@@ -1,245 +1,168 @@
 Return-Path: <peda@axentia.se>
-X-Google-Smtp-Source: AIpwx4/GtaHY+DM0EgA01EwlSgVNQjZE44gw4hpxGl6mAgW5HJtp5+OSRKkq6/k09ej9V9sKAiX7
-ARC-Seal: i=1; a=rsa-sha256; t=1523374108; cv=none;
+X-Google-Smtp-Source: AIpwx49wnZVLB5yu1oXaPM37jzHRP+fwGz15jNUa14M1R+SFriWJIQbz/0hUxFdYds6y99RTsluK
+ARC-Seal: i=1; a=rsa-sha256; t=1523887254; cv=none;
         d=google.com; s=arc-20160816;
-        b=os4iO2vu+EgTNEmDGv+7xOXa5elACoJKnsnT6+X/7yCA1Lyv1KdHBMswiihIR4CYfn
-         kowOAvKBuu2WMVpMZHpfI5zyd6NcpI1H0PF0egk17xbQu5LDm6cc1GG7jBDoo2p6eXW2
-         CqLfA1tTiJxc0PCoz0P/LCHQMmddlSU9XGiBj7xSeP+zxdYSKPPxV8OxqGeDIGYSRjiT
-         LOwIdIvbwnUpVyRGux9b5342/BwpUg6EiCaFg9C86QnrRzcC0GCBKO6qjLZvUyrPBst5
-         GsZ8prT4FWTv3KfRiTNiDc7OT8Q2ZNiHKSWe2tws0NQyKIBAOXgi5e6mv0N3GmzcmEWi
-         9sEQ==
+        b=iVGzfL2S1RhJ+Q4bXO0JiFleIiW4GdlNcLV/GKS/k+zUVW2MPAi87M9krhH+KA2keQ
+         pclSRTBErCiCMPE6YcBxE/7TFQEuDQhYGz9dh96JLcBZtE0norGzy31sR6trmlDR0QLQ
+         V3Vzxppi8cVn/ae3wLpQuweJilGNpREiiOenlzq87GTHd76CnBiUDHf5/wXGNScWnlQ/
+         y3BUxHVi5G034GCc1nwNYDjbT8AvbzhEi6Z/+fbEVeBfiBUlex/UdstVbudlaYk3T/ux
+         +vPm2HYhUbQNWiip/gKWtbS5p7Cil5EBJ57SqEfXinqBPPCh5Wp78NtNjf+OdJH5d/pb
+         rfzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=yAnugvRNYJ0E9ZFmkrbfybHUOQ3pcUOOa/CQs37wA6o=;
-        b=Hy5YtyH5rVi2/aGRfLiWzGOZzfMXU3T0n4+NFGH5aOjJMmfVA2mgcwZ4gsKrZKdbL9
-         FnFMD43gD+PPQpiADqUq5LBQSvEaSXnzhpQEXar86vQ77Zjm22lDWSlZUsBw6xZ5Z5MK
-         KM3rbR5VyFrjejaJ6xn0eVn+vzitvxC5e7wAPAS2pl/sTkEit3JmyYh7Z9SPS9QXe9uG
-         I5202tXINW7XfIG4BfrtNSugjRoTh4L2y6rjSZlKSyUxX/8iXgwH5RRvu64GvmDRZRmJ
-         AJPWzY1lE5EYacxzIEH+3BH72swBmL80blBDhr9YtkTdu95UM62YZUt6nlj/TNTR/8Um
-         BXCg==
+        h=spamdiagnosticmetadata:spamdiagnosticoutput
+         :content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:organization:from:references:cc:to
+         :subject:dkim-signature:arc-authentication-results;
+        bh=zQ/h8FLawq/8Xb6rRQoDfs7RFdC5IUOIb271zwFeO+s=;
+        b=onxA+ztetbAjq/uLaPfreNYIBUYgGvPbdw7VX34zYIqimZgruz7RUjajlqhQM9il+C
+         8Rt0J2abpommJSnEK6O3DOVqz1vQ7aPYu8RtoB8cPBZEGUhJp4HT2eMd8sJZRB99gxLG
+         xdgJgDo002mYhOilI6f766ZQRj1e/Oaem5ARgV9LaZJPTbxTsiLmi+W2qQWLPy0AfAOh
+         eIckHVuPefv/33gTsg7mm7518fD7K74k1cAlczaqXMkrAtbOhdRXTEjL3YQGQCG53aDK
+         zQlOnBCkDWN7jvAKEmOGC69RwbEVSGkk8Ls7mZ0FfyhzQzXk2jcs2Nk7melozxHeDdm7
+         eF1g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@axentia.se header.s=selector1 header.b=Geyj0O1b;
-       spf=pass (google.com: domain of peda@axentia.se designates 40.107.5.94 as permitted sender) smtp.mailfrom=peda@axentia.se
+       dkim=pass header.i=@axentia.se header.s=selector1 header.b=la/zXHga;
+       spf=pass (google.com: domain of peda@axentia.se designates 104.47.0.121 as permitted sender) smtp.mailfrom=peda@axentia.se
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@axentia.se header.s=selector1 header.b=Geyj0O1b;
-       spf=pass (google.com: domain of peda@axentia.se designates 40.107.5.94 as permitted sender) smtp.mailfrom=peda@axentia.se
+       dkim=pass header.i=@axentia.se header.s=selector1 header.b=la/zXHga;
+       spf=pass (google.com: domain of peda@axentia.se designates 104.47.0.121 as permitted sender) smtp.mailfrom=peda@axentia.se
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se;
-From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: afe: add current-sense-shunt and
+ voltage-divider
 To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Hartmut Knaack <knaack.h@gmx.de>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Andrew F . Davis" <afd@ti.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v3 1/2] dt-bindings: iio: afe: add current-sense-shunt and voltage-divider
-Date: Tue, 10 Apr 2018 17:28:01 +0200
-Message-Id: <20180410152802.30958-2-peda@axentia.se>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180410152802.30958-1-peda@axentia.se>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Peter Meerwald-Stadler <pmeerw@pmeerw.net>, Rob Herring
+ <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Randy Dunlap <rdunlap@infradead.org>, "Andrew F . Davis" <afd@ti.com>,
+ Fabio Estevam <festevam@gmail.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
 References: <20180410152802.30958-1-peda@axentia.se>
+ <20180410152802.30958-2-peda@axentia.se>
+From: Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <f4665f80-97a8-dedb-6d4b-b5e92b99ed78@axentia.se>
+Date: Mon, 16 Apr 2018 16:00:44 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180410152802.30958-2-peda@axentia.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: HE1PR06CA0143.eurprd06.prod.outlook.com
- (2603:10a6:7:16::30) To VI1PR0202MB2784.eurprd02.prod.outlook.com
- (2603:10a6:800:db::9)
+X-ClientProxiedBy: HE1P195CA0007.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::17)
+ To AM4PR0202MB2770.eurprd02.prod.outlook.com (2603:10a6:200:8c::20)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 893bc69e-acf3-47f9-3789-08d59ef7b34f
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4604075)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0202MB2784;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;3:M3YEkcrteGleH0K40tGZYKWM5TuTC8mMKPEdbUdZ3zjlGd8iRf6HoA1MMHjgK11gd3tLMGnYKdQR4znvP+guIIIL64lafYoD6nzyMiK7TY3uVQNAbQRoN+xJ2A40WaYs5vv90ShgEwMOw/AnFP63gJ9gM4JVa36zQOlRWtlXOAlig1UlmFiTZUuDnrNGk35+g4fpcM7NGLKJl8tu/D4ZwUfIoqy7hq4K6warDH8hXFG/4ur2xKXTF8dlgGUWIOuF;25:0lDEzlc/Ql0xQHYSMc6cT24Ukn9lSuUc8W2HzukZDWPzXkP9AkuEJGNy3w83+j2PXdLEZHEFE+5g9MhGw2mmJdY67wfeYZT/oPeZ7rl5DSJ4xM20SxibgRkvX7fF+2UlBufo8iLYIJOS41JvY4weL07zf7vI+8sZ+dcKX24lqu4aLFVfy4etXyPCKKYiK3em/FBRkGAKhDifLFh+K8+Xs1E4H9Fg7azK0T9K7hzDlnSf0v89sXpIc3mpEPP+mdZu1bb7Il8q0S+mBgfCkjwMPWOTNcWHlWTcfsVZxFPkA4PrL3nCYWkJejULwDnIstQN+wNP+/joCoDpeTD0rteMFQ==;31:iXCCqZ2YppznG/7DlVgljYuE3MEKGSjPiUosXrTbJ9NO+Uy3ZsdRJkPhynXEz1K5M+utAkBUr9aUbjr16Ac9Jf4P9H2FAYFbsrkTvoo9djA/sIIZ8SziKDb0LR2VwiJo+UuVo5FwF1uGYn3dJhGGQKlKlzpW010lxnV3shqKIu03WDUi2Qo5A1zk0fLfBopydeM0hmtNIbZdJ5J+jy8ek4zOE/jASInnX/tgfacBRSo=
-X-MS-TrafficTypeDiagnostic: VI1PR0202MB2784:
-X-Microsoft-Antispam-PRVS: <VI1PR0202MB2784BE407ABFC3FCF1B04856BCBE0@VI1PR0202MB2784.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(191636701735510)(9452136761055);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231221)(944501327)(52105095)(3002001)(10201501046)(6041310)(2016111802025)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6043046)(6072148)(201708071742011);SRVR:VI1PR0202MB2784;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0202MB2784;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;4:eXKp/k2U97AwfLZ4BFMczLHh7W5xiF+pfApD46o/XMC007h2ffp50BPB2Unk+50tKL0YnW6MdTcgCaTlM5hKSegRd09Y/IgL8/bGtOwuQTh5dZNF2e/snnXAaKVdzSNk+yPeIZtAd7zsO+IhYhDerKdUXeRVIZ7ensk/uEE1l+NY3U0VKrQltE1is33SNZboXD+BeI0FmUsX1x29pbXZ9kKsbVLDdolDOkhI0oxZSPManp6qivDCkT4SQ93p4kZe6l8JyphuoZ/1xSgR4/baYV1Tx1EogxJGs4OVdgEi2FJnJ8HI/aIuPOEQP9F004l9dH+Bxw5Ch/MdEoojPqX/Whtg6+j1K523ae+czXwQjTg=
-X-Forefront-PRVS: 0638FD5066
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(979002)(366004)(39380400002)(396003)(376002)(346002)(39830400003)(189003)(199004)(50466002)(8676002)(81156014)(2351001)(16526019)(186003)(81166006)(6116002)(446003)(3846002)(1076002)(16586007)(76176011)(47776003)(51416003)(52116002)(6506007)(386003)(25786009)(2361001)(48376002)(486006)(956004)(11346002)(97736004)(2616005)(74482002)(26005)(86362001)(476003)(6666003)(2906002)(6916009)(8936002)(106356001)(105586002)(50226002)(6486002)(7736002)(6512007)(305945005)(8666007)(54906003)(36756003)(53936002)(478600001)(68736007)(39060400002)(316002)(66066001)(7416002)(4326008)(5660300001)(15866825006)(42262002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0202MB2784;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0202MB2784;23:D3HymADjMY9QDsMHzNQg5zV4eAQfbBFFB2nbjXb?=
- =?us-ascii?Q?0/UC6XdKrxpQmQCOEk+TyK+bcG+mYmooH3HZKH5uAabqVINWjn5Bo7+pxgZR?=
- =?us-ascii?Q?MKIMNox5miWK46vFYIkiys4airjFcaxXBznSzAwk9QWuVGBYHEaDp7apDpFn?=
- =?us-ascii?Q?+7lDCEwSDBJmd5JE0A7ipthQGKzajwNkzu0Cu8S6y+OZLJ17+WFAUyt/cEvM?=
- =?us-ascii?Q?5TZgopMeb1x1BirWgnkqwUhTdITxrXmXxF5bRHux6eC0gUFpIKOT0QL9ita2?=
- =?us-ascii?Q?1NLQ3a1Fn5IlXvwZ7x14kAV2XoGW024gE4th+ZOBVNqr2Gjd/ddVk4844dUY?=
- =?us-ascii?Q?bSln5RemloIIZ/KGPTajafu9ssORL9BEDtarNiyFT3mDht5Fg3nPvyJ+RRIY?=
- =?us-ascii?Q?CBMRXcyuj21TQPXv6ByrETq42CchdHXCSBxdTy6fsA2ndjKPp+pfzuILk+16?=
- =?us-ascii?Q?YTtpLiP5/m+2YtfCDXuompiH5HOeRthhBVQY/8MZg6HgiVPAuYAHf3C5pGSE?=
- =?us-ascii?Q?9aOGqkYLoqQkASEI1y1ryszT3McXDkUW5BYc+4d2t69lWASPo7K2n6HorFA+?=
- =?us-ascii?Q?ytdEQbgPdHoi0iVrWOb2YPqaNKt5L7vVTl2GthcSOgQ/EjxyjBG9rXIL9czS?=
- =?us-ascii?Q?irFJ4+aRn+LxeNtyHRzPi+5diKbHxt/wKG1nQhni9lxrteGzB/jItzA3AmFl?=
- =?us-ascii?Q?uH3ZyaWWYu8jNz3PQwb+sBiZKETC/xK8/A5t5/WLPRcEhW87qSWW65zK5q3b?=
- =?us-ascii?Q?naFN+xZ8b2Iw7cES8Q+3Y/+FcRPlILPXAspgAN4Kv1a1jYmCerZ8Gh+kiZqZ?=
- =?us-ascii?Q?K3DRS+MFAOyKBoJpjiVIhhJ7OSAwJHisiYJVTnazs3w9m0CMIBgEb86CeXVy?=
- =?us-ascii?Q?06B4+9DqEosu7oV+IkTnU/eC2XOJRFZfL1A03PPPXX1qgOZPC/hvAIUEl+ti?=
- =?us-ascii?Q?ePHrzwGUdH2mHAzxGKEq09z4dJGszFy8w904wM8idNgBJaflIGvSKS3f/WJO?=
- =?us-ascii?Q?9IVqaf6BxZfP0eokgJ6yeu9K75LlxY5Y5URgGq9PCu8h2UJZ51yDvANzDDM+?=
- =?us-ascii?Q?kUpO+OC7GCumR4zGF49G6OaepFD8ukCJLWOKffOcIWuwm0mcFK/QE/jfh8rG?=
- =?us-ascii?Q?WkAEL5nT5jC6PMVHTjE46K2AzoQIWmKgcLKDS8cTAz4NlOUJ5QV3YZ0LvT/T?=
- =?us-ascii?Q?UdqHxp5skIt2RqueqT3WVaqjh4racaq1+LoWxQlh8NMHehwH7MaIg2Mhv6+V?=
- =?us-ascii?Q?lsrZG77F1yejLypS9gBc66zB4ZBllCS4ySQZcyyWHnMW5nap84TreBSYQ1t2?=
- =?us-ascii?Q?gl2GnZuoQv+8Oz/d0U6ds+yMlE3r2v9roY7RDSMaiK8uL77hq6mhTJu6ZP62?=
- =?us-ascii?Q?ibdYRnJ622K8Agm45u7RqXYJp1VgZK8SGz2IcwVbYxL0er7FAI1rDutM47Ot?=
- =?us-ascii?Q?7+Tf34pToQHhr5YSSO7EGJ5gCSQxbw9Rj4uiKux/dVUpVAssUjm/S/PwBF1u?=
- =?us-ascii?Q?Hm066sZ1PIh4cIg=3D=3D?=
-X-Microsoft-Antispam-Message-Info: eNfMTlhuxVcI0PkJulMioTLqMgKDM5aQ1c2H7hcnGPuCsEIW+ytf695dJzit18HAQK6oNGdu00WO1ccaEJKybD90VJ1SPVeMWTXCHzZd8a+NBf3AuLH4aBWNKjMSmh0HAdv6kZ/DbMD+VAci6xHWzhNPVAj9iP61dbCBdTVy3Rpr5996KsRXq1ORDZ5TbfCG
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;6:QpzDYxIMxs78lu2ObIMz36GKqUAv3scPRNhvEmADr5K/5jDECfok2XgPo9UuzaA9W0Vkqyyw0CP6+KJtANdxcGRNdxPbj9z5tkLB8WfrwQLkKdLmbxgEQ+LqswkPICco0FIz2xwPFAV/KAHrJq+fi14S5hXCkf3tTw9KKaMM3nZYeAlMhBc40Eibw/8MQHzoCr0KC0zkYyzGSNEX+Jmd+MWmiU0n05mEjwlWV6wzH9L+woPbv9oa2fq+QMuOlTJavtZkkWGJfjTv1mMZH9iXj3UcaYv6kkqYGk9DSLANVD8BDeqi2FP8D7nPMdGWLX9+yqSmxZaMgV5r19BM9wtustMokgjK5UIIPGbz61Gr3iDcH7nJp9KgnoK5oMeopqWXzutPvqaEX5PLjh86P8dsdAGLhQ21c42uxHGn+rRCnXZl2D1zBfDSDR9SVDHCoDMQ1ncMkYB6DdwmExbMkbo+iw==;5:yT5ccxbTseDFjzr28WQMG0xXwXpoiLzXhULgVIzyOmp4+13hHvqREcFIGq6Os/76opQBBstZ9U46p9OkUvmpAvLsMMMl0K8ZOxdPvfroUCvQEBjuLZrHcJfIMzgS5ImqpcF8H59QQbBaFIzcp9L3zdcwfrohgN5uPsFWVtoYej4=;24:0TBkUyMk8Piks89ZQwAKbHZ2PQPlpDeM4A6PfvS1jAc0/bhnntLLMvzf+GvI2FppGmjrDw1k9bgsHBpe7idfL4yZXFNLSgHfVUzLpa53LUU=
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM4PR0202MB2770;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2770;3:YpucJEYIt6IJd0SrbQv84umj0rwusTsURa5u7Fl6qLaAvsi+sBTyDLs1fnDytCShaK/2ACaTaStbYsNpHz3zt9N1s1lfZfhVQag/7JJYYPnQymU90LmtL2Nbgg3tI9brk7PoeJjekkB/kJn3eqzXwiynaU+sYzQa4LG45yaSWolM0yEbpUm8FfGvDJs4HpIQz7dIuBIToB7oFV1VJO29XlUYtUyVLl22TRdD6bKe1Cs0xjeVv/eOPPKHIydzXVHy;25:pZUfLIk/XCchK0e6b1a1AHMqAlgAFmC5xti/V9fRn9Z0sGTtleFN3G4MO4QuwSfzBStCs73zhVSgQgVLt8fP8eym9i+Ntg24HjLONzqYVmK/xrbp+kWeJR4jJRZMkRjnQQIyY0h2N0pNqZgJtEh8uIZTBCz4uBJdp1KihbEuAQ99CetEfzioJdAtMDvfpSkLlmwMjQHsHg6sJ0vU7kp0KaIWAWdpjU7AxtAalOCNgUMlUZkbwyvuXtxvbaG+0vy1z/pzBEyeygD48eP6b8ozf+A1iYuXW7UtZuoFNdXwR1xBh8Uqp0MGu0AGpvQrcQuvKHaFdDfmwBqiinmGgU7XXw==;31:Mz6FsmAWN9G14bAJKvpa0Q98ZECyikCJxJTLQXhTq4HdK5Ey00rQENpaRXnSDPHvpPla9Lhe/1lf8K/Aq82OFz8DrTn962iIw/bJ9Tqw9rx56fIpbzIQTseZgj8dXOhYtqDTPU5hj34/4kkjRuO9HWvQwSEnI649Qp8RYkgxlnr5LBU1ioWZKwDDHvFet76mE01UL8YCZVxktBx9vaN397sKE6qQR9L9ueXfUeyUmoo=
+X-MS-TrafficTypeDiagnostic: AM4PR0202MB2770:
+X-Microsoft-Antispam-PRVS: <AM4PR0202MB2770D630D142DB10862DBB2DBCB00@AM4PR0202MB2770.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231232)(944501327)(52105095)(93006095)(93001095)(6041310)(20161123562045)(20161123558120)(2016111802025)(20161123560045)(20161123564045)(6043046)(6072148)(201708071742011);SRVR:AM4PR0202MB2770;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0202MB2770;
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2770;4:Kd6SgFJmg5WBcWP1pZLtdEpUkmCDRqtlJiJNC+0TVIKhllLwQuRF+DakPW9kJAG8845QiOMKE20CFM7P6LzHBC4W1qDk+VmCMmA/9i7/3LjsS4k6/8uqozXqnRACjEgUg7XLzNF3I45Ny1b6H6JD9YoryevprZMI4/t+x1MTek1w7sMQDlGsgmTCeRhWx2GGHUr7kqlaPM+TUAvanLfCypwhElFxVCPqQ6ZoflYDpwcEstd837CMbZ4jTUbXDBj2/ZZShu4QlZpHb7yj75pyNg==
+X-Forefront-PRVS: 0644578634
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(376002)(39380400002)(346002)(366004)(396003)(39830400003)(199004)(377424004)(189003)(5660300001)(64126003)(31696002)(105586002)(486006)(50466002)(4326008)(305945005)(8666007)(25786009)(39060400002)(3260700006)(8676002)(316002)(956004)(11346002)(6116002)(3846002)(86362001)(446003)(81166006)(81156014)(106356001)(2906002)(97736004)(74482002)(54906003)(6486002)(476003)(65826007)(2616005)(229853002)(7736002)(7416002)(6666003)(6916009)(230700001)(26005)(2351001)(52116002)(2486003)(36756003)(66066001)(58126008)(52146003)(36916002)(65806001)(23676004)(77096007)(76176011)(47776003)(8936002)(16526019)(186003)(53936002)(68736007)(65956001)(2361001)(53546011)(16576012)(478600001)(6246003)(117156002)(31686004)(386003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0202MB2770;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTRQUjAyMDJNQjI3NzA7MjM6WURSdVBhWS96YzRQZWdMbkFNWUgwSlp6?=
+ =?utf-8?B?Z2VueVJDaThyYXI2MjRaVHpSaS9aa3VUUzFIRS9VcnF6OWQySVdIK1hpNXR0?=
+ =?utf-8?B?ekhJNHBtOHJRTWFINEg5eWdtYVZWazB6RERwMzhscmN0WlB3eldEUlFJblFa?=
+ =?utf-8?B?Tll4WkNNcnVMMmRSbkhVdUxqck1TMHdXUkpKTDFrTjRKTlRjMHR5TVdka21m?=
+ =?utf-8?B?MUxkVlNZZUVWeEhyKzJXa3pJaVk5emhwL3d3dHJxRzRhQUNjUm5wWmE5RW5R?=
+ =?utf-8?B?Y2MyWTdkWk90TnVITlMvaGVubFpPZEJLSHpSMGJVNGMvUnFGYjJtdkN0ekFL?=
+ =?utf-8?B?ZWE4bzJSSzJFT0lEZ2NNOGdGQ3M2VVpvbUZwMjRrU08zdDJWRW92TXYvbWlZ?=
+ =?utf-8?B?ZnAxRlFTWFZCcFNhdnpnNTdTWFlTbUxPMnRmN21qcWdJZnJIais0MmpBZ0Vx?=
+ =?utf-8?B?YTlTVUVVc1krNkhVWTJJOTFJcm9zWkZrd3BFNnFLQU8xLzY2UzlLcFpXZ2V1?=
+ =?utf-8?B?K08yOVFzSkxMNGZYakkzU3I5SXJUZkZkeG1LVkdDR0lZT0MxU3R5UWgzYUFk?=
+ =?utf-8?B?OTdhWFhTQkRkOUxpU0p3Z2pTcW1kUXJtV0dKRWNqditaay83UGJJNHBVUlBr?=
+ =?utf-8?B?ckwrZEZLUm1EOGVEMFNncGw5QzQrdThlem5MUHhWcVFLa1pKdmNMSnpsMDdM?=
+ =?utf-8?B?YnlGUmJlYzZYdktTZHpYWjY3RVJ6MklweFI1QTVtQ0RXajZGZllUWDhFOW5J?=
+ =?utf-8?B?WUNOcU92Q3F5SlpXSzJiNHFzU0NUY1BlY2xPSWZUVy9BRVVIME9yL0ZBaDQ3?=
+ =?utf-8?B?T2ZsWVA3TUVPYnJUcnRlU2NGQzN1NVhkV2xVSWlMNmtVWFUxalJudFR1SFBV?=
+ =?utf-8?B?cTBqOTEvdnc1MTFoVWdRb0dwanFOUWNQdUpNc3ErSkplR1hzSXVpWHB6ZXNY?=
+ =?utf-8?B?YWJ2R29KZVBaaHh2WTY0a2ZHelVOWitvTDlPYW9UUm1XNFphckx1cDI1dlhp?=
+ =?utf-8?B?UzlZdnRUaUJVM2RySzhUclhTZzJvUDhFQnMvTkt3Z0kzU0tvZGc3Tkxwa0di?=
+ =?utf-8?B?eW5PSVRBNVJOZ0syTG1qSjF3TDNHbnlaQmVZNW43Wk0zaUFla3RWY0w3ZHpv?=
+ =?utf-8?B?cGgzN2tQRTNBNkxNbCtzNHJvenExUTEvSEwyU3hMR0tscDJUVWNDUGZ0ejBE?=
+ =?utf-8?B?a0dneTRmUVlCd2s0UWlULzNpYnVuWGt1RnBsQklLL2xsNGtIMzQyYm51MUx1?=
+ =?utf-8?B?Tkk5c1Zsc3JTSUlHa043S3c1L3VXeUszSFVwcGg2QWcySVkzMFMzTkZDS0pX?=
+ =?utf-8?B?cndCRklWNlBqRXpNbytUSkIzMjgvRjVSTDhQYjNHcEYxa2hiUDZLeVJNTm9S?=
+ =?utf-8?B?SDlDNHB5OHpvTGROaU9JVUNNeTVTdk85VjhiYStGQkRFbDlESmxzanRBN09S?=
+ =?utf-8?B?R3gxMUdRb3ZpVXJybnkveUwvNTV0OUszR3J1ckJqRHBHY2E2bjQyM3VkRTh5?=
+ =?utf-8?B?c3NYZUNTU3lFV2dFUHNLbkJmRkw4UjR1Z1RFTitucStQQUpKVjFqdjk0TlRs?=
+ =?utf-8?B?eEhVYzJpRUd0VVNxbCt0aFMraDNqSFZQUFN4K3RkekhORnkyOUF6STBHc3lZ?=
+ =?utf-8?B?YmNNN0laSTdWK29xbWxDN2JBUmZQTFFhRWZWVDVxcXRkd2RpbWZTK0lPemZ2?=
+ =?utf-8?B?NkR2S1R1UjlOYWJySStucFZCQWxLaUd3WllUVzRzMnd3cWU4dFBXcjhybkho?=
+ =?utf-8?B?a0QwRWM1S1dTZFlDRUM2dUxRbDFxa0haU0RpdWJXczhYSi9QUFZaT2R3M1Jj?=
+ =?utf-8?B?eDBQS28wU0J0T09BT0lFcXRlaXRoMVJDa1VqdmlsNEVCZ1l4M1FkdGlzWEps?=
+ =?utf-8?B?YW9sK05TNkl4c2JJVkRUd1FyZWcycm5XRFJYb2ZFN0dSL0Zac2JqK3dOMCtF?=
+ =?utf-8?B?Mkx5bm1DbEFWakhEbkxia0cxWS9PamRUZEtGTWZieEZNSytSYm9hWXVGcHpK?=
+ =?utf-8?B?aURoWjI4UnFIejFHKzJDQmFHTFY1cVMrQmpaYmNGdXBTWUFMcTFkVkR6ZjdS?=
+ =?utf-8?B?a0VNbjBvUHlZZENQU1dEUEhOMi9JUUYzekMrMkFRNGszQ2g5c1VDUmtyQURq?=
+ =?utf-8?B?ZEwzcGV0SmNLSk90MTJyOFZ3bTVhSkwySm8zQ0ZWUjZLTUlic3NlRG9sRDFq?=
+ =?utf-8?B?WGM3WjhLNkg0MUNJR1lJVUlaSXg2b2VNMG02R1RtbmEyVm9zTUlvUU0yVkFO?=
+ =?utf-8?B?Nmt3L3NGTmFWVnBYQUJacG5qLy94ZGNUblFTcUJZK2NaOWpBMTQrMUhRPT0=?=
+X-Microsoft-Antispam-Message-Info: To3rrp4n/vKeRodY0vdA7rNvzwOTogEPAPXbYOnnrontC93DWvvP4iCqYjopy5pkuSc71wV4Ce0gP0gxnPWWd9AkQjL/e05oLUmlqcLIgOXnaLzKWIslQZdOqLIoHS0fBJ343td/PV2h9XbYFxvz2hECYYZ/nwLiGqOrWMmLWa5PHMAc3M6FWySVXR+S0El4
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2770;6:TnQZXHmU/Ie9+gU3TQ5wY3EFLaf+0Rulzr1/wbUZ6q/GOPBpx7oH/umpJKVVfR7AZ4cdgsDuBheHJGc0QHmZqzbwFYwBJKD9XHsUljr/LG73gTNwTXlDcBM2XTY3dOekaNSnLqJ2lTZnLOtFAx2cWKWe2X12Hpd2FydCFqkZbHh5Cj0NQkU2vl3hcMrTYq9LiZC6Lvx1Nw5YaT1K+Y1/1YUrJoCy4Gd3h+ITgu2Ga95xDff0NENrVrsKTfnjQJB8Gs85xODDvmmYyrwtwOXBybreZmGgUF9knQXw4pdXADLVMDjVOugpTlHJcg1/Vd/7HLUVoqWGB1R9wTvC4vNtgQH6T8AzFPS3liE0XpBXbmcGci6ZzgTnUfkXQ7vKT2rzWPWB3ibljAEFGekaMZ3eaLZY1IIOYzNrPy0SdqL3zqgsGqjSgTEopDaF6yiXIMhnXATQxKqT6ra4Y9Ts0BUbqg==;5:A5q2eJNGowEdp/8hqae0ivew3yeJvtwoVI/RLhYBu/BnAInWaPBkql3nPbDizW2goGIOASMbb1ZtHvedPrvuoqvzxMB+nFtsgjXFpfQLd3ipfO8XaFgysga/2RiU8UJndOqPQRxB2TTnF9heprczhlaSOtjQKIcR7/+wCZw0MHc=;24:DgVgFc4wu11vVv+aGc5pMTSYNv91gZanxaY/qmcaa3s/MbmK6AuAl6XokKmgDr5pR35RffScfzjPI+3fbBEMOSkD8Cd64n0EGF+uHPBmuG4=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;7:YPvR6nGDfAu0dZt0reuqIuFfiyqiXwTGRRqpeRJy26cIdwCgFjPB6ZeHTEHt1uF+DWdnc4g1atZ1TTnHKrDn6qvRFBcbEFoSbsR0+8J7IcnQTbR+sy8s20KF+6Zlg+l72xlF2AybkoxJ/0G5FNa34yOJvXw1fLB69UGh3+U1gQ3VsqebQBbL7r71h5BU1i4tuhYplklkapJmbWv3ifRPuKLlnd4bhSKs+ny1BEAp/8Wqz4zPTNUcA0ncoKfHG+s4
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2770;7:pkMQs3VUt3BR8VPx2jPpOHhyJbb3hlD7psd7zO8UqZ2XpEWepaEk6O3FUmHKCTXxr0aatPIoX1BvUWQckPyURvPgestbvyyCxrD7RChX2Ktd9UQaWvJBTSHblMeXYUnJJECiGIASDPGNFM0GpmLyDMfMIQdlJCnzJ0LrZw9morueAVCDnhd1S1yhY3yFYegva4kPu4pk6yf7wrOktsqnOf2kqvSEtUrt3WhBvIzASRs5Rn/Lgz3CyJ5fzPgFsfOG
+X-MS-Office365-Filtering-Correlation-Id: 801363de-062f-441f-07f3-08d5a3a27531
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2018 15:28:23.2873 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 893bc69e-acf3-47f9-3789-08d59ef7b34f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2018 14:00:47.9126 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 801363de-062f-441f-07f3-08d5a3a27531
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0202MB2784
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0202MB2770
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597373529205381513?=
-X-GMAIL-MSGID: =?utf-8?q?1597373529205381513?=
+X-GMAIL-MSGID: =?utf-8?q?1597911600944970408?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-An ADC is often used to measure other quantities indirectly. These
-bindings describe two cases, a current through a shunt resistor, and
-a "big" voltage measured with the help of a voltage divider.
+On 2018-04-10 17:28, Peter Rosin wrote:
+> +Example:
+> +The system voltage is circa 12V, but divided down with a 22/200
+> +voltage divider to adjust it to the ADC range.
+> +
+> +SYSV        ADC       GND
+> +  +          +         +
+> +  |  .-----. | .----.  |
+> +  '--| 200 |-+-| 22 |--'
+> +     '-----'   '----'
+> +
+> +sysv {
+> +	compatible = "voltage-divider";
+> +	io-channels = <&maxadc 1>;
+> +
+> +	/* Multiply the ADC voltage by 222/22 to get the system voltage. */
+> +	numerator = <222>; /* 200 + 22 */
+> +	denominator = <22>;
+> +};
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- .../bindings/iio/afe/current-sense-shunt.txt       | 41 ++++++++++++++++++++
- .../bindings/iio/afe/voltage-divider.txt           | 45 ++++++++++++++++++++++
- MAINTAINERS                                        |  7 ++++
- 3 files changed, 93 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/afe/current-sense-shunt.txt
- create mode 100644 Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
+While I already got a reviewed-by from Rob, and maybe I shouldn't be
+stirring the pot, but I had an umpteenth look and I now think this
+one looks a bit odd. It shows a bit that it originates from when the
+compatible was the very generic "io-channel-unit-converter" in v1
+of the series. What I mean is that a voltage divider presumable always
+gets you a lower voltage. Therefore, one would assume that the
+denominator should be larger than the numerator. The fact that this
+translates into the inverted fraction when calculating backwards
+through the voltage divider should probably not affect the binding.
 
-diff --git a/Documentation/devicetree/bindings/iio/afe/current-sense-shunt.txt b/Documentation/devicetree/bindings/iio/afe/current-sense-shunt.txt
-new file mode 100644
-index 000000000000..4d842aa85040
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/afe/current-sense-shunt.txt
-@@ -0,0 +1,41 @@
-+Current Sense Shunt
-+===================
-+
-+When an io-channel measures the voltage over a current sense shunt,
-+the interesting mesaurement is almost always the current through the
-+shunt, not the voltage over it. This binding describes such a current
-+sense circuit.
-+
-+Required properties:
-+- compatible : "current-sense-shunt"
-+- io-channels : Channel node of a voltage io-channel.
-+- shunt-resistor-micro-ohms : The shunt resistance in microohms.
-+
-+Example:
-+The system current is measured by measuring the voltage over a
-+3.3 ohms shunt resistor.
-+
-+sysi {
-+	compatible = "current-sense-shunt";
-+	io-channels = <&tiadc 0>;
-+
-+	/* Divide the voltage by 3300000/1000000 (or 3.3) for the current. */
-+	shunt-resistor-micro-ohms = <3300000>;
-+};
-+
-+&i2c {
-+	tiadc: adc@48 {
-+		compatible = "ti,ads1015";
-+	      	reg = <0x48>;
-+		#io-channel-cells = <1>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		channel@0 { /* IN0,IN1 differential */
-+			reg = <0>;
-+			ti,gain = <1>;
-+			ti,datarate = <4>;
-+		};
-+	};
-+};
-diff --git a/Documentation/devicetree/bindings/iio/afe/voltage-divider.txt b/Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
-new file mode 100644
-index 000000000000..fd4a215d9e6d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
-@@ -0,0 +1,45 @@
-+Voltage divider
-+===============
-+
-+When an io-channel measures the midpoint of a voltage divider, the
-+interesting voltage is often the voltage over the full resistance
-+of the divider. This binding describes the voltage divider in such
-+a curcuit.
-+
-+Required properties:
-+- compatible : "voltage-divider"
-+- io-channels : Channel node of a voltage io-channel.
-+
-+Optional properties:
-+- numerator : The io-channel scale is multiplied by this value (default 1).
-+- denominator : The io-channel scale is divided by this value (default 1).
-+
-+Example:
-+The system voltage is circa 12V, but divided down with a 22/200
-+voltage divider to adjust it to the ADC range.
-+
-+SYSV        ADC       GND
-+  +          +         +
-+  |  .-----. | .----.  |
-+  '--| 200 |-+-| 22 |--'
-+     '-----'   '----'
-+
-+sysv {
-+	compatible = "voltage-divider";
-+	io-channels = <&maxadc 1>;
-+
-+	/* Multiply the ADC voltage by 222/22 to get the system voltage. */
-+	numerator = <222>; /* 200 + 22 */
-+	denominator = <22>;
-+};
-+
-+&spi {
-+	maxadc: adc@0 {
-+		compatible = "maxim,max1027";
-+	      	reg = <0>;
-+		#io-channel-cells = <1>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <15 IRQ_TYPE_EDGE_RISING>;
-+		spi-max-frequency = <1000000>;
-+	};
-+};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6e950b8b4a41..237fcdfdddc6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6887,6 +6887,13 @@ F:	drivers/staging/iio/
- F:	include/linux/iio/
- F:	tools/iio/
- 
-+IIO UNIT CONVERTER
-+M:	Peter Rosin <peda@axentia.se>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/iio/afe/current-sense-shunt.txt
-+F:	Documentation/devicetree/bindings/iio/afe/voltage-divider.txt
-+
- IKANOS/ADI EAGLE ADSL USB DRIVER
- M:	Matthieu Castet <castet.matthieu@free.fr>
- M:	Stanislaw Gruszka <stf_xl@wp.pl>
--- 
-2.11.0
+So, in the above example, I think it would make more sense to have
+
+	numerator = <22>;
+	denominator = <222>; /* 200 + 22 */
+
+(and then, naturally, adjust the driver to invert the fraction)
+
+Comments?
+
+Cheers,
+Peter
