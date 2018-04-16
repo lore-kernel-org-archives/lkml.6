@@ -1,51 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752387AbeDPQls (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:41:48 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:32984 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751060AbeDPQlq (ORCPT
+        id S1752824AbeDPQqv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:46:51 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43506 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751070AbeDPQqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:41:46 -0400
-X-Google-Smtp-Source: AIpwx48jbW6EHRcEGWkzti4k/ud/GqLgnXU3pwGhRtAlbzLV9BW3E6UgUc6xPtC4wBg63cYHbPFGxCoyahs+u1BUo3E=
+        Mon, 16 Apr 2018 12:46:49 -0400
+X-Google-Smtp-Source: AIpwx4/mMz8KpvRxzP7jfRmqGRbYZohpQspvYnVJOiV0yozGNXQaX/5/jnf+upuBWRsuZWhHE+RZ5A==
+From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
+To: Matias Bjorling <mb@lightnvm.io>
+Cc: linux-block@vger.kernel.org, Javier Gonzales <javier@cnexlabs.com>,
+        linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: [PATCH 0/2] pblk bugfixes
+Date: Mon, 16 Apr 2018 18:46:14 +0200
+Message-Id: <1523897176-6241-1-git-send-email-hans.ml.holmberg@owltronix.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180416112810.57a3f74b@gandalf.local.home>
-References: <4650cbf668fd4853ad98dba834141e08@SIWEX5A.sing.micron.com> <20180416112810.57a3f74b@gandalf.local.home>
-From: Rajat Jain <rajatja@google.com>
-Date: Mon, 16 Apr 2018 09:41:04 -0700
-Message-ID: <CACK8Z6F02C2nskv7uO20fj=Ns3OsEwJ1FjaDYaE62+jfF5QZag@mail.gmail.com>
-Subject: Re: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace events
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Bean Huo (beanhuo)" <beanhuo@micron.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhad.com" <mingo@redhad.com>,
-        "Bart.VanAssche@sandisk.com" <Bart.VanAssche@sandisk.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 8:28 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Mon, 16 Apr 2018 14:31:49 +0000
-> "Bean Huo (beanhuo)" <beanhuo@micron.com> wrote:
->
->> Print the request tag along with other information
->> while tracing a command.
->>
->> Signed-off-by: Bean Huo <beanhuo@micron.com>
-Acked-by: Rajat Jain <rajatja@google.com>
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
->> ---
->
-> I don't see any issue with the tracing part.
->
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
->
-> Others need to check the content.
->
-> -- Steve
+This is a couple of bugfixes, nothing very urgent.
+
+Hans Holmberg (2):
+  lightnvm: pblk: only try to recover lines with written smeta
+  lightnvm: pblk: kick writer on new flush points
+
+ drivers/lightnvm/pblk-cache.c    | 10 ++++++----
+ drivers/lightnvm/pblk-core.c     |  2 +-
+ drivers/lightnvm/pblk-rb.c       |  4 ++--
+ drivers/lightnvm/pblk-recovery.c | 30 +++++++++++++++++++++---------
+ drivers/lightnvm/pblk.h          |  1 +
+ 5 files changed, 31 insertions(+), 16 deletions(-)
+
+-- 
+2.7.4
