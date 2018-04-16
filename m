@@ -1,117 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754207AbeDPOQy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 10:16:54 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59000 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750996AbeDPOQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:16:51 -0400
-Date: Mon, 16 Apr 2018 10:11:01 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
-Message-ID: <20180416141101.zcovkknupxcgiwf2@madcap2.tricolour.ca>
-References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
- <CAFqZXNuEwxp7vThtVH1oYSE5bAisvwNpBH3ry9tyL5BPSwXK=g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqZXNuEwxp7vThtVH1oYSE5bAisvwNpBH3ry9tyL5BPSwXK=g@mail.gmail.com>
-User-Agent: NeoMutt/20171027
+        id S1755366AbeDPOR6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:17:58 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:41802 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750996AbeDPOR5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 10:17:57 -0400
+Date: Mon, 16 Apr 2018 10:17:55 -0400 (EDT)
+Message-Id: <20180416.101755.99677892602830691.davem@davemloft.net>
+To: jacopo+renesas@jmondi.org
+Cc: sergei.shtylyov@cogentembedded.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: net: ravb: Add support for r8a77965 SoC
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1523886917-14491-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1523886917-14491-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-16 09:26, Ondrej Mosnacek wrote:
-> 2018-04-10 1:34 GMT+02:00 Richard Guy Briggs <rgb@redhat.com>:
-> > There were two formats of the audit MAC_STATUS record, one of which was more
-> > standard than the other.  One listed enforcing status changes and the
-> > other listed enabled status changes with a non-standard label.  In
-> > addition, the record was missing information about which LSM was
-> > responsible and the operation's completion status.  While this record is
-> > only issued on success, the parser expects the res= field to be present.
-> >
-> > old enforcing/permissive:
-> > type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
-> > old enable/disable:
-> > type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
-> >
-> > List both sets of status and old values and add the lsm= field and the
-> > res= field.
-> >
-> > Here is the new format:
-> > type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
-> >
-> > This record already accompanied a SYSCALL record.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/46
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  security/selinux/selinuxfs.c | 11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> > index 00eed84..00b21b2 100644
-> > --- a/security/selinux/selinuxfs.c
-> > +++ b/security/selinux/selinuxfs.c
-> > @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
-> >                 if (length)
-> >                         goto out;
-> >                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
-> > -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
-> > +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
-> > +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Date: Mon, 16 Apr 2018 15:55:17 +0200
+
+> Add documentation for r8a77965 compatible string to renesas ravb device
+> tree bindings documentation.
 > 
-> This is just a tiny nit but why does "old_enforcing" use an underscore
-> and "old-enabled" a dash? Shouldn't the style be consistent across
-> fields?
-
-Yes, but my understanding is a preference for underscore, and not to
-change existing field names.
-
-Steve?
-
-> Just my two cents...
-
-These details are worth noticing, thank you.
-
-> >                         new_value, selinux_enforcing,
-> >                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
-> > -                       audit_get_sessionid(current));
-> > +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
-> >                 selinux_enforcing = new_value;
-> >                 if (selinux_enforcing)
-> >                         avc_ss_reset(0);
-> > @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
-> >                 if (length)
-> >                         goto out;
-> >                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
-> > -                       "selinux=0 auid=%u ses=%u",
-> > +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
-> > +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
-> > +                       selinux_enforcing, selinux_enforcing,
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> ---
 > 
-> ^ also here
-> 
-> >                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
-> > -                       audit_get_sessionid(current));
-> > +                       audit_get_sessionid(current), 0, 1);
-> >         }
-> >
-> >         length = count;
-> 
-> Ondrej Mosnacek <omosnace at redhat dot com>
+> Renesas R-Car M3-N support has been merged for v4.17.
+> Document the missing device tree bindings.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Since this is purely a devicetree update, I'm assuming that it doesn't
+go through my networking tree.
