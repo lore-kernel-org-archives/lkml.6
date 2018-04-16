@@ -1,152 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753049AbeDPOvU convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 10:51:20 -0400
-Received: from mailout.micron.com ([137.201.242.129]:62164 "EHLO
-        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeDPOuQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:50:16 -0400
-From: "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhad.com" <mingo@redhad.com>,
-        "Bart.VanAssche@sandisk.com" <Bart.VanAssche@sandisk.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
-        "rajatja@google.com" <rajatja@google.com>
-Subject: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
- events
-Thread-Topic: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
- events
-Thread-Index: AdPVj5Jy/9Ew2ExTSbalJ+RQV0SXDQ==
-Date: Mon, 16 Apr 2018 14:31:49 +0000
-Message-ID: <4650cbf668fd4853ad98dba834141e08@SIWEX5A.sing.micron.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.160.29.124]
-X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-23786.005
-X-TM-AS-Result: No--7.046300-0.000000-31
-X-TM-AS-MatchedID: 707163-707451-851106-188019-700767-705602-851458-708712-7
-        00079-705450-708060-700476-148004-148050-148980-42000-42003-29961-63
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-User-Blocked-Sender: No
-x-mt-checkinternalsenderrule: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1753098AbeDPOvk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:51:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750972AbeDPOvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 10:51:38 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E6621776
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Mon, 16 Apr 2018 22:51:06 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] ARM: imx_v6_v7_defconfig: add RN5T618 PMIC family
+ support
+Message-ID: <20180416145105.GL25429@dragon>
+References: <20180318201510.13086-1-stefan@agner.ch>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180318201510.13086-1-stefan@agner.ch>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Print the request tag along with other information
-while tracing a command.
+On Sun, Mar 18, 2018 at 09:15:08PM +0100, Stefan Agner wrote:
+> This allows to successfully boot Colibri iMX7 which is using
+> the Ricoh RN5T567 PMIC.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Signed-off-by: Bean Huo <beanhuo@micron.com>
----
- include/trace/events/scsi.h | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
-
-diff --git a/include/trace/events/scsi.h b/include/trace/events/scsi.h
-index f624969..a4ada90 100644
---- a/include/trace/events/scsi.h
-+++ b/include/trace/events/scsi.h
-@@ -210,6 +210,7 @@ TRACE_EVENT(scsi_dispatch_cmd_start,
- 		__field( unsigned int,	lun	)
- 		__field( unsigned int,	opcode	)
- 		__field( unsigned int,	cmd_len )
-+		__field( int,		tag )
- 		__field( unsigned int,	data_sglen )
- 		__field( unsigned int,	prot_sglen )
- 		__field( unsigned char,	prot_op )
-@@ -223,6 +224,7 @@ TRACE_EVENT(scsi_dispatch_cmd_start,
- 		__entry->lun		= cmd->device->lun;
- 		__entry->opcode		= cmd->cmnd[0];
- 		__entry->cmd_len	= cmd->cmd_len;
-+		__entry->tag		= cmd->request->tag;
- 		__entry->data_sglen	= scsi_sg_count(cmd);
- 		__entry->prot_sglen	= scsi_prot_sg_count(cmd);
- 		__entry->prot_op	= scsi_get_prot_op(cmd);
-@@ -230,10 +232,10 @@ TRACE_EVENT(scsi_dispatch_cmd_start,
- 	),
- 
- 	TP_printk("host_no=%u channel=%u id=%u lun=%u data_sgl=%u prot_sgl=%u" \
--		  " prot_op=%s cmnd=(%s %s raw=%s)",
-+		  " prot_op=%s tag=%d cmnd=(%s %s raw=%s)",
- 		  __entry->host_no, __entry->channel, __entry->id,
- 		  __entry->lun, __entry->data_sglen, __entry->prot_sglen,
--		  show_prot_op_name(__entry->prot_op),
-+		  show_prot_op_name(__entry->prot_op), __entry->tag,
- 		  show_opcode_name(__entry->opcode),
- 		  __parse_cdb(__get_dynamic_array(cmnd), __entry->cmd_len),
- 		  __print_hex(__get_dynamic_array(cmnd), __entry->cmd_len))
-@@ -253,6 +255,7 @@ TRACE_EVENT(scsi_dispatch_cmd_error,
- 		__field( int,		rtn	)
- 		__field( unsigned int,	opcode	)
- 		__field( unsigned int,	cmd_len )
-+		__field( int,		tag )
- 		__field( unsigned int,	data_sglen )
- 		__field( unsigned int,	prot_sglen )
- 		__field( unsigned char,	prot_op )
-@@ -267,6 +270,7 @@ TRACE_EVENT(scsi_dispatch_cmd_error,
- 		__entry->rtn		= rtn;
- 		__entry->opcode		= cmd->cmnd[0];
- 		__entry->cmd_len	= cmd->cmd_len;
-+		__entry->tag		= cmd->request->tag;
- 		__entry->data_sglen	= scsi_sg_count(cmd);
- 		__entry->prot_sglen	= scsi_prot_sg_count(cmd);
- 		__entry->prot_op	= scsi_get_prot_op(cmd);
-@@ -274,10 +278,10 @@ TRACE_EVENT(scsi_dispatch_cmd_error,
- 	),
- 
- 	TP_printk("host_no=%u channel=%u id=%u lun=%u data_sgl=%u prot_sgl=%u" \
--		  " prot_op=%s cmnd=(%s %s raw=%s) rtn=%d",
-+		  " prot_op=%s tag=%d cmnd=(%s %s raw=%s) rtn=%d",
- 		  __entry->host_no, __entry->channel, __entry->id,
- 		  __entry->lun, __entry->data_sglen, __entry->prot_sglen,
--		  show_prot_op_name(__entry->prot_op),
-+		  show_prot_op_name(__entry->prot_op), __entry->tag,
- 		  show_opcode_name(__entry->opcode),
- 		  __parse_cdb(__get_dynamic_array(cmnd), __entry->cmd_len),
- 		  __print_hex(__get_dynamic_array(cmnd), __entry->cmd_len),
-@@ -298,6 +302,7 @@ DECLARE_EVENT_CLASS(scsi_cmd_done_timeout_template,
- 		__field( int,		result	)
- 		__field( unsigned int,	opcode	)
- 		__field( unsigned int,	cmd_len )
-+		__field( int,		tag )
- 		__field( unsigned int,	data_sglen )
- 		__field( unsigned int,	prot_sglen )
- 		__field( unsigned char,	prot_op )
-@@ -312,6 +317,7 @@ DECLARE_EVENT_CLASS(scsi_cmd_done_timeout_template,
- 		__entry->result		= cmd->result;
- 		__entry->opcode		= cmd->cmnd[0];
- 		__entry->cmd_len	= cmd->cmd_len;
-+		__entry->tag		= cmd->request->tag;
- 		__entry->data_sglen	= scsi_sg_count(cmd);
- 		__entry->prot_sglen	= scsi_prot_sg_count(cmd);
- 		__entry->prot_op	= scsi_get_prot_op(cmd);
-@@ -319,11 +325,11 @@ DECLARE_EVENT_CLASS(scsi_cmd_done_timeout_template,
- 	),
- 
- 	TP_printk("host_no=%u channel=%u id=%u lun=%u data_sgl=%u " \
--		  "prot_sgl=%u prot_op=%s cmnd=(%s %s raw=%s) result=(driver=" \
--		  "%s host=%s message=%s status=%s)",
-+		  "prot_sgl=%u prot_op=%s tag=%d cmnd=(%s %s raw=%s) " \
-+		  "result=(driver=%s host=%s message=%s status=%s)",
- 		  __entry->host_no, __entry->channel, __entry->id,
- 		  __entry->lun, __entry->data_sglen, __entry->prot_sglen,
--		  show_prot_op_name(__entry->prot_op),
-+		  show_prot_op_name(__entry->prot_op), __entry->tag,
- 		  show_opcode_name(__entry->opcode),
- 		  __parse_cdb(__get_dynamic_array(cmnd), __entry->cmd_len),
- 		  __print_hex(__get_dynamic_array(cmnd), __entry->cmd_len),
--- 
-2.7.4
+Applied all, thanks.
