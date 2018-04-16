@@ -1,48 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751893AbeDPPKZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 11:10:25 -0400
-Received: from resqmta-ch2-01v.sys.comcast.net ([69.252.207.33]:59860 "EHLO
-        resqmta-ch2-01v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751099AbeDPPKY (ORCPT
+        id S1751161AbeDPPNT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 11:13:19 -0400
+Received: from mail-io0-f169.google.com ([209.85.223.169]:44938 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeDPPNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:10:24 -0400
-Date: Mon, 16 Apr 2018 10:10:20 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Matthew Wilcox <willy@infradead.org>
-cc: linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: Re: [PATCH v3 2/2] slab: __GFP_ZERO is incompatible with a
- constructor
-In-Reply-To: <20180412191322.GA21205@bombadil.infradead.org>
-Message-ID: <alpine.DEB.2.20.1804161009590.8424@nuc-kabylake>
-References: <20180411060320.14458-1-willy@infradead.org> <20180411060320.14458-3-willy@infradead.org> <alpine.DEB.2.20.1804110842560.3788@nuc-kabylake> <20180411192448.GD22494@bombadil.infradead.org> <alpine.DEB.2.20.1804111601090.7458@nuc-kabylake>
- <20180411235652.GA28279@bombadil.infradead.org> <alpine.DEB.2.20.1804120907100.11220@nuc-kabylake> <20180412142718.GA20398@bombadil.infradead.org> <20180412191322.GA21205@bombadil.infradead.org>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 16 Apr 2018 11:13:17 -0400
+X-Google-Smtp-Source: AIpwx4+QjzL2sEvJOzureoHvew2t690kofuTRocMNNQxTE34Xn37FeeRQpr0g2DHaDkxs3nZvpR75QfhWxph6w7jIAc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfLGxPMy/Noi9QztCI8seSVlPMuW+vtUlus2sWjnmzYHlTjgvr9/JqQ4xFkuPscbhASy8a7CO7BoNVfptXl2i6jZZDK73ooxSjoBNHQVUDXFsW/HIh086
- X53mm4/NlGuPFo3U4YdjVClvoXtRUq/RUQHsn5b8MJzJVAhth+4UPH561BAqZh1BJ4JHJBsAMJYQrDOESZGkygXX0ltc0LPaAa19nD5YU+VxZ20zna931pO7
- 6ygy42FNFCrB6gNWOij/4Fz4NZeS6GM29n/hwUMoqLMAeyM0N8D/1lblLeUJDM3hE5Zr97Vf/s3X3L4WEaF1T33TlyrY/95Jylr4xTAXYuvIDcxd8Q8jCsZR
- XrmLCWTTEJlDcFXtJH5htp99qePwLs5vi3J7TalNb29jAsqm0q1acbrp2aL/8k4ovniaOjH3dLJwJVU9Tt0en4l0Igb6zTZlnX2Sk4Z5pEZussaoRgR9npg4
- U5aMMjiygzCM5P+c
+In-Reply-To: <20180416134309.lt7mrxe5khcuhozl@redbean>
+References: <7e17e3b1-25c3-cb61-ae94-dcbb1bf3473e@linux.ibm.com>
+ <3836add7-8691-77c1-33d2-0fbee7051795@de.ibm.com> <2dc648ad-0a6b-ba79-5d6a-fb3e3029994f@de.ibm.com>
+ <20180416134309.lt7mrxe5khcuhozl@redbean>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 16 Apr 2018 08:13:16 -0700
+X-Google-Sender-Auth: 9WJ4akl4UYvDbIXhmC3VRNKRCgY
+Message-ID: <CA+55aFzDHR47yZXvpOGx22bjWBGExTi=5jWnYb5C+FijJdgOOA@mail.gmail.com>
+Subject: Re: Wrong module .text address in 4.16.0
+To: Jessica Yu <jeyu@kernel.org>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>,
+        Thomas-Mich Richter <tmricht@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Kees Cook <keescook@chromium.org>
+Content-Type: multipart/mixed; boundary="001a1141bc444cfc970569f8a9d6"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Apr 2018, Matthew Wilcox wrote:
+--001a1141bc444cfc970569f8a9d6
+Content-Type: text/plain; charset="UTF-8"
 
-> __GFP_ZERO requests that the object be initialised to all-zeroes,
-> while the purpose of a constructor is to initialise an object to a
-> particular pattern.  We cannot do both.  Add a warning to catch any
-> users who mistakenly pass a __GFP_ZERO flag when allocating a slab with
-> a constructor.
+On Mon, Apr 16, 2018 at 6:43 AM, Jessica Yu <jeyu@kernel.org> wrote:
+>
+> So for users of /sys/module/*/sections, we will need to work around
+> this and possibly use %px for the real address. But perhaps we should
+> base the usage of %px on kptr_restrict?
 
-Acked-by: Christoph Lameter <cl@linux.com>
+Maybe. I was hoping we would be able to get rid of it eventually.
+
+The real problem is that those darn module_attribute things don't have
+proper IO routines. They *only* have the show routine, and that
+doesn't even get the 'struct file' pointer passed to it, just the
+buffer to fill in (not even a _size_ of a buffer - we're talking the
+bad bad old days of nasty /proc interfaces).
+
+Why is that a problem? Without a 'struct file' we can't even do
+permission checking right. %pK worked by doing disgusting wrong
+things.
+
+Now, in this case, at least the files are root-owned, and legible only
+to root, so I guess we can say that permissions have been properly
+checked at open time (not really true: the CAP_SYSLOG bit wasn't!, but
+I doubt anybody really cares), and so we could just check
+kptr_restrict.
+
+Oh well.
+
+Something like the attached, perhaps? Completely untested, and I don't
+even want credit for this if it is used.
+
+              Linus
+
+--001a1141bc444cfc970569f8a9d6
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jg2dol3o0
+
+IGtlcm5lbC9tb2R1bGUuYyB8IDYgKysrKystCiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25z
+KCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEva2VybmVsL21vZHVsZS5jIGIva2VybmVs
+L21vZHVsZS5jCmluZGV4IGE2ZTQzYTU4MDZhMS4uZjhjZjBiYjM1YWI2IDEwMDY0NAotLS0gYS9r
+ZXJuZWwvbW9kdWxlLmMKKysrIGIva2VybmVsL21vZHVsZS5jCkBAIC0xNDcyLDcgKzE0NzIsMTEg
+QEAgc3RhdGljIHNzaXplX3QgbW9kdWxlX3NlY3Rfc2hvdyhzdHJ1Y3QgbW9kdWxlX2F0dHJpYnV0
+ZSAqbWF0dHIsCiB7CiAJc3RydWN0IG1vZHVsZV9zZWN0X2F0dHIgKnNhdHRyID0KIAkJY29udGFp
+bmVyX29mKG1hdHRyLCBzdHJ1Y3QgbW9kdWxlX3NlY3RfYXR0ciwgbWF0dHIpOwotCXJldHVybiBz
+cHJpbnRmKGJ1ZiwgIjB4JXBLXG4iLCAodm9pZCAqKXNhdHRyLT5hZGRyZXNzKTsKKwl1bnNpZ25l
+ZCBsb25nIGFkZHIgPSAwOworCisJLyogUGVybWlzc2lvbnMgd2VyZSBjaGVja2VkIGF0IG9wZW4g
+Ki8KKwlhZGRyID0ga3B0cl9yZXN0cmljdCA8IDIgP3NhdHRyLT5hZGRyZXNzIDogMDsKKwlyZXR1
+cm4gc3ByaW50ZihidWYsICIlI2x4XG4iLCBhZGRyKTsKIH0KIAogc3RhdGljIHZvaWQgZnJlZV9z
+ZWN0X2F0dHJzKHN0cnVjdCBtb2R1bGVfc2VjdF9hdHRycyAqc2VjdF9hdHRycykK
+--001a1141bc444cfc970569f8a9d6--
