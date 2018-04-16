@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752806AbeDPGl7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:41:59 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41883 "EHLO
+        id S1752896AbeDPGmd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:42:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52375 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752654AbeDPGl5 (ORCPT
+        with ESMTP id S1751161AbeDPGmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:41:57 -0400
-Date: Sun, 15 Apr 2018 23:41:33 -0700
-From: tip-bot for Mark Rutland <tipbot@zytor.com>
-Message-ID: <tip-4d3b57da1593c66835d8e3a757e4751b35493fb8@git.kernel.org>
-Cc: acme@redhat.com, lizhijian@cn.fujitsu.com, mingo@kernel.org,
-        mark.rutland@arm.com, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, sandipan@linux.vnet.ibm.com
-Reply-To: tglx@linutronix.de, mark.rutland@arm.com, lizhijian@cn.fujitsu.com,
-        mingo@kernel.org, acme@redhat.com, sandipan@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <20180404163445.16492-1-mark.rutland@arm.com>
-References: <20180404163445.16492-1-mark.rutland@arm.com>
+        Mon, 16 Apr 2018 02:42:32 -0400
+Date: Sun, 15 Apr 2018 23:42:05 -0700
+From: tip-bot for Kim Phillips <tipbot@zytor.com>
+Message-ID: <tip-af72cfb80af5e4cafd8e0b58ac54f222c913aa1b@git.kernel.org>
+Cc: jolsa@redhat.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, hpa@zytor.com, acme@redhat.com,
+        tglx@linutronix.de, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, kim.phillips@arm.com, brianrob@microsoft.com
+Reply-To: mingo@kernel.org, jolsa@redhat.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, acme@redhat.com,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        brianrob@microsoft.com, namhyung@kernel.org, kim.phillips@arm.com
+In-Reply-To: <20180410191624.a3a468670dd4548c66d3d094@arm.com>
+References: <20180410191624.a3a468670dd4548c66d3d094@arm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools headers: Restore READ_ONCE() C++
- compatibility
-Git-Commit-ID: 4d3b57da1593c66835d8e3a757e4751b35493fb8
+Subject: [tip:perf/urgent] perf tests: Run dwarf unwind test on arm32
+Git-Commit-ID: af72cfb80af5e4cafd8e0b58ac54f222c913aa1b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,65 +35,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4d3b57da1593c66835d8e3a757e4751b35493fb8
-Gitweb:     https://git.kernel.org/tip/4d3b57da1593c66835d8e3a757e4751b35493fb8
-Author:     Mark Rutland <mark.rutland@arm.com>
-AuthorDate: Wed, 4 Apr 2018 17:34:45 +0100
+Commit-ID:  af72cfb80af5e4cafd8e0b58ac54f222c913aa1b
+Gitweb:     https://git.kernel.org/tip/af72cfb80af5e4cafd8e0b58ac54f222c913aa1b
+Author:     Kim Phillips <kim.phillips@arm.com>
+AuthorDate: Tue, 10 Apr 2018 19:16:24 -0500
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 12 Apr 2018 09:30:09 -0300
+CommitDate: Thu, 12 Apr 2018 09:30:37 -0300
 
-tools headers: Restore READ_ONCE() C++ compatibility
+perf tests: Run dwarf unwind test on arm32
 
-Our userspace <linux/compiler.h> defines READ_ONCE() in a way that clang
-doesn't like, as we have an anonymous union in which neither field is
-initialized.
+Enable the unwind test on arm32:
 
-WRITE_ONCE() is fine since it initializes the __val field. For
-READ_ONCE() we can keep clang and GCC happy with a dummy initialization
-of the __c field, so let's do that.
+  $ perf test unwind
+  58: DWARF unwind                                          : Ok
 
-At the same time, let's split READ_ONCE() and WRITE_ONCE() over several
-lines for legibility, as we do in the in-kernel <linux/compiler.h>.
-
-Reported-by: Li Zhijian <lizhijian@cn.fujitsu.com>
-Reported-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Tested-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Fixes: 6aa7de059173a986 ("locking/atomics: COCCINELLE/treewide: Convert trivial ACCESS_ONCE() patterns to READ_ONCE()/WRITE_ONCE()")
-Link: http://lkml.kernel.org/r/20180404163445.16492-1-mark.rutland@arm.com
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Brian Robbins <brianrob@microsoft.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20180410191624.a3a468670dd4548c66d3d094@arm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/linux/compiler.h | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ tools/perf/arch/{arm64 => arm}/include/arch-tests.h | 0
+ tools/perf/arch/arm/tests/Build                     | 2 ++
+ tools/perf/arch/{arm64 => arm}/tests/arch-tests.c   | 0
+ 3 files changed, 2 insertions(+)
 
-diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
-index 04e32f965ad7..1827c2f973f9 100644
---- a/tools/include/linux/compiler.h
-+++ b/tools/include/linux/compiler.h
-@@ -151,11 +151,21 @@ static __always_inline void __write_once_size(volatile void *p, void *res, int s
-  * required ordering.
-  */
- 
--#define READ_ONCE(x) \
--	({ union { typeof(x) __val; char __c[1]; } __u; __read_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
--
--#define WRITE_ONCE(x, val) \
--	({ union { typeof(x) __val; char __c[1]; } __u = { .__val = (val) }; __write_once_size(&(x), __u.__c, sizeof(x)); __u.__val; })
-+#define READ_ONCE(x)					\
-+({							\
-+	union { typeof(x) __val; char __c[1]; } __u =	\
-+		{ .__c = { 0 } };			\
-+	__read_once_size(&(x), __u.__c, sizeof(x));	\
-+	__u.__val;					\
-+})
+diff --git a/tools/perf/arch/arm64/include/arch-tests.h b/tools/perf/arch/arm/include/arch-tests.h
+similarity index 100%
+copy from tools/perf/arch/arm64/include/arch-tests.h
+copy to tools/perf/arch/arm/include/arch-tests.h
+diff --git a/tools/perf/arch/arm/tests/Build b/tools/perf/arch/arm/tests/Build
+index b30eff9bcc83..883c57ff0c08 100644
+--- a/tools/perf/arch/arm/tests/Build
++++ b/tools/perf/arch/arm/tests/Build
+@@ -1,2 +1,4 @@
+ libperf-y += regs_load.o
+ libperf-y += dwarf-unwind.o
 +
-+#define WRITE_ONCE(x, val)				\
-+({							\
-+	union { typeof(x) __val; char __c[1]; } __u =	\
-+		{ .__val = (val) }; 			\
-+	__write_once_size(&(x), __u.__c, sizeof(x));	\
-+	__u.__val;					\
-+})
- 
- 
- #ifndef __fallthrough
++libperf-y += arch-tests.o
+diff --git a/tools/perf/arch/arm64/tests/arch-tests.c b/tools/perf/arch/arm/tests/arch-tests.c
+similarity index 100%
+copy from tools/perf/arch/arm64/tests/arch-tests.c
+copy to tools/perf/arch/arm/tests/arch-tests.c
