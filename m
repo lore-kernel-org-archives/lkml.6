@@ -1,109 +1,244 @@
 Return-Path: <jacob.jun.pan@linux.intel.com>
-X-Google-Smtp-Source: AB8JxZqHP6eovRb1qJFnpyh498CLiC/89hw318skedSirwYgQ7HsBczvPixYYhOEsnxWRJ/G9u1b
-ARC-Seal: i=1; a=rsa-sha256; t=1525110707; cv=none;
+X-Google-Smtp-Source: AIpwx4+bZKh8buFgPqAEa0EtKkmAHmRuRDW7yX9dz3Z4nRJ4pRWtzfDxUEtDgWE5JFc9Jj7bvfaz
+ARC-Seal: i=1; a=rsa-sha256; t=1523915204; cv=none;
         d=google.com; s=arc-20160816;
-        b=QjfLT5pHeZGIDpQPULmRtqYWGUYqCzSd+gbq7x45SEKLVYfA2+b7Ixhn+PBu2H4XM1
-         TQNv6sIkKxKUWdiB3vqani7bBhuTIb60h6j6V106kNpYjBDAfp74nnj+75qDOM/4udM+
-         kUR3ML5Rsm9w785z61jVnJQuC+L6vHzUQ9k3N5el1pyCVTtgeYAppRPrIUHIVVicFXpS
-         RhGy9d21JzcYmYRGt3rTLEBTLEn83Ajd700uBKYqyrtzfwAVNYUyzFOC/BP0s8CT6r6h
-         UakTXjaxH+QC/QdcUXa77HphHuw19ZRgh3A3qi9lyp0Y+Wbj5SOpIsUDJbfXerSscwFg
-         PPsg==
+        b=P6Rn+2PLQ2HlX8BWIEYyjtipmGZekeZqVkWc35okr57dKA7h47L4jlGYpAFyuRJA2X
+         3oqwT4Nb6cSgZds6AzhbQCoJWLVwaFBJpbmuaF670lm9kmbqLoW2JvQ/rAdVy75gDArS
+         7zzlf53uVs5cOPWVIXCInI2+upD/x83Q/nO/u/nwsRlwoF22CzGjBOKy9NPn/d6AKrD2
+         9cfGZHIf93DzOQJa/7lvL+7/txrWvxh/4vlmcRO9QRj2n1MBKDbjBKWPQNOmeqBU+/A4
+         lDXBwryHSQ6iBKBHd1hlEmIsJLqBaT7mpPBy9Ma3l+Fy+2LQI3zwntumu3MDx8emfhX8
+         xPoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=dqwoStTgCnqKB+qXABpZNFTLemE7aLy6Gjpsk/YSjII=;
-        b=wizXgxvdVJJblL05RpPz6AksaMdNFXQw8PB9bn28hZxR3C0VHZlGV6s7lWlTTjPin8
-         MeW2iCi2ifgyraDTz0UMRqM69yAOZ7CXaLNO4dI8JIK2YplC2ZtBieNDJYxV7NBNArim
-         bgSgglvrjit8GYuxWp8DYvvZtEso8wbRzaKtg4nq6G5uJNfgS869SLwYDBX/SvsBZ49g
-         LKgnmdMCOziTvqLd8kVL0hVRS1tY0ekpb9SyO2bYpRB+E15ECFHn4tMgQRNys3wKFzru
-         2D8Wo8LprEmwvEdQO43zGwkuzabD9JR2R9Jh89fl0U7SNW88H1CQt6wOPWVKiCI4zvIU
-         Fr0Q==
+        bh=XIG3aRrCx53TZVK7XXetN5ucCvWTIMfSH6+QC+dTk0I=;
+        b=0+xa24Kh+rOQ6ktPDQbvDxG0tT1lizSLwh0Yr2G0LLaJob6dgDUPpO8frjmO26xxg1
+         sNDQ7b9dsR41R6hM/N8odn0x9gWr9AsCWc219hSOJ3WKmWqfKcku/KdIi/X+hZVl3a2l
+         0jV1pZuGyGaA5YwyPsphQxapSvhomVa+5l6xI7znqyz/C9u7/U/1bac2YnvNF7FMb9za
+         248vUFNd0I/wxPO4ECWnyfHEmZrBY6XUWvtgkYYdeJvyuo4lE2Jd/6Rb8KRku1EqFTHG
+         zp4e2z1S9NXMmCJnow+DWeFb85B+yKv4tdA/Sr8CphNJOdUo2bsywJTcTpMNrfNlMel7
+         s/Vg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.93 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,346,1520924400";
-   d="scan'208";a="52039507"
-Date: Mon, 30 Apr 2018 10:54:24 -0700
+X-IronPort-AV: E=Sophos;i="5.48,460,1517904000";
+   d="scan'208";a="34740147"
 From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc: "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
- LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>, David
- Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Alex Williamson <alex.williamson@redhat.com>,
- Rafael Wysocki <rafael.j.wysocki@intel.com>, "Liu, Yi L"
- <yi.l.liu@intel.com>, "Tian, Kevin" <kevin.tian@intel.com>, Raj Ashok
- <ashok.raj@intel.com>, Christoph Hellwig <hch@infradead.org>, Lu Baolu
- <baolu.lu@linux.intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v4 14/22] iommu: handle page response timeout
-Message-ID: <20180430105424.3f12f792@jacob-builder>
-In-Reply-To: <e98a1385-9e55-c021-4e89-7d07701f4b84@arm.com>
+To: iommu@lists.linux-foundation.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc: Rafael Wysocki <rafael.j.wysocki@intel.com>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	"Tian, Kevin" <kevin.tian@intel.com>,
+	Raj Ashok <ashok.raj@intel.com>,
+	Jean Delvare <khali@linux-fr.org>,
+	"Christoph Hellwig" <hch@infradead.org>,
+	"Lu Baolu" <baolu.lu@linux.intel.com>,
+	"Liu, Yi L" <yi.l.liu@linux.intel.com>,
+	Liu,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 05/22] iommu: introduce iommu invalidate API function
+Date: Mon, 16 Apr 2018 14:48:54 -0700
+Message-Id: <1523915351-54415-6-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
-	<1523915351-54415-15-git-send-email-jacob.jun.pan@linux.intel.com>
-	<20180423153622.GC38106@ostrya.localdomain>
-	<20180425083711.222202e7@jacob-builder>
-	<e98a1385-9e55-c021-4e89-7d07701f4b84@arm.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597940910205943696?=
-X-GMAIL-MSGID: =?utf-8?q?1599194485289194459?=
+X-GMAIL-THRID: =?utf-8?q?1597940909254056563?=
+X-GMAIL-MSGID: =?utf-8?q?1597940909254056563?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 30 Apr 2018 11:58:10 +0100
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
+From: "Liu, Yi L" <yi.l.liu@linux.intel.com>
 
-> On 25/04/18 16:37, Jacob Pan wrote:
-> >> In the other cases (unsupported PRI or rogue guest) then disabling
-> >> PRI using a FAILURE status might be the right thing to do. However,
-> >> assuming the device follows the PCI spec it will stop sending page
-> >> requests once there are as many PPRs in flight as the allocated
-> >> credit.
-> >>  
-> > Agreed, here I am not taking any actions. There may be need to drain
-> > in-fly requests.  
-> 
-> Right, as long as we first ensure that no new fault is generated (by
-> using a Response Failure). Though in my opinion not taking action
-> might be the safest option :)
-> 
-> Another thought: currently the comment in iommu.h says
-> "@IOMMU_FAULT_STATUS_FAILURE: General error. Drop all subsequent
-> faults from this device if possible. This is "Response Failure" in
-> PCI PRI."
-> 
-> I wonder if we should simply say "Drop all subsequent faults from the
-> device". Even if the PCI device doesn't properly implement PRI, the
-> IOMMU driver should set a "PRI disabled" bit in the device data that
-> prevents it from from reporting new faults and flooding the queue.
-> Anyway, it's a small detail that could go in a future patch series.
-> 
-right, we should disable PRI and let future PRQ response pending on
-re-enabling of PRI on the device. I will leave that to future
-enhancement.
-> >> If there isn't any possibility of memory leak or abusing
-> >> resources, I don't think it's our problem that the guest is
-> >> excessively slow at handling page requests. Setting an upper bound
-> >> to page request latency might do more harm than good. Ensuring
-> >> that devices respect the number of allocated in-flight PPRs is
-> >> more important in my opinion. 
-> > How about we have a really long timeout, e.g. 1 min similar to
-> > device invalidate response timeout in ATS spec., just for basic
-> > safety and diagnosis. Optionally, we could have quota in parallel.  
-> 
-> I agree that for development a timeout is useful. It might be worth
-> adding it as an option to the IOMMU module instead of a define.
-> Perhaps a number of seconds, 10 being the default and 0 disabling the
-> timeout? Otherwise we would probably end up with a succession of
-> patches incrementing the timeout by arbitrary values, if people find
-> it inconvenient.
-> 
-make sense. will do.
+When an SVM capable device is assigned to a guest, the first level page
+tables are owned by the guest and the guest PASID table pointer is
+linked to the device context entry of the physical IOMMU.
+
+Host IOMMU driver has no knowledge of caching structure updates unless
+the guest invalidation activities are passed down to the host. The
+primary usage is derived from emulated IOMMU in the guest, where QEMU
+can trap invalidation activities before passing them down to the
+host/physical IOMMU.
+Since the invalidation data are obtained from user space and will be
+written into physical IOMMU, we must allow security check at various
+layers. Therefore, generic invalidation data format are proposed here,
+model specific IOMMU drivers need to convert them into their own format.
+
+Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+---
+ drivers/iommu/iommu.c      | 14 ++++++++
+ include/linux/iommu.h      | 12 +++++++
+ include/uapi/linux/iommu.h | 79 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+)
+
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 3a69620..784e019 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1344,6 +1344,20 @@ void iommu_unbind_pasid_table(struct iommu_domain *domain, struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(iommu_unbind_pasid_table);
+ 
++int iommu_sva_invalidate(struct iommu_domain *domain,
++		struct device *dev, struct tlb_invalidate_info *inv_info)
++{
++	int ret = 0;
++
++	if (unlikely(!domain->ops->sva_invalidate))
++		return -ENODEV;
++
++	ret = domain->ops->sva_invalidate(domain, dev, inv_info);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(iommu_sva_invalidate);
++
+ static void __iommu_detach_device(struct iommu_domain *domain,
+ 				  struct device *dev)
+ {
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 8ad111f..e963dbd 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -190,6 +190,7 @@ struct iommu_resv_region {
+  * @pgsize_bitmap: bitmap of all possible supported page sizes
+  * @bind_pasid_table: bind pasid table pointer for guest SVM
+  * @unbind_pasid_table: unbind pasid table pointer and restore defaults
++ * @sva_invalidate: invalidate translation caches of shared virtual address
+  */
+ struct iommu_ops {
+ 	bool (*capable)(enum iommu_cap);
+@@ -243,6 +244,8 @@ struct iommu_ops {
+ 				struct pasid_table_config *pasidt_binfo);
+ 	void (*unbind_pasid_table)(struct iommu_domain *domain,
+ 				struct device *dev);
++	int (*sva_invalidate)(struct iommu_domain *domain,
++		struct device *dev, struct tlb_invalidate_info *inv_info);
+ 
+ 	unsigned long pgsize_bitmap;
+ };
+@@ -309,6 +312,9 @@ extern int iommu_bind_pasid_table(struct iommu_domain *domain,
+ 		struct device *dev, struct pasid_table_config *pasidt_binfo);
+ extern void iommu_unbind_pasid_table(struct iommu_domain *domain,
+ 				struct device *dev);
++extern int iommu_sva_invalidate(struct iommu_domain *domain,
++		struct device *dev, struct tlb_invalidate_info *inv_info);
++
+ extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+ extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 		     phys_addr_t paddr, size_t size, int prot);
+@@ -720,6 +726,12 @@ void iommu_unbind_pasid_table(struct iommu_domain *domain, struct device *dev)
+ {
+ }
+ 
++static inline int iommu_sva_invalidate(struct iommu_domain *domain,
++		struct device *dev, struct tlb_invalidate_info *inv_info)
++{
++	return -EINVAL;
++}
++
+ #endif /* CONFIG_IOMMU_API */
+ 
+ #endif /* __LINUX_IOMMU_H */
+diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+index 9f7a6bf..4447943 100644
+--- a/include/uapi/linux/iommu.h
++++ b/include/uapi/linux/iommu.h
+@@ -29,4 +29,83 @@ struct pasid_table_config {
+ 	__u8 pasid_bits;
+ };
+ 
++/**
++ * enum iommu_inv_granularity - Generic invalidation granularity
++ *
++ * When an invalidation request is sent to IOMMU to flush translation caches,
++ * it may carry different granularity. These granularity levels are not specific
++ * to a type of translation cache. For an example, PASID selective granularity
++ * is only applicable to PASID cache invalidation.
++ * This enum is a collection of granularities for all types of translation
++ * caches. The idea is to make it easy for IOMMU model specific driver do
++ * conversion from generic to model specific value.
++ */
++enum iommu_inv_granularity {
++	IOMMU_INV_GRANU_DOMAIN = 1,	/* all TLBs associated with a domain */
++	IOMMU_INV_GRANU_DEVICE,		/* caching structure associated with a
++					 * device ID
++					 */
++	IOMMU_INV_GRANU_DOMAIN_PAGE,	/* address range with a domain */
++	IOMMU_INV_GRANU_ALL_PASID,	/* cache of a given PASID */
++	IOMMU_INV_GRANU_PASID_SEL,	/* only invalidate specified PASID */
++
++	IOMMU_INV_GRANU_NG_ALL_PASID,	/* non-global within all PASIDs */
++	IOMMU_INV_GRANU_NG_PASID,	/* non-global within a PASIDs */
++	IOMMU_INV_GRANU_PAGE_PASID,	/* page-selective within a PASID */
++	IOMMU_INV_NR_GRANU,
++};
++
++/** enum iommu_inv_type - Generic translation cache types for invalidation
++ *
++ * Invalidation requests sent to IOMMU may indicate which translation cache
++ * to be operated on.
++ * Combined with enum iommu_inv_granularity, model specific driver can do a
++ * simple lookup to convert generic type to model specific value.
++ */
++enum iommu_inv_type {
++	IOMMU_INV_TYPE_DTLB,	/* device IOTLB */
++	IOMMU_INV_TYPE_TLB,	/* IOMMU paging structure cache */
++	IOMMU_INV_TYPE_PASID,	/* PASID cache */
++	IOMMU_INV_TYPE_CONTEXT,	/* device context entry cache */
++	IOMMU_INV_NR_TYPE
++};
++
++/**
++ * Translation cache invalidation header that contains mandatory meta data.
++ * @version:	info format version, expecting future extesions
++ * @type:	type of translation cache to be invalidated
++ */
++struct tlb_invalidate_hdr {
++	__u32 version;
++#define TLB_INV_HDR_VERSION_1 1
++	enum iommu_inv_type type;
++};
++
++/**
++ * Translation cache invalidation information, contains generic IOMMU
++ * data which can be parsed based on model ID by model specific drivers.
++ *
++ * @granularity:	requested invalidation granularity, type dependent
++ * @size:		2^size of 4K pages, 0 for 4k, 9 for 2MB, etc.
++ * @pasid:		processor address space ID value per PCI spec.
++ * @addr:		page address to be invalidated
++ * @flags	IOMMU_INVALIDATE_PASID_TAGGED: DMA with PASID tagged,
++ *						@pasid validity can be
++ *						deduced from @granularity
++ *		IOMMU_INVALIDATE_ADDR_LEAF: leaf paging entries
++ *		IOMMU_INVALIDATE_GLOBAL_PAGE: global pages
++ *
++ */
++struct tlb_invalidate_info {
++	struct tlb_invalidate_hdr	hdr;
++	enum iommu_inv_granularity	granularity;
++	__u32		flags;
++#define IOMMU_INVALIDATE_NO_PASID	(1 << 0)
++#define IOMMU_INVALIDATE_ADDR_LEAF	(1 << 1)
++#define IOMMU_INVALIDATE_GLOBAL_PAGE	(1 << 2)
++#define IOMMU_INVALIDATE_PASID_TAGGED	(1 << 3)
++	__u8		size;
++	__u32		pasid;
++	__u64		addr;
++};
+ #endif /* _UAPI_IOMMU_H */
+-- 
+2.7.4
