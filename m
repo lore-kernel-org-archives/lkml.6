@@ -1,125 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753170AbeDPQII (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:08:08 -0400
-Received: from avon.wwwdotorg.org ([104.237.132.123]:45346 "EHLO
-        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753150AbeDPQIG (ORCPT
+        id S1752916AbeDPQIX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:08:23 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52322 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752120AbeDPQIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:08:06 -0400
-Subject: Re: [PATCH v2 3/6] ARM: trusted_foundations: do not use naked
- function
-To: Stefan Agner <stefan@agner.ch>, Thierry Reding <treding@nvidia.com>
-Cc: Stephen Warren <swarren@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>, linux@armlinux.org.uk,
-        ard.biesheuvel@linaro.org, arnd@arndb.de, nicolas.pitre@linaro.org,
-        marc.zyngier@arm.com, behanw@converseincode.com, keescook@chromium.org,
-        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>
-References: <20180325180959.28008-1-stefan@agner.ch>
- <20180325180959.28008-4-stefan@agner.ch>
- <704c863a-0b5a-6396-d7da-f0ed17b7cca2@gmail.com>
- <263337af-7541-be9e-3db6-6cb987fd08fb@arm.com>
- <f627177c-f813-9e10-ade5-c7654375639b@gmail.com>
- <cf9b916103c0dba1e67682efc69f5bae@agner.ch>
-From: Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <498de826-6e6c-63d8-00d6-f394b2725a34@wwwdotorg.org>
-Date: Mon, 16 Apr 2018 10:08:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 16 Apr 2018 12:08:20 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCC536030D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Mon, 16 Apr 2018 10:08:18 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 02/10] dt-bindings: introduce RPMH RSC bindings for
+ Qualcomm SoCs
+Message-ID: <20180416160818.GC1209@codeaurora.org>
+References: <20180405161834.3850-1-ilina@codeaurora.org>
+ <20180405161834.3850-3-ilina@codeaurora.org>
+ <152306368031.94378.14957212064809086345@swboyd.mtv.corp.google.com>
+ <20180409160800.GC19682@codeaurora.org>
+ <152346054406.180276.4468371342222361883@swboyd.mtv.corp.google.com>
+ <20180411212431.GG19682@codeaurora.org>
+ <152365923361.51482.7839380101584600308@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <cf9b916103c0dba1e67682efc69f5bae@agner.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <152365923361.51482.7839380101584600308@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/2018 09:56 AM, Stefan Agner wrote:
-> On 27.03.2018 14:16, Dmitry Osipenko wrote:
->> On 27.03.2018 14:54, Robin Murphy wrote:
->>> On 26/03/18 22:20, Dmitry Osipenko wrote:
->>>> On 25.03.2018 21:09, Stefan Agner wrote:
->>>>> As documented in GCC naked functions should only use Basic asm
->>>>> syntax. The Extended asm or mixture of Basic asm and "C" code is
->>>>> not guaranteed. Currently this works because it was hard coded
->>>>> to follow and check GCC behavior for arguments and register
->>>>> placement.
->>>>>
->>>>> Furthermore with clang using parameters in Extended asm in a
->>>>> naked function is not supported:
->>>>>     arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
->>>>>             references not allowed in naked functions
->>>>>                   : "r" (type), "r" (arg1), "r" (arg2)
->>>>>                          ^
->>>>>
->>>>> Use a regular function to be more portable. This aligns also with
->>>>> the other smc call implementations e.g. in qcom_scm-32.c and
->>>>> bcm_kona_smc.c.
->>>>>
->>>>> Cc: Dmitry Osipenko <digetx@gmail.com>
->>>>> Cc: Stephen Warren <swarren@nvidia.com>
->>>>> Cc: Thierry Reding <treding@nvidia.com>
->>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>>>> ---
->>>>> Changes in v2:
->>>>> - Keep stmfd/ldmfd to avoid potential ABI issues
->>>>>
->>>>>    arch/arm/firmware/trusted_foundations.c | 14 +++++++++-----
->>>>>    1 file changed, 9 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm/firmware/trusted_foundations.c
->>>>> b/arch/arm/firmware/trusted_foundations.c
->>>>> index 3fb1b5a1dce9..689e6565abfc 100644
->>>>> --- a/arch/arm/firmware/trusted_foundations.c
->>>>> +++ b/arch/arm/firmware/trusted_foundations.c
->>>>> @@ -31,21 +31,25 @@
->>>>>      static unsigned long cpu_boot_addr;
->>>>>    -static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
->>>>> +static void tf_generic_smc(u32 type, u32 arg1, u32 arg2)
->>>>>    {
->>>>> +    register u32 r0 asm("r0") = type;
->>>>> +    register u32 r1 asm("r1") = arg1;
->>>>> +    register u32 r2 asm("r2") = arg2;
->>>>> +
->>>>>        asm volatile(
->>>>>            ".arch_extension    sec\n\t"
->>>>> -        "stmfd    sp!, {r4 - r11, lr}\n\t"
->>>>> +        "stmfd    sp!, {r4 - r11}\n\t"
->>>>>            __asmeq("%0", "r0")
->>>>>            __asmeq("%1", "r1")
->>>>>            __asmeq("%2", "r2")
->>>>>            "mov    r3, #0\n\t"
->>>>>            "mov    r4, #0\n\t"
->>>>>            "smc    #0\n\t"
->>>>> -        "ldmfd    sp!, {r4 - r11, pc}"
->>>>> +        "ldmfd    sp!, {r4 - r11}\n\t"
->>>>>            :
->>>>> -        : "r" (type), "r" (arg1), "r" (arg2)
->>>>> -        : "memory");
->>>>> +        : "r" (r0), "r" (r1), "r" (r2)
->>>>> +        : "memory", "r3", "r12", "lr");
->>>>
->>>> Although seems "lr" won't be affected by SMC invocation because it should be
->>>> banked and hence could be omitted entirely from the code. Maybe somebody could
->>>> confirm this.
->>> Strictly per the letter of the architecture, the SMC could be trapped to Hyp
->>> mode, and a hypervisor might clobber LR_usr in the process of forwarding the
->>> call to the firmware secure monitor (since Hyp doesn't have a banked LR of its
->>> own). Admittedly there are probably no real systems with the appropriate
->>> hardware/software combination to hit that, but on the other hand if this gets
->>> inlined where the compiler has already created a stack frame then an LR clobber
->>> is essentially free, so I reckon we're better off keeping it for reassurance.
->>> This isn't exactly a critical fast path anyway.
+On Fri, Apr 13 2018 at 16:40 -0600, Stephen Boyd wrote:
+>Quoting Lina Iyer (2018-04-11 14:24:31)
+>> On Wed, Apr 11 2018 at 09:29 -0600, Stephen Boyd wrote:
+>> >Quoting Lina Iyer (2018-04-09 09:08:00)
+>> >> On Fri, Apr 06 2018 at 19:14 -0600, Stephen Boyd wrote:
+>> >> >Quoting Lina Iyer (2018-04-05 09:18:26)
+>> >> >> diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+>> >> >> new file mode 100644
+>> >> >> index 000000000000..dcf71a5b302f
+>> >> >> --- /dev/null
+>> >> >> +++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+>> >> >> @@ -0,0 +1,127 @@
+>> >> >> +
+>> >> >> +Example 1:
+>> >> >> +
+>> >> >> +For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
+>> >> >> +register offsets for DRV2 start at 0D00, the register calculations are like
+>> >> >> +this -
+>> >> >> +First tuple: 0x179C0000 + 0x10000 * 2 = 0x179E0000
+>> >> >> +Second tuple: 0x179E0000 + 0xD00 = 0x179E0D00
+>> >> >> +
+>> >> >> +       apps_rsc: rsc@179e000 {
+>> >> >> +               label = "apps_rsc";
+>> >> >> +               compatible = "qcom,rpmh-rsc";
+>> >> >> +               reg = <0x179e0000 0x10000>, <0x179e0d00 0x3000>;
+>> >> >
+>> >> >The first reg property overlaps the second one. Does this second one
+>> >> >ever move around? I would hardcode it in the driver to be 0xd00 away
+>> >> >from the drv base instead of specifying it in DT if it's the same all
+>> >> >the time.
+>> >> >
+>> >> >Also, the example shows 0x179c0000 which I guess is the actual beginning
+>> >> >of the RSC block. So the binding seems to be for one DRV inside of an
+>> >> >RSC. Can we get the full description of the RSC in the binding instead?
+>> >> >I imagine that means there's a DRV0,1,2 and those probably have an
+>> >> >interrupt per each DRV and then a different TCS config per each one too?
+>> >> >If the binding can describe all of the RSC then we can use different
+>> >> >DRVs by changing the qcom,drv-id property.
+>> >> >
+>> >> >       rsc@179c0000 {
+>> >> >               compatible = "qcom,rpmh-rsc";
+>> >> >               reg = <0x179c0000 0x10000>,
+>> >> >                     <0x179d0000 0x10000>,
+>> >> >                     <0x179e0000 0x10000>;
+>> >> >               qcom,tcs-offset = <0xd00>;
+>> >> >               qcom,drv-id = <0/1/2>;
+>> >> >               interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+>> >> >                            <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+>> >> >                            <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+>> >> >       }
+>> >> >
+>> >> >This is sort of what I imagine it would look like. I have no idea how
+>> >> >the tcs config would work unless each DRV has the same TCS config
+>> >> >though. Otherwise, if each node is for a drv, then I would expect the
+>> >> >node would be called 'drv' and we wouldn't need the drv-id property and
+>> >> >the compatible string would say drv instead of rsc?
+>> >> >
+>> >> >BTW, what are the other DRVs used for in the apps RSC?
+>> >> >
+>> >> The DRV is the voter for an execution environment (Linux, Hypervisor,
+>> >> ATF) in the RSC. The RSC has a lot of other registers that Linux is not
+>> >> privy to. They are access restricted.
+>> >
+>> >Alright. Well sometimes access restrictions aren't there, so this isn't
+>> >a good assumption to make.
+>> >
+>> >> The memory organization of the RSC
+>> >> mandates that we know the DRV id to access registers specific to the
+>> >> DRV.
+>> >
+>> >I think qcom,drv-id covers that, no?
+>> >
+>> >> Unfortunately, not all RSC have identical DRV configuration and the
+>> >> register space is also variable depending on the capability of the RSC.
+>> >> There are functionalities supported by other RSCs in the SoC that are
+>> >> not supported by the RSC associated with the application processor,
+>> >> while not many RSCs' support multiple DRVs. Therefore it doesn't benefit
+>> >> describing the whole RSC as it is not usable from Linux (because of
+>> >> access restrictions).
+>> >
+>> >If we're not describing the whole RSC in the RSC binding then we're not
+>> >going to get very far. From what I can tell, this binding describes one
+>> >DRV inside of an RSC instead of the whole RSC. Yes we'll probably never
+>> >use the ATF part of the RSC in Linux, but we may use the hypervisor part
+>> >if we use KVM/Xen so the binding should be describing as much as it can
+>> >about this device in case some software needs to use it.
+>> >
+>> The RSC is pretty much this. A set of registers that are RSC specific at
+>> the address pointed to by the "rsc" reg and the TCS regsiters pointed to
+>> by the "tcs" reg. You do not want to clobber multiple DRVs into the same
+>> device node. It will be a lot confusing for the drivers to determine
+>> which DRV to vote.
+>
+>Well it seems like an RSC contains many DRVs and those DRVs contain many
+>TCSes. This is what I get after talking with Bjorn on IRC.
+>
+>	+--------------------------------------------------+ (0x00000)
+>	|                                                  |
+>	|                  DRV #0                          |
+>	|                                                  |
+>	|----------                          --------------| (tcs-offset (0xd00))
+>	|                  DRV0_TCS0                       |
+>	|                common space                      |
+>	|                cmd sequencer                     | 0xd00 + 0x14
+>	|                                                  |
+>	|                  DRV0_TCS1                       |
+>	|                common space                      | 0xd00 + 0x2a0
+>	|                cmd sequencer                     | 0xd00 + 0x2a0 + 0x14
+>	|                                                  |
+>	|                  DRV0_TCS2                       |
+>	|                                                  |
+>	|                                                  |
+>	+--------------------------------------------------+ (0x10000)
+>	|                                                  |
+>	|                  DRV #1                          |
+>	|                                                  |
+>	|----------                          --------------| (tcs-offset)
+>	|                  DRV1_TCS0                       |
+>	|                  DRV1_TCS1                       |
+>	|                  DRV1_TCS2                       |
+>	+--------------------------------------------------+ (0x20000)
+>	|                                                  |
+>	|                  DRV #2                          |
+>	|                                                  |
+>	|----------                          --------------|
+>	|                  DRV2_TCS0                       |
+>	|                  DRV2_TCS1                       |
+>	|                  DRV2_TCS2                       |
+>	|                  DRV2_TCS3                       |
+>	|                  DRV2_TCS4                       |
+>	|                  DRV2_TCS5                       |
+>	+--------------------------------------------------+
+>
+>I think I understand it now. There aren't any "RSC common" registers
+>that are common to the entire RSC. Instead, everything goes into a DRV,
+>or into a common TCS space, or into a TCS "queue".
+>
+>> >Put another way, even if the "apps" RSC is complicated, we should be
+>> >describing it to the best of our abilities in the binding so that when
+>> >it is used by non-linux OSes things still work by simply tweaking the
+>> >drv-id that we use to pick the right things out of the node.
+>> >
+>> >Or we're describing the RSC but it's really a container node that
+>> >doesn't do much besides hold DRVs? So this is described at the wrong
+>> >level?
+>> What we are describing is a DRV, but a standalone DRV alone is useless
+>> without the necessary RSC registers. So its a unique RSC+DRV combination
+>> that is represented here.
 >>
->> Okay, thank you for the clarification.
-> 
-> So it seems this change is fine?
-> 
-> Stephen, you picked up changes for this driver before, is this patch
-> going through your tree?
+>
+>If my understanding is correct up there then the binding could either
+>describe a single RSC DRV, or it could describe all the RSC DRV
+>instances and interrupts going into the RSC "block" and then we can use
+>drv-id to pick the offset we jump to.
+>
+Your understanding is correct.
 
-You had best ask Thierry; he's taken over Tegra maintenance upstream. 
-But that said, don't files in arch/arm go through Russell?
+>I imagine we don't have any practical use-case for the entire RSC space
+>because there aren't any common RSC registers to deal with.
+Not true.
+
+>So we've
+>boiled this all down to describing one DRV and then I wonder why we care
+>about having drv-id at all? It looks to be used to check for a max
+>number of TCS, but that's already described by DT so it doesn't seem
+>very useful to double check what the hardware can tells us.
+>
+There is also a number of commands per TCS (NCPT), that may way vary
+between different RSCs. The RSC of the application processor has 16
+commands in each TCS, but that is variable. I am not saying it cannot be
+described in DT, but it is something I read from the common RSC
+registers, currently.
+Also, I will using common/DRV0 registers to write wakeup time value,
+when the processor subsystem goes into power down. This is not DRV2
+register, but is a DRV0 register that we will have special access to.
+The patches for those I intend to publish, when we have support for
+sleep/suspend with this new architecture. So the address of the start of
+the RSC (=DRV0) is necessary.
+
+>Long story short, we can remove drv-id and just describe drvs by
+>themselves?
+Yes, we may. As long as I have a way to describe the register addresss
+of the start of the DRV (0x20000 for DRV#2)  and the tcs-offset (0xd00),
+we can work with the RSC-DRV in the driver.
+
+Thanks,
+Lina
