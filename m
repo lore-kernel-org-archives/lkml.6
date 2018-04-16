@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754497AbeDPKOt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:14:49 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:32281 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754362AbeDPKOb (ORCPT
+        id S1754689AbeDPKPz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:15:55 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:52140 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753975AbeDPKOP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:14:31 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180416101429epoutp03f8e431ab3e3e53abdded8e116c5a7f78~l4wdF9Fhw1184611846epoutp039
-X-AuditID: b6c32a39-591ff70000000ff4-b9-5ad4778549fe
+        Mon, 16 Apr 2018 06:14:15 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180416101413epoutp021a199993344fe90ceda5be6ea4cf48d8~l4wOcfVDg0419904199epoutp027
+X-AuditID: b6c32a45-6ebff70000000fe4-7f-5ad477753ee4
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Eduardo Valentin <edubezval@gmail.com>
 Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
@@ -16,202 +16,171 @@ Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH 14/14] arm64: dts: exynos: remove no longer needed samsung
- thermal properties
-Date: Mon, 16 Apr 2018 12:12:05 +0200
-Message-id: <1523873525-23718-15-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 09/14] thermal: exynos: remove parsing of
+ samsung,tmu_reference_voltage property
+Date: Mon, 16 Apr 2018 12:12:00 +0200
+Message-id: <1523873525-23718-10-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMIsWRmVeSWpSXmKPExsWy7bCmrm5r+ZUogx23OS02zljPajHvs6zF
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsWy7bCmmW5p+ZUogynTWS02zljPajHvs6zF
         /CvXWC36H79mtjh/fgO7xeVdc9gsPvceYbSYcX4fk8WTh31sDpweO2fdZfdYvOclk8emVZ1s
-        Hneu7WHz6NuyitHj8ya5ALYoLpuU1JzMstQifbsEroy3SxpYC5boVFw48pStgfGRahcjJ4eE
-        gInE9w2LmLsYuTiEBHYwSqy4eJUdwvnOKNH9pp8NpmrtpK2MEIkNjBItJ25AOb8YJZbu/csK
-        UsUmYCUxsX0VI4gtIqAlceLSdiaQImaBCUwST1/NBBslLBAv8ff7eyYQm0VAVeLWlSVgzbwC
-        nhLtm84zQayTkzh5bDJYnBMo3rTmGhvIIAmBJWwSF19NYIEocpHoal/HCGELS7w6vgXocA4g
-        W1ri0lFbiPpmRolvO/YwQ9RMYJTYs14IwraWOHz8ItgCZgE+iXdfe1ghenklOtqgSjwkdl+7
-        C9XqKLHo4gVoIM1hlNg88w/jBEapBYwMqxjFUguKc9NTiw0LTPWKE3OLS/PS9ZLzczcxgqNW
-        y3IH47FzPocYBTgYlXh4d5y9HCXEmlhWXJl7iFGCg1lJhHdZIlCINyWxsiq1KD++qDQntfgQ
-        ozQHi5I471OfM1FCAumJJanZqakFqUUwWSYOTqkGxrWNOxn+aj6a87x+T4M8B9vM/vdtqy/P
-        aOBdGnenZofLK+/Q7btF9Dj/3OyrSf7yrWeFazyDSaDVvDdVCnks39ZEVDA2beoWyrxT/dXS
-        YlPn56OtiZPLL14rdq19VKN8tOL/dN6H79ISgs7ZzzpcMVOLubEn8cNFX84kh+WNZutYith+
-        aKmsUWIpzkg01GIuKk4EADhwAtPWAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNLMWRmVeSWpSXmKPExsVy+t9jQd2W8itRBqfXGFlsnLGe1WLeZ1mL
+        Hneu7WHz6NuyitHj8ya5ALYoLpuU1JzMstQifbsEroyepVOYCj6rV7Q++snYwLhasYuRg0NC
+        wETi5XbxLkYuDiGBHYwSByfsY+9i5ARyvjNKPH4UBWKD1Fy4fYwRomgDo0TDzHNQRb8YJfoP
+        FoDYbAJWEhPbVzGC2CICWhInLm1nAmlgFpjAJPH01Uw2kISwQJLEl83HmEFsFgFViT1/1oAN
+        4hXwlOi6sJkFYpucxMljk1lBbE6geNOaa2wggyQEFrBJnDj5nxmiyEXi+pyNjBC2sMSr41vY
+        IWxpiWerNjJCNDQzSnzbsQeqYQKjxJ71QhC2tcTh4xfBNjAL8El0HP7LDgkLXomONqgSD4mN
+        Dy+xQtiOEu3v57NCvD+HUaLt4g6mCYxSCxgZVjGKpRYU56anFhsVGOoVJ+YWl+al6yXn525i
+        BEeslusOxhnnfA4xCnAwKvHw7jh7OUqINbGsuDL3EKMEB7OSCO+yRKAQb0piZVVqUX58UWlO
+        avEhRmkOFiVx3gbfM1FCAumJJanZqakFqUUwWSYOTqkGxhkyyR1nUz61yiv2rPm/uejZre1v
+        lV0Xf3Y8+J13Pt/kpxOv6E9vF5EtO6l9kelIsVa0WvuNw25/zV78+8Vn+c8tgkWmvKcv5tCu
+        Fbs/RJ5dwGzRUjV5XgJ/x5TCL+s+znjzVNOgkGVd+Oxomw+qwSrnj339coktTprh3IKwy6Hr
+        9+14wb1TNF6JpTgj0VCLuag4EQAsThKX1AIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNLMWRmVeSWpSXmKPExsVy+t9jQd2S8itRBv//q1tsnLGe1WLeZ1mL
         +VeusVr0P37NbHH+/AZ2i8u75rBZfO49wmgx4/w+JosnD/vYHDg9ds66y+6xeM9LJo9NqzrZ
-        PO5c28Pm0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBlvlzSwFizRqbhw5ClbA+Mj1S5GTg4J
-        AROJtZO2MnYxcnEICaxjlJh68SozhPOLUaKv6zczSBWbgJXExPZVjCC2iICWxIlL25lAipgF
-        JjBJLFm7iB0kISwQL/H3+3smEJtFQFXi1pUlrCA2r4CnRPum80wQ6+QkTh6bDBbnBIo3rbnG
-        BmILCXhINE68yjiBkWcBI8MqRsnUguLc9NxiowLDvNRyveLE3OLSvHS95PzcTYzAINt2WKtv
-        B+P9JfGHGAU4GJV4eHecvRwlxJpYVlyZe4hRgoNZSYR3WSJQiDclsbIqtSg/vqg0J7X4EKM0
-        B4uSOO/tvGORQgLpiSWp2ampBalFMFkmDk6pBsYtFb+CHRfP3Xyug++6n86X3WmJ1xO87nJ8
-        9jneuTTUdTpnjzn/5PmNv7vnen6Tlv3uyLy0TkDZRn263b4/OdtZ4o9e02krMP9pp+57k79b
-        3furyuNgG497S8Q439oJnCzw7m72vtr4adrqDdGi9V7cG1klsn/Efpml+PjOGR4XlpQjvc+Y
-        tiixFGckGmoxFxUnAgBoZo+lLgIAAA==
-X-CMS-MailID: 20180416101428epcas1p1d9646bf1b56f0512a3fa3a6301b793c6
+        PO5c28Pm0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBk9S6cwFXxWr2h99JOxgXG1YhcjJ4eE
+        gInEhdvHGLsYuTiEBNYxSmw/coEdwvnFKPH/9Fp2kCo2ASuJie2rGEFsEQEtiROXtjOBFDEL
+        TGCSWLJ2EViRsECSxJfNx5hBbBYBVYk9f9aAxXkFPCW6LmxmgVgnJ3Hy2GRWEJsTKN605hob
+        iC0k4CHROPEq4wRGngWMDKsYJVMLinPTc4uNCozyUsv1ihNzi0vz0vWS83M3MQKDbNthrf4d
+        jI+XxB9iFOBgVOLh3XH2cpQQa2JZcWXuIUYJDmYlEd5liUAh3pTEyqrUovz4otKc1OJDjNIc
+        LErivPz5xyKFBNITS1KzU1MLUotgskwcnFINjD2J8n8+rn0jYc54/rXf9Jo1+kamqWZHrsuG
+        TrXOfD4zTLsylrn6eO40SR4Vc8G3rjsPlBQeOnPm2YOgojviDudOp+gG8tr73g0LfWV8JuXO
+        YZ8Lr+dxdaSVb1lp+z9TsWat0JtwX0bZq+Xy2zMPiWloH9EOd9PxzXXrrg+d0SRR9CP3g/wm
+        JZbijERDLeai4kQAy00COy4CAAA=
+X-CMS-MailID: 20180416101412epcas2p241ac78d221c7c288e79fc410dd90d6ab
 X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180416101428epcas1p1d9646bf1b56f0512a3fa3a6301b793c6
-X-RootMTR: 20180416101428epcas1p1d9646bf1b56f0512a3fa3a6301b793c6
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180416101412epcas2p241ac78d221c7c288e79fc410dd90d6ab
+X-RootMTR: 20180416101412epcas2p241ac78d221c7c288e79fc410dd90d6ab
 References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180416101428epcas1p1d9646bf1b56f0512a3fa3a6301b793c6@epcas1p1.samsung.com>
+        <CGME20180416101412epcas2p241ac78d221c7c288e79fc410dd90d6ab@epcas2p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove no longer needed samsung thermal properties.
+Since pdata reference_voltage values are SoC (not platform) specific
+just move it from platform data to struct exynos_tmu_data instance.
+Then remove parsing of samsung,tmu_reference_voltage property.
 
 There should be no functional changes caused by this patch.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- .../dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi  | 20 --------------------
- .../boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi | 19 -------------------
- arch/arm64/boot/dts/exynos/exynos5433.dtsi          | 10 +++++-----
- .../boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi    | 21 ---------------------
- arch/arm64/boot/dts/exynos/exynos7.dtsi             |  2 +-
- 5 files changed, 6 insertions(+), 66 deletions(-)
- delete mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi
- delete mode 100644 arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
- delete mode 100644 arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
+ drivers/thermal/samsung/exynos_tmu.c | 18 +++++++++++++++---
+ drivers/thermal/samsung/exynos_tmu.h |  4 ----
+ 2 files changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi
-deleted file mode 100644
-index f080357..0000000
---- a/arch/arm64/boot/dts/exynos/exynos5433-tmu-g3d-sensor-conf.dtsi
-+++ /dev/null
-@@ -1,20 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Device tree sources for Exynos5433 TMU sensor configuration
-- *
-- * Copyright (c) 2016 Jonghwa Lee <jonghwa3.lee@samsung.com>
-- */
--
--#include <dt-bindings/thermal/thermal_exynos.h>
--
--#thermal-sensor-cells = <0>;
--samsung,tmu_gain = <8>;
--samsung,tmu_reference_voltage = <23>;
--samsung,tmu_noise_cancel_mode = <4>;
--samsung,tmu_efuse_value = <75>;
--samsung,tmu_min_efuse_value = <40>;
--samsung,tmu_max_efuse_value = <150>;
--samsung,tmu_first_point_trim = <25>;
--samsung,tmu_second_point_trim = <85>;
--samsung,tmu_default_temp_offset = <50>;
--samsung,tmu_mux_addr = <6>;
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
-deleted file mode 100644
-index cccae66..0000000
---- a/arch/arm64/boot/dts/exynos/exynos5433-tmu-sensor-conf.dtsi
-+++ /dev/null
-@@ -1,19 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Device tree sources for Exynos5433 TMU sensor configuration
-- *
-- * Copyright (c) 2016 Chanwoo Choi <cw00.choi@samsung.com>
-- */
--
--#include <dt-bindings/thermal/thermal_exynos.h>
--
--#thermal-sensor-cells = <0>;
--samsung,tmu_gain = <8>;
--samsung,tmu_reference_voltage = <16>;
--samsung,tmu_noise_cancel_mode = <4>;
--samsung,tmu_efuse_value = <75>;
--samsung,tmu_min_efuse_value = <40>;
--samsung,tmu_max_efuse_value = <150>;
--samsung,tmu_first_point_trim = <25>;
--samsung,tmu_second_point_trim = <85>;
--samsung,tmu_default_temp_offset = <50>;
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index c0231d0..c414a27 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -637,7 +637,7 @@
- 			clocks = <&cmu_peris CLK_PCLK_TMU0_APBIF>,
- 				<&cmu_peris CLK_SCLK_TMU0>;
- 			clock-names = "tmu_apbif", "tmu_sclk";
--			#include "exynos5433-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 9a0e961..6db6ef6 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -123,6 +123,8 @@
  
-@@ -648,7 +648,7 @@
- 			clocks = <&cmu_peris CLK_PCLK_TMU0_APBIF>,
- 				<&cmu_peris CLK_SCLK_TMU0>;
- 			clock-names = "tmu_apbif", "tmu_sclk";
--			#include "exynos5433-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 			status = "disabled";
- 		};
+ #define EXYNOS5433_PD_DET_EN			1
  
-@@ -659,7 +659,7 @@
- 			clocks = <&cmu_peris CLK_PCLK_TMU1_APBIF>,
- 				<&cmu_peris CLK_SCLK_TMU1>;
- 			clock-names = "tmu_apbif", "tmu_sclk";
--			#include "exynos5433-tmu-g3d-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 			status = "disabled";
- 		};
++#define EXYNOS5433_G3D_BASE			0x10070000
++
+ /*exynos5440 specific registers*/
+ #define EXYNOS5440_TMU_S0_7_TRIM		0x000
+ #define EXYNOS5440_TMU_S0_7_CTRL		0x020
+@@ -190,6 +192,9 @@
+  * @max_efuse_value: maximum valid trimming data
+  * @temp_error1: fused value of the first point trim.
+  * @temp_error2: fused value of the second point trim.
++ * @reference_voltage: reference voltage of amplifier
++ *	in the positive-TC generator block
++ *	0 < reference_voltage <= 31
+  * @regulator: pointer to the TMU regulator structure.
+  * @reg_conf: pointer to structure to register with core thermal.
+  * @ntrip: number of supported trip points.
+@@ -214,6 +219,7 @@ struct exynos_tmu_data {
+ 	u32 min_efuse_value;
+ 	u32 max_efuse_value;
+ 	u16 temp_error1, temp_error2;
++	u8 reference_voltage;
+ 	struct regulator *regulator;
+ 	struct thermal_zone_device *tzd;
+ 	unsigned int ntrip;
+@@ -369,7 +375,7 @@ static u32 get_con_reg(struct exynos_tmu_data *data, u32 con)
+ 		con |= (EXYNOS4412_MUX_ADDR_VALUE << EXYNOS4412_MUX_ADDR_SHIFT);
  
-@@ -670,7 +670,7 @@
- 			clocks = <&cmu_peris CLK_PCLK_TMU1_APBIF>,
- 				<&cmu_peris CLK_SCLK_TMU1>;
- 			clock-names = "tmu_apbif", "tmu_sclk";
--			#include "exynos5433-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 			status = "disabled";
- 		};
+ 	con &= ~(EXYNOS_TMU_REF_VOLTAGE_MASK << EXYNOS_TMU_REF_VOLTAGE_SHIFT);
+-	con |= pdata->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT;
++	con |= data->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT;
  
-@@ -681,7 +681,7 @@
- 			clocks = <&cmu_peris CLK_PCLK_TMU1_APBIF>,
- 				<&cmu_peris CLK_SCLK_TMU1>;
- 			clock-names = "tmu_apbif", "tmu_sclk";
--			#include "exynos5433-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 			status = "disabled";
- 		};
+ 	con &= ~(EXYNOS_TMU_BUF_SLOPE_SEL_MASK << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
+ 	con |= (pdata->gain << EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT);
+@@ -1136,8 +1142,6 @@ static int exynos_of_sensor_conf(struct device_node *np,
  
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi b/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
-deleted file mode 100644
-index 4849471..0000000
---- a/arch/arm64/boot/dts/exynos/exynos7-tmu-sensor-conf.dtsi
-+++ /dev/null
-@@ -1,21 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Device tree sources for Exynos7 TMU sensor configuration
-- *
-- * Copyright (c) 2016 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- */
--
--#include <dt-bindings/thermal/thermal_exynos.h>
--
--#thermal-sensor-cells = <0>;
--samsung,tmu_gain = <9>;
--samsung,tmu_reference_voltage = <17>;
--samsung,tmu_noise_cancel_mode = <4>;
--samsung,tmu_efuse_value = <75>;
--samsung,tmu_min_efuse_value = <15>;
--samsung,tmu_max_efuse_value = <100>;
--samsung,tmu_first_point_trim = <25>;
--samsung,tmu_second_point_trim = <85>;
--samsung,tmu_default_temp_offset = <50>;
--samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index ad9dce6..8834879 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -589,7 +589,7 @@
- 			clocks = <&clock_peris PCLK_TMU>,
- 				 <&clock_peris SCLK_TMU>;
- 			clock-names = "tmu_apbif", "tmu_sclk";
--			#include "exynos7-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
+ 	ret = of_property_read_u32(np, "samsung,tmu_gain", &value);
+ 	pdata->gain = (u8)value;
+-	of_property_read_u32(np, "samsung,tmu_reference_voltage", &value);
+-	pdata->reference_voltage = (u8)value;
  
- 		thermal-zones {
+ 	of_property_read_u32(np, "samsung,tmu_cal_type", &pdata->cal_type);
+ 
+@@ -1192,6 +1196,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 		data->tmu_read = exynos4210_tmu_read;
+ 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
+ 		data->ntrip = 4;
++		data->reference_voltage = 7;
+ 		data->efuse_value = 55;
+ 		data->min_efuse_value = 40;
+ 		data->max_efuse_value = 100;
+@@ -1208,6 +1213,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
+ 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
+ 		data->ntrip = 4;
++		data->reference_voltage = 16;
+ 		data->efuse_value = 55;
+ 		if (data->soc != SOC_ARCH_EXYNOS5420 &&
+ 		    data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
+@@ -1223,6 +1229,10 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
+ 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
+ 		data->ntrip = 8;
++		if (res.start == EXYNOS5433_G3D_BASE)
++			data->reference_voltage = 23;
++		else
++			data->reference_voltage = 16;
+ 		data->efuse_value = 75;
+ 		data->min_efuse_value = 40;
+ 		data->max_efuse_value = 150;
+@@ -1234,6 +1244,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 		data->tmu_set_emulation = exynos5440_tmu_set_emulation;
+ 		data->tmu_clear_irqs = exynos5440_tmu_clear_irqs;
+ 		data->ntrip = 4;
++		data->reference_voltage = 16;
+ 		data->efuse_value = 0x5d2d;
+ 		data->min_efuse_value = 16;
+ 		data->max_efuse_value = 76;
+@@ -1245,6 +1256,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+ 		data->tmu_set_emulation = exynos4412_tmu_set_emulation;
+ 		data->tmu_clear_irqs = exynos4210_tmu_clear_irqs;
+ 		data->ntrip = 8;
++		data->reference_voltage = 17;
+ 		data->efuse_value = 75;
+ 		data->min_efuse_value = 15;
+ 		data->max_efuse_value = 100;
+diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+index 4c49312..9f4318c 100644
+--- a/drivers/thermal/samsung/exynos_tmu.h
++++ b/drivers/thermal/samsung/exynos_tmu.h
+@@ -42,16 +42,12 @@ enum soc_type {
+  * struct exynos_tmu_platform_data
+  * @gain: gain of amplifier in the positive-TC generator block
+  *	0 < gain <= 15
+- * @reference_voltage: reference voltage of amplifier
+- *	in the positive-TC generator block
+- *	0 < reference_voltage <= 31
+  * @cal_type: calibration type for temperature
+  *
+  * This structure is required for configuration of exynos_tmu driver.
+  */
+ struct exynos_tmu_platform_data {
+ 	u8 gain;
+-	u8 reference_voltage;
+ 
+ 	u32 cal_type;
+ };
 -- 
 1.9.1
