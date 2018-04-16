@@ -1,88 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754058AbeDPI3L (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 04:29:11 -0400
-Received: from mga03.intel.com ([134.134.136.65]:21623 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752941AbeDPI3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 04:29:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,459,1517904000";
-   d="scan'208";a="220744017"
-Subject: Re: [PATCH v5 1/3] perf/core: store context switch out type into Perf
- trace
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-References: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
- <9ff84e83-a0ca-dd82-a6d0-cb951689be74@linux.intel.com>
- <20180409092603.GY4043@hirez.programming.kicks-ass.net>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <17c73937-5fdc-7323-366d-edb2f483b30c@linux.intel.com>
-Date: Mon, 16 Apr 2018 11:29:03 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1754062AbeDPIe5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 04:34:57 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42404 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754006AbeDPIez (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 04:34:55 -0400
+Subject: Re: [PATCH] blk-mq: mark hctx RESTART when get budget fails
+To: Ming Lei <ming.lei@redhat.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1523865336-17326-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180416081503.GB23664@ming.t460p>
+From: "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <11e10ccf-bdeb-4790-3bec-e3f49ab246c8@oracle.com>
+Date: Mon, 16 Apr 2018 16:34:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180409092603.GY4043@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180416081503.GB23664@ming.t460p>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8864 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804160079
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+Hi Ming
 
-On 09.04.2018 12:26, Peter Zijlstra wrote:
-> On Mon, Apr 09, 2018 at 10:25:32AM +0300, Alexey Budankov wrote:
->>
->> Store preempting context switch out event into Perf trace as a part of 
->> PERF_RECORD_SWITCH[_CPU_WIDE] record.
->>
->> Percentage of preempting and non-preempting context switches help 
->> understanding the nature of workloads (CPU or IO bound) that are running 
->> on a machine;
->>
->> The event is treated as preemption one when task->state value of the 
->> thread being switched out is TASK_RUNNING. Event type encoding is 
->> implemented using PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit;
->> 	
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-> 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
-> Acme, I'm thinking you should route this, since most of the changes are
-> actually to the tool.
+Thanks for your kindly response.
 
-This is just to make sure it doesn't sneak out of your attention 
-in hope the plan is still the same as Peter mentioned above.
+On 04/16/2018 04:15 PM, Ming Lei wrote:
+>> -		if (!blk_mq_get_dispatch_budget(hctx))
+>> +		if (!blk_mq_get_dispatch_budget(hctx)) {
+>> +			blk_mq_sched_mark_restart_hctx(hctx);
+> The RESTART flag still may not take into effect if all requests are
+> completed before calling blk_mq_sched_mark_restart_hctx().
+> 
 
-Thanks,
-Alexey
+Yes, this is indeed a very tricky scenario.
 
-> 
->> diff --git a/kernel/events/core.c b/kernel/events/core.c
->> index fc1c330c6bd6..872a5aaa77eb 100644
->> --- a/kernel/events/core.c
->> +++ b/kernel/events/core.c
->> @@ -7584,6 +7584,10 @@ static void perf_event_switch(struct task_struct *task,
->>  		},
->>  	};
->>  
->> +	if (!sched_in && task->state == TASK_RUNNING)
->> +		switch_event.event_id.header.misc |=
->> +				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
-> 
-> I typically prefer {} over any multi-line expression.
-> 
->>  	perf_iterate_sb(perf_event_switch_output,
->>  		       &switch_event,
->>  		       NULL);
-> 
+Sincerely
+Jianchao
