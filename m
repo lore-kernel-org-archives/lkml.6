@@ -1,327 +1,341 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753691AbeDPGZa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:25:30 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36506 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753520AbeDPGZM (ORCPT
+        id S1753798AbeDPGZv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:25:51 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33486 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753742AbeDPGZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:25:12 -0400
-X-Google-Smtp-Source: AIpwx49TasJnATV+es2VQduOu9lVkIt8u/hOUfGqFVnE0+MH4EPg5kex/GD1mmAbt3BSwBshy17OdA==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, jgross@suse.com,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
-        tiwai@suse.com
-Cc: andr2000@gmail.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v2 4/5] ALSA: xen-front: Implement handling of shared buffers
-Date: Mon, 16 Apr 2018 09:24:52 +0300
-Message-Id: <20180416062453.24743-5-andr2000@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180416062453.24743-1-andr2000@gmail.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
+        Mon, 16 Apr 2018 02:25:47 -0400
+X-Google-Smtp-Source: AIpwx48QP3kk7dxpkPRVDjdXyMaSFQSuPKltFnX2p5peWZSGolqfTXTq+4QOW+xmovOljj5MZke/yw==
+X-ME-Sender: <xms:5kHUWidGzNWYNIxz4_BuTMc8P3fmsBQDrV5iRFa_yZEzHY6eLHLGcg>
+Date: Mon, 16 Apr 2018 14:29:56 +0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Andrea Parri <parri.andrea@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [RFC tip/locking/lockdep v6 01/20] lockdep/Documention:
+ Recursive read lock detection reasoning
+Message-ID: <20180416062956.fwoz5snuwcbwaueh@tardis>
+References: <20180411135110.9217-1-boqun.feng@gmail.com>
+ <20180411135110.9217-2-boqun.feng@gmail.com>
+ <0ed9bece-4e63-de49-8be5-0ebab83c9769@infradead.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3f2idczmrxg2o2og"
+Content-Disposition: inline
+In-Reply-To: <0ed9bece-4e63-de49-8be5-0ebab83c9769@infradead.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Implement shared buffer handling according to the
-para-virtualized sound device protocol at xen/interface/io/sndif.h:
-  - manage buffer memory
-  - handle granted references
-  - handle page directories
+--3f2idczmrxg2o2og
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
----
- sound/xen/Makefile              |   3 +-
- sound/xen/xen_snd_front.c       |   8 ++
- sound/xen/xen_snd_front_shbuf.c | 193 ++++++++++++++++++++++++++++++++++++++++
- sound/xen/xen_snd_front_shbuf.h |  36 ++++++++
- 4 files changed, 239 insertions(+), 1 deletion(-)
- create mode 100644 sound/xen/xen_snd_front_shbuf.c
- create mode 100644 sound/xen/xen_snd_front_shbuf.h
+On Sat, Apr 14, 2018 at 05:38:54PM -0700, Randy Dunlap wrote:
+> Hi,
+>=20
 
-diff --git a/sound/xen/Makefile b/sound/xen/Makefile
-index 03c669984000..f028bc30af5d 100644
---- a/sound/xen/Makefile
-+++ b/sound/xen/Makefile
-@@ -2,6 +2,7 @@
- 
- snd_xen_front-objs := xen_snd_front.o \
- 		      xen_snd_front_cfg.o \
--		      xen_snd_front_evtchnl.o
-+		      xen_snd_front_evtchnl.o \
-+		      xen_snd_front_shbuf.o
- 
- obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
-diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
-index eb46bf4070f9..0569c6c596a3 100644
---- a/sound/xen/xen_snd_front.c
-+++ b/sound/xen/xen_snd_front.c
-@@ -11,6 +11,7 @@
- #include <linux/delay.h>
- #include <linux/module.h>
- 
-+#include <xen/page.h>
- #include <xen/platform_pci.h>
- #include <xen/xen.h>
- #include <xen/xenbus.h>
-@@ -186,6 +187,13 @@ static struct xenbus_driver xen_driver = {
- 
- static int __init xen_drv_init(void)
- {
-+	/* At the moment we only support case with XEN_PAGE_SIZE == PAGE_SIZE */
-+	if (XEN_PAGE_SIZE != PAGE_SIZE) {
-+		pr_err(XENSND_DRIVER_NAME ": different kernel and Xen page sizes are not supported: XEN_PAGE_SIZE (%lu) != PAGE_SIZE (%lu)\n",
-+		       XEN_PAGE_SIZE, PAGE_SIZE);
-+		return -ENODEV;
-+	}
-+
- 	if (!xen_domain())
- 		return -ENODEV;
- 
-diff --git a/sound/xen/xen_snd_front_shbuf.c b/sound/xen/xen_snd_front_shbuf.c
-new file mode 100644
-index 000000000000..6845dbc7fdf5
---- /dev/null
-+++ b/sound/xen/xen_snd_front_shbuf.c
-@@ -0,0 +1,193 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+
-+/*
-+ * Xen para-virtual sound device
-+ *
-+ * Copyright (C) 2016-2018 EPAM Systems Inc.
-+ *
-+ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-+ */
-+
-+#include <xen/xen.h>
-+#include <xen/xenbus.h>
-+
-+#include "xen_snd_front_shbuf.h"
-+
-+grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf)
-+{
-+	if (!buf->grefs)
-+		return GRANT_INVALID_REF;
-+
-+	return buf->grefs[0];
-+}
-+
-+void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf)
-+{
-+	memset(buf, 0, sizeof(*buf));
-+}
-+
-+void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf)
-+{
-+	int i;
-+
-+	if (buf->grefs) {
-+		for (i = 0; i < buf->num_grefs; i++)
-+			if (buf->grefs[i] != GRANT_INVALID_REF)
-+				gnttab_end_foreign_access(buf->grefs[i],
-+							  0, 0UL);
-+		kfree(buf->grefs);
-+	}
-+	kfree(buf->directory);
-+	free_pages_exact(buf->buffer, buf->buffer_sz);
-+	xen_snd_front_shbuf_clear(buf);
-+}
-+
-+/*
-+ * number of grant references a page can hold with respect to the
-+ * xensnd_page_directory header
-+ */
-+#define XENSND_NUM_GREFS_PER_PAGE ((XEN_PAGE_SIZE - \
-+		offsetof(struct xensnd_page_directory, gref)) / \
-+		sizeof(grant_ref_t))
-+
-+static void fill_page_dir(struct xen_snd_front_shbuf *buf,
-+			  int num_pages_dir)
-+{
-+	struct xensnd_page_directory *page_dir;
-+	unsigned char *ptr;
-+	int i, cur_gref, grefs_left, to_copy;
-+
-+	ptr = buf->directory;
-+	grefs_left = buf->num_grefs - num_pages_dir;
-+	/*
-+	 * skip grant references at the beginning, they are for pages granted
-+	 * for the page directory itself
-+	 */
-+	cur_gref = num_pages_dir;
-+	for (i = 0; i < num_pages_dir; i++) {
-+		page_dir = (struct xensnd_page_directory *)ptr;
-+		if (grefs_left <= XENSND_NUM_GREFS_PER_PAGE) {
-+			to_copy = grefs_left;
-+			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
-+		} else {
-+			to_copy = XENSND_NUM_GREFS_PER_PAGE;
-+			page_dir->gref_dir_next_page = buf->grefs[i + 1];
-+		}
-+
-+		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
-+		       to_copy * sizeof(grant_ref_t));
-+
-+		ptr += XEN_PAGE_SIZE;
-+		grefs_left -= to_copy;
-+		cur_gref += to_copy;
-+	}
-+}
-+
-+static int grant_references(struct xenbus_device *xb_dev,
-+			    struct xen_snd_front_shbuf *buf,
-+			    int num_pages_dir, int num_pages_buffer,
-+			    int num_grefs)
-+{
-+	grant_ref_t priv_gref_head;
-+	unsigned long frame;
-+	int ret, i, j, cur_ref;
-+	int otherend_id;
-+
-+	ret = gnttab_alloc_grant_references(num_grefs, &priv_gref_head);
-+	if (ret)
-+		return ret;
-+
-+	buf->num_grefs = num_grefs;
-+	otherend_id = xb_dev->otherend_id;
-+	j = 0;
-+
-+	for (i = 0; i < num_pages_dir; i++) {
-+		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
-+		if (cur_ref < 0) {
-+			ret = cur_ref;
-+			goto fail;
-+		}
-+
-+		frame = xen_page_to_gfn(virt_to_page(buf->directory +
-+						     XEN_PAGE_SIZE * i));
-+		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
-+		buf->grefs[j++] = cur_ref;
-+	}
-+
-+	for (i = 0; i < num_pages_buffer; i++) {
-+		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
-+		if (cur_ref < 0) {
-+			ret = cur_ref;
-+			goto fail;
-+		}
-+
-+		frame = xen_page_to_gfn(virt_to_page(buf->buffer +
-+						     XEN_PAGE_SIZE * i));
-+		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
-+		buf->grefs[j++] = cur_ref;
-+	}
-+
-+	gnttab_free_grant_references(priv_gref_head);
-+	fill_page_dir(buf, num_pages_dir);
-+	return 0;
-+
-+fail:
-+	gnttab_free_grant_references(priv_gref_head);
-+	return ret;
-+}
-+
-+static int alloc_int_buffers(struct xen_snd_front_shbuf *buf,
-+			     int num_pages_dir, int num_pages_buffer,
-+			     int num_grefs)
-+{
-+	buf->grefs = kcalloc(num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
-+	if (!buf->grefs)
-+		return -ENOMEM;
-+
-+	buf->directory = kcalloc(num_pages_dir, XEN_PAGE_SIZE, GFP_KERNEL);
-+	if (!buf->directory)
-+		goto fail;
-+
-+	buf->buffer_sz = num_pages_buffer * XEN_PAGE_SIZE;
-+	buf->buffer = alloc_pages_exact(buf->buffer_sz, GFP_KERNEL);
-+	if (!buf->buffer)
-+		goto fail;
-+
-+	return 0;
-+
-+fail:
-+	kfree(buf->grefs);
-+	buf->grefs = NULL;
-+	kfree(buf->directory);
-+	buf->directory = NULL;
-+	return -ENOMEM;
-+}
-+
-+int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
-+			      struct xen_snd_front_shbuf *buf,
-+			      unsigned int buffer_sz)
-+{
-+	int num_pages_buffer, num_pages_dir, num_grefs;
-+	int ret;
-+
-+	xen_snd_front_shbuf_clear(buf);
-+
-+	num_pages_buffer = DIV_ROUND_UP(buffer_sz, XEN_PAGE_SIZE);
-+	/* number of pages the page directory consumes itself */
-+	num_pages_dir = DIV_ROUND_UP(num_pages_buffer,
-+				     XENSND_NUM_GREFS_PER_PAGE);
-+	num_grefs = num_pages_buffer + num_pages_dir;
-+
-+	ret = alloc_int_buffers(buf, num_pages_dir,
-+				num_pages_buffer, num_grefs);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = grant_references(xb_dev, buf, num_pages_dir, num_pages_buffer,
-+			       num_grefs);
-+	if (ret < 0)
-+		return ret;
-+
-+	fill_page_dir(buf, num_pages_dir);
-+	return 0;
-+}
-diff --git a/sound/xen/xen_snd_front_shbuf.h b/sound/xen/xen_snd_front_shbuf.h
-new file mode 100644
-index 000000000000..d28e97c47b2c
---- /dev/null
-+++ b/sound/xen/xen_snd_front_shbuf.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-+
-+/*
-+ * Xen para-virtual sound device
-+ *
-+ * Copyright (C) 2016-2018 EPAM Systems Inc.
-+ *
-+ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-+ */
-+
-+#ifndef __XEN_SND_FRONT_SHBUF_H
-+#define __XEN_SND_FRONT_SHBUF_H
-+
-+#include <xen/grant_table.h>
-+
-+#include "xen_snd_front_evtchnl.h"
-+
-+struct xen_snd_front_shbuf {
-+	int num_grefs;
-+	grant_ref_t *grefs;
-+	u8 *directory;
-+	u8 *buffer;
-+	size_t buffer_sz;
-+};
-+
-+grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf);
-+
-+int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
-+			      struct xen_snd_front_shbuf *buf,
-+			      unsigned int buffer_sz);
-+
-+void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf);
-+
-+void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf);
-+
-+#endif /* __XEN_SND_FRONT_SHBUF_H */
--- 
-2.16.2
+Hello Randy,
+
+> Just a few typos etc. below...
+>=20
+
+Thanks! I fixed those typos according to your comments.
+
+> On 04/11/2018 06:50 AM, Boqun Feng wrote:
+> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> > ---
+> >  Documentation/locking/lockdep-design.txt | 178 +++++++++++++++++++++++=
+++++++++
+> >  1 file changed, 178 insertions(+)
+> >=20
+> > diff --git a/Documentation/locking/lockdep-design.txt b/Documentation/l=
+ocking/lockdep-design.txt
+> > index 9de1c158d44c..6bb9e90e2c4f 100644
+> > --- a/Documentation/locking/lockdep-design.txt
+> > +++ b/Documentation/locking/lockdep-design.txt
+> > @@ -284,3 +284,181 @@ Run the command and save the output, then compare=
+ against the output from
+> >  a later run of this command to identify the leakers.  This same output
+> >  can also help you find situations where runtime lock initialization has
+> >  been omitted.
+> > +
+> > +Recursive read locks:
+> > +---------------------
+> > +
+> > +Lockdep now is equipped with deadlock detection for recursive read loc=
+ks.
+> > +
+> > +Recursive read locks, as their name indicates, are the locks able to be
+> > +acquired recursively. Unlike non-recursive read locks, recursive read =
+locks
+> > +only get blocked by current write lock *holders* other than write lock
+> > +*waiters*, for example:
+> > +
+> > +	TASK A:			TASK B:
+> > +
+> > +	read_lock(X);
+> > +
+> > +				write_lock(X);
+> > +
+> > +	read_lock(X);
+> > +
+> > +is not a deadlock for recursive read locks, as while the task B is wai=
+ting for
+> > +the lock X, the second read_lock() doesn't need to wait because it's a=
+ recursive
+> > +read lock. However if the read_lock() is non-recursive read lock, then=
+ the above
+> > +case is a deadlock, because even if the write_lock() in TASK B can not=
+ get the
+> > +lock, but it can block the second read_lock() in TASK A.
+> > +
+> > +Note that a lock can be a write lock (exclusive lock), a non-recursive=
+ read
+> > +lock (non-recursive shared lock) or a recursive read lock (recursive s=
+hared
+> > +lock), depending on the lock operations used to acquire it (more speci=
+fically,
+> > +the value of the 'read' parameter for lock_acquire()). In other words,=
+ a single
+> > +lock instance has three types of acquisition depending on the acquisit=
+ion
+> > +functions: exclusive, non-recursive read, and recursive read.
+> > +
+> > +To be concise, we call that write locks and non-recursive read locks as
+> > +"non-recursive" locks and recursive read locks as "recursive" locks.
+> > +
+> > +Recursive locks don't block each other, while non-recursive locks do (=
+this is
+> > +even true for two non-recursive read locks). A non-recursive lock can =
+block the
+> > +corresponding recursive lock, and vice versa.
+> > +
+> > +A deadlock case with recursive locks involved is as follow:
+> > +
+> > +	TASK A:			TASK B:
+> > +
+> > +	read_lock(X);
+> > +				read_lock(Y);
+> > +	write_lock(Y);
+> > +				write_lock(X);
+> > +
+> > +Task A is waiting for task B to read_unlock() Y and task B is waiting =
+for task
+> > +A to read_unlock() X.
+> > +
+> > +Dependency types and strong dependency paths:
+> > +---------------------------------------------
+> > +In order to detect deadlocks as above, lockdep needs to track differen=
+t dependencies.
+> > +There are 4 categories for dependency edges in the lockdep graph:
+> > +
+> > +1) -(NN)->: non-recursive to non-recursive dependency. "X -(NN)-> Y" m=
+eans
+> > +            X -> Y and both X and Y are non-recursive locks.
+> > +
+> > +2) -(RN)->: recursive to non-recursive dependency. "X -(RN)-> Y" means
+> > +            X -> Y and X is recursive read lock and Y is non-recursive=
+ lock.
+> > +
+> > +3) -(NR)->: non-recursive to recursive dependency, "X -(NR)-> Y" means
+> > +            X -> Y and X is non-recursive lock and Y is recursive lock.
+> > +
+> > +4) -(RR)->: recursive to recursive dependency, "X -(RR)-> Y" means
+> > +            X -> Y and both X and Y are recursive locks.
+> > +
+> > +Note that given two locks, they may have multiple dependencies between=
+ them, for example:
+> > +
+> > +	TASK A:
+> > +
+> > +	read_lock(X);
+> > +	write_lock(Y);
+> > +	...
+> > +
+> > +	TASK B:
+> > +
+> > +	write_lock(X);
+> > +	write_lock(Y);
+> > +
+> > +, we have both X -(RN)-> Y and X -(NN)-> Y in the dependency graph.
+> > +
+> > +We use -(*N)-> for edges that is either -(RN)-> or -(NN)->, the simila=
+r for -(N*)->,
+> > +-(*R)-> and -(R*)->
+> > +
+> > +A "path" is a series of conjunct dependency edges in the graph. And we=
+ define a
+> > +"strong" path, which indicates the strong dependency throughout each d=
+ependency
+> > +in the path, as the path that doesn't have two conjunct edges (depende=
+ncies) as
+> > +-(*R)-> and -(R*)->. In other words, a "strong" path is a path from a =
+lock
+> > +walking to another through the lock dependencies, and if X -> Y -> Z i=
+n the
+> > +path (where X, Y, Z are locks), if the walk from X to Y is through a -=
+(NR)-> or
+> > +-(RR)-> dependency, the walk from Y to Z must not be through a -(RN)->=
+ or
+> > +-(RR)-> dependency, otherwise it's not a strong path.
+> > +
+> > +We will see why the path is called "strong" in next section.
+> > +
+> > +Recursive Read Deadlock Detection:
+> > +----------------------------------
+> > +
+> > +We now prove two things:
+> > +
+> > +Lemma 1:
+> > +
+> > +If there is a closed strong path (i.e. a strong cirle), then there is a
+>=20
+> ??                                                 circle
+>=20
+> > +combination of locking sequences that causes deadlock. I.e. a strong c=
+ircle is
+> > +sufficient for deadlock detection.
+> > +
+> > +Lemma 2:
+> > +
+> > +If there is no closed strong path (i.e. strong cirle), then there is no
+>=20
+> ??                                                circle
+>=20
+> > +combination of locking sequences that could cause deadlock. I.e.  stro=
+ng
+> > +circles are necessary for deadlock detection.
+> > +
+> > +With these two Lemmas, we can easily say a closed strong path is both =
+sufficient
+> > +and necessary for deadlocks, therefore a closed strong path is equival=
+ent to
+> > +deadlock possibility. As a closed strong path stands for a dependency =
+chain that
+> > +could cause deadlocks, so we call it "strong", considering there are d=
+ependency
+> > +circles that won't cause deadlocks.
+> > +
+> > +Proof for sufficiency (Lemma 1):
+> > +
+> > +Let's say we have a strong cirlce:
+>=20
+>                               circle:
+>=20
+> > +
+> > +	L1 -> L2 ... -> Ln -> L1
+> > +
+> > +, which means we have dependencies:
+> > +
+> > +	L1 -> L2
+> > +	L2 -> L3
+> > +	...
+> > +	Ln-1 -> Ln
+> > +	Ln -> L1
+> > +
+> > +We now can construct a combination of locking sequences that cause dea=
+dlock:
+> > +
+> > +Firstly let's make one CPU/task get the L1 in L1 -> L2, and then anoth=
+er get
+> > +the L2 in L2 -> L3, and so on. After this, all of the Lx in Lx -> Lx+1=
+ are
+> > +held by different CPU/tasks.
+> > +
+> > +And then because we have L1 -> L2, so the holder of L1 is going to acq=
+uire L2
+> > +in L1 -> L2, however since L2 is already held by another CPU/task, plu=
+s L1 ->
+> > +L2 and L2 -> L3 are not *R and R* (the definition of strong), therefor=
+e the
+> > +holder of L1 can not get L2, it has to wait L2's holder to release.
+> > +
+> > +Moreover, we can have a similar conclusion for L2's holder: it has to =
+wait L3's
+> > +holder to release, and so on. We now can proof that Lx's holder has to=
+ wait for
+>=20
+>                                             prove
+>=20
+> > +Lx+1's holder to release, and note that Ln+1 is L1, so we have a circu=
+lar
+> > +waiting scenario and nobody can get progress, therefore a deadlock.
+> > +
+> > +Proof for necessary (Lemma 2):
+> > +
+> > +Lemma 2 is equivalent to: If there is a deadlock scenario, then there =
+must be a
+> > +strong circle in the dependency graph.
+> > +
+> > +According to Wikipedia[1], if there is a deadlock, then there must be =
+a circular
+> > +waiting scenario, means there are N CPU/tasks, where CPU/task P1 is wa=
+iting for
+> > +a lock held by P2, and P2 is waiting for a lock held by P3, ... and Pn=
+ is waiting
+> > +for a lock held by P1. Let's name the lock Px is waiting as Lx, so sin=
+ce P1 is waiting
+> > +for L1 and holding Ln, so we will have Ln -> L1 in the dependency grap=
+h. Similarly,
+> > +we have L1 -> L2, L2 -> L3, ..., Ln-1 -> Ln in the dependency graph, w=
+hich means we
+> > +have a circle:
+> > +
+> > +	Ln -> L1 -> L2 -> ... -> Ln
+> > +
+> > +, and now let's prove the circle is strong:
+> > +
+> > +For a lock Lx, Px contributes the dependency Lx-1 -> Lx and Px+1 contr=
+ibutes
+> > +the dependency Lx -> Lx+1, and since Px is waiting for Px+1 to release=
+ Lx,
+> > +so Lx can not be both recursive in Lx -> Lx+1 and Lx-1 -> Lx, because =
+recursive
+> > +locks don't block each other, therefore Lx-1 -> Lx and Lx -> Lx+1 can =
+not be a
+> > +-(*R)-> -(R*)-> pair, and this is true for any lock in the circle, the=
+refore,
+> > +the circle is strong.
+> > +
+> > +References:
+> > +-----------
+> > +[1]: https://en.wikipedia.org/wiki/Deadlock
+> > +[2]: Shibu, K. (2009). Intro To Embedded Systems (1st ed.). Tata McGra=
+w-Hill
+> >=20
+> I would also change all /can not/ to /cannot/...
+
+Agreed. I will use 'cannot' for any future version, thanks a lot!
+
+Regards,
+Boqun
+
+>=20
+> --=20
+> ~Randy
+
+--3f2idczmrxg2o2og
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlrUQuEACgkQSXnow7UH
++rhceAgAiFC1FgfpxNWeoMXGSpVvNXiTJ8VC78SG9qSIKLJnk7a3nuJBV7nQbs6R
+Q+5BRUppjceXxesBjOdN5ykPER5PRyhki2P4SyYxHrpPn8P86R7U3bOUord6oOSY
+34k9ruzFf4VwUgvPbNjama2oip5+0VcIabTDxbeM1tnqsksorp6u/RdEZ9UddsBl
+AzTKk1c5SKPp6p9M/KBsVFwknPb9kvMTN/ExyEta+eAGLtsKya4IUalam4ps7OdC
+I6xLNaHEwZ7k+zW1vo/2ZZUFF/9QZtgiE3efU0CcxAVBWq4odgjtdaJJiqGDtSJm
+irxwXtUIQNsu+fSP+bSFHQVRansqgQ==
+=kjOm
+-----END PGP SIGNATURE-----
+
+--3f2idczmrxg2o2og--
