@@ -1,54 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753186AbeDSEKD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 00:10:03 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:33065 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751092AbeDSEKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 00:10:01 -0400
-Subject: Re: [PATCH v11 0/4] set VSESR_EL2 by user space and support
- NOTIFY_SEI notification
-To: James Morse <james.morse@arm.com>
-CC: <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@linaro.org>,
-        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
-        <catalin.marinas@arm.com>, <rjw@rjwysocki.net>, <bp@alien8.de>,
-        <lenb@kernel.org>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>, <linux-acpi@vger.kernel.org>,
-        <devel@acpica.org>, <huangshaoyu@huawei.com>, <zhengxiang9@huawei.com>
-References: <1523309796-36423-1-git-send-email-gengdongjiu@huawei.com>
- <d94439b6-9b9a-9bd0-ddec-3bb63ede9461@arm.com>
- <5161fb31-e5bb-872c-3e12-d7d38326aaca@huawei.com>
- <eb65baf4-abb0-570f-f3af-61f505c9de10@arm.com>
-From: gengdongjiu <gengdongjiu@huawei.com>
-Message-ID: <ebfea154-eceb-b2d2-d038-f27687d2bc01@huawei.com>
-Date: Thu, 19 Apr 2018 12:09:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753221AbeDSELM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 00:11:12 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:50519 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750913AbeDSELL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 00:11:11 -0400
+Subject: Re: [PATCH 01/14] memory: ti-emif-sram: Add resume function to recopy
+ sram code
+To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>,
+        <linus.walleij@linaro.org>, <grygorii.strashko@ti.com>,
+        <tony@atomide.com>
+CC: <t-kristo@ti.com>, <Russ.Dill@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ssantosh@kernel.org>,
+        <haojian.zhuang@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <d-gerlach@ti.com>
+References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
+ <1523505239-16229-2-git-send-email-j-keerthy@ti.com>
+ <31688cf4-b6ca-e7ce-3407-46262006b38f@oracle.com>
+From: Keerthy <j-keerthy@ti.com>
+Message-ID: <8e92db66-c2cb-8110-120d-fb6ff06ac643@ti.com>
+Date: Mon, 16 Apr 2018 15:50:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <eb65baf4-abb0-570f-f3af-61f505c9de10@arm.com>
+In-Reply-To: <31688cf4-b6ca-e7ce-3407-46262006b38f@oracle.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.142.68.147]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James,
 
-> 
->> I do not know when it is merge-window. About the apply version, it does not have limited.
-> 
-> 'git fetch' Linus' tree and look at the tags. 'v4.16' lost its '-rc' suffixes,
-> and there isn't a 'v4.17-rc1' yet, so we are still in the merge window.
-> 
-> Linus sends a message to LKML. eg:
-> https://lkml.org/lkml/2018/4/1/175
-> 
-> net-next closes shortly before the merge window, and re-opens afterwards. There
-> is a handy web page:
-> http://vger.kernel.org/~davem/net-next.html
 
- Thanks for this information, got it.
+On Thursday 12 April 2018 10:14 PM, santosh.shilimkar@oracle.com wrote:
+> On 4/11/18 9:53 PM, Keerthy wrote:
+>> From: Dave Gerlach <d-gerlach@ti.com>
+>>
+>> After an RTC+DDR cycle we lose sram context so emif pm functions present
+>> in sram are lost. We can check if the first byte of the original
+>> code in DDR contains the same first byte as the code in sram, and if
+>> they do not match we know we have lost context and must recopy the
+>> functions to the previous address to maintain PM functionality.
+>>
+>> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>   drivers/memory/ti-emif-pm.c | 24 ++++++++++++++++++++++++
+>>   1 file changed, 24 insertions(+)
+>>
+>> diff --git a/drivers/memory/ti-emif-pm.c b/drivers/memory/ti-emif-pm.c
+>> index 632651f..ec4a62c 100644
+>> --- a/drivers/memory/ti-emif-pm.c
+>> +++ b/drivers/memory/ti-emif-pm.c
+>> @@ -249,6 +249,25 @@ int ti_emif_get_mem_type(void)
+>>   };
+>>   MODULE_DEVICE_TABLE(of, ti_emif_of_match);
+>>   +#ifdef CONFIG_PM_SLEEP
+>> +static int ti_emif_resume(struct device *dev)
+>> +{
+>> +    unsigned long tmp =
+>> +            __raw_readl((void *)emif_instance->ti_emif_sram_virt);
+>> +
+>> +    /*
+>> +     * Check to see if what we are copying is already present in the
+>> +     * first byte at the destination, only copy if it is not which
+>> +     * indicates we have lost context and sram no longer contains
+>> +     * the PM code
+>> +     */
+> 
+>> +    if (tmp != ti_emif_sram)
+>> +        ti_emif_push_sram(dev, emif_instance);
+>> +
+>> +    return 0;
+>> +}
+>> +#endif /* CONFIG_PM_SLEEP */
+> Instead of this indirect method , why can't just check the previous
+> deep sleep mode and based on that do copy or not. EMIF power status
+> register should have something like that ?
+
+I will check if we have a register that tells previous state of sram,
+not sure of it.
+> 
+> Another minor point is even though there is nothing to do in suspend,
+> might be good to have a callback with comment that nothing to do with
+> some explanation why not. Don't have strong preference but may for
+> better readability.
+> 
+> Regards,
+> Santosh
+> 
+> 
