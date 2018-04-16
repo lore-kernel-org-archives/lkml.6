@@ -1,86 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753628AbeDPIPS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 04:15:18 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35907 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753394AbeDPIPQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 04:15:16 -0400
-X-Google-Smtp-Source: AIpwx4+xeImcQ/IW8FYYsNWIUeotm9q6KbylbVu4tdScUJPjgfXHa2o0SJC4U6L4211wgP7mG62HMpZYiv+JuSsHYWQ=
+        id S1753754AbeDPIP0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 04:15:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40374 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753669AbeDPIPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 04:15:24 -0400
+Date: Mon, 16 Apr 2018 16:15:12 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] blk-mq: mark hctx RESTART when get budget fails
+Message-ID: <20180416081503.GB23664@ming.t460p>
+References: <1523865336-17326-1-git-send-email-jianchao.w.wang@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180411085620.GI26100@olila.local.net-space.pl>
-References: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
- <1522770281.4522.14.camel@HansenPartnership.com> <20180403160712.GL26100@olila.local.net-space.pl>
- <1522774852.4522.25.camel@HansenPartnership.com> <20180404103824.GM26100@olila.local.net-space.pl>
- <20180411085620.GI26100@olila.local.net-space.pl>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 16 Apr 2018 10:15:15 +0200
-Message-ID: <CAKv+Gu_1ydqYS+TBgYVEH9jTDEjSecBYxJbq_28mZJ9G3-T8EA@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state during
- dom0 boot
-To: Daniel Kiper <daniel.kiper@oracle.com>
-Cc: James Bottomley <james.bottomley@hansenpartnership.com>,
-        linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>, eric.snowberg@oracle.com,
-        "H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523865336-17326-1-git-send-email-jianchao.w.wang@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 April 2018 at 10:56, Daniel Kiper <daniel.kiper@oracle.com> wrote:
-> On Wed, Apr 04, 2018 at 12:38:24PM +0200, Daniel Kiper wrote:
->> On Tue, Apr 03, 2018 at 10:00:52AM -0700, James Bottomley wrote:
->> > On Tue, 2018-04-03 at 18:07 +0200, Daniel Kiper wrote:
->> > > On Tue, Apr 03, 2018 at 08:44:41AM -0700, James Bottomley wrote:
->>
->> [...]
->>
->> > > > This looks like a bad idea: you're duplicating the secure boot
->> > > > check in
->> > > >
->> > > > drivers/firmware/efi/libstub/secureboot.c
->> > > >
->> > > > Which is an implementation of policy.  If we have to have policy in
->> > > > the kernel, it should really only be in one place to prevent drift;
->> > > > why can't you simply use the libstub efi_get_secureboot() so we're
->> > > > not duplicating the implementation of policy?
->> > >
->> > > Well, here is the first version of this patch:
->> > > https://lkml.org/lkml/2018/1/9/496 Ard did not like it. I was not
->> > > happy too. In general both approaches are not perfect. More you can
->> > > find in the discussion around this patchset. If you have better idea
->> > > how to do that I am happy to implement it.
->> >
->> > One way might be simply to have the pre exit-boot-services code lay
->> > down a variable containing the state which you pick up, rather than you
->>
->> Do you mean variable in kernel proper or something like that? If yes this
->> is not possible. EFI Linux stub is not executed in Xen dom0. All UEFI
->> infrastructure is owned and operated by Xen. Dom0 kernel can access some
->> stuff in UEFI, including variables, via hypercall. However, when dom0
->> runs only UEFI runtime services are available.
->>
->> > calling efi code separately and trying to use the insecure RT
->>
->> I am not sure why they are insecure.
->>
->> > variables.  That way there's a uniform view of the internal kernel
->> > secure boot state that everyone can use.
->>
->> That would be perfect but I have a feeling that in form proposed above
->> it is not possible.
->
-> Ping?
->
+On Mon, Apr 16, 2018 at 03:55:36PM +0800, Jianchao Wang wrote:
+> When get budget fails, blk_mq_sched_dispatch_requests does not do
+> anything to ensure the hctx to be restarted. We can survive from
+> this, because only the scsi implements .get_budget and it always
+> runs the hctx queues when request is completed.
 
-(apologies if this is a duplicate email - I thought I had replied
-already but I don't see it in my sent folder)
+Exactly, that is why we don't handle the failure before dequeuing
+request.
 
-Queued in efi/next - thanks.
+I suggest to just document this usage now.
+
+> 
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> ---
+>  block/blk-mq-sched.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+> index 25c14c5..49e7cd9 100644
+> --- a/block/blk-mq-sched.c
+> +++ b/block/blk-mq-sched.c
+> @@ -102,8 +102,10 @@ static void blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
+>  				!e->type->ops.mq.has_work(hctx))
+>  			break;
+>  
+> -		if (!blk_mq_get_dispatch_budget(hctx))
+> +		if (!blk_mq_get_dispatch_budget(hctx)) {
+> +			blk_mq_sched_mark_restart_hctx(hctx);
+
+The RESTART flag still may not take into effect if all requests are
+completed before calling blk_mq_sched_mark_restart_hctx().
+
+>  			break;
+> +		}
+>  
+>  		rq = e->type->ops.mq.dispatch_request(hctx);
+>  		if (!rq) {
+> @@ -148,8 +150,10 @@ static void blk_mq_do_dispatch_ctx(struct blk_mq_hw_ctx *hctx)
+>  		if (!sbitmap_any_bit_set(&hctx->ctx_map))
+>  			break;
+>  
+> -		if (!blk_mq_get_dispatch_budget(hctx))
+> +		if (!blk_mq_get_dispatch_budget(hctx)) {
+> +			blk_mq_sched_mark_restart_hctx(hctx);
+
+Same with above.
+
+Thanks,
+Ming
