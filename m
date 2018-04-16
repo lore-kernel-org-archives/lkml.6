@@ -1,127 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755035AbeDPLkd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 07:40:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59094 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752812AbeDPLkb (ORCPT
+        id S1755058AbeDPLlK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 07:41:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45350 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753636AbeDPLlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:40:31 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Peter Rosin <peda@axentia.se>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: tfa9879: fix whitespace issues caused by mindless conversion" to the asoc tree
-In-Reply-To: <20180412211437.21599-3-peda@axentia.se>
-Message-Id: <E1f82Uo-0007cQ-9V@debutante>
-Date: Mon, 16 Apr 2018 12:40:30 +0100
+        Mon, 16 Apr 2018 07:41:09 -0400
+Subject: Re: Wrong module .text address in 4.16.0
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jessica Yu <jeyu@kernel.org>
+References: <7e17e3b1-25c3-cb61-ae94-dcbb1bf3473e@linux.ibm.com>
+ <3836add7-8691-77c1-33d2-0fbee7051795@de.ibm.com>
+From: Thomas-Mich Richter <tmricht@linux.ibm.com>
+Organization: IBM LTC
+Date: Mon, 16 Apr 2018 13:41:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <3836add7-8691-77c1-33d2-0fbee7051795@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041611-0012-0000-0000-000005CB5E83
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041611-0013-0000-0000-00001947A233
+Message-Id: <05ab4bf4-04ab-d04b-d9a5-4507bc707c4d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804160111
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 04/16/2018 08:23 AM, Christian Borntraeger wrote:
+> FWIW, this breaks at least perf capability to resolve module symbols.
+> Adding some more CCs for perf and module.
+> 
+> 
+> On 04/16/2018 07:51 AM, Thomas-Mich Richter wrote:
+>> I just installed 4.16.0 and discovered the module .text address is
+>> wrong. It happens on s390 and x86 platforms. I have not tested others.
+>>
+>> Here is the issue, I have used module qeth_l2 on s390 which is the
+>> ethernet device driver:
+>>
+>> root@s35lp76 ~]# lsmod
+>> Module                  Size  Used by
+>> qeth_l2                94208  1
+>> ...
+>>
+>> [root@s35lp76 ~]# cat /proc/modules | egrep '^qeth_l2'
+>> qeth_l2 94208 1 - Live 0x000003ff80401000   <---- This is the correct address in memory
+>> [root@s35lp76 ~]# cat /sys/module/qeth_l2/sections/.text 
+>> 0x0000000018ea8363      <---- This is the wrong address
+>> [root@s35lp76 ~]# 
+>>
+>> File /sys/module/qeth_l2/sections/.text displays a very strange
+>> address which is definitely wrong. It should be something like
+>> 0x000003ff80401xxx.
+>>
+>> Same on x86.
+>>
+>> I have checked file kernel/module.c function add_sect_attrs()
+>> and it calls module_sect_show() when the sysfs file is read.
+>> And module_sect_show() uses 
+>>
+>>   sprintf(buf, "0x%pK\n", (void *)sattr->address);
+>>
+>> and my sysctl setting should be correct:
+>> [root@s35lp76 linux]# sysctl -a | fgrep kernel.kptr_restrict
+>> kernel.kptr_restrict = 0
+>> [root@s35lp76 linux]#
+>>
+>> I wonder if somebody else has seen this issue?
+>> Ideas how to fix this?
+>>
+>> Thanks
+>>
 
-   ASoC: tfa9879: fix whitespace issues caused by mindless conversion
+This new behavior actually break perf report/record/top on s390 for
+module address resolution. On s390 each module .text segment actually
+start at some offset after the module load addess shown with
+/proc/modules. That is the reason why we need 
+/sys/module/<module-name>/sections/.text to get the actual
+.text segment start address.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 42a2b6746955eb0265c2656282c7a424b51a54f1 Mon Sep 17 00:00:00 2001
-From: Peter Rosin <peda@axentia.se>
-Date: Thu, 12 Apr 2018 23:14:34 +0200
-Subject: [PATCH] ASoC: tfa9879: fix whitespace issues caused by mindless
- conversion
-
-Long lines and bad alignment disturbs the reading pleasure.
-
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/tfa9879.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
-
-diff --git a/sound/soc/codecs/tfa9879.c b/sound/soc/codecs/tfa9879.c
-index 6d213c6d3920..c30e0efdbe39 100644
---- a/sound/soc/codecs/tfa9879.c
-+++ b/sound/soc/codecs/tfa9879.c
-@@ -88,13 +88,14 @@ static int tfa9879_hw_params(struct snd_pcm_substream *substream,
- 	}
- 
- 	if (tfa9879->lsb_justified)
--		snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
--				    TFA9879_I2S_SET_MASK,
--				    i2s_set << TFA9879_I2S_SET_SHIFT);
-+		snd_soc_component_update_bits(component,
-+					      TFA9879_SERIAL_INTERFACE_1,
-+					      TFA9879_I2S_SET_MASK,
-+					      i2s_set << TFA9879_I2S_SET_SHIFT);
- 
- 	snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
--			    TFA9879_I2S_FS_MASK,
--			    fs << TFA9879_I2S_FS_SHIFT);
-+				      TFA9879_I2S_FS_MASK,
-+				      fs << TFA9879_I2S_FS_SHIFT);
- 	return 0;
- }
- 
-@@ -103,8 +104,8 @@ static int tfa9879_digital_mute(struct snd_soc_dai *dai, int mute)
- 	struct snd_soc_component *component = dai->component;
- 
- 	snd_soc_component_update_bits(component, TFA9879_MISC_CONTROL,
--			    TFA9879_S_MUTE_MASK,
--			    !!mute << TFA9879_S_MUTE_SHIFT);
-+				      TFA9879_S_MUTE_MASK,
-+				      !!mute << TFA9879_S_MUTE_SHIFT);
- 
- 	return 0;
- }
-@@ -152,11 +153,11 @@ static int tfa9879_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	}
- 
- 	snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
--			    TFA9879_SCK_POL_MASK,
--			    sck_pol << TFA9879_SCK_POL_SHIFT);
-+				      TFA9879_SCK_POL_MASK,
-+				      sck_pol << TFA9879_SCK_POL_SHIFT);
- 	snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
--			    TFA9879_I2S_SET_MASK,
--			    i2s_set << TFA9879_I2S_SET_SHIFT);
-+				      TFA9879_I2S_SET_MASK,
-+				      i2s_set << TFA9879_I2S_SET_SHIFT);
- 	return 0;
- }
- 
-@@ -298,7 +299,7 @@ static int tfa9879_i2c_probe(struct i2c_client *i2c,
- 			     tfa9879_regs[i].reg, tfa9879_regs[i].def);
- 
- 	return devm_snd_soc_register_component(&i2c->dev, &tfa9879_component,
--				      &tfa9879_dai, 1);
-+					       &tfa9879_dai, 1);
- }
- 
- static const struct i2c_device_id tfa9879_i2c_id[] = {
 -- 
-2.17.0
+Thomas Richter, Dept 3303, IBM LTC Boeblingen Germany
+--
+Vorsitzende des Aufsichtsrats: Martina Koederitz 
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
