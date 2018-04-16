@@ -1,249 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753361AbeDPVxj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:53:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40697 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752652AbeDPVvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:51:01 -0400
-From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v6 01/11] ARM: sunxi: smp: Move assembly code into a file
-Date: Mon, 16 Apr 2018 23:50:22 +0200
-Message-Id: <20180416215032.5023-2-mylene.josserand@bootlin.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180416215032.5023-1-mylene.josserand@bootlin.com>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+        id S1753120AbeDPVzj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:55:39 -0400
+Received: from mail-ve1eur01on0048.outbound.protection.outlook.com ([104.47.1.48]:63040
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752209AbeDPVzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 17:55:36 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com;
+Date: Mon, 16 Apr 2018 15:55:26 -0600
+From: Jason Gunthorpe <jgg@mellanox.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Matan Barak <matanb@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: Re: [PATCH] infiniband: mlx5: fix build error when
+ INFINIBAND_USER_ACCESS=m
+Message-ID: <20180416215526.GX23074@mellanox.com>
+References: <81ea9f01-4624-38d7-2bfe-1dd7063fa3f0@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81ea9f01-4624-38d7-2bfe-1dd7063fa3f0@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [174.3.196.123]
+X-ClientProxiedBy: VI1PR08CA0117.eurprd08.prod.outlook.com
+ (2603:10a6:800:d4::19) To VI1PR05MB4462.eurprd05.prod.outlook.com
+ (2603:10a6:803:43::13)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR05MB4462;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR05MB4462;3:A6LxVp6tGSVihAdBTZs0+HJorU+Lrvsc1t5KfAYY9YuntDH1Vynl9y8M9jF7g2SLYIrO/vGUs5Qxmo4efmOuezxKWTS4fE2AcFyIpKQk9NAkDtmwJCIW3vbRkkAHe95m/q9cfziiMyZ3CVc8rTfrzV3xILNSWQsKTy+xUVWQOnzRyTaQIVpMa6GOEnC31hbgr96DbMoujRUJw99HN/Qnn2DkU5PVbHopB54wEuHeOFjd93Ri1MZb9SZ8cqmfSMmR;25:bLAftCN9Qsm4K1yZ6ssTql52y1IixIYoLduTGM1GZCgUTXnD2fr4dal7RRpZVzLzVy7iSsF5IBeR7y0eJXAw0E4bkFHPAF2BjOFGYdd8yXy5U/IlYhfj7c4C1qpqeufMZDmShB6DbfBomIPPhChv57tulR75cjwRNRFoM9LPh/3ZM1QpuipxOaAuhA3VsHDZt3U4L5nk4cU+pxlKxZJKHVK6SLO63K3/ecGNhtG2M17m+orJut26BXsJkRJJDv+r1YA+mcPfPhD7c5dCIeQme3hMYhqKebN5IU7Ar9r3QEdzN5iRJDVnIcyZoQgICDii6LQAQl6eiluwWV4YOBK/lw==;31:dk1gtkLMIbvQYf3lW0dvpA5XLypNU7Id7ftGACG92RMwmInW02eqND0qV+iM4Q4NGQMoGyLu1g2eCKyyV/WSz7EnUfscfCgBZMUeowyITxsf4WwYClAH5yGesGoKlRalwC3qwlKURARC/ac27BNhYcKW6dIVF7p5RU7Oi+Hg2u/JWLZ6H2j0tbZ1hXY+UgdIRj74w7LjcMHvXfchsNG3FuZCNA6NJ9hCrR2XUvacOkw=
+X-MS-TrafficTypeDiagnostic: VI1PR05MB4462:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR05MB4462;20:ihJZ1+NXpPK30BMSO3PmAM7Ysc5bS/3ujNW1aBixFkz+b2c4tmpUWHhhkKUwDIaZU/A+pSD2ZogXq7DV6L/mGtHEvQlTODMPOpMQD64G8e+kYyIyZtzslmFNNpUlsTI7VitpT1dYUFwAXtwhnJ42qWhrKrnd3G49ytgdgQrru6gnkGRiV2lwvspIWHNUQT8gYmjjtzOUHACaL3CvgC4ge9a1a7nPTQ/k84BahphQmurTYXQKy+mbt/Jq9yXi01TdJBr6akrbAkNAY5MseyU+K+q3Vq+pCDVtu5krmR9RV4LJBcp+yt9TLj4wRpACmxOo5C01++NM2bmGM4A/ImC5XRzG75jtgl7pjiKrQqH+DBNSE4iW5Qy3P8FJ3y58gOTV9CB1F/2PCTpfhlVrScB/yQFOkZ37Gn9zR4TSdG0cBn24iO+wtmFLRH5l03DYPLrDOy1alQN3XzMISwIWqDaBvklb2gNUmjHInxrqbLK3zWongxgpl03SipEhYFv1xBRE;4:hwaW9+bCxf8xomZKMfqQYpKK/cPkMwJ1aNhnxn0Ry+HvrEgYCxCYQruR4KrErf+bHDlAC3b25KqStq1OCAG2DCNNaiwZyl0Z0yq35I/iY+g10o980Dxv+G8AzW8XPxlogEzNSrrhiY/oKgmlaLp0jEcqUVapKeI1/OIvSLNAujXL3UWc02Hy6KcgLtQkdZ9iTZxZvQ1jBA99trge1W34+ECxaLBJ4/sqYTuNAGjUFmC5GcGdDN9puvmo+G6uTzJ2KB7mjVKbRtZYH75/5TU9mZ88eMxm5pRZsTlKevMJqT6sG2MlslH9gbv02MWNVBGhONVeZcag20wP3eIvm3e8w5ei9yNzY0E/bK9/E0BtS70=
+X-Microsoft-Antispam-PRVS: <VI1PR05MB4462D417341070E61BBCDCFBCFB00@VI1PR05MB4462.eurprd05.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(228905959029699);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231232)(944501327)(52105095)(6055026)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:VI1PR05MB4462;BCL:0;PCL:0;RULEID:;SRVR:VI1PR05MB4462;
+X-Forefront-PRVS: 0644578634
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(376002)(346002)(39380400002)(189003)(199004)(47776003)(46656002)(6916009)(316002)(16586007)(58126008)(54906003)(9786002)(83796002)(66066001)(57986006)(9746002)(50466002)(33656002)(105586002)(4326008)(68736007)(69596002)(6246003)(122856001)(3846002)(8676002)(6116002)(23726003)(106356001)(1076002)(2906002)(486006)(36756003)(478600001)(53936002)(7736002)(446003)(11346002)(5660300001)(229853002)(2616005)(305945005)(476003)(97736004)(76176011)(8936002)(26005)(59450400001)(81156014)(386003)(186003)(86362001)(52116002)(81166006)(18370500001)(24400500001)(42262002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4462;H:mlx.ziepe.ca;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR05MB4462;23:b5YPWysYxpA8zzRPxqwdX5Y3tkYte115WRFm0wHUc?=
+ =?us-ascii?Q?MhzYABa+OF5vQtjU0eDf/5RRwHMRaotpYPjDHg3yG74XErpmcxF+Ybv+hGxP?=
+ =?us-ascii?Q?lYP9ZyWRwW9RiCyC/2+ZyJrhYjFX4t2E55T01hrMfoI8YWUX0yTJxVioU9F+?=
+ =?us-ascii?Q?zBWFFK3MAIUkzEKtIIbXJPE2rAhGfaVGTpfVSaZJZKL9lrfq8Y/Bs9BpkhvC?=
+ =?us-ascii?Q?+KzWPmGiY9SbDjAwq579xTj6V0hluCNj+igt7Sx3eGQ5c+xzCtg0FA29tr6i?=
+ =?us-ascii?Q?iW3nPqmPgfkEwX43mslozevjAsd7pockphOXQszJHT1X7BZWYuHXjrFxUJgG?=
+ =?us-ascii?Q?IaaHw6ZYMuVRysvq4tyGPLFRJ4U5n5eopBnDNjb9F3+IBhMXVHGcKM16QNYK?=
+ =?us-ascii?Q?ifGG6DFvCvScOK9viV7Zl8SjRM5Ut7yfseph/oijskRVCKB8E67BfxyYOT7W?=
+ =?us-ascii?Q?i7rMglWIXwO8PC7WkkMhuVAR9BNaliyND+4Vp2AZPqQ0N6H1XXlblLMKJU1g?=
+ =?us-ascii?Q?5A447Ufk7YYkGpbX96iNfI61ngSzCHyfEMY7Gg18SDxBes+7KdZTYijjmNau?=
+ =?us-ascii?Q?X4B9dUd3xNTMiTK5MOVecBHZoc/R+8VbIoNiRx3YOJirBhj2yCRFYouqJvSP?=
+ =?us-ascii?Q?n1++N/XhZMnDMWC1wwpPFO81py2eHxAivA67M2kU8vtQ+YBAO5xKaDlC0D6G?=
+ =?us-ascii?Q?KUQvUPCpoUJHHoiGfuQ2qBi9aO5o/CFa1If6g3Kl+FXMLWJ3XrnPGxePvbnt?=
+ =?us-ascii?Q?rv5MlWEmlzENCt2Ayt+oSv6ek6UHOKk64j43eMr4p2POTYp4BU3Z0J1exlCU?=
+ =?us-ascii?Q?Jw+pX/5hNXZyhSihZynhB8gsCqSL40zZjCitfqfNU1Ap6sS628SAd7qZhdNy?=
+ =?us-ascii?Q?oYPZGaLJvEBszDYbLvR3Sf80i+V2C6ewR69bGVfqqr7SnzC4Uhtc8C4kgIo5?=
+ =?us-ascii?Q?Law+m8MnhNMUsGSchHVHdpN6mIpSVQtSIPAtrMNBjqL6tu11O6+dV6obV5WM?=
+ =?us-ascii?Q?0kUpTe9pPkKTJZzwSGTaNJU2cFv/7w9MAySKqmBF2LNXI3k9sVoWquLvoj4k?=
+ =?us-ascii?Q?EgyH2XQ/TuWmAgo3qYCbya5GxEq1qnmjTFSKG+dmT1dKx1spYDuEhiSRxpdZ?=
+ =?us-ascii?Q?jyaaDTxw8vB0/QDMI4xwmt5g2RDxK4YXF0bqfKy2+IBFLjkRHXsqM5QeulJg?=
+ =?us-ascii?Q?cJWRRcupICTRMQTrZOHsLiNpgRB37g8KTqLP2yS2b4dCRbTxmsx2prWPsdgu?=
+ =?us-ascii?Q?G0jPPfADCiuPfZuqfGQShoZicp/7SXJIXGMpyAtVhAvGwGYkYWIi64yUwxG0?=
+ =?us-ascii?Q?WPX94OStuw22OwUZFBxFi30Vmd22tnXAZQdwZDtLUPmvOA3UE0W7Nhr1Fg7u?=
+ =?us-ascii?Q?mWChzHrWgxRvumEnZHYxdmW6jk=3D?=
+X-Microsoft-Antispam-Message-Info: qX4xN6tlQGU8G1glwOvQUNPFS5yweAZgWQLra/oR1l3fnBdjVtDYYCjwD/eCLPu74i0rIzWYsz/G+bRf1ewd+0Dy9WXwy4aKDyPrlEFPSMda4vlmf0qSScXhC2kRZd4Fdfbf7UTdW5MsJ5TOCznbWvlLcXIuIG47e1WoKs+LIqI8MRc31YJ14App9l1sXWT1
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR05MB4462;6:nVEfxHugOoivY+fOIvhSxrhn7XIWAEqDtNVRLijWiXsjmfcFNsAP6KKIm/rhoHirjAMEMyvGICjowUvWQ05Pd/XFFlVDvEEEBmLUSa8+FA9CwiCx/0oOtirbsQhne+4vSxEj+HBfHUeNI/atIIda+77NxeryK5CLvf4Jb3Dc77sgpRhL+TJs00sTxl1l58MWITLLQfm2Bzd2DwSyZvQYkwiomMqtPQGkmxSAjGbDn2Xfk745FprgSD5b5cBNfuD9NFb8cQqgU9PpBTQHhqfh7Fa/ipDsWl2PiEerf+Y7ioYJz3O/cKEH2NiiRqTwqD6MTXuuO5uU3PBf8HK89QoGaB93E9f8UhGeUDABT8EZB8bXOAVLsHLUsZkbjHI/Z174Hbu7aSuvPBd4xLvvMLn0QVBddboBbVtu9GYMEtyGvRfhIx19KCZbv3wnyLyn+RGUdQ1JMciYVReU9EVon89yyA==;5:W312jq7Bdz1WYJGuwCecMPAMUlUV6PI8jjXpXOaOJ/zKni0e1MtpMDjBa/LmS8t4YJQ5F/3brjw5we/kOkUw8Nj7uiilQ4sXBx+mZGhD821XcQ/fMWSoLmMin1mTsULKc56LXnEbBh+c4H34WXKbD4Bc+ZjBbxhUkizzwR1GgVs=;24:OEcKoLAVeWaNstLZrFQa6+JVhFn3vir+utaxxVxPxN+X8kr9+IKKnHYdRnMOm5IsDuZM7xr8UUBVfMqwqjwnpzjpXic4nTo+X4BSyP2P9NA=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR05MB4462;7:uCMURSuRTJt2NkPiggj+Vmq82msIQPykR+AXhXZl1qTV2NsNPDVJ2ySwcxUSGlZ+cSTTcF60bbAbqTVkr5J8MQbN1QBNfFXpRhcliU4kY8HplhPv2rAhPDL1bcXLQiJIfMZI42PWZNA34hbHXN/xc1U5oi4CvGUNebODQO1ZQ0u12RXaMq4IL6FOuQVAPfuuxsHXiXYCGvFccDw8n51JspdfFSCDDCois7TBIdGRZD0VdN794wMiC7b3NjYIkvhD
+X-MS-Office365-Filtering-Correlation-Id: 6cbc28f6-0aa9-476f-27ea-08d5a3e4c7ab
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2018 21:55:33.3984
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cbc28f6-0aa9-476f-27ea-08d5a3e4c7ab
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4462
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the assembly code for cluster cache enabling and resuming
-into an assembly file instead of having it directly in C code.
+On Mon, Apr 16, 2018 at 02:21:07PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix build errors when INFINIBAND_USER_ACCESS=m and MLX5_INFINIBAND=y.
+> The build error occurs when the mlx5 driver code attempts to use
+> USER_ACCESS interfaces, which are built as a loadable module.
+> 
+> Fixes these build errors:
+> 
+> drivers/infiniband/hw/mlx5/main.o: In function `populate_specs_root':
+> ../drivers/infiniband/hw/mlx5/main.c:4982: undefined reference to `uverbs_default_get_objects'
+> ../drivers/infiniband/hw/mlx5/main.c:4994: undefined reference to `uverbs_alloc_spec_tree'
+> drivers/infiniband/hw/mlx5/main.o: In function `depopulate_specs_root':
+> ../drivers/infiniband/hw/mlx5/main.c:5001: undefined reference to `uverbs_free_spec_tree'
+> 
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Matan Barak <matanb@mellanox.com>
+> Cc: Jason Gunthorpe <jgg@mellanox.com>
+> Cc: Leon Romanovsky <leonro@mellanox.com>
+> Cc: Doug Ledford <dledford@redhat.com>
+> Cc: linux-rdma@vger.kernel.org
+> Cc: stable@vger.kernel.org # reported against 4.16
+>  drivers/infiniband/hw/mlx5/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> +++ lnx-417-rc1/drivers/infiniband/hw/mlx5/Kconfig
+> @@ -1,6 +1,7 @@
+>  config MLX5_INFINIBAND
+>  	tristate "Mellanox Connect-IB HCA support"
+>  	depends on NETDEVICES && ETHERNET && PCI && MLX5_CORE
+> +	select INFINIBAND_USER_ACCESS
 
-Remove the CFLAGS because we are using the ARM directive "arch"
-instead.
+Shouldn't this be done via
 
-Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
----
- arch/arm/mach-sunxi/Makefile  |  4 +--
- arch/arm/mach-sunxi/headsmp.S | 80 +++++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-sunxi/mc_smp.c  | 82 +++----------------------------------------
- 3 files changed, 85 insertions(+), 81 deletions(-)
- create mode 100644 arch/arm/mach-sunxi/headsmp.S
+	depends on m || INFINIBAND_USER_ACCESS != m
 
-diff --git a/arch/arm/mach-sunxi/Makefile b/arch/arm/mach-sunxi/Makefile
-index 7de9cc286d53..7f45071ae74a 100644
---- a/arch/arm/mach-sunxi/Makefile
-+++ b/arch/arm/mach-sunxi/Makefile
-@@ -1,5 +1,3 @@
--CFLAGS_mc_smp.o	+= -march=armv7-a
--
- obj-$(CONFIG_ARCH_SUNXI) += sunxi.o
--obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o
-+obj-$(CONFIG_ARCH_SUNXI_MC_SMP) += mc_smp.o headsmp.o
- obj-$(CONFIG_SMP) += platsmp.o
-diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-new file mode 100644
-index 000000000000..37dc772701f3
---- /dev/null
-+++ b/arch/arm/mach-sunxi/headsmp.S
-@@ -0,0 +1,80 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2018 Chen-Yu Tsai
-+ * Copyright (c) 2018 Bootlin
-+ *
-+ * Chen-Yu Tsai <wens@csie.org>
-+ * Mylène Josserand <mylene.josserand@bootlin.com>
-+ *
-+ * SMP support for sunxi based systems with Cortex A7/A15
-+ *
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/assembler.h>
-+#include <asm/cputype.h>
-+
-+ENTRY(sunxi_mc_smp_cluster_cache_enable)
-+	.arch	armv7-a
-+	/*
-+	 * Enable cluster-level coherency, in preparation for turning on the MMU.
-+	 *
-+	 * Also enable regional clock gating and L2 data latency settings for
-+	 * Cortex-A15. These settings are from the vendor kernel.
-+	 */
-+	mrc	p15, 0, r1, c0, c0, 0
-+	movw	r2, #(ARM_CPU_PART_MASK & 0xffff)
-+	movt	r2, #(ARM_CPU_PART_MASK >> 16)
-+	and	r1, r1, r2
-+	movw	r2, #(ARM_CPU_PART_CORTEX_A15 & 0xffff)
-+	movt	r2, #(ARM_CPU_PART_CORTEX_A15 >> 16)
-+	cmp	r1, r2
-+	bne	not_a15
-+
-+	/* The following is Cortex-A15 specific */
-+
-+	/* ACTLR2: Enable CPU regional clock gates */
-+	mrc p15, 1, r1, c15, c0, 4
-+	orr r1, r1, #(0x1 << 31)
-+	mcr p15, 1, r1, c15, c0, 4
-+
-+	/* L2ACTLR */
-+	mrc p15, 1, r1, c15, c0, 0
-+	/* Enable L2, GIC, and Timer regional clock gates */
-+	orr r1, r1, #(0x1 << 26)
-+	/* Disable clean/evict from being pushed to external */
-+	orr r1, r1, #(0x1<<3)
-+	mcr p15, 1, r1, c15, c0, 0
-+
-+	/* L2CTRL: L2 data RAM latency */
-+	mrc p15, 1, r1, c9, c0, 2
-+	bic r1, r1, #(0x7 << 0)
-+	orr r1, r1, #(0x3 << 0)
-+	mcr p15, 1, r1, c9, c0, 2
-+
-+	/* End of Cortex-A15 specific setup */
-+	not_a15:
-+
-+	/* Get value of sunxi_mc_smp_first_comer */
-+	adr	r1, first
-+	ldr	r0, [r1]
-+	ldr	r0, [r1, r0]
-+
-+	/* Skip cci_enable_port_for_self if not first comer */
-+	cmp	r0, #0
-+	bxeq	lr
-+	b	cci_enable_port_for_self
-+
-+	.align 2
-+	first: .word sunxi_mc_smp_first_comer - .
-+ENDPROC(sunxi_mc_smp_cluster_cache_enable)
-+
-+ENTRY(sunxi_mc_smp_secondary_startup)
-+	bl	sunxi_mc_smp_cluster_cache_enable
-+	b	secondary_startup
-+ENDPROC(sunxi_mc_smp_secondary_startup)
-+
-+ENTRY(sunxi_mc_smp_resume)
-+	bl	sunxi_mc_smp_cluster_cache_enable
-+	b	cpu_resume
-+ENDPROC(sunxi_mc_smp_resume)
-diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-index c0246ec54a0a..727968d6a3e5 100644
---- a/arch/arm/mach-sunxi/mc_smp.c
-+++ b/arch/arm/mach-sunxi/mc_smp.c
-@@ -72,6 +72,9 @@ static void __iomem *cpucfg_base;
- static void __iomem *prcm_base;
- static void __iomem *sram_b_smp_base;
- 
-+extern void sunxi_mc_smp_secondary_startup(void);
-+extern void sunxi_mc_smp_resume(void);
-+
- static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
- {
- 	struct device_node *node;
-@@ -300,74 +303,7 @@ static void sunxi_cluster_cache_disable_without_axi(void)
- }
- 
- static int sunxi_mc_smp_cpu_table[SUNXI_NR_CLUSTERS][SUNXI_CPUS_PER_CLUSTER];
--static int sunxi_mc_smp_first_comer;
--
--/*
-- * Enable cluster-level coherency, in preparation for turning on the MMU.
-- *
-- * Also enable regional clock gating and L2 data latency settings for
-- * Cortex-A15. These settings are from the vendor kernel.
-- */
--static void __naked sunxi_mc_smp_cluster_cache_enable(void)
--{
--	asm volatile (
--		"mrc	p15, 0, r1, c0, c0, 0\n"
--		"movw	r2, #" __stringify(ARM_CPU_PART_MASK & 0xffff) "\n"
--		"movt	r2, #" __stringify(ARM_CPU_PART_MASK >> 16) "\n"
--		"and	r1, r1, r2\n"
--		"movw	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 & 0xffff) "\n"
--		"movt	r2, #" __stringify(ARM_CPU_PART_CORTEX_A15 >> 16) "\n"
--		"cmp	r1, r2\n"
--		"bne	not_a15\n"
--
--		/* The following is Cortex-A15 specific */
--
--		/* ACTLR2: Enable CPU regional clock gates */
--		"mrc p15, 1, r1, c15, c0, 4\n"
--		"orr r1, r1, #(0x1<<31)\n"
--		"mcr p15, 1, r1, c15, c0, 4\n"
--
--		/* L2ACTLR */
--		"mrc p15, 1, r1, c15, c0, 0\n"
--		/* Enable L2, GIC, and Timer regional clock gates */
--		"orr r1, r1, #(0x1<<26)\n"
--		/* Disable clean/evict from being pushed to external */
--		"orr r1, r1, #(0x1<<3)\n"
--		"mcr p15, 1, r1, c15, c0, 0\n"
--
--		/* L2CTRL: L2 data RAM latency */
--		"mrc p15, 1, r1, c9, c0, 2\n"
--		"bic r1, r1, #(0x7<<0)\n"
--		"orr r1, r1, #(0x3<<0)\n"
--		"mcr p15, 1, r1, c9, c0, 2\n"
--
--		/* End of Cortex-A15 specific setup */
--		"not_a15:\n"
--
--		/* Get value of sunxi_mc_smp_first_comer */
--		"adr	r1, first\n"
--		"ldr	r0, [r1]\n"
--		"ldr	r0, [r1, r0]\n"
--
--		/* Skip cci_enable_port_for_self if not first comer */
--		"cmp	r0, #0\n"
--		"bxeq	lr\n"
--		"b	cci_enable_port_for_self\n"
--
--		".align 2\n"
--		"first: .word sunxi_mc_smp_first_comer - .\n"
--	);
--}
--
--static void __naked sunxi_mc_smp_secondary_startup(void)
--{
--	asm volatile(
--		"bl	sunxi_mc_smp_cluster_cache_enable\n"
--		"b	secondary_startup"
--		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
--		:: "i" (sunxi_mc_smp_cluster_cache_enable)
--	);
--}
-+int sunxi_mc_smp_first_comer;
- 
- static DEFINE_SPINLOCK(boot_lock);
- 
-@@ -637,16 +573,6 @@ static bool __init sunxi_mc_smp_cpu_table_init(void)
-  */
- typedef typeof(cpu_reset) phys_reset_t;
- 
--static void __init __naked sunxi_mc_smp_resume(void)
--{
--	asm volatile(
--		"bl	sunxi_mc_smp_cluster_cache_enable\n"
--		"b	cpu_resume"
--		/* Let compiler know about sunxi_mc_smp_cluster_cache_enable */
--		:: "i" (sunxi_mc_smp_cluster_cache_enable)
--	);
--}
--
- static int __init nocache_trampoline(unsigned long __unused)
- {
- 	phys_reset_t phys_reset;
--- 
-2.11.0
+?
+
+We can turn off USER_ACCESS and still successfully compile the driver.
+
+Jason
