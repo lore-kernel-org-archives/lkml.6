@@ -1,78 +1,68 @@
-Return-Path: <dave.hansen@linux.intel.com>
-X-Google-Smtp-Source: AIpwx48FlDTOsZ+PN2p65K23FLEvOJQqOCbxjU/VT6V5PZE6PmnrCBuU9Q+j45EY4KSJ7yqzu/5c
-ARC-Seal: i=1; a=rsa-sha256; t=1523901541; cv=none;
+Return-Path: <linus971@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523901850; cv=none;
         d=google.com; s=arc-20160816;
-        b=eJJohHuUzLbA6p3+/KWKeCEI9Ck5qyUAPAKuZ2JYuTCIF0wA0nnMmeK7mcoveiEVW/
-         LDZk3VloUkX6pFjRrvOHnzwdf+z/i3N3B6l/mx47kWbdmd4BFThOIZXbrSJOUhQRix/M
-         uvmJY2h9Gk9Qbpe9rVFr1c+5nQeUaDY/vlWnykdI72xyd75o5J1azvXb1YWT7OLdt3qC
-         YvORS12yJpb09IJnB/r0cNIsvE2buT6RhpSYTL86CLBdLQuxHobwuuzGG63m32ogV1nF
-         v9kT/IEN20ewFKxiLDjHouXMmBiB72pB5aHnXIyEILQe+ILgM3cZcp5ElvM/bPtqVqe+
-         B+eQ==
+        b=L/oja2SB9wNwfAzsfdC7NH8UbTMr8/T1XCTdYZxde08SreOIwaEB1RbCkNX13Fx1vF
+         McEy7PMuZIp/BmmKVIHsQdXvH5OLwD1L2MyG9KvGC+uTrlQWcPWB5KJVIHWRapDoPmJ8
+         bGQJ9OcvLpgUUnf/Nn3nfE5OP734EKw8JH0BTu+7y4cyOjulKQ6yjGGR+D6l1XFqvXw1
+         qN6fx4PojUzHq0YyBRaxmLjdMzcvywIZ4l78yBMmNzpzxdy7iNvQ2ORxECGqASgJZRji
+         Cnv6z6Du0kOcJyDS6vp/KnGY13jah/kE2O6Y+wG2HNlJvd8mXG3fWLHH3A2n1OK3wuYw
+         9oSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:cc:references:to:subject
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=sAGPPRKwLgz3Y3kNX/dRXwbRyfgcXvZhG+WgvJ7wGaw=;
-        b=UZY/afJHKTkQbgyn3N3t5aFvXN2PNVH8wAO9jLA/rXB3aSy6AQUiaWMMq58ZVy2S09
-         HmD4LpZavEBOhcgbHq6OM7g/ThJxqIJPPcUgXNd6cGX3vHKN49EVkPFiBNcjiq0qHY1j
-         MUZdOQ4/5du6FcSc7Iq1dtWyJ0WHIihOgep880pvSXDWXpIhGq9kja41+1YKlBlZYeP+
-         Src/Bp6kpR27gn7DWm41nNkD5ZwezdgbfIMfk+jFmUKFTuXT6jh/fvgMrmMEhgzESJBZ
-         vGBUYGeH3X+NfWcLkKWhrKTBA/mJ2aJG+yzTuEnqMypVAoyOvMZOK/h0NZXaueHsu4yu
-         oDdg==
+        bh=IMl5t+KZtXpZ4U9NbMcpNi7hjQm6LJces1QJgT8pG9M=;
+        b=z9+xiSWJyAAT70C/lZ7jEJXBg2sluQ74vVOJgMMltuGFk/+jTF1DPkUodlrSXnJf01
+         oTaPpa/uYK66AIbc25uwaBhVcp2qT6CkJwGQ3fWpI5XWn8VpkyRzNiBzzy0ji+M3zH+C
+         Ox5IMqZB5owiobF20THYvyJIJOIRFgSWafhiy+EKo9fadi8cP/jUucSEjNR3YRqb0UMy
+         MGaZuheBb7GXVKSbfqQudBvJSIhTVchCfZ2U+lQEfMwN33FW5T+PUnEh6CgYImers+kZ
+         L1sQWwLhaQRxH3OSVRWsAGjcM7uwny3oBFfG06Sxlh43XaEwEG7lmRieP4eQFTnUs7IY
+         U2pQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=l58m7iM9;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=NKNABGau;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of dave.hansen@linux.intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=dave.hansen@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,459,1517904000";
-   d="scan'208";a="191934707"
-Subject: Re: Linux 4.17-rc1 - kernel paging errors running x86 selftests
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Shuah Khan <shuahkh@osg.samsung.com>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=l58m7iM9;
+       dkim=pass header.i=@linux-foundation.org header.s=google header.b=NKNABGau;
+       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
+X-Google-Smtp-Source: AIpwx48Ghqm+zOCkjbJj+yXCVj1IlGB9bI043blA37DHTbARSjeSlDpbbRQNLBhlKWNakByz68pZpWQyhm83v/2Z/8o=
+MIME-Version: 1.0
+Sender: linus971@gmail.com
+In-Reply-To: <8c0a94b7-763d-16be-6401-23a3064ee55a@linux.intel.com>
 References: <1dcd116c-9384-6885-2d9e-f620c14bd955@osg.samsung.com>
  <CA+55aFwE1SR87+Xkkmfr+D0Yq3R0HRkdf1GdgScEfXXWN4ba6w@mail.gmail.com>
- <CA+55aFzotCBw7S=dNzyFjZkNqS7MMeKVgUoK6Dgb9gRPV_ywVQ@mail.gmail.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- the arch/x86 maintainers <x86@kernel.org>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Message-ID: <8c0a94b7-763d-16be-6401-23a3064ee55a@linux.intel.com>
-Date: Mon, 16 Apr 2018 10:58:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CA+55aFzotCBw7S=dNzyFjZkNqS7MMeKVgUoK6Dgb9gRPV_ywVQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+ <CA+55aFzotCBw7S=dNzyFjZkNqS7MMeKVgUoK6Dgb9gRPV_ywVQ@mail.gmail.com> <8c0a94b7-763d-16be-6401-23a3064ee55a@linux.intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 16 Apr 2018 11:04:09 -0700
+X-Google-Sender-Auth: k9E8WT6o4Clx8CY7m6BUZTRC0CM
+Message-ID: <CA+55aFx=pwEJQHhab3gW6+qdom=ccFoWoK-aZokmqtPxNqTd8g@mail.gmail.com>
+Subject: Re: Linux 4.17-rc1 - kernel paging errors running x86 selftests
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Shuah Khan <shuahkh@osg.samsung.com>, Andy Lutomirski <luto@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597922964171604923?=
-X-GMAIL-MSGID: =?utf-8?q?1597926583083102202?=
+X-GMAIL-MSGID: =?utf-8?q?1597926906431027068?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/16/2018 10:56 AM, Linus Torvalds wrote:
-> On Mon, Apr 16, 2018 at 10:43 AM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> I don't see *why* it would be badly set up, and that test works fine
->> for me, though.
-> 
-> AHHAH!
-> 
-> I'm wrong. I can see it too. My desktop was running 18b7fd1c93e5 (my
-> kernel from Saturday, I hadn't rebooted it since), but I had 4.17-rc1
-> in kvmtool and on my laptop, and I see the problem in both cases.
-> 
-> So this came in recently, and I bet it's the global pages series from
-> Dave Hansen, although there were a few other things that came in
-> during the last day.
+On Mon, Apr 16, 2018 at 10:58 AM, Dave Hansen
+<dave.hansen@linux.intel.com> wrote:
+>
+> Joerg just found and fixed something that would be poked by the x86
+> selftests:
+>
+> https://lkml.org/lkml/2018/4/16/230
 
-Joerg just found and fixed something that would be poked by the x86
-selftests:
+Yup.
 
-https://lkml.org/lkml/2018/4/16/230
+And that silly bug explains the all-ones PTE.
+
+I was going through the bisection, with just a couple more rounds to
+go, but I guess I don't even need it.
+
+              Linus
