@@ -1,83 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754271AbeDPJJ5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:09:57 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35379 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754101AbeDPJJz (ORCPT
+        id S1754407AbeDPJKB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:10:01 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38238 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754101AbeDPJJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:09:55 -0400
-X-Google-Smtp-Source: AIpwx4+eEY4wTxb5XAmgoFla4X/BE4b/f5WFMx1APUidLMVPnPxMhO0Zl8h6pggZQcwRctb9zv2abw==
+        Mon, 16 Apr 2018 05:09:58 -0400
+X-Google-Smtp-Source: AIpwx4+kKxuuyqkPHISYX/1NwsOLy31rdbOiBo5x42chKn4OF26rtIRNqR0hdPBNC+SMyUjmZG0epA==
 From: Minchan Kim <minchan@kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: LKML <linux-kernel@vger.kernel.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Minchan Kim <minchan@kernel.org>
-Subject: [PATCH v5 0/4] zram memory tracking
-Date: Mon, 16 Apr 2018 18:09:42 +0900
-Message-Id: <20180416090946.63057-1-minchan@kernel.org>
+        Minchan Kim <minchan@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCH v5 1/4] zram: correct flag name of ZRAM_ACCESS
+Date: Mon, 16 Apr 2018 18:09:43 +0900
+Message-Id: <20180416090946.63057-2-minchan@kernel.org>
 X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+In-Reply-To: <20180416090946.63057-1-minchan@kernel.org>
+References: <20180416090946.63057-1-minchan@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zRam as swap is useful for small memory device. However, swap means
-those pages on zram are mostly cold pages due to VM's LRU algorithm.
-Especially, once init data for application are touched for launching,
-they tend to be not accessed any more and finally swapped out.
-zRAM can store such cold pages as compressed form but it's pointless
-to keep in memory. As well, it's pointless to store incompressible
-pages to zram so better idea is app developers manages them directly
-like free or mlock rather than remaining them on heap.
+ZRAM_ACCESS is used for locking a slot of zram so correct the name.
+It is also not a common flag to indicate status of the block so
+move the declare position on top of the flag.
+Lastly, let's move the function to the top of source code to be able to
+use it easily without forward declaration.
 
-This patch provides a debugfs /sys/kernel/debug/zram/zram0/block_state
-to represent each block's state so admin can investigate what memory is
-cold|incompressible|same page with using pagemap once the pages are
-swapped out.
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+---
+ drivers/block/zram/zram_drv.c | 20 ++++++++++----------
+ drivers/block/zram/zram_drv.h |  6 +++---
+ 2 files changed, 13 insertions(+), 13 deletions(-)
 
-
-The output is as follows,
-      300    75.033841 .wh
-      301    63.806904 s..
-      302    63.806919 ..h
-
-First column is zram's block index and 3rh one represents symbol
-(s: same page w: written page to backing store h: huge page) of the
-block state. Second column represents usec time unit of the block
-was last accessed. So above example means the 300th block is accessed
-at 75.033851 second and it was huge so it was written to the backing
-store.
-
-* from v4:
-  * Fix typos - Randy
-  * Add reviewed-by from Sergey
-
-* from v3:
-  * use depends on selecting DEBUG_FS - Greg KH
-  * Add acked-by from Greg
-  * Fix null ptr access at module unload - Sergey
-  * warning fix from copy_to_user - Sergey
-
-* From v2:
-  * debugfs and Kconfig cleanup - Greg KH
-  * Remove unnecesarry buffer - Sergey
-  * Change timestamp from sec to usec
-
-* From v1:
-  * Do not propagate error number for debugfs fail - Greg KH
-  * Add writeback and hugepage information - Serge
-
-Minchan Kim (4):
-  zram: correct flag name of ZRAM_ACCESS
-  zram: mark incompressible page as ZRAM_HUGE
-  zram: record accessed second
-  zram: introduce zram memory tracking
-
- Documentation/blockdev/zram.txt |  25 +++++
- drivers/block/zram/Kconfig      |  14 ++-
- drivers/block/zram/zram_drv.c   | 173 +++++++++++++++++++++++++++++---
- drivers/block/zram/zram_drv.h   |  14 ++-
- 4 files changed, 207 insertions(+), 19 deletions(-)
-
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index 0f3fadd71230..18dadeab775b 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -52,6 +52,16 @@ static size_t huge_class_size;
+ 
+ static void zram_free_page(struct zram *zram, size_t index);
+ 
++static void zram_slot_lock(struct zram *zram, u32 index)
++{
++	bit_spin_lock(ZRAM_LOCK, &zram->table[index].value);
++}
++
++static void zram_slot_unlock(struct zram *zram, u32 index)
++{
++	bit_spin_unlock(ZRAM_LOCK, &zram->table[index].value);
++}
++
+ static inline bool init_done(struct zram *zram)
+ {
+ 	return zram->disksize;
+@@ -753,16 +763,6 @@ static DEVICE_ATTR_RO(io_stat);
+ static DEVICE_ATTR_RO(mm_stat);
+ static DEVICE_ATTR_RO(debug_stat);
+ 
+-static void zram_slot_lock(struct zram *zram, u32 index)
+-{
+-	bit_spin_lock(ZRAM_ACCESS, &zram->table[index].value);
+-}
+-
+-static void zram_slot_unlock(struct zram *zram, u32 index)
+-{
+-	bit_spin_unlock(ZRAM_ACCESS, &zram->table[index].value);
+-}
+-
+ static void zram_meta_free(struct zram *zram, u64 disksize)
+ {
+ 	size_t num_pages = disksize >> PAGE_SHIFT;
+diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
+index 008861220723..8d8959ceabd1 100644
+--- a/drivers/block/zram/zram_drv.h
++++ b/drivers/block/zram/zram_drv.h
+@@ -43,9 +43,9 @@
+ 
+ /* Flags for zram pages (table[page_no].value) */
+ enum zram_pageflags {
+-	/* Page consists the same element */
+-	ZRAM_SAME = ZRAM_FLAG_SHIFT,
+-	ZRAM_ACCESS,	/* page is now accessed */
++	/* zram slot is locked */
++	ZRAM_LOCK = ZRAM_FLAG_SHIFT,
++	ZRAM_SAME,	/* Page consists the same element */
+ 	ZRAM_WB,	/* page is stored on backing_device */
+ 
+ 	__NR_ZRAM_PAGEFLAGS,
 -- 
 2.17.0.484.g0c8726318c-goog
