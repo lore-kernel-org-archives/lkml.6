@@ -1,102 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755407AbeDPMRz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:17:55 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49199 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755396AbeDPMRu (ORCPT
+        id S1755413AbeDPMSW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:18:22 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42261 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755206AbeDPMRd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:17:50 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180416121748euoutp02ab60e524aa1d11e92a1089c02b70ca98~l6cIWHDmX2259122591euoutp028
-X-AuditID: cbfec7f5-b5fff700000028a9-25-5ad4946a6026
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 01/14] thermal: exynos: Reading temperature makes sense
- only when TMU is turned on
-Date: Mon, 16 Apr 2018 14:17:44 +0200
-Message-ID: <60958515.5KCaPvLZ9i@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-Reply-To: <a49d9651-bb52-85bc-ffc0-2ba012e66dd5@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7pZU65EGXzcrWMx77Osxfwr11gt
-        +h+/ZrY4f34Du8XlXXPYLD73HmG0mHF+H5PF2iN32S2ePOxjc+D02DnrLrvH4j0vmTw2repk
-        87hzbQ+bR9+WVYwenzfJBbBFcdmkpOZklqUW6dslcGWcXfGOteAdV8X1LT+ZGhgbOLsYOTkk
-        BEwkTu/dxtLFyMUhJLCCUaJ/+j1mCOcLo0TXzXNQmc+MEjde7mWCaXn79wwTRGI5o8SSg5eh
-        nA+MEm/erGADqWITsJKY2L6KEcQWEdCTaHzfBlbELDCfSeJc92IWkISwQIbEtnM/wcayCKhK
-        XOleD9bMK6AlcXfNOmYQW1TAS2LLvnawGk4BO4nnR44xQ9QISpyc+QRsDrOAvETH5UZWkAUS
-        ArvYJZoXXGCDuNVFYsmlZcwQtrDEq+Nb2CFsGYnTk3tYIBqaGSW+7dgDVTSBUWLPeiEI21ri
-        8PGLQFM5gDZoSqzfpQ8RtpV40XuTGSQsIcAnceOtIMQNfBKTtk2HCvNKdLRBDVGT2LBsAxvM
-        1q6dK6EWeUg8mtvFNoFRaRaSb2Yh+WYWwt4FjMyrGMVTS4tz01OLjfNSy/WKE3OLS/PS9ZLz
-        czcxAlPR6X/Hv+5g3Pcn6RCjAAejEg/vjrOXo4RYE8uKK3MPMUpwMCuJ8C5LBArxpiRWVqUW
-        5ccXleakFh9ilOZgURLnjdOoixISSE8sSc1OTS1ILYLJMnFwSjUwOtSfNbbbZi8dmJN7auZF
-        TpeHgSf5pkvNb03y4J/u3O6fVGx95U5B1jTRrX9EjVv/ftl47LVim3aK2tcYnm0by/Xmd6l2
-        hj1elD9jMfuVeVxmJ7fHbinQDWYRPZY/nduJfxNzYE/ptZaIkwVlnCskdt60TvvNeLhmi9EJ
-        76xV6YcafvnrLapXYinOSDTUYi4qTgQA8MJCzUEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t/xu7qZU65EGZx4aWox77Osxfwr11gt
-        +h+/ZrY4f34Du8XlXXPYLD73HmG0mHF+H5PF2iN32S2ePOxjc+D02DnrLrvH4j0vmTw2repk
-        87hzbQ+bR9+WVYwenzfJBbBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp
-        29mkpOZklqUW6dsl6GWcXfGOteAdV8X1LT+ZGhgbOLsYOTkkBEwk3v49w9TFyMUhJLCUUeJu
-        83MghwMoISNxfH0ZRI2wxJ9rXWwQNe8YJX6efsoMkmATsJKY2L6KEcQWEdCTaHzfxgRiMwvM
-        ZJK4uUoTxBYWSJM48PYcK4jNIqAqcaV7PRuIzSugJXF3zTqwOaICXhJb9rWD9XIK2Ek8P3KM
-        GWLZdkaJx+1z2CEaBCVOznzCArFAXqLjciMrhK0jsWD3J7YJjIKzkJTNQlI2C0nZAkbmVYwi
-        qaXFuem5xUZ6xYm5xaV56XrJ+bmbGIERtu3Yzy07GLveBR9iFOBgVOLh3XH2cpQQa2JZcWXu
-        IUYJDmYlEd5liUAh3pTEyqrUovz4otKc1OJDjKZA301klhJNzgdGf15JvKGpobmFpaG5sbmx
-        mYWSOO95g8ooIYH0xJLU7NTUgtQimD4mDk6pBsZzy2JTpfSyrlsc+pgZrfc64at5V823VRfv
-        zGW4zPbyupjy7E1qPVK/F/39fnfiad+pawS2B54+dUfqseabzmdvqjkfvit765n7fPqh20Gh
-        ixPUZu/MLGCa5bmOeZFJ2M6mDxw7VPhtjpydp/vi4omAdKObJxlqVOd9K3aZO6cmeJX0Y/Ul
-        0Q48SizFGYmGWsxFxYkAzRaUAcYCAAA=
-X-CMS-MailID: 20180416121746eucas1p1de1cf16bcf7d8fdccd87ac41db735ef6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180416121746eucas1p1de1cf16bcf7d8fdccd87ac41db735ef6
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180416121746eucas1p1de1cf16bcf7d8fdccd87ac41db735ef6
-X-RootMTR: 20180416121746eucas1p1de1cf16bcf7d8fdccd87ac41db735ef6
-References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-        <1523873525-23718-2-git-send-email-b.zolnierkie@samsung.com>
-        <a49d9651-bb52-85bc-ffc0-2ba012e66dd5@linaro.org>
-        <CGME20180416121746eucas1p1de1cf16bcf7d8fdccd87ac41db735ef6@eucas1p1.samsung.com>
+        Mon, 16 Apr 2018 08:17:33 -0400
+X-Google-Smtp-Source: AIpwx49ykl7nFMrrfuYOznY2NQ0G/OxUj20F4Q0vuOWhiBpkBH4Q2gXnFccN+ocOcEb5HRxCEOkAsQ==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1 2/4] drm/tegra: dc: Rename supports_blending to legacy_blending
+Date: Mon, 16 Apr 2018 15:16:26 +0300
+Message-Id: <9a70c238b02fabb2af14508dc31d41820a71bebd.1523880381.git.digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cover.1523880381.git.digetx@gmail.com>
+References: <cover.1523880381.git.digetx@gmail.com>
+In-Reply-To: <cover.1523880381.git.digetx@gmail.com>
+References: <cover.1523880381.git.digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, April 16, 2018 02:06:41 PM Daniel Lezcano wrote:
-> On 16/04/2018 12:11, Bartlomiej Zolnierkiewicz wrote:
-> > From: Marek Szyprowski <m.szyprowski@samsung.com>
-> > 
-> > When thermal sensor is not yet enabled, reading temperature might return
-> > random value. This might even result in stopping system booting when such
-> > temperature is higher than the critical value. Fix this by checking if TMU
-> > has been actually enabled before reading the temperature.
-> > 
-> > This change fixes booting of Exynos4210-based board with TMU enabled (for
-> > example Samsung Trats board), which was broken since v4.4 kernel release.
-> 
-> Why not move the thermal_zone_of_sensor_register *after* initializing
-> the sensor ?
+Older Tegra's support blending. Rename SoC info entry supports_blending
+to legacy_blending to eliminate confusion.
 
-For initializing the sensor we need data obtained from
-therm_zone_of_sensor_register() so it cannot be easily
-done (especially since we also want the fix to be
-ported to -stable kernels). For more detailed description
-please see:
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/gpu/drm/tegra/dc.c | 20 ++++++++++----------
+ drivers/gpu/drm/tegra/dc.h |  2 +-
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-https://lkml.org/lkml/2018/4/10/376
-
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Fixes: 9e4249b40340 ("thermal: exynos: Fix first temperature read after registering sensor")
-> > CC: stable@vger.kernel.org # v4.6+
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index a2bf216d8854..a54eefea2513 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -440,10 +440,10 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
+ 
+ 	tegra_plane_writel(plane, value, DC_WIN_WIN_OPTIONS);
+ 
+-	if (dc->soc->supports_blending)
+-		tegra_plane_setup_blending(plane, window);
+-	else
++	if (dc->soc->legacy_blending)
+ 		tegra_plane_setup_blending_legacy(plane);
++	else
++		tegra_plane_setup_blending(plane, window);
+ }
+ 
+ static const u32 tegra20_primary_formats[] = {
+@@ -549,7 +549,7 @@ static int tegra_plane_atomic_check(struct drm_plane *plane,
+ 	 * the corresponding opaque formats. However, the opaque formats can
+ 	 * be emulated by disabling alpha blending for the plane.
+ 	 */
+-	if (!dc->soc->supports_blending) {
++	if (dc->soc->legacy_blending) {
+ 		err = tegra_plane_setup_legacy_state(tegra, plane_state);
+ 		if (err < 0)
+ 			return err;
+@@ -2092,7 +2092,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
+ 	.supports_interlacing = false,
+ 	.supports_cursor = false,
+ 	.supports_block_linear = false,
+-	.supports_blending = false,
++	.legacy_blending = true,
+ 	.pitch_align = 8,
+ 	.has_iommu = false,
+ 	.has_powergate = false,
+@@ -2110,7 +2110,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
+ 	.supports_interlacing = false,
+ 	.supports_cursor = false,
+ 	.supports_block_linear = false,
+-	.supports_blending = false,
++	.legacy_blending = true,
+ 	.pitch_align = 8,
+ 	.has_iommu = true,
+ 	.has_powergate = false,
+@@ -2128,7 +2128,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
+ 	.supports_interlacing = false,
+ 	.supports_cursor = false,
+ 	.supports_block_linear = false,
+-	.supports_blending = false,
++	.legacy_blending = true,
+ 	.pitch_align = 64,
+ 	.has_iommu = true,
+ 	.has_powergate = true,
+@@ -2146,7 +2146,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
+ 	.supports_interlacing = true,
+ 	.supports_cursor = true,
+ 	.supports_block_linear = true,
+-	.supports_blending = true,
++	.legacy_blending = false,
+ 	.pitch_align = 64,
+ 	.has_iommu = true,
+ 	.has_powergate = true,
+@@ -2164,7 +2164,7 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
+ 	.supports_interlacing = true,
+ 	.supports_cursor = true,
+ 	.supports_block_linear = true,
+-	.supports_blending = true,
++	.legacy_blending = false,
+ 	.pitch_align = 64,
+ 	.has_iommu = true,
+ 	.has_powergate = true,
+@@ -2216,7 +2216,7 @@ static const struct tegra_dc_soc_info tegra186_dc_soc_info = {
+ 	.supports_interlacing = true,
+ 	.supports_cursor = true,
+ 	.supports_block_linear = true,
+-	.supports_blending = true,
++	.legacy_blending = false,
+ 	.pitch_align = 64,
+ 	.has_powergate = false,
+ 	.coupled_pm = false,
+diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
+index d0bbcbcde4c1..3156006e75c6 100644
+--- a/drivers/gpu/drm/tegra/dc.h
++++ b/drivers/gpu/drm/tegra/dc.h
+@@ -55,7 +55,7 @@ struct tegra_dc_soc_info {
+ 	bool supports_interlacing;
+ 	bool supports_cursor;
+ 	bool supports_block_linear;
+-	bool supports_blending;
++	bool legacy_blending;
+ 	unsigned int pitch_align;
+ 	bool has_iommu;
+ 	bool has_powergate;
+-- 
+2.17.0
