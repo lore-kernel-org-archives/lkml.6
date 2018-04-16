@@ -1,96 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755273AbeDPN7p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:59:45 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:46446 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752578AbeDPN7o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:59:44 -0400
-Subject: Re: nds32 build failures
-From: Guenter Roeck <private@roeck-us.net>
-To: Greentime Hu <green.hu@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vincent Chen <vincentc@andestech.com>,
-        Greentime Hu <greentime@andestech.com>, Arnd Bergmann <arnd@arndb.de>,
-        kito.cheng@gmail.com, wuiw@andestech.com
-References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
- <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com>
- <a009bde1-c2d5-02ad-91ae-e2af2dc9f789@roeck-us.net>
-Message-ID: <ff66cf1e-e3e5-c597-4f1f-3e52be84960c@roeck-us.net>
-Date: Mon, 16 Apr 2018 06:59:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755319AbeDPOAC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:00:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57912 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755206AbeDPOAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 10:00:00 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5840621776
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Mon, 16 Apr 2018 10:59:57 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] perf/core: store context switch out type into
+ Perf trace
+Message-ID: <20180416135957.GC23802@kernel.org>
+References: <ff228fc5-5742-a5fe-8cad-79704742672c@linux.intel.com>
+ <9ff84e83-a0ca-dd82-a6d0-cb951689be74@linux.intel.com>
+ <20180409092603.GY4043@hirez.programming.kicks-ass.net>
+ <17c73937-5fdc-7323-366d-edb2f483b30c@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <a009bde1-c2d5-02ad-91ae-e2af2dc9f789@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Authenticated_sender: private@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: private@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: private@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17c73937-5fdc-7323-366d-edb2f483b30c@linux.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/2018 06:22 AM, Guenter Roeck wrote:
-> On 04/16/2018 02:06 AM, Greentime Hu wrote:
->> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
->>> I thought I should give the brand new architecture a try. Unfortunately,
->>> that was not very successful.
->>>
->>> Build reference: v4.17-rc1
->>> gcc version: nds32le-elf-gcc (GCC) 7.3.0
->>>
->>> Building nds32:defconfig ... failed
->>>
->>> arch/nds32/include/asm/nds32.h: In function 'GIE_ENABLE':
->>> arch/nds32/include/asm/nds32.h:25:2: error: implicit declaration of function
->>> '__nds32__gie_en'; did you mean '__nds32__'?
->>>
->>> arch/nds32/include/asm/nds32.h: In function 'CACHE_SET':
->>> arch/nds32/include/asm/nds32.h:38:18: error: implicit declaration of
->>> function '__nds32__mfsr'; did you mean '__nds32__'?
->>>
->>> arch/nds32/include/asm/nds32.h:38:32: error: 'NDS32_SR_ICM_CFG' undeclared
->>>
->>> arch/nds32/include/asm/nds32.h:41:32: error: 'NDS32_SR_DCM_CFG'
->>>
->>> Am I missing something ?
->>>
->> Hi, Guenter:
->>
->> This built failure is because the toolchain version you used is not
->> supported the latest intrinsic function/macro.
->> We are sending the latest patchset now and we expect the whole new
->> features will be supported in gcc8.0.0 and binutil2.31+.
->>
->> If you'd like to get these new features of toolchain, you may use the
->> github version.
->> This is the built-script repo. https://github.com/andestech/build_script.git
->>
-> Hmm. How comes that the defines are not there ? Also, is nds32_intrinsic.h supposed to be auto-generated ?
->
-Answering my own question. This file is part of gcc. Presumably, the missing defines
-are declared in that file ?
-Interesting, I always thought that the Linux kernel is supposed not to include compiler
-include files, to avoid issues such as license poisoning. One lives and learns.
+Em Mon, Apr 16, 2018 at 11:29:03AM +0300, Alexey Budankov escreveu:
+> Hi Arnaldo,
+> 
+> On 09.04.2018 12:26, Peter Zijlstra wrote:
+> > On Mon, Apr 09, 2018 at 10:25:32AM +0300, Alexey Budankov wrote:
+> >>
+> >> Store preempting context switch out event into Perf trace as a part of 
+> >> PERF_RECORD_SWITCH[_CPU_WIDE] record.
+> >>
+> >> Percentage of preempting and non-preempting context switches help 
+> >> understanding the nature of workloads (CPU or IO bound) that are running 
+> >> on a machine;
+> >>
+> >> The event is treated as preemption one when task->state value of the 
+> >> thread being switched out is TASK_RUNNING. Event type encoding is 
+> >> implemented using PERF_RECORD_MISC_SWITCH_OUT_PREEMPT bit;
+> >> 	
+> >> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> > 
+> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > 
+> > Acme, I'm thinking you should route this, since most of the changes are
+> > actually to the tool.
+> 
+> This is just to make sure it doesn't sneak out of your attention 
+> in hope the plan is still the same as Peter mentioned above.
 
-Guenter
-
-> The toolchain as provided isn't usable for me since it is not position independent.
->
-> Arnd, it might make sense to drop the nds32 toolchain from kernel.org; its presence is at best misleading.
->
-> Guenter
->
->
+Will look into this now.
+ 
+> Thanks,
+> Alexey
+> 
+> > 
+> >> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> >> index fc1c330c6bd6..872a5aaa77eb 100644
+> >> --- a/kernel/events/core.c
+> >> +++ b/kernel/events/core.c
+> >> @@ -7584,6 +7584,10 @@ static void perf_event_switch(struct task_struct *task,
+> >>  		},
+> >>  	};
+> >>  
+> >> +	if (!sched_in && task->state == TASK_RUNNING)
+> >> +		switch_event.event_id.header.misc |=
+> >> +				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
+> > 
+> > I typically prefer {} over any multi-line expression.
+> > 
+> >>  	perf_iterate_sb(perf_event_switch_output,
+> >>  		       &switch_event,
+> >>  		       NULL);
+> > 
