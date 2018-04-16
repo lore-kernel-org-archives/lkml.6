@@ -1,302 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754526AbeDPI5C (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 04:57:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39546 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754101AbeDPI5A (ORCPT
+        id S1754196AbeDPI7E (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 04:59:04 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:53724 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754101AbeDPI7C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 04:57:00 -0400
-Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Mon, 16 Apr 2018 10:56:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 16 Apr 2018 04:59:02 -0400
+X-Google-Smtp-Source: AIpwx48vVX3UszwB5vKIDZjNNc1DhjB4x4VyHLzfMdFbdASen8m2mGHNpHYqzmxWOMVhQDNx5jIF6tHohuQoKX3jojEphjtkxSYT
 MIME-Version: 1.0
-In-Reply-To: <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041608-0044-0000-0000-00000548AD6B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041608-0045-0000-0000-00002888B39D
-Message-Id: <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804160082
+Date: Mon, 16 Apr 2018 01:59:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e894e30569f36ee8@google.com>
+Subject: INFO: rcu detected stall in select_collect
+From: syzbot <syzbot+5c73ae1814a4a5f3f31b@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/04/2018 23:22, Tony Krowiak wrote:
-> This patch refactors the code that initializes the crypto
-> configuration for a guest. The crypto configuration is contained in
-> a crypto control block (CRYCB) which is a satellite control block to
-> our main hardware virtualization control block. The CRYCB is
-> attached to the main virtualization control block via a CRYCB
-> designation (CRYCBD) designation field containing the address of
-> the CRYCB as well as its format.
->
-> Prior to the introduction of AP device virtualization, there was
-> no need to provide access to or specify the format of the CRYCB for
-> a guest unless the MSA extension 3 (MSAX3) facility was installed
-> on the host system. With the introduction of AP device virtualization,
-> the CRYCB and its format must be made accessible to the guest
-> regardless of the presence of the MSAX3 facility.
->
-> The crypto initialization code is restructured as follows:
->
-> * A new compilation unit is introduced to contain all interfaces
->    and data structures related to configuring a guest's CRYCB for
->    both the refactoring of crypto initialization as well as all
->    subsequent patches introducing AP virtualization support.
->
-> * Currently, the asm code for querying the AP configuration is
->    duplicated in the AP bus as well as in KVM. Since the KVM
->    code was introduced, the AP bus has externalized the interface
->    for querying the AP configuration. The KVM interface will be
->    replaced with a call to the AP bus interface. Of course, this
->    will be moved to the new compilation unit mentioned above.
->
-> * An interface to format the CRYCBD field will be provided via
->    the new compilation unit and called from the KVM vm
->    initialization.
->
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
->   arch/s390/include/asm/kvm-ap.h   |   15 +++++++++
->   arch/s390/include/asm/kvm_host.h |    1 +
->   arch/s390/kvm/kvm-ap.c           |   39 ++++++++++++++++++++++++
->   arch/s390/kvm/kvm-s390.c         |   60 ++++----------------------------------
->   4 files changed, 61 insertions(+), 54 deletions(-)
->
-> diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
-> index 84412a9..736e93e 100644
-> --- a/arch/s390/include/asm/kvm-ap.h
-> +++ b/arch/s390/include/asm/kvm-ap.h
-> @@ -10,6 +10,9 @@
->   #ifndef _ASM_KVM_AP
->   #define _ASM_KVM_AP
->
-> +#include <linux/types.h>
-> +#include <linux/kvm_host.h>
-> +
->   /**
->    * kvm_ap_instructions_installed()
->    *
-> @@ -20,4 +23,16 @@
->    */
->   int kvm_ap_instructions_installed(void);
->
-> +/**
-> + * kvm_ap_build_crycbd
-> + *
-> + * The crypto control block designation (CRYCBD) is a 32-bit field that
-> + * designates both the host real address and format of the CRYCB. This function
-> + * builds the CRYCBD field for use by the KVM guest.
-> + *
-> + * @kvm:	the KVM guest
-> + * @crycbd:	reference to the CRYCBD
-> + */
-> +void kvm_ap_build_crycbd(struct kvm *kvm);
-> +
->   #endif /* _ASM_KVM_AP */
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index 81cdb6b..c990a1d 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -257,6 +257,7 @@ struct kvm_s390_sie_block {
->   	__u8	reservedf0[12];		/* 0x00f0 */
->   #define CRYCB_FORMAT1 0x00000001
->   #define CRYCB_FORMAT2 0x00000003
-> +#define CRYCB_FORMAT_MASK 0x00000003
->   	__u32	crycbd;			/* 0x00fc */
->   	__u64	gcr[16];		/* 0x0100 */
->   	__u64	gbea;			/* 0x0180 */
-> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
-> index 1267588..991bae4 100644
-> --- a/arch/s390/kvm/kvm-ap.c
-> +++ b/arch/s390/kvm/kvm-ap.c
-> @@ -10,6 +10,8 @@
->   #include <asm/kvm-ap.h>
->   #include <asm/ap.h>
->
-> +#include "kvm-s390.h"
-> +
->   int kvm_ap_instructions_installed(void)
->   {
->   #ifdef CONFIG_ZCRYPT
-> @@ -19,3 +21,40 @@ int kvm_ap_instructions_installed(void)
->   #endif
->   }
->   EXPORT_SYMBOL(kvm_ap_instructions_installed);
-> +
-> +static inline int kvm_ap_query_config(struct ap_config_info *config)
-> +{
-> +	memset(config, 0, sizeof(*config));
-> +
-> +#ifdef CONFIG_ZCRYPT
+Hello,
 
-I would prefer that you define the interface in an include file
-with stubs for the case ZCRYPT is not set.
+syzbot hit the following crash on upstream commit
+48023102b7078a6674516b1fe0d639669336049d (Fri Apr 13 23:55:41 2018 +0000)
+Merge branch 'overlayfs-linus' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=5c73ae1814a4a5f3f31b
 
-> +	if (kvm_ap_instructions_installed())
-> +		return ap_query_configuration(config);
-> +#endif
-> +
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static int kvm_ap_apxa_installed(void)
-> +{
-> +	struct ap_config_info config;
-> +
-> +	if (kvm_ap_query_config(&config) == 0)
-> +		return (config.apxa == 1);
-> +
-> +	return 0;
-> +}
-> +
-> +void kvm_ap_build_crycbd(struct kvm *kvm)
-> +{
-> +	kvm->arch.crypto.crycbd = (__u32)(unsigned long) kvm->arch.crypto.crycb;
-> +	kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK);
-> +
-> +	/* check whether MSAX3 is installed */
+So far this crash happened 4 times on upstream.
+Unfortunately, I don't have any reproducer for this crash yet.
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6222684371288064
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-8852471259444315113
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-It means we do not support AP virtualization without MSA3.
-It follows we do not support CRYCB_FORMAT0
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5c73ae1814a4a5f3f31b@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-It is different from what you explain in the comment.
-
-> +	if (kvm_ap_instructions_installed() && test_kvm_facility(kvm, 76)) {
-> +		if (kvm_ap_apxa_installed())
-> +			kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
-> +		else
-> +			kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
-> +	}
-> +}
-> +EXPORT_SYMBOL(kvm_ap_build_crycbd);
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index d0c3518..b47ff11 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -40,6 +40,7 @@
->   #include <asm/sclp.h>
->   #include <asm/cpacf.h>
->   #include <asm/timex.h>
-> +#include <asm/kvm-ap.h>
->   #include "kvm-s390.h"
->   #include "gaccess.h"
->
-> @@ -1881,55 +1882,6 @@ long kvm_arch_vm_ioctl(struct file *filp,
->   	return r;
->   }
->
-> -static int kvm_s390_query_ap_config(u8 *config)
-> -{
-> -	u32 fcn_code = 0x04000000UL;
-> -	u32 cc = 0;
-> -
-> -	memset(config, 0, 128);
-> -	asm volatile(
-> -		"lgr 0,%1\n"
-> -		"lgr 2,%2\n"
-> -		".long 0xb2af0000\n"		/* PQAP(QCI) */
-> -		"0: ipm %0\n"
-> -		"srl %0,28\n"
-> -		"1:\n"
-> -		EX_TABLE(0b, 1b)
-> -		: "+r" (cc)
-> -		: "r" (fcn_code), "r" (config)
-> -		: "cc", "0", "2", "memory"
-> -	);
-> -
-> -	return cc;
-> -}
-> -
-> -static int kvm_s390_apxa_installed(void)
-> -{
-> -	u8 config[128];
-> -	int cc;
-> -
-> -	if (test_facility(12)) {
-> -		cc = kvm_s390_query_ap_config(config);
-> -
-> -		if (cc)
-> -			pr_err("PQAP(QCI) failed with cc=%d", cc);
-> -		else
-> -			return config[0] & 0x40;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static void kvm_s390_set_crycb_format(struct kvm *kvm)
-> -{
-> -	kvm->arch.crypto.crycbd = (__u32)(unsigned long) kvm->arch.crypto.crycb;
-> -
-> -	if (kvm_s390_apxa_installed())
-> -		kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
-> -	else
-> -		kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
-> -}
-> -
->   static u64 kvm_s390_get_initial_cpuid(void)
->   {
->   	struct cpuid cpuid;
-> @@ -1941,12 +1893,12 @@ static u64 kvm_s390_get_initial_cpuid(void)
->
->   static void kvm_s390_crypto_init(struct kvm *kvm)
->   {
-> +	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
-> +	kvm_ap_build_crycbd(kvm);
-> +
->   	if (!test_kvm_facility(kvm, 76))
->   		return;
->
-> -	kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
-> -	kvm_s390_set_crycb_format(kvm);
-> -
->   	/* Enable AES/DEA protected key functions by default */
->   	kvm->arch.crypto.aes_kw = 1;
->   	kvm->arch.crypto.dea_kw = 1;
-> @@ -2475,6 +2427,8 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
->
->   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->   {
-> +	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
-> +
->   	if (!test_kvm_facility(vcpu->kvm, 76))
->   		return;
->
-> @@ -2484,8 +2438,6 @@ static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->   		vcpu->arch.sie_block->ecb3 |= ECB3_AES;
->   	if (vcpu->kvm->arch.crypto.dea_kw)
->   		vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
-> -
-> -	vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->   }
->
->   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
+INFO: rcu_sched detected stalls on CPUs/tasks:
+	(detected by 0, t=125007 jiffies, g=10417, c=10416, q=290)
+All QSes seen, last rcu_sched kthread activity 125014  
+(4294860146-4294735132), jiffies_till_next_fqs=3, root ->qsmask 0x0
+syz-executor6   R  running task    21784  4569   4561 0x00000008
+Call Trace:
+  <IRQ>
+  sched_show_task.cold.87+0x27a/0x301 kernel/sched/core.c:5325
+  print_other_cpu_stall.cold.79+0x92f/0x9d2 kernel/rcu/tree.c:1481
+  check_cpu_stall.isra.61+0x706/0xf50 kernel/rcu/tree.c:1599
+  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+  rcu_pending kernel/rcu/tree.c:3401 [inline]
+  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:173
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1283
+  __run_hrtimer kernel/time/hrtimer.c:1386 [inline]
+  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1448
+  hrtimer_interrupt+0x286/0x650 kernel/time/hrtimer.c:1506
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
+  </IRQ>
+RIP: 0010:__sanitizer_cov_trace_pc+0x14/0x50 kernel/kcov.c:94
+RSP: 0018:ffff88018d8bf8d8 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+RAX: ffff88018d8b4580 RBX: 1ffff10031b17f20 RCX: ffffffff81c1f494
+RDX: 0000000000000002 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: ffff88018d8bf8d8 R08: ffff88018d8b4580 R09: ffffed003b527e70
+R10: ffffed003b527e70 R11: ffff8801da93f383 R12: ffff88018d8bfbf0
+R13: ffff8801da93f300 R14: ffff88018d8bfbf8 R15: ffff88018d8bf9a0
+  select_collect+0x267/0x5f0 fs/dcache.c:1451
+  d_walk+0x3c3/0xc80 fs/dcache.c:1276
+  shrink_dcache_parent+0x179/0x230 fs/dcache.c:1486
+  vfs_rmdir+0x202/0x470 fs/namei.c:3850
+  do_rmdir+0x523/0x610 fs/namei.c:3911
+  SYSC_rmdir fs/namei.c:3929 [inline]
+  SyS_rmdir+0x1a/0x20 fs/namei.c:3927
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x455087
+RSP: 002b:00007ffe0e80b288 EFLAGS: 00000206 ORIG_RAX: 0000000000000054
+RAX: ffffffffffffffda RBX: 0000000000000065 RCX: 0000000000455087
+RDX: 0000000000000000 RSI: 00007ffe0e80d030 RDI: 00007ffe0e80d030
+RBP: 00007ffe0e80d030 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000006 R11: 0000000000000206 R12: 0000000000fa5940
+R13: 0000000000000000 R14: 0000000000000117 R15: 0000000000010850
+rcu_sched kthread starved for 125603 jiffies! g10417 c10416 f0x2  
+RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=1
+RCU grace-period kthread stack dump:
+rcu_sched       R  running task    23896     9      2 0x80000000
+Call Trace:
+  context_switch kernel/sched/core.c:2848 [inline]
+  __schedule+0x801/0x1e30 kernel/sched/core.c:3490
+  schedule+0xef/0x430 kernel/sched/core.c:3549
+  schedule_timeout+0x138/0x240 kernel/time/timer.c:1801
+  rcu_gp_kthread+0x6b5/0x1940 kernel/rcu/tree.c:2231
+  kthread+0x345/0x410 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
 
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
