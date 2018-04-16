@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751183AbeDPVEd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:04:33 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:46179 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750946AbeDPVEb (ORCPT
+        id S1751927AbeDPVIz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:08:55 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:41761 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751325AbeDPVIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:04:31 -0400
-X-Google-Smtp-Source: AIpwx4+kcJgB5Dxzs78GEWrzLfQZuvYBzVfvHvcSDUyXwCMJgr4jeb84jhrJzDwPsoxvpboPrYcYmQ==
-Date: Mon, 16 Apr 2018 16:04:29 -0500
+        Mon, 16 Apr 2018 17:08:53 -0400
+X-Google-Smtp-Source: AIpwx4+LZf71v8P8HRNBZrrCbW6hMr9EPzlFkItTzs06znLwlBUpOQ0kaN9xQdMxygTHOM2EHZTpdw==
+Date: Mon, 16 Apr 2018 16:08:51 -0500
 From: Rob Herring <robh@kernel.org>
 To: Alban Bedel <albeu@free.fr>
 Cc: linux-kernel@vger.kernel.org,
@@ -21,72 +21,82 @@ Cc: linux-kernel@vger.kernel.org,
         Richard Weinberger <richard@nod.at>,
         Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
         devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode for
- the cells list
-Message-ID: <20180416210429.e3yo52f355qxnopb@rob-hp-laptop>
+Subject: Re: [PATCH v3 2/3] doc: bindings: Add bindings documentation for mtd
+ nvmem
+Message-ID: <20180416210851.shu73nlincslxlde@rob-hp-laptop>
 References: <1521933899-362-1-git-send-email-albeu@free.fr>
- <1521933899-362-2-git-send-email-albeu@free.fr>
+ <1521933899-362-3-git-send-email-albeu@free.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1521933899-362-2-git-send-email-albeu@free.fr>
+In-Reply-To: <1521933899-362-3-git-send-email-albeu@free.fr>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 25, 2018 at 12:24:57AM +0100, Alban Bedel wrote:
-> Having the cells as subnodes of the provider device without any
-> compatible property might clash with other bindings. To avoid this
-> problem update the binding to have all the cells in a 'nvmem-cells'
-> subnode with a 'nvmem-cells' compatible string. This new binding
-> guarantee that we can turn any kind of device in a nvmem provider.
-> 
-> While discouraged for new uses the old scheme is still supported for
-> backward compatibility.
+On Sun, Mar 25, 2018 at 12:24:58AM +0100, Alban Bedel wrote:
+> Config data for drivers, like MAC addresses, is often stored in MTD.
+> Add a binding that define how such data storage can be represented in
+> device tree.
 > 
 > Signed-off-by: Alban Bedel <albeu@free.fr>
 > ---
->  Documentation/devicetree/bindings/nvmem/nvmem.txt | 55 ++++++++++++++++-------
->  drivers/nvmem/core.c                              | 10 +++++
->  2 files changed, 48 insertions(+), 17 deletions(-)
+> Changelog:
+> v2: * Added a "Required properties" section with the nvmem-provider
+>       property
+> v3: * Fixed my name in From and Signed-off-by
+>     * Moved to the new nvmem binding with the nvmem-cells subnode
+> ---
+>  .../devicetree/bindings/nvmem/mtd-nvmem.txt        | 27 ++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/mtd-nvmem.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/nvmem/nvmem.txt b/Documentation/devicetree/bindings/nvmem/nvmem.txt
-> index fd06c09..6b723e7 100644
-> --- a/Documentation/devicetree/bindings/nvmem/nvmem.txt
-> +++ b/Documentation/devicetree/bindings/nvmem/nvmem.txt
-> @@ -11,14 +11,29 @@ these data from, and where they are stored on the storage device.
->  This document is here to document this.
->  
->  = Data providers =
-> -Contains bindings specific to provider drivers and data cells as children
-> -of this node.
-> +A data provider should have a subnode named 'nvmem-cells' that contains
-> +a subnodes for each data cells.
+> diff --git a/Documentation/devicetree/bindings/nvmem/mtd-nvmem.txt b/Documentation/devicetree/bindings/nvmem/mtd-nvmem.txt
+> new file mode 100644
+> index 0000000..c819a69
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/nvmem/mtd-nvmem.txt
+> @@ -0,0 +1,27 @@
+> += NVMEM in MTD =
 > +
-> +For backward compatibility the nvmem data cells can be direct children
-> +of the data provider. This use is discouraged as it can conflict with
-> +other bindings.
+> +Config data for drivers, like MAC addresses, is often stored in MTD.
+> +An MTD device, or one of its partition, can be defined as a NVMEM provider
+> +by having an 'nvmem-cells' subnode as defined in nvmem.txt.
+> +
+> +Example:
+> +
+> +	flash@0 {
+> +		...
+> +
+> +		partition@2 {
 
-I don't think we need to go this far. Whether this is necessary depends 
-on the provider.
+This unit address is not correct...
 
->  
->  Optional properties:
->   read-only: Mark the provider as read only.
->  
-> += Data cells list =
-> +The data cells list node should be named 'nvmem-cells' and have a
-> +child node for each data cell.
+> +			label = "art";
+> +			reg = <0x7F0000 0x010000>;
+
+Lowercase hex.
+
+> +			read-only;
 > +
-> +Required properties:
-> + compatible: Must be "nvmem-cells"
-> + #address-cells: <1> if the provider use 32 bit addressing,
-> +                 <2> for 64 bits addressing
-> + #size-cells: <1> if the provider use 32 bit sizes,
-> +              <2> for 64 bits sizes
+> +			nvmem-cells {
+> +				compatible = "nvmem-cells";
+> +				#address-cells = <1>;
+> +				#size-cells = <1>;
 > +
->  = Data cells =
-> -These are the child nodes of the provider which contain data cell
-> +These are the child nodes of the nvmem-cells node which contain data cell
->  information like offset and size in nvmem provider.
+> +				eeprom@1000 {
+
+"eeprom" isn't specific data. The purpose of the nvmem binding is to 
+provide specific data fields like MAC addresseses.
+
+Plus "eeprom" is the node name for EEPROM devices.
+
+> +					reg = <0x1000 0x1000>;
+> +				};
+> +			};
+> +		};
+> +	};
+> -- 
+> 2.7.4
+> 
