@@ -1,106 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754806AbeDPJpk (ORCPT <rfc822;w@1wt.eu>);
+        id S1754820AbeDPJpn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:45:43 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41455 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754803AbeDPJpk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Apr 2018 05:45:40 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57218 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751840AbeDPJph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:45:37 -0400
-Date: Mon, 16 Apr 2018 10:45:34 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Ayan Kumar Halder <ayan.halder@arm.com>
-Cc: brian.starkey@arm.com, alexandru-cosmin.gheorghe@arm.com,
-        malidp@foss.arm.com, airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, nd@arm.com
-Subject: Re: [PATCH v2] drm/arm/malidp: Ensure that the crtcs are shutdown
- before removing any encoder/connector
-Message-ID: <20180416094534.GF14661@e110455-lin.cambridge.arm.com>
-References: <20180412154727.GJ16141@n2100.armlinux.org.uk>
- <1523633388-15112-1-git-send-email-ayan.halder@arm.com>
+X-Google-Smtp-Source: AIpwx4/nEn4YJfDjem7Z2bDwjn3lWvI4kVfsxUGg7w6hPDenhIVnAedzopeASUEbwRuc6JMKNoGLhg==
+Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
+        kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        javi.merino@kernel.org, rui.zhang@intel.com,
+        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>
+References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
+ <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
+ <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
+ <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
+ <20180416073729.GA4244@vireshk-i7>
+ <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
+ <20180416093747.GB4244@vireshk-i7>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <4abf0d97-d2b8-46ab-3c05-4a11510ac3fe@linaro.org>
+Date: Mon, 16 Apr 2018 11:45:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180416093747.GB4244@vireshk-i7>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1523633388-15112-1-git-send-email-ayan.halder@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 04:29:48PM +0100, Ayan Kumar Halder wrote:
-> One needs to ensure that the crtcs are shutdown so that the
-> drm_crtc_state->connector_mask reflects that no connectors
-> are currently active. Further, it reduces the reference
-> count for each connector. This ensures that the connectors
-> and encoders can be cleanly removed either when _unbind
-> is called for the corresponding drivers or by
-> drm_mode_config_cleanup().
-
-Describing what the code does is nice and good, however it is also
-useful to have a description of what the patch fixes, or why the fix
-provided by the patch is better.
-
-In this case, we need drm_atomic_helper_shutdown() to be called before
-component_unbind_all() otherwise the connectors attached to the
-component device will have the wrong reference count value and will not
-be cleanly cleared up.
-
+On 16/04/2018 11:37, Viresh Kumar wrote:
+> On 16-04-18, 09:44, Daniel Lezcano wrote:
+>> Because we rely on the number to identify the cluster and flag it
+>> 'processed'. The number itself is not important.
 > 
-> Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+> It is, because you are creating multiple groups (like cpufreq
+> policies) right now based on cluster id. Which will be zero for all
+> the CPUs. So in a big little system we will have two cpufreq cooling
+> devices and one cpuidle cooling device.
 
-With the updated commit message:
+Can you elaborate a bit ? I'm not sure to get the point.
 
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+BTW, Am I asked to change my code to stick to something which is not
+merged ?
 
-> ---
-> 
-> Changes in v2:
->  - Reset the connectors' mask and the reference counts in drm_device
-> before unbinding any of its components (ie connectors and 
-> encoders).
-> 
-> ---
->  drivers/gpu/drm/arm/malidp_drv.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-> index 8d20faa..0a788d7 100644
-> --- a/drivers/gpu/drm/arm/malidp_drv.c
-> +++ b/drivers/gpu/drm/arm/malidp_drv.c
-> @@ -278,7 +278,6 @@ static int malidp_init(struct drm_device *drm)
->  
->  static void malidp_fini(struct drm_device *drm)
->  {
-> -	drm_atomic_helper_shutdown(drm);
->  	drm_mode_config_cleanup(drm);
->  }
->  
-> @@ -646,6 +645,7 @@ static int malidp_bind(struct device *dev)
->  	malidp_de_irq_fini(drm);
->  	drm->irq_enabled = false;
->  irq_init_fail:
-> +	drm_atomic_helper_shutdown(drm);
->  	component_unbind_all(dev, drm);
->  bind_fail:
->  	of_node_put(malidp->crtc.port);
-> @@ -681,6 +681,7 @@ static void malidp_unbind(struct device *dev)
->  	malidp_se_irq_fini(drm);
->  	malidp_de_irq_fini(drm);
->  	drm->irq_enabled = false;
-> +	drm_atomic_helper_shutdown(drm);
->  	component_unbind_all(dev, drm);
->  	of_node_put(malidp->crtc.port);
->  	malidp->crtc.port = NULL;
-> -- 
-> 2.7.4
-> 
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
