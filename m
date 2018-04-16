@@ -1,117 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754509AbeDPMaO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:30:14 -0400
-Received: from mga07.intel.com ([134.134.136.100]:63893 "EHLO mga07.intel.com"
+        id S1754568AbeDPMa3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:30:29 -0400
+Received: from foss.arm.com ([217.140.101.70]:58954 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753696AbeDPMaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:30:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,459,1517904000";
-   d="scan'208";a="43672593"
-From: "Li, Philip" <philip.li@intel.com>
-To: Daniel Vetter <daniel@ffwll.ch>, Julia Lawall <julia.lawall@lip6.fr>
-CC: "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "David Airlie" <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Andrew Jeffery <andrew@aj.id.au>, "Joel Stanley" <joel@jms.id.au>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "kbuild-all@01.org" <kbuild-all@01.org>
-Subject: RE: [kbuild-all] [PATCH] drm: fix drm-get-put.cocci warnings
-Thread-Topic: [kbuild-all] [PATCH] drm: fix drm-get-put.cocci warnings
-Thread-Index: AQHT1VbvwhTwuQlup0e97tkFBlQh7qQDUmOQ
-Date: Mon, 16 Apr 2018 12:30:08 +0000
-Message-ID: <831EE4E5E37DCC428EB295A351E662494CABCEEB@SHSMSX103.ccr.corp.intel.com>
-References: <alpine.DEB.2.20.1804120752280.3559@hadrien>
- <20180416074535.GH31310@phenom.ffwll.local>
-In-Reply-To: <20180416074535.GH31310@phenom.ffwll.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZmEzYjgzZWMtMTgxZS00YTAyLWIwNWItZjcwMmZmMjRlMWYyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiI4NHBmWWdHQmdndjlEQTROOUNyWWtnYUZ0U3BZaERTMEhSOGQrODZ6TXNKazYzdHR0d0wzSVFvUHVUYjRvRTRzIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1753239AbeDPMa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 08:30:27 -0400
+Date: Mon, 16 Apr 2018 13:30:20 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
+        kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        javi.merino@kernel.org, rui.zhang@intel.com,
+        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>
+Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+Message-ID: <20180416123019.GA9341@e107981-ln.cambridge.arm.com>
+References: <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
+ <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
+ <20180416073729.GA4244@vireshk-i7>
+ <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
+ <20180416093747.GB4244@vireshk-i7>
+ <4abf0d97-d2b8-46ab-3c05-4a11510ac3fe@linaro.org>
+ <20180416095006.GC4244@vireshk-i7>
+ <b0e7ff16-c947-89a0-6bd9-56ee9a76e7ad@linaro.org>
+ <20180416101021.GD4244@vireshk-i7>
+ <1c61128a-dea6-b12c-4cd8-ef53a5c8628d@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c61128a-dea6-b12c-4cd8-ef53a5c8628d@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: Re: [kbuild-all] [PATCH] drm: fix drm-get-put.cocci warnings
+On Mon, Apr 16, 2018 at 02:10:30PM +0200, Daniel Lezcano wrote:
+> On 16/04/2018 12:10, Viresh Kumar wrote:
+> > On 16-04-18, 12:03, Daniel Lezcano wrote:
+> >> On 16/04/2018 11:50, Viresh Kumar wrote:
+> >>> On 16-04-18, 11:45, Daniel Lezcano wrote:
+> >>>> Can you elaborate a bit ? I'm not sure to get the point.
+> >>>
+> >>> Sure. With your current code on Hikey960 (big/LITTLE), you end up
+> >>> creating two cooling devices, one for the big cluster and one for
+> >>> small cluster. Which is the right thing to do, as we also have two
+> >>> cpufreq cooling devices.
+> >>>
+> >>> But with the change Sudeep is referring to, the helper you used to get
+> >>> cluster id will return 0 (SoC id) for all the 8 CPUs. So your code
+> >>> will end up creating a single cpuidle cooling device for all the CPUs.
+> >>> Which would be wrong.
+> >>
+> >> Is the semantic of topology_physical_package_id changing ?
+> > 
+> > That's what I understood from his email.
+> > 
+> >> I don't
+> >> understand the change Sudeep is referring to.
 > 
-> On Thu, Apr 12, 2018 at 07:54:10AM +0200, Julia Lawall wrote:
-> > From: Fengguang Wu <fengguang.wu@intel.com>
-> >
-> >  Use drm_*_get() and drm_*_put() helpers instead of drm_*_reference() and
-> >  drm_*_unreference() helpers.
-> >
-> > Generated by: scripts/coccinelle/api/drm-get-put.cocci
-> >
-> > Fixes: 6784ac15bc68 ("drm: Add ASPEED GFX driver")
-> > Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-> > Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
-> > ---
-> >
-> > tree:   https://github.com/shenki/linux drm-v1
+> Actually there is no impact with the change Sudeep is referring to. It
+> is for ACPI, we are DT based. Confirmed with Jeremy.
 > 
-> This isn't an upstream tree (and the aspeed driver isn't in upstream
-> afaict), so no need for spamming mailing lists I think.
-thanks for feedback Daniel, we will mark this repo as private one to avoid
-reporting to larger mailing list.
+> So AFAICT, it is not a problem.
 
-> 
-> But thanks for doing all this, great motivation to put more of the drm
-> refactorings into cocci files.
-> 
-> Cheers, Daniel
-> > head:   9680ed7979d5d403c6bde36271a048d62c048180
-> > commit: 6784ac15bc6889280522b04b97f1fb1208ee45e7 [23/27] drm: Add
-> ASPEED
-> > GFX
-> > driver
-> >
-> >  aspeed_gfx_drv.c |    4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > --- a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-> > +++ b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
-> > @@ -268,7 +268,7 @@ static int aspeed_gfx_probe(struct platf
-> >  err_unload:
-> >  	aspeed_gfx_unload(drm);
-> >  err_free:
-> > -	drm_dev_unref(drm);
-> > +	drm_dev_put(drm);
-> >
-> >  	return ret;
-> >  }
-> > @@ -279,7 +279,7 @@ static int aspeed_gfx_remove(struct plat
-> >
-> >  	drm_dev_unregister(drm);
-> >  	aspeed_gfx_unload(drm);
-> > -	drm_dev_unref(drm);
-> > +	drm_dev_put(drm);
-> >
-> >  	return 0;
-> >  }
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
-> _______________________________________________
-> kbuild-all mailing list
-> kbuild-all@lists.01.org
-> https://lists.01.org/mailman/listinfo/kbuild-all
+It is a problem - DT or ACPI alike. Sudeep was referring to the notion
+of "cluster" that has no architectural meaning whatsoever and using
+topology_physical_package_id() to detect a "cluster" was/is/will always
+be the wrong thing to do. The notion of cluster must not appear in the
+kernel at all, it has no architectural meaning. I understand you need
+to group CPUs but that has to be done in a different way, through
+cooling devices, thermal domains or power domains DT/ACPI bindings but
+not by using topology masks.
+
+You should be able to figure out this week at OSPM the reasoning behind
+what I am saying above.
+
+Cheers,
+Lorenzo
