@@ -1,92 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752662AbeDPVjW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:39:22 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36324 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751010AbeDPVjU (ORCPT
+        id S1752078AbeDPVn1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:43:27 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:42769 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751110AbeDPVn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:39:20 -0400
-X-Google-Smtp-Source: AIpwx4/u/KquNrIoOUAf8dS6NAqfxdUAwItvowUAVF86trSIKmdY8NqMcxG1lceXYvBpK+gjeulrlw==
-Date: Mon, 16 Apr 2018 16:39:19 -0500
+        Mon, 16 Apr 2018 17:43:26 -0400
+X-Google-Smtp-Source: AIpwx4+OKVhbaLNShnHPaclugXpySZNsg+iS/rulYIcTPmoyix3fzPTIfaQdkZoyYxw59t1OEIxnhQ==
+Date: Mon, 16 Apr 2018 16:43:24 -0500
 From: Rob Herring <robh@kernel.org>
 To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 Cc: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
         mark.rutland@arm.com, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 01/10] bindings: PCI: designware: Example update
-Message-ID: <20180416213919.blju6rzkq5md62q4@rob-hp-laptop>
+Subject: Re: [PATCH v4 04/10] bindings: PCI: designware: Add support for the
+ EP in Designware driver
+Message-ID: <20180416214324.wcyghdwejucoutki@rob-hp-laptop>
 References: <cover.1523881182.git.gustavo.pimentel@synopsys.com>
- <1936f007686d3cbb0ed3072d4cd81abc961bf358.1523881182.git.gustavo.pimentel@synopsys.com>
+ <7d3445e3f8bb15d27987e0d061275d7d69f2c519.1523881182.git.gustavo.pimentel@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1936f007686d3cbb0ed3072d4cd81abc961bf358.1523881182.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <7d3445e3f8bb15d27987e0d061275d7d69f2c519.1523881182.git.gustavo.pimentel@synopsys.com>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 03:37:49PM +0100, Gustavo Pimentel wrote:
-> Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers,
-> however it still be compatible with any previous DT that uses the old
-> reg-name.
-> 
-> Replaces the PCIe base address example by a real PCIe base address in use.
+On Mon, Apr 16, 2018 at 03:37:52PM +0100, Gustavo Pimentel wrote:
+> Add device tree binding documentation for the Endpoint in PCIe Designware
+> driver.
 > 
 > Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 > ---
-> Changes v1->v2:
->  - Removed any iATU reference or changes to avoid confusion.
+> Change v1->v2:
+>  - Add a missing log description.
 >  - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
-> Changes v2->v3:
-> - Nothing changed, just to follow the patch set version.
+> Change v2->v3:
+> - Reverted pcie_ep name to pcie.
 > Changes v3->v4:
 > - Reverted "snps,dw-pcie-rc" compatible string requested by Rob Herring.
 > 
->  Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
 > diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> index 1da7ade..7f9804d 100644
+> index 7f9804d..980fc9a 100644
 > --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
 > +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> @@ -1,7 +1,8 @@
->  * Synopsys DesignWare PCIe interface
->  
+> @@ -3,6 +3,7 @@
 >  Required properties:
-> -- compatible: should contain "snps,dw-pcie" to identify the core.
-> +- compatible:
-> +	"snps,dw-pcie" for RC mode;
+>  - compatible:
+>  	"snps,dw-pcie" for RC mode;
+> +	"snps,dw-pcie-ep" for EP mode;
 >  - reg: Should contain the configuration address space.
 >  - reg-names: Must be "config" for the PCIe configuration space.
 >      (The old way of getting the configuration address space from "ranges"
-> @@ -41,11 +42,11 @@ EP mode:
->  
->  Example configuration:
->  
-> -	pcie: pcie@dffff000 {
-> +	pcie: pcie@dfc00000 {
->  		compatible = "snps,dw-pcie";
-> -		reg = <0xdffff000 0x1000>, /* Controller registers */
-> -		      <0xd0000000 0x2000>; /* PCI config space */
-> -		reg-names = "ctrlreg", "config";
-> +		reg = <0xdfc00000 0x0001000>, /* IP registers */
-> +		      <0xd0000000 0x0002000>; /* Configuration space */
-> +		reg-names = "dbi", "config";
->  		#address-cells = <3>;
->  		#size-cells = <2>;
->  		device_type = "pci";
-> @@ -54,5 +55,4 @@ Example configuration:
->  		interrupts = <25>, <24>;
+> @@ -56,3 +57,15 @@ Example configuration:
 >  		#interrupt-cells = <1>;
 >  		num-lanes = <1>;
-> -		num-viewport = <3>;
-
-Seems like a spurious change?
-
 >  	};
+> +or
+> +	pcie: pcie@dfc00000 {
+> +		compatible = "snps,dw-pcie-ep";
+> +		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
+> +		      <0xdfc01000 0x0001000>, /* IP registers 2 */
+> +		      <0xd0000000 0x2000000>; /* Configuration space */
+> +		reg-names = "dbi", "dbi2", "addr_space";
+> +		device_type = "pci";
+
+This should not be present for endpoints.
+
+With that dropped,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+
+> +		num-ib-windows = <6>;
+> +		num-ob-windows = <2>;
+> +		num-lanes = <1>;
+> +	};
 > -- 
 > 2.7.4
 > 
