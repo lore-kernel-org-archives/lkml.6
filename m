@@ -1,50 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752770AbeDPQAE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:00:04 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44553 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751161AbeDPQAB (ORCPT
+        id S1752914AbeDPQAp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:00:45 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:46456 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752881AbeDPQAo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:00:01 -0400
-X-Google-Smtp-Source: AIpwx49vs1krIxV5VnqdGAvAvU0BCXufEdVvuj5pfkx4GznjuqIp8d3mGhac7E7JPbCE/xaASKVVCw==
-From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To: tomasz.figa@gmail.com, krzk@kernel.org, s.nawrocki@samsung.com
-Cc: linus.walleij@linaro.org, kgene@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 0/2] pinctrl/samsung: Fix incorrect EINTG banks order
-Date: Mon, 16 Apr 2018 17:52:44 +0200
-Message-Id: <1523893966-8884-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 16 Apr 2018 12:00:44 -0400
+X-Google-Smtp-Source: AIpwx4/AtTKGbLof9+MoKWIxMkx35EcM9BxRv/qGgrtJSVeaB3+V9lo8DmzxT7lLzuuc4VyOmE78ZA==
+Date: Mon, 16 Apr 2018 21:32:33 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: linux@armlinux.org.uk, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+Subject: [PATCH] gpu: drm: armada: Adding new typedef vm_fault_t
+Message-ID: <20180416160233.GA27043@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series compose of 2 patches.
+Use new return type vm_fault_t for fault handler
+in struct vm_operations_struct. For now, this is
+just documenting that the function returns a VM_
+FAULT value rather than an errno.  Once all inst
+ances are converted, vm_fault_t will become a di
+stinct type.
 
-First patch, fixing incorrect order of banks for s5pv210 and exynos5410
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ drivers/gpu/drm/armada/armada_gem.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-Second patch, documenting required order of banks
+diff --git a/drivers/gpu/drm/armada/armada_gem.c b/drivers/gpu/drm/armada/armada_gem.c
+index a97f509..81a55b7 100644
+--- a/drivers/gpu/drm/armada/armada_gem.c
++++ b/drivers/gpu/drm/armada/armada_gem.c
+@@ -13,25 +13,14 @@
+ #include <drm/armada_drm.h>
+ #include "armada_ioctlP.h"
 
-Changes from v1:
-  - Limit changes to s5pv210 and Exynos5410. Exynos3250 will be handled later.
-  - Added cc stable
-  - Added fixes tag
-  - Add patch with comments to all banks documenting required order.
+-static int armada_gem_vm_fault(struct vm_fault *vmf)
++static vm_fault_t armada_gem_vm_fault(struct vm_fault *vmf)
+ {
+ 	struct drm_gem_object *gobj = vmf->vma->vm_private_data;
+ 	struct armada_gem_object *obj = drm_to_armada_gem(gobj);
+ 	unsigned long pfn = obj->phys_addr >> PAGE_SHIFT;
+-	int ret;
 
-Paweł Chmiel (2):
-  pinctrl/samsung: Correct EINTG banks order
-  pinctrl/samsung: Document required order of banks
+ 	pfn += (vmf->address - vmf->vma->vm_start) >> PAGE_SHIFT;
+-	ret = vm_insert_pfn(vmf->vma, vmf->address, pfn);
+-
+-	switch (ret) {
+-	case 0:
+-	case -EBUSY:
+-		return VM_FAULT_NOPAGE;
+-	case -ENOMEM:
+-		return VM_FAULT_OOM;
+-	default:
+-		return VM_FAULT_SIGBUS;
+-	}
++	return vmf_insert_pfn(vmf->vma, vmf->address, pfn);
+ }
 
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c   | 30 ++++++++++++++++++++++++--
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 20 +++++++++++++++++
- 2 files changed, 48 insertions(+), 2 deletions(-)
-
--- 
-2.7.4
+ const struct vm_operations_struct armada_gem_vm_ops = {
+--
+1.9.1
