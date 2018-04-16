@@ -1,87 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751151AbeDPU3d (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 16:29:33 -0400
-Received: from mailout.micron.com ([137.201.242.129]:26322 "EHLO
-        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750708AbeDPU3b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 16:29:31 -0400
-From: "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To: Bart Van Assche <bart.vanassche@wdc.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "rajatja@google.com" <rajatja@google.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "mingo@redhad.com" <mingo@redhad.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>
-Subject: Re: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
- events
-Thread-Topic: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
- events
-Thread-Index: AdPVwUmBGJhhKEdfRWiDz1LGRhoC8w==
-Date: Mon, 16 Apr 2018 20:27:13 +0000
-Message-ID: <5b2fdd1b29b54590889194eba90debfb@SIWEX5A.sing.micron.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.160.29.124]
-X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-23786.005
-X-TM-AS-Result: No--8.854100-0.000000-31
-X-TM-AS-MatchedID: 150567-139010-702931-704425-707663-700023-704421-711432-7
-        02020-705901-106420-707800-702358-700604-700276-700107-703788-710842-700767
-        -188019-703829-701236-187067-701450-701583-707163-703378-705861-851106-1480
-        04-148046-148133-148980-42000-42003-29961-63
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-User-Blocked-Sender: No
-x-mt-checkinternalsenderrule: True
-Content-Type: text/plain; charset="utf-8"
+        id S1751182AbeDPUeN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 16:34:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750946AbeDPUeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 16:34:11 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E383921838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AIpwx4/EMe0FEVFNOvEdjEOBYyShHcPx4E6XcMQ09SuQmqRcoflV4U+SoKJy5IWgPeqtHtwkBWITTQUh2lWzEzA9Wjk=
 MIME-Version: 1.0
+In-Reply-To: <20180416172546.32118-1-eric@anholt.net>
+References: <20180413175632.oz62n363g6rxdp6z@rob-hp-laptop> <20180416172546.32118-1-eric@anholt.net>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 16 Apr 2018 15:33:49 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKJD86tV0jno_cZR=nLoOThT5rjRu3BPpzAwpcHgxSArQ@mail.gmail.com>
+Message-ID: <CAL_JsqKJD86tV0jno_cZR=nLoOThT5rjRu3BPpzAwpcHgxSArQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] drm/vc4: Remove the need for the GPU-subsystem DT node.
+To: Eric Anholt <eric@anholt.net>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>,
+        Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE"
+        <linux-rpi-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3GKTiGI009856
 
->>> This patch is not acceptable because it adds support for tag tracing
->>> to the legacy block layer only. Any patch that adds a new feature to
->>> the legacy block layer must also add it to blk-mq.
->>>
->> To be honest, I don't understand your point, can you give me more
->explanation?
+On Mon, Apr 16, 2018 at 12:25 PM, Eric Anholt <eric@anholt.net> wrote:
+> The GPU subsystem node was a workaround to have a central device to
+> bind V3D and display to.  Following the lead of 246774d17fc0
+> ("drm/etnaviv: remove the need for a gpu-subsystem DT node"), remove
+> the subsystem node usage and just create a platform device for the DRM
+> device to attach to if any of the subsystem devices are present.
 >
->The legacy block layer will be removed as soon as blk-mq provides all the
->functionality of the legacy block layer and as soon as it performs at least as
->well as the legacy block layer for all use cases. If new features are added to
->the legacy block layer but not to blk-mq that prevents removal of the legacy
->block layer. Hence the requirement I explained in my previous e-mail.
->
->Bart.
+> v2: Simplify the DT walking code.
 
-Thanks for your information.
-I have several questions again.
-When the legacy block layer will be replaced by blk-mq? 
-And "include/trece/event/block.h .. scsi.h" will also be changed? 
-Do you have the related git rep or mail list about this topic?
-Maybe this is great big change, I am very interested in that. And want to have a look at.
+> +static bool
+> +driver_of_table_has_a_match(const struct platform_driver *driver)
+> +{
+> +       struct device_node *node;
+> +
+> +       node = of_find_matching_node_and_match(NULL,
+> +                                              driver->driver.of_match_table,
+> +                                              NULL);
+> +       if (of_device_is_available(node)) {
+> +               of_node_put(node);
 
-By the way, these patches are not to add new feature, they are just to add print tag along with the other exist
-Printed request parameters.  The blk-mq is now still using "include/trace/evet/block.h" defined trace events.
+You need to put the node regardless.
 
-For example: 
-void blk_mq_start_request(struct request *rq)  
-{
-...
-...
-trace_block_rq_issue(q, rq);
-...
-...
-}
-Do you mean that this will also be removed/replaced by someone else?
-
-Bean Huo
+> +               return true;
+> +       }
+> +
+> +       return false;
+> +}
