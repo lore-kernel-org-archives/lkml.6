@@ -1,115 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753899AbeDPIQc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 04:16:32 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43265 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753813AbeDPIQ3 (ORCPT
+        id S1753838AbeDPISJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 04:18:09 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:40238 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751106AbeDPISI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 04:16:29 -0400
-X-Google-Smtp-Source: AIpwx4++TSKeHoDNdI7XtfstS4AAGyn8+JfVUFpTfIssSvQ7JZKUw777cKmTecG4eE0mXaZW84Z4CBwQe19RAMLnrvE=
+        Mon, 16 Apr 2018 04:18:08 -0400
+X-Google-Smtp-Source: AIpwx49PN7wSjpNRYfS7VoiH2VbS8PU2Z41Dmgq3hNbhgSxEDiR/ZxKlqRmm4Ogo1qngWML581aBg82Qyl1nDOlDRAg=
 MIME-Version: 1.0
-In-Reply-To: <yq1bment539.fsf@oracle.com>
-References: <1523524915-25170-1-git-send-email-jinpu.wangl@profitbricks.com>
- <yq1y3hsunnt.fsf@oracle.com> <CAMGffEkaTLLEs+i-EWUmo-Y8KSNBeyth63L1hXxP++PBcPPXbg@mail.gmail.com>
- <yq1bment539.fsf@oracle.com>
-From: Jinpu Wang <jinpu.wang@profitbricks.com>
-Date: Mon, 16 Apr 2018 10:16:07 +0200
-Message-ID: <CAMGffEkbXORH+baoVRD4fOLk=hV6P-oXRpobM6A+o_fCADkbdQ@mail.gmail.com>
-Subject: Re: [PATCH v2] block: ratelimite pr_err on IO path
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-        Suganath Prabu Subramani
-        <suganath-prabu.subramani@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>
+In-Reply-To: <bdaaa8823cc3aef44352ee867fb6274278f2a2a9.1522392153.git.baolin.wang@linaro.org>
+References: <bdaaa8823cc3aef44352ee867fb6274278f2a2a9.1522392153.git.baolin.wang@linaro.org>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Mon, 16 Apr 2018 16:18:06 +0800
+Message-ID: <CAMz4kuKdLEN6MNeyoBjR7NMhG-YJ9qBMZ5U1iYi623Z_1JXbpQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: eic: Add edge trigger emulation for EIC
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 6:59 PM, Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
-> Jinpu,
->
-> [CC:ed the mpt3sas maintainers]
->
-> The ratelimit patch is just an attempt to treat the symptom, not the
-> cause.
-Agree. If we can fix the root cause, it will be great.
->
->> Thanks for asking, we updated mpt3sas driver which enables DIX support
->> (prot_mask=0x7f), all disks are SATA SSDs, no DIF support.
->> After reboot, kernel reports the IO errors from all the drives behind
->> HBA, seems for almost every read IO, which turns the system unusable:
->> [   13.079375] sda: ref tag error at location 0 (rcvd 143196159)
->> [   13.079989] sda: ref tag error at location 937702912 (rcvd 143196159)
->> [   13.080233] sda: ref tag error at location 937703072 (rcvd 143196159)
->> [   13.080407] sda: ref tag error at location 0 (rcvd 143196159)
->> [   13.080594] sda: ref tag error at location 8 (rcvd 143196159)
->
-> That sounds like a bug in the mpt3sas driver or firmware. I guess the
-> HBA could conceivably be operating a SATA device as DIX Type 0 and strip
-> the PI on the drive side. But that doesn't seem to be a particularly
-> useful mode of operation.
->
-> Jinpu: Which firmware are you running? Also, please send us the output
-> of:
->
->         sg_readcap -l /dev/sda
->         sg_inq -x /dev/sda
->         sg_vpd /dev/sda
->
-Disks are INTEL SSDSC2BX48, directly attached to HBA.
-LSISAS3008: FWVersion(13.00.00.00), ChipRevision(0x02), BiosVersion(08.11.00.00)
-mpt3sas_cm2: Protocol=(Initiator,Target),
-Capabilities=(TLR,EEDP,Snapshot Buffer,Diag Trace Buffer,Task Set
-Full,NCQ)
+Hi,
 
-jwang@x:~$ sudo sg_vpd /dev/sdz
-Supported VPD pages VPD page:
-  Supported VPD pages [sv]
-  Unit serial number [sn]
-  Device identification [di]
-  Mode page policy [mpp]
-  ATA information (SAT) [ai]
-  Block limits (SBC) [bl]
-  Block device characteristics (SBC) [bdc]
-  Logical block provisioning (SBC) [lbpv]
-jwang@x:~$ sudo sg_inq -x /dev/sdz
-VPD INQUIRY: extended INQUIRY data page
-    inquiry: field in cdb illegal (page not supported)
-jwang@x:~$ sudo sg_readcap -l /dev/sdz
-Read Capacity results:
-   Protection: prot_en=0, p_type=0, p_i_exponent=0
-   Logical block provisioning: lbpme=1, lbprz=1
-   Last logical block address=937703087 (0x37e436af), Number of
-logical blocks=937703088
-   Logical block length=512 bytes
-   Logical blocks per physical block exponent=3 [so physical block
-length=4096 bytes]
-   Lowest aligned logical block address=0
-Hence:
-   Device size: 480103981056 bytes, 457862.8 MiB, 480.10 GB
-
-
-> Broadcom: How is DIX supposed to work for SATA drives behind an mpt3sas
-> controller?
+On 30 March 2018 at 15:02, Baolin Wang <baolin.wang@linaro.org> wrote:
+> The Spreadtrum debounce EIC and latch EIC can not support edge trigger,
+> but most GPIO users (like gpio-key driver) only use the edge trigger,
+> thus the EIC driver need add some support to emulate the edge trigger
+> to satisfy this requirement.
 >
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+
+Any comments for this patch set? Thanks.
+
+> ---
+>  drivers/gpio/gpio-eic-sprd.c |   73 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+> index de7dd93..e0d6a0a 100644
+> --- a/drivers/gpio/gpio-eic-sprd.c
+> +++ b/drivers/gpio/gpio-eic-sprd.c
+> @@ -300,6 +300,7 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
+>         struct gpio_chip *chip = irq_data_get_irq_chip_data(data);
+>         struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
+>         u32 offset = irqd_to_hwirq(data);
+> +       int state;
+>
+>         switch (sprd_eic->type) {
+>         case SPRD_EIC_DEBOUNCE:
+> @@ -310,6 +311,17 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
+>                 case IRQ_TYPE_LEVEL_LOW:
+>                         sprd_eic_update(chip, offset, SPRD_EIC_DBNC_IEV, 0);
+>                         break;
+> +               case IRQ_TYPE_EDGE_RISING:
+> +               case IRQ_TYPE_EDGE_FALLING:
+> +               case IRQ_TYPE_EDGE_BOTH:
+> +                       state = sprd_eic_get(chip, offset);
+> +                       if (state)
+> +                               sprd_eic_update(chip, offset,
+> +                                               SPRD_EIC_DBNC_IEV, 0);
+> +                       else
+> +                               sprd_eic_update(chip, offset,
+> +                                               SPRD_EIC_DBNC_IEV, 1);
+> +                       break;
+>                 default:
+>                         return -ENOTSUPP;
+>                 }
+> @@ -324,6 +336,17 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
+>                 case IRQ_TYPE_LEVEL_LOW:
+>                         sprd_eic_update(chip, offset, SPRD_EIC_LATCH_INTPOL, 1);
+>                         break;
+> +               case IRQ_TYPE_EDGE_RISING:
+> +               case IRQ_TYPE_EDGE_FALLING:
+> +               case IRQ_TYPE_EDGE_BOTH:
+> +                       state = sprd_eic_get(chip, offset);
+> +                       if (state)
+> +                               sprd_eic_update(chip, offset,
+> +                                               SPRD_EIC_LATCH_INTPOL, 0);
+> +                       else
+> +                               sprd_eic_update(chip, offset,
+> +                                               SPRD_EIC_LATCH_INTPOL, 1);
+> +                       break;
+>                 default:
+>                         return -ENOTSUPP;
+>                 }
+> @@ -405,6 +428,55 @@ static int sprd_eic_irq_set_type(struct irq_data *data, unsigned int flow_type)
+>         return 0;
+>  }
+>
+> +static void sprd_eic_toggle_trigger(struct gpio_chip *chip, unsigned int irq,
+> +                                   unsigned int offset)
+> +{
+> +       struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
+> +       struct irq_data *data = irq_get_irq_data(irq);
+> +       u32 trigger = irqd_get_trigger_type(data);
+> +       int state, post_state;
+> +
+> +       /*
+> +        * The debounce EIC and latch EIC can only support level trigger, so we
+> +        * can toggle the level trigger to emulate the edge trigger.
+> +        */
+> +       if ((sprd_eic->type != SPRD_EIC_DEBOUNCE &&
+> +            sprd_eic->type != SPRD_EIC_LATCH) ||
+> +           !(trigger & IRQ_TYPE_EDGE_BOTH))
+> +               return;
+> +
+> +       sprd_eic_irq_mask(data);
+> +       state = sprd_eic_get(chip, offset);
+> +
+> +retry:
+> +       switch (sprd_eic->type) {
+> +       case SPRD_EIC_DEBOUNCE:
+> +               if (state)
+> +                       sprd_eic_update(chip, offset, SPRD_EIC_DBNC_IEV, 0);
+> +               else
+> +                       sprd_eic_update(chip, offset, SPRD_EIC_DBNC_IEV, 1);
+> +               break;
+> +       case SPRD_EIC_LATCH:
+> +               if (state)
+> +                       sprd_eic_update(chip, offset, SPRD_EIC_LATCH_INTPOL, 0);
+> +               else
+> +                       sprd_eic_update(chip, offset, SPRD_EIC_LATCH_INTPOL, 1);
+> +               break;
+> +       default:
+> +               sprd_eic_irq_unmask(data);
+> +               return;
+> +       }
+> +
+> +       post_state = sprd_eic_get(chip, offset);
+> +       if (state != post_state) {
+> +               dev_warn(chip->parent, "EIC level was changed.\n");
+> +               state = post_state;
+> +               goto retry;
+> +       }
+> +
+> +       sprd_eic_irq_unmask(data);
+> +}
+> +
+>  static int sprd_eic_match_chip_by_type(struct gpio_chip *chip, void *data)
+>  {
+>         enum sprd_eic_type type = *(enum sprd_eic_type *)data;
+> @@ -448,6 +520,7 @@ static void sprd_eic_handle_one_type(struct gpio_chip *chip)
+>                                         bank * SPRD_EIC_PER_BANK_NR + n);
+>
+>                         generic_handle_irq(girq);
+> +                       sprd_eic_toggle_trigger(chip, girq, n);
+>                 }
+>         }
+>  }
 > --
-> Martin K. Petersen      Oracle Linux Engineering
+> 1.7.9.5
+>
 
 
-Thanks!
 
 -- 
-Jack Wang
-Linux Kernel Developer
-
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
+Baolin.wang
+Best Regards
