@@ -1,65 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752227AbeDPVVT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:21:19 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57242 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbeDPVVR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:21:17 -0400
-To: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Matan Barak <matanb@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] infiniband: mlx5: fix build error when
- INFINIBAND_USER_ACCESS=m
-Message-ID: <81ea9f01-4624-38d7-2bfe-1dd7063fa3f0@infradead.org>
-Date: Mon, 16 Apr 2018 14:21:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752058AbeDPVYw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:24:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751002AbeDPVYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 17:24:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD60B21771
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 16 Apr 2018 17:24:47 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "beanhuo@micron.com" <beanhuo@micron.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@redhad.com" <mingo@redhad.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "rajatja@google.com" <rajatja@google.com>
+Subject: Re: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI
+ trace events
+Message-ID: <20180416172447.5166f854@gandalf.local.home>
+In-Reply-To: <bee7c8b15b7cec3d4b1442f414e766539fac2491.camel@wdc.com>
+References: <4650cbf668fd4853ad98dba834141e08@SIWEX5A.sing.micron.com>
+        <bee7c8b15b7cec3d4b1442f414e766539fac2491.camel@wdc.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Mon, 16 Apr 2018 20:49:12 +0000
+Bart Van Assche <Bart.VanAssche@wdc.com> wrote:
 
-Fix build errors when INFINIBAND_USER_ACCESS=m and MLX5_INFINIBAND=y.
-The build error occurs when the mlx5 driver code attempts to use
-USER_ACCESS interfaces, which are built as a loadable module.
+> Which tools process these strings? Has it been verified whether or not
+> the tools that process these strings still work fine with this patch
+> applied?
 
-Fixes these build errors:
+Ideally, tools shouldn't process trace event strings, but I'm sure some
+do. :-/
 
-drivers/infiniband/hw/mlx5/main.o: In function `populate_specs_root':
-../drivers/infiniband/hw/mlx5/main.c:4982: undefined reference to `uverbs_default_get_objects'
-../drivers/infiniband/hw/mlx5/main.c:4994: undefined reference to `uverbs_alloc_spec_tree'
-drivers/infiniband/hw/mlx5/main.o: In function `depopulate_specs_root':
-../drivers/infiniband/hw/mlx5/main.c:5001: undefined reference to `uverbs_free_spec_tree'
+Getting libtraceevent out as a library is a high priority of mine, and
+hopefully I should get something out in a couple of months.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Matan Barak <matanb@mellanox.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: Leon Romanovsky <leonro@mellanox.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: linux-rdma@vger.kernel.org
-Cc: stable@vger.kernel.org # reported against 4.16
----
- drivers/infiniband/hw/mlx5/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Ideally, tools should parse the raw data and then new fields will not
+affect them.
 
---- lnx-417-rc1.orig/drivers/infiniband/hw/mlx5/Kconfig
-+++ lnx-417-rc1/drivers/infiniband/hw/mlx5/Kconfig
-@@ -1,6 +1,7 @@
- config MLX5_INFINIBAND
- 	tristate "Mellanox Connect-IB HCA support"
- 	depends on NETDEVICES && ETHERNET && PCI && MLX5_CORE
-+	select INFINIBAND_USER_ACCESS
- 	---help---
- 	  This driver provides low-level InfiniBand support for
- 	  Mellanox Connect-IB PCI Express host channel adapters (HCAs).
+-- Steve
