@@ -1,119 +1,115 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3398102-1523887672-2-10600714813765315743
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3317868-1523887287-2-9344603391895290054
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
 X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523887672; b=Hb8k1f602CkscbAFJQEIs9WZlTGLdq2pqtktrVwcp6C33058a4
-    +tjdWH/EoGrkm6fo3n7LTVfP1j7wfTT2szaIQ2ZydQ//ibsObHtwWG5WOwYYmUcu
-    Hq822aaH4qyWmlVFN4HQ/iXnLkbdU9lDCCfEDucnMFwR7/qlDcv/qyel1wxVdzXe
-    MVM3EgeF7frJthVSCVNNA9PW3F3xyEOWx+nLrEBPUvjNv7UD9DRJwlXrNmeT4nIr
-    cxI3BAvB+8jUsvhggSLowJ6QQc3leaav+Vi7QJDGbY8EQSqCTCC3jTtmZoyGrY5K
-    XXUaFOg4+wfP/+x/aBlszpUpwkCQr0jQ3izw==
+    1523887287; b=Zch1JsaZqB9VvFsxFHN0TWoxCik6guiAUV8VS/h29cz843u+Et
+    k1Ce9pjkx/I2AkTbrNpb00Q4o1lbmvhUiQ9o2QGqwFk0AWQDdAPi1tOhRwwqTYZj
+    DHDhOBuWtWOFgbYkTOxcIbnN7PFXVFQDm1nx2qDJe4wZqrAyDoaL8LOUuQ5rPWJY
+    N7vYYej4ycQd0+UmuGfjHbWV+Id4fWg6LoIUltrx8Ofxu2Kvz5wWB5TCKOUY44NR
+    bq1pjgtHeW3NzOSvAxt7yk/+hNUZHihnGKINFN14KFTH+QyqnJj4nt+8tJHZZ6A/
+    pHNWtvskprPTiLn7JoxQGRSqxjjOYXb7eROQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1523887672; bh=jxveb8jCoBU
-    1WbiKBbGQussSlLpN0wv8km03toJZnkw=; b=J9Z3T9nLvEnBTwmHvOZsWjjsYv8
-    XJ//+Pkj39QfW19jZmGrJbjUJsBl9lqy5uyVL9Hps/FWoJm9V1WsM79aDlEP0V8p
-    348+Mv5fNwVUNonsxPgNwZSqyjBD8kihb1n4IGu1dJ3D5QFzgo3IXGCNoXVMqUid
-    uaPe8b7BChQeq4t+I9/9JeOIbXa9Hpu4z5xSBTPnfa/F9/9tQnCV0DxF0ePR70Rs
-    Y7WskVZTd6e8E0+e43keHnvGcGB5MQFGNsGVAI5dLhEFk0k0TSsH1H6812s1hN+b
-    x2b7XWFeVSwpaWOi6VVk2USu0UDG9KhHGD4ZsTx8/B8Y72CBk8MsxpTAkNQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=NCLA/zkt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1523887287; bh=Epc36/GsnMrS9Ggc3TppQ1rSr3wm9n
+    sbLFAml5ClnzU=; b=I/fGM0UAfPt8rxKkGZZEgBeFeYFwmcPW7roIfz0R6/sSM5
+    KGsJuxxujgNib5FtESD+PUppR/O8mk6D2uhbgRdFDOsKl5opN/6X4fUvhKWLzNb1
+    36CFAj/67/EIIe3maoBk7NaLdoN+q0AqcWe9jOdgN5CTPIuipWzGN+Ge8W+cFB5q
+    sdzD29Q/JfdAR6qSx2IPNY9bBbfJl9cqmMETQel4p+g7Tv6LE1QiYr2qkNl7DNH2
+    PMFMWx+F7/2w8dLv3tn84zfSomlMzXmIDzyu123tV+O+KkCMzlCBIX7WX9y9bZKB
+    ZigTxJyuVDEYBDyixjiZ8q7OizKdRbZIHnGgcT/w==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linutronix.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BxnA/0W5;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linutronix.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=NCLA/zkt x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linutronix.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=BxnA/0W5;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linutronix.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfENDEryCLewDT+Nfi9dVky4xP36MlrmndLPl+HnnuKDx3Qs+5VthPAxO4xHakwECj8cGszgbhstFL68PLDLEHePkBiZFOxnVyVTJDCTG7Bl4zU7fBZzy
-    ZsfB9NktcDP3b04w/8+4lI54jEJ+5xpc4oiH9lHmE8ns9P//zEdSdn7XicM2l2NvYzCJ3icxc9SkcBTQhyjqqvFKsBIW5IBvJOoYKWNaNLA+pAiqWyPiBHBN
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfD8B0mK+SSNTU9ncNnI1d5qbzY3z/scgTOP7kPTzLHNkahMl9e29yObIvSuIurbLMeYo9NHSuguOu7HzV7UYwWE5vzs87fYLamyTaGrbdqP1kENEMGe7
+    W14rcmuG3yZxCN0Oa4hZ+hM7zS+52mCWnCxPw1+l6GKubtHNoKB2h0ET+RpxZPiGbLzvkTKgjG/MZgzzTdhZ4EO7WnhuH8vqmz2xmRVcS9e6m6PVaBXgzAL7
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=4zGRZ9gJ3Tx9_e93Am8A:9
-    a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=cvBusfyB2V15izCimMoJ:22
+    a=VwQbUJbxAAAA:8 a=w3DoHHLawtSICG2qJXIA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755163AbeDPOHt (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 16 Apr 2018 10:07:49 -0400
-Received: from mail-wr0-f180.google.com ([209.85.128.180]:38253 "EHLO
-        mail-wr0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751159AbeDPOHs (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 16 Apr 2018 10:07:48 -0400
-X-Google-Smtp-Source: AIpwx48hIrV7i8N1yrku1Btcw9+kixtp/NCb7gzEHb000o6eTBf0pYgGFdd6ye67qwrjAWZtINGLwQ==
-Date: Mon, 16 Apr 2018 15:07:43 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: tony@atomide.com, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hns@goldelico.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] mfd: twl-core: Fix clock initialization
-Message-ID: <20180416140743.fv5njvszyw6umz3b@dell>
-References: <20180409084539.14365-1-peter.ujfalusi@ti.com>
+        id S1755414AbeDPOBR (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 16 Apr 2018 10:01:17 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51465 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755108AbeDPOBP (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 16 Apr 2018 10:01:15 -0400
+Date: Mon, 16 Apr 2018 16:01:04 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-usb@vger.kernel.org
+Subject: Re: [RFC PATCH] usb: hcd: complete URBs in threaded-IRQ context
+ instead of tasklet
+Message-ID: <20180416140103.33s2xarrxxeecttk@linutronix.de>
+References: <20180216170450.yl5owfphuvltstnt@breakpoint.cc>
+ <20180227143934.2aa847ac@vento.lan>
+ <20180308095739.okdn7ghvlpy4oiy5@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180409084539.14365-1-peter.ujfalusi@ti.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <20180308095739.okdn7ghvlpy4oiy5@linutronix.de>
+User-Agent: NeoMutt/20180323
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 09 Apr 2018, Peter Ujfalusi wrote:
-
-> When looking up the clock we must use the client->dev as device since that
-> is the one which is probed via DT.
+On 2018-03-08 10:57:39 [+0100], To Mauro Carvalho Chehab wrote:
+> On 2018-02-27 14:39:34 [-0300], Mauro Carvalho Chehab wrote:
+> > Hi Sebastian,
+> Hi Mauro,
 > 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Cc: stable@vger.kernel.org # 4.16+
-> ---
-> Hi,
+> > Sorry for taking some time to test it, has been busy those days...
+> :)
 > 
-> Changes since v1:
-> - Removed the Fixes line and add tag only for v4.16 to avoid possible breakage
->   in pre v4.16.
->  
-> Regards,
-> Peter
+> > Anyway, I tested it today. Didn't work. It keep losing data.
 > 
->  drivers/mfd/twl-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Okay, this was unexpected. What I learned from the thread is that you
+> use the dwc2 controller and once upgrade to a kernel which completes the
+> URBs in BH context then you starting losing data from your DVB-s USB
+> device. And it was assumed that this is because BH/ksoftirq is getting
+> "paused" if it is running for too long. If that is the case then a
+> revert of "let us complete the URB in BH context" should get it working
+> again. Is that so?
 
-Applied, thanks.
+ping
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Sebastian
