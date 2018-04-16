@@ -1,84 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751840AbeDPPzo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 11:55:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60544 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750708AbeDPPzm (ORCPT
+        id S1752096AbeDPP4k (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 11:56:40 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:42010 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751169AbeDPP4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:55:42 -0400
-Subject: Re: syzbot dashboard
-To: Dmitry Vyukov <dvyukov@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Eric Biggers <ebiggers3@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-References: <CACT4Y+babw_2NJa+oym2VN7-Z4Bt_rZx2sMi68AD+1KzNpr=KQ@mail.gmail.com>
- <CA+55aFzxDYGLUPY802rJN=wgJ1aEZHLRE+W8J82eFz2nzKOMBg@mail.gmail.com>
- <CACT4Y+YDqJMb4mC6c--Ku=ZL9MpELmUKMXe4uQJ6H0av2FJC9w@mail.gmail.com>
- <20180323201634.GA16350@gmail.com>
- <CA+55aFwZpMB=VUTCNUgc4dcCEy9_T4iE0R0pAfDets=zDFJunQ@mail.gmail.com>
- <CACT4Y+YjD68zBdN7zCViB5ab9-R2JgBEf5OBiDauxMsyuEkLRw@mail.gmail.com>
- <CA+55aFwJ=fiuV+QF+-b+H58tquCzek6CNpssZn40r0z4E0Q6kA@mail.gmail.com>
- <CACT4Y+YUFbbQgE9C1awsVVBFOjLbTXANRQwPK+R58FLjhTb-Vg@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <93351718-7314-70c4-61a7-2c7b3582b5a0@infradead.org>
-Date: Mon, 16 Apr 2018 08:55:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 16 Apr 2018 11:56:38 -0400
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+YUFbbQgE9C1awsVVBFOjLbTXANRQwPK+R58FLjhTb-Vg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Date: Mon, 16 Apr 2018 17:56:34 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Stephen Warren <swarren@nvidia.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, linux@armlinux.org.uk,
+        ard.biesheuvel@linaro.org, arnd@arndb.de, nicolas.pitre@linaro.org,
+        marc.zyngier@arm.com, behanw@converseincode.com, keescook@chromium.org,
+        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Thierry Reding <treding@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 3/6] ARM: trusted_foundations: do not use naked
+ function
+In-Reply-To: <f627177c-f813-9e10-ade5-c7654375639b@gmail.com>
+References: <20180325180959.28008-1-stefan@agner.ch>
+ <20180325180959.28008-4-stefan@agner.ch>
+ <704c863a-0b5a-6396-d7da-f0ed17b7cca2@gmail.com>
+ <263337af-7541-be9e-3db6-6cb987fd08fb@arm.com>
+ <f627177c-f813-9e10-ade5-c7654375639b@gmail.com>
+Message-ID: <cf9b916103c0dba1e67682efc69f5bae@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/2018 04:15 AM, Dmitry Vyukov wrote:
-> On Sat, Apr 14, 2018 at 8:25 PM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->> Coming back to this now that the merge window is almost over ]
->>
->> On Mon, Mar 26, 2018 at 1:46 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+On 27.03.2018 14:16, Dmitry Osipenko wrote:
+> On 27.03.2018 14:54, Robin Murphy wrote:
+>> On 26/03/18 22:20, Dmitry Osipenko wrote:
+>>> On 25.03.2018 21:09, Stefan Agner wrote:
+>>>> As documented in GCC naked functions should only use Basic asm
+>>>> syntax. The Extended asm or mixture of Basic asm and "C" code is
+>>>> not guaranteed. Currently this works because it was hard coded
+>>>> to follow and check GCC behavior for arguments and register
+>>>> placement.
+>>>>
+>>>> Furthermore with clang using parameters in Extended asm in a
+>>>> naked function is not supported:
+>>>>    arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
+>>>>            references not allowed in naked functions
+>>>>                  : "r" (type), "r" (arg1), "r" (arg2)
+>>>>                         ^
+>>>>
+>>>> Use a regular function to be more portable. This aligns also with
+>>>> the other smc call implementations e.g. in qcom_scm-32.c and
+>>>> bcm_kona_smc.c.
+>>>>
+>>>> Cc: Dmitry Osipenko <digetx@gmail.com>
+>>>> Cc: Stephen Warren <swarren@nvidia.com>
+>>>> Cc: Thierry Reding <treding@nvidia.com>
+>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>>> ---
+>>>> Changes in v2:
+>>>> - Keep stmfd/ldmfd to avoid potential ABI issues
+>>>>
+>>>>   arch/arm/firmware/trusted_foundations.c | 14 +++++++++-----
+>>>>   1 file changed, 9 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/firmware/trusted_foundations.c
+>>>> b/arch/arm/firmware/trusted_foundations.c
+>>>> index 3fb1b5a1dce9..689e6565abfc 100644
+>>>> --- a/arch/arm/firmware/trusted_foundations.c
+>>>> +++ b/arch/arm/firmware/trusted_foundations.c
+>>>> @@ -31,21 +31,25 @@
+>>>>     static unsigned long cpu_boot_addr;
+>>>>   -static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
+>>>> +static void tf_generic_smc(u32 type, u32 arg1, u32 arg2)
+>>>>   {
+>>>> +    register u32 r0 asm("r0") = type;
+>>>> +    register u32 r1 asm("r1") = arg1;
+>>>> +    register u32 r2 asm("r2") = arg2;
+>>>> +
+>>>>       asm volatile(
+>>>>           ".arch_extension    sec\n\t"
+>>>> -        "stmfd    sp!, {r4 - r11, lr}\n\t"
+>>>> +        "stmfd    sp!, {r4 - r11}\n\t"
+>>>>           __asmeq("%0", "r0")
+>>>>           __asmeq("%1", "r1")
+>>>>           __asmeq("%2", "r2")
+>>>>           "mov    r3, #0\n\t"
+>>>>           "mov    r4, #0\n\t"
+>>>>           "smc    #0\n\t"
+>>>> -        "ldmfd    sp!, {r4 - r11, pc}"
+>>>> +        "ldmfd    sp!, {r4 - r11}\n\t"
+>>>>           :
+>>>> -        : "r" (type), "r" (arg1), "r" (arg2)
+>>>> -        : "memory");
+>>>> +        : "r" (r0), "r" (r1), "r" (r2)
+>>>> +        : "memory", "r3", "r12", "lr");
 >>>
->>> I've switched emails to links instead of attachments, here are few
->>> recent examples:
->>> https://lkml.org/lkml/2018/3/25/31
->>> https://lkml.org/lkml/2018/3/25/256
->>> https://lkml.org/lkml/2018/3/25/257
->>
->> Looks good to me. I notice that only the last one got any replies, though.
->>
->> I wonder if some people auto-ignore the new reports because of having
->> been burned by the previous "huge illegible emails" issue.
->>
->> I do see syzbot fixes in rdma, though, just not for that
->> cma_listen_on_all issue. So maybe that bug is nastier.
+>>> Although seems "lr" won't be affected by SMC invocation because it should be
+>>> banked and hence could be omitted entirely from the code. Maybe somebody could
+>>> confirm this.
+>> Strictly per the letter of the architecture, the SMC could be trapped to Hyp
+>> mode, and a hypervisor might clobber LR_usr in the process of forwarding the
+>> call to the firmware secure monitor (since Hyp doesn't have a banked LR of its
+>> own). Admittedly there are probably no real systems with the appropriate
+>> hardware/software combination to hit that, but on the other hand if this gets
+>> inlined where the compiler has already created a stack frame then an LR clobber
+>> is essentially free, so I reckon we're better off keeping it for reassurance.
+>> This isn't exactly a critical fast path anyway.
 > 
-> "possible deadlock in handle_rx" is now marked as fixed with
-> "vhost_net: add missing lock nesting notation".
-> "KASAN: use-after-free Read in pppol2tp_connect (3)" is marked as
-> fixed with "l2tp: fix races in tunnel creation".
-> "KASAN: use-after-free Read in __list_add_valid (5)" is still open.
-> 
-> Though, there are still 182 open bugs on dashboard:
-> https://syzkaller.appspot.com/
-> 
-> 80+ have reproducers and happened last time recently enough. Few
-> dozens without reproducers, but as history shows ~2/3 of them are
-> fixable. Part of the remaining ones is probably fixed, but nobody told
-> syzbot about the fixes. Part is probably still unfixed but happen
-> episodically.
-> 
+> Okay, thank you for the clarification.
 
-https://syzkaller.appspot.com/bug?id=0627d4551fdc39bf1ef5d82cd9eef587047f7718
-is fixed by 9ad553abe66f ("fs/reiserfs/journal.c: add missing resierfs_warning() arg"),
+So it seems this change is fine?
 
-which does contain the string:
-Reported-by: <syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com>
+Stephen, you picked up changes for this driver before, is this patch
+going through your tree?
 
-Is one of those hex strings incorrect?
-
--- 
-~Randy
+--
+Stefan
