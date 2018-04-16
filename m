@@ -1,111 +1,127 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1748446-1525110560-2-5737901870480869380
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3053989-1523878585-2-14602993175667651455
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='net', MailFrom='org', XOriginatingCountry='FR'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525110559; b=aFDEUOIFB4lTw71cYahwQ1BOW76DzsB3B+e0II1rSnyMGm1fQB
-    7h7CE4hjnG/QKlmSCMx0gIDp30UxlNe2IRiZvb6Ld/WBvRN5CYWzsN9+zW8fY97x
-    XCjK4nAweFcB0WMQGvx4n/FT5m0zi5UEUF8iOfJSmZJ9zWDOCgyV8PoSP4HTQnXi
-    b9kcYZJn8R2mlouDwyhBfNz/f+tsLXw9H4sGzj1wG/vCqPm50um0fm4tElN3am7d
-    rb8bSKUP4GZRcXBn+GUyodIBGYcZvCfHnfBzm+LTrBaC//o3cWJzCBvATBpgg2r5
-    lK6zscYj6rUfg7Z56gH/D1G++JaCYF74I/aw==
+    1523878585; b=c0BcH/LtcSiPW3OsaCEwdd+LhaXa/lqxzeeiQLgObwDgOLcGJE
+    Vkk1ViHhYe6//9fPcUWX3g4Jg6+KW5J1aTmtbCOV5lyfI+uQM/Ib+teahpsA7V7e
+    oXyx8URHhDuzkdjvfBCbc+agQ7sbLZGG1rJWkkCseFPLWb88fRLRQ/SjclM7qWqO
+    99kRlSDi928B6FfcfrlMwuvkb2rqma/rObSdSsxq2EZWbjCcG8u4uvid0u6vrKCa
+    hvhsRKaJ8OIk8NYt22XoyAD32yAFbYxv41Jj/U7iYdPO69dgsOZeA6iBBVh4VFzv
+    6y3pXv/zACg0AmcMgjOYz+0qv3cIKm2AJx7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:date
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525110559; bh=DUxKp
-    gPDKM9tHs4vog5LEQaKfJNfI+s0Oa8klhFsjIo=; b=H/zEMhi7AZOD5w8GDsy2l
-    NjSMk12BASjANmEtNxDH3ULv8VPq3UO5BzY1ZKPB+I8X/k8hctmiX8TW9bJg7yrj
-    FPtFza4+88XagDndHQ23Wjmz7ALdWh6qvglWDpXbg3QSbAYzl8j9kjEuRO47zaRv
-    0OThsCJoEekh01iQAw3Wc5d2jxanlkt7GqMOo9b8mqJla/qYssy8+6bZ2YpW+mnf
-    B/WdyqAupMc6Dr4l0NjRVzYl4ef8aRzWS3eO8xHeWgZZpeo6/lGo6L2s+ejMcqaM
-    X5Zb3hdqOyDf+afHnks7wOch35nHDYd2O8soDjWLJOgKDnwAoSlR8qDMzVxQnn5N
-    A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523878585;
+    bh=24ny5PY0L5RgC+Tm9DDYwdWSMoXLXwPiJL6YBkCfx4c=; b=LqhBCv0N3pH8
+    YicHpnhy41o9cVir/+QDvqEytm5TPGltUg+SwmGCkuAQhI3gHBkxFy481rCYR0QJ
+    9CAKXuxKizT2xOABApnalqH/GnZOxVaM42SetyJ1WkB91vkdlMXBs92mZsUXYTJO
+    QKN75r5rK0n8wrJBwmZr7mHRqOEmhRaGNNikEBOl24e/7r1oy1oUr8CGWSUlKZQa
+    Oa8TzrnfnVUSWQCEt8s4PbW+rjGBYNldfd1C+0XFpssVhQIw4iWhQdK+ykmeS7X7
+    sTxdI92iIoa6CoeFwkjnhEACPeVQQ9gIDlrJq9YmWTehF9m4NAlsZbPhimQ6BNY+
+    XDbGCjg6wQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hadess.net;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=hadess.net header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Sf9ZfB0o;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hadess.net;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=hadess.net header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Sf9ZfB0o;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNyX3sn25cpQMzxNOlgYs1BGFx+u7FBdPe+CeQ2Rpu5sE8FACZVnjhF/daGmoIpVZnYgW6L5EZXeKf9z+omUHqqD0VPj3vTcRi9kAP3TXs/VmmLwq8D7
-    AL0o7ftIqdugRmCNl0Pwj0cw49U9tDiR1JybULf92WEoeo5q4wtvj5TEltYPAfV++ktGNd947/X/Q7vTxElQnyPWzFz59bheutmikHWK5T4l9zB/3kZD6eZG
-    dt/gUKJcWczvXx+L1EX6Mg==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=nef-8XxXxq8A:10 a=kj9zAlcOel0A:10
-    a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8
-    a=DzOXeqrlEnruMLf-oEgA:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfCPLKj9omqt99p62fCMPUvOTRPWTmjtR1OFukMxDrylo+OwJw+Dq6n7fCANsY3e58d4VECfCgEMhuV08ZKVNOijLoDTj8wiNVHOx3RqgvjQphxwBc6P5
+    Z4i/UPICuSY5iP1hXiQWMlUZ7DHjg6PGmkPGF9/CK3XWwpp698m+DHl6LOz2Ej/2FV19hUoTow1AZYF/50iVHxTuZVFp2hmhEXYw2kHAfOpm8qU9bJk2PyZT
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=20KFwNOVAAAA:8 a=B9zcGuyZrMb6SIPcIbYA:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Originating-IP: 83.155.44.161
-Message-ID: <4e727467119e92364a9be63af80e7d671de984d0.camel@hadess.net>
-Subject: Re: [PATCH][staging-next] staging: rtl8723bs: spelling mistake:
- "dismatch" -> "mismatch"
-From: Bastien Nocera <hadess@hadess.net>
-To: Colin King <colin.king@canonical.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Justin Vreeland <justin@jvreeland.com>,
- devel@driverdev.osuosl.org
-Date: Mon, 30 Apr 2018 17:34:42 +0200
-In-Reply-To: <20180430141946.12186-1-colin.king@canonical.com>
-References: <20180430141946.12186-1-colin.king@canonical.com>
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754192AbeDPLgX convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Mon, 16 Apr 2018 07:36:23 -0400
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:45891 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753398AbeDPLgW (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 16 Apr 2018 07:36:22 -0400
+X-Google-Smtp-Source: AIpwx4+el01m+rXBw00+O9HylsP+qaqAhM8+0RLLIDUE3bHIRDypJnYBqpIcm9SBzlMNBw2ythcDI35IXP0Y7LhdAho=
+MIME-Version: 1.0
+In-Reply-To: <CAHcwAbQ4y3vWp7p7GayfdbzbomLrqLKMfu0egEoEODJ3LN5qOw@mail.gmail.com>
+References: <20180312191917.21381-1-namit@vmware.com> <20180312192848.22104-1-namit@vmware.com>
+ <E63288C3-BE4F-4D41-A074-1CB86C74414E@vmware.com> <BB21DC03-9168-4E5E-B5CA-D446E07BE52F@vmware.com>
+ <CAHcwAbSijSmeU3WnznAC+ZaF9iCmYkizqiJNuvLcrYm-YCWxRg@mail.gmail.com>
+ <219A03D6-7375-4577-90BA-45DCF2A29289@vmware.com> <CAHcwAbQ4y3vWp7p7GayfdbzbomLrqLKMfu0egEoEODJ3LN5qOw@mail.gmail.com>
+From: Oleksandr Natalenko <oleksandr@redhat.com>
+Date: Mon, 16 Apr 2018 13:36:20 +0200
+Message-ID: <CAHcwAbTEjs6+oPYRJ1HTj--Xh6tORygYUL6aU9tMOJ1KHP_eKQ@mail.gmail.com>
+Subject: Re: [PATCH v2] vmw_balloon: fixing double free when batching mode is off
+To: Nadav Amit <namit@vmware.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Xavier Deguillard <xdeguillard@vmware.com>,
+        pv-drivers <pv-drivers@vmware.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Gil Kupfer <gilkup@gmail.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "ldu@redhat.com" <ldu@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-04-30 at 15:19 +0100, Colin King wrote:
-> +       P2P_STATE_RECV_INVITE_REQ_DISMATCH =
-> 17,        /*      receiving the P2P Inviation request and mismatch
-> with the profile. */
+Hello.
 
-Might as well fix the "inviation" as well, no? :)
+On Fri, Mar 23, 2018 at 9:42 AM, Oleksandr Natalenko
+<oleksandr@redhat.com> wrote:
+>> Actually, rechecking the bug description, I might have rushed. The bug that
+>> I encountered is related to the vunmap() but it is only caused when batching
+>> is off, while the bug you reported has batching on.
+>>
+>> It seems that your sources support batching but do not include b91f108a3d54
+>> (“VMware balloon: Treat init like reset”), which I think would have solved
+>> the problem. I don’t see a mainline kernel that supports batching and does
+>> not have this patch, so it would be helpful to see the exact module that you
+>> use.
+>
+> Correct. The hash is d7568c130d0d0ff1fc5b364fc879b91f108a3d54, actually, though.
+> Yes, we miss this commit in our code base, but also we've already
+> provided a test kernel
+> with this commit included to the customer. Unfortunately, we have no answer yet.
 
-Thanks
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+At least for one customer I can confirm that the kernel built with
+both d7568c130 and the proposed patch fixes the issue.
+
+Thanks.
+
+-- 
+Best regards,
+  Oleksandr Natalenko (post-factum)
+  Senior Software Maintenance Engineer
