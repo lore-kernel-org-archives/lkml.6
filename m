@@ -1,82 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755290AbeDPMKE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:10:04 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:29434 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753744AbeDPMKC (ORCPT
+        id S1755307AbeDPMKf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:10:35 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:34062 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755294AbeDPMKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:10:02 -0400
-X-IronPort-AV: E=Sophos;i="5.48,459,1517875200";
-   d="scan'208";a="607120746"
-From: "Raslan, KarimAllah" <karahmed@amazon.de>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "david@redhat.com" <david@redhat.com>
-Subject: Re: [PATCH v2 00/12] KVM/X86: Introduce a new guest mapping interface
-Thread-Topic: [PATCH v2 00/12] KVM/X86: Introduce a new guest mapping
- interface
-Thread-Index: AQHT1QRgTdVQE1Wqo0a2IXn3xPxQ2KQDPR4AgAAQfwA=
-Date: Mon, 16 Apr 2018 12:09:53 +0000
-Message-ID: <1523880592.22952.9.camel@amazon.de>
-References: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
-         <b390f953-6fe3-1119-15eb-e3b31e609305@redhat.com>
-In-Reply-To: <b390f953-6fe3-1119-15eb-e3b31e609305@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.166.213]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <40671C31858D654ABBA8415D05B6612B@amazon.com>
+        Mon, 16 Apr 2018 08:10:33 -0400
+X-Google-Smtp-Source: AIpwx4+5KTVPcCqlisE022qDlXI0hF/gjlrrPEoQ13a4IGkpPHxTHg8FpUO7qDmit8X21WbQTa4ieg==
+Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
+        kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        javi.merino@kernel.org, rui.zhang@intel.com,
+        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>
+References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
+ <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
+ <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
+ <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
+ <20180416073729.GA4244@vireshk-i7>
+ <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
+ <20180416093747.GB4244@vireshk-i7>
+ <4abf0d97-d2b8-46ab-3c05-4a11510ac3fe@linaro.org>
+ <20180416095006.GC4244@vireshk-i7>
+ <b0e7ff16-c947-89a0-6bd9-56ee9a76e7ad@linaro.org>
+ <20180416101021.GD4244@vireshk-i7>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <1c61128a-dea6-b12c-4cd8-ef53a5c8628d@linaro.org>
+Date: Mon, 16 Apr 2018 14:10:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180416101021.GD4244@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3GCAFtt030157
 
-On Mon, 2018-04-16 at 13:10 +0200, Paolo Bonzini wrote:
-> On 15/04/2018 23:53, KarimAllah Ahmed wrote:
-> > 
-> > Guest memory can either be directly managed by the kernel (i.e. have a "struct
-> > page") or they can simply live outside kernel control (i.e. do not have a
-> > "struct page"). KVM mostly support these two modes, except in a few places
-> > where the code seems to assume that guest memory must have a "struct page".
-> > 
-> > This patchset introduces a new mapping interface to map guest memory into host
-> > kernel memory which also supports PFN-based memory (i.e. memory without 'struct
-> > page'). It also converts all offending code to this interface or simply
-> > read/write directly from guest memory.
-> > 
-> > As far as I can see all offending code is now fixed except the APIC-access page
-> > which I will handle in a seperate patch.
+On 16/04/2018 12:10, Viresh Kumar wrote:
+> On 16-04-18, 12:03, Daniel Lezcano wrote:
+>> On 16/04/2018 11:50, Viresh Kumar wrote:
+>>> On 16-04-18, 11:45, Daniel Lezcano wrote:
+>>>> Can you elaborate a bit ? I'm not sure to get the point.
+>>>
+>>> Sure. With your current code on Hikey960 (big/LITTLE), you end up
+>>> creating two cooling devices, one for the big cluster and one for
+>>> small cluster. Which is the right thing to do, as we also have two
+>>> cpufreq cooling devices.
+>>>
+>>> But with the change Sudeep is referring to, the helper you used to get
+>>> cluster id will return 0 (SoC id) for all the 8 CPUs. So your code
+>>> will end up creating a single cpuidle cooling device for all the CPUs.
+>>> Which would be wrong.
+>>
+>> Is the semantic of topology_physical_package_id changing ?
 > 
-> I assume the caching will also be a separate patch.
-
-Yup, do you want me to include it in this one? I already have it, I
-just thought that I get those bits out first.
-
+> That's what I understood from his email.
 > 
-> It looks good except that I'd squash patches 4 and 9 together.
+>> I don't
+>> understand the change Sudeep is referring to.
 
-Yup, makes sense. I should have squashed them when I removed the 
-lifecycle change!
+Actually there is no impact with the change Sudeep is referring to. It
+is for ACPI, we are DT based. Confirmed with Jeremy.
 
-Thanks for the review :)
+So AFAICT, it is not a problem.
 
-> But I'd like a second set of eyes to look at it.
-> 
-> Thanks,
-> 
-> Paolo
-> 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
