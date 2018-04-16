@@ -1,67 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753461AbeDPQOm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:14:42 -0400
-Received: from sauhun.de ([88.99.104.3]:49230 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752306AbeDPQOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:14:39 -0400
-Date: Mon, 16 Apr 2018 18:14:36 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] ARM: dts: renesas: replace toshiba,mmc-wrprotect-disable
- with disable-wp
-Message-ID: <20180416161435.g7na5yk2v2e2y633@ninjato>
-References: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
+        id S1753394AbeDPQOS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:14:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49490 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752777AbeDPQLs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 12:11:48 -0400
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com,
+        SeongJae Park <sj38.park@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tools/memory-model 08/17] kokr/doc: De-emphasize smp_read_barrier_depends
+Date: Mon, 16 Apr 2018 09:12:36 -0700
+X-Mailer: git-send-email 2.5.2
+In-Reply-To: <20180416161209.GA6895@linux.vnet.ibm.com>
+References: <20180416161209.GA6895@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6q5tvrnjeljvmcmh"
-Content-Disposition: inline
-In-Reply-To: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041616-0024-0000-0000-00000347CE60
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008863; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01018801; UDB=6.00519703; IPR=6.00798042;
+ MB=3.00020599; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-16 16:11:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041616-0025-0000-0000-000047AEEA40
+Message-Id: <1523895165-17576-8-git-send-email-paulmck@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804160146
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: SeongJae Park <sj38.park@gmail.com>
 
---6q5tvrnjeljvmcmh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This commit applies an upstream change, commit 9ad3c143d7d6 ("doc:
+De-emphasize smp_read_barrier_depends") to the Korean version document.
 
-On Tue, Apr 17, 2018 at 12:02:32AM +0900, Masahiro Yamada wrote:
-> Follow up commit 788778b0d21a ("mmc: tmio: deprecate "toshiba,
-> mmc-wrprotect-disable" DT property").
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: SeongJae Park <sj38.park@gmail.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+---
+ Documentation/translations/ko_KR/memory-barriers.txt | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---6q5tvrnjeljvmcmh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrUy+sACgkQFA3kzBSg
-KbZoBRAAqTX6Vs6Rq7RTzKSr0G+5l+LZQmEeorV/p3RuvxU+PdfGSqMbJfBWwPis
-pJ8jTyUslLPz+dKHmyKWkejKtHTNwcz8rIDW1xGyXJEGEeuqnF1kOyddpacS8Q2c
-6N8nXpkAe5/8Gh7fWd15nWG1wBQ0LnNZEWRNn0Nnw3ZqxPDv2GeBZogO3+5ueQUu
-65IxptFIPz6k9hKDaIopsf1lJRiIXoTFty/Vw4Y2O1gLAA6sakcEskCi86UhwI2N
-q9y86LL8E+mXD16EWMmEqsB/m97RIoRxXzJhr9WxwSU7ond88FJZkaJ72Ay2jUcg
-VbUZ97A77kLOY0RisXzDS9btdKsNMBqs7qINiPsN4ZXRE4xd56tx+uxmZsdrAuYr
-HUFXURET6T/p8t3YAtjDP9gDXjKflrD0Jol3XlpAmOJwbB/PXjYTemkIYtmU+CzY
-YuwZnYGg0wqB4dodSsm6CBC6NtxB19cgNvDPoSuXHX4PH84SVKh/d155EoMbAheS
-A+01obX4SdBCBYtA1HNkqMsvLC+QHJKdk2afOWHdLJakQ70LRG52rzCxa6BuGRPp
-t+W60ztaDBK8h8k05vrbQsmIDhpbVnZYwMSXBxXh/S9OFvOgu8nfTtu+RfMbHtYL
-udn+1x+d45gPssKOIDhXeclh7T1CJbufUNpFFgV8x+sZWKEmwr0=
-=d5X2
------END PGP SIGNATURE-----
-
---6q5tvrnjeljvmcmh--
+diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
+index edef154d77b2..44e47c2d33cf 100644
+--- a/Documentation/translations/ko_KR/memory-barriers.txt
++++ b/Documentation/translations/ko_KR/memory-barriers.txt
+@@ -1790,7 +1790,7 @@ CPU 메모리 배리어
+ 	범용		mb()			smp_mb()
+ 	쓰기		wmb()			smp_wmb()
+ 	읽기		rmb()			smp_rmb()
+-	데이터 의존성	read_barrier_depends()	smp_read_barrier_depends()
++	데이터 의존성				READ_ONCE()
+ 
+ 
+ 데이터 의존성 배리어를 제외한 모든 메모리 배리어는 컴파일러 배리어를
+@@ -2829,7 +2829,10 @@ CPU 2 는 C/D 를 갖습니다)가 병렬로 연결되어 있는 시스템을 
+ 다른 CPU 들도 분할된 캐시를 가지고 있을 수 있지만, 그런 CPU 들은 평범한 메모리
+ 액세스를 위해서도 이 분할된 캐시들 사이의 조정을 해야만 합니다.  Alpha 는 가장
+ 약한 메모리 순서 시맨틱 (semantic) 을 선택함으로써 메모리 배리어가 명시적으로
+-사용되지 않았을 때에는 그런 조정이 필요하지 않게 했습니다.
++사용되지 않았을 때에는 그런 조정이 필요하지 않게 했으며, 이는 Alpha 가 당시에
++더 높은 CPU 클락 속도를 가질 수 있게 했습니다.  하지만, Alpha 아키텍쳐 전용
++코드와 READ_ONCE() 매크로 내부에서를 제외하고는 smp_read_barrier_depends() 가
++사용되지 않아야 함을 알아두시기 바랍니다.
+ 
+ 
+ 캐시 일관성 VS DMA
+-- 
+2.5.2
