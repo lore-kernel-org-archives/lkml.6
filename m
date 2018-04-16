@@ -1,69 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752974AbeDPKJq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:09:46 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38325 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeDPKJp (ORCPT
+        id S1753215AbeDPKK0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:10:26 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41130 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752040AbeDPKKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:09:45 -0400
-Message-ID: <1523873350.5918.6.camel@pengutronix.de>
-Subject: Re: [PATCH v5 4/7] dt-bindings: clock: reset: Add AXG AO Clock and
- Reset Bindings
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Yixun Lan <yixun.lan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
-        Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date: Mon, 16 Apr 2018 12:09:10 +0200
-In-Reply-To: <1523872752.2601.26.camel@baylibre.com>
-References: <20180409143749.71197-1-yixun.lan@amlogic.com>
-         <20180409143749.71197-5-yixun.lan@amlogic.com>
-         <1523872752.2601.26.camel@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Mon, 16 Apr 2018 06:10:24 -0400
+X-Google-Smtp-Source: AIpwx4+sBKE013sBSGNcCOVTJr2Qul4VDh6v6uZPlMRpOIdvDxj1GdHHt22faJ+ncikT4Q1AkpLLHg==
+Date: Mon, 16 Apr 2018 15:40:21 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
+        kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        javi.merino@kernel.org, rui.zhang@intel.com,
+        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>
+Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+Message-ID: <20180416101021.GD4244@vireshk-i7>
+References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
+ <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
+ <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
+ <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
+ <20180416073729.GA4244@vireshk-i7>
+ <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
+ <20180416093747.GB4244@vireshk-i7>
+ <4abf0d97-d2b8-46ab-3c05-4a11510ac3fe@linaro.org>
+ <20180416095006.GC4244@vireshk-i7>
+ <b0e7ff16-c947-89a0-6bd9-56ee9a76e7ad@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0e7ff16-c947-89a0-6bd9-56ee9a76e7ad@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
-
-On Mon, 2018-04-16 at 11:59 +0200, Jerome Brunet wrote:
-> On Mon, 2018-04-09 at 22:37 +0800, Yixun Lan wrote:
-> > Add dt-bindings headers for the Meson-AXG's AO clock and
-> > reset controller.
+On 16-04-18, 12:03, Daniel Lezcano wrote:
+> On 16/04/2018 11:50, Viresh Kumar wrote:
+> > On 16-04-18, 11:45, Daniel Lezcano wrote:
+> >> Can you elaborate a bit ? I'm not sure to get the point.
 > > 
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> > ---
-> >  include/dt-bindings/clock/axg-aoclkc.h | 26 ++++++++++++++++++++++++++
-> >  include/dt-bindings/reset/axg-aoclkc.h | 20 ++++++++++++++++++++
-> >  2 files changed, 46 insertions(+)
-> >  create mode 100644 include/dt-bindings/clock/axg-aoclkc.h
-> >  create mode 100644 include/dt-bindings/reset/axg-aoclkc.h
+> > Sure. With your current code on Hikey960 (big/LITTLE), you end up
+> > creating two cooling devices, one for the big cluster and one for
+> > small cluster. Which is the right thing to do, as we also have two
+> > cpufreq cooling devices.
+> > 
+> > But with the change Sudeep is referring to, the helper you used to get
+> > cluster id will return 0 (SoC id) for all the 8 CPUs. So your code
+> > will end up creating a single cpuidle cooling device for all the CPUs.
+> > Which would be wrong.
 > 
-> Hi Philipp,
+> Is the semantic of topology_physical_package_id changing ?
+
+That's what I understood from his email.
+
+> I don't
+> understand the change Sudeep is referring to.
 > 
-> Is OK if we take this through clock tree ?
-> The related reset controller is actually part of a clock controller driver.
+> I saw this attempt:
+> 
+> https://patchwork.kernel.org/patch/9959977/
 
-Absolutely, this should go in together with the driver.
-I see no risk of merge conflicts here.
+@Sudeep: Is using topology_cod_id() is okay in that case ?
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-regards
-Philipp
+-- 
+viresh
