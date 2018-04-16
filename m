@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx4+AVxA2N3fVb8MRiejOBU5FftWz++yP+ssH0ljyOLxE95KnPf4tOSwuEBn0yvFqCbcUhAzC
+X-Google-Smtp-Source: AIpwx4+zjz6cuFeYf6y9fzqWk2lUYyivhnQExab+3F7c+qEa1HcHasjI1kF3V94EBwYJNb50NVad
 ARC-Seal: i=1; a=rsa-sha256; t=1523892344; cv=none;
         d=google.com; s=arc-20160816;
-        b=HXCm9PaaEWuKypQixiBlvgk/AKK5yz1IvQuoiCbAyj6yIQpz3/4tYy56X/cqfRHCE+
-         zmdmGeON+HCtbLrZ3tUq3ajVQqePAgQvy48P1xPnrHQOjd0s2sVoF8eM+BqrffgOT2KV
-         PhIh8Ol7hdiIo9yBTTxrdXZo6m0vnuqFSIb92xIrz39nrJY2mM/HYNrfT/5DHbFe05Ac
-         x9/egfkg6PAnIQLp4ajx1Kz4AFOFyC7KaJi6/2frZP406fJRpKQWnc8nzg2aL9yZ15vj
-         WBfmFqwYwkmrtwOHIsKe/4e8Rr3pHh0O84SMBVHzQ55OlAgxrVKaSQxzZq+TSyFbnBJi
-         gH3Q==
+        b=S46Xrr/t06LapKOtITnR5UV96lSx1q2RPlGzY+DRoepePzPLFYU6xCNEWa4s44eW03
+         N50+0l7okrD+N2RxrZE4hmSqp/+PklYyuZSevb/+Aj25sP1iDcgq7XgTDNRrsKjL+yTZ
+         erAXOedyd4yvWVqKKuneP7CxFd7i64/vRTRkEj2lzIH22qwgh6QQi5ELoUa/WnmjzEsQ
+         2hMDcnSUlo+MEJQcixIGKjkhDCbOqNGI7Dt+GOShiocUxe8cx2zyaqhjI9/lAb/rT8wh
+         BvzkadaaUl8Dhn9WzwpM5x7k8K2ODelJb6Dm532UylgBmKimDwABwSFBgyD9usaHTCgi
+         RkNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=OcvQhocRGo8adLG5spe7U+na6Cqu9Y9MpjcgHIpoCVg=;
-        b=Ba46+Ayk74soHU5TDg2K8EfwoH/iH6h6LpFeogc6NCyh0ARckv7H83Q0NLed4Ljsgz
-         IeGjvnPVSjndVuaAtC5Ei3Ei6EPLvCC87ggzsr1OkPduBliTVnDJT9yZLtYT9aDq5Iq0
-         jAxFunqBfySk5pVay9668rv8kQ9cjyanE6/z1aJ1tyBNypcMN4nSGZdqOwYLskJYehy9
-         TBDnKfadiK935O49k8X2X1xgT0Z+01TR6ML9p0Jah5uiFj/H1GtF4lYFBHjsmwiAmnrM
-         F7zVWxKx9HuP1YNcvVj1OwdZtHbQinvt6nLOdKMV4CCTTU4daBSbw7Uh9p1LYQO6Wihb
-         lqEA==
+        bh=rTwp+7cyC+ifomD+bjEqgAZMZ9DruB4hIDWDUgoZRqs=;
+        b=GBJv4So1ILyJRt/aP2LKLulIB1omq8YpjFvT73YxYB35vuULXKSnmLBIw9/VenpvLR
+         Pyd4Wt5GNacwGaQXZSn1olQyG1acroqbr3ma8c5kzMh9smamcrIrCzKQNUKdtyFpBoYq
+         oBaaetL68BlWiqWnaq1+Fq2j6nh1ste/xwrwpalYg4FQXsrZaFvkx+7qE6GsZfq/r0AR
+         MrQL0XO1Je2hj+bchKytIbCZQOR10NElUnmChSgwE6vrJJCfPi/U8ryWnMVyK1vTn9GC
+         4Puy0zNB00NYqQOPNOG34dMYBJZfbaVgBiXRAf4orygwI5B931avSQCIA0croGCnq9NY
+         szUA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=V1WFdvDj;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=NiCe9tU/;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=V1WFdvDj;
-       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=NiCe9tU/;
+       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,121 +58,80 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 14/35] x86/entry/32: Add PTI cr3 switches to NMI handler code
-Date: Mon, 16 Apr 2018 17:25:02 +0200
-Message-Id: <1523892323-14741-15-git-send-email-joro@8bytes.org>
+Subject: [PATCH 11/35] x86/entry/32: Simplify debug entry point
+Date: Mon, 16 Apr 2018 17:24:59 +0200
+Message-Id: <1523892323-14741-12-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 References: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597916939072612848?=
-X-GMAIL-MSGID: =?utf-8?q?1597916939072612848?=
+X-GMAIL-THRID: =?utf-8?q?1597916938505819047?=
+X-GMAIL-MSGID: =?utf-8?q?1597916938505819047?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-The NMI handler is special, as it needs to leave with the
-same cr3 as it was entered with. We need to do this because
-we could enter the NMI handler from kernel code with
-user-cr3 already loaded.
+The common exception entry code now handles the
+entry-from-sysenter stack situation and makes sure to leave
+with the same stack as it entered the kernel.
+
+So there is no need anymore for the special handling in the
+debug entry code.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 41 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 6 deletions(-)
+ arch/x86/entry/entry_32.S | 35 +++--------------------------------
+ 1 file changed, 3 insertions(+), 32 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index b2b0ecb..f47e535 100644
+index b3477ff..71e1cb3 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -77,6 +77,8 @@
- #endif
- .endm
+@@ -1231,41 +1231,12 @@ END(common_exception)
  
-+#define PTI_SWITCH_MASK         (1 << PAGE_SHIFT)
-+
+ ENTRY(debug)
+ 	/*
+-	 * #DB can happen at the first instruction of
+-	 * entry_SYSENTER_32 or in Xen's SYSENTER prologue.  If this
+-	 * happens, then we will be running on a very small stack.  We
+-	 * need to detect this condition and switch to the thread
+-	 * stack before calling any C code at all.
+-	 *
+-	 * If you edit this code, keep in mind that NMIs can happen in here.
++	 * Entry from sysenter is now handled in common_exception
+ 	 */
+ 	ASM_CLAC
+ 	pushl	$-1				# mark this as an int
+-
+-	SAVE_ALL
+-	ENCODE_FRAME_POINTER
+-	xorl	%edx, %edx			# error code 0
+-	movl	%esp, %eax			# pt_regs pointer
+-
+-	/* Are we currently on the SYSENTER stack? */
+-	movl	PER_CPU_VAR(cpu_entry_area), %ecx
+-	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
+-	subl	%eax, %ecx	/* ecx = (end of entry_stack) - esp */
+-	cmpl	$SIZEOF_entry_stack, %ecx
+-	jb	.Ldebug_from_sysenter_stack
+-
+-	TRACE_IRQS_OFF
+-	call	do_debug
+-	jmp	ret_from_exception
+-
+-.Ldebug_from_sysenter_stack:
+-	/* We're on the SYSENTER stack.  Switch off. */
+-	movl	%esp, %ebx
+-	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
+-	TRACE_IRQS_OFF
+-	call	do_debug
+-	movl	%ebx, %esp
+-	jmp	ret_from_exception
++	pushl	$do_debug
++	jmp	common_exception
+ END(debug)
+ 
  /*
-  * User gs save/restore
-  *
-@@ -213,8 +215,19 @@
- 
- .endm
- 
--.macro SAVE_ALL_NMI
-+.macro SAVE_ALL_NMI cr3_reg:req
- 	SAVE_ALL
-+
-+	/*
-+	 * Now switch the CR3 when PTI is enabled.
-+	 *
-+	 * We can enter with either user or kernel cr3, the code will
-+	 * store the old cr3 in \cr3_reg and switches to the kernel cr3
-+	 * if necessary.
-+	 */
-+	SWITCH_TO_KERNEL_CR3 scratch_reg=\cr3_reg
-+
-+.Lend_\@:
- .endm
- /*
-  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-@@ -262,7 +275,23 @@
- 	POP_GS_EX
- .endm
- 
--.macro RESTORE_ALL_NMI pop=0
-+.macro RESTORE_ALL_NMI cr3_reg:req pop=0
-+	/*
-+	 * Now switch the CR3 when PTI is enabled.
-+	 *
-+	 * We enter with kernel cr3 and switch the cr3 to the value
-+	 * stored on \cr3_reg, which is either a user or a kernel cr3.
-+	 */
-+	ALTERNATIVE "jmp .Lswitched_\@", "", X86_FEATURE_PTI
-+
-+	testl	$PTI_SWITCH_MASK, \cr3_reg
-+	jz	.Lswitched_\@
-+
-+	/* User cr3 in \cr3_reg - write it to hardware cr3 */
-+	movl	\cr3_reg, %cr3
-+
-+.Lswitched_\@:
-+
- 	RESTORE_REGS pop=\pop
- .endm
- 
-@@ -1333,7 +1362,7 @@ ENTRY(nmi)
- #endif
- 
- 	pushl	%eax				# pt_regs->orig_ax
--	SAVE_ALL_NMI
-+	SAVE_ALL_NMI cr3_reg=%edi
- 	ENCODE_FRAME_POINTER
- 	xorl	%edx, %edx			# zero error code
- 	movl	%esp, %eax			# pt_regs pointer
-@@ -1361,7 +1390,7 @@ ENTRY(nmi)
- 
- .Lnmi_return:
- 	CHECK_AND_APPLY_ESPFIX
--	RESTORE_ALL_NMI pop=4
-+	RESTORE_ALL_NMI cr3_reg=%edi pop=4
- 	jmp	.Lirq_return
- 
- #ifdef CONFIG_X86_ESPFIX32
-@@ -1377,12 +1406,12 @@ ENTRY(nmi)
- 	pushl	16(%esp)
- 	.endr
- 	pushl	%eax
--	SAVE_ALL_NMI
-+	SAVE_ALL_NMI cr3_reg=%edi
- 	ENCODE_FRAME_POINTER
- 	FIXUP_ESPFIX_STACK			# %eax == %esp
- 	xorl	%edx, %edx			# zero error code
- 	call	do_nmi
--	RESTORE_ALL_NMI
-+	RESTORE_ALL_NMI cr3_reg=%edi
- 	lss	12+4(%esp), %esp		# back to espfix stack
- 	jmp	.Lirq_return
- #endif
 -- 
 2.7.4
