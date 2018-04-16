@@ -1,59 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754642AbeDPLKr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 07:10:47 -0400
-Received: from smtprelay0240.b.hostedemail.com ([64.98.42.240]:46002 "EHLO
-        smtprelay.b.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751124AbeDPLKq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:10:46 -0400
-X-Session-Marker: 742E617274656D406C79636F732E636F6D
-X-Spam-Summary: 13,1.2,0,,d41d8cd98f00b204,t.artem@lycos.com,:,RULES_HIT:41:355:379:560:582:988:989:1152:1260:1277:1311:1313:1314:1345:1381:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2559:2562:2693:3138:3139:3140:3141:3142:3353:3421:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4361:5007:6261:8784:8828:9108:10008:10400:10848:11473:11658:11914:12050:12485:12760:12895:13069:13071:13075:13161:13211:13229:13311:13357:13439:14096:14097:14180:14659:14685:14721:14879:21080:21627:30034:30054:30070,0,RBL:64.98.36.5:@lycos.com:.lbl8.mailshell.net-62.22.55.100 66.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fs,MSBL:0,DNSBL:none,Custom_rules:0:1:0,LFtime:9,LUA_SUMMARY:none
-X-HE-Tag: place01_6269a79d58035
-X-Filterd-Recvd-Size: 1934
+        id S1754956AbeDPLK4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 07:10:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45990 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752648AbeDPLKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 07:10:53 -0400
+Subject: Re: [PATCH v2 00/12] KVM/X86: Introduce a new guest mapping interface
+To: KarimAllah Ahmed <karahmed@amazon.de>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, rkrcmar@redhat.com,
+        David Hildenbrand <david@redhat.com>
+References: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b390f953-6fe3-1119-15eb-e3b31e609305@redhat.com>
+Date: Mon, 16 Apr 2018 13:10:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Mon, 16 Apr 2018 16:04:35 +0500
-From: "Artem S. Tashkinov" <t.artem@lycos.com>
-To: linux-kernel <linux-kernel@vger.kernel.org>
-Subject: On the kernel numbering scheme
-Message-ID: <e7b554d738de83268f4fc06dd6f12ada@lycos.com>
-User-Agent: Roundcube Webmail/1.2.7
-X-Originating-IP: [196.52.84.52]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello all,
+On 15/04/2018 23:53, KarimAllah Ahmed wrote:
+> Guest memory can either be directly managed by the kernel (i.e. have a "struct
+> page") or they can simply live outside kernel control (i.e. do not have a
+> "struct page"). KVM mostly support these two modes, except in a few places
+> where the code seems to assume that guest memory must have a "struct page".
+> 
+> This patchset introduces a new mapping interface to map guest memory into host
+> kernel memory which also supports PFN-based memory (i.e. memory without 'struct
+> page'). It also converts all offending code to this interface or simply
+> read/write directly from guest memory.
+> 
+> As far as I can see all offending code is now fixed except the APIC-access page
+> which I will handle in a seperate patch.
 
-I know this proposal has already been made great many times but I'd like 
-to repeat it and have a healthy discussion about it.
+I assume the caching will also be a separate patch.
 
-The current kernel numbering scheme makes no sense at all because the 
-first two numbers don't represent anything at all. They had some meaning 
-back in the 1.x 2.x 3.x days but then with the introduction of the new 
-rolling development model, they became worthless.
+It looks good except that I'd squash patches 4 and 9 together.  But I'd
+like a second set of eyes to look at it.
 
-I'd love to change the kernel numbering scheme to this:
+Thanks,
 
-YYYY.RELEASE.PATCH_LEVEL
-
-So that the first kernel to be released in 2019 will be numbered 
-2019.0(.0), and its consequent releases will be 2019.1, 2019.2, 2019.3, 
-etc. and its stable patches will be 2019.0.1, 2019.0.2, 2019.0.3, 
-2019.0.4, etc.
-
-With this scheme you can easily see how fresh your kernel is and there's 
-no need arbitrary raise the first number because it always matches the 
-current year.
-
-There's one minor detail which might raise some questions: there are 
-release candidates and then there's a release, so for the development 
-which starts before the year end we might start with e.g. 2018.5-rc1 and 
-then if the actual release crosses a new year mark we simply turn 
-2018.5-rc7 into 2019.0.0.
-
-Best regards,
-Artem S. Tashkinov
+Paolo
