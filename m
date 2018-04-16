@@ -1,87 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeDPXSJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 19:18:09 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:53283 "EHLO hermes.aosc.io"
+        id S1751876AbeDPXaR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 19:30:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:41085 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751893AbeDPXSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 19:18:07 -0400
-Date: Tue, 17 Apr 2018 07:17:56 +0800
-In-Reply-To: <20180416184745.tqxyvojtcbage4fu@rob-hp-laptop>
-References: <20180411141641.14675-1-icenowy@aosc.io> <20180411141641.14675-2-icenowy@aosc.io> <20180416184745.tqxyvojtcbage4fu@rob-hp-laptop>
+        id S1751059AbeDPXaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 19:30:15 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 17 Apr 2018 09:28:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Pablo Neira Ayuso <pablo@netfilter.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>
+Subject: linux-next: build failure after merge of the netfilter tree
+Message-ID: <20180417092859.358573be@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH 1/5] dt-bindings: allow dwmac-sun8i to use other devices' exported regmap
-To: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>
-CC: devicetree@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        netdev@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <04C9F795-2680-4220-A39A-7B7D5FD74C4A@aosc.io>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xGmb.tbd_m2j/9+ca6DNz7="; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/xGmb.tbd_m2j/9+ca6DNz7=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-于 2018年4月17日 GMT+08:00 上午2:47:45, Rob Herring <robh@kernel.org> 写到:
->On Wed, Apr 11, 2018 at 10:16:37PM +0800, Icenowy Zheng wrote:
->> On some Allwinner SoCs the EMAC clock register needed by dwmac-sun8i
->is
->> in another device's memory space. In this situation dwmac-sun8i can
->use
->> a regmap exported by the other device with only the EMAC clock
->register.
->
->If this is a clock, then why not use the clock binding?
+After merging the netfilter tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-EMAC clock register is only the datasheet name. It contains
-MII mode selection and delay chain configuration.
+net/netfilter/nf_conntrack_extend.c: In function 'nf_ct_ext_
+add':
+net/netfilter/nf_conntrack_extend.c:74:2: error: implicit declaration of fu=
+nction 'kmemleak_not_leak' [-Werror=3Dimplicit-function-declaration]
+  kmemleak_not_leak(old);
+  ^~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
 
->
->> 
->> Document this situation in the dwmac-sun8i device tree binding
->> documentation.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->>  Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->> 
->> diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
->b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
->> index 3d6d5fa0c4d5..0c5f63a80617 100644
->> --- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
->> +++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
->> @@ -20,8 +20,9 @@ Required properties:
->>  - phy-handle: See ethernet.txt
->>  - #address-cells: shall be 1
->>  - #size-cells: shall be 0
->> -- syscon: A phandle to the syscon of the SoC with one of the
->following
->> - compatible string:
->> +- syscon: A phandle to a device which exports the EMAC clock
->register as a
->> + regmap or to the syscon of the SoC with one of the following
->compatible
->> + string:
->>    - allwinner,sun8i-h3-system-controller
->>    - allwinner,sun8i-v3s-system-controller
->>    - allwinner,sun50i-a64-system-controller
->> -- 
->> 2.15.1
->> 
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree"
->in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Caused by commit
+
+  114aa35d06d4 ("netfilter: conntrack: silent a memory leak warning")
+
+I have added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 17 Apr 2018 09:26:49 +1000
+Subject: [PATCH] netfilter: conntrack: include kmemleak.h for
+ kmemleak_not_leak()
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/netfilter/nf_conntrack_extend.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/netfilter/nf_conntrack_extend.c b/net/netfilter/nf_conntra=
+ck_extend.c
+index bd71a828ebde..277bbfe26478 100644
+--- a/net/netfilter/nf_conntrack_extend.c
++++ b/net/netfilter/nf_conntrack_extend.c
+@@ -9,6 +9,7 @@
+  *      2 of the License, or (at your option) any later version.
+  */
+ #include <linux/kernel.h>
++#include <linux/kmemleak.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/rcupdate.h>
+--=20
+2.16.3
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/xGmb.tbd_m2j/9+ca6DNz7=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrVMbsACgkQAVBC80lX
+0GxZ7wf/WOhRUi85MTU9MkKgs5QnmbKMxPMN1AMN4JHpCtFH8GhZrOJoHKBeRnI8
+nNlcCHW0P5tN8IzoDdUgvxX41g4IQc/doujuktE8nozsH5EbeshN3n5BT3BAssYK
+/5pnMNrpziCsxdFJnAQ99gsWAc1NScAsfcqxvH5JnnW5Tk//QPNcC3cDM3XGja0n
+QAH8JVSclPcnKZfcfbYpp3CFOacvF87WnsV0AgsMdUj8bGC8gR0gAv9Hiq0LFUwX
+FVwMmvBwrsQKozYxhZgACzJXdxWDwjLsKez5jjVnSbtAjnIBECQRUs2SJh8L/2Tj
+y2zMopyfzkNUHeu18vUnD/lZeTJ0JA==
+=bv6w
+-----END PGP SIGNATURE-----
+
+--Sig_/xGmb.tbd_m2j/9+ca6DNz7=--
