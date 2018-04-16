@@ -1,164 +1,137 @@
-Return-Path: <christianvanbrauner@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524064880; cv=none;
-        d=google.com; s=arc-20160816;
-        b=cHHuhQwU39fwpEEQicXMVyVvXKIeIHkoIB9TX7IHUS/gLd8V26Xaz+oTYVaTwx85j/
-         82eM7Ykrk/6qwu3/qiSMKc9Xc6fOEfg6zML02YtfXnBsbftBOYp1Laulqv8zK+tmas8g
-         uIOo6nLrDR4CK27ttDqwj2j6wj2pR9eSeQHVONoJZ8Ku788c2l8igMtRdc+eFufnTDIN
-         OtVjbP5llVbN9eILweLwK9xyEH9/3zPDI8B+kfO1JuGHCUVqoqxoKtWH8C2e6ie1trRy
-         NFuXD355X5+FHrNVwBZToqGuweiwkRIE8zwR11/ev/avs4hnjo3kyXlstJ2XgG7yYEuS
-         QWIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=liAcqvAGobgDX+bD9RSznY/yQ+9B4RjTg3IK2sG6Mnw=;
-        b=uls0+OJPIotWu2goHdS+yxSR7uEkBpwekDy2HoPniqt/Hb2m/W3Byr0QZodZ3sIwwE
-         z7hamj96ENQh9wK2w7w8fjYiqbcmmSn1hLVCK0q5jsmDkukuHsWJV/zF7jdcJ1lY6ft/
-         y8avtSEnKmprho3JvNacFzNkIznq0Cz/NRfSybCePN5/ukSL/sG13S4IGHw5diO3kpXc
-         /m77ubILla1ZHlnFhOYCqOSHGy3aKHaR1coFfLigpjXQOqjA0dxpyeu8AwHPu68LFi1n
-         nlILt2TEuprg9+5RCHba0iSty4BRgCsuv8RhZ1KvkoMeJyFCpSOzvp4XnFvjnX60kIUo
-         TP1A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-X-Google-Smtp-Source: AIpwx4/Og8fV2DvW+CEzkGd0fVPmJUb4sb+GAFpf6fmgYMsg0CNlSuKGMxxaaWTeqVTuidVrcr/0eA==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: ebiederm@xmission.com,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: avagin@virtuozzo.com,
-	ktkhai@virtuozzo.com,
-	serge@hallyn.com,
-	gregkh@linuxfoundation.org,
-	Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH net-next 1/2] netns: restrict uevents
-Date: Wed, 18 Apr 2018 17:21:05 +0200
-Message-Id: <20180418152106.18519-2-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180418152106.18519-1-christian.brauner@ubuntu.com>
-References: <20180418152106.18519-1-christian.brauner@ubuntu.com>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3502703-1523891376-2-11049259307348202204
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enda,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523891375; b=qoWOalBVkrlLPFM4+RX5Dgty+ukeWnWduq2lVfbSnvHW6CuyN0
+    z9RKu/F6Xf7btcLXkE1NYnJ2DwyUho7QKY2KaysUJs6rXeTpdWXaIVrhA+0TMHoz
+    P85YYaYcL+4XClD3xAgZDm9BfPb16wfe5YKL832MsV98O98WGhuT8pyUkopZwquw
+    GrpfuG83ySsZXqvLGaT8HslzBNPLcDeoJONtd4lsuw73ChE9s/KuiM2XQCYwsfzk
+    pOAoV6T7eA6HqUXe1AeIMyWlh4Q1vSz1AToxvR1UhV83Y/MVV40o9ni6lDc3o4sU
+    uqI/yi/pB4mEK986AS+9MjXNxuxe87ZsbQOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523891375; bh=soyJS
+    kZzZJiCNs6HC2oWKjC+vJyUQXfCDKC208Yp+JA=; b=eq7ga6DTd7bgfG5Hd1SMa
+    WN32zSnqYpP5AgIPPGanX0Nzem6KMYx0sb/cqAVxX/x6qVm8zM1EcsXvzUj5KpUt
+    YCWwwN6CV1tBU/StfCQTXjYjgJR3t5knA9i/V5nPLSf2Wm+GnCzevmLuSjgHvqC+
+    3LPxIZEsDUhAssPiv5Jz3J8FEX6qZYXs/dycF6JVuR7+hdK8fzogKjtGYFjPIn5Z
+    LbwXM8fGYDfg9rtgkAIPVOzgVtlBNweyjEKrVK8SkBzUYoZl+yBx4v/PpCYRbfRW
+    Bq5r8wfEbHEV2aHjtACsvt/3gy25BblQ/8TPFZZPIlSeYtYCRHv8Wyvqb68vBrva
+    Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Hw7hcn7k x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h+qHvilB;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Hw7hcn7k x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=h+qHvilB;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGB0jDcXgmrg+wD/eXM0qnjEYitxAtcHIzPkB60Y+QFXL+RhhaQ3Cs5KPibLV+7Yw8YSy3ApoS/CuQncYaxQSbh7eDz1z3CbEAA+B+k5roB6Jx+OpQvc
+    uPxwfvbj2Jpb9kVwK5BAxo/Zu9VGhJpy9OEse4CtUOncZRKkH5zVNzUFMGXOSmpt+LeZId25bzhYzXs4jLb5HRme4YWUUhkVpwybrSyr8y8i55APDU9CBk/X
+    yHUGhPY4Sx8Hob6ASg4ZHQ==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=TjV95GAluLwA:10 a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=nKdChVV6WI7Bv_97Fp8A:9 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx4/E6O0XE6dfB06OlZAVnB8wIeX9hDkUDnJnMDiHxCgh/VxvyfISggAzwcE1RqpViAo4G3DX7g==
+Date: Mon, 16 Apr 2018 20:41:21 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+ maco@android.com
+Subject: [PATCH] android: binder: Change return type to vm_fault_t
+Message-ID: <20180416151121.GA26791@jordon-HP-15-Notebook-PC>
+MIME-Version: 1.0
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+ willy@infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598097855783382881?=
-X-GMAIL-MSGID: =?utf-8?q?1598097855783382881?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-commit 07e98962fa77 ("kobject: Send hotplug events in all network namespaces")
+Use new return type vm_fault_t for fault handler
+in struct vm_operations_struct. For now, this is
+just documenting that the function returns a 
+VM_FAULT value rather than an errno.  Once all
+instances are converted, vm_fault_t will become
+a distinct type.
 
-enabled sending hotplug events into all network namespaces back in 2010.
-Over time the set of uevents that get sent into all network namespaces has
-shrunk a little. We have now reached the point where hotplug events for all
-devices that carry a namespace tag are filtered according to that
-namespace. Specifically, they are filtered whenever the namespace tag of
-the kobject does not match the namespace tag of the netlink socket. One
-example are network devices. Uevents for network devices only show up in
-the network namespaces these devices are moved to or created in.
+Reference commit id->
+1c8f422059ae5da07db7406ab916203f9417e396
 
-However, any uevent for a kobject that does not have a namespace tag
-associated with it will not be filtered and we will broadcast it into all
-network namespaces. This behavior stopped making sense when user namespaces
-were introduced.
-
-This patch restricts uevents to the initial user namespace for a couple of
-reasons that have been extensively discusses on the mailing list [1].
-- Thundering herd:
-  Broadcasting uevents into all network namespaces introduces significant
-  overhead.
-  All processes that listen to uevents running in non-initial user
-  namespaces will end up responding to uevents that will be meaningless to
-  them. Mainly, because non-initial user namespaces cannot easily manage
-  devices unless they have a privileged host-process helping them out. This
-  means that there will be a thundering herd of activity when there
-  shouldn't be any.
-- Uevents from non-root users are already filtered in userspace:
-  Uevents are filtered by userspace in a user namespace because the
-  received uid != 0. Instead the uid associated with the event will be
-  65534 == "nobody" because the global root uid is not mapped.
-  This means we can safely and without introducing regressions modify the
-  kernel to not send uevents into all network namespaces whose owning user
-  namespace is not the initial user namespace because we know that
-  userspace will ignore the message because of the uid anyway. I have
-  a) verified that is is true for every udev implementation out there b)
-  that this behavior has been present in all udev implementations from the
-  very beginning.
-- Removing needless overhead/Increasing performance:
-  Currently, the uevent socket for each network namespace is added to the
-  global variable uevent_sock_list. The list itself needs to be protected
-  by a mutex. So everytime a uevent is generated the mutex is taken on the
-  list. The mutex is held *from the creation of the uevent (memory
-  allocation, string creation etc. until all uevent sockets have been
-  handled*. This is aggravated by the fact that for each uevent socket that
-  has listeners the mc_list must be walked as well which means we're
-  talking O(n^2) here. Given that a standard Linux workload usually has
-  quite a lot of network namespaces and - in the face of containers - a lot
-  of user namespaces this quickly becomes a performance problem (see
-  "Thundering herd" above). By just recording uevent sockets of network
-  namespaces that are owned by the initial user namespace we significantly
-  increase performance in this codepath.
-- Injecting uevents:
-  There's a valid argument that containers might be interested in receiving
-  device events especially if they are delegated to them by a privileged
-  userspace process. One prime example are SR-IOV enabled devices that are
-  explicitly designed to be handed of to other users such as VMs or
-  containers.
-  This use-case can now be correctly handled since
-  commit 692ec06d7c92 ("netns: send uevent messages"). This commit
-  introduced the ability to send uevents from userspace. As such we can let
-  a sufficiently privileged (CAP_SYS_ADMIN in the owning user namespace of
-  the network namespace of the netlink socket) userspace process make a
-  decision what uevents should be sent. This removes the need to blindly
-  broadcast uevents into all user namespaces and provides a performant and
-  safe solution to this problem.
-- Filtering logic:
-  This patch filters by *owning user namespace of the network namespace a
-  given task resides in* and not by user namespace of the task per se. This
-  means if the user namespace of a given task is unshared but the network
-  namespace is kept and is owned by the initial user namespace a listener
-  that is opening the uevent socket in that network namespace can still
-  listen to uevents.
-
-[1]: https://lkml.org/lkml/2018/4/4/739
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
- lib/kobject_uevent.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ drivers/android/binder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index 15ea216a67ce..f5f5038787ac 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -703,9 +703,13 @@ static int uevent_net_init(struct net *net)
- 
- 	net->uevent_sock = ue_sk;
- 
--	mutex_lock(&uevent_sock_mutex);
--	list_add_tail(&ue_sk->list, &uevent_sock_list);
--	mutex_unlock(&uevent_sock_mutex);
-+	/* Restrict uevents to initial user namespace. */
-+	if (sock_net(ue_sk->sk)->user_ns == &init_user_ns) {
-+		mutex_lock(&uevent_sock_mutex);
-+		list_add_tail(&ue_sk->list, &uevent_sock_list);
-+		mutex_unlock(&uevent_sock_mutex);
-+	}
-+
- 	return 0;
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 15e3d3c..65be4ec 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -4671,7 +4671,7 @@ static void binder_vma_close(struct vm_area_struct *vma)
+ 	binder_defer_work(proc, BINDER_DEFERRED_PUT_FILES);
  }
- 
-@@ -713,9 +717,11 @@ static void uevent_net_exit(struct net *net)
+
+-static int binder_vm_fault(struct vm_fault *vmf)
++static vm_fault_t binder_vm_fault(struct vm_fault *vmf)
  {
- 	struct uevent_sock *ue_sk = net->uevent_sock;
- 
--	mutex_lock(&uevent_sock_mutex);
--	list_del(&ue_sk->list);
--	mutex_unlock(&uevent_sock_mutex);
-+	if (sock_net(ue_sk->sk)->user_ns == &init_user_ns) {
-+		mutex_lock(&uevent_sock_mutex);
-+		list_del(&ue_sk->list);
-+		mutex_unlock(&uevent_sock_mutex);
-+	}
- 
- 	netlink_kernel_release(ue_sk->sk);
- 	kfree(ue_sk);
--- 
-2.17.0
+ 	return VM_FAULT_SIGBUS;
+ }
+--
+1.9.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
