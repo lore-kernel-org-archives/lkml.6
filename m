@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx49AoSafK8oTS3Sf4h6ywwyGVYKhPcm3BLvBubHDeXRRNXbNPyyhFXHSJelHCdr25PCq4+y+
+X-Google-Smtp-Source: AIpwx491Aejze0Qt1aBDn/luMdYeE3Y10r2y/G+qgU8TIn4KpC9SNv0dHLvgjNJuo7FU3Oda+MjO
 ARC-Seal: i=1; a=rsa-sha256; t=1523892343; cv=none;
         d=google.com; s=arc-20160816;
-        b=AI16UzZiNxR55B3JlCali7CjwUqSKb6bvZyFGcMkx0/I+uPvF7AOPStOiCxs6uzjeb
-         U6i4F2Q5wN7ng2+6guzoxO/EvFwqR/wXU7Nom+e5aONsmQERLXccHtmNRqjuGhN5YIQa
-         mS+9xp4V20QgQ2TEdTZxqtrGPvNoJ7/dRk5tPB4c3eVRaz41Gbu8yseV+h1w17xBddQu
-         qFNwzHNs1WvB+LbQcQgOKcqg+3SwBn1IHNu6a5nW4kn+2PosaNMT3W0XsMueMobp2XG2
-         /Ppw9Pt7RJkP0teEbjmw/ZQNuFClz70FIPv6WZsP1fewwI9uSs5yONrWpXstoQJLAclV
-         /g6w==
+        b=yO+Pc7+pDrwG6I2D5S+LhjHGxCAqXudft5J1ngzj+JSQ/j7fe4J3+pgAXtplZKTPax
+         tP6V0B3wGcFFGgl+5C/AzzQKEw3CSI//6KqhHhRBiBtFI4UBa2nU2+pB/3kt/CH3V4Tx
+         IuPPha7TnMntLnqMH0ydb3QBSsjBePK8U7KQHOzL2/uJltGCebfVvSaakFx7fUhErq5L
+         cjMTA4r9u4IXZrVF6nHDq40J2REY1Ex15dJR+Oqw6HZn8Ri7BMyB9shtXASTfMOxxphN
+         Z02VBh1rn6XQZpgkuXGUVmua71Hc+UdjOiS5J+o3DUbXI2R63F3mV5B/X6UMn2gqtzry
+         zS2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=3iy4hHBTYS8Y6OIhJpAvVb/NIIrv1CbReyBomjD1ntw=;
-        b=qH52CoY4ZxyAKM3g7JsLk2Xigf3ejR51dbZipSpWDBxpv/fE01kj+S8TFquTjp9zbG
-         ZocERp/PxSaRb9h1i6bWa/7yXBOUEPn6f5Yxt5vHLOotVR2SBfebsR/4Dq55joVwYrvC
-         N7KGE7cyqhWfcTPAua7oIZSEZEqA67JGaDvPfCxpXvouFyiwewRBafO8ZPgKgMYRS0ch
-         bvwGCGJG2LzCKrlK0jMY9XnN/Sq6p2ptMPSpcC2bAkBg2K42E9mMumw93xHGDa4m0iEj
-         Dgao5N59QXkT/J8SmzPWzLb0s39m1KiDr+QjUSZXitlJ8xjoEaFlIKiSE8qtmj5pIz4I
-         obdg==
+        bh=XdXGQd0N0vAPaE2m6Oem9PQaW/jFOcs9xnrj+CAP6J0=;
+        b=vl+y/Eqh9hTV1YS71IwOqg73Y0YHx7KrgnbcZOcmpr7SzliQXOcB9NIWnfpFH01JOh
+         Bq0V24pKP4M+o68NxRFFnT4plctCeRYZVd7ThF7MUiHXpBLsPkfsgzilQHEVXVcObe8C
+         KVrlCoQE630bju2vCh61M9yUPVG3u0Pqdm0j2sEzXp4ZX5jdPr6c/5bGX9kUrycHwrMH
+         V2vfAzQ8yGKu0QFgpWJd5R2Y9KcNWW6B/+ypslTuoYV4MmDUd0hne/ksDJmSmbNXA0pR
+         FfLKczAf5W9bvIdzdvt1aMWR+OHOjTvPAo2KUUQkq0FRN62iX39qdRbYlEn+uk+EDnz6
+         wr4w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Z1mIzaE9;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=RHqLvUQV;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Z1mIzaE9;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=RHqLvUQV;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,86 +58,94 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 09/35] x86/entry/32: Introduce SAVE_ALL_NMI and RESTORE_ALL_NMI
-Date: Mon, 16 Apr 2018 17:24:57 +0200
-Message-Id: <1523892323-14741-10-git-send-email-joro@8bytes.org>
+Subject: [PATCH 12/35] x86/32: Use tss.sp1 as cpu_current_top_of_stack
+Date: Mon, 16 Apr 2018 17:25:00 +0200
+Message-Id: <1523892323-14741-13-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 References: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597916937991032749?=
-X-GMAIL-MSGID: =?utf-8?q?1597916937991032749?=
+X-GMAIL-THRID: =?utf-8?q?1597916938831451692?=
+X-GMAIL-MSGID: =?utf-8?q?1597916938831451692?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-These macros will be used in the NMI handler code and
-replace plain SAVE_ALL and RESTORE_REGS there. We will add
-the NMI-specific CR3-switch to these macros later.
+Now that we store the task-stack in tss.sp1 we can also use
+it as cpu_current_top_of_stack. This unifies the handling
+with x86-64.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/processor.h   | 4 ----
+ arch/x86/include/asm/thread_info.h | 2 --
+ arch/x86/kernel/cpu/common.c       | 4 ----
+ arch/x86/kernel/process_32.c       | 6 ------
+ 4 files changed, 16 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 927df80..e2621bf 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -186,6 +186,9 @@
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 4fa4206..3894f63 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -374,12 +374,8 @@ DECLARE_PER_CPU_PAGE_ALIGNED(struct tss_struct, cpu_tss_rw);
+ #define __KERNEL_TSS_LIMIT	\
+ 	(IO_BITMAP_OFFSET + IO_BITMAP_BYTES + sizeof(unsigned long) - 1)
  
- .endm
+-#ifdef CONFIG_X86_32
+-DECLARE_PER_CPU(unsigned long, cpu_current_top_of_stack);
+-#else
+ /* The RO copy can't be accessed with this_cpu_xyz(), so use the RW copy. */
+ #define cpu_current_top_of_stack cpu_tss_rw.x86_tss.sp1
+-#endif
  
-+.macro SAVE_ALL_NMI
-+	SAVE_ALL
-+.endm
  /*
-  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-  * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
-@@ -232,6 +235,10 @@
- 	POP_GS_EX
- .endm
+  * Save the original ist values for checking stack pointers during debugging
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index a5d9521..943c673 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -205,9 +205,7 @@ static inline int arch_within_stack_frames(const void * const stack,
  
-+.macro RESTORE_ALL_NMI pop=0
-+	RESTORE_REGS pop=\pop
-+.endm
-+
- .macro CHECK_AND_APPLY_ESPFIX
- #ifdef CONFIG_X86_ESPFIX32
- #define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
-@@ -1166,7 +1173,7 @@ ENTRY(nmi)
+ #else /* !__ASSEMBLY__ */
+ 
+-#ifdef CONFIG_X86_64
+ # define cpu_current_top_of_stack (cpu_tss_rw + TSS_sp1)
+-#endif
+ 
  #endif
  
- 	pushl	%eax				# pt_regs->orig_ax
--	SAVE_ALL
-+	SAVE_ALL_NMI
- 	ENCODE_FRAME_POINTER
- 	xorl	%edx, %edx			# zero error code
- 	movl	%esp, %eax			# pt_regs pointer
-@@ -1194,7 +1201,7 @@ ENTRY(nmi)
- 
- .Lnmi_return:
- 	CHECK_AND_APPLY_ESPFIX
--	RESTORE_REGS 4
-+	RESTORE_ALL_NMI pop=4
- 	jmp	.Lirq_return
- 
- #ifdef CONFIG_X86_ESPFIX32
-@@ -1210,12 +1217,12 @@ ENTRY(nmi)
- 	pushl	16(%esp)
- 	.endr
- 	pushl	%eax
--	SAVE_ALL
-+	SAVE_ALL_NMI
- 	ENCODE_FRAME_POINTER
- 	FIXUP_ESPFIX_STACK			# %eax == %esp
- 	xorl	%edx, %edx			# zero error code
- 	call	do_nmi
--	RESTORE_REGS
-+	RESTORE_ALL_NMI
- 	lss	12+4(%esp), %esp		# back to espfix stack
- 	jmp	.Lirq_return
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 311e988..2d67ad0 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1512,10 +1512,6 @@ EXPORT_PER_CPU_SYMBOL(__preempt_count);
+  * the top of the kernel stack.  Use an extra percpu variable to track the
+  * top of the kernel stack directly.
+  */
+-DEFINE_PER_CPU(unsigned long, cpu_current_top_of_stack) =
+-	(unsigned long)&init_thread_union + THREAD_SIZE;
+-EXPORT_PER_CPU_SYMBOL(cpu_current_top_of_stack);
+-
+ #ifdef CONFIG_CC_STACKPROTECTOR
+ DEFINE_PER_CPU_ALIGNED(struct stack_canary, stack_canary);
  #endif
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 3f3a8c6..8c29fd5 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -290,12 +290,6 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	update_sp0(next_p);
+ 	refresh_sysenter_cs(next);
+ 	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
+-	/*
+-	 * TODO: Find a way to let cpu_current_top_of_stack point to
+-	 * cpu_tss_rw.x86_tss.sp1. Doing so now results in stack corruption with
+-	 * iret exceptions.
+-	 */
+-	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
+ 
+ 	/*
+ 	 * Restore %gs if needed (which is common)
 -- 
 2.7.4
