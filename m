@@ -1,341 +1,672 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753798AbeDPGZv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:25:51 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33486 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753742AbeDPGZr (ORCPT
+        id S1753818AbeDPG0Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:26:16 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39088 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751341AbeDPGZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:25:47 -0400
-X-Google-Smtp-Source: AIpwx48QP3kk7dxpkPRVDjdXyMaSFQSuPKltFnX2p5peWZSGolqfTXTq+4QOW+xmovOljj5MZke/yw==
-X-ME-Sender: <xms:5kHUWidGzNWYNIxz4_BuTMc8P3fmsBQDrV5iRFa_yZEzHY6eLHLGcg>
-Date: Mon, 16 Apr 2018 14:29:56 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Andrea Parri <parri.andrea@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [RFC tip/locking/lockdep v6 01/20] lockdep/Documention:
- Recursive read lock detection reasoning
-Message-ID: <20180416062956.fwoz5snuwcbwaueh@tardis>
-References: <20180411135110.9217-1-boqun.feng@gmail.com>
- <20180411135110.9217-2-boqun.feng@gmail.com>
- <0ed9bece-4e63-de49-8be5-0ebab83c9769@infradead.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3f2idczmrxg2o2og"
-Content-Disposition: inline
-In-Reply-To: <0ed9bece-4e63-de49-8be5-0ebab83c9769@infradead.org>
-User-Agent: NeoMutt/20171215
+        Mon, 16 Apr 2018 02:25:09 -0400
+X-Google-Smtp-Source: AIpwx49+WENGwwKEGaq/hu8ve4BzhdhcNa/PEAVtwFKe3UKkj9b+kAOPIAM5Qj8cdeRCHT+7GM8oWQ==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, jgross@suse.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
+        tiwai@suse.com
+Cc: andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v2 2/5] ALSA: xen-front: Read sound driver configuration from Xen store
+Date: Mon, 16 Apr 2018 09:24:50 +0300
+Message-Id: <20180416062453.24743-3-andr2000@gmail.com>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180416062453.24743-1-andr2000@gmail.com>
+References: <20180416062453.24743-1-andr2000@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
---3f2idczmrxg2o2og
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Read configuration values from Xen store according
+to xen/interface/io/sndif.h protocol:
+  - introduce configuration structures for different
+    components, e.g. sound card, device, stream
+  - read PCM HW parameters, e.g rate, format etc.
+  - detect stream type (capture/playback)
+  - read device and card parameters
 
-On Sat, Apr 14, 2018 at 05:38:54PM -0700, Randy Dunlap wrote:
-> Hi,
->=20
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+---
+ sound/xen/Makefile            |   3 +-
+ sound/xen/xen_snd_front.c     |   7 +
+ sound/xen/xen_snd_front.h     |   4 +
+ sound/xen/xen_snd_front_cfg.c | 517 ++++++++++++++++++++++++++++++++++++++++++
+ sound/xen/xen_snd_front_cfg.h |  46 ++++
+ 5 files changed, 576 insertions(+), 1 deletion(-)
+ create mode 100644 sound/xen/xen_snd_front_cfg.c
+ create mode 100644 sound/xen/xen_snd_front_cfg.h
 
-Hello Randy,
-
-> Just a few typos etc. below...
->=20
-
-Thanks! I fixed those typos according to your comments.
-
-> On 04/11/2018 06:50 AM, Boqun Feng wrote:
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > ---
-> >  Documentation/locking/lockdep-design.txt | 178 +++++++++++++++++++++++=
-++++++++
-> >  1 file changed, 178 insertions(+)
-> >=20
-> > diff --git a/Documentation/locking/lockdep-design.txt b/Documentation/l=
-ocking/lockdep-design.txt
-> > index 9de1c158d44c..6bb9e90e2c4f 100644
-> > --- a/Documentation/locking/lockdep-design.txt
-> > +++ b/Documentation/locking/lockdep-design.txt
-> > @@ -284,3 +284,181 @@ Run the command and save the output, then compare=
- against the output from
-> >  a later run of this command to identify the leakers.  This same output
-> >  can also help you find situations where runtime lock initialization has
-> >  been omitted.
-> > +
-> > +Recursive read locks:
-> > +---------------------
-> > +
-> > +Lockdep now is equipped with deadlock detection for recursive read loc=
-ks.
-> > +
-> > +Recursive read locks, as their name indicates, are the locks able to be
-> > +acquired recursively. Unlike non-recursive read locks, recursive read =
-locks
-> > +only get blocked by current write lock *holders* other than write lock
-> > +*waiters*, for example:
-> > +
-> > +	TASK A:			TASK B:
-> > +
-> > +	read_lock(X);
-> > +
-> > +				write_lock(X);
-> > +
-> > +	read_lock(X);
-> > +
-> > +is not a deadlock for recursive read locks, as while the task B is wai=
-ting for
-> > +the lock X, the second read_lock() doesn't need to wait because it's a=
- recursive
-> > +read lock. However if the read_lock() is non-recursive read lock, then=
- the above
-> > +case is a deadlock, because even if the write_lock() in TASK B can not=
- get the
-> > +lock, but it can block the second read_lock() in TASK A.
-> > +
-> > +Note that a lock can be a write lock (exclusive lock), a non-recursive=
- read
-> > +lock (non-recursive shared lock) or a recursive read lock (recursive s=
-hared
-> > +lock), depending on the lock operations used to acquire it (more speci=
-fically,
-> > +the value of the 'read' parameter for lock_acquire()). In other words,=
- a single
-> > +lock instance has three types of acquisition depending on the acquisit=
-ion
-> > +functions: exclusive, non-recursive read, and recursive read.
-> > +
-> > +To be concise, we call that write locks and non-recursive read locks as
-> > +"non-recursive" locks and recursive read locks as "recursive" locks.
-> > +
-> > +Recursive locks don't block each other, while non-recursive locks do (=
-this is
-> > +even true for two non-recursive read locks). A non-recursive lock can =
-block the
-> > +corresponding recursive lock, and vice versa.
-> > +
-> > +A deadlock case with recursive locks involved is as follow:
-> > +
-> > +	TASK A:			TASK B:
-> > +
-> > +	read_lock(X);
-> > +				read_lock(Y);
-> > +	write_lock(Y);
-> > +				write_lock(X);
-> > +
-> > +Task A is waiting for task B to read_unlock() Y and task B is waiting =
-for task
-> > +A to read_unlock() X.
-> > +
-> > +Dependency types and strong dependency paths:
-> > +---------------------------------------------
-> > +In order to detect deadlocks as above, lockdep needs to track differen=
-t dependencies.
-> > +There are 4 categories for dependency edges in the lockdep graph:
-> > +
-> > +1) -(NN)->: non-recursive to non-recursive dependency. "X -(NN)-> Y" m=
-eans
-> > +            X -> Y and both X and Y are non-recursive locks.
-> > +
-> > +2) -(RN)->: recursive to non-recursive dependency. "X -(RN)-> Y" means
-> > +            X -> Y and X is recursive read lock and Y is non-recursive=
- lock.
-> > +
-> > +3) -(NR)->: non-recursive to recursive dependency, "X -(NR)-> Y" means
-> > +            X -> Y and X is non-recursive lock and Y is recursive lock.
-> > +
-> > +4) -(RR)->: recursive to recursive dependency, "X -(RR)-> Y" means
-> > +            X -> Y and both X and Y are recursive locks.
-> > +
-> > +Note that given two locks, they may have multiple dependencies between=
- them, for example:
-> > +
-> > +	TASK A:
-> > +
-> > +	read_lock(X);
-> > +	write_lock(Y);
-> > +	...
-> > +
-> > +	TASK B:
-> > +
-> > +	write_lock(X);
-> > +	write_lock(Y);
-> > +
-> > +, we have both X -(RN)-> Y and X -(NN)-> Y in the dependency graph.
-> > +
-> > +We use -(*N)-> for edges that is either -(RN)-> or -(NN)->, the simila=
-r for -(N*)->,
-> > +-(*R)-> and -(R*)->
-> > +
-> > +A "path" is a series of conjunct dependency edges in the graph. And we=
- define a
-> > +"strong" path, which indicates the strong dependency throughout each d=
-ependency
-> > +in the path, as the path that doesn't have two conjunct edges (depende=
-ncies) as
-> > +-(*R)-> and -(R*)->. In other words, a "strong" path is a path from a =
-lock
-> > +walking to another through the lock dependencies, and if X -> Y -> Z i=
-n the
-> > +path (where X, Y, Z are locks), if the walk from X to Y is through a -=
-(NR)-> or
-> > +-(RR)-> dependency, the walk from Y to Z must not be through a -(RN)->=
- or
-> > +-(RR)-> dependency, otherwise it's not a strong path.
-> > +
-> > +We will see why the path is called "strong" in next section.
-> > +
-> > +Recursive Read Deadlock Detection:
-> > +----------------------------------
-> > +
-> > +We now prove two things:
-> > +
-> > +Lemma 1:
-> > +
-> > +If there is a closed strong path (i.e. a strong cirle), then there is a
->=20
-> ??                                                 circle
->=20
-> > +combination of locking sequences that causes deadlock. I.e. a strong c=
-ircle is
-> > +sufficient for deadlock detection.
-> > +
-> > +Lemma 2:
-> > +
-> > +If there is no closed strong path (i.e. strong cirle), then there is no
->=20
-> ??                                                circle
->=20
-> > +combination of locking sequences that could cause deadlock. I.e.  stro=
-ng
-> > +circles are necessary for deadlock detection.
-> > +
-> > +With these two Lemmas, we can easily say a closed strong path is both =
-sufficient
-> > +and necessary for deadlocks, therefore a closed strong path is equival=
-ent to
-> > +deadlock possibility. As a closed strong path stands for a dependency =
-chain that
-> > +could cause deadlocks, so we call it "strong", considering there are d=
-ependency
-> > +circles that won't cause deadlocks.
-> > +
-> > +Proof for sufficiency (Lemma 1):
-> > +
-> > +Let's say we have a strong cirlce:
->=20
->                               circle:
->=20
-> > +
-> > +	L1 -> L2 ... -> Ln -> L1
-> > +
-> > +, which means we have dependencies:
-> > +
-> > +	L1 -> L2
-> > +	L2 -> L3
-> > +	...
-> > +	Ln-1 -> Ln
-> > +	Ln -> L1
-> > +
-> > +We now can construct a combination of locking sequences that cause dea=
-dlock:
-> > +
-> > +Firstly let's make one CPU/task get the L1 in L1 -> L2, and then anoth=
-er get
-> > +the L2 in L2 -> L3, and so on. After this, all of the Lx in Lx -> Lx+1=
- are
-> > +held by different CPU/tasks.
-> > +
-> > +And then because we have L1 -> L2, so the holder of L1 is going to acq=
-uire L2
-> > +in L1 -> L2, however since L2 is already held by another CPU/task, plu=
-s L1 ->
-> > +L2 and L2 -> L3 are not *R and R* (the definition of strong), therefor=
-e the
-> > +holder of L1 can not get L2, it has to wait L2's holder to release.
-> > +
-> > +Moreover, we can have a similar conclusion for L2's holder: it has to =
-wait L3's
-> > +holder to release, and so on. We now can proof that Lx's holder has to=
- wait for
->=20
->                                             prove
->=20
-> > +Lx+1's holder to release, and note that Ln+1 is L1, so we have a circu=
-lar
-> > +waiting scenario and nobody can get progress, therefore a deadlock.
-> > +
-> > +Proof for necessary (Lemma 2):
-> > +
-> > +Lemma 2 is equivalent to: If there is a deadlock scenario, then there =
-must be a
-> > +strong circle in the dependency graph.
-> > +
-> > +According to Wikipedia[1], if there is a deadlock, then there must be =
-a circular
-> > +waiting scenario, means there are N CPU/tasks, where CPU/task P1 is wa=
-iting for
-> > +a lock held by P2, and P2 is waiting for a lock held by P3, ... and Pn=
- is waiting
-> > +for a lock held by P1. Let's name the lock Px is waiting as Lx, so sin=
-ce P1 is waiting
-> > +for L1 and holding Ln, so we will have Ln -> L1 in the dependency grap=
-h. Similarly,
-> > +we have L1 -> L2, L2 -> L3, ..., Ln-1 -> Ln in the dependency graph, w=
-hich means we
-> > +have a circle:
-> > +
-> > +	Ln -> L1 -> L2 -> ... -> Ln
-> > +
-> > +, and now let's prove the circle is strong:
-> > +
-> > +For a lock Lx, Px contributes the dependency Lx-1 -> Lx and Px+1 contr=
-ibutes
-> > +the dependency Lx -> Lx+1, and since Px is waiting for Px+1 to release=
- Lx,
-> > +so Lx can not be both recursive in Lx -> Lx+1 and Lx-1 -> Lx, because =
-recursive
-> > +locks don't block each other, therefore Lx-1 -> Lx and Lx -> Lx+1 can =
-not be a
-> > +-(*R)-> -(R*)-> pair, and this is true for any lock in the circle, the=
-refore,
-> > +the circle is strong.
-> > +
-> > +References:
-> > +-----------
-> > +[1]: https://en.wikipedia.org/wiki/Deadlock
-> > +[2]: Shibu, K. (2009). Intro To Embedded Systems (1st ed.). Tata McGra=
-w-Hill
-> >=20
-> I would also change all /can not/ to /cannot/...
-
-Agreed. I will use 'cannot' for any future version, thanks a lot!
-
-Regards,
-Boqun
-
->=20
-> --=20
-> ~Randy
-
---3f2idczmrxg2o2og
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlrUQuEACgkQSXnow7UH
-+rhceAgAiFC1FgfpxNWeoMXGSpVvNXiTJ8VC78SG9qSIKLJnk7a3nuJBV7nQbs6R
-Q+5BRUppjceXxesBjOdN5ykPER5PRyhki2P4SyYxHrpPn8P86R7U3bOUord6oOSY
-34k9ruzFf4VwUgvPbNjama2oip5+0VcIabTDxbeM1tnqsksorp6u/RdEZ9UddsBl
-AzTKk1c5SKPp6p9M/KBsVFwknPb9kvMTN/ExyEta+eAGLtsKya4IUalam4ps7OdC
-I6xLNaHEwZ7k+zW1vo/2ZZUFF/9QZtgiE3efU0CcxAVBWq4odgjtdaJJiqGDtSJm
-irxwXtUIQNsu+fSP+bSFHQVRansqgQ==
-=kjOm
------END PGP SIGNATURE-----
-
---3f2idczmrxg2o2og--
+diff --git a/sound/xen/Makefile b/sound/xen/Makefile
+index 4507ef3c27fd..06705bef61fa 100644
+--- a/sound/xen/Makefile
++++ b/sound/xen/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0 OR MIT
+ 
+-snd_xen_front-objs := xen_snd_front.o
++snd_xen_front-objs := xen_snd_front.o \
++		      xen_snd_front_cfg.o
+ 
+ obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
+diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
+index f406a8f52c51..65d2494a9d14 100644
+--- a/sound/xen/xen_snd_front.c
++++ b/sound/xen/xen_snd_front.c
+@@ -25,6 +25,13 @@ static void xen_snd_drv_fini(struct xen_snd_front_info *front_info)
+ 
+ static int sndback_initwait(struct xen_snd_front_info *front_info)
+ {
++	int num_streams;
++	int ret;
++
++	ret = xen_snd_front_cfg_card(front_info, &num_streams);
++	if (ret < 0)
++		return ret;
++
+ 	return 0;
+ }
+ 
+diff --git a/sound/xen/xen_snd_front.h b/sound/xen/xen_snd_front.h
+index 4ae204b23d32..b52226cb30bc 100644
+--- a/sound/xen/xen_snd_front.h
++++ b/sound/xen/xen_snd_front.h
+@@ -11,8 +11,12 @@
+ #ifndef __XEN_SND_FRONT_H
+ #define __XEN_SND_FRONT_H
+ 
++#include "xen_snd_front_cfg.h"
++
+ struct xen_snd_front_info {
+ 	struct xenbus_device *xb_dev;
++
++	struct xen_front_cfg_card cfg;
+ };
+ 
+ #endif /* __XEN_SND_FRONT_H */
+diff --git a/sound/xen/xen_snd_front_cfg.c b/sound/xen/xen_snd_front_cfg.c
+new file mode 100644
+index 000000000000..d461985afffa
+--- /dev/null
++++ b/sound/xen/xen_snd_front_cfg.c
+@@ -0,0 +1,517 @@
++// SPDX-License-Identifier: GPL-2.0 OR MIT
++
++/*
++ * Xen para-virtual sound device
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#include <xen/xenbus.h>
++
++#include <xen/interface/io/sndif.h>
++
++#include "xen_snd_front.h"
++#include "xen_snd_front_cfg.h"
++
++/* maximum number of supported streams */
++#define VSND_MAX_STREAM		8
++
++struct cfg_hw_sample_rate {
++	const char *name;
++	unsigned int mask;
++	unsigned int value;
++};
++
++static const struct cfg_hw_sample_rate CFG_HW_SUPPORTED_RATES[] = {
++	{ .name = "5512",   .mask = SNDRV_PCM_RATE_5512,   .value = 5512 },
++	{ .name = "8000",   .mask = SNDRV_PCM_RATE_8000,   .value = 8000 },
++	{ .name = "11025",  .mask = SNDRV_PCM_RATE_11025,  .value = 11025 },
++	{ .name = "16000",  .mask = SNDRV_PCM_RATE_16000,  .value = 16000 },
++	{ .name = "22050",  .mask = SNDRV_PCM_RATE_22050,  .value = 22050 },
++	{ .name = "32000",  .mask = SNDRV_PCM_RATE_32000,  .value = 32000 },
++	{ .name = "44100",  .mask = SNDRV_PCM_RATE_44100,  .value = 44100 },
++	{ .name = "48000",  .mask = SNDRV_PCM_RATE_48000,  .value = 48000 },
++	{ .name = "64000",  .mask = SNDRV_PCM_RATE_64000,  .value = 64000 },
++	{ .name = "96000",  .mask = SNDRV_PCM_RATE_96000,  .value = 96000 },
++	{ .name = "176400", .mask = SNDRV_PCM_RATE_176400, .value = 176400 },
++	{ .name = "192000", .mask = SNDRV_PCM_RATE_192000, .value = 192000 },
++};
++
++struct cfg_hw_sample_format {
++	const char *name;
++	u64 mask;
++};
++
++static const struct cfg_hw_sample_format CFG_HW_SUPPORTED_FORMATS[] = {
++	{
++		.name = XENSND_PCM_FORMAT_U8_STR,
++		.mask = SNDRV_PCM_FMTBIT_U8
++	},
++	{
++		.name = XENSND_PCM_FORMAT_S8_STR,
++		.mask = SNDRV_PCM_FMTBIT_S8
++	},
++	{
++		.name = XENSND_PCM_FORMAT_U16_LE_STR,
++		.mask = SNDRV_PCM_FMTBIT_U16_LE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_U16_BE_STR,
++		.mask = SNDRV_PCM_FMTBIT_U16_BE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_S16_LE_STR,
++		.mask = SNDRV_PCM_FMTBIT_S16_LE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_S16_BE_STR,
++		.mask = SNDRV_PCM_FMTBIT_S16_BE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_U24_LE_STR,
++		.mask = SNDRV_PCM_FMTBIT_U24_LE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_U24_BE_STR,
++		.mask = SNDRV_PCM_FMTBIT_U24_BE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_S24_LE_STR,
++		.mask = SNDRV_PCM_FMTBIT_S24_LE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_S24_BE_STR,
++		.mask = SNDRV_PCM_FMTBIT_S24_BE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_U32_LE_STR,
++		.mask = SNDRV_PCM_FMTBIT_U32_LE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_U32_BE_STR,
++		.mask = SNDRV_PCM_FMTBIT_U32_BE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_S32_LE_STR,
++		.mask = SNDRV_PCM_FMTBIT_S32_LE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_S32_BE_STR,
++		.mask = SNDRV_PCM_FMTBIT_S32_BE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_A_LAW_STR,
++		.mask = SNDRV_PCM_FMTBIT_A_LAW
++	},
++	{
++		.name = XENSND_PCM_FORMAT_MU_LAW_STR,
++		.mask = SNDRV_PCM_FMTBIT_MU_LAW
++	},
++	{
++		.name = XENSND_PCM_FORMAT_F32_LE_STR,
++		.mask = SNDRV_PCM_FMTBIT_FLOAT_LE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_F32_BE_STR,
++		.mask = SNDRV_PCM_FMTBIT_FLOAT_BE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_F64_LE_STR,
++		.mask = SNDRV_PCM_FMTBIT_FLOAT64_LE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_F64_BE_STR,
++		.mask = SNDRV_PCM_FMTBIT_FLOAT64_BE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_IEC958_SUBFRAME_LE_STR,
++		.mask = SNDRV_PCM_FMTBIT_IEC958_SUBFRAME_LE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_IEC958_SUBFRAME_BE_STR,
++		.mask = SNDRV_PCM_FMTBIT_IEC958_SUBFRAME_BE
++	},
++	{
++		.name = XENSND_PCM_FORMAT_IMA_ADPCM_STR,
++		.mask = SNDRV_PCM_FMTBIT_IMA_ADPCM
++	},
++	{
++		.name = XENSND_PCM_FORMAT_MPEG_STR,
++		.mask = SNDRV_PCM_FMTBIT_MPEG
++	},
++	{
++		.name = XENSND_PCM_FORMAT_GSM_STR,
++		.mask = SNDRV_PCM_FMTBIT_GSM
++	},
++};
++
++static void cfg_hw_rates(char *list, unsigned int len,
++			 const char *path, struct snd_pcm_hardware *pcm_hw)
++{
++	char *cur_rate;
++	unsigned int cur_mask;
++	unsigned int cur_value;
++	unsigned int rates;
++	unsigned int rate_min;
++	unsigned int rate_max;
++	int i;
++
++	rates = 0;
++	rate_min = -1;
++	rate_max = 0;
++	while ((cur_rate = strsep(&list, XENSND_LIST_SEPARATOR))) {
++		for (i = 0; i < ARRAY_SIZE(CFG_HW_SUPPORTED_RATES); i++)
++			if (!strncasecmp(cur_rate,
++					 CFG_HW_SUPPORTED_RATES[i].name,
++					 XENSND_SAMPLE_RATE_MAX_LEN)) {
++				cur_mask = CFG_HW_SUPPORTED_RATES[i].mask;
++				cur_value = CFG_HW_SUPPORTED_RATES[i].value;
++				rates |= cur_mask;
++				if (rate_min > cur_value)
++					rate_min = cur_value;
++				if (rate_max < cur_value)
++					rate_max = cur_value;
++			}
++	}
++
++	if (rates) {
++		pcm_hw->rates = rates;
++		pcm_hw->rate_min = rate_min;
++		pcm_hw->rate_max = rate_max;
++	}
++}
++
++static void cfg_formats(char *list, unsigned int len,
++			const char *path, struct snd_pcm_hardware *pcm_hw)
++{
++	u64 formats;
++	char *cur_format;
++	int i;
++
++	formats = 0;
++	while ((cur_format = strsep(&list, XENSND_LIST_SEPARATOR))) {
++		for (i = 0; i < ARRAY_SIZE(CFG_HW_SUPPORTED_FORMATS); i++)
++			if (!strncasecmp(cur_format,
++					 CFG_HW_SUPPORTED_FORMATS[i].name,
++					 XENSND_SAMPLE_FORMAT_MAX_LEN))
++				formats |= CFG_HW_SUPPORTED_FORMATS[i].mask;
++	}
++
++	if (formats)
++		pcm_hw->formats = formats;
++}
++
++#define MAX_BUFFER_SIZE		(64 * 1024)
++#define MIN_PERIOD_SIZE		64
++#define MAX_PERIOD_SIZE		MAX_BUFFER_SIZE
++#define USE_FORMATS		(SNDRV_PCM_FMTBIT_U8 | \
++				 SNDRV_PCM_FMTBIT_S16_LE)
++#define USE_RATE		(SNDRV_PCM_RATE_CONTINUOUS | \
++				 SNDRV_PCM_RATE_8000_48000)
++#define USE_RATE_MIN		5512
++#define USE_RATE_MAX		48000
++#define USE_CHANNELS_MIN	1
++#define USE_CHANNELS_MAX	2
++#define USE_PERIODS_MIN		2
++#define USE_PERIODS_MAX		(MAX_BUFFER_SIZE / MIN_PERIOD_SIZE)
++
++static const struct snd_pcm_hardware SND_DRV_PCM_HW_DEFAULT = {
++	.info = (SNDRV_PCM_INFO_MMAP |
++		 SNDRV_PCM_INFO_INTERLEAVED |
++		 SNDRV_PCM_INFO_RESUME |
++		 SNDRV_PCM_INFO_MMAP_VALID),
++	.formats = USE_FORMATS,
++	.rates = USE_RATE,
++	.rate_min = USE_RATE_MIN,
++	.rate_max = USE_RATE_MAX,
++	.channels_min = USE_CHANNELS_MIN,
++	.channels_max = USE_CHANNELS_MAX,
++	.buffer_bytes_max = MAX_BUFFER_SIZE,
++	.period_bytes_min = MIN_PERIOD_SIZE,
++	.period_bytes_max = MAX_PERIOD_SIZE,
++	.periods_min = USE_PERIODS_MIN,
++	.periods_max = USE_PERIODS_MAX,
++	.fifo_size = 0,
++};
++
++static void cfg_read_pcm_hw(const char *path,
++			    struct snd_pcm_hardware *parent_pcm_hw,
++			    struct snd_pcm_hardware *pcm_hw)
++{
++	char *list;
++	int val;
++	size_t buf_sz;
++	unsigned int len;
++
++	/* inherit parent's PCM HW and read overrides from XenStore */
++	if (parent_pcm_hw)
++		*pcm_hw = *parent_pcm_hw;
++	else
++		*pcm_hw = SND_DRV_PCM_HW_DEFAULT;
++
++	val = xenbus_read_unsigned(path, XENSND_FIELD_CHANNELS_MIN, 0);
++	if (val)
++		pcm_hw->channels_min = val;
++
++	val = xenbus_read_unsigned(path, XENSND_FIELD_CHANNELS_MAX, 0);
++	if (val)
++		pcm_hw->channels_max = val;
++
++	list = xenbus_read(XBT_NIL, path, XENSND_FIELD_SAMPLE_RATES, &len);
++	if (!IS_ERR(list)) {
++		cfg_hw_rates(list, len, path, pcm_hw);
++		kfree(list);
++	}
++
++	list = xenbus_read(XBT_NIL, path, XENSND_FIELD_SAMPLE_FORMATS, &len);
++	if (!IS_ERR(list)) {
++		cfg_formats(list, len, path, pcm_hw);
++		kfree(list);
++	}
++
++	buf_sz = xenbus_read_unsigned(path, XENSND_FIELD_BUFFER_SIZE, 0);
++	if (buf_sz)
++		pcm_hw->buffer_bytes_max = buf_sz;
++
++	/* update configuration to match new values */
++	if (pcm_hw->channels_min > pcm_hw->channels_max)
++		pcm_hw->channels_min = pcm_hw->channels_max;
++
++	if (pcm_hw->rate_min > pcm_hw->rate_max)
++		pcm_hw->rate_min = pcm_hw->rate_max;
++
++	pcm_hw->period_bytes_max = pcm_hw->buffer_bytes_max;
++
++	pcm_hw->periods_max = pcm_hw->period_bytes_max /
++		pcm_hw->period_bytes_min;
++}
++
++static int cfg_get_stream_type(const char *path, int index,
++			       int *num_pb, int *num_cap)
++{
++	char *str = NULL;
++	char *stream_path;
++	int ret;
++
++	*num_pb = 0;
++	*num_cap = 0;
++	stream_path = kasprintf(GFP_KERNEL, "%s/%d", path, index);
++	if (!stream_path) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	str = xenbus_read(XBT_NIL, stream_path, XENSND_FIELD_TYPE, NULL);
++	if (IS_ERR(str)) {
++		ret = -EINVAL;
++		goto fail;
++	}
++
++	if (!strncasecmp(str, XENSND_STREAM_TYPE_PLAYBACK,
++			 sizeof(XENSND_STREAM_TYPE_PLAYBACK))) {
++		(*num_pb)++;
++	} else if (!strncasecmp(str, XENSND_STREAM_TYPE_CAPTURE,
++			      sizeof(XENSND_STREAM_TYPE_CAPTURE))) {
++		(*num_cap)++;
++	} else {
++		ret = -EINVAL;
++		goto fail;
++	}
++	ret = 0;
++
++fail:
++	kfree(stream_path);
++	kfree(str);
++	return ret;
++}
++
++static int cfg_stream(struct xen_snd_front_info *front_info,
++		      struct xen_front_cfg_pcm_instance *pcm_instance,
++		      const char *path, int index, int *cur_pb, int *cur_cap,
++		      int *stream_cnt)
++{
++	char *str = NULL;
++	char *stream_path;
++	struct xen_front_cfg_stream *stream;
++	int ret;
++
++	stream_path = devm_kasprintf(&front_info->xb_dev->dev,
++				     GFP_KERNEL, "%s/%d", path, index);
++	if (!stream_path) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	str = xenbus_read(XBT_NIL, stream_path, XENSND_FIELD_TYPE, NULL);
++	if (IS_ERR(str)) {
++		ret = -EINVAL;
++		goto fail;
++	}
++
++	if (!strncasecmp(str, XENSND_STREAM_TYPE_PLAYBACK,
++			 sizeof(XENSND_STREAM_TYPE_PLAYBACK))) {
++		stream = &pcm_instance->streams_pb[(*cur_pb)++];
++	} else if (!strncasecmp(str, XENSND_STREAM_TYPE_CAPTURE,
++			      sizeof(XENSND_STREAM_TYPE_CAPTURE))) {
++		stream = &pcm_instance->streams_cap[(*cur_cap)++];
++	} else {
++		ret = -EINVAL;
++		goto fail;
++	}
++
++	/* get next stream index */
++	stream->index = (*stream_cnt)++;
++	stream->xenstore_path = stream_path;
++	/*
++	 * check in Xen store if PCM HW configuration exists for this stream
++	 * and update if so, e.g. we inherit all values from device's PCM HW,
++	 * but can still override some of the values for the stream
++	 */
++	cfg_read_pcm_hw(stream->xenstore_path,
++			&pcm_instance->pcm_hw, &stream->pcm_hw);
++	ret = 0;
++
++fail:
++	kfree(str);
++	return ret;
++}
++
++static int cfg_device(struct xen_snd_front_info *front_info,
++		      struct xen_front_cfg_pcm_instance *pcm_instance,
++		      struct snd_pcm_hardware *parent_pcm_hw,
++		      const char *path, int node_index, int *stream_cnt)
++{
++	char *str;
++	char *device_path;
++	int ret, i, num_streams;
++	int num_pb, num_cap;
++	int cur_pb, cur_cap;
++	char node[3];
++
++	device_path = kasprintf(GFP_KERNEL, "%s/%d", path, node_index);
++	if (!device_path)
++		return -ENOMEM;
++
++	str = xenbus_read(XBT_NIL, device_path, XENSND_FIELD_DEVICE_NAME, NULL);
++	if (!IS_ERR(str)) {
++		strncpy(pcm_instance->name, str, sizeof(pcm_instance->name));
++		kfree(str);
++	}
++
++	pcm_instance->device_id = node_index;
++
++	/*
++	 * check in Xen store if PCM HW configuration exists for this device
++	 * and update if so, e.g. we inherit all values from card's PCM HW,
++	 * but can still override some of the values for the device
++	 */
++	cfg_read_pcm_hw(device_path, parent_pcm_hw, &pcm_instance->pcm_hw);
++
++	/* find out how many streams were configured in Xen store */
++	num_streams = 0;
++	do {
++		snprintf(node, sizeof(node), "%d", num_streams);
++		if (!xenbus_exists(XBT_NIL, device_path, node))
++			break;
++
++		num_streams++;
++	} while (num_streams < VSND_MAX_STREAM);
++
++	pcm_instance->num_streams_pb = 0;
++	pcm_instance->num_streams_cap = 0;
++	/* get number of playback and capture streams */
++	for (i = 0; i < num_streams; i++) {
++		ret = cfg_get_stream_type(device_path, i, &num_pb, &num_cap);
++		if (ret < 0)
++			goto fail;
++
++		pcm_instance->num_streams_pb += num_pb;
++		pcm_instance->num_streams_cap += num_cap;
++	}
++
++	if (pcm_instance->num_streams_pb) {
++		pcm_instance->streams_pb =
++				devm_kcalloc(&front_info->xb_dev->dev,
++					     pcm_instance->num_streams_pb,
++					     sizeof(struct xen_front_cfg_stream),
++					     GFP_KERNEL);
++		if (!pcm_instance->streams_pb) {
++			ret = -ENOMEM;
++			goto fail;
++		}
++	}
++
++	if (pcm_instance->num_streams_cap) {
++		pcm_instance->streams_cap =
++				devm_kcalloc(&front_info->xb_dev->dev,
++					     pcm_instance->num_streams_cap,
++					     sizeof(struct xen_front_cfg_stream),
++					     GFP_KERNEL);
++		if (!pcm_instance->streams_cap) {
++			ret = -ENOMEM;
++			goto fail;
++		}
++	}
++
++	cur_pb = 0;
++	cur_cap = 0;
++	for (i = 0; i < num_streams; i++) {
++		ret = cfg_stream(front_info, pcm_instance, device_path, i,
++				 &cur_pb, &cur_cap, stream_cnt);
++		if (ret < 0)
++			goto fail;
++	}
++	ret = 0;
++
++fail:
++	kfree(device_path);
++	return ret;
++}
++
++int xen_snd_front_cfg_card(struct xen_snd_front_info *front_info,
++			   int *stream_cnt)
++{
++	struct xenbus_device *xb_dev = front_info->xb_dev;
++	struct xen_front_cfg_card *cfg = &front_info->cfg;
++	int ret, num_devices, i;
++	char node[3];
++
++	*stream_cnt = 0;
++	num_devices = 0;
++	do {
++		snprintf(node, sizeof(node), "%d", num_devices);
++		if (!xenbus_exists(XBT_NIL, xb_dev->nodename, node))
++			break;
++
++		num_devices++;
++	} while (num_devices < SNDRV_PCM_DEVICES);
++
++	if (!num_devices) {
++		dev_warn(&xb_dev->dev,
++			 "No devices configured for sound card at %s\n",
++			 xb_dev->nodename);
++		return -ENODEV;
++	}
++
++	/* start from default PCM HW configuration for the card */
++	cfg_read_pcm_hw(xb_dev->nodename, NULL, &cfg->pcm_hw);
++
++	cfg->pcm_instances =
++			devm_kcalloc(&front_info->xb_dev->dev, num_devices,
++				     sizeof(struct xen_front_cfg_pcm_instance),
++				     GFP_KERNEL);
++	if (!cfg->pcm_instances)
++		return -ENOMEM;
++
++	for (i = 0; i < num_devices; i++) {
++		ret = cfg_device(front_info, &cfg->pcm_instances[i],
++				 &cfg->pcm_hw, xb_dev->nodename, i, stream_cnt);
++		if (ret < 0)
++			return ret;
++	}
++	cfg->num_pcm_instances = num_devices;
++	return 0;
++}
++
+diff --git a/sound/xen/xen_snd_front_cfg.h b/sound/xen/xen_snd_front_cfg.h
+new file mode 100644
+index 000000000000..2353fcc74889
+--- /dev/null
++++ b/sound/xen/xen_snd_front_cfg.h
+@@ -0,0 +1,46 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++
++/*
++ * Xen para-virtual sound device
++ *
++ * Copyright (C) 2016-2018 EPAM Systems Inc.
++ *
++ * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
++ */
++
++#ifndef __XEN_SND_FRONT_CFG_H
++#define __XEN_SND_FRONT_CFG_H
++
++#include <sound/core.h>
++#include <sound/pcm.h>
++
++struct xen_snd_front_info;
++
++struct xen_front_cfg_stream {
++	int index;
++	char *xenstore_path;
++	struct snd_pcm_hardware pcm_hw;
++};
++
++struct xen_front_cfg_pcm_instance {
++	char name[80];
++	int device_id;
++	struct snd_pcm_hardware pcm_hw;
++	int  num_streams_pb;
++	struct xen_front_cfg_stream *streams_pb;
++	int  num_streams_cap;
++	struct xen_front_cfg_stream *streams_cap;
++};
++
++struct xen_front_cfg_card {
++	char name_short[32];
++	char name_long[80];
++	struct snd_pcm_hardware pcm_hw;
++	int num_pcm_instances;
++	struct xen_front_cfg_pcm_instance *pcm_instances;
++};
++
++int xen_snd_front_cfg_card(struct xen_snd_front_info *front_info,
++			   int *stream_cnt);
++
++#endif /* __XEN_SND_FRONT_CFG_H */
+-- 
+2.16.2
