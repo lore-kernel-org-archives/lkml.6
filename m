@@ -1,134 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754266AbeDPJOu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:14:50 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30617 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751099AbeDPJOt (ORCPT
+        id S1754564AbeDPJPU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:15:20 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33957 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754113AbeDPJPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:14:49 -0400
-From: Vincent ABRIOU <vincent.abriou@st.com>
-To: Philippe CORNU <philippe.cornu@st.com>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: Fabien DESSENNE <fabien.dessenne@st.com>,
-        Mickael REULIER <mickael.reulier@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH] drm/stm: ltdc: add user update info in plane print state
-Thread-Topic: [PATCH] drm/stm: ltdc: add user update info in plane print state
-Thread-Index: AQHTzrhWwCZmriDzrESJEFIN65KdyqQDB7SA
-Date: Mon, 16 Apr 2018 09:14:36 +0000
-Message-ID: <8843fede-9859-7332-1e34-515efe58024c@st.com>
-References: <20180407213503.30932-1-philippe.cornu@st.com>
-In-Reply-To: <20180407213503.30932-1-philippe.cornu@st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.117]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FB7D2F16F1BD284CB8C992A26862BA6D@st.com>
+        Mon, 16 Apr 2018 05:15:19 -0400
+X-Google-Smtp-Source: AIpwx48B5eVoldoIVgrZByBYaQ2rnpv/2OAG/mf+O0dzfbqqNleG+L7joxyb04OH9EqoLYMMKgZ7nw==
+Date: Mon, 16 Apr 2018 12:15:14 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: instant reboot caused by 194a9749c73d650c0
+Message-ID: <20180416091514.wqig3l4lrc72tyrs@node.shutemov.name>
+References: <5ecfeb13-84e4-f1ef-bd30-391674b2050a@gmail.com>
+ <20180416060709.mnzk7fb5y45dnpmg@gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_04:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180416060709.mnzk7fb5y45dnpmg@gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3G9Et1A019029
 
-Hi Philippe,
+On Mon, Apr 16, 2018 at 08:07:09AM +0200, Ingo Molnar wrote:
+> 
+> * Eric Dumazet <eric.dumazet@gmail.com> wrote:
+> 
+> > Hi Kirill
+> > 
+> > For some reason, my hosts instantly crash at boot time, with absolutely no log on console.
+> > 
+> > Bisection pointed to :
+> > 
+> > $ git bisect bad
+> > 194a9749c73d650c0b1dfdee04fb0bdf0a888ba8 is the first bad commit
+> > commit 194a9749c73d650c0b1dfdee04fb0bdf0a888ba8
+> > Author: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Date:   Mon Mar 12 13:02:46 2018 +0300
+> > 
+> >     x86/boot/compressed/64: Handle 5-level paging boot if kernel is above 4G
+> 
+> Could you please send your .config? These early boot problems are sometimes build 
+> and Kconfig environment sensitive.
+> 
+> A high level description of your hardware and the distro you are using would also 
+> be useful.
 
-Reviewed-by: Vincent Abriou <vincent.abriou@st.com>
+And how do you start the kernel? EFI? Legacy boot? kexec?
 
-On 04/07/2018 11:35 PM, Philippe Cornu wrote:
-> This patch adds the user update information in
-> frames-per-second into the drm debugfs plane state.
 > 
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-> ---
->   drivers/gpu/drm/stm/ltdc.c | 22 ++++++++++++++++++++++
->   drivers/gpu/drm/stm/ltdc.h |  8 ++++++++
->   2 files changed, 30 insertions(+)
+> Kirill, I'm curious about this change:
 > 
-> diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-> index 2b745cfc9000..061d2b6e5157 100644
-> --- a/drivers/gpu/drm/stm/ltdc.c
-> +++ b/drivers/gpu/drm/stm/ltdc.c
-> @@ -729,6 +729,8 @@ static void ltdc_plane_atomic_update(struct drm_plane *plane,
->   	reg_update_bits(ldev->regs, LTDC_L1CR + lofs,
->   			LXCR_LEN | LXCR_CLUTEN, val);
->   
-> +	ldev->plane_fpsi[plane->index].counter++;
-> +
->   	mutex_lock(&ldev->err_lock);
->   	if (ldev->error_status & ISR_FUIF) {
->   		DRM_DEBUG_DRIVER("Fifo underrun\n");
-> @@ -754,6 +756,25 @@ static void ltdc_plane_atomic_disable(struct drm_plane *plane,
->   			 oldstate->crtc->base.id, plane->base.id);
->   }
->   
-> +static void ltdc_plane_atomic_print_state(struct drm_printer *p,
-> +					  const struct drm_plane_state *state)
-> +{
-> +	struct drm_plane *plane = state->plane;
-> +	struct ltdc_device *ldev = plane_to_ltdc(plane);
-> +	struct fps_info *fpsi = &ldev->plane_fpsi[plane->index];
-> +	int ms_since_last;
-> +	ktime_t now;
-> +
-> +	now = ktime_get();
-> +	ms_since_last = ktime_to_ms(ktime_sub(now, fpsi->last_timestamp));
-> +
-> +	drm_printf(p, "\tuser_updates=%dfps\n",
-> +		   DIV_ROUND_CLOSEST(fpsi->counter * 1000, ms_since_last));
-> +
-> +	fpsi->last_timestamp = now;
-> +	fpsi->counter = 0;
-> +}
-> +
->   static const struct drm_plane_funcs ltdc_plane_funcs = {
->   	.update_plane = drm_atomic_helper_update_plane,
->   	.disable_plane = drm_atomic_helper_disable_plane,
-> @@ -761,6 +782,7 @@ static const struct drm_plane_funcs ltdc_plane_funcs = {
->   	.reset = drm_atomic_helper_plane_reset,
->   	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
->   	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
-> +	.atomic_print_state = ltdc_plane_atomic_print_state,
->   };
->   
->   static const struct drm_plane_helper_funcs ltdc_plane_helper_funcs = {
-> diff --git a/drivers/gpu/drm/stm/ltdc.h b/drivers/gpu/drm/stm/ltdc.h
-> index 61a80d00bc3b..1e16d6afb0d2 100644
-> --- a/drivers/gpu/drm/stm/ltdc.h
-> +++ b/drivers/gpu/drm/stm/ltdc.h
-> @@ -20,6 +20,13 @@ struct ltdc_caps {
->   	bool non_alpha_only_l1; /* non-native no-alpha formats on layer 1 */
->   };
->   
-> +#define LTDC_MAX_LAYER	4
-> +
-> +struct fps_info {
-> +	unsigned int counter;
-> +	ktime_t last_timestamp;
-> +};
-> +
->   struct ltdc_device {
->   	void __iomem *regs;
->   	struct clk *pixel_clk;	/* lcd pixel clock */
-> @@ -27,6 +34,7 @@ struct ltdc_device {
->   	struct ltdc_caps caps;
->   	u32 error_status;
->   	u32 irq_status;
-> +	struct fps_info plane_fpsi[LTDC_MAX_LAYER];
->   };
->   
->   int ltdc_load(struct drm_device *ddev);
+> -       /* Calculate address we are running at */
+> -       call    1f
+> -1:     popl    %edi
+> -       subl    $1b, %edi
+> +       /* Calculate address of paging_enabled() once we are executing in the 
+> trampoline */
+> +       leal    paging_enabled - trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_OFFSET(%ecx), %eax
 > 
+> Here we change the calculation from a "discover where we are executing" method to 
+> a calculation method (which is fundamentally more fragile) - why?
+
+I guess, I tried to save one register -- %rdi is used for return from
+trampoline.
+
+But you're right there's no reason to do this and it may be more fragile.
+
+Eric, could you check if the patch makes any difference?
+
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index fca012baba19..395c122ef70b 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -562,7 +562,10 @@ ENTRY(trampoline_32bit_src)
+ 	movl	%eax, %cr4
+ 
+ 	/* Calculate address of paging_enabled() once we are executing in the trampoline */
+-	leal	paging_enabled - trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_OFFSET(%ecx), %eax
++	call	1f
++1:	popl	%eax
++	subl	$1b, %eax
++	leal	paging_enabled(%eax), %eax
+ 
+ 	/* Prepare the stack for far return to Long Mode */
+ 	pushl	$__KERNEL_CS
+diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
+index 91f75638f6e6..6ff7e81b5628 100644
+--- a/arch/x86/boot/compressed/pgtable.h
++++ b/arch/x86/boot/compressed/pgtable.h
+@@ -6,7 +6,7 @@
+ #define TRAMPOLINE_32BIT_PGTABLE_OFFSET	0
+ 
+ #define TRAMPOLINE_32BIT_CODE_OFFSET	PAGE_SIZE
+-#define TRAMPOLINE_32BIT_CODE_SIZE	0x60
++#define TRAMPOLINE_32BIT_CODE_SIZE	0x70
+ 
+ #define TRAMPOLINE_32BIT_STACK_END	TRAMPOLINE_32BIT_SIZE
+ 
+-- 
+ Kirill A. Shutemov
