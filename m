@@ -1,160 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753948AbeDPJ1k (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:27:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45546 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753651AbeDPJ1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:27:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E41342170D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Mon, 16 Apr 2018 18:27:35 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: acme@redhat.com, mhiramat@kernel.org, kstewart@linuxfoundation.org,
-        tglx@linutronix.de, pombredanne@nexb.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, uneedsihyeon@gmail.com, kjlx@templeofstupid.com
-Subject: Re: [PATCH 3/3] perf/buildid-cache: Support --purge-all option
-Message-Id: <20180416182735.4399e94b3c7e6d190ec7dc3e@kernel.org>
-In-Reply-To: <20180409110633.20767-4-ravi.bangoria@linux.vnet.ibm.com>
-References: <20180409110633.20767-1-ravi.bangoria@linux.vnet.ibm.com>
-        <20180409110633.20767-4-ravi.bangoria@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1754061AbeDPJ3x (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:29:53 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:19698 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751182AbeDPJ3v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 05:29:51 -0400
+Subject: Re: [RFC 01/10] PCI: dwc: Add MSI-X callbacks handler
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <niklas.cassel@axis.com>,
+        <jesper.nilsson@axis.com>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+ <77b7b2687e9618d3f7d1f11c3fc6ecec9a9442ef.1523379766.git.gustavo.pimentel@synopsys.com>
+CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <0b7023d9-29c6-0993-07d3-b046d25b67ff@ti.com>
+Date: Mon, 16 Apr 2018 14:59:34 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <77b7b2687e9618d3f7d1f11c3fc6ecec9a9442ef.1523379766.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  9 Apr 2018 16:36:33 +0530
-Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+Hi Gustavo,
 
-> User can remove files from cache using --remove/--purge options
-> but both needs list of files as an argument. It's not convenient
-> when you want to flush out entire cache. Add an option to purge
-> all files from cache.
+On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
+> Changes the pcie_raise_irq function signature, namely the interrupt_num
+> variable type from u8 to u16 to accommodate the MSI-X maximum interrupts
+> of 2048.
 > 
-> Ex,
->   # perf buildid-cache -l
->     /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c)
->     /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36)
->   # perf buildid-cache -P -v
->     Removing /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c): Ok
->     Removing /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36): Ok
->     Purged all: Ok
-
-Hmm, for purging all caches will be done by
-
-$ rm -rf ~/.debug
-
-Are there any difference?
-
-Thanks,
-
+> Implements a PCIe config space capability iterator function to search and
+> save the MSI and MSI-X pointers. With this method the code becomes more
+> generic and flexible.
 > 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+> Implements MSI-X set/get functions for sysfs interface in order to change
+> the EP entries number.
+> 
+> Implements EP MSI-X interface for triggering interruptions.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 > ---
->  tools/perf/Documentation/perf-buildid-cache.txt |  3 +++
->  tools/perf/builtin-buildid-cache.c              | 36 ++++++++++++++++++++++++-
->  2 files changed, 38 insertions(+), 1 deletion(-)
+>  drivers/pci/dwc/pci-dra7xx.c           |   2 +-
+>  drivers/pci/dwc/pcie-artpec6.c         |   2 +-
+>  drivers/pci/dwc/pcie-designware-ep.c   | 145 ++++++++++++++++++++++++++++++++-
+>  drivers/pci/dwc/pcie-designware-plat.c |   6 +-
+>  drivers/pci/dwc/pcie-designware.h      |  23 +++++-
+>  5 files changed, 173 insertions(+), 5 deletions(-)
 > 
-> diff --git a/tools/perf/Documentation/perf-buildid-cache.txt b/tools/perf/Documentation/perf-buildid-cache.txt
-> index 3f285ba6e1f9..f6de0952ff3c 100644
-> --- a/tools/perf/Documentation/perf-buildid-cache.txt
-> +++ b/tools/perf/Documentation/perf-buildid-cache.txt
-> @@ -48,6 +48,9 @@ OPTIONS
->  --purge=::
->          Purge all cached binaries including older caches which have specified
->  	path from the cache.
-> +-P::
-> +--purge-all::
-> +	Purge all cached binaries. This will flush out entire cache.
->  -M::
->  --missing=::
->  	List missing build ids in the cache for the specified file.
-> diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
-> index 50db05bd0cc6..3b4373cabd49 100644
-> --- a/tools/perf/builtin-buildid-cache.c
-> +++ b/tools/perf/builtin-buildid-cache.c
-> @@ -240,6 +240,34 @@ static int build_id_cache__purge_path(const char *pathname, struct nsinfo *nsi)
->  	return err;
+> diff --git a/drivers/pci/dwc/pci-dra7xx.c b/drivers/pci/dwc/pci-dra7xx.c
+> index ed8558d..5265725 100644
+> --- a/drivers/pci/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/dwc/pci-dra7xx.c
+> @@ -369,7 +369,7 @@ static void dra7xx_pcie_raise_msi_irq(struct dra7xx_pcie *dra7xx,
 >  }
 >  
-> +static int build_id_cache__purge_all(void)
-> +{
-> +	struct strlist *list;
-> +	struct str_node *pos;
-> +	int err;
-> +	char *buf;
-> +
-> +	list = build_id_cache__list_all(false);
-> +	if (!list) {
-> +		pr_debug("Failed to get buildids: -%d\n", errno);
-> +		return -EINVAL;
-> +	}
-> +
-> +	strlist__for_each_entry(pos, list) {
-> +		buf = build_id_cache__origname(pos->s);
-> +		err = build_id_cache__remove_s(pos->s);
-> +		pr_debug("Removing %s (%s): %s\n", buf, pos->s,
-> +			 err ? "FAIL" : "Ok");
-> +		free(buf);
-> +		if (err)
-> +			break;
-> +	}
-> +	strlist__delete(list);
-> +
-> +	pr_debug("Purged all: %s\n", err ? "FAIL" : "Ok");
-> +	return err;
-> +}
-> +
->  static bool dso__missing_buildid_cache(struct dso *dso, int parm __maybe_unused)
+>  static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+> -				 enum pci_epc_irq_type type, u8 interrupt_num)
+> +				 enum pci_epc_irq_type type, u16 interrupt_num)
 >  {
->  	char filename[PATH_MAX];
-> @@ -326,6 +354,7 @@ int cmd_buildid_cache(int argc, const char **argv)
->  	bool force = false;
->  	bool list_files = false;
->  	bool opts_flag = false;
-> +	bool purge_all = false;
->  	char const *add_name_list_str = NULL,
->  		   *remove_name_list_str = NULL,
->  		   *purge_name_list_str = NULL,
-> @@ -349,6 +378,7 @@ int cmd_buildid_cache(int argc, const char **argv)
->  		    "file(s) to remove"),
->  	OPT_STRING('p', "purge", &purge_name_list_str, "file list",
->  		    "file(s) to remove (remove old caches too)"),
-> +	OPT_BOOLEAN('P', "purge-all", &purge_all, "purge all cached files"),
->  	OPT_BOOLEAN('l', "list", &list_files, "list all cached files"),
->  	OPT_STRING('M', "missing", &missing_filename, "file",
->  		   "to find missing build ids in the cache"),
-> @@ -369,7 +399,8 @@ int cmd_buildid_cache(int argc, const char **argv)
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
+> diff --git a/drivers/pci/dwc/pcie-artpec6.c b/drivers/pci/dwc/pcie-artpec6.c
+> index e66cede..96dc259 100644
+> --- a/drivers/pci/dwc/pcie-artpec6.c
+> +++ b/drivers/pci/dwc/pcie-artpec6.c
+> @@ -428,7 +428,7 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
+>  }
 >  
->  	opts_flag = add_name_list_str || kcore_filename ||
->  		remove_name_list_str || purge_name_list_str ||
-> -		missing_filename || update_name_list_str;
-> +		missing_filename || update_name_list_str ||
-> +		purge_all;
+>  static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+> -				  enum pci_epc_irq_type type, u8 interrupt_num)
+> +				  enum pci_epc_irq_type type, u16 interrupt_num)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
 >  
->  	if (argc || !(list_files || opts_flag))
->  		usage_with_options(buildid_cache_usage, buildid_cache_options);
-> @@ -455,6 +486,9 @@ int cmd_buildid_cache(int argc, const char **argv)
->  		}
->  	}
+> diff --git a/drivers/pci/dwc/pcie-designware-ep.c b/drivers/pci/dwc/pcie-designware-ep.c
+> index 15b22a6..874d4c2 100644
+> --- a/drivers/pci/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/dwc/pcie-designware-ep.c
+> @@ -40,6 +40,44 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+>  	__dw_pcie_ep_reset_bar(pci, bar, 0);
+>  }
 >  
-> +	if (purge_all)
-> +		ret = build_id_cache__purge_all();
-> +
->  	if (missing_filename)
->  		ret = build_id_cache__fprintf_missing(session, stdout);
->  
-> -- 
-> 2.14.3
-> 
+> +void dw_pcie_ep_find_cap_addr(struct dw_pcie_ep *ep)
+> +{
 
+This should be implemented in a generic way similar to pci_find_capability().
+It'll be useful when we try to implement other capabilities as well.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Thanks
+Kishon
