@@ -1,151 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752829AbeDPRZv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 13:25:51 -0400
-Received: from anholt.net ([50.246.234.109]:55176 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750989AbeDPRZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 13:25:49 -0400
-From: Eric Anholt <eric@anholt.net>
-To: dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        linux-rpi-kernel@lists.infradead.org
-Cc: Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2 1/3] drm/vc4: Remove the need for the GPU-subsystem DT node.
-Date: Mon, 16 Apr 2018 10:25:46 -0700
-Message-Id: <20180416172546.32118-1-eric@anholt.net>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180413175632.oz62n363g6rxdp6z@rob-hp-laptop>
-References: <20180413175632.oz62n363g6rxdp6z@rob-hp-laptop>
+        id S1752824AbeDPR3B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 13:29:01 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:44358 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbeDPR3A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 13:29:00 -0400
+Date: Mon, 16 Apr 2018 10:28:58 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Ahsan Hussain <ahsan_hussain@mentor.com>
+Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chombour <Cedric_Hombourger@mentor.com>,
+        ahsann <Noor_Ahsan@mentor.com>, m.purski@samsung.com
+Subject: Re: [PATCH 1/1] hwmon: (ina2xx) initialize mutex before locking
+Message-ID: <20180416172858.GA9447@roeck-us.net>
+References: <f286b0f4-948f-74a7-6dc1-90ca88f3dcdc@mentor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f286b0f4-948f-74a7-6dc1-90ca88f3dcdc@mentor.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GPU subsystem node was a workaround to have a central device to
-bind V3D and display to.  Following the lead of 246774d17fc0
-("drm/etnaviv: remove the need for a gpu-subsystem DT node"), remove
-the subsystem node usage and just create a platform device for the DRM
-device to attach to if any of the subsystem devices are present.
+On Mon, Apr 16, 2018 at 10:08:19PM +0500, Ahsan Hussain wrote:
+> 
+> Upstream commit
+> 
+> 8d008c0c ("hwmon: (ina2xx) Make calibration register value fixed")
+> 
+This doesn't have to be on separate lines; as written, it just causes
+confusion.
 
-v2: Simplify the DT walking code.
+> makes ina2xx_set_shunt() call mutex_lock on an un-initialized mutex.
+> Initialize it prior so we don't get a NULL pointer dereference error
+> 
+> Signed-off-by: Ahsan Hussain <ahsan_hussain@mentor.com>
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- .../bindings/display/brcm,bcm-vc4.txt         |  7 -----
- drivers/gpu/drm/vc4/vc4_drv.c                 | 29 ++++++++++++++-----
- drivers/gpu/drm/vc4/vc4_hvs.c                 |  1 +
- drivers/gpu/drm/vc4/vc4_v3d.c                 |  1 +
- 4 files changed, 23 insertions(+), 15 deletions(-)
+Good find, but your patch is corrupted to the point where any attenpt to
+fix it up on my side failed. Please resend without corruption, and please
+provide a Fixes: line.
 
-diff --git a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
-index 284e2b14cfbe..5fd4717101d6 100644
---- a/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
-+++ b/Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
-@@ -4,9 +4,6 @@ The VC4 device present on the Raspberry Pi includes a display system
- with HDMI output and the HVS (Hardware Video Scaler) for compositing
- display planes.
- 
--Required properties for VC4:
--- compatible:	Should be "brcm,bcm2835-vc4" or "brcm,cygnus-vc4"
--
- Required properties for Pixel Valve:
- - compatible:	Should be one of "brcm,bcm2835-pixelvalve0",
- 		  "brcm,bcm2835-pixelvalve1", or "brcm,bcm2835-pixelvalve2"
-@@ -153,10 +150,6 @@ v3d: v3d@7ec00000 {
- 	interrupts = <1 10>;
- };
- 
--vc4: gpu {
--	compatible = "brcm,bcm2835-vc4";
--};
--
- panel: panel {
- 	compatible = "ontat,yx700wv03", "simple-panel";
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 7c95ed5c5cac..13b840b534b8 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -364,22 +364,30 @@ static int vc4_platform_drm_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static const struct of_device_id vc4_of_match[] = {
--	{ .compatible = "brcm,bcm2835-vc4", },
--	{ .compatible = "brcm,cygnus-vc4", },
--	{},
--};
--MODULE_DEVICE_TABLE(of, vc4_of_match);
--
- static struct platform_driver vc4_platform_driver = {
- 	.probe		= vc4_platform_drm_probe,
- 	.remove		= vc4_platform_drm_remove,
- 	.driver		= {
- 		.name	= "vc4-drm",
--		.of_match_table = vc4_of_match,
- 	},
- };
- 
-+static bool
-+driver_of_table_has_a_match(const struct platform_driver *driver)
-+{
-+	struct device_node *node;
-+
-+	node = of_find_matching_node_and_match(NULL,
-+					       driver->driver.of_match_table,
-+					       NULL);
-+	if (of_device_is_available(node)) {
-+		of_node_put(node);
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- static int __init vc4_drm_register(void)
- {
- 	int ret;
-@@ -389,6 +397,11 @@ static int __init vc4_drm_register(void)
- 	if (ret)
- 		return ret;
- 
-+	if (driver_of_table_has_a_match(&vc4_v3d_driver) ||
-+	    driver_of_table_has_a_match(&vc4_hvs_driver)) {
-+		platform_device_register_simple("vc4-drm", -1, NULL, 0);
-+	}
-+
- 	return platform_driver_register(&vc4_platform_driver);
- }
- 
-diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-index 2b62fc5b8d85..730813ee74ae 100644
---- a/drivers/gpu/drm/vc4/vc4_hvs.c
-+++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-@@ -262,6 +262,7 @@ static const struct of_device_id vc4_hvs_dt_match[] = {
- 	{ .compatible = "brcm,bcm2835-hvs" },
- 	{}
- };
-+MODULE_DEVICE_TABLE(of, vc4_hvs_dt_match);
- 
- struct platform_driver vc4_hvs_driver = {
- 	.probe = vc4_hvs_dev_probe,
-diff --git a/drivers/gpu/drm/vc4/vc4_v3d.c b/drivers/gpu/drm/vc4/vc4_v3d.c
-index bfc2fa73d2ae..e77e9ebbab4b 100644
---- a/drivers/gpu/drm/vc4/vc4_v3d.c
-+++ b/drivers/gpu/drm/vc4/vc4_v3d.c
-@@ -459,6 +459,7 @@ static const struct of_device_id vc4_v3d_dt_match[] = {
- 	{ .compatible = "brcm,vc4-v3d" },
- 	{}
- };
-+MODULE_DEVICE_TABLE(of, vc4_v3d_dt_match);
- 
- struct platform_driver vc4_v3d_driver = {
- 	.probe = vc4_v3d_dev_probe,
--- 
-2.17.0
+Thanks,
+Guenter
+
+> ---
+>  drivers/hwmon/ina2xx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+> index a629f7c..1304f01 100644
+> --- a/drivers/hwmon/ina2xx.c
+> +++ b/drivers/hwmon/ina2xx.c
+> @@ -457,6 +457,8 @@ static int ina2xx_probe(struct i2c_client *client,
+>  			val = INA2XX_RSHUNT_DEFAULT;
+>  	}
+>  +	mutex_init(&data->config_lock);
+> +
+>  	ina2xx_set_shunt(data, val);
+>   	ina2xx_regmap_config.max_register = data->config->registers;
+> @@ -473,8 +475,6 @@ static int ina2xx_probe(struct i2c_client *client,
+>  		return -ENODEV;
+>  	}
+>  -	mutex_init(&data->config_lock);
+> -
+>  	data->groups[group++] = &ina2xx_group;
+>  	if (id->driver_data == ina226)
+>  		data->groups[group++] = &ina226_group;
+> -- 
+> 2.7.4
+> 
