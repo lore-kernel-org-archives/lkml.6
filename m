@@ -1,69 +1,88 @@
-Return-Path: <helgaas@kernel.org>
-X-Google-Smtp-Source: AIpwx4+mDCj85T0anzM7RbZSLZfzA4SrSTkN9lalwB1J8dYZtOxofsd/ssAGAAF9vpZhoIKrYbQG
-ARC-Seal: i=1; a=rsa-sha256; t=1523848572; cv=none;
+Return-Path: <okaya@codeaurora.org>
+X-Google-Smtp-Source: AIpwx49+THGxXNzgWRVhC/5IwWERrLkFups6sTAIrF7ynDjaAGOl8zrNKjJ+/OusA9ypS2lVOC+s
+ARC-Seal: i=1; a=rsa-sha256; t=1523850832; cv=none;
         d=google.com; s=arc-20160816;
-        b=CFPTWPR9wdD+w/iJRw1kATEWcU5XBNN09Ai/P0tbAqJf5fiU8BekQH7deYMLj/2zGa
-         9wyOYj5Bpfqpox6NFmnbItV3dLZNSXdw0RWlcZGVTNJ2nz/N+bbGhf99y6uS6/xCo3gC
-         BNRC3sF60Pe1V8qjSQF6I6Oef6bZF2FaW/Ke06fnnzCqKNBJXn943Gpu9sBMsQhdNE6t
-         STKum3dyjbP5RQNkGvMiMmnSGUnfvM5LeJOWOtvHKUaNQFZ6qPb8tm5aEtVw7AeS6/r6
-         vdDmZjgH6lJ2pKqL2jqza1fFuEebguOAZvEdRmV5evJSocYQZBu+6RbZBHbabOk2wwjS
-         pu1g==
+        b=Z7xXJ3KpkX2zI6xdfXLJGOXsoRrVq16gU5gkY5GV9DYnY3qi3Pg4Udzv6d9g224fkz
+         FTcklsm4SaSQWam8b3P9KVWpfEZyDaCIt9LlZafp29QVE7UfQZ+qCN9mxgQHS+GeFOwX
+         nMtTyRwifOHKe7l2S4is1YCAFgsT4anMF9NJT8742Ti7nzTnmOayp8dUgeDll60Bjt2E
+         Fooh8oRPDuG2J3k5CsdpIytkCdaj7osM81CZpJuETyKQnB1dO+BDHdlEbRcn8XljrKmN
+         H/1sj0osNDZ0S3Goen7Zj/ZA+5WqkoYg5Ae016yPMB9wdX65PuKyNtfdCUdiKQ2oYU70
+         MGTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dmarc-filter
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=H5keOF6J5agvgpPetPSNvvdVXUID0t0GbUpoyIILPYs=;
-        b=LpTZfospkPuc20nJmMecqFLhjAEcseGatSwECVXMEVtoLDbfNYSed5PyHttHZzWsw1
-         i3kvoZZcryTpVhgFdHE3GNwseD2egUV0NjXQyDeqx6xLzlcGclZQM+BRk3TKOz6W/51Y
-         exHnazWHXSd6aeT0fLovDsDBeVMF/CsvLHyxbnzM5mNgzYNYVGIQYr1J/+dHlfwG5e4j
-         Ahi0U26GkcwbRYTjuNLleiFJSKdTyvgUSzCTvQ4bHpofL9A4SWQsNq6W4H0p5rc+UApo
-         F6AjGAiw3IArDIl5DVExfavWT54rZnwAYn8Kfm65Xu0fFNgviNGIFUi4vAO3UBybhtno
-         IKjQ==
+        bh=+efReypN3hTj02hQrvkgiwBI5fp6sZC0QnQUJx9lV/s=;
+        b=lNASO+I/mJJt10wVxPKMLsHGv1KVnVkXW7mrA75SUrMhqwyY4MbDxxsWwHdsUnA1QO
+         dqJIobw2BptCOoaYZ2Sssy42XQuNkyJ7hnqiHzNNsV4x+m8ujti69FXNdSeJI0dWNzoC
+         xKgBAFFfbMbudajh3p1zQ5whXdd4GiozxVSp5PGqBrlWLuI/Aaqtzb8JI9oIK79dDtoL
+         5znkNV3CyQEHemKaTDGdOsxdPINPfoh7jG2H0NeLjavXIbvYGwwWFPu/+Npb6nwdkYwZ
+         MTo30Iwq+bXsyGDgjURdbv7Kk0Ub/2nQxd3foVBMxedRd0D4cBXy+o4MI0aedyzOvj2J
+         OcKg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=RDKzMO7c;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=GFZFUNrk;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DDF821775
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Sun, 15 Apr 2018 22:16:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Oza Pawandeep <poza@codeaurora.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dongdong Liu <liudongdong3@huawei.com>,
-	Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
-	Sinan Kaya <okaya@codeaurora.org>,
-	Timur Tabi <timur@codeaurora.org>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=RDKzMO7c;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=GFZFUNrk;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD1CF6072E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 Subject: Re: [PATCH v13 0/6] Address error and recovery for AER and DPC
-Message-ID: <20180416031600.GB80087@bhelgaas-glaptop.roam.corp.google.com>
+To: Bjorn Helgaas <helgaas@kernel.org>, Oza Pawandeep <poza@codeaurora.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kate Stewart <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>,
+ Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+ Timur Tabi <timur@codeaurora.org>
 References: <1523284914-2037-1-git-send-email-poza@codeaurora.org>
+ <20180416031600.GB80087@bhelgaas-glaptop.roam.corp.google.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <5b4e667f-bead-a007-78dd-e42d3194f232@codeaurora.org>
+Date: Sun, 15 Apr 2018 23:53:47 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523284914-2037-1-git-send-email-poza@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180416031600.GB80087@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597280027023020186?=
-X-GMAIL-MSGID: =?utf-8?q?1597871041055533029?=
+X-GMAIL-MSGID: =?utf-8?q?1597873409975635238?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 09, 2018 at 10:41:48AM -0400, Oza Pawandeep wrote:
-> This patch set brings in error handling support for DPC
+On 4/15/2018 11:16 PM, Bjorn Helgaas wrote:
+> On Mon, Apr 09, 2018 at 10:41:48AM -0400, Oza Pawandeep wrote:
+>> This patch set brings in error handling support for DPC
+>>
+>> The current implementation of AER and error message broadcasting to the
+>> EP driver is tightly coupled and limited to AER service driver.
+>> It is important to factor out broadcasting and other link handling
+>> callbacks. So that not only when AER gets triggered, but also when DPC get
+>> triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
+>>
+>> DPC should behave identical to AER as far as error handling is concerned.
+>> DPC should remove the devices and not to do recovery for hotplug enabled system.
 > 
-> The current implementation of AER and error message broadcasting to the
-> EP driver is tightly coupled and limited to AER service driver.
-> It is important to factor out broadcasting and other link handling
-> callbacks. So that not only when AER gets triggered, but also when DPC get
-> triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
+> Is there a specific bug that's fixed by these patches?  I didn't see
+> one mentioned in the changelogs.
 > 
-> DPC should behave identical to AER as far as error handling is concerned.
-> DPC should remove the devices and not to do recovery for hotplug enabled system.
 
-Is there a specific bug that's fixed by these patches?  I didn't see
-one mentioned in the changelogs.
+There is no actual bug. 
+
+We realized that DPC and hotplug is heavily integrated today. We have use
+cases for systems without hotplug support but still support DPC. That's the
+problem we are trying to solve with this patchset.
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
