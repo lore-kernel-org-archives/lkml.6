@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754389AbeDPIvS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 04:51:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44810 "EHLO
+        id S1754446AbeDPIvb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 04:51:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44842 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754359AbeDPIvO (ORCPT
+        with ESMTP id S1754408AbeDPIv2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 04:51:14 -0400
+        Mon, 16 Apr 2018 04:51:28 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, netdev@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 07/12] scsi: reduce use of block bounce buffers
-Date: Mon, 16 Apr 2018 10:50:27 +0200
-Message-Id: <20180416085032.7367-8-hch@lst.de>
+Subject: [PATCH 09/12] ide: kill ide_toggle_bounce
+Date: Mon, 16 Apr 2018 10:50:29 +0200
+Message-Id: <20180416085032.7367-10-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180416085032.7367-1-hch@lst.de>
 References: <20180416085032.7367-1-hch@lst.de>
@@ -23,57 +23,104 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can rely on the dma-mapping code to handle any DMA limits that is
-bigger than the ISA DMA mask for us (either using an iommu or swiotlb),
-so remove setting the block layer bounce limit for anything but the
-unchecked_isa_dma case, or the bouncing for highmem pages.
+ide_toggle_bounce did select various strange block bounce limits, including
+not bouncing at all as soon as an iommu is present in the system.  Given
+that the dma_map routines now handle any required bounce buffering except
+for ISA DMA, and the ide code already must handle either ISA DMA or highmem
+at least for iommu equipped systems we can get rid of the block layer
+bounce limit setting entirely.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/scsi/scsi_lib.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+ drivers/ide/ide-dma.c   |  2 --
+ drivers/ide/ide-lib.c   | 26 --------------------------
+ drivers/ide/ide-probe.c |  3 ---
+ include/linux/ide.h     |  2 --
+ 4 files changed, 33 deletions(-)
 
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 0dfec0dedd5e..ebe2cbb48b80 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -2142,27 +2142,6 @@ static int scsi_map_queues(struct blk_mq_tag_set *set)
- 	return blk_mq_map_queues(set);
- }
+diff --git a/drivers/ide/ide-dma.c b/drivers/ide/ide-dma.c
+index 54d4d78ca46a..6f344654ef22 100644
+--- a/drivers/ide/ide-dma.c
++++ b/drivers/ide/ide-dma.c
+@@ -180,7 +180,6 @@ EXPORT_SYMBOL_GPL(ide_dma_unmap_sg);
+ void ide_dma_off_quietly(ide_drive_t *drive)
+ {
+ 	drive->dev_flags &= ~IDE_DFLAG_USING_DMA;
+-	ide_toggle_bounce(drive, 0);
  
--static u64 scsi_calculate_bounce_limit(struct Scsi_Host *shost)
+ 	drive->hwif->dma_ops->dma_host_set(drive, 0);
+ }
+@@ -211,7 +210,6 @@ EXPORT_SYMBOL(ide_dma_off);
+ void ide_dma_on(ide_drive_t *drive)
+ {
+ 	drive->dev_flags |= IDE_DFLAG_USING_DMA;
+-	ide_toggle_bounce(drive, 1);
+ 
+ 	drive->hwif->dma_ops->dma_host_set(drive, 1);
+ }
+diff --git a/drivers/ide/ide-lib.c b/drivers/ide/ide-lib.c
+index e1180fa46196..78cb79eddc8b 100644
+--- a/drivers/ide/ide-lib.c
++++ b/drivers/ide/ide-lib.c
+@@ -6,32 +6,6 @@
+ #include <linux/ide.h>
+ #include <linux/bitops.h>
+ 
+-/**
+- *	ide_toggle_bounce	-	handle bounce buffering
+- *	@drive: drive to update
+- *	@on: on/off boolean
+- *
+- *	Enable or disable bounce buffering for the device. Drives move
+- *	between PIO and DMA and that changes the rules we need.
+- */
+-
+-void ide_toggle_bounce(ide_drive_t *drive, int on)
 -{
--	struct device *host_dev;
--	u64 bounce_limit = 0xffffffff;
+-	u64 addr = BLK_BOUNCE_HIGH;	/* dma64_addr_t */
 -
--	if (shost->unchecked_isa_dma)
--		return BLK_BOUNCE_ISA;
--	/*
--	 * Platforms with virtual-DMA translation
--	 * hardware have no practical limit.
--	 */
--	if (!PCI_DMA_BUS_IS_PHYS)
--		return BLK_BOUNCE_ANY;
+-	if (!PCI_DMA_BUS_IS_PHYS) {
+-		addr = BLK_BOUNCE_ANY;
+-	} else if (on && drive->media == ide_disk) {
+-		struct device *dev = drive->hwif->dev;
 -
--	host_dev = scsi_get_device(shost);
--	if (host_dev && host_dev->dma_mask)
--		bounce_limit = (u64)dma_max_pfn(host_dev) << PAGE_SHIFT;
+-		if (dev && dev->dma_mask)
+-			addr = *dev->dma_mask;
+-	}
 -
--	return bounce_limit;
+-	if (drive->queue)
+-		blk_queue_bounce_limit(drive->queue, addr);
 -}
 -
- void __scsi_init_queue(struct Scsi_Host *shost, struct request_queue *q)
+ u64 ide_get_lba_addr(struct ide_cmd *cmd, int lba48)
  {
- 	struct device *dev = shost->dma_dev;
-@@ -2182,7 +2161,8 @@ void __scsi_init_queue(struct Scsi_Host *shost, struct request_queue *q)
- 	}
+ 	struct ide_taskfile *tf = &cmd->tf;
+diff --git a/drivers/ide/ide-probe.c b/drivers/ide/ide-probe.c
+index 2019e66eada7..8d8ed036ca0a 100644
+--- a/drivers/ide/ide-probe.c
++++ b/drivers/ide/ide-probe.c
+@@ -805,9 +805,6 @@ static int ide_init_queue(ide_drive_t *drive)
+ 	/* assign drive queue */
+ 	drive->queue = q;
  
- 	blk_queue_max_hw_sectors(q, shost->max_sectors);
--	blk_queue_bounce_limit(q, scsi_calculate_bounce_limit(shost));
-+	if (shost->unchecked_isa_dma)
-+		blk_queue_bounce_limit(q, BLK_BOUNCE_ISA);
- 	blk_queue_segment_boundary(q, shost->dma_boundary);
- 	dma_set_seg_boundary(dev, shost->dma_boundary);
+-	/* needs drive->queue to be set */
+-	ide_toggle_bounce(drive, 1);
+-
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/ide.h b/include/linux/ide.h
+index ca9d34feb572..11f0dd03a4b4 100644
+--- a/include/linux/ide.h
++++ b/include/linux/ide.h
+@@ -1508,8 +1508,6 @@ static inline void ide_set_hwifdata (ide_hwif_t * hwif, void *data)
+ 	hwif->hwif_data = data;
+ }
+ 
+-extern void ide_toggle_bounce(ide_drive_t *drive, int on);
+-
+ u64 ide_get_lba_addr(struct ide_cmd *, int);
+ u8 ide_dump_status(ide_drive_t *, const char *, u8);
  
 -- 
 2.17.0
