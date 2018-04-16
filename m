@@ -1,48 +1,48 @@
-Return-Path: <helgaas@kernel.org>
-X-Google-Smtp-Source: AIpwx4/uxM40XujLn3Laa09B9CZGbyuHtNp05kVbZZ++0nzQmOiBKKc4xnWBx/DVcicHZfXh8BsG
-ARC-Seal: i=1; a=rsa-sha256; t=1523848649; cv=none;
+Return-Path: <okaya@codeaurora.org>
+X-Google-Smtp-Source: AIpwx4/O7ilMph5gJWIek2RKFFNOEa9pV2xblRrYlIdLMIgT/TJjH5NGa1zjjkaJXnVqrQObtIXE
+ARC-Seal: i=1; a=rsa-sha256; t=1523889970; cv=none;
         d=google.com; s=arc-20160816;
-        b=jTL+1IENAGEFP1GjmZk/KoRW8O7MtX+UbWgK/l81WKBNAi4Iq2v0VCkuUTZvB1OqjV
-         vf7zYlb8jYwnGs0hhABAV85hY88tR2FnetOBycxl3SFO5wqUo871Hh3bTxmS8sMiS2w2
-         slMieJOy2dX0lg6D0rhMieDQkzzYj8xqiZ2h4Z8N08t68HUVPHFM/63Q85F0hENzqtMg
-         j4YZ8+4ETbT9QkrK0RX3oitZMKsqc452woc1sxiS5rSwM7SD/OxAhW8CQkxZjdgHDGam
-         nsY0zY+IDI41GvCDKKdfuPjO7yicbOYmxk4i7aRjh+hhWkc1fcgL56jcW3TSVHH8b/Wk
-         KjCQ==
+        b=N8+FU3ioarSJqmod10nFrgG/KuTiwSkJfNVXdISOVmuB7wp8VHcQJJoqNVloB7XF9/
+         1bEiLT6BAqJVFf+hiKis8mxO3mhsLJbsZyFQ0XDULTy+SqLcp8EAnMdwNVXOLo5w5+nu
+         3+6GW5M74eMlRY7E0JIHv/zt/NDiWsfTuNz9MQIrEmfD18bJouRmoQAoveyaiCVMy0G4
+         ZBxBPZ+xV6j2xGLIjpJiZfafIXgSBXEkUkaV+inlh47MzTRfJYcgWZuOJdn733nUBRtK
+         fgvgODADzL/OmJoPixgyjHBPChgO4HasKkcrwQLUI8sdza3vFd2DE70+jA5icZNtp2kp
+         2ceA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dmarc-filter
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dmarc-filter:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=Hub34NajNoTcebpwgJdE68w4bD/7LMUEelstOjBIQA8=;
-        b=uUYbDv1/GHyzvzVPm+XvzLNP4TCTd0aG2gNwQibxccDq1PVxbeHc4sbzdG/otgwac0
-         U4l0hCYs8shBdljFfAXZ7cBu0jIBXJHp0RNAh7Esc053+2nd/dmuNGNi/eM2m8jIkP6e
-         m1MkJE3jbxdfuNw+eLnsOvjgair/eWGlwSe0h3JPOhVjk6bfZSVx8fzrBOPJjv1N5aN5
-         Uxk3qXrDHirCkO8NVXPy+nCWFC1rMyMY+a4e3JpswMYjVbNq7u3tTI75gRaE6yBC8Iwo
-         IAY0NfUhNVTpk9w8upAK3GyCXFwwDUxvSh+XBJhV3vjcNJlsAkMISi3U60uHGP8HHZxc
-         GBmg==
+        bh=vGq3Xl49xNHG7T/nuxkuVYk6MWk2SSP8NGWP69p3hD4=;
+        b=Rnc+kVw3uGgxrmgrSVzpG2MCZiGReYEA/+FQdtl1MqL5zJMmi59H9W0l5f+KCX1Rrh
+         uL4k/g589fadMynlKhUcxGjS6Ea9amXGHV9B3l4IudmTL8Oogr43pMhEFOCutPPtIJ5z
+         TwlwRCdpmeXrNmLwNlKM8O7bHKpz/gJAes36UK4rbng05V5MQQ4/BQfF4OBcmGtKE7F3
+         /RemYuBt1WRhbm5wYSId3Tlean407v2FglZcDAAcp5s6oSGHjSTy3QIXQ/pidDZDit/B
+         Fhtx6ixDySsm9oNQyG6erO4qlZA4NFB99PHEaLHuj8IyiVCEZyIIe9VGawCzYfdE5DTB
+         oRxg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=cRoTCCF1;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=QSpI9byu;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA3D21775
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Sun, 15 Apr 2018 22:17:26 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Keith Busch <keith.busch@intel.com>,
-	Oza Pawandeep <poza@codeaurora.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dongdong Liu <liudongdong3@huawei.com>, Wei Zhang <wzhang@fb.com>,
-	Timur Tabi <timur@codeaurora.org>,
-	Alex Williamson <alex.williamson@redhat.com>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=cRoTCCF1;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=QSpI9byu;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9162A60AE0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
 Subject: Re: [PATCH v13 6/6] PCI/DPC: Do not do recovery for hotplug enabled
  system
-Message-ID: <20180416031726.GB158153@bhelgaas-glaptop.roam.corp.google.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Keith Busch <keith.busch@intel.com>, Oza Pawandeep <poza@codeaurora.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kate Stewart <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>,
+ Wei Zhang <wzhang@fb.com>, Timur Tabi <timur@codeaurora.org>,
+ Alex Williamson <alex.williamson@redhat.com>
 References: <20180410210349.GG54986@bhelgaas-glaptop.roam.corp.google.com>
  <13efe2e8-74c8-acb4-ec58-f79b14a1f182@codeaurora.org>
  <20180412140648.GD145698@bhelgaas-glaptop.roam.corp.google.com>
@@ -53,68 +53,47 @@ References: <20180410210349.GG54986@bhelgaas-glaptop.roam.corp.google.com>
  <20180412170911.GA6424@localhost.localdomain>
  <fa167b21-f70d-a220-5671-5ad66a0f72c0@codeaurora.org>
  <cced24b5-c0bd-138a-0304-c87cac2ec226@codeaurora.org>
+ <20180416031726.GB158153@bhelgaas-glaptop.roam.corp.google.com>
+From: Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <c236b732-ed65-9f94-7ae5-b1203dff2eb0@codeaurora.org>
+Date: Mon, 16 Apr 2018 10:46:04 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cced24b5-c0bd-138a-0304-c87cac2ec226@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180416031726.GB158153@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597280027488013564?=
-X-GMAIL-MSGID: =?utf-8?q?1597871121323254968?=
+X-GMAIL-MSGID: =?utf-8?q?1597914450143067267?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, Apr 14, 2018 at 11:53:17AM -0400, Sinan Kaya wrote:
+On 4/15/2018 11:17 PM, Bjorn Helgaas wrote:
+> It doesn't seem right to me that we handle both ERR_NONFATAL and
+> ERR_FATAL events differently if we happen to have DPC support in a
+> switch.
+> 
+> Maybe we should consider triggering DPC only on ERR_FATAL?  That would
+> keep DPC out of the ERR_NONFATAL cases.
+> 
+>From reliability perspective, it makes sense. DPC handles NONFATAL errors
+by bringing down the link. If error happened behind a switch and root port
+is handling DPC, we are impacting a lot of devices operation because of one
+faulty device.
 
-> You indicated that you want to unify the AER and DPC behavior. Let's
-> settle on what we want to do one more time. We have been going forth
-> and back on the direction.
+Keith, do you have any preference on this direction?
 
-My thinking is that as much as possible, similar events should be
-handled similarly, whether the mechanism is AER, DPC, EEH, etc.
-Ideally, drivers shouldn't have to be aware of which mechanism is in
-use.
+> For ERR_FATAL, maybe we should bite the bullet and use
+> remove/re-enumerate for AER as well as for DPC.  That would be painful
+> for higher-level software, but if we're willing to accept that pain
+> for new systems that support DPC, maybe life would be better overall
+> if it worked the same way on systems without DPC?
 
-Error recovery includes conventional PCI as well, but right now I
-think we're only concerned with PCIe.  The following error types are
-from PCIe r4.0, sec 6.2.2:
+Sure, we can go to this route as well.
 
-  ERR_COR
-    Corrected by hardware with no software intervention.  Software
-    involved for logging only.
-
-    Handled by AER via pci_error_handlers; DPC is never involved.
-
-    Link is unaffected.
-
-  ERR_NONFATAL
-    A transaction is unreliable but the link is fully functional.
-
-    If DPC is not supported, handled by AER via pci_error_handlers and
-    the link is unaffected.
-
-    If DPC supported, handled by DPC (because we set
-    PCI_EXP_DPC_CTL_EN_NONFATAL) via remove/re-enumerate.
-
-  ERR_FATAL
-    The link is unreliable.
-
-    If DPC is not supported, handled by AER via pci_error_handlers and
-    the link is reset.
-
-    If DPC supported, handled by DPC via remove/re-enumerate.
-
-It doesn't seem right to me that we handle both ERR_NONFATAL and
-ERR_FATAL events differently if we happen to have DPC support in a
-switch.
-
-Maybe we should consider triggering DPC only on ERR_FATAL?  That would
-keep DPC out of the ERR_NONFATAL cases.
-
-For ERR_FATAL, maybe we should bite the bullet and use
-remove/re-enumerate for AER as well as for DPC.  That would be painful
-for higher-level software, but if we're willing to accept that pain
-for new systems that support DPC, maybe life would be better overall
-if it worked the same way on systems without DPC?
-
-Bjorn
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
