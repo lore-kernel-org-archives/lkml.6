@@ -1,55 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754898AbeDPLJO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 07:09:14 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:43339 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753202AbeDPLJM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:09:12 -0400
-X-Google-Smtp-Source: AIpwx4918RMbrdfRiIPx3EE19RUUVL0kVCgWk7pVeyLDIIIHrSt2srQ88oo2qHm8IO9lSBPc91UzuXgfFLhztXb4sAc=
-MIME-Version: 1.0
-In-Reply-To: <1519139541-18783-11-git-send-email-jacopo+renesas@jmondi.org>
-References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org> <1519139541-18783-11-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Apr 2018 13:09:10 +0200
-X-Google-Sender-Auth: Hc69O-qOAsPFyxntMj5KmhLj8CY
-Message-ID: <CAMuHMdWS+6g=e-jzve74530zR-fw43oLeJaa+h7TWZ0nyjgMwg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/19] dt-bindings: dmaengine: rcar-dmac: document
- R8A77965 support
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1754933AbeDPLKB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 07:10:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54002 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754290AbeDPLIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 07:08:14 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 2/6] KVM: x86: hyperv: use defines when parsing hypercall parameters
+Date: Mon, 16 Apr 2018 13:08:02 +0200
+Message-Id: <20180416110806.4896-3-vkuznets@redhat.com>
+In-Reply-To: <20180416110806.4896-1-vkuznets@redhat.com>
+References: <20180416110806.4896-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Avoid open-coding offsets for hypercall input parameters, we already
+have defines for them.
 
-On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> Add documentation for r8a77965 compatible string to rcar-dmac device
-> tree bindings documentation.
->
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/kvm/hyperv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Can you please resend to the DMA engine maintainer?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 98618e397342..3cb3bb68db7e 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1339,9 +1339,9 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+ #endif
+ 
+ 	code = param & 0xffff;
+-	fast = (param >> 16) & 0x1;
+-	rep_cnt = (param >> 32) & 0xfff;
+-	rep_idx = (param >> 48) & 0xfff;
++	fast = !!(param & HV_HYPERCALL_FAST_BIT);
++	rep_cnt = (param >> HV_HYPERCALL_REP_COMP_OFFSET) & 0xfff;
++	rep_idx = (param >> HV_HYPERCALL_REP_START_OFFSET) & 0xfff;
+ 
+ 	trace_kvm_hv_hypercall(code, fast, rep_cnt, rep_idx, ingpa, outgpa);
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.14.3
