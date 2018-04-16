@@ -1,57 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752796AbeDPBgs (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 21:36:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52258 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752552AbeDPBgq (ORCPT
+        id S1752849AbeDPBjJ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 21:39:09 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:42655 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752552AbeDPBjH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 21:36:46 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD9C7606AC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-Subject: Re: [PATCH v4 6/7] dt-bindings: phy-qcom-usb2: Add support to
- override tuning values
-To: Doug Anderson <dianders@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>, linux-arm-msm@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-References: <1522321466-21755-1-git-send-email-mgautam@codeaurora.org>
- <1522321466-21755-7-git-send-email-mgautam@codeaurora.org>
- <CAD=FV=VGtmWTaa_aRG6UVAtCzy3cS8sTZDCqAgRMYeg7U02qTw@mail.gmail.com>
- <20180409201824.adsnvqo4vv2waixc@rob-hp-laptop>
- <47a6d655-c4ba-ab5a-ef94-094f25cff74b@codeaurora.org>
- <CAD=FV=Wc+dNZ6wPqwacn-wbp66FhBT5BgbbKGFjO9b+pa5Od6Q@mail.gmail.com>
-From: Manu Gautam <mgautam@codeaurora.org>
-Message-ID: <0488f08e-20f9-a38d-a8bf-544a09d5c8a3@codeaurora.org>
-Date: Mon, 16 Apr 2018 07:06:40 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 15 Apr 2018 21:39:07 -0400
+X-Google-Smtp-Source: AIpwx48ecY1RRX+904YugjbEEmQy/sb7hHUyem5yqKCMDDTDZ1wPQ8waQS+DsTXjZ4F0NaOnewlSFw==
+Date: Sun, 15 Apr 2018 18:39:02 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Roman Gushchin <guro@fb.com>
+Cc: linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, Shaohua Li <shli@fb.com>,
+        Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, kernel-team@fb.com
+Subject: Re: [PATCH] mm: allow to decrease swap.max below actual swap usage
+Message-ID: <20180416013902.GD1911913@devbig577.frc2.facebook.com>
+References: <20180412132705.30316-1-guro@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Wc+dNZ6wPqwacn-wbp66FhBT5BgbbKGFjO9b+pa5Od6Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412132705.30316-1-guro@fb.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello, Roman.
 
+The reclaim behavior is a bit worrisome.
 
-On 4/13/2018 2:17 AM, Doug Anderson wrote:
->> Thanks for review Rob. I too agree with both the viewpoints.
->> Doug, if it is not of much concern then can I stick with current approach?
-> I certainly would appreciate the #defines and believe they add to the
-> readability, but if you're dead set against it and Rob says it's OK, I
-> won't yell too loudly.
->
-Agree to the readability part. Will add #defines as you suggested.
--thanks
+* It disables an entire swap area while reclaim is in progress.  Most
+  systems only have one swap area, so this would disable allocating
+  new swap area for everyone.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+* The reclaim seems very inefficient.  IIUC, it has to read every swap
+  page to see whether the page belongs to the target memcg and for
+  each matching page, which involves walking page mm's and page
+  tables.
+
+An easy optimization would be walking swap_cgroup_ctrl so that it only
+reads swap entries which belong to the target cgroup and avoid
+disabling swap for others, but looking at the code, I wonder whether
+we need active reclaim at all.
+
+Swap already tries to aggressively reclaim swap entries when swap
+usage > 50% of the limit, so simply reducing the limit already
+triggers aggressive reclaim, and given that it's swap, just waiting it
+out could be the better behavior anyway, so how about something like
+the following?
+
+------ 8< ------
+From: Tejun Heo <tj@kernel.org>
+Subject: mm: memcg: allow lowering memory.swap.max below the current usage
+
+Currently an attempt to set swap.max into a value lower than the
+actual swap usage fails, which causes configuration problems as
+there's no way of lowering the configuration below the current usage
+short of turning off swap entirely.  This makes swap.max difficult to
+use and allows delegatees to lock the delegator out of reducing swap
+allocation.
+
+This patch updates swap_max_write() so that the limit can be lowered
+below the current usage.  It doesn't implement active reclaiming of
+swap entries for the following reasons.
+
+* mem_cgroup_swap_full() already tells the swap machinary to
+  aggressively reclaim swap entries if the usage is above 50% of
+  limit, so simply lowering the limit automatically triggers gradual
+  reclaim.
+
+* Forcing back swapped out pages is likely to heavily impact the
+  workload and mess up the working set.  Given that swap usually is a
+  lot less valuable and less scarce, letting the existing usage
+  dissipate over time through the above gradual reclaim and as they're
+  falted back in is likely the better behavior.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Shaohua Li <shli@fb.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: cgroups@vger.kernel.org
+---
+ Documentation/cgroup-v2.txt |    5 +++++
+ mm/memcontrol.c             |    6 +-----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+--- a/Documentation/cgroup-v2.txt
++++ b/Documentation/cgroup-v2.txt
+@@ -1199,6 +1199,11 @@ PAGE_SIZE multiple when read back.
+ 	Swap usage hard limit.  If a cgroup's swap usage reaches this
+ 	limit, anonymous memory of the cgroup will not be swapped out.
+ 
++	When reduced under the current usage, the existing swap
++	entries are reclaimed gradually and the swap usage may stay
++	higher than the limit for an extended period of time.  This
++	reduces the impact on the workload and memory management.
++
+ 
+ Usage Guidelines
+ ~~~~~~~~~~~~~~~~
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -6144,11 +6144,7 @@ static ssize_t swap_max_write(struct ker
+ 	if (err)
+ 		return err;
+ 
+-	mutex_lock(&memcg_limit_mutex);
+-	err = page_counter_limit(&memcg->swap, max);
+-	mutex_unlock(&memcg_limit_mutex);
+-	if (err)
+-		return err;
++	xchg(&memcg->swap.limit, max);
+ 
+ 	return nbytes;
+ }
