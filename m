@@ -1,28 +1,29 @@
 Return-Path: <michel.pollet@bp.renesas.com>
-X-Google-Smtp-Source: AIpwx49ZDhKVIfvuD+sIRMZFR1Fx8vrnKMwptjrrAWONWfsRGEg1Fs9T2NYGpGbKXr0YWxgODp97
-ARC-Seal: i=1; a=rsa-sha256; t=1523871583; cv=none;
+X-Google-Smtp-Source: AIpwx48gybclAuyulIWvh7dbCGUmX8OLnCmq5dqU4ZCZgUBhtRxwJFEu3erX530LJN1sYcVTh/YS
+ARC-Seal: i=1; a=rsa-sha256; t=1523871600; cv=none;
         d=google.com; s=arc-20160816;
-        b=VsS7c3HnZtIPW4PxqE9x58tikVmEx0Ke7G9iilFHZAL9KLBfdlL9iCNT+gVlSoMrb+
-         mnMzfh7N+lx4XLeTJxF4RLXbdCr7aCgk2DmdopcRCbl0eRfpr4NyohCmwSeU6012XG2p
-         AG+SNo/u8kph28LdpCnGFdf6wcEemFI+ImiSXgPnlSfwHDpAX+u4KAPOG3xhC3Ub8nji
-         ANu0bAFHE/AyabIsOld2cD35SzgfVFIWBxwNGsKC+noZahAHiZc9NfVwDBTNFyJ8kjnY
-         irst/oabmLHDM9605tsdo6Umwz0qR0/Y+RYNbs+iSQ+MP44BzEgQuYeU2a0TmyGuoK6i
-         aAKg==
+        b=vJU9r9fGUiZnI73oYD9PuB/4N2fyOi9HQEH0D0s6NRrPHTfpEDZPKXOOwj0wZBz1ft
+         HXV1sjFD+ljArNqbiea0Ee4VHBjeOb5UEtyvdqNA1JQ9BCPvXdba0jZxoIJBni7T/zd5
+         snc0xt2K5a1biIq9vhkSikqEepot6gvGNUsj3UYAZKTXhBV0KW9MbD9fB+jvToViD0N0
+         vyrcrDPGswY12sS6RfqCwmLrKfm7ncoqLQ9h1iNMoHnPet7y+3QnWNkH4XbgZKLQl/J0
+         90TIZ6zYBeBgCSrRO93ZYfFD0QMynbDGaSKU5KDkMrkF2zvJOsjXpNcOsG36BNQibRJy
+         nwXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=JwMnCJQHVy9RzvDEDWPrSH3kdKyOrCGun3nqjLowEPY=;
-        b=Oka2B1eI5LuWp22uA7cP48vdZekFAeYeH/y7XodV72bbEarR7/NzbNTXkl3wC2eFvh
-         XTAl9Z3Oa0sYu5fLu5QMDMmR8GAVybgMGXHz42cTEIVYeOXetzmC0mPckXJjgD1mZv+/
-         e0SJxmABFn5Hyc0AMGcXnHXidMghjLHniQQIkOCtmfhBYKOiIvEKFg1BsCwUD2aJKaje
-         gV/o/lRj5cF0ymOrsQHjU/K+iifXDTGvH9HKIKFJO0abpEfxPfUJJ3xHPpqPCpfowZAe
-         fhCUP+TxhFadBvJcVgEGCn4etgiOs9zpeoTp/37mPzyMYjQWzOgKLTYAE1Ai2oUuL0J6
-         TWTg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=088kp3tKBNhd1t8O1wFHgQkrp61vGOWS2/+jGFRBbPQ=;
+        b=H/npTW4X6HS4XwCG87yJIG4MKaRIXu4B0xKFL+NLM6vAuvrYHhTNdsw+K05HFC4MDA
+         O8WvBAWORJxm+BEYzVfiExq9m4fD3qMR+Y5bXrSPCirgOGY58ZBQEHoWOZ0KHsmfZwIt
+         pXdgNJBEScrm+8ocfv7BWrc+YqW4MdLTFByEK8nV+vZsqz3cRo2iR/bTS1LjwManeyWK
+         pqsxWAwzIbBqQoD041d4+q4ZZzxSNkTQiMJMqg+SWUfpEgEpdaBE9T0qsQnN1kNjtaqQ
+         v3o5g5mjy+8ZvvSKaYqgmHIVdnfDafh3mekWS7I5Eyw0/kuQPG9UHIS8jnBvcFphr/xg
+         IdOg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of michel.pollet@bp.renesas.com designates 210.160.252.173 as permitted sender) smtp.mailfrom=michel.pollet@bp.renesas.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of michel.pollet@bp.renesas.com designates 210.160.252.173 as permitted sender) smtp.mailfrom=michel.pollet@bp.renesas.com
 X-IronPort-AV: E=Sophos;i="5.48,459,1517842800";
-   d="scan'208";a="278331327"
+   d="scan'208";a="278331359"
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org,
 	Simon Horman <horms@verge.net.au>
@@ -33,50 +34,46 @@ Cc: phil.edworthy@renesas.com,
 	Mark Rutland <mark.rutland@arm.com>,
 	Magnus Damm <magnus.damm@gmail.com>,
 	Russell King <linux@armlinux.org.uk>,
+	Carlo Caione <carlo@endlessm.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Kevin Hilman <khilman@baylibre.com>,
 	Rajendra Nayak <rnayak@codeaurora.org>,
 	Stefan Wahren <stefan.wahren@i2se.com>,
-	Juri Lelli <juri.lelli@arm.com>,
 	Frank Rowand <frank.rowand@sony.com>,
-	Carlo Caione <carlo@endlessm.com>,
-	=?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-	Florian Fainelli <f.fainelli@gmail.com>,
+	Juri Lelli <juri.lelli@arm.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [RFC 0/3] Renesas RZ/N1D SMP enabler
-Date: Mon, 16 Apr 2018 10:34:55 +0100
-Message-Id: <1523871304-48517-1-git-send-email-michel.pollet@bp.renesas.com>
+Subject: [RFC 1/3] dt-bindings: cpu: Add Renesas RZ/N1D SMP enable method.
+Date: Mon, 16 Apr 2018 10:34:57 +0100
+Message-Id: <1523871304-48517-3-git-send-email-michel.pollet@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523871304-48517-1-git-send-email-michel.pollet@bp.renesas.com>
+References: <1523871304-48517-1-git-send-email-michel.pollet@bp.renesas.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597895169505919827?=
-X-GMAIL-MSGID: =?utf-8?q?1597895169505919827?=
+X-GMAIL-THRID: =?utf-8?q?1597895187404291878?=
+X-GMAIL-MSGID: =?utf-8?q?1597895187404291878?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-*Warning -- this requires the base RZ/N1 support patches already posted *
+Add a special enable method for second CA8 of the Renesas RZ/N1D
+(R9A06G032).
 
-This is a tentative patch series for enabling the second CA7 of the RZ/N1D.
-It's based on a spin_table method, and it reuses the same binding property
-as that driver.
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/arm/cpus.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-One question is: Do i have to document it separately, or is it sufficiently
-clear?
-
-Michel Pollet (3):
-  dt-bindings: cpu: Add Renesas RZ/N1D SMP enable method.
-  ARM: dts: Renesas RZ/N1D SMP enable method
-  arm: shmobile: Add the RZ/N1D SMP enabler driver.
-
- Documentation/devicetree/bindings/arm/cpus.txt |  1 +
- arch/arm/boot/dts/r9a06g032.dtsi               |  2 +
- arch/arm/mach-shmobile/Makefile                |  1 +
- arch/arm/mach-shmobile/smp-r9a06g032.c         | 87 ++++++++++++++++++++++++++
- 4 files changed, 91 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
-
+diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
+index 29e1dc5..b395d107 100644
+--- a/Documentation/devicetree/bindings/arm/cpus.txt
++++ b/Documentation/devicetree/bindings/arm/cpus.txt
+@@ -219,6 +219,7 @@ described below.
+ 			    "qcom,kpss-acc-v1"
+ 			    "qcom,kpss-acc-v2"
+ 			    "renesas,apmu"
++			    "renesas,r9a06g032-smp"
+ 			    "rockchip,rk3036-smp"
+ 			    "rockchip,rk3066-smp"
+ 			    "ste,dbx500-smp"
 -- 
 2.7.4
