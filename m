@@ -1,157 +1,266 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754348AbeDPKO3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:14:29 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:61942 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753154AbeDPKOY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754285AbeDPKO0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:14:26 -0400
+Received: from hermes.apache.org ([140.211.11.3]:57856 "HELO mail.apache.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+        id S1754251AbeDPKOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Apr 2018 06:14:24 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180416101423epoutp018be26ba6b11470e25be929ff58e45578~l4wXYYCuO2855528555epoutp01s
-X-AuditID: b6c32a48-8c1ff70000000ff2-f5-5ad4777ecb38
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH 12/14] thermal: exynos: remove separate exynos_tmu.h header
- file
-Date: Mon, 16 Apr 2018 12:12:03 +0200
-Message-id: <1523873525-23718-13-git-send-email-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 1.9.1
-In-reply-to: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCmhW5d+ZUog+nrzSw2zljPajHvs6zF
-        /CvXWC36H79mtjh/fgO7xeVdc9gsPvceYbSYcX4fk8WTh31sDpweO2fdZfdYvOclk8emVZ1s
-        Hneu7WHz6NuyitHj8ya5ALYoLpuU1JzMstQifbsErowVD54yFcyRqPjdOYW9gXGhSBcjJ4eE
-        gInE2sYrbCC2kMAORol/q+y6GLmA7O+MEu8utzLBFP3uesQCUbSBUeLNJFuIol+MEr9XdoMl
-        2ASsJCa2r2IEsUUEtCROXNrOBFLELDCBSeLpq5lgK4QFgiROvnwKVsQioCqx9PVGMJtXwFPi
-        1fZuVohtchInj00GszmB4k1rrrGBDJIQWMAmsXTeCnaIIheJvq9fGCFsYYlXx7dAxaUlnq0C
-        GQrS0Mwo8W3HHmaIxARGiT3rhSBsa4nDxy+CbWAW4JPoOPwXqJkDKM4r0dEGVeIhce/9W6j3
-        HSU29B1lh3h5DqPEzWO7WCYwSi1gZFjFKJZaUJybnlpsVGCiV5yYW1yal66XnJ+7iREcs1oe
-        OxgPnPM5xCjAwajEw7vj7OUoIdbEsuLK3EOMEhzMSiK8yxKBQrwpiZVVqUX58UWlOanFhxil
-        OViUxHkbfM9ECQmkJ5akZqemFqQWwWSZODilGhgzTDsjJ5w7KDjx2zyjLxMfzu5epMCS9WRD
-        ltGV6+fee94J6l4Uv/Y0V9eWDQmN0zdrP14sY9n556XtxpXZ4afzT8Se+fv91lahwq8Brrkx
-        vnJnOs+9+7LmxJSffdvdNNqld0j5T7h8j9HrXVeInrRbVS6rT9dn7zkz/plW6ouuCbyT6tY2
-        JapaiaU4I9FQi7moOBEAwfKad9UCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNLMWRmVeSWpSXmKPExsVy+t9jQd268itRBo8esFlsnLGe1WLeZ1mL
-        +VeusVr0P37NbHH+/AZ2i8u75rBZfO49wmgx4/w+JosnD/vYHDg9ds66y+6xeM9LJo9NqzrZ
-        PO5c28Pm0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBkrHjxlKpgjUfG7cwp7A+NCkS5GTg4J
-        AROJ312PWLoYuTiEBNYxSvzed4YJwvnFKNHUNo0FpIpNwEpiYvsqRhBbREBL4sSl7WBFzAIT
-        mCSWrF3EDpIQFgiQeHtzDROIzSKgKrH09UawBl4BT4lX27tZIdbJSZw8NhnM5gSKN625xgZi
-        Cwl4SDROvMo4gZFnASPDKkbJ1ILi3PTcYqMCo7zUcr3ixNzi0rx0veT83E2MwCDbdlirfwfj
-        4yXxhxgFOBiVeHh3nL0cJcSaWFZcmXuIUYKDWUmEd1kiUIg3JbGyKrUoP76oNCe1+BCjNAeL
-        kjgvf/6xSCGB9MSS1OzU1ILUIpgsEwenVANj9KlOj5S5C96errb6u+KGvfV9weLQ1uWqf4UU
-        +m5e2KDofuzVYbbmjUIXLvEZSf+OedTgL7RoAX/2vZpDpya8eaG6aaWhHGe2dPnG2Lm9CXrH
-        zH5c8xFZlXPQZZ3Sv9ebP72VbvhWte5vhO356B/P/GSbXj5a/zBc88SPuzWfL613DKrMieab
-        rMRSnJFoqMVcVJwIAH6RN0YuAgAA
-X-CMS-MailID: 20180416101422epcas2p34c80b64c6c762b98ae4fecfe6a4db4f8
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180416101422epcas2p34c80b64c6c762b98ae4fecfe6a4db4f8
-X-RootMTR: 20180416101422epcas2p34c80b64c6c762b98ae4fecfe6a4db4f8
-References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180416101422epcas2p34c80b64c6c762b98ae4fecfe6a4db4f8@epcas2p3.samsung.com>
+Message-ID: <149a44d0456b2f0b48be13ba51aeaccc33651073.camel@apache.org>
+Subject: Re: [PATCH v5] Fix modifier keys for Redragon Asura Keyboard
+From: Robert Munteanu <rombert@apache.org>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc: Jiri Kosina <jikos@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>
+Date: Mon, 16 Apr 2018 13:14:18 +0300
+In-Reply-To: <CAO-hwJKbYyZdtq=zg_ZeJOiL=5cTbD4oKuWmpF-P_7TgBkqVYA@mail.gmail.com>
+References: <20180411094953.12053-1-rombert@apache.org>
+         <CAO-hwJKbYyZdtq=zg_ZeJOiL=5cTbD4oKuWmpF-P_7TgBkqVYA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.0 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-exynos_tmu.h is used only by exynos_tmu.c so there is no need
-for a separate include file.
+Hi Benjamin and Jiri,
 
-There should be no functional changes caused by this patch.
+On Mon, 2018-04-16 at 12:02 +0200, Benjamin Tissoires wrote:
+> Hi Robert,
+> 
+> On Wed, Apr 11, 2018 at 11:49 AM, Robert Munteanu <rombert@apache.org
+> > wrote:
+> > Changelog:
+> > 
+> > - v2: modifier keys work, some combinations are still troublesome
+> > - v3: style cleanup, rebase on top of 4.14
+> > - v4: remove most debugging calls, make init info useful for user,
+> >   rebased on top of 4.15
+> > - v5: fix the HID descriptor as suggested by Benjamin Tissoires,
+> >   use existing USB vendor id, update comment style, add SPDX
+> >   license identifier, rename to hid-redragon, stop registering
+> >   two input devices, rebased on top of 4.16
+> 
+> As Jiri said, please provide a correct commit message.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu.c | 18 +++++++++++++++-
- drivers/thermal/samsung/exynos_tmu.h | 41 ------------------------------------
- 2 files changed, 17 insertions(+), 42 deletions(-)
- delete mode 100644 drivers/thermal/samsung/exynos_tmu.h
+Will do.
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 7975f33..197f267 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -34,8 +34,10 @@
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/cpu_cooling.h>
-+
-+#include <dt-bindings/thermal/thermal_exynos.h>
- 
--#include "exynos_tmu.h"
- #include "../thermal_core.h"
- 
- /* Exynos generic registers */
-@@ -173,6 +175,20 @@
- #define EXYNOS_NOISE_CANCEL_MODE		4
- 
- #define MCELSIUS	1000
-+
-+enum soc_type {
-+	SOC_ARCH_EXYNOS3250 = 1,
-+	SOC_ARCH_EXYNOS4210,
-+	SOC_ARCH_EXYNOS4412,
-+	SOC_ARCH_EXYNOS5250,
-+	SOC_ARCH_EXYNOS5260,
-+	SOC_ARCH_EXYNOS5420,
-+	SOC_ARCH_EXYNOS5420_TRIMINFO,
-+	SOC_ARCH_EXYNOS5433,
-+	SOC_ARCH_EXYNOS5440,
-+	SOC_ARCH_EXYNOS7,
-+};
-+
- /**
-  * struct exynos_tmu_data : A structure to hold the private data of the TMU
- 	driver
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-deleted file mode 100644
-index 8f56f86..0000000
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ /dev/null
-@@ -1,41 +0,0 @@
--/*
-- * exynos_tmu.h - Samsung EXYNOS TMU (Thermal Management Unit)
-- *
-- *  Copyright (C) 2011 Samsung Electronics
-- *  Donggeun Kim <dg77.kim@samsung.com>
-- *  Amit Daniel Kachhap <amit.daniel@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- */
--
--#ifndef _EXYNOS_TMU_H
--#define _EXYNOS_TMU_H
--#include <linux/cpu_cooling.h>
--#include <dt-bindings/thermal/thermal_exynos.h>
--
--enum soc_type {
--	SOC_ARCH_EXYNOS3250 = 1,
--	SOC_ARCH_EXYNOS4210,
--	SOC_ARCH_EXYNOS4412,
--	SOC_ARCH_EXYNOS5250,
--	SOC_ARCH_EXYNOS5260,
--	SOC_ARCH_EXYNOS5420,
--	SOC_ARCH_EXYNOS5420_TRIMINFO,
--	SOC_ARCH_EXYNOS5433,
--	SOC_ARCH_EXYNOS5440,
--	SOC_ARCH_EXYNOS7,
--};
--
--#endif /* _EXYNOS_TMU_H */
--- 
-1.9.1
+> 
+> I have a few nitpicks in the driver, v6 should be fine:
+> 
+> > 
+> > Signed-off-by: Robert Munteanu <rombert@apache.org>
+> > ---
+> >  drivers/hid/Kconfig        |  7 ++++
+> >  drivers/hid/Makefile       |  1 +
+> >  drivers/hid/hid-ids.h      |  1 +
+> >  drivers/hid/hid-quirks.c   |  3 ++
+> >  drivers/hid/hid-redragon.c | 89
+> > ++++++++++++++++++++++++++++++++++++++++++++++
+> >  5 files changed, 101 insertions(+)
+> >  create mode 100644 drivers/hid/hid-redragon.c
+> > 
+> > diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+> > index 19c499f5623d..1125e4813716 100644
+> > --- a/drivers/hid/Kconfig
+> > +++ b/drivers/hid/Kconfig
+> > @@ -560,6 +560,13 @@ config HID_MAYFLASH
+> >         Say Y here if you have HJZ Mayflash PS3 game controller
+> > adapters
+> >         and want to enable force feedback support.
+> > 
+> > +config HID_REDRAGON
+> > +       tristate "Redragon keyboards"
+> > +       depends on HID
+> > +       default !EXPERT
+> > +       ---help---
+> > +    Support for Redragon keyboards that need fix-ups to work
+> > properly.
+> > +
+> >  config HID_MICROSOFT
+> >         tristate "Microsoft non-fully HID-compliant devices"
+> >         depends on HID
+> > diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+> > index eb13b9e92d85..a36f3f40ba63 100644
+> > --- a/drivers/hid/Makefile
+> > +++ b/drivers/hid/Makefile
+> > @@ -84,6 +84,7 @@ hid-picolcd-$(CONFIG_DEBUG_FS)                +=
+> > hid-picolcd_debugfs.o
+> > 
+> >  obj-$(CONFIG_HID_PLANTRONICS)  += hid-plantronics.o
+> >  obj-$(CONFIG_HID_PRIMAX)       += hid-primax.o
+> > +obj-$(CONFIG_HID_REDRAGON)     += hid-redragon.o
+> >  obj-$(CONFIG_HID_RETRODE)      += hid-retrode.o
+> >  obj-$(CONFIG_HID_ROCCAT)       += hid-roccat.o hid-roccat-common.o 
+> > \
+> >         hid-roccat-arvo.o hid-roccat-isku.o hid-roccat-kone.o \
+> > diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> > index 9454ac134ce2..41a64d0e91f9 100644
+> > --- a/drivers/hid/hid-ids.h
+> > +++ b/drivers/hid/hid-ids.h
+> > @@ -599,6 +599,7 @@
+> >  #define USB_VENDOR_ID_JESS             0x0c45
+> >  #define USB_DEVICE_ID_JESS_YUREX       0x1010
+> >  #define USB_DEVICE_ID_ASUS_MD_5112     0x5112
+> > +#define USB_DEVICE_ID_REDRAGON_ASURA   0x760b
+> > 
+> >  #define USB_VENDOR_ID_JESS2            0x0f30
+> >  #define USB_DEVICE_ID_JESS2_COLOR_RUMBLE_PAD 0x0111
+> > diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+> > index e92b77fa574a..5f1253f1739a 100644
+> > --- a/drivers/hid/hid-quirks.c
+> > +++ b/drivers/hid/hid-quirks.c
+> > @@ -557,6 +557,9 @@ static const struct hid_device_id
+> > hid_have_special_driver[] = {
+> >  #if IS_ENABLED(CONFIG_HID_PRODIKEYS)
+> >         { HID_USB_DEVICE(USB_VENDOR_ID_CREATIVELABS,
+> > USB_DEVICE_ID_PRODIKEYS_PCMIDI) },
+> >  #endif
+> > +#if IS_ENABLED(CONFIG_HID_REDRAGON)
+> > +       {
+> > HID_USB_DEVICE(USB_VENDOR_ID_JESS,  USB_DEVICE_ID_REDRAGON_ASURA)
+> > },
+> > +#endif
+> 
+> Please drop this hunk. v4.16 should work without changing
+> hid_have_special_driver. This way, you will be sure that an initramfs
+> that doesn't include hid-redragon.ko will allo people to type their
+> LUKS password.
+
+I recall testing without this change resulted in the driver not being
+picked up. I will retest ( running 4.16.0 here, can update to 4.16.1
+soon ). In case the driver is not picked up, where should I start
+looking?
+
+> 
+> >  #if IS_ENABLED(CONFIG_HID_RETRODE)
+> >         { HID_USB_DEVICE(USB_VENDOR_ID_FUTURE_TECHNOLOGY,
+> > USB_DEVICE_ID_RETRODE2) },
+> >  #endif
+> > diff --git a/drivers/hid/hid-redragon.c b/drivers/hid/hid-
+> > redragon.c
+> > new file mode 100644
+> > index 000000000000..ff98a5dbb8e2
+> > --- /dev/null
+> > +++ b/drivers/hid/hid-redragon.c
+> > @@ -0,0 +1,89 @@
+> > +/*
+> > + *  HID driver for Redragon keyboards
+> > + *
+> > + *  Copyright (c) 2017 Robert Munteanu
+> > + *  SPDX-License-Identifier: GPL-2.0
+> > + */
+> > +
+> > +/*
+> > + * This program is free software; you can redistribute it and/or
+> > modify it
+> > + * under the terms of the GNU General Public License as published
+> > by the Free
+> > + * Software Foundation; either version 2 of the License, or (at
+> > your option)
+> > + * any later version.
+> > + */
+> > +
+> > +#include <linux/device.h>
+> > +#include <linux/input.h>
+> 
+> you probably don't need input.h
+> 
+> > +#include <linux/hid.h>
+> > +#include <linux/module.h>
+> > +#include <linux/log2.h>
+> 
+> log2.h? I am not sure you need it either
+> 
+> > +#include <linux/input-event-codes.h>
+> 
+> probably drop this one too.
+
+I'll drop the missing imports, those are leftovers from my initial
+work.
+
+> 
+> > +
+> > +#include "hid-ids.h"
+> > +
+> > +
+> > +/*
+> > + * The Redragon Asura keyboard sends an incorrect HID descriptor.
+> > + * At byte 100 it contains
+> > + *
+> > + *   0x81, 0x00
+> > + *
+> > + * which is Input (Data, Arr, Abs), but it should be
+> > + *
+> > + *   0x81, 0x02
+> > + *
+> > + * which is Input (Data, Var, Abs), which is consistent with the
+> > way
+> > + * key codes are generated.
+> > + */
+> > +
+> > +static __u8 *redragon_report_fixup(struct hid_device *hdev, __u8
+> > *rdesc,
+> > +       unsigned int *rsize)
+> > +{
+> > +       if (*rsize >= 102 && rdesc[100] == 0x81 && rdesc[101] ==
+> > 0x00) {
+> > +               dev_info(&hdev->dev, "Fixing Redragon ASURA report
+> > descriptor.\n");
+> > +               rdesc[101] = 0x02;
+> > +       }
+> > +
+> > +       return rdesc;
+> > +}
+> > +
+> > +static int redragon_probe(struct hid_device *dev,
+> > +       const struct hid_device_id *id)
+> > +{
+> > +       int ret;
+> > +
+> > +       ret = hid_parse(dev);
+> > +       if (ret) {
+> > +               hid_err(dev, "parse failed\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       /* do not register unused input device */
+> > +       if (dev->maxapplication == 1)
+> > +               return 0;
+> > +
+> > +       ret = hid_hw_start(dev, HID_CONNECT_DEFAULT);
+> > +       if (ret) {
+> > +               hid_err(dev, "hw start failed\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +static const struct hid_device_id redragon_devices[] = {
+> > +       {HID_USB_DEVICE(USB_VENDOR_ID_JESS,
+> > USB_DEVICE_ID_REDRAGON_ASURA)},
+> > +       {}
+> > +};
+> > +
+> > +MODULE_DEVICE_TABLE(hid, redragon_devices);
+> > +
+> > +static struct hid_driver redragon_driver = {
+> > +       .name = "redragon",
+> > +       .id_table = redragon_devices,
+> > +       .report_fixup = redragon_report_fixup,
+> > +       .probe = redragon_probe
+> > +};
+> > +
+> > +module_hid_driver(redragon_driver);
+> > +
+> > +MODULE_LICENSE("GPL");
+> 
+> The SPDX header says GPL-v2. And IIRC if there is the SPDX header you
+> can drop the MODULE_LICENSE (not entirely sure though).
+
+Ack, will adjust and re-test.
+
+Thanks for the review,
+
+Robert
