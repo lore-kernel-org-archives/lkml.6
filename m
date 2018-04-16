@@ -1,86 +1,266 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752326AbeDPUt7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 16:49:59 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:63639 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750708AbeDPUt5 (ORCPT
+        id S1752641AbeDPUvC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 16:51:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51468 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751107AbeDPUvA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 16:49:57 -0400
-X-IronPort-AV: E=Sophos;i="5.48,460,1517846400";
-   d="scan'208";a="76855750"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "beanhuo@micron.com" <beanhuo@micron.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhad.com" <mingo@redhad.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "rajatja@google.com" <rajatja@google.com>
-Subject: Re: [RESEND PATCH v1 2/2] trace: events: block: Add tag in block
- trace events
-Thread-Topic: [RESEND PATCH v1 2/2] trace: events: block: Add tag in block
- trace events
-Thread-Index: AdPVj891kSAdtlOyRKy4BVmHjk9SYAANKeCA
-Date: Mon, 16 Apr 2018 20:49:52 +0000
-Message-ID: <51266d3243acdf73e800a0d283473cc85a52a388.camel@wdc.com>
-References: <64d6073b28b140cda3e5870a54e0a7bc@SIWEX5A.sing.micron.com>
-In-Reply-To: <64d6073b28b140cda3e5870a54e0a7bc@SIWEX5A.sing.micron.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [199.255.44.172]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0975;7:hB6ot0mEnfc5YxKrRWCH005r4hTPmN7jvVi3obHVjVgdzL4zhA9Kg3JVI1fNtnaswyWEgNDmqKJ1krOrop3rQzy9uqpCLfkZWYc3ZLaBGPDx5PafYM0jIOwCPVtjIwCFjLu/Q28sH/lnMx9S1lmbpPhEl8ov0YglgEhWl62sjQ4MF9UNO0LkxFmMMM0UmpFg9c4T2bOfCwVR0Rap3dqfYvNlnHjfDTkEow9G3llIopGWDThtNle1Z9smZjhe7Lb6;20:nLSK7Ahs2xzdWcNbTvgduSf/s547uvNpQPPY1tplpVvyxFUtcfF5FhHcbnH1mbcwltZQ8zD7hUiSuDvG5SrImgzZsZbFeFjpDz3vKzxUZqGjqpHG9/YI8+Nq3/7R9ygyDk3BBkDwj9wjornq6GykLLenJIktkrpqixlse5uC4fg=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0975;
-x-ms-traffictypediagnostic: MWHPR04MB0975:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0975A7E4AD72F1177EC1DE0498B00@MWHPR04MB0975.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231232)(944501327)(52105095)(3002001)(6055026)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR04MB0975;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0975;
-x-forefront-prvs: 0644578634
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(39380400002)(396003)(346002)(366004)(376002)(199004)(189003)(377424004)(316002)(2616005)(97736004)(99286004)(476003)(2201001)(2501003)(66066001)(72206003)(486006)(11346002)(102836004)(81166006)(2900100001)(81156014)(110136005)(54906003)(68736007)(25786009)(26005)(186003)(8936002)(76176011)(6506007)(478600001)(446003)(86362001)(8676002)(229853002)(6246003)(5250100002)(7416002)(6436002)(53936002)(6512007)(6486002)(118296001)(305945005)(4326008)(7736002)(3846002)(14454004)(105586002)(106356001)(2906002)(3280700002)(3660700001)(6116002)(5660300001)(36756003)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0975;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: Xg6fBqQfnxvP8GHd6HFaMZIO1qgkFejZyWOyiycABfai+uxMbbFyA04NJbCWkq21xjWTtE7Vq30FVXRj2/+rqp8ICY7qBqXmYMoYohEfYDseWb9yOPV7jKSZRHQ09q8RA90Rd9JVpt+dxif16NAE8xzmtuxlo4tdG9FN6dMt3OYn3+mR3Dd6xffhEitQm17M
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <797E6BBE00F52D4188F997A925CE466A@namprd04.prod.outlook.com>
+        Mon, 16 Apr 2018 16:51:00 -0400
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 33505733-c240-4c81-4ece-08d5a3db9a79
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33505733-c240-4c81-4ece-08d5a3db9a79
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2018 20:49:52.5412
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0975
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 16 Apr 2018 13:50:58 -0700
+From: rishabhb@codeaurora.org
+To: Evan Green <evgreen@chromium.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        kyan@codeaurora.org, ckadabi@codeaurora.org,
+        stanimir.varbanov@linaro.org
+Subject: Re: [PATCH v4 2/2] drivers: soc: Add LLCC driver
+In-Reply-To: <CAE=gft5tF-aTCg6Top+uzX-NfM=RGWizc7g09HNiWPPLfmw=Uw@mail.gmail.com>
+References: <1523390893-10904-1-git-send-email-rishabhb@codeaurora.org>
+ <1523390893-10904-3-git-send-email-rishabhb@codeaurora.org>
+ <CAE=gft6DHtvkLAyAF30p6rwJrs845nxBOxWQ0gmHdJ0VQa4ZxQ@mail.gmail.com>
+ <a4d0d993c8bf42d9a2e59078606a4b4d@codeaurora.org>
+ <CAE=gft5tF-aTCg6Top+uzX-NfM=RGWizc7g09HNiWPPLfmw=Uw@mail.gmail.com>
+Message-ID: <af00da0284e32d3698db855edbf74e45@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3GKo69W013345
 
-On Mon, 2018-04-16 at 14:33 +0000, Bean Huo (beanhuo) wrote:
-> [ ... ]
-> -	TP_printk("%d,%d %s (%s) %llu + %u [%d]",
-> +	TP_printk("%d,%d %s (%s) %llu + %u tag=%d [%d]",
-> [ ... ]
-> -	TP_printk("%d,%d %s (%s) %llu + %u [%d]",
-> +	TP_printk("%d,%d %s (%s) %llu + %u tag=%d [%d]",
-> [ ... ]
-
-Which tools process these strings? Has it been verified whether or not
-the tools that process these strings still work fine with this patch
-applied?
-
-Thanks,
-
-Bart.
+On 2018-04-16 10:14, Evan Green wrote:
+> On Fri, Apr 13, 2018 at 4:08 PM <rishabhb@codeaurora.org> wrote:
+> 
+>> On 2018-04-12 15:02, Evan Green wrote:
+>> > Hi Rishabh,
+>> >
+>> > On Tue, Apr 10, 2018 at 1:09 PM Rishabh Bhatnagar
+>> > <rishabhb@codeaurora.org>
+>> > wrote:
+>> >
+>> >> LLCC (Last Level Cache Controller) provides additional cache memory
+>> >> in the system. LLCC is partitioned into multiple slices and each
+>> >> slice gets its own priority, size, ID and other config parameters.
+>> >> LLCC driver programs these parameters for each slice. Clients that
+>> >> are assigned to use LLCC need to get information such size & ID of the
+>> >> slice they get and activate or deactivate the slice as needed. LLCC
+>> >> driver
+>> >> provides API for the clients to perform these operations.
+>> >
+>> >> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+>> >> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>> >> ---
+>> >>   drivers/soc/qcom/Kconfig           |  17 ++
+>> >>   drivers/soc/qcom/Makefile          |   2 +
+>> >>   drivers/soc/qcom/llcc-sdm845.c     | 110 ++++++++++
+>> >>   drivers/soc/qcom/llcc-slice.c      | 404
+>> > +++++++++++++++++++++++++++++++++++++
+>> >>   include/linux/soc/qcom/llcc-qcom.h | 168 +++++++++++++++
+>> >>   5 files changed, 701 insertions(+)
+>> >>   create mode 100644 drivers/soc/qcom/llcc-sdm845.c
+>> >>   create mode 100644 drivers/soc/qcom/llcc-slice.c
+>> >>   create mode 100644 include/linux/soc/qcom/llcc-qcom.h
+>> >
+>> > [...]
+>> >> diff --git a/drivers/soc/qcom/llcc-sdm845.c
+>> > b/drivers/soc/qcom/llcc-sdm845.c
+>> >> new file mode 100644
+>> >> index 0000000..619b226
+>> >> --- /dev/null
+>> >> +++ b/drivers/soc/qcom/llcc-sdm845.c
+>> >> @@ -0,0 +1,110 @@
+>> >> +// SPDX-License-Identifier: GPL-2.0
+>> >> +/*
+>> >> + * Copyright (c) 2017-2018, The Linux Foundation. All rights
+>> >> reserved.
+>> >> + *
+>> >> + */
+>> >> +
+>> >> +#include <linux/kernel.h>
+>> >> +#include <linux/module.h>
+>> >> +#include <linux/of.h>
+>> >> +#include <linux/of_device.h>
+>> >> +#include <linux/soc/qcom/llcc-qcom.h>
+>> >> +
+>> >> +/*
+>> >> + * SCT(System Cache Table) entry contains of the following parameters
+>> >
+>> > contains the following members:
+>> >
+>> >> + * name: Name of the client's use case for which the llcc slice is
+>> >> used
+>> >> + * uid: Unique id for the client's use case
+>> >
+>> > s/uid/usecase_id/
+>> >
+>> >> + * slice_id: llcc slice id for each client
+>> >> + * max_cap: The maximum capacity of the cache slice provided in KB
+>> >> + * priority: Priority of the client used to select victim line for
+>> > replacement
+>> >> + * fixed_size: Determine if the slice has a fixed capacity
+>> >
+>> > "Boolean indicating if the slice has a fixed capacity" might be better
+>> >
+>> >> diff --git a/drivers/soc/qcom/llcc-slice.c
+>> >> b/drivers/soc/qcom/llcc-slice.c
+>> >> new file mode 100644
+>> >> index 0000000..67a81b0
+>> >> --- /dev/null
+>> >> +++ b/drivers/soc/qcom/llcc-slice.c
+>> > ...
+>> >> +static int llcc_update_act_ctrl(struct llcc_drv_data *drv, u32 sid,
+>> >> +                               u32 act_ctrl_reg_val, u32 status)
+>> >> +{
+>> >> +       u32 act_ctrl_reg;
+>> >> +       u32 status_reg;
+>> >> +       u32 slice_status;
+>> >> +       int ret = 0;
+>> >> +
+>> >> +       act_ctrl_reg = drv->bcast_off + LLCC_TRP_ACT_CTRLn(sid);
+>> >> +       status_reg = drv->bcast_off + LLCC_TRP_STATUSn(sid);
+>> >> +
+>> >> +       /*Set the ACTIVE trigger*/
+>> >
+>> > Add spaces around /* */
+>> >
+>> >> +       act_ctrl_reg_val |= ACT_CTRL_ACT_TRIG;
+>> >> +       ret = regmap_write(drv->regmap, act_ctrl_reg,
+>> >> act_ctrl_reg_val);
+>> >> +       if (ret)
+>> >> +               return ret;
+>> >> +
+>> >> +       /* Clear the ACTIVE trigger */
+>> >> +       act_ctrl_reg_val &= ~ACT_CTRL_ACT_TRIG;
+>> >> +       ret = regmap_write(drv->regmap, act_ctrl_reg,
+>> >> act_ctrl_reg_val);
+>> >> +       if (ret)
+>> >> +               return ret;
+>> >> +
+>> >> +       ret = regmap_read_poll_timeout(drv->regmap, status_reg,
+>> > slice_status,
+>> >> +                       !(slice_status & status), 0,
+>> > LLCC_STATUS_READ_DELAY);
+>> >> +       return ret;
+>> >> +}
+>> >> +
+>> >> +/**
+>> >> + * llcc_slice_activate - Activate the llcc slice
+>> >> + * @desc: Pointer to llcc slice descriptor
+>> >> + *
+>> >> + * A value zero will be returned on success and a negative errno will
+>> >
+>> > a value of zero
+>> >
+>> >> + * be returned in error cases
+>> >> + */
+>> >> +int llcc_slice_activate(struct llcc_slice_desc *desc)
+>> >> +{
+>> >> +       int ret;
+>> >> +       u32 act_ctrl_val;
+>> >> +       struct llcc_drv_data *drv;
+>> >> +
+>> >> +       if (desc == NULL)
+>> >> +               return -EINVAL;
+>> >
+>> > I think we can remove this check, right?
+>> >
+>> >> +
+>> >> +       drv = dev_get_drvdata(desc->dev);
+>> >> +       if (!drv)
+>> >> +               return -EINVAL;
+>> >> +
+>> >> +       mutex_lock(&drv->lock);
+>> >> +       if (test_bit(desc->slice_id, drv->bitmap)) {
+>> >> +               mutex_unlock(&drv->lock);
+>> >> +               return 0;
+>> >> +       }
+>> >> +
+>> >> +       act_ctrl_val = ACT_CTRL_OPCODE_ACTIVATE <<
+>> >> ACT_CTRL_OPCODE_SHIFT;
+>> >> +
+>> >> +       ret = llcc_update_act_ctrl(drv, desc->slice_id, act_ctrl_val,
+>> >> +                                 DEACTIVATE);
+>> >> +
+>> >> +       __set_bit(desc->slice_id, drv->bitmap);
+>> >> +       mutex_unlock(&drv->lock);
+>> >> +
+>> >> +       return ret;
+>> >> +}
+>> >> +EXPORT_SYMBOL_GPL(llcc_slice_activate);
+>> >> +
+>> >> +/**
+>> >> + * llcc_slice_deactivate - Deactivate the llcc slice
+>> >> + * @desc: Pointer to llcc slice descriptor
+>> >> + *
+>> >> + * A value zero will be returned on success and a negative errno will
+>> >> + * be returned in error cases
+>> >> + */
+>> >> +int llcc_slice_deactivate(struct llcc_slice_desc *desc)
+>> >> +{
+>> >> +       u32 act_ctrl_val;
+>> >> +       int ret;
+>> >> +       struct llcc_drv_data *drv;
+>> >> +
+>> >> +       if (desc == NULL)
+>> >> +               return -EINVAL;
+>> >> +
+>> >> +       drv = dev_get_drvdata(desc->dev);
+>> >> +       if (!drv)
+>> >> +               return -EINVAL;
+>> >> +
+>> >> +       mutex_lock(&drv->lock);
+>> >> +       if (!test_bit(desc->slice_id, drv->bitmap)) {
+>> >> +               mutex_unlock(&drv->lock);
+>> >> +               return 0;
+>> >> +       }
+>> >> +       act_ctrl_val = ACT_CTRL_OPCODE_DEACTIVATE <<
+>> > ACT_CTRL_OPCODE_SHIFT;
+>> >> +
+>> >> +       ret = llcc_update_act_ctrl(drv, desc->slice_id, act_ctrl_val,
+>> >> +                                 ACTIVATE);
+>> >> +
+>> >> +       __clear_bit(desc->slice_id, drv->bitmap);
+>> >> +       mutex_unlock(&drv->lock);
+>> >> +
+>> >> +       return ret;
+>> >> +}
+>> >> +EXPORT_SYMBOL_GPL(llcc_slice_deactivate);
+>> >> +
+>> >> +/**
+>> >> + * llcc_get_slice_id - return the slice id
+>> >> + * @desc: Pointer to llcc slice descriptor
+>> >> + *
+>> >> + * A positive value will be returned on success and a negative errno
+>> >> will
+>> >> + * be returned on error
+>> >> + */
+>> >> +int llcc_get_slice_id(struct llcc_slice_desc *desc)
+>> >> +{
+>> >> +       if (!desc)
+>> >> +               return -EINVAL;
+>> >
+>> > Can we remove this check too?
+>> >
+>> We need this check and the following one to protect against the
+>> null pointer access which might happen if client doesn't get
+>> the descriptor before accessing size and slice_id.
+> 
+> Is this just to protect against errors made during development, or is 
+> there
+> an expected code path through which this might actually happen? If it's
+> just to protect against developer error, then based on other feedback 
+> I've
+> seen on these lists, the null pointer dereference is preferred, and we
+> should remove this check. If it's an actual expected flow, then I guess
+> clients will call llcc_slice_getd(), see the ERR_PTR(-ENOENT), 
+> transform
+> that into NULL, and then call these other functions anyway?
+> 
+Yes, this is just to protect against development error. I will remove 
+the
+check here and above.
+-Rishabh
