@@ -1,87 +1,1070 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754827AbeDPNJ1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:09:27 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52427 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754192AbeDPNJY (ORCPT
+        id S1754842AbeDPNJi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:09:38 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:41380 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754192AbeDPNJ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:09:24 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180416130922euoutp01e40790250282643b6368abbac4d950b1~l7JJ4Kdzx2474224742euoutp01M
-X-AuditID: cbfec7f4-b4fc79c0000043e4-24-5ad4a07eba47
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/14] arm64: dts: exynos: remove no longer needed
- samsung thermal properties
-Date: Mon, 16 Apr 2018 15:09:13 +0200
-Message-ID: <3588882.B9zsMSkHUz@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-Reply-To: <3af07b96-dd74-336e-1261-dda2cde9abaa@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsWy7djPc7p1C65EGXw+Ymwx77Osxfwr11gt
-        +h+/ZrY4f34Du8XlXXPYLD73HmG0mHF+H5PFk4d9bA4cHjtn3WX3WLznJZPHplWdbB53ru1h
-        8/i8SS6ANYrLJiU1J7MstUjfLoEro+3CZ+aCc6wVU6aqNzBeZ+li5OSQEDCROHDzKWMXIxeH
-        kMAKRomWc8uYQBJCAl8YJc6+U4FIfGaUON/9ihWm43/LaiaIxHJGiTkvr7JAOB8YJW59OsAM
-        UsUmYCUxsX0VI4gtIqAn0fi+DayDWeATo8TSpk52kISwQLLE+V1zwIpYBFQlHrdNA7N5BTQl
-        /jw9BDZIVMBLYsu+drCbOAXsJC4+eMcKUSMocXLmE7AnmAXkJTouN7KCLJAQWMYu8aR5FhvE
-        rS4SE48fZoawhSVeHd/CDmHLSPzfOZ8JoqGZUeLbjj1QRRMYJfasF4KwrSUOH78INJUDaIOm
-        xPpd+hBhW4k5i7eyg4QlBPgkbrwVhLiBT2LStunMEGFeiY42qCFqEhuWbWCD2dq1cyXUIg+J
-        SZ8eM09gVJqF5JtZSL6ZhbB3ASPzKkbx1NLi3PTUYqO81HK94sTc4tK8dL3k/NxNjMCUc/rf
-        8S87GHf9STrEKMDBqMTDu+Ps5Sgh1sSy4srcQ4wSHMxKIrzLEoFCvCmJlVWpRfnxRaU5qcWH
-        GKU5WJTEeeM06qKEBNITS1KzU1MLUotgskwcnFINjBYXl23OF5TJO5u4xEVMXnGCavTT1F3z
-        LJ8yPlX3kc34aMMne4E/cnKj2+XdEwxsuHLD9CM/NqxZE9UyY2biplDPijfOz+YoXJda/Kw9
-        b2qR/ddrm0LlSy9s+eReIbrE0/xSZTVzaUmm4oxtBu/kb1uzf2Tq/ZweU73/yLFb8a+/1utl
-        37t4XYmlOCPRUIu5qDgRACoAwrc1AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsVy+t/xe7o1C65EGbR2ylnM+yxrMf/KNVaL
-        /sevmS3On9/AbnF51xw2i8+9RxgtZpzfx2Tx5GEfmwOHx85Zd9k9Fu95yeSxaVUnm8eda3vY
-        PD5vkgtgjdKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3
-        S9DLaLvwmbngHGvFlKnqDYzXWboYOTkkBEwk/resZupi5OIQEljKKDGlbRKQwwGUkJE4vr4M
-        okZY4s+1LjaImneMEjuvPmQCSbAJWElMbF/FCGKLCOhJNL5vAxvELPCGUeLong+sIAlhgUSJ
-        /Vf7mUFsFgFVicdt08AaeAU0Jf48PQQWFxXwktiyrx1sKKeAncTFB+9YIbbtYJRYcmY7O0SD
-        oMTJmU/AzmYWkJfouNzICmHrSCzY/YltAqPgLCRls5CUzUJStoCReRWjSGppcW56brGRXnFi
-        bnFpXrpecn7uJkZgNG079nPLDsaud8GHGAU4GJV4eHecvRwlxJpYVlyZe4hRgoNZSYR3WSJQ
-        iDclsbIqtSg/vqg0J7X4EKMp0HcTmaVEk/OBkZ5XEm9oamhuYWlobmxubGahJM573qAySkgg
-        PbEkNTs1tSC1CKaPiYNTqoHR/EueQVHA9KTugGlCW70MlcudH8t0hAYu2P1zrnfq+6fdq9+x
-        Jp5MXbw575vB95rW5NK3nPbFqvvf8OR9mRT8x7j88R9N37bSzQqKu67VpUvknr9p3hHJb5Ms
-        eo0l+eXN5ytS89XTTO8rRt7NyF59vJ5dj0XUY5Np/0MJdR9mCT/LPWE+rEosxRmJhlrMRcWJ
-        AKoE1PC8AgAA
-X-CMS-MailID: 20180416130917eucas1p10012e5d79bf59adc677e7e2364bae589
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180416130917eucas1p10012e5d79bf59adc677e7e2364bae589
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180416130917eucas1p10012e5d79bf59adc677e7e2364bae589
-X-RootMTR: 20180416130917eucas1p10012e5d79bf59adc677e7e2364bae589
-References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-        <1523873525-23718-15-git-send-email-b.zolnierkie@samsung.com>
-        <3af07b96-dd74-336e-1261-dda2cde9abaa@linaro.org>
-        <CGME20180416130917eucas1p10012e5d79bf59adc677e7e2364bae589@eucas1p1.samsung.com>
+        Mon, 16 Apr 2018 09:09:29 -0400
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: linux-kernel@vger.kernel.org
+Subject: Build regressions/improvements in v4.17-rc1
+Date: Mon, 16 Apr 2018 15:09:25 +0200
+Message-Id: <1523884165-17044-1-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, April 16, 2018 03:02:45 PM Daniel Lezcano wrote:
-> On 16/04/2018 12:12, Bartlomiej Zolnierkiewicz wrote:
-> > Remove no longer needed samsung thermal properties.
-> > 
-> > There should be no functional changes caused by this patch.
-> > 
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> Can you add an additional patch to remove the Documentation ?
+Below is the list of build error/warning regressions/improvements in
+v4.17-rc1[1] compared to v4.16[2].
 
-"dt-bindings: thermal: remove no longer needed samsung thermal properties"
-(https://www.spinics.net/lists/linux-samsung-soc/msg62324.html)
-is already present in linux-soc-thermal-tree (Eduardo has not dropped it)
+Summarized:
+  - build errors: +2/-10
+  - build warnings: +1407/-1867
 
-Best regards,
+Note that there may be false regressions, as some logs are incomplete.
+Still, they're build errors/warnings.
+
+Happy fixing! ;-)
+
+Thanks to the linux-next team for providing the build service.
+
+[1] http://kisskb.ellerman.id.au/kisskb/head/60cc43fc888428bb2f18f08997432d426a243338/ (244 out of 246 configs)
+[2] http://kisskb.ellerman.id.au/kisskb/head/0adb32858b0bddf4ada5f364a84ed60b196dbcda/ (all 246 configs)
+
+
+*** ERRORS ***
+
+2 error regressions:
+  + /kisskb/src/include/linux/thread_info.h: error: call to '__bad_copy_from' declared with attribute error: copy source size is too small:  => 138:19
+  + error: No rule to make target arch/parisc/kernel/binfmt_elf32.o:  => N/A
+
+10 error improvements:
+  - /kisskb/src/drivers/net/ethernet/intel/i40e/i40e_ethtool.c: error: implicit declaration of function 'cmpxchg64' [-Werror=implicit-function-declaration]: 4443:2, 4443:6 => 
+  - /kisskb/src/net/sched/sch_dsmark.c: error: unrecognizable insn:: 325:1 => 
+  - error: "mdesc_get_property" [drivers/sbus/char/oradax.ko] undefined!: N/A => 
+  - error: "mdesc_grab" [drivers/sbus/char/oradax.ko] undefined!: N/A => 
+  - error: "mdesc_node_by_name" [drivers/sbus/char/oradax.ko] undefined!: N/A => 
+  - error: "mdesc_release" [drivers/sbus/char/oradax.ko] undefined!: N/A => 
+  - error: "sun4v_ccb_info" [drivers/sbus/char/oradax.ko] undefined!: N/A => 
+  - error: "sun4v_ccb_kill" [drivers/sbus/char/oradax.ko] undefined!: N/A => 
+  - error: "sun4v_ccb_submit" [drivers/sbus/char/oradax.ko] undefined!: N/A => 
+  - error: "sun4v_hvapi_register" [drivers/sbus/char/oradax.ko] undefined!: N/A => 
+
+
+*** WARNINGS ***
+
+[Deleted 799 lines about "warning: ... [-Wpointer-sign]" on parisc-allmodconfig]
+[Deleted 1480 lines about "warning: -ffunction-sections disabled; it makes profiling impossible [enabled by default]" on parisc-allmodconfig]
+
+1407 warning regressions:
+  + /kisskb/src/arch/s390/kernel/early.c: warning: 'memmove_early' defined but not used [-Wunused-function]:  => 313:20
+  + /kisskb/src/arch/sh/kernel/cpu/sh4/../sh3/../../entry-common.S: Warning: overflow in branch to __restore_all; converted into longer instruction sequence:  => 89
+  + /kisskb/src/arch/sh/kernel/cpu/sh4/../sh3/../../entry-common.S: Warning: overflow in branch to syscall_call; converted into longer instruction sequence:  => 208
+  + /kisskb/src/arch/sh/kernel/cpu/sh4/../sh3/../../entry-common.S: Warning: overflow in branch to syscall_trace_entry; converted into longer instruction sequence:  => 356, 358
+  + /kisskb/src/crypto/cfb.c: warning: 'crypto_cfb_decrypt_inplace' uses dynamic stack allocation [enabled by default]:  => 179:1
+  + /kisskb/src/crypto/cfb.c: warning: 'crypto_cfb_encrypt_inplace' uses dynamic stack allocation [enabled by default]:  => 110:1
+  + /kisskb/src/crypto/cfb.c: warning: 'crypto_cfb_final' uses dynamic stack allocation [enabled by default]:  => 67:1
+  + /kisskb/src/drivers/base/regmap/regmap.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]: 2530:6 => 1819:6, 2497:6
+  + /kisskb/src/drivers/clk/clk-cs2000-cp.c: warning: 'cs2000_resume' defined but not used [-Wunused-function]:  => 544:12
+  + /kisskb/src/drivers/crypto/ccree/cc_cipher.c: warning: 'cc_cipher_setkey' uses dynamic stack allocation [enabled by default]:  => 347:1
+  + /kisskb/src/drivers/crypto/chelsio/chtls/chtls_cm.c: warning: 'wait_for_states.constprop.22' uses dynamic stack allocation [enabled by default]:  => 405:1
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/../display/dc/calcs/dce_calcs.c: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]:  => 2017:1
+  + /kisskb/src/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]:  => 414:5
+  + /kisskb/src/drivers/gpu/drm/drm_dp_dual_mode_helper.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 4 has type 'ssize_t {aka int}' [-Wformat=]:  => 220:16
+  + /kisskb/src/drivers/gpu/drm/drm_dp_helper.c: warning: format '%zu' expects argument of type 'size_t', but argument 3 has type 'unsigned int' [-Wformat=]:  => 869:18
+  + /kisskb/src/drivers/gpu/drm/drm_dp_helper.c: warning: format '%zu' expects argument of type 'size_t', but argument 4 has type 'unsigned int' [-Wformat=]: 865:18 => 817:18, 784:18
+  + /kisskb/src/drivers/gpu/drm/drm_gem_cma_helper.c: warning: format '%zu' expects argument of type 'size_t', but argument 4 has type 'unsigned int' [-Wformat=]: 115:21 => 115:21, 507:18
+  + /kisskb/src/drivers/gpu/drm/msm/disp/mdp5/mdp5.xml.h: warning: 'uv_filter' may be used uninitialized in this function [-Wuninitialized]:  => 1036:16
+  + /kisskb/src/drivers/iio/temperature/mlx90632.c: warning: 'object_new_raw' may be used uninitialized in this function [-Wuninitialized]:  => 472:39
+  + /kisskb/src/drivers/iio/temperature/mlx90632.c: warning: 'object_old_raw' may be used uninitialized in this function [-Wuninitialized]:  => 472:39
+  + /kisskb/src/drivers/iommu/amd_iommu.c: warning: 'iommu_table_lock' defined but not used [-Wunused-variable]:  => 86:8
+  + /kisskb/src/drivers/isdn/hardware/eicon/message.c: warning: the frame size of 2064 bytes is larger than 2048 bytes [-Wframe-larger-than=]:  => 5985:1
+  + /kisskb/src/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c: warning: 'type' may be used uninitialized in this function [-Wuninitialized]:  => 609:16
+  + /kisskb/src/drivers/net/ethernet/ibm/ibmvnic.c: warning: 'rc' may be used uninitialized in this function [-Wuninitialized]:  => 437:6
+  + /kisskb/src/drivers/net/ethernet/intel/ice/ice_main.c: warning: 'err' may be used uninitialized in this function [-Wuninitialized]:  => 4987:5, 4983:5
+  + /kisskb/src/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c: warning: value computed is not used [-Wunused-value]:  => 4446:4
+  + /kisskb/src/drivers/net/xen-netback/hash.c: warning: 'val' may be used uninitialized in this function [-Wuninitialized]:  => 118:6
+  + /kisskb/src/drivers/nvme/host/lightnvm.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]:  => 624:2
+  + /kisskb/src/drivers/staging/fsl-dpaa2/ethsw/ethsw.c: warning: 'err' may be used uninitialized in this function [-Wuninitialized]:  => 720:11, 923:2
+  + /kisskb/src/fs/afs/dynroot.c: warning: 'len' may be used uninitialized in this function [-Wuninitialized]:  => 126:6
+  + /kisskb/src/fs/autofs4/waitq.c: warning: 'wq' may be used uninitialized in this function [-Wuninitialized]:  => 474:5
+  + /kisskb/src/fs/befs/linuxvfs.c: warning: 'nlsname' may be used uninitialized in this function [-Wuninitialized]:  => 270:9
+  + /kisskb/src/fs/befs/linuxvfs.c: warning: 'utfname' may be used uninitialized in this function [-Wuninitialized]:  => 192:7
+  + /kisskb/src/include/linux/file.h: warning: 'output.file' may be used uninitialized in this function [-Wuninitialized]:  => 40:7
+  + /kisskb/src/include/linux/file.h: warning: 'output.flags' may be used uninitialized in this function [-Wuninitialized]:  => 39:2
+  + /kisskb/src/include/linux/fs.h: warning: 'nlsnamelen' may be used uninitialized in this function [-Wuninitialized]:  => 3374:19
+  + /kisskb/src/include/linux/list.h: warning: 'head' may be used uninitialized in this function [-Wuninitialized]:  => 93:12
+  + /kisskb/src/include/linux/list.h: warning: 'pdeo' may be used uninitialized in this function [-Wuninitialized]:  => 65:12
+  + /kisskb/src/include/linux/percpu-refcount.h: warning: 'percpu_count' may be used uninitialized in this function [-Wuninitialized]:  => 254:1, 220:1, 282:1, 183:1
+  + /kisskb/src/include/linux/spinlock.h: warning: 'dst_ptl' may be used uninitialized in this function [-Wuninitialized]:  => 350:2
+  + /kisskb/src/include/linux/spinlock.h: warning: 'ptl' may be used uninitialized in this function [-Wuninitialized]:  => 350:2
+  + /kisskb/src/include/media/v4l2-mediabus.h: warning: 'pix.<U7720>.ycbcr_enc' may be used uninitialized in this function [-Wuninitialized]:  => 132:22
+  + /kisskb/src/include/uapi/linux/swab.h: warning: 'r' may be used uninitialized in this function [-Wuninitialized]:  => 52:9
+  + /kisskb/src/kernel/cgroup/cgroup-v1.c: warning: 'root' may be used uninitialized in this function [-Wuninitialized]: 1268:20 => 1257:9, 1268:20
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 820>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U f00>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U11e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2000>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2aa0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U30a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3140>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U46e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4780>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4960>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4b40>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4c80>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4dc0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5960>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5a00>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U5b40>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6000>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6280>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6b40>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7000>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U70a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U81e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U85a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U86e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8780>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8f00>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U96e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9780>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9be0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua6e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub000>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub0a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc820>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc8c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ucf00>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud000>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud1e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud820>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uddc0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue000>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue280>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue3c0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue460>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 127:33, 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue5a0>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue6e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uebe0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uee60>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf280>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf320>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf6e0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uf960>]' may be used uninitialized in this function [-Wuninitialized]:  => 146:32
+  + /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ufdc0>]' may be used uninitialized in this function [-Wuninitialized]:  => 127:33
+  + /kisskb/src/lib/test_ubsan.c: warning: 'test_ubsan_out_of_bounds' uses dynamic stack allocation [enabled by default]:  => 67:1
+  + /kisskb/src/lib/test_ubsan.c: warning: 'test_ubsan_vla_bound_not_positive' uses dynamic stack allocation [enabled by default]:  => 51:1
+  + /kisskb/src/mm/hugetlb.c: warning: 'page' may be used uninitialized in this function [-Wuninitialized]: 1440:5 => 1433:2, 1433:5
+  + /kisskb/src/mm/memcontrol.c: warning: 'isolated' may be used uninitialized in this function [-Wuninitialized]:  => 2077:2
+  + /kisskb/src/mm/slub.c: warning: 'deactivate_slab.isra.49' uses dynamic stack allocation [enabled by default]:  => 2169:1
+  + /kisskb/src/mm/slub.c: warning: 'get_partial_node.isra.51' uses dynamic stack allocation [enabled by default]:  => 1869:1
+  + /kisskb/src/mm/slub.c: warning: 'unfreeze_partials.isra.50' uses dynamic stack allocation [enabled by default]:  => 2237:1
+  + /kisskb/src/net/tls/tls_sw.c: warning: 'decrypt_skb' uses dynamic stack allocation [enabled by default]:  => 719:1
+  + /kisskb/src/net/tls/tls_sw.c: warning: 'tls_read_size' uses dynamic stack allocation [enabled by default]:  => 984:1
+  + /kisskb/src/sound/soc/sh/rcar/core.c: warning: 'rsnd_resume' defined but not used [-Wunused-function]:  => 1548:12
+  + /kisskb/src/sound/soc/sh/rcar/core.c: warning: 'rsnd_suspend' defined but not used [-Wunused-function]:  => 1539:12
+  + arch/m68k/configs/multi_defconfig: warning: symbol value 'm' invalid for NF_TABLES_ARP:  => 214
+  + arch/m68k/configs/multi_defconfig: warning: symbol value 'm' invalid for NF_TABLES_BRIDGE:  => 269
+  + arch/m68k/configs/multi_defconfig: warning: symbol value 'm' invalid for NF_TABLES_INET:  => 108
+  + arch/m68k/configs/multi_defconfig: warning: symbol value 'm' invalid for NF_TABLES_NETDEV:  => 109
+  + arch/m68k/configs/sun3_defconfig: warning: symbol value 'm' invalid for NF_TABLES_ARP:  => 200
+  + arch/m68k/configs/sun3_defconfig: warning: symbol value 'm' invalid for NF_TABLES_BRIDGE:  => 255
+  + arch/m68k/configs/sun3_defconfig: warning: symbol value 'm' invalid for NF_TABLES_INET:  => 94
+  + arch/m68k/configs/sun3_defconfig: warning: symbol value 'm' invalid for NF_TABLES_NETDEV:  => 95
+  + drivers/staging/mt7621-dts/Kconfig: warning: 'BUILTIN_DTB' has wrong type. 'select' only accept arguments of bool and tristate type:  => 4
+  + warning: unmet direct dependencies detected for COMPAT_BINFMT_ELF:  => N/A
+  + warning: unmet direct dependencies detected for NEED_MULTIPLE_NODES:  => N/A
+  + warning: unmet direct dependencies detected for PREEMPT_COUNT:  => N/A
+  + warning: vmlinux.o(.text+0x154c): Section mismatch in reference from the function rb_alloc_aux() to the function .init.text:find_pa_parent_type():  => N/A
+  + warning: vmlinux.o(.text+0x214): Section mismatch in reference from the function srcu_torture_stats_print() to the function .init.text:setup_profiling_timer():  => N/A
+  + warning: vmlinux.o(.text+0x35baac): Section mismatch in reference from the function devm_memremap_pages() to the function .meminit.text:arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x35c388): Section mismatch in reference from the function devm_memremap_pages_release() to the function .meminit.text:arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x35f68): Section mismatch in reference from the function setup_scache() to the function .init.text:loongson3_sc_init():  => N/A
+  + warning: vmlinux.o(.text+0x3664): Section mismatch in reference from the variable __boot_from_prom to the function .init.text:prom_init():  => N/A
+  + warning: vmlinux.o(.text+0x376518): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x376d64): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x37dfd8): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x37e824): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x3944): Section mismatch in reference from the variable start_here_multiplatform to the function .init.text:early_setup():  => N/A
+  + warning: vmlinux.o(.text+0x3978): Section mismatch in reference from the variable start_here_common to the function .init.text:start_kernel():  => N/A
+  + warning: vmlinux.o(.text+0x3a66c): Section mismatch in reference from the function mips_sc_init() to the function .init.text:mips_sc_probe_cm3():  => N/A
+  + warning: vmlinux.o(.text+0x3e9908): Section mismatch in reference from the function .devm_memremap_pages() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x3ea154): Section mismatch in reference from the function .devm_memremap_pages_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x498dbc): Section mismatch in reference from the function hmm_devmem_release() to the function .meminit.text:arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x499130): Section mismatch in reference from the function hmm_devmem_pages_create() to the function .meminit.text:arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4a59ec): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4a5d08): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4ad8ac): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4adbc8): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0x4ca7238): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label():  => N/A
+  + warning: vmlinux.o(.text+0x51ffec): Section mismatch in reference from the function .hmm_devmem_release() to the function .meminit.text:.arch_remove_memory():  => N/A
+  + warning: vmlinux.o(.text+0x520308): Section mismatch in reference from the function .hmm_devmem_pages_create() to the function .meminit.text:.arch_add_memory():  => N/A
+  + warning: vmlinux.o(.text+0xea8): Section mismatch in reference from the function device_for_each_child_reverse() to the function .init.text:pcibios_init_bridge():  => N/A
+  + warning: vmlinux.o(.text+0xff4): Section mismatch in reference from the function extcon_get_state() to the function .init.text:alloc_pa_dev():  => N/A
+  + warning: vmlinux.o(.text.unlikely+0x184): Section mismatch in reference from the function alloc_tree_node() to the function .init.text:create_tree_node():  => N/A
+  + warning: vmlinux.o(.text.unlikely+0x25e0): Section mismatch in reference from the function .remove_pmd_table() to the function .meminit.text:.split_kernel_mapping():  => N/A
+  + warning: vmlinux.o(.text.unlikely+0x2650): Section mismatch in reference from the function .remove_pmd_table() to the function .meminit.text:.split_kernel_mapping():  => N/A
+  + warning: vmlinux.o(.text.unlikely+0x2834): Section mismatch in reference from the function .remove_pud_table() to the function .meminit.text:.split_kernel_mapping():  => N/A
+  + warning: vmlinux.o(.text.unlikely+0x293c): Section mismatch in reference from the function .remove_pud_table() to the function .meminit.text:.split_kernel_mapping():  => N/A
+
+1867 warning improvements:
+  - /kisskb/src/arch/cris/arch-v10/drivers/axisflashmap.c: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'uint64_t' [-Wformat]: 277:10, 359:10, 341:11 => 
+  - /kisskb/src/arch/cris/arch-v10/drivers/axisflashmap.c: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'uint64_t' [-Wformat]: 341:11, 359:10 => 
+  - /kisskb/src/arch/cris/arch-v10/drivers/sync_serial.c: warning: passing argument 1 of 'memcpy' discards 'volatile' qualifier from pointer target type [enabled by default]: 1344:6, 1354:6 => 
+  - /kisskb/src/arch/cris/arch-v10/drivers/sync_serial.c: warning: passing argument 1 of 'virt_to_phys' discards 'const' qualifier from pointer target type [enabled by default]: 1225:2 => 
+  - /kisskb/src/arch/mn10300/lib/checksum.c: warning: ignoring return value of 'copy_from_user', declared with attribute warn_unused_result [-Wunused-result]: 56:16 => 
+  - /kisskb/src/arch/mn10300/mm/dma-alloc.c: warning: 'mn10300_dma_supported' defined but not used [-Wunused-function]: 109:12 => 
+  - /kisskb/src/arch/mn10300/mm/dma-alloc.c: warning: format '%zu' expects argument of type 'size_t', but argument 3 has type 'unsigned int' [-Wformat]: 29:2 => 
+  - /kisskb/src/arch/x86/kernel/hw_breakpoint.c: warning: 'align' may be used uninitialized in this function [-Wuninitialized]: 361:2, 361:20 => 361:20
+  - /kisskb/src/block/bfq-wf2q.c: warning: 'root' may be used uninitialized in this function [-Wuninitialized]: 812:24 => 
+  - /kisskb/src/block/blk-merge.c: warning: 'bbio' may be used uninitialized in this function [-Wuninitialized]: 284:2 => 
+  - /kisskb/src/block/blk-sysfs.c: warning: 'val' may be used uninitialized in this function [-Wuninitialized]: 445:2 => 
+  - /kisskb/src/crypto/drbg.c: warning: format '%zu' expects argument of type 'size_t', but argument 2 has type 'unsigned int' [-Wformat]: 1275:3, 1062:3 => 
+  - /kisskb/src/crypto/ecc.c: warning: 'crypto_ecdh_shared_secret' uses dynamic stack allocation [enabled by default]: 1070:1 => 
+  - /kisskb/src/drivers/base/component.c: warning: format '%zu' expects argument of type 'size_t', but argument 4 has type 'unsigned int' [-Wformat]: 174:3 => 
+  - /kisskb/src/drivers/base/regmap/regcache-rbtree.c: warning: 'new_base_reg' may be used uninitialized in this function [-Wuninitialized]: 454:8 => 
+  - /kisskb/src/drivers/base/regmap/regcache-rbtree.c: warning: 'new_top_reg' may be used uninitialized in this function [-Wuninitialized]: 454:8 => 
+  - /kisskb/src/drivers/block/null_blk.c: warning: 'sector' may be used uninitialized in this function [-Wuninitialized]: 1254:3 => 
+  - /kisskb/src/drivers/block/null_blk.c: warning: 'size' may be used uninitialized in this function [-Wuninitialized]: 1254:3 => 
+  - /kisskb/src/drivers/block/rbd.c: warning: '__rbd_acknowledge_notify' uses dynamic stack allocation [enabled by default]: 3642:1 => 
+  - /kisskb/src/drivers/block/rbd.c: warning: '__rbd_notify_op_lock' uses dynamic stack allocation [enabled by default]: 3118:1 => 
+  - /kisskb/src/drivers/char/random.c: warning: comparison of distinct pointer types lacks a cast [enabled by default]: 1810:11 => 
+  - /kisskb/src/drivers/char/random.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 3 has type 'size_t' [-Wformat]: 1776:10 => 
+  - /kisskb/src/drivers/clk/renesas/clk-sh73a0.c: warning: 'parent_name' may be used uninitialized in this function [-Wuninitialized]: 155:3 => 
+  - /kisskb/src/drivers/dma-buf/reservation.c: warning: 'signaled_idx' may be used uninitialized in this function [-Wuninitialized]: 142:3 => 
+  - /kisskb/src/drivers/firmware/qemu_fw_cfg.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]: 364:6 => 
+  - /kisskb/src/drivers/gpio/gpio-dln2.c: warning: 'packed' attribute ignored for field of type '__le16' [-Wattributes]: 73:2 => 
+  - /kisskb/src/drivers/gpio/gpio-max3191x.c: warning: 'gpiod_set_array_single_value_cansleep' uses dynamic stack allocation [enabled by default]: 324:1 => 
+  - /kisskb/src/drivers/gpio/gpio-xra1403.c: warning: 'xra1403_dbg_show' uses dynamic stack allocation [enabled by default]: 157:1 => 
+  - /kisskb/src/drivers/gpu/drm/drm_dp_dual_mode_helper.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 6 has type 'ssize_t {aka int}' [-Wformat=]: 201:16 => 
+  - /kisskb/src/drivers/gpu/drm/drm_dp_helper.c: warning: format '%zu' expects argument of type 'size_t', but argument 5 has type 'unsigned int' [-Wformat=]: 780:18, 813:18 => 
+  - /kisskb/src/drivers/gpu/drm/drm_gem_cma_helper.c: warning: format '%zu' expects argument of type 'size_t', but argument 5 has type 'unsigned int' [-Wformat=]: 507:18 => 
+  - /kisskb/src/drivers/gpu/drm/msm/mdp/mdp5/mdp5.xml.h: warning: 'uv_filter' may be used uninitialized in this function [-Wuninitialized]: 1036:16 => 
+  - /kisskb/src/drivers/hwspinlock/hwspinlock_core.c: warning: 'id' may be used uninitialized in this function [-Wuninitialized]: 301:6 => 
+  - /kisskb/src/drivers/iio/accel/bmc150-accel-core.c: warning: 'ret' may be used uninitialized in this function [-Wuninitialized]: 860:2 => 
+  - /kisskb/src/drivers/iio/accel/mma9551.c: warning: 'reg' may be used uninitialized in this function [-Wuninitialized]: 381:32 => 
+  - /kisskb/src/drivers/iio/accel/mma9551_core.c: warning: 'pol_mask' may be used uninitialized in this function [-Wuninitialized]: 590:34 => 
+  - /kisskb/src/drivers/iio/humidity/hts221_i2c.c: warning: 'hts221_i2c_write' uses dynamic stack allocation [enabled by default]: 59:1 => 
+  - /kisskb/src/drivers/iio/potentiometer/ds1803.c: warning: 'ds1803_read_raw' uses dynamic stack allocation [enabled by default]: 86:1 => 
+  - /kisskb/src/drivers/input/keyboard/stmpe-keypad.c: warning: 'stmpe_keypad_irq' uses dynamic stack allocation [enabled by default]: 184:1 => 
+  - /kisskb/src/drivers/input/touchscreen/cyttsp4_core.c: warning: 'cyttsp4_get_mt_touches' uses dynamic stack allocation [enabled by default]: 961:1 => 
+  - /kisskb/src/drivers/leds/leds-pca955x.c: warning: 'ls' may be used uninitialized in this function [-Wuninitialized]: 164:2 => 
+  - /kisskb/src/drivers/md/dm-stripe.c: warning: 'stripe_status' uses dynamic stack allocation [enabled by default]: 395:1 => 
+  - /kisskb/src/drivers/media/cec/cec-api.c: warning: 'ev_idx' may be used uninitialized in this function [-Wuninitialized]: 330:2 => 
+  - /kisskb/src/drivers/media/common/videobuf2/videobuf2-core.c: warning: 'vb' may be used uninitialized in this function [-Wuninitialized]: 2533:3 => 
+  - /kisskb/src/drivers/media/platform/s5p-jpeg/jpeg-core.c: warning: 'dwngrd_sch_id' may be used uninitialized in this function [-Wuninitialized]: 579:45 => 
+  - /kisskb/src/drivers/media/platform/soc_camera/soc_camera.c: warning: 'sasd' may be used uninitialized in this function [-Wuninitialized]: 1451:2 => 
+  - /kisskb/src/drivers/mtd/nand/nand_base.c: warning: 'best_ecc_bytes' may be used uninitialized in this function [-Wuninitialized]: 6059:18, 6132:18 => 
+  - /kisskb/src/drivers/mtd/nand/nand_base.c: warning: 'best_step' may be used uninitialized in this function [-Wuninitialized]: 6057:17 => 
+  - /kisskb/src/drivers/mtd/nand/nand_base.c: warning: 'best_strength' may be used uninitialized in this function [-Wuninitialized]: 6131:21, 6058:21 => 
+  - /kisskb/src/drivers/mtd/nand/nandsim.c: warning: format '%u' expects argument of type 'unsigned int', but argument 2 has type 'long unsigned int' [-Wformat]: 760:2 => 
+  - /kisskb/src/drivers/net/ethernet/chelsio/cxgb3/t3_hw.c: warning: 'vpdstrtou16.constprop.17' uses dynamic stack allocation [enabled by default]: 700:1 => 
+  - /kisskb/src/drivers/net/ethernet/chelsio/cxgb3/t3_hw.c: warning: 'vpdstrtouint.constprop.16' uses dynamic stack allocation [enabled by default]: 691:1 => 
+  - /kisskb/src/drivers/net/wireless/ath/carl9170/fwcmd.h: warning: 'packed' attribute ignored for field of type 'struct <anonymous>[]' [-Wattributes]: 124:2 => 
+  - /kisskb/src/drivers/net/wireless/intersil/p54/lmac.h: warning: 'packed' attribute ignored for field of type 'struct <anonymous>[3]' [-Wattributes]: 377:2 => 
+  - /kisskb/src/drivers/of/unittest.c: warning: 'of_unittest_printf_one' uses dynamic stack allocation [enabled by default]: 277:1 => 
+  - /kisskb/src/drivers/power/supply/da9150-fg.c: warning: 'da9150_fg_read_attr.isra.4' uses dynamic stack allocation [enabled by default]: 108:1 => 
+  - /kisskb/src/drivers/power/supply/da9150-fg.c: warning: 'da9150_fg_write_attr.isra.3.constprop.5' uses dynamic stack allocation [enabled by default]: 126:1 => 
+  - /kisskb/src/drivers/rtc/rtc-cmos.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 5 has type 'size_t' [-Wformat]: 825:2 => 
+  - /kisskb/src/drivers/sbus/char/oradax.c: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]: 468:15, 478:15, 488:15, 498:15 => 
+  - /kisskb/src/drivers/sbus/char/oradax.c: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]: 851:14 => 
+  - /kisskb/src/drivers/scsi/aic7xxx/aic79xx_core.c: warning: 'ahd_loadseq' uses dynamic stack allocation [enabled by default]: 9496:1 => 
+  - /kisskb/src/drivers/scsi/aic7xxx/aic7xxx_core.c: warning: 'ahc_loadseq' uses dynamic stack allocation [enabled by default]: 6956:1 => 
+  - /kisskb/src/drivers/scsi/device_handler/scsi_dh_alua.c: warning: 'submit_rtpg' uses dynamic stack allocation [enabled by default]: 157:1 => 
+  - /kisskb/src/drivers/scsi/device_handler/scsi_dh_alua.c: warning: 'submit_stpg' uses dynamic stack allocation [enabled by default]: 189:1 => 
+  - /kisskb/src/drivers/scsi/device_handler/scsi_dh_emc.c: warning: 'send_trespass_cmd' uses dynamic stack allocation [enabled by default]: 294:1 => 
+  - /kisskb/src/drivers/scsi/device_handler/scsi_dh_rdac.c: warning: 'send_mode_select' uses dynamic stack allocation [enabled by default]: 581:1 => 
+  - /kisskb/src/drivers/scsi/osst.h: warning: 'packed' attribute ignored for field of type 'u32' [-Wattributes]: 97:2 => 
+  - /kisskb/src/drivers/scsi/scsi_debug.c: warning: value computed is not used [-Wunused-value]: 1599:2 => 
+  - /kisskb/src/drivers/staging/ccree/cc_cipher.c: warning: 'cc_cipher_setkey' uses dynamic stack allocation [enabled by default]: 374:1 => 
+  - /kisskb/src/drivers/staging/gdm724x/gdm_lte.c: warning: 'packed' attribute ignored for field of type 'struct <anonymous>' [-Wattributes]: 196:3 => 
+  - /kisskb/src/drivers/staging/lustre/lustre/llite/xattr.c: warning: 'll_xattr_get_common' uses dynamic stack allocation [enabled by default]: 417:1 => 
+  - /kisskb/src/drivers/staging/lustre/lustre/llite/xattr.c: warning: 'll_xattr_set_common' uses dynamic stack allocation [enabled by default]: 158:1 => 
+  - /kisskb/src/drivers/staging/ncpfs/ncp_fs_sb.h: warning: 'packed' attribute ignored for field of type '__u16' [-Wattributes]: 125:4, 129:4, 128:4, 126:4, 127:4 => 
+  - /kisskb/src/drivers/staging/ncpfs/ncp_fs_sb.h: warning: 'packed' attribute ignored for field of type '__u32' [-Wattributes]: 123:4, 124:4 => 
+  - /kisskb/src/drivers/staging/vt6656/mac.h: warning: 'packed' attribute ignored for field of type 'struct <anonymous>' [-Wattributes]: 351:3 => 
+  - /kisskb/src/drivers/tty/serial/crisv10.c: warning: 'ser_interrupt' defined but not used [-Wunused-function]: 2462:1 => 
+  - /kisskb/src/drivers/tty/serial/earlycon.c: warning: comparison of distinct pointer types lacks a cast [enabled by default]: 71:32 => 
+  - /kisskb/src/drivers/usb/misc/usbtest.c: warning: 'test_queue' uses dynamic stack allocation [enabled by default]: 2123:1 => 
+  - /kisskb/src/fs/btrfs/disk-io.c: warning: 'btrfs_check_super_csum' uses dynamic stack allocation [enabled by default]: 429:1 => 
+  - /kisskb/src/fs/btrfs/hash.c: warning: 'btrfs_crc32c' uses dynamic stack allocation [enabled by default]: 54:1 => 
+  - /kisskb/src/fs/btrfs/tree-checker.c: warning: 'check_dir_item.isra.10' uses dynamic stack allocation [enabled by default]: 360:1 => 
+  - /kisskb/src/fs/dcache.c: warning: 'n' may be used uninitialized in this function [-Wuninitialized]: 2449:2 => 
+  - /kisskb/src/fs/exofs/common.h: warning: 'packed' attribute ignored for field of type 'struct exofs_layout_implict_list' [-Wattributes]: 252:3 => 
+  - /kisskb/src/fs/exofs/common.h: warning: 'packed' attribute ignored for field of type 'struct exofs_layout_sliding_window' [-Wattributes]: 243:3 => 
+  - /kisskb/src/fs/ext4/readpage.c: warning: the frame size of 1240 bytes is larger than 1024 bytes [-Wframe-larger-than=]: 294:1 => 
+  - /kisskb/src/fs/jffs2/erase.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 4 has type 'size_t' [-Wformat]: 471:5, 402:4 => 
+  - /kisskb/src/fs/jffs2/erase.c: warning: format '%zx' expects argument of type 'size_t', but argument 2 has type 'unsigned int' [-Wformat]: 357:4 => 
+  - /kisskb/src/fs/jffs2/gc.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 3 has type 'size_t' [-Wformat]: 1035:4, 954:5 => 
+  - /kisskb/src/fs/jffs2/gc.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 5 has type 'size_t' [-Wformat]: 703:3 => 
+  - /kisskb/src/fs/jffs2/nodemgmt.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 3 has type 'size_t' [-Wformat]: 765:3, 788:3 => 
+  - /kisskb/src/fs/jffs2/read.c: warning: format '%zx' expects argument of type 'size_t', but argument 4 has type 'unsigned int' [-Wformat]: 47:3 => 
+  - /kisskb/src/fs/jffs2/readinode.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 5 has type 'size_t' [-Wformat]: 665:4, 92:4, 1207:3 => 
+  - /kisskb/src/fs/jffs2/readinode.c: warning: format '%zu' expects argument of type 'size_t', but argument 4 has type 'unsigned int' [-Wformat]: 69:3 => 
+  - /kisskb/src/fs/jffs2/readinode.c: warning: format '%zu' expects argument of type 'size_t', but argument 5 has type 'unsigned int' [-Wformat]: 1036:4, 951:3 => 
+  - /kisskb/src/fs/jffs2/scan.c: warning: format '%zu' expects argument of type 'size_t', but argument 2 has type 'unsigned int' [-Wformat]: 128:3, 121:3 => 
+  - /kisskb/src/fs/jffs2/scan.c: warning: format '%zx' expects argument of type 'size_t', but argument 2 has type 'unsigned int' [-Wformat]: 105:3 => 
+  - /kisskb/src/fs/jffs2/scan.c: warning: format '%zx' expects argument of type 'size_t', but argument 3 has type 'unsigned int' [-Wformat]: 300:3 => 
+  - /kisskb/src/fs/jffs2/wbuf.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 2 has type 'size_t' [-Wformat]: 645:3 => 
+  - /kisskb/src/fs/jffs2/wbuf.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 3 has type 'size_t' [-Wformat]: 1090:3, 1048:3, 1115:3 => 
+  - /kisskb/src/fs/jffs2/wbuf.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 4 has type 'size_t' [-Wformat]: 1090:3, 1115:3, 1048:3 => 
+  - /kisskb/src/fs/jffs2/wbuf.c: warning: format '%zx' expects argument of type 'size_t', but argument 2 has type 'unsigned int' [-Wformat]: 971:4 => 
+  - /kisskb/src/fs/jffs2/write.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 5 has type 'size_t' [-Wformat]: 271:3, 113:3 => 
+  - /kisskb/src/fs/libfs.c: warning: comparison of distinct pointer types lacks a cast [enabled by default]: 878:9 => 
+  - /kisskb/src/fs/mpage.c: warning: the frame size of 1120 bytes is larger than 1024 bytes [-Wframe-larger-than=]: 316:1 => 
+  - /kisskb/src/fs/mpage.c: warning: the frame size of 1168 bytes is larger than 1024 bytes [-Wframe-larger-than=]: 676:1 => 
+  - /kisskb/src/fs/pstore/ram_core.c: warning: 'persistent_ram_decode_rs8.isra.6' uses dynamic stack allocation [enabled by default]: 120:1 => 
+  - /kisskb/src/fs/pstore/ram_core.c: warning: 'persistent_ram_encode_rs8.isra.7' uses dynamic stack allocation [enabled by default]: 108:1 => 
+  - /kisskb/src/fs/reiserfs/inode.c: warning: 'reiserfs_new_directory' uses dynamic stack allocation [enabled by default]: 1860:1 => 
+  - /kisskb/src/include/asm-generic/io.h: warning: 'r' may be used uninitialized in this function [-Wuninitialized]: 155:15 => 
+  - /kisskb/src/include/linux/kern_levels.h: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]: 5:18 => 
+  - /kisskb/src/include/linux/kern_levels.h: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]: 5:18 => 
+  - /kisskb/src/include/linux/kern_levels.h: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]: 5:18 => 
+  - /kisskb/src/include/linux/sysv_fs.h: warning: 'packed' attribute ignored for field of type '__fs32' [-Wattributes]: 181:2, 113:2, 31:2, 169:2, 131:2, 115:2, 43:2, 145:2, 101:2, 143:2, 44:2, 182:2 => 
+  - /kisskb/src/include/linux/sysv_fs.h: warning: 'packed' attribute ignored for field of type 'sysv_zone_t[64]' [-Wattributes]: 172:2 => 
+  - /kisskb/src/include/media/soc_camera.h: warning: 'left' may be used uninitialized in this function [-Wuninitialized]: 347:7 => 
+  - /kisskb/src/include/media/soc_camera.h: warning: 'top' may be used uninitialized in this function [-Wuninitialized]: 347:7 => 
+  - /kisskb/src/include/media/v4l2-mediabus.h: warning: 'pix.<U6260>.ycbcr_enc' may be used uninitialized in this function [-Wuninitialized]: 132:22 => 
+  - /kisskb/src/include/net/ipx.h: warning: 'packed' attribute ignored for field of type '__be16' [-Wattributes]: 32:2, 34:2 => 
+  - /kisskb/src/include/net/ipx.h: warning: 'packed' attribute ignored for field of type 'struct ipx_address' [-Wattributes]: 44:9, 43:9 => 
+  - /kisskb/src/ipc/msgutil.c: warning: comparison of distinct pointer types lacks a cast [enabled by default]: 155:9, 95:9, 102:10, 162:10, 67:10, 55:9 => 
+  - /kisskb/src/kernel/futex.c: warning: 'oldval' may be used uninitialized in this function [-Wuninitialized]: 1604:3 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 500>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 640>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 6e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U 780>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U aa0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U dc0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1780>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1a00>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1be0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1c80>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U1d20>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2280>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U23c0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U2500>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U31e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U3dc0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4460>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U4e60>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6460>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6640>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U66e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6780>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U6960>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7280>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7320>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7be0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7dc0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U7e60>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8140>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8280>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8c80>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8d20>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U8dc0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9280>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9320>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9500>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<U9a00>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua5a0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua640>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua780>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ua820>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub140>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ub500>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ubd20>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ubdc0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc280>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc460>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Uc640>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ucbe0>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ucd20>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud140>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud280>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud6e0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ud8c0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Udf00>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ue780>]' may be used uninitialized in this function [-Wuninitialized]: 146:32 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ueaa0>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ued20>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ufa00>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/rcu/srcutree.c: warning: 'levelspread[<Ufd20>]' may be used uninitialized in this function [-Wuninitialized]: 127:33 => 
+  - /kisskb/src/kernel/relay.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 2 has type 'size_t' [-Wformat]: 850:10 => 
+  - /kisskb/src/kernel/relay.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 3 has type 'size_t' [-Wformat]: 850:10 => 
+  - /kisskb/src/kernel/time/tick-sched.c: warning: 'now' may be used uninitialized in this function [-Wuninitialized]: 835:19, 639:17 => 
+  - /kisskb/src/kernel/trace/ftrace.c: warning: 'module_exists' uses dynamic stack allocation [enabled by default]: 3917:1 => 
+  - /kisskb/src/lib/iov_iter.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 3 has type 'size_t' [-Wformat]: 341:2 => 
+  - /kisskb/src/lib/kstrtox.c: warning: comparison of distinct pointer types lacks a cast [enabled by default]: 404:1, 406:1, 405:1, 408:1, 410:1, 407:1, 409:1, 403:1, 379:10, 402:1, 401:1 => 
+  - /kisskb/src/lib/test_bitmap.c: warning: 'test_bitmap_arr32' uses dynamic stack allocation [enabled by default]: 319:1 => 
+  - /kisskb/src/lib/test_firmware.c: warning: 'rc' may be used uninitialized in this function [-Wuninitialized]: 778:31, 717:6 => 
+  - /kisskb/src/lib/vsprintf.c: warning: 'resource_string' uses dynamic stack allocation [enabled by default]: 802:1 => 
+  - /kisskb/src/mm/dmapool.c: warning: format '%zu' expects argument of type 'size_t', but argument 6 has type 'unsigned int' [-Wformat]: 99:6 => 
+  - /kisskb/src/mm/dmapool.c: warning: format '%zu' expects argument of type 'size_t', but argument 7 has type 'unsigned int' [-Wformat]: 99:6 => 
+  - /kisskb/src/mm/ksm.c: warning: 'stable_node' may be used uninitialized in this function [-Wuninitialized]: 1856:16 => 
+  - /kisskb/src/mm/percpu-km.c: warning: format '%zu' expects argument of type 'size_t', but argument 2 has type 'unsigned int' [-Wformat]: 115:3 => 
+  - /kisskb/src/mm/percpu.c: warning: #warning "the CRIS architecture has physical and virtual addresses confused" [-Wcpp]: 2744:2 => 
+  - /kisskb/src/mm/percpu.c: warning: format '%lx' expects argument of type 'long unsigned int', but argument 3 has type 'unsigned int' [-Wformat]: 2483:3 => 
+  - /kisskb/src/mm/percpu.c: warning: format '%zu' expects argument of type 'size_t', but argument 2 has type 'unsigned int' [-Wformat]: 2518:2, 1502:3 => 
+  - /kisskb/src/mm/percpu.c: warning: format '%zu' expects argument of type 'size_t', but argument 3 has type 'unsigned int' [-Wformat]: 1939:9, 1502:3 => 
+  - /kisskb/src/mm/percpu.c: warning: format '%zu' expects argument of type 'size_t', but argument 4 has type 'unsigned int' [-Wformat]: 1371:3, 1939:9, 2518:2 => 
+  - /kisskb/src/mm/percpu.c: warning: format '%zu' expects argument of type 'size_t', but argument 5 has type 'unsigned int' [-Wformat]: 2518:2, 1939:9, 1371:3 => 
+  - /kisskb/src/mm/percpu.c: warning: format '%zu' expects argument of type 'size_t', but argument 6 has type 'unsigned int' [-Wformat]: 2518:2, 1939:9 => 
+  - /kisskb/src/mm/percpu.c: warning: format '%zu' expects argument of type 'size_t', but argument 7 has type 'unsigned int' [-Wformat]: 1939:9, 2518:2 => 
+  - /kisskb/src/mm/percpu.c: warning: format '%zu' expects argument of type 'size_t', but argument 8 has type 'unsigned int' [-Wformat]: 1939:9 => 
+  - /kisskb/src/mm/pgtable-generic.c: warning: unused variable 'mm' [-Wunused-variable]: 83:20 => 
+  - /kisskb/src/mm/slab_common.c: warning: format '%zu' expects argument of type 'size_t', but argument 3 has type 'unsigned int' [-Wformat=]: 935:45 => 
+  - /kisskb/src/mm/slab_common.c: warning: format '%zu' expects argument of type 'size_t', but argument 3 has type 'unsigned int' [-Wformat]: 936:6 => 
+  - /kisskb/src/mm/slub.c: warning: 'deactivate_slab.isra.48' uses dynamic stack allocation [enabled by default]: 2153:1 => 
+  - /kisskb/src/mm/slub.c: warning: 'get_partial_node.isra.50' uses dynamic stack allocation [enabled by default]: 1853:1 => 
+  - /kisskb/src/mm/slub.c: warning: 'unfreeze_partials.isra.49' uses dynamic stack allocation [enabled by default]: 2221:1 => 
+  - /kisskb/src/net/core/dev_ioctl.c: warning: comparison of distinct pointer types lacks a cast [enabled by default]: 255:10, 131:11 => 
+  - /kisskb/src/net/core/pktgen.c: warning: 'pktgen_if_write' uses dynamic stack allocation [enabled by default]: 1710:1 => 
+  - /kisskb/src/net/core/sysctl_net_core.c: warning: comparison of distinct pointer types lacks a cast [enabled by default]: 164:9 => 
+  - /kisskb/src/net/ipv4/proc.c: warning: 'snmp_seq_show_tcp_udp.isra.5' uses dynamic stack allocation [enabled by default]: 449:1 => 
+  - /kisskb/src/net/ipv6/proc.c: warning: 'snmp6_seq_show_item' uses dynamic stack allocation [enabled by default]: 213:1 => 
+  - /kisskb/src/net/ipv6/proc.c: warning: 'snmp6_seq_show_item64.isra.1.constprop.2' uses dynamic stack allocation [enabled by default]: 226:1 => 
+  - /kisskb/src/net/llc/llc_sap.c: warning: 'llc_sap_mcast' uses dynamic stack allocation [enabled by default]: 421:1 => 
+  - /kisskb/src/net/netfilter/nf_tables_api.c: warning: 'nft_obj_init' uses dynamic stack allocation [enabled by default]: 4464:1 => 
+  - /kisskb/src/net/netfilter/nfnetlink_cthelper.c: warning: 'nfnl_cthelper_update_policy_all.isra.9' uses dynamic stack allocation [enabled by default]: 344:1 => 
+  - /kisskb/src/net/netfilter/nfnetlink_cttimeout.c: warning: 'ctnl_timeout_parse_policy' uses dynamic stack allocation [enabled by default]: 68:1 => 
+  - /kisskb/src/net/rds/connection.c: warning: 'rds_for_each_conn_info' uses dynamic stack allocation [enabled by default]: 574:1 => 
+  - /kisskb/src/net/rds/connection.c: warning: 'rds_walk_conn_path_info.isra.2.constprop.4' uses dynamic stack allocation [enabled by default]: 622:1 => 
+  - /kisskb/src/net/sunrpc/svc.c: warning: format '%zd' expects argument of type 'signed size_t', but argument 3 has type 'size_t' [-Wformat]: 1345:4 => 
+  - /kisskb/src/net/sunrpc/xprtsock.c: warning: format '%zu' expects argument of type 'size_t', but argument 4 has type 'unsigned int' [-Wformat]: 2641:3 => 
+  - /kisskb/src/security/integrity/ima/ima_api.c: warning: 'ima_audit_measurement' uses dynamic stack allocation [enabled by default]: 338:1 => 
+  - /kisskb/src/sound/core/pcm_native.c: warning: 'constrain_params_by_rules' uses dynamic stack allocation [enabled by default]: 434:1 => 
+  - <stdin>: warning: #warning syscall accept4 not implemented [-Wcpp]: 1269:2 => 
+  - <stdin>: warning: #warning syscall bind not implemented [-Wcpp]: 1260:2 => 
+  - <stdin>: warning: #warning syscall bpf not implemented [-Wcpp]: 1248:2 => 
+  - <stdin>: warning: #warning syscall clock_adjtime not implemented [-Wcpp]: 1206:2 => 
+  - <stdin>: warning: #warning syscall connect not implemented [-Wcpp]: 1263:2 => 
+  - <stdin>: warning: #warning syscall copy_file_range not implemented [-Wcpp]: 1308:2 => 
+  - <stdin>: warning: #warning syscall dup3 not implemented [-Wcpp]: 1167:2 => 
+  - <stdin>: warning: #warning syscall epoll_create1 not implemented [-Wcpp]: 1164:2 => 
+  - <stdin>: warning: #warning syscall eventfd2 not implemented [-Wcpp]: 1161:2 => 
+  - <stdin>: warning: #warning syscall execveat not implemented [-Wcpp]: 1251:2 => 
+  - <stdin>: warning: #warning syscall fanotify_init not implemented [-Wcpp]: 1191:2 => 
+  - <stdin>: warning: #warning syscall fanotify_mark not implemented [-Wcpp]: 1194:2 => 
+  - <stdin>: warning: #warning syscall finit_module not implemented [-Wcpp]: 1227:2 => 
+  - <stdin>: warning: #warning syscall getpeername not implemented [-Wcpp]: 1281:2 => 
+  - <stdin>: warning: #warning syscall getrandom not implemented [-Wcpp]: 1242:2 => 
+  - <stdin>: warning: #warning syscall getsockname not implemented [-Wcpp]: 1278:2 => 
+  - <stdin>: warning: #warning syscall getsockopt not implemented [-Wcpp]: 1272:2 => 
+  - <stdin>: warning: #warning syscall inotify_init1 not implemented [-Wcpp]: 1173:2 => 
+  - <stdin>: warning: #warning syscall kcmp not implemented [-Wcpp]: 1224:2 => 
+  - <stdin>: warning: #warning syscall listen not implemented [-Wcpp]: 1266:2 => 
+  - <stdin>: warning: #warning syscall membarrier not implemented [-Wcpp]: 1302:2 => 
+  - <stdin>: warning: #warning syscall memfd_create not implemented [-Wcpp]: 1245:2 => 
+  - <stdin>: warning: #warning syscall mlock2 not implemented [-Wcpp]: 1305:2 => 
+  - <stdin>: warning: #warning syscall name_to_handle_at not implemented [-Wcpp]: 1200:2 => 
+  - <stdin>: warning: #warning syscall open_by_handle_at not implemented [-Wcpp]: 1203:2 => 
+  - <stdin>: warning: #warning syscall pipe2 not implemented [-Wcpp]: 1170:2 => 
+  - <stdin>: warning: #warning syscall preadv not implemented [-Wcpp]: 1176:2 => 
+  - <stdin>: warning: #warning syscall preadv2 not implemented [-Wcpp]: 1311:2 => 
+  - <stdin>: warning: #warning syscall prlimit64 not implemented [-Wcpp]: 1197:2 => 
+  - <stdin>: warning: #warning syscall process_vm_readv not implemented [-Wcpp]: 1218:2 => 
+  - <stdin>: warning: #warning syscall process_vm_writev not implemented [-Wcpp]: 1221:2 => 
+  - <stdin>: warning: #warning syscall pwritev not implemented [-Wcpp]: 1179:2 => 
+  - <stdin>: warning: #warning syscall pwritev2 not implemented [-Wcpp]: 1314:2 => 
+  - <stdin>: warning: #warning syscall recvfrom not implemented [-Wcpp]: 1290:2 => 
+  - <stdin>: warning: #warning syscall recvmmsg not implemented [-Wcpp]: 1188:2 => 
+  - <stdin>: warning: #warning syscall recvmsg not implemented [-Wcpp]: 1293:2 => 
+  - <stdin>: warning: #warning syscall renameat2 not implemented [-Wcpp]: 1236:2 => 
+  - <stdin>: warning: #warning syscall rt_tgsigqueueinfo not implemented [-Wcpp]: 1182:2 => 
+  - <stdin>: warning: #warning syscall sched_getattr not implemented [-Wcpp]: 1233:2 => 
+  - <stdin>: warning: #warning syscall sched_setattr not implemented [-Wcpp]: 1230:2 => 
+  - <stdin>: warning: #warning syscall sendmmsg not implemented [-Wcpp]: 1212:2 => 
+  - <stdin>: warning: #warning syscall sendmsg not implemented [-Wcpp]: 1287:2 => 
+  - <stdin>: warning: #warning syscall sendto not implemented [-Wcpp]: 1284:2 => 
+  - <stdin>: warning: #warning syscall setsockopt not implemented [-Wcpp]: 1275:2 => 
+  - <stdin>: warning: #warning syscall shutdown not implemented [-Wcpp]: 1296:2 => 
+  - <stdin>: warning: #warning syscall signalfd4 not implemented [-Wcpp]: 1158:2 => 
+  - <stdin>: warning: #warning syscall socket not implemented [-Wcpp]: 1254:2 => 
+  - <stdin>: warning: #warning syscall socketpair not implemented [-Wcpp]: 1257:2 => 
+  - <stdin>: warning: #warning syscall syncfs not implemented [-Wcpp]: 1209:2 => 
+  - <stdin>: warning: #warning syscall timerfd_create not implemented [-Wcpp]: 1143:2 => 
+  - <stdin>: warning: #warning syscall timerfd_gettime not implemented [-Wcpp]: 1155:2 => 
+  - <stdin>: warning: #warning syscall timerfd_settime not implemented [-Wcpp]: 1152:2 => 
+  - <stdin>: warning: #warning syscall userfaultfd not implemented [-Wcpp]: 1299:2 => 
+  - arch/cris/arch-v32/Kconfig: warning: choice default symbol 'ETRAX_KGDB_PORT0' is not contained in the choice: 17 => 
+  - modpost: WARNING: modpost: Found 4 section mismatch(es).: N/A => 
+  - modpost: WARNING: modpost: Found 5 section mismatch(es).: N/A => 
+  - warning: "cause_of_death" [vmlinux] is COMMON symbol: N/A => 
+  - warning: "memcpy" [crypto/af_alg.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/ansi_cprng.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/async_tx/async_memcpy.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/camellia_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/cast5_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/cast6_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/ccm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/chacha20_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/chacha20poly1305.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/cmac.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/cryptd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/cts.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/des_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/ecdh_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/echainiv.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/fcrypt.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/keywrap.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/lrw.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/mcryptd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/md4.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/michael_mic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/pcbc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/poly1305_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/rmd128.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/rmd160.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/rmd256.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/rmd320.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/salsa20_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/sha3_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/sha512_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/sm3_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/tgr192.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/vmac.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/wp512.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [crypto/xcbc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/atm/atmtcp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/base/firmware_class.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/block/aoe/aoe.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/block/brd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/block/cryptoloop.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/block/drbd/drbd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/block/loop.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/block/nbd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/block/null_blk.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/block/rbd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/block/zram/zram.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/bluetooth/btintel.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/bluetooth/btmrvl.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/bluetooth/btqca.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/bluetooth/btwilink.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/bluetooth/hci_uart.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/bluetooth/hci_vhci.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/cdrom/cdrom.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/connector/cn.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/fmc/fmc-fakedev.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/fmc/fmc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/fsi/fsi-core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/gpio/gpio-pca953x.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/i2c/i2c-core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/i2c/i2c-slave-eeprom.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/i2c/muxes/i2c-mux-gpio.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/iio/accel/bmc150-accel-core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/iio/accel/mma9551_core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/iio/adc/ti-ads1015.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/iio/health/max30102.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/iio/humidity/hts221_i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/iio/imu/inv_mpu6050/inv-mpu6050.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/iio/industrialio.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/iio/light/tsl2583.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/leds/leds-tca6507.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/bcache/bcache.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-bio-prison.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-cache.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-crypt.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-era.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-integrity.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-log-userspace.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-log-writes.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-log.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-mod.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-snapshot.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-thin-pool.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-verity.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/dm-zoned.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/md-cluster.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/md-mod.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/persistent-data/dm-persistent-data.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/raid1.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/raid10.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/md/raid456.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/memstick/core/memstick.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/memstick/core/mspro_block.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/misc/echo/echo.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/misc/eeprom/eeprom.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/misc/eeprom/idt_89hpesx.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/misc/eeprom/max6875.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/misc/lkdtm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/misc/ti-st/st_drv.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/chips/cfi_cmdset_0001.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/chips/cfi_cmdset_0002.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/chips/cfi_cmdset_0020.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/chips/cfi_probe.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/chips/cfi_util.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/chips/gen_probe.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/chips/jedec_probe.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/chips/map_ram.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/chips/map_rom.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/inftl.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/lpddr/lpddr_cmds.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/lpddr/qinfo_probe.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/mtd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/mtdblock.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/mtdswap.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/nand/nand.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/nand/nandsim.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/nftl.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/sm_ftl.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/spi-nor/spi-nor.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/tests/mtd_nandbiterrs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/tests/mtd_nandecctest.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/tests/mtd_pagetest.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/mtd/ubi/ubi.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/appletalk/ipddp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/bonding/bonding.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/caif/caif_hsi.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/caif/caif_serial.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/can/can-dev.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/can/slcan.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/dsa/b53/b53_common.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/dsa/dsa_loop.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/dsa/microchip/ksz_common.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/dsa/mv88e6xxx/mv88e6xxx.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ethernet/mellanox/mlxsw/mlxsw_core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ethernet/mellanox/mlxsw/mlxsw_i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ethernet/qualcomm/qcauart.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ethernet/qualcomm/rmnet/rmnet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/geneve.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/hamradio/6pack.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/hamradio/bpqether.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/hamradio/hdlcdrv.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/hamradio/mkiss.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/hamradio/yam.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ipvlan/ipvlan.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/macsec.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/macvlan.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/netconsole.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/netdevsim/netdevsim.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/phy/mdio-gpio.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/phy/xilinx_gmii2rgmii.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ppp/ppp_async.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ppp/ppp_generic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ppp/ppp_mppe.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ppp/ppp_synctty.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ppp/pppoe.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/ppp/pptp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/slip/slhc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/slip/slip.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/team/team.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/team/team_mode_loadbalance.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/tun.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/veth.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/vrf.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/vxlan.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wan/dlci.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wan/hdlc_cisco.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wan/hdlc_fr.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wan/hdlc_ppp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wan/hdlc_raw.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wan/hdlc_raw_eth.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wan/lapbether.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wan/x25_asy.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/ath/ath6kl/ath6kl_core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/broadcom/brcm80211/brcmfmac/brcmfmac.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/intersil/hostap/hostap.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/intersil/p54/p54common.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/mac80211_hwsim.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/marvell/libertas/libertas.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/marvell/libertas_tf/libertas_tf.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/marvell/mwifiex/mwifiex.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/rsi/rsi_91x.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/st/cw1200/cw1200_core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/ti/wl1251/wl1251.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/ti/wl12xx/wl12xx.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/ti/wl18xx/wl18xx.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/net/wireless/ti/wlcore/wlcore.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/fdp/fdp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/fdp/fdp_i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/microread/microread.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/nfcmrvl/nfcmrvl.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/nfcmrvl/nfcmrvl_i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/nxp-nci/nxp-nci.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/nxp-nci/nxp-nci_i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/pn533/pn533.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/pn544/pn544.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/pn544/pn544_i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/s3fwrn5/s3fwrn5.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/st-nci/st-nci.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/st-nci/st-nci_i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/st21nfca/st21nfca_hci.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nfc/st21nfca/st21nfca_i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nvme/host/nvme-core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nvme/host/nvme-fabrics.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nvme/target/nvmet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/nvmem/nvmem_core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/power/supply/bq2415x_charger.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/power/supply/bq27xxx_battery_i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/power/supply/generic-adc-battery.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/power/supply/sbs-battery.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/regulator/ltc3589.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/regulator/ltc3676.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/regulator/pfuze100-regulator.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/regulator/pwm-regulator.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/regulator/tps6507x-regulator.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/ch.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/device_handler/scsi_dh_emc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/device_handler/scsi_dh_rdac.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/fcoe/libfcoe.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/libfc/libfc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/libiscsi.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/libiscsi_tcp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/libsas/libsas.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/osd/libosd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/osd/osd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/osst.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/scsi_debug.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/scsi_mod.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/scsi_transport_fc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/scsi_transport_iscsi.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/scsi_transport_srp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/sd_mod.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/ses.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/sg.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/sr_mod.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/scsi/st.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/siox/siox-core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/slimbus/slimbus.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/spmi/spmi.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/comedi/comedi.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/greybus/gb-audio-gb.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/greybus/gb-audio-manager.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/greybus/gb-bootrom.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/greybus/gb-i2c.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/greybus/gb-loopback.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/greybus/gb-raw.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/greybus/gb-uart.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/greybus/greybus.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/gs_fpgaboot/gs_fpga.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/iio/light/tsl2x7x.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/ipx/ipx.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/irda/drivers/sir-dev.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/irda/net/ircomm/ircomm-tty.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/irda/net/irda.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/irda/net/irlan/irlan.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/irda/net/irnet/irnet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lnet/klnds/socklnd/ksocklnd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lnet/libcfs/libcfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lnet/lnet/lnet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lnet/selftest/lnet_selftest.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lustre/llite/lustre.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lustre/lmv/lmv.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lustre/lov/lov.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lustre/mdc/mdc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lustre/mgc/mgc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lustre/obdclass/obdclass.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lustre/osc/osc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/lustre/lustre/ptlrpc/ptlrpc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/ncpfs/ncpfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/staging/skein/skein.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/target/iscsi/iscsi_target_mod.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/target/loopback/tcm_loop.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/target/target_core_mod.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/target/target_core_pscsi.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/target/target_core_user.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/target/tcm_fc/tcm_fc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/thermal/thermal_sys.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/tty/n_gsm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/tty/n_r3964.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/uwb/uwb.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [drivers/watchdog/ziirave_wdt.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/9p/9p.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/adfs/adfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/affs/affs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/afs/kafs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/autofs4/autofs4.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/befs/befs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/bfs/bfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/btrfs/btrfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/cachefiles/cachefiles.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ceph/ceph.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/cifs/cifs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/coda/coda.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/configfs/configfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/cramfs/cramfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/crypto/fscrypto.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/dlm/dlm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ecryptfs/ecryptfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/efs/efs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/exofs/exofs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ext2/ext2.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ext4/ext4.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/f2fs/f2fs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/fat/fat.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/fat/msdos.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/fat/vfat.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/freevxfs/freevxfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/fscache/fscache.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/fuse/fuse.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/gfs2/gfs2.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/hfs/hfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/hfsplus/hfsplus.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/hostfs/hostfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/hpfs/hpfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/isofs/isofs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/jbd2/jbd2.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/jffs2/jffs2.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/jfs/jfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/lockd/lockd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/minix/minix.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/nfs/blocklayout/blocklayoutdriver.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/nfs/filelayout/nfs_layout_nfsv41_files.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/nfs/flexfilelayout/nfs_layout_flexfiles.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/nfs/nfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/nfs/nfsv2.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/nfs/nfsv3.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/nfs/nfsv4.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/nfsd/nfsd.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/nilfs2/nilfs2.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ntfs/ntfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ocfs2/cluster/ocfs2_nodemanager.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ocfs2/dlm/ocfs2_dlm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ocfs2/dlmfs/ocfs2_dlmfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ocfs2/ocfs2.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ocfs2/ocfs2_stackglue.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/omfs/omfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/orangefs/orangefs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/overlayfs/overlay.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/pstore/pstore.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/qnx4/qnx4.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/qnx6/qnx6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/reiserfs/reiserfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/romfs/romfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/squashfs/squashfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/sysv/sysv.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ubifs/ubifs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/udf/udf.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/ufs/ufs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [fs/xfs/xfs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/842/842_decompress.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/bch.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/lz4/lz4_compress.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/lz4/lz4hc_compress.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/reed_solomon/reed_solomon.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/test-string_helpers.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/test_bitmap.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/test_bpf.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/test_firmware.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/ts_bm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/ts_fsm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/ts_kmp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/xxhash.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/zstd/zstd_compress.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [lib/zstd/zstd_decompress.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [mm/zsmalloc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/6lowpan/6lowpan.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/6lowpan/nhc_udp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/802/garp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/802/mrp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/802/psnap.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/8021q/8021q.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/9p/9pnet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/appletalk/appletalk.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/atm/atm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/atm/br2684.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/atm/clip.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/atm/lec.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/atm/mpoa.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/atm/pppoatm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ax25/ax25.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/batman-adv/batman-adv.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/bluetooth/bluetooth.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/bluetooth/bluetooth_6lowpan.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/bluetooth/bnep/bnep.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/bluetooth/rfcomm/rfcomm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/bridge/br_netfilter.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/bridge/bridge.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/bridge/netfilter/ebtables.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/bridge/netfilter/nft_reject_bridge.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/caif/caif.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/caif/caif_socket.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/can/can-bcm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/can/can-gw.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/can/can-raw.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ceph/libceph.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/core/devlink.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/core/drop_monitor.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/core/pktgen.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/dccp/dccp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/dccp/dccp_ipv6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/decnet/decnet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/decnet/netfilter/dn_rtmsg.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/dns_resolver/dns_resolver.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/dsa/dsa_core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/hsr/hsr.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ieee802154/6lowpan/ieee802154_6lowpan.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ieee802154/ieee802154.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ieee802154/ieee802154_socket.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ife/ife.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/ah4.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/esp4.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/ip_gre.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/ip_tunnel.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/ip_vti.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/ipcomp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/ipip.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/netfilter/arp_tables.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/netfilter/arpt_mangle.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/netfilter/ip_tables.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/netfilter/ipt_CLUSTERIP.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/netfilter/nf_nat_snmp_basic.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv4/tcp_diag.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/ah6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/esp6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/ip6_gre.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/ip6_tunnel.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/ip6_udp_tunnel.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/ip6_vti.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/ipcomp6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/ipv6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/mip6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/netfilter/ip6_tables.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/netfilter/ip6t_NPT.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/netfilter/ip6t_eui64.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/netfilter/ip6t_rpfilter.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/netfilter/ip6table_mangle.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/netfilter/nf_conntrack_ipv6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/netfilter/nft_chain_route_ipv6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/sit.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/xfrm6_mode_beet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/xfrm6_mode_tunnel.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/ipv6/xfrm6_tunnel.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/key/af_key.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/l2tp/l2tp_core.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/l2tp/l2tp_netlink.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/l2tp/l2tp_ppp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/llc/llc2.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/mac80211/mac80211.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/mac802154/mac802154.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/mpls/mpls_router.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_bitmap_ipmac.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_ip.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_ipmac.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_ipmark.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_ipport.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_ipportip.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_ipportnet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_mac.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_net.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_netiface.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_netnet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_netport.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipset/ip_set_hash_netportnet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipvs/ip_vs.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/ipvs/ip_vs_pe_sip.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_conncount.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_conntrack.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_conntrack_ftp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_conntrack_h323.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_conntrack_netlink.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_conntrack_pptp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_conntrack_proto_gre.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_conntrack_sip.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_nat.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nf_tables.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nfnetlink_cthelper.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nfnetlink_queue.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nft_compat.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nft_ct.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nft_exthdr.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nft_nat.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/nft_rt.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/xt_CT.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/xt_bpf.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/xt_connlimit.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/xt_hashlimit.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/xt_osf.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/xt_recent.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netfilter/xt_sctp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/netrom/netrom.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/nfc/hci/hci.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/nfc/nci/nci.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/nfc/nci/nci_uart.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/nfc/nfc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/nfc/nfc_digital.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/nsh/nsh.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/openvswitch/openvswitch.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/packet/af_packet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/packet/af_packet_diag.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/phonet/phonet.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/phonet/pn_pep.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/rds/rds.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/rose/rose.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/rxrpc/rxrpc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/act_bpf.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/act_pedit.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/cls_bpf.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/cls_flower.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/cls_rsvp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/cls_rsvp6.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/cls_u32.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/em_canid.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/em_meta.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/sch_atm.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/sch_choke.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/sch_gred.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/sch_mqprio.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/sch_prio.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/sch_red.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/sch_sfq.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/sch_tbf.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sched/sch_teql.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sctp/sctp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sctp/sctp_diag.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sunrpc/auth_gss/auth_rpcgss.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sunrpc/auth_gss/rpcsec_gss_krb5.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/sunrpc/sunrpc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/tipc/tipc.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/tls/tls.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/unix/unix.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/vmw_vsock/vsock.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/wireless/cfg80211.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/wireless/lib80211_crypt_ccmp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/wireless/lib80211_crypt_tkip.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/wireless/lib80211_crypt_wep.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/x25/x25.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/xfrm/xfrm_ipcomp.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [net/xfrm/xfrm_user.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [samples/connector/cn_test.ko] has no CRC!: N/A => 
+  - warning: "memcpy" [samples/trace_events/trace-events-sample.ko] has no CRC!: N/A => 
+  - warning: (COMPAT) selects COMPAT_BINFMT_ELF which has unmet direct dependencies (COMPAT && BINFMT_ELF): N/A => 
+  - warning: (MN10300 && HAVE_HARDLOCKUP_DETECTOR_ARCH) selects HAVE_NMI_WATCHDOG which has unmet direct dependencies (HAVE_NMI): N/A => 
+  - warning: (PREEMPT && DRM_I915_DEBUG && DEBUG_ATOMIC_SLEEP) selects PREEMPT_COUNT which has unmet direct dependencies (COLDFIRE): N/A => 
+  - warning: (SINGLE_MEMORY_CHUNK) selects NEED_MULTIPLE_NODES which has unmet direct dependencies (DISCONTIGMEM || NUMA): N/A => 
+  - warning: EXPORT symbol "__memcpy" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: EXPORT symbol "memcpy" [vmlinux] version generation failed, symbol will not be versioned.: N/A => 
+  - warning: vmlinux.o(.text+0x214): Section mismatch in reference from the function sfp_upstream_stop() to the function .init.text:setup_profiling_timer(): N/A => 
+  - warning: vmlinux.o(.text+0x35f0): Section mismatch in reference from the variable __boot_from_prom to the function .init.text:prom_init(): N/A => 
+  - warning: vmlinux.o(.text+0x3844): Section mismatch in reference from the variable start_here_multiplatform to the function .init.text:early_setup(): N/A => 
+  - warning: vmlinux.o(.text+0x3878): Section mismatch in reference from the variable start_here_common to the function .init.text:start_kernel(): N/A => 
+  - warning: vmlinux.o(.text+0x4b97e78): Section mismatch in reference from the function .create_device_attrs() to the function .init.text:.make_sensor_label(): N/A => 
+  - warning: vmlinux.o(.text+0x7a2f0): Section mismatch in reference from the function stop_machine_change_mapping() to the function .meminit.text:create_physical_mapping(): N/A => 
+  - warning: vmlinux.o(.text+0x7a2fc): Section mismatch in reference from the function stop_machine_change_mapping() to the function .meminit.text:create_physical_mapping(): N/A => 
+  - warning: vmlinux.o(.text+0x7a8bc): Section mismatch in reference from the function .stop_machine_change_mapping() to the function .meminit.text:.create_physical_mapping(): N/A => 
+  - warning: vmlinux.o(.text+0x7a8c8): Section mismatch in reference from the function .stop_machine_change_mapping() to the function .meminit.text:.create_physical_mapping(): N/A => 
+  - warning: vmlinux.o(.text+0x7bdec): Section mismatch in reference from the function .stop_machine_change_mapping() to the function .meminit.text:.create_physical_mapping(): N/A => 
+  - warning: vmlinux.o(.text+0x7bdf8): Section mismatch in reference from the function .stop_machine_change_mapping() to the function .meminit.text:.create_physical_mapping(): N/A => 
+  - warning: vmlinux.o(.text+0x7c01c): Section mismatch in reference from the function .stop_machine_change_mapping() to the function .meminit.text:.create_physical_mapping(): N/A => 
+  - warning: vmlinux.o(.text+0x7c028): Section mismatch in reference from the function .stop_machine_change_mapping() to the function .meminit.text:.create_physical_mapping(): N/A => 
+  - warning: vmlinux.o(.text+0xea8): Section mismatch in reference from the function pci_find_next_ext_capability() to the function .init.text:pcibios_init_bridge(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x1c8): Section mismatch in reference from the function .init_fallback_flush() to the function .init.text:.ppc64_bolted_size(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x1f4): Section mismatch in reference from the function .init_fallback_flush() to the function .init.text:.memblock_alloc_base(): N/A => 
+  - warning: vmlinux.o(.text.unlikely+0x32f4): Section mismatch in reference from the function .pnv_setup_rfi_flush() to the function .init.text:.setup_rfi_flush(): N/A => 
+
+Gr{oetje,eeting}s,
+
+						Geert
+
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
