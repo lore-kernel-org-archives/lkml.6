@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754180AbeDPJg0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:36:26 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41803 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751124AbeDPJgW (ORCPT
+        id S1754650AbeDPJgg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:36:36 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34183 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753065AbeDPJge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:36:22 -0400
-X-Google-Smtp-Source: AIpwx4++SKaOKJFoT9haaOLqmBJwWZCR67EVXgTYdtBeiRDP+Bvw6MNYtu19LWxQbktkQ8OuFaSvwQ==
-Date: Mon, 16 Apr 2018 10:36:18 +0100
+        Mon, 16 Apr 2018 05:36:34 -0400
+X-Google-Smtp-Source: AIpwx497G01i7e+K/v1MvqMb7CVckP+YKueKCXPykJScjn5DGSZeDwRJ3Bn2bQt3gZNdkYCe2k3Zmw==
+Date: Mon, 16 Apr 2018 10:36:30 +0100
 From: Lee Jones <lee.jones@linaro.org>
 To: Chen-Yu Tsai <wens@csie.org>
 Cc: Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] mfd: axp20x: Const-ify struct mfd_cell and struct
- resource
-Message-ID: <20180416093618.2ajissetbjfpjck5@dell>
+Subject: Re: [PATCH 2/3] mfd: axp20x: Use DEFINE_RES_IRQ to declare resources
+ for mfd_cells
+Message-ID: <20180416093630.ytjtspxsrlppxa5z@dell>
 References: <20180329043115.7132-1-wens@csie.org>
- <20180329043115.7132-2-wens@csie.org>
+ <20180329043115.7132-3-wens@csie.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180329043115.7132-2-wens@csie.org>
+In-Reply-To: <20180329043115.7132-3-wens@csie.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -31,14 +31,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, 29 Mar 2018, Chen-Yu Tsai wrote:
 
-> The axp20x driver has lots of mfd_cell and resource structs.
-> These can all be const-ified.
+> Previously we were open coding the interrupts for the various mfd
+> cells. This made the code somewhat long due to pretty-formatting.
+> 
+> This patch convert those into one-line declarations with DEFINE_RES_IRQ,
+> making the code shorter and easier to read.
 > 
 > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  drivers/mfd/axp20x.c       | 44 ++++++++++++++++++++++----------------------
->  include/linux/mfd/axp20x.h |  2 +-
->  2 files changed, 23 insertions(+), 23 deletions(-)
+>  drivers/mfd/axp20x.c | 187 +++++++++------------------------------------------
+>  1 file changed, 30 insertions(+), 157 deletions(-)
 
 Applied, thanks.
 
