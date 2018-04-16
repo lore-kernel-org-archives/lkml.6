@@ -1,113 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754250AbeDPJEU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:04:20 -0400
-Received: from www62.your-server.de ([213.133.104.62]:55766 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753541AbeDPJES (ORCPT
+        id S1754313AbeDPJFm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:05:42 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:56478 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754291AbeDPJFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:04:18 -0400
-Subject: Re: linux-next: build failure after merge of the bpf tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Mon, 16 Apr 2018 05:05:40 -0400
+Date: Mon, 16 Apr 2018 11:04:52 +0200
+From: Daniel Kiper <daniel.kiper@oracle.com>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: James Bottomley <james.bottomley@hansenpartnership.com>,
+        linux-efi@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>
-References: <20180416123000.30fd8a04@canb.auug.org.au>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <f79728c9-fa0c-ad04-f5cf-578172ec1712@iogearbox.net>
-Date: Mon, 16 Apr 2018 11:04:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        the arch/x86 maintainers <x86@kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>, eric.snowberg@oracle.com,
+        "H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] x86/xen/efi: Initialize UEFI secure boot state during
+ dom0 boot
+Message-ID: <20180416090452.GQ26100@olila.local.net-space.pl>
+References: <1522766345-4169-1-git-send-email-daniel.kiper@oracle.com>
+ <1522770281.4522.14.camel@HansenPartnership.com>
+ <20180403160712.GL26100@olila.local.net-space.pl>
+ <1522774852.4522.25.camel@HansenPartnership.com>
+ <20180404103824.GM26100@olila.local.net-space.pl>
+ <20180411085620.GI26100@olila.local.net-space.pl>
+ <CAKv+Gu_1ydqYS+TBgYVEH9jTDEjSecBYxJbq_28mZJ9G3-T8EA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180416123000.30fd8a04@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_1ydqYS+TBgYVEH9jTDEjSecBYxJbq_28mZJ9G3-T8EA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8864 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804160084
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen, hi John,
+On Mon, Apr 16, 2018 at 10:15:15AM +0200, Ard Biesheuvel wrote:
+> On 11 April 2018 at 10:56, Daniel Kiper <daniel.kiper@oracle.com> wrote:
+> > On Wed, Apr 04, 2018 at 12:38:24PM +0200, Daniel Kiper wrote:
+> >> On Tue, Apr 03, 2018 at 10:00:52AM -0700, James Bottomley wrote:
+> >> > On Tue, 2018-04-03 at 18:07 +0200, Daniel Kiper wrote:
+> >> > > On Tue, Apr 03, 2018 at 08:44:41AM -0700, James Bottomley wrote:
+> >>
+> >> [...]
+> >>
+> >> > > > This looks like a bad idea: you're duplicating the secure boot
+> >> > > > check in
+> >> > > >
+> >> > > > drivers/firmware/efi/libstub/secureboot.c
+> >> > > >
+> >> > > > Which is an implementation of policy.  If we have to have policy in
+> >> > > > the kernel, it should really only be in one place to prevent drift;
+> >> > > > why can't you simply use the libstub efi_get_secureboot() so we're
+> >> > > > not duplicating the implementation of policy?
+> >> > >
+> >> > > Well, here is the first version of this patch:
+> >> > > https://lkml.org/lkml/2018/1/9/496 Ard did not like it. I was not
+> >> > > happy too. In general both approaches are not perfect. More you can
+> >> > > find in the discussion around this patchset. If you have better idea
+> >> > > how to do that I am happy to implement it.
+> >> >
+> >> > One way might be simply to have the pre exit-boot-services code lay
+> >> > down a variable containing the state which you pick up, rather than you
+> >>
+> >> Do you mean variable in kernel proper or something like that? If yes this
+> >> is not possible. EFI Linux stub is not executed in Xen dom0. All UEFI
+> >> infrastructure is owned and operated by Xen. Dom0 kernel can access some
+> >> stuff in UEFI, including variables, via hypercall. However, when dom0
+> >> runs only UEFI runtime services are available.
+> >>
+> >> > calling efi code separately and trying to use the insecure RT
+> >>
+> >> I am not sure why they are insecure.
+> >>
+> >> > variables.  That way there's a uniform view of the internal kernel
+> >> > secure boot state that everyone can use.
+> >>
+> >> That would be perfect but I have a feeling that in form proposed above
+> >> it is not possible.
+> >
+> > Ping?
+> >
+>
+> (apologies if this is a duplicate email - I thought I had replied
+> already but I don't see it in my sent folder)
+>
+> Queued in efi/next - thanks.
 
-On 04/16/2018 04:30 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the bpf tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> kernel/bpf/core.o: In function `sock_map_release':
-> core.c:(.text+0xd04): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> kernel/events/core.o: In function `sock_map_release':
-> core.c:(.text+0x85cc): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> block/blk-core.o: In function `sock_map_release':
-> blk-core.c:(.text+0x58e8): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> drivers/net/virtio_net.o: In function `sock_map_release':
-> virtio_net.c:(.text+0x53ec): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/core/dev.o: In function `sock_map_release':
-> dev.c:(.text+0x6c68): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/core/rtnetlink.o: In function `sock_map_release':
-> rtnetlink.c:(.text+0x63e0): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/core/filter.o: In function `sock_map_release':
-> filter.c:(.text+0x8c8c): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/core/sock_reuseport.o: In function `sock_map_release':
-> sock_reuseport.c:(.text+0x398): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/bpf/test_run.o: In function `sock_map_release':
-> test_run.c:(.text+0x3dc): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/packet/af_packet.o: In function `sock_map_release':
-> af_packet.c:(.text+0x6958): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> 
-> Caused by commit
-> 
->   9b2e8bbc4e7a ("bpf: sockmap, map_release does not hold refcnt for pinned maps")
-> 
-> I applied the following patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 16 Apr 2018 12:27:24 +1000
-> Subject: [PATCH] fix for "bpf: sockmap, map_release does not hold refcnt for
->  pinned maps"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/bpf.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index f46561de5154..3b6c2b66f414 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -660,7 +660,7 @@ static inline int sock_map_prog(struct bpf_map *map,
->  	return -EOPNOTSUPP;
->  }
->  
-> -void sock_map_release(struct bpf_map *map) {}
-> +static inline void sock_map_release(struct bpf_map *map) {}
->  #endif
->  
->  /* verifier prototypes for helper functions called from eBPF programs */
+Thanks a lot!
 
-Sigh, yeah, that's buggy. Thanks for catching it!
-
-John, given bpf tree hasn't been pushed out, I'm considering to drop the
-series from the bpf tree so we can have a clean respin of it with this fixed
-initially and not as follow-up churn.
-
-While you're at it, can you just make this a bpf callback, so we have the
-'clear' handlers private in prog array and sockmap respectively? This would
-also have avoided the bug in the first place.
-
-Thanks,
 Daniel
