@@ -1,88 +1,77 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4006321-1523906800-2-7256872192136788550
+X-Cyrus-Session-Id: sloti22d1t05-4109416-1523912322-2-9129236147719316446
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='CA'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523906800; b=X+DSh7/ZRjKvJcgo3UuGKprSi1NJi/0FiteJRsJfcV/JpDShxE
-    tt/jB0m9PBaqG8I/eJao6JpXUTX/LQbkbmATSfbf3utMj0aUyGMry8CP9MaY0O6r
-    IORfa56MgUw0+KAIy4BjLBfPr4RpPfgzFhXUA7C+3xw5Qdb2qaPfr/d99iaMwLS6
-    iITHoZztkMgTSlJWZw7x1F9+MzusX9gI48YzNA8zH6gcnsJpD2SdX0nxKlCwMcEb
-    3lkTtLDD6S01TJNoxc/jNssKLUO+tMp1FY5281/bdVGfDdxm8GiuLVL2zSTehzwd
-    GWYtnqzA57whX4U1/4jetoa5KwtvCj5dKtfw==
+    1523912321; b=JtbFh7767EAtKGijONiYDQEAJ+OesLGUCRT1lRSn5fvnQCSF/t
+    01h6sD+2o9j0wkPTaMrJv+4m0SiwKxw/eMqZukeV0iZXutd8Rx8de5HMo0j+JLJ7
+    J4fwfnJxI1IhXS59ao2X7jYBKdiulwZiSr8lq4xSPF1bDWIrUMY2B4tLoZ4V/sYe
+    OV6LgELqASDlvSR8imGKVpQyqOATeXm+Ckgr8NfU43Bu/DzqJetqxMbTU9VSdNl2
+    Bqvj/DUOWALgno2ppGlm2cUgmVWJUn1owuup8cTHRerM5ovrU53hCJTRNNTwNS+0
+    fA9dzVjV8Y/2eJbDOwz4c1NFgdYQI0Q9SBeA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1523906800; bh=R1vm7mkyI1Y6RuzC9v+igsnzfabPdGkICIVEFiycva
-    w=; b=TVCn/djnbp5Cp+xXcDVPfQshdAaY+WeatCE6ajeoiPd7W3aNOJILrD7KRb
-    Ij2v/o4KQFxIAwoqZWYvK6Nw2qIjiHOB9q14r7WpkqebpfczCYLKyCpLb+1bf2bS
-    notKQN0j7UYyxmMlNc07uSCgKGK+ER29MJ2k5/TbjzULSabl957RZv/pRV2VbVRD
-    FYxrkokWyR8nXA1KlzZoPRiiG/mQFoRtYIU2Z5YTywRyNFt8I+VNdTLLkEKSIJq7
-    4+6P8ykg2z1Jz43+QuVJicOg/oqiUVhrk4q2clJxn/6pxtPyuUuxaSKgw//Nn/Is
-    jESKcQOQ8I6TnF700a4T+jjstmcw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qg6jN3RY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=vJKz1FYc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    messagingengine.com; h=date:from:to:cc:message-id:in-reply-to
+    :references:subject:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523912321;
+    bh=NjHt1be9NiMiQsTdbZcRbS0n0ha/cLJz9jMoOqzUBo8=; b=tKoEGCs9YsG5
+    RTLvejRdSCP2h/6NiCvx1LruGtFNNNzIg3eMI3/Iodv+yNzC+pn9+sBArkqINMJW
+    DIIAS0DCYgq2oM1CS05epC6wy2lEyvdDu4IdSDh6eSsAzlIA1nzQsCEj/bKaSlPV
+    OGGFQ5U0WJvEjo3Y9Y6kCK46uxXSNPe7NSxS0Ppw8zO9lCSNIZ9uRzBqcxyaBYmB
+    aKbpFh9XX/wtWIQTc9Vm5E3v9pecXHWYWrUO0jbmzKFTSDtIYFsM8QTkYZ4Kyt4B
+    14SerUl1At8X9umdFy24OIc/yqB4b5ger0wZJvuegeETDLFcUVQZMwL5HxW1qC8Y
+    j9UN1dL/1Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OXfvAY2g;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qg6jN3RY x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=vJKz1FYc x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-foundation.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=efficios.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=OXfvAY2g;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux-foundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=efficios.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPgGlzGara3SLael+f+dg/s8VxgSnJa6Q9YhNe4UN7mw+Rvm1PP5KOYzzkvhNvHj4w5vwp2ZMYx0P5JbF9m+0o1bygTQAN2NFrgxL5vIC0N3x4rR6jhw
-    0yxKo0XkhQ86mNkQR0j26oJGoz0HFarw12Ddyeh2r3JV+XbxHUq69CAmrhKrzW3rDSVCR7jEKifekV0rq/wOXsJongz9X+goe5FrXrqSGgmnDu79nSJudSXC
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=7d_E57ReAAAA:8 a=VwQbUJbxAAAA:8 a=toAGXmwsyvtZ_ilBNu0A:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=jhqOcbufqs7Y1TYCrUUU:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfJZqCFOFdE2baDBND4mm6zA4inbBF3qPIOTnmR3Sk7DBiTb6A3fxsNmkW6KKKdqa4HP1gTHLIgqoIJwGFXIpaA4RLDjGrBenVglfG6x5wyKUo872CvHB
+    7DuWu6BH5DI/dpsvsBQKPCmLT6bTl0o/aLeM0lv4H6g2xUwzgrg34419HkUOrrANlLjJB+6J/NLoaXOHRrD/Aa4uuqBnmXnY/39WKvoNtPrGh4by4TjCi8Vn
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=FKkrIqjQGGEA:10 a=alcw4SYXYecA:10
+    a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10 a=FqpbrowB-PMA:10 a=Z4Rwk6OoAAAA:8
+    a=7d_E57ReAAAA:8 a=VwQbUJbxAAAA:8 a=venAk8_45drclan_QD0A:9 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=jhqOcbufqs7Y1TYCrUUU:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753280AbeDPT0i (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 16 Apr 2018 15:26:38 -0400
-Received: from mail-it0-f48.google.com ([209.85.214.48]:35523 "EHLO
-        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753270AbeDPT0g (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Mon, 16 Apr 2018 15:26:36 -0400
-X-Google-Smtp-Source: AIpwx48KVQ+Fuzs2WwwFNTdJ2RJeopgAkzC0OtOiBX7x3TAI5hsOCVnyIK1+Hq5pSX54avZVFjzm0ELZDkwqB4exOig=
-MIME-Version: 1.0
-In-Reply-To: <435471300.11403.1523906479091.JavaMail.zimbra@efficios.com>
-References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com>
- <20180412192800.15708-13-mathieu.desnoyers@efficios.com> <CA+55aFxcJ2V_1BoW0Cct=Kkp7REkgiU_BTimGdmoFmWHaWaZ-g@mail.gmail.com>
- <CALCETrVvaMWUJKx+bxXdEm3oVBzn2r5RuJ4JcXNzOPSgJAC5PA@mail.gmail.com>
- <542721578.11358.1523903708510.JavaMail.zimbra@efficios.com>
- <CA+55aFzZtY5ELKc+TGf9BA6px300BNzedadm_yNXzODTKN=HgQ@mail.gmail.com> <435471300.11403.1523906479091.JavaMail.zimbra@efficios.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 16 Apr 2018 12:26:35 -0700
-X-Google-Sender-Auth: GngsxokCwTI62zHDD5D2ugi_dQ4
-Message-ID: <CA+55aFxtZXi05UNLmtbKcZ=2N_ROE5pLnu9+v6FaXiuK=VbErA@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 12/23] cpu_opv: Provide cpu_opv system call (v7)
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+        id S1750732AbeDPU6k (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 16 Apr 2018 16:58:40 -0400
+Received: from mail.efficios.com ([167.114.142.138]:52046 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeDPU6j (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 16 Apr 2018 16:58:39 -0400
+Date: Mon, 16 Apr 2018 16:58:37 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@amacapital.net>,
         Peter Zijlstra <peterz@infradead.org>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -102,38 +91,70 @@ Cc: Andy Lutomirski <luto@amacapital.net>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <1248652824.11527.1523912317964.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CA+55aFxtZXi05UNLmtbKcZ=2N_ROE5pLnu9+v6FaXiuK=VbErA@mail.gmail.com>
+References: <20180412192800.15708-1-mathieu.desnoyers@efficios.com> <20180412192800.15708-13-mathieu.desnoyers@efficios.com> <CA+55aFxcJ2V_1BoW0Cct=Kkp7REkgiU_BTimGdmoFmWHaWaZ-g@mail.gmail.com> <CALCETrVvaMWUJKx+bxXdEm3oVBzn2r5RuJ4JcXNzOPSgJAC5PA@mail.gmail.com> <542721578.11358.1523903708510.JavaMail.zimbra@efficios.com> <CA+55aFzZtY5ELKc+TGf9BA6px300BNzedadm_yNXzODTKN=HgQ@mail.gmail.com> <435471300.11403.1523906479091.JavaMail.zimbra@efficios.com> <CA+55aFxtZXi05UNLmtbKcZ=2N_ROE5pLnu9+v6FaXiuK=VbErA@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 12/23] cpu_opv: Provide cpu_opv system call
+ (v7)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.7_GA_1964 (ZimbraWebClient - FF52 (Linux)/8.8.7_GA_1964)
+Thread-Topic: cpu_opv: Provide cpu_opv system call (v7)
+Thread-Index: RuF2OosSEg2Wu4cnvUvTkLUnST/FrQ==
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 16, 2018 at 12:21 PM, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> And I try very hard to avoid being told I'm the one breaking
-> user-space. ;-)
+----- On Apr 16, 2018, at 3:26 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
 
-You *can't* be breaking user space. User space doesn't use this yet.
+> On Mon, Apr 16, 2018 at 12:21 PM, Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> And I try very hard to avoid being told I'm the one breaking
+>> user-space. ;-)
+> 
+> You *can't* be breaking user space. User space doesn't use this yet.
+> 
+> That's actually why I'd like to start with the minimal set - to make
+> sure we don't introduce features that will come back to bite us later.
+> 
+> The one compelling use case I saw was a memory allocator that used
+> this for getting per-CPU (vs per-thread) memory scaling.
+> 
+> That code didn't need the cpu_opv system call at all.
+> 
+> And if somebody does a ldload of a malloc library, and then wants to
+> analyze the behavior of a program, maybe they should ldload their own
+> malloc routines first? That's pretty much par for the course for those
+> kinds of projects.
+> 
+> So I'd much rather we first merge the non-contentious parts that
+> actually have some numbers for "this improves performance and makes a
+> nice fancy malloc possible".
+> 
+> As it is, the cpu_opv seems to be all about theory, not about actual need.
 
-That's actually why I'd like to start with the minimal set - to make
-sure we don't introduce features that will come back to bite us later.
+I fully get your point about getting the minimal feature in. So let's focus
+on rseq only.
 
-The one compelling use case I saw was a memory allocator that used
-this for getting per-CPU (vs per-thread) memory scaling.
+I will rework the patchset so the rseq selftests don't depend on cpu_opv,
+and remove the cpu_opv stuff. I think it would be a good start for the
+Facebook guys (jemalloc), given that just rseq seems to be enough for them
+for now. It should be enough for the arm64 performance counters as well.
 
-That code didn't need the cpu_opv system call at all.
+Then we'll figure out what is needed to make other projects use it based on
+their needs (e.g. lttng-ust, liburcu, glibc malloc), and whether jemalloc
+end up requiring cpu_opv for memory migration between per-cpu pools after all.
 
-And if somebody does a ldload of a malloc library, and then wants to
-analyze the behavior of a program, maybe they should ldload their own
-malloc routines first? That's pretty much par for the course for those
-kinds of projects.
+Thanks,
 
-So I'd much rather we first merge the non-contentious parts that
-actually have some numbers for "this improves performance and makes a
-nice fancy malloc possible".
+Mathieu
 
-As it is, the cpu_opv seems to be all about theory, not about actual need.
-
-              Linus
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
