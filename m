@@ -1,156 +1,147 @@
-Return-Path: <jikos@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1636556-1523964087-2-2270597988107454903
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3782214-1523900670-2-8199498125734441557
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_MED -2.3, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='195.135.220.15', Host='mx2.suse.de', Country='DE', FromHeader='org',
-  MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: jikos@kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523964086; b=uXo5r3XBFdXFfxBiTjXhAVvFnrrOhxRaW/6zSEmDTpwkmOPDXb
-    3UNEwmDYBvSxjYcRNnREGfm8q/jqVwNvQHpWJSTYJIvqynm/14ByEO8g2j7tbyDz
-    707j7VhuwqcbEomiobAVmhzOjMkWFFKSlUOPAbczxn1x+qXwgCmEYB3ECqJKV6v1
-    +s8u09Nv3Mg/ZcgoyvWqo+jFA/DeC6MY1DFP7r96ErgAQHXk+PNXjo+4eDRuEZ6+
-    sWHYHbHLIDKWJxsQGh/bZH//FWJBUYtxLcNGltapulYcXvPZRg9J0WaSB1ejwPc+
-    jav7C/jp3+onX7ebERpc6H8A1N1L1x0ObRuA==
+    1523900670; b=fht2evxfr0GSCUvZN61kdmh9Wsos4D5vweyBRe7Lo5A/CSjpEe
+    6kqIM0UXmaaOJZW/jvPJ2OLvauNxEpYrEIpMOjgisJj7ecnGIZHe9yfE4YzS7/q6
+    ASypfYIVntZ2GrcGGsy7iUdX1KHd0ifJxvPdGWRoW5Nk58WTsp49LnEViAiBSh1P
+    qUoF6ktTQYgHENQLrRRKgIwi0UvKBZc53pufFx8/ewVoh24guhIf+gSfLVJ4VwkX
+    rxn6TLRuaBGXNiM4aNtfrbH8E7La5EE2eE9Rw5ovV9ZHcY8A55Quksk51UJ9AbYP
+    fZT+sDPQ/0tnJMdK2ZcjoEWnht5Naemx+3mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
-    :message-id:references:mime-version:content-type; s=fm2; t=
-    1523964086; bh=mkGJWRgV1v4uQkfh0cf/hOU2kfr+xqNF2tJo/RreTYA=; b=v
-    L1+R+Ixxi6nbC7P1rr1tkRWyyiWe0B1Q4oOgDV1S4F/LmyxlPlCQeBX8cZfBin1W
-    cHNtOhToBNgSAOMcv4M7ePlkjgnTrOfUNlL/X7e/y2ulN8wUNT9IcZrqsvSQCBVp
-    LgTZbe7TneNJ7PL0+3lU6ywV7U1VIvYnmdRq1b+q89R/gPpzEAJqRsDRaY8YjEbu
-    R2imYdNcrqwpExKGBZFSgKzpOTMImbBY+pDuxsXp9UC86fWvyf6bs10BsDrjq7HS
-    YL4ktNrEHNogH4Ep1QHVy7tf9z6hCruN8sbri9FY4F9bC3kjrIplJuaGqvLJbhzF
-    EAFgBXe5Cjr+h7Q8eL0XQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523900670;
+    bh=IjImT+B/ZwzEU5wK02yKx6IFhnpMIS9yw7tbzC/HzxY=; b=kCq//ivQVJdn
+    Jzt6ZPQVCZ+oIIA/iNaIfiILYi44PrWpvcH2h9qaHpZMAhn0eEuN++qK3Y4s3HsA
+    vdXVqa2/8YLt6pHzoQqE1fLN+Qww+urEbfte1zZprj+3X3TlaumIl0WQj36mzxAo
+    6q/CFooH7pfgZwgU5vcZB7VrGyz8g6O9jUboQAIidDp+pksYkckMhK4kr4LOf7+i
+    euMaikArB31qHXjUheBrN7dsf4peUDf8qSJaXyYg1fVXWVQM98MfzhHoKVyHoraw
+    7Bdbkr5To+MbrYvzJ4ZENhHpurnEa8qxW1lMX0hZkh0oDNS1jIb+oD9fdM0ff32F
+    Gwu2N9JBrQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=195.135.220.15 (mx2.suse.de);
-    spf=none smtp.mailfrom=jikos@kernel.org smtp.helo=mx2.suse.de;
-    x-aligned-from=pass (Address match);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mx2.suse.de x-ptr-lookup=mx2.suse.de;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1 cipher=ECDHE-RSA-AES128-SHA bits=128/128;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=195.135.220.15 (mx2.suse.de);
-    spf=none smtp.mailfrom=jikos@kernel.org smtp.helo=mx2.suse.de;
-    x-aligned-from=pass (Address match);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mx2.suse.de x-ptr-lookup=mx2.suse.de;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1 cipher=ECDHE-RSA-AES128-SHA bits=128/128;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKh4sEY8HVofiUuzfggbxXOAfvU6pRI8kFie7U7nnnODcY5Zq3LJmd5o50U+KFkMbNkr8JCj/emBHb1Z2hvdMvJMgf3Tc6EGse9bAFUUuNn+JfzmkWgt
-    11C49PkAogvqD2XwD8PLMnV3UhsyFXbuMrB6sgz0M0NeUfIzGlBZkLijsGRUCwMZ28Pjgop0bToaAg==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=uEuDQZVrWKuLCe7byFjfVg==:117
-    a=uEuDQZVrWKuLCe7byFjfVg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=e7cu5d_3Oq7_yF9kUhMA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfPt7hU6hfAav+JXBAF65crqXrdPAZDfbVIfb+KMOvtDpZ8E93xmofAiXeXxT2uZzOP9x5F+4+DR4Mg1lk5ASW8e68cpeG0kN7HbkXZ8i2JEVNCvWm5OX
+    cwa9kaAXpISCr0xOPtKLkdZbsZ1qTSEbTHBNxERcZcnKp/HAdAe/i5ikQUXUB4LkJf96vJb2qs5LBtp+3iatVbOZMbpRw2td1db37qhVulEvai5N1/bzaryW
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=yMhMjlubAAAA:8 a=R5iCcuE7m3DCqLyTV6YA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
-Date: Tue, 17 Apr 2018 13:21:21 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Greg KH <greg@kroah.com>
-cc: Sasha Levin <Alexander.Levin@microsoft.com>, Pavel Machek <pavel@ucw.cz>,
-    Linus Torvalds <torvalds@linux-foundation.org>,
-    Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
-    "stable@vger.kernel.org" <stable@vger.kernel.org>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-    "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-    "linux-mm@kvack.org" <linux-mm@kvack.org>,
-    Cong Wang <xiyou.wangcong@gmail.com>, Dave Hansen <dave.hansen@intel.com>,
-    Johannes Weiner <hannes@cmpxchg.org>, Mel Gorman <mgorman@suse.de>,
-    Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
-    Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-    Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-    Byungchul Park <byungchul.park@lge.com>, Tejun Heo <tj@kernel.org>
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752604AbeDPRo2 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 16 Apr 2018 13:44:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752177AbeDPRo1 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 16 Apr 2018 13:44:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D0E21789
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Mon, 16 Apr 2018 13:44:23 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sasha Levin <Alexander.Levin@microsoft.com>
+Cc: Pavel Machek <pavel@ucw.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Petr Mladek <pmladek@suse.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Tejun Heo <tj@kernel.org>
 Subject: Re: [PATCH AUTOSEL for 4.14 015/161] printk: Add console owner and
  waiter logic to load balance console writes
-In-Reply-To: <20180417103936.GC8445@kroah.com>
-Message-ID: <nycvar.YFH.7.76.1804171250270.28129@cbobk.fhfr.pm>
-References: <20180416155031.GX2341@sasha-vm> <20180416160608.GA7071@amd> <20180416161412.GZ2341@sasha-vm> <20180416170501.GB11034@amd> <20180416171607.GJ2341@sasha-vm> <alpine.LRH.2.00.1804162214260.26111@gjva.wvxbf.pm> <20180416203629.GO2341@sasha-vm>
- <nycvar.YFH.7.76.1804162238500.28129@cbobk.fhfr.pm> <20180416211845.GP2341@sasha-vm> <nycvar.YFH.7.76.1804162326210.28129@cbobk.fhfr.pm> <20180417103936.GC8445@kroah.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+Message-ID: <20180416134423.2b60ff13@gandalf.local.home>
+In-Reply-To: <20180416171607.GJ2341@sasha-vm>
+References: <20180409001936.162706-15-alexander.levin@microsoft.com>
+        <20180409082246.34hgp3ymkfqke3a4@pathway.suse.cz>
+        <20180415144248.GP2341@sasha-vm>
+        <20180416093058.6edca0bb@gandalf.local.home>
+        <CA+55aFysLTQN8qRu=nuKttGBZzfQq=BpJBH+TMdgLJR7bgRGYg@mail.gmail.com>
+        <20180416153031.GA5039@amd>
+        <20180416155031.GX2341@sasha-vm>
+        <20180416160608.GA7071@amd>
+        <20180416161412.GZ2341@sasha-vm>
+        <20180416170501.GB11034@amd>
+        <20180416171607.GJ2341@sasha-vm>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 17 Apr 2018, Greg KH wrote:
+On Mon, 16 Apr 2018 17:16:10 +0000
+Sasha Levin <Alexander.Levin@microsoft.com> wrote:
 
-> It already is that :)
+ 
+> So if a user is operating a nuclear power plant, and has 2 leds: green
+> one that says "All OK!" and a red one saying "NUCLEAR MELTDOWN!", and
+> once in a blue moon a race condition is causing the red one to go on and
+> cause panic in the little province he lives in, we should tell that user
+> to fuck off?
+> 
+> LEDs may not be critical for you, but they can be critical for someone
+> else. Think of all the different users we have and the wildly different
+> ways they use the kernel.
 
-I have a question: I guess a stable team has an idea who they are 
-preparing the tree for, IOW who is the target consumer. Who is it?
+We can point them to the fix and have them backport it. Or they should
+ask their distribution to backport it.
 
-Certainly it's not major distros, as both RH and SUSE already stated that 
-they are either not basing off the stable kernel (only cherry-pick fixes 
-from it) (RH), or are quite far in the process of moving away from stable 
-tree towards combination of what RH is doing + semi-automated evaluation 
-of Fixes: tag (SUSE).
+Hopefully they tested the kernel they are using for something like
+that, and only want critical fixes. What happens if they take the next
+stable assuming that it has critical fixes only, and this fix causes a
+regression that creates the "ALL OK!" when it wasn't.
 
-If the target audience is somewhere else, that's perfectly fine, but then 
-it'd have to be stated explicitly I guess.
+Basically, I rather have stable be more bug compatible with the version
+it is based on with only critical fixes (things that will cause an
+oops) than to try to be bug compatible with mainline, as then we get
+into a state where things are a frankenstein of the stable base version
+and mainline. I could say, "Yeah this feature works better on this
+4.x version of the kernel" and not worry about "4.x.y" versions having
+it better.
 
-I can't speak for RH, but for us (at least me personally), the pace of 
-patches flowing into -stable is way too high for us to keep control of 
-what is landing in our tree.
-
-In some sense, stability should be equivalent to "minimal necessary amout 
-of super-critical changes". That's not what this "let's backport 
-proactively almost everything that has word 'fixes' in changelog" (I'm a 
-bit exaggerating of course) seems to be about.
-
-Again, the rules stated out in
-
-	Documentation/process/stable-kernel-rules.rst
-
-are very nice, and are exactly something at least we would be very happy 
-about. They have the nice hidden asumption in them, that someone actually 
-has to actively invest human brain power to think about the fix, its 
-consequences, prerequisities, etc. Not just doing a big dump of all 
-commits that "might fix something".
-
-How many of the actual patches flowing into -stable would satisfy those 
-criteria these days?
-
-IOW, I'm pretty sure our users are much happier with us supplying them 
-reactive fixes than pro-active uncertainity.
-
-> The problem Sasha is trying to solve here is that for many subsystems,
-> maintainers do not mark patches for stable at all.
-
-The pressure on those subsystems should be coming from unhappy users 
-(being it end-users or vendors redistributing the tree) of the stable 
-tree, who would be complaining about missing fixes for those subsystems. 
-Is this actually happening? Where?
-
-> Oh, and if you do want to complain about huge new features being 
-> backported, look at the mess that Spectre and Meltdown has caused in the 
-> stable trees.  I don't see anyone complaining about those massive 
-> changes :)
-
-Umm, sorry, how is this related?
-
-There simply was no other way, and I took it for given that this is seen 
-by everybody involved as an absolute exception, due to the nature of the 
-issue and of the massive changes that were needed.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+-- Steve
