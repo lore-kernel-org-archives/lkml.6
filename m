@@ -1,32 +1,32 @@
 Return-Path: <jacob.jun.pan@linux.intel.com>
-X-Google-Smtp-Source: AIpwx492kQ2nB6MQQX6d3eprLwXfggp8aAIvs8f9lTeRWastQyhYUrorhVwA1T7NWDtTb7Q9xQtc
+X-Google-Smtp-Source: AIpwx48L+Tx3tAeNxMk5ezKD8/PlSC8WRQlDwMhM35Z2b8icUOwsZI15yKf6bstP8nuOlZaTHhPj
 ARC-Seal: i=1; a=rsa-sha256; t=1523915204; cv=none;
         d=google.com; s=arc-20160816;
-        b=TB/l/Y7uuLK+1bgbknhxk6fVXcC4j3d1sVai+S4YoN68C4k+KLm0VORvfrMXBX2Zn/
-         J95R5fVLfqeZuJHGOw0/hGXUNHGQ5yJ9Eqdl5NQnjGpYmnbft6CfPCifteXil2CVs18b
-         Lx0Zhmcwiq0k1TuTs1y6iza9JA0q0ofwQDhts4D5avk2IUrPP6Mc+QEEi7YwROywQwg3
-         iRFtwij2TckWEogZBXg6EQ99DLc41cx+NinoifgMBRwEmsuk8jEryVAgpgaddITl/ght
-         x0F9IcCmOG0oN/JEePEfcQUp9FCNCqfuihGxhLaObDhqfwbMDbGXK+yomnBssIHPWnp9
-         +V1g==
+        b=tw6G2lIc2ZhTGuNeZGC95Gvezo7mp3e1IcEVtAd7iCQDwDLmqe2OEWorKv+nPiUTTY
+         1kqUt27oy1zpOWAdCaDXbPe0Vt+9nR/JpBHs6X8j0d0BlR+Zw/9jQcSsDz2BS+n8zQWp
+         BF4jFxEQ+oYzQVFqY8i5m7ChGfmKmXeY2uVEm3YTHej9aS78Y7rOYV0pJQo/pfyPI4Et
+         4JJA+Wz6pQo/fuYRsnP6wCF1daK+mbEv0Cmme8KDVGuOKnd9hrSWgAfBcuL9Rs4n4KPQ
+         4o4cbIEakXaUlQrHCyszhwDXTZBQG2gM+HSHO6dKK3ajp3Fg3r0Fac2BDM5Xr+XSO5Qr
+         YjzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=9XB5zZUZr+RGyzSozDdOaoI8Tc3vUsBP6NjDOlmHsgQ=;
-        b=ioQwJXD9cHYeVd1kvkqvYzYtDe7LgmYxL3btAzUwEJabIxu5Vhn66fp97F1HWqsmDs
-         0nYujmwv/nawHC+mAGbc17fP/fGunOxTToun04Q8mJk7dTNaALPRJFfTWfTc+iOqNJi5
-         owoZE8NEwhFkX+eFmmGwXmNd5MYOkz8Y96Jb4T2VBmU3RS67sqEJYeX3TQqvmEeW1qz6
-         udNgplcWZ2mH2RP+omQ+1YQhulkhwwqjIRSu4ALoaj4Fagz8lBzbhXFngAqzF08ZOBAV
-         nO69zBEvpfaOQc9gHduMqhXcHi5Q6f6EFzdtKJNhg4gP2yzx6s0FLwZPncUn0UmroyFM
-         zCgQ==
+        bh=gpL1yKAn4vTIIPj+2YRp2a32xwSR212L6qyEpVFXbDQ=;
+        b=hE6gUFm8wXxYCOkoPQU83QrlY57qFdJGH61F75iYSyEyN1sWGOHmm6NoERJZ3xXsNc
+         dQFjpy0apaIMxRtFgFGV2AMaM5ZyWCoAP++pN0IOTwAfWuuM7q4DYWp6kk9Lo5nNMQU7
+         kqFcPYMrU0rTcHYaNCLEcL9dzGXWtrRo1a2sDW8pp3le4d4bKmUIZ3WUQE4QtIXGV83Y
+         05D2WN33stOpxbMtHFctHH+jkGbIE1yHT2CtPT6GL6XUBYsOh7gLX556xETfMXGuPLg9
+         rdY9UpEYrM1RnDRT6h1FeeKIpQAcVOPqYSRY3Z7Qbp2iIrFXVGwhRAyOZMHulBANoVQh
+         n/Hg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,460,1517904000";
-   d="scan'208";a="34740151"
+   d="scan'208";a="34740194"
 From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 To: iommu@lists.linux-foundation.org,
 	LKML <linux-kernel@vger.kernel.org>,
@@ -43,65 +43,40 @@ Cc: Rafael Wysocki <rafael.j.wysocki@intel.com>,
 	"Christoph Hellwig" <hch@infradead.org>,
 	"Lu Baolu" <baolu.lu@linux.intel.com>,
 	Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v4 06/22] iommu/vt-d: add definitions for PFSID
-Date: Mon, 16 Apr 2018 14:48:55 -0700
-Message-Id: <1523915351-54415-7-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 19/22] iommu/intel-svm: do not flush iotlb for viommu
+Date: Mon, 16 Apr 2018 14:49:08 -0700
+Message-Id: <1523915351-54415-20-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597940909644139134?=
-X-GMAIL-MSGID: =?utf-8?q?1597940909644139134?=
+X-GMAIL-THRID: =?utf-8?q?1597940910062854256?=
+X-GMAIL-MSGID: =?utf-8?q?1597940910062854256?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When SRIOV VF device IOTLB is invalidated, we need to provide
-the PF source ID such that IOMMU hardware can gauge the depth
-of invalidation queue which is shared among VFs. This is needed
-when device invalidation throttle (DIT) capability is supported.
-
-This patch adds bit definitions for checking and tracking PFSID.
+vIOMMU passdown invalidation will be inclusive, PASID cache invalidation
+includes TLBs. See Intel VT-d Specification Ch 6.5.2.2 for details.
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- include/linux/intel-iommu.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/iommu/intel-svm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index ddc7d79..dfacd49 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -114,6 +114,7 @@
-  * Extended Capability Register
-  */
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index bdda1b6..697d5c2 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -284,7 +284,9 @@ static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(sdev, &svm->devs, list) {
+ 		intel_flush_pasid_dev(svm, sdev, svm->pasid);
+-		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
++		/* for emulated iommu, PASID cache invalidation implies IOTLB/DTLB */
++		if (!cap_caching_mode(svm->iommu->cap))
++			intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
+ 	}
+ 	rcu_read_unlock();
  
-+#define ecap_dit(e)		((e >> 41) & 0x1)
- #define ecap_pasid(e)		((e >> 40) & 0x1)
- #define ecap_pss(e)		((e >> 35) & 0x1f)
- #define ecap_eafs(e)		((e >> 34) & 0x1)
-@@ -284,6 +285,7 @@ enum {
- #define QI_DEV_IOTLB_SID(sid)	((u64)((sid) & 0xffff) << 32)
- #define QI_DEV_IOTLB_QDEP(qdep)	(((qdep) & 0x1f) << 16)
- #define QI_DEV_IOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
-+#define QI_DEV_IOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xff0) << 48))
- #define QI_DEV_IOTLB_SIZE	1
- #define QI_DEV_IOTLB_MAX_INVS	32
- 
-@@ -308,6 +310,7 @@ enum {
- #define QI_DEV_EIOTLB_PASID(p)	(((u64)p) << 32)
- #define QI_DEV_EIOTLB_SID(sid)	((u64)((sid) & 0xffff) << 16)
- #define QI_DEV_EIOTLB_QDEP(qd)	((u64)((qd) & 0x1f) << 4)
-+#define QI_DEV_EIOTLB_PFSID(pfsid) (((u64)(pfsid & 0xf) << 12) | ((u64)(pfsid & 0xff0) << 48))
- #define QI_DEV_EIOTLB_MAX_INVS	32
- 
- #define QI_PGRP_IDX(idx)	(((u64)(idx)) << 55)
-@@ -467,6 +470,7 @@ struct device_domain_info {
- 	struct list_head global; /* link to global list */
- 	u8 bus;			/* PCI bus number */
- 	u8 devfn;		/* PCI devfn number */
-+	u16 pfsid;		/* SRIOV physical function source ID */
- 	u8 pasid_supported:3;
- 	u8 pasid_enabled:1;
- 	u8 pri_supported:1;
 -- 
 2.7.4
