@@ -1,74 +1,57 @@
-Return-Path: <prvs=76449ef209=cyan@fb.com>
-X-Google-Smtp-Source: AIpwx4/BViAghdHn+o+SUWRgHPnMt7Cdbtfi6SwWGqz/arWzlfcucoRLl6LIv64hPOfjCusTzLyC
-ARC-Seal: i=1; a=rsa-sha256; t=1523907318; cv=none;
+Return-Path: <ebiggers3@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523908881; cv=none;
         d=google.com; s=arc-20160816;
-        b=iRz23WVUlHvLn4Cnr/IvvFvP/hNPPMRF+qIGYqSWKsn5Jf996YiAcoHgzhcj+Nfpxi
-         Pe2guz/3YmSezscJTJwhQaSTBgh/knH8sz37qJgV6+jIc7brKRZ3Tnw8PXxJFOtHmKHq
-         R51GTxuzZW3OhFHPA7b+wqijLmSkfZJH7GoGlcLvNR0Em6+hAW1RQX2jtLRSMWQTm33O
-         IFZP8ovW0YAvkckexsEkddevAjxUV3eZKdGNltTeiiHmM+ri9d/CFS15gcqOKTmIAqcq
-         KCLkgYQDGk28iGkkLGp4t/W1CSL7dFrhcWKdbquO97YXw0xQ8vJQYJ6VtKqfrjBJTo9w
-         PLbQ==
+        b=KAjdpgjL21avCQDj2shgCnvKEtHgdA6c+Jy5vrFrddhw/ny2a1aA9hf1x7n06MVO20
+         z1UHNAQw8KPsaFbV6CaqTm27izqtn87/O+T5jFAUhnP5vRTIX2lQXCcp0eccxch7cuoc
+         RiRnpcefuc+B0jf6JhAWi4V0MW7l8wqsP0ytE3DrEpCp2hZD0D2nHjsdyctimTNtlH5U
+         QAttcDOH0CvoKrU9LBjHtYkVVF/Si/kwm8HH9qCYv/RpW97FqEXdc8botbg9Ac8N+VWb
+         MJsfgZG2MdJ5fsOFw2v9pPAP2ujwV0REF9ofDd6KcyycZJVTuRja/FiZc3q0E3UkGeWE
+         Yz8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id
-         :spamdiagnosticmetadata:spamdiagnosticoutput:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=cXQ0KVGH2IFsMf57O/6Jg5mpQ27nSQm9Sfyrvgf7qOU=;
-        b=hAArW94oELxKxGSdGOWbgoEFDbs5yzYbz4M5UbwSy5dgXa65M+Uc6UXvKDjicxtNtr
-         k/x6kzqWAq3CKX6OA9FS7TxES98wGY8InjR7t1gm4daVJLwFBjoN/Rea6pwbsmq8k3AO
-         487WQ7RyngdiJT46r6y9ix0rcGurDSgPFhOnLAJB8lFnoDSj4y7yw3bQR7itbykxL9HX
-         CsdEZkZnrRqFf7wLlyjRcDE4wh3WZFG1dFjoRIH+MSMHOF2Nxg4BSRMmUwu8+A3KlFTP
-         YvKdL0rIhvU+kwL1bX8lmIXYWgPWrdZUBPoYiy1nXjMZ4c0esopw7svweOHpCK6SYn8I
-         scYg==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=MvE2hbV7v4G8gCyCK+nxR+vIbPLb4pcHkJf8TFdbZSw=;
+        b=RD6FgdMBEH4hI2A3cWlwqFq3+TPMwg93Jyt9XeZsSsoz4V7/S5z8yAtzE5i8rP8CAv
+         2DPIfAD1o0pAmArn80udrgrY+9lnNJO1CpAGscgRbjf7CFOA0LEimPM5kTLOAOx2WFt9
+         BclV1Nk7ZPRwJzVOdlUjQQskr2+5QSDuVmwBe4Wxi692D/gozXAim893030Z0ANBllMW
+         AKiVSO4tZa6Ixz/0KLB8vKW0UVy+h3y5Ak0uu7t2s/M4b/JIiAfqJHb0nKXvi0EKLGeS
+         Icg5QpNxvY/Ux0YbU006QEDB/xzvZkXSmw9TqF7g7e+gKyX6glxz7kcWK9Ww6yAypmYI
+         dqKQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@fb.com header.s=facebook header.b=jPu6PDTK;
-       dkim=pass header.i=@fb.onmicrosoft.com header.s=selector1-fb-com header.b=PfgGrttH;
-       spf=pass (google.com: domain of prvs=76449ef209=cyan@fb.com designates 67.231.153.30 as permitted sender) smtp.mailfrom=prvs=76449ef209=cyan@fb.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=fb.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hqk4JhjR;
+       spf=pass (google.com: domain of ebiggers3@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ebiggers3@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@fb.com header.s=facebook header.b=jPu6PDTK;
-       dkim=pass header.i=@fb.onmicrosoft.com header.s=selector1-fb-com header.b=PfgGrttH;
-       spf=pass (google.com: domain of prvs=76449ef209=cyan@fb.com designates 67.231.153.30 as permitted sender) smtp.mailfrom=prvs=76449ef209=cyan@fb.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=fb.com
-From: Yann Collet <cyan@fb.com>
-To: "maninder1.s@samsung.com" <maninder1.s@samsung.com>,
-        Vaneet Narang
-	<v.narang@samsung.com>, Nick Terrell <terrelln@fb.com>,
-        Sergey Senozhatsky
-	<sergey.senozhatsky.work@gmail.com>,
-        "herbert@gondor.apana.org.au"
-	<herbert@gondor.apana.org.au>
-CC: "davem@davemloft.net" <davem@davemloft.net>,
-        "minchan@kernel.org"
-	<minchan@kernel.org>,
-        "ngupta@vflare.org" <ngupta@vflare.org>,
-        Kees Cook
-	<keescook@chromium.org>,
-        "anton@enomsg.org" <anton@enomsg.org>,
-        "ccross@android.com" <ccross@android.com>,
-        "tony.luck@intel.com"
-	<tony.luck@intel.com>,
-        "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>,
-        "colin.king@canonical.com"
-	<colin.king@canonical.com>,
-        "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        PANKAJ MISHRA <pankaj.m@samsung.com>,
-        "AMIT
- SAHRAWAT" <a.sahrawat@samsung.com>,
-        "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hqk4JhjR;
+       spf=pass (google.com: domain of ebiggers3@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ebiggers3@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx480W2aErSVe5Gipml37wTJH616rAliQANJyVtjJz6d0FZpX02fc/5yfE3EiS7rlZKZeapFOUA==
+Date: Mon, 16 Apr 2018 13:01:18 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Yann Collet <cyan@fb.com>
+Cc: "maninder1.s@samsung.com" <maninder1.s@samsung.com>,
+	Vaneet Narang <v.narang@samsung.com>,
+	Nick Terrell <terrelln@fb.com>,
+	Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"minchan@kernel.org" <minchan@kernel.org>,
+	"ngupta@vflare.org" <ngupta@vflare.org>,
+	Kees Cook <keescook@chromium.org>,
+	"anton@enomsg.org" <anton@enomsg.org>,
+	"ccross@android.com" <ccross@android.com>,
+	"tony.luck@intel.com" <tony.luck@intel.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"colin.king@canonical.com" <colin.king@canonical.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	PANKAJ MISHRA <pankaj.m@samsung.com>,
+	AMIT SAHRAWAT <a.sahrawat@samsung.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH 0/1] cover-letter/lz4: Implement lz4 with dynamic offset
  length.
-Thread-Topic: [PATCH 0/1] cover-letter/lz4: Implement lz4 with dynamic offset
- length.
-Thread-Index: AQHTwO5jt8QdQWvsxEiscfHuXN/+16PbG3KAgAwQoWeAHCt4AIAAJUKA
-Date: Mon, 16 Apr 2018 19:34:29 +0000
-Message-ID: <74EB06AE-E1CA-4B06-9935-596DCFAC951C@fb.com>
+Message-ID: <20180416200118.GA10051@gmail.com>
 References: <20180329102613epcms5p6ffaa80d12115ded8f3c9ef01dd009744@epcms5p6>
  <20180329102046epcms5p8ecc9532b03bab4f47cbdbb2507171b86@epcms5p8>
  <20180323134319epcms5p62e6021aa33c941c46ecdb8b5364b614c@epcms5p6>
@@ -77,157 +60,93 @@ References: <20180329102613epcms5p6ffaa80d12115ded8f3c9ef01dd009744@epcms5p6>
  <20180321082628.GB2746@jagdpanzerIV>
  <CGME20180321044137epcas5p221e7ee4a0b7464eaa00dad8320f0251d@epcms5p4>
  <20180416102138epcms5p429e04b68b94dcf80cd84f7008467ed68@epcms5p4>
-In-Reply-To: <20180416102138epcms5p429e04b68b94dcf80cd84f7008467ed68@epcms5p4>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2601:641:0:eb66:e03c:6162:ed6d:e22d]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR15MB2221;7:XsASAH3y/3cejVigpXiDbYoL/CK9SOrYgsG3uXn6dFnK8nhYLTFzzgTPmwJkAk1Edte9ldkRCjZi7kYZxdhKCgK0ioKIqhNU3h4zbZkOu+i2p/13CiDrQXoo1lPNpnFbUM8OaKb32VNyuLSmvx9OeGGEv3D4WqLqgtnw9IMOGW2eXs3oZsxZyqmo4JOa0RQzLV23Zz75PrCe72t5doz4Bh7iU4aCmSjpDSeyzqs2JdnQxQqhWpbV4aM/CvS4BOWj;20:yUgvlk0GqF4b6WgWGDuzJuSyZRcjjRwQNU7zZMghSmJzJBsa1usQgq5Ouwcti1XK5osutWWPFEvWUo1vPP5KYBqdKA173FBQuL0c2rG1Ho8AG8P57UvRbhk/7OAtOYD5j4XGANuh5YJNN1hf9S5B6q1J3NbchmjyGe3PNA0GPa0=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(39860400002)(346002)(39380400002)(199004)(189003)(54906003)(186003)(83716003)(229853002)(33656002)(68736007)(2501003)(5660300001)(6116002)(5250100002)(97736004)(81156014)(6486002)(81166006)(7416002)(8936002)(36756003)(99286004)(82746002)(3660700001)(305945005)(3280700002)(2906002)(7736002)(8676002)(6436002)(478600001)(446003)(2900100001)(25786009)(476003)(2616005)(105586002)(486006)(6246003)(93886005)(11346002)(110136005)(14454004)(53936002)(316002)(39060400002)(86362001)(59450400001)(76176011)(106356001)(6306002)(46003)(102836004)(4326008)(6506007)(6512007)(42262002)(357404004);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR15MB2221;H:SN6PR15MB2205.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN6PR15MB2221;
-x-ms-traffictypediagnostic: SN6PR15MB2221:
-x-microsoft-antispam-prvs: <SN6PR15MB2221265041D0082055FDCCF6A4B00@SN6PR15MB2221.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(166708455590820)(7411616537696);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231232)(11241501184)(944501327)(52105095)(3002001)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:SN6PR15MB2221;BCL:0;PCL:0;RULEID:;SRVR:SN6PR15MB2221;
-x-forefront-prvs: 0644578634
-x-microsoft-antispam-message-info: MzxeJk0K28XTpx+dDHo+jo7Tn7EKKQX6BPlK1rjojdSa88jPvUg34ylh+QiGu8zzuWKyWKOeGqyTzkXoPz4imai4bl97oqTjq6jZJQxoRbcG5D85pKJJHcWRfnh3UY8CRK12ND3jxLjBMtCiTNNv+laP1EsMiAAfE2DU6HHj1205BrEqfQgNEKh+QtzexlUq
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6CCA283B630AC94DAD39499E415F0E9B@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ <74EB06AE-E1CA-4B06-9935-596DCFAC951C@fb.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 728eef97-c3c2-4d69-21a5-08d5a3d11280
-X-MS-Exchange-CrossTenant-Network-Message-Id: 728eef97-c3c2-4d69-21a5-08d5a3d11280
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2018 19:34:29.6047
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR15MB2221
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <74EB06AE-E1CA-4B06-9935-596DCFAC951C@fb.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1597900813489960416?=
-X-GMAIL-MSGID: =?utf-8?q?1597932640415181197?=
+X-GMAIL-MSGID: =?utf-8?q?1597934279036431604?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SGkgU2luZ2gNCg0KSSBkb24ndCBoYXZlIGFueSBzdHJvbmcgb3BpbmlvbiBvbiB0aGlzIHRvcGlj
-Lg0KDQpZb3UgbWFkZSB5b3VyIGNhc2UgY2xlYXI6IA0KeW91ciB2YXJpYW50IHRyYWRlcyBhIGxp
-dHRsZSBiaXQgb2Ygc3BlZWQgZm9yIGEgbGl0dGxlIGJpdCBtb3JlIGNvbXByZXNzaW9uIHJhdGlv
-Lg0KSW4gdGhlIGNvbnRleHQgb2YgenJhbSwgaXQgbWFrZXMgc2Vuc2UsIGFuZCBJIHdvdWxkIGV4
-cGVjdCBpdCB0byB3b3JrLCBhcyBhZHZlcnRpc2VkIGluIHlvdXIgYmVuY2htYXJrIHJlc3VsdHMu
-DQooZGlzY2xhaW1lcjogSSBoYXZlbid0IHJlcHJvZHVjZWQgdGhlc2UgcmVzdWx0cywganVzdCwg
-dGhleSBsb29rIHJlYXNvbmFibGUgdG8gbWUsIEkgaGF2ZSBubyByZWFzb24gdG8gZG91YnQgdGhl
-bSkuDQoNClNvLCB0aGUgaXNzdWUgaXMgbGVzcyBhYm91dCBwZXJmb3JtYW5jZSwgdGhhbiBhYm91
-dCBjb2RlIGNvbXBsZXhpdHkuDQoNCkFzIG1lbnRpb25lZCwgdGhpcyBpcyBhbiBpbmNvbXBhdGli
-bGUgdmFyaWFudC4NClNvLCBpdCByZXF1aXJlcyBpdHMgb3duIGVudHJ5IHBvaW50LCBhbmQgcHJl
-ZmVyYWJseSBpdHMgb3duIGNvZGUgcGF0aA0KKGV2ZW4gaWYgaXQncyBoZWF2aWx5IGR1cGxpY2F0
-ZWQsDQptaXhpbmcgaXQgd2l0aCByZWd1bGFyIGx6NCBzb3VyY2UgY29kZSwgYXMgcHJvcG9zZWQg
-aW4gdGhlIHBhdGNoLCB3aWxsIGJlIGJhZCBmb3IgbWFpbnRlbmFuY2UsIA0KYW5kIGNhbiBuZWdh
-dGl2ZWx5IGltcGFjdCByZWd1bGFyIGx6NCB1c2FnZSwgb3V0c2lkZSBvZiB6cmFtKS4NCg0KU28g
-dGhhdCdzIGJhc2ljYWxseSB0aGUgImNvc3QiIG9mIGFkZGluZyB0aGlzIG9wdGlvbi4NCg0KSXMg
-aXQgd29ydGggaXQ/DQpXZWxsLCB0aGlzIGlzIGNvbXBsZXRlbHkgb3V0c2lkZSBvZiBteSByZXNw
-b25zaWJpbGl0eSBhcmVhLCBzbyBJIHJlYWxseSBjYW4ndCB0ZWxsLg0KWW91J2xsIGhhdmUgdG8g
-Y29udmluY2UgcGVvcGxlIGluIGNoYXJnZSB0aGF0IHRoZSBnYWlucyBhcmUgd29ydGggdGhlaXIg
-Y29tcGxleGl0eSwNCnNpbmNlIF90aGV5XyB3aWxsIGluaGVyaXQgdGhlIGR1dHkgdG8ga2VlcCB0
-aGUgc3lzdGVtIHdvcmtpbmcgdGhyb3VnaCBpdHMgZnV0dXJlIGV2b2x1dGlvbnMuDQpBdCBhIG1p
-bmltdW0sIHlvdSBhcmUgdGFyZ2V0aW5nIG1haW50YWluZXJzIG9mIHpyYW0gYW5kIHRoZSBjcnlw
-dG8gaW50ZXJmYWNlLg0KRm9yIHRoaXMgdG9waWMsIHRoZXkgYXJlIHRoZSByaWdodCBwZW9wbGUg
-dG8gdGFsayB0by4NCg0KDQrvu79PbiA0LzE2LzE4LCAwNDowOSwgIk1hbmluZGVyIFNpbmdoIiA8
-bWFuaW5kZXIxLnNAc2Ftc3VuZy5jb20+IHdyb3RlOg0KDQogICAgDQogICAgIEhlbGxvIE5pY2sv
-IFlhbm4sDQogICAgDQogICAgQW55IGlucHV0cyByZWdhcmRpbmcgTFo0IGR5biByZXN1bHRzICYg
-bHo0IGR5biBhcHByb2FjaC4NCiAgICANCiAgICA+SGVsbG8gTmljay9TZXJnZXksDQogICAgPiAN
-CiAgICA+QW55IHN1Z2dlc3Rpb24gb3IgY29tbWVudHMsIHNvIHRoYXQgd2UgY2FuIGNoYW5nZSBj
-b2RlIGFuZCByZXNlbmQgdGhlIHBhdGNoPw0KICAgID4gDQogICAgPj4gSGkgTmljayAvIFNlcmdl
-eSwNCiAgICA+PiANCiAgICA+PiANCiAgICA+PiBXZSBoYXZlIGNvbXBhcmVkIExaNCBEeW4gd2l0
-aCBPcmlnaW5hbCBMWjQgdXNpbmcgc29tZSBzYW1wbGVzIG9mIHJlYWx0aW1lIGFwcGxpY2F0aW9u
-IGRhdGEoNEtiKQ0KICAgID4+IGNvbXByZXNzZWQvZGVjb21wcmVzc2VkIGJ5IFpSQU0uIEZvciBj
-b21wYXJpc29uIHdlIGhhdmUgdXNlZCBsemJlbmNoIChodHRwczovL2dpdGh1Yi5jb20vaW5pa2Vw
-L2x6YmVuY2gpDQogICAgPj4gd2UgaGF2ZSBpbXBsZW1lbnRlZCBkZWRpY2F0ZWQgTFo0IER5biBB
-UEkgJiBrZXB0IGxhc3QgbGl0ZXJhbCBsZW5ndGggYXMgNiB0byBhdm9pZCBvdmVyaGVhZCANCiAg
-ICA+PiBvZiBjaGVja3MuIEl0IHNlZW1zIGluIGF2ZXJhZ2UgY2FzZSB0aGVyZSBpcyBhIHNhdmlu
-ZyBvZiAzfjQlIGluIGNvbXByZXNzaW9uIHJhdGlvIHdpdGggYWxtb3N0IHNhbWUgY29tcHJlc3Np
-b24NCiAgICA+PiBzcGVlZCBhbmQgbWlub3IgbG9zcyBpbiBkZWNvbXByZXNzaW9uIHNwZWVkICh+
-NTBNQi9zKSB3aGVuIGNvbXBhcmVkIHdpdGggTFo0Lg0KICAgID4+IA0KICAgID4+IENvbXBhcmlz
-b24gb2YgTHo0IER5biB3aXRoIExaTzF4IGlzIGFsc28gZG9uZSBhcyBMWk8xeCBpcyBkZWZhdWx0
-IGNvbXByZXNzb3Igb2YgWlJBTS4NCiAgICA+PiANCiAgICA+PiBPcmlnaW5hbCBMWjQ6DQogICAg
-Pj4gc2gtMy4yIyAuL2x6YmVuY2ggIC1yICAtZWx6NCAgZGF0YS8NCiAgICA+PiBsemJlbmNoIDEu
-Ny4zICgzMi1iaXQgTGludXgpICAgQXNzZW1ibGVkIGJ5IFAuU2tpYmluc2tpDQogICAgPj4gQ29t
-cHJlc3NvciBuYW1lICAgICAgICAgQ29tcHJlc3MuIERlY29tcHJlc3MuIENvbXByLiBzaXplICBS
-YXRpbyBGaWxlbmFtZQ0KICAgID4+IG1lbWNweSAgICAgICAgICAgICAgICAgICAyMjA1IE1CL3Mg
-IDIyMTcgTUIvcyAgICAgICAgNDA5NiAxMDAuMDAgZGF0YS8vZGF0YV8xDQogICAgPj4gbHo0IDEu
-OC4wICAgICAgICAgICAgICAgICAyMTYgTUIvcyAgIDc2MSBNQi9zICAgICAgICAyNDMzICA1OS40
-MCBkYXRhLy9kYXRhXzENCiAgICA+PiBsejQgMS44LjAgICAgICAgICAgICAgICAgIDI2OSBNQi9z
-ICAgODc3IE1CL3MgICAgICAgIDE4NzMgIDQ1LjczIGRhdGEvL2RhdGFfMg0KICAgID4+IGx6NCAx
-LjguMCAgICAgICAgICAgICAgICAgMjM4IE1CL3MgICA1NzUgTUIvcyAgICAgICAgMjA2MCAgNTAu
-MjkgZGF0YS8vZGF0YV8zDQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICAzMjEgTUIv
-cyAgMTAxNSBNQi9zICAgICAgICAxNDY0ICAzNS43NCBkYXRhLy9kYXRhXzQNCiAgICA+PiBsejQg
-MS44LjAgICAgICAgICAgICAgICAgIDQ2NCBNQi9zICAxMDkwIE1CL3MgICAgICAgICA3MTMgIDE3
-LjQxIGRhdGEvL2RhdGFfNQ0KICAgID4+IGx6NCAxLjguMCAgICAgICAgICAgICAgICAgMjk2IE1C
-L3MgICA5NTYgTUIvcyAgICAgICAgMTU5NyAgMzguOTkgZGF0YS8vZGF0YV82DQogICAgPj4gbHo0
-IDEuOC4wICAgICAgICAgICAgICAgICAzMzggTUIvcyAgIDk5NCBNQi9zICAgICAgICAyMjM4ICA1
-NC42NCBkYXRhLy9kYXRhXzcNCiAgICA+PiBsejQgMS44LjAgICAgICAgICAgICAgICAgIDcwNSBN
-Qi9zICAxMTcyIE1CL3MgICAgICAgICAxOTMgICA0LjcxIGRhdGEvL2RhdGFfOA0KICAgID4+IGx6
-NCAxLjguMCAgICAgICAgICAgICAgICAgNDA0IE1CL3MgIDExNTAgTUIvcyAgICAgICAgMTA5NyAg
-MjYuNzggZGF0YS8vZGF0YV85DQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICAyMTYg
-TUIvcyAgIDkyMSBNQi9zICAgICAgICAzMTgzICA3Ny43MSBkYXRhLy9kYXRhXzEwDQogICAgPj4g
-bHo0IDEuOC4wICAgICAgICAgICAgICAgICA0NTYgTUIvcyAgMTEwMSBNQi9zICAgICAgICAxMDEx
-ICAyNC42OCBkYXRhLy9kYXRhXzExDQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICA4
-NjcgTUIvcyAgMTIwMiBNQi9zICAgICAgICAgIDM3ICAgMC45MCBkYXRhLy9kYXRhXzEyDQogICAg
-Pj4gDQogICAgPj4gDQogICAgPj4gTFo0IER5bmFtaWMgT2ZmZXQ6ICANCiAgICA+PiBzaC0zLjIj
-IC4vbHpiZW5jaCAgLXIgIC1lbHo0X2R5biAgZGF0YS8NCiAgICA+PiBsemJlbmNoIDEuNy4zICgz
-Mi1iaXQgTGludXgpICAgQXNzZW1ibGVkIGJ5IFAuU2tpYmluc2tpDQogICAgPj4gQ29tcHJlc3Nv
-ciBuYW1lICAgICAgICAgQ29tcHJlc3MuIERlY29tcHJlc3MuIENvbXByLiBzaXplICBSYXRpbyBG
-aWxlbmFtZQ0KICAgID4+IG1lbWNweSAgICAgICAgICAgICAgICAgICAyMjAzIE1CL3MgIDIyMTgg
-TUIvcyAgICAgICAgNDA5NiAxMDAuMDAgZGF0YS8vZGF0YV8xDQogICAgPj4gbHo0IDEuOC4wICAg
-ICAgICAgICAgICAgICAyMTggTUIvcyAgIDY5MyBNQi9zICAgICAgICAyMjI4ICA1NC4zOSBkYXRh
-Ly9kYXRhXzENCiAgICA+PiBsejQgMS44LjAgICAgICAgICAgICAgICAgIDI3MyBNQi9zICAgODUx
-IE1CL3MgICAgICAgIDE3MzkgIDQyLjQ2IGRhdGEvL2RhdGFfMg0KICAgID4+IGx6NCAxLjguMCAg
-ICAgICAgICAgICAgICAgMjMwIE1CL3MgICA1MjYgTUIvcyAgICAgICAgMTgwMCAgNDMuOTUgZGF0
-YS8vZGF0YV8zDQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICAzMjEgTUIvcyAgIDk1
-MiBNQi9zICAgICAgICAxMzU3ICAzMy4xMyBkYXRhLy9kYXRhXzQNCiAgICA+PiBsejQgMS44LjAg
-ICAgICAgICAgICAgICAgIDQ3MCBNQi9zICAxMDc1IE1CL3MgICAgICAgICA2NjQgIDE2LjIxIGRh
-dGEvL2RhdGFfNQ0KICAgID4+IGx6NCAxLjguMCAgICAgICAgICAgICAgICAgMzAzIE1CL3MgICA5
-NjQgTUIvcyAgICAgICAgMTQ1NSAgMzUuNTIgZGF0YS8vZGF0YV82DQogICAgPj4gbHo0IDEuOC4w
-ICAgICAgICAgICAgICAgICAzNDUgTUIvcyAgIDk1MSBNQi9zICAgICAgICAyMTI2ICA1MS45MCBk
-YXRhLy9kYXRhXzcNCiAgICA+PiBsejQgMS44LjAgICAgICAgICAgICAgICAgIDc0NCBNQi9zICAx
-MTYzIE1CL3MgICAgICAgICAxNzcgICA0LjMyIGRhdGEvL2RhdGFfOA0KICAgID4+IGx6NCAxLjgu
-MCAgICAgICAgICAgICAgICAgNDA5IE1CL3MgIDEyNTcgTUIvcyAgICAgICAgMTAzMyAgMjUuMjIg
-ZGF0YS8vZGF0YV85DQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICAyMjAgTUIvcyAg
-IDg1NyBNQi9zICAgICAgICAzMDQ5ICA3NC40NCBkYXRhLy9kYXRhXzEwDQogICAgPj4gbHo0IDEu
-OC4wICAgICAgICAgICAgICAgICA0NjQgTUIvcyAgMTEwNSBNQi9zICAgICAgICAgOTM0ICAyMi44
-MCBkYXRhLy9kYXRhXzExDQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICA4NzQgTUIv
-cyAgMTE5NCBNQi9zICAgICAgICAgIDM2ICAgMC44OCBkYXRhLy9kYXRhXzEyDQogICAgPj4gDQog
-ICAgPj4gDQogICAgPj4gTFo0IER5bmFtaWMgT2Zmc2V0IHdpdGggMzJLIGRhdGE6DQogICAgPj4g
-c2gtMy4yIyAuL2x6YmVuY2ggLWVsejRfZHluIGRhdGEvZGF0YTMyaw0KICAgID4+IGx6YmVuY2gg
-MS43LjMgKDMyLWJpdCBMaW51eCkgICBBc3NlbWJsZWQgYnkgUC5Ta2liaW5za2kNCiAgICA+PiBD
-b21wcmVzc29yIG5hbWUgICAgICAgICBDb21wcmVzcy4gRGVjb21wcmVzcy4gQ29tcHIuIHNpemUg
-IFJhdGlvIEZpbGVuYW1lDQogICAgPj4gbWVtY3B5ICAgICAgICAgICAgICAgICAgIDUyODUgTUIv
-cyAgNTI4MyBNQi9zICAgICAgIDMyNzY4IDEwMC4wMCBkYXRhL2RhdGEzMmsNCiAgICA+PiBsejQg
-MS44LjAgICAgICAgICAgICAgICAgIDI3NCBNQi9zICAgOTk1IE1CL3MgICAgICAgMTM0MzUgIDQx
-LjAwIGRhdGEvZGF0YTMyaw0KICAgID4+IGRvbmUuLi4gKGNJdGVycz0xIGRJdGVycz0xIGNUaW1l
-PTEuMCBkVGltZT0yLjAgY2h1bmtTaXplPTE3MDZNQiBjU3BlZWQ9ME1CKQ0KICAgID4+IA0KICAg
-ID4+IE9yaWdpbmFsIExaNCB3aXRoIDMySyBkYXRhOg0KICAgID4+IHNoLTMuMiMgLi9semJlbmNo
-X29yaWcgLWVsejQgZGF0YS9kYXRhMzJrDQogICAgPj4gbHpiZW5jaCAxLjcuMyAoMzItYml0IExp
-bnV4KSAgIEFzc2VtYmxlZCBieSBQLlNraWJpbnNraQ0KICAgID4+IENvbXByZXNzb3IgbmFtZSAg
-ICAgICAgIENvbXByZXNzLiBEZWNvbXByZXNzLiBDb21wci4gc2l6ZSAgUmF0aW8gRmlsZW5hbWUN
-CiAgICA+PiBtZW1jcHkgICAgICAgICAgICAgICAgICAgNDkxOCBNQi9zICA1MTA4IE1CL3MgICAg
-ICAgMzI3NjggMTAwLjAwIGRhdGEvZGF0YTMyaw0KICAgID4+IGx6NCAxLjguMCAgICAgICAgICAg
-ICAgICAgMjc2IE1CL3MgIDEwNDUgTUIvcyAgICAgICAxNDQ5MiAgNDQuMjMgZGF0YS9kYXRhMzJr
-DQogICAgPj4gDQogICAgPj4gTFpPMXggd2l0aCAzMksgZGF0YSAoRGVmYXVsdCBDb21wcmVzc29y
-IGZvciBaUkFNKTogDQogICAgPj4gc2gtMy4yIyAuL2x6YmVuY2ggLWVsem8xeCwxIGRhdGEvZGF0
-YTMyaw0KICAgID4+IGx6YmVuY2ggMS43LjMgKDMyLWJpdCBMaW51eCkgICBBc3NlbWJsZWQgYnkg
-UC5Ta2liaW5za2kNCiAgICA+PiBDb21wcmVzc29yIG5hbWUgICAgICAgICBDb21wcmVzcy4gRGVj
-b21wcmVzcy4gQ29tcHIuIHNpemUgIFJhdGlvIEZpbGVuYW1lDQogICAgPj4gbWVtY3B5ICAgICAg
-ICAgICAgICAgICAgIDUyNzMgTUIvcyAgNTMyMCBNQi9zICAgICAgIDMyNzY4IDEwMC4wMCBkYXRh
-L2RhdGEzMmsNCiAgICA+PiBsem8xeCAyLjA5IC0xICAgICAgICAgICAgIDI4MyBNQi9zICAgNDY1
-IE1CL3MgICAgICAgMTQyOTIgIDQzLjYyIGRhdGEvZGF0YTMyaw0KICAgIA0KICAgIA0KICAgIFRo
-YW5rcywNCiAgICBNYW5pbmRlciBTaW5naA0KICAgICANCiAgICANCg0K
+On Mon, Apr 16, 2018 at 07:34:29PM +0000, Yann Collet wrote:
+> Hi Singh
+> 
+> I don't have any strong opinion on this topic.
+> 
+> You made your case clear: 
+> your variant trades a little bit of speed for a little bit more compression ratio.
+> In the context of zram, it makes sense, and I would expect it to work, as advertised in your benchmark results.
+> (disclaimer: I haven't reproduced these results, just, they look reasonable to me, I have no reason to doubt them).
+> 
+> So, the issue is less about performance, than about code complexity.
+> 
+> As mentioned, this is an incompatible variant.
+> So, it requires its own entry point, and preferably its own code path
+> (even if it's heavily duplicated,
+> mixing it with regular lz4 source code, as proposed in the patch, will be bad for maintenance, 
+> and can negatively impact regular lz4 usage, outside of zram).
+> 
+> So that's basically the "cost" of adding this option.
+> 
+> Is it worth it?
+> Well, this is completely outside of my responsibility area, so I really can't tell.
+> You'll have to convince people in charge that the gains are worth their complexity,
+> since _they_ will inherit the duty to keep the system working through its future evolutions.
+> At a minimum, you are targeting maintainers of zram and the crypto interface.
+> For this topic, they are the right people to talk to.
+> 
+> 
+> ﻿On 4/16/18, 04:09, "Maninder Singh" <maninder1.s@samsung.com> wrote:
+> 
+>     
+>      Hello Nick/ Yann,
+>     
+>     Any inputs regarding LZ4 dyn results & lz4 dyn approach.
+>     
+>     >Hello Nick/Sergey,
+>     > 
+>     >Any suggestion or comments, so that we can change code and resend the patch?
+>     > 
+>     >> Hi Nick / Sergey,
+>     >> 
+>     >> 
+>     >> We have compared LZ4 Dyn with Original LZ4 using some samples of realtime application data(4Kb)
+>     >> compressed/decompressed by ZRAM. For comparison we have used lzbench (https://github.com/inikep/lzbench)
+>     >> we have implemented dedicated LZ4 Dyn API & kept last literal length as 6 to avoid overhead 
+>     >> of checks. It seems in average case there is a saving of 3~4% in compression ratio with almost same compression
+>     >> speed and minor loss in decompression speed (~50MB/s) when compared with LZ4.
+>     >> 
+>     >> Comparison of Lz4 Dyn with LZO1x is also done as LZO1x is default compressor of ZRAM.
+>     >> 
+
+Unfortunately the track record of maintaining compression code in the Linux
+kernel is not great.  zlib for example was forked from v1.2.3, which was
+released in 2005, and hasn't been updated since besides some random drive-by
+patches which have made it diverge even further from upstream.  There have even
+been bugs assigned CVE numbers in upstream zlib, and I don't think anyone has
+looked at whether the Linux kernel version has those bugs or not.
+
+The story with LZ4 is a bit better as someone updated it to v1.7.3 last year.
+But, it took a lot of rounds of review in which I had to point out some subtle
+regressions like the hash table size being accidentally changed, and things not
+being inlined that should be.  And of course now that version is outdated
+already.
+
+We also have LZO and Zstandard in the kernel to maintain too, as well as XZ
+decompression.
+
+And very problematically, *none* of these compression algorithms have a
+maintainer listed in the MAINTAINERS file.
+
+So in my opinion, as a prerequisite for this change, someone would need to
+volunteer to actually maintain LZ4 in the kernel.
+
+Thanks,
+
+Eric
