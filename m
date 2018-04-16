@@ -1,80 +1,83 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1133588-1524488321-2-4132992986432371945
+X-Cyrus-Session-Id: sloti22d1t05-2217916-1523852146-2-3622177308653181466
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES rocaen,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524488320; b=dMB0bs8gpIgH7f7YXmqOX/wVZSDW6Y+RvUVLH4jOQBHbbQPPKg
-    HOyJJHgHUnbDBz9GulPw+ukIfl4zSfYwdP3F8q5032F1mwMae0KaNm6HeIzSVmjb
-    i3Gw2r8YhzlnDtdHyBU0TQriKssDCvOQHIxbM2v85HU5e1YRPu2cHBCOO9CLoF3J
-    DomJ3odDSirWMXQoA6y7Ug8c4sy1Fh7PPPPuOCVrp1egn5l4qxiX6L6u+TTF++98
-    toJDZZUPDJlHJyIDweDdP89NxtLDQvAvj/YaaUFJWTaB4MBkqT+9q+MCONMdsBo6
-    ArcOgKaahZQD/5lvW0Ds2WctaJFNsrdkyoSw==
+    1523852145; b=E+MDAo1aaUhgg4MviVwLSqIWKopUBFy0Z9yocenSh7nl/VLGLk
+    6MiChIh7XqOTx+LgPenGbAVStKRuF2jSx1EGRXGmeyTHT3Qt4eYlSSrCoxDG9C4V
+    xDH+bLWL7yLRo8Bo0eFhkBs4Dk0f73H5aUM5OBG69gUX61L0vI5w3FNh6M5QvP0D
+    q+6PFUg39u/2gDNdc1ICWzpkrZByg6dWaQn5ctDvwVWuM9HOSMJdP3KDB2f6pixC
+    1k0yPuEwa6/Ps/ZgSghkwVHulMoEou3n91DT0+qpGqefzc8bHDIIMxYF55G016tN
+    kgh/h+9muo9xmuowGOU/t5vsogTV4q6ONblA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524488320; bh=Gfumo
-    tOmngtsNqdBrbBJQyo3lVsMiToZrmvTMrnlZX0=; b=viGWXQSCmtSDGvKqkCAuu
-    XG0gL+CplvD9VSUjxEJoRrnNOFPeNZIrsvkMc1mtOyWTv8TenwNxvKvWLAqEk7GN
-    2ePzfHiGMWEZjJNXgYF+2+5OvycNGZc/sMDAvUVm3TgjmHcki5MVCnJZGGHBlxSI
-    KJykg69CxRwOQrmI17yNBpNUO7V4aDTy9ob08iJLNgRgCsobP/rHLypiAZOhcQ1U
-    uleAO9n7ujXtcBsjqWrH+deh0CnTcl9jl0hsGIBoED2uzJ8sXYcZ9gBHwuWs/8W3
-    UWmeOaGVoK6DuJLMQhvpFj9cw6Kp4k7F4GiQe8sZNwRJOVzjbALYKs0kUBTm9wJB
-    Q==
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523852145; bh=Vz8xv
+    VNx0fkVnmOuqby/YPJVZ5jSRE5GX6sqUICzHUY=; b=OP+JKuWKwmfkxeH2KSUHQ
+    K7CtQiL8zp3kfqA4RTUF4O2/70mrFIxZG751SaR+0HIirBUny1jJiE/h9OaL+klj
+    T1ASQhaqWplZvoMwQf6sXtRb6IOBxTCAfSQpBj5VXcWpScVMtu5b741SWD/SVy6f
+    TqNNN9qb3XF6UwuLZWQPTeYRFMM4oK9L9xJ8N0SwliiMUGcXw/ta0/zvaa1Iq9vQ
+    9hGVt48SSqxmFQ0/UhQDOoRCQPE5fMlxFrToxnWPlepZvfoust9ZB+BbQ2vrDmnV
+    7EcQyo2QhkZcuC+dqB3uBqfPsWbAbsXmEUgr2abT2TcwokEgJiWR52ULBglrPgSu
+    g==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDFtCEr7A3DIyvSfgvg3zoWV+3i/NkJiyO/oixT5sjv4LB1/zG4BhuiVrr7dV0Df77NRXpV8Rhr+XpiONZ8Z9TMUwm/r3/oV8vzFtaRZeqglYSA/cj0R
-    PY7hVuWwSoe8+QWuVJheCePEhxWZMiwZgb6wwkZzyQMKN24XU1qDs55Fs1obIkVE0CzSrksNLmsZw0TIpQvHsJFqshcuJbe0cqHhmqxy2GWjo1qTCcoFhw4I
-    UL8yCuGnU0Ij5aham/yx+w==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=CjxXgO3LAAAA:8 a=DDOyTI_5AAAA:8
-    a=wqdROaKO76PCPhWBUJ4A:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfOio4cQqL/qS4B6jZpB1RpOhiPYuYVkyHDuwdo8xKzqyYQxkgNErqmOqmRbpAMxgx3vEQaEIP5XjKZ+oVroBsEiAJlQDpYT73Ge4cOuIqj0gJ8cfjKZC
+    gi1cYtClDs24LrO1/I4yAV6kXEWMnQZ5v5j1TTeP+YNRYT6xOslvwrOtVvJpzcaDyhJJ6OTYtSBXxSK2Wv0nihPTL+hVWP7qlMXRigbzHkaoOwsJgLoFiIDU
+    W7AhsxIm5SvdYX2qUrWbNA==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8 a=ySfo2T4IAAAA:8
+    a=CjxXgO3LAAAA:8 a=JfrnYn6hAAAA:8 a=DDOyTI_5AAAA:8 a=WP2f9hrftTm6G55qluUA:9
+    a=CjuIK1q_8ugA:10 a=ZUkhVnNHqyo2at-WnAgH:22 a=1CNFftbPRP8L7MoqJWF3:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Mon, 23 Apr 2018 14:58:27 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: James Simmons <jsimmons@infradead.org>
-Subject: Re: [PATCH 00/22] staging: lustre: llite: fix xattr handling
-Message-ID: <20180423125827.GA32162@kroah.com>
-References: <1523852111-17321-1-git-send-email-jsimmons@infradead.org>
-MIME-Version: 1.0
-Content-Disposition: inline
+From: James Simmons <jsimmons@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+ Oleg Drokin <oleg.drokin@intel.com>, NeilBrown <neilb@suse.com>
+Subject: [PATCH 19/22] staging: lustre: llite: add support set_acl method in
+ inode operations
+Date: Mon, 16 Apr 2018 00:15:08 -0400
+Message-Id: <1523852111-17321-20-git-send-email-jsimmons@infradead.org>
+X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1523852111-17321-1-git-send-email-jsimmons@infradead.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+References: <1523852111-17321-1-git-send-email-jsimmons@infradead.org>
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -85,11 +88,11 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, James Simmons <uja.ornl@yahoo.com>,
- Andreas Dilger <andreas.dilger@intel.com>, NeilBrown <neilb@suse.com>,
+Cc: Dmitry Eremin <dmitry.eremin@intel.com>,
+ "John L. Hammond" <john.hammond@intel.com>,
  Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Oleg Drokin <oleg.drokin@intel.com>,
  Lustre Development List <lustre-devel@lists.lustre.org>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -98,20 +101,165 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 16, 2018 at 12:14:49AM -0400, James Simmons wrote:
-> From: James Simmons <uja.ornl@yahoo.com>
-> 
-> Lustre utilities and user land APIs heavly depend on special xattr
-> handling. Sadly much of the xattr handling for lustre client has
-> been broken for awhile. This is all the fixes needed to make xattr
-> handling work properly with the latest kernels.
+From: Dmitry Eremin <dmitry.eremin@intel.com>
 
-Most of these now applied, please rebase and fix up the remaining ones
-when resending.
+Linux kernel v3.14 adds set_acl method to inode operations.
+This patch adds support to Lustre for proper acl management.
 
-thanks,
+Signed-off-by: Dmitry Eremin <dmitry.eremin@intel.com>
+Signed-off-by: John L. Hammond <john.hammond@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-9183
+Reviewed-on: https://review.whamcloud.com/25965
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10541
+Reviewed-on: https://review.whamcloud.com/
+Reviewed-by: Bob Glossman <bob.glossman@intel.com>
+Reviewed-by: James Simmons <uja.ornl@yahoo.com>
+Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+Signed-off-by: James Simmons <jsimmons@infradead.org>
+---
+ drivers/staging/lustre/lustre/llite/file.c         | 67 ++++++++++++++++++++++
+ .../staging/lustre/lustre/llite/llite_internal.h   |  4 ++
+ drivers/staging/lustre/lustre/llite/namei.c        | 10 +++-
+ 3 files changed, 79 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/drivers/staging/lustre/lustre/llite/file.c b/drivers/staging/lustre/lustre/llite/file.c
+index 0026fde..35f5bda 100644
+--- a/drivers/staging/lustre/lustre/llite/file.c
++++ b/drivers/staging/lustre/lustre/llite/file.c
+@@ -3030,6 +3030,7 @@ static int ll_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 	return rc;
+ }
+ 
++#ifdef CONFIG_FS_POSIX_ACL
+ struct posix_acl *ll_get_acl(struct inode *inode, int type)
+ {
+ 	struct ll_inode_info *lli = ll_i2info(inode);
+@@ -3043,6 +3044,69 @@ struct posix_acl *ll_get_acl(struct inode *inode, int type)
+ 	return acl;
+ }
+ 
++int ll_set_acl(struct inode *inode, struct posix_acl *acl, int type)
++{
++	struct ll_sb_info *sbi = ll_i2sbi(inode);
++	struct ptlrpc_request *req = NULL;
++	const char *name = NULL;
++	size_t value_size = 0;
++	char *value = NULL;
++	int rc;
++
++	switch (type) {
++	case ACL_TYPE_ACCESS:
++		name = XATTR_NAME_POSIX_ACL_ACCESS;
++		if (acl) {
++			rc = posix_acl_update_mode(inode, &inode->i_mode, &acl);
++			if (rc)
++				goto out;
++		}
++
++		break;
++
++	case ACL_TYPE_DEFAULT:
++		name = XATTR_NAME_POSIX_ACL_DEFAULT;
++		if (!S_ISDIR(inode->i_mode)) {
++			rc = acl ? -EACCES : 0;
++			goto out;
++		}
++
++		break;
++
++	default:
++		rc = -EINVAL;
++		goto out;
++	}
++
++	if (acl) {
++		value_size = posix_acl_xattr_size(acl->a_count);
++		value = kmalloc(value_size, GFP_NOFS);
++		if (!value) {
++			rc = -ENOMEM;
++			goto out;
++		}
++
++		rc = posix_acl_to_xattr(&init_user_ns, acl, value, value_size);
++		if (rc < 0)
++			goto out_value;
++	}
++
++	rc = md_setxattr(sbi->ll_md_exp, ll_inode2fid(inode),
++			 value ? OBD_MD_FLXATTR : OBD_MD_FLXATTRRM,
++			 name, value, value_size, 0, 0, 0, &req);
++
++	ptlrpc_req_finished(req);
++out_value:
++	kfree(value);
++out:
++	if (!rc)
++		set_cached_acl(inode, type, acl);
++	else
++		forget_cached_acl(inode, type);
++	return rc;
++}
++#endif /* CONFIG_FS_POSIX_ACL */
++
+ int ll_inode_permission(struct inode *inode, int mask)
+ {
+ 	struct ll_sb_info *sbi;
+@@ -3164,7 +3228,10 @@ int ll_inode_permission(struct inode *inode, int mask)
+ 	.permission	= ll_inode_permission,
+ 	.listxattr	= ll_listxattr,
+ 	.fiemap		= ll_fiemap,
++#ifdef CONFIG_FS_POSIX_ACL
+ 	.get_acl	= ll_get_acl,
++	.set_acl	= ll_set_acl,
++#endif
+ };
+ 
+ /* dynamic ioctl number support routines */
+diff --git a/drivers/staging/lustre/lustre/llite/llite_internal.h b/drivers/staging/lustre/lustre/llite/llite_internal.h
+index 6504850..2280327 100644
+--- a/drivers/staging/lustre/lustre/llite/llite_internal.h
++++ b/drivers/staging/lustre/lustre/llite/llite_internal.h
+@@ -754,7 +754,11 @@ enum ldlm_mode ll_take_md_lock(struct inode *inode, __u64 bits,
+ int ll_md_real_close(struct inode *inode, fmode_t fmode);
+ int ll_getattr(const struct path *path, struct kstat *stat,
+ 	       u32 request_mask, unsigned int flags);
++#ifdef CONFIG_FS_POSIX_ACL
+ struct posix_acl *ll_get_acl(struct inode *inode, int type);
++int ll_set_acl(struct inode *inode, struct posix_acl *acl, int type);
++#endif /* CONFIG_FS_POSIX_ACL */
++
+ int ll_migrate(struct inode *parent, struct file *file, int mdtidx,
+ 	       const char *name, int namelen);
+ int ll_get_fid_by_name(struct inode *parent, const char *name,
+diff --git a/drivers/staging/lustre/lustre/llite/namei.c b/drivers/staging/lustre/lustre/llite/namei.c
+index 6c9ec46..d7c4c58 100644
+--- a/drivers/staging/lustre/lustre/llite/namei.c
++++ b/drivers/staging/lustre/lustre/llite/namei.c
+@@ -1190,7 +1190,10 @@ static int ll_rename(struct inode *src, struct dentry *src_dchild,
+ 	.getattr	    = ll_getattr,
+ 	.permission	 = ll_inode_permission,
+ 	.listxattr	  = ll_listxattr,
+-	.get_acl	    = ll_get_acl,
++#ifdef CONFIG_FS_POSIX_ACL
++	.get_acl	= ll_get_acl,
++	.set_acl	= ll_set_acl,
++#endif
+ };
+ 
+ const struct inode_operations ll_special_inode_operations = {
+@@ -1198,5 +1201,8 @@ static int ll_rename(struct inode *src, struct dentry *src_dchild,
+ 	.getattr	= ll_getattr,
+ 	.permission     = ll_inode_permission,
+ 	.listxattr      = ll_listxattr,
+-	.get_acl	    = ll_get_acl,
++#ifdef CONFIG_FS_POSIX_ACL
++	.get_acl	= ll_get_acl,
++	.set_acl	= ll_set_acl,
++#endif
+ };
+-- 
+1.8.3.1
+
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
