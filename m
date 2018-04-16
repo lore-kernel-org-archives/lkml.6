@@ -1,154 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753270AbeDPWG5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 18:06:57 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50234 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752209AbeDPWGz (ORCPT
+        id S1752209AbeDPWPK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 18:15:10 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:46066 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750917AbeDPWPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 18:06:55 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5A760600ED
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-Subject: Re: [PATCH v2 1/2] regulator: dt-bindings: add QCOM RPMh regulator
- bindings
-To: Rob Herring <robh@kernel.org>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rnayak@codeaurora.org, sboyd@kernel.org, dianders@chromium.org
-References: <cover.1523673467.git.collinsd@codeaurora.org>
- <39b676d2ba7dac2436196cc5a090c6f151498dc8.1523673467.git.collinsd@codeaurora.org>
- <20180416205749.556rbkzaja33oref@rob-hp-laptop>
-From: David Collins <collinsd@codeaurora.org>
-Message-ID: <aad8e393-01bd-5935-5dd8-d96e54f5aa39@codeaurora.org>
-Date: Mon, 16 Apr 2018 15:06:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        Mon, 16 Apr 2018 18:15:08 -0400
+X-Google-Smtp-Source: AIpwx486tx5rdAPAexdYAAn1ALKfekHLU11EDz2NRT4qPe4tMdAcs9ywmUiVyalPvHsXyraVEUt5pA==
+Subject: Re: Crashes/hung tasks with z3pool under memory pressure
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, mawilcox@microsoft.com,
+        asavery@chromium.org, gwendal@chromium.org
+References: <20180412215501.GA16406@roeck-us.net>
+ <CAMJBoFMq8DoWdcrajB_xyMrGXsUsbMjos_U60mOvf01MpK_9Kw@mail.gmail.com>
+ <20180413173555.GA30587@roeck-us.net>
+ <CAMJBoFPXObpXyQWz-zPJ7JnC-Z5FqqrLfr5BFWKdh+szZrPZ7A@mail.gmail.com>
+ <20180413175615.GA30242@roeck-us.net>
+ <b241e25a-50a3-fefb-0443-ad6c0a200898@gmail.com>
+ <20180416155832.GB12015@roeck-us.net>
+From: Vitaly Wool <vitalywool@gmail.com>
+Message-ID: <b5158eef-2fbd-ce8c-1c8c-6c38ec837f1d@gmail.com>
+Date: Tue, 17 Apr 2018 00:14:37 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180416205749.556rbkzaja33oref@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20180416155832.GB12015@roeck-us.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rob,
+On 4/16/18 5:58 PM, Guenter Roeck wrote:
 
-On 04/16/2018 01:57 PM, Rob Herring wrote:
-> On Fri, Apr 13, 2018 at 07:50:34PM -0700, David Collins wrote:
->> Introduce bindings for RPMh regulator devices found on some
->> Qualcomm Technlogies, Inc. SoCs.  These devices allow a given
->> processor within the SoC to make PMIC regulator requests which
->> are aggregated within the RPMh hardware block along with requests
->> from other processors in the SoC to determine the final PMIC
->> regulator hardware state.
+> On Mon, Apr 16, 2018 at 02:43:01PM +0200, Vitaly Wool wrote:
+>> Hey Guenter,
 >>
->> Signed-off-by: David Collins <collinsd@codeaurora.org>
->> ---
->>  .../bindings/regulator/qcom,rpmh-regulator.txt     | 207 +++++++++++++++++++++
->>  .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 ++++
->> [...]
->> +++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
->> [...]
->> +- vdd_s1-supply
-> 
-> Use '-' rather than '_' on all these.
+>> On 04/13/2018 07:56 PM, Guenter Roeck wrote:
+>>
+>>> On Fri, Apr 13, 2018 at 05:40:18PM +0000, Vitaly Wool wrote:
+>>>> On Fri, Apr 13, 2018, 7:35 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>>>
+>>>>> On Fri, Apr 13, 2018 at 05:21:02AM +0000, Vitaly Wool wrote:
+>>>>>> Hi Guenter,
+>>>>>>
+>>>>>>
+>>>>>> Den fre 13 apr. 2018 kl 00:01 skrev Guenter Roeck <linux@roeck-us.net>:
+>>>>>>
+>>>>>>> Hi all,
+>>>>>>> we are observing crashes with z3pool under memory pressure. The kernel
+>>>>>> version
+>>>>>>> used to reproduce the problem is v4.16-11827-g5d1365940a68, but the
+>>>>>> problem was
+>>>>>>> also seen with v4.14 based kernels.
+>>>>>> just before I dig into this, could you please try reproducing the errors
+>>>>>> you see with https://patchwork.kernel.org/patch/10210459/ applied?
+>>>>>>
+>>>>> As mentioned above, I tested with v4.16-11827-g5d1365940a68, which already
+>>>>> includes this patch.
+>>>>>
+>>>> Bah. Sorry. Expect an update after the weekend.
+>>>>
+>>> NP; easy to miss. Thanks a lot for looking into it.
+>>>
+>> I wonder if the following patch would make a difference:
+>>
+>> diff --git a/mm/z3fold.c b/mm/z3fold.c
+>> index c0bca6153b95..5e547c2d5832 100644
+>> --- a/mm/z3fold.c
+>> +++ b/mm/z3fold.c
+>> @@ -887,19 +887,21 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+>>   				goto next;
+>>   		}
+>>   next:
+>> -		spin_lock(&pool->lock);
+>>   		if (test_bit(PAGE_HEADLESS, &page->private)) {
+>>   			if (ret == 0) {
+>> -				spin_unlock(&pool->lock);
+>>   				free_z3fold_page(page);
+>>   				return 0;
+>>   			}
+>> -		} else if (kref_put(&zhdr->refcount, release_z3fold_page)) {
+>> -			atomic64_dec(&pool->pages_nr);
+>> -			spin_unlock(&pool->lock);
+>> -			return 0;
+>> +		} else {
+>> +			spin_lock(&zhdr->page_lock);
+>> +			if (kref_put(&zhdr->refcount, release_z3fold_page_locked)) {
+>> +				atomic64_dec(&pool->pages_nr);
+>> +				return 0;
+>> +			}
+>> +			spin_unlock(&zhdr->page_lock);
+>>   		}
+>> +		spin_lock(&pool->lock);
+>>   		/*
+>>   		 * Add to the beginning of LRU.
+>>   		 * Pool lock has to be kept here to ensure the page has
+>>
+> No, it doesn't. Same crash.
+>
+> BUG: MAX_LOCK_DEPTH too low!
+> turning off the locking correctness validator.
+> depth: 48  max: 48!
+> 48 locks held by kswapd0/51:
+>   #0: 000000004d7a35a9 (&(&pool->lock)->rlock#3){+.+.}, at: z3fold_zpool_shrink+0x47/0x3e0
+>   #1: 000000007739f49e (&(&zhdr->page_lock)->rlock){+.+.}, at: z3fold_zpool_shrink+0xb7/0x3e0
+>   #2: 00000000ff6cd4c8 (&(&zhdr->page_lock)->rlock){+.+.}, at: z3fold_zpool_shrink+0xb7/0x3e0
+>   #3: 000000004cffc6cb (&(&zhdr->page_lock)->rlock){+.+.}, at: z3fold_zpool_shrink+0xb7/0x3e0
+> ...
+> PU: 0 PID: 51 Comm: kswapd0 Not tainted 4.17.0-rc1-yocto-standard+ #11
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.10.2-1 04/01/2014
+> Call Trace:
+>   dump_stack+0x67/0x9b
+>   __lock_acquire+0x429/0x18f0
+>   ? __lock_acquire+0x2af/0x18f0
+>   ? __lock_acquire+0x2af/0x18f0
+>   ? lock_acquire+0x93/0x230
+>   lock_acquire+0x93/0x230
+>   ? z3fold_zpool_shrink+0xb7/0x3e0
+>   _raw_spin_trylock+0x65/0x80
+>   ? z3fold_zpool_shrink+0xb7/0x3e0
+>   ? z3fold_zpool_shrink+0x47/0x3e0
+>   z3fold_zpool_shrink+0xb7/0x3e0
+>   zswap_frontswap_store+0x180/0x7c0
+> ...
+> BUG: sleeping function called from invalid context at mm/page_alloc.c:4320
+> in_atomic(): 1, irqs_disabled(): 0, pid: 51, name: kswapd0
+> INFO: lockdep is turned off.
+> Preemption disabled at:
+> [<0000000000000000>]           (null)
+> CPU: 0 PID: 51 Comm: kswapd0 Not tainted 4.17.0-rc1-yocto-standard+ #11
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.10.2-1 04/01/2014
+> Call Trace:
+>   dump_stack+0x67/0x9b
+>   ___might_sleep+0x16c/0x250
+>   __alloc_pages_nodemask+0x1e7/0x1490
+>   ? lock_acquire+0x93/0x230
+>   ? lock_acquire+0x93/0x230
+>   __read_swap_cache_async+0x14d/0x260
+>   zswap_writeback_entry+0xdb/0x340
+>   z3fold_zpool_shrink+0x2b1/0x3e0
+>   zswap_frontswap_store+0x180/0x7c0
+>   ? page_vma_mapped_walk+0x22/0x230
+>   __frontswap_store+0x6e/0xf0
+>   swap_writepage+0x49/0x70
+> ...
+>
+> This is with your patch applied on top of v4.17-rc1.
+>
+> Guenter
+>
+Ugh. Could you please keep that patch and apply this on top:
 
-I will change this on the next patch set.
-
-
->> +- vdd_s2-supply
->> +- vdd_s3-supply
->> +- vdd_s4-supply
->> +- vdd_s5-supply
->> +- vdd_s6-supply
->> +- vdd_s7-supply
->> +- vdd_s8-supply
->> +- vdd_s9-supply
->> +- vdd_s10-supply
->> +- vdd_s11-supply
->> +- vdd_s12-supply
->> +- vdd_s13-supply
->> +- vdd_l1_l27-supply
->> +- vdd_l2_l8_l17-supply
->> +- vdd_l3_l11-supply
->> +- vdd_l4_l5-supply
->> +- vdd_l6-supply
->> +- vdd_l7_l12_l14_l15-supply
->> +- vdd_l9-supply
->> +- vdd_l10_l23_l25-supply
->> +- vdd_l13_l19_l21-supply
->> +- vdd_l16_l28-supply
->> +- vdd_l18_l22-supply
->> +- vdd_l20_l24-supply
->> +- vdd_l26-supply
->> +- vdd_lvs1_lvs2-supply
->> +- vdd_lvs1_lvs2-supply
->> +	Usage:      optional (PM8998 only)
->> +	Value type: <phandle>
->> +	Definition: phandle of the parent supply regulator of one or more of the
->> +		    regulators for this PMIC.
->> +
->> +- vdd_bob-supply
->> +	Usage:      optional (PMI8998 only)
->> +	Value type: <phandle>
->> +	Definition: BOB regulator parent supply phandle
->> +
->> +- vdd_s1-supply
->> +- vdd_s2-supply
->> +- vdd_s3-supply
->> +- vdd_s4-supply
-> 
-> Listed twice?
-> 
->> +	Usage:      optional (PM8005 only)
->> +	Value type: <phandle>
->> +	Definition: phandle of the parent supply regulator of one or more of the
->> +		    regulators for this PMIC.
-
-I listed vdd_s1-supply to vdd_s4-supply here twice because I wanted to
-group together the supplies supported by each PMIC.  PM8005 only supports
-these 4 regulator supplies.  PM8998 supports these 4 along with many
-others.  How else would suggest that I capture this per-PMIC support
-information?
-
-
->> +===============================
->> +Second Level Nodes - Regulators
->> +===============================
->> +
->> +- qcom,regulator-initial-voltage
->> +	Usage:      optional; VRM regulators only
->> +	Value type: <u32>
->> +	Definition: Specifies the initial voltage in microvolts to request for a
->> +		    VRM regulator.
->> +
->> +- regulator-initial-mode
-> 
-> Vendor prefix?
-
-No, this does not need a vendor prefix.  The regulator-initial-mode
-property is already defined for all regulator devices [1]:
-
-    regulator-initial-mode: initial operating mode. The set of possible
-    operating modes depends on the capabilities of every hardware so each
-    device binding documentation explains which values the regulator
-    supports.
-
-The values supported by the property are hardware specific and thus must
-be listed in device specific binding files like this one.  Here is a
-previously merged example: [2].
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index c0bca6153b95..e8a80d044d9e 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -840,6 +840,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+  			kref_get(&zhdr->refcount);
+  			list_del_init(&zhdr->buddy);
+  			zhdr->cpu = -1;
++			break;
+  		}
+  
+  		list_del_init(&page->lru);
 
 Thanks,
-David
-
-[1]:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/regulator/regulator.txt?h=v4.17-rc1#n59
-[2]:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/regulator/twl-regulator.txt?h=v4.17-rc1#n60
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+    Vitaly
