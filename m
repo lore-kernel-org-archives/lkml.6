@@ -1,32 +1,32 @@
 Return-Path: <jacob.jun.pan@linux.intel.com>
-X-Google-Smtp-Source: AIpwx4/QJx4HfGl33xa+sTCxrWQSMbJpLUgOhf9I1JD1J8r9Z0mi+dclU9LsrxpMnyYWR6cKzHb8
-ARC-Seal: i=1; a=rsa-sha256; t=1523915204; cv=none;
+X-Google-Smtp-Source: AIpwx49K6/mYUM9ESTq0hZjn50U3Hub+V55uBEttfUyHdVg6PjLnAqN2mcoqedR7UGREZfBxciWv
+ARC-Seal: i=1; a=rsa-sha256; t=1523915205; cv=none;
         d=google.com; s=arc-20160816;
-        b=lAKJ1SFhS64Itw0WIWHGGR6OGuY2R2R6jzMBjw14OGxrqXpb6pyBuS19R2WXnJi77x
-         Gy1NDusDRNqqy3RCuJ1ZuvblCaqdLc5Wx0yeGTlbRv7UskQ1GivZbXwrmWJy47Kc1a47
-         naO7kfkeKC8+qxOvO89Lrf/pD7xLQPQm5pBUumIC1F3nbQ7tkpZgjMrHTJfLFpvKMftQ
-         2IGdmVuvjlag+ruhVh/jqUFYaPWMGw7To2t6v1H+Af8Iv4/kofC+w/+GiFtVDxnVRqzZ
-         WxOrz59fr7DrQDZ3C2mwskSkOcRQKuywJqpZhnsQ9FwjkJ//iVWJbqd7GcQFSdQW4Fz1
-         6eeQ==
+        b=lNpVSFIe4ajtID3nGhvY2PZ4OClDyRd+u+hg/+7C+OHdr9+e18hxRsBNGX3G9cSyVY
+         mCqPHzl7SqnYiX/f/7zQSt+cVFU5IAw9wUUyUWjhm+POJUzdItd6P8AeszYRFTq689An
+         WTusL3W1H7iZ5zTl2/3tJTEybrCl7lPqUWCYc/v3EWEWFYhYLFO8V1eC9FXz/C+Gl5F3
+         BEGfbgzOUhw7dSpO6MBzGbBQWV1qqAkJy1XONdUiIOs+w+anuSA8fjbkKJy6w3fKP4Uw
+         5eE40of+Kx5uCSgM354El+ayyvLULtUTIwYNQvYKo+511VcSJBXeenN+SSukecz7u5Bo
+         KVOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=4dnTpTRcY9LnX11gphWi5M6lLS35Ibd6O4cA3fmFPpU=;
-        b=pZSkw2Ju7vUFt4IOvD9+uisUY8SosjH0PCU7lejGU878d0ChMXajMoMK054undXzaD
-         gu5l+/x2wB7sL8f65J9/5rHA6/pi/+siI7jznezFGkzeox8kW6GaPbaog5KWz0H/JRrA
-         IG5VDAyrwYMkEVTg4tj7AApk9+yvwiEinQCbz8eO5q2THbIpGjNq6UdRlNck+jwzO3DG
-         h5iPavprpxUNCxt4xgvL1INhJa3fecxfwv2XDGPBlm05BlZRqvOoHNnoeautSE5GxRmU
-         gnGutGictdZjGv5u1a+rsbCpY1dElqOH7Sr7uf6Wt9d4LeonSlriqZiSx4yiW7X0Crfb
-         68hg==
+        bh=BczkwraTvtAo7yZIZ2RGyKw7kQA00uoT2prq0ySpQRA=;
+        b=ncUw3oadEOKKAUr2Rtkt+Bgi7FYJRvlrQ/zaABb1lhRXJOgu9sN8wvG2NbZRypmxF/
+         +FzPkNJ1xoasvtcFX85sl9mODn4KlKmwgUJSbL0QbcvjKqKXmp9JORKQcrz7lIBsjKCL
+         4l+YooLeX498tuoIgYtqnpZ3B7fMq4K2Ipp1sqEDdYRdpbrb5cOyPniBNNEWbgpz8Z3N
+         fZsAeuB/YK8QEs7/D1PhBM6aCOcX+LufAIyIZU3nxUVRAoOucWclobEkXqYXEUG4IaVE
+         YxVftE67fEp/xEcBFtASB310v+EwDA9B1On8f/XUYAqt/hN3YDSW3dLEvov7rH7EuryE
+         zCzA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,460,1517904000";
-   d="scan'208";a="34740154"
+   d="scan'208";a="34740197"
 From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 To: iommu@lists.linux-foundation.org,
 	LKML <linux-kernel@vger.kernel.org>,
@@ -43,101 +43,106 @@ Cc: Rafael Wysocki <rafael.j.wysocki@intel.com>,
 	"Christoph Hellwig" <hch@infradead.org>,
 	"Lu Baolu" <baolu.lu@linux.intel.com>,
 	Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v4 07/22] iommu/vt-d: fix dev iotlb pfsid use
-Date: Mon, 16 Apr 2018 14:48:56 -0700
-Message-Id: <1523915351-54415-8-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 20/22] iommu/vt-d: add intel iommu page response function
+Date: Mon, 16 Apr 2018 14:49:09 -0700
+Message-Id: <1523915351-54415-21-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597940909685559911?=
-X-GMAIL-MSGID: =?utf-8?q?1597940909685559911?=
+X-GMAIL-THRID: =?utf-8?q?1597940909906468274?=
+X-GMAIL-MSGID: =?utf-8?q?1597940909906468274?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-PFSID should be used in the invalidation descriptor for flushing
-device IOTLBs on SRIOV VFs.
+This patch adds page response support for Intel VT-d.
+Generic response data is taken from the IOMMU API
+then parsed into VT-d specific response descriptor format.
 
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 ---
- drivers/iommu/dmar.c        |  6 +++---
- drivers/iommu/intel-iommu.c | 16 +++++++++++++++-
- include/linux/intel-iommu.h |  5 ++---
- 3 files changed, 20 insertions(+), 7 deletions(-)
+ drivers/iommu/intel-iommu.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/intel-iommu.h |  3 +++
+ 2 files changed, 50 insertions(+)
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index accf5838..38bb90f 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1339,8 +1339,8 @@ void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 	qi_submit_sync(&desc, iommu);
- }
- 
--void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			u64 addr, unsigned mask)
-+void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask)
- {
- 	struct qi_desc desc;
- 
-@@ -1355,7 +1355,7 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
- 		qdep = 0;
- 
- 	desc.low = QI_DEV_IOTLB_SID(sid) | QI_DEV_IOTLB_QDEP(qdep) |
--		   QI_DIOTLB_TYPE;
-+		   QI_DIOTLB_TYPE | QI_DEV_IOTLB_PFSID(pfsid);
- 
- 	qi_submit_sync(&desc, iommu);
- }
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index d8058be..cae4042 100644
+index a6ea67d..38f76d4 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -1459,6 +1459,19 @@ static void iommu_enable_dev_iotlb(struct device_domain_info *info)
- 		return;
- 
- 	pdev = to_pci_dev(info->dev);
-+	/* For IOMMU that supports device IOTLB throttling (DIT), we assign
-+	 * PFSID to the invalidation desc of a VF such that IOMMU HW can gauge
-+	 * queue depth at PF level. If DIT is not set, PFSID will be treated as
-+	 * reserved, which should be set to 0.
-+	 */
-+	if (!ecap_dit(info->iommu->ecap))
-+		info->pfsid = 0;
-+	else if (pdev && pdev->is_virtfn) {
-+		if (ecap_dit(info->iommu->ecap))
-+			dev_warn(&pdev->dev, "SRIOV VF device IOTLB enabled without flow control\n");
-+		info->pfsid = PCI_DEVID(pdev->physfn->bus->number, pdev->physfn->devfn);
-+	} else
-+		info->pfsid = PCI_DEVID(info->bus, info->devfn);
- 
- #ifdef CONFIG_INTEL_IOMMU_SVM
- 	/* The PCIe spec, in its wisdom, declares that the behaviour of
-@@ -1524,7 +1537,8 @@ static void iommu_flush_dev_iotlb(struct dmar_domain *domain,
- 
- 		sid = info->bus << 8 | info->devfn;
- 		qdep = info->ats_qdep;
--		qi_flush_dev_iotlb(info->iommu, sid, qdep, addr, mask);
-+		qi_flush_dev_iotlb(info->iommu, sid, info->pfsid,
-+				qdep, addr, mask);
- 	}
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
+@@ -5142,6 +5142,52 @@ static int intel_iommu_sva_invalidate(struct iommu_domain *domain,
+ 	return ret;
  }
+ 
++static int intel_iommu_page_response(struct device *dev, struct page_response_msg *msg)
++{
++	struct qi_desc resp;
++	struct intel_iommu *iommu;
++	struct pci_dev *pdev;
++	u8 bus, devfn;
++	u16 rid;
++	u64 desc;
++
++	pdev = to_pci_dev(dev);
++	iommu = device_to_iommu(dev, &bus, &devfn);
++	if (!iommu) {
++		dev_err(dev, "No IOMMU for device to unbind PASID table\n");
++		return -ENODEV;
++	}
++
++	pci_dev_get(pdev);
++	rid = ((u16)bus << 8) | devfn;
++	/* Iommu private data contains  preserved page request descriptor, so we
++	 * inspect the SRR bit for response type then queue response with only
++	 * the private data [54:32].
++	 */
++	desc = msg->private_data;
++	if (desc & QI_PRQ_SRR) {
++		/* Page Stream Response */
++		resp.low = QI_PSTRM_IDX(msg->page_req_group_id) |
++			(desc & QI_PRQ_PRIV) | QI_PSTRM_BUS(PCI_BUS_NUM(pdev->bus->number)) |
++			QI_PSTRM_PASID(msg->pasid) | QI_PSTRM_RESP_TYPE;
++		resp.high = QI_PSTRM_ADDR(msg->addr) | QI_PSTRM_DEVFN(pdev->devfn & 0xff) |
++			QI_PSTRM_RESP_CODE(msg->resp_code);
++	} else {
++		/* Page Group Response */
++		resp.low = QI_PGRP_PASID(msg->pasid) |
++			QI_PGRP_DID(rid) |
++			QI_PGRP_PASID_P(msg->pasid_present) |
++			QI_PGRP_RESP_TYPE;
++		resp.high = QI_PGRP_IDX(msg->page_req_group_id) |
++			(desc & QI_PRQ_PRIV) | QI_PGRP_RESP_CODE(msg->resp_code);
++
++	}
++	qi_submit_sync(&resp, iommu);
++	pci_dev_put(pdev);
++
++	return 0;
++}
++
+ static int intel_iommu_map(struct iommu_domain *domain,
+ 			   unsigned long iova, phys_addr_t hpa,
+ 			   size_t size, int iommu_prot)
+@@ -5568,6 +5614,7 @@ const struct iommu_ops intel_iommu_ops = {
+ 	.bind_pasid_table	= intel_iommu_bind_pasid_table,
+ 	.unbind_pasid_table	= intel_iommu_unbind_pasid_table,
+ 	.sva_invalidate		= intel_iommu_sva_invalidate,
++	.page_response		= intel_iommu_page_response,
+ #endif
+ 	.map			= intel_iommu_map,
+ 	.unmap			= intel_iommu_unmap,
 diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index dfacd49..678a0f4 100644
+index dbe8c93..ed2883a 100644
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -504,9 +504,8 @@ extern void qi_flush_context(struct intel_iommu *iommu, u16 did, u16 sid,
- 			     u8 fm, u64 type);
- extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 			  unsigned int size_order, u64 type);
--extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
--			       u64 addr, unsigned mask);
--
-+extern void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 pfsid,
-+			u16 qdep, u64 addr, unsigned mask);
- extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
+@@ -337,6 +337,9 @@ enum {
+ #define QI_PSTRM_BUS(bus)	(((u64)(bus)) << 24)
+ #define QI_PSTRM_PASID(pasid)	(((u64)(pasid)) << 4)
  
- extern int dmar_ir_support(void);
++#define QI_PRQ_SRR	BIT_ULL(0)
++#define QI_PRQ_PRIV	GENMASK_ULL(54, 32)
++
+ #define QI_RESP_SUCCESS		0x0
+ #define QI_RESP_INVALID		0x1
+ #define QI_RESP_FAILURE		0xf
 -- 
 2.7.4
