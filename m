@@ -1,61 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753526AbeDPGrp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:47:45 -0400
-Received: from m12-18.163.com ([220.181.12.18]:44408 "EHLO m12-18.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751199AbeDPGrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:47:43 -0400
-From: sxauwsk <sxauwsk@163.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wangshikai@inno-instrument.cn, sxauwsk <sxauwsk@163.com>,
-        guojian <guojian@innoinstrument.net>
-Subject: [PATCH] [PATCH v1] spi: cadence: Add usleep_range() for  cdns_spi_fill_tx_fifo()
-Date: Mon, 16 Apr 2018 14:46:40 +0800
-Message-Id: <1523861200-34130-1-git-send-email-sxauwsk@163.com>
-X-Mailer: git-send-email 1.7.9.5
-X-CM-TRANSID: EsCowAAn5EXvRtRaPtkLFg--.12687S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKF43Xw1DZw4DtryUAFWfAFb_yoWkKrbEvF
-        18Aw1DGw45KF9rA3W29FsxAFWv9an5Cr1kuFWqqa9xJw47Z3Z2vr95Zr1DuwsxCa1UWF9x
-        ZrnYkayUArnxKjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRJ3ktUUUUU==
-X-Originating-IP: [113.140.17.238]
-X-CM-SenderInfo: 5v0d34lvn6il2tof0z/1tbiQBAqJlSIVnL2AAAAsS
+        id S1753658AbeDPGsY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:48:24 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40755 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752496AbeDPGsX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 02:48:23 -0400
+Date: Sun, 15 Apr 2018 23:48:08 -0700
+From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-ogppdtpzfax7y1h6gjdv5s6u@git.kernel.org>
+Cc: mingo@kernel.org, hpa@zytor.com, jolsa@kernel.org, acme@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, mliska@suse.cz,
+        adrian.hunter@intel.com, yao.jin@linux.intel.com, dsahern@gmail.com,
+        wangnan0@huawei.com, namhyung@kernel.org,
+        ravi.bangoria@linux.vnet.ibm.com, ak@linux.intel.com,
+        tmricht@linux.vnet.ibm.com
+Reply-To: namhyung@kernel.org, wangnan0@huawei.com, ak@linux.intel.com,
+        ravi.bangoria@linux.vnet.ibm.com, tmricht@linux.vnet.ibm.com,
+        mingo@kernel.org, hpa@zytor.com, jolsa@kernel.org, acme@redhat.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mliska@suse.cz,
+        yao.jin@linux.intel.com, adrian.hunter@intel.com, dsahern@gmail.com
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf report: Fix switching to another perf.data
+ file
+Git-Commit-ID: 7b366142a50ad79e48de8e67c5b3e8cfb9fa82dd
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of xspi work in busy condition, may send bytes failed.
-once something wrong, spi controller did't work any more
+Commit-ID:  7b366142a50ad79e48de8e67c5b3e8cfb9fa82dd
+Gitweb:     https://git.kernel.org/tip/7b366142a50ad79e48de8e67c5b3e8cfb9fa82dd
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 12 Apr 2018 14:58:24 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 13 Apr 2018 10:00:04 -0300
 
-My test found this situation appear in both of read/write process.
-so when TX FIFO is full, add one byte delay before send data;
+perf report: Fix switching to another perf.data file
 
-Signed-off-by: sxauwsk <sxauwsk@163.com>
-Signed-off-by: guojian <guojian@innoinstrument.net>
-Signed-off-by: wangshikai <wangshikai@inno-instrument.cn>
+In the TUI the 's' hotkey can be used to switch to another perf.data
+file in the current directory, but that got broken in Fixes:
+b01141f4f59c ("perf annotate: Initialize the priv are in symbol__new()"),
+that would show this once another file was chosen:
+
+    ┌─Fatal Error─────────────────────────────────────┐
+    │Annotation needs to be init before symbol__init()│
+    │                                                 │
+    │                                                 │
+    │Press any key...                                 │
+    └─────────────────────────────────────────────────┘
+
+Fix it by just silently bailing out if symbol__annotation_init() was already
+called, just like is done with symbol__init(), i.e. they are done just once at
+session start, not when switching to a new perf.data file.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Martin Liška <mliska@suse.cz>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Fixes: b01141f4f59c ("perf annotate: Initialize the priv are in symbol__new()")
+Link: https://lkml.kernel.org/n/tip-ogppdtpzfax7y1h6gjdv5s6u@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/spi/spi-cadence.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/perf/util/symbol.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
-index 66ae055..9694042 100644
---- a/drivers/spi/spi-cadence.c
-+++ b/drivers/spi/spi-cadence.c
-@@ -315,9 +315,11 @@ static void cdns_spi_fill_tx_fifo(struct cdns_spi *xspi)
- 	       (xspi->tx_bytes > 0)) {
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 62b2dd2253eb..1466814ebada 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -2091,16 +2091,14 @@ static bool symbol__read_kptr_restrict(void)
  
- 		/* When xspi in busy condition, bytes may send failed,
--		 * caused communication failure so add one byte delay
-+		 * then spi control did't work thoroughly, add one byte delay
- 		 */
--		usleep_range(10, 20);
-+		if (cdns_spi_read(xspi, CDNS_SPI_ISR_OFFSET) &
-+		    CDNS_SPI_IXR_TXFULL_MASK)
-+			usleep_range(10, 20);
+ int symbol__annotation_init(void)
+ {
++	if (symbol_conf.init_annotation)
++		return 0;
++
+ 	if (symbol_conf.initialized) {
+ 		pr_err("Annotation needs to be init before symbol__init()\n");
+ 		return -1;
+ 	}
  
- 		if (xspi->txbuf)
- 			cdns_spi_write(xspi, CDNS_SPI_TXD, *xspi->txbuf++);
--- 
-1.7.9.5
+-	if (symbol_conf.init_annotation) {
+-		pr_warning("Annotation being initialized multiple times\n");
+-		return 0;
+-	}
+-
+ 	symbol_conf.priv_size += sizeof(struct annotation);
+ 	symbol_conf.init_annotation = true;
+ 	return 0;
