@@ -1,72 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753362AbeDPSrt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 14:47:49 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:42128 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753118AbeDPSrr (ORCPT
+        id S1753299AbeDPSrc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 14:47:32 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:46163 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753088AbeDPSra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 14:47:47 -0400
-X-Google-Smtp-Source: AIpwx4/AguNKLQ/3R3MPhDhJu0yJsZatBZPbWIjn+hAFqvsR2OuXFIdeizgRovIdLrYTR0hpVHc0MA==
-Date: Mon, 16 Apr 2018 13:47:45 -0500
-From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/5] dt-bindings: allow dwmac-sun8i to use other devices'
- exported regmap
-Message-ID: <20180416184745.tqxyvojtcbage4fu@rob-hp-laptop>
-References: <20180411141641.14675-1-icenowy@aosc.io>
- <20180411141641.14675-2-icenowy@aosc.io>
+        Mon, 16 Apr 2018 14:47:30 -0400
+X-Google-Smtp-Source: AIpwx49vrIlk42VFUepYCYin1hU2BGO1z1DkbPjA6Ys2wWaw0FmwXwygxNoqn2kN4xGJlveRCg7sDg==
+Subject: Re: [PATCH] lightnvm: pblk: add CNEX Granby to the pblk device list
+To: Wei Xu <wxu@cnexlabs.com>
+Cc: javier@cnexlabs.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1523870357-2118-1-git-send-email-wxu@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <e595a844-8879-5919-6fc6-8563da666af4@lightnvm.io>
+Date: Mon, 16 Apr 2018 20:47:26 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180411141641.14675-2-icenowy@aosc.io>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <1523870357-2118-1-git-send-email-wxu@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 10:16:37PM +0800, Icenowy Zheng wrote:
-> On some Allwinner SoCs the EMAC clock register needed by dwmac-sun8i is
-> in another device's memory space. In this situation dwmac-sun8i can use
-> a regmap exported by the other device with only the EMAC clock register.
+On 4/16/18 11:19 AM, Wei Xu wrote:
 
-If this is a clock, then why not use the clock binding?
-
-> 
-> Document this situation in the dwmac-sun8i device tree binding
-> documentation.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Add a new lightnvm quirk to identify CNEX’s Granby controller.
+>
+> Signed-off-by: Wei Xu <wxu@cnexlabs.com>
 > ---
->  Documentation/devicetree/bindings/net/dwmac-sun8i.txt | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-> index 3d6d5fa0c4d5..0c5f63a80617 100644
-> --- a/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-> +++ b/Documentation/devicetree/bindings/net/dwmac-sun8i.txt
-> @@ -20,8 +20,9 @@ Required properties:
->  - phy-handle: See ethernet.txt
->  - #address-cells: shall be 1
->  - #size-cells: shall be 0
-> -- syscon: A phandle to the syscon of the SoC with one of the following
-> - compatible string:
-> +- syscon: A phandle to a device which exports the EMAC clock register as a
-> + regmap or to the syscon of the SoC with one of the following compatible
-> + string:
->    - allwinner,sun8i-h3-system-controller
->    - allwinner,sun8i-v3s-system-controller
->    - allwinner,sun50i-a64-system-controller
-> -- 
-> 2.15.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>   drivers/nvme/host/pci.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index cb73bc8..9419e88 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2529,6 +2529,8 @@ static const struct pci_device_id nvme_id_table[] = {
+>   		.driver_data = NVME_QUIRK_LIGHTNVM, },
+>   	{ PCI_DEVICE(0x1d1d, 0x2807),	/* CNEX WL */
+>   		.driver_data = NVME_QUIRK_LIGHTNVM, },
+> +	{ PCI_DEVICE(0x1d1d, 0x2601),	/* CNEX Granby */
+> +		.driver_data = NVME_QUIRK_LIGHTNVM, },
+>   	{ PCI_DEVICE_CLASS(PCI_CLASS_STORAGE_EXPRESS, 0xffffff) },
+>   	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2001) },
+>   	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
+Hi Wei,
+
+The patch looks good, but the title is not description of the change.
+
+Could the title be changed to "nvme: lightnvm: add granby support". 
+Also, please send it to the nvme mailing list and CC Keith Busch. It is 
+a pure NVMe device driver change, and can go directly up through the 
+NVMe maintainers. I'll add a Reviewed-by: when you've sent it.
+
+-Matias
