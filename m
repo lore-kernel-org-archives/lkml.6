@@ -1,133 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753240AbeDPSVM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 14:21:12 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:43540 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752308AbeDPSVL (ORCPT
+        id S1753156AbeDPSZK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 14:25:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60504 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753013AbeDPSZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 14:21:11 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date: Mon, 16 Apr 2018 20:21:09 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Thierry Reding <treding@nvidia.com>,
-        Stephen Warren <swarren@wwwdotorg.org>, linux@armlinux.org.uk
-Cc: Stephen Warren <swarren@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>, ard.biesheuvel@linaro.org,
-        arnd@arndb.de, nicolas.pitre@linaro.org, marc.zyngier@arm.com,
-        behanw@converseincode.com, keescook@chromium.org,
-        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 3/6] ARM: trusted_foundations: do not use naked
- function
-In-Reply-To: <498de826-6e6c-63d8-00d6-f394b2725a34@wwwdotorg.org>
-References: <20180325180959.28008-1-stefan@agner.ch>
- <20180325180959.28008-4-stefan@agner.ch>
- <704c863a-0b5a-6396-d7da-f0ed17b7cca2@gmail.com>
- <263337af-7541-be9e-3db6-6cb987fd08fb@arm.com>
- <f627177c-f813-9e10-ade5-c7654375639b@gmail.com>
- <cf9b916103c0dba1e67682efc69f5bae@agner.ch>
- <498de826-6e6c-63d8-00d6-f394b2725a34@wwwdotorg.org>
-Message-ID: <507a66ab9ab530a6d71db7a74f11ddfb@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
+        Mon, 16 Apr 2018 14:25:09 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        michal.simek@xilinx.com, nagasuresh12@gmail.com,
+        shubhrajyoti.datta@xilinx.com,
+        Naga Sureshkumar Relli <nagasure@xilinx.com>,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: zynqmp: Add pm runtime support" to the spi tree
+In-Reply-To: <1522069460-4703-1-git-send-email-nagasure@xilinx.com>
+Message-Id: <E1f88oL-0005ek-70@debutante>
+Date: Mon, 16 Apr 2018 19:25:05 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.04.2018 18:08, Stephen Warren wrote:
-> On 04/16/2018 09:56 AM, Stefan Agner wrote:
->> On 27.03.2018 14:16, Dmitry Osipenko wrote:
->>> On 27.03.2018 14:54, Robin Murphy wrote:
->>>> On 26/03/18 22:20, Dmitry Osipenko wrote:
->>>>> On 25.03.2018 21:09, Stefan Agner wrote:
->>>>>> As documented in GCC naked functions should only use Basic asm
->>>>>> syntax. The Extended asm or mixture of Basic asm and "C" code is
->>>>>> not guaranteed. Currently this works because it was hard coded
->>>>>> to follow and check GCC behavior for arguments and register
->>>>>> placement.
->>>>>>
->>>>>> Furthermore with clang using parameters in Extended asm in a
->>>>>> naked function is not supported:
->>>>>>     arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
->>>>>>             references not allowed in naked functions
->>>>>>                   : "r" (type), "r" (arg1), "r" (arg2)
->>>>>>                          ^
->>>>>>
->>>>>> Use a regular function to be more portable. This aligns also with
->>>>>> the other smc call implementations e.g. in qcom_scm-32.c and
->>>>>> bcm_kona_smc.c.
->>>>>>
->>>>>> Cc: Dmitry Osipenko <digetx@gmail.com>
->>>>>> Cc: Stephen Warren <swarren@nvidia.com>
->>>>>> Cc: Thierry Reding <treding@nvidia.com>
->>>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>>>>> ---
->>>>>> Changes in v2:
->>>>>> - Keep stmfd/ldmfd to avoid potential ABI issues
->>>>>>
->>>>>>    arch/arm/firmware/trusted_foundations.c | 14 +++++++++-----
->>>>>>    1 file changed, 9 insertions(+), 5 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm/firmware/trusted_foundations.c
->>>>>> b/arch/arm/firmware/trusted_foundations.c
->>>>>> index 3fb1b5a1dce9..689e6565abfc 100644
->>>>>> --- a/arch/arm/firmware/trusted_foundations.c
->>>>>> +++ b/arch/arm/firmware/trusted_foundations.c
->>>>>> @@ -31,21 +31,25 @@
->>>>>>      static unsigned long cpu_boot_addr;
->>>>>>    -static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
->>>>>> +static void tf_generic_smc(u32 type, u32 arg1, u32 arg2)
->>>>>>    {
->>>>>> +    register u32 r0 asm("r0") = type;
->>>>>> +    register u32 r1 asm("r1") = arg1;
->>>>>> +    register u32 r2 asm("r2") = arg2;
->>>>>> +
->>>>>>        asm volatile(
->>>>>>            ".arch_extension    sec\n\t"
->>>>>> -        "stmfd    sp!, {r4 - r11, lr}\n\t"
->>>>>> +        "stmfd    sp!, {r4 - r11}\n\t"
->>>>>>            __asmeq("%0", "r0")
->>>>>>            __asmeq("%1", "r1")
->>>>>>            __asmeq("%2", "r2")
->>>>>>            "mov    r3, #0\n\t"
->>>>>>            "mov    r4, #0\n\t"
->>>>>>            "smc    #0\n\t"
->>>>>> -        "ldmfd    sp!, {r4 - r11, pc}"
->>>>>> +        "ldmfd    sp!, {r4 - r11}\n\t"
->>>>>>            :
->>>>>> -        : "r" (type), "r" (arg1), "r" (arg2)
->>>>>> -        : "memory");
->>>>>> +        : "r" (r0), "r" (r1), "r" (r2)
->>>>>> +        : "memory", "r3", "r12", "lr");
->>>>>
->>>>> Although seems "lr" won't be affected by SMC invocation because it should be
->>>>> banked and hence could be omitted entirely from the code. Maybe somebody could
->>>>> confirm this.
->>>> Strictly per the letter of the architecture, the SMC could be trapped to Hyp
->>>> mode, and a hypervisor might clobber LR_usr in the process of forwarding the
->>>> call to the firmware secure monitor (since Hyp doesn't have a banked LR of its
->>>> own). Admittedly there are probably no real systems with the appropriate
->>>> hardware/software combination to hit that, but on the other hand if this gets
->>>> inlined where the compiler has already created a stack frame then an LR clobber
->>>> is essentially free, so I reckon we're better off keeping it for reassurance.
->>>> This isn't exactly a critical fast path anyway.
->>>
->>> Okay, thank you for the clarification.
->>
->> So it seems this change is fine?
->>
->> Stephen, you picked up changes for this driver before, is this patch
->> going through your tree?
-> 
-> You had best ask Thierry; he's taken over Tegra maintenance upstream.
-> But that said, don't files in arch/arm go through Russell?
+The patch
 
-I think the last patches applied to that file went through your tree.
+   spi: zynqmp: Add pm runtime support
 
-Thierry, Russel, any preferences?
+has been applied to the spi tree at
 
---
-Stefan
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 5662c997a3b5e2d267c879c0613be7d7c5c87c37 Mon Sep 17 00:00:00 2001
+From: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Date: Mon, 26 Mar 2018 18:34:20 +0530
+Subject: [PATCH] spi: zynqmp: Add pm runtime support
+
+This patch adds runtime pm functions.
+
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Signed-off-by: Naga Sureshkumar Relli <nagasure@xilinx.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-zynqmp-gqspi.c | 86 +++++++++++++++++++++++++++-------
+ 1 file changed, 70 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index 18aeaceee286..26d1ac3bf496 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -20,6 +20,7 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/spi/spi.h>
+ #include <linux/spinlock.h>
+ #include <linux/workqueue.h>
+@@ -135,6 +136,7 @@
+ #define GQSPI_DMA_UNALIGN		0x3
+ #define GQSPI_DEFAULT_NUM_CS	1	/* Default number of chip selects */
+ 
++#define SPI_AUTOSUSPEND_TIMEOUT		3000
+ enum mode_type {GQSPI_MODE_IO, GQSPI_MODE_DMA};
+ 
+ /**
+@@ -356,21 +358,9 @@ static void zynqmp_qspi_copy_read_data(struct zynqmp_qspi *xqspi,
+ static int zynqmp_prepare_transfer_hardware(struct spi_master *master)
+ {
+ 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+-	int ret;
+-
+-	ret = clk_enable(xqspi->refclk);
+-	if (ret)
+-		return ret;
+-
+-	ret = clk_enable(xqspi->pclk);
+-	if (ret)
+-		goto clk_err;
+ 
+ 	zynqmp_gqspi_write(xqspi, GQSPI_EN_OFST, GQSPI_EN_MASK);
+ 	return 0;
+-clk_err:
+-	clk_disable(xqspi->refclk);
+-	return ret;
+ }
+ 
+ /**
+@@ -387,8 +377,6 @@ static int zynqmp_unprepare_transfer_hardware(struct spi_master *master)
+ 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+ 
+ 	zynqmp_gqspi_write(xqspi, GQSPI_EN_OFST, 0x0);
+-	clk_disable(xqspi->refclk);
+-	clk_disable(xqspi->pclk);
+ 	return 0;
+ }
+ 
+@@ -959,11 +947,67 @@ static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
+ 
+ 	spi_master_resume(master);
+ 
++	clk_disable(xqspi->refclk);
++	clk_disable(xqspi->pclk);
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(zynqmp_qspi_dev_pm_ops, zynqmp_qspi_suspend,
+-			 zynqmp_qspi_resume);
++/**
++ * zynqmp_runtime_suspend - Runtime suspend method for the SPI driver
++ * @dev:	Address of the platform_device structure
++ *
++ * This function disables the clocks
++ *
++ * Return:	Always 0
++ */
++static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct spi_master *master = platform_get_drvdata(pdev);
++	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
++
++	clk_disable(xqspi->refclk);
++	clk_disable(xqspi->pclk);
++
++	return 0;
++}
++
++/**
++ * zynqmp_runtime_resume - Runtime resume method for the SPI driver
++ * @dev:	Address of the platform_device structure
++ *
++ * This function enables the clocks
++ *
++ * Return:	0 on success and error value on error
++ */
++static int __maybe_unused zynqmp_runtime_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct spi_master *master = platform_get_drvdata(pdev);
++	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
++	int ret;
++
++	ret = clk_enable(xqspi->pclk);
++	if (ret) {
++		dev_err(dev, "Cannot enable APB clock.\n");
++		return ret;
++	}
++
++	ret = clk_enable(xqspi->refclk);
++	if (ret) {
++		dev_err(dev, "Cannot enable device clock.\n");
++		clk_disable(xqspi->pclk);
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct dev_pm_ops zynqmp_qspi_dev_pm_ops = {
++	SET_RUNTIME_PM_OPS(zynqmp_runtime_suspend,
++			   zynqmp_runtime_resume, NULL)
++	SET_SYSTEM_SLEEP_PM_OPS(zynqmp_qspi_suspend, zynqmp_qspi_resume)
++};
+ 
+ /**
+  * zynqmp_qspi_probe:	Probe method for the QSPI driver
+@@ -1023,9 +1067,15 @@ static int zynqmp_qspi_probe(struct platform_device *pdev)
+ 		goto clk_dis_pclk;
+ 	}
+ 
++	pm_runtime_use_autosuspend(&pdev->dev);
++	pm_runtime_set_autosuspend_delay(&pdev->dev, SPI_AUTOSUSPEND_TIMEOUT);
++	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
+ 	/* QSPI controller initializations */
+ 	zynqmp_qspi_init_hw(xqspi);
+ 
++	pm_runtime_mark_last_busy(&pdev->dev);
++	pm_runtime_put_autosuspend(&pdev->dev);
+ 	xqspi->irq = platform_get_irq(pdev, 0);
+ 	if (xqspi->irq <= 0) {
+ 		ret = -ENXIO;
+@@ -1063,6 +1113,8 @@ static int zynqmp_qspi_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ clk_dis_all:
++	pm_runtime_set_suspended(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
+ 	clk_disable_unprepare(xqspi->refclk);
+ clk_dis_pclk:
+ 	clk_disable_unprepare(xqspi->pclk);
+@@ -1090,6 +1142,8 @@ static int zynqmp_qspi_remove(struct platform_device *pdev)
+ 	zynqmp_gqspi_write(xqspi, GQSPI_EN_OFST, 0x0);
+ 	clk_disable_unprepare(xqspi->refclk);
+ 	clk_disable_unprepare(xqspi->pclk);
++	pm_runtime_set_suspended(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
+ 
+ 	spi_unregister_master(master);
+ 
+-- 
+2.17.0
