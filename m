@@ -1,184 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeDPSTo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 14:19:44 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:36870 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752826AbeDPSTm (ORCPT
+        id S1753240AbeDPSVM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 14:21:12 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:43540 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752308AbeDPSVL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 14:19:42 -0400
-X-Google-Smtp-Source: AIpwx48+3kGLcaJz4qzcV6/J95yyqJ6MWOkQXMoZu52v2a4Bfc7tUmgfl/9fVmqzbitcZN7zvcYmOg==
-Date: Mon, 16 Apr 2018 13:19:40 -0500
-From: Rob Herring <robh@kernel.org>
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 1/5] dt-bindings: pinctrl: document the STMFX pinctrl
- bindings
-Message-ID: <20180416181940.4b5z4svbde3ompij@rob-hp-laptop>
-References: <1523440025-18077-1-git-send-email-amelie.delaunay@st.com>
- <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
+        Mon, 16 Apr 2018 14:21:11 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523440025-18077-2-git-send-email-amelie.delaunay@st.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Date: Mon, 16 Apr 2018 20:21:09 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Thierry Reding <treding@nvidia.com>,
+        Stephen Warren <swarren@wwwdotorg.org>, linux@armlinux.org.uk
+Cc: Stephen Warren <swarren@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>, ard.biesheuvel@linaro.org,
+        arnd@arndb.de, nicolas.pitre@linaro.org, marc.zyngier@arm.com,
+        behanw@converseincode.com, keescook@chromium.org,
+        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2 3/6] ARM: trusted_foundations: do not use naked
+ function
+In-Reply-To: <498de826-6e6c-63d8-00d6-f394b2725a34@wwwdotorg.org>
+References: <20180325180959.28008-1-stefan@agner.ch>
+ <20180325180959.28008-4-stefan@agner.ch>
+ <704c863a-0b5a-6396-d7da-f0ed17b7cca2@gmail.com>
+ <263337af-7541-be9e-3db6-6cb987fd08fb@arm.com>
+ <f627177c-f813-9e10-ade5-c7654375639b@gmail.com>
+ <cf9b916103c0dba1e67682efc69f5bae@agner.ch>
+ <498de826-6e6c-63d8-00d6-f394b2725a34@wwwdotorg.org>
+Message-ID: <507a66ab9ab530a6d71db7a74f11ddfb@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 11:47:01AM +0200, Amelie Delaunay wrote:
-> This patch adds documentation of device tree bindings for the
-> STMicroelectronics Multi-Function eXpander (STMFX) GPIO expander.
+On 16.04.2018 18:08, Stephen Warren wrote:
+> On 04/16/2018 09:56 AM, Stefan Agner wrote:
+>> On 27.03.2018 14:16, Dmitry Osipenko wrote:
+>>> On 27.03.2018 14:54, Robin Murphy wrote:
+>>>> On 26/03/18 22:20, Dmitry Osipenko wrote:
+>>>>> On 25.03.2018 21:09, Stefan Agner wrote:
+>>>>>> As documented in GCC naked functions should only use Basic asm
+>>>>>> syntax. The Extended asm or mixture of Basic asm and "C" code is
+>>>>>> not guaranteed. Currently this works because it was hard coded
+>>>>>> to follow and check GCC behavior for arguments and register
+>>>>>> placement.
+>>>>>>
+>>>>>> Furthermore with clang using parameters in Extended asm in a
+>>>>>> naked function is not supported:
+>>>>>>     arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
+>>>>>>             references not allowed in naked functions
+>>>>>>                   : "r" (type), "r" (arg1), "r" (arg2)
+>>>>>>                          ^
+>>>>>>
+>>>>>> Use a regular function to be more portable. This aligns also with
+>>>>>> the other smc call implementations e.g. in qcom_scm-32.c and
+>>>>>> bcm_kona_smc.c.
+>>>>>>
+>>>>>> Cc: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> Cc: Stephen Warren <swarren@nvidia.com>
+>>>>>> Cc: Thierry Reding <treding@nvidia.com>
+>>>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>>>>>> ---
+>>>>>> Changes in v2:
+>>>>>> - Keep stmfd/ldmfd to avoid potential ABI issues
+>>>>>>
+>>>>>>    arch/arm/firmware/trusted_foundations.c | 14 +++++++++-----
+>>>>>>    1 file changed, 9 insertions(+), 5 deletions(-)
+>>>>>>
+>>>>>> diff --git a/arch/arm/firmware/trusted_foundations.c
+>>>>>> b/arch/arm/firmware/trusted_foundations.c
+>>>>>> index 3fb1b5a1dce9..689e6565abfc 100644
+>>>>>> --- a/arch/arm/firmware/trusted_foundations.c
+>>>>>> +++ b/arch/arm/firmware/trusted_foundations.c
+>>>>>> @@ -31,21 +31,25 @@
+>>>>>>      static unsigned long cpu_boot_addr;
+>>>>>>    -static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
+>>>>>> +static void tf_generic_smc(u32 type, u32 arg1, u32 arg2)
+>>>>>>    {
+>>>>>> +    register u32 r0 asm("r0") = type;
+>>>>>> +    register u32 r1 asm("r1") = arg1;
+>>>>>> +    register u32 r2 asm("r2") = arg2;
+>>>>>> +
+>>>>>>        asm volatile(
+>>>>>>            ".arch_extension    sec\n\t"
+>>>>>> -        "stmfd    sp!, {r4 - r11, lr}\n\t"
+>>>>>> +        "stmfd    sp!, {r4 - r11}\n\t"
+>>>>>>            __asmeq("%0", "r0")
+>>>>>>            __asmeq("%1", "r1")
+>>>>>>            __asmeq("%2", "r2")
+>>>>>>            "mov    r3, #0\n\t"
+>>>>>>            "mov    r4, #0\n\t"
+>>>>>>            "smc    #0\n\t"
+>>>>>> -        "ldmfd    sp!, {r4 - r11, pc}"
+>>>>>> +        "ldmfd    sp!, {r4 - r11}\n\t"
+>>>>>>            :
+>>>>>> -        : "r" (type), "r" (arg1), "r" (arg2)
+>>>>>> -        : "memory");
+>>>>>> +        : "r" (r0), "r" (r1), "r" (r2)
+>>>>>> +        : "memory", "r3", "r12", "lr");
+>>>>>
+>>>>> Although seems "lr" won't be affected by SMC invocation because it should be
+>>>>> banked and hence could be omitted entirely from the code. Maybe somebody could
+>>>>> confirm this.
+>>>> Strictly per the letter of the architecture, the SMC could be trapped to Hyp
+>>>> mode, and a hypervisor might clobber LR_usr in the process of forwarding the
+>>>> call to the firmware secure monitor (since Hyp doesn't have a banked LR of its
+>>>> own). Admittedly there are probably no real systems with the appropriate
+>>>> hardware/software combination to hit that, but on the other hand if this gets
+>>>> inlined where the compiler has already created a stack frame then an LR clobber
+>>>> is essentially free, so I reckon we're better off keeping it for reassurance.
+>>>> This isn't exactly a critical fast path anyway.
+>>>
+>>> Okay, thank you for the clarification.
+>>
+>> So it seems this change is fine?
+>>
+>> Stephen, you picked up changes for this driver before, is this patch
+>> going through your tree?
 > 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
-> ---
->  .../devicetree/bindings/pinctrl/pinctrl-stmfx.txt  | 118 +++++++++++++++++++++
->  1 file changed, 118 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
-> new file mode 100644
-> index 0000000..4d8941de
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-stmfx.txt
-> @@ -0,0 +1,118 @@
-> +STMicroelectronics Multi-Function eXpander (STMFX) GPIO expander bindings
-> +
-> +ST Multi-Function eXpander (STMFX) is a slave controller using I2C for
-> +communication with the main MCU. It offers up to 24 GPIOs expansion.
-> +
-> +Required properties:
-> +- compatible: should be "st,stmfx-0300".
-> +- reg: I2C slave address of the device.
-> +- interrupt-parent: phandle of the STMFX parent interrupt controller.
-> +- interrutps: interrupt specifier triggered by MFX_IRQ_OUT signal.
-> +
-> +Optional property:
+> You had best ask Thierry; he's taken over Tegra maintenance upstream.
+> But that said, don't files in arch/arm go through Russell?
 
-s/property/properties/
+I think the last patches applied to that file went through your tree.
 
-> +- drive-open-drain: configure MFX_IRQ_OUT as open drain.
-> +- vdd-supply: phandle of the regulator supplying STMFX.
-> +
-> +Required properties for gpio controller sub-node:
-> +- #gpio-cells: should be <2>, the first cell is the GPIO number and the second
-> +  cell is the gpio flags in accordance with <dt-bindings/gpio/gpio.h>.
-> +- gpio-controller: marks the device as a GPIO controller.
-> +Please refer to ../gpio/gpio.txt.
-> +
-> +Optional properties for gpio controller sub-node:
-> +- #interrupt-cells: should be <2>, the first cell is the GPIO number and the
-> +  second cell is the interrupt flags in accordance with
-> +  <dt-bindings/interrupt-controller/irq.h>.
-> +- interrupt-controller: marks the device as an interrupt controller.
-> +
-> +Please refer to pinctrl-bindings.txt for pin configuration.
-> +
-> +Required properties for pin configuration sub-nodes:
-> +- pins: list of pins to which the configuration applies.
-> +
-> +Optional properties for pin configuration sub-nodes (pinconf-generic ones):
-> +- bias-disable: disable any bias on the pin.
-> +- bias-pull-up: the pin will be pulled up.
-> +- bias-pull-pin-default: use the pin-default pull state.
-> +- bias-pull-down: the pin will be pulled down.
-> +- drive-open-drain: the pin will be driven with open drain.
-> +- drive-push-pull: the pin will be driven actively high and low.
-> +- output-high: the pin will be configured as an output driving high level.
-> +- output-low: the pin will be configured as an output driving low level.
-> +
-> +Note that STMFX pins[15:0] are called "gpio[15:0]", and STMFX pins[23:16] are
-> +called "agpio[7:0]". Example, to refer to pin 18 of STMFX, use "agpio2".
-> +
-> +Example:
-> +
-> +	stmfxpinctrl: stmfx@42 {
-> +		compatible = "st,stmfx-0300";
-> +		reg = <0x42>;
-> +		interrupt-parent = <&gpioi>;
-> +		interrupts = <8 IRQ_TYPE_EDGE_RISING>;
-> +		vdd-supply = <&v3v3>;
-> +		status = "okay";
+Thierry, Russel, any preferences?
 
-Don't show status in examples.
-
-> +
-> +		stmfxgpio: gpio {
-
-Why does this need to be a sub node? Are there functions beyond GPIO?
-
-> +			#gpio-cells = <2>;
-> +			#interrupt-cells = <2>;
-> +			gpio-controller;
-> +			interrupt-controller;
-> +			status = "okay";
-> +		};
-> +
-> +		joystick_pins: joystick@0 {
-
-A unit-address without a reg prop is not valid.
-
-> +			pins = "gpio0", "gpio1", "gpio2", "gpio3", "gpio4";
-> +			drive-push-pull;
-> +			bias-pull-down;
-> +		};
-> +	};
-> +
-> +	joystick {
-> +		compatible = "gpio-keys";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		pinctrl-0 = <&joystick_pins>;
-> +		pinctrl-names = "default";
-> +		button@0 {
-> +			label = "JoySel";
-> +			linux,code = <KEY_ENTER>;
-> +			interrupt-parent = <&stmfxgpio>;
-> +			interrupts = <0 IRQ_TYPE_EDGE_RISING>;
-> +		};
-> +		button@1 {
-> +			label = "JoyDown";
-> +			linux,code = <KEY_DOWN>;
-> +			interrupt-parent = <&stmfxgpio>;
-> +			interrupts = <1 IRQ_TYPE_EDGE_RISING>;
-> +		};
-> +		button@2 {
-> +			label = "JoyLeft";
-> +			linux,code = <KEY_LEFT>;
-> +			interrupt-parent = <&stmfxgpio>;
-> +			interrupts = <2 IRQ_TYPE_EDGE_RISING>;
-> +		};
-> +		button@3 {
-> +			label = "JoyRight";
-> +			linux,code = <KEY_RIGHT>;
-> +			interrupt-parent = <&stmfxgpio>;
-> +			interrupts = <3 IRQ_TYPE_EDGE_RISING>;
-> +		};
-> +		button@4 {
-> +			label = "JoyUp";
-> +			linux,code = <KEY_UP>;
-> +			interrupt-parent = <&stmfxgpio>;
-> +			interrupts = <4 IRQ_TYPE_EDGE_RISING>;
-> +		};
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		orange {
-> +			gpios = <&stmfxgpio 17 1>;
-> +		};
-> +
-> +		blue {
-> +			gpios = <&stmfxgpio 19 1>;
-> +		};
-> +	}
-> -- 
-> 2.7.4
-> 
+--
+Stefan
