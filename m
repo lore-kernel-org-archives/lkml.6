@@ -1,61 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755221AbeDPMG0 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:06:26 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38655 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753848AbeDPMGY (ORCPT
+        id S1754351AbeDPMGr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:06:47 -0400
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:35859 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753088AbeDPMGp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:06:24 -0400
-X-Google-Smtp-Source: AIpwx48dat1+xC/wkBqa+sYElqoHh0fnG11QE/U0236wIp60xQmJPaj5PnsLnxFG1dGG0M5erlR4WA==
-Date: Mon, 16 Apr 2018 13:06:19 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-Cc: jdelvare@suse.com, linux@roeck-us.net, cphealy@gmail.com,
-        andrew.smirnov@gmail.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Immutable branch between MFD and HWMON due for the v4.18
- merge window
-Message-ID: <20180416120619.4mj7byn2rtztcbvd@dell>
-References: <1522160389-18822-1-git-send-email-andrey.gusakov@cogentembedded.com>
+        Mon, 16 Apr 2018 08:06:45 -0400
+X-Google-Smtp-Source: AIpwx49myGi+GSfCEIXiVWso00ASwIn+ONZ/2aKBbfIqpnGCtl8ot5RgKsEE6cu4HB+KX5BrUzSMzQ==
+Subject: Re: [PATCH 01/14] thermal: exynos: Reading temperature makes sense
+ only when TMU is turned on
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180416101339epcas2p171d462b70a85a6fff3bb939fca6d469d@epcas2p1.samsung.com>
+ <1523873525-23718-2-git-send-email-b.zolnierkie@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <a49d9651-bb52-85bc-ffc0-2ba012e66dd5@linaro.org>
+Date: Mon, 16 Apr 2018 14:06:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <1523873525-23718-2-git-send-email-b.zolnierkie@samsung.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1522160389-18822-1-git-send-email-andrey.gusakov@cogentembedded.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for the delay.  Things are pretty hectic at the moment.
+On 16/04/2018 12:11, Bartlomiej Zolnierkiewicz wrote:
+> From: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> When thermal sensor is not yet enabled, reading temperature might return
+> random value. This might even result in stopping system booting when such
+> temperature is higher than the critical value. Fix this by checking if TMU
+> has been actually enabled before reading the temperature.
+> 
+> This change fixes booting of Exynos4210-based board with TMU enabled (for
+> example Samsung Trats board), which was broken since v4.4 kernel release.
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+Why not move the thermal_zone_of_sensor_register *after* initializing
+the sensor ?
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Fixes: 9e4249b40340 ("thermal: exynos: Fix first temperature read after registering sensor")
+> CC: stable@vger.kernel.org # v4.6+
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-hwmon-v4.18
-
-for you to fetch changes up to ed645cccc0ebc0329916b6df039dd792d9105c9d:
-
-  hwmon: MC13783: Add uid and die temperature sensor inputs (2018-04-16 13:01:36 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD and HWMON due for the v4.18 merge window
-
-----------------------------------------------------------------
-Andrey Gusakov (1):
-      hwmon: MC13783: Add uid and die temperature sensor inputs
-
- drivers/hwmon/mc13783-adc.c | 60 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/mfd/mc13xxx-core.c  | 15 +++++++++++-
- include/linux/mfd/mc13xxx.h |  2 ++
- 3 files changed, 76 insertions(+), 1 deletion(-)
- 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
