@@ -1,138 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDPVfn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:35:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33064 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751060AbeDPVfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:35:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384F921834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Mon, 16 Apr 2018 16:35:36 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Srinath Mannam <srinath.mannam@broadcom.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Ray Jui <ray.jui@broadcom.com>,
-        linux-pci@vger.kernel.org, Rajat Jain <rajatja@google.com>,
-        Keith Busch <keith.busch@intel.com>, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Issue with Enable LTR while pcie_aspm off
-Message-ID: <20180416213536.GC28657@bhelgaas-glaptop.roam.corp.google.com>
-References: <CABe79T47vUjq20HuMrJZxhZWMr0q3uXMF6xL1TgkqhqA8qi1wg@mail.gmail.com>
- <20180413135659.GC46420@bhelgaas-glaptop.roam.corp.google.com>
- <CABe79T4nO7dC9uHwX-woAvkdw0+b2ssUyxgs0cnGo90OH_YD+Q@mail.gmail.com>
- <20180413211651.GA80087@bhelgaas-glaptop.roam.corp.google.com>
- <CABe79T4XC07tExSTOEoj9d5hkYWsm5QHUMD8rWorzz8S=V0yUA@mail.gmail.com>
- <20180414160918.GA158153@bhelgaas-glaptop.roam.corp.google.com>
- <CABe79T5Qzm1uSSZJH38pgYrSuhxo1W-EJK-LU+NpWBgvoehm2w@mail.gmail.com>
+        id S1752821AbeDPVfz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:35:55 -0400
+Received: from mail-ot0-f175.google.com ([74.125.82.175]:41614 "EHLO
+        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752652AbeDPVfx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 17:35:53 -0400
+X-Google-Smtp-Source: AIpwx48MGKVy+FT/zjyLJoNbrAwT7iuIdr1tFkZCv7orvelaGXNQo3kW1jut19uVx6pZcBADXhn3nw==
+Date: Mon, 16 Apr 2018 16:35:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] pinctrl: mediatek: update pinmux defintions for MT7623
+Message-ID: <20180416213552.wbtv2ljwqpxgogqx@rob-hp-laptop>
+References: <c8748c81711b0d41e83418b6c23d82d8c78c7094.1523845138.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CABe79T5Qzm1uSSZJH38pgYrSuhxo1W-EJK-LU+NpWBgvoehm2w@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <c8748c81711b0d41e83418b6c23d82d8c78c7094.1523845138.git.ryder.lee@mediatek.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Keith, linux-nvme, LKML; another possible ASPM issue with Samsung
-NVMe SSD 960 EVO]
+On Mon, Apr 16, 2018 at 10:32:19AM +0800, Ryder Lee wrote:
+> Fulfill the pinmux macros for MT7623
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> ---
+>  include/dt-bindings/pinctrl/mt7623-pinfunc.h | 90 +++++++++++++++++++++++++++-
+>  1 file changed, 87 insertions(+), 3 deletions(-)
 
-On Mon, Apr 16, 2018 at 09:03:33PM +0530, Srinath Mannam wrote:
-> On Sat, Apr 14, 2018 at 9:39 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Sat, Apr 14, 2018 at 09:04:05AM +0530, Srinath Mannam wrote:
-> >> I am sorry, in previous mail by mistake I have written L1.s support is
-> >> not there, Actually I wanted to write L0s support is not there.
-> >> L1 and L1ss support is there.
-> >
-> > If your endpoint (and everything in the path) advertise both LTR and
-> > L1ss support, that patch probably won't make a difference.
-> >
-> > It *might* make a difference if only part of the path supports both,
-> > because my reading of the spec is that L1ss requires LTR and LTR
-> > requires the entire path to support LTR, and we currently don't
-> > enforce that "entire path" part before enabling L1ss.
-> >
-> Yes, this patch did not work.
-
-OK, thanks for checking.  Since there's only one link in the path and
-both ends advertise L1SS and LTR support, I wouldn't expect it to make
-a difference.
-
-> >> But In our platform we required to disable ASPM.
->
-> > We're trying to figure out exactly *why* you must disable ASPM.  If
-> > it's because of a hardware defect, e.g., the device advertises ASPM
-> > support but it's actually broken, we probably need to add a quirk.
-> > Given the complexity of ASPM, it's surprising we don't have similar
-> > quirks already.
->
-> We see issues with ASPM enabled. Some link issues observed so for
-> time being we are using with aspm disabled until we fix that issue.
-
-I see other reports of ASPM issues with that Samsung 960 PRO NVMe SSD.
-Maybe they're related?
-
-  https://lkml.kernel.org/r/20171214184701.GA6322@libmpq.org
-  https://forums.lenovo.com/t5/ThinkCentre-A-E-M-S-Series/M900-Tiny-UEFI-Bug-M-2-NVMe-SSD-amp-8260-WiFi-ASPM-disabled-Much/td-p/3570469
-
-You might try setting NVME_QUIRK_NO_APST to see if that's related.
-There are some quirks that sound similar:
-
-  8427bbc22486 ("nvme-pci: disable APST on Samsung SSD 960 EVO + ASUS PRIME B350M-A")
-  467c77d4cbef ("nvme-pci: disable APST for Samsung NVMe SSD 960 EVO + ASUS PRIME Z370-A")
-
-Keith, et al, here's the relevant part of Srinath's lspci.  Both ends
-of the link claim to support ASPM including L1SS and LTR, but Srinath
-has to disable ASPM to get the SSD to work reliably.  Just FYI.
-
-> 0000:00:00.0 PCI bridge: Broadcom Limited Device d714 (prog-if 00 [Normal decode])
->        Bus: primary=00, secondary=01, subordinate=01, sec-latency=0
->        Capabilities: [ac] Express (v2) Root Port (Slot-), MSI 00
->                LnkCap: Port #0, Speed 8GT/s, Width x4, ASPM L0s L1, Exit Latency L0s <1us, L1 <2us
->                        ClockPM+ Surprise- LLActRep- BwNot+ ASPMOptComp+
->                LnkCtl: ASPM Disabled; RCB 64 bytes Disabled- CommClk+
->                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
->                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR+, OBFF Via WAKE# ARIFwd+
->                         AtomicOpsCap: Routing- 32bit- 64bit- 128bitCAS-
->                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-, LTR+, OBFF Disabled ARIFwd-
->                         AtomicOpsCtl: ReqEn- EgressBlck-
->        Capabilities: [240 v1] L1 PM Substates
->                L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
->                          PortCommonModeRestoreTime=8us PortTPowerOnTime=10us
->                L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
->                           T_CommonMode=1us LTR1.2_Threshold=0ns
-
-> 0000:01:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM961/PM961 (prog-if 02 [NVM Express])
->        Capabilities: [70] Express (v2) Endpoint, MSI 00
->                LnkCap: Port #0, Speed 8GT/s, Width x4, ASPM L1, Exit Latency L1 <64us
->                        ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
->                LnkCtl: ASPM Disabled; RCB 64 bytes Disabled- CommClk+
->                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
->                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+, LTR+, OBFF Not Supported
->                         AtomicOpsCap: 32bit- 64bit- 128bitCAS-
->                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-, LTR-, OBFF Disabled
->                         AtomicOpsCtl: ReqEn- 
->        Capabilities: [190 v1] L1 PM Substates
->                L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
->                          PortCommonModeRestoreTime=10us PortTPowerOnTime=10us
->                L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
->                           T_CommonMode=0us LTR1.2_Threshold=0ns
-
-
-> with LTR enabled also we observed some problem, that after LTR
-> messages received from EP, we see completion timeout with config
-> write.
-
-> So I thought If LTR configuration function also part of aspm file,
-> as it was under CONFIG_ASPM.  using pcie_aspm boot arg I can disable
-> both ASPM and LTR.
-
-> If this is not possible, then I will go for alternative solution of
-> quirk implementation as you suggest.
-
-Is this platform a lab prototype or is it already shipping?  If it's
-already shipping, you probably need some sort of upstream solution
-like an NVMe or PCIe quirk, but if not, maybe you can just hack your
-bringup kernel to disable ASPM and LTR until you fix the root cause.  
-
-Bjorn
+Reviewed-by: Rob Herring <robh@kernel.org>
