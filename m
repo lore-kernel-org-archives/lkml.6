@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx48W/qYLfuy0EMaxTw0mevRbyNCSz+Etj96hYrpF82Haf7gQAK0Bn9oS+1lRHNJV44/46WTs
-ARC-Seal: i=1; a=rsa-sha256; t=1523892348; cv=none;
+X-Google-Smtp-Source: AIpwx486v6lzIRxbNe/tLTX+srhsB06p0kvf93RDQICZnBOF2wde5jijMc6oIH1gpM6J/BUGqz61
+ARC-Seal: i=1; a=rsa-sha256; t=1523892347; cv=none;
         d=google.com; s=arc-20160816;
-        b=jDl0kRojombL+tcOv3oAxmfz2aUuspj3LmX+VCpUhkcCQV/jwIxmayzpDiUrE1pYAk
-         gRpDE18gusA14/2TQM4W9dhduuexWByVehEWeIGo7JP0gDlcBaBuq7Cbj+huWnWqS+NY
-         yC1yJxwMohiHErTLyqRIHjVFxftVRWhuyTTXepgzSUi/cx+zxjxYetBisixRH5uPVz2y
-         IKlwKC3gO4Q38ZDAvpHjOOqhVym6MUhrxyBt0ED6wdJqWxHFtA7C1mstAHs816kznRlY
-         W3Ifx2mNkGdOQjkwXgxVgvetPcosGW2Zl+gv6oOJrPrV37veyJp0Zy5Yqm9ji0UjIQIt
-         nQDQ==
+        b=fA+WkxGJdyU0wyN94sCcMbl8VrrZ6fcpgNo5LtZR1Pmp8vNwzB09v+tWqlQfWn/xHU
+         2CNePglPhid0/5nXDqDQVbA8R/l+McLGOTZsR1AZNQka5lVrKbvpyrCGfa+3UFkQzkyp
+         AKYpGQWR6zhvfTh9k9QN7qDwspEZjS+AW0l9Z9o4hC+CnE0ZscnWVnhaBLN/IXN3V8HI
+         /gmPK2R/iYha1hYPHT/CR3ngNBhU2EOAhooNUVL5FyMJ/soaEmebsUA3YcEBf3m3mq4h
+         OR7TGCEzAhGKTT5A3XbnQGmzGu9bHj/waM0llNMJIhjOOHTT6czMIVWwi/eFZybrx5Sh
+         V7Xw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=sBmnEAPtOXXVsp27L6zoCbiR5jvnoXrdbebyRH4BDuY=;
-        b=lxjBmccCMWhJ6qPCTkhRVDgP3iqDV91T32rt2DENLPUFGnym77ZFB1Yp7Rn2CTcqqQ
-         ZK+Ea/6TBJ5W4tQjGktOpwpGcnu/zcm2akpyJ31udeogG5U8ARWiRVgte0DQ7I7DkW82
-         /sIsaKvDHcymSImqMICiT7OVACvDw/caVQMewktX25phBYnWs25spYl/f+/L40lB0stz
-         VZ2zFZl2xL8HEYB96yYpD8uYOp5G37didRfNCAq4Nbzreg4F5arG6aOHpEo+uE1U5xJn
-         A/0d4tkBe4SEI4hQc1KQO7VHQ5HBGgkqCsLOjPBA36nYvFyS7eojH4UbrR9pvr8Pbkiu
-         CGtw==
+        bh=YQx9cZdEuHeJE+gwrrn8Afu/0pGPh6Q3W4RpoMicy/s=;
+        b=jCZx1D2iTwjXl1IKgILt2/q/itwy+8vKP1bSNkw/gDiT4wdBse+RR2sOa7r6MvYB2P
+         MN54Hu6FJDPwEbJlLtYVtY8mz7bQg4PHiIw9Lsn85gUsbX1hZuax5GWx30Ji9Q6Op1dA
+         bqTgZj8IxZLMfwOBgIMmtlCUkdztZYbwYEXAn3MrjrVdS/Efp8dz+VNGjbnhy4bOTRki
+         GFP2Cps56oIar+Ku+iaJgXIs2VHJcL9aRBfYTZ2BrdMNV7ItEXqGojZ8ArzcCFeSq8Jo
+         V6LPl7C+rs2YJXi1A2TaMs/pduDGhYkvCuPE6HoBXK21LD38r6K55AO7ih9W3mfAuiG8
+         upRA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GGgjqusw;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Z7Y/saWu;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=GGgjqusw;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=Z7Y/saWu;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,52 +58,52 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 25/35] x86/mm/pti: Define X86_CR3_PTI_PCID_USER_BIT on x86_32
-Date: Mon, 16 Apr 2018 17:25:13 +0200
-Message-Id: <1523892323-14741-26-git-send-email-joro@8bytes.org>
+Subject: [PATCH 22/35] x86/mm/pae: Populate the user page-table with user pgd's
+Date: Mon, 16 Apr 2018 17:25:10 +0200
+Message-Id: <1523892323-14741-23-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 References: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597916943163101962?=
-X-GMAIL-MSGID: =?utf-8?q?1597916943163101962?=
+X-GMAIL-THRID: =?utf-8?q?1597916942344753532?=
+X-GMAIL-MSGID: =?utf-8?q?1597916942344753532?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Move it out of the X86_64 specific processor defines so
-that its visible for 32bit too.
+When we populate a PGD entry, make sure we populate it in
+the user page-table too.
 
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/processor-flags.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/pgtable-3level.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/include/asm/processor-flags.h b/arch/x86/include/asm/processor-flags.h
-index 625a52a..02c2cbd 100644
---- a/arch/x86/include/asm/processor-flags.h
-+++ b/arch/x86/include/asm/processor-flags.h
-@@ -39,10 +39,6 @@
- #define CR3_PCID_MASK	0xFFFull
- #define CR3_NOFLUSH	BIT_ULL(63)
+diff --git a/arch/x86/include/asm/pgtable-3level.h b/arch/x86/include/asm/pgtable-3level.h
+index f24df59..f2ca313 100644
+--- a/arch/x86/include/asm/pgtable-3level.h
++++ b/arch/x86/include/asm/pgtable-3level.h
+@@ -98,6 +98,9 @@ static inline void native_set_pmd(pmd_t *pmdp, pmd_t pmd)
  
--#ifdef CONFIG_PAGE_TABLE_ISOLATION
--# define X86_CR3_PTI_PCID_USER_BIT	11
--#endif
--
- #else
- /*
-  * CR3_ADDR_MASK needs at least bits 31:5 set on PAE systems, and we save
-@@ -53,4 +49,8 @@
- #define CR3_NOFLUSH	0
- #endif
+ static inline void native_set_pud(pud_t *pudp, pud_t pud)
+ {
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++	pud.p4d.pgd = pti_set_user_pgtbl(&pudp->p4d.pgd, pud.p4d.pgd);
++#endif
+ 	set_64bit((unsigned long long *)(pudp), native_pud_val(pud));
+ }
+ 
+@@ -229,6 +232,10 @@ static inline pud_t native_pudp_get_and_clear(pud_t *pudp)
+ {
+ 	union split_pud res, *orig = (union split_pud *)pudp;
  
 +#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+# define X86_CR3_PTI_PCID_USER_BIT	11
++	pti_set_user_pgtbl(&pudp->p4d.pgd, __pgd(0));
 +#endif
 +
- #endif /* _ASM_X86_PROCESSOR_FLAGS_H */
+ 	/* xchg acts as a barrier before setting of the high bits */
+ 	res.pud_low = xchg(&orig->pud_low, 0);
+ 	res.pud_high = orig->pud_high;
 -- 
 2.7.4
