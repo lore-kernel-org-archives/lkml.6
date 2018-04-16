@@ -1,189 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754005AbeDPKqm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:46:42 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36230 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752989AbeDPKqk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:46:40 -0400
-X-Google-Smtp-Source: AIpwx49fubIieixdtzXUapegTQ2kbvZoFpWF2rG87O+3bk6oi1i3KKIuzU+vy2t2m1uM241P2KvM6A==
-Date: Mon, 16 Apr 2018 11:46:36 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] MFD for v4.17
-Message-ID: <20180416104636.5v7ry4cdpro2pvnu@dell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: NeoMutt/20170609 (1.8.3)
+        id S1754040AbeDPKuj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:50:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51590 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752654AbeDPKuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 06:50:37 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] KVM: x86: VMX: hyper-v: Enlightened MSR-Bitmap support
+Date: Mon, 16 Apr 2018 12:50:33 +0200
+Message-Id: <20180416105033.28778-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Enlightened MSR-Bitmap is a natural extension of Enlightened VMCS:
+Hyper-V Top Level Functional Specification states:
 
-Enjoy!
+"The L1 hypervisor may collaborate with the L0 hypervisor to make MSR
+accesses more efficient. It can enable enlightened MSR bitmaps by setting
+the corresponding field in the enlightened VMCS to 1. When enabled, the L0
+hypervisor does not monitor the MSR bitmaps for changes. Instead, the L1
+hypervisor must invalidate the corresponding clean field after making
+changes to one of the MSR bitmaps."
 
-The following changes since commit 7928b2cbe55b2a410a0f5c1f154610059c57b1b2:
+I reached out to Hyper-V team for additional details and I got the
+following information:
 
-  Linux 4.16-rc1 (2018-02-11 15:04:29 -0800)
+"Current Hyper-V implementation works as following:
 
-are available in the git repository at:
+If the enlightened MSR bitmap is not enabled:
+- All MSR accesses of L2 guests cause physical VM-Exits
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git mfd-next-4.17-1
+If the enlightened MSR bitmap is enabled:
+- Physical VM-Exits for L2 accesses to certain MSRs (currently FS_BASE,
+  GS_BASE and KERNEL_GS_BASE) are avoided, thus making these MSR accesses
+  faster."
 
-for you to fetch changes up to b45bf45f1b827d05e8209e2adf35f777ada0c5d4:
+I tested my series with a tight rdmsrl loop in L2, for KERNEL_GS_BASE the
+results are:
 
-  mfd: arizona: Update reset pin to use GPIOD (2018-03-28 12:06:34 +0100)
+Without Enlightened MSR-Bitmap: 1300 cycles/read
+With Enlightened MSR-Bitmap: 120 cycles/read
 
-----------------------------------------------------------------
- - New Device Support
-   - Add support for AXP813 ADC to AXP20x
-   - Add support for AXP813 Battery Power Supply to AXP813
-   - Add support for SC27XX SYSCON to SPARD SC27XX SPI
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Tested-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+---
+- Changes since 'v1': drop 'enable_emsr_bitmap' static key usage
+  [Paolo Bonzini]
+- Added 'Tested-by' from Lan Tianyu. Hope it stands after the changes.
+---
+ arch/x86/include/asm/hyperv-tlfs.h |  9 ++++++++-
+ arch/x86/kvm/vmx.c                 | 25 +++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 1 deletion(-)
 
-- New Functionality
-   - Interrogate HW for firmware version; rave-sp
-
- - Fix-ups
-   - Remove unused code; exynos{4,5}-pmu, cros_ec, cros_ec_acpi_gpe
-   - Remove duplicate error messages (-ENOMEM, etc); htc-i2cpld, janz-cmodio,
-		max8997, rc5t583, sm501, smsc-ece1099, abx500-core, si476x-i2c,
-		ti_am335x_tscadc, tps65090, tps6586x, tps65910, tps80031,
-		twl6030-irq, viperboard
-   - Succinctly Use ptr to struct in sizeof(); rc5t583, abx500-core, sm501,
-		smsc-ece1099
-   - Simplify syntax for NULL ptr checking; abx500-core, sm501
-   - No not unnecessarily initialise variables; tps65910, tps65910
-   - Reorganise and simplify driver data; omap-usb-tll
-   - Move to SPDX license statement; tps68470
-   - Probe ADCs via DT; axp20x
-   - Use new GPIOD API; arizona-core
-
-- Bug Fixes
-  - Reorder ordered (enum) device list; tps65218
-  - Only accept valid data from the offset; rave-sp
-  - Fix potential memory leaks; pcf50633-core
-
-----------------------------------------------------------------
-Andrey Smirnov (3):
-      mfd: rave-sp: Add code to print firmware versions
-      mfd: rave-sp: Convert print_hex_dump() to print_hex_dump_debug()
-      mfd: rave-sp: Check received frame length before accepting next byte
-
-Baolin Wang (1):
-      mfd: sprd: Add one syscon cell to access PMIC global registers
-
-Charles Keepax (1):
-      mfd: arizona: Update reset pin to use GPIOD
-
-Christophe JAILLET (1):
-      mfd: pcf50633: Fix some memory leaks in the error handling path of 'pcf50633_probe()'
-
-Dave Gerlach (1):
-      mfd: tps65218: Reorder tps65218_regulator_id enum
-
-David Lechner (1):
-      mfd: syscon: Set regmap name to DT node name
-
-Himanshu Jha (1):
-      mfd: ab8500-debugfs: Use kasprintf
-
-Jeffy Chen (1):
-      mfd: syscon: Set name of regmap_config
-
-Joel Stanley (1):
-      dt-bindings: aspeed-lpc: Document LPC Host Interface Controller
-
-Krzysztof Kozlowski (1):
-      mfd: syscon: Remove unused Exynos PMU headers
-
-Ladislav Michl (1):
-      mfd: omap-usb-tll: Allocate driver data at once
-
-Markus Elfring (25):
-      mfd: htc-i2cpld: Delete error message for a failed memory allocation
-      mfd: janz-cmodio: Delete error message for a failed memory allocation
-      mfd: jz4740-adc: Delete error message for a failed memory allocation
-      mfd: max8997: Delete error message for a failed memory allocation
-      mfd: rc5t583: Delete error message for a failed memory allocation
-      mfd: rc5t583: Improve a size determination
-      mfd: sm501: Delete error message for a failed memory allocation in two places
-      mfd: smsc-ece1099: Delete an error message for a failed memory allocation
-      mfd: abx500-core: Delete an error message for a failed memory allocation in abx500_register_ops()
-      mfd: abx500-core: Improve two size determinations in abx500_register_ops()
-      mfd: abx500-core: Adjust 14 checks for null pointers
-      mfd: si476x-i2c: Delete an error message for a failed memory allocation in si476x_core_probe()
-      mfd: sm501: Improve a size determination in two functions
-      mfd: sm501: Adjust 12 checks for null pointers
-      mfd: smsc-ece1099: Improve a size determination in smsc_i2c_probe()
-      mfd: ti_am335x_tscadc: Delete an error message for a failed memory allocation in ti_tscadc_probe()
-      mfd: tps65090: Delete an error message for a failed memory allocation in tps65090_i2c_probe()
-      mfd: tps6586x: Delete an error message for a failed memory allocation in tps6586x_parse_dt()
-      mfd: tps65910: Delete an error message for a failed memory allocation in tps65910_parse_dt()
-      mfd: tps65910: Delete an unnecessary variable initialisation in four functions
-      mfd: tps65910: Delete an unnecessary variable initialisation in tps65910_sleepinit()
-      mfd: tps65910: Move an assignment in tps65910_sleepinit()
-      mfd: tps80031: Delete an error message for a failed memory allocation in tps80031_probe()
-      mfd: twl6030-irq: Delete an error message for a failed memory allocation in twl6030_init_irq()
-      mfd: viperboard: Delete an error message for a failed memory allocation in vprbrd_probe()
-
-Quentin Schulz (3):
-      mfd: axp20x: Make AXP209/22x cells probe their ADC via DT
-      mfd: axp20x: Probe axp20x_adc driver for AXP813
-      mfd: axp20x: Add battery power supply cell for AXP813
-
-Rajmohan Mani (1):
-      mfd: Update to SPDX license identifier
-
-Wenkai Du (1):
-      Revert "mfd: cros_ec: Add ACPI GPE handler for LID0 devices"
-
- .../devicetree/bindings/mfd/aspeed-lpc.txt         |  41 ++++++++
- drivers/mfd/Makefile                               |   1 -
- drivers/mfd/ab8500-debugfs.c                       |   3 +-
- drivers/mfd/abx500-core.c                          |  25 +++--
- drivers/mfd/arizona-core.c                         |  53 ++++++----
- drivers/mfd/axp20x.c                               |  13 ++-
- drivers/mfd/cros_ec.c                              |  15 +--
- drivers/mfd/cros_ec_acpi_gpe.c                     | 103 --------------------
- drivers/mfd/htc-i2cpld.c                           |   4 +-
- drivers/mfd/janz-cmodio.c                          |   4 +-
- drivers/mfd/jz4740-adc.c                           |   4 +-
- drivers/mfd/max8997.c                              |   4 +-
- drivers/mfd/omap-usb-tll.c                         |  60 +++++-------
- drivers/mfd/pcf50633-core.c                        |   7 +-
- drivers/mfd/rave-sp.c                              | 107 +++++++++++++++++++--
- drivers/mfd/rc5t583.c                              |   6 +-
- drivers/mfd/si476x-i2c.c                           |   6 +-
- drivers/mfd/sm501.c                                |  32 +++---
- drivers/mfd/smsc-ece1099.c                         |   7 +-
- drivers/mfd/sprd-sc27xx-spi.c                      |   3 +
- drivers/mfd/syscon.c                               |   2 +
- drivers/mfd/ti_am335x_tscadc.c                     |   5 +-
- drivers/mfd/tps65090.c                             |   4 +-
- drivers/mfd/tps6586x.c                             |   4 +-
- drivers/mfd/tps65910.c                             |  18 ++--
- drivers/mfd/tps68470.c                             |  10 +-
- drivers/mfd/tps80031.c                             |   4 +-
- drivers/mfd/twl6030-irq.c                          |   4 +-
- drivers/mfd/viperboard.c                           |   4 +-
- include/linux/mfd/arizona/pdata.h                  |   3 +-
- include/linux/mfd/cros_ec.h                        |  18 ----
- include/linux/mfd/syscon/exynos4-pmu.h             |  21 ----
- include/linux/mfd/syscon/exynos5-pmu.h             |  19 ----
- include/linux/mfd/tps65218.h                       |   4 +-
- include/linux/mfd/tps68470.h                       |  17 +---
- 35 files changed, 284 insertions(+), 351 deletions(-)
- delete mode 100644 drivers/mfd/cros_ec_acpi_gpe.c
- delete mode 100644 include/linux/mfd/syscon/exynos4-pmu.h
- delete mode 100644 include/linux/mfd/syscon/exynos5-pmu.h
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 1c602ad4bda8..26e7e2240066 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -300,6 +300,9 @@ struct ms_hyperv_tsc_page {
+ /* TSC emulation after migration */
+ #define HV_X64_MSR_REENLIGHTENMENT_CONTROL	0x40000106
  
++/* Nested features (CPUID 0x4000000A) EAX */
++#define HV_X64_NESTED_MSR_BITMAP		BIT(19)
++
+ struct hv_reenlightenment_control {
+ 	__u64 vector:8;
+ 	__u64 reserved1:8;
+@@ -665,7 +668,11 @@ struct hv_enlightened_vmcs {
+ 	u32 hv_clean_fields;
+ 	u32 hv_padding_32;
+ 	u32 hv_synthetic_controls;
+-	u32 hv_enlightenments_control;
++	struct {
++		u32 nested_flush_hypercall:1;
++		u32 msr_bitmap:1;
++		u32 reserved:30;
++	} hv_enlightenments_control;
+ 	u32 hv_vp_id;
+ 
+ 	u64 hv_vm_id;
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index b2f8a700aeef..babc9ef121a4 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -1090,6 +1090,16 @@ static inline u16 evmcs_read16(unsigned long field)
+ 	return *(u16 *)((char *)current_evmcs + offset);
+ }
+ 
++static inline void evmcs_touch_msr_bitmap(void)
++{
++	if (unlikely(!current_evmcs))
++		return;
++
++	if (current_evmcs->hv_enlightenments_control.msr_bitmap)
++		current_evmcs->hv_clean_fields &=
++			~HV_VMX_ENLIGHTENED_CLEAN_FIELD_MSR_BITMAP;
++}
++
+ static void evmcs_load(u64 phys_addr)
+ {
+ 	struct hv_vp_assist_page *vp_ap =
+@@ -1174,6 +1184,7 @@ static inline u32 evmcs_read32(unsigned long field) { return 0; }
+ static inline u16 evmcs_read16(unsigned long field) { return 0; }
+ static inline void evmcs_load(u64 phys_addr) {}
+ static inline void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf) {}
++static inline void evmcs_touch_msr_bitmap(void) {}
+ #endif /* IS_ENABLED(CONFIG_HYPERV) */
+ 
+ static inline bool is_exception_n(u32 intr_info, u8 vector)
+@@ -4218,6 +4229,14 @@ static int alloc_loaded_vmcs(struct loaded_vmcs *loaded_vmcs)
+ 		if (!loaded_vmcs->msr_bitmap)
+ 			goto out_vmcs;
+ 		memset(loaded_vmcs->msr_bitmap, 0xff, PAGE_SIZE);
++
++		if (static_branch_unlikely(&enable_evmcs) &&
++		    (ms_hyperv.nested_features & HV_X64_NESTED_MSR_BITMAP)) {
++			struct hv_enlightened_vmcs *evmcs =
++				(struct hv_enlightened_vmcs *)loaded_vmcs->vmcs;
++
++			evmcs->hv_enlightenments_control.msr_bitmap = 1;
++		}
+ 	}
+ 	return 0;
+ 
+@@ -5335,6 +5354,9 @@ static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bit
+ 	if (!cpu_has_vmx_msr_bitmap())
+ 		return;
+ 
++	if (static_branch_unlikely(&enable_evmcs))
++		evmcs_touch_msr_bitmap();
++
+ 	/*
+ 	 * See Intel PRM Vol. 3, 20.6.9 (MSR-Bitmap Address). Early manuals
+ 	 * have the write-low and read-high bitmap offsets the wrong way round.
+@@ -5370,6 +5392,9 @@ static void __always_inline vmx_enable_intercept_for_msr(unsigned long *msr_bitm
+ 	if (!cpu_has_vmx_msr_bitmap())
+ 		return;
+ 
++	if (static_branch_unlikely(&enable_evmcs))
++		evmcs_touch_msr_bitmap();
++
+ 	/*
+ 	 * See Intel PRM Vol. 3, 20.6.9 (MSR-Bitmap Address). Early manuals
+ 	 * have the write-low and read-high bitmap offsets the wrong way round.
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.14.3
