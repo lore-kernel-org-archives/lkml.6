@@ -1,29 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755014AbeDPLkS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 07:40:18 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58690 "EHLO
+        id S1755035AbeDPLkd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 07:40:33 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59094 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754536AbeDPLkR (ORCPT
+        with ESMTP id S1752812AbeDPLkb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:40:17 -0400
+        Mon, 16 Apr 2018 07:40:31 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Peter Rosin <peda@axentia.se>
 Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: tfa9879: switch to using .probe_new" to the asoc tree
-In-Reply-To: <20180412211437.21599-6-peda@axentia.se>
-Message-Id: <E1f82UX-0007b2-Ij@debutante>
-Date: Mon, 16 Apr 2018 12:40:13 +0100
+        alsa-devel@alsa-project.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: tfa9879: fix whitespace issues caused by mindless conversion" to the asoc tree
+In-Reply-To: <20180412211437.21599-3-peda@axentia.se>
+Message-Id: <E1f82Uo-0007cQ-9V@debutante>
+Date: Mon, 16 Apr 2018 12:40:30 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: tfa9879: switch to using .probe_new
+   ASoC: tfa9879: fix whitespace issues caused by mindless conversion
 
 has been applied to the asoc tree at
 
@@ -48,41 +49,79 @@ to this mail.
 Thanks,
 Mark
 
->From e32259397e0166a7cc366e182f6f4297977d6c10 Mon Sep 17 00:00:00 2001
+>From 42a2b6746955eb0265c2656282c7a424b51a54f1 Mon Sep 17 00:00:00 2001
 From: Peter Rosin <peda@axentia.se>
-Date: Thu, 12 Apr 2018 23:14:37 +0200
-Subject: [PATCH] ASoC: tfa9879: switch to using .probe_new
+Date: Thu, 12 Apr 2018 23:14:34 +0200
+Subject: [PATCH] ASoC: tfa9879: fix whitespace issues caused by mindless
+ conversion
 
-Use the new probe style for i2c drivers.
+Long lines and bad alignment disturbs the reading pleasure.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/tfa9879.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/codecs/tfa9879.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/sound/soc/codecs/tfa9879.c b/sound/soc/codecs/tfa9879.c
-index c30e0efdbe39..4ed020262a27 100644
+index 6d213c6d3920..c30e0efdbe39 100644
 --- a/sound/soc/codecs/tfa9879.c
 +++ b/sound/soc/codecs/tfa9879.c
-@@ -277,8 +277,7 @@ static struct snd_soc_dai_driver tfa9879_dai = {
- 	.ops = &tfa9879_dai_ops,
- };
+@@ -88,13 +88,14 @@ static int tfa9879_hw_params(struct snd_pcm_substream *substream,
+ 	}
  
--static int tfa9879_i2c_probe(struct i2c_client *i2c,
--			     const struct i2c_device_id *id)
-+static int tfa9879_i2c_probe(struct i2c_client *i2c)
- {
- 	struct tfa9879_priv *tfa9879;
- 	int i;
-@@ -319,7 +318,7 @@ static struct i2c_driver tfa9879_i2c_driver = {
- 		.name = "tfa9879",
- 		.of_match_table = tfa9879_of_match,
- 	},
--	.probe = tfa9879_i2c_probe,
-+	.probe_new = tfa9879_i2c_probe,
- 	.id_table = tfa9879_i2c_id,
- };
+ 	if (tfa9879->lsb_justified)
+-		snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
+-				    TFA9879_I2S_SET_MASK,
+-				    i2s_set << TFA9879_I2S_SET_SHIFT);
++		snd_soc_component_update_bits(component,
++					      TFA9879_SERIAL_INTERFACE_1,
++					      TFA9879_I2S_SET_MASK,
++					      i2s_set << TFA9879_I2S_SET_SHIFT);
  
+ 	snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
+-			    TFA9879_I2S_FS_MASK,
+-			    fs << TFA9879_I2S_FS_SHIFT);
++				      TFA9879_I2S_FS_MASK,
++				      fs << TFA9879_I2S_FS_SHIFT);
+ 	return 0;
+ }
+ 
+@@ -103,8 +104,8 @@ static int tfa9879_digital_mute(struct snd_soc_dai *dai, int mute)
+ 	struct snd_soc_component *component = dai->component;
+ 
+ 	snd_soc_component_update_bits(component, TFA9879_MISC_CONTROL,
+-			    TFA9879_S_MUTE_MASK,
+-			    !!mute << TFA9879_S_MUTE_SHIFT);
++				      TFA9879_S_MUTE_MASK,
++				      !!mute << TFA9879_S_MUTE_SHIFT);
+ 
+ 	return 0;
+ }
+@@ -152,11 +153,11 @@ static int tfa9879_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	}
+ 
+ 	snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
+-			    TFA9879_SCK_POL_MASK,
+-			    sck_pol << TFA9879_SCK_POL_SHIFT);
++				      TFA9879_SCK_POL_MASK,
++				      sck_pol << TFA9879_SCK_POL_SHIFT);
+ 	snd_soc_component_update_bits(component, TFA9879_SERIAL_INTERFACE_1,
+-			    TFA9879_I2S_SET_MASK,
+-			    i2s_set << TFA9879_I2S_SET_SHIFT);
++				      TFA9879_I2S_SET_MASK,
++				      i2s_set << TFA9879_I2S_SET_SHIFT);
+ 	return 0;
+ }
+ 
+@@ -298,7 +299,7 @@ static int tfa9879_i2c_probe(struct i2c_client *i2c,
+ 			     tfa9879_regs[i].reg, tfa9879_regs[i].def);
+ 
+ 	return devm_snd_soc_register_component(&i2c->dev, &tfa9879_component,
+-				      &tfa9879_dai, 1);
++					       &tfa9879_dai, 1);
+ }
+ 
+ static const struct i2c_device_id tfa9879_i2c_id[] = {
 -- 
 2.17.0
