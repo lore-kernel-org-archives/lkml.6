@@ -1,165 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752916AbeDPObQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 10:31:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38980 "EHLO mail.kernel.org"
+        id S1753028AbeDPObp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:31:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56418 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751099AbeDPObO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:31:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB1A621789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 16 Apr 2018 11:31:11 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Thomas Richter <tmricht@linux.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.vnet.ibm.com>
-Subject: Re: [PATCH v2] perf list: Add s390 support for detailed/verbose pmu
- event description
-Message-ID: <20180416143111.GB18171@kernel.org>
-References: <20180416132314.33249-1-tmricht@linux.ibm.com>
+        id S1752960AbeDPObm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 10:31:42 -0400
+Date: Mon, 16 Apr 2018 16:31:30 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 3/5] net: stmmac: dwmac-sun8i: Allow
+ getting syscon regmap from device
+Message-ID: <20180416143130.tls6xtcq3hsv7u7f@flea>
+References: <20180411141641.14675-1-icenowy@aosc.io>
+ <20180411141641.14675-4-icenowy@aosc.io>
+ <20180412145628.iaaeue2imiijwx5d@flea>
+ <A027702A-F3F7-4896-B2B8-E024DA521661@aosc.io>
+ <CAGb2v66Qi2D1qgF3-iVJFAiznMUzzen0nHM5vsPe7Cyi6QTYpw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fsodokbge3zfjolf"
 Content-Disposition: inline
-In-Reply-To: <20180416132314.33249-1-tmricht@linux.ibm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAGb2v66Qi2D1qgF3-iVJFAiznMUzzen0nHM5vsPe7Cyi6QTYpw@mail.gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Apr 16, 2018 at 03:23:14PM +0200, Thomas Richter escreveu:
-> From: Thomas Richter <tmricht@linux.vnet.ibm.com>
-> 
-> Perf list with flags -d and -v print a description (-d) or
-> a very verbose explanation (-v) of CPU specific counter events.
-> These descriptions are provided with the json files in
-> directory pmu-events/arch/s390/*.json.
 
-Wasn't this a patch being reviewed by Mark?
+--fsodokbge3zfjolf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- Arnaldo
- 
-> Display of these descriptions on s390 requires the
-> corresponding json files.
-> 
-> On s390 this does not work because function is_pmu_core()
-> does not detect the s390 directory name where the
-> CPU specific events are listed. On x86 it is
->   /sys/bus/event_source/devices/cpu
-> whereas on s390 it is
->   /sys/bus/event_source/devices/cpum_cf
->   /sys/bus/event_source/devices/cpum_sf
-> 
-> Fix this by adding s390 directory name testing to
-> function is_pmu_core(). This is the same approach as taken for
-> arm platform.
-> 
-> Output before:
-> [root@s35lp76 perf]# ./perf list -d pmu
-> List of pre-defined events (to be used in -e):
-> 
->   cpum_cf/AES_BLOCKED_CYCLES/      [Kernel PMU event]
->   cpum_cf/AES_BLOCKED_FUNCTIONS/   [Kernel PMU event]
->   cpum_cf/AES_CYCLES/              [Kernel PMU event]
->   cpum_cf/AES_FUNCTIONS/           [Kernel PMU event]
->   ....
->   cpum_cf/TX_NC_TEND/              [Kernel PMU event]
->   cpum_cf/VX_BCD_EXECUTION_SLOTS/  [Kernel PMU event]
->   cpum_sf/SF_CYCLES_BASIC/         [Kernel PMU event]
-> 
-> Output after:
-> [root@s35lp76 perf]# ./perf list -d pmu
-> List of pre-defined events (to be used in -e):
-> 
->   cpum_cf/AES_BLOCKED_CYCLES/      [Kernel PMU event]
->   cpum_cf/AES_BLOCKED_FUNCTIONS/   [Kernel PMU event]
->   cpum_cf/AES_CYCLES/              [Kernel PMU event]
->   cpum_cf/AES_FUNCTIONS/           [Kernel PMU event]
->   ....
->   cpum_cf/TX_NC_TEND/              [Kernel PMU event]
->   cpum_cf/VX_BCD_EXECUTION_SLOTS/  [Kernel PMU event]
->   cpum_sf/SF_CYCLES_BASIC/         [Kernel PMU event]
-> 
-> 3906:
->   bcd_dfp_execution_slots
->        [BCD DFP Execution Slots]
->   decimal_instructions
->        [Decimal Instructions]
->   dtlb2_gpage_writes
->        [DTLB2 GPAGE Writes]
->   dtlb2_hpage_writes
->        [DTLB2 HPAGE Writes]
->   dtlb2_misses
->        [DTLB2 Misses]
->   dtlb2_writes
->        [DTLB2 Writes]
->   itlb2_misses
->        [ITLB2 Misses]
->   itlb2_writes
->        [ITLB2 Writes]
->   l1c_tlb2_misses
->        [L1C TLB2 Misses]
->   .....
-> 
-> cfvn 3:
->   cpu_cycles
->        [CPU Cycles]
->   instructions
->        [Instructions]
->   l1d_dir_writes
->        [L1D Directory Writes]
->   l1d_penalty_cycles
->        [L1D Penalty Cycles]
->   l1i_dir_writes
->        [L1I Directory Writes]
->   l1i_penalty_cycles
->        [L1I Penalty Cycles]
->   problem_state_cpu_cycles
->        [Problem State CPU Cycles]
->   problem_state_instructions
->        [Problem State Instructions]
->   ....
-> 
-> csvn generic:
->   aes_blocked_cycles
->        [AES Blocked Cycles]
->   aes_blocked_functions
->        [AES Blocked Functions]
->   aes_cycles
->        [AES Cycles]
->   aes_functions
->        [AES Functions]
->   dea_blocked_cycles
->        [DEA Blocked Cycles]
->   dea_blocked_functions
->        [DEA Blocked Functions]
->   ....
-> 
-> Signed-off-by: Thomas Richter <tmricht@linux.vnet.ibm.com>
-> Reviewed-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-> ---
->  tools/perf/util/pmu.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index 1111d5bf15ca..8675ddf558c6 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -562,6 +562,12 @@ static int is_pmu_core(const char *name)
->  	if (stat(path, &st) == 0)
->  		return 1;
->  
-> +	/* Look for cpu sysfs (specific to s390) */
-> +	scnprintf(path, PATH_MAX, "%s/bus/event_source/devices/%s",
-> +		  sysfs, name);
-> +	if (stat(path, &st) == 0 && !strncmp(name, "cpum_", 5))
-> +		return 1;
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.14.3
+On Thu, Apr 12, 2018 at 11:23:30PM +0800, Chen-Yu Tsai wrote:
+> On Thu, Apr 12, 2018 at 11:11 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
+> > =E4=BA=8E 2018=E5=B9=B44=E6=9C=8812=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
+=8810:56:28, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
+> >>On Wed, Apr 11, 2018 at 10:16:39PM +0800, Icenowy Zheng wrote:
+> >>> From: Chen-Yu Tsai <wens@csie.org>
+> >>>
+> >>> On the Allwinner R40 SoC, the "GMAC clock" register is in the CCU
+> >>> address space; on the A64 SoC this register is in the SRAM controller
+> >>> address space, and with a different offset.
+> >>>
+> >>> To access the register from another device and hide the internal
+> >>> difference between the device, let it register a regmap named
+> >>> "emac-clock". We can then get the device from the phandle, and
+> >>> retrieve the regmap with dev_get_regmap(); in this situation the
+> >>> regmap_field will be set up to access the only register in the
+> >>regmap.
+> >>>
+> >>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >>> [Icenowy: change to use regmaps with single register, change commit
+> >>>  message]
+> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >>> ---
+> >>>  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 48
+> >>++++++++++++++++++++++-
+> >>>  1 file changed, 46 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+> >>b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+> >>> index 1037f6c78bca..b61210c0d415 100644
+> >>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+> >>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+> >>> @@ -85,6 +85,13 @@ const struct reg_field old_syscon_reg_field =3D {
+> >>>      .msb =3D 31,
+> >>>  };
+> >>>
+> >>> +/* Specially exported regmap which contains only EMAC register */
+> >>> +const struct reg_field single_reg_field =3D {
+> >>> +    .reg =3D 0,
+> >>> +    .lsb =3D 0,
+> >>> +    .msb =3D 31,
+> >>> +};
+> >>> +
+> >>
+> >>I'm not sure this would be wise. If we ever need some other register
+> >>exported through the regmap, will have to change all the calling sites
+> >>everywhere in the kernel, which will be a pain and will break
+> >>bisectability.
+> >
+> > In this situation the register can be exported as another
+> >  regmap. Currently the code will access a regmap with name
+> > "emac-clock" for this register.
+> >
+> >>
+> >>Chen-Yu's (or was it yours?) initial solution with a custom writeable
+> >>hook only allowing a single register seemed like a better one.
+> >
+> > But I remember you mentioned that you want it to hide the
+> > difference inside the device.
+>=20
+> The idea is that a device can export multiple regmaps. This one,
+> the one named "gmac" (in my soon to come v2) or "emac-clock" here,
+> is but one of many possible regmaps, and it only exports the register
+> needed by the GMAC/EMAC.
+
+I'm not sure this would be wise either. There's a single register map,
+and as far as I know we don't have a binding to express this in the
+DT. This means that the customer and provider would have to use the
+same name, but without anything actually enforcing it aside from
+"someone in the community knows it".
+
+This is not a really good design, and I was actually preferring your
+first option. We shouldn't rely on any undocumented rule. This will be
+easy to break and hard to maintain.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--fsodokbge3zfjolf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrUs8EACgkQ0rTAlCFN
+r3TmKBAAhGCGS0TTlKTW7StN4+6CaJw5r6ydjVBrDS6IZeZI+cxFDn9HChUwjg6M
+P2eh/O7L3QuOmqWy+OkcvM5sNI+ukBReVZTb+9WS572KfiHodgDpd1hp/olkHifb
+9pH+hmmjb4thLzPlud0AWnApGIT80C7mj17OHdwIDpjzeiGkXc5oHUFF044BJQZ2
+yPWEPZ77IETSbFn6OC5iP/Teb+KBFiyBNKmOJ5v5ZrI22eshGcSx9LGqjOR3Hj43
+svSUyJfljJZ6oxwAK4EsgNVHS2Xd6xKTqRStrujE2XrkUF0ltl607SNJ4JTv8flU
+KlXA+NJg2cdf1VyW4gErLgc/NeYJ83KV4dCgcmSAdO6WWyKy5KJfh+h3OoBEaSpd
+hPCgy8Qi2fAuPyDd0fyxDoZHN6uwbE3ITmMyYMvEAz6/9aE6eAwwdlZ3uMBUDBJb
++zsI+gFEGbLB8uZg1xT9eO72lGpD+0cdYPu3aqGvmZs06+D9fEq8GFYH7zoUXrLm
+81ncCwntiPoRNXP4psppjUhb9Z7GOzXpnu2Gptxtwu8XP8jX80pFo7vb1PmFe13q
+FlIc33OvPB2I9EX3UEF2QjIJFCTGg7VxvltX4A77cWFqbeataMO0gn8mADyconga
+x/QKZvakQg1yq1FA+eTtKOq8nC9689rC/9lFSVqYODjDMVDsqZU=
+=3qhi
+-----END PGP SIGNATURE-----
+
+--fsodokbge3zfjolf--
