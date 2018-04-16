@@ -1,89 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752040AbeDPGcI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:32:08 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:42657 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeDPGcG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:32:06 -0400
-X-Google-Smtp-Source: AIpwx4+/n5pybvSvIFY8dqAjpZfYOWHiEdsR2R4hUXA2whRrw2un4FQ2wBfhommXlezcqx8bJKU73Ksz4xVGu+/sfzU=
+        id S1752067AbeDPGe1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:34:27 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:45323 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbeDPGe0 (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Mon, 16 Apr 2018 02:34:26 -0400
+Date: Mon, 16 Apr 2018 14:34:14 +0800
+From: joeyli <jlee@suse.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.de>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Randy Wright <rwright@hpe.com>,
+        Ingo Molnar <mingo@redhat.com>, akpm@linux-foundation.org,
+        Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
+ memory map
+Message-ID: <20180416063414.GG16023@linux-l9pv.suse>
+References: <20180413062716.8040-1-jlee@suse.com>
+ <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180416035831.GO6014@localhost>
-References: <0c2b76aba6a49e583f920ae582d6815fa9cc4361.1523346135.git.baolin.wang@linaro.org>
- <20180411093634.GC6014@localhost> <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
- <20180412093735.GF6014@localhost> <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
- <CAMz4ku+EUtk2phRGkxkW6YwUvBLb-O7tmMoucvVEQZbL9EY8Zg@mail.gmail.com>
- <20180413034332.GI6014@localhost> <CAMz4kuL_i7u5OCXrtJy92=OisOzgbWk_e-S9dSuBRPenX=ScPA@mail.gmail.com>
- <20180413063641.GL6014@localhost> <CAMz4ku+dLk2Gi_20ATW5o-MPvpy-2iF_YJCwyStaH8xPNXSE7Q@mail.gmail.com>
- <20180416035831.GO6014@localhost>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Mon, 16 Apr 2018 14:32:05 +0800
-Message-ID: <CAMz4kuKbPZkJBF1ci5osntnHHD2nkm1d81=2GQohzc3KGn-wiw@mail.gmail.com>
-Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
-        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16 April 2018 at 11:58, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Fri, Apr 13, 2018 at 02:41:48PM +0800, Baolin Wang wrote:
->> On 13 April 2018 at 14:36, Vinod Koul <vinod.koul@intel.com> wrote:
->> > On Fri, Apr 13, 2018 at 02:17:34PM +0800, Baolin Wang wrote:
->> >
->> >> > Agreed, users only care about grabbing a channel, setting a descriptor and
->> >> > submitting that.
->> >> >
->> >> > I think you need to go back and think about this a bit, please do go thru
->> >> > dmaengine documentation and see other driver examples.
->> >> >
->> >> > We don't typically expose these to users, they give us a transfer and we set
->> >> > that up in hardware for efficient. Its DMA so people expect us to use fastest
->> >> > mechanism available.
->> >>
->> >> But there are some configuration are really special for Spreadtrum
->> >> DMA, and must need user to specify how to configure, especially some
->> >> scenarios of audio. So I wander if we can add one pointer for
->> >> 'dma_slave_config' to expand some special DMA configuration
->> >> requirements, like:
->> >>
->> >> struct dma_slave_config {
->> >>     ......
->> >>     unsigned int slave_id;
->> >>     void *platform_data;
->> >> };
->> >>
->> >> So if some DMA has some special configuration (such as Spreadtrum
->> >> DMA), they can user this platform_data pointer. Like xilinx DMA, they
->> >> also have some special configuration.
->> >
->> > Well we all think our HW is special and needs some additional stuff, most of
->> > the cases turns out not to be the case.
->> >
->> > Can you explain how audio in this case additional configuration...
->>
->> Beside the general configuration, our audio driver will configure the
->> fragment length, block length, maybe transaction length, and they must
->> specify the request type and interrupt type, these are what we want to
->> export for users.
+On Mon, Apr 16, 2018 at 10:57:34AM +0800, Dave Young wrote:
+> On 04/13/18 at 02:27pm, Lee, Chun-Yi wrote:
+> > When using kdump, SOMETIMES the "size not consistent" warning message
+> > shows up when the crash kernel boots with early_ioremap_debug parameter:
+> > 
+> > WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
+> > early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
+> > 
+> > The root cause is that the unmapping size of memory map doesn't
+> > match with the original size when mapping:
+> > 
+> > in __efi_memmap_init()
+> > 	map.map = early_memremap(phys_map, data->size);
+> > 
+> > in efi_memmap_unmap()
+> >         size = efi.memmap.desc_size * efi.memmap.nr_map;
+> >         early_memunmap(efi.memmap.map, size);
+> > 
+> > But the efi.memmap.nr_map is from __efi_memmap_init(). The remainder
+> > of size was discarded when calculating the nr_map:
+> >         map.nr_map = data->size / data->desc_size;
+> > 
+> > When the original size of memory map region does not equal to the
+> > result of multiplication. The "size not consistent" warning
+> > will be triggered.
+> > 
+> > This issue sometimes was hit by kdump because kexec set the efi map
+> > size to align with 16 when loading crash kernel image:
+> > 
+> > in bzImage64_load()
+> >         efi_map_sz = efi_get_runtime_map_size();
+> >         efi_map_sz = ALIGN(efi_map_sz, 16);
+> > 
+> > This patch changes the logic in the unmapping function. Using the
+> > end address of map to calcuate original size.
+> > 
+> > Thank Randy Wright for his report and testing. And also thank
+> > Takashi Iwai for his help to trace issue.
+> 
+> Good catch.  The kexec code need to be fixed to use a separate buffer so
+> avoid the alignment like what kexec-tools did.  I can submit a fix for
+> that.
 >
-> As I said before, you need to derive fragment, block or transaction from
 
-I am sorry I did not make things clear here. What I mean is not only
-link list mode(prep_cyclic), but also other modes (prep_slave,
-prep_interleaved ...), users still need to configure the fragment
-length, block length or transaction length according to their
-requirements.
+Thanks!
+ 
+> But this issue could be a potential issue even if kexec get fixed so it
+> looks worth a fix in efi code as well.  How about mapping only nr_maps
+> *desc_size in __efi_memmap_init?  It looks easier to understand.
+> 
 
-> given prep_cyclic values. Interrupt type needs to be derived with the flags
-> passed. Please do see how other drivers make use of it.
+Takashi has another patch as you said. Finally I sent this patch because
+it's smaller.   
 
-Fine. We configure the Interrupt type through the flags passed.
-
--- 
-Baolin.wang
-Best Regards
+Thanks a lot!
+Joey Lee
