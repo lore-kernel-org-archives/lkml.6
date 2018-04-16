@@ -1,49 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755365AbeDPOEK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 10:04:10 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:41534 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750973AbeDPOEJ (ORCPT
+        id S1755266AbeDPOGV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:06:21 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35888 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750940AbeDPOGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:04:09 -0400
-Date: Mon, 16 Apr 2018 10:04:07 -0400 (EDT)
-Message-Id: <20180416.100407.1760752634367706398.davem@davemloft.net>
-To: maxime.chevallier@bootlin.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        antoine.tenart@bootlin.com, thomas.petazzoni@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net] net: mvpp2: Fix TCAM filter reserved range
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180416080723.15593-1-maxime.chevallier@bootlin.com>
-References: <20180416080723.15593-1-maxime.chevallier@bootlin.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 16 Apr 2018 10:06:19 -0400
+X-Google-Smtp-Source: AIpwx48AycZLQ7INphvXag//ayLkQQD7NV8EGrGZlJeVIgHKKEty64C69kgPnQlDJFDCWiZiBIxbOQ==
+Date: Mon, 16 Apr 2018 15:06:14 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: groeck@chromium.org, andy.shevchenko@gmail.com, kernel@collabora.com,
+        gwendal@chromium.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/8] mfd: cros_ec_dev: Register cros-ec-rtc driver as
+ a subdevice.
+Message-ID: <20180416140614.rwu6yalwjn76thhc@dell>
+References: <20180405113313.27340-1-enric.balletbo@collabora.com>
+ <20180405113313.27340-5-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180405113313.27340-5-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Date: Mon, 16 Apr 2018 10:07:23 +0200
+On Thu, 05 Apr 2018, Enric Balletbo i Serra wrote:
 
-> Marvell's PPv2 controller has a Packet Header parser, which uses a
-> fixed-size TCAM array of filter entries.
+> Check whether this EC instance has RTC host command support and instatiate
+> the RTC driver as a subdevice in such case.
 > 
-> The mvpp2 driver reserves some ranges among the 256 TCAM entries to
-> perform MAC and VID filtering. The rest of the TCAM ids are freely usable
-> for other features, such as IPv4 proto matching.
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> ---
 > 
-> This commit fixes the MVPP2_PE_LAST_FREE_TID define that sets the end of
-> the "free range", which included the MAC range. This could therefore allow
-> some other features to use entries dedicated to MAC filtering,
-> lowering the number of unicast/multicast addresses that could be allowed
-> before switching to promiscuous mode.
+> Changes in v5:
+> - [4/8] For mfd_cell struct use one line and no need for the comma.
 > 
-> Fixes: 10fea26ce2aa ("net: mvpp2: Add support for unicast filtering")
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Changes in v4:
+> - [4/8] Nit: check -> Check (Lee Jones)
+> - [4/8] Use ARRAY_SIZE() instead of hardcoded number (Lee Jones)
+> 
+> Changes in v3:
+> - [4/8] Add the Reviewed-by Andy Shevchenko.
+> 
+> Changes in v2:
+> - [4/8] Add the Reviewed-by Gwendal.
+> 
+>  drivers/mfd/cros_ec_dev.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 
-Applied, thanks.
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
