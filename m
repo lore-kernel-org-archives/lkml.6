@@ -1,102 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753798AbeDPMnL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:43:11 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33773 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752958AbeDPMnJ (ORCPT
+        id S1754065AbeDPMoq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:44:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52272 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752840AbeDPMop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:43:09 -0400
-X-Google-Smtp-Source: AIpwx49frWSDCaGnOU7Dizy/3d/CugcYtRz1YciL/EYR1CfRwA5OF6zaN58o4+3EQEnwyWJo4Tsnmg==
-Subject: Re: Crashes/hung tasks with z3pool under memory pressure
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, mawilcox@microsoft.com,
-        asavery@chromium.org, gwendal@chromium.org
-References: <20180412215501.GA16406@roeck-us.net>
- <CAMJBoFMq8DoWdcrajB_xyMrGXsUsbMjos_U60mOvf01MpK_9Kw@mail.gmail.com>
- <20180413173555.GA30587@roeck-us.net>
- <CAMJBoFPXObpXyQWz-zPJ7JnC-Z5FqqrLfr5BFWKdh+szZrPZ7A@mail.gmail.com>
- <20180413175615.GA30242@roeck-us.net>
-From: Vitaly Wool <vitalywool@gmail.com>
-Message-ID: <b241e25a-50a3-fefb-0443-ad6c0a200898@gmail.com>
-Date: Mon, 16 Apr 2018 14:43:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180413175615.GA30242@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Mon, 16 Apr 2018 08:44:45 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: x86@kernel.org
+Cc: iommu@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: remove pci-nommu.c
+Date: Mon, 16 Apr 2018 14:44:42 +0200
+Message-Id: <20180416124442.13831-1-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Guenter,
+The commit that switches x86 to dma_direct_ops stopped using and building
+this file, but accidentally left it in the tree.  Remove it.
 
-On 04/13/2018 07:56 PM, Guenter Roeck wrote:
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/x86/kernel/pci-nommu.c | 90 -------------------------------------
+ 1 file changed, 90 deletions(-)
+ delete mode 100644 arch/x86/kernel/pci-nommu.c
 
-> On Fri, Apr 13, 2018 at 05:40:18PM +0000, Vitaly Wool wrote:
->> On Fri, Apr 13, 2018, 7:35 PM Guenter Roeck <linux@roeck-us.net> wrote:
->>
->>> On Fri, Apr 13, 2018 at 05:21:02AM +0000, Vitaly Wool wrote:
->>>> Hi Guenter,
->>>>
->>>>
->>>> Den fre 13 apr. 2018 kl 00:01 skrev Guenter Roeck <linux@roeck-us.net>:
->>>>
->>>>> Hi all,
->>>>> we are observing crashes with z3pool under memory pressure. The kernel
->>>> version
->>>>> used to reproduce the problem is v4.16-11827-g5d1365940a68, but the
->>>> problem was
->>>>> also seen with v4.14 based kernels.
->>>>
->>>> just before I dig into this, could you please try reproducing the errors
->>>> you see with https://patchwork.kernel.org/patch/10210459/ applied?
->>>>
->>> As mentioned above, I tested with v4.16-11827-g5d1365940a68, which already
->>> includes this patch.
->>>
->> Bah. Sorry. Expect an update after the weekend.
->>
-> NP; easy to miss. Thanks a lot for looking into it.
->
-I wonder if the following patch would make a difference:
-
-diff --git a/mm/z3fold.c b/mm/z3fold.c
-index c0bca6153b95..5e547c2d5832 100644
---- a/mm/z3fold.c
-+++ b/mm/z3fold.c
-@@ -887,19 +887,21 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
-  				goto next;
-  		}
-  next:
--		spin_lock(&pool->lock);
-  		if (test_bit(PAGE_HEADLESS, &page->private)) {
-  			if (ret == 0) {
--				spin_unlock(&pool->lock);
-  				free_z3fold_page(page);
-  				return 0;
-  			}
--		} else if (kref_put(&zhdr->refcount, release_z3fold_page)) {
--			atomic64_dec(&pool->pages_nr);
--			spin_unlock(&pool->lock);
+diff --git a/arch/x86/kernel/pci-nommu.c b/arch/x86/kernel/pci-nommu.c
+deleted file mode 100644
+index ac7ea3a8242f..000000000000
+--- a/arch/x86/kernel/pci-nommu.c
++++ /dev/null
+@@ -1,90 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/* Fallback functions when the main IOMMU code is not compiled in. This
+-   code is roughly equivalent to i386. */
+-#include <linux/dma-direct.h>
+-#include <linux/scatterlist.h>
+-#include <linux/string.h>
+-#include <linux/gfp.h>
+-#include <linux/pci.h>
+-#include <linux/mm.h>
+-
+-#include <asm/processor.h>
+-#include <asm/iommu.h>
+-#include <asm/dma.h>
+-
+-#define NOMMU_MAPPING_ERROR		0
+-
+-static int
+-check_addr(char *name, struct device *hwdev, dma_addr_t bus, size_t size)
+-{
+-	if (hwdev && !dma_capable(hwdev, bus, size)) {
+-		if (*hwdev->dma_mask >= DMA_BIT_MASK(32))
+-			printk(KERN_ERR
+-			    "nommu_%s: overflow %Lx+%zu of device mask %Lx\n",
+-				name, (long long)bus, size,
+-				(long long)*hwdev->dma_mask);
+-		return 0;
+-	}
+-	return 1;
+-}
+-
+-static dma_addr_t nommu_map_page(struct device *dev, struct page *page,
+-				 unsigned long offset, size_t size,
+-				 enum dma_data_direction dir,
+-				 unsigned long attrs)
+-{
+-	dma_addr_t bus = phys_to_dma(dev, page_to_phys(page)) + offset;
+-	WARN_ON(size == 0);
+-	if (!check_addr("map_single", dev, bus, size))
+-		return NOMMU_MAPPING_ERROR;
+-	return bus;
+-}
+-
+-/* Map a set of buffers described by scatterlist in streaming
+- * mode for DMA.  This is the scatter-gather version of the
+- * above pci_map_single interface.  Here the scatter gather list
+- * elements are each tagged with the appropriate dma address
+- * and length.  They are obtained via sg_dma_{address,length}(SG).
+- *
+- * NOTE: An implementation may be able to use a smaller number of
+- *       DMA address/length pairs than there are SG table elements.
+- *       (for example via virtual mapping capabilities)
+- *       The routine returns the number of addr/length pairs actually
+- *       used, at most nents.
+- *
+- * Device ownership issues as mentioned above for pci_map_single are
+- * the same here.
+- */
+-static int nommu_map_sg(struct device *hwdev, struct scatterlist *sg,
+-			int nents, enum dma_data_direction dir,
+-			unsigned long attrs)
+-{
+-	struct scatterlist *s;
+-	int i;
+-
+-	WARN_ON(nents == 0 || sg[0].length == 0);
+-
+-	for_each_sg(sg, s, nents, i) {
+-		BUG_ON(!sg_page(s));
+-		s->dma_address = sg_phys(s);
+-		if (!check_addr("map_sg", hwdev, s->dma_address, s->length))
 -			return 0;
-+		} else {
-+			spin_lock(&zhdr->page_lock);
-+			if (kref_put(&zhdr->refcount, release_z3fold_page_locked)) {
-+				atomic64_dec(&pool->pages_nr);
-+				return 0;
-+			}
-+			spin_unlock(&zhdr->page_lock);
-  		}
-  
-+		spin_lock(&pool->lock);
-  		/*
-  		 * Add to the beginning of LRU.
-  		 * Pool lock has to be kept here to ensure the page has
-
-
-Thanks,
-    Vitaly
+-		s->dma_length = s->length;
+-	}
+-	return nents;
+-}
+-
+-static int nommu_mapping_error(struct device *dev, dma_addr_t dma_addr)
+-{
+-	return dma_addr == NOMMU_MAPPING_ERROR;
+-}
+-
+-const struct dma_map_ops nommu_dma_ops = {
+-	.alloc			= dma_generic_alloc_coherent,
+-	.free			= dma_generic_free_coherent,
+-	.map_sg			= nommu_map_sg,
+-	.map_page		= nommu_map_page,
+-	.is_phys		= 1,
+-	.mapping_error		= nommu_mapping_error,
+-	.dma_supported		= x86_dma_supported,
+-};
+-- 
+2.17.0
