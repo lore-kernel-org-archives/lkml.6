@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752974AbeDPCcU (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 22:32:20 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:9955 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752806AbeDPCcS (ORCPT
+        id S1753031AbeDPCc2 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 22:32:28 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:20659 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752989AbeDPCc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 22:32:18 -0400
-X-UUID: cf9d7ab804fc4c90978d5b470ad8a305-20180416
+        Sun, 15 Apr 2018 22:32:27 -0400
+X-UUID: e56c5f411876421c80e9ea081110082f-20180416
 From: Ryder Lee <ryder.lee@mediatek.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>,
-        chunhui dai <chunhui.dai@mediatek.com>, <linux-clk@vger.kernel.org>,
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: Linus Walleij <linus.walleij@linaro.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH] clk: mediatek: correct the clocks for MT2701 HDMI PHY module
-Date: Mon, 16 Apr 2018 10:31:58 +0800
-Message-ID: <f3248cc94349000b2587d9c6102d56323acba9e0.1523844642.git.ryder.lee@mediatek.com>
+Subject: [PATCH] pinctrl: mediatek: update pinmux defintions for MT7623
+Date: Mon, 16 Apr 2018 10:32:19 +0800
+Message-ID: <c8748c81711b0d41e83418b6c23d82d8c78c7094.1523845138.git.ryder.lee@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -26,85 +25,305 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hdmitx_dig_cts clock signal is not a child of clk26m,
-and the actual output of the PLL block is derived from
-the tvdpll via a configurable PLL post-divider.
+Fulfill the pinmux macros for MT7623
 
-It is used as the PLL reference input to the HDMI PHY module.
-
-Signed-off-by: Chunhui Dai <chunhui.dai@mediatek.com>
 Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- drivers/clk/mediatek/clk-mt2701.c      |  8 ++++++--
- include/dt-bindings/clock/mt2701-clk.h | 16 ++++++++--------
- 2 files changed, 14 insertions(+), 10 deletions(-)
+ include/dt-bindings/pinctrl/mt7623-pinfunc.h | 90 +++++++++++++++++++++++++++-
+ 1 file changed, 87 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
-index deca752..4dda898 100644
---- a/drivers/clk/mediatek/clk-mt2701.c
-+++ b/drivers/clk/mediatek/clk-mt2701.c
-@@ -46,8 +46,6 @@
- 		340 * MHZ),
- 	FIXED_CLK(CLK_TOP_HDMI_0_PLL340M, "hdmi_0_pll340m", "clk26m",
- 		340 * MHZ),
--	FIXED_CLK(CLK_TOP_HDMITX_CLKDIG_CTS, "hdmitx_dig_cts", "clk26m",
--		300 * MHZ),
- 	FIXED_CLK(CLK_TOP_HADDS2_FB, "hadds2_fbclk", "clk26m",
- 		27 * MHZ),
- 	FIXED_CLK(CLK_TOP_WBG_DIG_416M, "wbg_dig_ck_416m", "clk26m",
-@@ -977,6 +975,10 @@ static int mtk_pericfg_init(struct platform_device *pdev)
- 				21, 0x2d0, 4, 0x0, 0x2d4, 0),
- };
+diff --git a/include/dt-bindings/pinctrl/mt7623-pinfunc.h b/include/dt-bindings/pinctrl/mt7623-pinfunc.h
+index 4878a67..604fe78 100644
+--- a/include/dt-bindings/pinctrl/mt7623-pinfunc.h
++++ b/include/dt-bindings/pinctrl/mt7623-pinfunc.h
+@@ -23,20 +23,26 @@
  
-+static const struct mtk_fixed_factor apmixed_fixed_divs[] = {
-+	FACTOR(CLK_APMIXED_HDMI_REF, "hdmi_ref", "tvdpll", 1, 1),
-+};
+ #define MT7623_PIN_5_PWRAP_SPI0_CK2_FUNC_GPIO5 (MTK_PIN_NO(5) | 0)
+ #define MT7623_PIN_5_PWRAP_SPI0_CK2_FUNC_PWRAP_SPICK2_I (MTK_PIN_NO(5) | 1)
++#define MT7623_PIN_5_PWRAP_SPI0_CK2_FUNC_ANT_SEL1 (MTK_PIN_NO(5) | 5)
+ 
+ #define MT7623_PIN_6_PWRAP_SPI0_CSN2_FUNC_GPIO6 (MTK_PIN_NO(6) | 0)
+ #define MT7623_PIN_6_PWRAP_SPI0_CSN2_FUNC_PWRAP_SPICS2_B_I (MTK_PIN_NO(6) | 1)
++#define MT7623_PIN_6_PWRAP_SPI0_CSN2_FUNC_ANT_SEL0 (MTK_PIN_NO(6) | 5)
+ 
+ #define MT7623_PIN_7_SPI1_CSN_FUNC_GPIO7 (MTK_PIN_NO(7) | 0)
+ #define MT7623_PIN_7_SPI1_CSN_FUNC_SPI1_CS (MTK_PIN_NO(7) | 1)
++#define MT7623_PIN_7_SPI1_CSN_FUNC_KCOL0 (MTK_PIN_NO(7) | 4)
+ 
+ #define MT7623_PIN_8_SPI1_MI_FUNC_GPIO8 (MTK_PIN_NO(8) | 0)
+ #define MT7623_PIN_8_SPI1_MI_FUNC_SPI1_MI (MTK_PIN_NO(8) | 1)
+ #define MT7623_PIN_8_SPI1_MI_FUNC_SPI1_MO (MTK_PIN_NO(8) | 2)
++#define MT7623_PIN_8_SPI1_MI_FUNC_KCOL1 (MTK_PIN_NO(8) | 4)
+ 
+ #define MT7623_PIN_9_SPI1_MO_FUNC_GPIO9 (MTK_PIN_NO(9) | 0)
+ #define MT7623_PIN_9_SPI1_MO_FUNC_SPI1_MO (MTK_PIN_NO(9) | 1)
+ #define MT7623_PIN_9_SPI1_MO_FUNC_SPI1_MI (MTK_PIN_NO(9) | 2)
++#define MT7623_PIN_9_SPI1_MO_FUNC_EXT_FRAME_SYNC (MTK_PIN_NO(9) | 3)
++#define MT7623_PIN_9_SPI1_MO_FUNC_KCOL2 (MTK_PIN_NO(9) | 4)
+ 
+ #define MT7623_PIN_10_RTC32K_CK_FUNC_GPIO10 (MTK_PIN_NO(10) | 0)
+ #define MT7623_PIN_10_RTC32K_CK_FUNC_RTC32K_CK (MTK_PIN_NO(10) | 1)
+@@ -53,6 +59,7 @@
+ #define MT7623_PIN_14_GPIO14_FUNC_GPIO14 (MTK_PIN_NO(14) | 0)
+ #define MT7623_PIN_14_GPIO14_FUNC_URXD2 (MTK_PIN_NO(14) | 1)
+ #define MT7623_PIN_14_GPIO14_FUNC_UTXD2 (MTK_PIN_NO(14) | 2)
++#define MT7623_PIN_14_GPIO14_FUNC_SRCCLKENAI2 (MTK_PIN_NO(14) | 5)
+ 
+ #define MT7623_PIN_15_GPIO15_FUNC_GPIO15 (MTK_PIN_NO(15) | 0)
+ #define MT7623_PIN_15_GPIO15_FUNC_UTXD2 (MTK_PIN_NO(15) | 1)
+@@ -60,88 +67,139 @@
+ 
+ #define MT7623_PIN_18_PCM_CLK_FUNC_GPIO18 (MTK_PIN_NO(18) | 0)
+ #define MT7623_PIN_18_PCM_CLK_FUNC_PCM_CLK0 (MTK_PIN_NO(18) | 1)
++#define MT7623_PIN_18_PCM_CLK_FUNC_MRG_CLK (MTK_PIN_NO(18) | 2)
++#define MT7623_PIN_18_PCM_CLK_FUNC_MM_TEST_CK (MTK_PIN_NO(18) | 4)
++#define MT7623_PIN_18_PCM_CLK_FUNC_CONN_DSP_JCK (MTK_PIN_NO(18) | 5)
+ #define MT7623_PIN_18_PCM_CLK_FUNC_AP_PCM_CLKO (MTK_PIN_NO(18) | 6)
+ 
+ #define MT7623_PIN_19_PCM_SYNC_FUNC_GPIO19 (MTK_PIN_NO(19) | 0)
+ #define MT7623_PIN_19_PCM_SYNC_FUNC_PCM_SYNC (MTK_PIN_NO(19) | 1)
++#define MT7623_PIN_19_PCM_SYNC_FUNC_MRG_SYNC (MTK_PIN_NO(19) | 2)
++#define MT7623_PIN_19_PCM_SYNC_FUNC_CONN_DSP_JINTP (MTK_PIN_NO(19) | 5)
+ #define MT7623_PIN_19_PCM_SYNC_FUNC_AP_PCM_SYNC (MTK_PIN_NO(19) | 6)
+ 
+ #define MT7623_PIN_20_PCM_RX_FUNC_GPIO20 (MTK_PIN_NO(20) | 0)
+ #define MT7623_PIN_20_PCM_RX_FUNC_PCM_RX (MTK_PIN_NO(20) | 1)
++#define MT7623_PIN_20_PCM_RX_FUNC_MRG_RX (MTK_PIN_NO(20) | 2)
++#define MT7623_PIN_20_PCM_RX_FUNC_MRG_TX (MTK_PIN_NO(20) | 3)
+ #define MT7623_PIN_20_PCM_RX_FUNC_PCM_TX (MTK_PIN_NO(20) | 4)
++#define MT7623_PIN_20_PCM_RX_FUNC_CONN_DSP_JDI (MTK_PIN_NO(20) | 5)
+ #define MT7623_PIN_20_PCM_RX_FUNC_AP_PCM_RX (MTK_PIN_NO(20) | 6)
+ 
+ #define MT7623_PIN_21_PCM_TX_FUNC_GPIO21 (MTK_PIN_NO(21) | 0)
+ #define MT7623_PIN_21_PCM_TX_FUNC_PCM_TX (MTK_PIN_NO(21) | 1)
++#define MT7623_PIN_21_PCM_TX_FUNC_MRG_TX (MTK_PIN_NO(21) | 2)
++#define MT7623_PIN_21_PCM_TX_FUNC_MRG_RX (MTK_PIN_NO(21) | 3)
+ #define MT7623_PIN_21_PCM_TX_FUNC_PCM_RX (MTK_PIN_NO(21) | 4)
++#define MT7623_PIN_21_PCM_TX_FUNC_CONN_DSP_JMS (MTK_PIN_NO(21) | 5)
+ #define MT7623_PIN_21_PCM_TX_FUNC_AP_PCM_TX (MTK_PIN_NO(21) | 6)
+ 
+ #define MT7623_PIN_22_EINT0_FUNC_GPIO22 (MTK_PIN_NO(22) | 0)
+ #define MT7623_PIN_22_EINT0_FUNC_UCTS0 (MTK_PIN_NO(22) | 1)
+ #define MT7623_PIN_22_EINT0_FUNC_PCIE0_PERST_N (MTK_PIN_NO(22) | 2)
++#define MT7623_PIN_22_EINT0_FUNC_KCOL3 (MTK_PIN_NO(22) | 3)
++#define MT7623_PIN_22_EINT0_FUNC_CONN_DSP_JDO (MTK_PIN_NO(22) | 4)
++#define MT7623_PIN_22_EINT0_FUNC_EXT_FRAME_SYNC (MTK_PIN_NO(22) | 5)
+ 
+ #define MT7623_PIN_23_EINT1_FUNC_GPIO23 (MTK_PIN_NO(23) | 0)
+ #define MT7623_PIN_23_EINT1_FUNC_URTS0 (MTK_PIN_NO(23) | 1)
+ #define MT7623_PIN_23_EINT1_FUNC_PCIE1_PERST_N (MTK_PIN_NO(23) | 2)
++#define MT7623_PIN_23_EINT1_FUNC_KCOL2 (MTK_PIN_NO(23) | 3)
++#define MT7623_PIN_23_EINT1_FUNC_CONN_MCU_TDO (MTK_PIN_NO(23) | 4)
++#define MT7623_PIN_23_EINT1_FUNC_EXT_FRAME_SYNC (MTK_PIN_NO(23) | 5)
+ 
+ #define MT7623_PIN_24_EINT2_FUNC_GPIO24 (MTK_PIN_NO(24) | 0)
+ #define MT7623_PIN_24_EINT2_FUNC_UCTS1 (MTK_PIN_NO(24) | 1)
+ #define MT7623_PIN_24_EINT2_FUNC_PCIE2_PERST_N (MTK_PIN_NO(24) | 2)
++#define MT7623_PIN_24_EINT2_FUNC_KCOL1 (MTK_PIN_NO(24) | 3)
++#define MT7623_PIN_24_EINT2_FUNC_CONN_MCU_DBGACK_N (MTK_PIN_NO(24) | 4)
+ 
+ #define MT7623_PIN_25_EINT3_FUNC_GPIO25 (MTK_PIN_NO(25) | 0)
+ #define MT7623_PIN_25_EINT3_FUNC_URTS1 (MTK_PIN_NO(25) | 1)
++#define MT7623_PIN_25_EINT3_FUNC_KCOL0 (MTK_PIN_NO(25) | 3)
++#define MT7623_PIN_25_EINT3_FUNC_CONN_MCU_DBGI_N (MTK_PIN_NO(25) | 4)
+ 
+ #define MT7623_PIN_26_EINT4_FUNC_GPIO26 (MTK_PIN_NO(26) | 0)
+ #define MT7623_PIN_26_EINT4_FUNC_UCTS3 (MTK_PIN_NO(26) | 1)
++#define MT7623_PIN_26_EINT4_FUNC_DRV_VBUS_P1 (MTK_PIN_NO(26) | 2)
++#define MT7623_PIN_26_EINT4_FUNC_KROW3 (MTK_PIN_NO(26) | 3)
++#define MT7623_PIN_26_EINT4_FUNC_CONN_MCU_TCK0 (MTK_PIN_NO(26) | 4)
++#define MT7623_PIN_26_EINT4_FUNC_CONN_MCU_AICE_JCKC (MTK_PIN_NO(26) | 5)
+ #define MT7623_PIN_26_EINT4_FUNC_PCIE2_WAKE_N (MTK_PIN_NO(26) | 6)
+ 
+ #define MT7623_PIN_27_EINT5_FUNC_GPIO27 (MTK_PIN_NO(27) | 0)
+ #define MT7623_PIN_27_EINT5_FUNC_URTS3 (MTK_PIN_NO(27) | 1)
++#define MT7623_PIN_27_EINT5_FUNC_IDDIG_P1 (MTK_PIN_NO(27) | 2)
++#define MT7623_PIN_27_EINT5_FUNC_KROW2 (MTK_PIN_NO(27) | 3)
++#define MT7623_PIN_27_EINT5_FUNC_CONN_MCU_TDI (MTK_PIN_NO(27) | 4)
+ #define MT7623_PIN_27_EINT5_FUNC_PCIE1_WAKE_N (MTK_PIN_NO(27) | 6)
+ 
+ #define MT7623_PIN_28_EINT6_FUNC_GPIO28 (MTK_PIN_NO(28) | 0)
+ #define MT7623_PIN_28_EINT6_FUNC_DRV_VBUS (MTK_PIN_NO(28) | 1)
++#define MT7623_PIN_28_EINT6_FUNC_KROW1 (MTK_PIN_NO(28) | 3)
++#define MT7623_PIN_28_EINT6_FUNC_CONN_MCU_TRST_B (MTK_PIN_NO(28) | 4)
+ #define MT7623_PIN_28_EINT6_FUNC_PCIE0_WAKE_N (MTK_PIN_NO(28) | 6)
+ 
+ #define MT7623_PIN_29_EINT7_FUNC_GPIO29 (MTK_PIN_NO(29) | 0)
+ #define MT7623_PIN_29_EINT7_FUNC_IDDIG (MTK_PIN_NO(29) | 1)
+ #define MT7623_PIN_29_EINT7_FUNC_MSDC1_WP (MTK_PIN_NO(29) | 2)
++#define MT7623_PIN_29_EINT7_FUNC_KROW0 (MTK_PIN_NO(29) | 3)
++#define MT7623_PIN_29_EINT7_FUNC_CONN_MCU_TMS (MTK_PIN_NO(29) | 4)
++#define MT7623_PIN_29_EINT7_FUNC_CONN_MCU_AICE_JMSC (MTK_PIN_NO(29) | 5)
+ #define MT7623_PIN_29_EINT7_FUNC_PCIE2_PERST_N (MTK_PIN_NO(29) | 6)
+ 
+ #define MT7623_PIN_33_I2S1_DATA_FUNC_GPIO33 (MTK_PIN_NO(33) | 0)
+ #define MT7623_PIN_33_I2S1_DATA_FUNC_I2S1_DATA (MTK_PIN_NO(33) | 1)
++#define MT7623_PIN_33_I2S1_DATA_FUNC_I2S1_DATA_BYPS (MTK_PIN_NO(33) | 2)
+ #define MT7623_PIN_33_I2S1_DATA_FUNC_PCM_TX (MTK_PIN_NO(33) | 3)
++#define MT7623_PIN_33_I2S1_DATA_FUNC_IMG_TEST_CK (MTK_PIN_NO(33) | 4)
++#define MT7623_PIN_33_I2S1_DATA_FUNC_G1_RXD0 (MTK_PIN_NO(33) | 5)
+ #define MT7623_PIN_33_I2S1_DATA_FUNC_AP_PCM_TX (MTK_PIN_NO(33) | 6)
+ 
+ #define MT7623_PIN_34_I2S1_DATA_IN_FUNC_GPIO34 (MTK_PIN_NO(34) | 0)
+ #define MT7623_PIN_34_I2S1_DATA_IN_FUNC_I2S1_DATA_IN (MTK_PIN_NO(34) | 1)
+ #define MT7623_PIN_34_I2S1_DATA_IN_FUNC_PCM_RX (MTK_PIN_NO(34) | 3)
++#define MT7623_PIN_34_I2S1_DATA_IN_FUNC_VDEC_TEST_CK (MTK_PIN_NO(34) | 4)
++#define MT7623_PIN_34_I2S1_DATA_IN_FUNC_G1_RXD1 (MTK_PIN_NO(34) | 5)
+ #define MT7623_PIN_34_I2S1_DATA_IN_FUNC_AP_PCM_RX (MTK_PIN_NO(34) | 6)
+ 
+ #define MT7623_PIN_35_I2S1_BCK_FUNC_GPIO35 (MTK_PIN_NO(35) | 0)
+ #define MT7623_PIN_35_I2S1_BCK_FUNC_I2S1_BCK (MTK_PIN_NO(35) | 1)
+ #define MT7623_PIN_35_I2S1_BCK_FUNC_PCM_CLK0 (MTK_PIN_NO(35) | 3)
++#define MT7623_PIN_35_I2S1_BCK_FUNC_G1_RXD2 (MTK_PIN_NO(35) | 5)
+ #define MT7623_PIN_35_I2S1_BCK_FUNC_AP_PCM_CLKO (MTK_PIN_NO(35) | 6)
+ 
+ #define MT7623_PIN_36_I2S1_LRCK_FUNC_GPIO36 (MTK_PIN_NO(36) | 0)
+ #define MT7623_PIN_36_I2S1_LRCK_FUNC_I2S1_LRCK (MTK_PIN_NO(36) | 1)
+ #define MT7623_PIN_36_I2S1_LRCK_FUNC_PCM_SYNC (MTK_PIN_NO(36) | 3)
++#define MT7623_PIN_36_I2S1_LRCK_FUNC_G1_RXD3 (MTK_PIN_NO(36) | 5)
+ #define MT7623_PIN_36_I2S1_LRCK_FUNC_AP_PCM_SYNC (MTK_PIN_NO(36) | 6)
+ 
+ #define MT7623_PIN_37_I2S1_MCLK_FUNC_GPIO37 (MTK_PIN_NO(37) | 0)
+ #define MT7623_PIN_37_I2S1_MCLK_FUNC_I2S1_MCLK (MTK_PIN_NO(37) | 1)
++#define MT7623_PIN_37_I2S1_MCLK_FUNC_G1_RXDV (MTK_PIN_NO(37) | 5)
+ 
+ #define MT7623_PIN_39_JTMS_FUNC_GPIO39 (MTK_PIN_NO(39) | 0)
+ #define MT7623_PIN_39_JTMS_FUNC_JTMS (MTK_PIN_NO(39) | 1)
++#define MT7623_PIN_39_JTMS_FUNC_CONN_MCU_TMS (MTK_PIN_NO(39) | 2)
++#define MT7623_PIN_39_JTMS_FUNC_CONN_MCU_AICE_JMSC (MTK_PIN_NO(39) | 3)
++#define MT7623_PIN_39_JTMS_FUNC_DFD_TMS_XI (MTK_PIN_NO(39) | 4)
+ 
+ #define MT7623_PIN_40_JTCK_FUNC_GPIO40 (MTK_PIN_NO(40) | 0)
+ #define MT7623_PIN_40_JTCK_FUNC_JTCK (MTK_PIN_NO(40) | 1)
++#define MT7623_PIN_40_JTCK_FUNC_CONN_MCU_TCK1 (MTK_PIN_NO(40) | 2)
++#define MT7623_PIN_40_JTCK_FUNC_CONN_MCU_AICE_JCKC (MTK_PIN_NO(40) | 3)
++#define MT7623_PIN_40_JTCK_FUNC_DFD_TCK_XI (MTK_PIN_NO(40) | 4)
+ 
+ #define MT7623_PIN_41_JTDI_FUNC_GPIO41 (MTK_PIN_NO(41) | 0)
+ #define MT7623_PIN_41_JTDI_FUNC_JTDI (MTK_PIN_NO(41) | 1)
++#define MT7623_PIN_41_JTDI_FUNC_CONN_MCU_TDI (MTK_PIN_NO(41) | 2)
++#define MT7623_PIN_41_JTDI_FUNC_DFD_TDI_XI (MTK_PIN_NO(41) | 4)
+ 
+ #define MT7623_PIN_42_JTDO_FUNC_GPIO42 (MTK_PIN_NO(42) | 0)
+ #define MT7623_PIN_42_JTDO_FUNC_JTDO (MTK_PIN_NO(42) | 1)
++#define MT7623_PIN_42_JTDO_FUNC_CONN_MCU_TDO (MTK_PIN_NO(42) | 2)
++#define MT7623_PIN_42_JTDO_FUNC_DFD_TDO (MTK_PIN_NO(42) | 4)
+ 
+ #define MT7623_PIN_43_NCLE_FUNC_GPIO43 (MTK_PIN_NO(43) | 0)
+ #define MT7623_PIN_43_NCLE_FUNC_NCLE (MTK_PIN_NO(43) | 1)
+@@ -160,31 +218,40 @@
+ 
+ #define MT7623_PIN_47_NREB_FUNC_GPIO47 (MTK_PIN_NO(47) | 0)
+ #define MT7623_PIN_47_NREB_FUNC_NREB (MTK_PIN_NO(47) | 1)
++#define MT7623_PIN_47_NREB_FUNC_IDDIG_P1 (MTK_PIN_NO(47) | 2)
+ 
+ #define MT7623_PIN_48_NRNB_FUNC_GPIO48 (MTK_PIN_NO(48) | 0)
+ #define MT7623_PIN_48_NRNB_FUNC_NRNB (MTK_PIN_NO(48) | 1)
++#define MT7623_PIN_48_NRNB_FUNC_DRV_VBUS_P1 (MTK_PIN_NO(48) | 2)
+ 
+ #define MT7623_PIN_49_I2S0_DATA_FUNC_GPIO49 (MTK_PIN_NO(49) | 0)
+ #define MT7623_PIN_49_I2S0_DATA_FUNC_I2S0_DATA (MTK_PIN_NO(49) | 1)
++#define MT7623_PIN_49_I2S0_DATA_FUNC_I2S0_DATA_BYPS (MTK_PIN_NO(49) | 2)
+ #define MT7623_PIN_49_I2S0_DATA_FUNC_PCM_TX (MTK_PIN_NO(49) | 3)
+ #define MT7623_PIN_49_I2S0_DATA_FUNC_AP_I2S_DO (MTK_PIN_NO(49) | 6)
+ 
+ #define MT7623_PIN_53_SPI0_CSN_FUNC_GPIO53 (MTK_PIN_NO(53) | 0)
+ #define MT7623_PIN_53_SPI0_CSN_FUNC_SPI0_CS (MTK_PIN_NO(53) | 1)
++#define MT7623_PIN_53_SPI0_CSN_FUNC_SPDIF (MTK_PIN_NO(53) | 3)
++#define MT7623_PIN_53_SPI0_CSN_FUNC_ADC_CK (MTK_PIN_NO(53) | 4)
+ #define MT7623_PIN_53_SPI0_CSN_FUNC_PWM1 (MTK_PIN_NO(53) | 5)
+ 
+ #define MT7623_PIN_54_SPI0_CK_FUNC_GPIO54 (MTK_PIN_NO(54) | 0)
+ #define MT7623_PIN_54_SPI0_CK_FUNC_SPI0_CK (MTK_PIN_NO(54) | 1)
++#define MT7623_PIN_54_SPI0_CK_FUNC_SPDIF_IN1 (MTK_PIN_NO(54) | 3)
++#define MT7623_PIN_54_SPI0_CK_FUNC_ADC_DAT_IN (MTK_PIN_NO(54) | 4)
+ 
+ #define MT7623_PIN_55_SPI0_MI_FUNC_GPIO55 (MTK_PIN_NO(55) | 0)
+ #define MT7623_PIN_55_SPI0_MI_FUNC_SPI0_MI (MTK_PIN_NO(55) | 1)
+ #define MT7623_PIN_55_SPI0_MI_FUNC_SPI0_MO (MTK_PIN_NO(55) | 2)
+ #define MT7623_PIN_55_SPI0_MI_FUNC_MSDC1_WP (MTK_PIN_NO(55) | 3)
++#define MT7623_PIN_55_SPI0_MI_FUNC_ADC_WS (MTK_PIN_NO(55) | 4)
+ #define MT7623_PIN_55_SPI0_MI_FUNC_PWM2 (MTK_PIN_NO(55) | 5)
+ 
+ #define MT7623_PIN_56_SPI0_MO_FUNC_GPIO56 (MTK_PIN_NO(56) | 0)
+ #define MT7623_PIN_56_SPI0_MO_FUNC_SPI0_MO (MTK_PIN_NO(56) | 1)
+ #define MT7623_PIN_56_SPI0_MO_FUNC_SPI0_MI (MTK_PIN_NO(56) | 2)
++#define MT7623_PIN_56_SPI0_MO_FUNC_SPDIF_IN0 (MTK_PIN_NO(56) | 3)
+ 
+ #define MT7623_PIN_57_SDA1_FUNC_GPIO57 (MTK_PIN_NO(57) | 0)
+ #define MT7623_PIN_57_SDA1_FUNC_SDA1 (MTK_PIN_NO(57) | 1)
+@@ -275,10 +342,23 @@
+ 
+ #define MT7623_PIN_83_LCM_RST_FUNC_GPIO83 (MTK_PIN_NO(83) | 0)
+ #define MT7623_PIN_83_LCM_RST_FUNC_LCM_RST (MTK_PIN_NO(83) | 1)
++#define MT7623_PIN_83_LCM_RST_FUNC_VDAC_CK_XI (MTK_PIN_NO(83) | 2)
+ 
+ #define MT7623_PIN_84_DSI_TE_FUNC_GPIO84 (MTK_PIN_NO(84) | 0)
+ #define MT7623_PIN_84_DSI_TE_FUNC_DSI_TE (MTK_PIN_NO(84) | 1)
+ 
++#define MT7623_PIN_91_MIPI_TDN3_FUNC_GPIO91 (MTK_PIN_NO(91) | 0)
++#define MT7623_PIN_91_MIPI_TDN3_FUNC_TDN3 (MTK_PIN_NO(91) | 1)
 +
- static int mtk_apmixedsys_init(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
-@@ -988,6 +990,8 @@ static int mtk_apmixedsys_init(struct platform_device *pdev)
++#define MT7623_PIN_92_MIPI_TDP3_FUNC_GPIO92 (MTK_PIN_NO(92) | 0)
++#define MT7623_PIN_92_MIPI_TDP3_FUNC_TDP3 (MTK_PIN_NO(92) | 1)
++
++#define MT7623_PIN_93_MIPI_TDN2_FUNC_GPIO93 (MTK_PIN_NO(93) | 0)
++#define MT7623_PIN_93_MIPI_TDN2_FUNC_TDN2 (MTK_PIN_NO(93) | 1)
++
++#define MT7623_PIN_94_MIPI_TDP2_FUNC_GPIO94 (MTK_PIN_NO(94) | 0)
++#define MT7623_PIN_94_MIPI_TDP2_FUNC_TDP2 (MTK_PIN_NO(94) | 1)
++
+ #define MT7623_PIN_95_MIPI_TCN_FUNC_GPIO95 (MTK_PIN_NO(95) | 0)
+ #define MT7623_PIN_95_MIPI_TCN_FUNC_TCN (MTK_PIN_NO(95) | 1)
  
- 	mtk_clk_register_plls(node, apmixed_plls, ARRAY_SIZE(apmixed_plls),
- 								clk_data);
-+	mtk_clk_register_factors(apmixed_fixed_divs, ARRAY_SIZE(apmixed_fixed_divs),
-+								clk_data);
+@@ -300,20 +380,24 @@
+ #define MT7623_PIN_101_SPI2_CSN_FUNC_GPIO101 (MTK_PIN_NO(101) | 0)
+ #define MT7623_PIN_101_SPI2_CSN_FUNC_SPI2_CS (MTK_PIN_NO(101) | 1)
+ #define MT7623_PIN_101_SPI2_CSN_FUNC_SCL3 (MTK_PIN_NO(101) | 3)
++#define MT7623_PIN_101_SPI2_CSN_FUNC_KROW0 (MTK_PIN_NO(101) | 4)
  
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
-diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
-index 24e93df..1956ebb 100644
---- a/include/dt-bindings/clock/mt2701-clk.h
-+++ b/include/dt-bindings/clock/mt2701-clk.h
-@@ -171,13 +171,12 @@
- #define CLK_TOP_8BDAC				151
- #define CLK_TOP_WBG_DIG_416M			152
- #define CLK_TOP_DPI				153
--#define CLK_TOP_HDMITX_CLKDIG_CTS		154
--#define CLK_TOP_DSI0_LNTC_DSI			155
--#define CLK_TOP_AUD_EXT1			156
--#define CLK_TOP_AUD_EXT2			157
--#define CLK_TOP_NFI1X_PAD			158
--#define CLK_TOP_AXISEL_D4			159
--#define CLK_TOP_NR				160
-+#define CLK_TOP_DSI0_LNTC_DSI			154
-+#define CLK_TOP_AUD_EXT1			155
-+#define CLK_TOP_AUD_EXT2			156
-+#define CLK_TOP_NFI1X_PAD			157
-+#define CLK_TOP_AXISEL_D4			158
-+#define CLK_TOP_NR				159
+ #define MT7623_PIN_102_SPI2_MI_FUNC_GPIO102 (MTK_PIN_NO(102) | 0)
+ #define MT7623_PIN_102_SPI2_MI_FUNC_SPI2_MI (MTK_PIN_NO(102) | 1)
+ #define MT7623_PIN_102_SPI2_MI_FUNC_SPI2_MO (MTK_PIN_NO(102) | 2)
+ #define MT7623_PIN_102_SPI2_MI_FUNC_SDA3 (MTK_PIN_NO(102) | 3)
++#define MT7623_PIN_102_SPI2_MI_FUNC_KROW1 (MTK_PIN_NO(102) | 4)
  
- /* APMIXEDSYS */
+ #define MT7623_PIN_103_SPI2_MO_FUNC_GPIO103 (MTK_PIN_NO(103) | 0)
+ #define MT7623_PIN_103_SPI2_MO_FUNC_SPI2_MO (MTK_PIN_NO(103) | 1)
+ #define MT7623_PIN_103_SPI2_MO_FUNC_SPI2_MI (MTK_PIN_NO(103) | 2)
+ #define MT7623_PIN_103_SPI2_MO_FUNC_SCL3 (MTK_PIN_NO(103) | 3)
++#define MT7623_PIN_103_SPI2_MO_FUNC_KROW2 (MTK_PIN_NO(103) | 4)
  
-@@ -194,7 +193,8 @@
- #define CLK_APMIXED_HADDS2PLL			11
- #define CLK_APMIXED_AUD2PLL			12
- #define CLK_APMIXED_TVD2PLL			13
--#define CLK_APMIXED_NR				14
-+#define CLK_APMIXED_HDMI_REF			14
-+#define CLK_APMIXED_NR				15
+ #define MT7623_PIN_104_SPI2_CK_FUNC_GPIO104 (MTK_PIN_NO(104) | 0)
+ #define MT7623_PIN_104_SPI2_CK_FUNC_SPI2_CK (MTK_PIN_NO(104) | 1)
+ #define MT7623_PIN_104_SPI2_CK_FUNC_SDA3 (MTK_PIN_NO(104) | 3)
++#define MT7623_PIN_104_SPI2_CK_FUNC_KROW3 (MTK_PIN_NO(104) | 4)
  
- /* DDRPHY */
+ #define MT7623_PIN_105_MSDC1_CMD_FUNC_GPIO105 (MTK_PIN_NO(105) | 0)
+ #define MT7623_PIN_105_MSDC1_CMD_FUNC_MSDC1_CMD (MTK_PIN_NO(105) | 1)
+@@ -394,7 +478,7 @@
+ #define MT7623_PIN_121_MSDC0_DAT0_FUNC_WATCHDOG (MTK_PIN_NO(121) | 5)
+ 
+ #define MT7623_PIN_122_GPIO122_FUNC_GPIO122 (MTK_PIN_NO(122) | 0)
+-#define MT7623_PIN_122_GPIO122_FUNC_TEST (MTK_PIN_NO(122) | 1)
++#define MT7623_PIN_122_GPIO122_FUNC_CEC (MTK_PIN_NO(122) | 1)
+ #define MT7623_PIN_122_GPIO122_FUNC_SDA2 (MTK_PIN_NO(122) | 4)
+ #define MT7623_PIN_122_GPIO122_FUNC_URXD0 (MTK_PIN_NO(122) | 5)
+ 
+@@ -404,12 +488,12 @@
+ #define MT7623_PIN_123_HTPLG_FUNC_UTXD0 (MTK_PIN_NO(123) | 5)
+ 
+ #define MT7623_PIN_124_GPIO124_FUNC_GPIO124 (MTK_PIN_NO(124) | 0)
+-#define MT7623_PIN_124_GPIO124_FUNC_TEST (MTK_PIN_NO(124) | 1)
++#define MT7623_PIN_124_GPIO124_FUNC_HDMISCK (MTK_PIN_NO(124) | 1)
+ #define MT7623_PIN_124_GPIO124_FUNC_SDA1 (MTK_PIN_NO(124) | 4)
+ #define MT7623_PIN_124_GPIO124_FUNC_PWM3 (MTK_PIN_NO(124) | 5)
+ 
+ #define MT7623_PIN_125_GPIO125_FUNC_GPIO125 (MTK_PIN_NO(125) | 0)
+-#define MT7623_PIN_125_GPIO125_FUNC_TEST (MTK_PIN_NO(125) | 1)
++#define MT7623_PIN_125_GPIO125_FUNC_HDMISD (MTK_PIN_NO(125) | 1)
+ #define MT7623_PIN_125_GPIO125_FUNC_SCL1 (MTK_PIN_NO(125) | 4)
+ #define MT7623_PIN_125_GPIO125_FUNC_PWM4 (MTK_PIN_NO(125) | 5)
  
 -- 
 1.9.1
