@@ -1,60 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeDPQ6E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:58:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45754 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751099AbeDPQ6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:58:03 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC73F21789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Mon, 16 Apr 2018 13:58:00 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com
-Subject: Re: [PATCH] perf tools: set kernel end address properly
-Message-ID: <20180416165800.GD3202@kernel.org>
-References: <20180416042240.21528-1-namhyung@kernel.org>
- <20180416092345.GA23274@krava>
- <20180416135125.GA23802@kernel.org>
- <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
+        id S1753185AbeDPQ6v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:58:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56466 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753112AbeDPQ6p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 12:58:45 -0400
+Date: Mon, 16 Apr 2018 17:58:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Arkadiusz Kwiatkowski <arkadiusz.kwiatkowski@aptiv.com>
+Cc: vigneshr@ti.com, sourav.poddar@ti.com, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] spi: spi-ti-qspi: Fix parameters order in
+ regmap_update_bits calls
+Message-ID: <20180416165841.GF20726@sirena.org.uk>
+References: <496c162d-5e3c-e008-a14b-6b990e253e64@ti.com>
+ <1522402884-26790-1-git-send-email-arkadiusz.kwiatkowski@aptiv.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="1Y7d0dPL928TPQbc"
 Content-Disposition: inline
-In-Reply-To: <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1522402884-26790-1-git-send-email-arkadiusz.kwiatkowski@aptiv.com>
+X-Cookie: No lifeguard on duty.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Apr 16, 2018 at 11:07:30AM -0500, Kim Phillips escreveu:
-> On Mon, 16 Apr 2018 10:51:25 -0300
-> Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> 
-> > Em Mon, Apr 16, 2018 at 11:23:45AM +0200, Jiri Olsa escreveu:
-> > > On Mon, Apr 16, 2018 at 01:22:40PM +0900, Namhyung Kim wrote:
-> > > > The map_groups__fixup_end() was called to set end addresses of kernel
-> > > > map and module maps.  But now machine__create_modules() is set the end
-> > > > address of modules properly so the only remaining piece is the kernel
-> > > > map.  We can set it with adjacent module's address directly instead of
-> > > > calling the map_groups__fixup_end().  If there's no module after the
-> > > > kernel map, the end address will be ~0ULL.
-> > 
-> > I wonder if it wouldn't be better to have it as last symbol + PAGE_SIZE
-> > or something like that...
-> > 
-> > But, anyway, Kim, does this fix things for you? Can I have your
-> > Tested-by?
-> 
-> No, perf test 1 still fails:
-> 
-> vmlinux symtab matches kallsyms: FAILED!
 
-Ok, -vv please
+--1Y7d0dPL928TPQbc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-- Arnaldo
+On Fri, Mar 30, 2018 at 11:41:23AM +0200, Arkadiusz Kwiatkowski wrote:
+> This commit fixes the order of parameters passed to regmap_update_bits
+> function inside spi-ti-qspi driver. Accidentally the code worked
+> correctly when cs=0, but it is not the case for other values.
+
+This doesn't apply against current code, please check and resend.
+
+--1Y7d0dPL928TPQbc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrU1kAACgkQJNaLcl1U
+h9Db+gf8DkztroNNFajgi5uCMec9ZiegpPoY5iv7efHPF3Fil600G6Huxe0SWCl0
+fVBcZzEF/Pv0VpALb2cmKHgTV/adt/MBkOwzc35r7Zj4hpaN7lN+T4cl6CB9iabB
+t2uVMUsFSl+bFzDsJKAZzANAo2WF4EOHoIkRfyWlS68kn7f9qM7+yB4Pua8cWTrR
+isAnXSuutBOuvQkpr2sK0EeKun/B3VXFzdPzly50OPSBul6ovUDEi/4rnwcYix5c
+Pl/ai2xC5lzOFIJvJoyWhvFJ+6gRnYqVjtjycYPJhxp/2hu6r7nUzKPJPHthvsqQ
+jxAg0+d1SngNDXlUCYQKXnFKZue/AA==
+=JmWt
+-----END PGP SIGNATURE-----
+
+--1Y7d0dPL928TPQbc--
