@@ -1,140 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752736AbeDPWDx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 18:03:53 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57732 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750972AbeDPWDv (ORCPT
+        id S1753175AbeDPWFZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 18:05:25 -0400
+Received: from mail-wr0-f176.google.com ([209.85.128.176]:43133 "EHLO
+        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753070AbeDPWFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 18:03:51 -0400
-Subject: Re: [PATCH v2] docs: kernel-parameters.txt: Fix whitespace
-To: Thymo van Beers <thymovanbeers@gmail.com>, corbet@lwn.net
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180416214939.GA11304@thinkpad>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <31612fbd-6624-140a-ed92-04b8f0bd5f64@infradead.org>
-Date: Mon, 16 Apr 2018 15:03:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 16 Apr 2018 18:05:06 -0400
+X-Google-Smtp-Source: AIpwx488Pgi03wKCJ6ztaLw8QK7OlxDRzzsVlpcRdI8NTk4eREc2Z05RDElTab+DpMTPGvVidbYhLWCs3aRHtcZWZvY=
 MIME-Version: 1.0
-In-Reply-To: <20180416214939.GA11304@thinkpad>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From: Stephane Eranian <eranian@google.com>
+Date: Mon, 16 Apr 2018 22:04:53 +0000
+Message-ID: <CABPqkBS6MuO6Twtq=_+TDV=RNy0_2vRWf=LVCk6wk0tPwNSTog@mail.gmail.com>
+Subject: [RFC] perf/core: what is exclude_idle supposed to do
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, mingo@elte.hu,
+        Andi Kleen <ak@linux.intel.com>,
+        Vince Weaver <vincent.weaver@maine.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/18 14:49, Thymo van Beers wrote:
-> Some lines used spaces instead of tabs at line start.
-> This can cause mangled lines in editors due to inconsistency.
-> 
-> Replace spaces for tabs where appropriate.
-> 
-> Signed-off-by: Thymo van Beers <thymovanbeers@gmail.com>
-> ---
-> Changes in v2:
->   - Rebase against docs-next
->   - Fix indentation modifications
-> 
->  Documentation/admin-guide/kernel-parameters.txt | 136 ++++++++++++------------
->  1 file changed, 68 insertions(+), 68 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 3487be79847c..f625f65c286f 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
+Hi,
 
-Most of the patch is OK IMO, but not the intel_pstate part:
-The 2-space extra indents work fine here, while the extra tab makes a lot of the
-lines go beyond the 80-column mark.
+I am trying to understand what the exclude_idle event attribute is supposed
+to accomplish.
+As per the definition in the header file:
 
-> @@ -1650,39 +1650,39 @@
->  			0	disables intel_idle and fall back on acpi_idle.
->  			1 to 9	specify maximum depth of C-state.
->  
-> -	intel_pstate=  [X86]
-> -		       disable
-> -		         Do not enable intel_pstate as the default
-> -		         scaling driver for the supported processors
-> -		       passive
-> -			 Use intel_pstate as a scaling driver, but configure it
-> -			 to work with generic cpufreq governors (instead of
-> -			 enabling its internal governor).  This mode cannot be
-> -			 used along with the hardware-managed P-states (HWP)
-> -			 feature.
-> -		       force
-> -			 Enable intel_pstate on systems that prohibit it by default
-> -			 in favor of acpi-cpufreq. Forcing the intel_pstate driver
-> -			 instead of acpi-cpufreq may disable platform features, such
-> -			 as thermal controls and power capping, that rely on ACPI
-> -			 P-States information being indicated to OSPM and therefore
-> -			 should be used with caution. This option does not work with
-> -			 processors that aren't supported by the intel_pstate driver
-> -			 or on platforms that use pcc-cpufreq instead of acpi-cpufreq.
-> -		       no_hwp
-> -		         Do not enable hardware P state control (HWP)
-> -			 if available.
-> -		hwp_only
-> -			Only load intel_pstate on systems which support
-> -			hardware P state control (HWP) if available.
-> -		support_acpi_ppc
-> -			Enforce ACPI _PPC performance limits. If the Fixed ACPI
-> -			Description Table, specifies preferred power management
-> -			profile as "Enterprise Server" or "Performance Server",
-> -			then this feature is turned on by default.
-> -		per_cpu_perf_limits
-> -			Allow per-logical-CPU P-State performance control limits using
-> -			cpufreq sysfs interface
-> +	intel_pstate=	[X86]
-> +			disable
-> +				Do not enable intel_pstate as the default
-> +				scaling driver for the supported processors
-> +			passive
-> +				Use intel_pstate as a scaling driver, but configure it
-> +				to work with generic cpufreq governors (instead of
-> +				enabling its internal governor).  This mode cannot be
-> +				used along with the hardware-managed P-states (HWP)
-> +				feature.
-> +			force
-> +				Enable intel_pstate on systems that prohibit it by default
-> +				in favor of acpi-cpufreq. Forcing the intel_pstate driver
-> +				instead of acpi-cpufreq may disable platform features, such
-> +				as thermal controls and power capping, that rely on ACPI
-> +				P-States information being indicated to OSPM and therefore
-> +				should be used with caution. This option does not work with
-> +				processors that aren't supported by the intel_pstate driver
-> +				or on platforms that use pcc-cpufreq instead of acpi-cpufreq.
-> +			no_hwp
-> +				Do not enable hardware P state control (HWP)
-> +				if available.
-> +			hwp_only
-> +				Only load intel_pstate on systems which support
-> +				hardware P state control (HWP) if available.
-> +			support_acpi_ppc
-> +				Enforce ACPI _PPC performance limits. If the Fixed ACPI
-> +				Description Table, specifies preferred power management
-> +				profile as "Enterprise Server" or "Performance Server",
-> +				then this feature is turned on by default.
-> +			per_cpu_perf_limits
-> +				Allow per-logical-CPU P-State performance control limits using
-> +				cpufreq sysfs interface
->  
->  	intremap=	[X86-64, Intel-IOMMU]
->  			on	enable Interrupt Remapping (default)
-> @@ -2027,7 +2027,7 @@
->  			* [no]ncqtrim: Turn off queued DSM TRIM.
->  
->  			* nohrst, nosrst, norst: suppress hard, soft
-> -                          and both resets.
-> +			and both resets.
+    exclude_idle   :  1, /* don't count when idle */
 
-I would leave that line above indented like the one after "rstonce" below.
+Naively, I thought it would simply stop the event when running in the
+context of the idle task (swapper, pid 0) on any CPU. That would seem to
+match the succinct description.
 
->  
->  			* rstonce: only attempt one reset during
->  			  hot-unplug link recovery
+However, running a simple:
+
+$ perf record -a -e cycles:I sleep 5
+perf_event_attr:
+    sample_type                      IP|TID|TIME|CPU|PERIOD
+   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING|ID
+   exclude_idle                     1
+
+on an idle machine, showed me that this is not what is actually happening:
+$ perf  script
+          swapper     0 [000] 1132634.287442:          1 cycles:I:
+  ffffffff8100b1fb __intel_pmu_enable_all.isra.17 ([kernel.kallsyms])
+          swapper     0 [001] 1132634.287498:          1 cycles:I:
+  ffffffff8100b1fb __intel_pmu_enable_all.isra.17 ([kernel.kallsyms])
 
 
--- 
-~Randy
+After looking at the code, it all made sense, it seems to current
+implementation is only relevant for sw events. I don't understand why.
+
+I am left wondering what is the goal of exclude_idle?
