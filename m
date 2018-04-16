@@ -1,107 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753315AbeDPE1z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 00:27:55 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:58678 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751113AbeDPE1y (ORCPT
+        id S1753298AbeDPEfD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 00:35:03 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:46638 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752593AbeDPEfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 00:27:54 -0400
-X-UUID: 12908bfa7aa54a27993f2282ef898600-20180416
-Message-ID: <1523852857.14673.30.camel@mhfsdcap03>
-Subject: Re: [PATCH] mtd: nand: mtk: use of_device_get_match_data()
-From: xiaolei li <xiaolei.li@mediatek.com>
-To: Ryder Lee <ryder.lee@mediatek.com>
-CC: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date: Mon, 16 Apr 2018 12:27:37 +0800
-In-Reply-To: <c3af6d5035e43b53b5cc7ee68f9f1a853ce2a8f9.1523347340.git.ryder.lee@mediatek.com>
-References: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
-         <c3af6d5035e43b53b5cc7ee68f9f1a853ce2a8f9.1523347340.git.ryder.lee@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 16 Apr 2018 00:35:02 -0400
+X-Google-Smtp-Source: AIpwx49dunRhH02eKg4MXQtFkm2UApJfaC+S8BkaJt+tD6IFtHnCyzBWiFTbFnws08HFUL1+UDb53g==
 MIME-Version: 1.0
-X-MTK: N
+In-Reply-To: <20180405064658.rz2grnpm5fq45lhu@flea>
+References: <20180327053104.3812-1-jagan@amarulasolutions.com>
+ <CAMty3ZD3ohpgqsBjgNztpyHOmmcu_y7vuUOoop8y-+OpWjLYGA@mail.gmail.com> <20180405064658.rz2grnpm5fq45lhu@flea>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 16 Apr 2018 12:34:39 +0800
+X-Gmail-Original-Message-ID: <CAGb2v656MCUYiFd2J6ZE5hze2TKQqkMh7hGAUXhjz58qCj58ug@mail.gmail.com>
+Message-ID: <CAGb2v656MCUYiFd2J6ZE5hze2TKQqkMh7hGAUXhjz58qCj58ug@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] regulator: axp20x: add drivevbus support for axp803
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Jagan Teki <jagan@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-04-16 at 10:33 +0800, Ryder Lee wrote:
-> The usage of of_device_get_match_data() reduce the code size a bit.
-> 
-> Also, the only way to call .probe() is to match an entry in
-> .of_match_table[], so of_device_id cannot be NULL.
-> 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  drivers/mtd/nand/raw/mtk_ecc.c  |  7 +------
->  drivers/mtd/nand/raw/mtk_nand.c | 10 +---------
->  2 files changed, 2 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/mtk_ecc.c b/drivers/mtd/nand/mtk_ecc.c
-> index 40d86a8..6432bd7 100644
-> --- a/drivers/mtd/nand/raw/mtk_ecc.c
-> +++ b/drivers/mtd/nand/raw/mtk_ecc.c
-> @@ -500,7 +500,6 @@ static int mtk_ecc_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct mtk_ecc *ecc;
->  	struct resource *res;
-> -	const struct of_device_id *of_ecc_id = NULL;
->  	u32 max_eccdata_size;
->  	int irq, ret;
->  
-> @@ -508,11 +507,7 @@ static int mtk_ecc_probe(struct platform_device *pdev)
->  	if (!ecc)
->  		return -ENOMEM;
->  
-> -	of_ecc_id = of_match_device(mtk_ecc_dt_match, &pdev->dev);
-> -	if (!of_ecc_id)
-> -		return -ENODEV;
-> -
-> -	ecc->caps = of_ecc_id->data;
-> +	ecc->caps = of_device_get_match_data(dev);
->  
-Thanks.
+On Thu, Apr 5, 2018 at 2:46 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> On Thu, Apr 05, 2018 at 12:11:39PM +0530, Jagan Teki wrote:
+>> On Tue, Mar 27, 2018 at 11:01 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>> > Like axp221, axp223, axp813 the axp803 is also supporting external
+>> > regulator to drive the  OTG VBus through N_VBUSEN PMIC pin.
+>> >
+>> > Add support for it.
+>> >
+>> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> > Reviewed-by: Rob Herring <robh@kernel.org>
+>> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+>> > ---
+>> > Changes for v5:
+>> > - Collect Chen-Yu reviewed-by tag
+>> > Changes for v4:
+>> > - rebase on master
+>> > Changes for v3:
+>> > - Update drivevbus in table of regulators
+>>
+>> Can you pick these, has some dependency with drivevbus on other
+>> patches.
+>
+> I'm not the regulator maintainer, nor the AXP maintainer for that
+> matter. Mark Brown and Chen-Yu are, respectively.
 
-Reviewed-by: Xiaolei Li <xiaolei.li@mediatek.com>
+I've already reviewed all the patches. Please resend the series and
+include Mark Brown, the regulator subsystem maintainer. He clearly
+isn't in the current recipient list, so no wonder things didn't move
+forward. Once he applies the driver bits, we'll apply any pending
+device tree changes.
 
->  	max_eccdata_size = ecc->caps->num_ecc_strength - 1;
->  	max_eccdata_size = ecc->caps->ecc_strength[max_eccdata_size];
-> diff --git a/drivers/mtd/nand/mtk_nand.c b/drivers/mtd/nand/mtk_nand.c
-> index 6977da3..75c845a 100644
-> --- a/drivers/mtd/nand/raw/mtk_nand.c
-> +++ b/drivers/mtd/nand/raw/mtk_nand.c
-> @@ -1434,7 +1434,6 @@ static int mtk_nfc_probe(struct platform_device *pdev)
->  	struct device_node *np = dev->of_node;
->  	struct mtk_nfc *nfc;
->  	struct resource *res;
-> -	const struct of_device_id *of_nfc_id = NULL;
->  	int ret, irq;
->  
->  	nfc = devm_kzalloc(dev, sizeof(*nfc), GFP_KERNEL);
-> @@ -1452,6 +1451,7 @@ static int mtk_nfc_probe(struct platform_device *pdev)
->  	else if (!nfc->ecc)
->  		return -ENODEV;
->  
-> +	nfc->caps = of_device_get_match_data(dev);
->  	nfc->dev = dev;
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> @@ -1498,14 +1498,6 @@ static int mtk_nfc_probe(struct platform_device *pdev)
->  		goto clk_disable;
->  	}
->  
-> -	of_nfc_id = of_match_device(mtk_nfc_id_table, &pdev->dev);
-> -	if (!of_nfc_id) {
-> -		ret = -ENODEV;
-> -		goto clk_disable;
-> -	}
-> -
-> -	nfc->caps = of_nfc_id->data;
-> -
->  	platform_set_drvdata(pdev, nfc);
->  
->  	ret = mtk_nfc_nand_chips_init(dev, nfc);
+ChenYu
