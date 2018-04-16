@@ -1,113 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753307AbeDPR7O (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 13:59:14 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:43017 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752604AbeDPR7M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 13:59:12 -0400
-X-Google-Smtp-Source: AIpwx49O8L9o2n/6YuYBLLmp6tsErj2SvQvSIHS9SZ6f0CEF0t/rjjuGD6wNwmVGJxb20UQbbAjgTg==
-Date: Mon, 16 Apr 2018 10:59:09 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Vignesh R <vigneshr@ti.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v2 2/3] Input: ti_am335x_tsc - Ack pending IRQs at probe
- and before suspend
-Message-ID: <20180416175909.GC77055@dtor-ws>
-References: <20180414095153.32060-1-vigneshr@ti.com>
- <20180414095153.32060-3-vigneshr@ti.com>
+        id S1753223AbeDPSBC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 14:01:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35206 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752177AbeDPSBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 14:01:01 -0400
+Date: Mon, 16 Apr 2018 13:55:04 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>
+Subject: Re: [PATCH ghak21 V4 1/2] audit: remove path param from link denied
+ function
+Message-ID: <20180416175504.ldn62amrk7oxogia@madcap2.tricolour.ca>
+References: <cover.1521620371.git.rgb@redhat.com>
+ <20dd27aecaac4a158acecb9dbb5365327f0696ec.1521620371.git.rgb@redhat.com>
+ <CAGXu5jJrCntv1fGLtVALyh5+UGdn5DvCkM230Vn7QGutY8k1og@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180414095153.32060-3-vigneshr@ti.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAGXu5jJrCntv1fGLtVALyh5+UGdn5DvCkM230Vn7QGutY8k1og@mail.gmail.com>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 14, 2018 at 03:21:52PM +0530, Vignesh R wrote:
-> From: Grygorii Strashko <grygorii.strashko@ti.com>
+On 2018-04-16 10:55, Kees Cook wrote:
+> On Wed, Mar 21, 2018 at 1:42 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> > In commit 45b578fe4c3cade6f4ca1fc934ce199afd857edc
+> > ("audit: link denied should not directly generate PATH record")
+> > the need for the struct path *link parameter was removed.
+> > Remove the now useless struct path argument.
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  fs/namei.c            | 4 ++--
+> >  include/linux/audit.h | 6 ++----
+> >  kernel/audit.c        | 3 +--
+> >  3 files changed, 5 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index 9cc91fb..e3682bb 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -945,7 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
+> >         if (nd->flags & LOOKUP_RCU)
+> >                 return -ECHILD;
+> >
+> > -       audit_log_link_denied("follow_link", &nd->stack[0].link);
+> > +       audit_log_link_denied("follow_link");
+> >         return -EACCES;
+> >  }
+> >
+> > @@ -1011,7 +1011,7 @@ static int may_linkat(struct path *link)
+> >         if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
+> >                 return 0;
+> >
+> > -       audit_log_link_denied("linkat", link);
+> > +       audit_log_link_denied("linkat");
+> >         return -EPERM;
+> >  }
 > 
-> It is seen that just enabling the TSC module triggers a HW_PEN IRQ
-> without any interaction with touchscreen by user. This results in first
-> suspend/resume sequence to fail as system immediately wakes up from
-> suspend as soon as HW_PEN IRQ is enabled in suspend handler due to the
-> pending IRQ. Therefore clear all IRQs at probe and also in suspend
-
-Are the interrupts configured as edge?
-
-> callback for sanity.
+> This removed the "link" details in both cases, and then commit
+> ea841bafda3f ("audit: add refused symlink to audit_names") added back
+> one of them:
 > 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> ---
+> > diff --git a/fs/namei.c b/fs/namei.c
+> > index e3682bb72cb5..5f8e8e2732e1 100644
+> > --- a/fs/namei.c
+> > +++ b/fs/namei.c
+> > @@ -945,6 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
+> >         if (nd->flags & LOOKUP_RCU)
+> >                 return -ECHILD;
+> >
+> > +       audit_inode(nd->name, nd->stack[0].link.dentry, 0);
+> >         audit_log_link_denied("follow_link");
+> >         return -EACCES;
+> >  }
 > 
-> v2: Add Acks from v1.
-> 
->  drivers/input/touchscreen/ti_am335x_tsc.c | 2 ++
->  include/linux/mfd/ti_am335x_tscadc.h      | 1 +
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
-> index 810e05c9c4f5..dcd9db768169 100644
-> --- a/drivers/input/touchscreen/ti_am335x_tsc.c
-> +++ b/drivers/input/touchscreen/ti_am335x_tsc.c
-> @@ -439,6 +439,7 @@ static int titsc_probe(struct platform_device *pdev)
->  			dev_err(&pdev->dev, "irq wake enable failed.\n");
->  	}
->  
-> +	titsc_writel(ts_dev, REG_IRQSTATUS, IRQENB_MASK);
->  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_FIFO0THRES);
->  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_EOS);
+> Why remove it in the first place, and why add it back open-coded in
+> only one place?
 
-Out of curiosity, should this be:
+In both cases, the extra PATH record didn't make sense with the SYSCALL
+record "items=" field and conflicted with another PATH record's "item="
+field.
 
-	titsc_writel(ts_dev, REG_IRQENABLE,
-			IRQENB_FIFO0THRES | IRQENB_EOS);
+All the necessary details were already available in the hardlink case
+via two PATH records associated with the SYSCALL record.
 
-?
+There were two conflicting PATH records in the symlink case, one of them
+incomplete, so it made more sense to make the existing one complete.
 
-Because 2nd titsc_writel() overwrites the first? Or separate writes to
-the same register are distinct?
+> -Kees
 
->  	err = titsc_config_wires(ts_dev);
-> @@ -504,6 +505,7 @@ static int __maybe_unused titsc_suspend(struct device *dev)
->  
->  	tscadc_dev = ti_tscadc_dev_get(to_platform_device(dev));
->  	if (device_may_wakeup(tscadc_dev->dev)) {
-> +		titsc_writel(ts_dev, REG_IRQSTATUS, IRQENB_MASK);
+- RGB
 
-The comment in titsc_irq() says that we should not be touching
-IRQENB_FIFO0THRES as it is used by another driver, but here we are
-whacking it. Can you elaborate why this is safe?
-
-You might need to rework the interrupt handling since you have several
-drivers...
-
->  		idle = titsc_readl(ts_dev, REG_IRQENABLE);
->  		titsc_writel(ts_dev, REG_IRQENABLE,
->  				(idle | IRQENB_HW_PEN));
-> diff --git a/include/linux/mfd/ti_am335x_tscadc.h b/include/linux/mfd/ti_am335x_tscadc.h
-> index b9a53e013bff..1a6a34f726cc 100644
-> --- a/include/linux/mfd/ti_am335x_tscadc.h
-> +++ b/include/linux/mfd/ti_am335x_tscadc.h
-> @@ -63,6 +63,7 @@
->  #define IRQENB_FIFO1OVRRUN	BIT(6)
->  #define IRQENB_FIFO1UNDRFLW	BIT(7)
->  #define IRQENB_PENUP		BIT(9)
-> +#define IRQENB_MASK		(0x7FF)
->  
->  /* Step Configuration */
->  #define STEPCONFIG_MODE_MASK	(3 << 0)
-> -- 
-> 2.17.0
-> 
-
-Thanks.
-
--- 
-Dmitry
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
