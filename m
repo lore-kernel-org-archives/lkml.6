@@ -1,81 +1,80 @@
-Return-Path: <tglx@linutronix.de>
-X-Google-Smtp-Source: AIpwx4/kVsDyrVw1SKwkoX8TRtc+Wo7/qkNfxd9epxdaJ7mL1ehItQ+VB/qD7RMOqSN6dBBuIww6
-ARC-Seal: i=1; a=rsa-sha256; t=1524134157; cv=none;
+Return-Path: <jmoreira@suse.de>
+X-Google-Smtp-Source: AIpwx4/FEFZ4lBwPIjSYczCYlnUB21KDQfNYF0OC+Ji5svz6mBBWRQeZy0ztiZmuuXBevY4IOxFl
+ARC-Seal: i=1; a=rsa-sha256; t=1523889369; cv=none;
         d=google.com; s=arc-20160816;
-        b=EADl9mcS8U30FuOh50noD6Q5iiTzrf29jE6eRufQhWSM4KIp5VHdwAapefnxOVmucH
-         h0tEyEsJle2wluihfLWiL76YJga2KIvutDnpdlomQAKlUT1AW+CyykPJ1cXzK6gwgZAM
-         wM8TpWcLGEqdR9e5r2JM6pyBhEN8UhM4Lkrf3bOzRVTFtwi5XVTigL8ypFTu9Hl6FytX
-         ggdQWWMGbC0Zq5S3U/WZpfby2Gk8XOyojIWKAiKn49CJ4cxRuvCuc+jbzBaAD35e1R/E
-         BOP7iXvbxSkiZeN0wJqdW+F8INAX+G6GHxwr5l6sp0prTgKbrZyStiXh5z4UZLrBWZYI
-         ZOug==
+        b=JV8idz6E+CH3kKNCwubbseZSeJU7CJ4ToCS46Bvw3ypXBMY1PL9UeqCpQXOc2jLZDR
+         kmcZ+VpnCtwBvDd9s09PzK+GnTzNuFqe4vaMvUe1NtnZb3M/J2tYj+XSv2qfptUmitLb
+         Kla9TEt55PKr2dm+35UaueChSFmaxuh2D25KpwCQB9w0btbfu6MOfCkqvbI6NNSx/cou
+         65Hh4hcrOPMlqUVZVzE2Ig76Oibx15S7d0duGj0uOQmnQLDDKsLI3Zhi7HkrzP/CgxJB
+         tOOyqGS98k8VlGSfl/DBx0nA2Q3sInprYGcILNX/wLslM406Oe+h9AhZ3TDdafv1Gt3L
+         QsTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=rMBI2IO9vqOANipbYntQNPI8IEtN3MVA0AI1Z5I3/7k=;
-        b=nXCbmxU2quwyRNvImKC+Ht5bwtKcFR/dm2ppv0Max7ZQHWo7OOcw39xXIEpQFQHzw4
-         i9wW1xXjgp1mfZAUx+EzwCgbjSNATscMtgwcPZeB26dceZylJHn/rUk3sYgcE3w1Vc8f
-         qsv8Ymye2eIsvvWQwk6zSLaBrq2s5eNGgF2Vp7TXuyH0I4LmW4l9DHpU70eIQI47Wr5L
-         wPUrtyxHNozmtNovPLakN/2HsT1KepUGJFcRVjxmL10Eia6JH0ZLiT1k1Xxk4ICs4cp8
-         3+fq+MvVAfhUCGemu8zLQYWsn6J8r9IRIM41kDP1mNTPxlMAET2bjr1QQzGSHMXcwbD6
-         uxCw==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=maSq/7FoCVcAWFxKbwBj5y4yEuRd2WJLi1Hr8fpeBl0=;
+        b=l5Xu9G8a+eufJATvCZAQYBf2PZm6ALBZkbQx7gcjFwZd0zBLkr5+qeq4PYF5JDyzMX
+         yKv5flQhRQWMeVatY+Fu0iWzgdMscewo5643baOOVucJPjTNBUqA3fN5fEg8IiZaS59j
+         DxXyjMETBZbh1MaelXE09AcpIR7edNHJnSdoH8tRSjv+VizyS22aFAXtO+NORuiACxMC
+         58uy8qeeYu2TtxlhQPCDViso2SoRvt4VVtkmhxUAhtQPmdLsTQyR+AfVhSnRi+2aXrJp
+         hNiMQ0NBMCNo83S1PIBbZAMRL/vQJZttsZ6Z0Hyb6lITzDoOKD4SdCFFSSdLtFQ6T+q0
+         EEjg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+       spf=pass (google.com: domain of jmoreira@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jmoreira@suse.de
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
-Date: Thu, 19 Apr 2018 12:35:29 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Kees Cook <keescook@chromium.org>
-cc: Ingo Molnar <mingo@kernel.org>, Joao Moreira <jmoreira@suse.de>,
-    Kernel Hardening <kernel-hardening@lists.openwall.com>,
-    LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-    Herbert Xu <herbert@gondor.apana.org.au>,
-    "David S. Miller" <davem@davemloft.net>, Ingo Molnar <mingo@redhat.com>,
-    "H. Peter Anvin" <hpa@zytor.com>, Greg KH <gregkh@linuxfoundation.org>
+       spf=pass (google.com: domain of jmoreira@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jmoreira@suse.de
 Subject: Re: [PATCH 1/4] x86/crypto: camellia: Fix function prototypes
-In-Reply-To: <CAGXu5jLerFuW=-uxpegBinAjJN0shPJkYAVaz9K7VWzVRmnOEQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1804191233500.1563@nanos.tec.linutronix.de>
-References: <20180415041542.5364-1-jmoreira@suse.de> <20180415041542.5364-2-jmoreira@suse.de> <20180416061044.z6eb4psw2sbszemb@gmail.com> <CAGXu5jLerFuW=-uxpegBinAjJN0shPJkYAVaz9K7VWzVRmnOEQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+To: Ingo Molnar <mingo@kernel.org>
+Cc: kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+ x86@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+ tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+ gregkh@linuxfoundation.org, keescook@chromium.org
+References: <20180415041542.5364-1-jmoreira@suse.de>
+ <20180415041542.5364-2-jmoreira@suse.de>
+ <20180416061044.z6eb4psw2sbszemb@gmail.com>
+From: =?UTF-8?Q?Jo=c3=a3o_Moreira?= <jmoreira@suse.de>
+Message-ID: <15bd0d05-e046-1b35-9f14-91e507e6b162@suse.de>
+Date: Mon, 16 Apr 2018 11:35:58 -0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180416061044.z6eb4psw2sbszemb@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597784202629370804?=
-X-GMAIL-MSGID: =?utf-8?q?1598170498635337030?=
+X-GMAIL-MSGID: =?utf-8?q?1597913819399588169?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 18 Apr 2018, Kees Cook wrote:
-> So, instead of the original series, how about something like this:
 > 
-> Switch function pointers to not use the function cast, and define a
-> new GLUE_FUNC macro that kinda looks like the tricks used for
-> syscalls:
+>> +static inline void camellia_enc_blk(void *ctx, u8 *dst, const u8 *src)
+>>   {
+>> -	__camellia_enc_blk(ctx, dst, src, false);
+>> +	__camellia_enc_blk((struct camellia_ctx *) ctx, dst, src, false);
+>>   }
 > 
-> static const struct common_glue_ctx camellia_enc = {
-> ...
->         .funcs = { {
-> ...
->                 .num_blocks = 1,
->                 .fn_u = { .ecb = camellia_enc_blk }
->         } }
-> };
+> I don't see how this is an improvement: instead of having a proper type there's
+> now an opaque type and an ugly (and dangerous) type cast.
 > 
-> #define GLUE_FUNC(func, context) \
-> static inline void func(void *ctx, u8 *dst, const u8 *src) \
-> { __##func((context)ctx, dst, src); } \
-> __##func(context ctx, u8 *dst, const u8 *src)
-> 
-> GLUE_FUNC(camellia_enc_blk, struct camellia_ctx *)
-> {
-> ...original function...
-> }
+> What does "compatible with CFI requirements" mean?
 
-I was about to suggest this before I read to the end of the mail. Yes, that
-is much more palatable.
+For "compatible with CFI requirements", I meant: given a set of 
+functions that are invoked through a given set of pointers, all 
+functions and pointers in these sets have the same prototype. I added a 
+note about this CFI heuristic in the cover letter, but I guess I should 
+have been clearer there and added something more substantial to the 
+commit message.
 
-Thanks,
+Regarding the changes, this was the most straight-forward way I found to 
+make the sources compliant with the above, not requiring deeper semantic 
+changes to the underneath invoking code. On the other hand, I agree that 
+there is a collateral damage and that an ideal fix would be the other 
+way around -- removing the opaque type from the pointer instead of 
+adding it to the functions.
 
-	tglx
+I'll try to think of another way and send if I come to something.
+
+Tks,
+João.
