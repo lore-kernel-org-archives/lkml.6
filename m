@@ -1,102 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeDPDJQ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 23:09:16 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55690 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752609AbeDPDJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 23:09:14 -0400
-Date: Mon, 16 Apr 2018 11:09:04 +0800
-From: Dave Young <dyoung@redhat.com>
-To: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Cc: linux-efi@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Takashi Iwai <tiwai@suse.de>, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Randy Wright <rwright@hpe.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        akpm@linux-foundation.org, Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
- memory map
-Message-ID: <20180416030904.GB26685@dhcp-128-65.nay.redhat.com>
-References: <20180413062716.8040-1-jlee@suse.com>
- <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752906AbeDPDbU (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 23:31:20 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35766 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752639AbeDPDbT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 23:31:19 -0400
+X-Google-Smtp-Source: AIpwx49m+QbB6Dp4FncxObas3Cf6iMByiiZ383yzXNuIUbZ97kkLq04VI1nKSqmJxgsNVn6uTSmT4g==
+From: Minchan Kim <minchan@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Minchan Kim <minchan@kernel.org>
+Subject: [PATCH v4 0/4] zram memory tracking
+Date: Mon, 16 Apr 2018 12:31:06 +0900
+Message-Id: <20180416033110.32361-1-minchan@kernel.org>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/18 at 10:57am, Dave Young wrote:
-> On 04/13/18 at 02:27pm, Lee, Chun-Yi wrote:
-> > When using kdump, SOMETIMES the "size not consistent" warning message
-> > shows up when the crash kernel boots with early_ioremap_debug parameter:
-> > 
-> > WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
-> > early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
-> > 
-> > The root cause is that the unmapping size of memory map doesn't
-> > match with the original size when mapping:
-> > 
-> > in __efi_memmap_init()
-> > 	map.map = early_memremap(phys_map, data->size);
-> > 
-> > in efi_memmap_unmap()
-> >         size = efi.memmap.desc_size * efi.memmap.nr_map;
-> >         early_memunmap(efi.memmap.map, size);
-> > 
-> > But the efi.memmap.nr_map is from __efi_memmap_init(). The remainder
-> > of size was discarded when calculating the nr_map:
-> >         map.nr_map = data->size / data->desc_size;
-> > 
-> > When the original size of memory map region does not equal to the
-> > result of multiplication. The "size not consistent" warning
-> > will be triggered.
-> > 
-> > This issue sometimes was hit by kdump because kexec set the efi map
-> > size to align with 16 when loading crash kernel image:
-> > 
-> > in bzImage64_load()
-> >         efi_map_sz = efi_get_runtime_map_size();
-> >         efi_map_sz = ALIGN(efi_map_sz, 16);
-> > 
-> > This patch changes the logic in the unmapping function. Using the
-> > end address of map to calcuate original size.
-> > 
-> > Thank Randy Wright for his report and testing. And also thank
-> > Takashi Iwai for his help to trace issue.
-> 
-> Good catch.  The kexec code need to be fixed to use a separate buffer so
-> avoid the alignment like what kexec-tools did.  I can submit a fix for
-> that.
+zRam as swap is useful for small memory device. However, swap means
+those pages on zram are mostly cold pages due to VM's LRU algorithm.
+Especially, once init data for application are touched for launching,
+they tend to be not accessed any more and finally swapped out.
+zRAM can store such cold pages as compressed form but it's pointless
+to keep in memory. As well, it's pointless to store incompressible
+pages to zram so better idea is app developers manages them directly
+like free or mlock rather than remaining them on heap.
 
-Can you try below code, see if it works?
+This patch provides a debugfs /sys/kernel/debug/zram/zram0/block_state
+to represent each block's state so admin can investigate what memory is
+cold|incompressible|same page with using pagemap once the pages are
+swapped out.
 
 
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index 3182908b7e6c..eaee37c54b7b 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -398,11 +398,10 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
- 	 * little bit simple
- 	 */
- 	efi_map_sz = efi_get_runtime_map_size();
--	efi_map_sz = ALIGN(efi_map_sz, 16);
- 	params_cmdline_sz = sizeof(struct boot_params) + cmdline_len +
- 				MAX_ELFCOREHDR_STR_LEN;
- 	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
--	kbuf.bufsz = params_cmdline_sz + efi_map_sz +
-+	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16)+
- 				sizeof(struct setup_data) +
- 				sizeof(struct efi_setup_data);
- 
-@@ -410,7 +409,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
- 	if (!params)
- 		return ERR_PTR(-ENOMEM);
- 	efi_map_offset = params_cmdline_sz;
--	efi_setup_data_offset = efi_map_offset + efi_map_sz;
-+	efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
- 
- 	/* Copy setup header onto bootparams. Documentation/x86/boot.txt */
- 	setup_header_size = 0x0202 + kernel[0x0201] - setup_hdr_offset;
+The output is as follows,
+      300    75.033841 .wh
+      301    63.806904 s..
+      302    63.806919 ..h
+
+First column is zram's block index and 3rh one represents symbol
+(s: same page w: written page to backing store h: huge page) of the
+block state. Second column represents usec time unit of the block
+was last accessed. So above example means the 300th block is accessed
+at 75.033851 second and it was huge so it was written to the backing
+store.
+
+* from v3:
+  * use depends on selecting DEBUG_FS - Greg KH
+  * Add acked-by from Greg
+  * Fix null ptr access at module unload - Sergey
+  * warning fix from copy_to_user - Sergey
+
+* From v2:
+  * debugfs and Kconfig cleanup - Greg KH
+  * Remove unnecesarry buffer - Sergey
+  * Change timestamp from sec to usec
+
+* From v1:
+  * Do not propagate error number for debugfs fail - Greg KH
+  * Add writeback and hugepage information - Sergey
+
+Minchan Kim (4):
+  zram: correct flag name of ZRAM_ACCESS
+  zram: mark incompressible page as ZRAM_HUGE
+  zram: record accessed second
+  zram: introduce zram memory tracking
+
+ Documentation/blockdev/zram.txt |  25 +++++
+ drivers/block/zram/Kconfig      |  10 ++
+ drivers/block/zram/zram_drv.c   | 173 +++++++++++++++++++++++++++++---
+ drivers/block/zram/zram_drv.h   |  14 ++-
+ 4 files changed, 205 insertions(+), 17 deletions(-)
+
+-- 
+2.17.0.484.g0c8726318c-goog
