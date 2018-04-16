@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754831AbeDPK2I (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:28:08 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36934 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752201AbeDPKZo (ORCPT
+        id S1754684AbeDPK22 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:28:28 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35576 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752831AbeDPKZm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:25:44 -0400
-X-Google-Smtp-Source: AIpwx48tKBT2neRkIfZfC8RaIby2qzsuZTn3MpyEEuf42HbrV+N+PobKDmyhQQzgIuH4yiLgwWqN7A==
+        Mon, 16 Apr 2018 06:25:42 -0400
+X-Google-Smtp-Source: AIpwx49NKKzhdxeHcCemG+d6IH6X9eTi2cWGcJ0kEwBojoXnHWD/ou1iY1ghJ8RXuVWio5EhwFkzWQ==
 From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
 X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
 To: mb@lightnvm.io
 Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH 03/11] lightnvm: pblk: check read lba on gc path
-Date: Mon, 16 Apr 2018 12:25:24 +0200
-Message-Id: <1523874332-6272-4-git-send-email-javier@cnexlabs.com>
+Subject: [PATCH 01/11] lightnvm: pblk: fail gracefully on line alloc. failure
+Date: Mon, 16 Apr 2018 12:25:22 +0200
+Message-Id: <1523874332-6272-2-git-send-email-javier@cnexlabs.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523874332-6272-1-git-send-email-javier@cnexlabs.com>
 References: <1523874332-6272-1-git-send-email-javier@cnexlabs.com>
@@ -26,89 +26,104 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that the lba stored in the LBA metadata is correct in the GC path
-too. This requires a new helper function to check random reads in the
-vector read.
+In the event of a line failing to allocate, fail gracefully and stop the
+pipeline to avoid more write failing in the same place.
 
 Signed-off-by: Javier González <javier@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-read.c | 39 +++++++++++++++++++++++++++++++++------
- 1 file changed, 33 insertions(+), 6 deletions(-)
+ drivers/lightnvm/pblk-init.c |  5 +++++
+ drivers/lightnvm/pblk-map.c  | 33 ++++++++++++++++++++++++---------
+ 2 files changed, 29 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index 9eee10f69df0..0d45d4ffc370 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -113,15 +113,14 @@ static int pblk_submit_read_io(struct pblk *pblk, struct nvm_rq *rqd)
- 	return NVM_IO_OK;
- }
- 
--static void pblk_read_check(struct pblk *pblk, struct nvm_rq *rqd,
--			   sector_t blba)
-+static void pblk_read_check_seq(struct pblk *pblk, void *meta_list,
-+				sector_t blba, int nr_lbas)
- {
--	struct pblk_sec_meta *meta_list = rqd->meta_list;
--	int nr_lbas = rqd->nr_ppas;
-+	struct pblk_sec_meta *meta_lba_list = meta_list;
- 	int i;
- 
- 	for (i = 0; i < nr_lbas; i++) {
--		u64 lba = le64_to_cpu(meta_list[i].lba);
-+		u64 lba = le64_to_cpu(meta_lba_list[i].lba);
- 
- 		if (lba == ADDR_EMPTY)
- 			continue;
-@@ -130,6 +129,32 @@ static void pblk_read_check(struct pblk *pblk, struct nvm_rq *rqd,
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index 91a5bc2556a3..dee64f91227d 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -1047,6 +1047,11 @@ static int pblk_lines_init(struct pblk *pblk)
+ 		nr_free_chks += pblk_setup_line_meta(pblk, line, chunk_meta, i);
  	}
- }
  
-+/*
-+ * There can be wholes in the lba list.
-+ */
-+static void pblk_read_check_rand(struct pblk *pblk, void *meta_list,
-+				u64 *lba_list, int nr_lbas)
-+{
-+	struct pblk_sec_meta *meta_lba_list = meta_list;
-+	int i, j;
-+
-+	for (i = 0, j = 0; i < nr_lbas; i++) {
-+		u64 lba = lba_list[i];
-+		u64 meta_lba;
-+
-+		if (lba == ADDR_EMPTY)
-+			continue;
-+
-+		meta_lba = le64_to_cpu(meta_lba_list[j++].lba);
-+
-+		if (lba != meta_lba) {
-+			pr_err("pblk: corrupted read LBA (%llu/%llu)\n",
-+								lba, meta_lba);
-+			WARN_ON(1);
-+		}
++	if (!nr_free_chks) {
++		pr_err("pblk: too many bad blocks prevent for sane instance\n");
++		return -EINTR;
 +	}
-+}
 +
- static void pblk_read_put_rqd_kref(struct pblk *pblk, struct nvm_rq *rqd)
+ 	pblk_set_provision(pblk, nr_free_chks);
+ 
+ 	kfree(chunk_meta);
+diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
+index 20dbaa89c9df..953ca31dda68 100644
+--- a/drivers/lightnvm/pblk-map.c
++++ b/drivers/lightnvm/pblk-map.c
+@@ -18,11 +18,11 @@
+ 
+ #include "pblk.h"
+ 
+-static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+-			       struct ppa_addr *ppa_list,
+-			       unsigned long *lun_bitmap,
+-			       struct pblk_sec_meta *meta_list,
+-			       unsigned int valid_secs)
++static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
++			      struct ppa_addr *ppa_list,
++			      unsigned long *lun_bitmap,
++			      struct pblk_sec_meta *meta_list,
++			      unsigned int valid_secs)
  {
- 	struct ppa_addr *ppa_list;
-@@ -172,7 +197,7 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
- 		WARN_ONCE(bio->bi_status, "pblk: corrupted read error\n");
- #endif
+ 	struct pblk_line *line = pblk_line_get_data(pblk);
+ 	struct pblk_emeta *emeta;
+@@ -35,8 +35,14 @@ static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+ 	if (pblk_line_is_full(line)) {
+ 		struct pblk_line *prev_line = line;
  
--	pblk_read_check(pblk, rqd, r_ctx->lba);
-+	pblk_read_check_seq(pblk, rqd->meta_list, r_ctx->lba, rqd->nr_ppas);
- 
- 	bio_put(bio);
- 	if (r_ctx->private)
-@@ -585,6 +610,8 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
- 		goto err_free_bio;
++		/* If we cannot allocate a new line, make sure to store metadata
++		 * on current line and then fail
++		 */
+ 		line = pblk_line_replace_data(pblk);
+ 		pblk_line_close_meta(pblk, prev_line);
++
++		if (!line)
++			return -EINTR;
  	}
  
-+	pblk_read_check_rand(pblk, rqd.meta_list, gc_rq->lba_list, rqd.nr_ppas);
-+
- 	atomic_dec(&pblk->inflight_io);
+ 	emeta = line->emeta;
+@@ -74,6 +80,7 @@ static void pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+ 	}
  
- 	if (rqd.error) {
+ 	pblk_down_rq(pblk, ppa_list, nr_secs, lun_bitmap);
++	return 0;
+ }
+ 
+ void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
+@@ -87,8 +94,12 @@ void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
+ 
+ 	for (i = off; i < rqd->nr_ppas; i += min) {
+ 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
+-		pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
+-					lun_bitmap, &meta_list[i], map_secs);
++		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
++					lun_bitmap, &meta_list[i], map_secs)) {
++			bio_put(rqd->bio);
++			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
++			pblk_pipeline_stop(pblk);
++		}
+ 	}
+ }
+ 
+@@ -108,8 +119,12 @@ void pblk_map_erase_rq(struct pblk *pblk, struct nvm_rq *rqd,
+ 
+ 	for (i = 0; i < rqd->nr_ppas; i += min) {
+ 		map_secs = (i + min > valid_secs) ? (valid_secs % min) : min;
+-		pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
+-					lun_bitmap, &meta_list[i], map_secs);
++		if (pblk_map_page_data(pblk, sentry + i, &rqd->ppa_list[i],
++					lun_bitmap, &meta_list[i], map_secs)) {
++			bio_put(rqd->bio);
++			pblk_free_rqd(pblk, rqd, PBLK_WRITE);
++			pblk_pipeline_stop(pblk);
++		}
+ 
+ 		erase_lun = pblk_ppa_to_pos(geo, rqd->ppa_list[i]);
+ 
 -- 
 2.7.4
