@@ -1,88 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752078AbeDPVn1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:43:27 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:42769 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751110AbeDPVn0 (ORCPT
+        id S1752795AbeDPVn7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:43:59 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:45008 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752310AbeDPVn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:43:26 -0400
-X-Google-Smtp-Source: AIpwx4+OKVhbaLNShnHPaclugXpySZNsg+iS/rulYIcTPmoyix3fzPTIfaQdkZoyYxw59t1OEIxnhQ==
-Date: Mon, 16 Apr 2018 16:43:24 -0500
+        Mon, 16 Apr 2018 17:43:57 -0400
+X-Google-Smtp-Source: AIpwx4+uhEIdJl8XHMLy0AbL/KdmeafxC/FaqCr3psB0kEV5DMDSS3eLgKFoHfDtUCE0yX8Az9e6tQ==
+Date: Mon, 16 Apr 2018 16:43:55 -0500
 From: Rob Herring <robh@kernel.org>
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        mark.rutland@arm.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 04/10] bindings: PCI: designware: Add support for the
- EP in Designware driver
-Message-ID: <20180416214324.wcyghdwejucoutki@rob-hp-laptop>
-References: <cover.1523881182.git.gustavo.pimentel@synopsys.com>
- <7d3445e3f8bb15d27987e0d061275d7d69f2c519.1523881182.git.gustavo.pimentel@synopsys.com>
+To: Fabian Mewes <architekt@coding4coffee.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>, Lukas Wunner <lukas@wunner.de>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: iio: adc: mcp320x: Use vendor prefix
+ compatible strings
+Message-ID: <20180416214355.qa4y3jbqnaegmtzl@rob-hp-laptop>
+References: <1523892846-25000-1-git-send-email-architekt@coding4coffee.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7d3445e3f8bb15d27987e0d061275d7d69f2c519.1523881182.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <1523892846-25000-1-git-send-email-architekt@coding4coffee.org>
 User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 03:37:52PM +0100, Gustavo Pimentel wrote:
-> Add device tree binding documentation for the Endpoint in PCIe Designware
-> driver.
+On Mon, Apr 16, 2018 at 05:34:06PM +0200, Fabian Mewes wrote:
+> Update the example to use the compatible string including the
+> vendor prefix instead of the ones deprecated in 3a872138e4b.
 > 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> Signed-off-by: Fabian Mewes <architekt@coding4coffee.org>
 > ---
-> Change v1->v2:
->  - Add a missing log description.
->  - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
-> Change v2->v3:
-> - Reverted pcie_ep name to pcie.
-> Changes v3->v4:
-> - Reverted "snps,dw-pcie-rc" compatible string requested by Rob Herring.
-> 
->  Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> index 7f9804d..980fc9a 100644
-> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-> @@ -3,6 +3,7 @@
->  Required properties:
->  - compatible:
->  	"snps,dw-pcie" for RC mode;
-> +	"snps,dw-pcie-ep" for EP mode;
->  - reg: Should contain the configuration address space.
->  - reg-names: Must be "config" for the PCIe configuration space.
->      (The old way of getting the configuration address space from "ranges"
-> @@ -56,3 +57,15 @@ Example configuration:
->  		#interrupt-cells = <1>;
->  		num-lanes = <1>;
->  	};
-> +or
-> +	pcie: pcie@dfc00000 {
-> +		compatible = "snps,dw-pcie-ep";
-> +		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
-> +		      <0xdfc01000 0x0001000>, /* IP registers 2 */
-> +		      <0xd0000000 0x2000000>; /* Configuration space */
-> +		reg-names = "dbi", "dbi2", "addr_space";
-> +		device_type = "pci";
-
-This should not be present for endpoints.
-
-With that dropped,
+>  Documentation/devicetree/bindings/iio/adc/mcp320x.txt |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
-
-
-> +		num-ib-windows = <6>;
-> +		num-ob-windows = <2>;
-> +		num-lanes = <1>;
-> +	};
-> -- 
-> 2.7.4
-> 
-> 
