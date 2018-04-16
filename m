@@ -1,93 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751940AbeDPPyV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 11:54:21 -0400
-Received: from mail-ua0-f169.google.com ([209.85.217.169]:41960 "EHLO
-        mail-ua0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751227AbeDPPyT (ORCPT
+        id S1751840AbeDPPzo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 11:55:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60544 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbeDPPzm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:54:19 -0400
-X-Google-Smtp-Source: AIpwx4+WenuB2vm9ccDCC6pYX8l4ySSI0bo5lkkwph/wCuJuZVq65QBNiVNPzBI1L4Gi0bSXh+97v+kNWPEZlG2sEoo=
+        Mon, 16 Apr 2018 11:55:42 -0400
+Subject: Re: syzbot dashboard
+To: Dmitry Vyukov <dvyukov@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Eric Biggers <ebiggers3@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <CACT4Y+babw_2NJa+oym2VN7-Z4Bt_rZx2sMi68AD+1KzNpr=KQ@mail.gmail.com>
+ <CA+55aFzxDYGLUPY802rJN=wgJ1aEZHLRE+W8J82eFz2nzKOMBg@mail.gmail.com>
+ <CACT4Y+YDqJMb4mC6c--Ku=ZL9MpELmUKMXe4uQJ6H0av2FJC9w@mail.gmail.com>
+ <20180323201634.GA16350@gmail.com>
+ <CA+55aFwZpMB=VUTCNUgc4dcCEy9_T4iE0R0pAfDets=zDFJunQ@mail.gmail.com>
+ <CACT4Y+YjD68zBdN7zCViB5ab9-R2JgBEf5OBiDauxMsyuEkLRw@mail.gmail.com>
+ <CA+55aFwJ=fiuV+QF+-b+H58tquCzek6CNpssZn40r0z4E0Q6kA@mail.gmail.com>
+ <CACT4Y+YUFbbQgE9C1awsVVBFOjLbTXANRQwPK+R58FLjhTb-Vg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <93351718-7314-70c4-61a7-2c7b3582b5a0@infradead.org>
+Date: Mon, 16 Apr 2018 08:55:38 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180414224419.GA21830@thunk.org>
-References: <20180414195921.GA10437@avx2> <20180414224419.GA21830@thunk.org>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 16 Apr 2018 08:54:17 -0700
-X-Google-Sender-Auth: b4iHoUSnfByOrwY0xUHJF0kovmg
-Message-ID: <CAGXu5j+qQE-MmpB7xq6z_SsXm9AhJe2QQAEVQnenYD=iLzJqWQ@mail.gmail.com>
-Subject: Re: repeatable boot randomness inside KVM guest
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Thomas Garnier <thgarnie@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACT4Y+YUFbbQgE9C1awsVVBFOjLbTXANRQwPK+R58FLjhTb-Vg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 14, 2018 at 3:44 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> +linux-mm@kvack.org
-> kvm@vger.kernel.org, security@kernel.org moved to bcc
->
-> On Sat, Apr 14, 2018 at 10:59:21PM +0300, Alexey Dobriyan wrote:
->> SLAB allocators got CONFIG_SLAB_FREELIST_RANDOM option which randomizes
->> allocation pattern inside a slab:
+On 04/16/2018 04:15 AM, Dmitry Vyukov wrote:
+> On Sat, Apr 14, 2018 at 8:25 PM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> Coming back to this now that the merge window is almost over ]
 >>
->>       int cache_random_seq_create(struct kmem_cache *cachep, unsigned int count, gfp_t gfp)
->>       {
->>               ...
->>               /* Get best entropy at this stage of boot */
->>               prandom_seed_state(&state, get_random_long());
+>> On Mon, Mar 26, 2018 at 1:46 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>>>
+>>> I've switched emails to links instead of attachments, here are few
+>>> recent examples:
+>>> https://lkml.org/lkml/2018/3/25/31
+>>> https://lkml.org/lkml/2018/3/25/256
+>>> https://lkml.org/lkml/2018/3/25/257
 >>
->> Then I printed actual random sequences for each kmem cache.
->> Turned out they were all the same for most of the caches and
->> they didn't vary across guest reboots.
->
-> The problem is at the super-early state of the boot path, kernel code
-> can't allocate memory.  This is something most device drivers kinda
-> assume they can do.  :-)
->
-> So it means we haven't yet initialized the virtio-rng driver, and it's
-> before interrupts have been enabled, so we can't harvest any entropy
-> from interrupt timing.  So that's why trying to use virtio-rng didn't
-> help.
->
->> The only way to get randomness for SLAB is to enable RDRAND inside guest.
+>> Looks good to me. I notice that only the last one got any replies, though.
 >>
->> Is it KVM bug?
->
-> No, it's not a KVM bug.  The fundamental issue is in how the
-> CONFIG_SLAB_FREELIST_RANDOM is currently implemented.
->
-> What needs to happen is freelist should get randomized much later in
-> the boot sequence.  Doing it later will require locking; I don't know
-> enough about the slab/slub code to know whether the slab_mutex would
-> be sufficient, or some other lock might need to be added.
->
-> The other thing I would note that is that using prandom_u32_state() doesn't
-> really provide much security.  In fact, if the the goal is to protect
-> against a malicious attacker trying to guess what addresses will be
-> returned by the slab allocator, I suspect it's much like the security
-> patdowns done at airports.  It might protect against a really stupid
-> attacker, but it's mostly security theater.
->
-> The freelist randomization is only being done once; so it's not like
-> performance is really an issue.  It would be much better to just use
-> get_random_u32() and be done with it.  I'd drop using prandom_*
-> functions in slab.c and slubct and slab_common.c, and just use a
-> really random number generator, if the goal is real security as
-> opposed to security for show....
->
-> (Not that there's necessarily any thing wrong with security theater;
-> the US spends over 3 billion dollars a year on security theater.  As
-> politicians know, symbolism can be important.  :-)
+>> I wonder if some people auto-ignore the new reports because of having
+>> been burned by the previous "huge illegible emails" issue.
+>>
+>> I do see syzbot fixes in rdma, though, just not for that
+>> cma_listen_on_all issue. So maybe that bug is nastier.
+> 
+> "possible deadlock in handle_rx" is now marked as fixed with
+> "vhost_net: add missing lock nesting notation".
+> "KASAN: use-after-free Read in pppol2tp_connect (3)" is marked as
+> fixed with "l2tp: fix races in tunnel creation".
+> "KASAN: use-after-free Read in __list_add_valid (5)" is still open.
+> 
+> Though, there are still 182 open bugs on dashboard:
+> https://syzkaller.appspot.com/
+> 
+> 80+ have reproducers and happened last time recently enough. Few
+> dozens without reproducers, but as history shows ~2/3 of them are
+> fixable. Part of the remaining ones is probably fixed, but nobody told
+> syzbot about the fixes. Part is probably still unfixed but happen
+> episodically.
+> 
 
-I've added Thomas Garnier to CC (since he wrote this originally). He
-can speak to its position in the boot ordering and the effective
-entropy.
+https://syzkaller.appspot.com/bug?id=0627d4551fdc39bf1ef5d82cd9eef587047f7718
+is fixed by 9ad553abe66f ("fs/reiserfs/journal.c: add missing resierfs_warning() arg"),
 
--Kees
+which does contain the string:
+Reported-by: <syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com>
+
+Is one of those hex strings incorrect?
 
 -- 
-Kees Cook
-Pixel Security
+~Randy
