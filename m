@@ -1,102 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751927AbeDPVIz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:08:55 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:41761 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751325AbeDPVIx (ORCPT
+        id S1752201AbeDPVNb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:13:31 -0400
+Received: from mailout.micron.com ([137.201.242.129]:30791 "EHLO
+        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751086AbeDPVNa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:08:53 -0400
-X-Google-Smtp-Source: AIpwx4+LZf71v8P8HRNBZrrCbW6hMr9EPzlFkItTzs06znLwlBUpOQ0kaN9xQdMxygTHOM2EHZTpdw==
-Date: Mon, 16 Apr 2018 16:08:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Alban Bedel <albeu@free.fr>
-Cc: linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v3 2/3] doc: bindings: Add bindings documentation for mtd
- nvmem
-Message-ID: <20180416210851.shu73nlincslxlde@rob-hp-laptop>
-References: <1521933899-362-1-git-send-email-albeu@free.fr>
- <1521933899-362-3-git-send-email-albeu@free.fr>
+        Mon, 16 Apr 2018 17:13:30 -0400
+From: "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@redhad.com" <mingo@redhad.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "rajatja@google.com" <rajatja@google.com>
+Subject: Re: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
+ events
+Thread-Topic: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
+ events
+Thread-Index: AdPVx2ZtjVpJ9kJAR4mgs6eLh3g9fQ==
+Date: Mon, 16 Apr 2018 21:10:57 +0000
+Message-ID: <97d36126b86443f680aacfac23b0a04e@SIWEX5A.sing.micron.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.160.29.124]
+X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-23786.005
+X-TM-AS-Result: No--15.916400-0.000000-31
+X-TM-AS-MatchedID: 150567-139010-700648-703523-106660-704421-700022-851106-7
+        00075-188019-708060-700476-701618-705388-702358-702039-709251-187067-700767
+        -710207-702150-708712-707163-709584-706719-701099-704049-704425-707663-7029
+        31-711432-105700-703378-700107-148004-148046-148133-148980-10013-20043-4200
+        0-42003-29961-63
+X-TM-AS-User-Approved-Sender: Yes
+X-TM-AS-User-Blocked-Sender: No
+x-mt-checkinternalsenderrule: True
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521933899-362-3-git-send-email-albeu@free.fr>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3GLDbQD013474
 
-On Sun, Mar 25, 2018 at 12:24:58AM +0100, Alban Bedel wrote:
-> Config data for drivers, like MAC addresses, is often stored in MTD.
-> Add a binding that define how such data storage can be represented in
-> device tree.
+Hi, Bart
+
+>mingo@redhad.com; linux-block@vger.kernel.org; rajatja@google.com
+>Subject: [EXT] Re: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI
+>trace events
+>
+>On Mon, 2018-04-16 at 14:31 +0000, Bean Huo (beanhuo) wrote:
+>>  	TP_printk("host_no=%u channel=%u id=%u lun=%u data_sgl=%u
+>prot_sgl=%u" \
+>> -		  " prot_op=%s cmnd=(%s %s raw=%s)",
+>> +		  " prot_op=%s tag=%d cmnd=(%s %s raw=%s)",
+>>
+>> [ ... ]
+>>  	TP_printk("host_no=%u channel=%u id=%u lun=%u data_sgl=%u
+>prot_sgl=%u" \
+>> -		  " prot_op=%s cmnd=(%s %s raw=%s) rtn=%d",
+>> +		  " prot_op=%s tag=%d cmnd=(%s %s raw=%s) rtn=%d",
+>> [ ... ]
+>>  	TP_printk("host_no=%u channel=%u id=%u lun=%u data_sgl=%u " \
+>> -		  "prot_sgl=%u prot_op=%s cmnd=(%s %s raw=%s)
+>result=(driver=" \
+>> -		  "%s host=%s message=%s status=%s)",
+>> +		  "prot_sgl=%u prot_op=%s tag=%d cmnd=(%s %s raw=%s) " \
+>> +		  "result=(driver=%s host=%s message=%s status=%s)",
+>
+>Which tools process these strings? Has it been verified whether or not the
+>tools that process these strings still work fine with this patch applied?
 > 
-> Signed-off-by: Alban Bedel <albeu@free.fr>
-> ---
-> Changelog:
-> v2: * Added a "Required properties" section with the nvmem-provider
->       property
-> v3: * Fixed my name in From and Signed-off-by
->     * Moved to the new nvmem binding with the nvmem-cells subnode
-> ---
->  .../devicetree/bindings/nvmem/mtd-nvmem.txt        | 27 ++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/nvmem/mtd-nvmem.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/nvmem/mtd-nvmem.txt b/Documentation/devicetree/bindings/nvmem/mtd-nvmem.txt
-> new file mode 100644
-> index 0000000..c819a69
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/nvmem/mtd-nvmem.txt
-> @@ -0,0 +1,27 @@
-> += NVMEM in MTD =
-> +
-> +Config data for drivers, like MAC addresses, is often stored in MTD.
-> +An MTD device, or one of its partition, can be defined as a NVMEM provider
-> +by having an 'nvmem-cells' subnode as defined in nvmem.txt.
-> +
-> +Example:
-> +
-> +	flash@0 {
-> +		...
-> +
-> +		partition@2 {
 
-This unit address is not correct...
+I don't use one certain special tool to analyze this string, I am using ftrace with event.
+With tag information, I can see how many tasks in storage device and easily to trace each request
+under multiple thread workload. 
+Event there is someone who using certain tool to analyze this string, after adding additional
+tag printout, in my opinion, they are happy to see it there. 
 
-> +			label = "art";
-> +			reg = <0x7F0000 0x010000>;
+Again, you said if we add new feature in legacy block, we will also add new feature in blk-mq.
+I still don't understand here.  "include/trace/event/block.h ... scsi.h" will be changed?
+If yes, how? Because blk-mq is still using the events defined in include/trace/event/block.h.
 
-Lowercase hex.
+Bean Huo
 
-> +			read-only;
-> +
-> +			nvmem-cells {
-> +				compatible = "nvmem-cells";
-> +				#address-cells = <1>;
-> +				#size-cells = <1>;
-> +
-> +				eeprom@1000 {
-
-"eeprom" isn't specific data. The purpose of the nvmem binding is to 
-provide specific data fields like MAC addresseses.
-
-Plus "eeprom" is the node name for EEPROM devices.
-
-> +					reg = <0x1000 0x1000>;
-> +				};
-> +			};
-> +		};
-> +	};
-> -- 
-> 2.7.4
-> 
+>Thanks,
+>
+>Bart.
+>
