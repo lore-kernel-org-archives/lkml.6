@@ -1,51 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755206AbeDPMAS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:00:18 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48062 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755190AbeDPMAR (ORCPT
+        id S1755220AbeDPMAX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:00:23 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35882 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755190AbeDPMAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:00:17 -0400
-Subject: Re: [PATCH] ARM: dts: stm32: Enable stm32mp1 clock driver on
- stm32mp157c
-To: <gabriel.fernandez@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1521098327-13958-1-git-send-email-gabriel.fernandez@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <661fd823-d7ba-bafe-3dc9-93fd0cf134fe@st.com>
-Date: Mon, 16 Apr 2018 13:59:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1521098327-13958-1-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.122]
-X-ClientProxiedBy: GPXDAG4NODE6.st.com (10.75.127.76) To GPXDAG3NODE5.st.com
- (10.75.127.72)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_06:,,
- signatures=0
+        Mon, 16 Apr 2018 08:00:21 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: tfa9879: switch to SPDX license tag" to the asoc tree
+In-Reply-To: <20180413114751.6464-3-peda@axentia.se>
+Message-Id: <E1f82nx-00009X-1C@debutante>
+Date: Mon, 16 Apr 2018 13:00:17 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gabriel,
+The patch
 
-On 03/15/2018 08:18 AM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> This patch enables stm32mp1 clock driver.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+   ASoC: tfa9879: switch to SPDX license tag
 
+has been applied to the asoc tree at
 
-Applied on stm32-next.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Thanks.
-Alex
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 3d5fa5270b1f4cc47b300a943b2a82727c6c6b07 Mon Sep 17 00:00:00 2001
+From: Peter Rosin <peda@axentia.se>
+Date: Fri, 13 Apr 2018 13:47:51 +0200
+Subject: [PATCH] ASoC: tfa9879: switch to SPDX license tag
+
+It's less overhead, clearer and generally neater.
+
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/tfa9879.c | 18 ++++++------------
+ sound/soc/codecs/tfa9879.h |  7 +------
+ 2 files changed, 7 insertions(+), 18 deletions(-)
+
+diff --git a/sound/soc/codecs/tfa9879.c b/sound/soc/codecs/tfa9879.c
+index 4ed020262a27..abc114a3ae2b 100644
+--- a/sound/soc/codecs/tfa9879.c
++++ b/sound/soc/codecs/tfa9879.c
+@@ -1,15 +1,9 @@
+-/*
+- * tfa9879.c  --  driver for NXP Semiconductors TFA9879
+- *
+- * Copyright (C) 2014 Axentia Technologies AB
+- * Author: Peter Rosin <peda@axentia.se>
+- *
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
+- *
+- */
++// SPDX-License-Identifier: GPL-2.0+
++//
++// tfa9879.c  --  driver for NXP Semiconductors TFA9879
++//
++// Copyright (C) 2014 Axentia Technologies AB
++// Author: Peter Rosin <peda@axentia.se>
+ 
+ #include <linux/module.h>
+ #include <linux/init.h>
+diff --git a/sound/soc/codecs/tfa9879.h b/sound/soc/codecs/tfa9879.h
+index 3408c90c4628..66c88d0396fe 100644
+--- a/sound/soc/codecs/tfa9879.h
++++ b/sound/soc/codecs/tfa9879.h
+@@ -1,14 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
+ /*
+  * tfa9879.h  --  driver for NXP Semiconductors TFA9879
+  *
+  * Copyright (C) 2014 Axentia Technologies AB
+  * Author: Peter Rosin <peda@axentia.se>
+- *
+- *  This program is free software; you can redistribute  it and/or modify it
+- *  under  the terms of  the GNU General  Public License as published by the
+- *  Free Software Foundation;  either version 2 of the  License, or (at your
+- *  option) any later version.
+- *
+  */
+ 
+ #ifndef _TFA9879_H
+-- 
+2.17.0
