@@ -1,56 +1,54 @@
 Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525132123; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523903355; cv=none;
         d=google.com; s=arc-20160816;
-        b=0B6nJ1EA/oRy2Wza1F65jaeweeZ3y39IvTwAyVk8Fk/iTtL2Mvg4edLurnBhmSsVFE
-         IOCTaO9DjelOvSHNK2vtqkDd5czdRzi44GJjAANHcBUo5tRUVyXGqzrwwVjbC8U5A/u6
-         4u3LdIyl3ZABrQ6yeOdBq6ebVOYjxreAXDR9M1LxReYkIK9+bbOM9xorDkz+gFocwhZs
-         egw2yY8Lol1V1IFumHZrCFr3vad5pn3cyUN3d5vy+FOdOdoyB/A/W87y7HS0M0nrfmA9
-         Lr3bbE9G+W5c+1FXlTfITajyMOj5Yx3ubOY8rCB8ITAXXBfeItO5sLGOoJBkk6Zgz7GA
-         H2hA==
+        b=QmsQvk2kTHnoGtdqY/NNT7CE0ie4Kk3BeAJtukHwjU1lSH6P/Tf70TPA0/ru4H7CJh
+         /73cAh04GlESpZFVbQC30r50mrzLiHtayResQXZACYfoUxijK5hAENxkF+CA2T5ZyseW
+         y3Cs5CRibAKqWIvZj+QaoDTxzMGbV2OuIF+oLv6n2+evutvmQiIrLbzkDcZhqEnpErwx
+         S3+PUSQGr6TztMs/KEk8GW7crZtEUqhTn5qHSz/7ZDj0198l5HJuwb/itKePaidyErem
+         4dnXxa12ZJIOVZdJsmzuAHPxemDkaL+vEWriOCPvshmPyPoT74iLZWGcmDnalW8ng+ua
+         FMMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
          :mime-version:dkim-signature:dkim-signature
          :arc-authentication-results;
-        bh=rqhm8mkzO4Djr2jlFRM4eKFqPE8FDlNkXsrHn1LeY9M=;
-        b=Y/pQimRifbd2e8Hz8X6jWMQUqxETGy0BbmNFH1MmKJ+D9vIAjHdElRXvogHSmqyCa4
-         ijYPb6fFi30v6gQovA066bhvzP1JKUnksQT8NDDWh7uOo86TIQGnc0bni8EaAGe0N43b
-         0SIZkDfeFuV9cyiGnL4RmWWT4KTuy7j9ySOhCHM8U3UySdMdXX6ayHSaGSiBDrG6wssO
-         axfOfp7+G0Hl6Df1QTWgGp2UqoJGkUQP2/J6BKqGf7dcY3E33wKFCPdMQ0pj9lVTq9+V
-         H3tYwjM1Ci5eodVuOstNSt1FcaXSJBm7RiKD1GH+Cboi+c+B3oThAma/LXxPNue3Nj7+
-         2l1Q==
+        bh=1IWjPxj81AM/BeFE1BOv32XSDwKpfNZ26wsdamAnSbE=;
+        b=XPggzeDQjdjbgSZfC002+xnh9XmWo57VsNNFNh0tepXjt2Hri9dvw62EbiL4nlRod5
+         DM2ZaejKXtkoi/Bqdcm1rh/HG7+JaGmVieLltQjFLVJJbczVIcyOVMCm0QfqTIcEemLV
+         rj72R00QChtAQjBojR/MYFvZiYNZJ0AIMcJnjtXIXUpX/DJB/YTvLGJCG5TTD5hQOqvf
+         l/BP2LHr+jGjleb9nhmi9Q2sRZoiJw6yg593vQF2bKKB96nXt3Z3m3r9txm8dE0xvcgS
+         Jg0YSrD41BO8KkH7C8N2YXmX1lrkyJf2DD8BDvgE1HlImjsBRxFXAUvLq3St+m000awq
+         K43g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=cqdz6LId;
-       dkim=pass header.i=@chromium.org header.s=google header.b=P5t/K4eD;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=NvAF+582;
+       dkim=pass header.i=@chromium.org header.s=google header.b=HORN0uzb;
        spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=cqdz6LId;
-       dkim=pass header.i=@chromium.org header.s=google header.b=P5t/K4eD;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=NvAF+582;
+       dkim=pass header.i=@chromium.org header.s=google header.b=HORN0uzb;
        spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AB8JxZruihnOaJ7syio2VNTBQ0VaEbtWEk1CUFc+ZM1OUfzZJxk5FpFwUPBpLERlOrMVAY4hJHOq430RZGsUC50dVKQ=
+X-Google-Smtp-Source: AIpwx4+ihx6ST86jjng3FMlAnOKcSOwOt3gUn0M+d91Ip8T2LRj5zW1hkGDOXskPfkrJUfaglG6GkLsDoN9VxuRkq+w=
 MIME-Version: 1.0
 Sender: keescook@google.com
-In-Reply-To: <4e668302-8754-3f4e-3372-d0d7ba30cfa3@linux.intel.com>
-References: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
- <1523024546-6150-3-git-send-email-alex.popov@linux.com> <4e668302-8754-3f4e-3372-d0d7ba30cfa3@linux.intel.com>
+In-Reply-To: <1523024546-6150-3-git-send-email-alex.popov@linux.com>
+References: <1523024546-6150-1-git-send-email-alex.popov@linux.com> <1523024546-6150-3-git-send-email-alex.popov@linux.com>
 From: Kees Cook <keescook@chromium.org>
-Date: Mon, 30 Apr 2018 16:48:41 -0700
-X-Google-Sender-Auth: h8qHM7aI5Zj_pV1TaX1phPF3TkI
-Message-ID: <CAGXu5jJ_0e63QSv0YZsQoT_=zN8U-83nwxrQ10h=QjszbHK-aQ@mail.gmail.com>
+Date: Mon, 16 Apr 2018 11:29:13 -0700
+X-Google-Sender-Auth: CUaChLBr_I122P_ywfFFQPNhXnA
+Message-ID: <CAGXu5jKm218fpxyV3vOM+2SO-ERG3tWPUV0x8+-S0MJAReFz+A@mail.gmail.com>
 Subject: Re: [PATCH v11 2/6] x86/entry: Add STACKLEAK erasing the kernel stack
  at the end of syscalls
-To: Dave Hansen <dave.hansen@linux.intel.com>,
+To: Alexander Popov <alex.popov@linux.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Laura Abbott <labbott@redhat.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alexander Popov <alex.popov@linux.com>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
-	Brad Spengler <spender@grsecurity.net>, Ingo Molnar <mingo@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>, Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Borislav Petkov <bp@alien8.de>, Richard Sandiford <richard.sandiford@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>, "H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>, "Dmitry V . Levin" <ldv@altlinux.org>,
-	Emese Revfy <re.emese@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
+	Brad Spengler <spender@grsecurity.net>, Andy Lutomirski <luto@kernel.org>,
+	Tycho Andersen <tycho@tycho.ws>, Mark Rutland <mark.rutland@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>, Borislav Petkov <bp@alien8.de>,
+	Richard Sandiford <richard.sandiford@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+	"H . Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
+	"Dmitry V . Levin" <ldv@altlinux.org>, Emese Revfy <re.emese@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
 	Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Thomas Garnier <thgarnie@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
@@ -66,32 +64,41 @@ Cc: Alexander Popov <alex.popov@linux.com>,
 	Boris Lukashev <blukashev@sempervictus.com>, X86 ML <x86@kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-ccpol: medium
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597007022879408472?=
-X-GMAIL-MSGID: =?utf-8?q?1599216940850648612?=
+X-GMAIL-MSGID: =?utf-8?q?1597928484779950853?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 23, 2018 at 9:23 PM, Dave Hansen
-<dave.hansen@linux.intel.com> wrote:
-> Hi Alexander,
->
-> You can add:
->
-> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
->
-> for this patch if you like.  I haven't taken a super close look at the
-> rest, but this is certainly minimally invasive from my point of view for
-> the entry code.  Thanks, again for reworking it.
+On Fri, Apr 6, 2018 at 7:22 AM, Alexander Popov <alex.popov@linux.com> wrote:
+> This commit introduces the architecture-specific code filling the used
+> part of the kernel stack with a poison value before returning to the
+> userspace. Full STACKLEAK feature also contains the gcc plugin which
+> comes in a separate commit.
 
-Thanks Dave!
+Thanks for sending this again! And thanks for the updated reasoning
+for why this remains a valuable addition:
 
-Given this improvement and your review, I'm going to start carrying
-this for linux-next. Linus, if you're still opposed to this even after
-the changes here in v11, please let us know. I'd rather hash things
-out now instead of during a NAK in the 4.18 merge window. :)
+https://lkml.kernel.org/r/1523024546-6150-1-git-send-email-alex.popov@linux.com
 
-Thanks!
+I, too, remain convinced this is a good protection to have, even as we
+slowly remove VLAs and try to improve the compiler's initialization of
+stack variables.
+
+Dave, Ingo, Linus: how does this look? With the assembly rewritten
+into C, the entry changes are very small:
+
+>  arch/x86/entry/entry_32.S        |  7 ++++++
+>  arch/x86/entry/entry_64.S        |  3 +++
+>  arch/x86/entry/entry_64_compat.S |  5 ++++
+>  arch/x86/entry/erase.c           | 54 ++++++++++++++++++++++++++++++++++++++++
+
+I'd really like to get people's Ack/Review. :)
+
+Laura, can this C version work for arm64 as well?
+
+Thanks,
 
 -Kees
 
