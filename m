@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx48hwTWBg3kVeEsMwW42Gizo5qKHDXrz6HsTHUFb66dezLLi89VInnfrnlR92qaCqvEnkyg/
-ARC-Seal: i=1; a=rsa-sha256; t=1523892345; cv=none;
+X-Google-Smtp-Source: AIpwx4+X/t4m0m2ejvonwBXV2tVZMpfl5nH0bOWlOVhLm2Si2fSbI0umn2TInUToMCjU9KvcR0jP
+ARC-Seal: i=1; a=rsa-sha256; t=1523892351; cv=none;
         d=google.com; s=arc-20160816;
-        b=q/9AHDqq7/MTGKEn8tAh+rd0Vn7bpu99O1QzGNQbqeCKHp4qZIFjh2nDKOlQDo9yIA
-         CzbGme7dXGooFfxU+zR/KP6sOe1MA9igue9cgArjp+qLtEQL6NncbRYz4zx4ZX5Ixn55
-         ZS/P+XxG6qKFNjiAqK0Vx2NiA3hGa/iG60ULB/N0jf4oVLM9ajzkap3gepctbmJaJewE
-         SDCtSNeGW9ENqgkLCo40FBex3JUI4dn+127VPfWzO5SaKee/cwG6BLmID795ZzFQyXLp
-         Z7ad+2w2PypV1Krw+UKAtAa/zruXkmas0hOXkV82KvzOV1CwON62fJFerjnc1J979gpu
-         j/cQ==
+        b=c1dYBlOJMVsh+STDr2vTjhbpgi6WTe4F72nVFcRKqWi8gqP26vGHmAabfsk8nvgXby
+         j26x+2PeFzrkGnZLH3j0vfN3cGPdzdJk8CUSUJSEVEM+tbdqhhOXBUiWlZgpDqqoSblI
+         XDhnawptmN6v+ohjDbh0Sv2l8W6yFX3wIbqIgqutvAZl8Tnp1fFCP1uege7zblqlDAQH
+         aCGZczFBoJqTP6d2JzP3eCyoO5umJNtuWGrN95gRadY2lMsmc3ntRH1FAJpWQNTVtYi3
+         IbI9uS4dXJQOvwuCb0YvI0YjkWsrnCUcPOenfH+nQJjTRqPrTSyQgchwVpgCuFU2Xhtn
+         IZFw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=Y8N4hCCOk7avYFElYs/3evka9+flYYVqAWJN/ObKGmk=;
-        b=O0qLmhrIg5Bydiq7U7asNjnlwUdFXUdBYAhXc90n+oUkUiTRpEBO/5jqbuH0bjcJz0
-         fVdH4UJAUXmPigaAABHaINJrXzToFVTQo/pCYijXWCwJdrUQinhQhAdynxIBtwM9JkuO
-         Ab5jHRI3rthsIoNQlAskclkUR0dkvz1XYOEXfzdSfoZbQcQwJPk96PYDyXqAid4wxp06
-         jSy3QPDjKCfXJe72w9EeDhlwzSWqhYScC3th/qR2V1zwFsFEHfyjpG0Euhn9GCL5FI0r
-         3VFxdpXEMDAjxYV7Hv9DAhGC25ePvi2jCbEbOaxeZngf6jHS+HiG6ZEIoGGDJ6/frQN0
-         G3+g==
+        bh=yXjVihLm+2wNjR7+5+HSTgr8auLQO7nLO1HK3zaEXWI=;
+        b=PMxM3PIJKJBPlU5wi2XIN/yKgocTujvvBTqcaRkmNZCAz10oeRFEBwMnJxmbkjBTQ2
+         1zhhd6inOUDeh+TaIiurCFm/G+qFnD72DTXO+3rvgU7r1U/QlgJhhuC3HGGFo/nF4sdF
+         IPR79at5roeXBGq77tZ8zCuZu8Du1XrVA3IoVu/hB0Lsc4IdJm7FMFxOkIm7ECQhhSfA
+         0DqyymXdGIJjlB3TjRLDCnLnfO3i2kRspsQiYl5T0TbqOXBgV8vU1S4DJ19SkaCM+t1I
+         uOD7JGA4GV+kZBahzLzWBz33LJRTsMMr2e8WCuiQE0sZStrSq6yOPI8+VBCUlUWex1oP
+         ZQ7g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=fkLzrinP;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=M6BSfBf9;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=fkLzrinP;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=M6BSfBf9;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,91 +58,72 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 15/35] x86/pgtable: Rename pti_set_user_pgd to pti_set_user_pgtbl
-Date: Mon, 16 Apr 2018 17:25:03 +0200
-Message-Id: <1523892323-14741-16-git-send-email-joro@8bytes.org>
+Subject: [PATCH 27/35] x86/mm/dump_pagetables: Define INIT_PGD
+Date: Mon, 16 Apr 2018 17:25:15 +0200
+Message-Id: <1523892323-14741-28-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 References: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597916939516404451?=
-X-GMAIL-MSGID: =?utf-8?q?1597916939516404451?=
+X-GMAIL-THRID: =?utf-8?q?1597916945928694888?=
+X-GMAIL-MSGID: =?utf-8?q?1597916945928694888?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-With the way page-table folding is implemented on 32 bit, we
-are not only setting PGDs with this functions, but also PUDs
-and even PMDs. Give the function a more generic name to
-reflect that.
+Define INIT_PGD to point to the correct initial page-table
+for 32 and 64 bit and use it where needed. This fixes the
+build on 32 bit with CONFIG_PAGE_TABLE_ISOLATION enabled.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_64.h | 12 ++++++------
- arch/x86/mm/pti.c                 |  2 +-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/mm/dump_pagetables.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 877bc27..c863816 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -196,21 +196,21 @@ static inline bool pgdp_maps_userspace(void *__ptr)
- }
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 62a7e9f..84498da 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -110,6 +110,8 @@ static struct addr_marker address_markers[] = {
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+ };
  
++#define INIT_PGD	((pgd_t *) &init_top_pgt)
++
+ #else /* CONFIG_X86_64 */
+ 
+ enum address_markers_idx {
+@@ -138,6 +140,8 @@ static struct addr_marker address_markers[] = {
+ 	[END_OF_SPACE_NR]	= { -1,			NULL }
+ };
+ 
++#define INIT_PGD	(swapper_pg_dir)
++
+ #endif /* !CONFIG_X86_64 */
+ 
+ /* Multipliers for offsets within the PTEs */
+@@ -495,11 +499,7 @@ static inline bool is_hypervisor_range(int idx)
+ static void ptdump_walk_pgd_level_core(struct seq_file *m, pgd_t *pgd,
+ 				       bool checkwx, bool dmesg)
+ {
+-#ifdef CONFIG_X86_64
+-	pgd_t *start = (pgd_t *) &init_top_pgt;
+-#else
+-	pgd_t *start = swapper_pg_dir;
+-#endif
++	pgd_t *start = INIT_PGD;
+ 	pgprotval_t prot, eff;
+ 	int i;
+ 	struct pg_state st = {};
+@@ -565,7 +565,7 @@ EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
+ static void ptdump_walk_user_pgd_level_checkwx(void)
+ {
  #ifdef CONFIG_PAGE_TABLE_ISOLATION
--pgd_t __pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd);
-+pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd);
+-	pgd_t *pgd = (pgd_t *) &init_top_pgt;
++	pgd_t *pgd = INIT_PGD;
  
- /*
-  * Take a PGD location (pgdp) and a pgd value that needs to be set there.
-  * Populates the user and returns the resulting PGD that must be set in
-  * the kernel copy of the page tables.
-  */
--static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
-+static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
- {
  	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return pgd;
--	return __pti_set_user_pgd(pgdp, pgd);
-+	return __pti_set_user_pgtbl(pgdp, pgd);
- }
- #else
--static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
-+static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
- {
- 	return pgd;
- }
-@@ -226,7 +226,7 @@ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
- 	}
- 
- 	pgd = native_make_pgd(native_p4d_val(p4d));
--	pgd = pti_set_user_pgd((pgd_t *)p4dp, pgd);
-+	pgd = pti_set_user_pgtbl((pgd_t *)p4dp, pgd);
- 	*p4dp = native_make_p4d(native_pgd_val(pgd));
- }
- 
-@@ -237,7 +237,7 @@ static inline void native_p4d_clear(p4d_t *p4d)
- 
- static inline void native_set_pgd(pgd_t *pgdp, pgd_t pgd)
- {
--	*pgdp = pti_set_user_pgd(pgdp, pgd);
-+	*pgdp = pti_set_user_pgtbl(pgdp, pgd);
- }
- 
- static inline void native_pgd_clear(pgd_t *pgd)
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index f1fd52f..9bea9c3 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -117,7 +117,7 @@ void __init pti_check_boottime_disable(void)
- 	setup_force_cpu_cap(X86_FEATURE_PTI);
- }
- 
--pgd_t __pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
-+pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
- {
- 	/*
- 	 * Changes to the high (kernel) portion of the kernelmode page
+ 		return;
 -- 
 2.7.4
