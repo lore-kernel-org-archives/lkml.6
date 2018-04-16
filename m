@@ -1,55 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754919AbeDPNPi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:15:38 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:42700 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753909AbeDPNPg (ORCPT
+        id S1754948AbeDPNP7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:15:59 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:37698 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753479AbeDPNP5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:15:36 -0400
-X-Google-Smtp-Source: AIpwx4/RQWhH6JjoQi94Wbbgxdj8Xg8x4q8AwRHOCiu3wOuS9bNaPajry4taUKkoEVFAR/0JSU4hpA==
-Subject: Re: [PATCH 08/14] thermal: exynos: remove parsing of
- samsung,tmu[_min,_max]_efuse_value properties
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20180416101409epcas1p4f8e0279a94322d1cc423ced6dfce3362@epcas1p4.samsung.com>
- <1523873525-23718-9-git-send-email-b.zolnierkie@samsung.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <79d94b60-3dec-c4bf-6df4-5a4f1319760c@linaro.org>
-Date: Mon, 16 Apr 2018 15:15:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 16 Apr 2018 09:15:57 -0400
+X-Google-Smtp-Source: AIpwx49PcnAoT75idlIllFpsVrnn99ArAMnX7YHawYvqO1abTkz3C4y7md1CqNw0EvMQhDVFnKwxrWtVhgV3YXEpTMw=
 MIME-Version: 1.0
-In-Reply-To: <1523873525-23718-9-git-send-email-b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523884165-17044-1-git-send-email-geert@linux-m68k.org>
+References: <1523884165-17044-1-git-send-email-geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 16 Apr 2018 15:15:56 +0200
+X-Google-Sender-Auth: zGcFdxJMAlmPnT5oVSpGGcSzoQ8
+Message-ID: <CAMuHMdVKszYm5jH+o8iLdBdPTcsnpUr3rs4Z3kPtKXXH4fs8fw@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v4.17-rc1
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: "the arch/x86 maintainers" <x86@kernel.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/04/2018 12:11, Bartlomiej Zolnierkiewicz wrote:
-> Since pdata efuse values are SoC (not platform) specific just move
-> them from platform data to struct exynos_tmu_data instance. Then
-> remove parsing of samsung,tmu[_,min_,max]_efuse_value properties.
-> 
-> There should be no functional changes caused by this patch.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 49 +++++++++++++++++++++++-------------
+On Mon, Apr 16, 2018 at 3:09 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Below is the list of build error/warning regressions/improvements in
+> v4.17-rc1[1] compared to v4.16[2].
 >
+> Summarized:
+>   - build errors: +2/-10
+>   - build warnings: +1407/-1867
+>
+> Note that there may be false regressions, as some logs are incomplete.
+> Still, they're build errors/warnings.
+>
+> Happy fixing! ;-)
+>
+> Thanks to the linux-next team for providing the build service.
+>
+> [1] http://kisskb.ellerman.id.au/kisskb/head/60cc43fc888428bb2f18f08997432d426a243338/ (244 out of 246 configs)
+> [2] http://kisskb.ellerman.id.au/kisskb/head/0adb32858b0bddf4ada5f364a84ed60b196dbcda/ (all 246 configs)
+>
+>
+> *** ERRORS ***
+>
+> 2 error regressions:
+>   + /kisskb/src/include/linux/thread_info.h: error: call to '__bad_copy_from' declared with attribute error: copy source size is too small:  => 138:19
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+i386-allmodconfig
 
+>   + error: No rule to make target arch/parisc/kernel/binfmt_elf32.o:  => N/A
+
+parisc64/a500_defconfig (patch available)
+
+> *** WARNINGS ***
+>
+> [Deleted 799 lines about "warning: ... [-Wpointer-sign]" on parisc-allmodconfig]
+> [Deleted 1480 lines about "warning: -ffunction-sections disabled; it makes profiling impossible [enabled by default]" on parisc-allmodconfig]
+
+BTW, are there any plans to fix/silence these warrnings?
+Or should I look into automating their removal from the logs/report
+(optimistic me keeps on postponing that task :-)?
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
