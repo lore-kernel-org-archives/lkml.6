@@ -1,308 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754883AbeDPNOK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:14:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48908 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752497AbeDPNOI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:14:08 -0400
-Subject: Re: [PATCH v4 15/15] s390: doc: detailed specifications for AP
- virtualization
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-16-git-send-email-akrowiak@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Mon, 16 Apr 2018 15:13:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754897AbeDPNO0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:14:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46983 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753479AbeDPNOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 09:14:24 -0400
+Date: Mon, 16 Apr 2018 15:14:21 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Christopher Lameter <cl@linux.com>,
+        Guy Shattah <sguy@mellanox.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Vlastimil Babka <vbabka@suse.cz>, David Nellans <dnellans@nvidia.com>,
+        Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [RFC PATCH 0/3] Interface for higher order contiguous allocations
+Message-ID: <20180416131421.GQ17484@dhcp22.suse.cz>
+References: <20180212222056.9735-1-mike.kravetz@oracle.com>
+ <770445b3-6caa-a87a-5de7-3157fc5280c2@intel.com>
+ <74b7c6e5-bce6-a70a-287a-af44765836c7@intel.com>
+ <8f67cb20-3d70-274b-871b-11bedc687bd9@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <1523827345-11600-16-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041613-0040-0000-0000-0000042F8993
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041613-0041-0000-0000-000026338E54
-Message-Id: <04a0cf49-71a1-214a-7261-d8e55adee1de@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804160125
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f67cb20-3d70-274b-871b-11bedc687bd9@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/04/2018 23:22, Tony Krowiak wrote:
-> This patch provides documentation describing the AP architecture and
-> design concepts behind the virtualization of AP devices. It also
-> includes an example of how to configure AP devices for exclusive
-> use of KVM guests.
->
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
->   Documentation/s390/vfio-ap.txt |  567 ++++++++++++++++++++++++++++++++++++++++
->   MAINTAINERS                    |    1 +
->   2 files changed, 568 insertions(+), 0 deletions(-)
->   create mode 100644 Documentation/s390/vfio-ap.txt
->
-> diff --git a/Documentation/s390/vfio-ap.txt b/Documentation/s390/vfio-ap.txt
-> new file mode 100644
-> index 0000000..a1e888a
-> --- /dev/null
-> +++ b/Documentation/s390/vfio-ap.txt
-> @@ -0,0 +1,567 @@
-> +Introduction:
-> +============
-> +The Adjunct Processor (AP) facility is an IBM Z cryptographic facility comprised
-> +of three AP instructions and from 1 up to 256 PCIe cryptographic adapter cards.
-> +The AP devices provide cryptographic functions to all CPUs assigned to a
-> +linux system running in an IBM Z system LPAR.
-> +
-> +The AP adapter cards are exposed via the AP bus. The motivation for vfio-ap
-> +is to make AP cards available to KVM guests using the VFIO mediated device
-> +framework. This implementation relies considerably on the s390 virtualization
-> +facilities which do most of the hard work of providing direct access to AP
-> +devices.
-> +
-> +AP Architectural Overview:
-> +=========================
-> +To facilitate the comprehension of the design, let's start with some
-> +definitions:
-> +
-> +* AP adapter
-> +
-> +  An AP adapter is an IBM Z adapter card that can perform cryptographic
-> +  functions. There can be from 0 to 256 adapters assigned to an LPAR. Adapters
-> +  assigned to the LPAR in which a linux host is running will be available to
-> +  the linux host. Each adapter is identified by a number from 0 to 255. When
-> +  installed, an AP adapter is accessed by AP instructions executed by any CPU.
-> +
-> +  The AP adapter cards are assigned to a given LPAR via the system's Activation
-> +  Profile which can be edited via the HMC. When the system is IPL'd, the AP bus
-> +  module is loaded and detects the AP adapter cards assigned to the LPAR. The AP
-> +  bus creates a sysfs device for each adapter as they are detected. For example,
-> +  if AP adapters 4 and 10 (0x0a) are assigned to the LPAR, the AP bus will
-> +  create the following sysfs entries:
-> +
-> +    /sys/devices/ap/card04
-> +    /sys/devices/ap/card0a
-> +
-> +  Symbolic links to these devices will also be created in the AP bus devices
-> +  sub-directory:
-> +
-> +    /sys/bus/ap/devices/[card04]
-> +    /sys/bus/ap/devices/[card04]
-> +
-> +* AP domain
-> +
-> +  An adapter is partitioned into domains. Each domain can be thought of as
-> +  a set of hardware registers for processing AP instructions. An adapter can
-> +  hold up to 256 domains. Each domain is identified by a number from 0 to 255.
-> +  Domains can be further classified into two types:
-> +
-> +    * Usage domains are domains that can be accessed directly to process AP
-> +      commands.
-> +
-> +    * Control domains are domains that are accessed indirectly by AP
-> +      commands sent to a usage domain to control or change the domain, for
-> +      example; to set a secure private key for the domain.
-> +
-> +  The AP usage and control domains are assigned to a given LPAR via the system's
-> +  Activation Profile which can be edited via the HMC. When the system is IPL'd,
-> +  the AP bus module is loaded and detects the AP usage and control domains
-> +  assigned to the LPAR. The domain number of each usage domain will be coupled
-> +  with the adapter number of each AP adapter assigned to the LPAR to identify
-> +  the AP queues (see AP Queue section below). The domain number of each control
-> +  domain will be represented in a bitmask and stored in a sysfs file
-> +  /sys/bus/ap/ap_control_domain_mask created by the bus. The bits in the mask,
-> +  from most to least significant bit, correspond to domains 0-255.
-> +
-> +  A domain may be assigned to a system as both a usage and control domain, or
-> +  as a control domain only. Consequently, all domains assigned as both a usage
-> +  and control domain can both process AP commands as well as be changed by an AP
-> +  command sent to any usage domain assigned to the same system. Domains assigned
-> +  only as control domains can not process AP commands but can be changed by AP
-> +  commands sent to any usage domain assigned to the system.
-> +
-> +* AP Queue
-> +
-> +  An AP queue is the means by which an AP command-request message is sent to a
-> +  usage domain inside a specific adapter. An AP queue is identified by a tuple
-> +  comprised of an AP adapter ID (APID) and an AP queue index (APQI). The
-> +  APQI corresponds to a given usage domain number within the adapter. This tuple
-> +  forms an AP Queue Number (APQN) uniquely identifying an AP queue. AP
-> +  instructions include a field containing the APQN to identify the AP queue to
-> +  which the AP command-request message is to be sent for processing.
-> +
-> +  The AP bus will create a sysfs device for each APQN that can be derived from
-> +  the intersection of the AP adapter and usage domain numbers detected when the
-> +  AP bus module is loaded. For example, if adapters 4 and 10 (0x0a) and usage
-> +  domains 6 and 71 (0x47) are assigned to the LPAR, the AP bus will create the
-> +  following sysfs entries:
-> +
-> +    /sys/devices/ap/card04/04.0006
-> +    /sys/devices/ap/card04/04.0047
-> +    /sys/devices/ap/card0a/0a.0006
-> +    /sys/devices/ap/card0a/0a.0047
-> +
-> +  The following symbolic links to these devices will be created in the AP bus
-> +  devices subdirectory:
-> +
-> +    /sys/bus/ap/devices/[04.0006]
-> +    /sys/bus/ap/devices/[04.0047]
-> +    /sys/bus/ap/devices/[0a.0006]
-> +    /sys/bus/ap/devices/[0a.0047]
-> +
-> +* AP Instructions:
-> +
-> +  There are three AP instructions:
-> +
-> +  * NQAP: to enqueue an AP command-request message to a queue
-> +  * DQAP: to dequeue an AP command-reply message from a queue
-> +  * PQAP: to administer the queues
-> +
-> +AP and SIE:
-> +==========
-> +Let's now see how AP instructions are interpreted by the hardware.
-> +
-> +A satellite control block called the Crypto Control Block is attached to our
-> +main hardware virtualization control block. The CRYCB contains three fields to
-> +identify the adapters, usage domains and control domains assigned to the KVM
-> +guest:
-> +
-> +* The AP Mask (APM) field is a bit mask that identifies the AP adapters assigned
-> +  to the KVM guest. Each bit in the mask, from most significant to least
-> +  significant bit, corresponds to an APID from 0-255. If a bit is set, the
-> +  corresponding adapter is valid for use by the KVM guest.
-> +
-> +* The AP Queue Mask (AQM) field is a bit mask identifying the AP usage domains
-> +  assigned to the KVM guest. Each bit in the mask, from most significant to
-> +  least significant bit, corresponds to an AP queue index (APQI) from 0-255. If
-> +  a bit is set, the corresponding queue is valid for use by the KVM guest.
-> +
-> +* The AP Domain Mask field is a bit mask that identifies the AP control domains
-> +  assigned to the KVM guest. The ADM bit mask controls which domains can be
-> +  changed by an AP command-request message sent to a usage domain from the
-> +  guest. Each bit in the mask, from least significant to most significant bit,
-> +  corresponds to a domain from 0-255. If a bit is set, the corresponding domain
-> +  can be modified by an AP command-request message sent to a usage domain
-> +  configured for the KVM guest.
-> +
-> +If you recall from the description of an AP Queue, AP instructions include
-> +an APQN to identify the AP adapter and AP queue to which an AP command-request
-> +message is to be sent (NQAP and PQAP instructions), or from which a
-> +command-reply message is to be received (DQAP instruction). The validity of an
-> +APQN is defined by the matrix calculated from the APM and AQM; it is the
-> +cross product of all assigned adapter numbers (APM) with all assigned queue
-> +indexes (AQM). For example, if adapters 1 and 2 and usage domains 5 and 6 are
-> +assigned to a guest, the APQNs (1,5), (1,6), (2,5) and (2,6) will be valid for
-> +the guest.
-> +
-> +The APQNs can provide secure key functionality - i.e., a private key is stored
-> +on the adapter card for each of its domains - so each APQN must be assigned to
-> +at most one guest or the linux host.
-> +
-> +   Example 1: Valid configuration:
-> +   ------------------------------
-> +   Guest1: adapters 1,2  domains 5,6
-> +   Guest2: adapter  1,2  domain 7
-> +
-> +   This is valid because both guests have a unique set of APQNs: Guest1 has
-> +   APQNs (1,5), (1,6), (2,5) and (2,6); Guest2 has APQNs (1,7) and (2,7).
-> +
-> +   Example 2: Invalid configuration:
-> +   --------------------------------is assigned by writing the adapter's number into the
-> +   Guest1: adapters 1,2  domains 5,6
-> +   Guest2: adapter  1    domains 6,7
-> +
-> +   This is an invalid configuration because both guests have access to
-> +   APQN (1,6).
-> +
-> +The Design:
-> +===========
-> +The design introduces three new objects:
-> +
-> +1. AP matrix device
-> +2. VFIO AP device driver (vfio_ap.ko)
-> +3. AP mediated matrix passthrough device
-> +
-> +The VFIO AP device driver
-> +-------------------------
-> +The VFIO AP (vfio_ap) device driver serves the following purposes:
-> +
-> +1. Provides the interfaces to reserve APQNs for exclusive use of KVM guests.
-> +
-> +2. Sets up the VFIO mediated device interfaces to manage the mediated matrix
-> +   device and create the sysfs interfaces for assigning adapters, usage domains,
-> +   and control domains comprising the matrix for a KVM guest.
-> +
-> +3. Configure the APM, AQM and ADM in the CRYCB referenced by a KVM guest's
-> +   SIE state description to grant the guest access to AP devices
-> +
-> +4. Initialize the CPU model feature indicating that a KVM guest may use
-> +   AP facilities installed on the linux host.
-> +
-> +5. Enable interpretive execution mode for the KVM guest.
-> +
-> +Reserve APQNs for exclusive use of KVM guests
-> +---------------------------------------------
-> +The following block diagram illustrates the mechanism by which APQNs are
-> +reserved:
-> +
-> +                              +------------------+
-> +                 remove       |                  |   unbind
-> +         +------------------->+ cex4queue driver +<-----------+
-> +         |                    |                  |            |
-> +         |                    +------------------+            |
-> +         |                                                    |
-> +         |                                                    |
-> +         |                                                    |
-> ++--------+---------+ register +------------------+      +-----+------+
-> +|                  +<---------+                  | bind |            |
-> +|      ap_bus      |          |  vfio_ap driver  +<-----+    admin   |
-> +|                  +--------->+                  |      |            |
-> ++------------------+  probe   +---+--------+-----+      +------------+
-> +                                  |        |
-> +                           create |        | store APQN
-> +                                  |        |
-> +                                  v        v
-> +                              +---+--------+-----+
-> +                              |                  |
-> +                              |  matrix device   |
-> +                              |                  |
-> +                              +------------------+
-> +
-> +The process for reserving an AP queue for use by a KVM guest is:
-> +
-> +* The vfio-ap driver during its initialization will perform the following:
-> +  * Create the 'vfio_ap' root device - /sys/devices/vfio_ap
-> +  * Create the 'matrix' device in the 'vfio_ap' root
-> +  * Register the matrix device with the device core
-> +* Register with the ap_bus for AP queue devices of type CEX4, CEX5 and
-> +  CEX6 and to provide the vfio_ap driver's probe and remove callback interfaces.
+On Thu 12-04-18 13:58:47, Mike Kravetz wrote:
+> On 04/12/2018 01:40 PM, Reinette Chatre wrote:
+> > Hi Mike,
+> > 
+> > On 2/15/2018 12:22 PM, Reinette Chatre wrote:
+> >> On 2/12/2018 2:20 PM, Mike Kravetz wrote:
+> >>> These patches came out of the "[RFC] mmap(MAP_CONTIG)" discussions at:
+> >>> http://lkml.kernel.org/r/21f1ec96-2822-1189-1c95-79a2bb491571@oracle.com
+> >>>
+> >>> One suggestion in that thread was to create a friendlier interface that
+> >>> could be used by drivers and others outside core mm code to allocate a
+> >>> contiguous set of pages.  The alloc_contig_range() interface is used for
+> >>> this purpose today by CMA and gigantic page allocation.  However, this is
+> >>> not a general purpose interface.  So, wrap alloc_contig_range() in the
+> >>> more general interface:
+> >>>
+> >>> struct page *find_alloc_contig_pages(unsigned int order, gfp_t gfp, int nid,
+> >>> 					nodemask_t *nodemask)
+> >>>
+> >>> No underlying changes are made to increase the likelihood that a contiguous
+> >>> set of pages can be found and allocated.  Therefore, any user of this
+> >>> interface must deal with failure.  The hope is that this interface will be
+> >>> able to satisfy some use cases today.
+> >>
+> >> As discussed in another thread a new feature, Cache Pseudo-Locking,
+> >> requires large contiguous regions. Until now I just exposed
+> >> alloc_gigantic_page() to handle these allocations in my testing. I now
+> >> moved to using find_alloc_contig_pages() as introduced here and all my
+> >> tests passed. I do hope that an API supporting large contiguous regions
+> >> become available.
+> >>
+> >> Thank you very much for creating this.
+> >>
+> >> Tested-by: Reinette Chatre <reinette.chatre@intel.com>
+> > 
+> > Do you still intend on submitting these changes for inclusion?
+> > 
+> > I would really like to use this work but unfortunately the original
+> > patches submitted here do not apply anymore. I am encountering conflicts
+> > with, for example:
+> > 
+> > commit d9cc948f6fa1c3384037f500e0acd35f03850d15
+> > Author: Michal Hocko <mhocko@suse.com>
+> > Date:   Wed Jan 31 16:20:44 2018 -0800
+> > 
+> >     mm, hugetlb: integrate giga hugetlb more naturally to the allocation
+> > path
+> > 
+> > Thank you very much
+> 
+> Thanks for the reminder Reinette.
+> 
+> You were the only one to comment on the original proposal.  In addition,
+> my original use case may have gone away.  So, this effort went to the
+> bottom of my priority list.
+> 
+> I am happy rebase the patches, but would really like to get additional
+> comments.  Allocation of hugetlbfs gigantic pages is the only existing
+> user.  Perhaps this is a natural progression of Michal's patch above
+> as it moves all that special pfn range scanning out of hugetlb code.
 
-I wonder why the type of card has anything to do with this driver.
-It should be transparent, the driver should be able to provide the 
-matrix (APM/AQM/ADM)
-independently from the type of card in the slot.
-
-Regards,
-
-Pierre
-
+Yes, that was and still is the plan. Turn the hackish contig allocator
+into something more usable so I guess it would be in line with what
+Reinette is after.
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+Michal Hocko
+SUSE Labs
