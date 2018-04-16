@@ -1,62 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753990AbeDPH0P convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 03:26:15 -0400
-Received: from mout.gmx.net ([212.227.17.22]:40949 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752883AbeDPH0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 03:26:13 -0400
-Message-ID: <1523863560.8337.5.camel@gmx.de>
-Subject: Re: [ANNOUNCE] v4.14.34-rt27
-From: Mike Galbraith <efault@gmx.de>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Date: Mon, 16 Apr 2018 09:26:00 +0200
-In-Reply-To: <20180413215240.scbnvz7egaauawyz@linutronix.de>
-References: <20180413215240.scbnvz7egaauawyz@linutronix.de>
+        id S1754018AbeDPH0u (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 03:26:50 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:42672 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753994AbeDPH0k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 03:26:40 -0400
+X-Google-Smtp-Source: AIpwx48K3qM/TRaQiOgLfo4E5IHdcaySTe5FVtKBxt/zYRkcPbmJab4MX+uSmCohequQ+RVpBD02tMLse2jofOiC/Ck=
+MIME-Version: 1.0
+In-Reply-To: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
+References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Mon, 16 Apr 2018 09:26:23 +0200
+Message-ID: <CAFqZXNuEwxp7vThtVH1oYSE5bAisvwNpBH3ry9tyL5BPSwXK=g@mail.gmail.com>
+Subject: Re: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:gzfoWKaLa3uclzfdxIysnSzeQCacuqJzZQIg9/+Dw+fVyDKWLH/
- rc/PqGbECN5PKbSQlpzMt3tUxUurgyuIL7ifSu2Fov+Ys8iHJNIEZMAvdDM0sCq5sWsrJYz
- s5ZGJycSV4MB6HDM5ibChywT65InskhKwqTwiWGGO7tbWRi9njuAZFg+iHQjWNAtjUgJTfA
- xQMFC0qXKwButt4tCAhUg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:EU6Gfki+3Pc=:P/U3lNxee6TJqZKGUaLqGR
- k+PalpXW8DHoZ5sAbmBAntW3Ux4UeFkYvgeUApRDt2fy9qYKKX2u4kfIcjrXTvdlD5svSxNpr
- GzVOxjKZFzpImngogXoV7pX23L7OOnsrMk8CXW5mloOUyBuTeX4QkEb4gg9NpxJWWRTunr4/V
- apEd0inBbHv/OkKCpMjtOVcxhlX2iC5rmVcnzEKo5sa7KPlSCKVr5vwutxe7z2e08vVz4OrhQ
- INqu/3D6XllR5BciTfqzKfq1zXvZRMTOkKsp5vLmtCVJf6dwup6oOnoWUfvwMikQb52S2APz/
- KRV6TnP/hiL6QTkQ1hkVbY6MFB+GqfjOYr5+O7/hC+V3dupWul674acxzawAJmelWDI33C1A3
- hwwJvSLHWGCrPqUt0C+3/n0sfo03xrC6gpXP8iuZ/gIdo9KabX4Lg6ukWQX2xQRHBZsB7CXBR
- LQcssE3CX/VzKieFbFuSAOn9aET66gQioqpX46ixMsxNGgE460HmD9l+dU+pdHdgvJYIPPAnr
- +5tRCvJdGcEbvY/BLsnqhf9s4CdqntO/HUu4QnUXnqch3qMGgWlFeERosBB4OXjWvZpVletBu
- Qy6Npvm/IH5a9d9FETcXaUwh0hUGig6s5H/MSjx1L87eJ3I/lxhBf/hiA0q5QyRkj7Kx6zVOw
- /yvYhQqktVTdRGQPeQw1XfetcLnOs4UpdoI/4/KAIs+mFioebOn5uycdrYUd/wUEpY+D1zAbo
- t01K24LUAqGNNro0RF6sPtvtbkyCUVMXtvrmyzva0MOlbAN9BgrEjNJJt29QLTCCj82bO8vPI
- Eb4bZdhfzH8E2CER+RcxcC5sSypGtxGS4X3lQYtZhwXa2WRLeQ=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-13 at 23:52 +0200, Sebastian Andrzej Siewior wrote:
-> 
->   - Inter-event (latency) fixes by Tom Zanussi.
+2018-04-10 1:34 GMT+02:00 Richard Guy Briggs <rgb@redhat.com>:
+> There were two formats of the audit MAC_STATUS record, one of which was more
+> standard than the other.  One listed enforcing status changes and the
+> other listed enabled status changes with a non-standard label.  In
+> addition, the record was missing information about which LSM was
+> responsible and the operation's completion status.  While this record is
+> only issued on success, the parser expects the res= field to be present.
+>
+> old enforcing/permissive:
+> type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
+> old enable/disable:
+> type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
+>
+> List both sets of status and old values and add the lsm= field and the
+> res= field.
+>
+> Here is the new format:
+> type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
+>
+> This record already accompanied a SYSCALL record.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/46
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  security/selinux/selinuxfs.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+> index 00eed84..00b21b2 100644
+> --- a/security/selinux/selinuxfs.c
+> +++ b/security/selinux/selinuxfs.c
+> @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+>                 if (length)
+>                         goto out;
+>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+> -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
+> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
 
-  CC      kernel/trace/trace_events_hist.o
-kernel/trace/trace_events_hist.c: In function ‘__update_field_vars’:
-kernel/trace/trace_events_hist.c:3093:11: warning: ignoring return value of ‘strscpy’, declared with attribute warn_unused_result [-Wunused-result]
-    strscpy(str, val_str, STR_VAR_LEN_MAX);
-           ^
-kernel/trace/trace_events_hist.c: In function ‘trace_event_raw_event_synth’:
-kernel/trace/trace_events_hist.c:672:11: warning: ignoring return value of ‘strscpy’, declared with attribute warn_unused_result [-Wunused-result]
-    strscpy(str_field, str_val, STR_VAR_LEN_MAX);
+This is just a tiny nit but why does "old_enforcing" use an underscore
+and "old-enabled" a dash? Shouldn't the style be consistent across
+fields?
 
-Maybe add include/linux/string.h __must_check removal?
+Just my two cents...
 
-(whacked upstream by 08a77676f9c5)
+>                         new_value, selinux_enforcing,
+>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> -                       audit_get_sessionid(current));
+> +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
+>                 selinux_enforcing = new_value;
+>                 if (selinux_enforcing)
+>                         avc_ss_reset(0);
+> @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+>                 if (length)
+>                         goto out;
+>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+> -                       "selinux=0 auid=%u ses=%u",
+> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+> +                       selinux_enforcing, selinux_enforcing,
 
-	-Mike
+^ also here
+
+>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> -                       audit_get_sessionid(current));
+> +                       audit_get_sessionid(current), 0, 1);
+>         }
+>
+>         length = count;
+> --
+> 1.8.3.1
+>
+> --
+> Linux-audit mailing list
+> Linux-audit@redhat.com
+> https://www.redhat.com/mailman/listinfo/linux-audit
+
+-- 
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
