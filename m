@@ -1,102 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752833AbeDPRvb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 13:51:31 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:40309 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750980AbeDPRva (ORCPT
+        id S1752924AbeDPRxh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 13:53:37 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:59042 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeDPRxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 13:51:30 -0400
-Date: Mon, 16 Apr 2018 10:51:28 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ahsan Hussain <ahsan_hussain@mentor.com>
-Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chombour <Cedric_Hombourger@mentor.com>,
-        ahsann <Noor_Ahsan@mentor.com>, m.purski@samsung.com
-Subject: Re: [PATCH 1/1] hwmon: (ina2xx) initialize mutex before locking
-Message-ID: <20180416175128.GA10596@roeck-us.net>
-References: <f286b0f4-948f-74a7-6dc1-90ca88f3dcdc@mentor.com>
- <20180416172858.GA9447@roeck-us.net>
- <78aeafda-03f2-de62-f6bd-6bd7b81ea201@mentor.com>
+        Mon, 16 Apr 2018 13:53:36 -0400
+From: <ahsan_hussain@mentor.com>
+To: <linux@roeck-us.net>
+CC: <jdelvare@suse.com>, <linux-hwmon@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ahsan_hussain@mentor.com>,
+        <noor_ahsan@mentor.com>, <cedric_hombourger@mentor.com>
+Subject: [PATCH 1/1] hwmon: (ina2xx) initialize mutex before locking
+Date: Mon, 16 Apr 2018 22:53:23 +0500
+Message-ID: <1523901203-2981-1-git-send-email-ahsan_hussain@mentor.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78aeafda-03f2-de62-f6bd-6bd7b81ea201@mentor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 10:48:03PM +0500, Ahsan Hussain wrote:
-> 
-> 
-> On 04/16/2018 10:28 PM, Guenter Roeck wrote:
-> > On Mon, Apr 16, 2018 at 10:08:19PM +0500, Ahsan Hussain wrote:
-> >>
-> >> Upstream commit
-> >>
-> >> 8d008c0c ("hwmon: (ina2xx) Make calibration register value fixed")
-> >>
-> > This doesn't have to be on separate lines; as written, it just causes
-> > confusion.
-> > 
-> Will do in my next email.
-> >> makes ina2xx_set_shunt() call mutex_lock on an un-initialized mutex.
-> >> Initialize it prior so we don't get a NULL pointer dereference error
-> >>
-> >> Signed-off-by: Ahsan Hussain <ahsan_hussain@mentor.com>
-> > 
-> > Good find, but your patch is corrupted to the point where any attenpt to
-> > fix it up on my side failed. Please resend without corruption, and please
-> > provide a Fixes: line.
-> Appologies. This must be Thunderbird, I've been trying to coax into
-> doing otherwise. Will send the corrected patch shortly.
+From: Ahsan Hussain <ahsan_hussain@mentor.com>
 
-Best is to set up and use git send-email. Anyway, you can see the result
-of the corruption at https://patchwork.kernel.org/patch/10343535/;
-it appears that patchwork doesn't understand your patch either.
+Upstream commit 8d008c0c ("hwmon: (ina2xx) Make calibration register
+value fixed"), makes ina2xx_set_shunt() call mutex_lock on an
+un-initialized mutex. Initialize it prior so we don't get a NULL pointer
+dereference error.
 
-Guenter
+Fixes: 8d008c0c ("hwmon: (ina2xx) Make calibration register value fixed")
 
-> > 
-> > Thanks,
-> > Guenter
-> > 
-> >> ---
-> >>  drivers/hwmon/ina2xx.c | 4 ++--
-> >>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
-> >> index a629f7c..1304f01 100644
-> >> --- a/drivers/hwmon/ina2xx.c
-> >> +++ b/drivers/hwmon/ina2xx.c
-> >> @@ -457,6 +457,8 @@ static int ina2xx_probe(struct i2c_client *client,
-> >>  			val = INA2XX_RSHUNT_DEFAULT;
-> >>  	}
-> >>  +	mutex_init(&data->config_lock);
-> >> +
-> >>  	ina2xx_set_shunt(data, val);
-> >>   	ina2xx_regmap_config.max_register = data->config->registers;
-> >> @@ -473,8 +475,6 @@ static int ina2xx_probe(struct i2c_client *client,
-> >>  		return -ENODEV;
-> >>  	}
-> >>  -	mutex_init(&data->config_lock);
-> >> -
-> >>  	data->groups[group++] = &ina2xx_group;
-> >>  	if (id->driver_data == ina226)
-> >>  		data->groups[group++] = &ina226_group;
-> >> -- 
-> >> 2.7.4
-> >>
+Signed-off-by: Ahsan Hussain <ahsan_hussain@mentor.com>
+---
+ drivers/hwmon/ina2xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+index a629f7c..1304f01 100644
+--- a/drivers/hwmon/ina2xx.c
++++ b/drivers/hwmon/ina2xx.c
+@@ -457,6 +457,8 @@ static int ina2xx_probe(struct i2c_client *client,
+ 			val = INA2XX_RSHUNT_DEFAULT;
+ 	}
+ 
++	mutex_init(&data->config_lock);
++
+ 	ina2xx_set_shunt(data, val);
+ 
+ 	ina2xx_regmap_config.max_register = data->config->registers;
+@@ -473,8 +475,6 @@ static int ina2xx_probe(struct i2c_client *client,
+ 		return -ENODEV;
+ 	}
+ 
+-	mutex_init(&data->config_lock);
+-
+ 	data->groups[group++] = &ina2xx_group;
+ 	if (id->driver_data == ina226)
+ 		data->groups[group++] = &ina226_group;
+-- 
+2.7.4
