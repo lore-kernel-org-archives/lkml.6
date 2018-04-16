@@ -1,145 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751218AbeDPPN2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 11:13:28 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:50030 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750917AbeDPPN0 (ORCPT
+        id S1751884AbeDPPOA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 11:14:00 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:36885 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750799AbeDPPN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:13:26 -0400
-Subject: Re: [PATCH v3 2/6] mfd: stm32-timers: add support for dmas
-To: Lee Jones <lee.jones@linaro.org>
-CC: <thierry.reding@gmail.com>, <alexandre.torgue@st.com>,
-        <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>, <benjamin.gaignard@st.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-References: <1522404084-24903-1-git-send-email-fabrice.gasnier@st.com>
- <1522404084-24903-3-git-send-email-fabrice.gasnier@st.com>
- <20180416122217.u7h3wawpdx3kj4wd@dell>
- <7531300c-7b7e-75c9-ea5b-8ca01b684c45@st.com>
- <20180416144753.parny6fhvpd3tryf@dell>
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <f5e7b9b3-7013-1c80-482b-40a1a17b3490@st.com>
-Date: Mon, 16 Apr 2018 17:12:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 16 Apr 2018 11:13:58 -0400
+X-Google-Smtp-Source: AIpwx4/E2iIEfHlMN4MSpcyy75Uxp0ycW0ZlDqBr1bUAxPhthTonumWSoSbaa6VWLt5uxLbrC6LGVQ==
+Date: Mon, 16 Apr 2018 10:13:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ran Wang <ran.wang_1@nxp.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mark Rutland <mark.rutland@arm.com>, Scott Wood <oss@buserror.net>,
+        Kumar Gala <galak@kernel.crashing.org>, Li Yang <leoyang.li@nxp.com>,
+        Zhao Chenhui <chenhui.zhao@freescale.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Li Yang <leoli@freescale.com>
+Subject: Re: [PATCH v2 6/6] fsl_pmc: update device bindings
+Message-ID: <20180416151356.r7si6higfrovl53l@rob-hp-laptop>
+References: <20180411063551.30368-1-ran.wang_1@nxp.com>
+ <20180411063551.30368-6-ran.wang_1@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20180416144753.parny6fhvpd3tryf@dell>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.122]
-X-ClientProxiedBy: GPXDAG8NODE4.st.com (10.75.127.86) To GPXDAG5NODE6.st.com
- (10.75.127.79)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_08:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180411063551.30368-6-ran.wang_1@nxp.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/2018 04:47 PM, Lee Jones wrote:
-> On Mon, 16 Apr 2018, Fabrice Gasnier wrote:
-> 
->> On 04/16/2018 02:22 PM, Lee Jones wrote:
->>> On Fri, 30 Mar 2018, Fabrice Gasnier wrote:
->>>
->>>> STM32 Timers can support up to 7 DMA requests:
->>>> - 4 channels, update, compare and trigger.
->>>> Optionally request part, or all DMAs from stm32-timers MFD core.
->>>>
->>>> Also add routine to implement burst reads using DMA from timer registers.
->>>> This is exported. So, it can be used by child drivers, PWM capture
->>>> for instance (but not limited to).
->>>>
->>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->>>> Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
->>>> ---
->>>> Changes in v3:
->>>> - Basically Lee's comments:
->>>> - rather create a struct stm32_timers_dma, and place a reference to it
->>>>   in existing ddata (instead of adding priv struct).
->>>> - rather use a struct device in exported routine prototype, and use
->>>>   standard helpers instead of ddata. Get rid of to_stm32_timers_priv().
->>>> - simplify error handling in probe (remove a goto)
->>>> - comment on devm_of_platform_*populate() usage.
->>>>
->>>> Changes in v2:
->>>> - Abstract DMA handling from child driver: move it to MFD core
->>>> - Add comments on optional dma support
->>>> ---
->>>>  drivers/mfd/stm32-timers.c       | 219 ++++++++++++++++++++++++++++++++++++++-
->>>>  include/linux/mfd/stm32-timers.h |  32 ++++++
->>>>  2 files changed, 249 insertions(+), 2 deletions(-)
-> 
-> [...]
-> 
->>>> diff --git a/include/linux/mfd/stm32-timers.h b/include/linux/mfd/stm32-timers.h
->>>> index 2aadab6..585a4de 100644
->>>> --- a/include/linux/mfd/stm32-timers.h
->>>> +++ b/include/linux/mfd/stm32-timers.h
->>>> @@ -8,6 +8,8 @@
->>>>  #define _LINUX_STM32_GPTIMER_H_
->>>>  
->>>>  #include <linux/clk.h>
->>>> +#include <linux/dmaengine.h>
->>>> +#include <linux/dma-mapping.h>
->>>>  #include <linux/regmap.h>
->>>
->>> [...]
->>>
->>>> +enum stm32_timers_dmas {
->>>> +	STM32_TIMERS_DMA_CH1,
->>>> +	STM32_TIMERS_DMA_CH2,
->>>> +	STM32_TIMERS_DMA_CH3,
->>>> +	STM32_TIMERS_DMA_CH4,
->>>> +	STM32_TIMERS_DMA_UP,
->>>> +	STM32_TIMERS_DMA_TRIG,
->>>> +	STM32_TIMERS_DMA_COM,
->>>> +	STM32_TIMERS_MAX_DMAS,
->>>> +};
->>>> +
->>>> +struct stm32_timers_dma;
->>>
->>> Why don't you move the declaration into here?
->>
->> To follow previous discussions we had in V1 and V2, this is to avoid
->> sharing all the information with child drivers, e.g. passing physical
->> address of parent MFD into child devices.
->>
->> I should probably add a comment there ? Something like:
->>
->> /* STM32 timers MFD parent internal struct to handle DMA transfers */
->> struct stm32_timers_dma;
->>
->> Do you agree with this ?
->>
->> Thanks for reviewing,
->> BR,
->> Fabrice
->>
->>>
->>> Then you don't need to forward declare.
-> 
-> Yes, I remember our previous conversation.
-> 
-> Perhaps you could always put a comment like:
-> 
->>>>  struct stm32_timers {
->>>>  	struct clk *clk;
->>>>  	struct regmap *regmap;
->>>>  	u32 max_arr;
->>>> +	struct stm32_timers_dma *dma; /* Only to be used by the parent */
->>>>  };
-> 
-> If this is not acceptable, then the current solution will do.
+On Wed, Apr 11, 2018 at 02:35:51PM +0800, Ran Wang wrote:
+> From: Li Yang <leoli@freescale.com>
 
-Hi Lee,
-
-I'll update it with your proposal,
-
-Many thanks,
-Fabrice
+Needs a commit msg and the subject should give some indication of what 
+the update is. And also start with "dt-bindings: ..."
 
 > 
+> Signed-off-by: Li Yang <leoyang.li@nxp.com>
+> Signed-off-by: Zhao Chenhui <chenhui.zhao@nxp.com>
+> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> ---
+> Changes in v2:
+>   - new file
+> 
+>  .../devicetree/bindings/powerpc/fsl/pmc.txt        |   59 +++++++++++--------
+>  1 files changed, 34 insertions(+), 25 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt b/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt
+> index 07256b7..f1f749f 100644
+> --- a/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt
+> +++ b/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt
+> @@ -9,15 +9,20 @@ Properties:
+>  
+>    "fsl,mpc8548-pmc" should be listed for any chip whose PMC is
+>    compatible.  "fsl,mpc8536-pmc" should also be listed for any chip
+> -  whose PMC is compatible, and implies deep-sleep capability.
+> +  whose PMC is compatible, and implies deep-sleep capability and
+> +  wake on user defined packet(wakeup on ARP).
+> +
+> +  "fsl,p1022-pmc" should be listed for any chip whose PMC is
+> +  compatible, and implies lossless Ethernet capability during sleep.
+>  
+>    "fsl,mpc8641d-pmc" should be listed for any chip whose PMC is
+>    compatible; all statements below that apply to "fsl,mpc8548-pmc" also
+>    apply to "fsl,mpc8641d-pmc".
+>  
+>    Compatibility does not include bit assignments in SCCR/PMCDR/DEVDISR; these
+> -  bit assignments are indicated via the sleep specifier in each device's
+> -  sleep property.
+> +  bit assignments are indicated via the clock nodes.  Device which has a
+> +  controllable clock source should have a "fsl,pmc-handle" property pointing
+> +  to the clock node.
+>  
+>  - reg: For devices compatible with "fsl,mpc8349-pmc", the first resource
+>    is the PMC block, and the second resource is the Clock Configuration
+> @@ -33,31 +38,35 @@ Properties:
+>    this is a phandle to an "fsl,gtm" node on which timer 4 can be used as
+>    a wakeup source from deep sleep.
+>  
+> -Sleep specifiers:
+> +Clock nodes:
+> +The clock nodes are to describe the masks in PM controller registers for each
+> +soc clock.
+> +- fsl,pmcdr-mask: For "fsl,mpc8548-pmc"-compatible devices, the mask will be
+> +  ORed into PMCDR before suspend if the device using this clock is the wake-up
+> +  source and need to be running during low power mode; clear the mask if
+> +  otherwise.
+>  
+> -  fsl,mpc8349-pmc: Sleep specifiers consist of one cell.  For each bit
+> -  that is set in the cell, the corresponding bit in SCCR will be saved
+> -  and cleared on suspend, and restored on resume.  This sleep controller
+> -  supports disabling and resuming devices at any time.
+> +- fsl,sccr-mask: For "fsl,mpc8349-pmc"-compatible devices, the corresponding
+> +  bit specified by the mask in SCCR will be saved and cleared on suspend, and
+> +  restored on resume.
+>  
+> -  fsl,mpc8536-pmc: Sleep specifiers consist of three cells, the third of
+> -  which will be ORed into PMCDR upon suspend, and cleared from PMCDR
+> -  upon resume.  The first two cells are as described for fsl,mpc8578-pmc.
+> -  This sleep controller only supports disabling devices during system
+> -  sleep, or permanently.
+> -
+> -  fsl,mpc8548-pmc: Sleep specifiers consist of one or two cells, the
+> -  first of which will be ORed into DEVDISR (and the second into
+> -  DEVDISR2, if present -- this cell should be zero or absent if the
+> -  hardware does not have DEVDISR2) upon a request for permanent device
+> -  disabling.  This sleep controller does not support configuring devices
+> -  to disable during system sleep (unless supported by another compatible
+> -  match), or dynamically.
+
+You seem to be breaking backwards compatibility with this change. I 
+doubt that is okay on these platforms.
+
+
+> +- fsl,devdisr-mask: Contain one or two cells, depending on the availability of
+> +  DEVDISR2 register.  For compatible devices, the mask will be ORed into DEVDISR
+> +  or DEVDISR2 when the clock should be permenently disabled.
+>  
+>  Example:
+>  
+> -	power@b00 {
+> -		compatible = "fsl,mpc8313-pmc", "fsl,mpc8349-pmc";
+> -		reg = <0xb00 0x100 0xa00 0x100>;
+> -		interrupts = <80 8>;
+> +	power@e0070 {
+> +		compatible = "fsl,mpc8536-pmc", "fsl,mpc8548-pmc";
+> +		reg = <0xe0070 0x20>;
+> +
+> +		etsec1_clk: soc-clk@24 {
+> +			fsl,pmcdr-mask = <0x00000080>;
+> +		};
+> +		etsec2_clk: soc-clk@25 {
+> +			fsl,pmcdr-mask = <0x00000040>;
+> +		};
+> +		etsec3_clk: soc-clk@26 {
+> +			fsl,pmcdr-mask = <0x00000020>;
+> +		};
+>  	};
+> -- 
+> 1.7.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
