@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752874AbeDPQqy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:46:54 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:38412 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752776AbeDPQqv (ORCPT
+        id S1752906AbeDPQrO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:47:14 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34354 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752359AbeDPQqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:46:51 -0400
-X-Google-Smtp-Source: AIpwx4/l1RdAALfjykGCHCwtnl9PCsH/0XU7gNzQl3d32YuA6aBO40o74K876HnhtsPVZ2rAn7O9Hw==
+        Mon, 16 Apr 2018 12:46:50 -0400
+X-Google-Smtp-Source: AIpwx49gBxXRPz6blgfQyLLyiKJf3yKFmVYd19cFQFwLRW6ewX4shsup+6cSO6PvxIOkHq/nuPkf1A==
 From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
 To: Matias Bjorling <mb@lightnvm.io>
 Cc: linux-block@vger.kernel.org, Javier Gonzales <javier@cnexlabs.com>,
         linux-kernel@vger.kernel.org,
         Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH 2/2] lightnvm: pblk: kick writer on new flush points
-Date: Mon, 16 Apr 2018 18:46:16 +0200
-Message-Id: <1523897176-6241-3-git-send-email-hans.ml.holmberg@owltronix.com>
+Subject: [PATCH 1/2] lightnvm: pblk: only try to recover lines with written smeta
+Date: Mon, 16 Apr 2018 18:46:15 +0200
+Message-Id: <1523897176-6241-2-git-send-email-hans.ml.holmberg@owltronix.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523897176-6241-1-git-send-email-hans.ml.holmberg@owltronix.com>
 References: <1523897176-6241-1-git-send-email-hans.ml.holmberg@owltronix.com>
@@ -25,88 +25,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-Unless we kick the writer directly when setting a new flush point, the
-user risks having to wait for up to one second (the default timeout for
-the write thread to be kicked) for the IO to complete.
+When switching between different lun configurations, there is no
+guarantee that all lines that contain closed/open chunks have some
+valid data to recover.
+
+Check that the smeta chunk has been written to instead. Also
+skip bad lines (that does not have enough good chunks).
 
 Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 ---
- drivers/lightnvm/pblk-cache.c | 10 ++++++----
- drivers/lightnvm/pblk-core.c  |  2 +-
- drivers/lightnvm/pblk-rb.c    |  4 ++--
- drivers/lightnvm/pblk.h       |  1 +
- 4 files changed, 10 insertions(+), 7 deletions(-)
+ drivers/lightnvm/pblk-recovery.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-cache.c b/drivers/lightnvm/pblk-cache.c
-index 29a2311..b1c6d7e 100644
---- a/drivers/lightnvm/pblk-cache.c
-+++ b/drivers/lightnvm/pblk-cache.c
-@@ -44,13 +44,15 @@ int pblk_write_to_cache(struct pblk *pblk, struct bio *bio, unsigned long flags)
- 		goto out;
- 	}
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index 3e079c2..9cb6d5d 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -865,18 +865,30 @@ static void pblk_recov_wa_counters(struct pblk *pblk,
+ }
  
--	if (unlikely(!bio_has_data(bio)))
--		goto out;
--
- 	pblk_ppa_set_empty(&w_ctx.ppa);
- 	w_ctx.flags = flags;
--	if (bio->bi_opf & REQ_PREFLUSH)
-+	if (bio->bi_opf & REQ_PREFLUSH) {
- 		w_ctx.flags |= PBLK_FLUSH_ENTRY;
-+		pblk_write_kick(pblk);
-+	}
+ static int pblk_line_was_written(struct pblk_line *line,
+-			    struct pblk_line_meta *lm)
++			    struct pblk *pblk)
+ {
+ 
+-	int i;
+-	int state_mask = NVM_CHK_ST_OFFLINE | NVM_CHK_ST_FREE;
++	struct pblk_line_meta *lm = &pblk->lm;
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct nvm_chk_meta *chunk;
++	struct ppa_addr bppa;
++	int smeta_blk;
+ 
+-	for (i = 0; i < lm->blk_per_line; i++) {
+-		if (!(line->chks[i].state & state_mask))
+-			return 1;
+-	}
++	if (line->state == PBLK_LINESTATE_BAD)
++		return 0;
+ 
+-	return 0;
++	smeta_blk = find_first_zero_bit(line->blk_bitmap, lm->blk_per_line);
++	if (smeta_blk >= lm->blk_per_line)
++		return 0;
 +
-+	if (unlikely(!bio_has_data(bio)))
-+		goto out;
- 
- 	for (i = 0; i < nr_entries; i++) {
- 		void *data = bio_data(bio);
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 94d5d97..ceacd10 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -320,7 +320,7 @@ int pblk_bio_add_pages(struct pblk *pblk, struct bio *bio, gfp_t flags,
- 	return -1;
++	bppa = pblk->luns[smeta_blk].bppa;
++	chunk = &line->chks[pblk_ppa_to_pos(geo, bppa)];
++
++	if (chunk->state & NVM_CHK_ST_FREE)
++		return 0;
++
++	return 1;
  }
  
--static void pblk_write_kick(struct pblk *pblk)
-+void pblk_write_kick(struct pblk *pblk)
- {
- 	wake_up_process(pblk->writer_ts);
- 	mod_timer(&pblk->wtimer, jiffies + msecs_to_jiffies(1000));
-diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-index 52fdd85..7a63291 100644
---- a/drivers/lightnvm/pblk-rb.c
-+++ b/drivers/lightnvm/pblk-rb.c
-@@ -350,7 +350,7 @@ void pblk_rb_write_entry_gc(struct pblk_rb *rb, void *data,
- }
+ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+@@ -915,7 +927,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ 		line->lun_bitmap = ((void *)(smeta_buf)) +
+ 						sizeof(struct line_smeta);
  
- static int pblk_rb_flush_point_set(struct pblk_rb *rb, struct bio *bio,
--				  unsigned int pos)
-+				   unsigned int pos)
- {
- 	struct pblk_rb_entry *entry;
- 	unsigned int sync, flush_point;
-@@ -420,7 +420,7 @@ void pblk_rb_flush(struct pblk_rb *rb)
- 	if (pblk_rb_flush_point_set(rb, NULL, mem))
- 		return;
+-		if (!pblk_line_was_written(line, lm))
++		if (!pblk_line_was_written(line, pblk))
+ 			continue;
  
--	pblk_write_should_kick(pblk);
-+	pblk_write_kick(pblk);
- }
- 
- static int pblk_rb_may_write_flush(struct pblk_rb *rb, unsigned int nr_entries,
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 9c682ac..856ac41 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -837,6 +837,7 @@ void pblk_map_rq(struct pblk *pblk, struct nvm_rq *rqd, unsigned int sentry,
- int pblk_write_ts(void *data);
- void pblk_write_timer_fn(struct timer_list *t);
- void pblk_write_should_kick(struct pblk *pblk);
-+void pblk_write_kick(struct pblk *pblk);
- 
- /*
-  * pblk read path
+ 		/* Lines that cannot be read are assumed as not written here */
 -- 
 2.7.4
