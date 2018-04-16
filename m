@@ -1,118 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753126AbeDPOwV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 10:52:21 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45031 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751183AbeDPOwS (ORCPT
+        id S1751980AbeDPOs7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:48:59 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:62201 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeDPOs5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:52:18 -0400
-X-Google-Smtp-Source: AIpwx48S+rVjZOBCP/Y/JpxTua97ha3LR+kczqOwu2US2ceaGrIL1bqhlkHkFzkL62R16QDQvvbwZw==
-MIME-Version: 1.0
-In-Reply-To: <20180416143130.tls6xtcq3hsv7u7f@flea>
-References: <20180411141641.14675-1-icenowy@aosc.io> <20180411141641.14675-4-icenowy@aosc.io>
- <20180412145628.iaaeue2imiijwx5d@flea> <A027702A-F3F7-4896-B2B8-E024DA521661@aosc.io>
- <CAGb2v66Qi2D1qgF3-iVJFAiznMUzzen0nHM5vsPe7Cyi6QTYpw@mail.gmail.com> <20180416143130.tls6xtcq3hsv7u7f@flea>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 16 Apr 2018 22:51:55 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65VLYc1X2bN5v0_1xokZCEkKFYNLzecnE3WeP8goc2KmQ@mail.gmail.com>
-Message-ID: <CAGb2v65VLYc1X2bN5v0_1xokZCEkKFYNLzecnE3WeP8goc2KmQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 3/5] net: stmmac: dwmac-sun8i: Allow
- getting syscon regmap from device
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Mon, 16 Apr 2018 10:48:57 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w3GElqtv017749
+X-Nifty-SrcIP: [125.199.20.195]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips@linux-mips.org
+Cc: Paul Burton <paul.burton@mips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 7/7] MIPS: boot: rebuild ITB when contained DTB is updated
+Date: Mon, 16 Apr 2018 23:47:47 +0900
+Message-Id: <1523890067-13641-8-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523890067-13641-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1523890067-13641-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 10:31 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Thu, Apr 12, 2018 at 11:23:30PM +0800, Chen-Yu Tsai wrote:
->> On Thu, Apr 12, 2018 at 11:11 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> > 于 2018年4月12日 GMT+08:00 下午10:56:28, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->> >>On Wed, Apr 11, 2018 at 10:16:39PM +0800, Icenowy Zheng wrote:
->> >>> From: Chen-Yu Tsai <wens@csie.org>
->> >>>
->> >>> On the Allwinner R40 SoC, the "GMAC clock" register is in the CCU
->> >>> address space; on the A64 SoC this register is in the SRAM controller
->> >>> address space, and with a different offset.
->> >>>
->> >>> To access the register from another device and hide the internal
->> >>> difference between the device, let it register a regmap named
->> >>> "emac-clock". We can then get the device from the phandle, and
->> >>> retrieve the regmap with dev_get_regmap(); in this situation the
->> >>> regmap_field will be set up to access the only register in the
->> >>regmap.
->> >>>
->> >>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->> >>> [Icenowy: change to use regmaps with single register, change commit
->> >>>  message]
->> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> >>> ---
->> >>>  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 48
->> >>++++++++++++++++++++++-
->> >>>  1 file changed, 46 insertions(+), 2 deletions(-)
->> >>>
->> >>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->> >>b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->> >>> index 1037f6c78bca..b61210c0d415 100644
->> >>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->> >>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->> >>> @@ -85,6 +85,13 @@ const struct reg_field old_syscon_reg_field = {
->> >>>      .msb = 31,
->> >>>  };
->> >>>
->> >>> +/* Specially exported regmap which contains only EMAC register */
->> >>> +const struct reg_field single_reg_field = {
->> >>> +    .reg = 0,
->> >>> +    .lsb = 0,
->> >>> +    .msb = 31,
->> >>> +};
->> >>> +
->> >>
->> >>I'm not sure this would be wise. If we ever need some other register
->> >>exported through the regmap, will have to change all the calling sites
->> >>everywhere in the kernel, which will be a pain and will break
->> >>bisectability.
->> >
->> > In this situation the register can be exported as another
->> >  regmap. Currently the code will access a regmap with name
->> > "emac-clock" for this register.
->> >
->> >>
->> >>Chen-Yu's (or was it yours?) initial solution with a custom writeable
->> >>hook only allowing a single register seemed like a better one.
->> >
->> > But I remember you mentioned that you want it to hide the
->> > difference inside the device.
->>
->> The idea is that a device can export multiple regmaps. This one,
->> the one named "gmac" (in my soon to come v2) or "emac-clock" here,
->> is but one of many possible regmaps, and it only exports the register
->> needed by the GMAC/EMAC.
->
-> I'm not sure this would be wise either. There's a single register map,
-> and as far as I know we don't have a binding to express this in the
-> DT. This means that the customer and provider would have to use the
-> same name, but without anything actually enforcing it aside from
-> "someone in the community knows it".
->
-> This is not a really good design, and I was actually preferring your
-> first option. We shouldn't rely on any undocumented rule. This will be
-> easy to break and hard to maintain.
+Since now, the unnecessary rebuild of ITB has been fixed.  Another
+problem to be taken care of is, missed rebuild of ITB.
 
-So, one regmap per device covering the whole register range, and the
-consumer knows which register to poke by looking at its own compatible.
+For example, board-boston.its.S includes boston.dtb by the /incbin/
+directive.  If boston.dtb is updated, vmlinux.*.dtb must be rebuilt.
+Currently, the dependency between ITB and contained DTB files is not
+described anywhere.  Previously, this problem was hidden since
+vmlinux.*.itb was always rebuilt even if nothing is updated.  By
+fixing the spurious rebuild, this is a real problem now.
 
-That sound right?
+Use the same strategy for automatic generation of the header file
+dependency.  DTC works as a backend of mkimage, and DTC supports -d
+option.  It outputs the dependencies, including binary files pulled
+by the /incbin/ directive.
 
-ChenYu
+The implementation is simpler than cmd_dtc in scripts/Makefile.lib
+since we do not need CPP here.  Just pass -d $(depfile) to DTC, and
+let the resulted $(depfile) processed by fixdep.
+
+It might be unclear why "$(obj)/dts/%.dtb: ;" is needed.  With this
+commit, *.cmd files will contain dependency on DTB files.  In the
+next invocation of build, the *.cmd files will be included, then
+Make will try to find a rule to update *.dtb files.  Unfortunately,
+it is found in scripts/Makefile.lib.  The build rule of $(obj)/%.dtb
+is invoked by if_changed_dep, so it needs to include *.cmd files
+of DTB, but they are not included because we are in arch/mips/boot,
+but those *.cmd files reside in arch/mips/boot/dts/*/.  Cancel the
+pattern rule in scripts/Makefile.lib to suppress unneeded rebuilding
+of DTB.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ arch/mips/boot/Makefile | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/arch/mips/boot/Makefile b/arch/mips/boot/Makefile
+index d102d53..f8dce5b 100644
+--- a/arch/mips/boot/Makefile
++++ b/arch/mips/boot/Makefile
+@@ -163,11 +163,18 @@ quiet_cmd_itb-image = ITB     $@
+ 		$(CONFIG_SHELL) $(MKIMAGE) \
+ 		-D "-I dts -O dtb -p 500 \
+ 			--include $(objtree)/arch/mips \
+-			--warning no-unit_address_vs_reg" \
++			--warning no-unit_address_vs_reg \
++			-d $(depfile)" \
+ 		-f $(2) $@
+ 
+ $(obj)/vmlinux.itb: $(obj)/vmlinux.its $(obj)/vmlinux.bin FORCE
+-	$(call if_changed,itb-image,$<)
++	$(call if_changed_dep,itb-image,$<)
+ 
+ $(obj)/vmlinux.%.itb: $(obj)/vmlinux.%.its $(obj)/vmlinux.bin.% FORCE
+-	$(call if_changed,itb-image,$<)
++	$(call if_changed_dep,itb-image,$<)
++
++# The -d option of DTC outputs dependencies of binaries included by the
++# /incbin/ directive.  When .*.cmd files are included, Kbuild tries to
++# update *.dtb because it sees a pattern rule defined in scripts/Makefile.lib.
++# The rule must be cancelled by a more specific rule.
++$(obj)/dts/%.dtb: ;
+-- 
+2.7.4
