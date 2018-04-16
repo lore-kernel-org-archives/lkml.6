@@ -1,65 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752924AbeDPRxh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 13:53:37 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:59042 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751135AbeDPRxg (ORCPT
+        id S1752941AbeDPRzQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 13:55:16 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:37852 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeDPRzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 13:53:36 -0400
-From: <ahsan_hussain@mentor.com>
-To: <linux@roeck-us.net>
-CC: <jdelvare@suse.com>, <linux-hwmon@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ahsan_hussain@mentor.com>,
-        <noor_ahsan@mentor.com>, <cedric_hombourger@mentor.com>
-Subject: [PATCH 1/1] hwmon: (ina2xx) initialize mutex before locking
-Date: Mon, 16 Apr 2018 22:53:23 +0500
-Message-ID: <1523901203-2981-1-git-send-email-ahsan_hussain@mentor.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 16 Apr 2018 13:55:15 -0400
+X-Google-Smtp-Source: AIpwx4+bDdYE052t9suT1BFMZ6RbBkJHmBlEhbWvaTbxavABxhnCDo5PdtwA28gW+82JqOp9mzK/APA8CiNEl1MJBug=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+In-Reply-To: <20dd27aecaac4a158acecb9dbb5365327f0696ec.1521620371.git.rgb@redhat.com>
+References: <cover.1521620371.git.rgb@redhat.com> <20dd27aecaac4a158acecb9dbb5365327f0696ec.1521620371.git.rgb@redhat.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 16 Apr 2018 10:55:13 -0700
+X-Google-Sender-Auth: RwoaTwPosRn3jU1A3r-2z01SKak
+Message-ID: <CAGXu5jJrCntv1fGLtVALyh5+UGdn5DvCkM230Vn7QGutY8k1og@mail.gmail.com>
+Subject: Re: [PATCH ghak21 V4 1/2] audit: remove path param from link denied function
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ahsan Hussain <ahsan_hussain@mentor.com>
+On Wed, Mar 21, 2018 at 1:42 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> In commit 45b578fe4c3cade6f4ca1fc934ce199afd857edc
+> ("audit: link denied should not directly generate PATH record")
+> the need for the struct path *link parameter was removed.
+> Remove the now useless struct path argument.
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  fs/namei.c            | 4 ++--
+>  include/linux/audit.h | 6 ++----
+>  kernel/audit.c        | 3 +--
+>  3 files changed, 5 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 9cc91fb..e3682bb 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -945,7 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
+>         if (nd->flags & LOOKUP_RCU)
+>                 return -ECHILD;
+>
+> -       audit_log_link_denied("follow_link", &nd->stack[0].link);
+> +       audit_log_link_denied("follow_link");
+>         return -EACCES;
+>  }
+>
+> @@ -1011,7 +1011,7 @@ static int may_linkat(struct path *link)
+>         if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
+>                 return 0;
+>
+> -       audit_log_link_denied("linkat", link);
+> +       audit_log_link_denied("linkat");
+>         return -EPERM;
+>  }
 
-Upstream commit 8d008c0c ("hwmon: (ina2xx) Make calibration register
-value fixed"), makes ina2xx_set_shunt() call mutex_lock on an
-un-initialized mutex. Initialize it prior so we don't get a NULL pointer
-dereference error.
+This removed the "link" details in both cases, and then commit
+ea841bafda3f ("audit: add refused symlink to audit_names") added back
+one of them:
 
-Fixes: 8d008c0c ("hwmon: (ina2xx) Make calibration register value fixed")
+> diff --git a/fs/namei.c b/fs/namei.c
+> index e3682bb72cb5..5f8e8e2732e1 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -945,6 +945,7 @@ static inline int may_follow_link(struct nameidata *nd)
+>         if (nd->flags & LOOKUP_RCU)
+>                 return -ECHILD;
+>
+> +       audit_inode(nd->name, nd->stack[0].link.dentry, 0);
+>         audit_log_link_denied("follow_link");
+>         return -EACCES;
+>  }
 
-Signed-off-by: Ahsan Hussain <ahsan_hussain@mentor.com>
----
- drivers/hwmon/ina2xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Why remove it in the first place, and why add it back open-coded in
+only one place?
 
-diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
-index a629f7c..1304f01 100644
---- a/drivers/hwmon/ina2xx.c
-+++ b/drivers/hwmon/ina2xx.c
-@@ -457,6 +457,8 @@ static int ina2xx_probe(struct i2c_client *client,
- 			val = INA2XX_RSHUNT_DEFAULT;
- 	}
- 
-+	mutex_init(&data->config_lock);
-+
- 	ina2xx_set_shunt(data, val);
- 
- 	ina2xx_regmap_config.max_register = data->config->registers;
-@@ -473,8 +475,6 @@ static int ina2xx_probe(struct i2c_client *client,
- 		return -ENODEV;
- 	}
- 
--	mutex_init(&data->config_lock);
--
- 	data->groups[group++] = &ina2xx_group;
- 	if (id->driver_data == ina226)
- 		data->groups[group++] = &ina226_group;
+-Kees
+
 -- 
-2.7.4
+Kees Cook
+Pixel Security
