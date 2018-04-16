@@ -1,100 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeDPBrg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 21:47:36 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45092 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752609AbeDPBrf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 21:47:35 -0400
-X-Google-Smtp-Source: AIpwx4/Dj52LlL12nMpxB5qA/Uk3OIF5K/krgq8Vw3ka7fnVboQX/7XVtfh1ryyZko/OQUAMnXviCg==
-Date: Mon, 16 Apr 2018 10:47:29 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180416014729.GB1034@jagdpanzerIV>
-References: <20180413124704.19335-1-pmladek@suse.com>
- <20180413101233.0792ebf0@gandalf.local.home>
- <20180414023516.GA17806@tigerII.localdomain>
+        id S1752690AbeDPBwz (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 21:52:55 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52428 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751774AbeDPBwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 21:52:54 -0400
+Subject: Re: [PATCH] f2fs: clear PageError on writepage
+To: Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180413010716.53610-1-jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <f1821d3a-8904-6142-61aa-c7e4fc0d4934@huawei.com>
+Date: Mon, 16 Apr 2018 09:52:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180414023516.GA17806@tigerII.localdomain>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180413010716.53610-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/14/18 11:35), Sergey Senozhatsky wrote:
-> On (04/13/18 10:12), Steven Rostedt wrote:
-> > 
-> > > The interval is set to one hour. It is rather arbitrary selected time.
-> > > It is supposed to be a compromise between never print these messages,
-> > > do not lockup the machine, do not fill the entire buffer too quickly,
-> > > and get information if something changes over time.
-> > 
-> > 
-> > I think an hour is incredibly long. We only allow 100 lines per hour for
-> > printks happening inside another printk?
-> > 
-> > I think 5 minutes (at most) would probably be plenty. One minute may be
-> > good enough.
+On 2018/4/13 9:07, Jaegeuk Kim wrote:
+> This patch clears PageError in some pages tagged by read path, but when we
+> write the pages with valid contents, writepage should clear the bit likewise
+> ext4.
 > 
-> Besides 100 lines is absolutely not enough for any real lockdep splat.
-> My call would be - up to 1000 lines in a 1 minute interval.
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Well, if we want to basically turn printk_safe() into printk_safe_ratelimited().
-I'm not so sure about it.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Besides the patch also rate limits printk_nmi->logbuf - the logbuf
-PRINTK_NMI_DEFERRED_CONTEXT_MASK bypass, which is way too important
-to rate limit it - for no reason.
-
-Dunno, can we keep printk_safe() the way it is and introduce a new
-printk_safe_ratelimited() specifically for call_console_drivers()?
-
-Lockdep splat is a one time event, if we lose half of it - we, most
-like, lose the entire report. And call_console_drivers() is not the
-one and only source of warnings/errors/etc. So if we turn printk_safe
-into printk_safe_ratelimited() [not sure we want to do it] for all
-then I want restrictions to be as low as possible, IOW to log_store()
-as many lines as possible.
-
-Chatty console drivers is not exactly the case which printk_safe() was
-meant to fix. I'm pretty sure I put call_console_drivers() under printk_safe
-just because we call console_drivers with local IRQs disabled anyway and I
-was too lazy to do something like this
-
----
-
-@@ -2377,6 +2377,7 @@ void console_unlock(void)
- 		console_idx = log_next(console_idx);
- 		console_seq++;
- 		raw_spin_unlock(&logbuf_lock);
-+		__printk_safe_exit();
- 
- 		/*
- 		 * While actively printing out messages, if another printk()
-@@ -2390,6 +2391,7 @@ void console_unlock(void)
- 		call_console_drivers(ext_text, ext_len, text, len);
- 		start_critical_timings();
- 
-+		__printk_safe_enter();
- 		if (console_lock_spinning_disable_and_check()) {
- 			printk_safe_exit_irqrestore(flags);
- 			return;
-
----
-
-But, in general, I don't think there are real reasons for us to call
-console drivers from printk_safe section: call_console_drivers()->printk()
-will not deadlock, because vprintk_emit()->console_trylock_spinning() will
-always fail.
-
-	-ss
+Thanks,
