@@ -1,189 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753782AbeDPGug (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:50:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51729 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753810AbeDPGuf (ORCPT
+        id S1753831AbeDPGxM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:53:12 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:56686 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753215AbeDPGxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:50:35 -0400
-Date: Sun, 15 Apr 2018 23:49:03 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-efex7746id4w4wa03nqxvh3m@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, wangnan0@huawei.com,
-        adrian.hunter@intel.com, acme@redhat.com, namhyung@kernel.org,
-        dsahern@gmail.com, tglx@linutronix.de, jolsa@kernel.org,
-        ak@linux.intel.com, hpa@zytor.com, yao.jin@linux.intel.com,
-        ravi.bangoria@linux.vnet.ibm.com, mliska@suse.cz,
-        tmricht@linux.vnet.ibm.com, mingo@kernel.org
-Reply-To: hpa@zytor.com, ak@linux.intel.com, yao.jin@linux.intel.com,
-        ravi.bangoria@linux.vnet.ibm.com, mliska@suse.cz,
-        tmricht@linux.vnet.ibm.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, acme@redhat.com, adrian.hunter@intel.com,
-        wangnan0@huawei.com, dsahern@gmail.com, namhyung@kernel.org,
-        jolsa@kernel.org, tglx@linutronix.de
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf annotate: Handle variables in 'sub', 'or'
- and many other instructions
-Git-Commit-ID: b0d5c81e872ed21de1e56feb0fa6e4161da7be61
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 16 Apr 2018 02:53:11 -0400
+Date: Mon, 16 Apr 2018 08:52:59 +0200
+From: Ladislav Michl <ladis@linux-mips.org>
+To: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, Roger Quadros <rogerq@ti.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v2] mtd: onenand: omap2: Disable DMA for HIGHMEM buffers
+Message-ID: <20180416065256.GA24455@lenoch>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b0d5c81e872ed21de1e56feb0fa6e4161da7be61
-Gitweb:     https://git.kernel.org/tip/b0d5c81e872ed21de1e56feb0fa6e4161da7be61
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 12 Apr 2018 16:28:18 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 13 Apr 2018 10:00:05 -0300
+dma_map_single doesn't get the proper DMA address for vmalloced area,
+so disable DMA in this case.
 
-perf annotate: Handle variables in 'sub', 'or' and many other instructions
-
-Just like is done for 'mov' and others that can have as source or
-targets variables resolved by objdump, to make them more compact:
-
--               orb    $0x4,0x224d71(%rip)        # 226ca4 <_rtld_global+0xca4>
-+               orb    $0x4,_rtld_global+0xca4
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Martin Liška <mliska@suse.cz>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-efex7746id4w4wa03nqxvh3m@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+Reported-by: "H. Nikolaus Schaller" <hns@goldelico.com>
+Tested-by: "H. Nikolaus Schaller" <hns@goldelico.com>
 ---
- tools/perf/arch/x86/annotate/instructions.c | 67 ++++++++++++++++++++++++++++-
- 1 file changed, 66 insertions(+), 1 deletion(-)
+ Changes:
+ -v2: Added Tested-by tag, based on v4.17-rc1 (no change in patch itself)
 
-diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
-index 5bd1ba8c0282..44f5aba78210 100644
---- a/tools/perf/arch/x86/annotate/instructions.c
-+++ b/tools/perf/arch/x86/annotate/instructions.c
-@@ -1,21 +1,43 @@
- // SPDX-License-Identifier: GPL-2.0
- static struct ins x86__instructions[] = {
-+	{ .name = "adc",	.ops = &mov_ops,  },
-+	{ .name = "adcb",	.ops = &mov_ops,  },
-+	{ .name = "adcl",	.ops = &mov_ops,  },
- 	{ .name = "add",	.ops = &mov_ops,  },
- 	{ .name = "addl",	.ops = &mov_ops,  },
- 	{ .name = "addq",	.ops = &mov_ops,  },
-+	{ .name = "addsd",	.ops = &mov_ops,  },
- 	{ .name = "addw",	.ops = &mov_ops,  },
- 	{ .name = "and",	.ops = &mov_ops,  },
-+	{ .name = "andb",	.ops = &mov_ops,  },
-+	{ .name = "andl",	.ops = &mov_ops,  },
-+	{ .name = "andpd",	.ops = &mov_ops,  },
-+	{ .name = "andps",	.ops = &mov_ops,  },
-+	{ .name = "andq",	.ops = &mov_ops,  },
-+	{ .name = "andw",	.ops = &mov_ops,  },
-+	{ .name = "bsr",	.ops = &mov_ops,  },
-+	{ .name = "bt",		.ops = &mov_ops,  },
-+	{ .name = "btr",	.ops = &mov_ops,  },
- 	{ .name = "bts",	.ops = &mov_ops,  },
-+	{ .name = "btsq",	.ops = &mov_ops,  },
- 	{ .name = "call",	.ops = &call_ops, },
- 	{ .name = "callq",	.ops = &call_ops, },
-+	{ .name = "cmovbe",	.ops = &mov_ops,  },
-+	{ .name = "cmove",	.ops = &mov_ops,  },
-+	{ .name = "cmovae",	.ops = &mov_ops,  },
- 	{ .name = "cmp",	.ops = &mov_ops,  },
- 	{ .name = "cmpb",	.ops = &mov_ops,  },
- 	{ .name = "cmpl",	.ops = &mov_ops,  },
- 	{ .name = "cmpq",	.ops = &mov_ops,  },
- 	{ .name = "cmpw",	.ops = &mov_ops,  },
- 	{ .name = "cmpxch",	.ops = &mov_ops,  },
-+	{ .name = "cmpxchg",	.ops = &mov_ops,  },
-+	{ .name = "cs",		.ops = &mov_ops,  },
- 	{ .name = "dec",	.ops = &dec_ops,  },
- 	{ .name = "decl",	.ops = &dec_ops,  },
-+	{ .name = "divsd",	.ops = &mov_ops,  },
-+	{ .name = "divss",	.ops = &mov_ops,  },
-+	{ .name = "gs",		.ops = &mov_ops,  },
- 	{ .name = "imul",	.ops = &mov_ops,  },
- 	{ .name = "inc",	.ops = &dec_ops,  },
- 	{ .name = "incl",	.ops = &dec_ops,  },
-@@ -57,25 +79,68 @@ static struct ins x86__instructions[] = {
- 	{ .name = "lea",	.ops = &mov_ops,  },
- 	{ .name = "lock",	.ops = &lock_ops, },
- 	{ .name = "mov",	.ops = &mov_ops,  },
-+	{ .name = "movapd",	.ops = &mov_ops,  },
-+	{ .name = "movaps",	.ops = &mov_ops,  },
- 	{ .name = "movb",	.ops = &mov_ops,  },
- 	{ .name = "movdqa",	.ops = &mov_ops,  },
-+	{ .name = "movdqu",	.ops = &mov_ops,  },
- 	{ .name = "movl",	.ops = &mov_ops,  },
- 	{ .name = "movq",	.ops = &mov_ops,  },
-+	{ .name = "movsd",	.ops = &mov_ops,  },
- 	{ .name = "movslq",	.ops = &mov_ops,  },
-+	{ .name = "movss",	.ops = &mov_ops,  },
-+	{ .name = "movupd",	.ops = &mov_ops,  },
-+	{ .name = "movups",	.ops = &mov_ops,  },
-+	{ .name = "movw",	.ops = &mov_ops,  },
- 	{ .name = "movzbl",	.ops = &mov_ops,  },
- 	{ .name = "movzwl",	.ops = &mov_ops,  },
-+	{ .name = "mulsd",	.ops = &mov_ops,  },
-+	{ .name = "mulss",	.ops = &mov_ops,  },
- 	{ .name = "nop",	.ops = &nop_ops,  },
- 	{ .name = "nopl",	.ops = &nop_ops,  },
- 	{ .name = "nopw",	.ops = &nop_ops,  },
- 	{ .name = "or",		.ops = &mov_ops,  },
-+	{ .name = "orb",	.ops = &mov_ops,  },
- 	{ .name = "orl",	.ops = &mov_ops,  },
-+	{ .name = "orps",	.ops = &mov_ops,  },
-+	{ .name = "orq",	.ops = &mov_ops,  },
-+	{ .name = "pand",	.ops = &mov_ops,  },
-+	{ .name = "paddq",	.ops = &mov_ops,  },
-+	{ .name = "pcmpeqb",	.ops = &mov_ops,  },
-+	{ .name = "por",	.ops = &mov_ops,  },
-+	{ .name = "rclb",	.ops = &mov_ops,  },
-+	{ .name = "rcll",	.ops = &mov_ops,  },
-+	{ .name = "retq",	.ops = &ret_ops,  },
-+	{ .name = "sbb",	.ops = &mov_ops,  },
-+	{ .name = "sbbl",	.ops = &mov_ops,  },
-+	{ .name = "sete",	.ops = &mov_ops,  },
-+	{ .name = "sub",	.ops = &mov_ops,  },
-+	{ .name = "subl",	.ops = &mov_ops,  },
-+	{ .name = "subq",	.ops = &mov_ops,  },
-+	{ .name = "subsd",	.ops = &mov_ops,  },
-+	{ .name = "subw",	.ops = &mov_ops,  },
- 	{ .name = "test",	.ops = &mov_ops,  },
- 	{ .name = "testb",	.ops = &mov_ops,  },
- 	{ .name = "testl",	.ops = &mov_ops,  },
-+	{ .name = "ucomisd",	.ops = &mov_ops,  },
-+	{ .name = "ucomiss",	.ops = &mov_ops,  },
-+	{ .name = "vaddsd",	.ops = &mov_ops,  },
-+	{ .name = "vandpd",	.ops = &mov_ops,  },
-+	{ .name = "vmovdqa",	.ops = &mov_ops,  },
-+	{ .name = "vmovq",	.ops = &mov_ops,  },
-+	{ .name = "vmovsd",	.ops = &mov_ops,  },
-+	{ .name = "vmulsd",	.ops = &mov_ops,  },
-+	{ .name = "vorpd",	.ops = &mov_ops,  },
-+	{ .name = "vsubsd",	.ops = &mov_ops,  },
-+	{ .name = "vucomisd",	.ops = &mov_ops,  },
- 	{ .name = "xadd",	.ops = &mov_ops,  },
- 	{ .name = "xbeginl",	.ops = &jump_ops, },
- 	{ .name = "xbeginq",	.ops = &jump_ops, },
--	{ .name = "retq",	.ops = &ret_ops,  },
-+	{ .name = "xchg",	.ops = &mov_ops,  },
-+	{ .name = "xor",	.ops = &mov_ops, },
-+	{ .name = "xorb",	.ops = &mov_ops, },
-+	{ .name = "xorpd",	.ops = &mov_ops, },
-+	{ .name = "xorps",	.ops = &mov_ops, },
- };
+ drivers/mtd/nand/onenand/omap2.c | 105 +++++++++++--------------------
+ 1 file changed, 38 insertions(+), 67 deletions(-)
+
+diff --git a/drivers/mtd/nand/onenand/omap2.c b/drivers/mtd/nand/onenand/omap2.c
+index 9c159f0dd9a6..321137158ff3 100644
+--- a/drivers/mtd/nand/onenand/omap2.c
++++ b/drivers/mtd/nand/onenand/omap2.c
+@@ -375,56 +375,42 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
+ {
+ 	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
+ 	struct onenand_chip *this = mtd->priv;
+-	dma_addr_t dma_src, dma_dst;
+-	int bram_offset;
++	struct device *dev = &c->pdev->dev;
+ 	void *buf = (void *)buffer;
++	dma_addr_t dma_src, dma_dst;
++	int bram_offset, err;
+ 	size_t xtra;
+-	int ret;
  
- static bool x86__ins_is_fused(struct arch *arch, const char *ins1,
+ 	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
+-	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
+-		goto out_copy;
+-
+-	/* panic_write() may be in an interrupt context */
+-	if (in_interrupt() || oops_in_progress)
++	/*
++	 * If the buffer address is not DMA-able, len is not long enough to make
++	 * DMA transfers profitable or panic_write() may be in an interrupt
++	 * context fallback to PIO mode.
++	 */
++	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
++	    count < 384 || in_interrupt() || oops_in_progress )
+ 		goto out_copy;
+ 
+-	if (buf >= high_memory) {
+-		struct page *p1;
+-
+-		if (((size_t)buf & PAGE_MASK) !=
+-		    ((size_t)(buf + count - 1) & PAGE_MASK))
+-			goto out_copy;
+-		p1 = vmalloc_to_page(buf);
+-		if (!p1)
+-			goto out_copy;
+-		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
+-	}
+-
+ 	xtra = count & 3;
+ 	if (xtra) {
+ 		count -= xtra;
+ 		memcpy(buf + count, this->base + bram_offset + count, xtra);
+ 	}
+ 
++	dma_dst = dma_map_single(dev, buf, count, DMA_FROM_DEVICE);
+ 	dma_src = c->phys_base + bram_offset;
+-	dma_dst = dma_map_single(&c->pdev->dev, buf, count, DMA_FROM_DEVICE);
+-	if (dma_mapping_error(&c->pdev->dev, dma_dst)) {
+-		dev_err(&c->pdev->dev,
+-			"Couldn't DMA map a %d byte buffer\n",
+-			count);
+-		goto out_copy;
+-	}
+ 
+-	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+-	dma_unmap_single(&c->pdev->dev, dma_dst, count, DMA_FROM_DEVICE);
+-
+-	if (ret) {
+-		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
++	if (dma_mapping_error(dev, dma_dst)) {
++		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
+ 		goto out_copy;
+ 	}
+ 
+-	return 0;
++	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
++	dma_unmap_single(dev, dma_dst, count, DMA_FROM_DEVICE);
++	if (!err)
++		return 0;
++
++	dev_err(dev, "timeout waiting for DMA\n");
+ 
+ out_copy:
+ 	memcpy(buf, this->base + bram_offset, count);
+@@ -437,49 +423,34 @@ static int omap2_onenand_write_bufferram(struct mtd_info *mtd, int area,
+ {
+ 	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
+ 	struct onenand_chip *this = mtd->priv;
+-	dma_addr_t dma_src, dma_dst;
+-	int bram_offset;
++	struct device *dev = &c->pdev->dev;
+ 	void *buf = (void *)buffer;
+-	int ret;
++	dma_addr_t dma_src, dma_dst;
++	int bram_offset, err;
+ 
+ 	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
+-	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
+-		goto out_copy;
+-
+-	/* panic_write() may be in an interrupt context */
+-	if (in_interrupt() || oops_in_progress)
++	/*
++	 * If the buffer address is not DMA-able, len is not long enough to make
++	 * DMA transfers profitable or panic_write() may be in an interrupt
++	 * context fallback to PIO mode.
++	 */
++	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
++	    count < 384 || in_interrupt() || oops_in_progress )
+ 		goto out_copy;
+ 
+-	if (buf >= high_memory) {
+-		struct page *p1;
+-
+-		if (((size_t)buf & PAGE_MASK) !=
+-		    ((size_t)(buf + count - 1) & PAGE_MASK))
+-			goto out_copy;
+-		p1 = vmalloc_to_page(buf);
+-		if (!p1)
+-			goto out_copy;
+-		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
+-	}
+-
+-	dma_src = dma_map_single(&c->pdev->dev, buf, count, DMA_TO_DEVICE);
++	dma_src = dma_map_single(dev, buf, count, DMA_TO_DEVICE);
+ 	dma_dst = c->phys_base + bram_offset;
+-	if (dma_mapping_error(&c->pdev->dev, dma_src)) {
+-		dev_err(&c->pdev->dev,
+-			"Couldn't DMA map a %d byte buffer\n",
+-			count);
+-		return -1;
+-	}
+-
+-	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+-	dma_unmap_single(&c->pdev->dev, dma_src, count, DMA_TO_DEVICE);
+-
+-	if (ret) {
+-		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
++	if (dma_mapping_error(dev, dma_src)) {
++		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
+ 		goto out_copy;
+ 	}
+ 
+-	return 0;
++	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
++	dma_unmap_page(dev, dma_src, count, DMA_TO_DEVICE);
++	if (!err)
++		return 0;
++
++	dev_err(dev, "timeout waiting for DMA\n");
+ 
+ out_copy:
+ 	memcpy(this->base + bram_offset, buf, count);
+-- 
+2.17.0
