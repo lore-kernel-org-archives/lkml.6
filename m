@@ -1,106 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753584AbeDPGrq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:47:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59453 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752221AbeDPGrn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753526AbeDPGrp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:47:45 -0400
+Received: from m12-18.163.com ([220.181.12.18]:44408 "EHLO m12-18.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751199AbeDPGrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Apr 2018 02:47:43 -0400
-Date: Sun, 15 Apr 2018 23:47:35 -0700
-From: tip-bot for Thomas Richter <tipbot@zytor.com>
-Message-ID: <tip-4f75f1cbf95e2f0853cd229d042b203931b899af@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, hpa@zytor.com,
-        brueckner@linux.vnet.ibm.com, heiko.carstens@de.ibm.com,
-        tmricht@linux.ibm.com, tglx@linutronix.de, acme@redhat.com,
-        mingo@kernel.org, schwidefsky@de.ibm.com
-Reply-To: schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        tmricht@linux.ibm.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        brueckner@linux.vnet.ibm.com, mingo@kernel.org, acme@redhat.com,
-        tglx@linutronix.de
-In-Reply-To: <20180412133246.92801-1-tmricht@linux.ibm.com>
-References: <20180412133246.92801-1-tmricht@linux.ibm.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf record: Change warning for missing sysfs
- entry to debug
-Git-Commit-ID: 4f75f1cbf95e2f0853cd229d042b203931b899af
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+From: sxauwsk <sxauwsk@163.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wangshikai@inno-instrument.cn, sxauwsk <sxauwsk@163.com>,
+        guojian <guojian@innoinstrument.net>
+Subject: [PATCH] [PATCH v1] spi: cadence: Add usleep_range() for  cdns_spi_fill_tx_fifo()
+Date: Mon, 16 Apr 2018 14:46:40 +0800
+Message-Id: <1523861200-34130-1-git-send-email-sxauwsk@163.com>
+X-Mailer: git-send-email 1.7.9.5
+X-CM-TRANSID: EsCowAAn5EXvRtRaPtkLFg--.12687S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKF43Xw1DZw4DtryUAFWfAFb_yoWkKrbEvF
+        18Aw1DGw45KF9rA3W29FsxAFWv9an5Cr1kuFWqqa9xJw47Z3Z2vr95Zr1DuwsxCa1UWF9x
+        ZrnYkayUArnxKjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRJ3ktUUUUU==
+X-Originating-IP: [113.140.17.238]
+X-CM-SenderInfo: 5v0d34lvn6il2tof0z/1tbiQBAqJlSIVnL2AAAAsS
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4f75f1cbf95e2f0853cd229d042b203931b899af
-Gitweb:     https://git.kernel.org/tip/4f75f1cbf95e2f0853cd229d042b203931b899af
-Author:     Thomas Richter <tmricht@linux.ibm.com>
-AuthorDate: Thu, 12 Apr 2018 15:32:46 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 13 Apr 2018 09:59:56 -0300
+In case of xspi work in busy condition, may send bytes failed.
+once something wrong, spi controller did't work any more
 
-perf record: Change warning for missing sysfs entry to debug
+My test found this situation appear in both of read/write process.
+so when TX FIFO is full, add one byte delay before send data;
 
-Using perf on 4.16.0 kernel on s390 shows this warning:
-
-   failed: can't open node sysfs data
-
-each time I run command perf record ... for example:
-
-  [root@s35lp76 perf]# ./perf record -e rB0000 -- sleep 1
-  [ perf record: Woken up 1 times to write data ]
-  failed: can't open node sysfs data
-  [ perf record: Captured and wrote 0.001 MB perf.data (4 samples) ]
-  [root@s35lp76 perf]#
-
-It turns out commit e2091cedd51bf ("perf tools: Add MEM_TOPOLOGY feature
-to perf data file") tries to open directory named /sys/devices/system/node/
-which does not exist on s390.
-
-This is the call stack:
- __cmd_record
- +---> perf_session__write_header
-       +---> perf_header__adds_write
-             +---> do_write_feat
-	           +---> write_mem_topology
-		         +---> build_mem_topology
-			       prints warning
-
-The issue starts in do_write_feat() which unconditionally loops over all
-features and now includes HEADER_MEM_TOPOLOGY and calls write_mem_topology().
-
-Function record__init_features() at the beginning of __cmd_record() sets
-all features and then turns off some of them.
-
-Fix this by changing the warning to a level 2 debug output statement.
-
-So it is only shown when debug level 2 or higher is set.
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Link: http://lkml.kernel.org/r/20180412133246.92801-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: sxauwsk <sxauwsk@163.com>
+Signed-off-by: guojian <guojian@innoinstrument.net>
+Signed-off-by: wangshikai <wangshikai@inno-instrument.cn>
 ---
- tools/perf/util/header.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi-cadence.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 121df1683c36..a8bff2178fbc 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1320,7 +1320,8 @@ static int build_mem_topology(struct memory_node *nodes, u64 size, u64 *cntp)
+diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
+index 66ae055..9694042 100644
+--- a/drivers/spi/spi-cadence.c
++++ b/drivers/spi/spi-cadence.c
+@@ -315,9 +315,11 @@ static void cdns_spi_fill_tx_fifo(struct cdns_spi *xspi)
+ 	       (xspi->tx_bytes > 0)) {
  
- 	dir = opendir(path);
- 	if (!dir) {
--		pr_warning("failed: can't open node sysfs data\n");
-+		pr_debug2("%s: could't read %s, does this arch have topology information?\n",
-+			  __func__, path);
- 		return -1;
- 	}
+ 		/* When xspi in busy condition, bytes may send failed,
+-		 * caused communication failure so add one byte delay
++		 * then spi control did't work thoroughly, add one byte delay
+ 		 */
+-		usleep_range(10, 20);
++		if (cdns_spi_read(xspi, CDNS_SPI_ISR_OFFSET) &
++		    CDNS_SPI_IXR_TXFULL_MASK)
++			usleep_range(10, 20);
  
+ 		if (xspi->txbuf)
+ 			cdns_spi_write(xspi, CDNS_SPI_TXD, *xspi->txbuf++);
+-- 
+1.7.9.5
