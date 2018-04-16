@@ -1,39 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeDPRnj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 13:43:39 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:44464 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751159AbeDPRnh (ORCPT
+        id S1753080AbeDPRps (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 13:45:48 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35891 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752750AbeDPRpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 13:43:37 -0400
-Date: Mon, 16 Apr 2018 13:43:33 -0400 (EDT)
-Message-Id: <20180416.134333.1584175683168282946.davem@davemloft.net>
-To: ryder.lee@mediatek.com
-Cc: sean.wang@mediatek.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] net: mediatek: use of_device_get_match_data()
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <9bf87205f84062580934168774d690d4cd2bf26b.1523347340.git.ryder.lee@mediatek.com>
-References: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
-        <9bf87205f84062580934168774d690d4cd2bf26b.1523347340.git.ryder.lee@mediatek.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 16 Apr 2018 13:45:46 -0400
+X-Google-Smtp-Source: AIpwx48mOpfTEsJ1PUTHpIR+CDsM+r/3BWTMJuY0Wn1P8GMS7va0p4sIwEphlHRbhgvekqvjN/eePA==
+Date: Mon, 16 Apr 2018 10:45:42 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Vignesh R <vigneshr@ti.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v2 1/3] Input: ti_am335x_tsc - Mark IRQ as wakeup capable
+Message-ID: <20180416174542.GB77055@dtor-ws>
+References: <20180414095153.32060-1-vigneshr@ti.com>
+ <20180414095153.32060-2-vigneshr@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180414095153.32060-2-vigneshr@ti.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ryder Lee <ryder.lee@mediatek.com>
-Date: Mon, 16 Apr 2018 10:33:41 +0800
-
-> The usage of of_device_get_match_data() reduce the code size a bit.
+On Sat, Apr 14, 2018 at 03:21:51PM +0530, Vignesh R wrote:
+> On AM335x, ti_am335x_tsc can wake up the system from suspend, mark the
+> IRQ as wakeup capable, so that device irq is not disabled during system
+> suspend.
 > 
-> Also, the only way to call mtk_probe() is to match an entry in
-> of_mtk_match[], so match cannot be NULL.
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
 > 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> v2: No changes
+> 
+>  drivers/input/touchscreen/ti_am335x_tsc.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
+> index f1043ae71dcc..810e05c9c4f5 100644
+> --- a/drivers/input/touchscreen/ti_am335x_tsc.c
+> +++ b/drivers/input/touchscreen/ti_am335x_tsc.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/sort.h>
+> +#include <linux/pm_wakeirq.h>
+>  
+>  #include <linux/mfd/ti_am335x_tscadc.h>
+>  
+> @@ -432,6 +433,12 @@ static int titsc_probe(struct platform_device *pdev)
+>  		goto err_free_mem;
+>  	}
+>  
+> +	if (device_may_wakeup(tscadc_dev->dev)) {
+> +		err = dev_pm_set_wake_irq(tscadc_dev->dev, ts_dev->irq);
 
-Applied to net-next.
+Hmm, most of the drivers simply use enable_irq_wake()/disable_irq_wake()
+in suspend/resume paths and use dev_pm_set_wake_irq() only for dedicated
+and distinct wake interrupts. Why do we not follow the same pattern
+here?
+
+Thanks.
+
+> +		if (err)
+> +			dev_err(&pdev->dev, "irq wake enable failed.\n");
+> +	}
+> +
+>  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_FIFO0THRES);
+>  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_EOS);
+>  	err = titsc_config_wires(ts_dev);
+> @@ -462,6 +469,7 @@ static int titsc_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  err_free_irq:
+> +	dev_pm_clear_wake_irq(tscadc_dev->dev);
+>  	free_irq(ts_dev->irq, ts_dev);
+>  err_free_mem:
+>  	input_free_device(input_dev);
+> @@ -474,6 +482,7 @@ static int titsc_remove(struct platform_device *pdev)
+>  	struct titsc *ts_dev = platform_get_drvdata(pdev);
+>  	u32 steps;
+>  
+> +	dev_pm_clear_wake_irq(ts_dev->mfd_tscadc->dev);
+>  	free_irq(ts_dev->irq, ts_dev);
+>  
+>  	/* total steps followed by the enable mask */
+> -- 
+> 2.17.0
+> 
+
+-- 
+Dmitry
