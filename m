@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754833AbeDPLhB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 07:37:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36796 "EHLO mx2.suse.de"
+        id S1754914AbeDPLhO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 07:37:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36806 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754741AbeDPLg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:36:57 -0400
+        id S1754103AbeDPLhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 07:37:00 -0400
 From: Petr Mladek <pmladek@suse.com>
 To: Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
         Miroslav Benes <mbenes@suse.cz>
 Cc: Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
         Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
         linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v3 1/2] livepatch: Initialize shadow variables safely by a custom callback
-Date: Mon, 16 Apr 2018 13:36:46 +0200
-Message-Id: <20180416113647.25288-2-pmladek@suse.com>
+Subject: [PATCH v3 2/2] livepatch: Allow to call a custom callback when freeing shadow variables
+Date: Mon, 16 Apr 2018 13:36:47 +0200
+Message-Id: <20180416113647.25288-3-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180416113647.25288-1-pmladek@suse.com>
 References: <20180416113647.25288-1-pmladek@suse.com>
@@ -22,350 +22,275 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The existing API allows to pass a sample data to initialize the shadow
-data. It works well when the data are position independent. But it fails
-miserably when we need to set a pointer to the shadow structure itself.
+We might need to do some actions before the shadow variable is freed.
+For example, we might need to remove it from a list or free some data
+that it points to.
 
-Unfortunately, we might need to initialize the pointer surprisingly
-often because of struct list_head. It is even worse because the list
-might be hidden in other common structures, for example, struct mutex,
-struct wait_queue_head.
+This is already possible now. The user can get the shadow variable
+by klp_shadow_get(), do the necessary actions, and then call
+klp_shadow_free().
 
-For example, this was needed to fix races in ALSA sequencer. It required
-to add mutex into struct snd_seq_client. See commit b3defb791b26ea06
-("ALSA: seq: Make ioctls race-free") and commit d15d662e89fc667b9
-("ALSA: seq: Fix racy pool initializations")
+This patch allows to do it a more elegant way. The user could implement
+the needed actions in a callback that is passed to klp_shadow_free()
+as a parameter. The callback usually does reverse operations to
+the constructor callback that can be called by klp_shadow_*alloc().
 
-This patch makes the API more safe. A custom constructor function and data
-are passed to klp_shadow_*alloc() functions instead of the sample data.
+It is especially useful for klp_shadow_free_all(). There we need to do
+these extra actions for each found shadow variable with the given ID.
 
-Note that ctor_data are no longer a template for shadow->data. It might
-point to any data that might be necessary when the constructor is called.
+Note that the memory used by the shadow variable itself is still released
+later by rcu callback. It is needed to protect internal structures that
+keep all shadow variables. But the destructor is called immediately.
+The shadow variable must not be access anyway after klp_shadow_free()
+is called. The user is responsible to protect this any suitable way.
 
-Also note that the constructor is called under klp_shadow_lock. It is
-an internal spin_lock that synchronizes alloc() vs. get() operations,
-see klp_shadow_get_or_alloc(). On one hand, this adds a risk of ABBA
-deadlocks. On the other hand, it allows to do some operations safely.
-For example, we could add the new structure into an existing list.
-This must be done only once when the structure is allocated.
+Be aware that the destructor is called under klp_shadow_lock. It is
+the same as for the contructor in klp_shadow_alloc().
 
-Reported-by: Nicolai Stange <nstange@suse.de>
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- Documentation/livepatch/shadow-vars.txt   | 31 ++++++++----
- include/linux/livepatch.h                 | 14 ++++--
- kernel/livepatch/shadow.c                 | 82 ++++++++++++++++++++-----------
- samples/livepatch/livepatch-shadow-fix1.c | 18 ++++++-
- samples/livepatch/livepatch-shadow-fix2.c |  6 +--
- 5 files changed, 104 insertions(+), 47 deletions(-)
+ Documentation/livepatch/shadow-vars.txt   | 10 +++++++---
+ include/linux/livepatch.h                 |  5 +++--
+ kernel/livepatch/shadow.c                 | 26 ++++++++++++++++++--------
+ samples/livepatch/livepatch-shadow-fix1.c | 25 +++++++++++++++----------
+ samples/livepatch/livepatch-shadow-fix2.c | 27 ++++++++++++++++-----------
+ 5 files changed, 59 insertions(+), 34 deletions(-)
 
 diff --git a/Documentation/livepatch/shadow-vars.txt b/Documentation/livepatch/shadow-vars.txt
-index 89c66634d600..9c7ae191641c 100644
+index 9c7ae191641c..ecc09a7be5dd 100644
 --- a/Documentation/livepatch/shadow-vars.txt
 +++ b/Documentation/livepatch/shadow-vars.txt
-@@ -34,9 +34,13 @@ meta-data and shadow-data:
-   - data[] - storage for shadow data
- 
- It is important to note that the klp_shadow_alloc() and
--klp_shadow_get_or_alloc() calls, described below, store a *copy* of the
--data that the functions are provided.  Callers should provide whatever
--mutual exclusion is required of the shadow data.
-+klp_shadow_get_or_alloc() are zeroing the variable by default.
-+They also allow to call a custom constructor function when a non-zero
-+value is needed. Callers should provide whatever mutual exclusion
-+is required.
-+
-+Note that the constructor is called under klp_shadow_lock spinlock. It allows
-+to do actions that can be done only once when a new variable is allocated.
- 
- * klp_shadow_get() - retrieve a shadow variable data pointer
-   - search hashtable for <obj, id> pair
-@@ -47,7 +51,7 @@ mutual exclusion is required of the shadow data.
-     - WARN and return NULL
-   - if <obj, id> doesn't already exist
-     - allocate a new shadow variable
--    - copy data into the new shadow variable
-+    - initialize the variable using a custom constructor and data when provided
-     - add <obj, id> to the global hashtable
- 
- * klp_shadow_get_or_alloc() - get existing or alloc a new shadow variable
-@@ -56,7 +60,7 @@ mutual exclusion is required of the shadow data.
-     - return existing shadow variable
-   - if <obj, id> doesn't already exist
-     - allocate a new shadow variable
--    - copy data into the new shadow variable
-+    - initialize the variable using a custom constructor and data when provided
-     - add <obj, id> pair to the global hashtable
+@@ -65,11 +65,15 @@ to do actions that can be done only once when a new variable is allocated.
  
  * klp_shadow_free() - detach and free a <obj, id> shadow variable
-@@ -107,7 +111,8 @@ struct sta_info *sta_info_alloc(struct ieee80211_sub_if_data *sdata,
- 	sta = kzalloc(sizeof(*sta) + hw->sta_data_size, gfp);
+   - find and remove a <obj, id> reference from global hashtable
+-    - if found, free shadow variable
++    - if found
++      - call destructor function if defined
++      - free shadow variable
  
- 	/* Attach a corresponding shadow variable, then initialize it */
--	ps_lock = klp_shadow_alloc(sta, PS_LOCK, NULL, sizeof(*ps_lock), gfp);
-+	ps_lock = klp_shadow_alloc(sta, PS_LOCK, sizeof(*ps_lock), gfp,
-+				   NULL, NULL);
- 	if (!ps_lock)
- 		goto shadow_fail;
- 	spin_lock_init(ps_lock);
-@@ -148,16 +153,24 @@ shadow variables to parents already in-flight.
- For commit 1d147bfa6429, a good spot to allocate a shadow spinlock is
- inside ieee80211_sta_ps_deliver_wakeup():
+ * klp_shadow_free_all() - detach and free all <*, id> shadow variables
+   - find and remove any <*, id> references from global hashtable
+-    - if found, free shadow variable
++    - if found
++      - call destructor function if defined
++      - free shadow variable
  
-+int ps_lock_shadow_ctor(void *obj, void *shadow_data, void *ctor_data)
-+{
-+	spinlock_t *lock = shadow_data;
-+
-+	spin_lock_init(lock);
-+	return 0;
-+}
-+
- #define PS_LOCK 1
- void ieee80211_sta_ps_deliver_wakeup(struct sta_info *sta)
+ 
+ 2. Use cases
+@@ -136,7 +140,7 @@ variable:
+ 
+ void sta_info_free(struct ieee80211_local *local, struct sta_info *sta)
  {
--	DEFINE_SPINLOCK(ps_lock_fallback);
- 	spinlock_t *ps_lock;
- 
- 	/* sync with ieee80211_tx_h_unicast_ps_buf */
- 	ps_lock = klp_shadow_get_or_alloc(sta, PS_LOCK,
--			&ps_lock_fallback, sizeof(ps_lock_fallback),
--			GFP_ATOMIC);
-+			sizeof(*ps_lock), GFP_ATOMIC,
-+			ps_lock_shadow_ctor, NULL);
-+
- 	if (ps_lock)
- 		spin_lock(ps_lock);
+-	klp_shadow_free(sta, PS_LOCK);
++	klp_shadow_free(sta, PS_LOCK, NULL);
+ 	kfree(sta);
  	...
+ 
 diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 4754f01c1abb..7e084321b146 100644
+index 7e084321b146..aec44b1d9582 100644
 --- a/include/linux/livepatch.h
 +++ b/include/linux/livepatch.h
-@@ -186,11 +186,17 @@ static inline bool klp_have_reliable_stack(void)
- 	       IS_ENABLED(CONFIG_HAVE_RELIABLE_STACKTRACE);
- }
+@@ -189,6 +189,7 @@ static inline bool klp_have_reliable_stack(void)
+ typedef int (*klp_shadow_ctor_t)(void *obj,
+ 				 void *shadow_data,
+ 				 void *ctor_data);
++typedef void (*klp_shadow_dtor_t)(void *obj, void *shadow_data);
  
-+typedef int (*klp_shadow_ctor_t)(void *obj,
-+				 void *shadow_data,
-+				 void *ctor_data);
-+
  void *klp_shadow_get(void *obj, unsigned long id);
--void *klp_shadow_alloc(void *obj, unsigned long id, void *data,
--		       size_t size, gfp_t gfp_flags);
--void *klp_shadow_get_or_alloc(void *obj, unsigned long id, void *data,
--			      size_t size, gfp_t gfp_flags);
-+void *klp_shadow_alloc(void *obj, unsigned long id,
-+		       size_t size, gfp_t gfp_flags,
-+		       klp_shadow_ctor_t ctor, void *ctor_data);
-+void *klp_shadow_get_or_alloc(void *obj, unsigned long id,
-+			      size_t size, gfp_t gfp_flags,
-+			      klp_shadow_ctor_t ctor, void *ctor_data);
- void klp_shadow_free(void *obj, unsigned long id);
- void klp_shadow_free_all(unsigned long id);
+ void *klp_shadow_alloc(void *obj, unsigned long id,
+@@ -197,8 +198,8 @@ void *klp_shadow_alloc(void *obj, unsigned long id,
+ void *klp_shadow_get_or_alloc(void *obj, unsigned long id,
+ 			      size_t size, gfp_t gfp_flags,
+ 			      klp_shadow_ctor_t ctor, void *ctor_data);
+-void klp_shadow_free(void *obj, unsigned long id);
+-void klp_shadow_free_all(unsigned long id);
++void klp_shadow_free(void *obj, unsigned long id, klp_shadow_dtor_t dtor);
++void klp_shadow_free_all(unsigned long id, klp_shadow_dtor_t dtor);
+ 
+ #else /* !CONFIG_LIVEPATCH */
  
 diff --git a/kernel/livepatch/shadow.c b/kernel/livepatch/shadow.c
-index fdac27588d60..b10a0bbb7f84 100644
+index b10a0bbb7f84..83958c814439 100644
 --- a/kernel/livepatch/shadow.c
 +++ b/kernel/livepatch/shadow.c
-@@ -113,8 +113,10 @@ void *klp_shadow_get(void *obj, unsigned long id)
- }
- EXPORT_SYMBOL_GPL(klp_shadow_get);
- 
--static void *__klp_shadow_get_or_alloc(void *obj, unsigned long id, void *data,
--		       size_t size, gfp_t gfp_flags, bool warn_on_exist)
-+static void *__klp_shadow_get_or_alloc(void *obj, unsigned long id,
-+				       size_t size, gfp_t gfp_flags,
-+				       klp_shadow_ctor_t ctor, void *ctor_data,
-+				       bool warn_on_exist)
- {
- 	struct klp_shadow *new_shadow;
- 	void *shadow_data;
-@@ -125,18 +127,15 @@ static void *__klp_shadow_get_or_alloc(void *obj, unsigned long id, void *data,
- 	if (shadow_data)
- 		goto exists;
- 
--	/* Allocate a new shadow variable for use inside the lock below */
-+	/*
-+	 * Allocate a new shadow variable.  Fill it with zeroes by default.
-+	 * More complex setting can be done by @ctor function.  But it is
-+	 * called only when the buffer is really used (under klp_shadow_lock).
-+	 */
- 	new_shadow = kzalloc(size + sizeof(*new_shadow), gfp_flags);
- 	if (!new_shadow)
- 		return NULL;
- 
--	new_shadow->obj = obj;
--	new_shadow->id = id;
--
--	/* Initialize the shadow variable if data provided */
--	if (data)
--		memcpy(new_shadow->data, data, size);
--
- 	/* Look for <obj, id> again under the lock */
- 	spin_lock_irqsave(&klp_shadow_lock, flags);
- 	shadow_data = klp_shadow_get(obj, id);
-@@ -150,6 +149,22 @@ static void *__klp_shadow_get_or_alloc(void *obj, unsigned long id, void *data,
- 		goto exists;
- 	}
- 
-+	new_shadow->obj = obj;
-+	new_shadow->id = id;
-+
-+	if (ctor) {
-+		int err;
-+
-+		err = ctor(obj, new_shadow->data, ctor_data);
-+		if (err) {
-+			spin_unlock_irqrestore(&klp_shadow_lock, flags);
-+			kfree(new_shadow);
-+			pr_err("Failed to construct shadow variable <%p, %lx> (%d)\n",
-+			       obj, id, err);
-+			return NULL;
-+		}
-+	}
-+
- 	/* No <obj, id> found, so attach the newly allocated one */
- 	hash_add_rcu(klp_shadow_hash, &new_shadow->node,
- 		     (unsigned long)new_shadow->obj);
-@@ -170,26 +185,32 @@ static void *__klp_shadow_get_or_alloc(void *obj, unsigned long id, void *data,
-  * klp_shadow_alloc() - allocate and add a new shadow variable
-  * @obj:	pointer to parent object
-  * @id:		data identifier
-- * @data:	pointer to data to attach to parent
-  * @size:	size of attached data
-  * @gfp_flags:	GFP mask for allocation
-+ * @ctor:	custom constructor to initialize the shadow data (optional)
-+ * @ctor_data:	pointer to any data needed by @ctor (optional)
-+ *
-+ * Allocates @size bytes for new shadow variable data using @gfp_flags.
-+ * The data are zeroed by default.  They are further initialized by @ctor
-+ * function if it is not NULL.  The new shadow variable is then added
-+ * to the global hashtable.
-  *
-- * Allocates @size bytes for new shadow variable data using @gfp_flags
-- * and copies @size bytes from @data into the new shadow variable's own
-- * data space.  If @data is NULL, @size bytes are still allocated, but
-- * no copy is performed.  The new shadow variable is then added to the
-- * global hashtable.
-+ * If an existing <obj, id> shadow variable can be found, this routine will
-+ * issue a WARN, exit early and return NULL.
-  *
-- * If an existing <obj, id> shadow variable can be found, this routine
-- * will issue a WARN, exit early and return NULL.
-+ * This function guarantees that the constructor function is called only when
-+ * the variable did not exist before.  The cost is that @ctor is called
-+ * in atomic context under a spin lock.
-  *
-  * Return: the shadow variable data element, NULL on duplicate or
-  * failure.
-  */
--void *klp_shadow_alloc(void *obj, unsigned long id, void *data,
--		       size_t size, gfp_t gfp_flags)
-+void *klp_shadow_alloc(void *obj, unsigned long id,
-+		       size_t size, gfp_t gfp_flags,
-+		       klp_shadow_ctor_t ctor, void *ctor_data)
- {
--	return __klp_shadow_get_or_alloc(obj, id, data, size, gfp_flags, true);
-+	return __klp_shadow_get_or_alloc(obj, id, size, gfp_flags,
-+					 ctor, ctor_data, true);
- }
- EXPORT_SYMBOL_GPL(klp_shadow_alloc);
- 
-@@ -197,25 +218,28 @@ EXPORT_SYMBOL_GPL(klp_shadow_alloc);
-  * klp_shadow_get_or_alloc() - get existing or allocate a new shadow variable
-  * @obj:	pointer to parent object
-  * @id:		data identifier
-- * @data:	pointer to data to attach to parent
-  * @size:	size of attached data
-  * @gfp_flags:	GFP mask for allocation
-+ * @ctor:	custom constructor to initialize the shadow data (optional)
-+ * @ctor_data:	pointer to any data needed by @ctor (optional)
-  *
-  * Returns a pointer to existing shadow data if an <obj, id> shadow
-  * variable is already present.  Otherwise, it creates a new shadow
-  * variable like klp_shadow_alloc().
-  *
-- * This function guarantees that only one shadow variable exists with
-- * the given @id for the given @obj.  It also guarantees that the shadow
-- * variable will be initialized by the given @data only when it did not
-- * exist before.
-+ * This function guarantees that only one shadow variable exists with the given
-+ * @id for the given @obj.  It also guarantees that the constructor function
-+ * will be called only when the variable did not exist before.  The cost is
-+ * that @ctor is called in atomic context under a spin lock.
-  *
-  * Return: the shadow variable data element, NULL on failure.
-  */
--void *klp_shadow_get_or_alloc(void *obj, unsigned long id, void *data,
--			       size_t size, gfp_t gfp_flags)
-+void *klp_shadow_get_or_alloc(void *obj, unsigned long id,
-+			      size_t size, gfp_t gfp_flags,
-+			      klp_shadow_ctor_t ctor, void *ctor_data)
- {
--	return __klp_shadow_get_or_alloc(obj, id, data, size, gfp_flags, false);
-+	return __klp_shadow_get_or_alloc(obj, id, size, gfp_flags,
-+					 ctor, ctor_data, false);
+@@ -243,15 +243,26 @@ void *klp_shadow_get_or_alloc(void *obj, unsigned long id,
  }
  EXPORT_SYMBOL_GPL(klp_shadow_get_or_alloc);
  
-diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
-index 830c55514f9f..04151c7f2631 100644
---- a/samples/livepatch/livepatch-shadow-fix1.c
-+++ b/samples/livepatch/livepatch-shadow-fix1.c
-@@ -56,6 +56,21 @@ struct dummy {
- 	unsigned long jiffies_expire;
- };
- 
-+/*
-+ * The constructor makes more sense together with klp_shadow_get_or_alloc().
-+ * In this example, it would be safe to assign the pointer also to the shadow
-+ * variable returned by klp_shadow_alloc().  But we wanted to show the more
-+ * complicated use of the API.
-+ */
-+static int shadow_leak_ctor(void *obj, void *shadow_data, void *ctor_data)
++static void klp_shadow_free_struct(struct klp_shadow *shadow,
++				   klp_shadow_dtor_t dtor)
 +{
-+	void **shadow_leak = shadow_data;
-+	void *leak = ctor_data;
-+
-+	*shadow_leak = leak;
-+	return 0;
++	hash_del_rcu(&shadow->node);
++	if (dtor)
++		dtor(shadow->obj, shadow->data);
++	kfree_rcu(shadow, rcu_head);
 +}
 +
- struct dummy *livepatch_fix1_dummy_alloc(void)
+ /**
+  * klp_shadow_free() - detach and free a <obj, id> shadow variable
+  * @obj:	pointer to parent object
+  * @id:		data identifier
++ * @dtor:	custom callback that can be used to unregister the variable
++ *		and/or free data that the shadow variable points to (optional)
+  *
+  * This function releases the memory for this <obj, id> shadow variable
+  * instance, callers should stop referencing it accordingly.
+  */
+-void klp_shadow_free(void *obj, unsigned long id)
++void klp_shadow_free(void *obj, unsigned long id, klp_shadow_dtor_t dtor)
  {
- 	struct dummy *d;
-@@ -74,7 +89,8 @@ struct dummy *livepatch_fix1_dummy_alloc(void)
- 	 * pointer to handle resource release.
- 	 */
- 	leak = kzalloc(sizeof(int), GFP_KERNEL);
--	klp_shadow_alloc(d, SV_LEAK, &leak, sizeof(leak), GFP_KERNEL);
-+	klp_shadow_alloc(d, SV_LEAK, sizeof(leak), GFP_KERNEL,
-+			 shadow_leak_ctor, leak);
+ 	struct klp_shadow *shadow;
+ 	unsigned long flags;
+@@ -263,8 +274,7 @@ void klp_shadow_free(void *obj, unsigned long id)
+ 			       (unsigned long)obj) {
  
- 	pr_info("%s: dummy @ %p, expires @ %lx\n",
- 		__func__, d, d->jiffies_expire);
-diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
-index ff9948f0ec00..d6c62844dc15 100644
---- a/samples/livepatch/livepatch-shadow-fix2.c
-+++ b/samples/livepatch/livepatch-shadow-fix2.c
-@@ -53,17 +53,15 @@ struct dummy {
- bool livepatch_fix2_dummy_check(struct dummy *d, unsigned long jiffies)
+ 		if (klp_shadow_match(shadow, obj, id)) {
+-			hash_del_rcu(&shadow->node);
+-			kfree_rcu(shadow, rcu_head);
++			klp_shadow_free_struct(shadow, dtor);
+ 			break;
+ 		}
+ 	}
+@@ -276,11 +286,13 @@ EXPORT_SYMBOL_GPL(klp_shadow_free);
+ /**
+  * klp_shadow_free_all() - detach and free all <*, id> shadow variables
+  * @id:		data identifier
++ * @dtor:	custom callback that can be used to unregister the variable
++ *		and/or free data that the shadow variable points to (optional)
+  *
+  * This function releases the memory for all <*, id> shadow variable
+  * instances, callers should stop referencing them accordingly.
+  */
+-void klp_shadow_free_all(unsigned long id)
++void klp_shadow_free_all(unsigned long id, klp_shadow_dtor_t dtor)
  {
- 	int *shadow_count;
--	int count;
+ 	struct klp_shadow *shadow;
+ 	unsigned long flags;
+@@ -290,10 +302,8 @@ void klp_shadow_free_all(unsigned long id)
+ 
+ 	/* Delete all <*, id> from hash */
+ 	hash_for_each(klp_shadow_hash, i, shadow, node) {
+-		if (klp_shadow_match(shadow, shadow->obj, id)) {
+-			hash_del_rcu(&shadow->node);
+-			kfree_rcu(shadow, rcu_head);
+-		}
++		if (klp_shadow_match(shadow, shadow->obj, id))
++			klp_shadow_free_struct(shadow, dtor);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&klp_shadow_lock, flags);
+diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
+index 04151c7f2631..49b13553eaae 100644
+--- a/samples/livepatch/livepatch-shadow-fix1.c
++++ b/samples/livepatch/livepatch-shadow-fix1.c
+@@ -98,9 +98,19 @@ struct dummy *livepatch_fix1_dummy_alloc(void)
+ 	return d;
+ }
+ 
++static void livepatch_fix1_dummy_leak_dtor(void *obj, void *shadow_data)
++{
++	void *d = obj;
++	void **shadow_leak = shadow_data;
++
++	kfree(*shadow_leak);
++	pr_info("%s: dummy @ %p, prevented leak @ %p\n",
++			 __func__, d, *shadow_leak);
++}
++
+ void livepatch_fix1_dummy_free(struct dummy *d)
+ {
+-	void **shadow_leak, *leak;
++	void **shadow_leak;
  
  	/*
- 	 * Patch: handle in-flight dummy structures, if they do not
- 	 * already have a SV_COUNTER shadow variable, then attach a
- 	 * new one.
+ 	 * Patch: fetch the saved SV_LEAK shadow variable, detach and
+@@ -109,15 +119,10 @@ void livepatch_fix1_dummy_free(struct dummy *d)
+ 	 * was loaded.)
  	 */
--	count = 0;
- 	shadow_count = klp_shadow_get_or_alloc(d, SV_COUNTER,
--					       &count, sizeof(count),
--					       GFP_NOWAIT);
-+				sizeof(*shadow_count), GFP_NOWAIT,
-+				NULL, NULL);
- 	if (shadow_count)
- 		*shadow_count += 1;
+ 	shadow_leak = klp_shadow_get(d, SV_LEAK);
+-	if (shadow_leak) {
+-		leak = *shadow_leak;
+-		klp_shadow_free(d, SV_LEAK);
+-		kfree(leak);
+-		pr_info("%s: dummy @ %p, prevented leak @ %p\n",
+-			 __func__, d, leak);
+-	} else {
++	if (shadow_leak)
++		klp_shadow_free(d, SV_LEAK, livepatch_fix1_dummy_leak_dtor);
++	else
+ 		pr_info("%s: dummy @ %p leaked!\n", __func__, d);
+-	}
  
+ 	kfree(d);
+ }
+@@ -163,7 +168,7 @@ static int livepatch_shadow_fix1_init(void)
+ static void livepatch_shadow_fix1_exit(void)
+ {
+ 	/* Cleanup any existing SV_LEAK shadow variables */
+-	klp_shadow_free_all(SV_LEAK);
++	klp_shadow_free_all(SV_LEAK, livepatch_fix1_dummy_leak_dtor);
+ 
+ 	WARN_ON(klp_unregister_patch(&patch));
+ }
+diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
+index d6c62844dc15..b34c7bf83356 100644
+--- a/samples/livepatch/livepatch-shadow-fix2.c
++++ b/samples/livepatch/livepatch-shadow-fix2.c
+@@ -68,22 +68,27 @@ bool livepatch_fix2_dummy_check(struct dummy *d, unsigned long jiffies)
+ 	return time_after(jiffies, d->jiffies_expire);
+ }
+ 
++static void livepatch_fix2_dummy_leak_dtor(void *obj, void *shadow_data)
++{
++	void *d = obj;
++	void **shadow_leak = shadow_data;
++
++	kfree(*shadow_leak);
++	pr_info("%s: dummy @ %p, prevented leak @ %p\n",
++			 __func__, d, *shadow_leak);
++}
++
+ void livepatch_fix2_dummy_free(struct dummy *d)
+ {
+-	void **shadow_leak, *leak;
++	void **shadow_leak;
+ 	int *shadow_count;
+ 
+ 	/* Patch: copy the memory leak patch from the fix1 module. */
+ 	shadow_leak = klp_shadow_get(d, SV_LEAK);
+-	if (shadow_leak) {
+-		leak = *shadow_leak;
+-		klp_shadow_free(d, SV_LEAK);
+-		kfree(leak);
+-		pr_info("%s: dummy @ %p, prevented leak @ %p\n",
+-			 __func__, d, leak);
+-	} else {
++	if (shadow_leak)
++		klp_shadow_free(d, SV_LEAK, livepatch_fix2_dummy_leak_dtor);
++	else
+ 		pr_info("%s: dummy @ %p leaked!\n", __func__, d);
+-	}
+ 
+ 	/*
+ 	 * Patch: fetch the SV_COUNTER shadow variable and display
+@@ -93,7 +98,7 @@ void livepatch_fix2_dummy_free(struct dummy *d)
+ 	if (shadow_count) {
+ 		pr_info("%s: dummy @ %p, check counter = %d\n",
+ 			__func__, d, *shadow_count);
+-		klp_shadow_free(d, SV_COUNTER);
++		klp_shadow_free(d, SV_COUNTER, NULL);
+ 	}
+ 
+ 	kfree(d);
+@@ -140,7 +145,7 @@ static int livepatch_shadow_fix2_init(void)
+ static void livepatch_shadow_fix2_exit(void)
+ {
+ 	/* Cleanup any existing SV_COUNTER shadow variables */
+-	klp_shadow_free_all(SV_COUNTER);
++	klp_shadow_free_all(SV_COUNTER, NULL);
+ 
+ 	WARN_ON(klp_unregister_patch(&patch));
+ }
 -- 
 2.13.6
