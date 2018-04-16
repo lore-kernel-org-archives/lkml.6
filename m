@@ -1,115 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754872AbeDPNJt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:09:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41456 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753530AbeDPNJm (ORCPT
+        id S1754884AbeDPNK7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:10:59 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:47068 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754291AbeDPNK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:09:42 -0400
-Date: Mon, 16 Apr 2018 06:09:36 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Minchan Kim <minchan@kernel.org>, Roman Gushchin <guro@fb.com>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
- reclaimable memory
-Message-ID: <20180416130936.GC26022@bombadil.infradead.org>
-References: <20180305133743.12746-1-guro@fb.com>
- <20180305133743.12746-5-guro@fb.com>
- <20180413133519.GA213834@rodete-laptop-imager.corp.google.com>
- <20180413135923.GT17484@dhcp22.suse.cz>
- <13f1f5b5-f3f8-956c-145a-4641fb996048@suse.cz>
- <20180413142821.GW17484@dhcp22.suse.cz>
- <20180413143716.GA5378@cmpxchg.org>
- <20180416114144.GK17484@dhcp22.suse.cz>
- <1475594b-c1ad-9625-7aeb-ad8ad385b793@suse.cz>
+        Mon, 16 Apr 2018 09:10:57 -0400
+X-Google-Smtp-Source: AIpwx48p8DZOR/8flEFCm4us1CNMoDjczqMoWXLSFLzZPd4wsgoA1PZfn0tUVOMT3EuYDB25TUk64g==
+Subject: Re: [PATCH 14/14] arm64: dts: exynos: remove no longer needed samsung
+ thermal properties
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
+ <1523873525-23718-15-git-send-email-b.zolnierkie@samsung.com>
+ <3af07b96-dd74-336e-1261-dda2cde9abaa@linaro.org>
+ <CGME20180416130917eucas1p10012e5d79bf59adc677e7e2364bae589@eucas1p1.samsung.com>
+ <3588882.B9zsMSkHUz@amdc3058>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <a4b5bb57-6db0-4e31-b99d-4f77ba6c04f3@linaro.org>
+Date: Mon, 16 Apr 2018 15:10:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1475594b-c1ad-9625-7aeb-ad8ad385b793@suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <3588882.B9zsMSkHUz@amdc3058>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 02:06:21PM +0200, Vlastimil Babka wrote:
-> On 04/16/2018 01:41 PM, Michal Hocko wrote:
-> > On Fri 13-04-18 10:37:16, Johannes Weiner wrote:
-> >> On Fri, Apr 13, 2018 at 04:28:21PM +0200, Michal Hocko wrote:
-> >>> On Fri 13-04-18 16:20:00, Vlastimil Babka wrote:
-> >>>> We would need kmalloc-reclaimable-X variants. It could be worth it,
-> >>>> especially if we find more similar usages. I suspect they would be more
-> >>>> useful than the existing dma-kmalloc-X :)
-> >>>
-> >>> I am still not sure why __GFP_RECLAIMABLE cannot be made work as
-> >>> expected and account slab pages as SLAB_RECLAIMABLE
-> >>
-> >> Can you outline how this would work without separate caches?
-> > 
-> > I thought that the cache would only maintain two sets of slab pages
-> > depending on the allocation reuquests. I am pretty sure there will be
-> > other details to iron out and
+On 16/04/2018 15:09, Bartlomiej Zolnierkiewicz wrote:
+> On Monday, April 16, 2018 03:02:45 PM Daniel Lezcano wrote:
+>> On 16/04/2018 12:12, Bartlomiej Zolnierkiewicz wrote:
+>>> Remove no longer needed samsung thermal properties.
+>>>
+>>> There should be no functional changes caused by this patch.
+>>>
+>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>> ---
+>> Can you add an additional patch to remove the Documentation ?
 > 
-> For example the percpu (and other) array caches...
-> 
-> > maybe it will turn out that such a large
-> > portion of the chache would need to duplicate the state that a
-> > completely new cache would be more reasonable.
-> 
-> I'm afraid that's the case, yes.
+> "dt-bindings: thermal: remove no longer needed samsung thermal properties"
+> (https://www.spinics.net/lists/linux-samsung-soc/msg62324.html)
+> is already present in linux-soc-thermal-tree (Eduardo has not dropped it)
 
-I'm not sure it'll be so bad, at least for SLUB ... I think everything
-we need to duplicate is already percpu, and if we combine GFP_DMA
-and GFP_RECLAIMABLE into this, we might even get more savings.  Also,
-we only need to do this for the kmalloc slabs; currently 13 of them.
-So we eliminate 13 caches and in return allocate 13 * 2 * NR_CPU pointers.
-That'll be a win on some machines and a loss on others, but the machines
-where it's consuming more memory should have more memory to begin with,
-so I'd count it as a win.
+Ah, ok. Sorry for the noise.
 
-The node partial list probably wants to be trebled in size to have one
-list per memory type.  But I think the allocation path only changes
-like this:
 
-@@ -2663,10 +2663,13 @@ static __always_inline void *slab_alloc_node(struct kmem
-_cache *s,
-        struct kmem_cache_cpu *c;
-        struct page *page;
-        unsigned long tid;
-+       unsigned int offset = 0;
- 
-        s = slab_pre_alloc_hook(s, gfpflags);
-        if (!s)
-                return NULL;
-        if (s->flags & SLAB_KMALLOC)
-                offset = flags_to_slab_id(gfpflags);
- redo:
-        /*
-         * Must read kmem_cache cpu data via this cpu ptr. Preemption is
-@@ -2679,8 +2682,8 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
-         * to check if it is matched or not.
-         */
-        do {
--               tid = this_cpu_read(s->cpu_slab->tid);
--               c = raw_cpu_ptr(s->cpu_slab);
-+               tid = this_cpu_read((&s->cpu_slab[offset])->tid);
-+               c = raw_cpu_ptr(&s->cpu_slab[offset]);
-        } while (IS_ENABLED(CONFIG_PREEMPT) &&
-                 unlikely(tid != READ_ONCE(c->tid)));
- 
 
-> > Is this worth exploring
-> > at least? I mean something like this should help with the fragmentation
-> > already AFAIU. Accounting would be just free on top.
-> 
-> Yep. It could be also CONFIG_urable so smaller systems don't need to
-> deal with the memory overhead of this.
-> 
-> So do we put it on LSF/MM agenda?
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-We have an agenda?  :-)
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
