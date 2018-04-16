@@ -1,211 +1,233 @@
-Return-Path: <maninder1.s@samsung.com>
-X-Google-Smtp-Source: AIpwx492Xx+mFKob8DYSvwNqQGBxp3dXtVoBm7jZgDbuSujW6/vT/Z7RYvKytgnkYojm7kBwE/Nz
-ARC-Seal: i=1; a=rsa-sha256; t=1523876965; cv=none;
+Return-Path: <prvs=76449ef209=cyan@fb.com>
+X-Google-Smtp-Source: AIpwx4/BViAghdHn+o+SUWRgHPnMt7Cdbtfi6SwWGqz/arWzlfcucoRLl6LIv64hPOfjCusTzLyC
+ARC-Seal: i=1; a=rsa-sha256; t=1523907318; cv=none;
         d=google.com; s=arc-20160816;
-        b=XpC7qiRiKVH6oMf985K9kc+1kKBw4XQCqUPOXjmi+C5w4O/BWlPGzCynt8MoVMEo3j
-         Cxty4ziYhuhkjhcb68ncAPVVtNLz76S+V9dCGHOkYcaix2aLnJ7gZjPmRw3949KVW2Z3
-         ene40JAMwXL6jPsGxPhxG06pK5lxLl2bcVS3Nmk5VIijfwrdBbwvKUk4/qzxVqGfv2tZ
-         h6kfgQ8GNKjsQro0oGKtb9q83YgZeTTFCE0PViMOeB8UtUBia5ur7yl80WK2XK7DY+3O
-         S3a7oTbn9F9xcTuMhvOD8pAWzpltlI218TOl9sCjDdWAnpL1hAPumOoPohMg+LonFbsk
-         lJ/w==
+        b=iRz23WVUlHvLn4Cnr/IvvFvP/hNPPMRF+qIGYqSWKsn5Jf996YiAcoHgzhcj+Nfpxi
+         Pe2guz/3YmSezscJTJwhQaSTBgh/knH8sz37qJgV6+jIc7brKRZ3Tnw8PXxJFOtHmKHq
+         R51GTxuzZW3OhFHPA7b+wqijLmSkfZJH7GoGlcLvNR0Em6+hAW1RQX2jtLRSMWQTm33O
+         IFZP8ovW0YAvkckexsEkddevAjxUV3eZKdGNltTeiiHmM+ri9d/CFS15gcqOKTmIAqcq
+         KCLkgYQDGk28iGkkLGp4t/W1CSL7dFrhcWKdbquO97YXw0xQ8vJQYJ6VtKqfrjBJTo9w
+         PLbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:dlp-filter:cms-type:content-transfer-encoding:date
-         :message-id:in-reply-to:cc:to:from:sender:reply-to:subject
-         :mime-version:dkim-signature:dkim-filter:arc-authentication-results;
-        bh=+1zz764HV0oJ7C+4H9ftWtZNK0DUoTZJM3sBhWO2Nhc=;
-        b=JfzrG8aWzbPqEzR/1iXxOdD6N6OEAfnvg9RMARHsKQ1uLfJwMyWIg9XX1TdoiQJfb5
-         Y2I/ivSz/e74G8spTcJ0Xeckud5FKrhuxlRsiF3wi/qdk9V1hYj1peTgNkLUirFfDJr6
-         vJ/eH5EVmlGYSc4qSrhcpSKDNvZsZdNbLEjftsGkahiWKHn2jMlYdjb49iQyxSRRZe28
-         hJRuTSav75L/fuipjsvGIivJdQIZmxYpRhNh0t0T3YwCWCo65QSxrC2cLYCRP5ta/Vx/
-         n60se00lbYXOJ5+l8xrbuOUqsZvZLMEabr+ulxB0sAC4fuNtqRAkStM3TcEhuRx6r8D8
-         Fr6w==
+        h=mime-version:content-transfer-encoding:content-id
+         :spamdiagnosticmetadata:spamdiagnosticoutput:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=cXQ0KVGH2IFsMf57O/6Jg5mpQ27nSQm9Sfyrvgf7qOU=;
+        b=hAArW94oELxKxGSdGOWbgoEFDbs5yzYbz4M5UbwSy5dgXa65M+Uc6UXvKDjicxtNtr
+         k/x6kzqWAq3CKX6OA9FS7TxES98wGY8InjR7t1gm4daVJLwFBjoN/Rea6pwbsmq8k3AO
+         487WQ7RyngdiJT46r6y9ix0rcGurDSgPFhOnLAJB8lFnoDSj4y7yw3bQR7itbykxL9HX
+         CsdEZkZnrRqFf7wLlyjRcDE4wh3WZFG1dFjoRIH+MSMHOF2Nxg4BSRMmUwu8+A3KlFTP
+         YvKdL0rIhvU+kwL1bX8lmIXYWgPWrdZUBPoYiy1nXjMZ4c0esopw7svweOHpCK6SYn8I
+         scYg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=aoZKgnvc;
-       spf=pass (google.com: domain of maninder1.s@samsung.com designates 203.254.224.33 as permitted sender) smtp.mailfrom=maninder1.s@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       dkim=pass header.i=@fb.com header.s=facebook header.b=jPu6PDTK;
+       dkim=pass header.i=@fb.onmicrosoft.com header.s=selector1-fb-com header.b=PfgGrttH;
+       spf=pass (google.com: domain of prvs=76449ef209=cyan@fb.com designates 67.231.153.30 as permitted sender) smtp.mailfrom=prvs=76449ef209=cyan@fb.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=fb.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=aoZKgnvc;
-       spf=pass (google.com: domain of maninder1.s@samsung.com designates 203.254.224.33 as permitted sender) smtp.mailfrom=maninder1.s@samsung.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180416110924epoutp03cae19a25910e46ad504d3f4ca0e01f58~l5gZ0CPVY1416214162epoutp03d
-X-AuditID: b6c32a4a-cefff70000000fed-bb-5ad484637ae6
-Mime-Version: 1.0
+       dkim=pass header.i=@fb.com header.s=facebook header.b=jPu6PDTK;
+       dkim=pass header.i=@fb.onmicrosoft.com header.s=selector1-fb-com header.b=PfgGrttH;
+       spf=pass (google.com: domain of prvs=76449ef209=cyan@fb.com designates 67.231.153.30 as permitted sender) smtp.mailfrom=prvs=76449ef209=cyan@fb.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=fb.com
+From: Yann Collet <cyan@fb.com>
+To: "maninder1.s@samsung.com" <maninder1.s@samsung.com>,
+        Vaneet Narang
+	<v.narang@samsung.com>, Nick Terrell <terrelln@fb.com>,
+        Sergey Senozhatsky
+	<sergey.senozhatsky.work@gmail.com>,
+        "herbert@gondor.apana.org.au"
+	<herbert@gondor.apana.org.au>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "minchan@kernel.org"
+	<minchan@kernel.org>,
+        "ngupta@vflare.org" <ngupta@vflare.org>,
+        Kees Cook
+	<keescook@chromium.org>,
+        "anton@enomsg.org" <anton@enomsg.org>,
+        "ccross@android.com" <ccross@android.com>,
+        "tony.luck@intel.com"
+	<tony.luck@intel.com>,
+        "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>,
+        "colin.king@canonical.com"
+	<colin.king@canonical.com>,
+        "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        PANKAJ MISHRA <pankaj.m@samsung.com>,
+        "AMIT
+ SAHRAWAT" <a.sahrawat@samsung.com>,
+        "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>
 Subject: Re: [PATCH 0/1] cover-letter/lz4: Implement lz4 with dynamic offset
  length.
-Reply-To: maninder1.s@samsung.com
-Sender: Maninder Singh <maninder1.s@samsung.com>
-From: Maninder Singh <maninder1.s@samsung.com>
-To: Maninder Singh <maninder1.s@samsung.com>, Vaneet Narang
-	<v.narang@samsung.com>, Nick Terrell <terrelln@fb.com>, Sergey Senozhatsky
-	<sergey.senozhatsky.work@gmail.com>, "herbert@gondor.apana.org.au"
-	<herbert@gondor.apana.org.au>, Yann Collet <cyan@fb.com>
-CC: "davem@davemloft.net" <davem@davemloft.net>, "minchan@kernel.org"
-	<minchan@kernel.org>, "ngupta@vflare.org" <ngupta@vflare.org>, Kees Cook
-	<keescook@chromium.org>, "anton@enomsg.org" <anton@enomsg.org>,
-	"ccross@android.com" <ccross@android.com>, "tony.luck@intel.com"
-	<tony.luck@intel.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "colin.king@canonical.com"
-	<colin.king@canonical.com>, "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, PANKAJ MISHRA <pankaj.m@samsung.com>, AMIT
-	SAHRAWAT <a.sahrawat@samsung.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20180329102613epcms5p6ffaa80d12115ded8f3c9ef01dd009744@epcms5p6>
-X-Drm-Type: Y,confirm
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20180416102138epcms5p429e04b68b94dcf80cd84f7008467ed68@epcms5p4>
-Date: Mon, 16 Apr 2018 15:51:38 +0530
-X-CMS-MailID: 20180416102138epcms5p429e04b68b94dcf80cd84f7008467ed68
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-X-MTR: 20180416102138epcms5p429e04b68b94dcf80cd84f7008467ed68
-CMS-TYPE: 105P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHJsWRmVeSWpSXmKPExsWy7bCmhm5yy5UogwlHRC0u7k61mLN+DZvF
-	wa2aFts3fmO1+L26l81ia1OSxZzzLSwWzYvXs1l0v5KxONOda3H/3k8mi8u75rBZHJ7fxmKx
-	7Ot7dosNLbPYLe692cpk8WjCJCaLV/+usVm8uXCPxeLQybmMDiIe23ZvY/WY1dDL5jG74SKL
-	x5aVN5k8JvR/YvSY2PyO3WPnrLvsHtsOqHos3vOSyWPTqk42jxMzfrN47J+7ht2jb8sqRo+d
-	nzazenzeJBfAH5Vqk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIT
-	oOuWmQP0s5JCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVina0NBIz9DAXM/IyEjPxDTWysgU
-	qCQhNePf7y0sBfMdKp7072NrYDxp18XIwSEhYCKxaVdBFyMXh5DAbkaJiSfaWUHivAKCEn93
-	CHcxcnIIC4RJdFzcyw5iCwkoSlyYsYYRpERYwEDi11YNkDCbgJ7Eql17WEDGiAh0MEm8/nmc
-	DcRhFtjAKnH8wlU2kCoJAV6JGe1PWSBsaYnty7cygticAn4Si8/fgKoRlfjTAFMjKvH+2HxG
-	CFtEovXeWWYIW1Diwc/dUHEZidWbe8E2Swg0M0q8WNzCBOFMYZRYdLwVaqq5xPmT88G6eQV8
-	Jf5dus0E8gKLgKrE75uFECUuEvsbzoF9ySygLbFs4WtmkBJmAU2J9bv0IUpkJaaeWscEYdtK
-	bLjTxghRzifR+/sJE8yPO+bB2KoSLTc3sML8+/njR6i/PCTm7FvEPoFRaRYiqGchWTwLYfEC
-	RuZVjJKpBcW56anFpgVGeanlesWJucWleel6yfm5mxjBaV/LawfjsnM+hxgFOBiVeHh3nL0c
-	JcSaWFZcmXuIUYKDWUmEd1kiUIg3JbGyKrUoP76oNCe1+BCjKTAEJjJLiSbnA3NSXkm8oYml
-	gYmZmbmhgYGliZI4r0HYmSghgfTEktTs1NSC1CKYPiYOTqkGxrRJR+c8y5q4PYFD8v/MMknl
-	zyqbz8v4WdWnOHXE8Gx32LR42V194Rkbky6slEwtL7SLvF/4Ka5p+a21DcIcNyte3TYr4hS5
-	dcbHbK0zH5+9WrDm/ZSw3iO8iaJ2e5ese8t2sv98de7Ljq/XeqNdt9vMTlv1XG5xgfF5zfPF
-	F1akW71hUzzwQImlOCPRUIu5qDgRAOaI2tcRBAAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180321044137epcas5p221e7ee4a0b7464eaa00dad8320f0251d
-X-RootMTR: 20180321044137epcas5p221e7ee4a0b7464eaa00dad8320f0251d
+Thread-Topic: [PATCH 0/1] cover-letter/lz4: Implement lz4 with dynamic offset
+ length.
+Thread-Index: AQHTwO5jt8QdQWvsxEiscfHuXN/+16PbG3KAgAwQoWeAHCt4AIAAJUKA
+Date: Mon, 16 Apr 2018 19:34:29 +0000
+Message-ID: <74EB06AE-E1CA-4B06-9935-596DCFAC951C@fb.com>
 References: <20180329102613epcms5p6ffaa80d12115ded8f3c9ef01dd009744@epcms5p6>
-	<20180329102046epcms5p8ecc9532b03bab4f47cbdbb2507171b86@epcms5p8>
-	<20180323134319epcms5p62e6021aa33c941c46ecdb8b5364b614c@epcms5p6>
-	<1663C9A3-7DAC-4A11-894C-C99E07BEDAD2@fb.com>
-	<1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
-	<20180321082628.GB2746@jagdpanzerIV>
-	<CGME20180321044137epcas5p221e7ee4a0b7464eaa00dad8320f0251d@epcms5p4>
+ <20180329102046epcms5p8ecc9532b03bab4f47cbdbb2507171b86@epcms5p8>
+ <20180323134319epcms5p62e6021aa33c941c46ecdb8b5364b614c@epcms5p6>
+ <1663C9A3-7DAC-4A11-894C-C99E07BEDAD2@fb.com>
+ <1521607242-3968-1-git-send-email-maninder1.s@samsung.com>
+ <20180321082628.GB2746@jagdpanzerIV>
+ <CGME20180321044137epcas5p221e7ee4a0b7464eaa00dad8320f0251d@epcms5p4>
+ <20180416102138epcms5p429e04b68b94dcf80cd84f7008467ed68@epcms5p4>
+In-Reply-To: <20180416102138epcms5p429e04b68b94dcf80cd84f7008467ed68@epcms5p4>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2601:641:0:eb66:e03c:6162:ed6d:e22d]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR15MB2221;7:XsASAH3y/3cejVigpXiDbYoL/CK9SOrYgsG3uXn6dFnK8nhYLTFzzgTPmwJkAk1Edte9ldkRCjZi7kYZxdhKCgK0ioKIqhNU3h4zbZkOu+i2p/13CiDrQXoo1lPNpnFbUM8OaKb32VNyuLSmvx9OeGGEv3D4WqLqgtnw9IMOGW2eXs3oZsxZyqmo4JOa0RQzLV23Zz75PrCe72t5doz4Bh7iU4aCmSjpDSeyzqs2JdnQxQqhWpbV4aM/CvS4BOWj;20:yUgvlk0GqF4b6WgWGDuzJuSyZRcjjRwQNU7zZMghSmJzJBsa1usQgq5Ouwcti1XK5osutWWPFEvWUo1vPP5KYBqdKA173FBQuL0c2rG1Ho8AG8P57UvRbhk/7OAtOYD5j4XGANuh5YJNN1hf9S5B6q1J3NbchmjyGe3PNA0GPa0=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(39860400002)(346002)(39380400002)(199004)(189003)(54906003)(186003)(83716003)(229853002)(33656002)(68736007)(2501003)(5660300001)(6116002)(5250100002)(97736004)(81156014)(6486002)(81166006)(7416002)(8936002)(36756003)(99286004)(82746002)(3660700001)(305945005)(3280700002)(2906002)(7736002)(8676002)(6436002)(478600001)(446003)(2900100001)(25786009)(476003)(2616005)(105586002)(486006)(6246003)(93886005)(11346002)(110136005)(14454004)(53936002)(316002)(39060400002)(86362001)(59450400001)(76176011)(106356001)(6306002)(46003)(102836004)(4326008)(6506007)(6512007)(42262002)(357404004);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR15MB2221;H:SN6PR15MB2205.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN6PR15MB2221;
+x-ms-traffictypediagnostic: SN6PR15MB2221:
+x-microsoft-antispam-prvs: <SN6PR15MB2221265041D0082055FDCCF6A4B00@SN6PR15MB2221.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(166708455590820)(7411616537696);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231232)(11241501184)(944501327)(52105095)(3002001)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:SN6PR15MB2221;BCL:0;PCL:0;RULEID:;SRVR:SN6PR15MB2221;
+x-forefront-prvs: 0644578634
+x-microsoft-antispam-message-info: MzxeJk0K28XTpx+dDHo+jo7Tn7EKKQX6BPlK1rjojdSa88jPvUg34ylh+QiGu8zzuWKyWKOeGqyTzkXoPz4imai4bl97oqTjq6jZJQxoRbcG5D85pKJJHcWRfnh3UY8CRK12ND3jxLjBMtCiTNNv+laP1EsMiAAfE2DU6HHj1205BrEqfQgNEKh+QtzexlUq
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6CCA283B630AC94DAD39499E415F0E9B@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 728eef97-c3c2-4d69-21a5-08d5a3d11280
+X-MS-Exchange-CrossTenant-Network-Message-Id: 728eef97-c3c2-4d69-21a5-08d5a3d11280
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2018 19:34:29.6047
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR15MB2221
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1597900813489960416?=
-X-GMAIL-MSGID: =?utf-8?q?1597900813489960416?=
+X-GMAIL-MSGID: =?utf-8?q?1597932640415181197?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
-=C2=A0Hello=20Nick/=20Yann,=0D=0A=0D=0AAny=20inputs=20regarding=20LZ4=20dyn=
-=20results=20&=20lz4=20dyn=20approach.=0D=0A=0D=0A>Hello=20Nick/Sergey,=0D=
-=0A>=20=0D=0A>Any=20suggestion=20or=20comments,=20so=20that=20we=20can=20ch=
-ange=20code=20and=20resend=20the=20patch?=0D=0A>=20=0D=0A>>=20Hi=20Nick=20/=
-=20Sergey,=0D=0A>>=20=0D=0A>>=20=0D=0A>>=20We=20have=20compared=20LZ4=20Dyn=
-=20with=20Original=20LZ4=20using=20some=20samples=20of=20realtime=20applica=
-tion=20data(4Kb)=0D=0A>>=20compressed/decompressed=20by=20ZRAM.=20For=20com=
-parison=20we=20have=20used=20lzbench=20(https://github.com/inikep/lzbench)=
-=0D=0A>>=20we=20have=20implemented=20dedicated=20LZ4=20Dyn=20API=20&=20kept=
-=20last=20literal=20length=20as=206=20to=20avoid=20overhead=20=0D=0A>>=20of=
-=20checks.=20It=20seems=20in=20average=20case=20there=20is=20a=20saving=20o=
-f=203=7E4%=20in=20compression=20ratio=20with=20almost=20same=20compression=
-=0D=0A>>=20speed=20and=20minor=20loss=20in=20decompression=20speed=20(=7E50=
-MB/s)=20when=20compared=20with=20LZ4.=0D=0A>>=20=0D=0A>>=20Comparison=20of=
-=20Lz4=20Dyn=20with=20LZO1x=20is=20also=20done=20as=20LZO1x=20is=20default=
-=20compressor=20of=20ZRAM.=0D=0A>>=20=0D=0A>>=20Original=20LZ4:=0D=0A>>=20s=
-h-3.2=23=20./lzbench=20=20-r=20=20-elz4=20=20data/=0D=0A>>=20lzbench=201.7.=
-3=20(32-bit=20Linux)=20=20=20Assembled=20by=20P.Skibinski=0D=0A>>=20Compres=
-sor=20name=20=20=20=20=20=20=20=20=20Compress.=20Decompress.=20Compr.=20siz=
-e=20=20Ratio=20Filename=0D=0A>>=20memcpy=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=202205=20MB/s=20=202217=20MB/s=20=20=20=20=20=20=20=
-=204096=20100.00=20data//data_1=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20216=20MB/s=20=20=20761=20MB/s=20=20=20=20=20=
-=20=20=202433=20=2059.40=20data//data_1=0D=0A>>=20lz4=201.8.0=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20269=20MB/s=20=20=20877=20MB/s=20=20=
-=20=20=20=20=20=201873=20=2045.73=20data//data_2=0D=0A>>=20lz4=201.8.0=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20238=20MB/s=20=20=20575=20MB=
-/s=20=20=20=20=20=20=20=202060=20=2050.29=20data//data_3=0D=0A>>=20lz4=201.=
-8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20321=20MB/s=20=201015=
-=20MB/s=20=20=20=20=20=20=20=201464=20=2035.74=20data//data_4=0D=0A>>=20lz4=
-=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20464=20MB/s=20=20=
-1090=20MB/s=20=20=20=20=20=20=20=20=20713=20=2017.41=20data//data_5=0D=0A>>=
-=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20296=20MB/s=
-=20=20=20956=20MB/s=20=20=20=20=20=20=20=201597=20=2038.99=20data//data_6=
-=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=2033=
-8=20MB/s=20=20=20994=20MB/s=20=20=20=20=20=20=20=202238=20=2054.64=20data//=
-data_7=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20705=20MB/s=20=201172=20MB/s=20=20=20=20=20=20=20=20=20193=20=20=204.7=
-1=20data//data_8=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20404=20MB/s=20=201150=20MB/s=20=20=20=20=20=20=20=201097=20=
-=2026.78=20data//data_9=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20216=20MB/s=20=20=20921=20MB/s=20=20=20=20=20=20=20=203=
-183=20=2077.71=20data//data_10=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20456=20MB/s=20=201101=20MB/s=20=20=20=20=20=20=
-=20=201011=20=2024.68=20data//data_11=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20867=20MB/s=20=201202=20MB/s=20=20=20=20=
-=20=20=20=20=20=2037=20=20=200.90=20data//data_12=0D=0A>>=20=0D=0A>>=20=0D=
-=0A>>=20LZ4=20Dynamic=20Offet:=20=20=0D=0A>>=20sh-3.2=23=20./lzbench=20=20-=
-r=20=20-elz4_dyn=20=20data/=0D=0A>>=20lzbench=201.7.3=20(32-bit=20Linux)=20=
-=20=20Assembled=20by=20P.Skibinski=0D=0A>>=20Compressor=20name=20=20=20=20=
-=20=20=20=20=20Compress.=20Decompress.=20Compr.=20size=20=20Ratio=20Filenam=
-e=0D=0A>>=20memcpy=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-2203=20MB/s=20=202218=20MB/s=20=20=20=20=20=20=20=204096=20100.00=20data//d=
-ata_1=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20218=20MB/s=20=20=20693=20MB/s=20=20=20=20=20=20=20=202228=20=2054.39=20d=
-ata//data_1=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20273=20MB/s=20=20=20851=20MB/s=20=20=20=20=20=20=20=201739=20=2042.=
-46=20data//data_2=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20230=20MB/s=20=20=20526=20MB/s=20=20=20=20=20=20=20=201800=20=
-=2043.95=20data//data_3=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20321=20MB/s=20=20=20952=20MB/s=20=20=20=20=20=20=20=201=
-357=20=2033.13=20data//data_4=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20470=20MB/s=20=201075=20MB/s=20=20=20=20=20=20=20=
-=20=20664=20=2016.21=20data//data_5=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20303=20MB/s=20=20=20964=20MB/s=20=20=20=20=
-=20=20=20=201455=20=2035.52=20data//data_6=0D=0A>>=20lz4=201.8.0=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20345=20MB/s=20=20=20951=20MB/s=20=
-=20=20=20=20=20=20=202126=20=2051.90=20data//data_7=0D=0A>>=20lz4=201.8.0=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20744=20MB/s=20=201163=20M=
-B/s=20=20=20=20=20=20=20=20=20177=20=20=204.32=20data//data_8=0D=0A>>=20lz4=
-=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20409=20MB/s=20=20=
-1257=20MB/s=20=20=20=20=20=20=20=201033=20=2025.22=20data//data_9=0D=0A>>=
-=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20220=20MB/s=
-=20=20=20857=20MB/s=20=20=20=20=20=20=20=203049=20=2074.44=20data//data_10=
-=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=2046=
-4=20MB/s=20=201105=20MB/s=20=20=20=20=20=20=20=20=20934=20=2022.80=20data//=
-data_11=0D=0A>>=20lz4=201.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20874=20MB/s=20=201194=20MB/s=20=20=20=20=20=20=20=20=20=2036=20=20=200=
-.88=20data//data_12=0D=0A>>=20=0D=0A>>=20=0D=0A>>=20LZ4=20Dynamic=20Offset=
-=20with=2032K=20data:=0D=0A>>=20sh-3.2=23=20./lzbench=20-elz4_dyn=20data/da=
-ta32k=0D=0A>>=20lzbench=201.7.3=20(32-bit=20Linux)=20=20=20Assembled=20by=
-=20P.Skibinski=0D=0A>>=20Compressor=20name=20=20=20=20=20=20=20=20=20Compre=
-ss.=20Decompress.=20Compr.=20size=20=20Ratio=20Filename=0D=0A>>=20memcpy=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=205285=20MB/s=20=205283=
-=20MB/s=20=20=20=20=20=20=2032768=20100.00=20data/data32k=0D=0A>>=20lz4=201=
-.8.0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20274=20MB/s=20=20=209=
-95=20MB/s=20=20=20=20=20=20=2013435=20=2041.00=20data/data32k=0D=0A>>=20don=
-e...=20(cIters=3D1=20dIters=3D1=20cTime=3D1.0=20dTime=3D2.0=20chunkSize=3D1=
-706MB=20cSpeed=3D0MB)=0D=0A>>=20=0D=0A>>=20Original=20LZ4=20with=2032K=20da=
-ta:=0D=0A>>=20sh-3.2=23=20./lzbench_orig=20-elz4=20data/data32k=0D=0A>>=20l=
-zbench=201.7.3=20(32-bit=20Linux)=20=20=20Assembled=20by=20P.Skibinski=0D=
-=0A>>=20Compressor=20name=20=20=20=20=20=20=20=20=20Compress.=20Decompress.=
-=20Compr.=20size=20=20Ratio=20Filename=0D=0A>>=20memcpy=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=204918=20MB/s=20=205108=20MB/s=20=20=
-=20=20=20=20=2032768=20100.00=20data/data32k=0D=0A>>=20lz4=201.8.0=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20276=20MB/s=20=201045=20MB/s=20=20=
-=20=20=20=20=2014492=20=2044.23=20data/data32k=0D=0A>>=20=0D=0A>>=20LZO1x=
-=20with=2032K=20data=20(Default=20Compressor=20for=20ZRAM):=20=0D=0A>>=20sh=
--3.2=23=20./lzbench=20-elzo1x,1=20data/data32k=0D=0A>>=20lzbench=201.7.3=20=
-(32-bit=20Linux)=20=20=20Assembled=20by=20P.Skibinski=0D=0A>>=20Compressor=
-=20name=20=20=20=20=20=20=20=20=20Compress.=20Decompress.=20Compr.=20size=
-=20=20Ratio=20Filename=0D=0A>>=20memcpy=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=205273=20MB/s=20=205320=20MB/s=20=20=20=20=20=20=2032768=
-=20100.00=20data/data32k=0D=0A>>=20lzo1x=202.09=20-1=20=20=20=20=20=20=20=
-=20=20=20=20=20=20283=20MB/s=20=20=20465=20MB/s=20=20=20=20=20=20=2014292=
-=20=2043.62=20data/data32k=0D=0A=0D=0A=0D=0AThanks,=0D=0AManinder=20Singh=
-=0D=0A=C2=A0
+SGkgU2luZ2gNCg0KSSBkb24ndCBoYXZlIGFueSBzdHJvbmcgb3BpbmlvbiBvbiB0aGlzIHRvcGlj
+Lg0KDQpZb3UgbWFkZSB5b3VyIGNhc2UgY2xlYXI6IA0KeW91ciB2YXJpYW50IHRyYWRlcyBhIGxp
+dHRsZSBiaXQgb2Ygc3BlZWQgZm9yIGEgbGl0dGxlIGJpdCBtb3JlIGNvbXByZXNzaW9uIHJhdGlv
+Lg0KSW4gdGhlIGNvbnRleHQgb2YgenJhbSwgaXQgbWFrZXMgc2Vuc2UsIGFuZCBJIHdvdWxkIGV4
+cGVjdCBpdCB0byB3b3JrLCBhcyBhZHZlcnRpc2VkIGluIHlvdXIgYmVuY2htYXJrIHJlc3VsdHMu
+DQooZGlzY2xhaW1lcjogSSBoYXZlbid0IHJlcHJvZHVjZWQgdGhlc2UgcmVzdWx0cywganVzdCwg
+dGhleSBsb29rIHJlYXNvbmFibGUgdG8gbWUsIEkgaGF2ZSBubyByZWFzb24gdG8gZG91YnQgdGhl
+bSkuDQoNClNvLCB0aGUgaXNzdWUgaXMgbGVzcyBhYm91dCBwZXJmb3JtYW5jZSwgdGhhbiBhYm91
+dCBjb2RlIGNvbXBsZXhpdHkuDQoNCkFzIG1lbnRpb25lZCwgdGhpcyBpcyBhbiBpbmNvbXBhdGli
+bGUgdmFyaWFudC4NClNvLCBpdCByZXF1aXJlcyBpdHMgb3duIGVudHJ5IHBvaW50LCBhbmQgcHJl
+ZmVyYWJseSBpdHMgb3duIGNvZGUgcGF0aA0KKGV2ZW4gaWYgaXQncyBoZWF2aWx5IGR1cGxpY2F0
+ZWQsDQptaXhpbmcgaXQgd2l0aCByZWd1bGFyIGx6NCBzb3VyY2UgY29kZSwgYXMgcHJvcG9zZWQg
+aW4gdGhlIHBhdGNoLCB3aWxsIGJlIGJhZCBmb3IgbWFpbnRlbmFuY2UsIA0KYW5kIGNhbiBuZWdh
+dGl2ZWx5IGltcGFjdCByZWd1bGFyIGx6NCB1c2FnZSwgb3V0c2lkZSBvZiB6cmFtKS4NCg0KU28g
+dGhhdCdzIGJhc2ljYWxseSB0aGUgImNvc3QiIG9mIGFkZGluZyB0aGlzIG9wdGlvbi4NCg0KSXMg
+aXQgd29ydGggaXQ/DQpXZWxsLCB0aGlzIGlzIGNvbXBsZXRlbHkgb3V0c2lkZSBvZiBteSByZXNw
+b25zaWJpbGl0eSBhcmVhLCBzbyBJIHJlYWxseSBjYW4ndCB0ZWxsLg0KWW91J2xsIGhhdmUgdG8g
+Y29udmluY2UgcGVvcGxlIGluIGNoYXJnZSB0aGF0IHRoZSBnYWlucyBhcmUgd29ydGggdGhlaXIg
+Y29tcGxleGl0eSwNCnNpbmNlIF90aGV5XyB3aWxsIGluaGVyaXQgdGhlIGR1dHkgdG8ga2VlcCB0
+aGUgc3lzdGVtIHdvcmtpbmcgdGhyb3VnaCBpdHMgZnV0dXJlIGV2b2x1dGlvbnMuDQpBdCBhIG1p
+bmltdW0sIHlvdSBhcmUgdGFyZ2V0aW5nIG1haW50YWluZXJzIG9mIHpyYW0gYW5kIHRoZSBjcnlw
+dG8gaW50ZXJmYWNlLg0KRm9yIHRoaXMgdG9waWMsIHRoZXkgYXJlIHRoZSByaWdodCBwZW9wbGUg
+dG8gdGFsayB0by4NCg0KDQrvu79PbiA0LzE2LzE4LCAwNDowOSwgIk1hbmluZGVyIFNpbmdoIiA8
+bWFuaW5kZXIxLnNAc2Ftc3VuZy5jb20+IHdyb3RlOg0KDQogICAgDQogICAgIEhlbGxvIE5pY2sv
+IFlhbm4sDQogICAgDQogICAgQW55IGlucHV0cyByZWdhcmRpbmcgTFo0IGR5biByZXN1bHRzICYg
+bHo0IGR5biBhcHByb2FjaC4NCiAgICANCiAgICA+SGVsbG8gTmljay9TZXJnZXksDQogICAgPiAN
+CiAgICA+QW55IHN1Z2dlc3Rpb24gb3IgY29tbWVudHMsIHNvIHRoYXQgd2UgY2FuIGNoYW5nZSBj
+b2RlIGFuZCByZXNlbmQgdGhlIHBhdGNoPw0KICAgID4gDQogICAgPj4gSGkgTmljayAvIFNlcmdl
+eSwNCiAgICA+PiANCiAgICA+PiANCiAgICA+PiBXZSBoYXZlIGNvbXBhcmVkIExaNCBEeW4gd2l0
+aCBPcmlnaW5hbCBMWjQgdXNpbmcgc29tZSBzYW1wbGVzIG9mIHJlYWx0aW1lIGFwcGxpY2F0aW9u
+IGRhdGEoNEtiKQ0KICAgID4+IGNvbXByZXNzZWQvZGVjb21wcmVzc2VkIGJ5IFpSQU0uIEZvciBj
+b21wYXJpc29uIHdlIGhhdmUgdXNlZCBsemJlbmNoIChodHRwczovL2dpdGh1Yi5jb20vaW5pa2Vw
+L2x6YmVuY2gpDQogICAgPj4gd2UgaGF2ZSBpbXBsZW1lbnRlZCBkZWRpY2F0ZWQgTFo0IER5biBB
+UEkgJiBrZXB0IGxhc3QgbGl0ZXJhbCBsZW5ndGggYXMgNiB0byBhdm9pZCBvdmVyaGVhZCANCiAg
+ICA+PiBvZiBjaGVja3MuIEl0IHNlZW1zIGluIGF2ZXJhZ2UgY2FzZSB0aGVyZSBpcyBhIHNhdmlu
+ZyBvZiAzfjQlIGluIGNvbXByZXNzaW9uIHJhdGlvIHdpdGggYWxtb3N0IHNhbWUgY29tcHJlc3Np
+b24NCiAgICA+PiBzcGVlZCBhbmQgbWlub3IgbG9zcyBpbiBkZWNvbXByZXNzaW9uIHNwZWVkICh+
+NTBNQi9zKSB3aGVuIGNvbXBhcmVkIHdpdGggTFo0Lg0KICAgID4+IA0KICAgID4+IENvbXBhcmlz
+b24gb2YgTHo0IER5biB3aXRoIExaTzF4IGlzIGFsc28gZG9uZSBhcyBMWk8xeCBpcyBkZWZhdWx0
+IGNvbXByZXNzb3Igb2YgWlJBTS4NCiAgICA+PiANCiAgICA+PiBPcmlnaW5hbCBMWjQ6DQogICAg
+Pj4gc2gtMy4yIyAuL2x6YmVuY2ggIC1yICAtZWx6NCAgZGF0YS8NCiAgICA+PiBsemJlbmNoIDEu
+Ny4zICgzMi1iaXQgTGludXgpICAgQXNzZW1ibGVkIGJ5IFAuU2tpYmluc2tpDQogICAgPj4gQ29t
+cHJlc3NvciBuYW1lICAgICAgICAgQ29tcHJlc3MuIERlY29tcHJlc3MuIENvbXByLiBzaXplICBS
+YXRpbyBGaWxlbmFtZQ0KICAgID4+IG1lbWNweSAgICAgICAgICAgICAgICAgICAyMjA1IE1CL3Mg
+IDIyMTcgTUIvcyAgICAgICAgNDA5NiAxMDAuMDAgZGF0YS8vZGF0YV8xDQogICAgPj4gbHo0IDEu
+OC4wICAgICAgICAgICAgICAgICAyMTYgTUIvcyAgIDc2MSBNQi9zICAgICAgICAyNDMzICA1OS40
+MCBkYXRhLy9kYXRhXzENCiAgICA+PiBsejQgMS44LjAgICAgICAgICAgICAgICAgIDI2OSBNQi9z
+ICAgODc3IE1CL3MgICAgICAgIDE4NzMgIDQ1LjczIGRhdGEvL2RhdGFfMg0KICAgID4+IGx6NCAx
+LjguMCAgICAgICAgICAgICAgICAgMjM4IE1CL3MgICA1NzUgTUIvcyAgICAgICAgMjA2MCAgNTAu
+MjkgZGF0YS8vZGF0YV8zDQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICAzMjEgTUIv
+cyAgMTAxNSBNQi9zICAgICAgICAxNDY0ICAzNS43NCBkYXRhLy9kYXRhXzQNCiAgICA+PiBsejQg
+MS44LjAgICAgICAgICAgICAgICAgIDQ2NCBNQi9zICAxMDkwIE1CL3MgICAgICAgICA3MTMgIDE3
+LjQxIGRhdGEvL2RhdGFfNQ0KICAgID4+IGx6NCAxLjguMCAgICAgICAgICAgICAgICAgMjk2IE1C
+L3MgICA5NTYgTUIvcyAgICAgICAgMTU5NyAgMzguOTkgZGF0YS8vZGF0YV82DQogICAgPj4gbHo0
+IDEuOC4wICAgICAgICAgICAgICAgICAzMzggTUIvcyAgIDk5NCBNQi9zICAgICAgICAyMjM4ICA1
+NC42NCBkYXRhLy9kYXRhXzcNCiAgICA+PiBsejQgMS44LjAgICAgICAgICAgICAgICAgIDcwNSBN
+Qi9zICAxMTcyIE1CL3MgICAgICAgICAxOTMgICA0LjcxIGRhdGEvL2RhdGFfOA0KICAgID4+IGx6
+NCAxLjguMCAgICAgICAgICAgICAgICAgNDA0IE1CL3MgIDExNTAgTUIvcyAgICAgICAgMTA5NyAg
+MjYuNzggZGF0YS8vZGF0YV85DQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICAyMTYg
+TUIvcyAgIDkyMSBNQi9zICAgICAgICAzMTgzICA3Ny43MSBkYXRhLy9kYXRhXzEwDQogICAgPj4g
+bHo0IDEuOC4wICAgICAgICAgICAgICAgICA0NTYgTUIvcyAgMTEwMSBNQi9zICAgICAgICAxMDEx
+ICAyNC42OCBkYXRhLy9kYXRhXzExDQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICA4
+NjcgTUIvcyAgMTIwMiBNQi9zICAgICAgICAgIDM3ICAgMC45MCBkYXRhLy9kYXRhXzEyDQogICAg
+Pj4gDQogICAgPj4gDQogICAgPj4gTFo0IER5bmFtaWMgT2ZmZXQ6ICANCiAgICA+PiBzaC0zLjIj
+IC4vbHpiZW5jaCAgLXIgIC1lbHo0X2R5biAgZGF0YS8NCiAgICA+PiBsemJlbmNoIDEuNy4zICgz
+Mi1iaXQgTGludXgpICAgQXNzZW1ibGVkIGJ5IFAuU2tpYmluc2tpDQogICAgPj4gQ29tcHJlc3Nv
+ciBuYW1lICAgICAgICAgQ29tcHJlc3MuIERlY29tcHJlc3MuIENvbXByLiBzaXplICBSYXRpbyBG
+aWxlbmFtZQ0KICAgID4+IG1lbWNweSAgICAgICAgICAgICAgICAgICAyMjAzIE1CL3MgIDIyMTgg
+TUIvcyAgICAgICAgNDA5NiAxMDAuMDAgZGF0YS8vZGF0YV8xDQogICAgPj4gbHo0IDEuOC4wICAg
+ICAgICAgICAgICAgICAyMTggTUIvcyAgIDY5MyBNQi9zICAgICAgICAyMjI4ICA1NC4zOSBkYXRh
+Ly9kYXRhXzENCiAgICA+PiBsejQgMS44LjAgICAgICAgICAgICAgICAgIDI3MyBNQi9zICAgODUx
+IE1CL3MgICAgICAgIDE3MzkgIDQyLjQ2IGRhdGEvL2RhdGFfMg0KICAgID4+IGx6NCAxLjguMCAg
+ICAgICAgICAgICAgICAgMjMwIE1CL3MgICA1MjYgTUIvcyAgICAgICAgMTgwMCAgNDMuOTUgZGF0
+YS8vZGF0YV8zDQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICAzMjEgTUIvcyAgIDk1
+MiBNQi9zICAgICAgICAxMzU3ICAzMy4xMyBkYXRhLy9kYXRhXzQNCiAgICA+PiBsejQgMS44LjAg
+ICAgICAgICAgICAgICAgIDQ3MCBNQi9zICAxMDc1IE1CL3MgICAgICAgICA2NjQgIDE2LjIxIGRh
+dGEvL2RhdGFfNQ0KICAgID4+IGx6NCAxLjguMCAgICAgICAgICAgICAgICAgMzAzIE1CL3MgICA5
+NjQgTUIvcyAgICAgICAgMTQ1NSAgMzUuNTIgZGF0YS8vZGF0YV82DQogICAgPj4gbHo0IDEuOC4w
+ICAgICAgICAgICAgICAgICAzNDUgTUIvcyAgIDk1MSBNQi9zICAgICAgICAyMTI2ICA1MS45MCBk
+YXRhLy9kYXRhXzcNCiAgICA+PiBsejQgMS44LjAgICAgICAgICAgICAgICAgIDc0NCBNQi9zICAx
+MTYzIE1CL3MgICAgICAgICAxNzcgICA0LjMyIGRhdGEvL2RhdGFfOA0KICAgID4+IGx6NCAxLjgu
+MCAgICAgICAgICAgICAgICAgNDA5IE1CL3MgIDEyNTcgTUIvcyAgICAgICAgMTAzMyAgMjUuMjIg
+ZGF0YS8vZGF0YV85DQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICAyMjAgTUIvcyAg
+IDg1NyBNQi9zICAgICAgICAzMDQ5ICA3NC40NCBkYXRhLy9kYXRhXzEwDQogICAgPj4gbHo0IDEu
+OC4wICAgICAgICAgICAgICAgICA0NjQgTUIvcyAgMTEwNSBNQi9zICAgICAgICAgOTM0ICAyMi44
+MCBkYXRhLy9kYXRhXzExDQogICAgPj4gbHo0IDEuOC4wICAgICAgICAgICAgICAgICA4NzQgTUIv
+cyAgMTE5NCBNQi9zICAgICAgICAgIDM2ICAgMC44OCBkYXRhLy9kYXRhXzEyDQogICAgPj4gDQog
+ICAgPj4gDQogICAgPj4gTFo0IER5bmFtaWMgT2Zmc2V0IHdpdGggMzJLIGRhdGE6DQogICAgPj4g
+c2gtMy4yIyAuL2x6YmVuY2ggLWVsejRfZHluIGRhdGEvZGF0YTMyaw0KICAgID4+IGx6YmVuY2gg
+MS43LjMgKDMyLWJpdCBMaW51eCkgICBBc3NlbWJsZWQgYnkgUC5Ta2liaW5za2kNCiAgICA+PiBD
+b21wcmVzc29yIG5hbWUgICAgICAgICBDb21wcmVzcy4gRGVjb21wcmVzcy4gQ29tcHIuIHNpemUg
+IFJhdGlvIEZpbGVuYW1lDQogICAgPj4gbWVtY3B5ICAgICAgICAgICAgICAgICAgIDUyODUgTUIv
+cyAgNTI4MyBNQi9zICAgICAgIDMyNzY4IDEwMC4wMCBkYXRhL2RhdGEzMmsNCiAgICA+PiBsejQg
+MS44LjAgICAgICAgICAgICAgICAgIDI3NCBNQi9zICAgOTk1IE1CL3MgICAgICAgMTM0MzUgIDQx
+LjAwIGRhdGEvZGF0YTMyaw0KICAgID4+IGRvbmUuLi4gKGNJdGVycz0xIGRJdGVycz0xIGNUaW1l
+PTEuMCBkVGltZT0yLjAgY2h1bmtTaXplPTE3MDZNQiBjU3BlZWQ9ME1CKQ0KICAgID4+IA0KICAg
+ID4+IE9yaWdpbmFsIExaNCB3aXRoIDMySyBkYXRhOg0KICAgID4+IHNoLTMuMiMgLi9semJlbmNo
+X29yaWcgLWVsejQgZGF0YS9kYXRhMzJrDQogICAgPj4gbHpiZW5jaCAxLjcuMyAoMzItYml0IExp
+bnV4KSAgIEFzc2VtYmxlZCBieSBQLlNraWJpbnNraQ0KICAgID4+IENvbXByZXNzb3IgbmFtZSAg
+ICAgICAgIENvbXByZXNzLiBEZWNvbXByZXNzLiBDb21wci4gc2l6ZSAgUmF0aW8gRmlsZW5hbWUN
+CiAgICA+PiBtZW1jcHkgICAgICAgICAgICAgICAgICAgNDkxOCBNQi9zICA1MTA4IE1CL3MgICAg
+ICAgMzI3NjggMTAwLjAwIGRhdGEvZGF0YTMyaw0KICAgID4+IGx6NCAxLjguMCAgICAgICAgICAg
+ICAgICAgMjc2IE1CL3MgIDEwNDUgTUIvcyAgICAgICAxNDQ5MiAgNDQuMjMgZGF0YS9kYXRhMzJr
+DQogICAgPj4gDQogICAgPj4gTFpPMXggd2l0aCAzMksgZGF0YSAoRGVmYXVsdCBDb21wcmVzc29y
+IGZvciBaUkFNKTogDQogICAgPj4gc2gtMy4yIyAuL2x6YmVuY2ggLWVsem8xeCwxIGRhdGEvZGF0
+YTMyaw0KICAgID4+IGx6YmVuY2ggMS43LjMgKDMyLWJpdCBMaW51eCkgICBBc3NlbWJsZWQgYnkg
+UC5Ta2liaW5za2kNCiAgICA+PiBDb21wcmVzc29yIG5hbWUgICAgICAgICBDb21wcmVzcy4gRGVj
+b21wcmVzcy4gQ29tcHIuIHNpemUgIFJhdGlvIEZpbGVuYW1lDQogICAgPj4gbWVtY3B5ICAgICAg
+ICAgICAgICAgICAgIDUyNzMgTUIvcyAgNTMyMCBNQi9zICAgICAgIDMyNzY4IDEwMC4wMCBkYXRh
+L2RhdGEzMmsNCiAgICA+PiBsem8xeCAyLjA5IC0xICAgICAgICAgICAgIDI4MyBNQi9zICAgNDY1
+IE1CL3MgICAgICAgMTQyOTIgIDQzLjYyIGRhdGEvZGF0YTMyaw0KICAgIA0KICAgIA0KICAgIFRo
+YW5rcywNCiAgICBNYW5pbmRlciBTaW5naA0KICAgICANCiAgICANCg0K
