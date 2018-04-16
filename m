@@ -1,54 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDPJhB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:37:01 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45245 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753289AbeDPJg7 (ORCPT
+        id S1754656AbeDPJhw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:37:52 -0400
+Received: from mail-pg0-f54.google.com ([74.125.83.54]:37406 "EHLO
+        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753224AbeDPJhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:36:59 -0400
-X-Google-Smtp-Source: AIpwx4+WMS8csvaNKPxDlz8pxVaQkyhBH3CxmV7/4jvClGtrxRE6hxpHZhr/4/yzNJekyEZ6qReRgA==
-Date: Mon, 16 Apr 2018 10:36:55 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/3] mfd: axp20x: Correct AXP806 POK interrupt prefix
-Message-ID: <20180416093655.d2ni7iypccl72xxu@dell>
-References: <20180329043115.7132-1-wens@csie.org>
- <20180329043115.7132-4-wens@csie.org>
+        Mon, 16 Apr 2018 05:37:50 -0400
+X-Google-Smtp-Source: AIpwx4+wvnAuVM0Go0XYWPFET+kAwD6opNvaDlbj4inf75mp6tiL+fwwcFK6OLYK+uHZbu/UzHW++A==
+Date: Mon, 16 Apr 2018 15:07:47 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
+        kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        javi.merino@kernel.org, rui.zhang@intel.com,
+        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>
+Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+Message-ID: <20180416093747.GB4244@vireshk-i7>
+References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
+ <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
+ <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
+ <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
+ <20180416073729.GA4244@vireshk-i7>
+ <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180329043115.7132-4-wens@csie.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Mar 2018, Chen-Yu Tsai wrote:
+On 16-04-18, 09:44, Daniel Lezcano wrote:
+> Because we rely on the number to identify the cluster and flag it
+> 'processed'. The number itself is not important.
 
-> When AXP806 support was added, POK was incorrectly expanded to PWROK.
-> However, the datasheet lists them as POK[LSNP], which is the same as
-> on the AXP288. Furthermore, the registers associated with POK functions
-> are the same as the PEK on the other AXP PMICs. This suggests that
-> "POK" means "Power On Key", much like "PEK" means "Power Enable Key",
-> instead of "Power OK".
-> 
-> This patch changes the "PWROK" prefix to "POK" for these interrupts.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/mfd/axp20x.c       | 8 ++++----
->  include/linux/mfd/axp20x.h | 8 ++++----
->  2 files changed, 8 insertions(+), 8 deletions(-)
-
-Applied, thanks.
+It is, because you are creating multiple groups (like cpufreq
+policies) right now based on cluster id. Which will be zero for all
+the CPUs. So in a big little system we will have two cpufreq cooling
+devices and one cpuidle cooling device.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+viresh
