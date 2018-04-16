@@ -1,319 +1,570 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754402AbeDPKOe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:14:34 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:61975 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754295AbeDPKO3 (ORCPT
+        id S1754674AbeDPKPb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:15:31 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42538 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753842AbeDPKOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:14:29 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180416101427epoutp011bea249b37f6caa0d1a90d643aaa8f1d~l4wbeGtuR2791827918epoutp01S
-X-AuditID: b6c32a35-139ff70000000fee-72-5ad477823c9c
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH 13/14] ARM: dts: exynos: remove no longer needed samsung
- thermal properties
-Date: Mon, 16 Apr 2018 12:12:04 +0200
-Message-id: <1523873525-23718-14-git-send-email-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 1.9.1
-In-reply-to: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsWy7bCmvm5T+ZUog4PPpC02zljPajHvs6zF
-        /CvXWC36H79mtjh/fgO7xeVdc9gsPvceYbSYcX4fk8WTh31sDpweO2fdZfdYvOclk8emVZ1s
-        Hneu7WHz6NuyitHj8ya5ALYoLpuU1JzMstQifbsErow1fZdZCu64VUyctZGxgfGMVRcjB4eE
-        gInE/O2xXYxcHEICOxglTjyaywLhfGeU+HV4PRNMUcNTfYj4BkaJtVN+M0M4vxglpj5dzNjF
-        yMnBJmAlMbF9FZgtIqAlceLSdiaQImaBCUwST1/NZAOZJCwQK7GzPxOkhkVAVeLw6UesIGFe
-        AU+JlQ2xIGEJATmJk8cms4LYnEDhpjXX2EDGSAgsYZOY8WUnG0SRi8TcqauhbGGJV8e3sEMc
-        Ki1x6agtRH0zo8S3HXuYIWomMErsWS8EYVtLHD5+EWwBswCfxLuvPawQvbwSHW1QJR4S09u3
-        sUDYjhL3jy5lgvh3DqPEn19NTBMYpRYwMqxiFEstKM5NTy02LDDUK07MLS7NS9dLzs/dxAiO
-        Vi3THYxTzvkcYhTgYFTi4d1x9nKUEGtiWXFl7iFGCQ5mJRHeZYlAId6UxMqq1KL8+KLSnNTi
-        Q4zSHCxK4rxPfc5ECQmkJ5akZqemFqQWwWSZODilGhhDF/Dt/b5rrviiZGGlH93RVzPfZfS+
-        OedxsH/5B6X3DMWcf7qOMT69kFLCw3fo5qVpQUqvpr263n24oa35LvOx1wG3owX1HGeHW8Sy
-        MaqXbV2gYnhm49L2c4KBB7eoL5oq3Mne2dt5vkLOQVDSMn5LuYTO+6qf+/6ZLBTeuNhmg6+z
-        zuXpybuUWIozEg21mIuKEwEJHgbB0gIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBLMWRmVeSWpSXmKPExsVy+t9jQd3G8itRBvcuaFhsnLGe1WLeZ1mL
-        +VeusVr0P37NbHH+/AZ2i8u75rBZfO49wmgx4/w+JosnD/vYHDg9ds66y+6xeM9LJo9NqzrZ
-        PO5c28Pm0bdlFaPH501yAWxRXDYpqTmZZalF+nYJXBlr+i6zFNxxq5g4ayNjA+MZqy5GDg4J
-        AROJhqf6XYxcHEIC6xglzu/Yywrh/GKU+PxtHWMXIycHm4CVxMT2VWC2iICWxIlL25lAipgF
-        JjBJLFm7iB1kkrBArMTO/kyQGhYBVYnDpx+xgoR5BTwlVjbEgoQlBOQkTh6bzApicwKFm9Zc
-        YwOxhQQ8JBonXmWcwMizgJFhFaNkakFxbnpusVGBYV5quV5xYm5xaV66XnJ+7iZGYHhtO6zV
-        t4Px/pL4Q4wCHIxKPLw7zl6OEmJNLCuuzD3EKMHBrCTCuywRKMSbklhZlVqUH19UmpNafIhR
-        moNFSZz3dt6xSCGB9MSS1OzU1ILUIpgsEwenVAMjl/INs96HrwTFRBar1rYGiL1vXaif2Ve6
-        2+HslImTn9cfPtauXOT51uf0odcOl3dLvjF+633jWOWWgOuf46aVH7Jj/vTp/C5H+40fLDr/
-        9CqbTJ6bar5rh3o6e/u0Hzd3z+OvMpzw6gXjnd0aoWsv3GA59cNDV/2g+FI5BxmzbcumO18R
-        qmnnVmIpzkg01GIuKk4EAOR+wUsrAgAA
-X-CMS-MailID: 20180416101425epcas1p46ab4d827e3a64c5c16b32a17f63dd9d0
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180416101425epcas1p46ab4d827e3a64c5c16b32a17f63dd9d0
-X-RootMTR: 20180416101425epcas1p46ab4d827e3a64c5c16b32a17f63dd9d0
-References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180416101425epcas1p46ab4d827e3a64c5c16b32a17f63dd9d0@epcas1p4.samsung.com>
+        Mon, 16 Apr 2018 06:14:22 -0400
+X-Google-Smtp-Source: AIpwx4+WvLoxeMGJt3Qf5IAQ6stMGR7Gnx/NgY6Q8YXRM8LP3kf0zSfuUq80Tgi6tM/redpR8/dzDA==
+Subject: Re: [RfC PATCH] Add udmabuf misc device
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Dongwon Kim <dongwon.kim@intel.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, qemu-devel@nongnu.org,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
+References: <20180406090747.gwiegu22z4noj23i@sirius.home.kraxel.org>
+ <9a085854-3758-1500-9971-806c611cb54f@gmail.com>
+ <20180406115730.jtwcbz5okrphlxli@sirius.home.kraxel.org>
+ <7ef89a29-6584-d23c-efd1-f30d9b767a24@gmail.com>
+ <20180406185746.GA4983@downor-Z87X-UD5H>
+ <c5923162-4144-56ef-ac81-eb1ab3eb5e8f@gmail.com>
+ <20180410172605.GA26472@downor-Z87X-UD5H>
+ <e4be9524-53d8-640c-e242-8ed3bfd05541@gmail.com>
+ <20180413153708.GW31310@phenom.ffwll.local>
+ <ced31540-9e93-6a24-ea60-20a1bddf2d39@gmail.com>
+ <20180416074302.GG31310@phenom.ffwll.local>
+ <d7d0fb50-0407-b51d-fb20-7275d17db47b@gmail.com>
+ <CAKMK7uEH-VFFYQCVw4QWrFf-vGC8wK4X3Fq6EybjMPoknDsxnQ@mail.gmail.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <89b044da-8986-d361-f557-26331a3de317@gmail.com>
+Date: Mon, 16 Apr 2018 13:14:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAKMK7uEH-VFFYQCVw4QWrFf-vGC8wK4X3Fq6EybjMPoknDsxnQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove no longer needed samsung thermal properties.
+On 04/16/2018 12:32 PM, Daniel Vetter wrote:
+> On Mon, Apr 16, 2018 at 10:22 AM, Oleksandr Andrushchenko
+> <andr2000@gmail.com> wrote:
+>> On 04/16/2018 10:43 AM, Daniel Vetter wrote:
+>>> On Mon, Apr 16, 2018 at 10:16:31AM +0300, Oleksandr Andrushchenko wrote:
+>>>> On 04/13/2018 06:37 PM, Daniel Vetter wrote:
+>>>>> On Wed, Apr 11, 2018 at 08:59:32AM +0300, Oleksandr Andrushchenko wrote:
+>>>>>> On 04/10/2018 08:26 PM, Dongwon Kim wrote:
+>>>>>>> On Tue, Apr 10, 2018 at 09:37:53AM +0300, Oleksandr Andrushchenko
+>>>>>>> wrote:
+>>>>>>>> On 04/06/2018 09:57 PM, Dongwon Kim wrote:
+>>>>>>>>> On Fri, Apr 06, 2018 at 03:36:03PM +0300, Oleksandr Andrushchenko
+>>>>>>>>> wrote:
+>>>>>>>>>> On 04/06/2018 02:57 PM, Gerd Hoffmann wrote:
+>>>>>>>>>>>       Hi,
+>>>>>>>>>>>
+>>>>>>>>>>>>> I fail to see any common ground for xen-zcopy and udmabuf ...
+>>>>>>>>>>>> Does the above mean you can assume that xen-zcopy and udmabuf
+>>>>>>>>>>>> can co-exist as two different solutions?
+>>>>>>>>>>> Well, udmabuf route isn't fully clear yet, but yes.
+>>>>>>>>>>>
+>>>>>>>>>>> See also gvt (intel vgpu), where the hypervisor interface is
+>>>>>>>>>>> abstracted
+>>>>>>>>>>> away into a separate kernel modules even though most of the actual
+>>>>>>>>>>> vgpu
+>>>>>>>>>>> emulation code is common.
+>>>>>>>>>> Thank you for your input, I'm just trying to figure out
+>>>>>>>>>> which of the three z-copy solutions intersect and how much
+>>>>>>>>>>>> And what about hyper-dmabuf?
+>>>>>>>>> xen z-copy solution is pretty similar fundamentally to hyper_dmabuf
+>>>>>>>>> in terms of these core sharing feature:
+>>>>>>>>>
+>>>>>>>>> 1. the sharing process - import prime/dmabuf from the producer ->
+>>>>>>>>> extract
+>>>>>>>>> underlying pages and get those shared -> return references for
+>>>>>>>>> shared pages
+>>>>>>> Another thing is danvet was kind of against to the idea of importing
+>>>>>>> existing
+>>>>>>> dmabuf/prime buffer and forward it to the other domain due to
+>>>>>>> synchronization
+>>>>>>> issues. He proposed to make hyper_dmabuf only work as an exporter so
+>>>>>>> that it
+>>>>>>> can have a full control over the buffer. I think we need to talk about
+>>>>>>> this
+>>>>>>> further as well.
+>>>>>> Yes, I saw this. But this limits the use-cases so much.
+>>>>>> For instance, running Android as a Guest (which uses ION to allocate
+>>>>>> buffers) means that finally HW composer will import dma-buf into
+>>>>>> the DRM driver. Then, in case of xen-front for example, it needs to be
+>>>>>> shared with the backend (Host side). Of course, we can change
+>>>>>> user-space
+>>>>>> to make xen-front allocate the buffers (make it exporter), but what we
+>>>>>> try
+>>>>>> to avoid is to change user-space which in normal world would have
+>>>>>> remain
+>>>>>> unchanged otherwise.
+>>>>>> So, I do think we have to support this use-case and just have to
+>>>>>> understand
+>>>>>> the complexity.
+>>>>> Erm, why do you need importer capability for this use-case?
+>>>>>
+>>>>> guest1 -> ION -> xen-front -> hypervisor -> guest 2 -> xen-zcopy exposes
+>>>>> that dma-buf -> import to the real display hw
+>>>>>
+>>>>> No where in this chain do you need xen-zcopy to be able to import a
+>>>>> dma-buf (within linux, it needs to import a bunch of pages from the
+>>>>> hypervisor).
+>>>>>
+>>>>> Now if your plan is to use xen-zcopy in the guest1 instead of xen-front,
+>>>>> then you indeed need to import.
+>>>> This is the exact use-case I was referring to while saying
+>>>> we need to import on Guest1 side. If hyper-dmabuf is so
+>>>> generic that there is no xen-front in the picture, then
+>>>> it needs to import a dma-buf, so it can be exported at Guest2 side.
+>>>>>     But that imo doesn't make sense:
+>>>>> - xen-front gives you clearly defined flip events you can forward to the
+>>>>>      hypervisor. xen-zcopy would need to add that again.
+>>>> xen-zcopy is a helper driver which doesn't handle page flips
+>>>> and is not a KMS driver as one might think of: the DRM UAPI it uses is
+>>>> just to export a dma-buf as a PRIME buffer, but that's it.
+>>>> Flipping etc. is done by the backend [1], not xen-zcopy.
+>>>>>     Same for
+>>>>>      hyperdmabuf (and really we're not going to shuffle struct dma_fence
+>>>>> over
+>>>>>      the wire in a generic fashion between hypervisor guests).
+>>>>>
+>>>>> - xen-front already has the idea of pixel format for the buffer (and any
+>>>>>      other metadata). Again, xen-zcopy and hyperdmabuf lack that, would
+>>>>> need
+>>>>>      to add it shoehorned in somehow.
+>>>> Again, here you are talking of something which is implemented in
+>>>> Xen display backend, not xen-zcopy, e.g. display backend can
+>>>> implement para-virtual display w/o xen-zcopy at all, but in this case
+>>>> there is a memory copying for each frame. With the help of xen-zcopy
+>>>> the backend feeds xen-front's buffers directly into Guest2 DRM/KMS or
+>>>> Weston or whatever as xen-zcopy exports remote buffers as PRIME buffers,
+>>>> thus no buffer copying is required.
+>>> Why do you need to copy on every frame for xen-front? In the above
+>>> pipeline, using xen-front I see 0 architectural reasons to have a copy
+>>> anywhere.
+>>>
+>>> This seems to be the core of the confusion we're having here.
+>> Ok, so I'll try to explain:
+>> 1. xen-front - produces a display buffer to be shown at Guest2
+>> by the backend, shares its grant references with the backend
+>> 2. xen-front sends page flip event to the backend specifying the
+>> buffer in question
+>> 3. Backend takes the shared buffer (which is only a buffer mapped into
+>> backend's memory, it is not a dma-buf/PRIME one) and makes memcpy from
+>> it to a local dumb/surface
+> Why do you even do that? The copying here I mean - why don't you just
+> directly scan out from the grant references you received through the
+> hypervisor?
+Probably the confusion comes from the fact that KVM and Xen
+implement things differently (for example, on ARM we don't use QEMU at all).
+Please see [1] and [2] for Xen frontend/backend placement in the picture.
 
-There should be no functional changes caused by this patch.
-
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi                 |  2 +-
- arch/arm/boot/dts/exynos4.dtsi                    |  2 +-
- arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi | 20 --------------------
- arch/arm/boot/dts/exynos5250.dtsi                 |  2 +-
- arch/arm/boot/dts/exynos5410.dtsi                 |  8 ++++----
- arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi | 21 ---------------------
- arch/arm/boot/dts/exynos5420.dtsi                 | 10 +++++-----
- arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi | 20 --------------------
- arch/arm/boot/dts/exynos5440.dtsi                 |  6 +++---
- 9 files changed, 15 insertions(+), 76 deletions(-)
- delete mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
- delete mode 100644 arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
- delete mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
-
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 0a5f989..d6e014f 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -227,7 +227,7 @@
- 			interrupts = <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cmu CLK_TMU_APBIF>;
- 			clock-names = "tmu_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 909a9f2..ca1921d 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -736,7 +736,7 @@
- 			reg = <0x100C0000 0x100>;
- 			interrupts = <2 4>;
- 			status = "disabled";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		jpeg_codec: jpeg-codec@11840000 {
-diff --git a/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi b/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
-deleted file mode 100644
-index 489b58c..0000000
---- a/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
-+++ /dev/null
-@@ -1,20 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Device tree sources for Exynos4412 TMU sensor configuration
-- *
-- * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
-- */
--
--#include <dt-bindings/thermal/thermal_exynos.h>
--
--#thermal-sensor-cells = <0>;
--samsung,tmu_gain = <8>;
--samsung,tmu_reference_voltage = <16>;
--samsung,tmu_noise_cancel_mode = <4>;
--samsung,tmu_efuse_value = <55>;
--samsung,tmu_min_efuse_value = <40>;
--samsung,tmu_max_efuse_value = <100>;
--samsung,tmu_first_point_trim = <25>;
--samsung,tmu_second_point_trim = <85>;
--samsung,tmu_default_temp_offset = <50>;
--samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 45283a6..45242ba 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -282,7 +282,7 @@
- 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		sata: sata@122f0000 {
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 55509c6..b8b68ec 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -93,7 +93,7 @@
- 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		tmu_cpu1: tmu@10064000 {
-@@ -102,7 +102,7 @@
- 			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		tmu_cpu2: tmu@10068000 {
-@@ -111,7 +111,7 @@
- 			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		tmu_cpu3: tmu@1006c000 {
-@@ -120,7 +120,7 @@
- 			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif";
--			#include "exynos4412-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		mmc_0: mmc@12200000 {
-diff --git a/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi b/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
-deleted file mode 100644
-index fbc77cb..0000000
---- a/arch/arm/boot/dts/exynos5420-tmu-sensor-conf.dtsi
-+++ /dev/null
-@@ -1,21 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Device tree sources for Exynos5420 TMU sensor configuration
-- *
-- * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
-- * Copyright (c) 2017 Krzysztof Kozlowski <krzk@kernel.org>
-- */
--
--#include <dt-bindings/thermal/thermal_exynos.h>
--
--#thermal-sensor-cells = <0>;
--samsung,tmu_gain = <8>;
--samsung,tmu_reference_voltage = <16>;
--samsung,tmu_noise_cancel_mode = <4>;
--samsung,tmu_efuse_value = <55>;
--samsung,tmu_min_efuse_value = <0>;
--samsung,tmu_max_efuse_value = <100>;
--samsung,tmu_first_point_trim = <25>;
--samsung,tmu_second_point_trim = <85>;
--samsung,tmu_default_temp_offset = <50>;
--samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 2f3cb2a..85d8656 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -722,7 +722,7 @@
- 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif";
--			#include "exynos5420-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		tmu_cpu1: tmu@10064000 {
-@@ -731,7 +731,7 @@
- 			interrupts = <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif";
--			#include "exynos5420-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		tmu_cpu2: tmu@10068000 {
-@@ -740,7 +740,7 @@
- 			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>, <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
--			#include "exynos5420-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		tmu_cpu3: tmu@1006c000 {
-@@ -749,7 +749,7 @@
- 			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU>, <&clock CLK_TMU_GPU>;
- 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
--			#include "exynos5420-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		tmu_gpu: tmu@100a0000 {
-@@ -758,7 +758,7 @@
- 			interrupts = <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_TMU_GPU>, <&clock CLK_TMU>;
- 			clock-names = "tmu_apbif", "tmu_triminfo_apbif";
--			#include "exynos5420-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		sysmmu_g2dr: sysmmu@0x10A60000 {
-diff --git a/arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi b/arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
-deleted file mode 100644
-index 0421c3d..0000000
---- a/arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
-+++ /dev/null
-@@ -1,20 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Device tree sources for Exynos5440 TMU sensor configuration
-- *
-- * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
-- */
--
--#include <dt-bindings/thermal/thermal_exynos.h>
--
--#thermal-sensor-cells = <0>;
--samsung,tmu_gain = <5>;
--samsung,tmu_reference_voltage = <16>;
--samsung,tmu_noise_cancel_mode = <4>;
--samsung,tmu_efuse_value = <0x5d2d>;
--samsung,tmu_min_efuse_value = <16>;
--samsung,tmu_max_efuse_value = <76>;
--samsung,tmu_first_point_trim = <25>;
--samsung,tmu_second_point_trim = <70>;
--samsung,tmu_default_temp_offset = <25>;
--samsung,tmu_cal_type = <TYPE_ONE_POINT_TRIMMING>;
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index f3abecc4..a6323a4 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -234,7 +234,7 @@
- 			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_B_125>;
- 			clock-names = "tmu_apbif";
--			#include "exynos5440-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		tmuctrl_1: tmuctrl@16011c {
-@@ -243,7 +243,7 @@
- 			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_B_125>;
- 			clock-names = "tmu_apbif";
--			#include "exynos5440-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		tmuctrl_2: tmuctrl@160120 {
-@@ -252,7 +252,7 @@
- 			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&clock CLK_B_125>;
- 			clock-names = "tmu_apbif";
--			#include "exynos5440-tmu-sensor-conf.dtsi"
-+			#thermal-sensor-cells = <0>;
- 		};
- 
- 		sata@210000 {
--- 
-1.9.1
+WRT to [2] xen-front is a PV front-end driver running in guest OS
+and Xen display backend is a user-space application running in Dom0
+(in the picture [2] backend runs as a Dom0 kernel driver).
+So, the para-virtualized device is not implemented in the hypervisor
+itself, but as user/kernel-space pair in corresponding domains.
+Thus, when xen-front shares grant references of the pages of the buffer
+with the Xen display backend (user-space) the later can only map those
+references into Dom0 memory to memcpy into some local display buffer/dumb.
+Hence, hypervisor is not in the equation while actually implementing
+para-virtual display device, e.g. it provides you with API to share/map
+pages, but it won't be the entity which will implement actual page flips 
+etc.
+So, this is where xen-zcopy comes into the play (runs in Dom0):
+it not only maps xen-front's grant references into Dom0, but also creates
+a PRIME buffer, so this buffer can be used by other DRM devices/Weston
+running in Dom0.
+> Also I'm not clear in your example which step happens where (guest 1/2
+> or hypervisor)?
+Steps 1,2 - Guest2, kernel space
+Steps 3-4 - Guest1, Dom0 user-space
+The hypervisor here only provides transport and means to access buffers,
+actual display/DRM related code is in xen-front and Dom0's display backend
+>> 4. Backend flips that local dumb buffer/surface
+>>
+>> If I have a xen-zcopy helper driver then I can avoid doing step 3):
+>> 1) 2) remain the same as above
+>> 3) Initially for a new display buffer, backend calls xen-zcopy to create
+>> a local PRIME buffer from the grant references provided by the xen-front
+>> via displif protocol [1]: we now have handle_zcopy
+>> 4) Backend exports this PRIME with HANDLE_TO_FD from xen-zcopy and imports
+>> it into Weston-KMS/DRM or real HW DRM driver with FD_TO_HANDLE: we now have
+>> handle_local
+>> 5) On page flip event backend flips local PRIME: uses handle_local for flips
+>>
+>>>>> Ofc you won't be able to shovel sound or media stream data over to
+>>>>> another
+>>>>> guest like this, but that's what you have xen-v4l and xen-sound or
+>>>>> whatever else for. Trying to make a new uapi, which means userspace must
+>>>>> be changed for all the different use-case, instead of reusing standard
+>>>>> linux driver uapi (which just happens to send the data to another
+>>>>> hypervisor guest instead of real hw) imo just doesn't make much sense.
+>>>>>
+>>>>> Also, at least for the gpu subsystem: Any new uapi must have full
+>>>>> userspace available for it, see:
+>>>>>
+>>>>>
+>>>>> https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
+>>>>>
+>>>>> Adding more uapi is definitely the most painful way to fix a use-case.
+>>>>> Personally I'd go as far and also change the xen-zcopy side on the
+>>>>> receiving guest to use some standard linux uapi. E.g. you could write an
+>>>>> output v4l driver to receive the frames from guest1.
+>>>> So, we now know that xen-zcopy was not meant to handle page flips,
+>>>> but to implement new UAPI to let user-space create buffers either
+>>>> from Guest2 grant references (so it can be exported to Guest1) or
+>>>> other way round, e.g. create (from Guest1 grant references to export to
+>>>> Guest 2). For that reason it adds 2 IOCTLs: create buffer from grefs
+>>>> or produce grefs for the buffer given.
+>>>> One additional IOCTL is to wait for the buffer to be released by
+>>>> Guest2 user-space.
+>>>> That being said, I don't quite see how v4l can be used here to implement
+>>>> UAPI I need.
+>>> Under the assumption that you can make xen-front to zerocopy for the
+>>> kernel->hypervisor path, v4l could be made to work for the
+>>> hypervisor->kernel side of the pipeline.
+>>>
+>>> But it sounds like we have a confusion already on why or why not xen-front
+>>> can or cannot do zerocopy.
+>> xen-front provides an array of grant references to Guest2 (backend).
+>> It's up to backend what it does with those grant references
+>> which at Guest2 side are not PRIME or dma-buf, but just a set of pages.
+>> This is xen-zcopy which turns these pages into a PRIME. When this is done
+>> backend can now tell DRM drivers to use the buffer in DRM terms.
+>>
+>>>>>>> danvet, can you comment on this topic?
+>>>>>>>
+>>>>>>>>> 2. the page sharing mechanism - it uses Xen-grant-table.
+>>>>>>>>>
+>>>>>>>>> And to give you a quick summary of differences as far as I
+>>>>>>>>> understand
+>>>>>>>>> between two implementations (please correct me if I am wrong,
+>>>>>>>>> Oleksandr.)
+>>>>>>>>>
+>>>>>>>>> 1. xen-zcopy is DRM specific - can import only DRM prime buffer
+>>>>>>>>> while hyper_dmabuf can export any dmabuf regardless of originator
+>>>>>>>> Well, this is true. And at the same time this is just a matter
+>>>>>>>> of extending the API: xen-zcopy is a helper driver designed for
+>>>>>>>> xen-front/back use-case, so this is why it only has DRM PRIME API
+>>>>>>>>> 2. xen-zcopy doesn't seem to have dma-buf synchronization between
+>>>>>>>>> two VMs
+>>>>>>>>> while (as danvet called it as remote dmabuf api sharing)
+>>>>>>>>> hyper_dmabuf sends
+>>>>>>>>> out synchronization message to the exporting VM for synchronization.
+>>>>>>>> This is true. Again, this is because of the use-cases it covers.
+>>>>>>>> But having synchronization for a generic solution seems to be a good
+>>>>>>>> idea.
+>>>>>>> Yeah, understood xen-zcopy works ok with your use case. But I am just
+>>>>>>> curious
+>>>>>>> if it is ok not to have any inter-domain synchronization in this
+>>>>>>> sharing model.
+>>>>>> The synchronization is done with displif protocol [1]
+>>>>>>> The buffer being shared is technically dma-buf and originator needs to
+>>>>>>> be able
+>>>>>>> to keep track of it.
+>>>>>> As I am working in DRM terms the tracking is done by the DRM core
+>>>>>> for me for free. (This might be one of the reasons Daniel sees DRM
+>>>>>> based implementation fit very good from code-reuse POV).
+>>>>> Hm, not sure what tracking you refer to here all ... I got lost in all
+>>>>> the
+>>>>> replies while catching up.
+>>>>>
+>>>> I was just referring to accounting stuff already implemented in the DRM
+>>>> core,
+>>>> so I don't have to worry about doing the same for buffers to understand
+>>>> when they are released etc.
+>>>>>>>>> 3. 1-level references - when using grant-table for sharing pages,
+>>>>>>>>> there will
+>>>>>>>>> be same # of refs (each 8 byte)
+>>>>>>>> To be precise, grant ref is 4 bytes
+>>>>>>> You are right. Thanks for correction.;)
+>>>>>>>
+>>>>>>>>> as # of shared pages, which is passed to
+>>>>>>>>> the userspace to be shared with importing VM in case of xen-zcopy.
+>>>>>>>> The reason for that is that xen-zcopy is a helper driver, e.g.
+>>>>>>>> the grant references come from the display backend [1], which
+>>>>>>>> implements
+>>>>>>>> Xen display protocol [2]. So, effectively the backend extracts
+>>>>>>>> references
+>>>>>>>> from frontend's requests and passes those to xen-zcopy as an array
+>>>>>>>> of refs.
+>>>>>>>>>      Compared
+>>>>>>>>> to this, hyper_dmabuf does multiple level addressing to generate
+>>>>>>>>> only one
+>>>>>>>>> reference id that represents all shared pages.
+>>>>>>>> In the protocol [2] only one reference to the gref directory is
+>>>>>>>> passed
+>>>>>>>> between VMs
+>>>>>>>> (and the gref directory is a single-linked list of shared pages
+>>>>>>>> containing
+>>>>>>>> all
+>>>>>>>> of the grefs of the buffer).
+>>>>>>> ok, good to know. I will look into its implementation in more details
+>>>>>>> but is
+>>>>>>> this gref directory (chained grefs) something that can be used for any
+>>>>>>> general
+>>>>>>> memory sharing use case or is it jsut for xen-display (in current code
+>>>>>>> base)?
+>>>>>> Not to mislead you: one grant ref is passed via displif protocol,
+>>>>>> but the page it's referencing contains the rest of the grant refs.
+>>>>>>
+>>>>>> As to if this can be used for any memory: yes. It is the same for
+>>>>>> sndif and displif Xen protocols, but defined twice as strictly speaking
+>>>>>> sndif and displif are two separate protocols.
+>>>>>>
+>>>>>> While reviewing your RFC v2 one of the comments I had [2] was that if
+>>>>>> we
+>>>>>> can start from defining such a generic protocol for hyper-dmabuf.
+>>>>>> It can be a header file, which not only has the description part
+>>>>>> (which then become a part of Documentation/...rst file), but also
+>>>>>> defines
+>>>>>> all the required constants for requests, responses, defines message
+>>>>>> formats,
+>>>>>> state diagrams etc. all at one place. Of course this protocol must not
+>>>>>> be
+>>>>>> Xen specific, but be OS/hypervisor agnostic.
+>>>>>> Having that will trigger a new round of discussion, so we have it all
+>>>>>> designed
+>>>>>> and discussed before we start implementing.
+>>>>>>
+>>>>>> Besides the protocol we have to design UAPI part as well and make sure
+>>>>>> the hyper-dmabuf is not only accessible from user-space, but there will
+>>>>>> be
+>>>>>> number
+>>>>>> of kernel-space users as well.
+>>>>> Again, why do you want to create new uapi for this? Given the very
+>>>>> strict
+>>>>> requirements we have for new uapi (see above link), it's the toughest
+>>>>> way
+>>>>> to get any kind of support in.
+>>>> I do understand that adding new UAPI is not good for many reasons.
+>>>> But here I was meaning that current hyper-dmabuf design is
+>>>> only user-space oriented, e.g. it provides number of IOCTLs to do all
+>>>> the work. But I need a way to access the same from the kernel, so, for
+>>>> example,
+>>>> some other para-virtual driver can export/import dma-buf, not only
+>>>> user-space.
+>>> If you need an import-export helper library, just merge it. Do not attach
+>>> any uapi to it, just the internal helpers.
+>>>
+>>> Much, much, much easier to land.
+>> This can be done, but again, I will need some entity which
+>> backend may use to convert xen-front's grant references into
+>> a PRIME buffer, hence there is UAPI for that. In other words,
+>> I'll need a thiner xen-zcopy which will implement the same UAPI
+>> and use that library for Xen related stuff.
+>>
+>> The confusion may also come from the fact that the backend is
+>> a user-space application, not a kernel module (we have 2 modes
+>> of its operation as of now: DRM master or Weston client), so
+>> it needs a way to talk to the kernel.
+> So this is entirely a means to implement the virtual xen device in
+> dom0 (or whichever guest implements it)?
+>
+> I'm externally confused about what you mean with "backend", since
+> xen-front also has backend code. But that backend code lives in the
+> same guest os image (afaict at least), since it does direct function
+> calls.
+xen-front has no backend code, but only has code which allows it
+to create a dumb buffer from the grant references provided by the
+backend.
+> Please be more specific in what you mean instead of just "backend",
+> that's really confusing.
+Hope [2] better explains this
+>
+> But essentially we're talking about the equivalent of what qemu does
+> for kvm, and that's entirely not my problem. Not really a gpu
+> subsystem problem I think. Just talk with the xen hypervisor people
+> about how exactly they want to go about converting grant tables to
+> dma-buf, so that your virtual hw backend in userspace can make use of
+> it.
+The problem here is that the display backend then will need
+to talk to DRM. And what is the UAPI for that? Right, PRIME
+buffers.
+> And then merge it somewhere in the xen directories. Since the
+> grant tables and everything is very xen specific, I don't think
+> there's much point in trying to have a fake generic uapi that pretends
+> to work on other hypervisors, as long as they're Xen :-)
+>
+> And you probably have no need for all the caching/general book-keeping
+> drm_prime does (it's all in userspace I guess, except for the magic
+> conversion from grant references to a dma_buf). So there's no point
+> trying to reuse code in drm_prime.c.
+>
+> Also, this should make it tons easier to reuse xen-zcopy for
+> sound/wireless/v4l backends.
+>
+>>>>> That's why I had essentially zero big questions for xen-front (except
+>>>>> some
+>>>>> implementation improvements, and stuff to make sure xen-front actually
+>>>>> implements the real uapi semantics instead of its own), and why I'm
+>>>>> asking
+>>>>> much more questions on this stuff here.
+>>>>>
+>>>>>>>>> 4. inter VM messaging (hype_dmabuf only) - hyper_dmabuf has inter-vm
+>>>>>>>>> msg
+>>>>>>>>> communication defined for dmabuf synchronization and private data
+>>>>>>>>> (meta
+>>>>>>>>> info that Matt Roper mentioned) exchange.
+>>>>>>>> This is true, xen-zcopy has no means for inter VM sync and meta-data,
+>>>>>>>> simply because it doesn't have any code for inter VM exchange in it,
+>>>>>>>> e.g. the inter VM protocol is handled by the backend [1].
+>>>>>>>>> 5. driver-to-driver notification (hyper_dmabuf only) - importing VM
+>>>>>>>>> gets
+>>>>>>>>> notified when newdmabuf is exported from other VM - uevent can be
+>>>>>>>>> optionally
+>>>>>>>>> generated when this happens.
+>>>>>>>>>
+>>>>>>>>> 6. structure - hyper_dmabuf is targetting to provide a generic
+>>>>>>>>> solution for
+>>>>>>>>> inter-domain dmabuf sharing for most hypervisors, which is why it
+>>>>>>>>> has two
+>>>>>>>>> layers as mattrope mentioned, front-end that contains standard API
+>>>>>>>>> and backend
+>>>>>>>>> that is specific to hypervisor.
+>>>>>>>> Again, xen-zcopy is decoupled from inter VM communication
+>>>>>>>>>>> No idea, didn't look at it in detail.
+>>>>>>>>>>>
+>>>>>>>>>>> Looks pretty complex from a distant view.  Maybe because it tries
+>>>>>>>>>>> to
+>>>>>>>>>>> build a communication framework using dma-bufs instead of a simple
+>>>>>>>>>>> dma-buf passing mechanism.
+>>>>>>>>> we started with simple dma-buf sharing but realized there are many
+>>>>>>>>> things we need to consider in real use-case, so we added
+>>>>>>>>> communication
+>>>>>>>>> , notification and dma-buf synchronization then re-structured it to
+>>>>>>>>> front-end and back-end (this made things more compicated..) since
+>>>>>>>>> Xen
+>>>>>>>>> was not our only target. Also, we thought passing the reference for
+>>>>>>>>> the
+>>>>>>>>> buffer (hyper_dmabuf_id) is not secure so added uvent mechanism
+>>>>>>>>> later.
+>>>>>>>>>
+>>>>>>>>>> Yes, I am looking at it now, trying to figure out the full story
+>>>>>>>>>> and its implementation. BTW, Intel guys were about to share some
+>>>>>>>>>> test application for hyper-dmabuf, maybe I have missed one.
+>>>>>>>>>> It could probably better explain the use-cases and the complexity
+>>>>>>>>>> they have in hyper-dmabuf.
+>>>>>>>>> One example is actually in github. If you want take a look at it,
+>>>>>>>>> please
+>>>>>>>>> visit:
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> https://github.com/downor/linux_hyper_dmabuf_test/tree/xen/simple_export
+>>>>>>>> Thank you, I'll have a look
+>>>>>>>>>>> Like xen-zcopy it seems to depend on the idea that the hypervisor
+>>>>>>>>>>> manages all memory it is easy for guests to share pages with the
+>>>>>>>>>>> help of
+>>>>>>>>>>> the hypervisor.
+>>>>>>>>>> So, for xen-zcopy we were not trying to make it generic,
+>>>>>>>>>> it just solves display (dumb) zero-copying use-cases for Xen.
+>>>>>>>>>> We implemented it as a DRM helper driver because we can't see any
+>>>>>>>>>> other use-cases as of now.
+>>>>>>>>>> For example, we also have Xen para-virtualized sound driver, but
+>>>>>>>>>> its buffer memory usage is not comparable to what display wants
+>>>>>>>>>> and it works somewhat differently (e.g. there is no "frame done"
+>>>>>>>>>> event, so one can't tell when the sound buffer can be "flipped").
+>>>>>>>>>> At the same time, we do not use virtio-gpu, so this could probably
+>>>>>>>>>> be one more candidate for shared dma-bufs some day.
+>>>>>>>>>>>       Which simply isn't the case on kvm.
+>>>>>>>>>>>
+>>>>>>>>>>> hyper-dmabuf and xen-zcopy could maybe share code, or hyper-dmabuf
+>>>>>>>>>>> build
+>>>>>>>>>>> on top of xen-zcopy.
+>>>>>>>>>> Hm, I can imagine that: xen-zcopy could be a library code for
+>>>>>>>>>> hyper-dmabuf
+>>>>>>>>>> in terms of implementing all that page sharing fun in multiple
+>>>>>>>>>> directions,
+>>>>>>>>>> e.g. Host->Guest, Guest->Host, Guest<->Guest.
+>>>>>>>>>> But I'll let Matt and Dongwon to comment on that.
+>>>>>>>>> I think we can definitely collaborate. Especially, maybe we are
+>>>>>>>>> using some
+>>>>>>>>> outdated sharing mechanism/grant-table mechanism in our Xen backend
+>>>>>>>>> (thanks
+>>>>>>>>> for bringing that up Oleksandr). However, the question is once we
+>>>>>>>>> collaborate
+>>>>>>>>> somehow, can xen-zcopy's usecase use the standard API that
+>>>>>>>>> hyper_dmabuf
+>>>>>>>>> provides? I don't think we need different IOCTLs that do the same in
+>>>>>>>>> the final
+>>>>>>>>> solution.
+>>>>>>>>>
+>>>>>>>> If you think of xen-zcopy as a library (which implements Xen
+>>>>>>>> grant references mangling) and DRM PRIME wrapper on top of that
+>>>>>>>> library, we can probably define proper API for that library,
+>>>>>>>> so both xen-zcopy and hyper-dmabuf can use it. What is more, I am
+>>>>>>>> about to start upstreaming Xen para-virtualized sound device driver
+>>>>>>>> soon,
+>>>>>>>> which also uses similar code and gref passing mechanism [3].
+>>>>>>>> (Actually, I was about to upstream drm/xen-front, drm/xen-zcopy and
+>>>>>>>> snd/xen-front and then propose a Xen helper library for sharing big
+>>>>>>>> buffers,
+>>>>>>>> so common code of the above drivers can use the same code w/o code
+>>>>>>>> duplication)
+>>>>>>> I think it is possible to use your functions for memory sharing part
+>>>>>>> in
+>>>>>>> hyper_dmabuf's backend (this 'backend' means the layer that does page
+>>>>>>> sharing
+>>>>>>> and inter-vm communication with xen-specific way.), so why don't we
+>>>>>>> work on
+>>>>>>> "Xen helper library for sharing big buffers" first while we continue
+>>>>>>> our
+>>>>>>> discussion on the common API layer that can cover any dmabuf sharing
+>>>>>>> cases.
+>>>>>>>
+>>>>>> Well, I would love we reuse the code that I have, but I also
+>>>>>> understand that it was limited by my use-cases. So, I do not
+>>>>>> insist we have to ;)
+>>>>>> If we start designing and discussing hyper-dmabuf protocol we of course
+>>>>>> can work on this helper library in parallel.
+>>>>> Imo code reuse is overrated. Adding new uapi is what freaks me out here
+>>>>> :-)
+>>>>>
+>>>>> If we end up with duplicated implementations, even in upstream, meh, not
+>>>>> great, but also ok. New uapi, and in a similar way, new hypervisor api
+>>>>> like the dma-buf forwarding that hyperdmabuf does is the kind of thing
+>>>>> that will lock us in for 10+ years (if we make a mistake).
+>>>>>
+>>>>>>>> Thank you,
+>>>>>>>> Oleksandr
+>>>>>>>>
+>>>>>>>> P.S. All, is it a good idea to move this out of udmabuf thread into a
+>>>>>>>> dedicated one?
+>>>>>>> Either way is fine with me.
+>>>>>> So, if you can start designing the protocol we may have a dedicated
+>>>>>> mail
+>>>>>> thread for that. I will try to help with the protocol as much as I can
+>>>>> Please don't start with the protocol. Instead start with the concrete
+>>>>> use-cases, and then figure out why exactly you need new uapi. Once we
+>>>>> have
+>>>>> that answered, we can start thinking about fleshing out the details.
+>>>> On my side there are only 2 use-cases, Guest2 only:
+>>>> 1. Create a PRIME (dma-buf) from grant references
+>>>> 2. Create grant references from PRIME (dma-buf)
+>>> So these grant references, are those userspace visible things?
+>> Yes, the user-space backend receives those from xen-front via [1]
+>>
+>>> I thought
+>>> the grant references was just the kernel/hypervisor internal magic to make
+>>> this all work?
+>> So, I can map the grant references from user-space, but I won't
+>> be able to turn those into a PRIME buffer. So, the only use of those
+>> w/o xen-zcopy is to map grant refs and copy into real HW dumb on every page
+>> flip.
+> Ok, that explains. I thought your current xen-side implementation for
+> xen-front is already making all that stuff happen. But I'm still not
+> sure given all the confusing talk about back-end we have in these
+> threads (hyperdmabuf people also talked about different backends for
+> different hypervisors, I guess that's a different kind of backend?).
+Hope the explanation above makes it all clearer.
+Please let me know if you still want me to elaborate more
+> -Daniel
+[1] https://wiki.xen.org/wiki/Paravirtualization_(PV)
+[2] https://wiki.xen.org/wiki/File:XenPV.png
