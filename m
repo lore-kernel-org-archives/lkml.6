@@ -1,73 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753347AbeDPQOP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:14:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36726 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753084AbeDPQLs (ORCPT
+        id S1753238AbeDPQP6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:15:58 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:40170 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753093AbeDPQP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:11:48 -0400
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        SeongJae Park <sj38.park@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tools/memory-model 09/17]  kokr/Documentation/memory-barriers.txt: Cross-reference "tools/memory-model/"
-Date: Mon, 16 Apr 2018 09:12:37 -0700
-X-Mailer: git-send-email 2.5.2
-In-Reply-To: <20180416161209.GA6895@linux.vnet.ibm.com>
-References: <20180416161209.GA6895@linux.vnet.ibm.com>
+        Mon, 16 Apr 2018 12:15:56 -0400
+X-Google-Smtp-Source: AIpwx48mr83mSgGJZQa3jnU/Y+Z2BnkgeRSGkPXZqJD0BJtKaw+Q6iwbLNKAHCOqutKS1XIj/JNp/0xvutSiBuiXM5A=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18041616-0040-0000-0000-0000041BB4AC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008863; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01018801; UDB=6.00519703; IPR=6.00798043;
- MB=3.00020599; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-16 16:11:45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041616-0041-0000-0000-00000821B83D
-Message-Id: <1523895165-17576-9-git-send-email-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804160146
+References: <20180414195921.GA10437@avx2> <20180414224419.GA21830@thunk.org> <CAGXu5j+qQE-MmpB7xq6z_SsXm9AhJe2QQAEVQnenYD=iLzJqWQ@mail.gmail.com>
+In-Reply-To: <CAGXu5j+qQE-MmpB7xq6z_SsXm9AhJe2QQAEVQnenYD=iLzJqWQ@mail.gmail.com>
+From: Thomas Garnier <thgarnie@google.com>
+Date: Mon, 16 Apr 2018 16:15:44 +0000
+Message-ID: <CAJcbSZGpqZB2OjqdjoPtoUJrNw9nmms+U=CKvOLLptqjBn=YMQ@mail.gmail.com>
+Subject: Re: repeatable boot randomness inside KVM guest
+To: Kees Cook <keescook@chromium.org>
+Cc: tytso@mit.edu, Alexey Dobriyan <adobriyan@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: SeongJae Park <sj38.park@gmail.com>
+On Mon, Apr 16, 2018 at 8:54 AM Kees Cook <keescook@chromium.org> wrote:
 
-This commit applies an upstream change, commit 621df431b0ac
-("Documentation/memory-barriers.txt: Cross-reference
-"tools/memory-model/"") to the Korean version document.
+> On Sat, Apr 14, 2018 at 3:44 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> > +linux-mm@kvack.org
+> > kvm@vger.kernel.org, security@kernel.org moved to bcc
+> >
+> > On Sat, Apr 14, 2018 at 10:59:21PM +0300, Alexey Dobriyan wrote:
+> >> SLAB allocators got CONFIG_SLAB_FREELIST_RANDOM option which randomizes
+> >> allocation pattern inside a slab:
+> >>
+> >>       int cache_random_seq_create(struct kmem_cache *cachep, unsigned
+int count, gfp_t gfp)
+> >>       {
+> >>               ...
+> >>               /* Get best entropy at this stage of boot */
+> >>               prandom_seed_state(&state, get_random_long());
+> >>
+> >> Then I printed actual random sequences for each kmem cache.
+> >> Turned out they were all the same for most of the caches and
+> >> they didn't vary across guest reboots.
+> >
+> > The problem is at the super-early state of the boot path, kernel code
+> > can't allocate memory.  This is something most device drivers kinda
+> > assume they can do.  :-)
+> >
+> > So it means we haven't yet initialized the virtio-rng driver, and it's
+> > before interrupts have been enabled, so we can't harvest any entropy
+> > from interrupt timing.  So that's why trying to use virtio-rng didn't
+> > help.
+> >
+> >> The only way to get randomness for SLAB is to enable RDRAND inside
+guest.
+> >>
+> >> Is it KVM bug?
+> >
+> > No, it's not a KVM bug.  The fundamental issue is in how the
+> > CONFIG_SLAB_FREELIST_RANDOM is currently implemented.
 
-Signed-off-by: SeongJae Park <sj38.park@gmail.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- Documentation/translations/ko_KR/memory-barriers.txt | 3 +++
- 1 file changed, 3 insertions(+)
+Entropy at early boot in VM has always been a problem for this feature or
+others. Did you look at the impact on other boot security features fetching
+random values? Does your VM had RDRAND support (we use get_random_long()
+which will fetch from RDRAND to provide as much entropy as possible at this
+point)?
 
-diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
-index 44e47c2d33cf..2c0ab128cd04 100644
---- a/Documentation/translations/ko_KR/memory-barriers.txt
-+++ b/Documentation/translations/ko_KR/memory-barriers.txt
-@@ -36,6 +36,9 @@ Documentation/memory-barriers.txt
- 부분도 있고, 의도하진 않았지만 사람에 의해 쓰였다보니 불완전한 부분도 있습니다.
- 이 문서는 리눅스에서 제공하는 다양한 메모리 배리어들을 사용하기 위한
- 안내서입니다만, 뭔가 이상하다 싶으면 (그런게 많을 겁니다) 질문을 부탁드립니다.
-+일부 이상한 점들은 공식적인 메모리 일관성 모델과 tools/memory-model/ 에 있는
-+관련 문서를 참고해서 해결될 수 있을 겁니다.  그러나, 이 메모리 모델조차도 그
-+관리자들의 의견의 집합으로 봐야지, 절대 옳은 예언자로 신봉해선 안될 겁니다.
- 
- 다시 말하지만, 이 문서는 리눅스가 하드웨어에 기대하는 사항에 대한 명세서가
- 아닙니다.
--- 
-2.5.2
+> >
+> > What needs to happen is freelist should get randomized much later in
+> > the boot sequence.  Doing it later will require locking; I don't know
+> > enough about the slab/slub code to know whether the slab_mutex would
+> > be sufficient, or some other lock might need to be added.
+
+You can't re-randomize pre-allocated pages that's why the cache is
+randomized that early. If you don't have RDRAND, we could re-randomize
+later at boot with more entropy that could be useful in this specific case.
+
+> >
+> > The other thing I would note that is that using prandom_u32_state()
+doesn't
+> > really provide much security.  In fact, if the the goal is to protect
+> > against a malicious attacker trying to guess what addresses will be
+> > returned by the slab allocator, I suspect it's much like the security
+> > patdowns done at airports.  It might protect against a really stupid
+> > attacker, but it's mostly security theater.
+> >
+> > The freelist randomization is only being done once; so it's not like
+> > performance is really an issue.  It would be much better to just use
+> > get_random_u32() and be done with it.  I'd drop using prandom_*
+> > functions in slab.c and slubct and slab_common.c, and just use a
+> > really random number generator, if the goal is real security as
+> > opposed to security for show....
+
+The state is seeded with get_random_long() which will use RDRAND and any
+available entropy at this point. I am not sure the value of calling
+get_random_long() on each iteration especially if you don't have RDRAND.
+
+> >
+> > (Not that there's necessarily any thing wrong with security theater;
+> > the US spends over 3 billion dollars a year on security theater.  As
+> > politicians know, symbolism can be important.  :-)
+
+> I've added Thomas Garnier to CC (since he wrote this originally). He
+> can speak to its position in the boot ordering and the effective
+> entropy.
+
+Thanks for including me.
+
+
+> -Kees
+
+> --
+> Kees Cook
+> Pixel Security
+
+
+
+--
+Thomas
