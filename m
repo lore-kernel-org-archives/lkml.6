@@ -1,153 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754714AbeDPJkY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:40:24 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:50007 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752980AbeDPJkW (ORCPT
+        id S1754752AbeDPJky (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:40:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37220 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754285AbeDPJkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:40:22 -0400
-X-IronPort-AV: E=Sophos;i="5.48,459,1517842800";
-   d="scan'208";a="278331447"
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, buserror+upstream@gmail.com,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>, Chen-Yu Tsai <wens@csie.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Andy Gross <andy.gross@linaro.org>, Carlo Caione <carlo@endlessm.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Juri Lelli <juri.lelli@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [RFC 3/3] arm: shmobile: Add the RZ/N1D SMP enabler driver.
-Date: Mon, 16 Apr 2018 10:34:59 +0100
-Message-Id: <1523871304-48517-5-git-send-email-michel.pollet@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523871304-48517-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523871304-48517-1-git-send-email-michel.pollet@bp.renesas.com>
+        Mon, 16 Apr 2018 05:40:51 -0400
+Subject: Re: [PATCH 3/3] perf/buildid-cache: Support --purge-all option
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: acme@redhat.com, kstewart@linuxfoundation.org, tglx@linutronix.de,
+        pombredanne@nexb.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, uneedsihyeon@gmail.com, kjlx@templeofstupid.com,
+        ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180409110633.20767-1-ravi.bangoria@linux.vnet.ibm.com>
+ <20180409110633.20767-4-ravi.bangoria@linux.vnet.ibm.com>
+ <20180416182735.4399e94b3c7e6d190ec7dc3e@kernel.org>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Date: Mon, 16 Apr 2018 15:10:40 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180416182735.4399e94b3c7e6d190ec7dc3e@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041609-0020-0000-0000-00000412617B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041609-0021-0000-0000-000042A69AD9
+Message-Id: <f921f16f-578a-955c-4301-e596adbdcd4b@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804160090
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Renesas RZ/N1D second CA7 is parked in a ROM pen at boot time, it
-requires a special enable method to get it started at boot time.
+Hi Masami,
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- arch/arm/mach-shmobile/Makefile        |  1 +
- arch/arm/mach-shmobile/smp-r9a06g032.c | 87 ++++++++++++++++++++++++++++++++++
- 2 files changed, 88 insertions(+)
- create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+On 04/16/2018 02:57 PM, Masami Hiramatsu wrote:
+> On Mon,  9 Apr 2018 16:36:33 +0530
+> Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+>
+>> User can remove files from cache using --remove/--purge options
+>> but both needs list of files as an argument. It's not convenient
+>> when you want to flush out entire cache. Add an option to purge
+>> all files from cache.
+>>
+>> Ex,
+>>   # perf buildid-cache -l
+>>     /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c)
+>>     /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36)
+>>   # perf buildid-cache -P -v
+>>     Removing /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c): Ok
+>>     Removing /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36): Ok
+>>     Purged all: Ok
+> Hmm, for purging all caches will be done by
+>
+> $ rm -rf ~/.debug
+>
+> Are there any difference?
 
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 1939f52..d7fc98f 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -34,6 +34,7 @@ smp-$(CONFIG_ARCH_SH73A0)	+= smp-sh73a0.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7779)	+= smp-r8a7779.o headsmp-scu.o platsmp-scu.o
- smp-$(CONFIG_ARCH_R8A7790)	+= smp-r8a7790.o
- smp-$(CONFIG_ARCH_R8A7791)	+= smp-r8a7791.o
-+smp-$(CONFIG_ARCH_R9A06G032)	+= smp-r9a06g032.o
- smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
- 
- # PM objects
-diff --git a/arch/arm/mach-shmobile/smp-r9a06g032.c b/arch/arm/mach-shmobile/smp-r9a06g032.c
-new file mode 100644
-index 0000000..59ec287
---- /dev/null
-+++ b/arch/arm/mach-shmobile/smp-r9a06g032.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/N1D Second CA7 enabler.
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from action,s500-smp
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/smp.h>
-+#include <asm/cacheflush.h>
-+#include <asm/smp_plat.h>
-+#include <asm/smp_scu.h>
-+
-+/*
-+ * The second CPU is parked in ROM at boot time. It requires waking it after
-+ * writing an address into the BOOTADDR register of sysctrl.
-+ *
-+ * So the default value of the "cpu-release-addr" corresponds to BOOTADDR...
-+ *
-+ * *However* the BOOTADDR register is not available when the kernel
-+ * starts in NONSEC mode.
-+ *
-+ * So for NONSEC mode, the bootloader re-parks the second CPU into a pen
-+ * in SRAM, and changes the "cpu-release-addr" of linux's DT to a SRAM address,
-+ * which is not restricted.
-+ */
-+
-+static void __iomem *cpu_bootaddr;
-+
-+static DEFINE_SPINLOCK(cpu_lock);
-+
-+static int rzn1_smp_boot_secondary(unsigned int cpu, struct task_struct *idle)
-+{
-+	if (!cpu_bootaddr)
-+		return -ENODEV;
-+
-+	spin_lock(&cpu_lock);
-+
-+	writel(virt_to_phys(secondary_startup), cpu_bootaddr);
-+	arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-+
-+	spin_unlock(&cpu_lock);
-+
-+	return 0;
-+}
-+
-+static void __init rzn1_smp_prepare_cpus(unsigned int max_cpus)
-+{
-+	struct device_node *dn;
-+	int ret;
-+	u32 bootaddr;
-+
-+	dn = of_get_cpu_node(1, NULL);
-+	if (!dn) {
-+		pr_err("CPU#1: missing device tree node\n");
-+		return;
-+	}
-+	/*
-+	 * Determine the address from which the CPU is polling.
-+	 */
-+	ret = of_property_read_u32(dn, "cpu-release-addr", &bootaddr);
-+	if (ret)
-+		pr_err("CPU#1: invalid cpu-release-addr property\n");
-+
-+	of_node_put(dn);
-+	/* The bootloader *does* change this property */
-+	pr_info("CPU#1: cpu-release-addr %08x\n", (u32)bootaddr);
-+
-+	if (!bootaddr)
-+		return;
-+
-+	cpu_bootaddr = ioremap(bootaddr, sizeof(bootaddr));
-+	if (!cpu_bootaddr)
-+		pr_err("CPU#1: cpu-release-addr map failed\n");
-+}
-+
-+static const struct smp_operations rzn1_smp_ops __initconst = {
-+	.smp_prepare_cpus = rzn1_smp_prepare_cpus,
-+	.smp_boot_secondary = rzn1_smp_boot_secondary,
-+};
-+CPU_METHOD_OF_DECLARE(rzn1_smp, "renesas,r9a06g032-smp", &rzn1_smp_ops);
--- 
-2.7.4
+No logical difference if you know it's ~/.debug where it goes. :)
+I also used to do rm -rf earlier.
+
+This option is for a perf users. But I'm fine if it's not really needed.
+Will drop it.
+
+Thanks,
+Ravi
