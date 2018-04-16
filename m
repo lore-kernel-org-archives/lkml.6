@@ -1,128 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754065AbeDPMoq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:44:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52272 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752840AbeDPMop (ORCPT
+        id S1753664AbeDPMra (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:47:30 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:56133 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751113AbeDPMr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:44:45 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: x86@kernel.org
-Cc: iommu@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86: remove pci-nommu.c
-Date: Mon, 16 Apr 2018 14:44:42 +0200
-Message-Id: <20180416124442.13831-1-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 16 Apr 2018 08:47:27 -0400
+Subject: Re: [PATCH v3 2/6] mfd: stm32-timers: add support for dmas
+To: Lee Jones <lee.jones@linaro.org>
+CC: <thierry.reding@gmail.com>, <alexandre.torgue@st.com>,
+        <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <mcoquelin.stm32@gmail.com>, <benjamin.gaignard@st.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+References: <1522404084-24903-1-git-send-email-fabrice.gasnier@st.com>
+ <1522404084-24903-3-git-send-email-fabrice.gasnier@st.com>
+ <20180416122217.u7h3wawpdx3kj4wd@dell>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <7531300c-7b7e-75c9-ea5b-8ca01b684c45@st.com>
+Date: Mon, 16 Apr 2018 14:46:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180416122217.u7h3wawpdx3kj4wd@dell>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.122]
+X-ClientProxiedBy: GPXDAG2NODE4.st.com (10.75.127.68) To GPXDAG5NODE6.st.com
+ (10.75.127.79)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit that switches x86 to dma_direct_ops stopped using and building
-this file, but accidentally left it in the tree.  Remove it.
+On 04/16/2018 02:22 PM, Lee Jones wrote:
+> On Fri, 30 Mar 2018, Fabrice Gasnier wrote:
+> 
+>> STM32 Timers can support up to 7 DMA requests:
+>> - 4 channels, update, compare and trigger.
+>> Optionally request part, or all DMAs from stm32-timers MFD core.
+>>
+>> Also add routine to implement burst reads using DMA from timer registers.
+>> This is exported. So, it can be used by child drivers, PWM capture
+>> for instance (but not limited to).
+>>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+>> Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+>> ---
+>> Changes in v3:
+>> - Basically Lee's comments:
+>> - rather create a struct stm32_timers_dma, and place a reference to it
+>>   in existing ddata (instead of adding priv struct).
+>> - rather use a struct device in exported routine prototype, and use
+>>   standard helpers instead of ddata. Get rid of to_stm32_timers_priv().
+>> - simplify error handling in probe (remove a goto)
+>> - comment on devm_of_platform_*populate() usage.
+>>
+>> Changes in v2:
+>> - Abstract DMA handling from child driver: move it to MFD core
+>> - Add comments on optional dma support
+>> ---
+>>  drivers/mfd/stm32-timers.c       | 219 ++++++++++++++++++++++++++++++++++++++-
+>>  include/linux/mfd/stm32-timers.h |  32 ++++++
+>>  2 files changed, 249 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/mfd/stm32-timers.c b/drivers/mfd/stm32-timers.c
+>> index 1d347e5..98191ec 100644
+>> --- a/drivers/mfd/stm32-timers.c
+>> +++ b/drivers/mfd/stm32-timers.c
+>> @@ -4,16 +4,165 @@
+>>   * Author: Benjamin Gaignard <benjamin.gaignard@st.com>
+>>   */
+>>  
+>> +#include <linux/bitfield.h>
+>> +#include <linux/dmaengine.h>
+>> +#include <linux/dma-mapping.h>
+>>  #include <linux/mfd/stm32-timers.h>
+>>  #include <linux/module.h>
+>>  #include <linux/of_platform.h>
+>>  #include <linux/reset.h>
+>>  
+>> +#define STM32_TIMERS_MAX_REGISTERS	0x3fc
+>> +
+>> +struct stm32_timers_dma {
+>> +	struct completion completion;
+>> +	phys_addr_t phys_base;
+>> +	struct mutex lock;		/* protect dma access */
+> 
+> Nit: I like comments to use good grammar i.e. capital letters to
+> start a sentence and 's/dma/DMA/'.  Or better still, drop the comment,
+> we know what the lock is for.
+> 
+>> +	struct dma_chan *chan;
+>> +	struct dma_chan *chans[STM32_TIMERS_MAX_DMAS];
+> 
+> This requires explanation.  Maybe a kerneldoc header would be good here.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/x86/kernel/pci-nommu.c | 90 -------------------------------------
- 1 file changed, 90 deletions(-)
- delete mode 100644 arch/x86/kernel/pci-nommu.c
+Hi Lee,
 
-diff --git a/arch/x86/kernel/pci-nommu.c b/arch/x86/kernel/pci-nommu.c
-deleted file mode 100644
-index ac7ea3a8242f..000000000000
---- a/arch/x86/kernel/pci-nommu.c
-+++ /dev/null
-@@ -1,90 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/* Fallback functions when the main IOMMU code is not compiled in. This
--   code is roughly equivalent to i386. */
--#include <linux/dma-direct.h>
--#include <linux/scatterlist.h>
--#include <linux/string.h>
--#include <linux/gfp.h>
--#include <linux/pci.h>
--#include <linux/mm.h>
--
--#include <asm/processor.h>
--#include <asm/iommu.h>
--#include <asm/dma.h>
--
--#define NOMMU_MAPPING_ERROR		0
--
--static int
--check_addr(char *name, struct device *hwdev, dma_addr_t bus, size_t size)
--{
--	if (hwdev && !dma_capable(hwdev, bus, size)) {
--		if (*hwdev->dma_mask >= DMA_BIT_MASK(32))
--			printk(KERN_ERR
--			    "nommu_%s: overflow %Lx+%zu of device mask %Lx\n",
--				name, (long long)bus, size,
--				(long long)*hwdev->dma_mask);
--		return 0;
--	}
--	return 1;
--}
--
--static dma_addr_t nommu_map_page(struct device *dev, struct page *page,
--				 unsigned long offset, size_t size,
--				 enum dma_data_direction dir,
--				 unsigned long attrs)
--{
--	dma_addr_t bus = phys_to_dma(dev, page_to_phys(page)) + offset;
--	WARN_ON(size == 0);
--	if (!check_addr("map_single", dev, bus, size))
--		return NOMMU_MAPPING_ERROR;
--	return bus;
--}
--
--/* Map a set of buffers described by scatterlist in streaming
-- * mode for DMA.  This is the scatter-gather version of the
-- * above pci_map_single interface.  Here the scatter gather list
-- * elements are each tagged with the appropriate dma address
-- * and length.  They are obtained via sg_dma_{address,length}(SG).
-- *
-- * NOTE: An implementation may be able to use a smaller number of
-- *       DMA address/length pairs than there are SG table elements.
-- *       (for example via virtual mapping capabilities)
-- *       The routine returns the number of addr/length pairs actually
-- *       used, at most nents.
-- *
-- * Device ownership issues as mentioned above for pci_map_single are
-- * the same here.
-- */
--static int nommu_map_sg(struct device *hwdev, struct scatterlist *sg,
--			int nents, enum dma_data_direction dir,
--			unsigned long attrs)
--{
--	struct scatterlist *s;
--	int i;
--
--	WARN_ON(nents == 0 || sg[0].length == 0);
--
--	for_each_sg(sg, s, nents, i) {
--		BUG_ON(!sg_page(s));
--		s->dma_address = sg_phys(s);
--		if (!check_addr("map_sg", hwdev, s->dma_address, s->length))
--			return 0;
--		s->dma_length = s->length;
--	}
--	return nents;
--}
--
--static int nommu_mapping_error(struct device *dev, dma_addr_t dma_addr)
--{
--	return dma_addr == NOMMU_MAPPING_ERROR;
--}
--
--const struct dma_map_ops nommu_dma_ops = {
--	.alloc			= dma_generic_alloc_coherent,
--	.free			= dma_generic_free_coherent,
--	.map_sg			= nommu_map_sg,
--	.map_page		= nommu_map_page,
--	.is_phys		= 1,
--	.mapping_error		= nommu_mapping_error,
--	.dma_supported		= x86_dma_supported,
--};
--- 
-2.17.0
+I'll add kerneldoc in next version.
+
+> 
+> [...]
+> 
+>> +/**
+>> + * stm32_timers_dma_burst_read - Read from timers registers using DMA.
+>> + *
+>> + * Read from STM32 timers registers using DMA on a single event.
+>> + * @dev: reference to stm32_timers MFD device
+>> + * @buf: dma'able destination buffer
+>> + * @id: stm32_timers_dmas event identifier (ch[1..4], up, trig or com)
+>> + * @reg: registers start offset for DMA to read from (like CCRx for capture)
+>> + * @num_reg: number of registers to read upon each dma request, starting @reg.
+>> + * @bursts: number of bursts to read (e.g. like two for pwm period capture)
+>> + * @tmo_ms: timeout (milliseconds)
+>> + */
+>> +int stm32_timers_dma_burst_read(struct device *dev, u32 *buf,
+>> +				enum stm32_timers_dmas id, u32 reg,
+>> +				unsigned int num_reg, unsigned int bursts,
+>> +				unsigned long tmo_ms)
+>> +{
+>> +	struct stm32_timers *ddata = dev_get_drvdata(dev);
+>> +	unsigned long timeout = msecs_to_jiffies(tmo_ms);
+>> +	struct regmap *regmap = ddata->regmap;
+>> +	struct stm32_timers_dma *dma = ddata->dma;
+>> +	size_t len = num_reg * bursts * sizeof(u32);
+>> +	struct dma_async_tx_descriptor *desc;
+>> +	struct dma_slave_config config;
+>> +	dma_cookie_t cookie;
+>> +	dma_addr_t dma_buf;
+>> +	u32 dbl, dba;
+>> +	long err;
+>> +	int ret;
+>> +
+>> +	/* sanity check */
+> 
+> Proper grammar in all comments please.
+> 
+> "Sanity check"
+> 
+> [...]
+> 
+>> +	/* select dma channel in use */
+> 
+> Here too.
+> 
+> Etc, etc, etc ...
+
+Okay, will take care of this.
+
+> 
+>> +	dma->chan = dma->chans[id];
+>> +	dma_buf = dma_map_single(dev, buf, len, DMA_FROM_DEVICE);
+>> +	ret = dma_mapping_error(dev, dma_buf);
+>> +	if (ret)
+>> +		goto unlock;
+>> +
+>> +	/* Prepare DMA read from timer registers, using DMA burst mode */
+> 
+> This is good.
+> [...]
+> 
+> [...]
+> 
+>> diff --git a/include/linux/mfd/stm32-timers.h b/include/linux/mfd/stm32-timers.h
+>> index 2aadab6..585a4de 100644
+>> --- a/include/linux/mfd/stm32-timers.h
+>> +++ b/include/linux/mfd/stm32-timers.h
+>> @@ -8,6 +8,8 @@
+>>  #define _LINUX_STM32_GPTIMER_H_
+>>  
+>>  #include <linux/clk.h>
+>> +#include <linux/dmaengine.h>
+>> +#include <linux/dma-mapping.h>
+>>  #include <linux/regmap.h>
+> 
+> [...]
+> 
+>> +enum stm32_timers_dmas {
+>> +	STM32_TIMERS_DMA_CH1,
+>> +	STM32_TIMERS_DMA_CH2,
+>> +	STM32_TIMERS_DMA_CH3,
+>> +	STM32_TIMERS_DMA_CH4,
+>> +	STM32_TIMERS_DMA_UP,
+>> +	STM32_TIMERS_DMA_TRIG,
+>> +	STM32_TIMERS_DMA_COM,
+>> +	STM32_TIMERS_MAX_DMAS,
+>> +};
+>> +
+>> +struct stm32_timers_dma;
+> 
+> Why don't you move the declaration into here?
+
+To follow previous discussions we had in V1 and V2, this is to avoid
+sharing all the information with child drivers, e.g. passing physical
+address of parent MFD into child devices.
+
+I should probably add a comment there ? Something like:
+
+/* STM32 timers MFD parent internal struct to handle DMA transfers */
+struct stm32_timers_dma;
+
+Do you agree with this ?
+
+Thanks for reviewing,
+BR,
+Fabrice
+
+> 
+> Then you don't need to forward declare.
+> 
+>>  struct stm32_timers {
+>>  	struct clk *clk;
+>>  	struct regmap *regmap;
+>>  	u32 max_arr;
+>> +	struct stm32_timers_dma *dma;
+>>  };
+>> +
+>> +int stm32_timers_dma_burst_read(struct device *dev, u32 *buf,
+>> +				enum stm32_timers_dmas id, u32 reg,
+>> +				unsigned int num_reg, unsigned int bursts,
+>> +				unsigned long tmo_ms);
+>>  #endif
+> 
