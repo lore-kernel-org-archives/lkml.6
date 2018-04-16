@@ -1,215 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752899AbeDPJvM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:51:12 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:32979 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeDPJvJ (ORCPT
+        id S1752854AbeDPJxE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:53:04 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:47129 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeDPJxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:51:09 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180416095106euoutp02f884b1070da7873bd262fb4a77488612~l4cC7G5Fq1471114711euoutp02k
-X-AuditID: cbfec7f5-b5fff700000028a9-e8-5ad47209bcc5
-Subject: Re: [PATCH v6 29/30] drm/rockchip: Disallow PSR for the whole
- atomic commit
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        architt@codeaurora.org, inki.dae@samsung.com, thierry.reding@gmail.com,
-        hjc@rock-chips.com, seanpaul@chromium.org, airlied@linux.ie,
-        tfiga@chromium.org, heiko@sntech.de
-Cc: dri-devel@lists.freedesktop.org, dianders@chromium.org,
-        ykk@rock-chips.com, kernel@collabora.com, m.szyprowski@samsung.com,
-        linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com,
-        rydberg@bitmath.org, krzk@kernel.org,
-        linux-rockchip@lists.infradead.org, kgene@kernel.org,
-        linux-input@vger.kernel.org, orjan.eide@arm.com, wxt@rock-chips.com,
-        jeffy.chen@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        mark.yao@rock-chips.com, wzz@rock-chips.com, hl@rock-chips.com,
-        jingoohan1@gmail.com, sw0312.kim@samsung.com,
-        linux-kernel@vger.kernel.org, kyungmin.park@samsung.com,
-        Laurent.pinchart@ideasonboard.com, kuankuan.y@gmail.com,
-        hshi@chromium.org, "Kristian H . Kristensen" <hoegsberg@chromium.org>
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <ccd0d30a-e01e-fc56-5983-54ca7c1dbe24@samsung.com>
-Date: Mon, 16 Apr 2018 11:51:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.7.0
+        Mon, 16 Apr 2018 05:53:02 -0400
+From: Jiwei Sun <jiwei.sun@windriver.com>
+To: <a.zummo@towertech.it>, <alexandre.belloni@free-electrons.com>,
+        <linux-rtc@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <jiwei.sun@windriver.com>
+Subject: [PATCH] rtc: adjust the next alarm expiring time to avoid a softlockups.
+Date: Mon, 16 Apr 2018 17:53:35 +0800
+Message-ID: <1523872415-326-1-git-send-email-jiwei.sun@windriver.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180405095000.9756-30-enric.balletbo@collabora.com>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta2yTZRTH87z3LhZeCronhQytMwEMw0WSHUQJGkneD5oYPxhSE6W6lw1Z
-        x2zZZDqhdu6KmziIrt0FYraONDM03QZd1ZW1QAe1LU1xbJCuA5bsRhXYjTq3ufaFuG+/c/7/
-        k+d/TvJwpGKcUXIH8g+LunxNnopJoc5fiQe2ynQ31K+cmtkANYGrBBgrYzT4Lb0M3Jj5m4H2
-        224ES3cnaWiq+xoe266RMDxqYaGi8y4BddETFMwN+Bk4O21iYWwoREFH4Dsavr83SUIwaGPh
-        ustHgN94n4WqH1pYsN/rp2Hw0SwNYWcjA4+Gl0ioD/YQ8MulCAuOUxcJ6OnwUNA3+yMBEZsf
-        Qf3JcQamyhYZiDubKagotRBQfvM5CBhOsrvThfbmdiRMWSdoocEQooRwbQ0hOCItSOg2R1ih
-        odJEC3ZrFSNcmB2mhehxLyF0tBwTFswuSqjttCLhQn8zKUzZ095brU55PVvMO1Ak6rbt2peS
-        aygrKuhKP+IMe1kDmk6rRhyH+e24rDOrGqVwCv4swqOeCJKKaYRLe1sZqZhCuNd0hahGsuTE
-        xQezSVbwbQh/G39HMsUQLg+20glhLf8B/rXvGzohrOPHEbZdniQSBckP0njo97HkOMNvxgsd
-        g0yC5fwuPB6wJacp/iUcNPqS/Cy/FxtH46zkWYOvmkaoBMv4t3B3W22yT/IbcWlXAylxKr41
-        cvpJVI8MT7Tvkfht3PeHj5R4LZ7wdrISb8BL3U/9X+HBMSOVCIr5SoSj8xWMJOzEHm+ITlyM
-        XA59zrlNar+B/dEKQjrkKjwQWyNFWIXrzv9ESm05rixXSO4XcNTf9SRBKm69PsOcQC+aVyxm
-        XrGMecUy5v/fPYMoK0oVC/XaHFH/ar74RYZeo9UX5udkfHpIa0fLH8C36J1xoJ5/P3EjnkOq
-        Z+QOf1itoDVF+mKtG2GOVK2TWzTLLXm2pvhLUXfoY11hnqh3o/UcpUqVf7TpqFrB52gOiwdF
-        sUDUPVUJTqY0oJv1Je9qL98JV40OTC7c7jeVtJ3OS3++vnhjKGO3pXEp1Ni0+ejxDPWicu7P
-        W8eUrPX9lzPb+rJcn+3v8sjuP8ZpWwt+m3+N46/ZC8/842JyspQ7dn6+/eHD6aZL+2Il8T3r
-        FfNitvvBnHPoTsPeD1e/GcvdcSTTGPONlB50/OWq+blJRelzNZlbSJ1e8x9iKvjP/AMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTZxSH897P4tZ4LSjvcPGjdtGZrFoQOagjRhNzE/3DxDmV6fQGboBI
-        qbu3EFlmbDCKVkERg21RnJFVVzF2LQ4oCWJnRIZt7WBoJUWiRlfxYwFEjHyMAkv47znnd56T
-        902OglSN0QmKnDyjKOUJuWpmBtU22hL+SiF1pC8/P/AZlPhbCSg6+poGn/0WAx3v3jJQ0+VF
-        MPakl4bzpw/AkPNPEnpe2Fkorn1CwOnHpyh4/9DHwJUBKwv/dAcpcPtP0HDyaS8JgYCThfs3
-        2wjwFb1i4VhZNQuup500hPoGaWj3nGOgr2eMBEugiYBrt8Ms1J9pJqDJ/QcFdwcrCAg7fQgs
-        5REG+g+PMvDBU0VB8SE7AUcezAG/qZxdq+FrqmoQ3+94SfOVpiDFt5eWEHx9uBrxDbYwy1ce
-        tdK8y3GM4esGe2j+8fEWgndXH+RHbDcpvrTWgfi6ziqS73fN2zwzXbtGMuQbxQXZBtn4tfo7
-        HSRqdamgTVyRqtUlpexalZisXpa2JlPMzSkQpWVpe7TZpsMF+25o9nvaW1gTGphnRjEKzK3A
-        zf8OEmY0Q6HifkHYeifITgbxuPHCa3KSY/Fwp5mZHOpF+G3wEhENYrlvceWb4xNBHBdBuLXk
-        JRstSC5E4y6Hc2rvPYQ7Ht6mowrDfYlH3CEmykouDUf8zok+xX2BA0VtEzyb2467A31TM7Nw
-        q/UZFeUYbh1uuFw68T6SW4yHq/4iJ3k+PnSjcorj8aNnF4hTSGWbptumKbZpim2a8jOiHChO
-        zJf1WXo5USsLejk/L0ubYdC70Pjx/X7nQ209Mr/Z4kWcAqk/Vdb72tNVtFAgF+q9CCtIdZzS
-        Loy3lJlC4Y+iZNgt5eeKshclj3+ujEyYnWEYP+U8425dsi4FUnUpSSlJK0EdrwwsL0xXcVmC
-        UdwrivtE6X+PUMQkmND6uthbmx5kLLHe1dTxV39ofCRtHnFtu/j50JCQE2kK/WSZ6wlUXOyz
-        X47dYPWsjny82uAWKrrgTNkey/rmwPagrtiPrd8X2JceHN26kf17vyb1k7M73ucI15Fl5zfv
-        nsOv8RH7nF0dvy3IfDW8clWtt7PcvKhR46/oXnhgr3+LNaSm5GxBt5SUZOE/Pewz+5IDAAA=
-X-CMS-MailID: 20180416095104eucas1p1a4a4f1cbd39804702412b0dceff083a6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180416095104eucas1p1a4a4f1cbd39804702412b0dceff083a6
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180405095119epcas5p1964fcfc777686af4216a7ff6acd964ce
-X-RootMTR: 20180405095119epcas5p1964fcfc777686af4216a7ff6acd964ce
-References: <20180405095000.9756-1-enric.balletbo@collabora.com>
-        <CGME20180405095119epcas5p1964fcfc777686af4216a7ff6acd964ce@epcas5p1.samsung.com>
-        <20180405095000.9756-30-enric.balletbo@collabora.com>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05.04.2018 11:49, Enric Balletbo i Serra wrote:
-> From: Tomasz Figa <tfiga@chromium.org>
->
-> Currently PSR flush is triggered from CRTC's .atomic_begin() callback,
-> which is executed after modeset disables and enables and before plane
-> updates are committed. Since PSR flush and re-enable can be triggered
-> asynchronously by external sources (input event, delayed work), it can
-> race with hardware programming done in the aforementioned stages.
->
-> This patch blocks the PSR completely before hardware programming part
-> begins and unblock after it ends. This relies on reference counted PSR
-> disable introduced with previous patch.
->
-> Cc: Kristian H. Kristensen <hoegsberg@chromium.org>
-> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Thierry Escande <thierry.escande@collabora.com>
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->
->  drivers/gpu/drm/rockchip/rockchip_drm_fb.c  | 61 ++++++++++++++++++++++++++++-
->  drivers/gpu/drm/rockchip/rockchip_drm_vop.c |  7 ----
->  2 files changed, 60 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> index e266539e04e5..d4f4118b482d 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
-> @@ -167,8 +167,67 @@ rockchip_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
->  	return ERR_PTR(ret);
->  }
->  
-> +static void
-> +rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
-> +{
-> +	struct drm_crtc *crtc;
-> +	struct drm_crtc_state *crtc_state;
-> +	struct drm_encoder *encoder;
-> +	u32 encoder_mask = 0;
-> +	int i;
-> +
-> +	for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
-> +		encoder_mask |= crtc_state->encoder_mask;
-> +		encoder_mask |= crtc->state->encoder_mask;
+When run the following test case,
 
-Looks clever and cryptic. More readable would be with
-for_each_oldnew_crtc_in_state.
-Anyway:
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+/*
+ * This expects the new RTC class driver framework, working with
+ * clocks that will often not be clones of what the PC-AT had.
+ * Use the command line to specify another RTC if you need one.
+ */
+static const char default_rtc[] = "/dev/rtc0";
+int main(int argc, char **argv)
+{
+	int i, fd, retval;
+	unsigned long data;
+	struct rtc_time rtc_tm;
+	const char *rtc = default_rtc;
 
- --
-Regards
-Andrzej
+	fd = open(rtc, O_RDONLY);
+	if (fd == -1) {
+		perror(rtc);
+		exit(errno);
+	}
 
-> +	}
-> +
-> +	drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
-> +		rockchip_drm_psr_inhibit_get(encoder);
-> +}
-> +
-> +static void
-> +rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
-> +{
-> +	struct drm_crtc *crtc;
-> +	struct drm_crtc_state *crtc_state;
-> +	struct drm_encoder *encoder;
-> +	u32 encoder_mask = 0;
-> +	int i;
-> +
-> +	for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
-> +		encoder_mask |= crtc_state->encoder_mask;
-> +		encoder_mask |= crtc->state->encoder_mask;
-> +	}
-> +
-> +	drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
-> +		rockchip_drm_psr_inhibit_put(encoder);
-> +}
-> +
-> +static void
-> +rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
-> +{
-> +	struct drm_device *dev = old_state->dev;
-> +
-> +	rockchip_drm_psr_inhibit_get_state(old_state);
-> +
-> +	drm_atomic_helper_commit_modeset_disables(dev, old_state);
-> +
-> +	drm_atomic_helper_commit_modeset_enables(dev, old_state);
-> +
-> +	drm_atomic_helper_commit_planes(dev, old_state,
-> +					DRM_PLANE_COMMIT_ACTIVE_ONLY);
-> +
-> +	rockchip_drm_psr_inhibit_put_state(old_state);
-> +
-> +	drm_atomic_helper_commit_hw_done(old_state);
-> +
-> +	drm_atomic_helper_wait_for_vblanks(dev, old_state);
-> +
-> +	drm_atomic_helper_cleanup_planes(dev, old_state);
-> +}
-> +
->  static const struct drm_mode_config_helper_funcs rockchip_mode_config_helpers = {
-> -	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
-> +	.atomic_commit_tail = rockchip_atomic_helper_commit_tail_rpm,
->  };
->  
->  static const struct drm_mode_config_funcs rockchip_drm_mode_config_funcs = {
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> index 00f7f3441cf6..f14a10ca4792 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-> @@ -1029,16 +1029,9 @@ static void vop_crtc_atomic_flush(struct drm_crtc *crtc,
->  	}
->  }
->  
-> -static void vop_crtc_atomic_begin(struct drm_crtc *crtc,
-> -				  struct drm_crtc_state *old_crtc_state)
-> -{
-> -	rockchip_drm_psr_flush(crtc);
-> -}
-> -
->  static const struct drm_crtc_helper_funcs vop_crtc_helper_funcs = {
->  	.mode_fixup = vop_crtc_mode_fixup,
->  	.atomic_flush = vop_crtc_atomic_flush,
-> -	.atomic_begin = vop_crtc_atomic_begin,
->  	.atomic_enable = vop_crtc_atomic_enable,
->  	.atomic_disable = vop_crtc_atomic_disable,
->  };
+	retval = ioctl(fd, RTC_RD_TIME, &rtc_tm);
+	if (retval == -1) {
+		perror("RTC_RD_TIME ioctl");
+		exit(errno);
+	}
+
+	// Setting time 1970
+	rtc_tm.tm_year = 70;
+	retval = ioctl(fd, RTC_SET_TIME, &rtc_tm);
+	if (retval == -1) {
+		perror("RTC_SET_TIME ioctl");
+		exit(errno);
+	}
+
+	/* Turn on update interrupts (one per second) */
+	retval = ioctl(fd, RTC_UIE_ON, 0);
+	if (retval == -1) {
+		if (errno == ENOTTY) {
+			fprintf(stderr,
+				"\n...Update IRQs not supported.\n");
+			goto done;
+		}
+		perror("RTC_UIE_ON ioctl");
+		exit(errno);
+	}
+
+	fprintf(stderr, "Counting 5 update (1/sec) interrupts from reading %s:",
+			rtc);
+	fflush(stderr);
+
+	for (i=1; i<6; i++) {
+		if (i == 3) {
+			// Setting new time 2030
+			rtc_tm.tm_year = 130;
+			retval = ioctl(fd, RTC_SET_TIME, &rtc_tm);
+			if (retval == -1) {
+				perror("RTC_SET_TIME ioctl");
+				exit(errno);
+			}
+		}
+
+		/* This read will block */
+		retval = read(fd, &data, sizeof(unsigned long));
+		if (retval == -1) {
+			perror("read");
+			exit(errno);
+		}
+		fprintf(stderr, " %d, 0x%lx",i, data);
+		fflush(stderr);
+	}
+
+	/* Turn off update interrupts */
+	retval = ioctl(fd, RTC_UIE_OFF, 0);
+	if (retval == -1) {
+		perror("RTC_UIE_OFF ioctl");
+		exit(errno);
+	}
+
+done:
+	fprintf(stderr, "\n\n\t\t\t *** Test complete ***\n");
+
+	close(fd);
+
+	return 0;
+}
+
+there will be the following call trace in the preempt kernel.
+If the kernel is non-preempt, the softlockups will happen.
+
+[   29.928336] INFO: rcu_sched self-detected stall on CPU
+[   29.928336] 	2-....: (20934 ticks this GP) idle=f4a/1/4611686018427387906 softirq=754/754 fqs=4704
+[   29.928336] 	 (t=21000 jiffies g=55 c=54 q=42)
+[   29.928336] NMI backtrace for cpu 2
+[   29.928336] CPU: 2 PID: 49 Comm: kworker/2:1 Not tainted 4.16.0 #5
+[   29.928336] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+[   29.928336] Workqueue: events rtc_timer_do_work
+[   29.928336] Call Trace:
+[   29.928336]  <IRQ>
+[   29.928336]  dump_stack+0x46/0x64
+[   29.928336]  nmi_cpu_backtrace+0xba/0xc0
+[   29.928336]  ? lapic_can_unplug_cpu+0x90/0x90
+[   29.928336]  nmi_trigger_cpumask_backtrace+0x95/0xd0
+[   29.928336]  rcu_dump_cpu_stacks+0x84/0xb4
+[   29.928336]  rcu_check_callbacks+0x6b5/0x800
+[   29.928336]  ? tick_sched_do_timer+0x40/0x40
+[   29.928336]  update_process_times+0x23/0x50
+[   29.928336]  tick_sched_handle+0x21/0x50
+[   29.928336]  tick_sched_timer+0x2f/0x60
+[   29.928336]  __hrtimer_run_queues+0xe4/0x240
+[   29.928336]  hrtimer_interrupt+0x11d/0x270
+[   29.928336]  smp_apic_timer_interrupt+0x51/0x120
+[   29.928336]  apic_timer_interrupt+0xf/0x20
+[   29.928336]  </IRQ>
+[   29.928336] RIP: 0010:_raw_spin_unlock_irqrestore+0x5/0x10
+[   29.928336] RSP: 0018:ffff9db0801abd50 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff12
+[   29.928336] RAX: 0000000000000286 RBX: ffff8dfb869fe800 RCX: 00000000cbfa5590
+[   29.928336] RDX: 0000000000000000 RSI: 0000000000000286 RDI: ffff8dfb869febb0
+[   29.928336] RBP: ffff8dfb869febb0 R08: 0000000000000000 R09: ffff9db0801abcf8
+[   29.928336] R10: 0000000000000010 R11: 0000000000000001 R12: 0000000000000286
+[   29.928336] R13: 0000000000000001 R14: ffff8dfb869fe800 R15: ffff8dfb869fec20
+[   29.928336]  rtc_handle_legacy_irq+0x79/0xb0
+[   29.928336]  rtc_timer_do_work+0xcc/0x200
+[   29.928336]  process_one_work+0x136/0x330
+[   29.928336]  worker_thread+0x3f/0x3b0
+[   29.928336]  kthread+0xf0/0x130
+[   29.928336]  ? process_one_work+0x330/0x330
+[   29.928336]  ? kthread_bind+0x10/0x10
+[   29.928336]  ? call_usermodehelper_exec_async+0x10f/0x110
+[   29.928336]  ret_from_fork+0x35/0x40
+[   29.934096] INFO: rcu_sched detected stalls on CPUs/tasks:
+[   29.934096] 	2-....: (20935 ticks this GP) idle=f4a/1/4611686018427387904 softirq=754/754 fqs=4704
+[   29.934096] 	(detected by 3, t=21019 jiffies, g=55, c=54, q=42)
+[   29.934096] Sending NMI from CPU 3 to CPUs 2:
+[   29.948423] NMI backtrace for cpu 2
+[   29.948423] CPU: 2 PID: 49 Comm: kworker/2:1 Not tainted 4.16.0 #5
+[   29.948423] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+[   29.952553] Workqueue: events rtc_timer_do_work
+[   29.952553] RIP: 0010:__wake_up_common+0x0/0x120
+[   29.952553] RSP: 0018:ffff9db0801abcf0 EFLAGS: 00000046
+[   29.952553] RAX: 0000000000000292 RBX: ffff8dfb869feb88 RCX: 0000000000000000
+[   29.952553] RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffff8dfb869feb88
+[   29.952553] RBP: 0000000000000001 R08: 0000000000000000 R09: ffff9db0801abcf8
+[   29.952553] R10: 0000000000000010 R11: 0000000000000001 R12: 0000000000000292
+[   29.952553] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+[   29.952553] FS:  0000000000000000(0000) GS:ffff8dfb87d00000(0000) knlGS:0000000000000000
+[   29.952553] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   29.952553] CR2: 00007fff0ee7a9f0 CR3: 00000000062b2000 CR4: 00000000000006e0
+[   29.952553] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   29.952553] DR3: 0000000000000000 DR6: 0000000000000000 DR7: 0000000000000000
+[   29.952553] Call Trace:
+[   29.952553]  __wake_up_common_lock+0x65/0x90
+[   29.952553]  rtc_handle_legacy_irq+0x91/0xb0
+[   29.952553]  rtc_timer_do_work+0xcc/0x200
+[   29.952553]  process_one_work+0x136/0x330
+[   29.952553]  worker_thread+0x3f/0x3b0
+[   29.952553]  kthread+0xf0/0x130
+[   29.952553]  ? process_one_work+0x330/0x330
+[   29.952553]  ? kthread_bind+0x10/0x10
+[   29.952553]  ? call_usermodehelper_exec_async+0x10f/0x110
+[   29.952553]  ret_from_fork+0x35/0x40
+[   29.952553] Code: 90 90 90 90 90 90 90 90 90 90 90 48 8d 47 08 c7 07 00 00 00 00 48 89 47 08 48 89 47 10 c3 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 <41> 57 41 56 4d 89 c6 41 55 41 54 55 4c 89 cd 53 48 83 ec 10 4d
+[   29.952553] INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 6.037 msecs
+
+The root cause is as following.
+When the hardware clock's time is modified later than the periodic
+alarm clock's expire time, the rtc_timer_do_work's loop may spend
+a long time to process.
+In order to avoid the case, we can adjust the next expire time to
+equating to "now + period".
+
+Signed-off-by: Jiwei Sun <jiwei.sun@windriver.com>
+---
+ drivers/rtc/interface.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index 672b192..d76eceb 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -877,6 +877,9 @@ void rtc_timer_do_work(struct work_struct *work)
+ 
+ 		/* Re-add/fwd periodic timers */
+ 		if (ktime_to_ns(timer->period)) {
++			if (now - next->expires > timer->period)
++				timer->node.expires = now;
++
+ 			timer->node.expires = ktime_add(timer->node.expires,
+ 							timer->period);
+ 			timer->enabled = 1;
+-- 
+1.9.1
