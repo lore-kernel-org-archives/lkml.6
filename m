@@ -1,77 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754948AbeDPNP7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:15:59 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:37698 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753479AbeDPNP5 (ORCPT
+        id S1755066AbeDPNQ5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:16:57 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36764 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755030AbeDPNQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:15:57 -0400
-X-Google-Smtp-Source: AIpwx49PcnAoT75idlIllFpsVrnn99ArAMnX7YHawYvqO1abTkz3C4y7md1CqNw0EvMQhDVFnKwxrWtVhgV3YXEpTMw=
+        Mon, 16 Apr 2018 09:16:54 -0400
+X-Google-Smtp-Source: AIpwx4+uGQqGFerrfam8z1N3WbRflJQvBbCyKSKKGODodMByQHNuSJSD743VQTvoOCizbzUCV1rb2w==
+Subject: Re: [PATCH 09/14] thermal: exynos: remove parsing of
+ samsung,tmu_reference_voltage property
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180416101412epcas2p241ac78d221c7c288e79fc410dd90d6ab@epcas2p2.samsung.com>
+ <1523873525-23718-10-git-send-email-b.zolnierkie@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <02ebf806-4c33-0bf2-8450-1452fdb7ec8b@linaro.org>
+Date: Mon, 16 Apr 2018 15:16:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1523884165-17044-1-git-send-email-geert@linux-m68k.org>
-References: <1523884165-17044-1-git-send-email-geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 16 Apr 2018 15:15:56 +0200
-X-Google-Sender-Auth: zGcFdxJMAlmPnT5oVSpGGcSzoQ8
-Message-ID: <CAMuHMdVKszYm5jH+o8iLdBdPTcsnpUr3rs4Z3kPtKXXH4fs8fw@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v4.17-rc1
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: "the arch/x86 maintainers" <x86@kernel.org>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1523873525-23718-10-git-send-email-b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 3:09 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> Below is the list of build error/warning regressions/improvements in
-> v4.17-rc1[1] compared to v4.16[2].
->
-> Summarized:
->   - build errors: +2/-10
->   - build warnings: +1407/-1867
->
-> Note that there may be false regressions, as some logs are incomplete.
-> Still, they're build errors/warnings.
->
-> Happy fixing! ;-)
->
-> Thanks to the linux-next team for providing the build service.
->
-> [1] http://kisskb.ellerman.id.au/kisskb/head/60cc43fc888428bb2f18f08997432d426a243338/ (244 out of 246 configs)
-> [2] http://kisskb.ellerman.id.au/kisskb/head/0adb32858b0bddf4ada5f364a84ed60b196dbcda/ (all 246 configs)
->
->
-> *** ERRORS ***
->
-> 2 error regressions:
->   + /kisskb/src/include/linux/thread_info.h: error: call to '__bad_copy_from' declared with attribute error: copy source size is too small:  => 138:19
+On 16/04/2018 12:12, Bartlomiej Zolnierkiewicz wrote:
+> Since pdata reference_voltage values are SoC (not platform) specific
+> just move it from platform data to struct exynos_tmu_data instance.
+> Then remove parsing of samsung,tmu_reference_voltage property.
+> 
+> There should be no functional changes caused by this patch.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
 
-i386-allmodconfig
 
->   + error: No rule to make target arch/parisc/kernel/binfmt_elf32.o:  => N/A
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-parisc64/a500_defconfig (patch available)
-
-> *** WARNINGS ***
->
-> [Deleted 799 lines about "warning: ... [-Wpointer-sign]" on parisc-allmodconfig]
-> [Deleted 1480 lines about "warning: -ffunction-sections disabled; it makes profiling impossible [enabled by default]" on parisc-allmodconfig]
-
-BTW, are there any plans to fix/silence these warrnings?
-Or should I look into automating their removal from the logs/report
-(optimistic me keeps on postponing that task :-)?
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
