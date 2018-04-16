@@ -1,237 +1,74 @@
-Return-Path: <jmoreira@suse.de>
-X-Google-Smtp-Source: AIpwx48EElZKzX+buRUrUq12svxIWoTfAVXtttxQSNDxnBMGx0QPnZfSSUZf0GRExV4Rvl4RIW4+
-ARC-Seal: i=1; a=rsa-sha256; t=1523765756; cv=none;
+Return-Path: <mingo.kernel.org@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523859047; cv=none;
         d=google.com; s=arc-20160816;
-        b=Omi8iLGMHbUM5YxTQo/H5boziLrNPKasncflbhPnigKVPEYvzlbi+ItypbC1p9aS0K
-         q7Fqh5Ab9dLRsOaXov7p3kz7zUQMSsT6lS6BIlc7rGwjyhZfng2TutPSz4iPsmKLj1J+
-         g/nhYc3VCBfH/z2A6MSvGeOpEs9Jk/Mp+DtDy78WryAC4nmQWyPLSUzg+ccV5KX1IOR8
-         Z0d7pHbBrM6QMpvu7URoRupBc6GuMLHQWq5fpyjPCj1II/qcUfTV8TtgRMIX70/FW3I1
-         iMR9jdr8oQzMq/V5X6QnCIyRmG2R/+bbPdY0by6QdCmqXcZvDk4Kjz0ItDQlYbb5YGIT
-         3OkQ==
+        b=LgbRtZaOONgYxl6bHiWAr3VHzlUIXGSIUsdfdi+VlrU8P8NFrSmfK9ePJL5B+7rfCy
+         werHa4stttt13bLzO5rIGfG+ITQCkPa2uoUUsLY4YApTFEmXDPXosv+jVmjFb3BXc3aZ
+         PwuUBoWOeoSPn5RU8Cq/L69MS6q/jxYhuOrY3ZBSQjV0QOGv2gCisuf25OnyEe7m8Pth
+         vxEpnaq+dJilqb6Rh0Sx9BJPwK9OPadXriMfM1MSEF0zr+yr4mlFxt9TWW7AHgCaXSER
+         zkv5bYNK5YxUWkAJKPkNs2vVZAbYGzMcwmlLU5MALq0hnuechBS2lFTLbpwmyGaXIoqH
+         jo2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=+DmiFNGtZWb1t4WEIGOOmkS/urq4hL1KORr0J8OhkbI=;
-        b=DX4iJeLbkDAydYUjFFxwSqUNtqCr0gF0wdYc1TJM2TPNJ2YDUkST8u6oqiEw8Rblk7
-         oLpQkZnTiQCvRvTlpa50WCAbdz65duKY9ioa+7FUPrpcGXnWMIwe7ycxPWP4m+AdwKsv
-         hkjZt1Ys9lx9/xdPF4YzqzBVoxQBQgNLDPwFd6rqZNAzGkqT/cLP9AOLWk9jylLutuWV
-         lS3RAWWVS7LnA07pcD3/ShxfoZ4hZ30KhwvBW1IQasn284orntZRtJdgINZmsGkAF91K
-         Ccc7tnyEI/uMDAIabHAY/bFd/PKB4jycH3LTWm5t4Z8I4U4bwnmLVINW1yfSYQ+GErxx
-         oDAw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:sender:dkim-signature
+         :arc-authentication-results;
+        bh=yvdMQCQPJYF87AmScV/IOXkvbIMXPVRmRfS2er34QmM=;
+        b=Hx9KS/fcYNG3nCnVjd7Sk3FlBJ9gyajoeyV9/1+QRY8EzQXCI1Jat+9oefhiPRM6oK
+         yURHk9A1yCWgrJD/Wvkr8T2loP1UKDaXAo53Bv+JtnGQmrkUdjmBmHtow8Jgs2aE+kQc
+         rw0aPRwlh2Y9L3FlgVKlHUn1MbThWIn2BL3xorSH3SBtaUkBpWfBwovIWSQWQMUuT3nu
+         sKrVuQOxW7hbQbUYMwkWDDOviGSUzb66y0zX8CVLWioxxUXDYCAVRM0zamxPbgpYePHk
+         vV6aeOQvP1/NavXRJiecooXdxZpzXJuxvtjTprgcwFLklqiBxlcV8G8x/cCufv7BuDlq
+         OpYw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jmoreira@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jmoreira@suse.de
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=C6KsDYur;
+       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jmoreira@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=jmoreira@suse.de
-From: Joao Moreira <jmoreira@suse.de>
-To: kernel-hardening@lists.openwall.com
-Cc: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	gregkh@linuxfoundation.org,
-	keescook@chromium.org
-Subject: [PATCH 1/4] x86/crypto: camellia: Fix function prototypes
-Date: Sun, 15 Apr 2018 01:15:39 -0300
-Message-Id: <20180415041542.5364-2-jmoreira@suse.de>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180415041542.5364-1-jmoreira@suse.de>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=C6KsDYur;
+       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
+X-Google-Smtp-Source: AIpwx4+sfAjBAJnvoF/vZtfLPoru7qxhHG8fuMVjDCPOBbJOoPGFqwbkB6Y4HFUjEkDMZY1aGTnt7A==
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Mon, 16 Apr 2018 08:10:44 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Joao Moreira <jmoreira@suse.de>
+Cc: kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+	x86@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net,
+	tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+	gregkh@linuxfoundation.org, keescook@chromium.org
+Subject: Re: [PATCH 1/4] x86/crypto: camellia: Fix function prototypes
+Message-ID: <20180416061044.z6eb4psw2sbszemb@gmail.com>
 References: <20180415041542.5364-1-jmoreira@suse.de>
+ <20180415041542.5364-2-jmoreira@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180415041542.5364-2-jmoreira@suse.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597784202629370804?=
-X-GMAIL-MSGID: =?utf-8?q?1597784202629370804?=
+X-GMAIL-MSGID: =?utf-8?q?1597882025005407875?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Convert the use of 'struct camellia_ctx *' to 'void *' in prototypes of
-functions which are referenced through 'struct common_glue_func_entry',
-making their prototypes match those of this struct and, consequently,
-turning them compatible with CFI requirements.
 
-Whenever needed, cast 'void *' to 'struct camellia_ctx *'.
+* Joao Moreira <jmoreira@suse.de> wrote:
 
-Signed-off-by: João Moreira <jmoreira@suse.de>
----
- arch/x86/crypto/camellia_aesni_avx2_glue.c | 25 ++++++++---------
- arch/x86/crypto/camellia_aesni_avx_glue.c  | 21 +++++++--------
- arch/x86/crypto/camellia_glue.c            |  6 ++---
- arch/x86/include/asm/crypto/camellia.h     | 43 +++++++++++++-----------------
- 4 files changed, 40 insertions(+), 55 deletions(-)
+> Convert the use of 'struct camellia_ctx *' to 'void *' in prototypes of
+> functions which are referenced through 'struct common_glue_func_entry',
+> making their prototypes match those of this struct and, consequently,
+> turning them compatible with CFI requirements.
+> 
+> Whenever needed, cast 'void *' to 'struct camellia_ctx *'.
 
-diff --git a/arch/x86/crypto/camellia_aesni_avx2_glue.c b/arch/x86/crypto/camellia_aesni_avx2_glue.c
-index 60907c139c4e..6fe248ee5efa 100644
---- a/arch/x86/crypto/camellia_aesni_avx2_glue.c
-+++ b/arch/x86/crypto/camellia_aesni_avx2_glue.c
-@@ -27,20 +27,17 @@
- #define CAMELLIA_AESNI_AVX2_PARALLEL_BLOCKS 32
- 
- /* 32-way AVX2/AES-NI parallel cipher functions */
--asmlinkage void camellia_ecb_enc_32way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src);
--asmlinkage void camellia_ecb_dec_32way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src);
--
--asmlinkage void camellia_cbc_dec_32way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src);
--asmlinkage void camellia_ctr_32way(struct camellia_ctx *ctx, u8 *dst,
--				   const u8 *src, le128 *iv);
--
--asmlinkage void camellia_xts_enc_32way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src, le128 *iv);
--asmlinkage void camellia_xts_dec_32way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src, le128 *iv);
-+asmlinkage void camellia_ecb_enc_32way(void *ctx, u8 *dst, const u8 *src);
-+asmlinkage void camellia_ecb_dec_32way(void *ctx, u8 *dst, const u8 *src);
-+
-+asmlinkage void camellia_cbc_dec_32way(void *ctx, u8 *dst, const u8 *src);
-+asmlinkage void camellia_ctr_32way(void *ctx, u8 *dst, const u8 *src,
-+				   le128 *iv);
-+
-+asmlinkage void camellia_xts_enc_32way(void *ctx, u8 *dst, const u8 *src,
-+				       le128 *iv);
-+asmlinkage void camellia_xts_dec_32way(void *ctx, u8 *dst, const u8 *src,
-+				       le128 *iv);
- 
- static const struct common_glue_ctx camellia_enc = {
- 	.num_funcs = 4,
-diff --git a/arch/x86/crypto/camellia_aesni_avx_glue.c b/arch/x86/crypto/camellia_aesni_avx_glue.c
-index d96429da88eb..3ccfd75b4af4 100644
---- a/arch/x86/crypto/camellia_aesni_avx_glue.c
-+++ b/arch/x86/crypto/camellia_aesni_avx_glue.c
-@@ -26,28 +26,25 @@
- #define CAMELLIA_AESNI_PARALLEL_BLOCKS 16
- 
- /* 16-way parallel cipher functions (avx/aes-ni) */
--asmlinkage void camellia_ecb_enc_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src);
-+asmlinkage void camellia_ecb_enc_16way(void *ctx, u8 *dst, const u8 *src);
- EXPORT_SYMBOL_GPL(camellia_ecb_enc_16way);
- 
--asmlinkage void camellia_ecb_dec_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src);
-+asmlinkage void camellia_ecb_dec_16way(void *ctx, u8 *dst, const u8 *src);
- EXPORT_SYMBOL_GPL(camellia_ecb_dec_16way);
- 
--asmlinkage void camellia_cbc_dec_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src);
-+asmlinkage void camellia_cbc_dec_16way(void *ctx, u8 *dst, const u8 *src);
- EXPORT_SYMBOL_GPL(camellia_cbc_dec_16way);
- 
--asmlinkage void camellia_ctr_16way(struct camellia_ctx *ctx, u8 *dst,
--				   const u8 *src, le128 *iv);
-+asmlinkage void camellia_ctr_16way(void *ctx, u8 *dst, const u8 *src,
-+				   le128 *iv);
- EXPORT_SYMBOL_GPL(camellia_ctr_16way);
- 
--asmlinkage void camellia_xts_enc_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src, le128 *iv);
-+asmlinkage void camellia_xts_enc_16way(void *ctx, u8 *dst, const u8 *src,
-+				       le128 *iv);
- EXPORT_SYMBOL_GPL(camellia_xts_enc_16way);
- 
--asmlinkage void camellia_xts_dec_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src, le128 *iv);
-+asmlinkage void camellia_xts_dec_16way(void *ctx, u8 *dst, const u8 *src,
-+				       le128 *iv);
- EXPORT_SYMBOL_GPL(camellia_xts_dec_16way);
- 
- void camellia_xts_enc(void *ctx, u128 *dst, const u128 *src, le128 *iv)
-diff --git a/arch/x86/crypto/camellia_glue.c b/arch/x86/crypto/camellia_glue.c
-index af4840ab2a3d..0942b3998de5 100644
---- a/arch/x86/crypto/camellia_glue.c
-+++ b/arch/x86/crypto/camellia_glue.c
-@@ -39,16 +39,14 @@
- asmlinkage void __camellia_enc_blk(struct camellia_ctx *ctx, u8 *dst,
- 				   const u8 *src, bool xor);
- EXPORT_SYMBOL_GPL(__camellia_enc_blk);
--asmlinkage void camellia_dec_blk(struct camellia_ctx *ctx, u8 *dst,
--				 const u8 *src);
-+asmlinkage void camellia_dec_blk(void *ctx, u8 *dst, const u8 *src);
- EXPORT_SYMBOL_GPL(camellia_dec_blk);
- 
- /* 2-way parallel cipher functions */
- asmlinkage void __camellia_enc_blk_2way(struct camellia_ctx *ctx, u8 *dst,
- 					const u8 *src, bool xor);
- EXPORT_SYMBOL_GPL(__camellia_enc_blk_2way);
--asmlinkage void camellia_dec_blk_2way(struct camellia_ctx *ctx, u8 *dst,
--				      const u8 *src);
-+asmlinkage void camellia_dec_blk_2way(void *ctx, u8 *dst, const u8 *src);
- EXPORT_SYMBOL_GPL(camellia_dec_blk_2way);
- 
- static void camellia_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
-diff --git a/arch/x86/include/asm/crypto/camellia.h b/arch/x86/include/asm/crypto/camellia.h
-index 10f8d590bcfe..974bea896d96 100644
---- a/arch/x86/include/asm/crypto/camellia.h
-+++ b/arch/x86/include/asm/crypto/camellia.h
-@@ -40,35 +40,29 @@ extern int xts_camellia_setkey(struct crypto_tfm *tfm, const u8 *key,
- /* regular block cipher functions */
- asmlinkage void __camellia_enc_blk(struct camellia_ctx *ctx, u8 *dst,
- 				   const u8 *src, bool xor);
--asmlinkage void camellia_dec_blk(struct camellia_ctx *ctx, u8 *dst,
--				 const u8 *src);
-+asmlinkage void camellia_dec_blk(void *ctx, u8 *dst, const u8 *src);
- 
- /* 2-way parallel cipher functions */
- asmlinkage void __camellia_enc_blk_2way(struct camellia_ctx *ctx, u8 *dst,
- 					const u8 *src, bool xor);
--asmlinkage void camellia_dec_blk_2way(struct camellia_ctx *ctx, u8 *dst,
--				      const u8 *src);
-+asmlinkage void camellia_dec_blk_2way(void *ctx, u8 *dst, const u8 *src);
- 
- /* 16-way parallel cipher functions (avx/aes-ni) */
--asmlinkage void camellia_ecb_enc_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src);
--asmlinkage void camellia_ecb_dec_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src);
--
--asmlinkage void camellia_cbc_dec_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src);
--asmlinkage void camellia_ctr_16way(struct camellia_ctx *ctx, u8 *dst,
--				   const u8 *src, le128 *iv);
--
--asmlinkage void camellia_xts_enc_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src, le128 *iv);
--asmlinkage void camellia_xts_dec_16way(struct camellia_ctx *ctx, u8 *dst,
--				       const u8 *src, le128 *iv);
--
--static inline void camellia_enc_blk(struct camellia_ctx *ctx, u8 *dst,
--				    const u8 *src)
-+asmlinkage void camellia_ecb_enc_16way(void *ctx, u8 *dst, const u8 *src);
-+asmlinkage void camellia_ecb_dec_16way(void *ctx, u8 *dst, const u8 *src);
-+
-+asmlinkage void camellia_cbc_dec_16way(void *ctx, u8 *dst, const u8 *src);
-+asmlinkage void camellia_ctr_16way(void *ctx, u8 *dst, const u8 *src,
-+				   le128 *iv);
-+
-+asmlinkage void camellia_xts_enc_16way(void *ctx, u8 *dst, const u8 *src,
-+				       le128 *iv);
-+asmlinkage void camellia_xts_dec_16way(void *ctx, u8 *dst, const u8 *src,
-+				       le128 *iv);
-+
-+static inline void camellia_enc_blk(void *ctx, u8 *dst, const u8 *src)
- {
--	__camellia_enc_blk(ctx, dst, src, false);
-+	__camellia_enc_blk((struct camellia_ctx *) ctx, dst, src, false);
- }
- 
- static inline void camellia_enc_blk_xor(struct camellia_ctx *ctx, u8 *dst,
-@@ -77,10 +71,9 @@ static inline void camellia_enc_blk_xor(struct camellia_ctx *ctx, u8 *dst,
- 	__camellia_enc_blk(ctx, dst, src, true);
- }
- 
--static inline void camellia_enc_blk_2way(struct camellia_ctx *ctx, u8 *dst,
--					 const u8 *src)
-+static inline void camellia_enc_blk_2way(void *ctx, u8 *dst, const u8 *src)
- {
--	__camellia_enc_blk_2way(ctx, dst, src, false);
-+	__camellia_enc_blk_2way((struct camellia_ctx *) ctx, dst, src, false);
- }
- 
- static inline void camellia_enc_blk_xor_2way(struct camellia_ctx *ctx, u8 *dst,
--- 
-2.12.0
+> +static inline void camellia_enc_blk(void *ctx, u8 *dst, const u8 *src)
+>  {
+> -	__camellia_enc_blk(ctx, dst, src, false);
+> +	__camellia_enc_blk((struct camellia_ctx *) ctx, dst, src, false);
+>  }
+
+I don't see how this is an improvement: instead of having a proper type there's 
+now an opaque type and an ugly (and dangerous) type cast.
+
+What does "compatible with CFI requirements" mean?
+
+Thanks,
+
+	Ingo
