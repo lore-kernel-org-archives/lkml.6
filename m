@@ -1,52 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754800AbeDPM6z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:58:55 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36129 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754441AbeDPM6x (ORCPT
+        id S1754211AbeDPNCv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:02:51 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44710 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753771AbeDPNCt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:58:53 -0400
-X-Google-Smtp-Source: AIpwx48u229h+jPTP7PPasERehD4Em5JF/tbZ/I1N7Cp68y/Tyyiu+Df0i1TenjZiid0hGy314+anw==
-Date: Mon, 16 Apr 2018 13:58:49 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Tony Lindgren <tony@atomide.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCHv6 2/2] mfd: motorola-cpcap: Add audio-codec support
-Message-ID: <20180416125849.sfiphqylcyea7wjg@dell>
-References: <20180330125824.21418-1-sebastian.reichel@collabora.co.uk>
- <20180330125824.21418-3-sebastian.reichel@collabora.co.uk>
+        Mon, 16 Apr 2018 09:02:49 -0400
+X-Google-Smtp-Source: AIpwx4+Y8sVarbgEzY+bTsaWlDdsv/WmRk4VkFUMC2lQSeAs5fs+VrMvpClur/r65KjGvhry6wmb7w==
+Subject: Re: [PATCH 14/14] arm64: dts: exynos: remove no longer needed samsung
+ thermal properties
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180416101428epcas1p1d9646bf1b56f0512a3fa3a6301b793c6@epcas1p1.samsung.com>
+ <1523873525-23718-15-git-send-email-b.zolnierkie@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <3af07b96-dd74-336e-1261-dda2cde9abaa@linaro.org>
+Date: Mon, 16 Apr 2018 15:02:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <1523873525-23718-15-git-send-email-b.zolnierkie@samsung.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180330125824.21418-3-sebastian.reichel@collabora.co.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Mar 2018, Sebastian Reichel wrote:
-
-> From: Sebastian Reichel <sre@kernel.org>
+On 16/04/2018 12:12, Bartlomiej Zolnierkiewicz wrote:
+> Remove no longer needed samsung thermal properties.
 > 
-> Add support for the audio-codec node by converting from
-> devm_of_platform_populate() to devm_mfd_add_devices().
+> There should be no functional changes caused by this patch.
 > 
-> Tested-by: Pavel Machek <pavel@ucw.cz>
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->  drivers/mfd/motorola-cpcap.c | 51 +++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 50 insertions(+), 1 deletion(-)
-
-Applied, thanks.
+Can you add an additional patch to remove the Documentation ?
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
