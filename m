@@ -1,28 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753443AbeDPGrg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:47:36 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55205 "EHLO
+        id S1753584AbeDPGrq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:47:46 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59453 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751199AbeDPGre (ORCPT
+        with ESMTP id S1752221AbeDPGrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:47:34 -0400
-Date: Sun, 15 Apr 2018 23:46:13 -0700
-From: tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-8a812bf552d98f6f887f860d3910f201b4a97b26@git.kernel.org>
-Cc: alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, jolsa@kernel.org, ak@linux.intel.com,
-        kan.liang@linux.intel.com, acme@redhat.com, yao.jin@linux.intel.com,
-        tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org
-Reply-To: ak@linux.intel.com, acme@redhat.com, yao.jin@linux.intel.com,
-        kan.liang@linux.intel.com, tglx@linutronix.de, mingo@kernel.org,
-        peterz@infradead.org, alexander.shishkin@linux.intel.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@kernel.org
-In-Reply-To: <1523269609-28824-4-git-send-email-yao.jin@linux.intel.com>
-References: <1523269609-28824-4-git-send-email-yao.jin@linux.intel.com>
+        Mon, 16 Apr 2018 02:47:43 -0400
+Date: Sun, 15 Apr 2018 23:47:35 -0700
+From: tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-4f75f1cbf95e2f0853cd229d042b203931b899af@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, hpa@zytor.com,
+        brueckner@linux.vnet.ibm.com, heiko.carstens@de.ibm.com,
+        tmricht@linux.ibm.com, tglx@linutronix.de, acme@redhat.com,
+        mingo@kernel.org, schwidefsky@de.ibm.com
+Reply-To: schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        tmricht@linux.ibm.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        brueckner@linux.vnet.ibm.com, mingo@kernel.org, acme@redhat.com,
+        tglx@linutronix.de
+In-Reply-To: <20180412133246.92801-1-tmricht@linux.ibm.com>
+References: <20180412133246.92801-1-tmricht@linux.ibm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf version: Print status for syscall_table
-Git-Commit-ID: 8a812bf552d98f6f887f860d3910f201b4a97b26
+Subject: [tip:perf/urgent] perf record: Change warning for missing sysfs
+ entry to debug
+Git-Commit-ID: 4f75f1cbf95e2f0853cd229d042b203931b899af
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,71 +36,71 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8a812bf552d98f6f887f860d3910f201b4a97b26
-Gitweb:     https://git.kernel.org/tip/8a812bf552d98f6f887f860d3910f201b4a97b26
-Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Mon, 9 Apr 2018 18:26:49 +0800
+Commit-ID:  4f75f1cbf95e2f0853cd229d042b203931b899af
+Gitweb:     https://git.kernel.org/tip/4f75f1cbf95e2f0853cd229d042b203931b899af
+Author:     Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate: Thu, 12 Apr 2018 15:32:46 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 12 Apr 2018 10:33:34 -0300
+CommitDate: Fri, 13 Apr 2018 09:59:56 -0300
 
-perf version: Print status for syscall_table
+perf record: Change warning for missing sysfs entry to debug
 
-This patch doesn't print "libaudit" line if HAVE_SYSCALL_TABLE_SUPPORT
-is available and add a line for HAVE_SYSCALL_TABLE_SUPPORT.
+Using perf on 4.16.0 kernel on s390 shows this warning:
 
-For example,
+   failed: can't open node sysfs data
 
-$ ./perf -vv
-perf version 4.13.rc5.gc2f8af9
-                 dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
-    dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
-                 glibc: [ on  ]  # HAVE_GLIBC_SUPPORT
-                  gtk2: [ on  ]  # HAVE_GTK2_SUPPORT
-         syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
-                libbfd: [ on  ]  # HAVE_LIBBFD_SUPPORT
-                libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
-               libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
-numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
-               libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
-             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
-              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
-             libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
-             libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
-    libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
-                  zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
-                  lzma: [ on  ]  # HAVE_LZMA_SUPPORT
-             get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
-                   bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+each time I run command perf record ... for example:
 
-The line "syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT" is
-new created.
+  [root@s35lp76 perf]# ./perf record -e rB0000 -- sleep 1
+  [ perf record: Woken up 1 times to write data ]
+  failed: can't open node sysfs data
+  [ perf record: Captured and wrote 0.001 MB perf.data (4 samples) ]
+  [root@s35lp76 perf]#
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1523269609-28824-4-git-send-email-yao.jin@linux.intel.com
+It turns out commit e2091cedd51bf ("perf tools: Add MEM_TOPOLOGY feature
+to perf data file") tries to open directory named /sys/devices/system/node/
+which does not exist on s390.
+
+This is the call stack:
+ __cmd_record
+ +---> perf_session__write_header
+       +---> perf_header__adds_write
+             +---> do_write_feat
+	           +---> write_mem_topology
+		         +---> build_mem_topology
+			       prints warning
+
+The issue starts in do_write_feat() which unconditionally loops over all
+features and now includes HEADER_MEM_TOPOLOGY and calls write_mem_topology().
+
+Function record__init_features() at the beginning of __cmd_record() sets
+all features and then turns off some of them.
+
+Fix this by changing the warning to a level 2 debug output statement.
+
+So it is only shown when debug level 2 or higher is set.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20180412133246.92801-1-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-version.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/header.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-version.c b/tools/perf/builtin-version.c
-index 2abe3910d6b6..50df168be326 100644
---- a/tools/perf/builtin-version.c
-+++ b/tools/perf/builtin-version.c
-@@ -60,7 +60,10 @@ static void library_status(void)
- 	STATUS(HAVE_DWARF_GETLOCATIONS_SUPPORT, dwarf_getlocations);
- 	STATUS(HAVE_GLIBC_SUPPORT, glibc);
- 	STATUS(HAVE_GTK2_SUPPORT, gtk2);
-+#ifndef HAVE_SYSCALL_TABLE_SUPPORT
- 	STATUS(HAVE_LIBAUDIT_SUPPORT, libaudit);
-+#endif
-+	STATUS(HAVE_SYSCALL_TABLE_SUPPORT, syscall_table);
- 	STATUS(HAVE_LIBBFD_SUPPORT, libbfd);
- 	STATUS(HAVE_LIBELF_SUPPORT, libelf);
- 	STATUS(HAVE_LIBNUMA_SUPPORT, libnuma);
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 121df1683c36..a8bff2178fbc 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1320,7 +1320,8 @@ static int build_mem_topology(struct memory_node *nodes, u64 size, u64 *cntp)
+ 
+ 	dir = opendir(path);
+ 	if (!dir) {
+-		pr_warning("failed: can't open node sysfs data\n");
++		pr_debug2("%s: could't read %s, does this arch have topology information?\n",
++			  __func__, path);
+ 		return -1;
+ 	}
+ 
