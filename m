@@ -1,99 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754391AbeDPK3s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:29:48 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:37715 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753916AbeDPK3p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:29:45 -0400
-Subject: Re: [PATCH 01/14] memory: ti-emif-sram: Add resume function to recopy
- sram code
-To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>,
-        <linus.walleij@linaro.org>, <grygorii.strashko@ti.com>,
-        <tony@atomide.com>
-CC: <t-kristo@ti.com>, <Russ.Dill@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ssantosh@kernel.org>,
-        <haojian.zhuang@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <d-gerlach@ti.com>
-References: <1523505239-16229-1-git-send-email-j-keerthy@ti.com>
- <1523505239-16229-2-git-send-email-j-keerthy@ti.com>
- <31688cf4-b6ca-e7ce-3407-46262006b38f@oracle.com>
-From: Keerthy <j-keerthy@ti.com>
-Message-ID: <d52373eb-1707-17ff-fabb-9f7200cf54c0@ti.com>
-Date: Mon, 16 Apr 2018 15:59:14 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1753751AbeDPKaW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:30:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47426 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752201AbeDPKaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 06:30:21 -0400
+Date: Mon, 16 Apr 2018 12:30:17 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, acme@redhat.com,
+        kstewart@linuxfoundation.org, tglx@linutronix.de, pombredanne@nexb.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        uneedsihyeon@gmail.com, kjlx@templeofstupid.com,
+        ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: Re: [PATCH 3/3] perf/buildid-cache: Support --purge-all option
+Message-ID: <20180416103017.GB23274@krava>
+References: <20180409110633.20767-1-ravi.bangoria@linux.vnet.ibm.com>
+ <20180409110633.20767-4-ravi.bangoria@linux.vnet.ibm.com>
+ <20180416182735.4399e94b3c7e6d190ec7dc3e@kernel.org>
+ <f921f16f-578a-955c-4301-e596adbdcd4b@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <31688cf4-b6ca-e7ce-3407-46262006b38f@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f921f16f-578a-955c-4301-e596adbdcd4b@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Thursday 12 April 2018 10:14 PM, santosh.shilimkar@oracle.com wrote:
-> On 4/11/18 9:53 PM, Keerthy wrote:
->> From: Dave Gerlach <d-gerlach@ti.com>
->>
->> After an RTC+DDR cycle we lose sram context so emif pm functions present
->> in sram are lost. We can check if the first byte of the original
->> code in DDR contains the same first byte as the code in sram, and if
->> they do not match we know we have lost context and must recopy the
->> functions to the previous address to maintain PM functionality.
->>
->> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->> ---
->>   drivers/memory/ti-emif-pm.c | 24 ++++++++++++++++++++++++
->>   1 file changed, 24 insertions(+)
->>
->> diff --git a/drivers/memory/ti-emif-pm.c b/drivers/memory/ti-emif-pm.c
->> index 632651f..ec4a62c 100644
->> --- a/drivers/memory/ti-emif-pm.c
->> +++ b/drivers/memory/ti-emif-pm.c
->> @@ -249,6 +249,25 @@ int ti_emif_get_mem_type(void)
->>   };
->>   MODULE_DEVICE_TABLE(of, ti_emif_of_match);
->>   +#ifdef CONFIG_PM_SLEEP
->> +static int ti_emif_resume(struct device *dev)
->> +{
->> +    unsigned long tmp =
->> +            __raw_readl((void *)emif_instance->ti_emif_sram_virt);
->> +
->> +    /*
->> +     * Check to see if what we are copying is already present in the
->> +     * first byte at the destination, only copy if it is not which
->> +     * indicates we have lost context and sram no longer contains
->> +     * the PM code
->> +     */
+On Mon, Apr 16, 2018 at 03:10:40PM +0530, Ravi Bangoria wrote:
+> Hi Masami,
 > 
->> +    if (tmp != ti_emif_sram)
->> +        ti_emif_push_sram(dev, emif_instance);
->> +
->> +    return 0;
->> +}
->> +#endif /* CONFIG_PM_SLEEP */
-> Instead of this indirect method , why can't just check the previous
-> deep sleep mode and based on that do copy or not. EMIF power status
-> register should have something like that ?
-
-I will check if we have a register that tells the previous state of sram.
-
+> On 04/16/2018 02:57 PM, Masami Hiramatsu wrote:
+> > On Mon,  9 Apr 2018 16:36:33 +0530
+> > Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+> >
+> >> User can remove files from cache using --remove/--purge options
+> >> but both needs list of files as an argument. It's not convenient
+> >> when you want to flush out entire cache. Add an option to purge
+> >> all files from cache.
+> >>
+> >> Ex,
+> >>   # perf buildid-cache -l
+> >>     /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c)
+> >>     /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36)
+> >>   # perf buildid-cache -P -v
+> >>     Removing /tmp/a.out (8a86ef73e44067bca52cc3f6cd3e5446c783391c): Ok
+> >>     Removing /tmp/a.out.1 (ebe71fdcf4b366518cc154d570a33cd461a51c36): Ok
+> >>     Purged all: Ok
+> > Hmm, for purging all caches will be done by
+> >
+> > $ rm -rf ~/.debug
+> >
+> > Are there any difference?
 > 
-> Another minor point is even though there is nothing to do in suspend,
-> might be good to have a callback with comment that nothing to do with
-> some explanation why not. Don't have strong preference but may for
-> better readability.
+> No logical difference if you know it's ~/.debug where it goes. :)
+> I also used to do rm -rf earlier.
+> 
+> This option is for a perf users. But I'm fine if it's not really needed.
+> Will drop it.
 
-Okay. Thanks a lot for the quick feedback!
+I'd keep it.. as you said it could be configured at some other dir
 
-> 
-> Regards,
-> Santosh
-> 
-> 
+jirka
