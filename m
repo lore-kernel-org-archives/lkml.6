@@ -1,31 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754175AbeDPIui (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 04:50:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44682 "EHLO
+        id S1754293AbeDPIu6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 04:50:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44752 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753950AbeDPIuf (ORCPT
+        with ESMTP id S1754265AbeDPIux (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 04:50:35 -0400
+        Mon, 16 Apr 2018 04:50:53 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, netdev@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Subject: remove PCI_DMA_BUS_IS_PHYS 
-Date: Mon, 16 Apr 2018 10:50:20 +0200
-Message-Id: <20180416085032.7367-1-hch@lst.de>
+Subject: [PATCH 04/12] DAC960: don't use block layer bounce buffers
+Date: Mon, 16 Apr 2018 10:50:24 +0200
+Message-Id: <20180416085032.7367-5-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180416085032.7367-1-hch@lst.de>
+References: <20180416085032.7367-1-hch@lst.de>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+DAC960 just sets the block bounce limit to the dma mask, which means
+that the iommu or swiotlb already take care of the bounce buffering,
+and the block bouncing can be removed.
 
-this series tries to get rid of the global and PCI_DMA_BUS_IS_PHYS flag,
-which causes the block layer and networking code to bounce buffer memory
-above the dma mask in some cases.  It is a leftover from i386 + highmem
-days and is obsolete now that we have swiotlb or iommus so that the
-dma ops implementations can always (well minus the ISA DMA case which
-will require further attention) handle memory passed to them.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/block/DAC960.c | 9 ++-------
+ drivers/block/DAC960.h | 1 -
+ 2 files changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
+index f781eff7d23e..c9ba48519d0f 100644
+--- a/drivers/block/DAC960.c
++++ b/drivers/block/DAC960.c
+@@ -1179,7 +1179,6 @@ static bool DAC960_V1_EnableMemoryMailboxInterface(DAC960_Controller_T
+ 
+   if (pci_set_dma_mask(Controller->PCIDevice, DMA_BIT_MASK(32)))
+ 	return DAC960_Failure(Controller, "DMA mask out of range");
+-  Controller->BounceBufferLimit = DMA_BIT_MASK(32);
+ 
+   if ((hw_type == DAC960_PD_Controller) || (hw_type == DAC960_P_Controller)) {
+     CommandMailboxesSize =  0;
+@@ -1380,11 +1379,8 @@ static bool DAC960_V2_EnableMemoryMailboxInterface(DAC960_Controller_T
+   dma_addr_t	CommandMailboxDMA;
+   DAC960_V2_CommandStatus_T CommandStatus;
+ 
+-	if (!pci_set_dma_mask(Controller->PCIDevice, DMA_BIT_MASK(64)))
+-		Controller->BounceBufferLimit = DMA_BIT_MASK(64);
+-	else if (!pci_set_dma_mask(Controller->PCIDevice, DMA_BIT_MASK(32)))
+-		Controller->BounceBufferLimit = DMA_BIT_MASK(32);
+-	else
++	if (pci_set_dma_mask(Controller->PCIDevice, DMA_BIT_MASK(64)) &&
++	    pci_set_dma_mask(Controller->PCIDevice, DMA_BIT_MASK(32)))
+ 		return DAC960_Failure(Controller, "DMA mask out of range");
+ 
+   /* This is a temporary dma mapping, used only in the scope of this function */
+@@ -2540,7 +2536,6 @@ static bool DAC960_RegisterBlockDevice(DAC960_Controller_T *Controller)
+ 		continue;
+   	}
+   	Controller->RequestQueue[n] = RequestQueue;
+-  	blk_queue_bounce_limit(RequestQueue, Controller->BounceBufferLimit);
+   	RequestQueue->queuedata = Controller;
+ 	blk_queue_max_segments(RequestQueue, Controller->DriverScatterGatherLimit);
+ 	blk_queue_max_hw_sectors(RequestQueue, Controller->MaxBlocksPerCommand);
+diff --git a/drivers/block/DAC960.h b/drivers/block/DAC960.h
+index 21aff470d268..1439e651928b 100644
+--- a/drivers/block/DAC960.h
++++ b/drivers/block/DAC960.h
+@@ -2295,7 +2295,6 @@ typedef struct DAC960_Controller
+   unsigned short MaxBlocksPerCommand;
+   unsigned short ControllerScatterGatherLimit;
+   unsigned short DriverScatterGatherLimit;
+-  u64		BounceBufferLimit;
+   unsigned int CombinedStatusBufferLength;
+   unsigned int InitialStatusLength;
+   unsigned int CurrentStatusLength;
+-- 
+2.17.0
