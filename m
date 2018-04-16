@@ -1,63 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754829AbeDPJqK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:46:10 -0400
-Received: from mga03.intel.com ([134.134.136.65]:24654 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754042AbeDPJqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:46:08 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,459,1517904000";
-   d="scan'208";a="43642434"
-Date: Mon, 16 Apr 2018 12:46:03 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/mm: vmemmap and vmalloc base addressess are usngined
- longs
-Message-ID: <20180416094603.fj3wevho5j7wy7s6@black.fi.intel.com>
-References: <nycvar.YFH.7.76.1804121437350.28129@cbobk.fhfr.pm>
- <20180412142801.oi7bzju3frgkdskp@node.shutemov.name>
- <nycvar.YFH.7.76.1804161133500.28129@cbobk.fhfr.pm>
+        id S1754107AbeDPJsV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:48:21 -0400
+Received: from zxshcas2.zhaoxin.com ([180.169.121.92]:50001 "EHLO
+        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752931AbeDPJsT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 05:48:19 -0400
+From: David Wang <davidwang@zhaoxin.com>
+To: <perex@perex.cz>, <tiwai@suse.com>, <vinod.koul@intel.com>,
+        <Vijendar.Mukunda@amd.com>, <subhransu.s.prusty@intel.com>,
+        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>
+CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
+        <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
+        <lukelin@viacpu.com>, <timguo@zhaoxin.com>,
+        David Wang <davidwang@zhaoxin.com>
+Subject: [PATCH] ALSA: hda - New VIA controller suppor no-snoop path
+Date: Mon, 16 Apr 2018 17:48:09 +0800
+Message-ID: <1523872089-6381-1-git-send-email-davidwang@zhaoxin.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1804161133500.28129@cbobk.fhfr.pm>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+Content-Type: text/plain
+X-Originating-IP: [10.29.8.54]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 09:43:02AM +0000, Jiri Kosina wrote:
-> On Thu, 12 Apr 2018, Kirill A. Shutemov wrote:
-> 
-> > > Commits 9b46a051e4 ("x86/mm: Initialize vmemmap_base at boot-time") and 
-> > > a7412546d8 ("x86/mm: Adjust vmalloc base and size at boot-time") lost the 
-> > > type information for __VMALLOC_BASE_L4, __VMALLOC_BASE_L5, 
-> > > __VMEMMAP_BASE_L4 and __VMEMMAP_BASE_L5 constants.
-> > > 
-> > > Let's declare them explicitly unsigned long again.
-> > 
-> > It is just cosmetics, right? I mean these literals are 'unsigned long'
-> > anyway.
-> 
-> Yeah, I can't imagine this particular case leading to any overflow 
-> scenario, as the literal is big enough to be automatically treated as 
-> unsigned long by the compiler, but it shuts up sparse which treats this as 
-> a generic case (where the missing UL might be a problem), and totally 
-> pollutes the build output.
-> 
-> Either we put the 'UL' there, or teach sparse about figuring out the 
-> 'closer bigger fitting type' for hexadecimal literals, which might be more 
-> tricky.
+This patch is used to tell kernel that new VIA HDAC controller also
+support no-snoop path.
 
-I don't have a problem with the patch:
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
+---
+ sound/pci/hda/hda_intel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index 96143df..439e8e9 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1640,7 +1640,7 @@ static void azx_check_snoop_available(struct azx *chip)
+ 		 */
+ 		u8 val;
+ 		pci_read_config_byte(chip->pci, 0x42, &val);
+-		if (!(val & 0x80) && chip->pci->revision == 0x30)
++		if (!(val & 0x80) && (chip->pci->revision == 0x30 || chip->pci->revision == 0x20))
+ 			snoop = false;
+ 	}
+ 
 -- 
- Kirill A. Shutemov
+1.9.1
