@@ -1,76 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751164AbeDPVBR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:01:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51366 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750709AbeDPVBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:01:16 -0400
-Date: Mon, 16 Apr 2018 17:01:13 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Vlastimil Babka <vbabka@suse.cz>
-cc: Christopher Lameter <cl@linux.com>, Mike Snitzer <snitzer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: slab: introduce the flag SLAB_MINIMIZE_WASTE
-In-Reply-To: <b0e6ccf6-06ce-e50b-840e-c8d3072382fd@suse.cz>
-Message-ID: <alpine.LRH.2.02.1804161650170.7237@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.1803211153320.16017@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211226350.3174@nuc-kabylake>
- <alpine.LRH.2.02.1803211425330.26409@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
- <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com> <alpine.LRH.2.02.1804161054410.17807@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804161018030.9397@nuc-kabylake>
- <alpine.LRH.2.02.1804161123400.17807@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804161043430.9622@nuc-kabylake> <alpine.LRH.2.02.1804161532480.19492@file01.intranet.prod.int.rdu2.redhat.com> <b0e6ccf6-06ce-e50b-840e-c8d3072382fd@suse.cz>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1751183AbeDPVEd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:04:33 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:46179 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750946AbeDPVEb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 17:04:31 -0400
+X-Google-Smtp-Source: AIpwx4+kcJgB5Dxzs78GEWrzLfQZuvYBzVfvHvcSDUyXwCMJgr4jeb84jhrJzDwPsoxvpboPrYcYmQ==
+Date: Mon, 16 Apr 2018 16:04:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: Alban Bedel <albeu@free.fr>
+Cc: linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode for
+ the cells list
+Message-ID: <20180416210429.e3yo52f355qxnopb@rob-hp-laptop>
+References: <1521933899-362-1-git-send-email-albeu@free.fr>
+ <1521933899-362-2-git-send-email-albeu@free.fr>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1521933899-362-2-git-send-email-albeu@free.fr>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Mon, 16 Apr 2018, Vlastimil Babka wrote:
-
-> On 04/16/2018 09:36 PM, Mikulas Patocka wrote:
+On Sun, Mar 25, 2018 at 12:24:57AM +0100, Alban Bedel wrote:
+> Having the cells as subnodes of the provider device without any
+> compatible property might clash with other bindings. To avoid this
+> problem update the binding to have all the cells in a 'nvmem-cells'
+> subnode with a 'nvmem-cells' compatible string. This new binding
+> guarantee that we can turn any kind of device in a nvmem provider.
 > 
-> >>> I need to increase it just for dm-bufio slabs.
-> >>
-> >> If you do this then others will want the same...
-> > 
-> > If others need it, they can turn on the flag SLAB_MINIMIZE_WASTE too.
+> While discouraged for new uses the old scheme is still supported for
+> backward compatibility.
 > 
-> I think it should be possible without a new flag. The slub allocator
-> could just balance priorities (performance vs memory efficiency) better.
-> Currently I get the impression that "slub_max_order" is a performance
-> tunable. Let's add another criteria for selecting an order, that would
-> try to pick an order to minimize wasted space below e.g. 10% with some
-> different kind of max order. Pick good defaults, add tunables if you must.
+> Signed-off-by: Alban Bedel <albeu@free.fr>
+> ---
+>  Documentation/devicetree/bindings/nvmem/nvmem.txt | 55 ++++++++++++++++-------
+>  drivers/nvmem/core.c                              | 10 +++++
+>  2 files changed, 48 insertions(+), 17 deletions(-)
 > 
-> I mean, anyone who's creating a cache for 640KB objects most likely
-> doesn't want to waste another 384KB by each such object. They shouldn't
-> have to add a flag to let the slub allocator figure out that using 2MB
-> pages is the right thing to do here.
-> 
-> Vlastimil
+> diff --git a/Documentation/devicetree/bindings/nvmem/nvmem.txt b/Documentation/devicetree/bindings/nvmem/nvmem.txt
+> index fd06c09..6b723e7 100644
+> --- a/Documentation/devicetree/bindings/nvmem/nvmem.txt
+> +++ b/Documentation/devicetree/bindings/nvmem/nvmem.txt
+> @@ -11,14 +11,29 @@ these data from, and where they are stored on the storage device.
+>  This document is here to document this.
+>  
+>  = Data providers =
+> -Contains bindings specific to provider drivers and data cells as children
+> -of this node.
+> +A data provider should have a subnode named 'nvmem-cells' that contains
+> +a subnodes for each data cells.
+> +
+> +For backward compatibility the nvmem data cells can be direct children
+> +of the data provider. This use is discouraged as it can conflict with
+> +other bindings.
 
-The problem is that higher-order allocations (larger than 32K) are 
-unreliable. So, if you increase page order beyond that, the allocation may 
-randomly fail.
+I don't think we need to go this far. Whether this is necessary depends 
+on the provider.
 
-dm-bufio deals gracefully with allocation failure, because it preallocates 
-some buffers with vmalloc, but other subsystems may not deal with it and 
-they cound return ENOMEM randomly or misbehave in other ways. So, the 
-"SLAB_MINIMIZE_WASTE" flag is also saying that the allocation may fail and 
-the caller is prepared to deal with it.
-
-The slub subsystem does actual fallback to low-order when the allocation 
-fails (it allows different order for each slab in the same cache), but 
-slab doesn't fallback and you get NULL if higher-order allocation fails. 
-So, SLAB_MINIMIZE_WASTE is needed for slab because it will just randomly 
-fail with higher order.
-
-Mikulas
+>  
+>  Optional properties:
+>   read-only: Mark the provider as read only.
+>  
+> += Data cells list =
+> +The data cells list node should be named 'nvmem-cells' and have a
+> +child node for each data cell.
+> +
+> +Required properties:
+> + compatible: Must be "nvmem-cells"
+> + #address-cells: <1> if the provider use 32 bit addressing,
+> +                 <2> for 64 bits addressing
+> + #size-cells: <1> if the provider use 32 bit sizes,
+> +              <2> for 64 bits sizes
+> +
+>  = Data cells =
+> -These are the child nodes of the provider which contain data cell
+> +These are the child nodes of the nvmem-cells node which contain data cell
+>  information like offset and size in nvmem provider.
