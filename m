@@ -1,199 +1,202 @@
-Return-Path: <prvs=63775d80e=paf@cray.com>
-X-Google-Smtp-Source: AIpwx49gegRYsIJpg3sRRjs3ZczAJ8Ul5+dMJp+JqrduJFTPPg7HXVKHt0sWrIWNNbecWV5t+gAv
-ARC-Seal: i=1; a=rsa-sha256; t=1523892483; cv=none;
+Return-Path: <jsimmons@infradead.org>
+X-Google-Smtp-Source: AIpwx4/Zo4YAqk3MoRA+63v/aCTzHyYjJsSK66gSB4O1NqBg6lWmq7AKoTa8APZ4n9wVaZKM0nQP
+ARC-Seal: i=1; a=rsa-sha256; t=1523918563; cv=none;
         d=google.com; s=arc-20160816;
-        b=GGuq4A79Ob+q/rnWA6uC1mTWNJdtNE+H/WsLzMZknfJEh4wIeKOpaMcEaA1gvV8hG0
-         Oogd1Oa9YCAhNEy9qrMvdLB6VgtSTrr1Fpp9qOMlGMnE1fuFZgPwub1a+ovqKWoCUKfz
-         CJRr6ZO76o6baM4Y9boESV/NZzGi400nup8I6SppDBVf1qsqaOd8WzAuT8JBf7Byxlij
-         Q1dYc34mwGGCJRnBaKfYGsxyIUe6BzWq3M4TrpAbBz0saEuF/hAPmKUyGk5EsfHQvZuL
-         8Nce/I/X/lmEsYsUSiaO9U8JrZkzGt955CMyAg+Kf5+To/lVu2pIY2jcwlmYdaBeItGz
-         LuiQ==
+        b=ipsDQkxuBUxJvo2wVPz8/ryc/7g2Z4YBGW/1ROVih3b0M6JtYo3ltDscqB1ZOJDwEw
+         nrpnVH8GIOUTZb03sF8gbm3r33Ai/ROy6vGV/eM10PZgsEsqYqyMgo32oZ7XpqPZJpoe
+         hMQKyW9SAriV8bdXLijiqVy/blvA8LiYgtWdaxAzXGGvbXnv1+nj5FDhzjATzixIY4AF
+         UIv0oePSf3i+j/aOzWe4HLSDwUJRSBKLJq1CpDJnMkIav4y7tfAeJtv5s6hQCKezKKmv
+         1HatbcYo3b5X8cdjQ8GhW3lP/pj4jgRoLEWyAYhMKqbCvJWip54ID6BJvvKQ0hB9L2LT
+         jx4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-id
-         :spamdiagnosticmetadata:spamdiagnosticoutput:user-agent
-         :content-language:accept-language:in-reply-to:references:message-id
-         :date:thread-index:thread-topic:subject:cc:to:from:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=/GsBhCPbaJKJK82HCAuJjMi4K/ehYPuYd9FUGDKubTU=;
-        b=xwCmjwpB//ADNh7DvH1WptaZSPL0osJJQOJF2jHioA2jeHDzFAtdZ51F6smHZqs+cp
-         fDwJpAN/2sLx+MwAvkOHalacpYEqGLNDZlxYj1gvksdLBFicQvML8lnnXeV+ZME9E9rg
-         bL6H9K5DyC7pcGYPbXVgDUBE+mY4B01WfxPJRMmWoWkvHRdAGKk5Xxf4JHrXwz3FfVsX
-         no/O/K5Eclr8JOX8W4cwKkHc1wf2XY6Qk/7SxvziwQbLB8ePPfC4HvuD3xpGZ0uBpzeW
-         PsXGrajbBt0m5MZVtmayGQ87dwCrRMxj89qC2t8iysDAD+nzBYcjHj2paTw9VIDXMUi6
-         kmAw==
+        h=mime-version:user-agent:references:message-id:in-reply-to:subject
+         :cc:to:from:date:dkim-signature:arc-authentication-results;
+        bh=dORNuS2fE5IcpqlVz2cYz4L8Vp+EAWgFBDA4eJvTXbI=;
+        b=JbpSexSH63kjQiatqH2E8wWWb0uyM/rjWepvTyakVJ3C0epehUHV0jHqffTYAWRcfY
+         upfNNRXvQYza3uHIZM7l3EudTBHwqXsNOZEeHWBWEIwU58HXV4pY7+UiuPe/62qkACCX
+         M8EZOY3SHvJeVhegbkweYCTL11oikXt9hV/xJkFFIwoeyeDAuhlBHPFmtcs5zUnOLKCi
+         MA5Q7aYWW2Zr1XWUlkHNTsDgUAyKA8k9Xn7dNgn/EaxWSceroTeS9FCUiLrfV9hQbDaN
+         /xckqeyl9esNud7+bj/m59rtK5xas7QgkUXGvSU7nQtySjFAqnH47Yhhr6ky6AZP/ybQ
+         HQJw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=XJBCPV0z;
-       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=K8d8/7rK;
-       spf=pass (google.com: domain of prvs=63775d80e=paf@cray.com designates 68.232.142.33 as permitted sender) smtp.mailfrom=prvs=63775d80e=paf@cray.com
+       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=N4TPdnzS;
+       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=XJBCPV0z;
-       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=K8d8/7rK;
-       spf=pass (google.com: domain of prvs=63775d80e=paf@cray.com designates 68.232.142.33 as permitted sender) smtp.mailfrom=prvs=63775d80e=paf@cray.com
-X-IronPort-AV: E=Sophos;i="5.48,459,1517875200";
-   d="scan'208";a="19314966"
-X-Cray-OBMMKR: 1433258124 19314966
-From: Patrick Farrell <paf@cray.com>
-To: James Simmons <jsimmons@infradead.org>, NeilBrown <neilb@suse.com>
-CC: Oleg Drokin <oleg.drokin@intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Lustre Development List
-	<lustre-devel@lists.lustre.org>
+       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=N4TPdnzS;
+       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
+Date: Mon, 16 Apr 2018 23:42:31 +0100 (BST)
+From: James Simmons <jsimmons@infradead.org>
+To: Patrick Farrell <paf@cray.com>
+cc: NeilBrown <neilb@suse.com>, Oleg Drokin <oleg.drokin@intel.com>,
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+    Lustre Development List <lustre-devel@lists.lustre.org>
 Subject: Re: [lustre-devel] [PATCH 1/6] staging: lustre: move stack-check
  macros to libcfs_debug.h
-Thread-Topic: [lustre-devel] [PATCH 1/6] staging: lustre: move stack-check
- macros to libcfs_debug.h
-Thread-Index: AQHT1RvznGTF9Mlw1kmpPf1j/I5gHqQCwVQAgABvoIA=
-Date: Mon, 16 Apr 2018 15:27:58 +0000
-Message-ID: <6D3C7935-E7ED-4826-B459-0C4888D6048E@cray.com>
-References: <152383910760.23409.2327082725637657049.stgit@noble>
- <152383935730.23409.6748888065027051683.stgit@noble>
- <alpine.LFD.2.21.1804160438220.16188@casper.infradead.org>
-In-Reply-To: <alpine.LFD.2.21.1804160438220.16188@casper.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.c.0.180410
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=paf@cray.com; 
-x-originating-ip: [136.162.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN7PR11MB2641;7:TBPouNMQGSWMNIUBCNotvKGA2eAGQJnQ3uI5pE5DSTtIcnTZUOxmuy4/eLXgET0g5fedEZHnp8uHRlr1YYvK0atrvEcAhVUQbsDTTb98Li34qiY1o7LpFs7ReZivlfwHcDIbB4/NO40g9uEDbB0expWh01SDrSE1chkddqfvqXvv/zXZWcF6xd2JhHxWvPYtv/o+/R8hWeIio4dyP+YhtpY55huTiriRYAoYXehxCaVepb0eUQ/lxkXdgDH05Vbh
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:BN7PR11MB2641;
-x-ms-traffictypediagnostic: BN7PR11MB2641:
-x-microsoft-antispam-prvs: <BN7PR11MB26412FCADCD7A5F8C80CB560CBB00@BN7PR11MB2641.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231232)(944501327)(52105095)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:BN7PR11MB2641;BCL:0;PCL:0;RULEID:;SRVR:BN7PR11MB2641;
-x-forefront-prvs: 0644578634
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(39380400002)(396003)(39850400004)(346002)(189003)(199004)(476003)(478600001)(2616005)(966005)(36756003)(11346002)(106356001)(2906002)(54906003)(14454004)(3660700001)(66066001)(3280700002)(68736007)(110136005)(316002)(186003)(25786009)(4326008)(6246003)(229853002)(305945005)(58126008)(6436002)(83716003)(97736004)(33656002)(8676002)(5660300001)(26005)(6506007)(6306002)(86362001)(5250100002)(3846002)(99286004)(105586002)(2900100001)(6486002)(6512007)(446003)(82746002)(81166006)(7736002)(486006)(76176011)(8936002)(6116002)(59450400001)(81156014)(53936002)(102836004)(13693001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN7PR11MB2641;H:BN7PR11MB2674.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: Hr0+5+dPMO6mR7maA5zfmRLBOuJZdglDQs1IEk8faj1FBOWVo104AzyYvC/UEGYe1eI/X22VhJMF6Yg//PgHA0xUMxTIk0A5Gwq4VsNsiXtLofp8Shkz0VORoKfOjtDSS5vkOWOYQS64prqGQbmRzwsKhpjn7TkS5rSq552KweSuyuhEma9EyjueegGefOZI
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BA3450D69B8D1349BF8A7DEE6FFADC9E@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+In-Reply-To: <6D3C7935-E7ED-4826-B459-0C4888D6048E@cray.com>
+Message-ID: <alpine.LFD.2.21.1804162336220.14398@casper.infradead.org>
+References: <152383910760.23409.2327082725637657049.stgit@noble> <152383935730.23409.6748888065027051683.stgit@noble> <alpine.LFD.2.21.1804160438220.16188@casper.infradead.org> <6D3C7935-E7ED-4826-B459-0C4888D6048E@cray.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: bd48bc14-5ac1-4ffb-4ae6-08d5a3aea227
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd48bc14-5ac1-4ffb-4ae6-08d5a3aea227
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2018 15:27:58.1664
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e7b8488a-c0cd-4614-aae1-996bfabec247
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR11MB2641
-X-OriginatorOrg: cray.com
+Content-Type: multipart/mixed; boundary="1985284609-449751960-1523918551=:14398"
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
+X-CRM114-CacheID: sfid-20180416_234232_023958_AB89EC60 
+X-CRM114-Status: GOOD (  35.10  )
+X-Spam-Score: -0.0 (/)
+X-Spam-Report: SpamAssassin version 3.4.1 on casper.infradead.org summary:
+ Content analysis details:   (-0.0 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -0.0 NO_RELAYS              Informational: message was not relayed via SMTP
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597861409409058351?=
-X-GMAIL-MSGID: =?utf-8?q?1597917084415980121?=
+X-GMAIL-MSGID: =?utf-8?q?1597944431601706896?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SmFtZXMsDQoNCklmIEkgdW5kZXJzdGFuZCBjb3JyZWN0bHksIHlvdSdyZSBzYXlpbmcgeW91IHdh
-bnQgdG8gYmUgYWJsZSB0byBidWlsZCB3aXRob3V0IGRlYnVnIHN1cHBvcnQuLi4/ICBJJ20gbm90
-IGNvbnZpbmNlZCB0aGF0IGJ1aWxkaW5nIGEgY2xpZW50IHdpdGhvdXQgZGVidWcgc3VwcG9ydCBp
-cyBpbnRlcmVzdGluZyBvciB1c2VmdWwuICBJbiBmYWN0LCBJIHRoaW5rIGl0IHdvdWxkIGJlIGhh
-cm1mdWwsIGFuZCB3ZSBzaG91bGRuJ3Qgb3BlbiB1cCB0aGUgcG9zc2liaWxpdHkgLSB0aGlzIGlz
-IHN3aXRjaGFibGUgZGVidWcgd2l0aCB2ZXJ5IGxvdyBvdmVyaGVhZCB3aGVuIG5vdCBhY3R1YWxs
-eSAib24iLiAgSXQgd291bGQgYmUgcmVhbGx5IGF3ZnVsIHRvIGdldCBhIHByb2JsZW0gb24gYSBy
-dW5uaW5nIHN5c3RlbSBhbmQgZGlzY292ZXIgdGhlcmUncyBubyBkZWJ1ZyBzdXBwb3J0IC0gdGhh
-dCB5b3UgY2FuJ3QgZXZlbiBlbmFibGUgZGVidWcgd2l0aG91dCBhIHJlaW5zdGFsbC4NCg0KSWYg
-SSd2ZSB1bmRlcnN0b29kIHlvdSBjb3JyZWN0bHksIHRoZW4gSSB3b3VsZCB3YW50IHRvIHNlZSBw
-cm9vZiBvZiBhIHNpZ25pZmljYW50IHBlcmZvcm1hbmNlIGNvc3Qgd2hlbiBkZWJ1ZyBpcyBidWls
-dCBidXQgKm9mZiogYmVmb3JlIGFncmVlaW5nIHRvIGV2ZW4gZXhwb3NpbmcgdGhpcyBvcHRpb24u
-ICAoSSBrbm93IGl0J3MgYSBjaG9pY2UgdGhleSdkIGhhdmUgdG8gbWFrZSwgYnV0IGlmIGl0J3Mg
-bm90IHJlYWxseSB1c2VmdWwgd2l0aCBhIHNpZGUgb3JkZXIgb2YgcG90ZW50aWFsbHkgaGFybWZ1
-bCwgd2Ugc2hvdWxkbid0IGV2ZW4gZ2l2ZSBwZW9wbGUgdGhlIGNob2ljZS4pDQoNCi0gUGF0cmlj
-aw0KDQrvu79PbiA0LzE1LzE4LCAxMDo0OSBQTSwgImx1c3RyZS1kZXZlbCBvbiBiZWhhbGYgb2Yg
-SmFtZXMgU2ltbW9ucyIgPGx1c3RyZS1kZXZlbC1ib3VuY2VzQGxpc3RzLmx1c3RyZS5vcmcgb24g
-YmVoYWxmIG9mIGpzaW1tb25zQGluZnJhZGVhZC5vcmc+IHdyb3RlOg0KDQogICAgDQogICAgPiBD
-REVCVUdfU1RBQ0soKSBhbmQgQ0hFQ0tfU1RBQ0soKSBhcmUgbWFjcm9zIHRvIGhlbHAgd2l0aA0K
-ICAgID4gZGVidWdnaW5nLCBzbyBtb3ZlIHRoZW0gZnJvbQ0KICAgID4gICAgZHJpdmVycy9zdGFn
-aW5nL2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saW51eC9saWJjZnMuaA0KICAgID4gdG8N
-CiAgICA+ICAgIGRyaXZlcnMvc3RhZ2luZy9sdXN0cmUvaW5jbHVkZS9saW51eC9saWJjZnMvbGli
-Y2ZzX2RlYnVnLmgNCiAgICA+IA0KICAgID4gVGhpcyBzZWVtcyBhIG1vcmUgZml0dGluZyBsb2Nh
-dGlvbiwgYW5kIGlzIGEgc3RlcCB0b3dhcmRzDQogICAgPiByZW1vdmluZyBsaW51eC9saWJjZnMu
-aCBhbmQgc2ltcGxpZnlpbmcgdGhlIGluY2x1ZGUgZmlsZSBzdHJ1Y3R1cmUuDQogICAgDQogICAg
-TmFrLiBDdXJyZW50bHkgdGhlIGx1c3RyZSBjbGllbnQgYWx3YXlzIGVuYWJsZXMgZGVidWdnaW5n
-IGJ1dCB0aGF0DQogICAgc2hvdWxkbid0IGJlIHRoZSBjYXNlLiBXaGF0IHdlIGRvIG5lZWQgaXMg
-dGhlIGFibGUgdG8gdHVybiBvZmYgdGhlIA0KICAgIGNyYXp5IGRlYnVnZ2luZyBzdHVmZi4gSW4g
-dGhlIGRldmVsb3BtZW50IGJyYW5jaCBvZiBsdXN0cmUgaXQgaXMNCiAgICBkb25lIHdpdGggQ0RF
-QlVHX0VOQUJMRUQuIFdlIG5lZWQgc29tZXRoaW5nIGxpa2UgdGhhdCBpbiBLY29uZmlnDQogICAg
-bXVjaCBsaWtlIHdlIGhhdmUgQ09ORklHX0xVU1RSRV9ERUJVR19FWFBFTlNJVkVfQ0hFQ0suIFNp
-bmNlIHdlIGxpa2UNCiAgICB0byBiZSBhYmxlIHRvIHR1cm4gdGhhdCBvZmYgdGhpcyBzaG91bGQg
-YmUgbW92ZWQgdG8ganVzdCBhZnRlcg0KICAgIExJQkNGU19ERUJVR19NU0dfREFUQV9ERUNMLiBU
-aGVuIGZyb20gQ0hFQ0tfU1RBQ0sgZG93biB0byBDV0FSTigpDQogICAgaXQgY2FuIGJlIGJ1aWxk
-IG91dC4gV2hlbiBDREVCVUdfRU5BQkxFRCBpcyBkaXNhYmxlZCBDREVCVUdfTElNSVQNCiAgICB3
-b3VsZCBiZSBlbXB0eS4NCiAgICAgDQogICAgPiBTaWduZWQtb2ZmLWJ5OiBOZWlsQnJvd24gPG5l
-aWxiQHN1c2UuY29tPg0KICAgID4gLS0tDQogICAgPiAgLi4uL2x1c3RyZS9pbmNsdWRlL2xpbnV4
-L2xpYmNmcy9saWJjZnNfZGVidWcuaCAgICAgfCAgIDMyICsrKysrKysrKysrKysrKysrKysrDQog
-ICAgPiAgLi4uL2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saW51eC9saWJjZnMuaCAgICAg
-fCAgIDMxIC0tLS0tLS0tLS0tLS0tLS0tLS0NCiAgICA+ICAyIGZpbGVzIGNoYW5nZWQsIDMyIGlu
-c2VydGlvbnMoKyksIDMxIGRlbGV0aW9ucygtKQ0KICAgID4gDQogICAgPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saWJjZnNfZGVidWcu
-aCBiL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvaW5jbHVkZS9saW51eC9saWJjZnMvbGliY2ZzX2Rl
-YnVnLmgNCiAgICA+IGluZGV4IDkyOTBhMTk0MjllNy4uMGRjN2I5MWVmZTdjIDEwMDY0NA0KICAg
-ID4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saWJj
-ZnNfZGVidWcuaA0KICAgID4gKysrIGIvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9pbmNsdWRlL2xp
-bnV4L2xpYmNmcy9saWJjZnNfZGVidWcuaA0KICAgID4gQEAgLTYyLDYgKzYyLDM4IEBAIGludCBs
-aWJjZnNfZGVidWdfc3RyMm1hc2soaW50ICptYXNrLCBjb25zdCBjaGFyICpzdHIsIGludCBpc19z
-dWJzeXMpOw0KICAgID4gIGV4dGVybiB1bnNpZ25lZCBpbnQgbGliY2ZzX2NhdGFzdHJvcGhlOw0K
-ICAgID4gIGV4dGVybiB1bnNpZ25lZCBpbnQgbGliY2ZzX3BhbmljX29uX2xidWc7DQogICAgPiAg
-DQogICAgPiArLyogRW5hYmxlIGRlYnVnLWNoZWNrcyBvbiBzdGFjayBzaXplIC0gZXhjZXB0IG9u
-IHg4Nl82NCAqLw0KICAgID4gKyNpZiAhZGVmaW5lZChfX3g4Nl82NF9fKQ0KICAgID4gKyMgaWZk
-ZWYgX19pYTY0X18NCiAgICA+ICsjICBkZWZpbmUgQ0RFQlVHX1NUQUNLKCkgKFRIUkVBRF9TSVpF
-IC0JCQkJIFwNCiAgICA+ICsJCQkgICgodW5zaWduZWQgbG9uZylfX2J1aWx0aW5fZHdhcmZfY2Zh
-KCkgJiAgICAgICBcDQogICAgPiArCQkJICAgKFRIUkVBRF9TSVpFIC0gMSkpKQ0KICAgID4gKyMg
-ZWxzZQ0KICAgID4gKyMgIGRlZmluZSBDREVCVUdfU1RBQ0soKSAoVEhSRUFEX1NJWkUgLQkJCQkg
-XA0KICAgID4gKwkJCSAgKCh1bnNpZ25lZCBsb25nKV9fYnVpbHRpbl9mcmFtZV9hZGRyZXNzKDAp
-ICYgIFwNCiAgICA+ICsJCQkgICAoVEhSRUFEX1NJWkUgLSAxKSkpDQogICAgPiArIyBlbmRpZiAv
-KiBfX2lhNjRfXyAqLw0KICAgID4gKw0KICAgID4gKyNkZWZpbmUgX19DSEVDS19TVEFDSyhtc2dk
-YXRhLCBtYXNrLCBjZGxzKQkJCSAgICAgIFwNCiAgICA+ICtkbyB7CQkJCQkJCQkgICAgXA0KICAg
-ID4gKwlpZiAodW5saWtlbHkoQ0RFQlVHX1NUQUNLKCkgPiBsaWJjZnNfc3RhY2spKSB7CQkgIFwN
-CiAgICA+ICsJCUxJQkNGU19ERUJVR19NU0dfREFUQV9JTklUKG1zZ2RhdGEsIERfV0FSTklORywg
-TlVMTCk7ICAgXA0KICAgID4gKwkJbGliY2ZzX3N0YWNrID0gQ0RFQlVHX1NUQUNLKCk7CQkJICBc
-DQogICAgPiArCQlsaWJjZnNfZGVidWdfbXNnKG1zZ2RhdGEsCQkJICAgICAgIFwNCiAgICA+ICsJ
-CQkJICJtYXhpbXVtIGx1c3RyZSBzdGFjayAlbHVcbiIsCSAgXA0KICAgID4gKwkJCQkgQ0RFQlVH
-X1NUQUNLKCkpOwkJICAgICAgIFwNCiAgICA+ICsJCShtc2dkYXRhKS0+bXNnX21hc2sgPSBtYXNr
-OwkJCSAgICAgXA0KICAgID4gKwkJKG1zZ2RhdGEpLT5tc2dfY2RscyA9IGNkbHM7CQkJICAgICBc
-DQogICAgPiArCQlkdW1wX3N0YWNrKCk7CQkJCQkgICBcDQogICAgPiArCSAgICAgIC8qcGFuaWMo
-IkxCVUciKTsqLwkJCQkJXA0KICAgID4gKwl9CQkJCQkJCSAgICAgICBcDQogICAgPiArfSB3aGls
-ZSAoMCkNCiAgICA+ICsjZGVmaW5lIENGU19DSEVDS19TVEFDSyhtc2dkYXRhLCBtYXNrLCBjZGxz
-KSAgX19DSEVDS19TVEFDSyhtc2dkYXRhLCBtYXNrLCBjZGxzKQ0KICAgID4gKyNlbHNlIC8qIF9f
-eDg2XzY0X18gKi8NCiAgICA+ICsjZGVmaW5lIENGU19DSEVDS19TVEFDSyhtc2dkYXRhLCBtYXNr
-LCBjZGxzKSBkbyB7fSB3aGlsZSAoMCkNCiAgICA+ICsjZGVmaW5lIENERUJVR19TVEFDSygpICgw
-TCkNCiAgICA+ICsjZW5kaWYgLyogX194ODZfNjRfXyAqLw0KICAgID4gKw0KICAgID4gICNpZm5k
-ZWYgREVCVUdfU1VCU1lTVEVNDQogICAgPiAgIyBkZWZpbmUgREVCVUdfU1VCU1lTVEVNIFNfVU5E
-RUZJTkVEDQogICAgPiAgI2VuZGlmDQogICAgPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5n
-L2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saW51eC9saWJjZnMuaCBiL2RyaXZlcnMvc3Rh
-Z2luZy9sdXN0cmUvaW5jbHVkZS9saW51eC9saWJjZnMvbGludXgvbGliY2ZzLmgNCiAgICA+IGlu
-ZGV4IDA3ZDNjYjIyMTdkMS4uODNhZWM5Yzc2OThmIDEwMDY0NA0KICAgID4gLS0tIGEvZHJpdmVy
-cy9zdGFnaW5nL2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saW51eC9saWJjZnMuaA0KICAg
-ID4gKysrIGIvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saW51
-eC9saWJjZnMuaA0KICAgID4gQEAgLTgwLDM1ICs4MCw0IEBADQogICAgPiAgI2luY2x1ZGUgPHN0
-ZGFyZy5oPg0KICAgID4gICNpbmNsdWRlICJsaW51eC1jcHUuaCINCiAgICA+ICANCiAgICA+IC0j
-aWYgIWRlZmluZWQoX194ODZfNjRfXykNCiAgICA+IC0jIGlmZGVmIF9faWE2NF9fDQogICAgPiAt
-IyAgZGVmaW5lIENERUJVR19TVEFDSygpIChUSFJFQURfU0laRSAtCQkJCSBcDQogICAgPiAtCQkJ
-ICAoKHVuc2lnbmVkIGxvbmcpX19idWlsdGluX2R3YXJmX2NmYSgpICYgICAgICAgXA0KICAgID4g
-LQkJCSAgIChUSFJFQURfU0laRSAtIDEpKSkNCiAgICA+IC0jIGVsc2UNCiAgICA+IC0jICBkZWZp
-bmUgQ0RFQlVHX1NUQUNLKCkgKFRIUkVBRF9TSVpFIC0JCQkJIFwNCiAgICA+IC0JCQkgICgodW5z
-aWduZWQgbG9uZylfX2J1aWx0aW5fZnJhbWVfYWRkcmVzcygwKSAmICBcDQogICAgPiAtCQkJICAg
-KFRIUkVBRF9TSVpFIC0gMSkpKQ0KICAgID4gLSMgZW5kaWYgLyogX19pYTY0X18gKi8NCiAgICA+
-IC0NCiAgICA+IC0jZGVmaW5lIF9fQ0hFQ0tfU1RBQ0sobXNnZGF0YSwgbWFzaywgY2RscykJCQkg
-ICAgICBcDQogICAgPiAtZG8gewkJCQkJCQkJICAgIFwNCiAgICA+IC0JaWYgKHVubGlrZWx5KENE
-RUJVR19TVEFDSygpID4gbGliY2ZzX3N0YWNrKSkgewkJICBcDQogICAgPiAtCQlMSUJDRlNfREVC
-VUdfTVNHX0RBVEFfSU5JVChtc2dkYXRhLCBEX1dBUk5JTkcsIE5VTEwpOyAgIFwNCiAgICA+IC0J
-CWxpYmNmc19zdGFjayA9IENERUJVR19TVEFDSygpOwkJCSAgXA0KICAgID4gLQkJbGliY2ZzX2Rl
-YnVnX21zZyhtc2dkYXRhLAkJCSAgICAgICBcDQogICAgPiAtCQkJCSAibWF4aW11bSBsdXN0cmUg
-c3RhY2sgJWx1XG4iLAkgIFwNCiAgICA+IC0JCQkJIENERUJVR19TVEFDSygpKTsJCSAgICAgICBc
-DQogICAgPiAtCQkobXNnZGF0YSktPm1zZ19tYXNrID0gbWFzazsJCQkgICAgIFwNCiAgICA+IC0J
-CShtc2dkYXRhKS0+bXNnX2NkbHMgPSBjZGxzOwkJCSAgICAgXA0KICAgID4gLQkJZHVtcF9zdGFj
-aygpOwkJCQkJICAgXA0KICAgID4gLQkgICAgICAvKnBhbmljKCJMQlVHIik7Ki8JCQkJCVwNCiAg
-ICA+IC0JfQkJCQkJCQkgICAgICAgXA0KICAgID4gLX0gd2hpbGUgKDApDQogICAgPiAtI2RlZmlu
-ZSBDRlNfQ0hFQ0tfU1RBQ0sobXNnZGF0YSwgbWFzaywgY2RscykgIF9fQ0hFQ0tfU1RBQ0sobXNn
-ZGF0YSwgbWFzaywgY2RscykNCiAgICA+IC0jZWxzZSAvKiBfX3g4Nl82NF9fICovDQogICAgPiAt
-I2RlZmluZSBDRlNfQ0hFQ0tfU1RBQ0sobXNnZGF0YSwgbWFzaywgY2RscykgZG8ge30gd2hpbGUg
-KDApDQogICAgPiAtI2RlZmluZSBDREVCVUdfU1RBQ0soKSAoMEwpDQogICAgPiAtI2VuZGlmIC8q
-IF9feDg2XzY0X18gKi8NCiAgICA+IC0NCiAgICA+ICAjZW5kaWYgLyogX0xJTlVYX0xJQkNGU19I
-ICovDQogICAgPiANCiAgICA+IA0KICAgID4gDQogICAgX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18NCiAgICBsdXN0cmUtZGV2ZWwgbWFpbGluZyBsaXN0DQog
-ICAgbHVzdHJlLWRldmVsQGxpc3RzLmx1c3RyZS5vcmcNCiAgICBodHRwOi8vbGlzdHMubHVzdHJl
-Lm9yZy9saXN0aW5mby5jZ2kvbHVzdHJlLWRldmVsLWx1c3RyZS5vcmcNCiAgICANCg0K
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--1985284609-449751960-1523918551=:14398
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+
+> James,
+> 
+> If I understand correctly, you're saying you want to be able to build without debug support...?  I'm not convinced that building a client without debug support is interesting or useful.  In fact, I think it would be harmful, and we shouldn't open up the possibility - this is switchable debug with very low overhead when not actually "on".  It would be really awful to get a problem on a running system and discover there's no debug support - that you can't even enable debug without a reinstall.
+> 
+> If I've understood you correctly, then I would want to see proof of a significant performance cost when debug is built but *off* before agreeing to even exposing this option.  (I know it's a choice they'd have to make, but if it's not really useful with a side order of potentially harmful, we shouldn't even give people the choice.)
+
+I'm not saying add the option today but this is more for the long game.
+While the Intel lustre developers deeply love lustre's debugging 
+infrastructure I see a future where something better will come along to
+replace it. When that day comes we will have a period where both
+debugging infrastructurs will exist and some deployers of lustre will
+want to turn off the old debugging infrastructure and just use the new.
+That is what I have in mind. A switch to flip between options.
+
+> - Patrick
+> 
+> ﻿On 4/15/18, 10:49 PM, "lustre-devel on behalf of James Simmons" <lustre-devel-bounces@lists.lustre.org on behalf of jsimmons@infradead.org> wrote:
+> 
+>     
+>     > CDEBUG_STACK() and CHECK_STACK() are macros to help with
+>     > debugging, so move them from
+>     >    drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
+>     > to
+>     >    drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
+>     > 
+>     > This seems a more fitting location, and is a step towards
+>     > removing linux/libcfs.h and simplifying the include file structure.
+>     
+>     Nak. Currently the lustre client always enables debugging but that
+>     shouldn't be the case. What we do need is the able to turn off the 
+>     crazy debugging stuff. In the development branch of lustre it is
+>     done with CDEBUG_ENABLED. We need something like that in Kconfig
+>     much like we have CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK. Since we like
+>     to be able to turn that off this should be moved to just after
+>     LIBCFS_DEBUG_MSG_DATA_DECL. Then from CHECK_STACK down to CWARN()
+>     it can be build out. When CDEBUG_ENABLED is disabled CDEBUG_LIMIT
+>     would be empty.
+>      
+>     > Signed-off-by: NeilBrown <neilb@suse.com>
+>     > ---
+>     >  .../lustre/include/linux/libcfs/libcfs_debug.h     |   32 ++++++++++++++++++++
+>     >  .../lustre/include/linux/libcfs/linux/libcfs.h     |   31 -------------------
+>     >  2 files changed, 32 insertions(+), 31 deletions(-)
+>     > 
+>     > diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
+>     > index 9290a19429e7..0dc7b91efe7c 100644
+>     > --- a/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
+>     > +++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
+>     > @@ -62,6 +62,38 @@ int libcfs_debug_str2mask(int *mask, const char *str, int is_subsys);
+>     >  extern unsigned int libcfs_catastrophe;
+>     >  extern unsigned int libcfs_panic_on_lbug;
+>     >  
+>     > +/* Enable debug-checks on stack size - except on x86_64 */
+>     > +#if !defined(__x86_64__)
+>     > +# ifdef __ia64__
+>     > +#  define CDEBUG_STACK() (THREAD_SIZE -				 \
+>     > +			  ((unsigned long)__builtin_dwarf_cfa() &       \
+>     > +			   (THREAD_SIZE - 1)))
+>     > +# else
+>     > +#  define CDEBUG_STACK() (THREAD_SIZE -				 \
+>     > +			  ((unsigned long)__builtin_frame_address(0) &  \
+>     > +			   (THREAD_SIZE - 1)))
+>     > +# endif /* __ia64__ */
+>     > +
+>     > +#define __CHECK_STACK(msgdata, mask, cdls)			      \
+>     > +do {								    \
+>     > +	if (unlikely(CDEBUG_STACK() > libcfs_stack)) {		  \
+>     > +		LIBCFS_DEBUG_MSG_DATA_INIT(msgdata, D_WARNING, NULL);   \
+>     > +		libcfs_stack = CDEBUG_STACK();			  \
+>     > +		libcfs_debug_msg(msgdata,			       \
+>     > +				 "maximum lustre stack %lu\n",	  \
+>     > +				 CDEBUG_STACK());		       \
+>     > +		(msgdata)->msg_mask = mask;			     \
+>     > +		(msgdata)->msg_cdls = cdls;			     \
+>     > +		dump_stack();					   \
+>     > +	      /*panic("LBUG");*/					\
+>     > +	}							       \
+>     > +} while (0)
+>     > +#define CFS_CHECK_STACK(msgdata, mask, cdls)  __CHECK_STACK(msgdata, mask, cdls)
+>     > +#else /* __x86_64__ */
+>     > +#define CFS_CHECK_STACK(msgdata, mask, cdls) do {} while (0)
+>     > +#define CDEBUG_STACK() (0L)
+>     > +#endif /* __x86_64__ */
+>     > +
+>     >  #ifndef DEBUG_SUBSYSTEM
+>     >  # define DEBUG_SUBSYSTEM S_UNDEFINED
+>     >  #endif
+>     > diff --git a/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
+>     > index 07d3cb2217d1..83aec9c7698f 100644
+>     > --- a/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
+>     > +++ b/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
+>     > @@ -80,35 +80,4 @@
+>     >  #include <stdarg.h>
+>     >  #include "linux-cpu.h"
+>     >  
+>     > -#if !defined(__x86_64__)
+>     > -# ifdef __ia64__
+>     > -#  define CDEBUG_STACK() (THREAD_SIZE -				 \
+>     > -			  ((unsigned long)__builtin_dwarf_cfa() &       \
+>     > -			   (THREAD_SIZE - 1)))
+>     > -# else
+>     > -#  define CDEBUG_STACK() (THREAD_SIZE -				 \
+>     > -			  ((unsigned long)__builtin_frame_address(0) &  \
+>     > -			   (THREAD_SIZE - 1)))
+>     > -# endif /* __ia64__ */
+>     > -
+>     > -#define __CHECK_STACK(msgdata, mask, cdls)			      \
+>     > -do {								    \
+>     > -	if (unlikely(CDEBUG_STACK() > libcfs_stack)) {		  \
+>     > -		LIBCFS_DEBUG_MSG_DATA_INIT(msgdata, D_WARNING, NULL);   \
+>     > -		libcfs_stack = CDEBUG_STACK();			  \
+>     > -		libcfs_debug_msg(msgdata,			       \
+>     > -				 "maximum lustre stack %lu\n",	  \
+>     > -				 CDEBUG_STACK());		       \
+>     > -		(msgdata)->msg_mask = mask;			     \
+>     > -		(msgdata)->msg_cdls = cdls;			     \
+>     > -		dump_stack();					   \
+>     > -	      /*panic("LBUG");*/					\
+>     > -	}							       \
+>     > -} while (0)
+>     > -#define CFS_CHECK_STACK(msgdata, mask, cdls)  __CHECK_STACK(msgdata, mask, cdls)
+>     > -#else /* __x86_64__ */
+>     > -#define CFS_CHECK_STACK(msgdata, mask, cdls) do {} while (0)
+>     > -#define CDEBUG_STACK() (0L)
+>     > -#endif /* __x86_64__ */
+>     > -
+>     >  #endif /* _LINUX_LIBCFS_H */
+>     > 
+>     > 
+>     > 
+>     _______________________________________________
+>     lustre-devel mailing list
+>     lustre-devel@lists.lustre.org
+>     http://lists.lustre.org/listinfo.cgi/lustre-devel-lustre.org
+>     
+> 
+> 
+--1985284609-449751960-1523918551=:14398--
