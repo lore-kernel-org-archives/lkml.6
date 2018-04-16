@@ -1,174 +1,185 @@
-Return-Path: <tony@atomide.com>
-X-Google-Smtp-Source: AIpwx48Z+r7CgFMpGgf9/SuWOFsSfPhadN1lVP2EIX8GRilQBSDEESzT3yjvqY8FCK6LkbOre2tG
-ARC-Seal: i=1; a=rsa-sha256; t=1524505571; cv=none;
+Return-Path: <jacob.jun.pan@linux.intel.com>
+X-Google-Smtp-Source: AIpwx4873cMo2X6tmJKLLYrLU9cxcqaU1bAC63k8llRJIbCDQJTgZf+LqWPFTWMmRUWd88Ycvsor
+ARC-Seal: i=1; a=rsa-sha256; t=1523915203; cv=none;
         d=google.com; s=arc-20160816;
-        b=QWdwd20CzkigfECiAMg2jX8YwFn07QjT26ma1NnbKkDHO/KICeaSAYt3AWfSTRdolR
-         JDBJLtbVTFYvjhBFsf7+iPPBs/fe/vzfRJ/kU+Qq3XJpypgYb8+Z3piNwm4U0yXdBLlK
-         rTHIcO52mZv39Yrg2JF+/6p4tnHyBhPIgQPntvvuMdkM+r7ksI/EUJ1SDLfcArcRmA/c
-         R1ajE78zmG9YveOHHyCGH6eyL67QaxlyPDCWqvbL8dKE07oWayPeEaSn+mL3UXCWhyqj
-         Q2r3OAcn4nj5PP2GVYahW1h6CfR9oL1vZR3nAInpFk9gpRBU8mzE3ENekQKqEWefLo9a
-         hd7Q==
+        b=cmQxI4f0yaGzS2MOVEq/6ADKkbA5b1LykclXil8opSm7vAIui+z9eNA1lqu+6caFKb
+         7DYG2hq1utrxWy2y9SDT85P4NnE8eMh25x0iVX4o/WiMb1pLQhX7FSh2ZV8d/adBdKFl
+         ldtVA3yyKgIfgo26vvHqNqyp8hS74VdPyGAQjkx+WX2c2ab5FMoqx3d1WOcr7/uKLRTS
+         qOvGt5y0Rx4X9wArOiFpKqDfc5uPlOqZaWH+7rO/JkaJPQdXb1p0irTEYxx1EW7oySDE
+         H5oNSNKlaUrV2gEVcny5Sg3/LVD64h66HS7DviOmVc2UP4P5S1z72VVuoQqdxStFBIK9
+         xtOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=SKtHDcUrqhsCXkW/vwuACGcfqcLKd9sIk8uEqDiOyuc=;
-        b=qRPxtuaOKEHk/FOIoYdDT47dctF5XBw64cmCN/Ulb3rWtDg6q+FtnF79B+Uap921vw
-         wfmtR0u3waKZWV80jWenjTXUrB40eNmjEkR25QvrsBrEADJ5a8+dIMViPdDtXuHip9W3
-         spsyJ1T8WGK/uFTatT8J6HW8aLs0mp4T/Ay4LcNYx0apufqXbY+6tPpaY9cprN7CKimh
-         0W2GO8hCDRShTJh/JsksYSUF81kHlfoQhYRIXp53YXXq/rSNACahjsGvjiR/vOHK8hN7
-         3GHiG5POkn9W2ROzY7TEr1q6qUlmcqBOTzcUS+A8XXV6ARspnt4FO2owkNv1N0wjy3cV
-         Pz/g==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=ZC37PunnKMa9D+tDeY6Qju/qrM9YHGsXtHxKumWMDpM=;
+        b=PBOuzJYGdMKpaOhQI3PNRoxm2lv7qV+qqeKuLLGfrtXzLmYpE8mg1HHf5ygsLs4S3D
+         JemmthCd9SLNlC8S8Y00xHHh4XuoiFb9aKNeU8+mJHX9SeRuUDkIG0EHNo4s15kX4fXR
+         oh6sUyHijmCVPaKfRCO2wkS9RqH6ppgmwIRsRqDPWMiFDxveXW8YtByINXNXrT2tAfIO
+         nZX1l4iKX4NAfQDJlg6eOZMp2L9SdT1ULpAr/5XnECAeOeAMYuBS21Ml9B7GKG8lfBB1
+         M9swTJZzg1MW2o6kAJafQQMzfAz08w1fFlXk/9DFl1OFAQW36jlxC3Kq1wYsXhCIOTpU
+         VnRg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
-From: Tony Lindgren <tony@atomide.com>
-To: linux-omap@vger.kernel.org
-Cc: Dave Gerlach <d-gerlach@ti.com>,
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 192.55.52.136 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,460,1517904000";
+   d="scan'208";a="34740129"
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: iommu@lists.linux-foundation.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	David Woodhouse <dwmw2@infradead.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nishanth Menon <nm@ti.com>,
-	Suman Anna <s-anna@ti.com>,
-	Tero Kristo <t-kristo@ti.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Keerthy <j-keerthy@ti.com>
-Subject: [PATCH 02/16] ARM: OMAP2+: Allow using ti-sysc for system timers
-Date: Mon, 23 Apr 2018 10:45:35 -0700
-Message-Id: <20180423174549.57412-3-tony@atomide.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180423174549.57412-1-tony@atomide.com>
-References: <20180423174549.57412-1-tony@atomide.com>
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc: Rafael Wysocki <rafael.j.wysocki@intel.com>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	"Tian, Kevin" <kevin.tian@intel.com>,
+	Raj Ashok <ashok.raj@intel.com>,
+	Jean Delvare <khali@linux-fr.org>,
+	"Christoph Hellwig" <hch@infradead.org>,
+	"Lu Baolu" <baolu.lu@linux.intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 00/22] IOMMU and VT-d driver support for Shared Virtual Address (SVA)
+Date: Mon, 16 Apr 2018 14:48:49 -0700
+Message-Id: <1523915351-54415-1-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598559953455580522?=
-X-GMAIL-MSGID: =?utf-8?q?1598559953455580522?=
+X-GMAIL-THRID: =?utf-8?q?1597940908007423299?=
+X-GMAIL-MSGID: =?utf-8?q?1597940908007423299?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If a system timer is configured with an interrconnect target module in
-the dts, the ti,hwmods and module fck are at the interconnect target
-level. Then there's a separate fck for the timer child device.
+Hi Joerg and All,
 
-If the child device has a separate functional clock, we need to configure
-it directly. For example, timer clk clkctrl clock bit 0 is the module
-clock for the interconnect target, and bit 24 being the functional clock
-for the timer IP.
+(Rebased to 4.17-rc1. resend)
 
-For system timers, we already mark them as disabled. Now must also mark
-the interconnect target module as disabled to prevent ti-sysc to manage
-it instead of the system timer.
+Shared virtual address (SVA), a.k.a, Shared virtual memory (SVM) on Intel
+platforms allow address space sharing between device DMA and applications.
+SVA can reduce programming complexity and enhance security. To enable SVA
+in the guest, i.e. shared guest application address space and physical
+device DMA address, IOMMU driver must provide some new functionalities.
 
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/mach-omap2/timer.c | 67 ++++++++++++++++++++++++++++---------
- 1 file changed, 52 insertions(+), 15 deletions(-)
+This patchset is a follow-up on the discussions held at LPC 2017
+VFIO/IOMMU/PCI track. Slides and notes can be found here:
+https://linuxplumbersconf.org/2017/ocw/events/LPC2017/tracks/636
 
-diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
---- a/arch/arm/mach-omap2/timer.c
-+++ b/arch/arm/mach-omap2/timer.c
-@@ -167,6 +167,43 @@ static const struct of_device_id omap_timer_match[] __initconst = {
- 	{ }
- };
- 
-+static int omap_timer_add_disabled_property(struct device_node *np)
-+{
-+	struct property *prop;
-+
-+	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
-+	if (!prop)
-+		return -ENOMEM;
-+
-+	prop->name = "status";
-+	prop->value = "disabled";
-+	prop->length = strlen(prop->value);
-+
-+	return of_add_property(np, prop);
-+}
-+
-+static int omap_timer_update_dt(struct device_node *np)
-+{
-+	int error = 0;
-+
-+	if (!of_device_is_compatible(np, "ti,omap-counter32k")) {
-+		error = omap_timer_add_disabled_property(np);
-+		if (error)
-+			return error;
-+	}
-+
-+	/* No parent interconnect target module configured? */
-+	if (of_get_property(np, "ti,hwmods", NULL))
-+		return error;
-+
-+	/* Tag parent interconnect target module disabled */
-+	error = omap_timer_add_disabled_property(np->parent);
-+	if (error)
-+		return error;
-+
-+	return 0;
-+}
-+
- /**
-  * omap_get_timer_dt - get a timer using device-tree
-  * @match	- device-tree match structure for matching a device type
-@@ -182,6 +219,7 @@ static struct device_node * __init omap_get_timer_dt(const struct of_device_id *
- 						     const char *property)
- {
- 	struct device_node *np;
-+	int error;
- 
- 	for_each_matching_node(np, match) {
- 		if (!of_device_is_available(np))
-@@ -196,17 +234,9 @@ static struct device_node * __init omap_get_timer_dt(const struct of_device_id *
- 				  of_get_property(np, "ti,timer-secure", NULL)))
- 			continue;
- 
--		if (!of_device_is_compatible(np, "ti,omap-counter32k")) {
--			struct property *prop;
-+		error = omap_timer_update_dt(np);
-+		WARN(error, "%s: Could not update dt: %i\n", __func__, error);
- 
--			prop = kzalloc(sizeof(*prop), GFP_KERNEL);
--			if (!prop)
--				return NULL;
--			prop->name = "status";
--			prop->value = "disabled";
--			prop->length = strlen(prop->value);
--			of_add_property(np, prop);
--		}
- 		return np;
- 	}
- 
-@@ -265,8 +295,12 @@ static int __init omap_dm_timer_init_one(struct omap_dm_timer *timer,
- 		return -ENODEV;
- 
- 	of_property_read_string_index(np, "ti,hwmods", 0, &oh_name);
--	if (!oh_name)
--		return -ENODEV;
-+	if (!oh_name) {
-+		of_property_read_string_index(np->parent, "ti,hwmods", 0,
-+					      &oh_name);
-+		if (!oh_name)
-+			return -ENODEV;
-+	}
- 
- 	timer->irq = irq_of_parse_and_map(np, 0);
- 	if (!timer->irq)
-@@ -418,9 +452,12 @@ static int __init __maybe_unused omap2_sync32k_clocksource_init(void)
- 	if (!np)
- 		return -ENODEV;
- 
--	of_property_read_string_index(np, "ti,hwmods", 0, &oh_name);
--	if (!oh_name)
--		return -ENODEV;
-+	of_property_read_string_index(np->parent, "ti,hwmods", 0, &oh_name);
-+	if (!oh_name) {
-+		of_property_read_string_index(np, "ti,hwmods", 0, &oh_name);
-+		if (!oh_name)
-+			return -ENODEV;
-+	}
- 
- 	/*
- 	 * First check hwmod data is available for sync32k counter
+The complete guest SVA support also involves changes in QEMU and VFIO,
+which has been posted earlier.
+https://www.spinics.net/lists/kvm/msg148798.html
+
+This is the IOMMU portion follow up of the more complete series of the
+kernel changes to support vSVA. Please refer to the link below for more
+details. https://www.spinics.net/lists/kvm/msg148819.html
+
+Generic APIs are introduced in addition to Intel VT-d specific changes,
+the goal is to have common interfaces across IOMMU and device types for
+both VFIO and other in-kernel users.
+
+At the top level, new IOMMU interfaces are introduced as follows:
+ - bind guest PASID table
+ - passdown invalidations of translation caches
+ - IOMMU device fault reporting including page request/response and
+   non-recoverable faults.
+
+For IOMMU detected device fault reporting, struct device is extended to
+provide callback and tracking at device level. The original proposal was
+discussed here "Error handling for I/O memory management units"
+(https://lwn.net/Articles/608914/). I have experimented two alternative
+solutions:
+1. use a shared group notifier, this does not scale well also causes unwanted
+notification traffic when group sibling device is reported with faults.
+2. place fault callback at device IOMMU arch data, e.g. device_domain_info
+in Intel/FSL IOMMU driver. This will cause code duplication, since per
+device fault reporting is generic.
+
+The additional patches are Intel VT-d specific, which either implements or
+replaces existing private interfaces with the generic ones.
+
+This patchset is based on the work and ideas from many people, especially:
+Ashok Raj <ashok.raj@intel.com>
+Liu, Yi L <yi.l.liu@linux.intel.com>
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+
+Thanks,
+
+Jacob
+
+V4
+	- Futher integrate feedback for iommu_param and iommu_fault_param
+	  from Jean and others.
+	- Handle fault reporting error and race conditions. Keep tracking per
+	  device pending page requests such that page group response can be
+	  sanitized.
+	- Added a timer to handle irresponsive guest who does not send page
+	  response on time.
+	- Use a workqueue for VT-d non-recorverable IRQ fault handling.
+	- Added trace events for invalidation and fault reporting.
+V3
+	- Consolidated fault reporting data format based on discussions on v2,
+	  including input from ARM and AMD.
+	- Renamed invalidation APIs from svm to sva based on discussions on v2
+	- Use a parent pointer under struct device for all iommu per device data
+	- Simplified device fault callback, allow driver private data to be
+	  registered. This might make it easy to replace domain fault handler.
+V2
+	- Replaced hybrid interface data model (generic data + vendor specific
+	data) with all generic data. This will have the security benefit where
+	data passed from user space can be sanitized by all software layers if
+	needed.
+	- Addressed review comments from V1
+	- Use per device fault report data
+	- Support page request/response communications between host IOMMU and
+	guest or other in-kernel users.
+	- Added unrecoverable fault reporting to DMAR
+	- Use threaded IRQ function for DMAR fault interrupt and fault
+	  reporting
+
+
+
+Jacob Pan (21):
+  iommu: introduce bind_pasid_table API function
+  iommu/vt-d: move device_domain_info to header
+  iommu/vt-d: add a flag for pasid table bound status
+  iommu/vt-d: add bind_pasid_table function
+  iommu/vt-d: add definitions for PFSID
+  iommu/vt-d: fix dev iotlb pfsid use
+  iommu/vt-d: support flushing more translation cache types
+  iommu/vt-d: add svm/sva invalidate function
+  iommu: introduce device fault data
+  driver core: add per device iommu param
+  iommu: introduce device fault report API
+  iommu: introduce page response function
+  iommu: handle page response timeout
+  iommu/config: add build dependency for dmar
+  iommu/vt-d: report non-recoverable faults to device
+  iommu/intel-svm: report device page request
+  iommu/intel-svm: replace dev ops with fault report API
+  iommu/intel-svm: do not flush iotlb for viommu
+  iommu/vt-d: add intel iommu page response function
+  trace/iommu: add sva trace events
+  iommu: use sva invalidate and device fault trace event
+
+Liu, Yi L (1):
+  iommu: introduce iommu invalidate API function
+
+ drivers/iommu/Kconfig         |   1 +
+ drivers/iommu/dmar.c          | 209 ++++++++++++++++++++++-
+ drivers/iommu/intel-iommu.c   | 376 +++++++++++++++++++++++++++++++++++++++---
+ drivers/iommu/intel-svm.c     |  84 ++++++++--
+ drivers/iommu/iommu.c         | 284 ++++++++++++++++++++++++++++++-
+ include/linux/device.h        |   3 +
+ include/linux/dma_remapping.h |   1 +
+ include/linux/dmar.h          |   2 +-
+ include/linux/intel-iommu.h   |  52 +++++-
+ include/linux/intel-svm.h     |  20 +--
+ include/linux/iommu.h         | 226 ++++++++++++++++++++++++-
+ include/trace/events/iommu.h  | 112 +++++++++++++
+ include/uapi/linux/iommu.h    | 111 +++++++++++++
+ 13 files changed, 1409 insertions(+), 72 deletions(-)
+ create mode 100644 include/uapi/linux/iommu.h
+
 -- 
-2.17.0
+2.7.4
