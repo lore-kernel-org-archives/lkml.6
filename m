@@ -1,30 +1,30 @@
 Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx4/TcEJnHgKrXSjXgw4gHkQfPEVgc/ITzqKREHqZ3lxPvQJmwdgqzx59o6gaS4GhZ3PGrpO6
-ARC-Seal: i=1; a=rsa-sha256; t=1523892347; cv=none;
+X-Google-Smtp-Source: AIpwx48UhKIR6Kyo15zsKMs42Q5joIfK49xw9UoLJP74a5k5Esg2FFAysU0GCAR9s2ICLMKwP2K7
+ARC-Seal: i=1; a=rsa-sha256; t=1523892348; cv=none;
         d=google.com; s=arc-20160816;
-        b=iPDw7+pp509MoT4tYVGjHKq7yuBQF4ZDYmWBRrI0CCvHwLfYtPzvm2ld5PKbo25om1
-         +ugg24P8UhdY0h/+JML+jOmlIohlKhsgdmF32N0GnPLfu91etEdY7c94LT0mhf8imbs8
-         0AFTe9tuniIiyBXesstrk+OZ5li2nPLlnknW/WwSviur6YqGJe25BoD9bBbykV2OJ+6z
-         VaBY3J6Ph0kUmFlF4g+E1ADQ9LOMmW8xziVzbYUvljyhw1TvW4IdvRoHly/qyRnP2yvJ
-         ibFgU+aE8K11iK5Da7dYZBIbmPQsiPICe9kV32DhDMZ0pwlAwlPnGpD/DJ0XkX/EhYRm
-         Yglw==
+        b=Po5GSwS5fVsjuF7zRw44VwqqUATn+LosO9uhZdxyNBBHY8YvkuxP+y94QLZEtIrv12
+         ca/ExEBgtZg3tMg3nZjzL7u2oO33U9ASv80x//Cp9G5L9KyyAd4GWbEjsb4cNiPypBvQ
+         Ep64CH4LvyGWYKQOtfoMRj9cAP2MywngT5HKoIZcFhrdcOKKcjrLpf3qk0VzjaUaYLgW
+         0s715PCKrK9v7Cp9tbipd3rVj26GpyXM9oWh8URLoS9tibjGfCz1x/m0oNpaa9I2goTE
+         cYkKIQKO5c4I2J2Augb3J+cqz0mxG9xJgxlyD1kRXdko0F54IXEUYGSRIi0uco93lwqg
+         ETXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=6dQOIlW3IjyIC9NEJ7gz1FwKgUM1vbUBR1JSU/HHuzw=;
-        b=Q6KQWkzQcIcKJKXl+6ePTzoWewJCr7CfMefFdnJGjG29GIwoYZDqWyyphFWscqNSI8
-         j2+L67cMyWZLaDceqYiudniBHFAGWXgpKME1jjR5/ixVoMP9LHlDm2Aa7dpA7V3xHlVY
-         t4+F/ceRy9rlklwPGpihuz/M+7IncenaTn6SM7dncR71ET+lHtS2xAxwsaPyk7HNkNi3
-         XTJkugwN74naGhuu9n/FlPqnxGSsBMFk3Obu+7z3w6aQrgGphxD61Lm79J3lIMkrVf6K
-         Yz8lmX005sZITWKk3o2qKFsu3PkjutnZhHGAmnXYm+PLBmxqJTo/Yt941NWJTd4fZO+7
-         gWUw==
+        bh=WeXc/Ao+LnCoDUTx4VGRj1iHDitMElHV+QHmbKrVox4=;
+        b=h9g2nicH8OiWS/3yzEhkh8AlxEdnVBtOKxFm7n7Lf7ZDH6hyWNehq440wxZ0ce79h8
+         ytIVVzrpqB+7aOnS1vYXTvhn3eewh5ujGkKAYBi9DtA8apPxq4Swi8r3pYupC6WUHDMY
+         N1sSvZ5CL+Z6aBZOufxlUWdfLaImRALrPclUCaJ99mLLaAt/fPtQGxyIy1cPK8qbZN+e
+         73wwcF/FaJ0uP8GPi/oI/9JgSLGN2bdWfchGxprEqE0zmJNhSKqqvBroi+O8oK/KJWdy
+         sIg5MNYk4lDluSRt8JTN7x+i2F7Ajc3lTMY2jCRdi0DumJiUZaOi2rXW5faOdySEAx4z
+         KTmg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=L1Xqtsvf;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=izzdsz4s;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=L1Xqtsvf;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
+       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=izzdsz4s;
+       spf=pass (google.com: domain of joro@8bytes.org designates 81.169.241.247 as permitted sender) smtp.mailfrom=joro@8bytes.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
 From: Joerg Roedel <joro@8bytes.org>
 To: Thomas Gleixner <tglx@linutronix.de>,
@@ -58,108 +58,84 @@ Cc: x86@kernel.org,
 	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
 	jroedel@suse.de,
 	joro@8bytes.org
-Subject: [PATCH 17/35] x86/pgtable/32: Allocate 8k page-tables when PTI is enabled
-Date: Mon, 16 Apr 2018 17:25:05 +0200
-Message-Id: <1523892323-14741-18-git-send-email-joro@8bytes.org>
+Subject: [PATCH 21/35] x86/mm/pae: Populate valid user PGD entries
+Date: Mon, 16 Apr 2018 17:25:09 +0200
+Message-Id: <1523892323-14741-22-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 References: <1523892323-14741-1-git-send-email-joro@8bytes.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597916941616372730?=
-X-GMAIL-MSGID: =?utf-8?q?1597916941616372730?=
+X-GMAIL-THRID: =?utf-8?q?1597916942795572076?=
+X-GMAIL-MSGID: =?utf-8?q?1597916942795572076?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Allocate a kernel and a user page-table root when PTI is
-enabled. Also allocate a full page per root for PAE because
-otherwise the bit to flip in cr3 to switch between them
-would be non-constant, which creates a lot of hassle.
-Keep that for a later optimization.
+Generic page-table code populates all non-leaf entries with
+_KERNPG_TABLE bits set. This is fine for all paging modes
+except PAE.
+
+In PAE mode only a subset of the bits is allowed to be set.
+Make sure we only set allowed bits by masking out the
+reserved bits.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/kernel/head_32.S | 20 +++++++++++++++-----
- arch/x86/mm/pgtable.c     |  5 +++--
- 2 files changed, 18 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/pgtable_types.h | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-index b59e4fb..12a3e8c 100644
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -512,11 +512,18 @@ ENTRY(initial_code)
- ENTRY(setup_once_ref)
- 	.long setup_once
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index 1e5a406..65f2dbaf 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -50,6 +50,7 @@
+ #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
+ #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
+ #define _PAGE_SOFTW2	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW2)
++#define _PAGE_SOFTW3	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW3)
+ #define _PAGE_PAT	(_AT(pteval_t, 1) << _PAGE_BIT_PAT)
+ #define _PAGE_PAT_LARGE (_AT(pteval_t, 1) << _PAGE_BIT_PAT_LARGE)
+ #define _PAGE_SPECIAL	(_AT(pteval_t, 1) << _PAGE_BIT_SPECIAL)
+@@ -267,14 +268,37 @@ typedef struct pgprot { pgprotval_t pgprot; } pgprot_t;
  
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+#define	PGD_ALIGN	(2 * PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	1024
+ typedef struct { pgdval_t pgd; } pgd_t;
+ 
++#ifdef CONFIG_X86_PAE
++
++/*
++ * PHYSICAL_PAGE_MASK might be non-constant when SME is compiled in, so we can't
++ * use it here.
++ */
++
++#define PGD_PAE_PAGE_MASK	((signed long)PAGE_MASK)
++#define PGD_PAE_PHYS_MASK	(((1ULL << __PHYSICAL_MASK_SHIFT)-1) & PGD_PAE_PAGE_MASK)
++
++/*
++ * PAE allows Base Address, P, PWT, PCD and AVL bits to be set in PGD entries.
++ * All other bits are Reserved MBZ
++ */
++#define PGD_ALLOWED_BITS	(PGD_PAE_PHYS_MASK | _PAGE_PRESENT | \
++				 _PAGE_PWT | _PAGE_PCD | \
++				 _PAGE_SOFTW1 | _PAGE_SOFTW2 | _PAGE_SOFTW3 )
++
 +#else
-+#define	PGD_ALIGN	(PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	0
++/* No need to mask any bits for !PAE */
++#define PGD_ALLOWED_BITS	(~0ULL)
 +#endif
- /*
-  * BSS section
-  */
- __PAGE_ALIGNED_BSS
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- #ifdef CONFIG_X86_PAE
- .globl initial_pg_pmd
- initial_pg_pmd:
-@@ -526,14 +533,17 @@ initial_pg_pmd:
- initial_page_table:
- 	.fill 1024,4,0
- #endif
-+	.align PGD_ALIGN
- initial_pg_fixmap:
- 	.fill 1024,4,0
--.globl empty_zero_page
--empty_zero_page:
--	.fill 4096,1,0
- .globl swapper_pg_dir
-+	.align PGD_ALIGN
- swapper_pg_dir:
- 	.fill 1024,4,0
-+	.fill PTI_USER_PGD_FILL,4,0
-+.globl empty_zero_page
-+empty_zero_page:
-+	.fill 4096,1,0
- EXPORT_SYMBOL(empty_zero_page)
- 
- /*
-@@ -542,7 +552,7 @@ EXPORT_SYMBOL(empty_zero_page)
- #ifdef CONFIG_X86_PAE
- __PAGE_ALIGNED_DATA
- 	/* Page-aligned for the benefit of paravirt? */
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- ENTRY(initial_page_table)
- 	.long	pa(initial_pg_pmd+PGD_IDENT_ATTR),0	/* low identity map */
- # if KPMDS == 3
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index ffc8c13..f4211d2 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -339,7 +339,8 @@ static inline pgd_t *_pgd_alloc(void)
- 	 * We allocate one page for pgd.
- 	 */
- 	if (!SHARED_KERNEL_PMD)
--		return (pgd_t *)__get_free_page(PGALLOC_GFP);
-+		return (pgd_t *)__get_free_pages(PGALLOC_GFP,
-+						 PGD_ALLOCATION_ORDER);
- 
- 	/*
- 	 * Now PAE kernel is not running as a Xen domain. We can allocate
-@@ -351,7 +352,7 @@ static inline pgd_t *_pgd_alloc(void)
- static inline void _pgd_free(pgd_t *pgd)
++
+ static inline pgd_t native_make_pgd(pgdval_t val)
  {
- 	if (!SHARED_KERNEL_PMD)
--		free_page((unsigned long)pgd);
-+		free_pages((unsigned long)pgd, PGD_ALLOCATION_ORDER);
- 	else
- 		kmem_cache_free(pgd_cache, pgd);
+-	return (pgd_t) { val };
++	return (pgd_t) { val & PGD_ALLOWED_BITS };
  }
+ 
+ static inline pgdval_t native_pgd_val(pgd_t pgd)
+ {
+-	return pgd.pgd;
++	return pgd.pgd & PGD_ALLOWED_BITS;
+ }
+ 
+ static inline pgdval_t pgd_flags(pgd_t pgd)
 -- 
 2.7.4
