@@ -1,42 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754077AbeDPIfF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 04:35:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753541AbeDPIfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 04:35:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 250522170D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Mon, 16 Apr 2018 16:34:27 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Robin Gong <yibin.gong@nxp.com>
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux@armlinux.org.uk,
-        kernel@pengutronix.de, fabio.estevam@nxp.com, aisheng.dong@nxp.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Subject: Re: [PATCH v1] ARM: dts: imx6qdl-sabreauto: add ecspi dts for
- sabreauto board
-Message-ID: <20180416083426.GF25429@dragon>
-References: <1521627768-942-1-git-send-email-yibin.gong@nxp.com>
+        id S1754087AbeDPIhC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 04:37:02 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:52721 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752941AbeDPIhB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 04:37:01 -0400
+Subject: Re: [PATCH v2 8/9] PCI: dwc: Small computation improvement
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "kishon@ti.com" <kishon@ti.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1523266508.git.gustavo.pimentel@synopsys.com>
+ <5181f7ffbb9d2889974c49d84e72042251adf8b6.1523266508.git.gustavo.pimentel@synopsys.com>
+ <003001d3d128$39f3eaa0$addbbfe0$@gmail.com>
+ <c295bc5b-e67a-290c-3316-56a1cc001538@synopsys.com>
+ <CAOMZO5Acd-5ed_FivBf=GMmKLxipnossDtG4ptzq5-LzcNBhjA@mail.gmail.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <b8f10ee2-b580-9d49-247f-6c65804816c4@synopsys.com>
+Date: Mon, 16 Apr 2018 09:35:55 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521627768-942-1-git-send-email-yibin.gong@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAOMZO5Acd-5ed_FivBf=GMmKLxipnossDtG4ptzq5-LzcNBhjA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 06:22:48PM +0800, Robin Gong wrote:
-> DIN pin of SPI-NOR muxed with I2C3_SDA which connected to one gpio expand
-> chip, thus have to disable all those module which compacted by those gpios
-> if enable SPI-NOR support on Sabreauto board.
+Hi Fabio,
+
+On 15/04/2018 14:09, Fabio Estevam wrote:
+> Hi Gustavo,
 > 
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> On Wed, Apr 11, 2018 at 4:40 AM, Gustavo Pimentel
+> <gustavo.pimentel@synopsys.com> wrote:
+> 
+>> Can be this one?
+>>
+>> Probably any recent and decent compiler does this kind of substitution
+>> in order to improve code performance. Nevertheless it's a coding good
+>> practice whenever there is a division / multiplication by multiple of 2
+>> to replace it by the equivalent operation in this case, the shift
+>> rotation.
+> 
+> Subject says that this patch provides a computation improvement, but
+> as you said above the compiler
+> will perform the shift, so it doesn't seem we will get any benefit.
 
-I'm not in the position to maintain a bunch of dts files for a single
-board with different device multiplexing options.
+In the worth case there is no performance, so it will not hurt having it.
+However depending the compiler and the platform this can bring some improvement.
+For instance like Jingoo said: "The most platforms using 'dwc' are based on ARM
+CPUs. So, the shift rotation can be better."
 
-Shawn
+It's just a attempt to improve the code that doesn't bring any harm.
+
+> 
+> IMHO the original code has better readability as it makes easier to
+> understand that pp->cfg0_size will get the half of
+> resource_size(pp->cfg) size.
+
+Personally I prefer the shift rotation rather the division by 2. But in my case
+I'm used to use/see this type of operation, but it's like I said it's my
+personal opinion.
+
+> 
+> I would say it is better to drop this patch from the series.
+
+Let's see this patch inflicts pain on someone else, in that case I'll remove
+from the series.
+
+> 
+> Thanks
+> 
+
+Regards,
+Gustavo
