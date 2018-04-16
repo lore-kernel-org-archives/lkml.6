@@ -1,265 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755246AbeDPNjU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:39:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50132 "EHLO mx2.suse.de"
+        id S1755251AbeDPNnQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:43:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755015AbeDPNjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:39:19 -0400
-Subject: Re: [PATCH v2 4/5] ALSA: xen-front: Implement handling of shared
- buffers
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, boris.ostrovsky@oracle.com,
-        konrad.wilk@oracle.com, perex@perex.cz, tiwai@suse.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
- <20180416062453.24743-5-andr2000@gmail.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <6ab76dd7-ec6b-0756-5490-f5b5805998d6@suse.com>
-Date: Mon, 16 Apr 2018 15:39:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755208AbeDPNnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 09:43:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B72321789
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jeyu@kernel.org
+Date: Mon, 16 Apr 2018 15:43:09 +0200
+From: Jessica Yu <jeyu@kernel.org>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Thomas-Mich Richter <tmricht@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, Kees Cook <keescook@chromium.org>
+Subject: Re: Wrong module .text address in 4.16.0
+Message-ID: <20180416134309.lt7mrxe5khcuhozl@redbean>
+References: <7e17e3b1-25c3-cb61-ae94-dcbb1bf3473e@linux.ibm.com>
+ <3836add7-8691-77c1-33d2-0fbee7051795@de.ibm.com>
+ <2dc648ad-0a6b-ba79-5d6a-fb3e3029994f@de.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180416062453.24743-5-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <2dc648ad-0a6b-ba79-5d6a-fb3e3029994f@de.ibm.com>
+X-OS: Linux redbean 4.15.3-200.fc26.x86_64 x86_64
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/04/18 08:24, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> 
-> Implement shared buffer handling according to the
-> para-virtualized sound device protocol at xen/interface/io/sndif.h:
->   - manage buffer memory
->   - handle granted references
->   - handle page directories
-> 
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->  sound/xen/Makefile              |   3 +-
->  sound/xen/xen_snd_front.c       |   8 ++
->  sound/xen/xen_snd_front_shbuf.c | 193 ++++++++++++++++++++++++++++++++++++++++
->  sound/xen/xen_snd_front_shbuf.h |  36 ++++++++
->  4 files changed, 239 insertions(+), 1 deletion(-)
->  create mode 100644 sound/xen/xen_snd_front_shbuf.c
->  create mode 100644 sound/xen/xen_snd_front_shbuf.h
-> 
-> diff --git a/sound/xen/Makefile b/sound/xen/Makefile
-> index 03c669984000..f028bc30af5d 100644
-> --- a/sound/xen/Makefile
-> +++ b/sound/xen/Makefile
-> @@ -2,6 +2,7 @@
->  
->  snd_xen_front-objs := xen_snd_front.o \
->  		      xen_snd_front_cfg.o \
-> -		      xen_snd_front_evtchnl.o
-> +		      xen_snd_front_evtchnl.o \
-> +		      xen_snd_front_shbuf.o
->  
->  obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
-> diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
-> index eb46bf4070f9..0569c6c596a3 100644
-> --- a/sound/xen/xen_snd_front.c
-> +++ b/sound/xen/xen_snd_front.c
-> @@ -11,6 +11,7 @@
->  #include <linux/delay.h>
->  #include <linux/module.h>
->  
-> +#include <xen/page.h>
->  #include <xen/platform_pci.h>
->  #include <xen/xen.h>
->  #include <xen/xenbus.h>
-> @@ -186,6 +187,13 @@ static struct xenbus_driver xen_driver = {
->  
->  static int __init xen_drv_init(void)
->  {
-> +	/* At the moment we only support case with XEN_PAGE_SIZE == PAGE_SIZE */
-> +	if (XEN_PAGE_SIZE != PAGE_SIZE) {
-> +		pr_err(XENSND_DRIVER_NAME ": different kernel and Xen page sizes are not supported: XEN_PAGE_SIZE (%lu) != PAGE_SIZE (%lu)\n",
-> +		       XEN_PAGE_SIZE, PAGE_SIZE);
-> +		return -ENODEV;
-> +	}
++++ Christian Borntraeger [16/04/18 12:53 +0200]:
+>Can this be related to
+>commit ef0010a30935de4e0211cbc7bdffc30446cdee9b
+>    vsprintf: don't use 'restricted_pointer()' when not restricting
+>and related commits?
+>
+>To me it looks like %pk is always printing the hash, but never the real pointer -
+>no matter what kernel.kptr_restrict says.
 
-Do you really want to print that error message on bare metal?
+(Added Kees and Tobin to CC)
 
-> +
->  	if (!xen_domain())
->  		return -ENODEV;
->  
-> diff --git a/sound/xen/xen_snd_front_shbuf.c b/sound/xen/xen_snd_front_shbuf.c
-> new file mode 100644
-> index 000000000000..6845dbc7fdf5
-> --- /dev/null
-> +++ b/sound/xen/xen_snd_front_shbuf.c
-> @@ -0,0 +1,193 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +
-> +/*
-> + * Xen para-virtual sound device
-> + *
-> + * Copyright (C) 2016-2018 EPAM Systems Inc.
-> + *
-> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> + */
-> +
-> +#include <xen/xen.h>
-> +#include <xen/xenbus.h>
-> +
-> +#include "xen_snd_front_shbuf.h"
-> +
-> +grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf)
-> +{
-> +	if (!buf->grefs)
-> +		return GRANT_INVALID_REF;
-> +
-> +	return buf->grefs[0];
-> +}
-> +
-> +void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf)
-> +{
-> +	memset(buf, 0, sizeof(*buf));
-> +}
-> +
-> +void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf)
-> +{
-> +	int i;
-> +
-> +	if (buf->grefs) {
-> +		for (i = 0; i < buf->num_grefs; i++)
-> +			if (buf->grefs[i] != GRANT_INVALID_REF)
-> +				gnttab_end_foreign_access(buf->grefs[i],
-> +							  0, 0UL);
-> +		kfree(buf->grefs);
-> +	}
-> +	kfree(buf->directory);
-> +	free_pages_exact(buf->buffer, buf->buffer_sz);
-> +	xen_snd_front_shbuf_clear(buf);
-> +}
-> +
-> +/*
-> + * number of grant references a page can hold with respect to the
-> + * xensnd_page_directory header
-> + */
-> +#define XENSND_NUM_GREFS_PER_PAGE ((XEN_PAGE_SIZE - \
-> +		offsetof(struct xensnd_page_directory, gref)) / \
-> +		sizeof(grant_ref_t))
-> +
-> +static void fill_page_dir(struct xen_snd_front_shbuf *buf,
-> +			  int num_pages_dir)
-> +{
-> +	struct xensnd_page_directory *page_dir;
-> +	unsigned char *ptr;
-> +	int i, cur_gref, grefs_left, to_copy;
-> +
-> +	ptr = buf->directory;
-> +	grefs_left = buf->num_grefs - num_pages_dir;
-> +	/*
-> +	 * skip grant references at the beginning, they are for pages granted
-> +	 * for the page directory itself
-> +	 */
-> +	cur_gref = num_pages_dir;
-> +	for (i = 0; i < num_pages_dir; i++) {
-> +		page_dir = (struct xensnd_page_directory *)ptr;
-> +		if (grefs_left <= XENSND_NUM_GREFS_PER_PAGE) {
-> +			to_copy = grefs_left;
-> +			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
-> +		} else {
-> +			to_copy = XENSND_NUM_GREFS_PER_PAGE;
-> +			page_dir->gref_dir_next_page = buf->grefs[i + 1];
-> +		}
-> +
-> +		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
-> +		       to_copy * sizeof(grant_ref_t));
-> +
-> +		ptr += XEN_PAGE_SIZE;
-> +		grefs_left -= to_copy;
-> +		cur_gref += to_copy;
-> +	}
-> +}
-> +
-> +static int grant_references(struct xenbus_device *xb_dev,
-> +			    struct xen_snd_front_shbuf *buf,
-> +			    int num_pages_dir, int num_pages_buffer,
-> +			    int num_grefs)
-> +{
-> +	grant_ref_t priv_gref_head;
-> +	unsigned long frame;
-> +	int ret, i, j, cur_ref;
-> +	int otherend_id;
-> +
-> +	ret = gnttab_alloc_grant_references(num_grefs, &priv_gref_head);
-> +	if (ret)
-> +		return ret;
-> +
-> +	buf->num_grefs = num_grefs;
-> +	otherend_id = xb_dev->otherend_id;
-> +	j = 0;
-> +
-> +	for (i = 0; i < num_pages_dir; i++) {
-> +		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
-> +		if (cur_ref < 0) {
-> +			ret = cur_ref;
-> +			goto fail;
-> +		}
-> +
-> +		frame = xen_page_to_gfn(virt_to_page(buf->directory +
-> +						     XEN_PAGE_SIZE * i));
-> +		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
-> +		buf->grefs[j++] = cur_ref;
-> +	}
-> +
-> +	for (i = 0; i < num_pages_buffer; i++) {
-> +		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
-> +		if (cur_ref < 0) {
-> +			ret = cur_ref;
-> +			goto fail;
-> +		}
-> +
-> +		frame = xen_page_to_gfn(virt_to_page(buf->buffer +
-> +						     XEN_PAGE_SIZE * i));
-> +		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
-> +		buf->grefs[j++] = cur_ref;
-> +	}
-> +
-> +	gnttab_free_grant_references(priv_gref_head);
-> +	fill_page_dir(buf, num_pages_dir);
-> +	return 0;
-> +
-> +fail:
-> +	gnttab_free_grant_references(priv_gref_head);
-> +	return ret;
-> +}
-> +
-> +static int alloc_int_buffers(struct xen_snd_front_shbuf *buf,
-> +			     int num_pages_dir, int num_pages_buffer,
-> +			     int num_grefs)
-> +{
-> +	buf->grefs = kcalloc(num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
-> +	if (!buf->grefs)
-> +		return -ENOMEM;
-> +
-> +	buf->directory = kcalloc(num_pages_dir, XEN_PAGE_SIZE, GFP_KERNEL);
-> +	if (!buf->directory)
-> +		goto fail;
-> +
-> +	buf->buffer_sz = num_pages_buffer * XEN_PAGE_SIZE;
-> +	buf->buffer = alloc_pages_exact(buf->buffer_sz, GFP_KERNEL);
-> +	if (!buf->buffer)
-> +		goto fail;
-> +
-> +	return 0;
-> +
-> +fail:
-> +	kfree(buf->grefs);
-> +	buf->grefs = NULL;
-> +	kfree(buf->directory);
+Can confirm, a git bisect confirms that ef0010a3093 was the first bad commit.
 
-Why do you need to free those here? Shouldn't that be done via
-xen_snd_front_shbuf_free() in case of an error?
+And yeah, the default seems to be to always hash the pointer address now,
+regardless of kptr_restrict. See Documentation/sysctl/kernel.txt:
 
+    When kptr_restrict is set to 0 (the default) the address is hashed before
+    printing. (This is the equivalent to %p.)
 
-Juergen
+And to quote from the relevant patchset (https://lkml.org/lkml/2017/11/28/1593):
+
+   The added advantage of hashing %p is that security is now opt-out, if
+   you _really_ want the address you have to work a little harder and use %px.
+
+So for users of /sys/module/*/sections, we will need to work around
+this and possibly use %px for the real address. But perhaps we should
+base the usage of %px on kptr_restrict? That is what m_show() in
+module.c currently does, which is why you get the correct address when
+you look at /proc/modules (it uses %px and either shows 0's or the
+real address based on kallsyms_show_value()). module_sect_show() uses
+%pK so it's getting hashed. Is there a better way of doing this?
+
+Jessica
+
+>
+>
+>On 04/16/2018 08:23 AM, Christian Borntraeger wrote:
+>> FWIW, this breaks at least perf capability to resolve module symbols.
+>> Adding some more CCs for perf and module.
+>>
+>>
+>> On 04/16/2018 07:51 AM, Thomas-Mich Richter wrote:
+>>> I just installed 4.16.0 and discovered the module .text address is
+>>> wrong. It happens on s390 and x86 platforms. I have not tested others.
+>>>
+>>> Here is the issue, I have used module qeth_l2 on s390 which is the
+>>> ethernet device driver:
+>>>
+>>> root@s35lp76 ~]# lsmod
+>>> Module                  Size  Used by
+>>> qeth_l2                94208  1
+>>> ...
+>>>
+>>> [root@s35lp76 ~]# cat /proc/modules | egrep '^qeth_l2'
+>>> qeth_l2 94208 1 - Live 0x000003ff80401000   <---- This is the correct address in memory
+>>> [root@s35lp76 ~]# cat /sys/module/qeth_l2/sections/.text
+>>> 0x0000000018ea8363      <---- This is the wrong address
+>>> [root@s35lp76 ~]#
+>>>
+>>> File /sys/module/qeth_l2/sections/.text displays a very strange
+>>> address which is definitely wrong. It should be something like
+>>> 0x000003ff80401xxx.
+>>>
+>>> Same on x86.
+>>>
+>>> I have checked file kernel/module.c function add_sect_attrs()
+>>> and it calls module_sect_show() when the sysfs file is read.
+>>> And module_sect_show() uses
+>>>
+>>>   sprintf(buf, "0x%pK\n", (void *)sattr->address);
+>>>
+>>> and my sysctl setting should be correct:
+>>> [root@s35lp76 linux]# sysctl -a | fgrep kernel.kptr_restrict
+>>> kernel.kptr_restrict = 0
+>>> [root@s35lp76 linux]#
+>>>
+>>> I wonder if somebody else has seen this issue?
+>>> Ideas how to fix this?
+>>>
+>>> Thanks
+>>>
+>
