@@ -1,90 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754255AbeDPMlh (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:41:37 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43526 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752620AbeDPMld (ORCPT
+        id S1754780AbeDPMlx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:41:53 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34416 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754761AbeDPMlv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:41:33 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180416124131euoutp01f66a11ea36d128c1e60a1684e2997e9a~l6w10RUSW1023210232euoutp01k
-X-AuditID: cbfec7f4-713ff700000043e4-42-5ad499faaa82
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
+        Mon, 16 Apr 2018 08:41:51 -0400
+X-Google-Smtp-Source: AIpwx4+ZRua4fUGad3acWJ7sDpmSGs7wZaUpP2s92Ipg5e6e+Qrq/TUybAPqrdsSlVCMoemcaln72A==
+Subject: Re: [PATCH 02/14] thermal: exynos: Propagate error value from
+ tmu_read()
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc: Eduardo Valentin <edubezval@gmail.com>,
         Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
         Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maciej Purski <m.purski@samsung.com>
-Subject: Re: [PATCH 03/14] thermal: exynos: Read soc_type from match data
-Date: Mon, 16 Apr 2018 14:41:26 +0200
-Message-ID: <5369056.eM2qptIOQZ@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-Reply-To: <09824e4e-b60a-13eb-36a5-a6f2172b5539@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djPc7q/Zl6JMth3k81i3mdZi/lXrrFa
-        9D9+zWxx/vwGdovLu+awWXzuPcJoMeP8PiaLBS9vsVg8edjH5sDpsXPWXXaPxXteMnlsWtXJ
-        5nHn2h42j74tqxg9Pm+SC2CL4rJJSc3JLEst0rdL4Mp4fXw/c8Fktoo/O56zNTB2snYxcnJI
-        CJhIbPp5Hsjm4hASWMEo8bh7GzOE84VR4szro4wQzmdGiVur/rHAtLR2NUG1LGeU2Lr6LFTV
-        B0aJK69XsoFUsQlYSUxsX8UIYosI6Ek0vm9jAiliFpjBJLFxyzuw7cICnhK/L30Da2ARUJVY
-        0TUFzOYV0JQ482UiO4gtKuAlsWVfOxOIzSlgJzF33Rx2iBpBiZMzn4CdxCwgL9FxuRHsJAmB
-        XewSNxqnQb3nIvHv90d2CFtY4tXxLVC2jMT/nfOZIBqaGSW+7djDDJGYwCixZ70QhG0tcfj4
-        RaBBHEAbNCXW79KHCNtKHD35kw0kLCHAJ3HjrSDEDXwSk7ZNZ4YI80p0tEENUZPYsGwDG8zW
-        rp0roRZ5SHQv6WGawKg0C8k3s5B8Mwth7wJG5lWM4qmlxbnpqcVGeanlesWJucWleel6yfm5
-        mxiBqej0v+NfdjDu+pN0iFGAg1GJh3fH2ctRQqyJZcWVuYcYJTiYlUR4lyUChXhTEiurUovy
-        44tKc1KLDzFKc7AoifPGadRFCQmkJ5akZqemFqQWwWSZODilGhhnvFBomGa5faZ7ArOr65Gi
-        yp4bE2b6ezIqxT5+6cT7SL3xgemTS8/ShAS2NdgG18fFMUfxKGXEKztunnJ7V3bbIpHt3iGr
-        RUP7vZed8LjvJX3g4bufdiqpGl83VNn99GG//v+cie7nzH/FvX8+/hYVizF1TZ9Zdf3ftEt/
-        VYRcmfqZZ786eFqJpTgj0VCLuag4EQBRmtugQQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsVy+t/xu7o/Zl6JMlhxjcti3mdZi/lXrrFa
-        9D9+zWxx/vwGdovLu+awWXzuPcJoMeP8PiaLBS9vsVg8edjH5sDpsXPWXXaPxXteMnlsWtXJ
-        5nHn2h42j74tqxg9Pm+SC2CL0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXS
-        t7NJSc3JLEst0rdL0Mt4fXw/c8Fktoo/O56zNTB2snYxcnJICJhItHY1AdlcHEICSxkltndf
-        AnI4gBIyEsfXl0HUCEv8udbFBlHzjlHi6+OTLCAJNgEriYntqxhBbBEBPYnG921MIEXMApOY
-        JBperwNLCAt4Svy+9I0NxGYRUJVY0TUFzOYV0JQ482UiO4gtKuAlsWVfOxOIzSlgJzF33Rx2
-        iG3bGSUuNZ+EahCUODnzCdhmZgF5iY7LjawQto7Egt2f2CYwCs5CUjYLSdksJGULGJlXMYqk
-        lhbnpucWG+kVJ+YWl+al6yXn525iBMbYtmM/t+xg7HoXfIhRgINRiYd3x9nLUUKsiWXFlbmH
-        GCU4mJVEeJclAoV4UxIrq1KL8uOLSnNSiw8xmgJ9N5FZSjQ5Hxj/eSXxhqaG5haWhubG5sZm
-        FkrivOcNKqOEBNITS1KzU1MLUotg+pg4OKUaGOcZzTy3cdYaZpflEbM+vDtzV/Jibti/9Yfs
-        f1c87NkuKRx5eMPEN7ty+NPjjTj2fG1fztlqUhIYU5fPlR9Q8b+p0WfrZ46VgbJ/Tv+cV15/
-        rMozzXkGw6kDjK7736X/2J3aeZavuv3HEZ60u7ayz6s/nUrYcuq/+vfAbWUbLxSZHUo3jpN+
-        e1aJpTgj0VCLuag4EQCYUqxBxwIAAA==
-X-CMS-MailID: 20180416124129eucas1p1545c737e0feb0f9f2c327b8597c46bce
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180416124129eucas1p1545c737e0feb0f9f2c327b8597c46bce
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180416124129eucas1p1545c737e0feb0f9f2c327b8597c46bce
-X-RootMTR: 20180416124129eucas1p1545c737e0feb0f9f2c327b8597c46bce
+        Marek Szyprowski <m.szyprowski@samsung.com>
 References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-        <1523873525-23718-4-git-send-email-b.zolnierkie@samsung.com>
-        <09824e4e-b60a-13eb-36a5-a6f2172b5539@linaro.org>
-        <CGME20180416124129eucas1p1545c737e0feb0f9f2c327b8597c46bce@eucas1p1.samsung.com>
+ <1523873525-23718-3-git-send-email-b.zolnierkie@samsung.com>
+ <39e461aa-2a60-f3cf-d116-fc7e97f9da2e@linaro.org>
+ <CGME20180416123502eucas1p1113fb99938a09a6f425e0ed6bfa6be60@eucas1p1.samsung.com>
+ <6993557.YT37RIp4lG@amdc3058>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <22d7f063-9a69-78cf-e0fd-2043e187244e@linaro.org>
+Date: Mon, 16 Apr 2018 14:41:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <6993557.YT37RIp4lG@amdc3058>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, April 16, 2018 02:19:30 PM Daniel Lezcano wrote:
-> On 16/04/2018 12:11, Bartlomiej Zolnierkiewicz wrote:
-> > From: Maciej Purski <m.purski@samsung.com>
-> > 
-> > Device context's field data->soc is currently obtained by comparing
-> > of_compatible's. Provide soc_type as .data field in device's match
-> > table, as it is done in most drivers.
-> > 
-> > Signed-off-by: Maciej Purski <m.purski@samsung.com>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
+On 16/04/2018 14:35, Bartlomiej Zolnierkiewicz wrote:
+> On Monday, April 16, 2018 02:16:56 PM Daniel Lezcano wrote:
+>> On 16/04/2018 12:11, Bartlomiej Zolnierkiewicz wrote:
+>>> From: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>
+>>> tmu_read() in case of Exynos4210 might return error for out of bound
+>>> values. Current code ignores such value, what leads to reporting critical
+>>> temperature value. Add proper error code propagation to exynos_get_temp()
+>>> function.
+>>
+>> For me the comment in the function exynos4210_tmu_read
+>>
+>> /* "temp_code" should range between 75 and 175 */
+>>
+>> ... is strange. I would double check this assertion before dealing with
+>> the error value.
 > 
-> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> static int exynos4210_tmu_read(struct exynos_tmu_data *data)
+> {
+> 	int ret = readb(data->base + EXYNOS_TMU_REG_CURRENT_TEMP);
+> 
+> 	/* "temp_code" should range between 75 and 175 */
+> 	return (ret < 75 || ret > 175) ? -ENODATA : ret;
+> }
+> 
 
-Zhang & Eduardo are Thermal Maintainers (+ I'm Maintainer for
-Samsung Thermal) so I assume you meant "Reviewed-by:"?
+But I don't get why it *should* ?
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Shouldn't be the same with the 4412, it seems having the same sensor, no?
+
+
+> The value returned by Exynos4210 hardware should be > 75 && < 175 and
+> it is later used as the "temp_code" parameter for code_to_temp():
+> 
+> static int code_to_temp(struct exynos_tmu_data *data, u16 temp_code)
+> {
+> 	if (data->cal_type == TYPE_ONE_POINT_TRIMMING)
+> 		return temp_code - data->temp_error1 + EXYNOS_FIRST_POINT_TRIM;
+> 
+> 	return (temp_code - data->temp_error1) *
+> 		(EXYNOS_SECOND_POINT_TRIM - EXYNOS_FIRST_POINT_TRIM) /
+> 		(data->temp_error2 - data->temp_error1) +
+> 		EXYNOS_FIRST_POINT_TRIM;
+> }
+> 
+> so after the current fix the code finally matches the comment.
+> 
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>> CC: stable@vger.kernel.org # v4.6+
+>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>> ---
+>>>  drivers/thermal/samsung/exynos_tmu.c | 9 +++++++--
+>>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>>> index 986cbd0..ac83f72 100644
+>>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>>> @@ -892,6 +892,7 @@ static void exynos7_tmu_control(struct platform_device *pdev, bool on)
+>>>  static int exynos_get_temp(void *p, int *temp)
+>>>  {
+>>>  	struct exynos_tmu_data *data = p;
+>>> +	int value, ret = 0;
+>>>  
+>>>  	if (!data || !data->tmu_read || !data->enabled)
+>>>  		return -EINVAL;
+>>> @@ -899,12 +900,16 @@ static int exynos_get_temp(void *p, int *temp)
+>>>  	mutex_lock(&data->lock);
+>>>  	clk_enable(data->clk);
+>>>  
+>>> -	*temp = code_to_temp(data, data->tmu_read(data)) * MCELSIUS;
+>>> +	value = data->tmu_read(data);
+>>> +	if (value < 0)
+>>> +		ret = value;
+>>> +	else
+>>> +		*temp = code_to_temp(data, value) * MCELSIUS;
+>>>  
+>>>  	clk_disable(data->clk);
+>>>  	mutex_unlock(&data->lock);
+>>>  
+>>> -	return 0;
+>>> +	return ret;
+>>>  }
+>>>  
+>>>  #ifdef CONFIG_THERMAL_EMULATION
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
