@@ -1,188 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753413AbeDPT3U (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 15:29:20 -0400
-Received: from mga03.intel.com ([134.134.136.65]:52570 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753325AbeDPT3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 15:29:19 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,460,1517904000";
-   d="scan'208";a="191956884"
-Date: Mon, 16 Apr 2018 12:29:05 -0700
-From: Dongwon Kim <dongwon.kim@intel.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Artem Mygaiev <Artem_Mygaiev@epam.com>
-Subject: Re: [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper DRM driver
-Message-ID: <20180416192905.GA18096@downor-Z87X-UD5H>
-References: <20180329131931.29957-1-andr2000@gmail.com>
- <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
+        id S1753468AbeDPTcj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 15:32:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45998 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752308AbeDPTch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 15:32:37 -0400
+Date: Mon, 16 Apr 2018 15:32:35 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Mike Snitzer <snitzer@redhat.com>
+cc: Vlastimil Babka <vbabka@suse.cz>, Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
+        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] slab: introduce the flag SLAB_MINIMIZE_WASTE
+In-Reply-To: <20180416144638.GA22484@redhat.com>
+Message-ID: <alpine.LRH.2.02.1804161530360.19492@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211024220.2175@nuc-kabylake> <alpine.LRH.2.02.1803211153320.16017@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211226350.3174@nuc-kabylake>
+ <alpine.LRH.2.02.1803211425330.26409@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
+ <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yeah, I definitely agree on the idea of expanding the use case to the 
-general domain where dmabuf sharing is used. However, what you are
-targetting with proposed changes is identical to the core design of
-hyper_dmabuf.
+This patch introduces a flag SLAB_MINIMIZE_WASTE for slab and slub. This
+flag causes allocation of larger slab caches in order to minimize wasted
+space.
 
-On top of this basic functionalities, hyper_dmabuf has driver level
-inter-domain communication, that is needed for dma-buf remote tracking
-(no fence forwarding though), event triggering and event handling, extra
-meta data exchange and hyper_dmabuf_id that represents grefs
-(grefs are shared implicitly on driver level)
+This is needed because we want to use dm-bufio for deduplication index and
+there are existing installations with non-power-of-two block sizes (such
+as 640KB). The performance of the whole solution depends on efficient
+memory use, so we must waste as little memory as possible.
 
-Also it is designed with frontend (common core framework) + backend
-(hyper visor specific comm and memory sharing) structure for portability.
-We just can't limit this feature to Xen because we want to use the same
-uapis not only for Xen but also other applicable hypervisor, like ACORN.
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 
-So I am wondering we can start with this hyper_dmabuf then modify it for
-your use-case if needed and polish and fix any glitches if we want to 
-to use this for all general dma-buf usecases.
+---
+ drivers/md/dm-bufio.c |    2 +-
+ include/linux/slab.h  |    7 +++++++
+ mm/slab.c             |    4 ++--
+ mm/slab.h             |    7 ++++---
+ mm/slab_common.c      |    2 +-
+ mm/slub.c             |   25 ++++++++++++++++++++-----
+ 6 files changed, 35 insertions(+), 12 deletions(-)
 
-Also, I still have one unresolved question regarding the export/import flow
-in both of hyper_dmabuf and xen-zcopy.
-
-@danvet: Would this flow (guest1->import existing dmabuf->share underlying
-pages->guest2->map shared pages->create/export dmabuf) be acceptable now?
-
-Regards,
-DW
+Index: linux-2.6/include/linux/slab.h
+===================================================================
+--- linux-2.6.orig/include/linux/slab.h	2018-04-16 21:10:45.000000000 +0200
++++ linux-2.6/include/linux/slab.h	2018-04-16 21:10:45.000000000 +0200
+@@ -108,6 +108,13 @@
+ #define SLAB_KASAN		0
+ #endif
  
-On Mon, Apr 16, 2018 at 05:33:46PM +0300, Oleksandr Andrushchenko wrote:
-> Hello, all!
-> 
-> After discussing xen-zcopy and hyper-dmabuf [1] approaches
-> 
-> it seems that xen-zcopy can be made not depend on DRM core any more
-> 
-> and be dma-buf centric (which it in fact is).
-> 
-> The DRM code was mostly there for dma-buf's FD import/export
-> 
-> with DRM PRIME UAPI and with DRM use-cases in mind, but it comes out that if
-> 
-> the proposed 2 IOCTLs (DRM_XEN_ZCOPY_DUMB_FROM_REFS and
-> DRM_XEN_ZCOPY_DUMB_TO_REFS)
-> 
-> are extended to also provide a file descriptor of the corresponding dma-buf,
-> then
-> 
-> PRIME stuff in the driver is not needed anymore.
-> 
-> That being said, xen-zcopy can safely be detached from DRM and moved from
-> 
-> drivers/gpu/drm/xen into drivers/xen/dma-buf-backend(?).
-> 
-> This driver then becomes a universal way to turn any shared buffer between
-> Dom0/DomD
-> 
-> and DomU(s) into a dma-buf, e.g. one can create a dma-buf from any grant
-> references
-> 
-> or represent a dma-buf as grant-references for export.
-> 
-> This way the driver can be used not only for DRM use-cases, but also for
-> other
-> 
-> use-cases which may require zero copying between domains.
-> 
-> For example, the use-cases we are about to work in the nearest future will
-> use
-> 
-> V4L, e.g. we plan to support cameras, codecs etc. and all these will benefit
-> 
-> from zero copying much. Potentially, even block/net devices may benefit,
-> 
-> but this needs some evaluation.
-> 
-> 
-> I would love to hear comments for authors of the hyper-dmabuf
-> 
-> and Xen community, as well as DRI-Devel and other interested parties.
-> 
-> 
-> Thank you,
-> 
-> Oleksandr
-> 
-> 
-> On 03/29/2018 04:19 PM, Oleksandr Andrushchenko wrote:
-> >From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> >
-> >Hello!
-> >
-> >When using Xen PV DRM frontend driver then on backend side one will need
-> >to do copying of display buffers' contents (filled by the
-> >frontend's user-space) into buffers allocated at the backend side.
-> >Taking into account the size of display buffers and frames per seconds
-> >it may result in unneeded huge data bus occupation and performance loss.
-> >
-> >This helper driver allows implementing zero-copying use-cases
-> >when using Xen para-virtualized frontend display driver by
-> >implementing a DRM/KMS helper driver running on backend's side.
-> >It utilizes PRIME buffers API to share frontend's buffers with
-> >physical device drivers on backend's side:
-> >
-> >  - a dumb buffer created on backend's side can be shared
-> >    with the Xen PV frontend driver, so it directly writes
-> >    into backend's domain memory (into the buffer exported from
-> >    DRM/KMS driver of a physical display device)
-> >  - a dumb buffer allocated by the frontend can be imported
-> >    into physical device DRM/KMS driver, thus allowing to
-> >    achieve no copying as well
-> >
-> >For that reason number of IOCTLs are introduced:
-> >  -  DRM_XEN_ZCOPY_DUMB_FROM_REFS
-> >     This will create a DRM dumb buffer from grant references provided
-> >     by the frontend
-> >  - DRM_XEN_ZCOPY_DUMB_TO_REFS
-> >    This will grant references to a dumb/display buffer's memory provided
-> >    by the backend
-> >  - DRM_XEN_ZCOPY_DUMB_WAIT_FREE
-> >    This will block until the dumb buffer with the wait handle provided
-> >    be freed
-> >
-> >With this helper driver I was able to drop CPU usage from 17% to 3%
-> >on Renesas R-Car M3 board.
-> >
-> >This was tested with Renesas' Wayland-KMS and backend running as DRM master.
-> >
-> >Thank you,
-> >Oleksandr
-> >
-> >Oleksandr Andrushchenko (1):
-> >   drm/xen-zcopy: Add Xen zero-copy helper DRM driver
-> >
-> >  Documentation/gpu/drivers.rst               |   1 +
-> >  Documentation/gpu/xen-zcopy.rst             |  32 +
-> >  drivers/gpu/drm/xen/Kconfig                 |  25 +
-> >  drivers/gpu/drm/xen/Makefile                |   5 +
-> >  drivers/gpu/drm/xen/xen_drm_zcopy.c         | 880 ++++++++++++++++++++++++++++
-> >  drivers/gpu/drm/xen/xen_drm_zcopy_balloon.c | 154 +++++
-> >  drivers/gpu/drm/xen/xen_drm_zcopy_balloon.h |  38 ++
-> >  include/uapi/drm/xen_zcopy_drm.h            | 129 ++++
-> >  8 files changed, 1264 insertions(+)
-> >  create mode 100644 Documentation/gpu/xen-zcopy.rst
-> >  create mode 100644 drivers/gpu/drm/xen/xen_drm_zcopy.c
-> >  create mode 100644 drivers/gpu/drm/xen/xen_drm_zcopy_balloon.c
-> >  create mode 100644 drivers/gpu/drm/xen/xen_drm_zcopy_balloon.h
-> >  create mode 100644 include/uapi/drm/xen_zcopy_drm.h
-> >
-> [1]
-> https://lists.xenproject.org/archives/html/xen-devel/2018-02/msg01202.html
++/*
++ * Use higer order allocations to minimize wasted space.
++ * Note: the allocation is unreliable if this flag is used, the caller
++ * must handle allocation failures gracefully.
++ */
++#define SLAB_MINIMIZE_WASTE	((slab_flags_t __force)0x10000000U)
++
+ /* The following flags affect the page allocator grouping pages by mobility */
+ /* Objects are reclaimable */
+ #define SLAB_RECLAIM_ACCOUNT	((slab_flags_t __force)0x00020000U)
+Index: linux-2.6/mm/slab_common.c
+===================================================================
+--- linux-2.6.orig/mm/slab_common.c	2018-04-16 21:10:45.000000000 +0200
++++ linux-2.6/mm/slab_common.c	2018-04-16 21:10:45.000000000 +0200
+@@ -53,7 +53,7 @@ static DECLARE_WORK(slab_caches_to_rcu_d
+ 		SLAB_FAILSLAB | SLAB_KASAN)
+ 
+ #define SLAB_MERGE_SAME (SLAB_RECLAIM_ACCOUNT | SLAB_CACHE_DMA | \
+-			 SLAB_ACCOUNT)
++			 SLAB_ACCOUNT | SLAB_MINIMIZE_WASTE)
+ 
+ /*
+  * Merge control. If this is set then no merging of slab caches will occur.
+Index: linux-2.6/mm/slub.c
+===================================================================
+--- linux-2.6.orig/mm/slub.c	2018-04-16 21:10:45.000000000 +0200
++++ linux-2.6/mm/slub.c	2018-04-16 21:12:41.000000000 +0200
+@@ -3249,7 +3249,7 @@ static inline unsigned int slab_order(un
+ 	return order;
+ }
+ 
+-static inline int calculate_order(unsigned int size, unsigned int reserved)
++static inline int calculate_order(unsigned int size, unsigned int reserved, slab_flags_t flags)
+ {
+ 	unsigned int order;
+ 	unsigned int min_objects;
+@@ -3277,7 +3277,7 @@ static inline int calculate_order(unsign
+ 			order = slab_order(size, min_objects,
+ 					slub_max_order, fraction, reserved);
+ 			if (order <= slub_max_order)
+-				return order;
++				goto ret_order;
+ 			fraction /= 2;
+ 		}
+ 		min_objects--;
+@@ -3289,15 +3289,30 @@ static inline int calculate_order(unsign
+ 	 */
+ 	order = slab_order(size, 1, slub_max_order, 1, reserved);
+ 	if (order <= slub_max_order)
+-		return order;
++		goto ret_order;
+ 
+ 	/*
+ 	 * Doh this slab cannot be placed using slub_max_order.
+ 	 */
+ 	order = slab_order(size, 1, MAX_ORDER, 1, reserved);
+ 	if (order < MAX_ORDER)
+-		return order;
++		goto ret_order;
+ 	return -ENOSYS;
++
++ret_order:
++	if (flags & SLAB_MINIMIZE_WASTE) {
++		/* Increase the order if it decreases waste */
++		int test_order;
++		for (test_order = order + 1; test_order < MAX_ORDER; test_order++) {
++			unsigned long order_objects = ((PAGE_SIZE << order) - reserved) / size;
++			unsigned long test_order_objects = ((PAGE_SIZE << test_order) - reserved) / size;
++			if (test_order_objects >= min(32, MAX_OBJS_PER_PAGE))
++				break;
++			if (test_order_objects > order_objects << (test_order - order))
++				order = test_order;
++		}
++	}
++	return order;
+ }
+ 
+ static void
+@@ -3562,7 +3577,7 @@ static int calculate_sizes(struct kmem_c
+ 	if (forced_order >= 0)
+ 		order = forced_order;
+ 	else
+-		order = calculate_order(size, s->reserved);
++		order = calculate_order(size, s->reserved, flags);
+ 
+ 	if ((int)order < 0)
+ 		return 0;
+Index: linux-2.6/drivers/md/dm-bufio.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-bufio.c	2018-04-16 21:10:45.000000000 +0200
++++ linux-2.6/drivers/md/dm-bufio.c	2018-04-16 21:11:23.000000000 +0200
+@@ -1683,7 +1683,7 @@ struct dm_bufio_client *dm_bufio_client_
+ 	    (block_size < PAGE_SIZE || !is_power_of_2(block_size))) {
+ 		snprintf(slab_name, sizeof slab_name, "dm_bufio_cache-%u", c->block_size);
+ 		c->slab_cache = kmem_cache_create(slab_name, c->block_size, ARCH_KMALLOC_MINALIGN,
+-						  SLAB_RECLAIM_ACCOUNT, NULL);
++						  SLAB_RECLAIM_ACCOUNT | SLAB_MINIMIZE_WASTE, NULL);
+ 		if (!c->slab_cache) {
+ 			r = -ENOMEM;
+ 			goto bad;
+Index: linux-2.6/mm/slab.h
+===================================================================
+--- linux-2.6.orig/mm/slab.h	2018-04-16 21:10:45.000000000 +0200
++++ linux-2.6/mm/slab.h	2018-04-16 21:10:45.000000000 +0200
+@@ -142,10 +142,10 @@ static inline slab_flags_t kmem_cache_fl
+ #if defined(CONFIG_SLAB)
+ #define SLAB_CACHE_FLAGS (SLAB_MEM_SPREAD | SLAB_NOLEAKTRACE | \
+ 			  SLAB_RECLAIM_ACCOUNT | SLAB_TEMPORARY | \
+-			  SLAB_ACCOUNT)
++			  SLAB_ACCOUNT | SLAB_MINIMIZE_WASTE)
+ #elif defined(CONFIG_SLUB)
+ #define SLAB_CACHE_FLAGS (SLAB_NOLEAKTRACE | SLAB_RECLAIM_ACCOUNT | \
+-			  SLAB_TEMPORARY | SLAB_ACCOUNT)
++			  SLAB_TEMPORARY | SLAB_ACCOUNT | SLAB_MINIMIZE_WASTE)
+ #else
+ #define SLAB_CACHE_FLAGS (0)
+ #endif
+@@ -164,7 +164,8 @@ static inline slab_flags_t kmem_cache_fl
+ 			      SLAB_NOLEAKTRACE | \
+ 			      SLAB_RECLAIM_ACCOUNT | \
+ 			      SLAB_TEMPORARY | \
+-			      SLAB_ACCOUNT)
++			      SLAB_ACCOUNT | \
++			      SLAB_MINIMIZE_WASTE)
+ 
+ bool __kmem_cache_empty(struct kmem_cache *);
+ int __kmem_cache_shutdown(struct kmem_cache *);
+Index: linux-2.6/mm/slab.c
+===================================================================
+--- linux-2.6.orig/mm/slab.c	2018-04-16 21:10:45.000000000 +0200
++++ linux-2.6/mm/slab.c	2018-04-16 21:10:45.000000000 +0200
+@@ -1790,14 +1790,14 @@ static size_t calculate_slab_order(struc
+ 		 * as GFP_NOFS and we really don't want to have to be allocating
+ 		 * higher-order pages when we are unable to shrink dcache.
+ 		 */
+-		if (flags & SLAB_RECLAIM_ACCOUNT)
++		if (flags & SLAB_RECLAIM_ACCOUNT && !(flags & SLAB_MINIMIZE_WASTE))
+ 			break;
+ 
+ 		/*
+ 		 * Large number of objects is good, but very large slabs are
+ 		 * currently bad for the gfp()s.
+ 		 */
+-		if (gfporder >= slab_max_order)
++		if (gfporder >= slab_max_order && !(flags & SLAB_MINIMIZE_WASTE))
+ 			break;
+ 
+ 		/*
