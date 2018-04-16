@@ -1,86 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754983AbeDPLiB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 07:38:01 -0400
-Received: from mout.gmx.net ([212.227.15.18]:55431 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750732AbeDPLiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:38:00 -0400
-Content-Type: text/plain;
-        charset=gb2312
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [V9fs-developer] [PATCH 2/2] fs/9p: detecting invalid options as
- much as possible
-From: cgxu519@gmx.com
-In-Reply-To: <20180416075641.GA16402@nautica>
-Date: Mon, 16 Apr 2018 19:37:32 +0800
-Cc: "cgxu519@gmx.com" <cgxu519@gmx.com>, ericvh@gmail.com,
-        rminnich@sandia.gov, lucho@ionkov.net,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <923F6291-1E42-42DF-9312-5720050037E3@gmx.com>
-References: <1523864909-4337-1-git-send-email-cgxu519@gmx.com>
- <1523864909-4337-2-git-send-email-cgxu519@gmx.com>
- <20180416075641.GA16402@nautica>
-To: Dominique Martinet <asmadeus@codewreck.org>
-X-Mailer: Apple Mail (2.3445.6.18)
-X-Provags-ID: V03:K1:rkbSZH1auPtAf8cVegGhzETJPQaakggWr8D9wbr8ei14pvUbryU
- KKMLspiSBQPQTJdRFwwen23Os0jEzYMB7Kzd9SAzUNujUOZgYXGUM5QzycFUmLJM9lwmZX2
- VN+cTuWWrX5AzL/DiP/ZyVEJVwAOvRMb1A2HDhYF/AvacXKb4d15M1PXrZ7HTvtr+ppmvf/
- /tEcPcZUh3SEhy3U6xDJA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:qhhNkArSkJw=:hgv1KDkg2oscSaoVLuA8wP
- evLa3svcvcpAK1jZtMI6/ImeyVSVghKqSJjlCXzJha8bgTsml8Ci6YMdTh8w137TADn0mVCae
- MtJtzNrvosnH9Z9nrakyPuVZabqY1su7q9nqEBPgZzi3BLoOytqLP9itEZURbHXdcptPkmDJn
- VUULneD4RqWW0w7NKh/HgshSSsPeN31x45wGtHbl8h3qmWaemV2x7OcfAqVzYGRZtbilPuI92
- 8exDTJnxzypyOt4IxPfxmY166ONxXIfd/YpdjcpgwPwwO8nUHCIoWRfjASghDPNCvcFIpLGOC
- 32XakzMkoomF80SfUsa5npnP7iT9xh9uDJux7CKtdoy19cnz6S9cqtOa7gx80FW0INAMO6OCV
- LqGzjAdZtyIcKnpAGTLBpVx4YhDYHe4uMbcgyjOEBf58AAhph1vuXHELqQ0YlWljgR/8MsEYV
- huWF3/s1OJPElzQYnpPjPj0QyRhbGGrAmJLXAtg+qtvepk7nQiNb79h+2IeFEPxbWpRNbHWM8
- bN7Q0HwkyytxEcnnWWjXUTAoKONKlWFZiVEcHilh4Q9rhMlztWNJXzKkKePwpxDeI+f0VGosx
- fpLiLe+VmoMYKMjwioaMNYj2WVP4bP7exZHut4tR7c0NTWBqR+qXhXsqrA8w0emWwOuW8yxBG
- FrDiKZTiwg+IWE+uyGF5kw7bE7Z1XE6ckviHMxcjKHuVuRoM/OtXHxZ3sCpUezDMT/4IplRjj
- oo2rb/TK7IrbcuMU6GrqVRb50IUi91iug2bTw45ZM8Fez9m9tEObp2C4ZABjDLbL7gm7oplSg
- uUpW5ROLMqUmwlhG93gKe0O/nw3tjFDOCClcxBY2OMwrBJ6cAE=
+        id S1753950AbeDPLjO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 07:39:14 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56818 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753105AbeDPLjN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 07:39:13 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Peter Rosin <peda@axentia.se>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: max9860: switch to SPDX license tag" to the asoc tree
+In-Reply-To: <20180413114751.6464-2-peda@axentia.se>
+Message-Id: <E1f82TW-0007To-1B@debutante>
+Date: Mon, 16 Apr 2018 12:39:10 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dominique,
+The patch
 
-Thanks for your quick reply and comment.
+   ASoC: max9860: switch to SPDX license tag
 
+has been applied to the asoc tree at
 
-在 2018年4月16日，下午3:56，Dominique Martinet <asmadeus@codewreck.org> 写道：
-> 
-> Chengguang Xu wrote on Mon, Apr 16, 2018:
->> 		default:
->> +			p9_debug(P9_DEBUG_ERROR,
->> +				"unrecognized mount option \"%s\" or missing value\n",
->> +					p);
->> 			continue;
-> 
-> The problem with that is that the same options are passed to the vfs,
-> net and transport init later on - none of which know the full subset of
-> valid options to tell what option has been recognized or not.
-> 
-> Unless we do some backward-incompatible breakage of passing all the
-> net/transport options in its own option (e.g. net=foo:bar:moo) there
-> unfortunately is no nice way of fixing this now.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Yes, I agree with you.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> 
-> 
-> (I don't mind the rest of the patches, although I'd say if we hit ENOMEM
-> there is likely trouble going on so I'm not so sure about hiding it if
-> there also is an EINVAL, but I don't really care)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-The initial motivation of hiding ENOMEM here is when reproducing the error，
-the error code may change by system condition(more accurately memory condition),
-after this patch the error code will be persistent. However, as you pointed out,
-when we hit ENOMEM there would be a serious trouble, so in real life maybe we
-cannot benefit from it. What do you think? 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Chengguang.
+Mark
+
+>From a93532dbdc8d6b96b8c51eea333cb40bfa7c490c Mon Sep 17 00:00:00 2001
+From: Peter Rosin <peda@axentia.se>
+Date: Fri, 13 Apr 2018 13:47:50 +0200
+Subject: [PATCH] ASoC: max9860: switch to SPDX license tag
+
+It's less overhead, clearer and generally neater.
+
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/max9860.c | 31 +++++++++++--------------------
+ sound/soc/codecs/max9860.h | 10 +---------
+ 2 files changed, 12 insertions(+), 29 deletions(-)
+
+diff --git a/sound/soc/codecs/max9860.c b/sound/soc/codecs/max9860.c
+index c1bd9de5e4a3..de3d44e9199b 100644
+--- a/sound/soc/codecs/max9860.c
++++ b/sound/soc/codecs/max9860.c
+@@ -1,23 +1,14 @@
+-/*
+- * Driver for the MAX9860 Mono Audio Voice Codec
+- *
+- * https://datasheets.maximintegrated.com/en/ds/MAX9860.pdf
+- *
+- * The driver does not support sidetone since the DVST register field is
+- * backwards with the mute near the maximum level instead of the minimum.
+- *
+- * Author: Peter Rosin <peda@axentia.s>
+- *         Copyright 2016 Axentia Technologies
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License for more details.
+- */
++// SPDX-License-Identifier: GPL-2.0
++//
++// Driver for the MAX9860 Mono Audio Voice Codec
++//
++// https://datasheets.maximintegrated.com/en/ds/MAX9860.pdf
++//
++// The driver does not support sidetone since the DVST register field is
++// backwards with the mute near the maximum level instead of the minimum.
++//
++// Author: Peter Rosin <peda@axentia.s>
++//         Copyright 2016 Axentia Technologies
+ 
+ #include <linux/init.h>
+ #include <linux/module.h>
+diff --git a/sound/soc/codecs/max9860.h b/sound/soc/codecs/max9860.h
+index 22041bd67a7d..e07b905eaf50 100644
+--- a/sound/soc/codecs/max9860.h
++++ b/sound/soc/codecs/max9860.h
+@@ -1,17 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Driver for the MAX9860 Mono Audio Voice Codec
+  *
+  * Author: Peter Rosin <peda@axentia.s>
+  *         Copyright 2016 Axentia Technologies
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License for more details.
+  */
+ 
+ #ifndef _SND_SOC_MAX9860
+-- 
+2.17.0
