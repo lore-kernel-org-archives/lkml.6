@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753130AbeDPCdk (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 22:33:40 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:61803 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752552AbeDPCdj (ORCPT
+        id S1753171AbeDPCdu (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 22:33:50 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:41359 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753139AbeDPCdt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 22:33:39 -0400
-X-UUID: 61a5ec34f1c548c3b2104c1059753a84-20180416
+        Sun, 15 Apr 2018 22:33:49 -0400
+X-UUID: a1ccc2918fb74be6845bdddde40af7c1-20180416
 From: Ryder Lee <ryder.lee@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+To: "David S. Miller" <davem@davemloft.net>
+CC: Sean Wang <sean.wang@mediatek.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH] soc: mediatek: use of_device_get_match_data()
-Date: Mon, 16 Apr 2018 10:33:34 +0800
-Message-ID: <b7fffebff04c6b717c568194ac7503144a3302a8.1523347340.git.ryder.lee@mediatek.com>
+Subject: [PATCH] net: mediatek: use of_device_get_match_data()
+Date: Mon, 16 Apr 2018 10:33:41 +0800
+Message-ID: <9bf87205f84062580934168774d690d4cd2bf26b.1523347340.git.ryder.lee@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
 References: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
@@ -28,70 +29,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The usage of of_device_get_match_data() reduce the code size a bit.
 
-Also, the only way to call pwrap_probe() is to match an entry in
-of_pwrap_match_tbl[], so of_id cannot be NULL.
+Also, the only way to call mtk_probe() is to match an entry in
+of_mtk_match[], so match cannot be NULL.
 
 Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- drivers/soc/mediatek/mtk-pmic-wrap.c | 13 +++----------
- drivers/soc/mediatek/mtk-scpsys.c    |  4 +---
- 2 files changed, 4 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-index e9e054a..2afae64 100644
---- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-+++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-@@ -1458,19 +1458,12 @@ static int pwrap_probe(struct platform_device *pdev)
- 	int ret, irq;
- 	struct pmic_wrapper *wrp;
- 	struct device_node *np = pdev->dev.of_node;
--	const struct of_device_id *of_id =
--		of_match_device(of_pwrap_match_tbl, &pdev->dev);
- 	const struct of_device_id *of_slave_id = NULL;
- 	struct resource *res;
- 
--	if (!of_id) {
--		dev_err(&pdev->dev, "Error: No device match found\n");
--		return -ENODEV;
--	}
-+	if (np->child)
-+		of_slave_id = of_match_node(of_slave_match_tbl, np->child);
- 
--	if (pdev->dev.of_node->child)
--		of_slave_id = of_match_node(of_slave_match_tbl,
--					    pdev->dev.of_node->child);
- 	if (!of_slave_id) {
- 		dev_dbg(&pdev->dev, "slave pmic should be defined in dts\n");
- 		return -EINVAL;
-@@ -1482,7 +1475,7 @@ static int pwrap_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, wrp);
- 
--	wrp->master = of_id->data;
-+	wrp->master = of_device_get_match_data(&pdev->dev);
- 	wrp->slave = of_slave_id->data;
- 	wrp->dev = &pdev->dev;
- 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 435ce5e..a02a18e 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -973,15 +973,13 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 
- static int scpsys_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index e0b72bf..d8ebf0a 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -2503,7 +2503,6 @@ static int mtk_probe(struct platform_device *pdev)
  {
+ 	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	struct device_node *mac_np;
 -	const struct of_device_id *match;
- 	const struct scp_subdomain *sd;
- 	const struct scp_soc_data *soc;
- 	struct scp *scp;
- 	struct genpd_onecell_data *pd_data;
- 	int i, ret;
+ 	struct mtk_eth *eth;
+ 	int err;
+ 	int i;
+@@ -2512,8 +2511,7 @@ static int mtk_probe(struct platform_device *pdev)
+ 	if (!eth)
+ 		return -ENOMEM;
  
--	match = of_match_device(of_scpsys_match_tbl, &pdev->dev);
--	soc = (const struct scp_soc_data *)match->data;
-+	soc = of_device_get_match_data(&pdev->dev);
+-	match = of_match_device(of_mtk_match, &pdev->dev);
+-	eth->soc = (struct mtk_soc_data *)match->data;
++	eth->soc = of_device_get_match_data(&pdev->dev);
  
- 	scp = init_scp(pdev, soc->domains, soc->num_domains, &soc->regs,
- 			soc->bus_prot_reg_update);
+ 	eth->dev = &pdev->dev;
+ 	eth->base = devm_ioremap_resource(&pdev->dev, res);
 -- 
 1.9.1
