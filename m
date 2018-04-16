@@ -1,69 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753224AbeDPQMr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 12:12:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59814 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753099AbeDPQLu (ORCPT
+        id S1753241AbeDPQMy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 12:12:54 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:38074 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752221AbeDPQMq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 12:11:50 -0400
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Cc: mingo@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tools/memory-model 16/17] tools/memory-model: Model 'smp_store_mb()'
-Date: Mon, 16 Apr 2018 09:12:44 -0700
-X-Mailer: git-send-email 2.5.2
-In-Reply-To: <20180416161209.GA6895@linux.vnet.ibm.com>
-References: <20180416161209.GA6895@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18041616-0056-0000-0000-0000043EB45C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008863; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01018801; UDB=6.00519703; IPR=6.00798042;
- MB=3.00020599; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-16 16:11:45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041616-0057-0000-0000-00000882B7C6
-Message-Id: <1523895165-17576-16-git-send-email-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804160146
+        Mon, 16 Apr 2018 12:12:46 -0400
+X-Google-Smtp-Source: AIpwx4/Uet+S845D1thbVfv6avtoi9clZi39pw40uh2FyNADdksncTBp2dxTDyLhSU91TaxN2h1ipw==
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, rkrcmar@redhat.com, kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for 4.17-rc2
+Date: Mon, 16 Apr 2018 18:12:42 +0200
+Message-Id: <1523895162-43521-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
+Linus,
 
-This commit models 'smp_store_mb(x, val);' to be semantically equivalent
-to 'WRITE_ONCE(x, val); smp_mb();'.
+The following changes since commit e01bca2fc698d7f0626f0214001af523e18ad60b:
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- tools/memory-model/linux-kernel.def | 1 +
- 1 file changed, 1 insertion(+)
+  kvm: x86: fix a prototype warning (2018-04-06 18:20:31 +0200)
 
-diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-index 397e4e67e8c8..acf86f6f360a 100644
---- a/tools/memory-model/linux-kernel.def
-+++ b/tools/memory-model/linux-kernel.def
-@@ -14,6 +14,7 @@ smp_store_release(X,V) { __store{release}(*X,V); }
- smp_load_acquire(X) __load{acquire}(*X)
- rcu_assign_pointer(X,V) { __store{release}(X,V); }
- rcu_dereference(X) __load{once}(X)
-+smp_store_mb(X,V) { __store{once}(X,V); __fence{mb}; }
- 
- // Fences
- smp_mb() { __fence{mb} ; }
--- 
-2.5.2
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+
+for you to fetch changes up to d5edb7f8e7ab9fd5fd54a77d957b1733f117a813:
+
+  kvm: selftests: add vmx_tsc_adjust_test (2018-04-16 17:50:23 +0200)
+
+----------------------------------------------------------------
+Bug fixes, plus a new test case and the associated infrastructure for
+writing nested virtualization tests.
+
+----------------------------------------------------------------
+
+In case you spot some patches committed about 20 seconds before tagging,
+that's just to acknowledge Reviewed-bys.  But maybe you only check that on
+late-Saturday-night-before-end-of-the-merge-window pull requests. :)
+
+Paolo
+
+Colin Ian King (1):
+      kvm: selftests: fix spelling mistake: "divisable" and "divisible"
+
+KarimAllah Ahmed (3):
+      X86/VMX: Disable VMX preemption timer if MWAIT is not intercepted
+      X86/KVM: Do not allow DISABLE_EXITS_MWAIT when LAPIC ARAT is not available
+      X86/KVM: Properly update 'tsc_offset' to represent the running guest
+
+Krish Sadhukhan (1):
+      x86: Add check for APIC access address for vmentry of L2 guests
+
+Paolo Bonzini (2):
+      kvm: x86: move MSR_IA32_TSC handling to x86.c
+      kvm: selftests: add vmx_tsc_adjust_test
+
+Peng Hao (1):
+      kvm: selftests: add -std=gnu99 cflags
+
+hu huajun (1):
+      KVM: X86: fix incorrect reference of trace_kvm_pi_irte_update
+
+ arch/x86/include/asm/kvm_host.h                   |   1 +
+ arch/x86/kvm/svm.c                                |  31 +-
+ arch/x86/kvm/vmx.c                                |  95 +++--
+ arch/x86/kvm/x86.c                                |  15 +-
+ tools/testing/selftests/kvm/Makefile              |   5 +-
+ tools/testing/selftests/kvm/include/kvm_util.h    |  15 +-
+ tools/testing/selftests/kvm/include/vmx.h         | 494 ++++++++++++++++++++++
+ tools/testing/selftests/kvm/lib/kvm_util.c        |  20 +-
+ tools/testing/selftests/kvm/lib/sparsebit.c       |   4 +-
+ tools/testing/selftests/kvm/lib/vmx.c             | 243 +++++++++++
+ tools/testing/selftests/kvm/vmx_tsc_adjust_test.c | 231 ++++++++++
+ 11 files changed, 1081 insertions(+), 73 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/include/vmx.h
+ create mode 100644 tools/testing/selftests/kvm/lib/vmx.c
+ create mode 100644 tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
