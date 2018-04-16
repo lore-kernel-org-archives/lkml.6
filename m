@@ -1,120 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752906AbeDPCbv (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 22:31:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:54007 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751774AbeDPCbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 22:31:50 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 16 Apr 2018 12:30:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>
-Subject: linux-next: build failure after merge of the bpf tree
-Message-ID: <20180416123000.30fd8a04@canb.auug.org.au>
+        id S1752974AbeDPCcU (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 22:32:20 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:9955 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752806AbeDPCcS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 22:32:18 -0400
+X-UUID: cf9d7ab804fc4c90978d5b470ad8a305-20180416
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        chunhui dai <chunhui.dai@mediatek.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH] clk: mediatek: correct the clocks for MT2701 HDMI PHY module
+Date: Mon, 16 Apr 2018 10:31:58 +0800
+Message-ID: <f3248cc94349000b2587d9c6102d56323acba9e0.1523844642.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/z/+uyHLVn+3.ksDUOgyPIfK"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/z/+uyHLVn+3.ksDUOgyPIfK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The hdmitx_dig_cts clock signal is not a child of clk26m,
+and the actual output of the PLL block is derived from
+the tvdpll via a configurable PLL post-divider.
 
-Hi all,
+It is used as the PLL reference input to the HDMI PHY module.
 
-After merging the bpf tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-kernel/bpf/core.o: In function `sock_map_release':
-core.c:(.text+0xd04): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-kernel/events/core.o: In function `sock_map_release':
-core.c:(.text+0x85cc): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-block/blk-core.o: In function `sock_map_release':
-blk-core.c:(.text+0x58e8): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-drivers/net/virtio_net.o: In function `sock_map_release':
-virtio_net.c:(.text+0x53ec): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-net/core/dev.o: In function `sock_map_release':
-dev.c:(.text+0x6c68): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-net/core/rtnetlink.o: In function `sock_map_release':
-rtnetlink.c:(.text+0x63e0): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-net/core/filter.o: In function `sock_map_release':
-filter.c:(.text+0x8c8c): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-net/core/sock_reuseport.o: In function `sock_map_release':
-sock_reuseport.c:(.text+0x398): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-net/bpf/test_run.o: In function `sock_map_release':
-test_run.c:(.text+0x3dc): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-net/packet/af_packet.o: In function `sock_map_release':
-af_packet.c:(.text+0x6958): multiple definition of `sock_map_release'
-kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-
-Caused by commit
-
-  9b2e8bbc4e7a ("bpf: sockmap, map_release does not hold refcnt for pinned =
-maps")
-
-I applied the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 16 Apr 2018 12:27:24 +1000
-Subject: [PATCH] fix for "bpf: sockmap, map_release does not hold refcnt for
- pinned maps"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Chunhui Dai <chunhui.dai@mediatek.com>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- include/linux/bpf.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt2701.c      |  8 ++++++--
+ include/dt-bindings/clock/mt2701-clk.h | 16 ++++++++--------
+ 2 files changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index f46561de5154..3b6c2b66f414 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -660,7 +660,7 @@ static inline int sock_map_prog(struct bpf_map *map,
- 	return -EOPNOTSUPP;
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index deca752..4dda898 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -46,8 +46,6 @@
+ 		340 * MHZ),
+ 	FIXED_CLK(CLK_TOP_HDMI_0_PLL340M, "hdmi_0_pll340m", "clk26m",
+ 		340 * MHZ),
+-	FIXED_CLK(CLK_TOP_HDMITX_CLKDIG_CTS, "hdmitx_dig_cts", "clk26m",
+-		300 * MHZ),
+ 	FIXED_CLK(CLK_TOP_HADDS2_FB, "hadds2_fbclk", "clk26m",
+ 		27 * MHZ),
+ 	FIXED_CLK(CLK_TOP_WBG_DIG_416M, "wbg_dig_ck_416m", "clk26m",
+@@ -977,6 +975,10 @@ static int mtk_pericfg_init(struct platform_device *pdev)
+ 				21, 0x2d0, 4, 0x0, 0x2d4, 0),
+ };
+ 
++static const struct mtk_fixed_factor apmixed_fixed_divs[] = {
++	FACTOR(CLK_APMIXED_HDMI_REF, "hdmi_ref", "tvdpll", 1, 1),
++};
++
+ static int mtk_apmixedsys_init(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+@@ -988,6 +990,8 @@ static int mtk_apmixedsys_init(struct platform_device *pdev)
+ 
+ 	mtk_clk_register_plls(node, apmixed_plls, ARRAY_SIZE(apmixed_plls),
+ 								clk_data);
++	mtk_clk_register_factors(apmixed_fixed_divs, ARRAY_SIZE(apmixed_fixed_divs),
++								clk_data);
+ 
+ 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
  }
-=20
--void sock_map_release(struct bpf_map *map) {}
-+static inline void sock_map_release(struct bpf_map *map) {}
- #endif
-=20
- /* verifier prototypes for helper functions called from eBPF programs */
---=20
-2.16.3
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/z/+uyHLVn+3.ksDUOgyPIfK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrUCqgACgkQAVBC80lX
-0GwJSQf/bE61HpqdcNVK65k6QMq+KhnOJrII8d0UqpvUZsM2zKJ9H2VOzqokvwxs
-HYvbSwIYJ/fTXgDBpb+hMP+ghlCzhAprdHobVeplffsQPV5LVMTbcwpdqpg8nC3U
-vdXW2LUZoJPKGW9iPaC56ULf/QE8mDdeXr4sO6cDQ0e1Rpplmz+T43PPfgjUAKle
-ktP/3Xw/DQEvoDIhkh64zCBTFQoE35Mr1sC6uXpBIp6ccEJ9NscCQU3cXKDALUH0
-piD8kbgQCXD6F4gxJFVUtQ2HEqPnAbgv1pxDfkTKV+xjpYZETSdL0kAVNENitQrH
-PKpOhCihtTgGdDZWOxTwMicV9EeZXg==
-=IQvX
------END PGP SIGNATURE-----
-
---Sig_/z/+uyHLVn+3.ksDUOgyPIfK--
+diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
+index 24e93df..1956ebb 100644
+--- a/include/dt-bindings/clock/mt2701-clk.h
++++ b/include/dt-bindings/clock/mt2701-clk.h
+@@ -171,13 +171,12 @@
+ #define CLK_TOP_8BDAC				151
+ #define CLK_TOP_WBG_DIG_416M			152
+ #define CLK_TOP_DPI				153
+-#define CLK_TOP_HDMITX_CLKDIG_CTS		154
+-#define CLK_TOP_DSI0_LNTC_DSI			155
+-#define CLK_TOP_AUD_EXT1			156
+-#define CLK_TOP_AUD_EXT2			157
+-#define CLK_TOP_NFI1X_PAD			158
+-#define CLK_TOP_AXISEL_D4			159
+-#define CLK_TOP_NR				160
++#define CLK_TOP_DSI0_LNTC_DSI			154
++#define CLK_TOP_AUD_EXT1			155
++#define CLK_TOP_AUD_EXT2			156
++#define CLK_TOP_NFI1X_PAD			157
++#define CLK_TOP_AXISEL_D4			158
++#define CLK_TOP_NR				159
+ 
+ /* APMIXEDSYS */
+ 
+@@ -194,7 +193,8 @@
+ #define CLK_APMIXED_HADDS2PLL			11
+ #define CLK_APMIXED_AUD2PLL			12
+ #define CLK_APMIXED_TVD2PLL			13
+-#define CLK_APMIXED_NR				14
++#define CLK_APMIXED_HDMI_REF			14
++#define CLK_APMIXED_NR				15
+ 
+ /* DDRPHY */
+ 
+-- 
+1.9.1
