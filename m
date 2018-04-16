@@ -1,202 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754747AbeDPNGM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:06:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48226 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753599AbeDPNGJ (ORCPT
+        id S1754816AbeDPNH3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:07:29 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:33153 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753105AbeDPNH1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:06:09 -0400
-Subject: Re: [PATCH v4 13/15] KVM: s390: configure the guest's AP devices
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-14-git-send-email-akrowiak@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Mon, 16 Apr 2018 15:05:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 16 Apr 2018 09:07:27 -0400
+X-Originating-IP: 193.205.81.22
+Date: Mon, 16 Apr 2018 15:07:21 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 15/19] dt-bindings: gpio: Add support for r8a77965
+Message-ID: <20180416130721.GB3377@w540>
+References: <1519139541-18783-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1519139541-18783-16-git-send-email-jacopo+renesas@jmondi.org>
+ <CAMuHMdW4k+GROdy6kKT-3jd7YYGVbKvieyCSEWXGXJyvZg7NGQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1523827345-11600-14-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041613-0008-0000-0000-000004EB1827
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041613-0009-0000-0000-00001E7F2F49
-Message-Id: <2e7387b9-ceb4-cdca-56ac-f5344084e10a@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804160124
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW4k+GROdy6kKT-3jd7YYGVbKvieyCSEWXGXJyvZg7NGQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/04/2018 23:22, Tony Krowiak wrote:
-> Registers a group notifier during the open of the mediated
-> matrix device to get information on KVM presence through the
-> VFIO_GROUP_NOTIFY_SET_KVM event. When notified, the pointer
-> to the kvm structure is saved inside the mediated matrix
-> device. Once the VFIO AP device driver has access to KVM,
-> access to the APs can be configured for the guest.
->
-> Access to APs is configured when the file descriptor for the
-> mediated matrix device is opened by userspace. The items to be
-> configured are:
->
-> 1. The ECA.28 bit in the SIE state description determines whether
->     AP instructions are interpreted by the hardware or intercepted.
->     The VFIO AP device driver relies interpretive execution of
->     AP instructions so the ECA.28 bit will be set
->
-> 2. Guest access to AP adapters, usage domains and control domains
->     is controlled by three bit masks referenced from the
->     Crypto Control Block (CRYCB) referenced from the guest's SIE state
->     description:
->
->     * The AP Mask (APM) controls access to the AP adapters. Each bit
->       in the APM represents an adapter number - from most significant
->       to least significant bit - from 0 to 255. The bits in the APM
->       are set according to the adapter numbers assigned to the mediated
->       matrix device via its 'assign_adapter' sysfs attribute file.
->
->     * The AP Queue (AQM) controls access to the AP queues. Each bit
->       in the AQM represents an AP queue index - from most significant
->       to least significant bit - from 0 to 255. A queue index references
->       a specific domain and is synonymous with the domian number. The
->       bits in the AQM are set according to the domain numbers assigned
->       to the mediated matrix device via its 'assign_domain' sysfs
->       attribute file.
->
->     * The AP Domain Mask (ADM) controls access to the AP control domains.
->       Each bit in the ADM represents a control domain - from most
->       significant to least significant bit - from 0-255. The
->       bits in the ADM are set according to the domain numbers assigned
->       to the mediated matrix device via its 'assign_control_domain'
->       sysfs attribute file.
->
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
->   drivers/s390/crypto/vfio_ap_ops.c     |   50 +++++++++++++++++++++++++++++++++
->   drivers/s390/crypto/vfio_ap_private.h |    2 +
->   2 files changed, 52 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> index bc2b05e..e3ff5ab 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -53,6 +53,54 @@ static int vfio_ap_mdev_remove(struct mdev_device *mdev)
->   	return 0;
->   }
->
-> +static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
-> +				       unsigned long action, void *data)
-> +{
-> +	struct ap_matrix_mdev *matrix_mdev;
-> +
-> +	if (action == VFIO_GROUP_NOTIFY_SET_KVM) {
-> +		matrix_mdev = container_of(nb, struct ap_matrix_mdev,
-> +					   group_notifier);
-> +		matrix_mdev->kvm = data;
-> +	}
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
-> +static int vfio_ap_mdev_open(struct mdev_device *mdev)
-> +{
-> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-> +	unsigned long events;
-> +	int ret;
-> +
-> +	matrix_mdev->group_notifier.notifier_call = vfio_ap_mdev_group_notifier;
-> +	events = VFIO_GROUP_NOTIFY_SET_KVM;
-> +
-> +	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
-> +				     &events, &matrix_mdev->group_notifier);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = kvm_ap_interpret_instructions(matrix_mdev->kvm, true);
 
-Do you need this call ?
-apie is always enabled in KVM if AP instructions are available.
+--xXmbgvnjoT4axfJE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Setting or not the interpretation is done for the VM in a all.
-It is not the right place to do it here since open is device dependent.
+Hi Geert,
 
-Or we only have one device in the VM at a time.
-In this case, shouldn't we make it official by returning -EEXIST for the 
-second call?
+On Mon, Apr 16, 2018 at 01:12:06PM +0200, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+>
+> On Tue, Feb 20, 2018 at 4:12 PM, Jacopo Mondi <jacopo+renesas@jmondi.org>=
+ wrote:
+> > Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Can you please resend to the GPIO maintainer?
+> Thanks!
+
+Thank you for the useful reminder.
+
+=46rom my original M3-N support series, the following DT binding patches
+have actually to be resent, now that the SoC support is in v4.17-rc1.
+
+dt-bindings: dmaengine: rcar-dmac: document R8A77965 support
+dt-bindings: serial: sh-sci: Add support for r8a77965 (H)SCIF
+dt-bindings: net: ravb: Add support for r8a77965 SoC
+dt-bindings: gpio: Add support for r8a77965
+
+I will resend each one to the appropriate tree maintainer.
+
+Thanks
+   j
 
 
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = kvm_ap_configure_matrix(matrix_mdev->kvm,
-> +				      matrix_mdev->matrix);
-> +
-> +	return ret;
-> +}
-> +
-> +static void vfio_ap_mdev_release(struct mdev_device *mdev)
-> +{
-> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-> +
-> +	kvm_ap_deconfigure_matrix(matrix_mdev->kvm);
-> +	kvm_ap_interpret_instructions(matrix_mdev->kvm, false);
-
-This call clears the apie in KVM.
-This is only OK if we have a single device present until the end of the VM,
-otherwise AP instructions in the guest will fail after the release until 
-the end of the VM
-or until a new device is plugged.
-
-
-> +	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
-> +				 &matrix_mdev->group_notifier);
-> +}
-> +
->   static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
->   {
->   	return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
-> @@ -754,6 +802,8 @@ static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
->   	.mdev_attr_groups	= vfio_ap_mdev_attr_groups,
->   	.create			= vfio_ap_mdev_create,
->   	.remove			= vfio_ap_mdev_remove,
-> +	.open			= vfio_ap_mdev_open,
-> +	.release		= vfio_ap_mdev_release,
->   };
 >
->   int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
-> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-> index f248faf..48e2806 100644
-> --- a/drivers/s390/crypto/vfio_ap_private.h
-> +++ b/drivers/s390/crypto/vfio_ap_private.h
-> @@ -31,6 +31,8 @@ struct ap_matrix {
+> Gr{oetje,eeting}s,
 >
->   struct ap_matrix_mdev {
->   	struct kvm_ap_matrix *matrix;
-> +	struct notifier_block group_notifier;
-> +	struct kvm *kvm;
->   };
+>                         Geert
 >
->   static inline struct ap_matrix *to_ap_matrix(struct device *dev)
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
+--xXmbgvnjoT4axfJE
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa1KAJAAoJEHI0Bo8WoVY8nbsQAJo7vULjkaCO/iMsjeYGgbqS
+394iQwYhLWZ2cAVbvWc7srLMJDA3oy9HwuK72rAuBRYiU3uTJXE0b8uAI0YdJZI+
+cB0WJc3WwwbNq9sE55j72xH5pBWGJYwKxrUv6BIf6GCTIwyVZsh28oNRjTJUaSWP
+jhYxZTXuBsVoJ0K9i+2EQDjPmIzXQzF/kK8v/z3h7bQih2/7yHOjZl+5sNDwwX3f
+RjN0L9P+cXY3SVJyEb4Ax1l5NP9MFZ8FkNEOijV7Yg0INVD7M2+bZeDXNmcC2400
+IiZhEYDY7bgEmRM5FNfUvXP+550GYBZdBoSAT6Vx2OXPod3mE6y0iJYuvVPw8DIQ
+Q6jHfe4g4wV8knV+FZpBpFylVhA2KsGqGHkVMzomBltamcukmL0FyRJctEwIaQX7
+ynbDhoBtBppgg4INY+vXqWtO9jxoTCF7H9DKVLZz7o5M7fe936FHyipxG+lksowN
+32IAgsx9VgTuJCbf5eco+24vhERU5othazdS0oKwDfm+tuw8Rw/n8Yv3R5YGeSS4
+0NzDV+jphU+/Ru+XIE6MuaWMu9QLtqWNWZy1lMxqqeRFx10pDi/aFTXxsBA6Yg+m
+VnlEYMZtNIYOz1Z9szhe1HTtBDQd97Sgp8h3B4OZPFrkYhhBX06IIk1SVzkUTvDn
+VhLcu8UFzHzGWT06DXK5
+=tQ6Y
+-----END PGP SIGNATURE-----
+
+--xXmbgvnjoT4axfJE--
