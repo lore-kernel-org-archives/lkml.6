@@ -1,97 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753080AbeDPRps (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 13:45:48 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:35891 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752750AbeDPRpq (ORCPT
+        id S1753058AbeDPRsM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 13:48:12 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:58399 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752826AbeDPRsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 13:45:46 -0400
-X-Google-Smtp-Source: AIpwx48mOpfTEsJ1PUTHpIR+CDsM+r/3BWTMJuY0Wn1P8GMS7va0p4sIwEphlHRbhgvekqvjN/eePA==
-Date: Mon, 16 Apr 2018 10:45:42 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Vignesh R <vigneshr@ti.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v2 1/3] Input: ti_am335x_tsc - Mark IRQ as wakeup capable
-Message-ID: <20180416174542.GB77055@dtor-ws>
-References: <20180414095153.32060-1-vigneshr@ti.com>
- <20180414095153.32060-2-vigneshr@ti.com>
+        Mon, 16 Apr 2018 13:48:11 -0400
+Subject: Re: [PATCH 1/1] hwmon: (ina2xx) initialize mutex before locking
+To: Guenter Roeck <linux@roeck-us.net>
+CC: <jdelvare@suse.com>, <linux-hwmon@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        chombour <Cedric_Hombourger@mentor.com>,
+        ahsann <Noor_Ahsan@mentor.com>, <m.purski@samsung.com>
+References: <f286b0f4-948f-74a7-6dc1-90ca88f3dcdc@mentor.com>
+ <20180416172858.GA9447@roeck-us.net>
+From: Ahsan Hussain <ahsan_hussain@mentor.com>
+Organization: Mentor Graphics
+Message-ID: <78aeafda-03f2-de62-f6bd-6bd7b81ea201@mentor.com>
+Date: Mon, 16 Apr 2018 22:48:03 +0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180414095153.32060-2-vigneshr@ti.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180416172858.GA9447@roeck-us.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 14, 2018 at 03:21:51PM +0530, Vignesh R wrote:
-> On AM335x, ti_am335x_tsc can wake up the system from suspend, mark the
-> IRQ as wakeup capable, so that device irq is not disabled during system
-> suspend.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> ---
-> 
-> v2: No changes
-> 
->  drivers/input/touchscreen/ti_am335x_tsc.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
-> index f1043ae71dcc..810e05c9c4f5 100644
-> --- a/drivers/input/touchscreen/ti_am335x_tsc.c
-> +++ b/drivers/input/touchscreen/ti_am335x_tsc.c
-> @@ -27,6 +27,7 @@
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/sort.h>
-> +#include <linux/pm_wakeirq.h>
->  
->  #include <linux/mfd/ti_am335x_tscadc.h>
->  
-> @@ -432,6 +433,12 @@ static int titsc_probe(struct platform_device *pdev)
->  		goto err_free_mem;
->  	}
->  
-> +	if (device_may_wakeup(tscadc_dev->dev)) {
-> +		err = dev_pm_set_wake_irq(tscadc_dev->dev, ts_dev->irq);
 
-Hmm, most of the drivers simply use enable_irq_wake()/disable_irq_wake()
-in suspend/resume paths and use dev_pm_set_wake_irq() only for dedicated
-and distinct wake interrupts. Why do we not follow the same pattern
-here?
 
-Thanks.
-
-> +		if (err)
-> +			dev_err(&pdev->dev, "irq wake enable failed.\n");
-> +	}
-> +
->  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_FIFO0THRES);
->  	titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_EOS);
->  	err = titsc_config_wires(ts_dev);
-> @@ -462,6 +469,7 @@ static int titsc_probe(struct platform_device *pdev)
->  	return 0;
->  
->  err_free_irq:
-> +	dev_pm_clear_wake_irq(tscadc_dev->dev);
->  	free_irq(ts_dev->irq, ts_dev);
->  err_free_mem:
->  	input_free_device(input_dev);
-> @@ -474,6 +482,7 @@ static int titsc_remove(struct platform_device *pdev)
->  	struct titsc *ts_dev = platform_get_drvdata(pdev);
->  	u32 steps;
->  
-> +	dev_pm_clear_wake_irq(ts_dev->mfd_tscadc->dev);
->  	free_irq(ts_dev->irq, ts_dev);
->  
->  	/* total steps followed by the enable mask */
-> -- 
-> 2.17.0
+On 04/16/2018 10:28 PM, Guenter Roeck wrote:
+> On Mon, Apr 16, 2018 at 10:08:19PM +0500, Ahsan Hussain wrote:
+>>
+>> Upstream commit
+>>
+>> 8d008c0c ("hwmon: (ina2xx) Make calibration register value fixed")
+>>
+> This doesn't have to be on separate lines; as written, it just causes
+> confusion.
 > 
-
--- 
-Dmitry
+Will do in my next email.
+>> makes ina2xx_set_shunt() call mutex_lock on an un-initialized mutex.
+>> Initialize it prior so we don't get a NULL pointer dereference error
+>>
+>> Signed-off-by: Ahsan Hussain <ahsan_hussain@mentor.com>
+> 
+> Good find, but your patch is corrupted to the point where any attenpt to
+> fix it up on my side failed. Please resend without corruption, and please
+> provide a Fixes: line.
+Appologies. This must be Thunderbird, I've been trying to coax into
+doing otherwise. Will send the corrected patch shortly.
+> 
+> Thanks,
+> Guenter
+> 
+>> ---
+>>  drivers/hwmon/ina2xx.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+>> index a629f7c..1304f01 100644
+>> --- a/drivers/hwmon/ina2xx.c
+>> +++ b/drivers/hwmon/ina2xx.c
+>> @@ -457,6 +457,8 @@ static int ina2xx_probe(struct i2c_client *client,
+>>  			val = INA2XX_RSHUNT_DEFAULT;
+>>  	}
+>>  +	mutex_init(&data->config_lock);
+>> +
+>>  	ina2xx_set_shunt(data, val);
+>>   	ina2xx_regmap_config.max_register = data->config->registers;
+>> @@ -473,8 +475,6 @@ static int ina2xx_probe(struct i2c_client *client,
+>>  		return -ENODEV;
+>>  	}
+>>  -	mutex_init(&data->config_lock);
+>> -
+>>  	data->groups[group++] = &ina2xx_group;
+>>  	if (id->driver_data == ina226)
+>>  		data->groups[group++] = &ina226_group;
+>> -- 
+>> 2.7.4
+>>
