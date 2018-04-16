@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753679AbeDPVvm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 17:51:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40757 "EHLO mail.bootlin.com"
+        id S1753210AbeDPVvq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 17:51:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40767 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752981AbeDPVvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 17:51:38 -0400
+        id S1752981AbeDPVvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 17:51:43 -0400
 From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
 To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
         marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
@@ -14,9 +14,9 @@ Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
         thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v6 06/11] ARM: sunxi: Add initialization of CNTVOFF
-Date: Mon, 16 Apr 2018 23:50:27 +0200
-Message-Id: <20180416215032.5023-7-mylene.josserand@bootlin.com>
+Subject: [PATCH v6 07/11] ARM: sun9i: smp: Rename clusters's power-off
+Date: Mon, 16 Apr 2018 23:50:28 +0200
+Message-Id: <20180416215032.5023-8-mylene.josserand@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180416215032.5023-1-mylene.josserand@bootlin.com>
 References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
@@ -27,80 +27,49 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the initialization of CNTVOFF for sun8i-a83t.
+To prepare the support for sun8i-a83t, rename the variable name
+that handles the power-off of clusters because it is different from
+sun9i-a80 to sun8i-a83t.
 
-For boot CPU, create a new machine that handles this
-function's call in an "init_early" callback. We need to initialize
-CNTVOFF before the arch timer's initialization otherwise, it will
-not be taken into account and fails to boot correctly.
-Because of that, this function can't be called in SMP's early_initcall
-function which is called after timer's init.
-
-For secondary CPUs, add this function into secondary_startup
-assembly entry.
+The power off register for clusters are different from a80 and a83t.
 
 Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/mach-sunxi/headsmp.S |  1 +
- arch/arm/mach-sunxi/sunxi.c   | 20 +++++++++++++++++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ arch/arm/mach-sunxi/mc_smp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
-index 37dc772701f3..32d76be98541 100644
---- a/arch/arm/mach-sunxi/headsmp.S
-+++ b/arch/arm/mach-sunxi/headsmp.S
-@@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+index 727968d6a3e5..03f021d0c73e 100644
+--- a/arch/arm/mach-sunxi/mc_smp.c
++++ b/arch/arm/mach-sunxi/mc_smp.c
+@@ -60,7 +60,7 @@
+ #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
+ #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
+ #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
+-#define PRCM_PWROFF_GATING_REG_CLUSTER	BIT(4)
++#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
+ #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
+ #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
+ #define PRCM_CPU_SOFT_ENTRY_REG		0x164
+@@ -255,7 +255,7 @@ static int sunxi_cluster_powerup(unsigned int cluster)
  
- ENTRY(sunxi_mc_smp_secondary_startup)
- 	bl	sunxi_mc_smp_cluster_cache_enable
-+	bl	secure_cntvoff_init
- 	b	secondary_startup
- ENDPROC(sunxi_mc_smp_secondary_startup)
+ 	/* clear cluster power gate */
+ 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+-	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER;
++	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+ 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	udelay(20);
  
-diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
-index 5e9602ce1573..ddc439f6269b 100644
---- a/arch/arm/mach-sunxi/sunxi.c
-+++ b/arch/arm/mach-sunxi/sunxi.c
-@@ -16,6 +16,7 @@
- #include <linux/platform_device.h>
+@@ -452,7 +452,7 @@ static int sunxi_cluster_powerdown(unsigned int cluster)
+ 	/* gate cluster power */
+ 	pr_debug("%s: gate cluster power\n", __func__);
+ 	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+-	reg |= PRCM_PWROFF_GATING_REG_CLUSTER;
++	reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
+ 	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
+ 	udelay(20);
  
- #include <asm/mach/arch.h>
-+#include <asm/secure_cntvoff.h>
- 
- static const char * const sunxi_board_dt_compat[] = {
- 	"allwinner,sun4i-a10",
-@@ -62,7 +63,6 @@ MACHINE_END
- static const char * const sun8i_board_dt_compat[] = {
- 	"allwinner,sun8i-a23",
- 	"allwinner,sun8i-a33",
--	"allwinner,sun8i-a83t",
- 	"allwinner,sun8i-h2-plus",
- 	"allwinner,sun8i-h3",
- 	"allwinner,sun8i-r40",
-@@ -75,6 +75,24 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
- 	.dt_compat	= sun8i_board_dt_compat,
- MACHINE_END
- 
-+void __init sun8i_cntvoff_init(void)
-+{
-+#ifdef CONFIG_SMP
-+	secure_cntvoff_init();
-+#endif
-+}
-+
-+static const char * const sun8i_cntvoff_board_dt_compat[] = {
-+	"allwinner,sun8i-a83t",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i-a83t board")
-+	.init_early	= sun8i_cntvoff_init,
-+	.init_time	= sun6i_timer_init,
-+	.dt_compat	= sun8i_cntvoff_board_dt_compat,
-+MACHINE_END
-+
- static const char * const sun9i_board_dt_compat[] = {
- 	"allwinner,sun9i-a80",
- 	NULL,
 -- 
 2.11.0
