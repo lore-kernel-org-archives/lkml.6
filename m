@@ -1,141 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754019AbeDPKXK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:23:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:57712 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753218AbeDPKXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:23:08 -0400
-Subject: Re: [PATCH v2 12/17] kvm: arm/arm64: Expose supported physical
- address limit for VM
-To: Peter Maydell <peter.maydell@linaro.org>
-Cc: arm-mail-list <linux-arm-kernel@lists.infradead.org>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kvmarm@lists.cs.columbia.edu, kvm-devel <kvm@vger.kernel.org>,
-        Christoffer Dall <cdall@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-13-git-send-email-suzuki.poulose@arm.com>
- <CAFEAcA-jUSHuwRrWCH6vFENmEi7Xskn9s9BgDmBKj3YKCyXHXQ@mail.gmail.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <ec7e7694-ae65-6a47-d547-3ed5ef55e6c4@arm.com>
-Date: Mon, 16 Apr 2018 11:23:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753275AbeDPKZn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:25:43 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45921 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbeDPKZl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 06:25:41 -0400
+X-Google-Smtp-Source: AIpwx4/FUdDKNWTz3KrGbkJLweruoVLHzPqT6vH8+NJvIO1hDCz/jmTDUFTswzRew7tDTQkMtOohNw==
+From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
+X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+To: mb@lightnvm.io
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
+Subject: [PATCH 00/11] lightnvm: pblk: small fixes
+Date: Mon, 16 Apr 2018 12:25:21 +0200
+Message-Id: <1523874332-6272-1-git-send-email-javier@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <CAFEAcA-jUSHuwRrWCH6vFENmEi7Xskn9s9BgDmBKj3YKCyXHXQ@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/04/18 14:21, Peter Maydell wrote:
-> On 27 March 2018 at 14:15, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->> Expose the maximum physical address size supported by the host
->> for a VM. This could be later used by the userspace to choose the
->> appropriate size for a given VM. The limit is determined as the
->> minimum of actual CPU limit, the kernel limit (i.e, either 48 or 52)
->> and the stage2 page table support limit (which is 40bits at the moment).
->> For backward compatibility, we support a minimum of 40bits. The limit
->> will be lifted as we add support for the stage2 to support the host
->> kernel PA limit.
->>
->> This value may be different from what is exposed to the VM via
->> CPU ID registers. The limit only applies to the stage2 page table.
->>
->> Cc: Christoffer Dall <cdall@kernel.org>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Peter Maydel <peter.maydell@linaro.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   Documentation/virtual/kvm/api.txt | 14 ++++++++++++++
->>   arch/arm/include/asm/kvm_mmu.h    |  5 +++++
->>   arch/arm64/include/asm/kvm_mmu.h  |  5 +++++
->>   include/uapi/linux/kvm.h          |  6 ++++++
->>   virt/kvm/arm/arm.c                |  6 ++++++
->>   5 files changed, 36 insertions(+)
->>
->> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
->> index 792fa87..55908a8 100644
->> --- a/Documentation/virtual/kvm/api.txt
->> +++ b/Documentation/virtual/kvm/api.txt
->> @@ -3500,6 +3500,20 @@ Returns: 0 on success; -1 on error
->>   This ioctl can be used to unregister the guest memory region registered
->>   with KVM_MEMORY_ENCRYPT_REG_REGION ioctl above.
->>
->> +4.113 KVM_ARM_GET_MAX_VM_PHYS_SHIFT
->> +Capability: basic
->> +Architectures: arm, arm64
->> +Type: system ioctl
->> +Parameters: none
->> +Returns: log2(Maximum physical address space size) supported by the
->> +hyperviosr.
-> 
-> typo: "hypervisor".
-> 
+A bunch of small fixes and extra checks for pblk. Non is critical, though
+("lightnvm: pblk: check for chunk size before allocating it") might be nice to
+get into 4.17 as it is a fix for the 2.0 pblk patches.
 
-Will fix it.
+Javier
 
->> +
->> +This ioctl can be used to identify the maximum physical address space size
->> +supported by the hypervisor.
-> 
-> Is that the physical address space on the host, or the physical
-> address space size we present to the guest?
+Javier González (11):
+  lightnvm: pblk: fail gracefully on line alloc. failure
+  lightnvm: pblk: recheck for bad lines at runtime
+  lightnvm: pblk: check read lba on gc path
+  lightnvn: pblk: improve error msg on corrupted LBAs
+  lightnvm: pblk: warn in case of corrupted write buffer
+  lightnvm: pblk: return NVM_ error on failed submission
+  lightnvm: pblk: remove unnecessary indirection
+  lightnvm: pblk: remove unnecessary argument
+  lightnvm: pblk: check for chunk size before allocating it
+  lightnvn: pass flag on graceful teardown to targets
+  lightnvm: pblk: remove dead function
 
-It is the size of the address space we present to the guest. I will update
-the documentation to make it more clear.
+ drivers/lightnvm/core.c      | 10 +++---
+ drivers/lightnvm/pblk-core.c | 86 ++++++++++++++++++++++++++------------------
+ drivers/lightnvm/pblk-gc.c   | 10 +++---
+ drivers/lightnvm/pblk-init.c | 38 ++++++++++++--------
+ drivers/lightnvm/pblk-map.c  | 33 ++++++++++++-----
+ drivers/lightnvm/pblk-rb.c   |  5 ++-
+ drivers/lightnvm/pblk-read.c | 73 ++++++++++++++++++++++++++++---------
+ drivers/lightnvm/pblk.h      |  7 ++--
+ include/linux/lightnvm.h     |  2 +-
+ 9 files changed, 173 insertions(+), 91 deletions(-)
 
-> 
->> The returned value indicates the maximum size
->> +of the address that can be resolved by the stage2 translation table on
->> +arm/arm64. On arm64, the value is decided based on the host kernel
->> +configuration and the system wide safe value of ID_AA64MMFR0_EL1:PARange.
->> +This may not match the value exposed to the VM in CPU ID registers.
-> 
-> Isn't it likely to confuse the guest if we lie to it about the PA range it
-> sees? When would the two values differ?
-
-On a heterogeneous system, the guest could see different values
-of PARange on the same VCPU. So that is not safe for a guest at the moment.
-Ideally, we should emulate the PARange to provide the system wide safe value, which the
-guest can read.
-
-We don't touch the emulation of PARange in the ID registers in this set.
-All we do is (in the next patches) limiting the address space size provided
-to the guest. May be we could update PARange to the limit imposed and emulate
-the field.
-
-> 
-> Do we also need a 'set' operation, so userspace can create a VM
-> that has a 40 bit userspace on a CPU that supports more than that,
-> or does it just work?
-
-It just works as before, creating a 40bit userspace, without any additional
-steps. All we do is, allowing to create a VM with bigger address space
-by specifying the size in the "type" field. The other question is, does
-it really matter what a guest sees in PARange and what it is provided
-with ? e.g, on my Juno, the A53's have 40bit and A57 has 44bit, while
-the system uses only 40bit.
-
-This will be true even with the new change. i.e, we don't allow a size
-beyond the limit supported by all the CPUs on the system.
-
-> 
-> What's the x86 API for KVM to tell userspace about physical address
-> range restrictions?
-
- From a quick look, the limit comes from cpuid (leaf 0x80000008 ?). So, it
-could be via the existing per-VCPU get/set_cpuid{,2}() API on x86.
-
-Suzuki
+-- 
+2.7.4
