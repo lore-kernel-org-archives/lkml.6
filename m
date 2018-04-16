@@ -1,48 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754656AbeDPJhw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:37:52 -0400
-Received: from mail-pg0-f54.google.com ([74.125.83.54]:37406 "EHLO
-        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753224AbeDPJhu (ORCPT
+        id S1754058AbeDPJi0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:38:26 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44733 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753025AbeDPJiY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:37:50 -0400
-X-Google-Smtp-Source: AIpwx4+wvnAuVM0Go0XYWPFET+kAwD6opNvaDlbj4inf75mp6tiL+fwwcFK6OLYK+uHZbu/UzHW++A==
-Date: Mon, 16 Apr 2018 15:07:47 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
-        kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>
-Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-Message-ID: <20180416093747.GB4244@vireshk-i7>
-References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
- <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
- <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
- <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
- <20180416073729.GA4244@vireshk-i7>
- <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
+        Mon, 16 Apr 2018 05:38:24 -0400
+X-Google-Smtp-Source: AIpwx49hBU3tRlbjQZbKcFhE9q16QMTwhNvZgLWLEMqEMNa/mTvRsu++3OPxHu7rAWzFYgFK/EEyqQ==
+Date: Mon, 16 Apr 2018 10:38:21 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Daniel Schultz <d.schultz@phytec.de>
+Cc: zyw@rock-chips.com, zhangqing@rock-chips.com, xsf@rock-chips.com,
+        tony.xie@rock-chips.com, w.egorov@phytec.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] mfd: rk808: Refactor shutdown functions
+Message-ID: <20180416093821.sqrcc6mmnc23njul@dell>
+References: <1522335000-23057-1-git-send-email-d.schultz@phytec.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1522335000-23057-1-git-send-email-d.schultz@phytec.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-04-18, 09:44, Daniel Lezcano wrote:
-> Because we rely on the number to identify the cluster and flag it
-> 'processed'. The number itself is not important.
+On Thu, 29 Mar 2018, Daniel Schultz wrote:
 
-It is, because you are creating multiple groups (like cpufreq
-policies) right now based on cluster id. Which will be zero for all
-the CPUs. So in a big little system we will have two cpufreq cooling
-devices and one cpuidle cooling device.
+> Since all three shutdown functions have almost the same code, all logic
+> from the shutdown functions can be refactored to a new function
+> "rk808_update_bits", which can update a register by a given address and
+> bitmask.
+> 
+> Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+> ---
+> Changes:
+> 	v2: Re-submit with recipients from Rockchip.
+> 	v3: - Added devicetree property to enable the PMIC reset seperate from 
+> 	      "rockchip,system-power-controller".
+> 	    - Dropped the first patch of this serie.
+> 	v4: Splitted refactoring and the new reset feature.
+> 	v5: Removed null pointer from rk808_update_bits.
+> 
+>  drivers/mfd/rk808.c | 46 +++++++++++++---------------------------------
+>  1 file changed, 13 insertions(+), 33 deletions(-)
+
+I'd still like an Ack/Review from the Rockchip guys please.
 
 -- 
-viresh
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
