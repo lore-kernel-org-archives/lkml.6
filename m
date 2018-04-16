@@ -1,106 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755279AbeDPOZA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 10:25:00 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:33508 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751375AbeDPOY5 (ORCPT
+        id S1755427AbeDPOZT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:25:19 -0400
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:35310 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755291AbeDPOZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:24:57 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180416142455euoutp023acd241a6aae99edea770d33b6311375~l8LHZGA7o2110821108euoutp024
-X-AuditID: cbfec7f4-b4fc79c0000043e4-eb-5ad4b2343620
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/14] thermal: exynos: remove separate exynos_tmu.h
- header file
-Date: Mon, 16 Apr 2018 16:24:50 +0200
-Message-ID: <4780353.WGAykbfPTG@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
-In-Reply-To: <fa04dbd9-fdb4-26e4-ac1d-2aa3a5840465@linaro.org>
+        Mon, 16 Apr 2018 10:25:15 -0400
+X-Google-Smtp-Source: AIpwx48FHqXB1r1cBeHkDV267tuL4DWcmniqnLKMeTwZF3wGoTec3K4RpZIr3ujGpK+2KH4MdfXh4w==
+Date: Mon, 16 Apr 2018 16:25:12 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>, mario.limonciello@dell.com,
+        andy@infradead.org, dvhart@infradead.org, mjg59@srcf.ucam.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] ALSA: hda: Disabled unused audio controller for
+ Dell platforms with Switchable Graphics
+Message-ID: <20180416142512.bwsemgwrncyl5xan@pali>
+References: <20180412104239.25584-1-kai.heng.feng@canonical.com>
+ <20180412104239.25584-3-kai.heng.feng@canonical.com>
+ <s5hr2nk8zs5.wl-tiwai@suse.de>
+ <20180412105909.tbyfcjm55sb47hiq@pali>
+ <93DC0F40-81A5-49C6-A470-0D1B6AA85725@canonical.com>
+ <20180414104512.GA27158@wunner.de>
+ <20180414104950.ngomyjy5l5cwhb5i@pali>
+ <20180414111711.GA4245@wunner.de>
+ <20180415171746.futkvgbaoj6quy5z@pali>
+ <20180415190523.GA16129@wunner.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMKsWRmVeSWpSXmKPExsWy7djPc7qmm65EGbSsZ7GY91nWYv6Va6wW
-        /Y9fM1ucP7+B3eLyrjlsFp97jzBazDi/j8niycM+NgcOj52z7rJ7LN7zkslj06pONo871/aw
-        eXzeJBfAGsVlk5Kak1mWWqRvl8CVcfjqLLaCfVwVs199Z2pgvMHRxcjJISFgIrFmx0bWLkYu
-        DiGBFYwSf9f8ZIRwvjBKTJg5A8r5zChx9cAcFpiW5XOfg9lCAssZJTZeDIco+sAoceXGJVaQ
-        BJuAlcTE9lWMILaIgJ5E4/s2JpAiZoFPjBJLmzrZQRLCAmESE54cBWtgEVCVuHbtFZjNK6Ap
-        sfTaWTYQW1TAS2LLvnYmEJtTwE7i/cl2NogaQYmTM5+AXcEsIC/RcbkR7AkJgXXsEtN3TmGF
-        ONVFYsbrZUwQtrDEq+Nb2CFsGYnTk3tYIBqaGSW+7djDDJGYwCixZ70QhG0tcfj4RaBBHEAb
-        NCXW79KHCNtKHLy/kBEkLCHAJ3HjrSDEDXwSk7ZNZ4YI80p0tEENUZPYsGwDG8zWrp0roRZ5
-        SBy98Jh5AqPSLCTfzELyzSyEvQsYmVcxiqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIEJp3T
-        /45/2cG460/SIUYBDkYlHt4dZy9HCbEmlhVX5h5ilOBgVhLhXZYIFOJNSaysSi3Kjy8qzUkt
-        PsQozcGiJM4bp1EXJSSQnliSmp2aWpBaBJNl4uCUamB044uJ/FLUYGYzn/1jdNCrJFb7nPzl
-        dftPzQq42WlodTaLsYdZpLX0nfpqNXnWC0cNH9776buyN9g2/e66rtRg22cuH44w7Jiy5nDu
-        yYNHggor32eyPFwj5M+asGlyWxh7zMUEfeWAhSEhAeet/oaueZMZvOXBlpq+ezoKtqE3FrwR
-        Yf/xYZkSS3FGoqEWc1FxIgDY7jvRNgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFIsWRmVeSWpSXmKPExsVy+t/xe7rGm65EGdx6bGYx77Osxfwr11gt
-        +h+/ZrY4f34Du8XlXXPYLD73HmG0mHF+H5PFk4d9bA4cHjtn3WX3WLznJZPHplWdbB53ru1h
-        8/i8SS6ANUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjf
-        LkEv4/DVWWwF+7gqZr/6ztTAeIOji5GTQ0LARGL53OcsXYxcHEICSxklmt9tBXI4gBIyEsfX
-        l0HUCEv8udbFBlHzjlFiecckRpAEm4CVxMT2VWC2iICeROP7NiaQImaBN4wSR/d8YAVJCAuE
-        SDyYcgGsiEVAVeLatVdgcV4BTYml186ygdiiAl4SW/a1M4HYnAJ2Eu9PtkNt28Eocbz/FjtE
-        g6DEyZlPWEBsZgF5iY7LjawQto7Egt2f2CYwCs5CUjYLSdksJGULGJlXMYqklhbnpucWG+oV
-        J+YWl+al6yXn525iBMbTtmM/N+9gvLQx+BCjAAejEg/vjrOXo4RYE8uKK3MPMUpwMCuJ8C5L
-        BArxpiRWVqUW5ccXleakFh9iNAX6biKzlGhyPjDW80riDU0NzS0sDc2NzY3NLJTEec8bVEYJ
-        CaQnlqRmp6YWpBbB9DFxcEo1MKp8ja/T4cnL2LVfWcjec9ZpXrPX7covmQx3pXIedmBpuHbY
-        ZF8hX7X5nEazOYfZ3i/NPz31vV7lpheGj25dYnUukkyZw61d9E5n9zVTncX2f3lZFE6+kFjj
-        wfbpyknTU7uO/XONmPAn9ETHRGGxvgq5Y141HJHa67PfbUhknML77eSKFa9erlZiKc5INNRi
-        LipOBAAA2pP1vQIAAA==
-X-CMS-MailID: 20180416142452eucas1p2feb091d3ba51e78f42e93e184eb01291
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180416142452eucas1p2feb091d3ba51e78f42e93e184eb01291
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180416142452eucas1p2feb091d3ba51e78f42e93e184eb01291
-X-RootMTR: 20180416142452eucas1p2feb091d3ba51e78f42e93e184eb01291
-References: <1523873525-23718-1-git-send-email-b.zolnierkie@samsung.com>
-        <1523873525-23718-13-git-send-email-b.zolnierkie@samsung.com>
-        <fa04dbd9-fdb4-26e4-ac1d-2aa3a5840465@linaro.org>
-        <CGME20180416142452eucas1p2feb091d3ba51e78f42e93e184eb01291@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180415190523.GA16129@wunner.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, April 16, 2018 03:24:57 PM Daniel Lezcano wrote:
-> On 16/04/2018 12:12, Bartlomiej Zolnierkiewicz wrote:
-> > exynos_tmu.h is used only by exynos_tmu.c so there is no need
-> > for a separate include file.
+On Sunday 15 April 2018 21:05:23 Lukas Wunner wrote:
+> On Sun, Apr 15, 2018 at 07:17:46PM +0200, Pali Rohár wrote:
+> > On Saturday 14 April 2018 13:17:11 Lukas Wunner wrote:
+> > > On Sat, Apr 14, 2018 at 12:49:50PM +0200, Pali Rohár wrote:
+> > > > On Saturday 14 April 2018 12:45:12 Lukas Wunner wrote:
+> > > > > On Thu, Apr 12, 2018 at 10:15:41PM +0800, Kai-Heng Feng wrote:
+> > > > > > Do you have any suggestion to check if it connects to the system via
+> > > > > > Thunderbolt?
+> > > > > 
+> > > > > Just use pci_is_thunderbolt_attached(), introduced by 8531e283bee6,
+> > > > > like this:
+> > > > > 
+> > > > > if (check_dell_switchable_gfx(pci) && !pci_is_thunderbolt_attached(pci))
+> > > > 
+> > > > And what about PCI-e device attached to ExpressCard slot?
+> > > 
+> > > I don't know of a bullet-proof way to recognize those.  In theory
+> > > one could check if the PCIe port above the GPU is a non-hotplug
+> > > root port, but I think there are machines with hotplug capable
+> > > root ports with GPUs below them that aren't actually removable.
+> > > 
+> > > However I think ExpressCard-attached GPUs were rare, much less ones
+> > > with integrated HDA controller, so in reality that's probably a
+> > > non-issue.
 > > 
-> > There should be no functional changes caused by this patch.
-> > 
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c | 18 +++++++++++++++-
-> >  drivers/thermal/samsung/exynos_tmu.h | 41 ------------------------------------
-> >  2 files changed, 17 insertions(+), 42 deletions(-)
-> >  delete mode 100644 drivers/thermal/samsung/exynos_tmu.h
-> > 
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> > index 7975f33..197f267 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -34,8 +34,10 @@
-> >  #include <linux/of_irq.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/regulator/consumer.h>
-> > +#include <linux/cpu_cooling.h>
-> > +
+> > Hm... maybe another idea: Is it possible to detect which audio pci
+> > device belongs to graphics card via vga_switcheroo? Currently, looking
+> > at output it is same PCI device as graphic card, just different PCI
+> > function.
 > 
-> This one should go away, no ?
+> No, the DRM drivers don't filter ExpressCard-attached GPUs when
+> registering with vga_switcheroo.
 
-Yes, thanks for noticing (I've just sent v2 of this patch).
-.
-> Apart this.
+> They do filter Thunderbolt-attached GPUs.
+
+So check via vga_switcheroo should at least work for Thunderbolt GPUs.
+
+> The ExpressCard 2.0 spec defines some ACPI stuff that *might* be
+> used to recognize root ports that are ExpressCard slots, but I'm
+> not sure how reliable that is.
+
+So for EC we do not know or have reliable detection.
+
+I do not know if it is possible, but for me it looks like that check via
+vga_switcheroo should be better then adding another heuristic to other
+drivers.
+
+Lukas, what do you think? And it is possible to use this check for
+detecting audio device?
+
+And once we would have good/reliable check for EC devices we can add it
+into vga_switcheroo and all users of it could benefit. Anyway, I think
+that vga_switcheroo should filter also EC GPU cards if it already
+filters Thunderbolt.
+
+> I don't have such a machine and have no experience with it.
 > 
-> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> This is from the MacBookPro8,3 DSDT:
+> 
+>             Device (RP04)
+>             {
+>                 Name (_ADR, 0x001C0003)
+>                 OperationRegion (A1E0, PCI_Config, 0x19, 0x01)
+>                 Field (A1E0, ByteAcc, NoLock, Preserve)
+>                 {
+>                     SECB,   8
+>                 }
+> 
+>                 Device (EXCD)
+>                 {
+>                     Name (_ADR, 0x00)
+>                     Name (_SUN, 0x01)
+>                     Method (_RMV, 0, NotSerialized)
+>                     {
+>                         Return (0x01)
+>                     }
+> 
+>                     Name (_EJD, "\\_SB.PCI0.EHC2.HUBN.PRTN.PRT4")
+>                 }
+>                 ...
+>             }
+> 
+> Thanks,
+> 
+> Lukas
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+-- 
+Pali Rohár
+pali.rohar@gmail.com
