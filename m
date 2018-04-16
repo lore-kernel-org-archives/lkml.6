@@ -1,62 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754820AbeDPJpn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 05:45:43 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41455 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754803AbeDPJpk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 05:45:40 -0400
-X-Google-Smtp-Source: AIpwx4/nEn4YJfDjem7Z2bDwjn3lWvI4kVfsxUGg7w6hPDenhIVnAedzopeASUEbwRuc6JMKNoGLhg==
-Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
-        kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>
-References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
- <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
- <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
- <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
- <20180416073729.GA4244@vireshk-i7>
- <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
- <20180416093747.GB4244@vireshk-i7>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <4abf0d97-d2b8-46ab-3c05-4a11510ac3fe@linaro.org>
-Date: Mon, 16 Apr 2018 11:45:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754829AbeDPJqK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 05:46:10 -0400
+Received: from mga03.intel.com ([134.134.136.65]:24654 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754042AbeDPJqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 05:46:08 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,459,1517904000";
+   d="scan'208";a="43642434"
+Date: Mon, 16 Apr 2018 12:46:03 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/mm: vmemmap and vmalloc base addressess are usngined
+ longs
+Message-ID: <20180416094603.fj3wevho5j7wy7s6@black.fi.intel.com>
+References: <nycvar.YFH.7.76.1804121437350.28129@cbobk.fhfr.pm>
+ <20180412142801.oi7bzju3frgkdskp@node.shutemov.name>
+ <nycvar.YFH.7.76.1804161133500.28129@cbobk.fhfr.pm>
 MIME-Version: 1.0
-In-Reply-To: <20180416093747.GB4244@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.1804161133500.28129@cbobk.fhfr.pm>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/04/2018 11:37, Viresh Kumar wrote:
-> On 16-04-18, 09:44, Daniel Lezcano wrote:
->> Because we rely on the number to identify the cluster and flag it
->> 'processed'. The number itself is not important.
+On Mon, Apr 16, 2018 at 09:43:02AM +0000, Jiri Kosina wrote:
+> On Thu, 12 Apr 2018, Kirill A. Shutemov wrote:
 > 
-> It is, because you are creating multiple groups (like cpufreq
-> policies) right now based on cluster id. Which will be zero for all
-> the CPUs. So in a big little system we will have two cpufreq cooling
-> devices and one cpuidle cooling device.
+> > > Commits 9b46a051e4 ("x86/mm: Initialize vmemmap_base at boot-time") and 
+> > > a7412546d8 ("x86/mm: Adjust vmalloc base and size at boot-time") lost the 
+> > > type information for __VMALLOC_BASE_L4, __VMALLOC_BASE_L5, 
+> > > __VMEMMAP_BASE_L4 and __VMEMMAP_BASE_L5 constants.
+> > > 
+> > > Let's declare them explicitly unsigned long again.
+> > 
+> > It is just cosmetics, right? I mean these literals are 'unsigned long'
+> > anyway.
+> 
+> Yeah, I can't imagine this particular case leading to any overflow 
+> scenario, as the literal is big enough to be automatically treated as 
+> unsigned long by the compiler, but it shuts up sparse which treats this as 
+> a generic case (where the missing UL might be a problem), and totally 
+> pollutes the build output.
+> 
+> Either we put the 'UL' there, or teach sparse about figuring out the 
+> 'closer bigger fitting type' for hexadecimal literals, which might be more 
+> tricky.
 
-Can you elaborate a bit ? I'm not sure to get the point.
+I don't have a problem with the patch:
 
-BTW, Am I asked to change my code to stick to something which is not
-merged ?
-
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+ Kirill A. Shutemov
