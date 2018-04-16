@@ -1,162 +1,124 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1582956-1523557977-2-12993992791143416578
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523557976; b=bL2LJ7YUy6TVQmyIa7WngkeQ+TYT0Hl4ulGGwlA8VDAy2noWDW
-    hAGxVRdIb1J5lB5kNch8kltlRYih+hEWEhfm1JxEFb5ocoQZnhauWw5Y3YgFdUC6
-    xrDktGd104Gk/mS0mKyFs9ZZ6K48kD4SxW44ucPAlD/vbO1sPvp8UdcFRTOzbfep
-    +EoXhsi42mjkHwdBrlAit6IffTi2Gh7ISOs9Q/WxK0rVfnynkaBGMS3+zY7Kfk+Z
-    deuDWjP5FyycGcTBFs8xY8sKxJFkuSwYkWMaY5xHr9TKuNMMmVawthXsZX9tQkMw
-    ocjqjxfOnt0KzU5m6ukVgEvYeqnnTo0+RF4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=cc:subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523557976;
-    bh=pXSiezbeROvtDlfeA7/PSwklw57nTOl64afMcXsijs4=; b=ss6ZsN9jNYNh
-    i/rV28cqZfvIkr5zxWUb8OJak4fMm90QoDmYjl3u2nUccO4D337DjQCATm2d4K7J
-    Xz6RqQe3CeI/gmLR5tFUbEsDyDFs3XhrPOOW3+DXUavJFfJyFSVmV1BoCq7D6vGh
-    q6+3NQZWxh5sMCf+GdO4a6IT3Vjz11TF84CeLjo7EcjuBRxjJzs2tAYwf57AiNhS
-    keL6IHtM/bzeJgub0OWiX9rrFoaoarjMfRhF7o4altl7Q3XDBuBZBS7erZEGsX6e
-    OfNCnj2HfCLAzF4vXh9UWP6hiP8kyVnGF6eFnm3eDVUuH8TeXuMf97jn/WqfTmD4
-    PfsDt+Y1/g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HxYoPwIk x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=e7DeYd+1;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=HxYoPwIk x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=e7DeYd+1;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfONZjWczTtJHEqeDuWIe6o2TdUp5xqJk/J8fzeRYDywrSTp0SlWpUA4ZdNjRgkFII6sYteKmJ0LQ3SB7bAuSM6t0ZTbUxR9H0cQ0NkxYThL4NGMYjP25
-    bPoSZNV+0/XbraZAYh9MtU2fbmhS3lU8NgzjIj/3VF2ITKYIR3qU/bCMUSXTyd1UfpYYbZmfvmFh4obGe9yEbeX88BJgfnfpm2JXJACQSwwn26224KVd+9FZ
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=ZvkwkgPurpcA:10 a=xqWC_Br6kY4A:10 a=4_-BN3WEXhEA:10 a=Kd1tUaAdevIA:10
-    a=1XWaLZrsAAAA:8 a=Sg8HuZxHAAAA:8 a=VwQbUJbxAAAA:8 a=GcyzOjIWAAAA:8
-    a=gpI8acLqhJ06iL_wKUgA:9 a=OKn5u0scoi39EwHP:21 a=Ug62Kmh5orO8b7MT:21
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=JFlNBosjgyz61O-hmi61:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=hQL3dl6oAZ8NdCsdz28n:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753148AbeDLScr (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 12 Apr 2018 14:32:47 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38710 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752937AbeDLScp (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 12 Apr 2018 14:32:45 -0400
-X-Google-Smtp-Source: AIpwx48gKvFYuuAdObpIaxBfPL7Na/OHz8wUWizsxLDupy0W5y8zfW5s2Wie/NRTAy0EmZgn5qLdIw==
-Cc: mtk.manpages@gmail.com
-Subject: Re: [PATCH] mmap.2: MAP_FIXED is okay if the address range has been
- reserved
-To: Jann Horn <jannh@google.com>, linux-man@vger.kernel.org,
-        mhocko@kernel.org, jhubbard@nvidia.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-References: <20180412153941.170849-1-jannh@google.com>
-From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <3ff7472c-23c8-402b-ddfb-871a749c5016@gmail.com>
-Date: Thu, 12 Apr 2018 20:32:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <okaya@codeaurora.org>
+X-Google-Smtp-Source: AIpwx4+EXxS+LGuJcGQ5knTCUYwdeE6/vahSmRgWNdVhI6dbvHG5bab1k7TAvcp6c+xcjxsffolr
+ARC-Seal: i=1; a=rsa-sha256; t=1523916085; cv=none;
+        d=google.com; s=arc-20160816;
+        b=B6UZNnMJLcATVFypMNUBVbgkEpDhn1XF4HVule8lorVl4obV3GyxPeuYRaH+xWF5Bm
+         5Tmz6BEeoEN2v0fRdUT3GFeWoWHKrC2sVU0uzWjW+I4Lbubz5QDc96DF8DdpIl5n/GHU
+         7oeyjrTtulCJHLUpAg6W0LuAKN2nh4U55fV/Y0OzMR6elaMrRBpdPtPaCLOhspblmpI1
+         0Zjz4bW7VvyjaU75Vemu5EzIXQg6A7t1LPQkXq9J7GI8+yqiUstXPGwegzJwkNkMeWob
+         CG0XVjOupIeesgqSEomgTnOafjkS1cvjDV4w/Py30N3UwQCwheNkTG4+Yo+9wpKDUXh7
+         0vDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=NXduwFytSCIvYs2wb29jaECuSwkO+181SiO1k61bbqo=;
+        b=qH3nYo6m/QbLnnATu89Ljp+XPnVbvzpcDwDUO0hugfnoFN0izygKy2yzBW3Dui9VcZ
+         lYK5LSLpUF4UbGPuAFd1ppJ6erskB91kMDxBKJm0w96Cxp4vp5amdPR4u1AS9m3V2uIy
+         Rofn7JbBtSEYqc3gsG2CPNG4SiAaIAj21BtEm5ly+N4GBUs0ejUNtp2OtRjFByGozev1
+         o173wF4huTEJhR2FYC5f3xHTFBdFsSAOV3xPyD8FKrTuYbl0fi684tF0faKmn+zDkYrJ
+         XsUx8qqT8fFpduERR2FGONZhd6q9vH9ACF/8j2AXWYazieHfCQ6XyXpl1/1jOnZeVCaq
+         Jmaw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Fnc/eYqF;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=UQQyP1li;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=Fnc/eYqF;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=UQQyP1li;
+       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5CF34600ED
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From: Sinan Kaya <okaya@codeaurora.org>
+To: linux-parisc@linux-mips.org,
+	arnd@arndb.de,
+	timur@codeaurora.org,
+	sulrich@codeaurora.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sinan Kaya <okaya@codeaurora.org>,
+	"James E.J. Bottomley" <jejb@parisc-linux.org>,
+	Helge Deller <deller@gmx.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-parisc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] parisc: use the asm-generic version for writeX()
+Date: Mon, 16 Apr 2018 18:01:15 -0400
+Message-Id: <1523916078-23049-1-git-send-email-okaya@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180412153941.170849-1-jannh@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597941834039295294?=
+X-GMAIL-MSGID: =?utf-8?q?1597941834039295294?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello Jann,
+parisc architecture seems to be mapping writeX() and writeX_relaxed() APIs
+to __raw_writeX() API.
 
-On 04/12/2018 05:39 PM, Jann Horn wrote:
-> Clarify that MAP_FIXED is appropriate if the specified address range has
-> been reserved using an existing mapping, but shouldn't be used otherwise.
-> 
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
->  man2/mmap.2 | 19 +++++++++++--------
->  1 file changed, 11 insertions(+), 8 deletions(-)
-> 
-> diff --git a/man2/mmap.2 b/man2/mmap.2
-> index bef8b4432..80c9ec285 100644
-> --- a/man2/mmap.2
-> +++ b/man2/mmap.2
-> @@ -253,8 +253,9 @@ Software that aspires to be portable should use this option with care,
->  keeping in mind that the exact layout of a process's memory mappings
->  is allowed to change significantly between kernel versions,
->  C library versions, and operating system releases.
-> -Furthermore, this option is extremely hazardous (when used on its own),
-> -because it forcibly removes preexisting mappings,
-> +This option should only be used when the specified memory region has
-> +already been reserved using another mapping; otherwise, it is extremely
-> +hazardous because it forcibly removes preexisting mappings,
->  making it easy for a multithreaded process to corrupt its own address space.
->  .IP
->  For example, suppose that thread A looks through
-> @@ -284,13 +285,15 @@ and the PAM libraries
->  .UR http://www.linux-pam.org
->  .UE .
->  .IP
-> -Newer kernels
-> -(Linux 4.17 and later) have a
-> +For cases in which the specified memory region has not been reserved using an
-> +existing mapping, newer kernels (Linux 4.17 and later) provide an option
->  .B MAP_FIXED_NOREPLACE
-> -option that avoids the corruption problem; if available,
-> -.B MAP_FIXED_NOREPLACE
-> -should be preferred over
-> -.BR MAP_FIXED .
-> +that should be used instead; older kernels require the caller to use
-> +.I addr
-> +as a hint (without
-> +.BR MAP_FIXED )
-> +and take appropriate action if the kernel places the new mapping at a
-> +different address.
->  .TP
->  .BR MAP_FIXED_NOREPLACE " (since Linux 4.17)"
->  .\" commit a4ff8e8620d3f4f50ac4b41e8067b7d395056843
+__raw_writeX() API doesn't provide any kind of ordering guarantees.
+commit 755bd04aaf4b ("io: define stronger ordering for the default writeX()
+implementation") changed asm-generic implementation to use a more
+conservative approach towards the writeX() API.
 
-Thanks! Nice patch! Applied.
+Drop the arch specific version and rely on the asm-generic version for
+parisc since parisc version doesn't seem to do anything special with these
+macros.
 
-Cheers,
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+---
+ arch/parisc/include/asm/io.h | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
 
-Michael
-
-
-
+diff --git a/arch/parisc/include/asm/io.h b/arch/parisc/include/asm/io.h
+index afe493b..ef04864 100644
+--- a/arch/parisc/include/asm/io.h
++++ b/arch/parisc/include/asm/io.h
+@@ -194,41 +194,14 @@ static inline unsigned long long readq(const volatile void __iomem *addr)
+ 	return le64_to_cpu((__le64 __force) __raw_readq(addr));
+ }
+ 
+-static inline void writeb(unsigned char b, volatile void __iomem *addr)
+-{
+-	__raw_writeb(b, addr);
+-}
+-static inline void writew(unsigned short w, volatile void __iomem *addr)
+-{
+-	__raw_writew((__u16 __force) cpu_to_le16(w), addr);
+-}
+-static inline void writel(unsigned int l, volatile void __iomem *addr)
+-{
+-	__raw_writel((__u32 __force) cpu_to_le32(l), addr);
+-}
+-static inline void writeq(unsigned long long q, volatile void __iomem *addr)
+-{
+-	__raw_writeq((__u64 __force) cpu_to_le64(q), addr);
+-}
+-
+ #define	readb	readb
+ #define	readw	readw
+ #define	readl	readl
+ #define readq	readq
+-#define writeb	writeb
+-#define writew	writew
+-#define writel	writel
+-#define writeq	writeq
+-
+ #define readb_relaxed(addr)	readb(addr)
+ #define readw_relaxed(addr)	readw(addr)
+ #define readl_relaxed(addr)	readl(addr)
+ #define readq_relaxed(addr)	readq(addr)
+-#define writeb_relaxed(b, addr)	writeb(b, addr)
+-#define writew_relaxed(w, addr)	writew(w, addr)
+-#define writel_relaxed(l, addr)	writel(l, addr)
+-#define writeq_relaxed(q, addr)	writeq(q, addr)
+-
+ #define mmiowb() do { } while (0)
+ 
+ void memset_io(volatile void __iomem *addr, unsigned char val, int count);
 -- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+2.7.4
