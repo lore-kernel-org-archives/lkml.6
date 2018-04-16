@@ -1,61 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751375AbeDPPS3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 11:18:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60014 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750799AbeDPPS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:18:28 -0400
-From: Takashi Iwai <tiwai@suse.de>
-To: Christoph Hellwig <hch@lst.de>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] dma-direct: Try reallocation with GFP_DMA32 if possible
-Date: Mon, 16 Apr 2018 17:18:19 +0200
-Message-Id: <20180416151819.27520-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.3
+        id S1751882AbeDPPUN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 11:20:13 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:43524 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeDPPUL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 11:20:11 -0400
+X-Google-Smtp-Source: AIpwx49dU1pXxYF0PyJCgZI6O7dgrixEJ6RcnPhfH/BoyTji0nwY98KFTipRB9kfZqUHQGL87Ih9wA==
+Date: Mon, 16 Apr 2018 10:20:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: linus.walleij@linaro.org, mark.rutland@arm.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: gpio: Add support for r8a77965
+Message-ID: <20180416152009.gf3rnpuork2lbcfa@rob-hp-laptop>
+References: <1523886904-14449-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523886904-14449-1-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the recent swiotlb bug revealed, we seem to have given up the
-direct DMA allocation too early and felt back to swiotlb allocation.
-The reason is that swiotlb allocator expected that dma_direct_alloc()
-would try harder to get pages even below 64bit DMA mask with
-GFP_DMA32, but the function doesn't do that but only deals with
-GFP_DMA case.
+On Mon, Apr 16, 2018 at 03:55:04PM +0200, Jacopo Mondi wrote:
+> Add compatible string for R-Car M3-N (r8a77965) in gpio-rcar.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-This patch adds a similar fallback reallocation with GFP_DMA32 as
-we've done with GFP_DMA.  The condition is that the coherent mask is
-smaller than 64bit (i.e. some address limitation), and neither GFP_DMA
-nor GFP_DMA32 is set beforehand.
+You missed Simon's and my R-by's on v2.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-
----
-
-This is a resend of a test patch included in the previous thread
-("swiotlb: Fix unexpected swiotlb_alloc_coherent() failures").
-
- lib/dma-direct.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/lib/dma-direct.c b/lib/dma-direct.c
-index bbfb229aa067..970d39155618 100644
---- a/lib/dma-direct.c
-+++ b/lib/dma-direct.c
-@@ -84,6 +84,13 @@ void *dma_direct_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 		__free_pages(page, page_order);
- 		page = NULL;
- 
-+		if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
-+		    dev->coherent_dma_mask < DMA_BIT_MASK(64) &&
-+		    !(gfp & (GFP_DMA32 | GFP_DMA))) {
-+			gfp |= GFP_DMA32;
-+			goto again;
-+		}
-+
- 		if (IS_ENABLED(CONFIG_ZONE_DMA) &&
- 		    dev->coherent_dma_mask < DMA_BIT_MASK(32) &&
- 		    !(gfp & GFP_DMA)) {
--- 
-2.16.3
+> 
+> Renesas R-Car M3-N support has been merged for v4.17.
+> Document the missing device tree bindings.
+> 
+> ---
+>  Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> index 9474138..f2af897 100644
+> --- a/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> +++ b/Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt
+> @@ -14,6 +14,7 @@ Required Properties:
+>      - "renesas,gpio-r8a7794": for R8A7794 (R-Car E2) compatible GPIO controller.
+>      - "renesas,gpio-r8a7795": for R8A7795 (R-Car H3) compatible GPIO controller.
+>      - "renesas,gpio-r8a7796": for R8A7796 (R-Car M3-W) compatible GPIO controller.
+> +    - "renesas,gpio-r8a77965": for R8A77965 (R-Car M3-N) compatible GPIO controller.
+>      - "renesas,gpio-r8a77970": for R8A77970 (R-Car V3M) compatible GPIO controller.
+>      - "renesas,gpio-r8a77995": for R8A77995 (R-Car D3) compatible GPIO controller.
+>      - "renesas,rcar-gen1-gpio": for a generic R-Car Gen1 GPIO controller.
+> --
+> 2.7.4
+> 
