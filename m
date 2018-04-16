@@ -1,202 +1,155 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3396683-1524786423-2-11560918466826176881
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3595654-1523894429-2-9592060274001492913
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: from='UTF-8', cc='UTF-8', plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524786422; b=VVZUH1SXazYF7haJ1EK2oGpQMbdDPzENRtRB42s+hLJi3yHJK7
-    fn/m2+daQmmN7devV9XvW3YZEUBjzZaIiXjQxq6LIzcTbMahWnXgPnglDhi+fWvv
-    c87xgSJbbw3WP66ABbofTE/2JDBeIfob4cxnRH9DE8zV2fJ2UbhBe1X4dZ13CY0N
-    GwKG/kZWiOlQ1U0qTRGRbp2NP4oDktDTks0jwoR3odq7qrCezATfgkK7q3pYfS99
-    UPZ++5TjTToei5Q4l8bC/E6XO69qqnKokahce29FSRKS29OgrshFUPeeqFyaAD+c
-    +PMvualB3iDMd9+b+kr0pJnj1tfL7siMjGVw==
+    1523894428; b=uy484B8DGndOSpoh5EkLrZk8n3zf82EfNN+DpnfhCXtYsVb9t1
+    v+qaWoe5CzmhAzNk6jf2A3ISSRY2ljwQHZn7/4LutoCMQJMKgCF+Ew/CBMlPhCCn
+    uUOYFxPjz5zKOwCZzYRlfyKuG8H+OsMl7ILFjrcbWC0uDmuHg61tink3OO52KpCt
+    hBi+m9UxYF4r/zmEHG83JoKxrCd+Au8lNyjif7p2ILwrvYRUwZ1r8d2wV+KzoVv8
+    JTFE97w9yUjzBd0pHbkJdRZL5Rxh9Hzjad5IAmgyngkRJMbR6CFiOuAoZkw3TgrQ
+    E/KvhMsphPFqjULm5CUtFVB2UZSj+iCGPlMA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1524786422; bh=N9Mr2/ZPWhFsdw2FZTuV6eAVjIjF4Z
-    SYPWKa+jtnxtg=; b=LDohZYc92+oyOskupGVgpY01x3vKirC6Z0xWuVgjFwUZrZ
-    i7Jfj+2rEczB6HEuYq/JwUrurt5LAK1GV7DgtHGlQzm/WKcZBqBI9w3KJSRuVBrr
-    tXomRAgoshq3+ycIaNH7uXcWe2hXSr47VYG9nEyOFsZCyl+AT+a2blHkYt0wIInT
-    0zOz8zLaQ6TBcoSESTzzLSti5XrVEQQkwXMXd/2zlVVoR+3c+iAAIqSqIaVzzd5F
-    48f9QSlyOQqpqwl0qsKJRMKxNjuj+LMfSS8+H3L1i+itd1p1l+VtzDzONoy5C08T
-    g0I3OSx++Mpg3lzWdn1L5D2moQA+g/eD9b2uBh6w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523894428;
+    bh=/T9HU9SZVOqOMlY/8NU7XSlN8ZWeBNURpifQCIs75+M=; b=uKazRiRbPIfK
+    CSP9xA4g53d1f33qGSOO7RnztxAdUKDDFYHcXm3H2wXHRSc3ea6HKZIEnHt9Qveo
+    +9WjNfrEl3w1dW8V/P8GT4OxQrl5QM76NIki2fgxPy4EpGgi93OdXOFlNfmRf+JE
+    Vfu+xXYci7vhqJuCRYLa9o2N28AuOHj+dMYBworE1Y84skJNmI1j9ZWE7EpaZv6t
+    ussObwhprPFrIxSVcXLKEUTkjevOQgdlXBo+8E3qShpCMrVlWsnzK/41ovCPpcJ4
+    5knoG1RznmAIgR1SvtrOx3LBk4TDgiB21ysg+w1wv0Qw7MqZcIgZrcOnGiqe0QDQ
+    be33YzOM7w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UHPBLjHZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EojLRt84;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=UHPBLjHZ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=EojLRt84;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDZvytLBvD9Lsfa0s8Yj1yJibPKI8+oTQvCuztkSvSMG3rz27R+Y3yGpwO5uTsplhZrSPK6T7EGeI1nepRv1CzZKQhPzfHJ76uPkFRz7svcmUoy6p3U7
-    LYo7GQjJdYdxTEi+PZCFxuWQQ8AicqndWQLtAFJe7XiaMwROWCNnzOEojChOzCuj+p8dx225YG4m81Cy6tbWr/Ij8jO+sxnzm8N7kxjiXd0DdePZx0pKIgG3
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=xNf9USuDAAAA:8
-    a=VwQbUJbxAAAA:8 a=u8oXkYziLMnxz89bddIA:9 a=x8gzFH9gYPwA:10
-    a=SEwjQc04WA-l_NiBhQ7s:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfI8DeAzooUENjel6SP6MO7Pc1t2gEokCPmflTOYs+5pHtPzvLgD9TOQ2ONBNnJMkAW3YK9OTZ1lIKq4YAebHZdHowgswTp92Zx1aJewbAXlL3oAltts5
+    OsibluYmGnP+nhVYNLXeqs2JWdQzDeJS6WmNlkodS5oEO3X8Kbd1gfZ4ATdDfpBHckpeIEjQ6VrJyT4xzcR12yQO+GOuSMzoymj1GwRPVtf1IGgjPT50ffwU
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+    a=8lk8bxz1YjIA:10 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
+    a=hfpeQFZ0g_gcF6t6SsUA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751626AbeDZXqq (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 26 Apr 2018 19:46:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751139AbeDZXqp (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Thu, 26 Apr 2018 19:46:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 556AE217D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Cc: sandeen@sandeen.net, darrick.wong@oracle.com, dhowells@redhat.com,
-        tytso@mit.edu, fliu@suse.com, jack@suse.cz, jeffm@suse.com,
-        nborisov@suse.com, jake.norris@suse.com, mtk.manpages@gmail.com,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [RFC] vfs: skip extra attributes check on removal for symlinks
-Date: Thu, 26 Apr 2018 16:46:39 -0700
-Message-Id: <20180426234639.12480-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.13.2
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1752826AbeDPQAM (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 16 Apr 2018 12:00:12 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:41207 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751793AbeDPQAE (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 16 Apr 2018 12:00:04 -0400
+X-Google-Smtp-Source: AIpwx4/tsKCVco9/KTtKsla0SEvNZ264Yv0kymXzGHYV7USqt6u2YKUZY6qDOjKEmZTt56Zf5x/txA==
+From: =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To: tomasz.figa@gmail.com, krzk@kernel.org, s.nawrocki@samsung.com
+Cc: linus.walleij@linaro.org, kgene@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2 1/2] pinctrl/samsung: Correct EINTG banks order
+Date: Mon, 16 Apr 2018 17:52:45 +0200
+Message-Id: <1523893966-8884-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523893966-8884-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+References: <1523893966-8884-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Linux filesystems cannot set extra file attributes (stx_attributes as per
-statx(2)) on a symbolic link. To set extra file attributes you issue
-ioctl(2) with FS_IOC_SETFLAGS, *all* ioctl(2) calls on a symbolic link
-yield EBADF.
+All banks with GPIO interrupts should be at beginning
+of bank array and without any other types of banks between them.
+This order is expected by exynos_eint_gpio_irq, when doing
+interrupt group to bank translation.
+Otherwise, kernel NULL pointer dereference would happen
+when trying to handle interrupt, due to wrong bank being looked up.
+Observed on s5pv210, when trying to handle gpj0 interrupt,
+where kernel was mapping it to gpi bank.
 
-This is because ioctl(2) tries to obtain struct fd from the symbolic link
-file descriptor passed using fdget(), fdget() in turn always returns no
-file set when a file descriptor is open with O_PATH. As per symlink(2)
-O_PATH and O_NOFOLLOW must *always* be used when you want to get the file
-descriptor of a symbolic link, and this holds true for Linux, as such extra
-file attributes cannot possibly be set on symbolic links on Linux.
-
-Filesystems repair utilities should be updated to detect this as
-corruption and correct this, however, the VFS *does* respect these
-extra attributes on symlinks for removal.
-
-Since we cannot set these attributes we should special-case the
-immutable/append on delete for symlinks, this would be consistent with
-what we *do* allow on Linux for all filesystems.
-
-The userspace utility chattr(1) cannot set these attributes on symlinks
-*and* other special files as well:
-
-	# chattr -a symlink
-	chattr: Operation not supported while reading flags on b
-
-The reason for this is different though. Refer to commit 023d111e92195
-("chattr.1.in: Document the compression attribute flags E, X, and ...")
-merged on e2fsprogs v1.28 since August 2002. This commit prevented
-issuing the ioctl() for symlink *and* special files in consideration for
-a buggy DRM driver where issuing lsattr on their special files crashed
-the system. For details refer to Debian bug 152029 [0].
-
-You can craft your own tool to query the extra file attributes with
-the new shiny statx(2) tool, statx(2) will list the attributes if
-they were set for instance on a corrupt filesystem. However statx(2)
-is only used for *querying* -- not for setting the attributes.
-
-If you implement issuing your own ioctl() for FS_IOC_FSGETXATTR or
-FS_IOC_FSSETXATTR on special files (block, char, fifo) it will fail
-returning -1 and errno is set to ENOTTY (Inappropriate ioctl for
-device). The reason for this is different than for symlinks.
-For special files this fails on vfs_ioctl() when the filesystem
-f_op callbacks are not set for these special files:
-
-long vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-{
-	int error = -ENOTTY;
-
-        if (!filp->f_op->unlocked_ioctl)
-		goto out;
-
-	error = filp->f_op->unlocked_ioctl(filp, cmd, arg);
-	if (error == -ENOIOCTLCMD)
-		error = -ENOTTY;
-out:
-	return error;
-}
-
-The same applies to PF_LOCAL named sockets. Since this varies by
-filesystem for special files, only make a special rule to respect
-the immutable and append attribute on symlinks.
-
-[0] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=152029
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 023e06dfa6882f500b9c86fd61f0b1913aa07f36 ("pinctrl: exynos: add exynos5410 SoC specific data")
+Fixes: 608a26a7bc04a39cfd7041f31ca2b2100113d14e ("pinctrl: Add s5pv210 support to pinctrl-exynos)
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
 
-As discussed at LSF/MM -- I'd follow up on this low hanging fruit as
-the discussion had stalled on linux-xfs on review of the respective
-xfs_repair changes. This addresses the general API question, and
-as such I think could help establish order in how we split up patches
-for those changes.
+Changes from v1:
+  - Limit changes to s5pv210 and Exynos5410. Exynos3250 will be handled later.
+  - Added cc stable
+  - Added fixes tag
+---
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This requires some other eyeballs, and it also requires a putting it through
-xfstests which I can do in the next few days, hence the RFC. But better put it
-out for review already. I'd also like feedback from the linux-api folks to
-see if this matches their own known / documented expectations.
-
- fs/namei.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 186bd2464fd5..0f9069468cfb 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2719,6 +2719,14 @@ int __check_sticky(struct inode *dir, struct inode *inode)
- }
- EXPORT_SYMBOL(__check_sticky);
- 
-+/* Process extra file attributes only when they make sense */
-+static bool may_delete_stx_attributes(struct inode *inode)
-+{
-+	if (!S_ISLNK(inode->i_mode) && (IS_APPEND(inode) || IS_IMMUTABLE(inode)))
-+		return false;
-+	return  true;
-+}
-+
- /*
-  *	Check whether we can remove a link victim from directory dir, check
-  *  whether the type of victim is right.
-@@ -2757,8 +2765,8 @@ static int may_delete(struct inode *dir, struct dentry *victim, bool isdir)
- 	if (IS_APPEND(dir))
- 		return -EPERM;
- 
--	if (check_sticky(dir, inode) || IS_APPEND(inode) ||
--	    IS_IMMUTABLE(inode) || IS_SWAPFILE(inode) || HAS_UNMAPPED_ID(inode))
-+	if (check_sticky(dir, inode) || !may_delete_stx_attributes(inode) ||
-+	    IS_SWAPFILE(inode) || HAS_UNMAPPED_ID(inode))
- 		return -EPERM;
- 	if (isdir) {
- 		if (!d_is_dir(victim))
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+index 90c2744..4f4ae66 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+@@ -105,12 +105,12 @@ static const struct samsung_pin_bank_data s5pv210_pin_bank[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x1c0, "gpg1", 0x38),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x1e0, "gpg2", 0x3c),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x200, "gpg3", 0x40),
+-	EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x240, "gpj0", 0x44),
+ 	EXYNOS_PIN_BANK_EINTG(6, 0x260, "gpj1", 0x48),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x280, "gpj2", 0x4c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2a0, "gpj3", 0x50),
+ 	EXYNOS_PIN_BANK_EINTG(5, 0x2c0, "gpj4", 0x54),
++	EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpi"),
+ 	EXYNOS_PIN_BANK_EINTN(8, 0x2e0, "mp01"),
+ 	EXYNOS_PIN_BANK_EINTN(4, 0x300, "mp02"),
+ 	EXYNOS_PIN_BANK_EINTN(8, 0x320, "mp03"),
+@@ -630,7 +630,6 @@ static const struct samsung_pin_bank_data exynos5410_pin_banks0[] __initconst =
+ 	EXYNOS_PIN_BANK_EINTG(4, 0x100, "gpc3", 0x20),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x120, "gpc1", 0x24),
+ 	EXYNOS_PIN_BANK_EINTG(7, 0x140, "gpc2", 0x28),
+-	EXYNOS_PIN_BANK_EINTN(2, 0x160, "gpm5"),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpd1", 0x2c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x1A0, "gpe0", 0x30),
+ 	EXYNOS_PIN_BANK_EINTG(2, 0x1C0, "gpe1", 0x34),
+@@ -641,6 +640,7 @@ static const struct samsung_pin_bank_data exynos5410_pin_banks0[] __initconst =
+ 	EXYNOS_PIN_BANK_EINTG(2, 0x260, "gpg2", 0x48),
+ 	EXYNOS_PIN_BANK_EINTG(4, 0x280, "gph0", 0x4c),
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x2A0, "gph1", 0x50),
++	EXYNOS_PIN_BANK_EINTN(2, 0x160, "gpm5"),
+ 	EXYNOS_PIN_BANK_EINTN(8, 0x2C0, "gpm7"),
+ 	EXYNOS_PIN_BANK_EINTN(6, 0x2E0, "gpy0"),
+ 	EXYNOS_PIN_BANK_EINTN(4, 0x300, "gpy1"),
 -- 
-2.17.0
-
+2.7.4
