@@ -1,84 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753080AbeDPEsL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 00:48:11 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36648 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751059AbeDPEsK (ORCPT
+        id S1753050AbeDPFE2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 01:04:28 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:34261 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752198AbeDPFE0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 00:48:10 -0400
-X-Google-Smtp-Source: AIpwx4/oGnKoSg9EBTiXWcnatIEb5Oe4vdADXTsHs4KSsP1oOqrPUUmfgFST5IA6dtAY8U1+lz54Pg==
+        Mon, 16 Apr 2018 01:04:26 -0400
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vincent Chen <vincentc@andestech.com>,
+        Greentime Hu <greentime@andestech.com>
+From: Guenter Roeck <private@roeck-us.net>
+Subject: nds32 build failures
+Cc: Arnd Bergmann <arnd@arndb.de>
+Message-ID: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
+Date: Sun, 15 Apr 2018 20:58:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAGb2v67FaU3_su9XGaGj4zVSoAnpfN8cAhbBHEJu3Owt=Qicmg@mail.gmail.com>
-References: <20180206044905.30508-1-icenowy@aosc.io> <CAGb2v67FaU3_su9XGaGj4zVSoAnpfN8cAhbBHEJu3Owt=Qicmg@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 16 Apr 2018 12:47:47 +0800
-X-Gmail-Original-Message-ID: <CAGb2v665vvCigXYhxncS1E18oKspT_vS++A34Bd0JCPOEnhnig@mail.gmail.com>
-Message-ID: <CAGb2v665vvCigXYhxncS1E18oKspT_vS++A34Bd0JCPOEnhnig@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 00/10] Allwinner H3 DVFS support
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Authenticated_sender: private@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: private@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: private@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 12:41 PM, Chen-Yu Tsai <wens@csie.org> wrote:
-> Hi,
->
-> On Tue, Feb 6, 2018 at 12:48 PM, Icenowy Zheng <icenowy@aosc.io> wrote:
->> This patchset tries to add DVFS support for Allwinner H3 SoC,
->> considering two kinds of adjustable regulators used on H3 boards:
->> SY8106A I2C-controlled regulator and SY8113B regulator (controllable
->> by GPIO with some special designs on the board), and also taking the
->> uncontrollable boards into consider.
->>
->> PATCH 1 and PATCH 2 are for the SY8106A regulator, then PATCH 3 and
->> PATCH 4 are for the r_i2c bus, which is used by boards with SY8106A
->> to communicate with the regulator.
->>
->> PATCH 5 adds the operating points v2 table to the H3 SoC, but with
->> OPPs higher than 1008MHz temporarily dropped.
->>
->> Then there's patches for several tested boards: Orange Pi PC (with
->> SY8106A), Orange Pi One/Zero (with GPIO-adjustable SY8113B) and
->> ALL-H3-CC (unadjustable).
->>
->> Icenowy Zheng (5):
->>   ARM: sun8i: h3: add operating-points-v2 table for CPU
->>   ARM: sun8i: h2+: add SY8113B regulator used by Orange Pi Zero board
->>   ARM: sun8i: h3: add SY8113B regulator used by Orange Pi One board
->>   ARM: sun8i: h3: fix ALL-H3-CC H3 ver VDD-CPUX voltage
->>   ARM: sun8i: h3: set the cpu-supply to VDD-CPUX on ALL-H3-CC H3 ver
->>
->> Ondrej Jirman (5):
->>   dt-bindings: add binding for the SY8106A voltage regulator
->>   regulator: add support for SY8106A regulator
->>   ARM: sunxi: h3/h5: Add r_i2c pinmux node
->>   ARM: sunxi: h3/h5: Add r_i2c I2C controller
->>   ARM: sun8i: h3: Add SY8106A regulator to Orange Pi PC
->
-> I've applied all the device tree patches for 4.18, taking into account
-> comments from Maxime. See
->
->     https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/log/?h=sunxi/h3-h5-for-4.17
+I thought I should give the brand new architecture a try. Unfortunately, that was not very successful.
 
-I meant
+Build reference: v4.17-rc1
+gcc version: nds32le-elf-gcc (GCC) 7.3.0
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git/log/?h=sunxi/h3-h5-for-4.18
+Building nds32:defconfig ... failed
 
-of course...
+arch/nds32/include/asm/nds32.h: In function 'GIE_ENABLE':
+arch/nds32/include/asm/nds32.h:25:2: error: implicit declaration of function '__nds32__gie_en'; did you mean '__nds32__'?
 
-> Mostly it's just renaming the regulator node names and labels.
->
-> Please resend the first two patches to Mark Brown, the regulator
-> subsystem maintainer. And you might want to mention the branch
-> above in case he needs a use case reference.
->
-> Regards
-> ChenYu
+arch/nds32/include/asm/nds32.h: In function 'CACHE_SET':
+arch/nds32/include/asm/nds32.h:38:18: error: implicit declaration of function '__nds32__mfsr'; did you mean '__nds32__'?
+
+arch/nds32/include/asm/nds32.h:38:32: error: 'NDS32_SR_ICM_CFG' undeclared
+
+arch/nds32/include/asm/nds32.h:41:32: error: 'NDS32_SR_DCM_CFG'
+
+Am I missing something ?
+
+Guenter
