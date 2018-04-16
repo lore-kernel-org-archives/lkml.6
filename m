@@ -1,54 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752892AbeDPCky (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 15 Apr 2018 22:40:54 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36144 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752623AbeDPCkw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Apr 2018 22:40:52 -0400
-X-Google-Smtp-Source: AIpwx4+ObrYvYSJHze8IGL62QiX8wPD7RlBXN6jFgzuqHmI0Twfh5lG/b/zEfTL323v9kluE04Qlhw==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, arnd@arndb.de, orsonzhai@gmail.com,
-        zhang.lyra@gmail.com
-Cc: devicetree@vger.kernel.org, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, baolin.wang@linaro.org
-Subject: [PATCH 2/2] arm64: dts: Add the rtc enable clock for watchdog
-Date: Mon, 16 Apr 2018 10:40:04 +0800
-Message-Id: <bc450ea82fe7fbec7e7f74c5cdc8a37d202fe526.1523846102.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <fcea1874b6e3d0243684c133c7b34f2384341a32.1523846102.git.baolin.wang@linaro.org>
-References: <fcea1874b6e3d0243684c133c7b34f2384341a32.1523846102.git.baolin.wang@linaro.org>
-In-Reply-To: <fcea1874b6e3d0243684c133c7b34f2384341a32.1523846102.git.baolin.wang@linaro.org>
-References: <fcea1874b6e3d0243684c133c7b34f2384341a32.1523846102.git.baolin.wang@linaro.org>
+        id S1752796AbeDPC5o (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 15 Apr 2018 22:57:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34660 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751774AbeDPC5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Apr 2018 22:57:43 -0400
+Date: Mon, 16 Apr 2018 10:57:34 +0800
+From: Dave Young <dyoung@redhat.com>
+To: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-efi@vger.kernel.org,
+        Takashi Iwai <tiwai@suse.de>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Randy Wright <rwright@hpe.com>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        akpm@linux-foundation.org, Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
+ memory map
+Message-ID: <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
+References: <20180413062716.8040-1-jlee@suse.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180413062716.8040-1-jlee@suse.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the rtc enable clock for watchdog controller to make it work well.
+On 04/13/18 at 02:27pm, Lee, Chun-Yi wrote:
+> When using kdump, SOMETIMES the "size not consistent" warning message
+> shows up when the crash kernel boots with early_ioremap_debug parameter:
+> 
+> WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
+> early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
+> 
+> The root cause is that the unmapping size of memory map doesn't
+> match with the original size when mapping:
+> 
+> in __efi_memmap_init()
+> 	map.map = early_memremap(phys_map, data->size);
+> 
+> in efi_memmap_unmap()
+>         size = efi.memmap.desc_size * efi.memmap.nr_map;
+>         early_memunmap(efi.memmap.map, size);
+> 
+> But the efi.memmap.nr_map is from __efi_memmap_init(). The remainder
+> of size was discarded when calculating the nr_map:
+>         map.nr_map = data->size / data->desc_size;
+> 
+> When the original size of memory map region does not equal to the
+> result of multiplication. The "size not consistent" warning
+> will be triggered.
+> 
+> This issue sometimes was hit by kdump because kexec set the efi map
+> size to align with 16 when loading crash kernel image:
+> 
+> in bzImage64_load()
+>         efi_map_sz = efi_get_runtime_map_size();
+>         efi_map_sz = ALIGN(efi_map_sz, 16);
+> 
+> This patch changes the logic in the unmapping function. Using the
+> end address of map to calcuate original size.
+> 
+> Thank Randy Wright for his report and testing. And also thank
+> Takashi Iwai for his help to trace issue.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- arch/arm64/boot/dts/sprd/whale2.dtsi |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Good catch.  The kexec code need to be fixed to use a separate buffer so
+avoid the alignment like what kexec-tools did.  I can submit a fix for
+that.
 
-diff --git a/arch/arm64/boot/dts/sprd/whale2.dtsi b/arch/arm64/boot/dts/sprd/whale2.dtsi
-index bf7e70c..e9db910 100644
---- a/arch/arm64/boot/dts/sprd/whale2.dtsi
-+++ b/arch/arm64/boot/dts/sprd/whale2.dtsi
-@@ -214,8 +214,9 @@
- 				reg = <0 0x40310000 0 0x1000>;
- 				interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
- 				timeout-sec = <12>;
--				clock-names = "enable";
--				clocks = <&aon_gate CLK_APCPU_WDG_EB>;
-+				clock-names = "enable", "rtc_enable";
-+				clocks = <&aon_gate CLK_APCPU_WDG_EB>,
-+				       <&aon_gate CLK_AP_WDG_RTC_EB>;
- 			};
- 		};
- 
--- 
-1.7.9.5
+But this issue could be a potential issue even if kexec get fixed so it
+looks worth a fix in efi code as well.  How about mapping only nr_maps
+*desc_size in __efi_memmap_init?  It looks easier to understand.
+
+> 
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Randy Wright <rwright@hpe.com>
+> Cc: Takashi Iwai <tiwai@suse.de>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> ---
+>  drivers/firmware/efi/memmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
+> index 5fc7052..1f592d8 100644
+> --- a/drivers/firmware/efi/memmap.c
+> +++ b/drivers/firmware/efi/memmap.c
+> @@ -121,7 +121,7 @@ void __init efi_memmap_unmap(void)
+>  	if (!efi.memmap.late) {
+>  		unsigned long size;
+>  
+> -		size = efi.memmap.desc_size * efi.memmap.nr_map;
+> +		size = efi.memmap.map_end - efi.memmap.map;
+>  		early_memunmap(efi.memmap.map, size);
+>  	} else {
+>  		memunmap(efi.memmap.map);
+> -- 
+> 2.10.2
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+
+Thanks
+Dave
