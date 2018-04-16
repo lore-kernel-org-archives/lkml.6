@@ -1,40 +1,12 @@
-Return-Path: <minchan.kim@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523873014; cv=none;
-        d=google.com; s=arc-20160816;
-        b=OC+vVsbouW2VKBud8ZHHVCvtJSyUWvXc+bw8kot+G8uu3wdyK/PXk9wX3PPUQCm4iW
-         3J0/XTrrz27FFOsAS+dGEbsvj+VhyPQUQ9ya7p4woLfyxAX3Niqb75Wg2SYRuCSu8pm+
-         kHXOZSOQNdzNJl02u5OEILah74B3zjzKQrCOf0D4yDL1mz1v4DqwCXrllgUnjsGiGplR
-         uX93t+b7Bq3h8pBmVMHJpgUIp/Yeapz4+uSCtuo4hG/cMCKHGaPnj5vKSOwcj7kfJ3ZC
-         IVhp1WzM5chx3GIuO6a3gECdt46uLMvRIqfVy7A/DvsCGTS4dsf6bu5/4WN3917mNHTw
-         ZUbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=9EpUhu0PMytB+Pkiivm7HPRl6YI6dBY1ytbltYjer2Q=;
-        b=iqKYwM1Sq7Nf7KCVFfOqBdro/dbNK8Nu1hQIhp3bQgQ7Bmv17nvwoojR/ChmEpDeeE
-         g/kwnSHuPSfepuTl2MIwpx+ZTA110LIvfq1YwKJHldjXXPdIjofLfJ1eBrUgizRX5ONX
-         EPkYxR5VyDix0tOq0Kz4AcZKY+ie3L8l7a9YyJLz/V5H0NcWSmJ593gANhNWc4LPWy5E
-         Yura6KBecQF7ALFQ9YsI5V6BV9kTEmAxnuqHEtf06g4NzsTWd8uXiI7LvcyxsIjGMstk
-         O6a2VQ3FdpNxLnDZKJ/0bl2P/7M9hzO68LhRXIBheahKEHu/iR4cUvQxxvJRK3pzSUmP
-         GZPw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Jpstbdkq;
-       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Jpstbdkq;
-       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com
-X-Google-Smtp-Source: AIpwx4+GATQBc4G/MTt7i5lCpkfYbc4jrr9IwC2M8rBVtELH5NFLcNmt0NU9eRq68aS8ATfX/hhCkQ==
-Sender: Minchan Kim <minchan.kim@gmail.com>
-Date: Mon, 16 Apr 2018 19:03:27 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Mon, 16 Apr 2018 11:40:35 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Minchan Kim <minchan@kernel.org>
 Cc: Ganesh Mahendran <opensource.ganesh@gmail.com>,
 	LKML <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>,
 	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
 	Todd Kjos <tkjos@google.com>, Martijn Coenen <maco@android.com>
 Subject: Re: [PATCH v5] ANDROID: binder: change down_write to down_read
-Message-ID: <20180416100327.GC64023@rodete-desktop-imager.corp.google.com>
+Message-ID: <20180416094035.GA19002@kroah.com>
 References: <20180330012921.GB255979@rodete-desktop-imager.corp.google.com>
  <20180330100407.GB19140@kroah.com>
  <20180402063448.GA250086@rodete-desktop-imager.corp.google.com>
@@ -49,10 +21,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20180416093727.GA8021@kroah.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596254032587353794?=
-X-GMAIL-MSGID: =?utf-8?q?1597896669368328949?=
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -156,23 +125,13 @@ On Mon, Apr 16, 2018 at 11:37:27AM +0200, Greg Kroah-Hartman wrote:
 > > Could you pick up the patch?
 > 
 > If there is no regression, and no speed up either, why is it needed?  :)
-
-1. rw_semaphore: generally, down_read is better than down_write
-2. mmap_sem is one of heavy contented lock among rw_semaphore
-3. Android suffers from the mmap_sem contention with several threads.
-4. I found binder has misused the mmap_sem with down_write.
-5. so fix it.
-
 > 
 > And is app launch time really the best binder benchmark?  What about the
 > throughput and latency tests?  Do those show any changes?  I'm kind of
-
-Ganesh did throughput test and confirmed there is no regression.
-I will spend more time that how I could do latency test.
-
 > lost as to what is really happening here, sorry, the merge window is not
 > the time for me to be keeping track of this type of thing...
-> 
-> thanks,
-> 
-> greg k-h
+
+Also, this patch is not even in my to-review queue, so it needs to be
+resent at the very least...
+
+greg k-h
