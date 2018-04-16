@@ -1,76 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754826AbeDPLGp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 07:06:45 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:35297 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754534AbeDPLGn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:06:43 -0400
-X-Google-Smtp-Source: AIpwx48JlooSFaV/Vk/QEdClcv8XjeN12XBnRx+j5C03t8lkLzutTrqEDd5swIRFbIH778DbUdlg9A==
-Message-ID: <5AD483BD.70804@gmail.com>
-Date: Mon, 16 Apr 2018 19:06:37 +0800
-From: zoucao-ipc <zoucaox@gmail.com>
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
-MIME-Version: 1.0
-To: zoucao@linux.alibaba.com, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com
-CC: x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/boot/e820: add new chareater "-" to free BIOS memory
- in memmap bootargs
-References: <20180410025912.49830-1-zoucao@linux.alibaba.com> <20180410025912.49830-2-zoucao@linux.alibaba.com>
-In-Reply-To: <20180410025912.49830-2-zoucao@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        id S1754134AbeDPLIL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 07:08:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48368 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752725AbeDPLIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 07:08:09 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] KVM: x86: hyperv: PV TLB flush for Windows guests
+Date: Mon, 16 Apr 2018 13:08:00 +0200
+Message-Id: <20180416110806.4896-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-any suggestions？
+Changes since v2:
+- Fixed a sparse warning in PATCH1 [kbuild test robot]
 
-On 2018/4/10 上午10:59, zoucao@linux.alibaba.com wrote:
-> From: zoucao <zoucao@localhost.localdomain>
->
-> Normally every BIOS reserved memory is used for some features, we can't
-> use them, but in some conditions,  users can ensure some BIOS memories
-> are not used and reserved memory is well to free, they have not a good
-> way to free these memories, here add a new chareater "-" in memmap to
-> free reserved memory.
->
-> Signed-off-by: zou cao <zoucao@linux.alibaba.com>
-> ---
->   7u/Documentation/kernel-parameters.txt | 6 ++++++
->   7u/arch/x86/kernel/e820.c              | 3 +++
->   2 files changed, 9 insertions(+)
->
-> diff --git a/7u/Documentation/kernel-parameters.txt b/7u/Documentation/kernel-parameters.txt
-> index 9a1abb99a..dbea75e12 100644
-> --- a/7u/Documentation/kernel-parameters.txt
-> +++ b/7u/Documentation/kernel-parameters.txt
-> @@ -1677,6 +1677,12 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
->   			         or
->   			         memmap=0x10000$0x18690000
->   
-> +	memmap=nn[KMG]-ss[KMG]
-> +			Free E820 reserved memory, as specified by the user.
-> +			Region of reserved memory to be free, from ss to ss+nn.
-> +			Example: free reserved memory from 0x18690000-0x186a0000
-> +					memmap=0x4101000-0x6aeff000
-> +
->   	memory_corruption_check=0/1 [X86]
->   			Some BIOSes seem to corrupt the first 64k of
->   			memory when doing things like suspend/resume.
-> diff --git a/7u/arch/x86/kernel/e820.c b/7u/arch/x86/kernel/e820.c
-> index 174da5fc5..b8a042981 100644
-> --- a/7u/arch/x86/kernel/e820.c
-> +++ b/7u/arch/x86/kernel/e820.c
-> @@ -875,6 +875,9 @@ static int __init parse_memmap_one(char *p)
->   	} else if (*p == '$') {
->   		start_at = memparse(p+1, &p);
->   		e820_add_region(start_at, mem_size, E820_RESERVED);
-> +	} else if (*p == '-') {
-> +		start_at = memparse(p+1, &p);
-> +		e820_remove_range(start_at, mem_size, E820_RESERVED, E820_RAM);
->   	} else
->   		e820_remove_range(mem_size, ULLONG_MAX - mem_size, E820_RAM, 1);
->   
+Description:
+
+This is both a new feature and a bugfix.
+
+Bugfix description: 
+
+It was found that Windows 2016 guests on KVM crash when they have > 64
+vCPUs, non-flat topology (>1 core/thread per socket; in case it has >64
+sockets Windows just ignores vCPUs above 64) and Hyper-V enlightenments
+(any) are enabled. The most common error reported is "PAGE FAULT IN
+NONPAGED AREA" but I saw different messages. Apparently, Windows doesn't
+expect to run on a Hyper-V server without PV TLB flush support as there's
+no such Hyper-V servers out there (it's only WS2016 supporting > 64 vCPUs
+AFAIR).
+
+Adding PV TLB flush support to KVM helps, Windows 2016 guests now boot 
+normally (I tried '-smp 128,sockets=64,cores=1,threads=2' and 
+'-smp 128,sockets=8,cores=16,threads=1' but other topologies should work
+too).
+
+Feature description:
+
+PV TLB flush helps a lot when running overcommited. KVM gained support for
+it recently but it is only available for Linux guests. Windows guests use
+emulated Hyper-V interface and PV TLB flush needs to be added there.
+
+I tested WS2016 guest with 128 vCPUs running on a 12 pCPU server. The test
+was running 65 threads doing 50 mmap()/munmap() for 16384 pages with a
+tiny random nanosleep in between (I used Cygwin. It would be great if
+someone could point me to a good Windows-native TLB trashing test).
+
+The average results are:
+Before:
+real    0m22.464s
+user    0m0.990s
+sys     1m26.3276s
+
+After:
+real    0m19.304s
+user    0m0.908s
+sys     0m36.249s
+
+When running without overcommit the results of the same test are very close
+so the feature can be enabled by default.
+
+Implementation details.
+
+The implementation is very simplistic and straightforward. We ignore
+'address space' argument of the hypercalls (as there is no good way to
+figure out what's currently in CR3 of a running vCPU as generally we don't
+VMEXIT on guest CR3 write) and do full TLB flush on specified vCPUs. In
+case said vCPUs are not running TLB flush will be performed upon guest
+enter.
+
+Qemu (and other userspaces) need to enable CPUID feature bits to make
+Windows aware the feature is supported. I'll post Qemu enablement patch
+separately.
+
+Patches are based on the current kvm/queue branch.
+
+Vitaly Kuznetsov (6):
+  x86/hyper-v: move struct hv_flush_pcpu{,ex} definitions to common
+    header
+  KVM: x86: hyperv: use defines when parsing hypercall parameters
+  KVM: x86: hyperv: do rep check for each hypercall separately
+  KVM: x86: hyperv: simplistic HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE}
+    implementation
+  KVM: x86: hyperv: simplistic
+    HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE}_EX implementation
+  KVM: x86: hyperv: declare KVM_CAP_HYPERV_TLBFLUSH capability
+
+ Documentation/virtual/kvm/api.txt  |   9 ++
+ arch/x86/hyperv/mmu.c              |  40 ++-----
+ arch/x86/include/asm/hyperv-tlfs.h |  20 ++++
+ arch/x86/include/asm/kvm_host.h    |   1 +
+ arch/x86/kvm/hyperv.c              | 217 ++++++++++++++++++++++++++++++++++---
+ arch/x86/kvm/trace.h               |  51 +++++++++
+ arch/x86/kvm/x86.c                 |   1 +
+ include/uapi/linux/kvm.h           |   1 +
+ 8 files changed, 297 insertions(+), 43 deletions(-)
+
+-- 
+2.14.3
