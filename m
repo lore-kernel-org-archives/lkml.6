@@ -1,166 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755261AbeDPOWa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 10:22:30 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47942 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752078AbeDPOW2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:22:28 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180416142225euoutp01ebfdd7340b6102427f57c3eb80a6fcf6~l8I7jxR0m2872128721euoutp01o
-X-AuditID: cbfec7f2-1c1ff70000011644-8a-5ad4b19e3fa8
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
-Subject: [PATCH v2 12/14] thermal: exynos: remove separate exynos_tmu.h
- header file
-Date: Mon, 16 Apr 2018 16:22:19 +0200
-Message-ID: <2686175.IEZVfBECIu@amdc3058>
-User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+        id S1755393AbeDPOXJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:23:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751892AbeDPOXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 10:23:07 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E2112183A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AIpwx48WpwMgPxXmNqaLD3U3LKyB1hTIdTsc/APjunlo1SsA2Td4xdnI8I0nSZnCDjzHHgJeyDXXLabVE7wm4hpnagI=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHKsWRmVeSWpSXmKPExsWy7djP87rzNl6JMlj83chi44z1rBbzPsta
-        zL9yjdWi//FrZovz5zewW1zeNYfN4nPvEUaLGef3MVk8edjH5sDpsXPWXXaPxXteMnlsWtXJ
-        5nHn2h42j74tqxg9Pm+SC2CL4rJJSc3JLEst0rdL4MrY3rOAseCfZMXPySdYGhifinYxcnJI
-        CJhIXF25nrGLkYtDSGAFo8TdRf+YIZwvjBIv5r1gh3A+M0qc6/zEAtOy7dM9qKrljBL39u5j
-        hXA+MEp0btvLBlLFJmAlMbF9FSOILSKgJXHi0nYmkCJmgQlMEk9fzQQrEhYIlXjw/g07iM0i
-        oCqx+t5CsAZeAU2JU5f+g9miAl4SW/a1M0HEBSVOznwCdgazgLxEx+VGsM0SAsvYJW5tvMMG
-        cZ+LxMaj65ggbGGJV8e3sEPYMhL/d85ngmhoZpT4tmMPM0RiAqPEnvVCELa1xOHjF4GmcgBt
-        0JRYv0sfImwr0bWnGSwsIcAnceOtIMQNfBKTtk1nhgjzSnS0QQ1Rk9iwbAMbzNaunSuhFnlI
-        /Dv0FeoyR4lPLW1sExgVZyH5bBaSz2Yh3LCAkXkVo3hqaXFuemqxYV5quV5xYm5xaV66XnJ+
-        7iZGYCo6/e/4px2MXy8lHWIU4GBU4uHdcfZylBBrYllxZe4hRgkOZiUR3mWJQCHelMTKqtSi
-        /Pii0pzU4kOM0hwsSuK8cRp1UUIC6YklqdmpqQWpRTBZJg5OqQbGCQ2dLOsabmV07vrHuH2T
-        YcjzsIh9DotMXps37jJczN1yeb68ksWmq2dETvtoFUwI/GSw1Z/fXsK4Yenz4vubUrOWcyUY
-        LtWQeXlhTmG94dxHovK3+7z7X2zesF3lRvLK479fNLbulXcwCPHaxnv+qNMuZ+ULXdYrt/bZ
-        J/1emhZi6VQg90BTiaU4I9FQi7moOBEA9VP/UkEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsVy+t/xu7pzN16JMph+T9Bi44z1rBbzPsta
-        zL9yjdWi//FrZovz5zewW1zeNYfN4nPvEUaLGef3MVk8edjH5sDpsXPWXXaPxXteMnlsWtXJ
-        5nHn2h42j74tqxg9Pm+SC2CL0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXS
-        t7NJSc3JLEst0rdL0MvY3rOAseCfZMXPySdYGhifinYxcnJICJhIbPt0j7mLkYtDSGApo8T1
-        oxdZuxg5gBIyEsfXl0HUCEv8udbFBmILCbxjlJjeqgZiswlYSUxsX8UIYosIaEmcuLSdCWQO
-        s0AXk8Tf693MIAlhgWCJg0/2gRWxCKhKrL63EMzmFdCUOHXpP5gtKuAlsWVfOxNEXFDi5Mwn
-        LCA2s4C8RMflRlYIW0diwe5PbBMY+WchKZuFpGwWkrIFjMyrGEVSS4tz03OLjfSKE3OLS/PS
-        9ZLzczcxAuNl27GfW3Ywdr0LPsQowMGoxMO74+zlKCHWxLLiytxDjBIczEoivMsSgUK8KYmV
-        ValF+fFFpTmpxYcYTYGemMgsJZqcD4zlvJJ4Q1NDcwtLQ3Njc2MzCyVx3vMGlVFCAumJJanZ
-        qakFqUUwfUwcnFINjLsCI29wiC1Y61Rw7+QW54861Ud9wiX32b58Ldy9/5vjnfnnNvCX9hpv
-        /zoxNunb9q3rV+054rt63mQVg7d9E63eHNsWYspZ6i6p//TL84Suj2L7/IrKbuhrp27YfHF/
-        2+WOnkDN/jnThUyXdy3qqnM38/1QsfVWFMsl7fCwc0ZsZqdX9odVxyqxFGckGmoxFxUnAgDs
-        rxIdrQIAAA==
-X-CMS-MailID: 20180416142221eucas1p1ded332b5b69a9f3f1224914e48b28c19
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180416142221eucas1p1ded332b5b69a9f3f1224914e48b28c19
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180416142221eucas1p1ded332b5b69a9f3f1224914e48b28c19
-X-RootMTR: 20180416142221eucas1p1ded332b5b69a9f3f1224914e48b28c19
-References: <CGME20180416142221eucas1p1ded332b5b69a9f3f1224914e48b28c19@eucas1p1.samsung.com>
+In-Reply-To: <3bf87960-06f8-3224-10d9-4ad76ff446a4@axentia.se>
+References: <20180409105918.20792-1-peda@axentia.se> <20180409105918.20792-3-peda@axentia.se>
+ <20180413174648.zxljbw634o2r4zty@rob-hp-laptop> <3bf87960-06f8-3224-10d9-4ad76ff446a4@axentia.se>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 16 Apr 2018 09:22:45 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKvPFp-5Km78Vbt=R-rA8F1pm5H4BzvKh9z2JOYrpVDRA@mail.gmail.com>
+Message-ID: <CAL_JsqKvPFp-5Km78Vbt=R-rA8F1pm5H4BzvKh9z2JOYrpVDRA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] dt-bindings: display: atmel: add optional output-mode property
+To: Peter Rosin <peda@axentia.se>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>, Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-exynos_tmu.h is used only by exynos_tmu.c so there is no need
-for a separate include file.
+On Sat, Apr 14, 2018 at 8:54 AM, Peter Rosin <peda@axentia.se> wrote:
+> On 2018-04-13 19:46, Rob Herring wrote:
+>> On Mon, Apr 09, 2018 at 12:59:15PM +0200, Peter Rosin wrote:
+>>> Useful for beating cases where an output mode selection heuristic
+>>> fails.
+>>>
+>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+>>> ---
+>>>  Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
+>>> index 82f2acb3d374..dc478455b883 100644
+>>> --- a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
+>>> +++ b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
+>>> @@ -10,6 +10,10 @@ Required properties:
+>>>   - #address-cells: should be set to 1.
+>>>   - #size-cells: should be set to 0.
+>>>
+>>> +Optional properties:
+>>> + - output-mode: override any output mode selection hueristic and force a
+>>> +   particular output mode. One of "rgb444", "rgb565", "rgb666" and "rgb888".
+>>> +
+>>
+>> This needs to be generic, not just added to some random display
+>> controller binding.
+>>
+>> It also belongs in the port or endpoint node as is done for camera
+>> interfaces.
+>
+> Hmm, should I extend media/video-interfaces.txt with more bus types (or since
+> I'm targeting parallel interfaces, perhaps the new bus types should be
+> autodetected from other props?) or should a write a new binding similar to
+> it?
 
-Also while at it remove no longer needed cpu_cooling.h include.
+Ultimately, I'd like it documented in one place. It can stay in
+media/video-interfaces.txt for now, but we should probably move it or
+portions of it out of media/. I don't have a good suggestion other
+than up a level where people will find it easily.
 
-There should be no functional changes caused by this patch.
+> One question regarding bus-width, should it include hsync/vsync/de/clk?
+> If yes, how to distinguish rgb565 with all those four from rgb666 with
+> only de/clk (some panels do not need hsync/vsync)? 20 lines in both
+> cases...
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
-Replacement patch for v1.
+I'd say no, it is just the data lines.
 
-v2:
-- Remove cpu_cooling.h include (as requested by Daniel)
-- Add Acked-by from Daniel
+> Or are rgb444/rgb565/rgb666/rgb888 already supported by the media video
+> interface binding? That's not at all obvious to me.
 
- drivers/thermal/samsung/exynos_tmu.c |   17 +++++++++++++-
- drivers/thermal/samsung/exynos_tmu.h |   41 -----------------------------------
- 2 files changed, 16 insertions(+), 42 deletions(-)
+Not sure, I'd guess not.
 
-Index: b/drivers/thermal/samsung/exynos_tmu.c
-===================================================================
---- a/drivers/thermal/samsung/exynos_tmu.c	2018-04-16 16:13:18.995562674 +0200
-+++ b/drivers/thermal/samsung/exynos_tmu.c	2018-04-16 16:13:28.663562918 +0200
-@@ -35,7 +35,8 @@
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
- 
--#include "exynos_tmu.h"
-+#include <dt-bindings/thermal/thermal_exynos.h>
-+
- #include "../thermal_core.h"
- 
- /* Exynos generic registers */
-@@ -173,6 +174,20 @@
- #define EXYNOS_NOISE_CANCEL_MODE		4
- 
- #define MCELSIUS	1000
-+
-+enum soc_type {
-+	SOC_ARCH_EXYNOS3250 = 1,
-+	SOC_ARCH_EXYNOS4210,
-+	SOC_ARCH_EXYNOS4412,
-+	SOC_ARCH_EXYNOS5250,
-+	SOC_ARCH_EXYNOS5260,
-+	SOC_ARCH_EXYNOS5420,
-+	SOC_ARCH_EXYNOS5420_TRIMINFO,
-+	SOC_ARCH_EXYNOS5433,
-+	SOC_ARCH_EXYNOS5440,
-+	SOC_ARCH_EXYNOS7,
-+};
-+
- /**
-  * struct exynos_tmu_data : A structure to hold the private data of the TMU
- 	driver
-Index: b/drivers/thermal/samsung/exynos_tmu.h
-===================================================================
---- a/drivers/thermal/samsung/exynos_tmu.h	2018-04-16 16:13:18.995562674 +0200
-+++ /dev/null	1970-01-01 00:00:00.000000000 +0000
-@@ -1,41 +0,0 @@
--/*
-- * exynos_tmu.h - Samsung EXYNOS TMU (Thermal Management Unit)
-- *
-- *  Copyright (C) 2011 Samsung Electronics
-- *  Donggeun Kim <dg77.kim@samsung.com>
-- *  Amit Daniel Kachhap <amit.daniel@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- */
--
--#ifndef _EXYNOS_TMU_H
--#define _EXYNOS_TMU_H
--#include <linux/cpu_cooling.h>
--#include <dt-bindings/thermal/thermal_exynos.h>
--
--enum soc_type {
--	SOC_ARCH_EXYNOS3250 = 1,
--	SOC_ARCH_EXYNOS4210,
--	SOC_ARCH_EXYNOS4412,
--	SOC_ARCH_EXYNOS5250,
--	SOC_ARCH_EXYNOS5260,
--	SOC_ARCH_EXYNOS5420,
--	SOC_ARCH_EXYNOS5420_TRIMINFO,
--	SOC_ARCH_EXYNOS5433,
--	SOC_ARCH_EXYNOS5440,
--	SOC_ARCH_EXYNOS7,
--};
--
--#endif /* _EXYNOS_TMU_H */
+Rob
