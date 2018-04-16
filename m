@@ -1,156 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752777AbeDPOdx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 10:33:53 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36568 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751205AbeDPOdu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:33:50 -0400
-X-Google-Smtp-Source: AIpwx4+Cok1AifV/LA5+GS4DP0ZS+SukucPkbyUB5vb5c21mXaUp9qtJ6g42EDZxRtKktCpxbwi9wA==
-Subject: Re: [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper DRM driver
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
-        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        Dongwon Kim <dongwon.kim@intel.com>,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Artem Mygaiev <Artem_Mygaiev@epam.com>
-References: <20180329131931.29957-1-andr2000@gmail.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
-Date: Mon, 16 Apr 2018 17:33:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752783AbeDPOfQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:35:16 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:40457 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750716AbeDPOfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 10:35:14 -0400
+Date: Mon, 16 Apr 2018 22:34:37 +0800
+In-Reply-To: <20180416143130.tls6xtcq3hsv7u7f@flea>
+References: <20180411141641.14675-1-icenowy@aosc.io> <20180411141641.14675-4-icenowy@aosc.io> <20180412145628.iaaeue2imiijwx5d@flea> <A027702A-F3F7-4896-B2B8-E024DA521661@aosc.io> <CAGb2v66Qi2D1qgF3-iVJFAiznMUzzen0nHM5vsPe7Cyi6QTYpw@mail.gmail.com> <20180416143130.tls6xtcq3hsv7u7f@flea>
 MIME-Version: 1.0
-In-Reply-To: <20180329131931.29957-1-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [linux-sunxi] Re: [PATCH 3/5] net: stmmac: dwmac-sun8i: Allow getting syscon regmap from device
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+From: Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <8B16E29B-B5B9-4FCE-91F0-F4B0D909EAE1@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, all!
-
-After discussing xen-zcopy and hyper-dmabuf [1] approaches
-
-it seems that xen-zcopy can be made not depend on DRM core any more
-
-and be dma-buf centric (which it in fact is).
-
-The DRM code was mostly there for dma-buf's FD import/export
-
-with DRM PRIME UAPI and with DRM use-cases in mind, but it comes out that if
-
-the proposed 2 IOCTLs (DRM_XEN_ZCOPY_DUMB_FROM_REFS and 
-DRM_XEN_ZCOPY_DUMB_TO_REFS)
-
-are extended to also provide a file descriptor of the corresponding 
-dma-buf, then
-
-PRIME stuff in the driver is not needed anymore.
-
-That being said, xen-zcopy can safely be detached from DRM and moved from
-
-drivers/gpu/drm/xen into drivers/xen/dma-buf-backend(?).
-
-This driver then becomes a universal way to turn any shared buffer 
-between Dom0/DomD
-
-and DomU(s) into a dma-buf, e.g. one can create a dma-buf from any grant 
-references
-
-or represent a dma-buf as grant-references for export.
-
-This way the driver can be used not only for DRM use-cases, but also for 
-other
-
-use-cases which may require zero copying between domains.
-
-For example, the use-cases we are about to work in the nearest future 
-will use
-
-V4L, e.g. we plan to support cameras, codecs etc. and all these will benefit
-
-from zero copying much. Potentially, even block/net devices may benefit,
-
-but this needs some evaluation.
 
 
-I would love to hear comments for authors of the hyper-dmabuf
-
-and Xen community, as well as DRI-Devel and other interested parties.
-
-
-Thank you,
-
-Oleksandr
-
-
-On 03/29/2018 04:19 PM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+于 2018年4月16日 GMT+08:00 下午10:31:30, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Thu, Apr 12, 2018 at 11:23:30PM +0800, Chen-Yu Tsai wrote:
+>> On Thu, Apr 12, 2018 at 11:11 PM, Icenowy Zheng <icenowy@aosc.io>
+>wrote:
+>> > 于 2018年4月12日 GMT+08:00 下午10:56:28, Maxime Ripard
+><maxime.ripard@bootlin.com> 写到:
+>> >>On Wed, Apr 11, 2018 at 10:16:39PM +0800, Icenowy Zheng wrote:
+>> >>> From: Chen-Yu Tsai <wens@csie.org>
+>> >>>
+>> >>> On the Allwinner R40 SoC, the "GMAC clock" register is in the CCU
+>> >>> address space; on the A64 SoC this register is in the SRAM
+>controller
+>> >>> address space, and with a different offset.
+>> >>>
+>> >>> To access the register from another device and hide the internal
+>> >>> difference between the device, let it register a regmap named
+>> >>> "emac-clock". We can then get the device from the phandle, and
+>> >>> retrieve the regmap with dev_get_regmap(); in this situation the
+>> >>> regmap_field will be set up to access the only register in the
+>> >>regmap.
+>> >>>
+>> >>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>> >>> [Icenowy: change to use regmaps with single register, change
+>commit
+>> >>>  message]
+>> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> >>> ---
+>> >>>  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 48
+>> >>++++++++++++++++++++++-
+>> >>>  1 file changed, 46 insertions(+), 2 deletions(-)
+>> >>>
+>> >>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+>> >>b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+>> >>> index 1037f6c78bca..b61210c0d415 100644
+>> >>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+>> >>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+>> >>> @@ -85,6 +85,13 @@ const struct reg_field old_syscon_reg_field =
+>{
+>> >>>      .msb = 31,
+>> >>>  };
+>> >>>
+>> >>> +/* Specially exported regmap which contains only EMAC register
+>*/
+>> >>> +const struct reg_field single_reg_field = {
+>> >>> +    .reg = 0,
+>> >>> +    .lsb = 0,
+>> >>> +    .msb = 31,
+>> >>> +};
+>> >>> +
+>> >>
+>> >>I'm not sure this would be wise. If we ever need some other
+>register
+>> >>exported through the regmap, will have to change all the calling
+>sites
+>> >>everywhere in the kernel, which will be a pain and will break
+>> >>bisectability.
+>> >
+>> > In this situation the register can be exported as another
+>> >  regmap. Currently the code will access a regmap with name
+>> > "emac-clock" for this register.
+>> >
+>> >>
+>> >>Chen-Yu's (or was it yours?) initial solution with a custom
+>writeable
+>> >>hook only allowing a single register seemed like a better one.
+>> >
+>> > But I remember you mentioned that you want it to hide the
+>> > difference inside the device.
+>> 
+>> The idea is that a device can export multiple regmaps. This one,
+>> the one named "gmac" (in my soon to come v2) or "emac-clock" here,
+>> is but one of many possible regmaps, and it only exports the register
+>> needed by the GMAC/EMAC.
 >
-> Hello!
+>I'm not sure this would be wise either. There's a single register map,
+>and as far as I know we don't have a binding to express this in the
+>DT. This means that the customer and provider would have to use the
+>same name, but without anything actually enforcing it aside from
+>"someone in the community knows it".
 >
-> When using Xen PV DRM frontend driver then on backend side one will need
-> to do copying of display buffers' contents (filled by the
-> frontend's user-space) into buffers allocated at the backend side.
-> Taking into account the size of display buffers and frames per seconds
-> it may result in unneeded huge data bus occupation and performance loss.
+>This is not a really good design, and I was actually preferring your
+>first option. We shouldn't rely on any undocumented rule. This will be
+>easy to break and hard to maintain.
+
+Okay. Then I will revert back to the original solution in the next version.
+
 >
-> This helper driver allows implementing zero-copying use-cases
-> when using Xen para-virtualized frontend display driver by
-> implementing a DRM/KMS helper driver running on backend's side.
-> It utilizes PRIME buffers API to share frontend's buffers with
-> physical device drivers on backend's side:
->
->   - a dumb buffer created on backend's side can be shared
->     with the Xen PV frontend driver, so it directly writes
->     into backend's domain memory (into the buffer exported from
->     DRM/KMS driver of a physical display device)
->   - a dumb buffer allocated by the frontend can be imported
->     into physical device DRM/KMS driver, thus allowing to
->     achieve no copying as well
->
-> For that reason number of IOCTLs are introduced:
->   -  DRM_XEN_ZCOPY_DUMB_FROM_REFS
->      This will create a DRM dumb buffer from grant references provided
->      by the frontend
->   - DRM_XEN_ZCOPY_DUMB_TO_REFS
->     This will grant references to a dumb/display buffer's memory provided
->     by the backend
->   - DRM_XEN_ZCOPY_DUMB_WAIT_FREE
->     This will block until the dumb buffer with the wait handle provided
->     be freed
->
-> With this helper driver I was able to drop CPU usage from 17% to 3%
-> on Renesas R-Car M3 board.
->
-> This was tested with Renesas' Wayland-KMS and backend running as DRM master.
->
-> Thank you,
-> Oleksandr
->
-> Oleksandr Andrushchenko (1):
->    drm/xen-zcopy: Add Xen zero-copy helper DRM driver
->
->   Documentation/gpu/drivers.rst               |   1 +
->   Documentation/gpu/xen-zcopy.rst             |  32 +
->   drivers/gpu/drm/xen/Kconfig                 |  25 +
->   drivers/gpu/drm/xen/Makefile                |   5 +
->   drivers/gpu/drm/xen/xen_drm_zcopy.c         | 880 ++++++++++++++++++++++++++++
->   drivers/gpu/drm/xen/xen_drm_zcopy_balloon.c | 154 +++++
->   drivers/gpu/drm/xen/xen_drm_zcopy_balloon.h |  38 ++
->   include/uapi/drm/xen_zcopy_drm.h            | 129 ++++
->   8 files changed, 1264 insertions(+)
->   create mode 100644 Documentation/gpu/xen-zcopy.rst
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_zcopy.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_zcopy_balloon.c
->   create mode 100644 drivers/gpu/drm/xen/xen_drm_zcopy_balloon.h
->   create mode 100644 include/uapi/drm/xen_zcopy_drm.h
->
-[1] 
-https://lists.xenproject.org/archives/html/xen-devel/2018-02/msg01202.html
+>Maxime
