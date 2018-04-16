@@ -1,52 +1,146 @@
-Date: Mon, 23 Apr 2018 15:03:47 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: NeilBrown <neilb@suse.com>
-Cc: James Simmons <jsimmons@infradead.org>,
-	Oleg Drokin <oleg.drokin@intel.com>,
-	Andreas Dilger <andreas.dilger@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 2/6] staging: lustre: remove libcfs/linux/libcfs.h
-Message-ID: <20180423130347.GB17153@kroah.com>
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AIpwx4/6nnrxKhsKW5qOiJasq7KN06TC1mG3zwK+txYhRlESfhbUA4jpll/tCeN1c5pUU7gCVYGZ
+ARC-Seal: i=1; a=rsa-sha256; t=1523839387; cv=none;
+        d=google.com; s=arc-20160816;
+        b=yN9KtKotiFc3zpQDwJ+3m57z5gX144EMOFJGE/5sL3En3VzwyAFIZNry/ZIMGEhLEj
+         iiCL/RteXwbwKDLnVlCJyExGjMSLNyPtyobmK5T0ElaEor0HpiLqRvqF4uXxcjADBHdj
+         I3bWhV0wVNKy9kIcG/SWH8sH5Ojzsl/jaf5DXmi9ayjkQ1jH/0Ixuw5fsL+0eGZdbkGH
+         dsaZpAAYz5BPrvm92/79wTklggQJt/9K0kMFITSb43a4Yovu4T22kqEFa/VFssACQ5Jq
+         VbNqV0QLVK+ZMahDcGHwldPuGwZ5eqZQrvooiP1ZGwCWLr/C4rqgJaNbDgBGDaFiydyd
+         ophg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:cc:subject:date:to:from
+         :arc-authentication-results;
+        bh=3CCNZXwIH8xCEUaaS5Sxz4QDnggLsEhteXcsw9Qaz7s=;
+        b=YQFYRQeHCPmRwFE8uD0TXmGV14nFpsILD99fKAfhHAKeCk2E2QXplHOihJMaIDPOLy
+         ry/W1oe09O2SSyumAoxV8k23ibG4C8SbQJNb7FppKYYom46OifkyLa0EHZ1cHqZTh2nz
+         54QZ3ZXrzHNyP2WIao2Xmfj9T07yxp4hVnUa+YbYMFcxBDl0ZV9R0bjlrpotMYn+2jBV
+         a3LtBxuvPvORCEGxXABi0TnUbqI6nkAOdZMNLN8gFkneoN90W6nUC8YU174SkYH5RnzN
+         7EuEPO+3blU1I9bU09d0TAoB9ONziWl1z+od0Ng4qKfCpXgKxLSBxFFPMgLHRzk5G5O/
+         ta1A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ James Simmons <jsimmons@infradead.org>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Date: Mon, 16 Apr 2018 10:42:37 +1000
+Subject: [PATCH 1/6] staging: lustre: move stack-check macros to
+ libcfs_debug.h
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152383935730.23409.6748888065027051683.stgit@noble>
+In-Reply-To: <152383910760.23409.2327082725637657049.stgit@noble>
 References: <152383910760.23409.2327082725637657049.stgit@noble>
- <152383935734.23409.11654775387996961581.stgit@noble>
- <alpine.LFD.2.21.1804160431550.16188@casper.infradead.org>
- <874lk9s0ri.fsf@notabene.neil.brown.name>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <874lk9s0ri.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597861409409058351?=
+X-GMAIL-MSGID: =?utf-8?q?1597861409409058351?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 18, 2018 at 12:32:01PM +1000, NeilBrown wrote:
-> On Mon, Apr 16 2018, James Simmons wrote:
-> 
-> >> This include file is only included in one place,
-> >> and only contains a list of other include directives.
-> >> So just move all those to the place where this file
-> >> is included, and discard the file.
-> >> 
-> >> One include directive uses a local name ("linux-cpu.h"), so
-> >> that needs to be given a proper path.
-> >> 
-> >> Probably many of these should be remove from here, and moved to
-> >> just the files that need them.
-> >
-> > Nak. Dumping all the extra headers from linux/libcfs.h to libcfs.h is
-> > the wrong approach. The one header, libcfs.h, to be the only header
-> > in all lustre files is the wrong approach. I have been looking to
-> > unroll that mess. I have patch that I need to polish you that I can
-> > submit.
-> 
-> I think we both have the same goal - maybe just different paths to get
-> there.  If you have something nearly ready to submit, I'm happy to wait
-> for it, then proceed on top of it.
+CDEBUG_STACK() and CHECK_STACK() are macros to help with
+debugging, so move them from
+   drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
+to
+   drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
 
-I've taken this patch as it doesn't make anything worse than the total
-mess we have now :)
+This seems a more fitting location, and is a step towards
+removing linux/libcfs.h and simplifying the include file structure.
 
-thanks,
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ .../lustre/include/linux/libcfs/libcfs_debug.h     |   32 ++++++++++++++++++++
+ .../lustre/include/linux/libcfs/linux/libcfs.h     |   31 -------------------
+ 2 files changed, 32 insertions(+), 31 deletions(-)
 
-greg k-h
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h b/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
+index 9290a19429e7..0dc7b91efe7c 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h
+@@ -62,6 +62,38 @@ int libcfs_debug_str2mask(int *mask, const char *str, int is_subsys);
+ extern unsigned int libcfs_catastrophe;
+ extern unsigned int libcfs_panic_on_lbug;
+ 
++/* Enable debug-checks on stack size - except on x86_64 */
++#if !defined(__x86_64__)
++# ifdef __ia64__
++#  define CDEBUG_STACK() (THREAD_SIZE -				 \
++			  ((unsigned long)__builtin_dwarf_cfa() &       \
++			   (THREAD_SIZE - 1)))
++# else
++#  define CDEBUG_STACK() (THREAD_SIZE -				 \
++			  ((unsigned long)__builtin_frame_address(0) &  \
++			   (THREAD_SIZE - 1)))
++# endif /* __ia64__ */
++
++#define __CHECK_STACK(msgdata, mask, cdls)			      \
++do {								    \
++	if (unlikely(CDEBUG_STACK() > libcfs_stack)) {		  \
++		LIBCFS_DEBUG_MSG_DATA_INIT(msgdata, D_WARNING, NULL);   \
++		libcfs_stack = CDEBUG_STACK();			  \
++		libcfs_debug_msg(msgdata,			       \
++				 "maximum lustre stack %lu\n",	  \
++				 CDEBUG_STACK());		       \
++		(msgdata)->msg_mask = mask;			     \
++		(msgdata)->msg_cdls = cdls;			     \
++		dump_stack();					   \
++	      /*panic("LBUG");*/					\
++	}							       \
++} while (0)
++#define CFS_CHECK_STACK(msgdata, mask, cdls)  __CHECK_STACK(msgdata, mask, cdls)
++#else /* __x86_64__ */
++#define CFS_CHECK_STACK(msgdata, mask, cdls) do {} while (0)
++#define CDEBUG_STACK() (0L)
++#endif /* __x86_64__ */
++
+ #ifndef DEBUG_SUBSYSTEM
+ # define DEBUG_SUBSYSTEM S_UNDEFINED
+ #endif
+diff --git a/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
+index 07d3cb2217d1..83aec9c7698f 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
++++ b/drivers/staging/lustre/include/linux/libcfs/linux/libcfs.h
+@@ -80,35 +80,4 @@
+ #include <stdarg.h>
+ #include "linux-cpu.h"
+ 
+-#if !defined(__x86_64__)
+-# ifdef __ia64__
+-#  define CDEBUG_STACK() (THREAD_SIZE -				 \
+-			  ((unsigned long)__builtin_dwarf_cfa() &       \
+-			   (THREAD_SIZE - 1)))
+-# else
+-#  define CDEBUG_STACK() (THREAD_SIZE -				 \
+-			  ((unsigned long)__builtin_frame_address(0) &  \
+-			   (THREAD_SIZE - 1)))
+-# endif /* __ia64__ */
+-
+-#define __CHECK_STACK(msgdata, mask, cdls)			      \
+-do {								    \
+-	if (unlikely(CDEBUG_STACK() > libcfs_stack)) {		  \
+-		LIBCFS_DEBUG_MSG_DATA_INIT(msgdata, D_WARNING, NULL);   \
+-		libcfs_stack = CDEBUG_STACK();			  \
+-		libcfs_debug_msg(msgdata,			       \
+-				 "maximum lustre stack %lu\n",	  \
+-				 CDEBUG_STACK());		       \
+-		(msgdata)->msg_mask = mask;			     \
+-		(msgdata)->msg_cdls = cdls;			     \
+-		dump_stack();					   \
+-	      /*panic("LBUG");*/					\
+-	}							       \
+-} while (0)
+-#define CFS_CHECK_STACK(msgdata, mask, cdls)  __CHECK_STACK(msgdata, mask, cdls)
+-#else /* __x86_64__ */
+-#define CFS_CHECK_STACK(msgdata, mask, cdls) do {} while (0)
+-#define CDEBUG_STACK() (0L)
+-#endif /* __x86_64__ */
+-
+ #endif /* _LINUX_LIBCFS_H */
