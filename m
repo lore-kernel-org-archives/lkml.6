@@ -1,191 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753831AbeDPGxM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:53:12 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:56686 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753215AbeDPGxL (ORCPT
+        id S1753346AbeDPG5n (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:57:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41856 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751325AbeDPG5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:53:11 -0400
-Date: Mon, 16 Apr 2018 08:52:59 +0200
-From: Ladislav Michl <ladis@linux-mips.org>
-To: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>, Roger Quadros <rogerq@ti.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v2] mtd: onenand: omap2: Disable DMA for HIGHMEM buffers
-Message-ID: <20180416065256.GA24455@lenoch>
+        Mon, 16 Apr 2018 02:57:42 -0400
+Subject: Re: [PATCH 2/3] perf/buildid-cache: Support --list option
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: acme@redhat.com, mhiramat@kernel.org, kstewart@linuxfoundation.org,
+        tglx@linutronix.de, pombredanne@nexb.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        uneedsihyeon@gmail.com, kjlx@templeofstupid.com,
+        ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180409110633.20767-1-ravi.bangoria@linux.vnet.ibm.com>
+ <20180409110633.20767-3-ravi.bangoria@linux.vnet.ibm.com>
+ <20180413125801.GG28241@krava>
+From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Date: Mon, 16 Apr 2018 12:27:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180413125801.GG28241@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041606-0020-0000-0000-00000412504E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041606-0021-0000-0000-000042A688DE
+Message-Id: <51d5e4fc-1c8c-96d1-6b60-390d84f2f960@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804160064
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_map_single doesn't get the proper DMA address for vmalloced area,
-so disable DMA in this case.
+Thanks Jiri for the reviews. Will post v2 soon.
 
-Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-Reported-by: "H. Nikolaus Schaller" <hns@goldelico.com>
-Tested-by: "H. Nikolaus Schaller" <hns@goldelico.com>
----
- Changes:
- -v2: Added Tested-by tag, based on v4.17-rc1 (no change in patch itself)
+-Ravi
 
- drivers/mtd/nand/onenand/omap2.c | 105 +++++++++++--------------------
- 1 file changed, 38 insertions(+), 67 deletions(-)
-
-diff --git a/drivers/mtd/nand/onenand/omap2.c b/drivers/mtd/nand/onenand/omap2.c
-index 9c159f0dd9a6..321137158ff3 100644
---- a/drivers/mtd/nand/onenand/omap2.c
-+++ b/drivers/mtd/nand/onenand/omap2.c
-@@ -375,56 +375,42 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
- {
- 	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
- 	struct onenand_chip *this = mtd->priv;
--	dma_addr_t dma_src, dma_dst;
--	int bram_offset;
-+	struct device *dev = &c->pdev->dev;
- 	void *buf = (void *)buffer;
-+	dma_addr_t dma_src, dma_dst;
-+	int bram_offset, err;
- 	size_t xtra;
--	int ret;
- 
- 	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
--	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
--		goto out_copy;
--
--	/* panic_write() may be in an interrupt context */
--	if (in_interrupt() || oops_in_progress)
-+	/*
-+	 * If the buffer address is not DMA-able, len is not long enough to make
-+	 * DMA transfers profitable or panic_write() may be in an interrupt
-+	 * context fallback to PIO mode.
-+	 */
-+	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
-+	    count < 384 || in_interrupt() || oops_in_progress )
- 		goto out_copy;
- 
--	if (buf >= high_memory) {
--		struct page *p1;
--
--		if (((size_t)buf & PAGE_MASK) !=
--		    ((size_t)(buf + count - 1) & PAGE_MASK))
--			goto out_copy;
--		p1 = vmalloc_to_page(buf);
--		if (!p1)
--			goto out_copy;
--		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
--	}
--
- 	xtra = count & 3;
- 	if (xtra) {
- 		count -= xtra;
- 		memcpy(buf + count, this->base + bram_offset + count, xtra);
- 	}
- 
-+	dma_dst = dma_map_single(dev, buf, count, DMA_FROM_DEVICE);
- 	dma_src = c->phys_base + bram_offset;
--	dma_dst = dma_map_single(&c->pdev->dev, buf, count, DMA_FROM_DEVICE);
--	if (dma_mapping_error(&c->pdev->dev, dma_dst)) {
--		dev_err(&c->pdev->dev,
--			"Couldn't DMA map a %d byte buffer\n",
--			count);
--		goto out_copy;
--	}
- 
--	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
--	dma_unmap_single(&c->pdev->dev, dma_dst, count, DMA_FROM_DEVICE);
--
--	if (ret) {
--		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
-+	if (dma_mapping_error(dev, dma_dst)) {
-+		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
- 		goto out_copy;
- 	}
- 
--	return 0;
-+	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-+	dma_unmap_single(dev, dma_dst, count, DMA_FROM_DEVICE);
-+	if (!err)
-+		return 0;
-+
-+	dev_err(dev, "timeout waiting for DMA\n");
- 
- out_copy:
- 	memcpy(buf, this->base + bram_offset, count);
-@@ -437,49 +423,34 @@ static int omap2_onenand_write_bufferram(struct mtd_info *mtd, int area,
- {
- 	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
- 	struct onenand_chip *this = mtd->priv;
--	dma_addr_t dma_src, dma_dst;
--	int bram_offset;
-+	struct device *dev = &c->pdev->dev;
- 	void *buf = (void *)buffer;
--	int ret;
-+	dma_addr_t dma_src, dma_dst;
-+	int bram_offset, err;
- 
- 	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
--	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
--		goto out_copy;
--
--	/* panic_write() may be in an interrupt context */
--	if (in_interrupt() || oops_in_progress)
-+	/*
-+	 * If the buffer address is not DMA-able, len is not long enough to make
-+	 * DMA transfers profitable or panic_write() may be in an interrupt
-+	 * context fallback to PIO mode.
-+	 */
-+	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
-+	    count < 384 || in_interrupt() || oops_in_progress )
- 		goto out_copy;
- 
--	if (buf >= high_memory) {
--		struct page *p1;
--
--		if (((size_t)buf & PAGE_MASK) !=
--		    ((size_t)(buf + count - 1) & PAGE_MASK))
--			goto out_copy;
--		p1 = vmalloc_to_page(buf);
--		if (!p1)
--			goto out_copy;
--		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
--	}
--
--	dma_src = dma_map_single(&c->pdev->dev, buf, count, DMA_TO_DEVICE);
-+	dma_src = dma_map_single(dev, buf, count, DMA_TO_DEVICE);
- 	dma_dst = c->phys_base + bram_offset;
--	if (dma_mapping_error(&c->pdev->dev, dma_src)) {
--		dev_err(&c->pdev->dev,
--			"Couldn't DMA map a %d byte buffer\n",
--			count);
--		return -1;
--	}
--
--	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
--	dma_unmap_single(&c->pdev->dev, dma_src, count, DMA_TO_DEVICE);
--
--	if (ret) {
--		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
-+	if (dma_mapping_error(dev, dma_src)) {
-+		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
- 		goto out_copy;
- 	}
- 
--	return 0;
-+	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-+	dma_unmap_page(dev, dma_src, count, DMA_TO_DEVICE);
-+	if (!err)
-+		return 0;
-+
-+	dev_err(dev, "timeout waiting for DMA\n");
- 
- out_copy:
- 	memcpy(this->base + bram_offset, buf, count);
--- 
-2.17.0
+On 04/13/2018 06:28 PM, Jiri Olsa wrote:
+> On Mon, Apr 09, 2018 at 04:36:32PM +0530, Ravi Bangoria wrote:
+>
+> SNIP
+>
+>> -		     !remove_name_list_str && !purge_name_list_str &&
+>> -		     !missing_filename && !update_name_list_str))
+>> +	opts_flag = add_name_list_str || kcore_filename ||
+>> +		remove_name_list_str || purge_name_list_str ||
+>> +		missing_filename || update_name_list_str;
+>> +
+>> +	if (argc || !(list_files || opts_flag))
+>>  		usage_with_options(buildid_cache_usage, buildid_cache_options);
+>>  
+>> +	/* -l is exclusive. It can not be used with other options. */
+>> +	if (list_files && opts_flag)
+>> +		usage_with_options_msg(buildid_cache_usage,
+>> +			buildid_cache_options, "-l is exclusive.\n");
+>> +
+>>  	if (ns_id > 0)
+>>  		nsi = nsinfo__new(ns_id);
+>>  
+>> @@ -366,6 +396,11 @@ int cmd_buildid_cache(int argc, const char **argv)
+>>  
+>>  	setup_pager();
+>>  
+>> +	if (list_files) {
+>> +		build_id_cache__show_all();
+>> +		goto out;
+> make build_id_cache__show_all return value and store it to ret before going out
+>
+> jirka
+>
