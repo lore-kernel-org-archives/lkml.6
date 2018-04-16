@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754413AbeDPIv2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 04:51:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44830 "EHLO
+        id S1754200AbeDPIuo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 04:50:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44700 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754381AbeDPIvY (ORCPT
+        with ESMTP id S1753950AbeDPIul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 04:51:24 -0400
+        Mon, 16 Apr 2018 04:50:41 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, netdev@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 08/12] mmc: reduce use of block bounce buffers
-Date: Mon, 16 Apr 2018 10:50:28 +0200
-Message-Id: <20180416085032.7367-9-hch@lst.de>
+Subject: [PATCH 01/12] iscsi_tcp: don't set a bounce limit
+Date: Mon, 16 Apr 2018 10:50:21 +0200
+Message-Id: <20180416085032.7367-2-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180416085032.7367-1-hch@lst.de>
 References: <20180416085032.7367-1-hch@lst.de>
@@ -23,39 +23,24 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can rely on the dma-mapping code to handle any DMA limits that is
-bigger than the ISA DMA mask for us (either using an iommu or swiotlb),
-so remove setting the block layer bounce limit for anything but bouncing
-for highmem pages.
+The default already is to never bounce, so the call is a no-op.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/mmc/core/queue.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/scsi/iscsi_tcp.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-index 56e9a803db21..60a02a763d01 100644
---- a/drivers/mmc/core/queue.c
-+++ b/drivers/mmc/core/queue.c
-@@ -351,17 +351,14 @@ static const struct blk_mq_ops mmc_mq_ops = {
- static void mmc_setup_queue(struct mmc_queue *mq, struct mmc_card *card)
- {
- 	struct mmc_host *host = card->host;
--	u64 limit = BLK_BOUNCE_HIGH;
--
--	if (mmc_dev(host)->dma_mask && *mmc_dev(host)->dma_mask)
--		limit = (u64)dma_max_pfn(mmc_dev(host)) << PAGE_SHIFT;
- 
- 	blk_queue_flag_set(QUEUE_FLAG_NONROT, mq->queue);
- 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, mq->queue);
- 	if (mmc_can_erase(card))
- 		mmc_queue_setup_discard(mq->queue, card);
- 
--	blk_queue_bounce_limit(mq->queue, limit);
-+	if (!mmc_dev(host)->dma_mask || !mmc_dev(host)->dma_mask)
-+		blk_queue_bounce_limit(mq->queue, BLK_BOUNCE_HIGH);
- 	blk_queue_max_hw_sectors(mq->queue,
- 		min(host->max_blk_count, host->max_req_size / 512));
- 	blk_queue_max_segments(mq->queue, host->max_segs);
+diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+index 2ba4b68fdb73..b025a0b74341 100644
+--- a/drivers/scsi/iscsi_tcp.c
++++ b/drivers/scsi/iscsi_tcp.c
+@@ -962,7 +962,6 @@ static int iscsi_sw_tcp_slave_configure(struct scsi_device *sdev)
+ 	if (conn->datadgst_en)
+ 		sdev->request_queue->backing_dev_info->capabilities
+ 			|= BDI_CAP_STABLE_WRITES;
+-	blk_queue_bounce_limit(sdev->request_queue, BLK_BOUNCE_ANY);
+ 	blk_queue_dma_alignment(sdev->request_queue, 0);
+ 	return 0;
+ }
 -- 
 2.17.0
