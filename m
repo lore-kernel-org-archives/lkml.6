@@ -1,79 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753729AbeDPM1v (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 08:27:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41424 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752496AbeDPM1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 08:27:50 -0400
-Date: Mon, 16 Apr 2018 14:27:47 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Minchan Kim <minchan@kernel.org>,
-        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
- reclaimable memory
-Message-ID: <20180416122747.GM17484@dhcp22.suse.cz>
-References: <20180305133743.12746-1-guro@fb.com>
- <20180305133743.12746-5-guro@fb.com>
- <20180413133519.GA213834@rodete-laptop-imager.corp.google.com>
- <20180413135923.GT17484@dhcp22.suse.cz>
- <13f1f5b5-f3f8-956c-145a-4641fb996048@suse.cz>
- <20180413142821.GW17484@dhcp22.suse.cz>
- <20180413143716.GA5378@cmpxchg.org>
- <20180416114144.GK17484@dhcp22.suse.cz>
- <1475594b-c1ad-9625-7aeb-ad8ad385b793@suse.cz>
+        id S1754147AbeDPM2X (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 08:28:23 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43347 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753931AbeDPM2V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 08:28:21 -0400
+X-Google-Smtp-Source: AIpwx48iXQvln0QHBELf3IKcK9nNPXbRuUgUvBCQzCaocDUlKTjZA/2giSM0VvYpZb+AdmPwjs+C2Q==
+From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+To: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20VUCHENER?= <clement.vuchener@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>, Cameron Gutman <aicommander@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-input <linux-input@vger.kernel.org>
+Cc: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
+Subject: [PATCH v9 0/2] hid-steam driver with user mode client dection
+Date: Mon, 16 Apr 2018 14:27:01 +0200
+Message-Id: <20180416122703.22306-1-rodrigorivascosta@gmail.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1475594b-c1ad-9625-7aeb-ad8ad385b793@suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 16-04-18 14:06:21, Vlastimil Babka wrote:
-> On 04/16/2018 01:41 PM, Michal Hocko wrote:
-> > On Fri 13-04-18 10:37:16, Johannes Weiner wrote:
-> >> On Fri, Apr 13, 2018 at 04:28:21PM +0200, Michal Hocko wrote:
-> >>> On Fri 13-04-18 16:20:00, Vlastimil Babka wrote:
-> >>>> We would need kmalloc-reclaimable-X variants. It could be worth it,
-> >>>> especially if we find more similar usages. I suspect they would be more
-> >>>> useful than the existing dma-kmalloc-X :)
-> >>>
-> >>> I am still not sure why __GFP_RECLAIMABLE cannot be made work as
-> >>> expected and account slab pages as SLAB_RECLAIMABLE
-> >>
-> >> Can you outline how this would work without separate caches?
-> > 
-> > I thought that the cache would only maintain two sets of slab pages
-> > depending on the allocation reuquests. I am pretty sure there will be
-> > other details to iron out and
-> 
-> For example the percpu (and other) array caches...
-> 
-> > maybe it will turn out that such a large
-> > portion of the chache would need to duplicate the state that a
-> > completely new cache would be more reasonable.
-> 
-> I'm afraid that's the case, yes.
-> 
-> > Is this worth exploring
-> > at least? I mean something like this should help with the fragmentation
-> > already AFAIU. Accounting would be just free on top.
-> 
-> Yep. It could be also CONFIG_urable so smaller systems don't need to
-> deal with the memory overhead of this.
-> 
-> So do we put it on LSF/MM agenda?
+Hello! This is reroll v9 of the Steam Controller driver.
 
-If you volunteer to lead the discussion, then I do not have any
-objections.
+@Pierre-Loup, @Clément, could you please check if this driver is acceptable by
+Valve? I think this could be the one ;-).
+
+I've rolled back the synthetic LPAD diagonals. It happens that the actual
+coordinates of the pads are rotated about 15 degrees to the center, but the
+marks in the pad are aligned to 0/90 degrees. That, and my poor's man
+trigonometry, makes clicking the diagonals quite unreliable.
+Sorry for the noise, but now I think that we are better limiting ourselves to
+the events emitted by the hardware, as is.
+
+Other than that, I've doing some torture testing, with and without the Steam
+Client running. I've changed:
+ 1. The way EPIPE is handled when sending a report: I've noticed that Steam
+    Client retries up to 50 times, with little or no delay between them, so I do
+    the same.
+ 2. I've added a fallback in case this driver is unable to get the serial number
+    of the controller. Failures on any other report can be ignored safely. But
+    failing to get the serial number was preventing the creating of the hidraw
+    node (wired controller only), and that could prevent Steam Client from
+    working. 
+ 3. I've received a mail from Valve with a bunch of constants for the
+    protocol. Most are related to the setting of new mappings (that we do not
+    need) and a few of the rest are deprecated. Anyway, I've renamed the
+    constants STEAM_CMD_* to align them with the official names, and added a
+    few more that were unknown to me, just for future reference. Still, commands
+    used for enabling/disabling lizard mode are the same.
+
+Best regards.
+
+Changes in v9:
+ * Remove synthetic diagonals for the DPAD (bad idea).
+ * Rename protocol constants to follow Valve names.
+ * Rewrite the retry fo steam_send_report() when EPIPE.
+ * Add a fallback for failure getting the serial number.
+
+Changes in v8:
+ * Add constants for the protocol major magic numbers.
+ * Disable/Enable margin of the rpad, together with the lizard-mode.
+ * Synthesize diagonals for the DPAD.
+ * Fix overflow with Y=-32768.
+ * Make lizard_mode parameter a bool, dynamically updatable.
+
+Changes in v7:
+ * All the automatic lizard_mode stuff.
+ * Added the lizard_mode parameter.
+ * The patchset is reduced to 2 commits. The separation of the
+   steam_get_serial command no longer makes sense, since I need the
+   steam_send_cmd in the first commit to implement the lizard mode.
+ * Change the input mapping to conform to Documentation/gamepad.rst.
+
+(v6 was a RFC, it does not count).
+
+Changes in v5:
+ * Fix license SPDX to GPL-2.0+.
+ * Minor stylistic changes (BIT(3) instead 0x08 and so on).
+
+Changes in v4:
+ * Add command to check the wireless connection status on probe, without
+   waiting for a message (thanks to Clément Vuchener for the tip).
+ * Removed the error code on redundant connection/disconnection messages. That
+   was harmless but polluted dmesg.
+ * Added buttons for touching the left-pad and right-pad.
+ * Fixed a misplaced #include from 2/4 to 1/4.
+
+Changes in v3:
+ * Use RCU to do the dynamic connec/disconnect of wireless devices.
+ * Remove entries in hid-quirks.c as they are no longer needed. This allows
+   this module to be blacklisted without side effects.
+ * Do not bypass the virtual keyboard/mouse HID devices to avoid breaking
+   existing use cases (lizard mode). A user-space tool to do that is
+   linked.
+ * Fully separated axes for joystick and left-pad. As it happens.
+ * Add fuzz values for left/right pad axes, they are a little wiggly.
+
+Changes in v2:
+ * Remove references to USB. Now the interesting interfaces are selected by
+   looking for the ones with feature reports.
+ * Feature reports buffers are allocated with hid_alloc_report_buf().
+ * Feature report length is checked, to avoid overflows in case of
+   corrupt/malicius USB devices.
+ * Resolution added to the ABS axes.
+ * A lot of minor cleanups.
+
+Rodrigo Rivas Costa (2):
+  HID: add driver for Valve Steam Controller
+  HID: steam: add battery device.
+
+ drivers/hid/Kconfig     |    8 +
+ drivers/hid/Makefile    |    1 +
+ drivers/hid/hid-ids.h   |    4 +
+ drivers/hid/hid-steam.c | 1112 +++++++++++++++++++++++++++++++++++++++
+ include/linux/hid.h     |    1 +
+ 5 files changed, 1126 insertions(+)
+ create mode 100644 drivers/hid/hid-steam.c
 
 -- 
-Michal Hocko
-SUSE Labs
+2.17.0
