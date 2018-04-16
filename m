@@ -1,83 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752708AbeDPUnr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 16:43:47 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:54237 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752496AbeDPUnn (ORCPT
+        id S1752813AbeDPUoG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 16:44:06 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:44797 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752750AbeDPUoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 16:43:43 -0400
-X-IronPort-AV: E=Sophos;i="5.48,460,1517846400";
-   d="scan'208";a="179160328"
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-To: "beanhuo@micron.com" <beanhuo@micron.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "rajatja@google.com" <rajatja@google.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhad.com" <mingo@redhad.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>
-Subject: Re: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
- events
-Thread-Topic: [RESEND PATCH v1 1/2] trace: events: scsi: Add tag in SCSI trace
- events
-Thread-Index: AdPVwUmBGJhhKEdfRWiDz1LGRhoC8wAAk8gA
-Date: Mon, 16 Apr 2018 20:43:39 +0000
-Message-ID: <51067460c8f403cceaa6fa6c6f6a6b61e78cb018.camel@wdc.com>
-References: <5b2fdd1b29b54590889194eba90debfb@SIWEX5A.sing.micron.com>
-In-Reply-To: <5b2fdd1b29b54590889194eba90debfb@SIWEX5A.sing.micron.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com;
-x-originating-ip: [199.255.44.172]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0910;7:27sJwvcLyvCBDQUmH4lyuwdBZeHDAryFQl8pzp/0utrfNgo4+5KWJbGCTzVvh8EJ6CCK8YcLMoDlMp37jD0jyYYc9uyshSg6siUh/sD0SZej1iTOEIL+XyfiEz2nieOBSDF1o5vEqQ/yJ3xhd479KzDB+dPjUAuHzgjf1Vx+A1+YqB2dfuvM15zglQhjri71y5Hj7XJ50i4QK1v/vKJ144N32IGDSwYYA+/G7zUY+BhOwCIvoAdSr6PnlPh6Yluc;20:U3KjyZofe0b07Lie2g/KOX2Tvz8sjcCPADM2FISHtCtIZO7Fa5qa1/zgTGztHzAa6ae2aVcg4WqR8b3nOxCk3fbF1J6lgym/e6D8JGseB4qOhbOKxYgFVTmxGGaZqGzf+oci+LXGwh0l3kuPnJLlqpH4mrbLyfDWkgpHxPbuSos=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0910;
-x-ms-traffictypediagnostic: MWHPR04MB0910:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0910519992635A96193B21D298B00@MWHPR04MB0910.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231232)(944501327)(52105095)(3002001)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(6072148)(201708071742011);SRVR:MWHPR04MB0910;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0910;
-x-forefront-prvs: 0644578634
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39380400002)(366004)(39860400002)(396003)(377424004)(199004)(189003)(81166006)(54906003)(110136005)(105586002)(68736007)(36756003)(81156014)(316002)(8676002)(305945005)(5660300001)(2906002)(478600001)(7416002)(7736002)(76176011)(2616005)(14454004)(99286004)(72206003)(186003)(8936002)(66066001)(102836004)(446003)(59450400001)(11346002)(6506007)(97736004)(26005)(6116002)(53936002)(118296001)(476003)(25786009)(106356001)(486006)(4326008)(2900100001)(2501003)(5250100002)(3846002)(5890100001)(86362001)(6246003)(229853002)(3660700001)(3280700002)(6436002)(6486002)(2201001)(6512007)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0910;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: 7+KCi+uZ5VQf3t2nlRUVJA7+OFxZMKJOFrN6lIHoenBVJtH8a2/jy7HU7//5vR1eB6HxzuR9MvDwzReG22XmDVSxADh4wO6wE/r/PHMOnf1w+4xEEeIS1ApRhgR/WeLYf8pqKMpdBYHMeR28GavTwv5+brLvk/dZosVR266wBeY7T7NrRV+Dmu8DTDBesDyS
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <21FF2013C60E83438AC474891086B1D1@namprd04.prod.outlook.com>
+        Mon, 16 Apr 2018 16:44:03 -0400
+X-Google-Smtp-Source: AIpwx4+eKXBCozB9pnLfT1LvBFdXrHHwD78CHYl9tPFgPio/7kWnwXNu2m0qQ/cJCHQeSESohUpq2XM2fFnoRKmqTus=
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: c122efcd-6f13-41ee-482b-08d5a3dabc17
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c122efcd-6f13-41ee-482b-08d5a3dabc17
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2018 20:43:39.4289
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0910
+In-Reply-To: <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
+ <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
+ <2864697.7uzmEJovl2@natalenko.name> <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
+ <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com> <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Mon, 16 Apr 2018 13:44:01 -0700
+X-Google-Sender-Auth: XKdJnk0QaewBKlmCOHVSR_ujcVY
+Message-ID: <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Jens Axboe <axboe@kernel.dk>, Bart Van Assche <bart.vanassche@wdc.com>
+Cc: David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3GKhs4k009950
 
-On Mon, 2018-04-16 at 20:27 +0000, Bean Huo (beanhuo) wrote:
-> By the way, these patches are not to add new feature, they are just to
-> add print tag along with the other exist printed request parameters.
+On Thu, Apr 12, 2018 at 8:02 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Apr 12, 2018 at 3:47 PM, Kees Cook <keescook@chromium.org> wrote:
+>> After fixing up some build issues in the middle of the 4.16 cycle, I
+>> get an unhelpful bisect result of commit 0a4b6e2f80aa ("Merge branch
+>> 'for-4.16/block'"). Instead of letting the test run longer, I'm going
+>> to switch to doing several shorter test boots per kernel and see if
+>> that helps. One more bisect coming...
+>
+> Okay, so I can confirm the bisect points at the _merge_ itself, not a
+> specific patch. I'm not sure how to proceed here. It looks like some
+> kind of interaction between separate trees? Jens, do you have
+> suggestions on how to track this down?
 
-Are you aware that there are two tag fields in struct request, namely "tag"
-and "internal_tag"? Are you aware that how these fields are used depends on
-whether or not a scheduler is attached to a request queue? Have you verified
-that the "tag" field contains a meaningful value for blk-mq for every blk-mq
-tracepoint?
+Turning off HARDENED_USERCOPY and turning on KASAN, I see the same report:
 
-Thanks,
+[   38.274106] BUG: KASAN: slab-out-of-bounds in _copy_to_user+0x42/0x60
+[   38.274841] Read of size 22 at addr ffff8800122b8c4b by task smartctl/1064
+[   38.275630]
+[   38.275818] CPU: 2 PID: 1064 Comm: smartctl Not tainted 4.17.0-rc1-ARCH+ #266
+[   38.276631] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[   38.277690] Call Trace:
+[   38.277988]  dump_stack+0x71/0xab
+[   38.278397]  ? _copy_to_user+0x42/0x60
+[   38.278833]  print_address_description+0x6a/0x270
+[   38.279368]  ? _copy_to_user+0x42/0x60
+[   38.279800]  kasan_report+0x243/0x360
+[   38.280221]  _copy_to_user+0x42/0x60
+[   38.280635]  sg_io+0x459/0x660
+...
 
-Bart.
+Though we get slightly more details (some we already knew):
+
+[   38.301330] Allocated by task 329:
+[   38.301734]  kmem_cache_alloc_node+0xca/0x220
+[   38.302239]  scsi_mq_init_request+0x64/0x130 [scsi_mod]
+[   38.302821]  blk_mq_alloc_rqs+0x2cf/0x370
+[   38.303265]  blk_mq_sched_alloc_tags.isra.4+0x7d/0xb0
+[   38.303820]  blk_mq_init_sched+0xf0/0x220
+[   38.304268]  elevator_switch+0x17a/0x2c0
+[   38.304705]  elv_iosched_store+0x173/0x220
+[   38.305171]  queue_attr_store+0x72/0xb0
+[   38.305602]  kernfs_fop_write+0x188/0x220
+[   38.306049]  __vfs_write+0xb6/0x330
+[   38.306436]  vfs_write+0xe9/0x240
+[   38.306804]  ksys_write+0x98/0x110
+[   38.307181]  do_syscall_64+0x6d/0x1d0
+[   38.307590]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   38.308142]
+[   38.308316] Freed by task 0:
+[   38.308652] (stack is not available)
+[   38.309060]
+[   38.309243] The buggy address belongs to the object at ffff8800122b8c00
+[   38.309243]  which belongs to the cache scsi_sense_cache of size 96
+[   38.310625] The buggy address is located 75 bytes inside of
+[   38.310625]  96-byte region [ffff8800122b8c00, ffff8800122b8c60)
+
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
