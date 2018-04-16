@@ -1,83 +1,70 @@
-Return-Path: <kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/UNBbnrNT6uwuoZ/qeDd4fLMjFHOw7Dl4NEb4XDhnMaTDtiS5n43pqXYsx89yS4Q9B3SG1
-ARC-Seal: i=1; a=rsa-sha256; t=1523500030; cv=none;
+Return-Path: <jacopo+renesas@jmondi.org>
+X-Google-Smtp-Source: AIpwx4885vHvTdxSVgsPDAkTwOJgcS7lUlz62NNsFmAqWQhyQyQO6tDVctT7psEUNG6gvTZ5KNVp
+ARC-Seal: i=1; a=rsa-sha256; t=1523886939; cv=none;
         d=google.com; s=arc-20160816;
-        b=mUHBieH9DZKCiIN4jcyxfzcaWQukvHWnz7eIVt4eA6LAD2jbgWAmAW71FO5fwPA1Ww
-         /bgNUtD63dw4qFNrdY7QnWdMw5zVfgfWuggzYjkCVXhtrsLz6z1SWjEC3X7rfm435hCS
-         FYI/lqQJTGHxe5iyNpqc84MEN5/DiEsQ3wIy8J90OXy63tW2ONJLHcJg2N9RcHQRhvKc
-         PM5Kd50fhFcFJQhV8a7vSFrio5gzEUKPz00wLVg2TgPJ/wrJIgSX2fq3pAlBsTtpv3pK
-         /8heghpqGP7Ms3QITOcPpSj/ef8RVFuw7irQLs5wpSKVWXReGRbvVkPUwTlp/OzQ/+Ht
-         BU4Q==
+        b=vZPTjDgu3T0wWjWeWOGGeEFKMGw5imW/J+uyWMT/NrpJ+xd/XaWSMubzyMzPlCQIUE
+         50tzn3q8j6B6WD/HhJMQ3QZao+hyTtXEAA6JTX3l9PeAmlGhud7JrOB85O/SsAqkr1el
+         sgMlqTHp9fMUjUrpmB46a+jm8grlJw/QLhSmJeb9i+nqimQxBIxVhLkptqr+R2RNeoJx
+         MJuHIZt/7p4VuL6ulBMAkB2lkV5x3x04mgopjoMGT/8IHMRoErulm8w3UwT+Zw1CWo/t
+         Kjw/wg5dIHoocLkqt0AwBv1UlvHMwHqBjbBj4Km/pKxJEtXHVlwOKlHb2zWcljnV+CY0
+         8Dfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=7HS/b2AuMk/Ghh5gPoPBWgVs16UxmWBdOYEzCnLSxIw=;
-        b=nlp7/+ko9the21afYALhOznWJBVd0USikiOozyChQLUg22fMtcVlSejsQPahow+7qG
-         ztNoyLhIpIJ6wRQhReCMvw7L8uiDFWD9SajyjPRhVOJ6a/JrWAaDMTgUISD1Adg4gy+S
-         AluXMDjwQBfjhHNY0cbu+hZgD0IgM3WQn8MEc9G39nETEzqGW8KzQ6uhCSixnOx3XU57
-         QVBEyrh11G3Elzh+aDSwzdOMUy0bzjK3nQpqqHd8qKH70pjSg8nv4iDfFcj95w5hP4hg
-         JO3TTtbTbs2qjTyZntmqZ09SXezr2s1ORSB54+EF30BlgY8yYMw08tWuIT6oMVDqjwMx
-         ZZ5Q==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=BPSOMjs/6rP00ulaqaHOa/sZw3huhJgxwXq2Ffnou5w=;
+        b=nBHAAfKMwm8C8mIe5eYNkbZuwgbwtRr4a3Xz5dWSX2GYmyAyxQPoxeajb6+OBwWClp
+         zH4uDolwkf5iT8fo78enCWxpbBH4TvsyztXdNYcHFlcsNCIE980b7k74Gf8VgwvVHcTL
+         o2X8yybY2PmpX3KQtZTdqDbo1qhp56jQ/qJpSjVkNRBZLpWgbUFm8prkW5cbmABZaNEA
+         7D4pAjr/nLQ1UZS2qyiAz3uv2j5r135f/k5+mFjHm72ani/g819wUiLWbBDd06lCLxK7
+         LzAYGxEQejtdMlbM2YjhOtU3A8CNEH0oNUriV984kaXFZzaPvhw+5XZRb4lG5mTDITk+
+         sCJA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=YLpCQ3Lz;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cbn655Dh;
-       spf=pass (google.com: domain of kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=neutral (google.com: 217.70.178.230 is neither permitted nor denied by best guess record for domain of jacopo+renesas@jmondi.org) smtp.mailfrom=jacopo+renesas@jmondi.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=YLpCQ3Lz;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=cbn655Dh;
-       spf=pass (google.com: domain of kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12980-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F275F60274
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCHv2] dmaengine: dmatest: Remove use of VLAs
-To: Laura Abbott <labbott@redhat.com>, Vinod Koul <vinod.koul@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-hardening@lists.openwall.com, Kees Cook <keescook@chromium.org>
-References: <20180411010216.17702-1-labbott@redhat.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <70092ca4-1b42-d438-83d5-068a22618baf@codeaurora.org>
-Date: Wed, 11 Apr 2018 22:26:45 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180411010216.17702-1-labbott@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+       spf=neutral (google.com: 217.70.178.230 is neither permitted nor denied by best guess record for domain of jacopo+renesas@jmondi.org) smtp.mailfrom=jacopo+renesas@jmondi.org
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: gregkh@linuxfoundation.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: serial: sh-sci: Add support for r8a77965 (H)SCIF
+Date: Mon, 16 Apr 2018 15:55:28 +0200
+Message-Id: <1523886928-14535-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597409665574809172?=
-X-GMAIL-MSGID: =?utf-8?q?1597505567761120061?=
+X-GMAIL-THRID: =?utf-8?q?1597911271665078819?=
+X-GMAIL-MSGID: =?utf-8?q?1597911271665078819?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 4/10/2018 9:02 PM, Laura Abbott wrote:
-> There's an ongoing effort to remove VLAs from the kernel
-> (https://lkml.org/lkml/2018/3/7/621) to eventually turn on -Wvla.
-> The test already pre-allocates some buffers with kmalloc so turn
-> the two VLAs in to pre-allocated kmalloc buffers.
-> 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v2: Switch to using kmalloc buffers instead of putting a large array on
-> the stack.
-> ---
->  drivers/dma/dmatest.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
+Add documentation for r8a77965 compatible string to Renesas sci-serial
+device tree bindings documentation.
 
-Reviewed-by: Sinan Kaya <okaya@codeaurora.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
 
+Renesas R-Car M3-N support has been merged for v4.17.
+Document the missing device tree bindings.
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+---
+ Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+index ad962f4..0cc5417 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -41,6 +41,8 @@ Required properties:
+     - "renesas,hscif-r8a7795" for R8A7795 (R-Car H3) HSCIF compatible UART.
+     - "renesas,scif-r8a7796" for R8A7796 (R-Car M3-W) SCIF compatible UART.
+     - "renesas,hscif-r8a7796" for R8A7796 (R-Car M3-W) HSCIF compatible UART.
++    - "renesas,scif-r8a77965" for R8A77965 (R-Car M3-N) SCIF compatible UART.
++    - "renesas,hscif-r8a77965" for R8A77965 (R-Car M3-N) HSCIF compatible UART.
+     - "renesas,scif-r8a77970" for R8A77970 (R-Car V3M) SCIF compatible UART.
+     - "renesas,hscif-r8a77970" for R8A77970 (R-Car V3M) HSCIF compatible UART.
+     - "renesas,scif-r8a77980" for R8A77980 (R-Car V3H) SCIF compatible UART.
+--
+2.7.4
