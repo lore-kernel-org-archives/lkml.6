@@ -1,112 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754809AbeDPNEI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 09:04:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:59294 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750884AbeDPNEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 09:04:07 -0400
-Date: Mon, 16 Apr 2018 14:03:48 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, edubezval@gmail.com,
-        kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>
-Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-Message-ID: <20180416130348.GA5120@e107533-lin>
-References: <20180416073729.GA4244@vireshk-i7>
- <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
- <20180416093747.GB4244@vireshk-i7>
- <4abf0d97-d2b8-46ab-3c05-4a11510ac3fe@linaro.org>
- <20180416095006.GC4244@vireshk-i7>
- <b0e7ff16-c947-89a0-6bd9-56ee9a76e7ad@linaro.org>
- <20180416101021.GD4244@vireshk-i7>
- <1c61128a-dea6-b12c-4cd8-ef53a5c8628d@linaro.org>
- <20180416123102.GD3706@e107533-lin>
- <1d4ce2d7-cc24-83e1-dbf9-2c1cd2f5ca74@linaro.org>
+        id S1754747AbeDPNGM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 09:06:12 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48226 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753599AbeDPNGJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 09:06:09 -0400
+Subject: Re: [PATCH v4 13/15] KVM: s390: configure the guest's AP devices
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Mon, 16 Apr 2018 15:05:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d4ce2d7-cc24-83e1-dbf9-2c1cd2f5ca74@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1523827345-11600-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041613-0008-0000-0000-000004EB1827
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041613-0009-0000-0000-00001E7F2F49
+Message-Id: <2e7387b9-ceb4-cdca-56ac-f5344084e10a@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804160124
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 02:49:35PM +0200, Daniel Lezcano wrote:
-> On 16/04/2018 14:31, Sudeep Holla wrote:
-> > On Mon, Apr 16, 2018 at 02:10:30PM +0200, Daniel Lezcano wrote:
-> >> On 16/04/2018 12:10, Viresh Kumar wrote:
-> >>> On 16-04-18, 12:03, Daniel Lezcano wrote:
-> >>>> On 16/04/2018 11:50, Viresh Kumar wrote:
-> >>>>> On 16-04-18, 11:45, Daniel Lezcano wrote:
-> >>>>>> Can you elaborate a bit ? I'm not sure to get the point.
-> >>>>>
-> >>>>> Sure. With your current code on Hikey960 (big/LITTLE), you end up
-> >>>>> creating two cooling devices, one for the big cluster and one for
-> >>>>> small cluster. Which is the right thing to do, as we also have two
-> >>>>> cpufreq cooling devices.
-> >>>>>
-> >>>>> But with the change Sudeep is referring to, the helper you used to get
-> >>>>> cluster id will return 0 (SoC id) for all the 8 CPUs. So your code
-> >>>>> will end up creating a single cpuidle cooling device for all the CPUs.
-> >>>>> Which would be wrong.
-> >>>>
-> >>>> Is the semantic of topology_physical_package_id changing ?
-> >>>
-> >>> That's what I understood from his email.
-> >>>
-> >>>> I don't
-> >>>> understand the change Sudeep is referring to.
-> >>
-> >> Actually there is no impact with the change Sudeep is referring to. It
-> >> is for ACPI, we are DT based. Confirmed with Jeremy.
-> >>
-> > 
-> > No, it will change for DT. The aim is to be consistent irrespective of
-> > h/w or f/w description(i.e ADCPI or DT)
-> 
-> What will happen with the code using topology_physical_package_id ?
-> 
-> drivers/acpi/processor_thermal.c:       int id = topology_physical_package_id(cpu);
-> drivers/acpi/processor_thermal.c:               if (topology_physical_package_id(i) == id)
-> drivers/acpi/processor_thermal.c:               if (topology_physical_package_id(i) ==
-> drivers/acpi/processor_thermal.c: topology_physical_package_id(cpu))
-> 
+On 15/04/2018 23:22, Tony Krowiak wrote:
+> Registers a group notifier during the open of the mediated
+> matrix device to get information on KVM presence through the
+> VFIO_GROUP_NOTIFY_SET_KVM event. When notified, the pointer
+> to the kvm structure is saved inside the mediated matrix
+> device. Once the VFIO AP device driver has access to KVM,
+> access to the APs can be configured for the guest.
+>
+> Access to APs is configured when the file descriptor for the
+> mediated matrix device is opened by userspace. The items to be
+> configured are:
+>
+> 1. The ECA.28 bit in the SIE state description determines whether
+>     AP instructions are interpreted by the hardware or intercepted.
+>     The VFIO AP device driver relies interpretive execution of
+>     AP instructions so the ECA.28 bit will be set
+>
+> 2. Guest access to AP adapters, usage domains and control domains
+>     is controlled by three bit masks referenced from the
+>     Crypto Control Block (CRYCB) referenced from the guest's SIE state
+>     description:
+>
+>     * The AP Mask (APM) controls access to the AP adapters. Each bit
+>       in the APM represents an adapter number - from most significant
+>       to least significant bit - from 0 to 255. The bits in the APM
+>       are set according to the adapter numbers assigned to the mediated
+>       matrix device via its 'assign_adapter' sysfs attribute file.
+>
+>     * The AP Queue (AQM) controls access to the AP queues. Each bit
+>       in the AQM represents an AP queue index - from most significant
+>       to least significant bit - from 0 to 255. A queue index references
+>       a specific domain and is synonymous with the domian number. The
+>       bits in the AQM are set according to the domain numbers assigned
+>       to the mediated matrix device via its 'assign_domain' sysfs
+>       attribute file.
+>
+>     * The AP Domain Mask (ADM) controls access to the AP control domains.
+>       Each bit in the ADM represents a control domain - from most
+>       significant to least significant bit - from 0-255. The
+>       bits in the ADM are set according to the domain numbers assigned
+>       to the mediated matrix device via its 'assign_control_domain'
+>       sysfs attribute file.
+>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> ---
+>   drivers/s390/crypto/vfio_ap_ops.c     |   50 +++++++++++++++++++++++++++++++++
+>   drivers/s390/crypto/vfio_ap_private.h |    2 +
+>   2 files changed, 52 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index bc2b05e..e3ff5ab 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -53,6 +53,54 @@ static int vfio_ap_mdev_remove(struct mdev_device *mdev)
+>   	return 0;
+>   }
+>
+> +static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
+> +				       unsigned long action, void *data)
+> +{
+> +	struct ap_matrix_mdev *matrix_mdev;
+> +
+> +	if (action == VFIO_GROUP_NOTIFY_SET_KVM) {
+> +		matrix_mdev = container_of(nb, struct ap_matrix_mdev,
+> +					   group_notifier);
+> +		matrix_mdev->kvm = data;
+> +	}
+> +
+> +	return NOTIFY_OK;
+> +}
+> +
+> +static int vfio_ap_mdev_open(struct mdev_device *mdev)
+> +{
+> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+> +	unsigned long events;
+> +	int ret;
+> +
+> +	matrix_mdev->group_notifier.notifier_call = vfio_ap_mdev_group_notifier;
+> +	events = VFIO_GROUP_NOTIFY_SET_KVM;
+> +
+> +	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+> +				     &events, &matrix_mdev->group_notifier);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = kvm_ap_interpret_instructions(matrix_mdev->kvm, true);
 
-ACPI and hence will have right notion of package.
+Do you need this call ?
+apie is always enabled in KVM if AP instructions are available.
 
-> drivers/block/mtip32xx/mtip32xx.c: topology_physical_package_id(cpumask_first(node_mask)),
-> 
+Setting or not the interpretation is done for the VM in a all.
+It is not the right place to do it here since open is device dependent.
 
-Not sure if it was ever used on ARM/ARM64
+Or we only have one device in the VM at a time.
+In this case, shouldn't we make it official by returning -EEXIST for the 
+second call?
 
-> drivers/cpufreq/arm_big_little.c:       return topology_physical_package_id(cpu);
 
-Yes this is main affected driver. I don't think it's used by any ARM64
-platform anymore. This is one of the reason I divorced SCPI driver from
-this recently. ARM32 may still retain old definition of package_id(not
-sure, depends if anyone as need to change that and maintainers view on
-that). If not, we need to fix this driver along with the code changing
-the definition.
 
-> 
-> drivers/crypto/qat/qat_common/adf_common_drv.h: return topology_physical_package_id(smp_processor_id());
-> drivers/crypto/virtio/virtio_crypto_common.h:   node = topology_physical_package_id(cpu);
-> 
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = kvm_ap_configure_matrix(matrix_mdev->kvm,
+> +				      matrix_mdev->matrix);
+> +
+> +	return ret;
+> +}
+> +
+> +static void vfio_ap_mdev_release(struct mdev_device *mdev)
+> +{
+> +	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+> +
+> +	kvm_ap_deconfigure_matrix(matrix_mdev->kvm);
+> +	kvm_ap_interpret_instructions(matrix_mdev->kvm, false);
 
-x86 specific and never assumed cluster id.
+This call clears the apie in KVM.
+This is only OK if we have a single device present until the end of the VM,
+otherwise AP instructions in the guest will fail after the release until 
+the end of the VM
+or until a new device is plugged.
 
-> kernel/events/core.c:           event_pkg = topology_physical_package_id(event_cpu);
-> kernel/events/core.c:           local_pkg = topology_physical_package_id(local_cpu);
-> 
 
-Generic and hence never assumed cluster id.
+> +	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+> +				 &matrix_mdev->group_notifier);
+> +}
+> +
+>   static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
+>   {
+>   	return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
+> @@ -754,6 +802,8 @@ static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
+>   	.mdev_attr_groups	= vfio_ap_mdev_attr_groups,
+>   	.create			= vfio_ap_mdev_create,
+>   	.remove			= vfio_ap_mdev_remove,
+> +	.open			= vfio_ap_mdev_open,
+> +	.release		= vfio_ap_mdev_release,
+>   };
+>
+>   int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> index f248faf..48e2806 100644
+> --- a/drivers/s390/crypto/vfio_ap_private.h
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -31,6 +31,8 @@ struct ap_matrix {
+>
+>   struct ap_matrix_mdev {
+>   	struct kvm_ap_matrix *matrix;
+> +	struct notifier_block group_notifier;
+> +	struct kvm *kvm;
+>   };
+>
+>   static inline struct ap_matrix *to_ap_matrix(struct device *dev)
 
---
-Regards,
-Sudeep
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
