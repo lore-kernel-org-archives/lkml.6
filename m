@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753584AbeDPGZQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:25:16 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41984 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753454AbeDPGZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753508AbeDPGZL (ORCPT <rfc822;w@1wt.eu>);
         Mon, 16 Apr 2018 02:25:11 -0400
-X-Google-Smtp-Source: AIpwx4+rW0ziWE2fZtyn0UIA12ibfqQ2nBDZEcJe9kgN+x16CaREizOg1MsoJnHuUpYlcyFI6JHlmQ==
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43623 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753346AbeDPGZH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 02:25:07 -0400
+X-Google-Smtp-Source: AIpwx49FSPos8nEWoQ9pHbRUn0ZIgLkkE2pjkexVawXZ7XDCopCPtSBY8U/PFAuVdgzn73JdpVeAYw==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, jgross@suse.com,
@@ -15,9 +15,9 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         tiwai@suse.com
 Cc: andr2000@gmail.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v2 3/5] ALSA: xen-front: Implement Xen event channel handling
-Date: Mon, 16 Apr 2018 09:24:51 +0300
-Message-Id: <20180416062453.24743-4-andr2000@gmail.com>
+Subject: [PATCH v2 1/5] ALSA: xen-front: Introduce Xen para-virtualized sound frontend driver
+Date: Mon, 16 Apr 2018 09:24:49 +0300
+Message-Id: <20180416062453.24743-2-andr2000@gmail.com>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180416062453.24743-1-andr2000@gmail.com>
 References: <20180416062453.24743-1-andr2000@gmail.com>
@@ -27,102 +27,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Handle Xen event channels:
-  - create for all configured streams and publish
-    corresponding ring references and event channels in Xen store,
-    so backend can connect
-  - implement event channels interrupt handlers
-  - create and destroy event channels with respect to Xen bus state
+Introduce skeleton of the para-virtualized Xen sound
+frontend driver.
+
+Initial handling for Xen bus states: implement
+Xen bus state machine for the frontend driver according to
+the state diagram and recovery flow from sound para-virtualized
+protocol: xen/interface/io/sndif.h.
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- sound/xen/Makefile                |   3 +-
- sound/xen/xen_snd_front.c         |  10 +-
- sound/xen/xen_snd_front.h         |   7 +
- sound/xen/xen_snd_front_evtchnl.c | 474 ++++++++++++++++++++++++++++++++++++++
- sound/xen/xen_snd_front_evtchnl.h |  92 ++++++++
- 5 files changed, 584 insertions(+), 2 deletions(-)
- create mode 100644 sound/xen/xen_snd_front_evtchnl.c
- create mode 100644 sound/xen/xen_snd_front_evtchnl.h
+ sound/Kconfig             |   2 +
+ sound/Makefile            |   2 +-
+ sound/xen/Kconfig         |  10 +++
+ sound/xen/Makefile        |   5 ++
+ sound/xen/xen_snd_front.c | 196 ++++++++++++++++++++++++++++++++++++++++++++++
+ sound/xen/xen_snd_front.h |  18 +++++
+ 6 files changed, 232 insertions(+), 1 deletion(-)
+ create mode 100644 sound/xen/Kconfig
+ create mode 100644 sound/xen/Makefile
+ create mode 100644 sound/xen/xen_snd_front.c
+ create mode 100644 sound/xen/xen_snd_front.h
 
-diff --git a/sound/xen/Makefile b/sound/xen/Makefile
-index 06705bef61fa..03c669984000 100644
---- a/sound/xen/Makefile
-+++ b/sound/xen/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0 OR MIT
+diff --git a/sound/Kconfig b/sound/Kconfig
+index 6833db9002ec..1140e9988fc5 100644
+--- a/sound/Kconfig
++++ b/sound/Kconfig
+@@ -96,6 +96,8 @@ source "sound/x86/Kconfig"
  
- snd_xen_front-objs := xen_snd_front.o \
--		      xen_snd_front_cfg.o
-+		      xen_snd_front_cfg.o \
-+		      xen_snd_front_evtchnl.o
+ source "sound/synth/Kconfig"
  
- obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
-diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
-index 65d2494a9d14..eb46bf4070f9 100644
---- a/sound/xen/xen_snd_front.c
-+++ b/sound/xen/xen_snd_front.c
-@@ -18,9 +18,11 @@
- #include <xen/interface/io/sndif.h>
- 
- #include "xen_snd_front.h"
-+#include "xen_snd_front_evtchnl.h"
- 
- static void xen_snd_drv_fini(struct xen_snd_front_info *front_info)
- {
-+	xen_snd_front_evtchnl_free_all(front_info);
- }
- 
- static int sndback_initwait(struct xen_snd_front_info *front_info)
-@@ -32,7 +34,12 @@ static int sndback_initwait(struct xen_snd_front_info *front_info)
- 	if (ret < 0)
- 		return ret;
- 
--	return 0;
-+	/* create event channels for all streams and publish */
-+	ret = xen_snd_front_evtchnl_create_all(front_info, num_streams);
-+	if (ret < 0)
-+		return ret;
++source "sound/xen/Kconfig"
 +
-+	return xen_snd_front_evtchnl_publish_all(front_info);
- }
+ endif # SND
  
- static int sndback_connect(struct xen_snd_front_info *front_info)
-@@ -122,6 +129,7 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
- 		return -ENOMEM;
+ endif # !UML
+diff --git a/sound/Makefile b/sound/Makefile
+index 99d8c31262c8..797ecdcd35e2 100644
+--- a/sound/Makefile
++++ b/sound/Makefile
+@@ -5,7 +5,7 @@
+ obj-$(CONFIG_SOUND) += soundcore.o
+ obj-$(CONFIG_DMASOUND) += oss/dmasound/
+ obj-$(CONFIG_SND) += core/ i2c/ drivers/ isa/ pci/ ppc/ arm/ sh/ synth/ usb/ \
+-	firewire/ sparc/ spi/ parisc/ pcmcia/ mips/ soc/ atmel/ hda/ x86/
++	firewire/ sparc/ spi/ parisc/ pcmcia/ mips/ soc/ atmel/ hda/ x86/ xen/
+ obj-$(CONFIG_SND_AOA) += aoa/
  
- 	front_info->xb_dev = xb_dev;
-+	spin_lock_init(&front_info->io_lock);
- 	dev_set_drvdata(&xb_dev->dev, front_info);
- 
- 	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
-diff --git a/sound/xen/xen_snd_front.h b/sound/xen/xen_snd_front.h
-index b52226cb30bc..9c2ffbb4e4b8 100644
---- a/sound/xen/xen_snd_front.h
-+++ b/sound/xen/xen_snd_front.h
-@@ -13,9 +13,16 @@
- 
- #include "xen_snd_front_cfg.h"
- 
-+struct xen_snd_front_evtchnl_pair;
-+
- struct xen_snd_front_info {
- 	struct xenbus_device *xb_dev;
- 
-+	/* serializer for backend IO: request/response */
-+	spinlock_t io_lock;
-+	int num_evt_pairs;
-+	struct xen_snd_front_evtchnl_pair *evt_pairs;
-+
- 	struct xen_front_cfg_card cfg;
- };
- 
-diff --git a/sound/xen/xen_snd_front_evtchnl.c b/sound/xen/xen_snd_front_evtchnl.c
+ # This one must be compilable even if sound is configured out
+diff --git a/sound/xen/Kconfig b/sound/xen/Kconfig
 new file mode 100644
-index 000000000000..9ece39f938f8
+index 000000000000..7cad38be8317
 --- /dev/null
-+++ b/sound/xen/xen_snd_front_evtchnl.c
-@@ -0,0 +1,474 @@
++++ b/sound/xen/Kconfig
+@@ -0,0 +1,10 @@
++# ALSA Xen drivers
++
++config SND_XEN_FRONTEND
++	tristate "Xen para-virtualized sound frontend driver"
++	depends on XEN && SND_PCM
++	select XEN_XENBUS_FRONTEND
++	default n
++	help
++	  Choose this option if you want to enable a para-virtualized
++	  frontend sound driver for Xen guest OSes.
+diff --git a/sound/xen/Makefile b/sound/xen/Makefile
+new file mode 100644
+index 000000000000..4507ef3c27fd
+--- /dev/null
++++ b/sound/xen/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0 OR MIT
++
++snd_xen_front-objs := xen_snd_front.o
++
++obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
+diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
+new file mode 100644
+index 000000000000..f406a8f52c51
+--- /dev/null
++++ b/sound/xen/xen_snd_front.c
+@@ -0,0 +1,196 @@
 +// SPDX-License-Identifier: GPL-2.0 OR MIT
 +
 +/*
@@ -133,476 +118,198 @@ index 000000000000..9ece39f938f8
 + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 + */
 +
-+#include <xen/events.h>
-+#include <xen/grant_table.h>
++#include <linux/delay.h>
++#include <linux/module.h>
++
++#include <xen/platform_pci.h>
 +#include <xen/xen.h>
 +#include <xen/xenbus.h>
 +
++#include <xen/interface/io/sndif.h>
++
 +#include "xen_snd_front.h"
-+#include "xen_snd_front_cfg.h"
-+#include "xen_snd_front_evtchnl.h"
 +
-+static irqreturn_t evtchnl_interrupt_req(int irq, void *dev_id)
++static void xen_snd_drv_fini(struct xen_snd_front_info *front_info)
 +{
-+	struct xen_snd_front_evtchnl *channel = dev_id;
-+	struct xen_snd_front_info *front_info = channel->front_info;
-+	struct xensnd_resp *resp;
-+	RING_IDX i, rp;
-+	unsigned long flags;
-+
-+	if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
-+		return IRQ_HANDLED;
-+
-+	spin_lock_irqsave(&front_info->io_lock, flags);
-+
-+again:
-+	rp = channel->u.req.ring.sring->rsp_prod;
-+	/* ensure we see queued responses up to rp */
-+	rmb();
-+
-+	for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
-+		resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
-+		if (resp->id != channel->evt_id)
-+			continue;
-+		switch (resp->operation) {
-+		case XENSND_OP_OPEN:
-+			/* fall through */
-+		case XENSND_OP_CLOSE:
-+			/* fall through */
-+		case XENSND_OP_READ:
-+			/* fall through */
-+		case XENSND_OP_WRITE:
-+			/* fall through */
-+		case XENSND_OP_TRIGGER:
-+			channel->u.req.resp_status = resp->status;
-+			complete(&channel->u.req.completion);
-+			break;
-+		case XENSND_OP_HW_PARAM_QUERY:
-+			channel->u.req.resp_status = resp->status;
-+			channel->u.req.resp.hw_param =
-+					resp->resp.hw_param;
-+			complete(&channel->u.req.completion);
-+			break;
-+
-+		default:
-+			dev_err(&front_info->xb_dev->dev,
-+				"Operation %d is not supported\n",
-+				resp->operation);
-+			break;
-+		}
-+	}
-+
-+	channel->u.req.ring.rsp_cons = i;
-+	if (i != channel->u.req.ring.req_prod_pvt) {
-+		int more_to_do;
-+
-+		RING_FINAL_CHECK_FOR_RESPONSES(&channel->u.req.ring,
-+					       more_to_do);
-+		if (more_to_do)
-+			goto again;
-+	} else {
-+		channel->u.req.ring.sring->rsp_event = i + 1;
-+	}
-+
-+	spin_unlock_irqrestore(&front_info->io_lock, flags);
-+	return IRQ_HANDLED;
 +}
 +
-+static irqreturn_t evtchnl_interrupt_evt(int irq, void *dev_id)
++static int sndback_initwait(struct xen_snd_front_info *front_info)
 +{
-+	struct xen_snd_front_evtchnl *channel = dev_id;
-+	struct xen_snd_front_info *front_info = channel->front_info;
-+	struct xensnd_event_page *page = channel->u.evt.page;
-+	u32 cons, prod;
-+	unsigned long flags;
-+
-+	if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
-+		return IRQ_HANDLED;
-+
-+	spin_lock_irqsave(&front_info->io_lock, flags);
-+
-+	prod = page->in_prod;
-+	/* ensure we see ring contents up to prod */
-+	virt_rmb();
-+	if (prod == page->in_cons)
-+		goto out;
-+
-+	for (cons = page->in_cons; cons != prod; cons++) {
-+		struct xensnd_evt *event;
-+
-+		event = &XENSND_IN_RING_REF(page, cons);
-+		if (unlikely(event->id != channel->evt_id++))
-+			continue;
-+
-+		switch (event->type) {
-+		case XENSND_EVT_CUR_POS:
-+			/* do nothing at the moment */
-+			break;
-+		}
-+	}
-+
-+	page->in_cons = cons;
-+	/* ensure ring contents */
-+	virt_wmb();
-+
-+out:
-+	spin_unlock_irqrestore(&front_info->io_lock, flags);
-+	return IRQ_HANDLED;
++	return 0;
 +}
 +
-+void xen_snd_front_evtchnl_flush(struct xen_snd_front_evtchnl *channel)
++static int sndback_connect(struct xen_snd_front_info *front_info)
 +{
-+	int notify;
-+
-+	channel->u.req.ring.req_prod_pvt++;
-+	RING_PUSH_REQUESTS_AND_CHECK_NOTIFY(&channel->u.req.ring, notify);
-+	if (notify)
-+		notify_remote_via_irq(channel->irq);
++	return 0;
 +}
 +
-+static void evtchnl_free(struct xen_snd_front_info *front_info,
-+			 struct xen_snd_front_evtchnl *channel)
++static void sndback_disconnect(struct xen_snd_front_info *front_info)
 +{
-+	unsigned long page = 0;
-+
-+	if (channel->type == EVTCHNL_TYPE_REQ)
-+		page = (unsigned long)channel->u.req.ring.sring;
-+	else if (channel->type == EVTCHNL_TYPE_EVT)
-+		page = (unsigned long)channel->u.evt.page;
-+
-+	if (!page)
-+		return;
-+
-+	channel->state = EVTCHNL_STATE_DISCONNECTED;
-+	if (channel->type == EVTCHNL_TYPE_REQ) {
-+		/* release all who still waits for response if any */
-+		channel->u.req.resp_status = -EIO;
-+		complete_all(&channel->u.req.completion);
-+	}
-+
-+	if (channel->irq)
-+		unbind_from_irqhandler(channel->irq, channel);
-+
-+	if (channel->port)
-+		xenbus_free_evtchn(front_info->xb_dev, channel->port);
-+
-+	/* end access and free the page */
-+	if (channel->gref != GRANT_INVALID_REF)
-+		gnttab_end_foreign_access(channel->gref, 0, page);
-+
-+	memset(channel, 0, sizeof(*channel));
++	xen_snd_drv_fini(front_info);
++	xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
 +}
 +
-+void xen_snd_front_evtchnl_free_all(struct xen_snd_front_info *front_info)
++static void sndback_changed(struct xenbus_device *xb_dev,
++			    enum xenbus_state backend_state)
 +{
-+	int i;
-+
-+	if (!front_info->evt_pairs)
-+		return;
-+
-+	for (i = 0; i < front_info->num_evt_pairs; i++) {
-+		evtchnl_free(front_info, &front_info->evt_pairs[i].req);
-+		evtchnl_free(front_info, &front_info->evt_pairs[i].evt);
-+	}
-+
-+	kfree(front_info->evt_pairs);
-+	front_info->evt_pairs = NULL;
-+}
-+
-+static int evtchnl_alloc(struct xen_snd_front_info *front_info, int index,
-+			 struct xen_snd_front_evtchnl *channel,
-+			 enum xen_snd_front_evtchnl_type type)
-+{
-+	struct xenbus_device *xb_dev = front_info->xb_dev;
-+	unsigned long page;
-+	grant_ref_t gref;
-+	irq_handler_t handler;
-+	char *handler_name = NULL;
++	struct xen_snd_front_info *front_info = dev_get_drvdata(&xb_dev->dev);
 +	int ret;
 +
-+	memset(channel, 0, sizeof(*channel));
-+	channel->type = type;
-+	channel->index = index;
-+	channel->front_info = front_info;
-+	channel->state = EVTCHNL_STATE_DISCONNECTED;
-+	channel->gref = GRANT_INVALID_REF;
-+	page = get_zeroed_page(GFP_NOIO | __GFP_HIGH);
-+	if (!page) {
-+		ret = -ENOMEM;
-+		goto fail;
++	dev_dbg(&xb_dev->dev, "Backend state is %s, front is %s\n",
++		xenbus_strstate(backend_state),
++		xenbus_strstate(xb_dev->state));
++
++	switch (backend_state) {
++	case XenbusStateReconfiguring:
++		/* fall through */
++	case XenbusStateReconfigured:
++		/* fall through */
++	case XenbusStateInitialised:
++		/* fall through */
++		break;
++
++	case XenbusStateInitialising:
++		/* recovering after backend unexpected closure */
++		sndback_disconnect(front_info);
++		break;
++
++	case XenbusStateInitWait:
++		/* recovering after backend unexpected closure */
++		sndback_disconnect(front_info);
++
++		ret = sndback_initwait(front_info);
++		if (ret < 0)
++			xenbus_dev_fatal(xb_dev, ret, "initializing frontend");
++		else
++			xenbus_switch_state(xb_dev, XenbusStateInitialised);
++		break;
++
++	case XenbusStateConnected:
++		if (xb_dev->state != XenbusStateInitialised)
++			break;
++
++		ret = sndback_connect(front_info);
++		if (ret < 0)
++			xenbus_dev_fatal(xb_dev, ret, "initializing frontend");
++		else
++			xenbus_switch_state(xb_dev, XenbusStateConnected);
++		break;
++
++	case XenbusStateClosing:
++		/*
++		 * in this state backend starts freeing resources,
++		 * so let it go into closed state first, so we can also
++		 * remove ours
++		 */
++		break;
++
++	case XenbusStateUnknown:
++		/* fall through */
++	case XenbusStateClosed:
++		if (xb_dev->state == XenbusStateClosed)
++			break;
++
++		sndback_disconnect(front_info);
++		break;
 +	}
-+
-+	handler_name = kasprintf(GFP_KERNEL, "%s-%s", XENSND_DRIVER_NAME,
-+				 type == EVTCHNL_TYPE_REQ ?
-+				 XENSND_FIELD_RING_REF :
-+				 XENSND_FIELD_EVT_RING_REF);
-+	if (!handler_name) {
-+		ret = -ENOMEM;
-+		goto fail;
-+	}
-+
-+	if (type == EVTCHNL_TYPE_REQ) {
-+		struct xen_sndif_sring *sring = (struct xen_sndif_sring *)page;
-+
-+		init_completion(&channel->u.req.completion);
-+		mutex_init(&channel->u.req.req_io_lock);
-+		SHARED_RING_INIT(sring);
-+		FRONT_RING_INIT(&channel->u.req.ring, sring, XEN_PAGE_SIZE);
-+
-+		ret = xenbus_grant_ring(xb_dev, sring, 1, &gref);
-+		if (ret < 0) {
-+			channel->u.req.ring.sring = NULL;
-+			free_page(page);
-+			goto fail;
-+		}
-+
-+		handler = evtchnl_interrupt_req;
-+	} else {
-+		ret = gnttab_grant_foreign_access(xb_dev->otherend_id,
-+						  virt_to_gfn((void *)page), 0);
-+		if (ret < 0) {
-+			free_page(page);
-+			goto fail;
-+		}
-+
-+		channel->u.evt.page = (struct xensnd_event_page *)page;
-+		gref = ret;
-+		handler = evtchnl_interrupt_evt;
-+	}
-+
-+	channel->gref = gref;
-+
-+	ret = xenbus_alloc_evtchn(xb_dev, &channel->port);
-+	if (ret < 0)
-+		goto fail;
-+
-+	ret = bind_evtchn_to_irq(channel->port);
-+	if (ret < 0) {
-+		dev_err(&xb_dev->dev,
-+			"Failed to bind IRQ for domid %d port %d: %d\n",
-+			front_info->xb_dev->otherend_id, channel->port, ret);
-+		goto fail;
-+	}
-+
-+	channel->irq = ret;
-+
-+	ret = request_threaded_irq(channel->irq, NULL, handler,
-+				   IRQF_ONESHOT, handler_name, channel);
-+	if (ret < 0) {
-+		dev_err(&xb_dev->dev, "Failed to request IRQ %d: %d\n",
-+			channel->irq, ret);
-+		goto fail;
-+	}
-+
-+	kfree(handler_name);
-+	return 0;
-+
-+fail:
-+	kfree(handler_name);
-+	dev_err(&xb_dev->dev, "Failed to allocate ring: %d\n", ret);
-+	return ret;
 +}
 +
-+int xen_snd_front_evtchnl_create_all(struct xen_snd_front_info *front_info,
-+				     int num_streams)
++static int xen_drv_probe(struct xenbus_device *xb_dev,
++			 const struct xenbus_device_id *id)
 +{
-+	struct xen_front_cfg_card *cfg = &front_info->cfg;
-+	struct device *dev = &front_info->xb_dev->dev;
-+	int d, ret = 0;
++	struct xen_snd_front_info *front_info;
 +
-+	front_info->evt_pairs =
-+			kcalloc(num_streams,
-+				sizeof(struct xen_snd_front_evtchnl_pair),
-+				GFP_KERNEL);
-+	if (!front_info->evt_pairs)
++	front_info = devm_kzalloc(&xb_dev->dev,
++				  sizeof(*front_info), GFP_KERNEL);
++	if (!front_info)
 +		return -ENOMEM;
 +
-+	/* iterate over devices and their streams and create event channels */
-+	for (d = 0; d < cfg->num_pcm_instances; d++) {
-+		struct xen_front_cfg_pcm_instance *pcm_instance;
-+		int s, index;
++	front_info->xb_dev = xb_dev;
++	dev_set_drvdata(&xb_dev->dev, front_info);
 +
-+		pcm_instance = &cfg->pcm_instances[d];
-+
-+		for (s = 0; s < pcm_instance->num_streams_pb; s++) {
-+			index = pcm_instance->streams_pb[s].index;
-+
-+			ret = evtchnl_alloc(front_info, index,
-+					    &front_info->evt_pairs[index].req,
-+					    EVTCHNL_TYPE_REQ);
-+			if (ret < 0) {
-+				dev_err(dev, "Error allocating control channel\n");
-+				goto fail;
-+			}
-+
-+			ret = evtchnl_alloc(front_info, index,
-+					    &front_info->evt_pairs[index].evt,
-+					    EVTCHNL_TYPE_EVT);
-+			if (ret < 0) {
-+				dev_err(dev, "Error allocating in-event channel\n");
-+				goto fail;
-+			}
-+		}
-+
-+		for (s = 0; s < pcm_instance->num_streams_cap; s++) {
-+			index = pcm_instance->streams_cap[s].index;
-+
-+			ret = evtchnl_alloc(front_info, index,
-+					    &front_info->evt_pairs[index].req,
-+					    EVTCHNL_TYPE_REQ);
-+			if (ret < 0) {
-+				dev_err(dev, "Error allocating control channel\n");
-+				goto fail;
-+			}
-+
-+			ret = evtchnl_alloc(front_info, index,
-+					    &front_info->evt_pairs[index].evt,
-+					    EVTCHNL_TYPE_EVT);
-+			if (ret < 0) {
-+				dev_err(dev, "Error allocating in-event channel\n");
-+				goto fail;
-+			}
-+		}
-+	}
-+	if (ret < 0)
-+		goto fail;
-+
-+	front_info->num_evt_pairs = num_streams;
-+	return 0;
-+
-+fail:
-+	xen_snd_front_evtchnl_free_all(front_info);
-+	return ret;
++	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
 +}
 +
-+static int evtchnl_publish(struct xenbus_transaction xbt,
-+			   struct xen_snd_front_evtchnl *channel,
-+			   const char *path, const char *node_ring,
-+			   const char *node_chnl)
++static int xen_drv_remove(struct xenbus_device *dev)
 +{
-+	struct xenbus_device *xb_dev = channel->front_info->xb_dev;
-+	int ret;
++	struct xen_snd_front_info *front_info = dev_get_drvdata(&dev->dev);
++	int to = 100;
 +
-+	/* write control channel ring reference */
-+	ret = xenbus_printf(xbt, path, node_ring, "%u", channel->gref);
-+	if (ret < 0) {
-+		dev_err(&xb_dev->dev, "Error writing ring-ref: %d\n", ret);
-+		return ret;
++	xenbus_switch_state(dev, XenbusStateClosing);
++
++	/*
++	 * On driver removal it is disconnected from XenBus,
++	 * so no backend state change events come via .otherend_changed
++	 * callback. This prevents us from exiting gracefully, e.g.
++	 * signaling the backend to free event channels, waiting for its
++	 * state to change to XenbusStateClosed and cleaning at our end.
++	 * Normally when front driver removed backend will finally go into
++	 * XenbusStateInitWait state.
++	 *
++	 * Workaround: read backend's state manually and wait with time-out.
++	 */
++	while ((xenbus_read_unsigned(front_info->xb_dev->otherend, "state",
++				     XenbusStateUnknown) != XenbusStateInitWait) &&
++				     to--)
++		msleep(10);
++
++	if (!to) {
++		unsigned int state;
++
++		state = xenbus_read_unsigned(front_info->xb_dev->otherend,
++					     "state", XenbusStateUnknown);
++		pr_err("Backend state is %s while removing driver\n",
++		       xenbus_strstate(state));
 +	}
 +
-+	/* write event channel ring reference */
-+	ret = xenbus_printf(xbt, path, node_chnl, "%u", channel->port);
-+	if (ret < 0) {
-+		dev_err(&xb_dev->dev, "Error writing event channel: %d\n", ret);
-+		return ret;
-+	}
-+
++	xen_snd_drv_fini(front_info);
++	xenbus_frontend_closed(dev);
 +	return 0;
 +}
 +
-+int xen_snd_front_evtchnl_publish_all(struct xen_snd_front_info *front_info)
++static const struct xenbus_device_id xen_drv_ids[] = {
++	{ XENSND_DRIVER_NAME },
++	{ "" }
++};
++
++static struct xenbus_driver xen_driver = {
++	.ids = xen_drv_ids,
++	.probe = xen_drv_probe,
++	.remove = xen_drv_remove,
++	.otherend_changed = sndback_changed,
++};
++
++static int __init xen_drv_init(void)
 +{
-+	struct xen_front_cfg_card *cfg = &front_info->cfg;
-+	struct xenbus_transaction xbt;
-+	int ret, d;
++	if (!xen_domain())
++		return -ENODEV;
 +
-+again:
-+	ret = xenbus_transaction_start(&xbt);
-+	if (ret < 0) {
-+		xenbus_dev_fatal(front_info->xb_dev, ret,
-+				 "starting transaction");
-+		return ret;
-+	}
++	if (!xen_has_pv_devices())
++		return -ENODEV;
 +
-+	for (d = 0; d < cfg->num_pcm_instances; d++) {
-+		struct xen_front_cfg_pcm_instance *pcm_instance;
-+		int s, index;
-+
-+		pcm_instance = &cfg->pcm_instances[d];
-+
-+		for (s = 0; s < pcm_instance->num_streams_pb; s++) {
-+			index = pcm_instance->streams_pb[s].index;
-+
-+			ret = evtchnl_publish(xbt,
-+					      &front_info->evt_pairs[index].req,
-+					      pcm_instance->streams_pb[s].xenstore_path,
-+					      XENSND_FIELD_RING_REF,
-+					      XENSND_FIELD_EVT_CHNL);
-+			if (ret < 0)
-+				goto fail;
-+
-+			ret = evtchnl_publish(xbt,
-+					      &front_info->evt_pairs[index].evt,
-+					      pcm_instance->streams_pb[s].xenstore_path,
-+					      XENSND_FIELD_EVT_RING_REF,
-+					      XENSND_FIELD_EVT_EVT_CHNL);
-+			if (ret < 0)
-+				goto fail;
-+		}
-+
-+		for (s = 0; s < pcm_instance->num_streams_cap; s++) {
-+			index = pcm_instance->streams_cap[s].index;
-+
-+			ret = evtchnl_publish(xbt,
-+					      &front_info->evt_pairs[index].req,
-+					      pcm_instance->streams_cap[s].xenstore_path,
-+					      XENSND_FIELD_RING_REF,
-+					      XENSND_FIELD_EVT_CHNL);
-+			if (ret < 0)
-+				goto fail;
-+
-+			ret = evtchnl_publish(xbt,
-+					      &front_info->evt_pairs[index].evt,
-+					      pcm_instance->streams_cap[s].xenstore_path,
-+					      XENSND_FIELD_EVT_RING_REF,
-+					      XENSND_FIELD_EVT_EVT_CHNL);
-+			if (ret < 0)
-+				goto fail;
-+		}
-+	}
-+	ret = xenbus_transaction_end(xbt, 0);
-+	if (ret < 0) {
-+		if (ret == -EAGAIN)
-+			goto again;
-+
-+		xenbus_dev_fatal(front_info->xb_dev, ret,
-+				 "completing transaction");
-+		goto fail_to_end;
-+	}
-+	return 0;
-+fail:
-+	xenbus_transaction_end(xbt, 1);
-+fail_to_end:
-+	xenbus_dev_fatal(front_info->xb_dev, ret, "writing XenStore");
-+	return ret;
++	pr_info("Initialising Xen " XENSND_DRIVER_NAME " frontend driver\n");
++	return xenbus_register_frontend(&xen_driver);
 +}
 +
-+void xen_snd_front_evtchnl_pair_set_connected(struct xen_snd_front_evtchnl_pair *evt_pair,
-+					      bool is_connected)
++static void __exit xen_drv_fini(void)
 +{
-+	enum xen_snd_front_evtchnl_state state;
-+
-+	if (is_connected)
-+		state = EVTCHNL_STATE_CONNECTED;
-+	else
-+		state = EVTCHNL_STATE_DISCONNECTED;
-+
-+	evt_pair->req.state = state;
-+	evt_pair->evt.state = state;
++	pr_info("Unregistering Xen " XENSND_DRIVER_NAME " frontend driver\n");
++	xenbus_unregister_driver(&xen_driver);
 +}
 +
-+void xen_snd_front_evtchnl_pair_clear(struct xen_snd_front_evtchnl_pair *evt_pair)
-+{
-+	evt_pair->req.evt_next_id = 0;
-+	evt_pair->evt.evt_next_id = 0;
-+}
++module_init(xen_drv_init);
++module_exit(xen_drv_fini);
 +
-diff --git a/sound/xen/xen_snd_front_evtchnl.h b/sound/xen/xen_snd_front_evtchnl.h
++MODULE_DESCRIPTION("Xen virtual sound device frontend");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("xen:" XENSND_DRIVER_NAME);
++MODULE_SUPPORTED_DEVICE("{{ALSA,Virtual soundcard}}");
+diff --git a/sound/xen/xen_snd_front.h b/sound/xen/xen_snd_front.h
 new file mode 100644
-index 000000000000..c4921f469347
+index 000000000000..4ae204b23d32
 --- /dev/null
-+++ b/sound/xen/xen_snd_front_evtchnl.h
-@@ -0,0 +1,92 @@
++++ b/sound/xen/xen_snd_front.h
+@@ -0,0 +1,18 @@
 +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
 +
 +/*
@@ -613,87 +320,13 @@ index 000000000000..c4921f469347
 + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 + */
 +
-+#ifndef __XEN_SND_FRONT_EVTCHNL_H
-+#define __XEN_SND_FRONT_EVTCHNL_H
++#ifndef __XEN_SND_FRONT_H
++#define __XEN_SND_FRONT_H
 +
-+#include <xen/interface/io/sndif.h>
-+
-+struct xen_snd_front_info;
-+
-+#ifndef GRANT_INVALID_REF
-+/*
-+ * FIXME: usage of grant reference 0 as invalid grant reference:
-+ * grant reference 0 is valid, but never exposed to a PV driver,
-+ * because of the fact it is already in use/reserved by the PV console.
-+ */
-+#define GRANT_INVALID_REF	0
-+#endif
-+
-+/* timeout in ms to wait for backend to respond */
-+#define VSND_WAIT_BACK_MS	3000
-+
-+enum xen_snd_front_evtchnl_state {
-+	EVTCHNL_STATE_DISCONNECTED,
-+	EVTCHNL_STATE_CONNECTED,
++struct xen_snd_front_info {
++	struct xenbus_device *xb_dev;
 +};
 +
-+enum xen_snd_front_evtchnl_type {
-+	EVTCHNL_TYPE_REQ,
-+	EVTCHNL_TYPE_EVT,
-+};
-+
-+struct xen_snd_front_evtchnl {
-+	struct xen_snd_front_info *front_info;
-+	int gref;
-+	int port;
-+	int irq;
-+	int index;
-+	/* state of the event channel */
-+	enum xen_snd_front_evtchnl_state state;
-+	enum xen_snd_front_evtchnl_type type;
-+	/* either response id or incoming event id */
-+	u16 evt_id;
-+	/* next request id or next expected event id */
-+	u16 evt_next_id;
-+	union {
-+		struct {
-+			struct xen_sndif_front_ring ring;
-+			struct completion completion;
-+			/* latest response status */
-+			int resp_status;
-+			/* serializer for backend IO: request/response */
-+			struct mutex req_io_lock;
-+			union {
-+				struct xensnd_query_hw_param hw_param;
-+			} resp;
-+		} req;
-+		struct {
-+			struct xensnd_event_page *page;
-+			/* this is needed to handle XENSND_EVT_CUR_POS event */
-+			struct snd_pcm_substream *substream;
-+		} evt;
-+	} u;
-+};
-+
-+struct xen_snd_front_evtchnl_pair {
-+	struct xen_snd_front_evtchnl req;
-+	struct xen_snd_front_evtchnl evt;
-+};
-+
-+int xen_snd_front_evtchnl_create_all(struct xen_snd_front_info *front_info,
-+				     int num_streams);
-+
-+void xen_snd_front_evtchnl_free_all(struct xen_snd_front_info *front_info);
-+
-+int xen_snd_front_evtchnl_publish_all(struct xen_snd_front_info *front_info);
-+
-+void xen_snd_front_evtchnl_flush(struct xen_snd_front_evtchnl *evtchnl);
-+
-+void xen_snd_front_evtchnl_pair_set_connected(struct xen_snd_front_evtchnl_pair *evt_pair,
-+					      bool is_connected);
-+
-+void xen_snd_front_evtchnl_pair_clear(struct xen_snd_front_evtchnl_pair *evt_pair);
-+
-+#endif /* __XEN_SND_FRONT_EVTCHNL_H */
++#endif /* __XEN_SND_FRONT_H */
 -- 
 2.16.2
