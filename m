@@ -1,71 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753602AbeDPUIu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 16:08:50 -0400
-Received: from ms.lwn.net ([45.79.88.28]:58712 "EHLO ms.lwn.net"
+        id S1751059AbeDPUQG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 16:16:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753323AbeDPUIs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 16:08:48 -0400
-Date: Mon, 16 Apr 2018 14:08:46 -0600
-From: Jonathan Corbet <corbet@lwn.net>
-To: Thymo van Beers <thymovanbeers@gmail.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: kernel-parameters.txt: Fix whitespace
-Message-ID: <20180416140846.0effe6ad@lwn.net>
-In-Reply-To: <20180416154458.GA24716@thinkpad>
-References: <20180416154458.GA24716@thinkpad>
-Organization: LWN.net
+        id S1750708AbeDPUQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 16:16:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B677217DF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Mon, 16 Apr 2018 13:16:03 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        chao@kernel.org
+Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
+Message-ID: <20180416201603.GA76077@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180408081312.6190-1-yuchao0@huawei.com>
+ <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
+ <20180413010433.GB51348@jaegeuk-macbookpro.roam.corp.google.com>
+ <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
+ <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
+ <51d2e16a-3a69-71ef-86f5-aee63cd6731c@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <51d2e16a-3a69-71ef-86f5-aee63cd6731c@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Apr 2018 17:45:01 +0200
-Thymo van Beers <thymovanbeers@gmail.com> wrote:
-
-> Some lines used spaces instead of tabs at line start.
-> This can cause mangled lines in editors due to inconsistency.
+On 04/13, Chao Yu wrote:
+> On 2018/4/13 12:05, Jaegeuk Kim wrote:
+> > On 04/13, Chao Yu wrote:
+> >> On 2018/4/13 9:04, Jaegeuk Kim wrote:
+> >>> On 04/10, Chao Yu wrote:
+> >>>> Hi Jaegeuk,
+> >>>>
+> >>>> On 2018/4/8 16:13, Chao Yu wrote:
+> >>>>> f2fs doesn't allow abuse on atomic write class interface, so except
+> >>>>> limiting in-mem pages' total memory usage capacity, we need to limit
+> >>>>> start-commit time as well, otherwise we may run into infinite loop
+> >>>>> during foreground GC because target blocks in victim segment are
+> >>>>> belong to atomic opened file for long time.
+> >>>>>
+> >>>>> Now, we will check the condition with f2fs_balance_fs_bg in
+> >>>>> background threads, once if user doesn't commit data exceeding 30
+> >>>>> seconds, we will drop all cached data, so I expect it can keep our
+> >>>>> system running safely to prevent Dos attack.
+> >>>>
+> >>>> Is it worth to add this patch to avoid abuse on atomic write interface by user?
+> >>>
+> >>> Hmm, hope to see a real problem first in this case.
+> >>
+> >> I think this can be a more critical security leak instead of a potential issue
+> >> which we can wait for someone reporting that can be too late.
+> >>
+> >> For example, user can simply write a huge file whose data spread in all f2fs
+> >> segments, once user open that file as atomic, foreground GC will suffer
+> >> deadloop, causing denying any further service of f2fs.
+> > 
+> > How can you guarantee it won't happen within 30sec? If you want to avoid that,
 > 
-> Replace spaces for tabs where appropriate.
+> Now the value is smaller than generic hang task threshold in order to avoid
+> foreground GC helding gc_mutex too long, we can tune that parameter?
+> 
+> > you have to take a look at foreground gc.
+> 
+> What do you mean? let GC moves blocks of atomic write opened file?
 
-Seems like a fine idea.  The patch doesn't apply, though; can you please
-make a version against current docs-next?  (Or against 4.17-rc1 will work
-too).
+I thought that we first need to detect when foreground GC is stuck by such the
+huge number of atomic writes. Then, we need to do something like dropping all
+the atomic writes.
 
-Also...
-
->  			domain
-> -			  Isolate from the general SMP balancing and scheduling
-> -			  algorithms. Note that performing domain isolation this way
-> -			  is irreversible: it's not possible to bring back a CPU to
-> -			  the domains once isolated through isolcpus. It's strongly
-> -			  advised to use cpusets instead to disable scheduler load
-> -			  balancing through the "cpuset.sched_load_balance" file.
-> -			  It offers a much more flexible interface where CPUs can
-> -			  move in and out of an isolated set anytime.
-> -
-> -			  You can move a process onto or off an "isolated" CPU via
-> -			  the CPU affinity syscalls or cpuset.
-> -			  <cpu number> begins at 0 and the maximum value is
-> -			  "number of CPUs in system - 1".
-> +				Isolate from the general SMP balancing and scheduling
-> +				algorithms. Note that performing domain isolation this way
-> +				is irreversible: it's not possible to bring back a CPU to
-> +				the domains once isolated through isolcpus. It's strongly
-> +				advised to use cpusets instead to disable scheduler load
-> +				balancing through the "cpuset.sched_load_balance" file.
-> +				It offers a much more flexible interface where CPUs can
-> +				move in and out of an isolated set anytime.
-> +
-> +			You can move a process onto or off an "isolated" CPU via
-> +			the CPU affinity syscalls or cpuset.
-> +			<cpu number> begins at 0 and the maximum value is
-> +			"number of CPUs in system - 1".
-
-This would appear to have changed the indentation of some of the text?
-
-Thanks,
-
-jon
+> 
+> Thanks,
+> 
+> > 
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>>> Thanks,
+> >>>
+> >>> .
+> >>>
+> > 
+> > .
+> > 
