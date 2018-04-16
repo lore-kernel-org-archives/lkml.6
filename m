@@ -1,208 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753468AbeDPTcj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 15:32:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752308AbeDPTch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 15:32:37 -0400
-Date: Mon, 16 Apr 2018 15:32:35 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Mike Snitzer <snitzer@redhat.com>
-cc: Vlastimil Babka <vbabka@suse.cz>, Christopher Lameter <cl@linux.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] slab: introduce the flag SLAB_MINIMIZE_WASTE
-In-Reply-To: <20180416144638.GA22484@redhat.com>
-Message-ID: <alpine.LRH.2.02.1804161530360.19492@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211024220.2175@nuc-kabylake> <alpine.LRH.2.02.1803211153320.16017@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211226350.3174@nuc-kabylake>
- <alpine.LRH.2.02.1803211425330.26409@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
- <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1753551AbeDPTdD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 15:33:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33032 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752308AbeDPTdB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 15:33:01 -0400
+To: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] textsearch: fix kernel-doc warnings and add kernel-api
+ section
+Cc: LKML <linux-kernel@vger.kernel.org>
+Message-ID: <8f871cc5-dba8-c4d8-9dfb-ea61a2aa35a7@infradead.org>
+Date: Mon, 16 Apr 2018 12:32:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces a flag SLAB_MINIMIZE_WASTE for slab and slub. This
-flag causes allocation of larger slab caches in order to minimize wasted
-space.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-This is needed because we want to use dm-bufio for deduplication index and
-there are existing installations with non-power-of-two block sizes (such
-as 640KB). The performance of the whole solution depends on efficient
-memory use, so we must waste as little memory as possible.
+Make lib/textsearch.c usable as kernel-doc.
+Add textsearch() function family to kernel-api documentation.
+Fix kernel-doc warnings in <linux/textsearch.h>:
+  ../include/linux/textsearch.h:65: warning: Incorrect use of kernel-doc format:
+	* get_next_block - fetch next block of data
+  ../include/linux/textsearch.h:82: warning: Incorrect use of kernel-doc format:
+	* finish - finalize/clean a series of get_next_block() calls
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- drivers/md/dm-bufio.c |    2 +-
- include/linux/slab.h  |    7 +++++++
- mm/slab.c             |    4 ++--
- mm/slab.h             |    7 ++++---
- mm/slab_common.c      |    2 +-
- mm/slub.c             |   25 ++++++++++++++++++++-----
- 6 files changed, 35 insertions(+), 12 deletions(-)
+ Documentation/core-api/kernel-api.rst |   13 +++++++
+ include/linux/textsearch.h            |    4 +-
+ lib/textsearch.c                      |   40 +++++++++++++-----------
+ 3 files changed, 38 insertions(+), 19 deletions(-)
 
-Index: linux-2.6/include/linux/slab.h
-===================================================================
---- linux-2.6.orig/include/linux/slab.h	2018-04-16 21:10:45.000000000 +0200
-+++ linux-2.6/include/linux/slab.h	2018-04-16 21:10:45.000000000 +0200
-@@ -108,6 +108,13 @@
- #define SLAB_KASAN		0
- #endif
+--- linux-next-20180416.orig/Documentation/core-api/kernel-api.rst
++++ linux-next-20180416/Documentation/core-api/kernel-api.rst
+@@ -136,6 +136,19 @@ Sorting
+ .. kernel-doc:: lib/list_sort.c
+    :export:
  
-+/*
-+ * Use higer order allocations to minimize wasted space.
-+ * Note: the allocation is unreliable if this flag is used, the caller
-+ * must handle allocation failures gracefully.
++Text Searching
++--------------
++
++.. kernel-doc:: lib/textsearch.c
++   :doc: ts_intro
++
++.. kernel-doc:: lib/textsearch.c
++   :export:
++
++.. kernel-doc:: include/linux/textsearch.h
++   :functions: textsearch_find textsearch_next \
++               textsearch_get_pattern textsearch_get_pattern_len
++
+ UUID/GUID
+ ---------
+ 
+--- linux-next-20180416.orig/lib/textsearch.c
++++ linux-next-20180416/lib/textsearch.c
+@@ -10,7 +10,10 @@
+  * 		Pablo Neira Ayuso <pablo@netfilter.org>
+  *
+  * ==========================================================================
+- *
 + */
-+#define SLAB_MINIMIZE_WASTE	((slab_flags_t __force)0x10000000U)
 +
- /* The following flags affect the page allocator grouping pages by mobility */
- /* Objects are reclaimable */
- #define SLAB_RECLAIM_ACCOUNT	((slab_flags_t __force)0x00020000U)
-Index: linux-2.6/mm/slab_common.c
-===================================================================
---- linux-2.6.orig/mm/slab_common.c	2018-04-16 21:10:45.000000000 +0200
-+++ linux-2.6/mm/slab_common.c	2018-04-16 21:10:45.000000000 +0200
-@@ -53,7 +53,7 @@ static DECLARE_WORK(slab_caches_to_rcu_d
- 		SLAB_FAILSLAB | SLAB_KASAN)
++/**
++ * DOC: ts_intro
+  * INTRODUCTION
+  *
+  *   The textsearch infrastructure provides text searching facilities for
+@@ -19,7 +22,9 @@
+  *
+  * ARCHITECTURE
+  *
+- *      User
++ * .. code-block:: none
++ *
++ *     User
+  *     +----------------+
+  *     |        finish()|<--------------(6)-----------------+
+  *     |get_next_block()|<--------------(5)---------------+ |
+@@ -33,21 +38,21 @@
+  *     |             (3)|----->| find()/next() |-----------+          |
+  *     |             (7)|----->| destroy()     |----------------------+
+  *     +----------------+      +---------------+
+- *  
+- *   (1) User configures a search by calling _prepare() specifying the
+- *       search parameters such as the pattern and algorithm name.
++ *
++ *   (1) User configures a search by calling textsearch_prepare() specifying
++ *       the search parameters such as the pattern and algorithm name.
+  *   (2) Core requests the algorithm to allocate and initialize a search
+  *       configuration according to the specified parameters.
+- *   (3) User starts the search(es) by calling _find() or _next() to
+- *       fetch subsequent occurrences. A state variable is provided
+- *       to the algorithm to store persistent variables.
++ *   (3) User starts the search(es) by calling textsearch_find() or
++ *       textsearch_next() to fetch subsequent occurrences. A state variable
++ *       is provided to the algorithm to store persistent variables.
+  *   (4) Core eventually resets the search offset and forwards the find()
+  *       request to the algorithm.
+  *   (5) Algorithm calls get_next_block() provided by the user continuously
+  *       to fetch the data to be searched in block by block.
+  *   (6) Algorithm invokes finish() after the last call to get_next_block
+  *       to clean up any leftovers from get_next_block. (Optional)
+- *   (7) User destroys the configuration by calling _destroy().
++ *   (7) User destroys the configuration by calling textsearch_destroy().
+  *   (8) Core notifies the algorithm to destroy algorithm specific
+  *       allocations. (Optional)
+  *
+@@ -62,9 +67,10 @@
+  *   amount of times and even in parallel as long as a separate struct
+  *   ts_state variable is provided to every instance.
+  *
+- *   The actual search is performed by either calling textsearch_find_-
+- *   continuous() for linear data or by providing an own get_next_block()
+- *   implementation and calling textsearch_find(). Both functions return
++ *   The actual search is performed by either calling
++ *   textsearch_find_continuous() for linear data or by providing
++ *   an own get_next_block() implementation and
++ *   calling textsearch_find(). Both functions return
+  *   the position of the first occurrence of the pattern or UINT_MAX if
+  *   no match was found. Subsequent occurrences can be found by calling
+  *   textsearch_next() regardless of the linearity of the data.
+@@ -72,7 +78,7 @@
+  *   Once you're done using a configuration it must be given back via
+  *   textsearch_destroy.
+  *
+- * EXAMPLE
++ * EXAMPLE::
+  *
+  *   int pos;
+  *   struct ts_config *conf;
+@@ -87,13 +93,13 @@
+  *       goto errout;
+  *   }
+  *
+- *   pos = textsearch_find_continuous(conf, &state, example, strlen(example));
++ *   pos = textsearch_find_continuous(conf, \&state, example, strlen(example));
+  *   if (pos != UINT_MAX)
+- *       panic("Oh my god, dancing chickens at %d\n", pos);
++ *       panic("Oh my god, dancing chickens at \%d\n", pos);
+  *
+  *   textsearch_destroy(conf);
+- * ==========================================================================
+  */
++/* ========================================================================== */
  
- #define SLAB_MERGE_SAME (SLAB_RECLAIM_ACCOUNT | SLAB_CACHE_DMA | \
--			 SLAB_ACCOUNT)
-+			 SLAB_ACCOUNT | SLAB_MINIMIZE_WASTE)
+ #include <linux/module.h>
+ #include <linux/types.h>
+@@ -225,7 +231,7 @@ static unsigned int get_linear_data(unsi
+  *
+  * Returns the position of first occurrence of the pattern or
+  * %UINT_MAX if no occurrence was found.
+- */ 
++ */
+ unsigned int textsearch_find_continuous(struct ts_config *conf,
+ 					struct ts_state *state,
+ 					const void *data, unsigned int len)
+--- linux-next-20180416.orig/include/linux/textsearch.h
++++ linux-next-20180416/include/linux/textsearch.h
+@@ -62,7 +62,7 @@ struct ts_config
+ 	int 			flags;
  
- /*
-  * Merge control. If this is set then no merging of slab caches will occur.
-Index: linux-2.6/mm/slub.c
-===================================================================
---- linux-2.6.orig/mm/slub.c	2018-04-16 21:10:45.000000000 +0200
-+++ linux-2.6/mm/slub.c	2018-04-16 21:12:41.000000000 +0200
-@@ -3249,7 +3249,7 @@ static inline unsigned int slab_order(un
- 	return order;
- }
+ 	/**
+-	 * get_next_block - fetch next block of data
++	 * @get_next_block: fetch next block of data
+ 	 * @consumed: number of bytes consumed by the caller
+ 	 * @dst: destination buffer
+ 	 * @conf: search configuration
+@@ -79,7 +79,7 @@ struct ts_config
+ 						  struct ts_state *state);
  
--static inline int calculate_order(unsigned int size, unsigned int reserved)
-+static inline int calculate_order(unsigned int size, unsigned int reserved, slab_flags_t flags)
- {
- 	unsigned int order;
- 	unsigned int min_objects;
-@@ -3277,7 +3277,7 @@ static inline int calculate_order(unsign
- 			order = slab_order(size, min_objects,
- 					slub_max_order, fraction, reserved);
- 			if (order <= slub_max_order)
--				return order;
-+				goto ret_order;
- 			fraction /= 2;
- 		}
- 		min_objects--;
-@@ -3289,15 +3289,30 @@ static inline int calculate_order(unsign
- 	 */
- 	order = slab_order(size, 1, slub_max_order, 1, reserved);
- 	if (order <= slub_max_order)
--		return order;
-+		goto ret_order;
- 
- 	/*
- 	 * Doh this slab cannot be placed using slub_max_order.
- 	 */
- 	order = slab_order(size, 1, MAX_ORDER, 1, reserved);
- 	if (order < MAX_ORDER)
--		return order;
-+		goto ret_order;
- 	return -ENOSYS;
-+
-+ret_order:
-+	if (flags & SLAB_MINIMIZE_WASTE) {
-+		/* Increase the order if it decreases waste */
-+		int test_order;
-+		for (test_order = order + 1; test_order < MAX_ORDER; test_order++) {
-+			unsigned long order_objects = ((PAGE_SIZE << order) - reserved) / size;
-+			unsigned long test_order_objects = ((PAGE_SIZE << test_order) - reserved) / size;
-+			if (test_order_objects >= min(32, MAX_OBJS_PER_PAGE))
-+				break;
-+			if (test_order_objects > order_objects << (test_order - order))
-+				order = test_order;
-+		}
-+	}
-+	return order;
- }
- 
- static void
-@@ -3562,7 +3577,7 @@ static int calculate_sizes(struct kmem_c
- 	if (forced_order >= 0)
- 		order = forced_order;
- 	else
--		order = calculate_order(size, s->reserved);
-+		order = calculate_order(size, s->reserved, flags);
- 
- 	if ((int)order < 0)
- 		return 0;
-Index: linux-2.6/drivers/md/dm-bufio.c
-===================================================================
---- linux-2.6.orig/drivers/md/dm-bufio.c	2018-04-16 21:10:45.000000000 +0200
-+++ linux-2.6/drivers/md/dm-bufio.c	2018-04-16 21:11:23.000000000 +0200
-@@ -1683,7 +1683,7 @@ struct dm_bufio_client *dm_bufio_client_
- 	    (block_size < PAGE_SIZE || !is_power_of_2(block_size))) {
- 		snprintf(slab_name, sizeof slab_name, "dm_bufio_cache-%u", c->block_size);
- 		c->slab_cache = kmem_cache_create(slab_name, c->block_size, ARCH_KMALLOC_MINALIGN,
--						  SLAB_RECLAIM_ACCOUNT, NULL);
-+						  SLAB_RECLAIM_ACCOUNT | SLAB_MINIMIZE_WASTE, NULL);
- 		if (!c->slab_cache) {
- 			r = -ENOMEM;
- 			goto bad;
-Index: linux-2.6/mm/slab.h
-===================================================================
---- linux-2.6.orig/mm/slab.h	2018-04-16 21:10:45.000000000 +0200
-+++ linux-2.6/mm/slab.h	2018-04-16 21:10:45.000000000 +0200
-@@ -142,10 +142,10 @@ static inline slab_flags_t kmem_cache_fl
- #if defined(CONFIG_SLAB)
- #define SLAB_CACHE_FLAGS (SLAB_MEM_SPREAD | SLAB_NOLEAKTRACE | \
- 			  SLAB_RECLAIM_ACCOUNT | SLAB_TEMPORARY | \
--			  SLAB_ACCOUNT)
-+			  SLAB_ACCOUNT | SLAB_MINIMIZE_WASTE)
- #elif defined(CONFIG_SLUB)
- #define SLAB_CACHE_FLAGS (SLAB_NOLEAKTRACE | SLAB_RECLAIM_ACCOUNT | \
--			  SLAB_TEMPORARY | SLAB_ACCOUNT)
-+			  SLAB_TEMPORARY | SLAB_ACCOUNT | SLAB_MINIMIZE_WASTE)
- #else
- #define SLAB_CACHE_FLAGS (0)
- #endif
-@@ -164,7 +164,8 @@ static inline slab_flags_t kmem_cache_fl
- 			      SLAB_NOLEAKTRACE | \
- 			      SLAB_RECLAIM_ACCOUNT | \
- 			      SLAB_TEMPORARY | \
--			      SLAB_ACCOUNT)
-+			      SLAB_ACCOUNT | \
-+			      SLAB_MINIMIZE_WASTE)
- 
- bool __kmem_cache_empty(struct kmem_cache *);
- int __kmem_cache_shutdown(struct kmem_cache *);
-Index: linux-2.6/mm/slab.c
-===================================================================
---- linux-2.6.orig/mm/slab.c	2018-04-16 21:10:45.000000000 +0200
-+++ linux-2.6/mm/slab.c	2018-04-16 21:10:45.000000000 +0200
-@@ -1790,14 +1790,14 @@ static size_t calculate_slab_order(struc
- 		 * as GFP_NOFS and we really don't want to have to be allocating
- 		 * higher-order pages when we are unable to shrink dcache.
- 		 */
--		if (flags & SLAB_RECLAIM_ACCOUNT)
-+		if (flags & SLAB_RECLAIM_ACCOUNT && !(flags & SLAB_MINIMIZE_WASTE))
- 			break;
- 
- 		/*
- 		 * Large number of objects is good, but very large slabs are
- 		 * currently bad for the gfp()s.
- 		 */
--		if (gfporder >= slab_max_order)
-+		if (gfporder >= slab_max_order && !(flags & SLAB_MINIMIZE_WASTE))
- 			break;
- 
- 		/*
+ 	/**
+-	 * finish - finalize/clean a series of get_next_block() calls
++	 * @finish: finalize/clean a series of get_next_block() calls
+ 	 * @conf: search configuration
+ 	 * @state: search state
+ 	 *
