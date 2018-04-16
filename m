@@ -1,130 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755427AbeDPOZT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 10:25:19 -0400
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:35310 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755291AbeDPOZP (ORCPT
+        id S1755457AbeDPOZi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 10:25:38 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:44513 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755291AbeDPOZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 10:25:15 -0400
-X-Google-Smtp-Source: AIpwx48FHqXB1r1cBeHkDV267tuL4DWcmniqnLKMeTwZF3wGoTec3K4RpZIr3ujGpK+2KH4MdfXh4w==
-Date: Mon, 16 Apr 2018 16:25:12 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>, mario.limonciello@dell.com,
-        andy@infradead.org, dvhart@infradead.org, mjg59@srcf.ucam.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] ALSA: hda: Disabled unused audio controller for
- Dell platforms with Switchable Graphics
-Message-ID: <20180416142512.bwsemgwrncyl5xan@pali>
-References: <20180412104239.25584-1-kai.heng.feng@canonical.com>
- <20180412104239.25584-3-kai.heng.feng@canonical.com>
- <s5hr2nk8zs5.wl-tiwai@suse.de>
- <20180412105909.tbyfcjm55sb47hiq@pali>
- <93DC0F40-81A5-49C6-A470-0D1B6AA85725@canonical.com>
- <20180414104512.GA27158@wunner.de>
- <20180414104950.ngomyjy5l5cwhb5i@pali>
- <20180414111711.GA4245@wunner.de>
- <20180415171746.futkvgbaoj6quy5z@pali>
- <20180415190523.GA16129@wunner.de>
+        Mon, 16 Apr 2018 10:25:35 -0400
+X-Google-Smtp-Source: AIpwx4/YsjZ0Nvt8qgRGAguMIklgOpyrG8Rl/DoJ0hx/r6l89iF2fhWLDjeLpSC+B1bBeP33pjcKx8sKhWZ9uXe87lM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180415190523.GA16129@wunner.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180416141101.zcovkknupxcgiwf2@madcap2.tricolour.ca>
+References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
+ <CAFqZXNuEwxp7vThtVH1oYSE5bAisvwNpBH3ry9tyL5BPSwXK=g@mail.gmail.com> <20180416141101.zcovkknupxcgiwf2@madcap2.tricolour.ca>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Mon, 16 Apr 2018 16:25:19 +0200
+Message-ID: <CAFqZXNsiTU7nqcuttjtjpDnU6Ua_+Ff8HcUCSuBHqT9DFCLx8w@mail.gmail.com>
+Subject: Re: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday 15 April 2018 21:05:23 Lukas Wunner wrote:
-> On Sun, Apr 15, 2018 at 07:17:46PM +0200, Pali Rohár wrote:
-> > On Saturday 14 April 2018 13:17:11 Lukas Wunner wrote:
-> > > On Sat, Apr 14, 2018 at 12:49:50PM +0200, Pali Rohár wrote:
-> > > > On Saturday 14 April 2018 12:45:12 Lukas Wunner wrote:
-> > > > > On Thu, Apr 12, 2018 at 10:15:41PM +0800, Kai-Heng Feng wrote:
-> > > > > > Do you have any suggestion to check if it connects to the system via
-> > > > > > Thunderbolt?
-> > > > > 
-> > > > > Just use pci_is_thunderbolt_attached(), introduced by 8531e283bee6,
-> > > > > like this:
-> > > > > 
-> > > > > if (check_dell_switchable_gfx(pci) && !pci_is_thunderbolt_attached(pci))
-> > > > 
-> > > > And what about PCI-e device attached to ExpressCard slot?
-> > > 
-> > > I don't know of a bullet-proof way to recognize those.  In theory
-> > > one could check if the PCIe port above the GPU is a non-hotplug
-> > > root port, but I think there are machines with hotplug capable
-> > > root ports with GPUs below them that aren't actually removable.
-> > > 
-> > > However I think ExpressCard-attached GPUs were rare, much less ones
-> > > with integrated HDA controller, so in reality that's probably a
-> > > non-issue.
-> > 
-> > Hm... maybe another idea: Is it possible to detect which audio pci
-> > device belongs to graphics card via vga_switcheroo? Currently, looking
-> > at output it is same PCI device as graphic card, just different PCI
-> > function.
-> 
-> No, the DRM drivers don't filter ExpressCard-attached GPUs when
-> registering with vga_switcheroo.
+2018-04-16 16:11 GMT+02:00 Richard Guy Briggs <rgb@redhat.com>:
+> On 2018-04-16 09:26, Ondrej Mosnacek wrote:
+>> 2018-04-10 1:34 GMT+02:00 Richard Guy Briggs <rgb@redhat.com>:
+>> > There were two formats of the audit MAC_STATUS record, one of which was more
+>> > standard than the other.  One listed enforcing status changes and the
+>> > other listed enabled status changes with a non-standard label.  In
+>> > addition, the record was missing information about which LSM was
+>> > responsible and the operation's completion status.  While this record is
+>> > only issued on success, the parser expects the res= field to be present.
+>> >
+>> > old enforcing/permissive:
+>> > type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
+>> > old enable/disable:
+>> > type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
+>> >
+>> > List both sets of status and old values and add the lsm= field and the
+>> > res= field.
+>> >
+>> > Here is the new format:
+>> > type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
+>> >
+>> > This record already accompanied a SYSCALL record.
+>> >
+>> > See: https://github.com/linux-audit/audit-kernel/issues/46
+>> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>> > ---
+>> >  security/selinux/selinuxfs.c | 11 +++++++----
+>> >  1 file changed, 7 insertions(+), 4 deletions(-)
+>> >
+>> > diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+>> > index 00eed84..00b21b2 100644
+>> > --- a/security/selinux/selinuxfs.c
+>> > +++ b/security/selinux/selinuxfs.c
+>> > @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+>> >                 if (length)
+>> >                         goto out;
+>> >                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+>> > -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
+>> > +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+>> > +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+>>
+>> This is just a tiny nit but why does "old_enforcing" use an underscore
+>> and "old-enabled" a dash? Shouldn't the style be consistent across
+>> fields?
+>
+> Yes, but my understanding is a preference for underscore, and not to
+> change existing field names.
 
-> They do filter Thunderbolt-attached GPUs.
+Ah, I just noticed that the field is already used elsewhere in the
+code, so it makes sense to keep it the same. I thought at first that
+it is just a typo.
 
-So check via vga_switcheroo should at least work for Thunderbolt GPUs.
-
-> The ExpressCard 2.0 spec defines some ACPI stuff that *might* be
-> used to recognize root ports that are ExpressCard slots, but I'm
-> not sure how reliable that is.
-
-So for EC we do not know or have reliable detection.
-
-I do not know if it is possible, but for me it looks like that check via
-vga_switcheroo should be better then adding another heuristic to other
-drivers.
-
-Lukas, what do you think? And it is possible to use this check for
-detecting audio device?
-
-And once we would have good/reliable check for EC devices we can add it
-into vga_switcheroo and all users of it could benefit. Anyway, I think
-that vga_switcheroo should filter also EC GPU cards if it already
-filters Thunderbolt.
-
-> I don't have such a machine and have no experience with it.
-> 
-> This is from the MacBookPro8,3 DSDT:
-> 
->             Device (RP04)
->             {
->                 Name (_ADR, 0x001C0003)
->                 OperationRegion (A1E0, PCI_Config, 0x19, 0x01)
->                 Field (A1E0, ByteAcc, NoLock, Preserve)
->                 {
->                     SECB,   8
->                 }
-> 
->                 Device (EXCD)
->                 {
->                     Name (_ADR, 0x00)
->                     Name (_SUN, 0x01)
->                     Method (_RMV, 0, NotSerialized)
->                     {
->                         Return (0x01)
->                     }
-> 
->                     Name (_EJD, "\\_SB.PCI0.EHC2.HUBN.PRTN.PRT4")
->                 }
->                 ...
->             }
-> 
-> Thanks,
-> 
-> Lukas
+>
+> Steve?
+>
+>> Just my two cents...
+>
+> These details are worth noticing, thank you.
+>
+>> >                         new_value, selinux_enforcing,
+>> >                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>> > -                       audit_get_sessionid(current));
+>> > +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
+>> >                 selinux_enforcing = new_value;
+>> >                 if (selinux_enforcing)
+>> >                         avc_ss_reset(0);
+>> > @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+>> >                 if (length)
+>> >                         goto out;
+>> >                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+>> > -                       "selinux=0 auid=%u ses=%u",
+>> > +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+>> > +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+>> > +                       selinux_enforcing, selinux_enforcing,
+>>
+>> ^ also here
+>>
+>> >                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>> > -                       audit_get_sessionid(current));
+>> > +                       audit_get_sessionid(current), 0, 1);
+>> >         }
+>> >
+>> >         length = count;
+>>
+>> Ondrej Mosnacek <omosnace at redhat dot com>
+>
+> - RGB
+>
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
 
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
