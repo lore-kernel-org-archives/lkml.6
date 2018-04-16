@@ -1,83 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751489AbeDPPD6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 11:03:58 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:62358 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751024AbeDPPD4 (ORCPT
+        id S1751903AbeDPPFE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 11:05:04 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:42318 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeDPPFC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 11:03:56 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w3GF2eKa006974
-X-Nifty-SrcIP: [125.199.20.195]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] ARM: dts: renesas: replace toshiba,mmc-wrprotect-disable with disable-wp
-Date: Tue, 17 Apr 2018 00:02:32 +0900
-Message-Id: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 16 Apr 2018 11:05:02 -0400
+Date: Mon, 16 Apr 2018 11:05:01 -0400 (EDT)
+Message-Id: <20180416.110501.92472500114183248.davem@davemloft.net>
+To: liu.xiang6@zte.com.cn
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        liuxiang_1999@126.com
+Subject: Re: [PATCH v3] net: davicom: dm9000: Avoid spinlock recursion
+ during dm9000_timeout routine
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <1523695834-6261-1-git-send-email-liu.xiang6@zte.com.cn>
+References: <1523695834-6261-1-git-send-email-liu.xiang6@zte.com.cn>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Follow up commit 788778b0d21a ("mmc: tmio: deprecate "toshiba,
-mmc-wrprotect-disable" DT property").
+From: Liu Xiang <liu.xiang6@zte.com.cn>
+Date: Sat, 14 Apr 2018 16:50:34 +0800
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> +static bool dm9000_current_in_timeout(struct board_info *db)
+> +{
+> +	bool ret = false;
+> +
+> +	preempt_disable();
+> +	ret = (db->timeout_cpu == smp_processor_id());
+> +	preempt_enable();
 
- arch/arm/boot/dts/r8a73a4-ape6evm.dts | 4 ++--
- arch/arm/boot/dts/sh73a0.dtsi         | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+This doesn't work.
 
-diff --git a/arch/arm/boot/dts/r8a73a4-ape6evm.dts b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-index ec7c86e..125c39c 100644
---- a/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-+++ b/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-@@ -234,7 +234,7 @@
- &sdhi0 {
- 	vmmc-supply = <&vcc_sdhi0>;
- 	bus-width = <4>;
--	toshiba,mmc-wrprotect-disable;
-+	disable-wp;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdhi0_pins>;
- 	status = "okay";
-@@ -244,7 +244,7 @@
- 	vmmc-supply = <&ape6evm_fixed_3v3>;
- 	bus-width = <4>;
- 	broken-cd;
--	toshiba,mmc-wrprotect-disable;
-+	disable-wp;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdhi1_pins>;
- 	status = "okay";
-diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
-index 914a7c2..39cc586 100644
---- a/arch/arm/boot/dts/sh73a0.dtsi
-+++ b/arch/arm/boot/dts/sh73a0.dtsi
-@@ -336,7 +336,7 @@
- 			      GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks SH73A0_CLK_SDHI1>;
- 		power-domains = <&pd_a3sp>;
--		toshiba,mmc-wrprotect-disable;
-+		disable-wp;
- 		cap-sd-highspeed;
- 		status = "disabled";
- 	};
-@@ -348,7 +348,7 @@
- 			      GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&mstp3_clks SH73A0_CLK_SDHI2>;
- 		power-domains = <&pd_a3sp>;
--		toshiba,mmc-wrprotect-disable;
-+		disable-wp;
- 		cap-sd-highspeed;
- 		status = "disabled";
- 	};
--- 
-2.7.4
+As soon as you do preempt_enable(), smp_processor_id() can change.
