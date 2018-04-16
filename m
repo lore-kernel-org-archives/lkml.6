@@ -1,89 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753394AbeDPGXf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 02:23:35 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34772 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753346AbeDPGXe (ORCPT
+        id S1753443AbeDPGZH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 02:25:07 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37038 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751341AbeDPGZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 02:23:34 -0400
-Subject: Re: Wrong module .text address in 4.16.0
-To: Thomas-Mich Richter <tmricht@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jessica Yu <jeyu@kernel.org>
-References: <7e17e3b1-25c3-cb61-ae94-dcbb1bf3473e@linux.ibm.com>
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Date: Mon, 16 Apr 2018 08:23:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <7e17e3b1-25c3-cb61-ae94-dcbb1bf3473e@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18041606-0044-0000-0000-000005489E32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041606-0045-0000-0000-00002888A3B9
-Message-Id: <3836add7-8691-77c1-33d2-0fbee7051795@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-16_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804160059
+        Mon, 16 Apr 2018 02:25:06 -0400
+X-Google-Smtp-Source: AIpwx4/9KyAcK5BMjCAASLy46oTb51uSxFT/WnEKM8jCHxHtcUUKhtjbJQCoZCDo9eV8roggqIWbSg==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, jgross@suse.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
+        tiwai@suse.com
+Cc: andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v2 0/5] ALSA: xen-front: Add Xen para-virtualized frontend driver
+Date: Mon, 16 Apr 2018 09:24:48 +0300
+Message-Id: <20180416062453.24743-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FWIW, this breaks at least perf capability to resolve module symbols.
-Adding some more CCs for perf and module.
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
+Please note: this patch series depends on [3].
 
-On 04/16/2018 07:51 AM, Thomas-Mich Richter wrote:
-> I just installed 4.16.0 and discovered the module .text address is
-> wrong. It happens on s390 and x86 platforms. I have not tested others.
-> 
-> Here is the issue, I have used module qeth_l2 on s390 which is the
-> ethernet device driver:
-> 
-> root@s35lp76 ~]# lsmod
-> Module                  Size  Used by
-> qeth_l2                94208  1
-> ...
-> 
-> [root@s35lp76 ~]# cat /proc/modules | egrep '^qeth_l2'
-> qeth_l2 94208 1 - Live 0x000003ff80401000   <---- This is the correct address in memory
-> [root@s35lp76 ~]# cat /sys/module/qeth_l2/sections/.text 
-> 0x0000000018ea8363      <---- This is the wrong address
-> [root@s35lp76 ~]# 
-> 
-> File /sys/module/qeth_l2/sections/.text displays a very strange
-> address which is definitely wrong. It should be something like
-> 0x000003ff80401xxx.
-> 
-> Same on x86.
-> 
-> I have checked file kernel/module.c function add_sect_attrs()
-> and it calls module_sect_show() when the sysfs file is read.
-> And module_sect_show() uses 
-> 
->   sprintf(buf, "0x%pK\n", (void *)sattr->address);
-> 
-> and my sysctl setting should be correct:
-> [root@s35lp76 linux]# sysctl -a | fgrep kernel.kptr_restrict
-> kernel.kptr_restrict = 0
-> [root@s35lp76 linux]#
-> 
-> I wonder if somebody else has seen this issue?
-> Ideas how to fix this?
-> 
-> Thanks
-> 
+This patch series adds support for Xen [1] para-virtualized
+sound frontend driver. It implements the protocol from
+include/xen/interface/io/sndif.h with the following limitations:
+- mute/unmute is not supported
+- get/set volume is not supported
+Volume control is not supported for the reason that most of the
+use-cases (at the moment) are based on scenarious where
+unprivileged OS (e.g. Android, AGL etc) use software mixers.
+
+Both capture and playback are supported.
+
+Corresponding backend, implemented as a user-space application, can be
+found at [2].
+
+Thank you,
+Oleksandr
+
+Changes since v1:
+*****************
+
+1. Moved driver from sound/drivers to sound/xen
+
+2. Coding style changes to better meet Linux Kernel
+
+3. Added explicit back and front synchronization
+   In order to provide explicit synchronization between backend and
+   frontend the following changes are introduced in the protocol:
+    - add new ring buffer for sending asynchronous events from
+      backend to frontend to report number of bytes played by the
+      frontend (XENSND_EVT_CUR_POS)
+    - introduce trigger events for playback control: start/stop/pause/resume
+    - add "req-" prefix to event-channel and ring-ref to unify naming
+      of the Xen event channels for requests and events
+
+4. Added explicit back and front parameter negotiation
+   In order to provide explicit stream parameter negotiation between
+   backend and frontend the following changes are introduced in the protocol:
+   add XENSND_OP_HW_PARAM_QUERY request to read/update
+   configuration space for the parameters given: request passes
+   desired parameter's intervals/masks and the response to this request
+   returns allowed min/max intervals/masks to be used.
+
+[1] https://xenproject.org/
+[2] https://github.com/xen-troops/snd_be
+[3] https://lkml.org/lkml/2018/4/12/522
+
+Oleksandr Andrushchenko (5):
+  ALSA: xen-front: Introduce Xen para-virtualized sound frontend driver
+  ALSA: xen-front: Read sound driver configuration from Xen store
+  ALSA: xen-front: Implement Xen event channel handling
+  ALSA: xen-front: Implement handling of shared buffers
+  ALSA: xen-front: Implement ALSA virtual sound driver
+
+ sound/Kconfig                     |   2 +
+ sound/Makefile                    |   2 +-
+ sound/xen/Kconfig                 |  10 +
+ sound/xen/Makefile                |   9 +
+ sound/xen/xen_snd_front.c         | 410 +++++++++++++++++++
+ sound/xen/xen_snd_front.h         |  57 +++
+ sound/xen/xen_snd_front_alsa.c    | 830 ++++++++++++++++++++++++++++++++++++++
+ sound/xen/xen_snd_front_alsa.h    |  23 ++
+ sound/xen/xen_snd_front_cfg.c     | 517 ++++++++++++++++++++++++
+ sound/xen/xen_snd_front_cfg.h     |  46 +++
+ sound/xen/xen_snd_front_evtchnl.c | 478 ++++++++++++++++++++++
+ sound/xen/xen_snd_front_evtchnl.h |  92 +++++
+ sound/xen/xen_snd_front_shbuf.c   | 193 +++++++++
+ sound/xen/xen_snd_front_shbuf.h   |  36 ++
+ 14 files changed, 2704 insertions(+), 1 deletion(-)
+ create mode 100644 sound/xen/Kconfig
+ create mode 100644 sound/xen/Makefile
+ create mode 100644 sound/xen/xen_snd_front.c
+ create mode 100644 sound/xen/xen_snd_front.h
+ create mode 100644 sound/xen/xen_snd_front_alsa.c
+ create mode 100644 sound/xen/xen_snd_front_alsa.h
+ create mode 100644 sound/xen/xen_snd_front_cfg.c
+ create mode 100644 sound/xen/xen_snd_front_cfg.h
+ create mode 100644 sound/xen/xen_snd_front_evtchnl.c
+ create mode 100644 sound/xen/xen_snd_front_evtchnl.h
+ create mode 100644 sound/xen/xen_snd_front_shbuf.c
+ create mode 100644 sound/xen/xen_snd_front_shbuf.h
+
+-- 
+2.16.2
