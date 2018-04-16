@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754846AbeDPLIU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 07:08:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45912 "EHLO mx1.redhat.com"
+        id S1754880AbeDPLIZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 07:08:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48402 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752725AbeDPLIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 07:08:16 -0400
+        id S1754555AbeDPLIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 07:08:22 -0400
 From: Vitaly Kuznetsov <vkuznets@redhat.com>
 To: kvm@vger.kernel.org
 Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -17,76 +17,67 @@ Cc: x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
         Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/6] KVM: x86: hyperv: do rep check for each hypercall separately
-Date: Mon, 16 Apr 2018 13:08:03 +0200
-Message-Id: <20180416110806.4896-4-vkuznets@redhat.com>
+Subject: [PATCH v3 6/6] KVM: x86: hyperv: declare KVM_CAP_HYPERV_TLBFLUSH capability
+Date: Mon, 16 Apr 2018 13:08:06 +0200
+Message-Id: <20180416110806.4896-7-vkuznets@redhat.com>
 In-Reply-To: <20180416110806.4896-1-vkuznets@redhat.com>
 References: <20180416110806.4896-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prepare to support TLB flush hypercalls, some of which are REP hypercalls.
-Also, return HV_STATUS_INVALID_HYPERCALL_INPUT as it seems more
-appropriate.
+We need a new capability to indicate support for the newly added
+HvFlushVirtualAddress{List,Space}{,Ex} hypercalls. Upon seeing this
+capability, userspace is supposed to announce PV TLB flush features
+by setting the appropriate CPUID bits (if needed).
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/kvm/hyperv.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ Documentation/virtual/kvm/api.txt | 9 +++++++++
+ arch/x86/kvm/x86.c                | 1 +
+ include/uapi/linux/kvm.h          | 1 +
+ 3 files changed, 11 insertions(+)
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 3cb3bb68db7e..67788d358200 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1309,7 +1309,7 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
- {
- 	u64 param, ingpa, outgpa, ret = HV_STATUS_SUCCESS;
- 	uint16_t code, rep_idx, rep_cnt;
--	bool fast, longmode;
-+	bool fast, longmode, rep;
+diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+index 1c7958b57fe9..74e22e36b3c8 100644
+--- a/Documentation/virtual/kvm/api.txt
++++ b/Documentation/virtual/kvm/api.txt
+@@ -4596,3 +4596,12 @@ Architectures: s390
+ This capability indicates that kvm will implement the interfaces to handle
+ reset, migration and nested KVM for branch prediction blocking. The stfle
+ facility 82 should not be provided to the guest without this capability.
++
++8.14 KVM_CAP_HYPERV_TLBFLUSH
++
++Architectures: x86
++
++This capability indicates that KVM supports paravirtualized Hyper-V TLB Flush
++hypercalls:
++HvFlushVirtualAddressSpace, HvFlushVirtualAddressSpaceEx,
++HvFlushVirtualAddressList, HvFlushVirtualAddressListEx.
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 51ecd381793b..c6784ea69dc6 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2864,6 +2864,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ 	case KVM_CAP_HYPERV_SYNIC2:
+ 	case KVM_CAP_HYPERV_VP_INDEX:
+ 	case KVM_CAP_HYPERV_EVENTFD:
++	case KVM_CAP_HYPERV_TLBFLUSH:
+ 	case KVM_CAP_PCI_SEGMENT:
+ 	case KVM_CAP_DEBUGREGS:
+ 	case KVM_CAP_X86_ROBUST_SINGLESTEP:
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index 1065006c9bf5..30c193b43d89 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -941,6 +941,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_CAP_S390_BPB 152
+ #define KVM_CAP_GET_MSR_FEATURES 153
+ #define KVM_CAP_HYPERV_EVENTFD 154
++#define KVM_CAP_HYPERV_TLBFLUSH 155
  
- 	/*
- 	 * hypercall generates UD from non zero cpl and real mode
-@@ -1342,28 +1342,31 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
- 	fast = !!(param & HV_HYPERCALL_FAST_BIT);
- 	rep_cnt = (param >> HV_HYPERCALL_REP_COMP_OFFSET) & 0xfff;
- 	rep_idx = (param >> HV_HYPERCALL_REP_START_OFFSET) & 0xfff;
-+	rep = !!(rep_cnt || rep_idx);
+ #ifdef KVM_CAP_IRQ_ROUTING
  
- 	trace_kvm_hv_hypercall(code, fast, rep_cnt, rep_idx, ingpa, outgpa);
- 
--	/* Hypercall continuation is not supported yet */
--	if (rep_cnt || rep_idx) {
--		ret = HV_STATUS_INVALID_HYPERCALL_CODE;
--		goto set_result;
--	}
--
- 	switch (code) {
- 	case HVCALL_NOTIFY_LONG_SPIN_WAIT:
-+		if (unlikely(rep)) {
-+			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
-+			break;
-+		}
- 		kvm_vcpu_on_spin(vcpu, true);
- 		break;
- 	case HVCALL_SIGNAL_EVENT:
-+		if (unlikely(rep)) {
-+			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
-+			break;
-+		}
- 		ret = kvm_hvcall_signal_event(vcpu, fast, ingpa);
- 		if (ret != HV_STATUS_INVALID_PORT_ID)
- 			break;
- 		/* maybe userspace knows this conn_id: fall through */
- 	case HVCALL_POST_MESSAGE:
- 		/* don't bother userspace if it has no way to handle it */
--		if (!vcpu_to_synic(vcpu)->active) {
--			ret = HV_STATUS_INVALID_HYPERCALL_CODE;
-+		if (unlikely(rep || !vcpu_to_synic(vcpu)->active)) {
-+			ret = HV_STATUS_INVALID_HYPERCALL_INPUT;
- 			break;
- 		}
- 		vcpu->run->exit_reason = KVM_EXIT_HYPERV;
 -- 
 2.14.3
