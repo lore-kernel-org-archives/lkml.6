@@ -1,224 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753833AbeDPKWo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 06:22:44 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:40917 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753154AbeDPKWm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 06:22:42 -0400
-X-Google-Smtp-Source: AIpwx49E7Owvw8ZLdLe4ZqniNgt6r+huCZWn5EJAjZUAJLKBWPNFgswZ2Yqh/9x9DUGWHLgfN6zTXw==
-From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To: mb@lightnvm.io
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH] lightnvm: pblk: remove unnecessary bio_get/put
-Date: Mon, 16 Apr 2018 12:22:37 +0200
-Message-Id: <1523874157-5216-1-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
+        id S1754019AbeDPKXK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 06:23:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:57712 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753218AbeDPKXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 06:23:08 -0400
+Subject: Re: [PATCH v2 12/17] kvm: arm/arm64: Expose supported physical
+ address limit for VM
+To: Peter Maydell <peter.maydell@linaro.org>
+Cc: arm-mail-list <linux-arm-kernel@lists.infradead.org>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kvmarm@lists.cs.columbia.edu, kvm-devel <kvm@vger.kernel.org>,
+        Christoffer Dall <cdall@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
+ <1522156531-28348-13-git-send-email-suzuki.poulose@arm.com>
+ <CAFEAcA-jUSHuwRrWCH6vFENmEi7Xskn9s9BgDmBKj3YKCyXHXQ@mail.gmail.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <ec7e7694-ae65-6a47-d547-3ed5ef55e6c4@arm.com>
+Date: Mon, 16 Apr 2018 11:23:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFEAcA-jUSHuwRrWCH6vFENmEi7Xskn9s9BgDmBKj3YKCyXHXQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the read path, pblk gets a reference to the incoming bio and puts it
-after ending the bio. Though this behavior is correct, it is unnecessary
-since pblk is the one putting the bio, therefore, it cannot disappear
-underneath it.
+On 13/04/18 14:21, Peter Maydell wrote:
+> On 27 March 2018 at 14:15, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>> Expose the maximum physical address size supported by the host
+>> for a VM. This could be later used by the userspace to choose the
+>> appropriate size for a given VM. The limit is determined as the
+>> minimum of actual CPU limit, the kernel limit (i.e, either 48 or 52)
+>> and the stage2 page table support limit (which is 40bits at the moment).
+>> For backward compatibility, we support a minimum of 40bits. The limit
+>> will be lifted as we add support for the stage2 to support the host
+>> kernel PA limit.
+>>
+>> This value may be different from what is exposed to the VM via
+>> CPU ID registers. The limit only applies to the stage2 page table.
+>>
+>> Cc: Christoffer Dall <cdall@kernel.org>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Peter Maydel <peter.maydell@linaro.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   Documentation/virtual/kvm/api.txt | 14 ++++++++++++++
+>>   arch/arm/include/asm/kvm_mmu.h    |  5 +++++
+>>   arch/arm64/include/asm/kvm_mmu.h  |  5 +++++
+>>   include/uapi/linux/kvm.h          |  6 ++++++
+>>   virt/kvm/arm/arm.c                |  6 ++++++
+>>   5 files changed, 36 insertions(+)
+>>
+>> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+>> index 792fa87..55908a8 100644
+>> --- a/Documentation/virtual/kvm/api.txt
+>> +++ b/Documentation/virtual/kvm/api.txt
+>> @@ -3500,6 +3500,20 @@ Returns: 0 on success; -1 on error
+>>   This ioctl can be used to unregister the guest memory region registered
+>>   with KVM_MEMORY_ENCRYPT_REG_REGION ioctl above.
+>>
+>> +4.113 KVM_ARM_GET_MAX_VM_PHYS_SHIFT
+>> +Capability: basic
+>> +Architectures: arm, arm64
+>> +Type: system ioctl
+>> +Parameters: none
+>> +Returns: log2(Maximum physical address space size) supported by the
+>> +hyperviosr.
+> 
+> typo: "hypervisor".
+> 
 
-Removing this reference, allows to clean up rqd->bio and avoid pointer
-bouncing for the different read paths. Now, the incoming bio always
-resides in the read context and pblk's internal bios (if any) reside in
-rqd->bio.
+Will fix it.
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-read.c | 57 +++++++++++++++++++-------------------------
- 1 file changed, 24 insertions(+), 33 deletions(-)
+>> +
+>> +This ioctl can be used to identify the maximum physical address space size
+>> +supported by the hypervisor.
+> 
+> Is that the physical address space on the host, or the physical
+> address space size we present to the guest?
 
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index 2f8224354c62..5464e4177c87 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -39,10 +39,10 @@ static int pblk_read_from_cache(struct pblk *pblk, struct bio *bio,
- }
- 
- static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
--				 sector_t blba, unsigned long *read_bitmap)
-+				 struct bio *bio, sector_t blba,
-+				 unsigned long *read_bitmap)
- {
- 	struct pblk_sec_meta *meta_list = rqd->meta_list;
--	struct bio *bio = rqd->bio;
- 	struct ppa_addr ppas[PBLK_MAX_REQ_ADDRS];
- 	int nr_secs = rqd->nr_ppas;
- 	bool advanced_bio = false;
-@@ -189,7 +189,6 @@ static void pblk_end_user_read(struct bio *bio)
- 	WARN_ONCE(bio->bi_status, "pblk: corrupted read bio\n");
- #endif
- 	bio_endio(bio);
--	bio_put(bio);
- }
- 
- static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
-@@ -197,23 +196,18 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
- 	struct pblk_g_ctx *r_ctx = nvm_rq_to_pdu(rqd);
--	struct bio *bio = rqd->bio;
-+	struct bio *int_bio = rqd->bio;
- 	unsigned long start_time = r_ctx->start_time;
- 
- 	generic_end_io_acct(dev->q, READ, &pblk->disk->part0, start_time);
- 
- 	if (rqd->error)
- 		pblk_log_read_err(pblk, rqd);
--#ifdef CONFIG_NVM_DEBUG
--	else
--		WARN_ONCE(bio->bi_status, "pblk: corrupted read error\n");
--#endif
- 
- 	pblk_read_check_seq(pblk, rqd, r_ctx->lba);
- 
--	bio_put(bio);
--	if (r_ctx->private)
--		pblk_end_user_read((struct bio *)r_ctx->private);
-+	if (int_bio)
-+		bio_put(int_bio);
- 
- 	if (put_line)
- 		pblk_read_put_rqd_kref(pblk, rqd);
-@@ -230,16 +224,19 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
- static void pblk_end_io_read(struct nvm_rq *rqd)
- {
- 	struct pblk *pblk = rqd->private;
-+	struct pblk_g_ctx *r_ctx = nvm_rq_to_pdu(rqd);
-+	struct bio *bio = (struct bio *)r_ctx->private;
- 
-+	pblk_end_user_read(bio);
- 	__pblk_end_io_read(pblk, rqd, true);
- }
- 
--static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
--				 unsigned int bio_init_idx,
--				 unsigned long *read_bitmap)
-+static int pblk_partial_read(struct pblk *pblk, struct nvm_rq *rqd,
-+			     struct bio *orig_bio, unsigned int bio_init_idx,
-+			     unsigned long *read_bitmap)
- {
--	struct bio *new_bio, *bio = rqd->bio;
- 	struct pblk_sec_meta *meta_list = rqd->meta_list;
-+	struct bio *new_bio;
- 	struct bio_vec src_bv, dst_bv;
- 	void *ppa_ptr = NULL;
- 	void *src_p, *dst_p;
-@@ -319,7 +316,7 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
- 		meta_list[hole].lba = lba_list_media[i];
- 
- 		src_bv = new_bio->bi_io_vec[i++];
--		dst_bv = bio->bi_io_vec[bio_init_idx + hole];
-+		dst_bv = orig_bio->bi_io_vec[bio_init_idx + hole];
- 
- 		src_p = kmap_atomic(src_bv.bv_page);
- 		dst_p = kmap_atomic(dst_bv.bv_page);
-@@ -338,28 +335,26 @@ static int pblk_partial_read_bio(struct pblk *pblk, struct nvm_rq *rqd,
- 
- 	bio_put(new_bio);
- 
--	/* Complete the original bio and associated request */
--	bio_endio(bio);
--	rqd->bio = bio;
-+	/* restore original request */
-+	rqd->bio = NULL;
- 	rqd->nr_ppas = nr_secs;
- 
- 	__pblk_end_io_read(pblk, rqd, false);
--	return NVM_IO_OK;
-+	return NVM_IO_DONE;
- 
- err:
- 	pr_err("pblk: failed to perform partial read\n");
- 
- 	/* Free allocated pages in new bio */
--	pblk_bio_free_pages(pblk, bio, 0, new_bio->bi_vcnt);
-+	pblk_bio_free_pages(pblk, orig_bio, 0, new_bio->bi_vcnt);
- 	__pblk_end_io_read(pblk, rqd, false);
- 	return NVM_IO_ERR;
- }
- 
--static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd,
-+static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd, struct bio *bio,
- 			 sector_t lba, unsigned long *read_bitmap)
- {
- 	struct pblk_sec_meta *meta_list = rqd->meta_list;
--	struct bio *bio = rqd->bio;
- 	struct ppa_addr ppa;
- 
- 	pblk_lookup_l2p_seq(pblk, &ppa, lba, 1);
-@@ -423,14 +418,15 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 	rqd = pblk_alloc_rqd(pblk, PBLK_READ);
- 
- 	rqd->opcode = NVM_OP_PREAD;
--	rqd->bio = bio;
- 	rqd->nr_ppas = nr_secs;
-+	rqd->bio = NULL; /* cloned bio if needed */
- 	rqd->private = pblk;
- 	rqd->end_io = pblk_end_io_read;
- 
- 	r_ctx = nvm_rq_to_pdu(rqd);
- 	r_ctx->start_time = jiffies;
- 	r_ctx->lba = blba;
-+	r_ctx->private = bio; /* original bio */
- 
- 	/* Save the index for this bio's start. This is needed in case
- 	 * we need to fill a partial read.
-@@ -448,17 +444,15 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 		rqd->ppa_list = rqd->meta_list + pblk_dma_meta_size;
- 		rqd->dma_ppa_list = rqd->dma_meta_list + pblk_dma_meta_size;
- 
--		pblk_read_ppalist_rq(pblk, rqd, blba, &read_bitmap);
-+		pblk_read_ppalist_rq(pblk, rqd, bio, blba, &read_bitmap);
- 	} else {
--		pblk_read_rq(pblk, rqd, blba, &read_bitmap);
-+		pblk_read_rq(pblk, rqd, bio, blba, &read_bitmap);
- 	}
- 
--	bio_get(bio);
- 	if (bitmap_full(&read_bitmap, nr_secs)) {
--		bio_endio(bio);
- 		atomic_inc(&pblk->inflight_io);
- 		__pblk_end_io_read(pblk, rqd, false);
--		return NVM_IO_OK;
-+		return NVM_IO_DONE;
- 	}
- 
- 	/* All sectors are to be read from the device */
-@@ -473,13 +467,10 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 		}
- 
- 		rqd->bio = int_bio;
--		r_ctx->private = bio;
- 
- 		ret = pblk_submit_io(pblk, rqd);
- 		if (ret) {
- 			pr_err("pblk: read IO submission failed\n");
--			if (int_bio)
--				bio_put(int_bio);
- 			goto fail_end_io;
- 		}
- 
-@@ -489,7 +480,7 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 	/* The read bio request could be partially filled by the write buffer,
- 	 * but there are some holes that need to be read from the drive.
- 	 */
--	return pblk_partial_read_bio(pblk, rqd, bio_init_idx, &read_bitmap);
-+	return pblk_partial_read(pblk, rqd, bio, bio_init_idx, &read_bitmap);
- 
- fail_rqd_free:
- 	pblk_free_rqd(pblk, rqd, PBLK_READ);
--- 
-2.7.4
+It is the size of the address space we present to the guest. I will update
+the documentation to make it more clear.
+
+> 
+>> The returned value indicates the maximum size
+>> +of the address that can be resolved by the stage2 translation table on
+>> +arm/arm64. On arm64, the value is decided based on the host kernel
+>> +configuration and the system wide safe value of ID_AA64MMFR0_EL1:PARange.
+>> +This may not match the value exposed to the VM in CPU ID registers.
+> 
+> Isn't it likely to confuse the guest if we lie to it about the PA range it
+> sees? When would the two values differ?
+
+On a heterogeneous system, the guest could see different values
+of PARange on the same VCPU. So that is not safe for a guest at the moment.
+Ideally, we should emulate the PARange to provide the system wide safe value, which the
+guest can read.
+
+We don't touch the emulation of PARange in the ID registers in this set.
+All we do is (in the next patches) limiting the address space size provided
+to the guest. May be we could update PARange to the limit imposed and emulate
+the field.
+
+> 
+> Do we also need a 'set' operation, so userspace can create a VM
+> that has a 40 bit userspace on a CPU that supports more than that,
+> or does it just work?
+
+It just works as before, creating a 40bit userspace, without any additional
+steps. All we do is, allowing to create a VM with bigger address space
+by specifying the size in the "type" field. The other question is, does
+it really matter what a guest sees in PARange and what it is provided
+with ? e.g, on my Juno, the A53's have 40bit and A57 has 44bit, while
+the system uses only 40bit.
+
+This will be true even with the new change. i.e, we don't allow a size
+beyond the limit supported by all the CPUs on the system.
+
+> 
+> What's the x86 API for KVM to tell userspace about physical address
+> range restrictions?
+
+ From a quick look, the limit comes from cpuid (leaf 0x80000008 ?). So, it
+could be via the existing per-VCPU get/set_cpuid{,2}() API on x86.
+
+Suzuki
