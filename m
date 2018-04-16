@@ -1,67 +1,99 @@
-Return-Path: <prvs=36372c2ef6=kyle.roeschley@ni.com>
-X-Google-Smtp-Source: AIpwx4+JfhR2kz51BORhU6P9o1qLO0SyehKM6fTWeO/XfRQ8RRoONjTy/+pYQPQQtKOUS9XPsazC
-ARC-Seal: i=1; a=rsa-sha256; t=1523287454; cv=none;
-        d=google.com; s=arc-20160816;
-        b=JUmN/Dmy5JWrSjt7JKsZ8zPZ6iHG6M6uHZoYdWFRkYquai1ZZkFZ25rMwC5TrcL7mS
-         Fs51ZU19oJGNU6kvwWV/Pa/a7xLB5a/6cqxHIkhZ0O6d6/FAvhHZCKjtEHLwa4UCpOeO
-         VILIxX+MvOksfI8IFtTnIS3mVPvNgWIE0y+4L7FddIi3wc9uFPtjFHsTdsB6RAYiIcBh
-         yWDy9sX0zj/vdEKabZ3cNlPNjFje1/jSkqhJn2608AJGqKgS8Q7aGztkWSN0fZ0ReaXp
-         LcfzfAVwv6TV+W88/2mKNlyG+e4dJGG+0OUANZCA5nVmSd7XHq7GJ3cluG1GK6Q0cOoh
-         8awg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=Ia8Pl/BgpI1bZc9bacWxQYZHCu90lZcr1HQxy4XtDVI=;
-        b=UoycBJ9OjHlnIoEanomDhvyMQur3oUDnk2QHA7446tw162i0rznQ6Q4wNVeNSdMNHF
-         rUiaZkMd+9C7SeDt9Lgw5+KkuLXI3OsxC5qly4lm6pKWTAuXMDgPXCeL4dZ/MmEZqTJM
-         zVoNG2ScRp4wfsPCWUyEkyrBKaEu4qTg2IMGHNE4EKPQ/klKwvaFkqkH/pngFrOm4cij
-         TWGWevreKsCFC5Y/WwM5REWhXJ4Bd5vTt8TaNCuzrNFYst0Wu38iecDkxCiDmZxdXl1E
-         kl6k38psyFO+x2Nf/qOw6ouQByX9eXop7gnRXTDkf2pFFbhVAeEY0zT0C6Eubpv5QNoQ
-         JQIw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of prvs=36372c2ef6=kyle.roeschley@ni.com designates 148.163.156.75 as permitted sender) smtp.mailfrom=prvs=36372c2ef6=kyle.roeschley@ni.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of prvs=36372c2ef6=kyle.roeschley@ni.com designates 148.163.156.75 as permitted sender) smtp.mailfrom=prvs=36372c2ef6=kyle.roeschley@ni.com
-From: Kyle Roeschley <kyle.roeschley@ni.com>
-To: Johan Hovold <johan@kernel.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kyle Roeschley
-	<kyle.roeschley@ni.com>
-Subject: [PATCH] USB: serial: cp210x: Add ID for NI USB serial console
-Date: Mon, 9 Apr 2018 10:23:55 -0500
-Message-ID: <20180409152355.7774-1-kyle.roeschley@ni.com>
-X-Mailer: git-send-email 2.16.2
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2659956-1523863608-2-8667557823196888871
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5, LANGUAGES enda,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523863607; b=tMMgG2wIcPK9KBWhRW8H5PaQDJ9VccPZz97nelnmnMrFfzxiXA
+    YKe3Jc/H4U5/Pg8wY6VpQVDh02KOTikgM3bgoE8osyPLy7VZ1vt/on1Ym+KnO2wd
+    YVBqd661lrABbW+mFFj9oi7NdEkxlIDztCc+thQuVgRBqS4KVMiC0XGWMCbFcN59
+    oWAOHI9BBSpXPfdt1WTWQJdEcQG/9MB8Hleu5qgbi56U0Hbrd2rRqsyGkUeU+crs
+    CrY9F75s+mdAuVueWmW7EE4UMertpODUx78jHP+9KWex8kbUN4yJBFuLV4uxvC2d
+    U1U5g0eND33t9s//cDwsqaftbYs1GDhoCwHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1523863607; bh=qU0Wt06xAIpmqzghqkcsfu/YBKl0SE
+    R6qmhMPn0N1Yk=; b=qjqp5RRIq0+nDDnaDsESpAreG4nWnvkExzNLWHvvQ6vMiU
+    7yy6n6NvaF/d8UhTsJoiN8Ik25aKSBo/dHMdmbw4mCzxY4eRxYoJLe8HkS+zi/M3
+    U3QUQq9NgFAR5wUVbxErPCZp6fs58PFj+Kbdm+1ngWyYxKcXJXYWjdodL7wsCkyW
+    W7/Tu0fSRgggLmxgoERdGQqJCXTxCUunBkrlds3hjVE1r1Ko/OfZdeVNvr/HSn+L
+    wflLnaZQFvzQHoL+zos7sksz6fBsXwP/IKk18uN4cTZ1oLMyoUgxjRGJ+PhY8aaO
+    EfOwVQ6Uq0w8zJ/bjOqjW0DLd9uQZxcAlSDU6iYg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=XLYj09Ez x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=m5lcNb4f;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=XLYj09Ez x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=m5lcNb4f;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLvXvZiof6jRtIvDkqY+iO96+9TNksBDuvSecljjzbQEoG89xExcBxbGIah/G09N1xoyk+4UaDPOEn1S5DUKrSDfs7mhoeINK8LGNwi+NQL5wfHZtdnM
+    F+cQ6teoIVKQ0QF9Ohi4ZXUbRGzt4odOckS5jf0z1lXtNn9CFLflVylf7465Z7fe2a0cKK5gSPEb2K6h8jg3cvFiTWPQafBrm6hdY0WL4rI3dX5AJzhx0woC
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=gVGD3344AAAA:8 a=VwQbUJbxAAAA:8 a=DSnVEm2WeWSGjTZyNd0A:9 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=xQEvYfgLW3QvObN0DhJi:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752975AbeDPH0N (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 16 Apr 2018 03:26:13 -0400
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:42198 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750946AbeDPH0M (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 16 Apr 2018 03:26:12 -0400
+X-Google-Smtp-Source: AIpwx48xZyM+J0Y6OZMxgGEdchcHd5HjZgSxTXkmDQeYSh36uPRuzgcug9+17r1QtR6jXxY0smx/lQ==
+Date: Mon, 16 Apr 2018 09:26:06 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Kyle Roeschley <kyle.roeschley@ni.com>
+Cc: Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: cp210x: Add ID for NI USB serial console
+Message-ID: <20180416072606.GK10795@localhost>
+References: <20180409152355.7774-1-kyle.roeschley@ni.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180409152355.7774-1-kyle.roeschley@ni.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597282665739196263?=
-X-GMAIL-MSGID: =?utf-8?q?1597282665739196263?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Added the USB VID and PID for the USB serial console on some National
-Instruments devices.
+On Mon, Apr 09, 2018 at 10:23:55AM -0500, Kyle Roeschley wrote:
+> Added the USB VID and PID for the USB serial console on some National
+> Instruments devices.
+> 
+> Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
 
-Signed-off-by: Kyle Roeschley <kyle.roeschley@ni.com>
----
- drivers/usb/serial/cp210x.c | 1 +
- 1 file changed, 1 insertion(+)
+Now applied, thanks.
 
-diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-index 06d502b3e913..cc5b2d0d340d 100644
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -213,6 +213,7 @@ static const struct usb_device_id id_table[] = {
- 	{ USB_DEVICE(0x3195, 0xF190) }, /* Link Instruments MSO-19 */
- 	{ USB_DEVICE(0x3195, 0xF280) }, /* Link Instruments MSO-28 */
- 	{ USB_DEVICE(0x3195, 0xF281) }, /* Link Instruments MSO-28 */
-+	{ USB_DEVICE(0x3923, 0x7A0B) }, /* National Instruments USB Serial Console */
- 	{ USB_DEVICE(0x413C, 0x9500) }, /* DW700 GPS USB interface */
- 	{ } /* Terminating Entry */
- };
--- 
-2.16.2
+Johan
