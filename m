@@ -1,65 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753541AbeDPT5p (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 15:57:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47172 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753269AbeDPT5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 15:57:43 -0400
-Date: Mon, 16 Apr 2018 14:57:42 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] livepatch: Allocate and free shadow variables
- more safely
-Message-ID: <20180416195742.n2zsthypbx7c4yzn@treble>
-References: <20180416113647.25288-1-pmladek@suse.com>
+        id S1753436AbeDPT7u (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 15:59:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55045 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752934AbeDPT7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 15:59:49 -0400
+Subject: Re: [PATCH 3/3] dcache: account external names as indirectly
+ reclaimable memory
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Minchan Kim <minchan@kernel.org>,
+        Roman Gushchin <guro@fb.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, lsf-pc@lists.linux-foundation.org
+References: <20180305133743.12746-1-guro@fb.com>
+ <20180305133743.12746-5-guro@fb.com>
+ <20180413133519.GA213834@rodete-laptop-imager.corp.google.com>
+ <20180413135923.GT17484@dhcp22.suse.cz>
+ <13f1f5b5-f3f8-956c-145a-4641fb996048@suse.cz>
+ <20180413142821.GW17484@dhcp22.suse.cz> <20180413143716.GA5378@cmpxchg.org>
+ <20180416114144.GK17484@dhcp22.suse.cz>
+ <1475594b-c1ad-9625-7aeb-ad8ad385b793@suse.cz>
+ <20180416122747.GM17484@dhcp22.suse.cz>
+From: Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <a6413098-b37c-a6b8-45cb-ce273ff16c29@suse.cz>
+Date: Mon, 16 Apr 2018 21:57:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180416122747.GM17484@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180416113647.25288-1-pmladek@suse.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 01:36:45PM +0200, Petr Mladek wrote:
-> Nikolai started to use shadow variables and found that list_head
-> is not initialized correctly using the existing API.
+On 04/16/2018 02:27 PM, Michal Hocko wrote:
+> On Mon 16-04-18 14:06:21, Vlastimil Babka wrote:
+>>
+>> For example the percpu (and other) array caches...
+>>
+>>> maybe it will turn out that such a large
+>>> portion of the chache would need to duplicate the state that a
+>>> completely new cache would be more reasonable.
+>>
+>> I'm afraid that's the case, yes.
+>>
+>>> Is this worth exploring
+>>> at least? I mean something like this should help with the fragmentation
+>>> already AFAIU. Accounting would be just free on top.
+>>
+>> Yep. It could be also CONFIG_urable so smaller systems don't need to
+>> deal with the memory overhead of this.
+>>
+>> So do we put it on LSF/MM agenda?
 > 
-> The problem is that LIST_HEAD_INIT() set pointers to itself.
-> klp_shadow_alloc() then copies these pointers to another location.
-> 
-> It would be possible to solve this by a late initialization. But
-> this does not work well with klp_shadow_get_or_alloc(). Also this
-> behavior is error prone. Note that list_head might be hidden in
-> another structure, for example mutex.
-> 
-> I suggest to change the API and allow to initialize the shadow
-> variables using a custom callback. I think that we have already
-> talked about this but we decided to go the easier way. It seems
-> that it was a bad decision.
-> 
-> I send also patch that add a symmetric callback to the klp_shadow_free()
-> functions. It might be handy especially for klp_shadow_free_all().
-> 
-> 
-> Changes against v2:
-> 
->   + Use pr_err() instead of WARN() when ctor() fails [Josh]
->   + Some typos [Mirek]
-> 
-> 
-> Changes against v1:
-> 
->   + Rename init/free callbacks to ctor/dtor
->   + Misc update of comments and commit messages
->   + Fix sizeof() in the sample code in shadow-vars.txt
+> If you volunteer to lead the discussion, then I do not have any
+> objections.
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Sure, let's add the topic of SLAB_MINIMIZE_WASTE [1] as well.
 
--- 
-Josh
+Something like "Supporting reclaimable kmalloc caches and large
+non-buddy-sized objects in slab allocators" ?
+
+[1] https://marc.info/?l=linux-mm&m=152156671614796&w=2
