@@ -1,95 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751876AbeDPXaR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 19:30:17 -0400
-Received: from ozlabs.org ([203.11.71.1]:41085 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751059AbeDPXaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 19:30:15 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 17 Apr 2018 09:28:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Pablo Neira Ayuso <pablo@netfilter.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Cong Wang <xiyou.wangcong@gmail.com>
-Subject: linux-next: build failure after merge of the netfilter tree
-Message-ID: <20180417092859.358573be@canb.auug.org.au>
+        id S1752221AbeDPXwB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 19:52:01 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:43093 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750979AbeDPXv7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 19:51:59 -0400
+X-Google-Smtp-Source: AIpwx48nFJi9LX715Uf4Rd09t6SepGU7+LLK67v1hS7rrStxDdHsTxIW9iQ2/TdqenULgdUP0IQzJQ==
+Date: Mon, 16 Apr 2018 16:51:56 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Peter Hutterer <peter.hutterer@who-t.net>
+Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] HID: input: do not increment usages when a
+ duplicate is found
+Message-ID: <20180416235156.GE77055@dtor-ws>
+References: <20171208142818.15156-1-benjamin.tissoires@redhat.com>
+ <20171208142818.15156-3-benjamin.tissoires@redhat.com>
+ <20171210222926.GB11027@jelly>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xGmb.tbd_m2j/9+ca6DNz7="; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171210222926.GB11027@jelly>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xGmb.tbd_m2j/9+ca6DNz7=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 11, 2017 at 08:29:26AM +1000, Peter Hutterer wrote:
+> On Fri, Dec 08, 2017 at 03:28:18PM +0100, Benjamin Tissoires wrote:
+> > This is something that bothered us from a long time. When hid-input
+> > doesn't know how to map a usage, it uses *_MISC. But there is something
+> > else which increments the usage if the evdev code is already used.
+> > 
+> > This leads to few issues:
+> > - some devices may have their ABS_X mapped to ABS_Y if they export a bad
+> >   set of usages (see the DragonRise joysticks IIRC -> fixed in a specific
+> >   HID driver)
+> > - *_MISC + N might (will) conflict with other defined axes (my Logitech
+> >   H800 exports some multitouch axes because of that)
+> > - this prevents to freely add some new evdev usages, because "hey, my
+> >   headset will now report ABS_COFFEE, and it's not coffee capable".
+> > 
+> > So let's try to kill this nonsense, and hope we won't break too many
+> > devices.
+> > 
+> > I my headset case, the ABS_MISC axes are created because of some
+> > proprietary usages, so we might not break that many devices.
+> > 
+> > For backward compatibility, a quirk HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE
+> > is created and can be applied to any device that needs this behavior.
+> > 
+> > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> 
+> Acked-by: Peter Hutterer <peter.hutterer@who-t.net>
 
-Hi all,
+So what is happening with this series? I think we should get it them
+in; there is really no reason for bumping ABS_MISC till it gets into
+ABS_MT_* range on some devices that are out there.
 
-After merging the netfilter tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+FWIW
 
-net/netfilter/nf_conntrack_extend.c: In function 'nf_ct_ext_
-add':
-net/netfilter/nf_conntrack_extend.c:74:2: error: implicit declaration of fu=
-nction 'kmemleak_not_leak' [-Werror=3Dimplicit-function-declaration]
-  kmemleak_not_leak(old);
-  ^~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Caused by commit
+Thanks.
 
-  114aa35d06d4 ("netfilter: conntrack: silent a memory leak warning")
-
-I have added this patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 17 Apr 2018 09:26:49 +1000
-Subject: [PATCH] netfilter: conntrack: include kmemleak.h for
- kmemleak_not_leak()
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/netfilter/nf_conntrack_extend.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/net/netfilter/nf_conntrack_extend.c b/net/netfilter/nf_conntra=
-ck_extend.c
-index bd71a828ebde..277bbfe26478 100644
---- a/net/netfilter/nf_conntrack_extend.c
-+++ b/net/netfilter/nf_conntrack_extend.c
-@@ -9,6 +9,7 @@
-  *      2 of the License, or (at your option) any later version.
-  */
- #include <linux/kernel.h>
-+#include <linux/kmemleak.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/rcupdate.h>
---=20
-2.16.3
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xGmb.tbd_m2j/9+ca6DNz7=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrVMbsACgkQAVBC80lX
-0GxZ7wf/WOhRUi85MTU9MkKgs5QnmbKMxPMN1AMN4JHpCtFH8GhZrOJoHKBeRnI8
-nNlcCHW0P5tN8IzoDdUgvxX41g4IQc/doujuktE8nozsH5EbeshN3n5BT3BAssYK
-/5pnMNrpziCsxdFJnAQ99gsWAc1NScAsfcqxvH5JnnW5Tk//QPNcC3cDM3XGja0n
-QAH8JVSclPcnKZfcfbYpp3CFOacvF87WnsV0AgsMdUj8bGC8gR0gAv9Hiq0LFUwX
-FVwMmvBwrsQKozYxhZgACzJXdxWDwjLsKez5jjVnSbtAjnIBECQRUs2SJh8L/2Tj
-y2zMopyfzkNUHeu18vUnD/lZeTJ0JA==
-=bv6w
------END PGP SIGNATURE-----
-
---Sig_/xGmb.tbd_m2j/9+ca6DNz7=--
+-- 
+Dmitry
