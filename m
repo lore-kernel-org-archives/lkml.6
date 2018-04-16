@@ -1,261 +1,215 @@
-Return-Path: <prvs=6391b331b=paf@cray.com>
-X-Google-Smtp-Source: AIpwx4+66nrqEwSeb54uqSHQDoFUet019B9L4dTucrHTjpf7iAMcKGCNlwjwMzgWs+17wofbSRky
-ARC-Seal: i=1; a=rsa-sha256; t=1524025421; cv=none;
+Return-Path: <prvs=637e8313d=doucharek@cray.com>
+X-Google-Smtp-Source: AIpwx4/zfL2aUOGWlmYs4hZA1pV8pOW787lirYO82K1SiCnCdGdKxbYkhzhu4HJUauzNLXV5ln7h
+ARC-Seal: i=1; a=rsa-sha256; t=1523918927; cv=none;
         d=google.com; s=arc-20160816;
-        b=koHAARFEA+LGbk2Prxm8iSIvg98s7wtV8ovZbJumvZ4QvbiKcRGH/CrPCJtNAUGSas
-         GmmxcLmfAl0zpQNzNYHtJtxtVGqWAb0ouDX52awCLQiJiDn192/RQT9QwAK8RwvboJWk
-         o8hdHFmqBP6B5JmxpLI6IznphjFEqRLjY745hxDyvAwFQl6lsxQSuZzHim7V8PVYSnYt
-         1Esyz/Yy1shdygXaRaVt2oJa1jsBrxgbA+GU4gZdKXYImSEFTeJjt4AmaR755mBpelzP
-         sGt8nqed1s7LU+RyaFQqDPLprHZNF04E7GVXflg/GJQ0S9iksxSbzUM6Rbkoz9RnRjBG
-         27tg==
+        b=aRx/byOndSwlH4TofXyh8tGHdvmNUCL5NrPHcC0ngGGA04tGCufvD81VBbyrvgUDEj
+         2PGbNeH5riEiyVjQ9kfw4H6WANmQJp+n8s3qk7+9ZLZDongwGrKXCVkRf+fU7nhVD5RB
+         MGcyPX50LYAkcCSxBk5dkQG78tPOjX8RPFmSZR5FvRhO0kkYkH1QjnnWV0JDLEdTdO2I
+         AjhLXKHkqayn8mYLZnoC+BwOGbJgXhaeW0ZuPDzLYR+Dh6YnTXf66dXd4wlnQg7n/l4U
+         DrlwgZ/FR0wH/t2uAHVIvbfAZQqgPlZDcn7/mIIIye49zdYwvy5issRG+lHnxTsaGvIn
+         qvKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:spamdiagnosticmetadata:spamdiagnosticoutput
-         :content-language:accept-language:in-reply-to:references:message-id
-         :date:thread-index:thread-topic:subject:cc:to:from:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=J951uPxvKOmWsuxAfSTp3rV3h6Wt7yI+KLPnobDitUI=;
-        b=0sYpWWoYRwjvyj4ol7Cue0CJYFOrX6kje4zwJ3QH6+HrnAuGRXf+28KtXBvuj03v7V
-         W13r8vRF9NTlZcj7WYsTvRmWt6mgJMVy+66Go3th0dhFvCLqtLLVPlgk/GlQzqgEFsAw
-         SD3OmUtQQwoVQzRfzY/GUiwjSpH6+yv+g8WdxPWww/CdSJejEDeBZi4+eJ1JsUHXyAo/
-         pEoCrfhVtl0XVQnHbXn/AZpXfy+MLo+OFkhClCfcc+BWHztoRSWJX8yd2bB8ll+EZjdc
-         ZOWZ+xdYG1/eACBAs6Bf1atrEjnVZ5RKD3R11t2n5whQd6A1MaQB3Zxr/WV3GnCOrgnr
-         nv7g==
+        h=mime-version:content-transfer-encoding:content-id
+         :spamdiagnosticmetadata:spamdiagnosticoutput:content-language
+         :accept-language:in-reply-to:references:message-id:date:thread-index
+         :thread-topic:subject:cc:to:from:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=j3M6H7ooJCJdTp/5/k/bL6mzIAlEqwGtubnF7Ri+qOc=;
+        b=LKfnDRYgEStXEhTRc7uBBuL+1KeImjzeVxIBbADCrFQBXONJ4u/TERJ4MIBRAhCngk
+         8aYFEJ1G5O6INM8lPQ/9eHKL+uObZv3AJN3ntA7BlvpsLXQEbQkBjwDxe6fzqz7EnDCf
+         5bFgzViBvOSZrj4GbE5/OpVV2IHEAEWCQwmuXi+qJswpDNn3QxaIBxcjv+/wovBw7LFt
+         ic2akxc1heKidjj1YU2qmaHmr78jbDgGGUPcjXskq7OjDkvUxIGk6DR+pbMPpCNhoZYu
+         hKDUP5DMx46mB2e2xbhVBP6MXk7MNJ1HO5ViUQyk0agywwhpccP4QNTLTbiTXQ03ZEz9
+         Z1ow==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=lGZ6PW8m;
-       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=D+piCppc;
-       spf=pass (google.com: domain of prvs=6391b331b=paf@cray.com designates 68.232.142.33 as permitted sender) smtp.mailfrom=prvs=6391b331b=paf@cray.com
+       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=u4puZLmA;
+       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=RtzuvliC;
+       spf=pass (google.com: domain of prvs=637e8313d=doucharek@cray.com designates 68.232.143.164 as permitted sender) smtp.mailfrom=prvs=637e8313d=doucharek@cray.com
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=lGZ6PW8m;
-       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=D+piCppc;
-       spf=pass (google.com: domain of prvs=6391b331b=paf@cray.com designates 68.232.142.33 as permitted sender) smtp.mailfrom=prvs=6391b331b=paf@cray.com
-X-IronPort-AV: E=Sophos;i="5.48,464,1517875200";
-   d="scan'208,217";a="19348922"
-X-Cray-OBMMKR: 1433258124 19348922
-From: Patrick Farrell <paf@cray.com>
-To: NeilBrown <neilb@suse.com>, James Simmons <jsimmons@infradead.org>
-CC: Oleg Drokin <oleg.drokin@intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Lustre Development List
-	<lustre-devel@lists.lustre.org>
+       dkim=pass (test mode) header.i=@cray.com header.s=cray1024 header.b=u4puZLmA;
+       dkim=pass header.i=@crayinc.onmicrosoft.com header.s=selector1-cray-com header.b=RtzuvliC;
+       spf=pass (google.com: domain of prvs=637e8313d=doucharek@cray.com designates 68.232.143.164 as permitted sender) smtp.mailfrom=prvs=637e8313d=doucharek@cray.com
+X-IronPort-AV: E=Sophos;i="5.48,460,1517875200";
+   d="scan'208";a="19040249"
+X-Cray-OBMMKR: 1433258124 19040249
+From: Doug Oucharek <doucharek@cray.com>
+To: James Simmons <jsimmons@infradead.org>
+CC: Patrick Farrell <paf@cray.com>, Oleg Drokin <oleg.drokin@intel.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Lustre Development List
+	<lustre-devel@lists.lustre.org>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>
 Subject: Re: [lustre-devel] [PATCH 1/6] staging: lustre: move stack-check
  macros to libcfs_debug.h
 Thread-Topic: [lustre-devel] [PATCH 1/6] staging: lustre: move stack-check
  macros to libcfs_debug.h
-Thread-Index: AQHT1RvznGTF9Mlw1kmpPf1j/I5gHqQCwVQAgABvoICAAM08gIAB0aYAgAAd6lU=
-Date: Wed, 18 Apr 2018 04:23:34 +0000
-Message-ID: <BN7PR11MB2674FEA0BF3CFD9F3EC469F6CBB60@BN7PR11MB2674.namprd11.prod.outlook.com>
+Thread-Index: AQHT1Rv1Bc5MmqaVa0G2lOzhjNOrBaQCwVQAgADDcwCAAHlpgIAAAbeA
+Date: Mon, 16 Apr 2018 22:48:40 +0000
+Message-ID: <44671B46-27F6-4CFA-8E3A-7AD62B4C597E@cray.com>
 References: <152383910760.23409.2327082725637657049.stgit@noble>
  <152383935730.23409.6748888065027051683.stgit@noble>
  <alpine.LFD.2.21.1804160438220.16188@casper.infradead.org>
  <6D3C7935-E7ED-4826-B459-0C4888D6048E@cray.com>
- <alpine.LFD.2.21.1804162336220.14398@casper.infradead.org>,<877ep5s0wb.fsf@notabene.neil.brown.name>
-In-Reply-To: <877ep5s0wb.fsf@notabene.neil.brown.name>
+ <alpine.LFD.2.21.1804162336220.14398@casper.infradead.org>
+In-Reply-To: <alpine.LFD.2.21.1804162336220.14398@casper.infradead.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: suse.com; dkim=none (message not signed)
- header.d=none;suse.com; dmarc=none action=none header.from=cray.com;
-x-originating-ip: [2607:fb90:997a:849f:49df:d265:e4b:f1b3]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=doucharek@cray.com;
+x-originating-ip: [136.162.66.1]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN7PR11MB2673;7:A+Bu5ffYKv7Cs2AEuiQDZZLvi7RyWaJHSYGRdrcjpz5mMGLYqC7hBfi/hMG4xznZcHyJ3J2nMHgaNnlWD0rjE6d/l5wiHFIHpVFIEhsEqbDJ75MBwjbHZwSFVKFxt/JMefXoBcv0D+N9LxGlz+G0/JZVE/3/CQ86VPjcqS6Tyxqj7po6GvIdB1ehLY8Sst+g6jVChzHGAwMKYdfqZ8vdcTDSSxZNDPnSEqIZST2G9f3rb0YXt43fGFsriylKXKn+
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN7PR11MB2673;
-x-ms-traffictypediagnostic: BN7PR11MB2673:
-x-microsoft-antispam-prvs: <BN7PR11MB267357E9DCED56AAD8A177E9CBB60@BN7PR11MB2673.namprd11.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;MWHPR11MB1824;7:rh+TbzsUVt4TQvQm9BD4BmnyzdU8VaBLDuovM7aqbTHr0+chJfkNmKdthIfhDj1p+b6l2gz0AgZN7poAbhPGCs4qi/Z1S1frYbr9PQxkgWcLYjgVI6P5Q3KkKubGYtHHgyLcLoGYjtxHxODUv6kVy61FLpLXOaNZZETaJKH9qqJK2jHB4na9dxmmzX0Pyiq8nUwCy937xVxlFxIM/KthSITdQcMMWhg9GHLxngzZ+TQryGW2buJ0+gL7511nVQxo
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(376002)(346002)(366004)(396003)(39380400002)(39850400004)(199004)(189003)(6436002)(2906002)(68736007)(66066001)(33656002)(76176011)(486006)(105586002)(54906003)(81156014)(446003)(316002)(14454004)(229853002)(97736004)(25786009)(93886005)(4326008)(82746002)(8936002)(6246003)(81166006)(3280700002)(5250100002)(3660700001)(8676002)(36756003)(186003)(83716003)(2616005)(7736002)(106356001)(2900100001)(6486002)(478600001)(305945005)(86362001)(476003)(99286004)(102836004)(53936002)(5660300001)(6512007)(26005)(53546011)(59450400001)(6916009)(966005)(6116002)(3846002)(6506007)(6306002)(11346002)(13693001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR11MB1824;H:MWHPR11MB2029.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1824;
+x-ms-traffictypediagnostic: MWHPR11MB1824:
+x-microsoft-antispam-prvs: <MWHPR11MB1824B6D8676ABFCFCFB1DE92D4B00@MWHPR11MB1824.namprd11.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(788757137089);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231232)(944501327)(52105095)(10201501046)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:BN7PR11MB2673;BCL:0;PCL:0;RULEID:;SRVR:BN7PR11MB2673;
-x-forefront-prvs: 06469BCC91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(396003)(346002)(376002)(366004)(39380400002)(54896002)(9686003)(6506007)(76176011)(229853002)(102836004)(53546011)(59450400001)(5660300001)(14454004)(476003)(74316002)(99286004)(446003)(11346002)(55016002)(81166006)(7736002)(2906002)(8676002)(46003)(4326008)(186003)(7696005)(6436002)(25786009)(86362001)(5250100002)(33656002)(8936002)(54906003)(316002)(6116002)(93886005)(2900100001)(478600001)(13693001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN7PR11MB2673;H:BN7PR11MB2674.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
-x-microsoft-antispam-message-info: Rr5AgXXDyu0+HKmiTSjqc1tHvl72hZLlnIxGJAkBQZ/v48nFLTlcJ2cKbP7WbM8nZ0xzFSuM88f1KeZSD3BeOJUhBjwGrsZ+OFmAnKhMxBefL46terksE0kioAZT/X8bWX9G/VB/JcDW1RlGqzOuddsCJhu6cfewh3Chi3kTe4rKx2CkfsjbsGXEFRA4n43u
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231232)(944501327)(52105095)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:MWHPR11MB1824;BCL:0;PCL:0;RULEID:;SRVR:MWHPR11MB1824;
+x-forefront-prvs: 0644578634
+x-microsoft-antispam-message-info: HuD5l3qoKYpn/gGSsvWc0mNuTK5WgOaTbKyGTPq9lQgONVyGJtrbAJPd0Q4EGuBoKARR7eb6gKOFfKY3RUSPhd0x1qp0gAMo5owuFVFyQXeQYvW0nIGA+oOw/dC87Xt/KrATZnzd9EWakotf3XWH9/XKZHvP/HJBmV14kPhPzDpoPVOz1KsYhcM5Ze5Usap+
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: multipart/alternative;
-	boundary="_000_BN7PR11MB2674FEA0BF3CFD9F3EC469F6CBB60BN7PR11MB2674namp_"
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <222239F0DFCEE04AADA3D899D8387203@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 0dd9dab4-c8cc-4068-93aa-08d5a4e426ab
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dd9dab4-c8cc-4068-93aa-08d5a4e426ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2018 04:23:34.9820
+X-MS-Office365-Filtering-Correlation-Id: 9741caad-6299-424c-53e4-08d5a3ec334d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9741caad-6299-424c-53e4-08d5a3ec334d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Apr 2018 22:48:40.6420
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: e7b8488a-c0cd-4614-aae1-996bfabec247
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR11MB2673
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1824
 X-OriginatorOrg: cray.com
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597861409409058351?=
-X-GMAIL-MSGID: =?utf-8?q?1598056479675631454?=
+X-GMAIL-MSGID: =?utf-8?q?1597944812858408391?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---_000_BN7PR11MB2674FEA0BF3CFD9F3EC469F6CBB60BN7PR11MB2674namp_
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-
-
-Of course - I=92m no fan of keeping the Lustre specific stuff long term.  I=
-t has a few pretty powerful tricks embedded in it (others can describe them=
- better but, for example, it has per CPU debug buffers and if configured, i=
-t can halt all CPUs but one and write out all the buffers before panicking)=
-, but it=92s mostly just a set of messages controlled by a pair of message =
-specific and file-level (subsystem_debug) masks.
-
-And it should all use generic kernel infrastructure, absolutely.  There=92s=
- been interest in that for a long time but never the right combination of e=
-xpertise and will.
-
-________________________________
-From: NeilBrown <neilb@suse.com>
-Sent: Tuesday, April 17, 2018 9:29:08 PM
-To: James Simmons; Patrick Farrell
-Cc: Oleg Drokin; Greg Kroah-Hartman; Linux Kernel Mailing List; Lustre Deve=
-lopment List
-Subject: Re: [lustre-devel] [PATCH 1/6] staging: lustre: move stack-check m=
-acros to libcfs_debug.h
-
-On Mon, Apr 16 2018, James Simmons wrote:
-
->> James,
->>
->> If I understand correctly, you're saying you want to be able to build wi=
-thout debug support...?  I'm not convinced that building a client without d=
-ebug support is interesting or useful.  In fact, I think it would be harmfu=
-l, and we shouldn't open up the possibility - this is switchable debug with=
- very low overhead when not actually "on".  It would be really awful to get=
- a problem on a running system and discover there's no debug support - that=
- you can't even enable debug without a reinstall.
->>
->> If I've understood you correctly, then I would want to see proof of a si=
-gnificant performance cost when debug is built but *off* before agreeing to=
- even exposing this option.  (I know it's a choice they'd have to make, but=
- if it's not really useful with a side order of potentially harmful, we sho=
-uldn't even give people the choice.)
->
-> I'm not saying add the option today but this is more for the long game.
-> While the Intel lustre developers deeply love lustre's debugging
-> infrastructure I see a future where something better will come along to
-> replace it. When that day comes we will have a period where both
-> debugging infrastructurs will exist and some deployers of lustre will
-> want to turn off the old debugging infrastructure and just use the new.
-> That is what I have in mind. A switch to flip between options.
-
-My position on this is that lustre's debugging infrastructure (in
-mainline) *will* be changed to use something that the rest of the kernel
-can and does use.  Quite possibly that "something" will first be
-enhanced so that it is as powerful and useful as what lustre has.
-I suspect this will partly be pr_debug(), partly WARN_ON(), partly trace
-points.  But I'm not very familiar with tracepoints or with lustre
-debugging yet so this is far from certain.
-pr_debug() and tracepoints can be compiled out, but only kernel-wide.
-There is no reason for lustre to be special there.  WARN_ON() and
-BUG_ON() cannot be compiled out, but BUG_ON() must only be used when
-proceeding is unarguably worse than crashing the machine.  In recent
-years a lot of BUG_ON()s have been removed or changed to warnings.  We
-need to maintain that attitude.
-
-I don't like the idea of have two parallel debuging infrastructures that
-you can choose between - it encourages confusion and brings no benefits.
-
-Thanks,
-NeilBrown
-
---_000_BN7PR11MB2674FEA0BF3CFD9F3EC469F6CBB60BN7PR11MB2674namp_
-Content-Type: text/html; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
-252">
-</head>
-<body>
-<br>
-Of course - I=92m no fan of keeping the Lustre specific stuff long term.&nb=
-sp; It has a few pretty powerful tricks embedded in it (others can describe=
- them better but, for example, it has per CPU debug buffers and if configur=
-ed, it can halt all CPUs but one and write
- out all the buffers before panicking), but it=92s mostly just a set of mes=
-sages controlled by a pair of message specific and file-level (subsystem_de=
-bug) masks.<br>
-<br>
-And it should all use generic kernel infrastructure, absolutely.&nbsp; Ther=
-e=92s been interest in that for a long time but never the right combination=
- of expertise and will.<br>
-<br>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> NeilBrown &lt;neilb@s=
-use.com&gt;<br>
-<b>Sent:</b> Tuesday, April 17, 2018 9:29:08 PM<br>
-<b>To:</b> James Simmons; Patrick Farrell<br>
-<b>Cc:</b> Oleg Drokin; Greg Kroah-Hartman; Linux Kernel Mailing List; Lust=
-re Development List<br>
-<b>Subject:</b> Re: [lustre-devel] [PATCH 1/6] staging: lustre: move stack-=
-check macros to libcfs_debug.h</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">On Mon, Apr 16 2018, James Simmons wrote:<br>
-<br>
-&gt;&gt; James,<br>
-&gt;&gt; <br>
-&gt;&gt; If I understand correctly, you're saying you want to be able to bu=
-ild without debug support...?&nbsp; I'm not convinced that building a clien=
-t without debug support is interesting or useful.&nbsp; In fact, I think it=
- would be harmful, and we shouldn't open up the
- possibility - this is switchable debug with very low overhead when not act=
-ually &quot;on&quot;.&nbsp; It would be really awful to get a problem on a =
-running system and discover there's no debug support - that you can't even =
-enable debug without a reinstall.<br>
-&gt;&gt; <br>
-&gt;&gt; If I've understood you correctly, then I would want to see proof o=
-f a significant performance cost when debug is built but *off* before agree=
-ing to even exposing this option.&nbsp; (I know it's a choice they'd have t=
-o make, but if it's not really useful with
- a side order of potentially harmful, we shouldn't even give people the cho=
-ice.)<br>
-&gt;<br>
-&gt; I'm not saying add the option today but this is more for the long game=
-.<br>
-&gt; While the Intel lustre developers deeply love lustre's debugging <br>
-&gt; infrastructure I see a future where something better will come along t=
-o<br>
-&gt; replace it. When that day comes we will have a period where both<br>
-&gt; debugging infrastructurs will exist and some deployers of lustre will<=
-br>
-&gt; want to turn off the old debugging infrastructure and just use the new=
-.<br>
-&gt; That is what I have in mind. A switch to flip between options.<br>
-<br>
-My position on this is that lustre's debugging infrastructure (in<br>
-mainline) *will* be changed to use something that the rest of the kernel<br=
->
-can and does use.&nbsp; Quite possibly that &quot;something&quot; will firs=
-t be<br>
-enhanced so that it is as powerful and useful as what lustre has.<br>
-I suspect this will partly be pr_debug(), partly WARN_ON(), partly trace<br=
->
-points.&nbsp; But I'm not very familiar with tracepoints or with lustre<br>
-debugging yet so this is far from certain.<br>
-pr_debug() and tracepoints can be compiled out, but only kernel-wide.<br>
-There is no reason for lustre to be special there.&nbsp; WARN_ON() and<br>
-BUG_ON() cannot be compiled out, but BUG_ON() must only be used when<br>
-proceeding is unarguably worse than crashing the machine.&nbsp; In recent<b=
-r>
-years a lot of BUG_ON()s have been removed or changed to warnings.&nbsp; We=
-<br>
-need to maintain that attitude.<br>
-<br>
-I don't like the idea of have two parallel debuging infrastructures that<br=
->
-you can choose between - it encourages confusion and brings no benefits.<br=
->
-<br>
-Thanks,<br>
-NeilBrown<br>
-</div>
-</span></font></div>
-</body>
-</html>
-
---_000_BN7PR11MB2674FEA0BF3CFD9F3EC469F6CBB60BN7PR11MB2674namp_--
+DQo+IE9uIEFwciAxNiwgMjAxOCwgYXQgMzo0MiBQTSwgSmFtZXMgU2ltbW9ucyA8anNpbW1vbnNA
+aW5mcmFkZWFkLm9yZz4gd3JvdGU6DQo+IA0KPiANCj4+IEphbWVzLA0KPj4gDQo+PiBJZiBJIHVu
+ZGVyc3RhbmQgY29ycmVjdGx5LCB5b3UncmUgc2F5aW5nIHlvdSB3YW50IHRvIGJlIGFibGUgdG8g
+YnVpbGQgd2l0aG91dCBkZWJ1ZyBzdXBwb3J0Li4uPyAgSSdtIG5vdCBjb252aW5jZWQgdGhhdCBi
+dWlsZGluZyBhIGNsaWVudCB3aXRob3V0IGRlYnVnIHN1cHBvcnQgaXMgaW50ZXJlc3Rpbmcgb3Ig
+dXNlZnVsLiAgSW4gZmFjdCwgSSB0aGluayBpdCB3b3VsZCBiZSBoYXJtZnVsLCBhbmQgd2Ugc2hv
+dWxkbid0IG9wZW4gdXAgdGhlIHBvc3NpYmlsaXR5IC0gdGhpcyBpcyBzd2l0Y2hhYmxlIGRlYnVn
+IHdpdGggdmVyeSBsb3cgb3ZlcmhlYWQgd2hlbiBub3QgYWN0dWFsbHkgIm9uIi4gIEl0IHdvdWxk
+IGJlIHJlYWxseSBhd2Z1bCB0byBnZXQgYSBwcm9ibGVtIG9uIGEgcnVubmluZyBzeXN0ZW0gYW5k
+IGRpc2NvdmVyIHRoZXJlJ3Mgbm8gZGVidWcgc3VwcG9ydCAtIHRoYXQgeW91IGNhbid0IGV2ZW4g
+ZW5hYmxlIGRlYnVnIHdpdGhvdXQgYSByZWluc3RhbGwuDQo+PiANCj4+IElmIEkndmUgdW5kZXJz
+dG9vZCB5b3UgY29ycmVjdGx5LCB0aGVuIEkgd291bGQgd2FudCB0byBzZWUgcHJvb2Ygb2YgYSBz
+aWduaWZpY2FudCBwZXJmb3JtYW5jZSBjb3N0IHdoZW4gZGVidWcgaXMgYnVpbHQgYnV0ICpvZmYq
+IGJlZm9yZSBhZ3JlZWluZyB0byBldmVuIGV4cG9zaW5nIHRoaXMgb3B0aW9uLiAgKEkga25vdyBp
+dCdzIGEgY2hvaWNlIHRoZXknZCBoYXZlIHRvIG1ha2UsIGJ1dCBpZiBpdCdzIG5vdCByZWFsbHkg
+dXNlZnVsIHdpdGggYSBzaWRlIG9yZGVyIG9mIHBvdGVudGlhbGx5IGhhcm1mdWwsIHdlIHNob3Vs
+ZG4ndCBldmVuIGdpdmUgcGVvcGxlIHRoZSBjaG9pY2UuKQ0KPiANCj4gSSdtIG5vdCBzYXlpbmcg
+YWRkIHRoZSBvcHRpb24gdG9kYXkgYnV0IHRoaXMgaXMgbW9yZSBmb3IgdGhlIGxvbmcgZ2FtZS4N
+Cj4gV2hpbGUgdGhlIEludGVsIGx1c3RyZSBkZXZlbG9wZXJzIGRlZXBseSBsb3ZlIGx1c3RyZSdz
+IGRlYnVnZ2luZyANCj4gaW5mcmFzdHJ1Y3R1cmUgSSBzZWUgYSBmdXR1cmUgd2hlcmUgc29tZXRo
+aW5nIGJldHRlciB3aWxsIGNvbWUgYWxvbmcgdG8NCj4gcmVwbGFjZSBpdC4gV2hlbiB0aGF0IGRh
+eSBjb21lcyB3ZSB3aWxsIGhhdmUgYSBwZXJpb2Qgd2hlcmUgYm90aA0KPiBkZWJ1Z2dpbmcgaW5m
+cmFzdHJ1Y3R1cnMgd2lsbCBleGlzdCBhbmQgc29tZSBkZXBsb3llcnMgb2YgbHVzdHJlIHdpbGwN
+Cj4gd2FudCB0byB0dXJuIG9mZiB0aGUgb2xkIGRlYnVnZ2luZyBpbmZyYXN0cnVjdHVyZSBhbmQg
+anVzdCB1c2UgdGhlIG5ldy4NCj4gVGhhdCBpcyB3aGF0IEkgaGF2ZSBpbiBtaW5kLiBBIHN3aXRj
+aCB0byBmbGlwIGJldHdlZW4gb3B0aW9ucy4NCg0KWWVzIHBsZWFzZSEhICBBbiBvcHRpb24gZm9y
+IHVzZXJzIHdoaWNoIHNheXMg4oCcbm8sIHlvdSBkbyBub3QgaGF2ZSB0aGUgcmlnaHQgdG8gcGFu
+aWMgbXkgc3lzdGVtIHZpYSBMQVNTRVJUIHdoZW5ldmVyIHlvdSBsaWtl4oCdIHdvdWxkIGJlIGEg
+Ymxlc3NpbmcuDQoNCkRvdWcNCg0KPiANCj4+IC0gUGF0cmljaw0KPj4gDQo+PiDvu79PbiA0LzE1
+LzE4LCAxMDo0OSBQTSwgImx1c3RyZS1kZXZlbCBvbiBiZWhhbGYgb2YgSmFtZXMgU2ltbW9ucyIg
+PGx1c3RyZS1kZXZlbC1ib3VuY2VzQGxpc3RzLmx1c3RyZS5vcmcgb24gYmVoYWxmIG9mIGpzaW1t
+b25zQGluZnJhZGVhZC5vcmc+IHdyb3RlOg0KPj4gDQo+PiANCj4+PiBDREVCVUdfU1RBQ0soKSBh
+bmQgQ0hFQ0tfU1RBQ0soKSBhcmUgbWFjcm9zIHRvIGhlbHAgd2l0aA0KPj4+IGRlYnVnZ2luZywg
+c28gbW92ZSB0aGVtIGZyb20NCj4+PiAgIGRyaXZlcnMvc3RhZ2luZy9sdXN0cmUvaW5jbHVkZS9s
+aW51eC9saWJjZnMvbGludXgvbGliY2ZzLmgNCj4+PiB0bw0KPj4+ICAgZHJpdmVycy9zdGFnaW5n
+L2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saWJjZnNfZGVidWcuaA0KPj4+IA0KPj4+IFRo
+aXMgc2VlbXMgYSBtb3JlIGZpdHRpbmcgbG9jYXRpb24sIGFuZCBpcyBhIHN0ZXAgdG93YXJkcw0K
+Pj4+IHJlbW92aW5nIGxpbnV4L2xpYmNmcy5oIGFuZCBzaW1wbGlmeWluZyB0aGUgaW5jbHVkZSBm
+aWxlIHN0cnVjdHVyZS4NCj4+IA0KPj4gICAgTmFrLiBDdXJyZW50bHkgdGhlIGx1c3RyZSBjbGll
+bnQgYWx3YXlzIGVuYWJsZXMgZGVidWdnaW5nIGJ1dCB0aGF0DQo+PiAgICBzaG91bGRuJ3QgYmUg
+dGhlIGNhc2UuIFdoYXQgd2UgZG8gbmVlZCBpcyB0aGUgYWJsZSB0byB0dXJuIG9mZiB0aGUgDQo+
+PiAgICBjcmF6eSBkZWJ1Z2dpbmcgc3R1ZmYuIEluIHRoZSBkZXZlbG9wbWVudCBicmFuY2ggb2Yg
+bHVzdHJlIGl0IGlzDQo+PiAgICBkb25lIHdpdGggQ0RFQlVHX0VOQUJMRUQuIFdlIG5lZWQgc29t
+ZXRoaW5nIGxpa2UgdGhhdCBpbiBLY29uZmlnDQo+PiAgICBtdWNoIGxpa2Ugd2UgaGF2ZSBDT05G
+SUdfTFVTVFJFX0RFQlVHX0VYUEVOU0lWRV9DSEVDSy4gU2luY2Ugd2UgbGlrZQ0KPj4gICAgdG8g
+YmUgYWJsZSB0byB0dXJuIHRoYXQgb2ZmIHRoaXMgc2hvdWxkIGJlIG1vdmVkIHRvIGp1c3QgYWZ0
+ZXINCj4+ICAgIExJQkNGU19ERUJVR19NU0dfREFUQV9ERUNMLiBUaGVuIGZyb20gQ0hFQ0tfU1RB
+Q0sgZG93biB0byBDV0FSTigpDQo+PiAgICBpdCBjYW4gYmUgYnVpbGQgb3V0LiBXaGVuIENERUJV
+R19FTkFCTEVEIGlzIGRpc2FibGVkIENERUJVR19MSU1JVA0KPj4gICAgd291bGQgYmUgZW1wdHku
+DQo+PiANCj4+PiBTaWduZWQtb2ZmLWJ5OiBOZWlsQnJvd24gPG5laWxiQHN1c2UuY29tPg0KPj4+
+IC0tLQ0KPj4+IC4uLi9sdXN0cmUvaW5jbHVkZS9saW51eC9saWJjZnMvbGliY2ZzX2RlYnVnLmgg
+ICAgIHwgICAzMiArKysrKysrKysrKysrKysrKysrKw0KPj4+IC4uLi9sdXN0cmUvaW5jbHVkZS9s
+aW51eC9saWJjZnMvbGludXgvbGliY2ZzLmggICAgIHwgICAzMSAtLS0tLS0tLS0tLS0tLS0tLS0t
+DQo+Pj4gMiBmaWxlcyBjaGFuZ2VkLCAzMiBpbnNlcnRpb25zKCspLCAzMSBkZWxldGlvbnMoLSkN
+Cj4+PiANCj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL2x1c3RyZS9pbmNsdWRlL2xp
+bnV4L2xpYmNmcy9saWJjZnNfZGVidWcuaCBiL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvaW5jbHVk
+ZS9saW51eC9saWJjZnMvbGliY2ZzX2RlYnVnLmgNCj4+PiBpbmRleCA5MjkwYTE5NDI5ZTcuLjBk
+YzdiOTFlZmU3YyAxMDA2NDQNCj4+PiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvbHVzdHJlL2luY2x1
+ZGUvbGludXgvbGliY2ZzL2xpYmNmc19kZWJ1Zy5oDQo+Pj4gKysrIGIvZHJpdmVycy9zdGFnaW5n
+L2x1c3RyZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saWJjZnNfZGVidWcuaA0KPj4+IEBAIC02Miw2
+ICs2MiwzOCBAQCBpbnQgbGliY2ZzX2RlYnVnX3N0cjJtYXNrKGludCAqbWFzaywgY29uc3QgY2hh
+ciAqc3RyLCBpbnQgaXNfc3Vic3lzKTsNCj4+PiBleHRlcm4gdW5zaWduZWQgaW50IGxpYmNmc19j
+YXRhc3Ryb3BoZTsNCj4+PiBleHRlcm4gdW5zaWduZWQgaW50IGxpYmNmc19wYW5pY19vbl9sYnVn
+Ow0KPj4+IA0KPj4+ICsvKiBFbmFibGUgZGVidWctY2hlY2tzIG9uIHN0YWNrIHNpemUgLSBleGNl
+cHQgb24geDg2XzY0ICovDQo+Pj4gKyNpZiAhZGVmaW5lZChfX3g4Nl82NF9fKQ0KPj4+ICsjIGlm
+ZGVmIF9faWE2NF9fDQo+Pj4gKyMgIGRlZmluZSBDREVCVUdfU1RBQ0soKSAoVEhSRUFEX1NJWkUg
+LQkJCQkgXA0KPj4+ICsJCQkgICgodW5zaWduZWQgbG9uZylfX2J1aWx0aW5fZHdhcmZfY2ZhKCkg
+JiAgICAgICBcDQo+Pj4gKwkJCSAgIChUSFJFQURfU0laRSAtIDEpKSkNCj4+PiArIyBlbHNlDQo+
+Pj4gKyMgIGRlZmluZSBDREVCVUdfU1RBQ0soKSAoVEhSRUFEX1NJWkUgLQkJCQkgXA0KPj4+ICsJ
+CQkgICgodW5zaWduZWQgbG9uZylfX2J1aWx0aW5fZnJhbWVfYWRkcmVzcygwKSAmICBcDQo+Pj4g
+KwkJCSAgIChUSFJFQURfU0laRSAtIDEpKSkNCj4+PiArIyBlbmRpZiAvKiBfX2lhNjRfXyAqLw0K
+Pj4+ICsNCj4+PiArI2RlZmluZSBfX0NIRUNLX1NUQUNLKG1zZ2RhdGEsIG1hc2ssIGNkbHMpCQkJ
+ICAgICAgXA0KPj4+ICtkbyB7CQkJCQkJCQkgICAgXA0KPj4+ICsJaWYgKHVubGlrZWx5KENERUJV
+R19TVEFDSygpID4gbGliY2ZzX3N0YWNrKSkgewkJICBcDQo+Pj4gKwkJTElCQ0ZTX0RFQlVHX01T
+R19EQVRBX0lOSVQobXNnZGF0YSwgRF9XQVJOSU5HLCBOVUxMKTsgICBcDQo+Pj4gKwkJbGliY2Zz
+X3N0YWNrID0gQ0RFQlVHX1NUQUNLKCk7CQkJICBcDQo+Pj4gKwkJbGliY2ZzX2RlYnVnX21zZyht
+c2dkYXRhLAkJCSAgICAgICBcDQo+Pj4gKwkJCQkgIm1heGltdW0gbHVzdHJlIHN0YWNrICVsdVxu
+IiwJICBcDQo+Pj4gKwkJCQkgQ0RFQlVHX1NUQUNLKCkpOwkJICAgICAgIFwNCj4+PiArCQkobXNn
+ZGF0YSktPm1zZ19tYXNrID0gbWFzazsJCQkgICAgIFwNCj4+PiArCQkobXNnZGF0YSktPm1zZ19j
+ZGxzID0gY2RsczsJCQkgICAgIFwNCj4+PiArCQlkdW1wX3N0YWNrKCk7CQkJCQkgICBcDQo+Pj4g
+KwkgICAgICAvKnBhbmljKCJMQlVHIik7Ki8JCQkJCVwNCj4+PiArCX0JCQkJCQkJICAgICAgIFwN
+Cj4+PiArfSB3aGlsZSAoMCkNCj4+PiArI2RlZmluZSBDRlNfQ0hFQ0tfU1RBQ0sobXNnZGF0YSwg
+bWFzaywgY2RscykgIF9fQ0hFQ0tfU1RBQ0sobXNnZGF0YSwgbWFzaywgY2RscykNCj4+PiArI2Vs
+c2UgLyogX194ODZfNjRfXyAqLw0KPj4+ICsjZGVmaW5lIENGU19DSEVDS19TVEFDSyhtc2dkYXRh
+LCBtYXNrLCBjZGxzKSBkbyB7fSB3aGlsZSAoMCkNCj4+PiArI2RlZmluZSBDREVCVUdfU1RBQ0so
+KSAoMEwpDQo+Pj4gKyNlbmRpZiAvKiBfX3g4Nl82NF9fICovDQo+Pj4gKw0KPj4+ICNpZm5kZWYg
+REVCVUdfU1VCU1lTVEVNDQo+Pj4gIyBkZWZpbmUgREVCVUdfU1VCU1lTVEVNIFNfVU5ERUZJTkVE
+DQo+Pj4gI2VuZGlmDQo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy9sdXN0cmUvaW5j
+bHVkZS9saW51eC9saWJjZnMvbGludXgvbGliY2ZzLmggYi9kcml2ZXJzL3N0YWdpbmcvbHVzdHJl
+L2luY2x1ZGUvbGludXgvbGliY2ZzL2xpbnV4L2xpYmNmcy5oDQo+Pj4gaW5kZXggMDdkM2NiMjIx
+N2QxLi44M2FlYzljNzY5OGYgMTAwNjQ0DQo+Pj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL2x1c3Ry
+ZS9pbmNsdWRlL2xpbnV4L2xpYmNmcy9saW51eC9saWJjZnMuaA0KPj4+ICsrKyBiL2RyaXZlcnMv
+c3RhZ2luZy9sdXN0cmUvaW5jbHVkZS9saW51eC9saWJjZnMvbGludXgvbGliY2ZzLmgNCj4+PiBA
+QCAtODAsMzUgKzgwLDQgQEANCj4+PiAjaW5jbHVkZSA8c3RkYXJnLmg+DQo+Pj4gI2luY2x1ZGUg
+ImxpbnV4LWNwdS5oIg0KPj4+IA0KPj4+IC0jaWYgIWRlZmluZWQoX194ODZfNjRfXykNCj4+PiAt
+IyBpZmRlZiBfX2lhNjRfXw0KPj4+IC0jICBkZWZpbmUgQ0RFQlVHX1NUQUNLKCkgKFRIUkVBRF9T
+SVpFIC0JCQkJIFwNCj4+PiAtCQkJICAoKHVuc2lnbmVkIGxvbmcpX19idWlsdGluX2R3YXJmX2Nm
+YSgpICYgICAgICAgXA0KPj4+IC0JCQkgICAoVEhSRUFEX1NJWkUgLSAxKSkpDQo+Pj4gLSMgZWxz
+ZQ0KPj4+IC0jICBkZWZpbmUgQ0RFQlVHX1NUQUNLKCkgKFRIUkVBRF9TSVpFIC0JCQkJIFwNCj4+
+PiAtCQkJICAoKHVuc2lnbmVkIGxvbmcpX19idWlsdGluX2ZyYW1lX2FkZHJlc3MoMCkgJiAgXA0K
+Pj4+IC0JCQkgICAoVEhSRUFEX1NJWkUgLSAxKSkpDQo+Pj4gLSMgZW5kaWYgLyogX19pYTY0X18g
+Ki8NCj4+PiAtDQo+Pj4gLSNkZWZpbmUgX19DSEVDS19TVEFDSyhtc2dkYXRhLCBtYXNrLCBjZGxz
+KQkJCSAgICAgIFwNCj4+PiAtZG8gewkJCQkJCQkJICAgIFwNCj4+PiAtCWlmICh1bmxpa2VseShD
+REVCVUdfU1RBQ0soKSA+IGxpYmNmc19zdGFjaykpIHsJCSAgXA0KPj4+IC0JCUxJQkNGU19ERUJV
+R19NU0dfREFUQV9JTklUKG1zZ2RhdGEsIERfV0FSTklORywgTlVMTCk7ICAgXA0KPj4+IC0JCWxp
+YmNmc19zdGFjayA9IENERUJVR19TVEFDSygpOwkJCSAgXA0KPj4+IC0JCWxpYmNmc19kZWJ1Z19t
+c2cobXNnZGF0YSwJCQkgICAgICAgXA0KPj4+IC0JCQkJICJtYXhpbXVtIGx1c3RyZSBzdGFjayAl
+bHVcbiIsCSAgXA0KPj4+IC0JCQkJIENERUJVR19TVEFDSygpKTsJCSAgICAgICBcDQo+Pj4gLQkJ
+KG1zZ2RhdGEpLT5tc2dfbWFzayA9IG1hc2s7CQkJICAgICBcDQo+Pj4gLQkJKG1zZ2RhdGEpLT5t
+c2dfY2RscyA9IGNkbHM7CQkJICAgICBcDQo+Pj4gLQkJZHVtcF9zdGFjaygpOwkJCQkJICAgXA0K
+Pj4+IC0JICAgICAgLypwYW5pYygiTEJVRyIpOyovCQkJCQlcDQo+Pj4gLQl9CQkJCQkJCSAgICAg
+ICBcDQo+Pj4gLX0gd2hpbGUgKDApDQo+Pj4gLSNkZWZpbmUgQ0ZTX0NIRUNLX1NUQUNLKG1zZ2Rh
+dGEsIG1hc2ssIGNkbHMpICBfX0NIRUNLX1NUQUNLKG1zZ2RhdGEsIG1hc2ssIGNkbHMpDQo+Pj4g
+LSNlbHNlIC8qIF9feDg2XzY0X18gKi8NCj4+PiAtI2RlZmluZSBDRlNfQ0hFQ0tfU1RBQ0sobXNn
+ZGF0YSwgbWFzaywgY2RscykgZG8ge30gd2hpbGUgKDApDQo+Pj4gLSNkZWZpbmUgQ0RFQlVHX1NU
+QUNLKCkgKDBMKQ0KPj4+IC0jZW5kaWYgLyogX194ODZfNjRfXyAqLw0KPj4+IC0NCj4+PiAjZW5k
+aWYgLyogX0xJTlVYX0xJQkNGU19IICovDQo+Pj4gDQo+Pj4gDQo+Pj4gDQo+PiAgICBfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KPj4gICAgbHVzdHJlLWRl
+dmVsIG1haWxpbmcgbGlzdA0KPj4gICAgbHVzdHJlLWRldmVsQGxpc3RzLmx1c3RyZS5vcmcNCj4+
+ICAgIGh0dHA6Ly9saXN0cy5sdXN0cmUub3JnL2xpc3RpbmZvLmNnaS9sdXN0cmUtZGV2ZWwtbHVz
+dHJlLm9yZw0KPj4gDQo+PiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18NCj4gbHVzdHJlLWRldmVsIG1haWxpbmcgbGlzdA0KPiBsdXN0cmUtZGV2ZWxA
+bGlzdHMubHVzdHJlLm9yZw0KPiBodHRwOi8vbGlzdHMubHVzdHJlLm9yZy9saXN0aW5mby5jZ2kv
+bHVzdHJlLWRldmVsLWx1c3RyZS5vcmcNCg0K
