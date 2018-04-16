@@ -1,42 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752982AbeDPHhd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 03:37:33 -0400
-Received: from mail-pg0-f46.google.com ([74.125.83.46]:38227 "EHLO
-        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750866AbeDPHhc (ORCPT
+        id S1753145AbeDPHiQ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 03:38:16 -0400
+Received: from hub01.inventec.com ([61.220.76.161]:54569 "EHLO
+        mail.inventec.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753088AbeDPHiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 03:37:32 -0400
-X-Google-Smtp-Source: AIpwx4/D8BDjpaTC9NGZbw5TS3lvSVRKeVLeN1naQpxL4Jrvpg60IrtUbIrC54dW4MjwWpkYu6xJfg==
-Date: Mon, 16 Apr 2018 13:07:29 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
-        kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>
-Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-Message-ID: <20180416073729.GA4244@vireshk-i7>
-References: <1522945005-7165-1-git-send-email-daniel.lezcano@linaro.org>
- <1522945005-7165-7-git-send-email-daniel.lezcano@linaro.org>
- <3f3b3b7a-3b74-aee2-2fac-f2759babe3f0@arm.com>
- <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
+        Mon, 16 Apr 2018 03:38:15 -0400
+X-Google-Smtp-Source: AIpwx49fVVzb0SFFR15DBgyJ8//4M/bJiuoi94EeBrFh4KdgGmXv1LOSVNLIfGwSoaigkM989tWa5atQudDlc5dvAHE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <939f7943-feec-aaa2-3bd3-59a6618330c0@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <3dc71810-a743-9fe0-c8b0-7e42d8167685@axentia.se>
+References: <20180320061909.5775-1-chen.kenyy@inventec.com>
+ <20180320093200.19179-1-peda@axentia.se> <5053d0d0-e4c5-733e-051d-b5900d05ea2b@axentia.se>
+ <CADo_Z40fZaT8iRSALDv7-YaK0YD-WFph5RwmrngFbC4FzFAp9Q@mail.gmail.com> <3dc71810-a743-9fe0-c8b0-7e42d8167685@axentia.se>
+From: =?UTF-8?B?Q2hlbktlbllZIOmZs+awuOeHnyBUQU8=?=
+        <chen.kenyy@inventec.com>
+Date: Mon, 16 Apr 2018 15:37:58 +0800
+Message-ID: <CADo_Z40NYhLNLmLDPrOGoAyqvOkchpjnJZmx6sYpbEXUroC7Qw@mail.gmail.com>
+Subject: Re: [PATCH linux dev-4.16 v2] i2c: muxes: pca9641: new driver
+To: Peter Rosin <peda@axentia.se>
+CC: <linux-kernel@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+        Wolfram Sang <wsa@the-dreams.de>, Joel Stanley <joel@jms.id.au>,
+        <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-DNSRBL: 
+X-MAIL: IEC1-MSE-FE1.inventec.com w3G7c48F069348
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-04-18, 13:47, Daniel Lezcano wrote:
-> Ok, noted. At the first glance, it should not be a problem.
+2018-04-13 15:27 GMT+08:00 Peter Rosin <peda@axentia.se>:
+> On 2018-04-13 08:59, ChenKenYY 陳永營 TAO wrote:
+>> Hi Peter,
+>>
+>> Sorry for late. Here has some event at my company which needs to pause
+>> this work.
+>>
+>> If the status changed, I will update my patch.
+>
+> No worries, I just want to know how to handle my preparatory patches. If
+> nothing changes, I think I'll push the first two anyway, but will hold
+> off the third until there is some real need from it.
+>
+> Or can you perhaps make time to test a patch adding pca9641 if I adapt
+> your code to my 3/3 patch? Then I can put these patches behind me.
+>
+I think you can push code first, I will test and update when I ready.
 
-Why do you think it wouldn't be a problem ?
+Thanks,
+Ken
 
--- 
-viresh
+> Cheers,
+> Peter
