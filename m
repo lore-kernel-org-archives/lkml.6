@@ -1,72 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752963AbeDQXAO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 19:00:14 -0400
-Received: from mail-pg0-f47.google.com ([74.125.83.47]:41265 "EHLO
-        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752708AbeDQXAL (ORCPT
+        id S1752725AbeDQXGd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 19:06:33 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:34329 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751010AbeDQXGa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 19:00:11 -0400
-X-Google-Smtp-Source: AIpwx49t2CP6BkVcVuEgIydUKQkLHxFdjD1jzzu9e8+18iSHgeC9PmKA5ngPBd1Z0e+b5X0WEVHdgQ==
-Subject: Re: [PATCH] blk-mq: Clear out elevator private data
-To: Kees Cook <keescook@chromium.org>
-Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Valente <paolo.valente@linaro.org>,
+        Tue, 17 Apr 2018 19:06:30 -0400
+X-Google-Smtp-Source: AIpwx49XeyL+6JtpGSzEWH7xL5J6h4Ij85JqTB8jHOe5HgusT7wq1GOq/4L0wFlk0tITbg8EHlLkuZPWziR6Pz6m0hU=
+MIME-Version: 1.0
+In-Reply-To: <0fbf2b13-8bae-c7c5-d930-ebaafdc72202@kernel.dk>
+References: <10360653.ov98egbaqx@natalenko.name> <2864697.7uzmEJovl2@natalenko.name>
+ <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
+ <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
+ <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
+ <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
+ <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
+ <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
+ <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
+ <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com>
+ <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk> <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
+ <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
+ <07f263ff-cea6-ac3c-944b-0f36fee8ba25@kernel.dk> <CAGXu5j+kHipvoyFWjGp8M6+83zbd6yHOzwxQ-2LNBQbD5-jS9w@mail.gmail.com>
+ <8b32e079-d4e6-3fea-a89d-ff856e4e13b1@kernel.dk> <0fbf2b13-8bae-c7c5-d930-ebaafdc72202@kernel.dk>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 17 Apr 2018 16:06:28 -0700
+X-Google-Sender-Auth: oPvkQ4EOF5qWgg4qimdeOBoTJSc
+Message-ID: <CAGXu5jK2qwHLN+ormmCpeVPTMwojYELPOfEYsB60LwZ7pQcpcg@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Paolo Valente <paolo.valente@linaro.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
         Bart Van Assche <bart.vanassche@wdc.com>,
         David Windsor <dave@nullcore.net>,
         "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Hannes Reinecke <hare@suse.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
         Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
-References: <20180417214218.GA44753@beast>
- <7d192394-568c-53e0-4359-723769c3ed7d@kernel.dk>
- <CAGXu5jLLn9HxkR0G6=-Qqjr__=ya_NM3zCLsZwa1V5m7fisQ5A@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <ddaa34ef-b143-1739-d227-c4b09dad6f6c@kernel.dk>
-Date: Tue, 17 Apr 2018 17:00:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLLn9HxkR0G6=-Qqjr__=ya_NM3zCLsZwa1V5m7fisQ5A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/17/18 4:57 PM, Kees Cook wrote:
-> On Tue, Apr 17, 2018 at 2:45 PM, Jens Axboe <axboe@kernel.dk> wrote:
->> On 4/17/18 3:42 PM, Kees Cook wrote:
->>> Some elevators may not correctly check rq->rq_flags & RQF_ELVPRIV, and
->>> may attempt to read rq->elv fields. When requests got reused, this
->>> caused BFQ to think it already had a bfqq (rq->elv.priv[1]) allocated.
->>> This could lead to odd behaviors like having the sense buffer address
->>> slowly start incrementing. This eventually tripped HARDENED_USERCOPY
->>> and KASAN.
+On Tue, Apr 17, 2018 at 3:57 PM, Jens Axboe <axboe@kernel.dk> wrote:
+> On 4/17/18 3:48 PM, Jens Axboe wrote:
+>> On 4/17/18 3:47 PM, Kees Cook wrote:
+>>> On Tue, Apr 17, 2018 at 2:39 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>>>> On 4/17/18 3:25 PM, Kees Cook wrote:
+>>>>> On Tue, Apr 17, 2018 at 1:46 PM, Kees Cook <keescook@chromium.org> wrote:
+>>>>>> I see elv.priv[1] assignments made in a few places -- is it possible
+>>>>>> there is some kind of uninitialized-but-not-NULL state that can leak
+>>>>>> in there?
+>>>>>
+>>>>> Got it. This fixes it for me:
+>>>>>
+>>>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>>>>> index 0dc9e341c2a7..859df3160303 100644
+>>>>> --- a/block/blk-mq.c
+>>>>> +++ b/block/blk-mq.c
+>>>>> @@ -363,7 +363,7 @@ static struct request *blk_mq_get_request(struct
+>>>>> request_queue *q,
+>>>>>
+>>>>>         rq = blk_mq_rq_ctx_init(data, tag, op);
+>>>>>         if (!op_is_flush(op)) {
+>>>>> -               rq->elv.icq = NULL;
+>>>>> +               memset(&rq->elv, 0, sizeof(rq->elv));
+>>>>>                 if (e && e->type->ops.mq.prepare_request) {
+>>>>>                         if (e->type->icq_cache && rq_ioc(bio))
+>>>>>                                 blk_mq_sched_assign_ioc(rq, bio);
+>>>>> @@ -461,7 +461,7 @@ void blk_mq_free_request(struct request *rq)
+>>>>>                         e->type->ops.mq.finish_request(rq);
+>>>>>                 if (rq->elv.icq) {
+>>>>>                         put_io_context(rq->elv.icq->ioc);
+>>>>> -                       rq->elv.icq = NULL;
+>>>>> +                       memset(&rq->elv, 0, sizeof(rq->elv));
+>>>>>                 }
+>>>>>         }
+>>>>
+>>>> This looks like a BFQ problem, this should not be necessary. Paolo,
+>>>> you're calling your own prepare request handler from the insert
+>>>> as well, and your prepare request does nothing if rq->elv.icq == NULL.
 >>>
->>> This patch wipes all of rq->elv instead of just rq->elv.icq. While
->>> it shouldn't technically be needed, this ends up being a robustness
->>> improvement that should lead to at least finding bugs in elevators faster.
+>>> I sent the patch anyway, since it's kind of a robustness improvement,
+>>> I'd hope. If you fix BFQ also, please add:
 >>
->> Comments from the other email still apply, we should not need to do this
->> full memset() for every request. From a quick look, BFQ needs to straighten
->> out its usage of prepare request and interactions with insert_request.
-> 
-> Sure, understood. I would point out, FWIW, that memset() gets unrolled
-> by the compiler and this is just two more XORs in the same cacheline
-> (the two words following icq). (And there is SO much more being
-> cleared during alloc, it didn't seem like hardly any extra cost vs the
-> robustness it provided.)
+>> It's also a memset() in the hot path, would prefer to avoid that...
+>> The issue here is really the convoluted bfq usage of insert/prepare,
+>> I'm sure Paolo can take it from here.
+>
+> Does this fix it?
+>
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index f0ecd98509d8..d883469a1582 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -4934,8 +4934,11 @@ static void bfq_prepare_request(struct request *rq, struct bio *bio)
+>         bool new_queue = false;
+>         bool bfqq_already_existing = false, split = false;
+>
+> -       if (!rq->elv.icq)
+> +       if (!rq->elv.icq) {
+> +               rq->elv.priv[0] = rq->elv.priv[1] = NULL;
+>                 return;
+> +       }
+> +
+>         bic = icq_to_bic(rq->elv.icq);
+>
+>         spin_lock_irq(&bfqd->lock);
 
-Yeah, it's not super pricey, but it's not needed. BFQ is the user of
-the members, and the one that assigns them. You're saying leftover
-assignments, since it doesn't always assign them. Hence I think that's
-a better fix, just sent out a test patch a few minutes ago.
+It does! Excellent. :)
 
-You did all the hard work, I'm just coasting on your findings.
+-Kees
 
 -- 
-Jens Axboe
+Kees Cook
+Pixel Security
