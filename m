@@ -1,81 +1,106 @@
-Return-Path: <kernel-hardening-return-13148-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AB8JxZp2BGFeg4IH3YmmHI8PcDN80owJ5fwLGhQdG72Gl0+/6bCe7ncdzgb5n4UqnrUuI2Mg0ekw
-ARC-Seal: i=1; a=rsa-sha256; t=1524824049; cv=none;
+Return-Path: <kernel-hardening-return-13021-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49NyOCt5/Cq+4ZxmUunI6uHdiOkpgGd/mHOGcjAwxiufdYs9neAyNLksKB122h1PjABAwI3
+ARC-Seal: i=1; a=rsa-sha256; t=1523990348; cv=none;
         d=google.com; s=arc-20160816;
-        b=VJu5lrFtRlDlDFotq4JGI316c8CrA3vFXrqhOTLswhDlRYueOWrOETTS7YNAQCmhIJ
-         j+mh+HOcZOqZgbPcPflhZLtdHuwCyRhNw3qK87Rw7zQAMsDypK5618UA4iIx/PUqXhJf
-         QHSCfrsKgJ/JM9O4ZlJ8A9yYMWs56RgOaPR9EqjoZW0KU+3Lm7sXAXET2rOquAXXEq9k
-         EJoHTnSrQ5r8KU8aF/il5VEB7Sy6FWQ9I6k3NL4Tdt6k1Z3beZm5NKERT4U6aHA+f3vN
-         wlu/qfLyWXf6aBLWlLjLQ53VtYtuJDhfcM1+mZqrtJj7mGCdXx+cj5tKo7sp6/D1lEJk
-         WPYw==
+        b=GmNq1CiwXq6QBIHxBmGNQc5JQB44ki+2LnPUfkNSO1nhUxqGNpiVM3259qxN7UAC6M
+         Qq5doEFWKrteBf9/ioyvCWxjQ+2+baqoEAoXfZA9zmgyj8KiPzuyMFV0oBpTNP3pgHug
+         QziKKWJXLCcZdrR35cVwuVTpgRWhM2xvGljothxi3+Vy9XnNePxmmM1ZXhjydBUNNgdy
+         ToiGW2AIuz282eNo33v/E1QwHCHsqLzWwBY5oesN82jwzVEUlPUCBOWxPLwxV7taWmtf
+         8JZs9nB2x7UtPqIXcdeaJxW6koca94VR51RMylG6/gZKtBAhAlQP4AG1DnEmiXm7f9wU
+         ioBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=8XvtedOS39UKqnW8amsoMohfpTdHZjxUdHmcTyEWnjY=;
-        b=KE/FQnS3Xrj+/P2p53AXqDf1Hg55sE5vcnp4xjmbfKqiBuWNIdR+wI/q0BuIw6gqtJ
-         aTQNk94iBZ+qHboB2BTi9nZhoWivK76xjOV7BEdFgcOd2Xm47T0msSszt5nGfv0kWnx3
-         2DiiOTgYrdCQ2aMg7MmeUqlAuNDGcg0qhudlLXBLZU6KevcMxetDUfpkMUOFHzv3AYB7
-         uRDW0yX+uHUIYGzqbQuFaXamdv3W2fqUoW50EgQd4VAfv8lwH9kdh+ABdFitG56ToM10
-         zEyyoSJCAatQGdddh2BcYhIaAQV116pI2RiXOPI1NujSASdeqLVRITHUrDAjYbKhEe/M
-         Y27Q==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=Fn8xtB+CwNlvAku6GAuXB7RMe1286hdtILaL+6SVwIU=;
+        b=Rj0wvC2jJGFmJ4OY6y4yINSjmeo+wKGV964G9r4NBbRN9WEUWKplkor69+lPKE6s/o
+         1p0lHQZijFxg5OUpV1gVgu5AzSaiPyZ4oSmY/J7wK0tOdCOIVl+niRv6tFAjsKjUeJxT
+         LfXk02qkKWUoJXKWvwQRSygq9rfs58CzF8kZ7BkpNGtz70o9h47YRiXFygeQxIjQ2J1j
+         xSPxjmRRACRB7uljcTU6lxSTOTZyFqwBsLCxR9/W+VozqwP9LNC6nh4itwNC20Z+GU88
+         N8pyXgl2VUIrw3YV92OmHRhb+gSNfrwi1f+q6+cuEaIotwi8xkyQvkH9YaNJ+oHQN4N0
+         y/fA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13148-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13148-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13021-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13021-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13148-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13148-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13021-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13021-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Fri, 27 Apr 2018 11:13:46 +0100
 From: Mark Rutland <mark.rutland@arm.com>
-To: Christoffer Dall <christoffer.dall@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-	drjones@redhat.com, arnd@arndb.de, suzuki.poulose@arm.com,
-	marc.zyngier@arm.com, catalin.marinas@arm.com,
-	awallis@codeaurora.org, kernel-hardening@lists.openwall.com,
-	will.deacon@arm.com, linux-kernel@vger.kernel.org,
-	ramana.radhakrishnan@arm.com, kvmarm@lists.cs.columbia.edu
-Subject: Re: [PATCHv3 02/11] arm64/kvm: consistently handle host HCR_EL2 flags
-Message-ID: <20180427101346.nabhblz3csp3cy36@lakrids.cambridge.arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: arnd@arndb.de,
+	catalin.marinas@arm.com,
+	cdall@kernel.org,
+	drjones@redhat.com,
+	kvmarm@lists.cs.columbia.edu,
+	linux-arch@vger.kernel.org,
+	marc.zyngier@arm.com,
+	mark.rutland@arm.com,
+	ramana.radhakrishnan@arm.com,
+	suzuki.poulose@arm.com,
+	will.deacon@arm.com,
+	linux-kernel@vger.kernel.org,
+	awallis@codeaurora.org,
+	kernel-hardening@lists.openwall.com
+Subject: [PATCHv3 04/11] arm64: Don't trap host pointer auth use to EL2
+Date: Tue, 17 Apr 2018 19:37:28 +0100
+Message-Id: <20180417183735.56985-5-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180417183735.56985-1-mark.rutland@arm.com>
 References: <20180417183735.56985-1-mark.rutland@arm.com>
- <20180417183735.56985-3-mark.rutland@arm.com>
- <20180427095139.GH13249@C02W217FHV2R.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180427095139.GH13249@C02W217FHV2R.local>
-User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598019685895863114?=
-X-GMAIL-MSGID: =?utf-8?q?1598893902471833122?=
+X-GMAIL-THRID: =?utf-8?q?1598019703538856592?=
+X-GMAIL-MSGID: =?utf-8?q?1598019703538856592?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 27, 2018 at 11:51:39AM +0200, Christoffer Dall wrote:
-> On Tue, Apr 17, 2018 at 07:37:26PM +0100, Mark Rutland wrote:
-> > In KVM we define the configuration of HCR_EL2 for a VHE HOST in
-> > HCR_HOST_VHE_FLAGS, but we don't ahve a similar definition for the
-> 
-> nit: have
-> 
-> > non-VHE host flags, and open-code HCR_RW. Further, in head.S we
-> > open-code the flags for VHE and non-VHE configurations.
-> > 
-> > In future, we're going to want to configure more flags for the host, so
-> > lets add a HCR_HOST_NVHE_FLAGS defintion, adn consistently use both
-> 
-> nit: and
-> 
+To allow EL0 (and/or EL1) to use pointer authentication functionality,
+we must ensure that pointer authentication instructions and accesses to
+pointer authentication keys are not trapped to EL2.
 
-Sorry about those; fixed up now.
+This patch ensures that HCR_EL2 is configured appropriately when the
+kernel is booted at EL2. For non-VHE kernels we set HCR_EL2.{API,APK},
+ensuring that EL1 can access keys and permit EL0 use of instructions.
+For VHE kernels host EL0 (TGE && E2H) is unaffected by these settings,
+and it doesn't matter how we configure HCR_EL2.{API,APK}, so we don't
+bother setting them.
 
-[...]
+This does not enable support for KVM guests, since KVM manages HCR_EL2
+itself when running VMs.
 
-> Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Christoffer Dall <cdall@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: kvmarm@lists.cs.columbia.edu
+---
+ arch/arm64/include/asm/kvm_arm.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Cheers!
-
-Mark.
+diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+index 89b3dda7e3cb..4d57e1e58323 100644
+--- a/arch/arm64/include/asm/kvm_arm.h
++++ b/arch/arm64/include/asm/kvm_arm.h
+@@ -23,6 +23,8 @@
+ #include <asm/types.h>
+ 
+ /* Hyp Configuration Register (HCR) bits */
++#define HCR_API		(UL(1) << 41)
++#define HCR_APK		(UL(1) << 40)
+ #define HCR_TEA		(UL(1) << 37)
+ #define HCR_TERR	(UL(1) << 36)
+ #define HCR_TLOR	(UL(1) << 35)
+@@ -86,7 +88,7 @@
+ 			 HCR_AMO | HCR_SWIO | HCR_TIDCP | HCR_RW | HCR_TLOR | \
+ 			 HCR_FMO | HCR_IMO)
+ #define HCR_VIRT_EXCP_MASK (HCR_VSE | HCR_VI | HCR_VF)
+-#define HCR_HOST_NVHE_FLAGS (HCR_RW)
++#define HCR_HOST_NVHE_FLAGS (HCR_RW | HCR_API | HCR_APK)
+ #define HCR_HOST_VHE_FLAGS (HCR_RW | HCR_TGE | HCR_E2H)
+ 
+ /* TCR_EL2 Registers bits */
+-- 
+2.11.0
