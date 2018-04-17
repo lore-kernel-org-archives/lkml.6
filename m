@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx489VaZ5RrGdQ5oQCjWLvUWMPcJXmcWnao/HNgR9o9NuavL5cMr9L7+NJV04qX0iG5rjA7Bk
-ARC-Seal: i=1; a=rsa-sha256; t=1523981410; cv=none;
+X-Google-Smtp-Source: AIpwx4/DFFOF4UC+qeQfXoxFvpRNxoAcOfKasVGuWyqzlc9iLvXbB29uUpS5U4FuyKNI0/ttjjdH
+ARC-Seal: i=1; a=rsa-sha256; t=1523981407; cv=none;
         d=google.com; s=arc-20160816;
-        b=BEyIv/hKYOTudhR62FAdKYkgTpEPnEwse0+7x8iqcj+BOcDNqkdqk4CiYFnLjCompZ
-         fZEpfbUaM/mBMkNOZj1QEq5l3BBviAGXtCQTXxZN9W0v+lCV9zVBFoi9YT2bSCVM8z7i
-         KwmZd7hNX71mgOKJM8H1YhzuxkL2JtRC76A4xD6tYr62VF+H+xpKXfPyQYCVfGqGgaz3
-         UzX1rdAYn4YR5l8OUo5FkmTzeAxXPQnene58xwhifXaA/EW7qDFikoYwyQsy/qN2z3xi
-         srhjdibK9V+yjWi2LnRxYqN5Zu6mzKEZ35xUxOpfGQ5VDgk8qAkrCzjqDeh4LM+WKxV7
-         zLnQ==
+        b=hasDGJpUlA7D2IFx+3nX4ajN46rmaleRaNf7NF7rnr6orJHUUHsoRXifAKLg4KQU3J
+         bNL5VHCH0FuIJ2Du3VorGVTii7fSPxwEminP7uZfvpuvLLJijw5prY9682gl3BElwaK9
+         7lG6dT1GkxGiScQdszjCvxgh8ra7bC+UafYuJRv3Yc2LvimFzajPBhiXlWV13AO9cREF
+         bPBwh0p4xBZPsc/CGRPzEpn6AKW/U/V+snAZv53IjHGRQtFYFo84Bd50TA59v77FiCiO
+         Eypc0pDy/xeIkW6kA8LwIgLg2VtXq4Em7VxQU/d4YsA9ryeUjDVfjJhePF8jXG/LO/2y
+         BvvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RYRs53b01d3K2vFSPna4W8tqcZNmT6PDzJC2d+9Insw=;
-        b=UMALnkbMxZW9QWBuAGI4ldreI1SHihDelplnnv63CMFLYQwt4XdpGOfNF3YS7No4QS
-         5r4VTtjgEOqJdS93O2FocmVr9EyEgLIt5jeiOy9zkJ8t6bRwzdivSP8rNAOwsWyk/J67
-         Ti4nPxG2HOkv3CaS17bSQSLqiX9/7cJdo/NCNmYq0PL2ZJqbkEt5TtGuw84W0VLhEWWF
-         YP9mYu39LkRtefJ8HidsK+OIC7iCAmCSEvdLuTyFdB82qsi0jVmayH27LFjfMpv3MbW7
-         zG5lYzrxmx5Fs9+WmDtsYVla3vleLnXTMud3bf2HVFeyHrZvkcQpUEp8bU8gZPcj6Spe
-         KiJA==
+        bh=RO8yvfhi37G7YUnn+t+VHHoEWqtzPOqE5mGdpzpRYMQ=;
+        b=dP1200Ztlrs2UbY/gG5q5OWcvl1atjcpzCEHFMLzG27oVZ1j6/FjocXIBqrru0V3op
+         umUNIKCqM1zDTxLnWiT2Gmqr6h8hYkjTeW9/Lzjy9+s6zHPX/JlGJSDDBQPHhnQJ81MI
+         4EnFlw8RZZQvyIPMHQiCxJsc291Z0/EmBaZJ8AUEtPMAdmOwIZ7QOBIE4K6cGGPLGqna
+         SWZnC0Ig21W9Q3wjxx/b6gMZ70b5XKY/hHCtlFWsqymfxFrfal+aadzwFRb7qA13QyXp
+         BW9IQXfB+FMkNiCvCKRCcAQsXkbTryXk4Jtr/HAf35AOBR71RG9iaD8jG5kEYcSTUBnH
+         nS6g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Pavlos Parissis <pavlos.parissis@gmail.com>,
-	Lei Chen <chenl.lei@gmail.com>,
-	Maxime Hadjinlian <maxime.hadjinlian@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	David Ahern <dsahern@gmail.com>,
-	Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	Wang Nan <wangnan0@huawei.com>,
-	kernel-team@lge.com,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.9 52/66] Revert "perf tests: Decompress kernel module before objdump"
-Date: Tue, 17 Apr 2018 17:59:25 +0200
-Message-Id: <20180417155648.152933169@linuxfoundation.org>
+	Michael Young <m.a.young@durham.ac.uk>,
+	Eric Biggers <ebiggers@google.com>,
+	"J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.9 51/66] sunrpc: remove incorrect HMAC request initialization
+Date: Tue, 17 Apr 2018 17:59:24 +0200
+Message-Id: <20180417155648.106865963@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -50,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010331907044022?=
-X-GMAIL-MSGID: =?utf-8?q?1598010331907044022?=
+X-GMAIL-THRID: =?utf-8?q?1598009764077402720?=
+X-GMAIL-MSGID: =?utf-8?q?1598010328669385783?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,65 +50,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Eric Biggers <ebiggers@google.com>
 
-This reverts commit 7525a238be8f46617cdda29d1be5b85ffe3b042d which is
-commit 94df1040b1e6aacd8dec0ba3c61d7e77cd695f26 upstream.
+commit f3aefb6a7066e24bfea7fcf1b07907576de69d63 upstream.
 
-It breaks the build of perf on 4.9.y, so I'm dropping it.
+make_checksum_hmac_md5() is allocating an HMAC transform and doing
+crypto API calls in the following order:
 
-Reported-by: Pavlos Parissis <pavlos.parissis@gmail.com>
-Reported-by: Lei Chen <chenl.lei@gmail.com>
-Reported-by: Maxime Hadjinlian <maxime.hadjinlian@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: kernel-team@lge.com
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Sasha Levin <alexander.levin@microsoft.com>
+    crypto_ahash_init()
+    crypto_ahash_setkey()
+    crypto_ahash_digest()
+
+This is wrong because it makes no sense to init() the request before a
+key has been set, given that the initial state depends on the key.  And
+digest() is short for init() + update() + final(), so in this case
+there's no need to explicitly call init() at all.
+
+Before commit 9fa68f620041 ("crypto: hash - prevent using keyed hashes
+without setting key") the extra init() had no real effect, at least for
+the software HMAC implementation.  (There are also hardware drivers that
+implement HMAC-MD5, and it's not immediately obvious how gracefully they
+handle init() before setkey().)  But now the crypto API detects this
+incorrect initialization and returns -ENOKEY.  This is breaking NFS
+mounts in some cases.
+
+Fix it by removing the incorrect call to crypto_ahash_init().
+
+Reported-by: Michael Young <m.a.young@durham.ac.uk>
+Fixes: 9fa68f620041 ("crypto: hash - prevent using keyed hashes without setting key")
+Fixes: fffdaef2eb4a ("gss_krb5: Add support for rc4-hmac encryption")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/perf/tests/code-reading.c |   20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
 
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -224,8 +224,6 @@ static int read_object_code(u64 addr, si
- 	unsigned char buf2[BUFSZ];
- 	size_t ret_len;
- 	u64 objdump_addr;
--	const char *objdump_name;
--	char decomp_name[KMOD_DECOMP_LEN];
- 	int ret;
+---
+ net/sunrpc/auth_gss/gss_krb5_crypto.c |    3 ---
+ 1 file changed, 3 deletions(-)
+
+--- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
++++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+@@ -237,9 +237,6 @@ make_checksum_hmac_md5(struct krb5_ctx *
  
- 	pr_debug("Reading object code for memory address: %#"PRIx64"\n", addr);
-@@ -286,25 +284,9 @@ static int read_object_code(u64 addr, si
- 		state->done[state->done_cnt++] = al.map->start;
- 	}
+ 	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
  
--	objdump_name = al.map->dso->long_name;
--	if (dso__needs_decompress(al.map->dso)) {
--		if (dso__decompress_kmodule_path(al.map->dso, objdump_name,
--						 decomp_name,
--						 sizeof(decomp_name)) < 0) {
--			pr_debug("decompression failed\n");
--			return -1;
--		}
--
--		objdump_name = decomp_name;
--	}
--
- 	/* Read the object code using objdump */
- 	objdump_addr = map__rip_2objdump(al.map, al.addr);
--	ret = read_via_objdump(objdump_name, objdump_addr, buf2, len);
--
--	if (dso__needs_decompress(al.map->dso))
--		unlink(objdump_name);
--
-+	ret = read_via_objdump(al.map->dso->long_name, objdump_addr, buf2, len);
- 	if (ret > 0) {
- 		/*
- 		 * The kernel maps are inaccurate - assume objdump is right in
+-	err = crypto_ahash_init(req);
+-	if (err)
+-		goto out;
+ 	err = crypto_ahash_setkey(hmac_md5, cksumkey, kctx->gk5e->keylength);
+ 	if (err)
+ 		goto out;
