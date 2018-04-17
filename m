@@ -1,289 +1,300 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1050911-1524352532-2-870789345792698565
+X-Cyrus-Session-Id: sloti22d1t05-1716434-1523967047-2-1978781353290462648
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, DATE_IN_PAST_06_12 1.543,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
-  MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, T_TVD_MIME_EPI 0.01,
+  LANGUAGES endaro, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Attached: .config.gz
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524352531; b=o7C0t0E2Y+/2fXTFpDrzeHjwzYN8UfEvcLoHmX/2NUdOxy+Luh
-    ICTc9e7vgnzq/4ZqyhUfOtw3vmP1/3YtlfyjDgtAicPFKMcI8fB14xX4FJI4iagZ
-    QJNnvyfTlEJWN+c5ZVLWDpKG01v1epwmL0yAXgFkNs2qU+Kn4N6PsdBwInwYFFXO
-    dr3FcJveYnEa3AGp5F4IgbbhZ7i/mR3lMwAe1dVXAc+EOXtZOHY7fjVAydy5TKaQ
-    poZA+Z/rReNU+oD4OpTHmv5rk8lvkS10PUtflVR678rtNA2/mw514EEQYWAGKf75
-    Py5SqOwXljZLFIJqR4gw91p5eH+uAfIpKH9g==
+    1523967046; b=wXBgIzPEJd+Zb5YKzu2NFC0qxboNDefibUN06IMrGWFFEJGssl
+    cyys68RVojgy52Bu/4vYSmfvoHAUweUmranj/Pz7ADl8RYHtRBkWZGBP/Z/TZoPK
+    qCNdrmk7KQdA/XGWcLHjQkXOwy0KOOhSLqQO+XACXdMEmPLKttXxBUtRo0iK1JeB
+    penlM75nhBVN6ZhNxGE1sFVE74YMJZQP/MZ3Cia2l7FOzX/ko8QHCgdJB+8gnZQl
+    ydwtgEUaiyXl9DIuzBQCCM3BljhlIOQBC+9K/41/F9fN458XUQhI1rhbzWer5AMq
+    VmIYr3JAt800r1b7LHM6QdnR1eGJoniFwGbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:subject:to:cc:references:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524352531;
-    bh=5VNGK9C3nMbcQCuhrEVIdxSu4837rUU2p8ljzLzFPgk=; b=DQJcBvhvMsPd
-    HxxZhXYyUEC07DvV6thobQ5mthGXV3qmPQSs3+g6iOawAigJkJNKglB/GnZX8qU3
-    cxg/0UqcgY2HujBNR6NKLilw56YkfvpfmEGHm0VcCCTNDss5vt1TGzSObtZLW3xo
-    hcUHadjcI3QQqDV9/2qQoPcPYPbOvLzNkIZUgMg5bWUMEFCgWDZdA5XtUmi+KT6C
-    ekZqT3Qa6Vk9amXhe8/Gx6uWERXW60jlp58iN7/UTc1O3hx04Ju1na4rtlAHVDAg
-    wr7Ovy7NsAp4ryX+CG83w/AQbKY7HYVkUvnzAr7dnw7LqCUfh1WnRPHeaJLbWjv3
-    UIY3oP+DyQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1523967046; bh=dqQfPXP/3XOjQaWpf6yuI4eW4ty7+O
+    emP/ibquGnbqM=; b=nsdJB9brHlXQq0SF9BzdnYbpPFAuCMBxnoXWIIHNCnBm5N
+    KrAcNdEC8l1ARO4JMxPGJszhxqzF7NQajXzPLUgkPNq2p/iYoWfKobCpvPGToCan
+    Kpzf6InanKxSZHka6rFIzaKEp1MtlgrxaO+IuegJmh8BGGuWZSZnH3TTAMjtfSAU
+    QieCYTpvkTk9Ve0r/36sXfWN4xkbxdO01vd8h5mOUgQmDBEk7t8Ss1nOxLERcPwP
+    CjybJYHxe0N1kbzduLb5guIlXzTov8rPO+Ig2NVnpwEqfsFMrexpLfRqsMrAip6F
+    EyHOSVdpWyAgg/DxgI9PD5e9L+wk4SR6pSU1NM/Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHmaE4rXxABkc2nCC0tlW+jDfNUq8mmcOeU/gZpb13kKe3rlnD7ghcBQHgrkGye9ZgjGz5f61QIKY2uHOgU4chH9eMTwTVskcmC2JPlLwGKo1J4Gd/9j
-    ejjJngOZ3FfaLsAlvXWSeNEOfVcktWKehtDQ+0I+EoSHtvExVLIDpr4Xi+7Qvhh+KKGWrq+MDocmuWtSPVlBO3iMyynSJE2tpGGAr9pskXMUdkPc3JipMyQP
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=HMCGxLQ2B_VLhreLiSkA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfHTL+MrzizoBSRiRAmOK2nZrH1EW14MK7CwK56BCp8BOWgJS+zR7zwpUF4Nij4t2afMR7TEg0R3TbO1FVd+2xiJkPbpavME5x9lHq0G/Fik8WP6DVEtl
+    ykbARQ4xkuaKoRDpvDnQj72pK0/AFtaVcz+wymXe+RyzX99LZQIBTU8dL+nZmrliX04w7fyI8dV4RXtFGIAn8wnK49lKQsJVnVdpywpfGYd2k4DiZpXJK6jB
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=NEAV23lmAAAA:8
+    a=ufHFDILaAAAA:8 a=i3X5FwGiAAAA:8 a=gX7FSbejV5GTvSxnI6gA:9 a=CjuIK1q_8ugA:10
+    a=6vNW4krxgUHO-k5c-LgA:9 a=49ladYHvHUoA:10 a=VwQbUJbxAAAA:8
+    a=fUSZZkATYxXnQMecnGkA:9 a=x8gzFH9gYPwA:10 a=ZmIg1sZ3JBWsdXgziEIF:22
+    a=mmqRlSCDY2ywfjPLJ4af:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753280AbeDUXP3 (ORCPT <rfc822;greg@kroah.com>);
-        Sat, 21 Apr 2018 19:15:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46354 "EHLO mx2.suse.de"
+        id S1753051AbeDQMKo (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 08:10:44 -0400
+Received: from mga17.intel.com ([192.55.52.151]:47392 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753272AbeDUXP2 (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Sat, 21 Apr 2018 19:15:28 -0400
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 2/3] mm: add find_alloc_contig_pages() interface
-To: Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
+        id S1753046AbeDQMKn (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:10:43 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,463,1517904000";
+   d="gz'50?scan'50,208,50";a="47597499"
+Date: Tue, 17 Apr 2018 20:10:00 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: kbuild-all@01.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Reinette Chatre <reinette.chatre@intel.com>,
         Michal Hocko <mhocko@kernel.org>,
         Christopher Lameter <cl@linux.com>,
         Guy Shattah <sguy@mellanox.com>,
         Anshuman Khandual <khandual@linux.vnet.ibm.com>,
         Michal Nazarewicz <mina86@mina86.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
         David Nellans <dnellans@nvidia.com>,
         Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180417020915.11786-1-mike.kravetz@oracle.com>
- <20180417020915.11786-3-mike.kravetz@oracle.com>
-Message-ID: <deb9dd1d-84bf-75c7-2880-a7bcec880d47@suse.cz>
-Date: Sat, 21 Apr 2018 18:16:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH 2/3] mm: add find_alloc_contig_pages() interface
+Message-ID: <201804172011.K5f3XeGz%fengguang.wu@intel.com>
+References: <20180417020915.11786-3-mike.kravetz@oracle.com>
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="T4sUOijqQbZv57TR"
+Content-Disposition: inline
 In-Reply-To: <20180417020915.11786-3-mike.kravetz@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/17/2018 04:09 AM, Mike Kravetz wrote:
-> find_alloc_contig_pages() is a new interface that attempts to locate
-> and allocate a contiguous range of pages.  It is provided as a more
-> convenient interface than alloc_contig_range() which is currently
-> used by CMA and gigantic huge pages.
-> 
-> When attempting to allocate a range of pages, migration is employed
-> if possible.  There is no guarantee that the routine will succeed.
-> So, the user must be prepared for failure and have a fall back plan.
-> 
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-Hi, just two quick observations, maybe discussion pointers for the
-LSF/MM session:
-- it's weird that find_alloc_contig_pages() takes an order, and
-free_contig_pages() takes a nr_pages. I suspect the interface would be
-more future-proof with both using nr_pages? Perhaps also minimum
-alignment for the allocation side? Order is fine for hugetlb, but what
-about other potential users?
-- contig_alloc_migratetype_ok() says that MIGRATE_CMA blocks are OK to
-allocate from. This silently assumes that everything allocated by this
-will be migratable itself, or it might eat CMA reserves. Is it the case?
-Also you then call alloc_contig_range() with MIGRATE_MOVABLE, so it will
-skip/fail on MIGRATE_CMA anyway IIRC.
+--T4sUOijqQbZv57TR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Vlastimil
+Hi Mike,
 
-> ---
->  include/linux/gfp.h | 12 ++++++++
->  mm/page_alloc.c     | 89 +++++++++++++++++++++++++++++++++++++++++++++++++++--
->  2 files changed, 99 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> index 86a0d06463ab..528b194cc266 100644
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -573,6 +573,18 @@ static inline bool pm_suspended_storage(void)
->  extern int alloc_contig_range(unsigned long start, unsigned long end,
->  			      unsigned migratetype, gfp_t gfp_mask);
->  extern void free_contig_range(unsigned long pfn, unsigned long nr_pages);
-> +extern struct page *find_alloc_contig_pages(unsigned int order, gfp_t gfp,
-> +						int nid, nodemask_t *nodemask);
-> +extern void free_contig_pages(struct page *page, unsigned long nr_pages);
-> +#else
-> +static inline page *find_alloc_contig_pages(unsigned int order, gfp_t gfp,
-> +						int nid, nodemask_t *nodemask)
-> +{
-> +	return NULL;
-> +}
-> +static void free_contig_pages(struct page *page, unsigned long nr_pages)
-> +{
-> +}
->  #endif
->  
->  #ifdef CONFIG_CMA
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 0fd5e8e2456e..81070fe55c44 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -67,6 +67,7 @@
->  #include <linux/ftrace.h>
->  #include <linux/lockdep.h>
->  #include <linux/nmi.h>
-> +#include <linux/mmzone.h>
->  
->  #include <asm/sections.h>
->  #include <asm/tlbflush.h>
-> @@ -2010,9 +2011,13 @@ static __always_inline struct page *__rmqueue_cma_fallback(struct zone *zone,
->  {
->  	return __rmqueue_smallest(zone, order, MIGRATE_CMA);
->  }
-> +#define contig_alloc_migratetype_ok(migratetype) \
-> +	((migratetype) == MIGRATE_CMA || (migratetype) == MIGRATE_MOVABLE)
->  #else
->  static inline struct page *__rmqueue_cma_fallback(struct zone *zone,
->  					unsigned int order) { return NULL; }
-> +#define contig_alloc_migratetype_ok(migratetype) \
-> +	((migratetype) == MIGRATE_MOVABLE)
->  #endif
->  
->  /*
-> @@ -7822,6 +7827,9 @@ int alloc_contig_range(unsigned long start, unsigned long end,
->  	};
->  	INIT_LIST_HEAD(&cc.migratepages);
->  
-> +	if (!contig_alloc_migratetype_ok(migratetype))
-> +		return -EINVAL;
-> +
->  	/*
->  	 * What we do here is we mark all pageblocks in range as
->  	 * MIGRATE_ISOLATE.  Because pageblock and max order pages may
-> @@ -7912,8 +7920,9 @@ int alloc_contig_range(unsigned long start, unsigned long end,
->  
->  	/* Make sure the range is really isolated. */
->  	if (test_pages_isolated(outer_start, end, false)) {
-> -		pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
-> -			__func__, outer_start, end);
-> +		if (!(migratetype == MIGRATE_MOVABLE)) /* only print for CMA */
-> +			pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
-> +				__func__, outer_start, end);
->  		ret = -EBUSY;
->  		goto done;
->  	}
-> @@ -7949,6 +7958,82 @@ void free_contig_range(unsigned long pfn, unsigned long nr_pages)
->  	}
->  	WARN(count != 0, "%ld pages are still in use!\n", count);
->  }
-> +
-> +static bool contig_pfn_range_valid(struct zone *z, unsigned long start_pfn,
-> +					unsigned long nr_pages)
-> +{
-> +	unsigned long i, end_pfn = start_pfn + nr_pages;
-> +	struct page *page;
-> +
-> +	for (i = start_pfn; i < end_pfn; i++) {
-> +		if (!pfn_valid(i))
-> +			return false;
-> +
-> +		page = pfn_to_page(i);
-> +
-> +		if (page_zone(page) != z)
-> +			return false;
-> +
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +/**
-> + * find_alloc_contig_pages() -- attempt to find and allocate a contiguous
-> + *				range of pages
-> + * @order:	number of pages
-> + * @gfp:	gfp mask used to limit search as well as during compaction
-> + * @nid:	target node
-> + * @nodemask:	mask of other possible nodes
-> + *
-> + * Pages can be freed with a call to free_contig_pages(), or by manually
-> + * calling __free_page() for each page allocated.
-> + *
-> + * Return: pointer to 'order' pages on success, or NULL if not successful.
-> + */
-> +struct page *find_alloc_contig_pages(unsigned int order, gfp_t gfp,
-> +					int nid, nodemask_t *nodemask)
-> +{
-> +	unsigned long pfn, nr_pages, flags;
-> +	struct page *ret_page = NULL;
-> +	struct zonelist *zonelist;
-> +	struct zoneref *z;
-> +	struct zone *zone;
-> +	int rc;
-> +
-> +	nr_pages = 1 << order;
-> +	zonelist = node_zonelist(nid, gfp);
-> +	for_each_zone_zonelist_nodemask(zone, z, zonelist, gfp_zone(gfp),
-> +					nodemask) {
-> +		spin_lock_irqsave(&zone->lock, flags);
-> +		pfn = ALIGN(zone->zone_start_pfn, nr_pages);
-> +		while (zone_spans_pfn(zone, pfn + nr_pages - 1)) {
-> +			if (contig_pfn_range_valid(zone, pfn, nr_pages)) {
-> +				spin_unlock_irqrestore(&zone->lock, flags);
-> +
-> +				rc = alloc_contig_range(pfn, pfn + nr_pages,
-> +							MIGRATE_MOVABLE, gfp);
-> +				if (!rc) {
-> +					ret_page = pfn_to_page(pfn);
-> +					return ret_page;
-> +				}
-> +				spin_lock_irqsave(&zone->lock, flags);
-> +			}
-> +			pfn += nr_pages;
-> +		}
-> +		spin_unlock_irqrestore(&zone->lock, flags);
-> +	}
-> +
-> +	return ret_page;
-> +}
-> +EXPORT_SYMBOL_GPL(find_alloc_contig_pages);
-> +
-> +void free_contig_pages(struct page *page, unsigned long nr_pages)
-> +{
-> +	free_contig_range(page_to_pfn(page), nr_pages);
-> +}
-> +EXPORT_SYMBOL_GPL(free_contig_pages);
->  #endif
->  
->  #if defined CONFIG_MEMORY_HOTPLUG || defined CONFIG_CMA
-> 
+Thank you for the patch! Yet something to improve:
 
+[auto build test ERROR on mmotm/master]
+[also build test ERROR on v4.17-rc1 next-20180417]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Mike-Kravetz/mm-change-type-of-free_contig_range-nr_pages-to-unsigned-long/20180417-194309
+base:   git://git.cmpxchg.org/linux-mmotm.git master
+config: i386-tinyconfig (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=i386 
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/slab.h:15:0,
+                    from include/linux/crypto.h:24,
+                    from arch/x86/kernel/asm-offsets.c:9:
+>> include/linux/gfp.h:580:15: error: unknown type name 'page'
+    static inline page *find_alloc_contig_pages(unsigned int order, gfp_t gfp,
+                  ^~~~
+   include/linux/gfp.h:585:13: warning: 'free_contig_pages' defined but not used [-Wunused-function]
+    static void free_contig_pages(struct page *page, unsigned long nr_pages)
+                ^~~~~~~~~~~~~~~~~
+   make[2]: *** [arch/x86/kernel/asm-offsets.s] Error 1
+   make[2]: Target '__build' not remade because of errors.
+   make[1]: *** [prepare0] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [sub-make] Error 2
+
+vim +/page +580 include/linux/gfp.h
+
+   570	
+   571	#if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
+   572	/* The below functions must be run on a range from a single zone. */
+   573	extern int alloc_contig_range(unsigned long start, unsigned long end,
+   574				      unsigned migratetype, gfp_t gfp_mask);
+   575	extern void free_contig_range(unsigned long pfn, unsigned long nr_pages);
+   576	extern struct page *find_alloc_contig_pages(unsigned int order, gfp_t gfp,
+   577							int nid, nodemask_t *nodemask);
+   578	extern void free_contig_pages(struct page *page, unsigned long nr_pages);
+   579	#else
+ > 580	static inline page *find_alloc_contig_pages(unsigned int order, gfp_t gfp,
+   581							int nid, nodemask_t *nodemask)
+   582	{
+   583		return NULL;
+   584	}
+   585	static void free_contig_pages(struct page *page, unsigned long nr_pages)
+   586	{
+   587	}
+   588	#endif
+   589	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--T4sUOijqQbZv57TR
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--T4sUOijqQbZv57TR--
