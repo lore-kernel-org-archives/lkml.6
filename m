@@ -1,69 +1,68 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2367869-1523987431-2-14786477297147598766
+X-Cyrus-Session-Id: sloti22d1t05-2397738-1523987425-2-11482711221263727589
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523987430; b=h4PGdDp8I3rUoyhd6BWobt9NFyjODs9dYBpczrTtL4WWOztAx7
-    W4wdBkFJMGSZDKA19q1U6xNYWKJyZEMUvVL8MSOoqLSQnRe7R7DAclmCHDrUfqhO
-    zbQjq3qvirGHAVcoeUyWiphb8kYO2Dk6/s6N+OHVj1G834tgZMuzfnzlEVH4U3/H
-    ms4fKosRFcT4ubHzcv2mgpfSLh/i0+ZQtgC069xmhSv9mkXRmSYudP6gfunvQ/C2
-    XYso7Rz6vFnwbolvTl4/WYmiLIIe1mHQrztFlr7pnrytBfGJFHP5uT21evt7iZp0
-    rt68qMAdeQmvK0fmc/EsmXJxzM1rmOMIcvtA==
+    1523987424; b=tQk6b4H6OAiz3pr3JO9B+IwgEXguXGD156cSDhxOlKCGzqa3/W
+    dOCkd25OD874RLEGAphBFuhL9wfyha/WRz8zPNA7A/C2IxnOA2jDIyLt6ecSue9R
+    4eVrLip91TfFfqt6CTVAbZhT2m6Bu1kMGoIBIjAHk1qOzuanWYqF8sOWBySTSi0y
+    Us3o05zfVxM2XAG+Cr60u05aQlmKQ1yT8a/lgycOp7/Tf8DKPHAb+EYcDU5YtwAD
+    23lRvGqRA/ZZkAYd20yWd0nGRUhlN8bMAgx27hi0iUvEKSDOtdeUQ/PRFjq2Oawm
+    xJoAZqlgRAT40O09yiBadp8wQ+LdXHxe3O3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523987430; bh=uAXOv
-    H8Z3DMDKcDUGNBYuZ/NR2U7+TsqXmQZNy6lOwk=; b=QE2o+hZKWa+3yNqVkWfQM
-    WHmXQ+hG2jajukyNxX8RxmQCWanKgMg45giAsWLeWMp/tQg9wKUvUZi/C7s6HMSn
-    q++ibTgHLxH+yroyN/7BVKWFxcr0nbmTtOEhn/+C3Skm2X7wkln++NKddD36qq40
-    llc02u1p3gcAdlQ9NKgYX0O2vWr7iWLgzaoiC7jxaqscn8+7MuTxnzf2yeMNWIDk
-    mTwkEDlgytW4tMX7Atnv1+Z8YbbsqfBrX/+NK+s/tS6hqj4rxpiPVnpZVhES53Au
-    3FHlmiLffcRrWz+q5TEij9GWALfEZFkpJhq6x8wNOSffWKRgc0kyOIt1JTiRav0M
-    A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1523987424; bh=8hAX+
+    5htgj2QWP6FG1qRbE8dK8fLLIkpU+uzq87vYto=; b=OxiyjUrcUMjqhOgW27toI
+    ZGS4YZzyLpxrpdfFsPHDwvi9LJEIbsZVqvNmy3Vemh6iFYJcSK7wgFaZyDBkauEW
+    /7cVou3P+Wm4qyzoNZYnnMNYXpGWL6p3hnzQY8bC2GjO9Wo6pQfLXa4OA5JbYvg9
+    30W12khb9fDREdWNvQiMFbir1RYe3NNQId66tkj2tjuDsZQCdalcZ4jBGcVSyTeJ
+    UznrTLHhuB+pYYT3r+bWUYKOFhHJ9z3zBeBHvVrey1j7eRHwDPdDFpVPczJ72qkU
+    tdiPojAxXEH1mTw5+RryXr7XVOOmjvgYfZgA8Q+G5yM1SuU4fQn8j/l7Te/hWDNv
+    g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMMCGsGKrS0DuzYWBN71AUXJ1O0p8AdJBi9TLJahrZsfqZlZKpk1l47nJUup2a9b9bh8lnaJ01WHhLeJieEZDPKHlAsbrAEUJ4FqZ8W7J/kY3IzkHA+n
-    LBbgwXphm7j+POzkwwB9gGF7BtReRDLFCuQT9UNNYfkqDbvVlTB0l/F9C4NzabHQExOR9P5lSbX02jcIg+cwr+xecNUbSYluoWs0vGAocgmh3wChTQchqWZt
-    Q2+Wsy+2oYQgCpem4GicGw==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+X-CM-Envelope: MS4wfOhvUg4uO+QaIjdDQss1517d3SvizLLe+zb2YYZt+QlybewVqj7x0hi6zHdV4YE+Rl3hvDYEITYEpEe1W3QU9QxxEGAHVW3mREQH5xr1j29HxyrGznu8
+    ScPfXlx2SUycQ7IGsy1ylHwfxv/dgXJRoYaBo6Vy/2j/U96SfAcqTYSfa/rgZDMj5iBk7aQbmFFUvPGfTCAfoNquQ3mcwBwwKiXuN4coLUUxUFVfuBr+e5av
+    iLOO0KJCfelG/sd+DVgk+w==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8
-    a=7CQSdrXTAAAA:8 a=QyXUC8HyAAAA:8 a=ag1SF4gXAAAA:8 a=DDOyTI_5AAAA:8
-    a=TbWBU93eRZgzZTkg1z0A:9 a=CjuIK1q_8ugA:10 a=Oj-tNtZlA1e06AYgeCfH:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=7CQSdrXTAAAA:8 a=DDOyTI_5AAAA:8 a=TbWBU93eRZgzZTkg1z0A:9 a=CjuIK1q_8ugA:10
+    a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -93,10 +92,10 @@ To: Christoph Hellwig <hch@lst.de>,
  Ohad Ben-Cohen <ohad@wizery.com>,
  Bjorn Andersson <bjorn.andersson@linaro.org>,
  Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH v3 20/20] usb: Remove depends on HAS_DMA in case of platform
+Subject: [PATCH v3 09/20] iommu: Remove depends on HAS_DMA in case of platform
  dependency
-Date: Tue, 17 Apr 2018 19:49:20 +0200
-Message-Id: <1523987360-18760-21-git-send-email-geert@linux-m68k.org>
+Date: Tue, 17 Apr 2018 19:49:09 +0200
+Message-Id: <1523987360-18760-10-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
 References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
@@ -143,8 +142,7 @@ This simplifies the dependencies, and allows to improve compile-testing.
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Reviewed-by: Mark Brown <broonie@kernel.org>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com> [drivers/usb/gadget/]
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Acked-by: Joerg Roedel <jroedel@suse.de>
 ---
 v3:
   - Add Acked-by,
@@ -155,45 +153,39 @@ v2:
   - Drop RFC state,
   - Split per subsystem.
 ---
- drivers/usb/gadget/udc/Kconfig | 4 ++--
- drivers/usb/mtu3/Kconfig       | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/iommu/Kconfig | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index 0875d38476ee9395..9c3b4f86965e80c7 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -179,7 +179,7 @@ config USB_R8A66597
- 
- config USB_RENESAS_USBHS_UDC
- 	tristate 'Renesas USBHS controller'
--	depends on USB_RENESAS_USBHS && HAS_DMA
-+	depends on USB_RENESAS_USBHS
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index df171cb8582296b9..c76157e57f6ba4ba 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -23,7 +23,7 @@ config IOMMU_IO_PGTABLE
+ config IOMMU_IO_PGTABLE_LPAE
+ 	bool "ARMv7/v8 Long Descriptor Format"
+ 	select IOMMU_IO_PGTABLE
+-	depends on HAS_DMA && (ARM || ARM64 || (COMPILE_TEST && !GENERIC_ATOMIC64))
++	depends on ARM || ARM64 || (COMPILE_TEST && !GENERIC_ATOMIC64)
  	help
- 	   Renesas USBHS is a discrete USB host and peripheral controller chip
- 	   that supports both full and high speed USB 2.0 data transfers.
-@@ -192,7 +192,7 @@ config USB_RENESAS_USBHS_UDC
- config USB_RENESAS_USB3
- 	tristate 'Renesas USB3.0 Peripheral controller'
- 	depends on ARCH_RENESAS || COMPILE_TEST
--	depends on EXTCON && HAS_DMA
-+	depends on EXTCON
+ 	  Enable support for the ARM long descriptor pagetable format.
+ 	  This allocator supports 4K/2M/1G, 16K/32M and 64K/512M page
+@@ -42,7 +42,7 @@ config IOMMU_IO_PGTABLE_LPAE_SELFTEST
+ config IOMMU_IO_PGTABLE_ARMV7S
+ 	bool "ARMv7/v8 Short Descriptor Format"
+ 	select IOMMU_IO_PGTABLE
+-	depends on HAS_DMA && (ARM || ARM64 || COMPILE_TEST)
++	depends on ARM || ARM64 || COMPILE_TEST
  	help
- 	   Renesas USB3.0 Peripheral controller is a USB peripheral controller
- 	   that supports super, high, and full speed USB 3.0 data transfers.
-diff --git a/drivers/usb/mtu3/Kconfig b/drivers/usb/mtu3/Kconfig
-index 25cd61947beea51e..c0c0eb88e5eafc74 100644
---- a/drivers/usb/mtu3/Kconfig
-+++ b/drivers/usb/mtu3/Kconfig
-@@ -2,7 +2,7 @@
- 
- config USB_MTU3
- 	tristate "MediaTek USB3 Dual Role controller"
--	depends on EXTCON && (USB || USB_GADGET) && HAS_DMA
-+	depends on EXTCON && (USB || USB_GADGET)
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
- 	select USB_XHCI_MTK if USB_SUPPORT && USB_XHCI_HCD
- 	help
+ 	  Enable support for the ARM Short-descriptor pagetable format.
+ 	  This supports 32-bit virtual and physical addresses mapped using
+@@ -376,7 +376,6 @@ config QCOM_IOMMU
+ 	# Note: iommu drivers cannot (yet?) be built as modules
+ 	bool "Qualcomm IOMMU Support"
+ 	depends on ARCH_QCOM || (COMPILE_TEST && !GENERIC_ATOMIC64)
+-	depends on HAS_DMA
+ 	select IOMMU_API
+ 	select IOMMU_IO_PGTABLE_LPAE
+ 	select ARM_DMA_USE_IOMMU
 -- 
 2.7.4
 
