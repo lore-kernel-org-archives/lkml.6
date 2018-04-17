@@ -1,89 +1,95 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1523998983; cv=none;
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49PKBOsMThRFdsFT+pFRBCKe/klr6cpad/8isxvsW0O6faKI/CO7566Oj9HVfQJA6peDIDY
+ARC-Seal: i=1; a=rsa-sha256; t=1523981141; cv=none;
         d=google.com; s=arc-20160816;
-        b=SyTE4uAazEJ8uoWv860CC5moYXxbSrKWy48jFQYUrJ09KKSJMOAv7lR9666jxIu6pU
-         cs/c0Z3j2nuzONXTk/SRIYZnPrWrvikG9D/mq78VNVjdclzQrw0en9G2JlW9SpUCRLLM
-         Cu2oksmlAx9SvaMjamy/OOeIzn7vjrqXk92G3WtmgaNczt5NzIxwQzCxPCJPS+38VIBR
-         dTFuxdnTI/WKSbFeTSk9EmklTs+EaZpiEDkaxRW8ARF7vsuKa1kSUWQFp/nPqJP6UTsP
-         ed1zfZLzgJlljJ7DX3kgQh7POAeXVJvJm7AWNJfL4oG4u4+X4Kh+TQZSej7ZZCbBL9Oq
-         Nr0g==
+        b=cHHg1Rtta6vOR2sO6Y7QhhmpAjBOhDoEE6ZKDIoliNC/RvpZkkpUbgU6Yvx8V4bBQh
+         wgxbyigGHXmo0LyF+YJ0SFLl3nvo27EqRvXoWmx4KLxTbTv6opTgWfElWBNRMHRN7f7d
+         7q8xZQv9+PmJpbTPHt60mLISmtE1wJX1wNSWcmx1PLCdPMAOZSIOSPyVq4Y+K/NnH23G
+         +kgHZTD09cASkO2rHn0+xgYjaYSHHXIF9G4UB07Rto2v8fnAFnnxWkK6fQ0YvT3nwR/O
+         4NLCXHuc7UNfv7Sfcy1ItmZqyQOYqJLRiT6126odAgA6HcfRomtzRK3shJ4gRHal2nE9
+         vMXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=cJn6sXBTXEXnVz6MKBtoIv2mkp3t/xkEbCX+QA35WDo=;
-        b=I/fd/jB7SWN5PsoNTMf0GUkt07Y4YA95lS3urnT/oUsXr8/D/a0WnNbwOBAlGRO2Zl
-         rr2+a5DgtQPRhbKO47xM8qH7d9BzUMYRm5ghwIjb8lGCDHk8TQl63fSXgKVTRL9xyy3F
-         PB7kprm9oTHnDyTbc4/17nG1p9hLJyRXoo7Z12/cx+pySzGpm3uOQhNcCzyB/Ol9euKG
-         BrT10mLjqNriyyNQSbKEKOA3Y/HyWWlrTS7Sk/dZo9b8NxvoqDyVHjIrGDYnVmaO/uwZ
-         wYlRO5ANO8/PmFYk4Z8QNYFA+kIqJDTep406LElKe5mxxA3n5HWtDzIxXNX2uQXeHaEU
-         9ngw==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=e0K9vNoVX3Yts1EUPlL7X3Orx8jDV+fcXdeG8R92zDQ=;
+        b=MQZm13yyJpf/mN/mZJDtrnB07etAfu2tf5gHFubHcoGC9dOWa3DcUZ/vnJRImGIxWg
+         e9nwLeGVJZcwqY77gUs+3m7oILH9aLZJGNT94qQL2VB4RhZK3ArHhTyYFpbCvWMUz7wX
+         lA4P1y/c+1xWn8sEaTz7cfTW5odkSaQR/667iUnrdqD7G6JThAF+UwshKiASRoDjmKZB
+         TuJIDBzKvlj5XGEevKDAO4X/WfIuuVN2SKrwVSRz2+Box5eNVtEO9OdnyI7vFT6crZzb
+         5jQ0XtMjKYCfywnVBPAwRKkmtZKgoDEzZIOxxxCwZhj2X6jitHe/DtayN/8Ja24fzNH5
+         nVRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AIpwx49qgb8ms6J3s1SGikrZP02Es5GpW80Z0HXhawNJAxhqt3n3HL9DfD5mVmoiXZ7mGZTn9n12OA==
-Message-ID: <5ad66106.8a1f1c0a.eba47.b41d@mx.google.com>
-Date: Tue, 17 Apr 2018 14:03:02 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.15.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.15.17-54-gae8929dc5a7d
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	John Johansen <john.johansen@canonical.com>
+Subject: [PATCH 4.15 40/53] apparmor: fix resource audit messages when auditing peer
+Date: Tue, 17 Apr 2018 17:59:05 +0200
+Message-Id: <20180417155725.064377968@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
-Subject: Re: [PATCH 4.15 00/53] 4.15.18-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598009896263734013?=
-X-GMAIL-MSGID: =?utf-8?q?1598028758157112558?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598009833879299855?=
+X-GMAIL-MSGID: =?utf-8?q?1598010049677829862?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.15.y boot: 69 boots: 2 failed, 65 passed with 2 untried/u=
-nknown (v4.15.17-54-gae8929dc5a7d)
+4.15-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.15.y/kernel/v4.15.17-54-gae8929dc5a7d/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.15.=
-y/kernel/v4.15.17-54-gae8929dc5a7d/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.15.y
-Git Describe: v4.15.17-54-gae8929dc5a7d
-Git Commit: ae8929dc5a7d09feab66e3131a04a1ed88d8d284
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 36 unique boards, 12 SoC families, 13 builds out of 185
+From: John Johansen <john.johansen@canonical.com>
 
-Boot Regressions Detected:
+commit b5beb07ad32ab533027aa988d96a44965ec116f7 upstream.
 
-arm:
+Resource auditing is using the peer field which is not available
+when the rlim data struct is used, because it is a different element
+of the same union. Accessing peer during resource auditing could
+cause garbage log entries or even oops the kernel.
 
-    at91_dt_defconfig:
-        at91sam9m10g45ek:
-            lab-free-electrons: new failure (last pass: v4.15.17)
+Move the rlim data block into the same struct as the peer field
+so they can be used together.
 
-    multi_v7_defconfig:
-        sun8i-a83t-allwinner-h8homlet-v2:
-            lab-free-electrons: new failure (last pass: v4.15.17)
-
-Boot Failures Detected:
-
-arm:
-
-    at91_dt_defconfig
-        at91sam9m10g45ek: 1 failed lab
-
-    multi_v7_defconfig
-        sun8i-a83t-allwinner-h8homlet-v2: 1 failed lab
+CC: <stable@vger.kernel.org>
+Fixes: 86b92cb782b3 ("apparmor: move resource checks to using labels")
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ security/apparmor/include/audit.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/security/apparmor/include/audit.h
++++ b/security/apparmor/include/audit.h
+@@ -126,6 +126,10 @@ struct apparmor_audit_data {
+ 					const char *target;
+ 					kuid_t ouid;
+ 				} fs;
++				struct {
++					int rlim;
++					unsigned long max;
++				} rlim;
+ 				int signal;
+ 			};
+ 		};
+@@ -135,10 +139,6 @@ struct apparmor_audit_data {
+ 			long pos;
+ 		} iface;
+ 		struct {
+-			int rlim;
+-			unsigned long max;
+-		} rlim;
+-		struct {
+ 			const char *src_name;
+ 			const char *type;
+ 			const char *trans;
