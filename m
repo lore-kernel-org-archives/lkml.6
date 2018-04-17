@@ -1,137 +1,89 @@
 Return-Path: <cgxu519@gmx.com>
-X-Google-Smtp-Source: AIpwx48can4I8GDJq3x6jQ9Hs3LLPhqtUZJta0QSkv5GbYmP3YIBICk4Vc0Vj09AUqJhqY6czcYQ
-ARC-Seal: i=1; a=rsa-sha256; t=1524101037; cv=none;
+X-Google-Smtp-Source: AIpwx48PVWNfmZRtsdumoHWfU4nBx9VurZ8VBtNaJWsu5i1q+nGA8B7E2dO9i+YJ1Fr9yNj189om
+ARC-Seal: i=1; a=rsa-sha256; t=1523948769; cv=none;
         d=google.com; s=arc-20160816;
-        b=zDkXklSEdqQ+ceRfeGvc3lrVR5JIOwWWH4ZPsjRo883lP0cgrlofX7pwAI6l3upDaZ
-         E+oQS8dPrZd+dJhMTLc8Fw9hx2bn914NZmVc0Y5c0dppyl+RDyzT1uR5POx1brOGbdCh
-         lusVGAFJEqRsFR875J0d9bFbHxwxXFDDTB2W/wE42AkhEUTn7uepW1sWfx9oENEAvRA2
-         1YpUiWBAcO/WyOPN9j9a+df5jwCh9tX2G5+LZn0kzbBpmM5uKC/yz5oFJDnvF1kIs1gF
-         TcEt+oGHq5qecemVOC7fGA1ovFth/v56+0QoRCA7XAzXwZB5dBokXK74ID6aSImneg+X
-         xtcw==
+        b=HqeZljCBQ9VscpiKLdHbsiuFytjLhxlVjoWB9eoCGtZn0YerJA+L1gwGI7uYvDvfvm
+         PPDMBVD3goHBf2PBzhKsF4h5K7GzqT7AHCm40TCME5EHLXmUj9HzfES+DctePfFDAulB
+         cT/UX9k3svNF+IPzNt8GWAuZqXr/KxSvIUc63KOfY2F/9ODHJZr0tIQV160Eq+Y4nw3O
+         aiGjoZSQM+sh7yq488K0wwi5LE5Lq5qMFQ5TvuRhipNzfmah15Mqb39KDolICnbeo0us
+         6peFZtQg2Y7ykLMVBrc98WbLDO8Uo3X17RFpa7JAB1pWdLZvzo/y90vPL5NFlApUCenf
+         iHFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:arc-authentication-results;
-        bh=dOYwvM9Zz/BQiy4/rR6tgXiSrw16b0q0Kh44R2MR9ZI=;
-        b=U7bd3EJSlCPuM5aNOgZi2oi+1mhrmum3bv4znoe0UnPZ+fKMGZpuG2Z9YCaLzqD8wg
-         h1HP7GKKY15+ebc0BkeZj10wm6P2IFaS2l3huJysTRcOy8Hn021/j/oTQCjjVcY2bCWr
-         KefEqiCNIedlfZJuwdeNmorC5MPMrFcOC0qpYFliY56bGG/vuX45CKWYuiTmLbpuy8rc
-         ygH9Md8DTqr5gJDGZWCwRjDeKpFyyhCb7PYH/moTgsQ6C2puTYz7vM6oLtCaMcC0lvN2
-         A4lR6E+UChsl+tGmUDOqj7H37zg9VXVl+2dTEtlz+oAKneMBt0x/XoEi0SquetyUaild
-         590A==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=KdgJ1bXEEUgE0jlTMDiK5c25dLRsSEvZ34H3FosEZ9s=;
+        b=a6wbJ9NvfIOehpZ/zwCoHQ+FfWOzDdQwU9eoSujMM/XxVaexSUSjxUpkLzOnA0x992
+         9rRHHCXS8yRuQurKLII3VqK5POxrkC/Vxu23rN9py2AMiHOzc212LsoMEtZfQmQfTDNQ
+         XlTMvBlJkHwWU1rERcxzpCRyN8Q4B+G/+iaX4IPJ6iVKfbd5i7TFv9MjGApR2wI6K8HG
+         iGkNWnowUfkTCXtu8qlcimKJEGllEtEhgxSZNol82FVnY0WvpV54U5LC5k6Bm+GGabPD
+         fXX4MwDEmRwILBoOVTEO4KPPGPmrzYoo3tMpc7nE0v3i3SCaNOB17wVfzccyDOCG9ytl
+         pVow==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of cgxu519@gmx.com designates 212.227.17.21 as permitted sender) smtp.mailfrom=cgxu519@gmx.com
+       spf=pass (google.com: domain of cgxu519@gmx.com designates 212.227.15.19 as permitted sender) smtp.mailfrom=cgxu519@gmx.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of cgxu519@gmx.com designates 212.227.17.21 as permitted sender) smtp.mailfrom=cgxu519@gmx.com
-Content-Type: text/plain;
-	charset=gb2312
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH 1/2] hfs: fix potential refcnt problem of nls module
-From: "cgxu519@gmx.com" <cgxu519@gmx.com>
-In-Reply-To: <20180418124251.d66a36cb23673f0d8b152910@linux-foundation.org>
-Date: Thu, 19 Apr 2018 09:18:53 +0800
-Cc: "cgxu519@gmx.com" <cgxu519@gmx.com>,
- linux-fsdevel@vger.kernel.org,
- dhowells@redhat.com,
- kstewart@linuxfoundation.org,
- gregkh@linuxfoundation.org,
- tglx@linutronix.de,
- pombredanne@nexb.com,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <060F1E17-ECD0-41F5-B635-2A0E16967433@gmx.com>
+       spf=pass (google.com: domain of cgxu519@gmx.com designates 212.227.15.19 as permitted sender) smtp.mailfrom=cgxu519@gmx.com
+From: Chengguang Xu <cgxu519@gmx.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: dhowells@redhat.com,
+	kstewart@linuxfoundation.org,
+	gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	pombredanne@nexb.com,
+	linux-kernel@vger.kernel.org,
+	Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH 2/2] hfsplus: fix potential refcnt problem of nls module
+Date: Tue, 17 Apr 2018 15:05:33 +0800
+Message-Id: <1523948733-8537-2-git-send-email-cgxu519@gmx.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1523948733-8537-1-git-send-email-cgxu519@gmx.com>
 References: <1523948733-8537-1-git-send-email-cgxu519@gmx.com>
- <20180418124251.d66a36cb23673f0d8b152910@linux-foundation.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-X-Mailer: Apple Mail (2.3445.6.18)
-X-Provags-ID: V03:K1:94Ni1M2+6nulXzCtIP/kFm7fC8a/Q3vVOfeMvKvg3ZycW2RDzYp
- X7q+lZCAlIOvvhTDXcrSaEza1HirJ/EMghHvYUsj2EMxyZBhUc4Jg3HThKtEdth5220OGDP
- hrIRZoqeyiknRlEBRAJiEaLN4wFEc2VKOziauj9Rius7lPlhXUZ+UE1XPd2avH8TSuPjCWl
- K2IV7Ispc8IB07P1Wpfeg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6hSb458qU5E=:NiadXJpqlJwBaomoWs2o34
- mTBJxh2TjTtX2oOHum7O8Pg+LMiDNLHPaFTmmtL7JOEJkbQ3PlIRYPebGnT1DBCeCzCwKykEl
- 9lN9fz6jjQdczOR18SfszyAgmvDVn5FNPcjeSGpnMPvt74AD20B1JLQAcipndo1b9ikVetgPP
- reiuQO0x6fPK3ZFEr+HtxWFMdnmpsh+xa80xKhyYifplkli4RGQhx4Or0Pm2IgajtppUjqsAW
- stLguxvyZdrEHhSDYJDRKecqSiEGkYwETQ97Y/Z/EemAC15XeaFbBoiyws6lUI32dSbusVPzh
- UWuDKy5zhez9EzMS80dEEaA5CMrCP5DhDSmvghgVxOWj5gTtnu/bhHl3pv4xisplcH03ci4t8
- V68oRRf8ip3O5EaIXbSSR/5GUEGbmS2MptPYO7XzPZk+b1VZuFHt8Zbou20E18PVhZ6hi8p/3
- 4eC8FtZl5Fi7ZNcT2do1XRei0R2BcLLw/HilpSfmhC+tgm8rziPIRnX1yyzbmMuPVFqUqB5SS
- 9gbfP+NwhYqTPEaT86vM1uKF7s21HPiHEVTYBa7Gq4qetpXmqRa7S9BcPet0kIBxIjw2pVnTR
- PHfuNQ1va49fZ/I9ApBzwZJZhKdfk5A14SaIfJmcjtZKpni7rPH0zgfJ745II6h4+93WqakWr
- /Z3cI2XX5krPHwe7UUlg6ViZi3k+wQvgJVxMgCdJIjkQNlWWLGnVkuO4C69LbReUar4dcMGn8
- 8DgkabEUw8nCAP7TKlPeju+s9EqKnwPM+Rx5AoN4z/R2J0U0HthiAMfKrITvKYzKaWlJtqLPZ
- hAmDgtdBrebBmDjZNHjUU6JIRosX7+4BjNdbeGZuaKRmIecBC8=
+X-Provags-ID: V03:K1:qYWhdORermWroev0TN4penUR9tZP1DnVRq5qRjNN4u/babdMUci
+ 3KaY0ypPuRMp/ddha/2p+ca1BYcShXyeGgnMJqMNuLejQtu5TNnOQ1ZrttRuh4B/rwfgpD6
+ UichuSrOi+9VsGJMdPMShDv4lZOPGMnRivEEoCXd/C6H4A9YCfOp6yAgipU995DRkzWfeta
+ GureiU8Z5q+rMR+h5Lorw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:onJ3H4B1/Ow=:Cd6BjvD5b+4ojWtwtG8L/7
+ ZO65/bDIVNQXnDG7yvkFl9o6FvElmtwuA2X2UI9wt7tnaQUbJhPCXzG3j1GtlcIIH0Sl/GV14
+ 7u8g8nM82d2QAiFmCqYufUGVHcwxve8iYrZzf7BG2eISUZK+ebUJnwONADsjh+ei/NAv+oaRm
+ Cto1uEoSEYkopzd+jJmXqUb7fzE3y6OkPBVCBPwnj2fbkw0uOpihJA+8GmbJVEwsjpxI+UdtE
+ kjQB/kNDW6w+am8WnS21Se8w6ElLDDrbmo07/4mt48r/4MF6NH7KAQloLA/ZTZV2CaWPcE1fk
+ 4VGUUqIMiIEVGPvrmIsBObx5CuEB27bSHfAoxrJprnFsn/Y7DVffG+7JhwZiHbAqzba2Dxm1m
+ rpxfwlG3sfOmp4K1O2Ic33tIigAu4ptZYHES+Q3vX5clEAMTIo7VPNhnoa7YDS/teT0CZc3Jt
+ NRnG1zMW5YB87HNfaWhIPtGZG1XeQpEcdaKhFJr9pHokhW9mpjBQcm1xAnrCL4wQdQo+VEcjd
+ tUDblEhZy/g9F1vnAI812Dlj/n3z8tytcfPMGDh6B8VKqptckBFi+X15mSCTiQpvdEAo605uG
+ Zrlxlqi0Alx0AgRKOUglLkO60yPF4stqaqV/nVTqju7D86lxcRJx3r0KV4DN6r3rjvi2NgT41
+ /OtbzBQI2zUFacjfvT1jULUvdn0x2zgVySVcxpiicv4Gs+3u5d/4myOJOcxjBh56qhs5eByup
+ /VvYgRfeGJopXcDKqTS8FtxcHVsEXIz+kDC7fH1QVfeINkdE1Tn0sMH/dkKRNiKepNmeUBCku
+ IcSoNrtY6rM1pQGq5a57NB9dxXpbA==
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597976097754652065?=
-X-GMAIL-MSGID: =?utf-8?q?1598135769065560339?=
+X-GMAIL-THRID: =?utf-8?q?1597976104302734055?=
+X-GMAIL-MSGID: =?utf-8?q?1597976104302734055?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-=D4=DA 2018=C4=EA4=D4=C219=C8=D5=A3=AC=C9=CF=CE=E73:42=A3=ACAndrew =
-Morton <akpm@linux-foundation.org> =D0=B4=B5=C0=A3=BA
->=20
-> On Tue, 17 Apr 2018 15:05:32 +0800 Chengguang Xu <cgxu519@gmx.com> =
-wrote:
->=20
->> When specifying iocharset/codepage multiple times in a mount,
->> current option parsing will cause inaccurate refcount of nls
->> module. Hence, call unload_nls for previous one in this case.
->>=20
->> ...
->>=20
->> --- a/fs/hfs/super.c
->> +++ b/fs/hfs/super.c
->> @@ -329,8 +329,10 @@ static int parse_options(char *options, struct =
-hfs_sb_info *hsb)
->> 				return 0;
->> 			}
->> 			p =3D match_strdup(&args[0]);
->> -			if (p)
->> +			if (p) {
->> +				unload_nls(hsb->nls_disk);
->> 				hsb->nls_disk =3D load_nls(p);
->> +			}
->> 			if (!hsb->nls_disk) {
->> 				pr_err("unable to load codepage =
-\"%s\"\n", p);
->> 				kfree(p);
->> @@ -344,8 +346,10 @@ static int parse_options(char *options, struct =
-hfs_sb_info *hsb)
->> 				return 0;
->> 			}
->> 			p =3D match_strdup(&args[0]);
->> -			if (p)
->> +			if (p) {
->> +				unload_nls(hsb->nls_io);
->> 				hsb->nls_io =3D load_nls(p);
->> +			}
->> 			if (!hsb->nls_io) {
->> 				pr_err("unable to load iocharset =
-\"%s\"\n", p);
->> 				kfree(p);
->=20
-> Confused.
->=20
-> 			break;
-> : 		case opt_codepage:
-> : 			if (hsb->nls_disk) {
-> : 				pr_err("unable to change codepage\n");
-> : 				return 0;
-> : 			}
->=20
-> Here, hsb->nls_disk is known to be zero.
->=20
-> : 			p =3D match_strdup(&args[0]);
-> : 			if (p) {
-> : 				unload_nls(hsb->nls_disk);
->=20
-> So this will always do unload_nls(0).
->=20
-> : 				hsb->nls_disk =3D load_nls(p);
-> : 			}
->=20
-> And the same applies to your opt_iocharset change.
+When specifying nls option multiple times in a mount,
+current option parsing will cause inaccurate refcount of nls
+module. Hence, call unload_nls for previous one in this case.
 
-You are right. Sorry I just misread this part, please just drop the =
-patch.
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+ fs/hfsplus/options.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks.
+diff --git a/fs/hfsplus/options.c b/fs/hfsplus/options.c
+index 047e05c..068d4e2 100644
+--- a/fs/hfsplus/options.c
++++ b/fs/hfsplus/options.c
+@@ -171,8 +171,10 @@ int hfsplus_parse_options(char *input, struct hfsplus_sb_info *sbi)
+ 				return 0;
+ 			}
+ 			p = match_strdup(&args[0]);
+-			if (p)
++			if (p) {
++				unload_nls(sbi->nls);
+ 				sbi->nls = load_nls(p);
++			}
+ 			if (!sbi->nls) {
+ 				pr_err("unable to load nls mapping \"%s\"\n",
+ 				       p);
+-- 
+1.8.3.1
