@@ -1,62 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752231AbeDQKtL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 06:49:11 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:22141 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751270AbeDQKtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 06:49:10 -0400
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc: Allow selection of
- CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Message-Id: <20180417104909.22D416C07D@po15720vm.idsi0.si.c-s.fr>
-Date: Tue, 17 Apr 2018 12:49:09 +0200 (CEST)
+        id S1752357AbeDQKyD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 06:54:03 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:17516 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751927AbeDQKyC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 06:54:02 -0400
+Subject: Re: [RESEND PATCH v2 0/4] ARM: davinci: remove the mach-specific
+ aemif driver - part 1
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180417102917.7794-1-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <2a2ac117-900c-77b6-f247-49777493e55f@ti.com>
+Date: Tue, 17 Apr 2018 16:23:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180417102917.7794-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This option does dead code and data elimination with the linker by
-compiling with -ffunction-sections -fdata-sections and linking with
---gc-sections.
+Hi Bartosz,
 
-By selecting this option on mpc885_ads_defconfig,
-vmlinux LOAD segment size gets reduced by 10%
+On Tuesday 17 April 2018 03:59 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> This is the first part of changes required to remove duplicate aemif
+> support from mach-davinci.
+> 
+> I actually noticed that one of my previous changes from 2017 broke nand
+> in legacy mode - the clock lookup no longer works. This series addresses
+> it as well.
+> 
+> First patch just uses a static string for the ti-aemif driver name.
+> 
+> The second adds support for board files to the aemif driver.
+> 
+> Last two add nand support to da850-lcdk in legacy mode and make
+> da850-evm use the platform driver instead of the mach-specific one.
+> 
+> If these patches get accepted, I'll prepere a follow-up moving all
+> other boards to the new platform driver.
+> 
+> This series applies on top of v8 of David Lechner's CCF series.
 
-Program Header before the patch:
-    LOAD off    0x00010000 vaddr 0xc0000000 paddr 0x00000000 align 2**16
-         filesz 0x0036eda4 memsz 0x0038de04 flags rwx
+Are there any patches in the series that can safely be applied to v4.17-rc1?
 
-Program Header after the patch:
-    LOAD off    0x00010000 vaddr 0xc0000000 paddr 0x00000000 align 2**16
-         filesz 0x00316da4 memsz 0x00334268 flags rwx
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/Kconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8fe4353be5e3..e1fac49cf465 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -888,6 +888,14 @@ config PPC_MEM_KEYS
- 
- 	  If unsure, say y.
- 
-+config PPC_UNUSED_ELIMINATION
-+	bool "Eliminate unused functions and data from vmlinux"
-+	default n
-+	select LD_DEAD_CODE_DATA_ELIMINATION
-+	help
-+	  Select this to do dead code and data elimination with the linker
-+	  by compiling with -ffunction-sections -fdata-sections and linking
-+	  with --gc-sections.
- endmenu
- 
- config ISA_DMA_API
--- 
-2.13.3
+Thanks,
+Sekhar
