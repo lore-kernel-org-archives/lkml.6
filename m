@@ -1,113 +1,468 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753242AbeDQXwk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 19:52:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:44883 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751164AbeDQXwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 19:52:39 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 18 Apr 2018 09:51:13 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20180418095113.21c84c83@canb.auug.org.au>
+        id S1753002AbeDQX6C (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 19:58:02 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:42655 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752760AbeDQX56 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 19:57:58 -0400
+X-Google-Smtp-Source: AIpwx4/8+NYuX3/C0smH7f1JGLMBbEfZdwecdU/S7svxHGbromDJx01pEGnIYg9Zp2IO5tiVCmd+5w==
+Date: Tue, 17 Apr 2018 16:57:56 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Taniya Das <tdas@codeaurora.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        David Collins <collinsd@codeaurora.org>
+Subject: Re: [v3,2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Message-ID: <20180417235756.GF244487@google.com>
+References: <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/H2zGha.o3/DcDidRHMxFlv0"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/H2zGha.o3/DcDidRHMxFlv0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Apr 14, 2018 at 08:06:41AM +0530, Taniya Das wrote:
+> Add the RPMh clock driver to control the RPMh managed clock resources on
+> some of the Qualcomm Technologies, Inc. SoCs.
+> 
+> Signed-off-by: David Collins <collinsd@codeaurora.org>
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
+>  drivers/clk/qcom/Kconfig    |   9 ++
+>  drivers/clk/qcom/Makefile   |   1 +
+>  drivers/clk/qcom/clk-rpmh.c | 367 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 377 insertions(+)
+>  create mode 100644 drivers/clk/qcom/clk-rpmh.c
+>
+> --
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index fbf4532..63c3372 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -112,6 +112,15 @@ config IPQ_GCC_8074
+>  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
+>  	  of ipq8074.
+> 
+> +config QCOM_CLK_RPMH
+> +	tristate "RPMh Clock Driver"
+> +	depends on COMMON_CLK_QCOM && QCOM_RPMH
+> +	help
+> +	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
+> +	 SoCs. It accepts requests from other hardware subsystems via RSC.
+> +	 Say Y if you want to support the clocks exposed by RPMh on
+> +	 platforms such as sdm845.
+> +
+>  config MSM_GCC_8660
+>  	tristate "MSM8660 Global Clock Controller"
+>  	depends on COMMON_CLK_QCOM
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 230332c..b2b5babf 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -36,5 +36,6 @@ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+>  obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+>  obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+>  obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+> +obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+>  obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+>  obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> new file mode 100644
+> index 0000000..fa61284
+> --- /dev/null
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -0,0 +1,367 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <soc/qcom/cmd-db.h>
+> +#include <soc/qcom/rpmh.h>
+> +
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +
+> +#define CLK_RPMH_ARC_EN_OFFSET	0
+> +#define CLK_RPMH_VRM_EN_OFFSET	4
+> +#define CLK_RPMH_APPS_RSC_AO_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
+> +					 BIT(RPMH_ACTIVE_ONLY_STATE))
+> +#define CLK_RPMH_APPS_RSC_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
+> +				      BIT(RPMH_ACTIVE_ONLY_STATE) | \
+> +				      BIT(RPMH_SLEEP_STATE))
+> +struct clk_rpmh {
+> +	struct clk_hw hw;
+> +	const char *res_name;
+> +	u32 res_addr;
+> +	u32 res_en_offset;
+> +	u32 res_on_val;
+> +	u32 res_off_val;
+> +	u32 state;
+> +	u32 aggr_state;
+> +	u32 last_sent_aggr_state;
+> +	u32 valid_state_mask;
+> +	struct rpmh_client *rpmh_client;
+> +	struct device *dev;
+> +	struct clk_rpmh *peer;
+> +	unsigned long rate;
+> +};
+> +
+> +struct rpmh_cc {
+> +	struct clk_onecell_data data;
+> +	struct clk *clks[];
+> +};
+> +
+> +struct clk_rpmh_desc {
+> +	struct clk_hw **clks;
+> +	size_t num_clks;
+> +};
 
-Hi all,
+Could you briefly document the struct members, especially struct clk_rpmh?
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> +static DEFINE_MUTEX(rpmh_clk_lock);
+> +
+> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
+> +			  _res_en_offset, _res_on, _res_off, _rate)	\
+> +	static struct clk_rpmh _platform##_##_name_active;		      \
+> +	static struct clk_rpmh _platform##_##_name = {			      \
+> +		.res_name = _res_name,					      \
+> +		.res_en_offset = _res_en_offset,			      \
+> +		.res_on_val = _res_on,					      \
+> +		.res_off_val = _res_off,				      \
+> +		.rate = _rate,						      \
+> +		.peer = &_platform##_##_name_active,			      \
+> +		.valid_state_mask = CLK_RPMH_APPS_RSC_STATE_MASK,	      \
+> +		.hw.init = &(struct clk_init_data){			      \
+> +			.ops = &clk_rpmh_ops,			              \
+> +			.name = #_name,					      \
+> +		},							      \
+> +	};								      \
+> +	static struct clk_rpmh _platform##_##_name_active = {		      \
+> +		.res_name = _res_name,					      \
+> +		.res_en_offset = _res_en_offset,			      \
+> +		.res_on_val = _res_on,					      \
+> +		.res_off_val = _res_off,				      \
+> +		.rate = _rate,						      \
+> +		.peer = &_platform##_##_name,				      \
+> +		.valid_state_mask = CLK_RPMH_APPS_RSC_AO_STATE_MASK,	      \
+> +		.hw.init = &(struct clk_init_data){			      \
+> +			.ops = &clk_rpmh_ops,				      \
+> +			.name = #_name_active,				      \
+> +		},							      \
+> +	}
+> +
+> +#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name, \
+> +			    _res_on, _res_off, _rate) \
+> +	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
+> +			  CLK_RPMH_ARC_EN_OFFSET, _res_on, _res_off, _rate)
+> +
+> +#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name,	\
+> +			    _rate)					 \
+> +	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,     \
+> +			  CLK_RPMH_VRM_EN_OFFSET, true, false, _rate)
+> +
+> +static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
+> +{
+> +	return container_of(_hw, struct clk_rpmh, hw);
+> +}
+> +
+> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
+> +{
+> +	return ((c->last_sent_aggr_state & BIT(state))
+> +		!= (c->aggr_state & BIT(state)));
+> +}
+> +
+> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
+> +{
+> +	struct tcs_cmd cmd = { 0 };
+> +	u32 cmd_state, on_val;
+> +	enum rpmh_state state = RPMH_SLEEP_STATE;
+> +	int ret = 0;
 
-sound/soc/intel/skylake/skl-topology.c: In function 'skl_fill_sink_instance=
-_id':
-sound/soc/intel/skylake/skl-topology.c:833:45: error: 'struct skl_kpb_param=
-s' has no member named 'u'
-   struct skl_mod_inst_map *inst =3D kpb_params->u.map;
-                                             ^~
-sound/soc/intel/skylake/skl-topology.c: In function 'skl_tplg_find_moduleid=
-_from_uuid':
-sound/soc/intel/skylake/skl-topology.c:953:17: error: 'struct skl_kpb_param=
-s' has no member named 'u'
-     &uuid_params->u.map_uuid[i].mod_uuid);
-                 ^~
-sound/soc/intel/skylake/skl-topology.c:959:10: error: 'struct skl_kpb_param=
-s' has no member named 'u'
-    params->u.map[i].mod_id =3D module_id;
-          ^~
-sound/soc/intel/skylake/skl-topology.c:960:10: error: 'struct skl_kpb_param=
-s' has no member named 'u'
-    params->u.map[i].inst_id =3D
-          ^~
-sound/soc/intel/skylake/skl-topology.c:961:16: error: 'struct skl_kpb_param=
-s' has no member named 'u'
-     uuid_params->u.map_uuid[i].inst_id;
-                ^~
-sound/soc/intel/skylake/skl-topology.c: At top level:
-sound/soc/intel/skylake/skl-topology.c:3544:5: error: conflicting types for=
- 'skl_tplg_init'
- int skl_tplg_init(struct snd_soc_component *component, struct hdac_ext_bus=
- *ebus)
-     ^~~~~~~~~~~~~
-In file included from sound/soc/intel/skylake/skl-topology.c:27:0:
-sound/soc/intel/skylake/skl-topology.h:463:5: note: previous declaration of=
- 'skl_tplg_init' was here
- int skl_tplg_init(struct snd_soc_platform *platform,
-     ^~~~~~~~~~~~~
-sound/soc/intel/skylake/skl-pcm.c: In function 'skl_populate_modules':
-sound/soc/intel/skylake/skl-pcm.c:1351:4: error: implicit declaration of fu=
-nction 'skl_tplg_add_moduleid_in_bind_params'; did you mean 'skl_tplg_updat=
-e_pipe_params'? [-Werror=3Dimplicit-function-declaration]
-    skl_tplg_add_moduleid_in_bind_params(skl, w);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    skl_tplg_update_pipe_params
-sound/soc/intel/skylake/skl-pcm.c: In function 'skl_platform_soc_probe':
-sound/soc/intel/skylake/skl-pcm.c:1372:23: error: passing argument 1 of 'sk=
-l_tplg_init' from incompatible pointer type [-Werror=3Dincompatible-pointer=
--types]
-   ret =3D skl_tplg_init(component, ebus);
-                       ^~~~~~~~~
-In file included from sound/soc/intel/skylake/skl-pcm.c:28:0:
-sound/soc/intel/skylake/skl-topology.h:463:5: note: expected 'struct snd_so=
-c_platform *' but argument is of type 'struct snd_soc_component *'
- int skl_tplg_init(struct snd_soc_platform *platform,
-     ^~~~~~~~~~~~~
+nit: initialization of 'ret' is not needed.
 
-Caused by commit
+> +
+> +	cmd.addr = c->res_addr + c->res_en_offset;
+> +	cmd_state = c->aggr_state;
+> +	on_val = c->res_on_val;
+> +
+> +	for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
 
-  81e9b0a07889 ("ASoC: topology: Give more data to clients via callbacks")
+It would be clearer to initialize 'state' here.
 
-I have used the sound-aoc tree from next-20180416 again today.
+> +		if (has_state_changed(c, state)) {
+> +			cmd.data = (cmd_state & BIT(state)) ? on_val : 0;
+                                                                       ~
+Shouldn't this be c->res_off_val?
 
---=20
-Cheers,
-Stephen Rothwell
+> +			ret = rpmh_write_async(c->rpmh_client, state,
+> +						&cmd, 1);
+> +			if (ret) {
+> +				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
+> +					(!state) ? "sleep" :
+> +					(state == RPMH_WAKE_ONLY_STATE)	?
+> +					"wake" : "active", c->res_name, ret);
+> +				return ret;
+> +			}
+> +		}
+> +	}
+> +
+> +	c->last_sent_aggr_state = c->aggr_state;
+> +	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
+> +
+> +	return 0;
+> +}
+> +
+> +static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
+> +						bool enable)
+> +{
+> +	int ret;
+> +
+> +	/* Update state and aggregate state values based on enable value. */
+> +	c->state = enable ? c->valid_state_mask : 0;
+> +	c->aggr_state = c->state | c->peer->state;
+> +	c->peer->aggr_state = c->aggr_state;
+> +
+> +	ret = clk_rpmh_send_aggregate_command(c);
+> +	if (ret && enable) {
+> +		c->state = 0;
+> +	} else if (ret) {
+> +		c->state = c->valid_state_mask;
+> +		WARN(1, "clk: %s failed to disable\n", c->res_name);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int clk_rpmh_prepare(struct clk_hw *hw)
+> +{
+> +	struct clk_rpmh *c = to_clk_rpmh(hw);
+> +	int ret = 0;
+> +
+> +	mutex_lock(&rpmh_clk_lock);
+> +
+> +	if (c->state)
+> +		goto out;
+> +
+> +	ret = clk_rpmh_aggregate_state_send_command(c, true);
 
---Sig_/H2zGha.o3/DcDidRHMxFlv0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+This ends up calling rpmh_write_async(), hence the operation might
+still be in flight when the function returns. Is this intended?
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrWiHEACgkQAVBC80lX
-0GysGgf/QUgfq2mTWjxAM0s0EQLfHlsPGScVODEH7DMd1d9vXnSqtEhIEo1OA32z
-BY/jQG+u2hgnhD8Q9Jsa7ho1VX6ReuBLlqmSY+ap8N/wXDi9o3WxQn2Ksk5SYIPJ
-Yq0UISTUFLWa7sRUAKDFDgR5X5amw2a5kA1rEK0cjUD00r62J6bNdynm5KqRs/xg
-5IezF2lRJbRn6FDcfoWHt2prosgTgXPqx/TR8tnYPjpZEaKF/TOTxL60uKzFkCor
-l5hYq3jrKWJjJFoKcSYoeZX0OYiYc5NkzrJAJxnU1GjEN43Des9dYhU8ujRHMxTJ
-Jyuvb2vsT4xQ7hFWiG4X7Uz4e/y4kQ==
-=497v
------END PGP SIGNATURE-----
-
---Sig_/H2zGha.o3/DcDidRHMxFlv0--
+> +out:
+> +	mutex_unlock(&rpmh_clk_lock);
+> +	return ret;
+> +};
+> +
+> +static void clk_rpmh_unprepare(struct clk_hw *hw)
+> +{
+> +	struct clk_rpmh *c = to_clk_rpmh(hw);
+> +
+> +	mutex_lock(&rpmh_clk_lock);
+> +
+> +	if (!c->state)
+> +		goto out;
+> +
+> +	clk_rpmh_aggregate_state_send_command(c, false);
+> +out:
+> +	mutex_unlock(&rpmh_clk_lock);
+> +	return;
+> +};
+> +
+> +static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
+> +					  unsigned long parent_rate)
+> +{
+> +	struct clk_rpmh *r = to_clk_rpmh(hw);
+> +
+> +	/*
+> +	 * RPMh clocks have a fixed rate. Return static rate set
+> +	 * at init time.
+> +	 */
+> +	return r->rate;
+> +}
+> +
+> +static const struct clk_ops clk_rpmh_ops = {
+> +	.prepare	= clk_rpmh_prepare,
+> +	.unprepare	= clk_rpmh_unprepare,
+> +	.recalc_rate	= clk_rpmh_recalc_rate,
+> +};
+> +
+> +/* Resource name must match resource id present in cmd-db. */
+> +DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 0x0, 19200000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 19200000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 19200000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 38400000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 38400000);
+> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 38400000);
+> +
+> +static struct clk_hw *sdm845_rpmh_clocks[] = {
+> +	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+> +	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
+> +	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
+> +	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
+> +	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
+> +	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
+> +	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
+> +	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
+> +	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
+> +	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
+> +	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
+> +	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
+> +};
+> +
+> +static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
+> +	.clks = sdm845_rpmh_clocks,
+> +	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
+> +};
+> +
+> +static int clk_rpmh_probe(struct platform_device *pdev)
+> +{
+> +	struct clk **clks;
+> +	struct clk *clk;
+> +	struct rpmh_cc *rcc;
+> +	struct clk_onecell_data *data;
+> +	struct clk_hw **hw_clks;
+> +	struct clk_rpmh *rpmh_clk;
+> +	const struct clk_rpmh_desc *desc;
+> +	struct rpmh_client *rpmh_client;
+> +	struct device *dev;
+> +	size_t num_clks, i;
+> +	int ret;
+> +
+> +	dev = &pdev->dev;
+> +
+> +	ret = cmd_db_ready();
+> +	if (ret) {
+> +		if (ret != -EPROBE_DEFER) {
+> +			dev_err(dev, "Command DB not available (%d)\n",	ret);
+> +			goto fail;
+> +		}
+> +		return ret;
+> +	}
+> +
+> +	rpmh_client = rpmh_get_client(pdev);
+> +	if (IS_ERR(rpmh_client)) {
+> +		ret = PTR_ERR(rpmh_client);
+> +		dev_err(dev, "Failed to request RPMh client, ret=%d\n",	ret);
+> +		return ret;
+> +	}
+> +
+> +	desc = of_device_get_match_data(&pdev->dev);
+> +	hw_clks = desc->clks;
+> +	num_clks = desc->num_clks;
+> +
+> +	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * num_clks,
+> +			   GFP_KERNEL);
+> +	if (!rcc) {
+> +		ret = -ENOMEM;
+> +		goto err;
+> +	}
+> +
+> +	clks = rcc->clks;
+> +	data = &rcc->data;
+> +	data->clks = clks;
+> +	data->clk_num = num_clks;
+> +
+> +	for (i = 0; i < num_clks; i++) {
+> +		rpmh_clk = to_clk_rpmh(hw_clks[i]);
+> +		rpmh_clk->res_addr = cmd_db_read_addr(rpmh_clk->res_name);
+> +		if (!rpmh_clk->res_addr) {
+> +			dev_err(dev, "missing RPMh resource address for %s\n",
+> +					rpmh_clk->res_name);
+> +			ret = -ENODEV;
+> +			goto err;
+> +		}
+> +
+> +		rpmh_clk->rpmh_client = rpmh_client;
+> +
+> +		clk = devm_clk_register(&pdev->dev, hw_clks[i]);
+> +		if (IS_ERR(clk)) {
+> +			ret = PTR_ERR(clk);
+> +			dev_err(dev, "failed to register %s\n",
+> +					hw_clks[i]->init->name);
+> +			goto err;
+> +		}
+> +
+> +		clks[i] = clk;
+> +		rpmh_clk->dev = &pdev->dev;
+> +	}
+> +
+> +	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
+> +				  data);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to add clock provider\n");
+> +		goto err;
+> +	}
+> +
+> +	dev_dbg(dev, "Registered RPMh clocks\n");
+> +
+> +	return 0;
+> +err:
+> +	if (rpmh_client)
+> +		rpmh_release(rpmh_client);
+> +fail:
+> +	dev_err(dev, "Error registering RPMh Clock driver (%d)\n", ret);
+> +	return ret;
+> +}
+> +
+> +static int clk_rpmh_remove(struct platform_device *pdev)
+> +{
+> +	const struct clk_rpmh_desc *desc =
+> +			of_device_get_match_data(&pdev->dev);
+> +	struct clk_hw **hw_clks = desc->clks;
+> +	struct clk_rpmh *rpmh_clk = to_clk_rpmh(hw_clks[0]);
+> +
+> +	rpmh_release(rpmh_clk->rpmh_client);
+> +	of_clk_del_provider(pdev->dev.of_node);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id clk_rpmh_match_table[] = {
+> +	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
+> +
+> +static struct platform_driver clk_rpmh_driver = {
+> +	.probe		= clk_rpmh_probe,
+> +	.remove		= clk_rpmh_remove,
+> +	.driver		= {
+> +		.name	= "clk-rpmh",
+> +		.of_match_table = clk_rpmh_match_table,
+> +	},
+> +};
+> +
+> +static int __init clk_rpmh_init(void)
+> +{
+> +	return platform_driver_register(&clk_rpmh_driver);
+> +}
+> +subsys_initcall(clk_rpmh_init);
+> +
+> +static void __exit clk_rpmh_exit(void)
+> +{
+> +	platform_driver_unregister(&clk_rpmh_driver);
+> +}
+> +module_exit(clk_rpmh_exit);
+> +
+> +MODULE_DESCRIPTION("QCOM RPMh Clock Driver");
+> +MODULE_LICENSE("GPL v2");
