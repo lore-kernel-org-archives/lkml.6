@@ -1,190 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753082AbeDQPM6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:12:58 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50664 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752682AbeDQPM4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:12:56 -0400
-Subject: Re: [PATCH v4 05/15] KVM: s390: enable/disable AP interpretive
- execution
-To: Halil Pasic <pasic@linux.vnet.ibm.com>,
-        Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, berrange@redhat.com, fiuczy@linux.vnet.ibm.com,
-        buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <15b60572-40d6-0f03-11f9-c50cb7eb00e8@linux.vnet.ibm.com>
- <15bb0c9b-e605-232b-4dd2-826b6ee0d045@linux.vnet.ibm.com>
- <c939ca13-db4c-94c2-5af6-b31a0d31f5ac@linux.vnet.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Tue, 17 Apr 2018 11:12:34 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1752580AbeDQPQ5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:16:57 -0400
+Received: from imap.thunk.org ([74.207.234.97]:51052 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751193AbeDQPQz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 11:16:55 -0400
+Date: Tue, 17 Apr 2018 11:16:50 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: repeatable boot randomness inside KVM guest
+Message-ID: <20180417151650.GA16738@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20180414195921.GA10437@avx2>
+ <20180414224419.GA21830@thunk.org>
+ <20180415004134.GB15294@bombadil.infradead.org>
+ <1523956414.3250.5.camel@HansenPartnership.com>
+ <20180417114728.GA21954@bombadil.infradead.org>
+ <1523966232.3250.15.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <c939ca13-db4c-94c2-5af6-b31a0d31f5ac@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041715-0044-0000-0000-00000405E5AB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008871; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01019261; UDB=6.00519973; IPR=6.00798503;
- MB=3.00020618; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 15:12:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041715-0045-0000-0000-00000837E9F4
-Message-Id: <1095c82f-d5b3-b878-64cb-61069e12a5cf@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170135
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523966232.3250.15.camel@HansenPartnership.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/2018 07:52 AM, Halil Pasic wrote:
->
-> On 04/16/2018 01:13 PM, Pierre Morel wrote:
->> On 16/04/2018 12:51, Pierre Morel wrote:
->>> On 15/04/2018 23:22, Tony Krowiak wrote:
->>>> The VFIO AP device model exploits interpretive execution of AP
->>>> instructions (APIE) to provide guests passthrough access to AP
->>>> devices. This patch introduces a new interface to enable and
->>>> disable APIE.
->>>>
->>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>>> ---
->>>>    arch/s390/include/asm/kvm-ap.h   |   16 ++++++++++++++++
->>>>    arch/s390/include/asm/kvm_host.h |    1 +
->>>>    arch/s390/kvm/kvm-ap.c           |   20 ++++++++++++++++++++
->>>>    arch/s390/kvm/kvm-s390.c         |    9 +++++++++
->>>>    4 files changed, 46 insertions(+), 0 deletions(-)
->>>>
->>>> diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
->>>> index 736e93e..a6c092e 100644
->>>> --- a/arch/s390/include/asm/kvm-ap.h
->>>> +++ b/arch/s390/include/asm/kvm-ap.h
->>>> @@ -35,4 +35,20 @@
->>>>     */
->>>>    void kvm_ap_build_crycbd(struct kvm *kvm);
->>>>
->>>> +/**
->>>> + * kvm_ap_interpret_instructions
->>>> + *
->>>> + * Indicate whether AP instructions shall be interpreted. If they are not
->>>> + * interpreted, all AP instructions will be intercepted and routed back to
->>>> + * userspace.
->>>> + *
->>>> + * @kvm: the virtual machine attributes
->>>> + * @enable: indicates whether AP instructions are to be interpreted (true) or
->>>> + *        or not (false).
->>>> + *
->>>> + * Returns 0 if completed successfully; otherwise, returns -EOPNOTSUPP
->>>> + * indicating that AP instructions are not installed on the guest.
->>>> + */
->>>> +int kvm_ap_interpret_instructions(struct kvm *kvm, bool enable);
->>>> +
->>>>    #endif /* _ASM_KVM_AP */
->>>> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
->>>> index 3162783..5470685 100644
->>>> --- a/arch/s390/include/asm/kvm_host.h
->>>> +++ b/arch/s390/include/asm/kvm_host.h
->>>> @@ -715,6 +715,7 @@ struct kvm_s390_crypto {
->>>>        __u32 crycbd;
->>>>        __u8 aes_kw;
->>>>        __u8 dea_kw;
->>>> +    __u8 apie;
->>>>    };
->>>>
->>>>    #define APCB0_MASK_SIZE 1
->>>> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
->>>> index 991bae4..55d11b5 100644
->>>> --- a/arch/s390/kvm/kvm-ap.c
->>>> +++ b/arch/s390/kvm/kvm-ap.c
->>>> @@ -58,3 +58,23 @@ void kvm_ap_build_crycbd(struct kvm *kvm)
->>>>        }
->>>>    }
->>>>    EXPORT_SYMBOL(kvm_ap_build_crycbd);
->>>> +
->>>> +int kvm_ap_interpret_instructions(struct kvm *kvm, bool enable)
->>>> +{
->>>> +    int ret = 0;
->>>> +
->>>> +    mutex_lock(&kvm->lock);
->>>> +
->>>> +    if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP)) {
->>> Do we really need to test CPU_FEAT_AP?
->>>
->>> I understand that KVM_S390_VM_CPU_FEAT_AP means AP instructions are interpreted.
->>> shouldn't we add this information in the name?
->>> like KVM_S390_VM_CPU_FEAT_APIE
->> If I misunderstood and FEAT_AP really mean AP instructions available in the guest,
->> same question:
->> is this function called if AP instructions are not available in the guest?
->>
-> See patch #13. I guess the check above is anyway good as defensive
-> programming. This implementation should be sane regardless of
-> the answer to your question.
+On Tue, Apr 17, 2018 at 12:57:12PM +0100, James Bottomley wrote:
+> 
+> You don't have to compromise the bootloader to influence this, you
+> merely have to trick it into providing the random number you wanted. 
+> The bigger you make the attack surface (the more inputs) the more
+> likelihood of finding a trick that works.
 
-I agree.
+There is a large class of devices where the bootloader can be
+considered trusted.  For example, all modern Chrome and Android
+devices have signed bootloaders by default.  And if you are using an
+Amazon or Chrome VM, you are generally started it with a known,
+trusted boot image.
 
->
->>>> +        ret = -EOPNOTSUPP;
->>>> +        goto done;
->>>> +    }
->>>> +
->>>> +    kvm->arch.crypto.apie = enable;
->>>> +    kvm_s390_vcpu_crypto_reset_all(kvm);
->>>> +
->>>> +done:
->>>> +    mutex_unlock(&kvm->lock);
->>>> +    return ret;
->>>> +}
->>>> +EXPORT_SYMBOL(kvm_ap_interpret_instructions);
->>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->>>> index 55cd897..1dc8566 100644
->>>> --- a/arch/s390/kvm/kvm-s390.c
->>>> +++ b/arch/s390/kvm/kvm-s390.c
->>>> @@ -1901,6 +1901,9 @@ static void kvm_s390_crypto_init(struct kvm *kvm)
->>>>        kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
->>>>        kvm_ap_build_crycbd(kvm);
->>>>
->>>> +    /* Default setting indicating SIE shall interpret AP instructions */
->>>> +    kvm->arch.crypto.apie = 1;
->>>> +
->>>>        if (!test_kvm_facility(kvm, 76))
->>>>            return;
->>>>
->>>> @@ -2434,6 +2437,12 @@ static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->>>>    {
->>>>        vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->>>>
->>>> +    vcpu->arch.sie_block->eca &= ~ECA_APIE;
->>>> +    if (vcpu->kvm->arch.crypto.apie &&
->>>> +        test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
->>> Do we call xxx_crypto_setup() if KVM does not support AP interpretation?
->> sorry, I should have written AP instructions here:
->> is this function called if AP instructions are not available in the guest?
->>
-> Yes, this function can be called with AP instructions available to the guest.
-> Please have a look at patch 2 (kvm_s390_vm_set_crypto and the rest).
->
-> Also this function is called on initialization regardless of AP instructions.
->
->>>> +        vcpu->arch.sie_block->eca |= ECA_APIE;
->>>> +
->>>> +
->>>>        if (!test_kvm_facility(vcpu->kvm, 76))
->>>>            return;
->>>>
+The reason why it's useful to have the bootloader get the entropy is
+because it may device-specific access and be able to leverage whatever
+infrastructure was used to load the kernel and/or intialramfs to also
+load the equivalent of /var/lib/systemd/random-seed (or
+/var/lib/urandom, et. al) --- and do this early enough that we can
+have truely secure randomness for those kernel faciliteis that need
+access to real randomness to initialize the stack canary, or
+initializing the slab cache.
+
+There are other ways that this could be done, of course.  If the UEFI
+boot services are still available, you might be able to ask the UEFI
+services to give you randomness.  And yes, the hardware might be
+backdoored to the fare-the-well by the MSS (for devices manufactured
+in China) or by an NSA Tailored Access Operations intercepting a
+computer shipment in transit.  But my vision was that this wouldn't
+necessarily bump the entropy accounting or mark the CRNG as fully
+intialized.  (If you work for the NSA and you're sure you won't do an
+own-goal, you could enable a kernel boot option which marks the CRNG
+initialized from entropy coming from UEFI or RDRAND or a TPM.  But I
+don't think it should be the default.)
+
+The only goal was to get enough uncertainty so we can secure early
+kernel users of entropy for security features such as kernel ASLR, the
+kernel stack canary, SLAB freelist randomization, etc.
+
+And by the way --- if you think it is easy / possible to get secure
+random numbers easily from either a TPMv1 or TPMv2 w/o any early boot
+services (e.g., no interrupts, no DMA, no page tables, no memory
+allocation) that would be really good to know.
+
+Cheers,
+
+> No, entropy mixing ensures that all you do with bad entropy is degrade
+> the quality, but if the quality degrades to zero (as it might at boot
+> when you've no other entropy sources so you feed in 100% bad entropy),
+> then the random sequences become predictable.
+
+Actually, if you have good entropy mixing, you can mix super-bad
+entropy --- e.g., completely known by the attacker, and it won't make
+the entropy pool any worse.  It can only help.
+
+It does require that the entropy mixing algorithm should be
+reversible, so that mixing in even a fully known sequence will not
+cause uncertainty to be lost.  The input_pool in the random driver is
+designed in such a way, which is why /dev/[u]random is world-writable.
+Anyone can contribute potential uncertainty into the pool.  Regardless
+of whether they have zero, partial, or full knowledge of the internal
+random state, they won't have any more certainty of the pool after
+they mix in their contribution.  And an attacker which does not know
+the contribution, and who might have partial knowledge of the pool,
+will less knowledge about the internal state afterwards.
+
+Cheers,
+
+					- Ted
