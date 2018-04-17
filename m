@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+SiIUsMZ0sKkj25m+Lp01Q8rWt7yO0dqyYj4ELYAJfqzQ8HFmMhTv2hlKz+c1tuNvnIMqY
-ARC-Seal: i=1; a=rsa-sha256; t=1523980889; cv=none;
+X-Google-Smtp-Source: AIpwx49MItKJEWYF/RMucEDsQl7BMNWKpAWkTK7yPesc0Y4tD8lDCUvA6rjzHaAHgvXpb+299yaL
+ARC-Seal: i=1; a=rsa-sha256; t=1523980883; cv=none;
         d=google.com; s=arc-20160816;
-        b=XldZ1oKsIuld5jNFundqo4zGaIDf4UbiMyGSQz1MIgVMuhkT9JtC/ubxyr/GFwNmk2
-         EWHWNEYZq0WlpF9G9XloX9686nDQpXSDCgEq80lNF0cK+z5Fz0JkNrFv5tPf/s+EmvYF
-         jpxgbAvkYl+9pZtcd4TSwOMn0ilemgx7BbAx++b78U1TKAYyhILIP2g6wViM1eD78YHv
-         gVYPxkXTfPPMzOJ9rOxKOrQsElfpYGNmWVwcGOVp5nUNVF94Beax1WBGu25esPNpac4G
-         BPjfxsZXNuBAKtwX10MTQVXgnyyDls4xOpiuKm8On6WWZ3WgALduocElYsGWjySfHrk7
-         N+0Q==
+        b=COKzdEBEMqEfD+ZXNwICnHzgHY1AzPfbB4aJkbORkl5XiFIvqkbDe/G+ZjlQcMsfmh
+         XOxCo4uid7kI5ewML+Sl/WYTI4Z5uPZrzASJ5YoIqwaKuvbgYwAGrcnXXftzQPnufI83
+         /UIiyfxm+B+yaBLu/3LGeuG5Ey9EDWSzfER819CapRfPbLYdui0ASj8K7KdTYG8CLawz
+         7g4IsywFfhEXp4KM5ubrHgQOX7V2hFRVfkXBq+toUzVvtkRZx0jRpGHtxN9wt0iX9yWW
+         udZTuo1t8Ki/876qWDzo+X74JVfwpAJB7wDDxBzvL8BPKB71WtJdkIhrrdx6TAWsLkXD
+         20xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=uEE5SrSo9W2yAsFiT+qNw/r4Iv5UKKcylOUSga4ejhw=;
-        b=xlWmzp+xc3PoEzkzgET3BlJpZNeAkzXEKnOFEn6qrQmktGTX7cBKV0/1GHYP2mnZlJ
-         DjBk5iZnRw150l2o4LW9s+qnWRKv9OPzYolkgP7Y/2gJO0Qc9hPnrVci6X6zfx1sIQA+
-         d1E5Feo66Pza3tXvkXzK/6vazN3S3F++SYMa23I3urCPZiXvabGvKaTELrjNRa71fDOj
-         uQhEvZajb/UFqRZUXtli6S1gOsnLzvvuS4RdnQREI48/su7SmYe+gc6m+hmaiCrGecZF
-         boGGCNNO6p54Mk1TpjEvtp/cOZmBYS+s2+5OJZBkWrtIZLGeGFGAKiikoeqaWZEpQpHA
-         04lA==
+        bh=sZRmsWK9SMWC43KS7ylAtDFoP3tC4ed0xQF+J/gDzC4=;
+        b=ZRm9FwWsyzjltYzJ1O3zuNrWUTAN8Fsbbm5ow2f1Za1pXo24a6ygnHLmoeDcNjaqES
+         O919Qv1iniV/BxW3Ly6e3WsyRwYyXro2QFmEnB97GHlNTlUBSi8GpTciEVSBAWvi4ibW
+         jdg/RZP4zTi7CbF3fxI0bL/uIw3ZQW2J0puCgzFOcBm/Y5MV/gcxPG1yG7jSpyAVB/XY
+         rLrCIYftLhtecwcA2Z2zm8uf4m1cryiLUGLXVA/cIMbWGbPh1G1vMiwGUHiLZ1KDinaX
+         9PNeEvqu/KhbM3DpcbC1yttKj0z6GFQl5o6jdGsSXP+3NZpfjxffDD2z2aRhvTyfNwVa
+         F7Tg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,19 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Omar Sandoval <osandov@fb.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.16 41/68] blk-mq: order getting budget and driver tag
-Date: Tue, 17 Apr 2018 17:57:54 +0200
-Message-Id: <20180417155750.999593927@linuxfoundation.org>
+	Huacai Chen <chenhc@lemote.com>,
+	James Hogan <jhogan@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Rich Felker <dalias@libc.org>,
+	Ralf Baechle <ralf@linux-mips.org>,
+	Russell King <linux@arm.linux.org.uk>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Ingo Molnar <mingo@elte.hu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 39/68] zboot: fix stack protector in compressed boot phase
+Date: Tue, 17 Apr 2018 17:57:52 +0200
+Message-Id: <20180417155750.920900508@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -43,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009784816995673?=
-X-GMAIL-MSGID: =?utf-8?q?1598009784816995673?=
+X-GMAIL-THRID: =?utf-8?q?1598009779318755042?=
+X-GMAIL-MSGID: =?utf-8?q?1598009779318755042?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,95 +57,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit 0bca799b92807ee9be0890690f5dde7d8c6a8e25 upstream.
+commit 7bbaf27d9c83037b6e60a818e57bdbedf6bc15be upstream.
 
-This patch orders getting budget and driver tag by making sure to acquire
-driver tag after budget is got, this way can help to avoid the following
-race:
+Calling __stack_chk_guard_setup() in decompress_kernel() is too late
+that stack checking always fails for decompress_kernel() itself.  So
+remove __stack_chk_guard_setup() and initialize __stack_chk_guard before
+we call decompress_kernel().
 
-1) before dispatch request from scheduler queue, get one budget first, then
-dequeue a request, call it request A.
+Original code comes from ARM but also used for MIPS and SH, so fix them
+together.  If without this fix, compressed booting of these archs will
+fail because stack checking is enabled by default (>=4.16).
 
-2) in another IO path for dispatching request B which is from hctx->dispatch,
-driver tag is got, then try to get budget in blk_mq_dispatch_rq_list(),
-unfortunately the budget is held by request A.
-
-3) meantime blk_mq_dispatch_rq_list() is called for dispatching request
-A, and try to get driver tag first, unfortunately no driver tag is
-available because the driver tag is held by request B
-
-4) both two IO pathes can't move on, and IO stall is caused.
-
-This issue can be observed when running dbench on USB storage.
-
-This patch fixes this issue by always getting budget before getting
-driver tag.
-
-Cc: stable@vger.kernel.org
-Fixes: de1482974080ec9e ("blk-mq: introduce .get_budget and .put_budget in blk_mq_ops")
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Link: http://lkml.kernel.org/r/1522226933-29317-1-git-send-email-chenhc@lemote.com
+Fixes: 8779657d29c0 ("stackprotector: Introduce CONFIG_CC_STACKPROTECTOR_STRONG")
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Acked-by: James Hogan <jhogan@kernel.org>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Rich Felker <dalias@libc.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Ingo Molnar <mingo@elte.hu>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-mq.c |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ arch/arm/boot/compressed/misc.c        |    9 +--------
+ arch/mips/boot/compressed/decompress.c |    9 +--------
+ arch/sh/boot/compressed/misc.c         |    9 +--------
+ 3 files changed, 3 insertions(+), 24 deletions(-)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1188,7 +1188,12 @@ bool blk_mq_dispatch_rq_list(struct requ
- 		struct blk_mq_queue_data bd;
+--- a/arch/arm/boot/compressed/misc.c
++++ b/arch/arm/boot/compressed/misc.c
+@@ -128,12 +128,7 @@ asmlinkage void __div0(void)
+ 	error("Attempting division by 0!");
+ }
  
- 		rq = list_first_entry(list, struct request, queuelist);
--		if (!blk_mq_get_driver_tag(rq, &hctx, false)) {
-+
-+		hctx = blk_mq_map_queue(rq->q, rq->mq_ctx->cpu);
-+		if (!got_budget && !blk_mq_get_dispatch_budget(hctx))
-+			break;
-+
-+		if (!blk_mq_get_driver_tag(rq, NULL, false)) {
- 			/*
- 			 * The initial allocation attempt failed, so we need to
- 			 * rerun the hardware queue when a tag is freed. The
-@@ -1197,8 +1202,7 @@ bool blk_mq_dispatch_rq_list(struct requ
- 			 * we'll re-run it below.
- 			 */
- 			if (!blk_mq_mark_tag_wait(&hctx, rq)) {
--				if (got_budget)
--					blk_mq_put_dispatch_budget(hctx);
-+				blk_mq_put_dispatch_budget(hctx);
- 				/*
- 				 * For non-shared tags, the RESTART check
- 				 * will suffice.
-@@ -1209,11 +1213,6 @@ bool blk_mq_dispatch_rq_list(struct requ
- 			}
- 		}
- 
--		if (!got_budget && !blk_mq_get_dispatch_budget(hctx)) {
--			blk_mq_put_driver_tag(rq);
--			break;
--		}
+-unsigned long __stack_chk_guard;
 -
- 		list_del_init(&rq->queuelist);
+-void __stack_chk_guard_setup(void)
+-{
+-	__stack_chk_guard = 0x000a0dff;
+-}
++const unsigned long __stack_chk_guard = 0x000a0dff;
  
- 		bd.rq = rq;
-@@ -1812,11 +1811,11 @@ static blk_status_t __blk_mq_try_issue_d
- 	if (q->elevator && !bypass_insert)
- 		goto insert;
+ void __stack_chk_fail(void)
+ {
+@@ -150,8 +145,6 @@ decompress_kernel(unsigned long output_s
+ {
+ 	int ret;
  
--	if (!blk_mq_get_driver_tag(rq, NULL, false))
-+	if (!blk_mq_get_dispatch_budget(hctx))
- 		goto insert;
+-	__stack_chk_guard_setup();
+-
+ 	output_data		= (unsigned char *)output_start;
+ 	free_mem_ptr		= free_mem_ptr_p;
+ 	free_mem_end_ptr	= free_mem_ptr_end_p;
+--- a/arch/mips/boot/compressed/decompress.c
++++ b/arch/mips/boot/compressed/decompress.c
+@@ -76,12 +76,7 @@ void error(char *x)
+ #include "../../../../lib/decompress_unxz.c"
+ #endif
  
--	if (!blk_mq_get_dispatch_budget(hctx)) {
--		blk_mq_put_driver_tag(rq);
-+	if (!blk_mq_get_driver_tag(rq, NULL, false)) {
-+		blk_mq_put_dispatch_budget(hctx);
- 		goto insert;
- 	}
+-unsigned long __stack_chk_guard;
+-
+-void __stack_chk_guard_setup(void)
+-{
+-	__stack_chk_guard = 0x000a0dff;
+-}
++const unsigned long __stack_chk_guard = 0x000a0dff;
  
+ void __stack_chk_fail(void)
+ {
+@@ -92,8 +87,6 @@ void decompress_kernel(unsigned long boo
+ {
+ 	unsigned long zimage_start, zimage_size;
+ 
+-	__stack_chk_guard_setup();
+-
+ 	zimage_start = (unsigned long)(&__image_begin);
+ 	zimage_size = (unsigned long)(&__image_end) -
+ 	    (unsigned long)(&__image_begin);
+--- a/arch/sh/boot/compressed/misc.c
++++ b/arch/sh/boot/compressed/misc.c
+@@ -104,12 +104,7 @@ static void error(char *x)
+ 	while(1);	/* Halt */
+ }
+ 
+-unsigned long __stack_chk_guard;
+-
+-void __stack_chk_guard_setup(void)
+-{
+-	__stack_chk_guard = 0x000a0dff;
+-}
++const unsigned long __stack_chk_guard = 0x000a0dff;
+ 
+ void __stack_chk_fail(void)
+ {
+@@ -130,8 +125,6 @@ void decompress_kernel(void)
+ {
+ 	unsigned long output_addr;
+ 
+-	__stack_chk_guard_setup();
+-
+ #ifdef CONFIG_SUPERH64
+ 	output_addr = (CONFIG_MEMORY_START + 0x2000);
+ #else
