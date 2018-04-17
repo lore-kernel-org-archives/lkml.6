@@ -1,99 +1,83 @@
-Return-Path: <jrdr.linux@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523976721; cv=none;
+Return-Path: <andrew.donnellan@au1.ibm.com>
+X-Google-Smtp-Source: AIpwx480egSafwqPRAko4iuQtwM6tqVXtgvavoo19FjiwUyPyaACrsWCACgsCRYbJ7DM7Q4QE/0+
+ARC-Seal: i=1; a=rsa-sha256; t=1524009097; cv=none;
         d=google.com; s=arc-20160816;
-        b=LIdOvSxZ1mRke7+IeeSRg2/wxUYCAJWXuAanOhA4mA5c+VTQ9quAVYSRuBUsPTiW1W
-         +LEFf1bTBwL8SDEn3EK29F8CVjtLblWv5aqtw3OLinX0MyE4XGiFuX9um0K2vuWoKPzp
-         +xSYOkePJvT9sk1e67oh2yrpYUtlHdskHM/Kdf1K/mGFSia/BGYyj7v4h82ndOPfQkkX
-         ENemmnmlwonokNE8AV68HS7O3NIZKSXJKbjmW/JUec8qzI+zsD1Xie+9Dx38hMiAfAUs
-         qPDX9uu2owd0o/Kz9aynt7GQfu6nxAfnD/LUe0L4R6Ng0FpThrqBmCmEVXwq5+rtC3sq
-         XN+A==
+        b=o44+MIZFeDXkoGKXtOQlUwDMPHXp8BNHcb5ritR+BKU6jk8q1MHKPHLfAIeYilf8MX
+         fJoMx0weiuy3WhAbMbrVndF6ILEkr6t+WiVDyZeNUZ0dPG7PJPXTQjOv4CF5aXx4vYxS
+         Nwll0IkNu0eNdeHOYwzcV2DjEStmOhVSTSeNuxWsXv5LS5RyVZWVWAGz3DBKpKdzk/Px
+         pe7UxNrn9mRL3m7KIlGyV8qcaEEvv+3w3FNe2ZC9hiTu5BhQUj9IHO18+/WaVfs5kmH9
+         wLB6VwG+Im+5UqRd/ZI/HQQbqocMAXVMVi6Fc7+0yZxt+icYutMrzoG2LCt2bHQJiCbd
+         uO1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=OPntlKhMG5e2pg1hTjNfD9IbVlVYA6OG2CjX1eJinaQ=;
-        b=byaJUtHBHcF0V5H8Znbp21m+sdqqGp4EnFOaZFAdu1QfEbA2UHua5eyIq/sluSSuJ9
-         stA5iUa02dKmIAuCnrSdHPIv+c444W7SKKU1rnnWDpQbdpPn75DON5NRfZk+98E7mYVC
-         P7+fC5uLtP4siJf5owBE1FtaSNZM7deWdeOCAotrCrIpwxMot7/dltxLSknppKDEkLpG
-         5LP+s026XUXLvKUHSKE1qULXImhUJpomoQmSO97TKVPmbVO3E5WXwOCKaf6VOlTCNVPx
-         65X36Gx8y0TZaxglR/L5nKV/T41OI0TsClVhMCa2f+8pPB7vIrmSbKmOUwZuKSldE4WR
-         y0aw==
+        h=message-id:content-transfer-encoding:content-language:in-reply-to
+         :mime-version:user-agent:date:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=GPURw3QN9bQaSLcU6o4Fck5xhxaegaWb3kQo0LFXmWc=;
+        b=CHhtmyTjHHSPSpu+NExs25I93l48Iag5RJqJHSbKwS82m2V/XrMYBtNtB81Ge4D6zZ
+         cWAr7p3U/NaDnjVQ+ylD8MR03GB4Rje0yvN4cHBuJ9bd7CLwMxcc5Ara4WWLXQTIoxin
+         ldigFV37SjT3HbdDgzygCNZBFBM0wt5r0fv5vL/BUJp5bIA8mpBm8kbj0gacQ7kMEpDD
+         nU4AEosL7oW8ssyCLzZqKTRzkvvW+L1WhhrJj3XdTSrWQG5cNnNLKa0cRcdK4BVb8rnH
+         8mzifIF3Ji3L23nneKEC+72HDAAB+i+ETM3n13Nlwa4qcZyOUsCwn71EWEA6XfgFOU+R
+         M1GA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IHzIJ1S+;
-       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of andrew.donnellan@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=andrew.donnellan@au1.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=IHzIJ1S+;
-       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx4/Ajtd7/iOpKkaSinPateJY+vW6QiRTJNpm9biPN2w6rvOIlIMVo7wQmz38My3XMCvvWc9+fQ==
-Date: Tue, 17 Apr 2018 20:23:54 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: fbarrat@linux.vnet.ibm.com, andrew.donnellan@au1.ibm.com, arnd@arndb.de,
-	gregkh@linuxfoundation.org
+       spf=pass (google.com: domain of andrew.donnellan@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=andrew.donnellan@au1.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+Subject: Re: [PATCH] misc: cxl: Change return type to vm_fault_t
+To: Souptick Joarder <jrdr.linux@gmail.com>, fbarrat@linux.vnet.ibm.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org
 Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	willy@infradead.org
-Subject: [PATCH] misc: cxl: Change return type to vm_fault_t
-Message-ID: <20180417145354.GA31451@jordon-HP-15-Notebook-PC>
+        willy@infradead.org
+References: <20180417145354.GA31451@jordon-HP-15-Notebook-PC>
+From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date: Wed, 18 Apr 2018 09:51:27 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180417145354.GA31451@jordon-HP-15-Notebook-PC>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041723-0040-0000-0000-000004302257
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041723-0041-0000-0000-000026342F99
+Message-Id: <384a35d1-30dd-55d1-4a19-d7c9dc99bdfb@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170206
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598005414798688515?=
-X-GMAIL-MSGID: =?utf-8?q?1598005414798688515?=
+X-GMAIL-MSGID: =?utf-8?q?1598039363533169432?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On 18/04/18 00:53, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+> 
+> Reference id -> 1c8f422059ae ("mm: change return type to
+> vm_fault_t")
+> 
+> previously cxl_mmap_fault returns VM_FAULT_NOPAGE as
+> default value irrespective of vm_insert_pfn() return
+> value. This bug is fixed with new vmf_insert_pfn()
+> which will return VM_FAULT_ type based on err.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-Reference id -> 1c8f422059ae ("mm: change return type to
-vm_fault_t")
+This looks good to me
 
-previously cxl_mmap_fault returns VM_FAULT_NOPAGE as
-default value irrespective of vm_insert_pfn() return
-value. This bug is fixed with new vmf_insert_pfn()
-which will return VM_FAULT_ type based on err.
-
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
----
- drivers/misc/cxl/context.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/cxl/context.c b/drivers/misc/cxl/context.c
-index 7ff315a..c6ec872 100644
---- a/drivers/misc/cxl/context.c
-+++ b/drivers/misc/cxl/context.c
-@@ -128,11 +128,12 @@ void cxl_context_set_mapping(struct cxl_context *ctx,
- 	mutex_unlock(&ctx->mapping_lock);
- }
-
--static int cxl_mmap_fault(struct vm_fault *vmf)
-+static vm_fault_t cxl_mmap_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct cxl_context *ctx = vma->vm_file->private_data;
- 	u64 area, offset;
-+	vm_fault_t ret;
-
- 	offset = vmf->pgoff << PAGE_SHIFT;
-
-@@ -169,11 +170,11 @@ static int cxl_mmap_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
- 	}
-
--	vm_insert_pfn(vma, vmf->address, (area + offset) >> PAGE_SHIFT);
-+	ret = vmf_insert_pfn(vma, vmf->address, (area + offset) >> PAGE_SHIFT);
-
- 	mutex_unlock(&ctx->status_mutex);
-
--	return VM_FAULT_NOPAGE;
-+	return ret;
- }
-
- static const struct vm_operations_struct cxl_mmap_vmops = {
---
-1.9.1
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
