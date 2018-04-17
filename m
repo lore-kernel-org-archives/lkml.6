@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1535273-1523962006-2-10892564793885910364
+X-Cyrus-Session-Id: sloti22d1t05-1716434-1523967902-2-2925763975468967143
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: yes ("Address greg@kroah.com in From header is in addressbook");
- in-addressbook; shared/fdfaecbe-d8f0-4518-a17e-0d89bf6dc529 ("Greg")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -13,66 +13,67 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523962006; b=XBp1k9sw4yQq7o9InHKBbSpjHs2rF6Q1HQXZQlNHttyuiRsnfV
-    NsLXrbn2Mzbyt1uabbjE4KP8EcL766roEaERijkHjSEfOtAzs+etZmgPN/ylGb3G
-    8fBa6dBKGYWPnYWO8YQOlenUbDxYEowbc5sr2Y7So9yNpJq+STuOEdhoSr4Z8+xz
-    AYCjd4MByXgEPVKjxJ/QxlZv8C9yM3FR8aAbgrzaFMS9b+ElqQQpL+0C2gJKGUqg
-    UYKQdiuTKpD26ipe/cMVyf/4mJQQHTuES1UpLnus9vg6czuaW+lKANsFG1P4eAlz
-    VjnEL8JDhaV/aDwCDxdqS5lcg9DgRE5v0HrQ==
+    1523967901; b=hh6YB+SKetRRQ51ofXCR/woi0SPz4aIE8AMrZF978zZyEu31X+
+    IE4XB1t+x0kauBz4h5RLvAZfPxAXrIPf0AJNwM+LYAxhJkJtNr/dZdJAdXoOGTOE
+    mfF4TvpmWukNIrL3++N6CfdndVyX4LimfOpRrfwZThS65W0Eqduf0ucBcB7dDwl8
+    X7NCtsAHoySD0YZzFPTh4ENZRft7wUCZENPeSnSyLkcj2IK9p/IMB2EBQ3hP37Jd
+    zmC49fjAg1X+GTxQ4s7nE5bPDvmYtFURo7NAMSosikDzwQcvu6eVNvUaLiVTd4Ty
+    5HYhOKI951FxCNDsiBdBspQFdsek5WfKNapg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523962006; bh=kItfi/iZ7JCBTvdV0HKvw3inLTwHtR
-    a8WcXRci7HoGk=; b=K4OtqzFgZge82x1LCLXyymIw/p0GPSLCVBAaaJ6JwZy7uT
-    +a49OLMqU6E2j3DB33HSWT9D9srl2l70uel9H+nkX3JwLXfxJtSShQQUmUwzYjEj
-    Ufk0iwOxWNZW4msFEMhLfBr5pS0Aud0ciqrrDcUiohPlI3KkCBtyYX/uzetfYzxs
-    AXCnn7uEOsDmfoj+b9CAPfyjlx/gbgHNO3wmBswoPSAy080qlfzW83hbTYrrygNy
-    uLk7PDlYGv6N64iO11T22ftvH8JZagOdo0xZz9tNJRNSqjIuXgQ5t2lllACVJs3E
-    M9vYKjO8YQFWHUqdGuOX2i6OgbSsTKJLqDJM2f9g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=eeOWfW5+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
+    :list-id; s=fm2; t=1523967901; bh=QNbd+eNrADlxgtV8NBkylfxHSYPXTR
+    sjgxNosvnlYQo=; b=k2xAcA6TesV5ADXlFSz5Ueg4jW7FKBNTvG15vrss4npOgJ
+    1pSrBNeuYEaN5/YW/hFUuGRBEFCN4Y4WNbREuyHieEQ9rJk0UM60LUjnfMyfybDt
+    bTBoKy0fQxMaZAKZYPlJomUN+XIg41WAyLYYyM6BFmXfoQP4s+2hc29pRZt1aAQD
+    9ImuiVJDWUf2mTMdKAEuakGtnrXr3Rbtk0ajpyzofS8p1zXlyy996eBhlQwOe4tU
+    Z1OXzNT7cIHc5i4KqdHQdns4cZdhYUuLnHJAgYA19rCPhQgnoHdoRsxlcO3RAAR+
+    JhMqpDRLVprF3JVj7XWd/wj+VvkTgU8nBdj9YFGw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kroah.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com header.i=@messagingengine.com header.b=eeOWfW5+ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kroah.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfL2V029djvuTDtieoOlaGTJ5GgAB4u/15rawDKrw+8buzS4JhS0njWURHOQTuYMTFKdtmHnrNXDqg3QeBgOlmfTzvSGio3kDfKjATAKZJrrGmI8N17G7
-    RJnAjBo/nEK5j6p+ounJ00ThfCvGMYM/wt0HxNaOXLR8gDByqBrkvYDh+F1q0yCsvDWXg6IUQ5zsuU2/kONlABBlb+O3xnTbyK/U7vQSwsskkNSHpx6+5pN/
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfB5hxlvsstnydXSsxni43Q2Kp/wqeBSSygkBGES6ILAENGDsRMwWmqgJmtu9c0PQPIzD0ysFsYKOmivROJ+cS+e7ZAA54I5OldfV13vEC8YSPnbQqnBy
+    zvRVwBFjJMHMlnZ3MSaS5rXMB7odq+px/w1pckdwqlkZKqqmV2v6daXvWD4hDmeE8+TL3TKrvD1KFsZ2xP1tRzaOjQzmhDUQnVNdFJTtcUgX3kO6QpYN8HTI
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=S7EZvegbvvhE8-UanOAA:9 a=CjuIK1q_8ugA:10
+    a=VwQbUJbxAAAA:8 a=UqCG9HQmAAAA:8 a=JdNLi9D1yxpcJktNDmMA:9
+    a=T_7aERi61UENQ_CM:21 a=UGXRVjrbRyw7EdGr:21 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752058AbeDQKqo (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 06:46:44 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:36807 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751980AbeDQKqn (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 06:46:43 -0400
-X-ME-Sender: <xms:ktDVWs4BseUPYnW_4hFrKkUUcJyJl3p3J1LJrQpwfr6CoJbPYaaCeQ>
-Date: Tue, 17 Apr 2018 12:46:37 +0200
-From: Greg KH <greg@kroah.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Sasha Levin <Alexander.Levin@microsoft.com>,
+        id S1752359AbeDQMZA (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 08:25:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41374 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752087AbeDQMY7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:24:59 -0400
+Date: Tue, 17 Apr 2018 14:24:54 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Greg KH <greg@kroah.com>
+Cc: Pavel Machek <pavel@ucw.cz>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Petr Mladek <pmladek@suse.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
@@ -89,9 +90,8 @@ Cc: Sasha Levin <Alexander.Levin@microsoft.com>,
         Tejun Heo <tj@kernel.org>
 Subject: Re: [PATCH AUTOSEL for 4.14 015/161] printk: Add console owner and
  waiter logic to load balance console writes
-Message-ID: <20180417104637.GD8445@kroah.com>
-References: <CA+55aFysLTQN8qRu=nuKttGBZzfQq=BpJBH+TMdgLJR7bgRGYg@mail.gmail.com>
- <20180416153031.GA5039@amd>
+Message-ID: <20180417122454.rwkwpsfvyhpzvvx3@pathway.suse.cz>
+References: <20180416153031.GA5039@amd>
  <20180416155031.GX2341@sasha-vm>
  <20180416160608.GA7071@amd>
  <20180416161412.GZ2341@sasha-vm>
@@ -100,73 +100,89 @@ References: <CA+55aFysLTQN8qRu=nuKttGBZzfQq=BpJBH+TMdgLJR7bgRGYg@mail.gmail.com>
  <20180416124711.048f1858@gandalf.local.home>
  <20180416165258.GH2341@sasha-vm>
  <20180416170010.GA11034@amd>
+ <20180417104637.GD8445@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180416170010.GA11034@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180417104637.GD8445@kroah.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 16, 2018 at 07:00:10PM +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > >> Let me ask my wife (who is happy using Linux as a regular desktop user)
-> > >> how comfortable she would be with triaging kernel bugs...
-> > >
-> > >That's really up to the distribution, not the main kernel stable. Does
-> > >she download and compile the kernels herself? Does she use LEDs?
-> > >
-> > >The point is, stable is to keep what was working continued working.
-> > >If we don't care about introducing a regression, and just want to keep
-> > >regressions the same as mainline, why not just go to mainline? That way
-> > >you can also get the new features? Mainline already has the mantra to
-> > >not break user space. When I work on new features, I sometimes stumble
-> > >on bugs with the current features. And some of those fixes require a
-> > >rewrite. It was "good enough" before, but every so often could cause a
-> > >bug that the new feature would trigger more often. Do we back port that
-> > >rewrite? Do we backport fixes to old code that are more likely to be
-> > >triggered by new features?
-> > >
-> > >Ideally, we should be working on getting to no regressions to stable.
-> > 
-> > This is exactly what we're doing.
-> > 
-> > If a fix for a bug in -stable introduces a different regression,
-> > should we take it or not?
-> 
-> If a fix for bug introduces regression, would you call it "obviously
-> correct"?
+On Tue 2018-04-17 12:46:37, Greg KH wrote:
+> Oh, I know why, suddenly subsystems that never were taking the time to
+> mark patches for stable are getting patches backported and are getting
+> nervous.
 
-I honestly can't believe you all are arguing about this.  We backport
-bugfixes to the stable tree.  If those fixes also are buggy we either
-apply the fix for that problem that ended up in Linus's tree, or we
-revert the patch.  If the fix is not in Linus's tree, sometimes we leave
-the "bug" in stable for a bit to apply some pressure on the
-developer/maintainer to get it fixed in Linus's tree (that's what I mean
-by being "bug compatible".)
+Yes, I am getting nervous because of this. The number of printk fixes
+nominated for stable is increasing exponentially (just my feeling)
+during last few months.
 
-This is exactly what we have been doing for over a decade now, why are
-people suddenly getting upset?
+The problem is that I want to be responsible and think about possible
+regressions. Sometimes it requires checking the state of the
+particular kernel release. The older code base the more complicated
+the decision is.
 
-Oh, I know why, suddenly subsystems that never were taking the time to
-mark patches for stable are getting patches backported and are getting
-nervous.  The simple way to stop that from happening is to PROPERLY MARK
-PATCHES FOR STABLE IN THE FIRST PLACE!
+You might argue that backporting the fixes helps to get the same code
+in all supported code bases. But it is not true. It never will be
+the same.
 
-If you do that, then, no "automated" patches will get selected as you
-already handled them all.  Or if there are some automated patches
-picked, you can easily NAK them (like xfs does as they know better than
-everyone else, and honestly, I trust them, and don't run xfs myself), or
-do like what I do when it happens to me and go "hey, nice, I missed that
-one!"
 
-There, problem solved, if you do that, no more worrying by you at all,
-and this thread can properly die.
+Anyway, in the past the "automatically" nominated printk fixes
+were trivial. They did not cause harm. But they also were not
+worth it, IMHO. They fixed corner cases that were there for ages.
+Most of these fixes were found by code review when working on
+a feature. They were not backed by bug reports.
 
-ugh,
 
-greg k-h
+Last week, autosel nominated pretty non-trivial patch (started
+this thread). It partly solved a problem we tried to fix last few
+years.
+
+On one side, this was an annoying problem that motivated several
+people spend a lot of time on it. This might be a motivation
+for a backport.
+
+On the other hand, it took many years to come somewhere. The main
+problem was the fear of regressions. We fixed/improved many things
+in the mean time. It shows that the problem really is not trivial.
+The same is true for the fix. We did our best to avoid regressions.
+But it does not mean that there are none. Also it does not mean
+that it will really give better results in all situations.
+
+I really do not see a reason to hurry and backport this to
+the older kernel releases. It means to spread the fix but also
+eventual problems. It is easy to miss a dependant patch.
+The less trivial fix, the more possible problems are there.
+
+
+
+Back to the trend. Last week I got autosel mails even for
+patches that were still being discussed, had issues, and
+were far from upstream:
+
+https://lkml.kernel.org/r/DM5PR2101MB1032AB19B489D46B717B50D4FBBB0@DM5PR2101MB1032.namprd21.prod.outlook.com
+https://lkml.kernel.org/r/DM5PR2101MB10327FA0A7E0D2C901E33B79FBBB0@DM5PR2101MB1032.namprd21.prod.outlook.com
+
+It might be a good idea if the mail asked to add Fixes: tag
+or stable mailing list. But the mail suggested to add the
+unfinished patch into stable branch directly (even before
+upstreaming?).
+
+
+Now, there are only hand full of printk patches in each
+release, so it is still doable. I just do not understand
+how other maintainers, from much more busy subsystems,
+could cope with this trend.
+
+By other words. If you want to automatize patch nomination,
+you might need to automatize also patch review. Or you need
+to keep the patch rate low. This might mean to nominate
+only important and rather trivial fixes.
+
+
+Best Regards,
+Petr
