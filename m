@@ -1,35 +1,40 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/oCVCkLeCOjvMegd2i9Ijm8LU8n9sNyc+VokTTAErFiAgKJbkwniccVfAjj+0fFl9fuiF3
-ARC-Seal: i=1; a=rsa-sha256; t=1523981313; cv=none;
+X-Google-Smtp-Source: AIpwx4+802FNBcJGGnk1fv7ZBp3xKgM5hmqF98NLTahbya+k7LAj4YA4BSGsdEZo6vIQ61dWHiEa
+ARC-Seal: i=1; a=rsa-sha256; t=1523981310; cv=none;
         d=google.com; s=arc-20160816;
-        b=YTRbzKrg4C8EA0+QmGgPLoYLSM/67+mEB8UBG12P6VG8uiLXYFITL3HTWR4cx2arh2
-         dVq1ROPAARMC/LxUIyD1gUDt8U9oH7vM9ao/ZMCopKLTBCq7y0ctvlmnNc+MgQ0bD7Ib
-         vEoeaO1dqVq740joW4ij3WQu0Tss0tYIiQFyA5ZYt516bN6ahQwYJrNp860n1AYzYrxa
-         Eh97Ie12vwV7ifD9htmJo171y6xl6p+jb/4g1w0Gq4VHUp12Il8dJOth5MIhrXatlFmO
-         xW3umc/vmw08EZDXlBTyrcjl1kLuHVKPZOkylbgFgR2QfzfK9aqqRYmrOqYi1ulpgb6e
-         eLgA==
+        b=hhzIyak5uH9VE6zwu3QbVjVzGG1MrlVctOIOj3decokwfQZCsovH9ctMGZQ+ET61BV
+         4YPWgjRmMqkJ8K5C4gJ5og5JD3t7WckQmc0lSpXZYXfYXEpoFzk+9ApGbrG0jhZLHKYm
+         2FToLK5Kz1EVChr3jJtyT+GAYBtoFBbqYvnOrugAGiNs+HHpIdo5ih9Y17rmL2gR0bwa
+         Yqf/WdkbOulaKLLIzxJcJ5WK1CnS/lwxzJNx6C1JHgpjIZ6+1cozvc9lDp3mvyHc3ykq
+         mg4K6ShjnPvvb3f6RZmwO3jb1QNYzSCl0nVU05+6xNu/ym5xYxhD7SklIDwMQTgAJ6m5
+         pzMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=EpuajOJ0j/QJtOUu9H8Z94VwvBzZynq/Xm8XAXvnXGk=;
-        b=Ol5pP0sfxxDVZ9rv2Qam12ytRiOVcgaSIit0wRlBS7r/HpgJ5hGDqkjIs5eruqjaAD
-         wUlvr+IrI3lR0MHUovGZotgDK+ToScQ4IXlilbAupu4lyGHiaK7Hg/15FYWc9l45c0oZ
-         /Oy8iPQSr6LZOSik0eN6sOk4hpAti7jiXdZ2AUrCcp81HbF91itoOXFZTKMWDBslbLyK
-         NXw2xmCzTtCNgkLZAKwnwremRi0pGfWlYPDFuWruB1xo8Lw3GX9hHkgn5S5qHOC2bvG3
-         hGQJVJZqGIn7V73RO+BJKIgRRMIiKF3NePqChkLOSN7D4CEU5e7JoURumjokYgJjcn58
-         Z5hg==
+        bh=1YMpjzGIBL7bFor4ij0UJvjPm8iCJaTEopJv542NfoU=;
+        b=GSEf9BZgcrB9HFTmkmtrJ51T7Ja39z+asUdVI3xKsxDe3gxGiiwt1I9hP7Fg4ypc4o
+         A5wHKwdDgQyE4/waVvfUw9RTD4CIUxWcW99Z6ZFoIm2sQWrwvJwJ4UbqUwKXW7PRCdH1
+         WzYGbwMyYOCl0wefyAPXo3wCLSqAEvBgPa95W0U/qaVc8Se8epw2PhBQ5DUT1JOz7JDE
+         TDG0gSxTZ0Dc1bjdvP67x4wptDgFaxfQg1kTOd8COT4F08nM+SrrlwHfH9zXjtyYdg6L
+         +3HVCfhe9lwh0qBZ7PpQmMVCMC4IiQRKMSNcA9SChp5SY7IXje/7D76ftEkNPtytRAUe
+         CfZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.9 02/66] parisc: Fix out of array access in match_pci_device()
-Date: Tue, 17 Apr 2018 17:58:35 +0200
-Message-Id: <20180417155645.967397478@linuxfoundation.org>
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Greg Hackmann <ghackmann@google.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 4.9 19/66] arm64: cpufeature: __this_cpu_has_cap() shouldnt stop early
+Date: Tue, 17 Apr 2018 17:58:52 +0200
+Message-Id: <20180417155646.684452470@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -39,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009707455572846?=
-X-GMAIL-MSGID: =?utf-8?q?1598010229982088727?=
+X-GMAIL-THRID: =?utf-8?q?1598010226619795635?=
+X-GMAIL-MSGID: =?utf-8?q?1598010226619795635?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,47 +53,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 615b2665fd20c327b631ff1e79426775de748094 upstream.
 
-As found by the ubsan checker, the value of the 'index' variable can be
-out of range for the bc[] array:
+From: James Morse <james.morse@arm.com>
 
-UBSAN: Undefined behaviour in arch/parisc/kernel/drivers.c:655:21
-index 6 is out of range for type 'char [6]'
-Backtrace:
- [<104fa850>] __ubsan_handle_out_of_bounds+0x68/0x80
- [<1019d83c>] check_parent+0xc0/0x170
- [<1019d91c>] descend_children+0x30/0x6c
- [<1059e164>] device_for_each_child+0x60/0x98
- [<1019cd54>] parse_tree_node+0x40/0x54
- [<1019d86c>] check_parent+0xf0/0x170
- [<1019d91c>] descend_children+0x30/0x6c
- [<1059e164>] device_for_each_child+0x60/0x98
- [<1019d938>] descend_children+0x4c/0x6c
- [<1059e164>] device_for_each_child+0x60/0x98
- [<1019cd54>] parse_tree_node+0x40/0x54
- [<1019cffc>] hwpath_to_device+0xa4/0xc4
+commit edf298cfce47ab7279d03b5203ae2ef3a58e49db upstream.
 
-Signed-off-by: Helge Deller <deller@gmx.de>
-Cc: stable@vger.kernel.org
+this_cpu_has_cap() tests caps->desc not caps->matches, so it stops
+walking the list when it finds a 'silent' feature, instead of
+walking to the end of the list.
+
+Prior to v4.6's 644c2ae198412 ("arm64: cpufeature: Test 'matches' pointer
+to find the end of the list") we always tested desc to find the end of
+a capability list. This was changed for dubious things like PAN_NOT_UAO.
+v4.7's e3661b128e53e ("arm64: Allow a capability to be checked on
+single CPU") added this_cpu_has_cap() using the old desc style test.
+
+CC: Suzuki K Poulose <suzuki.poulose@arm.com>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: James Morse <james.morse@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
+Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/parisc/kernel/drivers.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/kernel/cpufeature.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/arch/parisc/kernel/drivers.c
-+++ b/arch/parisc/kernel/drivers.c
-@@ -648,6 +648,10 @@ static int match_pci_device(struct devic
- 					(modpath->mod == PCI_FUNC(devfn)));
- 	}
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1024,9 +1024,8 @@ static bool __this_cpu_has_cap(const str
+ 	if (WARN_ON(preemptible()))
+ 		return false;
  
-+	/* index might be out of bounds for bc[] */
-+	if (index >= 6)
-+		return 0;
-+
- 	id = PCI_SLOT(pdev->devfn) | (PCI_FUNC(pdev->devfn) << 5);
- 	return (modpath->bc[index] == id);
- }
+-	for (caps = cap_array; caps->desc; caps++)
++	for (caps = cap_array; caps->matches; caps++)
+ 		if (caps->capability == cap &&
+-		    caps->matches &&
+ 		    caps->matches(caps, SCOPE_LOCAL_CPU))
+ 			return true;
+ 	return false;
