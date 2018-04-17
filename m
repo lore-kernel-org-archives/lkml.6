@@ -1,55 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751211AbeDQAJI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 20:09:08 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:33688 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751060AbeDQAJG (ORCPT
+        id S1751970AbeDQAbP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 20:31:15 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:33856 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751218AbeDQAbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 20:09:06 -0400
-X-Google-Smtp-Source: AIpwx48Df8AwgSbE1YSlI2Ae6KOxO9G3Jp7Qyc/j4wsdPddPiUoQ6/+SPiL/LEBbUwAE47KHWZBzJA==
+        Mon, 16 Apr 2018 20:31:13 -0400
+X-Google-Smtp-Source: AIpwx498HJhdQTc5/FjUGHOHvdKrYDywVB8Awp0ZbZoccsUt/62ab7ksbmO9gDEPz+95S32zqmp1og==
+Date: Tue, 17 Apr 2018 03:31:09 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Thomas Garnier <thgarnie@google.com>
+Cc: Kees Cook <keescook@chromium.org>, tytso@mit.edu,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
+Subject: Re: repeatable boot randomness inside KVM guest
+Message-ID: <20180417003109.GA10597@avx2>
+References: <20180414195921.GA10437@avx2>
+ <20180414224419.GA21830@thunk.org>
+ <CAGXu5j+qQE-MmpB7xq6z_SsXm9AhJe2QQAEVQnenYD=iLzJqWQ@mail.gmail.com>
+ <CAJcbSZGpqZB2OjqdjoPtoUJrNw9nmms+U=CKvOLLptqjBn=YMQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20180412224111.35216-1-swboyd@chromium.org>
-In-Reply-To: <20180412224111.35216-1-swboyd@chromium.org>
-From: Evan Green <evgreen@chromium.org>
-Date: Tue, 17 Apr 2018 00:08:27 +0000
-X-Gmail-Original-Message-ID: <CAE=gft5Wo0JDk0+yN4LuEg-=xXXPecKxF8if9ksAXZrh+08QLA@mail.gmail.com>
-Message-ID: <CAE=gft5Wo0JDk0+yN4LuEg-=xXXPecKxF8if9ksAXZrh+08QLA@mail.gmail.com>
-Subject: Re: [PATCH] soc: qcom: cmd-db: Make endian-agnostic
-To: swboyd@chromium.org
-Cc: Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        msivasub@codeaurora.org, Lina Iyer <ilina@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJcbSZGpqZB2OjqdjoPtoUJrNw9nmms+U=CKvOLLptqjBn=YMQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 3:41 PM Stephen Boyd <swboyd@chromium.org> wrote:
+On Mon, Apr 16, 2018 at 04:15:44PM +0000, Thomas Garnier wrote:
+> On Mon, Apr 16, 2018 at 8:54 AM Kees Cook <keescook@chromium.org> wrote:
+> 
+> > On Sat, Apr 14, 2018 at 3:44 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> > > +linux-mm@kvack.org
+> > > kvm@vger.kernel.org, security@kernel.org moved to bcc
+> > >
+> > > On Sat, Apr 14, 2018 at 10:59:21PM +0300, Alexey Dobriyan wrote:
+> > >> SLAB allocators got CONFIG_SLAB_FREELIST_RANDOM option which randomizes
+> > >> allocation pattern inside a slab:
+> > >>
+> > >>       int cache_random_seq_create(struct kmem_cache *cachep, unsigned
+> int count, gfp_t gfp)
+> > >>       {
+> > >>               ...
+> > >>               /* Get best entropy at this stage of boot */
+> > >>               prandom_seed_state(&state, get_random_long());
+> > >>
+> > >> Then I printed actual random sequences for each kmem cache.
+> > >> Turned out they were all the same for most of the caches and
+> > >> they didn't vary across guest reboots.
+> > >
+> > > The problem is at the super-early state of the boot path, kernel code
+> > > can't allocate memory.  This is something most device drivers kinda
+> > > assume they can do.  :-)
+> > >
+> > > So it means we haven't yet initialized the virtio-rng driver, and it's
+> > > before interrupts have been enabled, so we can't harvest any entropy
+> > > from interrupt timing.  So that's why trying to use virtio-rng didn't
+> > > help.
+> > >
+> > >> The only way to get randomness for SLAB is to enable RDRAND inside
+> guest.
+> > >>
+> > >> Is it KVM bug?
+> > >
+> > > No, it's not a KVM bug.  The fundamental issue is in how the
+> > > CONFIG_SLAB_FREELIST_RANDOM is currently implemented.
+> 
+> Entropy at early boot in VM has always been a problem for this feature or
+> others. Did you look at the impact on other boot security features fetching
+> random values? Does your VM had RDRAND support (we use get_random_long()
+> which will fetch from RDRAND to provide as much entropy as possible at this
+> point)?
 
-> This driver deals with memory that is stored in little-endian format.
-> Update the structures with the proper little-endian types and then
-> do the proper conversions when reading the fields. Note that we compare
-> the ids with a memcmp() because we already pad out the string 'id' field
-> to exactly 8 bytes with the strncpy() onto the stack.
+The problem is that "qemu-system-x86_64" by default doesn't use RDRAND nor
+does it use entropy from the host to bootstrap. You need "-cpu host" or
+equivalent.
 
-> Cc: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-> Cc: Lina Iyer <ilina@codeaurora.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Evan Green <evgreen@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
+Given that DMI strings are acting as a seed and fixed creation order of
+core kernel caches those SLAB randomization sequences may be globally
+the same (I didn't check) or draw from a small set.
 
-> Changes from inline patch:
->   * Fixed magic
->   * Made function for memcmp()
->   *
-
->   drivers/soc/qcom/cmd-db.c | 116 +++++++++++++++++++++-----------------
->   1 file changed, 65 insertions(+), 51 deletions(-)
-
-> Sent by a computer through tubes
-
-
-Reviewed-by: Evan Green <evgreen@chromium.org>
+And of course there will be users which don't use RDRAND because it is
+NSA backdoor.
