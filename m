@@ -1,57 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751256AbeDQGQa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 02:16:30 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46815 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750971AbeDQGQ2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 02:16:28 -0400
-X-Google-Smtp-Source: AIpwx494v9qGjjbxByAINvL778I0xlMiLYt6oQK1wBx2oQwBWLKWgAEBAGiAhPUJZNd6LmCG2EOEhQ==
-Subject: Re: [PATCH] nvme: lightnvm: add granby support
-To: Wei Xu <wxu@cnexlabs.com>, linux-nvme@lists.infradead.org
-Cc: javier@cnexlabs.com, keith.busch@intel.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1523930112-7402-1-git-send-email-wxu@cnexlabs.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <6e50972d-f806-52ac-7983-2642bd211afa@lightnvm.io>
-Date: Tue, 17 Apr 2018 08:16:25 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        id S1751857AbeDQGS1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 02:18:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35539 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750831AbeDQGSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 02:18:25 -0400
+Subject: Re: [PATCH v7 1/7] xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and
+ CONFIG_XEN_PVH
+To: Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        kvm@vger.kernel.org, pbonzini@redhat.com
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        boris.ostrovsky@oracle.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, bp@suse.de, thomas.lendacky@amd.com,
+        luto@kernel.org, dave.hansen@linux.intel.com, roger.pau@citrix.com,
+        rkrcmar@redhat.com, rdunlap@infradead.org
+References: <1523920175-27287-1-git-send-email-maran.wilson@oracle.com>
+ <1523920273-27516-1-git-send-email-maran.wilson@oracle.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <eb2524dd-f74a-286c-81c9-1d81fd3edfab@suse.com>
+Date: Tue, 17 Apr 2018 08:18:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1523930112-7402-1-git-send-email-wxu@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523920273-27516-1-git-send-email-maran.wilson@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/17/18 3:55 AM, Wei Xu wrote:
-> Add a new lightnvm quirk to identify CNEX’s Granby controller.
+On 17/04/18 01:11, Maran Wilson wrote:
+> In order to pave the way for hypervisors other than Xen to use the PVH
+> entry point for VMs, we need to factor the PVH entry code into Xen specific
+> and hypervisor agnostic components. The first step in doing that, is to
+> create a new config option for PVH entry that can be enabled
+> independently from CONFIG_XEN.
 > 
-> Signed-off-by: Wei Xu <wxu@cnexlabs.com>
-> ---
->   drivers/nvme/host/pci.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index cb73bc8..9419e88 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -2529,6 +2529,8 @@ static const struct pci_device_id nvme_id_table[] = {
->   		.driver_data = NVME_QUIRK_LIGHTNVM, },
->   	{ PCI_DEVICE(0x1d1d, 0x2807),	/* CNEX WL */
->   		.driver_data = NVME_QUIRK_LIGHTNVM, },
-> +	{ PCI_DEVICE(0x1d1d, 0x2601),	/* CNEX Granby */
-> +		.driver_data = NVME_QUIRK_LIGHTNVM, },
->   	{ PCI_DEVICE_CLASS(PCI_CLASS_STORAGE_EXPRESS, 0xffffff) },
->   	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2001) },
->   	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
-> 
+> Signed-off-by: Maran Wilson <maran.wilson@oracle.com>
 
-Looks good to me.
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Reviewed-by: Matias Bjørling <mb@lightnvm.io>
 
-Keith, when convenient can you pick this up for 4.18?
+Juergen
