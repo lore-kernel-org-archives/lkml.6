@@ -1,28 +1,28 @@
-Return-Path: <kernel-hardening-return-13017-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx498RHgMEM8D8KYZUaf5PAp4g7qhUxr1TCsFu2mWJXXMlYmOoBf/5bR7CDRB44SUUew3ZhUK
-ARC-Seal: i=1; a=rsa-sha256; t=1523990289; cv=none;
+Return-Path: <kernel-hardening-return-13027-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/NwRbclOUeSWK/C3625N/6bZ5u4eW7PwNTjIju37HJinqhYpbmfaMp7sXDul4giNl4tz8M
+ARC-Seal: i=1; a=rsa-sha256; t=1523990418; cv=none;
         d=google.com; s=arc-20160816;
-        b=cSzb1+9861mljuFnyTKS3P/D7qk+D9jAfSzxyEH6hjBLGMB7mW21tPONxhXmRBPOks
-         UsOLmzVERZaDZIdFXnHF2fx4mxIKsl5Q8FaM7puB6IWoBFG8mMo2HUJwfdewfM27aUqk
-         ts5fqGgZbI7QhqLY/z5/TeLEmAbHAmJOTPG5U2B4CqDSTvM1tQ+Yy9WPfFCl2RzLy9eg
-         1q18ImUjmBAmSA9R6A/16WwaBEILol0IX5a5VoM5obH/2qfRIt1orccb+jhCjzV+RBh4
-         kwqhWeCWJL3ok1j11S6lO/uNvCcoy07u7/V6Lj/T9IoxCAdTgsge7NYah2Pd+6JXy6/q
-         zcwA==
+        b=E4f8Jymoxlwj7wjz0DBJHk9V0SZtNP+c9B5fJjmiqtD8stRt1/VWvS7UhTz5aRD9rr
+         wEOiljqvaYRxWoMsyrIAt0Zl6n5Og3IuyROB5bld54XC72TKYdQexiyk9ww/Bmc8w5sR
+         +4lsStx1h5dHUIT1MX1Vo+W4pZQiYxh+GxTVNBeEv+ciLt1+8GvmHENgxCyhL/mSu3wf
+         du3wtbBs9qP4NElOuYdeZ4B3HxUL4ORNpHElxWto7BGS6XLQnaqlAGFfwdb1bG/MjueL
+         nKqpoaIRTZMY2evW8+4M5X5ihv4nXsbyh1NB3+dhh16pN3gQi1zD3sQq3F9/PlWqflLU
+         yEWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=+DE6RojaQgLii4AzQx2J//hbAuRGcoTiMkSH6PpH9+4=;
-        b=KzXjq4dyZhak32UDIRivXFbn0qgU70r6YcnYo6PUkCxgqWfqMgjFmwhm6mN7kE8Fv7
-         79YdhrAlz+BhR08acdgxCf/wLE+f0J2MDE2W1ZF5K/2of+NbpsvQLQwGmWGeL4s45lbP
-         DuxDv4ZTEAe0nQglfa59ceXxF/OfYB+Q2AOYw5ct09S/+g/UGT7HTNkUETdbhsDB6hhe
-         2wgFMibNoF7yfOZXF+VoSV7rlieuat3bQ3JFPEqTNM5CBSjwB/ZQVVd6DxWmYkpGg4Xw
-         Mvesv6A6YrlPgO7Sf1MOONAD5ld2ockGjTILsSum878rgaAtXCgfJoHilEULMmxg3LYO
-         BFgg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
+         :list-post:precedence:mailing-list:arc-authentication-results;
+        bh=S2yKRzuojZKrb7rEru+zLTieZuWCMPdlwVDdvNKYhQs=;
+        b=fOKBASpgje1xUl15lKZv0BJzuU8MLYXuasATioSlESuAXdKYXkPB3Z4di/pRRHI6IZ
+         qRK+Giq5HtCAmR8FjpMOwFUx0VQnqfyG6Fs0Cf+ok44wFeJhpfmjqwd2eaFEv3sVl3f+
+         5XcfQkolKEE1KyPjooT2AiOD3oXnDcM01LRfo1J8KJw0BF9eDO82sFCMAGJBF86AJS6m
+         ti1C9y4cQofDN9VZN+hNdy7A+nRlRfDxoICCt17MB+M9qcMOixpWVRW1NGZQAGX0Aj+V
+         DgGqI6bMmxaMLhXumKVChyxk7YSXItUKuPUQ4Kx6PDRaMr73BixCHVIddBlaGBl8NJAl
+         ejpA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13017-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13017-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13027-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13027-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13017-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13017-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13027-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13027-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
@@ -44,151 +44,277 @@ Cc: arnd@arndb.de,
 	linux-kernel@vger.kernel.org,
 	awallis@codeaurora.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCHv3 00/11] ARMv8.3 pointer authentication userspace support
-Date: Tue, 17 Apr 2018 19:37:24 +0100
-Message-Id: <20180417183735.56985-1-mark.rutland@arm.com>
+Subject: [PATCHv3 07/11] arm64: add basic pointer authentication support
+Date: Tue, 17 Apr 2018 19:37:31 +0100
+Message-Id: <20180417183735.56985-8-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180417183735.56985-1-mark.rutland@arm.com>
+References: <20180417183735.56985-1-mark.rutland@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598019642179172752?=
-X-GMAIL-MSGID: =?utf-8?q?1598019642179172752?=
+X-GMAIL-THRID: =?utf-8?q?1598019777095215790?=
+X-GMAIL-MSGID: =?utf-8?q?1598019777095215790?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This series adds support for the ARMv8.3 pointer authentication extension,
-enabling userspace return address protection with recent versions of GCC.
+This patch adds basic support for pointer authentication, allowing
+userspace to make use of APIAKey. The kernel maintains an APIAKey value
+for each process (shared by all threads within), which is initialised to
+a random value at exec() time.
 
-Since RFC [1]:
-* Make the KVM context switch (semi-lazy)
-* Rebase to v4.13-rc1
-* Improve pointer authentication documentation
-* Add hwcap documentation
-* Various minor cleanups
+To describe that address authentication instructions are available, the
+ID_AA64ISAR0.{APA,API} fields are exposed to userspace. A new hwcap,
+APIA, is added to describe that the kernel manages APIAKey.
 
-Since v1 [2]:
-* Rebase to v4.15-rc1
-* Settle on per-process keys
-* Strip PACs when unwinding userspace
-* Don't expose an XPAC hwcap (this is implied by ID registers)
-* Leave APIB, ABPDA, APDB, and APGA keys unsupported for now
-* Support IMP DEF algorithms
-* Rely on KVM ID register emulation
-* Various cleanups
+Instructions using other keys (APIBKey, APDAKey, APDBKey) are disabled,
+and will behave as NOPs. These may be made use of in future patches.
 
-Since v2 [3]:
-* Unify HCR_EL2 initialization
-* s/POINTER_AUTHENTICATION/PTR_AUTH/
-* Drop KVM support (for now)
-* Drop detection of generic authentication
+No support is added for the generic key (APGAKey), though this cannot be
+trapped or made to behave as a NOP. Its presence is not advertised with
+a hwcap.
 
-While there are use-cases for keys other than APIAKey, the only software that
-I'm aware of with pointer authentication support is GCC, which only makes use
-of APIAKey. I'm happy to add support for other keys as users appear.
-
-I've pushed the series to the arm64/pointer-auth branch [4] of my linux tree.
-I've also pushed out a necessary bootwrapper patch to the pointer-auth branch
-[5] of my bootwrapper repo.
-
-
-Extension Overview 
-==================
-
-The ARMv8.3 pointer authentication extension adds functionality to detect
-modification of pointer values, mitigating certain classes of attack such as
-stack smashing, and making return oriented programming attacks harder
-
-The extension introduces the concept of a pointer authentication code (PAC),
-which is stored in some upper bits of pointers. Each PAC is derived from the
-original pointer, another 64-bit value (e.g. the stack pointer), and a secret
-128-bit key.
-
-New instructions are added which can be used to:
-
-* Insert a PAC into a pointer
-* Strip a PAC from a pointer
-* Authenticate strip a PAC from a pointer
-
-If authentication succeeds, the code is removed, yielding the original pointer.
-If authentication fails, bits are set in the pointer such that it is guaranteed
-to cause a fault if used.
-
-These instructions can make use of four keys:
-
-* APIAKey (A.K.A. Instruction A key)
-* APIBKey (A.K.A. Instruction B key)
-* APDAKey (A.K.A. Data A key)
-* APDBKey (A.K.A. Data B Key)
-
-A subset of these instruction encodings have been allocated from the HINT
-space, and will operate as NOPs on any ARMv8-A parts which do not feature the
-extension (or if purposefully disabled by the kernel). Software using only this
-subset of the instructions should function correctly on all ARMv8-A parts.
-
-Additionally, instructions are added to authenticate small blocks of memory in
-similar fashion, using APGAKey (A.K.A. Generic key).
-
-
-This Series
-===========
-
-This series enables the use of instructions using APIAKey, which is initialised
-and maintained per-process (shared by all threads). This series does not add
-support for APIBKey, APDAKey, APDBKey, nor APGAKey.
-
-I've given this some basic testing with a homebrew test suite. More ideally,
-we'd add some tests to the kernel source tree.
-
-For the time being, pointer authentication functionality is hidden from
-guests via ID register trapping.
-
-Thanks,
-Mark.
-
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2017-April/498941.html
-[2] https://lkml.kernel.org/r/1500480092-28480-1-git-send-email-mark.rutland@arm.com
-[3] https://lkml.kernel.org/r/20171127163806.31435-1-mark.rutland@arm.com
-[4] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git arm64/pointer-auth
-[5] git://git.kernel.org/pub/scm/linux/kernel/git/mark/boot-wrapper-aarch64.git pointer-auth
-
-
-Mark Rutland (11):
-  arm64: add pointer authentication register bits
-  arm64/kvm: consistently handle host HCR_EL2 flags
-  arm64/kvm: hide ptrauth from guests
-  arm64: Don't trap host pointer auth use to EL2
-  arm64/cpufeature: detect pointer authentication
-  asm-generic: mm_hooks: allow hooks to be overridden individually
-  arm64: add basic pointer authentication support
-  arm64: expose user PAC bit positions via ptrace
-  arm64: perf: strip PAC when unwinding userspace
-  arm64: enable pointer authentication
-  arm64: docs: document pointer authentication
-
- Documentation/arm64/booting.txt                |   8 ++
- Documentation/arm64/elf_hwcaps.txt             |   6 ++
- Documentation/arm64/pointer-authentication.txt |  84 ++++++++++++++++++++
- arch/arm64/Kconfig                             |  23 ++++++
- arch/arm64/include/asm/cpucaps.h               |   5 +-
- arch/arm64/include/asm/esr.h                   |   3 +-
- arch/arm64/include/asm/kvm_arm.h               |   3 +
- arch/arm64/include/asm/mmu.h                   |   5 ++
- arch/arm64/include/asm/mmu_context.h           |  25 +++++-
- arch/arm64/include/asm/pointer_auth.h          | 104 +++++++++++++++++++++++++
- arch/arm64/include/asm/sysreg.h                |  30 +++++++
- arch/arm64/include/uapi/asm/hwcap.h            |   1 +
- arch/arm64/include/uapi/asm/ptrace.h           |   7 ++
- arch/arm64/kernel/cpufeature.c                 |  56 +++++++++++++
- arch/arm64/kernel/cpuinfo.c                    |   1 +
- arch/arm64/kernel/head.S                       |   5 +-
- arch/arm64/kernel/perf_callchain.c             |   5 +-
- arch/arm64/kernel/ptrace.c                     |  38 +++++++++
- arch/arm64/kvm/handle_exit.c                   |  18 +++++
- arch/arm64/kvm/hyp/switch.c                    |   2 +-
- arch/arm64/kvm/sys_regs.c                      |   9 +++
- include/asm-generic/mm_hooks.h                 |  11 +++
- include/uapi/linux/elf.h                       |   1 +
- 23 files changed, 441 insertions(+), 9 deletions(-)
- create mode 100644 Documentation/arm64/pointer-authentication.txt
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/include/asm/mmu.h          |  5 ++
+ arch/arm64/include/asm/mmu_context.h  | 25 +++++++++-
+ arch/arm64/include/asm/pointer_auth.h | 89 +++++++++++++++++++++++++++++++++++
+ arch/arm64/include/uapi/asm/hwcap.h   |  1 +
+ arch/arm64/kernel/cpufeature.c        |  9 ++++
+ arch/arm64/kernel/cpuinfo.c           |  1 +
+ 6 files changed, 128 insertions(+), 2 deletions(-)
  create mode 100644 arch/arm64/include/asm/pointer_auth.h
 
+diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+index dd320df0d026..f6480ea7b0d5 100644
+--- a/arch/arm64/include/asm/mmu.h
++++ b/arch/arm64/include/asm/mmu.h
+@@ -25,10 +25,15 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++#include <asm/pointer_auth.h>
++
+ typedef struct {
+ 	atomic64_t	id;
+ 	void		*vdso;
+ 	unsigned long	flags;
++#ifdef CONFIG_ARM64_PTR_AUTH
++	struct ptrauth_keys	ptrauth_keys;
++#endif
+ } mm_context_t;
+ 
+ /*
+diff --git a/arch/arm64/include/asm/mmu_context.h b/arch/arm64/include/asm/mmu_context.h
+index 39ec0b8a689e..caf0d3010112 100644
+--- a/arch/arm64/include/asm/mmu_context.h
++++ b/arch/arm64/include/asm/mmu_context.h
+@@ -29,7 +29,6 @@
+ #include <asm/cacheflush.h>
+ #include <asm/cpufeature.h>
+ #include <asm/proc-fns.h>
+-#include <asm-generic/mm_hooks.h>
+ #include <asm/cputype.h>
+ #include <asm/pgtable.h>
+ #include <asm/sysreg.h>
+@@ -168,7 +167,14 @@ static inline void cpu_replace_ttbr1(pgd_t *pgdp)
+ #define destroy_context(mm)		do { } while(0)
+ void check_and_switch_context(struct mm_struct *mm, unsigned int cpu);
+ 
+-#define init_new_context(tsk,mm)	({ atomic64_set(&(mm)->context.id, 0); 0; })
++static inline int init_new_context(struct task_struct *tsk,
++			struct mm_struct *mm)
++{
++	atomic64_set(&mm->context.id, 0);
++	mm_ctx_ptrauth_init(&mm->context);
++
++	return 0;
++}
+ 
+ #ifdef CONFIG_ARM64_SW_TTBR0_PAN
+ static inline void update_saved_ttbr0(struct task_struct *tsk,
+@@ -216,6 +222,8 @@ static inline void __switch_mm(struct mm_struct *next)
+ 		return;
+ 	}
+ 
++	mm_ctx_ptrauth_switch(&next->context);
++
+ 	check_and_switch_context(next, cpu);
+ }
+ 
+@@ -241,6 +249,19 @@ switch_mm(struct mm_struct *prev, struct mm_struct *next,
+ void verify_cpu_asid_bits(void);
+ void post_ttbr_update_workaround(void);
+ 
++static inline void arch_dup_mmap(struct mm_struct *oldmm,
++				 struct mm_struct *mm)
++{
++	mm_ctx_ptrauth_dup(&oldmm->context, &mm->context);
++}
++#define arch_dup_mmap arch_dup_mmap
++
++/*
++ * We need to override arch_dup_mmap before including the generic hooks, which
++ * are otherwise sufficient for us.
++ */
++#include <asm-generic/mm_hooks.h>
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ #endif /* !__ASM_MMU_CONTEXT_H */
+diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
+new file mode 100644
+index 000000000000..a2e8fb91fdee
+--- /dev/null
++++ b/arch/arm64/include/asm/pointer_auth.h
+@@ -0,0 +1,89 @@
++/*
++ * Copyright (C) 2016 ARM Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++#ifndef __ASM_POINTER_AUTH_H
++#define __ASM_POINTER_AUTH_H
++
++#include <linux/random.h>
++
++#include <asm/cpufeature.h>
++#include <asm/sysreg.h>
++
++#ifdef CONFIG_ARM64_PTR_AUTH
++/*
++ * Each key is a 128-bit quantity which is split accross a pair of 64-bit
++ * registers (Lo and Hi).
++ */
++struct ptrauth_key {
++	unsigned long lo, hi;
++};
++
++/*
++ * We give each process its own instruction A key (APIAKey), which is shared by
++ * all threads. This is inherited upon fork(), and reinitialised upon exec*().
++ * All other keys are currently unused, with APIBKey, APDAKey, and APBAKey
++ * instructions behaving as NOPs.
++ */
++struct ptrauth_keys {
++	struct ptrauth_key apia;
++};
++
++static inline void ptrauth_keys_init(struct ptrauth_keys *keys)
++{
++	if (!cpus_have_const_cap(ARM64_HAS_ADDRESS_AUTH))
++		return;
++
++	get_random_bytes(keys, sizeof(*keys));
++}
++
++#define __ptrauth_key_install(k, v)			\
++do {							\
++	write_sysreg_s(v.lo, SYS_ ## k ## KEYLO_EL1);	\
++	write_sysreg_s(v.hi, SYS_ ## k ## KEYHI_EL1);	\
++} while (0)
++
++static inline void ptrauth_keys_switch(struct ptrauth_keys *keys)
++{
++	if (!cpus_have_const_cap(ARM64_HAS_ADDRESS_AUTH))
++		return;
++
++	__ptrauth_key_install(APIA, keys->apia);
++}
++
++static inline void ptrauth_keys_dup(struct ptrauth_keys *old,
++				    struct ptrauth_keys *new)
++{
++	if (!cpus_have_const_cap(ARM64_HAS_ADDRESS_AUTH))
++		return;
++
++	*new = *old;
++}
++
++#define mm_ctx_ptrauth_init(ctx) \
++	ptrauth_keys_init(&(ctx)->ptrauth_keys)
++
++#define mm_ctx_ptrauth_switch(ctx) \
++	ptrauth_keys_switch(&(ctx)->ptrauth_keys)
++
++#define mm_ctx_ptrauth_dup(oldctx, newctx) \
++	ptrauth_keys_dup(&(oldctx)->ptrauth_keys, &(newctx)->ptrauth_keys)
++
++#else
++#define mm_ctx_ptrauth_init(ctx)
++#define mm_ctx_ptrauth_switch(ctx)
++#define mm_ctx_ptrauth_dup(oldctx, newctx)
++#endif
++
++#endif /* __ASM_POINTER_AUTH_H */
+diff --git a/arch/arm64/include/uapi/asm/hwcap.h b/arch/arm64/include/uapi/asm/hwcap.h
+index 17c65c8f33cb..01f02ac500ae 100644
+--- a/arch/arm64/include/uapi/asm/hwcap.h
++++ b/arch/arm64/include/uapi/asm/hwcap.h
+@@ -48,5 +48,6 @@
+ #define HWCAP_USCAT		(1 << 25)
+ #define HWCAP_ILRCPC		(1 << 26)
+ #define HWCAP_FLAGM		(1 << 27)
++#define HWCAP_APIA		(1 << 28)
+ 
+ #endif /* _UAPI__ASM_HWCAP_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 01b1a7e7d70f..f418d4cb6691 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -1030,6 +1030,11 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
+ #endif
+ 
+ #ifdef CONFIG_ARM64_PTR_AUTH
++static void cpu_enable_address_auth(struct arm64_cpu_capabilities const *cap)
++{
++	config_sctlr_el1(0, SCTLR_ELx_ENIA);
++}
++
+ static bool has_address_auth(const struct arm64_cpu_capabilities *entry,
+ 			     int __unused)
+ {
+@@ -1246,6 +1251,7 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.capability = ARM64_HAS_ADDRESS_AUTH,
+ 		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
+ 		.matches = has_address_auth,
++		.cpu_enable = cpu_enable_address_auth,
+ 	},
+ #endif /* CONFIG_ARM64_PTR_AUTH */
+ 	{},
+@@ -1293,6 +1299,9 @@ static const struct arm64_cpu_capabilities arm64_elf_hwcaps[] = {
+ #ifdef CONFIG_ARM64_SVE
+ 	HWCAP_CAP(SYS_ID_AA64PFR0_EL1, ID_AA64PFR0_SVE_SHIFT, FTR_UNSIGNED, ID_AA64PFR0_SVE, CAP_HWCAP, HWCAP_SVE),
+ #endif
++#ifdef CONFIG_ARM64_PNTR_AUTH
++	HWCAP_CAP(SYS_ID_AA64ISAR1_EL1, ID_AA64ISAR1_APA_SHIFT, FTR_UNSIGNED, 1, CAP_HWCAP, HWCAP_APIA),
++#endif
+ 	{},
+ };
+ 
+diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
+index e9ab7b3ed317..608411e3aaff 100644
+--- a/arch/arm64/kernel/cpuinfo.c
++++ b/arch/arm64/kernel/cpuinfo.c
+@@ -81,6 +81,7 @@ static const char *const hwcap_str[] = {
+ 	"uscat",
+ 	"ilrcpc",
+ 	"flagm",
++	"apia",
+ 	NULL
+ };
+ 
 -- 
 2.11.0
