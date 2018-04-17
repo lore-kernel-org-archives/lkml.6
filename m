@@ -1,77 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752707AbeDQVZc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:25:32 -0400
-Received: from mail-ua0-f180.google.com ([209.85.217.180]:33851 "EHLO
-        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752327AbeDQVZ2 (ORCPT
+        id S1753151AbeDQV21 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:28:27 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:54222 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752320AbeDQV2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:25:28 -0400
-X-Google-Smtp-Source: AIpwx4+wcM0bZ9s4KW1H7sADKy4qMOlfocO180KlNmlsdfhwbg9nJNhpVhFgLFgDkd1KY4zr6k+Kd51k956Ptwe13aA=
+        Tue, 17 Apr 2018 17:28:20 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
+        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <grygorii.strashko@ti.com>, <nsekhar@ti.com>
+Subject: [net-next PATCH v4 09/13] net: netcp: ethss: use of_get_phy_mode() to support different RGMII modes
+Date: Tue, 17 Apr 2018 17:30:38 -0400
+Message-ID: <1524000642-23944-10-git-send-email-m-karicheri2@ti.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1524000642-23944-1-git-send-email-m-karicheri2@ti.com>
+References: <1524000642-23944-1-git-send-email-m-karicheri2@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
- <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
- <2864697.7uzmEJovl2@natalenko.name> <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
- <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
- <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
- <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
- <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
- <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
- <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
- <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com>
- <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk> <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 17 Apr 2018 14:25:25 -0700
-X-Google-Sender-Auth: svKG9YO9hroYV27EgwP86sDx4yk
-Message-ID: <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Jens Axboe <axboe@kernel.dk>, Paolo Valente <paolo.valente@linaro.org>
-Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 1:46 PM, Kees Cook <keescook@chromium.org> wrote:
-> I see elv.priv[1] assignments made in a few places -- is it possible
-> there is some kind of uninitialized-but-not-NULL state that can leak
-> in there?
+The phy used for K2G allows for internal delays to be added optionally
+to the clock circuitry based on board desing. To add this support,
+enhance the driver to use of_get_phy_mode() to read the phy-mode from
+the phy device and pass the same to phy through of_phy_connect().
 
-Got it. This fixes it for me:
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+---
+ drivers/net/ethernet/ti/netcp_ethss.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 0dc9e341c2a7..859df3160303 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -363,7 +363,7 @@ static struct request *blk_mq_get_request(struct
-request_queue *q,
-
-        rq = blk_mq_rq_ctx_init(data, tag, op);
-        if (!op_is_flush(op)) {
--               rq->elv.icq = NULL;
-+               memset(&rq->elv, 0, sizeof(rq->elv));
-                if (e && e->type->ops.mq.prepare_request) {
-                        if (e->type->icq_cache && rq_ioc(bio))
-                                blk_mq_sched_assign_ioc(rq, bio);
-@@ -461,7 +461,7 @@ void blk_mq_free_request(struct request *rq)
-                        e->type->ops.mq.finish_request(rq);
-                if (rq->elv.icq) {
-                        put_io_context(rq->elv.icq->ioc);
--                       rq->elv.icq = NULL;
-+                       memset(&rq->elv, 0, sizeof(rq->elv));
-                }
-        }
-
-
-
+diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
+index d982dcb..5bc7921 100644
+--- a/drivers/net/ethernet/ti/netcp_ethss.c
++++ b/drivers/net/ethernet/ti/netcp_ethss.c
+@@ -21,6 +21,7 @@
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of_mdio.h>
++#include <linux/of_net.h>
+ #include <linux/of_address.h>
+ #include <linux/if_vlan.h>
+ #include <linux/ptp_classify.h>
+@@ -707,6 +708,7 @@ struct gbe_slave {
+ 	u32				link_interface;
+ 	u32				mac_control;
+ 	u8				phy_port_t;
++	struct device_node		*node;
+ 	struct device_node		*phy_node;
+ 	struct ts_ctl                   ts_ctl;
+ 	struct list_head		slave_list;
+@@ -2322,6 +2324,21 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
+ 		has_phy = true;
+ 		phy_mode = PHY_INTERFACE_MODE_SGMII;
+ 		slave->phy_port_t = PORT_MII;
++	} else if (slave->link_interface == RGMII_LINK_MAC_PHY) {
++		has_phy = true;
++		phy_mode = of_get_phy_mode(slave->node);
++		/* if phy-mode is not present, default to
++		 * PHY_INTERFACE_MODE_RGMII
++		 */
++		if (phy_mode < 0)
++			phy_mode = PHY_INTERFACE_MODE_RGMII;
++
++		if (!phy_interface_mode_is_rgmii(phy_mode)) {
++			dev_err(priv->dev,
++				"Unsupported phy mode %d\n", phy_mode);
++			return -EINVAL;
++		}
++		slave->phy_port_t = PORT_MII;
+ 	} else if (slave->link_interface == XGMII_LINK_MAC_PHY) {
+ 		has_phy = true;
+ 		phy_mode = PHY_INTERFACE_MODE_NA;
+@@ -2947,6 +2964,7 @@ static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
+ 		slave->link_interface = SGMII_LINK_MAC_PHY;
+ 	}
+ 
++	slave->node = node;
+ 	slave->open = false;
+ 	if ((slave->link_interface == SGMII_LINK_MAC_PHY) ||
+ 	    (slave->link_interface == RGMII_LINK_MAC_PHY) ||
 -- 
-Kees Cook
-Pixel Security
+1.9.1
