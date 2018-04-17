@@ -1,11 +1,11 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2312362-1523985219-2-2964260483099600646
+X-Cyrus-Session-Id: sloti22d1t05-2322533-1523985202-2-12482321603851831015
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523985219; b=sThMK+MY0XArXs2pqN+XsEGz0aUjrC+x9JE0ANyeXSwDdkh9pm
-    URiG+9idvFysfZUe+eK9jqpWo/x4lt1aeT96niU8wvXNjOwbgTtwKGVAbBxzJMWV
-    iaLw0nJsPXkIwxSGnJiaHXs5JP9Rckkx2azGv7tnlcR2Ipy28X5V/hmMYXVrwlke
-    aVyJgcIPc8CrSk2ORbe37iScsltNxRPxD78VdR/ilaZT7FHjuF4LOSEMN6U+DHKg
-    VIN+ywBAL8aCj5EJjaBfT8fXzm4BoHkTgfdKM9ExZ+6pBbOOhy01QR8RqnS5FvDN
-    TN1q586gHycspvnKmcZCUgwZz0wLYjzDj9CQ==
+    1523985201; b=qvn9mPqhIpmKkNT6BCuPKDY75WwB8JZpwYbPx+dMSIMcbbyd0Q
+    XCgf0+pKmucdW1cXWpSBN8ctOn2NcEwVhkD4QbnZq12wy/lYos1zJ28mtR+MVqtR
+    XmSK5/Ystcg54dUCfQguqwl9AeSoGJ0aDSi+EWIVmIjHOo8mfpukQge2s/BeiAGP
+    /jfIXx2aRhL2yHLcuLpBxOFXC7ykW9+cmsHyLBYG6yA42TDTF+wIO4U56qvXip1U
+    4EnFlfzuzFeS4E0LoeCXpQRM+AqpzyQ100QTHm4j4E9S9wDeglNstxub1IsYxYhM
+    1WtqP9fNYUNmRjD9ntbhm9JNNFyBpH9EX7/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523985219; bh=G2rVsmtcVrcQnswDHo8S8x+RI9IUr5
-    xlhRtmPbHIX5w=; b=KMIIwsHC+C31yVE1lRLelSiwIOnbI0PBx0BhnbHi9BW0jr
-    OGSG+9kGwKIWHewYANxyqyWKM/HqXZq+rHYReRymfp4SYJSHGeXKrOBsvNRpELkH
-    VJ/CWop9pzQzbITX/ZSYqrZE5lXTX65q9g9Erh2H/UoHr1CC6VyPvQ2O4+BSexat
-    BgrvSiusCO7bftVOUi1CVgmUK2ERKDLVtWhYxfr4eybqg8M/XMgxzUth746LcIdE
-    ePdK6O+c4CLT7fN0qR5GgyNb5eEWwUsjFZFkLJqXXm8nSbnVV8EBzXpdL+kKcM5W
-    qiw5DFQBQWcueNQ7170naLDerKnYOWmURpeEqF6w==
+    :list-id; s=fm2; t=1523985201; bh=A9OaGrrd0/8Zjx0dgqrWeVF96EUPOL
+    BxIuOqHfVCdsc=; b=Je0JrUnIv2rOkHTBCjawkexP0rqbivCw7Nj24AZsGO6Vox
+    lF+sD9TngM68Rhn3Ba35Dy/4GqHSJ83EqLIySdxzwBQap3TLX2ZeD5iLtD0q56/X
+    MVDLROYHeDJQxjgM014VdOZV8rIX4ltj6LU+WKJPdPQIJr1lnW3ZeyBgVgjIPwVF
+    cEt8VVFCvD0KDY0pljYTg29juh6lfiRVrCGefaTtDMeNcczgr/xCM8pOjqpDMgB1
+    ODyO5ipAIwVhk2ur2iJ5rKAZD4qP7ARfK/CIHSN9FMcdRhcRAb6jjcP8QdQ1KzT4
+    V0ajLosOy3irnMRZIHuKFN2mO7f1fL75Z73Gp73g==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
@@ -51,32 +51,32 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFV+VZt5ZqrYnnplVTFQil1I9qu9GIJU+8RFu0Pc5zw8qW++2oPZyQfEwn0DBBFPD51WhXUDvIcQR34bd6/oraIvbqu/veOOt/hA2atuttlLvYMSeffI
-    27aBpnsUrEvM1BIpb7LIDybco6Epma/z1iics5JXtOMFng8zHo/6OtfI/9xIkrIq59oEtRcaupzQHEahpHf/OEfsHyjSmnv4E1Ag0D98vER+I/Q0oXsiFOU1
+X-CM-Envelope: MS4wfPmJjN/a8mozcRAudviVmogmAxyx0WVlebGvGQoBp7TVGgoAeoMNGVV2kl1DxOY6wBhb568Ay1IbF/3Bj4K1irw7BvYliLcgk1I1eSnM4serGyFmSFiy
+    f/HMHmx7RFWrTj9UHZOLsJ6H9WzsfEvGCrc9CrKOK3aTbB+QuALQ5NJSBYQ54bw8ipVP0/WNclK/rWCgFxp5X9S4RzQHXgRltwcO3zaoLxPyHvVxPY9b5Fk2
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=P1BnusSwAAAA:8 a=VwQbUJbxAAAA:8 a=vQBBkBfzAAAA:8 a=ag1SF4gXAAAA:8
-    a=1X84iZHUU3uXrpedBrwA:9 a=QEXdDO2ut3YA:10 a=D0XLA9XvdZm18NrgonBM:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=NGXS0kB0m_rannUenejW:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=fk1lIlRQAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=Gj_NPGMNAAAA:8
+    a=ag1SF4gXAAAA:8 a=3KOjD5BY3yv1Bt1V9BEA:9 a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19
+    a=QEXdDO2ut3YA:10 a=U75ogvRika4pmaD_UPO0:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=xGItau7KCEKv9uFBzOR9:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753347AbeDQRN1 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 13:13:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60022 "EHLO
+        id S1752947AbeDQQAN (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 12:00:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752696AbeDQQAK (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 12:00:10 -0400
+        with ESMTP id S1752250AbeDQQAM (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 12:00:12 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH 4.16 13/68] media: v4l: vsp1: Fix header display list status check in continuous mode
-Date: Tue, 17 Apr 2018 17:57:26 +0200
-Message-Id: <20180417155749.871501229@linuxfoundation.org>
+        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Bill Perkins <wmp@grnwood.net>
+Subject: [PATCH 4.16 14/68] ipmi: Fix some error cleanup issues
+Date: Tue, 17 Apr 2018 17:57:27 +0200
+Message-Id: <20180417155749.908755011@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -94,42 +94,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-commit 613928e85317b945c863bb893f5737d2f22f5425 upstream.
+commit cc095f0ac1f7c200e51a5c2a78a43c9f42049dbb upstream.
 
-To allow dual pipelines utilising two WPF entities when available, the
-VSP was updated to support header-mode display list in continuous
-pipelines.
+device_remove_group() was called on any cleanup, even if the
+device attrs had not been added yet.  That can occur in certain
+error scenarios, so add a flag to know if it has been added.
 
-A small bug in the status check of the command register causes the
-second pipeline to be directly afflicted by the running of the first;
-appearing as a perceived performance issue with stuttering display.
+Also make sure we remove the dev if we added it ourselves.
 
-Fix the vsp1_dl_list_hw_update_pending() call to ensure that the read
-comparison corresponds to the correct pipeline.
-
-Fixes: eaf4bfad6ad8 ("v4l: vsp1: Add support for header display lists in continuous mode")
-
-Cc: "Stable v4.14+" <stable@vger.kernel.org>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: stable@vger.kernel.org # 4.15
+Cc: Laura Abbott <labbott@redhat.com>
+Tested-by: Bill Perkins <wmp@grnwood.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vsp1/vsp1_dl.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_si_intf.c |   18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -509,7 +509,8 @@ static bool vsp1_dl_list_hw_update_pendi
- 		return !!(vsp1_read(vsp1, VI6_DL_BODY_SIZE)
- 			  & VI6_DL_BODY_SIZE_UPD);
- 	else
--		return !!(vsp1_read(vsp1, VI6_CMD(dlm->index) & VI6_CMD_UPDHDR));
-+		return !!(vsp1_read(vsp1, VI6_CMD(dlm->index))
-+			  & VI6_CMD_UPDHDR);
- }
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -252,6 +252,9 @@ struct smi_info {
+ 	/* Default driver model device. */
+ 	struct platform_device *pdev;
  
- static void vsp1_dl_list_hw_enqueue(struct vsp1_dl_list *dl)
++	/* Have we added the device group to the device? */
++	bool dev_group_added;
++
+ 	/* Counters and things for the proc filesystem. */
+ 	atomic_t stats[SI_NUM_STATS];
+ 
+@@ -2027,8 +2030,8 @@ int ipmi_si_add_smi(struct si_sm_io *io)
+ 	if (initialized) {
+ 		rv = try_smi_init(new_smi);
+ 		if (rv) {
+-			mutex_unlock(&smi_infos_lock);
+ 			cleanup_one_si(new_smi);
++			mutex_unlock(&smi_infos_lock);
+ 			return rv;
+ 		}
+ 	}
+@@ -2187,6 +2190,7 @@ static int try_smi_init(struct smi_info
+ 			rv);
+ 		goto out_err_stop_timer;
+ 	}
++	new_smi->dev_group_added = true;
+ 
+ 	rv = ipmi_register_smi(&handlers,
+ 			       new_smi,
+@@ -2240,7 +2244,10 @@ static int try_smi_init(struct smi_info
+ 	return 0;
+ 
+ out_err_remove_attrs:
+-	device_remove_group(new_smi->io.dev, &ipmi_si_dev_attr_group);
++	if (new_smi->dev_group_added) {
++		device_remove_group(new_smi->io.dev, &ipmi_si_dev_attr_group);
++		new_smi->dev_group_added = false;
++	}
+ 	dev_set_drvdata(new_smi->io.dev, NULL);
+ 
+ out_err_stop_timer:
+@@ -2288,6 +2295,7 @@ out_err:
+ 		else
+ 			platform_device_put(new_smi->pdev);
+ 		new_smi->pdev = NULL;
++		new_smi->io.dev = NULL;
+ 	}
+ 
+ 	kfree(init_name);
+@@ -2384,8 +2392,10 @@ static void cleanup_one_si(struct smi_in
+ 		}
+ 	}
+ 
+-	device_remove_group(to_clean->io.dev, &ipmi_si_dev_attr_group);
+-	dev_set_drvdata(to_clean->io.dev, NULL);
++	if (to_clean->dev_group_added)
++		device_remove_group(to_clean->io.dev, &ipmi_si_dev_attr_group);
++	if (to_clean->io.dev)
++		dev_set_drvdata(to_clean->io.dev, NULL);
+ 
+ 	list_del(&to_clean->link);
+ 
