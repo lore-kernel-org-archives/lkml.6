@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2152363-1523980686-2-6453970198403930424
+X-Cyrus-Session-Id: sloti22d1t05-1742877-1523967796-2-13697775672308058598
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -8,28 +8,28 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MUL
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
   MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523980686; b=l4vF0tRwGGTj/r4Li+eIYnJPdZ6Q1VrQABTLMqcRLsBjGXKTlV
-    yaBCvLq6EuybaV+7riGM/pNe/kl6cZqf2d7lrYCxveNCMJx/v/vTZAvbR2ZxasY1
-    PiHEjY1gyrrFIeWTc5us4fnsQKu613i7rImkwYBlXnKUv1fMONdm9aYGHs6J7O7C
-    Qn9wjp9sr8RFhmhFAzyp2irDrBXd9yPpwyxHO5ON/xY0K+KcDrqOk/ilY1owaLG7
-    GK8gU0VARAiGWO039MowoHH8FclCERrIigvQECcg/5tcky6nuPgrJxZoTQwT0JCf
-    fHyB7n1vVmu2wsRtWJfB6v9GIXrh+FG+C0bA==
+    1523967795; b=gZLoNMGx66PVVWZPgzpoyc6TtX2sQgeXjjUA1mD+eh/eBK14+o
+    19oKpbgHrjG2g2wDj9l6WuEs95TmtaOJk6AslabgH8XcZEHUyPJFsCfsM0Jhe+Qe
+    tvb9NdbZEaD3CH0i6sQHq7rEOOoD4ID1mxT45JoBouJ4H4jaC+6YmeTf6NhKr4fb
+    xy/3+1RhrbALgKEzctRD+rNMbHoDX9QJt7UEgt6OJzzteubBLRqTlWbdiAq6d/3Y
+    pSt+M5UYiN89Hra/2sGR/GQNfT8DRB2GUij4Lgf0dMhjVRlik7cCrPxyr+FFkWbI
+    aMRHIlr98d9xg2uyxKTurssBlpjcM+fZvy+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1523980686; bh=l+eemrpP5D7
-    YMYbcqrFsYT7CXN0FQ6PMF4fPoN+e3rM=; b=Y/ealJUipYcPyr3ZLBg1ZuaN9FW
-    gvZyChKQuJvC361o+HpEULlIB2CUXtv3XFsDGY7VZrWlIlZSkXrwdzx62a9WrM1I
-    IvJAmlLYUzOReU0Qp7fXR3Lkyq893HWz0PsfYHI+DnRKYyCqGy6cyFBy+LfyRWag
-    M5OB+XUGA5mFIubdLqPB4F5Wd4p+vMpOS3ALJD5TyoQEbg/SVbW51FgFavTKRU/0
-    qjggV83LY6GXg/DBzQ8UI3ftbY6FcscBBs66NrjmFrvcfbZOiPdt+sZ4It2X+WQs
-    nMaEcSr3tCwK2WHVr2nUv3syASab61zanTOYNYzERrwIcagBWkZ7cBKJqjQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1523967795; bh=nSFjpSeV50QRSZ6dthi6a0YoJLIOvx
+    u9EZ0sYmb2qhg=; b=IwRhLTK1to+7tzgCDiQyPynO8ROZmoCfFEK9cXukaCMnVL
+    zjUPWeBVm2Oe+flPVaDlrHZcS8Yk97Wapkjt1LsLXcoqEsv44A2yKPrSoZHMOnn2
+    IX3jd3i0F79TYY037U4fMkE17TOlFAGnw1NSneStySx8B2U7ZQQWRL+xrY/sEyLv
+    SJaZCRL2DWqw9EU4XRIsJ+0LuIzaIKopCcz2vPHTE1ENrI8Fb2FX3N6BvIVng4Rq
+    5tTAZ2HFzLe/UUJMYwJGg+wKMkHGdUcgtEzdkgru+3Olb+FGJCNRLttCNh71Nj+p
+    gmQRQfU1Pojkgu2DIbpFQGWH9c/0tKYqUrn/gNhA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
@@ -51,36 +51,33 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNYWltlXSa03DbFV+TW/VWFoQoZ/OI9bZlLdLtRWUFU030u7J/2V2nYL+Fvk0RAsBduKIfgBM5kLO/VvecG53xQFiIR5VC/HdEdRwBYQCzZLIW1++RUf
-    Wwr4f5B6REq3LU4MMpx1oIdgZZTbFKqf8jpUgXHwY9j/VtfKnIQlGgGKkAu3YI9fwytKBdNvdDhPfVBIcsr8F/sYL/J1VKRN/2yX9l2Yw+pQPUGZOyvf7GlI
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=iox4zFpeAAAA:8 a=HQ_B14XTsyJMtPaU2CgA:9 a=QEXdDO2ut3YA:10
-    a=WzC6qhA0u3u7Ye7llzcV:22
+X-CM-Envelope: MS4wfBdzp0ITCFFxkFMHdLeFOY2H2aZ304m/8eylCYsSCmbLJPFB5PDfp7Mjl2OG4qNkergepQfK/OaDrHS2pHXrvOFvpMoQ4tLH29JJcBnAIw1YL8c2bRba
+    uK8V7gsI68EsyM5dAdpBjhwpx6J4woM+VkY4uck5+M/bmqpGBr3Grs0Yeps8cK5cYraoVBRBVqe6/t/S60IJnHILQndHsmfV+GUqleeG0tnXQY+pGfYJJQAt
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=NEAV23lmAAAA:8 a=D19gQVrFAAAA:8 a=iox4zFpeAAAA:8 a=Pg82Rxtgs_1_dKY1UfEA:9
+    a=CjuIK1q_8ugA:10 a=W4TVW4IDbPiebHqcZpNg:22 a=WzC6qhA0u3u7Ye7llzcV:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752580AbeDQP6D (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 11:58:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36238 "EHLO mx2.suse.de"
+        id S1752796AbeDQMXA (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 08:23:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41224 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751187AbeDQP6C (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:58:02 -0400
-Date: Tue, 17 Apr 2018 17:58:01 +0200
+        id S1752546AbeDQMW7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:22:59 -0400
+Date: Tue, 17 Apr 2018 14:22:58 +0200
 From: Jan Kara <jack@suse.cz>
 To: Pavlos Parissis <pavlos.parissis@gmail.com>
 Cc: Jan Kara <jack@suse.cz>, mszeredi@redhat.com, amir73il@gmail.com,
         linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Subject: Re: kernel 4.14.x crash around fsnotify_mark_connector
-Message-ID: <20180417155801.y4boo2nnoznn6sg6@quack2.suse.cz>
+Message-ID: <20180417122258.gj25idq7w7xm5dgc@quack2.suse.cz>
 References: <e7323798-3175-3d27-fdd1-349f1422cb26@gmail.com>
- <20180417140231.75fi4ek2q77qilta@quack2.suse.cz>
- <3016af7f-97f0-e28d-96cd-e49fada3e88d@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3016af7f-97f0-e28d-96cd-e49fada3e88d@gmail.com>
+In-Reply-To: <e7323798-3175-3d27-fdd1-349f1422cb26@gmail.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
@@ -88,27 +85,90 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue 17-04-18 16:15:07, Pavlos Parissis wrote:
-> On 17/04/2018 04:02 μμ, Jan Kara wrote:
-> > On Tue 17-04-18 12:39:32, Pavlos Parissis wrote:
-> >> In one of our production servers where we run kernel version 4.14.32, I noticed
-> >> the following:
-> > 
-> > OK, I was looking into this for some time and couldn't find a problem in
-> > 4.14.32 code. Can you try running a kernel with CONFIG_DEBUG_SLAB and
-> > CONFIG_DEBUG_PAGEALLOC enabled to hopefully catch the problem earlier?
-> > Thanks!
-> > 
-> 
-> I can certainly do that, but I can't reproduce that specific crash. So,
-> it may take days before we get a similar crash. Having said that, the
-> soft lockup issue, which I mentioned in another thread, happens once per
-> day, so I hope running a kernel with those debug settings will help you.
+Hi,
 
-Yes, the hope is debug checks will trigger faster than the actual data
-corruption (or softlockup) you've hit.
+On Tue 17-04-18 12:39:32, Pavlos Parissis wrote:
+> In one of our production servers where we run kernel version 4.14.32, I noticed
+> the following:
+
+Thanks for the report! So I believe this is the same underlying problem as
+for the softlockups you were observing - there I believe the linked list
+just gets corrupted which causes the list iteration to never finish. But
+this more points to a place where could be some use-after-free issues
+(either in fsnotify or somewhere else). I'll look into the code.
 
 								Honza
+
+> 
+> ----
+> [138630.417246] cache_from_obj: Wrong slab cache. fsnotify_mark_connector but
+> object is from kmalloc-2048(361:anycast-healthchecker.service)
+> [138630.477075] ------------[ cut here ]------------
+> [138630.500028] WARNING: CPU: 14 PID: 26002 at mm/slab.h:377
+> kmem_cache_free+0x133/0x1c0
+> [138630.538130] Modules linked in: netconsole binfmt_misc sctp_diag sctp dccp_diag
+> dccp tcp_diag udp_diag inet_diag unix_diag cfg80211 rfkill 8021q garp mrp xfs loop
+> x86_pkg_temp_thermal intel_powerclamp coretemp kvm_intel kvm irqbypass
+> crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel crypto_simd
+> glue_helper cryptd iTCO_wdt intel_cstate hpwdt hpilo iTCO_vendor_support sg
+> intel_rapl_perf ipmi_si pcspkr ioatdma shpchp lpc_ich i2c_i801 ipmi_devintf dca
+> mfd_core wmi ipmi_msghandler nfsd auth_rpcgss nfs_acl lockd grace sunrpc ip_tables
+> ext4 mbcache jbd2 i2c_algo_bit sd_mod drm_kms_helper syscopyarea sysfillrect
+> sysimgblt fb_sys_fops ttm bnx2x serio_raw mdio libcrc32c crc32c_intel hpsa ptp drm
+> scsi_transport_sas pps_core dm_mirror dm_region_hash dm_log dm_mod dax
+> [138630.871763] CPU: 14 PID: 26002 Comm: kworker/u66:3 Not tainted
+> 4.14.32-1.el7.x86_64 #1
+> [138630.910864] Hardware name: HP ProLiant BL460c Gen9, BIOS I36 10/25/2017
+> [138630.943498] Workqueue: events_unbound fsnotify_connector_destroy_workfn
+> [138630.976569] task: ffff88203b62ae80 task.stack: ffffc90008a20000
+> [138631.005895] RIP: 0010:kmem_cache_free+0x133/0x1c0
+> [138631.029230] RSP: 0018:ffffc90008a23e20 EFLAGS: 00010246
+> [138631.055217] RAX: 000000000000007c RBX: ffff882000000000 RCX: 0000000000000000
+> [138631.091346] RDX: 0000000000000000 RSI: ffff88203f3969d8 RDI: ffff88203f3969d8
+> [138631.127139] RBP: ffffc90008a23e38 R08: 0000000000000001 R09: 000000000000057d
+> [138631.162575] R10: ffff88102b906cf0 R11: ffff88102b913ea0 R12: ffff88103f579980
+> [138631.198018] R13: ffff88203bd57c00 R14: ffff88203bd63f00 R15: ffffffff82128388
+> [138631.233371] FS:  0000000000000000(0000) GS:ffff88203f380000(0000)
+> knlGS:0000000000000000
+> [138631.273426] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [138631.301980] CR2: 0000000003600fd8 CR3: 000000000200a006 CR4: 00000000003606e0
+> [138631.338783] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [138631.374525] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [138631.409797] Call Trace:
+> [138631.422387]  fsnotify_connector_destroy_workfn+0x68/0x80
+> [138631.448516]  process_one_work+0x15c/0x380
+> [138631.468352]  worker_thread+0x4d/0x3e0
+> [138631.486705]  kthread+0x10c/0x140
+> [138631.503091]  ? max_active_store+0x80/0x80
+> [138631.523217]  ? __kthread_parkme+0x70/0x70
+> [138631.543338]  ? do_syscall_64+0x79/0x1b0
+> [138631.562518]  ret_from_fork+0x35/0x40
+> [138631.580199] Code: 4c 3b a7 d8 00 00 00 0f 84 11 ff ff ff 48 8b 4f 60 49 8b 54
+> 24 60 48 c7 c6 c0 19 c3 81 48 c7 c7 c0 9c e7 81 31 c0 e8 90 a5 eb ff <0f> 0b4c 89
+> e7 e9 e9 fe ff ff 65 8b 05 2c 3c de 7e 89 c0 48 0f
+> [138631.672489] ---[ end trace 6748d86d682915c2 ]---
+> [138631.695691] cache_from_obj: Wrong slab cache. fsnotify_mark_connector but
+> object is from kmalloc-2048(361:anycast-healthchecker.service)
+> ---
+> 
+> The kernel was fine and server was responsive.
+> A coworker mentioned that it may come from
+> https://github.com/torvalds/linux/blob/master/fs/notify/mark.c#L160
+> and commit
+> 08991e83b728 ("fsnotify: Free fsnotify_mark_connector when there is no mark
+> attached") arrived with 4.12-rc1 may be the cause of it.
+> 
+> I am wondering if it is related to the issue I reported
+> https://lkml.org/lkml/2018/4/16/506. But, that issue causes the whole server to
+> crash, which is not the case for above kernel dump.
+> 
+> 
+> Cheers,
+> Pavlos
+> 
+
+
+
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
