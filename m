@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+5IzkleN8l4a1QutZb7smBFH3m63h74J2eWqTynKJnC+PfRBDqILfvN/E7sOYKS1xlQ5Pa
-ARC-Seal: i=1; a=rsa-sha256; t=1523981217; cv=none;
+X-Google-Smtp-Source: AIpwx49uVT9J4e5KjrEvELlR22eHdDCMeKtA1d4Wc5ikqTR8ylg4O06+SNffH4ewx2AniW6rF4T3
+ARC-Seal: i=1; a=rsa-sha256; t=1523981214; cv=none;
         d=google.com; s=arc-20160816;
-        b=COcavFZTl1HyFLVwBhbb3a45Mfmh53yI8ql0vddvCmO2hgoQaa8gA13RSmlEbJrKzH
-         xEa8P+jMKV3u+KoThY7ttVKnbPMXrLrB367RPzntRwvdLasGNyd0EQOuTLFZOQcw+WRW
-         +VPM77uvP9iafxCKzJP56tEtVGPsPsd2YtW66/tymAFa/W+JUtQv7UGaKWcLlaoL/BR/
-         p/axG6CHGOX/KGT0QAl/hw5JUD+MJP51Uwi/zGEKRDbZEJVmDig2b9F0/fKGu9oqz1Tr
-         d5DHfcF/IOhZ2wZIduWgFRXrNLJBmJvfdhx2snUiZfpJaGN65kb1PD4BEjwmbd156X4B
-         B9mA==
+        b=odUwWFAuE++d+nBFujrnAJl+0PRr7wzq/Y5cHTVMhPRYbVFDkKeca2oG01Frn7iGgE
+         R8VKqtVp0ee6YEsSgJ+e7lEa9vOfgGmhKtygAawf7g9avS0b3hd5cZI6vk9IXHprFMhC
+         /M8qUuVYDGEArE7UZVnCLOghkaViIz9jlOvpcRvfeI7/nuN6xHEKjaX2X/52tAJiXkqr
+         187r9Z1GJJNLz84R0+YrtqyanCWEEC2BWQLGbcyjDObjPaGlidFU+2a+dSqDQGNV2uMM
+         fFUWuNccoqRldLeqGYXy8rwY/n5Ifptr7UkWGIo+rvpGEPQi1gKVlQWgWeHtxw4JI6Q/
+         XCgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Czv2eGdqcBcNKYJnfFQzL8prJO7U8FJsae16ATqjet4=;
-        b=inv+ejUvErHFpSsptPYoR306Vi/VBMjCHEj9fvPlMQVM868xK8t74TjikAq/qa1YZH
-         /AmRK3Ynyr5VPvwV6X09u/eOw86fbs2MFNAgipfH8LSH3dVQheItFhk40EKg2mGc8kuT
-         leYHDeq8gyjxylw62jXgcLhoQhBk5lDtej9ko1UgIYh+xzOfbLnlzQSQCIEWAPK0oiU+
-         OajdDXrdsTgKEHEM1jfWdbvppbDmP5BGqEs8ca3BXmURlKvYNFq849ElWnhSK8keY0gQ
-         3sG1B99lgR7p6oI19xOB/UtM+c8K34m7aKaBs2VPHO83uvR0cKAPW1OtXF86raBQ2ges
-         16hw==
+        bh=XpBC7wYFVHdGbCCGir3GqmTldUGN559Bz1dF7nfwB0k=;
+        b=Y717XGoP0mbG4h8uVL70Ab1E81K/ypWUrPgj82MlrIIpcV1RuQpeC3D+xOamdfCw0L
+         xft9Jo4RbzRcEAr2xgCqmcq6QJecyAE8Nn9Tlox+HUBmhAaSxeMfjw028qTwEOmvOSZr
+         IzBakUGEkagzBu+LA0B7XVXvn3CuARiuMZEbOZAHWU162qI4tRaYTubzTC1rLF14ON1r
+         8n2xzojEod3ygqAYyYHeKm1aqEHqq9TgibYp+ELRXcVEu1d6hjmi08jF+cf5MLwwhIjZ
+         8mc/gOH36oeJH11eUXuDMqKiEMAcbzLQY665Hq5f8dWSzf2QMw6cScB8nHJ4RfQSccJL
+         D53g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,15 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sudhir Sreedharan <ssreedharan@mvista.com>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 35/49] rtl8187: Fix NULL pointer dereference in priv->conf_mutex
-Date: Tue, 17 Apr 2018 17:59:14 +0200
-Message-Id: <20180417155716.690278125@linuxfoundation.org>
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
+	Ming Lei <tom.leiming@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Jens Axboe <axboe@fb.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 26/49] block/loop: fix deadlock after loop_set_status
+Date: Tue, 17 Apr 2018 17:59:05 +0200
+Message-Id: <20180417155716.273754205@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -40,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009886651691074?=
-X-GMAIL-MSGID: =?utf-8?q?1598010128856481538?=
+X-GMAIL-THRID: =?utf-8?q?1598009837369883753?=
+X-GMAIL-MSGID: =?utf-8?q?1598010125552867600?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,72 +53,130 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sudhir Sreedharan <ssreedharan@mvista.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 7972326a26b5bf8dc2adac575c4e03ee7e9d193a upstream.
+commit 1e047eaab3bb5564f25b41e9cd3a053009f4e789 upstream.
 
-This can be reproduced by bind/unbind the driver multiple times
-in AM3517 board.
+syzbot is reporting deadlocks at __blkdev_get() [1].
 
-Analysis revealed that rtl8187_start() was invoked before probe
-finishes(ie. before the mutex is initialized).
+----------------------------------------
+[   92.493919] systemd-udevd   D12696   525      1 0x00000000
+[   92.495891] Call Trace:
+[   92.501560]  schedule+0x23/0x80
+[   92.502923]  schedule_preempt_disabled+0x5/0x10
+[   92.504645]  __mutex_lock+0x416/0x9e0
+[   92.510760]  __blkdev_get+0x73/0x4f0
+[   92.512220]  blkdev_get+0x12e/0x390
+[   92.518151]  do_dentry_open+0x1c3/0x2f0
+[   92.519815]  path_openat+0x5d9/0xdc0
+[   92.521437]  do_filp_open+0x7d/0xf0
+[   92.527365]  do_sys_open+0x1b8/0x250
+[   92.528831]  do_syscall_64+0x6e/0x270
+[   92.530341]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
 
- INFO: trying to register non-static key.
- the code is fine but needs lockdep annotation.
- turning off the locking correctness validator.
- CPU: 0 PID: 821 Comm: wpa_supplicant Not tainted 4.9.80-dirty #250
- Hardware name: Generic AM3517 (Flattened Device Tree)
- [<c010e0d8>] (unwind_backtrace) from [<c010beac>] (show_stack+0x10/0x14)
- [<c010beac>] (show_stack) from [<c017401c>] (register_lock_class+0x4f4/0x55c)
- [<c017401c>] (register_lock_class) from [<c0176fe0>] (__lock_acquire+0x74/0x1938)
- [<c0176fe0>] (__lock_acquire) from [<c0178cfc>] (lock_acquire+0xfc/0x23c)
- [<c0178cfc>] (lock_acquire) from [<c08aa2f8>] (mutex_lock_nested+0x50/0x3b0)
- [<c08aa2f8>] (mutex_lock_nested) from [<c05f5bf8>] (rtl8187_start+0x2c/0xd54)
- [<c05f5bf8>] (rtl8187_start) from [<c082dea0>] (drv_start+0xa8/0x320)
- [<c082dea0>] (drv_start) from [<c084d1d4>] (ieee80211_do_open+0x2bc/0x8e4)
- [<c084d1d4>] (ieee80211_do_open) from [<c069be94>] (__dev_open+0xb8/0x120)
- [<c069be94>] (__dev_open) from [<c069c11c>] (__dev_change_flags+0x88/0x14c)
- [<c069c11c>] (__dev_change_flags) from [<c069c1f8>] (dev_change_flags+0x18/0x48)
- [<c069c1f8>] (dev_change_flags) from [<c0710b08>] (devinet_ioctl+0x738/0x840)
- [<c0710b08>] (devinet_ioctl) from [<c067925c>] (sock_ioctl+0x164/0x2f4)
- [<c067925c>] (sock_ioctl) from [<c02883f8>] (do_vfs_ioctl+0x8c/0x9d0)
- [<c02883f8>] (do_vfs_ioctl) from [<c0288da8>] (SyS_ioctl+0x6c/0x7c)
- [<c0288da8>] (SyS_ioctl) from [<c0107760>] (ret_fast_syscall+0x0/0x1c)
- Unable to handle kernel NULL pointer dereference at virtual address 00000000
- pgd = cd1ec000
- [00000000] *pgd=8d1de831, *pte=00000000, *ppte=00000000
- Internal error: Oops: 817 [#1] PREEMPT ARM
- Modules linked in:
- CPU: 0 PID: 821 Comm: wpa_supplicant Not tainted 4.9.80-dirty #250
- Hardware name: Generic AM3517 (Flattened Device Tree)
- task: ce73eec0 task.stack: cd1ea000
- PC is at mutex_lock_nested+0xe8/0x3b0
- LR is at mutex_lock_nested+0xd0/0x3b0
+[   92.931922] 1 lock held by systemd-udevd/525:
+[   92.933642]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x73/0x4f0
+----------------------------------------
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Sudhir Sreedharan <ssreedharan@mvista.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The reason of deadlock turned out that wait_event_interruptible() in
+blk_queue_enter() got stuck with bdev->bd_mutex held at __blkdev_put()
+due to q->mq_freeze_depth == 1.
+
+----------------------------------------
+[   92.787172] a.out           S12584   634    633 0x80000002
+[   92.789120] Call Trace:
+[   92.796693]  schedule+0x23/0x80
+[   92.797994]  blk_queue_enter+0x3cb/0x540
+[   92.803272]  generic_make_request+0xf0/0x3d0
+[   92.807970]  submit_bio+0x67/0x130
+[   92.810928]  submit_bh_wbc+0x15e/0x190
+[   92.812461]  __block_write_full_page+0x218/0x460
+[   92.815792]  __writepage+0x11/0x50
+[   92.817209]  write_cache_pages+0x1ae/0x3d0
+[   92.825585]  generic_writepages+0x5a/0x90
+[   92.831865]  do_writepages+0x43/0xd0
+[   92.836972]  __filemap_fdatawrite_range+0xc1/0x100
+[   92.838788]  filemap_write_and_wait+0x24/0x70
+[   92.840491]  __blkdev_put+0x69/0x1e0
+[   92.841949]  blkdev_close+0x16/0x20
+[   92.843418]  __fput+0xda/0x1f0
+[   92.844740]  task_work_run+0x87/0xb0
+[   92.846215]  do_exit+0x2f5/0xba0
+[   92.850528]  do_group_exit+0x34/0xb0
+[   92.852018]  SyS_exit_group+0xb/0x10
+[   92.853449]  do_syscall_64+0x6e/0x270
+[   92.854944]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+[   92.943530] 1 lock held by a.out/634:
+[   92.945105]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x3c/0x1e0
+----------------------------------------
+
+The reason of q->mq_freeze_depth == 1 turned out that loop_set_status()
+forgot to call blk_mq_unfreeze_queue() at error paths for
+info->lo_encrypt_type != NULL case.
+
+----------------------------------------
+[   37.509497] CPU: 2 PID: 634 Comm: a.out Tainted: G        W        4.16.0+ #457
+[   37.513608] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+[   37.518832] RIP: 0010:blk_freeze_queue_start+0x17/0x40
+[   37.521778] RSP: 0018:ffffb0c2013e7c60 EFLAGS: 00010246
+[   37.524078] RAX: 0000000000000000 RBX: ffff8b07b1519798 RCX: 0000000000000000
+[   37.527015] RDX: 0000000000000002 RSI: ffffb0c2013e7cc0 RDI: ffff8b07b1519798
+[   37.529934] RBP: ffffb0c2013e7cc0 R08: 0000000000000008 R09: 47a189966239b898
+[   37.532684] R10: dad78b99b278552f R11: 9332dca72259d5ef R12: ffff8b07acd73678
+[   37.535452] R13: 0000000000004c04 R14: 0000000000000000 R15: ffff8b07b841e940
+[   37.538186] FS:  00007fede33b9740(0000) GS:ffff8b07b8e80000(0000) knlGS:0000000000000000
+[   37.541168] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   37.543590] CR2: 00000000206fdf18 CR3: 0000000130b30006 CR4: 00000000000606e0
+[   37.546410] Call Trace:
+[   37.547902]  blk_freeze_queue+0x9/0x30
+[   37.549968]  loop_set_status+0x67/0x3c0 [loop]
+[   37.549975]  loop_set_status64+0x3b/0x70 [loop]
+[   37.549986]  lo_ioctl+0x223/0x810 [loop]
+[   37.549995]  blkdev_ioctl+0x572/0x980
+[   37.550003]  block_ioctl+0x34/0x40
+[   37.550006]  do_vfs_ioctl+0xa7/0x6d0
+[   37.550017]  ksys_ioctl+0x6b/0x80
+[   37.573076]  SyS_ioctl+0x5/0x10
+[   37.574831]  do_syscall_64+0x6e/0x270
+[   37.576769]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+----------------------------------------
+
+[1] https://syzkaller.appspot.com/bug?id=cd662bc3f6022c0979d01a262c318fab2ee9b56f
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>
+Fixes: ecdd09597a572513 ("block/loop: fix race between I/O and set_status")
+Cc: Ming Lei <tom.leiming@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: stable <stable@vger.kernel.org>
+Cc: Jens Axboe <axboe@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/loop.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
-+++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
-@@ -1450,6 +1450,7 @@ static int rtl8187_probe(struct usb_inte
- 		goto err_free_dev;
- 	}
- 	mutex_init(&priv->io_mutex);
-+	mutex_init(&priv->conf_mutex);
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1098,11 +1098,15 @@ loop_set_status(struct loop_device *lo,
+ 	if (info->lo_encrypt_type) {
+ 		unsigned int type = info->lo_encrypt_type;
  
- 	SET_IEEE80211_DEV(dev, &intf->dev);
- 	usb_set_intfdata(intf, dev);
-@@ -1625,7 +1626,6 @@ static int rtl8187_probe(struct usb_inte
- 		printk(KERN_ERR "rtl8187: Cannot register device\n");
- 		goto err_free_dmabuf;
- 	}
--	mutex_init(&priv->conf_mutex);
- 	skb_queue_head_init(&priv->b_tx_status.queue);
+-		if (type >= MAX_LO_CRYPT)
+-			return -EINVAL;
++		if (type >= MAX_LO_CRYPT) {
++			err = -EINVAL;
++			goto exit;
++		}
+ 		xfer = xfer_funcs[type];
+-		if (xfer == NULL)
+-			return -EINVAL;
++		if (xfer == NULL) {
++			err = -EINVAL;
++			goto exit;
++		}
+ 	} else
+ 		xfer = NULL;
  
- 	wiphy_info(dev->wiphy, "hwaddr %pM, %s V%d + %s, rfkill mask %d\n",
