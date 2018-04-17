@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49MItKJEWYF/RMucEDsQl7BMNWKpAWkTK7yPesc0Y4tD8lDCUvA6rjzHaAHgvXpb+299yaL
-ARC-Seal: i=1; a=rsa-sha256; t=1523980883; cv=none;
+X-Google-Smtp-Source: AIpwx4/JbnJr/CnzxMAC3jo2ZwYxEemUeZe42b9oeEoiYMaXMdZAmWQ5RyffzG2tqGKTzRZ/fdLc
+ARC-Seal: i=1; a=rsa-sha256; t=1523980880; cv=none;
         d=google.com; s=arc-20160816;
-        b=COKzdEBEMqEfD+ZXNwICnHzgHY1AzPfbB4aJkbORkl5XiFIvqkbDe/G+ZjlQcMsfmh
-         XOxCo4uid7kI5ewML+Sl/WYTI4Z5uPZrzASJ5YoIqwaKuvbgYwAGrcnXXftzQPnufI83
-         /UIiyfxm+B+yaBLu/3LGeuG5Ey9EDWSzfER819CapRfPbLYdui0ASj8K7KdTYG8CLawz
-         7g4IsywFfhEXp4KM5ubrHgQOX7V2hFRVfkXBq+toUzVvtkRZx0jRpGHtxN9wt0iX9yWW
-         udZTuo1t8Ki/876qWDzo+X74JVfwpAJB7wDDxBzvL8BPKB71WtJdkIhrrdx6TAWsLkXD
-         20xg==
+        b=EeA65owiTcbg3Gg6sbXArowDudgxVAADU+6RLptLN/tGck1QW395pD02Ht1B6qrzRz
+         dmKdcqMgH3aXtTXADQSs6wFSJ+zJg13Xu5Z39urcdaiPMy++FVfTgMA0Uh2oJP/fHvUw
+         3GHUvoxJQ0eeLEICLOmezJYN3BEKmPNS4OZVeWfAt+1R11jvenbFptKrMirfgKoFuWiN
+         RIaoI4I0FOigT4Nq8ZnsZNn6CEKy1HxxUwbJ5+PZzcPU1xgFu0smJJ67FSKzSkx4Mbbz
+         +oqZiEJCpk5Xl1l9buAqa4JiNolU2VHNUahm8N09CSByI5yiIAe/2C6z9SbTomQGtVXv
+         vd4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=sZRmsWK9SMWC43KS7ylAtDFoP3tC4ed0xQF+J/gDzC4=;
-        b=ZRm9FwWsyzjltYzJ1O3zuNrWUTAN8Fsbbm5ow2f1Za1pXo24a6ygnHLmoeDcNjaqES
-         O919Qv1iniV/BxW3Ly6e3WsyRwYyXro2QFmEnB97GHlNTlUBSi8GpTciEVSBAWvi4ibW
-         jdg/RZP4zTi7CbF3fxI0bL/uIw3ZQW2J0puCgzFOcBm/Y5MV/gcxPG1yG7jSpyAVB/XY
-         rLrCIYftLhtecwcA2Z2zm8uf4m1cryiLUGLXVA/cIMbWGbPh1G1vMiwGUHiLZ1KDinaX
-         9PNeEvqu/KhbM3DpcbC1yttKj0z6GFQl5o6jdGsSXP+3NZpfjxffDD2z2aRhvTyfNwVa
-         F7Tg==
+        bh=dYjatGIVYRooaD0N65JEolTfe+EIAQhPez8cY7RitD0=;
+        b=JEBcfS0GnfA/5rfuAFAfcC62lc5ZfMDYsIuKaB8ApNVVen9QbxXPLkl1VDQt8zZDM5
+         g7l5HwuIRvD12gpWWrwHGf9rpM6NIi70Y12oLm9Dch9oLeQrcjdt0K4bOLjPP99AARxa
+         pe6uz9LqM7DPrfUpmtH9IlYF3liXREJIw67ZMZAz7FsC3dmCxS81XAOTefwVtg0kAu/X
+         17xGbMg6GSKqpX2v0XwBO8uOemwmPUN07C2mv1t94Yrw1j258MUaWqv8DdUwsmTZFU9g
+         4uYmCpbStC2cDG/Xkyk8Ugz2gtbOZTKoCBtIuIJQ7mnXu3dUTIedASyhED7STmn0Lj/S
+         jBXA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Huacai Chen <chenhc@lemote.com>,
-	James Hogan <jhogan@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Rich Felker <dalias@libc.org>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Russell King <linux@arm.linux.org.uk>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Ingo Molnar <mingo@elte.hu>,
+	Yury Norov <ynorov@caviumnetworks.com>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot <syzbot+6887cbb011c8054e8a3d@syzkaller.appspotmail.com>,
+	Noam Camus <noamca@mellanox.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 39/68] zboot: fix stack protector in compressed boot phase
-Date: Tue, 17 Apr 2018 17:57:52 +0200
-Message-Id: <20180417155750.920900508@linuxfoundation.org>
+Subject: [PATCH 4.16 38/68] lib: fix stall in __bitmap_parselist()
+Date: Tue, 17 Apr 2018 17:57:51 +0200
+Message-Id: <20180417155750.883936738@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -48,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009779318755042?=
-X-GMAIL-MSGID: =?utf-8?q?1598009779318755042?=
+X-GMAIL-THRID: =?utf-8?q?1598009776446596481?=
+X-GMAIL-MSGID: =?utf-8?q?1598009776446596481?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,112 +56,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Huacai Chen <chenhc@lemote.com>
+From: Yury Norov <ynorov@caviumnetworks.com>
 
-commit 7bbaf27d9c83037b6e60a818e57bdbedf6bc15be upstream.
+commit 8351760ff5b2042039554b4948ddabaac644a976 upstream.
 
-Calling __stack_chk_guard_setup() in decompress_kernel() is too late
-that stack checking always fails for decompress_kernel() itself.  So
-remove __stack_chk_guard_setup() and initialize __stack_chk_guard before
-we call decompress_kernel().
+syzbot is catching stalls at __bitmap_parselist()
+(https://syzkaller.appspot.com/bug?id=ad7e0351fbc90535558514a71cd3edc11681997a).
+The trigger is
 
-Original code comes from ARM but also used for MIPS and SH, so fix them
-together.  If without this fix, compressed booting of these archs will
-fail because stack checking is enabled by default (>=4.16).
+  unsigned long v = 0;
+  bitmap_parselist("7:,", &v, BITS_PER_LONG);
 
-Link: http://lkml.kernel.org/r/1522226933-29317-1-git-send-email-chenhc@lemote.com
-Fixes: 8779657d29c0 ("stackprotector: Introduce CONFIG_CC_STACKPROTECTOR_STRONG")
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Acked-by: James Hogan <jhogan@kernel.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Rich Felker <dalias@libc.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Ingo Molnar <mingo@elte.hu>
+which results in hitting infinite loop at
+
+    while (a <= b) {
+	    off = min(b - a + 1, used_size);
+	    bitmap_set(maskp, a, off);
+	    a += group_size;
+    }
+
+due to used_size == group_size == 0.
+
+Link: http://lkml.kernel.org/r/20180404162647.15763-1-ynorov@caviumnetworks.com
+Fixes: 0a5ce0831d04382a ("lib/bitmap.c: make bitmap_parselist() thread-safe and much faster")
+Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+6887cbb011c8054e8a3d@syzkaller.appspotmail.com>
+Cc: Noam Camus <noamca@mellanox.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/compressed/misc.c        |    9 +--------
- arch/mips/boot/compressed/decompress.c |    9 +--------
- arch/sh/boot/compressed/misc.c         |    9 +--------
- 3 files changed, 3 insertions(+), 24 deletions(-)
+ lib/bitmap.c      |    2 +-
+ lib/test_bitmap.c |    4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/compressed/misc.c
-+++ b/arch/arm/boot/compressed/misc.c
-@@ -128,12 +128,7 @@ asmlinkage void __div0(void)
- 	error("Attempting division by 0!");
- }
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -607,7 +607,7 @@ static int __bitmap_parselist(const char
+ 		/* if no digit is after '-', it's wrong*/
+ 		if (at_start && in_range)
+ 			return -EINVAL;
+-		if (!(a <= b) || !(used_size <= group_size))
++		if (!(a <= b) || group_size == 0 || !(used_size <= group_size))
+ 			return -EINVAL;
+ 		if (b >= nmaskbits)
+ 			return -ERANGE;
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -255,6 +255,10 @@ static const struct test_bitmap_parselis
+ 	{-EINVAL, "-1",	NULL, 8, 0},
+ 	{-EINVAL, "-0",	NULL, 8, 0},
+ 	{-EINVAL, "10-1", NULL, 8, 0},
++	{-EINVAL, "0-31:", NULL, 8, 0},
++	{-EINVAL, "0-31:0", NULL, 8, 0},
++	{-EINVAL, "0-31:0/0", NULL, 8, 0},
++	{-EINVAL, "0-31:1/0", NULL, 8, 0},
+ 	{-EINVAL, "0-31:10/1", NULL, 8, 0},
+ };
  
--unsigned long __stack_chk_guard;
--
--void __stack_chk_guard_setup(void)
--{
--	__stack_chk_guard = 0x000a0dff;
--}
-+const unsigned long __stack_chk_guard = 0x000a0dff;
- 
- void __stack_chk_fail(void)
- {
-@@ -150,8 +145,6 @@ decompress_kernel(unsigned long output_s
- {
- 	int ret;
- 
--	__stack_chk_guard_setup();
--
- 	output_data		= (unsigned char *)output_start;
- 	free_mem_ptr		= free_mem_ptr_p;
- 	free_mem_end_ptr	= free_mem_ptr_end_p;
---- a/arch/mips/boot/compressed/decompress.c
-+++ b/arch/mips/boot/compressed/decompress.c
-@@ -76,12 +76,7 @@ void error(char *x)
- #include "../../../../lib/decompress_unxz.c"
- #endif
- 
--unsigned long __stack_chk_guard;
--
--void __stack_chk_guard_setup(void)
--{
--	__stack_chk_guard = 0x000a0dff;
--}
-+const unsigned long __stack_chk_guard = 0x000a0dff;
- 
- void __stack_chk_fail(void)
- {
-@@ -92,8 +87,6 @@ void decompress_kernel(unsigned long boo
- {
- 	unsigned long zimage_start, zimage_size;
- 
--	__stack_chk_guard_setup();
--
- 	zimage_start = (unsigned long)(&__image_begin);
- 	zimage_size = (unsigned long)(&__image_end) -
- 	    (unsigned long)(&__image_begin);
---- a/arch/sh/boot/compressed/misc.c
-+++ b/arch/sh/boot/compressed/misc.c
-@@ -104,12 +104,7 @@ static void error(char *x)
- 	while(1);	/* Halt */
- }
- 
--unsigned long __stack_chk_guard;
--
--void __stack_chk_guard_setup(void)
--{
--	__stack_chk_guard = 0x000a0dff;
--}
-+const unsigned long __stack_chk_guard = 0x000a0dff;
- 
- void __stack_chk_fail(void)
- {
-@@ -130,8 +125,6 @@ void decompress_kernel(void)
- {
- 	unsigned long output_addr;
- 
--	__stack_chk_guard_setup();
--
- #ifdef CONFIG_SUPERH64
- 	output_addr = (CONFIG_MEMORY_START + 0x2000);
- #else
