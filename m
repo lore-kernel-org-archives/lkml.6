@@ -1,198 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752900AbeDQPKF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:10:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38330 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752649AbeDQPKD (ORCPT
+        id S1752948AbeDQPKu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:10:50 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:48982 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752078AbeDQPKs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:10:03 -0400
-Subject: Re: [PATCH v4 05/15] KVM: s390: enable/disable AP interpretive
- execution
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-6-git-send-email-akrowiak@linux.vnet.ibm.com>
- <15b60572-40d6-0f03-11f9-c50cb7eb00e8@linux.vnet.ibm.com>
- <15bb0c9b-e605-232b-4dd2-826b6ee0d045@linux.vnet.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Tue, 17 Apr 2018 11:09:54 -0400
+        Tue, 17 Apr 2018 11:10:48 -0400
+Subject: Re: [PATCH] xen: xenbus_dev_frontend: Really return response string
+To: Juergen Gross <jgross@suse.com>,
+        Simon Gaiser <simon@invisiblethingslab.com>,
+        xen-devel@lists.xenproject.org
+Cc: linux-kernel@vger.kernel.org
+References: <20180315030803.27781-1-simon@invisiblethingslab.com>
+ <8eb5cb63-c733-a543-be6d-cf7348f5092a@suse.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <1405cf1d-21e6-afa7-4fff-ce2d326fdaaf@oracle.com>
+Date: Tue, 17 Apr 2018 11:12:29 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <15bb0c9b-e605-232b-4dd2-826b6ee0d045@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <8eb5cb63-c733-a543-be6d-cf7348f5092a@suse.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041715-0052-0000-0000-000002DD0BAF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008871; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01019261; UDB=6.00519973; IPR=6.00798502;
- MB=3.00020618; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 15:10:00
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041715-0053-0000-0000-00005C5D59AB
-Message-Id: <a87d2612-58d0-88be-ecc6-2a4c40b31f93@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170134
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8865 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=858
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804170135
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/2018 07:13 AM, Pierre Morel wrote:
-> On 16/04/2018 12:51, Pierre Morel wrote:
->> On 15/04/2018 23:22, Tony Krowiak wrote:
->>> The VFIO AP device model exploits interpretive execution of AP
->>> instructions (APIE) to provide guests passthrough access to AP
->>> devices. This patch introduces a new interface to enable and
->>> disable APIE.
->>>
->>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>> ---
->>>   arch/s390/include/asm/kvm-ap.h   |   16 ++++++++++++++++
->>>   arch/s390/include/asm/kvm_host.h |    1 +
->>>   arch/s390/kvm/kvm-ap.c           |   20 ++++++++++++++++++++
->>>   arch/s390/kvm/kvm-s390.c         |    9 +++++++++
->>>   4 files changed, 46 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/arch/s390/include/asm/kvm-ap.h 
->>> b/arch/s390/include/asm/kvm-ap.h
->>> index 736e93e..a6c092e 100644
->>> --- a/arch/s390/include/asm/kvm-ap.h
->>> +++ b/arch/s390/include/asm/kvm-ap.h
->>> @@ -35,4 +35,20 @@
->>>    */
->>>   void kvm_ap_build_crycbd(struct kvm *kvm);
->>>
->>> +/**
->>> + * kvm_ap_interpret_instructions
->>> + *
->>> + * Indicate whether AP instructions shall be interpreted. If they 
->>> are not
->>> + * interpreted, all AP instructions will be intercepted and routed 
->>> back to
->>> + * userspace.
->>> + *
->>> + * @kvm: the virtual machine attributes
->>> + * @enable: indicates whether AP instructions are to be interpreted 
->>> (true) or
->>> + *        or not (false).
->>> + *
->>> + * Returns 0 if completed successfully; otherwise, returns -EOPNOTSUPP
->>> + * indicating that AP instructions are not installed on the guest.
->>> + */
->>> +int kvm_ap_interpret_instructions(struct kvm *kvm, bool enable);
->>> +
->>>   #endif /* _ASM_KVM_AP */
->>> diff --git a/arch/s390/include/asm/kvm_host.h 
->>> b/arch/s390/include/asm/kvm_host.h
->>> index 3162783..5470685 100644
->>> --- a/arch/s390/include/asm/kvm_host.h
->>> +++ b/arch/s390/include/asm/kvm_host.h
->>> @@ -715,6 +715,7 @@ struct kvm_s390_crypto {
->>>       __u32 crycbd;
->>>       __u8 aes_kw;
->>>       __u8 dea_kw;
->>> +    __u8 apie;
->>>   };
->>>
->>>   #define APCB0_MASK_SIZE 1
->>> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
->>> index 991bae4..55d11b5 100644
->>> --- a/arch/s390/kvm/kvm-ap.c
->>> +++ b/arch/s390/kvm/kvm-ap.c
->>> @@ -58,3 +58,23 @@ void kvm_ap_build_crycbd(struct kvm *kvm)
->>>       }
->>>   }
->>>   EXPORT_SYMBOL(kvm_ap_build_crycbd);
->>> +
->>> +int kvm_ap_interpret_instructions(struct kvm *kvm, bool enable)
->>> +{
->>> +    int ret = 0;
->>> +
->>> +    mutex_lock(&kvm->lock);
->>> +
->>> +    if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP)) {
+On 04/17/2018 03:33 AM, Juergen Gross wrote:
+> On 15/03/18 04:08, Simon Gaiser wrote:
+>> xenbus_command_reply() did not actually copy the response string and
+>> leaked stack content instead.
 >>
->> Do we really need to test CPU_FEAT_AP?
->>
->> I understand that KVM_S390_VM_CPU_FEAT_AP means AP instructions are 
->> interpreted.
->> shouldn't we add this information in the name?
->> like KVM_S390_VM_CPU_FEAT_APIE
+>> Fixes: 9a6161fe73bd ("xen: return xenstore command failures via response instead of rc")
+>> Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
+> Reviewed-by: Juergen Gross <jgross@suse.com>
 >
-> If I misunderstood and FEAT_AP really mean AP instructions available 
-> in the guest,
-> same question:
-> is this function called if AP instructions are not available in the 
-> guest?
->
->>
->>> +        ret = -EOPNOTSUPP;
->>> +        goto done;
->>> +    }
->>> +
->>> +    kvm->arch.crypto.apie = enable;
->>> +    kvm_s390_vcpu_crypto_reset_all(kvm);
->>> +
->>> +done:
->>> +    mutex_unlock(&kvm->lock);
->>> +    return ret;
->>> +}
->>> +EXPORT_SYMBOL(kvm_ap_interpret_instructions);
->>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->>> index 55cd897..1dc8566 100644
->>> --- a/arch/s390/kvm/kvm-s390.c
->>> +++ b/arch/s390/kvm/kvm-s390.c
->>> @@ -1901,6 +1901,9 @@ static void kvm_s390_crypto_init(struct kvm *kvm)
->>>       kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
->>>       kvm_ap_build_crycbd(kvm);
->>>
->>> +    /* Default setting indicating SIE shall interpret AP 
->>> instructions */
->>> +    kvm->arch.crypto.apie = 1;
->>> +
->>>       if (!test_kvm_facility(kvm, 76))
->>>           return;
->>>
->>> @@ -2434,6 +2437,12 @@ static void kvm_s390_vcpu_crypto_setup(struct 
->>> kvm_vcpu *vcpu)
->>>   {
->>>       vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->>>
->>> +    vcpu->arch.sie_block->eca &= ~ECA_APIE;
->>> +    if (vcpu->kvm->arch.crypto.apie &&
->>> +        test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
->>
->> Do we call xxx_crypto_setup() if KVM does not support AP interpretation?
->
-> sorry, I should have written AP instructions here:
-> is this function called if AP instructions are not available in the guest?
 
-Yes, as I stated in a previous email, this function is called by
-kvm_arch_vcpu_setup(vcpu) regardless of whether AP instructions are
-available on the guest or not.
+Applied to for-linus-4.17.
 
->
->
->>
->>> +        vcpu->arch.sie_block->eca |= ECA_APIE;
->>> +
->>> +
->>>       if (!test_kvm_facility(vcpu->kvm, 76))
->>>           return;
->>>
->>
->
+-boris
