@@ -1,238 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752850AbeDQDjA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 23:39:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55912 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751908AbeDQDi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 23:38:59 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 405272175D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Mon, 16 Apr 2018 20:38:58 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
-Message-ID: <20180417033858.GB76077@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180127094301.29154-2-yuchao0@huawei.com>
- <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
- <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
- <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
- <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
- <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
- <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
- <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
- <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
- <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        id S1751980AbeDQDoT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 23:44:19 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42104 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751086AbeDQDoR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 23:44:17 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] blk-mq: start request gstate with gen 1
+Date: Tue, 17 Apr 2018 11:44:43 +0800
+Message-Id: <1523936683-1522-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8865 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=960
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804170033
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/13, Chao Yu wrote:
-> Ping again..
-> 
-> Do you have time to discuss this?
+rq->gstate and rq->aborted_gstate both are zero before rqs are
+allocated. If we have a small timeout, when the timer fires,
+there could be rqs that are never allocated, and also there could
+be rq that has been allocated but not initialized and started. At
+the moment, the rq->gstate and rq->aborted_gstate both are 0, thus
+the blk_mq_terminate_expired will identify the rq is timed out and
+invoke .timeout early.
 
-We may need a time to have a chat in person. Do you have any chance to visit
-US?
+For scsi, this will cause scsi_times_out to be invoked before the
+scsi_cmnd is not initialized, scsi_cmnd->device is still NULL at
+the moment, then we will get crash.
 
-> 
-> On 2018/2/27 22:16, Chao Yu wrote:
-> > Ping,
-> > 
-> > On 2018/2/13 15:34, Chao Yu wrote:
-> >> Hi Jaegeuk,
-> >>
-> >> On 2018/2/10 10:52, Chao Yu wrote:
-> >>> On 2018/2/10 9:41, Jaegeuk Kim wrote:
-> >>>> On 02/01, Chao Yu wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
-> >>>>>> On 01/31, Chao Yu wrote:
-> >>>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
-> >>>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
-> >>>>>>>> to add a new feature flag at every time? How about adding a layout value instead
-> >>>>>>>
-> >>>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
-> >>>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
-> >>>>>>> valid range of extended area in node block, but we don't know which
-> >>>>>>> fields/features are valid/enabled or not.
-> >>>>>>>
-> >>>>>>> One more thing is that if we can add one feature flag for each field, we got one
-> >>>>>>> more chance to disable it dynamically.
-> >>>>>>>
-> >>>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
-> >>>>>>>
-> >>>>>>> Yes, using raw 1017 is not appropriate here.
-> >>>>>>>
-> >>>>>>>> entries. Like this?
-> >>>>>>>> 		union {
-> >>>>>>>> 			struct node_v1;
-> >>>>>>>> 			struct node_v2;
-> >>>>>>>> 			struct node_v3;
-> >>>>>>>> 			...
-> >>>>>>>> 			struct direct_node dn;
-> >>>>>>>> 			struct indirect_node in;
-> >>>>>>>> 		};
-> >>>>>>>> 	};
-> >>>>>>>>
-> >>>>>>>> 	struct node_v1 {
-> >>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-> >>>>>>>> 		__le32 node_checksum;
-> >>>>>>>> 	}
-> >>>>>>>>
-> >>>>>>>> 	struct node_v2 {
-> >>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
-> >>>>>>>
-> >>>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
-> >>>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
-> >>>>>>>
-> >>>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
-> >>>>>>> fields, node version count can be a large number, it results in complicated
-> >>>>>>> version recognization and handling.
-> >>>>>>>
-> >>>>>>> One more question is how can we control which fields are valid or not in
-> >>>>>>> comp[Vx_NSIZE]?
-> >>>>>>>
-> >>>>>>>
-> >>>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
-> >>>>>>> the one used by f2fs_inode:
-> >>>>>>>
-> >>>>>>> struct f2fs_node {
-> >>>>>>> 	union {
-> >>>>>>> 		struct f2fs_inode i;
-> >>>>>>> 		union {
-> >>>>>>> 			struct {
-> >>>>>>> 				__le32 node_checksum;
-> >>>>>>> 				__le32 feature_field_1;
-> >>>>>>> 				__le32 feature_field_2;
-> >>>>>>> 				....
-> >>>>>>> 				__le32 addr[];
-> >>>>>>> 				
-> >>>>>>> 			};
-> >>>>>>> 			struct direct_node dn;
-> >>>>>>> 			struct indirect_node in;
-> >>>>>>> 		};
-> >>>>>>> 	};
-> >>>>>>> 	struct node_footer footer;
-> >>>>>>> } __packed;
-> >>>>>>>
-> >>>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
-> >>>>>>> macro to indicate actual size of addr.
-> >>>>>>
-> >>>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
-> >>>>>
-> >>>>> OK, I think we need more discussion.. ;)
-> >>>>>
-> >>>>>> can't set each of features individually. Like the second entry should have
-> >>>>>
-> >>>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
-> >>>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
-> >>>>> example:
-> >>>>>
-> >>>>> #define F2FS_NODE_CHECKSUM	0x0001
-> >>>>> #define F2FS_NODE_FIELD1	0x0002
-> >>>>> #define F2FS_NODE_FIELD2	0x0004
-> >>>>>
-> >>>>> 	union {
-> >>>>> 		struct {
-> >>>>> 			__le32 node_checksum;
-> >>>>> 			__le32 field_1;
-> >>>>> 			__le32 field_2;
-> >>>>> 			....
-> >>>>> 			__le32 addr[];
-> >>>>> 		};
-> >>>>> 		struct direct_node dn;
-> >>>>> 		struct indirect_node in;
-> >>>>> 	};
-> >>>>>
-> >>>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
-> >>>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
-> >>>>>
-> >>>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
-> >>>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
-> >>>>
-> >>>> So, that's why I thought we may need a sort of each formats.
-> >>>
-> >>> Hmm.. if we have two new added fields, there are (2 << 2) combinations
-> >>> of all formats, as:
-> >>>
-> >>> struct original {
-> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK];
-> >>> }
-> >>>
-> >>> struct node_v1 {
-> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
-> >>> 	__le32 field_1;
-> >>> }
-> >>>
-> >>> struct node_v2 {
-> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
-> >>> 	__le32 field_2;
-> >>> }
-> >>>
-> >>> struct node_v2 {
-> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
-> >>> 	__le32 field_1;
-> >>> 	__le32 field_2;
-> >>> }
-> >>>
-> >>> If we add more new fields, the node version will increase sharply due
-> >>> to there is (n << 2) combination with n fields. Right? Any thoughts to
-> >>> reduce maintaining overhead on those node versions structures?
-> >>
-> >> Do you have time to explain more about the design of multiple version structure
-> >> for node block, I'm still be confused about two things:
-> >> 1. what will we do if we want to add one new field in node structure.
-> >> 2. how can we recognize which fields are valid and which ones are invalid.
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>> Thanks,
-> >>>
-> >>>>
-> >>>>>
-> >>>>> Any thoughts?
-> >>>>>
-> >>>>> Thanks,
-> >>>>>
-> >>>>>> enabled node_checksum, which we may not want to do.
-> >>>>>>
-> >>>>>>>
-> >>>>>>> Thanks,
-> >>>>>>>
-> >>>>>>>> 		__le32 comp[V2_NSIZE];
-> >>>>>>>> 	}
-> >>>>>>>> 	...
-> >>>>>>>>
-> >>>>>>>>> +			};
-> >>>>>>>>> +			struct direct_node dn;
-> >>>>>>>>> +			struct indirect_node in;
-> >>>>>>>>> +		};
-> >>>>>>>>>  	};
-> >>>>>>>>>  	struct node_footer footer;
-> >>>>>>>>>  } __packed;
-> >>>>>>>>> -- 
-> >>>>>>>>> 2.15.0.55.gc2ece9dc4de6
-> >>>>>>>>
-> >>>>>>>> .
-> >>>>>>>>
-> >>>
-> >>> .
-> >>>
-> >>
-> > 
-> > .
-> > 
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Ming Lei <ming.lei@redhat.com>
+Cc: Martin Steigerwald <Martin@Lichtvoll.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ block/blk-core.c | 4 ++++
+ block/blk-mq.c   | 7 +++++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/block/blk-core.c b/block/blk-core.c
+index abcb868..ce62681 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -201,6 +201,10 @@ void blk_rq_init(struct request_queue *q, struct request *rq)
+ 	rq->part = NULL;
+ 	seqcount_init(&rq->gstate_seq);
+ 	u64_stats_init(&rq->aborted_gstate_sync);
++	/*
++	 * See comment of blk_mq_init_request
++	 */
++	WRITE_ONCE(rq->gstate, MQ_RQ_GEN_INC);
+ }
+ EXPORT_SYMBOL(blk_rq_init);
+ 
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index f5c7dbc..d62030a 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2069,6 +2069,13 @@ static int blk_mq_init_request(struct blk_mq_tag_set *set, struct request *rq,
+ 
+ 	seqcount_init(&rq->gstate_seq);
+ 	u64_stats_init(&rq->aborted_gstate_sync);
++	/*
++	 * start gstate with gen 1 instead of 0, otherwise it will be equal
++	 * to aborted_gstate, and be identified timed out by
++	 * blk_mq_terminate_expired.
++	 */
++	WRITE_ONCE(rq->gstate, MQ_RQ_GEN_INC);
++
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
