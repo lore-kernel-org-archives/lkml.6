@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48+9QzTUUfJG5jQNcLPiE18eRtf/Mm16Mh1ZuGnLyQVJJm6Z5b6j8pYJiXcx0XKH0hirTSA
+X-Google-Smtp-Source: AIpwx4+YUFc6gEFz/B9eM34l5w3XGlst10MHDrM/NCcnSEqllAcur+e/7Egy+IWLRP9Zo38g9AVZ
 ARC-Seal: i=1; a=rsa-sha256; t=1523981079; cv=none;
         d=google.com; s=arc-20160816;
-        b=YjkpVoEGu6dnSxAEq0KuDJ3DGob7Sc2Vn4GHRQYqaXrwo2pN6wAwT0ApHaGT0SDXiD
-         nlqXIpiTPjuy2UIAgwQfat9PnH3tKN6va60iw4UY2BVND0s3eKjr9Kqa2N4eIRhp1AZu
-         H8IToF1nlVothue2uA/BcrnKFV+6OnivfVbm7kwiwrdqjn3EQqrixe4xwk5ohIZHzGDU
-         ogZKg52wjtVClEz5l0mSlUNtVQz2P3GMDwY2U2lfjE44dXSZ4GG4ETfIBNa233APBEnr
-         fjGV9tRNlhAtC6lRv+qxmFf7jVk37PtRQ/JOPjX+y/1sjn9/uj1Uf2vjzg+TKkGyUi4S
-         WrOg==
+        b=yvPGJlTZTW5kX9EC9EiYyWoATt1ayuO1tnahAvYFGsGLop+NARzZOWzfspIRfU78xJ
+         LDtlxpwSBmWabecLUzbuuGeRBOOJQvEEtSuZ3Yt/u/6s7cxSF67UdljA60NjheyYZ+92
+         YyWXSMQIIIpaqr/z3UUthFYW008/kytAu4k/r7Rue2j6XP1m+BSgIaJx71WNzoSIZQTl
+         4W7q0Gh40sbIV8RY54FpdXc/fE0qzcYM3vWIqtYf1mMpIDX1UPwEUdrj4+K9+9K51yWp
+         VkKLdcpI0Hi16P6yMTaLr0XUBbAoIQQcG4Y+zoI0lEK+fROLVXxoVtfMD+6ANsHxcaKq
+         ooqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=brWdCMXzEciKPNuaiojosu9+e2OZXdmshk8Iwm98ukE=;
-        b=oDRMw1/IMdl23PYJWOwGDTfOpVKXxQyVPtIbs8lF/5FUq6EPgOHZyrGrXzWB+PXqQx
-         fZRcjqPk/BDwsPakFXaaAZl9efK7E3Vc+m1ALDOYej/eRpa2orPi4MafQNBoNBQHGtlY
-         jh/U2OULjUwQ9k/NKXdlweQJiG/GQUhOGtWDAOq8BXRIDteduOzAfdzaaDnzCCyDFH3Z
-         P7y6JCCfi+UADE/cr42LogT0Lq4/VsPR+C7LwCdT461YxomczEeMi8JQiWc+I/ccJQNI
-         MwiCkj1Ioj5VIzFZtsxq4Dx5dLgNkwq+TX0vT4OrqyaN/e9xiu+CsrlaOFPXDm5gqPsz
-         CxoQ==
+        bh=0v163CqwVBUrHmJe//CfCqwRTymrOoBxcHphQd5dB5o=;
+        b=OkGUY9wm8G6JPdd36HBmoTiF0hokj4rNoe+DrfRxGAFeb+4JIvEQA/2Cke2DbVHlck
+         sEB3Ju2s0sFR7fnCo3h4B4OTPlhPnRguoKCHdELv6922oKZ9G+q1wOv+FydEumtXYmmk
+         YFJNz6MrfNbgmDLyJeDrEqSqWpq1NBtfcwAOyb+lhzLncN8+rK5lbQgKtMlF4VsrXYVU
+         h8N/sOaF7H4gJKel1ON71Gm7QXctmUocxnLMajGetbbLi+jiM87u4Voxns/pjr7caLwu
+         LAfHi3PCfmy+vo5nZq1m2wlQb6/x5ec9HPkYK7SlDPa3mGIj3jR+noYi9vgV6nmgOkyd
+         6O/A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Serge Hallyn <serge@hallyn.com>,
 	John Johansen <john.johansen@canonical.com>
-Subject: [PATCH 4.15 39/53] apparmor: fix display of .ns_name for containers
-Date: Tue, 17 Apr 2018 17:59:04 +0200
-Message-Id: <20180417155725.021110829@linuxfoundation.org>
+Subject: [PATCH 4.15 38/53] apparmor: fix logging of the existence test for signals
+Date: Tue, 17 Apr 2018 17:59:03 +0200
+Message-Id: <20180417155724.975046596@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009831116787143?=
-X-GMAIL-MSGID: =?utf-8?q?1598009984583393643?=
+X-GMAIL-THRID: =?utf-8?q?1598009829328873460?=
+X-GMAIL-MSGID: =?utf-8?q?1598009983519267807?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,34 +50,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: John Johansen <john.johansen@canonical.com>
 
-commit 040d9e2bce0a5b321c402b79ee43a8e8d2fd3b06 upstream.
+commit 98cf5bbff413eadf1b9cb195a7b80cc61c72a50e upstream.
 
-The .ns_name should not be virtualized by the current ns view. It
-needs to report the ns base name as that is being used during startup
-as part of determining apparmor policy namespace support.
+The existence test is not being properly logged as the signal mapping
+maps it to the last entry in the named signal table. This is done
+to help catch bugs by making the 0 mapped signal value invalid so
+that we can catch the signal value not being filled in.
 
-BugLink: http://bugs.launchpad.net/bugs/1746463
-Fixes: d9f02d9c237aa ("apparmor: fix display of ns name")
+When fixing the off-by-one comparision logic the reporting of the
+existence test was broken, because the logic behind the mapped named
+table was hidden. Fix this by adding a define for the name lookup
+and using it.
+
 Cc: Stable <stable@vger.kernel.org>
-Reported-by: Serge Hallyn <serge@hallyn.com>
-Tested-by: Serge Hallyn <serge@hallyn.com>
+Fixes: f7dc4c9a855a1 ("apparmor: fix off-by-one comparison on MAXMAPPED_SIG")
 Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/apparmor/apparmorfs.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ security/apparmor/include/sig_names.h |    4 +++-
+ security/apparmor/ipc.c               |    2 +-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -1189,9 +1189,7 @@ static int seq_ns_level_show(struct seq_
- static int seq_ns_name_show(struct seq_file *seq, void *v)
- {
- 	struct aa_label *label = begin_current_label_crit_section();
--
--	seq_printf(seq, "%s\n", aa_ns_name(labels_ns(label),
--					   labels_ns(label), true));
-+	seq_printf(seq, "%s\n", labels_ns(label)->base.name);
- 	end_current_label_crit_section(label);
+--- a/security/apparmor/include/sig_names.h
++++ b/security/apparmor/include/sig_names.h
+@@ -2,6 +2,8 @@
  
- 	return 0;
+ #define SIGUNKNOWN 0
+ #define MAXMAPPED_SIG 35
++#define MAXMAPPED_SIGNAME (MAXMAPPED_SIG + 1)
++
+ /* provide a mapping of arch signal to internal signal # for mediation
+  * those that are always an alias SIGCLD for SIGCLHD and SIGPOLL for SIGIO
+  * map to the same entry those that may/or may not get a separate entry
+@@ -56,7 +58,7 @@ static const int sig_map[MAXMAPPED_SIG]
+ };
+ 
+ /* this table is ordered post sig_map[sig] mapping */
+-static const char *const sig_names[MAXMAPPED_SIG + 1] = {
++static const char *const sig_names[MAXMAPPED_SIGNAME] = {
+ 	"unknown",
+ 	"hup",
+ 	"int",
+--- a/security/apparmor/ipc.c
++++ b/security/apparmor/ipc.c
+@@ -174,7 +174,7 @@ static void audit_signal_cb(struct audit
+ 			audit_signal_mask(ab, aad(sa)->denied);
+ 		}
+ 	}
+-	if (aad(sa)->signal < MAXMAPPED_SIG)
++	if (aad(sa)->signal < MAXMAPPED_SIGNAME)
+ 		audit_log_format(ab, " signal=%s", sig_names[aad(sa)->signal]);
+ 	else
+ 		audit_log_format(ab, " signal=rtmin+%d",
