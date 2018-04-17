@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/hs8NwxBfwmt3XN1K0FTJ2yhwiHtoMlsX4rcL/PhqRIErbCkcIdHeUpcojJP4EfJyB65NR
-ARC-Seal: i=1; a=rsa-sha256; t=1523981258; cv=none;
+X-Google-Smtp-Source: AIpwx4//ecZwMwVIR5bWJKtNpuUK6lKyKjrMwaZCJkqYRxnH8mAWGEuYu6MdTq087UoGxWRhhSC5
+ARC-Seal: i=1; a=rsa-sha256; t=1523981255; cv=none;
         d=google.com; s=arc-20160816;
-        b=ESn5QLb2iytnioiF5J+Kc+HmaKvWnQ+/eZwGxf2DaVw+U1n+WrGOWhzkkv7p7K39ZG
-         Wytq+12h0084fDJuMP0vUG587rl/W6YHHaabFYP/I/8EcJBQu9mKCE3nj5ttuzWp7041
-         VycqwWOg1RZAKKJEGn0fz5FMk6cxaIKChATrQbyE4m2ALkMzNDgHd3RgbK9Q4Us3DsF+
-         bB88A9R86opOdEu7CjFjmrnBiGhu2btOM+BIlWlF8bt9bqLYVpofpB51YgzWyOWyQxAF
-         heIdaDPLEZ/Sdl/nGJPMdM7oL5zErXkrzxGLoVP8BJ/xV9YQf+nvKwkavzo/sFgPVy1z
-         y06w==
+        b=YgyN+yZ5oqIbJkP2EZZ9tbMcEcfbqMeQrd/ZSSRCP/oM/fNTv4r1G8EUh22jA1ESgM
+         csXr2Faaa3UE5COhuDSvTsgp96enBOmNwt3TZxaYETcy/PFkFteQGThGIMeELpmJsd/h
+         rLqkdNbtPIlPCpROy7lC1+MPy37UmTGwifHWod9d8AvvxZ8ky0ZIEIrH8ocXfWClktlf
+         OaAUVYQRNPe5bh3V4/tnStaqIP4tPCY3dnxoPviXNItcaCFG9p7vNtli2V2FcmWHJzBL
+         g3FMvLrbRhOfEER3pSAgKLhyfv+alFTWD/lGxEY2pYY5hjzHoUl13vzrcUQW8WBhGhSZ
+         HEaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4SLPwznFhsfJxknn/UCQ7V2H9VR6tZhGAbIbrWJBQaI=;
-        b=zecN5u4YhlLSg0U6GlZjH9WdB0xs1xM97t0VOPrbsx1FPbHh18KomM5uZbyqC+CU+A
-         WkyFQzOyInGINmEr70BBSJQDsEnUrIfNDrZe58qPzEcLDsXfOWlt4S6+fHCwBs9guReT
-         FCNSFr/eWNLD3/qKFB1FGxajKwbNAu41I2XMErKVE4JVkjlTpbCwsF84zFZJrqweFW1m
-         jXA4eX1B7xK+V+dPEQtE7psqB7vHl9uIcr3fcrb91qkezm5Yrjak2Gl6/uDom+JowUpJ
-         fJy3axxmgd+yCwjTJxdtvb/GWFxoK0spgaPafANQLrig2qMEAegmKgIt0CuIbLDzKg2p
-         babA==
+        bh=hIxBENaFubH60Su/F3qPNwipU7osYvfkCH0/JyA3280=;
+        b=c/mRm3L8RuJYgOFgscaSIy0/QQMgLEwqPfj6IblswPQjaZkV9Mu+cKngeptSNpKRpp
+         LggflyLnZNqrPyBXd2ktsGnZs5+PLsLCNXYPivtiurZVv0t3SztLm7ppzip2P76uA1pF
+         nsff36CMEANHzvfu6Wn1LIXCmsCcwlxXk/cZuw+TRdWL5b4UOBalfKQEOfRj2lzNbWIz
+         sChC48i7PvG3B4YS6Rqdu3RemTMwEKmx6755Bye3LIZhtVtmlgKyau4HS4XzCIvDfN38
+         iyFTR+ZplOolQrW2Ur2saKvGJMHtn/Z+tHkRfFjsGpqTxpga/I/KJsmLWeXhKxt8KE1p
+         EFiQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lucash Stach <l.stach@pengutronix.de>,
-	"J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 49/49] nfsd: fix incorrect umasks
-Date: Tue, 17 Apr 2018 17:59:28 +0200
-Message-Id: <20180417155717.375209984@linuxfoundation.org>
+	Dan Rue <dan.rue@linaro.org>,
+	Mike Kravetz <mike.kravetz@oracle.com>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Yisheng Xie <xieyisheng1@huawei.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Nic Losby <blurbdust@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 48/49] hugetlbfs: fix bug in pgoff overflow checking
+Date: Tue, 17 Apr 2018 17:59:27 +0200
+Message-Id: <20180417155717.326675545@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -40,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009814769839475?=
-X-GMAIL-MSGID: =?utf-8?q?1598010172184174718?=
+X-GMAIL-THRID: =?utf-8?q?1598009812086723888?=
+X-GMAIL-MSGID: =?utf-8?q?1598010168841921686?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,171 +56,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: J. Bruce Fields <bfields@redhat.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-commit 880a3a5325489a143269a8e172e7563ebf9897bc upstream.
+commit 5df63c2a149ae65a9ec239e7c2af44efa6f79beb upstream.
 
-We're neglecting to clear the umask after it's set, which can cause a
-later unrelated rpc to (incorrectly) use the same umask if it happens to
-be processed by the same thread.
+This is a fix for a regression in 32 bit kernels caused by an invalid
+check for pgoff overflow in hugetlbfs mmap setup.  The check incorrectly
+specified that the size of a loff_t was the same as the size of a long.
+The regression prevents mapping hugetlbfs files at offsets greater than
+4GB on 32 bit kernels.
 
-There's a more subtle problem here too:
+On 32 bit kernels conversion from a page based unsigned long can not
+overflow a loff_t byte offset.  Therefore, skip this check if
+sizeof(unsigned long) != sizeof(loff_t).
 
-An NFSv4 compound request is decoded all in one pass before any
-operations are executed.
-
-Currently we're setting current->fs->umask at the time we decode the
-compound.  In theory a single compound could contain multiple creates
-each setting a umask.  In that case we'd end up using whichever umask
-was passed in the *last* operation as the umask for all the creates,
-whether that was correct or not.
-
-So, we should just be saving the umask at decode time and waiting to set
-it until we actually process the corresponding operation.
-
-In practice it's unlikely any client would do multiple creates in a
-single compound.  And even if it did they'd likely be from the same
-process (hence carry the same umask).  So this is a little academic, but
-we should get it right anyway.
-
-Fixes: 47057abde515 (nfsd: add support for the umask attribute)
-Cc: stable@vger.kernel.org
-Reported-by: Lucash Stach <l.stach@pengutronix.de>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Link: http://lkml.kernel.org/r/20180330145402.5053-1-mike.kravetz@oracle.com
+Fixes: 63489f8e8211 ("hugetlbfs: check for pgoff value overflow")
+Reported-by: Dan Rue <dan.rue@linaro.org>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Nic Losby <blurbdust@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfsd/nfs4proc.c |   12 ++++++++++--
- fs/nfsd/nfs4xdr.c  |    8 +++-----
- fs/nfsd/xdr4.h     |    2 ++
- 3 files changed, 15 insertions(+), 7 deletions(-)
+ fs/hugetlbfs/inode.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -32,6 +32,7 @@
-  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
-+#include <linux/fs_struct.h>
- #include <linux/file.h>
- #include <linux/falloc.h>
- #include <linux/slab.h>
-@@ -252,11 +253,13 @@ do_open_lookup(struct svc_rqst *rqstp, s
- 		 * Note: create modes (UNCHECKED,GUARDED...) are the same
- 		 * in NFSv4 as in v3 except EXCLUSIVE4_1.
- 		 */
-+		current->fs->umask = open->op_umask;
- 		status = do_nfsd_create(rqstp, current_fh, open->op_fname.data,
- 					open->op_fname.len, &open->op_iattr,
- 					*resfh, open->op_createmode,
- 					(u32 *)open->op_verf.data,
- 					&open->op_truncate, &open->op_created);
-+		current->fs->umask = 0;
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -148,10 +148,14 @@ static int hugetlbfs_file_mmap(struct fi
  
- 		if (!status && open->op_label.len)
- 			nfsd4_security_inode_setsecctx(*resfh, &open->op_label, open->op_bmval);
-@@ -608,6 +611,7 @@ nfsd4_create(struct svc_rqst *rqstp, str
- 	if (status)
- 		return status;
+ 	/*
+ 	 * page based offset in vm_pgoff could be sufficiently large to
+-	 * overflow a (l)off_t when converted to byte offset.
++	 * overflow a loff_t when converted to byte offset.  This can
++	 * only happen on architectures where sizeof(loff_t) ==
++	 * sizeof(unsigned long).  So, only check in those instances.
+ 	 */
+-	if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
+-		return -EINVAL;
++	if (sizeof(unsigned long) == sizeof(loff_t)) {
++		if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
++			return -EINVAL;
++	}
  
-+	current->fs->umask = create->cr_umask;
- 	switch (create->cr_type) {
- 	case NF4LNK:
- 		status = nfsd_symlink(rqstp, &cstate->current_fh,
-@@ -616,20 +620,22 @@ nfsd4_create(struct svc_rqst *rqstp, str
- 		break;
- 
- 	case NF4BLK:
-+		status = nfserr_inval;
- 		rdev = MKDEV(create->cr_specdata1, create->cr_specdata2);
- 		if (MAJOR(rdev) != create->cr_specdata1 ||
- 		    MINOR(rdev) != create->cr_specdata2)
--			return nfserr_inval;
-+			goto out_umask;
- 		status = nfsd_create(rqstp, &cstate->current_fh,
- 				     create->cr_name, create->cr_namelen,
- 				     &create->cr_iattr, S_IFBLK, rdev, &resfh);
- 		break;
- 
- 	case NF4CHR:
-+		status = nfserr_inval;
- 		rdev = MKDEV(create->cr_specdata1, create->cr_specdata2);
- 		if (MAJOR(rdev) != create->cr_specdata1 ||
- 		    MINOR(rdev) != create->cr_specdata2)
--			return nfserr_inval;
-+			goto out_umask;
- 		status = nfsd_create(rqstp, &cstate->current_fh,
- 				     create->cr_name, create->cr_namelen,
- 				     &create->cr_iattr,S_IFCHR, rdev, &resfh);
-@@ -673,6 +679,8 @@ nfsd4_create(struct svc_rqst *rqstp, str
- 	fh_dup2(&cstate->current_fh, &resfh);
- out:
- 	fh_put(&resfh);
-+out_umask:
-+	current->fs->umask = 0;
- 	return status;
- }
- 
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -33,7 +33,6 @@
-  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
--#include <linux/fs_struct.h>
- #include <linux/file.h>
- #include <linux/slab.h>
- #include <linux/namei.h>
-@@ -683,7 +682,7 @@ nfsd4_decode_create(struct nfsd4_compoun
- 
- 	status = nfsd4_decode_fattr(argp, create->cr_bmval, &create->cr_iattr,
- 				    &create->cr_acl, &create->cr_label,
--				    &current->fs->umask);
-+				    &create->cr_umask);
- 	if (status)
- 		goto out;
- 
-@@ -928,7 +927,6 @@ nfsd4_decode_open(struct nfsd4_compounda
- 	case NFS4_OPEN_NOCREATE:
- 		break;
- 	case NFS4_OPEN_CREATE:
--		current->fs->umask = 0;
- 		READ_BUF(4);
- 		open->op_createmode = be32_to_cpup(p++);
- 		switch (open->op_createmode) {
-@@ -936,7 +934,7 @@ nfsd4_decode_open(struct nfsd4_compounda
- 		case NFS4_CREATE_GUARDED:
- 			status = nfsd4_decode_fattr(argp, open->op_bmval,
- 				&open->op_iattr, &open->op_acl, &open->op_label,
--				&current->fs->umask);
-+				&open->op_umask);
- 			if (status)
- 				goto out;
- 			break;
-@@ -951,7 +949,7 @@ nfsd4_decode_open(struct nfsd4_compounda
- 			COPYMEM(open->op_verf.data, NFS4_VERIFIER_SIZE);
- 			status = nfsd4_decode_fattr(argp, open->op_bmval,
- 				&open->op_iattr, &open->op_acl, &open->op_label,
--				&current->fs->umask);
-+				&open->op_umask);
- 			if (status)
- 				goto out;
- 			break;
---- a/fs/nfsd/xdr4.h
-+++ b/fs/nfsd/xdr4.h
-@@ -118,6 +118,7 @@ struct nfsd4_create {
- 	} u;
- 	u32		cr_bmval[3];        /* request */
- 	struct iattr	cr_iattr;           /* request */
-+	int		cr_umask;           /* request */
- 	struct nfsd4_change_info  cr_cinfo; /* response */
- 	struct nfs4_acl *cr_acl;
- 	struct xdr_netobj cr_label;
-@@ -228,6 +229,7 @@ struct nfsd4_open {
- 	u32		op_why_no_deleg;    /* response - DELEG_NONE_EXT only */
- 	u32		op_create;     	    /* request */
- 	u32		op_createmode;      /* request */
-+	int		op_umask;           /* request */
- 	u32		op_bmval[3];        /* request */
- 	struct iattr	op_iattr;           /* UNCHECKED4, GUARDED4, EXCLUSIVE4_1 */
- 	nfs4_verifier	op_verf __attribute__((aligned(32)));
+ 	/* must be huge page aligned */
+ 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
