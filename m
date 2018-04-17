@@ -1,76 +1,76 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2152363-1523980571-2-6481247779748706756
+X-Cyrus-Session-Id: sloti22d1t05-2214042-1523981994-2-8127428734972568841
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
-  MailFrom='org'
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523980570; b=KA4c0F4U5SMVHYXmJqGaZvBFBOz9G7D/Ited17ghoyzfRizBkp
-    DdSfBI8iu8z70RtntdVnqxGM6oYe3c7+UNfbS04PMQzONmRhxJCOheXYlWWFHUWm
-    Fye3O6zn/jdEc94b+Y5JWULeuu1FGK/cO2Y50gqmSayu0taCYFRncoaZ4UtRqzKf
-    D9mhBSCSLGIAPXQmnMBxHTjQ0fHlCt+dRV1jvf7xe8xnDM9tCU97M2DhGkAF2paT
-    xGGO4NCKaVPCHhsJmeWQPaR24Z/uRWTJxG4ECZTDTYziSSG2CILorZnWBAceiwdx
-    G6DbA3cbagNfY7fT5TRXVpI1YEIc6wjFHe1A==
+    1523981994; b=rXciecOrfJ8aSwbrRYpRde5XPLB8g3YpJbcHZjpVYrMNWXzDHB
+    C8Isu5sWfCHy+ey7ZX+q7N21W60PXrtXDFoouAE7zwGcLVpBTNzJlpEJKmvhNLjW
+    xIqdsH8YYX/fiqn+tLzw+uPzekd5Ly6Bwl6vGqqQRqXIKUFM2KV+P6fthJIHl6M7
+    iJ9KowDz4g3P0ArkbYhS1WV3AJQRqcC6L3pext4SNStglTCuzr5OX8+q+r3ZDiNN
+    4iU8PyVQkeOQh6zA1h4M6c/nHZ49wxZsNTni+8iY4h/gQeaYqNyGMJ49vHQ/B/Jb
+    aN1nTcbWk7U2KsNzLzU+0j+PZNRa4x+u7xUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523980570; bh=OcGND4GTPN1+It/7yn4Td+3MAYPAKO
-    AXfJGWET4zkaU=; b=GL+EJf5OXdtTd8vTrFBbSVjG1WpFvbmK5K5lBSeKbN03qc
-    N65chSk7N3rKwRpbNA5HDALs3ZgYUgHh0IL+SbOP0x4QeeipzTyHYj3iZ7+IzLgW
-    dDybJxAw7Y+RQj6MmLODxaDh+QVyIXny9HPzV7IeBjwRw0FRZo/iZfgPLKaM85Ju
-    Uxbk2Qp1f0ugnbKzs6pUw11xhhrJBZDoKlsClBPfGg5FmOsRpgsqD40OOrHuN0fn
-    w0wBFid/Su7LEfynJzZlwzcTqd6Crh9fFZysM8mBpcSFj/cM7FZffybenfnuk6AB
-    2+4LDWEgZeApQWSruubAqtpmNnCJCyfmYWIfs9xw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
+    t=1523981994; bh=gzCYDZMLZ5O5okDOVvr2JMUsS1GwN+bO1RcZxogwjrE=; b=
+    iv2WnMQfEjP1iCwDiUaiCEnfqmBJsUN57aArQDlPV6ao7K+pOgmBYkQ8RKMtvibY
+    CJACnGlClrJsIRQnQD4dL6SJ2YHVhkw0lLMKQfp1sTZb3c6knSYvLgjhEQq/OPph
+    oi/SNSu9P0RLE/ng2hfpGoEfRych5axDaUkWzylFYu0RcINOwyEuW2eAmhWDYjdL
+    kruuZfEQq9XFu+KsPyzdoajxXhPbLv1rpXZpZ75eoqAnXZqV3c9mQXdrtig2FFg8
+    pFYa/bm+Wtph4oytygGQPbNn+Rm4CQpfba+uWbhMmff/WsRLGiVHmgoGmV0RIZIn
+    YxnlqfUuGAp0uC8eeuKyjA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=C/epXbD2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=C/epXbD2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=suse.cz header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBCsvoy09VC12CQxcUt+b8etQVKwOW5LnmsAycuuvxwUyZ0PxcIO6tlwxim2VOIN4q27GOsHUDvtztftGwd13fEAhHqFKsCmeupU6yszAmFtzoeyfa07
-    u7nKVtsT28gVoJq0l8XdoGt/HACiWcTD2Jy58QbpNYR0xl3rOGaIPvdlx3JQKDdxNdMaRIasQkgckyzxJxJVFGE7of5G2A+7XQcL8WeL1H/HTPrZ7QyWDvBn
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=yMhMjlubAAAA:8 a=iox4zFpeAAAA:8 a=LnxICZl57cgcFHVXWBMA:9 a=CjuIK1q_8ugA:10
-    a=WzC6qhA0u3u7Ye7llzcV:22
+X-CM-Envelope: MS4wfCFuuADbDqtpCJUbWH0WmS00nCrQp2BmnC3DEzbngJQQ2lrwmL0cVe/ETTQjvybhxq/pMHIj5zIQHsnQidW5VgY5hZ5xBnpyvbho11C/4EZ1ybLiAYS5
+    8bWQ/bknd40zHpaefHDlYY5IW3SitPelo7ZDRYjvQHcSygVKPAOFkGHstdxZLlUWPSyHkwkmtCSeT5dT42yOdk4zjK30r9pu+p/uy3kLZnh8BKQOATC1WIB8
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
+    a=F7qjIGpQ-GgA:10 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=qHwAVdC6PccEh1uRRzYA:9 a=BsN9TcDhfwh2D3yI:21
+    a=2EUiTx4m7oNUI-TS:21 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752617AbeDQPzy (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 11:55:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36059 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752580AbeDQPzw (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:55:52 -0400
-Date: Tue, 17 Apr 2018 17:55:49 +0200
-From: Jan Kara <jack@suse.cz>
-To: Sasha Levin <Alexander.Levin@microsoft.com>
-Cc: Jan Kara <jack@suse.cz>, Pavel Machek <pavel@ucw.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        id S1754406AbeDQQTk (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 12:19:40 -0400
+Received: from mail-bn3nam01on0108.outbound.protection.outlook.com ([104.47.33.108]:39472
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754386AbeDQQTh (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:19:37 -0400
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: Jan Kara <jack@suse.cz>
+CC: Pavel Machek <pavel@ucw.cz>, Steven Rostedt <rostedt@goodmis.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Petr Mladek <pmladek@suse.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
@@ -89,178 +89,156 @@ Cc: Jan Kara <jack@suse.cz>, Pavel Machek <pavel@ucw.cz>,
         Tejun Heo <tj@kernel.org>
 Subject: Re: [PATCH AUTOSEL for 4.14 015/161] printk: Add console owner and
  waiter logic to load balance console writes
-Message-ID: <20180417155549.6lxmoiwnlwtwdgld@quack2.suse.cz>
-References: <20180416113629.2474ae74@gandalf.local.home>
- <20180416160200.GY2341@sasha-vm>
- <20180416121224.2138b806@gandalf.local.home>
- <20180416161911.GA2341@sasha-vm>
- <20180416123019.4d235374@gandalf.local.home>
- <20180416163754.GD2341@sasha-vm>
- <20180416170604.GC11034@amd>
- <20180416172327.GK2341@sasha-vm>
+Thread-Topic: [PATCH AUTOSEL for 4.14 015/161] printk: Add console owner and
+ waiter logic to load balance console writes
+Thread-Index: AQHTz5h7IvK2v80d0k6VVqDoPwJEM6P4GK8AgAnYKwCAAX5DAIAAHfKAgAAFIICAAAchAIAAAugAgAAB5YCAAAMcgIAAAh8AgAAH3gCAAATcgIABMtsAgAAewoCAACg7gIAABqKA
+Date: Tue, 17 Apr 2018 16:19:35 +0000
+Message-ID: <20180417161933.GY2341@sasha-vm>
+References: <20180416160200.GY2341@sasha-vm>
+ <20180416121224.2138b806@gandalf.local.home> <20180416161911.GA2341@sasha-vm>
+ <20180416123019.4d235374@gandalf.local.home> <20180416163754.GD2341@sasha-vm>
+ <20180416170604.GC11034@amd> <20180416172327.GK2341@sasha-vm>
  <20180417114144.ov27khlig5thqvyo@quack2.suse.cz>
  <20180417133149.GR2341@sasha-vm>
+ <20180417155549.6lxmoiwnlwtwdgld@quack2.suse.cz>
+In-Reply-To: <20180417155549.6lxmoiwnlwtwdgld@quack2.suse.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0933;7:Bkb1eXAtc4yZt2KZVJ3wqSzKDrR3KWH3M6cW+qNoJRCDjOiJ2lpLNTVmBZpMQ9IVt4kKOqsegJhpq7HWV6yZHDGOjMxpOpB7Mflj7cb8ozS+hGE56Mspb1osT81x5TM1jHOuFElLptkjlGmqNCwvlBHIArDSX4B+XeTIh8ib0jNoFrpqE5on/65ipXWtggxpO5jPLh0gixDuYr7sAt2Nv9M3uO9u59Mee7tqCCW6ilGYMraYk7mfZh7mt+m7jBIp;20:DMleutOREHUFb/41Q9HvDuD6qFshOP4C/J0ZhLnXq8hRfdpAkfm42qbotjUYYhMlTEJLz7AZvF6QaS8/sl9crG9OVVTQWu64IOrWtWAKD+kUNYcT/lOVUt1MVhBIlKD4g+AdzdByG54Rmxue9HJlVEoR/6t4SJnwxLUZkdqvw+o=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7193020);SRVR:DM5PR2101MB0933;
+x-ms-traffictypediagnostic: DM5PR2101MB0933:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-prvs: <DM5PR2101MB09338D19813C054A4C19D333FBB70@DM5PR2101MB0933.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231232)(944501359)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:DM5PR2101MB0933;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0933;
+x-forefront-prvs: 0645BEB7AA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(39860400002)(396003)(39380400002)(346002)(366004)(199004)(189003)(377424004)(81166006)(81156014)(6486002)(8936002)(478600001)(305945005)(2900100001)(486006)(72206003)(26005)(3660700001)(8676002)(10290500003)(186003)(25786009)(86362001)(4326008)(11346002)(446003)(97736004)(7416002)(5660300001)(3280700002)(105586002)(476003)(14454004)(2906002)(33716001)(6512007)(93886005)(6436002)(59450400001)(33896004)(6506007)(102836004)(99286004)(6916009)(86612001)(33656002)(66066001)(7736002)(9686003)(22452003)(68736007)(76176011)(3846002)(5250100002)(316002)(10090500001)(6116002)(6246003)(53936002)(39060400002)(54906003)(106356001)(229853002)(1076002)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0933;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: qGnA4RddCxFmHcd3DYhA8NEQ16biZn/aK+n02lTaa/EyFkh/7dEbxm/WW3nJYRuEfvY0LjQlCAXzXDTg24I2RuOcHl+DmYAMgfkMrq2BMiINmYrO2HQXev3pHQubmaMnY9MhzsgbT+GzgDo3TW/7YxTZChqSTz1x1YbTBh54CV3wmLZ3tOQ0t7EtHXmi16pB
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <691D2CF14B25954AA8F1F65B4D37659A@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417133149.GR2341@sasha-vm>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-MS-Office365-Filtering-Correlation-Id: d3150652-7695-4192-9126-08d5a47f02a1
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3150652-7695-4192-9126-08d5a47f02a1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2018 16:19:35.3417
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0933
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue 17-04-18 13:31:51, Sasha Levin wrote:
-> On Tue, Apr 17, 2018 at 01:41:44PM +0200, Jan Kara wrote:
-> >On Mon 16-04-18 17:23:30, Sasha Levin wrote:
-> >> On Mon, Apr 16, 2018 at 07:06:04PM +0200, Pavel Machek wrote:
-> >> >On Mon 2018-04-16 16:37:56, Sasha Levin wrote:
-> >> >> On Mon, Apr 16, 2018 at 12:30:19PM -0400, Steven Rostedt wrote:
-> >> >> >On Mon, 16 Apr 2018 16:19:14 +0000
-> >> >> >Sasha Levin <Alexander.Levin@microsoft.com> wrote:
-> >> >> >
-> >> >> >> >Wait! What does that mean? What's the purpose of stable if it is as
-> >> >> >> >broken as mainline?
-> >> >> >>
-> >> >> >> This just means that if there is a fix that went in mainline, and the
-> >> >> >> fix is broken somehow, we'd rather take the broken fix than not.
-> >> >> >>
-> >> >> >> In this scenario, *something* will be broken, it's just a matter of
-> >> >> >> what. We'd rather have the same thing broken between mainline and
-> >> >> >> stable.
-> >> >> >
-> >> >> >Honestly, I think that removes all value of the stable series. I
-> >> >> >remember when the stable series were first created. People were saying
-> >> >> >that it wouldn't even get to more than 5 versions, because the bar for
-> >> >> >backporting was suppose to be very high. Today it's just a fork of the
-> >> >> >kernel at a given version. No more features, but we will be OK with
-> >> >> >regressions. I'm struggling to see what the benefit of it is suppose to
-> >> >> >be?
-> >> >>
-> >> >> It's not "OK with regressions".
-> >> >>
-> >> >> Let's look at a hypothetical example: You have a 4.15.1 kernel that has
-> >> >> a broken printf() behaviour so that when you:
-> >> >>
-> >> >> 	pr_err("%d", 5)
-> >> >>
-> >> >> Would print:
-> >> >>
-> >> >> 	"Microsoft Rulez"
-> >> >>
-> >> >> Bad, right? So you went ahead and fixed it, and now it prints "5" as you
-> >> >> might expect. But alas, with your patch, running:
-> >> >>
-> >> >> 	pr_err("%s", "hi!")
-> >> >>
-> >> >> Would show a cat picture for 5 seconds.
-> >> >>
-> >> >> Should we take your patch in -stable or not? If we don't, we're stuck
-> >> >> with the original issue while the mainline kernel will behave
-> >> >> differently, but if we do - we introduce a new regression.
-> >> >
-> >> >Of course not.
-> >> >
-> >> >- It must be obviously correct and tested.
-> >> >
-> >> >If it introduces new bug, it is not correct, and certainly not
-> >> >obviously correct.
-> >>
-> >> As you might have noticed, we don't strictly follow the rules.
-> >>
-> >> Take a look at the whole PTI story as an example. It's way more than 100
-> >> lines, it's not obviously corrent, it fixed more than 1 thing, and so
-> >> on, and yet it went in -stable!
-> >>
-> >> Would you argue we shouldn't have backported PTI to -stable?
-> >
-> >So I agree with that being backported. But I think this nicely demostrates
-> >a point some people are trying to make in this thread. We do take fixes
-> >with high risk or regression if they fix serious enough issue. Also we do
-> >take fixes to non-serious stuff (such as addition of device ID) if the
-> >chances of regression are really low.
-> >
-> >So IMHO the metric for including the fix is not solely "how annoying to
-> >user this can be" but rather something like:
-> >
-> >score = (how annoying the bug is) * ((1 / (chance of regression due to
-> >	including this)) - 1)^3
-> >
-> >(constants are somewhat arbitrary subject to tuning ;). Now both 'annoying'
-> >and 'regression chance' parts are subjective and sometimes difficult to
-> >estimate so don't take the formula too seriously but it demonstrates the
-> >point. I think we all agree we want to fix annoying stuff and we don't want
-> >regressions. But you need to somehow weight this over your expected
-> >userbase - and this is where your argument "but someone might be annoyed by
-> >LEDs not working so let's include it" has problems - it should rather be
-> >"is the annoyance of non-working leds over expected user base high enough
-> >to risk a regression due to this patch for someone in the expected user
-> >base"? The answer to this second question is not clear at all to a casual
-> >reviewer and that's why we IMHO have CC stable tag as maintainer is
-> >supposed to have at least a bit better clue.
-> 
-> We may be able to guesstimate the 'regression chance', but there's no
-> way we can guess the 'annoyance' once. There are so many different use
-> cases that we just can't even guess how many people would get "annoyed"
-> by something.
+On Tue, Apr 17, 2018 at 05:55:49PM +0200, Jan Kara wrote:
+>On Tue 17-04-18 13:31:51, Sasha Levin wrote:
+>> We may be able to guesstimate the 'regression chance', but there's no
+>> way we can guess the 'annoyance' once. There are so many different use
+>> cases that we just can't even guess how many people would get "annoyed"
+>> by something.
+>
+>As a maintainer, I hope I have reasonable idea what are common use cases
+>for my subsystem. Those I cater to when estimating 'annoyance'. Sure I don=
+'t
+>know all of the use cases so people doing unusual stuff hit more bugs and
+>have to report them to get fixes included in -stable. But for me this is a
+>preferable tradeoff over the risk of regression so this is the rule I use
+>when tagging for stable. Now I'm not a -stable maintainer and I fully agre=
+e
+>with "those who do the work decide" principle so pick whatever patches you
+>think are appropriate, I just wanted explain why I don't think more patche=
+s
+>in stable are necessarily good.
 
-As a maintainer, I hope I have reasonable idea what are common use cases
-for my subsystem. Those I cater to when estimating 'annoyance'. Sure I don't
-know all of the use cases so people doing unusual stuff hit more bugs and
-have to report them to get fixes included in -stable. But for me this is a
-preferable tradeoff over the risk of regression so this is the rule I use
-when tagging for stable. Now I'm not a -stable maintainer and I fully agree
-with "those who do the work decide" principle so pick whatever patches you
-think are appropriate, I just wanted explain why I don't think more patches
-in stable are necessarily good. 
+The AUTOSEL story is different for subsystems that don't do -stable, and
+subsystems that are actually doing the work (like yourself).
 
-> Even regression chance is tricky, look at the commits I've linked
-> earlier in the thread. Even the most trivial looking commits that end up
-> in stable have a chance for regression.
+I'm not trying to override active maintainers, I'm trying to help them
+make decisions.
 
-Sure, you can never be certain and I think people (including me)
-underestimate the chance of regressions for "trivial" patches. But you just
-estimate a chance, you may be lucky, you may not...
+The AUTOSEL bot will attempt to apply any patch it deems as -stable for
+on all -stable branches, finding possible dependencies, build them, and
+run any tests that you might deem necessary.
 
-> >Another point I wanted to make is that if chance a patch causes a
-> >regression is about 2% as you said somewhere else in a thread, then by
-> >adding 20 patches that "may fix a bug that is annoying for someone" you've
-> >just increased a chance there's a regression in the release by 34%. And
-> 
-> So I've said that the rejection rate is less than 2%. This includes
-> all commits that I have proposed for -stable, but didn't end up being
-> included in -stable.
-> 
-> This includes commits that the author/maintainers NACKed, commits that
-> didn't do anything on older kernels, commits that were buggy but were
-> caught before the kernel was released, commits that failed to build on
-> an arch I didn't test it on originally and so on.
-> 
-> After thousands of merged AUTOSEL patches I can count the number of
-> times a commit has caused a regression and had to be removed on one
-> hand.
-> 
-> >this is not just a math game, this also roughly matches a real experience
-> >with maintaining our enterprise kernels. Do 20 "maybe" fixes outweight such
-> >regression chance? And I also note that for a regression to get reported so
-> >that it gets included into your 2% estimate of a patch regression rate,
-> >someone must be bothered enough by it to triage it and send an email
-> >somewhere so that already falls into a category of "serious" stuff to me.
-> 
-> It is indeed a numbers game, but the regression rate isn't 2%, it's
-> closer to 0.05%.
+You would be able to start your analysis without "wasting" time on doing
+a bunch of "manual labor".
 
-Honestly, I think 0.05% is too optimististic :) Quick grepping of 4.14
-stable tree suggests some 13 commits were reverted from stable due to bugs.
-That's some 0.4% and that doesn't count fixes that were applied to
-fix other regressions.
+There's a big difference between subsystems like yours and most of the
+rest of the kernel.
 
-But the actual numbers don't really matter that much, in principle the more
-patches you add the higher is the chance of regression. You can't change
-that so you better have a good reason to include a patch...
+>> Even regression chance is tricky, look at the commits I've linked
+>> earlier in the thread. Even the most trivial looking commits that end up
+>> in stable have a chance for regression.
+>
+>Sure, you can never be certain and I think people (including me)
+>underestimate the chance of regressions for "trivial" patches. But you jus=
+t
+>estimate a chance, you may be lucky, you may not...
+>
+>> >Another point I wanted to make is that if chance a patch causes a
+>> >regression is about 2% as you said somewhere else in a thread, then by
+>> >adding 20 patches that "may fix a bug that is annoying for someone" you=
+'ve
+>> >just increased a chance there's a regression in the release by 34%. And
+>>
+>> So I've said that the rejection rate is less than 2%. This includes
+>> all commits that I have proposed for -stable, but didn't end up being
+>> included in -stable.
+>>
+>> This includes commits that the author/maintainers NACKed, commits that
+>> didn't do anything on older kernels, commits that were buggy but were
+>> caught before the kernel was released, commits that failed to build on
+>> an arch I didn't test it on originally and so on.
+>>
+>> After thousands of merged AUTOSEL patches I can count the number of
+>> times a commit has caused a regression and had to be removed on one
+>> hand.
+>>
+>> >this is not just a math game, this also roughly matches a real experien=
+ce
+>> >with maintaining our enterprise kernels. Do 20 "maybe" fixes outweight =
+such
+>> >regression chance? And I also note that for a regression to get reporte=
+d so
+>> >that it gets included into your 2% estimate of a patch regression rate,
+>> >someone must be bothered enough by it to triage it and send an email
+>> >somewhere so that already falls into a category of "serious" stuff to m=
+e.
+>>
+>> It is indeed a numbers game, but the regression rate isn't 2%, it's
+>> closer to 0.05%.
+>
+>Honestly, I think 0.05% is too optimististic :) Quick grepping of 4.14
+>stable tree suggests some 13 commits were reverted from stable due to bugs=
+.
+>That's some 0.4% and that doesn't count fixes that were applied to
+>fix other regressions.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+0.05% is for commits that were merged in stable but later fixed or
+reverted because they introduced a regression. By grepping for reverts
+you also include things such as:
+
+ - Reverts of commits that were in the corresponding mainline tree
+ - Reverts of commits that didn't introduce regressions
+
+>But the actual numbers don't really matter that much, in principle the mor=
+e
+>patches you add the higher is the chance of regression. You can't change
+>that so you better have a good reason to include a patch...
+
+You increase the chance of regressions, but you also increase the chance
+of fixing bugs that affect users.
+
+My claim is that the chance to fix bugs increases far more significantly
+than the chance to introduce regressions.=
