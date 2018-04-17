@@ -1,119 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeDQGtF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 02:49:05 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60293 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751147AbeDQGtD (ORCPT
+        id S1751200AbeDQG7e (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 02:59:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33326 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750821AbeDQG7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 02:49:03 -0400
-X-Google-Smtp-Source: AIpwx4/07/CjwiLxKa1NWqxPwhE2cW9t8ym9mPopubjy/p7GJAAuMSunvb2LxKpBsFmhD/I/Ns6A1w==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] Input: i8042 - Fix KBD port cannot wake up system from
- suspend-to-idle
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20180413215746.GA27465@dtor-ws>
-Date: Tue, 17 Apr 2018 14:48:56 +0800
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <9F493625-24C6-4FBD-9179-5C74C8CE441D@canonical.com>
-References: <20180411085905.22272-1-kai.heng.feng@canonical.com>
- <20180413215746.GA27465@dtor-ws>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-X-Mailer: Apple Mail (2.3445.6.18)
+        Tue, 17 Apr 2018 02:59:33 -0400
+Subject: Re: [PATCH 1/2] perf tools powerpc: Fix callchain ip filtering
+To: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Cc: acme@kernel.org, jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, ravi.bangoria@linux.vnet.ibm.com,
+        sukadev@linux.vnet.ibm.com, maynard@us.ibm.com
+References: <20180412171129.4422-1-sandipan@linux.vnet.ibm.com>
+ <20180412171129.4422-2-sandipan@linux.vnet.ibm.com>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date: Tue, 17 Apr 2018 12:29:25 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180412171129.4422-2-sandipan@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041706-0008-0000-0000-000004EC23F2
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041706-0009-0000-0000-00001E80260D
+Message-Id: <3471e3e0-80ad-7a7f-96b8-60d24a4931a2@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170063
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 5:57 AM, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 
-> On Wed, Apr 11, 2018 at 04:59:05PM +0800, Kai-Heng Feng wrote:
->> Commit f13b2065de81 ("Input: i8042 - allow KBD and AUX ports to wake up
->> from suspend-to-idle") make system in s2idle can be woken up by i8042
->> keyboard, but it's disabled by default.
->>
->> In commit 3e6e15a862a0 ("Input: enable remote wakeup for PNP i8042
->> keyboard ports") states that "Keyboard ports are always supposed to be
->> wakeup-enabled", it should be enabled by default. Keyboard wakeup from
->> s2idles is also the default behavior for other OSes.
->>
->> But right now we can't wake up the system by keyboard, from s2idle.
->>
->> In i8042_probe(), device_set_wakeup_enable(), which gets called by
->> i8042_pnp_kbd_probe(), runs before device_set_wakeup_capable(), which
->> gets called by i8042_register_ports(). So device_set_wakeup_enable()
->> doesn't really enable wakeup for keyboard.
+
+On 04/12/2018 10:41 PM, Sandipan Das wrote:
+> For powerpc64, if a probe is added for a function without specifying
+> a line number, the corresponding trap instruction is placed at offset
+> 0 (for big endian) or 8 (for little endian) from the start address of
+> the function. This address is in the function prologue and the trap
+> instruction preceeds the instructions to set up the stack frame.
 >
-> You are talking about 2 different devices here, one representing PNP and
-> another KBD serio port. Unfortunately there is not really a link between
-> the 2.
-
-Thanks for the clarification. I can see the difference now.
-
-Enable wakeup for the serio device is what we want here.
-
-So does the device_set_wakeup_enable() in i8042_pnp_kbd_probe() need  
-another device_set_wakeup_capable()?
-Otherwise I think device_set_wakeup_enable() here never works.
-
+> Therefore, at this point during execution, the return address for the
+> function is yet to be written to its caller's stack frame. So, the LR
+> value at index 2 of the callchain ips provided by the kernel is still
+> valid and must not be skipped.
 >
->> We can enable keyboard wakeup in i8042_register_ports() directly.
+> This can be observed on a powerpc64le system running Fedora 27 as
+> shown below.
 >
-> No, the world is not all x86, what makes sense for x86 does not
-> necessarily work for other architectures. We need to come up with a way
-> for tying PNP devices and i8042 ports for x86 case.
+>  # perf probe -x /usr/lib64/libc-2.26.so -a inet_pton
+>  # perf record -e probe_libc:inet_pton/max-stack=3/ ping -6 -c 1 ::1
+>  # perf script
+>
+> Without this patch, the output is:
+>
+>  ping 27909 [007] 532219.943481: probe_libc:inet_pton: (7fff99b0af28)
+>                    15af28 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+>                    1105b4 getaddrinfo (/usr/lib64/libc-2.26.so)
+>
+> With this patch applied, the output is:
+>
+>  ping 27909 [007] 532219.943481: probe_libc:inet_pton: (7fff99b0af28)
+>                    15af28 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+>                    10fa54 gaih_inet.constprop.7 (/usr/lib64/libc-2.26.so)
+>                    1105b4 getaddrinfo (/usr/lib64/libc-2.26.so)
+>
+> Fixes: a60335ba3298 ("perf tools powerpc: Adjust callchain based on DWARF debug info")
+> Signed-off-by: Sandipan Das <sandipan@linux.vnet.ibm.com>
+> ---
 
-Maybe wrap it around with "#ifdef CONFIG_X86"? I can see there are several  
-occurrences in the i8042.c.
+This change looks good to me but seems it fixed the issue
+partially.Ex,
 
-Kai-Heng
+    # readelf --debug-dump=frames-interp /lib64/libc-2.26.so | less
+    ...
+    00005778 0000000000000024 0000577c FDE cie=00000000 pc=0000000000048b30..0000000000048c64
+       LOC           CFA      r31   ra   
+    0000000000048b30 r1+0     u     u    
+    0000000000048b40 r1+0     c-8   r0   
+    0000000000048b58 r1+64    c-8   c+16 
+    0000000000048bd8 r1+0     c-8   c+16 
+    0000000000048be4 r1+0     u    
+    0000000000048bf0 r1+64    c-8   c+16 
 
->
->> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> ---
->>  drivers/input/serio/i8042-x86ia64io.h | 3 ---
->>  drivers/input/serio/i8042.c           | 4 ++++
->>  2 files changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/input/serio/i8042-x86ia64io.h  
->> b/drivers/input/serio/i8042-x86ia64io.h
->> index b353d494ad40..e3def9195c2a 100644
->> --- a/drivers/input/serio/i8042-x86ia64io.h
->> +++ b/drivers/input/serio/i8042-x86ia64io.h
->> @@ -925,9 +925,6 @@ static int i8042_pnp_kbd_probe(struct pnp_dev *dev,  
->> const struct pnp_device_id *
->>  	i8042_pnp_id_to_string(dev->id, i8042_kbd_firmware_id,
->>  			       sizeof(i8042_kbd_firmware_id));
->>
->> -	/* Keyboard ports are always supposed to be wakeup-enabled */
->> -	device_set_wakeup_enable(&dev->dev, true);
->> -
->>  	i8042_pnp_kbd_devices++;
->>  	return 0;
->>  }
->> diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
->> index 824f4c1c1f31..21a16b757931 100644
->> --- a/drivers/input/serio/i8042.c
->> +++ b/drivers/input/serio/i8042.c
->> @@ -1400,6 +1400,10 @@ static void __init i8042_register_ports(void)
->>  				i8042_ports[i].irq);
->>  			serio_register_port(serio);
->>  			device_set_wakeup_capable(&serio->dev, true);
->> +
->> +			/* Keyboard ports are always supposed to be wakeup-enabled */
->> +			if (i == I8042_KBD_PORT_NO)
->> +				device_wakeup_enable(&serio->dev);
->>  		}
->>  	}
->>  }
->> -- 
->> 2.17.0
->
-> Thanks.
->
-> -- 
-> Dmitry
+0000000000048b30..0000000000048c64 is arandom() function from libc:
+
+    0000000000048b30 <random>:
+       48b30:       1c 00 4c 3c     addis   r2,r12,28
+       48b34:       d0 e5 42 38     addi    r2,r2,-6704
+       48b38:       a6 02 08 7c     mflr    r0
+       48b3c:       f8 ff e1 fb     std     r31,-8(r1)
+       48b40:       00 00 00 60     nop
+       48b44:       00 00 20 39     li      r9,0
+       48b48:       80 b5 e2 3b     addi    r31,r2,-19072
+       48b4c:       01 00 00 39     li      r8,1
+       48b50:       10 00 01 f8     std     r0,16(r1)
+       48b54:       c1 ff 21 f8     stdu    r1,-64(r1)
+       48b58:       f0 8f 4d e9     ld      r10,-28688(r13)
+       ...
+
+Your change fixed the issue for 48b30..48b40. But not for
+48b40..48b58.
+
+I probed at 0x48b40.
+
+    # ./perf record -g -e probe_libc:abs_48b40 ~/rand
+
+perf report without Suka's and your change:
+
+    # Children      Self  Trace output 
+    # ........  ........  ..............
+    #
+       100.00%   100.00%  (7fffb7d28b40)
+                |
+                ---0
+                   __libc_start_main
+                   generic_start_main.isra.0
+                   main
+                   rand
+                   __random
+
+perf report with only Suka's change:
+
+    # Children      Self  Trace output 
+    # ........  ........  ..............
+    #
+       100.00%   100.00%  (7fffb7d28b40)
+                |
+                ---0
+                   __libc_start_main
+                   generic_start_main.isra.0
+                   main
+                   __random
+
+perf report with Suka's and your change:
+
+    # Children      Self  Trace output 
+    # ........  ........  ..............
+    #
+       100.00%   100.00%  (7fffb7d28b40)
+                |
+                ---0
+                   __libc_start_main
+                   generic_start_main.isra.0
+                   main
+                   __random
+
+I think rand() is a valid entry which is missing in last two cases.
