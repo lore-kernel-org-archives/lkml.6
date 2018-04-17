@@ -1,75 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754287AbeDQQ52 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:57:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752273AbeDQQ50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:57:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DF9D217D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 17 Apr 2018 12:57:23 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
- x86 syscall func names
-Message-ID: <20180417125723.6506e1d1@gandalf.local.home>
-In-Reply-To: <20180417124019.1e4350d5@gandalf.local.home>
-References: <20180417115440.2145f7f5@gandalf.local.home>
-        <20180417163527.GA7775@kernel.org>
-        <20180417124019.1e4350d5@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1754108AbeDQQ6v (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:58:51 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:52224 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753392AbeDQQ6t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:58:49 -0400
+Subject: Re: [PATCH] clocksource: arc_timer: add comments about locking while
+ read GFRC
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20180417155232.4989-1-Eugeniy.Paltsev@synopsys.com>
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Message-ID: <a87ce229-2142-f393-aabf-2b0750f19ae5@synopsys.com>
+Date: Tue, 17 Apr 2018 09:58:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180417155232.4989-1-Eugeniy.Paltsev@synopsys.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.10.161.84]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 12:40:19 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On 04/17/2018 08:52 AM, Eugeniy Paltsev wrote:
+> This came to light in some internal discussions and it is nice to have
+> this documented rather than digging up the PRM (Prog Ref Manual) again.
+>
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-> On Tue, 17 Apr 2018 13:35:27 -0300
-> Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> 
-> 
-> > [root@jouet ~]# perf test openat
-> >  2: Detect openat syscall event                           : Ok
-> >  3: Detect openat syscall event on all cpus               : Ok
-> > 15: syscalls:sys_enter_openat event fields                : Ok
-> > [root@jouet ~]#
-> > 
-> > [root@jouet ~]# perf trace -e nanosleep,syscalls:*nanosleep sleep 1
-> >      0.000 (         ): syscalls:sys_enter_nanosleep:rqtp: 0x7ffd9f737950, rmtp: 0x00000000
-> >      0.009 (         ): sleep/7905 nanosleep(rqtp: 0x7ffd9f737950                                        ) ...
-> >   1000.204 (         ): syscalls:sys_exit_nanosleep:0x0
-> >      0.009 (1000.217 ms): sleep/7905  ... [continued]: nanosleep()) = 0
-> > [root@jouet ~]#
-> > 
-> > Works, so the regression seems to be fixed, without looking at the code
-> > that much:
-> > 
-> > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>  
-> 
-> But does this still work on x86_32? I'll test that out. Thanks for
-> testing, but I may have another patch soon.
+Minor nits below, otherwise LGTM !
+Acked-by: Vineet Gupta <vgupta@synopsys.com>
 
-OK, it's still broken there with this patch. I got this:
+> ---
+>   drivers/clocksource/arc_timer.c | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+>
+> diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
+> index 4927355f9cbe..b594c373debc 100644
+> --- a/drivers/clocksource/arc_timer.c
+> +++ b/drivers/clocksource/arc_timer.c
+> @@ -61,6 +61,19 @@ static u64 arc_read_gfrc(struct clocksource *cs)
+>   	unsigned long flags;
+>   	u32 l, h;
+>   
+> +	/*
+> +	 * MCIP_CMD/MCIP_READBACK registers are allocated
 
-# ls /sys/kernel/tracing/events/syscalls
-enable
-filter
-sys_enter_nanosleep
-sys_exit_nanosleep
+ From a programming model pov, there seems to be just one instance of 
+MCIP_CMD/MCIP_READBACK however micro-architecturally there's an instance PER ARC 
+CORE.....
+> +	 * PER ARC CORE (not per cluster), and there are dedicated hardware
+> +	 * decode logic (per core) inside ARConnect to handle simultaneous
+> +	 * read/write accesses from cores via those two registers.
+> +	 * So several concurrent commands to ARConnect are OK if they are
+> +	 * trying to access two different sub-components (like GFRC,
+> +	 * inter-core interrupt, etc...). HW also support simultaneously
 
-But with this:
+s/support/supports/
 
-	return !strcmp(sym + 9, name + 3) || !strcmp(sym + 3, name + 3);
-
-I get all the syscalls back. I'll make another patch.
-
--- Steve
+> +	 * accessing GFRC by multiple cores.
+> +	 * That's why it is safe to disable hard interrupts on the local CPU
+> +	 * before access to GFRC instead of taking global MCIP spinlock
+> +	 * defined in arch/arc/kernel/mcip.c
+> +	 */
+>   	local_irq_save(flags);
+>   
+>   	__mcip_cmd(CMD_GFRC_READ_LO, 0);
