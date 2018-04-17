@@ -1,106 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754690AbeDQQtr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:49:47 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:63091 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754473AbeDQQtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:49:45 -0400
-Subject: Re: [PATCH] powerpc: Allow selection of
- CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180417104909.22D416C07D@po15720vm.idsi0.si.c-s.fr>
- <CA+7wUszKbPKu86jSprEBJsxJOmyAc42x5S4XmPce_RFXTsHTfQ@mail.gmail.com>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <e49e2296-11f8-a2fa-6b64-db18ba5db641@c-s.fr>
-Date: Tue, 17 Apr 2018 18:49:44 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        id S1754482AbeDQQzV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:55:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33830 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754454AbeDQQzQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:55:16 -0400
+Subject: Re: [PATCH v4 05/15] KVM: s390: enable/disable AP interpretive
+ execution
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, buendgen@de.ibm.com
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <15b60572-40d6-0f03-11f9-c50cb7eb00e8@linux.vnet.ibm.com>
+ <cf928702-db64-93c7-9b89-bf1c66a33cfa@linux.vnet.ibm.com>
+ <6cba35df-b0de-8000-bb39-c4cec8622c57@linux.vnet.ibm.com>
+ <2b053349-071e-17ed-6ebd-a37bcfd2f330@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Tue, 17 Apr 2018 18:55:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CA+7wUszKbPKu86jSprEBJsxJOmyAc42x5S4XmPce_RFXTsHTfQ@mail.gmail.com>
+In-Reply-To: <2b053349-071e-17ed-6ebd-a37bcfd2f330@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041716-0040-0000-0000-0000044E9A02
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041716-0041-0000-0000-000020F2E36E
+Message-Id: <f01eb8fa-8a63-92f2-c15f-2c9a4e198f65@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170148
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 17/04/2018 18:22, Tony Krowiak wrote:
+> On 04/17/2018 12:13 PM, Pierre Morel wrote:
+>> On 17/04/2018 17:02, Tony Krowiak wrote:
+>>> On 04/16/2018 06:51 AM, Pierre Morel wrote:
+>>>> On 15/04/2018 23:22, Tony Krowiak wrote:
+>>>>> The VFIO AP device model exploits interpretive execution of AP
+>>>>> instructions (APIE) to provide guests passthrough access to AP
+>>>>> devices. This patch introduces a new interface to enable and
+>>>>> disable APIE.
+>>>>>
+>>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>>>> ---
+>>>>>   arch/s390/include/asm/kvm-ap.h   |   16 ++++++++++++++++
+>>>>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>>>>   arch/s390/kvm/kvm-ap.c           |   20 ++++++++++++++++++++
+>>>>>   arch/s390/kvm/kvm-s390.c         |    9 +++++++++
+>>>>>   4 files changed, 46 insertions(+), 0 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/s390/include/asm/kvm-ap.h 
+>>>>> b/arch/s390/include/asm/kvm-ap.h
+>>>>> index 736e93e..a6c092e 100644
+>>>>> --- a/arch/s390/include/asm/kvm-ap.h
+>>>>> +++ b/arch/s390/include/asm/kvm-ap.h
+>>>>> @@ -35,4 +35,20 @@
+>>>>>    */
+>>>>>   void kvm_ap_build_crycbd(struct kvm *kvm);
+>>>>>
+>>>>> +/**
+>>>>> + * kvm_ap_interpret_instructions
+>>>>> + *
+>>>>> + * Indicate whether AP instructions shall be interpreted. If they 
+>>>>> are not
+>>>>> + * interpreted, all AP instructions will be intercepted and 
+>>>>> routed back to
+>>>>> + * userspace.
+>>>>> + *
+>>>>> + * @kvm: the virtual machine attributes
+>>>>> + * @enable: indicates whether AP instructions are to be 
+>>>>> interpreted (true) or
+>>>>> + *        or not (false).
+>>>>> + *
+>>>>> + * Returns 0 if completed successfully; otherwise, returns 
+>>>>> -EOPNOTSUPP
+>>>>> + * indicating that AP instructions are not installed on the guest.
+>>>>> + */
+>>>>> +int kvm_ap_interpret_instructions(struct kvm *kvm, bool enable);
+>>>>> +
+>>>>>   #endif /* _ASM_KVM_AP */
+>>>>> diff --git a/arch/s390/include/asm/kvm_host.h 
+>>>>> b/arch/s390/include/asm/kvm_host.h
+>>>>> index 3162783..5470685 100644
+>>>>> --- a/arch/s390/include/asm/kvm_host.h
+>>>>> +++ b/arch/s390/include/asm/kvm_host.h
+>>>>> @@ -715,6 +715,7 @@ struct kvm_s390_crypto {
+>>>>>       __u32 crycbd;
+>>>>>       __u8 aes_kw;
+>>>>>       __u8 dea_kw;
+>>>>> +    __u8 apie;
+>>>>>   };
+>>>>>
+>>>>>   #define APCB0_MASK_SIZE 1
+>>>>> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+>>>>> index 991bae4..55d11b5 100644
+>>>>> --- a/arch/s390/kvm/kvm-ap.c
+>>>>> +++ b/arch/s390/kvm/kvm-ap.c
+>>>>> @@ -58,3 +58,23 @@ void kvm_ap_build_crycbd(struct kvm *kvm)
+>>>>>       }
+>>>>>   }
+>>>>>   EXPORT_SYMBOL(kvm_ap_build_crycbd);
+>>>>> +
+>>>>> +int kvm_ap_interpret_instructions(struct kvm *kvm, bool enable)
+>>>>> +{
+>>>>> +    int ret = 0;
+>>>>> +
+>>>>> +    mutex_lock(&kvm->lock);
+>>>>> +
+>>>>> +    if (!test_kvm_cpu_feat(kvm, KVM_S390_VM_CPU_FEAT_AP)) {
+>>>>
+>>>> Do we really need to test CPU_FEAT_AP?
+>>>
+>>> Yes we do.
+>>
+>> really? why?
+>
+> The KVM_S390_VM_CPU_FEAT_AP will not be enabled by KVM if the AP
+> instructions are not installed on the host. I assume - but have
+> no way of verifying - that if the AP instructions are not installed
+> on the host, that interpretation would fail. Do you know what would
+> happen if AP instructions are interpreted when not installed on
+> the host?
 
+If the host has no AP instructions (his ECA.28=0) but it set ECA.28 for 
+a guest,
+there will be no AP instructions available in the guest.
 
-Le 17/04/2018 à 18:45, Mathieu Malaterre a écrit :
-> On Tue, Apr 17, 2018 at 12:49 PM, Christophe Leroy
-> <christophe.leroy@c-s.fr> wrote:
->> This option does dead code and data elimination with the linker by
->> compiling with -ffunction-sections -fdata-sections and linking with
->> --gc-sections.
+>
 >>
->> By selecting this option on mpc885_ads_defconfig,
->> vmlinux LOAD segment size gets reduced by 10%
 >>
->> Program Header before the patch:
->>      LOAD off    0x00010000 vaddr 0xc0000000 paddr 0x00000000 align 2**16
->>           filesz 0x0036eda4 memsz 0x0038de04 flags rwx
+>>>
+>>>>
+>>>>
+>>>> I understand that KVM_S390_VM_CPU_FEAT_AP means AP instructions are 
+>>>> interpreted.
+>>>> shouldn't we add this information in the name?
+>>>> like KVM_S390_VM_CPU_FEAT_APIE
+>>>
+>>> KVM_S390_VM_CPU_FEAT_AP does NOT mean AP instructions are 
+>>> interpreted, it means
+>>> AP instructions are installed.
 >>
->> Program Header after the patch:
->>      LOAD off    0x00010000 vaddr 0xc0000000 paddr 0x00000000 align 2**16
->>           filesz 0x00316da4 memsz 0x00334268 flags rwx
+>> Right same error I made all along this review.
+>> But AFAIK it means AP instructions are provided to the guest.
+>> Then should this function be called if the guest has no AP 
+>> instructions ?
 >>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/Kconfig | 8 ++++++++
->>   1 file changed, 8 insertions(+)
 >>
->> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->> index 8fe4353be5e3..e1fac49cf465 100644
->> --- a/arch/powerpc/Kconfig
->> +++ b/arch/powerpc/Kconfig
->> @@ -888,6 +888,14 @@ config PPC_MEM_KEYS
+>>>
+>>>>
+>>>>> +        ret = -EOPNOTSUPP;
+>>>>> +        goto done;
+>>>>> +    }
+>>>>> +
+>>>>> +    kvm->arch.crypto.apie = enable;
+>>>>> +    kvm_s390_vcpu_crypto_reset_all(kvm);
+>>>>> +
+>>>>> +done:
+>>>>> +    mutex_unlock(&kvm->lock);
+>>>>> +    return ret;
+>>>>> +}
+>>>>> +EXPORT_SYMBOL(kvm_ap_interpret_instructions);
+>>>>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>>>>> index 55cd897..1dc8566 100644
+>>>>> --- a/arch/s390/kvm/kvm-s390.c
+>>>>> +++ b/arch/s390/kvm/kvm-s390.c
+>>>>> @@ -1901,6 +1901,9 @@ static void kvm_s390_crypto_init(struct kvm 
+>>>>> *kvm)
+>>>>>       kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
+>>>>>       kvm_ap_build_crycbd(kvm);
+>>>>>
+>>>>> +    /* Default setting indicating SIE shall interpret AP 
+>>>>> instructions */
+>>>>> +    kvm->arch.crypto.apie = 1;
+>>>>> +
+>>>>>       if (!test_kvm_facility(kvm, 76))
+>>>>>           return;
+>>>>>
+>>>>> @@ -2434,6 +2437,12 @@ static void 
+>>>>> kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
+>>>>>   {
+>>>>>       vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
+>>>>>
+>>>>> +    vcpu->arch.sie_block->eca &= ~ECA_APIE;
+>>>>> +    if (vcpu->kvm->arch.crypto.apie &&
+>>>>> +        test_kvm_cpu_feat(vcpu->kvm, KVM_S390_VM_CPU_FEAT_AP))
+>>>>
+>>>> Do we call xxx_crypto_setup() if KVM does not support AP 
+>>>> interpretation?
+>>>
+>>> Yes, kvm_s390_vcpu_crypto_setup(vcpu) is called by 
+>>> kvm_arch_vcpu_setup(vcpu)
+>>> as well as from kvm_s390_vcpu_crypto_reset_all(kvm). Calling it has 
+>>> nothing
+>>> to do with whether AP interpretation is supported or not as it does 
+>>> much
+>>> more than that, including setting up of wrapping keys and the CRYCBD.
 >>
->>            If unsure, say y.
+>> Sorry, still the same error I made about CPU_FEAT_AP meaning AP 
+>> instructions in the guest
+>> and not AP interpretation available.
+>> Could apie be set if AP instruction are not supported?
 >>
->> +config PPC_UNUSED_ELIMINATION
->> +       bool "Eliminate unused functions and data from vmlinux"
->> +       default n
->> +       select LD_DEAD_CODE_DATA_ELIMINATION
->> +       help
->> +         Select this to do dead code and data elimination with the linker
->> +         by compiling with -ffunction-sections -fdata-sections and linking
->> +         with --gc-sections.
->>   endmenu
+>>>
+>>>>
+>>>>> + vcpu->arch.sie_block->eca |= ECA_APIE;
+>>>>> +
+>>>>> +
+>>>>>       if (!test_kvm_facility(vcpu->kvm, 76))
+>>>>>           return;
+>>>>>
+>>>>
+>>>
 >>
-> 
-> Just for reference, I cannot boot my Mac Mini G4 anymore (yaboot). The
-> messages I can see (prom_init) are:
+>
 
-Which version of GCC do you use ?
-
-Can you provide the generated System.map with and without that option 
-active ?
-
-Thanks
-Christophe
-
-> 
-> ---
-> done
-> copying OF device tree...
-> Building dt strings...
-> Building dt structure...
-> Device tree strings 0x01100000 -> 0x01100e02
-> Device tree struct   0x01101000 -> 0x01109000
-> Quiescing Open Firmware ...
-> Booting Linux via __start() @ 0x00140000 ...
-> _
-> ---
-> 
-> 
-> 
->>   config ISA_DMA_API
->> --
->> 2.13.3
->>
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
