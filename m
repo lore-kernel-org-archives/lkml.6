@@ -1,111 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751970AbeDQHcc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 03:32:32 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36787 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750831AbeDQHcb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 03:32:31 -0400
-Date: Tue, 17 Apr 2018 09:32:28 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: v4.17-rc1 on motorola droid d4: WARN_ON from
- drivers/gpu/drm/omapdrm/dss/hdmi4.c
-Message-ID: <20180417073228.GA9246@amd>
+        id S1752048AbeDQHdA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 03:33:00 -0400
+Received: from foss.arm.com ([217.140.101.70]:39058 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750821AbeDQHc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 03:32:59 -0400
+Subject: Re: [PATCH] MAINTAINERS: Update e-mail address for Christoffer Dall
+To: Christoffer Dall <christoffer.dall@arm.com>,
+        linux-kernel@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+References: <20180416182831.4035-1-christoffer.dall@arm.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <6bb15fe7-cf20-c4e2-d596-fd9e243659e4@arm.com>
+Date: Tue, 17 Apr 2018 08:32:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180416182831.4035-1-christoffer.dall@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 16/04/18 19:28, Christoffer Dall wrote:
+> Update my e-mail address to a working address.
+> 
+> Signed-off-by: Christoffer Dall <christoffer.dall@arm.com>
+> ---
+>  MAINTAINERS | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0a1410d5a621..3e9c99d2620b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7738,7 +7738,7 @@ F:	arch/x86/include/asm/svm.h
+>  F:	arch/x86/kvm/svm.c
+>  
+>  KERNEL VIRTUAL MACHINE FOR ARM (KVM/arm)
+> -M:	Christoffer Dall <christoffer.dall@linaro.org>
+> +M:	Christoffer Dall <christoffer.dall@arm.com>
+>  M:	Marc Zyngier <marc.zyngier@arm.com>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  L:	kvmarm@lists.cs.columbia.edu
+> @@ -7752,7 +7752,7 @@ F:	virt/kvm/arm/
+>  F:	include/kvm/arm_*
+>  
+>  KERNEL VIRTUAL MACHINE FOR ARM64 (KVM/arm64)
+> -M:	Christoffer Dall <christoffer.dall@linaro.org>
+> +M:	Christoffer Dall <christoffer.dall@arm.com>
+>  M:	Marc Zyngier <marc.zyngier@arm.com>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  L:	kvmarm@lists.cs.columbia.edu
+> 
 
---OgqxwSJOaUobr8KG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'll queue this as a fix for the next -rc.
 
-Hi!
+Thanks,
 
-While playing with screensaver on droid4:
-
-[ 1047.117462] omap-mcbsp 40124000.mcbsp: CLKS: could not
-clk_set_parent() to prcm_fck
-[ 1047.130432] ------------[ cut here ]------------
-[ 1047.135559] WARNING: CPU: 1 PID: 2942 at
-drivers/gpu/drm/omapdrm/dss/hdmi4.c:667 hdmi_audio_stop+0x5c/0x68
-[ 1047.145294] Modules linked in:
-[ 1047.148376] CPU: 1 PID: 2942 Comm: pulseaudio Not tainted
-4.17.0-rc1-73412-g8f3e00d-dirty #623
-[ 1047.157043] Hardware name: Generic OMAP4 (Flattened Device Tree)
-[ 1047.163085] [<c0111854>] (unwind_backtrace) from [<c010d740>]
-(show_stack+0x10/0x14)
-[ 1047.170898] [<c010d740>] (show_stack) from [<c08fc244>]
-(dump_stack+0xa8/0xe0)
-[ 1047.178161] [<c08fc244>] (dump_stack) from [<c0134d50>]
-(__warn+0xf8/0x124)
-[ 1047.185180] [<c0134d50>] (__warn) from [<c0134db8>]
-(warn_slowpath_null+0x3c/0x48)
-[ 1047.192962] [<c0134db8>] (warn_slowpath_null) from [<c053d9dc>]
-(hdmi_audio_stop+0x5c/0x68)
-[ 1047.192993] [<c053d9dc>] (hdmi_audio_stop) from [<c06f3e2c>]
-(hdmi_dai_trigger+0x6c/0x88)
-[ 1047.193023] [<c06f3e2c>] (hdmi_dai_trigger) from [<c06e0308>]
-(soc_pcm_trigger+0x140/0x184)
-[ 1047.193023] [<c06e0308>] (soc_pcm_trigger) from [<c06afc68>]
-(snd_pcm_do_stop+0x54/0x58)
-[ 1047.193054] [<c06afc68>] (snd_pcm_do_stop) from [<c06afa10>]
-(snd_pcm_action_single+0x38/0x78)
-[ 1047.193054] [<c06afa10>] (snd_pcm_action_single) from [<c06b1c24>]
-(snd_pcm_drop+0x48/0x94)
-[ 1047.193054] [<c06b1c24>] (snd_pcm_drop) from [<c06b2d24>]
-(snd_pcm_ioctl+0x8e0/0x1308)
-[ 1047.193084] [<c06b2d24>] (snd_pcm_ioctl) from [<c02c80cc>]
-(do_vfs_ioctl+0x84/0xa70)
-[ 1047.193084] [<c02c80cc>] (do_vfs_ioctl) from [<c02c8b14>]
-(ksys_ioctl+0x5c/0x80)
-[ 1047.193115] [<c02c8b14>] (ksys_ioctl) from [<c0101000>]
-(ret_fast_syscall+0x0/0x28)
-[ 1047.193115] Exception stack(0xecfc1fa8 to 0xecfc1ff0)
-[ 1047.193115] 1fa0:                   00562308 b1986394 00000015
-00004143 00000000 00562e20
-[ 1047.193115] 1fc0: 00562308 b1986394 0053d4e0 00000036 0000000e
-b6fdbce8 00507d80 bed64644
-[ 1047.193145] 1fe0: b19867c4 bed644c4 b1916be7 b6c8e716
-[ 1047.193145] irq event stamp: 60448
-[ 1047.193145] hardirqs last  enabled at (60447): [<c01c6df4>]
-ktime_get_ts64+0x19c/0x1dc
-[ 1047.193176] hardirqs last disabled at (60448): [<c06b099c>]
-snd_pcm_stream_lock_irq+0x24/0x34
-[ 1047.193176] softirqs last  enabled at (60078): [<c01024a0>]
-__do_softirq+0x2e0/0x59c
-[ 1047.193176] softirqs last disabled at (60031): [<c013c684>]
-irq_exit+0x144/0x194
-[ 1047.193206] ---[ end trace 07b005c418b9f99b ]---
-[ 1062.235626] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-[ 1092.313934] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---OgqxwSJOaUobr8KG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrVowwACgkQMOfwapXb+vLX0ACgqtQxgXXS53SFCo6OJZrWtBjF
-/7gAn32SuiZKu4CSMhX1LjM675PXQoi+
-=S4Cg
------END PGP SIGNATURE-----
-
---OgqxwSJOaUobr8KG--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
