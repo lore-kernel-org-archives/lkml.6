@@ -1,206 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeDQKYW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 06:24:22 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:31202 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751211AbeDQKYU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 06:24:20 -0400
-Subject: Re: [RFC 03/10] PCI: endpoint: Add MSI-X interfaces
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <adouglas@cadence.com>, <niklas.cassel@axis.com>,
-        <jesper.nilsson@axis.com>
-References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
- <c76688ee290a9ed4f0f70f5e350b906950ec05df.1523379766.git.gustavo.pimentel@synopsys.com>
-CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <7fec2005-d7a8-daea-9451-7f3593afe285@ti.com>
-Date: Tue, 17 Apr 2018 15:54:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S1752532AbeDQKYe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 06:24:34 -0400
+Received: from foss.arm.com ([217.140.101.70]:40600 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752273AbeDQKYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 06:24:32 -0400
+Date: Tue, 17 Apr 2018 11:24:24 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
+        kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        javi.merino@kernel.org, rui.zhang@intel.com,
+        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
+        Amit Daniel Kachhap <amit.kachhap@gmail.com>
+Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
+ idle cooling driver
+Message-ID: <20180417102424.GA27279@e107981-ln.cambridge.arm.com>
+References: <20180416093747.GB4244@vireshk-i7>
+ <4abf0d97-d2b8-46ab-3c05-4a11510ac3fe@linaro.org>
+ <20180416095006.GC4244@vireshk-i7>
+ <b0e7ff16-c947-89a0-6bd9-56ee9a76e7ad@linaro.org>
+ <20180416101021.GD4244@vireshk-i7>
+ <1c61128a-dea6-b12c-4cd8-ef53a5c8628d@linaro.org>
+ <20180416123019.GA9341@e107981-ln.cambridge.arm.com>
+ <633cdc63-ce6d-89af-26dd-bdc3a27556ed@linaro.org>
+ <20180416142243.GB32565@red-moon>
+ <845fafa3-f0ab-2050-fe32-1780dc61b8a8@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <c76688ee290a9ed4f0f70f5e350b906950ec05df.1523379766.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <845fafa3-f0ab-2050-fe32-1780dc61b8a8@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Apr 17, 2018 at 09:17:36AM +0200, Daniel Lezcano wrote:
 
-On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
-> Implements the generic method for calling the get/set callbacks.
-> 
-> Adds the PCI_EPC_IRQ_MSIX type.
-> 
-> Adds the MSI-X callbacks signatures to the ops structure.
-> 
-> Adds sysfs interface for altering the number of MSI-X entries.
-> 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
->  drivers/pci/endpoint/pci-ep-cfs.c   | 24 ++++++++++++++++
->  drivers/pci/endpoint/pci-epc-core.c | 57 +++++++++++++++++++++++++++++++++++++
->  include/linux/pci-epc.h             | 11 ++++++-
->  include/linux/pci-epf.h             |  1 +
->  4 files changed, 92 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
-> index 018ea34..d1288a0 100644
-> --- a/drivers/pci/endpoint/pci-ep-cfs.c
-> +++ b/drivers/pci/endpoint/pci-ep-cfs.c
-> @@ -286,6 +286,28 @@ static ssize_t pci_epf_msi_interrupts_show(struct config_item *item,
->  		       to_pci_epf_group(item)->epf->msi_interrupts);
->  }
->  
-> +static ssize_t pci_epf_msix_interrupts_store(struct config_item *item,
-> +					     const char *page, size_t len)
-> +{
-> +	u16 val;
-> +	int ret;
-> +
-> +	ret = kstrtou16(page, 0, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	to_pci_epf_group(item)->epf->msix_interrupts = val;
-> +
-> +	return len;
-> +}
-> +
-> +static ssize_t pci_epf_msix_interrupts_show(struct config_item *item,
-> +					    char *page)
-> +{
-> +	return sprintf(page, "%d\n",
-> +		       to_pci_epf_group(item)->epf->msix_interrupts);
-> +}
-> +
->  PCI_EPF_HEADER_R(vendorid)
->  PCI_EPF_HEADER_W_u16(vendorid)
->  
-> @@ -327,6 +349,7 @@ CONFIGFS_ATTR(pci_epf_, subsys_vendor_id);
->  CONFIGFS_ATTR(pci_epf_, subsys_id);
->  CONFIGFS_ATTR(pci_epf_, interrupt_pin);
->  CONFIGFS_ATTR(pci_epf_, msi_interrupts);
-> +CONFIGFS_ATTR(pci_epf_, msix_interrupts);
->  
->  static struct configfs_attribute *pci_epf_attrs[] = {
->  	&pci_epf_attr_vendorid,
-> @@ -340,6 +363,7 @@ static struct configfs_attribute *pci_epf_attrs[] = {
->  	&pci_epf_attr_subsys_id,
->  	&pci_epf_attr_interrupt_pin,
->  	&pci_epf_attr_msi_interrupts,
-> +	&pci_epf_attr_msix_interrupts,
->  	NULL,
->  };
->  
-> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> index b0ee427..294a383 100644
-> --- a/drivers/pci/endpoint/pci-epc-core.c
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-> @@ -218,6 +218,63 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
->  EXPORT_SYMBOL_GPL(pci_epc_set_msi);
->  
->  /**
-> + * pci_epc_get_msix() - get the number of MSI-X interrupt numbers allocated
-> + * @epc: the EPC device to which MSI-X interrupts was requested
-> + * @func_no: the endpoint function number in the EPC device
-> + *
-> + * Invoke to get the number of MSI-X interrupts allocated by the RC
-> + */
-> +int pci_epc_get_msix(struct pci_epc *epc, u8 func_no)
-> +{
-> +	int interrupt;
-> +	unsigned long flags;
-> +
-> +	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
-> +		return 0;
-> +
-> +	if (!epc->ops->get_msix)
-> +		return 0;
-> +
-> +	spin_lock_irqsave(&epc->lock, flags);
-> +	interrupt = epc->ops->get_msix(epc, func_no);
-> +	spin_unlock_irqrestore(&epc->lock, flags);
-> +
-> +	if (interrupt < 0)
-> +		return 0;
-> +
-> +	return interrupt++;
+[...]
 
-return interrupt + 1?
-> +}
-> +EXPORT_SYMBOL_GPL(pci_epc_get_msix);
-> +
-> +/**
-> + * pci_epc_set_msix() - set the number of MSI-X interrupt numbers required
-> + * @epc: the EPC device on which MSI-X has to be configured
-> + * @func_no: the endpoint function number in the EPC device
-> + * @interrupts: number of MSI-X interrupts required by the EPF
-> + *
-> + * Invoke to set the required number of MSI-X interrupts.
-> + */
-> +int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
-> +{
-> +	int ret;
-> +	unsigned long flags;
-> +
-> +	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
-> +	    interrupts < 1 || interrupts > 2048)
-> +		return -EINVAL;
-> +
-> +	if (!epc->ops->set_msix)
-> +		return 0;
-> +
-> +	spin_lock_irqsave(&epc->lock, flags);
-> +	ret = epc->ops->set_msix(epc, func_no, interrupts - 1);
-> +	spin_unlock_irqrestore(&epc->lock, flags);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(pci_epc_set_msix);
-> +
-> +/**
->   * pci_epc_unmap_addr() - unmap CPU address from PCI address
->   * @epc: the EPC device on which address is allocated
->   * @func_no: the endpoint function number in the EPC device
-> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-> index af657ca..32e8961 100644
-> --- a/include/linux/pci-epc.h
-> +++ b/include/linux/pci-epc.h
-> @@ -17,6 +17,7 @@ enum pci_epc_irq_type {
->  	PCI_EPC_IRQ_UNKNOWN,
->  	PCI_EPC_IRQ_LEGACY,
->  	PCI_EPC_IRQ_MSI,
-> +	PCI_EPC_IRQ_MSIX,
->  };
->  
->  /**
-> @@ -30,6 +31,10 @@ enum pci_epc_irq_type {
->   *	     capability register
->   * @get_msi: ops to get the number of MSI interrupts allocated by the RC from
->   *	     the MSI capability register
-> + * @set_msix: ops to set the requested number of MSI-X interrupts in the
-> + *	     MSI-X capability register
-> + * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
-> + *	     from the MSI-X capability register
->   * @raise_irq: ops to raise a legacy or MSI interrupt
->   * @start: ops to start the PCI link
->   * @stop: ops to stop the PCI link
-> @@ -48,8 +53,10 @@ struct pci_epc_ops {
->  			      phys_addr_t addr);
->  	int	(*set_msi)(struct pci_epc *epc, u8 func_no, u8 interrupts);
->  	int	(*get_msi)(struct pci_epc *epc, u8 func_no);
-> +	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
-> +	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
+> >>>> Actually there is no impact with the change Sudeep is referring to. It
+> >>>> is for ACPI, we are DT based. Confirmed with Jeremy.
+> >>>>
+> >>>> So AFAICT, it is not a problem.
+> >>>
+> >>> It is a problem - DT or ACPI alike. Sudeep was referring to the notion
+> >>> of "cluster" that has no architectural meaning whatsoever and using
+> >>> topology_physical_package_id() to detect a "cluster" was/is/will always
+> >>> be the wrong thing to do. The notion of cluster must not appear in the
+> >>> kernel at all, it has no architectural meaning. I understand you need
+> >>> to group CPUs but that has to be done in a different way, through
+> >>> cooling devices, thermal domains or power domains DT/ACPI bindings but
+> >>> not by using topology masks.
+> >>
+> >> I don't get it. What is the cluster concept defined in the ARM
+> >> documentation?
+> >>
+> >> ARM Cortex-A53 MPCore Processor Technical Reference Manual
+> >>
+> >> 4.5.2. Multiprocessor Affinity Register
+> >>
+> >> I see the documentation says:
+> >>
+> >> A cluster with two cores, three cores, ...
+> >>
+> >> How the kernel can represent that if you kill the
+> >> topology_physical_package_id() ?
+> > 
+> > From an Arm ARM perspective (ARM v8 reference manual), the MPIDR_EL1 has
+> > no notion of cluster which means that a cluster is not architecturally
+> > defined on Arm systems.
+> 
+> Sorry, I'm lost :/ You say the MPIDR_EL1 has no notion of cluster but
+> the documentation describing this register is all talking about cluster.
+> 
+> http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0500g/BABHBJCI.html
 
-The 1st patch in the series is already using get_msix, set_msix. This patch
-should precede the 1st patch.
+I pointed you at the documentation I am referring to. You are referring
+to A53 TRM, I am referring to the Arm architecture reference manual that
+is the reference for all Arm cores.
 
-Thanks
-Kishon
+> > Currently, as Morten explained today, topology_physical_package_id()
+> > is supposed to represent a "cluster" and that's completely wrong
+> > because a "cluster" cannot be defined from an architectural perspective.
+> > 
+> > It was a bodge used as a shortcut, wrongly. We should have never used
+> > that API for that purpose and there must be no code in the kernel
+> > relying on:
+> > 
+> > topology_physical_package_id()
+> > 
+> > to define a cluster; the information you require to group CPUs must
+> > come from something else, which is firmware bindings(DT or ACPI) as
+> > I mentioned.
+> 
+> Why not ?
+
+I explained why not :). A cluster is not defined architecturally on Arm
+- it is as simple as that and you can't rely on a given MPIDR_EL1
+subfield to define what a cluster id is.
+
+> diff --git a/arch/arm64/include/asm/topology.h
+> b/arch/arm64/include/asm/topology.h
+> index c4f2d50..ac0776d 100644
+> --- a/arch/arm64/include/asm/topology.h
+> +++ b/arch/arm64/include/asm/topology.h
+> @@ -14,7 +14,8 @@ struct cpu_topology {
+> 
+>  extern struct cpu_topology cpu_topology[NR_CPUS];
+> 
+> -#define topology_physical_package_id(cpu)
+> (cpu_topology[cpu].cluster_id)
+> +#define topology_physical_package_id(cpu)      (0)
+> +#define topology_physical_cluster_id(cpu)
+
+There is no such a thing (and there is no architecturally defined
+package id on Arm either).
+
+> (cpu_topology[cpu].cluster_id)
+>  #define topology_core_id(cpu)          (cpu_topology[cpu].core_id)
+>  #define topology_core_cpumask(cpu)     (&cpu_topology[cpu].core_sibling)
+>  #define topology_sibling_cpumask(cpu)  (&cpu_topology[cpu].thread_sibling)
+> 
+> 
+> > Please speak to Sudeep who will fill you on the reasoning above.
+> 
+> Yes, Sudeep is next to me but I would prefer to keep the discussion on
+> the mailing list so everyone can get the reasoning.
+
+It is not a reasoning - it is the Arm architecture. There is no
+architecturally defined cluster id on Arm. The affinity bits in
+MPIDR_EL1 must be treated as a unique number that represents a given
+core/thread, how the bits are allocated across affinity levels is not
+something that you can rely on architecturally - that's why DT/ACPI
+topology bindings exist to group cpus in a hierarchical topology.
+
+HTH,
+Lorenzo
