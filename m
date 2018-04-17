@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49iaIS8M5LBSugEOgVFyx4fkxRv9Krl6GxKk/VAFgQVpYrcQKTCwV0dj39HAgVaqLcIPigE
-ARC-Seal: i=1; a=rsa-sha256; t=1523981206; cv=none;
+X-Google-Smtp-Source: AIpwx49QsOj4vvLaa3zeJFr6uPHBKHVW8rOOHjx46+a/y4JKcpYcYDuR30CaVqlzS2tpMmD2y5H/
+ARC-Seal: i=1; a=rsa-sha256; t=1523981200; cv=none;
         d=google.com; s=arc-20160816;
-        b=SaYd3E4rivXgNjmOyOP7zqZnkBWkKp1v7+3ZrorKN1g/6tBL228cG0fTEI8TZlnh7i
-         9JGKC5Q8r7p66o8OJLpdtpLN4Ua2aTf6q61vWoIk/lJZL9+cjCsvmglKXcMDP6DYl5S6
-         y5JzCSZWGGlWYA9IC9lCpK1XnWDudfDkeM0vbQKPfU2I8lTCKo4x6uhKLlLiylsZO6Gy
-         Tg8QI8JWNa4Gxy81eo3MuUcYzUSdZB5sR6sYFImW6vzqmjwECR9Ye8PBsxDJAf8NZTDB
-         yknC6QFS1GBB9yd60lzppa/VK2EZMw5c7a4YiHc73dPOiLWJ//C8Iab+xPBoh7ZlZ32Z
-         nptA==
+        b=GvKNbj22pUNsMINyO5kr+6X7vy+G8XnVvkaN30RkvXkF+cXO52RZ0xpES+mlQf8Lx8
+         sen2iVk9yqKZiqVlIAB3ZB5JwRaxVIQECPu+o3EVjgm8Q7PrUO6F6jUX3kL84k3iQluo
+         7GvcrFJXX92roSoY/ECm68rAsZh+E6io89w1hD7u65eU9mWhp7suzlAfXbOBTKe4vQgQ
+         LmIXJrss9j2Rsi0dX7HbnYI0mpQuM8SNbbJLwPMwO9kBfBAI8A1MgA3rCkV4uGnYYNX/
+         Ae3TkKkDzGy1r4mUwYVS6hHjrnJ0DlB2imSXIJEz8VpgnrJ3ajUIznZ/wdaKGpmPHLmh
+         CahA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=DE6Q8kK6H14HXMXxetfBxb+ALzgKZgA+BTen4ucuT74=;
-        b=tiQy5ha5IG46C5psUHkHyZCnQyBm1z5eoSc5N+H769usyiEnD3OCSrK7EJdV10is4T
-         mVRwZ7Xd3R1N32QkryMhsdGL2L4TrdzimMyzXWALCOG2SUl4P5vawsdysDUXSW3cvWS0
-         YEFeji+hWqXM+OAKuWHHn1ixjpWl7rT6f+zj421IN24zrbAb8M8GfJ2MpixkRFzoX4qa
-         C9Z/Xq1IM1UO7poxqkyNCAekPoLBSENlUS4Z1yXoJRWvR9SHX+TpyG8P2O6x0QsgvXxL
-         cSOi8N93eFZIzKlhcLrRRMyvi63q+hSgwV6/NAd4DqaT+amVmd+CqLD+ZcC/w9rOG4sU
-         XACw==
+        bh=9wtL4ZGSKZZr3Ho/aVnhlbJI8xWO/HK6uuVA2beaTK4=;
+        b=c1McECFdfsZEAaxmV6K2zA3X4BfLru/fWl2Ahxxc95i2olNDIUf/TvKIjXTrfBblYO
+         R9u9bmlEsfGXyw6yv1VOEkCAOqYxVOOuzpsoe49ooxI2yHCeGZ7Hh/nMQVSJdJ2p8TXI
+         wxQiQNoeTCzqQygIkzd2nWVLTuwS2ew+kMOIbbK609v/3VjBb00gXzB54a1pz2h+ejOl
+         YZ3KC1sxbPsCts4JMov+CVELU1cC7YO65UamiYl7PIIxQlRKWWL6qBCRArG0OKyFnawN
+         fifUDusvIzaZ3ukwGTjAoatc39a7PGXmO/xFl+NPAo6UarOQS5YfJDJCKMoCS69dMc5d
+         3uCw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hans.verkuil@cisco.com>
-Subject: [PATCH 4.14 08/49] media: v4l2-compat-ioctl32: dont oops on overlay
-Date: Tue, 17 Apr 2018 17:58:47 +0200
-Message-Id: <20180417155715.401585486@linuxfoundation.org>
+	Eric Auger <eric.auger@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 06/49] vhost: Fix vhost_copy_to_user()
+Date: Tue, 17 Apr 2018 17:58:45 +0200
+Message-Id: <20180417155715.311593948@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009699184942601?=
-X-GMAIL-MSGID: =?utf-8?q?1598010117874302717?=
+X-GMAIL-THRID: =?utf-8?q?1598009751810796107?=
+X-GMAIL-MSGID: =?utf-8?q?1598010110759008910?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,128 +51,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+From: Eric Auger <eric.auger@redhat.com>
 
-commit 85ea29f19eab56ec16ec6b92bc67305998706afa upstream.
 
-At put_v4l2_window32(), it tries to access kp->clips. However,
-kp points to an userspace pointer. So, it should be obtained
-via get_user(), otherwise it can OOPS:
+[ Upstream commit 7ced6c98c7ab7a1f6743931e28671b833af79b1e ]
 
- vivid-000: ==================  END STATUS  ==================
- BUG: unable to handle kernel paging request at 00000000fffb18e0
- IP: [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
- PGD 3f5776067 PUD 3f576f067 PMD 3f5769067 PTE 800000042548f067
- Oops: 0001 [#1] SMP
- Modules linked in: vivid videobuf2_vmalloc videobuf2_memops v4l2_dv_timings videobuf2_core v4l2_common videodev media xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill binfmt_misc snd_hda_codec_hdmi i915 snd_hda_intel snd_hda_controller snd_hda_codec intel_rapl x86_pkg_temp_thermal snd_hwdep intel_powerclamp snd_pcm coretemp snd_seq_midi kvm_intel kvm snd_seq_midi_event snd_rawmidi i2c_algo_bit drm_kms_helper snd_seq drm crct10dif_pclmul e1000e snd_seq_device crc32_pclmul snd_timer ghash_clmulni_intel snd mei_me mei ptp pps_core soundcore lpc_ich video crc32c_intel [last unloaded: media]
- CPU: 2 PID: 28332 Comm: v4l2-compliance Not tainted 3.18.102+ #107
- Hardware name:                  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
- task: ffff8804293f8000 ti: ffff8803f5640000 task.ti: ffff8803f5640000
- RIP: 0010:[<ffffffffc05468d9>]  [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
- RSP: 0018:ffff8803f5643e28  EFLAGS: 00010246
- RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00000000fffb1ab4
- RDX: 00000000fffb1a68 RSI: 00000000fffb18d8 RDI: 00000000fffb1aa8
- RBP: ffff8803f5643e48 R08: 0000000000000001 R09: ffff8803f54b0378
- R10: 0000000000000000 R11: 0000000000000168 R12: 00000000fffb18c0
- R13: 00000000fffb1a94 R14: 00000000fffb18c8 R15: 0000000000000000
- FS:  0000000000000000(0000) GS:ffff880456d00000(0063) knlGS:00000000f7100980
- CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
- CR2: 00000000fffb18e0 CR3: 00000003f552b000 CR4: 00000000003407e0
- Stack:
-  00000000fffb1a94 00000000c0cc5640 0000000000000056 ffff8804274f3600
-  ffff8803f5643ed0 ffffffffc0547e16 0000000000000003 ffff8803f5643eb0
-  ffffffff81301460 ffff88009db44b01 ffff880441942520 ffff8800c0d05640
- Call Trace:
-  [<ffffffffc0547e16>] v4l2_compat_ioctl32+0x12d6/0x1b1d [videodev]
-  [<ffffffff81301460>] ? file_has_perm+0x70/0xc0
-  [<ffffffff81252a2c>] compat_SyS_ioctl+0xec/0x1200
-  [<ffffffff8173241a>] sysenter_dispatch+0x7/0x21
- Code: 00 00 48 8b 80 48 c0 ff ff 48 83 e8 38 49 39 c6 0f 87 2b ff ff ff 49 8d 45 1c e8 a3 ce e3 c0 85 c0 0f 85 1a ff ff ff 41 8d 40 ff <4d> 8b 64 24 20 41 89 d5 48 8d 44 40 03 4d 8d 34 c4 eb 15 0f 1f
- RIP  [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
- RSP <ffff8803f5643e28>
- CR2: 00000000fffb18e0
+vhost_copy_to_user is used to copy vring used elements to userspace.
+We should use VHOST_ADDR_USED instead of VHOST_ADDR_DESC.
 
-Tested with vivid driver on Kernel v3.18.102.
-
-Same bug happens upstream too:
-
- BUG: KASAN: user-memory-access in __put_v4l2_format32+0x98/0x4d0 [videodev]
- Read of size 8 at addr 00000000ffe48400 by task v4l2-compliance/8713
-
- CPU: 0 PID: 8713 Comm: v4l2-compliance Not tainted 4.16.0-rc4+ #108
- Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
- Call Trace:
-  dump_stack+0x5c/0x7c
-  kasan_report+0x164/0x380
-  ? __put_v4l2_format32+0x98/0x4d0 [videodev]
-  __put_v4l2_format32+0x98/0x4d0 [videodev]
-  v4l2_compat_ioctl32+0x1aec/0x27a0 [videodev]
-  ? __fsnotify_inode_delete+0x20/0x20
-  ? __put_v4l2_format32+0x4d0/0x4d0 [videodev]
-  compat_SyS_ioctl+0x646/0x14d0
-  ? do_ioctl+0x30/0x30
-  do_fast_syscall_32+0x191/0x3f4
-  entry_SYSENTER_compat+0x6b/0x7a
- ==================================================================
- Disabling lock debugging due to kernel taint
- BUG: unable to handle kernel paging request at 00000000ffe48400
- IP: __put_v4l2_format32+0x98/0x4d0 [videodev]
- PGD 3a22fb067 P4D 3a22fb067 PUD 39b6f0067 PMD 39b6f1067 PTE 80000003256af067
- Oops: 0001 [#1] SMP KASAN
- Modules linked in: vivid videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops v4l2_tpg v4l2_dv_timings videobuf2_v4l2 videobuf2_common v4l2_common videodev xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack libcrc32c tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill ecdh_generic binfmt_misc snd_hda_codec_hdmi intel_rapl x86_pkg_temp_thermal intel_powerclamp i915 coretemp snd_hda_intel snd_hda_codec kvm_intel snd_hwdep snd_hda_core kvm snd_pcm irqbypass crct10dif_pclmul crc32_pclmul snd_seq_midi ghash_clmulni_intel snd_seq_midi_event i2c_algo_bit intel_cstate snd_rawmidi intel_uncore snd_seq drm_kms_helper e1000e snd_seq_device snd_timer intel_rapl_perf
-  drm ptp snd mei_me mei lpc_ich pps_core soundcore video crc32c_intel
- CPU: 0 PID: 8713 Comm: v4l2-compliance Tainted: G    B            4.16.0-rc4+ #108
- Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
- RIP: 0010:__put_v4l2_format32+0x98/0x4d0 [videodev]
- RSP: 0018:ffff8803b9be7d30 EFLAGS: 00010282
- RAX: 0000000000000000 RBX: ffff8803ac983e80 RCX: ffffffff8cd929f2
- RDX: 1ffffffff1d0a149 RSI: 0000000000000297 RDI: 0000000000000297
- RBP: 00000000ffe485c0 R08: fffffbfff1cf5123 R09: ffffffff8e7a8948
- R10: 0000000000000001 R11: fffffbfff1cf5122 R12: 00000000ffe483e0
- R13: 00000000ffe485c4 R14: ffff8803ac985918 R15: 00000000ffe483e8
- FS:  0000000000000000(0000) GS:ffff880407400000(0063) knlGS:00000000f7a46980
- CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
- CR2: 00000000ffe48400 CR3: 00000003a83f2003 CR4: 00000000003606f0
- Call Trace:
-  v4l2_compat_ioctl32+0x1aec/0x27a0 [videodev]
-  ? __fsnotify_inode_delete+0x20/0x20
-  ? __put_v4l2_format32+0x4d0/0x4d0 [videodev]
-  compat_SyS_ioctl+0x646/0x14d0
-  ? do_ioctl+0x30/0x30
-  do_fast_syscall_32+0x191/0x3f4
-  entry_SYSENTER_compat+0x6b/0x7a
- Code: 4c 89 f7 4d 8d 7c 24 08 e8 e6 a4 69 cb 48 8b 83 98 1a 00 00 48 83 e8 10 49 39 c7 0f 87 9d 01 00 00 49 8d 7c 24 20 e8 c8 a4 69 cb <4d> 8b 74 24 20 4c 89 ef 4c 89 fe ba 10 00 00 00 e8 23 d9 08 cc
- RIP: __put_v4l2_format32+0x98/0x4d0 [videodev] RSP: ffff8803b9be7d30
- CR2: 00000000ffe48400
-
-cc: stable@vger.kernel.org
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Fixes: f88949138058 ("vhost: introduce O(1) vq metadata cache")
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/vhost/vhost.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -101,7 +101,7 @@ static int get_v4l2_window32(struct v4l2
- static int put_v4l2_window32(struct v4l2_window __user *kp,
- 			     struct v4l2_window32 __user *up)
- {
--	struct v4l2_clip __user *kclips = kp->clips;
-+	struct v4l2_clip __user *kclips;
- 	struct v4l2_clip32 __user *uclips;
- 	compat_caddr_t p;
- 	u32 clipcount;
-@@ -116,6 +116,8 @@ static int put_v4l2_window32(struct v4l2
- 	if (!clipcount)
- 		return 0;
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -756,7 +756,7 @@ static int vhost_copy_to_user(struct vho
+ 		struct iov_iter t;
+ 		void __user *uaddr = vhost_vq_meta_fetch(vq,
+ 				     (u64)(uintptr_t)to, size,
+-				     VHOST_ADDR_DESC);
++				     VHOST_ADDR_USED);
  
-+	if (get_user(kclips, &kp->clips))
-+		return -EFAULT;
- 	if (get_user(p, &up->clips))
- 		return -EFAULT;
- 	uclips = compat_ptr(p);
+ 		if (uaddr)
+ 			return __copy_to_user(uaddr, from, size);
