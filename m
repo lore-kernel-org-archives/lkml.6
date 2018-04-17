@@ -1,131 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDQIZ2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 04:25:28 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36891 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751884AbeDQIZA (ORCPT
+        id S1752135AbeDQI1z (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 04:27:55 -0400
+Received: from mx0b-00176a03.pphosted.com ([67.231.157.48]:57604 "EHLO
+        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751793AbeDQI1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:25:00 -0400
-X-Google-Smtp-Source: AIpwx49J2OEvDKefoDYo8DB2NZ2W0BDlJ3IhNuy1lb4dvu+RDzO30zp2mUqmMnfeNrSgjayXG/Gtzw==
-Subject: Re: [PATCH v2 1/5] ALSA: xen-front: Introduce Xen para-virtualized
- sound frontend driver
-To: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
-        tiwai@suse.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
- <20180416062453.24743-2-andr2000@gmail.com>
- <c473b7b3-6125-7f2f-d3c2-bff58dc61d48@suse.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <ea707fd4-fb72-aa8a-f5ac-dd9ff89dea9b@gmail.com>
-Date: Tue, 17 Apr 2018 11:24:56 +0300
+        Tue, 17 Apr 2018 04:27:53 -0400
+Subject: Re: EXT: Re: [PATCHv1] Input: atmel_mxt_ts - fix the firmware update
+To: Nick Dyer <nick@shmanahar.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+CC: Sebastian Reichel <sre@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        <linux-input@vger.kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@collabora.com>
+References: <20180322164330.24809-1-sebastian.reichel@collabora.co.uk>
+ <20180323194736.7fhgb6qjkwbivsvx@hairyalien>
+From: Nandor Han <nandor.han@ge.com>
+Message-ID: <18fcfdcc-d43a-6ee3-07d5-af618b600e12@ge.com>
+Date: Tue, 17 Apr 2018 09:37:54 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <c473b7b3-6125-7f2f-d3c2-bff58dc61d48@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180323194736.7fhgb6qjkwbivsvx@hairyalien>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [3.159.19.191]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1804170060
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/2018 03:25 PM, Juergen Gross wrote:
-> On 16/04/18 08:24, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+On 23/03/18 21:47, Nick Dyer wrote:
+> On Thu, Mar 22, 2018 at 05:43:30PM +0100, Sebastian Reichel wrote:
+>> The automatic update mechanism will trigger an update if the
+>> info block CRCs are different between maxtouch configuration
+>> file (maxtouch.cfg) and chip.
 >>
->> Introduce skeleton of the para-virtualized Xen sound
->> frontend driver.
->>
->> Initial handling for Xen bus states: implement
->> Xen bus state machine for the frontend driver according to
->> the state diagram and recovery flow from sound para-virtualized
->> protocol: xen/interface/io/sndif.h.
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> Only one minor nit (see below). With that addressed (or fixed when
-> committing):
-will fix
-> Reviewed-by: Juergen Gross <jgross@suse.com>
-Thank you
->
-> Juergen
->
->> ---
->>   sound/Kconfig             |   2 +
->>   sound/Makefile            |   2 +-
->>   sound/xen/Kconfig         |  10 +++
->>   sound/xen/Makefile        |   5 ++
->>   sound/xen/xen_snd_front.c | 196 ++++++++++++++++++++++++++++++++++++++++++++++
->>   sound/xen/xen_snd_front.h |  18 +++++
->>   6 files changed, 232 insertions(+), 1 deletion(-)
->>   create mode 100644 sound/xen/Kconfig
->>   create mode 100644 sound/xen/Makefile
->>   create mode 100644 sound/xen/xen_snd_front.c
->>   create mode 100644 sound/xen/xen_snd_front.h
->>
->> diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
->> new file mode 100644
->> index 000000000000..f406a8f52c51
->> --- /dev/null
->> +++ b/sound/xen/xen_snd_front.c
->> @@ -0,0 +1,196 @@
->> +static void sndback_changed(struct xenbus_device *xb_dev,
->> +			    enum xenbus_state backend_state)
->> +{
->> +	struct xen_snd_front_info *front_info = dev_get_drvdata(&xb_dev->dev);
->> +	int ret;
->> +
->> +	dev_dbg(&xb_dev->dev, "Backend state is %s, front is %s\n",
->> +		xenbus_strstate(backend_state),
->> +		xenbus_strstate(xb_dev->state));
->> +
->> +	switch (backend_state) {
->> +	case XenbusStateReconfiguring:
->> +		/* fall through */
->> +	case XenbusStateReconfigured:
->> +		/* fall through */
->> +	case XenbusStateInitialised:
->> +		/* fall through */
->> +		break;
->> +
->> +	case XenbusStateInitialising:
->> +		/* recovering after backend unexpected closure */
->> +		sndback_disconnect(front_info);
->> +		break;
->> +
->> +	case XenbusStateInitWait:
->> +		/* recovering after backend unexpected closure */
->> +		sndback_disconnect(front_info);
->> +
->> +		ret = sndback_initwait(front_info);
->> +		if (ret < 0)
->> +			xenbus_dev_fatal(xb_dev, ret, "initializing frontend");
->> +		else
->> +			xenbus_switch_state(xb_dev, XenbusStateInitialised);
->> +		break;
->> +
->> +	case XenbusStateConnected:
->> +		if (xb_dev->state != XenbusStateInitialised)
->> +			break;
->> +
->> +		ret = sndback_connect(front_info);
->> +		if (ret < 0)
->> +			xenbus_dev_fatal(xb_dev, ret, "initializing frontend");
->> +		else
->> +			xenbus_switch_state(xb_dev, XenbusStateConnected);
->> +		break;
->> +
->> +	case XenbusStateClosing:
->> +		/*
->> +		 * in this state backend starts freeing resources,
->> +		 * so let it go into closed state first, so we can also
->> +		 * remove ours
->> +		 */
-> Please start the sentence with a capital letter and end it with a
-> full stop.
->
->
-> Juergen
+>> The driver compared the CRCs without retrieving the chip CRC,
+>> resulting always in a failure and firmware flashing action
+>> triggered. The patch will fix this issue by retrieving the
+>> chip info block CRC before the check.
+> 
+> Thanks for raising this, I agree it's definitely something we want to
+> fix.
+> 
+> However, I'm not convinced you're solving the problem in the best way.
+> You've attached it to the read_t9_resolution() code path, whereas the
+> info block is common between T9 and T100 and works in the same way.
+> 
+> Would you mind trying the below patch? I've dusted it off from some
+> work that I did back in 2012 and it should solve your issue.
+> 
+> It also has the benefit that by reading the information block and the
+> object table into a contiguous region of memory, we can verify the
+> checksum at probe time. This means we make sure that we are indeed
+> talking to a chip that supports object protocol correctly.
+> 
+
+Thanks Nick. This looks like a better solution.
+Sebastian will test this and we can see the results.
+
+
+Nandor
