@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49cA9xVEcySmXfuT9vXjMy60elWLbYErZ7G1JYhe15BZGS/Vee9/jwF0ba79GTWhI3aipAD
-ARC-Seal: i=1; a=rsa-sha256; t=1523981045; cv=none;
+X-Google-Smtp-Source: AIpwx4/B6UEaGj2c2fqxLoNkc8VImdnyLWsefYm84kZxadjo2vkvGj3KhNBzac7mEXAQ9mU9q7du
+ARC-Seal: i=1; a=rsa-sha256; t=1523981041; cv=none;
         d=google.com; s=arc-20160816;
-        b=g/WlsXeGHx/72q9vnzn4NWwK0U8yEpFBHc87Z7pY408YMEOODX1aMUeUuB+Sy2zUDQ
-         jRCK+fmIUw0eMr1tCZ1UxQcDIGpN8LkGJRr06dmuD5+SkfdM7jnuiapfGTti7Mh/zXLi
-         BvQhcfApp48deycFqxvLfw8jkm64O9Bt7dz8Cqkv7vl3RzDYB/VVBW1jg5rSgKDCXJjU
-         ZEwho22csNbP2SOspfjEQvirlvApQut4Cfqb7/LJSyCYhsyYkoRrurQPueNLP9uWPPA5
-         BAwryPt7olHgRhVKHSPQCOOEnqM2A7HBT1Jdi4jXOEJMzbveIRbncRKIXTV7LPfEdPbe
-         AiDQ==
+        b=XtGKOSQqbu+OsAi+0bbhrXE5stFfHnnrNg8YXlfHszDLdCv+pmztaglcBBCRuwhYGH
+         TE5+Lb6VA7pMPGkSFTYrJ0hu7UeWiH0Lrzoj0jmbCSxM9WFmoQDKmtWZmJX0qZRujfcx
+         h8hmdVELwzSrZvwResVlAqBwTPmFtOy6EdvjbWfF2jG/HOHuSKmcFVlAsMefq8YIJytL
+         Tff9R2A6MqEkVdK+cszdrOI9Y1k6m4vkVB0i1XdG7aZ4ZP7JyvniLfncPmDvY4mO5gnD
+         t21veVp7gxOgChznvoDbYtbTvSMgx6HhGtQIWV2ovOh9Zmzkd049C307bwr0qt9AHwTu
+         M1Ng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6ByJdTLNipgIbcuBNYEvOUl0h4nY4YIByPRjefCN1oo=;
-        b=oxhyA3OFRkoHk03sWmnhI8P2xKas1v0imKDusa9p6T4X/FzHvyW53HYp/EMO70Y0wB
-         e/Ty/9HejgARzBzrXZn3XCi3dFO64FQiDLIXvW/KHlZgFnShacGC/yl+A2UZ8J9gztaN
-         4seL2f56AL/xyM1btPJHa8p4ui+j9cvw/DzzfgDKalhzkMazlcxXImZfmZbyl1a2HgY+
-         VZNztRlPGpP54RvfxOV3irZ1z+fRZumlTFYnEryDD27pMlhepwO+Rkmmr/IdqDYQqFmU
-         7syMjUvgcGtgCg9RhZMttJZ0wiEUnDAqPaYioGNawU7ZhCHyPLcT+RQQ6AsNoThIsTSw
-         xsgw==
+        bh=adKGoFck9Z+keFp9sQRu2udg7nzo0SPR69P5SRINkP0=;
+        b=rjXwDDi1m7RkrAc81sS9nba0f+wxDc36F02n4wFq8NFCLC1QQ2zkgIgMSbKEpJ0RTk
+         K0G/z8Uu+Gs8LfXpxR6LCXWNjpGbHkAncCpLfXowp6bo/hfRVCnk42jLT2r1aLYYR1iY
+         4QZnxauFW0LRgpANsIOQhn1lSae6eURPq+jZ583XP8omgtLUCXl/Ss9eiw8IhcCnpGT/
+         qE0xnx83/8oi2xL3dHRxiPk6LotH4j5ZmT24mfQzCd0yxQN4scx07XlnEZNOMogT5pT6
+         paX8FhtwwCsFcYfW3fKHvHVCu7EdQIHLP8cbFteLf2VAKuwG9oYEN4woXyAn8KxanWkA
+         rg4A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yunlong Song <yunlong.song@huawei.com>,
-	Chao Yu <yuchao0@huawei.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.15 27/53] f2fs: fix heap mode to reset it back
-Date: Tue, 17 Apr 2018 17:58:52 +0200
-Message-Id: <20180417155724.487207079@linuxfoundation.org>
+	Michael Young <m.a.young@durham.ac.uk>,
+	Eric Biggers <ebiggers@google.com>,
+	"J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.15 26/53] sunrpc: remove incorrect HMAC request initialization
+Date: Tue, 17 Apr 2018 17:58:51 +0200
+Message-Id: <20180417155724.416498922@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009767226616026?=
-X-GMAIL-MSGID: =?utf-8?q?1598009948735957975?=
+X-GMAIL-THRID: =?utf-8?q?1598009764077402720?=
+X-GMAIL-MSGID: =?utf-8?q?1598009944686014987?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +50,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yunlong Song <yunlong.song@huawei.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit b94929d975c8423defc9aededb0f499ff936b509 upstream.
+commit f3aefb6a7066e24bfea7fcf1b07907576de69d63 upstream.
 
-Commit 7a20b8a61eff81bdb7097a578752a74860e9d142 ("f2fs: allocate node
-and hot data in the beginning of partition") introduces another mount
-option, heap, to reset it back. But it does not do anything for heap
-mode, so fix it.
+make_checksum_hmac_md5() is allocating an HMAC transform and doing
+crypto API calls in the following order:
 
+    crypto_ahash_init()
+    crypto_ahash_setkey()
+    crypto_ahash_digest()
+
+This is wrong because it makes no sense to init() the request before a
+key has been set, given that the initial state depends on the key.  And
+digest() is short for init() + update() + final(), so in this case
+there's no need to explicitly call init() at all.
+
+Before commit 9fa68f620041 ("crypto: hash - prevent using keyed hashes
+without setting key") the extra init() had no real effect, at least for
+the software HMAC implementation.  (There are also hardware drivers that
+implement HMAC-MD5, and it's not immediately obvious how gracefully they
+handle init() before setkey().)  But now the crypto API detects this
+incorrect initialization and returns -ENOKEY.  This is breaking NFS
+mounts in some cases.
+
+Fix it by removing the incorrect call to crypto_ahash_init().
+
+Reported-by: Michael Young <m.a.young@durham.ac.uk>
+Fixes: 9fa68f620041 ("crypto: hash - prevent using keyed hashes without setting key")
+Fixes: fffdaef2eb4a ("gss_krb5: Add support for rc4-hmac encryption")
 Cc: stable@vger.kernel.org
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/gc.c      |    5 +++--
- fs/f2fs/segment.c |    3 ++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ net/sunrpc/auth_gss/gss_krb5_crypto.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -191,8 +191,9 @@ static void select_policy(struct f2fs_sb
- 	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
- 		p->max_search = sbi->max_victim_search;
+--- a/net/sunrpc/auth_gss/gss_krb5_crypto.c
++++ b/net/sunrpc/auth_gss/gss_krb5_crypto.c
+@@ -237,9 +237,6 @@ make_checksum_hmac_md5(struct krb5_ctx *
  
--	/* let's select beginning hot/small space first */
--	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
-+	/* let's select beginning hot/small space first in no_heap mode*/
-+	if (test_opt(sbi, NOHEAP) &&
-+		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
- 		p->offset = 0;
- 	else
- 		p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2155,7 +2155,8 @@ static unsigned int __get_next_segno(str
- 	if (sbi->segs_per_sec != 1)
- 		return CURSEG_I(sbi, type)->segno;
+ 	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
  
--	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
-+	if (test_opt(sbi, NOHEAP) &&
-+		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
- 		return 0;
- 
- 	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
+-	err = crypto_ahash_init(req);
+-	if (err)
+-		goto out;
+ 	err = crypto_ahash_setkey(hmac_md5, cksumkey, kctx->gk5e->keylength);
+ 	if (err)
+ 		goto out;
