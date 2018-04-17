@@ -1,119 +1,85 @@
-Return-Path: <Vijendar.Mukunda@amd.com>
-X-Google-Smtp-Source: AIpwx48Mg1Qy1mnCSgojUQ+psIRMVXLdDlJA95NpHbXFCzr8YCeuZ4n4mCXjRIpbLR/OUvQHxs0M
-ARC-Seal: i=1; a=rsa-sha256; t=1523941115; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AIpwx49dCh6I+ikqwC9JmeMtqDc8fjlWoXEDN2PQv6GrOxXz8XzrainooHEcDid1ZHTMsujLBxvL
+ARC-Seal: i=1; a=rsa-sha256; t=1523985123; cv=none;
         d=google.com; s=arc-20160816;
-        b=RKE7rW3cZU0SijJE5AIUOZq97mHiDMLf/ONCaUTSy2lYngOGRkXL/IyN3tG6Xq3ho+
-         72z38Sx4iFfomCAHvXoadgVp41+EnGs5jQX3c2mOqgVzazgA1OgXN6JIxVACIdkEwEIJ
-         o/R1Ujbjs72IeGnmpGVtiVPnPBTJgkG38hPZaytseyFWacUWoCD4r/IGzlE1pFidIZ7a
-         RTanyyAPeAa59Lohp59LYclbvrjwlq+rTfoio8SbYIRReRY5XamnOktfI8eR8fsnkUUr
-         /8bZmbX8ymDcBjj+BSEWPulqGW0wHa4/FCa/FugzxV6Gny3LkPyNv5lDrr08JmkF7WV+
-         V3fg==
+        b=Flma7hjgr1Hvv31VFXTSEJXxqao0uS2CDTDBn5bmsKEuSyJKW/np/Za9KPR0X6QR2D
+         zxZ4Hw1Mt+DQesJ7G/aIqaQ7TCYqGTrrSjKn5smVh9doWnqrzom6qbgawrDx6ZfcmW31
+         ODCPkHd71+cXH5Ieggfg2L7OYfqHKIYIn11/hUAgXmPrCWXbEccw6PbYLwoAghFAJQSc
+         sA09dl0yCRzRuhL8grLw+4mOKRTGEt5+UXdFXTwgb/Bvtfs22r5pgr5TOd6why7nGvlS
+         Z0ZHTAhfCB5PpNj2OCDc905kY+Y644Rs5cIOih65CoJ7C715EjdSZbReaByC1MX1iy1Y
+         lWzg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:dkim-signature
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=5tLJqTfSlV2e1hcHlC4nl+CRn09tnm3e3fbxC+IZOcY=;
-        b=lEXbt7uf0DL/sEJYQPrm7Y2RBbkbp+xhw0Bgw0xO7uu9yLXLnEj6JlnR43RNbyzQSn
-         0Rl6GMdWYY/47pef7TiePrEvbhyIEHiM7JOl8VHTOqxLMxvLkG4wtebmyqamFvUjzLxB
-         Bwnxbqfqm1RINuAuA6pmnNYuu8PUFWemYWICpvUnF1bz3EcJ8sNMTYz2a2srA5E3A2P/
-         a+2U6NqzLXunnkORpj80PJDsDS+f8SW76gP4eZ+qP1PwhZ9hRf5oPa7w2kE8pvkmDBB3
-         CzS0XeMV94z1JsbiLNs9/4bo0ea3TimUPnALWad4I0qfnoBkOQo0JLRDyQnbEQundrdF
-         RPhw==
+        bh=QLz8w1MMxB08hgidcbuyJCLbu8RvwUeVdHIPf8jCpHw=;
+        b=M6waQh0FY+Fm0V7rf79Ve35bUPm7LK/jPkSx55sCcatZ3KzZYGdYxtGXAe+5cSp4dt
+         M1VJFLfAf/vfX7pyWUuqG3DGnp1S2t04rgmEUmwQpXKBqIE9Ttt0AwlyQz/oWeUCTkA/
+         kd/5O3UdCAHji8A53gDxyTDC++VL4UE0v8TWb4+2aKKMEfSXLVyVT8vj0STQ212tp1UB
+         Z0hT/CJHGRqiefHMJeoTL1uZ9bUnKkF+RuQvgNtCMPMmsNsnWZY1ZMJVL8DYdeR8zs4M
+         /n6yPeKLHNa3dxRVshyMAUW8tCiT66+IOI0q3mmz2LK5Q10kF4InLcjeHFAj0Ae7PXlJ
+         Fqeg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=RXA/2b2/;
-       spf=neutral (google.com: 104.47.33.47 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=Qn6NXe6O;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=RXA/2b2/;
-       spf=neutral (google.com: 104.47.33.47 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; renesas.com; dkim=none (message not signed)
- header.d=none;renesas.com; dmarc=permerror action=none header.from=amd.com;
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: 
-CC: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
-	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Alex Deucher
-	<alexander.deucher@amd.com>, Akshu Agrawal <akshu.agrawal@amd.com>, "Jason
- Clinton" <jclinton@chromium.org>, Guenter Roeck <linux@roeck-us.net>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, "moderated list:SOUND - SOC LAYER / DYNAMIC
- AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/4] ASoC: amd: fixed checkpatch pl warnings
-Date: Tue, 17 Apr 2018 10:29:52 +0530
-Message-ID: <1523941201-15665-3-git-send-email-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523941201-15665-1-git-send-email-Vijendar.Mukunda@amd.com>
-References: <1523941201-15665-1-git-send-email-Vijendar.Mukunda@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(39380400002)(376002)(39860400002)(2980300002)(428003)(189003)(199004)(86362001)(109986005)(1671002)(50466002)(105586002)(72206003)(104016004)(53416004)(53936002)(446003)(478600001)(336012)(316002)(26005)(5660300001)(11346002)(48376002)(426003)(7416002)(16586007)(77096007)(186003)(106466001)(47776003)(2906002)(51416003)(36756003)(7696005)(76176011)(486006)(59450400001)(476003)(6666003)(126002)(54906003)(2616005)(305945005)(39060400002)(4326008)(8936002)(81156014)(68736007)(50226002)(97736004)(81166006)(8676002)(356003)(266003)(19627235001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN4PR12MB0755;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT029;1:gV6WsFW3MbdZ89FkUR6iVWbqU23hFWnWBdXDty19JEt/WiDOUijz21a/pPqHZiPobEehk4Z16hRvCxtAyeWMp7TTD94AI1ewb69H1EPNPCFGOR/UBPBnhEwXPkmo/OSe
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BN4PR12MB0755;
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0755;3:HYz2TpHF7XDniXeSphYrPbnQy+V6aPLXXwyXoBEdgj6AMry5KlrxmrK37r9f/HscN4upI3JGZ+0DBUeHMro+yTSo2P6GlufQZGTkgNiV7JUdTnsLAav8bdnMrcKUJx5+Z1RxtMeO/PycW643ysX8MONTS8v1cos339SJ8VBLpnurlnwPaP3XeqnsHGiO/G/1qCYvW4gRCb5ko3AeFlmaCccOoKkvkHTQjrqQ6Z7S2fkdjzguJNtCs0tWFKxqyRELhF6gO6tHlSpnTbUo6JYLwbrdbgPGm/BmKLoVuLaaJ4kM4bvugFCEoEQI1ZzyMJsNvF7IORpvli2RVIXeGcx0wy1egakRcLIYFSitS8HxC/U=;25:zdn78m1aBFSTgAuZHlFghJjgR3kb+62eLUsLKXEEe17+P+NCgcANELMStHxAQxqgikzKZ+DobtNgzTAd/PDT4Wsmyg83eUeZygeG9ULy4IqraWfElZQLCK8HD1IOE6kywWohxpQiIjJBhPVf720pagKgop1icyemD0EbIPous5d6o1S7KjjBAP86xukh/UvN52OqRUMRUXl6MBOTYSXgz5fZsh/0ETn9EsOndgBodekukFCKugy8TAtDvFe1tcvvSyGdzy3jvnVBSoLvmW2pQpqMOhS9z2UMFHR2jnErrZFLfXabeFfTcLtgpbFeiN90VaPPTWpfoKM5Nl/wzfI4mQ==
-X-MS-TrafficTypeDiagnostic: BN4PR12MB0755:
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0755;31:wC3tHGR6jklt3p1o1i3dK7RqG4C4kFoGE1gls2f5eCt4Whqt/X/ScihJ1NeaOmleNLNPBo6a7VoR0WyN1ExCc9Y62EZimNnEEDiw6HhDNL2RckiKVLmVpIgEykU/uhbdQvYXowAkhIkej9RUqXeSupEWl/lF8Z6TuvV8IkK+F69m/l5UfBAJa8xygWJYFrd7wL67zGADHzGmJoCzdNVNuKA4wb5jSPzx/g2KD/rYvYw=;20:Dgq2wKS42S0Ex/V06gaZetJ2/WFac2t2CcGfe9UGuJS6w1e/znvF8YLnjTAydADyQz6e4N/IX30VLoiLkTe5EDpw4aYpYA4p5ETFO8oQ4ufWTj4WsyMKSlsDSwP1I9KQ65SysNbLtJz398tEtwXszmLLD/FIUCetMpgdFJM/P66opPhuh2B9yfqMeKIWUw5xjmyPPmW8U/HKJ5itb1yy+L0pr/CI+OrKl1PCU243tDNHdVfQNndF9YAUMIBGZ5KRi/L869SJa8F9SbaEMLjIAS9y5PpYwbPhmoWACsN6rx/ffaqrJB3JOs8AJcPQgSOVUoc32iQdJ+2PirApaCupNXJNd08ghPwIB1GYdLeQ/kFHp7GovdN2h/gNczBhfrv3sXogBp29RnCpig2zbH+0wR9Ku06AETJuWK2XHXLYOGTS7pcaCEP+fGNQD4e9MBwCmIrTdlCEtJlOnEvJN8UKhctA+DUoNOaEGLd1rM4ClKtzmqOcjDclSyg7IgFetTFT
-X-Microsoft-Antispam-PRVS: <BN4PR12MB07558C0F2537D64BAFD1B90A97B70@BN4PR12MB0755.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231232)(944501327)(52105095)(93006095)(93003095)(3002001)(10201501046)(6055026)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BN4PR12MB0755;BCL:0;PCL:0;RULEID:;SRVR:BN4PR12MB0755;
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0755;4:FpfNtAvQA76bxEvcO7kSWfUwrHxFhegAX9LW97ooLSaRBfNUJWGQ3Kq+2ruQHd6SagusXUdMFNVEMWnrn4ZntGjTVV0reKzx/8XhYB77aG90IcK8YmB68zVfmJ8NNUN+nTPNolmka2eXPaLqx852CvaiATmXzZGYyHFtsh3DO9eC+W4Aor6dAxKtxP85eZJCfmdSuEhjxdl9co1ZttNj+IgHBw2ZlRI3KvWwMdMLFNITv2GPYrBnRD9hrEDHQLlnHyBHlfCPalrqlNuBOvzECfP6rTTePgjD7UilY/ZT2ZSlpYSr2TEe8faUYRzhFrSb
-X-Forefront-PRVS: 0645BEB7AA
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN4PR12MB0755;23:MUAJmC0at2Ts/8/ONpwfIzn+tuKYmp/zQ1ljFFug+?=
- =?us-ascii?Q?xjlp/AUeVxphzbP1A+YKdTe+OChMJnU0flPgf3d19VcHvz5LAVMLDJX6lr1p?=
- =?us-ascii?Q?L4kqcaanbh3bPLn8vtQYRsGmy+qqQyxH1tUg2ENFCjBLcAaF48hxeODUrb0U?=
- =?us-ascii?Q?5u/Urzef1D/udIE+deK50xHHp22Wg6ZwgrD6FanoPlbH71JiF4wVfK7Y1GK/?=
- =?us-ascii?Q?30L0h22R9wsd5q/TuLFdz6pO5kGDu1hb3IOUZLxAdphPPlEjpJ7nNiWoNqbe?=
- =?us-ascii?Q?N0qeifqSs4BYTUlJn1S0lZaGx6b8tauBhsAavdZ+6IOjaMEz2OiIhVNVcmiz?=
- =?us-ascii?Q?fVn6NNodpkXQP09E9+Ysj6M/YCoWLMlcVR50TODQDXmNuWLtZv+WFQuRM0fI?=
- =?us-ascii?Q?lN0rPRlScSlPNPdWJR9LYp6YqHJAeOlWqungsV8DUuFW9fpMkorkZKVN0wqF?=
- =?us-ascii?Q?zwtHyv8g6Ifkq01KbDZ/gNvWcJxZIa2keo1PMjAXdPKmejXzrMJ+u1BHJZQ3?=
- =?us-ascii?Q?irx3ZYyLIfeV56JKBlhXPdozUkW/rL6qsV9WjcwKQ4G/QgKUQkDpAjTjuiHK?=
- =?us-ascii?Q?0UMiFMM86bgMTrqFrXUD4EHi8FxkBAzDFxMrmAn+SJTeXiWG12U4N/nhxtEB?=
- =?us-ascii?Q?DcjC6OCXExX0iaNoBpDpRFH+Mpv5c2xgO6zjGdwNK/BuArKQDJi5igQCLnOH?=
- =?us-ascii?Q?Vt1VrubS+b60GmstdntkjmL4pqzCm4MK09TnUDeQvEp9ai3R3HDEhp67vtjW?=
- =?us-ascii?Q?P1qUmqRM/XtL1Uecot1t+XNNmbPwyqGbcQlhq+O3x5I2QtawNGyXfo3wOq19?=
- =?us-ascii?Q?N3P4/ekN5IC0dMN56tRyWc873xoDQ2t6ms0vbqLWhSosnAP/KA5LpH464T/r?=
- =?us-ascii?Q?hYg/zNMdn2mTEb4xyc8QrdnYb8I9/cxRLwgUo10BFQxaPwsZAPun16aD4ywx?=
- =?us-ascii?Q?mkqYV5M7yazbJndpG/vHL0n70YBlxv5CigpUyZhTBrLpdtse1JQ/Ek++LmDv?=
- =?us-ascii?Q?90YDlTj9ULq4DgiRXxZZCprSZI8O2Q7I463BL1JK/Z3Ccr6zo/7Mc6EnWnnL?=
- =?us-ascii?Q?ISIBweXWbogE0cIDSQ5fGluhzSa7r3PZUhu9ln3k15cwfBlsikMFmtLgDiee?=
- =?us-ascii?Q?53G2QDbPDZiECFvlsloJuwG73dLS2Xv97UdDU+zcPiXMhr0iMXZAKokE2L+n?=
- =?us-ascii?Q?neWwnIePFfN9Ti2ew4t4n3GpVgIQe0+9jZ+9UPdUvl82bV6XnPwiw9HmKO4e?=
- =?us-ascii?Q?Dz09BhUvn7tqN2gJPWLiUqoju6x6TpDWRbr1RVgJKT/as8WF4cJ3cd2laQJq?=
- =?us-ascii?B?Zz09?=
-X-Microsoft-Antispam-Message-Info: A+tPQlkwCLEBCMNeFUxj8aJO2SJCPR44XVqknGJLP3fuGRd6ztVqCdaq8WA+Lk6Wu6y0+0qw38oc9VaXacSaEZrpmda4xlfEjzyt9SuQ/qyZmATXiwj7yzYFByUWcwnKWJOa9KSj1UVDWZIMK6E1qfFlqeTxKCV1Vut92dJy9Vp5Ja3gVZ18HPC00j8f+h1h
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0755;6:avZA7JqBouzeVBfJc2iicdzVnAaZ82s8a1ZvJx6ZUjI630EBvLnfsa0ofy1m8WJcxpk+/3HHK92Ie4NNwz3XJ79lpNwyJ4Te6+FygaiCoxhEbbi010EQX+5ivDeDHChr9J5fiq6NigBZ86ThB3l2Cdw2aapYgWKfINWIjzQi4otDO2ypL5kW0cMyk9HPKpFOlf3pOddQ2+YNY7GqzpipX51XFBcY28yOw33SVgfTQWzptH7E0VIBROYThEazUK5MEEdHnezjgM1pCfNJhOy8ret/N6mbk5E1jMzDq9bEVVQGdymwQc+49DaaUFE1zpBGhgY4xTPeLYhLtW49aUMdqW2jBVQDp8ZzEA408BM992K+2H3G4/1BKWEVUDTtKeIXgkR7EBCbznS0fTr/4y5gupE4pH+ORn1TU+6yLGwHSOfAZm/w+CmOPKvqqZavws/9LKQsucMjj7CsnIpEofuvKQ==;5:LsNHAbau0x//YtaESsIjm+T428yNlvR5nmKH3UzQX5mXP38niNOt5hE1XnH3Rsr9fy7JqCWmVPw85gAkd4F+LmBdwZxLegHe3yJU825hrCFGhCPxKTeQnqu23+qMLR2rPG6F4PGwG0vVo+7rbdVBPTEnIY9xEzAbOWzO/s6ewTU=;24:9p4s4AU00CwSFEUOvkx/TgHD8viOuh04l5PNVPOydkqPfGr09wCtPR4jl35g6o3/ko/1BlcXzx9qHMzYU9YtnxU0fWfm1znqFn9unrxWQX4=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN4PR12MB0755;7:14xCTxOhoey41m8fhvm6R1I716b4ZE1BeSwJTyavBCwJoTVdoFv989YMw2y2nTnesJ24eg86f8RRXyDeOVrBZecpYS38OCoz9upVfk9G1VjZRZNTomU+O67t59VE5Pe9tdatlKDht5xUdVCpnMJllQVb9FRMT06evvj8oEl2b8pr3DFfTS4X+3fQGKPRIS4sCgnCO30Wuu3wXJx9scY6zkhT3Mrn9yiRB7NtlJKjCt7srOqoPKlcb7Hkgf4hP1oD;20:9s+W5KQcBB/ZoVm/lHN6Eb9zKMwj07Is+EAp6FZxvzPYEFsjf3Z5RmTChLag5xpWqjL7NUZHoUaCBlpWnBxKnMfVjALCUX7BtfHw8DACWRf05/eF1ujL3vpEKZFClwVUDYBRxRD1zVa5rS6SAAzsa9S4NMup27l33/8+PkCuQJnKSCP5gzb2o7evriL2YQ9chfV2pbCoqQmyazmsGfqTh/7YlU1wjtbvOuyeqVXLjd7QHWrMYjNOnMf7E6v2oj1E
-X-MS-Office365-Filtering-Correlation-Id: 0f541d4a-8d5d-4367-d63c-08d5a41fdd79
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 04:58:30.3702
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f541d4a-8d5d-4367-d63c-08d5a41fdd79
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN4PR12MB0755
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=Qn6NXe6O;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
+From: Mark Brown <broonie@kernel.org>
+To: Mukunda@sirena.org.uk, Vijendar <Vijendar.Mukunda@amd.com>
+Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Mark Brown <broonie@kernel.org>, , "moderated list:SOUND - SOC LAYER / DYNAMIC, AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Takashi Iwai <tiwai@suse.com>, Jason Clinton <jclinton@chromium.org>, Mark Brown <broonie@kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Akshu Agrawal <akshu.agrawal@amd.com>, Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: amd: fixed checkpatch pl warnings" to the asoc tree
+In-Reply-To: <1523941201-15665-3-git-send-email-Vijendar.Mukunda@amd.com>
+Message-Id: <E1f8U98-0001yy-Fj@debutante>
+Date: Tue, 17 Apr 2018 18:11:58 +0100
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597968078640223451?=
-X-GMAIL-MSGID: =?utf-8?q?1597968078640223451?=
+X-GMAIL-THRID: =?utf-8?q?1598014074889832395?=
+X-GMAIL-MSGID: =?utf-8?q?1598014225145592807?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   ASoC: amd: fixed checkpatch pl warnings
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 13838c11c31e764d8143fdfcccea47691afd5ff2 Mon Sep 17 00:00:00 2001
+From: "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>
+Date: Tue, 17 Apr 2018 10:29:52 +0530
+Subject: [PATCH] ASoC: amd: fixed checkpatch pl warnings
 
 fixed checkpatch pl warnings.
 
 Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/acp-pcm-dma.c | 259 ++++++++++++++++++++++++--------------------
- sound/soc/amd/acp.h         |  22 ++--
+ sound/soc/amd/acp-pcm-dma.c | 259 ++++++++++++++++++++----------------
+ sound/soc/amd/acp.h         |  22 +--
  2 files changed, 153 insertions(+), 128 deletions(-)
 
 diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index 540088d..5ffe2ef 100644
+index 540088d317f2..5ffe2efc6363 100644
 --- a/sound/soc/amd/acp-pcm-dma.c
 +++ b/sound/soc/amd/acp-pcm-dma.c
 @@ -130,7 +130,8 @@ static void acp_reg_write(u32 val, void __iomem *acp_mmio, u32 reg)
@@ -825,7 +791,7 @@ index 540088d..5ffe2ef 100644
  	acp_reg_write(1, adata->acp_mmio, mmACP_EXTERNAL_INTR_ENB);
  	return 0;
 diff --git a/sound/soc/amd/acp.h b/sound/soc/amd/acp.h
-index ba01510..0e6089b 100644
+index ba01510eb818..0e6089b4f8a0 100644
 --- a/sound/soc/amd/acp.h
 +++ b/sound/soc/amd/acp.h
 @@ -115,23 +115,25 @@ enum {
@@ -865,4 +831,4 @@ index ba01510..0e6089b 100644
  	/* Reserved for future use */
  	u32 reserved;
 -- 
-2.7.4
+2.17.0
