@@ -1,120 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753239AbeDQDOj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 23:14:39 -0400
-Received: from mga12.intel.com ([192.55.52.136]:3585 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752221AbeDQDMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 23:12:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,461,1517904000";
-   d="scan'208";a="48447616"
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>
-Cc: ashok.raj@intel.com, sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
-        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 2/9] iommu/vt-d: Decouple idr bond pointer from svm
-Date: Tue, 17 Apr 2018 11:03:15 +0800
-Message-Id: <1523934202-21669-3-git-send-email-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523934202-21669-1-git-send-email-baolu.lu@linux.intel.com>
-References: <1523934202-21669-1-git-send-email-baolu.lu@linux.intel.com>
+        id S1752481AbeDQDTJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 23:19:09 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34432 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751218AbeDQDTH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 23:19:07 -0400
+X-Google-Smtp-Source: AIpwx4+RBIABMkZoP7NxE9qEpiPWEMqOj3E/XQ0HdJivk+ErD3qICT+YAU2JQOQy0UwW3bGMAYNTcQ==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        orsonzhai@gmail.com, zhang.lyra@gmail.com
+Cc: baolin.wang@linaro.org, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xiaotong.lu@spreadtrum.com
+Subject: [PATCH 1/2] dt-bindings: input: Add Add Spreadtrum SC27xx vibrator documentation
+Date: Tue, 17 Apr 2018 11:18:23 +0800
+Message-Id: <0bfdc811c2b3da3aa1cde2feef278a86503e3804.1523934640.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we move the PASID idr out of SVM code and make it serving
-as a global PASID name space, the consumer can specify a ptr
-to bind it with a PASID. We shouldn't assume that each PASID
-will be bond with a ptr of struct intel_svm anymore.
+From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 
-This patch cleans up a idr_for_each_entry() usage in the SVM
-code. It's required to replace the SVM-specific idr with the
-global PASID idr.
+This patch adds the binding documentation for Spreadtrum SC27xx series
+vibrator device.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Liu Yi L <yi.l.liu@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Signed-off-by: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/iommu/intel-svm.c   | 14 ++++++++++----
- include/linux/intel-iommu.h |  1 +
- 2 files changed, 11 insertions(+), 4 deletions(-)
+ .../bindings/input/sprd,sc27xx-vibra.txt           |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index e8cd984..983af0c 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -298,6 +298,7 @@ static const struct mmu_notifier_ops intel_mmuops = {
- };
- 
- static DEFINE_MUTEX(pasid_mutex);
-+static LIST_HEAD(global_svm_list);
- 
- int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_ops *ops)
- {
-@@ -329,13 +330,13 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 
- 	mutex_lock(&pasid_mutex);
- 	if (pasid && !(flags & SVM_FLAG_PRIVATE_PASID)) {
--		int i;
-+		struct intel_svm *t;
- 
--		idr_for_each_entry(&iommu->pasid_idr, svm, i) {
--			if (svm->mm != mm ||
--			    (svm->flags & SVM_FLAG_PRIVATE_PASID))
-+		list_for_each_entry(t, &global_svm_list, list) {
-+			if (t->mm != mm || (t->flags & SVM_FLAG_PRIVATE_PASID))
- 				continue;
- 
-+			svm = t;
- 			if (svm->pasid >= pasid_max) {
- 				dev_warn(dev,
- 					 "Limited PASID width. Cannot use existing PASID %d\n",
-@@ -404,6 +405,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		svm->mm = mm;
- 		svm->flags = flags;
- 		INIT_LIST_HEAD_RCU(&svm->devs);
-+		INIT_LIST_HEAD(&svm->list);
- 		ret = -ENOMEM;
- 		if (mm) {
- 			ret = mmu_notifier_register(&svm->notifier, mm);
-@@ -430,6 +432,8 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		 */
- 		if (cap_caching_mode(iommu->cap))
- 			intel_flush_pasid_dev(svm, sdev, svm->pasid);
+diff --git a/Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt b/Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt
+new file mode 100644
+index 0000000..92ead29
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/sprd,sc27xx-vibra.txt
+@@ -0,0 +1,12 @@
++Spreadtrum SC27xx PMIC Vibrator
 +
-+		list_add_tail(&svm->list, &global_svm_list);
- 	}
- 	list_add_rcu(&sdev->list, &svm->devs);
- 
-@@ -485,6 +489,8 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 					if (svm->mm)
- 						mmu_notifier_unregister(&svm->notifier, svm->mm);
- 
-+					list_del(&svm->list);
++Required properties:
++- compatible: should be "sprd,sc27xx-vibrator".
++- reg: address of vibrator control register.
 +
- 					/* We mandate that no page faults may be outstanding
- 					 * for the PASID when intel_svm_unbind_mm() is called.
- 					 * If that is not obeyed, subtle errors will happen.
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index ef169d6..795717e 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -486,6 +486,7 @@ struct intel_svm {
- 	int flags;
- 	int pasid;
- 	struct list_head devs;
-+	struct list_head list;
- };
- 
- extern int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sdev);
++Example :
++
++vibrator@eb4 {
++	compatible = "sprd,sc27xx-vibrator";
++	reg = <0xeb4>;
++};
 -- 
-2.7.4
+1.7.9.5
