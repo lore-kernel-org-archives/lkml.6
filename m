@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49PKBOsMThRFdsFT+pFRBCKe/klr6cpad/8isxvsW0O6faKI/CO7566Oj9HVfQJA6peDIDY
-ARC-Seal: i=1; a=rsa-sha256; t=1523981141; cv=none;
+X-Google-Smtp-Source: AIpwx48sxN8em4Wq2HM6DS0dVZz0vzfTV27J339g300rFfp4tG/ttALWQ0CT2F+FGLdNFOuMRoou
+ARC-Seal: i=1; a=rsa-sha256; t=1523981139; cv=none;
         d=google.com; s=arc-20160816;
-        b=cHHg1Rtta6vOR2sO6Y7QhhmpAjBOhDoEE6ZKDIoliNC/RvpZkkpUbgU6Yvx8V4bBQh
-         wgxbyigGHXmo0LyF+YJ0SFLl3nvo27EqRvXoWmx4KLxTbTv6opTgWfElWBNRMHRN7f7d
-         7q8xZQv9+PmJpbTPHt60mLISmtE1wJX1wNSWcmx1PLCdPMAOZSIOSPyVq4Y+K/NnH23G
-         +kgHZTD09cASkO2rHn0+xgYjaYSHHXIF9G4UB07Rto2v8fnAFnnxWkK6fQ0YvT3nwR/O
-         4NLCXHuc7UNfv7Sfcy1ItmZqyQOYqJLRiT6126odAgA6HcfRomtzRK3shJ4gRHal2nE9
-         vMXw==
+        b=Me47jAc4HTIb3IpQvvJsH9ZkIMEeXsjyfVBJWie0Z281awv+pX5xLQYSCKOGHHcLOX
+         aLZm/rKyDCsU5SxtOz6TEcZIQ4BSSJF4DKFb2LS+TpvrjomYOK6qsI3tsmjVgUR6gULK
+         3YtBUhcgHVG0n+93aF5D1vgYAgFL5MYlgGVnUtYujxUhXluWLGXLTOZeJIAY4hP5K69t
+         gPR+iXFO6NFzh1dcK7JQCRJRUqk0viGRNPa5i/wo7zIw6ZqlG3Qh0DTPOGdMc+AxXpfq
+         lXCh+sdLxyA53on5unBazun2TB72IT2A47Ufz/t7glfdp5wYvaDh3PmQmRYp5lay6zTx
+         mbFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=e0K9vNoVX3Yts1EUPlL7X3Orx8jDV+fcXdeG8R92zDQ=;
-        b=MQZm13yyJpf/mN/mZJDtrnB07etAfu2tf5gHFubHcoGC9dOWa3DcUZ/vnJRImGIxWg
-         e9nwLeGVJZcwqY77gUs+3m7oILH9aLZJGNT94qQL2VB4RhZK3ArHhTyYFpbCvWMUz7wX
-         lA4P1y/c+1xWn8sEaTz7cfTW5odkSaQR/667iUnrdqD7G6JThAF+UwshKiASRoDjmKZB
-         TuJIDBzKvlj5XGEevKDAO4X/WfIuuVN2SKrwVSRz2+Box5eNVtEO9OdnyI7vFT6crZzb
-         5jQ0XtMjKYCfywnVBPAwRKkmtZKgoDEzZIOxxxCwZhj2X6jitHe/DtayN/8Ja24fzNH5
-         nVRQ==
+        bh=mWhENeRbQ+R+mqbRmjavP+zAun48ClE6CCm7AcK7RLY=;
+        b=YieE8aUTQSIxONU5KCBo0D5u6xY1eNmLH2mO7e+TYUl6b4moq1E0mZpIS9VxiymDxc
+         r8PTGamFLU1lOFJvICqcc4HWErAidn9FUuo269BTZdPh/6LM4exua5gzv+1b05aJRuKR
+         QPFQqg5OURMVZ3ormwuPiZZSNpe2sYJB94OZ/U2ceQJJbMNhBwwIH52Ov9CgZD9zkl1b
+         zS/JUI6XFWmCRUUnZBQMIRV4hFQw9k8V172/ZnbNM723HEo4LCwoGQ9oCaQYNiuikbrn
+         iaXSGrzwpEmGYmcI7TDHnIaIYt442PASuaeowQTePZxJL8l1FZtbaHH7QufMG4zU73o6
+         ceGw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	John Johansen <john.johansen@canonical.com>
-Subject: [PATCH 4.15 40/53] apparmor: fix resource audit messages when auditing peer
-Date: Tue, 17 Apr 2018 17:59:05 +0200
-Message-Id: <20180417155725.064377968@linuxfoundation.org>
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.15 49/53] getname_kernel() needs to make sure that ->name != ->iname in long case
+Date: Tue, 17 Apr 2018 17:59:14 +0200
+Message-Id: <20180417155725.452747154@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009833879299855?=
-X-GMAIL-MSGID: =?utf-8?q?1598010049677829862?=
+X-GMAIL-THRID: =?utf-8?q?1598009878581722556?=
+X-GMAIL-MSGID: =?utf-8?q?1598010047009008481?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,48 +48,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Johansen <john.johansen@canonical.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit b5beb07ad32ab533027aa988d96a44965ec116f7 upstream.
+commit 30ce4d1903e1d8a7ccd110860a5eef3c638ed8be upstream.
 
-Resource auditing is using the peer field which is not available
-when the rlim data struct is used, because it is a different element
-of the same union. Accessing peer during resource auditing could
-cause garbage log entries or even oops the kernel.
+missed it in "kill struct filename.separate" several years ago.
 
-Move the rlim data block into the same struct as the peer field
-so they can be used together.
-
-CC: <stable@vger.kernel.org>
-Fixes: 86b92cb782b3 ("apparmor: move resource checks to using labels")
-Signed-off-by: John Johansen <john.johansen@canonical.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/apparmor/include/audit.h |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/namei.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/security/apparmor/include/audit.h
-+++ b/security/apparmor/include/audit.h
-@@ -126,6 +126,10 @@ struct apparmor_audit_data {
- 					const char *target;
- 					kuid_t ouid;
- 				} fs;
-+				struct {
-+					int rlim;
-+					unsigned long max;
-+				} rlim;
- 				int signal;
- 			};
- 		};
-@@ -135,10 +139,6 @@ struct apparmor_audit_data {
- 			long pos;
- 		} iface;
- 		struct {
--			int rlim;
--			unsigned long max;
--		} rlim;
--		struct {
- 			const char *src_name;
- 			const char *type;
- 			const char *trans;
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -222,9 +222,10 @@ getname_kernel(const char * filename)
+ 	if (len <= EMBEDDED_NAME_MAX) {
+ 		result->name = (char *)result->iname;
+ 	} else if (len <= PATH_MAX) {
++		const size_t size = offsetof(struct filename, iname[1]);
+ 		struct filename *tmp;
+ 
+-		tmp = kmalloc(sizeof(*tmp), GFP_KERNEL);
++		tmp = kmalloc(size, GFP_KERNEL);
+ 		if (unlikely(!tmp)) {
+ 			__putname(result);
+ 			return ERR_PTR(-ENOMEM);
