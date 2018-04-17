@@ -1,88 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752159AbeDQIXJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 04:23:09 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:47086 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752608AbeDQIVG (ORCPT
+        id S1752359AbeDQIX1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 04:23:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33550 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752609AbeDQIVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:21:06 -0400
-X-Google-Smtp-Source: AIpwx4+fogb3mnfLEhpV6g2GUmKCC9qxh4INbFJFucGf7Li2aRAOV3mcKnzo+xCb93cQTKG7wJcCXQ==
-Subject: Re: [PATCH v6 07/11] ARM: sun9i: smp: Rename clusters's power-off
-To: =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        Tue, 17 Apr 2018 04:21:14 -0400
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: jeyu@kernel.org, torvalds@linux-foundation.org,
         linux-kernel@vger.kernel.org
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
- <20180416215032.5023-8-mylene.josserand@bootlin.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <fd19ec26-9240-5ae2-fc6e-d3918ab91d01@cogentembedded.com>
-Date: Tue, 17 Apr 2018 11:21:02 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180416215032.5023-8-mylene.josserand@bootlin.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Cc: borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
+        brueckner@linux.vnet.ibm.com, heiko.carstens@de.ibm.com,
+        peterz@infradead.org, acme@kernel.org, me@tobin.cc,
+        keescook@chromium.org, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] modules: Fix display of wrong  module .text address
+Date: Tue, 17 Apr 2018 10:20:54 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18041708-0012-0000-0000-000005CBB89C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041708-0013-0000-0000-0000194801A6
+Message-Id: <20180417082054.26978-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170075
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+In kernel v4.16.0 the module .text address is displayed
+wrong when using /sys/module/*/sections/.text file.
+Commit ef0010a30935 ("vsprintf: don't use 'restricted_pointer()' when
+not restricting")
+is the first bad commit.
 
-On 4/17/2018 12:50 AM, Mylène Josserand wrote:
+Here is the issue, using module qeth_l2 on s390 which is the
+ethernet device driver:
 
-> To prepare the support for sun8i-a83t, rename the variable name
+[root@s35lp76 ~]# lsmod
+Module                  Size  Used by
+qeth_l2                94208  1
+...
 
-    s/variable/macro/ maybe? Also "rename the ... name" sounds tautological...
+[root@s35lp76 ~]# cat /proc/modules | egrep '^qeth_l2'
+qeth_l2 94208 1 - Live 0x000003ff80401000
+                       ^ This is the correct address in memory
+[root@s35lp76 ~]# cat /sys/module/qeth_l2/sections/.text
+0x0000000018ea8363      <---- This is a wrong address
+[root@s35lp76 ~]#
 
-> that handles the power-off of clusters because it is different from
-> sun9i-a80 to sun8i-a83t.
-> 
-> The power off register for clusters are different from a80 and a83t.
-> 
-> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->   arch/arm/mach-sunxi/mc_smp.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-> index 727968d6a3e5..03f021d0c73e 100644
-> --- a/arch/arm/mach-sunxi/mc_smp.c
-> +++ b/arch/arm/mach-sunxi/mc_smp.c
-> @@ -60,7 +60,7 @@
->   #define PRCM_CPU_PO_RST_CTRL_CORE(n)	BIT(n)
->   #define PRCM_CPU_PO_RST_CTRL_CORE_ALL	0xf
->   #define PRCM_PWROFF_GATING_REG(c)	(0x100 + 0x4 * (c))
-> -#define PRCM_PWROFF_GATING_REG_CLUSTER	BIT(4)
-> +#define PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I	BIT(4)
->   #define PRCM_PWROFF_GATING_REG_CORE(n)	BIT(n)
->   #define PRCM_PWR_SWITCH_REG(c, cpu)	(0x140 + 0x10 * (c) + 0x4 * (cpu))
->   #define PRCM_CPU_SOFT_ENTRY_REG		0x164
-> @@ -255,7 +255,7 @@ static int sunxi_cluster_powerup(unsigned int cluster)
->   
->   	/* clear cluster power gate */
->   	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
-> -	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER;
-> +	reg &= ~PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
->   	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
->   	udelay(20);
->   
-> @@ -452,7 +452,7 @@ static int sunxi_cluster_powerdown(unsigned int cluster)
->   	/* gate cluster power */
->   	pr_debug("%s: gate cluster power\n", __func__);
->   	reg = readl(prcm_base + PRCM_PWROFF_GATING_REG(cluster));
-> -	reg |= PRCM_PWROFF_GATING_REG_CLUSTER;
-> +	reg |= PRCM_PWROFF_GATING_REG_CLUSTER_SUN9I;
->   	writel(reg, prcm_base + PRCM_PWROFF_GATING_REG(cluster));
->   	udelay(20);
->   
+This breaks the perf tool which uses this address on s390
+to calculate start of .text section in memory.
 
-MBR, Sergei
+Fix this by printing the correct (unhashed) address.
+
+Thanks to Jessica Yu for helping on this.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Jessica Yu <jeyu@kernel.org>
+---
+ kernel/module.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/module.c b/kernel/module.c
+index a6e43a5806a1..77ab7211ddef 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1472,7 +1472,7 @@ static ssize_t module_sect_show(struct module_attribute *mattr,
+ {
+ 	struct module_sect_attr *sattr =
+ 		container_of(mattr, struct module_sect_attr, mattr);
+-	return sprintf(buf, "0x%pK\n", (void *)sattr->address);
++	return sprintf(buf, "%#lx\n", kptr_restrict < 2 ? sattr->address : 0);
+ }
+ 
+ static void free_sect_attrs(struct module_sect_attrs *sect_attrs)
+-- 
+2.14.3
