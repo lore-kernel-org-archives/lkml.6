@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+5TwuPpyOK+xEr+ZxVE3wFG7gpqgBujMUkfSrU+bnni2b/sTNgbUzg6n4Bj8pMlaIngC1h
-ARC-Seal: i=1; a=rsa-sha256; t=1523980878; cv=none;
+X-Google-Smtp-Source: AIpwx48EGNXZ0TkGKO3+EuDA9ey82HRiRxtFwume+avcwNnaOLApAw6wfGseAfmf9RHBIhhQFU84
+ARC-Seal: i=1; a=rsa-sha256; t=1523980872; cv=none;
         d=google.com; s=arc-20160816;
-        b=b2omoAKKiJKO/2rPjR5ooerYAjn3kFQaCv75hU1RzuYodHQDdirTlsfk3Zbw3fUJZ5
-         cYA6Pwe+62Xy2gkNrCimHjuKch60vMN/DNmjke5DZ5PULO68M59cy+v90bIV3xG2Juv/
-         q/0IRsrTthSwD0dnhtNH1E0+efxeszl98DzTn4AIkmoPyJWBaY1r5K9/yg3YoI306B+D
-         bR2MBEu2gzEfXHdzjK8cYAWZzik1yrLdNqURh4+ULPAsCaDz6FIX5E7AzBaQmibrkRZf
-         05kkNEu1RskUevPM0aqzmREduqxx+49aVU+6ZtxQ1SZRG7gzKn7oNUY3Ez6Yb7wsFhYj
-         wQ3g==
+        b=gNESe+Z8Evb34ZQM0TkUEhe47YvuVioL8Jn7bgpk8Mcsix+puHA0lsZzi7bN9X47lU
+         QJz7Llu/lhbeqMz4LDaFrWyN/z3dYJhsAe740721tOxPRRO/eAeqGL0QLpNeKbfhvEvy
+         V98sDQ4l3f0DRk+6VUl6iNlkBbIRPwnd9/pJuZKlPAXTtL2hO2PKGTWkju+I9FpPlbgW
+         c/3XKsUDrhp9Fr7iNMsnUrDrJE45WbD/d5iK2y1cFD2KWlfieec8Jc9XsNNS+I+GxNrp
+         Jo/3zp6maxdXWrl1mlBXrD5R1bMkgi/hWiYrNriuX6tD+pK+AoqeF4DWSZegfG4TPgfT
+         q/xg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=r9dRDVxqLp/rQ9c2RS4q/WqTxOpytch3nWGFjL01Atk=;
-        b=lfCGwM3dLG1yxvLxHc/wXVwZgH4Ch6tLJIMAwhuo7CAhGzsFXj1lEFbtmcgerTA28z
-         AXUGsHdwWyKQ+W4XlZanbDwbGW3pPlTGDPQwIap833hvVtvlcpS7xaFTDTK8ISCp0O30
-         IlE4U1m37Rs2zzeYCc4P8n81tVBTOsuUGKGoAoG0T3tzF0m673QORGoQmocTYArZsL3f
-         uroyDP/i9AHoGUa31hs8LmOadbnioKvUUzqHEyUBWohawpQuB4/MRjLEfpq1R2Dy2vLR
-         cxYKWu/9ssZzAcDE7xy4x81e2uaj50My4DiEhvxEBsmFbARcZexmeB0wgeYI+SJU97DU
-         IkQQ==
+        bh=Oh512x6NyJ2iSjxX+9X8XAqGnIdj/nH4bWApIkfCQNA=;
+        b=vP6q5Xs5IX/h1ajZIsIjzBDrvC7BS3xSJ5fZqreWFj/x6XkSxxPVRYjFx5AxU/F/Wa
+         7hwCELNYtEEiVFYSVjmbLzgKXIFWbfSqY1k90TrjDG6aZcnwBDKIb/1gFPGGrYo9oD3N
+         7NHZz27brDkUI0aZUPeijEAzaJBnOIuk8SC0kgWrdKmH5OFy7pJiM7pht4trGdp9Tmn6
+         nPXZd9wH/aPPVWMZH+r0KtpSVqistjudwUYV87Pa4DIzkYrMamRa2wJj/3VMJovOodRc
+         zcsuYgZepW6O8oxBulz0cPhSjajzgZ3ZANZh7VuEz/NKFFMlLOF2EMAKYH27QmK/tFvC
+         BHZg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alex Gagniuc <Alex_Gagniuc@Dellteam.com>,
-	Keith Busch <keith.busch@intel.com>,
-	Max Gurtovoy <maxg@mellanox.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.16 37/68] nvme: Skip checking heads without namespaces
-Date: Tue, 17 Apr 2018 17:57:50 +0200
-Message-Id: <20180417155750.840111905@linuxfoundation.org>
+	Yunlong Song <yunlong.song@huawei.com>,
+	Chao Yu <yuchao0@huawei.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4.16 35/68] f2fs: fix heap mode to reset it back
+Date: Tue, 17 Apr 2018 17:57:48 +0200
+Message-Id: <20180417155750.765830011@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009773096722663?=
-X-GMAIL-MSGID: =?utf-8?q?1598009773096722663?=
+X-GMAIL-THRID: =?utf-8?q?1598009767226616026?=
+X-GMAIL-MSGID: =?utf-8?q?1598009767226616026?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,37 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Keith Busch <keith.busch@intel.com>
+From: Yunlong Song <yunlong.song@huawei.com>
 
-commit 2079699c10c8c60a9572540c2f77d045abf036eb upstream.
+commit b94929d975c8423defc9aededb0f499ff936b509 upstream.
 
-If a task is holding a reference to a namespace on a removed controller,
-the head will not be released. If the same controller is added again
-later, its namespaces may not be successfully added. Instead, the user
-will see kernel message "Duplicate IDs for nsid <X>".
+Commit 7a20b8a61eff81bdb7097a578752a74860e9d142 ("f2fs: allocate node
+and hot data in the beginning of partition") introduces another mount
+option, heap, to reset it back. But it does not do anything for heap
+mode, so fix it.
 
-This patch fixes that by skipping heads that don't have namespaces when
-considering if a new namespace is safe to add.
-
-Reported-by: Alex Gagniuc <Alex_Gagniuc@Dellteam.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvme/host/core.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/gc.c      |    5 +++--
+ fs/f2fs/segment.c |    3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2793,6 +2793,7 @@ static int __nvme_check_ids(struct nvme_
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -191,8 +191,9 @@ static void select_policy(struct f2fs_sb
+ 	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
+ 		p->max_search = sbi->max_victim_search;
  
- 	list_for_each_entry(h, &subsys->nsheads, entry) {
- 		if (nvme_ns_ids_valid(&new->ids) &&
-+		    !list_empty(&h->list) &&
- 		    nvme_ns_ids_equal(&new->ids, &h->ids))
- 			return -EINVAL;
- 	}
+-	/* let's select beginning hot/small space first */
+-	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
++	/* let's select beginning hot/small space first in no_heap mode*/
++	if (test_opt(sbi, NOHEAP) &&
++		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+ 		p->offset = 0;
+ 	else
+ 		p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2164,7 +2164,8 @@ static unsigned int __get_next_segno(str
+ 	if (sbi->segs_per_sec != 1)
+ 		return CURSEG_I(sbi, type)->segno;
+ 
+-	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
++	if (test_opt(sbi, NOHEAP) &&
++		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+ 		return 0;
+ 
+ 	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
