@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+A3dvASsYXRq05q0KrbIcNfNQmZJ+M9jbGQN36tqz1sUteOLvWvjH/UzzxeGdJKVia//B/
+X-Google-Smtp-Source: AIpwx4+1lNuHCuY9PJNqSIq4Fu2S4FnPodW2SvaWGjXntVU23GnyQvTkgwv2w5nrytmm49HmjVDJ
 ARC-Seal: i=1; a=rsa-sha256; t=1523981076; cv=none;
         d=google.com; s=arc-20160816;
-        b=HL6PmqEkOEmn115GfsQ0d5iiH4ENdO3ADDXcK9JcmPUV9F9xftjLRQMV4YrDmPdWsQ
-         M5pbTjaoP8pWiHByWVEFln9Id7R42n5QafbDq3wSo8vCo3wzPfsk7dL2sQM7U8L+Eg3i
-         xHzDSLILpNRFo+ls9fNUujEIjuZzGIO48fplUrICzzspPrYGoO1QX6R+fGetbkf6NF48
-         3fGf+Ipix+Zcn/gyS0bmImNQvzv1eI0SqjvqRTATCmzJ1vLjfWuccQv5bDrDw/Akr60Y
-         F8Ogycnn2dJOE2CjesXpCpTDmp16tCcjPaciJkvJSbVPL84oo2bYLfmxHKfBqEBzVggA
-         FZSA==
+        b=XheSS//oqTUZf6oMgU60LbhC9/UtmUeFW1MTbZGd1GJX2SMzF5wuxJwdJLyiipBQVL
+         AmxtEWNeC454p4d6cMmIetd5f4IRd0LsBK0fxLV1bIZJ7FiDsC+bBobDSE9CQ0S2GpdW
+         HoGM4ykhPCR0F4m2cHzs0mL+aIbFsRID5kLvOdYkDkMW3l6w3w0dMPSpvzO0+LUitY6a
+         iL3pVlMdVL9Kks1lGhvZT/wxGfaCbQiv7dhQTev+18BqbM0lELRqBEsIC76uWlm5luvF
+         yU/3mx2zw4ZosfvuHXeGeojiCdb8FRofcTRH94n3sRGh1h7dHvbwKZ+aInsk9/QdFDu+
+         KWbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=LnHgsKMUu1QiCx7jtZ1Stoo2ww33oNuCF1yMijxQUi4=;
-        b=LAWDLOCjkrSCeMVKVaJueXNRyQ57EKK9aKpvl68oRgUJds1ZpiZFLqJVBZJNWbGjwc
-         V4GCZF2rO0Ev3vHDEKhRZFzIcg80v9+2zkioq1klv8EBD6852Uk9iiYnt2xu3xSJtBIW
-         W8/McGTUtcV/JE5hroOoNqXtRPgHivA0mUAj0CpaVeM3JTLMO08+6pbbMNxomw3Iz6+o
-         zjup2yj2uj4MABUhoMAGId/cmPJurWUQJ8fGrANZ46liZdn/CyqfHbFxcdarE0KoNYCM
-         znIn21aOFc3kTZ3Ayku5D8pVzbrG/QIBW7t3+lw4vIH8VFJ8WgIjVQZOGdSFqpPCK/j1
-         SfkA==
+        bh=4VWMIaV9XnJ9xfeAEDv+ZA8bIMr7iO7k3cF5KUaZX4w=;
+        b=z6h22BXqqJ+T0wlg/T/g41vo/lqAXZsR+YXMYS2w0BaLjr/eo21BeKMz0xx91SMTil
+         N4a+5aMOk4ZHioExrzykRVEY0Ls7DjLvnUvWK3vZerHAbVpe4qzZ4DSJN9U7FU/R2kh5
+         d4MLc+XmsyJMxfe1D2b0Ir35BF60H9t97cD5fa94gDf8HkVJ+rcjAFyXth1YoK8OftAd
+         u8D9pfFeIabp8PNcrDT1vztvArfnRy6oEFsMh+pGbSVJJ4Ko4MoYudVAC1gfTsHUNa8E
+         XIR00AsOpiVXWyCfDQTMy7wMReTvCIv2tJtrPrNvk/Q3Px/RLwt1OnBN4tYl/GOMtJab
+         vG5w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Omar Sandoval <osandov@fb.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.15 31/53] blk-mq: order getting budget and driver tag
-Date: Tue, 17 Apr 2018 17:58:56 +0200
-Message-Id: <20180417155724.667039673@linuxfoundation.org>
+	Tejaswi Tanikella <tejaswit@codeaurora.org>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 05/53] slip: Check if rstate is initialized before uncompressing
+Date: Tue, 17 Apr 2018 17:58:30 +0200
+Message-Id: <20180417155723.313038973@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -43,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009784816995673?=
-X-GMAIL-MSGID: =?utf-8?q?1598009980983644754?=
+X-GMAIL-THRID: =?utf-8?q?1598009735919872133?=
+X-GMAIL-MSGID: =?utf-8?q?1598009981459093325?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,95 +49,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Tejaswi Tanikella <tejaswit@codeaurora.org>
 
-commit 0bca799b92807ee9be0890690f5dde7d8c6a8e25 upstream.
 
-This patch orders getting budget and driver tag by making sure to acquire
-driver tag after budget is got, this way can help to avoid the following
-race:
+[ Upstream commit 3f01ddb962dc506916c243f9524e8bef97119b77 ]
 
-1) before dispatch request from scheduler queue, get one budget first, then
-dequeue a request, call it request A.
+On receiving a packet the state index points to the rstate which must be
+used to fill up IP and TCP headers. But if the state index points to a
+rstate which is unitialized, i.e. filled with zeros, it gets stuck in an
+infinite loop inside ip_fast_csum trying to compute the ip checsum of a
+header with zero length.
 
-2) in another IO path for dispatching request B which is from hctx->dispatch,
-driver tag is got, then try to get budget in blk_mq_dispatch_rq_list(),
-unfortunately the budget is held by request A.
+89.666953:   <2> [<ffffff9dd3e94d38>] slhc_uncompress+0x464/0x468
+89.666965:   <2> [<ffffff9dd3e87d88>] ppp_receive_nonmp_frame+0x3b4/0x65c
+89.666978:   <2> [<ffffff9dd3e89dd4>] ppp_receive_frame+0x64/0x7e0
+89.666991:   <2> [<ffffff9dd3e8a708>] ppp_input+0x104/0x198
+89.667005:   <2> [<ffffff9dd3e93868>] pppopns_recv_core+0x238/0x370
+89.667027:   <2> [<ffffff9dd4428fc8>] __sk_receive_skb+0xdc/0x250
+89.667040:   <2> [<ffffff9dd3e939e4>] pppopns_recv+0x44/0x60
+89.667053:   <2> [<ffffff9dd4426848>] __sock_queue_rcv_skb+0x16c/0x24c
+89.667065:   <2> [<ffffff9dd4426954>] sock_queue_rcv_skb+0x2c/0x38
+89.667085:   <2> [<ffffff9dd44f7358>] raw_rcv+0x124/0x154
+89.667098:   <2> [<ffffff9dd44f7568>] raw_local_deliver+0x1e0/0x22c
+89.667117:   <2> [<ffffff9dd44c8ba0>] ip_local_deliver_finish+0x70/0x24c
+89.667131:   <2> [<ffffff9dd44c92f4>] ip_local_deliver+0x100/0x10c
 
-3) meantime blk_mq_dispatch_rq_list() is called for dispatching request
-A, and try to get driver tag first, unfortunately no driver tag is
-available because the driver tag is held by request B
+./scripts/faddr2line vmlinux slhc_uncompress+0x464/0x468 output:
+ ip_fast_csum at arch/arm64/include/asm/checksum.h:40
+ (inlined by) slhc_uncompress at drivers/net/slip/slhc.c:615
 
-4) both two IO pathes can't move on, and IO stall is caused.
+Adding a variable to indicate if the current rstate is initialized. If
+such a packet arrives, move to toss state.
 
-This issue can be observed when running dbench on USB storage.
-
-This patch fixes this issue by always getting budget before getting
-driver tag.
-
-Cc: stable@vger.kernel.org
-Fixes: de1482974080ec9e ("blk-mq: introduce .get_budget and .put_budget in blk_mq_ops")
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Tejaswi Tanikella <tejaswit@codeaurora.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- block/blk-mq.c |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/net/slip/slhc.c |    5 +++++
+ include/net/slhc_vj.h   |    1 +
+ 2 files changed, 6 insertions(+)
 
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1096,7 +1096,12 @@ bool blk_mq_dispatch_rq_list(struct requ
- 		blk_status_t ret;
+--- a/drivers/net/slip/slhc.c
++++ b/drivers/net/slip/slhc.c
+@@ -509,6 +509,10 @@ slhc_uncompress(struct slcompress *comp,
+ 		if(x < 0 || x > comp->rslot_limit)
+ 			goto bad;
  
- 		rq = list_first_entry(list, struct request, queuelist);
--		if (!blk_mq_get_driver_tag(rq, &hctx, false)) {
++		/* Check if the cstate is initialized */
++		if (!comp->rstate[x].initialized)
++			goto bad;
 +
-+		hctx = blk_mq_map_queue(rq->q, rq->mq_ctx->cpu);
-+		if (!got_budget && !blk_mq_get_dispatch_budget(hctx))
-+			break;
-+
-+		if (!blk_mq_get_driver_tag(rq, NULL, false)) {
- 			/*
- 			 * The initial allocation attempt failed, so we need to
- 			 * rerun the hardware queue when a tag is freed. The
-@@ -1105,8 +1110,7 @@ bool blk_mq_dispatch_rq_list(struct requ
- 			 * we'll re-run it below.
- 			 */
- 			if (!blk_mq_mark_tag_wait(&hctx, rq)) {
--				if (got_budget)
--					blk_mq_put_dispatch_budget(hctx);
-+				blk_mq_put_dispatch_budget(hctx);
- 				/*
- 				 * For non-shared tags, the RESTART check
- 				 * will suffice.
-@@ -1117,11 +1121,6 @@ bool blk_mq_dispatch_rq_list(struct requ
- 			}
- 		}
- 
--		if (!got_budget && !blk_mq_get_dispatch_budget(hctx)) {
--			blk_mq_put_driver_tag(rq);
--			break;
--		}
--
- 		list_del_init(&rq->queuelist);
- 
- 		bd.rq = rq;
-@@ -1619,11 +1618,11 @@ static void __blk_mq_try_issue_directly(
- 	if (q->elevator)
- 		goto insert;
- 
--	if (!blk_mq_get_driver_tag(rq, NULL, false))
-+	if (!blk_mq_get_dispatch_budget(hctx))
- 		goto insert;
- 
--	if (!blk_mq_get_dispatch_budget(hctx)) {
--		blk_mq_put_driver_tag(rq);
-+	if (!blk_mq_get_driver_tag(rq, NULL, false)) {
-+		blk_mq_put_dispatch_budget(hctx);
- 		goto insert;
- 	}
- 
+ 		comp->flags &=~ SLF_TOSS;
+ 		comp->recv_current = x;
+ 	} else {
+@@ -673,6 +677,7 @@ slhc_remember(struct slcompress *comp, u
+ 	if (cs->cs_tcp.doff > 5)
+ 	  memcpy(cs->cs_tcpopt, icp + ihl*4 + sizeof(struct tcphdr), (cs->cs_tcp.doff - 5) * 4);
+ 	cs->cs_hsize = ihl*2 + cs->cs_tcp.doff*2;
++	cs->initialized = true;
+ 	/* Put headers back on packet
+ 	 * Neither header checksum is recalculated
+ 	 */
+--- a/include/net/slhc_vj.h
++++ b/include/net/slhc_vj.h
+@@ -127,6 +127,7 @@ typedef __u32 int32;
+  */
+ struct cstate {
+ 	byte_t	cs_this;	/* connection id number (xmit) */
++	bool	initialized;	/* true if initialized */
+ 	struct cstate *next;	/* next in ring (xmit) */
+ 	struct iphdr cs_ip;	/* ip/tcp hdr from most recent packet */
+ 	struct tcphdr cs_tcp;
