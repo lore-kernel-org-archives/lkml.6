@@ -1,28 +1,28 @@
-Return-Path: <kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/iulMksLqQQLgKda7mQsk7HJgG52l3bygOHPo5qbBKfVIZFZ9sE4py3Z2UdJ5J+SL5vMJV
-ARC-Seal: i=1; a=rsa-sha256; t=1523990356; cv=none;
+Return-Path: <kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/KUmRLVXTWahryV/ATKzTAr8MJUIZ3fiFide6OExOXCWDx8z/VxogpBnODx7m869H4j+mi
+ARC-Seal: i=1; a=rsa-sha256; t=1523990325; cv=none;
         d=google.com; s=arc-20160816;
-        b=glJcKkeklgGzokjJwFbzjVQJDo28qtAf6hz7e1tdmcSijCkIsJmKAr7r9CM0uMaV0d
-         ZRPXVM0gh65f30vKkGlhRxYmPrHkRzqAkuUHChh5G72GOw3+EQdrq8enGslMA2ys3UWo
-         O12FDT0LM2sXOVq6VW7l4iTIthK9Nb8NKSaftC5TRFw5tP/YnIqrg5uoJq+p4vYoTScE
-         PFQZ9EjPGEzBMxlM3fXTEdyRzgQGDi4NsqOlVAQG0i/KDAeTEIwgWdqLUbC54yREgDhE
-         enR0O53TWoPMpTHCTqitBy0+/tzV5xpgCuGP91AEYR4hpa+QwQ2AAZMZoHe2Rr3eXHM9
-         l6cw==
+        b=nLrbrDGHj3K/raAvnkPJ1fIhu/GEXj7XK6s+iKBQaMwR9nZyvUk2HDVcQ6bZs4icG4
+         qs8dQvuqA01c34+OKfFOBAqtddVMEBaNFkVh/em0sr9w4X7F7Y9JjyVwn7SGnxvOFgtR
+         fFYrm97+Kg99iGdvIDvWfqq5B+G9+t4zAHpbisjPvKPb53L/e4PQIHBbFbVxVr8aZrIH
+         iRafszYTvjdD+ByTiwbShgNDNWtnB8yn1xx/94n4+WcZLjq7AR2S96dNuZbxWhQjGtim
+         3auMSUYzVyu5dBLG8DDnZ8g9wke1lkR0mL5v64TN5YH/5bpsDy80h9yjJtXxyI/KqumP
+         TjoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=TvwDR9OtThvWmHFb7GOitVvR0DTVFGRzvYeJ7lkpaSk=;
-        b=b54FGjg6CnOTVeeK36Uj7aYG9sKyvMjxQB0ge+2KmhU7Qf2kisNckcKLhUhhi2Ao1w
-         UzOQGZs8Q9fYuotpcz7+vrApRGkKynchBL6GtFAKj1mBaDpYUzymmyosDPbB2vpd2DaA
-         ZiLd2qCjMGmqHzjle9DIUiI7J/IAR/G4549uIqP0gK9586aC09z1zmOz3Ubkc6YpUCpA
-         mFR6S//kTWjFcmtzbaNkBxIamHIIFDTgRwT30xWKUxxu7o4ikhE1YoETx14e7cI+AVsu
-         49OnQIO9Jml5Cnk55S6jAEsVZb6S+Ug2lXo/Hi5cgawhxjyHsPtwhjaQZe2pC5pnRKsm
-         Zf6w==
+        bh=LMD5f0EwKBjsG6J9F8f4uIaYPevd2L8RCUaeSal7aGQ=;
+        b=JFg3F0hoHJVqVJcS5xN3Kicvb5DH0EnEPFi5BS45iOhMwRvB3vwfqsJ8jYn/yXY1VI
+         FMGPmLhDahYp8vNp5A5xV8MbybmfhFYJ0DC1CiIFwkKnPr9eWN2nNRl3FXdmUL3B2ozT
+         stEOsfeUX178uNEnYwVjuPm7fNEydaPnAoP3fnaNZLQIvXiei1H5mYcOmJyjk7k+uCUv
+         hloamMn9wC8NrW3DHeHPdgms43v3+fQriGp7VG2UEFq5aghqtl1dVaFS6A60DWGq2HF0
+         I5sEw9pixd1XwhrRHFV8N9Qd8DI96ePhC2C6c/GdaXs4xKo/SmfH1ZJScbH7N3I3Qhpa
+         +uAw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13018-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
@@ -44,177 +44,120 @@ Cc: arnd@arndb.de,
 	linux-kernel@vger.kernel.org,
 	awallis@codeaurora.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCHv3 08/11] arm64: expose user PAC bit positions via ptrace
-Date: Tue, 17 Apr 2018 19:37:32 +0100
-Message-Id: <20180417183735.56985-9-mark.rutland@arm.com>
+Subject: [PATCHv3 01/11] arm64: add pointer authentication register bits
+Date: Tue, 17 Apr 2018 19:37:25 +0100
+Message-Id: <20180417183735.56985-2-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180417183735.56985-1-mark.rutland@arm.com>
 References: <20180417183735.56985-1-mark.rutland@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598019712430835023?=
-X-GMAIL-MSGID: =?utf-8?q?1598019712430835023?=
+X-GMAIL-THRID: =?utf-8?q?1598019679846665173?=
+X-GMAIL-MSGID: =?utf-8?q?1598019679846665173?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When pointer authentication is in use, data/instruction pointers have a
-number of PAC bits inserted into them. The number and position of these
-bits depends on the configured TCR_ELx.TxSZ and whether tagging is
-enabled. ARMv8.3 allows tagging to differ for instruction and data
-pointers.
+The ARMv8.3 pointer authentication extension adds:
 
-For userspace debuggers to unwind the stack and/or to follow pointer
-chains, they need to be able to remove the PAC bits before attempting to
-use a pointer.
+* New fields in ID_AA64ISAR1 to report the presence of pointer
+  authentication functionality.
 
-This patch adds a new structure with masks describing the location of
-the PAC bits in userspace instruction and data pointers (i.e. those
-addressable via TTBR0), which userspace can query via PTRACE_GETREGSET.
-By clearing these bits from pointers, userspace can acquire the PAC-less
-versions.
+* New control bits in SCTLR_ELx to enable this functionality.
 
-This new regset is exposed when the kernel is built with (user) pointer
-authentication support, and the feature is enabled. Otherwise, it is
-hidden.
+* New system registers to hold the keys necessary for this
+  functionality.
+
+* A new ESR_ELx.EC code used when the new instructions are affected by
+  configurable traps
+
+This patch adds the relevant definitions to <asm/sysreg.h> and
+<asm/esr.h> for these, to be used by subsequent patches.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/pointer_auth.h |  8 ++++++++
- arch/arm64/include/uapi/asm/ptrace.h  |  7 +++++++
- arch/arm64/kernel/ptrace.c            | 38 +++++++++++++++++++++++++++++++++++
- include/uapi/linux/elf.h              |  1 +
- 4 files changed, 54 insertions(+)
+ arch/arm64/include/asm/esr.h    |  3 ++-
+ arch/arm64/include/asm/sysreg.h | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
-index a2e8fb91fdee..5ff141245633 100644
---- a/arch/arm64/include/asm/pointer_auth.h
-+++ b/arch/arm64/include/asm/pointer_auth.h
-@@ -16,9 +16,11 @@
- #ifndef __ASM_POINTER_AUTH_H
- #define __ASM_POINTER_AUTH_H
+diff --git a/arch/arm64/include/asm/esr.h b/arch/arm64/include/asm/esr.h
+index ce70c3ffb993..022785162281 100644
+--- a/arch/arm64/include/asm/esr.h
++++ b/arch/arm64/include/asm/esr.h
+@@ -30,7 +30,8 @@
+ #define ESR_ELx_EC_CP14_LS	(0x06)
+ #define ESR_ELx_EC_FP_ASIMD	(0x07)
+ #define ESR_ELx_EC_CP10_ID	(0x08)
+-/* Unallocated EC: 0x09 - 0x0B */
++#define ESR_ELx_EC_PAC		(0x09)
++/* Unallocated EC: 0x0A - 0x0B */
+ #define ESR_ELx_EC_CP14_64	(0x0C)
+ /* Unallocated EC: 0x0d */
+ #define ESR_ELx_EC_ILL		(0x0E)
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 6171178075dc..426f0eb90101 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -171,6 +171,19 @@
+ #define SYS_TTBR1_EL1			sys_reg(3, 0, 2, 0, 1)
+ #define SYS_TCR_EL1			sys_reg(3, 0, 2, 0, 2)
  
-+#include <linux/bitops.h>
- #include <linux/random.h>
- 
- #include <asm/cpufeature.h>
-+#include <asm/memory.h>
- #include <asm/sysreg.h>
- 
- #ifdef CONFIG_ARM64_PTR_AUTH
-@@ -71,6 +73,12 @@ static inline void ptrauth_keys_dup(struct ptrauth_keys *old,
- 	*new = *old;
- }
- 
-+/*
-+ * The EL0 pointer bits used by a pointer authentication code.
-+ * This is dependent on TBI0 being enabled, or bits 63:56 would also apply.
-+ */
-+#define ptrauth_pac_mask() 	GENMASK(54, VA_BITS)
++#define SYS_APIAKEYLO_EL1		sys_reg(3, 0, 2, 1, 0)
++#define SYS_APIAKEYHI_EL1		sys_reg(3, 0, 2, 1, 1)
++#define SYS_APIBKEYLO_EL1		sys_reg(3, 0, 2, 1, 2)
++#define SYS_APIBKEYHI_EL1		sys_reg(3, 0, 2, 1, 3)
 +
- #define mm_ctx_ptrauth_init(ctx) \
- 	ptrauth_keys_init(&(ctx)->ptrauth_keys)
- 
-diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
-index 98c4ce55d9c3..4994d718771a 100644
---- a/arch/arm64/include/uapi/asm/ptrace.h
-+++ b/arch/arm64/include/uapi/asm/ptrace.h
-@@ -228,6 +228,13 @@ struct user_sve_header {
- 		  SVE_PT_SVE_OFFSET + SVE_PT_SVE_SIZE(vq, flags)	\
- 		: SVE_PT_FPSIMD_OFFSET + SVE_PT_FPSIMD_SIZE(vq, flags))
- 
-+/* pointer authentication masks (NT_ARM_PAC_MASK) */
++#define SYS_APDAKEYLO_EL1		sys_reg(3, 0, 2, 2, 0)
++#define SYS_APDAKEYHI_EL1		sys_reg(3, 0, 2, 2, 1)
++#define SYS_APDBKEYLO_EL1		sys_reg(3, 0, 2, 2, 2)
++#define SYS_APDBKEYHI_EL1		sys_reg(3, 0, 2, 2, 3)
 +
-+struct user_pac_mask {
-+	__u64		data_mask;
-+	__u64		insn_mask;
-+};
++#define SYS_APGAKEYLO_EL1		sys_reg(3, 0, 2, 3, 0)
++#define SYS_APGAKEYHI_EL1		sys_reg(3, 0, 2, 3, 1)
 +
- #endif /* __ASSEMBLY__ */
+ #define SYS_ICC_PMR_EL1			sys_reg(3, 0, 4, 6, 0)
  
- #endif /* _UAPI__ASM_PTRACE_H */
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 71d99af24ef2..f395649f755e 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -44,6 +44,7 @@
- #include <asm/cpufeature.h>
- #include <asm/debug-monitors.h>
- #include <asm/pgtable.h>
-+#include <asm/pointer_auth.h>
- #include <asm/stacktrace.h>
- #include <asm/syscall.h>
- #include <asm/traps.h>
-@@ -951,6 +952,30 @@ static int sve_set(struct task_struct *target,
+ #define SYS_AFSR0_EL1			sys_reg(3, 0, 5, 1, 0)
+@@ -417,9 +430,13 @@
+ #define SYS_ICH_LR15_EL2		__SYS__LR8_EL2(7)
  
- #endif /* CONFIG_ARM64_SVE */
+ /* Common SCTLR_ELx flags. */
++#define SCTLR_ELx_ENIA	(1 << 31)
++#define SCTLR_ELx_ENIB	(1 << 30)
++#define SCTLR_ELx_ENDA	(1 << 27)
+ #define SCTLR_ELx_EE    (1 << 25)
+ #define SCTLR_ELx_IESB	(1 << 21)
+ #define SCTLR_ELx_WXN	(1 << 19)
++#define SCTLR_ELx_ENDB	(1 << 13)
+ #define SCTLR_ELx_I	(1 << 12)
+ #define SCTLR_ELx_SA	(1 << 3)
+ #define SCTLR_ELx_C	(1 << 2)
+@@ -510,11 +527,24 @@
+ #define ID_AA64ISAR0_AES_SHIFT		4
  
-+#ifdef CONFIG_ARM64_PTR_AUTH
-+static int pac_mask_get(struct task_struct *target,
-+			const struct user_regset *regset,
-+			unsigned int pos, unsigned int count,
-+			void *kbuf, void __user *ubuf)
-+{
-+	/*
-+	 * The PAC bits can differ across data and instruction pointers
-+	 * depending on TCR_EL1.TBID*, which we may make use of in future, so
-+	 * we expose separate masks.
-+	 */
-+	unsigned long mask = ptrauth_pac_mask();
-+	struct user_pac_mask uregs = {
-+		.data_mask = mask,
-+		.insn_mask = mask,
-+	};
+ /* id_aa64isar1 */
++#define ID_AA64ISAR1_GPI_SHIFT		28
++#define ID_AA64ISAR1_GPA_SHIFT		24
+ #define ID_AA64ISAR1_LRCPC_SHIFT	20
+ #define ID_AA64ISAR1_FCMA_SHIFT		16
+ #define ID_AA64ISAR1_JSCVT_SHIFT	12
++#define ID_AA64ISAR1_API_SHIFT		8
++#define ID_AA64ISAR1_APA_SHIFT		4
+ #define ID_AA64ISAR1_DPB_SHIFT		0
+ 
++#define ID_AA64ISAR1_APA_NI		0x0
++#define ID_AA64ISAR1_APA_ARCHITECTED	0x1
++#define ID_AA64ISAR1_API_NI		0x0
++#define ID_AA64ISAR1_API_IMP_DEF	0x1
++#define ID_AA64ISAR1_GPA_NI		0x0
++#define ID_AA64ISAR1_GPA_ARCHITECTED	0x1
++#define ID_AA64ISAR1_GPI_NI		0x0
++#define ID_AA64ISAR1_GPI_IMP_DEF	0x1
 +
-+	if (!cpus_have_cap(ARM64_HAS_ADDRESS_AUTH))
-+		return -EINVAL;
-+
-+	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, &uregs, 0, -1);
-+}
-+#endif /* CONFIG_ARM64_PTR_AUTH */
-+
- enum aarch64_regset {
- 	REGSET_GPR,
- 	REGSET_FPR,
-@@ -963,6 +988,9 @@ enum aarch64_regset {
- #ifdef CONFIG_ARM64_SVE
- 	REGSET_SVE,
- #endif
-+#ifdef CONFIG_ARM64_PTR_AUTH
-+	REGSET_PAC_MASK,
-+#endif
- };
- 
- static const struct user_regset aarch64_regsets[] = {
-@@ -1032,6 +1060,16 @@ static const struct user_regset aarch64_regsets[] = {
- 		.get_size = sve_get_size,
- 	},
- #endif
-+#ifdef CONFIG_ARM64_PTR_AUTH
-+	[REGSET_PAC_MASK] = {
-+		.core_note_type = NT_ARM_PAC_MASK,
-+		.n = sizeof(struct user_pac_mask) / sizeof(u64),
-+		.size = sizeof(u64),
-+		.align = sizeof(u64),
-+		.get = pac_mask_get,
-+		/* this cannot be set dynamically */
-+	},
-+#endif
- };
- 
- static const struct user_regset_view user_aarch64_view = {
-diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-index e2535d6dcec7..070c28121979 100644
---- a/include/uapi/linux/elf.h
-+++ b/include/uapi/linux/elf.h
-@@ -420,6 +420,7 @@ typedef struct elf64_shdr {
- #define NT_ARM_HW_WATCH	0x403		/* ARM hardware watchpoint registers */
- #define NT_ARM_SYSTEM_CALL	0x404	/* ARM system call number */
- #define NT_ARM_SVE	0x405		/* ARM Scalable Vector Extension registers */
-+#define NT_ARM_PAC_MASK		0x406	/* ARM pointer authentication code masks */
- #define NT_ARC_V2	0x600		/* ARCv2 accumulator/extra registers */
- 
- /* Note header in a PT_NOTE section */
+ /* id_aa64pfr0 */
+ #define ID_AA64PFR0_CSV3_SHIFT		60
+ #define ID_AA64PFR0_CSV2_SHIFT		56
 -- 
 2.11.0
