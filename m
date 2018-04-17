@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48666N/zQHPoPV7HtUtnigN2F3ZFeu1BnqdMbJOyF29Sm6gRWvixXwSp43t5FbSAsWg8GVb
+X-Google-Smtp-Source: AIpwx48175O1Zji/IJKisPxBVT5POrojmkCQrKOiTbXs3hLubfHlXlMY4zQCkUS9Da57jZoBDpT1
 ARC-Seal: i=1; a=rsa-sha256; t=1523981078; cv=none;
         d=google.com; s=arc-20160816;
-        b=CyYMHHctBjkbhh4Xp3PgXbA7W3BgwZlHtq4JjtqeHxb8xxbsN6j7bklBrEoI+JRzSa
-         ika3KG6C9G/a0Dap7Bpt6U2khmtgCAA9awN05H+W7x4vrWc0avrpnVhDsgYVUOFqYKO+
-         Uk0U38UgXKLQ9yD2i+ywKy0k5antEg08SQkA7ke0iOXiLV9uFZ4zZXM+gbtpWr8NWKsu
-         7ZYUFIg9E2Van1cel5uQBwqyMBPj1uyxtPMsbm3N+7JsVwlTP9VJa7+bQmv99e16zVEq
-         QfcqbYMDyTzGnm5haoyN9AzKSgSoEMoWc1WsOYQizFGfkgb3QeO9xdublmEnNw6H/6Ft
-         ll8A==
+        b=oRWjhuU3qazNER/SMMSFsG4QOYA6elS5YarTEeVruOm0xRgY8vjLpZmMCfnsgE9DQ/
+         KF+Bmuxrxk0mw889Qdu6gOhPIe6ndjs4AM8iW3ZfALmTy5iIqvyTm83+XoNZxa1ADnX1
+         7YB8pnetWUckQWAYydUg25D2Ltl7Y82jRkUEeFdVDxzf3lEvXeSp/9mtkFBZ46jLC43h
+         bgxU9QURudw6AyTyg+fQ2Af3mRjWieulCoBV18YuEoReNeZQ60tZHyGzm+qgOUsgBtGf
+         MgeQh2aCR5RlXaaqWGO8YKhhneRk1zbAzQ+Jv0ZARmzvhBuXIf5Y/rFBrCGF48sxrQmM
+         Cljw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=8zRb3zvWrJpsh1R08jNTQVgElk+riMOY09ZmDbFVUyc=;
-        b=D7eRs6RbkKTxpf0w+V3UrPjQS/DGsGQiMxlLYknE6lKxlYmaIs+4TwUsK+0XbPaRYo
-         3xmGhwMfBsAGbacoMVs/qSNqysSX06c0cHNS2eYdvoc7wmp4J3GKpQ02ZVPgQx4lRcHW
-         lVwkQOa2Lm7NJqG0I1QkGt3OSXH/O+p1JsVnwKep7sGJg5dwHxE7LtGxC/ToCBKm+LUx
-         UZ5rMPoWcKnwkbpUfBCX8h+a4P4KPHKPaJ8OZ+86R/FDnrVqAmpEoVCB1ALlDLEZ879E
-         kaUm/CjPh3RDWGx9hRzuvl7EdxOsFUZO1ndIxwn9HLTzWmBTBQXs85uN9LY52AqCOnmi
-         kLnw==
+        bh=Tx/Pqtg9RfugCyMh9O0h/MKXQfZReCdCN8ICY6qDyxw=;
+        b=E51H9s+fNrIQ1/QDl5DwTv1NuULjUHgC4M02/G4Tw0w0xE/oPJv1a7DROvXr9bHGnL
+         UC+N2YBCvhGXeaONSbC2w1zNotDI7o9eI59bwAQy36az6nIHhvJ5FH6A+sAjpVfCEewt
+         5JwxWsOGlZNX1m7k+Qq8qgFOpCJFpcE+ZE2QoUIGzyzsrdOV70A2we/mRxCcE3+s0Tvo
+         t8L3wpaMW/b+5GYfP+GVY2RgWtC5/mnLOQ6K3HoVHtuNOavoiJWppu519X0CzCX+NuLf
+         zkoCWeR2OaQAlbl0Xi+2tWKsOPT2SSs3xMPfJTUwJZJV1eLPZ/Vcp9v8J9eDjkScu1cH
+         LpYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Bill Kuzeja <william.kuzeja@stratus.com>,
-	Himanshu Madhani <himanshu.madhani@cavium.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.15 37/53] scsi: qla2xxx: Fix small memory leak in qla2x00_probe_one on probe failure
-Date: Tue, 17 Apr 2018 17:59:02 +0200
-Message-Id: <20180417155724.932574324@linuxfoundation.org>
+	Lucash Stach <l.stach@pengutronix.de>,
+	"J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.15 36/53] nfsd: fix incorrect umasks
+Date: Tue, 17 Apr 2018 17:59:01 +0200
+Message-Id: <20180417155724.893176389@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009819441657999?=
-X-GMAIL-MSGID: =?utf-8?q?1598009983510688225?=
+X-GMAIL-THRID: =?utf-8?q?1598009814769839475?=
+X-GMAIL-MSGID: =?utf-8?q?1598009983158631682?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,230 +49,171 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bill Kuzeja <William.Kuzeja@stratus.com>
+From: J. Bruce Fields <bfields@redhat.com>
 
-commit 6d6340672ba3a99c4cf7af79c2edf7aa25595c84 upstream.
+commit 880a3a5325489a143269a8e172e7563ebf9897bc upstream.
 
-The code that fixes the crashes in the following commit introduced a small
-memory leak:
+We're neglecting to clear the umask after it's set, which can cause a
+later unrelated rpc to (incorrectly) use the same umask if it happens to
+be processed by the same thread.
 
-commit 6a2cf8d3663e ("scsi: qla2xxx: Fix crashes in qla2x00_probe_one on probe failure")
+There's a more subtle problem here too:
 
-Fixing this requires a bit of reworking, which I've explained. Also provide
-some code cleanup.
+An NFSv4 compound request is decoded all in one pass before any
+operations are executed.
 
-There is a small window in qla2x00_probe_one where if qla2x00_alloc_queues
-fails, we end up never freeing req and rsp and leak 0xc0 and 0xc8 bytes
-respectively (the sizes of req and rsp).
+Currently we're setting current->fs->umask at the time we decode the
+compound.  In theory a single compound could contain multiple creates
+each setting a umask.  In that case we'd end up using whichever umask
+was passed in the *last* operation as the umask for all the creates,
+whether that was correct or not.
 
-I originally put in checks to test for this condition which were based on
-the incorrect assumption that if ha->rsp_q_map and ha->req_q_map were
-allocated, then rsp and req were allocated as well. This is incorrect.
-There is a window between these allocations:
+So, we should just be saving the umask at decode time and waiting to set
+it until we actually process the corresponding operation.
 
-       ret = qla2x00_mem_alloc(ha, req_length, rsp_length, &req, &rsp);
-                goto probe_hw_failed;
+In practice it's unlikely any client would do multiple creates in a
+single compound.  And even if it did they'd likely be from the same
+process (hence carry the same umask).  So this is a little academic, but
+we should get it right anyway.
 
-[if successful, both rsp and req allocated]
-
-       base_vha = qla2x00_create_host(sht, ha);
-                goto probe_hw_failed;
-
-       ret = qla2x00_request_irqs(ha, rsp);
-                goto probe_failed;
-
-       if (qla2x00_alloc_queues(ha, req, rsp)) {
-                goto probe_failed;
-
-[if successful, now ha->rsp_q_map and ha->req_q_map allocated]
-
-To simplify this, we should just set req and rsp to NULL after we free
-them. Sounds simple enough? The problem is that req and rsp are pointers
-defined in the qla2x00_probe_one and they are not always passed by reference
-to the routines that free them.
-
-Here are paths which can free req and rsp:
-
-PATH 1:
-qla2x00_probe_one
-   ret = qla2x00_mem_alloc(ha, req_length, rsp_length, &req, &rsp);
-   [req and rsp are passed by reference, but if this fails, we currently
-    do not NULL out req and rsp. Easily fixed]
-
-PATH 2:
-qla2x00_probe_one
-   failing in qla2x00_request_irqs or qla2x00_alloc_queues
-      probe_failed:
-         qla2x00_free_device(base_vha);
-            qla2x00_free_req_que(ha, req)
-            qla2x00_free_rsp_que(ha, rsp)
-
-PATH 3:
-qla2x00_probe_one:
-   failing in qla2x00_mem_alloc or qla2x00_create_host
-      probe_hw_failed:
-         qla2x00_free_req_que(ha, req)
-         qla2x00_free_rsp_que(ha, rsp)
-
-PATH 1: This should currently work, but it doesn't because rsp and rsp are
-not set to NULL in qla2x00_mem_alloc. Easily remedied.
-
-PATH 2: req and rsp aren't passed in at all to qla2x00_free_device but are
-derived from ha->req_q_map[0] and ha->rsp_q_map[0]. These are only set up if
-qla2x00_alloc_queues succeeds.
-
-In qla2x00_free_queues, we are protected from crashing if these don't exist
-because req_qid_map and rsp_qid_map are only set on their allocation. We are
-guarded in this way:
-
-        for (cnt = 0; cnt < ha->max_req_queues; cnt++) {
-                if (!test_bit(cnt, ha->req_qid_map))
-                        continue;
-
-PATH 3: This works. We haven't freed req or rsp yet (or they were never
-allocated if qla2x00_mem_alloc failed), so we'll attempt to free them here.
-
-To summarize, there are a few small changes to make this work correctly and
-(and for some cleanup):
-
-1) (For PATH 1) Set *rsp and *req to NULL in case of failure in
-qla2x00_mem_alloc so these are correctly set to NULL back in
-qla2x00_probe_one
-
-2) After jumping to probe_failed: and calling qla2x00_free_device,
-explicitly set rsp and req to NULL so further calls with these pointers do
-not crash, i.e. the free queue calls in the probe_hw_failed section we fall
-through to.
-
-3) Fix return code check in the call to qla2x00_alloc_queues. We currently
-drop the return code on the floor. The probe fails but the caller of the
-probe doesn't have an error code, so it attaches to pci. This can result in
-a crash on module shutdown.
-
-4) Remove unnecessary NULL checks in qla2x00_free_req_que,
-qla2x00_free_rsp_que, and the egregious NULL checks before kfrees and vfrees
-in qla2x00_mem_free.
-
-I tested this out running a scenario where the card breaks at various times
-during initialization. I made sure I forced every error exit path in
-qla2x00_probe_one.
-
-Cc: <stable@vger.kernel.org> # v4.16
-Fixes: 6a2cf8d3663e ("scsi: qla2xxx: Fix crashes in qla2x00_probe_one on probe failure")
-Signed-off-by: Bill Kuzeja <william.kuzeja@stratus.com>
-Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 47057abde515 (nfsd: add support for the umask attribute)
+Cc: stable@vger.kernel.org
+Reported-by: Lucash Stach <l.stach@pengutronix.de>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_os.c |   44 ++++++++++++++++++++----------------------
- 1 file changed, 21 insertions(+), 23 deletions(-)
+ fs/nfsd/nfs4proc.c |   12 ++++++++++--
+ fs/nfsd/nfs4xdr.c  |    8 +++-----
+ fs/nfsd/xdr4.h     |    2 ++
+ 3 files changed, 15 insertions(+), 7 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -466,9 +466,6 @@ fail_req_map:
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -32,6 +32,7 @@
+  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
++#include <linux/fs_struct.h>
+ #include <linux/file.h>
+ #include <linux/falloc.h>
+ #include <linux/slab.h>
+@@ -252,11 +253,13 @@ do_open_lookup(struct svc_rqst *rqstp, s
+ 		 * Note: create modes (UNCHECKED,GUARDED...) are the same
+ 		 * in NFSv4 as in v3 except EXCLUSIVE4_1.
+ 		 */
++		current->fs->umask = open->op_umask;
+ 		status = do_nfsd_create(rqstp, current_fh, open->op_fname.data,
+ 					open->op_fname.len, &open->op_iattr,
+ 					*resfh, open->op_createmode,
+ 					(u32 *)open->op_verf.data,
+ 					&open->op_truncate, &open->op_created);
++		current->fs->umask = 0;
  
- static void qla2x00_free_req_que(struct qla_hw_data *ha, struct req_que *req)
- {
--	if (!ha->req_q_map)
--		return;
--
- 	if (IS_QLAFX00(ha)) {
- 		if (req && req->ring_fx00)
- 			dma_free_coherent(&ha->pdev->dev,
-@@ -479,17 +476,14 @@ static void qla2x00_free_req_que(struct
- 		(req->length + 1) * sizeof(request_t),
- 		req->ring, req->dma);
+ 		if (!status && open->op_label.len)
+ 			nfsd4_security_inode_setsecctx(*resfh, &open->op_label, open->op_bmval);
+@@ -603,6 +606,7 @@ nfsd4_create(struct svc_rqst *rqstp, str
+ 	if (status)
+ 		return status;
  
--	if (req) {
-+	if (req)
- 		kfree(req->outstanding_cmds);
--		kfree(req);
--	}
-+
-+	kfree(req);
++	current->fs->umask = create->cr_umask;
+ 	switch (create->cr_type) {
+ 	case NF4LNK:
+ 		status = nfsd_symlink(rqstp, &cstate->current_fh,
+@@ -611,20 +615,22 @@ nfsd4_create(struct svc_rqst *rqstp, str
+ 		break;
+ 
+ 	case NF4BLK:
++		status = nfserr_inval;
+ 		rdev = MKDEV(create->cr_specdata1, create->cr_specdata2);
+ 		if (MAJOR(rdev) != create->cr_specdata1 ||
+ 		    MINOR(rdev) != create->cr_specdata2)
+-			return nfserr_inval;
++			goto out_umask;
+ 		status = nfsd_create(rqstp, &cstate->current_fh,
+ 				     create->cr_name, create->cr_namelen,
+ 				     &create->cr_iattr, S_IFBLK, rdev, &resfh);
+ 		break;
+ 
+ 	case NF4CHR:
++		status = nfserr_inval;
+ 		rdev = MKDEV(create->cr_specdata1, create->cr_specdata2);
+ 		if (MAJOR(rdev) != create->cr_specdata1 ||
+ 		    MINOR(rdev) != create->cr_specdata2)
+-			return nfserr_inval;
++			goto out_umask;
+ 		status = nfsd_create(rqstp, &cstate->current_fh,
+ 				     create->cr_name, create->cr_namelen,
+ 				     &create->cr_iattr,S_IFCHR, rdev, &resfh);
+@@ -668,6 +674,8 @@ nfsd4_create(struct svc_rqst *rqstp, str
+ 	fh_dup2(&cstate->current_fh, &resfh);
+ out:
+ 	fh_put(&resfh);
++out_umask:
++	current->fs->umask = 0;
+ 	return status;
  }
  
- static void qla2x00_free_rsp_que(struct qla_hw_data *ha, struct rsp_que *rsp)
- {
--	if (!ha->rsp_q_map)
--		return;
--
- 	if (IS_QLAFX00(ha)) {
- 		if (rsp && rsp->ring)
- 			dma_free_coherent(&ha->pdev->dev,
-@@ -500,8 +494,7 @@ static void qla2x00_free_rsp_que(struct
- 		(rsp->length + 1) * sizeof(response_t),
- 		rsp->ring, rsp->dma);
- 	}
--	if (rsp)
--		kfree(rsp);
-+	kfree(rsp);
- }
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -33,7 +33,6 @@
+  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
  
- static void qla2x00_free_queues(struct qla_hw_data *ha)
-@@ -3083,7 +3076,8 @@ qla2x00_probe_one(struct pci_dev *pdev,
- 		goto probe_failed;
+-#include <linux/fs_struct.h>
+ #include <linux/file.h>
+ #include <linux/slab.h>
+ #include <linux/namei.h>
+@@ -683,7 +682,7 @@ nfsd4_decode_create(struct nfsd4_compoun
  
- 	/* Alloc arrays of request and response ring ptrs */
--	if (qla2x00_alloc_queues(ha, req, rsp)) {
-+	ret = qla2x00_alloc_queues(ha, req, rsp);
-+	if (ret) {
- 		ql_log(ql_log_fatal, base_vha, 0x003d,
- 		    "Failed to allocate memory for queue pointers..."
- 		    "aborting.\n");
-@@ -3384,8 +3378,15 @@ probe_failed:
- 	}
+ 	status = nfsd4_decode_fattr(argp, create->cr_bmval, &create->cr_iattr,
+ 				    &create->cr_acl, &create->cr_label,
+-				    &current->fs->umask);
++				    &create->cr_umask);
+ 	if (status)
+ 		goto out;
  
- 	qla2x00_free_device(base_vha);
--
- 	scsi_host_put(base_vha->host);
-+	/*
-+	 * Need to NULL out local req/rsp after
-+	 * qla2x00_free_device => qla2x00_free_queues frees
-+	 * what these are pointing to. Or else we'll
-+	 * fall over below in qla2x00_free_req/rsp_que.
-+	 */
-+	req = NULL;
-+	rsp = NULL;
- 
- probe_hw_failed:
- 	qla2x00_mem_free(ha);
-@@ -4078,6 +4079,7 @@ fail_npiv_info:
- 	(*rsp)->dma = 0;
- fail_rsp_ring:
- 	kfree(*rsp);
-+	*rsp = NULL;
- fail_rsp:
- 	dma_free_coherent(&ha->pdev->dev, ((*req)->length + 1) *
- 		sizeof(request_t), (*req)->ring, (*req)->dma);
-@@ -4085,6 +4087,7 @@ fail_rsp:
- 	(*req)->dma = 0;
- fail_req_ring:
- 	kfree(*req);
-+	*req = NULL;
- fail_req:
- 	dma_free_coherent(&ha->pdev->dev, sizeof(struct ct_sns_pkt),
- 		ha->ct_sns, ha->ct_sns_dma);
-@@ -4452,16 +4455,11 @@ qla2x00_mem_free(struct qla_hw_data *ha)
- 		dma_free_coherent(&ha->pdev->dev, ha->init_cb_size,
- 			ha->init_cb, ha->init_cb_dma);
- 
--	if (ha->optrom_buffer)
--		vfree(ha->optrom_buffer);
--	if (ha->nvram)
--		kfree(ha->nvram);
--	if (ha->npiv_info)
--		kfree(ha->npiv_info);
--	if (ha->swl)
--		kfree(ha->swl);
--	if (ha->loop_id_map)
--		kfree(ha->loop_id_map);
-+	vfree(ha->optrom_buffer);
-+	kfree(ha->nvram);
-+	kfree(ha->npiv_info);
-+	kfree(ha->swl);
-+	kfree(ha->loop_id_map);
- 
- 	ha->srb_mempool = NULL;
- 	ha->ctx_mempool = NULL;
+@@ -928,7 +927,6 @@ nfsd4_decode_open(struct nfsd4_compounda
+ 	case NFS4_OPEN_NOCREATE:
+ 		break;
+ 	case NFS4_OPEN_CREATE:
+-		current->fs->umask = 0;
+ 		READ_BUF(4);
+ 		open->op_createmode = be32_to_cpup(p++);
+ 		switch (open->op_createmode) {
+@@ -936,7 +934,7 @@ nfsd4_decode_open(struct nfsd4_compounda
+ 		case NFS4_CREATE_GUARDED:
+ 			status = nfsd4_decode_fattr(argp, open->op_bmval,
+ 				&open->op_iattr, &open->op_acl, &open->op_label,
+-				&current->fs->umask);
++				&open->op_umask);
+ 			if (status)
+ 				goto out;
+ 			break;
+@@ -951,7 +949,7 @@ nfsd4_decode_open(struct nfsd4_compounda
+ 			COPYMEM(open->op_verf.data, NFS4_VERIFIER_SIZE);
+ 			status = nfsd4_decode_fattr(argp, open->op_bmval,
+ 				&open->op_iattr, &open->op_acl, &open->op_label,
+-				&current->fs->umask);
++				&open->op_umask);
+ 			if (status)
+ 				goto out;
+ 			break;
+--- a/fs/nfsd/xdr4.h
++++ b/fs/nfsd/xdr4.h
+@@ -118,6 +118,7 @@ struct nfsd4_create {
+ 	} u;
+ 	u32		cr_bmval[3];        /* request */
+ 	struct iattr	cr_iattr;           /* request */
++	int		cr_umask;           /* request */
+ 	struct nfsd4_change_info  cr_cinfo; /* response */
+ 	struct nfs4_acl *cr_acl;
+ 	struct xdr_netobj cr_label;
+@@ -228,6 +229,7 @@ struct nfsd4_open {
+ 	u32		op_why_no_deleg;    /* response - DELEG_NONE_EXT only */
+ 	u32		op_create;     	    /* request */
+ 	u32		op_createmode;      /* request */
++	int		op_umask;           /* request */
+ 	u32		op_bmval[3];        /* request */
+ 	struct iattr	op_iattr;           /* UNCHECKED4, GUARDED4, EXCLUSIVE4_1 */
+ 	nfs4_verifier	op_verf __attribute__((aligned(32)));
