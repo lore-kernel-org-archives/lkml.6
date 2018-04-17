@@ -1,76 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755265AbeDQQfO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:35:14 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:49638 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754462AbeDQQfL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:35:11 -0400
-Date: Tue, 17 Apr 2018 09:35:09 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Vitaly Wool <vitalywool@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, mawilcox@microsoft.com,
-        asavery@chromium.org, gwendal@chromium.org
-Subject: Re: Crashes/hung tasks with z3pool under memory pressure
-Message-ID: <20180417163509.GA4922@roeck-us.net>
-References: <20180417160032.46915216@seldlx21914.corpusers.net>
+        id S1755237AbeDQQfc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:35:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56036 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754093AbeDQQfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:35:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B16021838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 17 Apr 2018 13:35:27 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
+ x86 syscall func names
+Message-ID: <20180417163527.GA7775@kernel.org>
+References: <20180417115440.2145f7f5@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180417160032.46915216@seldlx21914.corpusers.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <20180417115440.2145f7f5@gandalf.local.home>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 04:00:32PM +0200, Vitaly Wool wrote:
-> Hi Guenter,
+Em Tue, Apr 17, 2018 at 11:54:40AM -0400, Steven Rostedt escreveu:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> > [ ... ]
-> > > Ugh. Could you please keep that patch and apply this on top:
-> > > 
-> > > diff --git a/mm/z3fold.c b/mm/z3fold.c
-> > > index c0bca6153b95..e8a80d044d9e 100644
-> > > --- a/mm/z3fold.c
-> > > +++ b/mm/z3fold.c
-> > > @@ -840,6 +840,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
-> > >                       kref_get(&zhdr->refcount);
-> > >                       list_del_init(&zhdr->buddy);
-> > >                       zhdr->cpu = -1;
-> > > +                     break;
-> > >               }
-> > >               list_del_init(&page->lru);
-> > > 
-> > Much better, in a way. The system now takes much longer to crash,
-> > and the crash reason is a bit different. The log is too long to attach,
-> > so I copied it to [1].
-> > 
-> > crashdump.0002                  Latest log
-> > 000[12]-Fix-attempt-[12].patch  Patches applied on top of v4.17.0-rc1.
+> Arnaldo noticed that the latest kernel is missing the syscall event system
+> directory in x86. I bisected it down to d5a00528b58c ("syscalls/core,
+> syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()").
 > 
-> thanks for the update. Let's start from a clean sheet. I believe this patch has to be applied anyway so could you please check if it solves the problem. 
+> The system call trace events are special, as there is only one trace event
+> for all system calls (the raw_syscalls). But a macro that wraps the system
+> calls creates meta data for them that copies the name to find the system
+> call that maps to the system call table (the number). At boot up, it does a
+> kallsyms lookup for this mapping. If it does not find a function, then that
+> system call is ignored.
 > 
+> Because the x86 system calls had "__x86_" appended to the "sys" for the
+> names, they do not match the default compare algorithm. As this was a
+> problem for power pc, the algorithm can be overwritten by the architecture.
+> The solution is to have x86 have its own algorithm to do the compare and
+> this brings back the system call trace events.
+> 
+> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Getting better; the log is much less noisy. Unfortunately, there are still
-locking problems, resulting in a hung task. I copied the log message to [1].
-This is with [2] applied on top of v4.17-rc1.
+[root@jouet ~]# perf test openat
+ 2: Detect openat syscall event                           : Ok
+ 3: Detect openat syscall event on all cpus               : Ok
+15: syscalls:sys_enter_openat event fields                : Ok
+[root@jouet ~]#
 
-Guenter
+[root@jouet ~]# perf trace -e nanosleep,syscalls:*nanosleep sleep 1
+     0.000 (         ): syscalls:sys_enter_nanosleep:rqtp: 0x7ffd9f737950, rmtp: 0x00000000
+     0.009 (         ): sleep/7905 nanosleep(rqtp: 0x7ffd9f737950                                        ) ...
+  1000.204 (         ): syscalls:sys_exit_nanosleep:0x0
+     0.009 (1000.217 ms): sleep/7905  ... [continued]: nanosleep()) = 0
+[root@jouet ~]#
 
----
-[1] http://server.roeck-us.net/qemu/z3pool/crashdump.0003
-[2] http://server.roeck-us.net/qemu/z3pool/0001-Fix-attempt-3.patch
+Works, so the regression seems to be fixed, without looking at the code
+that much:
+
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+- Arnaldo
