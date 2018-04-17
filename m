@@ -1,336 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752357AbeDQPFw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:05:52 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:25694 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbeDQPFt (ORCPT
+        id S1752690AbeDQPHr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:07:47 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41233 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751204AbeDQPHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:05:49 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w3HF5jmG029904
-X-Nifty-SrcIP: [209.85.213.43]
-X-Google-Smtp-Source: AIpwx48GM8Vumtr8P2K3HfkkZj75awArgVAnT3KjJ+PDBRGle4Zi9INO7TIRMKiJZM0snsWXFzpPlpA7gGA4xi514XM=
-MIME-Version: 1.0
-In-Reply-To: <9086cd96-bbeb-fa6e-6a62-8869ae8c7ee3@infradead.org>
-References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
- <1523595999-27433-18-git-send-email-yamada.masahiro@socionext.com> <9086cd96-bbeb-fa6e-6a62-8869ae8c7ee3@infradead.org>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 18 Apr 2018 00:05:04 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASXyB5ggr34eTOsw1gjEaWB9qxC31MfG4qbBtyFrBGkFg@mail.gmail.com>
-Message-ID: <CAK7LNASXyB5ggr34eTOsw1gjEaWB9qxC31MfG4qbBtyFrBGkFg@mail.gmail.com>
-Subject: Re: [PATCH 17/30] Documentation: kconfig: document a new Kconfig
- macro language
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Kees Cook <keescook@chromium.org>,
-        Emese Revfy <re.emese@gmail.com>, X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Apr 2018 11:07:44 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180417150741euoutp02ed1e5ef384f3a68759e4474e3dbeef8b~mQZvvlwpp2001420014euoutp02W
+X-AuditID: cbfec7f2-5ffe19c000011644-3f-5ad60dbbc92e
+Subject: Re: [PATCH v2] X.509: unpack RSA signatureValue field from BIT
+ STRING
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        David Howells <dhowells@redhat.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Message-id: <f29df54e-48e1-12e0-f2d2-fd8353cc445f@partner.samsung.com>
+Date: Tue, 17 Apr 2018 17:07:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
+MIME-version: 1.0
+In-reply-to: <6f5cdb8a-809e-6651-0e32-711d415a8b38@maciej.szmigiero.name>
+Content-type: text/plain; charset="iso-8859-2"
+Content-language: en-US
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djP87q7ea9FGcy5ZGwx53wLi8W7pt8s
+        Fj+uTGKx6H4lY7Fu/WImi613mtgs7t/7yWRxedccNosPPY/YLA4ufcZscf7COXaLI1P2sTrw
+        eLRe+svmsWXlTSaPbQdUPa7tjvTY13+YxaPne7LH+31X2Tw+b5IL4IjisklJzcksSy3St0vg
+        ylgycwpbwU72iqOPNzA3MP5i7WLk5JAQMJF49eQNmC0ksIJRYtmUrC5GLiD7M6PE7uYmNpii
+        E/1tjBCJZYwSVz5+ZYFwnjFKfF91nBGkSlggQOLwnl1gtohArMSr2StZQYqYBV4zSbx985gF
+        JMEmYC7xaPsZJhCbV8BNYnnjK7AGFgFViaur7oLFRQUiJJqe/2SHqBGU+DH5Hlgvp4CnxLTn
+        r4GGcgAN1ZPYc8QYJMwsIC7R3HqTBcKWl9i85i0zyF4Jgf9sEi9n3mWBeMFFYuWJq+wQtrDE
+        q+NboGwZic6Og0wQdrnEpi1r2SGaGxgl1rxvYoRIWEscPn6RFWIDn8SkbdOZQY6QEOCV6GgT
+        gijxkLj05SQzhO0o0bb3AjSE5jBKtD5vZZnAKDcLyT+zEH6YheSHWUh+WMDIsopRPLW0ODc9
+        tdgwL7Vcrzgxt7g0L10vOT93EyMwPZ3+d/zTDsavl5IOMQpwMCrx8ErsuBIlxJpYVlyZe4hR
+        goNZSYR352OgEG9KYmVValF+fFFpTmrxIUZpDhYlcd44jbooIYH0xJLU7NTUgtQimCwTB6dU
+        A+P2uxHVvztehiw5Jz0pO2r9Xu9Lv5TUri1+2lJsu7v9idVHVj1HQfm9pqpaogdLOSyM3Yoc
+        2WL/nGWR6nCQ3pU16w3TvXm3ThrFqr1edGORyUpRvuSbfJu2HNyqe2NBxN0XnzcU7z2dFr8j
+        0zq0+YJDWonXkvNzY++fMyw79cCZ0by5YJ1A7gYlluKMREMt5qLiRAAKku/3SwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42I5/e/4Zd1dvNeiDNZPk7aYc76FxeJd028W
+        ix9XJrFYdL+SsVi3fjGTxdY7TWwW9+/9ZLK4vGsOm8WHnkdsFgeXPmO2OH/hHLvFkSn7WB14
+        PFov/WXz2LLyJpPHtgOqHtd2R3rs6z/M4tHzPdnj/b6rbB6fN8kFcERx2aSk5mSWpRbp2yVw
+        ZSyZOYWtYCd7xdHHG5gbGH+xdjFyckgImEic6G9j7GLk4hASWMIosXH1VmaQhJDAM0aJI0tr
+        QWxhAT+Jd1f/gDWICMRKXPt3gRmkgVngNZNE6/mzjBAN8xglZn32ArHZBMwlHm0/wwRi8wq4
+        SSxvfAVWwyKgKnF11V2wuKhAhMS985/YIGoEJX5MvscCYnMKeEpMe/4aaBkH0AIdia+TIkDC
+        zALiEs2tN1kgbHmJzWveMk9gFJiFpHsWQscsJB2zkHQsYGRZxSiSWlqcm55bbKhXnJhbXJqX
+        rpecn7uJERhB24793LyD8dLG4EOMAhyMSjy8EjuuRAmxJpYVV+YeYpTgYFYS4d35GCjEm5JY
+        WZValB9fVJqTWnyIUZqDRUmc97xBZZSQQHpiSWp2ampBahFMlomDU6qB0TPlvroWm++TkuOr
+        rSa9nvTjucyhR3zrJ0T326bLvTrZcEW54tp7i3Nbf3e8ZNm225tNv3C3RdP10/nOD9oCL57n
+        +GSkaLOxZlrYVq15cffrjFc+z+d97StqES9d/Pgq55sI9aK3ynOybHNDOBJ3crPeKuSK+rji
+        i8OElzptKTsDhBWP3HpyRomlOCPRUIu5qDgRAJkeUGucAgAA
+X-CMS-MailID: 20180417150738eucas1p17e5c715fdd41d59888a9dd747f5bb330
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180417134032epcas3p21dbb2d3a6d8650cd64e147d2ce89e6ea
+X-RootMTR: 20180417134032epcas3p21dbb2d3a6d8650cd64e147d2ce89e6ea
+References: <CGME20180417134032epcas3p21dbb2d3a6d8650cd64e147d2ce89e6ea@epcas3p2.samsung.com>
+        <6f5cdb8a-809e-6651-0e32-711d415a8b38@maciej.szmigiero.name>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-15 8:33 GMT+09:00 Randy Dunlap <rdunlap@infradead.org>:
-> On 04/12/18 22:06, Masahiro Yamada wrote:
->> Add a document for the macro language introduced to Kconfig.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->> Changes in v3: None
->> Changes in v2: None
->>
->>  Documentation/kbuild/kconfig-macro-language.txt | 179 ++++++++++++++++++++++++
->>  MAINTAINERS                                     |   2 +-
->>  2 files changed, 180 insertions(+), 1 deletion(-)
->>  create mode 100644 Documentation/kbuild/kconfig-macro-language.txt
->>
->> diff --git a/Documentation/kbuild/kconfig-macro-language.txt b/Documentation/kbuild/kconfig-macro-language.txt
->> new file mode 100644
->> index 0000000..1f6281b
->> --- /dev/null
->> +++ b/Documentation/kbuild/kconfig-macro-language.txt
->> @@ -0,0 +1,179 @@
->> +Concept
->> +-------
->> +
->> +The basic idea was inspired by Make. When we look at Make, we notice sort of
->> +two languages in one. One language describes dependency graphs consisting of
->> +targets and prerequisites. The other is a macro language for performing textual
->> +substitution.
->> +
->> +There is clear distinction between the two language stages. For example, you
->> +can write a makefile like follows:
->> +
->> +    APP := foo
->> +    SRC := foo.c
->> +    CC := gcc
->> +
->> +    $(APP): $(SRC)
->> +            $(CC) -o $(APP) $(SRC)
->> +
->> +The macro language replaces the variable references with their expanded form,
->> +and handles as if the source file were input like follows:
->> +
->> +    foo: foo.c
->> +            gcc -o foo foo.c
->> +
->> +Then, Make analyzes the dependency graph and determines the targets to be
->> +updated.
->> +
->> +The idea is quite similar in Kconfig - it is possible to describe a Kconfig
->> +file like this:
->> +
->> +    CC := gcc
->> +
->> +    config CC_HAS_FOO
->> +            def_bool $(shell $(srctree)/scripts/gcc-check-foo.sh $(CC))
->> +
->> +The macro language in Kconfig processes the source file into the following
->> +intermediate:
->> +
->> +    config CC_HAS_FOO
->> +            def_bool y
->> +
->> +Then, Kconfig moves onto the evaluation stage to resolve inter-symbol
->> +dependency, which is explained in kconfig-language.txt.
->> +
->> +
->> +Variables
->> +---------
->> +
->> +Like in Make, a variable in Kconfig works as a macro variable.  A macro
->> +variable is expanded "in place" to yield a text string that may then expanded
->
->                                                                may then be expanded
->
->> +further. To get the value of a variable, enclose the variable name in $( ).
->> +As a special case, single-letter variable names can omit the parentheses and is
->
->                                                                             and are
->
->> +simply referenced like $X. Unlike Make, Kconfig does not support curly braces
->> +as in ${CC}.
->> +
->> +There are two types of variables: simply expanded variables and recursively
->> +expanded variables.
->> +
->> +A simply expanded variable is defined using the := assignment operator. Its
->> +righthand side is expanded immediately upon reading the line from the Kconfig
->> +file.
->> +
->> +A recursively expanded variable is defined using the = assignment operator.
->> +Its righthand side is simply stored as the value of the variable without
->> +expanding it in any way. Instead, the expansion is performed when the variable
->> +is used.
->> +
->> +There is another type of assignment operator; += is used to append text to a
->> +variable. The righthand side of += is expanded immediately if the lefthand
->> +side was originally defined as a simple variable. Otherwise, its evaluation is
->> +deferred.
->> +
->> +
->> +Functions
->> +---------
->> +
->> +Like Make, Kconfig supports both built-in and user-defined functions. A
->> +function invocation looks much like a variable reference, but includes one or
->> +more parameters separated by commas:
->> +
->> +  $(function-name arg1, arg2, arg3)
->> +
->> +Some functions are implemented as a built-in function. Currently, Kconfig
->> +supports the following:
->> +
->> + - $(shell command)
->> +
->> +  The 'shell' function accepts a single argument that is expanded and passed
->> +  to a subshell for execution. The standard output of the command is then read
->> +  and returned as the value of the function. Every newline in the output is
->> +  replaced with a space. Any trailing newlines are deleted. The standard error
->> +  is not returned, nor is any program exit status.
->> +
->> + - $(warning text)
->> +
->> +  The 'warning' function prints its arguments to stderr. The output is prefixed
->> +  with the name of the current Kconfig file, the current line number. It
->
->                                           file and the current line number. It
->
->> +  evaluates to an empty string.
->> +
->> + - $(info text)
->> +
->> +  The 'info' function is similar to 'warning' except that it sends its argument
->> +  to stdout without any Kconfig name or line number.
->
-> Are current Kconfig file name and line number available so that someone can
-> construct their own $(info message) messages?
-
-Not available for now, but it would be easy to support such special variables
-that expand to the current file name, and line number.
-For example,  '$(file)' and '$(lineno)' ?
 
 
->> +
->> +A user-defined function is defined by using the = operator. The parameters are
->> +referenced within the body definition with $1, $2, etc. (or $(1), $(2), etc.)
->> +In fact, a user-defined function is internally treated as a recursive variable.
->
-> so the difference is just whether there are arguments?
-> A recursive variable does not have arguments and a function always has at least
-> one argument?
+On 17.04.2018 15:39, Maciej S. Szmigiero wrote:
+> The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
+> For RSA signatures this BIT STRING is of so-called primitive subtype, which
+> contains a u8 prefix indicating a count of unused bits in the encoding.
+> 
+> We have to strip this prefix from signature data, just as we already do for
+> key data in x509_extract_key_data() function.
+> 
+> This wasn't noticed earlier because this prefix byte is zero for RSA key
+> sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
+> prefixes has no bearing on its value.
+> 
+> The signature length, however was incorrect, which is a problem for RSA
+> implementations that need it to be exactly correct (like AMD CCP).
+> 
+> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
-At least in my implementation, yes, they are implemented in the same way.
-The difference is "what we call it".
+your e-mail address looks incorrect
 
-I just called it in an intuitive name.
-
-If there is no argument, people generally assume it is a variable.
-If it takes arguments, a function.
-But, in fact, they are the same.
-
-
-
-Probably, similar situation in GNU Make.
-
-For example, you can use $(call ...) to expand a variable
-
-Test Makefile:
-
-
-A = 1
-
-all:
-       @echo $(A)
-       @echo $(call A)
-
-
-Both print the value of A.
-
-
-
-
-
-
-
-
->
->> +
->> +A user-defined function is referenced in the same way as a built-in function:
->> +
->> +    $(my_func, arg0, arg1, arg2)
->
-> Syntax given above is:
-> +  $(function-name arg1, arg2, arg3)
->
-> with no comma after the function name.  Which is it?
-
-
-Sorry, no comma after the function name.
-
-But, I personally think a comma after the function name is more consistent.
-
-
-
-
->> +
->> +Note 1:
->> +There is a slight difference in the whitespace handling of the function call
->> +between Make and Kconfig. In Make, leading whitespaces are trimmed from the
->> +first argument. So, $(info    FOO) is equivalent to $(info FOO). Kconfig keeps
->> +any leading whitespaces except the one right after the function name, which
->> +works as a separator. So, $(info    FOO) prints "   FOO" to the stdout.
->> +
->> +Note 2:
->> +In Make, a user-defined function is referenced by using a built-in function,
->> +'call', like this:
->> +
->> +    $(call my_func, arg0, arg1, arg2)
->> +
->> +However, Kconfig did not adopt this form just for the purpose of shortening the
->> +syntax.
->> +
->> +
->> +Caveats
->> +-------
->> +
->> +A variable (or function) can not be expanded across tokens. So, you can not use
->
->                             cannot                                     cannot
->
->> +a variable as a shorthand for an expression that consists of multiple tokens.
->> +The following works:
->> +
->> +    RANGE_MIN := 1
->> +    RANGE_MAX := 3
->> +
->> +    config FOO
->> +            int "foo"
->> +            range $(RANGE_MIN) $(RANGE_MAX)
->> +
->> +But, the following does not work:
->> +
->> +    RANGES := 1 3
->> +
->> +    config FOO
->> +            int "foo"
->> +            range $(RANGES)
->> +
->> +A variable can not be expanded to any keyword in Kconfig.  The following does
->
->               cannot
->
->> +not work:
->> +
->> +    MY_TYPE := tristate
->> +
->> +    config FOO
->> +            $(MY_TYPE) "foo"
->> +            default y
->> +
->> +Obviously from the design, $(shell command) is expanded in the textual
->> +substitution phase.  You can not pass symbols to the 'shell' function.
->
->                             cannot
->
->> +The following does not work as expected.
->> +
->> +    config ENDIAN_OPTION
->> +            string
->> +            default "-mbig-endian" if CPU_BIG_ENDIAN
->> +            default "-mlittle-endian" if CPU_LITTLE_ENDIAN
->> +
->> +    config CC_HAS_ENDIAN_OPTION
->> +            def_bool $(shell $(srctree)/scripts/gcc-check-option ENDIAN_OPTION)
->> +
->> +Instead, you can do like follows so that any function call is statically
->> +expanded.
->> +
->> +    config CC_HAS_ENDIAN_OPTION
->> +            bool
->
-> fix indentation?
-
-Good catch.  I will fix them all.
-
-
-
->> +         default $(shell $(srctree)/scripts/gcc-check-option -mbig-endian) if CPU_BIG_ENDIAN
->> +         default $(shell $(srctree)/scripts/gcc-check-option -mlittle-endian) if CPU_LITTLE_ENDIAN
->
->
-> --
-> ~Randy
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+[...]
 
 -- 
-Best Regards
-Masahiro Yamada
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
