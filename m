@@ -1,37 +1,83 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+9P8pBMwyDiybDeAU3CRQkgep8lYZ2My3Mq/KujUq+KD8ny23eVkuc0DzGuAszosJ5hOBe
-ARC-Seal: i=1; a=rsa-sha256; t=1523980900; cv=none;
-        d=google.com; s=arc-20160816;
-        b=oshXtrb/XRjpKo1fRJlFzk9xG5xProk7CJAzg0qxptYLTrca+tdB8mOMwcqVBN7fNK
-         bRMJWlDlaHB+1mCc9S3VGKsKHIGEsZOaZKEEDQJ1IIEduR9m6HJg3ez31KWRVqtluyY5
-         uQb2oJcVSdc+KscKXAB+nTwoNgBSDQ78szVCDPgebR6Uvm1pt/LTzHjdSc331jY8C4jh
-         Ko0EHRc2HuDS4HhsSA6OklLYNRtEJ81bdOJ2RunbigvFaM4ItTcF0nRxdju1O48h/pX1
-         8ilnZWJEplTL1Ew3PXOou2dqgdD6e9LRePwkiXHs7BGy48V9JNfQONAb81BF1N6Fa74s
-         X5+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=sp2HHcNn5lgUo5F/HWrfP9Rgq/Bp3c0+Zhl6LzgPX3Q=;
-        b=cCIS7IrYql9JzIUQ1HdPuYZty2V3TqQSUP5wYcOUjf4MrukAmQIpjBlNBavRY3uO/B
-         o+cnlphcQrz9qPwobYjnwtemlPz0EhDTGHB1G8uPMkL02XVBJn4oNnWgUMpiAksxaW/t
-         6asWY7is7lt/iYqRLfSdcGAogHYxKBi+QBC1yw8yIOAP/c7yHxt0mBS+enZ5iMPstZOD
-         /l6zV8biwD5i5ghxchUat+R6c1gXMV1SdTyg6V3kqKPCDS7YWXbnP4ZXeHPTChOxByQw
-         uovcsP6YCkia8jVvsjOf2qyq2DdbD//qdRHznKAIVWk7kNPmYGD8Q7Zx/RQylx08U3D1
-         AYqw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2126129-1523980900-2-12075653545006088197
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523980899; b=NcHgvG9zk/g7NfzXhev908+LJ3NF+a0XEnDUPxssACiKwlSNT3
+    mJv5AhxaWru7tEyrcsnHZFuPAro57+2LosqsdfzUZ4u59eLM5SpreqevqARGyX+G
+    t+uieemiUEYc0caBg0R8tnixxV1Gz8AitKoc7gnjDGEJdF51B68aPgPj4lq/fhRy
+    IfkwEfM2nFPyaSmJaPOXQZ5Y6DY3aVn0+M9D/MNVD9UEd5u9fzQ9FG8Z9rPBjxKr
+    oPIGuuLZ4atF7MKsi+xDI2PkQlM4Vlv5ZoKeXqA9b+495FdhFNzmNJHqvRYpM64S
+    a5s40XvhDSutPhqCAP53FifMKtl0AAZ38OUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523980899; bh=rVs1uqfQX0BF7kn3xdi4fK6HXfgUfy
+    5Rni5v2Qm22s8=; b=SdW7DmRqzmu30ZhSXQCCUXKzj9KhN66bhLtmhA3/RUl+Ji
+    UTGaPCppWk81yGkTArDpo1i61z01IZDLInwwJFE+6OdXfpCNuZ59sL3L1u6GqoR9
+    Xi+/CWGZaWoGTkFAhEs87TWcXOmJ8aZGeTgKj71A93Jccd3Cc92EvA3O0VC/zd/D
+    8G8C4fb6Evyvvfg2JJKBUMkt2SeX4SXUGKypZJE9nznatNNOkBhAQeeIddAtZLB6
+    T+ncVsXB7ZHdbhM4kvaq4En54TH2UNQYfrRvxAvrKZs3RxWIYwJObizgo9IXm1Cp
+    icu0hWc6dPx9FtF5ckJT5bPkYUqi2E+95gEeA5NQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKgsYcY+8CYT4JL6YeL+B82PCNQ+bvQEQrNSeNWPT8G2QWAkE3rH4PMI7yhq9AtUNwpgG3YehwHxIMqVEjQEN+AFMqtQHddvG6U61X8yTUiwvvEBBj3n
+    LFQUQIYLyI0VqLrGgsRA/vZNmsT0oiIpRYv9QGmDJXVqt/dxzhDTxS6x9yI30cZaSDtfnqXmwdMK0+M3elykoNyvFr0Q/nyPdVqdnYDuyImScNzx8pKkYAwO
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
+    a=NSgSl6uiuIS8w7tqW_gA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753779AbeDQQBg (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 12:01:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60490 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753760AbeDQQBc (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 12:01:32 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.16 44/68] ovl: Set d->last properly during lookup
-Date: Tue, 17 Apr 2018 17:57:57 +0200
-Message-Id: <20180417155751.122616432@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Haberland <sth@linux.vnet.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.16 42/68] blk-mq: make sure that correct hctx->next_cpu is set
+Date: Tue, 17 Apr 2018 17:57:55 +0200
+Message-Id: <20180417155751.044663858@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -39,10 +85,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009796047020083?=
-X-GMAIL-MSGID: =?utf-8?q?1598009796047020083?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,79 +95,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vivek Goyal <vgoyal@redhat.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit 452061fd4521b2bf3225fc391dbe536e5f9c05e2 upstream.
+commit a1c735fb790745f94a359df45c11df4a69760389 upstream.
 
-d->last signifies that this is the last layer we are looking into and there
-is no more. And that means this allows for some optimzation opportunities
-during lookup. For example, in ovl_lookup_single() we don't have to check
-for opaque xattr of a directory is this is the last layer we are looking
-into (d->last = true).
+>From commit 20e4d81393196 (blk-mq: simplify queue mapping & schedule
+with each possisble CPU), one hctx can be mapped from all offline CPUs,
+then hctx->next_cpu can be set as wrong.
 
-But knowing for sure whether we are looking into last layer can be very
-tricky. If redirects are not enabled, then we can look at poe->numlower and
-figure out if the lookup we are about to is last layer or not. But if
-redircts are enabled then it is possible poe->numlower suggests that we are
-looking in last layer, but there is an absolute redirect present in found
-element and that redirects us to a layer in root and that means lookup will
-continue in lower layers further.
+This patch fixes this issue by making hctx->next_cpu pointing to the
+first CPU in hctx->cpumask if all CPUs in hctx->cpumask are offline.
 
-For example, consider following.
-
-/upperdir/pure (opaque=y)
-/upperdir/pure/foo (opaque=y,redirect=/bar)
-/lowerdir/bar
-
-In this case pure is "pure upper". When we look for "foo", that time
-poe->numlower=0. But that alone does not mean that we will not search for a
-merge candidate in /lowerdir. Absolute redirect changes that.
-
-IOW, d->last should not be set just based on poe->numlower if redirects are
-enabled. That can lead to setting d->last while it should not have and that
-means we will not check for opaque xattr while we should have.
-
-So do this.
-
- - If redirects are not enabled, then continue to rely on poe->numlower
-   information to determine if it is last layer or not.
-
- - If redirects are enabled, then set d->last = true only if this is the
-   last layer in root ovl_entry (roe).
-
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 02b69b284cd7 ("ovl: lookup redirects")
-Cc: <stable@vger.kernel.org> #v4.10
+Cc: Stefan Haberland <sth@linux.vnet.ibm.com>
+Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Fixes: 20e4d81393196 ("blk-mq: simplify queue mapping & schedule with each possisble CPU")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/namei.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ block/blk-mq.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -815,7 +815,7 @@ struct dentry *ovl_lookup(struct inode *
- 		.is_dir = false,
- 		.opaque = false,
- 		.stop = false,
--		.last = !poe->numlower,
-+		.last = ofs->config.redirect_follow ? false : !poe->numlower,
- 		.redirect = NULL,
- 	};
- 
-@@ -873,7 +873,11 @@ struct dentry *ovl_lookup(struct inode *
- 	for (i = 0; !d.stop && i < poe->numlower; i++) {
- 		struct ovl_path lower = poe->lowerstack[i];
- 
--		d.last = i == poe->numlower - 1;
-+		if (!ofs->config.redirect_follow)
-+			d.last = i == poe->numlower - 1;
-+		else
-+			d.last = lower.layer->idx == roe->numlower;
-+
- 		err = ovl_lookup_layer(lower.dentry, &d, &this);
- 		if (err)
- 			goto out_put;
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2439,6 +2439,8 @@ static void blk_mq_map_swqueue(struct re
+ 		 */
+ 		hctx->next_cpu = cpumask_first_and(hctx->cpumask,
+ 				cpu_online_mask);
++		if (hctx->next_cpu >= nr_cpu_ids)
++			hctx->next_cpu = cpumask_first(hctx->cpumask);
+ 		hctx->next_cpu_batch = BLK_MQ_CPU_WORK_BATCH;
+ 	}
+ }
