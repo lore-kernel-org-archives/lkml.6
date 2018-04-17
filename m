@@ -1,40 +1,37 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+UEZdzbcZit7DO+kJgNfs7ry1Veut8NM8KM1/ys9vfC4u7rvqHktLqLi9mGUgV8fef7PNx
-ARC-Seal: i=1; a=rsa-sha256; t=1523981346; cv=none;
+X-Google-Smtp-Source: AIpwx49L+WfDDt3lqDl0vH88I1vdL/GtSkFbgRp5DEv+q6P/+T2OD3pw8JdG4D9rnqOid3N8GScB
+ARC-Seal: i=1; a=rsa-sha256; t=1523981343; cv=none;
         d=google.com; s=arc-20160816;
-        b=fhQbRVcwl6mNCpfnXkNvVJpmOAQrH+GsbjG489c0MsBe6XBR8IlJri1t1A4/Ut+f+5
-         twheEmTxVcIbafDhUYqUimeZyyUbOiuFtUIMWNeCfU2k00ngiTkC/3R/lXBsD3jq1Glb
-         ZfMiKPLUlxKaLKpY2j8wVUbgyIotH+cNQ69ajP17tmtYyMOt/hvVNJMwlbcaQCysjHxq
-         ZGYoyB2lpKiDQVF5H53XgIUXhrp1/ll+9BTLyOQXPbgOuBD2xNe4JJ0Ga8A4YZEbukE1
-         nBto/8wnwZGhFYaLBVL363puwEkv17pPiNsCAms/fb3qIfgeKR2jSVeKlxdIrgPsDfZn
-         ed6g==
+        b=F8RqvbGDnd6s5FKpfoZBZ4vMLaw2jQIESCcYH+cuKxbtWdcavfO0kPq2Tz900d6C8F
+         CANLyyhAyaGde37wWkn7v7lHcf0MYxKPSeIuhDDzQ3gjHcKLtUxqRqjYYc7R0u7m7MGT
+         ZH2C9Q/fvsOSlq6olXa1jbkmLXypjZ178d6z/GK5MqBxwqgGtsOHFLTAPosVf7f4traz
+         BlmzY5mXtHP/X6p/fWKlRibz/VKnoTo67PdWr+dACtkBxUKVXd6xBRGRLdrSDBFoIRFL
+         CgsyiQvduXMBf3QMaoStkdQmcjUuugb8oYA4EPHCzrgY7YMC7grQTg7JiD8piGRPYGBz
+         qsMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=beb4xM8hnIH6wkwkxgTZ17oRM05hctvHBDVFUkGbl34=;
-        b=ZteOEYUmu2VnIHfnYzitG6NCCCGfdYWgwZWMX87jlmciysE5sgogZQgqt5iYk3ijlz
-         jJ6xBy7vg2OkQEVBHJgbWPuG8nIbXumgOW61fa6PSOP94MglLqDnm3wWq1XRwpnyYHkL
-         RxZVDn9cZN30ChgULtDzidZvHHJ5470ZgGKwt7YJe3kEL9jpyl/hhgCC0DyEpK7gkCgd
-         Uj3u7PMA7/4ZVQlsNDvJE/Pa/2sIxNzohYPwpEoD+BdzRA/huT7UKGo2NZHVJBU3cv5c
-         rbBzSvty1lt6AfKb0psHRI4wItB0dEwJoYGACdRbDQSQhCGXxH6qaEq9c0ytjVtglAdp
-         0XSA==
+        bh=ZQrQIrYTWshqL5/DeDO/AFOiEP9tzE9oB6/yiUBxCTU=;
+        b=pVGoJVFho5iXFQWmqpSM7CBEFOAFm4kFvMeCMCbiwm6ezwBPtsp+NPV31U3Jpb3R1R
+         mZmnO4k1Np6h/OJSxMOlxk39PxW1XHxvu+yciCH8ejUG9jnHjC+aJtMyYZl7SlLq+Wmx
+         HkHoaWkSJWuRCxHEumxR7vuQIfL65+EwHCL3gQ8sXsRVQt70f+faiqSkca+h5CASY0ys
+         d7spB9fgVjM9YcNyOcqJ6JRAIdx2/4XcHYRyeqilCrhznDkQPRl3FhfmjDdN3rMo6NRT
+         dyAen3NLau50+QbCcmW8N6jrm4ta2ritffOIS9RSR31TpT7DqrH8qcTviWvO5PA5wQPJ
+         Hs/g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dan Hettena <dhettena@nvidia.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Greg Hackmann <ghackmann@google.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.9 30/66] arm64: entry: Apply BP hardening for suspicious interrupts from EL0
-Date: Tue, 17 Apr 2018 17:59:03 +0200
-Message-Id: <20180417155647.179857158@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Dexuan Cui <decui@microsoft.com>,
+	Stephen Hemminger <sthemmin@microsoft.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>
+Subject: [PATCH 4.9 03/66] Drivers: hv: vmbus: do not mark HV_PCIE as perf_device
+Date: Tue, 17 Apr 2018 17:58:36 +0200
+Message-Id: <20180417155646.007046735@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010264510882542?=
-X-GMAIL-MSGID: =?utf-8?q?1598010264510882542?=
+X-GMAIL-THRID: =?utf-8?q?1598009716274677787?=
+X-GMAIL-MSGID: =?utf-8?q?1598010261658335666?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,58 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Dexuan Cui <decui@microsoft.com>
 
+commit 238064f13d057390a8c5e1a6a80f4f0a0ec46499 upstream.
 
-From: Will Deacon <will.deacon@arm.com>
+The pci-hyperv driver's channel callback hv_pci_onchannelcallback() is not
+really a hot path, so we don't need to mark it as a perf_device, meaning
+with this patch all HV_PCIE channels' target_cpu will be CPU0.
 
-commit 30d88c0e3ace625a92eead9ca0ad94093a8f59fe upstream.
-
-It is possible to take an IRQ from EL0 following a branch to a kernel
-address in such a way that the IRQ is prioritised over the instruction
-abort. Whilst an attacker would need to get the stars to align here,
-it might be sufficient with enough calibration so perform BP hardening
-in the rare case that we see a kernel address in the ELR when handling
-an IRQ from EL0.
-
-Reported-by: Dan Hettena <dhettena@nvidia.com>
-Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
-Tested-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: stable@vger.kernel.org
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/entry.S |    5 +++++
- arch/arm64/mm/fault.c     |    6 ++++++
- 2 files changed, 11 insertions(+)
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -686,6 +686,11 @@ el0_irq_naked:
- #endif
+---
+ drivers/hv/channel_mgmt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/hv/channel_mgmt.c
++++ b/drivers/hv/channel_mgmt.c
+@@ -70,7 +70,7 @@ static const struct vmbus_device vmbus_d
+ 	/* PCIE */
+ 	{ .dev_type = HV_PCIE,
+ 	  HV_PCIE_GUID,
+-	  .perf_device = true,
++	  .perf_device = false,
+ 	},
  
- 	ct_user_exit
-+#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-+	tbz	x22, #55, 1f
-+	bl	do_el0_irq_bp_hardening
-+1:
-+#endif
- 	irq_handler
- 
- #ifdef CONFIG_TRACE_IRQFLAGS
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -590,6 +590,12 @@ asmlinkage void __exception do_mem_abort
- 	arm64_notify_die("", regs, &info, esr);
- }
- 
-+asmlinkage void __exception do_el0_irq_bp_hardening(void)
-+{
-+	/* PC has already been checked in entry.S */
-+	arm64_apply_bp_hardening();
-+}
-+
- asmlinkage void __exception do_el0_ia_bp_hardening(unsigned long addr,
- 						   unsigned int esr,
- 						   struct pt_regs *regs)
+ 	/* Synthetic Frame Buffer */
