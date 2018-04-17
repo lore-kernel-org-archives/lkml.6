@@ -1,72 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753437AbeDQVcr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:32:47 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:23126 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752327AbeDQV2V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:28:21 -0400
-From: Murali Karicheri <m-karicheri2@ti.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
-        <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <nsekhar@ti.com>
-Subject: [net-next PATCH v4 07/13] net: netcp: ethss: map vlan priorities to zero flow
-Date: Tue, 17 Apr 2018 17:30:36 -0400
-Message-ID: <1524000642-23944-8-git-send-email-m-karicheri2@ti.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1524000642-23944-1-git-send-email-m-karicheri2@ti.com>
-References: <1524000642-23944-1-git-send-email-m-karicheri2@ti.com>
+        id S1753412AbeDQVdK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:33:10 -0400
+Received: from fieldses.org ([173.255.197.46]:35914 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752944AbeDQVdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 17:33:09 -0400
+Date: Tue, 17 Apr 2018 17:33:08 -0400
+From: "J. Bruce Fields" <bfields@fieldses.org>
+To: syzbot <syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com>
+Cc: anna.schumaker@netapp.com, davem@davemloft.net, jlayton@kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        trond.myklebust@primarydata.com
+Subject: Re: general protection fault in encode_rpcb_string
+Message-ID: <20180417213308.GC18217@fieldses.org>
+References: <f4f5e80803d08f47b9056a0366dd@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4f5e80803d08f47b9056a0366dd@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver currently support only vlan priority zero. So map the
-vlan priorities to zero flow in hardware.
+On Mon, Apr 16, 2018 at 09:02:01PM -0700, syzbot wrote:
+> syzbot hit the following crash on bpf-next commit
+> 5d1365940a68dd57b031b6e3c07d7d451cd69daf (Thu Apr 12 18:09:05 2018 +0000)
+> Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=4b98281f2401ab849f4b
+> 
+> So far this crash happened 2 times on bpf-next.
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6433835633868800
+> syzkaller reproducer:
+> https://syzkaller.appspot.com/x/repro.syz?id=6407311794896896
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=5861511176126464
 
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
----
- drivers/net/ethernet/ti/netcp_ethss.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Based on that, looks like it's attempting an nfs mount while causing
+kmalloc failures?
 
-diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 83acb72..91935e5 100644
---- a/drivers/net/ethernet/ti/netcp_ethss.c
-+++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -602,6 +602,7 @@ struct gbe_port_regs {
- struct gbe_port_regs_ofs {
- 	u16	port_vlan;
- 	u16	tx_pri_map;
-+	u16     rx_pri_map;
- 	u16	sa_lo;
- 	u16	sa_hi;
- 	u16	ts_ctl;
-@@ -2304,6 +2305,13 @@ static int gbe_slave_open(struct gbe_intf *gbe_intf)
- 		gbe_sgmii_rtreset(priv, slave, false);
- 	gbe_port_config(priv, slave, priv->rx_packet_max);
- 	gbe_set_slave_mac(slave, gbe_intf);
-+	/* For NU & 2U switch, map the vlan priorities to zero
-+	 * as we only configure to use priority 0
-+	 */
-+	if (IS_SS_ID_MU(priv))
-+		writel(HOST_TX_PRI_MAP_DEFAULT,
-+		       GBE_REG_ADDR(slave, port_regs, rx_pri_map));
-+
- 	/* enable forwarding */
- 	cpsw_ale_control_set(priv->ale, slave->port_num,
- 			     ALE_PORT_STATE, ALE_PORT_STATE_FORWARD);
-@@ -3005,6 +3013,7 @@ static int init_slave(struct gbe_priv *gbe_dev, struct gbe_slave *slave,
- 		/* Initialize  slave port register offsets */
- 		GBENU_SET_REG_OFS(slave, port_regs, port_vlan);
- 		GBENU_SET_REG_OFS(slave, port_regs, tx_pri_map);
-+		GBENU_SET_REG_OFS(slave, port_regs, rx_pri_map);
- 		GBENU_SET_REG_OFS(slave, port_regs, sa_lo);
- 		GBENU_SET_REG_OFS(slave, port_regs, sa_hi);
- 		GBENU_SET_REG_OFS(slave, port_regs, ts_ctl);
--- 
-1.9.1
+Probably one of rpcb->r_netid, r_addr, or r_owner was bad in
+rpcb_enc_getaddr.
+
+Hm, and previous log makes it look like it was an rpc_sockaddr2uaddr()
+in rpcb_getport_async() that was made to fail.  Do we need to check for
+failure of:
+
+	map->r_addr = rpc_sockaddr2uaddr(sap, GFP_ATOMIC);
+
+?
+
+--b.
+
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=-5947642240294114534
+> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+> 
+> RBP: 00000000006dbc50 R08: 000000002000a000 R09: 0000000000003437
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe464ffed80
+> R13: 0030656c69662f2e R14: ffffffffffffffff R15: 0000000000000006
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 0 PID: 1861 Comm: kworker/u4:4 Not tainted 4.16.0+ #2
+> Hardware name: Google Google Compute Engine/Google Compute Engine,
+> BIOS Google 01/01/2011
+> Workqueue: rpciod rpc_async_schedule
+> RIP: 0010:strlen+0x1f/0xa0 lib/string.c:479
+> RSP: 0018:ffff8801cf75f318 EFLAGS: 00010296
+> RAX: dffffc0000000000 RBX: ffff8801cf68f200 RCX: ffffffff86a8c407
+> RDX: 0000000000000000 RSI: ffffffff86a84d7b RDI: 0000000000000000
+> RBP: ffff8801cf75f330 R08: ffff8801cf7de080 R09: ffffed0039ea3d43
+> R10: ffffed0039ea3d43 R11: ffff8801cf51ea1f R12: 0000000000000000
+> R13: 0000000002000000 R14: 0000000000000000 R15: ffff8801cf75f3e0
+> FS:  0000000000000000(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f64808a4000 CR3: 00000001b566a000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  strlen include/linux/string.h:267 [inline]
+>  encode_rpcb_string+0x23/0x70 net/sunrpc/rpcb_clnt.c:914
+>  rpcb_enc_getaddr+0x146/0x1f0 net/sunrpc/rpcb_clnt.c:940
+>  rpcauth_wrap_req_encode net/sunrpc/auth.c:777 [inline]
+>  rpcauth_wrap_req+0x1a8/0x230 net/sunrpc/auth.c:791
+>  rpc_xdr_encode net/sunrpc/clnt.c:1754 [inline]
+>  call_transmit+0x8a9/0xfe0 net/sunrpc/clnt.c:1949
+>  __rpc_execute+0x28a/0xfe0 net/sunrpc/sched.c:784
+>  rpc_async_schedule+0x16/0x20 net/sunrpc/sched.c:857
+>  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+>  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+>  kthread+0x345/0x410 kernel/kthread.c:238
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
+> Code: 37 ff ff ff 0f 1f 84 00 00 00 00 00 48 b8 00 00 00 00 00 fc ff
+> df 55 48 89 fa 48 c1 ea 03 48 89 e5 41 54 49 89 fc 53 48 83 ec 08
+> <0f> b6 04 02 48 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 4d 41 80 3c
+> RIP: strlen+0x1f/0xa0 lib/string.c:479 RSP: ffff8801cf75f318
+> ---[ end trace bd76ed0378a56845 ]---
+> 
+> 
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug
+> is merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new
+> bug report.
+> Note: all commands must start from beginning of the line in the email body.
