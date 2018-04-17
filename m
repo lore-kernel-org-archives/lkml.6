@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+hTIMvdLxN7HxB19DwusVFGcB+u+VVBB7Qjs9oNvwnBBo4NoDolXhveZyNgJ3Eg9cfHiVk
-ARC-Seal: i=1; a=rsa-sha256; t=1523981244; cv=none;
+X-Google-Smtp-Source: AIpwx48v8DU9BQ/queLNNsRhrDZ7ypgIMlfmyuwXeNQtoiQ9ABdik4Z/6HmnpQRnG5+uCflQVnAJ
+ARC-Seal: i=1; a=rsa-sha256; t=1523981241; cv=none;
         d=google.com; s=arc-20160816;
-        b=y5z6yTYYtHFDYosq/pcW9zpMap/2wVmZCq6Oi+xgyUP5ZHDYaHPZjp1Zlv9CAFRBpZ
-         c57VeDeqfPVHtPdCYZuWHQK2HzQXqd6T1SPiP+BHeDBVwTda3+01IDnxM1w0Rxd6LE/x
-         USLak5Xu2XD0kccY6NxZKuGjB4vjj+IkqM8qCyx+x3jeRjPTH+SK0W09EfXNMyKpohPn
-         Gz5AAFCygTWwtoKWmSyBLjEYV887UCAp4+pnHJLNlh5/KSe5mFBrwq4e8wBOK61NaYu+
-         Mduz5Lmi9XQ2Ifrmrq7UuYbtVdN34j4sXPP3jncW8foSYumlzDxD0tFsE3JnCWDWyjU8
-         Mu7g==
+        b=JGNtW1kqz+KyYCcbBHeKsjLenll34L+KuNEg4BEVgywy4ONL5jztE/Z+WiMGaxSqld
+         I+LTDgZ1gnbEeih2CAUy2vvmr5r83Q1upPMUdkMp7N5fBj4j4mrrgbbr2jS9boGm4r2C
+         Aazq7AujoEyinZerYwmz/1zhe7PII1JYU3iqAiG2BtMKNR4KF4ujk+UWFc+vrmG9eY6c
+         kHH1EHZ9N2QJ3fl1/d0I8/dhUeix/UbKzQb/iziKvTsPbZWSBxTU3Kri3TA/4/cDDfxM
+         d/t9eU4nKd7gfzPs0sulQYm7zlgzJVFCEveLMYmUg1OseSuFIatEPSpzkFtvtLLN6k7h
+         7mLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=YSFqXAhvHtmHIxisTYBHdISxKpMDHKAykRrwovjghz4=;
-        b=xzNyjxiNc88FqPMAywvYIycXeIzME9NuPwR0l1U5zscmc+XZ9OrfNWxeviUjkjMSVP
-         Kz1ingWudHYu16fxCs6fg5pDBDu3UPugrR8Oho6TuI0gH578zJzAsq3gTavkmdPGnMPb
-         drZVLpa4B+cZGuUt+9JCTEpysb0HYBrS/8toFzuOJQRVy5bTrRFzb0UMP1e9RdGfYbVP
-         oZMbJu1s/veIOwuW3noFwtUMRWuMiewPWFzh1mx/mS3A/a6a79KPmfhicvkI1Zf97me+
-         AMydxDp8earAMaHPRsA1yyhiFL8JHSLDE8H8H62buCYzGYuEn498Zn3y2h5N9xAX80fS
-         0hnQ==
+        bh=hdrQMBRPZTmpXkehhFXFweNrluZ1VbbrigohmUJ7NcQ=;
+        b=Pa82Lwr915q94TgUXQ+ndJdFrIpEmZC0AnVp0+YSF8RzlW3zo9wi1C4L8oi+Tzg30m
+         1kwow3EejSsAZyQKX7t1zJcTtyCdJZKkDZdPQEX4l3OwYEYHArHcB4gxTOPZfkF7dUH9
+         z8wShvdMmiqgEzqp/0Tl4iwaSxvNMKtVHkDyGG+Q1xpmpCRLb1hCi92wjDTSOU5DASBO
+         njUqRm7pRGdRnErpjhzRyzM1BQdQFprtU9fXN+v3WzlyibZPLYvvm7YRgJVbpuoQoigf
+         pWetpKPaJrA9MG3hRptHsPic4DWyXB+XN/JJDPHbb8KrUv9w+DncevBrtMPN7VSPVv23
+         +9+g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dave Jiang <dave.jiang@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.14 27/49] nfit: fix region registration vs block-data-window ranges
-Date: Tue, 17 Apr 2018 17:59:06 +0200
-Message-Id: <20180417155716.314869745@linuxfoundation.org>
+	Yury Norov <ynorov@caviumnetworks.com>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot <syzbot+6887cbb011c8054e8a3d@syzkaller.appspotmail.com>,
+	Noam Camus <noamca@mellanox.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 44/49] lib: fix stall in __bitmap_parselist()
+Date: Tue, 17 Apr 2018 17:59:23 +0200
+Message-Id: <20180417155717.139456197@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -40,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009840996584111?=
-X-GMAIL-MSGID: =?utf-8?q?1598010157597585528?=
+X-GMAIL-THRID: =?utf-8?q?1598009776446596481?=
+X-GMAIL-MSGID: =?utf-8?q?1598010155172447836?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,56 +56,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Yury Norov <ynorov@caviumnetworks.com>
 
-commit 8d0d8ed3356aa9ed43b819aaedd39b08ca453007 upstream.
+commit 8351760ff5b2042039554b4948ddabaac644a976 upstream.
 
-Commit 1cf03c00e7c1 "nfit: scrub and register regions in a workqueue"
-mistakenly attempts to register a region per BLK aperture. There is
-nothing to register for individual apertures as they belong as a set to
-a BLK aperture group that are registered with a corresponding
-DIMM-control-region. Filter them for registration to prevent some
-needless devm_kzalloc() allocations.
+syzbot is catching stalls at __bitmap_parselist()
+(https://syzkaller.appspot.com/bug?id=ad7e0351fbc90535558514a71cd3edc11681997a).
+The trigger is
 
+  unsigned long v = 0;
+  bitmap_parselist("7:,", &v, BITS_PER_LONG);
+
+which results in hitting infinite loop at
+
+    while (a <= b) {
+	    off = min(b - a + 1, used_size);
+	    bitmap_set(maskp, a, off);
+	    a += group_size;
+    }
+
+due to used_size == group_size == 0.
+
+Link: http://lkml.kernel.org/r/20180404162647.15763-1-ynorov@caviumnetworks.com
+Fixes: 0a5ce0831d04382a ("lib/bitmap.c: make bitmap_parselist() thread-safe and much faster")
+Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+6887cbb011c8054e8a3d@syzkaller.appspotmail.com>
+Cc: Noam Camus <noamca@mellanox.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: <stable@vger.kernel.org>
-Fixes: 1cf03c00e7c1 ("nfit: scrub and register regions in a workqueue")
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/nfit/core.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ lib/bitmap.c      |    2 +-
+ lib/test_bitmap.c |    4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -2748,15 +2748,21 @@ static void acpi_nfit_scrub(struct work_
- static int acpi_nfit_register_regions(struct acpi_nfit_desc *acpi_desc)
- {
- 	struct nfit_spa *nfit_spa;
--	int rc;
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -605,7 +605,7 @@ static int __bitmap_parselist(const char
+ 		/* if no digit is after '-', it's wrong*/
+ 		if (at_start && in_range)
+ 			return -EINVAL;
+-		if (!(a <= b) || !(used_size <= group_size))
++		if (!(a <= b) || group_size == 0 || !(used_size <= group_size))
+ 			return -EINVAL;
+ 		if (b >= nmaskbits)
+ 			return -ERANGE;
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -218,6 +218,10 @@ static const struct test_bitmap_parselis
+ 	{-EINVAL, "-1",	NULL, 8, 0},
+ 	{-EINVAL, "-0",	NULL, 8, 0},
+ 	{-EINVAL, "10-1", NULL, 8, 0},
++	{-EINVAL, "0-31:", NULL, 8, 0},
++	{-EINVAL, "0-31:0", NULL, 8, 0},
++	{-EINVAL, "0-31:0/0", NULL, 8, 0},
++	{-EINVAL, "0-31:1/0", NULL, 8, 0},
+ 	{-EINVAL, "0-31:10/1", NULL, 8, 0},
+ };
  
--	list_for_each_entry(nfit_spa, &acpi_desc->spas, list)
--		if (nfit_spa_type(nfit_spa->spa) == NFIT_SPA_DCR) {
--			/* BLK regions don't need to wait for ars results */
--			rc = acpi_nfit_register_region(acpi_desc, nfit_spa);
--			if (rc)
--				return rc;
--		}
-+	list_for_each_entry(nfit_spa, &acpi_desc->spas, list) {
-+		int rc, type = nfit_spa_type(nfit_spa->spa);
-+
-+		/* PMEM and VMEM will be registered by the ARS workqueue */
-+		if (type == NFIT_SPA_PM || type == NFIT_SPA_VOLATILE)
-+			continue;
-+		/* BLK apertures belong to BLK region registration below */
-+		if (type == NFIT_SPA_BDW)
-+			continue;
-+		/* BLK regions don't need to wait for ARS results */
-+		rc = acpi_nfit_register_region(acpi_desc, nfit_spa);
-+		if (rc)
-+			return rc;
-+	}
- 
- 	acpi_desc->ars_start_flags = 0;
- 	if (!acpi_desc->cancel)
