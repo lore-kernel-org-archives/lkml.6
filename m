@@ -1,61 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752624AbeDQKlB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 06:41:01 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:45975 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751927AbeDQKk7 (ORCPT
+        id S1752511AbeDQKoH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 06:44:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54126 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751865AbeDQKoF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 06:40:59 -0400
-X-Google-Smtp-Source: AIpwx48kcQoSmjmq/boa+SfgIkctuI46dmnaIjNuWCrrskM45ii1NJGtNfHjkvtS+tN5LUTQk/al9frTMRl0OoilKkw=
-MIME-Version: 1.0
-In-Reply-To: <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com>
-References: <CANRm+Cy+Cr1-AMwM+u20X53=GqY0zfOugFypZcZwyJmnnwNNwA@mail.gmail.com>
- <20180226111630.GB4377@pd.tnic> <CANRm+Cxw2-8Cf+6cg_yZC+SD66uNA5RO+ZaoHHmkpHLzjCih=A@mail.gmail.com>
- <20180226113000.GC4377@pd.tnic> <CANRm+CzwY2yzKFXF7r=vfqDaHHoHxC221TSBtSHC2XtvkrQxHA@mail.gmail.com>
- <20180226114409.GD4377@pd.tnic> <46cecef2-b0fb-b0c2-bbf3-983328d52763@redhat.com>
- <20180226121509.GE4377@pd.tnic> <24cd527d-5287-f0be-ffe8-eab341bf1d94@redhat.com>
- <3866d359-0ef8-6a99-6254-84890be62b93@redhat.com> <20180226122205.GG4377@pd.tnic>
- <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Tue, 17 Apr 2018 18:40:58 +0800
-Message-ID: <CANRm+CyyL2jjjn7nZtLJvP+t1pN9ndAGhijmbX4LJh15=O+dvQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>, LKML <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Eduardo Habkost <ehabkost@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Apr 2018 06:44:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA1EB603AF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=cpandya@codeaurora.org
+From: Chintan Pandya <cpandya@codeaurora.org>
+To: vbabka@suse.cz, labbott@redhat.com, catalin.marinas@arm.com,
+        hannes@cmpxchg.org, f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        khandual@linux.vnet.ibm.com, mhocko@kernel.org,
+        Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v2 0/2] vunmap and debug objects
+Date: Tue, 17 Apr 2018 16:13:46 +0530
+Message-Id: <1523961828-9485-1-git-send-email-cpandya@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc Eduardo,
-2018-02-26 20:41 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
-> On 26/02/2018 13:22, Borislav Petkov wrote:
->> On Mon, Feb 26, 2018 at 01:18:07PM +0100, Paolo Bonzini wrote:
->>>> In this context, "host-initiated" write means written by KVM userspace
->>>> with ioctl(KVM_SET_MSR).  It generally happens only on VM startup, reset
->>>> or live migration.
->>>
->>> To be clear, the target of the write is still the vCPU's emulated MSR.
->>
->> So how am I to imagine this as a user:
->>
->> qemu-system-x86_64 --microcode-revision=0xdeadbeef...
->
-> More like "-cpu foo,ucode_rev=0xdeadbeef".  But in practice what would
-> happen is one of the following:
->
-> 1) "-cpu host" sets ucode_rev to the same value of the host, everyone
-> else leaves it to zero as is now.
+I'm not entirely sure, how debug objects are really
+useful in vmalloc framework.
 
-Hi Paolo,
+I'm assuming they are useful in some ways. So, there
+are 2 issues in that. First patch is avoiding possible
+race scenario and second patch passes _proper_ args
+in debug object APIs. Both these patches can help
+debug objects to be in consistent state.
 
-Do you mean the host admin to get the ucode_rev from the host and set
-to -cpu host, ucode_rev=xxxxxx or qemu get the ucode_rev directly by
-rdmsr?
+We've observed some list corruptions in debug objects.
+However, no claims that these patches will be fixing
+them.
 
-Regards,
-Wanpeng Li
+If one has an opinion that debug object has no use in
+vmalloc framework, I would raise a patch to remove
+them from the vunmap leg.
+
+Below 2 patches are rebased over tip + my other patch in
+review "[PATCH v2] mm: vmalloc: Clean up vunmap to avoid
+pgtable ops twice"
+
+Chintan Pandya (2):
+  mm: vmalloc: Avoid racy handling of debugobjects in vunmap
+  mm: vmalloc: Pass proper vm_start into debugobjects
+
+>From V1->V2:
+ - Incorporated Anshuman's comment about missing corrections
+   in vm_unmap_ram()
+
+ mm/vmalloc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation
+Center, Inc., is a member of Code Aurora Forum, a Linux Foundation
+Collaborative Project
