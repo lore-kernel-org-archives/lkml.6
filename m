@@ -1,22 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752560AbeDQOUs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:20:48 -0400
+        id S1752691AbeDQOVB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:21:01 -0400
 Received: from mail-db5eur01on0061.outbound.protection.outlook.com ([104.47.2.61]:62520
         "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752221AbeDQOUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:20:45 -0400
+        id S1752261AbeDQOUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:20:47 -0400
 From: Abel Vesa <abel.vesa@nxp.com>
 To: Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>,
         Robin Gong <yibin.gong@nxp.com>
 Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-imx@nxp.com, Abel Vesa <abelvesa@linux.com>,
         Robin Gong <b38343@freescale.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH 1/2] mfd: pf1550: add pf1550 mfd driver
-Date: Tue, 17 Apr 2018 17:20:18 +0300
-Message-Id: <1523974819-8711-1-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH 2/2] power: pf1550_charger: add pf1550 charger driver
+Date: Tue, 17 Apr 2018 17:20:19 +0300
+Message-Id: <1523974819-8711-2-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523974819-8711-1-git-send-email-abel.vesa@nxp.com>
+References: <1523974819-8711-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [95.76.156.53]
@@ -26,49 +28,50 @@ X-ClientProxiedBy: DB6PR0501CA0011.eurprd05.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1611;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;3:TmJ76/7NLcHgoubLmysQ8cyyNE4rB9oJiEIqL+UWDmwBoMVwlJ9h+O0O80AV7/aCxp2TmjHIdhPHrNAvEnrMfQNS/bKVyskR1yV67V3+GnoExEK8z9ZUMrlOuwEwOKoWtHxN3WBwaqwLoFA4Tt9t4kvEjZroBLA4abMsUC0T9hVoZ0UvlKqrewx2W4u+lThT1AQ49zBZ04O4XmC7Qn+FUy2/YQJ2xUo1wcKnBNaZXvaEAoXlSrPd823pKJkLn/6h;25:6VX3CJFQ9q9aXpFKc/X1mmOuWAW+aO4LjFsOTJebURq4bhFfuWouzWswo9y9hbIQebfohuyHkGHOs8pF4XXLFELBR+RHUesPYRIlzAfCHNnXkf8V+RTspfOB1CBraKg54aeOjagpDMt/203eu/5wZV8lsPceG/CirE7nK/gBg9Yt1qHm2ROJQSsBoyVsyNEvou7khmYQHHzc5+vB8SXaokJs1XQLCvIo5cGvCSM5TeSPI0Du9corRzTBbY7sttMWRBhhRfpu3X17YBwxheEbIcCNjyUfeSZ/troYMmHQpZmUmchh82WHiWMMl1iDmILsyqZQ7PiG3uSl9+bHW5Hr2Q==;31:YAHTnvzQTxlYcBYYOpRxrjRsQo6CY+ODU2fFcgv5HYUcG8c1S/m+81oLYe1ZDoJp5FBkm1UjuvJ/0bgu3pGBCJZV2HCFrqVskCxhak3Vkbn+XzWTnhGG+TV2XrWlMKJmnpiLPboCf+7BHea3rH6IS3K2/Iz1h4xsTia8Jtv0Rja8Km7b6x8TtsvCtRH9PUGAz+Qkzx6H7hXWO4GQqn9iQ7nIs6NpBJ7BHXZAskMbwws=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;3:7Awxsf98Q5WXU1biVX10ZkLJTzuZ1ekDJbTj22uHD6w/sEbYPE8JvFOCp0Ro6Cnw6OeSOLqhksl5SJtkhGXFTxiiyigB38cXx7Dx778J5+4VRUkGh6Rgc97gMg2sOQ/Yr1T17XS+HIsq0HlCtsVR5jllVhsGTDhjdS0GycXnNosYAObh6/KAGENVXb6f75mZuhRy67etekLIFXkjIFWW6O1PjFPWOyp+xT9NohPhDhHFLEbICg2fKGlO/YXXVA70;25:OHwE/t3NyoJGrVf4K7l2DhgFXC1jca+/Speu1LO4XQR8OFbA6ljhzF6Ou9Fu+IWFS5ZHcvAO9Nf8lgMGtD6361mAQgs/jGXJELSisa/W/q7uY/YoIRW5kYoh1GFJFXg0i7Ky3li9c0l8b5ivL7BcILvGQ6wz6LmOPllz/XcN5TmR2eBsBPCVY7DlbsegSwJbb9kU0RHsVKB4eEVBP5TjFCoG48/2/KotEN6LBj+5Km1z3+g4pT75m6j/CznHnzDAZh8McDjS+zmb7a/LXbv+ehBVwmDp0G4JMZ8+2a5v4FZpR40kMs42GjhjObpALm8Q9/L64k+ILkmUZfxxmitWpA==;31:ppM1bUFufyY0sb2KMYTF7uGLtZXlGVjnQL1rTLLXGbML3pwVZnVtVr4Iay8TDjAgxY067thq0Ykw+aoUhQOOrrBL5Jknm0VXRitI1faWyqH2/VNlFLT33Auh2gH2+HAUzrXYow+cZ1VdnUtJfYJEHvzWyS3dVuxsk5aQdHItQwAmSOAwKa3qaQ/CNZurXuKMFEAW1GuA6FnDQfSO8GUBoxms4opYmK4f3nyZp2uVurk=
 X-MS-TrafficTypeDiagnostic: HE1PR04MB1611:
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com;
 X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;20:5ngWIeXVEwZc9KyBLBGZDLOyqiogNUlJgUtHZ49oqik/sZgunrhmc1QoYqdWcMENHC0bffRGCgs3wmST5TEVnVZvcxOPIzuskwPB/01zhRU9uS8tk0iRE7+gLlhDxp07QS4epHrcSwECebFtxP8pWcwp4RFwkx9HRaQvJXLTqt7AS+IEe5JgFusEfWPMLTXBJ05ZnhIyNIK5UsG6g+s75boLSo4GjKZmDxMcGIor2qdG7y89Ue++ElPOFp5xAJ4CfcH8b8Wzhmp8PWl8W78YNfJxNyahG0GhH5XbcV0Mw+6nh2DuWw3uw5lO8IrLpqC/d2SZyT7xk/EvHrOhA/3P1gf+llRczOMqEb8dwXY9ZC+1BeHKjuHwQ9hKOuirFoYus6dpkIlv4+RJZuchBoWnIbtgG0ceotQq4yLlYKuIiES128NOsfIG1TwVNP6y9cF99SMNmAZgGE5Ilo48GU7JOKQ04Fzrxb4T8vfrmR0qm/h383lftglQ7CItKy+np602;4:al+rovxdXRp7yjepVIPTuZCMaU0A+eKVcOrZBiarLOwrmzEsyyvj6L+ysf9Bw8NKuLQcS0SC+04Z6+eHiPUyTqvp3OcMs+vjEYjPedZyyZG2S/wGKwjznEccTLYH2YKq2ojzd3TZ+nSGQ/Zm0pB3+li7t0uMMELrTCzzgc2bl2A2Tv8X1hvt+u055s1sxsgu4KHwvXTFkz0euF9Lgcb0/8PRxWfveE61KE26kdWDMnLvlCeo6Y8cRRR3sQEa06yKVb8iZcby8RGtmZQwiNNIO9/WIbW6ieL8UYj1Jfxv066xXTG/XOs3owGCceXJ+JQnN9tmX+uhEmhaD0Iq6M0ZhFmKjKv0S1LSPH5IzPgq/PA=
-X-Microsoft-Antispam-PRVS: <HE1PR04MB16116B188A8C1228A4E7450FF6B70@HE1PR04MB1611.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;20:zvAiialpVAYp3WKtFQm5SCfrfMtycQQLg7s1tmNCfay/qFBcVJfxPQGjHh+Oc7sAdexRxxE+u4o5IJbPi1YoPmeChIcq6aL9u4HdYJOYhlOHH6VTfW21M+Rkzz+zGkfbMWWxI1eIxtnoKZdQRRF0OmLE2rwBDoTHaqbvoEZasZXwAlVUnctpyYhzHLwg7dhX88jZOC8pLQmF8vtKfQdcOwDaGk1bw13Cp+zBa6CAUwUZGtPaKzmjoK4c3S3PFCOpm8RoANgRzRi3VWtdYIoBjTv4qvxoXJNx/cv1hLUzMovuZSI6gxOHOQgLIRs9Mf6uxOAP5pOYErtCDjl43ZD8VxRoEyMOuGEchLT9ifovvDrxbEv6Fo1Cqf3d7gmM6h9dRp7v//PVIiq08DAofJIaiLCJc1nw9zpNlWJW4kNdB4pmjyD5SiGe/vsKPU+lh6BoRiNMuEUTtNt8ntwZIpsf8WZgCG1JNX3rwLL/qDtIWmg/7H2MpScXTUy0HhaEN4iY;4:M8RQ5IwmHrUS/3O3tsZiSsgevDfPmiuldeBAnWE6Ez6Isoji+KAcJu7QcsWcaGNyu+1+KFFA+P13Gs8qAklnvbpMF0epipcdqAfumZPdkNoBDuZeqSYKNfrN6u71XSVPgwOt9oBYIVjCM4Qx7bLDzGY+DhelQE4ldXrURh34IVLBQs0+10/rXL29AdOdG5X73JR1rxLzl+K6+xRK/dZv/ZkF8vEHR1K3tu1qJDRP12e4Q+MIgiVqTwUR8UqSCl7uTnQIFQNSxK3BOhQWGTlBJMmommoMpMX30VB64TKHVV1KUwXDS7rW2ZTWvK6Zu6CWdJEJtbP3QHvCXCWgsp6e+G96XWfKZJQ+UmAasK2h8sY=
+X-Microsoft-Antispam-PRVS: <HE1PR04MB1611BBA675308430D985E831F6B70@HE1PR04MB1611.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(101931422205132);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231232)(944501359)(52105095)(6055026)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011);SRVR:HE1PR04MB1611;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1611;
 X-Forefront-PRVS: 0645BEB7AA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39380400002)(39860400002)(396003)(376002)(346002)(199004)(189003)(386003)(6506007)(54906003)(110136005)(956004)(59450400001)(476003)(478600001)(44832011)(2616005)(25786009)(53936002)(6636002)(6666003)(36756003)(316002)(3846002)(6512007)(16586007)(6116002)(97736004)(4326008)(305945005)(486006)(5660300001)(575784001)(81166006)(8936002)(51416003)(86362001)(68736007)(81156014)(8676002)(2906002)(66066001)(106356001)(47776003)(50226002)(48376002)(52116002)(6486002)(26005)(186003)(50466002)(16526019)(7736002)(105586002)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1611;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB1611;23:cWeY7Xv0yJC9N5h1scOkt9qxVASHmdZ4Fj73haCWV?=
- =?us-ascii?Q?lgLSToRebYvZxPGDNkj1/LvL/gMeXqS7mLZAYBwf+a0rauEWCxlugDRflrjg?=
- =?us-ascii?Q?kPcNp3huzPxUkEZl9wHjItepfKkRioZzUfnGmG4k5uFgOT171CfF7PJDzU5G?=
- =?us-ascii?Q?gEPAJgP94gieFj+TU2lXm+9TYGg1EVs/gKxohMyx3rIFz6ukCL5AUx9PRNEK?=
- =?us-ascii?Q?XTQwrvSyENPq0Pqb2PoCGh1w7rGrFyGpRO07O6KLf6q3dwbDFIW8hmsFSnz7?=
- =?us-ascii?Q?Hhd8dSGPcs9BEdmekzzihR9NhRI9FKxFUe3gOhHYyMrHFsODy7cDUkZA+6sc?=
- =?us-ascii?Q?nGgc0FNgR2fj27aWoowAYSBFjrSa23hGMbWuNRV4FZvzY9iluwChq7z/2223?=
- =?us-ascii?Q?1egbOW9jlSM2mUUHMF5w20vCIbXBW4kZhSY5U4LgNaguFeabNyL7GQ8BgNZ0?=
- =?us-ascii?Q?gd+oXs6kzYC+BKFmu7gggpf6btWl+1psbxFjg5hCj3eFbvDeAUIUX29K22U6?=
- =?us-ascii?Q?I5VQ3hdTl3O8B9EohlaSrdn1x2e44ZwwuXnJEy1fCK+cRzpPX+1/rt8hFNMc?=
- =?us-ascii?Q?xOxGa+2rmWE5roHUDUPfC6L0CI4O6TktNLLRmJZaGHo/TTPAsi7WiGVrVqD9?=
- =?us-ascii?Q?dpTjjKzle4Cyo141uvD8+4LG30eEhj4pzvgpl2NgYMN3J5AWf66uCIrdCoWY?=
- =?us-ascii?Q?MLfair6yguR0j3udM21upiciQKtaryxtNySquKEMim+FlZiZMb0zB88eIRgR?=
- =?us-ascii?Q?fsC39dRAGI9kxv8ppAtL7lG6KJWaKN6M2c5jkBUILtNwNjIkwJnYxRkTet36?=
- =?us-ascii?Q?K4Ep1PBRQbpV6cGGkA4n5+1kPybuXsFRfdxCiUCFVCu9Dy31aCa5t6WGIHrR?=
- =?us-ascii?Q?x7M9Knk7tRUM4i/99aNXCPqYnkKJYTWk2Hh/moRg+Yr1kSKGdnLwMEXVGd0N?=
- =?us-ascii?Q?rjzszU40EgvyOJxORXrNikkHiyEBpNHXlvoz1m9y0uiR83o3C7/QqJtB448A?=
- =?us-ascii?Q?ZGv1SRT3XhShffD6ap/78qce0biA2igodJ9q2Ioni7YDhp22mnT3JbvR8Ao+?=
- =?us-ascii?Q?roiW3ePCF/p9IH8yqzld7VM//COEpN9cTSilK4k4PVE9WA/dTjuwCk6+e1V2?=
- =?us-ascii?Q?5g4xHev0Fmcxcll5TtwSy58COphTP/wS/G51mTgfh1vyArJ1vkKRbb7ojVp4?=
- =?us-ascii?Q?hWRQdGW68iZRtiXE6ME6bGf4Rpr76NywS6n3Dij29q/7p1CboErcvu+SG9dg?=
- =?us-ascii?Q?sH+boakrCHfVuzoOtk=3D?=
-X-Microsoft-Antispam-Message-Info: SZgnLYX4KLMv7G8BAf7ouTyOC6dHBU1WzCmpCjK+ecqJnA1iPXiZo8rL0UCZwdHhLx0z0V6F9Bt6A+57c/sK2TzOKHaHZmK/JcwttR9o6nRso56vnkMmnLCEoXLH54J1R05EswhFTAlBdVjch1e9sEfH/pDdyN/xYviWFwGY1XVsaaJDv9ZHCP7NlaJCMFIY
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;6:5d1FkzNC7+dFKBbHTmEMcZgfUMCQUyb5ld9IfXzJZe69huqJHA8ZmJiU6F4BwG5rbjacYy00iZIglPybIys22X71evKTBE+rS9EGS10CobsCzcuTGI6HtbGWottojQY6EVcpFmpRyytgs/HzFI1QDusFu7UG5gA6bdUIV5IjIleGiMEyM+aEO1ut3ksBVafsAYHah45selmluhwEGyaEeyOAIa7/afNip6RtFZNDBdXeXspp2oDfXT3igNg/GJieQJ1yahjuyddv0W0FVox63Q/aL1o5HV4Uuv76U9FUQqA/uK4HlbiliQ1Gi5FVYIirqb/7VVgPZYRNgcPvjyVLbXiqbo7k0ElzmydlrxTxiyjPj4ByGLuJo5iDKszH8zBEMYSt/KCnciOCZgnMudnK9smtt6ewTh9aPwuq8JAVVXLqjX5ea481ZD87IYVrg4fGqnQoSKDvp7bX+K1ohaL8gA==;5:2Qar5aZksSw/QkfI5S8UDiMp2+Jvf+lica785Lp6TleENS9gPb9hvwt0I4/kOn3Otk+rqdFQdKZkNDKrLHFsZNZyQu7pLdqwiQAwvecMx2BKf8CadDlgnF1c1MCXW/G93gvMWzx1es85J5mULid1MU+MNtPpeJqSG6v00FL0LFw=;24:b6Br09Q/YBRYb09mn8Z3MzCgz552d41f+uPAhjAh2Hes1qYHf5XqBNsJJkg2nsj4EdCRX9PhNZmslsY6JGGclyjX5jJVvWdUw8i4sOo+sXI=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(39380400002)(39860400002)(396003)(376002)(346002)(199004)(189003)(386003)(6506007)(54906003)(110136005)(956004)(11346002)(59450400001)(476003)(478600001)(44832011)(446003)(2616005)(25786009)(53936002)(6636002)(6666003)(36756003)(316002)(3846002)(6512007)(16586007)(6116002)(97736004)(4326008)(305945005)(76176011)(486006)(5660300001)(575784001)(81166006)(8936002)(51416003)(86362001)(68736007)(81156014)(8676002)(2906002)(5890100001)(66066001)(106356001)(47776003)(50226002)(48376002)(52116002)(6486002)(26005)(186003)(50466002)(16526019)(7736002)(105586002)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1611;H:fsr-ub1664-175.ea.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR04MB1611;23:fbo/xyKLrxVZjmLCOK59EwfrXyFDguciwCT0nb0W9?=
+ =?us-ascii?Q?6olJaHWlxtFBU0P2F/ad76wbI1hmqgLvpnIKFm5BYEGDM5XvYun4aS1DuiZN?=
+ =?us-ascii?Q?Ci/RW+d2+xgXDIrA9KK16bFwNadNM+JXlCOt6Qvckj8j+9FzTzZNbh0pTYxm?=
+ =?us-ascii?Q?AgN30YTqHiLlOO5pA1KVCVszqrwSO02O07WmF8Q0/3kbs6xWVjeo9P7PSOAK?=
+ =?us-ascii?Q?t1O2LMviTD8FUhXmAmiHqOcUg5+/qIykjce0XTGuKFcZYsHQ/RRU2YM7BDcx?=
+ =?us-ascii?Q?nL35rAT6wk//EKykZRlOlKN930lKnsZJUL/DY5voXfnVijVj2FsmOo2S6hSi?=
+ =?us-ascii?Q?/nAcIHn6BstXw+jNdLB2FBbAUfno/vUK+FJTJSImHCo5+MDH5xRBtA/5TblL?=
+ =?us-ascii?Q?h2/Lox2IAq2CLvpMeEMm4T0xxZQFkKgykGOABoQgNpqIOPFq80R+5IsIGCQ3?=
+ =?us-ascii?Q?/eMm+9lGdHYsRJZ5tTOtypjyjhPFRAEDLaTzPL7KVUOOrGw9MOHGJPwoH7uu?=
+ =?us-ascii?Q?L3FXWomGMAVY9t2rHxWKj8DoEYT1cU2QPCmu0ufyRVj2tTHCltGCsliC1e2b?=
+ =?us-ascii?Q?ilbHs/bFVNyCeXBlUBWFKTc0PMvRTrCdKoBc4Rwe8ZPU884gkg2+Qg7SNOLc?=
+ =?us-ascii?Q?7ncd2l6cZjJjBN53sCG513GM2GrJqVDI/Kq26/fa/w/YJRAG5WekLuF4hwkT?=
+ =?us-ascii?Q?FTSS0v7E0N7RcJVrSb6BMylg489mv6QXDFdogB/GADu4C77M81ksfjQ/38RB?=
+ =?us-ascii?Q?3MPi+LJJQ+M9L3aSeL2f1GSYK031Kb/tOcbLYJ0n/N0q19PykHYAitV5qJgj?=
+ =?us-ascii?Q?8I+U1SmrG9vESLWmPWjuwtjsgvuIDpQ97SaB7gog1IWITwJmOvDj0wfLsR75?=
+ =?us-ascii?Q?NoEPKiXXqJTwIC3l37WBe9ItlUJNhGK0y6WftwtZycYlSulOtaJf/mg2kjO5?=
+ =?us-ascii?Q?xF2OZueqZ4veISp7EgcJgOT39XlPTBg+/gwsN1vsvTszNgxBR5G20ZmkP1pd?=
+ =?us-ascii?Q?AW/fClPHoS7FBZ0PaB6MauRz259Gm6TXTCZbZyV+DVeTwxX3OvGaODuFmQPV?=
+ =?us-ascii?Q?SoNwWYVQ6Fd4xXx3gdEBbcD8Ci61QKxTQouYhC6ibII0RBA+3qkhM1+upp38?=
+ =?us-ascii?Q?d7tGy6Flwglf701sFcJRQ1Rt9I8f3xOA/zPQI7jK+nklr2SiCl64R8h/nuFC?=
+ =?us-ascii?Q?JviJ/tupzZvStmxNSJE7WOLfqpLkfpjkZJ5iWTRYrhAw47D0FzLTyHFWT/K6?=
+ =?us-ascii?Q?4xORn3UPcYwOBbI7XcJg1iByIXGWHmYwivDYA51teGfSCk8bbVK/ez0a1AfS?=
+ =?us-ascii?Q?J2jJT35zEVe/ZP2JuBquC9b4JygamD9/ymJSSlj3nsz?=
+X-Microsoft-Antispam-Message-Info: NS7r5qViEyXnInIcKj5iCvk1IFe0WSYGR2AANuVJxDgtPXyACMMeEGEUoMCglCJ54tT6ha1lZcYUYJOCKJt1zHTeOe4528UkkUSTA47mGC8oc78AQk+LobKMhHlcrli1BkK0VLlDgSkjcLfY8PEDBplqo7nCOIWJaYNqstwOr5dPhCrRX69JW6ymq0vDMWsj
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;6:YMrOVpkTQ9y28PWw8ZUYbZHW/Pi7HUAiGZjsO+iNSaL0wD1LI9h3QwepPeJwyPO6hBMHPG2ownbMQHPppFev1rShyfYyEv55dnXr9RDLdZWJ5d+D6Kr6sfTGICo9PqA9t1lz9+mznmLO02S2dohKNiCfSEtfXFB2V8YF2uJGVhmbYH29Pk7s2cfqkBhJw/OU7+pZcpPhiHhJNh5V0uHHMp9KSS2+J8A77wOgZCb73/AkSZtFYXOlHIpzO9rPfCgYEHQRtHZEhjF1YR910CUzWkzx2PjfdtjotNeFequm0CA2/C3HOzqzA0/G7bizYaDn/v69I4/aTyZo7b/3TnuysnmovoqTgwvsWxSXkKHgWVuom+zg3uUTi41UqLR5QpFPNjAqRZpiJMDI9rwYImWcT19BucIo/LuIV0EvkacXFTyOUUmbtV6fPtYLAiMCBI8TaHTdYUSQygqp5zJFjjShuQ==;5:sHzX/GuedqEtJg5u3I8cEC5jNK1TcSoGuR6ywPrdKPMb711Garnk29/ceAXYKUbTag/gQsqzQLV6xkEctK0c4ivjc2JVVO0TqHYwy2j6G2XomoXVXv/Xe1bxWcJ5VCT8iUXJSHawBgzu8pndPONMyjJphmjn3h+WIo2zdrr0f6I=;24:kWfdSLatpGA3rKZquVQICtE7Bu3UjnBJfZ01cYX0fv655Z+XZL7beyPHho7r18XszOibSE/GH0RL9wsABytTNZX3vzlpjxfqFYLA8aTGT7A=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;7:MVo0ur4I9QolcgXrI8Ra6CEGzXbRVhrNOykECxHJ/HaXlXhG4o6W0tXZr9SJ+haZauijKx4b2akvsN35wL536wXYVHGGJgXvct+2tawQ5qVDhwlrgy6Dsl/5VEveHF9EsOtvyT01wV+OWRyh9MpwI6s4JLivaJkouWbzdH9gWLBhyND+UlzCcp2BeQgmoUpvBM8jOjCJVkGQLdGSwqJQyyzGkR+L0GS2O1jvLm7bcFYql5NrGnKpdFxtSjlWLK1o
-X-MS-Office365-Filtering-Correlation-Id: f22747ba-84b3-48b0-a3ef-08d5a46e6652
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR04MB1611;7:l6bHRnHVuXlOsS3YB+8UKB4/fuMUs/KIff8aVVLok8cKqalMgOR9bfqw+kRfNzkvKJ+Tx6w9mXnN56Jq//waHTTIRJ+CULnkSJxlH0sG4MW4SyR7PqLKaxPasTWIzfBPtz7wqUgW7CXm65jwJAKo6cEDmm5l+ZA5MVP3heDld7R051c9sM7FkUyUWUpDdCX+F87hpO9qgQVguT9OCsRBxlyWXSxEQgFLciFjDvQxjUzGg0qdxMK7Omzjrf2UQJlb
+X-MS-Office365-Filtering-Correlation-Id: baf41a23-e557-4384-9798-08d5a46e6788
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 14:20:40.1280
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 14:20:42.1124
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f22747ba-84b3-48b0-a3ef-08d5a46e6652
+X-MS-Exchange-CrossTenant-Network-Message-Id: baf41a23-e557-4384-9798-08d5a46e6788
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1611
@@ -78,66 +81,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Robin Gong <b38343@freescale.com>
 
-Add basic pf1550 mfd driver.
+Add basic pf1550 charger driver.
 
 Signed-off-by: Robin Gong <yibin.gong@nxp.com>
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- drivers/mfd/Kconfig        |  14 +++
- drivers/mfd/Makefile       |   2 +
- drivers/mfd/pf1550.c       | 282 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/pf1550.h | 241 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 539 insertions(+)
- create mode 100644 drivers/mfd/pf1550.c
- create mode 100644 include/linux/mfd/pf1550.h
+ drivers/power/supply/Kconfig          |   6 +
+ drivers/power/supply/Makefile         |   1 +
+ drivers/power/supply/pf1550_charger.c | 660 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 667 insertions(+)
+ create mode 100644 drivers/power/supply/pf1550_charger.c
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index b860eb5..5acd239 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -404,6 +404,20 @@ config MFD_MX25_TSADC
- 	  i.MX25 processors. They consist of a conversion queue for general
- 	  purpose ADC and a queue for Touchscreens.
+diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+index 428b426..2ebd38c 100644
+--- a/drivers/power/supply/Kconfig
++++ b/drivers/power/supply/Kconfig
+@@ -380,6 +380,12 @@ config CHARGER_PCF50633
+ 	help
+ 	 Say Y to include support for NXP PCF50633 Main Battery Charger.
  
-+config MFD_PF1550
-+	tristate "Freescale Semiconductor PF1550 PMIC Support"
-+	depends on I2C=y
-+	select MFD_CORE
-+	select REGMAP_I2C
-+	select REGMAP_IRQ
++config CHARGER_PF1550
++	tristate "Freescale PF1550 battery charger driver"
++	depends on MFD_PF1550
 +	help
-+	  Say yes here to add support for Freescale Semiconductor PF1550.
-+	  This is a companion Power Management IC with regulators, ONKEY,
-+	  and charger control on chip.
-+	  This driver provides common support for accessing the device;
-+	  additional drivers must be enabled in order to use the functionality
-+	  of the device.
++	 Say Y to enable support for the Freescale PF1550 battery charger.
 +
- config MFD_HI6421_PMIC
- 	tristate "HiSilicon Hi6421 PMU/Codec IC"
- 	depends on OF
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index e9fd20d..b8ac19b 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -97,6 +97,8 @@ obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
- obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
- obj-$(CONFIG_MFD_MC13XXX_I2C)	+= mc13xxx-i2c.o
- 
-+obj-$(CONFIG_MFD_PF1550)	+= pf1550.o
-+
- obj-$(CONFIG_MFD_CORE)		+= mfd-core.o
- 
- obj-$(CONFIG_EZX_PCAP)		+= ezx-pcap.o
-diff --git a/drivers/mfd/pf1550.c b/drivers/mfd/pf1550.c
+ config BATTERY_JZ4740
+ 	tristate "Ingenic JZ4740 battery"
+ 	depends on MACH_JZ4740
+diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+index e83aa84..0b2e424 100644
+--- a/drivers/power/supply/Makefile
++++ b/drivers/power/supply/Makefile
+@@ -55,6 +55,7 @@ obj-$(CONFIG_BATTERY_S3C_ADC)	+= s3c_adc_battery.o
+ obj-$(CONFIG_BATTERY_TWL4030_MADC)	+= twl4030_madc_battery.o
+ obj-$(CONFIG_CHARGER_88PM860X)	+= 88pm860x_charger.o
+ obj-$(CONFIG_CHARGER_PCF50633)	+= pcf50633-charger.o
++obj-$(CONFIG_CHARGER_PF1550)	+= pf1550_charger.o
+ obj-$(CONFIG_BATTERY_JZ4740)	+= jz4740-battery.o
+ obj-$(CONFIG_BATTERY_RX51)	+= rx51_battery.o
+ obj-$(CONFIG_AB8500_BM)		+= ab8500_bmdata.o ab8500_charger.o ab8500_fg.o ab8500_btemp.o abx500_chargalg.o pm2301_charger.o
+diff --git a/drivers/power/supply/pf1550_charger.c b/drivers/power/supply/pf1550_charger.c
 new file mode 100644
-index 0000000..70817ef
+index 0000000..c5e0c55
 --- /dev/null
-+++ b/drivers/mfd/pf1550.c
-@@ -0,0 +1,282 @@
++++ b/drivers/power/supply/pf1550_charger.c
+@@ -0,0 +1,660 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * pf1550.c - mfd core driver for the PF1550
++ * pf1550_charger.c - regulator driver for the PF1550
 + *
 + * Copyright (C) 2016 Freescale Semiconductor, Inc.
 + * Robin Gong <yibin.gong@freescale.com>
@@ -151,518 +143,649 @@ index 0000000..70817ef
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
-+ *
-+ * This driver is based on max77693.c
 + */
 +
-+#include <linux/err.h>
-+#include <linux/i2c.h>
 +#include <linux/interrupt.h>
 +#include <linux/module.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/pf1550.h>
-+#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/power_supply.h>
 +#include <linux/regmap.h>
++#include <linux/mfd/pf1550.h>
 +
-+static const struct mfd_cell pf1550_devs[] = {
-+	{
-+		.name = "pf1550-regulator",
-+		.of_compatible = "fsl,pf1550-regulator",
-+	},
-+	{
-+		.name = "pf1550-onkey",
-+		.of_compatible = "fsl,pf1550-onkey",
-+	},
-+	{
-+		.name = "pf1550-charger",
-+		.of_compatible = "fsl,pf1550-charger",
-+	},
-+};
++#define PF1550_CHARGER_NAME		"pf1550-charger"
++#define PF1550_DEFAULT_CONSTANT_VOLT	4200000
++#define PF1550_DEFAULT_MIN_SYSTEM_VOLT	3500000
++#define PF1550_DEFAULT_THERMAL_TEMP	75
 +
-+static const struct regmap_config pf1550_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = PF1550_PMIC_REG_END,
-+};
++static const char *pf1550_charger_model		= "PF1550";
++static const char *pf1550_charger_manufacturer	= "Freescale";
 +
-+static const struct regmap_irq pf1550_regulator_irqs[] = {
-+	{ .reg_offset = 0, .mask = PMIC_IRQ_SW1_LS,		},
-+	{ .reg_offset = 0, .mask = PMIC_IRQ_SW2_LS,		},
-+	{ .reg_offset = 0, .mask = PMIC_IRQ_SW3_LS,		},
-+
-+	{ .reg_offset = 3, .mask = PMIC_IRQ_SW1_HS,		},
-+	{ .reg_offset = 3, .mask = PMIC_IRQ_SW2_HS,		},
-+	{ .reg_offset = 3, .mask = PMIC_IRQ_SW3_HS,		},
-+
-+	{ .reg_offset = 16, .mask = PMIC_IRQ_LDO1_FAULT,	},
-+	{ .reg_offset = 16, .mask = PMIC_IRQ_LDO2_FAULT,	},
-+	{ .reg_offset = 16, .mask = PMIC_IRQ_LDO3_FAULT,	},
-+
-+	{ .reg_offset = 22, .mask = PMIC_IRQ_TEMP_110,	},
-+	{ .reg_offset = 22, .mask = PMIC_IRQ_TEMP_125,	},
-+};
-+
-+static const struct regmap_irq_chip pf1550_regulator_irq_chip = {
-+	.name			= "pf1550-regulator",
-+	.status_base		= PF1550_PMIC_REG_SW_INT_STAT0,
-+	.mask_base		= PF1550_PMIC_REG_SW_INT_MASK0,
-+	.mask_invert		= false,
-+	.num_regs		= 4,
-+	.irqs			= pf1550_regulator_irqs,
-+	.num_irqs		= ARRAY_SIZE(pf1550_regulator_irqs),
-+};
-+
-+static const struct regmap_irq pf1550_onkey_irqs[] = {
-+	{ .reg_offset = 0, .mask = ONKEY_IRQ_PUSHI,		},
-+	{ .reg_offset = 0, .mask = ONKEY_IRQ_1SI,		},
-+	{ .reg_offset = 0, .mask = ONKEY_IRQ_2SI,		},
-+	{ .reg_offset = 0, .mask = ONKEY_IRQ_3SI,		},
-+	{ .reg_offset = 0, .mask = ONKEY_IRQ_4SI,		},
-+	{ .reg_offset = 0, .mask = ONKEY_IRQ_8SI,		},
-+};
-+
-+static const struct regmap_irq_chip pf1550_onkey_irq_chip = {
-+	.name			= "pf1550-onkey",
-+	.status_base		= PF1550_PMIC_REG_ONKEY_INT_STAT0,
-+	.mask_base		= PF1550_PMIC_REG_ONKEY_INT_MASK0,
-+	.mask_invert		= false,
-+	.num_regs		= 1,
-+	.irqs			= pf1550_onkey_irqs,
-+	.num_irqs		= ARRAY_SIZE(pf1550_onkey_irqs),
-+};
-+
-+static const struct regmap_irq pf1550_charger_irqs[] = {
-+	{ .reg_offset = 0, .mask = CHARG_IRQ_BAT2SOCI,		},
-+	{ .reg_offset = 0, .mask = CHARG_IRQ_BATI,		},
-+	{ .reg_offset = 0, .mask = CHARG_IRQ_CHGI,		},
-+	{ .reg_offset = 0, .mask = CHARG_IRQ_VBUSI,		},
-+	{ .reg_offset = 0, .mask = CHARG_IRQ_DPMI,		},
-+	{ .reg_offset = 0, .mask = CHARG_IRQ_THMI,		},
-+};
-+
-+static const struct regmap_irq_chip pf1550_charger_irq_chip = {
-+	.name			= "pf1550-charger",
-+	.status_base		= PF1550_CHARG_REG_CHG_INT,
-+	.mask_base		= PF1550_CHARG_REG_CHG_INT_MASK,
-+	.mask_invert		= false,
-+	.num_regs		= 1,
-+	.irqs			= pf1550_charger_irqs,
-+	.num_irqs		= ARRAY_SIZE(pf1550_charger_irqs),
-+};
-+
-+static int pf1550_i2c_probe(struct i2c_client *i2c,
-+			    const struct i2c_device_id *id)
-+{
++struct pf1550_charger {
++	struct device *dev;
 +	struct pf1550_dev *pf1550;
-+	unsigned int reg_data = 0;
++	struct power_supply *charger;
++	struct power_supply_desc psy_desc;
++	int irq;
++	struct delayed_work irq_work;
++	struct mutex mutex;
++
++	u32 constant_volt;
++	u32 min_system_volt;
++	u32 thermal_regulation_temp;
++};
++
++static struct pf1550_irq_info pf1550_charger_irqs[] = {
++	{ PF1550_CHARG_IRQ_BAT2SOCI,		"BAT2SOC" },
++	{ PF1550_CHARG_IRQ_BATI,		"BAT" },
++	{ PF1550_CHARG_IRQ_CHGI,		"CHG" },
++	{ PF1550_CHARG_IRQ_VBUSI,		"VBUS" },
++	{ PF1550_CHARG_IRQ_THMI,		"THM" },
++};
++
++static int pf1550_get_charger_state(struct regmap *regmap, int *val)
++{
++	int ret;
++	unsigned int data;
++
++	ret = regmap_read(regmap, PF1550_CHARG_REG_CHG_SNS, &data);
++	if (ret < 0)
++		return ret;
++
++	data &= PF1550_CHG_SNS_MASK;
++
++	switch (data) {
++	case PF1550_CHG_PRECHARGE:
++	case PF1550_CHG_CONSTANT_CURRENT:
++	case PF1550_CHG_CONSTANT_VOL:
++	case PF1550_CHG_EOC:
++		*val = POWER_SUPPLY_STATUS_CHARGING;
++		break;
++	case PF1550_CHG_DONE:
++		*val = POWER_SUPPLY_STATUS_FULL;
++		break;
++	case PF1550_CHG_TIMER_FAULT:
++	case PF1550_CHG_SUSPEND:
++		*val = POWER_SUPPLY_STATUS_NOT_CHARGING;
++		break;
++	case PF1550_CHG_OFF_INV:
++	case PF1550_CHG_OFF_TEMP:
++	case PF1550_CHG_LINEAR_ONLY:
++		*val = POWER_SUPPLY_STATUS_DISCHARGING;
++		break;
++	default:
++		*val = POWER_SUPPLY_STATUS_UNKNOWN;
++	}
++
++	return 0;
++}
++
++static int pf1550_get_charge_type(struct regmap *regmap, int *val)
++{
++	int ret;
++	unsigned int data;
++
++	ret = regmap_read(regmap, PF1550_CHARG_REG_CHG_SNS, &data);
++	if (ret < 0)
++		return ret;
++
++	data &= PF1550_CHG_SNS_MASK;
++
++	switch (data) {
++	case PF1550_CHG_SNS_MASK:
++		*val = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
++		break;
++	case PF1550_CHG_CONSTANT_CURRENT:
++	case PF1550_CHG_CONSTANT_VOL:
++	case PF1550_CHG_EOC:
++		*val = POWER_SUPPLY_CHARGE_TYPE_FAST;
++		break;
++	case PF1550_CHG_DONE:
++	case PF1550_CHG_TIMER_FAULT:
++	case PF1550_CHG_SUSPEND:
++	case PF1550_CHG_OFF_INV:
++	case PF1550_CHG_BAT_OVER:
++	case PF1550_CHG_OFF_TEMP:
++	case PF1550_CHG_LINEAR_ONLY:
++		*val = POWER_SUPPLY_CHARGE_TYPE_NONE;
++		break;
++	default:
++		*val = POWER_SUPPLY_CHARGE_TYPE_UNKNOWN;
++	}
++
++	return 0;
++}
++
++/*
++ * Supported health statuses:
++ *  - POWER_SUPPLY_HEALTH_DEAD
++ *  - POWER_SUPPLY_HEALTH_GOOD
++ *  - POWER_SUPPLY_HEALTH_OVERVOLTAGE
++ *  - POWER_SUPPLY_HEALTH_UNKNOWN
++ */
++static int pf1550_get_battery_health(struct regmap *regmap, int *val)
++{
++	int ret;
++	unsigned int data;
++
++	ret = regmap_read(regmap, PF1550_CHARG_REG_BATT_SNS, &data);
++	if (ret < 0)
++		return ret;
++
++	data &= PF1550_BAT_SNS_MASK;
++
++	switch (data) {
++	case PF1550_BAT_NO_DETECT:
++		*val = POWER_SUPPLY_HEALTH_DEAD;
++		break;
++	case PF1550_BAT_NO_VBUS:
++	case PF1550_BAT_LOW_THAN_PRECHARG:
++	case PF1550_BAT_CHARG_FAIL:
++	case PF1550_BAT_HIGH_THAN_PRECHARG:
++		*val = POWER_SUPPLY_HEALTH_GOOD;
++		break;
++	case PF1550_BAT_OVER_VOL:
++		*val = POWER_SUPPLY_HEALTH_OVERVOLTAGE;
++		break;
++	default:
++		*val = POWER_SUPPLY_HEALTH_UNKNOWN;
++		break;
++	}
++
++	return 0;
++}
++
++static int pf1550_get_present(struct regmap *regmap, int *val)
++{
++	unsigned int data;
++	int ret;
++
++	ret = regmap_read(regmap, PF1550_CHARG_REG_BATT_SNS, &data);
++	if (ret < 0)
++		return ret;
++
++	data &= PF1550_BAT_SNS_MASK;
++	*val = (data == PF1550_BAT_NO_DETECT) ? 0 : 1;
++
++	return 0;
++}
++
++static int pf1550_get_online(struct regmap *regmap, int *val)
++{
++	unsigned int data;
++	int ret;
++
++	ret = regmap_read(regmap, PF1550_CHARG_REG_VBUS_SNS, &data);
++	if (ret < 0)
++		return ret;
++
++	*val = (data & PF1550_VBUS_VALID) ? 1 : 0;
++
++	return 0;
++}
++
++static void pf1550_chg_bat_isr(struct pf1550_charger *chg)
++{
++	unsigned int data;
++
++	if (regmap_read(chg->pf1550->regmap,
++			PF1550_CHARG_REG_BATT_SNS, &data)) {
++		dev_err(chg->dev, "Read BATT_SNS error.\n");
++		return;
++	}
++
++	switch (data & PF1550_BAT_SNS_MASK) {
++	case PF1550_BAT_NO_VBUS:
++		dev_dbg(chg->dev, "No valid VBUS input.\n");
++		break;
++	case PF1550_BAT_LOW_THAN_PRECHARG:
++		dev_dbg(chg->dev, "VBAT < VPRECHG.LB.\n");
++		break;
++	case PF1550_BAT_CHARG_FAIL:
++		dev_dbg(chg->dev, "Battery charging failed.\n");
++		break;
++	case PF1550_BAT_HIGH_THAN_PRECHARG:
++		dev_dbg(chg->dev, "VBAT > VPRECHG.LB.\n");
++		break;
++	case PF1550_BAT_OVER_VOL:
++		dev_dbg(chg->dev, "VBAT > VBATOV.\n");
++		break;
++	case PF1550_BAT_NO_DETECT:
++		dev_dbg(chg->dev, "Battery not detected.\n");
++		break;
++	default:
++		dev_err(chg->dev, "Unknown value read:%x\n",
++			data & PF1550_CHG_SNS_MASK);
++	}
++}
++
++static void pf1550_chg_chg_isr(struct pf1550_charger *chg)
++{
++	unsigned int data;
++
++	if (regmap_read(chg->pf1550->regmap,
++			PF1550_CHARG_REG_CHG_SNS, &data)) {
++		dev_err(chg->dev, "Read CHG_SNS error.\n");
++		return;
++	}
++
++	switch (data & PF1550_CHG_SNS_MASK) {
++	case PF1550_CHG_PRECHARGE:
++		dev_dbg(chg->dev, "In pre-charger mode.\n");
++		break;
++	case PF1550_CHG_CONSTANT_CURRENT:
++		dev_dbg(chg->dev, "In fast-charge constant current mode.\n");
++		break;
++	case PF1550_CHG_CONSTANT_VOL:
++		dev_dbg(chg->dev, "In fast-charge constant voltage mode.\n");
++		break;
++	case PF1550_CHG_EOC:
++		dev_dbg(chg->dev, "In EOC mode.\n");
++		break;
++	case PF1550_CHG_DONE:
++		dev_dbg(chg->dev, "In DONE mode.\n");
++		break;
++	case PF1550_CHG_TIMER_FAULT:
++		dev_info(chg->dev, "In timer fault mode.\n");
++		break;
++	case PF1550_CHG_SUSPEND:
++		dev_info(chg->dev, "In thermistor suspend mode.\n");
++		break;
++	case PF1550_CHG_OFF_INV:
++		dev_info(chg->dev, "Input invalid, charger off.\n");
++		break;
++	case PF1550_CHG_BAT_OVER:
++		dev_info(chg->dev, "Battery over-voltage.\n");
++		break;
++	case PF1550_CHG_OFF_TEMP:
++		dev_info(chg->dev, "Temp high, charger off.\n");
++		break;
++	case PF1550_CHG_LINEAR_ONLY:
++		dev_dbg(chg->dev, "In Linear mode, not charging.\n");
++		break;
++	default:
++		dev_err(chg->dev, "Unknown value read:%x\n",
++			data & PF1550_CHG_SNS_MASK);
++	}
++}
++
++static void pf1550_chg_vbus_isr(struct pf1550_charger *chg)
++{
++	enum power_supply_type old_type;
++	unsigned int data;
++
++	if (regmap_read(chg->pf1550->regmap,
++			PF1550_CHARG_REG_VBUS_SNS, &data)) {
++		dev_err(chg->dev, "Read VBUS_SNS error.\n");
++		return;
++	}
++
++	old_type = chg->psy_desc.type;
++
++	if (data & PF1550_VBUS_UVLO) {
++		chg->psy_desc.type = POWER_SUPPLY_TYPE_BATTERY;
++		dev_dbg(chg->dev, "VBUS deattached.\n");
++	}
++	if (data & PF1550_VBUS_IN2SYS)
++		dev_dbg(chg->dev, "VBUS_IN2SYS_SNS.\n");
++	if (data & PF1550_VBUS_OVLO)
++		dev_dbg(chg->dev, "VBUS_OVLO_SNS.\n");
++	if (data & PF1550_VBUS_VALID) {
++		chg->psy_desc.type = POWER_SUPPLY_TYPE_MAINS;
++		dev_dbg(chg->dev, "VBUS attached.\n");
++	}
++
++	if (old_type != chg->psy_desc.type)
++		power_supply_changed(chg->charger);
++}
++
++static irqreturn_t pf1550_charger_irq_handler(int irq, void *data)
++{
++	struct pf1550_charger *chg = data;
++
++	chg->irq = irq;
++	schedule_delayed_work(&chg->irq_work,  msecs_to_jiffies(10));
++
++	return IRQ_HANDLED;
++}
++
++static void pf1550_charger_irq_work(struct work_struct *work)
++{
++	struct pf1550_charger *chg = container_of(to_delayed_work(work),
++						  struct pf1550_charger,
++						  irq_work);
++	int i, irq_type = -1;
++	unsigned int status;
++
++	if (!chg->charger)
++		return;
++
++	mutex_lock(&chg->mutex);
++
++	for (i = 0; i < ARRAY_SIZE(pf1550_charger_irqs); i++)
++		if (chg->irq == pf1550_charger_irqs[i].virq)
++			irq_type = pf1550_charger_irqs[i].irq;
++
++	switch (irq_type) {
++	case PF1550_CHARG_IRQ_BAT2SOCI:
++		dev_info(chg->dev, "BAT to SYS Overcurrent interrupt.\n");
++		break;
++	case PF1550_CHARG_IRQ_BATI:
++		pf1550_chg_bat_isr(chg);
++		break;
++	case PF1550_CHARG_IRQ_CHGI:
++		pf1550_chg_chg_isr(chg);
++		break;
++	case PF1550_CHARG_IRQ_VBUSI:
++		pf1550_chg_vbus_isr(chg);
++		break;
++	case PF1550_CHARG_IRQ_THMI:
++		dev_info(chg->dev, "Thermal interrupt.\n");
++		break;
++	default:
++		dev_err(chg->dev, "unknown interrupt occurred.\n");
++	}
++
++	if (regmap_read(chg->pf1550->regmap, PF1550_CHARG_REG_CHG_INT, &status))
++		dev_err(chg->dev, "Read CHG_INT error.\n");
++	if (regmap_write(chg->pf1550->regmap, PF1550_CHARG_REG_CHG_INT, status))
++		dev_err(chg->dev, "clear CHG_INT error.\n");
++
++	mutex_unlock(&chg->mutex);
++}
++
++static enum power_supply_property pf1550_charger_props[] = {
++	POWER_SUPPLY_PROP_STATUS,
++	POWER_SUPPLY_PROP_CHARGE_TYPE,
++	POWER_SUPPLY_PROP_HEALTH,
++	POWER_SUPPLY_PROP_PRESENT,
++	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_MODEL_NAME,
++	POWER_SUPPLY_PROP_MANUFACTURER,
++};
++
++static int pf1550_charger_get_property(struct power_supply *psy,
++			    enum power_supply_property psp,
++			    union power_supply_propval *val)
++{
++	struct pf1550_charger *chg = power_supply_get_drvdata(psy);
++	struct regmap *regmap = chg->pf1550->regmap;
 +	int ret = 0;
 +
-+	pf1550 = devm_kzalloc(&i2c->dev,
-+			sizeof(struct pf1550_dev), GFP_KERNEL);
-+	if (!pf1550)
++	switch (psp) {
++	case POWER_SUPPLY_PROP_STATUS:
++		ret = pf1550_get_charger_state(regmap, &val->intval);
++		break;
++	case POWER_SUPPLY_PROP_CHARGE_TYPE:
++		ret = pf1550_get_charge_type(regmap, &val->intval);
++		break;
++	case POWER_SUPPLY_PROP_HEALTH:
++		ret = pf1550_get_battery_health(regmap, &val->intval);
++		break;
++	case POWER_SUPPLY_PROP_PRESENT:
++		ret = pf1550_get_present(regmap, &val->intval);
++		break;
++	case POWER_SUPPLY_PROP_ONLINE:
++		ret = pf1550_get_online(regmap, &val->intval);
++		break;
++	case POWER_SUPPLY_PROP_MODEL_NAME:
++		val->strval = pf1550_charger_model;
++		break;
++	case POWER_SUPPLY_PROP_MANUFACTURER:
++		val->strval = pf1550_charger_manufacturer;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return ret;
++}
++
++static int pf1550_set_constant_volt(struct pf1550_charger *chg,
++		unsigned int uvolt)
++{
++	unsigned int data;
++
++	if (uvolt >= 3500000 && uvolt <= 4440000)
++		data = 8 + (uvolt - 3500000) / 20000;
++	else {
++		dev_err(chg->dev, "Wrong value for constant voltage\n");
++		return -EINVAL;
++	}
++
++	dev_dbg(chg->dev, "Charging constant voltage: %u (0x%x)\n", uvolt,
++			data);
++
++	return regmap_update_bits(chg->pf1550->regmap,
++			PF1550_CHARG_REG_BATT_REG,
++			PF1550_CHARG_REG_BATT_REG_CHGCV_MASK, data);
++}
++
++static int pf1550_set_min_system_volt(struct pf1550_charger *chg,
++		unsigned int uvolt)
++{
++	unsigned int data;
++
++	switch (uvolt) {
++	case 3500000:
++		data = 0x0;
++		break;
++	case 3700000:
++		data = 0x1;
++		break;
++	case 4300000:
++		data = 0x2;
++		break;
++	default:
++		dev_err(chg->dev, "Wrong value for minimum system voltage\n");
++		return -EINVAL;
++	}
++
++	data <<= PF1550_CHARG_REG_BATT_REG_VMINSYS_SHIFT;
++
++	dev_dbg(chg->dev, "Minimum system regulation voltage: %u (0x%x)\n",
++			uvolt, data);
++
++	return regmap_update_bits(chg->pf1550->regmap,
++			PF1550_CHARG_REG_BATT_REG,
++			PF1550_CHARG_REG_BATT_REG_VMINSYS_MASK, data);
++}
++
++static int pf1550_set_thermal_regulation_temp(struct pf1550_charger *chg,
++		unsigned int cels)
++{
++	unsigned int data;
++
++	switch (cels) {
++	case 60:
++		data = 0x0;
++		break;
++	case 75:
++		data = 0x1;
++		break;
++	case 90:
++		data = 0x2;
++		break;
++	case 105:
++		data = 0x3;
++		break;
++	default:
++		dev_err(chg->dev, "Wrong value for thermal temperature\n");
++		return -EINVAL;
++	}
++
++	data <<= PF1550_CHARG_REG_THM_REG_CNFG_REGTEMP_SHIFT;
++
++	dev_dbg(chg->dev, "Thermal regulation loop temperature: %u (0x%x)\n",
++			cels, data);
++
++	return regmap_update_bits(chg->pf1550->regmap,
++			PF1550_CHARG_REG_THM_REG_CNFG,
++			PF1550_CHARG_REG_THM_REG_CNFG_REGTEMP_MASK, data);
++}
++
++/*
++ * Sets charger registers to proper and safe default values.
++ */
++static int pf1550_reg_init(struct pf1550_charger *chg)
++{
++	int ret;
++	unsigned int data;
++
++	/* Unmask charger interrupt, mask DPMI and reserved bit */
++	ret =  regmap_write(chg->pf1550->regmap, PF1550_CHARG_REG_CHG_INT_MASK,
++				0x51);
++	if (ret) {
++		dev_err(chg->dev, "Error unmask charger interrupt: %d\n", ret);
++		return ret;
++	}
++
++	ret = regmap_read(chg->pf1550->regmap, PF1550_CHARG_REG_VBUS_SNS,
++				&data);
++	if (ret) {
++		dev_err(chg->dev, "Read charg vbus_sns error: %d\n", ret);
++		return ret;
++	}
++
++	if (data & PF1550_VBUS_VALID)
++		chg->psy_desc.type = POWER_SUPPLY_TYPE_MAINS;
++
++	ret = pf1550_set_constant_volt(chg, chg->constant_volt);
++	if (ret)
++		return ret;
++
++	ret = pf1550_set_min_system_volt(chg, chg->min_system_volt);
++	if (ret)
++		return ret;
++
++	ret = pf1550_set_thermal_regulation_temp(chg,
++			chg->thermal_regulation_temp);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static int pf1550_dt_init(struct device *dev, struct pf1550_charger *chg)
++{
++	struct device_node *np = dev->of_node;
++
++	if (!np) {
++		dev_err(dev, "no charger OF node\n");
++		return -EINVAL;
++	}
++
++	if (of_property_read_u32(np, "fsl,constant-microvolt",
++			&chg->constant_volt))
++		chg->constant_volt = PF1550_DEFAULT_CONSTANT_VOLT;
++
++	if (of_property_read_u32(np, "fsl,min-system-microvolt",
++			&chg->min_system_volt))
++		chg->min_system_volt = PF1550_DEFAULT_MIN_SYSTEM_VOLT;
++
++	if (of_property_read_u32(np, "fsl,thermal-regulation",
++			&chg->thermal_regulation_temp))
++		chg->thermal_regulation_temp = PF1550_DEFAULT_THERMAL_TEMP;
++
++	return 0;
++}
++
++static int pf1550_charger_probe(struct platform_device *pdev)
++{
++	struct pf1550_charger *chg;
++	struct power_supply_config psy_cfg = {};
++	struct pf1550_dev *pf1550 = dev_get_drvdata(pdev->dev.parent);
++	int i, ret;
++
++	chg = devm_kzalloc(&pdev->dev, sizeof(*chg), GFP_KERNEL);
++	if (!chg)
 +		return -ENOMEM;
 +
-+	i2c_set_clientdata(i2c, pf1550);
-+	pf1550->dev = &i2c->dev;
-+	pf1550->i2c = i2c;
-+	pf1550->irq = i2c->irq;
++	chg->dev = &pdev->dev;
++	chg->pf1550 = pf1550;
 +
-+	pf1550->regmap = devm_regmap_init_i2c(i2c, &pf1550_regmap_config);
-+	if (IS_ERR(pf1550->regmap)) {
-+		ret = PTR_ERR(pf1550->regmap);
-+		dev_err(pf1550->dev, "failed to allocate register map: %d\n",
-+				ret);
++	platform_set_drvdata(pdev, chg);
++
++	ret = pf1550_dt_init(&pdev->dev, chg);
++	if (ret)
++		return ret;
++
++	mutex_init(&chg->mutex);
++
++	INIT_DELAYED_WORK(&chg->irq_work, pf1550_charger_irq_work);
++
++	for (i = 0; i < ARRAY_SIZE(pf1550_charger_irqs); i++) {
++		struct pf1550_irq_info *charger_irq =
++						&pf1550_charger_irqs[i];
++		unsigned int virq = 0;
++
++		virq = regmap_irq_get_virq(pf1550->irq_data_charger,
++					charger_irq->irq);
++		if (!virq)
++			return -EINVAL;
++
++		charger_irq->virq = virq;
++
++		ret = devm_request_threaded_irq(&pdev->dev, virq, NULL,
++					pf1550_charger_irq_handler,
++					IRQF_NO_SUSPEND,
++					charger_irq->name, chg);
++		if (ret) {
++			dev_err(&pdev->dev,
++				"failed: irq request (IRQ: %d, error :%d)\n",
++				charger_irq->irq, ret);
++			return ret;
++		}
++	}
++
++	psy_cfg.drv_data = chg;
++
++	chg->psy_desc.name = PF1550_CHARGER_NAME;
++	chg->psy_desc.type = POWER_SUPPLY_TYPE_BATTERY;
++	chg->psy_desc.get_property = pf1550_charger_get_property;
++	chg->psy_desc.properties = pf1550_charger_props;
++	chg->psy_desc.num_properties = ARRAY_SIZE(pf1550_charger_props);
++
++	chg->charger = power_supply_register(&pdev->dev, &chg->psy_desc,
++						&psy_cfg);
++	if (IS_ERR(chg->charger)) {
++		dev_err(&pdev->dev, "failed: power supply register\n");
++		ret = PTR_ERR(chg->charger);
 +		return ret;
 +	}
 +
-+	ret = regmap_read(pf1550->regmap, PF1550_PMIC_REG_DEVICE_ID, &reg_data);
-+	if (ret < 0 || reg_data != 0x7c) {
-+		dev_err(pf1550->dev, "device not found!\n");
-+		return ret;
-+	}
++	ret = pf1550_reg_init(chg);
 +
-+	pf1550->type = PF1550;
-+	dev_info(pf1550->dev, "pf1550 found.\n");
-+
-+	ret = regmap_add_irq_chip(pf1550->regmap, pf1550->irq,
-+				IRQF_ONESHOT | IRQF_SHARED |
-+				IRQF_TRIGGER_FALLING, 0,
-+				&pf1550_regulator_irq_chip,
-+				&pf1550->irq_data_regulator);
-+	if (ret) {
-+		dev_err(pf1550->dev, "failed to add irq1 chip: %d\n", ret);
-+		goto err_regulator_irq;
-+	}
-+
-+	ret = regmap_add_irq_chip(pf1550->regmap, pf1550->irq,
-+				IRQF_ONESHOT | IRQF_SHARED |
-+				IRQF_TRIGGER_FALLING, 0,
-+				&pf1550_onkey_irq_chip,
-+				&pf1550->irq_data_onkey);
-+	if (ret) {
-+		dev_err(pf1550->dev, "failed to add irq3 chip: %d\n", ret);
-+		goto err_onkey_irq;
-+	}
-+
-+	ret = regmap_add_irq_chip(pf1550->regmap, pf1550->irq,
-+				IRQF_ONESHOT | IRQF_SHARED |
-+				IRQF_TRIGGER_FALLING, 0,
-+				&pf1550_charger_irq_chip,
-+				&pf1550->irq_data_charger);
-+	if (ret) {
-+		dev_err(pf1550->dev, "failed to add irq4 chip: %d\n", ret);
-+		goto err_charger_irq;
-+	}
-+
-+	ret = mfd_add_devices(pf1550->dev, -1, pf1550_devs,
-+			      ARRAY_SIZE(pf1550_devs), NULL, 0, NULL);
-+	if (ret < 0)
-+		goto err_mfd;
-+
-+	return ret;
-+
-+err_mfd:
-+	mfd_remove_devices(pf1550->dev);
-+err_charger_irq:
-+	regmap_del_irq_chip(pf1550->irq, pf1550->irq_data_charger);
-+err_onkey_irq:
-+	regmap_del_irq_chip(pf1550->irq, pf1550->irq_data_regulator);
-+err_regulator_irq:
 +	return ret;
 +}
 +
-+static int pf1550_i2c_remove(struct i2c_client *i2c)
++static int pf1550_charger_remove(struct platform_device *pdev)
 +{
-+	struct pf1550_dev *pf1550 = i2c_get_clientdata(i2c);
++	struct pf1550_charger *chg = platform_get_drvdata(pdev);
 +
-+	mfd_remove_devices(pf1550->dev);
-+
-+	regmap_del_irq_chip(pf1550->irq, pf1550->irq_data_regulator);
-+	regmap_del_irq_chip(pf1550->irq, pf1550->irq_data_onkey);
-+	regmap_del_irq_chip(pf1550->irq, pf1550->irq_data_charger);
++	cancel_delayed_work_sync(&chg->irq_work);
++	power_supply_unregister(chg->charger);
 +
 +	return 0;
 +}
 +
-+static const struct i2c_device_id pf1550_i2c_id[] = {
-+	{ "pf1550", PF1550 },
++static const struct platform_device_id pf1550_charger_id[] = {
++	{ "pf1550-charger", 0, },
 +	{ }
 +};
-+MODULE_DEVICE_TABLE(i2c, pf1550_i2c_id);
++MODULE_DEVICE_TABLE(platform, pf1550_charger_id);
 +
-+static int pf1550_suspend(struct device *dev)
-+{
-+	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
-+	struct pf1550_dev *pf1550 = i2c_get_clientdata(i2c);
-+
-+	if (device_may_wakeup(dev)) {
-+		enable_irq_wake(pf1550->irq);
-+		disable_irq(pf1550->irq);
-+	}
-+
-+	return 0;
-+}
-+
-+static int pf1550_resume(struct device *dev)
-+{
-+	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
-+	struct pf1550_dev *pf1550 = i2c_get_clientdata(i2c);
-+
-+	if (device_may_wakeup(dev)) {
-+		disable_irq_wake(pf1550->irq);
-+		enable_irq(pf1550->irq);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops pf1550_pm = {
-+	.suspend = pf1550_suspend,
-+	.resume = pf1550_resume,
-+};
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id pf1550_dt_match[] = {
-+	{ .compatible = "fsl,pf1550" },
-+	{},
-+};
-+#endif
-+
-+static struct i2c_driver pf1550_i2c_driver = {
++static struct platform_driver pf1550_charger_driver = {
 +	.driver = {
-+		   .name = "pf1550",
-+		   .owner = THIS_MODULE,
-+		   .pm = &pf1550_pm,
-+		   .of_match_table = of_match_ptr(pf1550_dt_match),
++		.name	= "pf1550-charger",
 +	},
-+	.probe = pf1550_i2c_probe,
-+	.remove = pf1550_i2c_remove,
-+	.id_table = pf1550_i2c_id,
++	.probe		= pf1550_charger_probe,
++	.remove		= pf1550_charger_remove,
++	.id_table	= pf1550_charger_id,
 +};
++module_platform_driver(pf1550_charger_driver);
 +
-+static int __init pf1550_i2c_init(void)
-+{
-+	return i2c_add_driver(&pf1550_i2c_driver);
-+}
-+/* init early so consumer devices can complete system boot */
-+subsys_initcall(pf1550_i2c_init);
-+
-+static void __exit pf1550_i2c_exit(void)
-+{
-+	i2c_del_driver(&pf1550_i2c_driver);
-+}
-+module_exit(pf1550_i2c_exit);
-+
-+MODULE_DESCRIPTION("Freescale PF1550 multi-function core driver");
 +MODULE_AUTHOR("Robin Gong <yibin.gong@freescale.com>");
++MODULE_DESCRIPTION("PF1550 charger driver");
 +MODULE_LICENSE("GPL");
-+
-diff --git a/include/linux/mfd/pf1550.h b/include/linux/mfd/pf1550.h
-new file mode 100644
-index 0000000..9721929
---- /dev/null
-+++ b/include/linux/mfd/pf1550.h
-@@ -0,0 +1,241 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * pf1550.h - mfd head file for PF1550
-+ *
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Robin Gong <yibin.gong@freescale.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __LINUX_MFD_PF1550_H
-+#define __LINUX_MFD_PF1550_H
-+
-+#include <linux/i2c.h>
-+
-+enum chips { PF1550 = 1, };
-+
-+enum pf1550_pmic_reg {
-+	/* PMIC regulator part */
-+	PF1550_PMIC_REG_DEVICE_ID		= 0x00,
-+	PF1550_PMIC_REG_OTP_FLAVOR		= 0x01,
-+	PF1550_PMIC_REG_SILICON_REV		= 0x02,
-+
-+	PF1550_PMIC_REG_INT_CATEGORY		= 0x06,
-+	PF1550_PMIC_REG_SW_INT_STAT0		= 0x08,
-+	PF1550_PMIC_REG_SW_INT_MASK0		= 0x09,
-+	PF1550_PMIC_REG_SW_INT_SENSE0		= 0x0A,
-+	PF1550_PMIC_REG_SW_INT_STAT1		= 0x0B,
-+	PF1550_PMIC_REG_SW_INT_MASK1		= 0x0C,
-+	PF1550_PMIC_REG_SW_INT_SENSE1		= 0x0D,
-+	PF1550_PMIC_REG_SW_INT_STAT2		= 0x0E,
-+	PF1550_PMIC_REG_SW_INT_MASK2		= 0x0F,
-+	PF1550_PMIC_REG_SW_INT_SENSE2		= 0x10,
-+	PF1550_PMIC_REG_LDO_INT_STAT0		= 0x18,
-+	PF1550_PMIC_REG_LDO_INT_MASK0		= 0x19,
-+	PF1550_PMIC_REG_LDO_INT_SENSE0		= 0x1A,
-+	PF1550_PMIC_REG_TEMP_INT_STAT0		= 0x20,
-+	PF1550_PMIC_REG_TEMP_INT_MASK0		= 0x21,
-+	PF1550_PMIC_REG_TEMP_INT_SENSE0		= 0x22,
-+	PF1550_PMIC_REG_ONKEY_INT_STAT0		= 0x24,
-+	PF1550_PMIC_REG_ONKEY_INT_MASK0		= 0x25,
-+	PF1550_PMIC_REG_ONKEY_INT_SENSE0	= 0x26,
-+	PF1550_PMIC_REG_MISC_INT_STAT0		= 0x28,
-+	PF1550_PMIC_REG_MISC_INT_MASK0		= 0x29,
-+	PF1550_PMIC_REG_MISC_INT_SENSE0		= 0x2A,
-+
-+	PF1550_PMIC_REG_COINCELL_CONTROL	= 0x30,
-+
-+	PF1550_PMIC_REG_SW1_VOLT		= 0x32,
-+	PF1550_PMIC_REG_SW1_STBY_VOLT		= 0x33,
-+	PF1550_PMIC_REG_SW1_SLP_VOLT		= 0x34,
-+	PF1550_PMIC_REG_SW1_CTRL		= 0x35,
-+	PF1550_PMIC_REG_SW1_CTRL1		= 0x36,
-+	PF1550_PMIC_REG_SW2_VOLT		= 0x38,
-+	PF1550_PMIC_REG_SW2_STBY_VOLT		= 0x39,
-+	PF1550_PMIC_REG_SW2_SLP_VOLT		= 0x3A,
-+	PF1550_PMIC_REG_SW2_CTRL		= 0x3B,
-+	PF1550_PMIC_REG_SW2_CTRL1		= 0x3C,
-+	PF1550_PMIC_REG_SW3_VOLT		= 0x3E,
-+	PF1550_PMIC_REG_SW3_STBY_VOLT		= 0x3F,
-+	PF1550_PMIC_REG_SW3_SLP_VOLT		= 0x40,
-+	PF1550_PMIC_REG_SW3_CTRL		= 0x41,
-+	PF1550_PMIC_REG_SW3_CTRL1		= 0x42,
-+	PF1550_PMIC_REG_VSNVS_CTRL		= 0x48,
-+	PF1550_PMIC_REG_VREFDDR_CTRL		= 0x4A,
-+	PF1550_PMIC_REG_LDO1_VOLT		= 0x4C,
-+	PF1550_PMIC_REG_LDO1_CTRL		= 0x4D,
-+	PF1550_PMIC_REG_LDO2_VOLT		= 0x4F,
-+	PF1550_PMIC_REG_LDO2_CTRL		= 0x50,
-+	PF1550_PMIC_REG_LDO3_VOLT		= 0x52,
-+	PF1550_PMIC_REG_LDO3_CTRL		= 0x53,
-+	PF1550_PMIC_REG_PWRCTRL0		= 0x58,
-+	PF1550_PMIC_REG_PWRCTRL1		= 0x59,
-+	PF1550_PMIC_REG_PWRCTRL2		= 0x5A,
-+	PF1550_PMIC_REG_PWRCTRL3		= 0x5B,
-+	PF1550_PMIC_REG_SW1_PWRDN_SEQ		= 0x5F,
-+	PF1550_PMIC_REG_SW2_PWRDN_SEQ		= 0x60,
-+	PF1550_PMIC_REG_SW3_PWRDN_SEQ		= 0x61,
-+	PF1550_PMIC_REG_LDO1_PWRDN_SEQ		= 0x62,
-+	PF1550_PMIC_REG_LDO2_PWRDN_SEQ		= 0x63,
-+	PF1550_PMIC_REG_LDO3_PWRDN_SEQ		= 0x64,
-+	PF1550_PMIC_REG_VREFDDR_PWRDN_SEQ	= 0x65,
-+
-+	PF1550_PMIC_REG_STATE_INFO		= 0x67,
-+	PF1550_PMIC_REG_I2C_ADDR		= 0x68,
-+	PF1550_PMIC_REG_IO_DRV0			= 0x69,
-+	PF1550_PMIC_REG_IO_DRV1			= 0x6A,
-+	PF1550_PMIC_REG_RC_16MHZ		= 0x6B,
-+	PF1550_PMIC_REG_KEY			= 0x6F,
-+
-+	/* charger part */
-+	PF1550_CHARG_REG_CHG_INT		= 0x80,
-+	PF1550_CHARG_REG_CHG_INT_MASK		= 0x82,
-+	PF1550_CHARG_REG_CHG_INT_OK		= 0x84,
-+	PF1550_CHARG_REG_VBUS_SNS		= 0x86,
-+	PF1550_CHARG_REG_CHG_SNS		= 0x87,
-+	PF1550_CHARG_REG_BATT_SNS		= 0x88,
-+	PF1550_CHARG_REG_CHG_OPER		= 0x89,
-+	PF1550_CHARG_REG_CHG_TMR		= 0x8A,
-+	PF1550_CHARG_REG_CHG_EOC_CNFG		= 0x8D,
-+	PF1550_CHARG_REG_CHG_CURR_CNFG		= 0x8E,
-+	PF1550_CHARG_REG_BATT_REG		= 0x8F,
-+	PF1550_CHARG_REG_BATFET_CNFG		= 0x91,
-+	PF1550_CHARG_REG_THM_REG_CNFG		= 0x92,
-+	PF1550_CHARG_REG_VBUS_INLIM_CNFG	= 0x94,
-+	PF1550_CHARG_REG_VBUS_LIN_DPM		= 0x95,
-+	PF1550_CHARG_REG_USB_PHY_LDO_CNFG	= 0x96,
-+	PF1550_CHARG_REG_DBNC_DELAY_TIME	= 0x98,
-+	PF1550_CHARG_REG_CHG_INT_CNFG		= 0x99,
-+	PF1550_CHARG_REG_THM_ADJ_SETTING	= 0x9A,
-+	PF1550_CHARG_REG_VBUS2SYS_CNFG		= 0x9B,
-+	PF1550_CHARG_REG_LED_PWM		= 0x9C,
-+	PF1550_CHARG_REG_FAULT_BATFET_CNFG	= 0x9D,
-+	PF1550_CHARG_REG_LED_CNFG		= 0x9E,
-+	PF1550_CHARG_REG_CHGR_KEY2		= 0x9F,
-+
-+	PF1550_PMIC_REG_END			= 0xff,
-+};
-+
-+#define PF1550_CHG_PRECHARGE		0
-+#define PF1550_CHG_CONSTANT_CURRENT	1
-+#define PF1550_CHG_CONSTANT_VOL		2
-+#define PF1550_CHG_EOC			3
-+#define PF1550_CHG_DONE			4
-+#define PF1550_CHG_TIMER_FAULT		6
-+#define PF1550_CHG_SUSPEND		7
-+#define PF1550_CHG_OFF_INV		8
-+#define PF1550_CHG_BAT_OVER		9
-+#define PF1550_CHG_OFF_TEMP		10
-+#define PF1550_CHG_LINEAR_ONLY		12
-+#define PF1550_CHG_SNS_MASK		0xf
-+
-+#define PF1550_BAT_NO_VBUS		0
-+#define PF1550_BAT_LOW_THAN_PRECHARG	1
-+#define PF1550_BAT_CHARG_FAIL		2
-+#define PF1550_BAT_HIGH_THAN_PRECHARG	4
-+#define PF1550_BAT_OVER_VOL		5
-+#define	PF1550_BAT_NO_DETECT		6
-+#define PF1550_BAT_SNS_MASK		0x7
-+
-+#define PF1550_VBUS_UVLO		BIT(2)
-+#define PF1550_VBUS_IN2SYS		BIT(3)
-+#define PF1550_VBUS_OVLO		BIT(4)
-+#define PF1550_VBUS_VALID		BIT(5)
-+
-+#define PF1550_CHARG_REG_BATT_REG_CHGCV_MASK		0x3f
-+#define PF1550_CHARG_REG_BATT_REG_VMINSYS_SHIFT		6
-+#define PF1550_CHARG_REG_BATT_REG_VMINSYS_MASK		0x3
-+#define PF1550_CHARG_REG_THM_REG_CNFG_REGTEMP_SHIFT	2
-+#define PF1550_CHARG_REG_THM_REG_CNFG_REGTEMP_MASK	0x3
-+
-+#define PMIC_IRQ_SW1_LS		BIT(0)
-+#define PMIC_IRQ_SW2_LS		BIT(1)
-+#define PMIC_IRQ_SW3_LS		BIT(2)
-+#define PMIC_IRQ_SW1_HS		BIT(0)
-+#define PMIC_IRQ_SW2_HS		BIT(1)
-+#define PMIC_IRQ_SW3_HS		BIT(2)
-+#define PMIC_IRQ_LDO1_FAULT	BIT(0)
-+#define PMIC_IRQ_LDO2_FAULT	BIT(1)
-+#define PMIC_IRQ_LDO3_FAULT	BIT(2)
-+#define PMIC_IRQ_TEMP_110	BIT(0)
-+#define PMIC_IRQ_TEMP_125	BIT(1)
-+
-+#define ONKEY_IRQ_PUSHI		BIT(0)
-+#define ONKEY_IRQ_1SI		BIT(1)
-+#define ONKEY_IRQ_2SI		BIT(2)
-+#define ONKEY_IRQ_3SI		BIT(3)
-+#define ONKEY_IRQ_4SI		BIT(4)
-+#define ONKEY_IRQ_8SI		BIT(5)
-+
-+#define CHARG_IRQ_BAT2SOCI	BIT(1)
-+#define CHARG_IRQ_BATI		BIT(2)
-+#define CHARG_IRQ_CHGI		BIT(3)
-+#define CHARG_IRQ_VBUSI		BIT(5)
-+#define CHARG_IRQ_DPMI		BIT(6)
-+#define CHARG_IRQ_THMI		BIT(7)
-+
-+enum pf1550_irq {
-+	PF1550_PMIC_IRQ_SW1_LS,
-+	PF1550_PMIC_IRQ_SW2_LS,
-+	PF1550_PMIC_IRQ_SW3_LS,
-+	PF1550_PMIC_IRQ_SW1_HS,
-+	PF1550_PMIC_IRQ_SW2_HS,
-+	PF1550_PMIC_IRQ_SW3_HS,
-+	PF1550_PMIC_IRQ_LDO1_FAULT,
-+	PF1550_PMIC_IRQ_LDO2_FAULT,
-+	PF1550_PMIC_IRQ_LDO3_FAULT,
-+	PF1550_PMIC_IRQ_TEMP_110,
-+	PF1550_PMIC_IRQ_TEMP_125,
-+
-+	PF1550_ONKEY_IRQ_PUSHI,
-+	PF1550_ONKEY_IRQ_1SI,
-+	PF1550_ONKEY_IRQ_2SI,
-+	PF1550_ONKEY_IRQ_3SI,
-+	PF1550_ONKEY_IRQ_4SI,
-+	PF1550_ONKEY_IRQ_8SI,
-+
-+	PF1550_CHARG_IRQ_BAT2SOCI,
-+	PF1550_CHARG_IRQ_BATI,
-+	PF1550_CHARG_IRQ_CHGI,
-+	PF1550_CHARG_IRQ_VBUSI,
-+	PF1550_CHARG_IRQ_DPMI,
-+	PF1550_CHARG_IRQ_THMI,
-+};
-+
-+enum pf1550_regulators {
-+	PF1550_SW1,
-+	PF1550_SW2,
-+	PF1550_SW3,
-+	PF1550_VREFDDR,
-+	PF1550_LDO1,
-+	PF1550_LDO2,
-+	PF1550_LDO3,
-+};
-+
-+struct pf1550_irq_info {
-+	unsigned int irq;
-+	const char *name;
-+	unsigned int virq;
-+};
-+
-+struct pf1550_dev {
-+	struct device *dev;
-+	struct i2c_client *i2c;
-+	int type;
-+	struct regmap *regmap;
-+	struct regmap_irq_chip_data *irq_data_regulator;
-+	struct regmap_irq_chip_data *irq_data_onkey;
-+	struct regmap_irq_chip_data *irq_data_charger;
-+	int irq;
-+};
-+
-+#endif /* __LINUX_MFD_PF1550_H */
 -- 
 2.7.4
