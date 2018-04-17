@@ -1,79 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752620AbeDQWKb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 18:10:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47088 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750989AbeDQWKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 18:10:30 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Richard Guy Briggs <rgb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>
-Subject: Re: [PATCH ghak80 V1] audit: add syscall information to FEATURE_CHANGE records
-Date: Tue, 17 Apr 2018 18:10:30 -0400
-Message-ID: <2312860.Cha4zeddVm@x2>
-Organization: Red Hat
-In-Reply-To: <CAHC9VhSxjEKNcdE2Mm-Vwef6RvTG2ykGFFmeAtVypAaPRvddmg@mail.gmail.com>
-References: <08bd08ee9bc70f6e98b9e298ba6a2c0f4dcadb4b.1523372093.git.rgb@redhat.com> <CAHC9VhSxjEKNcdE2Mm-Vwef6RvTG2ykGFFmeAtVypAaPRvddmg@mail.gmail.com>
+        id S1752707AbeDQWMp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 18:12:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35256 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbeDQWMn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 18:12:43 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 17 Apr 2018 15:12:42 -0700
+From: rishabhb@codeaurora.org
+To: Rob Herring <robh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
+        kyan@codeaurora.org, ckadabi@codeaurora.org,
+        stanimir.varbanov@linaro.org, evgreen@chromium.org
+Subject: Re: [PATCH v4 1/2] Documentation: Documentation for qcom, llcc
+In-Reply-To: <9a9ffe61f85dd28199bcc2d449097059@codeaurora.org>
+References: <1523390893-10904-1-git-send-email-rishabhb@codeaurora.org>
+ <1523390893-10904-2-git-send-email-rishabhb@codeaurora.org>
+ <20180416145912.ja7d2xd2kqiukrgl@rob-hp-laptop>
+ <9a9ffe61f85dd28199bcc2d449097059@codeaurora.org>
+Message-ID: <1d31f2d727d32922aaf98c345723229e@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, April 17, 2018 6:06:24 PM EDT Paul Moore wrote:
-> On Wed, Apr 11, 2018 at 8:46 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Tie syscall information to FEATURE_CHANGE calls since it is a result of
-> > user action.
-> > 
-> > See: https://github.com/linux-audit/audit-kernel/issues/80
-> > 
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> > 
-> >  kernel/audit.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 8da24ef..23f125b 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -1103,10 +1103,9 @@ static void audit_log_feature_change(int which,
-> > u32 old_feature, u32 new_feature> 
-> >  {
-> >  
-> >         struct audit_buffer *ab;
-> > 
-> > -       if (audit_enabled == AUDIT_OFF)
-> > +       if (!audit_enabled)
+On 2018-04-17 10:43, rishabhb@codeaurora.org wrote:
+> On 2018-04-16 07:59, Rob Herring wrote:
+>> On Tue, Apr 10, 2018 at 01:08:12PM -0700, Rishabh Bhatnagar wrote:
+>>> Documentation for last level cache controller device tree bindings,
+>>> client bindings usage examples.
+>> 
+>> "Documentation: Documentation ..."? That wastes a lot of the subject
+>> line... The preferred prefix is "dt-bindings: ..."
+>> 
+>>> 
+>>> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+>>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>>> ---
+>>>  .../devicetree/bindings/arm/msm/qcom,llcc.txt      | 58 
+>>> ++++++++++++++++++++++
+>>>  1 file changed, 58 insertions(+)
+>>>  create mode 100644 
+>>> Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>>> 
+>>> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt 
+>>> b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>>> new file mode 100644
+>>> index 0000000..497cf0f
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>>> @@ -0,0 +1,58 @@
+>>> +== Introduction==
+>>> +
+>>> +LLCC (Last Level Cache Controller) provides last level of cache 
+>>> memory in SOC,
+>>> +that can be shared by multiple clients. Clients here are different 
+>>> cores in the
+>>> +SOC, the idea is to minimize the local caches at the clients and 
+>>> migrate to
+>>> +common pool of memory
+>>> +
+>>> +Properties:
+>>> +- compatible:
+>>> +	 Usage: required
+>>> +	 Value type: <string>
+>>> +	 Definition: must be "qcom,sdm845-llcc"
+>>> +
+>>> +- reg:
+>>> +	 Usage: required
+>>> +	 Value Type: <prop-encoded-array>
+>>> +	 Definition: must be addresses and sizes of the LLCC registers
+>> 
+>> How many address ranges?
+>> 
+> It consists of just one address range. I'll edit the definition to make
+> it more clear.
+>>> +
+>>> +- #cache-cells:
+>> 
+>> This is all written as it is a common binding, but it is not one.
+>> 
+>> You already have most of the configuration data for each client in the
+>> driver, I think I'd just put the client connection there too. Is there
+>> any variation of this for a given SoC?
+>> 
+> #cache-cells and max-slices won't change for a given SOC. So you want 
+> me
+> to hard-code in the driver itself?
 > 
-> Sooo, this is an unrelated style change, why?  Looking at the rest of
-> kernel/audit.c we seem to use a mix of "(!x)" and "(x == 0/CONST)" so
-> why are you adding noise to this patch?
-> 
-> >                 return;
-> > 
-> > -
-> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
-> > +       ab = audit_log_start(current->audit_context, GFP_KERNEL,
-> > AUDIT_FEATURE_CHANGE);
-> This is the important part, and the Right Thing To Do.
-
-This is an unexpected change. I have asked questions on the github issue 
-tracker but have not gotten a satisfactory answer. Please do not merge this 
-until there's agreement on this.
-
-Thanks,
--Steve
-
-> >         if (!ab)
-> >         
-> >                 return;
-> >         
-> >         audit_log_task_info(ab, current);
-> > 
-> > --
-> > 1.8.3.1
+I can use of_parse_phandle_with_fixed_args function and fix the number 
+of
+args as 1 instead of keeping #cache-cells here in DT. Does that look 
+fine?
+>>> +	 Usage: required
+>>> +	 Value Type: <u32>
+>>> +	 Definition: Number of cache cells, must be 1
+>>> +
+>>> +- max-slices:
+>>> +	 usage: required
+>>> +	 Value Type: <u32>
+>>> +	 Definition: Number of cache slices supported by hardware
+>> 
+>> What's a slice?
+>> 
+> System cache memory provided by LLCC is divided into smaller chunks
+> called slices. Each slice has its associated size and ID. Clients can
+> query slice details, activate and deactivate them.
+>>> +
+>>> +Example:
+>>> +
+>>> +	llcc: qcom,llcc@1100000 {
+>>> +		compatible = "qcom,sdm845-llcc";
+>>> +		reg = <0x1100000 0x250000>;
+>>> +		#cache-cells = <1>;
+>>> +		max-slices = <32>;
+>>> +	};
+>>> +
+>>> +== Client ==
+>>> +
+>>> +Properties:
+>>> +- cache-slice-names:
+>>> +	 Usage: required
+>>> +	 Value type: <stringlist>
+>>> +	 Definition: A set of names that identify the usecase names of a
+>>> +			client that uses cache slice. These strings are
+>>> +			used to look up the cache slice entries by name.
+>>> +
+>>> +- cache-slices:
+>>> +	 Usage: required
+>>> +	 Value type: <prop-encoded-array>
+>>> +	 Definition: The tuple has phandle to llcc device as the first
+>>> +			argument and the second argument is the usecase
+>>> +			id of the client.
+>>> +For Example:
+>>> +	venus {
+>>> +		cache-slice-names = "vidsc0", "vidsc1";
+>>> +	 	cache-slices = <&llcc VIDSC0_ID>, <&llcc VIDSC1_ID>;
+>>> +	};
+>>> --
+>>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+>>> Forum,
+>>> a Linux Foundation Collaborative Project
+>>> 
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe devicetree" 
+>>> in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
