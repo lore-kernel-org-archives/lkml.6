@@ -1,101 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752672AbeDQPRT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:17:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47074 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751157AbeDQPRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:17:18 -0400
-Date: Tue, 17 Apr 2018 23:17:02 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: PATCH V4 0/5 nvme-pci: fixes on nvme_timeout and nvme_dev_disable
-Message-ID: <20180417151700.GC16286@ming.t460p>
-References: <1520489971-31174-1-git-send-email-jianchao.w.wang@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1520489971-31174-1-git-send-email-jianchao.w.wang@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752658AbeDQPUt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:20:49 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:52674 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751836AbeDQPUs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 11:20:48 -0400
+Message-ID: <1523978443.3310.3.camel@HansenPartnership.com>
+Subject: Re: repeatable boot randomness inside KVM guest
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Date: Tue, 17 Apr 2018 16:20:43 +0100
+In-Reply-To: <20180417140722.GC21954@bombadil.infradead.org>
+References: <20180414195921.GA10437@avx2> <20180414224419.GA21830@thunk.org>
+         <20180415004134.GB15294@bombadil.infradead.org>
+         <1523956414.3250.5.camel@HansenPartnership.com>
+         <20180417114728.GA21954@bombadil.infradead.org>
+         <1523966232.3250.15.camel@HansenPartnership.com>
+         <20180417140722.GC21954@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 08, 2018 at 02:19:26PM +0800, Jianchao Wang wrote:
-> Firstly, really appreciate Keith and Sagi's precious advice on previous versions.
-> And this is the version 4.
+On Tue, 2018-04-17 at 07:07 -0700, Matthew Wilcox wrote:
+> On Tue, Apr 17, 2018 at 12:57:12PM +0100, James Bottomley wrote:
+> > On Tue, 2018-04-17 at 04:47 -0700, Matthew Wilcox wrote:
+> > > On Tue, Apr 17, 2018 at 10:13:34AM +0100, James Bottomley wrote:
+> > > > On Sat, 2018-04-14 at 17:41 -0700, Matthew Wilcox wrote:
+> > > > > On Sat, Apr 14, 2018 at 06:44:19PM -0400, Theodore Y. Ts'o
+> > > > > wrote:
+> > > > > > What needs to happen is freelist should get randomized much
+> > > > > > later in the boot sequence.  Doing it later will require
+> > > > > > locking; I don't know enough about the slab/slub code to
+> > > > > > know whether the slab_mutex would be sufficient, or some
+> > > > > > other lock might need to be added.
+> > > > > 
+> > > > > Could we have the bootloader pass in some initial randomness?
+> > > > 
+> > > > Where would the bootloader get it from (securely) that the
+> > > > kernel can't?
+> > > 
+> > > In this particular case, qemu is booting the kernel, so it can
+> > > apply to /dev/random for some entropy.
+> > 
+> > Well, yes, but wouldn't qemu virtualize /dev/random anyway so the
+> > guest  kernel can get it from the HWRNG provided by qemu?
 > 
-> Some patches of the previous patchset have been submitted and the left is this patchset
-> which has been refactored. Please consider it for 4.17.
-> 
-> The target of this patchset is to avoid nvme_dev_disable to be invoked by nvme_timeout.
-> As we know, nvme_dev_disable will issue commands on adminq, if the controller no response,
-> it has to depend on timeout path. However, nvme_timeout will also need to invoke
-> nvme_dev_disable. This will introduce dangerous circular dependence. Moreover,
-> nvme_dev_disable is under the shutdown_lock, even when it go to sleep, this makes things
-> worse.
-> 
-> The basic idea of this patchset is:
->  - When need to schedule reset_work, hand over expired requests to nvme_dev_disable. They
->    will be completed after the controller is disabled/shtudown.
-> 
->  - When requests from nvme_dev_disable and nvme_reset_work expires, disable the controller
->    directly then the request could be completed to wakeup the waiter. 
-> 
-> The 'disable the controller directly' here means that it doesn't send commands on adminq.
-> A new interface is introduced for this, nvme_pci_disable_ctrl_directly. More details,
-> please refer to the comment of the function.
-> 
-> Then nvme_timeout doesn't depends on nvme_dev_disable any more.
-> 
-> Because there is big difference from previous version, and some relatively independent patches
-> have been submitted, so I just reserve the key part of previous version change log following.
-> 
-> Change V3->V4
->  - refactor the interfaces flushing in-flight requests and add them to nvme core.
->  - refactor the nvme_timeout to make it more clearly
-> 
-> Change V2->V3:
->  - discard the patch which unfreeze the queue after nvme_dev_disable
-> 
-> Changes V1->V2:
->  - disable PCI controller bus master in nvme_pci_disable_ctrl_directly
-> 
-> There are 5 patches:
-> 1st one is to change the operations on nvme_request->flags to atomic operations, then we could introduce
-> another NVME_REQ_ABORTED next.
-> 2nd patch introduce two new interfaces to flush in-flight requests in nvme core.
-> 3rd patch is to avoid the nvme_dev_disable in nvme_timeout, it introduce new interface nvme_pci_disable_ctrl_directly
-> and refactor the nvme_timeout
-> 4th~5th is to fix issues introduced after 3rd patch.
-> 
-> Jianchao Wang (5)
-> 0001-nvme-do-atomically-bit-operations-on-nvme_request.fl.patch
-> 0002-nvme-add-helper-interface-to-flush-in-flight-request.patch
-> 0003-nvme-pci-avoid-nvme_dev_disable-to-be-invoked-in-nvm.patch
-> 0004-nvme-pci-discard-wait-timeout-when-delete-cq-sq.patch
-> 0005-nvme-pci-add-the-timeout-case-for-DELETEING-state.patch
-> 
-> diff stat
->  drivers/nvme/host/core.c |  96 +++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/nvme/host/nvme.h |   4 +-
->  drivers/nvme/host/pci.c  | 224 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------
->  
+> The part of Ted's mail that I snipped explained that virtio-rng
+> relies on being able to kmalloc memory, so by definition it can't
+> provide entropy before kmalloc is initialised.
 
-Hi Jianchao,
+That sounds fixable ...
 
-Looks blktest(block/011) can trigger IO hang easily on NVMe PCI device,
-and all are related with nvme_dev_disable():
+> > > I thought our model was that if somebody had compromised the
+> > > bootloader, all bets were off.
+> > 
+> > You don't have to compromise the bootloader to influence this, you
+> > merely have to trick it into providing the random number you
+> > wanted.  The bigger you make the attack surface (the more inputs)
+> > the more likelihood of finding a trick that works.
+> > 
+> > >   And also that we were free to mix in as many untrustworthy
+> > > bytes of alleged entropy into the random pool as we liked.
+> > 
+> > No, entropy mixing ensures that all you do with bad entropy is
+> > degrade the quality, but if the quality degrades to zero (as it
+> > might at boot when you've no other entropy sources so you feed in
+> > 100% bad entropy), then the random sequences become predictable.
+> 
+> I don't understand that.  If I estimate that I have 'k' bytes of
+> entropy in my pool, and then I mix in 'n' entirely predictable bytes,
+> I should still have k bytes of entropy in the pool.  If I withdraw k
+> bytes from the pool, then yes the future output from the pool may be
+> entirely predictable, but I have to know what those k bytes were.
 
-1) admin queue may be disabled by nvme_dev_disable() from timeout path
-during resetting, then reset can't move on
+If that were true, why are we debating this?  I thought the problem was
+the alleged random sequences for slub placement were repeating on
+subsequent VM boots meaning there's effectively no entropy in the pool
+and we need to add some.
 
-2) the nvme_dev_disable() called from nvme_reset_work() may cause double
-completion on timed-out request 
-
-So could you share us what your plan is about this patchset?
-
-Thanks,
-Ming
+James
