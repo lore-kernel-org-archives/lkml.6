@@ -1,362 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752940AbeDQPxG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:53:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46166 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751836AbeDQPxF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:53:05 -0400
-Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
- <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
- <f9327dfe-a7c2-340d-12c7-6cf76a8c1b0d@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Tue, 17 Apr 2018 17:52:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753347AbeDQPyq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:54:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45814 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752766AbeDQPyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 11:54:43 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 475C72175D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 17 Apr 2018 11:54:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: [PATCH] tracing/x86: Update syscall trace events to handle new x86
+ syscall func names
+Message-ID: <20180417115440.2145f7f5@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <f9327dfe-a7c2-340d-12c7-6cf76a8c1b0d@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041715-0040-0000-0000-000004300717
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041715-0041-0000-0000-0000263412B4
-Message-Id: <23c37409-2abf-82c2-4f7e-d4defdca6902@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170140
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/04/2018 16:15, Tony Krowiak wrote:
-> On 04/16/2018 04:56 AM, Pierre Morel wrote:
->> On 15/04/2018 23:22, Tony Krowiak wrote:
->>> This patch refactors the code that initializes the crypto
->>> configuration for a guest. The crypto configuration is contained in
->>> a crypto control block (CRYCB) which is a satellite control block to
->>> our main hardware virtualization control block. The CRYCB is
->>> attached to the main virtualization control block via a CRYCB
->>> designation (CRYCBD) designation field containing the address of
->>> the CRYCB as well as its format.
->>>
->>> Prior to the introduction of AP device virtualization, there was
->>> no need to provide access to or specify the format of the CRYCB for
->>> a guest unless the MSA extension 3 (MSAX3) facility was installed
->>> on the host system. With the introduction of AP device virtualization,
->>> the CRYCB and its format must be made accessible to the guest
->>> regardless of the presence of the MSAX3 facility.
->>>
->>> The crypto initialization code is restructured as follows:
->>>
->>> * A new compilation unit is introduced to contain all interfaces
->>>    and data structures related to configuring a guest's CRYCB for
->>>    both the refactoring of crypto initialization as well as all
->>>    subsequent patches introducing AP virtualization support.
->>>
->>> * Currently, the asm code for querying the AP configuration is
->>>    duplicated in the AP bus as well as in KVM. Since the KVM
->>>    code was introduced, the AP bus has externalized the interface
->>>    for querying the AP configuration. The KVM interface will be
->>>    replaced with a call to the AP bus interface. Of course, this
->>>    will be moved to the new compilation unit mentioned above.
->>>
->>> * An interface to format the CRYCBD field will be provided via
->>>    the new compilation unit and called from the KVM vm
->>>    initialization.
->>>
->>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
->>> ---
->>>   arch/s390/include/asm/kvm-ap.h   |   15 +++++++++
->>>   arch/s390/include/asm/kvm_host.h |    1 +
->>>   arch/s390/kvm/kvm-ap.c           |   39 ++++++++++++++++++++++++
->>>   arch/s390/kvm/kvm-s390.c         |   60 
->>> ++++----------------------------------
->>>   4 files changed, 61 insertions(+), 54 deletions(-)
->>>
->>> diff --git a/arch/s390/include/asm/kvm-ap.h 
->>> b/arch/s390/include/asm/kvm-ap.h
->>> index 84412a9..736e93e 100644
->>> --- a/arch/s390/include/asm/kvm-ap.h
->>> +++ b/arch/s390/include/asm/kvm-ap.h
->>> @@ -10,6 +10,9 @@
->>>   #ifndef _ASM_KVM_AP
->>>   #define _ASM_KVM_AP
->>>
->>> +#include <linux/types.h>
->>> +#include <linux/kvm_host.h>
->>> +
->>>   /**
->>>    * kvm_ap_instructions_installed()
->>>    *
->>> @@ -20,4 +23,16 @@
->>>    */
->>>   int kvm_ap_instructions_installed(void);
->>>
->>> +/**
->>> + * kvm_ap_build_crycbd
->>> + *
->>> + * The crypto control block designation (CRYCBD) is a 32-bit field 
->>> that
->>> + * designates both the host real address and format of the CRYCB. 
->>> This function
->>> + * builds the CRYCBD field for use by the KVM guest.
->>> + *
->>> + * @kvm:    the KVM guest
->>> + * @crycbd:    reference to the CRYCBD
->>> + */
->>> +void kvm_ap_build_crycbd(struct kvm *kvm);
->>> +
->>>   #endif /* _ASM_KVM_AP */
->>> diff --git a/arch/s390/include/asm/kvm_host.h 
->>> b/arch/s390/include/asm/kvm_host.h
->>> index 81cdb6b..c990a1d 100644
->>> --- a/arch/s390/include/asm/kvm_host.h
->>> +++ b/arch/s390/include/asm/kvm_host.h
->>> @@ -257,6 +257,7 @@ struct kvm_s390_sie_block {
->>>       __u8    reservedf0[12];        /* 0x00f0 */
->>>   #define CRYCB_FORMAT1 0x00000001
->>>   #define CRYCB_FORMAT2 0x00000003
->>> +#define CRYCB_FORMAT_MASK 0x00000003
->>>       __u32    crycbd;            /* 0x00fc */
->>>       __u64    gcr[16];        /* 0x0100 */
->>>       __u64    gbea;            /* 0x0180 */
->>> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
->>> index 1267588..991bae4 100644
->>> --- a/arch/s390/kvm/kvm-ap.c
->>> +++ b/arch/s390/kvm/kvm-ap.c
->>> @@ -10,6 +10,8 @@
->>>   #include <asm/kvm-ap.h>
->>>   #include <asm/ap.h>
->>>
->>> +#include "kvm-s390.h"
->>> +
->>>   int kvm_ap_instructions_installed(void)
->>>   {
->>>   #ifdef CONFIG_ZCRYPT
->>> @@ -19,3 +21,40 @@ int kvm_ap_instructions_installed(void)
->>>   #endif
->>>   }
->>>   EXPORT_SYMBOL(kvm_ap_instructions_installed);
->>> +
->>> +static inline int kvm_ap_query_config(struct ap_config_info *config)
->>> +{
->>> +    memset(config, 0, sizeof(*config));
->>> +
->>> +#ifdef CONFIG_ZCRYPT
->>
->> I would prefer that you define the interface in an include file
->> with stubs for the case ZCRYPT is not set.
->
-> This is a static function only called internally, but I suppose there is
-> no harm in defining it as an interface in kvm-ap.h ... it may come
-> in handy down the road.
->
->>
->>
->>> +    if (kvm_ap_instructions_installed())
->>> +        return ap_query_configuration(config);
->>> +#endif
->>> +
->>> +    return -EOPNOTSUPP;
->>> +}
->>> +
->>> +static int kvm_ap_apxa_installed(void)
->>> +{
->>> +    struct ap_config_info config;
->>> +
->>> +    if (kvm_ap_query_config(&config) == 0)
->>> +        return (config.apxa == 1);
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +void kvm_ap_build_crycbd(struct kvm *kvm)
->>> +{
->>> +    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
->>> kvm->arch.crypto.crycb;
->>> +    kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK);
->>> +
->>> +    /* check whether MSAX3 is installed */
->>
->> It means we do not support AP virtualization without MSA3.
->> It follows we do not support CRYCB_FORMAT0
->
-> If MSAX3 is not installed, that means there is no key wrapping support,
-> hence CRYCB_FORMAT0. The CRYCB_FORMAT1 and CRYCB_FORMAT2 CRYCBs
-> both include wrapping key masks. I don't follow your logic here.
->
->>
->>
->> It is different from what you explain in the comment.
->
-> How is it different? Above, we are setting the CRYCBD value regardless
-> of whether MSAX3 is installed or not. Previously, the CRYCBD value
-> was set only if MSAX3 is installed (see comments below)
->
->>
->>
->>> +    if (kvm_ap_instructions_installed() && test_kvm_facility(kvm, 
->>> 76)) {
->>> +        if (kvm_ap_apxa_installed())
->>> +            kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
->>> +        else
->>> +            kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
->>> +    }
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-sorry, I was fooled by the test on kvm_instructions_installed() and that 
-CRYCB_FORMAT0 = 0.
-since you cleared the format above it is 0 by default.
+Arnaldo noticed that the latest kernel is missing the syscall event system
+directory in x86. I bisected it down to d5a00528b58c ("syscalls/core,
+syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()").
 
-Since we can not use CRYCB_FORMAT0 if we have no AP instructions, the 
-logic of the test
-seems false even the result is right.
+The system call trace events are special, as there is only one trace event
+for all system calls (the raw_syscalls). But a macro that wraps the system
+calls creates meta data for them that copies the name to find the system
+call that maps to the system call table (the number). At boot up, it does a
+kallsyms lookup for this mapping. If it does not find a function, then that
+system call is ignored.
 
-I think you can make it more readable if you put all the crycb 
-initialization together
-inside the kvm_s390_crypto_init() function instead of exporting part of 
-it inside
-kvm_ap_build_crycbd()
+Because the x86 system calls had "__x86_" appended to the "sys" for the
+names, they do not match the default compare algorithm. As this was a
+problem for power pc, the algorithm can be overwritten by the architecture.
+The solution is to have x86 have its own algorithm to do the compare and
+this brings back the system call trace events.
 
-Regards,
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ arch/x86/include/asm/ftrace.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Pierre
-
->>> +}
->>> +EXPORT_SYMBOL(kvm_ap_build_crycbd);
->>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
->>> index d0c3518..b47ff11 100644
->>> --- a/arch/s390/kvm/kvm-s390.c
->>> +++ b/arch/s390/kvm/kvm-s390.c
->>> @@ -40,6 +40,7 @@
->>>   #include <asm/sclp.h>
->>>   #include <asm/cpacf.h>
->>>   #include <asm/timex.h>
->>> +#include <asm/kvm-ap.h>
->>>   #include "kvm-s390.h"
->>>   #include "gaccess.h"
->>>
->>> @@ -1881,55 +1882,6 @@ long kvm_arch_vm_ioctl(struct file *filp,
->>>       return r;
->>>   }
->>>
->>> -static int kvm_s390_query_ap_config(u8 *config)
->>> -{
->>> -    u32 fcn_code = 0x04000000UL;
->>> -    u32 cc = 0;
->>> -
->>> -    memset(config, 0, 128);
->>> -    asm volatile(
->>> -        "lgr 0,%1\n"
->>> -        "lgr 2,%2\n"
->>> -        ".long 0xb2af0000\n"        /* PQAP(QCI) */
->>> -        "0: ipm %0\n"
->>> -        "srl %0,28\n"
->>> -        "1:\n"
->>> -        EX_TABLE(0b, 1b)
->>> -        : "+r" (cc)
->>> -        : "r" (fcn_code), "r" (config)
->>> -        : "cc", "0", "2", "memory"
->>> -    );
->>> -
->>> -    return cc;
->>> -}
->>> -
->>> -static int kvm_s390_apxa_installed(void)
->>> -{
->>> -    u8 config[128];
->>> -    int cc;
->>> -
->>> -    if (test_facility(12)) {
->>> -        cc = kvm_s390_query_ap_config(config);
->>> -
->>> -        if (cc)
->>> -            pr_err("PQAP(QCI) failed with cc=%d", cc);
->>> -        else
->>> -            return config[0] & 0x40;
->>> -    }
->>> -
->>> -    return 0;
->>> -}
->>> -
->>> -static void kvm_s390_set_crycb_format(struct kvm *kvm)
->>> -{
->>> -    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
->>> kvm->arch.crypto.crycb;
->>> -
->>> -    if (kvm_s390_apxa_installed())
->>> -        kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
->>> -    else
->>> -        kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
->>> -}
->>> -
->>>   static u64 kvm_s390_get_initial_cpuid(void)
->>>   {
->>>       struct cpuid cpuid;
->>> @@ -1941,12 +1893,12 @@ static u64 kvm_s390_get_initial_cpuid(void)
->>>
->>>   static void kvm_s390_crypto_init(struct kvm *kvm)
->>>   {
->>> +    kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
->>> +    kvm_ap_build_crycbd(kvm);
->>> +
->
-> Notice the call to kvm_ap_build_crycbd(kvm) above was added, so
-> the CRYCBD is being set regardless of the presence of MSAX3.
->
->>>       if (!test_kvm_facility(kvm, 76))
->>>           return;
->>>
->>> -    kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
->>> -    kvm_s390_set_crycb_format(kvm);
-> Notice that this code that was removed to set the CRYCBD is called
-> only if MSAX3 is not installed - i.e., see the if statement
-> immediately preceding the two statements above.
->>> -
->>>       /* Enable AES/DEA protected key functions by default */
->>>       kvm->arch.crypto.aes_kw = 1;
->>>       kvm->arch.crypto.dea_kw = 1;
->>> @@ -2475,6 +2427,8 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu 
->>> *vcpu)
->>>
->>>   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
->>>   {
->>> +    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->>> +
->>>       if (!test_kvm_facility(vcpu->kvm, 76))
->>>           return;
->>>
->>> @@ -2484,8 +2438,6 @@ static void kvm_s390_vcpu_crypto_setup(struct 
->>> kvm_vcpu *vcpu)
->>>           vcpu->arch.sie_block->ecb3 |= ECB3_AES;
->>>       if (vcpu->kvm->arch.crypto.dea_kw)
->>>           vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
->>> -
->>> -    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
->>>   }
->>>
->>>   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
->>
->>
->
-
+diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
+index 09ad88572746..c30b3fac20ae 100644
+--- a/arch/x86/include/asm/ftrace.h
++++ b/arch/x86/include/asm/ftrace.h
+@@ -31,6 +31,16 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
+ 	return addr;
+ }
+ 
++#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
++static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
++{
++	/*
++	 * Compare the symbol name with the system call name. Skip the
++	 * "__x64_sys" prefix.
++	 */
++	return !strcmp(sym + 9, name + 3);
++}
++
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ 
+ struct dyn_arch_ftrace {
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+2.13.6
