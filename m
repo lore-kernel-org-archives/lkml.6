@@ -1,176 +1,152 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1343005-1524088966-2-1972737106972181016
+X-Cyrus-Session-Id: sloti22d1t05-2152363-1523979665-2-9347466660699057409
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Attached: signature.asc
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524088965; b=Qo1CQG+nSFmghh/FZmg7CZ5O0fQ5A9N9kTtB+PZ2uQpMBFb3F8
-    7PvRNJmztD/LiB1nCC/9mBdKceUsfq/DOZtzxPn5LJ2VTY58JJCfWPyyV5o6f+Lc
-    BPTZzi7uynKOrc8NJH4fwdouSq6IDaCpdHc20GiB78cIfv5UhzHmP9iMEwZ8D2Zw
-    L4yWSfT+WylYQwBqQENbw0Q7gp1Svo9bjCIU3ZSgg4lM1ksK/CAmXT9XDkGWWa1A
-    lSZe9rY5+UxaDMDeH5VbZxz6NO/4SgMJhoQ13lOVHpsXFseGIiz58WgiXV24ld6p
-    P4zv4wjf7TmdUpsrnMMViL1nS74OmGwjOXug==
+    1523979664; b=mXalzR26p0cHTEu95A9+Y5gJ7PpPDQ2g+x803SZbwvHsPI1m5j
+    q+9A7isXSWbzBSYEEt1VV8q6AjiOb9EepInsb2P99TiD5/yBp8vwSVi/20tZRXqo
+    //CiDt8+BKAvO0dVirkK0Zl1XvacUWQe7hHJSXti/Zx45B8A9YbjuhMWc1lKNJRr
+    1jBWZIhN3jWhZ8XmdvVgOMB3WhX76ZJvmCb9E/ibQMJokOUx0iVrtP3LgXZAXHxN
+    u7hLG7CSHVsdjgB/OOVPKouP8OWGBLl4XUjyCqT7SFoe/UKmQU58oj+8LYVdQZhe
+    /llE7Bql8F4vo21HXCnM7QOKhH62dI6s+mWA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524088965; bh=UvKLgNkLu594Xb89c4GLt/amkA/VTk
-    oCL3u/RdFdz70=; b=BYZUgXbpKDo2CwgqLthDvStgyXbPH24bmblXE/urQmrctD
-    1gH5bc7Q3QtLix4JAsZNwqZasZH1YoWRMftMJUrqqxK0QIwXiUCVRB/JuAC+3jDK
-    If7aV0WcT7VjzQ0Bj4xxTUoDsjKdk/wx+Lnyb9YPBhCC6U+iOfzZeLiBpDMVyeRN
-    c+BquwUz+qVq6DXM+e8xTeVGGcBdMrhBA3pJR1/2O1yQcRT/c/Rv2umA2olFBgDh
-    YdCL8NbuzETL9iTT+/ehLv4w10BppKFNr6Vd4cyuSYIFew29dfE4DtJqvwUWZXR2
-    e7EfyYN95d8qeSyFeBDFPLUy9Pj1reUkp135VDaw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523979664; bh=vmcb480exWK5RTC/EZ5jVXinJJF6ss
+    pmVUxkQNMyC7I=; b=TOQk8vjlBBN0LQbjhywlW830zaj6sqjbWgNv80PUXxeu3r
+    rFbggOrN/+i0V9/K6/8Ux7/hoNfTZvyxWqRqUDrZBvI0i6g32R8fkzBLtEjn+ZIy
+    a0nuZrNCm5pTcfPVYTIqow8maTQTUWsMsa3m4nkOy1Iy9Vtqaq/Eg+N9q5HWINbp
+    +rTX9hAkCKbeTGOMEwSQEAm0yK+rAu9hocePNq/R2BzuD7qL4KTm9cdg9YyeWLQ7
+    7DuGuAfz67Plt0JlOzpWV31xBAjZ9xyrS/i1oE2FrEAKVP4iiy9WMIuuT8yYXVYS
+    EFS9ar1HVM7f9mhkiDHFexIlWqXE7EAaL+B6Xa9A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOVLnKfCVEa9/N9n7HaMO8iNViIhCFmRA818tAXuEjXPi5mrnzK6yqaEFGz03LS/3FEiNscBlkS4KKfd859ztjtkrooJV4x24SJwjpzK8uP34pcdh5Nk
-    memYNcKD53oc/oCiUIwD325Rh81gKATqbFost7j3Z0yjoSzZkrihuyzkGcKBvlmrVt98BgwKoLOPYOJf73p4ZcvySMyZEiKDnonZfhB1yw7xQhlIjOgxzTAH
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=gPJu0pBYAAAA:8 a=MQI6Y0egzowl_ClwRrgA:9 a=QEXdDO2ut3YA:10
-    a=nexa93dvyXfkjgvsf1wA:9 a=ONNS8QRKHyMA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=AlIIF0cMT2hfDT4axODj:22
+X-CM-Envelope: MS4wfFqz/FidIzUn7AGnM8FwXV1FTzuXyyn9NnPGtQPaMjzgCMCgvzPsJeM0xSbwLvIfo8iT89WK54OozuZSpiWXa/oKz5I1rLJ3vI8ZiJZj2O6HLElaxU3c
+    8Q9WKa+MaN6O/zdy3QLIsxbeFySXVgRtUegjGfSK3grYIZjRnCE1XzlrP28twlavLIJEP6dvwcZnk0TASB7bm9MtSDEnGMrOw+IuajP/xdd5J7PeHEUo5B5M
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IhDdiLrqHVMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=gPJu0pBYAAAA:8 a=bNj8a4Z-HAieuLBluAwA:9
+    a=AjGcO6oz07-iQ99wixmX:22 a=AlIIF0cMT2hfDT4axODj:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752530AbeDRWCn (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 18 Apr 2018 18:02:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752514AbeDRWCm (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 18 Apr 2018 18:02:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1549321781
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 18 Apr 2018 23:02:37 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] MIPS: memset.S: Fix clobber of v1 in last_fixup
-Message-ID: <20180418220237.GC16439@saruman>
+        id S1752192AbeDQPlC (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 11:41:02 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:41722 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752619AbeDQPlB (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 11:41:01 -0400
+From: Matt Redfearn <matt.redfearn@mips.com>
+To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
+CC: <linux-mips@linux-mips.org>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 2/4] MIPS: uaccess: Add micromips clobbers to bzero invocation
+Date: Tue, 17 Apr 2018 16:40:01 +0100
+Message-ID: <1523979603-492-2-git-send-email-matt.redfearn@mips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523979603-492-1-git-send-email-matt.redfearn@mips.com>
 References: <1523979603-492-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
-Content-Disposition: inline
-In-Reply-To: <1523979603-492-1-git-send-email-matt.redfearn@mips.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+Content-Type: text/plain
+X-Originating-IP: [192.168.155.41]
+X-BESS-ID: 1523979613-637140-28836-247121-1
+X-BESS-VER: 2018.4-r1804121647
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192083
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The micromips implementation of bzero additionally clobbers registers t7
+& t8. Specify this in the clobbers list when invoking bzero.
 
---9Ek0hoCL9XbhcSqy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported-by: James Hogan <jhogan@kernel.org>
+Fixes: 26c5e07d1478 ("MIPS: microMIPS: Optimise 'memset' core library function.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+---
 
-On Tue, Apr 17, 2018 at 04:40:00PM +0100, Matt Redfearn wrote:
-> The label .Llast_fixup\@ is jumped to on page fault within the final
-> byte set loop of memset (on < MIPSR6 architectures). For some reason, in
-> this fault handler, the v1 register is randomly set to a2 & STORMASK.
-> This clobbers v1 for the calling function. This can be observed with the
-> following test code:
->=20
-> static int __init __attribute__((optimize("O0"))) test_clear_user(void)
-> {
->   register int t asm("v1");
->   char *test;
->   int j, k;
->=20
->   pr_info("\n\n\nTesting clear_user\n");
->   test =3D vmalloc(PAGE_SIZE);
->=20
->   for (j =3D 256; j < 512; j++) {
->     t =3D 0xa5a5a5a5;
->     if ((k =3D clear_user(test + PAGE_SIZE - 256, j)) !=3D j - 256) {
->         pr_err("clear_user (%px %d) returned %d\n", test + PAGE_SIZE - 25=
-6, j, k);
->     }
->     if (t !=3D 0xa5a5a5a5) {
->        pr_err("v1 was clobbered to 0x%x!\n", t);
->     }
->   }
->=20
->   return 0;
-> }
-> late_initcall(test_clear_user);
->=20
-> Which demonstrates that v1 is indeed clobbered (MIPS64):
->=20
-> Testing clear_user
-> v1 was clobbered to 0x1!
-> v1 was clobbered to 0x2!
-> v1 was clobbered to 0x3!
-> v1 was clobbered to 0x4!
-> v1 was clobbered to 0x5!
-> v1 was clobbered to 0x6!
-> v1 was clobbered to 0x7!
->=20
-> Since the number of bytes that could not be set is already contained in
-> a2, the andi placing a value in v1 is not necessary and actively
-> harmful in clobbering v1.
->=20
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
-> Reported-by: James Hogan <jhogan@kernel.org>
-> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+Changes in v2: None
 
-Thanks, Patches 1 & 2 applied to my fixes branch.
+ arch/mips/include/asm/uaccess.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Cheers
-James
-
---9Ek0hoCL9XbhcSqy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlrXwHwACgkQbAtpk944
-dnrHag/+IUrJMlxzFTrTonbr0bNVombMS6zD7ZSDJ/bBAJnm6Y4xE4iTFXOVISXS
-F4LVlo3zwJNwzTIrjXCb1tMgZPNeqeYykVZ9xyotAtriPQAFcfGyISeyhkTxwb1o
-B5yXVcpEHdrZIf0QYD5SyAFlUNXD7nDFq421UmdXtEnzNp/6Wgjrak5oGjyNRhu8
-1ZiWmL8BlH/Qh0gVSj2RnAsX9VpNkJJ7jWqm52xI32uqU4njbz+iTLt8Y9ulypVO
-kuArCI3CWgmi+2ABT1xnvil6Vdi/gRW2nH4NzMxJCtMd4NQju88+YnJwMjO5ki9A
-fOOdzi5C5pm0+ArxnMvfjZR+7JOf7x/c9VAqJdMSiNGCY/FnLMdwMqcZ2B+FEG9q
-HMMDDizsi4PdCXICHEAREMnDhrSTlUMi+u2ib/uMy3EKuxYIKLIt6Fe7ONe3T+Nh
-mBMTWs2zzrG6VkhAB5MBD5ksoSw9/uoHFHysJkKzptNeE8sp/0EqLFl7erWk4Ivm
-5YH120f8YidC75fNCR6dXdhV15ejPScrwdo1jkEGginVP/rK7WR8LZPjbl8RVRnl
-HX8qIL76bR8ThEHVopBaY1JhurkmFxaOfrPpMsw4DEMkf3EQgNAW1dBT/lAI6djh
-BxFZ4jpQA3k4V0+8xOAUi+1EUaGAVKUcuiafdOcO8+Dyg10jQPg=
-=S1hV
------END PGP SIGNATURE-----
-
---9Ek0hoCL9XbhcSqy--
+diff --git a/arch/mips/include/asm/uaccess.h b/arch/mips/include/asm/uaccess.h
+index b71306947290..06629011a434 100644
+--- a/arch/mips/include/asm/uaccess.h
++++ b/arch/mips/include/asm/uaccess.h
+@@ -654,6 +654,13 @@ __clear_user(void __user *addr, __kernel_size_t size)
+ {
+ 	__kernel_size_t res;
+ 
++#ifdef CONFIG_CPU_MICROMIPS
++/* micromips memset / bzero also clobbers t7 & t8 */
++#define bzero_clobbers "$4", "$5", "$6", __UA_t0, __UA_t1, "$15", "$24", "$31"
++#else
++#define bzero_clobbers "$4", "$5", "$6", __UA_t0, __UA_t1, "$31"
++#endif /* CONFIG_CPU_MICROMIPS */
++
+ 	if (eva_kernel_access()) {
+ 		__asm__ __volatile__(
+ 			"move\t$4, %1\n\t"
+@@ -663,7 +670,7 @@ __clear_user(void __user *addr, __kernel_size_t size)
+ 			"move\t%0, $6"
+ 			: "=r" (res)
+ 			: "r" (addr), "r" (size)
+-			: "$4", "$5", "$6", __UA_t0, __UA_t1, "$31");
++			: bzero_clobbers);
+ 	} else {
+ 		might_fault();
+ 		__asm__ __volatile__(
+@@ -674,7 +681,7 @@ __clear_user(void __user *addr, __kernel_size_t size)
+ 			"move\t%0, $6"
+ 			: "=r" (res)
+ 			: "r" (addr), "r" (size)
+-			: "$4", "$5", "$6", __UA_t0, __UA_t1, "$31");
++			: bzero_clobbers);
+ 	}
+ 
+ 	return res;
+-- 
+2.7.4
