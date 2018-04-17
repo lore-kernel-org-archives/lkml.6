@@ -1,144 +1,133 @@
-Return-Path: <matthias.bgg@kernel.org>
-X-Google-Smtp-Source: AIpwx4+HrWtuIDtY4PQ66bLEHpfN3GryxxM7eWrqIoKyEKy89N4ff0LjFu5vw5WGC2a/lg0ZpG2T
-ARC-Seal: i=1; a=rsa-sha256; t=1524563246; cv=none;
-        d=google.com; s=arc-20160816;
-        b=MRbQZh/h08JD8N9pdA/toWSvg1GCrNdmOhbZsqafT6zPIWD1f5dwnBRQjdHIAVtpXH
-         0bAR/3a1K9BlojrFmNeyQ2vXxgNoLpTjCRnM7I1EvJNW/6vp7ETv7Wr340ZECFveUVsX
-         /2HiGFI1MXbS4cTC4OKykL/qmv5oDNRCMrYB6ri/u9FNJ6iJDr6w8XmsMJE7TRuX5x2U
-         dAfK6CLhw82TyVSna+NW3vmS6FawYW5S5B33EFIgG40en3bfoAIOytGhtZYvn1kguJYT
-         R/9Fa7qP58RlPrE+l5UK3s6FQ3KxO7K3sYoQ8dOo8D5m9XMiBsRxr3Rw1oXzN31w6h0g
-         C4lA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=kLI6u4KSiyvGQAn3x27W8E6xfBDxk2P7Zr37uf9uMMs=;
-        b=ZEsygacPbmWFDedDLqG6LVpTnd/ACxUtKSBOzk9bG932itklygHMGo6eB+guPV1MMH
-         /dMXKSlKyZ8qTAB/+lBfIlwVijZ5KcAnSZvcgfwlUod6kEtSX2F7Akh9SU/4UTT8J+O+
-         xxS7rPh50ZlLvHvvMtRSRtdN31DRe7cNP/SQ4iYRqbyzi8FKOO+4aa9iu3BUdNLl2/h4
-         0MDdZv4i2CPG61Ehl5d039wtvgcOeJ6O81ILPvScA8Whpn/ypWKOUliNxFma9SqaYsQi
-         dRAe9Zd/9+2eK5d0WbCdZgCzW1Z4x018nrD+J4JFfo3mGp/07vbWdmP4mJp4oLXigvLW
-         ooIw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of matthias.bgg@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=matthias.bgg@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6E7217D2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=matthias.bgg@kernel.org
-From: matthias.bgg@kernel.org
-To: ulrich.hecht+renesas@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	ck.hu@mediatek.com,
-	p.zabel@pengutronix.de,
-	airlied@linux.ie,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@codeaurora.org,
-	lee.jones@linaro.org
-Cc: davem@davemloft.net,
-	gregkh@linuxfoundation.org,
-	mchehab@kernel.org,
-	rdunlap@infradead.org,
-	pi-cheng.chen@linaro.org,
-	sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	linux@armlinux.org.uk,
-	matthias.bgg@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <mbrugger@suse.com>
-Subject: [v2 resend 01/10] dt-bindings: mediatek: mmsys: Add support for mfd
-Date: Tue, 24 Apr 2018 11:46:58 +0200
-Message-Id: <64ca273429d92f581568a48f3efe6035af65f579.1524563001.git.mbrugger@suse.com>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
-References: <cover.1524563001.git.mbrugger@suse.com>
-In-Reply-To: <cover.1524563001.git.mbrugger@suse.com>
-References: <cover.1524563001.git.mbrugger@suse.com>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1954995-1523973254-2-15467099948783864724
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523973253; b=Ci6iE69e1JY6mOY+jx7j2IxoOpPxqgpwvUrntFrIBhZ3SxJuEm
+    +CG6LyygTAE0FhgX/fv/Fl5l1xTpMCL70GinCwW/wBcY2sDis1hwwfshbiE0+iDo
+    QZ/zlQrgINCFZ2p2X5+VkZyaFKpUuovpEW5LKgNt+zTQ8Ps5BoYWjVcqYJZXQlDm
+    TN+xU6KiL4WOz5I7bFJbc6MnJugIdmtpi1shQW3YycoUUJV3sEv0grIAYfGNa6J3
+    XPJEypbkzK/Xuukr1FOJE/NE8fXf3S8S4bUGFBQZUdTahopM3VjIKs2f0CcX5+ze
+    XVglNhzYMvnsCv9rFoe4ZYYEXGTbgb6JfLag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1523973253; bh=YHUOPc+Jr5Z15pUMXLHUV8w+tSi3VD
+    yz3Si3uvS4nCE=; b=cQH4bjNMa4ghZB7+d0yKIpCNACF5qh9SlzFxD5ZMF56hl3
+    iol2hm4zb4zTkhBD9OSrMo0F6rsWFNUU4pMRJotS/AFzSmj28vU3Ft0mqFf0A/C+
+    io2PqICnv7B3b6STJuGq7p7rQVB0G1kGk8ld987TAWKQSLkuUirvLrTsUPC1IRgv
+    NyOEueQb0zbedLK2/VU6JhJG4kYuh7dFjY4i0OSX5KjgWyPE4uzJXZ1hRpZqUBhN
+    7uX1Qzp7DWk2gnT0hp5Ok8m1gQSXl7VUeeHhthpjHFwo/n48wGTzbUmj4vvz40Sq
+    /IYUmEexi3g4vcmRoxRjFXk+N6rG8/A/I3wLUiDg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=l4NpdZmm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=l4NpdZmm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=l4NpdZmm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=l4NpdZmm x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEvac54MK4/hznqWC/MmKB+CH4ADW2F0gmuydcSRGZh0cACwpmwTZGibZNbKQ2zxqhax/kv6HWGZ+4aB0i1GOtAXUAq1o2sJrXvRPlKtuqDBGxj6c1Y9
+    pBNzs4J23+wPoHNEdGIOKN9ZPZQBZQsRyuCRcn09IkB5oxhE2vt8CPsV9+ZYOr9atuaHS9xKGPCrY8SGOcAVMRHd8CG1f0sMD2f6KpeVzinZ8nWBcnBIUVly
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=LpQP-O61AAAA:8
+    a=VwQbUJbxAAAA:8 a=ISB2Xr1dKNDCVahVjTsA:9 a=x8gzFH9gYPwA:10
+    a=pioyyrs4ZptJ924tMmac:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753801AbeDQNxw (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 09:53:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34890 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753783AbeDQNxv (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 17 Apr 2018 09:53:51 -0400
+X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Remote-Spam-Level: 
+X-Remote-Spam-Status: No, score=-2.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,T_DKIM_INVALID autolearn=no autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2892C603AF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=yossim@codeaurora.org
+From: Yossi Mansharoff <yossim@codeaurora.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Cc: swboyd@chromium.org, Yossi Mansharoff <yossim@codeaurora.org>
+Subject: [PATCH v2] doc: usb: ci-hdrc-usb2: Add property "mux-controls"
+Date: Tue, 17 Apr 2018 16:53:25 +0300
+Message-Id: <1523973206-2165-1-git-send-email-yossim@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598620431128515385?=
-X-GMAIL-MSGID: =?utf-8?q?1598620431128515385?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Matthias Brugger <mbrugger@suse.com>
+The chipidea usb controller may be connected, in some platforms,
+to an external mux to toggle between different usb ports for
+different roles (host and device).
 
-Add binding description for the mmsys mfd for some Mediatek
-devices. mmsys has some registers to control clock gates (which is
-used in the clk driver) and some registers to set the routing and enable
-the differnet blocks of the display subsystem.
+The mux-controller property, if set, binds the chipidea usb
+controller with a mux for this use.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+Signed-off-by: Yossi Mansharoff <yossim@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |  2 --
- .../bindings/display/mediatek/mediatek,disp.txt    |  2 +-
- .../devicetree/bindings/mfd/mediatek,mmsys.txt     | 27 ++++++++++++++++++++++
- 3 files changed, 28 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
+ Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-index 4eb8bbe15c01..4468345f8b1a 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-@@ -6,10 +6,8 @@ The Mediatek mmsys controller provides various clocks to the system.
- Required Properties:
+diff --git a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
+index 0e03344..2e93181 100644
+--- a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
++++ b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
+@@ -76,6 +76,10 @@ Optional properties:
+   needs to make sure it does not send more than 90%
+   maximum_periodic_data_per_frame. The use case is multiple transactions, but
+   less frame rate.
++- mux-controls: The mux control for toggling host/device output of this
++  controller. It's expected that a mux state of 0 indicates device mode and a
++  mux state of 1 indicates host mode.
++- mux-control-names: Shall be "usb_switch" if mux-controls is specified.
  
- - compatible: Should be one of:
--	- "mediatek,mt2701-mmsys", "syscon"
- 	- "mediatek,mt2712-mmsys", "syscon"
- 	- "mediatek,mt6797-mmsys", "syscon"
--	- "mediatek,mt8173-mmsys", "syscon"
- - #clock-cells: Must be 1
- 
- The mmsys controller uses the common clk binding from
-diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-index 383183a89164..85a3b4ec06cd 100644
---- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-+++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-@@ -9,7 +9,7 @@ function block.
- 
- All DISP device tree nodes must be siblings to the central MMSYS_CONFIG node.
- For a description of the MMSYS_CONFIG binding, see
--Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt.
-+Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
- 
- DISP function blocks
- ====================
-diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-new file mode 100644
-index 000000000000..2331ae16917e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/mediatek,mmsys.txt
-@@ -0,0 +1,27 @@
-+MediaTek MMSYS Multifunction Device Driver
-+
-+MMSYS is a multifunction device with the following sub modules:
-+- clocks for the multi-media subsystem
-+- central node for the DRM subsystem.
-+
-+This document describes the binding for MFD device. The MFD takes care to initailize
-+the clock driver and the DRM driver. More info see
-+Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-+
-+Required properties:
-+- compatible: Should be one of:
-+	- "mediatek,mt2701-mmsys", "syscon"
-+	- "mediatek,mt8173-mmsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+Optional properties:
-+- power-domains: list of powerdomains needed for the subsystem to work
-+
-+Example:
-+
-+mmsys: clock-controller@14000000 {
-+	compatible = "mediatek,mt8173-mmsys", "syscon";
-+	reg = <0 0x14000000 0 0x1000>;
-+	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
-+	#clock-cells = <1>;
-+};
+ i.mx specific properties
+ - fsl,usbmisc: phandler of non-core register device, with one
+@@ -102,4 +106,6 @@ Example:
+ 		rx-burst-size-dword = <0x10>;
+ 		extcon = <0>, <&usb_id>;
+ 		phy-clkgate-delay-us = <400>;
++		mux-controls = <&usb_switch>;
++		mux-control-names = "usb_switch";
+ 	};
 -- 
-2.16.3
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
