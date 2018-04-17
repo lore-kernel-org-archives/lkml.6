@@ -1,104 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753156AbeDQVlc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:41:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752427AbeDQVlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:41:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 526BE2178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 17 Apr 2018 17:41:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org
-Subject: Re: [PATCH v2] tracing/x86: Update syscall trace events to handle
- new x86 syscall func names
-Message-ID: <20180417174128.0f3457f0@gandalf.local.home>
-In-Reply-To: <20180417181304.GA2895@kernel.org>
-References: <20180417130702.01575029@gandalf.local.home>
-        <20180417172236.GA17342@light.dominikbrodowski.net>
-        <20180417180430.GF3625@kernel.org>
-        <20180417181304.GA2895@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1753201AbeDQVmX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:42:23 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34037 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752427AbeDQVmV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 17:42:21 -0400
+X-Google-Smtp-Source: AIpwx49cKFS3nuEOhQIfyWMLHFkx6hz5aBC0ry1dnl/z+m9D63xwK6jph5bvtTCLUOabGp5o9rKGNg==
+Date: Tue, 17 Apr 2018 14:42:18 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        linux-kernel@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
+Subject: [PATCH] blk-mq: Clear out elevator private data
+Message-ID: <20180417214218.GA44753@beast>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 15:13:04 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+Some elevators may not correctly check rq->rq_flags & RQF_ELVPRIV, and
+may attempt to read rq->elv fields. When requests got reused, this
+caused BFQ to think it already had a bfqq (rq->elv.priv[1]) allocated.
+This could lead to odd behaviors like having the sense buffer address
+slowly start incrementing. This eventually tripped HARDENED_USERCOPY
+and KASAN.
 
-> Em Tue, Apr 17, 2018 at 03:04:30PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Tue, Apr 17, 2018 at 07:22:36PM +0200, Dominik Brodowski escreveu:  
-> > > >   Added back original compare to not miss 32bit kernel syscalls  
-> > > 
-> > > s/32bit/32bit and 0-parameter syscalls.  
-> > 
-> > So this should have covered 0-parameter syscalls, ok, I'm double
-> > checking that the last patch is the one I have running... Because
-> > 0-parameter syscalls are not working for me, i.e. no
-> > syscalls:sys_enter_getppid, for instance.  
-> 
-> Yeah, failing:
-> 
-> [root@jouet ~]# strace -e openat -e file perf test -F -v "mmap interface" |& grep syscalls
-> openat(AT_FDCWD, "/sys/kernel/debug/tracing/events/syscalls/sys_enter_getsid/format", O_RDONLY) = 3
-> openat(AT_FDCWD, "/sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid/format", O_RDONLY) = -1 ENOENT (No such file or directory)
-> [root@jouet ~]# 
-> 
-> [root@jouet ~]# ls -la /sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid/format
-> ls: cannot access '/sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid/format': No such file or directory
-> [root@jouet ~]#
-> 
-> With:
-> 
-> +#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
-> +static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
-> +{
-> +       /*
-> +        * Compare the symbol name with the system call name. Skip the
-> +        * "__x64_sys" prefix.
-> +        */
-> +       return !strcmp(sym + 9, name + 3) || !strcmp(sym + 3, name + 3);
-> +}
-> 
-> in place.
+This patch wipes all of rq->elv instead of just rq->elv.icq. While
+it shouldn't technically be needed, this ends up being a robustness
+improvement that should lead to at least finding bugs in elevators faster.
 
-It doesn't have to do with the number of parameters, not everything has
-"__x64" on it.
+Reported-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Fixes: bd166ef183c26 ("blk-mq-sched: add framework for MQ capable IO schedulers")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+In theory, BFQ needs to also check the RQF_ELVPRIV flag, but I'll leave that
+to Paolo to figure out. Also, my Fixes line is kind of a best-guess. This
+is where icq was originally wiped, so it seemed as good a commit as any.
+---
+ block/blk-mq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Try this patch:
-
--- Steve
-
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-index 09ad88572746..15582648887f 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -31,6 +31,19 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
- 	return addr;
- }
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 0dc9e341c2a7..859df3160303 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -363,7 +363,7 @@ static struct request *blk_mq_get_request(struct request_queue *q,
  
-+#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
-+static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
-+{
-+	/*
-+	 * Compare the symbol name with the system call name. Skip the
-+	 * "__x64_sys", "__ia32_sys" or simple "sys" prefix.
-+	 */
-+	return !strcmp(sym + 3, name + 3) ||
-+		(!strncmp(sym, "__x64_", 6) && !strcmp(sym + 9, name + 3)) ||
-+		(!strncmp(sym, "__ia32_", 7) && !strcmp(sym + 10, name + 3));
-+
-+}
-+
- #ifdef CONFIG_DYNAMIC_FTRACE
+ 	rq = blk_mq_rq_ctx_init(data, tag, op);
+ 	if (!op_is_flush(op)) {
+-		rq->elv.icq = NULL;
++		memset(&rq->elv, 0, sizeof(rq->elv));
+ 		if (e && e->type->ops.mq.prepare_request) {
+ 			if (e->type->icq_cache && rq_ioc(bio))
+ 				blk_mq_sched_assign_ioc(rq, bio);
+@@ -461,7 +461,7 @@ void blk_mq_free_request(struct request *rq)
+ 			e->type->ops.mq.finish_request(rq);
+ 		if (rq->elv.icq) {
+ 			put_io_context(rq->elv.icq->ioc);
+-			rq->elv.icq = NULL;
++			memset(&rq->elv, 0, sizeof(rq->elv));
+ 		}
+ 	}
  
- struct dyn_arch_ftrace {
+-- 
+2.7.4
+
+
+-- 
+Kees Cook
+Pixel Security
