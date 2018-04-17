@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752784AbeDQOrq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:47:46 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53546 "EHLO
+        id S1752876AbeDQOsC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:48:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38868 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753348AbeDQOeE (ORCPT
+        by vger.kernel.org with ESMTP id S1753321AbeDQOd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:34:04 -0400
+        Tue, 17 Apr 2018 10:33:59 -0400
 From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 To: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
         kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
@@ -27,16 +27,16 @@ Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
         Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
         x86@kernel.org
-Subject: [PATCH v10 05/25] mm: introduce pte_spinlock for FAULT_FLAG_SPECULATIVE
-Date: Tue, 17 Apr 2018 16:33:11 +0200
+Subject: [PATCH v10 01/25] mm: introduce CONFIG_SPECULATIVE_PAGE_FAULT
+Date: Tue, 17 Apr 2018 16:33:07 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
 References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18041714-0040-0000-0000-0000044E8E46
+x-cbid: 18041714-0012-0000-0000-000005CBDCCC
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041714-0041-0000-0000-000020F2D705
-Message-Id: <1523975611-15978-6-git-send-email-ldufour@linux.vnet.ibm.com>
+x-cbparentid: 18041714-0013-0000-0000-000019482804
+Message-Id: <1523975611-15978-2-git-send-email-ldufour@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -48,56 +48,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When handling page fault without holding the mmap_sem the fetch of the
-pte lock pointer and the locking will have to be done while ensuring
-that the VMA is not touched in our back.
+This configuration variable will be used to build the code needed to
+handle speculative page fault.
 
-So move the fetch and locking operations in a dedicated function.
+By default it is turned off, and activated depending on architecture
+support, SMP and MMU.
 
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Suggested-by: David Rientjes <rientjes@google.com>
 Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
- mm/memory.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ mm/Kconfig | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 4528bd584b7a..0b9a51f80e0e 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2288,6 +2288,13 @@ int apply_to_page_range(struct mm_struct *mm, unsigned long addr,
- }
- EXPORT_SYMBOL_GPL(apply_to_page_range);
+diff --git a/mm/Kconfig b/mm/Kconfig
+index d5004d82a1d6..5484dca11199 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -752,3 +752,25 @@ config GUP_BENCHMARK
+ 	  performance of get_user_pages_fast().
  
-+static inline bool pte_spinlock(struct vm_fault *vmf)
-+{
-+	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
-+	spin_lock(vmf->ptl);
-+	return true;
-+}
+ 	  See tools/testing/selftests/vm/gup_benchmark.c
 +
- static inline bool pte_map_lock(struct vm_fault *vmf)
- {
- 	vmf->pte = pte_offset_map_lock(vmf->vma->vm_mm, vmf->pmd,
-@@ -3804,8 +3811,8 @@ static int do_numa_page(struct vm_fault *vmf)
- 	 * validation through pte_unmap_same(). It's of NUMA type but
- 	 * the pfn may be screwed if the read is non atomic.
- 	 */
--	vmf->ptl = pte_lockptr(vma->vm_mm, vmf->pmd);
--	spin_lock(vmf->ptl);
-+	if (!pte_spinlock(vmf))
-+		return VM_FAULT_RETRY;
- 	if (unlikely(!pte_same(*vmf->pte, vmf->orig_pte))) {
- 		pte_unmap_unlock(vmf->pte, vmf->ptl);
- 		goto out;
-@@ -3998,8 +4005,8 @@ static int handle_pte_fault(struct vm_fault *vmf)
- 	if (pte_protnone(vmf->orig_pte) && vma_is_accessible(vmf->vma))
- 		return do_numa_page(vmf);
- 
--	vmf->ptl = pte_lockptr(vmf->vma->vm_mm, vmf->pmd);
--	spin_lock(vmf->ptl);
-+	if (!pte_spinlock(vmf))
-+		return VM_FAULT_RETRY;
- 	entry = vmf->orig_pte;
- 	if (unlikely(!pte_same(*vmf->pte, entry)))
- 		goto unlock;
++config ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
++       def_bool n
++
++config SPECULATIVE_PAGE_FAULT
++       bool "Speculative page faults"
++       default y
++       depends on ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
++       depends on MMU && SMP
++       help
++         Try to handle user space page faults without holding the mmap_sem.
++
++	 This should allow better concurrency for massively threaded process
++	 since the page fault handler will not wait for other threads memory
++	 layout change to be done, assuming that this change is done in another
++	 part of the process's memory space. This type of page fault is named
++	 speculative page fault.
++
++	 If the speculative page fault fails because of a concurrency is
++	 detected or because underlying PMD or PTE tables are not yet
++	 allocating, it is failing its processing and a classic page fault
++	 is then tried.
 -- 
 2.7.4
