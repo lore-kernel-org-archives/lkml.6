@@ -1,157 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752769AbeDQPIl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:08:41 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:18108 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbeDQPIj (ORCPT
+        id S1752788AbeDQPJE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:09:04 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:55582 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752199AbeDQPJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:08:39 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w3HF8Ipt006008
-X-Nifty-SrcIP: [209.85.217.182]
-X-Google-Smtp-Source: AIpwx4+IFSj47MHIS9afgQCtQ6F2oXO2+p9mp6/wuvaMbVciFn0FUDITXkNraQS+xcrYUY+7nuq5uHST7UANaa5Nyoc=
+        Tue, 17 Apr 2018 11:09:02 -0400
+Subject: Re: [PATCH RESEND] xen/sndif: Sync up with the canonical definition
+ in Xen
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc: jgross@suse.com, iurii.konovalenko@globallogic.com,
+        konrad.wilk@oracle.com, tiwai@suse.de,
+        Oleksandr Grytsov <oleksandr_grytsov@epam.com>
+References: <20180412172627.18065-1-oleksandr_andrushchenko@epam.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <9f6398a3-7e85-9345-4e2a-afb5b69dcff8@oracle.com>
+Date: Tue, 17 Apr 2018 11:10:36 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KQu-GUcocDpRO=VZrjSXaZe8Bo-1feJwABX5PXhsYu+XA@mail.gmail.com>
-References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
- <1523595999-27433-18-git-send-email-yamada.masahiro@socionext.com> <CAFkk2KQu-GUcocDpRO=VZrjSXaZe8Bo-1feJwABX5PXhsYu+XA@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Wed, 18 Apr 2018 00:07:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQxxNddpr2PiOR=izKuH5tQhFKP91XFzdY8i6HJ_H3Fgw@mail.gmail.com>
-Message-ID: <CAK7LNAQxxNddpr2PiOR=izKuH5tQhFKP91XFzdY8i6HJ_H3Fgw@mail.gmail.com>
-Subject: Re: [PATCH 17/30] Documentation: kconfig: document a new Kconfig
- macro language
-To: Ulf Magnusson <ulfalizer@gmail.com>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Emese Revfy <re.emese@gmail.com>,
-        X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180412172627.18065-1-oleksandr_andrushchenko@epam.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8865 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804170135
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-15 17:08 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
-> On Fri, Apr 13, 2018 at 7:06 AM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> Add a document for the macro language introduced to Kconfig.
->>
->> The motivation of this work is to move the compiler option tests to
->> Kconfig from Makefile.  A number of kernel features require the
->> compiler support.  Enabling such features blindly in Kconfig ends up
->> with a lot of nasty build-time testing in Makefiles.  If a chosen
->> feature turns out unsupported by the compiler, what the build system
->> can do is either to disable it (silently!) or to forcibly break the
->> build, despite Kconfig has let the user to enable it.
->>
->> This change was strongly prompted by Linus Torvalds.  You can find
->> his suggestions [1] [2] in ML.  The original idea was to add a new
->> 'option', but I found generalized text expansion would make Kconfig
->> more powerful and lovely.  While polishing up the implementation, I
->> noticed sort of similarity between Make and Kconfig.  This might be
->> too immature to be called 'language', but anyway here it is.  All
->> ideas are from Make (you can even say it is addicted), so people
->> will easily understand how it works.
->>
->> [1]: https://lkml.org/lkml/2016/12/9/577
->> [2]: https://lkml.org/lkml/2018/2/7/527
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->> Changes in v3: None
->> Changes in v2: None
->>
->>  Documentation/kbuild/kconfig-macro-language.txt | 179 ++++++++++++++++++++++++
->>  MAINTAINERS                                     |   2 +-
->>  2 files changed, 180 insertions(+), 1 deletion(-)
->>  create mode 100644 Documentation/kbuild/kconfig-macro-language.txt
->>
->> diff --git a/Documentation/kbuild/kconfig-macro-language.txt b/Documentation/kbuild/kconfig-macro-language.txt
->> new file mode 100644
->> index 0000000..1f6281b
->> --- /dev/null
->> +++ b/Documentation/kbuild/kconfig-macro-language.txt
->> @@ -0,0 +1,179 @@
->> +Concept
->> +-------
->> +
->> +The basic idea was inspired by Make. When we look at Make, we notice sort of
->> +two languages in one. One language describes dependency graphs consisting of
->> +targets and prerequisites. The other is a macro language for performing textual
->> +substitution.
->> +
->> +There is clear distinction between the two language stages. For example, you
->> +can write a makefile like follows:
->> +
->> +    APP := foo
->> +    SRC := foo.c
->> +    CC := gcc
->> +
->> +    $(APP): $(SRC)
->> +            $(CC) -o $(APP) $(SRC)
->> +
->> +The macro language replaces the variable references with their expanded form,
->> +and handles as if the source file were input like follows:
->> +
->> +    foo: foo.c
->> +            gcc -o foo foo.c
->> +
->> +Then, Make analyzes the dependency graph and determines the targets to be
->> +updated.
->> +
->> +The idea is quite similar in Kconfig - it is possible to describe a Kconfig
->> +file like this:
->> +
->> +    CC := gcc
->> +
->> +    config CC_HAS_FOO
->> +            def_bool $(shell $(srctree)/scripts/gcc-check-foo.sh $(CC))
->> +
->> +The macro language in Kconfig processes the source file into the following
->> +intermediate:
->> +
->> +    config CC_HAS_FOO
->> +            def_bool y
->> +
->> +Then, Kconfig moves onto the evaluation stage to resolve inter-symbol
->> +dependency, which is explained in kconfig-language.txt.
->> +
->> +
->> +Variables
->> +---------
->> +
->> +Like in Make, a variable in Kconfig works as a macro variable.  A macro
->> +variable is expanded "in place" to yield a text string that may then expanded
->> +further. To get the value of a variable, enclose the variable name in $( ).
->> +As a special case, single-letter variable names can omit the parentheses and is
->> +simply referenced like $X. Unlike Make, Kconfig does not support curly braces
->> +as in ${CC}.
+On 04/12/2018 01:26 PM, Oleksandr Andrushchenko wrote:
+> This is the sync up with the canonical definition of the sound
+> protocol in Xen:
 >
-> Do we need single-letter variable names for anything? It looks like
-> we're deviating
-> a bit from Make behavior already.
+> 1. Protocol version was referenced in the protocol description,
+>    but missed its definition. Fixed by adding a constant
+>    for current protocol version.
 >
-> I suspect they're just a side effect of Make having automatic variables like $@.
-> The Make manual discourages them otherwise:
+> 2. Some of the request descriptions have "reserved" fields
+>    missed: fixed by adding corresponding entries.
 >
-> "A dollar sign followed by a character other than a dollar sign,
-> open-parenthesis or
-> open-brace treats that single character as the variable name. Thus, you could
-> reference the variable x with `$x'. However, this practice is strongly
-> discouraged,
-> except in the case of the automatic variables (see section Automatic
-> Variables)."
+> 3. Extend the size of the requests and responses to 64 octets.
+>    Bump protocol version to 2.
+>
+> 4. Add explicit back and front synchronization
+>    In order to provide explicit synchronization between backend and
+>    frontend the following changes are introduced in the protocol:
+>     - add new ring buffer for sending asynchronous events from
+>       backend to frontend to report number of bytes played by the
+>       frontend (XENSND_EVT_CUR_POS)
+>     - introduce trigger events for playback control: start/stop/pause/resume
+>     - add "req-" prefix to event-channel and ring-ref to unify naming
+>       of the Xen event channels for requests and events
+>
+> 5. Add explicit back and front parameter negotiation
+>    In order to provide explicit stream parameter negotiation between
+>    backend and frontend the following changes are introduced in the protocol:
+>    add XENSND_OP_HW_PARAM_QUERY request to read/update
+>    configuration space for the parameters given: request passes
+>    desired parameter's intervals/masks and the response to this request
+>    returns allowed min/max intervals/masks to be used.
+>
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> Signed-off-by: Oleksandr Grytsov <oleksandr_grytsov@epam.com>
+> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Cc: Takashi Iwai <tiwai@suse.de>
 >
 
-OK.  We do not need two ways to do the same thing.
 
-I will consider it
-although supporting single-letter variable is not costly.
+Applied to for-linus-4.17
 
-
-
--- 
-Best Regards
-Masahiro Yamada
+-boris
