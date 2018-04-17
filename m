@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+Wug0NG7kjZTn7P/LcG3U3pTUN5fddDc81oC3niY/iOItJHCjdnh6taVMKCYotiDjrHXMz
-ARC-Seal: i=1; a=rsa-sha256; t=1523980968; cv=none;
+X-Google-Smtp-Source: AIpwx4/RuC5juehJV79+OItj23dVAo7YUkY4ShEiZbIEwaDokegutdtykov4yO03S42HbgQ6ijyn
+ARC-Seal: i=1; a=rsa-sha256; t=1523980964; cv=none;
         d=google.com; s=arc-20160816;
-        b=hx8BNOC4AR21Difyj2yBjDCxyIqKgQ/wmjOCpWOS9e9s8WmtDcxhev2V/je2GdR5AR
-         ReH+wFPb3tbjbFLicP1nJibrSxbfi0WM4JSyRwUEDujw1wnGIdsViQYkNobGdOYCiMrp
-         iyJfnneLtR6CpU1Jb5aC8BetWyfoplYviM18JXPq8i+0hWLglEI8e9hYrpI9cesr93Nh
-         1b5SyoZs0aHXwmfI2Pvd/T14aaN2/BgMEi8iuZHFbEugG64ZuEn/4m3gfZSzUdtq/JM5
-         s0sQk9NRqZX7v1qHpA6MG/8fQNGrjrRawyIx7v1sMAxS0f6SZ4cQqKdn9kQzxOc91fZO
-         iN8Q==
+        b=kemh6spIYgcgFjiFjb3UxZY7R8wR+575Fq0rRmDfF1CNzuIBm66uQuQjeczrVrUAgW
+         FrNuCokXzvGZn6mYsEiEj50KzRLF5kLZUrF4mtLpU5k5eCYbOp6rUXfqRYJtNWq8SSWS
+         KfzAXDontrgG6Jj46oyTYFv9ps9HjEUH02veFZAP8CBCLipEdH2dUXYJZjAPoljM/y7m
+         wDZqopHte7fNNqwOnJ8XJXCyuNzDkdY8WUiwjpX2Y7aXYm59AuJKcT627tLn69gPEDdX
+         LuLBOHhLmpmvQitiwWicOcICKTesUuhCmH6iYmH5p++8d7wMQo2Tu3un52Oi1q/pz4kJ
+         RU8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=WKU/nhGPpS6VynbrBF8rkruLggsOwNNISEXsmFmACCY=;
-        b=qyw4qB/WnrteoZivAJwezLXf4Xm7msS8RdeX8Ea0xTky4FcAC160cAUFYnOlBnI9bK
-         KUX2tnateCh2vjSZLnc0cYyV7FTtBpxFI/2zWZTnSr67r/6TaHPXIEjbwUWUKmBuCxLq
-         HJU57YJm8BbHkVPW98btj0VcmDBqq5Ik84nhPU5RP5OWNuv8YTa7/Sed0trJjCnMcTED
-         07OZuPk5vdteErWgAYTJa63AzwsJdev8NTSZBl0/QvzJNBkb1wvgkSrkZ68AU4njn+OI
-         SlLySPV3/BmtK3bz7TicKh8A0ZAUnlxhp4ZwWDw50VR9oLUIxXm0jN8ydvBknNSypYkI
-         g1Aw==
+        bh=jkDu/oOs/Jj3r5TbNjmmEpSBi66FltMvdYhum2LF3NQ=;
+        b=ATBz+J0WwecAZt4RCYvyYne73ss+2XlY7vrG/HcLgH+oiLMOxvo6ebwwthhCN/9TiE
+         anIeHqeMZk2+5rZZtueMv9wEkcTNkCQ6jDnW1jofGXTpaB4RekmU0WjaDJpsNLqXkuEi
+         3swj4FyEHfzgxbEFTv61vjtwO7lM9S/zvJaYXIK69ciBTfEpo2MyzOQQP/9gT/3P2tDo
+         80AYPK9HYrh6YGpUwVeUXLyUMc2dUpVn9DvAavCJJccfoML22Egz8fzWKP6NE51sNel2
+         PjTOMJWLFSJutQrHctX5c79gII6Nkj96NJjNTin6gjnDx7+o5porOy3cWB8hSBqlkaOI
+         bC5w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Dmitry V. Levin" <ldv@altlinux.org>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.16 32/68] x86/uapi: Fix asm/bootparam.h userspace compilation errors
-Date: Tue, 17 Apr 2018 17:57:45 +0200
-Message-Id: <20180417155750.648492693@linuxfoundation.org>
+	Ben Greear <greearb@candelatech.com>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+	Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.16 31/68] ath9k: Protect queue draining by rcu_read_lock()
+Date: Tue, 17 Apr 2018 17:57:44 +0200
+Message-Id: <20180417155750.607392965@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009867721216871?=
-X-GMAIL-MSGID: =?utf-8?q?1598009867721216871?=
+X-GMAIL-THRID: =?utf-8?q?1598009863461041684?=
+X-GMAIL-MSGID: =?utf-8?q?1598009863461041684?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,71 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dmitry V. Levin <ldv@altlinux.org>
+From: Toke Høiland-Jørgensen <toke@toke.dk>
 
-commit 9820e1c3376c641299624dd24646aed3167ad5b1 upstream.
+commit 182b1917109892ab9f26d66bfdcbc4ba6f0a0a65 upstream.
 
-Consistently use types provided by <linux/types.h> to fix the following
-asm/bootparam.h userspace compilation errors:
+When ath9k was switched over to use the mac80211 intermediate queues,
+node cleanup now drains the mac80211 queues. However, this call path is
+not protected by rcu_read_lock() as it was previously entirely internal
+to the driver which uses its own locking.
 
-	/usr/include/asm/bootparam.h:140:2: error: unknown type name 'u16'
-	  u16 version;
-	/usr/include/asm/bootparam.h:141:2: error: unknown type name 'u16'
-	  u16 compatible_version;
-	/usr/include/asm/bootparam.h:142:2: error: unknown type name 'u16'
-	  u16 pm_timer_address;
-	/usr/include/asm/bootparam.h:143:2: error: unknown type name 'u16'
-	  u16 num_cpus;
-	/usr/include/asm/bootparam.h:144:2: error: unknown type name 'u64'
-	  u64 pci_mmconfig_base;
-	/usr/include/asm/bootparam.h:145:2: error: unknown type name 'u32'
-	  u32 tsc_khz;
-	/usr/include/asm/bootparam.h:146:2: error: unknown type name 'u32'
-	  u32 apic_khz;
-	/usr/include/asm/bootparam.h:147:2: error: unknown type name 'u8'
-	  u8 standard_ioapic;
-	/usr/include/asm/bootparam.h:148:2: error: unknown type name 'u8'
-	  u8 cpu_ids[255];
+This leads to a possible rcu_dereference() without holding
+rcu_read_lock(); but only if a station is cleaned up while having
+packets queued on the TXQ. Fix this by adding the rcu_read_lock() to the
+caller in ath9k.
 
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: <stable@vger.kernel.org> # v4.16
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 4a362601baa6 ("x86/jailhouse: Add infrastructure for running in non-root cell")
-Link: http://lkml.kernel.org/r/20180405043210.GA13254@altlinux.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 50f08edf9809 ("ath9k: Switch to using mac80211 intermediate software queues.")
+Cc: stable@vger.kernel.org
+Reported-by: Ben Greear <greearb@candelatech.com>
+Signed-off-by: Toke Høiland-Jørgensen <toke@toke.dk>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/uapi/asm/bootparam.h |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/wireless/ath/ath9k/xmit.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -137,15 +137,15 @@ struct boot_e820_entry {
-  * setup data structure.
-  */
- struct jailhouse_setup_data {
--	u16	version;
--	u16	compatible_version;
--	u16	pm_timer_address;
--	u16	num_cpus;
--	u64	pci_mmconfig_base;
--	u32	tsc_khz;
--	u32	apic_khz;
--	u8	standard_ioapic;
--	u8	cpu_ids[255];
-+	__u16	version;
-+	__u16	compatible_version;
-+	__u16	pm_timer_address;
-+	__u16	num_cpus;
-+	__u64	pci_mmconfig_base;
-+	__u32	tsc_khz;
-+	__u32	apic_khz;
-+	__u8	standard_ioapic;
-+	__u8	cpu_ids[255];
- } __attribute__((packed));
+--- a/drivers/net/wireless/ath/ath9k/xmit.c
++++ b/drivers/net/wireless/ath/ath9k/xmit.c
+@@ -2892,6 +2892,8 @@ void ath_tx_node_cleanup(struct ath_soft
+ 	struct ath_txq *txq;
+ 	int tidno;
  
- /* The so-called "zeropage" */
++	rcu_read_lock();
++
+ 	for (tidno = 0; tidno < IEEE80211_NUM_TIDS; tidno++) {
+ 		tid = ath_node_to_tid(an, tidno);
+ 		txq = tid->txq;
+@@ -2909,6 +2911,8 @@ void ath_tx_node_cleanup(struct ath_soft
+ 		if (!an->sta)
+ 			break; /* just one multicast ath_atx_tid */
+ 	}
++
++	rcu_read_unlock();
+ }
+ 
+ #ifdef CONFIG_ATH9K_TX99
