@@ -1,88 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755560AbeDQQ0a (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:26:30 -0400
-Received: from isilmar-4.linta.de ([136.243.71.142]:34602 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754365AbeDQQ00 (ORCPT
+        id S1754454AbeDQQ2B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:28:01 -0400
+Received: from sonic301-10.consmr.mail.bf2.yahoo.com ([74.6.129.49]:34626 "EHLO
+        sonic301-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752116AbeDQQ2A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:26:26 -0400
-Date: Tue, 17 Apr 2018 18:10:29 +0200
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
- x86 syscall func names
-Message-ID: <20180417161029.GA8733@light.dominikbrodowski.net>
-References: <20180417115440.2145f7f5@gandalf.local.home>
+        Tue, 17 Apr 2018 12:28:00 -0400
+X-YMail-OSG: 8l8sOKkVM1niMbJL.HyoSIYKEEUG7QKuLviKVO96MTfD9TnQL6N7i7VEBTf8D2I
+ PpJFw9IJmewMscYyrImfLV_GkT_W6U.F4AIgo69920SvyW849Cf2ehX58UfuJjbeXDy6MKNTY07l
+ hQAYMCJ5NEPZUAtMXfjVj26dzF0pT.lf7qcH5BkUAuWvgoWXij6ouSmR2bM9Mx2rlEdvyp155NPW
+ jDxOhtF32YmLZxQ_i1zpnFz2Obm3vdi91xGQrH7AN2sZus6agpg.8p6dFCipDdXaaKNJ.o43dS6l
+ uuuNf0cc6dPr_juJwRslfMnqqJceKYikm3AGbJNNKPFnen5vec.xzUJJ5Mj_M9PP4BcyOYgACOhW
+ lGZOqJKjfs1gEu1235739ehevCLlfZ82QQTDqdKUzCaMgWIDJFaQHqdX1tdxRaOhtgGSyonj6A5i
+ yt5scXJiJfTvXjbHXr8gscCUSDZUq2.lMNT22iYgcKL_wH0WtCXkj5rMxwKf.oqQG306mCkegGqk
+ EOEEBRGHZJcWgeX5WYqow0P6BpqFnLg--
+Subject: Re: On the kernel numbering scheme
+To: xDynamite <dreamingforward@gmail.com>,
+        "Artem S. Tashkinov" <t.artem@lycos.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+References: <e7b554d738de83268f4fc06dd6f12ada@lycos.com>
+ <CAMjeLr-A7z=A3E3yqnZ_PZhekZPxhCDP=Cb0aWhemmv3MNAoPA@mail.gmail.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <954f8e10-ae72-3175-1bac-ffac6cae10f7@schaufler-ca.com>
+Date: Tue, 17 Apr 2018 09:27:46 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417115440.2145f7f5@gandalf.local.home>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAMjeLr-A7z=A3E3yqnZ_PZhekZPxhCDP=Cb0aWhemmv3MNAoPA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Steven,
+On 4/16/2018 5:55 PM, \0xDynamite wrote:
+>  > The current kernel numbering scheme makes no sense at all because the
+>> first two numbers don't represent anything at all. They had some meaning
+>> back in the 1.x 2.x 3.x days but then with the introduction of the new
+>> rolling development model, they became worthless.
+>>
+>> I'd love to change the kernel numbering scheme to this:
+>>
+>> YYYY.RELEASE.PATCH_LEVEL
+>>
+>> So that the first kernel to be released in 2019 will be numbered
+>> 2019.0(.0),
+> If you're going to suggest changes, then you should do it like this:
+> Change major numbers ONLY when you've introduced a new incompatibility
+> with your API and increment minor numbers for everything else.  THEN,
+> the first number WILL mean something.  If your software changes
+> something outside the way users communicate with the kernel (major
+> changes) and just changes something that COULD affect other software,
+> then have multiple partitions in your release number, like 3.5.41.
 
-On Tue, Apr 17, 2018 at 11:54:40AM -0400, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> Arnaldo noticed that the latest kernel is missing the syscall event system
-> directory in x86. I bisected it down to d5a00528b58c ("syscalls/core,
-> syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()").
-> 
-> The system call trace events are special, as there is only one trace event
-> for all system calls (the raw_syscalls). But a macro that wraps the system
-> calls creates meta data for them that copies the name to find the system
-> call that maps to the system call table (the number). At boot up, it does a
-> kallsyms lookup for this mapping. If it does not find a function, then that
-> system call is ignored.
-> 
-> Because the x86 system calls had "__x86_" appended to the "sys" for the
-
-__x64 actually.
-
-> names, they do not match the default compare algorithm. As this was a
-> problem for power pc, the algorithm can be overwritten by the architecture.
-> The solution is to have x86 have its own algorithm to do the compare and
-> this brings back the system call trace events.
-
-this lets me wonder *which* syscall "function" should be included in this
-directory. Is it really the stub (__x64_sys_waitid, for example), or better
-the sign-extending C function (__se_sys_waitid) which then calls an
-internal helper (__do_sys_waitid). An additional advantage:
-__se_sys_waitid would be available on x86 and, AFAICS, on all other archs.
-
-> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  arch/x86/include/asm/ftrace.h | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-> index 09ad88572746..c30b3fac20ae 100644
-> --- a/arch/x86/include/asm/ftrace.h
-> +++ b/arch/x86/include/asm/ftrace.h
-> @@ -31,6 +31,16 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
->  	return addr;
->  }
->  
-> +#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
-> +static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
-> +{
-> +	/*
-> +	 * Compare the symbol name with the system call name. Skip the
-> +	 * "__x64_sys" prefix.
-> +	 */
-> +	return !strcmp(sym + 9, name + 3);
-> +}
-
-What are the first three chars you skip for *name?
-
-Thanks,
-	Dominik
+Release numbering schemes are the ultimate opportunity
+for bikeshedding. It doesn't frikking matter. Schemes that
+are designed to convey anything more important than sequence
+break down eventually. Schemes that convey nothing but
+sequence can't be used to emphasize a major change. Let this
+sleeping dog lie. You have better things to worry about.
+ 
