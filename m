@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+gT2BD1TcxA7KyPe7nbMJa1mjMrNnykOn7Ljvae892eyBD07g7zpZrxKBys6fGq4FjiYNX
-ARC-Seal: i=1; a=rsa-sha256; t=1523981076; cv=none;
+X-Google-Smtp-Source: AIpwx4+m87g3/Y84Yph01NRwP09KtoFt0hWA8oCbFBy5mpFG1/OJyYDp9ozJwYYrT6rPkDdN17RO
+ARC-Seal: i=1; a=rsa-sha256; t=1523981077; cv=none;
         d=google.com; s=arc-20160816;
-        b=oiRS/3kosagRATh1/V8BlkzCqFvq4ggkii9D4l54aMZiy4uAg8pVMEufMwSwFu6kPS
-         hslegwzBKj5sCEQrsmEyAlnLeM864WbmofiFNAIzybcWXBdbt5/bPfLqqUaJ5x5kMW4K
-         clrrfl9IaMgcGuOFYSDEtENKx0WqmmIfeTyM0APV6A6IS8KLGPXzT+dbOJBbJwtLiAU0
-         4KeLKIA1ktbjAGiN0K1q/6LDRf9/WnDk4xPprQhBhmENqt2OI0ABQCcDDi8+QFvC81Go
-         EYRGnu7JbnIFGDu9rn0epOEPVFJqA9PLE62aXAmFffuFW9+dKFE8vxBdGlVHu+5TuebB
-         slWQ==
+        b=ntPUEBPAiiOO5vmDfeKKDDd81i4BB1RGIZstRa4dhYT/dblUOCOSeA2uV8ZfwinxNO
+         e4jfrhdrPAoXfU2T8lP2X4ImHhdDklLX+krRrCJB4IkB3VVyOzmjaA1jN6Z1egGJ2d0B
+         jiakdYMNV3EJn3uL9e0dx9O3GrKTKmWWLuU7upnVtCPT6ZCDn6ChWL3zi/jU+dSlIUm3
+         ZZKbsr4IaBDlh3qpEC9LN7+lHAtuBwdryyMInF0RUCa22AXih+/DI8Ttg5dwFMk2cYTL
+         HLeRWC12ApuvJuFTaItOoK4GIbYRDmeTPXCSRougszwqLOTs++wAkTHWytA2ef/12DOk
+         SAfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=R4p7u+dbD63NmP/nXk0DdduDRZ9cgbIVHSmykSxKTqc=;
-        b=Lq90EPR74IK2RSfFQrb3LF59PGZTE4gzLAj5GM21TbqYOQHGCT1FzOoKA45VBeNkmG
-         RMiKtqkjup7q4xROAtzyjgWY4PgZVnxqjH8gyF4zqBrkf4SfxyNeeY8FMKzQKvjuHF/X
-         udynBruaBQt3ywpu2jx+K+G1edEzYgPsFsXpegFarTmiBYLODG/slxWc5f3eFGuW4KQN
-         cg3TVzHx4SMpaW1rUlUz+o87phGgEgMSg3SlKDZV8OkDQK7zUGkRBN2HjN5OtM23M1rq
-         I659v1xK+Cv9HoPJfENPmPd2PUffg3ac/YmL5u5gmp+rKrM6pcKo3FUkr9NPDWl0r6Nh
-         o70A==
+        bh=e2+Xvwf2XKWOYjqSRPZPH7tULDV19/IvU9pCPelrKZ8=;
+        b=nWC1Zfmuc60w0YNqGQVfpSXHLCfQC1kXQsRotdih5dCRIGFdzQLxbP9iBQH1KS2ldr
+         bD2/iNeLIDoeO0cVDFHETHTD7495ne0ct8Yt00Lr5VJ0SihLawLSny8jzU91OXPVFIYR
+         aHBYTFXK9MxZHkKTfeXI5X9eU3VhhvZAvZ8IGKyJR+8Muj2h1tTkDYB4A27x9Fa6DZe1
+         XYkEUCa7nLjSTeySTOTsxwzWfrE5KIS7pOpnK+Q+pC8qMOdm3FEmY0cNWXWh5VN54MgO
+         Y/MZjDzTj+8Tuy+DI8mhIzSSGKQqfrPstciugo1GiApkm5VAcODZ8Ewf/59qmRpjw0yh
+         8zXA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,16 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Stefan Haberland <sth@linux.vnet.ibm.com>,
-	Keith Busch <keith.busch@intel.com>,
-	Christian Borntraeger <borntraeger@de.ibm.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.15 32/53] blk-mq: dont keep offline CPUs mapped to hctx 0
-Date: Tue, 17 Apr 2018 17:58:57 +0200
-Message-Id: <20180417155724.713605978@linuxfoundation.org>
+	Simon Gaiser <simon@invisiblethingslab.com>,
+	Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.15 34/53] xen: xenbus_dev_frontend: Fix XS_TRANSACTION_END handling
+Date: Tue, 17 Apr 2018 17:58:59 +0200
+Message-Id: <20180417155724.802239811@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009790987535058?=
-X-GMAIL-MSGID: =?utf-8?q?1598009981309990381?=
+X-GMAIL-THRID: =?utf-8?q?1598009807855187650?=
+X-GMAIL-MSGID: =?utf-8?q?1598009982329680189?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,45 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Simon Gaiser <simon@invisiblethingslab.com>
 
-commit bffa9909a6b48d8ca3398dec601bc9162a4020c4 upstream.
+commit 2a22ee6c3ab1d761bc9c04f1e4117edd55b82f09 upstream.
 
->From commit 4b855ad37194 ("blk-mq: Create hctx for each present CPU),
-blk-mq doesn't remap queue after CPU topo is changed, that said when
-some of these offline CPUs become online, they are still mapped to
-hctx 0, then hctx 0 may become the bottleneck of IO dispatch and
-completion.
+Commit fd8aa9095a95 ("xen: optimize xenbus driver for multiple
+concurrent xenstore accesses") made a subtle change to the semantic of
+xenbus_dev_request_and_reply() and xenbus_transaction_end().
 
-This patch sets up the mapping from the beginning, and aligns to
-queue mapping for PCI device (blk_mq_pci_map_queues()).
+Before on an error response to XS_TRANSACTION_END
+xenbus_dev_request_and_reply() would not decrement the active
+transaction counter. But xenbus_transaction_end() has always counted the
+transaction as finished regardless of the response.
 
-Cc: Stefan Haberland <sth@linux.vnet.ibm.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: stable@vger.kernel.org
-Fixes: 4b855ad37194 ("blk-mq: Create hctx for each present CPU)
-Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+The new behavior is that xenbus_dev_request_and_reply() and
+xenbus_transaction_end() will always count the transaction as finished
+regardless the response code (handled in xs_request_exit()).
+
+But xenbus_dev_frontend tries to end a transaction on closing of the
+device if the XS_TRANSACTION_END failed before. Trying to close the
+transaction twice corrupts the reference count. So fix this by also
+considering a transaction closed if we have sent XS_TRANSACTION_END once
+regardless of the return code.
+
+Cc: <stable@vger.kernel.org> # 4.11
+Fixes: fd8aa9095a95 ("xen: optimize xenbus driver for multiple concurrent xenstore accesses")
+Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-mq-cpumap.c |    5 -----
- 1 file changed, 5 deletions(-)
+ drivers/xen/xenbus/xenbus_dev_frontend.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/block/blk-mq-cpumap.c
-+++ b/block/blk-mq-cpumap.c
-@@ -16,11 +16,6 @@
- 
- static int cpu_to_queue_index(unsigned int nr_queues, const int cpu)
- {
--	/*
--	 * Non present CPU will be mapped to queue index 0.
--	 */
--	if (!cpu_present(cpu))
--		return 0;
- 	return cpu % nr_queues;
- }
- 
+--- a/drivers/xen/xenbus/xenbus_dev_frontend.c
++++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
+@@ -365,7 +365,7 @@ void xenbus_dev_queue_reply(struct xb_re
+ 			if (WARN_ON(rc))
+ 				goto out;
+ 		}
+-	} else if (req->msg.type == XS_TRANSACTION_END) {
++	} else if (req->type == XS_TRANSACTION_END) {
+ 		trans = xenbus_get_transaction(u, req->msg.tx_id);
+ 		if (WARN_ON(!trans))
+ 			goto out;
