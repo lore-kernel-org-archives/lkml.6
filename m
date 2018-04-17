@@ -1,87 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752958AbeDQTFU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 15:05:20 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:48352 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752733AbeDQTFR (ORCPT
+        id S1753088AbeDQTFo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 15:05:44 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:60212 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752609AbeDQTFl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 15:05:17 -0400
-Subject: Re: [PATCH v5 09/10] PCI: dwc: Small computation improvement
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>, <kishon@ti.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <cover.1523973931.git.gustavo.pimentel@synopsys.com>
- <4fc069a2b82cc7a3790bc528a6b67636654a3a35.1523973931.git.gustavo.pimentel@synopsys.com>
-From: Joao Pinto <Joao.Pinto@synopsys.com>
-Message-ID: <d0a96713-9e34-2351-4301-8a2f9039e224@synopsys.com>
-Date: Tue, 17 Apr 2018 20:05:11 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
-MIME-Version: 1.0
-In-Reply-To: <4fc069a2b82cc7a3790bc528a6b67636654a3a35.1523973931.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: pt-PT
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.107.15.26]
+        Tue, 17 Apr 2018 15:05:41 -0400
+Date: Tue, 17 Apr 2018 15:05:39 -0400 (EDT)
+Message-Id: <20180417.150539.348388784309198242.davem@davemloft.net>
+To: mschiffer@universe-factory.net
+Cc: netdev@vger.kernel.org, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND net-next] ipv6: provide Kconfig switch to
+ disable accept_ra by default
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <b39b1b4304524c43dfd83280aea4cfb4e8ac97f5.1523959377.git.mschiffer@universe-factory.net>
+References: <b39b1b4304524c43dfd83280aea4cfb4e8ac97f5.1523959377.git.mschiffer@universe-factory.net>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Às 3:34 PM de 4/17/2018, Gustavo Pimentel escreveu:
-> Replaces a simple division by 2 to a right shift rotation of 1 bit.
-> 
-> Probably any recent and decent compiler does this kind of substitution
-> in order to improve code performance. Nevertheless it's a coding good
-> practice whenever there is a division / multiplication by multiple of 2
-> to replace it by the equivalent operation in this case, the shift
-> rotation.
-> 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> Change v1->v2:
->  - Nothing changed, just to follow the patch set version.
-> Change v2->v3:
->  - Nothing changed, just to follow the patch set version.
-> Changes v3->v4:
->  - Added a small explication to the log description.
-> Changes v4->v5:
->  - Nothing changed, just to follow the patch set version.
-> 
->  drivers/pci/dwc/pcie-designware-host.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
-> index 5a23f78..fc55fde 100644
-> --- a/drivers/pci/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/dwc/pcie-designware-host.c
-> @@ -332,8 +332,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  
->  	cfg_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config");
->  	if (cfg_res) {
-> -		pp->cfg0_size = resource_size(cfg_res) / 2;
-> -		pp->cfg1_size = resource_size(cfg_res) / 2;
-> +		pp->cfg0_size = resource_size(cfg_res) >> 1;
-> +		pp->cfg1_size = resource_size(cfg_res) >> 1;
->  		pp->cfg0_base = cfg_res->start;
->  		pp->cfg1_base = cfg_res->start + pp->cfg0_size;
->  	} else if (!pp->va_cfg0_base) {
-> @@ -377,8 +377,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
->  			break;
->  		case 0:
->  			pp->cfg = win->res;
-> -			pp->cfg0_size = resource_size(pp->cfg) / 2;
-> -			pp->cfg1_size = resource_size(pp->cfg) / 2;
-> +			pp->cfg0_size = resource_size(pp->cfg) >> 1;
-> +			pp->cfg1_size = resource_size(pp->cfg) >> 1;
->  			pp->cfg0_base = pp->cfg->start;
->  			pp->cfg1_base = pp->cfg->start + pp->cfg0_size;
->  			break;
-> 
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 17 Apr 2018 12:04:50 +0200
 
-Thanks Gustavo!
+> Many distributions and users prefer to handle router advertisements in
+> userspace; one example is OpenWrt, which includes a combined RA and DHCPv6
+> client. For such configurations, accept_ra should not be enabled by
+> default.
+> 
+> As setting net.ipv6.conf.default.accept_ra via sysctl.conf or similar
+> facilities may be too late to catch all interfaces and common sysctl.conf
+> tools do not allow setting an option for all existing interfaces, this
+> patch provides a Kconfig option to control the default value of
+> default.accept_ra.
+> 
+> Using default.accept_ra is preferable to all.accept_ra for our usecase,
+> as disabling all.accept_ra would preclude users from explicitly enabling
+> accept_ra on individual interfaces.
+> 
+> Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
-Acked-by: Joao Pinto <jpinto@synopsys.com>
+This kind of Kconfig option makes an irreversible behavior choice at
+compile time, which satisfies one set of users whilst completely
+precluding another set.
+
+So no matter what setting a distribution chooses, one set of users are
+basically out of luck.
+
+For that reason I consider this a poor approach.
+
+I hate module options, but at least with that the user can choose
+regardless of what the distribution maker decided to do with their
+kernel.
+
+This is essentially how we handle "disable_ipv6"
+
+I'm not applying this, because it is as much of a step backwards as
+it is a step forward, sorry.
