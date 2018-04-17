@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753073AbeDQCDV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 22:03:21 -0400
+        id S1753106AbeDQCD1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 22:03:27 -0400
 Received: from mga14.intel.com ([192.55.52.115]:29008 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753021AbeDQCDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 22:03:15 -0400
+        id S1753077AbeDQCDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 22:03:24 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,461,1517904000";
-   d="scan'208";a="37922800"
+   d="scan'208";a="37922827"
 From: "Huang, Ying" <ying.huang@intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Tim Chen <tim.c.chen@intel.com>, Andi Kleen <ak@linux.intel.com>,
@@ -24,9 +24,9 @@ Cc: Tim Chen <tim.c.chen@intel.com>, Andi Kleen <ak@linux.intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: [PATCH -mm 13/21] mm, THP, swap: Support PMD swap mapping in madvise_free()
-Date: Tue, 17 Apr 2018 10:02:22 +0800
-Message-Id: <20180417020230.26412-14-ying.huang@intel.com>
+Subject: [PATCH -mm 16/21] mm, THP, swap: Free PMD swap mapping when zap_huge_pmd()
+Date: Tue, 17 Apr 2018 10:02:25 +0800
+Message-Id: <20180417020230.26412-17-ying.huang@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417020230.26412-1-ying.huang@intel.com>
 References: <20180417020230.26412-1-ying.huang@intel.com>
@@ -36,12 +36,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huang Ying <ying.huang@intel.com>
 
-When madvise_free() found a PMD swap mapping, if only part of the huge
-swap cluster is operated on, the PMD swap mapping will be split and
-fallback to PTE swap mapping processing.  Otherwise, if all huge swap
-cluster is operated on, free_swap_and_cache() will be called to
-decrease the PMD swap mapping count and probably free the swap space
-and the THP in swap cache too.
+For a PMD swap mapping, zap_huge_pmd() will clear the PMD and call
+free_swap_and_cache() to decrease the swap reference count and maybe
+free or split the huge swap cluster and the THP in swap cache.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -56,100 +53,67 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 ---
- mm/huge_memory.c | 50 +++++++++++++++++++++++++++++++++---------------
- mm/madvise.c     |  2 +-
- 2 files changed, 36 insertions(+), 16 deletions(-)
+ mm/huge_memory.c | 32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 445c5416d251..3e395f52c5a4 100644
+index b0a9a4afc129..3490f1baea49 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -1846,6 +1846,15 @@ static inline void __split_huge_swap_pmd(struct vm_area_struct *vma,
- }
- #endif
- 
-+static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
-+{
-+	pgtable_t pgtable;
-+
-+	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
-+	pte_free(mm, pgtable);
-+	mm_dec_nr_ptes(mm);
-+}
-+
- /*
-  * Return true if we do MADV_FREE successfully on entire pmd page.
-  * Otherwise, return false.
-@@ -1866,15 +1875,35 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		goto out_unlocked;
- 
- 	orig_pmd = *pmd;
--	if (is_huge_zero_pmd(orig_pmd))
--		goto out;
+@@ -2011,7 +2011,7 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		spin_unlock(ptl);
+ 		if (is_huge_zero_pmd(orig_pmd))
+ 			tlb_remove_page_size(tlb, pmd_page(orig_pmd), HPAGE_PMD_SIZE);
+-	} else if (is_huge_zero_pmd(orig_pmd)) {
++	} else if (pmd_present(orig_pmd) && is_huge_zero_pmd(orig_pmd)) {
+ 		zap_deposited_table(tlb->mm, pmd);
+ 		spin_unlock(ptl);
+ 		tlb_remove_page_size(tlb, pmd_page(orig_pmd), HPAGE_PMD_SIZE);
+@@ -2024,17 +2024,27 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 			page_remove_rmap(page, true);
+ 			VM_BUG_ON_PAGE(page_mapcount(page) < 0, page);
+ 			VM_BUG_ON_PAGE(!PageHead(page), page);
+-		} else if (thp_migration_supported()) {
+-			swp_entry_t entry;
 -
- 	if (unlikely(!pmd_present(orig_pmd))) {
--		VM_BUG_ON(thp_migration_supported() &&
--				  !is_pmd_migration_entry(orig_pmd));
--		goto out;
-+		swp_entry_t entry = pmd_to_swp_entry(orig_pmd);
+-			VM_BUG_ON(!is_pmd_migration_entry(orig_pmd));
+-			entry = pmd_to_swp_entry(orig_pmd);
+-			page = pfn_to_page(swp_offset(entry));
++		} else {
++			swp_entry_t entry = pmd_to_swp_entry(orig_pmd);
 +
-+		if (is_migration_entry(entry)) {
-+			VM_BUG_ON(!thp_migration_supported());
-+			goto out;
-+		} else if (thp_swap_supported() && !non_swap_entry(entry)) {
-+			/* If part of THP is discarded */
-+			if (next - addr != HPAGE_PMD_SIZE) {
-+				unsigned long haddr = addr & HPAGE_PMD_MASK;
-+
-+				__split_huge_swap_pmd(vma, haddr, pmd);
-+				goto out;
++			if (thp_migration_supported() &&
++			    is_migration_entry(entry))
++				page = pfn_to_page(swp_offset(entry));
++			else if (thp_swap_supported() &&
++				 !non_swap_entry(entry))
++				free_swap_and_cache(entry, true);
++			else {
++				WARN_ONCE(1,
++"Non present huge pmd without pmd migration or swap enabled!");
++				goto unlock;
 +			}
-+			free_swap_and_cache(entry, true);
-+			pmd_clear(pmd);
-+			zap_deposited_table(mm, pmd);
-+			if (current->mm == mm)
-+				sync_mm_rss(mm);
-+			add_mm_counter(mm, MM_SWAPENTS, -HPAGE_PMD_NR);
-+			ret = true;
-+			goto out;
-+		} else
-+			VM_BUG_ON(1);
- 	}
+ 			flush_needed = 0;
+-		} else
+-			WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
++		}
  
-+	if (is_huge_zero_pmd(orig_pmd))
-+		goto out;
-+
- 	page = pmd_page(orig_pmd);
- 	/*
- 	 * If other processes are mapping this page, we couldn't discard
-@@ -1920,15 +1949,6 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	return ret;
- }
- 
--static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
--{
--	pgtable_t pgtable;
+-		if (PageAnon(page)) {
++		if (!page) {
++			zap_deposited_table(tlb->mm, pmd);
++			add_mm_counter(tlb->mm, MM_SWAPENTS, -HPAGE_PMD_NR);
++		} else if (PageAnon(page)) {
+ 			zap_deposited_table(tlb->mm, pmd);
+ 			add_mm_counter(tlb->mm, MM_ANONPAGES, -HPAGE_PMD_NR);
+ 		} else {
+@@ -2042,7 +2052,7 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 				zap_deposited_table(tlb->mm, pmd);
+ 			add_mm_counter(tlb->mm, MM_FILEPAGES, -HPAGE_PMD_NR);
+ 		}
 -
--	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
--	pte_free(mm, pgtable);
--	mm_dec_nr_ptes(mm);
--}
--
- int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		 pmd_t *pmd, unsigned long addr)
- {
-diff --git a/mm/madvise.c b/mm/madvise.c
-index d180000c626b..e03e85a20fb4 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -321,7 +321,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
- 	unsigned long next;
- 
- 	next = pmd_addr_end(addr, end);
--	if (pmd_trans_huge(*pmd))
-+	if (pmd_trans_huge(*pmd) || is_swap_pmd(*pmd))
- 		if (madvise_free_huge_pmd(tlb, vma, pmd, addr, next))
- 			goto next;
- 
++unlock:
+ 		spin_unlock(ptl);
+ 		if (flush_needed)
+ 			tlb_remove_page_size(tlb, page, HPAGE_PMD_SIZE);
 -- 
 2.17.0
