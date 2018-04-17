@@ -1,125 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752844AbeDQLoB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 07:44:01 -0400
-Received: from mail-by2nam01on0047.outbound.protection.outlook.com ([104.47.34.47]:47349
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752332AbeDQLn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 07:43:59 -0400
-From: Radhey Shyam Pandey <radheys@xilinx.com>
-To: Vinod Koul <vinod.koul@intel.com>
-CC: "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "Appana Durga Kedareswara Rao" <appanad@xilinx.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
+        id S1753021AbeDQLoJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 07:44:09 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:24723 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752686AbeDQLoE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 07:44:04 -0400
+X-IronPort-AV: E=Sophos;i="5.48,463,1517842800";
+   d="scan'208";a="278458298"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Rob Herring <robh@kernel.org>
+CC: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "Andy Shevchenko" <andy.shevchenko@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
- to netdev dma client
-Thread-Topic: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
- to netdev dma client
-Thread-Index: AQHTym7m2V209m7Mdku6MMzd169mt6P7VJGAgAmMXFA=
-Date: Tue, 17 Apr 2018 11:43:56 +0000
-Message-ID: <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
-References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
- <1522665546-10035-3-git-send-email-radheys@xilinx.com>
- <20180411090854.GY6014@localhost>
-In-Reply-To: <20180411090854.GY6014@localhost>
-Accept-Language: en-US
+Subject: RE: [PATCH v3] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Thread-Topic: [PATCH v3] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Thread-Index: AQHT0wSYdC3Wj2qtiEG+OZ/tkhpiS6QD1fCAgAEGFIA=
+Date: Tue, 17 Apr 2018 11:43:58 +0000
+Message-ID: <TY1PR01MB1769AE3A4B1E5EA521DDC867F5B70@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1523609472-4481-1-git-send-email-phil.edworthy@renesas.com>
+ <20180416200329.notqjtdztzjrnim7@rob-hp-laptop>
+In-Reply-To: <20180416200329.notqjtdztzjrnim7@rob-hp-laptop>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-TNEF-Correlator: 
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR02MB2291;7:7tjXP6lVB61pZMaYzMoDTKWODvxlpdiswxEkcSlbfouVuFJ99FeMmtCt2MS9DAIlx4K3onqiqYoaaHBHqTcAg76+MqVDDqfXbr8QDnHQFi9xqoOmKyzEMlbQiX4ZnTTxVXi5RJ3pyiTP8TKLynpa3lF5TLVALn74ZfuqY80+zUEtNRcwE5S3eXDE9j4ung+MA/+s/sS/pXX6tXRDQjXSSFfXa/IGDPVPFH6q0vl61pnoIl6aIIARVl9PLSHhbBl2
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39380400002)(396003)(376002)(346002)(39860400002)(366004)(13464003)(189003)(199004)(81156014)(6246003)(81166006)(33656002)(14454004)(3660700001)(99286004)(478600001)(6436002)(54906003)(2900100001)(4326008)(106356001)(8676002)(316002)(3280700002)(55016002)(66066001)(68736007)(2906002)(9686003)(229853002)(25786009)(53936002)(97736004)(6916009)(105586002)(8936002)(74316002)(55236004)(5250100002)(86362001)(76176011)(102836004)(11346002)(6116002)(446003)(486006)(476003)(305945005)(3846002)(7736002)(6506007)(53546011)(26005)(5660300001)(186003)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR02MB2291;H:BN6PR02MB3282.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:BN6PR02MB2291;
-x-ms-traffictypediagnostic: BN6PR02MB2291:
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com;
-x-microsoft-antispam-prvs: <BN6PR02MB2291ABC9D94E363082E02F36C7B70@BN6PR02MB2291.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(192813158149592)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231232)(944501359)(52105095)(3002001)(6055026)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BN6PR02MB2291;BCL:0;PCL:0;RULEID:;SRVR:BN6PR02MB2291;
+ smtp.mailfrom=phil.edworthy@renesas.com;
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB0411;7:uIml7SAdLCe9BygeH7eOgTVOJfP4N4kD8PwsxLKHbBkFTnTR+SFRQBmSAADnkGFZPKtoPzhqEl+siMiEINFdSJDzoI7TX8fwtc7o39y0Os8PhsRKWSE5yn/6GrbQjUVwWDqVewAyKP/sq1mfdhYsKH1vyYglcXobLcKC+ZrtW+L/7gVBbRdya5PdHRArrVI5i2Coxa7/MkTttbCAutvwCZmg+8bLqJYzWLjxR1aM3b7CfqE0u1BCP4kuxO5NIvd8;20:8KefUvqvnfIYnS6cAV4iNxwP0qmNW7GO4diTU8n29Pcie0+p0WIYECeM2SX11ahFvX1AXLk5kC5fm5+bnFGkfVpfX1QVgpVOIPOdy8CByU6U16CoaYCNH+86EznwahP6MozyMMrglFbwtnFrHVuqbhFZ6VGnDGRrAe9CbQksJCs=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB0411;
+x-ms-traffictypediagnostic: TY1PR01MB0411:
+x-microsoft-antispam-prvs: <TY1PR01MB04114C68A867C5CCBD5F34BDF5B70@TY1PR01MB0411.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231232)(944501327)(52105095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:TY1PR01MB0411;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB0411;
 x-forefront-prvs: 0645BEB7AA
-x-microsoft-antispam-message-info: XgDGmy0kqIZzGP3uUq8ODX29Qssbvuc3MSbG7ATugnZ9PxC2qxRNy2VU/A2JYsIlOUZYog5aU2zds0jqmENcUa7l8rJa3oRTb1lHTF9Uqfq3x6RHe7O9wKR9efbzWGpCtImclqxAkpOY45DWmyOBwI9qDxTYFeeWBNMPByiQEKvMAMk4dQqG9LpFrjMwN2LM
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39380400002)(396003)(39860400002)(366004)(199004)(189003)(186003)(229853002)(53936002)(486006)(305945005)(76176011)(54906003)(99286004)(316002)(446003)(7736002)(26005)(6506007)(102836004)(53546011)(7696005)(106356001)(14454004)(44832011)(6916009)(86362001)(11346002)(2900100001)(81156014)(81166006)(8676002)(74316002)(3280700002)(7416002)(66066001)(8936002)(2906002)(68736007)(97736004)(5250100002)(5660300001)(3660700001)(476003)(33656002)(105586002)(3846002)(39060400002)(6246003)(25786009)(4326008)(478600001)(6436002)(6116002)(9686003)(55016002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB0411;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: rK7DyjPHR+STvXHL8GpuQqOMEJMNNoAMimMWnAQlY3elHqVVVLRnl+n6KS9fPGCapCXnG6/06WaChFbD2VSXQKHOFNOWmwGa/zD764V6ZJREomUFx7O9hOzAvg51e6IuTEqINOGAfWyvGXtL4uxsW/oyO5TqQohVgIfLR55zh6YHRIdLWjeiYjeV9PqXPSoH
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 450e67a5-d2e1-4092-5982-08d5a458809f
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 450e67a5-d2e1-4092-5982-08d5a458809f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2018 11:43:56.3859
+X-MS-Office365-Filtering-Correlation-Id: ba61611a-43c7-4ee0-8be8-08d5a45881e8
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba61611a-43c7-4ee0-8be8-08d5a45881e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2018 11:43:58.4652
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR02MB2291
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB0411
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3HBi58m008266
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3HBiEPK008270
 
-Hi Vinod,
+Hi Rob,
 
-> -----Original Message-----
-> From: Vinod Koul [mailto:vinod.koul@intel.com]
-> Sent: Wednesday, April 11, 2018 2:39 PM
-> To: Radhey Shyam Pandey <radheys@xilinx.com>
-> Cc: dan.j.williams@intel.com; michal.simek@xilinx.com; Appana Durga
-> Kedareswara Rao <appanad@xilinx.com>; Radhey Shyam Pandey
-> <radheys@xilinx.com>; lars@metafoo.de; dmaengine@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control
-> words to netdev dma client
-> 
-> On Mon, Apr 02, 2018 at 04:09:02PM +0530, Radhey Shyam Pandey wrote:
-> 
+On 16 April 2018 21:03 Rob Herring wrote:
+> On Fri, Apr 13, 2018 at 09:51:12AM +0100, Phil Edworthy wrote:
+> > The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> > per GPIO in port A, but the driver currently only supports 1 interrupt.
+> > See the DesignWare DW_apb_gpio Databook description of the
+> > 'GPIO_INTR_IO' parameter.
+> >
+> > This change allows the driver to work with up to 32 interrupts, it
+> > will get as many interrupts as specified in the DT 'interrupts' property.
+> > It doesn't do anything clever with the different interrupts, it just
+> > calls the same handler used for single interrupt hardware.
+> >
+> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> > ---
+> > One point to mention is that I have made it possible for users to have
+> > unconncted interrupts by specifying holes in the list of interrupts.
+> > This is done by supporting the interrupts-extended DT prop.
+> > However, I have no use for this and had to hack some test case for this.
+> > Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+> >
+> > v3:
+> >  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid
+> > bisect problems
+> > v2:
+> >  - Replaced interrupt-mask DT prop with support for the interrupts-
+> extended
+> >    prop. This means replacing the call to irq_of_parse_and_map() with calls
+> >    to of_irq_parse_one() and irq_create_of_mapping().
+> >
+> > Note: There are a few *code* lines over 80 chars, but this is just guidance,
+> >    right? Especially as there are already some lines over 80 chars.
+> > ---
+[snip]
+
+> > +			for (j = 0; j < pp->ngpio; j++) {
+> > +				if (of_irq_parse_one(np, j, &oirq))
+> > +					continue;
 > > +
-> > +		if (chan->xdev->has_axieth_connected) {
-> > +			seg = list_first_entry(&desc->segments,
-> > +					struct xilinx_axidma_tx_segment,
-> node);
-> > +			if (cb.callback_param) {
-> > +				app_w = (u32 *) cb.callback_param;
+> > +				pp->irq[j] = irq_create_of_mapping(&oirq);
 > 
-> why are you interpreting callback_param? This is plainly wrong.
-> we do not know what is the interpretation of callback_param and it is
-> internal to submitter.
-In design, if AXI DMA is connected to AXI Ethernet IP there are certain
-AXI4-Stream Status fields (RX) that we need to pass to ethernet driver
-along with data buffer. An example includes: checksum fields, packet
-length etc. To pass these control words there is a structure defined
-between dmaengine and client. Before calling the client callback
-stream control words are copied to dma client callback_param struct
-(only if axieth is connected).
+> I'm hoping to not have new users of of_irq_parse_one and
+> irq_create_of_mapping. Can you use of_irq_get instead? It will base back
+> error codes so you can distinguish different conditions.
+Sure, I hadn't noticed that particular variant!
 
-I understand it's not an ideal way and we shouldn't be interpreting
-callback_param but couldn't find any better alternative of passing
-custom information from dmaengine to client driver and still be 
-aligned to the framework.
+Thanks
+Phil
 
-> 
-> What exactly is the problem you are trying to solve?
-As mentioned above we need to pass AXI4-stream words(custom
-data) from dmaengine driver to dma client driver(ethernet) for
-each DMA descriptor. Current solution populates callback_param
-struct (only if axieth is connected). Please let me know if there is
-an alternate solution. 
-
-> 
-> > +				hw = &seg->hw;
-> > +				*app_w = hw->status &
-> XILINX_DMA_MAX_TRANS_LEN;
-> > +				memcpy(app_w, hw->app, sizeof(u32) *
-> > +					XILINX_DMA_NUM_APP_WORDS);
+> > +				if (pp->irq[j])
+> > +					pp->has_irq = true;
 > > +			}
-> 
-> --
-> ~Vinod
+> > +
+> > +			if (!pp->has_irq)
+> >  				dev_warn(dev, "no irq for port%d\n", pp-
+> >idx);
+> >  		}
+> >
+> > -		if (has_acpi_companion(dev) && pp->idx == 0)
+> > -			pp->irq =
+> platform_get_irq(to_platform_device(dev), 0);
+> > +		if (has_acpi_companion(dev) && pp->idx == 0) {
+> > +			pp->irq[0] =
+> platform_get_irq(to_platform_device(dev), 0);
+> > +			if (pp->irq[0])
+> > +				pp->has_irq = true;
+> > +		}
+> >
+> >  		pp->irq_shared	= false;
+> >  		pp->gpio_base	= -1;
