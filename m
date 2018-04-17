@@ -1,68 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753859AbeDQRGX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 13:06:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41894 "EHLO mx2.suse.de"
+        id S1753724AbeDQRGj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 13:06:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753088AbeDQRGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 13:06:22 -0400
-Date: Tue, 17 Apr 2018 09:52:10 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, peterz@infradead.org, tglx@linutronix.de,
-        mingo@kernel.org, longman@redhat.com, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbues@suse.de>
-Subject: Re: [PATCH 2/2] rtmutex: Reduce top-waiter blocking on a lock
-Message-ID: <20180417165210.xxtplqjkv46q4d4f@linux-n805>
-References: <20180410162750.8290-2-dave@stgolabs.net>
- <201804112023.tAv7vUah%fengguang.wu@intel.com>
+        id S1753056AbeDQRGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 13:06:37 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 591EF2178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 17 Apr 2018 14:06:24 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
+ x86 syscall func names
+Message-ID: <20180417170624.GC7775@kernel.org>
+References: <20180417115440.2145f7f5@gandalf.local.home>
+ <20180417163527.GA7775@kernel.org>
+ <20180417124019.1e4350d5@gandalf.local.home>
+ <20180417125723.6506e1d1@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201804112023.tAv7vUah%fengguang.wu@intel.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180417125723.6506e1d1@gandalf.local.home>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Apr 2018, kbuild test robot wrote:
+Em Tue, Apr 17, 2018 at 12:57:23PM -0400, Steven Rostedt escreveu:
+> On Tue, 17 Apr 2018 12:40:19 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Tue, 17 Apr 2018 13:35:27 -0300
+> > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > 
+> > 
+> > > [root@jouet ~]# perf test openat
+> > >  2: Detect openat syscall event                           : Ok
+> > >  3: Detect openat syscall event on all cpus               : Ok
+> > > 15: syscalls:sys_enter_openat event fields                : Ok
+> > > [root@jouet ~]#
+> > > 
+> > > [root@jouet ~]# perf trace -e nanosleep,syscalls:*nanosleep sleep 1
+> > >      0.000 (         ): syscalls:sys_enter_nanosleep:rqtp: 0x7ffd9f737950, rmtp: 0x00000000
+> > >      0.009 (         ): sleep/7905 nanosleep(rqtp: 0x7ffd9f737950                                        ) ...
+> > >   1000.204 (         ): syscalls:sys_exit_nanosleep:0x0
+> > >      0.009 (1000.217 ms): sleep/7905  ... [continued]: nanosleep()) = 0
+> > > [root@jouet ~]#
+> > > 
+> > > Works, so the regression seems to be fixed, without looking at the code
+> > > that much:
+> > > 
+> > > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>  
+> > 
+> > But does this still work on x86_32? I'll test that out. Thanks for
+> > testing, but I may have another patch soon.
+> 
+> OK, it's still broken there with this patch. I got this:
+> 
+> # ls /sys/kernel/tracing/events/syscalls
+> enable
+> filter
+> sys_enter_nanosleep
+> sys_exit_nanosleep
+> 
+> But with this:
+> 
+> 	return !strcmp(sym + 9, name + 3) || !strcmp(sym + 3, name + 3);
+> 
+> I get all the syscalls back. I'll make another patch.
 
->Hi Davidlohr,
->
->I love your patch! Perhaps something to improve:
->
->[auto build test WARNING on linus/master]
->[also build test WARNING on v4.16 next-20180411]
->[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
->url:    https://github.com/0day-ci/linux/commits/Davidlohr-Bueso/locking-rtmutex-Delete-save_state-member-of-struct-rt_mutex/20180411-155733
->reproduce:
->        # apt-get install sparse
->        make ARCH=x86_64 allmodconfig
->        make C=1 CF=-D__CHECK_ENDIAN__
+[root@jouet ~]# ls -lad /e/syscalls/sys_enter_* | wc -l
+299
+[root@jouet ~]# ls -lad /e/syscalls/sys_* | wc -l
+598
+[root@jouet ~]# uname -a
+Linux jouet 4.17.0-rc1-00025-g69dd313cd795 #11 SMP Tue Apr 17 13:18:44 -03 2018 x86_64 x86_64 x86_64 GNU/Linux
+[root@jouet ~]#
 
-Ok.
+With your first patch, I'll change to the above...
 
->
->
->sparse warnings: (new ones prefixed by >>)
->
->>> kernel/locking/rtmutex_common.h:62:9: sparse: context imbalance in '__rt_mutex_slowlock' - unexpected unlock
-
-I did:
-
-make C=1 CF=-D__CHECK_ENDIAN__ kernel/locking/rtmutex.o
-
-But cannot trigger this message. There are however a ton of other
-sparse issues with 'indirect_branch'. Ie:
-
-./arch/x86/include/asm/nospec-branch.h:144:38: warning: Unknown escape '@'
-./include/linux/init.h:134:6: error: attribute 'indirect_branch': unknown attribute
-./include/linux/init.h:135:5: error: attribute 'indirect_branch': unknown attribute
-
-More importantly, I don't follow where this "unexpected unlock" would come from
-considering that rtmutex doesn't use __acquires/__releases annotations. Nor do
-I understand why this patch would produce a new context imbalance.
-
-Thanks,
-Davidlohr
+- Arnaldo
