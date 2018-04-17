@@ -1,82 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752900AbeDQPnF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:43:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49210 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752695AbeDQPnD (ORCPT
+        id S1753122AbeDQPoG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:44:06 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45637 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752613AbeDQPoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:43:03 -0400
-Date: Tue, 17 Apr 2018 08:43:57 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: rcu_process_callbacks irqsoff latency caused by taking spinlock
- with irqs disabled
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180405093414.2273203e@roar.ozlabs.ibm.com>
- <20180405001358.GK3948@linux.vnet.ibm.com>
- <20180405104512.25ada2bb@roar.ozlabs.ibm.com>
- <20180405155320.GN3948@linux.vnet.ibm.com>
- <20180407074042.0c50a59a@roar.ozlabs.ibm.com>
- <20180408210618.GT3948@linux.vnet.ibm.com>
+        Tue, 17 Apr 2018 11:44:03 -0400
+X-Google-Smtp-Source: AIpwx49PBwnvhN8o2s1bvggdoqEHeVd5mzXuneCioGypIWV/1fxb00L9L8zas/gBLyjLyI9DAwcyxw==
+Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode for
+ the cells list
+To: Alban <albeu@free.fr>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <1521933899-362-1-git-send-email-albeu@free.fr>
+ <1521933899-362-2-git-send-email-albeu@free.fr>
+ <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
+ <20180417165420.423a691b@avionic-0020>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
+Date: Tue, 17 Apr 2018 16:44:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180408210618.GT3948@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18041715-0044-0000-0000-00000405ECF5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008871; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01019272; UDB=6.00519979; IPR=6.00798513;
- MB=3.00020619; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 15:43:01
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041715-0045-0000-0000-00000837F149
-Message-Id: <20180417154357.GA24235@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170139
+In-Reply-To: <20180417165420.423a691b@avionic-0020>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 08, 2018 at 02:06:18PM -0700, Paul E. McKenney wrote:
-> On Sat, Apr 07, 2018 at 07:40:42AM +1000, Nicholas Piggin wrote:
-> > On Thu, 5 Apr 2018 08:53:20 -0700
-> > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+Thanks for explaining,
 
-[ . . . ]
-
-> > > > Note that rcu doesn't show up consistently at the top, this was
-> > > > just one that looked *maybe* like it can be improved. So I don't
-> > > > know how reproducible it is.  
-> > > 
-> > > Ah, that leads me to wonder whether the hypervisor preempted whoever is
-> > > currently holding the lock.  Do we have anything set up to detect that
-> > > sort of thing?
-> > 
-> > In this case it was running on bare metal, so it was a genuine latency
-> > event. It just hasn't been consistently at the top (scheduler has been
-> > there, but I'm bringing that down with tuning).
+On 17/04/18 15:54, Alban wrote:
+> This will not only allow reading the calibration data from nvmem, but
+> will also create a partition on the MTD device, which is not acceptable.
+> With my proposed binding this would become:
 > 
-> OK, never mind about vCPU preemption, then!  ;-)
+> flash@0 {
+> 	#address-cells = <1>;
+> 	#size-cells = <1>;
+> 	compatible = "s25sl064a";
+> 	reg = <0>;
 > 
-> It looks like I will have other reasons to decrease rcu_node lock
-> contention, so let me see what I can do.
+> 	nvmem-cells {
+> 		compatible = "nvmem-cells";
+> 		#address-cells = <1>;
+> 		#address-cells = <1>;
+> 
+> 		calibration: calib@404 {
+> 			reg = <0x404 0x10>;
+> 		};
+> 	};
 
-And the intermittent contention behavior you saw makes is plausible
-given the current code structure, which avoids contention in the common
-case where grace periods follow immediately one after the other, but
-does not in the less-likely case where RCU is idle and a bunch of CPUs
-simultaneously see the need for a new grace period.  I have a fix in
-the works which occasionally actually makes it through rcutorture.  ;-)
+Why can't we make nvmem-cells node a nvmem provider in this case?
+Which should work!
 
-I expect to have something robust enough to post to LKML by the end
-of this week.
+--srini
 
-							Thanx, Paul
+
+> };
+> 
+> Which would work fine as the MTD code will ignore the nvmem-cells
+> subnode thanks to its compatible string.
