@@ -1,73 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753122AbeDQPoG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:44:06 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45637 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752613AbeDQPoD (ORCPT
+        id S1753146AbeDQPog (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:44:36 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43876 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750741AbeDQPof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:44:03 -0400
-X-Google-Smtp-Source: AIpwx49PBwnvhN8o2s1bvggdoqEHeVd5mzXuneCioGypIWV/1fxb00L9L8zas/gBLyjLyI9DAwcyxw==
-Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode for
- the cells list
-To: Alban <albeu@free.fr>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <1521933899-362-1-git-send-email-albeu@free.fr>
- <1521933899-362-2-git-send-email-albeu@free.fr>
- <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
- <20180417165420.423a691b@avionic-0020>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
-Date: Tue, 17 Apr 2018 16:44:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 17 Apr 2018 11:44:35 -0400
+X-Google-Smtp-Source: AIpwx482dvNN2kUgFzrF5PvW5SLWjZlmY0XV5C2Bcoe+nzXwdYq6bLH8GHeGVBWCrl8qO99GvrN2iXd1lWYuyuXSFUM=
 MIME-Version: 1.0
-In-Reply-To: <20180417165420.423a691b@avionic-0020>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <87h8o9g8be.fsf@intel.com>
+References: <20180417151127.GA31655@jordon-HP-15-Notebook-PC> <87h8o9g8be.fsf@intel.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Tue, 17 Apr 2018 21:14:32 +0530
+Message-ID: <CAFqt6zb_XqVKHPH5U4TubgDTgBURWv63cfa_OMQEyHjGZpKTHQ@mail.gmail.com>
+Subject: Re: [PATCH] gpu: drm: i915: Change return type to vm_fault_t
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for explaining,
+Not exactly. The plan for these patches is to introduce new vm_fault_t type
+in vm_operations_struct fault handlers. It's now available in 4.17-rc1. We will
+push all the required drivers/filesystem changes through different maintainers
+to linus tree. Once everything is converted into vm_fault_t type then Changing
+it from a signed to an unsigned int causes GCC to warn about an assignment
+from an incompatible type -- int foo(void) is incompatible with
+unsigned int foo(void).
 
-On 17/04/18 15:54, Alban wrote:
-> This will not only allow reading the calibration data from nvmem, but
-> will also create a partition on the MTD device, which is not acceptable.
-> With my proposed binding this would become:
-> 
-> flash@0 {
-> 	#address-cells = <1>;
-> 	#size-cells = <1>;
-> 	compatible = "s25sl064a";
-> 	reg = <0>;
-> 
-> 	nvmem-cells {
-> 		compatible = "nvmem-cells";
-> 		#address-cells = <1>;
-> 		#address-cells = <1>;
-> 
-> 		calibration: calib@404 {
-> 			reg = <0x404 0x10>;
-> 		};
-> 	};
+Please refer 1c8f422059ae ("mm: change return type to vm_fault_t") in 4.17-rc1.
 
-Why can't we make nvmem-cells node a nvmem provider in this case?
-Which should work!
-
---srini
-
-
-> };
-> 
-> Which would work fine as the MTD code will ignore the nvmem-cells
-> subnode thanks to its compatible string.
+On Tue, Apr 17, 2018 at 8:59 PM, Jani Nikula
+<jani.nikula@linux.intel.com> wrote:
+> On Tue, 17 Apr 2018, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> Use new return type vm_fault_t for fault handler. For
+>> now, this is just documenting that the function returns
+>> a VM_FAULT value rather than an errno. Once all instances
+>> are converted, vm_fault_t will become a distinct type.
+>>
+>> Reference id -> 1c8f422059ae ("mm: change return type to
+>> vm_fault_t")
+>>
+>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> ---
+>>  drivers/gpu/drm/i915/i915_drv.h |  3 ++-
+>>  drivers/gpu/drm/i915/i915_gem.c | 15 ++++++++-------
+>>  2 files changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+>> index a42deeb..95b0d50 100644
+>> --- a/drivers/gpu/drm/i915/i915_drv.h
+>> +++ b/drivers/gpu/drm/i915/i915_drv.h
+>> @@ -51,6 +51,7 @@
+>>  #include <drm/drm_gem.h>
+>>  #include <drm/drm_auth.h>
+>>  #include <drm/drm_cache.h>
+>> +#include <linux/mm_types.h>
+>>
+>>  #include "i915_params.h"
+>>  #include "i915_reg.h"
+>> @@ -3363,7 +3364,7 @@ int i915_gem_wait_for_idle(struct drm_i915_private *dev_priv,
+>>                          unsigned int flags);
+>>  int __must_check i915_gem_suspend(struct drm_i915_private *dev_priv);
+>>  void i915_gem_resume(struct drm_i915_private *dev_priv);
+>> -int i915_gem_fault(struct vm_fault *vmf);
+>> +vm_fault_t i915_gem_fault(struct vm_fault *vmf);
+>>  int i915_gem_object_wait(struct drm_i915_gem_object *obj,
+>>                        unsigned int flags,
+>>                        long timeout,
+>> diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+>> index dd89abd..bdac690 100644
+>> --- a/drivers/gpu/drm/i915/i915_gem.c
+>> +++ b/drivers/gpu/drm/i915/i915_gem.c
+>> @@ -1882,7 +1882,7 @@ int i915_gem_mmap_gtt_version(void)
+>>   * The current feature set supported by i915_gem_fault() and thus GTT mmaps
+>>   * is exposed via I915_PARAM_MMAP_GTT_VERSION (see i915_gem_mmap_gtt_version).
+>>   */
+>> -int i915_gem_fault(struct vm_fault *vmf)
+>> +vm_fault_t i915_gem_fault(struct vm_fault *vmf)
+>>  {
+>>  #define MIN_CHUNK_PAGES ((1 << 20) >> PAGE_SHIFT) /* 1 MiB */
+>>       struct vm_area_struct *area = vmf->vma;
+>> @@ -1895,6 +1895,7 @@ int i915_gem_fault(struct vm_fault *vmf)
+>>       pgoff_t page_offset;
+>>       unsigned int flags;
+>>       int ret;
+>> +     vm_fault_t retval;
+>
+> What's the point of changing the name? An unnecessary change.
+>
+> BR,
+> Jani.
+>
+>>
+>>       /* We don't use vmf->pgoff since that has the fake offset */
+>>       page_offset = (vmf->address - area->vm_start) >> PAGE_SHIFT;
+>> @@ -2000,7 +2001,7 @@ int i915_gem_fault(struct vm_fault *vmf)
+>>                * and so needs to be reported.
+>>                */
+>>               if (!i915_terminally_wedged(&dev_priv->gpu_error)) {
+>> -                     ret = VM_FAULT_SIGBUS;
+>> +                     retval = VM_FAULT_SIGBUS;
+>>                       break;
+>>               }
+>>       case -EAGAIN:
+>> @@ -2017,21 +2018,21 @@ int i915_gem_fault(struct vm_fault *vmf)
+>>                * EBUSY is ok: this just means that another thread
+>>                * already did the job.
+>>                */
+>> -             ret = VM_FAULT_NOPAGE;
+>> +             retval = VM_FAULT_NOPAGE;
+>>               break;
+>>       case -ENOMEM:
+>> -             ret = VM_FAULT_OOM;
+>> +             retval = VM_FAULT_OOM;
+>>               break;
+>>       case -ENOSPC:
+>>       case -EFAULT:
+>> -             ret = VM_FAULT_SIGBUS;
+>> +             retval = VM_FAULT_SIGBUS;
+>>               break;
+>>       default:
+>>               WARN_ONCE(ret, "unhandled error in i915_gem_fault: %i\n", ret);
+>> -             ret = VM_FAULT_SIGBUS;
+>> +             retval = VM_FAULT_SIGBUS;
+>>               break;
+>>       }
+>> -     return ret;
+>> +     return retval;
+>>  }
+>>
+>>  static void __i915_gem_object_release_mmap(struct drm_i915_gem_object *obj)
+>> --
+>> 1.9.1
+>>
+>
+> --
+> Jani Nikula, Intel Open Source Technology Center
