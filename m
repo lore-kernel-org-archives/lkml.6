@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753755AbeDQNjr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 09:39:47 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64910 "EHLO
+        id S1753721AbeDQNjp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 09:39:45 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:16915 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753219AbeDQNjk (ORCPT
+        by vger.kernel.org with ESMTP id S1753524AbeDQNjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 09:39:40 -0400
+        Tue, 17 Apr 2018 09:39:41 -0400
 From: Fabrice Gasnier <fabrice.gasnier@st.com>
 To: <lee.jones@linaro.org>, <alexandre.torgue@st.com>
 CC: <dan.carpenter@oracle.com>, <thierry.reding@gmail.com>,
@@ -16,13 +16,15 @@ CC: <dan.carpenter@oracle.com>, <thierry.reding@gmail.com>,
         <benjamin.gaignard@st.com>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <linux-pwm@vger.kernel.org>
-Subject: [PATCH v5 0/6] Add support for PWM input capture on STM32
-Date: Tue, 17 Apr 2018 15:38:27 +0200
-Message-ID: <1523972313-28765-1-git-send-email-fabrice.gasnier@st.com>
+Subject: [PATCH v5 6/6] ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
+Date: Tue, 17 Apr 2018 15:38:33 +0200
+Message-ID: <1523972313-28765-7-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1523972313-28765-1-git-send-email-fabrice.gasnier@st.com>
+References: <1523972313-28765-1-git-send-email-fabrice.gasnier@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.116]
+X-Originating-IP: [10.75.127.117]
 X-ClientProxiedBy: GPXDAG5NODE6.st.com (10.75.127.79) To GPXDAG5NODE6.st.com
  (10.75.127.79)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_07:,,
@@ -31,53 +33,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for capture to stm32-pwm driver.
-Capture is based on DMAs.
-- First two patches add support for requesting DMAs to MFD core
-- Next three patches add support for capture to stm32-pwm driver
-- This has been tested on stm32429i-eval board.
+Enable pwm3 input capture on stm32f429i-eval, by using DMA.
 
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 ---
-Changes in v5:
-- update patch 2 (mfd: stm32-timers: add support for dmas)
-  move stm32_timers_dma struct to header file,
-  fix warning on dma_mapping_error().
+ arch/arm/boot/dts/stm32429i-eval.dts | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Changes in v4:
-- Lee's comments on patch 2 (mfd: stm32-timers: add support for dmas)
-  Add kerneldoc header, better format comments.
-
-Changes in v3:
-- Dropped 2 precusor patches applied by Thierry in pwm tree:
-  "pwm: stm32: fix, remove unused struct device"
-  "pwm: stm32: protect common prescaler for all channels"
-- Note: this series applies on top on pwm tree
-- Implements Lee's comments on MFD part: rework stm32_timers_dma struct,
-  exported routine prototype now use generic device struct, more
-  various comments (see patch 2 changelog).
-
-Resend v2:
-- Add collected Acks
-
-Changes in v2:
-- Abstract DMA handling from child driver: move it to MFD core
-- Rework pwm capture routines to adopt this change
-- Comment on optional dma support, beautify DMAs probe
-
-Fabrice Gasnier (6):
-  dt-bindings: mfd: stm32-timers: add support for dmas
-  mfd: stm32-timers: add support for dmas
-  pwm: stm32: add capture support
-  pwm: stm32: improve capture by tuning counter prescaler
-  pwm: stm32: use input prescaler to improve period capture
-  ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
-
- .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
- arch/arm/boot/dts/stm32429i-eval.dts               |   3 +
- drivers/mfd/stm32-timers.c                         | 201 +++++++++++++++-
- drivers/pwm/pwm-stm32.c                            | 257 +++++++++++++++++++++
- include/linux/mfd/stm32-timers.h                   |  58 +++++
- 5 files changed, 537 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm/boot/dts/stm32429i-eval.dts b/arch/arm/boot/dts/stm32429i-eval.dts
+index 7eb786a..88d878a 100644
+--- a/arch/arm/boot/dts/stm32429i-eval.dts
++++ b/arch/arm/boot/dts/stm32429i-eval.dts
+@@ -290,6 +290,9 @@
+ &timers3 {
+ 	status = "okay";
+ 
++	/* Enable PWM input capture by using dma */
++	dmas = <&dma1 4 5 0x400 0x0>;
++	dma-names = "ch1";
+ 	pwm {
+ 		pinctrl-0 = <&pwm3_pins>;
+ 		pinctrl-names = "default";
 -- 
 1.9.1
