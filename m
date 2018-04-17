@@ -1,83 +1,162 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524006184; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ERgbsez7zL16ClnKG/SHgRinVF/fUTavJ6q4+ajx1Ph1O/UAT4oP7JK3mwqyDUfzy4
-         Dd14JzIY1pezFHSfbxVMscXFAyrfYxzszryvAWtkkqhEpc4E+XAXeG/AmVItBJQp5cHH
-         xcgYlfgEo9Huev1ZoO1nWGOOTrxIW61oRzp9cn8yfhd5Ak+F+lqjcgg12SkTc55KMDZO
-         sL7FxNPf3tqmoklXi92JaeWpBuNigY+pvq/QW2qIxpaXzsFoFOt3Fncbse8CbrjavDIM
-         s7zHhktO1wFnyVxi7OKPA9lZZuR7xuckUuSCznhGTVPLQHzfUuU5PerddGIVVzHYo9RS
-         4miw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=PI9GbQmg5O9GapFq38icecmW/sSBmd71Ej8t/rB3BmE=;
-        b=KVRUjqSoYr78BTE8HNZP4tcdR890eRaRtQIxdiVGLPz2fOIePt0D+WP0rwiO8JMStA
-         ZJUOOXp397w3FEsToRJMgRqlbrVOoHupaB+Z+DyrZepM06jC2IXkiIkjmBs88xb4CK1X
-         7cKc5kN1rKy78YpMLtTKWGY/3eu2qD3t9Kkrm6OJwgW9QoBpEjLBVWYpYwjO0chCFrG8
-         8nvFirIQ42DsSR/4XLb7O/2GQX5plbGvQlKDiiGaKs8Q/jHI+dUDVfRpdhRacR7Akzer
-         WQoXVN/gUMNg+NkNu3d1h4fv4gJY9tzDJicV6lFSGXK8jx8rhf0wvavuCpk9dZJIc4wE
-         zV2g==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AIpwx48mZR2NOOz4z4WxytzcHUHRSSkej5LsoHtyAXqUOK/TdfR8z6yeDFC6BpWKhEb4VImnfUrnew==
-Message-ID: <5ad67d27.a6a0df0a.a4bd2.b7e9@mx.google.com>
-Date: Tue, 17 Apr 2018 16:03:03 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.9.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.9.94-67-g148bd16b9893
-In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
-References: <20180417155645.868055442@linuxfoundation.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2781072-1523999097-2-4195785515045069624
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523999096; b=WtqKTPyGAhFKnlaUCWI1F5fqD47ZgOuA36v4/wfbB0ZPEiiJGm
+    03Ovv0k3X5ALoPXZTIexGeqVvDSj/gki8JA7dIbmSEHp+iBHdeYjtYbPMnP15Oci
+    cRTwJt5VlQFIP5gMNINxIeROXabf/35V7KhxMZ72hT4rUVjd2d8Z6mGU1ERwc0Bf
+    A9i25CQBb/ADKCs+foVf0UX1miIR+v4GTMU2bYIJutQ/w+eI2PyvwXH1VTyAkevY
+    fq7DLm1T0a9O0D62HKjgdsdw5FaviBpuPbM6IGv6zzyAj430cGKpezg9TnloI8K4
+    NCV5M1rq2D/AISrYlEPbEcnBmAMjPDMS2yhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1523999096;
+    bh=qRkK5HiHGmZmUWayrABJ6TXwvPtYxoAYdt33/URbOtw=; b=M8atL/pc5A+P
+    C+ZRJVt+9CTP+ixTcQ5T9Jxrqmdoww34kFPkexSNrAN48Zasxi7F35z6FtzwWzE/
+    va4yXEjSGPgjNO6sRpknF8rfXVeuYg8M5f7a75Fi+L5saMXD+lrg04QAS+yrzZKc
+    CbD4bg5/8EBrG6dDbqWjVlS/GSSqXOCWx0hPwbzpy6ypETYGytDJ0gsv5hRIcqjt
+    ptr04m3LVUKtJRr2wf2xLXupNB2KAUrrfUCwu4TER5uDtIy9T9TSJubviHBxsiTd
+    WL/fnTsO+yO5utQq1Bi3KhvC347pa86XKlLDNUAXOpCe4Ngf7XkjHReM5b8XzM2V
+    gdKHDDNR8A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJEbk0/7JLRVakGiCiRZp2Fc4KnqSkGTmfy9mFKtnC1fTs122ATdIK3dn2N+9bXXCWLPNHgQ3/6FzBRPy3snWsqCQy/GINnH8+58qWM0J3Hcki3Huu/u
+    dMSV+UoWkuVt9vhdbskgHbRJf5KzNHJBzojIXAZZNAmw/gZrMZn5t5YwfWpfzd1OGZypzYylv5dYoTg2LLQgKWAfMKLsYmLFM+OVi8AFGs9/ZO4Cm4yL/juC
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=J7Nbbob27coA:10
+    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753056AbeDQVEz (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 17:04:55 -0400
+Received: from osg.samsung.com ([64.30.133.232]:46290 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753021AbeDQVEz (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 17 Apr 2018 17:04:55 -0400
 Subject: Re: [PATCH 4.9 00/66] 4.9.95-stable review
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuahkh@osg.samsung.com, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
+References: <20180417155645.868055442@linuxfoundation.org>
+From: Shuah Khan <shuahkh@osg.samsung.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=shuahkh@osg.samsung.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <3e758183-4d5b-48c1-c525-c75da07b9fac@osg.samsung.com>
+Date: Tue, 17 Apr 2018 15:04:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598010284891206038?=
-X-GMAIL-MSGID: =?utf-8?q?1598036308451247646?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.9.y boot: 52 boots: 1 failed, 48 passed with 3 untried/un=
-known (v4.9.94-67-g148bd16b9893)
+On 04/17/2018 09:58 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.95 release.
+> There are 66 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Apr 19 15:56:27 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.95-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.94-67-g148bd16b9893/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.94-67-g148bd16b9893/
 
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.94-67-g148bd16b9893
-Git Commit: 148bd16b989355ed27e01a6480c2548d0bb795e1
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 26 unique boards, 11 SoC families, 15 builds out of 182
+Compiled and booted on my test system. No dmesg regressions.
 
-Boot Regressions Detected:
-
-arm64:
-
-    defconfig:
-        r8a7795-salvator-x:
-            lab-baylibre: failing since 7 days (last pass: v4.9.93 - first =
-fail: v4.9.93-278-g1614c07609f0)
-
-Boot Failure Detected:
-
-arm64:
-
-    defconfig
-        r8a7795-salvator-x: 1 failed lab
-
----
-For more info write to <info@kernelci.org>
+thanks,
+-- Shuah
