@@ -1,75 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeDQGTB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 02:19:01 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42890 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750831AbeDQGTA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 02:19:00 -0400
-X-Google-Smtp-Source: AIpwx4/GrYFESQKOzXMXbyKlwW7zSHKKJUtkLKm9zPrA3VovlD+zHvj11MDT9aqBQ5uPwL2c0m9NuQ==
-Message-ID: <5AD591D0.5040404@gmail.com>
-Date: Tue, 17 Apr 2018 14:18:56 +0800
-From: zoucao-ipc <zoucaox@gmail.com>
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
+        id S1752082AbeDQGUN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 02:20:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39634 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750831AbeDQGUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 02:20:12 -0400
+Date: Tue, 17 Apr 2018 08:20:10 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Stephane Eranian <eranian@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, mingo@elte.hu,
+        Andi Kleen <ak@linux.intel.com>,
+        Vince Weaver <vincent.weaver@maine.edu>
+Subject: Re: [RFC] perf/core: what is exclude_idle supposed to do
+Message-ID: <20180417062010.GA2052@krava>
+References: <CABPqkBS6MuO6Twtq=_+TDV=RNy0_2vRWf=LVCk6wk0tPwNSTog@mail.gmail.com>
 MIME-Version: 1.0
-To: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
-CC: zoucao@linux.alibaba.com, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/boot/e820: add new chareater "-" to free BIOS memory
- in memmap bootargs
-References: <20180410025912.49830-1-zoucao@linux.alibaba.com> <20180410025912.49830-2-zoucao@linux.alibaba.com>
-In-Reply-To: <20180410025912.49830-2-zoucao@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBS6MuO6Twtq=_+TDV=RNy0_2vRWf=LVCk6wk0tPwNSTog@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping?
+On Mon, Apr 16, 2018 at 10:04:53PM +0000, Stephane Eranian wrote:
+> Hi,
+> 
+> I am trying to understand what the exclude_idle event attribute is supposed
+> to accomplish.
+> As per the definition in the header file:
+> 
+>     exclude_idle   :  1, /* don't count when idle */
+> 
+> Naively, I thought it would simply stop the event when running in the
+> context of the idle task (swapper, pid 0) on any CPU. That would seem to
+> match the succinct description.
+> 
+> However, running a simple:
+> 
+> $ perf record -a -e cycles:I sleep 5
+> perf_event_attr:
+>     sample_type                      IP|TID|TIME|CPU|PERIOD
+>    read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING|ID
+>    exclude_idle                     1
+> 
+> on an idle machine, showed me that this is not what is actually happening:
+> $ perf  script
+>           swapper     0 [000] 1132634.287442:          1 cycles:I:
+>   ffffffff8100b1fb __intel_pmu_enable_all.isra.17 ([kernel.kallsyms])
+>           swapper     0 [001] 1132634.287498:          1 cycles:I:
+>   ffffffff8100b1fb __intel_pmu_enable_all.isra.17 ([kernel.kallsyms])
+> 
+> 
+> After looking at the code, it all made sense, it seems to current
+> implementation is only relevant for sw events. I don't understand why.
 
-On 2018/4/10 上午10:59, zoucao@linux.alibaba.com wrote:
-> From: zoucao <zoucao@localhost.localdomain>
->
-> Normally every BIOS reserved memory is used for some features, we can't
-> use them, but in some conditions,  users can ensure some BIOS memories
-> are not used and reserved memory is well to free, they have not a good
-> way to free these memories, here add a new chareater "-" in memmap to
-> free reserved memory.
->
-> Signed-off-by: zou cao <zoucao@linux.alibaba.com>
-> ---
->   7u/Documentation/kernel-parameters.txt | 6 ++++++
->   7u/arch/x86/kernel/e820.c              | 3 +++
->   2 files changed, 9 insertions(+)
->
-> diff --git a/7u/Documentation/kernel-parameters.txt b/7u/Documentation/kernel-parameters.txt
-> index 9a1abb99a..dbea75e12 100644
-> --- a/7u/Documentation/kernel-parameters.txt
-> +++ b/7u/Documentation/kernel-parameters.txt
-> @@ -1677,6 +1677,12 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
->   			         or
->   			         memmap=0x10000$0x18690000
->   
-> +	memmap=nn[KMG]-ss[KMG]
-> +			Free E820 reserved memory, as specified by the user.
-> +			Region of reserved memory to be free, from ss to ss+nn.
-> +			Example: free reserved memory from 0x18690000-0x186a0000
-> +					memmap=0x4101000-0x6aeff000
-> +
->   	memory_corruption_check=0/1 [X86]
->   			Some BIOSes seem to corrupt the first 64k of
->   			memory when doing things like suspend/resume.
-> diff --git a/7u/arch/x86/kernel/e820.c b/7u/arch/x86/kernel/e820.c
-> index 174da5fc5..b8a042981 100644
-> --- a/7u/arch/x86/kernel/e820.c
-> +++ b/7u/arch/x86/kernel/e820.c
-> @@ -875,6 +875,9 @@ static int __init parse_memmap_one(char *p)
->   	} else if (*p == '$') {
->   		start_at = memparse(p+1, &p);
->   		e820_add_region(start_at, mem_size, E820_RESERVED);
-> +	} else if (*p == '-') {
-> +		start_at = memparse(p+1, &p);
-> +		e820_remove_range(start_at, mem_size, E820_RESERVED, E820_RAM);
->   	} else
->   		e820_remove_range(mem_size, ULLONG_MAX - mem_size, E820_RAM, 1);
->   
+AFAICS it's not implemented
+
+Peter suggested some time ago change for cpu-clock (attached)
+I still have it in my queue, because it gives funny numbers
+sometimes.. and I haven't figured it out so far
+
+the idea so far was to use cpu-clock,cpu-clock:I events to
+count and display idle % in perf top/record and stat metrics
+
+jirka
+
+
+---
+>From 7f20b047cf56f8086d79007175592633798656ce Mon Sep 17 00:00:00 2001
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Thu, 23 Nov 2017 16:15:36 +0100
+Subject: [PATCH] perf: Add support to monitor idle time on cpu-clock
+
+Adding support to use perf_event_attr::exclude_idle
+(the :I modifierr in perf tools)to monitor idle time
+on cpu-clock event.
+
+Link: http://lkml.kernel.org/n/tip-jw45kl6ydrhzqx4uxws0qsqb@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ kernel/events/core.c     | 22 ++++++++++++++++++----
+ kernel/sched/idle_task.c | 17 +++++++++++++++++
+ 2 files changed, 35 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 2989e3b0fe8b..62c0dc75ed11 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9391,19 +9391,33 @@ static void perf_swevent_init_hrtimer(struct perf_event *event)
+  * Software event: cpu wall time clock
+  */
+ 
++static u64 cpu_clock_count(struct perf_event *event)
++{
++	u64 now = local_clock();
++
++	if (event->attr.exclude_idle)
++		now -= idle_task(event->oncpu)->se.sum_exec_runtime;
++
++	return now;
++}
++
+ static void cpu_clock_event_update(struct perf_event *event)
+ {
+-	s64 prev;
++	s64 prev, delta;
+ 	u64 now;
+ 
+-	now = local_clock();
++	now = cpu_clock_count(event);
+ 	prev = local64_xchg(&event->hw.prev_count, now);
+-	local64_add(now - prev, &event->count);
++	delta = now - prev;
++	if (delta > 0)
++		local64_add(delta, &event->count);
+ }
+ 
+ static void cpu_clock_event_start(struct perf_event *event, int flags)
+ {
+-	local64_set(&event->hw.prev_count, local_clock());
++	u64 now = cpu_clock_count(event);
++
++	local64_set(&event->hw.prev_count, now);
+ 	perf_swevent_start_hrtimer(event);
+ }
+ 
+diff --git a/kernel/sched/idle_task.c b/kernel/sched/idle_task.c
+index d518664cce4f..e360ce5dd9a2 100644
+--- a/kernel/sched/idle_task.c
++++ b/kernel/sched/idle_task.c
+@@ -27,9 +27,14 @@ static void check_preempt_curr_idle(struct rq *rq, struct task_struct *p, int fl
+ static struct task_struct *
+ pick_next_task_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
++	struct task_struct *idle = rq->idle;
++
+ 	put_prev_task(rq, prev);
+ 	update_idle_core(rq);
+ 	schedstat_inc(rq->sched_goidle);
++
++	idle->se.exec_start = rq_clock_task(rq);
++
+ 	return rq->idle;
+ }
+ 
+@@ -48,6 +53,15 @@ dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
+ 
+ static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
+ {
++	struct task_struct *idle = rq->idle;
++	u64 delta, now;
++
++	now = rq_clock_task(rq);
++	delta = now - idle->se.exec_start;
++	if (likely((s64)delta > 0))
++		idle->se.sum_exec_runtime += delta;
++	idle->se.exec_start = now;
++
+ 	rq_last_tick_reset(rq);
+ }
+ 
+@@ -57,6 +71,9 @@ static void task_tick_idle(struct rq *rq, struct task_struct *curr, int queued)
+ 
+ static void set_curr_task_idle(struct rq *rq)
+ {
++	struct task_struct *idle = rq->idle;
++
++	idle->se.exec_start = rq_clock_task(rq);
+ }
+ 
+ static void switched_to_idle(struct rq *rq, struct task_struct *p)
+-- 
+2.13.6
