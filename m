@@ -1,63 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752747AbeDQLra (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 07:47:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53250 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752357AbeDQLr3 (ORCPT
+        id S1752786AbeDQLs3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 07:48:29 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46272 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752357AbeDQLs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 07:47:29 -0400
-Date: Tue, 17 Apr 2018 04:47:28 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: repeatable boot randomness inside KVM guest
-Message-ID: <20180417114728.GA21954@bombadil.infradead.org>
-References: <20180414195921.GA10437@avx2>
- <20180414224419.GA21830@thunk.org>
- <20180415004134.GB15294@bombadil.infradead.org>
- <1523956414.3250.5.camel@HansenPartnership.com>
+        Tue, 17 Apr 2018 07:48:27 -0400
+X-Google-Smtp-Source: AIpwx498uU8fuIO9lj5dKojfaztcibf2pY362nJ7pSdAwDNAWWFZo7Llxs/yvUxya+STqUDa+iUpgg==
+Subject: Re: [PATCH] lightnvm: pblk: take bitmap alloc. out of critical
+ section
+To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
+References: <1523874066-4459-1-git-send-email-javier@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <76bed955-2e70-7540-0836-f93fbd677d7e@lightnvm.io>
+Date: Tue, 17 Apr 2018 13:48:11 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <1523874066-4459-1-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1523956414.3250.5.camel@HansenPartnership.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 10:13:34AM +0100, James Bottomley wrote:
-> On Sat, 2018-04-14 at 17:41 -0700, Matthew Wilcox wrote:
-> > On Sat, Apr 14, 2018 at 06:44:19PM -0400, Theodore Y. Ts'o wrote:
-> > > What needs to happen is freelist should get randomized much later
-> > > in the boot sequence.††Doing it later will require locking; I don't
-> > > know enough about the slab/slub code to know whether the slab_mutex
-> > > would be sufficient, or some other lock might need to be added.
-> > 
-> > Could we have the bootloader pass in some initial randomness?
+On 4/16/18 12:21 PM, Javier Gonz√°lez wrote:
+> Allocate line bitmaps outside of the line lock on line preparation.
 > 
-> Where would the bootloader get it from (securely) that the kernel
-> can't?
+> Signed-off-by: Javier Gonz√°lez <javier@cnexlabs.com>
 
-In this particular case, qemu is booting the kernel, so it can apply to
-/dev/random for some entropy.
 
-> For example, if you compile in a TPM driver, the kernel will
-> pick up 32 random entropy bytes from the TPM to seed the pool, but I
-> think it happens too late to help with this problem currently.  IMA
-> also needs the TPM very early in the boot sequence, so I was wondering
-> about using the initial EFI driver, which is present on boot, and then
-> transitioning to the proper kernel TPM driver later, which would mean
-> we could seed the pool earlier.
+The patch description tells what the patch does, it should tell why the 
+change the done.
+
+> ---
+>   drivers/lightnvm/pblk-core.c | 96 +++++++++++++++++++++++++-------------------
+>   1 file changed, 55 insertions(+), 41 deletions(-)
 > 
-> As long as you mix it properly and limit the amount, it shouldn't
-> necessarily be a source of actual compromise, but having an external
-> input to our cryptographically secure entropy pool is an additional
-> potential attack vector.
+> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+> index 5f960a6609c8..7762e89984ee 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -1058,6 +1058,25 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
+>   	return 1;
+>   }
+>   
+> +static int pblk_line_alloc_bitmaps(struct pblk *pblk, struct pblk_line *line)
+> +{
+> +	struct pblk_line_meta *lm = &pblk->lm;
+> +
+> +	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
+> +	if (!line->map_bitmap)
+> +		return -ENOMEM;
+> +
+> +	/* will be initialized using bb info from map_bitmap */
+> +	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_KERNEL);
+> +	if (!line->invalid_bitmap) {
+> +		kfree(line->map_bitmap);
+> +		line->map_bitmap = NULL;
+> +		return -ENOMEM;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   /* For now lines are always assumed full lines. Thus, smeta former and current
+>    * lun bitmaps are omitted.
+>    */
+> @@ -1162,18 +1181,7 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+>   {
+>   	struct pblk_line_meta *lm = &pblk->lm;
+>   	int blk_in_line = atomic_read(&line->blk_in_line);
+> -	int blk_to_erase, ret;
+> -
+> -	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_ATOMIC);
+> -	if (!line->map_bitmap)
+> -		return -ENOMEM;
+> -
+> -	/* will be initialized using bb info from map_bitmap */
+> -	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_ATOMIC);
+> -	if (!line->invalid_bitmap) {
+> -		ret = -ENOMEM;
+> -		goto fail_free_map_bitmap;
+> -	}
+> +	int blk_to_erase;
+>   
+>   	/* Bad blocks do not need to be erased */
+>   	bitmap_copy(line->erase_bitmap, line->blk_bitmap, lm->blk_per_line);
+> @@ -1191,15 +1199,15 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+>   	}
+>   
+>   	if (blk_in_line < lm->min_blk_line) {
+> -		ret = -EAGAIN;
+> -		goto fail_free_invalid_bitmap;
+> +		spin_unlock(&line->lock);
+> +		return -EAGAIN;
+>   	}
+>   
+>   	if (line->state != PBLK_LINESTATE_FREE) {
+>   		WARN(1, "pblk: corrupted line %d, state %d\n",
+>   							line->id, line->state);
+> -		ret = -EINTR;
+> -		goto fail_free_invalid_bitmap;
+> +		spin_unlock(&line->lock);
+> +		return -EINTR;
+>   	}
+>   
+>   	line->state = PBLK_LINESTATE_OPEN;
+> @@ -1213,16 +1221,6 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+>   	kref_init(&line->ref);
+>   
+>   	return 0;
+> -
+> -fail_free_invalid_bitmap:
+> -	spin_unlock(&line->lock);
+> -	kfree(line->invalid_bitmap);
+> -	line->invalid_bitmap = NULL;
+> -fail_free_map_bitmap:
+> -	kfree(line->map_bitmap);
+> -	line->map_bitmap = NULL;
+> -
+> -	return ret;
+>   }
+>   
+>   int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
+> @@ -1242,13 +1240,15 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
+>   	}
+>   	spin_unlock(&l_mg->free_lock);
+>   
+> -	pblk_rl_free_lines_dec(&pblk->rl, line, true);
+> +	if (pblk_line_alloc_bitmaps(pblk, line))
+> +		return -EINTR;
 
-I thought our model was that if somebody had compromised the bootloader,
-all bets were off.  And also that we were free to mix in as many
-untrustworthy bytes of alleged entropy into the random pool as we liked.
+Why return -EINTR, instead of the return value from (0, -ENOMEM) from 
+pblk_line_alloc_bitmap?
+
+
+>   
+>   	if (!pblk_line_init_bb(pblk, line, 0)) {
+>   		list_add(&line->list, &l_mg->free_list);
+>   		return -EINTR;
+>   	}
+>   
+> +	pblk_rl_free_lines_dec(&pblk->rl, line, true);
+>   	return 0;
+>   }
+>   
+> @@ -1260,6 +1260,24 @@ void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
+>   	line->emeta = NULL;
+>   }
+>   
+> +static void pblk_line_clear(struct pblk_line *line)
+> +{
+> +	*line->vsc = cpu_to_le32(EMPTY_ENTRY);
+> +
+> +	line->map_bitmap = NULL;
+> +	line->invalid_bitmap = NULL;
+> +	line->smeta = NULL;
+> +	line->emeta = NULL;
+> +}
+
+Instead of pblk_line_clear, how about pblk_line_reinit?
