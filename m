@@ -1,159 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755272AbeDQQiO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:38:14 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:35064 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752715AbeDQQiK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:38:10 -0400
-X-Google-Smtp-Source: AIpwx49eBg2dWrsI4eu9o+gD3JPlZe/hHa/V67D8RbuTAjwhcIn8CgUrkc0oNCzMRZ0qoGIpeHgWzQ==
-From: Yafang Shao <laoar.shao@gmail.com>
-To: eric.dumazet@gmail.com, davem@davemloft.net
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, songliubraving@fb.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v2 net-next] net: introduce a new tracepoint for tcp_rcv_space_adjust
-Date: Wed, 18 Apr 2018 00:36:56 +0800
-Message-Id: <1523983016-11005-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1755286AbeDQQjd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:39:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56620 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754781AbeDQQja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:39:30 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C2542175C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Tue, 17 Apr 2018 12:39:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
+ x86 syscall func names
+Message-ID: <20180417123927.4406f990@gandalf.local.home>
+In-Reply-To: <20180417161029.GA8733@light.dominikbrodowski.net>
+References: <20180417115440.2145f7f5@gandalf.local.home>
+        <20180417161029.GA8733@light.dominikbrodowski.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcp_rcv_space_adjust is called every time data is copied to user space,
-introducing a tcp tracepoint for which could show us when the packet is
-copied to user.
-This could help us figure out whether there's latency in user process.
+On Tue, 17 Apr 2018 18:10:29 +0200
+Dominik Brodowski <linux@dominikbrodowski.net> wrote:
 
-When a tcp packet arrives, tcp_rcv_established() will be called and with
-the existed tracepoint tcp_probe we could get the time when this packet
-arrives.
-Then this packet will be copied to user, and tcp_rcv_space_adjust will
-be called and with this new introduced tracepoint we could get the time
-when this packet is copied to user.
 
-        arrives time : user process time    => latency caused by user
-        tcp_probe      tcp_rcv_space_adjust
+> > Because the x86 system calls had "__x86_" appended to the "sys" for the  
+> 
+> __x64 actually.
 
-Hence in the printk message, sk_cookie is printed as a key to relate
-tcp_rcv_space_adjust with tcp_probe.
+Heh, I constantly make that mistake.
 
-Maybe we could export sockfd in this new tracepoint as well, then we
-could relate this new tracepoint with epoll/read/recv* tracepoints, and
-finally that could show us the whole lifespan of this packet. But we
-could also implement that with pid as these functions are executed in
-process context.
+Hmm, OK, I need to look at this a bit more. If this is x64, then
+there's probably syscalls (on 32 bit), that don't have that. It should
+probably include more checks. Something like:
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+  return !strcmp(sym + 9, name + 3) || !strcmp(sym + 3, name + 3);
 
----
-v1 -> v2: use sk_cookie as key suggested by Eric.
----
- include/trace/events/tcp.h | 33 +++++++++++++++++++++++++++------
- net/ipv4/tcp_input.c       |  2 ++
- 2 files changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
-index 3dd6802..814f754 100644
---- a/include/trace/events/tcp.h
-+++ b/include/trace/events/tcp.h
-@@ -10,6 +10,7 @@
- #include <linux/tracepoint.h>
- #include <net/ipv6.h>
- #include <net/tcp.h>
-+#include <linux/sock_diag.h>
- 
- #define TP_STORE_V4MAPPED(__entry, saddr, daddr)		\
- 	do {							\
-@@ -125,6 +126,7 @@
- 		__array(__u8, daddr, 4)
- 		__array(__u8, saddr_v6, 16)
- 		__array(__u8, daddr_v6, 16)
-+		__field(__u64, sock_cookie)
- 	),
- 
- 	TP_fast_assign(
-@@ -144,12 +146,24 @@
- 
- 		TP_STORE_ADDRS(__entry, inet->inet_saddr, inet->inet_daddr,
- 			       sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
-+
-+		/*
-+		 * sk_cookie is used to identify a socket, with which we could
-+		 * relate this tracepoint with other tracepoints,
-+		 * i.e. tcp_probe.
-+		 * If we needn't this relation, then sk_cookie is useless;
-+		 * if we need this relation, then tcp_probe is already set,
-+		 * and sk_cookie is already set in tcp_probe, so we could get
-+		 * the value directly.
-+		 */
-+		__entry->sock_cookie = atomic64_read(&sk->sk_cookie);
- 	),
- 
--	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c",
-+	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c sock_cookie=%llu",
- 		  __entry->sport, __entry->dport,
- 		  __entry->saddr, __entry->daddr,
--		  __entry->saddr_v6, __entry->daddr_v6)
-+		  __entry->saddr_v6, __entry->daddr_v6,
-+		  __entry->sock_cookie)
- );
- 
- DEFINE_EVENT(tcp_event_sk, tcp_receive_reset,
-@@ -166,6 +180,13 @@
- 	TP_ARGS(sk)
- );
- 
-+DEFINE_EVENT(tcp_event_sk, tcp_rcv_space_adjust,
-+
-+	TP_PROTO(const struct sock *sk),
-+
-+	TP_ARGS(sk)
-+);
-+
- TRACE_EVENT(tcp_retransmit_synack,
- 
- 	TP_PROTO(const struct sock *sk, const struct request_sock *req),
-@@ -232,6 +253,7 @@
- 		__field(__u32, snd_wnd)
- 		__field(__u32, srtt)
- 		__field(__u32, rcv_wnd)
-+		__field(__u64, sock_cookie)
- 	),
- 
- 	TP_fast_assign(
-@@ -256,15 +278,14 @@
- 		__entry->rcv_wnd = tp->rcv_wnd;
- 		__entry->ssthresh = tcp_current_ssthresh(sk);
- 		__entry->srtt = tp->srtt_us >> 3;
-+		__entry->sock_cookie = sock_gen_cookie(sk);
- 	),
- 
--	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x "
--		  "snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u "
--		  "rcv_wnd=%u",
-+	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llu",
- 		  __entry->saddr, __entry->daddr, __entry->mark,
- 		  __entry->length, __entry->snd_nxt, __entry->snd_una,
- 		  __entry->snd_cwnd, __entry->ssthresh, __entry->snd_wnd,
--		  __entry->srtt, __entry->rcv_wnd)
-+		  __entry->srtt, __entry->rcv_wnd, __entry->sock_cookie)
- );
- 
- #endif /* _TRACE_TCP_H */
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index f93687f..43ad468 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -582,6 +582,8 @@ void tcp_rcv_space_adjust(struct sock *sk)
- 	u32 copied;
- 	int time;
- 
-+	trace_tcp_rcv_space_adjust(sk);
-+
- 	tcp_mstamp_refresh(tp);
- 	time = tcp_stamp_us_delta(tp->tcp_mstamp, tp->rcvq_space.time);
- 	if (time < (tp->rcv_rtt_est.rtt_us >> 3) || tp->rcv_rtt_est.rtt_us == 0)
--- 
-1.8.3.1
+> 
+> > names, they do not match the default compare algorithm. As this was a
+> > problem for power pc, the algorithm can be overwritten by the architecture.
+> > The solution is to have x86 have its own algorithm to do the compare and
+> > this brings back the system call trace events.  
+> 
+> this lets me wonder *which* syscall "function" should be included in this
+> directory. Is it really the stub (__x64_sys_waitid, for example), or better
+> the sign-extending C function (__se_sys_waitid) which then calls an
+> internal helper (__do_sys_waitid). An additional advantage:
+> __se_sys_waitid would be available on x86 and, AFAICS, on all other archs.
+
+It should include anything that uses the "SYSCALL_DEFINE#()" macros.
+
+> 
+> > Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---
+> >  arch/x86/include/asm/ftrace.h | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
+> > index 09ad88572746..c30b3fac20ae 100644
+> > --- a/arch/x86/include/asm/ftrace.h
+> > +++ b/arch/x86/include/asm/ftrace.h
+> > @@ -31,6 +31,16 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
+> >  	return addr;
+> >  }
+> >  
+> > +#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
+> > +static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
+> > +{
+> > +	/*
+> > +	 * Compare the symbol name with the system call name. Skip the
+> > +	 * "__x64_sys" prefix.
+> > +	 */
+> > +	return !strcmp(sym + 9, name + 3);
+> > +}  
+> 
+> What are the first three chars you skip for *name?
+
+"sys_"
+
+-- Steve
+
+> 
+> Thanks,
+> 	Dominik
