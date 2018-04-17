@@ -1,67 +1,74 @@
-Return-Path: <tglx@linutronix.de>
-X-Google-Smtp-Source: AIpwx48BneSdBRiej5xjlg8v0a7Ck6Ungazdl31RuSptO4A2k9IhNhzXZ4+vu0McikYgJgG0t+Im
-ARC-Seal: i=1; a=rsa-sha256; t=1523955300; cv=none;
+Return-Path: <BATV+1a17e12b704b27f00da8+5350+infradead.org+hch@bombadil.srs.infradead.org>
+X-Google-Smtp-Source: AIpwx4+64zoDl5gC7egs3ABzDCdZDfQglGyT5kSb4CTuNpZbrSGRLnLcoAwSGJ7BQRUfCfxzkIrk
+ARC-Seal: i=1; a=rsa-sha256; t=1523970051; cv=none;
         d=google.com; s=arc-20160816;
-        b=Y9N3WW7MQhu2LnHmcyM6ySOJZ2pGZZUaE+45yVI9AmyoR+gMXcvRwMCStGBSNbEnDn
-         qJeeKcKuwp/7zncb75hMqC6pBW8iRghTavC+9abCMoGG7DZNQAVZYbTLRAtQe0atWrGL
-         Bv0hWctKEhLtxg3Gdr2Aiw1OiZnp4wT6YjeSwlCRbz857oJrdJ3zdFYCaCt+iEgNvca/
-         fq5APysq7jhVU4IyOlNz4rtdwbjGeTrQVf4XKelzcs3inhvcC9wVBqx249FFsnTawlD8
-         T1uGpSV1E8a0Dofz75EhdMDLXo0voHou9u+4yZ9rmrRoZMmXs8hIuPeG55Cc9r2LrQi0
-         MUEw==
+        b=OhNBwUkUe45Lp0ObhP0fJIydI9eYsh+jmNtoiKh9nl1HMrTVBoBvVVKhzBKsihv6zC
+         tceGTnZKskCCQx43nKMfUzmDs3iSOXKZ18BQwT57xNVCSymwSgbnOlQwS5FQw5DexEAU
+         vletkMk2xZP8K0dUx1aadehTDPQ0blaDA91oC+MBssluoaa9SrqP6UGqEKyNznfC6F1I
+         yswRhRrBzKXsmEd9IdxHMY+lPehulbLznBGmr7WiDNK9BebhZcfZRpIVHPy74Fd2A6Hw
+         q6Bp/klpGjzLTUIVeG97j5j+WKh2jC6dDqlAD4MyaPYDq/tBe0HHR07Rr4xi2ElGtyay
+         BsfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=FK35o9OAqZ8EvWqkXu0Uonmq1yj9KVS23aPSIIb1G2s=;
-        b=rLlMVNy0lDI3xK9nZTiSG0PZRpXYjerhISIYX+WCyUn3qG8xJq5qFKIMs+TOoRL4gI
-         F5Jj6920hRmOHOVVirX9efI6sLDabBFyfaw9vR9kPY//u4Zg+0Fpy/t29P7PGMnrK3Sx
-         JmSneFiRLcRvK+ry6jitNn1uOPX4XteW4Wv4eIko7ql770lhzMRAyk+85BgavpAccXWm
-         SRA18MZtlmmALPh2tU96ycIUPqMIszQ/RaSS7tXdpG/7aaYzMBFZNvZ9Js1y85XAHa+n
-         3+taCjpJuM7/GHz1VQZhsT83GOl4nq64+MUtsdKhIed45/QmljitH+iRefVFwXS2dxXc
-         rqBw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=wNkpQkf9I/0o9gsqCau7bVLlimMLgvSnYja4kBOyRyQ=;
+        b=ayLOtMmLeG/Qog9gtcjcVvX10/xmwTs1gxbA+sgqkncln6ixRD0Ffe0biOiZ9wcIdY
+         8XNo2iyGcvKU+D+YggHBgFblAVD7z9JOU5sr3AAQriD/bZJTYcbGRfHqL0XP2NzHynut
+         VRtwYG9qyLZsFm+S15jsoN6cuaLkpK5P7N5V6osdDMrZrhmHTSZzWVrr1E7Q2XoFSS5n
+         15DmDVWUYyB0TGogS7AvQfHlSNPGuKONMzD6Wo4Ij2GMlMI/dLktD0SPjhVG4Scydrm5
+         vqDXHMHXqAaKXNtM5ckENlOIrCNiDxN2Aelji8VnHUllyfk7UP5HWEaia+/qrjTT5GFP
+         EKbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=HuINp5SQ;
+       spf=pass (google.com: best guess record for domain of batv+1a17e12b704b27f00da8+5350+infradead.org+hch@bombadil.srs.infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=BATV+1a17e12b704b27f00da8+5350+infradead.org+hch@bombadil.srs.infradead.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 2a01:7a0:2:106d:700::1 as permitted sender) smtp.mailfrom=tglx@linutronix.de
-Date: Tue, 17 Apr 2018 10:54:37 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: David Wang <davidwang@zhaoxin.com>
-cc: 'Christoph Hellwig' <hch@infradead.org>, mingo@redhat.com, hpa@zytor.com,
-    gregkh@linuxfoundation.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-    brucechang@via-alliance.com, cooperyan@zhaoxin.com, qiyuanwang@zhaoxin.com,
-    benjaminpan@viatech.com, lukelin@viacpu.com, timguo@zhaoxin.com
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=HuINp5SQ;
+       spf=pass (google.com: best guess record for domain of batv+1a17e12b704b27f00da8+5350+infradead.org+hch@bombadil.srs.infradead.org designates 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=BATV+1a17e12b704b27f00da8+5350+infradead.org+hch@bombadil.srs.infradead.org
+Date: Tue, 17 Apr 2018 06:00:40 -0700
+From: 'Christoph Hellwig' <hch@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: David Wang <davidwang@zhaoxin.com>,
+	'Christoph Hellwig' <hch@infradead.org>, mingo@redhat.com,
+	hpa@zytor.com, gregkh@linuxfoundation.org, x86@kernel.org,
+	linux-kernel@vger.kernel.org, brucechang@via-alliance.com,
+	cooperyan@zhaoxin.com, qiyuanwang@zhaoxin.com,
+	benjaminpan@viatech.com, lukelin@viacpu.com, timguo@zhaoxin.com
 Subject: Re: [PATCH] x86/dma-mapping: override via_no_dac for new VIA PCI
  bridges
-In-Reply-To: <000001d3d628$4e91a4c0$ebb4ee40$@zhaoxin.com>
-Message-ID: <alpine.DEB.2.21.1804171052440.1694@nanos.tec.linutronix.de>
+Message-ID: <20180417130040.GA9426@infradead.org>
 References: <000001d3d628$4e91a4c0$ebb4ee40$@zhaoxin.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+ <alpine.DEB.2.21.1804171052440.1694@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1804171052440.1694@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597894379144798679?=
-X-GMAIL-MSGID: =?utf-8?q?1597982954020261272?=
+X-GMAIL-MSGID: =?utf-8?q?1597998418827866083?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 17 Apr 2018, David Wang wrote:
-> > On Mon, Apr 16, 2018 at 05:26:56PM +0800, David Wang wrote:
-> > > PCI bridges integrated in new VIA chipset/SoC have no DAC issue.
-> > > Enable DAC for the platforms with these chipset/SoC can improve DMA
-> > > performance about 20% when DRAM size > 4GB.
-> > >
-> > 
-> > So we get an exception to an exception?  Is there any way to figure out
-> the
-> > PCI IDs actually affected?
-> Yes.
-> 
-> Do you mean we should list the PCI IDs of the PCI bridges which have no DAC
-> issue?
+On Tue, Apr 17, 2018 at 10:54:37AM +0200, Thomas Gleixner wrote:
+> The question was rather to have a list of PCI IDs for those chipsets which
+> have the problem and set the 'disable' flag only for those. That makes a lot
+> more sense than making a list of new chips which disable the disable flag.
 
-The question was rather to have a list of PCI IDs for those chipsets which
-have the problem and set the 'disable' flag only for those. That makes a lot
-more sense than making a list of new chips which disable the disable flag.
+Agreed.
 
-Thanks,
+There are a few other things I'd like to do in this area while we're
+at it (I'm happy to do the work, not trying to offload it to David
+or Thomas):
 
-	tglx
+ (1) make the nodac flag a per-device flag.  Set for every device
+     under one of the affected VIA bridges, or for all PCI devices
+     if the nodac command line option is used
+ (2) move that flag into the common struct device (or the to be
+     designed dma struct hanging off it in the future) and make that
+     bit handled in common code as there is a common Xilinx host
+     bridge with a 32-bit dma limitation
+ (3) kill of the forcesac option, which was a strange performance
+     tweak back in plain PCI days, which probably didn't even work
+     as expected to start with.
