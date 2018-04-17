@@ -1,197 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753946AbeDQNrF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 09:47:05 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41297 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753902AbeDQNq7 (ORCPT
+        id S1753964AbeDQNrM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 09:47:12 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:63776 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753902AbeDQNrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 09:46:59 -0400
-Date: Tue, 17 Apr 2018 06:46:12 -0700
-From: tip-bot for Alison Schofield <tipbot@zytor.com>
-Message-ID: <tip-1340ccfa9a9afefdbab90d7935d4ed19817e37c2@git.kernel.org>
-Cc: peterz@infradead.org, linux-kernel@vger.kernel.org, prarit@redhat.com,
-        imammedo@redhat.com, rientjes@google.com, mingo@kernel.org,
-        alison.schofield@intel.com, tglx@linutronix.de,
-        tim.c.chen@linux.intel.com, tony.luck@intel.com, bp@suse.de,
-        hpa@zytor.com, dave.hansen@linux.intel.com, hpa@linux.intel.com,
-        bp@alien8.de
-Reply-To: hpa@zytor.com, bp@suse.de, tony.luck@intel.com,
-        tim.c.chen@linux.intel.com, bp@alien8.de, hpa@linux.intel.com,
-        dave.hansen@linux.intel.com, imammedo@redhat.com, prarit@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        alison.schofield@intel.com, tglx@linutronix.de, mingo@kernel.org,
-        rientjes@google.com
-In-Reply-To: <20180407002130.GA18984@alison-desk.jf.intel.com>
-References: <20180407002130.GA18984@alison-desk.jf.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86,sched: Allow topologies where NUMA nodes share
- an LLC
-Git-Commit-ID: 1340ccfa9a9afefdbab90d7935d4ed19817e37c2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 17 Apr 2018 09:47:08 -0400
+Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
+ to netdev dma client
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Radhey Shyam Pandey <radheys@xilinx.com>,
+        Vinod Koul <vinod.koul@intel.com>
+CC: "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
+ <1522665546-10035-3-git-send-email-radheys@xilinx.com>
+ <20180411090854.GY6014@localhost>
+ <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
+ <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
+Date: Tue, 17 Apr 2018 16:46:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1340ccfa9a9afefdbab90d7935d4ed19817e37c2
-Gitweb:     https://git.kernel.org/tip/1340ccfa9a9afefdbab90d7935d4ed19817e37c2
-Author:     Alison Schofield <alison.schofield@intel.com>
-AuthorDate: Fri, 6 Apr 2018 17:21:30 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 17 Apr 2018 15:39:55 +0200
+On 2018-04-17 15:54, Lars-Peter Clausen wrote:
+> On 04/17/2018 01:43 PM, Radhey Shyam Pandey wrote:
+>> Hi Vinod,
+>>
+>>> -----Original Message-----
+>>> From: Vinod Koul [mailto:vinod.koul@intel.com]
+>>> Sent: Wednesday, April 11, 2018 2:39 PM
+>>> To: Radhey Shyam Pandey <radheys@xilinx.com>
+>>> Cc: dan.j.williams@intel.com; michal.simek@xilinx.com; Appana Durga
+>>> Kedareswara Rao <appanad@xilinx.com>; Radhey Shyam Pandey
+>>> <radheys@xilinx.com>; lars@metafoo.de; dmaengine@vger.kernel.org;
+>>> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>>> Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control
+>>> words to netdev dma client
+>>>
+>>> On Mon, Apr 02, 2018 at 04:09:02PM +0530, Radhey Shyam Pandey wrote:
+>>>
+>>>> +
+>>>> +		if (chan->xdev->has_axieth_connected) {
+>>>> +			seg = list_first_entry(&desc->segments,
+>>>> +					struct xilinx_axidma_tx_segment,
+>>> node);
+>>>> +			if (cb.callback_param) {
+>>>> +				app_w = (u32 *) cb.callback_param;
+>>>
+>>> why are you interpreting callback_param? This is plainly wrong.
+>>> we do not know what is the interpretation of callback_param and it is
+>>> internal to submitter.
+>> In design, if AXI DMA is connected to AXI Ethernet IP there are certain
+>> AXI4-Stream Status fields (RX) that we need to pass to ethernet driver
+>> along with data buffer. An example includes: checksum fields, packet
+>> length etc. To pass these control words there is a structure defined
+>> between dmaengine and client. Before calling the client callback
+>> stream control words are copied to dma client callback_param struct
+>> (only if axieth is connected).
+>>
+>> I understand it's not an ideal way and we shouldn't be interpreting
+>> callback_param but couldn't find any better alternative of passing
+>> custom information from dmaengine to client driver and still be 
+>> aligned to the framework.
+>>
+>>>
+>>> What exactly is the problem you are trying to solve?
+>> As mentioned above we need to pass AXI4-stream words(custom
+>> data) from dmaengine driver to dma client driver(ethernet) for
+>> each DMA descriptor. Current solution populates callback_param
+>> struct (only if axieth is connected). Please let me know if there is
+>> an alternate solution. 
+> 
+> The standard interfaces need to work in a way that a client using them does
+> not have to know to which DMA controller it is connected. In a similar way
+> the DMA controller shouldn't have any client specific logic for the generic
+> interfaces. Otherwise there is no point of having a generic interface.
+> 
+> There are two options.
+> 
+> Either you extend the generic interfaces so it can cover your usecase in a
+> generic way. E.g. the ability to attach meta data to transfer.
 
-x86,sched: Allow topologies where NUMA nodes share an LLC
+Fwiw I have this patch as part of a bigger work to achieve similar results:
 
-Intel's Skylake Server CPUs have a different LLC topology than previous
-generations. When in Sub-NUMA-Clustering (SNC) mode, the package is divided
-into two "slices", each containing half the cores, half the LLC, and one
-memory controller and each slice is enumerated to Linux as a NUMA
-node. This is similar to how the cores and LLC were arranged for the
-Cluster-On-Die (CoD) feature.
+commit f7cf442a37618bbd996f2640ececc4a990ea655e
+Author: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Date:   Wed Nov 22 10:21:59 2017 +0200
 
-CoD allowed the same cache line to be present in each half of the LLC.
-But, with SNC, each line is only ever present in *one* slice. This means
-that the portion of the LLC *available* to a CPU depends on the data being
-accessed:
+    dmaengine: Add callback to set per descriptor metadata
+    
+    Some DMA engines can send and receive side band information, commands or
+    parameters which is not transferred within the data stream itself. In such
+    case clients can set the metadata to the given descriptor and it is going
+    to be sent to the peripheral, or in case of DEV_TO_MEM the provided buffer
+    will receive the metadata.
+    
+    Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-    Remote socket: entire package LLC is shared
-    Local socket->local slice: data goes into local slice LLC
-    Local socket->remote slice: data goes into remote-slice LLC. Slightly
-                    		higher latency than local slice LLC.
-
-The biggest implication from this is that a process accessing all
-NUMA-local memory only sees half the LLC capacity.
-
-The CPU describes its cache hierarchy with the CPUID instruction. One of
-the CPUID leaves enumerates the "logical processors sharing this
-cache". This information is used for scheduling decisions so that tasks
-move more freely between CPUs sharing the cache.
-
-But, the CPUID for the SNC configuration discussed above enumerates the LLC
-as being shared by the entire package. This is not 100% precise because the
-entire cache is not usable by all accesses. But, it *is* the way the
-hardware enumerates itself, and this is not likely to change.
-
-The userspace visible impact of all the above is that the sysfs info
-reports the entire LLC as being available to the entire package. As noted
-above, this is not true for local socket accesses. This patch does not
-correct the sysfs info. It is the same, pre and post patch.
-
-The current code emits the following warning:
-
- sched: CPU #3's llc-sibling CPU #0 is not on the same node! [node: 1 != 0]. Ignoring dependency.
-
-The warning is coming from the topology_sane() check in smpboot.c because
-the topology is not matching the expectations of the model for obvious
-reasons.
-
-To fix this, add a vendor and model specific check to never call
-topology_sane() for these systems. Also, just like "Cluster-on-Die" disable
-the "coregroup" sched_domain_topology_level and use NUMA information from
-the SRAT alone.
-
-This is OK at least on the hardware we are immediately concerned about
-because the LLC sharing happens at both the slice and at the package level,
-which are also NUMA boundaries.
-
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: brice.goglin@gmail.com
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Igor Mammedov <imammedo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Link: https://lkml.kernel.org/r/20180407002130.GA18984@alison-desk.jf.intel.com
-
----
- arch/x86/kernel/smpboot.c | 45 ++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 40 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index ff99e2b6fc54..45175b81dd5b 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -77,6 +77,8 @@
- #include <asm/i8259.h>
- #include <asm/misc.h>
- #include <asm/qspinlock.h>
-+#include <asm/intel-family.h>
-+#include <asm/cpu_device_id.h>
+diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+index cc887a6f74ba..fb8e9c92fb01 100644
+--- a/include/linux/dmaengine.h
++++ b/include/linux/dmaengine.h
+@@ -709,6 +709,11 @@ struct dma_filter {
+  *	be called after period_len bytes have been transferred.
+  * @device_prep_interleaved_dma: Transfer expression in a generic way.
+  * @device_prep_dma_imm_data: DMA's 8 byte immediate data to the dst address
++ * @device_attach_metadata: Some DMA engines can send and receive side band
++ *	information, commands or parameters which is not transferred within the
++ *	data stream itself. In such case clients can set the metadata to the
++ *	given descriptor and it is going to be sent to the peripheral, or in
++ *	case of DEV_TO_MEM the provided buffer will receive the metadata.
+  * @device_config: Pushes a new configuration to a channel, return 0 or an error
+  *	code
+  * @device_pause: Pauses any transfer happening on a channel. Returns
+@@ -796,6 +801,9 @@ struct dma_device {
+ 		struct dma_chan *chan, dma_addr_t dst, u64 data,
+ 		unsigned long flags);
  
- /* Number of siblings per CPU package */
- int smp_num_siblings = 1;
-@@ -390,15 +392,47 @@ static bool match_smt(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- 	return false;
++	int (*device_attach_metadata)(struct dma_async_tx_descriptor *desc,
++				      void *data, size_t len);
++
+ 	int (*device_config)(struct dma_chan *chan,
+ 			     struct dma_slave_config *config);
+ 	int (*device_pause)(struct dma_chan *chan);
+@@ -909,6 +917,21 @@ static inline struct dma_async_tx_descriptor *dmaengine_prep_dma_memcpy(
+ 						    len, flags);
  }
  
-+/*
-+ * Define snc_cpu[] for SNC (Sub-NUMA Cluster) CPUs.
-+ *
-+ * These are Intel CPUs that enumerate an LLC that is shared by
-+ * multiple NUMA nodes. The LLC on these systems is shared for
-+ * off-package data access but private to the NUMA node (half
-+ * of the package) for on-package access.
-+ *
-+ * CPUID (the source of the information about the LLC) can only
-+ * enumerate the cache as being shared *or* unshared, but not
-+ * this particular configuration. The CPU in this case enumerates
-+ * the cache to be shared across the entire package (spanning both
-+ * NUMA nodes).
-+ */
++static inline int dmaengine_attach_metadata(
++		struct dma_async_tx_descriptor *desc, void *data, size_t len)
++{
++	struct dma_chan *chan;
 +
-+static const struct x86_cpu_id snc_cpu[] = {
-+	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_SKYLAKE_X },
-+	{}
-+};
++	if (!desc)
++		return 0;
 +
- static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- {
- 	int cpu1 = c->cpu_index, cpu2 = o->cpu_index;
- 
--	if (per_cpu(cpu_llc_id, cpu1) != BAD_APICID &&
--	    per_cpu(cpu_llc_id, cpu1) == per_cpu(cpu_llc_id, cpu2))
--		return topology_sane(c, o, "llc");
-+	/* Do not match if we do not have a valid APICID for cpu: */
-+	if (per_cpu(cpu_llc_id, cpu1) == BAD_APICID)
-+		return false;
- 
--	return false;
-+	/* Do not match if LLC id does not match: */
-+	if (per_cpu(cpu_llc_id, cpu1) != per_cpu(cpu_llc_id, cpu2))
-+		return false;
++	chan = desc->chan;
++	if (!chan || !chan->device || !chan->device->device_attach_metadata)
++		return 0;
 +
-+	/*
-+	 * Allow the SNC topology without warning. Return of false
-+	 * means 'c' does not share the LLC of 'o'. This will be
-+	 * reflected to userspace.
-+	 */
-+	if (!topology_same_node(c, o) && x86_match_cpu(snc_cpu))
-+		return false;
++	return chan->device->device_attach_metadata(desc, data, len);
++}
 +
-+	return topology_sane(c, o, "llc");
- }
- 
- /*
-@@ -456,7 +490,8 @@ static struct sched_domain_topology_level x86_topology[] = {
- 
- /*
-  * Set if a package/die has multiple NUMA nodes inside.
-- * AMD Magny-Cours and Intel Cluster-on-Die have this.
-+ * AMD Magny-Cours, Intel Cluster-on-Die, and Intel
-+ * Sub-NUMA Clustering have this.
-  */
- static bool x86_has_numa_in_package;
- 
+ /**
+  * dmaengine_terminate_all() - Terminate all active DMA transfers
+  * @chan: The channel for which to terminate the transfers
+
+The drawback is that the DMA drivers need to do memcpy.
+I'm considering to change this to get metadata_ptr() so clients can
+directly write to the buffer w/o memcpy.
+
+> Or you can implement a interface that is specific to your DMA controller and
+> any client using this interface knows it is talking to your DMA controller.
+
+Hrm, so we can have DMA driver specific calls? The reason why TI's keystone 2
+navigator DMA support was rejected that it was introducing NAV specific calls
+for clients to configure features not yet supported by the framework.
+
+> 
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
