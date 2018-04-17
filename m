@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49vZTMQlKs1cHecApLp/oLu3moDXxW5gO1aVHqc+E9IZpFKC84mTM+UNtwf0wf7gT1yW16g
-ARC-Seal: i=1; a=rsa-sha256; t=1523981250; cv=none;
+X-Google-Smtp-Source: AIpwx49PGGrVaxiYRakKJ4/7wPvvUl3JTqjKXuyqtCPJjAX8mIwipnrmNk0aPVJgKHHmsho5ptXT
+ARC-Seal: i=1; a=rsa-sha256; t=1523981247; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ig+ju+zowsZLfQPUDQOAun4AteptaGJQSq3W1crt+9t//8v4Yu3q/2ChWRbvTog6NV
-         K/nplhfU5JyM4nyWbkg4PDGw/WYvg/KrG3vZHVkV0fpf4gtf3+J4ufmfeFyTTEfozyKc
-         v2o4LKliUn1dnzKNDBebr++w17IHl96oqumsKN60mtFpWZUQCsJ0jUpNbscXeUVStSIa
-         ZVlJXFKlo85i0vebk9wyrd2RPJFd/vackou9g1RStFiXbpb6ClvM5kSZMTqas+dO4M4y
-         34J4L7nAJzuxH4RGYddHc+B9uV1m4J9MLyxm8SyTlKjIPJm0w9cjn0Yl8QgKLhQGMU+g
-         8b/w==
+        b=DMyc1Fiqdt9cc0lUGJd3jUM9uEH8BiezOXi5Dqtd5KOCufQsdSKgzXVx2mWrlJ8tjo
+         /DlgtGRMsU+oYRSESkzr01Ow5cXZoOaBzHze13M3Kpli3bhqc5QNXfOM+9AynYUsqhvE
+         x/KqlGM02Buvz0AtKA9z3fPt8PPLsg0zPCOoX1lcs9pE5yPQCa4VKXjXk3YHoBMdLw9A
+         YdyBGNroDx9dTS4Uhl+/lwBJR0Ahg070YfD6QSRrLvFDuPTsULrM/pxrH7hS9qaIjuHY
+         So2VrBY7lUMkz+xJkjPs14JzEhR7FH4Vryb3c8A24muU3NGMm6B+4tjMZSk0e8z3OKq7
+         1HgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XQRWThXI/wQxAirEDiLMg7PGYDHuXEHHXd593KWpVAE=;
-        b=0qEuUmHRTSoHslJAlgosEHeUyux9tMG7hrkaRYFVA1ooLec3BVNZn8W2QtSXAzSVlM
-         sDnalp1FTXpmS03cRFOXa0bl7Cc0u/XKyMt19PZnqJK+YM4hU+t2DY6+oJ+27tQBxUiC
-         S40yRWlUS5NfcyoeBRzqNKcbWp7jjl8BXAH6tu/k8ZnK92DWESEL8G0/cUhxmEOmsmEv
-         LNgbJFD7wZvcIHCqWSW2gJ/UCU7HXH5wBIR+rNnUzNV5/E6PK0BPep5WD88DVM7aNvHg
-         qSJEYmzHLLRS7D9nK91KhfCApIj+jg+kFWMACHzTeDZU5PZqc9v5SVtnbTBdFRVJiAvN
-         E/ow==
+        bh=UjXN6V6euj5s/y6jwP1V8/odKnprgcocPi+WMC6xceY=;
+        b=k+nMv2NEq7p7VXy7DjGGU3Swo/cxJxttH8129+NK3EOX/kxdCi/cBrcscPgTssH2i5
+         2yWQtWVySTWGR9Ea1glbAYqqeM/wAAo4T0mACWzmhwi/UgG71nrRDLJWf7UqJ0j1LDvF
+         ODTAuhDpvPJGaH4+Jl5XQVUAq8z7wNS/rFTjSVtXV4uLUBhvYOlWv0EDCKXlxf0qXW4G
+         vtz5Ywhj5iExqZK8xjwNNaPPzHpA1p0F3cTiJ0XvWj36JcMD7XZ7QadvIymvEyKHFTKl
+         AJQNLeDF8d+e1e7FmiizKaw7buNdbOweACmftbS71x747W1HC+7JQohhhSZA2b1UOLTq
+         vTPw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>,
-	Vivek Goyal <vgoyal@redhat.com>,
-	Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 46/49] ovl: fix lookup with middle layer opaque dir and absolute path redirects
-Date: Tue, 17 Apr 2018 17:59:25 +0200
-Message-Id: <20180417155717.228185033@linuxfoundation.org>
+	Stefan Haberland <sth@linux.vnet.ibm.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Christian Borntraeger <borntraeger@de.ibm.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Ming Lei <ming.lei@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 45/49] blk-mq: dont keep offline CPUs mapped to hctx 0
+Date: Tue, 17 Apr 2018 17:59:24 +0200
+Message-Id: <20180417155717.187039680@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -41,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009799059325863?=
-X-GMAIL-MSGID: =?utf-8?q?1598010164187874277?=
+X-GMAIL-THRID: =?utf-8?q?1598009790987535058?=
+X-GMAIL-MSGID: =?utf-8?q?1598010160665028020?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,85 +54,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit 3ec9b3fafcaf441cc4d46b9742cd6ec0c79f8df0 upstream.
+commit bffa9909a6b48d8ca3398dec601bc9162a4020c4 upstream.
 
-As of now if we encounter an opaque dir while looking for a dentry, we set
-d->last=true. This means that there is no need to look further in any of
-the lower layers. This works fine as long as there are no redirets or
-relative redircts. But what if there is an absolute redirect on the
-children dentry of opaque directory. We still need to continue to look into
-next lower layer. This patch fixes it.
+>From commit 4b855ad37194 ("blk-mq: Create hctx for each present CPU),
+blk-mq doesn't remap queue after CPU topo is changed, that said when
+some of these offline CPUs become online, they are still mapped to
+hctx 0, then hctx 0 may become the bottleneck of IO dispatch and
+completion.
 
-Here is an example to demonstrate the issue. Say you have following setup.
+This patch sets up the mapping from the beginning, and aligns to
+queue mapping for PCI device (blk_mq_pci_map_queues()).
 
-upper:  /redirect (redirect=/a/b/c)
-lower1: /a/[b]/c       ([b] is opaque) (c has absolute redirect=/a/b/d/)
-lower0: /a/b/d/foo
-
-Now "redirect" dir should merge with lower1:/a/b/c/ and lower0:/a/b/d.
-Note, despite the fact lower1:/a/[b] is opaque, we need to continue to look
-into lower0 because children c has an absolute redirect.
-
-Following is a reproducer.
-
-Watch me make foo disappear:
-
- $ mkdir lower middle upper work work2 merged
- $ mkdir lower/origin
- $ touch lower/origin/foo
- $ mount -t overlay none merged/ \
-         -olowerdir=lower,upperdir=middle,workdir=work2
- $ mkdir merged/pure
- $ mv merged/origin merged/pure/redirect
- $ umount merged
- $ mount -t overlay none merged/ \
-         -olowerdir=middle:lower,upperdir=upper,workdir=work
- $ mv merged/pure/redirect merged/redirect
-
-Now you see foo inside a twice redirected merged dir:
-
- $ ls merged/redirect
- foo
- $ umount merged
- $ mount -t overlay none merged/ \
-         -olowerdir=middle:lower,upperdir=upper,workdir=work
-
-After mount cycle you don't see foo inside the same dir:
-
- $ ls merged/redirect
-
-During middle layer lookup, the opaqueness of middle/pure is left in
-the lookup state and then middle/pure/redirect is wrongly treated as
-opaque.
-
-Fixes: 02b69b284cd7 ("ovl: lookup redirects")
-Cc: <stable@vger.kernel.org> #v4.10
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Stefan Haberland <sth@linux.vnet.ibm.com>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: stable@vger.kernel.org
+Fixes: 4b855ad37194 ("blk-mq: Create hctx for each present CPU)
+Tested-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/namei.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ block/blk-mq-cpumap.c |    5 -----
+ 1 file changed, 5 deletions(-)
 
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -56,6 +56,15 @@ static int ovl_check_redirect(struct den
- 			if (s == next)
- 				goto invalid;
- 		}
-+		/*
-+		 * One of the ancestor path elements in an absolute path
-+		 * lookup in ovl_lookup_layer() could have been opaque and
-+		 * that will stop further lookup in lower layers (d->stop=true)
-+		 * But we have found an absolute redirect in decendant path
-+		 * element and that should force continue lookup in lower
-+		 * layers (reset d->stop).
-+		 */
-+		d->stop = false;
- 	} else {
- 		if (strchr(buf, '/') != NULL)
- 			goto invalid;
+--- a/block/blk-mq-cpumap.c
++++ b/block/blk-mq-cpumap.c
+@@ -16,11 +16,6 @@
+ 
+ static int cpu_to_queue_index(unsigned int nr_queues, const int cpu)
+ {
+-	/*
+-	 * Non present CPU will be mapped to queue index 0.
+-	 */
+-	if (!cpu_present(cpu))
+-		return 0;
+ 	return cpu % nr_queues;
+ }
+ 
