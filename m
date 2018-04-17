@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48PCEUE5KN1yNtXpQj+wudSOK7Cs2j9oieOBIPatH7x+LlezcU+7Pd/N8UpJ0G3jSuRvRjk
-ARC-Seal: i=1; a=rsa-sha256; t=1523981269; cv=none;
+X-Google-Smtp-Source: AIpwx48BZNtt8bbWctfTGg1sVTtNVnAfqd9QJDXitDxM/3XEnVQgkAlhDLfd4h+yJnFV76ZULgSG
+ARC-Seal: i=1; a=rsa-sha256; t=1523981263; cv=none;
         d=google.com; s=arc-20160816;
-        b=qj5izZV4gO38XxC/qielnS0M5SDtdw9XZVpaZhC2oaRYkmOm7XlsV8+T/yVWPZT6TJ
-         BLtmNogn3mXW88+wDsVhP1deOoa9p8bzdSmtWITfHN6DsbZLZq0JLOvF4ysCP0UA/mbd
-         uhyXPavbF6TaN8RV6I24Y0YFemnZDVAyG+PYy/HUHWetDBJW4mtF/qhb4DWu7soPmkqT
-         C/egV8AlHaFa2CiXC3cgseAYmDlEo0uI9/8YBL8gP9YJCq5VHeZrZ5f6w7MX7lKwIVYs
-         gslCrARGzBofCYdn6kgicjeLpOwLpwWU8fHOeGvAzB2ILOWzrwkMguV7K3Sn7mggcUvI
-         Pv5w==
+        b=k5EhTcUS2N5l+DxvhCbDm88/57MlW58htNPD75LifuU4x696LJ/Td9WubBQPyPYMuN
+         S6fGOWfh5aiqoHYffa9P8YLCOaWtYWHSp9TGEKzI1eUq2TUGvmm/CJPaNtCR5wjZVCly
+         caL8sjysCOZ3Ry/jlDok+Lk8Tty6F1b0qxoDmkYYCETE5yYrKFQ3Pg4yNNb/PEWwPLQR
+         WNdg9YT3YkkoYGJwakpSbXBEFMYB8hGm5MwzdqoTyNnIdIul2Rijedv1Wu5iVRtiybLX
+         +E3GywfBx/Vl9lbLighqFkoI/3wjyC8l0WF5AHZuFM/vj6OieYUOeeWnMjVd8BYSD4Bz
+         7Lwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/sy6HVfNXUNmEhGR7yCqI6/+BBeDqVG5o946hVgnbXg=;
-        b=TmmspzwlcZ8ez1AtciG4oKBUz7OQrE5ebhJMkz3d4+wn41YPqiJcLeddJYWPiUWEiR
-         HaJQqcaXuWgUsYt29ltT5o+xzSnwLnIFdxAZtHHWmAvprIEYpdY6kW63IixBg/4uaLwT
-         vxiZCoU8QVHyFEFwKLhPoLpy5iE6kEIULobtr2c3hS5ebfA5nrjnMxoTR+1g0w5v2Luu
-         Cjz2eJpdM+/tINw+slx7z2Cg1xs/2evEiRBDb1GLnnKQA3wtNIs2357Bd5fFg51ZlMv3
-         HsrN6/43cKRjtF4bc7NFRw548uiMlm4DnOmJkRfxwxR6cz0RYenJJKZbhzBIvRHRbiy8
-         qHwg==
+        bh=dB95ZcsX0f+rfd7f8FQRTYnGgkQkN2ecJ6BenYWS9gQ=;
+        b=FC0xG3vAge5mAS7MK7l1S/KooXwLBlc0eQzhw6rFzMcSB43NghzFAQ8Vz7nqOVCXtm
+         GE6qhHKHWmRiBscLVIhYrsAC65Pkrb4h7ahWb5v5czU4V0DlSERT8q3Bc46C38+5M/xO
+         dYKbjoVz+uUO8qF3tQC1XCE4z/NGgjKMvPkkHkExEAgJG26xwl4EWGkYMQJ5qtkQtCNx
+         Q0auAJgw92sFpSNF+rqSvFJUHPUZOch3Miu8spVAppaMs3eTPwtMFkBAIgkgybczttc8
+         xazJHDqDPtR4nxQNjeCwZAj225KCyDS1uBNcMvaU+hyrapUwiF7zOVLspbRUl+wpqyr5
+         w8jg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Thorsten Leemhuis <regressions@leemhuis.info>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 31/49] get_user_pages_fast(): return -EFAULT on access_ok failure
-Date: Tue, 17 Apr 2018 17:59:10 +0200
-Message-Id: <20180417155716.507362957@linuxfoundation.org>
+	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	Ursula Braun <ubraun@linux.vnet.ibm.com>,
+	Benjamin Block <bblock@linux.vnet.ibm.com>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.14 29/49] s390/qdio: dont merge ERROR output buffers
+Date: Tue, 17 Apr 2018 17:59:08 +0200
+Message-Id: <20180417155716.411762706@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -48,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009890881181716?=
-X-GMAIL-MSGID: =?utf-8?q?1598010183568664301?=
+X-GMAIL-THRID: =?utf-8?q?1598009846096502118?=
+X-GMAIL-MSGID: =?utf-8?q?1598010178156308207?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,68 +51,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael S. Tsirkin <mst@redhat.com>
+From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
-commit c61611f70958d86f659bca25c02ae69413747a8d upstream.
+commit 0cf1e05157b9e5530dcc3ca9fec9bf617fc93375 upstream.
 
-get_user_pages_fast is supposed to be a faster drop-in equivalent of
-get_user_pages.  As such, callers expect it to return a negative return
-code when passed an invalid address, and never expect it to return 0
-when passed a positive number of pages, since its documentation says:
+On an Output queue, both EMPTY and PENDING buffer states imply that the
+buffer is ready for completion-processing by the upper-layer drivers.
 
- * Returns number of pages pinned. This may be fewer than the number
- * requested. If nr_pages is 0 or negative, returns 0. If no pages
- * were pinned, returns -errno.
+So for a non-QEBSM Output queue, get_buf_states() merges mixed
+batches of PENDING and EMPTY buffers into one large batch of EMPTY
+buffers. The upper-layer driver (ie. qeth) later distuingishes PENDING
+from EMPTY by inspecting the slsb_state for
+QDIO_OUTBUF_STATE_FLAG_PENDING.
 
-When get_user_pages_fast fall back on get_user_pages this is exactly
-what happens.  Unfortunately the implementation is inconsistent: it
-returns 0 if passed a kernel address, confusing callers: for example,
-the following is pretty common but does not appear to do the right thing
-with a kernel address:
+But the merge logic in get_buf_states() contains a bug that causes us to
+erronously also merge ERROR buffers into such a batch of EMPTY buffers
+(ERROR is 0xaf, EMPTY is 0xa1; so ERROR & EMPTY == EMPTY).
+Effectively, most outbound ERROR buffers are currently discarded
+silently and processed as if they had succeeded.
 
-        ret = get_user_pages_fast(addr, 1, writeable, &page);
-        if (ret < 0)
-                return ret;
+Note that this affects _all_ non-QEBSM device types, not just IQD with CQ.
 
-Change get_user_pages_fast to return -EFAULT when supplied a kernel
-address to make it match expectations.
+Fix it by explicitly spelling out the exact conditions for merging.
 
-All callers have been audited for consistency with the documented
-semantics.
+For extracting the "get initial state" part out of the loop, this relies
+on the fact that get_buf_states() is never called with a count of 0. The
+QEBSM path already strictly requires this, and the two callers with
+variable 'count' make sure of it.
 
-Link: http://lkml.kernel.org/r/1522962072-182137-4-git-send-email-mst@redhat.com
-Fixes: 5b65c4677a57 ("mm, x86/mm: Fix performance regression in get_user_pages_fast()")
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Reported-by: syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
+Cc: <stable@vger.kernel.org> #v3.2+
+Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Reviewed-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Reviewed-by: Benjamin Block <bblock@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/gup.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/s390/cio/qdio_main.c |   31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1816,9 +1816,12 @@ int get_user_pages_fast(unsigned long st
- 	len = (unsigned long) nr_pages << PAGE_SHIFT;
- 	end = start + len;
+--- a/drivers/s390/cio/qdio_main.c
++++ b/drivers/s390/cio/qdio_main.c
+@@ -205,7 +205,10 @@ again:
+ 	return 0;
+ }
  
-+	if (nr_pages <= 0)
-+		return 0;
+-/* returns number of examined buffers and their common state in *state */
++/*
++ * Returns number of examined buffers and their common state in *state.
++ * Requested number of buffers-to-examine must be > 0.
++ */
+ static inline int get_buf_states(struct qdio_q *q, unsigned int bufnr,
+ 				 unsigned char *state, unsigned int count,
+ 				 int auto_ack, int merge_pending)
+@@ -216,17 +219,23 @@ static inline int get_buf_states(struct
+ 	if (is_qebsm(q))
+ 		return qdio_do_eqbs(q, state, bufnr, count, auto_ack);
+ 
+-	for (i = 0; i < count; i++) {
+-		if (!__state) {
+-			__state = q->slsb.val[bufnr];
+-			if (merge_pending && __state == SLSB_P_OUTPUT_PENDING)
+-				__state = SLSB_P_OUTPUT_EMPTY;
+-		} else if (merge_pending) {
+-			if ((q->slsb.val[bufnr] & __state) != __state)
+-				break;
+-		} else if (q->slsb.val[bufnr] != __state)
+-			break;
++	/* get initial state: */
++	__state = q->slsb.val[bufnr];
++	if (merge_pending && __state == SLSB_P_OUTPUT_PENDING)
++		__state = SLSB_P_OUTPUT_EMPTY;
 +
- 	if (unlikely(!access_ok(write ? VERIFY_WRITE : VERIFY_READ,
- 					(void __user *)start, len)))
--		return 0;
-+		return -EFAULT;
- 
- 	if (gup_fast_permitted(start, nr_pages, write)) {
- 		local_irq_disable();
++	for (i = 1; i < count; i++) {
+ 		bufnr = next_buf(bufnr);
++
++		/* merge PENDING into EMPTY: */
++		if (merge_pending &&
++		    q->slsb.val[bufnr] == SLSB_P_OUTPUT_PENDING &&
++		    __state == SLSB_P_OUTPUT_EMPTY)
++			continue;
++
++		/* stop if next state differs from initial state: */
++		if (q->slsb.val[bufnr] != __state)
++			break;
+ 	}
+ 	*state = __state;
+ 	return i;
