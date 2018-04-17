@@ -1,84 +1,40 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2220351-1523981375-2-7091781585428463323
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523981375; b=oD/ctI7d77fV1B8K+g8ZhaUtzPIyUuJhIo5Bgc0z9iMfKBot6z
-    oqCM0C1OuMna+1pXPZgv/rDtZlvI2tSuMYhY3urMtIMmcSTN/JPP25t4ORGIJRXU
-    TfOFMRGTBWBcCQNx+Wegk9b5fm18rIjcET7ke3GHvisuZZWQSvPgxQn4sNl3C0Nh
-    Jh32nTFPobWBnEILZ8GHKtf0Hj5JpNjvwE+7LYv/JDXNFS1utt2DhQv0gf+D1tSH
-    hHcu/Z97EPXaLQoWKf/2jd24SNpc6Az/OBEq1Eb8GEO28Ioi2LmK5wWNEGU3GGPJ
-    C0eHpfDpQ3/WpMOXvpka42GL55QwDyDiVfSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523981375; bh=DmE9V5T9gCmqelhiR67sG40sHBIMkR
-    zKeszWEGRc5Kc=; b=twJ4RsMels+PCOBEv9+/+ScRTnKeWQALr3JiHXNOisc4Mc
-    uQt4YPzE3F5Z9zJCSRUZUYduZT7VznqTK5hXD1pgS2jmQ0VJI88kwr7EYjUhWkj7
-    2z/g/HeK1hhaOOz/Tj9vTXYUVWipjDf2vJaSlcDPOVa5gELw37CWaKtPXWjh/hAh
-    umV+oiCCtF6c7aGXfL313LGTUyTi6bFSbEZeL+Nnw+uy2fkh0KzlZnCsfiiqW6+5
-    fuRutkFAGU0R6C++mXD/4hvSZghIDumhyqqD0VbPrAEmpdLSwQSlqN4qqi17fMQK
-    3iYkm83YD9L4hwHEGyf4wPcLJhHXDeXcwDiu9rdw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI3rsFllVhedrbpR0JdbJm9kjsI0WLiLuayTFXrOv2/GF37tkk3HWvcOxCUMl/RXvRCQGNXK1PLMCFmniOatnGae+V3q/alUVGNBBIlHaj0AXKAdFiTq
-    XsILRvTljONy/Rh2f/ri624EUvUELsHcrZZ1JKkBVNmYuCEXi53PI94J3l+9rJV4QYCPrNsdSW/eaIP6jIYXHOF3S/5ldZIhWJFwMOUl6J2qCLRvljO8/mJh
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=7CQSdrXTAAAA:8 a=KKAkSRfTAAAA:8 a=1XWaLZrsAAAA:8 a=ag1SF4gXAAAA:8
-    a=Yl9wlt2tm8I-GhEjR5sA:9 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
-    a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932109AbeDQQJ3 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 12:09:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36116 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932107AbeDQQJ2 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 12:09:28 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4+fx7IEh9BCCBxRee26fe2RSMTup84CCcYVT5p9MGlLhEJerjftOvh8IgWpYSNlMMzUJ7lV
+ARC-Seal: i=1; a=rsa-sha256; t=1523981373; cv=none;
+        d=google.com; s=arc-20160816;
+        b=SCGjcnTxV/QqGEIrG8nhsgyzEI6Fj3Q8aqQDvZa+vx3HJ4U9CKTSyvYtV3KkSvqfnq
+         gpYdLiIMXs7ypjYd8QMGlPoAvRBvyEsPd0Da6zZia74/CpV5pdnV8SBnfMCff4MbqQKd
+         FeOBa2557niG2tJQgM8Oq78uORiN6X6IH7sVUAB0U4ykfEoaySXsrt37Y/0WZxHCWYEc
+         nWwmlfHbaz0okr+pJw3ukknzWsl3j/olgByNxPf4+H6uIFLD1lZgwuhLHVPCZnnE4bj/
+         mxdFXHiqn3WYRoU4fl0pLnK/RxyCvCpPgQfwZXMpeZAWSYPSmPKwcS7GaHxZPBZ2jP8Y
+         kUjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=8Mmf/6dXsb7yDm9Vdvlv82MhvceJnp6jA5unaTrvhmI=;
+        b=IZv8upCJlfatiH2/Fe/gNTT8iBgci4XVjv2p3gibzczrOYdgijZe5gOQ8VCEHDL4DT
+         vhNLnrO4Yup45jSINjEE8Sl0jnmWdvvqHg+ClsCZuU2/BaavFZdvlYgahzU+jqQeA4dm
+         pZBzYx/xtTT9B/o3fvvQuq5G6KHZhTlIi08E1N/CV0/umK5pgNaxyndq5DDsOm1SflUj
+         7xKeMX6x5VZqsVHS4+6sQITgEb6ON1LR7Wh31Twipw2OBBFdtgbsZ0Bgtxx4s66YD22C
+         YT7JFP8lmPDPucNeaWrFaHgdQZqxqaxjhRIJQkvb12iJw3o/knAP42Nhlh2lpsLqU9mv
+         tN9Q==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 4.9 32/66] arm64: cpu_errata: Allow an erratum to be match for all revisions of a core
-Date: Tue, 17 Apr 2018 17:59:05 +0200
-Message-Id: <20180417155647.267387199@linuxfoundation.org>
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Christoffer Dall <christoffer.dall@linaro.org>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Greg Hackmann <ghackmann@google.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 4.9 42/66] arm/arm64: KVM: Turn kvm_psci_version into a static inline
+Date: Tue, 17 Apr 2018 17:59:15 +0200
+Message-Id: <20180417155647.699709330@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -86,9 +42,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598010292748360385?=
+X-GMAIL-MSGID: =?utf-8?q?1598010292748360385?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -101,40 +58,130 @@ From: Mark Rutland <mark.rutland@arm.com>
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 06f1494f837da8997d670a1ba87add7963b08922 upstream.
+commit a4097b351118e821841941a79ec77d3ce3f1c5d9 upstream.
 
-Some minor erratum may not be fixed in further revisions of a core,
-leading to a situation where the workaround needs to be updated each
-time an updated core is released.
+We're about to need kvm_psci_version in HYP too. So let's turn it
+into a static inline, and pass the kvm structure as a second
+parameter (so that HYP can do a kern_hyp_va on it).
 
-Introduce a MIDR_ALL_VERSIONS match helper that will work for all
-versions of that MIDR, once and for all.
-
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+[v4.9: account for files moved to virt/ upstream]
 Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
 Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpu_errata.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/kvm/psci.c         |   12 ++----------
+ arch/arm64/kvm/hyp/switch.c |   18 +++++++++++-------
+ include/kvm/arm_psci.h      |   21 ++++++++++++++++++++-
+ 3 files changed, 33 insertions(+), 18 deletions(-)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -127,6 +127,13 @@ static void  install_bp_hardening_cb(con
- 	.midr_range_min = min, \
- 	.midr_range_max = max
+--- a/arch/arm/kvm/psci.c
++++ b/arch/arm/kvm/psci.c
+@@ -120,7 +120,7 @@ static unsigned long kvm_psci_vcpu_on(st
+ 	if (!vcpu)
+ 		return PSCI_RET_INVALID_PARAMS;
+ 	if (!vcpu->arch.power_off) {
+-		if (kvm_psci_version(source_vcpu) != KVM_ARM_PSCI_0_1)
++		if (kvm_psci_version(source_vcpu, kvm) != KVM_ARM_PSCI_0_1)
+ 			return PSCI_RET_ALREADY_ON;
+ 		else
+ 			return PSCI_RET_INVALID_PARAMS;
+@@ -230,14 +230,6 @@ static void kvm_psci_system_reset(struct
+ 	kvm_prepare_system_event(vcpu, KVM_SYSTEM_EVENT_RESET);
+ }
  
-+#define MIDR_ALL_VERSIONS(model) \
-+	.def_scope = SCOPE_LOCAL_CPU, \
-+	.matches = is_affected_midr_range, \
-+	.midr_model = model, \
-+	.midr_range_min = 0, \
-+	.midr_range_max = (MIDR_VARIANT_MASK | MIDR_REVISION_MASK)
+-int kvm_psci_version(struct kvm_vcpu *vcpu)
+-{
+-	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
+-		return KVM_ARM_PSCI_LATEST;
+-
+-	return KVM_ARM_PSCI_0_1;
+-}
+-
+ static int kvm_psci_0_2_call(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm *kvm = vcpu->kvm;
+@@ -395,7 +387,7 @@ static int kvm_psci_0_1_call(struct kvm_
+  */
+ static int kvm_psci_call(struct kvm_vcpu *vcpu)
+ {
+-	switch (kvm_psci_version(vcpu)) {
++	switch (kvm_psci_version(vcpu, vcpu->kvm)) {
+ 	case KVM_ARM_PSCI_1_0:
+ 		return kvm_psci_1_0_call(vcpu);
+ 	case KVM_ARM_PSCI_0_2:
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@ -19,6 +19,8 @@
+ #include <linux/jump_label.h>
+ #include <uapi/linux/psci.h>
+ 
++#include <kvm/arm_psci.h>
 +
- const struct arm64_cpu_capabilities arm64_errata[] = {
- #if	defined(CONFIG_ARM64_ERRATUM_826319) || \
- 	defined(CONFIG_ARM64_ERRATUM_827319) || \
+ #include <asm/kvm_asm.h>
+ #include <asm/kvm_emulate.h>
+ #include <asm/kvm_hyp.h>
+@@ -311,14 +313,16 @@ again:
+ 
+ 	if (exit_code == ARM_EXCEPTION_TRAP &&
+ 	    (kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC64 ||
+-	     kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC32) &&
+-	    vcpu_get_reg(vcpu, 0) == PSCI_0_2_FN_PSCI_VERSION) {
+-		u64 val = PSCI_RET_NOT_SUPPORTED;
+-		if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
+-			val = 2;
++	     kvm_vcpu_trap_get_class(vcpu) == ESR_ELx_EC_HVC32)) {
++		u32 val = vcpu_get_reg(vcpu, 0);
+ 
+-		vcpu_set_reg(vcpu, 0, val);
+-		goto again;
++		if (val == PSCI_0_2_FN_PSCI_VERSION) {
++			val = kvm_psci_version(vcpu, kern_hyp_va(vcpu->kvm));
++			if (unlikely(val == KVM_ARM_PSCI_0_1))
++				val = PSCI_RET_NOT_SUPPORTED;
++			vcpu_set_reg(vcpu, 0, val);
++			goto again;
++		}
+ 	}
+ 
+ 	if (static_branch_unlikely(&vgic_v2_cpuif_trap) &&
+--- a/include/kvm/arm_psci.h
++++ b/include/kvm/arm_psci.h
+@@ -18,6 +18,7 @@
+ #ifndef __KVM_ARM_PSCI_H__
+ #define __KVM_ARM_PSCI_H__
+ 
++#include <linux/kvm_host.h>
+ #include <uapi/linux/psci.h>
+ 
+ #define KVM_ARM_PSCI_0_1	PSCI_VERSION(0, 1)
+@@ -26,7 +27,25 @@
+ 
+ #define KVM_ARM_PSCI_LATEST	KVM_ARM_PSCI_1_0
+ 
+-int kvm_psci_version(struct kvm_vcpu *vcpu);
++/*
++ * We need the KVM pointer independently from the vcpu as we can call
++ * this from HYP, and need to apply kern_hyp_va on it...
++ */
++static inline int kvm_psci_version(struct kvm_vcpu *vcpu, struct kvm *kvm)
++{
++	/*
++	 * Our PSCI implementation stays the same across versions from
++	 * v0.2 onward, only adding the few mandatory functions (such
++	 * as FEATURES with 1.0) that are required by newer
++	 * revisions. It is thus safe to return the latest.
++	 */
++	if (test_bit(KVM_ARM_VCPU_PSCI_0_2, vcpu->arch.features))
++		return KVM_ARM_PSCI_LATEST;
++
++	return KVM_ARM_PSCI_0_1;
++}
++
++
+ int kvm_hvc_call_handler(struct kvm_vcpu *vcpu);
+ 
+ #endif /* __KVM_ARM_PSCI_H__ */
