@@ -1,125 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753942AbeDQRIj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 13:08:39 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:56504 "EHLO pegase1.c-s.fr"
+        id S1753645AbeDQRIk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 13:08:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753358AbeDQRIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 13:08:19 -0400
-Message-Id: <a94e38e1dbe0c38ce5b363fac29ab6e65fd9985a.1523984745.git.christophe.leroy@c-s.fr>
-In-Reply-To: <7fbae252f24ec4d30f52f57a549901fa3f799f8f.1523984745.git.christophe.leroy@c-s.fr>
-References: <7fbae252f24ec4d30f52f57a549901fa3f799f8f.1523984745.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 2/2] powerpc/32be: use stmw/lmw for registers save/restore in
- asm
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 17 Apr 2018 19:08:18 +0200 (CEST)
+        id S1753823AbeDQRIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 13:08:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76738217D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 17 Apr 2018 14:08:22 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
+ x86 syscall func names
+Message-ID: <20180417170821.GD7775@kernel.org>
+References: <20180417115440.2145f7f5@gandalf.local.home>
+ <20180417163527.GA7775@kernel.org>
+ <20180417124019.1e4350d5@gandalf.local.home>
+ <20180417125723.6506e1d1@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417125723.6506e1d1@gandalf.local.home>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arch/powerpc/Makefile activates -mmultiple on BE PPC32 configs
-in order to use multiple word instructions in functions entry/exit
+Em Tue, Apr 17, 2018 at 12:57:23PM -0400, Steven Rostedt escreveu:
+> On Tue, 17 Apr 2018 12:40:19 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Tue, 17 Apr 2018 13:35:27 -0300
+> > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > 
+> > 
+> > > [root@jouet ~]# perf test openat
+> > >  2: Detect openat syscall event                           : Ok
+> > >  3: Detect openat syscall event on all cpus               : Ok
+> > > 15: syscalls:sys_enter_openat event fields                : Ok
+> > > [root@jouet ~]#
+> > > 
+> > > [root@jouet ~]# perf trace -e nanosleep,syscalls:*nanosleep sleep 1
+> > >      0.000 (         ): syscalls:sys_enter_nanosleep:rqtp: 0x7ffd9f737950, rmtp: 0x00000000
+> > >      0.009 (         ): sleep/7905 nanosleep(rqtp: 0x7ffd9f737950                                        ) ...
+> > >   1000.204 (         ): syscalls:sys_exit_nanosleep:0x0
+> > >      0.009 (1000.217 ms): sleep/7905  ... [continued]: nanosleep()) = 0
+> > > [root@jouet ~]#
+> > > 
+> > > Works, so the regression seems to be fixed, without looking at the code
+> > > that much:
+> > > 
+> > > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>  
+> > 
+> > But does this still work on x86_32? I'll test that out. Thanks for
+> > testing, but I may have another patch soon.
+> 
+> OK, it's still broken there with this patch. I got this:
+> 
+> # ls /sys/kernel/tracing/events/syscalls
+> enable
+> filter
+> sys_enter_nanosleep
+> sys_exit_nanosleep
+> 
+> But with this:
+> 
+> 	return !strcmp(sym + 9, name + 3) || !strcmp(sym + 3, name + 3);
+> 
+> I get all the syscalls back. I'll make another patch.
 
-The patch does the same for the asm parts, for consistency
+Argh, rebuilding the world, since lots of places include ftrace.h...
 
-On processors like the 8xx on which insn fetching is pretty slow,
-this speeds up registers save/restore
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v2: Swapped both patches in the serie to reduce number of impacted
-     lines and added the same modification in ppc_save_regs()
-
- arch/powerpc/include/asm/ppc_asm.h  |  5 +++++
- arch/powerpc/kernel/misc.S          | 10 ++++++++++
- arch/powerpc/kernel/ppc_save_regs.S |  4 ++++
- 3 files changed, 19 insertions(+)
-
-diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
-index 13f7f4c0e1ea..4bb765d0b758 100644
---- a/arch/powerpc/include/asm/ppc_asm.h
-+++ b/arch/powerpc/include/asm/ppc_asm.h
-@@ -80,11 +80,16 @@ END_FW_FTR_SECTION_IFSET(FW_FEATURE_SPLPAR)
- #else
- #define SAVE_GPR(n, base)	stw	n,GPR0+4*(n)(base)
- #define REST_GPR(n, base)	lwz	n,GPR0+4*(n)(base)
-+#ifdef CONFIG_CPU_BIG_ENDIAN
-+#define SAVE_NVGPRS(base)	stmw	13, GPR0+4*13(base)
-+#define REST_NVGPRS(base)	lmw	13, GPR0+4*13(base)
-+#else
- #define SAVE_NVGPRS(base)	SAVE_GPR(13, base); SAVE_8GPRS(14, base); \
- 				SAVE_10GPRS(22, base)
- #define REST_NVGPRS(base)	REST_GPR(13, base); REST_8GPRS(14, base); \
- 				REST_10GPRS(22, base)
- #endif
-+#endif
- 
- #define SAVE_2GPRS(n, base)	SAVE_GPR(n, base); SAVE_GPR(n+1, base)
- #define SAVE_4GPRS(n, base)	SAVE_2GPRS(n, base); SAVE_2GPRS(n+2, base)
-diff --git a/arch/powerpc/kernel/misc.S b/arch/powerpc/kernel/misc.S
-index 746ee0320ad4..a316d90a5c26 100644
---- a/arch/powerpc/kernel/misc.S
-+++ b/arch/powerpc/kernel/misc.S
-@@ -49,6 +49,10 @@ _GLOBAL(setjmp)
- 	PPC_STL	r0,0(r3)
- 	PPC_STL	r1,SZL(r3)
- 	PPC_STL	r2,2*SZL(r3)
-+#if defined(CONFIG_PPC32) && defined(CONFIG_CPU_BIG_ENDIAN)
-+	mfcr	r12
-+	stmw	r12, 3*SZL(r3)
-+#else
- 	mfcr	r0
- 	PPC_STL	r0,3*SZL(r3)
- 	PPC_STL	r13,4*SZL(r3)
-@@ -70,10 +74,15 @@ _GLOBAL(setjmp)
- 	PPC_STL	r29,20*SZL(r3)
- 	PPC_STL	r30,21*SZL(r3)
- 	PPC_STL	r31,22*SZL(r3)
-+#endif
- 	li	r3,0
- 	blr
- 
- _GLOBAL(longjmp)
-+#if defined(CONFIG_PPC32) && defined(CONFIG_CPU_BIG_ENDIAN)
-+	lmw	r12, 3*SZL(r3)
-+	mtcrf	0x38, r12
-+#else
- 	PPC_LL	r13,4*SZL(r3)
- 	PPC_LL	r14,5*SZL(r3)
- 	PPC_LL	r15,6*SZL(r3)
-@@ -95,6 +104,7 @@ _GLOBAL(longjmp)
- 	PPC_LL	r31,22*SZL(r3)
- 	PPC_LL	r0,3*SZL(r3)
- 	mtcrf	0x38,r0
-+#endif
- 	PPC_LL	r0,0(r3)
- 	PPC_LL	r1,SZL(r3)
- 	PPC_LL	r2,2*SZL(r3)
-diff --git a/arch/powerpc/kernel/ppc_save_regs.S b/arch/powerpc/kernel/ppc_save_regs.S
-index 1b1787d52896..d60316e70514 100644
---- a/arch/powerpc/kernel/ppc_save_regs.S
-+++ b/arch/powerpc/kernel/ppc_save_regs.S
-@@ -25,6 +25,9 @@
-  */
- _GLOBAL(ppc_save_regs)
- 	PPC_STL	r0,0*SZL(r3)
-+#if defined(CONFIG_PPC32) && defined(CONFIG_CPU_BIG_ENDIAN)
-+	stmw	r2, 2*SZL(r3)
-+#else
- 	PPC_STL	r2,2*SZL(r3)
- 	PPC_STL	r3,3*SZL(r3)
- 	PPC_STL	r4,4*SZL(r3)
-@@ -55,6 +58,7 @@ _GLOBAL(ppc_save_regs)
- 	PPC_STL	r29,29*SZL(r3)
- 	PPC_STL	r30,30*SZL(r3)
- 	PPC_STL	r31,31*SZL(r3)
-+#endif
- 	/* go up one stack frame for SP */
- 	PPC_LL	r4,0(r1)
- 	PPC_STL	r4,1*SZL(r3)
--- 
-2.13.3
+- Arnaldo
