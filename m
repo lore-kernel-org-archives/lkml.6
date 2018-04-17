@@ -1,167 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752911AbeDQOHc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:07:32 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:39558 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752387AbeDQOHa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:07:30 -0400
-From: Matt Redfearn <matt.redfearn@mips.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] MIPS: memset.S: Reinstate delay slot indentation
-Date: Tue, 17 Apr 2018 15:06:12 +0100
-Message-ID: <1523973972-25633-3-git-send-email-matt.redfearn@mips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523973972-25633-1-git-send-email-matt.redfearn@mips.com>
-References: <1523973972-25633-1-git-send-email-matt.redfearn@mips.com>
+        id S1753014AbeDQOHm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:07:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752592AbeDQOHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:07:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E412183B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
+Date: Tue, 17 Apr 2018 16:07:37 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: viro@zeniv.linux.org.uk, arnd@arndb.de, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+Subject: Re: [PATCH] hsi: clients: Change return type to vm_fault_t
+Message-ID: <20180417140737.45xtk7qanthxzgsm@earth.universe>
+References: <20180417135742.GA30368@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1523973990-452060-18537-58458-3
-X-BESS-VER: 2018.4.1-r1804121648
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192082
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gylny6llc5krr34d"
+Content-Disposition: inline
+In-Reply-To: <20180417135742.GA30368@jordon-HP-15-Notebook-PC>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Assembly language within the MIPS kernel conventionally indents
-instructions which are in a branch delay slot to make them easier to
-see. Commit 8483b14aaa81 ("MIPS: lib: memset: Whitespace fixes") rather
-inexplicably removed all of these indentations from memset.S. Reinstate
-the convention for all instructions in a branch delay slot. This
-effectively reverts the above commit, plus other locations introduced
-with MIPSR6 support.
 
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
----
+--gylny6llc5krr34d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/mips/lib/memset.S | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+Hi,
 
-diff --git a/arch/mips/lib/memset.S b/arch/mips/lib/memset.S
-index 84e91f4fdf53..085cc86f624f 100644
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -95,7 +95,7 @@
- 
- 	sltiu		t0, a2, STORSIZE	/* very small region? */
- 	bnez		t0, .Lsmall_memset\@
--	andi		t0, a0, STORMASK	/* aligned? */
-+	 andi		t0, a0, STORMASK	/* aligned? */
- 
- #ifdef CONFIG_CPU_MICROMIPS
- 	move		t8, a1			/* used by 'swp' instruction */
-@@ -103,12 +103,12 @@
- #endif
- #ifndef CONFIG_CPU_DADDI_WORKAROUNDS
- 	beqz		t0, 1f
--	PTR_SUBU	t0, STORSIZE		/* alignment in bytes */
-+	 PTR_SUBU	t0, STORSIZE		/* alignment in bytes */
- #else
- 	.set		noat
- 	li		AT, STORSIZE
- 	beqz		t0, 1f
--	PTR_SUBU	t0, AT			/* alignment in bytes */
-+	 PTR_SUBU	t0, AT			/* alignment in bytes */
- 	.set		at
- #endif
- 
-@@ -149,7 +149,7 @@
- 1:	ori		t1, a2, 0x3f		/* # of full blocks */
- 	xori		t1, 0x3f
- 	beqz		t1, .Lmemset_partial\@	/* no block to fill */
--	andi		t0, a2, 0x40-STORSIZE
-+	 andi		t0, a2, 0x40-STORSIZE
- 
- 	PTR_ADDU	t1, a0			/* end address */
- 	.set		reorder
-@@ -174,7 +174,7 @@
- 	.set		at
- #endif
- 	jr		t1
--	PTR_ADDU	a0, t0			/* dest ptr */
-+	 PTR_ADDU	a0, t0			/* dest ptr */
- 
- 	.set		push
- 	.set		noreorder
-@@ -186,7 +186,7 @@
- 
- 	beqz		a2, 1f
- #ifndef CONFIG_CPU_MIPSR6
--	PTR_ADDU	a0, a2			/* What's left */
-+	 PTR_ADDU	a0, a2			/* What's left */
- 	R10KCBARRIER(0(ra))
- #ifdef __MIPSEB__
- 	EX(LONG_S_R, a1, -1(a0), .Llast_fixup\@)
-@@ -194,7 +194,7 @@
- 	EX(LONG_S_L, a1, -1(a0), .Llast_fixup\@)
- #endif
- #else
--	PTR_SUBU	t0, $0, a2
-+	 PTR_SUBU	t0, $0, a2
- 	PTR_ADDIU	t0, 1
- 	STORE_BYTE(0)
- 	STORE_BYTE(1)
-@@ -210,11 +210,11 @@
- 0:
- #endif
- 1:	jr		ra
--	move		a2, zero
-+	 move		a2, zero
- 
- .Lsmall_memset\@:
- 	beqz		a2, 2f
--	PTR_ADDU	t1, a0, a2
-+	 PTR_ADDU	t1, a0, a2
- 
- 1:	PTR_ADDIU	a0, 1			/* fill bytewise */
- 	R10KCBARRIER(0(ra))
-@@ -222,7 +222,7 @@
- 	 EX(sb, a1, -1(a0), .Lsmall_fixup\@)
- 
- 2:	jr		ra			/* done */
--	move		a2, zero
-+	 move		a2, zero
- 	.if __memset == 1
- 	END(memset)
- 	.set __memset, 0
-@@ -238,7 +238,7 @@
- 
- .Lfirst_fixup\@:
- 	jr	ra
--	nop
-+	 nop
- 
- .Lfwd_fixup\@:
- 	PTR_L		t0, TI_TASK($28)
-@@ -246,7 +246,7 @@
- 	LONG_L		t0, THREAD_BUADDR(t0)
- 	LONG_ADDU	a2, t1
- 	jr		ra
--	LONG_SUBU	a2, t0
-+	 LONG_SUBU	a2, t0
- 
- .Lpartial_fixup\@:
- 	PTR_L		t0, TI_TASK($28)
-@@ -278,7 +278,7 @@
- LEAF(memset)
- EXPORT_SYMBOL(memset)
- 	beqz		a1, 1f
--	move		v0, a0			/* result */
-+	 move		v0, a0			/* result */
- 
- 	andi		a1, 0xff		/* spread fillword */
- 	LONG_SLL		t1, a1, 8
--- 
-2.7.4
+On Tue, Apr 17, 2018 at 07:27:42PM +0530, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+>=20
+> Reference id -> 1c8f422059ae ("mm: change return type to
+> vm_fault_t")
+>=20
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
+>  drivers/hsi/clients/cmt_speech.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/hsi/clients/cmt_speech.c b/drivers/hsi/clients/cmt_s=
+peech.c
+> index 324cb8e..a1d4b93 100644
+> --- a/drivers/hsi/clients/cmt_speech.c
+> +++ b/drivers/hsi/clients/cmt_speech.c
+> @@ -1098,7 +1098,7 @@ static void cs_hsi_stop(struct cs_hsi_iface *hi)
+>  	kfree(hi);
+>  }
+>=20
+> -static int cs_char_vma_fault(struct vm_fault *vmf)
+> +static vm_fault_t cs_char_vma_fault(struct vm_fault *vmf)
+>  {
+>  	struct cs_char *csdata =3D vmf->vma->vm_private_data;
+>  	struct page *page;
+> --
+> 1.9.1
+>=20
+
+Thanks, queued to hsi-next.
+
+-- Sebastian
+
+--gylny6llc5krr34d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrV/6QACgkQ2O7X88g7
++pobzA//ZAv/MiqmprUGMP+eBbi8Lpe9U5bRXJdJMT0BVz9v6XusbFtorIl4aG3b
+z0sMO0VlOBl5pqWlWhtQOYNDQVnadi0dbgY3UPdptJTss1MfneyndQZT16HsHnNI
+SmJOurADAjreE6TyBvbLNm6qCZoWIto0mMuMZPWt75pLSTcqnFsCUbx5gzqSUlli
+pfOKzWAvmluKaX3v8FeL9mu+CokC3NyLmJ3hJlmiu0laD9PQel3BRNY/B+Ko516Y
+vDPQXfDsGuEKzm+xkJY9mK7JgrmIrLD4jrJetqqPMnVLApxvKuDYJhj69Er85o0R
+8n/05/R4/EJ//HEDEBtFPvE6ATU55D4SzamjB1BsRi5YNuaxRL0pikqWJUi6aFgF
+iqloBmVfRuf5vChH15KzH+l4UQtFApLJ2gJOWgzezVq+CyTsBQgsmOptpB7w3M8M
+xFs8Fe83SDEgYhoQ+t0ve6Kc+dWyVrmUKAKZe7jkevWYrF6poa6XRCyoDIs4bK7p
+PdO0Q+CfZyfHDjDWGi+3L+APTBrun9glXbQw69oAs7ryIqmi1YtdbRViUOlA7xu2
+7gh6L6tOW0sIszs+sMMuBYSKYHV5k99h63wZSWS+wimJNPO6HRg87+Kz2eKg2nZk
+YiwckB64q3dCkcNuf0s2lWDn44XhhyZE/EpdHLOjzASI9C21bjY=
+=cj2n
+-----END PGP SIGNATURE-----
+
+--gylny6llc5krr34d--
