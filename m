@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48P1LWAQDHH2/hmJtjNdTQEkgZScaxSXfFm0od6M8yn7SSqyryJW+sj9RiVW0e/wLODYA+7
-ARC-Seal: i=1; a=rsa-sha256; t=1523981038; cv=none;
+X-Google-Smtp-Source: AIpwx48C0SeaYepuou6PKFPqCD8xIhggz5aAKb/TW3Eoh1TcqwCg5CPK9M8MbCgQI1oBO025sQ13
+ARC-Seal: i=1; a=rsa-sha256; t=1523981035; cv=none;
         d=google.com; s=arc-20160816;
-        b=keWajSFvJ8q5m2kwpxNGQkdqhuN37Stsw3T4QghiH0DpDDXz7kTGORpKLcAfxRrNGM
-         sm5BadEWsAsIWAXKOlDyomEi+qgM4gSSFTp6i5s2gHex/BaLkb/sVX7Tm9oA+wF9t4x6
-         xkLLr9Ix+t7PcgOraCLK9VKHUjCk37+CNJshznraqgCSL9U1cZeVbn0Gcn3sHmlA0bug
-         IrTmOapnqu+CsGaBjQ2MmgnzAqz70Gwlp1IbuaF0vcpiuIGo/QKALiJPTp5u2jZs8NLu
-         hYhigzPsDcHjVhX+w0HVFfQ+n/P+V5WP+3un9+g801l7uA9oJiYElby+2mACeSu6dgcY
-         GX0A==
+        b=v5DaBxp5dXq+Ov4oDDWGA3/A/gW4cFfdB9RFqelK5OeDS6nfgsnj5+ZST5Bf7SmC28
+         7q1aRX6vH7N+SGp8MK9nQQAkhwK3C57bjGv3nFrqCHswi9KbQO8n/soXpXiXdkS3ZhAG
+         sgQj89k45wGWwyK+VhO3NT65XdELiLkH7HtD2rOIknGa7AVsgg8YYbqMILqkBQkPxjbB
+         kQ2X86jyL6cza2KTrr+UhOYVVBb8paOwK2SbRIfrhTGflWpjQKjcJN7bqkGxFSQkpRqs
+         LNcD8ee6sTGJ6UJzFuFSHEqbwIAsefgChlqgfQy/LuRelXa69v+aeWYrDT+sf5fqjDqR
+         IrcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=/W+aeeh8SHJU51cjh2XoHU8FLgpaCvnsRP1dq9RLPZQ=;
-        b=cSp0+sgUDUvUE0KgDK5Q/ml11p3LHaA3XQZUq2Ve3D+jYjUrNMecoIJR+Zc7B1+K99
-         1H4j6+MjCOR/gFlCeIG3Elbu0hbwKjqi2xXSGaoJ8OlMotuYMauYbK2ZBdtfXbedSQZE
-         zgZwqJlgPW2frYAEaddg1Q9hb61hYyIVwzi8tM2oj66J8yZoBhAUR6pXdBtaXLtyIpoP
-         kwdDLRAQIq4pTS+7Vum7QZ9LPh6aK0BMWV7uekyZxALQWRri9TfvK9NAzU2TXwLrGBPt
-         YGG2MHV0QWqTww1x9LqhMiJuAU7sCikDxNwweJ0vsbmICuvec0kLWZofq8W1nNAxPtOI
-         QSZQ==
+        bh=Isjd6v8/1g8s0bfztld3gOdFSckbL7MZM6PqujuvPqk=;
+        b=z8u2hy264TC2n9ClJbNjm5BonEimkswfGdlntd3rW45JzIyXfiwcDmYJG9rRKzd7+b
+         9kenpnKVvR1t7lQchFnjoTVT+4f/IH+joBtdFQsdh0jmMYmJUbKsZkP+7qMd0XTKIDJD
+         z4SN7PQ7qnBL1426XONKjrJpKmXalWOPlqxUJPtuYVzP7Mc4/fKYn+FAoFcCPUA/lPog
+         POi7MLNCOqsuQj13aXJ1gwIq4ddueLI4Ung8nPWcmcNxe8NgDJVRxrjc08C3C7AekdA2
+         k3TPcAqCKnyCe8GHKN3q021Mf9+9QYbdXMIsGRihMEcl0516+iwg2t54c2IrBUUe4PSc
+         1/uw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Li RongQing <lirongqing@baidu.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	jgross@suse.com,
-	Dou Liyang <douly.fnst@cn.fujitsu.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	hpa@zytor.com
-Subject: [PATCH 4.15 25/53] x86/apic: Fix signedness bug in APIC ID validity checks
-Date: Tue, 17 Apr 2018 17:58:50 +0200
-Message-Id: <20180417155724.340156421@linuxfoundation.org>
+	Ben Greear <greearb@candelatech.com>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+	Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.15 24/53] ath9k: Protect queue draining by rcu_read_lock()
+Date: Tue, 17 Apr 2018 17:58:49 +0200
+Message-Id: <20180417155724.294002947@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009870580406629?=
-X-GMAIL-MSGID: =?utf-8?q?1598009941575843067?=
+X-GMAIL-THRID: =?utf-8?q?1598009863461041684?=
+X-GMAIL-MSGID: =?utf-8?q?1598009938556158791?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,160 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Li RongQing <lirongqing@baidu.com>
+From: Toke Høiland-Jørgensen <toke@toke.dk>
 
-commit a774635db5c430cbf21fa5d2f2df3d23aaa8e782 upstream.
+commit 182b1917109892ab9f26d66bfdcbc4ba6f0a0a65 upstream.
 
-The APIC ID as parsed from ACPI MADT is validity checked with the
-apic->apic_id_valid() callback, which depends on the selected APIC type.
+When ath9k was switched over to use the mac80211 intermediate queues,
+node cleanup now drains the mac80211 queues. However, this call path is
+not protected by rcu_read_lock() as it was previously entirely internal
+to the driver which uses its own locking.
 
-For non X2APIC types APIC IDs >= 0xFF are invalid, but values > 0x7FFFFFFF
-are detected as valid. This happens because the 'apicid' argument of the
-apic_id_valid() callback is type 'int'. So the resulting comparison
+This leads to a possible rcu_dereference() without holding
+rcu_read_lock(); but only if a station is cleaned up while having
+packets queued on the TXQ. Fix this by adding the rcu_read_lock() to the
+caller in ath9k.
 
-   apicid < 0xFF
-
-evaluates to true for all unsigned int values > 0x7FFFFFFF which are handed
-to default_apic_id_valid(). As a consequence, invalid APIC IDs in !X2APIC
-mode are considered valid and accounted as possible CPUs.
-
-Change the apicid argument type of the apic_id_valid() callback to u32 so
-the evaluation is unsigned and returns the correct result.
-
-[ tglx: Massaged changelog ]
-
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 50f08edf9809 ("ath9k: Switch to using mac80211 intermediate software queues.")
 Cc: stable@vger.kernel.org
-Cc: jgross@suse.com
-Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: hpa@zytor.com
-Link: https://lkml.kernel.org/r/1523322966-10296-1-git-send-email-lirongqing@baidu.com
+Reported-by: Ben Greear <greearb@candelatech.com>
+Signed-off-by: Toke Høiland-Jørgensen <toke@toke.dk>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/apic.h          |    4 ++--
- arch/x86/kernel/acpi/boot.c          |   13 ++++++++-----
- arch/x86/kernel/apic/apic_common.c   |    2 +-
- arch/x86/kernel/apic/apic_numachip.c |    2 +-
- arch/x86/kernel/apic/x2apic.h        |    2 +-
- arch/x86/kernel/apic/x2apic_phys.c   |    2 +-
- arch/x86/kernel/apic/x2apic_uv_x.c   |    2 +-
- arch/x86/xen/apic.c                  |    2 +-
- 8 files changed, 16 insertions(+), 13 deletions(-)
+ drivers/net/wireless/ath/ath9k/xmit.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -319,7 +319,7 @@ struct apic {
- 	/* Probe, setup and smpboot functions */
- 	int	(*probe)(void);
- 	int	(*acpi_madt_oem_check)(char *oem_id, char *oem_table_id);
--	int	(*apic_id_valid)(int apicid);
-+	int	(*apic_id_valid)(u32 apicid);
- 	int	(*apic_id_registered)(void);
+--- a/drivers/net/wireless/ath/ath9k/xmit.c
++++ b/drivers/net/wireless/ath/ath9k/xmit.c
+@@ -2892,6 +2892,8 @@ void ath_tx_node_cleanup(struct ath_soft
+ 	struct ath_txq *txq;
+ 	int tidno;
  
- 	bool	(*check_apicid_used)(physid_mask_t *map, int apicid);
-@@ -492,7 +492,7 @@ static inline unsigned int read_apic_id(
- 	return apic->get_apic_id(reg);
- }
- 
--extern int default_apic_id_valid(int apicid);
-+extern int default_apic_id_valid(u32 apicid);
- extern int default_acpi_madt_oem_check(char *, char *);
- extern void default_setup_apic_routing(void);
- 
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -200,7 +200,7 @@ acpi_parse_x2apic(struct acpi_subtable_h
- {
- 	struct acpi_madt_local_x2apic *processor = NULL;
- #ifdef CONFIG_X86_X2APIC
--	int apic_id;
-+	u32 apic_id;
- 	u8 enabled;
- #endif
- 
-@@ -222,10 +222,13 @@ acpi_parse_x2apic(struct acpi_subtable_h
- 	 * to not preallocating memory for all NR_CPUS
- 	 * when we use CPU hotplug.
- 	 */
--	if (!apic->apic_id_valid(apic_id) && enabled)
--		printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
--	else
--		acpi_register_lapic(apic_id, processor->uid, enabled);
-+	if (!apic->apic_id_valid(apic_id)) {
-+		if (enabled)
-+			pr_warn(PREFIX "x2apic entry ignored\n");
-+		return 0;
-+	}
++	rcu_read_lock();
 +
-+	acpi_register_lapic(apic_id, processor->uid, enabled);
- #else
- 	printk(KERN_WARNING PREFIX "x2apic entry ignored\n");
- #endif
---- a/arch/x86/kernel/apic/apic_common.c
-+++ b/arch/x86/kernel/apic/apic_common.c
-@@ -40,7 +40,7 @@ int default_check_phys_apicid_present(in
- 	return physid_isset(phys_apicid, phys_cpu_present_map);
+ 	for (tidno = 0; tidno < IEEE80211_NUM_TIDS; tidno++) {
+ 		tid = ath_node_to_tid(an, tidno);
+ 		txq = tid->txq;
+@@ -2909,6 +2911,8 @@ void ath_tx_node_cleanup(struct ath_soft
+ 		if (!an->sta)
+ 			break; /* just one multicast ath_atx_tid */
+ 	}
++
++	rcu_read_unlock();
  }
  
--int default_apic_id_valid(int apicid)
-+int default_apic_id_valid(u32 apicid)
- {
- 	return (apicid < 255);
- }
---- a/arch/x86/kernel/apic/apic_numachip.c
-+++ b/arch/x86/kernel/apic/apic_numachip.c
-@@ -56,7 +56,7 @@ static u32 numachip2_set_apic_id(unsigne
- 	return id << 24;
- }
- 
--static int numachip_apic_id_valid(int apicid)
-+static int numachip_apic_id_valid(u32 apicid)
- {
- 	/* Trust what bootloader passes in MADT */
- 	return 1;
---- a/arch/x86/kernel/apic/x2apic.h
-+++ b/arch/x86/kernel/apic/x2apic.h
-@@ -1,6 +1,6 @@
- /* Common bits for X2APIC cluster/physical modes. */
- 
--int x2apic_apic_id_valid(int apicid);
-+int x2apic_apic_id_valid(u32 apicid);
- int x2apic_apic_id_registered(void);
- void __x2apic_send_IPI_dest(unsigned int apicid, int vector, unsigned int dest);
- unsigned int x2apic_get_apic_id(unsigned long id);
---- a/arch/x86/kernel/apic/x2apic_phys.c
-+++ b/arch/x86/kernel/apic/x2apic_phys.c
-@@ -101,7 +101,7 @@ static int x2apic_phys_probe(void)
- }
- 
- /* Common x2apic functions, also used by x2apic_cluster */
--int x2apic_apic_id_valid(int apicid)
-+int x2apic_apic_id_valid(u32 apicid)
- {
- 	return 1;
- }
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -554,7 +554,7 @@ static void uv_send_IPI_all(int vector)
- 	uv_send_IPI_mask(cpu_online_mask, vector);
- }
- 
--static int uv_apic_id_valid(int apicid)
-+static int uv_apic_id_valid(u32 apicid)
- {
- 	return 1;
- }
---- a/arch/x86/xen/apic.c
-+++ b/arch/x86/xen/apic.c
-@@ -112,7 +112,7 @@ static int xen_madt_oem_check(char *oem_
- 	return xen_pv_domain();
- }
- 
--static int xen_id_always_valid(int apicid)
-+static int xen_id_always_valid(u32 apicid)
- {
- 	return 1;
- }
+ #ifdef CONFIG_ATH9K_TX99
