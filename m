@@ -1,87 +1,151 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753985AbeDQOgT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:36:19 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:57931 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752952AbeDQOgG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:36:06 -0400
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: ysato@users.sourceforge.jp, dalias@libc.org,
-        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] sh: mm: Fix unprotected access to struct device
-Date: Tue, 17 Apr 2018 16:35:51 +0200
-Message-Id: <1523975751-12826-1-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
+        id S1754007AbeDQOgr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:36:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37736 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752744AbeDQOgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:36:42 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 189DB206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+From: Andy Lutomirski <luto@kernel.org>
+To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH] x86/entry/64/compat: Preserve r8-r11 in int $0x80
+Date: Tue, 17 Apr 2018 07:36:36 -0700
+Message-Id: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
-operations observe dev->dma_pfn_offset") the generic DMA allocation
-function on which the SH 'dma_alloc_coherent()' function relies on,
-accesses the 'dma_pfn_offset' field of struct device.
+32-bit user code that uses int $80 doesn't care about r8-r11.  There is,
+however, some 64-bit user code that intentionally uses int $0x80 to
+invoke 32-bit system calls.  From what I've seen, basically all such
+code assumes that r8-r15 are all preserved, but the kernel clobbers
+r8-r11.  Since I doubt that there's any code that depends on int $0x80
+zeroing r8-r11, change the kernel to preserve them.
 
-Unfortunately the 'dma_generic_alloc_coherent()' function is called from
-several places with a NULL struct device argument, halting the CPU
-during the boot process.
+I suspect that very little user code is broken by the old clobber,
+since r8-r11 are only rarely allocated by gcc, and they're clobbered
+by function calls, so they only way we'd see a problem is if the
+same function that invokes int $0x80 also spills something important
+to one of these registers.
 
-This patch fixes the issue by protecting access to dev->dma_pfn_offset,
-with a trivial check for validity. It also passes a valid 'struct device'
-in the 'platform_resource_setup_memory' function which is the main user
-of 'dma_alloc_coherent()', and inserts a WARN_ON() check to remind to future
-(and existing) bogus users of this function to provide a valid 'struct device'
-whenever possible.
+The current behavior seems to date back to the historical commit
+"[PATCH] x86-64 merge for 2.6.4".  Before that, all regs were
+preserved.  I can't find any explanation of why this change was made.
 
-Fixes: ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset")
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+This patch also updates the test_syscall_vdso_32 testcase to verify
+the new behavior, and it strengthens the test to make sure that
+the kernel doesn't accidentally permute r8..r15.
+
+Suggested-by: Denys Vlasenko <dvlasenk@redhat.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/sh/mm/consistent.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
-index 8ce9869..ec177c0 100644
---- a/arch/sh/mm/consistent.c
-+++ b/arch/sh/mm/consistent.c
-@@ -59,7 +59,9 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+Ingo, Thomas: this could be a -stable candidate, but it's apparently not
+severe enough for many people to have noticed.
 
- 	split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
+ arch/x86/entry/entry_64_compat.S                |  8 +++---
+ tools/testing/selftests/x86/test_syscall_vdso.c | 35 +++++++++++++++----------
+ 2 files changed, 25 insertions(+), 18 deletions(-)
 
--	*dma_handle = virt_to_phys(ret) - PFN_PHYS(dev->dma_pfn_offset);
-+	*dma_handle = virt_to_phys(ret);
-+	if (!WARN_ON(!dev))
-+		*dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
-
- 	return ret_nocache;
- }
-@@ -69,9 +71,12 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
- 			       unsigned long attrs)
- {
- 	int order = get_order(size);
--	unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
-+	unsigned long pfn = (dma_handle >> PAGE_SHIFT);
- 	int k;
-
-+	if (!WARN_ON(!dev))
-+		pfn += dev->dma_pfn_offset;
-+
- 	for (k = 0; k < (1 << order); k++)
- 		__free_pages(pfn_to_page(pfn + k), 0);
-
-@@ -143,7 +148,7 @@ int __init platform_resource_setup_memory(struct platform_device *pdev,
- 	if (!memsize)
+diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+index 08425c42f8b7..e4b94b7494c6 100644
+--- a/arch/x86/entry/entry_64_compat.S
++++ b/arch/x86/entry/entry_64_compat.S
+@@ -368,13 +368,13 @@ ENTRY(entry_INT80_compat)
+ 	pushq	%rdx			/* pt_regs->dx */
+ 	pushq	%rcx			/* pt_regs->cx */
+ 	pushq	$-ENOSYS		/* pt_regs->ax */
+-	pushq   $0			/* pt_regs->r8  = 0 */
++	pushq   %r8			/* pt_regs->r8 */
+ 	xorl	%r8d, %r8d		/* nospec   r8 */
+-	pushq   $0			/* pt_regs->r9  = 0 */
++	pushq   %r9			/* pt_regs->r9 */
+ 	xorl	%r9d, %r9d		/* nospec   r9 */
+-	pushq   $0			/* pt_regs->r10 = 0 */
++	pushq   %r10			/* pt_regs->r10 */
+ 	xorl	%r10d, %r10d		/* nospec   r10 */
+-	pushq   $0			/* pt_regs->r11 = 0 */
++	pushq   %r11			/* pt_regs->r11 */
+ 	xorl	%r11d, %r11d		/* nospec   r11 */
+ 	pushq   %rbx                    /* pt_regs->rbx */
+ 	xorl	%ebx, %ebx		/* nospec   rbx */
+diff --git a/tools/testing/selftests/x86/test_syscall_vdso.c b/tools/testing/selftests/x86/test_syscall_vdso.c
+index 40370354d4c1..c9c3281077bc 100644
+--- a/tools/testing/selftests/x86/test_syscall_vdso.c
++++ b/tools/testing/selftests/x86/test_syscall_vdso.c
+@@ -100,12 +100,19 @@ asm (
+ 	"	shl	$32, %r8\n"
+ 	"	orq	$0x7f7f7f7f, %r8\n"
+ 	"	movq	%r8, %r9\n"
+-	"	movq	%r8, %r10\n"
+-	"	movq	%r8, %r11\n"
+-	"	movq	%r8, %r12\n"
+-	"	movq	%r8, %r13\n"
+-	"	movq	%r8, %r14\n"
+-	"	movq	%r8, %r15\n"
++	"	incq	%r9\n"
++	"	movq	%r9, %r10\n"
++	"	incq	%r10\n"
++	"	movq	%r10, %r11\n"
++	"	incq	%r11\n"
++	"	movq	%r11, %r12\n"
++	"	incq	%r12\n"
++	"	movq	%r12, %r13\n"
++	"	incq	%r13\n"
++	"	movq	%r13, %r14\n"
++	"	incq	%r14\n"
++	"	movq	%r14, %r15\n"
++	"	incq	%r15\n"
+ 	"	ret\n"
+ 	"	.code32\n"
+ 	"	.popsection\n"
+@@ -128,12 +135,13 @@ int check_regs64(void)
+ 	int err = 0;
+ 	int num = 8;
+ 	uint64_t *r64 = &regs64.r8;
++	uint64_t expected = 0x7f7f7f7f7f7f7f7fULL;
+ 
+ 	if (!kernel_is_64bit)
  		return 0;
-
--	buf = dma_alloc_coherent(NULL, memsize, &dma_handle, GFP_KERNEL);
-+	buf = dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
- 	if (!buf) {
- 		pr_warning("%s: unable to allocate memory\n", name);
- 		return -ENOMEM;
---
-2.7.4
+ 
+ 	do {
+-		if (*r64 == 0x7f7f7f7f7f7f7f7fULL)
++		if (*r64 == expected++)
+ 			continue; /* register did not change */
+ 		if (syscall_addr != (long)&int80) {
+ 			/*
+@@ -147,18 +155,17 @@ int check_regs64(void)
+ 				continue;
+ 			}
+ 		} else {
+-			/* INT80 syscall entrypoint can be used by
++			/*
++			 * INT80 syscall entrypoint can be used by
+ 			 * 64-bit programs too, unlike SYSCALL/SYSENTER.
+ 			 * Therefore it must preserve R12+
+ 			 * (they are callee-saved registers in 64-bit C ABI).
+ 			 *
+-			 * This was probably historically not intended,
+-			 * but R8..11 are clobbered (cleared to 0).
+-			 * IOW: they are the only registers which aren't
+-			 * preserved across INT80 syscall.
++			 * Starting in Linux 4.17 (and any kernel that
++			 * backports the change), R8..11 are preserved.
++			 * Historically (and probably unintentionally), they
++			 * were clobbered or zeroed.
+ 			 */
+-			if (*r64 == 0 && num <= 11)
+-				continue;
+ 		}
+ 		printf("[FAIL]\tR%d has changed:%016llx\n", num, *r64);
+ 		err++;
+-- 
+2.14.3
