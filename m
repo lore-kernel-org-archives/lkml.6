@@ -1,85 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752359AbeDQIX1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 04:23:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33550 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752609AbeDQIVO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:21:14 -0400
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: jeyu@kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Cc: borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
-        brueckner@linux.vnet.ibm.com, heiko.carstens@de.ibm.com,
-        peterz@infradead.org, acme@kernel.org, me@tobin.cc,
-        keescook@chromium.org, Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH] modules: Fix display of wrong  module .text address
-Date: Tue, 17 Apr 2018 10:20:54 +0200
-X-Mailer: git-send-email 2.13.5
-X-TM-AS-GCONF: 00
-x-cbid: 18041708-0012-0000-0000-000005CBB89C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041708-0013-0000-0000-0000194801A6
-Message-Id: <20180417082054.26978-1-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170075
+        id S1752481AbeDQIYn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 04:24:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44232 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752254AbeDQIXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 04:23:15 -0400
+Date: Tue, 17 Apr 2018 10:23:12 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+cc: Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>, Jessica Yu <jeyu@kernel.org>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 05/10] livepatch: Support separate list for replaced
+ patches.
+In-Reply-To: <20180416190425.tk7nnbqbmaxeniud@treble>
+Message-ID: <alpine.LSU.2.21.1804171018500.12184@pobox.suse.cz>
+References: <20180323224410.vuq5cabfprqhd6ej@treble> <20180326101107.bbloeh5l276on7uz@pathway.suse.cz> <20180406195049.dtfebzfdkbvv6yex@treble> <20180410083455.l26dgo5kx4cy7bc7@pathway.suse.cz> <20180410174206.l3uk6lchhzxvn75x@treble>
+ <alpine.LSU.2.21.1804110956430.28885@pobox.suse.cz> <20180411123214.mfpkbrirze32phrb@treble> <20180411141711.cwceg7o5ttjgebii@pathway.suse.cz> <20180411154852.3yjab3ot76qicw6m@treble> <20180416145811.x4lvtm5kxyigbp56@pathway.suse.cz>
+ <20180416190425.tk7nnbqbmaxeniud@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In kernel v4.16.0 the module .text address is displayed
-wrong when using /sys/module/*/sections/.text file.
-Commit ef0010a30935 ("vsprintf: don't use 'restricted_pointer()' when
-not restricting")
-is the first bad commit.
 
-Here is the issue, using module qeth_l2 on s390 which is the
-ethernet device driver:
+> > > > Second, unrelated patches must never patch the same functions.
+> > > > Otherwise we would not be able to define which implementation
+> > > > should be used. This is especially important when a patch is
+> > > > removed and we need to fallback either to another patch or
+> > > > original code. Yes, it makes perfect sense. But it needs code
+> > > > that will check it, refuse loading the patch, ... It is not
+> > > > complicated. But it is rather additional code than
+> > > > simplification. I might make livepatching more safe
+> > > > but probably not simplify the code.
+> > > 
+> > > We don't need to enforce that.  The func stack can stay.  If somebody
+> > > wants to patch the same function multiple times (without using
+> > > 'replace'), that's inadvisable, but it's also their business.  They're
+> > > responsible for the tooling to ensure the patch stack order is sane.
+> > 
+> > 
+> > While it might make sense to ignore the patch stack (ordering) for
+> > the enable operation. Do we really want to ignore it when disabling
+> > a patch.
+> > 
+> > By other words, do we want to allow disabling a patch that is in
+> > the middle of the stack, only partly in use? Does not this allow
+> > some other crazy scenarios? Is it really the user business?
+> > Will it make our life easier?
+> 
+> If there's no longer a patch stack, then there's no concept of a middle.
+> We would expect the patches to be independent of one another, and so
+> disabling any of them independently would be harmless.
+> 
+> If any of the patches share a func, and the user disables one in the
+> "middle", it's not our job to support that.  The vendor / patch author
+> should prevent such cases from occurring with tooling, packaging,
+> documentation, etc.  Or they can just use 'replace'.
+> 
+> We can already have similar unexpected situations today.  For example,
+> what if patch B is a cumulative superset of patch A, but the user
+> mistakenly loads patch A (without replace) *after* loading patch B?
+> Then some unforeseen craziness could ensue.
+> 
+> We can't control all such scenarios (and that's ok), but we shouldn't
+> pretend that we support them.
 
-[root@s35lp76 ~]# lsmod
-Module                  Size  Used by
-qeth_l2                94208  1
-...
+FWIW I agree with the above. Provided we keep the func stack.
 
-[root@s35lp76 ~]# cat /proc/modules | egrep '^qeth_l2'
-qeth_l2 94208 1 - Live 0x000003ff80401000
-                       ^ This is the correct address in memory
-[root@s35lp76 ~]# cat /sys/module/qeth_l2/sections/.text
-0x0000000018ea8363      <---- This is a wrong address
-[root@s35lp76 ~]#
+[...]
 
-This breaks the perf tool which uses this address on s390
-to calculate start of .text section in memory.
+> > The question is what to do with the stack of patches. It will have
+> > no meaning for the enable operation because it will be done
+> > automatically. But what about the disable/unregistrer operation?
+> 
+> Assuming we got rid of the patch stack, would we even need to keep a
+> global list of patches anymore?
 
-Fix this by printing the correct (unhashed) address.
+There are places we walk through the list of patches (klp_add_nops() in 
+this patch set, klp_module_coming()), so probably yes.
 
-Thanks to Jessica Yu for helping on this.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Jessica Yu <jeyu@kernel.org>
----
- kernel/module.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/module.c b/kernel/module.c
-index a6e43a5806a1..77ab7211ddef 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1472,7 +1472,7 @@ static ssize_t module_sect_show(struct module_attribute *mattr,
- {
- 	struct module_sect_attr *sattr =
- 		container_of(mattr, struct module_sect_attr, mattr);
--	return sprintf(buf, "0x%pK\n", (void *)sattr->address);
-+	return sprintf(buf, "%#lx\n", kptr_restrict < 2 ? sattr->address : 0);
- }
- 
- static void free_sect_attrs(struct module_sect_attrs *sect_attrs)
--- 
-2.14.3
+Miroslav
