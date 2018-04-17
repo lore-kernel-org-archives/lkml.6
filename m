@@ -1,87 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752848AbeDQVjw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:39:52 -0400
-Received: from mail-pl0-f45.google.com ([209.85.160.45]:42023 "EHLO
-        mail-pl0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeDQVjt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:39:49 -0400
-X-Google-Smtp-Source: AIpwx48FyBUx5YSb8x2A71w/gCAm2jlwP3wx/zcYq7VGOaXWhMf3SQkhZsJ1I9XVER2YFXsVSfcO2g==
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Kees Cook <keescook@chromium.org>,
-        Paolo Valente <paolo.valente@linaro.org>
-Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
-References: <10360653.ov98egbaqx@natalenko.name>
- <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
- <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
- <2864697.7uzmEJovl2@natalenko.name>
- <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
- <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
- <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
- <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
- <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
- <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
- <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
- <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com>
- <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk>
- <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
- <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <07f263ff-cea6-ac3c-944b-0f36fee8ba25@kernel.dk>
-Date: Tue, 17 Apr 2018 15:39:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1753002AbeDQVlF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:41:05 -0400
+Received: from imap.thunk.org ([74.207.234.97]:53362 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751878AbeDQVlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 17:41:03 -0400
+Date: Tue, 17 Apr 2018 17:40:59 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: repeatable boot randomness inside KVM guest
+Message-ID: <20180417214059.GA23194@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20180414195921.GA10437@avx2>
+ <20180414224419.GA21830@thunk.org>
+ <20180415004134.GB15294@bombadil.infradead.org>
+ <1523956414.3250.5.camel@HansenPartnership.com>
+ <20180417114728.GA21954@bombadil.infradead.org>
+ <1523966232.3250.15.camel@HansenPartnership.com>
+ <20180417151650.GA16738@thunk.org>
+ <1523979759.3310.7.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523979759.3310.7.camel@HansenPartnership.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/17/18 3:25 PM, Kees Cook wrote:
-> On Tue, Apr 17, 2018 at 1:46 PM, Kees Cook <keescook@chromium.org> wrote:
->> I see elv.priv[1] assignments made in a few places -- is it possible
->> there is some kind of uninitialized-but-not-NULL state that can leak
->> in there?
-> 
-> Got it. This fixes it for me:
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 0dc9e341c2a7..859df3160303 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -363,7 +363,7 @@ static struct request *blk_mq_get_request(struct
-> request_queue *q,
-> 
->         rq = blk_mq_rq_ctx_init(data, tag, op);
->         if (!op_is_flush(op)) {
-> -               rq->elv.icq = NULL;
-> +               memset(&rq->elv, 0, sizeof(rq->elv));
->                 if (e && e->type->ops.mq.prepare_request) {
->                         if (e->type->icq_cache && rq_ioc(bio))
->                                 blk_mq_sched_assign_ioc(rq, bio);
-> @@ -461,7 +461,7 @@ void blk_mq_free_request(struct request *rq)
->                         e->type->ops.mq.finish_request(rq);
->                 if (rq->elv.icq) {
->                         put_io_context(rq->elv.icq->ioc);
-> -                       rq->elv.icq = NULL;
-> +                       memset(&rq->elv, 0, sizeof(rq->elv));
->                 }
->         }
+On Tue, Apr 17, 2018 at 04:42:39PM +0100, James Bottomley wrote:
+> Depends how the parameter is passed.  If it can be influenced from the
+> command line then a large class of "trusted boot" systems actually
+> don't verify the command line, so you can boot a trusted system and
+> still inject bogus command line parameters.  This is definitely true of
+> PC class secure boot.  Not saying it will always be so, just
+> illustrating why you don't necessarily want to expand the attack
+> surface.
 
-This looks like a BFQ problem, this should not be necessary. Paolo,
-you're calling your own prepare request handler from the insert
-as well, and your prepare request does nothing if rq->elv.icq == NULL.
+Sure, this is why I don't really like the scheme of relying on the
+command line.  For one thing, the command-line is public, so if the
+attacker can read /proc/cmdline, they'll have access to the entropy.
 
--- 
-Jens Axboe
+What I would prefer is an extension to the boot protocol so that some
+number of bytes would be passed to the kernel as a separate bag of
+bytes alongside the kernel command line and the initrd.
+
+The kernel would mix that into the random driver (which is written so
+the basic input pool and primary_crng can accept input in super-early
+boot).  This woud be done *before* we relocate the kernel, so that
+kernel ASLR code can relocate the kernel test to a properly
+unpredictable number --- so this really is quite super-early boot.
+
+> OK, in the UEFI ideal world where every component is a perfectly
+> written OS, perhaps you're right.  In the more real world, do you trust
+> the people who wrote the bootloader to understand and correctly
+> implement the cryptographically secure process of obtaining a random
+> input?
+
+In the default setup, I would expect the bootloader (such as grub)
+would read the random initialization data from disk.  So it would work
+much like systemd reading from /var/lib/systemd/random-seed.  And I
+would trust the bootloader implementors to be able to do this about as
+well as I would trust the systemd implementors.  :-)  It's not that
+hard, after all....
+
+						- Ted
