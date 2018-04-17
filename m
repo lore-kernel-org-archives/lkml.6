@@ -1,200 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753254AbeDQMnL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 08:43:11 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:37707 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752609AbeDQMnJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:43:09 -0400
-X-IronPort-AV: E=Sophos;i="5.48,463,1517842800";
-   d="scan'208";a="277046291"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v4] gpio: dwapb: Add support for 1 interrupt per port A GPIO
-Date: Tue, 17 Apr 2018 13:42:57 +0100
-Message-Id: <1523968977-4241-1-git-send-email-phil.edworthy@renesas.com>
+        id S1753289AbeDQMnR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 08:43:17 -0400
+Received: from m12-11.163.com ([220.181.12.11]:38423 "EHLO m12-11.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752609AbeDQMnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:43:15 -0400
+From: Wenle Chen <solomonwen@163.com>
+To: chenwenle@huawei.com
+Cc: jhogan@kernel.org, linux@roeck-us.net, rostedt@goodmis.org,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        solachenclever@hotmail.com, solomonwen@163.com
+Subject: [PATCH] scripts : sync the var type between memory and print
+Date: Tue, 17 Apr 2018 20:41:04 +0800
+Message-Id: <1523968864-3892-1-git-send-email-solomonwen@163.com>
 X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: C8CowAC3zb5669Va_FA+Pg--.57994S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CFy7ZFWUWr4xJw18GrW8Crg_yoW8Gr45pF
+        s0ka4rW3s7uFZ5Cr9rt340yFyrAws5AF15urZ5XF4rAF4rXr9Ygw47C3yfZ345C3Z7t3yr
+        CF45ury8CF1kJw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UuCJQUUUUU=
+X-Originating-IP: [113.116.237.34]
+X-CM-SenderInfo: 5vro0zprqzv0i6rwjhhfrp/1tbiLRsrSVSIWZ3SngAAsA
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DesignWare GPIO IP can be configured for either 1 interrupt or 1
-per GPIO in port A, but the driver currently only supports 1 interrupt.
-See the DesignWare DW_apb_gpio Databook description of the
-'GPIO_INTR_IO' parameter.
+From: Wenle Chen <chenwenle@huawei.com>
 
-This change allows the driver to work with up to 32 interrupts, it will
-get as many interrupts as specified in the DT 'interrupts' property.
-It doesn't do anything clever with the different interrupts, it just calls
-the same handler used for single interrupt hardware.
+    The %d in printf need get a int
+But the real type of these vars is unsigned.
+It may let some compilers show a warning.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Wenle Chen <chenwenle@huawei.com>
 ---
-One point to mention is that I have made it possible for users to have
-unconncted interrupts by specifying holes in the list of interrupts. This is
-done by supporting the interrupts-extended DT prop.
-However, I have no use for this and had to hack some test case for this.
-Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+ scripts/recordmcount.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-v4:
- - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
-v3:
- - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
-v2:
- - Replaced interrupt-mask DT prop with support for the interrupts-extended
-   prop. This means replacing the call to irq_of_parse_and_map() with calls
-   to of_irq_parse_one() and irq_create_of_mapping().
-
-Note: There are a few *code* lines over 80 chars, but this is just guidance,
-   right? Especially as there are already some lines over 80 chars.
-
-snps:gpio fix
-
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
- .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++--
- drivers/gpio/gpio-dwapb.c                          | 42 +++++++++++++++++-----
- drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
- include/linux/platform_data/gpio-dwapb.h           |  3 +-
- 4 files changed, 44 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-index 4a75da7..3c1118b 100644
---- a/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-+++ b/Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-@@ -26,8 +26,13 @@ controller.
-   the second encodes the triger flags encoded as described in
-   Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
- - interrupt-parent : The parent interrupt controller.
--- interrupts : The interrupt to the parent controller raised when GPIOs
--  generate the interrupts.
-+- interrupts : The interrupts to the parent controller raised when GPIOs
-+  generate the interrupts. If the controller provides one combined interrupt
-+  for all GPIOs, specify a single interrupt. If the controller provides one
-+  interrupt for each GPIO, provide a list of interrupts that correspond to each
-+  of the GPIO pins. When specifying multiple interrupts, if any are unconnected,
-+  use the interrupts-extended property to specify the interrupts and set the
-+  interrupt controller handle for unused interrupts to 0.
- - snps,nr-gpios : The number of pins in the port, a single cell.
- - resets : Reset line for the controller.
+diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
+index 8c9691c..6f900fa 100644
+--- a/scripts/recordmcount.c
++++ b/scripts/recordmcount.c
+@@ -459,7 +459,7 @@ do_file(char const *const fname)
+ 	switch (ehdr->e_ident[EI_DATA]) {
+ 		static unsigned int const endian = 1;
+ 	default:
+-		fprintf(stderr, "unrecognized ELF data encoding %d: %s\n",
++		fprintf(stderr, "unrecognized ELF data encoding %u: %s\n",
+ 			ehdr->e_ident[EI_DATA], fname);
+ 		fail_file();
+ 		break;
+@@ -500,7 +500,7 @@ do_file(char const *const fname)
+ 	gpfx = 0;
+ 	switch (w2(ehdr->e_machine)) {
+ 	default:
+-		fprintf(stderr, "unrecognized e_machine %d %s\n",
++		fprintf(stderr, "unrecognized e_machine %u %s\n",
+ 			w2(ehdr->e_machine), fname);
+ 		fail_file();
+ 		break;
+@@ -541,7 +541,7 @@ do_file(char const *const fname)
  
-diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-index 226977f..7a1022f 100644
---- a/drivers/gpio/gpio-dwapb.c
-+++ b/drivers/gpio/gpio-dwapb.c
-@@ -441,14 +441,19 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
- 	irq_gc->chip_types[1].handler = handle_edge_irq;
- 
- 	if (!pp->irq_shared) {
--		irq_set_chained_handler_and_data(pp->irq, dwapb_irq_handler,
--						 gpio);
-+		int i;
-+
-+		for (i = 0; i < pp->ngpio; i++) {
-+			if (pp->irq[i])
-+				irq_set_chained_handler_and_data(pp->irq[i],
-+						dwapb_irq_handler, gpio);
-+		}
- 	} else {
- 		/*
- 		 * Request a shared IRQ since where MFD would have devices
- 		 * using the same irq pin
- 		 */
--		err = devm_request_irq(gpio->dev, pp->irq,
-+		err = devm_request_irq(gpio->dev, pp->irq[0],
- 				       dwapb_irq_handler_mfd,
- 				       IRQF_SHARED, "gpio-dwapb-mfd", gpio);
- 		if (err) {
-@@ -524,7 +529,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 	if (pp->idx == 0)
- 		port->gc.set_config = dwapb_gpio_set_config;
- 
--	if (pp->irq)
-+	if (pp->has_irq)
- 		dwapb_configure_irqs(gpio, port, pp);
- 
- 	err = gpiochip_add_data(&port->gc, port);
-@@ -535,7 +540,7 @@ static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
- 		port->is_registered = true;
- 
- 	/* Add GPIO-signaled ACPI event support */
--	if (pp->irq)
-+	if (pp->has_irq)
- 		acpi_gpiochip_request_interrupts(&port->gc);
- 
- 	return err;
-@@ -601,13 +606,32 @@ dwapb_gpio_get_pdata(struct device *dev)
- 		if (dev->of_node && pp->idx == 0 &&
- 			fwnode_property_read_bool(fwnode,
- 						  "interrupt-controller")) {
--			pp->irq = irq_of_parse_and_map(to_of_node(fwnode), 0);
--			if (!pp->irq)
-+			struct device_node *np = to_of_node(fwnode);
-+			unsigned int j;
-+
-+			/*
-+			 * The IP has configuration options to allow a single
-+			 * combined interrupt or one per gpio. If one per gpio,
-+			 * some might not be used.
-+			 */
-+			for (j = 0; j < pp->ngpio; j++) {
-+				int irq = of_irq_get(np, j);
-+				if (irq < 0)
-+					continue;
-+
-+				pp->irq[j] = irq;
-+				pp->has_irq = true;
-+			}
-+
-+			if (!pp->has_irq)
- 				dev_warn(dev, "no irq for port%d\n", pp->idx);
- 		}
- 
--		if (has_acpi_companion(dev) && pp->idx == 0)
--			pp->irq = platform_get_irq(to_platform_device(dev), 0);
-+		if (has_acpi_companion(dev) && pp->idx == 0) {
-+			pp->irq[0] = platform_get_irq(to_platform_device(dev), 0);
-+			if (pp->irq[0])
-+				pp->has_irq = true;
-+		}
- 
- 		pp->irq_shared	= false;
- 		pp->gpio_base	= -1;
-diff --git a/drivers/mfd/intel_quark_i2c_gpio.c b/drivers/mfd/intel_quark_i2c_gpio.c
-index 90e35de..5bddb84 100644
---- a/drivers/mfd/intel_quark_i2c_gpio.c
-+++ b/drivers/mfd/intel_quark_i2c_gpio.c
-@@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev *pdev, struct mfd_cell *cell)
- 	pdata->properties->idx		= 0;
- 	pdata->properties->ngpio	= INTEL_QUARK_MFD_NGPIO;
- 	pdata->properties->gpio_base	= INTEL_QUARK_MFD_GPIO_BASE;
--	pdata->properties->irq		= pdev->irq;
-+	pdata->properties->irq[0]	= pdev->irq;
-+	pdata->properties->has_irq	= true;
- 	pdata->properties->irq_shared	= true;
- 
- 	cell->platform_data = pdata;
-diff --git a/include/linux/platform_data/gpio-dwapb.h b/include/linux/platform_data/gpio-dwapb.h
-index 2dc7f4a..5a52d69 100644
---- a/include/linux/platform_data/gpio-dwapb.h
-+++ b/include/linux/platform_data/gpio-dwapb.h
-@@ -19,7 +19,8 @@ struct dwapb_port_property {
- 	unsigned int	idx;
- 	unsigned int	ngpio;
- 	unsigned int	gpio_base;
--	unsigned int	irq;
-+	unsigned int	irq[32];
-+	bool		has_irq;
- 	bool		irq_shared;
- };
- 
+ 	switch (ehdr->e_ident[EI_CLASS]) {
+ 	default:
+-		fprintf(stderr, "unrecognized ELF class %d %s\n",
++		fprintf(stderr, "unrecognized ELF class %u %s\n",
+ 			ehdr->e_ident[EI_CLASS], fname);
+ 		fail_file();
+ 		break;
 -- 
 2.7.4
