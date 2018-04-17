@@ -1,54 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753281AbeDQVm3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:42:29 -0400
-Received: from resqmta-ch2-01v.sys.comcast.net ([69.252.207.33]:56454 "EHLO
-        resqmta-ch2-01v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752606AbeDQVm1 (ORCPT
+        id S1752766AbeDQVpi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:45:38 -0400
+Received: from 6.mo173.mail-out.ovh.net ([46.105.43.93]:45015 "EHLO
+        6.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeDQVph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:42:27 -0400
-Date: Tue, 17 Apr 2018 16:42:24 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Mikulas Patocka <mpatocka@redhat.com>
-cc: Vlastimil Babka <vbabka@suse.cz>, Mike Snitzer <snitzer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: slab: introduce the flag SLAB_MINIMIZE_WASTE
-In-Reply-To: <alpine.LRH.2.02.1804171453190.26973@file01.intranet.prod.int.rdu2.redhat.com>
-Message-ID: <alpine.DEB.2.20.1804171641390.20702@nuc-kabylake>
-References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
- <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com> <alpine.LRH.2.02.1804161054410.17807@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804161018030.9397@nuc-kabylake>
- <alpine.LRH.2.02.1804161123400.17807@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804161043430.9622@nuc-kabylake> <alpine.LRH.2.02.1804161532480.19492@file01.intranet.prod.int.rdu2.redhat.com> <b0e6ccf6-06ce-e50b-840e-c8d3072382fd@suse.cz>
- <alpine.LRH.2.02.1804161650170.7237@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804170939420.17557@nuc-kabylake> <alpine.LRH.2.02.1804171453190.26973@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Tue, 17 Apr 2018 17:45:37 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfG/fpMw6Cw8ILmhCUDJYYkNMkvXlq6fiFv51mJUUpMvpOTQN0hErqggbJJnnzWwqii8btbLqiKJ71Jh/TQbitLnEZyMhmN2+GLQRopJQPc5CoKWimw6m
- RNiogn3LM9YKVbFL7TEoGILHGdM9AyDBJooQpW1bdQEoZ4+SIR5EuOGAyX5lfIil1Y3SsFBmM2M5/f6kgRhucy/L6REwGRRx/SvAkKzRQ4dX6t3OcucyUhZT
- iQTBdhX2Kz0HYE0+uYSHjUIurZu8FQWEo+YhrqyJxFsKDf2oBjtjTFaRWgV+LAg2vVeS8LHnPl3pQ/IHfVAi84+RFbEgr25cnFu4e9f0xaMTC1DPLBoVpMTP
- VYpzMW5RVWEv/g+SCdtx9QORJOj3bLGokuGlg/yvzLnuUjWOd5pFq8Z+QZ/9Gjet3YpSZSEeqAReYxpfeOvv71vrnUB7M/NvxQjxysYB8qMJAbFKSKGIEh83
- yObConGvn3Y4YUkv
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 18 Apr 2018 03:06:39 +0900
+From: andi@etezian.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: exynos: Update x and y properties for mms114
+ touchscreen
+In-Reply-To: <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
+References: <CGME20180126060503epcas2p4befe2d3d43f4a2158b1e1a123bf7906f@epcas2p4.samsung.com>
+ <20180126060454.18082-1-andi.shyti@samsung.com>
+ <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
+Message-ID: <f75382b5953a9f4f9f80bb0db5b2f249@etezian.org>
+User-Agent: Roundcube Webmail/1.3.4
+X-Originating-IP: 202.86.152.34
+X-Webmail-UserID: andi@etezian.org
+X-Ovh-Tracer-Id: 4013833171218055833
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtgedrjedtgdduudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018, Mikulas Patocka wrote:
+Hi Krzysztof,
 
-> > > The slub subsystem does actual fallback to low-order when the allocation
-> > > fails (it allows different order for each slab in the same cache), but
-> > > slab doesn't fallback and you get NULL if higher-order allocation fails.
-> > > So, SLAB_MINIMIZE_WASTE is needed for slab because it will just randomly
-> > > fail with higher order.
-> >
-> > Fix Slab instead of adding a flag that is only useful for one allocator?
->
-> Slab assumes that all slabs have the same order, so it's not so easy to
-> fix it.
+On 18.04.2018 00:32, Krzysztof Kozlowski wrote:
+> On Fri, Jan 26, 2018 at 03:04:54PM +0900, Andi Shyti wrote:
+>> The mms114 binding [1] specifies that the 'x' and 'y' should be
+>> called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
+>> in coherence with the touchscreen [2] binding.
+>> 
+>> Update the mms114 node for trats2 and trats dts according to the
+>> binding.
+>> 
+>> [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+>> [2] 
+>> Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+>> 
+>> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+>> ---
+>> Hi Krzysztof,
+>> 
+>> this patch depends on Simon's patchset [1] and must be applied after
+>> that. If you want I can ping you when the patch gets or you can take
+>> it in the next cycle.
+>> 
+>> Andi
+>> 
+>> [1] https://marc.info/?l=linux-kernel&m=151682273403098&w=2
+>> 
+> 
+> Hi Andi,
+> 
+> As I understand, the dependencies are in and I can take this?
 
-Well since SLAB uses compound pages one could easily determine the order
-of the page and thus also support multiple page orders there.
+Thanks a lot, somehow I missed it,
+
+Please take it.
+
+Thank you,
+Andi
