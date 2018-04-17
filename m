@@ -1,78 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752507AbeDQPAr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:00:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45932 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750741AbeDQPAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:00:45 -0400
-Subject: Re: [PATCH] x86/entry/64/compat: Preserve r8-r11 in int $0x80
-To: Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-References: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
-From: Denys Vlasenko <dvlasenk@redhat.com>
-Message-ID: <cd1a4b8c-dd8e-d88d-c154-fcf02aca5d74@redhat.com>
-Date: Tue, 17 Apr 2018 17:00:43 +0200
+        id S1752671AbeDQPAw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:00:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50760 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750741AbeDQPAt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 11:00:49 -0400
+Subject: Re: [PATCH 1/2] perf tools powerpc: Fix callchain ip filtering
+To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: acme@kernel.org, jolsa@redhat.com, linux-kernel@vger.kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, sukadev@linux.vnet.ibm.com,
+        maynard@us.ibm.com
+References: <20180412171129.4422-1-sandipan@linux.vnet.ibm.com>
+ <20180412171129.4422-2-sandipan@linux.vnet.ibm.com>
+ <3471e3e0-80ad-7a7f-96b8-60d24a4931a2@linux.ibm.com>
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Date: Tue, 17 Apr 2018 20:30:32 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <3471e3e0-80ad-7a7f-96b8-60d24a4931a2@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18041715-0020-0000-0000-00000412EEB7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041715-0021-0000-0000-000042A72F6E
+Message-Id: <8b57ea28-f620-2f9c-e494-3877606696a6@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/17/2018 04:36 PM, Andy Lutomirski wrote:
-> 32-bit user code that uses int $80 doesn't care about r8-r11.  There is,
-> however, some 64-bit user code that intentionally uses int $0x80 to
-> invoke 32-bit system calls.  From what I've seen, basically all such
-> code assumes that r8-r15 are all preserved, but the kernel clobbers
-> r8-r11.  Since I doubt that there's any code that depends on int $0x80
-> zeroing r8-r11, change the kernel to preserve them.
+
+On 04/17/2018 12:29 PM, Ravi Bangoria wrote:
 > 
-> I suspect that very little user code is broken by the old clobber,
-> since r8-r11 are only rarely allocated by gcc, and they're clobbered
-> by function calls, so they only way we'd see a problem is if the
-> same function that invokes int $0x80 also spills something important
-> to one of these registers.
+> This change looks good to me but seems it fixed the issue
+> partially.Ex,
 > 
-> The current behavior seems to date back to the historical commit
-> "[PATCH] x86-64 merge for 2.6.4".  Before that, all regs were
-> preserved.  I can't find any explanation of why this change was made.
+>     # readelf --debug-dump=frames-interp /lib64/libc-2.26.so | less
+>     ...
+>     00005778 0000000000000024 0000577c FDE cie=00000000 pc=0000000000048b30..0000000000048c64
+>        LOC           CFA      r31   ra   
+>     0000000000048b30 r1+0     u     u    
+>     0000000000048b40 r1+0     c-8   r0   
+>     0000000000048b58 r1+64    c-8   c+16 
+>     0000000000048bd8 r1+0     c-8   c+16 
+>     0000000000048be4 r1+0     u    
+>     0000000000048bf0 r1+64    c-8   c+16 
+> 
+> 0000000000048b30..0000000000048c64 is arandom() function from libc:
+> 
+>     0000000000048b30 <random>:
+>        48b30:       1c 00 4c 3c     addis   r2,r12,28
+>        48b34:       d0 e5 42 38     addi    r2,r2,-6704
+>        48b38:       a6 02 08 7c     mflr    r0
+>        48b3c:       f8 ff e1 fb     std     r31,-8(r1)
+>        48b40:       00 00 00 60     nop
+>        48b44:       00 00 20 39     li      r9,0
+>        48b48:       80 b5 e2 3b     addi    r31,r2,-19072
+>        48b4c:       01 00 00 39     li      r8,1
+>        48b50:       10 00 01 f8     std     r0,16(r1)
+>        48b54:       c1 ff 21 f8     stdu    r1,-64(r1)
+>        48b58:       f0 8f 4d e9     ld      r10,-28688(r13)
+>        ...
+> 
+> Your change fixed the issue for 48b30..48b40. But not for
+> 48b40..48b58.
+> 
+> I probed at 0x48b40.
+> 
+>     # ./perf record -g -e probe_libc:abs_48b40 ~/rand
+> 
+> perf report without Suka's and your change:
+> 
+>     # Children      Self  Trace output 
+>     # ........  ........  ..............
+>     #
+>        100.00%   100.00%  (7fffb7d28b40)
+>                 |
+>                 ---0
+>                    __libc_start_main
+>                    generic_start_main.isra.0
+>                    main
+>                    rand
+>                    __random
+> 
+> perf report with only Suka's change:
+> 
+>     # Children      Self  Trace output 
+>     # ........  ........  ..............
+>     #
+>        100.00%   100.00%  (7fffb7d28b40)
+>                 |
+>                 ---0
+>                    __libc_start_main
+>                    generic_start_main.isra.0
+>                    main
+>                    __random
+> 
+> perf report with Suka's and your change:
+> 
+>     # Children      Self  Trace output 
+>     # ........  ........  ..............
+>     #
+>        100.00%   100.00%  (7fffb7d28b40)
+>                 |
+>                 ---0
+>                    __libc_start_main
+>                    generic_start_main.isra.0
+>                    main
+>                    __random
+> 
+> I think rand() is a valid entry which is missing in last two cases.
+> 
+> 
 
-This means that the new behavior is there for some 8 years already.
-Whoever was impacted by it, probably already switched to the new ABI.
+Ah, good catch and thanks for the review. Will address these problems in v2.
 
-Current ABI is "weaker", it allows kernel to save fewer registers.
-
-Which is generally a good thing, since saving/restoring things cost
-cycles, and sometimes painful on entry paths where you may desperately
-need a scratch register or two. (Recall this one? -
-...
-         movq    %rsp, PER_CPU_VAR(rsp_scratch)
-         movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
-         /* Construct struct pt_regs on stack */
-         pushq   $__USER_DS                      /* pt_regs->ss */
-         pushq   PER_CPU_VAR(rsp_scratch)        /* pt_regs->sp */
-...
-wouldn't it be _great_ if one of GPRs would be available here
-to hold userspace %rsp?
-)
-
-If userspace needs some registers saved, it's trivial for it to have:
-
-	push reg1
-	push reg2
-	int  0x80
-	pop  reg2
-	pop  reg1
-
-OTOH if userspace _does not_ need some registers saved,
-but they are defined as saved by the entrypoint ABI, then save/restore work
-is done every time, even when not needed.
-
-Thus, I propose to retain the current behavior.
+- Sandipan
