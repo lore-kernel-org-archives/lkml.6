@@ -1,57 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752620AbeDQKKv convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 06:10:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46856 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752086AbeDQKKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 06:10:50 -0400
-Date: Tue, 17 Apr 2018 12:10:44 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: "Harald Freudenberger" <FREUDE@de.ibm.com>
-Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>, alex.williamson@redhat.com,
-        alifm@linux.vnet.ibm.com, berrange@redhat.com,
-        bjsdjshi@linux.vnet.ibm.com, borntrae@linux.ibm.com,
-        fiuczy@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, kvm@vger.kernel.org, kwankhede@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        mjrosato@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com,
-        pasic@linux.vnet.ibm.com, pbonzini@redhat.com,
-        "Reinhard Buendgen" <BUENDGEN@de.ibm.com>, thuth@redhat.com
-Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
-Message-ID: <20180417121044.5c8f2182.cohuck@redhat.com>
-In-Reply-To: <OFE3FE11B1.8E1BDDEF-ON00258272.002AEDB1-C1258272.002B06EF@notes.na.collabserv.com>
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
-        <OFE3FE11B1.8E1BDDEF-ON00258272.002AEDB1-C1258272.002B06EF@notes.na.collabserv.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+        id S1752647AbeDQKLt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 06:11:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752048AbeDQKLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 06:11:47 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0CB21727
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
+From: James Hogan <jhogan@kernel.org>
+To: linux-mips@linux-mips.org, Arnd Bergmann <arnd@arndb.de>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Matthew Fortune <matthew.fortune@mips.com>,
+        Robert Suchanek <robert.suchanek@mips.com>
+Subject: [PATCH v3 0/3] MIPS: Override barrier_before_unreachable() to fix microMIPS
+Date: Tue, 17 Apr 2018 11:11:03 +0100
+Message-Id: <cover.ebc99f68d5063a817328b9184d747f539800cff0.1523959603.git-series.jhogan@kernel.org>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 09:49:58 +0200
-"Harald Freudenberger" <FREUDE@de.ibm.com> wrote:
+This series overrides barrier_before_unreachable() for MIPS to add an
+.insn assembler directive.
 
-> Didn't we say that when APXA is not available there is no Crypto support
-> for KVM ?
+Due to the subsequent __builtin_unreachable(), the assembler can't tell
+that a label on the empty inline asm is code rather than data, so any
+microMIPS branches targetting it (which sadly can't be removed) raise
+errors due to the mismatching ISA mode, Adding the .insn in patch 3
+tells the assembler that it should be treated as code.
 
-[Going by the code, as I don't have access to the architecture]
+To do this we add a new standard asm/compiler.h for architecture
+overrides in patch 2. There are a few existing asm/compiler.h files
+already existing, most of which are fairly simple and don't include
+anything else (arm, arm64, mips). Unfortunately the alpha one includes
+linux/compiler.h though, so it can undefine some inline macros. On
+Arnd's suggestion this is converted to use OPTIMIZE_INLINING instead in
+patch 1. A build of alpha's defconfig on GCC 7.3 before and after this
+series results in the following size differences, which appear harmless
+to me:
 
-Current status seems to be:
-- setup crycb if facility 76 is available (that's MSAX3, I guess?)
-- use format 2 if APXA is available, else use format 1
+$ ./scripts/bloat-o-meter vmlinux.1 vmlinux.2
+add/remove: 1/1 grow/shrink: 3/0 up/down: 264/-348 (-84)
+Function                                     old     new   delta
+cap_bprm_set_creds                          1496    1664    +168
+cap_issubset                                   -      68     +68
+flex_array_put                               328     344     +16
+cap_capset                                   488     500     +12
+nonroot_raised_pE.constprop                  348       -    -348
+Total: Before=5823709, After=5823625, chg -0.00%
 
->From Tony's patch description, the goal seems to be:
-- setup crycb even if MSAX3 is not available
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Matthew Fortune <matthew.fortune@mips.com>
+Cc: Robert Suchanek <robert.suchanek@mips.com>
+Cc: linux-alpha@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Cc: linux-arch@vger.kernel.org
 
-So my understanding is that we use APXA only to decide on the format of
-the crycb, but provide it in any case?
+James Hogan (1):
+  alpha: Use OPTIMIZE_INLINING instead of asm/compiler.h
 
-(Not providing a crycb if APXA is not available would be loss of
-functionality, I guess? Deciding not to provide vfio-ap if APXA is not
-available is a different game, of course.)
+Paul Burton (2):
+  compiler.h: Allow arch-specific overrides
+  MIPS: Workaround GCC __builtin_unreachable reordering bug
+
+ arch/alpha/Kconfig                 |  6 ++++++
+ arch/alpha/include/asm/compiler.h  | 11 -----------
+ arch/arc/include/asm/Kbuild        |  1 +
+ arch/c6x/include/asm/Kbuild        |  1 +
+ arch/h8300/include/asm/Kbuild      |  1 +
+ arch/hexagon/include/asm/Kbuild    |  1 +
+ arch/ia64/include/asm/Kbuild       |  1 +
+ arch/m68k/include/asm/Kbuild       |  1 +
+ arch/microblaze/include/asm/Kbuild |  1 +
+ arch/mips/include/asm/compiler.h   | 23 +++++++++++++++++++++++
+ arch/nds32/include/asm/Kbuild      |  1 +
+ arch/nios2/include/asm/Kbuild      |  1 +
+ arch/openrisc/include/asm/Kbuild   |  1 +
+ arch/parisc/include/asm/Kbuild     |  1 +
+ arch/powerpc/include/asm/Kbuild    |  1 +
+ arch/riscv/include/asm/Kbuild      |  1 +
+ arch/s390/include/asm/Kbuild       |  1 +
+ arch/sh/include/asm/Kbuild         |  1 +
+ arch/sparc/include/asm/Kbuild      |  1 +
+ arch/um/include/asm/Kbuild         |  1 +
+ arch/unicore32/include/asm/Kbuild  |  1 +
+ arch/x86/include/asm/Kbuild        |  1 +
+ arch/xtensa/include/asm/Kbuild     |  1 +
+ include/asm-generic/compiler.h     |  8 ++++++++
+ include/linux/compiler-gcc.h       |  2 ++
+ include/linux/compiler_types.h     |  3 +++
+ 26 files changed, 62 insertions(+), 11 deletions(-)
+ create mode 100644 include/asm-generic/compiler.h
+
+base-commit: b284d4d5a6785f8cd07eda2646a95782373cd01e
+-- 
+git-series 0.9.1
