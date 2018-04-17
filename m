@@ -1,118 +1,420 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753097AbeDQMcB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 08:32:01 -0400
-Received: from smtp1-g21.free.fr ([212.27.42.1]:35877 "EHLO smtp1-g21.free.fr"
+        id S1753239AbeDQMcf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 08:32:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41947 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752359AbeDQMb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:31:59 -0400
-Date: Tue, 17 Apr 2018 14:31:28 +0200
-From: Alban <albeu@free.fr>
-To: Rob Herring <robh@kernel.org>
-Cc: Alban <albeu@free.fr>, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode
- for the cells list
-Message-ID: <20180417143128.69126385@avionic-0020>
-In-Reply-To: <20180416210429.e3yo52f355qxnopb@rob-hp-laptop>
-References: <1521933899-362-1-git-send-email-albeu@free.fr>
-        <1521933899-362-2-git-send-email-albeu@free.fr>
-        <20180416210429.e3yo52f355qxnopb@rob-hp-laptop>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1753038AbeDQMcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:32:33 -0400
+Subject: Re: [PATCH v2 5/5] ALSA: xen-front: Implement ALSA virtual sound
+ driver
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, boris.ostrovsky@oracle.com,
+        konrad.wilk@oracle.com, perex@perex.cz, tiwai@suse.com
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180416062453.24743-1-andr2000@gmail.com>
+ <20180416062453.24743-6-andr2000@gmail.com>
+ <f8ec79c7-1b6f-dd00-5bd3-fc9fb8b42de1@suse.com>
+ <e77fe463-68aa-b117-84c5-6dc729a3df42@gmail.com>
+ <06ce3d52-5a38-dd1e-90b7-7b9414b6819d@gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <d29712f2-80de-203a-8246-243adcdab734@suse.com>
+Date: Tue, 17 Apr 2018 14:32:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/esdboVINWphvIninm4cYbzi"; protocol="application/pgp-signature"
+In-Reply-To: <06ce3d52-5a38-dd1e-90b7-7b9414b6819d@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/esdboVINWphvIninm4cYbzi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 17/04/18 14:26, Oleksandr Andrushchenko wrote:
+> On 04/17/2018 02:32 PM, Oleksandr Andrushchenko wrote:
+>> On 04/16/2018 05:09 PM, Juergen Gross wrote:
+>>> On 16/04/18 08:24, Oleksandr Andrushchenko wrote:
+>>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>>>
+>>>> Implement essential initialization of the sound driver:
+>>>>    - introduce required data structures
+>>>>    - handle driver registration
+>>>>    - handle sound card registration
+>>>>    - register sound driver on backend connection
+>>>>    - remove sound driver on backend disconnect
+>>>>
+>>>> Initialize virtual sound card with streams according to the
+>>>> Xen store configuration.
+>>>>
+>>>> Implement ALSA driver operations including:
+>>>> - manage frontend/backend shared buffers
+>>>> - manage Xen bus event channel states
+>>>>
+>>>> Implement requests from front to back for ALSA
+>>>> PCM operations.
+>>>>   - report ALSA period elapsed event: handle XENSND_EVT_CUR_POS
+>>>>     notifications from the backend when stream position advances
+>>>>     during playback/capture. The event carries a value of how
+>>>>     many octets were played/captured at the time of the event.
+>>>>   - implement explicit stream parameter negotiation between
+>>>>     backend and frontend: handle XENSND_OP_HW_PARAM_QUERY request
+>>>>     to read/update configuration space for the parameter given:
+>>>>     request passes desired parameter interval and the response to
+>>>>     this request returns min/max interval for the parameter to be used.
+>>>>
+>>>> Signed-off-by: Oleksandr Andrushchenko
+>>>> <oleksandr_andrushchenko@epam.com>
+>>>> ---
+>>>>   sound/xen/Makefile                |   3 +-
+>>>>   sound/xen/xen_snd_front.c         | 193 ++++++++-
+>>>>   sound/xen/xen_snd_front.h         |  28 ++
+>>>>   sound/xen/xen_snd_front_alsa.c    | 830
+>>>> ++++++++++++++++++++++++++++++++++++++
+>>>>   sound/xen/xen_snd_front_alsa.h    |  23 ++
+>>>>   sound/xen/xen_snd_front_evtchnl.c |   6 +-
+>>>>   6 files changed, 1080 insertions(+), 3 deletions(-)
+>>>>   create mode 100644 sound/xen/xen_snd_front_alsa.c
+>>>>   create mode 100644 sound/xen/xen_snd_front_alsa.h
+>>>>
+>>>> diff --git a/sound/xen/Makefile b/sound/xen/Makefile
+>>>> index f028bc30af5d..1e6470ecc2f2 100644
+>>>> --- a/sound/xen/Makefile
+>>>> +++ b/sound/xen/Makefile
+>>>> @@ -3,6 +3,7 @@
+>>>>   snd_xen_front-objs := xen_snd_front.o \
+>>>>                 xen_snd_front_cfg.o \
+>>>>                 xen_snd_front_evtchnl.o \
+>>>> -              xen_snd_front_shbuf.o
+>>>> +              xen_snd_front_shbuf.o \
+>>>> +              xen_snd_front_alsa.o
+>>>>     obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
+>>>> diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
+>>>> index 0569c6c596a3..1fef253ea21a 100644
+>>>> --- a/sound/xen/xen_snd_front.c
+>>>> +++ b/sound/xen/xen_snd_front.c
+>>>> @@ -19,10 +19,201 @@
+>>>>   #include <xen/interface/io/sndif.h>
+>>>>     #include "xen_snd_front.h"
+>>>> +#include "xen_snd_front_alsa.h"
+>>>>   #include "xen_snd_front_evtchnl.h"
+>>>> +#include "xen_snd_front_shbuf.h"
+>>>> +
+>>>> +static struct xensnd_req *
+>>>> +be_stream_prepare_req(struct xen_snd_front_evtchnl *evtchnl, u8
+>>>> operation)
+>>>> +{
+>>>> +    struct xensnd_req *req;
+>>>> +
+>>>> +    req = RING_GET_REQUEST(&evtchnl->u.req.ring,
+>>>> +                   evtchnl->u.req.ring.req_prod_pvt);
+>>>> +    req->operation = operation;
+>>>> +    req->id = evtchnl->evt_next_id++;
+>>>> +    evtchnl->evt_id = req->id;
+>>>> +    return req;
+>>>> +}
+>>>> +
+>>>> +static int be_stream_do_io(struct xen_snd_front_evtchnl *evtchnl)
+>>>> +{
+>>>> +    if (unlikely(evtchnl->state != EVTCHNL_STATE_CONNECTED))
+>>>> +        return -EIO;
+>>>> +
+>>>> +    reinit_completion(&evtchnl->u.req.completion);
+>>>> +    xen_snd_front_evtchnl_flush(evtchnl);
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int be_stream_wait_io(struct xen_snd_front_evtchnl *evtchnl)
+>>>> +{
+>>>> +    if (wait_for_completion_timeout(&evtchnl->u.req.completion,
+>>>> +            msecs_to_jiffies(VSND_WAIT_BACK_MS)) <= 0)
+>>>> +        return -ETIMEDOUT;
+>>>> +
+>>>> +    return evtchnl->u.req.resp_status;
+>>>> +}
+>>>> +
+>>>> +int xen_snd_front_stream_query_hw_param(struct
+>>>> xen_snd_front_evtchnl *evtchnl,
+>>>> +                    struct xensnd_query_hw_param *hw_param_req,
+>>>> +                    struct xensnd_query_hw_param *hw_param_resp)
+>>>> +{
+>>>> +    struct xen_snd_front_info *front_info = evtchnl->front_info;
+>>>> +    struct xensnd_req *req;
+>>>> +    unsigned long flags;
+>>>> +    int ret;
+>>>> +
+>>>> +    mutex_lock(&evtchnl->u.req.req_io_lock);
+>>>> +
+>>>> +    spin_lock_irqsave(&front_info->io_lock, flags);
+>>>> +    req = be_stream_prepare_req(evtchnl, XENSND_OP_HW_PARAM_QUERY);
+>>>> +    req->op.hw_param = *hw_param_req;
+>>>> +
+>>>> +    ret = be_stream_do_io(evtchnl);
+>>>> +    spin_unlock_irqrestore(&front_info->io_lock, flags);
+>>>> +
+>>>> +    if (ret == 0)
+>>>> +        ret = be_stream_wait_io(evtchnl);
+>>>> +
+>>>> +    if (ret == 0)
+>>>> +        *hw_param_resp = evtchnl->u.req.resp.hw_param;
+>>>> +
+>>>> +    mutex_unlock(&evtchnl->u.req.req_io_lock);
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +int xen_snd_front_stream_prepare(struct xen_snd_front_evtchnl
+>>>> *evtchnl,
+>>>> +                 struct xen_snd_front_shbuf *sh_buf,
+>>>> +                 u8 format, unsigned int channels,
+>>>> +                 unsigned int rate, u32 buffer_sz,
+>>>> +                 u32 period_sz)
+>>>> +{
+>>>> +    struct xen_snd_front_info *front_info = evtchnl->front_info;
+>>>> +    struct xensnd_req *req;
+>>>> +    unsigned long flags;
+>>>> +    int ret;
+>>>> +
+>>>> +    mutex_lock(&evtchnl->u.req.req_io_lock);
+>>>> +
+>>>> +    spin_lock_irqsave(&front_info->io_lock, flags);
+>>>> +    req = be_stream_prepare_req(evtchnl, XENSND_OP_OPEN);
+>>>> +    req->op.open.pcm_format = format;
+>>>> +    req->op.open.pcm_channels = channels;
+>>>> +    req->op.open.pcm_rate = rate;
+>>>> +    req->op.open.buffer_sz = buffer_sz;
+>>>> +    req->op.open.period_sz = period_sz;
+>>>> +    req->op.open.gref_directory =
+>>>> xen_snd_front_shbuf_get_dir_start(sh_buf);
+>>>> +
+>>>> +    ret = be_stream_do_io(evtchnl);
+>>>> +    spin_unlock_irqrestore(&front_info->io_lock, flags);
+>>>> +
+>>>> +    if (ret == 0)
+>>>> +        ret = be_stream_wait_io(evtchnl);
+>>>> +
+>>>> +    mutex_unlock(&evtchnl->u.req.req_io_lock);
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +int xen_snd_front_stream_close(struct xen_snd_front_evtchnl *evtchnl)
+>>>> +{
+>>>> +    struct xen_snd_front_info *front_info = evtchnl->front_info;
+>>>> +    struct xensnd_req *req;
+>>>> +    unsigned long flags;
+>>>> +    int ret;
+>>>> +
+>>>> +    mutex_lock(&evtchnl->u.req.req_io_lock);
+>>>> +
+>>>> +    spin_lock_irqsave(&front_info->io_lock, flags);
+>>>> +    req = be_stream_prepare_req(evtchnl, XENSND_OP_CLOSE);
+>>>> +
+>>>> +    ret = be_stream_do_io(evtchnl);
+>>>> +    spin_unlock_irqrestore(&front_info->io_lock, flags);
+>>>> +
+>>>> +    if (ret == 0)
+>>>> +        ret = be_stream_wait_io(evtchnl);
+>>>> +
+>>>> +    mutex_unlock(&evtchnl->u.req.req_io_lock);
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +int xen_snd_front_stream_write(struct xen_snd_front_evtchnl *evtchnl,
+>>>> +                   unsigned long pos, unsigned long count)
+>>>> +{
+>>>> +    struct xen_snd_front_info *front_info = evtchnl->front_info;
+>>>> +    struct xensnd_req *req;
+>>>> +    unsigned long flags;
+>>>> +    int ret;
+>>>> +
+>>>> +    mutex_lock(&evtchnl->u.req.req_io_lock);
+>>>> +
+>>>> +    spin_lock_irqsave(&front_info->io_lock, flags);
+>>>> +    req = be_stream_prepare_req(evtchnl, XENSND_OP_WRITE);
+>>>> +    req->op.rw.length = count;
+>>>> +    req->op.rw.offset = pos;
+>>>> +
+>>>> +    ret = be_stream_do_io(evtchnl);
+>>>> +    spin_unlock_irqrestore(&front_info->io_lock, flags);
+>>>> +
+>>>> +    if (ret == 0)
+>>>> +        ret = be_stream_wait_io(evtchnl);
+>>>> +
+>>>> +    mutex_unlock(&evtchnl->u.req.req_io_lock);
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +int xen_snd_front_stream_read(struct xen_snd_front_evtchnl *evtchnl,
+>>>> +                  unsigned long pos, unsigned long count)
+>>>> +{
+>>>> +    struct xen_snd_front_info *front_info = evtchnl->front_info;
+>>>> +    struct xensnd_req *req;
+>>>> +    unsigned long flags;
+>>>> +    int ret;
+>>>> +
+>>>> +    mutex_lock(&evtchnl->u.req.req_io_lock);
+>>>> +
+>>>> +    spin_lock_irqsave(&front_info->io_lock, flags);
+>>>> +    req = be_stream_prepare_req(evtchnl, XENSND_OP_READ);
+>>>> +    req->op.rw.length = count;
+>>>> +    req->op.rw.offset = pos;
+>>>> +
+>>>> +    ret = be_stream_do_io(evtchnl);
+>>>> +    spin_unlock_irqrestore(&front_info->io_lock, flags);
+>>>> +
+>>>> +    if (ret == 0)
+>>>> +        ret = be_stream_wait_io(evtchnl);
+>>>> +
+>>>> +    mutex_unlock(&evtchnl->u.req.req_io_lock);
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +int xen_snd_front_stream_trigger(struct xen_snd_front_evtchnl
+>>>> *evtchnl,
+>>>> +                 int type)
+>>>> +{
+>>>> +    struct xen_snd_front_info *front_info = evtchnl->front_info;
+>>>> +    struct xensnd_req *req;
+>>>> +    unsigned long flags;
+>>>> +    int ret;
+>>>> +
+>>>> +    mutex_lock(&evtchnl->u.req.req_io_lock);
+>>>> +
+>>>> +    spin_lock_irqsave(&front_info->io_lock, flags);
+>>>> +    req = be_stream_prepare_req(evtchnl, XENSND_OP_TRIGGER);
+>>>> +    req->op.trigger.type = type;
+>>>> +
+>>>> +    ret = be_stream_do_io(evtchnl);
+>>>> +    spin_unlock_irqrestore(&front_info->io_lock, flags);
+>>>> +
+>>>> +    if (ret == 0)
+>>>> +        ret = be_stream_wait_io(evtchnl);
+>>>> +
+>>>> +    mutex_unlock(&evtchnl->u.req.req_io_lock);
+>>>> +    return ret;
+>>>> +}
+>>>>     static void xen_snd_drv_fini(struct xen_snd_front_info *front_info)
+>>>>   {
+>>>> +    xen_snd_front_alsa_fini(front_info);
+>>>>       xen_snd_front_evtchnl_free_all(front_info);
+>>>>   }
+>>>>   @@ -45,7 +236,7 @@ static int sndback_initwait(struct
+>>>> xen_snd_front_info *front_info)
+>>>>     static int sndback_connect(struct xen_snd_front_info *front_info)
+>>>>   {
+>>>> -    return 0;
+>>>> +    return xen_snd_front_alsa_init(front_info);
+>>>>   }
+>>>>     static void sndback_disconnect(struct xen_snd_front_info
+>>>> *front_info)
+>>>> diff --git a/sound/xen/xen_snd_front.h b/sound/xen/xen_snd_front.h
+>>>> index 9c2ffbb4e4b8..7adbdb4d2019 100644
+>>>> --- a/sound/xen/xen_snd_front.h
+>>>> +++ b/sound/xen/xen_snd_front.h
+>>>> @@ -13,17 +13,45 @@
+>>>>     #include "xen_snd_front_cfg.h"
+>>>>   +struct card_info;
+>>>> +struct xen_snd_front_evtchnl;
+>>>>   struct xen_snd_front_evtchnl_pair;
+>>>> +struct xen_snd_front_shbuf;
+>>>> +struct xensnd_query_hw_param;
+>>>>     struct xen_snd_front_info {
+>>>>       struct xenbus_device *xb_dev;
+>>>>   +    struct card_info *card_info;
+>>>> +
+>>>>       /* serializer for backend IO: request/response */
+>>>>       spinlock_t io_lock;
+>>>> +
+>>>>       int num_evt_pairs;
+>>>>       struct xen_snd_front_evtchnl_pair *evt_pairs;
+>>>>         struct xen_front_cfg_card cfg;
+>>>>   };
+>>>>   +int xen_snd_front_stream_query_hw_param(struct
+>>>> xen_snd_front_evtchnl *evtchnl,
+>>>> +                    struct xensnd_query_hw_param *hw_param_req,
+>>>> +                    struct xensnd_query_hw_param *hw_param_resp);
+>>>> +
+>>>> +int xen_snd_front_stream_prepare(struct xen_snd_front_evtchnl
+>>>> *evtchnl,
+>>>> +                 struct xen_snd_front_shbuf *sh_buf,
+>>>> +                 u8 format, unsigned int channels,
+>>>> +                 unsigned int rate, u32 buffer_sz,
+>>>> +                 u32 period_sz);
+>>>> +
+>>>> +int xen_snd_front_stream_close(struct xen_snd_front_evtchnl *evtchnl);
+>>>> +
+>>>> +int xen_snd_front_stream_write(struct xen_snd_front_evtchnl *evtchnl,
+>>>> +                   unsigned long pos, unsigned long count);
+>>>> +
+>>>> +int xen_snd_front_stream_read(struct xen_snd_front_evtchnl *evtchnl,
+>>>> +                  unsigned long pos, unsigned long count);
+>>>> +
+>>>> +int xen_snd_front_stream_trigger(struct xen_snd_front_evtchnl
+>>>> *evtchnl,
+>>>> +                 int type);
+>>>> +
+>>>>   #endif /* __XEN_SND_FRONT_H */
+>>>> diff --git a/sound/xen/xen_snd_front_alsa.c
+>>>> b/sound/xen/xen_snd_front_alsa.c
+>>>> new file mode 100644
+>>>> index 000000000000..f524b172750e
+>>>> --- /dev/null
+>>>> +++ b/sound/xen/xen_snd_front_alsa.c
+>>>> @@ -0,0 +1,830 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>>>> +
+>>>> +/*
+>>>> + * Xen para-virtual sound device
+>>>> + *
+>>>> + * Copyright (C) 2016-2018 EPAM Systems Inc.
+>>>> + *
+>>>> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>>> + */
+>>>> +
+>>>> +#include <linux/platform_device.h>
+>>>> +
+>>>> +#include <sound/core.h>
+>>>> +#include <sound/pcm.h>
+>>>> +#include <sound/pcm_params.h>
+>>>> +
+>>>> +#include <xen/xenbus.h>
+>>>> +
+>>>> +#include "xen_snd_front.h"
+>>>> +#include "xen_snd_front_alsa.h"
+>>>> +#include "xen_snd_front_cfg.h"
+>>>> +#include "xen_snd_front_evtchnl.h"
+>>>> +#include "xen_snd_front_shbuf.h"
+>>>> +
+>>>> +struct pcm_stream_info {
+>>> Not sure how this is generally handled in the sound drivers, but when
+>>> reviewing the code using those structures I repeatedly tried to find
+>>> their definitions in the sound headers instead of here. Same applies to
+>>> the alsa_* names.
+>>>
+>>> I'd prefer names which don't poison the name space.
+>> I'll try to do something about naming
+> One question still remains wrt alsa_* names: if this is for structures
+> I have (alsa_sndif_sample_format/alsa_sndif_hw_param), then
+> those already have sndif in their name which clearly says these are
+> Xen related ones (sndif is a Xen protocol).
+> If you also don't like the alsa_* function names then those are all
+> static and defined in this same file, so see no confusion here.
+> 
+> I have changed other non-obvious struct names:
+> 
+> -struct pcm_stream_info {
+> +struct xen_snd_front_pcm_stream_info {
+> 
+> -struct pcm_instance_info {
+> +struct xen_snd_front_pcm_instance_info {
+> 
+> -struct card_info {
+> +struct xen_snd_front_card_info {
+> 
+> Does the above work for you?
 
-On Mon, 16 Apr 2018 16:04:29 -0500
-Rob Herring <robh@kernel.org> wrote:
+Yes, this seems to be okay.
 
-> On Sun, Mar 25, 2018 at 12:24:57AM +0100, Alban Bedel wrote:
-> > Having the cells as subnodes of the provider device without any
-> > compatible property might clash with other bindings. To avoid this
-> > problem update the binding to have all the cells in a 'nvmem-cells'
-> > subnode with a 'nvmem-cells' compatible string. This new binding
-> > guarantee that we can turn any kind of device in a nvmem provider.
-> >=20
-> > While discouraged for new uses the old scheme is still supported for
-> > backward compatibility.
-> >=20
-> > Signed-off-by: Alban Bedel <albeu@free.fr>
-> > ---
-> >  Documentation/devicetree/bindings/nvmem/nvmem.txt | 55 +++++++++++++++=
-+-------
-> >  drivers/nvmem/core.c                              | 10 +++++
-> >  2 files changed, 48 insertions(+), 17 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/nvmem/nvmem.txt b/Docume=
-ntation/devicetree/bindings/nvmem/nvmem.txt
-> > index fd06c09..6b723e7 100644
-> > --- a/Documentation/devicetree/bindings/nvmem/nvmem.txt
-> > +++ b/Documentation/devicetree/bindings/nvmem/nvmem.txt
-> > @@ -11,14 +11,29 @@ these data from, and where they are stored on the s=
-torage device.
-> >  This document is here to document this.
-> > =20
-> >  =3D Data providers =3D
-> > -Contains bindings specific to provider drivers and data cells as child=
-ren
-> > -of this node.
-> > +A data provider should have a subnode named 'nvmem-cells' that contains
-> > +a subnodes for each data cells.
-> > +
-> > +For backward compatibility the nvmem data cells can be direct children
-> > +of the data provider. This use is discouraged as it can conflict with
-> > +other bindings. =20
->=20
-> I don't think we need to go this far. Whether this is necessary depends=20
-> on the provider.
+Thanks,
 
-It depend more on the drivers implementation. Sure as long as the
-driver only support the nvmem API it doesn't matter, both binding are
-fine. But if it ever need to support another API the bindings might
-clash and the whole device binding will need to be updated. So all in
-all I see very few value in still allowing the old binding for new
-devices, or do you seen any problem with the new binding?
-
-However if the consensus is to keep both styles I will rewrite this
-paragraph as needed.
-
-Alban
-
---Sig_/esdboVINWphvIninm4cYbzi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJa1ekhAAoJEHSUmkuduC28zUMP/R1CQa0hBlA+o8D8cTMQpkcN
-xacENM3vNWs8WCGoiKWnbMtMFPNBTELSg201T+2iL4d/oCTZ29sOjoziTACQyqAJ
-vTI5HqGVZtsUl/r3wzrWCudrGbT+ghon9rvJrkpPE3t+G6YoVrqfYvxYqwRjA2EP
-sg825d9ZtAlijI0JtgYHPklGRej7AMMy8b6KbDXgnGTM+Xr4ETQ/VaefAOUszjL3
-FeZjGL8Su3hZmEcOIMv50yVLrVZt05URnU8nX8FqkX5/i0Hzr50eS1bLjfSKu69m
-pGZuLB9mQMDjEj13SY/fJS/tRe+6g8GLe2EPiWwcy6RN6I0vCquIIzzESJOkwUgo
-+FeLp1bZA9UGg3PtFtuY1zvkHJIwafBE/4NwSd7d4nF0lHZsLzDgIhEOUNnwqKvc
-vo9RB+MDskA2viYoLC+IUwgYdYpQHyfRn/AucccNvlfvV8u6uuFnfeXUrGU9bmIO
-80uTEavVCjUVMwixZy4+jUXcgZVusg5S9sjiZQj81jBhtVulUint5/4caApKmQy+
-//ujAMHVq5KxVQ639+exxkM1cqV8+NcsxY0HQHLmYmJwLNoXsLubwM6pYrMfhN0Y
-Idg/c/NVt2/EvrNee0a3W88VpiExZTfzXCdDkUi1qgcPvmdOX/SB0QIFF4bEhV44
-BsEGkmWGx1g7yTvlsU/x
-=eR8l
------END PGP SIGNATURE-----
-
---Sig_/esdboVINWphvIninm4cYbzi--
+Juergen
