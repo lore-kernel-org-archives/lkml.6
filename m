@@ -1,59 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752682AbeDQR3v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 13:29:51 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:50104 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751230AbeDQR3s (ORCPT
+        id S1752749AbeDQRag (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 13:30:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49922 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751232AbeDQRae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 13:29:48 -0400
-Subject: Re: [RESEND PATCH v2 0/4] ARM: davinci: remove the mach-specific
- aemif driver - part 1
-To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180417102917.7794-1-brgl@bgdev.pl>
- <2a2ac117-900c-77b6-f247-49777493e55f@ti.com>
- <CAMpxmJUBFEF7FDp910HwsrNhGhwJDrgRR_9qL0DE5W1M=39MgQ@mail.gmail.com>
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <e3fc3019-888c-cbc3-5e1b-e24c30bc4d49@oracle.com>
-Date: Tue, 17 Apr 2018 10:29:09 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 17 Apr 2018 13:30:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C88FC60117
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Tue, 17 Apr 2018 11:30:28 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mahesh Sivasubramanian <msivasub@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>
+Subject: Re: [PATCH] soc: qcom: cmd-db: Make endian-agnostic
+Message-ID: <20180417173028.GB29077@codeaurora.org>
+References: <20180412224111.35216-1-swboyd@chromium.org>
+ <20180417172234.GA29077@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMpxmJUBFEF7FDp910HwsrNhGhwJDrgRR_9qL0DE5W1M=39MgQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8866 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=866
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804170152
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180417172234.GA29077@codeaurora.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/17/2018 5:36 AM, Bartosz Golaszewski wrote:
-> 2018-04-17 12:53 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
->> Hi Bartosz,
-
-[...]
-
->>> This series applies on top of v8 of David Lechner's CCF series.
+On Tue, Apr 17 2018 at 11:22 -0600, Lina Iyer wrote:
+>On Thu, Apr 12 2018 at 16:41 -0600, Stephen Boyd wrote:
+>>This driver deals with memory that is stored in little-endian format.
+>>Update the structures with the proper little-endian types and then
+>>do the proper conversions when reading the fields. Note that we compare
+>>the ids with a memcmp() because we already pad out the string 'id' field
+>>to exactly 8 bytes with the strncpy() onto the stack.
 >>
->> Are there any patches in the series that can safely be applied to v4.17-rc1?
+>>Cc: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+>>Cc: Lina Iyer <ilina@codeaurora.org>
+>>Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>Cc: Evan Green <evgreen@chromium.org>
+>>Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>>---
+>>
+>>Changes from inline patch:
+>>* Fixed magic
+>>* Made function for memcmp()
+>>*
+>>
+>>drivers/soc/qcom/cmd-db.c | 116 +++++++++++++++++++++-----------------
+>>1 file changed, 65 insertions(+), 51 deletions(-)
+>>
+>>@@ -99,8 +90,34 @@ struct cmd_db_header {
+>> * h/w accelerator and request a resource state.
+>> */
+>>
+>>+static const char CMD_DB_MAGIC[] = { 0xdb, 0x30, 0x03, 0x0c };
+>>+
+>This works now.
+>
+>>+static bool cmd_db_magic_matches(struct cmd_db_header *header)
+>>+{
+>>+	__le32 *magic = &header->magic_num;
+>>+
+>>+	return memcmp(magic, CMD_DB_MAGIC, sizeof(CMD_DB_MAGIC)) == 0;
+>>+}
+>>+
+>>static struct cmd_db_header *cmd_db_header;
+>Could  you move this up, along with other declarations?
+>>
+>>+
+>>+static inline void *rsc_to_entry_header(struct rsc_hdr *hdr)
+>>+{
+>>+	u16 offset = le16_to_cpu(hdr->header_offset);
+>>+
+>>+	return cmd_db_header->data + offset;
+>
+>I noticed that the data was incorrect, with the above and I did it to
+>read the correct data.
+>
+Spoke too soon. Let me test more and report.
+-- Lina
 
-> 
-> Hi Sekhar,
-> 
-> yes, all of them. They're not linked to David's work in any way.
-> 
-Please separate the driver/emif/* patches from the series. These
-are not fixes so they are not rcx candidates. But will queue them
-up for next merge window. Thanks !!
+>return ((void*)cmd_db_header + sizeof(*cmd_db_header) + offset);
+>>+}
+>>+
+>>+static inline void *
+>>+rsc_offset(struct rsc_hdr *hdr, struct entry_header *ent)
+>>+{
+>>+	u16 offset = le16_to_cpu(hdr->header_offset);
+>>+	u16 loffset = le16_to_cpu(ent->offset);
+>>+
+>>+	return cmd_db_header->data + offset + loffset;
+>As well here -
+>return ((void*)cmd_db_header + sizeof(*cmd_db_header) + offset +
+>loffset);
+>>+}
+>>+
+>
+>Thanks,
+>Lina
+>
