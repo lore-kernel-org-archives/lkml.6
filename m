@@ -1,371 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751865AbeDQI6S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 04:58:18 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33004 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751147AbeDQI6Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:58:16 -0400
-X-Google-Smtp-Source: AIpwx49/kt1Z2kOl0WeAtc9LBqWgG/PIgLPBdqYntU0Qk7xSdY1HefyRO17LRDkKcGdlOatGM4wtTg==
-Subject: Re: [PATCH v2 3/5] ALSA: xen-front: Implement Xen event channel
- handling
-To: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
-        tiwai@suse.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
- <20180416062453.24743-4-andr2000@gmail.com>
- <f9d307ea-9464-252e-2a5a-11ac0b3163f4@suse.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <2e06f714-ebc2-11bb-078b-8a453ea8464c@gmail.com>
-Date: Tue, 17 Apr 2018 11:58:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <f9d307ea-9464-252e-2a5a-11ac0b3163f4@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S1752199AbeDQI7n (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 04:59:43 -0400
+Received: from mail-by2nam03on0042.outbound.protection.outlook.com ([104.47.42.42]:48576
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751147AbeDQI7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 04:59:40 -0400
+From: Rafal Ozieblo <rafalo@cadence.com>
+To: David Miller <davem@davemloft.net>
+CC: "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Piotr Sroka <piotrs@cadence.com>, Lukasz Tyrala <ltyrala@cadence.com>
+Subject: RE: [PATCH 0/3] Receive Side Coalescing for macb driver
+Thread-Topic: [PATCH 0/3] Receive Side Coalescing for macb driver
+Thread-Index: AQHT1DKrh4uO12ninEi+8bwBioxkGqQDgUeAgAEnuEA=
+Date: Tue, 17 Apr 2018 08:59:35 +0000
+Message-ID: <BN3PR0701MB1122B2FF2A1C54CD363B16A7C9B70@BN3PR0701MB1122.namprd07.prod.outlook.com>
+References: <1523739187-20077-1-git-send-email-rafalo@cadence.com>
+ <20180416.110855.61732218036810337.davem@davemloft.net>
+In-Reply-To: <20180416.110855.61732218036810337.davem@davemloft.net>
+Accept-Language: pl-PL, en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccmFmYWxvXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYTVkMjk2YjgtNDIxZC0xMWU4LTg2ZmItZThiMWZjMTMxNjNhXGFtZS10ZXN0XGE1ZDI5NmI5LTQyMWQtMTFlOC04NmZiLWU4YjFmYzEzMTYzYWJvZHkudHh0IiBzej0iMTgyMCIgdD0iMTMxNjg0MjkxNzQ4Nzk1MDgxIiBoPSJaZlFuYzNENm1pOHAzaThpcU0yNTdRb2FteGs9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-tag-bcast: 
+x-dg-paste: 
+x-dg-rorf: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=rafalo@cadence.com;
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN3PR0701MB1171;7:FeneZLu4Zc6xeyGO8K4pXYoPB9V7n1S+cAfa0LzYoHwmndo9L787t7+l4ghrVcRUg51VwOCiNZOXOwigUtOGGViqOvbHYDpLz0DcUdU25JlQd9B8GCJZiOsQBDCOgp3ai41IzAEaxSroDNfAst4FUtCzmFEspUjxT2UA4pyxIVOyP5+XqHTmFzsxTERq2rXUngWrIMj1VF7+G5K9E4X5YCGMh2VJ8Xe3B5lhOQY0fc02u6oy6mQtHK4j1OgI3s6T;20:KUXCptC6n+qF9P4zxMiiWecYlxTwISEEFS//58/jiBDLtrd/FIQL06PHNbOsI2Gp4mP+nNlVGHBONgamPBY9KsqGkqKkps3zH+VBYYs6UmUpb/q+v2J5TIA1ld6+vd3cp3zWXBVjRc1wyNzT3cZyAVEmWylZicZsIbb9HJ+zPkh4Xn8RodeqL+U/PSBuHHvoRT0HnF1aUN9/09N/tq6vTEnj50udmGFH1PJesKqWO3RVEd4gtmpDMcUEila8pqC4
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(376002)(39380400002)(39860400002)(199004)(189003)(36092001)(3280700002)(7736002)(66066001)(5660300001)(107886003)(6116002)(3846002)(3660700001)(6246003)(4326008)(476003)(5250100002)(86362001)(486006)(446003)(68736007)(11346002)(25786009)(229853002)(6436002)(97736004)(6916009)(76176011)(99286004)(6506007)(7696005)(54906003)(316002)(102836004)(26005)(186003)(105586002)(33656002)(9686003)(478600001)(74316002)(305945005)(55016002)(53936002)(2900100001)(81156014)(81166006)(14454004)(106356001)(8936002)(2906002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR0701MB1171;H:BN3PR0701MB1122.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BN3PR0701MB1171;
+x-ms-traffictypediagnostic: BN3PR0701MB1171:
+x-microsoft-antispam-prvs: <BN3PR0701MB1171058573DA05D33B7CFBF1C9B70@BN3PR0701MB1171.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72806322054110);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231232)(944501327)(52105095)(93006095)(93001095)(10201501046)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(6072148)(201708071742011);SRVR:BN3PR0701MB1171;BCL:0;PCL:0;RULEID:;SRVR:BN3PR0701MB1171;
+x-forefront-prvs: 0645BEB7AA
+x-microsoft-antispam-message-info: 2cs6iT2rid5l/0uyfyV3+m50pdvcC7BhHUsJWhaTwGtO+e8ptsMYmO5P7iERMoMg5/Mv6jAmTjd3lRPSqzDjE5pzffzMJG2ITrZ+56Z9ahFwT+KcIWwcb0oeUFAEcT7sde8Yrf4mgKUi5LlIW45W25a0wPPKfUwW6qzLPfdbfI4A/bJQZf6bw4CH5Xi0KuHJwj8ysOjtEzVo1wMiL8CEDw==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: d4d4c92a-6c77-4cf8-42d9-08d5a4418b67
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4d4c92a-6c77-4cf8-42d9-08d5a4418b67
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2018 08:59:35.9151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR0701MB1171
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3H8xunr000379
 
-On 04/16/2018 04:12 PM, Juergen Gross wrote:
-> On 16/04/18 08:24, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> Handle Xen event channels:
->>    - create for all configured streams and publish
->>      corresponding ring references and event channels in Xen store,
->>      so backend can connect
->>    - implement event channels interrupt handlers
->>    - create and destroy event channels with respect to Xen bus state
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> ---
->>   sound/xen/Makefile                |   3 +-
->>   sound/xen/xen_snd_front.c         |  10 +-
->>   sound/xen/xen_snd_front.h         |   7 +
->>   sound/xen/xen_snd_front_evtchnl.c | 474 ++++++++++++++++++++++++++++++++++++++
->>   sound/xen/xen_snd_front_evtchnl.h |  92 ++++++++
->>   5 files changed, 584 insertions(+), 2 deletions(-)
->>   create mode 100644 sound/xen/xen_snd_front_evtchnl.c
->>   create mode 100644 sound/xen/xen_snd_front_evtchnl.h
->>
->> diff --git a/sound/xen/Makefile b/sound/xen/Makefile
->> index 06705bef61fa..03c669984000 100644
->> --- a/sound/xen/Makefile
->> +++ b/sound/xen/Makefile
->> @@ -1,6 +1,7 @@
->>   # SPDX-License-Identifier: GPL-2.0 OR MIT
->>   
->>   snd_xen_front-objs := xen_snd_front.o \
->> -		      xen_snd_front_cfg.o
->> +		      xen_snd_front_cfg.o \
->> +		      xen_snd_front_evtchnl.o
->>   
->>   obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
->> diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
->> index 65d2494a9d14..eb46bf4070f9 100644
->> --- a/sound/xen/xen_snd_front.c
->> +++ b/sound/xen/xen_snd_front.c
->> @@ -18,9 +18,11 @@
->>   #include <xen/interface/io/sndif.h>
->>   
->>   #include "xen_snd_front.h"
->> +#include "xen_snd_front_evtchnl.h"
-> Does it really make sense to have multiple driver-private headers?
+From: David Miller [mailto:davem@davemloft.net] 
+Sent: 16 kwietnia 2018 17:09
+
+> From: Rafal Ozieblo <rafalo@cadence.com>
+> Date: Sat, 14 Apr 2018 21:53:07 +0100
 >
-> I think those can be merged.
-I would really like to keep it separate as it clearly
-shows which stuff belongs to which modules.
-At least for me it is easier to maintain it this way.
+>> This patch series adds support for receive side coalescing for Cadence 
+>> GEM driver. Receive segmentation coalescing is a mechanism to reduce 
+>> CPU overhead. This is done by coalescing received TCP message segments 
+>> together into a single large message. This means that when the message
+>> is complete the CPU only has to process the single header and act upon 
+>> the one data payload.
 >
->>   
->>   static void xen_snd_drv_fini(struct xen_snd_front_info *front_info)
->>   {
->> +	xen_snd_front_evtchnl_free_all(front_info);
->>   }
->>   
->>   static int sndback_initwait(struct xen_snd_front_info *front_info)
->> @@ -32,7 +34,12 @@ static int sndback_initwait(struct xen_snd_front_info *front_info)
->>   	if (ret < 0)
->>   		return ret;
->>   
->> -	return 0;
->> +	/* create event channels for all streams and publish */
->> +	ret = xen_snd_front_evtchnl_create_all(front_info, num_streams);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	return xen_snd_front_evtchnl_publish_all(front_info);
->>   }
->>   
->>   static int sndback_connect(struct xen_snd_front_info *front_info)
->> @@ -122,6 +129,7 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
->>   		return -ENOMEM;
->>   
->>   	front_info->xb_dev = xb_dev;
->> +	spin_lock_init(&front_info->io_lock);
->>   	dev_set_drvdata(&xb_dev->dev, front_info);
->>   
->>   	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
->> diff --git a/sound/xen/xen_snd_front.h b/sound/xen/xen_snd_front.h
->> index b52226cb30bc..9c2ffbb4e4b8 100644
->> --- a/sound/xen/xen_snd_front.h
->> +++ b/sound/xen/xen_snd_front.h
->> @@ -13,9 +13,16 @@
->>   
->>   #include "xen_snd_front_cfg.h"
->>   
->> +struct xen_snd_front_evtchnl_pair;
->> +
->>   struct xen_snd_front_info {
->>   	struct xenbus_device *xb_dev;
->>   
->> +	/* serializer for backend IO: request/response */
->> +	spinlock_t io_lock;
->> +	int num_evt_pairs;
->> +	struct xen_snd_front_evtchnl_pair *evt_pairs;
->> +
->>   	struct xen_front_cfg_card cfg;
->>   };
->>   
->> diff --git a/sound/xen/xen_snd_front_evtchnl.c b/sound/xen/xen_snd_front_evtchnl.c
->> new file mode 100644
->> index 000000000000..9ece39f938f8
->> --- /dev/null
->> +++ b/sound/xen/xen_snd_front_evtchnl.c
->> @@ -0,0 +1,474 @@
->> +// SPDX-License-Identifier: GPL-2.0 OR MIT
->> +
->> +/*
->> + * Xen para-virtual sound device
->> + *
->> + * Copyright (C) 2016-2018 EPAM Systems Inc.
->> + *
->> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> + */
->> +
->> +#include <xen/events.h>
->> +#include <xen/grant_table.h>
->> +#include <xen/xen.h>
->> +#include <xen/xenbus.h>
->> +
->> +#include "xen_snd_front.h"
->> +#include "xen_snd_front_cfg.h"
->> +#include "xen_snd_front_evtchnl.h"
->> +
->> +static irqreturn_t evtchnl_interrupt_req(int irq, void *dev_id)
->> +{
->> +	struct xen_snd_front_evtchnl *channel = dev_id;
->> +	struct xen_snd_front_info *front_info = channel->front_info;
->> +	struct xensnd_resp *resp;
->> +	RING_IDX i, rp;
->> +	unsigned long flags;
->> +
->> +	if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
->> +		return IRQ_HANDLED;
->> +
->> +	spin_lock_irqsave(&front_info->io_lock, flags);
->> +
->> +again:
->> +	rp = channel->u.req.ring.sring->rsp_prod;
->> +	/* ensure we see queued responses up to rp */
->> +	rmb();
->> +
->> +	for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
->> +		resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
->> +		if (resp->id != channel->evt_id)
->> +			continue;
->> +		switch (resp->operation) {
->> +		case XENSND_OP_OPEN:
->> +			/* fall through */
->> +		case XENSND_OP_CLOSE:
->> +			/* fall through */
->> +		case XENSND_OP_READ:
->> +			/* fall through */
->> +		case XENSND_OP_WRITE:
->> +			/* fall through */
->> +		case XENSND_OP_TRIGGER:
->> +			channel->u.req.resp_status = resp->status;
->> +			complete(&channel->u.req.completion);
->> +			break;
->> +		case XENSND_OP_HW_PARAM_QUERY:
->> +			channel->u.req.resp_status = resp->status;
->> +			channel->u.req.resp.hw_param =
->> +					resp->resp.hw_param;
->> +			complete(&channel->u.req.completion);
->> +			break;
->> +
->> +		default:
->> +			dev_err(&front_info->xb_dev->dev,
->> +				"Operation %d is not supported\n",
->> +				resp->operation);
->> +			break;
->> +		}
->> +	}
->> +
->> +	channel->u.req.ring.rsp_cons = i;
->> +	if (i != channel->u.req.ring.req_prod_pvt) {
->> +		int more_to_do;
->> +
->> +		RING_FINAL_CHECK_FOR_RESPONSES(&channel->u.req.ring,
->> +					       more_to_do);
->> +		if (more_to_do)
->> +			goto again;
->> +	} else {
->> +		channel->u.req.ring.sring->rsp_event = i + 1;
->> +	}
->> +
->> +	spin_unlock_irqrestore(&front_info->io_lock, flags);
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static irqreturn_t evtchnl_interrupt_evt(int irq, void *dev_id)
->> +{
->> +	struct xen_snd_front_evtchnl *channel = dev_id;
->> +	struct xen_snd_front_info *front_info = channel->front_info;
->> +	struct xensnd_event_page *page = channel->u.evt.page;
->> +	u32 cons, prod;
->> +	unsigned long flags;
->> +
->> +	if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
->> +		return IRQ_HANDLED;
->> +
->> +	spin_lock_irqsave(&front_info->io_lock, flags);
->> +
->> +	prod = page->in_prod;
->> +	/* ensure we see ring contents up to prod */
->> +	virt_rmb();
->> +	if (prod == page->in_cons)
->> +		goto out;
->> +
->> +	for (cons = page->in_cons; cons != prod; cons++) {
->> +		struct xensnd_evt *event;
->> +
->> +		event = &XENSND_IN_RING_REF(page, cons);
->> +		if (unlikely(event->id != channel->evt_id++))
->> +			continue;
->> +
->> +		switch (event->type) {
->> +		case XENSND_EVT_CUR_POS:
->> +			/* do nothing at the moment */
->> +			break;
->> +		}
->> +	}
->> +
->> +	page->in_cons = cons;
->> +	/* ensure ring contents */
->> +	virt_wmb();
->> +
->> +out:
->> +	spin_unlock_irqrestore(&front_info->io_lock, flags);
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +void xen_snd_front_evtchnl_flush(struct xen_snd_front_evtchnl *channel)
->> +{
->> +	int notify;
->> +
->> +	channel->u.req.ring.req_prod_pvt++;
->> +	RING_PUSH_REQUESTS_AND_CHECK_NOTIFY(&channel->u.req.ring, notify);
->> +	if (notify)
->> +		notify_remote_via_irq(channel->irq);
->> +}
->> +
->> +static void evtchnl_free(struct xen_snd_front_info *front_info,
->> +			 struct xen_snd_front_evtchnl *channel)
->> +{
->> +	unsigned long page = 0;
->> +
->> +	if (channel->type == EVTCHNL_TYPE_REQ)
->> +		page = (unsigned long)channel->u.req.ring.sring;
->> +	else if (channel->type == EVTCHNL_TYPE_EVT)
->> +		page = (unsigned long)channel->u.evt.page;
->> +
->> +	if (!page)
->> +		return;
->> +
->> +	channel->state = EVTCHNL_STATE_DISCONNECTED;
->> +	if (channel->type == EVTCHNL_TYPE_REQ) {
->> +		/* release all who still waits for response if any */
->> +		channel->u.req.resp_status = -EIO;
->> +		complete_all(&channel->u.req.completion);
->> +	}
->> +
->> +	if (channel->irq)
->> +		unbind_from_irqhandler(channel->irq, channel);
->> +
->> +	if (channel->port)
->> +		xenbus_free_evtchn(front_info->xb_dev, channel->port);
->> +
->> +	/* end access and free the page */
->> +	if (channel->gref != GRANT_INVALID_REF)
->> +		gnttab_end_foreign_access(channel->gref, 0, page);
-> Free page?
-According to [1] if page is provided to gnttab_end_foreign_access
-it will be freed. So, no need to free it manually
->> +
->> +	memset(channel, 0, sizeof(*channel));
->> +}
->> +
->> +void xen_snd_front_evtchnl_free_all(struct xen_snd_front_info *front_info)
->> +{
->> +	int i;
->> +
->> +	if (!front_info->evt_pairs)
->> +		return;
->> +
->> +	for (i = 0; i < front_info->num_evt_pairs; i++) {
->> +		evtchnl_free(front_info, &front_info->evt_pairs[i].req);
->> +		evtchnl_free(front_info, &front_info->evt_pairs[i].evt);
->> +	}
->> +
->> +	kfree(front_info->evt_pairs);
->> +	front_info->evt_pairs = NULL;
->> +}
->> +
->> +static int evtchnl_alloc(struct xen_snd_front_info *front_info, int index,
->> +			 struct xen_snd_front_evtchnl *channel,
->> +			 enum xen_snd_front_evtchnl_type type)
->> +{
->> +	struct xenbus_device *xb_dev = front_info->xb_dev;
->> +	unsigned long page;
->> +	grant_ref_t gref;
->> +	irq_handler_t handler;
->> +	char *handler_name = NULL;
->> +	int ret;
->> +
->> +	memset(channel, 0, sizeof(*channel));
->> +	channel->type = type;
->> +	channel->index = index;
->> +	channel->front_info = front_info;
->> +	channel->state = EVTCHNL_STATE_DISCONNECTED;
->> +	channel->gref = GRANT_INVALID_REF;
->> +	page = get_zeroed_page(GFP_NOIO | __GFP_HIGH);
-> Why GFP_NOIO | __GFP_HIGH? Could it be you copied that from blkfront
-> driver?
-It can be net-front, I guess, which has the same for rx/tx rings
->   I believe swapping via sound card is rather uncommon.
-Indeed, will use GFP_KERNEL here
->> +	if (!page) {
->> +		ret = -ENOMEM;
->> +		goto fail;
->> +	}
->> +
->> +	handler_name = kasprintf(GFP_KERNEL, "%s-%s", XENSND_DRIVER_NAME,
->> +				 type == EVTCHNL_TYPE_REQ ?
->> +				 XENSND_FIELD_RING_REF :
->> +				 XENSND_FIELD_EVT_RING_REF);
->> +	if (!handler_name) {
->> +		ret = -ENOMEM;
-> Missing free_page(page)? Maybe you rather add it in the common
-> fail path instead of the numerous instances below?
+> You're going to have to think more deeply about enabling this feature.
 >
-yes, will move it under the common fail: label
-> Juergen
-[1] 
-https://elixir.bootlin.com/linux/v4.17-rc1/source/include/xen/grant_table.h#L96
+> If you can't adjust the receive buffer offset, then the various packet header fields will be unaligned.
+>
+> On certain architectures this will result in unaligned traps all over the networking stack as the packet is being processed.
+>
+> So enabling this by default will hurt performance on such systems a lot.
+>
+> The whole "skb_reserve(skb, NET_IP_ALIGN)" is not just for fun, it is absolutely essential.
+
+I totally agree with you. But the issue is with IP cores which has this feature implemented in.
+Even when user does not want to use that feature but he bought IP with configuration supported RSC, then he has to switch off IP alignment.
+There is no IP alignment with RSC in the GEM:
+"When the gem rsc define has been set the receive buffer offset cannot be changed in the network configuration register."
+If IP supports RSC and skb has 2B reserved for alignment we end up with none packets receive correctly (2B missing in the each skb).
+We can either leave few customers without support in Linux driver or let them use the driver with decrease performance.
