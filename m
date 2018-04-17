@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/MhI8hD+1yyQTfBcqQX1rW3CyLXMX3yDOX/ZfkgcXXvbG4v5qiMJMRy5CYxeuDkDAkkmD1
-ARC-Seal: i=1; a=rsa-sha256; t=1523981097; cv=none;
+X-Google-Smtp-Source: AIpwx489sWItuJF6JjvHYm6nbB6CA34GEjkaG8aaxmRhRNpQwYNWvfhzV+Ihyz/EUHQROunZ/2tw
+ARC-Seal: i=1; a=rsa-sha256; t=1523981093; cv=none;
         d=google.com; s=arc-20160816;
-        b=EJtp/rqDRxX66rguAUmBMCKClmtVxHSlXqnjkV4hc7kPrUSdHZNP0t2i0Rf8NsJbis
-         LM3/Q2vL7ZAF9p8J9izQpWytNG1FEqsCRceckCo8UEvBILhGkSyiXKGp8a1kJ4uOdoFM
-         JA2sulkNF7yN2pewEkToKZyf1OgAocGbzoiV3ozLXHpgS1Quh8wNw/BrjiD9EMA2z9td
-         8Wob4Sp7CpLxjt5xclr5ABksuq7+CknJ6X5SHHEJN4anSHtM5/pynl2cONQ7rrMvhDy4
-         v0aYPUnvXy+e8Bs9FJ2om5EHeXataY0a0Eoz7PGUpJM2lynbq4ChLuH4XMxUPU3cAM7/
-         6rZA==
+        b=KEp1W7/c/jdj738VR/z8RVprmr71mzASf7PkoHWLQUBHlVxL3VF2TefWYrEaqcfeFU
+         sTnkzzMGIvUZity408Tcq4dHrTj3fVPKJTm7gr39sA9qZTzLokwqJcLstYmNEQxN3T7r
+         5z/ljjgJUBGUlmveqXziNIvBqpTA1NPd6l/kDT6V8sgKvitLikQpXMSdYl53ZqzERe9N
+         z3/0AswLb6zh+2XnQFk620l4gLR8IPMc6RjrytIonf51Z7Sb5VpoUaOY8f7nBrWsLyTO
+         fuDN7eTMnVA47Ydk36ikQw/odvToCs8MXM2g+TR+haGyJ/nmurfVdpiTmJVHX/Q95cUi
+         ScjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=kmCAE9pbjEHILMwWxZEbeCv0fIQoGbjIAIPjRVwOkw4=;
-        b=Ts8cTKHSJqiy4LqEZNt/r/hEU9cx2viQi5P6t6vTUKrYd8hc9DCf57cONE379L7qN7
-         WIccCXh82ewpeJ8C3ryBTQa+OI0K6WqdIKq2hPdmoQfeyquTbfaQvYtXOPG+wsEom1uZ
-         Kkehrksr5Cqplo1TJHUxt3kbF9LEy4zcs6TC1tf5H+RMPcbctFDn+Aa65g9+MYV4id2Y
-         ZqkOu8hLI1NbDAip/Tzh0fmCBABOwBora0MSlhN45oZEvT0sVTKiRFCxZWdp5RHu/t/R
-         3MyucDOX0yOanUDv35XrHAarMZk94Z4tNTfRC06/jz/lQDLxDKygWY/Wv/skM8KNxaDb
-         C8Tg==
+        bh=eBSAXKYAUYh8s8jTzuhc7lnle/Gs3YJQMcu1i9RjWTk=;
+        b=gWutGLIc5cI6PKSzdxg7qKcVkMyBhFabP1jyZL1iOuNuCnEU61n2FAZetIyTx+XX7c
+         1+z/bxtnJ2wszn7QSzjNybRex0DnkDSHR4+wFS5bLoj0MGJpoyUQWurlLUwMOQjM+C2q
+         nCelcw54znJpHRtmJiCIN1sX7tn+lawJDpYSy+me9byBmNLIJFTuVmyNHj8its8EzWck
+         xzkY3VXfHgIBmiKJjUvYPlFffC82tgUSrJFMEJkFQ8u+9WS4a6hJ2SSl0VajpqChtOkq
+         OrxH+pPy5ayAJs3JOyLxSOTqrURdsZYuOYAVstEMysQ7BeOE2adhNgKbadyYVlgl+4Z5
+         d6xQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Phil Elwell <phil@raspberrypi.org>,
+	Eric Auger <eric.auger@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 11/53] lan78xx: Correctly indicate invalid OTP
-Date: Tue, 17 Apr 2018 17:58:36 +0200
-Message-Id: <20180417155723.706431040@linuxfoundation.org>
+Subject: [PATCH 4.15 10/53] vhost: Fix vhost_copy_to_user()
+Date: Tue, 17 Apr 2018 17:58:35 +0200
+Message-Id: <20180417155723.662183823@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -40,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009755647099908?=
-X-GMAIL-MSGID: =?utf-8?q?1598010003215479618?=
+X-GMAIL-THRID: =?utf-8?q?1598009751810796107?=
+X-GMAIL-MSGID: =?utf-8?q?1598009999959860649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,33 +51,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Phil Elwell <phil@raspberrypi.org>
+From: Eric Auger <eric.auger@redhat.com>
 
 
-[ Upstream commit 4bfc33807a9a02764bdd1e42e794b3b401240f27 ]
+[ Upstream commit 7ced6c98c7ab7a1f6743931e28671b833af79b1e ]
 
-lan78xx_read_otp tries to return -EINVAL in the event of invalid OTP
-content, but the value gets overwritten before it is returned and the
-read goes ahead anyway. Make the read conditional as it should be
-and preserve the error code.
+vhost_copy_to_user is used to copy vring used elements to userspace.
+We should use VHOST_ADDR_USED instead of VHOST_ADDR_DESC.
 
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Fixes: f88949138058 ("vhost: introduce O(1) vq metadata cache")
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/vhost/vhost.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -928,7 +928,8 @@ static int lan78xx_read_otp(struct lan78
- 			offset += 0x100;
- 		else
- 			ret = -EINVAL;
--		ret = lan78xx_read_raw_otp(dev, offset, length, data);
-+		if (!ret)
-+			ret = lan78xx_read_raw_otp(dev, offset, length, data);
- 	}
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -756,7 +756,7 @@ static int vhost_copy_to_user(struct vho
+ 		struct iov_iter t;
+ 		void __user *uaddr = vhost_vq_meta_fetch(vq,
+ 				     (u64)(uintptr_t)to, size,
+-				     VHOST_ADDR_DESC);
++				     VHOST_ADDR_USED);
  
- 	return ret;
+ 		if (uaddr)
+ 			return __copy_to_user(uaddr, from, size);
