@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49uVT9J4e5KjrEvELlR22eHdDCMeKtA1d4Wc5ikqTR8ylg4O06+SNffH4ewx2AniW6rF4T3
-ARC-Seal: i=1; a=rsa-sha256; t=1523981214; cv=none;
+X-Google-Smtp-Source: AIpwx4+xUD1foIHhXGtaeKW5aEYnNo8DP5iqi3K1qwTp/K3nNMMcCvqOT9Wd3v7iHlC8+/6kVcqT
+ARC-Seal: i=1; a=rsa-sha256; t=1523981209; cv=none;
         d=google.com; s=arc-20160816;
-        b=odUwWFAuE++d+nBFujrnAJl+0PRr7wzq/Y5cHTVMhPRYbVFDkKeca2oG01Frn7iGgE
-         R8VKqtVp0ee6YEsSgJ+e7lEa9vOfgGmhKtygAawf7g9avS0b3hd5cZI6vk9IXHprFMhC
-         /M8qUuVYDGEArE7UZVnCLOghkaViIz9jlOvpcRvfeI7/nuN6xHEKjaX2X/52tAJiXkqr
-         187r9Z1GJJNLz84R0+YrtqyanCWEEC2BWQLGbcyjDObjPaGlidFU+2a+dSqDQGNV2uMM
-         fFUWuNccoqRldLeqGYXy8rwY/n5Ifptr7UkWGIo+rvpGEPQi1gKVlQWgWeHtxw4JI6Q/
-         XCgg==
+        b=gz6AC1ozoqSCpVt/C9f2K7OSB5sRNx1s2pQSgZUtox1N1VG65Q+hj9o5hIuzUgzMVY
+         i/G4vRdyHxbQ3SYJBf3Axhr+6+MjHkeaLWearmJWj1rxdL6OYJumLsfzLQ4Hv42H3v5c
+         siKzixPS4e/mTHnYMCLufau/Jo1xjZt1geA948GMIK/5m5a78km1TqzRWlJASIj/cuPp
+         LSh09NxR/PcwUgO5W3uAENvEUgYLmtKXhgSPdkGPwwJTKqlWUP0EfOnsJe5FeNOiRgVs
+         sPnsBn8qoGzKS/sCr7n+DxCSm7YOPhdpWjiX+5hAi4aW4UObyk/95ymZlfNsHP4moiG2
+         Pfgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XpBC7wYFVHdGbCCGir3GqmTldUGN559Bz1dF7nfwB0k=;
-        b=Y717XGoP0mbG4h8uVL70Ab1E81K/ypWUrPgj82MlrIIpcV1RuQpeC3D+xOamdfCw0L
-         xft9Jo4RbzRcEAr2xgCqmcq6QJecyAE8Nn9Tlox+HUBmhAaSxeMfjw028qTwEOmvOSZr
-         IzBakUGEkagzBu+LA0B7XVXvn3CuARiuMZEbOZAHWU162qI4tRaYTubzTC1rLF14ON1r
-         8n2xzojEod3ygqAYyYHeKm1aqEHqq9TgibYp+ELRXcVEu1d6hjmi08jF+cf5MLwwhIjZ
-         8mc/gOH36oeJH11eUXuDMqKiEMAcbzLQY665Hq5f8dWSzf2QMw6cScB8nHJ4RfQSccJL
-         D53g==
+        bh=D/9nfwdTy/YRGTdp/OU6eV1qVEFlDXfTwTChas/R5R0=;
+        b=n0nDoPZ5VYDPtlecKaxtOKGiQTzkgrBKHw52L0RkOJ+l85F1ZramUT/DH5aseY4LJq
+         s4NcFwPhBxc/CxFQIzzNZ4ZBOjqcChPHqo4u1LH9V5ag7YTdixCxBtfX4MIpBuB7JGQ2
+         Cu4JQKPwBcY/3zHtSzFJ1Ei2JXEAdwgJKJqP1SGDWApWBycnd58vC+o8JaxxUn1VE7RR
+         +KJF3lY3qgpk9jWHxlF9QiqKJd+yShqDd3sJxtY/zWCpDU4bvOB0YWPuDoCwQwyA+gti
+         YFz+aY9AO/bPett90Ju9D08r04LjpBOkumgFs6KTNzK3Gepg7Gi2oEslnYD2Yt8UklvF
+         Xr4g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
-	Ming Lei <tom.leiming@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jens Axboe <axboe@fb.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 26/49] block/loop: fix deadlock after loop_set_status
-Date: Tue, 17 Apr 2018 17:59:05 +0200
-Message-Id: <20180417155716.273754205@linuxfoundation.org>
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.14 09/49] media: v4l: vsp1: Fix header display list status check in continuous mode
+Date: Tue, 17 Apr 2018 17:58:48 +0200
+Message-Id: <20180417155715.453427333@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009837369883753?=
-X-GMAIL-MSGID: =?utf-8?q?1598010125552867600?=
+X-GMAIL-THRID: =?utf-8?q?1598009701678571338?=
+X-GMAIL-MSGID: =?utf-8?q?1598010121203507319?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,130 +50,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-commit 1e047eaab3bb5564f25b41e9cd3a053009f4e789 upstream.
+commit 613928e85317b945c863bb893f5737d2f22f5425 upstream.
 
-syzbot is reporting deadlocks at __blkdev_get() [1].
+To allow dual pipelines utilising two WPF entities when available, the
+VSP was updated to support header-mode display list in continuous
+pipelines.
 
-----------------------------------------
-[   92.493919] systemd-udevd   D12696   525      1 0x00000000
-[   92.495891] Call Trace:
-[   92.501560]  schedule+0x23/0x80
-[   92.502923]  schedule_preempt_disabled+0x5/0x10
-[   92.504645]  __mutex_lock+0x416/0x9e0
-[   92.510760]  __blkdev_get+0x73/0x4f0
-[   92.512220]  blkdev_get+0x12e/0x390
-[   92.518151]  do_dentry_open+0x1c3/0x2f0
-[   92.519815]  path_openat+0x5d9/0xdc0
-[   92.521437]  do_filp_open+0x7d/0xf0
-[   92.527365]  do_sys_open+0x1b8/0x250
-[   92.528831]  do_syscall_64+0x6e/0x270
-[   92.530341]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+A small bug in the status check of the command register causes the
+second pipeline to be directly afflicted by the running of the first;
+appearing as a perceived performance issue with stuttering display.
 
-[   92.931922] 1 lock held by systemd-udevd/525:
-[   92.933642]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x73/0x4f0
-----------------------------------------
+Fix the vsp1_dl_list_hw_update_pending() call to ensure that the read
+comparison corresponds to the correct pipeline.
 
-The reason of deadlock turned out that wait_event_interruptible() in
-blk_queue_enter() got stuck with bdev->bd_mutex held at __blkdev_put()
-due to q->mq_freeze_depth == 1.
+Fixes: eaf4bfad6ad8 ("v4l: vsp1: Add support for header display lists in continuous mode")
 
-----------------------------------------
-[   92.787172] a.out           S12584   634    633 0x80000002
-[   92.789120] Call Trace:
-[   92.796693]  schedule+0x23/0x80
-[   92.797994]  blk_queue_enter+0x3cb/0x540
-[   92.803272]  generic_make_request+0xf0/0x3d0
-[   92.807970]  submit_bio+0x67/0x130
-[   92.810928]  submit_bh_wbc+0x15e/0x190
-[   92.812461]  __block_write_full_page+0x218/0x460
-[   92.815792]  __writepage+0x11/0x50
-[   92.817209]  write_cache_pages+0x1ae/0x3d0
-[   92.825585]  generic_writepages+0x5a/0x90
-[   92.831865]  do_writepages+0x43/0xd0
-[   92.836972]  __filemap_fdatawrite_range+0xc1/0x100
-[   92.838788]  filemap_write_and_wait+0x24/0x70
-[   92.840491]  __blkdev_put+0x69/0x1e0
-[   92.841949]  blkdev_close+0x16/0x20
-[   92.843418]  __fput+0xda/0x1f0
-[   92.844740]  task_work_run+0x87/0xb0
-[   92.846215]  do_exit+0x2f5/0xba0
-[   92.850528]  do_group_exit+0x34/0xb0
-[   92.852018]  SyS_exit_group+0xb/0x10
-[   92.853449]  do_syscall_64+0x6e/0x270
-[   92.854944]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[   92.943530] 1 lock held by a.out/634:
-[   92.945105]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x3c/0x1e0
-----------------------------------------
-
-The reason of q->mq_freeze_depth == 1 turned out that loop_set_status()
-forgot to call blk_mq_unfreeze_queue() at error paths for
-info->lo_encrypt_type != NULL case.
-
-----------------------------------------
-[   37.509497] CPU: 2 PID: 634 Comm: a.out Tainted: G        W        4.16.0+ #457
-[   37.513608] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[   37.518832] RIP: 0010:blk_freeze_queue_start+0x17/0x40
-[   37.521778] RSP: 0018:ffffb0c2013e7c60 EFLAGS: 00010246
-[   37.524078] RAX: 0000000000000000 RBX: ffff8b07b1519798 RCX: 0000000000000000
-[   37.527015] RDX: 0000000000000002 RSI: ffffb0c2013e7cc0 RDI: ffff8b07b1519798
-[   37.529934] RBP: ffffb0c2013e7cc0 R08: 0000000000000008 R09: 47a189966239b898
-[   37.532684] R10: dad78b99b278552f R11: 9332dca72259d5ef R12: ffff8b07acd73678
-[   37.535452] R13: 0000000000004c04 R14: 0000000000000000 R15: ffff8b07b841e940
-[   37.538186] FS:  00007fede33b9740(0000) GS:ffff8b07b8e80000(0000) knlGS:0000000000000000
-[   37.541168] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   37.543590] CR2: 00000000206fdf18 CR3: 0000000130b30006 CR4: 00000000000606e0
-[   37.546410] Call Trace:
-[   37.547902]  blk_freeze_queue+0x9/0x30
-[   37.549968]  loop_set_status+0x67/0x3c0 [loop]
-[   37.549975]  loop_set_status64+0x3b/0x70 [loop]
-[   37.549986]  lo_ioctl+0x223/0x810 [loop]
-[   37.549995]  blkdev_ioctl+0x572/0x980
-[   37.550003]  block_ioctl+0x34/0x40
-[   37.550006]  do_vfs_ioctl+0xa7/0x6d0
-[   37.550017]  ksys_ioctl+0x6b/0x80
-[   37.573076]  SyS_ioctl+0x5/0x10
-[   37.574831]  do_syscall_64+0x6e/0x270
-[   37.576769]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-----------------------------------------
-
-[1] https://syzkaller.appspot.com/bug?id=cd662bc3f6022c0979d01a262c318fab2ee9b56f
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>
-Fixes: ecdd09597a572513 ("block/loop: fix race between I/O and set_status")
-Cc: Ming Lei <tom.leiming@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: Jens Axboe <axboe@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: "Stable v4.14+" <stable@vger.kernel.org>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/media/platform/vsp1/vsp1_dl.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1098,11 +1098,15 @@ loop_set_status(struct loop_device *lo,
- 	if (info->lo_encrypt_type) {
- 		unsigned int type = info->lo_encrypt_type;
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -508,7 +508,8 @@ static bool vsp1_dl_list_hw_update_pendi
+ 		return !!(vsp1_read(vsp1, VI6_DL_BODY_SIZE)
+ 			  & VI6_DL_BODY_SIZE_UPD);
+ 	else
+-		return !!(vsp1_read(vsp1, VI6_CMD(dlm->index) & VI6_CMD_UPDHDR));
++		return !!(vsp1_read(vsp1, VI6_CMD(dlm->index))
++			  & VI6_CMD_UPDHDR);
+ }
  
--		if (type >= MAX_LO_CRYPT)
--			return -EINVAL;
-+		if (type >= MAX_LO_CRYPT) {
-+			err = -EINVAL;
-+			goto exit;
-+		}
- 		xfer = xfer_funcs[type];
--		if (xfer == NULL)
--			return -EINVAL;
-+		if (xfer == NULL) {
-+			err = -EINVAL;
-+			goto exit;
-+		}
- 	} else
- 		xfer = NULL;
- 
+ static void vsp1_dl_list_hw_enqueue(struct vsp1_dl_list *dl)
