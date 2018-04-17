@@ -1,83 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752649AbeDQLIL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 07:08:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34847 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752086AbeDQLIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 07:08:09 -0400
-Subject: Re: [PATCH v2 2/5] ALSA: xen-front: Read sound driver configuration
- from Xen store
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, boris.ostrovsky@oracle.com,
-        konrad.wilk@oracle.com, perex@perex.cz, tiwai@suse.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
- <20180416062453.24743-3-andr2000@gmail.com>
- <451f4f4b-646e-0058-e24f-d9ae918f583f@suse.com>
- <2c37fff3-9dfe-f904-d06f-7751d5e9e002@gmail.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <9e875172-cbc2-7019-9971-34f88ecc8d18@suse.com>
-Date: Tue, 17 Apr 2018 13:08:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752658AbeDQLJQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 07:09:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51566 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751810AbeDQLJN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 07:09:13 -0400
+Date: Tue, 17 Apr 2018 12:09:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Ilia Lin <ilialin@codeaurora.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, mark.rutland@arm.com, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, lgirdwood@gmail.com, andy.gross@linaro.org,
+        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, rnayak@codeaurora.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        celster@codeaurora.org, tfinkel@codeaurora.org
+Subject: Re: [PATCH v4 10/14] dt-bindings: Add support for SAW documentation
+Message-ID: <20180417110908.GE8973@sirena.org.uk>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-11-git-send-email-ilialin@codeaurora.org>
+ <20180409202144.76gjmc6kcn2msffl@rob-hp-laptop>
 MIME-Version: 1.0
-In-Reply-To: <2c37fff3-9dfe-f904-d06f-7751d5e9e002@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ZInfyf7laFu/Kiw7"
+Content-Disposition: inline
+In-Reply-To: <20180409202144.76gjmc6kcn2msffl@rob-hp-laptop>
+X-Cookie: Depart in pieces, i.e., split.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/04/18 10:42, Oleksandr Andrushchenko wrote:
-> On 04/16/2018 03:55 PM, Juergen Gross wrote:
->> On 16/04/18 08:24, Oleksandr Andrushchenko wrote:
->>> +        goto fail;
->>> +    }
->>> +
->>> +    if (!strncasecmp(str, XENSND_STREAM_TYPE_PLAYBACK,
->>> +             sizeof(XENSND_STREAM_TYPE_PLAYBACK))) {
->>> +        stream = &pcm_instance->streams_pb[(*cur_pb)++];
->>> +    } else if (!strncasecmp(str, XENSND_STREAM_TYPE_CAPTURE,
->>> +                  sizeof(XENSND_STREAM_TYPE_CAPTURE))) {
->>> +        stream = &pcm_instance->streams_cap[(*cur_cap)++];
->>> +    } else {
->>> +        ret = -EINVAL;
->>> +        goto fail;
->>> +    }
->> Until here this function looks very much like cfg_get_stream_type().
->> Can't they use a common sub-function?
-> Not really, because cfg_get_stream_type uses kasprintf
-> for strings and this one devm_kasprintf. Trying to make
-> a common sub-func doesn't make sense to me
 
-Aah, okay. Didn't spot that.
+--ZInfyf7laFu/Kiw7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>> +    /* start from default PCM HW configuration for the card */
->>> +    cfg_read_pcm_hw(xb_dev->nodename, NULL, &cfg->pcm_hw);
->>> +
->>> +    cfg->pcm_instances =
->>> +            devm_kcalloc(&front_info->xb_dev->dev, num_devices,
->>> +                     sizeof(struct xen_front_cfg_pcm_instance),
->>> +                     GFP_KERNEL);
->>> +    if (!cfg->pcm_instances)
->>> +        return -ENOMEM;
->>> +
->>> +    for (i = 0; i < num_devices; i++) {
->>> +        ret = cfg_device(front_info, &cfg->pcm_instances[i],
->>> +                 &cfg->pcm_hw, xb_dev->nodename, i, stream_cnt);
->>> +        if (ret < 0)
->>> +            return ret;
->> Who will free all the memory allocated until now in case of an error?
-> The memory is allocated with devm_xxx functions, so it will
-> be freed on device destructions automatically
->>
->> And I think when removing the device freeing the memory is missing, too.
-> Same as above, the kernel will take care of it while destroying the device
+On Mon, Apr 09, 2018 at 03:21:44PM -0500, Rob Herring wrote:
+> On Fri, Mar 30, 2018 at 12:26:43AM +0300, Ilia Lin wrote:
+> > Add support for SAW controlled regulators in 8x96.
+> > Document it.
 
-Okay, thanks.
+> Perhaps some clue in the subject what subsystem and/or device this=20
+> applies to.
 
+Right, especially given that if people can't find the documentation for
+driver binding changes that's likely to be one of the first compliants.
 
-Juergen
+> > +- qcom,saw-leader:
+> > +	Usage: optional
+> > +	Value type: <boo>
+> > +	Description: SAW controlled gang leader. Will be configured as
+> > +		     SAW regulator.
+
+> Would the coupled regulator binding work in this case?
+
+Someone would need to get the code working first though depending on
+what the hardware does that might not be the right thing.  It's fairly
+common to have hardware support for grouping multiple physical
+regulators together into a single supply in order to provide more
+current with all the control being done from one of the regulators.
+
+--ZInfyf7laFu/Kiw7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrV1dMACgkQJNaLcl1U
+h9C0bQf+J8T+z/WFL4FRphSZwjRTU+0HhnZzffI5jjGTCYxiT8QBq3RCb2St3qz/
+ZiEqf0N7TGQSwDb3TxMnSmZPJVop2UrKOMKVFDmO6j9i2b8ZsqFgC+PsJ9fEpJyr
+nvaaZZ+TTepltFDR0qFFllIKwB5m1hi+Do+hg/84of5IVXm17OuNY9xEqDSjSKWh
+SIUk2S684iXlHrWhkYgfrfpi1FrwdM/LNcAEUcn85Pd0os1R7pj2cXYONlt0SxQS
+ype0JVeh5/6fLe9rSbJy+4yC4L1FIgvnIu8RY6DloLGLjN5+gpnewq+9ku8ia2W+
++6tF2ug17EqAwRKsjMYk21BGkuUYYA==
+=Wr8V
+-----END PGP SIGNATURE-----
+
+--ZInfyf7laFu/Kiw7--
