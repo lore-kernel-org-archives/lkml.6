@@ -1,102 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeDQOGD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:06:03 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33061 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751345AbeDQOGB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:06:01 -0400
-X-Google-Smtp-Source: AIpwx49Am1e1bdcrh6GXATf/ZRRRX8SEhJt5Kbw+MsbbhGW1t0Y8hM9lhoKIJ1RXE034CtL3+83JCQ==
-Date: Tue, 17 Apr 2018 16:00:32 +0200
-From: Vitaly Wool <vitalywool@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, mawilcox@microsoft.com,
-        asavery@chromium.org, gwendal@chromium.org
-Subject: Re: Crashes/hung tasks with z3pool under memory pressure
-Message-ID: <20180417160032.46915216@seldlx21914.corpusers.net>
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1752824AbeDQOHU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:07:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752387AbeDQOHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:07:18 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A108D21727
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Tue, 17 Apr 2018 09:07:14 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: Philipp Rudo <prudo@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Dave Young <dyoung@redhat.com>
+Subject: Re: [PATCH v1 0/2] kexec: Remove "weak" annotations from headers
+Message-ID: <20180417140714.GF28657@bhelgaas-glaptop.roam.corp.google.com>
+References: <152355706051.36693.9856090891621551967.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180413110820.662d4879@ThinkPad>
+ <20180413092908.GB2119@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180413092908.GB2119@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
-
-> [ ... ]
-> > Ugh. Could you please keep that patch and apply this on top:
-> > 
-> > diff --git a/mm/z3fold.c b/mm/z3fold.c
-> > index c0bca6153b95..e8a80d044d9e 100644
-> > --- a/mm/z3fold.c
-> > +++ b/mm/z3fold.c
-> > @@ -840,6 +840,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
-> >                       kref_get(&zhdr->refcount);
-> >                       list_del_init(&zhdr->buddy);
-> >                       zhdr->cpu = -1;
-> > +                     break;
-> >               }
-> >               list_del_init(&page->lru);
-> > 
-> Much better, in a way. The system now takes much longer to crash,
-> and the crash reason is a bit different. The log is too long to attach,
-> so I copied it to [1].
+On Fri, Apr 13, 2018 at 05:29:08PM +0800, Baoquan He wrote:
+> Hi Bjorn,
 > 
-> crashdump.0002                  Latest log
-> 000[12]-Fix-attempt-[12].patch  Patches applied on top of v4.17.0-rc1.
+> There are changes I have made to solve 5-level conflict with
+> kexec/kdump and also interface unification task, they will involve x86
+> 64 only changes on these functions, I don't think we need remove them if
+> without any obvious impact or error reported.
 
-thanks for the update. Let's start from a clean sheet. I believe this patch has to be applied anyway so could you please check if it solves the problem. 
+Removing the weak attribute from the declaration in the header file
+does not prevent you from defining a weak function later in the .c
+file.
 
-diff --git a/mm/z3fold.c b/mm/z3fold.c
-index c0bca6153b95..059fb3d5ca86 100644
---- a/mm/z3fold.c
-+++ b/mm/z3fold.c
-@@ -144,7 +144,8 @@ enum z3fold_page_flags {
- 	PAGE_HEADLESS = 0,
- 	MIDDLE_CHUNK_MAPPED,
- 	NEEDS_COMPACTING,
--	PAGE_STALE
-+	PAGE_STALE,
-+	UNDER_RECLAIM
- };
- 
- /*****************
-@@ -173,6 +174,7 @@ static struct z3fold_header *init_z3fold_page(struct page *page,
- 	clear_bit(MIDDLE_CHUNK_MAPPED, &page->private);
- 	clear_bit(NEEDS_COMPACTING, &page->private);
- 	clear_bit(PAGE_STALE, &page->private);
-+	clear_bit(UNDER_RECLAIM, &page->private);
- 
- 	spin_lock_init(&zhdr->page_lock);
- 	kref_init(&zhdr->refcount);
-@@ -756,6 +758,10 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
- 		atomic64_dec(&pool->pages_nr);
- 		return;
- 	}
-+	if (test_bit(UNDER_RECLAIM, &page->private)) {
-+		z3fold_page_unlock(zhdr);
-+		return;
-+	}
- 	if (test_and_set_bit(NEEDS_COMPACTING, &page->private)) {
- 		z3fold_page_unlock(zhdr);
- 		return;
-@@ -840,6 +846,8 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
- 			kref_get(&zhdr->refcount);
- 			list_del_init(&zhdr->buddy);
- 			zhdr->cpu = -1;
-+			set_bit(UNDER_RECLAIM, &page->private);
-+			break;
- 		}
- 
- 		list_del_init(&page->lru);
-@@ -888,6 +896,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
- 		}
- next:
- 		spin_lock(&pool->lock);
-+		clear_bit(UNDER_RECLAIM, &page->private);
- 		if (test_bit(PAGE_HEADLESS, &page->private)) {
- 			if (ret == 0) {
- 				spin_unlock(&pool->lock);
+We should remove the weak attribute from the header file declaration
+because it can lead to non-obvious errors, e.g., calling the wrong
+version of the function.  There's no build-time or run-time indication
+that this happens, so it's a real trap.
+
+Bjorn
