@@ -1,181 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752332AbeDQKdm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 06:33:42 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:58214 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751230AbeDQKdk (ORCPT
+        id S1752624AbeDQKlB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 06:41:01 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:45975 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751927AbeDQKk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 06:33:40 -0400
-Subject: Re: [RFC 06/10] misc: pci_endpoint_test: Add MSI-X support
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <adouglas@cadence.com>, <niklas.cassel@axis.com>,
-        <jesper.nilsson@axis.com>
-References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
- <8b88f8c2b766f36c71659deb0fce635154b2b39f.1523379766.git.gustavo.pimentel@synopsys.com>
-CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <b25dcfb1-e770-e302-d9aa-7c35f6c58fa5@ti.com>
-Date: Tue, 17 Apr 2018 16:03:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 17 Apr 2018 06:40:59 -0400
+X-Google-Smtp-Source: AIpwx48kcQoSmjmq/boa+SfgIkctuI46dmnaIjNuWCrrskM45ii1NJGtNfHjkvtS+tN5LUTQk/al9frTMRl0OoilKkw=
 MIME-Version: 1.0
-In-Reply-To: <8b88f8c2b766f36c71659deb0fce635154b2b39f.1523379766.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com>
+References: <CANRm+Cy+Cr1-AMwM+u20X53=GqY0zfOugFypZcZwyJmnnwNNwA@mail.gmail.com>
+ <20180226111630.GB4377@pd.tnic> <CANRm+Cxw2-8Cf+6cg_yZC+SD66uNA5RO+ZaoHHmkpHLzjCih=A@mail.gmail.com>
+ <20180226113000.GC4377@pd.tnic> <CANRm+CzwY2yzKFXF7r=vfqDaHHoHxC221TSBtSHC2XtvkrQxHA@mail.gmail.com>
+ <20180226114409.GD4377@pd.tnic> <46cecef2-b0fb-b0c2-bbf3-983328d52763@redhat.com>
+ <20180226121509.GE4377@pd.tnic> <24cd527d-5287-f0be-ffe8-eab341bf1d94@redhat.com>
+ <3866d359-0ef8-6a99-6254-84890be62b93@redhat.com> <20180226122205.GG4377@pd.tnic>
+ <fb705c01-9bdd-9924-00c6-70d8ee940fb4@redhat.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Tue, 17 Apr 2018 18:40:58 +0800
+Message-ID: <CANRm+CyyL2jjjn7nZtLJvP+t1pN9ndAGhijmbX4LJh15=O+dvQ@mail.gmail.com>
+Subject: Re: [PATCH] KVM: X86: Allow userspace to define the microcode version
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>, LKML <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Cc Eduardo,
+2018-02-26 20:41 GMT+08:00 Paolo Bonzini <pbonzini@redhat.com>:
+> On 26/02/2018 13:22, Borislav Petkov wrote:
+>> On Mon, Feb 26, 2018 at 01:18:07PM +0100, Paolo Bonzini wrote:
+>>>> In this context, "host-initiated" write means written by KVM userspace
+>>>> with ioctl(KVM_SET_MSR).  It generally happens only on VM startup, reset
+>>>> or live migration.
+>>>
+>>> To be clear, the target of the write is still the vCPU's emulated MSR.
+>>
+>> So how am I to imagine this as a user:
+>>
+>> qemu-system-x86_64 --microcode-revision=0xdeadbeef...
+>
+> More like "-cpu foo,ucode_rev=0xdeadbeef".  But in practice what would
+> happen is one of the following:
+>
+> 1) "-cpu host" sets ucode_rev to the same value of the host, everyone
+> else leaves it to zero as is now.
 
-On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
-> Adds the MSI-X support and updates driver documentation accordingly.
-> 
-> Changes the driver parameter in order to allow the interruption type
-> selection.
-> 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
->  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
->  drivers/misc/pci_endpoint_test.c                 | 102 +++++++++++++++++------
->  2 files changed, 79 insertions(+), 26 deletions(-)
-> 
-> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
-> index 4ebc359..fdfa0f6 100644
-> --- a/Documentation/misc-devices/pci-endpoint-test.txt
-> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
-> @@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
->  	*) verifying addresses programmed in BAR
->  	*) raise legacy IRQ
->  	*) raise MSI IRQ
-> +	*) raise MSI-X IRQ
->  	*) read data
->  	*) write data
->  	*) copy data
-> @@ -25,6 +26,8 @@ ioctl
->   PCITEST_LEGACY_IRQ: Tests legacy IRQ
->   PCITEST_MSI: Tests message signalled interrupts. The MSI number
->  	      to be tested should be passed as argument.
-> + PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
-> +	      to be tested should be passed as argument.
->   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
->  		as argument.
->   PCITEST_READ: Perform read tests. The size of the buffer should be passed
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-> index 37db0fc..a7d9354 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -42,11 +42,16 @@
->  #define PCI_ENDPOINT_TEST_COMMAND	0x4
->  #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
->  #define COMMAND_RAISE_MSI_IRQ		BIT(1)
-> -#define MSI_NUMBER_SHIFT		2
-> -/* 6 bits for MSI number */
-> -#define COMMAND_READ                    BIT(8)
-> -#define COMMAND_WRITE                   BIT(9)
-> -#define COMMAND_COPY                    BIT(10)
-> +#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
-> +#define IRQ_TYPE_SHIFT			3
-> +#define IRQ_TYPE_LEGACY			0
-> +#define IRQ_TYPE_MSI			1
-> +#define IRQ_TYPE_MSIX			2
-> +#define MSI_NUMBER_SHIFT		5
+Hi Paolo,
 
-Now that you are anyways fixing this, add a new register entry for MSI numbers.
-Let's not keep COMMAND and MSI's together.
-> +/* 12 bits for MSI number */
-> +#define COMMAND_READ                    BIT(17)
-> +#define COMMAND_WRITE                   BIT(18)
-> +#define COMMAND_COPY                    BIT(19)
+Do you mean the host admin to get the ucode_rev from the host and set
+to -cpu host, ucode_rev=xxxxxx or qemu get the ucode_rev directly by
+rdmsr?
 
-This change should be done along with the pci-epf-test in a single patch.
->  
->  #define PCI_ENDPOINT_TEST_STATUS	0x8
->  #define STATUS_READ_SUCCESS             BIT(0)
-> @@ -73,9 +78,9 @@ static DEFINE_IDA(pci_endpoint_test_ida);
->  #define to_endpoint_test(priv) container_of((priv), struct pci_endpoint_test, \
->  					    miscdev)
->  
-> -static bool no_msi;
-> -module_param(no_msi, bool, 0444);
-> -MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
-
-Let's not remove this just to make sure existing users doesn't get affected.
-> +static int irq_type = IRQ_TYPE_MSIX;
-> +module_param(irq_type, int, 0444);
-> +MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI, 2 - MSI-X)");
->  
->  enum pci_barno {
->  	BAR_0,
-> @@ -103,7 +108,7 @@ struct pci_endpoint_test {
->  struct pci_endpoint_test_data {
->  	enum pci_barno test_reg_bar;
->  	size_t alignment;
-> -	bool no_msi;
-> +	int irq_type;
->  };
->  
->  static inline u32 pci_endpoint_test_readl(struct pci_endpoint_test *test,
-> @@ -177,10 +182,10 @@ static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
->  
->  static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
->  {
-> -	u32 val;
-> +	u32 val = COMMAND_RAISE_LEGACY_IRQ;
->  
-> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
-> -				 COMMAND_RAISE_LEGACY_IRQ);
-> +	val |= (IRQ_TYPE_LEGACY << IRQ_TYPE_SHIFT);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND, val);
->  	val = wait_for_completion_timeout(&test->irq_raised,
->  					  msecs_to_jiffies(1000));
->  	if (!val)
-> @@ -192,12 +197,12 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
->  static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
->  				      u8 msi_num)
->  {
-> -	u32 val;
-> +	u32 val = COMMAND_RAISE_MSI_IRQ;
->  	struct pci_dev *pdev = test->pdev;
->  
-> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
-> -				 msi_num << MSI_NUMBER_SHIFT |
-> -				 COMMAND_RAISE_MSI_IRQ);
-> +	val |= (msi_num << MSI_NUMBER_SHIFT);
-> +	val |= (IRQ_TYPE_MSI << IRQ_TYPE_SHIFT);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND, val);
->  	val = wait_for_completion_timeout(&test->irq_raised,
->  					  msecs_to_jiffies(1000));
->  	if (!val)
-> @@ -209,6 +214,26 @@ static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
->  	return false;
->  }
->  
-> +static bool pci_endpoint_test_msix_irq(struct pci_endpoint_test *test,
-> +				       u16 msix_num)
-> +{
-> +	u32 val = COMMAND_RAISE_MSIX_IRQ;
-> +	struct pci_dev *pdev = test->pdev;
-> +
-> +	val |= (msix_num << MSI_NUMBER_SHIFT);
-> +	val |= (IRQ_TYPE_MSIX << IRQ_TYPE_SHIFT);
-> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND, val);
-> +	val = wait_for_completion_timeout(&test->irq_raised,
-> +					  msecs_to_jiffies(1000));
-> +	if (!val)
-> +		return false;
-> +
-> +	if (test->last_irq - pdev->irq == msix_num - 1)
-> +		return true;
-> +
-> +	return false;
-
-I think you can have a single function for msix_irq and msi_irq.
-
-Thanks
-Kishon
+Regards,
+Wanpeng Li
