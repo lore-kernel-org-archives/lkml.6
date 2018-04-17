@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752876AbeDQLKQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 07:10:16 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:50801 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751230AbeDQLKN (ORCPT
+        id S1752978AbeDQLK3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 07:10:29 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:65391 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752144AbeDQLKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 07:10:13 -0400
+        Tue, 17 Apr 2018 07:10:25 -0400
 X-IronPort-AV: E=Sophos;i="5.48,463,1517842800";
-   d="scan'208";a="278455905"
+   d="scan'208";a="278455921"
 From: Michel Pollet <michel.pollet@bp.renesas.com>
 To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
 Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
@@ -19,9 +19,9 @@ Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
         Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-pm@vger.kernel.org
-Subject: [PATCH v5 5/6] ARM: dts: Renesas RZN1D-DB Board base file
-Date: Tue, 17 Apr 2018 12:04:20 +0100
-Message-Id: <1523963101-56725-6-git-send-email-michel.pollet@bp.renesas.com>
+Subject: [PATCH v5 6/6] reset: Renesas RZ/N1 reboot driver
+Date: Tue, 17 Apr 2018 12:04:21 +0100
+Message-Id: <1523963101-56725-7-git-send-email-michel.pollet@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
 References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
@@ -29,63 +29,149 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a base device tree file for the RZN1-DB board, with only the
-basic support allowing the system to boot to a prompt. Only one UART is
-used, with only a single CPU running.
+The Renesas RZ/N1 Family (Part #R9A06G0xx) needs a small driver
+to reboot the Cortex-A7 cores. This driver is a sub driver of
+the sysctrl MFD.
 
 Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
- arch/arm/boot/dts/Makefile                  |  1 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts | 29 +++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
- create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+ drivers/power/reset/Kconfig       |  7 +++
+ drivers/power/reset/Makefile      |  1 +
+ drivers/power/reset/rzn1-reboot.c | 96 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 104 insertions(+)
+ create mode 100644 drivers/power/reset/rzn1-reboot.c
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 052aaf0..a53a677 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -809,6 +809,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
- 	r8a7793-gose.dtb \
- 	r8a7794-alt.dtb \
- 	r8a7794-silk.dtb \
-+	r9a06g032-rzn1d400-db.dtb \
- 	sh73a0-kzm9g.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += \
- 	rv1108-evb.dtb \
-diff --git a/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+index df58fc8..1416d88 100644
+--- a/drivers/power/reset/Kconfig
++++ b/drivers/power/reset/Kconfig
+@@ -144,6 +144,13 @@ config POWER_RESET_RESTART
+ 	  Instead they restart, and u-boot holds the SoC until the
+ 	  user presses a key. u-boot then boots into Linux.
+ 
++config POWER_RESET_RZN1
++	bool "Renesas RZ/N1 reboot driver"
++	depends on ARCH_RZN1
++	help
++	  This driver allows rebooting the CA7 cores of the
++	  Renesas RZ/N1 Family of SoC (Part # R9A06G0xx).
++
+ config POWER_RESET_ST
+ 	bool "ST restart driver"
+ 	depends on ARCH_STI
+diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+index 7778c74..bad9702 100644
+--- a/drivers/power/reset/Makefile
++++ b/drivers/power/reset/Makefile
+@@ -16,6 +16,7 @@ obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) += piix4-poweroff.o
+ obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
+ obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
+ obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
++obj-$(CONFIG_POWER_RESET_RZN1) += rzn1-reboot.o
+ obj-$(CONFIG_POWER_RESET_ST) += st-poweroff.o
+ obj-$(CONFIG_POWER_RESET_VERSATILE) += arm-versatile-reboot.o
+ obj-$(CONFIG_POWER_RESET_VEXPRESS) += vexpress-poweroff.o
+diff --git a/drivers/power/reset/rzn1-reboot.c b/drivers/power/reset/rzn1-reboot.c
 new file mode 100644
-index 0000000..5fc2c40
+index 0000000..43876d5
 --- /dev/null
-+++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
-@@ -0,0 +1,29 @@
++++ b/drivers/power/reset/rzn1-reboot.c
+@@ -0,0 +1,96 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Device Tree Source for the RZN1D-DB Board
++ * RZ/N1 reboot driver
 + *
 + * Copyright (C) 2018 Renesas Electronics Europe Limited
 + *
++ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
++ * Derived from zx-reboot.c
 + */
 +
-+/dts-v1/;
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/notifier.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/reboot.h>
 +
-+#include "r9a06g032.dtsi"
++/* Definitions from the SDK rzn1-sysctrl.h autogenerated file */
++#define RZN1_SYSCTRL_REG_RSTEN_MRESET_EN		0
++#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN		1
++#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN_MASK		0x6
++#define RZN1_SYSCTRL_REG_RSTEN_WDM3RST_EN		3
++#define RZN1_SYSCTRL_REG_RSTEN_CM3LOCKUPRST_EN		4
++#define RZN1_SYSCTRL_REG_RSTEN_CM3SYSRESET_EN		5
++#define RZN1_SYSCTRL_REG_RSTEN_SWRST_EN			6
++#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ		1
++#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ_MASK	0x6
++#define RZN1_SYSCTRL_REG_RSTCTRL_WDM3RST_REQ		3
++#define RZN1_SYSCTRL_REG_RSTCTRL_CM3LOCKUPRST_REQ	4
++#define RZN1_SYSCTRL_REG_RSTCTRL_CM3SYSRESET_REQ	5
++#define RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ		6
 +
-+/ {
-+	model = "RZN1D-DB Board";
-+	compatible = "renesas,rzn1d400-db",
-+			"renesas,r9a06g032", "renesas,rzn1";
++static void __iomem *reg_rsten, *reg_rstctrl;
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
++static int rzn1_reboot_handler(struct notifier_block *this,
++			      unsigned long mode, void *cmd)
++{
++	writel(readl(reg_rsten) |
++			BIT(RZN1_SYSCTRL_REG_RSTEN_SWRST_EN) |
++			BIT(RZN1_SYSCTRL_REG_RSTEN_MRESET_EN),
++		reg_rsten);
++	writel(readl(reg_rstctrl) |
++			BIT(RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ),
++		reg_rstctrl);
 +
-+	aliases {
-+		serial0 = &uart0;
-+	};
++	mdelay(50);
++	pr_emerg("Unable to restart system\n");
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block rzn1_reboot_nb = {
++	.notifier_call = rzn1_reboot_handler,
++	.priority = 128,
 +};
 +
-+&uart0 {
-+	status = "okay";
++static int rzn1_reboot_probe(struct platform_device *ofdev)
++{
++	int err;
++
++	reg_rsten = of_iomap(ofdev->dev.of_node, 0);
++	reg_rstctrl = of_iomap(ofdev->dev.of_node, 1);
++
++	if (!reg_rsten || !reg_rstctrl) {
++		dev_err(&ofdev->dev, "invalid register mapping\n");
++		return -ENODEV;
++	}
++
++	err = register_restart_handler(&rzn1_reboot_nb);
++	if (err) {
++		dev_err(&ofdev->dev, "register restart handler failed(err=%d)\n",
++			err);
++	}
++
++	return err;
++}
++
++static const struct of_device_id rzn1_reboot_of_match[] = {
++	{ .compatible = "renesas,rzn1-reboot" },
++	{}
 +};
++MODULE_DEVICE_TABLE(of, rzn1_reboot_of_match);
++
++static struct platform_driver rzn1_reboot_driver = {
++	.probe = rzn1_reboot_probe,
++	.driver = {
++		.name = "rzn1-reboot",
++		.of_match_table = rzn1_reboot_of_match,
++	},
++};
++module_platform_driver(rzn1_reboot_driver);
++
++MODULE_DESCRIPTION("RZ/N1 reboot driver");
++MODULE_AUTHOR("Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
