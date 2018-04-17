@@ -1,210 +1,138 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1262712-1524216141-2-2858263723979270563
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='IN'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524216140; b=cfB84YLzSsfPQF3q6rSmWBKk9N6WTUxfsCsyePw0uh4YuX395b
-    WNm76tQH/enVjjMrfhkkkbh/b2+I6bOdqSEDdeR7Kp4KxQkuWgH0bqdvZwGymozu
-    /tKVMy3HsUcWzDyWAYAhB4ZgjZsK1EcFnYAVvfaDIPWrXChiKjuMgIbICs3DB64C
-    hec3W1wwm9q6g8a7/KarQDQu5vefXqqvM4KQKieFK5g4/em0G89kGbNHbe4K3Fk4
-    d4mqNwgnppAhveb05xdokiYanOVpEOOpKufhTBlseHMed+NfYFfml6hm1rfPq9NM
-    HnZMMkLS1gTqVvNKzHnUtG/AD+0g12sVJBxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1524216140; bh=NmanRWam1W
-    D7Le7EXrNg3ETk2QRna55K7lP2kHwh+nI=; b=o3HZaTT72FG1bixI6KCYzmn1bB
-    DtZrHTj+l5/HwkcTCvt5qEe434CS+30W+BCoo+ktCMpQqyWBoY/Fvi/h9OCztn+r
-    XrR8TmEzVb5kSYjVwt4G8UknUj9/lF8dxXvcDbxMtQVlXL8Gu9TTUFCl2msH67HS
-    aHdmFJo6tan49iJ/x4u24dfLnwm61J5oSiwvXZOlwagQiR/+R6W4SyL+dvi2B7Us
-    xDERFtxBbUC5X1qz4/f+haA/dKsAdROXGl7qrlmhyTT/+XaLKANbklM6KSin8GwS
-    KbDMhU0+bDA7ZAIpiycxWjqVlBz5fOibOWJ7pCdEJ2nR6PUcyAvuIA0kk8ig==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=dsZsh60v x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=nxp.com header.i=@nxp.com header.b=dsZsh60v x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nxp.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=nxp.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFtBsmeG4m6duf0D6HPmlX/t560JFw0KvPTQrjePW1YUCYfeAIUbCI7Z/vs40nesuarpo4U0/OU8n4Emgy5qMasLLBToIsEJeOeT8PkEVLGo04tOD9mS
-    wK4t16hsic9nHqdOPhKwAXKdwHCy5Ny/hlR09J1nO2jDEmTOMzdwAsSa6sesGS0cD3T1YLw3d+mV6oRiDSGFIxT5sqfjpSLXHWKMYkSEpe0WqT0uO+xiyZit
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=m-XU2MN_NUEA:10 a=-Vr38N3OkxwA:10
-    a=FZ-paitokdoA:10 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
-    a=dw2S5ISiLjYA:10 a=VwQbUJbxAAAA:8 a=BkWyz1_tYeLiHRJLhn0A:9 a=QEXdDO2ut3YA:10
-    a=ic4oXV6auKO-Q6VfiSZ6:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754246AbeDTJWS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 20 Apr 2018 05:22:18 -0400
-Received: from mail-ve1eur01on0086.outbound.protection.outlook.com ([104.47.1.86]:51815
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754170AbeDTJWQ (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:22:16 -0400
-From: Peter Chen <peter.chen@nxp.com>
-To: Peter Rosin <peda@axentia.se>,
-        Yossi Mansharoff <yossim@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:CHIPIDEA USB HIGH SPEED DUAL ROLE CONTROLLER"
-        <linux-usb@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-CC: "robh@kernel.org" <robh@kernel.org>,
-        "swboyd@chromium.org" <swboyd@chromium.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v2] usb: chipidea: Hook into mux framework to toggle usb
+Return-Path: <peda@axentia.se>
+X-Google-Smtp-Source: AIpwx49421kjs3xULEvPtAITj05vGNXWlUvw8Fv9NnZg5I+TCgzcBkZMPy14EQYvFq2eIi7SZv+T
+ARC-Seal: i=1; a=rsa-sha256; t=1523974295; cv=none;
+        d=google.com; s=arc-20160816;
+        b=UgVdyjTO4habyqwq9WX8jhq6nBvGX35ZwVyVtOcj7yi/yaZAr2/PwM95nCBXSjN338
+         rebh/Sjkh+1dnsFcuvr6S0ReWlSM/qW2f1yoK/wL6WfjKBIBTwaRkAdOCh0uAFOeXSNn
+         rwoNkyYCTziT3p3fpWZ26Mx9NdyiiQTheqmcHM9cT8Fe7efoq7RzKVxXTinGNlpiyEQN
+         R1vBkmWhUmsAWjSEx94tibDoavxOLXLzxyovw3xcqsKbcpsqTTY/73s8mzV9hmO+YwY+
+         NIQUflnA9wSecjaZ0xMWXZE/HLsQGkkZhqHSaOYv9W57P75hIZocA5bVb9N20/cVDHky
+         2NOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=spamdiagnosticmetadata:spamdiagnosticoutput
+         :content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:organization:from:references:cc:to
+         :subject:dkim-signature:arc-authentication-results;
+        bh=pkli9gepsiqfYNXoIKujwbPeusQL8bhCRVCuWVtcYxA=;
+        b=0L0GLIpG2jPG0Zf0UvWZ2GZ6mBG4d8TlLMYW/jLyGc0FW5fyghz1hkMYiJnrd9Q3ud
+         HeLXspn5msAlpIqNuu2sfJWBelQabdJpYNFw72V9hI+ywNDZnwLgQPcaBjWH2O+BFQIP
+         n3lcVDYzFJnc6e7j9HDHEZ+issfF+6Ju7pq8X5IbjFV1jiU3Oo7LPNQUEUvd9jsrHBq4
+         iw9dM22m+Q/EWH7FyX3N37OVNPGj7qWMzz8FgnCNUTtComgc+Zw1l36jZH3RpjSYIdZs
+         HYqYe2b84jE3isbEPHyTBOYiTuv7Q99++f0JaL/oSV3zIiK/MC4DVS4xSY1qvx92lkAK
+         qBng==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@axentia.se header.s=selector1 header.b=ZB6gQa3m;
+       spf=pass (google.com: domain of peda@axentia.se designates 104.47.2.105 as permitted sender) smtp.mailfrom=peda@axentia.se
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@axentia.se header.s=selector1 header.b=ZB6gQa3m;
+       spf=pass (google.com: domain of peda@axentia.se designates 104.47.2.105 as permitted sender) smtp.mailfrom=peda@axentia.se
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+Subject: Re: [PATCH v2] usb: chipidea: Hook into mux framework to toggle usb
  switch
-Thread-Topic: [PATCH v2] usb: chipidea: Hook into mux framework to toggle usb
- switch
-Thread-Index: AQHT1lN0/EEznR23NUSUmIox/rpIi6QI53FwgABe24CAABrpoA==
-Date: Fri, 20 Apr 2018 09:22:13 +0000
-Message-ID: <VI1PR04MB1455162DE3FF630262693E558BB40@VI1PR04MB1455.eurprd04.prod.outlook.com>
+To: Yossi Mansharoff <yossim@codeaurora.org>, Peter Chen
+ <Peter.Chen@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "open list:CHIPIDEA USB HIGH SPEED DUAL ROLE CONTROLLER"
+ <linux-usb@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: robh@kernel.org, swboyd@chromium.org, devicetree@vger.kernel.org,
+ Stephen Boyd <stephen.boyd@linaro.org>
 References: <1523973148-2094-1-git-send-email-yossim@codeaurora.org>
- <HE1PR04MB14504981D8B409CD8F9E7B7D8BB40@HE1PR04MB1450.eurprd04.prod.outlook.com>
- <1fd0df0a-3930-94c8-2973-2c90e0b07530@axentia.se>
-In-Reply-To: <1fd0df0a-3930-94c8-2973-2c90e0b07530@axentia.se>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: axentia.se; dkim=none (message not signed)
- header.d=none;axentia.se; dmarc=none action=none header.from=nxp.com;
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB0941;7:+LuEKW+qEZqH2N2zLO0yuEAYk0FlkFAqRVej4qziMJAVaPhqW0lPBAsCyQlUZnNW4eEepExs5ICS1/JMODZkDZS5YYZ6i9e/I6Uu9x/9CRqJ4K83lEP1aVsT5Obz0sPbLxUISySK5XZDv1nlROTUPKl3P+Ht1SbrsKE9FWBknPBOFFsn+FKYm/uNxjf7Y64WOzpYvsRTQpksIhU4x/toRVHKkO/Jbq4IbZZwbtE4BGgZFLd1mu2Gcthn2tiuEMmS
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB0941;
-x-ms-traffictypediagnostic: VI1PR04MB0941:
-x-microsoft-antispam-prvs: <VI1PR04MB0941ED0C0940D355C7593DFA8BB40@VI1PR04MB0941.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231232)(944501327)(52105095)(93006095)(93001095)(10201501046)(6055026)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:VI1PR04MB0941;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB0941;
-x-forefront-prvs: 0648FCFFA8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39380400002)(39860400002)(346002)(366004)(396003)(52314003)(186003)(316002)(6246003)(54906003)(4326008)(11346002)(476003)(110136005)(229853002)(86362001)(53936002)(81166006)(7696005)(446003)(25786009)(305945005)(44832011)(8936002)(6506007)(478600001)(7736002)(102836004)(26005)(59450400001)(33656002)(2906002)(8676002)(3846002)(55016002)(6306002)(5250100002)(66066001)(6116002)(3280700002)(74316002)(5660300001)(76176011)(6436002)(2900100001)(9686003)(966005)(3660700001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB0941;H:VI1PR04MB1455.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
-x-microsoft-antispam-message-info: MtpXgAb+K5hFwUInaxsWhiKezRpn8nDnqN6YZ750a8fVbVO78VnVwhZtSHLx1UFr1RTSY9rgOY64dOxHc5sFMnNi9woVkSJqPYINwZ54eIanUP8k3qiqOD/+KIknGv9p6lsAYzmo5qN5ay6yaO8PQcyMQBf+XkeiIUGGhB3tRuhh7/tvHc3DJzOVvysAh3zC
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <ec1c44d7-45a8-a27e-5c45-717b87d3b252@axentia.se>
+Date: Tue, 17 Apr 2018 16:11:26 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 540d2b08-ecac-404a-d189-08d5a6a033a2
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 540d2b08-ecac-404a-d189-08d5a6a033a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2018 09:22:13.2829
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB0941
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+In-Reply-To: <1523973148-2094-1-git-send-email-yossim@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: HE1PR05CA0130.eurprd05.prod.outlook.com
+ (2603:10a6:7:28::17) To HE1PR0202MB2777.eurprd02.prod.outlook.com
+ (2603:10a6:3:e8::19)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:HE1PR0202MB2777;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;3:rsR5EsNzNmYFfgyjRfzAZm0SKq6Z76yu+EKDRkM6AVKfACX+p6EOSlJNHgGN9UeEeBB1wXO6+EfBgrmhdyymRkaSWy4iG/UQ8IXEzlNnrb+uLba/vX/szAFUxc7PTZtQW/18FG+RDRiOL6I/ISgSBo0NaA/XrnHP3XmQkMxv5pDVQWUuPhY9As2/3y9EV1sd55EMfXyUIPrdyPhvuU48r8A6b3tndXvgBplb63PnjIgp2GExZ6AuMibUOJvIfJx/;25:tMgpkp9NPB3qg5+StlJHIpxcVLq56+1+US2ID4hBAsB4Z7FdlIsxCWpP0XAUoc0Sbv89Spd4eIl7qzuuZodsW1d5PLBCYDgTCKeYH+tpWTLA0ijDkFEc91aW/fC6EtVAUAUbBud5+DxaMHLnEM9FzWEhek8JTdgl//eBti9of+8JbBf+NifMcD9TksoJCpmcikYEBoZOhXnbl8SJP+WyQvn2EvJrjDWznr+RKI8dqyvBqhhieOvxEkZ4mWwM3fXjIfraAvhi1HfUDwXFym2YROc91qLPsH9bYE/VTrSzAe98aNYWbEgOFeT7HuMWJyDeD4VGDu4etE0AN7VDTMmr2g==;31:7L4UK9dahL36takQckyMSkCLnZzO6r98iNx8XMjiHQyUN5rNyYKT8pBy0asKiGUMJ7RfXxENOygRR9OnhuIU39+eruPma3ZX0/Ey+0hBBMuvS2rvXCc9nPmi/h8VONKB94Oxgc2qCex/5APs8UKdD+HnQwreoteTSG5MN4/mv87h2XB7eieIHMTdKdG/ACn85mykFBO786mdgHtonisrW6z+7p9We6XHbOEvDBiEmPI=
+X-MS-TrafficTypeDiagnostic: HE1PR0202MB2777:
+X-Microsoft-Antispam-PRVS: <HE1PR0202MB277757FBF5CC8C64F77B5C7BBCB70@HE1PR0202MB2777.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(166708455590820);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231232)(944501327)(52105095)(6041310)(20161123564045)(20161123560045)(2016111802025)(20161123562045)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:HE1PR0202MB2777;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0202MB2777;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;4:ekf4ERmV7S9EttosuZSOZF4tUofI3ztiCpimq69juqj6DmB/j09FBBM6fIY3X2Nkv49lEU1w/JhcLigLBxTgLqlNKrTdAKiJjJmlhMNQ68Ex6DI/FL7SB0PUkVwoXyP9CLd00+Y+ZPKa+MVjkTzkXS2zl4nczzch2RBEkvNN99Ez5x2bqg07uJodH1aAmgWrJ7lPJTRGPeJg6Iw/+9aHy24uoZee0fWRBH5TJ8STy6/b2H1L/dGvWT0wSo1df6NYH+28gms8steXuntOXJTIQAfhnpU4+HQi3Q0ZHO8+liUqHc9KdBGZLtUFuGpKCw9R
+X-Forefront-PRVS: 0645BEB7AA
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(346002)(366004)(39380400002)(39830400003)(396003)(376002)(377424004)(199004)(189003)(77096007)(476003)(446003)(3846002)(117156002)(230700001)(53546011)(6116002)(3260700006)(6246003)(65826007)(2906002)(31696002)(956004)(2616005)(36756003)(110136005)(8656006)(86362001)(68736007)(5660300001)(25786009)(6306002)(11346002)(26005)(66066001)(65956001)(52146003)(36916002)(16576012)(47776003)(2486003)(52116002)(105586002)(8936002)(106356001)(81166006)(8676002)(58126008)(16526019)(186003)(53936002)(4326008)(6486002)(316002)(6666003)(23676004)(64126003)(81156014)(76176011)(229853002)(74482002)(966005)(486006)(305945005)(50466002)(7736002)(31686004)(97736004)(386003)(478600001)(65806001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2777;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjAyMDJNQjI3Nzc7MjM6cFYwVFdZWGVLU3cwVmtaMEpCQUtVN3NY?=
+ =?utf-8?B?dzFESThTb1krOVVuaUQ2TjcwRVd0KzROeUoxOUV0dUNQcDloVDNQeFlkelFS?=
+ =?utf-8?B?aVNxSDlGbEU1cGNyVFhPcGhoQzRtRDROK1BFcmhRTHhIZ3AvTmpBODVuM080?=
+ =?utf-8?B?aGFEZGk2Mm41elpSQjIxbjU5djlmaUVWT3FwSEtKSElHNzRvREJ0WUREdG16?=
+ =?utf-8?B?NkJOZTc0MDFjbEc1Ulc5OEJTbVdpK2krdlJ3Y1VKRVFVRWoyb21wMzkrV1ps?=
+ =?utf-8?B?S2s0YkU3eXpUaW9kRkNySm9rbVFrRS80L0QybnFjME9aTGpYbTh6NE5qa3Fq?=
+ =?utf-8?B?bGlGeHgyOVZiK21QT3Qvbk5PVXh3S1BsRmoyUytvb3NEdGZrTGRUVkpnc0JJ?=
+ =?utf-8?B?aUkwYlI0VVFYR0s4VDZWdmcwc3ozYmxka2c5aE1wc01pM2x4WnV5KzBRR0dJ?=
+ =?utf-8?B?QlNmemI3OWk5NEVqY1pndkhmNy8xYUxFODZ1Wk9sVTNMeFFTcjErSG9xNk5U?=
+ =?utf-8?B?QUxCZ3ZnUVU5ajZVVnQvL1hkcWZBUEQ5TTNXTUprU1pCdVFMK2dlY2IzaStI?=
+ =?utf-8?B?QXdLengxZm5ENWhhUHg3My9BdVFnelFjMERYeWJVdklHWDlKRXZhYkZvTXQ4?=
+ =?utf-8?B?NXRraEZadDNsbFBMaVduZm9SR3VHeWgrby9nckMzUE16b3FkS3dHZW0wR3dx?=
+ =?utf-8?B?dVhiY1ZSOGRYdFF6bFhiQUdJUVVJeXNrc3NKRVJOajdPMzZMSVJjSm4wSFBS?=
+ =?utf-8?B?cnl1K2FvVXdIYkRGWU1rY3lFdG9WY21seXExb1dmcU1uK1cvZFFzOUVuR0NQ?=
+ =?utf-8?B?Z2ZkUDBidEhFZDluWk9WQUJIMUlYd1hIYkZDY3NOZlpLVkVtV29tZXZjMEdE?=
+ =?utf-8?B?ZU5DWUFWRktROExUODZqUFIvSlQ0ZGFGQTdDQ0hISVNCb3JUT1JHUURJdG9m?=
+ =?utf-8?B?RGYxamZFZWEyNWYxbldkNGhjdUtBV2RCNDNvM2w5YVVXS3BaS3pab25QQjJo?=
+ =?utf-8?B?UGhKb3JqQ3l5NFQ4cVowY2dZNWl5WmRvSGNaZTQxa2dDQXJjMUozaWhHNXAx?=
+ =?utf-8?B?WWhPaHpTYTdxZnY5WE5ucFpPRmpSNUQ0emFYYnIzeFdXcXlJem5BYTVuV2U3?=
+ =?utf-8?B?T2ZhbkpOSTZlSVo0aTA1SnZWQnNaK1k3K1AxV1ZVbFE2eGpqRzdjWUExeGxk?=
+ =?utf-8?B?SXFtRmUxalBKZGdVYnRlbmhMbWlnSnVHVUQxeGNuQlVtbGloTDVHaHZpWHBj?=
+ =?utf-8?B?YWVaVG1IU2JVTUs0L1hTeHBJZU5Oa210NFFGYzdGZGp2Qmp4U0lpOVBiejNP?=
+ =?utf-8?B?NkEzVFdBS1VCODlMZWFWcWpjRkd5NUNNUnZtbm1tOWpCdVJTQWhnalU4ck1F?=
+ =?utf-8?B?SGtFVlVpUFJ2bkNScEFxNGk1bnEraHpocm01cDA4SGFxVnRzUE55TXU3WTda?=
+ =?utf-8?B?SlNtQ04vYzlUVEZNVWQ3Y3EvUlZFVm4reHlYbElaelpUVXNYZmJES1lMTXIy?=
+ =?utf-8?B?QUJkNXhiUlN2SXlsaTNJbHVDZS9jRmQ1K1VjV1pYelhKekdnZGJpSnNrOTdQ?=
+ =?utf-8?B?aEFPNmhFQks2Yms5dkgzOWMrdUh4blFhV2dOSm9WNERvbkhIMGkvNnJSbHlC?=
+ =?utf-8?B?bHJYMnFiMFFzWjFnc0pnQ2hxYTFRVGRkWXNjS2k4MGJqUmY2WUEzMHVlKzlq?=
+ =?utf-8?B?c0RNYmVzZUJKbkJnczYybVh3eDl4NU9IV2lYcGdpWWhHUU11YTQ4cTBCd2gy?=
+ =?utf-8?B?eUYxN3ZvdTdwQkg4WEJkZm5hS2hJL0lrUXpzSTdJWmpGSjZMZUxOenMybzlj?=
+ =?utf-8?B?ekpjVlRFL3VPZkI4SWdLUFNHallrekVVbEptYTdwbE9aWkFualFEOWU4UHVH?=
+ =?utf-8?B?T2xjNmRxdGZoVGd0OVVkcXFVM3hUWURJeS9HVlVRT1ZSZndnMHhuSEtWVCsr?=
+ =?utf-8?B?NkhKazFIcGJ3TTBIUC9tN1dKTFRKM0JqZXJ5ZXhmSUovVDBvY3V2OGdiUjQr?=
+ =?utf-8?B?L3VXMVduMXJSdTVzNEY2a3dpZHU1V0txeUVFRXlNcVZ4TVJqc1JlRCttUWp2?=
+ =?utf-8?B?c0NBWGRxM1hRbWV1T250WVAyMi95dHo4RWwvN0JmTGxsanMwYjNvU1YvWGs5?=
+ =?utf-8?Q?p1Rl8osJoCyZN64GBGii1d2gJ4OPLYP2rXiX/HzdYvnQ0h?=
+X-Microsoft-Antispam-Message-Info: /W+hEMONdyjXcSvdjVZ0gW1C+E7wqHdZjlKvN/HmigVcgedUROj2dlulpIf4sFgkpdH4AdDNu9slmMVNo/1y03EIo2rAqq0w3JiiGT6pvS0bAxAI4aRrwYrqKMXPcqx6urUdWi5EWV/x5r2kWsAQWlGUcGt5oIAxc0pZ0+JVif8rLKYWceHTVNhpkE7Fxm4c
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;6:zqRDiD64YLFjffgh6XUuxz/GlQiKjmFwk/zSbwM2GcmlG7/N2sGFleWggcPcpQfe9cis4KpchL4QUtgQST1KoRZvyPU+eaId9sguKxJApLtUHbeiaFjB9NBAA37PqSxxDtEtUShb2rvu9UFWVXRyJhL0Og1xH2fiVNVsZRFezLalOB3AQOvfjA8VeXQtaz8sTPZ29IeVt8N/9mYEIKU1x4/3ppQUeBYZMZ3r4YdzsVcrecBZPzPzfu+OcWs7J/HnzKbpyKclrIIztGXpUbyxwjBYqBJhJsbdWAP0Liu3VJvVZHkqBzBzX7ndb+JUD1dBwbskFIh2PxjJJqWxXORA1vdx2tnGl5KbwD8W1+c+x633XoHJn1idZY8Sk4i7rLf69mSQTW+ZIQwywNp3IM1zkVhiC53L4EVchQs7hjESREtEjCcsu1vP6kQm28akUUuiK/pR6J29c2695/bZ7BVWyA==;5:YqbzNHiCe4jCnzkmIKO6sICbJeq2WowvWsaYGC1v3b+5bGkARwLNHNO7u1xBwxmB453R98G5tr3mHmp5Ri8VUMq68R6puNobV9pW4/SoBL0y9aXPKV0jR0RDW/6CVs3cvX1IDOe70IklcQp7tZQFVRlTmp/eSl2VkVX5Z2nwdGo=;24:nwypbhp0SFffzVX89eVw3Qj+K92YM20Wb+WYJVS8WDU8/vZhXFq6egsZXZx44Pxa01ho8MHv2FppqtlAiA9PlJGm4zU1+19+sBhlXBMVxsc=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;7:A7yqjyv77++CLKeeqiAt/myRWlFaiJ/mqjYO7ntzfYcVyZAp7dC/GUdtwrqno7xjP5GNWom8XQjXk62j/KReQlzvxh4rrJPQXKejDlV/T2bJUjTZeZuVdt8mLFQRokPQ0u96qC+8nxaNpXox3MVpH0641v1Mn4gIYPSs8pzIig9Q1f6ZVpwbvtiPevA13xdkFlnlaN7JBIAPexRbOhLu6hss0OoxnrtNnifdnPc8BXwzOfXz9zQwW2td7JQG6UIw
+X-MS-Office365-Filtering-Correlation-Id: b4a86131-1b6b-4d66-52a9-08d5a46d1db3
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 14:11:29.6818 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4a86131-1b6b-4d66-52a9-08d5a46d1db3
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0202MB2777
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1592995743032653066?=
+X-GMAIL-MSGID: =?utf-8?q?1598002870863198665?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-IA0KPiA+PiBAQCAtMyw2ICszLDggQEAgY29uZmlnIFVTQl9DSElQSURFQQ0KPiA+PiAgCWRlcGVu
-ZHMgb24gKChVU0JfRUhDSV9IQ0QgJiYgVVNCX0dBREdFVCkgfHwgKFVTQl9FSENJX0hDRCAmJg0K
-PiA+PiAhVVNCX0dBREdFVCkgfHwgKCFVU0JfRUhDSV9IQ0QgJiYgVVNCX0dBREdFVCkpICYmIEhB
-U19ETUENCj4gPj4gIAlzZWxlY3QgRVhUQ09ODQo+ID4+ICAJc2VsZWN0IFJFU0VUX0NPTlRST0xM
-RVINCj4gPj4gKwlzZWxlY3QgTVVMVElQTEVYRVINCj4gPj4gKwlzZWxlY3QgTVVYX0dQSU8NCj4g
-Pg0KPiA+IFRoZSBhYm92ZSB0d28gY29uZmlndXJhdGlvbnMgYXJlIG9ubHkgdXNlZCBhdCB5b3Vy
-IHNwZWNpZmljIHBsYXRmb3JtcywNCj4gPiBwbGVhc2UgYWRkIHRoZW0gYXQgZWl0aGVyIHlvdXIg
-cGxhdGZvcm0gZGVmY29uZmlnIG9yIHRoZSByZWxhdGVkIGhhcmR3YXJlIGRyaXZlcidzDQo+IEtj
-b25maWcuDQo+IA0KPiAic2VsZWN0IE1VWF9HUElPIiBpcyBpbmRlZWQgcXVlc3Rpb25hYmxlIGFu
-ZCBzaG91bGQgYmUgc29tZXdoZXJlIGVsc2UgYmVjYXVzZQ0KPiB0aGlzIGRyaXZlciB3aWxsIHdv
-cmsgd2l0aCBhbnkgb3RoZXIgbXV4IGFzIHdlbGwuIEl0J3Mgc2ltcGx5IHNvbWV0aGluZyBlbHNl
-IHRoYXQNCj4gcmVxdWlyZXMgaXQuIElmIGl0IHdhcyB0aGUgY2FzZSB0aGF0IE1VWF9HUElPIGlz
-IGluZGVlZCByZXF1aXJlZCB0aGVuIHRoZSB3aG9sZSB1c2UNCj4gb2YgdGhlIG11eCBzdWJzeXN0
-ZW0gaXMgcXVlc3Rpb25hYmxlIGFuZCB0aGUgdGhpbmcgY29udHJvbGxlZCBtaWdodCBhcyB3ZWxs
-IGJlDQo+IGNvbnRyb2xsZWQgZGlyZWN0bHkgd2l0aCB0aGUgR1BJTyBsaW5lLiBUaGUgbXV4IHN1
-YnN5c3RlbSBpcyBnb29kIHdoZW4gYSBzaW5nbGUgbXV4DQo+ICJjb250cm9sbGVyIiBpcyBzaGFy
-ZWQgYmV0d2VlbiBzZXZlcmFsIHVucmVsYXRlZCBkcml2ZXJzIHV0aWxpemluZyBkaWZmZXJlbnQg
-bXV4ZXMNCj4gY29udHJvbGxlZCBieSB0aGF0IHNhbWUgbXV4ICJjb250cm9sbGVyIiAodGhpbmsg
-c2V2ZXJhbCBtdXhlcyBjb250cm9sbGVkIGJ5IHRoZSBzYW1lDQo+IEdQSU8gbGluZS9saW5lcyku
-IFRoZSBtdXggc3Vic3lzdGVtIGlzIGFsc28gdXNlZnVsIHdoZW4gdGhlIGRyaXZlciBkb2VzIG5v
-dCB3YW50IHRvDQo+IGhhbmRsZS9rbm93IGhvdyB0aGUgc3BlY2lmaWMgbXV4IGlzIGNvbnRyb2xs
-ZWQuIFRoYXQgc2FpZCwgaXQncyBvZiBjb3Vyc2Ugbm90IHdyb25nIHRvDQo+IHVzZSB0aGUgbXV4
-IHN1YnN5c3RlbSBpbiBjYXNlcyBsaWtlIHRoaXMgZWl0aGVyLCBidXQgSSB0aGluayBpdCBtaWdo
-dCBiZSBtdWNoIGVhc2llcg0KPiBhbmQgZGlyZWN0IHRvIGp1c3QgdHdpZGRsZSB0aGUgc2luZ2xl
-IEdQSU8gbGluZSBkaXJlY3RseSBoZXJlPw0KPiANCj4gT3IgZG8geW91IGV4cGVjdCBzb21lIGZ1
-dHVyZSBIVyB2YXJpYW50IHRoYXQgd2lsbCB1c2Ugc29tZSBvdGhlciBtZWFucyB0byBjb250cm9s
-DQo+IHRoaXMgbXV4Pw0KPiANCg0KTm8sIHRoaXMgbXV4IGlzIG9ubHkgdXNlZCBhdCBZb3NzaSdz
-IGJvYXJkcywgSSBleHBlY3QgdGhlc2UgdHdvIGNvbmZpZ3VyYXRpb25zIGlzIHVuZGVyDQpNVVgn
-cyBoYXJkd2FyZSBkcml2ZXIgS2NvbmZpZyBpZiBpdCBpcyBleGlzdGVkLCBvciB1bmRlciBpdHMg
-cGxhdGZvcm0gZGVmY29uZmlnLiBTb21lb25lDQpoYXMgYWxyZWFkeSBjb21wbGFpbmVkIHRvbyBt
-YW55IHNlbGVjdHMgaW5jcmVhc2UgdGhlIGNvZGUgc2l6ZToNCg0KaHR0cHM6Ly9wYXRjaHdvcmsu
-a2VybmVsLm9yZy9wYXRjaC8xMDM0OTI5My8NCg0KPiA+PiAgCWhlbHANCj4gPj4gIAkgIFNheSBZ
-IGhlcmUgaWYgeW91ciBzeXN0ZW0gaGFzIGEgZHVhbCByb2xlIGhpZ2ggc3BlZWQgVVNCDQo+ID4+
-ICAJICBjb250cm9sbGVyIGJhc2VkIG9uIENoaXBJZGVhIHNpbGljb24gSVAuIEl0IHN1cHBvcnRz
-Og0KPiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvY2hpcGlkZWEvY29yZS5jDQo+ID4+IGIv
-ZHJpdmVycy91c2IvY2hpcGlkZWEvY29yZS5jIGluZGV4DQo+ID4+IDMzYWU4N2YuLjhmYTA5OTEg
-MTAwNjQ0DQo+ID4+IC0tLSBhL2RyaXZlcnMvdXNiL2NoaXBpZGVhL2NvcmUuYw0KPiA+PiArKysg
-Yi9kcml2ZXJzL3VzYi9jaGlwaWRlYS9jb3JlLmMNCj4gPj4gQEAgLTYxLDYgKzYxLDcgQEANCj4g
-Pj4gICNpbmNsdWRlIDxsaW51eC9vZi5oPg0KPiA+PiAgI2luY2x1ZGUgPGxpbnV4L3JlZ3VsYXRv
-ci9jb25zdW1lci5oPiAgI2luY2x1ZGUNCj4gPj4gPGxpbnV4L3VzYi9laGNpX2RlZi5oPg0KPiA+
-PiArI2luY2x1ZGUgPGxpbnV4L211eC9jb25zdW1lci5oPg0KPiA+Pg0KPiA+PiAgI2luY2x1ZGUg
-ImNpLmgiDQo+ID4+ICAjaW5jbHVkZSAidWRjLmgiDQo+ID4+IEBAIC02ODcsNiArNjg4LDEwIEBA
-IHN0YXRpYyBpbnQgY2lfZ2V0X3BsYXRkYXRhKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPj4gIAlp
-ZiAob2ZfZmluZF9wcm9wZXJ0eShkZXYtPm9mX25vZGUsICJub24temVyby10dGN0cmwtdHRoYSIs
-IE5VTEwpKQ0KPiA+PiAgCQlwbGF0ZGF0YS0+ZmxhZ3MgfD0gQ0lfSERSQ19TRVRfTk9OX1pFUk9f
-VFRIQTsNCj4gPj4NCj4gPj4gKwlwbGF0ZGF0YS0+dXNiX3N3aXRjaCA9IGRldm1fbXV4X2NvbnRy
-b2xfZ2V0X29wdGlvbmFsKGRldiwgInVzYl9zd2l0Y2giKTsNCj4gPj4gKwlpZiAoSVNfRVJSKHBs
-YXRkYXRhLT51c2Jfc3dpdGNoKSkNCj4gPj4gKwkJcmV0dXJuIFBUUl9FUlIocGxhdGRhdGEtPnVz
-Yl9zd2l0Y2gpOw0KPiA+PiArDQo+ID4+ICAJZXh0X2lkID0gRVJSX1BUUigtRU5PREVWKTsNCj4g
-Pj4gIAlleHRfdmJ1cyA9IEVSUl9QVFIoLUVOT0RFVik7DQo+ID4+ICAJaWYgKG9mX3Byb3BlcnR5
-X3JlYWRfYm9vbChkZXYtPm9mX25vZGUsICJleHRjb24iKSkgeyBkaWZmIC0tZ2l0DQo+ID4+IGEv
-ZHJpdmVycy91c2IvY2hpcGlkZWEvaG9zdC5jIGIvZHJpdmVycy91c2IvY2hpcGlkZWEvaG9zdC5j
-IGluZGV4DQo+ID4+IGFmNDVhYTMyLi5kOWQyZDAwDQo+ID4+IDEwMDY0NA0KPiA+PiAtLS0gYS9k
-cml2ZXJzL3VzYi9jaGlwaWRlYS9ob3N0LmMNCj4gPj4gKysrIGIvZHJpdmVycy91c2IvY2hpcGlk
-ZWEvaG9zdC5jDQo+ID4+IEBAIC0xMyw2ICsxMyw3IEBADQo+ID4+ICAjaW5jbHVkZSA8bGludXgv
-dXNiL2hjZC5oPg0KPiA+PiAgI2luY2x1ZGUgPGxpbnV4L3VzYi9jaGlwaWRlYS5oPg0KPiA+PiAg
-I2luY2x1ZGUgPGxpbnV4L3JlZ3VsYXRvci9jb25zdW1lci5oPg0KPiA+PiArI2luY2x1ZGUgPGxp
-bnV4L211eC9jb25zdW1lci5oPg0KPiA+Pg0KPiA+PiAgI2luY2x1ZGUgIi4uL2hvc3QvZWhjaS5o
-Ig0KPiA+Pg0KPiA+PiBAQCAtMTYxLDYgKzE2MiwxMCBAQCBzdGF0aWMgaW50IGhvc3Rfc3RhcnQo
-c3RydWN0IGNpX2hkcmMgKmNpKQ0KPiA+PiAgCQlpZiAoY2lfb3RnX2lzX2ZzbV9tb2RlKGNpKSkg
-ew0KPiA+PiAgCQkJb3RnLT5ob3N0ID0gJmhjZC0+c2VsZjsNCj4gPj4gIAkJCWhjZC0+c2VsZi5v
-dGdfcG9ydCA9IDE7DQo+ID4+ICsJCX0gZWxzZSB7DQo+ID4+ICsJCQlyZXQgPSBtdXhfY29udHJv
-bF9zZWxlY3QoY2ktPnBsYXRkYXRhLT51c2Jfc3dpdGNoLCAxKTsNCj4gPj4gKwkJCWlmIChyZXQp
-DQo+ID4+ICsJCQkJZ290byBkaXNhYmxlX3JlZzsNCj4gPg0KPiA+IFdoYXQgd2lsbCBoYXBwZW4g
-aWYgY2ktPnBsYXRkYXRhLT51c2Jfc3dpdGNoICBpcyBOVUxMPw0KPiANCj4gV2hhdCBoYXMgbm90
-IGJlZW4gbWVudGlvbmVkIGluIHRoaXMgcGF0Y2ggaXMgdGhhdCBpdCBkZXBlbmRzIG9uIGFub3Ro
-ZXIgcGF0Y2ggd2hpY2gNCj4gaXMgbm90IHlldCB1cHN0cmVhbS4gWW91IGNhbiBnb29nbGUgZm9y
-DQo+IA0KPiBtdXg6IGFkZCBtdXhfY29udHJvbF9nZXRfb3B0aW9uYWwoKSBBUEkNCj4gDQo+IHRv
-IGdldCBhbiBpZGVhIChpdCdzIGFsc28gaW4gbGludXgtbmV4dCkuIEFueXdheSwgd2l0aCB0aGF0
-IHBhdGNoIHRoaXMgaXMgbm90IGEgcHJvYmxlbS4NCj4gDQoNClRoYW5rcywgSSBzZWUgaXQganVk
-Z2VzIE5VTEwgcG9pbnRlciwgdGhlbiBpdCBpcyBPSy4NCg0KIA0KPiA+PiAgLyoqDQo+ID4+ICAg
-KiBzdHJ1Y3QgY2lfaGRyY19jYWJsZSAtIHN0cnVjdHVyZSBmb3IgZXh0ZXJuYWwgY29ubmVjdG9y
-IGNhYmxlDQo+ID4+IHN0YXRlIHRyYWNraW5nIEBAIC0NCj4gPj4gNzYsNiArNzcsNyBAQCBzdHJ1
-Y3QgY2lfaGRyY19wbGF0Zm9ybV9kYXRhIHsNCj4gPj4gIAkvKiBWQlVTIGFuZCBJRCBzaWduYWwg
-c3RhdGUgdHJhY2tpbmcsIHVzaW5nIGV4dGNvbiBmcmFtZXdvcmsgKi8NCj4gPj4gIAlzdHJ1Y3Qg
-Y2lfaGRyY19jYWJsZQkJdmJ1c19leHRjb247DQo+ID4+ICAJc3RydWN0IGNpX2hkcmNfY2FibGUJ
-CWlkX2V4dGNvbjsNCj4gPj4gKwlzdHJ1Y3QgbXV4X2NvbnRyb2wJCSp1c2Jfc3dpdGNoOw0KPiA+
-PiAgCXUzMgkJCXBoeV9jbGtnYXRlX2RlbGF5X3VzOw0KPiA+DQo+ID4gSWYgQ09ORklHX1VTQl9D
-SElQSURFQV9IT1NUIGlzIG5vdCBkZWZpbmVkLCBpdCBtYXkgY2F1c2UgYnVpbGQgZXJyb3INCj4g
-DQo+IEhvdyBpcyB0aGF0IHJlbGF0ZWQ/IFRoZXJlIGlzIGEgZm9yd2FyZCBkZWNsYXJhdGlvbiBh
-Ym92ZT8NCj4gDQoNClNvcnJ5LCBJIGRpZCBub3Qgbm90aWNlIGRyaXZlcnMvdXNiL2NoaXBpZGVh
-L2NvcmUuYyBhbHNvIGluY2x1ZGVzIDxsaW51eC9tdXgvY29uc3VtZXIuaD4uDQoNClBldGVyDQo=
+On 2018-04-17 15:52, Yossi Mansharoff wrote:
+> On the db410c 96boards platform we have a TC7USB40MU on the board
+> to mux the D+/D- lines coming from the controller between a micro
+> usb "device" port and a USB hub for "host" roles[1]. During a
+> role switch, we need to toggle this mux to forward the D+/D-
+> lines to either the port or the hub. Add the necessary code to do
+> the role switch in chipidea core via the generic mux framework.
+> Board configurations like on db410c are expected to change roles
+> via the sysfs API described in
+> Documentation/ABI/testing/sysfs-platform-chipidea-usb2.
+
+Ok, so this is v2. Please describe what is different from v1.
+I have told you before that this information helps.
+
+> [1] https://github.com/96boards/documentation/raw/master/ConsumerEdition/DragonBoard-410c/HardwareDocs/Schematics_DragonBoard.pdf
+
+This link returns 404 for me.
+
+Cheers,
+Peter
