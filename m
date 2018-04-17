@@ -1,97 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752748AbeDQOJb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:09:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55264 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752250AbeDQOJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:09:28 -0400
-Date: Tue, 17 Apr 2018 16:09:20 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v4 02/15] KVM: s390: reset crypto attributes for all
- vcpus
-Message-ID: <20180417160920.7c5756d7.cohuck@redhat.com>
-In-Reply-To: <0a3d569e-4328-364f-6df7-17de4f28833a@linux.vnet.ibm.com>
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1523827345-11600-3-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <20180417133403.6fd7627a.cohuck@redhat.com>
-        <0a3d569e-4328-364f-6df7-17de4f28833a@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1752952AbeDQOJs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:09:48 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:24414 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752221AbeDQOJ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:09:29 -0400
+Subject: Re: [RESEND PATCH v2 3/4] ARM: davinci: add aemif & nand support to
+ da850-lcdk in legacy mode
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180417102917.7794-1-brgl@bgdev.pl>
+ <20180417102917.7794-4-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <df39067d-a941-4099-2cfe-7602d4047c6f@ti.com>
+Date: Tue, 17 Apr 2018 19:39:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180417102917.7794-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 09:47:58 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+On Tuesday 17 April 2018 03:59 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> We now have support for aemif & nand from board files. As an example
+> add support for nand to da850-lcdk in legacy mode.
 
-> On 04/17/2018 07:34 AM, Cornelia Huck wrote:
-> > On Sun, 15 Apr 2018 17:22:12 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> >  
-> >> Introduces a new function to reset the crypto attributes for all
-> >> vcpus whether they are running or not. Each vcpu in KVM will
-> >> be removed from SIE prior to resetting the crypto attributes in its
-> >> SIE state description. After all vcpus have had their crypto attributes
-> >> reset the vcpus will be restored to SIE.
-> >>
-> >> This function will be used in a later patch to set the ECA.28
-> >> bit in the SIE state description to enable interpretive execution of
-> >> AP instructions. It will also be incorporated into the
-> >> kvm_s390_vm_set_crypto(kvm) function to fix an issue whereby the crypto
-> >> key wrapping attributes could potentially get out of synch for running
-> >> vcpus.  
-> > So, this description leads me to think it would make sense to queue
-> > this patch (fixing the key wrapping) independently of this series,
-> > wouldn't it?  
-> I considered that because I figured there might be objections, but
-> since separating them would create dependency issues I didn't see
-> any harm in including it here. I can remove this from the explanation
-> above and the code below and create a separate patch for the key
-> wrapping if you'd prefer.
+Hawkboard is a separate board of its own, although closely related to
+LCDK. Lets refer to it as hawkboard itself, instead of "LCDK in legacy
+mode". So:
 
-Well, I think this makes sense as an individual patch, but I'll leave
-that to the maintainers to decide.
+ARM: davinci: omapl138-hawk: ...
 
-> >  
-> >> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> >> ---
-> >>   arch/s390/kvm/kvm-s390.c |   19 +++++++++++++------
-> >>   arch/s390/kvm/kvm-s390.h |   14 ++++++++++++++
-> >>   2 files changed, 27 insertions(+), 6 deletions(-)
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  arch/arm/mach-davinci/board-omapl138-hawk.c | 132 ++++++++++++++++++++
+>  1 file changed, 132 insertions(+)
+> 
+> diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+> index 6c997c59a3cd..9c3de56b54e4 100644
+> --- a/arch/arm/mach-davinci/board-omapl138-hawk.c
+> +++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+> @@ -16,6 +16,11 @@
+>  #include <linux/gpio.h>
+>  #include <linux/gpio/machine.h>
+>  #include <linux/platform_data/gpio-davinci.h>
+> +#include <linux/platform_data/ti-aemif.h>
+> +#include <linux/mtd/rawnand.h>
+> +#include <linux/mtd/partitions.h>
+> +#include <linux/platform_data/mtd-davinci.h>
+> +#include <linux/platform_data/mtd-davinci-aemif.h>
+>  #include <linux/regulator/machine.h>
+>  
+>  #include <asm/mach-types.h>
+> @@ -162,6 +167,129 @@ static __init void omapl138_hawk_mmc_init(void)
+>  	gpiod_remove_lookup_table(&mmc_gpios_table);
+>  }
+>  
+> +static struct mtd_partition omapl138_hawk_nandflash_partition[] = {
+> +	{
+> +		.name		= "u-boot env",
+> +		.offset		= 0,
+> +		.size		= SZ_128K,
+> +		.mask_flags	= MTD_WRITEABLE,
+> +	 },
+> +	{
+> +		.name		= "u-boot",
+> +		.offset		= MTDPART_OFS_APPEND,
+> +		.size		= SZ_128K,
 
-> >> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
-> >> index 1b5621f..76324b7 100644
-> >> --- a/arch/s390/kvm/kvm-s390.h
-> >> +++ b/arch/s390/kvm/kvm-s390.h
-> >> @@ -410,4 +410,18 @@ static inline int kvm_s390_use_sca_entries(void)
-> >>   }
-> >>   void kvm_s390_reinject_machine_check(struct kvm_vcpu *vcpu,
-> >>   				     struct mcck_volatile_info *mcck_info);
-> >> +
-> >> +/**
-> >> + * kvm_s390_vcpu_crypto_reset_all
-> >> + *
-> >> + * Reset the crypto attributes for each vcpu. This can be done while the vcpus
-> >> + * are running as each vcpu will be removed from SIE before resetting the crypto
-> >> + * attributes and restored to SIE afterward.
-> >> + *
-> >> + * Note: The kvm->lock mutex must be locked prior to calling this function and
-> >> + *	 unlocked after it returns.  
-> > "Must be called with kvm->lock held"?  
-> Yes. The kvm->lock must be held to set the crypto attributes that will be
-> copied to the vcpus via the kvm_s390_vcpu_crypto_reset_all() function,
-> so it made sense to hold the lock across the entire operation.
+Can you make it 512K as it is in da850-lcdk.dts ?
 
-This was intended as a suggestion for a more compact usage note :)
+> +		.mask_flags	= MTD_WRITEABLE,
+> +	},
+> +	{
+> +		.name		= "free space",
+> +		.offset		= MTDPART_OFS_APPEND,
+> +		.size		= MTDPART_SIZ_FULL,
+> +		.mask_flags	= 0,
+> +	},
+> +};
+
+> +static struct aemif_abus_data omapl138_hawk_aemif_abus_data[] = {
+> +	{
+> +		.cs	= 3,
+> +	}
+> +};
+> +
+> +static struct platform_device omapl138_hawk_aemif_devices[] = {
+> +	{
+> +		.name		= "davinci_nand",
+> +		.id		= 1,
+
+Is there a reason for .id to be set to 1 here? Ideally it should be -1,
+I think since there is a single NAND on the board.
+
+Note that I sent a patch dropping AEMIF clock acquisition from DaVinci
+NAND driver.
+
+> +		.dev		= {
+> +			.platform_data	= &omapl138_hawk_nandflash_data,
+> +		},
+> +		.resource	= omapl138_hawk_nandflash_resource,
+> +		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
+> +		.id		= 0,
+
+This should have resulted in a double init warning?
+
+Thanks,
+Sekhar
