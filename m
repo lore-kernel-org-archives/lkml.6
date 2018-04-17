@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755286AbeDQQjd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:39:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56620 "EHLO mail.kernel.org"
+        id S1755293AbeDQQkX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:40:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754781AbeDQQja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:39:30 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C2542175C
+        id S1755118AbeDQQkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:40:22 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2BBB21838
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 17 Apr 2018 12:39:27 -0400
+Date: Tue, 17 Apr 2018 12:40:19 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>
+        x86@kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
 Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
  x86 syscall func names
-Message-ID: <20180417123927.4406f990@gandalf.local.home>
-In-Reply-To: <20180417161029.GA8733@light.dominikbrodowski.net>
+Message-ID: <20180417124019.1e4350d5@gandalf.local.home>
+In-Reply-To: <20180417163527.GA7775@kernel.org>
 References: <20180417115440.2145f7f5@gandalf.local.home>
-        <20180417161029.GA8733@light.dominikbrodowski.net>
+        <20180417163527.GA7775@kernel.org>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -29,69 +29,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 18:10:29 +0200
-Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+On Tue, 17 Apr 2018 13:35:27 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
 
-> > Because the x86 system calls had "__x86_" appended to the "sys" for the  
+> [root@jouet ~]# perf test openat
+>  2: Detect openat syscall event                           : Ok
+>  3: Detect openat syscall event on all cpus               : Ok
+> 15: syscalls:sys_enter_openat event fields                : Ok
+> [root@jouet ~]#
 > 
-> __x64 actually.
-
-Heh, I constantly make that mistake.
-
-Hmm, OK, I need to look at this a bit more. If this is x64, then
-there's probably syscalls (on 32 bit), that don't have that. It should
-probably include more checks. Something like:
-
-  return !strcmp(sym + 9, name + 3) || !strcmp(sym + 3, name + 3);
-
-
+> [root@jouet ~]# perf trace -e nanosleep,syscalls:*nanosleep sleep 1
+>      0.000 (         ): syscalls:sys_enter_nanosleep:rqtp: 0x7ffd9f737950, rmtp: 0x00000000
+>      0.009 (         ): sleep/7905 nanosleep(rqtp: 0x7ffd9f737950                                        ) ...
+>   1000.204 (         ): syscalls:sys_exit_nanosleep:0x0
+>      0.009 (1000.217 ms): sleep/7905  ... [continued]: nanosleep()) = 0
+> [root@jouet ~]#
 > 
-> > names, they do not match the default compare algorithm. As this was a
-> > problem for power pc, the algorithm can be overwritten by the architecture.
-> > The solution is to have x86 have its own algorithm to do the compare and
-> > this brings back the system call trace events.  
+> Works, so the regression seems to be fixed, without looking at the code
+> that much:
 > 
-> this lets me wonder *which* syscall "function" should be included in this
-> directory. Is it really the stub (__x64_sys_waitid, for example), or better
-> the sign-extending C function (__se_sys_waitid) which then calls an
-> internal helper (__do_sys_waitid). An additional advantage:
-> __se_sys_waitid would be available on x86 and, AFAICS, on all other archs.
+> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-It should include anything that uses the "SYSCALL_DEFINE#()" macros.
-
-> 
-> > Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---
-> >  arch/x86/include/asm/ftrace.h | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-> > index 09ad88572746..c30b3fac20ae 100644
-> > --- a/arch/x86/include/asm/ftrace.h
-> > +++ b/arch/x86/include/asm/ftrace.h
-> > @@ -31,6 +31,16 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
-> >  	return addr;
-> >  }
-> >  
-> > +#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
-> > +static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
-> > +{
-> > +	/*
-> > +	 * Compare the symbol name with the system call name. Skip the
-> > +	 * "__x64_sys" prefix.
-> > +	 */
-> > +	return !strcmp(sym + 9, name + 3);
-> > +}  
-> 
-> What are the first three chars you skip for *name?
-
-"sys_"
+But does this still work on x86_32? I'll test that out. Thanks for
+testing, but I may have another patch soon.
 
 -- Steve
-
-> 
-> Thanks,
-> 	Dominik
