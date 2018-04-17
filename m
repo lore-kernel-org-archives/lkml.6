@@ -1,104 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754371AbeDQQha (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:37:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37360 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753928AbeDQQh1 (ORCPT
+        id S1755259AbeDQQiJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:38:09 -0400
+Received: from resqmta-ch2-08v.sys.comcast.net ([69.252.207.40]:39558 "EHLO
+        resqmta-ch2-08v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754675AbeDQQiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:37:27 -0400
-Subject: Re: [PATCH v4 15/15] s390: doc: detailed specifications for AP
- virtualization
-To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-16-git-send-email-akrowiak@linux.vnet.ibm.com>
- <04a0cf49-71a1-214a-7261-d8e55adee1de@linux.vnet.ibm.com>
- <65d3b123-7a0a-4de3-687f-5b6707e797f7@linux.vnet.ibm.com>
- <53283f8e-52b5-5653-044c-843b5b033a1e@linux.vnet.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Tue, 17 Apr 2018 12:37:19 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Tue, 17 Apr 2018 12:38:06 -0400
+Date: Tue, 17 Apr 2018 11:38:02 -0500 (CDT)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Vlastimil Babka <vbabka@suse.cz>
+cc: Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
+        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] slab: introduce the flag SLAB_MINIMIZE_WASTE
+In-Reply-To: <f8f736fe-9e0e-acd2-8040-f4f25ea5a7a2@suse.cz>
+Message-ID: <alpine.DEB.2.20.1804171135190.18801@nuc-kabylake>
+References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211024220.2175@nuc-kabylake> <alpine.LRH.2.02.1803211153320.16017@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211226350.3174@nuc-kabylake>
+ <alpine.LRH.2.02.1803211425330.26409@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
+ <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com> <alpine.LRH.2.02.1804161530360.19492@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804170940340.17557@nuc-kabylake>
+ <f8f736fe-9e0e-acd2-8040-f4f25ea5a7a2@suse.cz>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <53283f8e-52b5-5653-044c-843b5b033a1e@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041716-0040-0000-0000-0000041CFB4E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008871; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01019290; UDB=6.00519990; IPR=6.00798531;
- MB=3.00020619; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 16:37:25
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041716-0041-0000-0000-00000822FFC9
-Message-Id: <c15ce906-70b9-0462-e6e0-0bd3b77387d0@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170145
+Content-Type: text/plain; charset=US-ASCII
+X-CMAE-Envelope: MS4wfC2tcBarzIi4LmxLo5jCBgV9NG8nTk4cKl7qby9jcUednoctKl/uKCI9xGSWCgFWHv0fRgklEEW3+DiXQ3oBGI+utFeT7RmwLUNqPKNR+8HptUHhW1o5
+ x8Ejg27ot6uUtIEWSPEfqVtdecpKRLPtP/HmmHkjDqeWcoRFnlSKXZX57sEJ2lhNretmolLfTPTNRpIDWj8kNMbtYYwdedrN3dKJwAanvCr7cqZX4WXReniM
+ ghgpOnCXqOLM0LB3hrqEufZGtnhI6jBzBsjbtcriJUEb64XJzyKdQtgfsoPj7hXlQXhRUbV4PmudejOEmdNMxZIp8fv7KQvvX6Rw1QtLq4HSOc8d8M/C9qAu
+ 9NCSEw8nEfDFwEqcNccPLiK+8m/dsrXT3Eo/dIqWYvzkUx1vX1J/hYAPeLYddd7wIHUFUZ+0G3b/Mvplgt52N7SzRPH8PKdviLmBS0VnncYygt4LeSIrIv/l
+ QH8Y5rxNc/eXX4Qr
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/17/2018 12:25 PM, Pierre Morel wrote:
-> On 17/04/2018 18:14, Tony Krowiak wrote:
->> On 04/16/2018 09:13 AM, Pierre Morel wrote:
->>> On 15/04/2018 23:22, Tony Krowiak wrote:
->>>> This patch provides documentation describing the AP architecture and
->>>> design concepts behind the virtualization of AP devices. It also
->>>>
-> ...snip...
->>>> +The process for reserving an AP queue for use by a KVM guest is:
->>>> +
->>>> +* The vfio-ap driver during its initialization will perform the 
->>>> following:
->>>> +  * Create the 'vfio_ap' root device - /sys/devices/vfio_ap
->>>> +  * Create the 'matrix' device in the 'vfio_ap' root
->>>> +  * Register the matrix device with the device core
->>>> +* Register with the ap_bus for AP queue devices of type CEX4, CEX5 
->>>> and
->>>> +  CEX6 and to provide the vfio_ap driver's probe and remove 
->>>> callback interfaces.
->>>
->>> I wonder why the type of card has anything to do with this driver.
->>> It should be transparent, the driver should be able to provide the 
->>> matrix (APM/AQM/ADM)
->>> independently from the type of card in the slot.
->>
->> We've been down this road several times before. We are only 
->> supporting virtualization of
->> CEX4 and newer cards. Also, the AP bus requires registering for 
->> specific card types.
->
-> Yes I know, but the AP BUS design may be not the optimal for the AP 
-> Matrix.
-> The AP Matrix is device independent.
-> We just write/clear bits in a matrix and we do not care what is plugged.
->
-> So may be make clear that this device dependence is due to the actual 
-> AP BUS interface design.
+On Tue, 17 Apr 2018, Vlastimil Babka wrote:
 
-Okay, will do.
+> On 04/17/2018 04:45 PM, Christopher Lameter wrote:
 
+> > But then higher order allocs are generally seen as problematic.
 >
->>
->>>
->>>
->>> Regards,
->>>
->>> Pierre
->>>
->>
+> I think in this case they are better than wasting/fragmenting 384kB for
+> 640kB object.
+
+Well typically we have suggested that people use vmalloc in the past.
+
+
+> > Note that SLUB will fall back to smallest order already if a failure
+> > occurs so increasing slub_max_order may not be that much of an issue.
+> >
+> > Maybe drop the max order limit completely and use MAX_ORDER instead?
 >
+> For packing, sure. For performance, please no (i.e. don't try to
+> allocate MAX_ORDER for each and every cache).
+
+No of course not. We would have to modify the order selection on kmem
+cache creation.
+
+> > That
+> > means that callers need to be able to tolerate failures.
+>
+> Is it any different from now? I suppose there would still be
+> smallest-order fallback involved in sl*b itself? And if your allocation
+> is so large it can fail even with the fallback (i.e. >= costly order),
+> you need to tolerate failures anyway?
+
+Failures can occur even with < costly order as far as I can telkl. Order 0
+is the only safe one.
+
+> One corner case I see is if there is anyone who would rather use their
+> own fallback instead of the space-wasting smallest-order fallback.
+> Maybe we could map some GFP flag to indicate that.
+
+Well if you have a fallback then maybe the slab allocator should not fall
+back on its own but let the caller deal with it.
