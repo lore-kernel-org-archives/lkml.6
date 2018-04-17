@@ -1,77 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752667AbeDQJTt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 05:19:49 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:14255 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752048AbeDQJTq (ORCPT
+        id S1752703AbeDQJUA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 05:20:00 -0400
+Received: from vulcan.natalenko.name ([104.207.131.136]:35484 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752048AbeDQJT4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 05:19:46 -0400
-Subject: Re: [PATCH v4 03/10] PCI: endpoint: functions/pci-epf-test: Add
- second entry
-To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-References: <cover.1523881182.git.gustavo.pimentel@synopsys.com>
- <d025236bb2646eb3b4d4de9f2e745cab5d7ef2b9.1523881182.git.gustavo.pimentel@synopsys.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <56bdafe6-1725-6e55-68a4-38667f114e5c@ti.com>
-Date: Tue, 17 Apr 2018 14:49:37 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 17 Apr 2018 05:19:56 -0400
+ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1523956797; a=rsa-sha256;
+        cv=none;
+        b=u8qd9GU4zrkC0hvhDKRHCOEorwwSzTa7yGshAVTarUbpyRX7iZB0/CQJqSsakYPm96y0TQSOEPfFbUmAEPM3bvT8dYcOqQWKJx6V9yfYwQQDn42gd/gfzk5G81PkCtMWjOEQPhNhlFSbWJQcNp3Jm/QrKGFZ/Faw+6Dee9f+ZxQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1523956797;
+        h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qvY8HO0+Nssvn2xR4xFCiW8lZXXG3VIQ8j+5mXg2HH8=;
+        b=c2zAAmsSqvoo0rsQGXWAqH3t/rkh2wCWgap4cALdqSb8GJ/6E16Zj74hYDGKDZiaCeAYTO
+        HXjUJnKm2Xmwool/bwH1HeXq0TgD8DDP6HziR/5yvsw+lkKavHYcVMikzwChcS4dWlwg66
+        GAjFn0ecRZt9F5muhb9ddjk6EXDzB8M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 2B18C33B51C
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-In-Reply-To: <d025236bb2646eb3b4d4de9f2e745cab5d7ef2b9.1523881182.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Tue, 17 Apr 2018 11:19:57 +0200
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Kees Cook <keescook@chromium.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Bart Van Assche <bart.vanassche@wdc.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org,
+        keescook@google.com
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+In-Reply-To: <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
+References: <10360653.ov98egbaqx@natalenko.name>
+ <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
+ <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
+ <2864697.7uzmEJovl2@natalenko.name>
+ <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
+ <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
+ <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
+ <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
+ <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
+Message-ID: <8faec18239a6104b250d9668bb1d3abc@natalenko.name>
+User-Agent: Roundcube Webmail/1.3.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi.
 
-On Monday 16 April 2018 08:07 PM, Gustavo Pimentel wrote:
-> Adds a seconds entry on the pci_epf_test_ids structure that disables the
-> linkup_notifier parameter on driver.
+17.04.2018 05:12, Kees Cook wrote:
+>> Turning off HARDENED_USERCOPY and turning on KASAN, I see the same 
+>> report:
+>> 
+>> [   38.274106] BUG: KASAN: slab-out-of-bounds in 
+>> _copy_to_user+0x42/0x60
+>> [   38.274841] Read of size 22 at addr ffff8800122b8c4b by task 
+>> smartctl/1064
+>> [   38.275630]
+>> [   38.275818] CPU: 2 PID: 1064 Comm: smartctl Not tainted 
+>> 4.17.0-rc1-ARCH+ #266
+>> [   38.276631] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+>> BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+>> [   38.277690] Call Trace:
+>> [   38.277988]  dump_stack+0x71/0xab
+>> [   38.278397]  ? _copy_to_user+0x42/0x60
+>> [   38.278833]  print_address_description+0x6a/0x270
+>> [   38.279368]  ? _copy_to_user+0x42/0x60
+>> [   38.279800]  kasan_report+0x243/0x360
+>> [   38.280221]  _copy_to_user+0x42/0x60
+>> [   38.280635]  sg_io+0x459/0x660
+>> ...
+>> 
+>> Though we get slightly more details (some we already knew):
+>> 
+>> [   38.301330] Allocated by task 329:
+>> [   38.301734]  kmem_cache_alloc_node+0xca/0x220
+>> [   38.302239]  scsi_mq_init_request+0x64/0x130 [scsi_mod]
+>> [   38.302821]  blk_mq_alloc_rqs+0x2cf/0x370
+>> [   38.303265]  blk_mq_sched_alloc_tags.isra.4+0x7d/0xb0
+>> [   38.303820]  blk_mq_init_sched+0xf0/0x220
+>> [   38.304268]  elevator_switch+0x17a/0x2c0
+>> [   38.304705]  elv_iosched_store+0x173/0x220
+>> [   38.305171]  queue_attr_store+0x72/0xb0
+>> [   38.305602]  kernfs_fop_write+0x188/0x220
+>> [   38.306049]  __vfs_write+0xb6/0x330
+>> [   38.306436]  vfs_write+0xe9/0x240
+>> [   38.306804]  ksys_write+0x98/0x110
+>> [   38.307181]  do_syscall_64+0x6d/0x1d0
+>> [   38.307590]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [   38.308142]
+>> [   38.308316] Freed by task 0:
+>> [   38.308652] (stack is not available)
+>> [   38.309060]
+>> [   38.309243] The buggy address belongs to the object at 
+>> ffff8800122b8c00
+>> [   38.309243]  which belongs to the cache scsi_sense_cache of size 96
+>> [   38.310625] The buggy address is located 75 bytes inside of
+>> [   38.310625]  96-byte region [ffff8800122b8c00, ffff8800122b8c60)
 > 
-> This allows EPs that doesn't have linkup notification signal to work
-> with pcitest.
+> With a hardware watchpoint, I've isolated the corruption to here:
 > 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> Change v2->v3:
->  - Added second entry in pci_epf_test_ids structure.
->  - Remove test_reg_bar field assignment on second entry.
-> Changes v3->v4:
-> - Nothing changed, just to follow the patch set version.
+> bfq_dispatch_request+0x2be/0x1610:
+> __bfq_dispatch_request at block/bfq-iosched.c:3902
+> 3900            if (rq) {
+> 3901    inc_in_driver_start_rq:
+> 3902                    bfqd->rq_in_driver++;
+> 3903    start_rq:
+> 3904                    rq->rq_flags |= RQF_STARTED;
+> 3905            }
 > 
->  drivers/pci/endpoint/functions/pci-epf-test.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> index 7cef851..63dca44 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->  	return 0;
->  }
->  
-> +static const struct pci_epf_test_data data_cfg2 = {
-> +	.linkup_notifier = false
-> +};
-> +
->  static const struct pci_epf_device_id pci_epf_test_ids[] = {
->  	{
->  		.name = "pci_epf_test",
->  	},
-> +	{
-> +		.name = "pci_epf_test_cfg2",
+> Through some race condition(?), rq_in_driver is also sense_buffer, and
+> it can get incremented.
+> …
+> I still haven't figured this out, though... any have a moment to look 
+> at this?
 
-I'd prefer this to be named pci_epf_test_designware so that configfs entry is
-self explanatory.
+By any chance, have you tried to simplify the reproducer environment, or 
+it still needs my complex layout to trigger things even with KASAN?
 
-Thanks
-Kishon
+Regards,
+   Oleksandr
