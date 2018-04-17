@@ -1,96 +1,222 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753186AbeDQVs1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:48:27 -0400
-Received: from mail-pg0-f43.google.com ([74.125.83.43]:43386 "EHLO
-        mail-pg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753133AbeDQVsX (ORCPT
+        id S1752944AbeDQVxj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:53:39 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41102 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752310AbeDQVxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:48:23 -0400
-X-Google-Smtp-Source: AIpwx481LgHZ+IGeoDWnrVazGYgdcCvFJg9XevFJntBtZH4ycyyLvRP3FHxizZ2m0PjXQiw1zFzb7A==
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Kees Cook <keescook@chromium.org>
-Cc: Paolo Valente <paolo.valente@linaro.org>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
-References: <10360653.ov98egbaqx@natalenko.name>
- <2864697.7uzmEJovl2@natalenko.name>
- <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
- <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
- <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
- <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
- <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
- <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
- <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
- <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com>
- <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk>
- <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
- <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
- <07f263ff-cea6-ac3c-944b-0f36fee8ba25@kernel.dk>
- <CAGXu5j+kHipvoyFWjGp8M6+83zbd6yHOzwxQ-2LNBQbD5-jS9w@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <8b32e079-d4e6-3fea-a89d-ff856e4e13b1@kernel.dk>
-Date: Tue, 17 Apr 2018 15:48:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 17 Apr 2018 17:53:37 -0400
+X-Google-Smtp-Source: AIpwx4/FCmqSNwWMdJvUUQNhDu9CMHAMnKGip9q+utIoy+fhqnknKzK1Rcb4AAAOUzORQUrOUL7WrQ==
+Date: Tue, 17 Apr 2018 14:53:34 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: ohad@wizery.com, arnd@arndb.de, broonie@kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] hwspinlock: Introduce one new mode for hwspinlock
+Message-ID: <20180417215334.GF17344@builder>
+References: <d7fe0ed3d2dccf51e04a5c9032a73d1fd62dd1c1.1523156656.git.baolin.wang@linaro.org>
+ <f18e7e37046873a393ca43ee91986b9e192e977c.1523156656.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+kHipvoyFWjGp8M6+83zbd6yHOzwxQ-2LNBQbD5-jS9w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f18e7e37046873a393ca43ee91986b9e192e977c.1523156656.git.baolin.wang@linaro.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/17/18 3:47 PM, Kees Cook wrote:
-> On Tue, Apr 17, 2018 at 2:39 PM, Jens Axboe <axboe@kernel.dk> wrote:
->> On 4/17/18 3:25 PM, Kees Cook wrote:
->>> On Tue, Apr 17, 2018 at 1:46 PM, Kees Cook <keescook@chromium.org> wrote:
->>>> I see elv.priv[1] assignments made in a few places -- is it possible
->>>> there is some kind of uninitialized-but-not-NULL state that can leak
->>>> in there?
->>>
->>> Got it. This fixes it for me:
->>>
->>> diff --git a/block/blk-mq.c b/block/blk-mq.c
->>> index 0dc9e341c2a7..859df3160303 100644
->>> --- a/block/blk-mq.c
->>> +++ b/block/blk-mq.c
->>> @@ -363,7 +363,7 @@ static struct request *blk_mq_get_request(struct
->>> request_queue *q,
->>>
->>>         rq = blk_mq_rq_ctx_init(data, tag, op);
->>>         if (!op_is_flush(op)) {
->>> -               rq->elv.icq = NULL;
->>> +               memset(&rq->elv, 0, sizeof(rq->elv));
->>>                 if (e && e->type->ops.mq.prepare_request) {
->>>                         if (e->type->icq_cache && rq_ioc(bio))
->>>                                 blk_mq_sched_assign_ioc(rq, bio);
->>> @@ -461,7 +461,7 @@ void blk_mq_free_request(struct request *rq)
->>>                         e->type->ops.mq.finish_request(rq);
->>>                 if (rq->elv.icq) {
->>>                         put_io_context(rq->elv.icq->ioc);
->>> -                       rq->elv.icq = NULL;
->>> +                       memset(&rq->elv, 0, sizeof(rq->elv));
->>>                 }
->>>         }
->>
->> This looks like a BFQ problem, this should not be necessary. Paolo,
->> you're calling your own prepare request handler from the insert
->> as well, and your prepare request does nothing if rq->elv.icq == NULL.
+On Sat 07 Apr 20:06 PDT 2018, Baolin Wang wrote:
+
+> In some scenarios, user need do some time-consuming or sleepable
+> operations under the hardware spinlock protection for synchronization
+> between the multiple subsystems.
 > 
-> I sent the patch anyway, since it's kind of a robustness improvement,
-> I'd hope. If you fix BFQ also, please add:
+> For example, there is one PMIC efuse on Spreadtrum platform, which
+> need to be accessed under one hardware lock. But during the hardware
+> lock protection, the efuse operation is time-consuming to almost 5 ms,
+> so we can not disable the interrupts or preemption so long in this case.
+> 
+> Thus we can introduce one new mode to indicate that we just acquire the
+> hardware lock and do not disable interrupts or preemption, meanwhile we
+> should force user to protect the hardware lock with mutex or spinlock to
+> avoid dead-lock.
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-It's also a memset() in the hot path, would prefer to avoid that...
-The issue here is really the convoluted bfq usage of insert/prepare,
-I'm sure Paolo can take it from here.
+Looks good, both patches applied.
 
--- 
-Jens Axboe
+Thanks,
+Bjorn
+
+> ---
+>  drivers/hwspinlock/hwspinlock_core.c |   34 ++++++++++++++++----
+>  include/linux/hwspinlock.h           |   58 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 85 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+> index f4a59f5..5278d05 100644
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -71,10 +71,16 @@
+>   * This function attempts to lock an hwspinlock, and will immediately
+>   * fail if the hwspinlock is already taken.
+>   *
+> - * Upon a successful return from this function, preemption (and possibly
+> - * interrupts) is disabled, so the caller must not sleep, and is advised to
+> - * release the hwspinlock as soon as possible. This is required in order to
+> - * minimize remote cores polling on the hardware interconnect.
+> + * Caution: If the mode is HWLOCK_RAW, that means user must protect the routine
+> + * of getting hardware lock with mutex or spinlock. Since in some scenarios,
+> + * user need some time-consuming or sleepable operations under the hardware
+> + * lock, they need one sleepable lock (like mutex) to protect the operations.
+> + *
+> + * If the mode is not HWLOCK_RAW, upon a successful return from this function,
+> + * preemption (and possibly interrupts) is disabled, so the caller must not
+> + * sleep, and is advised to release the hwspinlock as soon as possible. This is
+> + * required in order to minimize remote cores polling on the hardware
+> + * interconnect.
+>   *
+>   * The user decides whether local interrupts are disabled or not, and if yes,
+>   * whether he wants their previous state to be saved. It is up to the user
+> @@ -113,6 +119,9 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+>  	case HWLOCK_IRQ:
+>  		ret = spin_trylock_irq(&hwlock->lock);
+>  		break;
+> +	case HWLOCK_RAW:
+> +		ret = 1;
+> +		break;
+>  	default:
+>  		ret = spin_trylock(&hwlock->lock);
+>  		break;
+> @@ -134,6 +143,9 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+>  		case HWLOCK_IRQ:
+>  			spin_unlock_irq(&hwlock->lock);
+>  			break;
+> +		case HWLOCK_RAW:
+> +			/* Nothing to do */
+> +			break;
+>  		default:
+>  			spin_unlock(&hwlock->lock);
+>  			break;
+> @@ -170,9 +182,14 @@ int __hwspin_trylock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+>   * is already taken, the function will busy loop waiting for it to
+>   * be released, but give up after @timeout msecs have elapsed.
+>   *
+> - * Upon a successful return from this function, preemption is disabled
+> - * (and possibly local interrupts, too), so the caller must not sleep,
+> - * and is advised to release the hwspinlock as soon as possible.
+> + * Caution: If the mode is HWLOCK_RAW, that means user must protect the routine
+> + * of getting hardware lock with mutex or spinlock. Since in some scenarios,
+> + * user need some time-consuming or sleepable operations under the hardware
+> + * lock, they need one sleepable lock (like mutex) to protect the operations.
+> + *
+> + * If the mode is not HWLOCK_RAW, upon a successful return from this function,
+> + * preemption is disabled (and possibly local interrupts, too), so the caller
+> + * must not sleep, and is advised to release the hwspinlock as soon as possible.
+>   * This is required in order to minimize remote cores polling on the
+>   * hardware interconnect.
+>   *
+> @@ -266,6 +283,9 @@ void __hwspin_unlock(struct hwspinlock *hwlock, int mode, unsigned long *flags)
+>  	case HWLOCK_IRQ:
+>  		spin_unlock_irq(&hwlock->lock);
+>  		break;
+> +	case HWLOCK_RAW:
+> +		/* Nothing to do */
+> +		break;
+>  	default:
+>  		spin_unlock(&hwlock->lock);
+>  		break;
+> diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+> index 859d673..fe450ee 100644
+> --- a/include/linux/hwspinlock.h
+> +++ b/include/linux/hwspinlock.h
+> @@ -24,6 +24,7 @@
+>  /* hwspinlock mode argument */
+>  #define HWLOCK_IRQSTATE	0x01	/* Disable interrupts, save state */
+>  #define HWLOCK_IRQ	0x02	/* Disable interrupts, don't save state */
+> +#define HWLOCK_RAW	0x03
+>  
+>  struct device;
+>  struct device_node;
+> @@ -176,6 +177,25 @@ static inline int hwspin_trylock_irq(struct hwspinlock *hwlock)
+>  }
+>  
+>  /**
+> + * hwspin_trylock_raw() - attempt to lock a specific hwspinlock
+> + * @hwlock: an hwspinlock which we want to trylock
+> + *
+> + * This function attempts to lock an hwspinlock, and will immediately fail
+> + * if the hwspinlock is already taken.
+> + *
+> + * Caution: User must protect the routine of getting hardware lock with mutex
+> + * or spinlock to avoid dead-lock, that will let user can do some time-consuming
+> + * or sleepable operations under the hardware lock.
+> + *
+> + * Returns 0 if we successfully locked the hwspinlock, -EBUSY if
+> + * the hwspinlock was already taken, and -EINVAL if @hwlock is invalid.
+> + */
+> +static inline int hwspin_trylock_raw(struct hwspinlock *hwlock)
+> +{
+> +	return __hwspin_trylock(hwlock, HWLOCK_RAW, NULL);
+> +}
+> +
+> +/**
+>   * hwspin_trylock() - attempt to lock a specific hwspinlock
+>   * @hwlock: an hwspinlock which we want to trylock
+>   *
+> @@ -243,6 +263,29 @@ int hwspin_lock_timeout_irq(struct hwspinlock *hwlock, unsigned int to)
+>  }
+>  
+>  /**
+> + * hwspin_lock_timeout_raw() - lock an hwspinlock with timeout limit
+> + * @hwlock: the hwspinlock to be locked
+> + * @to: timeout value in msecs
+> + *
+> + * This function locks the underlying @hwlock. If the @hwlock
+> + * is already taken, the function will busy loop waiting for it to
+> + * be released, but give up when @timeout msecs have elapsed.
+> + *
+> + * Caution: User must protect the routine of getting hardware lock with mutex
+> + * or spinlock to avoid dead-lock, that will let user can do some time-consuming
+> + * or sleepable operations under the hardware lock.
+> + *
+> + * Returns 0 when the @hwlock was successfully taken, and an appropriate
+> + * error code otherwise (most notably an -ETIMEDOUT if the @hwlock is still
+> + * busy after @timeout msecs). The function will never sleep.
+> + */
+> +static inline
+> +int hwspin_lock_timeout_raw(struct hwspinlock *hwlock, unsigned int to)
+> +{
+> +	return __hwspin_lock_timeout(hwlock, to, HWLOCK_RAW, NULL);
+> +}
+> +
+> +/**
+>   * hwspin_lock_timeout() - lock an hwspinlock with timeout limit
+>   * @hwlock: the hwspinlock to be locked
+>   * @to: timeout value in msecs
+> @@ -302,6 +345,21 @@ static inline void hwspin_unlock_irq(struct hwspinlock *hwlock)
+>  }
+>  
+>  /**
+> + * hwspin_unlock_raw() - unlock hwspinlock
+> + * @hwlock: a previously-acquired hwspinlock which we want to unlock
+> + *
+> + * This function will unlock a specific hwspinlock.
+> + *
+> + * @hwlock must be already locked (e.g. by hwspin_trylock()) before calling
+> + * this function: it is a bug to call unlock on a @hwlock that is already
+> + * unlocked.
+> + */
+> +static inline void hwspin_unlock_raw(struct hwspinlock *hwlock)
+> +{
+> +	__hwspin_unlock(hwlock, HWLOCK_RAW, NULL);
+> +}
+> +
+> +/**
+>   * hwspin_unlock() - unlock hwspinlock
+>   * @hwlock: a previously-acquired hwspinlock which we want to unlock
+>   *
+> -- 
+> 1.7.9.5
+> 
