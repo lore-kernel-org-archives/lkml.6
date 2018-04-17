@@ -1,118 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752159AbeDQFre (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 01:47:34 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:45511 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751230AbeDQFq6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 01:46:58 -0400
-X-Google-Smtp-Source: AIpwx49p/IOUGlkrJL8g/mtrInBEnWLqvKu2pVCT7nONuQqubIms9mTkUv0VKjr+sJh82JTaBtDnHg==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Tim Shearer <tshearer@advaoptical.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: [PATCH 2/3] KVM: X86: Allow userspace to disable ioport intercept
-Date: Mon, 16 Apr 2018 22:46:01 -0700
-Message-Id: <1523943962-25415-3-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
-References: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
+        id S1751337AbeDQFtM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 01:49:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34256 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750765AbeDQFtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 01:49:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2CC21726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+To: Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180416175743.20826-1-jbrunet@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180416175743.20826-1-jbrunet@baylibre.com>
+Message-ID: <152394414961.51482.3707791896217213422@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 0/3] clk: add duty cycle support
+Date: Mon, 16 Apr 2018 22:49:09 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Quoting Jerome Brunet (2018-04-16 10:57:40)
+> This patchset adds the possibility to control the duty cycle ratio of a
+> clock within the clock framework.
+> 
+> This useful when the duty cycle ratio depends on another parameter
+> controlled by the clock framework. For example, the duty cycle ratio may
+> depends on the value of a divider (ratio = N / div).
+> 
+> This is also useful if the related clock is part of large tree. In this
+> case, using CCF to control the clock tree and the PWM framework for the
+> duty cycle would be a nightmare for the provider and the consumer.
 
-Allow to disable ioport intercept by userspace.
+Can you please Cc the PWM maintainer on this patch series?
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Tim Shearer <tshearer@advaoptical.com>
-Cc: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- Documentation/virtual/kvm/api.txt | 11 +++++++++++
- arch/x86/include/asm/kvm_host.h   |  2 ++
- arch/x86/kvm/x86.c                |  5 +++++
- include/uapi/linux/kvm.h          |  1 +
- 4 files changed, 19 insertions(+)
+> 
+> A clock provider is not required to implement the operation to set and get
+> the duty cycle. If it does not implement .get_duty_cycle(), the ratio is
+> assumed to be 50%.
+> 
+> This series also provides pass-through operations ready to be used for
+> clock which don't resample the clock signal (such as gates and muxes).
+> This is provided to make things easier for consumers. Clocks are usually
+> made of several elements, like a composite clocks with a mux, a divider,
+> and a gate. With the pass-through ops set on the gate, the consumer does
+> not need to be aware that the duty cycle is actually controlled by the
+> divider, it can continue to use the clock through the gate, as usual.  The
+> simple propagation will stop at the first clock which resample the signal
+> (such as a divider).
+> 
+> Patch 2 and 3 add the pass-through ops to the generic gate and mux ops.  In
+> this first version, it is unconditional, but maybe we should provide a flag
+> to let people decide what is best for them ?
+> 
+> The series has been developed to handled the sample clocks provided by
+> audio clock controller of amlogic's A113 SoC. To support i2s modes, this
+> clock need to have a 50% duty cycle ratio, while it should be just one
+> pulse of the parent clock in dsp modes.
 
-diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-index 1c7958b..3d0488e 100644
---- a/Documentation/virtual/kvm/api.txt
-+++ b/Documentation/virtual/kvm/api.txt
-@@ -4378,6 +4378,17 @@ all such vmexits.
- 
- Do not enable KVM_FEATURE_PV_UNHALT if you disable HLT exits.
- 
-+7.14 KVM_CAP_IOPORT_DISABLE_INTERCEPT
-+
-+Architectures: x86
-+Parameters: args[0] defines whether ioport intercept
-+
-+When disable intercept (args[0] == 1), some ioports which frequently
-+access will not be intercepted.
-+
-+When enable intercept (args[0] == 0), behavior is as if this facility
-+is unsupported.
-+
- 8. Other capabilities.
- ----------------------
- 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index c25775f..2f29f64 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -808,6 +808,8 @@ struct kvm_arch {
- 	bool hlt_in_guest;
- 	bool pause_in_guest;
- 
-+	bool ioport_disable_intercept;
-+
- 	unsigned long irq_sources_bitmap;
- 	s64 kvmclock_offset;
- 	raw_spinlock_t tsc_write_lock;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 51ecd38..044e314 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2881,6 +2881,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
-  	case KVM_CAP_SPLIT_IRQCHIP:
- 	case KVM_CAP_IMMEDIATE_EXIT:
- 	case KVM_CAP_GET_MSR_FEATURES:
-+	case KVM_CAP_IOPORT_DISABLE_INTERCEPT:
- 		r = 1;
- 		break;
- 	case KVM_CAP_SYNC_REGS:
-@@ -4250,6 +4251,10 @@ static int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 			kvm->arch.pause_in_guest = true;
- 		r = 0;
- 		break;
-+	case KVM_CAP_IOPORT_DISABLE_INTERCEPT:
-+		kvm->arch.ioport_disable_intercept = cap->args[0];
-+		r = 0;
-+		break;
- 	default:
- 		r = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 1065006..92730d8 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -941,6 +941,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_S390_BPB 152
- #define KVM_CAP_GET_MSR_FEATURES 153
- #define KVM_CAP_HYPERV_EVENTFD 154
-+#define KVM_CAP_IOPORT_DISABLE_INTERCEPT 155
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
--- 
-2.7.4
+Cool. I've heard rumblings from some other SoC manufacturers that they
+want duty cycle control via the clk framework but nothing came of it, so
+thanks for picking this up.
+
+> 
+> PS: Checkpatch complains heavily about the white space in the trace header
+> file. I believe I have respected the style already used in this
+> file. Please let me know if it should be done differently.
+
+The trace file looks fine. Ignore checkpatch.
