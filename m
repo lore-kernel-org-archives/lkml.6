@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49inrXMeHu2XWuRGn6jYgfgtl8c9SQ4btbYXzBQxaRkTE6ASDpipMhv746Rq34twfZc2ntA
-ARC-Seal: i=1; a=rsa-sha256; t=1523981324; cv=none;
+X-Google-Smtp-Source: AIpwx49vCwAMnLfGLCgfQWdzEKUul+MIveDidUIaYy2rWUNNE1LK7crW+DWHCBOggGq/9c+7GB7G
+ARC-Seal: i=1; a=rsa-sha256; t=1523981321; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZKdE3n/FoKHDKp6zteQhvVOhNfZRI2S42nHxlGB0OYwAOV3Z9P03wjbXmynrjoezIu
-         A2/VeLO6S2lXnHmlMb9T7Eu+37FvcjXN+Owf80diVydKLUoJ1MV32Zg1v3pDueWiXGti
-         rzJVHZ9LITviRW+wKime+tdjaWs0HjyJQqkGhFcPOaoMnTjK9akk6Vx0h1mC/d8DtxW+
-         yw3g3nw/SX1Jl3dm4jR3Q2DPijlH7wp2JcjF+2VfblRK8n7rXXcGXEX0x+J6bKSM5bL7
-         57cLSUFt20706QNMmK+2bjm+U4BkuUUtyQ37h+9zS22okqKCEANjJJL6QPzbSE71OAMa
-         6TIw==
+        b=MK5cHB+nD4lsneGSDgc9vpsPC9OXBiM9VISmJwggTzXym2RdE2N+dMeGfzhAzxqE46
+         cUmU0mCPW9oXSUCmTMzWncANr3Audmxom9D9lCCvlsnRLhtLOrGlBQt5qNzlwRcTqsYQ
+         o+JacnoJa7ASbr7X2hrjK2OIwyimHqt5JnoamP0kxU9VLYj+1/6jo1kRgx19OiUDBWsA
+         JHRVOGkTL/Nt2qQsw4LxBVKhzp5laf3VLyaf/EUrMYnH+5RdR2Vd8b0hJCLGrRYLE8Gr
+         uU/kQx/tnXv0AKjb9GlGui8NjgU0RuLdrxyIBt6iL+vbucyfybHZL4je8wEPlX/Kivan
+         5HQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=E5rpdM/pdwRZpE3PuYCWU0KpyJtSAX9NuCnu7n10TTg=;
-        b=GRWCqUaqIaAqryPkVUBXljNs4YewInvoajHj2oPGybSOWaoZsPiVOPq6Q0Voyf7Ild
-         lztjTPgoYmONCaztq8emCm+/knILroODJ+xZKYz80SV4xW4azlj0QTE9EgtN6gw+28hk
-         QxfN+XHl/7dKbzX4BZy302kfQ2VMFZjkBWaXy0PerrXKwFPBsNsG+jKZzgNOhFpfGSO5
-         EbQup8X3szFKr403k57Syqv+h/NhzAWwNjeD8VmDOR9ngN09TNh4AcrlYbb4+PS31fnB
-         IlraifeRBw9/xKhWG0ykesZ9c8uXnEhi51tXreUapgQU3lKhJPDvDPToSnOrcnVD2VMk
-         iCtA==
+        bh=I86ycQ329ZLgFWXQb3o8+vEG5wmHWwngvOcUdSUb3HM=;
+        b=KHfJuZomIsa/sWa4nVSaZ0W69KbA8anoGsBLNiogIoInH2MwWgePKq2C4G/piBJyxE
+         db9mlh5/GihewjxojvY/OjLRzgv5K5cF1uWAYxGxquFa/MELRrRD31IdaZVQU1bj2iED
+         t+obQhL3WwJKoslIzYi11ekpv5vi4e5EzzlYgawROvV9OGct3PtGrt6UNkTWid+/XboO
+         RIndMJ4D+NQFGef9UtAX7upOfQawKC9CiBrHCuD4kMcfTJFtFS1vF1XHIA7pLxs0Wio5
+         YZ+7aJLaCIvq6qjjK8EfPaN8gLZxNoycJTnD06EpIgrxV9tz+7jRuKy5b+Wz84O8SBfX
+         9T5w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
-	James Morse <james.morse@arm.com>,
-	Kees Cook <keescook@chromium.org>,
-	Mark Rutland <mark.rutland@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 4.9 23/66] arm64: Factor out TTBR0_EL1 post-update workaround into a specific asm macro
-Date: Tue, 17 Apr 2018 17:58:56 +0200
-Message-Id: <20180417155646.856330651@linuxfoundation.org>
+	Greg Hackmann <ghackmann@google.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 4.9 22/66] drivers/firmware: Expose psci_get_version through psci_ops structure
+Date: Tue, 17 Apr 2018 17:58:55 +0200
+Message-Id: <20180417155646.810533738@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010241096704382?=
-X-GMAIL-MSGID: =?utf-8?q?1598010241096704382?=
+X-GMAIL-THRID: =?utf-8?q?1598010238567873822?=
+X-GMAIL-MSGID: =?utf-8?q?1598010238567873822?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,60 +55,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Mark Rutland <mark.rutland@arm.com>
 
 
-From: Catalin Marinas <catalin.marinas@arm.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit f33bcf03e6079668da6bf4eec4a7dcf9289131d0 upstream.
+commit d68e3ba5303f7e1099f51fdcd155f5263da8569b upstream.
 
-This patch takes the errata workaround code out of cpu_do_switch_mm into
-a dedicated post_ttbr0_update_workaround macro which will be reused in a
-subsequent patch.
+Entry into recent versions of ARM Trusted Firmware will invalidate the CPU
+branch predictor state in order to protect against aliasing attacks.
 
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Kees Cook <keescook@chromium.org>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+This patch exposes the PSCI "VERSION" function via psci_ops, so that it
+can be invoked outside of the PSCI driver where necessary.
+
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
 Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/assembler.h |   14 ++++++++++++++
- arch/arm64/mm/proc.S               |    6 +-----
- 2 files changed, 15 insertions(+), 5 deletions(-)
+ drivers/firmware/psci.c |    2 ++
+ include/linux/psci.h    |    1 +
+ 2 files changed, 3 insertions(+)
 
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -434,4 +434,18 @@ alternative_endif
- 	.macro	pte_to_phys, phys, pte
- 	and	\phys, \pte, #(((1 << (48 - PAGE_SHIFT)) - 1) << PAGE_SHIFT)
- 	.endm
+--- a/drivers/firmware/psci.c
++++ b/drivers/firmware/psci.c
+@@ -496,6 +496,8 @@ static void __init psci_init_migrate(voi
+ static void __init psci_0_2_set_functions(void)
+ {
+ 	pr_info("Using standard PSCI v0.2 function IDs\n");
++	psci_ops.get_version = psci_get_version;
 +
-+/*
-+ * Errata workaround post TTBR0_EL1 update.
-+ */
-+	.macro	post_ttbr0_update_workaround
-+#ifdef CONFIG_CAVIUM_ERRATUM_27456
-+alternative_if ARM64_WORKAROUND_CAVIUM_27456
-+	ic	iallu
-+	dsb	nsh
-+	isb
-+alternative_else_nop_endif
-+#endif
-+	.endm
-+
- #endif	/* __ASM_ASSEMBLER_H */
---- a/arch/arm64/mm/proc.S
-+++ b/arch/arm64/mm/proc.S
-@@ -139,11 +139,7 @@ ENTRY(cpu_do_switch_mm)
- 	isb
- 	msr	ttbr0_el1, x0			// now update TTBR0
- 	isb
--alternative_if ARM64_WORKAROUND_CAVIUM_27456
--	ic	iallu
--	dsb	nsh
--	isb
--alternative_else_nop_endif
-+	post_ttbr0_update_workaround
- 	ret
- ENDPROC(cpu_do_switch_mm)
+ 	psci_function_id[PSCI_FN_CPU_SUSPEND] =
+ 					PSCI_FN_NATIVE(0_2, CPU_SUSPEND);
+ 	psci_ops.cpu_suspend = psci_cpu_suspend;
+--- a/include/linux/psci.h
++++ b/include/linux/psci.h
+@@ -26,6 +26,7 @@ int psci_cpu_init_idle(unsigned int cpu)
+ int psci_cpu_suspend_enter(unsigned long index);
  
+ struct psci_operations {
++	u32 (*get_version)(void);
+ 	int (*cpu_suspend)(u32 state, unsigned long entry_point);
+ 	int (*cpu_off)(u32 state);
+ 	int (*cpu_on)(unsigned long cpuid, unsigned long entry_point);
