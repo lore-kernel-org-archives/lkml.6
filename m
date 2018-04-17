@@ -1,37 +1,40 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49L+WfDDt3lqDl0vH88I1vdL/GtSkFbgRp5DEv+q6P/+T2OD3pw8JdG4D9rnqOid3N8GScB
-ARC-Seal: i=1; a=rsa-sha256; t=1523981343; cv=none;
+X-Google-Smtp-Source: AIpwx48UZwnpzkll4RwdSDbi3WnWlEUGz5iJMM9fsZOa00qTdAo5ZqgghvCH/S4Rvi+YU6e5w/y8
+ARC-Seal: i=1; a=rsa-sha256; t=1523981341; cv=none;
         d=google.com; s=arc-20160816;
-        b=F8RqvbGDnd6s5FKpfoZBZ4vMLaw2jQIESCcYH+cuKxbtWdcavfO0kPq2Tz900d6C8F
-         CANLyyhAyaGde37wWkn7v7lHcf0MYxKPSeIuhDDzQ3gjHcKLtUxqRqjYYc7R0u7m7MGT
-         ZH2C9Q/fvsOSlq6olXa1jbkmLXypjZ178d6z/GK5MqBxwqgGtsOHFLTAPosVf7f4traz
-         BlmzY5mXtHP/X6p/fWKlRibz/VKnoTo67PdWr+dACtkBxUKVXd6xBRGRLdrSDBFoIRFL
-         CgsyiQvduXMBf3QMaoStkdQmcjUuugb8oYA4EPHCzrgY7YMC7grQTg7JiD8piGRPYGBz
-         qsMw==
+        b=KX46Grv+ZxOWXEwEUhninqR+FcDKqtXeHWpQx2mED4sOxZCI+LtfDKwIW952IjcKaE
+         euKtYEh+nG74g0hYqSG4gHei+4mk97tkH0ZaUxLCH4pQ1w7VqN4sZI/S/1OAvj6UJGxb
+         X07ipp+EFzsyN6sb+rCUIluXWJRZtaYFNrOgIDB3JoDkyS764RLFrxaLoFOpj/Br4hp0
+         nUs4Y2SYGDeWQ6HoFuhwHpeLlxgKcnYKr9jCGHkZr/dXo5b7MUQOxUSrShiyq1T7f1t+
+         1YqIzB75egaoNWgeqhSaEdxSRHkgst/iMpXRxiObnsSglerxQtIkVhW6q8dL0eKTE4pp
+         Plvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZQrQIrYTWshqL5/DeDO/AFOiEP9tzE9oB6/yiUBxCTU=;
-        b=pVGoJVFho5iXFQWmqpSM7CBEFOAFm4kFvMeCMCbiwm6ezwBPtsp+NPV31U3Jpb3R1R
-         mZmnO4k1Np6h/OJSxMOlxk39PxW1XHxvu+yciCH8ejUG9jnHjC+aJtMyYZl7SlLq+Wmx
-         HkHoaWkSJWuRCxHEumxR7vuQIfL65+EwHCL3gQ8sXsRVQt70f+faiqSkca+h5CASY0ys
-         d7spB9fgVjM9YcNyOcqJ6JRAIdx2/4XcHYRyeqilCrhznDkQPRl3FhfmjDdN3rMo6NRT
-         dyAen3NLau50+QbCcmW8N6jrm4ta2ritffOIS9RSR31TpT7DqrH8qcTviWvO5PA5wQPJ
-         Hs/g==
+        bh=Q3my5xXK0mfvB60vTbwXNqheySbNaNlt32879HSCQzc=;
+        b=BkI3c2xQbXRghWU6uWmBC/YqlgJKTBlmc1K9+CBKcFmKdQMWkm69ord/UtEYerMBOw
+         Fme2MzeMwTbkmuD7fDpD2+oIG9eYsyo9g6X5zrehuipchVKlVK/7HgooRn7v/6cEyplb
+         1WJL4GYXJYw2y/36hdjA7i/zIRL7fSxOoOfRBLrTcVpqVSVdj6dh7EhJ2zcPD30UWKiY
+         Y12C582kRbrEjdLlL1IyhagKcY0gYbwzSKfqplYJH+uEIqARhXULMLyLy9QtP0b1Vzwj
+         +wYD7/nA8lZDf6HEguOSp9JRr+naixRBDPadsVUISsexEGe4QIgV0Mm1JTaQXHnhW/M0
+         jI2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Dexuan Cui <decui@microsoft.com>,
-	Stephen Hemminger <sthemmin@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 4.9 03/66] Drivers: hv: vmbus: do not mark HV_PCIE as perf_device
-Date: Tue, 17 Apr 2018 17:58:36 +0200
-Message-Id: <20180417155646.007046735@linuxfoundation.org>
+	Dan Hettena <dhettena@nvidia.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Greg Hackmann <ghackmann@google.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 4.9 29/66] arm64: entry: Apply BP hardening for high-priority synchronous exceptions
+Date: Tue, 17 Apr 2018 17:59:02 +0200
+Message-Id: <20180417155647.135110935@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009716274677787?=
-X-GMAIL-MSGID: =?utf-8?q?1598010261658335666?=
+X-GMAIL-THRID: =?utf-8?q?1598010258459867487?=
+X-GMAIL-MSGID: =?utf-8?q?1598010258459867487?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +53,66 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 238064f13d057390a8c5e1a6a80f4f0a0ec46499 upstream.
 
-The pci-hyperv driver's channel callback hv_pci_onchannelcallback() is not
-really a hot path, so we don't need to mark it as a perf_device, meaning
-with this patch all HV_PCIE channels' target_cpu will be CPU0.
+From: Will Deacon <will.deacon@arm.com>
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: stable@vger.kernel.org
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+commit 5dfc6ed27710c42cbc15db5c0d4475699991da0a upstream.
+
+Software-step and PC alignment fault exceptions have higher priority than
+instruction abort exceptions, so apply the BP hardening hooks there too
+if the user PC appears to reside in kernel space.
+
+Reported-by: Dan Hettena <dhettena@nvidia.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
+Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hv/channel_mgmt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kernel/entry.S |    6 ++++--
+ arch/arm64/mm/fault.c     |    9 +++++++++
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -70,7 +70,7 @@ static const struct vmbus_device vmbus_d
- 	/* PCIE */
- 	{ .dev_type = HV_PCIE,
- 	  HV_PCIE_GUID,
--	  .perf_device = true,
-+	  .perf_device = false,
- 	},
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -624,8 +624,10 @@ el0_sp_pc:
+ 	 * Stack or PC alignment exception handling
+ 	 */
+ 	mrs	x26, far_el1
+-	// enable interrupts before calling the main handler
+-	enable_dbg_and_irq
++	enable_dbg
++#ifdef CONFIG_TRACE_IRQFLAGS
++	bl	trace_hardirqs_off
++#endif
+ 	ct_user_exit
+ 	mov	x0, x26
+ 	mov	x1, x25
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -617,6 +617,12 @@ asmlinkage void __exception do_sp_pc_abo
+ 	struct siginfo info;
+ 	struct task_struct *tsk = current;
  
- 	/* Synthetic Frame Buffer */
++	if (user_mode(regs)) {
++		if (instruction_pointer(regs) > TASK_SIZE)
++			arm64_apply_bp_hardening();
++		local_irq_enable();
++	}
++
+ 	if (show_unhandled_signals && unhandled_signal(tsk, SIGBUS))
+ 		pr_info_ratelimited("%s[%d]: %s exception: pc=%p sp=%p\n",
+ 				    tsk->comm, task_pid_nr(tsk),
+@@ -676,6 +682,9 @@ asmlinkage int __exception do_debug_exce
+ 	if (interrupts_enabled(regs))
+ 		trace_hardirqs_off();
+ 
++	if (user_mode(regs) && instruction_pointer(regs) > TASK_SIZE)
++		arm64_apply_bp_hardening();
++
+ 	if (!inf->fn(addr, esr, regs)) {
+ 		rv = 1;
+ 	} else {
