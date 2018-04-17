@@ -1,391 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752691AbeDQJBw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 05:01:52 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41072 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752667AbeDQJBs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 05:01:48 -0400
-X-Google-Smtp-Source: AIpwx4/zW2CX5DgEbwq2Qx3z9QhIK7qUh71JVcSmyvZPY19MmeYQRel9CYt/9aaRCeuJ5cx17DM0yw==
-Date: Tue, 17 Apr 2018 11:01:44 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v1 4/4] drm/tegra: plane: Add custom CSC BLOB property
-Message-ID: <20180417090144.GZ31310@phenom.ffwll.local>
-Mail-Followup-To: Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <cover.1523880381.git.digetx@gmail.com>
- <dac33c4b27107fee37d187d97187431353fe6afc.1523880381.git.digetx@gmail.com>
+        id S1752308AbeDQJDS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 05:03:18 -0400
+Received: from mail-ve1eur01on0064.outbound.protection.outlook.com ([104.47.1.64]:26474
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751232AbeDQJDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 05:03:15 -0400
+From: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
+To: andrew@lunn.ch, robh@kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        davem@davemloft.net, marcel@holtmann.org, devicetree@vger.kernel.org
+Cc: alexandru.marginean@nxp.com, madalin.bucur@nxp.com,
+        vicentiu.galanopulo@nxp.com
+Subject: [PATCH net-next 0/3] net: phy: Enable C45 vendor specific MDIO register addr space
+Date: Tue, 17 Apr 2018 04:02:30 -0500
+Message-Id: <20180417090233.21548-1-vicentiu.galanopulo@nxp.com>
+X-Mailer: git-send-email 2.8.3
+Reply-to: vicentiu.galanopulo@nxp.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dac33c4b27107fee37d187d97187431353fe6afc.1523880381.git.digetx@gmail.com>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [64.157.242.222]
+X-ClientProxiedBy: MWHPR12CA0056.namprd12.prod.outlook.com
+ (2603:10b6:300:103::18) To AM0PR04MB4116.eurprd04.prod.outlook.com
+ (2603:10a6:208:65::14)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4116;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;3:5VNG5f45WnsFvcTUWXuw55b8ZR5tdKVfvuJgkL4oD20n1MS4TSSisPCwMy6AaJiokBOYzUUGiQHohjb8IcbDBdCevHlGdHiUhLRA3yJ7SfBbrF+/ky8IrvjRHDVY4kujaaIWDKeP1um2HtBqvepxVbMhWgndAy85HZkqRYUSe6uDbHeLLNBQ1uyLjrKtaEY5VUHBUk1CozT1Clut+cZ24bOYy+Vq42vGOK2Wp2wwOXmwUjqbM1V5gHYcO6EnGWH0;25:oul5NVkykayRCqqC3i73bX2JmnzzvmAnXuPoKZaDpu3Hj80SBWNPvntS9Y4C5P6asWoi2YQOy7SrVCmR5ixm4nHvIcH7aX3Mrs1dlGnoE6S9nyH1yZyVf4cj0L5BFlV5I0G6M51hDDuYL5xTlr73bTWwIyC4N1KgFqyDMV5tCgsy9n3iR86ZRM5HQ6w8OXlO+9puA/gIJzpcfm1aclcSlwDFsV2v3Ph2tfymf+ou7u96bIBXGWKdRMj8GbGZD20OLimslv0X9gJCJ37k0cE51ePUv9qCEgKw3XmaLISY/aH2o3Soq4bxSbvly/R5jA6hveQgtDbrvZZY7F3BTzis2g==;31:EGAebmHzPMbQeAYL/dNtYwKjnfXNY/8EXu0CUm8Nke91qIsknG76OYW8jWba/pgIGi2bjHSZpu5+n8WmEKyU/uJN/1ai5coTY6CuM16CvFL9+8Hne1TudC2sBIT5YJPx8IsIVKkj5L5OuAk707kl6yh5m8ONBzk1hvmAaNTkV7mQPYlofFQKliTpgrez3ZNvi5IFQNFkvPmvWlfHYFLtKqq1GfT8HDwEulmZqIIS0iM=
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4116:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=vicentiu.galanopulo@nxp.com;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;20:X5FgaU0TldWH/k1eV45UMgRuHTDNHArNTLCXhIzPBQJzllds1tNNun/qZhINbhMSwPv46PeYJ1mAhtyMJD1boofcUAbcvuEPRP9DSkkNmlSSZ4s29aYH5o6lyJKe7c2Bm7JX+siOvmYsQhiw1kmj5EXdyI0LOadtyFMK9ETscnwftgAfkrKZ6r7sIVwuhM69pQfjrMpGsW1eYjJPG3WN2ukmId6hciwIlFjVw3IrApQDEkzcUtAhBqhZLo2FzVeyF4++Xr6rUSFWDAauIKMujPlGjSn8VQyCm1fdXAFVBm1jJJLIYkAJvxxcp56nz9asxbRZ4PDn1A0Z5ZFgxEFDStsTbLq0SJelHW3bYCMOdlVIbwe8xY02B/mpJ2Azio4rf6d/2G97iC7QdxSQdUHpiCRWu9Avxy8JDavXF7cV+Nqa7piWTxhnOV5oiynWiEr0qFbe25uWjfwhsMCnYhEOXipnYV02aHuKfb4BH4r32yrY572v87deo7XUG1y5Bl5K;4:c8428rUF7wHxmGCD8w/SX6qakmLJmp1ogJ+sqrL5sX5y6Vm2AYLQ77JcC6N9FVA+CFcLSEPmBsDU8njanWQFGwc7RYwf2FC/Q9TWh9JaSvfAsWbyjadfJBLkGqmbgpx72Necktf+J4Yp2yf012brp6jxcv/XtGgN6lYEPbWEAoAsmEC8VU9Q/WygCIZsnAi7TqFeMuWMfTlv6WM93aLHrIN7JMMaj2fS4AKQ9Glky9aySScmnGIY8eTM3CXdy3eiP0ehD4becHJM7bRyJ+JEWw==
+X-Microsoft-Antispam-PRVS: <AM0PR04MB41161F3BCBC23E6A12AB5CC7EEB70@AM0PR04MB4116.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231232)(944501359)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:AM0PR04MB4116;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4116;
+X-Forefront-PRVS: 0645BEB7AA
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(376002)(366004)(39860400002)(346002)(396003)(189003)(199004)(956004)(6506007)(47776003)(105586002)(50226002)(305945005)(16526019)(8676002)(81166006)(81156014)(8936002)(2906002)(48376002)(68736007)(25786009)(50466002)(478600001)(386003)(97736004)(66066001)(6116002)(106356001)(316002)(16586007)(52116002)(3846002)(53936002)(36756003)(51416003)(1076002)(186003)(6512007)(4326008)(44832011)(2616005)(486006)(476003)(7736002)(5660300001)(43066004)(3450700001)(86362001)(6666003)(6486002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4116;H:rhuath.am.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4116;23:IjnnbKjkQUmVL48Z1twZYMPVdWT3XIXqeCJiwxUJW?=
+ =?us-ascii?Q?gkDS4bkRsjRYhetUup3+NthgjvEU1yLtIgBCZe6U5Ko0UNq/7ouZoT7MzHaw?=
+ =?us-ascii?Q?RerUUj1S/WBVjoNIQuRKJxNV0gRmdTtkBNkAoFUiEaiNUC06MmgUnve1/cBh?=
+ =?us-ascii?Q?+Vwpn13y0OYFZlkh6h8xZp2pnXTlH7hmwqSzSBCHXeVyYyU1niJ+hbZ4jVF9?=
+ =?us-ascii?Q?YTrbs4CO8b+hUegBwCvdSVTQOi/BaFFTAZhQnAVPXM5hlpQlnCag/VMYQmBX?=
+ =?us-ascii?Q?MIfgmkboAs34v9Q9wLYDKL/yYJKNkMFm4zcl2IXwsRTi8Rc4JKovu/cPapGl?=
+ =?us-ascii?Q?1oXjk5zc4MbR/xDNX5TqR5aNAUEvL2RWhmIXnOujYkmGM+Pux5LWVaUfSRff?=
+ =?us-ascii?Q?Eq90SNJkNqaDXbe7wzb5ziFSfrf+SXxc6Y+FyBoGMeh9p+mcy5mzOzz317sd?=
+ =?us-ascii?Q?dZWJYWIQxVl5RY4RU1jhnu/V6BchtmvscGDdQ1KqUEXMx/zXLaRfERYLYVav?=
+ =?us-ascii?Q?3E+jIgCpIjvOuyGkZFmYS5VWFsn1RIzXyWVFMHj6aUUVBL4cF91QGxqNT65a?=
+ =?us-ascii?Q?qkgQXTwvOsSBe5kVzlc8T6iKXGTuvQNeIAR5LntZcQ5EZ1slhcCc2Jh2Vygf?=
+ =?us-ascii?Q?D5UIolbcVkFFIaTtlKxhj3QH5uSBY30R26cjGZcLBNaSoepenJRmHqLgn680?=
+ =?us-ascii?Q?7ilzWToq0pFyKMGDG+lGy5K7VSNfJNpu7qpoFgDkpO85Wt0rZDXwAba8lEBZ?=
+ =?us-ascii?Q?kfKWAFWW1N8q8BqA2vAOeHmEKdCwzryz3MyoduqltQwBM72UX/+NOHmDBW8T?=
+ =?us-ascii?Q?5saDb5Sr47WEU9Mj49bROZ7kRxJ9nXUWhP/aEXkboBMs4oJeVpgq6bY6FM+/?=
+ =?us-ascii?Q?yHltt70wociGpUZz/1TUvk6Q7b3nN0p0lA+LKMHUydMkJJILputPX0+6YsK+?=
+ =?us-ascii?Q?KS6Uk2EUPPZhdt5hJIdY/kE90xVq3pMMh/H9/pJXtefqgZUWimkMdkm4Ayfn?=
+ =?us-ascii?Q?fZwADcr20znErp6OSA7GYDos0N5Q4OoIYtgMqm3Jy6AavzqwQpAoWgaN6ifI?=
+ =?us-ascii?Q?GH8iILqt1Fe1aX9qDor7LdFzk6pMK/ZpOz8Fqfdb0+Ept0KjusfOimq/Vca4?=
+ =?us-ascii?Q?a4moGePGur8pt9TcGxHTS0s/nyLMmyM83TDOWWWkkStOppCtbJpfEhWNt/Ka?=
+ =?us-ascii?Q?VmNP+Oarz2xcP0=3D?=
+X-Microsoft-Antispam-Message-Info: sVxJRlD/wxmw/zaWCh9RA1URtCab60bgT5dcEiWAsyljKZ3XK8pEaNtbwIHeaVHR4I0LNEW+UPTrGtyv66yypCj/1YEazdEDddsGYcS73/UxoDdQ7Ol8vDBFP6vGeo8Cc3AKv5SGtuLh5QATh8uTIkAOBk20ebwgeI7MQ3cUkQ0AXGcqRQxPx1HI6/ofOxpx
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;6:UU5XwhprRR5+1aqzT8G4VswF2tz7WThAWm+OuKLJ6StZaNT31YH7jUsBlsSle4kP+V5l9Iew6SNN4hMVoGeFRyorU2kKUmWpQlSXYUyllJbBb35CLrJEbnWmOGl9dm4KjNrQZ/wdeHzW5hnAhW6exF/j/VRU026ys9I41TRNX8P1hgG5wWIR7BpH+F0BNYZLzDwxOB1SgCeElttyhanAEMBu93btC9UPHcHxiAyJSAcNXYaKIu2ij5oM1+taLmnVwqwLGvTQayNyQefD6/6VhZRLL6MEs7QcgYLtVuPYkVONWwWb8UfFnnhdn+xx54GPky5WkpWk7KZcbl9zZVCaqACoV6v5vsZwho5uHoPOjAWvkBD7jGRQ/UMS9eLVMRM50XoJ06+uuEkAJULTHMFRRcWFDq+Y8AXYMn9fjQtYhctSwsHwGg6FPywP93v/mrsgoUdO4HP/nUSSpuclqGkkHw==;5:nDwioNKD6Cro8Widmmi0X99+PIYDdmqLxRmJlbBY3SLw3UCyYoBUBSOagbhqDcqt+m3eyzy2SDYBqgD4eDCJbHMfqKgu9Qi3sGsQmwsoapFzNyKRG6siYHMBSVU2Sivf/BqlhDPNQJB0+qhNkXlLIXMJDx0Nh/LsU5gHVSiCPP0=;24:EFGjO+EhRKbaYSJ2xOzUPNi+aWQtNhTwKvSvXjfxQHr7algOoEqPW3TJEQ9CXRvc7jxS7QkH8vZ8X7w1uKqwkXIip0qHHp9S52Sw8L9mnBY=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;7:u9RaYuneAM/s6zO8NDpRDtgtw7Sj8iTn3ReliwDvhwVLZsxYmnBUHI7fb/Jg3obisl8IUOUfqjeBZnnVf9kteusirlvqM13f+6LdgfTwoKaWSDExKjDob7jXZYdASaaIzxRbGlCTcxO0PtsRdykCCnBs8JJnvT5L1IzwenQEUtDJ+0/qRc43lrpBbFt/UZmb4E9ATYyzWEZaeHbmHIGzlKcBvUfUbPMV9FxlRwEFuIU6KFfOXk1UzoDrZv3gKXuM
+X-MS-Office365-Filtering-Correlation-Id: a479c73f-2945-4f35-37f7-08d5a4420c78
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 09:03:10.0076 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a479c73f-2945-4f35-37f7-08d5a4420c78
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4116
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 03:16:28PM +0300, Dmitry Osipenko wrote:
-> This new property allows userspace to apply custom color conversion
-> coefficients per plane, making possible to utilize display controller
-> for color adjustments of a video overlay.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Enabling the discovery on the MDIO bus of PHYs which
+have a vendor specific address space for accessing the C45 MDIO registers.
 
-Same here, this needs corresponding userspace:
+Vicentiu Galanopulo (3):
+  net: phy: Add binding for vendor specific C45 MDIO address space
+  net: phy: Change the array size to 32 for device_ids
+  net: phy: Enable C45 PHYs with vendor specific address space
 
-https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
-
-And again there's even more people who discussed extending the existing
-color management support for crtcs to planes. I think we definitely want a
-standard interface for this, not each driver doing their own thing.
--Daniel
-
-> ---
->  drivers/gpu/drm/tegra/dc.c    | 86 +++++++++++++++++++++++++++++++----
->  drivers/gpu/drm/tegra/dc.h    | 11 +++++
->  drivers/gpu/drm/tegra/plane.c | 35 ++++++++++++++
->  drivers/gpu/drm/tegra/plane.h |  5 ++
->  include/uapi/drm/tegra_drm.h  | 11 +++++
->  5 files changed, 139 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-> index b19e954a223f..24a1317871d4 100644
-> --- a/drivers/gpu/drm/tegra/dc.c
-> +++ b/drivers/gpu/drm/tegra/dc.c
-> @@ -435,15 +435,15 @@ static void tegra_dc_setup_window(struct tegra_plane *plane,
->  	value = WIN_ENABLE;
->  
->  	if (yuv) {
-> -		/* setup default colorspace conversion coefficients */
-> -		tegra_plane_writel(plane, 0x00f0, DC_WIN_CSC_YOF);
-> -		tegra_plane_writel(plane, 0x012a, DC_WIN_CSC_KYRGB);
-> -		tegra_plane_writel(plane, 0x0000, DC_WIN_CSC_KUR);
-> -		tegra_plane_writel(plane, 0x0198, DC_WIN_CSC_KVR);
-> -		tegra_plane_writel(plane, 0x039b, DC_WIN_CSC_KUG);
-> -		tegra_plane_writel(plane, 0x032f, DC_WIN_CSC_KVG);
-> -		tegra_plane_writel(plane, 0x0204, DC_WIN_CSC_KUB);
-> -		tegra_plane_writel(plane, 0x0000, DC_WIN_CSC_KVB);
-> +		/* setup colorspace conversion coefficients */
-> +		tegra_plane_writel(plane, window->csc.yof, DC_WIN_CSC_YOF);
-> +		tegra_plane_writel(plane, window->csc.kyrgb, DC_WIN_CSC_KYRGB);
-> +		tegra_plane_writel(plane, window->csc.kur, DC_WIN_CSC_KUR);
-> +		tegra_plane_writel(plane, window->csc.kvr, DC_WIN_CSC_KVR);
-> +		tegra_plane_writel(plane, window->csc.kug, DC_WIN_CSC_KUG);
-> +		tegra_plane_writel(plane, window->csc.kvg, DC_WIN_CSC_KVG);
-> +		tegra_plane_writel(plane, window->csc.kub, DC_WIN_CSC_KUB);
-> +		tegra_plane_writel(plane, window->csc.kvb, DC_WIN_CSC_KVB);
->  
->  		value |= CSC_ENABLE;
->  	} else if (window->bits_per_pixel < 24) {
-> @@ -624,6 +624,7 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
->  	struct drm_framebuffer *fb = plane->state->fb;
->  	struct tegra_plane *p = to_tegra_plane(plane);
->  	struct tegra_dc_window window;
-> +	const struct drm_tegra_plane_csc_blob *csc;
->  	unsigned int i;
->  
->  	/* rien ne va plus */
-> @@ -665,6 +666,28 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
->  			window.stride[i] = fb->pitches[i];
->  	}
->  
-> +	if (state->csc_blob) {
-> +		csc = state->csc_blob->data;
-> +
-> +		window.csc.yof = csc->yof;
-> +		window.csc.kyrgb = csc->kyrgb;
-> +		window.csc.kur = csc->kur;
-> +		window.csc.kvr = csc->kvr;
-> +		window.csc.kug = csc->kug;
-> +		window.csc.kvg = csc->kvg;
-> +		window.csc.kub = csc->kub;
-> +		window.csc.kvb = csc->kvb;
-> +	} else {
-> +		window.csc.yof = 0x00f0;
-> +		window.csc.kyrgb = 0x012a;
-> +		window.csc.kur = 0x0000;
-> +		window.csc.kvr = 0x0198;
-> +		window.csc.kug = 0x039b;
-> +		window.csc.kvg = 0x032f;
-> +		window.csc.kub = 0x0204;
-> +		window.csc.kvb = 0x0000;
-> +	}
-> +
->  	tegra_dc_setup_window(p, &window);
->  }
->  
-> @@ -776,6 +799,42 @@ static void tegra_plane_create_legacy_properties(struct tegra_plane *plane,
->  	dev_err(plane->dc->dev, "failed to create legacy plane properties\n");
->  }
->  
-> +static void tegra_plane_create_csc_property(struct tegra_plane *plane)
-> +{
-> +	/* set default colorspace conversion coefficients to ITU-R BT.601 */
-> +	struct drm_tegra_plane_csc_blob csc_bt601 = {
-> +		.yof   = 0x00f0,
-> +		.kyrgb = 0x012a,
-> +		.kur   = 0x0000,
-> +		.kvr   = 0x0198,
-> +		.kug   = 0x039b,
-> +		.kvg   = 0x032f,
-> +		.kub   = 0x0204,
-> +		.kvb   = 0x0000,
-> +	};
-> +	struct drm_property_blob *blob;
-> +
-> +	blob = drm_property_create_blob(plane->base.dev, sizeof(csc_bt601),
-> +					&csc_bt601);
-> +	if (!blob) {
-> +		dev_err(plane->dc->dev, "failed to create CSC BLOB\n");
-> +		return;
-> +	}
-> +
-> +	plane->props.csc_blob = drm_property_create(
-> +		plane->base.dev, DRM_MODE_PROP_BLOB, "YUV to RGB CSC", 0);
-> +
-> +	if (!plane->props.csc_blob) {
-> +		dev_err(plane->dc->dev, "failed to create CSC property\n");
-> +		drm_property_blob_put(blob);
-> +		return;
-> +	}
-> +
-> +	drm_object_attach_property(&plane->base.base, plane->props.csc_blob, 0);
-> +
-> +	plane->csc_default = blob;
-> +}
-> +
->  static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
->  						    struct tegra_dc *dc)
->  {
-> @@ -814,6 +873,9 @@ static struct drm_plane *tegra_primary_plane_create(struct drm_device *drm,
->  	if (dc->soc->legacy_blending)
->  		tegra_plane_create_legacy_properties(plane, drm);
->  
-> +	if (dc->soc->has_win_a_csc)
-> +		tegra_plane_create_csc_property(plane);
-> +
->  	return &plane->base;
->  }
->  
-> @@ -1092,6 +1154,7 @@ static struct drm_plane *tegra_dc_overlay_plane_create(struct drm_device *drm,
->  
->  	drm_plane_helper_add(&plane->base, &tegra_plane_helper_funcs);
->  	drm_plane_create_zpos_property(&plane->base, plane->index, 0, 255);
-> +	tegra_plane_create_csc_property(plane);
->  
->  	return &plane->base;
->  }
-> @@ -2269,6 +2332,7 @@ static const struct tegra_dc_soc_info tegra20_dc_soc_info = {
->  	.num_overlay_formats = ARRAY_SIZE(tegra20_overlay_formats),
->  	.overlay_formats = tegra20_overlay_formats,
->  	.modifiers = tegra20_modifiers,
-> +	.has_win_a_csc = false,
->  };
->  
->  static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
-> @@ -2287,6 +2351,7 @@ static const struct tegra_dc_soc_info tegra30_dc_soc_info = {
->  	.num_overlay_formats = ARRAY_SIZE(tegra20_overlay_formats),
->  	.overlay_formats = tegra20_overlay_formats,
->  	.modifiers = tegra20_modifiers,
-> +	.has_win_a_csc = false,
->  };
->  
->  static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
-> @@ -2305,6 +2370,7 @@ static const struct tegra_dc_soc_info tegra114_dc_soc_info = {
->  	.num_overlay_formats = ARRAY_SIZE(tegra114_overlay_formats),
->  	.overlay_formats = tegra114_overlay_formats,
->  	.modifiers = tegra20_modifiers,
-> +	.has_win_a_csc = true,
->  };
->  
->  static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
-> @@ -2323,6 +2389,7 @@ static const struct tegra_dc_soc_info tegra124_dc_soc_info = {
->  	.num_overlay_formats = ARRAY_SIZE(tegra124_overlay_formats),
->  	.overlay_formats = tegra124_overlay_formats,
->  	.modifiers = tegra124_modifiers,
-> +	.has_win_a_csc = true,
->  };
->  
->  static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
-> @@ -2341,6 +2408,7 @@ static const struct tegra_dc_soc_info tegra210_dc_soc_info = {
->  	.num_overlay_formats = ARRAY_SIZE(tegra114_overlay_formats),
->  	.overlay_formats = tegra114_overlay_formats,
->  	.modifiers = tegra124_modifiers,
-> +	.has_win_a_csc = true,
->  };
->  
->  static const struct tegra_windowgroup_soc tegra186_dc_wgrps[] = {
-> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
-> index 3913d047abac..23439eaaa4de 100644
-> --- a/drivers/gpu/drm/tegra/dc.h
-> +++ b/drivers/gpu/drm/tegra/dc.h
-> @@ -77,6 +77,7 @@ struct tegra_dc_soc_info {
->  	const u32 *overlay_formats;
->  	unsigned int num_overlay_formats;
->  	const u64 *modifiers;
-> +	bool has_win_a_csc;
->  };
->  
->  struct tegra_dc {
-> @@ -152,6 +153,16 @@ struct tegra_dc_window {
->  		unsigned int w;
->  		unsigned int h;
->  	} dst;
-> +	struct {
-> +		unsigned int yof;
-> +		unsigned int kyrgb;
-> +		unsigned int kur;
-> +		unsigned int kvr;
-> +		unsigned int kug;
-> +		unsigned int kvg;
-> +		unsigned int kub;
-> +		unsigned int kvb;
-> +	} csc;
->  	unsigned int bits_per_pixel;
->  	unsigned int stride[2];
->  	unsigned long base[3];
-> diff --git a/drivers/gpu/drm/tegra/plane.c b/drivers/gpu/drm/tegra/plane.c
-> index 4d794f2b44df..c5733c5a66e9 100644
-> --- a/drivers/gpu/drm/tegra/plane.c
-> +++ b/drivers/gpu/drm/tegra/plane.c
-> @@ -17,6 +17,9 @@ static void tegra_plane_destroy(struct drm_plane *plane)
->  {
->  	struct tegra_plane *p = to_tegra_plane(plane);
->  
-> +	if (p->csc_default)
-> +		drm_property_blob_put(p->csc_default);
-> +
->  	drm_plane_cleanup(plane);
->  	kfree(p);
->  }
-> @@ -38,6 +41,9 @@ static void tegra_plane_reset(struct drm_plane *plane)
->  		plane->state->plane = plane;
->  		plane->state->zpos = p->index;
->  		plane->state->normalized_zpos = p->index;
-> +
-> +		if (p->csc_default)
-> +			state->csc_blob = drm_property_blob_get(p->csc_default);
->  	}
->  }
->  
-> @@ -63,12 +69,22 @@ tegra_plane_atomic_duplicate_state(struct drm_plane *plane)
->  	for (i = 0; i < 2; i++)
->  		copy->blending[i] = state->blending[i];
->  
-> +	if (state->csc_blob)
-> +		copy->csc_blob = drm_property_blob_get(state->csc_blob);
-> +	else
-> +		copy->csc_blob = NULL;
-> +
->  	return &copy->base;
->  }
->  
->  static void tegra_plane_atomic_destroy_state(struct drm_plane *plane,
->  					     struct drm_plane_state *state)
->  {
-> +	struct tegra_plane_state *tegra = to_tegra_plane_state(state);
-> +
-> +	if (tegra->csc_blob)
-> +		drm_property_blob_put(tegra->csc_blob);
-> +
->  	__drm_atomic_helper_plane_destroy_state(state);
->  	kfree(state);
->  }
-> @@ -95,6 +111,23 @@ static int tegra_plane_set_property(struct drm_plane *plane,
->  {
->  	struct tegra_plane_state *tegra_state = to_tegra_plane_state(state);
->  	struct tegra_plane *tegra = to_tegra_plane(plane);
-> +	struct drm_property_blob *blob;
-> +
-> +	if (property == tegra->props.csc_blob) {
-> +		blob = drm_property_lookup_blob(plane->dev, value);
-> +		if (!blob)
-> +			return -EINVAL;
-> +
-> +		if (blob->length != sizeof(struct drm_tegra_plane_csc_blob)) {
-> +			drm_property_blob_put(blob);
-> +			return -EINVAL;
-> +		}
-> +
-> +		drm_property_blob_put(tegra_state->csc_blob);
-> +		tegra_state->csc_blob = blob;
-> +
-> +		return 0;
-> +	}
->  
->  	if (property == tegra->props.color_key0)
->  		tegra_state->ckey0_enabled = value;
-> @@ -118,6 +151,8 @@ static int tegra_plane_get_property(struct drm_plane *plane,
->  		*value = tegra_state->ckey0_enabled;
->  	else if (property == tegra->props.color_key1)
->  		*value = tegra_state->ckey1_enabled;
-> +	else if (property == tegra->props.csc_blob)
-> +		*value = tegra_state->csc_blob->base.id;
->  	else
->  		return -EINVAL;
->  
-> diff --git a/drivers/gpu/drm/tegra/plane.h b/drivers/gpu/drm/tegra/plane.h
-> index dafecea73b29..dc9efa7be502 100644
-> --- a/drivers/gpu/drm/tegra/plane.h
-> +++ b/drivers/gpu/drm/tegra/plane.h
-> @@ -23,7 +23,10 @@ struct tegra_plane {
->  	struct {
->  		struct drm_property *color_key0;
->  		struct drm_property *color_key1;
-> +		struct drm_property *csc_blob;
->  	} props;
-> +
-> +	struct drm_property_blob *csc_default;
->  };
->  
->  struct tegra_cursor {
-> @@ -51,6 +54,8 @@ struct tegra_plane_state {
->  	u32 format;
->  	u32 swap;
->  
-> +	struct drm_property_blob *csc_blob;
-> +
->  	/* used for legacy blending support only */
->  	struct tegra_plane_legacy_blending_state blending[2];
->  	bool opaque;
-> diff --git a/include/uapi/drm/tegra_drm.h b/include/uapi/drm/tegra_drm.h
-> index a5da44209a68..a3054ea7b222 100644
-> --- a/include/uapi/drm/tegra_drm.h
-> +++ b/include/uapi/drm/tegra_drm.h
-> @@ -29,6 +29,17 @@
->  extern "C" {
->  #endif
->  
-> +struct drm_tegra_plane_csc_blob {
-> +	__u32 yof;
-> +	__u32 kyrgb;
-> +	__u32 kur;
-> +	__u32 kvr;
-> +	__u32 kug;
-> +	__u32 kvg;
-> +	__u32 kub;
-> +	__u32 kvb;
-> +};
-> +
->  #define DRM_TEGRA_GEM_CREATE_TILED     (1 << 0)
->  #define DRM_TEGRA_GEM_CREATE_BOTTOM_UP (1 << 1)
->  #define DRM_TEGRA_GEM_CREATE_SCATTERED (1 << 2)
-> -- 
-> 2.17.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+ Documentation/devicetree/bindings/net/phy.txt |   6 ++
+ drivers/net/phy/phy_device.c                  |  49 ++++++++++-
+ drivers/of/of_mdio.c                          | 113 +++++++++++++++++++++++++-
+ include/linux/phy.h                           |  16 +++-
+ 4 files changed, 176 insertions(+), 8 deletions(-)
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.7.4
