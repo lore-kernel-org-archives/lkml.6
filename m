@@ -1,80 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755259AbeDQQiJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:38:09 -0400
-Received: from resqmta-ch2-08v.sys.comcast.net ([69.252.207.40]:39558 "EHLO
-        resqmta-ch2-08v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754675AbeDQQiG (ORCPT
+        id S1755272AbeDQQiO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:38:14 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:35064 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752715AbeDQQiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:38:06 -0400
-Date: Tue, 17 Apr 2018 11:38:02 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Vlastimil Babka <vbabka@suse.cz>
-cc: Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] slab: introduce the flag SLAB_MINIMIZE_WASTE
-In-Reply-To: <f8f736fe-9e0e-acd2-8040-f4f25ea5a7a2@suse.cz>
-Message-ID: <alpine.DEB.2.20.1804171135190.18801@nuc-kabylake>
-References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211024220.2175@nuc-kabylake> <alpine.LRH.2.02.1803211153320.16017@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211226350.3174@nuc-kabylake>
- <alpine.LRH.2.02.1803211425330.26409@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
- <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com> <alpine.LRH.2.02.1804161530360.19492@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804170940340.17557@nuc-kabylake>
- <f8f736fe-9e0e-acd2-8040-f4f25ea5a7a2@suse.cz>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfC2tcBarzIi4LmxLo5jCBgV9NG8nTk4cKl7qby9jcUednoctKl/uKCI9xGSWCgFWHv0fRgklEEW3+DiXQ3oBGI+utFeT7RmwLUNqPKNR+8HptUHhW1o5
- x8Ejg27ot6uUtIEWSPEfqVtdecpKRLPtP/HmmHkjDqeWcoRFnlSKXZX57sEJ2lhNretmolLfTPTNRpIDWj8kNMbtYYwdedrN3dKJwAanvCr7cqZX4WXReniM
- ghgpOnCXqOLM0LB3hrqEufZGtnhI6jBzBsjbtcriJUEb64XJzyKdQtgfsoPj7hXlQXhRUbV4PmudejOEmdNMxZIp8fv7KQvvX6Rw1QtLq4HSOc8d8M/C9qAu
- 9NCSEw8nEfDFwEqcNccPLiK+8m/dsrXT3Eo/dIqWYvzkUx1vX1J/hYAPeLYddd7wIHUFUZ+0G3b/Mvplgt52N7SzRPH8PKdviLmBS0VnncYygt4LeSIrIv/l
- QH8Y5rxNc/eXX4Qr
+        Tue, 17 Apr 2018 12:38:10 -0400
+X-Google-Smtp-Source: AIpwx49eBg2dWrsI4eu9o+gD3JPlZe/hHa/V67D8RbuTAjwhcIn8CgUrkc0oNCzMRZ0qoGIpeHgWzQ==
+From: Yafang Shao <laoar.shao@gmail.com>
+To: eric.dumazet@gmail.com, davem@davemloft.net
+Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, songliubraving@fb.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v2 net-next] net: introduce a new tracepoint for tcp_rcv_space_adjust
+Date: Wed, 18 Apr 2018 00:36:56 +0800
+Message-Id: <1523983016-11005-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018, Vlastimil Babka wrote:
+tcp_rcv_space_adjust is called every time data is copied to user space,
+introducing a tcp tracepoint for which could show us when the packet is
+copied to user.
+This could help us figure out whether there's latency in user process.
 
-> On 04/17/2018 04:45 PM, Christopher Lameter wrote:
+When a tcp packet arrives, tcp_rcv_established() will be called and with
+the existed tracepoint tcp_probe we could get the time when this packet
+arrives.
+Then this packet will be copied to user, and tcp_rcv_space_adjust will
+be called and with this new introduced tracepoint we could get the time
+when this packet is copied to user.
 
-> > But then higher order allocs are generally seen as problematic.
->
-> I think in this case they are better than wasting/fragmenting 384kB for
-> 640kB object.
+        arrives time : user process time    => latency caused by user
+        tcp_probe      tcp_rcv_space_adjust
 
-Well typically we have suggested that people use vmalloc in the past.
+Hence in the printk message, sk_cookie is printed as a key to relate
+tcp_rcv_space_adjust with tcp_probe.
 
+Maybe we could export sockfd in this new tracepoint as well, then we
+could relate this new tracepoint with epoll/read/recv* tracepoints, and
+finally that could show us the whole lifespan of this packet. But we
+could also implement that with pid as these functions are executed in
+process context.
 
-> > Note that SLUB will fall back to smallest order already if a failure
-> > occurs so increasing slub_max_order may not be that much of an issue.
-> >
-> > Maybe drop the max order limit completely and use MAX_ORDER instead?
->
-> For packing, sure. For performance, please no (i.e. don't try to
-> allocate MAX_ORDER for each and every cache).
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 
-No of course not. We would have to modify the order selection on kmem
-cache creation.
+---
+v1 -> v2: use sk_cookie as key suggested by Eric.
+---
+ include/trace/events/tcp.h | 33 +++++++++++++++++++++++++++------
+ net/ipv4/tcp_input.c       |  2 ++
+ 2 files changed, 29 insertions(+), 6 deletions(-)
 
-> > That
-> > means that callers need to be able to tolerate failures.
->
-> Is it any different from now? I suppose there would still be
-> smallest-order fallback involved in sl*b itself? And if your allocation
-> is so large it can fail even with the fallback (i.e. >= costly order),
-> you need to tolerate failures anyway?
-
-Failures can occur even with < costly order as far as I can telkl. Order 0
-is the only safe one.
-
-> One corner case I see is if there is anyone who would rather use their
-> own fallback instead of the space-wasting smallest-order fallback.
-> Maybe we could map some GFP flag to indicate that.
-
-Well if you have a fallback then maybe the slab allocator should not fall
-back on its own but let the caller deal with it.
+diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+index 3dd6802..814f754 100644
+--- a/include/trace/events/tcp.h
++++ b/include/trace/events/tcp.h
+@@ -10,6 +10,7 @@
+ #include <linux/tracepoint.h>
+ #include <net/ipv6.h>
+ #include <net/tcp.h>
++#include <linux/sock_diag.h>
+ 
+ #define TP_STORE_V4MAPPED(__entry, saddr, daddr)		\
+ 	do {							\
+@@ -125,6 +126,7 @@
+ 		__array(__u8, daddr, 4)
+ 		__array(__u8, saddr_v6, 16)
+ 		__array(__u8, daddr_v6, 16)
++		__field(__u64, sock_cookie)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -144,12 +146,24 @@
+ 
+ 		TP_STORE_ADDRS(__entry, inet->inet_saddr, inet->inet_daddr,
+ 			       sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
++
++		/*
++		 * sk_cookie is used to identify a socket, with which we could
++		 * relate this tracepoint with other tracepoints,
++		 * i.e. tcp_probe.
++		 * If we needn't this relation, then sk_cookie is useless;
++		 * if we need this relation, then tcp_probe is already set,
++		 * and sk_cookie is already set in tcp_probe, so we could get
++		 * the value directly.
++		 */
++		__entry->sock_cookie = atomic64_read(&sk->sk_cookie);
+ 	),
+ 
+-	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c",
++	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c sock_cookie=%llu",
+ 		  __entry->sport, __entry->dport,
+ 		  __entry->saddr, __entry->daddr,
+-		  __entry->saddr_v6, __entry->daddr_v6)
++		  __entry->saddr_v6, __entry->daddr_v6,
++		  __entry->sock_cookie)
+ );
+ 
+ DEFINE_EVENT(tcp_event_sk, tcp_receive_reset,
+@@ -166,6 +180,13 @@
+ 	TP_ARGS(sk)
+ );
+ 
++DEFINE_EVENT(tcp_event_sk, tcp_rcv_space_adjust,
++
++	TP_PROTO(const struct sock *sk),
++
++	TP_ARGS(sk)
++);
++
+ TRACE_EVENT(tcp_retransmit_synack,
+ 
+ 	TP_PROTO(const struct sock *sk, const struct request_sock *req),
+@@ -232,6 +253,7 @@
+ 		__field(__u32, snd_wnd)
+ 		__field(__u32, srtt)
+ 		__field(__u32, rcv_wnd)
++		__field(__u64, sock_cookie)
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -256,15 +278,14 @@
+ 		__entry->rcv_wnd = tp->rcv_wnd;
+ 		__entry->ssthresh = tcp_current_ssthresh(sk);
+ 		__entry->srtt = tp->srtt_us >> 3;
++		__entry->sock_cookie = sock_gen_cookie(sk);
+ 	),
+ 
+-	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x "
+-		  "snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u "
+-		  "rcv_wnd=%u",
++	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llu",
+ 		  __entry->saddr, __entry->daddr, __entry->mark,
+ 		  __entry->length, __entry->snd_nxt, __entry->snd_una,
+ 		  __entry->snd_cwnd, __entry->ssthresh, __entry->snd_wnd,
+-		  __entry->srtt, __entry->rcv_wnd)
++		  __entry->srtt, __entry->rcv_wnd, __entry->sock_cookie)
+ );
+ 
+ #endif /* _TRACE_TCP_H */
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index f93687f..43ad468 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -582,6 +582,8 @@ void tcp_rcv_space_adjust(struct sock *sk)
+ 	u32 copied;
+ 	int time;
+ 
++	trace_tcp_rcv_space_adjust(sk);
++
+ 	tcp_mstamp_refresh(tp);
+ 	time = tcp_stamp_us_delta(tp->tcp_mstamp, tp->rcvq_space.time);
+ 	if (time < (tp->rcv_rtt_est.rtt_us >> 3) || tp->rcv_rtt_est.rtt_us == 0)
+-- 
+1.8.3.1
