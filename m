@@ -1,72 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753088AbeDQMvJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 08:51:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53468 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751863AbeDQMvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:51:07 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB3CA21726
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 17 Apr 2018 09:51:04 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
-        Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jin Yao <yao.jin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>, kernel-team@lge.com
-Subject: Re: [PATCH 17/17] perf annotate: Handle variables in 'sub', 'or' and
- many other instructions
-Message-ID: <20180417125104.GB3553@kernel.org>
-References: <20180413140111.25313-1-acme@kernel.org>
- <20180413140111.25313-18-acme@kernel.org>
- <20180413162043.GD6694@tassilo.jf.intel.com>
- <20180413172035.GB26496@kernel.org>
- <20180413173940.GE6694@tassilo.jf.intel.com>
- <20180417025628.GB31947@sejong>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417025628.GB31947@sejong>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1753166AbeDQMwd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 08:52:33 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:34430 "EHLO
+        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752087AbeDQMwb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:52:31 -0400
+X-IronPort-AV: E=Sophos;i="5.48,463,1517842800";
+   d="scan'208";a="277046813"
+From: Michel Pollet <michel.pollet@bp.renesas.com>
+To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
+Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Chen-Yu Tsai <wens@csie.org>, Rajendra Nayak <rnayak@codeaurora.org>,
+        Juri Lelli <juri.lelli@arm.com>, Carlo Caione <carlo@endlessm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/3] Renesas RZ/N1D SMP enabler
+Date: Tue, 17 Apr 2018 13:47:59 +0100
+Message-Id: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Apr 17, 2018 at 11:56:28AM +0900, Namhyung Kim escreveu:
-> Hi,
-> 
-> On Fri, Apr 13, 2018 at 10:39:40AM -0700, Andi Kleen wrote:
-> > > What do I miss? Or where is it that I'm misinterpreting the calculations
-> > > that objdump did in its output?
-> > 
-> > The calculations are right, but these are still two different address modes.
-> > You cannot just turn one silently into the other.
-> > 
-> > I think it would be ok to use the syntax in the assembler
-> > 
-> > symbol(%rip)  with no # ...
-> 
-> One thing I find useful is to show string constant if the address is
-> in the rodata (and printable of course).  Maybe something like below..
-> 
->   lea    0x1234(%rip),%rdi    # "hello world\n"
->   callq  printf
-> 
-> 
-> Just an idea.
+*WARNING -- this requires the base RZ/N1 base patches (v5) already posted
 
-Send some more :-)
+This patch series is for enabling the second CA7 of the RZ/N1D.
+It's based on a spin_table method, and it reuses the same binding
+property as that driver.
 
-/me adds to the todo.annotate folder...
+v2:
+  + Added suggestions from Florian Fainelli
+  + Use __pa_symbol()
+  + Simplified logic in prepare_cpu()
+  + Reordered the patches
+  + Rebased on RZN1 Base patch v5
 
-- Arnaldo
+*** BLURB HERE ***
+
+Michel Pollet (3):
+  dt-bindings: cpu: Add Renesas RZ/N1D SMP enable method.
+  arm: shmobile: Add the RZ/N1D SMP enabler driver
+  ARM: dts: Renesas RZ/N1D SMP enable method
+
+ Documentation/devicetree/bindings/arm/cpus.txt |  1 +
+ arch/arm/boot/dts/r9a06g032.dtsi               |  2 +
+ arch/arm/mach-shmobile/Makefile                |  1 +
+ arch/arm/mach-shmobile/smp-r9a06g032.c         | 85 ++++++++++++++++++++++++++
+ 4 files changed, 89 insertions(+)
+ create mode 100644 arch/arm/mach-shmobile/smp-r9a06g032.c
+
+-- 
+2.7.4
