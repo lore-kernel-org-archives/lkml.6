@@ -1,77 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752608AbeDQRz5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 13:55:57 -0400
-Received: from foss.arm.com ([217.140.101.70]:46502 "EHLO foss.arm.com"
+        id S1752570AbeDQR4v (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 13:56:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751230AbeDQRz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 13:55:56 -0400
-Subject: Re: [PATCH v3 1/2] iommu - Enable debugfs exposure of the IOMMU
-To: "Hook, Gary" <ghook@amd.com>, "Mehta, Sohil" <sohil.mehta@intel.com>,
-        "gary.hook@amd.com" <gary.hook@amd.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <152302042701.47565.17954813724758433858.stgit@sosxen2.amd.com>
- <152302066417.47565.4017200105445420643.stgit@sosxen2.amd.com>
- <1523663790.2747.4.camel@intel.com>
- <10e422dd-a3ca-8ecb-50fa-e7f131a55a12@amd.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <80b1e9e5-3048-391a-6d7d-adeeece1bf46@arm.com>
-Date: Tue, 17 Apr 2018 18:55:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751157AbeDQR4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 13:56:50 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD1CD20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 17 Apr 2018 14:56:47 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: Re: [PATCH v2] tracing/x86: Update syscall trace events to handle
+ new x86 syscall func names
+Message-ID: <20180417175647.GE3625@kernel.org>
+References: <20180417130702.01575029@gandalf.local.home>
+ <20180417172940.GA3625@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <10e422dd-a3ca-8ecb-50fa-e7f131a55a12@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417172940.GA3625@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/04/18 18:36, Hook, Gary wrote:
-> On 4/13/2018 7:55 PM, Mehta, Sohil wrote:
->> On Fri, 2018-04-06 at 08:17 -0500, Gary R Hook wrote:
->>> +struct dentry *iommu_debugfs_setup(void)
->>> +{
->>> +    if (!debugfs_initialized())
->>
->> This check is probably not needed.
-> 
-> Ah, so it isn't. Thank you.
-> 
->>
->>> +        return NULL;
->>> +
->>> +    if (!iommu_debugfs_dir)
->>> +        iommu_debugfs_dir = debugfs_create_dir("iommu",
->>> NULL);
->>> +
->>> +    if (iommu_debugfs_dir)
->>> +        pr_warn("WARNING: IOMMU DEBUGFS SUPPORT HAS BEEN
->>> ENABLED IN THIS KERNEL\n");
->>> +
->>
->> As this gets called for each IOMMU, do you want to use pr_warn_once?
-> 
-> That works, yes.
+Em Tue, Apr 17, 2018 at 02:29:40PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Tue, Apr 17, 2018 at 01:07:02PM -0400, Steven Rostedt escreveu:
+> > Because the x86 system calls had "__x64_" appended to the "sys" for the
+> > names, they do not match the default compare algorithm. As this was a
+> > problem for power pc, the algorithm can be overwritten by the architecture.
+> > The solution is to have x86 have its own algorithm to do the compare and
+> > this brings back the system call trace events.
 
-Or I guess you could just roll the pr_warn() into the previous if() 
-condition, i.e. only warn when the singleton debugfs_dir is actually 
-created.
-
-Robin.
-
+> > Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+ 
+> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ 
+> Again on x86_64, the number of files in
+> /sys/kernel/debug/tracing/events/syscalls/ is the same, all my perf
+> related tests pass.
 > 
->>
->>> +    return iommu_debugfs_dir;
->>> +}
->>> +EXPORT_SYMBOL_GPL(iommu_debugfs_setup);
->>
->> -Sohil
->>
+> Now to the next seemingly kernel related test failure, unrelated to
+> this:
 > 
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+>  4: Read samples using the mmap interface                 : FAILED!
+
+Ok, I take that back, it is related:
+
+[root@jouet perf]# perf test -F -v "mmap interface" |& grep -v plugins
+ 4: Read samples using the mmap interface                 :
+--- start ---
+perf_evsel__new(sys_enter_getppid)
+---- end ----
+Read samples using the mmap interface: FAILED!
+[root@jouet perf]#
+
+[root@jouet perf]# strace -e openat -e file perf test -F -v "mmap interface" |& grep syscalls
+openat(AT_FDCWD, "/sys/kernel/debug/tracing/events/syscalls/sys_enter_getsid/format", O_RDONLY) = 3
+openat(AT_FDCWD, "/sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid/format", O_RDONLY) = -1 ENOENT (No such file or directory)
+[root@jouet perf]#
+
+Where did syscalls:sys_enter_getppid go? Zero argument syscall,
+investigating...
+
+- Arnaldo
