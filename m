@@ -1,32 +1,34 @@
 Return-Path: <hdegoede@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1523956756; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1523955522; cv=none;
         d=google.com; s=arc-20160816;
-        b=mGWUiE6r8ycDFhBjOlc/k/SvIooGEIX/wKpm1V/2qiHsuUhhSB8BiSmLa2UFA4FTZY
-         c40bKCKcG/b5jpvoBtM7VHRPMu4azibQjfWDGTvMem0M9uGbU/BmJHkzF7k0pLmleGNM
-         SthuIAZ/QvAn+99Qh24Wegzbcq9ytQUH0NJ0SqYi/6gKQ5VmsgRKF0Bz6Pa01DaHhcwy
-         6YAw3PxHD0N7Pzl//fmVIC9E9AZ3cWa0ydeFLL0VGScNZ2ybo4ueZ/zcOLlnHsVRPseh
-         iQd7v+/lmoEEvINvBUxeF6MGJhcovRz2SfMQSa3bXXxZKOcD4vjRUgGoDianiGQm93LI
-         kgvg==
+        b=KzWI7140hoCQU+8UfR8QHPbI1MUkFZU9OrhAvMoE89zoJaluqttIO9RF0t3SmkHOl6
+         CLGqTMruLLczxUUyPT2vgE5U5w+FOuWHaKvJbh622we76W3NmgQLX3IzaSN6lkxImAPf
+         bNy1FRfS+gH06v2j+VqqS7HesE44weAJiOH+WohkCD7IUnNN4dQ3SucJfgB0Yh79KkRb
+         NROQ5go2wiHVKpuWL8d1w3Zm6D4ngcPlYea4q414oEJSg8aG+ddFJ6UI5gbvqLXDRDbi
+         UAfaxPBKJnWQ8tt6PtuMVIltixMdEPYD6ayxfgs53tYDre+qWe/olGGldulDxOir/iPF
+         7Wqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
          :user-agent:date:message-id:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=39GE6jOGRavIidAe4deZkWR7bcyzHu7nbGlGcw/zDtI=;
-        b=KqLMU6aZuxKjDTPzNb6Yi7hcvJdfFF15UHUE8lO3/OO2cV/dwj0FbKsrA8TDSs41sI
-         6XBBNc9XfwMo6sMP+YhxBfwwRy87zIUp8uchlk5FPXF+Tq1BPH+rm31PjWpeKZnP+twu
-         H1Aiw+SanwU0RuxvtGKCsHThNIwX962uLhgiT0Se66XwgUS1ISscxTYe6WtLxFHC3cUl
-         aCFU7HawKDb1Sh06Dnaj/EkO8b3NMDq9iY2PO3LzSpsruYU69yquGNzJLCdFztrcKk7m
-         U+KTb1AEO/PoTUf5gaWV1+KMgJ5dAHi6rqL+Y584OUGdjDGdnqGtMdeqWoz5y5wc9J4B
-         hbnQ==
+        bh=v63NvxHfZaQJZcSUERyR1c7CoXnxodhR6CDtJOjXKXw=;
+        b=EPZAENQXXN5k+sJDfi4rzM5MKVYtsrmjyZNtwigNYJmEfLDGvwNeAKNCoqaEhQN3LM
+         Lq+VmYjzPR8Jh+4Bsx23gR4D0ZxHWDwByUMz82mCthKYmlP366EmcHMQMxkL+x9cXlNf
+         8Qkc0BFZy3crrghVtqafRkjCe5l0eMTfuKUuU8cca4JoFWLoIF7p54UtL0vpeU5x/zub
+         wHFJWzQI3VQO5tshaZqO/HnlTO1Wq13iq23dxcWtubqG2hNWgwIQmi86bN2RUXQ2XHGo
+         mP1K4w+YC0PmGibzd9aDo3C6XowRP0FSWSx/nW8y89T5dyzTZYBDpV4QYHwoHrLufQch
+         N2Jg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AIpwx4+tmucWWtqdZXOvy3IWpUBb9uUkRMz8Sb3kTuEhgiKC6q4dSo6W/94Tr6z8KcSy2IbCshKzyQ==
+X-Google-Smtp-Source: AIpwx4/OQRB+bKYxDIGC8nIcCHrf+hicqCBnTyP9uH0T2XgTwvMbzwt5NFKmsGhK6OmeEfmVWfwyVQ==
 Subject: Re: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+ Andres Rodriguez <andresx7@gmail.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy@infradead.org>,
  Ard Biesheuvel <ard.biesheuvel@linaro.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,8 +48,8 @@ References: <20180408174014.21908-1-hdegoede@redhat.com>
  <20180408174014.21908-3-hdegoede@redhat.com>
  <20180417001738.GN30543@wotan.suse.de>
 From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <00800dc5-f6de-ab26-4d3e-eb2a47e10709@redhat.com>
-Date: Tue, 17 Apr 2018 11:19:14 +0200
+Message-ID: <aff2d267-e06d-f422-5623-6f6cc25af155@redhat.com>
+Date: Tue, 17 Apr 2018 10:58:40 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
@@ -57,7 +59,7 @@ Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597199782052351527?=
-X-GMAIL-MSGID: =?utf-8?q?1597984479862597863?=
+X-GMAIL-MSGID: =?utf-8?q?1597983185733014065?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -81,26 +83,99 @@ On 17-04-18 02:17, Luis R. Rodriguez wrote:
 >> +	}
 >> +#endif
 > 
+> You mussed what I asked for in terms of adding a new flag, (please work on top
+> of Andre's patches as those likely will be merged first, and also have kdocs
+> for the flags)
 
-So thinking some more about this, I can put the device_property check
-inside the fw_get_efi_embedded_fw() call, as well as modify opt_flags
-there to or in FW_OPT_NOCACHE on success, then together with the discussed
-changed to drop the #ifdef, the code would look like this:
+Ok I will base my next version on top of Andres' series.
 
-         ret = fw_get_filesystem_firmware(device, fw->priv);
-	if (ret)
-		fw_get_efi_embedded_fw(device, fw->priv, &opt_flags, ret);
-	if (ret)
-                 if (!(opt_flags & FW_OPT_NO_WARN))
-                         dev_warn(device,
-	...
+> and then a new firmware API to wrap the above into a function
+> which would only do something if the driver *asked* for it on their firmware
+> API call.
+> Ie, please add a new firmware_request_efi_fw().
 
-With just these 2 lines being new:
+As I tried to explain in the changelog the problem with doing this, is that
+this makes it a driver decision, where it really needs to be platform-code driven,
+not driver driven.
 
-	if (ret)
-		fw_get_efi_embedded_fw(device, fw->priv, &opt_flags, ret);
+Take for example the drivers/input/touchscreen/silead.c code that is used on
+a lot of 32 bit ARM platforms too, which don't have EFI at all, so if that
+needs to call request_firmware_efi() then should I add:
 
-So the main.c changes will be nice and clean then.
+#ifdef CONFIG_X86
+	fw = request_firmware_efi(...);
+#else
+	fw = request_firmware(...);
+#endif
+
+? But even on x86 only some devices with a silead touchscreen have EFI
+embedded firmware, so then I would need something like:
+
+#ifdef CONFIG_X86
+	if (device_property_get_bool(dev, "some-prop-name"))
+		fw = request_firmware_efi(...);
+	else
+#else
+		fw = request_firmware(...);
+#endif
+
+That is assuming I still want the normal fallback path in the
+case no EFI firmware is available, which I do because then
+something like packagekit may see if the firmware is packaged
+in one of the configured distro repositories.
+
+We already have (x86) platform code in place to attach
+properties (like a board specific firmware filename) to the
+device using device-properties so that drivers like silead.c
+don't get filled / polluted with board/platform specific knowledge,
+which IMHO is the place where the knowledge fallback to
+an EFI embedded firmware copy belongs.
+
+As the further patches in v3 of this series shows, this actually
+works quite nicely, because this also allows bundling the
+EFI-embedded firmware info (prefix, length, crc, name) together
+with the other board specific properties.
+
+TL;DR: using request_firmware_efi() vs request_firmware() is
+a driver decision, but whether EFI firmware fallback should be
+is board/platform specific not driver specific, therefor I
+believe that using a device-property to signal this is better.
+
+
+If you insist on me adding a request_firmware_efi() I can give
+this a shot, but I know that Dmitry (the input maintainer) will
+very much dislike the silead.c changes that implies...
+
+Still a question for lets sat we go that route, what do we
+then do with request_firmware_efi() when CONFIG_EFI is not set ?
+Should it be defined then or not, and if it should be defined
+when CONFIG_EFI is not set what should it do then?
+
+> Also if you see the
+> work I've done to remove the ifdefs over fallback mechanism you'll see it helps
+> split code and make it easier to read. We should strive to not add any more
+> ifdefery and instead make tehis code read easily.
+
+So looking at how the CONFIG_FW_LOADER_USER_HELPER stuff deals
+with this, I should:
+
+1) Move the definition of fw_get_efi_embedded_fw() to a new
+drivers/base/firmware_loader/fallback_efi.c,
+which only gets build if CONFIG_EFI_EMBEDDED_FIRMWARE is set
+
+2) Put the following in fallback.h:
+
+#ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
+int fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret);
+#else
+static inline int
+fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv, int ret)
+{
+	return ret;
+}
+#endif
+
+have I got that right?
 
 Regards,
 
