@@ -1,57 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751183AbeDQGG5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 02:06:57 -0400
-Received: from mail-oi0-f52.google.com ([209.85.218.52]:41202 "EHLO
-        mail-oi0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbeDQGGz (ORCPT
+        id S1751256AbeDQGQa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 02:16:30 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46815 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750971AbeDQGQ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 02:06:55 -0400
-X-Google-Smtp-Source: AIpwx4+LigAiBTt7JHlB+1WPE7vGgpWk7soK11DlCKkBdiJJnPY/tR4yOlTghYJm86dsuP8EQGSAMo+QslwcYHmNj4U=
+        Tue, 17 Apr 2018 02:16:28 -0400
+X-Google-Smtp-Source: AIpwx494v9qGjjbxByAINvL778I0xlMiLYt6oQK1wBx2oQwBWLKWgAEBAGiAhPUJZNd6LmCG2EOEhQ==
+Subject: Re: [PATCH] nvme: lightnvm: add granby support
+To: Wei Xu <wxu@cnexlabs.com>, linux-nvme@lists.infradead.org
+Cc: javier@cnexlabs.com, keith.busch@intel.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1523930112-7402-1-git-send-email-wxu@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <6e50972d-f806-52ac-7983-2642bd211afa@lightnvm.io>
+Date: Tue, 17 Apr 2018 08:16:25 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180416153501.GQ6014@localhost>
-References: <CAMz4kuJyKNNuR9WGP8F1NKAET6ZTtN4LtXTTtdnR3Zyxa+OjNw@mail.gmail.com>
- <20180412093735.GF6014@localhost> <CAMz4ku+i+zA0_5U65vc3h3tO-hzWvtCOFDeFU94h3Rm6sJUuKQ@mail.gmail.com>
- <CAMz4ku+EUtk2phRGkxkW6YwUvBLb-O7tmMoucvVEQZbL9EY8Zg@mail.gmail.com>
- <20180413034332.GI6014@localhost> <CAMz4kuL_i7u5OCXrtJy92=OisOzgbWk_e-S9dSuBRPenX=ScPA@mail.gmail.com>
- <20180413063641.GL6014@localhost> <CAMz4ku+dLk2Gi_20ATW5o-MPvpy-2iF_YJCwyStaH8xPNXSE7Q@mail.gmail.com>
- <20180416035831.GO6014@localhost> <CAMz4kuKbPZkJBF1ci5osntnHHD2nkm1d81=2GQohzc3KGn-wiw@mail.gmail.com>
- <20180416153501.GQ6014@localhost>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Tue, 17 Apr 2018 14:06:54 +0800
-Message-ID: <CAMz4ku+uru+53BR9JaqQQ+ik30-8o5By-Ai2jA_g-MYF0iKpCA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] dmaengine: sprd: Add Spreadtrum DMA configuration
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
-        dmaengine@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1523930112-7402-1-git-send-email-wxu@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16 April 2018 at 23:35, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Mon, Apr 16, 2018 at 02:32:05PM +0800, Baolin Wang wrote:
->
->> >> Beside the general configuration, our audio driver will configure the
->> >> fragment length, block length, maybe transaction length, and they must
->> >> specify the request type and interrupt type, these are what we want to
->> >> export for users.
->> >
->> > As I said before, you need to derive fragment, block or transaction from
->>
->> I am sorry I did not make things clear here. What I mean is not only
->> link list mode(prep_cyclic), but also other modes (prep_slave,
->> prep_interleaved ...), users still need to configure the fragment
->> length, block length or transaction length according to their
->> requirements.
->
-> Other modes are similar, they also use the parameters programmed from
-> dma_slave_config. Pls see other driver examples. IIRC dw dma has
-> similar capabilities but not all are exposed to user and driver configures.
+On 4/17/18 3:55 AM, Wei Xu wrote:
+> Add a new lightnvm quirk to identify CNEX’s Granby controller.
+> 
+> Signed-off-by: Wei Xu <wxu@cnexlabs.com>
+> ---
+>   drivers/nvme/host/pci.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index cb73bc8..9419e88 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2529,6 +2529,8 @@ static const struct pci_device_id nvme_id_table[] = {
+>   		.driver_data = NVME_QUIRK_LIGHTNVM, },
+>   	{ PCI_DEVICE(0x1d1d, 0x2807),	/* CNEX WL */
+>   		.driver_data = NVME_QUIRK_LIGHTNVM, },
+> +	{ PCI_DEVICE(0x1d1d, 0x2601),	/* CNEX Granby */
+> +		.driver_data = NVME_QUIRK_LIGHTNVM, },
+>   	{ PCI_DEVICE_CLASS(PCI_CLASS_STORAGE_EXPRESS, 0xffffff) },
+>   	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2001) },
+>   	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
+> 
 
-I'll check the dw dma. Really thanks for your help :)
+Looks good to me.
 
--- 
-Baolin.wang
-Best Regards
+Reviewed-by: Matias Bjørling <mb@lightnvm.io>
+
+Keith, when convenient can you pick this up for 4.18?
