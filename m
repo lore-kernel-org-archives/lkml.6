@@ -1,34 +1,36 @@
 Return-Path: <ktkhai@virtuozzo.com>
-X-Google-Smtp-Source: AIpwx49EOpXWGmRsQnOXpE7Vj6wYPddl29mJG4619u3dEiiLXGrVivAZXWdIz97YfX5w90LZwH/3
-ARC-Seal: i=1; a=rsa-sha256; t=1523980390; cv=none;
+X-Google-Smtp-Source: AIpwx49VdjKx3mzaRrA/CiTgmQE6mM+AuJ4YmMH/E+Eqo69aZ3NB82bJwuldRLbC9BA336wU7O13
+ARC-Seal: i=1; a=rsa-sha256; t=1523980436; cv=none;
         d=google.com; s=arc-20160816;
-        b=vhdrDUx5rnQKk7g3k7139SGVNR/X5dMej6TOhtLfD10SqDsHWUqVQ2Ko+lxINpw386
-         ZA/nLMHjAjCutEsoq4cRR0btln0gr1/p/LrTqs3OtouQSRex26P34gb4ufwWhj4I1dXQ
-         ni+/7AYh1jndg9BnhPQ3Yk90Uck1tEAlouWEDyeKEGzaGUFwf75yUONJgbSgVXCErhqo
-         jMBm7Hi3/Ccw8+4NvNSO+/p9i0U4JlVT0Iko+ogXN1iRcUI7DyMION3T6u4TxqtIFCAH
-         mtaJNeYxPfzGZ4ueiX8BtnqWckf1/S//rMqDAbBUq51Xo8q+AAuGgZe6by6Wprl3c4Br
-         GBTQ==
+        b=m2j7jM3/vxNPa5/oXa/jtQUJEXW1gS9o6Eq5GiBD4qTwJBvPXZr6zXIlLxWW8vkRvx
+         mtRealhT6ILcJkAyHW8bVbsUaqOtZ01EPqe8e8KA9tz9tyq9olkq8B8XKuFHyl2wKrQc
+         04DBLd+z3/lZZjcz/xkIaeJqYzqjbXUAQLYznBJQ+1jwFGvqOSTuMwpCZlTbQy3yI93M
+         LrXFYcSUfM/dZTuqIe4xjid+dXikUROT4GPXlY41s4h/HNw9abQXdYm9iKr7rroRN3YY
+         fWnULkD+Uq5ZeROr81qDJNEeSNQQOTCS7bJl45ysO5oRyJ/tdu8WPy6klzZ3zZqgxll0
+         l5vQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=spamdiagnosticmetadata:spamdiagnosticoutput
-         :content-transfer-encoding:mime-version:user-agent:message-id:date
-         :to:from:subject:dkim-signature:arc-authentication-results;
-        bh=rZzcLxeGEsxHZh8yN1df3EyPLDFmprqgUg1JREeh9X4=;
-        b=NScGJnGVswputTCCuVOQfux+w/gU/XZrBAFO204EDSTU4v3piKOjs4S7HeaQGcx81U
-         FKCuoeb/+FbCOY6LTx8mesbABthgX7M8W9Q0voKEXuSjjEc/rrAYXrOZFOb+/P0NCxLd
-         iiVhYEjGc8P5zWNKK6TLFn+1i+bnFRPBUP87J9nf67yziZ64Ya6mQZa19NqjFEqV5GN+
-         3aJ3zRaj4R4S4fbC/i1cRmXsg9tgusv7N7t0qa6pHjzDGx7I+MNrTseNr1ZKA20+O2Kq
-         GtU74t9+0EF6tBdJYP/8dbyrXCRA3OZ0vPDbhr7pndEDf8vBTZLmXpFyJVNjdyokBTl0
-         kOMQ==
+         :content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:message-id:date:to:from:subject:dkim-signature
+         :arc-authentication-results;
+        bh=zETBXdcwhdLLCYcdTJuM1Wx3KMLGUEyvsXVxiATPWGQ=;
+        b=SXpB/4rKVczhEpmgEHwlYDvZP15rCYghw7/33t6lVK7zgZxVKUps29+cQ0n6+Z/dZ6
+         yMEufFQZmsyRFADkVD+T+55l9Loj+W4pC3ksF3CZJ6XXYESg9rjIsp/dkMzDWnAmksHh
+         408Qavy23hhf135aTkxUAkiaALJBoEnzqz6BNYSaxDm4Eohpc+4rBu/yvkhYqjcog92g
+         1nRSCnBc94aLwKdjaXO84l5d/I+gs0MA4jLF3JuRAcGGi6YglbsGyUbCm4AhQLgBv/6w
+         DuFROiUswgWDBJ33cJYHBx08KQJPqHoKiyHuyFNFioso6HjcdKGnoOu3e0xQnAf7Agpx
+         dO9Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=MKIoQqAN;
-       spf=pass (google.com: domain of ktkhai@virtuozzo.com designates 40.107.1.101 as permitted sender) smtp.mailfrom=ktkhai@virtuozzo.com;
+       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=J+ZKcHsv;
+       spf=pass (google.com: domain of ktkhai@virtuozzo.com designates 104.47.0.100 as permitted sender) smtp.mailfrom=ktkhai@virtuozzo.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=MKIoQqAN;
-       spf=pass (google.com: domain of ktkhai@virtuozzo.com designates 40.107.1.101 as permitted sender) smtp.mailfrom=ktkhai@virtuozzo.com;
+       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=J+ZKcHsv;
+       spf=pass (google.com: domain of ktkhai@virtuozzo.com designates 104.47.0.100 as permitted sender) smtp.mailfrom=ktkhai@virtuozzo.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
-Subject: [PATCH v2 00/12] Improve shrink_slab() scalability (old complexity
- was O(n^2), new is O(n))
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com;
+Subject: [PATCH v2 04/12] mm: Assign memcg-aware shrinkers bitmap to memcg
 From: Kirill Tkhai <ktkhai@virtuozzo.com>
 To: akpm@linux-foundation.org, vdavydov.dev@gmail.com, shakeelb@google.com,
  viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
@@ -40,190 +42,382 @@ To: akpm@linux-foundation.org, vdavydov.dev@gmail.com, shakeelb@google.com,
  jbacik@fb.com, linux@roeck-us.net, linux-kernel@vger.kernel.org,
  linux-mm@kvack.org, willy@infradead.org, lirongqing@baidu.com,
  aryabinin@virtuozzo.com
-Date: Tue, 17 Apr 2018 21:52:53 +0300
-Message-ID: <152397794111.3456.1281420602140818725.stgit@localhost.localdomain>
+Date: Tue, 17 Apr 2018 21:53:31 +0300
+Message-ID: <152399121146.3456.5459546288565589098.stgit@localhost.localdomain>
+In-Reply-To: <152397794111.3456.1281420602140818725.stgit@localhost.localdomain>
+References: <152397794111.3456.1281420602140818725.stgit@localhost.localdomain>
 User-Agent: StGit/0.18
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: HE1PR07CA0013.eurprd07.prod.outlook.com
- (2603:10a6:7:67::23) To HE1PR0801MB1339.eurprd08.prod.outlook.com
- (2603:10a6:3:3a::7)
+X-ClientProxiedBy: HE1P189CA0017.EURP189.PROD.OUTLOOK.COM (2603:10a6:7:53::30)
+ To AM5PR0801MB1331.eurprd08.prod.outlook.com (2603:10a6:203:1f::9)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB1339;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;3:wyEGNE2IR3BjKzM8on6dbNSqp7aqyt6R/7YKvAOcKqgtkTwLcYFdEJSbGZg2tHuWJzi5nSVnkiT7vzet/Nie8oI1zLm/N8jtsqzlvQKP0TuIJizAsGosDmtlwMK/eUohrkic8sjLMTKHzjQVyLYTo0XhT6Ow9yS8PBbb/3T2ooHduTpOFv0OGxQogL/5r+9ijGa2Ik9FPJAcSjknQk1f+9K3cjnVUyCEV0YSntp+0Od/degXvlVO9U9qWxbriBA1;25:thGIMgCi1Rtlxuq8CKjx8ZmtNe+h6ctL/yUWod6kLStWrQ4H0RgMJiqxVUSJUE5fpweSffSQXk+eoEB3fzTlL31L19ZJk/gvnb/8hsgE1k4Xwg6QbQkWzuHs40IYMt1HD6eRiMRO55o6lX/5jRrPneKVw75sgDJboZZjpeTz2an1CcEPH2Rf70ZwOpFnTAE438iVCH8B+Q0pQ7rOrekCBzfvQDtQPljAA1PZ4D1O1TaC7WrzTPzHRYHkzWoQbZ8+WkVaLZjVYrZl+cl5/xdoqFlqJRsuXSBjLW1jdghhNOUTGo+vZuMugw3YZkYmXdzWLDbbis2JzytUnFFbJkYSLA==;31:KFpRtLYwlHaiGQtgkn7/OuNUyvwolSejlAut9DyNNghDaz7o19mYDzLCropeUy0kUVNJMRktwccBUevxX7eaXG1Md6fm+eq3Vm0xr2jE9Ud1uX9UlCzsOYa07qehvWd2QlKVHUszQr6qWLAf7U+iwpegx0ZSq7qlHF09V3l+gZuBqYnhM68Jbm3vFsIq7jgB7c4kob1FD1G8a38cb6AKInzu0fsLJ98hJEYdj/cyc+4=
-X-MS-TrafficTypeDiagnostic: HE1PR0801MB1339:
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;20:3sLuXZv7HZY8v4FqSqJflTGP7SltNHGWDhFgGkd9/BLQKXraifLmjjSGdBa3L3ReNDalLmeiyO/THnnAdqMwS5gXNt5r0Vm+QhdsKSCXdjLzy6Al6mU2etMwDiHkjJTMyFAqb0qiJzLSbF/H0KPwlOjoqxTUl8BT/2QwT1tmZmy667dl3DJyAv+JYo7BHfknFQ2KEG7m/0rVISNORLaYbBt/Z6mNyFPd1QCJrGtH1P/hWkyt7CI++pZpjZJVaqcSFZ62mo/x617P+d30fNFVg9xF0RLnS2YhIfOz2NFu7ZQJqf6VfjpQv1O0q1ZCpmdkmgkm6G+bBzQrpg3X5+QXVochLzdOLnGn4xv2vYrsTfvDZ2LrLWdmGwBJMKp41f/femT9O5GRrA9eh29S1YtwFQ/c7oGGufdDWn5Obj2WGSOyiUlbIn+jdua62nhlI3E7+R1aZTA4pKLmJqBKJROR7BA9+kCu/1E/TqHtWNxCcHwFzLJ2MLLQxiyXasduH1eR;4:su7ccJht8/Dlyqb82CfcEByT9/hFf5y0/dFdWWlKkMfmcaqIWTRClNcfS/HNHhaJ1ZXqaJLLbNKq6BZuHum68Zyp4sBQhugfVpAMcm1vwm607vkbt9/sojMrMnrwED7SGCsch9QyFSIwAPmVDe2+tSwGfzvle17POc8/ZJlE7TTZKIZAoS1LUU5KZ9RhhWs3qNBeNAACED7M7zRna/xRpdk4rajcLJF+EeQFVHUDE3xZN4+PFUII2dIL4yxWxX08qSDP4xJXsInn9G2QnxaKrVN5dDoasMjjhB+45A66a9dVZ1DkIC+RNCboTG6sZ30S
-X-Microsoft-Antispam-PRVS: <HE1PR0801MB1339F3315E179A0EDF416E64CDB70@HE1PR0801MB1339.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(131327999870524);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231232)(944501359)(52105095)(93006095)(93001095)(10201501046)(3002001)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:HE1PR0801MB1339;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB1339;
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB1331;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1331;3:nbe/lSlbJvqEIIhmil0x1WrfB8HDEO4E0sVm1PdtR/5E689njDOobZFyfublxS2ceIZvePgm5uDcn8Ofhae6M9uZ1yqUrBTvl7eTX+v4YVMqdqbUKWDrh92M05b1l5s3Y3y6gR6+u5BTfySzUeOALWaujjuxvkVnZLKUrJgyGCbIL53LxOY9fIF6Km0YYcXF/P0q0mIZJrH3C6CoqKbJl8S94AOGg8Jhc5ihpNFfDEFHW2FdEOQCJxLm9U/83+UH;25:/cEztO2pbcgsn34/r3r05rmJcYie1O8EMnjzSZdPnhA/iyUNWjB/+7G59PiO01q3dYF4sQfu5K5bnXh7eSKvyRlr6mQJiC9WmDqPcMRE/yHloUEE70gmWdbEBVuBRgWH6LKdGlLX8FJXo7/2YMvUiYydPYnf/8YBWhfU+7A7HM/Xa82HfbUfYw93M0uLqGGNCsixkAShAA8NNl0lH27jl7DdXkRqQEHxUe7UK0FXXz21M1dPWNs1Ahux8ZaqdC+vzDwME0pjSutBHrjpG1w3wLm2xK/KYe4GScQwfULprqQZ2VupQmncOEgx/e5qc3QFOFxvyUHvD46DZGedjG0F0g==;31:DV+RfDHTF8tqcd+2QjNJNbUB5Q5XNDhylRHFmhVhjl3gOnJ1Co2nPGWiCTvLEJFyDyhmHz/TQYyj4rDp3smmg2VCisLbUL4RqHUkoT9TLYZNYMF9jU4P2tn/YoO6yy7jjHyX8P24n/y+WB0UiJu352wmbpy3sJ0QmyJojG+2dNHD51jTyXVu3eKErN50easKf//nZl4dodcZqGGnjY1x7zNArjSxufyqOPfM7kFpbI0=
+X-MS-TrafficTypeDiagnostic: AM5PR0801MB1331:
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1331;20:vI4TVr/44lbbre+88PpMMu9r/brPeV+FiJ7ln0kVixkHnbCf5OfTf2f5Xgzsm1KF8L3H/SBn9tyjTlRKVe8eNx3v8Gmo6dPJCIY0Fr0XUx0oBV6wZJdDX8cowJgxxsYXmO79edRKMrSVgOXrDM4QBZvjsqqpgrdt4HrHaQW4KCz+D5lj+LSZOahGK2NmoL0N9vkNQP24tTz+Z7mUx/KS3BqGOdX2tIfFGshwsTlkgzzbA1I9va3yr+Fu5D7HyVVmgf+fh+lNkf0LQTNlzfPzmijISeCUkySeyFI84Tgz5hBvDGFApcZaF7VjrslKeY/0kRJUEWR8RCDLkWKNeVBOiC5v8ltbfWbb42C7yoWfbzgYk6Qbzhmc+bkkjexnGkYzsujo+9uOFlZkSKD1cFORsG52Q06LIl//NVcitqSpKNSV0+uoc8t6ZuWJ/BPflDDDMu43DG37eQT9mBqjXJ3nuBVM4MFyNJGazvi2WLP98pbrojaeJYo3GG02UvMtWlcE;4:k89otuLzlXIIAoJzSCSp9M7qa3FJUe9fkSF/TZGppQsgSw9Xr38+0G4HLLSCSbKlnO2zNYraK1tXe52YCefYXQhAa7smr671TuzjDh2iSH+QvaMlwyNbzeJkmITYNwONjdACh+ugcMCRdTSk2z2hvGus8lp2QydEXNW8KFbv9GqAWwqOi8Du60VuJ3iPiobei1SlzMQxXmPKiD8DoaLQkIjAlAHCGP2cNagS5sZ9pL1CljWxCgxIGMhVVDOxfcHGbZ4SUnqQMcW88d4ilYROmQ==
+X-Microsoft-Antispam-PRVS: <AM5PR0801MB133183D4096E2340872D4A86CDB70@AM5PR0801MB1331.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231232)(944501327)(52105095)(3002001)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM5PR0801MB1331;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB1331;
 X-Forefront-PRVS: 0645BEB7AA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(39850400004)(396003)(39380400002)(366004)(376002)(346002)(189003)(199004)(81156014)(81166006)(5660300001)(61506002)(105586002)(486006)(66066001)(8936002)(106356001)(58126008)(39060400002)(68736007)(59450400001)(23676004)(52116002)(6506007)(2486003)(7696005)(55236004)(33896004)(8676002)(86362001)(386003)(47776003)(25786009)(2906002)(26005)(55016002)(956004)(7416002)(476003)(230700001)(97736004)(50466002)(3846002)(6116002)(6636002)(6666003)(186003)(305945005)(7736002)(53936002)(103116003)(478600001)(16526019)(9686003)(316002)(81973001)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB1339;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjEzMzk7MjM6VU5zc0dPdmtMMkdGMXptY0paV2dJbTMr?=
- =?utf-8?B?RFN4UjR5aDh4bWxvbFJEcSt1UjNOTWhTdUtaU0pqVS9tZ2tVYzJtd1lXaDlu?=
- =?utf-8?B?VWFOZERWeTY4N2txdFA3R3BVbnEyOXFXYVU3cmdGOWdjYy9qUTkzekE4WDQ0?=
- =?utf-8?B?QzJTL0hwK29uazU4V1Q2ZWZBOE5NSkZlcmlxUXhhc0drc0UyNFRrU2lsOVRD?=
- =?utf-8?B?L0xSZHJSM2lxM1FOeC9aTklHUFFsVU1JOEEyZEpqQ2haM29QUkI1ZHZ0MUVW?=
- =?utf-8?B?VzRkZHgwdERBYTFYc2xvU0ZWbThRbUt2STl5T3ZiU0JoWnk2Z0ZZRW5ISTFQ?=
- =?utf-8?B?YWkrMkdVMHlvNUc5SkJvTVhkaHdJUHNnQVJnc0M4Z2lGZzBtQ1VIRmJFSUlu?=
- =?utf-8?B?Wm51U0UzaTNyUTMyZzZBMmw3SS80cXJnOE81OFV5VTFYZTVQNFUxQjVZUGVo?=
- =?utf-8?B?ZEN5dUV2MUpzaFNhM0p3RnNqVVVia0tBVnlxdjNKaVhUMHNkRW5JcC9KYzBy?=
- =?utf-8?B?VWFxY1dxaVJmcVVOZ3MzVUt2dG1mWGhSN3FuR3QrU1p3M1k3bzZYeS9nZmQy?=
- =?utf-8?B?T2E0L2MyaGQwUlVVdkpnUU9PWGE2amN2bnAxcDdzeVNxdHd0WnlZZXZtekRo?=
- =?utf-8?B?SlNlMUJwQ290Yjc3VTAydGJ4NUdoRDZJc21wSmo0Z1Rra1VOcWlXQnNaU3Bq?=
- =?utf-8?B?SUFqK3BvekFsdWZCNk54ZEFhQVpCNVJyaDBBbmNjbUdpN2o1Qk9zTWtyL3Rx?=
- =?utf-8?B?NFlwU2JJdUx5RUtyL1FvdlRGVW1PMlllMU5IbnZZVFFtYkg5c21nYkdZejVj?=
- =?utf-8?B?Nm9FOVhGZWFHVXFVbWtIaWZqbW5JTXd5cWc5dGRweUhZNVNnREdrclNqNndG?=
- =?utf-8?B?aFdaSXBIMVFXcU9PeDVIMWNJZ1dTc2s4TDFjQmhINERRTzFNRlIwelo2SUxm?=
- =?utf-8?B?R3FIUkdvNXNYbjVsQm95YjhkaU1oSGtOOWw5eXkxcVErSk5DK1FORWhvUVZx?=
- =?utf-8?B?UVIwVTRwVEtmUS9xZDJRUzVTYUNTWGIya3J6cndTa0VBQ0c3djhFbjQ4Nmt4?=
- =?utf-8?B?QVcra2ZyY0cyajhjanpaU2lUSEtOV2V5eWlLcUhOd2FUS0FZV1BheVBIRGhV?=
- =?utf-8?B?VjBqWUhiZmVkS0FuM1l6eXFoZkgyR0c3alAxZWZwRkVMb3FSeWtERG1ZMEJq?=
- =?utf-8?B?WnltYW40TjNDOTRIdDc2ZldGSjVROHhrSkZiVGFZNUt5L2xQNnFqYysraFhD?=
- =?utf-8?B?djVQUDRrWEhrZGVsKzlMQW9QN3FGUFc5L3grQUNjN3lmMEhyN011Mml4d3Yx?=
- =?utf-8?B?dU9lOURoazczQ3ErUE5ZZjFqRSs0RlhzTW1LUGJCYno5SDl5ZjdTYlBScjVz?=
- =?utf-8?B?VUZFb2p1WmJTSTBWYytISEt6SUVKVE9vWER4S2taM1RMWVNaSGdQTS91aHAv?=
- =?utf-8?B?Y0c3bitFTDZUdmRqRDVxZjlCaGhSM1hQWllObDIvT3RRQnNlY2lWeXR6S1la?=
- =?utf-8?B?UXh5KzlUbUxNLzNtYVhKemxSSG1xWUYxanBZMTQ4WkptUDZldUE0M050aEJF?=
- =?utf-8?B?ZVI3Zlduc2RCUm1EKzl2SjltejJKWDV2RlNnelpmWkJjTWNlenZMNFIyNEhy?=
- =?utf-8?B?U3o3MWpaa3VXM1hnSUVnZnE4R3RGQ1lCRS9ZVTFVdGpjVjJiWnRxMFlvUlhN?=
- =?utf-8?B?ckw0aFhudGlqczNNZGdGNVM2c2toWm9aeWtDeVBVTkl5WVhnZkRNUTA2V09j?=
- =?utf-8?Q?ZHmeWDjQsN1XG/ee0iH9NBw54zNt0/u4I0WUlIE=3D?=
-X-Microsoft-Antispam-Message-Info: 7BztE75RBoxBa5ftpPMAbhF744mLZFvblWDeyuuVrE26N+tvSCk5EjU2Dbl0KQHl9WWw69D/pUB3DtjXoeXx3np6HK+ODIwfFpy8dHReH4nIY0db19gT3kFc6Q5zxGt50s/AriXe1LCgvrO3EIkLxemOLD414GIPIuoZrzwNGmAE6FPAUrkpNAJzCduDa0+y
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;6:ye1pNiJpjDv7DOVXOzRM5j9OJ9Qgjw7byrZVOMni0ztTLvUgRjp/r7TkVdfpN6aOKcQPLhc1h2vtjziYNcD3iO3tcCM+1gHjOkxzwo6lL5DcxgVVPWxB48eS2vZ8kA2Q69d9jqZyErJnGlYXEBtrH7c8Y19DNjtTMGddoNggl3Zo2S6P0jcAN528rQ7OYvHyRLQ9svyDKZ1RJ9d4Yf0/+oGFPHjGBaZ82RrYOKgYh3cuvpyul5p0WR2fQuEZU4tePtHO3s1uywUA4ukrPv2h6tWUQAv3m/R3Rz6OjxQJX8suhCHjs/VFLFAZp7w1Ho3m+t+6NNbPCwWBVXa7enCaboD2G2j3if97Of0/OAuekwWwelQRcqlOeIj1lRsz+pItUr16Czo3QyK389vcSejSezRElZkqT+WdIkpIrkcxUCDMsqZTmDQDTSTYrCg6t6vP6Gp5FAYVQJT8wtVgDDhA/A==;5:ouBv+bDnH7BJ22gcY80Oa1r0dRgy2eI1FogXlyoiznJz4cMKq57oSr2XurTZ9El3ymgdv7Oxbzk7Md38prv9FmlrzDz5+1QkN9d0ijLAG44cb6IS7koq1JT3bnimHVA1crQDqWomaWnC4hkDw0qi0H9+UtmW8KoFHCQqNH5vwuE=;24:yyv2M3ZSRhhTz7Q/7AwY4PcrimhN3USVywv5RelQpOB35Qs8wVpgooK0/bGJsgpbeX/DtZ1z05Y4ENIqB8Ok8drET62DwYuhizHFwVhMf/4=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(979002)(6069001)(39850400004)(396003)(39380400002)(366004)(346002)(376002)(189003)(199004)(956004)(9686003)(478600001)(55016002)(186003)(59450400001)(316002)(16526019)(6666003)(6636002)(55236004)(68736007)(103116003)(476003)(97736004)(386003)(6506007)(105586002)(6116002)(3846002)(58126008)(53936002)(486006)(47776003)(50466002)(52116002)(2906002)(7696005)(61506002)(23676004)(2486003)(446003)(76176011)(33896004)(11346002)(66066001)(25786009)(26005)(5660300001)(39060400002)(86362001)(305945005)(81166006)(81156014)(7416002)(7736002)(230700001)(8936002)(106356001)(8676002)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0801MB1331;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA4MDFNQjEzMzE7MjM6ZGs1U1Nzd3dLREdwOFZ0RnhCZkRhWnBZ?=
+ =?utf-8?B?aU9idzdqblQ4LzAzOCt3Uk1XWEdIS0d3NVM1QkJkdWQzTTJIMUpSelErbWpk?=
+ =?utf-8?B?TXJyazFMZ2FJMTFOMUNGeVFSTTVISFZJaGNjUFRLM0hueVlTVEdBVVlIVElj?=
+ =?utf-8?B?amVkSG9vYnl6R0ltdFhNeXE2VnFSVkx4V2pjemlYeDdlVUVpUXF5REZSK1U2?=
+ =?utf-8?B?N09OZUVpcnU2ai9oVTlhcGlod2RoUmh6dlZIcnJ5ck5DeWozeUplaVdmZHBJ?=
+ =?utf-8?B?UklET3J3OXpyVDhRQ3dPa3FXTFFUSG9KcHZBbUc3Rys1d1V5bEZPc2pOVTQ4?=
+ =?utf-8?B?VFNzQ3Z5M0d4YW1LenE5QnYvOUgzdHg3K2xNUDMxMnZ6NEUvRmFtS29ialRO?=
+ =?utf-8?B?RFNXcnhuWkYzZ0FlNUZRd25FbVNkUW52czJCSzVxRGVBYjc3bEw0UHdFYjZ0?=
+ =?utf-8?B?aG1xd2N0YlBFbSthZkFJSzhIRi9ZT3RPYVQvdnhYSTk1Mk54ZHVLRWxjYzJF?=
+ =?utf-8?B?amoxQWVvQXlFeVg4VzBhV3hPUEZOYWc0OFlzaktzMlJtR1lvbEQ2NG1xRUpR?=
+ =?utf-8?B?dUptbkU2WW9kNkpZc0s5OXRRbjIvbWlVWG53Ryt4S25TbFYzRTZERFhyOExO?=
+ =?utf-8?B?Mm16SjZCNTdBbm93VGZ2Rm0vUmhIS3N3eVptS0xIZGFHWUZieDZZMGRZWHc4?=
+ =?utf-8?B?a1htMjNPWVE0ZXFsMlpQVnlMcXNOeTBaREhRdVE5cHJINzVoUG9taFlRZzNE?=
+ =?utf-8?B?WEpRT25zN1l3UkZUL2hndlhubXFuYlFkVUp5SjlReHBwdnBSVndWdTZVVlNN?=
+ =?utf-8?B?QW1wZEhDbzB3clF4VXBzRG83Z1o5ekRmL050U2o5RXVRemlWSERzY0ZISHd2?=
+ =?utf-8?B?Nm55bnJOWmQ0NGJPM0RzWEx4V2tIbEtRSy9nOFFZT3RuZ1E0ci9sRVRkcUZF?=
+ =?utf-8?B?T1JVU3U0ZW11TVVTTjlmTmNJK0xrKzhMTTVEclpuNUpNbkZPa3BuZVhFUnly?=
+ =?utf-8?B?eUxoNjZSS05lVXFKdDY5cUlYZ280cDVoOUoyUFdsY1lNYU9uUkU1SS9NanIz?=
+ =?utf-8?B?cG5nUXk3b1Frd2ZCVHFRd0xPdXBOY0FEMm5TT3dWSkY5M1hEUGdrc2xnUjBT?=
+ =?utf-8?B?YVpveGxuSWRGT21YazN5SjlkWkNVUWRpNURJU1R5QzEyWms3U3QzckFMdkE2?=
+ =?utf-8?B?bWVxUGJaSmRGRTNqQk5NRjJVMi9VdExjKzMySExLcUJCMmtwZGJCb3FBMmc1?=
+ =?utf-8?B?MGpmZEVuR0ZpZGsySEZBOUpSdnZIYm5BZlFQbG10dHhiaXdFaktodHhtSkJR?=
+ =?utf-8?B?ZlMzSXBaSmJ1Sjh4YzkvTTBJZDR2Sk9aaXAwOUNZbmVwVFRpdFlIR2pXbnNC?=
+ =?utf-8?B?aG8xMFFIWTl2djhIRWdqRElmUVFVN1ZBN20yMFhxOEVZMFhGRGVHNlc2REJN?=
+ =?utf-8?B?cFI4cWpla1pnSXFOK1ZhNXVua1BXMFZzdDdYTTFkbU1FenBaSG9OeHhGcTdP?=
+ =?utf-8?B?TURDY2lJSjUwNERvaDhmOVVvcWZwQmQvcjhlaTh2b25PQmRqSitINlBMVVBw?=
+ =?utf-8?B?TURISU9IaUxNRnJ1ajA3NkxRTm14RDl3T3ZGNnptRThtRnA4QlM2LzNlbTFm?=
+ =?utf-8?B?eDdxbzMzbjBwOUZYdzFKb0RSREZkRHNOaHRFR0tndUhyandKRW5ESFVCN3dQ?=
+ =?utf-8?B?Z3JMUG5RRUpPWi9xZDl6LzlOQjVxaE5FQVUyYVBEOUd5elFXQkVsRXAxSDNj?=
+ =?utf-8?B?eVd5Z3VFL3hLQk05czJ6amNGL3o2alQvbHJrM0ZucStpRDE3ZzRCcCtEREFM?=
+ =?utf-8?B?ODJBRUw4WFQxQURNMUtRQXNTTUFiWDhLQkFXRXBYamlhWUIwT1BQczNrRmtS?=
+ =?utf-8?B?WmJ1eWlFMW1YdXRXNjdqYmdsVFdkbWpkS3pnNCsyS29RSEhjN0Y2RGVWS3lh?=
+ =?utf-8?Q?uFRxe3oinqCmKEGlFlN4L0/T9tsCggvo=3D?=
+X-Microsoft-Antispam-Message-Info: YbtSoHENWi4a/SiLW4jBTf7yoLtYnjAj54p3RfydmACwQplClMOPeT5kxNQVT1n2DUEOgNY+GA65GpxtbHH2wVukuH5q+z3fMOx/tR0eyAU0Qi+O01JFglEI3EvRnO6B470dWWX+ESVlwTydfMqQnEorXEIQY2+poMim7jAv1bJg5iiADm1E2gNpD/lZ9skb
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1331;6:7rzrwny5fMnmLP2X8YK2CYoGM4p2nS+G3dvzETsDQFoFEgg+2HHWKUHWklB+765VYgrrOv974FtAVUkInhtOzPVBDf0H8jkTLShiXkvzjPgk113LIzg5ZSC3mj60Vmb/2XkyDgBOkNQUi89g1yt/As18k1nmoSlpxFspVXdULwkbqkrXtEOB7toUpLnkwMD1bcJTb8KGPL2m35qGv/o0MaPy3851270jpTnSIy+1wRfMnN1vr8vb09GkBfYdWoHskJG/6FSHQbNTRTqUStuXxr4VnHjfoCe+Gc/19/MNDaL75+pE/1A0g6w9ELu4Ck+a/VJjAxiz7D0Uq2hIlxMAbYWhnJqOG5NB4YY3kUponVLwTBkGngPjtrhvJIdMesVx9ejlPuFeP3YcsvcabAC+NZYJg3oUwWhqqX2Qj2IHD2aKbxLcFcM1zBNdk1LrJOEqgF6lEgDENLdZs+O1SYRHPQ==;5:X4OfyCytaj2Yi9R+XU5XpOZPlft2ZACHSVsmDkayA4t+83lcS285uS44WSetncZBS+XGorUtUGmDQ3fTs4UjfLWfe9PAHCak2QgGXleVQU3Zm+HtLlPxen83Rl+CXEEGEW+BVhrnZM8c7ZijXHmK5q9LXLGESxzRl0m7IMtdGsM=;24:k5HioDLZ+TOXji3tPmUNVSlbOxjOnwqyEq9NIpeaNfN50kuxVJZYbekAc+azbcqELXKopS1rr2Q9QkFgG6gdAFZi7MBqxvJ1SUxGEjKwySM=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;7:E3l08JavF4ZOT8ofTvm54bfQmUkzAjkYzshGfUHj+7lVlDeCg9qn4rxRd0/RephX+xWWSt9ync7WjyfUyZqhYcCpTUsrunJyg941WkWGNFh4V2zKW+tS0BGDnV3zk6BWdHHbc8O/amZF/m/5V/9/NuHn+vMfuGzJRqTEpwUUKcGFRKTCaiFMvIQ4R6o3weon3czNWS3m/Y/GPYD9JJ4AhfALn2dwOAcZ4J+MG9NmuO1IyXb/QVsjxtDZOyaGSe7u;20:C4L1EbSmpbuNY+9yb/n44Dm0LsQBSTaYkE+t5P1Jrw+Elf8zQm3vtoK0PL8cZVBzSg9jfWbhxoRQe/sZlQcFpBzGv6bykPz+Ba0bWEyW2PEIsp5oNv6adS4vnDsWKGL9Xry3J6dxGo4HlL41OgDgu2LBeHYVRwZ28Nm25nBcYuQ=
-X-MS-Office365-Filtering-Correlation-Id: 4a804fd8-f8cc-4ed0-93a3-08d5a47b4df6
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1331;7:/t6wmQ+ONzCD8dWbaFEbuFPFY0vgC0xCDIHJE89xdHGO76tx7YjfDaZg/t3bgklE5eiIucPjlaynATv7If4epOmVLCCoCdM8nGv2oxCEeMTreeHneRFSksiprcOZ1KZOMrSX+eKmszjyISyANh+fhyN2Mjl3bzrJ6nbRuL2tFRUVIjhvM0BocaZ1MSs2xaa6sO6ZfZfE3d5y6/X4ZbapcdcSzEkKTGu9Q0tpLB+OZ9NeGSqEIogngA/HisLL6fBb;20:h9mcp26Iwfi2GtzNsNcknnzSTgWPaVGkgdeAfNJqCEyrX9QsBS9lS9/LuACmjQpiiTBzswkJIqg11b81UuMkLa0kkUtvNBarIdk+MR+d6LpqfYevXg+/DYU0WRKrLRYQTTvZwZsEx3Tc5/RGJfnOzSgw1okPC9rWAqr1IWoZk1A=
+X-MS-Office365-Filtering-Correlation-Id: dc185a79-1822-46f3-fb0f-08d5a47b68d5
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 15:53:03.0137 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a804fd8-f8cc-4ed0-93a3-08d5a47b4df6
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 15:53:46.6922 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc185a79-1822-46f3-fb0f-08d5a47b68d5
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1339
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB1331
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598009262059172512?=
-X-GMAIL-MSGID: =?utf-8?q?1598009262059172512?=
+X-GMAIL-THRID: =?utf-8?q?1598009310068873507?=
+X-GMAIL-MSGID: =?utf-8?q?1598009310068873507?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+Imagine a big node with many cpus, memory cgroups and containers.
+Let we have 200 containers, every container has 10 mounts,
+and 10 cgroups. All container tasks don't touch foreign
+containers mounts. If there is intensive pages write,
+and global reclaim happens, a writing task has to iterate
+over all memcgs to shrink slab, before it's able to go
+to shrink_page_list().
 
-this patches solves the problem with slow shrink_slab() occuring
-on the machines having many shrinkers and memory cgroups (i.e.,
-with many containers). The problem is complexity of shrink_slab()
-is O(n^2) and it grows too fast with the growth of containers
-numbers.
+Iteration over all the memcg slabs is very expensive:
+the task has to visit 200 * 10 = 2000 shrinkers
+for every memcg, and since there are 2000 memcgs,
+the total calls are 2000 * 2000 = 4000000.
 
-Let we have 200 containers, and every container has 10 mounts
-and 10 cgroups. All container tasks are isolated, and they don't
-touch foreign containers mounts.
+So, the shrinker makes 4 million do_shrink_slab() calls
+just to try to isolate SWAP_CLUSTER_MAX pages in one
+of the actively writing memcg via shrink_page_list().
+I've observed a node spending almost 100% in kernel,
+making useless iteration over already shrinked slab.
 
-In case of global reclaim, a task has to iterate all over the memcgs
-and to call all the memcg-aware shrinkers for all of them. This means,
-the task has to visit 200 * 10 = 2000 shrinkers for every memcg,
-and since there are 2000 memcgs, the total calls of do_shrink_slab()
-are 2000 * 2000 = 4000000.
+This patch adds bitmap of memcg-aware shrinkers to memcg.
+The size of the bitmap depends on bitmap_nr_ids, and during
+memcg life it's maintained to be enough to fit bitmap_nr_ids
+shrinkers. Every bit in the map is related to corresponding
+shrinker id.
 
-4 million calls are not a number operations, which can takes 1 cpu cycle.
-E.g., super_cache_count() accesses at least two lists, and makes arifmetical
-calculations. Even, if there are no charged objects, we do these calculations,
-and replaces cpu caches by read memory. I observed nodes spending almost 100%
-time in kernel, in case of intensive writing and global reclaim. The writer
-consumes pages fast, but it's need to shrink_slab() before the reclaimer
-reached shrink pages function (and frees SWAP_CLUSTER_MAX pages). Even if
-there is no writing, the iterations just waste the time, and slows reclaim down.
+Next patches will maintain set bit only for really charged
+memcg. This will allow shrink_slab() to increase its
+performance in significant way. See the last patch for
+the numbers.
 
-Let's see the small test below:
-
-$echo 1 > /sys/fs/cgroup/memory/memory.use_hierarchy
-$mkdir /sys/fs/cgroup/memory/ct
-$echo 4000M > /sys/fs/cgroup/memory/ct/memory.kmem.limit_in_bytes
-$for i in `seq 0 4000`;
-	do mkdir /sys/fs/cgroup/memory/ct/$i;
-	echo $$ > /sys/fs/cgroup/memory/ct/$i/cgroup.procs;
-	mkdir -p s/$i; mount -t tmpfs $i s/$i; touch s/$i/file;
-done
-
-Then, let's see drop caches time (4 sequential calls):
-$time echo 3 > /proc/sys/vm/drop_caches
-
-0.00user 8.99system 0:08.99elapsed 99%CPU
-0.00user 5.97system 0:05.97elapsed 100%CPU
-0.00user 5.97system 0:05.97elapsed 100%CPU
-0.00user 5.85system 0:05.85elapsed 100%CPU
-
-Last three calls don't actually shrink something. So, the iterations
-over slab shrinkers take 5.85 seconds. Not so good for scalability.
-
-The patchset solves the problem by making shrink_slab() of O(n)
-complexity. There are following functional actions:
-
-1)Assign id to every registered memcg-aware shrinker.
-2)Maintain per-memcgroup bitmap of memcg-aware shrinkers,
-  and set a shrinker-related bit after the first element
-  is added to lru list (also, when removed child memcg
-  elements are reparanted).
-3)Split memcg-aware shrinkers and !memcg-aware shrinkers,
-  and call a shrinker if its bit is set in memcg's shrinker
-  bitmap.
-  (Also, there is a functionality to clear the bit, after
-  last element is shrinked).
-
-This gives signify performance increase. The result after patchset is applied:
-
-$time echo 3 > /proc/sys/vm/drop_caches
-0.00user 1.11system 0:01.12elapsed 99%CPU
-0.00user 0.00system 0:00.00elapsed 100%CPU
-0.00user 0.00system 0:00.00elapsed 100%CPU
-0.00user 0.00system 0:00.00elapsed 100%CPU
-
-Even if we round 0:00.00 up to 0:00.01, the results shows
-the performance increases at least in 585 times.
-
-So, the patchset makes shrink_slab() of less complexity and improves
-the performance in such types of load I pointed. This will give a profit
-in case of !global reclaim case, since there also will be less
-do_shrink_slab() calls.
-
-This patchset is made against linux-next.git tree.
-
-v2: Many changes requested in commentaries to v1:
-
-1)the code mostly moved to mm/memcontrol.c;
-2)using IDR instead of array of shrinkers;
-3)added a possibility to assign list_lru shrinker id
-  at the time of shrinker registering;
-4)reorginized locking and renamed functions and variables.
----
-
-Kirill Tkhai (12):
-      mm: Assign id to every memcg-aware shrinker
-      memcg: Refactoring in mem_cgroup_alloc()
-      memcg: Refactoring in alloc_mem_cgroup_per_node_info()
-      mm: Assign memcg-aware shrinkers bitmap to memcg
-      fs: Propagate shrinker::id to list_lru
-      list_lru: Add memcg argument to list_lru_from_kmem()
-      list_lru: Pass dst_memcg argument to memcg_drain_list_lru_node()
-      list_lru: Pass lru argument to memcg_drain_list_lru_node()
-      mm: Set bit in memcg shrinker bitmap on first list_lru item apearance
-      mm: Iterate only over charged shrinkers during memcg shrink_slab()
-      mm: Add SHRINK_EMPTY shrinker methods return value
-      mm: Clear shrinker bit if there are no objects related to memcg
-
-
- fs/super.c                 |    7 +-
- include/linux/list_lru.h   |    3 -
- include/linux/memcontrol.h |   30 +++++++
- include/linux/shrinker.h   |   17 +++-
- mm/list_lru.c              |   64 +++++++++++----
- mm/memcontrol.c            |  160 ++++++++++++++++++++++++++++++++----
- mm/vmscan.c                |  194 +++++++++++++++++++++++++++++++++++++++-----
- mm/workingset.c            |    6 +
- 8 files changed, 422 insertions(+), 59 deletions(-)
-
---
 Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ include/linux/memcontrol.h |   15 +++++
+ mm/memcontrol.c            |  125 ++++++++++++++++++++++++++++++++++++++++++++
+ mm/vmscan.c                |   21 +++++++
+ 3 files changed, 160 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index af9eed2e3e04..2ec96ab46b01 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -115,6 +115,7 @@ struct mem_cgroup_per_node {
+ 	unsigned long		lru_zone_size[MAX_NR_ZONES][NR_LRU_LISTS];
+ 
+ 	struct mem_cgroup_reclaim_iter	iter[DEF_PRIORITY + 1];
++	struct memcg_shrinker_map __rcu	*shrinkers_map;
+ 
+ 	struct rb_node		tree_node;	/* RB tree node */
+ 	unsigned long		usage_in_excess;/* Set to the value by which */
+@@ -153,6 +154,11 @@ struct mem_cgroup_thresholds {
+ 	struct mem_cgroup_threshold_ary *spare;
+ };
+ 
++struct memcg_shrinker_map {
++	struct rcu_head rcu;
++	unsigned long map[0];
++};
++
+ enum memcg_kmem_state {
+ 	KMEM_NONE,
+ 	KMEM_ALLOCATED,
+@@ -1200,6 +1206,8 @@ extern int memcg_nr_cache_ids;
+ void memcg_get_cache_ids(void);
+ void memcg_put_cache_ids(void);
+ 
++extern int shrinkers_max_nr;
++
+ /*
+  * Helper macro to loop through all memcg-specific caches. Callers must still
+  * check if the cache is valid (it is either valid or NULL).
+@@ -1223,6 +1231,13 @@ static inline int memcg_cache_id(struct mem_cgroup *memcg)
+ 	return memcg ? memcg->kmemcg_id : -1;
+ }
+ 
++extern struct memcg_shrinker_map __rcu *root_shrinkers_map[];
++#define SHRINKERS_MAP(memcg, nid)					\
++	(memcg == root_mem_cgroup || !memcg ?				\
++	 root_shrinkers_map[nid] : memcg->nodeinfo[nid]->shrinkers_map)
++
++extern int expand_shrinker_maps(int old_id, int id);
++
+ #else
+ #define for_each_memcg_cache_index(_idx)	\
+ 	for (; NULL; )
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 2959a454a072..562dfb1be9ef 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -305,6 +305,113 @@ EXPORT_SYMBOL(memcg_kmem_enabled_key);
+ 
+ struct workqueue_struct *memcg_kmem_cache_wq;
+ 
++static DECLARE_RWSEM(shrinkers_max_nr_rwsem);
++struct memcg_shrinker_map __rcu *root_shrinkers_map[MAX_NUMNODES] = { 0 };
++
++static void get_shrinkers_max_nr(void)
++{
++	down_read(&shrinkers_max_nr_rwsem);
++}
++
++static void put_shrinkers_max_nr(void)
++{
++	up_read(&shrinkers_max_nr_rwsem);
++}
++
++static void kvfree_map_rcu(struct rcu_head *head)
++{
++	kvfree(container_of(head, struct memcg_shrinker_map, rcu));
++}
++
++static int memcg_expand_maps(struct mem_cgroup *memcg, int nid,
++			     int size, int old_size)
++{
++	struct memcg_shrinker_map *new, *old;
++
++	lockdep_assert_held(&shrinkers_max_nr_rwsem);
++
++	new = kvmalloc(sizeof(*new) + size, GFP_KERNEL);
++	if (!new)
++		return -ENOMEM;
++
++	/* Set all old bits, clear all new bits */
++	memset(new->map, (int)0xff, old_size);
++	memset((void *)new->map + old_size, 0, size - old_size);
++
++	old = rcu_dereference_protected(SHRINKERS_MAP(memcg, nid), true);
++
++	if (memcg)
++		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinkers_map, new);
++	else
++		rcu_assign_pointer(root_shrinkers_map[nid], new);
++
++	if (old)
++		call_rcu(&old->rcu, kvfree_map_rcu);
++
++	return 0;
++}
++
++static int alloc_shrinker_maps(struct mem_cgroup *memcg, int nid)
++{
++	/* Skip allocation, when we're initializing root_mem_cgroup */
++	if (!root_mem_cgroup)
++		return 0;
++
++	return memcg_expand_maps(memcg, nid, shrinkers_max_nr/BITS_PER_BYTE, 0);
++}
++
++static void free_shrinker_maps(struct mem_cgroup *memcg,
++			       struct mem_cgroup_per_node *pn)
++{
++	struct memcg_shrinker_map *map;
++
++	if (memcg == root_mem_cgroup)
++		return;
++
++	/* IDR unhashed long ago, and expand_shrinker_maps can't race with us */
++	map = rcu_dereference_protected(pn->shrinkers_map, true);
++	kvfree_map_rcu(&map->rcu);
++}
++
++static struct idr mem_cgroup_idr;
++
++int expand_shrinker_maps(int old_nr, int nr)
++{
++	int id, size, old_size, node, ret;
++	struct mem_cgroup *memcg;
++
++	old_size = old_nr / BITS_PER_BYTE;
++	size = nr / BITS_PER_BYTE;
++
++	down_write(&shrinkers_max_nr_rwsem);
++	for_each_node(node) {
++		idr_for_each_entry(&mem_cgroup_idr, memcg, id) {
++			if (id == 1)
++				memcg = NULL;
++			ret = memcg_expand_maps(memcg, node, size, old_size);
++			if (ret)
++				goto unlock;
++		}
++
++		/* root_mem_cgroup is not initialized yet */
++		if (id == 0)
++			ret = memcg_expand_maps(NULL, node, size, old_size);
++	}
++unlock:
++	up_write(&shrinkers_max_nr_rwsem);
++	return ret;
++}
++#else /* CONFIG_SLOB */
++static void get_shrinkers_max_nr(void) { }
++static void put_shrinkers_max_nr(void) { }
++
++static int alloc_shrinker_maps(struct mem_cgroup *memcg, int nid)
++{
++	return 0;
++}
++static void free_shrinker_maps(struct mem_cgroup *memcg,
++			       struct mem_cgroup_per_node *pn) { }
++
+ #endif /* !CONFIG_SLOB */
+ 
+ /**
+@@ -3002,6 +3109,8 @@ static u64 mem_cgroup_read_u64(struct cgroup_subsys_state *css,
+ }
+ 
+ #ifndef CONFIG_SLOB
++int shrinkers_max_nr;
++
+ static int memcg_online_kmem(struct mem_cgroup *memcg)
+ {
+ 	int memcg_id;
+@@ -4266,7 +4375,10 @@ static DEFINE_IDR(mem_cgroup_idr);
+ static void mem_cgroup_id_remove(struct mem_cgroup *memcg)
+ {
+ 	if (memcg->id.id > 0) {
++		/* Removing IDR must be visible for expand_shrinker_maps() */
++		get_shrinkers_max_nr();
+ 		idr_remove(&mem_cgroup_idr, memcg->id.id);
++		put_shrinkers_max_nr();
+ 		memcg->id.id = 0;
+ 	}
+ }
+@@ -4333,12 +4445,17 @@ static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+ 	if (!pn->lruvec_stat_cpu)
+ 		goto err_pcpu;
+ 
++	if (alloc_shrinker_maps(memcg, node))
++		goto err_maps;
++
+ 	lruvec_init(&pn->lruvec);
+ 	pn->usage_in_excess = 0;
+ 	pn->on_tree = false;
+ 	pn->memcg = memcg;
+ 	return 0;
+ 
++err_maps:
++	free_percpu(pn->lruvec_stat_cpu);
+ err_pcpu:
+ 	memcg->nodeinfo[node] = NULL;
+ 	kfree(pn);
+@@ -4352,6 +4469,7 @@ static void free_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+ 	if (!pn)
+ 		return;
+ 
++	free_shrinker_maps(memcg, pn);
+ 	free_percpu(pn->lruvec_stat_cpu);
+ 	kfree(pn);
+ }
+@@ -4407,13 +4525,18 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 	INIT_LIST_HEAD(&memcg->cgwb_list);
+ #endif
++
++	get_shrinkers_max_nr();
+ 	for_each_node(node)
+-		if (alloc_mem_cgroup_per_node_info(memcg, node))
++		if (alloc_mem_cgroup_per_node_info(memcg, node)) {
++			put_shrinkers_max_nr();
+ 			goto fail;
++		}
+ 
+ 	memcg->id.id = idr_alloc(&mem_cgroup_idr, memcg,
+ 				 1, MEM_CGROUP_ID_MAX,
+ 				 GFP_KERNEL);
++	put_shrinkers_max_nr();
+ 	if (memcg->id.id < 0)
+ 		goto fail;
+ 
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 4f02fe83537e..f63eb5596c35 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -172,6 +172,22 @@ static DECLARE_RWSEM(shrinker_rwsem);
+ #if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
+ static DEFINE_IDR(shrinkers_id_idr);
+ 
++static int expand_shrinker_id(int id)
++{
++	if (likely(id < shrinkers_max_nr))
++		return 0;
++
++	id = shrinkers_max_nr * 2;
++	if (id == 0)
++		id = BITS_PER_BYTE;
++
++	if (expand_shrinker_maps(shrinkers_max_nr, id))
++		return -ENOMEM;
++
++	shrinkers_max_nr = id;
++	return 0;
++}
++
+ static int add_memcg_shrinker(struct shrinker *shrinker)
+ {
+ 	int id, ret;
+@@ -180,6 +196,11 @@ static int add_memcg_shrinker(struct shrinker *shrinker)
+ 	ret = id = idr_alloc(&shrinkers_id_idr, shrinker, 0, 0, GFP_KERNEL);
+ 	if (ret < 0)
+ 		goto unlock;
++	ret = expand_shrinker_id(id);
++	if (ret < 0) {
++		idr_remove(&shrinkers_id_idr, id);
++		goto unlock;
++	}
+ 	shrinker->id = id;
+ 	ret = 0;
+ unlock:
