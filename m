@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752608AbeDQKbJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 06:31:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44098 "EHLO
+        id S1752306AbeDQKcu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 06:32:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46946 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751327AbeDQKbH (ORCPT
+        with ESMTP id S1751232AbeDQKct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 06:31:07 -0400
+        Tue, 17 Apr 2018 06:32:49 -0400
 From: Mark Brown <broonie@kernel.org>
 To: Fengguang Wu <fengguang.wu@intel.com>
 Cc: Mark Brown <broonie@kernel.org>, Shuming Fan <shumingf@realtek.com>,
@@ -17,8 +17,8 @@ Cc: Mark Brown <broonie@kernel.org>, Shuming Fan <shumingf@realtek.com>,
         alsa-devel@alsa-project.org
 Subject: Applied "ASoC: rt1305: fix platform_no_drv_owner.cocci warnings" to the asoc tree
 In-Reply-To: <20180416194124.GA75306@lkp-hsx02>
-Message-Id: <E1f8Nt2-0006gy-Sh@debutante>
-Date: Tue, 17 Apr 2018 11:30:56 +0100
+Message-Id: <E1f8Num-0006oI-HY@debutante>
+Date: Tue, 17 Apr 2018 11:32:44 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
