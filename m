@@ -1,122 +1,503 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753239AbeDQOdq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:33:46 -0400
-Received: from mail-he1eur01on0136.outbound.protection.outlook.com ([104.47.0.136]:16622
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752670AbeDQOcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:32:48 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se;
-From: Peter Rosin <peda@axentia.se>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Rosin <peda@axentia.se>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Vadim Pasternak <vadimp@mellanox.com>,
-        Michael Shych <michaelsh@mellanox.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-i2c@vger.kernel.org
-Subject: [PATCH 1/4] i2c: mux: ltc4306: switch to using .probe_new
-Date: Tue, 17 Apr 2018 16:32:30 +0200
-Message-Id: <20180417143233.25145-2-peda@axentia.se>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180417143233.25145-1-peda@axentia.se>
-References: <20180417143233.25145-1-peda@axentia.se>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: DB6PR0301CA0039.eurprd03.prod.outlook.com
- (2603:10a6:4:3e::49) To HE1PR0202MB2777.eurprd02.prod.outlook.com
- (2603:10a6:3:e8::19)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:HE1PR0202MB2777;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;3:+bnLw8zIlJsE/CWyaPsvV8x42h0WdxpreUfiFXNsci6DyVL++XuNmvN9Yc3Z/1jw3PX5FsxPxqRUAy6aAq1JrcGumWbx3pWsrs1M7TojdFSDNOC3y9UM8Gc1KSrIERhwCi6uXDXx4WkWLQqCu7CTZRr+L5Oxd1QrzIx34m596TSXtlQJt+dQ3NtK81CJHT5F72eAwqWaPIspkWCRNmbQmTAek92WUqcPPwEMZ0sBA9jS2OAGC4k/hPcuZUAszmTc;25:9hsk32iowP3x/iQcKtqK3ZyWQdQVlaM+XptRKHSKNI1xxcFUfKPo18hOccbSy8A4iwE8yhfWqMBqcOwbNnOlKO2X+qGXlTjN+6a8LWejNZz961bUX32MBFsTi3lMB6AHsERjqrCUtznfN3m8EGXVwsVGkm53uP0Ue8XTtt9CtWnJo+Yl/nG762vDX8w4Ddk/LAwuLz0SFpsgY9L+wDwAdnFED/JO6GjDjr7sYO9XZ49VpctGsyz4MkezXefseU+5FgpOKkUcFqE5hmSslTxEyH5kWeuVjnySd3TdbxYfQYnpgKBwaDUTzgM5gRTnCfr3/oaXPA0muFAxJvHMob/7kw==;31:w8szXw+XXLKWhrIpVb4q9VYwSyRoq2jk4gKPzP1uUtWnV7niy0TO4zdKJhquxlNUBsYNQEqgxSygfGyILcecp8jEMPelIK5ilQAX1aptoRzdVa12yZldePUHmlc7Jn3tdti06kqMWSXNuBNYR+woiXnKhcoXnSu9WXxEHKQmEcLwT0f8lUtBTKtG09vggU8533gDBB27SWOQV9Uw4Pnw1nkogfP6A4k6G4hMEUS84Bg=
-X-MS-TrafficTypeDiagnostic: HE1PR0202MB2777:
-X-Microsoft-Antispam-PRVS: <HE1PR0202MB2777FD34A141878EBF8A55B8BCB70@HE1PR0202MB2777.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231232)(944501327)(52105095)(6041310)(20161123564045)(20161123560045)(2016111802025)(20161123562045)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:HE1PR0202MB2777;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0202MB2777;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;4:rVx2q7/gw2eMj2bNpw5MT+0e1xL24ILp2zw25AsBtZhXBtkECGXLR8/0kJEfiwoYVvRIz/TV8r/KFzs47Cai3Vy+H90Rrk4EfpTDBAdc8Y2O/ehxxE50lhqZEWh9AQsDmToQUum28kqTMJivGMuYcLahW8Vc35+7eANFbF/pVgjMIPcehDTb7WrsHxN1JCn+LBc9CvIS1Xf6/0gFciNO2hsWumu+IoqrcxM+RViyf4R2CJuPYTDYm+EOqNOO55afJDqx3cc1Q/PsHzMjFU20Ig==
-X-Forefront-PRVS: 0645BEB7AA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39380400002)(39840400004)(366004)(346002)(189003)(199004)(6486002)(4326008)(1076002)(316002)(186003)(16526019)(53936002)(81156014)(6666003)(47776003)(52116002)(16586007)(105586002)(50226002)(8936002)(106356001)(8676002)(81166006)(48376002)(386003)(97736004)(6506007)(478600001)(74482002)(76176011)(305945005)(50466002)(7736002)(486006)(51416003)(6916009)(6116002)(2906002)(575784001)(446003)(2361001)(476003)(3846002)(2351001)(25786009)(5660300001)(66066001)(26005)(8666007)(11346002)(2616005)(36756003)(54906003)(956004)(68736007)(86362001)(6512007)(142923001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2777;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR0202MB2777;23:L9HovkIAbJ3xUbzY4sxauuJbfjUBBGLSKoY6CaX?=
- =?us-ascii?Q?5aWQcQNCpGxDhSJbgk1+V7FSnxK28bQJSISYoDhwXZkDnIDKP7nrnAu9Pk/j?=
- =?us-ascii?Q?f/mBJ7JxSd91i3MrFmFcMrxK47WVDW/10Nq93+RSAt5cQb8rv0D9Vax6TGkp?=
- =?us-ascii?Q?c+/tmGLYoQIv71eTGUxJcSxiM8bHNGr26K7+5nHx/sGq3a/h/TD5UUEIz58o?=
- =?us-ascii?Q?1yKi29+k1Jo2npCJuZ7ZaQ3kYgd1QznpGq8DBNAIHnaje49xNZr8pkglsEF4?=
- =?us-ascii?Q?2mgxvB/SOXtJ7Gi1YgFVp4c1swrn6QkgIWsc+YHFmut01taRsXuMxCwgZbVc?=
- =?us-ascii?Q?His7mieYXZkCcBk3hsVGKbTx5swlFde61/pyaUKl22eFj+I1Tjni2EIpvDNU?=
- =?us-ascii?Q?OF/V1vOL57A+FUwaNN4wcQ94IfAcBKi2HAN3wrGzhHllaOCsQsXQSLa1S0Cm?=
- =?us-ascii?Q?Fu5lq+P8iITTgW1riXX64PAGUHXGwWzRA4vOTM6gHm985rMENWwztlHJVfiS?=
- =?us-ascii?Q?fYKQuxlbp4GNKCgkKTu6htiBCFNbji0L8hm6moEkcyWAeys9OrN8NF9gyV4H?=
- =?us-ascii?Q?ZXH9enQuieL1rpGoBmxOLJIO2vcFV0+9W6rtUhF5frvwq0gwD6YxZfLVJYxb?=
- =?us-ascii?Q?VBhKDdnHTZj4SbwujD2JAZrdXsKo6VXTaeny5tHwDAK51V9oBRxW7tmH+74X?=
- =?us-ascii?Q?woW5RKGHkqHeqx0XIWHg/J96KYWGi1mdcGvOQgUlAHD+YYaa+IS/bZKANmxp?=
- =?us-ascii?Q?wAj3QBZ0U61iRE8SK3DUFGtKfK7nsaDdQ+LSKpBfWD/HBsI3N+Ok5sc7IYFT?=
- =?us-ascii?Q?AvOWXotD+9W2SreSO6BTmdHrIPy+R7TTP0Yth45lJZ0ru1/oMJLF8RQ89lMj?=
- =?us-ascii?Q?PgFYV84kOZTtLiYpTR8VIqHjKaPTUrozvyT12iYYxLjh7044oJpvM67LL0nR?=
- =?us-ascii?Q?vQC+Flwj3jKKT2H6LFs9/2lbQSqwf6Y2C3Yt6NzxmVrQNBXFpDAjN5oF8eMQ?=
- =?us-ascii?Q?XUUNOY2xbNZgnQN+A+5jiM5GGnp+/asxzCOwMPv1Lyb1099lSdo9rlUeD9WF?=
- =?us-ascii?Q?F0hAlr+m8ItoDgwoYbz3+YYYln6QjWRuJ6ALCJdenfIHHxbCbuiMpVIk6+fF?=
- =?us-ascii?Q?uYdsQ37G0CBlhIv1z6XPEAiZEznYp5oIzxua+2ipyoD6Xhq6mmt9n40Mvka+?=
- =?us-ascii?Q?eyo1C056afqAkKWaA3fp/zKjsNeUm24Kf2PiTS43nqkUku2RhzOqKK3D5ovr?=
- =?us-ascii?Q?mbZCtH785MTsvfZDLrp7BP7gjwcMT4wP/u4TGxaeRGt6VLiJMLJtqU58QF6m?=
- =?us-ascii?Q?0izdYHi5tfoiStDj5qkp9EYO/Py7dOpFosFlvtd+0yNBPVi4dR2FFgPJYEnb?=
- =?us-ascii?Q?POZs+pA=3D=3D?=
-X-Microsoft-Antispam-Message-Info: 2zSYnh7HnTIgKwzB6ki6iBmgtELUUUkgbv/HRPiVe/8H0j7vhw52DcD2XmnflC/ZQDTQMbAZpEF0Rtr5wuagObKu63KTyR3Z/3f4R4cXRc+bHsAeao3Tb34P9QvlsxIITy8LB/BgzT/WCBWyK4em2BxnJvqDQmDiwvtE9rN3Z9S0yuZiKVcY4Hpn5sufDTKm
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;6:WEdWpmGJVe0frohUeqHi5fetMKkwrmO6vNpC0ZoRFBytzNmL/NbBuRyVHT6jLRu530h1z0JrZsM5RcHtNIz/b49R8e5Qmb3oSfAvd01oqDGUoaId7HRfTgxWGHuYZCmgIXIUeia5cu7xbd24FgycBI67UlKN5XO72odjoIOCz7VJ/tNNnS3leuUcst52aZAiXZFfHqa2LkA6b09EWgAI1KyJo/tk2KZCGYhS8hGI4WqaI23UJoH5YTB5nefC/TMMkMhv6onMjNCqUT/R7OfYw0B+f4qAVpZjqTRvK6kZpWwU0nwnaMQUREW7HYwvVwrSfZUMi3OaW1vOvM/ngfGgQ4YdfpRG65NQOz72SCk3QBXtYfFRRqcDuDXvR8g5gUXKN22CheqkrPRsK9lCJDvJupweWwouYPx03xekKtbJoSH6qRSTm9vjfntd9i6g1qEwaffA3Ww3F+l7URF0Hdr+2g==;5:sW4jm9XOYnspUD5OD6aXk393A3Q6hWsKxiLA8XZAO9mEJ3QAs2nDnh45n8i3a5CofUledQ5LlhvlKhaYjvt0LPe3yjx33zOveEq/3XvQbBzNFvCEG2Z1wcqNPTB5TIPybxgaz95z86+kLiURhv30oXTYqGIHypg8EmjKwhnTdGc=;24:SikQDjna3vzsDNMcqtbmpNTkHctisUDRizHM1TFEZq5G73RTWkLXfCh6MpIPjebByDDLoNIrwFYNsNXoZQJz/GuCj/6PdlOCwNsZLcFomag=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2777;7:0urkigwyQixhWcwQsPyvfLqcKsFqVj1lj6VF+yaemHUhLcTCY/GGSyOoBuNTFSsb9pZCnbwBktwVgnE7RKQUFfnDfi88WaQ3EXRebWw+oNp+5gACShKu3S99OlvcNA8HG89vcuJ8JEZ8HI1rSVVxFunlxEdK9Pf4q8bIY883biJyYvzOVz4qmaaTVSJeIF/zZDQ+AiGt6AnsiciYVWUOEIP9qj5pv7do+wTPOv+H9srQttpbb/UedF3OjEGhfz77
-X-MS-Office365-Filtering-Correlation-Id: 2a28c5ea-6331-4352-906e-08d5a4701658
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 14:32:45.1769 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a28c5ea-6331-4352-906e-08d5a4701658
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0202MB2777
+        id S1753269AbeDQOdx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:33:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50494 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752670AbeDQOds (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:33:48 -0400
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+To: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: [PATCH v10 00/25] Speculative page faults
+Date: Tue, 17 Apr 2018 16:33:06 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18041714-0020-0000-0000-00000412EC56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041714-0021-0000-0000-000042A72CE7
+Message-Id: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the new probe style for i2c drivers.
+This is a port on kernel 4.16 of the work done by Peter Zijlstra to
+handle page fault without holding the mm semaphore [1].
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/i2c/muxes/i2c-mux-ltc4306.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+The idea is to try to handle user space page faults without holding the
+mmap_sem. This should allow better concurrency for massively threaded
+process since the page fault handler will not wait for other threads memory
+layout change to be done, assuming that this change is done in another part
+of the process's memory space. This type page fault is named speculative
+page fault. If the speculative page fault fails because of a concurrency is
+detected or because underlying PMD or PTE tables are not yet allocating, it
+is failing its processing and a classic page fault is then tried.
 
-diff --git a/drivers/i2c/muxes/i2c-mux-ltc4306.c b/drivers/i2c/muxes/i2c-mux-ltc4306.c
-index 311b1cced0c0..a9af93259b19 100644
---- a/drivers/i2c/muxes/i2c-mux-ltc4306.c
-+++ b/drivers/i2c/muxes/i2c-mux-ltc4306.c
-@@ -206,8 +206,7 @@ static const struct of_device_id ltc4306_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, ltc4306_of_match);
- 
--static int ltc4306_probe(struct i2c_client *client,
--			 const struct i2c_device_id *id)
-+static int ltc4306_probe(struct i2c_client *client)
- {
- 	struct i2c_adapter *adap = to_i2c_adapter(client->dev.parent);
- 	const struct chip_desc *chip;
-@@ -221,7 +220,7 @@ static int ltc4306_probe(struct i2c_client *client,
- 	chip = of_device_get_match_data(&client->dev);
- 
- 	if (!chip)
--		chip = &chips[id->driver_data];
-+		chip = &chips[i2c_match_id(ltc4306_id, client)->driver_data];
- 
- 	idle_disc = device_property_read_bool(&client->dev,
- 					      "i2c-mux-idle-disconnect");
-@@ -310,7 +309,7 @@ static struct i2c_driver ltc4306_driver = {
- 		.name	= "ltc4306",
- 		.of_match_table = of_match_ptr(ltc4306_of_match),
- 	},
--	.probe		= ltc4306_probe,
-+	.probe_new	= ltc4306_probe,
- 	.remove		= ltc4306_remove,
- 	.id_table	= ltc4306_id,
- };
+The speculative page fault (SPF) has to look for the VMA matching the fault
+address without holding the mmap_sem, this is done by introducing a rwlock
+which protects the access to the mm_rb tree. Previously this was done using
+SRCU but it was introducing a lot of scheduling to process the VMA's
+freeing
+operation which was hitting the performance by 20% as reported by Kemi Wang
+[2].Using a rwlock to protect access to the mm_rb tree is limiting the
+locking contention to these operations which are expected to be in a O(log
+n)
+order. In addition to ensure that the VMA is not freed in our back a
+reference count is added and 2 services (get_vma() and put_vma()) are
+introduced to handle the reference count. When a VMA is fetch from the RB
+tree using get_vma() is must be later freeed using put_vma(). Furthermore,
+to allow the VMA to be used again by the classic page fault handler a
+service is introduced can_reuse_spf_vma(). This service is expected to be
+called with the mmap_sem hold. It checked that the VMA is still matching
+the specified address and is releasing its reference count as the mmap_sem
+is hold it is ensure that it will not be freed in our back. In general, the
+VMA's reference count could be decremented when holding the mmap_sem but it
+should not be increased as holding the mmap_sem is ensuring that the VMA is
+stable. I can't see anymore the overhead I got while will-it-scale
+benchmark anymore.
+
+The VMA's attributes checked during the speculative page fault processing
+have to be protected against parallel changes. This is done by using a per
+VMA sequence lock. This sequence lock allows the speculative page fault
+handler to fast check for parallel changes in progress and to abort the
+speculative page fault in that case.
+
+Once the VMA is found, the speculative page fault handler would check for
+the VMA's attributes to verify that the page fault has to be handled
+correctly or not. Thus the VMA is protected through a sequence lock which
+allows fast detection of concurrent VMA changes. If such a change is
+detected, the speculative page fault is aborted and a *classic* page fault
+is tried.  VMA sequence lockings are added when VMA attributes which are
+checked during the page fault are modified.
+
+When the PTE is fetched, the VMA is checked to see if it has been changed,
+so once the page table is locked, the VMA is valid, so any other changes
+leading to touching this PTE will need to lock the page table, so no
+parallel change is possible at this time.
+
+The locking of the PTE is done with interrupts disabled, this allows to
+check for the PMD to ensure that there is not an ongoing collapsing
+operation. Since khugepaged is firstly set the PMD to pmd_none and then is
+waiting for the other CPU to have catch the IPI interrupt, if the pmd is
+valid at the time the PTE is locked, we have the guarantee that the
+collapsing opertion will have to wait on the PTE lock to move foward. This
+allows the SPF handler to map the PTE safely. If the PMD value is different
+than the one recorded at the beginning of the SPF operation, the classic
+page fault handler will be called to handle the operation while holding the
+mmap_sem. As the PTE lock is done with the interrupts disabled, the lock is
+done using spin_trylock() to avoid dead lock when handling a page fault
+while a TLB invalidate is requested by an other CPU holding the PTE.
+
+In pseudo code, this could be seen as:
+    speculative_page_fault()
+    {
+	    vma = GET_VMA_vma()
+	    check vma sequence count
+	    check vma's support
+	    disable interrupt
+		  check pgd,p4d,...,pte
+		  save pmd and pte in vmf
+		  save vma sequence counter in vmf
+	    enable interrupt
+	    check vma sequence count
+	    handle_pte_fault(vma)
+		    ..
+		    page = alloc_page()
+		    pte_map_lock()
+			    disable interrupt
+				    abort if sequence counter has changed
+				    abort if pmd or pte has changed
+				    pte map and lock
+			    enable interrupt
+		    if abort
+		       free page
+		       abort
+		    ...
+    }
+    
+    arch_fault_handler()
+    {
+	    if (speculative_page_fault(&vma)) goto done
+    again:
+	    lock(mmap_sem)
+	    if (!vma)
+	       try_to_reuse(vma)
+	    else
+	       vma = find_vma();
+	    handle_pte_fault(vma);
+	    if retry
+	       unlock(mmap_sem)
+	       vma = NULL;
+	       goto again;
+    done
+	    handle fault error
+    }
+
+Support for THP is not done because when checking for the PMD, we can be
+confused by an in progress collapsing operation done by khugepaged. The
+issue is that pmd_none() could be true either if the PMD is not already
+populated or if the underlying PTE are in the way to be collapsed. So we
+cannot safely allocate a PMD if pmd_none() is true.
+
+This series add a new software performance event named 'speculative-faults'
+or 'spf'. It counts the number of successful page fault event handled in a
+speculative way. When recording 'faults,spf' events, the faults one is
+counting the total number of page fault events while 'spf' is only counting
+the part of the faults processed in a speculative way.
+
+There are some trace events introduced by this series. They allow to
+identify why the page faults where not processed in a speculative way. This
+doesn't take in account the faults generated by a monothreaded process
+which directly processed while holding the mmap_sem. This trace events are
+grouped in a system named 'pagefault', they are:
+ - pagefault:spf_pte_lock : if the pte was already locked by another thread
+ - pagefault:spf_vma_changed : if the VMA has been changed in our back
+ - pagefault:spf_vma_noanon : the vma->anon_vma field was not yet set.
+ - pagefault:spf_vma_notsup : the VMA's type is not supported
+ - pagefault:spf_vma_access : the VMA's access right are not respected
+ - pagefault:spf_pmd_changed : the upper PMD pointer has changed in our
+ back.
+
+To record all the related events, the easier is to run perf with the
+following arguments :
+$ perf stat -e 'faults,spf,pagefault:*' <command>
+
+There is also a dedicated vmstat counter showing the number of successful
+page fault handled in a speculative way. I can be seen this way:
+$ grep speculative_pgfault /proc/vmstat
+
+This series builds on top of v4.16-mmotm-2018-04-13-17-28 and is
+functional on x86 and PowerPC.
+
+---------------------
+Real Workload results
+
+As mentioned in previous email, we did non official runs using a "popular
+in memory multithreaded database product" on 176 cores SMT8 Power system
+which showed a 30% improvements in the number of transaction processed per
+second. This run has been done on the v6 series, but changes introduced in
+this new verion should not impact the performance boost seen.
+
+Here are the perf data captured during 2 of these runs on top of the v8
+series:
+		vanilla		spf
+faults		89.418		101.364		
+spf                n/a		 97.989
+
+With the SPF kernel, most of the page fault were processed in a speculative
+way.
+
+Ganesh Mahendran had backported the series on top of a 4.9 kernel and give
+it
+a try on an android device. He reported that the application launch time
+was
+improved by 15%, and for large applications (~100 threads) by 20% [3].
+
+------------------
+Benchmarks results
+
+Base kernel is v4.16
+SPF is BASE + this series
+
+Kernbench:
+----------
+Here are the results on a 16 CPUs X86 guest using kernbench on a 4.15
+kernel (kernel is build 5 times):
+
+Average	Half load -j 8
+		 Run	(std deviation)
+		 BASE			SPF
+Elapsed	Time	 152.5	 (0.631585)	151.406	(0.391446)	-0.72%
+User	Time	 1036.4	 (2.42065)	1025.2	(1.9909)	-1.08%
+System	Time	 125.688 (0.403695)	126.794	(0.716715)	0.88%
+Percent	CPU	 761.4	 (2.07364)	760.4	(1.34164)	-0.13%
+Context	Switches 51429	 (804.93)	51435.6	(1108.12)	0.01%
+Sleeps		 104625	 (510.468)	105877	(703.774)	1.20%
+						
+Average	Optimal	load -j	16
+		 Run	(std deviation)
+		 BASE			SPF
+Elapsed	Time	 75.51	 (0.576498)	74.684	(0.279159)	-1.09%
+User	Time	 970.701 (69.2768)	964.945	(63.5283)	-0.59%
+System	Time	 111.965 (14.4711)	112.465	(15.1159)	0.45%
+Percent	CPU	 1044.8	 (298.806)	1051.3	(306.658)	0.62%
+Context	Switches 75261.5 (25129.6)	75387.4	(25264.8)	0.17%
+Sleeps		 109660	 (5349.62)	110279	(4704.95)	0.56%
+
+During a run on the SPF, perf events were captured:
+ Performance counter stats for '../kernbench -M':
+         513045402      faults
+               202      spf
+                 0      pagefault:spf_pte_lock
+                 0      pagefault:spf_vma_changed
+                 0      pagefault:spf_vma_noanon
+              2210      pagefault:spf_vma_notsup
+                 0      pagefault:spf_vma_access
+                 0      pagefault:spf_pmd_changed
+
+    1837.394054020 seconds time elapsed
+
+Very few speculative page fault were recorded as most of the processes
+involved are monothreaded (sounds that on this architecture some threads
+were created during the kernel build processing).
+
+Here are the kerbench results on a 80 CPUs Power8 system:
+
+Average	Half load -j 40
+		 Run	(std deviation)
+		 BASE			SPF
+Elapsed	Time	 117.222 (0.733294)	116.784	(0.452139)	-0.37%
+User	Time	 4485.58 (27.1243)	4473.9	(8.0409)	-0.26%
+System	Time	 134.228 (0.601764)	134.874	(0.680169)	0.48%
+Percent	CPU	 3940.4	 (12.4218)	3945.8	(12.5579)	0.14%
+Context	Switches 92414.8 (689.529)	92448.6	(511.846)	0.04%
+Sleeps		 318388	 (758.783)	318758	(1758.96)	0.12%
+						
+Average	Optimal	load -j	80
+		 Run	(std deviation)
+		 BASE			SPF
+Elapsed	Time	 107.102 (0.73605)	107.872	(1.08573)	0.72%
+User	Time	 5875.13 (1464.89)	5862.59	(1463.87)	-0.21%
+System	Time	 157.006 (24.0146)	157.731	(24.1209)	0.46%
+Percent	CPU	 5445.4	 (1587.03)	5417.6	(1552.41)	-0.51%
+Context	Switches 221714	 (136312)	221526	(136071)	-0.08%
+Sleeps		 332500	 (15173.2)	332037	(14202.1)	-0.14%
+
+During a run on the SPF, perf events were captured:
+ Performance counter stats for '../kernbench -M':
+         116933988      faults
+                 0      spf
+                 0      pagefault:spf_pte_lock
+                 0      pagefault:spf_vma_changed
+                 0      pagefault:spf_vma_noanon
+               476      pagefault:spf_vma_notsup
+                 0      pagefault:spf_vma_access
+                 0      pagefault:spf_pmd_changed
+
+Most of the processes involved are monothreaded so SPF is not activated but
+there is no impact on the performance.
+
+Ebizzy:
+-------
+The test is counting the number of records per second it can manage, the
+higher is the best. I run it like this 'ebizzy -mTRp'. To get consistent
+result I repeated the test 100 times and measure the average result. The
+number is the record processes per second, the higher is the best.
+
+  		BASE		SPF		delta	
+16 CPUs x86 VM	12405.52	91104.52	634.39%
+80 CPUs P8 node 37880.01	76201.05	101.16%
+
+Here are the performance counter read during a run on a 16 CPUs x86 VM:
+ Performance counter stats for './ebizzy -mRTp':
+            860074      faults
+            856866      spf
+               285      pagefault:spf_pte_lock
+              1506      pagefault:spf_vma_changed
+                 0      pagefault:spf_vma_noanon
+                73      pagefault:spf_vma_notsup
+                 0      pagefault:spf_vma_access
+                 0      pagefault:spf_pmd_changed
+
+And the ones captured during a run on a 80 CPUs Power node:
+ Performance counter stats for './ebizzy -mRTp':
+            722695      faults
+            699402      spf
+             16048      pagefault:spf_pte_lock
+              6838      pagefault:spf_vma_changed
+                 0      pagefault:spf_vma_noanon
+               277      pagefault:spf_vma_notsup
+                 0      pagefault:spf_vma_access
+                 0      pagefault:spf_pmd_changed
+
+In ebizzy's case most of the page fault were handled in a speculative way,
+leading the ebizzy performance boost.
+
+------------------
+Changes since v9:
+ - Accounted for all review feedback from David Rientjes and Jerome Glisse,
+   hopefully
+ - Fix a lockdep warning when populate_vma_page_range() is called by
+   mprotect_fixup(). The call to vm_write_end(vma) is now made before
+calling
+   populate_vma_page_range() since vma locking is not required here.
+ - Introduce INIT_VMA() move VMA's sequence and refcount initialization out
+   of __vma_link_rb(). This fix various lockdep warning raised when
+   unmap_region() may be called before vma_link() (patch 7 & 8)
+ - Allow CONFIG_SPECULATIVE_PAGE_FAULT to be switched off
+ - Pass VMA's flag value to maybe_mkwrite() allowing to use the cached ones
+   (patch 12)
+ - Make CONFIG_SPECULATIVE_PAGE_FAULT user configurable
+ - Add speculative page fault vmstats
+ - Remove #ifdef in arch/*/mm/fault.c
+Changes since v8:
+ - Don't check PMD when locking the pte when THP is disabled
+   Thanks to Daniel Jordan for reporting this.
+ - Rebase on 4.16
+Changes since v7:
+ - move pte_map_lock() and pte_spinlock() upper in mm/memory.c (patch 4 &
+   5)
+ - make pte_unmap_same() compatible with the speculative page fault (patch
+   6)
+Changes since v6:
+ - Rename config variable to CONFIG_SPECULATIVE_PAGE_FAULT (patch 1)
+ - Review the way the config variable is set (patch 1 to 3)
+ - Introduce mm_rb_write_*lock() in mm/mmap.c (patch 18)
+ - Merge patch introducing pte try locking in the patch 18.
+Changes since v5:
+ - use rwlock agains the mm RB tree in place of SRCU
+ - add a VMA's reference count to protect VMA while using it without
+   holding the mmap_sem.
+ - check PMD value to detect collapsing operation
+ - don't try speculative page fault for mono threaded processes
+ - try to reuse the fetched VMA if VM_RETRY is returned
+ - go directly to the error path if an error is detected during the SPF
+   path
+ - fix race window when moving VMA in move_vma()
+Changes since v4:
+ - As requested by Andrew Morton, use CONFIG_SPF and define it earlier in
+ the series to ease bisection.
+Changes since v3:
+ - Don't build when CONFIG_SMP is not set
+ - Fixed a lock dependency warning in __vma_adjust()
+ - Use READ_ONCE to access p*d values in handle_speculative_fault()
+ - Call memcp_oom() service in handle_speculative_fault()
+Changes since v2:
+ - Perf event is renamed in PERF_COUNT_SW_SPF
+ - On Power handle do_page_fault()'s cleaning
+ - On Power if the VM_FAULT_ERROR is returned by
+ handle_speculative_fault(), do not retry but jump to the error path
+ - If VMA's flags are not matching the fault, directly returns
+ VM_FAULT_SIGSEGV and not VM_FAULT_RETRY
+ - Check for pud_trans_huge() to avoid speculative path
+ - Handles _vm_normal_page()'s introduced by 6f16211df3bf
+ ("mm/device-public-memory: device memory cache coherent with CPU")
+ - add and review few comments in the code
+Changes since v1:
+ - Remove PERF_COUNT_SW_SPF_FAILED perf event.
+ - Add tracing events to details speculative page fault failures.
+ - Cache VMA fields values which are used once the PTE is unlocked at the
+ end of the page fault events.
+ - Ensure that fields read during the speculative path are written and read
+ using WRITE_ONCE and READ_ONCE.
+ - Add checks at the beginning of the speculative path to abort it if the
+ VMA is known to not be supported.
+Changes since RFC V5 [5]
+ - Port to 4.13 kernel
+ - Merging patch fixing lock dependency into the original patch
+ - Replace the 2 parameters of vma_has_changed() with the vmf pointer
+ - In patch 7, don't call __do_fault() in the speculative path as it may
+ want to unlock the mmap_sem.
+ - In patch 11-12, don't check for vma boundaries when
+ page_add_new_anon_rmap() is called during the spf path and protect against
+ anon_vma pointer's update.
+ - In patch 13-16, add performance events to report number of successful
+ and failed speculative events.
+
+[1]
+http://linux-kernel.2935.n7.nabble.com/RFC-PATCH-0-6-Another-go-at-speculative-page-faults-tt965642.html#none
+[2] https://patchwork.kernel.org/patch/9999687/
+[3] https://lkml.org/lkml/2018/3/21/894
+
+
+Laurent Dufour (21):
+  mm: introduce CONFIG_SPECULATIVE_PAGE_FAULT
+  x86/mm: define ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+  powerpc/mm: set ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+  mm: introduce pte_spinlock for FAULT_FLAG_SPECULATIVE
+  mm: make pte_unmap_same compatible with SPF
+  mm: introduce INIT_VMA()
+  mm: protect VMA modifications using VMA sequence count
+  mm: protect mremap() against SPF hanlder
+  mm: protect SPF handler against anon_vma changes
+  mm: cache some VMA fields in the vm_fault structure
+  mm/migrate: Pass vm_fault pointer to migrate_misplaced_page()
+  mm: introduce __lru_cache_add_active_or_unevictable
+  mm: introduce __vm_normal_page()
+  mm: introduce __page_add_new_anon_rmap()
+  mm: protect mm_rb tree with a rwlock
+  mm: adding speculative page fault failure trace events
+  perf: add a speculative page fault sw event
+  perf tools: add support for the SPF perf event
+  mm: speculative page fault handler return VMA
+  mm: add speculative page fault vmstats
+  powerpc/mm: add speculative page fault
+
+Peter Zijlstra (4):
+  mm: prepare for FAULT_FLAG_SPECULATIVE
+  mm: VMA sequence count
+  mm: provide speculative fault infrastructure
+  x86/mm: add speculative pagefault handling
+
+ arch/powerpc/Kconfig                  |   1 +
+ arch/powerpc/mm/fault.c               |  33 +-
+ arch/x86/Kconfig                      |   1 +
+ arch/x86/mm/fault.c                   |  42 ++-
+ fs/exec.c                             |   2 +-
+ fs/proc/task_mmu.c                    |   5 +-
+ fs/userfaultfd.c                      |  17 +-
+ include/linux/hugetlb_inline.h        |   2 +-
+ include/linux/migrate.h               |   4 +-
+ include/linux/mm.h                    | 145 +++++++-
+ include/linux/mm_types.h              |   7 +
+ include/linux/pagemap.h               |   4 +-
+ include/linux/rmap.h                  |  12 +-
+ include/linux/swap.h                  |  10 +-
+ include/linux/vm_event_item.h         |   3 +
+ include/trace/events/pagefault.h      |  88 +++++
+ include/uapi/linux/perf_event.h       |   1 +
+ kernel/fork.c                         |   5 +-
+ mm/Kconfig                            |  22 ++
+ mm/huge_memory.c                      |   6 +-
+ mm/hugetlb.c                          |   2 +
+ mm/init-mm.c                          |   3 +
+ mm/internal.h                         |  20 ++
+ mm/khugepaged.c                       |   5 +
+ mm/madvise.c                          |   6 +-
+ mm/memory.c                           | 649 +++++++++++++++++++++++++++++-----
+ mm/mempolicy.c                        |  51 ++-
+ mm/migrate.c                          |   6 +-
+ mm/mlock.c                            |  13 +-
+ mm/mmap.c                             | 229 +++++++++---
+ mm/mprotect.c                         |   4 +-
+ mm/mremap.c                           |  13 +
+ mm/nommu.c                            |   2 +-
+ mm/rmap.c                             |   5 +-
+ mm/swap.c                             |   6 +-
+ mm/swap_state.c                       |   8 +-
+ mm/vmstat.c                           |   5 +-
+ tools/include/uapi/linux/perf_event.h |   1 +
+ tools/perf/util/evsel.c               |   1 +
+ tools/perf/util/parse-events.c        |   4 +
+ tools/perf/util/parse-events.l        |   1 +
+ tools/perf/util/python.c              |   1 +
+ 42 files changed, 1231 insertions(+), 214 deletions(-)
+ create mode 100644 include/trace/events/pagefault.h
+
 -- 
-2.11.0
+2.7.4
