@@ -1,28 +1,28 @@
 Return-Path: <alastair@au1.ibm.com>
-X-Google-Smtp-Source: AIpwx4/yHID4KAatns2179q5XtheVO1fx7Vgr1KKsR5w8+ecAGbWcHGFNaaMUtuNURXttZ9sZrAh
-ARC-Seal: i=1; a=rsa-sha256; t=1524013868; cv=none;
+X-Google-Smtp-Source: AIpwx4+uDWtvRjczdsiQ5UFK0lc/m6u5qq+CMSfJIlGPip6Kcfk1NBMIJxA4fQSqTUHCmNZSv9H6
+ARC-Seal: i=1; a=rsa-sha256; t=1523931073; cv=none;
         d=google.com; s=arc-20160816;
-        b=I80CaF+f5WJ+FK8kgMLmC0R119HbeDyAJA9WbWDWyZtgBUy860Oo62nj2jwRWuaeIw
-         PSI3W8FoYcTson7npZE7yECtKBDX8FNptM4RlkFSssyj9jQbfMZN/pTFiJtOtYsPOo9E
-         rTZdyY8Ep8KYzJvtjWcm8rapbAShgOlRG3GwRavShScJrOrBGKJV/mDXkDPLJOeUqQ14
-         O/HZY7NY3rplZKogLJlkWgERnjYLFUpoEklkP4V3ZzCUW3+JPLjcYk+bfK2NGr3XUCDL
-         bqRuvEDZAMhFn1gTENuBW0mxLiWyifn/vo2E+WWchN0PSmfDn+foCbGX4vDLilFowJjJ
-         zPzA==
+        b=AVmy+VzoHYXmROiTLkkz4KlIH8zKN5UTc+IeaqvREDRDR+a+Mj6EmrWLVvlHBBklGr
+         FBV7w6Q2HXbSY4qMAzGSUan+l4B0GIkYI6pQXEMoQgjABFY9D1rcRdV4ivSD4eF+SKmS
+         PeZ98EPJkTpftVTufYl3z9p1sLD5XYJGVOmnk4OofENkUeZFRPrigiRw/pzsPQbHVt7v
+         fT47Vbz1ZJTJsZv/B0SCQna8PW/PQwTvX/ex6aAPesL6X60WW8W5JufPx59lYFmhdUiP
+         7rHFUrvLpavYXtMB8eHh9UiIFsiqWZl6/gGwUFrzkS6m3KLerWLcldceMVPItPIx1c3O
+         NcIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:references:in-reply-to:date:subject:cc:to:from
          :arc-authentication-results;
         bh=Bm7y3+5fSB9O4GJfCPDTDYWXNrlrL/GCr79GrFX39b0=;
-        b=wplmPp6pYz5DD2Kknc/v/jAvJHkvI+cuBiRnUTf0wuHqM/2BKJUo1d888mVYW0DSXp
-         AFBbcOBrZVHTwe2nOswb+VI418AxB7dTw2igPibdxQZa/GWPKQ4WCVXkkhG4z0ndYkFE
-         noN/0LlhLA3uzbot7vJsgIsEIC47avQTTFrRXqb0FxEfyxjIyumdAmIXiPvsa3Pbs0K7
-         tMsTv+JgsQAEflkCue/MDw+vZBLTFzieCUPRUGPA4FpceT82UaYhKP1TCcDkRGRkxUEe
-         yLD51GS8kZi29gJRYtyhLeojnwMau23d8gbnfF8+wivD4V1iprG/ap0LRvN2VrnSn3Eo
-         Xi8A==
+        b=a03is5/y+GIkz9If0/Rk1Xymmia9V6s6MZ5eXmA4yA8x4VR4mt9DFL6RC0edC3rV/5
+         EdWXnt8ETZr7zO24G3dIAhVVx+k8+SqGgBBZWg5FG+2Amk0fA4h2eeVN5acIeg/1Sc+7
+         9HY6cYp9OurXDokvBazCOuI4FQ9z2A7rRBG6KL3QRV5ncpQq4mexUQTXpEKKOp+N2IA5
+         7JNSYT6nW2Npkbk7TIGyTdpb3QRu2HjNg57nWIRj0CtSDjXbxzvBUjX6Sdm65g75UpYp
+         7cetRck4zVzj9rwWmzHLlu87e1aa+74d9r3wzA/KpJL9r9GHipkrvxKMX5SDZaosc5et
+         sbIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
+       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
+       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 From: "Alastair D'Silva" <alastair@au1.ibm.com>
 To: linuxppc-dev@lists.ozlabs.org
@@ -33,27 +33,26 @@ Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, mikey@neuling.org,
         gregkh@linuxfoundation.org, arnd@arndb.de,
         andrew.donnellan@au1.ibm.com, fbarrat@linux.vnet.ibm.com,
         corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
-Subject: [PATCH v2 4/7] ocxl: Rename pnv_ocxl_spa_remove_pe to clarify it's action
-Date: Wed, 18 Apr 2018 11:08:07 +1000
+Subject: [PATCH 4/7] ocxl: Rename pnv_ocxl_spa_remove_pe to clarify it's action
+Date: Tue, 17 Apr 2018 12:09:47 +1000
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180418010810.30937-1-alastair@au1.ibm.com>
+In-Reply-To: <20180417020950.21446-1-alastair@au1.ibm.com>
 References: <20180417020950.21446-1-alastair@au1.ibm.com>
- <20180418010810.30937-1-alastair@au1.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18041801-0008-0000-0000-000004EC75A6
+x-cbid: 18041702-0040-0000-0000-0000042FBD4D
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041801-0009-0000-0000-00001E807C81
-Message-Id: <20180418010810.30937-5-alastair@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_13:,,
+x-cbparentid: 18041702-0041-0000-0000-00002633C4B4
+Message-Id: <20180417020950.21446-5-alastair@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804180008
+ definitions=main-1804170020
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597957549805591967?=
-X-GMAIL-MSGID: =?utf-8?q?1598044365229771622?=
+X-GMAIL-MSGID: =?utf-8?q?1597957549805591967?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
