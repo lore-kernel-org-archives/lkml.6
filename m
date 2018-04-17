@@ -1,123 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752560AbeDQIbv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 04:31:51 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:34484 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752144AbeDQIbk (ORCPT
+        id S1752649AbeDQIcq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 04:32:46 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:26511 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751235AbeDQIco (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:31:40 -0400
-X-Google-Smtp-Source: AIpwx4/9o/jI82AsUICG8J6knfGCUhILHftAcuNV0cIxPziEUOE9AIVBgrVgJGtWo/oMzuW6WxSB15gXrdDap8JZAhw=
-MIME-Version: 1.0
-In-Reply-To: <OSBPR01MB20548CE7A728549EFA2B9ADBD2B70@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-References: <1523349015-37985-1-git-send-email-michel.pollet@bp.renesas.com>
- <1523349015-37985-4-git-send-email-michel.pollet@bp.renesas.com>
- <20180413180549.yjzkl2yf7osz7myt@rob-hp-laptop> <OSBPR01MB20548CE7A728549EFA2B9ADBD2B70@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Apr 2018 10:31:38 +0200
-X-Google-Sender-Auth: 6ZCRYeM791BNk5VnNMKAVO3BUwI
-Message-ID: <CAMuHMdWoW6QXofvS0Ju5VL1WivmWWMx8c=ppVbKe1+2eO6LsFg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/8] dt-bindings: mfd: renesas,rzn1-sysctrl: document
- RZ/N1 sysctrl node
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Rob Herring <robh@kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        "buserror+upstream@gmail.com" <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>,
+        Tue, 17 Apr 2018 04:32:44 -0400
+From: Olivier MOYSAN <olivier.moysan@st.com>
+To: "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org"
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "kernel@stlinux.com" <kernel@stlinux.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        "rmk@arm.linux.org.uk" <rmk@arm.linux.org.uk>,
+        "jsarha@ti.com" <jsarha@ti.com>
+Subject: Re: [PATCH 0/3] ASoC: stm32: sai: add support of iec958 controls
+Thread-Topic: [PATCH 0/3] ASoC: stm32: sai: add support of iec958 controls
+Thread-Index: AQHTuugk+f/v2G3G5kiIINnSVNO0DaQEtPsA
+Date: Tue, 17 Apr 2018 08:29:17 +0000
+Message-ID: <a0552849-47fa-dc72-a512-a3e075adb07f@st.com>
+References: <1520958428-10930-1-git-send-email-olivier.moysan@st.com>
+In-Reply-To: <1520958428-10930-1-git-send-email-olivier.moysan@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.116]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2457FA169E377F43A07A71F8D69433AF@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3H8Wu8q029305
 
-Hi Michel,
+Hello,
 
-On Tue, Apr 17, 2018 at 9:56 AM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> On 13 April 2018 19:06, Rob Herring:
->> On Tue, Apr 10, 2018 at 09:30:03AM +0100, Michel Pollet wrote:
->> > The Renesas RZ/N1 Family (Part #R9A06G0xx) has a multi-function system
->> > controller. This documents the node used to encapsulate it's sub
->> > drivers.
->> >
->> > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
->> > ---
->> >  .../bindings/mfd/renesas,rzn1-sysctrl.txt          | 23
->> ++++++++++++++++++++++
->> >  1 file changed, 23 insertions(+)
->> >  create mode 100644
->> > Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
->> >
->> > diff --git
->> > a/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
->> > b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
->> > new file mode 100644
->> > index 0000000..9897f8f
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/mfd/renesas,rzn1-sysctrl.txt
->> > @@ -0,0 +1,23 @@
->> > +DT bindings for the Renesas RZ/N1 System Controller
->> > +
->> > +== System Controller Node ==
->> > +
->> > +The system controller node currently only hosts a single sub-node to
->> > +handle the rebooting of the CPU. Eventually it will host the clock
->> > +driver, SMP start handler, watchdog etc.
->>
->> Please submit a complete binding for the h/w block.
->>
->> Again, if the only reason you have sub nodes is to define compatible strings
->> and in turn enumerate drivers, then you don't need the nodes in DT. DT is
->> not the only way to instantiate drivers.
->
-> I can't document it before I have the code. There is 0.000% chance of my clock
-> driver for example to be upstreamed the way I would imagine making it -- in
-> fact pretty much any other driver will have to be reworked to fit, so documenting
-> bindings first is impossible.
->
-> So, if I understand correctly, you are telling me to make a 'sysctrl' driver and use
-> platform_device to instantiate my sub-drivers? Isn't that what machine files used
-> to do? And they are now banned?
->
-> Geert, any guidance here?
+I guess the blocking patch in this patchset is the patch "add IEC958 
+channel status control helper". This patch has been reviewed several 
+times, but did not get a ack so far.
+If you think these helpers will not be merged, I will reintegrate the 
+corresponding code in stm driver.
+Please let me know, if I need to prepare a v2 without helpers, or if we 
+can go further in the review of iec helpers patch ?
 
-It depends on how many and which subnodes you want to add to  the sysctrl
-node. Without a complete binding for the block, we cannot know.
-If the major part will be the clock driver, I would make that the main
-driver for the sysctrl node. The clock driver can easily register
-e.g. a simple reset handler.
+Best regards
+olivier
 
-Cfr. the renesas-cpg-mssr driver, which also handles (module) resets.
-There are plenty of other examples of drivers providing multiple
-functionalities (e.g. pinctrl drivers also registering GPIO controllers).
 
-If a monolithic driver becomes too large, it can still be split using the
-MFD framework.
-E.g. the BD9571 PMIC driver is split in an MFD core driver, and 2 drivers
-for different functionalities:
-
-   drivers/gpio/gpio-bd9571mwv.c
-   drivers/mfd/bd9571mwv.c
-   drivers/regulator/bd9571mwv-regulator.c
-   include/linux/mfd/bd9571mwv.h
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+On 03/13/2018 05:27 PM, Olivier Moysan wrote:
+> This patchset adds support of iec958 controls to STM32 SAI driver.
+> 
+> The patch makes use of iec958 control status helpers previously proposed
+> and discussed through the following threads:
+> https://patchwork.kernel.org/patch/8062601/
+> https://patchwork.kernel.org/patch/8091551/ (v2)
+> https://patchwork.kernel.org/patch/8462961/ (v3)
+> https://patchwork.kernel.org/patch/8533731/ (v4)
+> 
+> Olivier Moysan (3):
+>    ALSA: pcm: add IEC958 channel status control helper
+>    ASoC: stm32: sai: add iec958 controls support
+>    ASoC: dmaengine_pcm: document process callback
+> 
+>   include/sound/dmaengine_pcm.h |   2 +
+>   include/sound/pcm_iec958.h    |  19 +++++++
+>   sound/core/pcm_iec958.c       | 114 ++++++++++++++++++++++++++++++++++++++++++
+>   sound/soc/stm/Kconfig         |   1 +
+>   sound/soc/stm/stm32_sai_sub.c | 101 ++++++++++++++++++++++++++++++++-----
+>   5 files changed, 225 insertions(+), 12 deletions(-)
+> 
