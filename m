@@ -1,67 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeDQR3r (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 13:29:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36020 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751230AbeDQR3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 13:29:46 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63E1C2175C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 17 Apr 2018 14:29:40 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: [PATCH v2] tracing/x86: Update syscall trace events to handle
- new x86 syscall func names
-Message-ID: <20180417172940.GA3625@kernel.org>
-References: <20180417130702.01575029@gandalf.local.home>
+        id S1752682AbeDQR3v (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 13:29:51 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:50104 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751230AbeDQR3s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 13:29:48 -0400
+Subject: Re: [RESEND PATCH v2 0/4] ARM: davinci: remove the mach-specific
+ aemif driver - part 1
+To: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180417102917.7794-1-brgl@bgdev.pl>
+ <2a2ac117-900c-77b6-f247-49777493e55f@ti.com>
+ <CAMpxmJUBFEF7FDp910HwsrNhGhwJDrgRR_9qL0DE5W1M=39MgQ@mail.gmail.com>
+From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <e3fc3019-888c-cbc3-5e1b-e24c30bc4d49@oracle.com>
+Date: Tue, 17 Apr 2018 10:29:09 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417130702.01575029@gandalf.local.home>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAMpxmJUBFEF7FDp910HwsrNhGhwJDrgRR_9qL0DE5W1M=39MgQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8866 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=866
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804170152
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Apr 17, 2018 at 01:07:02PM -0400, Steven Rostedt escreveu:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On 4/17/2018 5:36 AM, Bartosz Golaszewski wrote:
+> 2018-04-17 12:53 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
+>> Hi Bartosz,
+
+[...]
+
+>>> This series applies on top of v8 of David Lechner's CCF series.
+>>
+>> Are there any patches in the series that can safely be applied to v4.17-rc1?
+
 > 
-> Arnaldo noticed that the latest kernel is missing the syscall event system
-> directory in x86. I bisected it down to d5a00528b58c ("syscalls/core,
-> syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()").
+> Hi Sekhar,
 > 
-> The system call trace events are special, as there is only one trace event
-> for all system calls (the raw_syscalls). But a macro that wraps the system
-> calls creates meta data for them that copies the name to find the system
-> call that maps to the system call table (the number). At boot up, it does a
-> kallsyms lookup for this mapping. If it does not find a function, then that
-> system call is ignored.
+> yes, all of them. They're not linked to David's work in any way.
 > 
-> Because the x86 system calls had "__x64_" appended to the "sys" for the
-> names, they do not match the default compare algorithm. As this was a
-> problem for power pc, the algorithm can be overwritten by the architecture.
-> The solution is to have x86 have its own algorithm to do the compare and
-> this brings back the system call trace events.
-> 
-> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-Again on x86_64, the number of files in
-/sys/kernel/debug/tracing/events/syscalls/ is the same, all my perf
-related tests pass.
-
-Now to the next seemingly kernel related test failure, unrelated to
-this:
-
- 4: Read samples using the mmap interface                 : FAILED!
-
-- Arnaldo
+Please separate the driver/emif/* patches from the series. These
+are not fixes so they are not rcx candidates. But will queue them
+up for next merge window. Thanks !!
