@@ -1,74 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752590AbeDQTqJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 15:46:09 -0400
-Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:5876 "EHLO
-        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751878AbeDQTqI (ORCPT
+        id S1752690AbeDQTqY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 15:46:24 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42526 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752629AbeDQTqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 15:46:08 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EqAgDGTdZah8mZ6ERdhFR6KJkCgwOSa?=
- =?us-ascii?q?IE9OwsbEIQ+glwhNRcBAgEBAQEBAQIBAQIQAQEBCgsJCCgjDII1JAEKBEspAy8?=
- =?us-ascii?q?BAQEBAQEBAQEBAQEBAQEBAQEBARUCDUNqME9vARKFDahViEKCJYgGgVQ/gQ+CX?=
- =?us-ascii?q?YM/Aoc0AoxmiwIIgWGMWgKMSgEYkAuBJR4BgghwgxMJghcOCSmDHIpwUY5oAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EqAgDGTdZah8mZ6ERdhFR6KJkCgwOSaIE9OwsbEIQ+glw?=
- =?us-ascii?q?hNRcBAgEBAQEBAQIBAQIQAQEBCgsJCCgjDII1JAEKBEspAy8BAQEBAQEBAQEBA?=
- =?us-ascii?q?QEBAQEBAQEBARUCDUNqME9vARKFDahViEKCJYgGgVQ/gQ+CXYM/Aoc0AoxmiwI?=
- =?us-ascii?q?IgWGMWgKMSgEYkAuBJR4BgghwgxMJghcOCSmDHIpwUY5oAQE?=
-X-LoopCount0: from 10.208.86.39
-X-IronPort-AV: E=Sophos;i="5.48,464,1517896800";
-   d="scan'208";a="1134609170"
-X-DLP: DLP_GlobalPCIDSS
-From: Mario Limonciello <mario.limonciello@dell.com>
-To: dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        Mario Limonciello <mario.limonciello@dell.com>
-Subject: [PATCH] platform/x86: dell-smbios: Match on www.dell.com in OEM strings too
-Date: Tue, 17 Apr 2018 14:45:56 -0500
-Message-Id: <1523994356-9598-1-git-send-email-mario.limonciello@dell.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 17 Apr 2018 15:46:23 -0400
+X-Google-Smtp-Source: AIpwx49rNCwihwxFHkIUsi9CtOe2Btwn4xpsyuJE6INskeC/8ZwU1xHDdGlWrxN3Ih3ZLeL06UBTWg==
+Date: Tue, 17 Apr 2018 21:46:19 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: andi@etezian.org
+Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: exynos: Update x and y properties for mms114
+ touchscreen
+Message-ID: <20180417194619.djrggjqogfwtxrwp@kozik-lap>
+References: <CGME20180126060503epcas2p4befe2d3d43f4a2158b1e1a123bf7906f@epcas2p4.samsung.com>
+ <20180126060454.18082-1-andi.shyti@samsung.com>
+ <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
+ <f75382b5953a9f4f9f80bb0db5b2f249@etezian.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f75382b5953a9f4f9f80bb0db5b2f249@etezian.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sergey reported that some much older Dell systems don't support
-the OEM string "Dell System" but instead supported www.dell.com
-in OEM strings.
+On Wed, Apr 18, 2018 at 03:06:39AM +0900, andi@etezian.org wrote:
+> Hi Krzysztof,
+> 
+> On 18.04.2018 00:32, Krzysztof Kozlowski wrote:
+> > On Fri, Jan 26, 2018 at 03:04:54PM +0900, Andi Shyti wrote:
+> > > The mms114 binding [1] specifies that the 'x' and 'y' should be
+> > > called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
+> > > in coherence with the touchscreen [2] binding.
+> > > 
+> > > Update the mms114 node for trats2 and trats dts according to the
+> > > binding.
+> > > 
+> > > [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+> > > [2]
+> > > Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+> > > 
+> > > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> > > ---
+> > > Hi Krzysztof,
+> > > 
+> > > this patch depends on Simon's patchset [1] and must be applied after
+> > > that. If you want I can ping you when the patch gets or you can take
+> > > it in the next cycle.
+> > > 
+> > > Andi
+> > > 
+> > > [1] https://marc.info/?l=linux-kernel&m=151682273403098&w=2
+> > > 
+> > 
+> > Hi Andi,
+> > 
+> > As I understand, the dependencies are in and I can take this?
+> 
+> Thanks a lot, somehow I missed it,
+> 
+> Please take it.
 
-Match both of these to indicate that this driver is running on
-a Dell system.
+Unfortunately it does not apply anymore. Probably because the Trats2 DTS
+was renamed.  Also another board was added so please rebase on v4.17-rc1
+or linux-next.
 
-Reported-by: Sergey Kubushyn <ksi@koi8.net>
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-Tested-by: Sergey Kubushyn <ksi@koi8.net>
----
- drivers/platform/x86/dell-smbios-base.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
-index 2485c80..fbd6557 100644
---- a/drivers/platform/x86/dell-smbios-base.c
-+++ b/drivers/platform/x86/dell-smbios-base.c
-@@ -555,11 +555,15 @@ static void free_group(struct platform_device *pdev)
- 
- static int __init dell_smbios_init(void)
- {
--	const struct dmi_device *valid;
-+	const struct dmi_device *valid_dell_system;
-+	const struct dmi_device *valid_www;
- 	int ret, wmi, smm;
- 
--	valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL);
--	if (!valid) {
-+	valid_dell_system =
-+		dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL);
-+	valid_www =
-+		dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL);
-+	if (!valid_dell_system && !valid_www) {
- 		pr_err("Unable to run on non-Dell system\n");
- 		return -ENODEV;
- 	}
--- 
-2.7.4
+Best regards,
+Krzysztof
