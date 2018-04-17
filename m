@@ -1,139 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752067AbeDQIUW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 04:20:22 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:26709 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751085AbeDQIST (ORCPT
+        id S1752199AbeDQIUj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 04:20:39 -0400
+Received: from smtpgwcipde.automotive.elektrobit.com ([213.95.163.141]:57437
+        "EHLO smtpgwcipde.elektrobit.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752135AbeDQISY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:18:19 -0400
-Subject: Re: [PATCH v2 2/3] Input: ti_am335x_tsc - Ack pending IRQs at probe
- and before suspend
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC: "Strashko, Grygorii" <grygorii.strashko@ti.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>
-References: <20180414095153.32060-1-vigneshr@ti.com>
- <20180414095153.32060-3-vigneshr@ti.com> <20180416175909.GC77055@dtor-ws>
-From: Vignesh R <vigneshr@ti.com>
-Message-ID: <59afa48c-df5f-1c45-70e5-a0ae0aae8cff@ti.com>
-Date: Tue, 17 Apr 2018 13:49:00 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180416175909.GC77055@dtor-ws>
-Content-Type: text/plain; charset="utf-8"
+        Tue, 17 Apr 2018 04:18:24 -0400
+From: <Tobias.Jordan@elektrobit.com>
+To: <wsa@the-dreams.de>
+CC: <der.herr@hofr.at>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: RE: [SIL2review] [PATCH] i2c: img-scb: fix PM device usage count
+Thread-Topic: [SIL2review] [PATCH] i2c: img-scb: fix PM device usage count
+Thread-Index: AQHTrjt0dQSN4VmZz0CI1P0T6XZe26O1PdUAgE6BXICAASWIwA==
+Date: Tue, 17 Apr 2018 08:03:07 +0000
+Message-ID: <84353cd0444f41c4aebbc1b6eb2eeae3@denue6es008.ebgroup.elektrobit.com>
+References: <20180224224303.3mpwhal2axcr6aos@agrajag.zerfleddert.de>
+ <20180225132014.GA8844@osadl.at> <20180225172730.2b443978@denkmatte>
+ <20180416161845.hxizpjituo6mpvbm@ninjato>
+In-Reply-To: <20180416161845.hxizpjituo6mpvbm@ninjato>
+Accept-Language: en-US, de-DE
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.5.137.27]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+> Is it easily recognizable if the drivers check the error code because
+> there is a reason or if they do it "out of habit"?
 
-On Monday 16 April 2018 11:29 PM, Dmitry Torokhov wrote:
-> On Sat, Apr 14, 2018 at 03:21:52PM +0530, Vignesh R wrote:
->> From: Grygorii Strashko <grygorii.strashko@ti.com>
->> 
->> It is seen that just enabling the TSC module triggers a HW_PEN IRQ
->> without any interaction with touchscreen by user. This results in first
->> suspend/resume sequence to fail as system immediately wakes up from
->> suspend as soon as HW_PEN IRQ is enabled in suspend handler due to the
->> pending IRQ. Therefore clear all IRQs at probe and also in suspend
-> 
-> Are the interrupts configured as edge?
-> 
+Probably by looking closely at the implementation of the PM callouts
+for the driver, but I couldn't find a pattern that would be easy to
+recognize. Maybe I didn't look close enough ;-)
 
-No, its a level interrupt.
+I concur that removing the check would be a better approach if it's
+clear that it's just done "out of habit".
 
->> callback for sanity.
->> 
->> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> Acked-by: Lee Jones <lee.jones@linaro.org>
->> ---
->> 
->> v2: Add Acks from v1.
->> 
->>  drivers/input/touchscreen/ti_am335x_tsc.c | 2 ++
->>  include/linux/mfd/ti_am335x_tscadc.h      | 1 +
->>  2 files changed, 3 insertions(+)
->> 
->> diff --git a/drivers/input/touchscreen/ti_am335x_tsc.c b/drivers/input/touchscreen/ti_am335x_tsc.c
->> index 810e05c9c4f5..dcd9db768169 100644
->> --- a/drivers/input/touchscreen/ti_am335x_tsc.c
->> +++ b/drivers/input/touchscreen/ti_am335x_tsc.c
->> @@ -439,6 +439,7 @@ static int titsc_probe(struct platform_device *pdev)
->>                        dev_err(&pdev->dev, "irq wake enable failed.\n");
->>        }
->>  
->> +     titsc_writel(ts_dev, REG_IRQSTATUS, IRQENB_MASK);
->>        titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_FIFO0THRES);
->>        titsc_writel(ts_dev, REG_IRQENABLE, IRQENB_EOS);
-> 
-> Out of curiosity, should this be:
-> 
->         titsc_writel(ts_dev, REG_IRQENABLE,
->                         IRQENB_FIFO0THRES | IRQENB_EOS);
-> 
-> ?
-> 
-> Because 2nd titsc_writel() overwrites the first? Or separate writes to
-> the same register are distinct?
-> 
+Actually, the real problem is to find the drivers that need to have
+the check in, add/fix it for them, and remove it for all others.
 
-As per TRM, writing 0 to any bit of REG_IRQENABLE has no effect(IRQs are
-cleared by writing to REG_IRQCLR). Therefore, second write does not
-overwrite the first. I agree that there is nothing that prevents us from
-enabling both IRQs in a single write. That can be a separate cleanup patch.
+Unfortunately, all I'm currently able to do is finding the parts that
+are inconsistent.
 
->>        err = titsc_config_wires(ts_dev);
->> @@ -504,6 +505,7 @@ static int __maybe_unused titsc_suspend(struct device *dev)
->>  
->>        tscadc_dev = ti_tscadc_dev_get(to_platform_device(dev));
->>        if (device_may_wakeup(tscadc_dev->dev)) {
->> +             titsc_writel(ts_dev, REG_IRQSTATUS, IRQENB_MASK);
-> 
-> The comment in titsc_irq() says that we should not be touching
-> IRQENB_FIFO0THRES as it is used by another driver, but here we are
-> whacking it. Can you elaborate why this is safe?
-> 
-> You might need to rework the interrupt handling since you have several
-> drivers...
-> 
-
-I guess you meant IRQENB_FIFO1THRES(FIFO0 is used for TSC and FIFO1 is
-ADC). Yes, this driver must not touch FIFO1 related IRQs, I will fix
-that up in next version.
-
-
->>                idle = titsc_readl(ts_dev, REG_IRQENABLE);
->>                titsc_writel(ts_dev, REG_IRQENABLE,
->>                                (idle | IRQENB_HW_PEN));
->> diff --git a/include/linux/mfd/ti_am335x_tscadc.h b/include/linux/mfd/ti_am335x_tscadc.h
->> index b9a53e013bff..1a6a34f726cc 100644
->> --- a/include/linux/mfd/ti_am335x_tscadc.h
->> +++ b/include/linux/mfd/ti_am335x_tscadc.h
->> @@ -63,6 +63,7 @@
->>  #define IRQENB_FIFO1OVRRUN   BIT(6)
->>  #define IRQENB_FIFO1UNDRFLW  BIT(7)
->>  #define IRQENB_PENUP         BIT(9)
->> +#define IRQENB_MASK          (0x7FF)
->>  
->>  /* Step Configuration */
->>  #define STEPCONFIG_MODE_MASK (3 << 0)
->> -- 
->> 2.17.0
->> 
-> 
-> Thanks.
-> 
-> -- 
-> Dmitry
-
--- 
-Regards
-Vignesh
+Tobias
