@@ -1,68 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753231AbeDQMri (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 08:47:38 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:64414 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752844AbeDQMrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:47:37 -0400
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/8xx: Remove RTC clock on 88x
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Vitaly Bordug <vitb@kernel.crashing.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Message-Id: <20180417124735.8991D6C0AC@po15720vm.idsi0.si.c-s.fr>
-Date: Tue, 17 Apr 2018 14:47:35 +0200 (CEST)
+        id S1753273AbeDQMrs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 08:47:48 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:42270 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752844AbeDQMrq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:47:46 -0400
+X-Google-Smtp-Source: AIpwx4/AS51/RbgUvMlilMFauNBVqzdpbRvJ9eNfqAu2PpbiPG4o4YAANR9DBQb5jPgEBLsHePFwcHilBYckLQkW300=
+MIME-Version: 1.0
+In-Reply-To: <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com>
+References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net> <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Tue, 17 Apr 2018 14:47:44 +0200
+X-Google-Sender-Auth: -0RnFDdWfRcMTOiwYxtS6hJRFkQ
+Message-ID: <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com>
+Subject: Re: nds32 build failures
+To: Greentime Hu <green.hu@gmail.com>
+Cc: Guenter Roeck <private@roeck-us.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vincent Chen <vincentc@andestech.com>,
+        Greentime Hu <greentime@andestech.com>, kito.cheng@gmail.com,
+        wuiw@andestech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 885 familly processors don't have the Real Time Clock
+On Mon, Apr 16, 2018 at 11:06 AM, Greentime Hu <green.hu@gmail.com> wrote:
+> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
+>
+> This built failure is because the toolchain version you used is not
+> supported the latest intrinsic function/macro.
+> We are sending the latest patchset now and we expect the whole new
+> features will be supported in gcc8.0.0 and binutil2.31+.
+>
+> If you'd like to get these new features of toolchain, you may use the
+> github version.
+> This is the built-script repo. https://github.com/andestech/build_script.git
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/platforms/8xx/adder875.c        | 2 --
- arch/powerpc/platforms/8xx/ep88xc.c          | 2 --
- arch/powerpc/platforms/8xx/mpc885ads_setup.c | 2 --
- 3 files changed, 6 deletions(-)
+I've taken the gcc-6.3 sources from there, and updated them to gcc-6.4.0
+in order to build a nds32le-linux toolchain based on the same version as
+the other ones.
 
-diff --git a/arch/powerpc/platforms/8xx/adder875.c b/arch/powerpc/platforms/8xx/adder875.c
-index 333dece79394..bcef9f66191e 100644
---- a/arch/powerpc/platforms/8xx/adder875.c
-+++ b/arch/powerpc/platforms/8xx/adder875.c
-@@ -111,7 +111,5 @@ define_machine(adder875) {
- 	.get_irq = mpc8xx_get_irq,
- 	.restart = mpc8xx_restart,
- 	.calibrate_decr = generic_calibrate_decr,
--	.set_rtc_time = mpc8xx_set_rtc_time,
--	.get_rtc_time = mpc8xx_get_rtc_time,
- 	.progress = udbg_progress,
- };
-diff --git a/arch/powerpc/platforms/8xx/ep88xc.c b/arch/powerpc/platforms/8xx/ep88xc.c
-index cd0d90f1fb1c..ebcf34a14789 100644
---- a/arch/powerpc/platforms/8xx/ep88xc.c
-+++ b/arch/powerpc/platforms/8xx/ep88xc.c
-@@ -170,7 +170,5 @@ define_machine(ep88xc) {
- 	.get_irq	= mpc8xx_get_irq,
- 	.restart = mpc8xx_restart,
- 	.calibrate_decr = mpc8xx_calibrate_decr,
--	.set_rtc_time = mpc8xx_set_rtc_time,
--	.get_rtc_time = mpc8xx_get_rtc_time,
- 	.progress = udbg_progress,
- };
-diff --git a/arch/powerpc/platforms/8xx/mpc885ads_setup.c b/arch/powerpc/platforms/8xx/mpc885ads_setup.c
-index e821a42d5816..a0c83c1905c6 100644
---- a/arch/powerpc/platforms/8xx/mpc885ads_setup.c
-+++ b/arch/powerpc/platforms/8xx/mpc885ads_setup.c
-@@ -220,7 +220,5 @@ define_machine(mpc885_ads) {
- 	.get_irq		= mpc8xx_get_irq,
- 	.restart		= mpc8xx_restart,
- 	.calibrate_decr		= mpc8xx_calibrate_decr,
--	.set_rtc_time		= mpc8xx_set_rtc_time,
--	.get_rtc_time		= mpc8xx_get_rtc_time,
- 	.progress		= udbg_progress,
- };
--- 
-2.13.3
+Unfortunately neither the usual binutils-2.29.1 nor your binutils worked
+for me, but I eventually managed to get a build using the binutils-2.30
+release.
+
+With this, I could build a mainline kernel with a couple of warnings,
+but an 'allmodconfig' build still failed.
+
+Guenter, can you try my binary from
+www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
+?
+
+If that works for you, I'll update the front-page and remove the nds32-elf
+toolchains.
+
+Greentime, do you have a patch set for gcc-7.3 as well, or are 6.3 and 8.0 the
+only working compilers for nds32le-linux?
+
+      Arnd
