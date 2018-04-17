@@ -1,715 +1,258 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1573997-1524226182-2-8602007088404503566
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1954995-1523973215-2-5021656001284013995
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524226181; b=JGcRQeX2rGlBFK/uLpTUFBAuu0oux2hQ7iy8ihjm85yNyABj2+
-    imPi8wlQE9ovHOU6yTbR+ce/y0wi8Le0HVVC+XkenfZzrbuL5Zpx1o8RWP4o3wcO
-    DjJkVcCzpR+0pG9x7oJHDhjf02Db+xnyio/rzBKPhpEX4mUW5nBbXjaVEbA7a5EW
-    9RPxwk3rK18njOZD+57HVb9w3JKCdE+49vi3skzK9EK2EUa0+LbwM52CDmK8LMyh
-    87xVH7gOCEj6WDIMyxahUc0c46w73td7+VLgRNpzi5qMVL1d2zVcqAV8Xux+zzVk
-    85U8E0k7jVJC4MpdPMWT28OIzLU7X9jq38fQ==
+    1523973214; b=DFX8z2+TCCIO4NsKjf8JMj/27Rgn7ilWcdH6xo8X57+eZygfOA
+    3PKJIx0vsp3J3UYgNq6RcLyc25kgm3LBI8KebqXvFuSLuvZOR4COGuTv30cOSIlp
+    j/Z9UxLVE8jkMGDCvqyuJfjwvLDYQ6HXHS+UcyUgHyP+QSpBvLGJAIfO20Ic1qAD
+    Hzp5G1rJcea4DCt+vxdDGy3H/SvjAjEdIIDHSGtVqTfR90pWVgwzoRa7BhITUqyd
+    P0EsrdYbaQLjh12R0scr//G28IBWGLFQYCWZzT08keIpIi2nxVWNGlXHLU2VToox
+    5qZXixnxMuZrgmcdrkfFwRdXR51ZbgDUK4DQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524226181; bh=
-    hFZtiQtv/XCrlnqCs3/rs2YftW3lMo3gt7T1NL/AqxQ=; b=ugkQjzhXjPT0Qmw3
-    alNkSiJpNeK3gCGC1HFBBkcxn8mU/bbHzB5K/jl7vC7eTQXWVsUI90gTkxXDVQd5
-    ouI95/GJDbTXtSnUZHAxeHbuLveHOVKXaP9WXXMxwQ+3dS7IJdm1s+M9XKwLcyp4
-    5hUDnrMVTKdaDIwjFQc1NqVhJz8eOgBmIyndofugCVcI/xSt/QLJlSLiGTZx/aGV
-    nyoLTWbnCLJWS+lIDCuZlcDGLTckICgqIIqi9rZFPQwKYLwduHbToeHRdXPi8Dpv
-    6BCHVhptpEK5sMQHuKkVpb0Bar5G1/SOuZB6DUlmpp5m5qUeI19EcgXvsJR8D2s9
-    1i4cCQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1523973214; bh=1xDCh2F5rhk/lM07tqkDovKf2+1N2C
+    xUDF0H6wFkjLQ=; b=TM0lHtzwPHEyf3lX2bfcWctIo5a/SW0FlrZ7Uomj+W2Hvt
+    Ifb2cYi/R0AtuWCdSnqCNykJqNgyBMy+GXlxT0M96AnCKNbZds1W/hpN2NjdyEv6
+    zRIkzfWMnrgM2xz1u48i6rFbphMRzTyRV5JaLHnAxNiU6pEW/s6lVi1Ov+KjecJd
+    E+VOQQETh1NYqC1PUppgGVhvCrtcI4eyeO9DDYo4KamtVrHo/5ygRuqjbB8MdfG5
+    O+cjvlLioqPfzxJZxIch8qnkWsSn6rVoKQZXaoCvC9aLBRPSss1ye2HC2Bd3eYs4
+    0AuFbt0Ue17KjSrPD+MrkH2maVUbevZcCMwhc/fQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=Jm0uhRQ2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=dzWh5f36 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=Jm0uhRQ2 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=codeaurora.org header.i=@codeaurora.org header.b=dzWh5f36 x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=codeaurora.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfO30B6WZMnGdNQpFqDHuxhBZom+FCtFu3WlMi9uRjlhEX4GMz5oeaU7Q5VEz3kz8HVVuumj9YkEtGp0OLR6fRGxEU/KjNi7DcYAlQ1aNnD5Mo2KxE/Fk
-    h+wGGu0liu2D4+O4XeMLhesu2LVj8yzydGSvn9rga/adMpT4K47TBY2a4dzLaDQrokOO4ONUlM5eF8Cd44mSn/fA0ImZymdgoQrBtS2EBJkVA/V309JILJ3v
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=e2aKWUZgKUqnVxDD1lcA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfAQoFLSSpLKB+oYR2taiAd+BvmxqdmFYkJxuj4vzMRGEVzhb6CLhaNfy8JDRmhQv5pomR+hBL2OdODdoMeiSihpixCeEndNUG8UVNCzBv/AWvubfXEH9
+    MdCTwye81+ykAl0gE+LRgAMv9+miut32kJZFqpShZXqnOWAUYBktyhwsxRfUNADYXVAa0Q31F/IFrcFJHgUK0sEkE5UDWeuh8YHJtbTTcFYiVqmn94iQLOHj
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=NEAV23lmAAAA:8
+    a=8AirrxEcAAAA:8 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+    a=LpQP-O61AAAA:8 a=kg-UbGovrIhLtwywPbwA:9 a=kiR4oCbkcUSWJ7Qr:21
+    a=76ZrOVe15nerNXEu:21 a=x8gzFH9gYPwA:10 a=ST-jHhOKWsTCqRlWije3:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
+    a=pioyyrs4ZptJ924tMmac:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754591AbeDTMJi (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 20 Apr 2018 08:09:38 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:45225 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754686AbeDTMJg (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 20 Apr 2018 08:09:36 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: y2038@lists.linaro.org
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Paul Eggert <eggert@cs.ucla.edu>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-alpha@vger.kernel.org,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH v2 2/2] rusage: allow 64-bit times ru_utime/ru_stime
-Date: Fri, 20 Apr 2018 14:05:14 +0200
-Message-Id: <20180420120605.1612248-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180420120605.1612248-1-arnd@arndb.de>
-References: <20180420120605.1612248-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:ahO9WbP00t7TnGWOSFgjOdrsN89dCI8PXu2ibH2vgAYSZmXPObo
- vV2SNEqOiddQHqQK7opZ2CJ6FASWz7dsLGGm480EFf1PF8FAMCmA5DTqHJcVyfK4an10UPk
- WESm0SqQEC5Szzvu64RDXF35i1YwI4wPzbTQeUAuRx0CcxDrzUvvld8srEhL9kIgU+VbeRh
- Rj+ovvLLTX4AD+geSi35Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:eQd0N607K3c=:4AsQp225IR4ft/3wKaQl4c
- a4bE/v0xAAf3sViJ5BCTSSJfigKXO1xqHs2BzdFxrZc1JGvd+CDPl5M2FR+DcIq/M/rHI/Qrn
- REaGIi7gM44IXby1AEQMwN5rc8lfQvqLl6Whhqf6hysQkAIMC49QR19shokZDqBD5GEmCuaU5
- Ew1ptnC/rCoKHJwTOkv0PFIca3OR87lxmqEZbybXVKCmZ/NyTI/NW7Vv3rSVjUGf7pOQf+NQU
- B8ZJDMRgpPwjp8xgyC+PoeDEIBNLvg9nCS44yzVwolvPE2AFMv6DjqxZ4VZjO0S8E2XdSAIm9
- hTeIKNroogjLuQnnNEA2ro1jPASXW9qwrcEzfokZIHb4nOBOcmgmCG9BRLuiPLQQ8mw8DFE79
- y6tihhZoKdLPkpXwk0XplHZJIRYmleDk0p9gSDy7JG/Ujz4n94V92/sOuDoOSMrII7Bz0jBkK
- 5lark/g0/o62qY8nN0Upm7w04EtEesALxA9dflEvScigJfi6r4S14L/7MDrze4ZI9VrdNigD4
- mqGaAGQwEgwilBRNwFhN+PT/US5TfE/UIBRUQiyZvf9b7V/yu3SA45AbdqxprGiKBXsl9TLg/
- Dl0K5SM9rf9ROn2jyHbpkeqCj3xZJ02tN/KESGXwEOk3spu3SviaGW8usdvB0QIPeknwljUIF
- ktVzKx/SkAzVHoCSsGt6i60hRm/pgPOMKOdYUvtqOBPXpy0NjCB4dmiP5/h6rSXuS5/aCQg/j
- EzenwMbhpCXrv38YTCeGzgFb66r8do/i4j9nsQ==
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        id S1753125AbeDQNxU (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 09:53:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34478 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752672AbeDQNxT (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 17 Apr 2018 09:53:19 -0400
+X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Remote-Spam-Level: 
+X-Remote-Spam-Status: No, score=-2.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,T_DKIM_INVALID autolearn=no autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D5A646071A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=yossim@codeaurora.org
+From: Yossi Mansharoff <yossim@codeaurora.org>
+To: Peter Chen <Peter.Chen@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org (open list:CHIPIDEA USB HIGH SPEED DUAL ROLE
+        CONTROLLER), linux-kernel@vger.kernel.org (open list)
+Cc: robh@kernel.org, swboyd@chromium.org,
+        Yossi Mansharoff <yossim@codeaurora.org>,
+        Peter Rosin <peda@axentia.se>, Peter Chen <peter.chen@nxp.com>,
+        <devicetree@vger.kernel.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>
+Subject: [PATCH v2] usb: chipidea: Hook into mux framework to toggle usb switch
+Date: Tue, 17 Apr 2018 16:52:28 +0300
+Message-Id: <1523973148-2094-1-git-send-email-yossim@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-As part of the y2038 system call work, the getrusage/wait4/waitid system
-calls came up, since they pass time data to user space in 'timeval'
-format as required by POSIX. This means the existing kernel data structure
-is no longer compatible with the one from user space once we have a C
-library exposing 64-bit time_t, requiring the library to convert the
-kernel structure into its own structure.
+On the db410c 96boards platform we have a TC7USB40MU on the board
+to mux the D+/D- lines coming from the controller between a micro
+usb "device" port and a USB hub for "host" roles[1]. During a
+role switch, we need to toggle this mux to forward the D+/D-
+lines to either the port or the hub. Add the necessary code to do
+the role switch in chipidea core via the generic mux framework.
+Board configurations like on db410c are expected to change roles
+via the sysfs API described in
+Documentation/ABI/testing/sysfs-platform-chipidea-usb2.
 
-This patch moves that conversion into the kernel itself, providing a
-set of system calls that can directly be used to implement the libc
-getrusage/wait4/waitid functions as we have traditionally done.
+[1] https://github.com/96boards/documentation/raw/master/ConsumerEdition/DragonBoard-410c/HardwareDocs/Schematics_DragonBoard.pdf
 
-There are two advantages to this:
+Cc: Peter Rosin <peda@axentia.se>
+Cc: Peter Chen <peter.chen@nxp.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
 
-- The new path becomes the native case, avoiding the conversion
-  overhead for future 32-bit C libraries.  At least glibc will still
-  have to implement a conversion logic as a fallback in order to run
-  new applications on older kernels, but that does not have to be used
-  on new kernels.
-- The range for the ru_utime/ru_stime is no longer limited to
-  a 31-bit second counter (about 68 years). That limit may theoretically
-  be hit on large SMP systems with a single process running for an
-  extended time, e.g. 256 concurrent threads running for more than
-  97 days.  Note that there is no overflow in 2038, as all the times
-  are relative to the start of a process.
-
-The downside of this is obviously the added complexity of having three
-additional system call entry points plus their respective compat handlers,
-and updated syscall tables on each architecture (not included in this
-patch). Overall, I think this is *not* worth it, but I feel it's important
-to show how it can be done and what the cost is.
-
-There are probably some minor improvements that can be implemented on top,
-as well as bugs that I introduce.  When reviewing this patch, let's for
-now focus instead on the question whether we want it at all or not.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yossi Mansharoff <yossim@codeaurora.org>
 ---
- arch/alpha/kernel/osf_sys.c   |   2 +-
- include/linux/compat.h        |  26 ++++++++-
- include/linux/resource.h      |   4 +-
- include/linux/sched/task.h    |   4 +-
- include/linux/syscalls.h      |   8 +++
- include/uapi/linux/resource.h |  29 ++++++++++
- kernel/compat.c               |  30 ++++++++++-
- kernel/exit.c                 | 120 ++++++++++++++++++++++++++++++++++++++----
- kernel/sys.c                  |  74 +++++++++++++++++++++++---
- 9 files changed, 275 insertions(+), 22 deletions(-)
+ drivers/usb/chipidea/Kconfig |  2 ++
+ drivers/usb/chipidea/core.c  |  5 +++++
+ drivers/usb/chipidea/host.c  |  7 +++++++
+ drivers/usb/chipidea/udc.c   | 13 ++++++++++++-
+ include/linux/usb/chipidea.h |  2 ++
+ 5 files changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-index cad03ee445b3..aecdb48257b5 100644
---- a/arch/alpha/kernel/osf_sys.c
-+++ b/arch/alpha/kernel/osf_sys.c
-@@ -1185,7 +1185,7 @@ SYSCALL_DEFINE4(osf_wait4, pid_t, pid, int __user *, ustatus, int, options,
+diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
+index 785f0ed..6a8e635 100644
+--- a/drivers/usb/chipidea/Kconfig
++++ b/drivers/usb/chipidea/Kconfig
+@@ -3,6 +3,8 @@ config USB_CHIPIDEA
+ 	depends on ((USB_EHCI_HCD && USB_GADGET) || (USB_EHCI_HCD && !USB_GADGET) || (!USB_EHCI_HCD && USB_GADGET)) && HAS_DMA
+ 	select EXTCON
+ 	select RESET_CONTROLLER
++	select MULTIPLEXER
++	select MUX_GPIO
+ 	help
+ 	  Say Y here if your system has a dual role high speed USB
+ 	  controller based on ChipIdea silicon IP. It supports:
+diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+index 33ae87f..8fa0991 100644
+--- a/drivers/usb/chipidea/core.c
++++ b/drivers/usb/chipidea/core.c
+@@ -61,6 +61,7 @@
+ #include <linux/of.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/usb/ehci_def.h>
++#include <linux/mux/consumer.h>
+ 
+ #include "ci.h"
+ #include "udc.h"
+@@ -687,6 +688,10 @@ static int ci_get_platdata(struct device *dev,
+ 	if (of_find_property(dev->of_node, "non-zero-ttctrl-ttha", NULL))
+ 		platdata->flags |= CI_HDRC_SET_NON_ZERO_TTHA;
+ 
++	platdata->usb_switch = devm_mux_control_get_optional(dev, "usb_switch");
++	if (IS_ERR(platdata->usb_switch))
++		return PTR_ERR(platdata->usb_switch);
++
+ 	ext_id = ERR_PTR(-ENODEV);
+ 	ext_vbus = ERR_PTR(-ENODEV);
+ 	if (of_property_read_bool(dev->of_node, "extcon")) {
+diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
+index af45aa32..d9d2d00 100644
+--- a/drivers/usb/chipidea/host.c
++++ b/drivers/usb/chipidea/host.c
+@@ -13,6 +13,7 @@
+ #include <linux/usb/hcd.h>
+ #include <linux/usb/chipidea.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/mux/consumer.h>
+ 
+ #include "../host/ehci.h"
+ 
+@@ -161,6 +162,10 @@ static int host_start(struct ci_hdrc *ci)
+ 		if (ci_otg_is_fsm_mode(ci)) {
+ 			otg->host = &hcd->self;
+ 			hcd->self.otg_port = 1;
++		} else {
++			ret = mux_control_select(ci->platdata->usb_switch, 1);
++			if (ret)
++				goto disable_reg;
+ 		}
+ 	}
+ 
+@@ -181,6 +186,8 @@ static void host_stop(struct ci_hdrc *ci)
+ 	struct usb_hcd *hcd = ci->hcd;
+ 
+ 	if (hcd) {
++		if (!ci_otg_is_fsm_mode(ci))
++			mux_control_deselect(ci->platdata->usb_switch);
+ 		if (ci->platdata->notify_event)
+ 			ci->platdata->notify_event(ci,
+ 				CI_HDRC_CONTROLLER_STOPPED_EVENT);
+diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
+index 9852ec5..209d3f6 100644
+--- a/drivers/usb/chipidea/udc.c
++++ b/drivers/usb/chipidea/udc.c
+@@ -19,6 +19,7 @@
+ #include <linux/usb/gadget.h>
+ #include <linux/usb/otg-fsm.h>
+ #include <linux/usb/chipidea.h>
++#include <linux/mux/consumer.h>
+ 
+ #include "ci.h"
+ #include "udc.h"
+@@ -1965,16 +1966,26 @@ void ci_hdrc_gadget_destroy(struct ci_hdrc *ci)
+ 
+ static int udc_id_switch_for_device(struct ci_hdrc *ci)
  {
- 	unsigned int status = 0;
- 	struct rusage32 r32;
--	struct rusage r;
-+	struct __kernel_rusage r;
- 	long err = kernel_wait4(pid, &status, options, &r);
- 	if (err <= 0)
- 		return err;
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index b73e2616a409..2ef30d314c48 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -105,7 +105,7 @@ typedef __compat_uid32_t	compat_uid_t;
- typedef __compat_gid32_t	compat_gid_t;
++	int ret = 0;
++
+ 	if (ci->is_otg)
+ 		/* Clear and enable BSV irq */
+ 		hw_write_otgsc(ci, OTGSC_BSVIS | OTGSC_BSVIE,
+ 					OTGSC_BSVIS | OTGSC_BSVIE);
  
- struct compat_sel_arg_struct;
--struct rusage;
-+struct __kernel_rusage;
+-	return 0;
++	if (!ci_otg_is_fsm_mode(ci))
++		ret = mux_control_select(ci->platdata->usb_switch, 0);
++
++	if (ci->is_otg && ret)
++		hw_write_otgsc(ci, OTGSC_BSVIE | OTGSC_BSVIS, OTGSC_BSVIS);
++
++	return ret;
+ }
  
- struct compat_itimerspec {
- 	struct compat_timespec it_interval;
-@@ -321,9 +321,31 @@ struct compat_rusage {
- 	compat_long_t	ru_nivcsw;
+ static void udc_id_switch_for_host(struct ci_hdrc *ci)
+ {
++	mux_control_deselect(ci->platdata->usb_switch);
++
+ 	/*
+ 	 * host doesn't care B_SESSION_VALID event
+ 	 * so clear and disbale BSV irq
+diff --git a/include/linux/usb/chipidea.h b/include/linux/usb/chipidea.h
+index 07f9936..9ea55a1 100644
+--- a/include/linux/usb/chipidea.h
++++ b/include/linux/usb/chipidea.h
+@@ -10,6 +10,7 @@
+ #include <linux/usb/otg.h>
+ 
+ struct ci_hdrc;
++struct mux_control;
+ 
+ /**
+  * struct ci_hdrc_cable - structure for external connector cable state tracking
+@@ -76,6 +77,7 @@ struct ci_hdrc_platform_data {
+ 	/* VBUS and ID signal state tracking, using extcon framework */
+ 	struct ci_hdrc_cable		vbus_extcon;
+ 	struct ci_hdrc_cable		id_extcon;
++	struct mux_control		*usb_switch;
+ 	u32			phy_clkgate_delay_us;
  };
  
--extern int put_compat_rusage(const struct rusage *,
-+struct compat_rusage_time64 {
-+	struct __kernel_rusage_timeval ru_utime;
-+	struct __kernel_rusage_timeval ru_stime;
-+	compat_long_t	ru_maxrss;
-+	compat_long_t	ru_ixrss;
-+	compat_long_t	ru_idrss;
-+	compat_long_t	ru_isrss;
-+	compat_long_t	ru_minflt;
-+	compat_long_t	ru_majflt;
-+	compat_long_t	ru_nswap;
-+	compat_long_t	ru_inblock;
-+	compat_long_t	ru_oublock;
-+	compat_long_t	ru_msgsnd;
-+	compat_long_t	ru_msgrcv;
-+	compat_long_t	ru_nsignals;
-+	compat_long_t	ru_nvcsw;
-+	compat_long_t	ru_nivcsw;
-+};
-+
-+extern int put_compat_rusage(const struct __kernel_rusage *,
- 			     struct compat_rusage __user *);
- 
-+extern int put_compat_rusage_time64(const struct __kernel_rusage *,
-+				    struct compat_rusage_time64 __user *);
-+
- struct compat_siginfo;
- 
- struct compat_dirent {
-diff --git a/include/linux/resource.h b/include/linux/resource.h
-index bdf491cbcab7..8cebf90e76b7 100644
---- a/include/linux/resource.h
-+++ b/include/linux/resource.h
-@@ -7,8 +7,10 @@
- 
- struct task_struct;
- 
--void getrusage(struct task_struct *p, int who, struct rusage *ru);
-+void getrusage(struct task_struct *p, int who, struct __kernel_rusage *ru);
- int do_prlimit(struct task_struct *tsk, unsigned int resource,
- 		struct rlimit *new_rlim, struct rlimit *old_rlim);
- 
-+int put_rusage(const struct __kernel_rusage *rk, struct rusage __user *ru);
-+
- #endif
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 5be31eb7b266..cc54ae5e6010 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -10,7 +10,7 @@
- #include <linux/sched.h>
- 
- struct task_struct;
--struct rusage;
-+struct __kernel_rusage;
- union thread_union;
- 
- /*
-@@ -75,7 +75,7 @@ extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *,
- extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
- struct task_struct *fork_idle(int);
- extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
--extern long kernel_wait4(pid_t, int *, int, struct rusage *);
-+extern long kernel_wait4(pid_t, int *, int, struct __kernel_rusage *);
- 
- extern void free_task(struct task_struct *tsk);
- 
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index a756ab42894f..084360078f29 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -37,6 +37,7 @@ struct pollfd;
- struct rlimit;
- struct rlimit64;
- struct rusage;
-+struct __kernel_rusage;
- struct sched_param;
- struct sched_attr;
- struct sel_arg_struct;
-@@ -522,6 +523,10 @@ asmlinkage long sys_waitid(int which, pid_t pid,
- 			   struct siginfo __user *infop,
- 			   int options, struct rusage __user *ru);
- 
-+asmlinkage long sys_waitid_time64(int which, pid_t pid,
-+			   struct siginfo __user *infop,
-+			   int options, struct __kernel_rusage __user *ru);
-+
- /* kernel/fork.c */
- asmlinkage long sys_set_tid_address(int __user *tidptr);
- asmlinkage long sys_unshare(unsigned long unshare_flags);
-@@ -656,6 +661,7 @@ asmlinkage long sys_getrlimit(unsigned int resource,
- asmlinkage long sys_setrlimit(unsigned int resource,
- 				struct rlimit __user *rlim);
- asmlinkage long sys_getrusage(int who, struct rusage __user *ru);
-+asmlinkage long sys_getrusage_time64(int who, struct __kernel_rusage __user *ru);
- asmlinkage long sys_umask(int mask);
- asmlinkage long sys_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			unsigned long arg4, unsigned long arg5);
-@@ -821,6 +827,8 @@ asmlinkage long sys_recvmmsg(int fd, struct mmsghdr __user *msg,
- 
- asmlinkage long sys_wait4(pid_t pid, int __user *stat_addr,
- 				int options, struct rusage __user *ru);
-+asmlinkage long sys_wait4_time64(pid_t pid, int __user *stat_addr,
-+				int options, struct __kernel_rusage __user *ru);
- asmlinkage long sys_prlimit64(pid_t pid, unsigned int resource,
- 				const struct rlimit64 __user *new_rlim,
- 				struct rlimit64 __user *old_rlim);
-diff --git a/include/uapi/linux/resource.h b/include/uapi/linux/resource.h
-index 611d3745c70a..a822e716e122 100644
---- a/include/uapi/linux/resource.h
-+++ b/include/uapi/linux/resource.h
-@@ -50,6 +50,35 @@ struct	rusage {
- 	__kernel_long_t	ru_nivcsw;	/* involuntary " */
- };
- 
-+/*
-+ * __kernel_rusage is the binary that we expect 32-bit C libraries
-+ * to provide for their 'struct rusage' after migrating to a 64-bit
-+ * time_t.
-+ */
-+struct __kernel_rusage_timeval {
-+	__s64 tv_sec;
-+	__s64 tv_usec;
-+};
-+
-+struct	__kernel_rusage {
-+	struct __kernel_rusage_timeval	ru_utime; /* user time used */
-+	struct __kernel_rusage_timeval	ru_stime; /* system time used */
-+	__kernel_long_t	ru_maxrss;	/* maximum resident set size */
-+	__kernel_long_t	ru_ixrss;	/* integral shared memory size */
-+	__kernel_long_t	ru_idrss;	/* integral unshared data size */
-+	__kernel_long_t	ru_isrss;	/* integral unshared stack size */
-+	__kernel_long_t	ru_minflt;	/* page reclaims */
-+	__kernel_long_t	ru_majflt;	/* page faults */
-+	__kernel_long_t	ru_nswap;	/* swaps */
-+	__kernel_long_t	ru_inblock;	/* block input operations */
-+	__kernel_long_t	ru_oublock;	/* block output operations */
-+	__kernel_long_t	ru_msgsnd;	/* messages sent */
-+	__kernel_long_t	ru_msgrcv;	/* messages received */
-+	__kernel_long_t	ru_nsignals;	/* signals received */
-+	__kernel_long_t	ru_nvcsw;	/* voluntary context switches */
-+	__kernel_long_t	ru_nivcsw;	/* involuntary " */
-+};
-+
- struct rlimit {
- 	__kernel_ulong_t	rlim_cur;
- 	__kernel_ulong_t	rlim_max;
-diff --git a/kernel/compat.c b/kernel/compat.c
-index 51a081b46832..e3cb7c14558a 100644
---- a/kernel/compat.c
-+++ b/kernel/compat.c
-@@ -234,7 +234,7 @@ COMPAT_SYSCALL_DEFINE3(sigprocmask, int, how,
- 
- #endif
- 
--int put_compat_rusage(const struct rusage *r, struct compat_rusage __user *ru)
-+int put_compat_rusage(const struct __kernel_rusage *r, struct compat_rusage __user *ru)
- {
- 	struct compat_rusage r32;
- 	memset(&r32, 0, sizeof(r32));
-@@ -261,6 +261,34 @@ int put_compat_rusage(const struct rusage *r, struct compat_rusage __user *ru)
- 	return 0;
- }
- 
-+int put_compat_rusage_time64(const struct __kernel_rusage *r,
-+			     struct compat_rusage_time64 __user *ru)
-+{
-+	struct compat_rusage_time64 r32;
-+	memset(&r32, 0, sizeof(r32));
-+	r32.ru_utime.tv_sec = r->ru_utime.tv_sec;
-+	r32.ru_utime.tv_usec = r->ru_utime.tv_usec;
-+	r32.ru_stime.tv_sec = r->ru_stime.tv_sec;
-+	r32.ru_stime.tv_usec = r->ru_stime.tv_usec;
-+	r32.ru_maxrss = r->ru_maxrss;
-+	r32.ru_ixrss = r->ru_ixrss;
-+	r32.ru_idrss = r->ru_idrss;
-+	r32.ru_isrss = r->ru_isrss;
-+	r32.ru_minflt = r->ru_minflt;
-+	r32.ru_majflt = r->ru_majflt;
-+	r32.ru_nswap = r->ru_nswap;
-+	r32.ru_inblock = r->ru_inblock;
-+	r32.ru_oublock = r->ru_oublock;
-+	r32.ru_msgsnd = r->ru_msgsnd;
-+	r32.ru_msgrcv = r->ru_msgrcv;
-+	r32.ru_nsignals = r->ru_nsignals;
-+	r32.ru_nvcsw = r->ru_nvcsw;
-+	r32.ru_nivcsw = r->ru_nivcsw;
-+	if (copy_to_user(ru, &r32, sizeof(r32)))
-+		return -EFAULT;
-+	return 0;
-+}
-+
- static int compat_get_user_cpu_mask(compat_ulong_t __user *user_mask_ptr,
- 				    unsigned len, struct cpumask *new_mask)
- {
-diff --git a/kernel/exit.c b/kernel/exit.c
-index c3c7ac560114..5088c671ea74 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -995,7 +995,7 @@ struct wait_opts {
- 
- 	struct waitid_info	*wo_info;
- 	int			wo_stat;
--	struct rusage		*wo_rusage;
-+	struct __kernel_rusage	*wo_rusage;
- 
- 	wait_queue_entry_t		child_wait;
- 	int			notask_error;
-@@ -1548,7 +1548,7 @@ static long do_wait(struct wait_opts *wo)
- }
- 
- static long kernel_waitid(int which, pid_t upid, struct waitid_info *infop,
--			  int options, struct rusage *ru)
-+			  int options, struct __kernel_rusage *ru)
- {
- 	struct wait_opts wo;
- 	struct pid *pid = NULL;
-@@ -1596,7 +1596,7 @@ static long kernel_waitid(int which, pid_t upid, struct waitid_info *infop,
- SYSCALL_DEFINE5(waitid, int, which, pid_t, upid, struct siginfo __user *,
- 		infop, int, options, struct rusage __user *, ru)
- {
--	struct rusage r;
-+	struct __kernel_rusage r;
- 	struct waitid_info info = {.status = 0};
- 	long err = kernel_waitid(which, upid, &info, options, ru ? &r : NULL);
- 	int signo = 0;
-@@ -1604,7 +1604,41 @@ SYSCALL_DEFINE5(waitid, int, which, pid_t, upid, struct siginfo __user *,
- 	if (err > 0) {
- 		signo = SIGCHLD;
- 		err = 0;
--		if (ru && copy_to_user(ru, &r, sizeof(struct rusage)))
-+		if (ru && put_rusage(&r, ru))
-+			return -EFAULT;
-+	}
-+	if (!infop)
-+		return err;
-+
-+	if (!access_ok(VERIFY_WRITE, infop, sizeof(*infop)))
-+		return -EFAULT;
-+
-+	user_access_begin();
-+	unsafe_put_user(signo, &infop->si_signo, Efault);
-+	unsafe_put_user(0, &infop->si_errno, Efault);
-+	unsafe_put_user(info.cause, &infop->si_code, Efault);
-+	unsafe_put_user(info.pid, &infop->si_pid, Efault);
-+	unsafe_put_user(info.uid, &infop->si_uid, Efault);
-+	unsafe_put_user(info.status, &infop->si_status, Efault);
-+	user_access_end();
-+	return err;
-+Efault:
-+	user_access_end();
-+	return -EFAULT;
-+}
-+
-+SYSCALL_DEFINE5(waitid_time64, int, which, pid_t, upid, struct siginfo __user *,
-+		infop, int, options, struct __kernel_rusage __user *, ru)
-+{
-+	struct __kernel_rusage r;
-+	struct waitid_info info = {.status = 0};
-+	long err = kernel_waitid(which, upid, &info, options, ru ? &r : NULL);
-+	int signo = 0;
-+
-+	if (err > 0) {
-+		signo = SIGCHLD;
-+		err = 0;
-+		if (ru && copy_to_user(ru, &r, sizeof(struct __kernel_rusage)))
- 			return -EFAULT;
- 	}
- 	if (!infop)
-@@ -1628,7 +1662,7 @@ SYSCALL_DEFINE5(waitid, int, which, pid_t, upid, struct siginfo __user *,
- }
- 
- long kernel_wait4(pid_t upid, int __user *stat_addr, int options,
--		  struct rusage *ru)
-+		  struct __kernel_rusage *ru)
- {
- 	struct wait_opts wo;
- 	struct pid *pid = NULL;
-@@ -1673,11 +1707,24 @@ long kernel_wait4(pid_t upid, int __user *stat_addr, int options,
- SYSCALL_DEFINE4(wait4, pid_t, upid, int __user *, stat_addr,
- 		int, options, struct rusage __user *, ru)
- {
--	struct rusage r;
-+	struct __kernel_rusage r;
- 	long err = kernel_wait4(upid, stat_addr, options, ru ? &r : NULL);
- 
- 	if (err > 0) {
--		if (ru && copy_to_user(ru, &r, sizeof(struct rusage)))
-+		if (ru && put_rusage(&r, ru))
-+			return -EFAULT;
-+	}
-+	return err;
-+}
-+
-+SYSCALL_DEFINE4(wait4_time64, pid_t, upid, int __user *, stat_addr,
-+		int, options, struct __kernel_rusage __user *, ru)
-+{
-+	struct __kernel_rusage r;
-+	long err = kernel_wait4(upid, stat_addr, options, ru ? &r : NULL);
-+
-+	if (err > 0) {
-+		if (ru && copy_to_user(ru, &r, sizeof(struct __kernel_rusage)))
- 			return -EFAULT;
- 	}
- 	return err;
-@@ -1703,7 +1750,7 @@ COMPAT_SYSCALL_DEFINE4(wait4,
- 	int, options,
- 	struct compat_rusage __user *, ru)
- {
--	struct rusage r;
-+	struct __kernel_rusage r;
- 	long err = kernel_wait4(pid, stat_addr, options, ru ? &r : NULL);
- 	if (err > 0) {
- 		if (ru && put_compat_rusage(&r, ru))
-@@ -1712,12 +1759,27 @@ COMPAT_SYSCALL_DEFINE4(wait4,
- 	return err;
- }
- 
-+COMPAT_SYSCALL_DEFINE4(wait4_time64,
-+	compat_pid_t, pid,
-+	compat_uint_t __user *, stat_addr,
-+	int, options,
-+	struct compat_rusage_time64 __user *, ru)
-+{
-+	struct __kernel_rusage r;
-+	long err = kernel_wait4(pid, stat_addr, options, ru ? &r : NULL);
-+	if (err > 0) {
-+		if (ru && put_compat_rusage_time64(&r, ru))
-+			return -EFAULT;
-+	}
-+	return err;
-+}
-+
- COMPAT_SYSCALL_DEFINE5(waitid,
- 		int, which, compat_pid_t, pid,
- 		struct compat_siginfo __user *, infop, int, options,
- 		struct compat_rusage __user *, uru)
- {
--	struct rusage ru;
-+	struct __kernel_rusage ru;
- 	struct waitid_info info = {.status = 0};
- 	long err = kernel_waitid(which, pid, &info, options, uru ? &ru : NULL);
- 	int signo = 0;
-@@ -1754,6 +1816,46 @@ COMPAT_SYSCALL_DEFINE5(waitid,
- 	user_access_end();
- 	return -EFAULT;
- }
-+
-+COMPAT_SYSCALL_DEFINE5(waitid_time64,
-+		int, which, compat_pid_t, pid,
-+		struct compat_siginfo __user *, infop, int, options,
-+		struct compat_rusage_time64 __user *, uru)
-+{
-+	struct __kernel_rusage ru;
-+	struct waitid_info info = {.status = 0};
-+	long err = kernel_waitid(which, pid, &info, options, uru ? &ru : NULL);
-+	int signo = 0;
-+	if (err > 0) {
-+		signo = SIGCHLD;
-+		err = 0;
-+		if (uru) {
-+			/* kernel_waitid() overwrites everything in ru */
-+			err = put_compat_rusage_time64(&ru, uru);
-+			if (err)
-+				return -EFAULT;
-+		}
-+	}
-+
-+	if (!infop)
-+		return err;
-+
-+	if (!access_ok(VERIFY_WRITE, infop, sizeof(*infop)))
-+		return -EFAULT;
-+
-+	user_access_begin();
-+	unsafe_put_user(signo, &infop->si_signo, Efault);
-+	unsafe_put_user(0, &infop->si_errno, Efault);
-+	unsafe_put_user(info.cause, &infop->si_code, Efault);
-+	unsafe_put_user(info.pid, &infop->si_pid, Efault);
-+	unsafe_put_user(info.uid, &infop->si_uid, Efault);
-+	unsafe_put_user(info.status, &infop->si_status, Efault);
-+	user_access_end();
-+	return err;
-+Efault:
-+	user_access_end();
-+	return -EFAULT;
-+}
- #endif
- 
- __weak void abort(void)
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 1de538f622e8..5b5f2dc19e79 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -1699,7 +1699,7 @@ SYSCALL_DEFINE2(setrlimit, unsigned int, resource, struct rlimit __user *, rlim)
-  *
-  */
- 
--static void accumulate_thread_rusage(struct task_struct *t, struct rusage *r)
-+static void accumulate_thread_rusage(struct task_struct *t, struct __kernel_rusage *r)
- {
- 	r->ru_nvcsw += t->nvcsw;
- 	r->ru_nivcsw += t->nivcsw;
-@@ -1709,12 +1709,13 @@ static void accumulate_thread_rusage(struct task_struct *t, struct rusage *r)
- 	r->ru_oublock += task_io_get_oublock(t);
- }
- 
--void getrusage(struct task_struct *p, int who, struct rusage *r)
-+void getrusage(struct task_struct *p, int who, struct __kernel_rusage *r)
- {
- 	struct task_struct *t;
- 	unsigned long flags;
- 	u64 tgutime, tgstime, utime, stime;
- 	unsigned long maxrss = 0;
-+	struct timespec64 ts;
- 
- 	memset((char *)r, 0, sizeof (*r));
- 	utime = stime = 0;
-@@ -1769,8 +1770,12 @@ void getrusage(struct task_struct *p, int who, struct rusage *r)
- 	unlock_task_sighand(p, &flags);
- 
- out:
--	r->ru_utime = ns_to_kernel_old_timeval(utime);
--	r->ru_stime = ns_to_kernel_old_timeval(stime);
-+	ts = ns_to_timespec64(utime);
-+	r->ru_utime.tv_sec = ts.tv_sec;
-+	r->ru_utime.tv_usec = ts.tv_nsec / NSEC_PER_USEC;
-+	ts = ns_to_timespec64(stime);
-+	r->ru_stime.tv_sec = ts.tv_sec;
-+	r->ru_stime.tv_usec = ts.tv_nsec / NSEC_PER_USEC;
- 
- 	if (who != RUSAGE_CHILDREN) {
- 		struct mm_struct *mm = get_task_mm(p);
-@@ -1783,10 +1788,54 @@ void getrusage(struct task_struct *p, int who, struct rusage *r)
- 	r->ru_maxrss = maxrss * (PAGE_SIZE / 1024); /* convert pages to KBs */
- }
- 
--SYSCALL_DEFINE2(getrusage, int, who, struct rusage __user *, ru)
-+int put_rusage(const struct __kernel_rusage *rk, struct rusage __user *ru)
- {
- 	struct rusage r;
- 
-+	if (IS_ENABLED(CONFIG_64BIT))
-+		return copy_to_user(ru, &rk, sizeof(rk)) ? -EFAULT : 0;
-+
-+	memset(&r, 0, sizeof(r));
-+	r.ru_utime.tv_sec = rk->ru_utime.tv_sec;
-+	r.ru_utime.tv_usec = rk->ru_utime.tv_usec;
-+	r.ru_stime.tv_sec = rk->ru_stime.tv_sec;
-+	r.ru_stime.tv_usec = rk->ru_stime.tv_usec;
-+	r.ru_maxrss = rk->ru_maxrss;
-+	r.ru_ixrss = rk->ru_ixrss;
-+	r.ru_idrss = rk->ru_idrss;
-+	r.ru_isrss = rk->ru_isrss;
-+	r.ru_minflt = rk->ru_minflt;
-+	r.ru_majflt = rk->ru_majflt;
-+	r.ru_nswap = rk->ru_nswap;
-+	r.ru_inblock = rk->ru_inblock;
-+	r.ru_oublock = rk->ru_oublock;
-+	r.ru_msgsnd = rk->ru_msgsnd;
-+	r.ru_msgrcv = rk->ru_msgrcv;
-+	r.ru_nsignals = rk->ru_nsignals;
-+	r.ru_nvcsw = rk->ru_nvcsw;
-+	r.ru_nivcsw = rk->ru_nivcsw;
-+	if (copy_to_user(ru, &r, sizeof(r)))
-+		return -EFAULT;
-+	return 0;
-+}
-+
-+SYSCALL_DEFINE2(getrusage, int, who, struct rusage __user *, ru)
-+{
-+	struct __kernel_rusage r;
-+
-+	if (who != RUSAGE_SELF && who != RUSAGE_CHILDREN &&
-+	    who != RUSAGE_THREAD)
-+		return -EINVAL;
-+
-+	getrusage(current, who, &r);
-+	return put_rusage(&r, ru);
-+}
-+
-+#ifndef CONFIG_64BIT
-+SYSCALL_DEFINE2(getrusage_time64, int, who, struct __kernel_rusage __user *, ru)
-+{
-+	struct __kernel_rusage r;
-+
- 	if (who != RUSAGE_SELF && who != RUSAGE_CHILDREN &&
- 	    who != RUSAGE_THREAD)
- 		return -EINVAL;
-@@ -1794,11 +1843,12 @@ SYSCALL_DEFINE2(getrusage, int, who, struct rusage __user *, ru)
- 	getrusage(current, who, &r);
- 	return copy_to_user(ru, &r, sizeof(r)) ? -EFAULT : 0;
- }
-+#endif
- 
- #ifdef CONFIG_COMPAT
- COMPAT_SYSCALL_DEFINE2(getrusage, int, who, struct compat_rusage __user *, ru)
- {
--	struct rusage r;
-+	struct __kernel_rusage r;
- 
- 	if (who != RUSAGE_SELF && who != RUSAGE_CHILDREN &&
- 	    who != RUSAGE_THREAD)
-@@ -1807,6 +1857,18 @@ COMPAT_SYSCALL_DEFINE2(getrusage, int, who, struct compat_rusage __user *, ru)
- 	getrusage(current, who, &r);
- 	return put_compat_rusage(&r, ru);
- }
-+
-+COMPAT_SYSCALL_DEFINE2(getrusage_time64, int, who, struct compat_rusage_time64 __user *, ru)
-+{
-+	struct __kernel_rusage r;
-+
-+	if (who != RUSAGE_SELF && who != RUSAGE_CHILDREN &&
-+	    who != RUSAGE_THREAD)
-+		return -EINVAL;
-+
-+	getrusage(current, who, &r);
-+	return put_compat_rusage_time64(&r, ru);
-+}
- #endif
- 
- SYSCALL_DEFINE1(umask, int, mask)
 -- 
-2.9.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
