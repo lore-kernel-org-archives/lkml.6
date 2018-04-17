@@ -1,36 +1,79 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+dEVP7Re+OM6g9Y0D0CAXAAHamJ9upU9ctoLZ/nF7IQNvAsjB1Rujwnqkrng/02yEjsc/V
-ARC-Seal: i=1; a=rsa-sha256; t=1523981437; cv=none;
-        d=google.com; s=arc-20160816;
-        b=ZehCDAN+wQ07qqZjvqpCJ5j+sKi9ta/Y0iheq7feDIZVehxPyeIxD7ciVjw7c1jn0/
-         y9vsprdw+7liKg2Cvtl5g2BkgnKd6kHl6751bk/uWYqFvBaNsuMPf6NISXqVm/JU0h6P
-         k3pQz4MXbMTWIyG7hifEwaEQGRVAm6pUlEiCbH1LA2mbYCdc1LihggxSCjmoaMR9LsEL
-         LPgPaqyKpNCl7gB1nfJwgkrQko1Knk7WlwUgdgD0B6BKR8lXvSo+nKe5IkWL+jDZdYBY
-         d4S1ZQWnMPPlLBIAjvvDecSn1cPUe24qK4/4l0UKoRNC/Vf+nsHd1HA8SAskR8P+Dtxp
-         8X7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=jON3sulnWoxrWzWmXB+Wn7F2oq9S4NqvaTiz+Z4XYo8=;
-        b=oZhZNsCUIk3ZXfeRH6pIfCS8UZRPINhQwAIwcXf1yaDEwahzc25WNQi0Ajr99xHxxw
-         0pjeJJaoVBiAAynEQVgnoavejok1k4WnMqQ1P6N7DMKtXxU1tPXiH2GCvfycNxd52GjW
-         lTpP3KSLUavsYFN65s2/GcTJvYD5MfYJ5kK1KvYQFQRpjrtYU/VIrVpM5m6AKX2t27oX
-         sKUAAjDUA0qOdGkNiyiKSoqk84YQ2Xs7APT/V9IL/AoX2z2JZJ1FHP8YsDq1YyuZDauA
-         YBZ2zlxCJQeC/F6GssndKiB6cC/YCGJmr+ghc79x/T1kl8tJINky3sUKummI6mJkbyRI
-         yOdQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2220351-1523981436-2-2983148252616048963
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES endaro, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523981433; b=aqIFqvecZTB4UktR2vVoZaRK+MNbixLKeRRcfbbLz36fYLDEO+
+    vMcbVLhleK78VzBvdKLAedPnQse1ftjAbXVWdEUia33bzkWASibHT5FOXy/tjVv9
+    GEf/x5GCV50hyo1lauxZOtlRxsxTEXELmhOfFoI6BpQlZq+rxc6uwGpQvqr07BYg
+    YkIpGVQUfHqtK6KQSI6coW2TK7TAaPwVpFFDjA9bWRfJ+38zLNpj97R5/KgeQEuh
+    qzXyadHZeKUaVPJCHfEvOL7dMAtgDkKdXpa2l05njJpS+fyc31oRRNPrPwdPEAwI
+    7AZSkVZgGsS14p6tqkhoPnn8320kVqwCAIhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523981433; bh=7H/BShoOjiR0DutAihJ7yLYiYv6UCT
+    pHNFLI2ILhEZ0=; b=XeMF40tAbXSLiMMJ6SEfuPDf3RexYKAEEcfeBHD0Fh9jt7
+    lj0Eey8G40OPdssKHsUnFQ6mKmJ0b0x6QHZxS7SsMYVEteJGL/g3u8IF+0I+gf9B
+    9ci4agd+kqZP5tPagfyVfekE4wKztMcTMx2V23QVMJXXaKXyKlVevjdso9SdpFAL
+    iOZZf28uIxDj8TAy3YO0BcCAZLUGSZufrfRev825x+Tc2zBrPAxenfolk43q33aO
+    4/7+b/7TmJ236AwC1hz6FhEiUmWbY/bEjfyccI/JWYp4uxhjlJCzWKwVFDK0Px6P
+    lzhUB2QXv33pFiaxdyBmEMoHdfTFAbS5vEk6RCSw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHbbGbPUNduiq68llmk1CetAFMf8orVAUkvlyus5WCgtffnu8iW3a4DXym84r64JMkdccjR5sA70ZJ14xvgLPc1vPaQ7WMv7i24eNXTiTbopzZtMvFF5
+    iSoxIT7Gs2/PFUYqzKiZW4jhkFmNW9Bpdh3q1ZfvV9RETBu+r9oUmrB1PK8/Z66FV2EBmMLACiWdohOBF0CZQIFr7zB23SXWbXlKuMwppw/IpOKY7MxGwUpX
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=drOt6m5kAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=2mOOifH8u5EECxIMPxYA:9
+    a=pJxnJ5vO3RysYamt:21 a=0mWPGmnHVDgINNCZ:21 a=QEXdDO2ut3YA:10
+    a=RMMjzBEyIzXRtoq5n5K6:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1755307AbeDQQK1 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 12:10:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36410 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755507AbeDQQK0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 12:10:26 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.9 61/66] hwmon: (ina2xx) Fix access to uninitialized mutex
-Date: Tue, 17 Apr 2018 17:59:34 +0200
-Message-Id: <20180417155648.514470317@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.9 58/66] getname_kernel() needs to make sure that ->name != ->iname in long case
+Date: Tue, 17 Apr 2018 17:59:31 +0200
+Message-Id: <20180417155648.392395989@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -38,10 +81,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009936138504780?=
-X-GMAIL-MSGID: =?utf-8?q?1598010359596501387?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,67 +91,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 0c4c5860e9983eb3da7a3d73ca987643c3ed034b upstream.
+commit 30ce4d1903e1d8a7ccd110860a5eef3c638ed8be upstream.
 
-Initialize data->config_lock mutex before it is used by the driver code.
+missed it in "kill struct filename.separate" several years ago.
 
-This fixes following warning on Odroid XU3 boards:
-
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 5 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc7-next-20180115-00001-gb75575dee3f2 #107
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[<c0111504>] (unwind_backtrace) from [<c010dbec>] (show_stack+0x10/0x14)
-[<c010dbec>] (show_stack) from [<c09b3f74>] (dump_stack+0x90/0xc8)
-[<c09b3f74>] (dump_stack) from [<c0179528>] (register_lock_class+0x1c0/0x59c)
-[<c0179528>] (register_lock_class) from [<c017bd1c>] (__lock_acquire+0x78/0x1850)
-[<c017bd1c>] (__lock_acquire) from [<c017de30>] (lock_acquire+0xc8/0x2b8)
-[<c017de30>] (lock_acquire) from [<c09ca59c>] (__mutex_lock+0x60/0xa0c)
-[<c09ca59c>] (__mutex_lock) from [<c09cafd0>] (mutex_lock_nested+0x1c/0x24)
-[<c09cafd0>] (mutex_lock_nested) from [<c068b0d0>] (ina2xx_set_shunt+0x70/0xb0)
-[<c068b0d0>] (ina2xx_set_shunt) from [<c068b218>] (ina2xx_probe+0x88/0x1b0)
-[<c068b218>] (ina2xx_probe) from [<c0673d90>] (i2c_device_probe+0x1e0/0x2d0)
-[<c0673d90>] (i2c_device_probe) from [<c053a268>] (driver_probe_device+0x2b8/0x4a0)
-[<c053a268>] (driver_probe_device) from [<c053a54c>] (__driver_attach+0xfc/0x120)
-[<c053a54c>] (__driver_attach) from [<c05384cc>] (bus_for_each_dev+0x58/0x7c)
-[<c05384cc>] (bus_for_each_dev) from [<c0539590>] (bus_add_driver+0x174/0x250)
-[<c0539590>] (bus_add_driver) from [<c053b5e0>] (driver_register+0x78/0xf4)
-[<c053b5e0>] (driver_register) from [<c0675ef0>] (i2c_register_driver+0x38/0xa8)
-[<c0675ef0>] (i2c_register_driver) from [<c0102b40>] (do_one_initcall+0x48/0x18c)
-[<c0102b40>] (do_one_initcall) from [<c0e00df0>] (kernel_init_freeable+0x110/0x1d4)
-[<c0e00df0>] (kernel_init_freeable) from [<c09c8120>] (kernel_init+0x8/0x114)
-[<c09c8120>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-
-Fixes: 5d389b125186 ("hwmon: (ina2xx) Make calibration register value fixed")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-[backport to v4.4.y/v4.9.y: context changes]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwmon/ina2xx.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/namei.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/hwmon/ina2xx.c
-+++ b/drivers/hwmon/ina2xx.c
-@@ -447,6 +447,7 @@ static int ina2xx_probe(struct i2c_clien
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -221,9 +221,10 @@ getname_kernel(const char * filename)
+ 	if (len <= EMBEDDED_NAME_MAX) {
+ 		result->name = (char *)result->iname;
+ 	} else if (len <= PATH_MAX) {
++		const size_t size = offsetof(struct filename, iname[1]);
+ 		struct filename *tmp;
  
- 	/* set the device type */
- 	data->config = &ina2xx_config[id->driver_data];
-+	mutex_init(&data->config_lock);
- 
- 	if (of_property_read_u32(dev->of_node, "shunt-resistor", &val) < 0) {
- 		struct ina2xx_platform_data *pdata = dev_get_platdata(dev);
-@@ -473,8 +474,6 @@ static int ina2xx_probe(struct i2c_clien
- 		return -ENODEV;
- 	}
- 
--	mutex_init(&data->config_lock);
--
- 	data->groups[group++] = &ina2xx_group;
- 	if (id->driver_data == ina226)
- 		data->groups[group++] = &ina226_group;
+-		tmp = kmalloc(sizeof(*tmp), GFP_KERNEL);
++		tmp = kmalloc(size, GFP_KERNEL);
+ 		if (unlikely(!tmp)) {
+ 			__putname(result);
+ 			return ERR_PTR(-ENOMEM);
