@@ -1,62 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753224AbeDQMyM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 08:54:12 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41172 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753097AbeDQMyK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:54:10 -0400
-X-Google-Smtp-Source: AIpwx4+gd63zLnvhX6vrFyXiBURbe7xtzInic4afzt+LBigEBAvJOzQLKaz/uzRBvL9Q1R9zkBKYPg==
-Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode for
- the cells list
-To: Alban Bedel <albeu@free.fr>, linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <1521933899-362-1-git-send-email-albeu@free.fr>
- <1521933899-362-2-git-send-email-albeu@free.fr>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
-Date: Tue, 17 Apr 2018 13:54:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1753363AbeDQMyf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 08:54:35 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:59256 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752087AbeDQMyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:54:33 -0400
+Date: Tue, 17 Apr 2018 14:54:29 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
+Cc: robh@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, marcel@holtmann.org,
+        devicetree@vger.kernel.org, alexandru.marginean@nxp.com,
+        madalin.bucur@nxp.com
+Subject: Re: [PATCH net-next 2/3] net: phy: Change the array size to 32 for
+ device_ids
+Message-ID: <20180417125429.GE2591@lunn.ch>
+References: <20180417090233.21548-1-vicentiu.galanopulo@nxp.com>
+ <20180417090233.21548-3-vicentiu.galanopulo@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1521933899-362-2-git-send-email-albeu@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417090233.21548-3-vicentiu.galanopulo@nxp.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 24/03/18 23:24, Alban Bedel wrote:
-> Having the cells as subnodes of the provider device without any
-> compatible property might clash with other bindings. To avoid this
-> problem update the binding to have all the cells in a 'nvmem-cells'
-> subnode with a 'nvmem-cells' compatible string. This new binding
-> guarantee that we can turn any kind of device in a nvmem provider.
+On Tue, Apr 17, 2018 at 04:02:32AM -0500, Vicentiu Galanopulo wrote:
+> In the context of enabling the discovery of the PHYs
+> which have the C45 MDIO address space in a non-standard
+> address:  num_ids in get_phy_c45_ids, has the
+> value 8 (ARRAY_SIZE(c45_ids->device_ids)), but the
+> u32 *devs can store 32 devices in the bitfield.
 > 
-> While discouraged for new uses the old scheme is still supported for
-> backward compatibility.
+> If a device is stored in *devs, in bits 32 to 9
+> (bit counting in lookup loop starts from 1), it will
+> not be found.
 
-Am not sure if this a really good idea to change nvmem bindings based on 
-provider requirements. This can be a beginning of other problems!!
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Did you know that we can pass nvmem cells info via nvmem config ?
-
-Why can't mtd-nvmem provider populate the nvmem_config->cells from its 
-dt "nvmem-cells" subnode before it registers the provider?
-
-Doing this way will make the binding very much specific to the provider 
-rather than changing nvmem core bindings.
-
-thanks,
-srini
+    Andrew
