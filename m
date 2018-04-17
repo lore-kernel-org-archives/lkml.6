@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+fUdInskNruS0vp7aVXuQ66Kw1yJ1mk0spKQH/p50EX148BwpHZWC9/gLjly2iGjZ+zaAo
-ARC-Seal: i=1; a=rsa-sha256; t=1523980981; cv=none;
+X-Google-Smtp-Source: AIpwx4+WvO17CwjrLlGrE5ycuXarHPoIiKKzrostJwTOeubThorw9glxelnSSlxW+BcFM45M30k6
+ARC-Seal: i=1; a=rsa-sha256; t=1523980978; cv=none;
         d=google.com; s=arc-20160816;
-        b=zksd/3guBVY9sNGDKx5Aj8gKv5hOaa/ibTvgcrB5LqIAJ1pl3YqU8OCpaKKW+JLKSl
-         CUwARLQgtFgdpjdhmXtjdhxYprNZfyA0mpvOKjOMwzgv6M3GHB6OEVZPWYnoOQr1vZN2
-         F0KmVpb46+OFtk7gU23kpI3PIlyLRU/cV0vj7GJ/LQQGYkgEYwQYGOAS3jhlduasK798
-         KiXGdMMwZQt3cFTCqj0t7SifJtQW/+tAeaafxW9Btj+9VxYfVhB73tLMdqNsOU5fxYdx
-         jKDO51aJrxBJe9+Tcl0J7iHwMSlduLxdi+Jx5eZmJuJDdcEXf6nxgPB9RD0dQd1z+Kzl
-         ZhuQ==
+        b=jL3jCCUROe5geEx7HelGtfuM5UJjEoQftu1wSVIsu96ShnCbyfFZsHgOe6dDWwvZJD
+         YmSrNjzpkE1S1joH+Iops/9qP1m4o9YsMhKmPd2PGnrfZDFoeaV1PgSYZydUOsmZrqOK
+         cQMuMxZdfYOnnl5FF/fIghaJx2MX3jac7YpiXy2i4IVba9CgQc8EpbK6JeHSXHGxtpW/
+         eJCEZb010vWtMbEjF+Yu6ps7C4X+Yf0hWt3j2wvWFsY9m0+zPTNb8vUIBt+oHbF6GGlc
+         Z9SmqLlUncgFRBBOqirBW1gKep1kMchLA0tp+NuwYUK6jb39iApB+9vZp5na+foe6qW9
+         E2yA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=pMIX+kN+aIvp/wCqiidulxZuVAgXUWPLia8qTKifEwk=;
-        b=Ugu6Z+lt+Yl55JAVv7UqdG1sA2ntUpi0xQT0C6ne5+0pYabajjOAfkDDaWmI0/lZ1V
-         ihNv0468BL9o668KEf+7JxUx4vEEqQQKsFFyqvK6NZjNZMQT8c1dJQDinLqNigGpsjvq
-         QXPzvXUi9rb7xGQpamE/Ay8V61aFoU0tRXUgqebKnRTx6WfzzEtS87hZfG9vmFFi2ORW
-         UJy1v9qN+llH7eYDGWf1PgTFbeMoHZ2QC+n4zMeGPlplw6TAbT3a0c8MzLky8Dlx3s7O
-         qeyBvV0epuV9lsnjzWhaQzEZsb08npBwXviIg9U4hpIqRXq/3f4JJgr+590HaKXTxEGl
-         MVKQ==
+        bh=q2ilMBrsXvmmp2pajcl73LARU1bbipV8iPFSXMgow9g=;
+        b=roSgN0cBZI3BO4Xk//9LYPcFa48ht5BcB0ScPmKI358b0huT6kVXHuYLPhaNgESmJr
+         zww1TeKd9dXSRf1osSoeP8rYPkUcyJxNkiGEB+1u0exwt06LarvMwPFZX+itYY6Tafk/
+         7YYXp6XDerWG3MtvXTYrpcw+neGlvmTzMKMyKxMvPPxpp0UvBjSZZ2PEXj2OnKYENbmB
+         SLMNkkwm/ni39STFl858VhMPNfM95mSbYAPJOlSk23zY0uo0sM1zuny+y+Z8TFn+69cI
+         kaB/sJGrMu7hRmJnUc23piELRH+a8ei3ghg4B4O2r4RC49omPYCgYHXeNncAj5mLhfEz
+         P4lg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,10 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Szymon Janc <szymon.janc@codecoup.pl>,
-	Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.16 66/68] Bluetooth: Fix connection if directed advertising and privacy is used
-Date: Tue, 17 Apr 2018 17:58:19 +0200
-Message-Id: <20180417155752.022565081@linuxfoundation.org>
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.16 65/68] getname_kernel() needs to make sure that ->name != ->iname in long case
+Date: Tue, 17 Apr 2018 17:58:18 +0200
+Message-Id: <20180417155751.980482572@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -40,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009881802443674?=
-X-GMAIL-MSGID: =?utf-8?q?1598009881802443674?=
+X-GMAIL-THRID: =?utf-8?q?1598009878581722556?=
+X-GMAIL-MSGID: =?utf-8?q?1598009878581722556?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,298 +48,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Szymon Janc <szymon.janc@codecoup.pl>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 082f2300cfa1a3d9d5221c38c5eba85d4ab98bd8 upstream.
+commit 30ce4d1903e1d8a7ccd110860a5eef3c638ed8be upstream.
 
-Local random address needs to be updated before creating connection if
-RPA from LE Direct Advertising Report was resolved in host. Otherwise
-remote device might ignore connection request due to address mismatch.
+missed it in "kill struct filename.separate" several years ago.
 
-This was affecting following qualification test cases:
-GAP/CONN/SCEP/BV-03-C, GAP/CONN/GCEP/BV-05-C, GAP/CONN/DCEP/BV-05-C
-
-Before patch:
-< HCI Command: LE Set Random Address (0x08|0x0005) plen 6          #11350 [hci0] 84680.231216
-        Address: 56:BC:E8:24:11:68 (Resolvable)
-          Identity type: Random (0x01)
-          Identity: F2:F1:06:3D:9C:42 (Static)
-> HCI Event: Command Complete (0x0e) plen 4                        #11351 [hci0] 84680.246022
-      LE Set Random Address (0x08|0x0005) ncmd 1
-        Status: Success (0x00)
-< HCI Command: LE Set Scan Parameters (0x08|0x000b) plen 7         #11352 [hci0] 84680.246417
-        Type: Passive (0x00)
-        Interval: 60.000 msec (0x0060)
-        Window: 30.000 msec (0x0030)
-        Own address type: Random (0x01)
-        Filter policy: Accept all advertisement, inc. directed unresolved RPA (0x02)
-> HCI Event: Command Complete (0x0e) plen 4                        #11353 [hci0] 84680.248854
-      LE Set Scan Parameters (0x08|0x000b) ncmd 1
-        Status: Success (0x00)
-< HCI Command: LE Set Scan Enable (0x08|0x000c) plen 2             #11354 [hci0] 84680.249466
-        Scanning: Enabled (0x01)
-        Filter duplicates: Enabled (0x01)
-> HCI Event: Command Complete (0x0e) plen 4                        #11355 [hci0] 84680.253222
-      LE Set Scan Enable (0x08|0x000c) ncmd 1
-        Status: Success (0x00)
-> HCI Event: LE Meta Event (0x3e) plen 18                          #11356 [hci0] 84680.458387
-      LE Direct Advertising Report (0x0b)
-        Num reports: 1
-        Event type: Connectable directed - ADV_DIRECT_IND (0x01)
-        Address type: Random (0x01)
-        Address: 53:38:DA:46:8C:45 (Resolvable)
-          Identity type: Public (0x00)
-          Identity: 11:22:33:44:55:66 (OUI 11-22-33)
-        Direct address type: Random (0x01)
-        Direct address: 7C:D6:76:8C:DF:82 (Resolvable)
-          Identity type: Random (0x01)
-          Identity: F2:F1:06:3D:9C:42 (Static)
-        RSSI: -74 dBm (0xb6)
-< HCI Command: LE Set Scan Enable (0x08|0x000c) plen 2             #11357 [hci0] 84680.458737
-        Scanning: Disabled (0x00)
-        Filter duplicates: Disabled (0x00)
-> HCI Event: Command Complete (0x0e) plen 4                        #11358 [hci0] 84680.469982
-      LE Set Scan Enable (0x08|0x000c) ncmd 1
-        Status: Success (0x00)
-< HCI Command: LE Create Connection (0x08|0x000d) plen 25          #11359 [hci0] 84680.470444
-        Scan interval: 60.000 msec (0x0060)
-        Scan window: 60.000 msec (0x0060)
-        Filter policy: White list is not used (0x00)
-        Peer address type: Random (0x01)
-        Peer address: 53:38:DA:46:8C:45 (Resolvable)
-          Identity type: Public (0x00)
-          Identity: 11:22:33:44:55:66 (OUI 11-22-33)
-        Own address type: Random (0x01)
-        Min connection interval: 30.00 msec (0x0018)
-        Max connection interval: 50.00 msec (0x0028)
-        Connection latency: 0 (0x0000)
-        Supervision timeout: 420 msec (0x002a)
-        Min connection length: 0.000 msec (0x0000)
-        Max connection length: 0.000 msec (0x0000)
-> HCI Event: Command Status (0x0f) plen 4                          #11360 [hci0] 84680.474971
-      LE Create Connection (0x08|0x000d) ncmd 1
-        Status: Success (0x00)
-< HCI Command: LE Create Connection Cancel (0x08|0x000e) plen 0    #11361 [hci0] 84682.545385
-> HCI Event: Command Complete (0x0e) plen 4                        #11362 [hci0] 84682.551014
-      LE Create Connection Cancel (0x08|0x000e) ncmd 1
-        Status: Success (0x00)
-> HCI Event: LE Meta Event (0x3e) plen 19                          #11363 [hci0] 84682.551074
-      LE Connection Complete (0x01)
-        Status: Unknown Connection Identifier (0x02)
-        Handle: 0
-        Role: Master (0x00)
-        Peer address type: Public (0x00)
-        Peer address: 00:00:00:00:00:00 (OUI 00-00-00)
-        Connection interval: 0.00 msec (0x0000)
-        Connection latency: 0 (0x0000)
-        Supervision timeout: 0 msec (0x0000)
-        Master clock accuracy: 0x00
-
-After patch:
-< HCI Command: LE Set Scan Parameters (0x08|0x000b) plen 7    #210 [hci0] 667.152459
-        Type: Passive (0x00)
-        Interval: 60.000 msec (0x0060)
-        Window: 30.000 msec (0x0030)
-        Own address type: Random (0x01)
-        Filter policy: Accept all advertisement, inc. directed unresolved RPA (0x02)
-> HCI Event: Command Complete (0x0e) plen 4                   #211 [hci0] 667.153613
-      LE Set Scan Parameters (0x08|0x000b) ncmd 1
-        Status: Success (0x00)
-< HCI Command: LE Set Scan Enable (0x08|0x000c) plen 2        #212 [hci0] 667.153704
-        Scanning: Enabled (0x01)
-        Filter duplicates: Enabled (0x01)
-> HCI Event: Command Complete (0x0e) plen 4                   #213 [hci0] 667.154584
-      LE Set Scan Enable (0x08|0x000c) ncmd 1
-        Status: Success (0x00)
-> HCI Event: LE Meta Event (0x3e) plen 18                     #214 [hci0] 667.182619
-      LE Direct Advertising Report (0x0b)
-        Num reports: 1
-        Event type: Connectable directed - ADV_DIRECT_IND (0x01)
-        Address type: Random (0x01)
-        Address: 50:52:D9:A6:48:A0 (Resolvable)
-          Identity type: Public (0x00)
-          Identity: 11:22:33:44:55:66 (OUI 11-22-33)
-        Direct address type: Random (0x01)
-        Direct address: 7C:C1:57:A5:B7:A8 (Resolvable)
-          Identity type: Random (0x01)
-          Identity: F4:28:73:5D:38:B0 (Static)
-        RSSI: -70 dBm (0xba)
-< HCI Command: LE Set Scan Enable (0x08|0x000c) plen 2       #215 [hci0] 667.182704
-        Scanning: Disabled (0x00)
-        Filter duplicates: Disabled (0x00)
-> HCI Event: Command Complete (0x0e) plen 4                  #216 [hci0] 667.183599
-      LE Set Scan Enable (0x08|0x000c) ncmd 1
-        Status: Success (0x00)
-< HCI Command: LE Set Random Address (0x08|0x0005) plen 6    #217 [hci0] 667.183645
-        Address: 7C:C1:57:A5:B7:A8 (Resolvable)
-          Identity type: Random (0x01)
-          Identity: F4:28:73:5D:38:B0 (Static)
-> HCI Event: Command Complete (0x0e) plen 4                  #218 [hci0] 667.184590
-      LE Set Random Address (0x08|0x0005) ncmd 1
-        Status: Success (0x00)
-< HCI Command: LE Create Connection (0x08|0x000d) plen 25    #219 [hci0] 667.184613
-        Scan interval: 60.000 msec (0x0060)
-        Scan window: 60.000 msec (0x0060)
-        Filter policy: White list is not used (0x00)
-        Peer address type: Random (0x01)
-        Peer address: 50:52:D9:A6:48:A0 (Resolvable)
-          Identity type: Public (0x00)
-          Identity: 11:22:33:44:55:66 (OUI 11-22-33)
-        Own address type: Random (0x01)
-        Min connection interval: 30.00 msec (0x0018)
-        Max connection interval: 50.00 msec (0x0028)
-        Connection latency: 0 (0x0000)
-        Supervision timeout: 420 msec (0x002a)
-        Min connection length: 0.000 msec (0x0000)
-        Max connection length: 0.000 msec (0x0000)
-> HCI Event: Command Status (0x0f) plen 4                    #220 [hci0] 667.186558
-      LE Create Connection (0x08|0x000d) ncmd 1
-        Status: Success (0x00)
-> HCI Event: LE Meta Event (0x3e) plen 19                    #221 [hci0] 667.485824
-      LE Connection Complete (0x01)
-        Status: Success (0x00)
-        Handle: 0
-        Role: Master (0x00)
-        Peer address type: Random (0x01)
-        Peer address: 50:52:D9:A6:48:A0 (Resolvable)
-          Identity type: Public (0x00)
-          Identity: 11:22:33:44:55:66 (OUI 11-22-33)
-        Connection interval: 50.00 msec (0x0028)
-        Connection latency: 0 (0x0000)
-        Supervision timeout: 420 msec (0x002a)
-        Master clock accuracy: 0x07
-@ MGMT Event: Device Connected (0x000b) plen 13          {0x0002} [hci0] 667.485996
-        LE Address: 11:22:33:44:55:66 (OUI 11-22-33)
-        Flags: 0x00000000
-        Data length: 0
-
-Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/net/bluetooth/hci_core.h |    2 +-
- net/bluetooth/hci_conn.c         |   29 +++++++++++++++++++++--------
- net/bluetooth/hci_event.c        |   15 +++++++++++----
- net/bluetooth/l2cap_core.c       |    2 +-
- 4 files changed, 34 insertions(+), 14 deletions(-)
+ fs/namei.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/include/net/bluetooth/hci_core.h
-+++ b/include/net/bluetooth/hci_core.h
-@@ -895,7 +895,7 @@ struct hci_conn *hci_connect_le_scan(str
- 				     u16 conn_timeout);
- struct hci_conn *hci_connect_le(struct hci_dev *hdev, bdaddr_t *dst,
- 				u8 dst_type, u8 sec_level, u16 conn_timeout,
--				u8 role);
-+				u8 role, bdaddr_t *direct_rpa);
- struct hci_conn *hci_connect_acl(struct hci_dev *hdev, bdaddr_t *dst,
- 				 u8 sec_level, u8 auth_type);
- struct hci_conn *hci_connect_sco(struct hci_dev *hdev, int type, bdaddr_t *dst,
---- a/net/bluetooth/hci_conn.c
-+++ b/net/bluetooth/hci_conn.c
-@@ -749,18 +749,31 @@ static bool conn_use_rpa(struct hci_conn
- }
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -222,9 +222,10 @@ getname_kernel(const char * filename)
+ 	if (len <= EMBEDDED_NAME_MAX) {
+ 		result->name = (char *)result->iname;
+ 	} else if (len <= PATH_MAX) {
++		const size_t size = offsetof(struct filename, iname[1]);
+ 		struct filename *tmp;
  
- static void hci_req_add_le_create_conn(struct hci_request *req,
--				       struct hci_conn *conn)
-+				       struct hci_conn *conn,
-+				       bdaddr_t *direct_rpa)
- {
- 	struct hci_cp_le_create_conn cp;
- 	struct hci_dev *hdev = conn->hdev;
- 	u8 own_addr_type;
- 
--	/* Update random address, but set require_privacy to false so
--	 * that we never connect with an non-resolvable address.
-+	/* If direct address was provided we use it instead of current
-+	 * address.
- 	 */
--	if (hci_update_random_address(req, false, conn_use_rpa(conn),
--				      &own_addr_type))
--		return;
-+	if (direct_rpa) {
-+		if (bacmp(&req->hdev->random_addr, direct_rpa))
-+			hci_req_add(req, HCI_OP_LE_SET_RANDOM_ADDR, 6,
-+								direct_rpa);
-+
-+		/* direct address is always RPA */
-+		own_addr_type = ADDR_LE_DEV_RANDOM;
-+	} else {
-+		/* Update random address, but set require_privacy to false so
-+		 * that we never connect with an non-resolvable address.
-+		 */
-+		if (hci_update_random_address(req, false, conn_use_rpa(conn),
-+					      &own_addr_type))
-+			return;
-+	}
- 
- 	memset(&cp, 0, sizeof(cp));
- 
-@@ -825,7 +838,7 @@ static void hci_req_directed_advertising
- 
- struct hci_conn *hci_connect_le(struct hci_dev *hdev, bdaddr_t *dst,
- 				u8 dst_type, u8 sec_level, u16 conn_timeout,
--				u8 role)
-+				u8 role, bdaddr_t *direct_rpa)
- {
- 	struct hci_conn_params *params;
- 	struct hci_conn *conn;
-@@ -940,7 +953,7 @@ struct hci_conn *hci_connect_le(struct h
- 		hci_dev_set_flag(hdev, HCI_LE_SCAN_INTERRUPTED);
- 	}
- 
--	hci_req_add_le_create_conn(&req, conn);
-+	hci_req_add_le_create_conn(&req, conn, direct_rpa);
- 
- create_conn:
- 	err = hci_req_run(&req, create_le_conn_complete);
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -4648,7 +4648,8 @@ static void hci_le_conn_update_complete_
- /* This function requires the caller holds hdev->lock */
- static struct hci_conn *check_pending_le_conn(struct hci_dev *hdev,
- 					      bdaddr_t *addr,
--					      u8 addr_type, u8 adv_type)
-+					      u8 addr_type, u8 adv_type,
-+					      bdaddr_t *direct_rpa)
- {
- 	struct hci_conn *conn;
- 	struct hci_conn_params *params;
-@@ -4699,7 +4700,8 @@ static struct hci_conn *check_pending_le
- 	}
- 
- 	conn = hci_connect_le(hdev, addr, addr_type, BT_SECURITY_LOW,
--			      HCI_LE_AUTOCONN_TIMEOUT, HCI_ROLE_MASTER);
-+			      HCI_LE_AUTOCONN_TIMEOUT, HCI_ROLE_MASTER,
-+			      direct_rpa);
- 	if (!IS_ERR(conn)) {
- 		/* If HCI_AUTO_CONN_EXPLICIT is set, conn is already owned
- 		 * by higher layer that tried to connect, if no then
-@@ -4808,8 +4810,13 @@ static void process_adv_report(struct hc
- 		bdaddr_type = irk->addr_type;
- 	}
- 
--	/* Check if we have been requested to connect to this device */
--	conn = check_pending_le_conn(hdev, bdaddr, bdaddr_type, type);
-+	/* Check if we have been requested to connect to this device.
-+	 *
-+	 * direct_addr is set only for directed advertising reports (it is NULL
-+	 * for advertising reports) and is already verified to be RPA above.
-+	 */
-+	conn = check_pending_le_conn(hdev, bdaddr, bdaddr_type, type,
-+								direct_addr);
- 	if (conn && type == LE_ADV_IND) {
- 		/* Store report for later inclusion by
- 		 * mgmt_device_connected
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@ -7156,7 +7156,7 @@ int l2cap_chan_connect(struct l2cap_chan
- 			hcon = hci_connect_le(hdev, dst, dst_type,
- 					      chan->sec_level,
- 					      HCI_LE_CONN_TIMEOUT,
--					      HCI_ROLE_SLAVE);
-+					      HCI_ROLE_SLAVE, NULL);
- 		else
- 			hcon = hci_connect_le_scan(hdev, dst, dst_type,
- 						   chan->sec_level,
+-		tmp = kmalloc(sizeof(*tmp), GFP_KERNEL);
++		tmp = kmalloc(size, GFP_KERNEL);
+ 		if (unlikely(!tmp)) {
+ 			__putname(result);
+ 			return ERR_PTR(-ENOMEM);
