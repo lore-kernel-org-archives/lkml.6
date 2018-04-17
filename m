@@ -1,68 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752696AbeDQIj6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 04:39:58 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:37857 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752609AbeDQIjz (ORCPT
+        id S1752744AbeDQIkk convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 04:40:40 -0400
+Received: from emcscan.emc.com.tw ([192.72.220.5]:1414 "EHLO
+        emcscan.emc.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752087AbeDQIka (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:39:55 -0400
-X-Google-Smtp-Source: AIpwx48UJcWye3KweDSy54Cm0PafRipfxFutOnSNgifYFAKLTEMuIDQujyi/j+2jFRr5GQ3zUZyIVmiOtNGSWsNcs7Q=
+        Tue, 17 Apr 2018 04:40:30 -0400
+From: =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>
+To: "'Benjamin Tissoires'" <benjamin.tissoires@redhat.com>
+Cc: "'Oliver Haessler'" <oliver@redhat.com>,
+        "'Benjamin Berg'" <bberg@redhat.com>,
+        "'Rob Herring'" <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        "'open list:HID CORE LAYER'" <linux-input@vger.kernel.org>,
+        "'lkml'" <linux-kernel@vger.kernel.org>,
+        "'Dmitry Torokhov'" <dmitry.torokhov@gmail.com>,
+        "'Aaron Ma'" <aaron.ma@canonical.com>
+References: <20180409091051.2944-1-benjamin.tissoires@redhat.com> <CAO-hwJJnHPEQ+R+8qWb1Dn+otqgmbcKgiNDOyNkVBD+xdzY_zw@mail.gmail.com>
+In-Reply-To: <CAO-hwJJnHPEQ+R+8qWb1Dn+otqgmbcKgiNDOyNkVBD+xdzY_zw@mail.gmail.com>
+Subject: RE: [PATCH v2 0/9] Input: support for latest Lenovo thinkpads (series 80)
+Date: Tue, 17 Apr 2018 16:40:28 +0800
+Message-ID: <00f701d3d627$bcf41de0$36dc59a0$@emc.com.tw>
 MIME-Version: 1.0
-In-Reply-To: <20180221193941.12005.34137.stgit@tlendack-t1.amdoffice.net>
-References: <20180221193941.12005.34137.stgit@tlendack-t1.amdoffice.net>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Tue, 17 Apr 2018 16:39:54 +0800
-Message-ID: <CANRm+CzHgLsOar4ZJSn_cyOauH5b99zP=O34MM+f9t5Xe9i+fg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] KVM: MSR-based features
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: "the arch/x86 maintainers" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, Joerg Roedel <joro@8bytes.org>,
-        Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AQJU5pv00HPhSK9QPPuQFFTXzPYicAFyVNacovbutKA=
+Content-Language: zh-tw
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-02-22 3:39 GMT+08:00 Tom Lendacky <thomas.lendacky@amd.com>:
-> The following series implements support within KVM for MSR-based features.
-> The first patch creates the MSR-based feature framework used to retrieve
-> the available MSR-based features.  The second patch makes use of the
-> framework to allow a guest to determine if the LFENCE instruction is
-> serializing on AMD processors.
+Hi Benjamin,
 
-Is there a qemu patch for LFENCE instruction?
+I agree this series.
 
-Regards,
-Wanpeng Li
+Thanks
+KT
 
+-----Original Message-----
+From: Benjamin Tissoires [mailto:benjamin.tissoires@redhat.com] 
+Sent: Tuesday, April 17, 2018 4:34 PM
+To: 廖崇榮
+Cc: Oliver Haessler; Benjamin Berg; Rob Herring; devicetree@vger.kernel.org; open list:HID CORE LAYER; lkml; Dmitry Torokhov; Aaron Ma
+Subject: Re: [PATCH v2 0/9] Input: support for latest Lenovo thinkpads (series 80)
+
+Hi KT,
+
+gentle ping :)
+
+Could you ACK/NACK this series?
+
+Dmitry, the first patch could go without KT's approval. Also I realized that Aaron submitted a similar patch for the X1 Carbon last
+October: https://patchwork.kernel.org/patch/10008513/
+So I think the first one should go ASAP now that the laptops are shipping from Lenovo.
+
+Cheers,
+Benjamin
+
+On Mon, Apr 9, 2018 at 11:10 AM, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
+> Hi Dmitry,
 >
-> This series is based on the master branch of the KVM git tree.
+> Here is the v2 of the Lenovo 80 series.
+> Changes from v1:
+> - included patch to convert a function to static from build bot
+> - use of device property instead of platform data (thus the new device tree
+>   binding)
 >
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git
+> BTW, KT, if you want to add your Signed-off-by on the patches, feel 
+> free to do so. You were of tremendous help :)
 >
-> ---
+> Cheers,
+> Benjamin
 >
-> Changes from v2:
-> - Moved back to initializing the MSR-based feature list in kvm_init_msr_list()
->   (based on the kvm_x86_ops callback return code)
-> - Removed the definition of KVM_GET_MSR and switched back to using KVM_GET_MSRS
-> - Consolidated the documentation to group the ioctl usage and describe the usage
->   specific to the version of the ioctl used.
+> Benjamin Tissoires (9):
+>   Input: synaptics - add Lenovo 80 series ids to SMBus
+>   input: elan_i2c_smbus - fix corrupted stack
+>   Input: elan_i2c - add trackstick report
+>   Input: elantech - split device info into a separate structure
+>   Input: elantech_query_info() can be static
+>   Input: elantech - query the resolution in query_info
+>   Input: elantech - add support for SMBus devices
+>   Input: elantech - detect new ICs and setup Host Notify for them
+>   input: psmouse-smbus: allow to control psmouse_deactivate
 >
-> Tom Lendacky (2):
->       KVM: x86: Add a framework for supporting MSR-based features
->       KVM: SVM: Add MSR-based feature support for serializing LFENCE
->
->
->  Documentation/virtual/kvm/api.txt |   29 +++++++++++----
->  arch/x86/include/asm/kvm_host.h   |    2 +
->  arch/x86/kvm/svm.c                |   43 ++++++++++++++++++++++
->  arch/x86/kvm/x86.c                |   72 +++++++++++++++++++++++++++++++++++--
->  include/uapi/linux/kvm.h          |    1 +
->  5 files changed, 136 insertions(+), 11 deletions(-)
+>  .../devicetree/bindings/input/elan_i2c.txt         |   1 +
+>  drivers/input/mouse/Kconfig                        |  12 +
+>  drivers/input/mouse/elan_i2c_core.c                |  90 +++-
+>  drivers/input/mouse/elan_i2c_smbus.c               |  22 +-
+>  drivers/input/mouse/elantech.c                     | 479 +++++++++++++++------
+>  drivers/input/mouse/elantech.h                     |  69 ++-
+>  drivers/input/mouse/psmouse-base.c                 |  21 +-
+>  drivers/input/mouse/psmouse-smbus.c                |  24 +-
+>  drivers/input/mouse/psmouse.h                      |   2 +
+>  drivers/input/mouse/synaptics.c                    |   5 +-
+>  10 files changed, 565 insertions(+), 160 deletions(-)
 >
 > --
-> Tom Lendacky
+> 2.14.3
+>
