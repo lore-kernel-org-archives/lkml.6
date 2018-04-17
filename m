@@ -1,183 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753262AbeDQVzi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:55:38 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:32863 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752655AbeDQVzg (ORCPT
+        id S1753315AbeDQVzq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:55:46 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:40909 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752647AbeDQVzm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:55:36 -0400
-X-Google-Smtp-Source: AIpwx4+6Wbobd+Vm90hIZThxiw9dfT1yOcdfwNKwr0NSANUQX3OFXjmJeWf/+mhFdeGB1ZD/FNOB59RhzcEab8OnzpU=
+        Tue, 17 Apr 2018 17:55:42 -0400
+X-Google-Smtp-Source: AIpwx4897IZHdclOHL7O9cf16GQzMlK0SH0S3SeYFaIPg3R3tfcXlx0MazPvp9sG6quC0q/1GGf9Ezb1xMyRzZS5rGQ=
 MIME-Version: 1.0
-In-Reply-To: <A047B5AE-CA5F-4664-92F7-935E8ED4C0CA@fb.com>
-References: <1523983016-11005-1-git-send-email-laoar.shao@gmail.com> <A047B5AE-CA5F-4664-92F7-935E8ED4C0CA@fb.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 18 Apr 2018 05:54:55 +0800
-Message-ID: <CALOAHbASY7-rJ8p-OciOqY9u90sKB7qP1hasiHsRaQ-g39nTqA@mail.gmail.com>
-Subject: Re: [PATCH v2 net-next] net: introduce a new tracepoint for tcp_rcv_space_adjust
-To: Song Liu <songliubraving@fb.com>
-Cc: "eric.dumazet@gmail.com" <eric.dumazet@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
-        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <CAHC9VhTv_2ErGe38u+Z2CGY2BhNqbG0u_tqbMmwOYUsr4jJ3aQ@mail.gmail.com>
+References: <eb67b174e6a3d0fe174cc738d9109cd7fda96a9b.1523316291.git.rgb@redhat.com>
+ <CAHC9VhTv_2ErGe38u+Z2CGY2BhNqbG0u_tqbMmwOYUsr4jJ3aQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 17 Apr 2018 17:55:40 -0400
+Message-ID: <CAHC9VhQ5513TWiUc5vCo6j=ksiVDThXaA6_XTTt-T2OvfrEOTw@mail.gmail.com>
+Subject: Re: [PATCH ghak47 V1] audit: normalize MAC_POLICY_LOAD record
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 1:38 AM, Song Liu <songliubraving@fb.com> wrote:
->
->
->> On Apr 17, 2018, at 9:36 AM, Yafang Shao <laoar.shao@gmail.com> wrote:
+On Wed, Apr 11, 2018 at 5:11 PM, Paul Moore <paul@paul-moore.com> wrote:
+> On Mon, Apr 9, 2018 at 7:36 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+>> The audit MAC_POLICY_LOAD record had redundant dangling keywords and was
+>> missing information about which LSM was responsible and its completion
+>> status.  While this record is only issued on success, the parser expects
+>> the res= field to be present.
 >>
->> tcp_rcv_space_adjust is called every time data is copied to user space,
->> introducing a tcp tracepoint for which could show us when the packet is
->> copied to user.
->> This could help us figure out whether there's latency in user process.
+>> Old record:
+>> type=MAC_POLICY_LOAD msg=audit(1479299795.404:43): policy loaded auid=0 ses=1
 >>
->> When a tcp packet arrives, tcp_rcv_established() will be called and with
->> the existed tracepoint tcp_probe we could get the time when this packet
->> arrives.
->> Then this packet will be copied to user, and tcp_rcv_space_adjust will
->> be called and with this new introduced tracepoint we could get the time
->> when this packet is copied to user.
+>> Delete the redundant dangling keywords, add the lsm= field and the res=
+>> field.
 >>
->>        arrives time : user process time    => latency caused by user
->>        tcp_probe      tcp_rcv_space_adjust
+>> New record:
+>> type=MAC_POLICY_LOAD msg=audit(1523293846.204:894): auid=0 ses=1 lsm=selinux res=1
 >>
->> Hence in the printk message, sk_cookie is printed as a key to relate
->> tcp_rcv_space_adjust with tcp_probe.
->>
->> Maybe we could export sockfd in this new tracepoint as well, then we
->> could relate this new tracepoint with epoll/read/recv* tracepoints, and
->> finally that could show us the whole lifespan of this packet. But we
->> could also implement that with pid as these functions are executed in
->> process context.
->>
->> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
->>
+>> See: https://github.com/linux-audit/audit-kernel/issues/47
+>> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 >> ---
->> v1 -> v2: use sk_cookie as key suggested by Eric.
->> ---
->> include/trace/events/tcp.h | 33 +++++++++++++++++++++++++++------
->> net/ipv4/tcp_input.c       |  2 ++
->> 2 files changed, 29 insertions(+), 6 deletions(-)
+>>  security/selinux/selinuxfs.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
->> index 3dd6802..814f754 100644
->> --- a/include/trace/events/tcp.h
->> +++ b/include/trace/events/tcp.h
->> @@ -10,6 +10,7 @@
->> #include <linux/tracepoint.h>
->> #include <net/ipv6.h>
->> #include <net/tcp.h>
->> +#include <linux/sock_diag.h>
+>> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+>> index 00b21b2..496915a 100644
+>> --- a/security/selinux/selinuxfs.c
+>> +++ b/security/selinux/selinuxfs.c
+>> @@ -531,7 +531,7 @@ static ssize_t sel_write_load(struct file *file, const char __user *buf,
 >>
->> #define TP_STORE_V4MAPPED(__entry, saddr, daddr)              \
->>       do {                                                    \
->> @@ -125,6 +126,7 @@
->>               __array(__u8, daddr, 4)
->>               __array(__u8, saddr_v6, 16)
->>               __array(__u8, daddr_v6, 16)
->> +             __field(__u64, sock_cookie)
->>       ),
->>
->>       TP_fast_assign(
->> @@ -144,12 +146,24 @@
->>
->>               TP_STORE_ADDRS(__entry, inet->inet_saddr, inet->inet_daddr,
->>                              sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
->> +
->> +             /*
->> +              * sk_cookie is used to identify a socket, with which we could
->> +              * relate this tracepoint with other tracepoints,
->> +              * i.e. tcp_probe.
->> +              * If we needn't this relation, then sk_cookie is useless;
->> +              * if we need this relation, then tcp_probe is already set,
->> +              * and sk_cookie is already set in tcp_probe, so we could get
->> +              * the value directly.
->> +              */
->> +             __entry->sock_cookie = atomic64_read(&sk->sk_cookie);
->>       ),
->>
->> -     TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c",
->> +     TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c sock_cookie=%llu",
->>                 __entry->sport, __entry->dport,
->>                 __entry->saddr, __entry->daddr,
->> -               __entry->saddr_v6, __entry->daddr_v6)
->> +               __entry->saddr_v6, __entry->daddr_v6,
->> +               __entry->sock_cookie)
->> );
->>
->> DEFINE_EVENT(tcp_event_sk, tcp_receive_reset,
->> @@ -166,6 +180,13 @@
->>       TP_ARGS(sk)
->> );
->>
->> +DEFINE_EVENT(tcp_event_sk, tcp_rcv_space_adjust,
->> +
->> +     TP_PROTO(const struct sock *sk),
->> +
->> +     TP_ARGS(sk)
->> +);
->> +
->> TRACE_EVENT(tcp_retransmit_synack,
->>
->>       TP_PROTO(const struct sock *sk, const struct request_sock *req),
->> @@ -232,6 +253,7 @@
->>               __field(__u32, snd_wnd)
->>               __field(__u32, srtt)
->>               __field(__u32, rcv_wnd)
->> +             __field(__u64, sock_cookie)
->>       ),
->>
->>       TP_fast_assign(
->> @@ -256,15 +278,14 @@
->>               __entry->rcv_wnd = tp->rcv_wnd;
->>               __entry->ssthresh = tcp_current_ssthresh(sk);
->>               __entry->srtt = tp->srtt_us >> 3;
->> +             __entry->sock_cookie = sock_gen_cookie(sk);
->>       ),
->>
->> -     TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x "
->> -               "snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u "
->> -               "rcv_wnd=%u",
->> +     TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llu",
->>                 __entry->saddr, __entry->daddr, __entry->mark,
->>                 __entry->length, __entry->snd_nxt, __entry->snd_una,
->>                 __entry->snd_cwnd, __entry->ssthresh, __entry->snd_wnd,
->> -               __entry->srtt, __entry->rcv_wnd)
->> +               __entry->srtt, __entry->rcv_wnd, __entry->sock_cookie)
->> );
->>
->> #endif /* _TRACE_TCP_H */
->> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
->> index f93687f..43ad468 100644
->> --- a/net/ipv4/tcp_input.c
->> +++ b/net/ipv4/tcp_input.c
->> @@ -582,6 +582,8 @@ void tcp_rcv_space_adjust(struct sock *sk)
->>       u32 copied;
->>       int time;
->>
->> +     trace_tcp_rcv_space_adjust(sk);
->> +
->>       tcp_mstamp_refresh(tp);
->>       time = tcp_stamp_us_delta(tp->tcp_mstamp, tp->rcvq_space.time);
->>       if (time < (tp->rcv_rtt_est.rtt_us >> 3) || tp->rcv_rtt_est.rtt_us == 0)
+>>  out1:
+>>         audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
+>> -               "policy loaded auid=%u ses=%u",
+>> +               "auid=%u ses=%u lsm=selinux res=1",
+>
+> This is another case of NACK on principle, but I think we can make an
+> exception in this particular case.
+>
+> Also like the other patch, this will need to wait for the merge window
+> to close before I can merge it.
+
+Merged into selinux/next.
+
+>>                 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>>                 audit_get_sessionid(current));
+>>  out:
 >> --
 >> 1.8.3.1
->>
->
-> If I understand this correctly, you can get all the information you need with
-> a kprobe on tcp_rcv_space_adjust(). Why is it necessary to introduce a new
-> tracepoint?
->
 
-Tracepoint is less expensive and more cnovinient, that is the same
-reason why tcp_probe.c was removed and tcp_probe tracepoint was
-introduced.
-
-Thanks
-Yafang
+-- 
+paul moore
+www.paul-moore.com
