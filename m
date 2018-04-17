@@ -1,88 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752784AbeDQOzo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:55:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37512 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751927AbeDQOzj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:55:39 -0400
-Subject: Re: [PATCH v4 02/15] KVM: s390: reset crypto attributes for all vcpus
-To: Halil Pasic <pasic@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        akrowiak@linux.vnet.ibm.com
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-3-git-send-email-akrowiak@linux.vnet.ibm.com>
- <41496d07-54b3-5cc6-8803-a935f6d821ee@linux.vnet.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Tue, 17 Apr 2018 10:55:30 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1752497AbeDQO6d (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:58:33 -0400
+Received: from mga18.intel.com ([134.134.136.126]:64247 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751193AbeDQO6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:58:31 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,463,1517904000";
+   d="scan'208";a="51467121"
+Date: Tue, 17 Apr 2018 22:56:26 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, wexu@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jfreimann@redhat.com
+Subject: Re: [RFC v2] virtio: support packed ring
+Message-ID: <20180417145626.y5vei4y6irrdw7ky@debian>
+References: <20180401141216.8969-1-tiwei.bie@intel.com>
+ <ebfbfc3e-9e52-9331-61b6-258e131f822d@redhat.com>
+ <20180413071529.f4esh654dakodf4f@debian>
+ <8dee7d62-ac0b-54ba-6bec-4bc4a6fb34e9@redhat.com>
+ <20180417025133.7t7exmizgolr565z@debian>
+ <20180417151654-mutt-send-email-mst@kernel.org>
+ <20180417124716.wsypd5zl4n4galrz@debian>
+ <20180417170354-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <41496d07-54b3-5cc6-8803-a935f6d821ee@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041714-0044-0000-0000-00000405E225
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008871; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01019256; UDB=6.00519969; IPR=6.00798497;
- MB=3.00020618; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 14:55:35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041714-0045-0000-0000-00000837E66B
-Message-Id: <4dd8242a-4f25-065f-5eea-e53c73130763@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170133
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180417170354-mutt-send-email-mst@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/17/2018 10:29 AM, Halil Pasic wrote:
->
->
-> On 04/15/2018 11:22 PM, Tony Krowiak wrote:
->> Introduces a new function to reset the crypto attributes for all
->> vcpus whether they are running or not. Each vcpu in KVM will
->> be removed from SIE prior to resetting the crypto attributes in its
->> SIE state description. After all vcpus have had their crypto attributes
->> reset the vcpus will be restored to SIE.
->>
->> This function will be used in a later patch to set the ECA.28
->> bit in the SIE state description to enable interpretive execution of
->> AP instructions. It will also be incorporated into the
->> kvm_s390_vm_set_crypto(kvm) function to fix an issue whereby the crypto
->> key wrapping attributes could potentially get out of synch for running
->> vcpus.
->>
->
-> Wasn't this 'issue' reported by me by any chance?
+On Tue, Apr 17, 2018 at 05:04:59PM +0300, Michael S. Tsirkin wrote:
+> On Tue, Apr 17, 2018 at 08:47:16PM +0800, Tiwei Bie wrote:
+> > On Tue, Apr 17, 2018 at 03:17:41PM +0300, Michael S. Tsirkin wrote:
+> > > On Tue, Apr 17, 2018 at 10:51:33AM +0800, Tiwei Bie wrote:
+> > > > On Tue, Apr 17, 2018 at 10:11:58AM +0800, Jason Wang wrote:
+> > > > > On 2018年04月13日 15:15, Tiwei Bie wrote:
+> > > > > > On Fri, Apr 13, 2018 at 12:30:24PM +0800, Jason Wang wrote:
+> > > > > > > On 2018年04月01日 22:12, Tiwei Bie wrote:
+> > > > [...]
+> > > > > > > > +static int detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
+> > > > > > > > +			      void **ctx)
+> > > > > > > > +{
+> > > > > > > > +	struct vring_packed_desc *desc;
+> > > > > > > > +	unsigned int i, j;
+> > > > > > > > +
+> > > > > > > > +	/* Clear data ptr. */
+> > > > > > > > +	vq->desc_state[head].data = NULL;
+> > > > > > > > +
+> > > > > > > > +	i = head;
+> > > > > > > > +
+> > > > > > > > +	for (j = 0; j < vq->desc_state[head].num; j++) {
+> > > > > > > > +		desc = &vq->vring_packed.desc[i];
+> > > > > > > > +		vring_unmap_one_packed(vq, desc);
+> > > > > > > > +		desc->flags = 0x0;
+> > > > > > > Looks like this is unnecessary.
+> > > > > > It's safer to zero it. If we don't zero it, after we
+> > > > > > call virtqueue_detach_unused_buf_packed() which calls
+> > > > > > this function, the desc is still available to the
+> > > > > > device.
+> > > > > 
+> > > > > Well detach_unused_buf_packed() should be called after device is stopped,
+> > > > > otherwise even if you try to clear, there will still be a window that device
+> > > > > may use it.
+> > > > 
+> > > > This is not about whether the device has been stopped or
+> > > > not. We don't have other places to re-initialize the ring
+> > > > descriptors and wrap_counter. So they need to be set to
+> > > > the correct values when doing detach_unused_buf.
+> > > > 
+> > > > Best regards,
+> > > > Tiwei Bie
+> > > 
+> > > find vqs is the time to do it.
+> > 
+> > The .find_vqs() will call .setup_vq() which will eventually
+> > call vring_create_virtqueue(). It's a different case. Here
+> > we're talking about re-initializing the descs and updating
+> > the wrap counter when detaching the unused descs (In this
+> > case, split ring just needs to decrease vring.avail->idx).
+> > 
+> > Best regards,
+> > Tiwei Bie
+> 
+> There's no requirement that  virtqueue_detach_unused_buf re-initializes
+> the descs. It happens on cleanup path just before drivers delete the
+> vqs.
 
-Yes it was .... was I supposed to include that fact in the commit message?
+Cool, I wasn't aware of it. I saw split ring decrease
+vring.avail->idx after detaching an unused desc, so I
+thought detaching unused desc also needs to make sure
+that the ring state will be updated correspondingly.
 
->
-> I agree with Connnie, we don't need the forward reference to
-> ECA.28.
+If there is no such requirement, do you think it's OK
+to remove below two lines:
 
-I'm not sure that's exactly what she said, but I'd be more than happy
-to remove it.
+vq->avail_idx_shadow--;
+vq->vring.avail->idx = cpu_to_virtio16(_vq->vdev, vq->avail_idx_shadow);
 
->
->
-> Regards,
-> Halil
->
->> Signed-off-by: Tony Krowiak<akrowiak@linux.vnet.ibm.com>
->
+from virtqueue_detach_unused_buf(), and we could have
+one generic function to handle both rings:
+
+void *virtqueue_detach_unused_buf(struct virtqueue *_vq)
+{
+	struct vring_virtqueue *vq = to_vvq(_vq);
+	unsigned int num, i;
+	void *buf;
+
+	START_USE(vq);
+
+	num = vq->packed ? vq->vring_packed.num : vq->vring.num;
+
+	for (i = 0; i < num; i++) {
+		if (!vq->desc_state[i].data)
+			continue;
+		/* detach_buf clears data, so grab it now. */
+		buf = vq->desc_state[i].data;
+		detach_buf(vq, i, NULL);
+		END_USE(vq);
+		return buf;
+	}
+	/* That should have freed everything. */
+	BUG_ON(vq->vq.num_free != num);
+
+	END_USE(vq);
+	return NULL;
+}
+
+Best regards,
+Tiwei Bie
