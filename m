@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx486ZDQZKzVKVHwR7V+XfX62Oh4T8Me56BWGx8e9DjiZUMwB3S98ieTftz+zemktb83118Y0
-ARC-Seal: i=1; a=rsa-sha256; t=1523981071; cv=none;
+X-Google-Smtp-Source: AIpwx49cA9xVEcySmXfuT9vXjMy60elWLbYErZ7G1JYhe15BZGS/Vee9/jwF0ba79GTWhI3aipAD
+ARC-Seal: i=1; a=rsa-sha256; t=1523981045; cv=none;
         d=google.com; s=arc-20160816;
-        b=otwdUwoH6NDJOhfsDSK1iwoN7MvOqSrB0+FbSOFsBuMz14fJ4WHhWXOjFbA22EfrKk
-         lu2gf79rMTZB859Qyb0X99x18CSHXWPyzBJ5CusKxNZIymPRnFmNXo9AaJsZ9nr+QYI/
-         SkQ4ZJuYtcwrXYeZYs9qMf63cAJHtTL7TDiACvNA52TeVXzKN25CUk5Pok359FVaM6Td
-         +dDFmhQ1k+XUWRo1aYNsQyfd3uQNJNP8SLK21GuaglWzqNMiNHbfgKyhk7Yp9Yb+TCwz
-         FrXu9Y1sd8n3B+xWyZ1r/bN5ATqPcasevyF4pQixvekZIgWWjvJx4nkudZm781Sl+6tV
-         Yf/Q==
+        b=g/WlsXeGHx/72q9vnzn4NWwK0U8yEpFBHc87Z7pY408YMEOODX1aMUeUuB+Sy2zUDQ
+         jRCK+fmIUw0eMr1tCZ1UxQcDIGpN8LkGJRr06dmuD5+SkfdM7jnuiapfGTti7Mh/zXLi
+         BvQhcfApp48deycFqxvLfw8jkm64O9Bt7dz8Cqkv7vl3RzDYB/VVBW1jg5rSgKDCXJjU
+         ZEwho22csNbP2SOspfjEQvirlvApQut4Cfqb7/LJSyCYhsyYkoRrurQPueNLP9uWPPA5
+         BAwryPt7olHgRhVKHSPQCOOEnqM2A7HBT1Jdi4jXOEJMzbveIRbncRKIXTV7LPfEdPbe
+         AiDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MMGiR3xO3Z7g6xX3cQ6iNhZ2c6nrkn8O8HDNeaS+z70=;
-        b=DEGZpFqykD1SMCMq+VYEdvSnDXDIQx4vHAzx8m4MI8xetyEOpua6C/OU4zWOwhlPuR
-         dqmxshH0xt2bzmgLK9nQBVktA9ka4lKtDjXww7lO+Pmbh/0cYUOE7TJ//0w0cvv9qW0L
-         UwK+JaVCUxOd1hE5owrKEa9+TUVhqy3DKlpfGbIs/BdwG9bHG3taExQ36KbcLK5TvEbK
-         Yhi5oVPUUh+WKGPmbce91V0XfEEn5Kwt+ojawwxf3Ph9Q46CGaRYnt+9qzezw8gckOFu
-         BAcb+xusnzkK8GNJCw9XNZXSfKjQcAXf0iGEtChV+wAB3qHUnjAxzUUxEisPY6r3lhhe
-         YbUA==
+        bh=6ByJdTLNipgIbcuBNYEvOUl0h4nY4YIByPRjefCN1oo=;
+        b=oxhyA3OFRkoHk03sWmnhI8P2xKas1v0imKDusa9p6T4X/FzHvyW53HYp/EMO70Y0wB
+         e/Ty/9HejgARzBzrXZn3XCi3dFO64FQiDLIXvW/KHlZgFnShacGC/yl+A2UZ8J9gztaN
+         4seL2f56AL/xyM1btPJHa8p4ui+j9cvw/DzzfgDKalhzkMazlcxXImZfmZbyl1a2HgY+
+         VZNztRlPGpP54RvfxOV3irZ1z+fRZumlTFYnEryDD27pMlhepwO+Rkmmr/IdqDYQqFmU
+         7syMjUvgcGtgCg9RhZMttJZ0wiEUnDAqPaYioGNawU7ZhCHyPLcT+RQQ6AsNoThIsTSw
+         xsgw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>,
-	Bart Van Assche <bart.vanassche@wdc.com>,
-	Hannes Reinecke <hare@suse.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Johannes Thumshirn <jthumshirn@suse.de>,
-	Oleksandr Natalenko <oleksandr@natalenko.name>,
-	Martin Steigerwald <martin@lichtvoll.de>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.15 28/53] block: Change a rcu_read_{lock,unlock}_sched() pair into rcu_read_{lock,unlock}()
-Date: Tue, 17 Apr 2018 17:58:53 +0200
-Message-Id: <20180417155724.531278623@linuxfoundation.org>
+	Yunlong Song <yunlong.song@huawei.com>,
+	Chao Yu <yuchao0@huawei.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4.15 27/53] f2fs: fix heap mode to reset it back
+Date: Tue, 17 Apr 2018 17:58:52 +0200
+Message-Id: <20180417155724.487207079@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -47,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009769995705477?=
-X-GMAIL-MSGID: =?utf-8?q?1598009976278568492?=
+X-GMAIL-THRID: =?utf-8?q?1598009767226616026?=
+X-GMAIL-MSGID: =?utf-8?q?1598009948735957975?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,58 +50,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Yunlong Song <yunlong.song@huawei.com>
 
-commit 818e0fa293ca836eba515615c64680ea916fd7cd upstream.
+commit b94929d975c8423defc9aededb0f499ff936b509 upstream.
 
-scsi_device_quiesce() uses synchronize_rcu() to guarantee that the
-effect of blk_set_preempt_only() will be visible for percpu_ref_tryget()
-calls that occur after the queue unfreeze by using the approach
-explained in https://lwn.net/Articles/573497/. The rcu read lock and
-unlock calls in blk_queue_enter() form a pair with the synchronize_rcu()
-call in scsi_device_quiesce(). Both scsi_device_quiesce() and
-blk_queue_enter() must either use regular RCU or RCU-sched.
-Since neither the RCU-protected code in blk_queue_enter() nor
-blk_queue_usage_counter_release() sleeps, regular RCU protection
-is sufficient. Note: scsi_device_quiesce() does not have to be
-modified since it already uses synchronize_rcu().
+Commit 7a20b8a61eff81bdb7097a578752a74860e9d142 ("f2fs: allocate node
+and hot data in the beginning of partition") introduces another mount
+option, heap, to reset it back. But it does not do anything for heap
+mode, so fix it.
 
-Reported-by: Tejun Heo <tj@kernel.org>
-Fixes: 3a0a529971ec ("block, scsi: Make SCSI quiesce and resume work reliably")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Acked-by: Tejun Heo <tj@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Ming Lei <ming.lei@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc: Martin Steigerwald <martin@lichtvoll.de>
-Cc: stable@vger.kernel.org # v4.15
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: stable@vger.kernel.org
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-core.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/gc.c      |    5 +++--
+ fs/f2fs/segment.c |    3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -823,7 +823,7 @@ int blk_queue_enter(struct request_queue
- 		bool success = false;
- 		int ret;
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -191,8 +191,9 @@ static void select_policy(struct f2fs_sb
+ 	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
+ 		p->max_search = sbi->max_victim_search;
  
--		rcu_read_lock_sched();
-+		rcu_read_lock();
- 		if (percpu_ref_tryget_live(&q->q_usage_counter)) {
- 			/*
- 			 * The code that sets the PREEMPT_ONLY flag is
-@@ -836,7 +836,7 @@ int blk_queue_enter(struct request_queue
- 				percpu_ref_put(&q->q_usage_counter);
- 			}
- 		}
--		rcu_read_unlock_sched();
-+		rcu_read_unlock();
+-	/* let's select beginning hot/small space first */
+-	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
++	/* let's select beginning hot/small space first in no_heap mode*/
++	if (test_opt(sbi, NOHEAP) &&
++		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+ 		p->offset = 0;
+ 	else
+ 		p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2155,7 +2155,8 @@ static unsigned int __get_next_segno(str
+ 	if (sbi->segs_per_sec != 1)
+ 		return CURSEG_I(sbi, type)->segno;
  
- 		if (success)
- 			return 0;
+-	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
++	if (test_opt(sbi, NOHEAP) &&
++		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
+ 		return 0;
+ 
+ 	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
