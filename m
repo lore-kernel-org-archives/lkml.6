@@ -1,68 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752686AbeDQKDJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 06:03:09 -0400
-Received: from ozlabs.org ([203.11.71.1]:38379 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751927AbeDQKDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 06:03:08 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 17 Apr 2018 20:01:42 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Howells <dhowells@redhat.com>
-Cc: Jessica Yu <jeyu@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: linux-next: manual merge of the efi-lock-down tree with the
- modules tree
-Message-ID: <20180417200142.6eb2c629@canb.auug.org.au>
-In-Reply-To: <25950.1523951172@warthog.procyon.org.uk>
-References: <20180417113218.4e6ba307@canb.auug.org.au>
-        <25950.1523951172@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gkaOe9cMOGfEGdBt03gB5iK"; protocol="application/pgp-signature"
+        id S1752417AbeDQKGF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 06:06:05 -0400
+Received: from orthanc.universe-factory.net ([104.238.176.138]:60284 "EHLO
+        orthanc.universe-factory.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751810AbeDQKGE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 06:06:04 -0400
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND net-next] ipv6: provide Kconfig switch to disable accept_ra by default
+Date: Tue, 17 Apr 2018 12:04:50 +0200
+Message-Id: <b39b1b4304524c43dfd83280aea4cfb4e8ac97f5.1523959377.git.mschiffer@universe-factory.net>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gkaOe9cMOGfEGdBt03gB5iK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Many distributions and users prefer to handle router advertisements in
+userspace; one example is OpenWrt, which includes a combined RA and DHCPv6
+client. For such configurations, accept_ra should not be enabled by
+default.
 
-Hi David,
+As setting net.ipv6.conf.default.accept_ra via sysctl.conf or similar
+facilities may be too late to catch all interfaces and common sysctl.conf
+tools do not allow setting an option for all existing interfaces, this
+patch provides a Kconfig option to control the default value of
+default.accept_ra.
 
-On Tue, 17 Apr 2018 08:46:12 +0100 David Howells <dhowells@redhat.com> wrot=
-e:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > Today's linux-next merge of the efi-lock-down tree got a conflict in: =
-=20
->=20
-> Can you drop my branch for the moment?
+Using default.accept_ra is preferable to all.accept_ra for our usecase,
+as disabling all.accept_ra would preclude users from explicitly enabling
+accept_ra on individual interfaces.
 
-Sure, no problem.  Just let me know when to grab it again.
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+---
+ net/ipv6/Kconfig    | 12 ++++++++++++
+ net/ipv6/addrconf.c |  2 +-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gkaOe9cMOGfEGdBt03gB5iK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrVxgYACgkQAVBC80lX
-0GzRcQf/a3OnaBT495zp6dZKXzqp8K6VIre+sq+SujLr1afZPv2FLxqS6fjKPgQv
-JixVKrBZm9N5Lh3CSxYSE6h5pdKf6fPtUJbCLZG1ddSeihVdPy6QV0UmQltO4MAl
-axfTinalUg+OYEuBp5yLKoUFryWfFNLMAIP9uxWzyiX/9S9BPmF4adXY/dya56IH
-F049Lq7EjKMz8tAnALkyjCy3adz8isouKN+9xp/B8/GTEFBiNNLnUFbL1eahDKei
-j53CsGRx+wiAgjbQgtQLqUnN1KJDx4EPl+6k5iCfrs4KBEjkkF37HSUIAXHc7GAF
-sECPG+4MSmfYY7ROs0/DoHKzKiytZA==
-=+/HC
------END PGP SIGNATURE-----
-
---Sig_/gkaOe9cMOGfEGdBt03gB5iK--
+diff --git a/net/ipv6/Kconfig b/net/ipv6/Kconfig
+index 6794ddf0547c..0f453110f288 100644
+--- a/net/ipv6/Kconfig
++++ b/net/ipv6/Kconfig
+@@ -20,6 +20,18 @@ menuconfig IPV6
+ 
+ if IPV6
+ 
++config IPV6_ACCEPT_RA_DEFAULT
++	bool "IPv6: Accept router advertisements by default"
++	default y
++	help
++	  The kernel can internally handle IPv6 router advertisements for
++	  stateless address autoconfiguration (SLAAC) and route configuration,
++	  which can be configured in detail and per-interface using a number of
++	  sysctl options. This option controls the default value of
++	  net.ipv6.conf.default.accept_ra.
++
++	  If unsure, say Y.
++
+ config IPV6_ROUTER_PREF
+ 	bool "IPv6: Router Preference (RFC 4191) support"
+ 	---help---
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 62b97722722c..5fd6d2120a35 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -245,7 +245,7 @@ static struct ipv6_devconf ipv6_devconf_dflt __read_mostly = {
+ 	.forwarding		= 0,
+ 	.hop_limit		= IPV6_DEFAULT_HOPLIMIT,
+ 	.mtu6			= IPV6_MIN_MTU,
+-	.accept_ra		= 1,
++	.accept_ra		= IS_ENABLED(CONFIG_IPV6_ACCEPT_RA_DEFAULT),
+ 	.accept_redirects	= 1,
+ 	.autoconf		= 1,
+ 	.force_mld_version	= 0,
+-- 
+2.17.0
