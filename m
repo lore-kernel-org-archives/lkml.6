@@ -1,65 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753236AbeDQXpC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 19:45:02 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41987 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752727AbeDQXpA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 19:45:00 -0400
-X-Google-Smtp-Source: AIpwx49yYc7It3HSea/JYGSEJMn1VnxayYk5vJATdoiuLxmn+Ir93U5n1hm/uXVSlJHLxNxiyY9fKQ==
-Date: Tue, 17 Apr 2018 16:44:57 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Yafang Shao <laoar.shao@gmail.com>, davem@davemloft.net,
-        songliubraving@fb.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: introduce a new tracepoint for
- tcp_rcv_space_adjust
-Message-ID: <20180417234455.q6fgn7oroehmxk6l@ast-mbp>
-References: <1523892818-12820-1-git-send-email-laoar.shao@gmail.com>
- <d2ab1647-c832-c982-5952-ab7a415f7c76@gmail.com>
+        id S1753242AbeDQXwk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 19:52:40 -0400
+Received: from ozlabs.org ([203.11.71.1]:44883 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751164AbeDQXwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 19:52:39 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 18 Apr 2018 09:51:13 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Message-ID: <20180418095113.21c84c83@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d2ab1647-c832-c982-5952-ab7a415f7c76@gmail.com>
-User-Agent: NeoMutt/20180223
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/H2zGha.o3/DcDidRHMxFlv0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 08:43:31AM -0700, Eric Dumazet wrote:
-> 
-> 
-> On 04/16/2018 08:33 AM, Yafang Shao wrote:
-> > tcp_rcv_space_adjust is called every time data is copied to user space,
-> > introducing a tcp tracepoint for which could show us when the packet is
-> > copied to user.
-> > This could help us figure out whether there's latency in user process.
-> > 
-> > When a tcp packet arrives, tcp_rcv_established() will be called and with
-> > the existed tracepoint tcp_probe we could get the time when this packet
-> > arrives.
-> > Then this packet will be copied to user, and tcp_rcv_space_adjust will
-> > be called and with this new introduced tracepoint we could get the time
-> > when this packet is copied to user.
-> > 
-> > 	arrives time : user process time    => latency caused by user
-> > 	tcp_probe      tcp_rcv_space_adjust
-> > 
-> > Hence in the prink message, sk is printed as a key to connect these two
-> > tracepoints.
-> > 
-> 
-> socket pointer is not a key.
-> 
-> TCP sockets can be reused pretty fast after free.
-> 
-> I suggest you go for cookie instead, this is an unique 64bit identifier.
-> ( sock_gen_cookie() for details )
+--Sig_/H2zGha.o3/DcDidRHMxFlv0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I think would be even better if the stack would do this sock_gen_cookie()
-on its own in some way that user cannnot infere the order.
-In many cases we wanted to use socket cookie, but since it's not inited
-by default it's kinda useless.
-Turning this tracepoint on just to get cookie would be an ugly workaround.
+Hi all,
+
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+sound/soc/intel/skylake/skl-topology.c: In function 'skl_fill_sink_instance=
+_id':
+sound/soc/intel/skylake/skl-topology.c:833:45: error: 'struct skl_kpb_param=
+s' has no member named 'u'
+   struct skl_mod_inst_map *inst =3D kpb_params->u.map;
+                                             ^~
+sound/soc/intel/skylake/skl-topology.c: In function 'skl_tplg_find_moduleid=
+_from_uuid':
+sound/soc/intel/skylake/skl-topology.c:953:17: error: 'struct skl_kpb_param=
+s' has no member named 'u'
+     &uuid_params->u.map_uuid[i].mod_uuid);
+                 ^~
+sound/soc/intel/skylake/skl-topology.c:959:10: error: 'struct skl_kpb_param=
+s' has no member named 'u'
+    params->u.map[i].mod_id =3D module_id;
+          ^~
+sound/soc/intel/skylake/skl-topology.c:960:10: error: 'struct skl_kpb_param=
+s' has no member named 'u'
+    params->u.map[i].inst_id =3D
+          ^~
+sound/soc/intel/skylake/skl-topology.c:961:16: error: 'struct skl_kpb_param=
+s' has no member named 'u'
+     uuid_params->u.map_uuid[i].inst_id;
+                ^~
+sound/soc/intel/skylake/skl-topology.c: At top level:
+sound/soc/intel/skylake/skl-topology.c:3544:5: error: conflicting types for=
+ 'skl_tplg_init'
+ int skl_tplg_init(struct snd_soc_component *component, struct hdac_ext_bus=
+ *ebus)
+     ^~~~~~~~~~~~~
+In file included from sound/soc/intel/skylake/skl-topology.c:27:0:
+sound/soc/intel/skylake/skl-topology.h:463:5: note: previous declaration of=
+ 'skl_tplg_init' was here
+ int skl_tplg_init(struct snd_soc_platform *platform,
+     ^~~~~~~~~~~~~
+sound/soc/intel/skylake/skl-pcm.c: In function 'skl_populate_modules':
+sound/soc/intel/skylake/skl-pcm.c:1351:4: error: implicit declaration of fu=
+nction 'skl_tplg_add_moduleid_in_bind_params'; did you mean 'skl_tplg_updat=
+e_pipe_params'? [-Werror=3Dimplicit-function-declaration]
+    skl_tplg_add_moduleid_in_bind_params(skl, w);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    skl_tplg_update_pipe_params
+sound/soc/intel/skylake/skl-pcm.c: In function 'skl_platform_soc_probe':
+sound/soc/intel/skylake/skl-pcm.c:1372:23: error: passing argument 1 of 'sk=
+l_tplg_init' from incompatible pointer type [-Werror=3Dincompatible-pointer=
+-types]
+   ret =3D skl_tplg_init(component, ebus);
+                       ^~~~~~~~~
+In file included from sound/soc/intel/skylake/skl-pcm.c:28:0:
+sound/soc/intel/skylake/skl-topology.h:463:5: note: expected 'struct snd_so=
+c_platform *' but argument is of type 'struct snd_soc_component *'
+ int skl_tplg_init(struct snd_soc_platform *platform,
+     ^~~~~~~~~~~~~
+
+Caused by commit
+
+  81e9b0a07889 ("ASoC: topology: Give more data to clients via callbacks")
+
+I have used the sound-aoc tree from next-20180416 again today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/H2zGha.o3/DcDidRHMxFlv0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrWiHEACgkQAVBC80lX
+0GysGgf/QUgfq2mTWjxAM0s0EQLfHlsPGScVODEH7DMd1d9vXnSqtEhIEo1OA32z
+BY/jQG+u2hgnhD8Q9Jsa7ho1VX6ReuBLlqmSY+ap8N/wXDi9o3WxQn2Ksk5SYIPJ
+Yq0UISTUFLWa7sRUAKDFDgR5X5amw2a5kA1rEK0cjUD00r62J6bNdynm5KqRs/xg
+5IezF2lRJbRn6FDcfoWHt2prosgTgXPqx/TR8tnYPjpZEaKF/TOTxL60uKzFkCor
+l5hYq3jrKWJjJFoKcSYoeZX0OYiYc5NkzrJAJxnU1GjEN43Des9dYhU8ujRHMxTJ
+Jyuvb2vsT4xQ7hFWiG4X7Uz4e/y4kQ==
+=497v
+-----END PGP SIGNATURE-----
+
+--Sig_/H2zGha.o3/DcDidRHMxFlv0--
