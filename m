@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+NXRMDmlH1rl4Lv2CRDx6+GGru8abF/a3iz62wdYweHD7qo+466v9G/KtKSkkugsLz396K
-ARC-Seal: i=1; a=rsa-sha256; t=1523981261; cv=none;
+X-Google-Smtp-Source: AIpwx4/hs8NwxBfwmt3XN1K0FTJ2yhwiHtoMlsX4rcL/PhqRIErbCkcIdHeUpcojJP4EfJyB65NR
+ARC-Seal: i=1; a=rsa-sha256; t=1523981258; cv=none;
         d=google.com; s=arc-20160816;
-        b=QLjACivLHhqgYkMmVEeqsQNrp1Q/RZZlZ9A9xNQ/+AJxHTe7hQy5JxvzNzzw+ZbxBK
-         93JDc1+WGlRZb4D/YRHFITNdW1HOQDo7noXRMW3dA+uI1hazFu7ZOTfykS9hwNgFS6aE
-         z5PSt7y9TzkZNuqj3SuZdCLPX3NwJVyZ7C0+wurMA0I3QxkM3zSEvOYO1wzzHhPCTxyE
-         8/zEDrFsAxBc3bcDQpnAwcZ3CbeXGenumU8VIt9j6uDnbyj8OilihOO6lV2xETQGsvIG
-         hkH9mrQVCla9VyMBNWTwIEKfor0TJvNG4aVvQ0Zh055JR81esmdDyR7uqfUWbUUuExch
-         Qqog==
+        b=ESn5QLb2iytnioiF5J+Kc+HmaKvWnQ+/eZwGxf2DaVw+U1n+WrGOWhzkkv7p7K39ZG
+         Wytq+12h0084fDJuMP0vUG587rl/W6YHHaabFYP/I/8EcJBQu9mKCE3nj5ttuzWp7041
+         VycqwWOg1RZAKKJEGn0fz5FMk6cxaIKChATrQbyE4m2ALkMzNDgHd3RgbK9Q4Us3DsF+
+         bB88A9R86opOdEu7CjFjmrnBiGhu2btOM+BIlWlF8bt9bqLYVpofpB51YgzWyOWyQxAF
+         heIdaDPLEZ/Sdl/nGJPMdM7oL5zErXkrzxGLoVP8BJ/xV9YQf+nvKwkavzo/sFgPVy1z
+         y06w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ZAY50QHrAg8hAZvOEay8EWeORQ08BABtraO+qD9m4X4=;
-        b=LzmVE2A5Y2S+4EDNDI2cCAPzdOI82JUsT4bbEhn5t3maYwzeI18imnp4eG1Gyg82ai
-         xKZNKJml250NP/kJ692Cfw2s4ZsFJG58G7ouZ3bxsQLhdf7uJnUfn0VNrlbmQ/OvRzN5
-         i8kHChLKo1XCc50TY0DxpFsBLuy8ZxZkr8pRT6+iD2aJQUJvwGq1vn9RDWwZM1wirHUV
-         ks2KB81tx4Ix8heKNTaWAMjbm+hZqFpGMMfu3402r3uapdZxwDWfIITDXfqIr373iIYq
-         L0ZHMtDmwrF1l3CiiEUQCEIfQquDW+XxiZeqGxsYC2FXqXBvD9hYZsAdP9tqv1WSQ7Xn
-         3+cw==
+        bh=4SLPwznFhsfJxknn/UCQ7V2H9VR6tZhGAbIbrWJBQaI=;
+        b=zecN5u4YhlLSg0U6GlZjH9WdB0xs1xM97t0VOPrbsx1FPbHh18KomM5uZbyqC+CU+A
+         WkyFQzOyInGINmEr70BBSJQDsEnUrIfNDrZe58qPzEcLDsXfOWlt4S6+fHCwBs9guReT
+         FCNSFr/eWNLD3/qKFB1FGxajKwbNAu41I2XMErKVE4JVkjlTpbCwsF84zFZJrqweFW1m
+         jXA4eX1B7xK+V+dPEQtE7psqB7vHl9uIcr3fcrb91qkezm5Yrjak2Gl6/uDom+JowUpJ
+         fJy3axxmgd+yCwjTJxdtvb/GWFxoK0spgaPafANQLrig2qMEAegmKgIt0CuIbLDzKg2p
+         babA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
-	Benjamin Block <bblock@linux.vnet.ibm.com>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 28/49] s390/qdio: dont retry EQBS after CCQ 96
-Date: Tue, 17 Apr 2018 17:59:07 +0200
-Message-Id: <20180417155716.373107602@linuxfoundation.org>
+	Lucash Stach <l.stach@pengutronix.de>,
+	"J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.14 49/49] nfsd: fix incorrect umasks
+Date: Tue, 17 Apr 2018 17:59:28 +0200
+Message-Id: <20180417155717.375209984@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009842403765495?=
-X-GMAIL-MSGID: =?utf-8?q?1598010174710872203?=
+X-GMAIL-THRID: =?utf-8?q?1598009814769839475?=
+X-GMAIL-MSGID: =?utf-8?q?1598010172184174718?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,75 +49,171 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+From: J. Bruce Fields <bfields@redhat.com>
 
-commit dae55b6fef58530c13df074bcc182c096609339e upstream.
+commit 880a3a5325489a143269a8e172e7563ebf9897bc upstream.
 
-Immediate retry of EQBS after CCQ 96 means that we potentially misreport
-the state of buffers inspected during the first EQBS call.
+We're neglecting to clear the umask after it's set, which can cause a
+later unrelated rpc to (incorrectly) use the same umask if it happens to
+be processed by the same thread.
 
-This occurs when
-1. the first EQBS finds all inspected buffers still in the initial state
-   set by the driver (ie INPUT EMPTY or OUTPUT PRIMED),
-2. the EQBS terminates early with CCQ 96, and
-3. by the time that the second EQBS comes around, the state of those
-   previously inspected buffers has changed.
+There's a more subtle problem here too:
 
-If the state reported by the second EQBS is 'driver-owned', all we know
-is that the previous buffers are driver-owned now as well. But we can't
-tell if they all have the same state. So for instance
-- the second EQBS reports OUTPUT EMPTY, but any number of the previous
-  buffers could be OUTPUT ERROR by now,
-- the second EQBS reports OUTPUT ERROR, but any number of the previous
-  buffers could be OUTPUT EMPTY by now.
+An NFSv4 compound request is decoded all in one pass before any
+operations are executed.
 
-Effectively, this can result in both over- and underreporting of errors.
+Currently we're setting current->fs->umask at the time we decode the
+compound.  In theory a single compound could contain multiple creates
+each setting a umask.  In that case we'd end up using whichever umask
+was passed in the *last* operation as the umask for all the creates,
+whether that was correct or not.
 
-If the state reported by the second EQBS is 'HW-owned', that doesn't
-guarantee that the previous buffers have not been switched to
-driver-owned in the mean time. So for instance
-- the second EQBS reports INPUT EMPTY, but any number of the previous
-  buffers could be INPUT PRIMED (or INPUT ERROR) by now.
+So, we should just be saving the umask at decode time and waiting to set
+it until we actually process the corresponding operation.
 
-This would result in failure to process pending work on the queue. If
-it's the final check before yielding initiative, this can cause
-a (temporary) queue stall due to IRQ avoidance.
+In practice it's unlikely any client would do multiple creates in a
+single compound.  And even if it did they'd likely be from the same
+process (hence carry the same umask).  So this is a little academic, but
+we should get it right anyway.
 
-Fixes: 25f269f17316 ("[S390] qdio: EQBS retry after CCQ 96")
-Cc: <stable@vger.kernel.org> #v3.2+
-Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
-Reviewed-by: Benjamin Block <bblock@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 47057abde515 (nfsd: add support for the umask attribute)
+Cc: stable@vger.kernel.org
+Reported-by: Lucash Stach <l.stach@pengutronix.de>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/cio/qdio_main.c |   11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ fs/nfsd/nfs4proc.c |   12 ++++++++++--
+ fs/nfsd/nfs4xdr.c  |    8 +++-----
+ fs/nfsd/xdr4.h     |    2 ++
+ 3 files changed, 15 insertions(+), 7 deletions(-)
 
---- a/drivers/s390/cio/qdio_main.c
-+++ b/drivers/s390/cio/qdio_main.c
-@@ -126,7 +126,7 @@ static inline int qdio_check_ccq(struct
- static int qdio_do_eqbs(struct qdio_q *q, unsigned char *state,
- 			int start, int count, int auto_ack)
- {
--	int rc, tmp_count = count, tmp_start = start, nr = q->nr, retried = 0;
-+	int rc, tmp_count = count, tmp_start = start, nr = q->nr;
- 	unsigned int ccq = 0;
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -32,6 +32,7 @@
+  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
++#include <linux/fs_struct.h>
+ #include <linux/file.h>
+ #include <linux/falloc.h>
+ #include <linux/slab.h>
+@@ -252,11 +253,13 @@ do_open_lookup(struct svc_rqst *rqstp, s
+ 		 * Note: create modes (UNCHECKED,GUARDED...) are the same
+ 		 * in NFSv4 as in v3 except EXCLUSIVE4_1.
+ 		 */
++		current->fs->umask = open->op_umask;
+ 		status = do_nfsd_create(rqstp, current_fh, open->op_fname.data,
+ 					open->op_fname.len, &open->op_iattr,
+ 					*resfh, open->op_createmode,
+ 					(u32 *)open->op_verf.data,
+ 					&open->op_truncate, &open->op_created);
++		current->fs->umask = 0;
  
- 	qperf_inc(q, eqbs);
-@@ -149,14 +149,7 @@ again:
- 		qperf_inc(q, eqbs_partial);
- 		DBF_DEV_EVENT(DBF_WARN, q->irq_ptr, "EQBS part:%02x",
- 			tmp_count);
--		/*
--		 * Retry once, if that fails bail out and process the
--		 * extracted buffers before trying again.
--		 */
--		if (!retried++)
--			goto again;
--		else
--			return count - tmp_count;
-+		return count - tmp_count;
- 	}
+ 		if (!status && open->op_label.len)
+ 			nfsd4_security_inode_setsecctx(*resfh, &open->op_label, open->op_bmval);
+@@ -608,6 +611,7 @@ nfsd4_create(struct svc_rqst *rqstp, str
+ 	if (status)
+ 		return status;
  
- 	DBF_ERROR("%4x EQBS ERROR", SCH_NO(q));
++	current->fs->umask = create->cr_umask;
+ 	switch (create->cr_type) {
+ 	case NF4LNK:
+ 		status = nfsd_symlink(rqstp, &cstate->current_fh,
+@@ -616,20 +620,22 @@ nfsd4_create(struct svc_rqst *rqstp, str
+ 		break;
+ 
+ 	case NF4BLK:
++		status = nfserr_inval;
+ 		rdev = MKDEV(create->cr_specdata1, create->cr_specdata2);
+ 		if (MAJOR(rdev) != create->cr_specdata1 ||
+ 		    MINOR(rdev) != create->cr_specdata2)
+-			return nfserr_inval;
++			goto out_umask;
+ 		status = nfsd_create(rqstp, &cstate->current_fh,
+ 				     create->cr_name, create->cr_namelen,
+ 				     &create->cr_iattr, S_IFBLK, rdev, &resfh);
+ 		break;
+ 
+ 	case NF4CHR:
++		status = nfserr_inval;
+ 		rdev = MKDEV(create->cr_specdata1, create->cr_specdata2);
+ 		if (MAJOR(rdev) != create->cr_specdata1 ||
+ 		    MINOR(rdev) != create->cr_specdata2)
+-			return nfserr_inval;
++			goto out_umask;
+ 		status = nfsd_create(rqstp, &cstate->current_fh,
+ 				     create->cr_name, create->cr_namelen,
+ 				     &create->cr_iattr,S_IFCHR, rdev, &resfh);
+@@ -673,6 +679,8 @@ nfsd4_create(struct svc_rqst *rqstp, str
+ 	fh_dup2(&cstate->current_fh, &resfh);
+ out:
+ 	fh_put(&resfh);
++out_umask:
++	current->fs->umask = 0;
+ 	return status;
+ }
+ 
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -33,7 +33,6 @@
+  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-#include <linux/fs_struct.h>
+ #include <linux/file.h>
+ #include <linux/slab.h>
+ #include <linux/namei.h>
+@@ -683,7 +682,7 @@ nfsd4_decode_create(struct nfsd4_compoun
+ 
+ 	status = nfsd4_decode_fattr(argp, create->cr_bmval, &create->cr_iattr,
+ 				    &create->cr_acl, &create->cr_label,
+-				    &current->fs->umask);
++				    &create->cr_umask);
+ 	if (status)
+ 		goto out;
+ 
+@@ -928,7 +927,6 @@ nfsd4_decode_open(struct nfsd4_compounda
+ 	case NFS4_OPEN_NOCREATE:
+ 		break;
+ 	case NFS4_OPEN_CREATE:
+-		current->fs->umask = 0;
+ 		READ_BUF(4);
+ 		open->op_createmode = be32_to_cpup(p++);
+ 		switch (open->op_createmode) {
+@@ -936,7 +934,7 @@ nfsd4_decode_open(struct nfsd4_compounda
+ 		case NFS4_CREATE_GUARDED:
+ 			status = nfsd4_decode_fattr(argp, open->op_bmval,
+ 				&open->op_iattr, &open->op_acl, &open->op_label,
+-				&current->fs->umask);
++				&open->op_umask);
+ 			if (status)
+ 				goto out;
+ 			break;
+@@ -951,7 +949,7 @@ nfsd4_decode_open(struct nfsd4_compounda
+ 			COPYMEM(open->op_verf.data, NFS4_VERIFIER_SIZE);
+ 			status = nfsd4_decode_fattr(argp, open->op_bmval,
+ 				&open->op_iattr, &open->op_acl, &open->op_label,
+-				&current->fs->umask);
++				&open->op_umask);
+ 			if (status)
+ 				goto out;
+ 			break;
+--- a/fs/nfsd/xdr4.h
++++ b/fs/nfsd/xdr4.h
+@@ -118,6 +118,7 @@ struct nfsd4_create {
+ 	} u;
+ 	u32		cr_bmval[3];        /* request */
+ 	struct iattr	cr_iattr;           /* request */
++	int		cr_umask;           /* request */
+ 	struct nfsd4_change_info  cr_cinfo; /* response */
+ 	struct nfs4_acl *cr_acl;
+ 	struct xdr_netobj cr_label;
+@@ -228,6 +229,7 @@ struct nfsd4_open {
+ 	u32		op_why_no_deleg;    /* response - DELEG_NONE_EXT only */
+ 	u32		op_create;     	    /* request */
+ 	u32		op_createmode;      /* request */
++	int		op_umask;           /* request */
+ 	u32		op_bmval[3];        /* request */
+ 	struct iattr	op_iattr;           /* UNCHECKED4, GUARDED4, EXCLUSIVE4_1 */
+ 	nfs4_verifier	op_verf __attribute__((aligned(32)));
