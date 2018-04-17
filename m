@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753402AbeDQVa1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:30:27 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:54224 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752975AbeDQV2Y (ORCPT
+        id S1753469AbeDQVa3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:30:29 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:29975 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752911AbeDQV2Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Apr 2018 17:28:24 -0400
 From: Murali Karicheri <m-karicheri2@ti.com>
@@ -13,9 +13,9 @@ To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <davem@davemloft.net>, <netdev@vger.kernel.org>,
         <grygorii.strashko@ti.com>, <nsekhar@ti.com>
-Subject: [net-next PATCH v4 01/13] soc: ti: K2G: enhancement to support QMSS in K2G NAVSS
-Date: Tue, 17 Apr 2018 17:30:30 -0400
-Message-ID: <1524000642-23944-2-git-send-email-m-karicheri2@ti.com>
+Subject: [net-next PATCH v4 02/13] soc: ti: K2G: provide APIs to support driver probe deferral
+Date: Tue, 17 Apr 2018 17:30:31 -0400
+Message-ID: <1524000642-23944-3-git-send-email-m-karicheri2@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1524000642-23944-1-git-send-email-m-karicheri2@ti.com>
 References: <1524000642-23944-1-git-send-email-m-karicheri2@ti.com>
@@ -26,240 +26,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Navigator Subsystem (NAVSS) available on K2G SoC has a cut down
-version of QMSS with less number of queues, internal linking ram
-with lesser number of buffers etc.  It doesn't have status and
-explicit push register space as in QMSS available on other K2 SoCs.
-So define reg indices specific to QMSS on K2G. This patch introduces
-"ti,66ak2g-navss-qm" compatibility to identify QMSS on K2G NAVSS
-and to customize the dts handling code. Per Device manual,
-descriptors with index less than or equal to regions0_size is in region 0
-in the case of K2 QMSS where as for QMSS on K2G, descriptors with index
-less than regions0_size is in region 0. So update the size accordingly in
-the regions0_size bits of the linking ram size 0 register.
+This patch provide APIs to allow client drivers to support
+probe deferral. On K2G SoC, devices can be probed only
+after the ti_sci_pm_domains driver is probed and ready.
+As drivers may get probed at different order, any driver
+that depends on knav dma and qmss drivers, for example
+netcp network driver, needs to defer probe until
+knav devices are probed and ready to service. To do this,
+add an API to query the device ready status from the knav
+dma and qmss devices.
 
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/soc/ti/keystone-navigator-qmss.txt    |  9 ++-
- drivers/soc/ti/knav_qmss.h                         |  6 ++
- drivers/soc/ti/knav_qmss_queue.c                   | 90 ++++++++++++++++------
- 3 files changed, 82 insertions(+), 23 deletions(-)
+ drivers/soc/ti/knav_dma.c        |  8 ++++++++
+ drivers/soc/ti/knav_qmss_queue.c |  8 ++++++++
+ include/linux/soc/ti/knav_dma.h  | 12 ++++++++++++
+ include/linux/soc/ti/knav_qmss.h |  1 +
+ 4 files changed, 29 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
-index 77cd42c..b025770 100644
---- a/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
-+++ b/Documentation/devicetree/bindings/soc/ti/keystone-navigator-qmss.txt
-@@ -17,7 +17,8 @@ pool management.
+diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
+index 026182d..224d7dd 100644
+--- a/drivers/soc/ti/knav_dma.c
++++ b/drivers/soc/ti/knav_dma.c
+@@ -134,6 +134,13 @@ struct knav_dma_chan {
  
+ static struct knav_dma_pool_device *kdev;
  
- Required properties:
--- compatible	: Must be "ti,keystone-navigator-qmss";
-+- compatible	: Must be "ti,keystone-navigator-qmss".
-+		: Must be "ti,66ak2g-navss-qm" for QMSS on K2G SoC.
- - clocks	: phandle to the reference clock for this device.
- - queue-range	: <start number> total range of queue numbers for the device.
- - linkram0	: <address size> for internal link ram, where size is the total
-@@ -39,6 +40,12 @@ Required properties:
- 			  - Descriptor memory setup region.
- 			  - Queue Management/Queue Proxy region for queue Push.
- 			  - Queue Management/Queue Proxy region for queue Pop.
++static bool device_ready;
++bool knav_dma_device_ready(void)
++{
++	return device_ready;
++}
++EXPORT_SYMBOL_GPL(knav_dma_device_ready);
 +
-+For QMSS on K2G SoC, following QM reg indexes are used in that order
-+			  - Queue Peek region.
-+			  - Queue configuration region.
-+			  - Queue Management/Queue Proxy region for queue Push/Pop.
-+
- - queue-pools	: child node classifying the queue ranges into pools.
- 		  Queue ranges are grouped into 3 type of pools:
- 		  - qpend	    : pool of qpend(interruptible) queues
-diff --git a/drivers/soc/ti/knav_qmss.h b/drivers/soc/ti/knav_qmss.h
-index 905b974..56866ba4 100644
---- a/drivers/soc/ti/knav_qmss.h
-+++ b/drivers/soc/ti/knav_qmss.h
-@@ -292,6 +292,11 @@ struct knav_queue {
- 	struct list_head		list;
- };
+ static bool check_config(struct knav_dma_chan *chan, struct knav_dma_cfg *cfg)
+ {
+ 	if (!memcmp(&chan->cfg, cfg, sizeof(*cfg)))
+@@ -773,6 +780,7 @@ static int knav_dma_probe(struct platform_device *pdev)
+ 	debugfs_create_file("knav_dma", S_IFREG | S_IRUGO, NULL, NULL,
+ 			    &knav_dma_debug_ops);
  
-+enum qmss_version {
-+	QMSS,
-+	QMSS_66AK2G,
-+};
-+
- struct knav_device {
- 	struct device				*dev;
- 	unsigned				base_id;
-@@ -305,6 +310,7 @@ struct knav_device {
- 	struct list_head			pools;
- 	struct list_head			pdsps;
- 	struct list_head			qmgrs;
-+	enum qmss_version			version;
- };
++	device_ready = true;
+ 	return ret;
+ }
  
- struct knav_range_ops {
 diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
-index 77d6b5c..8526c8e 100644
+index 8526c8e..419365a 100644
 --- a/drivers/soc/ti/knav_qmss_queue.c
 +++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -42,6 +42,15 @@
- #define KNAV_QUEUE_PUSH_REG_INDEX	4
- #define KNAV_QUEUE_POP_REG_INDEX	5
+@@ -74,6 +74,13 @@
+  */
+ const char *knav_acc_firmwares[] = {"ks2_qmss_pdsp_acc48.bin"};
  
-+/* Queue manager register indices in DTS for QMSS in K2G NAVSS.
-+ * There are no status and vbusm push registers on this version
-+ * of QMSS. Push registers are same as pop, So all indices above 1
-+ * are to be re-defined
-+ */
-+#define KNAV_L_QUEUE_CONFIG_REG_INDEX	1
-+#define KNAV_L_QUEUE_REGION_REG_INDEX	2
-+#define KNAV_L_QUEUE_PUSH_REG_INDEX	3
++static bool device_ready;
++bool knav_qmss_device_ready(void)
++{
++	return device_ready;
++}
++EXPORT_SYMBOL_GPL(knav_qmss_device_ready);
 +
- /* PDSP register indices in DTS */
- #define KNAV_QUEUE_PDSP_IRAM_REG_INDEX	0
- #define KNAV_QUEUE_PDSP_REGS_REG_INDEX	1
-@@ -1169,8 +1178,12 @@ static int knav_queue_setup_link_ram(struct knav_device *kdev)
- 		dev_dbg(kdev->dev, "linkram0: dma:%pad, virt:%p, size:%x\n",
- 			&block->dma, block->virt, block->size);
- 		writel_relaxed((u32)block->dma, &qmgr->reg_config->link_ram_base0);
--		writel_relaxed(block->size, &qmgr->reg_config->link_ram_size0);
--
-+		if (kdev->version == QMSS_66AK2G)
-+			writel_relaxed(block->size,
-+				       &qmgr->reg_config->link_ram_size0);
-+		else
-+			writel_relaxed(block->size - 1,
-+				       &qmgr->reg_config->link_ram_size0);
- 		block++;
- 		if (!block->size)
- 			continue;
-@@ -1387,42 +1400,64 @@ static int knav_queue_init_qmgrs(struct knav_device *kdev,
- 		qmgr->reg_peek =
- 			knav_queue_map_reg(kdev, child,
- 					   KNAV_QUEUE_PEEK_REG_INDEX);
--		qmgr->reg_status =
--			knav_queue_map_reg(kdev, child,
--					   KNAV_QUEUE_STATUS_REG_INDEX);
-+
-+		if (kdev->version == QMSS) {
-+			qmgr->reg_status =
-+				knav_queue_map_reg(kdev, child,
-+						   KNAV_QUEUE_STATUS_REG_INDEX);
-+		}
-+
- 		qmgr->reg_config =
- 			knav_queue_map_reg(kdev, child,
-+					   (kdev->version == QMSS_66AK2G) ?
-+					   KNAV_L_QUEUE_CONFIG_REG_INDEX :
- 					   KNAV_QUEUE_CONFIG_REG_INDEX);
- 		qmgr->reg_region =
- 			knav_queue_map_reg(kdev, child,
-+					   (kdev->version == QMSS_66AK2G) ?
-+					   KNAV_L_QUEUE_REGION_REG_INDEX :
- 					   KNAV_QUEUE_REGION_REG_INDEX);
-+
- 		qmgr->reg_push =
- 			knav_queue_map_reg(kdev, child,
--					   KNAV_QUEUE_PUSH_REG_INDEX);
--		qmgr->reg_pop =
--			knav_queue_map_reg(kdev, child,
--					   KNAV_QUEUE_POP_REG_INDEX);
-+					   (kdev->version == QMSS_66AK2G) ?
-+					    KNAV_L_QUEUE_PUSH_REG_INDEX :
-+					    KNAV_QUEUE_PUSH_REG_INDEX);
-+
-+		if (kdev->version == QMSS) {
-+			qmgr->reg_pop =
-+				knav_queue_map_reg(kdev, child,
-+						   KNAV_QUEUE_POP_REG_INDEX);
-+		}
+ /**
+  * knav_queue_notify: qmss queue notfier call
+  *
+@@ -1849,6 +1856,7 @@ static int knav_queue_probe(struct platform_device *pdev)
  
--		if (IS_ERR(qmgr->reg_peek) || IS_ERR(qmgr->reg_status) ||
-+		if (IS_ERR(qmgr->reg_peek) ||
-+		    ((kdev->version == QMSS) &&
-+		    (IS_ERR(qmgr->reg_status) || IS_ERR(qmgr->reg_pop))) ||
- 		    IS_ERR(qmgr->reg_config) || IS_ERR(qmgr->reg_region) ||
--		    IS_ERR(qmgr->reg_push) || IS_ERR(qmgr->reg_pop)) {
-+		    IS_ERR(qmgr->reg_push)) {
- 			dev_err(dev, "failed to map qmgr regs\n");
-+			if (kdev->version == QMSS) {
-+				if (!IS_ERR(qmgr->reg_status))
-+					devm_iounmap(dev, qmgr->reg_status);
-+				if (!IS_ERR(qmgr->reg_pop))
-+					devm_iounmap(dev, qmgr->reg_pop);
-+			}
- 			if (!IS_ERR(qmgr->reg_peek))
- 				devm_iounmap(dev, qmgr->reg_peek);
--			if (!IS_ERR(qmgr->reg_status))
--				devm_iounmap(dev, qmgr->reg_status);
- 			if (!IS_ERR(qmgr->reg_config))
- 				devm_iounmap(dev, qmgr->reg_config);
- 			if (!IS_ERR(qmgr->reg_region))
- 				devm_iounmap(dev, qmgr->reg_region);
- 			if (!IS_ERR(qmgr->reg_push))
- 				devm_iounmap(dev, qmgr->reg_push);
--			if (!IS_ERR(qmgr->reg_pop))
--				devm_iounmap(dev, qmgr->reg_pop);
- 			devm_kfree(dev, qmgr);
- 			continue;
- 		}
- 
-+		/* Use same push register for pop as well */
-+		if (kdev->version == QMSS_66AK2G)
-+			qmgr->reg_pop = qmgr->reg_push;
-+
- 		list_add_tail(&qmgr->list, &kdev->qmgrs);
- 		dev_info(dev, "added qmgr start queue %d, num of queues %d, reg_peek %p, reg_status %p, reg_config %p, reg_region %p, reg_push %p, reg_pop %p\n",
- 			 qmgr->start_queue, qmgr->num_queues,
-@@ -1681,10 +1716,24 @@ static int knav_queue_init_queues(struct knav_device *kdev)
+ 	debugfs_create_file("qmss", S_IFREG | S_IRUGO, NULL, NULL,
+ 			    &knav_queue_debug_ops);
++	device_ready = true;
  	return 0;
- }
  
-+/* Match table for of_platform binding */
-+static const struct of_device_id keystone_qmss_of_match[] = {
-+	{
-+		.compatible = "ti,keystone-navigator-qmss",
-+	},
-+	{
-+		.compatible = "ti,66ak2g-navss-qm",
-+		.data	= (void *)QMSS_66AK2G,
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
+ err:
+diff --git a/include/linux/soc/ti/knav_dma.h b/include/linux/soc/ti/knav_dma.h
+index 66693bc..7127ec3 100644
+--- a/include/linux/soc/ti/knav_dma.h
++++ b/include/linux/soc/ti/knav_dma.h
+@@ -167,6 +167,8 @@ struct knav_dma_desc {
+ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 				struct knav_dma_cfg *config);
+ void knav_dma_close_channel(void *channel);
++int knav_dma_get_flow(void *channel);
++bool knav_dma_device_ready(void);
+ #else
+ static inline void *knav_dma_open_channel(struct device *dev, const char *name,
+ 				struct knav_dma_cfg *config)
+@@ -176,6 +178,16 @@ static inline void *knav_dma_open_channel(struct device *dev, const char *name,
+ static inline void knav_dma_close_channel(void *channel)
+ {}
+ 
++static inline int knav_dma_get_flow(void *channel)
++{
++	return -EINVAL;
++}
 +
- static int knav_queue_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
- 	struct device_node *qmgrs, *queue_pools, *regions, *pdsps;
-+	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
- 	u32 temp[2];
- 	int ret;
-@@ -1700,6 +1749,10 @@ static int knav_queue_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	match = of_match_device(of_match_ptr(keystone_qmss_of_match), dev);
-+	if (match && match->data)
-+		kdev->version = QMSS_66AK2G;
++static inline bool knav_dma_device_ready(void)
++{
++	return false;
++}
 +
- 	platform_set_drvdata(pdev, kdev);
- 	kdev->dev = dev;
- 	INIT_LIST_HEAD(&kdev->queue_ranges);
-@@ -1815,13 +1868,6 @@ static int knav_queue_remove(struct platform_device *pdev)
- 	return 0;
- }
+ #endif
  
--/* Match table for of_platform binding */
--static struct of_device_id keystone_qmss_of_match[] = {
--	{ .compatible = "ti,keystone-navigator-qmss", },
--	{},
--};
--MODULE_DEVICE_TABLE(of, keystone_qmss_of_match);
--
- static struct platform_driver keystone_qmss_driver = {
- 	.probe		= knav_queue_probe,
- 	.remove		= knav_queue_remove,
+ #endif /* __SOC_TI_KEYSTONE_NAVIGATOR_DMA_H__ */
+diff --git a/include/linux/soc/ti/knav_qmss.h b/include/linux/soc/ti/knav_qmss.h
+index 9f0ebb3b..9745df6 100644
+--- a/include/linux/soc/ti/knav_qmss.h
++++ b/include/linux/soc/ti/knav_qmss.h
+@@ -86,5 +86,6 @@ int knav_pool_desc_map(void *ph, void *desc, unsigned size,
+ void *knav_pool_desc_unmap(void *ph, dma_addr_t dma, unsigned dma_sz);
+ dma_addr_t knav_pool_desc_virt_to_dma(void *ph, void *virt);
+ void *knav_pool_desc_dma_to_virt(void *ph, dma_addr_t dma);
++bool knav_qmss_device_ready(void);
+ 
+ #endif /* __SOC_TI_KNAV_QMSS_H__ */
 -- 
 1.9.1
