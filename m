@@ -1,326 +1,238 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752786AbeDQDiX convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 23:38:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55822 "EHLO mail.kernel.org"
+        id S1752850AbeDQDjA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 23:39:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751980AbeDQDiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 23:38:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 341512175D
+        id S1751908AbeDQDi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 23:38:59 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 405272175D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Mon, 16 Apr 2018 20:38:58 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] f2fs: support {d,id,did,x}node checksum
+Message-ID: <20180417033858.GB76077@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180127094301.29154-2-yuchao0@huawei.com>
+ <20180131020213.GA86468@jaegeuk-macbookpro.roam.corp.google.com>
+ <b65ee79a-8d3d-8ade-133b-913b2cbd0264@huawei.com>
+ <20180131221531.GC12901@jaegeuk-macbookpro.roam.corp.google.com>
+ <55f144df-4419-3642-5b35-c8885cdb7354@kernel.org>
+ <20180210014140.GB1885@jaegeuk-macbookpro.roam.corp.google.com>
+ <5f22d645-001d-a132-f0bd-2dba1f6daaea@kernel.org>
+ <558ea6b1-e57d-5910-d931-a47f143cca25@huawei.com>
+ <3782ed9e-741d-d711-3937-bc8127566982@kernel.org>
+ <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Tali Perry <tali.perry1@gmail.com>, avifishman70@gmail.com,
-        brendanhiggins@google.com, linux@armlinux.org.uk, mark.rutland@arm.com,
-        raltherr@google.com, robh+dt@kernel.org, tmaimon77@gmail.com
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1522059386-20601-3-git-send-email-tali.perry1@gmail.com>
-Cc: devicetree@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Tali Perry <tali.perry1@gmail.com>
-References: <1522059386-20601-1-git-send-email-tali.perry1@gmail.com>
- <1522059386-20601-3-git-send-email-tali.perry1@gmail.com>
-Message-ID: <152393630051.51482.7797391524865573162@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v12 2/2] clk: npcm7xx: add clock controller
-Date: Mon, 16 Apr 2018 20:38:20 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bd8580f5-a5a1-5e0a-ea01-088cffb441e4@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Tali Perry (2018-03-26 03:16:26)
-> * Nuvoton NPCM7XX Clock Controller
+On 04/13, Chao Yu wrote:
+> Ping again..
 > 
-> Nuvoton Poleg BMC NPCM7XX contains an integrated clock controller, which
-> generates and supplies clocks to all modules within the BMC.
-> 
-> 
-> 
-> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
-> 
-> 
+> Do you have time to discuss this?
 
-There should be a triple dash here.
+We may need a time to have a chat in person. Do you have any chance to visit
+US?
 
-I applied this to clk-next with these changes squashed in. If anything
-is wrong let me know.
-
-----8<----
-
-diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-index 7e4964b9e5c8..dba5384f03a4 100644
---- a/drivers/clk/clk-npcm7xx.c
-+++ b/drivers/clk/clk-npcm7xx.c
-@@ -8,24 +8,16 @@
-  */
- 
- #include <linux/module.h>
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
--#include <linux/device.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
--#include <linux/of_platform.h>
- #include <linux/of_address.h>
--#include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/err.h>
--#include <linux/rational.h>
- #include <linux/bitfield.h>
--#include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
--
--#include <asm/cp15.h>
- 
-+#include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
- 
- struct npcm7xx_clk_pll {
- 	struct clk_hw	hw;
-@@ -35,9 +27,6 @@ struct npcm7xx_clk_pll {
- 
- #define to_npcm7xx_clk_pll(_hw) container_of(_hw, struct npcm7xx_clk_pll, hw)
- 
--struct clk_hw *npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
--	const char *parent_name, unsigned long flags);
--
- #define PLLCON_LOKI	BIT(31)
- #define PLLCON_LOKS	BIT(30)
- #define PLLCON_FBDV	GENMASK(27, 16)
-@@ -55,8 +44,7 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(struct clk_hw *hw,
- 	u64 ret;
- 
- 	if (parent_rate == 0) {
--		pr_err("%s: parent rate is zero. reg=%x\n", __func__,
--			(u32)(pll->pllcon));
-+		pr_err("%s: parent rate is zero", __func__);
- 		return 0;
- 	}
- 
-@@ -73,13 +61,13 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(struct clk_hw *hw,
- 	return ret;
- }
- 
--const struct clk_ops npcm7xx_clk_pll_ops = {
-+static const struct clk_ops npcm7xx_clk_pll_ops = {
- 	.recalc_rate = npcm7xx_clk_pll_recalc_rate,
- };
- 
--
--struct clk_hw *npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
--	const char *parent_name, unsigned long flags)
-+static struct clk_hw *
-+npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
-+			 const char *parent_name, unsigned long flags)
- {
- 	struct npcm7xx_clk_pll *pll;
- 	struct clk_init_data init;
-@@ -90,8 +78,7 @@ struct clk_hw *npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
- 	if (!pll)
- 		return ERR_PTR(-ENOMEM);
- 
--	pr_debug("%s reg, reg=0x%x, name=%s, p=%s\n",
--		__func__, (unsigned int)pllcon, name, parent_name);
-+	pr_debug("%s reg, name=%s, p=%s\n", __func__, name, parent_name);
- 
- 	init.name = name;
- 	init.ops = &npcm7xx_clk_pll_ops;
-@@ -113,7 +100,6 @@ struct clk_hw *npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
- 	return hw;
- }
- 
--
- #define NPCM7XX_CLKEN1          (0x00)
- #define NPCM7XX_CLKEN2          (0x28)
- #define NPCM7XX_CLKEN3          (0x30)
-@@ -143,7 +129,6 @@ struct clk_hw *npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
- #define NPCM7XX_SECCNT          (0x68)
- #define NPCM7XX_CNTR25M         (0x6C)
- 
--
- struct npcm7xx_clk_gate_data {
- 	u32 reg;
- 	u8 bit_idx;
-@@ -219,7 +204,6 @@ struct npcm7xx_clk_pll_data {
- 	int onecell_idx;
- };
- 
--
- /*
-  * Single copy of strings used to refer to clocks within this driver indexed by
-  * above enum.
-@@ -271,7 +255,6 @@ struct npcm7xx_clk_pll_data {
- #define NPCM7XX_CLK_S_USB_BRIDGE  "usb_bridge"
- #define NPCM7XX_CLK_S_PCI         "pci"
- 
--
- static u32 pll_mux_table[] = {0, 1, 2, 3};
- static const char * const pll_mux_parents[] __initconst = {
- 	NPCM7XX_CLK_S_PLL0,
-@@ -328,7 +311,6 @@ static const char * const dvcssel_mux_parents[] __initconst = {
- 	NPCM7XX_CLK_S_PLL2,
- };
- 
--
- static const struct npcm7xx_clk_pll_data npcm7xx_plls[] __initconst = {
- 	{NPCM7XX_PLLCON0, NPCM7XX_CLK_S_PLL0, NPCM7XX_CLK_S_REFCLK, 0, -1},
- 
-@@ -342,7 +324,6 @@ static const struct npcm7xx_clk_pll_data npcm7xx_plls[] __initconst = {
- 	NPCM7XX_CLK_S_REFCLK, 0, -1},
- };
- 
--
- static const struct npcm7xx_clk_mux_data npcm7xx_muxes[] __initconst = {
- 	{0, GENMASK(1, 0), cpuck_mux_table, NPCM7XX_CLK_S_CPU_MUX,
- 	cpuck_mux_parents, ARRAY_SIZE(cpuck_mux_parents), CLK_IS_CRITICAL,
-@@ -387,7 +368,6 @@ static const struct npcm7xx_clk_div_fixed_data npcm7xx_divs_fx[] __initconst = {
- 	{ 1, 2, NPCM7XX_CLK_S_PLL2_DIV2, NPCM7XX_CLK_S_PLL2, 0, -1},
- };
- 
--
- /* configurable dividers: */
- static const struct npcm7xx_clk_div_data npcm7xx_divs[] __initconst = {
- 	{NPCM7XX_CLKDIV1, 28, 3, NPCM7XX_CLK_S_ADC,
-@@ -455,7 +435,6 @@ static const struct npcm7xx_clk_div_data npcm7xx_divs[] __initconst = {
- 
- };
- 
--
- static const struct npcm7xx_clk_gate_data npcm7xx_gates[] __initconst = {
- 	{NPCM7XX_CLKEN1, 31, "smb1-gate", NPCM7XX_CLK_S_APB2, 0},
- 	{NPCM7XX_CLKEN1, 30, "smb0-gate", NPCM7XX_CLK_S_APB2, 0},
-@@ -557,23 +536,17 @@ static const struct npcm7xx_clk_gate_data npcm7xx_gates[] __initconst = {
- 	{NPCM7XX_CLKEN3, 0, "pwmm1-gate", NPCM7XX_CLK_S_APB3, 0},
- };
- 
--
--
- static DEFINE_SPINLOCK(npcm7xx_clk_lock);
- 
--
- static void __init npcm7xx_clk_init(struct device_node *clk_np)
- {
- 	struct clk_hw_onecell_data *npcm7xx_clk_data;
- 	void __iomem *clk_base;
- 	struct resource res;
- 	struct clk_hw *hw;
--	struct clk *clk;
- 	int ret;
- 	int i;
- 
--	clk_base = NULL;
--
- 	ret = of_address_to_resource(clk_np, 0, &res);
- 	if (ret) {
- 		pr_err("%s: failed to get resource, ret %d\n", clk_np->name,
-@@ -581,49 +554,20 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 		return;
- 	}
- 
--
- 	clk_base = ioremap(res.start, resource_size(&res));
- 	if (IS_ERR(clk_base))
- 		goto npcm7xx_init_error;
- 
--
- 	npcm7xx_clk_data = kzalloc(sizeof(*npcm7xx_clk_data->hws) *
- 		NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL);
--
--	npcm7xx_clk_data->num = 0;
--
--	if (!npcm7xx_clk_data->hws) {
--		pr_err("Can't alloc npcm7xx_clk_data\n");
-+	if (!npcm7xx_clk_data)
- 		goto npcm7xx_init_np_err;
--	}
- 
- 	npcm7xx_clk_data->num = NPCM7XX_NUM_CLOCKS;
- 
- 	for (i = 0; i < NPCM7XX_NUM_CLOCKS; i++)
- 		npcm7xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
- 
--	/* Read fixed clocks. These 3 clocks must be defined in DT */
--	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
--	if (!IS_ERR(clk)) {
--		pr_err("failed to find external REFCLK: %ld\n",
--			PTR_ERR(clk));
--		clk_put(clk);
--	}
--
--	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
--	if (!IS_ERR(clk)) {
--		pr_err("failed to find external SYSBYPCK: %ld\n",
--			PTR_ERR(clk));
--		clk_put(clk);
--	}
--
--	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
--	if (!IS_ERR(clk)) {
--		pr_err("failed to find external MCBYPCK: %ld\n",
--			PTR_ERR(clk));
--		clk_put(clk);
--	}
--
- 	/* Register plls */
- 	for (i = 0; i < ARRAY_SIZE(npcm7xx_plls); i++) {
- 		const struct npcm7xx_clk_pll_data *pll_data = &npcm7xx_plls[i];
-@@ -640,18 +584,16 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 	}
- 
- 	/* Register fixed dividers */
--	clk = clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL1_DIV2,
-+	hw = clk_hw_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL1_DIV2,
- 			NPCM7XX_CLK_S_PLL1, 0, 1, 2);
--	if (IS_ERR(clk)) {
-+	if (IS_ERR(hw)) {
- 		pr_err("npcm7xx_clk: Can't register fixed div\n");
- 		goto npcm7xx_init_fail;
- 	}
- 
--
--	clk = clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL2_DIV2,
-+	hw = clk_hw_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL2_DIV2,
- 			NPCM7XX_CLK_S_PLL2, 0, 1, 2);
--
--	if (IS_ERR(clk)) {
-+	if (IS_ERR(hw)) {
- 		pr_err("npcm7xx_clk: Can't register div2\n");
- 		goto npcm7xx_init_fail;
- 	}
-@@ -676,7 +618,7 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 			npcm7xx_clk_data->hws[mux_data->onecell_idx] = hw;
- 	}
- 
--	/* Register clock dividers specified in npcm7xx_divs. */
-+	/* Register clock dividers specified in npcm7xx_divs */
- 	for (i = 0; i < ARRAY_SIZE(npcm7xx_divs); i++) {
- 		const struct npcm7xx_clk_div_data *div_data = &npcm7xx_divs[i];
- 
-@@ -700,23 +642,15 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 	if (ret)
- 		pr_err("failed to add DT provider: %d\n", ret);
- 
--
- 	of_node_put(clk_np);
- 
- 	return;
- 
- npcm7xx_init_fail:
--	if (npcm7xx_clk_data->num)
--		kfree(npcm7xx_clk_data->hws);
-+	kfree(npcm7xx_clk_data->hws);
- npcm7xx_init_np_err:
--	if (clk_base != NULL)
--		iounmap(clk_base);
-+	iounmap(clk_base);
- npcm7xx_init_error:
- 	of_node_put(clk_np);
--	pr_err("clk setup fail\n");
- }
--
- CLK_OF_DECLARE(npcm7xx_clk_init, "nuvoton,npcm750-clk", npcm7xx_clk_init);
--
--
--
+> 
+> On 2018/2/27 22:16, Chao Yu wrote:
+> > Ping,
+> > 
+> > On 2018/2/13 15:34, Chao Yu wrote:
+> >> Hi Jaegeuk,
+> >>
+> >> On 2018/2/10 10:52, Chao Yu wrote:
+> >>> On 2018/2/10 9:41, Jaegeuk Kim wrote:
+> >>>> On 02/01, Chao Yu wrote:
+> >>>>>
+> >>>>>
+> >>>>> On 2018/2/1 6:15, Jaegeuk Kim wrote:
+> >>>>>> On 01/31, Chao Yu wrote:
+> >>>>>>> On 2018/1/31 10:02, Jaegeuk Kim wrote:
+> >>>>>>>> What if we want to add more entries in addition to node_checksum? Do we have
+> >>>>>>>> to add a new feature flag at every time? How about adding a layout value instead
+> >>>>>>>
+> >>>>>>> Hmm.. for previous implementation, IMO, we'd better add a new feature flag at
+> >>>>>>> every time, otherwise, w/ extra_nsize only, in current image, we can know a
+> >>>>>>> valid range of extended area in node block, but we don't know which
+> >>>>>>> fields/features are valid/enabled or not.
+> >>>>>>>
+> >>>>>>> One more thing is that if we can add one feature flag for each field, we got one
+> >>>>>>> more chance to disable it dynamically.
+> >>>>>>>
+> >>>>>>>> of extra_nsize? For example, layout #1 means node_checksum with extra_nsize=X?
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> What does 1017 mean? We need to make this structure more flexibly for new
+> >>>>>>>
+> >>>>>>> Yes, using raw 1017 is not appropriate here.
+> >>>>>>>
+> >>>>>>>> entries. Like this?
+> >>>>>>>> 		union {
+> >>>>>>>> 			struct node_v1;
+> >>>>>>>> 			struct node_v2;
+> >>>>>>>> 			struct node_v3;
+> >>>>>>>> 			...
+> >>>>>>>> 			struct direct_node dn;
+> >>>>>>>> 			struct indirect_node in;
+> >>>>>>>> 		};
+> >>>>>>>> 	};
+> >>>>>>>>
+> >>>>>>>> 	struct node_v1 {
+> >>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> >>>>>>>> 		__le32 node_checksum;
+> >>>>>>>> 	}
+> >>>>>>>>
+> >>>>>>>> 	struct node_v2 {
+> >>>>>>>> 		__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=500];
+> >>>>>>>
+> >>>>>>> Hmm.. If we only need to add one more 4 bytes field in struct node_v2, but
+> >>>>>>> V2_NSIZE is defined as fixed 500, there must be 492 bytes wasted.
+> >>>>>>>
+> >>>>>>> Or we can define V2_NSIZE as 8, but if there comes more and more extended
+> >>>>>>> fields, node version count can be a large number, it results in complicated
+> >>>>>>> version recognization and handling.
+> >>>>>>>
+> >>>>>>> One more question is how can we control which fields are valid or not in
+> >>>>>>> comp[Vx_NSIZE]?
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> Anyway, what I'm thinking is maybe we can restructure layout of node block like
+> >>>>>>> the one used by f2fs_inode:
+> >>>>>>>
+> >>>>>>> struct f2fs_node {
+> >>>>>>> 	union {
+> >>>>>>> 		struct f2fs_inode i;
+> >>>>>>> 		union {
+> >>>>>>> 			struct {
+> >>>>>>> 				__le32 node_checksum;
+> >>>>>>> 				__le32 feature_field_1;
+> >>>>>>> 				__le32 feature_field_2;
+> >>>>>>> 				....
+> >>>>>>> 				__le32 addr[];
+> >>>>>>> 				
+> >>>>>>> 			};
+> >>>>>>> 			struct direct_node dn;
+> >>>>>>> 			struct indirect_node in;
+> >>>>>>> 		};
+> >>>>>>> 	};
+> >>>>>>> 	struct node_footer footer;
+> >>>>>>> } __packed;
+> >>>>>>>
+> >>>>>>> Moving all extended fields to the head of f2fs_node, so we don't have to use
+> >>>>>>> macro to indicate actual size of addr.
+> >>>>>>
+> >>>>>> Thinking what'd be the best way. My concern is, once getting more entries, we
+> >>>>>
+> >>>>> OK, I think we need more discussion.. ;)
+> >>>>>
+> >>>>>> can't set each of features individually. Like the second entry should have
+> >>>>>
+> >>>>> Oh, that will be hard. If we have to avoid that, we have to tag in somewhere
+> >>>>> e.g. f2fs_inode::i_flags2 to indicate which new field in f2fs_node is valid, for
+> >>>>> example:
+> >>>>>
+> >>>>> #define F2FS_NODE_CHECKSUM	0x0001
+> >>>>> #define F2FS_NODE_FIELD1	0x0002
+> >>>>> #define F2FS_NODE_FIELD2	0x0004
+> >>>>>
+> >>>>> 	union {
+> >>>>> 		struct {
+> >>>>> 			__le32 node_checksum;
+> >>>>> 			__le32 field_1;
+> >>>>> 			__le32 field_2;
+> >>>>> 			....
+> >>>>> 			__le32 addr[];
+> >>>>> 		};
+> >>>>> 		struct direct_node dn;
+> >>>>> 		struct indirect_node in;
+> >>>>> 	};
+> >>>>>
+> >>>>> f2fs_inode::i_flags2 = F2FS_NODE_CHECKSUM | F2FS_NODE_FIELD1
+> >>>>> indicates that f2fs_node::node_checksum and f2fs_node::field_1 are valid;
+> >>>>>
+> >>>>> f2fs_inode::i_flags2 = F2FS_NODE_FIELD1 | F2FS_NODE_FIELD2
+> >>>>> indicates that f2fs_node::field_1 and f2fs_node::field_2 are valid.
+> >>>>
+> >>>> So, that's why I thought we may need a sort of each formats.
+> >>>
+> >>> Hmm.. if we have two new added fields, there are (2 << 2) combinations
+> >>> of all formats, as:
+> >>>
+> >>> struct original {
+> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK];
+> >>> }
+> >>>
+> >>> struct node_v1 {
+> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V1_NSIZE=1];
+> >>> 	__le32 field_1;
+> >>> }
+> >>>
+> >>> struct node_v2 {
+> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V2_NSIZE=1];
+> >>> 	__le32 field_2;
+> >>> }
+> >>>
+> >>> struct node_v2 {
+> >>> 	__le32 data[DEF_ADDRS_PER_BLOCK - V3_NSIZE=2];
+> >>> 	__le32 field_1;
+> >>> 	__le32 field_2;
+> >>> }
+> >>>
+> >>> If we add more new fields, the node version will increase sharply due
+> >>> to there is (n << 2) combination with n fields. Right? Any thoughts to
+> >>> reduce maintaining overhead on those node versions structures?
+> >>
+> >> Do you have time to explain more about the design of multiple version structure
+> >> for node block, I'm still be confused about two things:
+> >> 1. what will we do if we want to add one new field in node structure.
+> >> 2. how can we recognize which fields are valid and which ones are invalid.
+> >>
+> >> Thanks,
+> >>
+> >>>
+> >>> Thanks,
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Any thoughts?
+> >>>>>
+> >>>>> Thanks,
+> >>>>>
+> >>>>>> enabled node_checksum, which we may not want to do.
+> >>>>>>
+> >>>>>>>
+> >>>>>>> Thanks,
+> >>>>>>>
+> >>>>>>>> 		__le32 comp[V2_NSIZE];
+> >>>>>>>> 	}
+> >>>>>>>> 	...
+> >>>>>>>>
+> >>>>>>>>> +			};
+> >>>>>>>>> +			struct direct_node dn;
+> >>>>>>>>> +			struct indirect_node in;
+> >>>>>>>>> +		};
+> >>>>>>>>>  	};
+> >>>>>>>>>  	struct node_footer footer;
+> >>>>>>>>>  } __packed;
+> >>>>>>>>> -- 
+> >>>>>>>>> 2.15.0.55.gc2ece9dc4de6
+> >>>>>>>>
+> >>>>>>>> .
+> >>>>>>>>
+> >>>
+> >>> .
+> >>>
+> >>
+> > 
+> > .
+> > 
