@@ -1,74 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752766AbeDQVpi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:45:38 -0400
-Received: from 6.mo173.mail-out.ovh.net ([46.105.43.93]:45015 "EHLO
-        6.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeDQVph (ORCPT
+        id S1752975AbeDQVpr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:45:47 -0400
+Received: from mail-pl0-f47.google.com ([209.85.160.47]:39130 "EHLO
+        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752786AbeDQVpn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:45:37 -0400
+        Tue, 17 Apr 2018 17:45:43 -0400
+X-Google-Smtp-Source: AIpwx48UDyw6+9b3clMSrCskH8iLvuKZ6WBEeefwjEqFSnRIv/s/lMXawOGMV12dr4uxmDlJXTYgQw==
+Subject: Re: [PATCH] blk-mq: Clear out elevator private data
+To: Kees Cook <keescook@chromium.org>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        linux-kernel@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
+References: <20180417214218.GA44753@beast>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <7d192394-568c-53e0-4359-723769c3ed7d@kernel.dk>
+Date: Tue, 17 Apr 2018 15:45:38 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180417214218.GA44753@beast>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Wed, 18 Apr 2018 03:06:39 +0900
-From: andi@etezian.org
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: exynos: Update x and y properties for mms114
- touchscreen
-In-Reply-To: <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
-References: <CGME20180126060503epcas2p4befe2d3d43f4a2158b1e1a123bf7906f@epcas2p4.samsung.com>
- <20180126060454.18082-1-andi.shyti@samsung.com>
- <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
-Message-ID: <f75382b5953a9f4f9f80bb0db5b2f249@etezian.org>
-User-Agent: Roundcube Webmail/1.3.4
-X-Originating-IP: 202.86.152.34
-X-Webmail-UserID: andi@etezian.org
-X-Ovh-Tracer-Id: 4013833171218055833
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtgedrjedtgdduudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
-
-On 18.04.2018 00:32, Krzysztof Kozlowski wrote:
-> On Fri, Jan 26, 2018 at 03:04:54PM +0900, Andi Shyti wrote:
->> The mms114 binding [1] specifies that the 'x' and 'y' should be
->> called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
->> in coherence with the touchscreen [2] binding.
->> 
->> Update the mms114 node for trats2 and trats dts according to the
->> binding.
->> 
->> [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
->> [2] 
->> Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
->> 
->> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
->> ---
->> Hi Krzysztof,
->> 
->> this patch depends on Simon's patchset [1] and must be applied after
->> that. If you want I can ping you when the patch gets or you can take
->> it in the next cycle.
->> 
->> Andi
->> 
->> [1] https://marc.info/?l=linux-kernel&m=151682273403098&w=2
->> 
+On 4/17/18 3:42 PM, Kees Cook wrote:
+> Some elevators may not correctly check rq->rq_flags & RQF_ELVPRIV, and
+> may attempt to read rq->elv fields. When requests got reused, this
+> caused BFQ to think it already had a bfqq (rq->elv.priv[1]) allocated.
+> This could lead to odd behaviors like having the sense buffer address
+> slowly start incrementing. This eventually tripped HARDENED_USERCOPY
+> and KASAN.
 > 
-> Hi Andi,
-> 
-> As I understand, the dependencies are in and I can take this?
+> This patch wipes all of rq->elv instead of just rq->elv.icq. While
+> it shouldn't technically be needed, this ends up being a robustness
+> improvement that should lead to at least finding bugs in elevators faster.
 
-Thanks a lot, somehow I missed it,
+Comments from the other email still apply, we should not need to do this
+full memset() for every request. From a quick look, BFQ needs to straighten
+out its usage of prepare request and interactions with insert_request.
 
-Please take it.
+> Reported-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+> Fixes: bd166ef183c26 ("blk-mq-sched: add framework for MQ capable IO schedulers")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> In theory, BFQ needs to also check the RQF_ELVPRIV flag, but I'll leave that
+> to Paolo to figure out. Also, my Fixes line is kind of a best-guess. This
+> is where icq was originally wiped, so it seemed as good a commit as any.
 
-Thank you,
-Andi
+Yeah, that's probably a bit too broad for fixes :-)
+
+-- 
+Jens Axboe
