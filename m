@@ -1,86 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752707AbeDQUjX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 16:39:23 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41704 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752254AbeDQUjW (ORCPT
+        id S1752766AbeDQUqI (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 16:46:08 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:32789 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752387AbeDQUqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 16:39:22 -0400
-X-Google-Smtp-Source: AIpwx49mKZQ+8+2WaWi+N2CJ9sEn540wFojXQYHOP/1HJ0y7pdDwLzcIaHV3QEOkXzlG/in0wcMlLQ==
-Date: Tue, 17 Apr 2018 23:39:19 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>, adobriyan@gmail.com,
-        mhocko@kernel.org, willy@infradead.org, mguzik@redhat.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [v4 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-Message-ID: <20180417203919.GF19578@uranus.lan>
-References: <1523730291-109696-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180417112957.84de526138f404a04298ec4c@linux-foundation.org>
+        Tue, 17 Apr 2018 16:46:06 -0400
+X-Google-Smtp-Source: AIpwx49e6WiEONh9FgFIKAV9t+OUnYAW+lWwSy9u6F5I8jaewR92yJPLsMmH1X/zFEnogaZwF+uPaRYJv2LHHtbQEK8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417112957.84de526138f404a04298ec4c@linux-foundation.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
+ <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
+ <2864697.7uzmEJovl2@natalenko.name> <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
+ <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
+ <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
+ <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
+ <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
+ <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
+ <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
+ <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com> <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 17 Apr 2018 13:46:04 -0700
+X-Google-Sender-Auth: 4OuUv_4apSIGIiLkd83Wq9VxJJI
+Message-ID: <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Jens Axboe <axboe@kernel.dk>, Paolo Valente <paolo.valente@linaro.org>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 11:29:57AM -0700, Andrew Morton wrote:
-> On Sun, 15 Apr 2018 02:24:51 +0800 Yang Shi <yang.shi@linux.alibaba.com> wrote:
-> 
-> > mmap_sem is on the hot path of kernel, and it very contended, but it is
-> > abused too. It is used to protect arg_start|end and evn_start|end when
-> > reading /proc/$PID/cmdline and /proc/$PID/environ, but it doesn't make
-> > sense since those proc files just expect to read 4 values atomically and
-> > not related to VM, they could be set to arbitrary values by C/R.
-> > 
-> > And, the mmap_sem contention may cause unexpected issue like below:
-> > 
-> > INFO: task ps:14018 blocked for more than 120 seconds.
-> >        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
-> >  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> > message.
-> >  ps              D    0 14018      1 0x00000004
-> >   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
-> >   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
-> >   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
-> >  Call Trace:
-> >   [<ffffffff817154d0>] ? __schedule+0x250/0x730
-> >   [<ffffffff817159e6>] schedule+0x36/0x80
-> >   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
-> >   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
-> >   [<ffffffff81717db0>] down_read+0x20/0x40
-> >   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
-> >   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
-> >   [<ffffffff81241d87>] __vfs_read+0x37/0x150
-> >   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
-> >   [<ffffffff81242266>] vfs_read+0x96/0x130
-> >   [<ffffffff812437b5>] SyS_read+0x55/0xc0
-> >   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
-> > 
-> > Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
-> > for them to mitigate the abuse of mmap_sem.
-> > 
-> > So, introduce a new spinlock in mm_struct to protect the concurrent
-> > access to arg_start|end, env_start|end and others, as well as replace
-> > write map_sem to read to protect the race condition between prctl and
-> > sys_brk which might break check_data_rlimit(), and makes prctl more
-> > friendly to other VM operations.
-> 
-> (We should move check_data_rlimit() out of the .h file)
-> 
-> It seems inconsistent to be using mmap_sem to protect ->start_brk and
-> friends in sys_brk().  We've already declared that these are protected
-> by arg_lock so that's what we should be using?  And getting this
-> consistent should permit us to stop using mmap_sem in prctl()
-> altogether?
+On Tue, Apr 17, 2018 at 1:28 PM, Jens Axboe <axboe@kernel.dk> wrote:
+> It has to be the latter bfqq->dispatched increment, as those are
+> transient (and bfqd is not).
 
-Nope, we still can't. Look, the down_read part order the call with
-sys_brk. while arg_lock orders prctl call itself. That said if
-someone is calling sys_brk while we're in a middle of prctl it
-should wait until prctl finished. But two simultaneous prcl
-may proceed without taking a write lock using arg_lock as
-a barrier.
+Yeah, and I see a lot of comments around the lifetime of rq and bfqq,
+so I assume something is not being locked correctly.
+
+#define RQ_BFQQ(rq)             ((rq)->elv.priv[1])
+
+static struct request *__bfq_dispatch_request(struct blk_mq_hw_ctx *hctx)
+{
+        struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
+        struct request *rq = NULL;
+        struct bfq_queue *bfqq = NULL;
+
+        if (!list_empty(&bfqd->dispatch)) {
+                rq = list_first_entry(&bfqd->dispatch, struct request,
+                                      queuelist);
+                list_del_init(&rq->queuelist);
+
+                bfqq = RQ_BFQQ(rq);
+
+                if (bfqq) {
+                        /*
+                         * Increment counters here, because this
+                         * dispatch does not follow the standard
+                         * dispatch flow (where counters are
+                         * incremented)
+                         */
+                        bfqq->dispatched++;
+...
+
+I see elv.priv[1] assignments made in a few places -- is it possible
+there is some kind of uninitialized-but-not-NULL state that can leak
+in there?
+
+bfq_prepare_request() assigns elv.priv[1], and bfq_insert_request()
+only checks that it's non-NULL (if at all) in one case. Can
+bfq_insert_request() get called without bfq_prepare_request() being
+called first?
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
