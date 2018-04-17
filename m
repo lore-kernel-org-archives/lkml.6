@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756097AbeDQQOR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:14:17 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:57054 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755997AbeDQQOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1756088AbeDQQOO (ORCPT <rfc822;w@1wt.eu>);
         Tue, 17 Apr 2018 12:14:14 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:57036 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754213AbeDQQOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:14:12 -0400
 From: Borislav Petkov <bp@alien8.de>
 To: X86 ML <x86@kernel.org>
 Cc: Andy Lutomirski <luto@amacapital.net>,
@@ -13,9 +13,9 @@ Cc: Andy Lutomirski <luto@amacapital.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH 9/9] x86/dumpstack: Explain the reasoning for the prologue and buffer size
-Date: Tue, 17 Apr 2018 18:11:24 +0200
-Message-Id: <20180417161124.5294-10-bp@alien8.de>
+Subject: [PATCH 8/9] x86/dumpstack: Save first regs set for the executive summary
+Date: Tue, 17 Apr 2018 18:11:23 +0200
+Message-Id: <20180417161124.5294-9-bp@alien8.de>
 X-Mailer: git-send-email 2.13.0
 In-Reply-To: <20180417161124.5294-1-bp@alien8.de>
 References: <20180417161124.5294-1-bp@alien8.de>
@@ -25,44 +25,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Borislav Petkov <bp@suse.de>
 
-The whole reasoning behind the amount of opcode bytes dumped and
-prologue length isn't very clear so let's hold down some of the reasons
-for why it is done the way it is.
+Save the regs set when we call __die() for the first time and print it
+in oops_end().
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/kernel/dumpstack.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/x86/kernel/dumpstack.c | 32 ++++++++++++--------------------
+ 1 file changed, 12 insertions(+), 20 deletions(-)
 
 diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index ee344030fd0a..666a284116ac 100644
+index 82da808b5c36..ee344030fd0a 100644
 --- a/arch/x86/kernel/dumpstack.c
 +++ b/arch/x86/kernel/dumpstack.c
-@@ -72,6 +72,25 @@ static void printk_stack_address(unsigned long address, int reliable,
- 	printk("%s %s%pB\n", log_lvl, reliable ? "" : "? ", (void *)address);
- }
+@@ -28,6 +28,8 @@ int panic_on_unrecovered_nmi;
+ int panic_on_io_nmi;
+ static int die_counter;
  
-+/*
-+ * There are a couple of reasons for the 2/3rd prologue, courtesy of Linus:
-+ *
-+ * In case where we don't have the exact kernel image (which, if we did, we can
-+ * simply disassemble and navigate to the RIP), the purpose of the bigger
-+ * prologue is to have more context and to be able to correlate the code from
-+ * the different toolchains better.
-+ *
-+ * In addition, it helps in recreating the register allocation of the failing
-+ * kernel and thus make sense of the register dump.
-+ *
-+ * What is more, the additional complication of a variable length insn arch like
-+ * x86 warrants having longer byte sequence before rIP so that the disassembler
-+ * can "sync" up properly and find instruction boundaries when decoding the
-+ * opcode bytes.
-+ *
-+ * Thus, the 2/3rds prologue and 64 byte OPCODE_BUFSIZE is just a random
-+ * guesstimate in attempt to achieve all of the above.
-+ */
- void show_opcodes(u8 *rip, const char *loglvl)
++static struct pt_regs exec_summary_regs;
++
+ bool in_task_stack(unsigned long *stack, struct task_struct *task,
+ 		   struct stack_info *info)
  {
- 	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
+@@ -321,6 +323,9 @@ void oops_end(unsigned long flags, struct pt_regs *regs, int signr)
+ 	raw_local_irq_restore(flags);
+ 	oops_exit();
+ 
++	/* Executive summary in case the oops scrolled away */
++	__show_regs(&exec_summary_regs, true);
++
+ 	if (!signr)
+ 		return;
+ 	if (in_interrupt())
+@@ -339,10 +344,10 @@ NOKPROBE_SYMBOL(oops_end);
+ 
+ int __die(const char *str, struct pt_regs *regs, long err)
+ {
+-#ifdef CONFIG_X86_32
+-	unsigned short ss;
+-	unsigned long sp;
+-#endif
++	/* Save the regs of the first oops for the executive summary later. */
++	if (!die_counter)
++		exec_summary_regs = *regs;
++
+ 	printk(KERN_DEFAULT
+ 	       "%s: %04lx [#%d]%s%s%s%s%s\n", str, err & 0xffff, ++die_counter,
+ 	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT"         : "",
+@@ -352,26 +357,13 @@ int __die(const char *str, struct pt_regs *regs, long err)
+ 	       IS_ENABLED(CONFIG_PAGE_TABLE_ISOLATION) ?
+ 	       (boot_cpu_has(X86_FEATURE_PTI) ? " PTI" : " NOPTI") : "");
+ 
++	show_regs(regs);
++	print_modules();
++
+ 	if (notify_die(DIE_OOPS, str, regs, err,
+ 			current->thread.trap_nr, SIGSEGV) == NOTIFY_STOP)
+ 		return 1;
+ 
+-	print_modules();
+-	show_regs(regs);
+-#ifdef CONFIG_X86_32
+-	if (user_mode(regs)) {
+-		sp = regs->sp;
+-		ss = regs->ss;
+-	} else {
+-		sp = kernel_stack_pointer(regs);
+-		savesegment(ss, ss);
+-	}
+-	printk(KERN_EMERG "EIP: %pS SS:ESP: %04x:%08lx\n",
+-	       (void *)regs->ip, ss, sp);
+-#else
+-	/* Executive summary in case the oops scrolled away */
+-	printk(KERN_ALERT "RIP: %pS RSP: %016lx\n", (void *)regs->ip, regs->sp);
+-#endif
+ 	return 0;
+ }
+ NOKPROBE_SYMBOL(__die);
 -- 
 2.13.0
