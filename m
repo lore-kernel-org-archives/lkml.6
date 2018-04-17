@@ -1,75 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeDQBEC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 21:04:02 -0400
-Received: from ozlabs.org ([203.11.71.1]:42643 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751164AbeDQBEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 21:04:00 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 17 Apr 2018 11:02:32 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shuming Fan <shumingf@realtek.com>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20180417110232.19225908@canb.auug.org.au>
+        id S1751980AbeDQBVL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 21:21:11 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:47004 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751164AbeDQBVJ (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Mon, 16 Apr 2018 21:21:09 -0400
+Date: Tue, 17 Apr 2018 09:20:48 +0800
+From: joeyli <jlee@suse.com>
+To: Randy Wright <rwright@hpe.com>
+Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>, linux-efi@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Takashi Iwai <tiwai@suse.de>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        akpm@linux-foundation.org, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>
+Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
+ memory map
+Message-ID: <20180417012048.GK16023@linux-l9pv.suse>
+References: <20180413062716.8040-1-jlee@suse.com>
+ <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
+ <20180416030904.GB26685@dhcp-128-65.nay.redhat.com>
+ <20180416063738.GH16023@linux-l9pv.suse>
+ <20180417003522.GA2741@rfwz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ah7BZ6fB0KAVxG=rOF2nG+x"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417003522.GA2741@rfwz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ah7BZ6fB0KAVxG=rOF2nG+x
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Apr 16, 2018 at 06:35:22PM -0600, Randy Wright wrote:
+> On Mon, Apr 16, 2018 at 02:37:38PM +0800, joeyli wrote:
+> > Hi Randy,
+> > ...
+> > Randy, do you want to try Dave's kexec patch on your environment? Please remove
+> > my patch first.  
+> > 
+> > Thanks a lot!
+> > Joey Lee
+> 
+> Hi Joey, 
+> 
+> I tried Dave's patch to kexec-bzimage64.c on my build of the SuSE
+> 4.12.14-15 kernel.   I ran the same test as I did with your patch: I
+> verified the early_ioremap.c warnings occurred with a crash triggered
+> from a kexec boot of the unmodified kernel. Then I applied the patch to
+> kexec-bzimage64.c, rebuilt, re-ran the test to crash from the kexec'ed
+> kernel, and verified the warnings are no longer seen.
+>
 
-Hi all,
+Thanks for your help! Looks that Dave's kexec patch works to prevent the
+warning message. 
+ 
+> I'm out of time today, but I will plan to run the same  test tomorrow on
+> a build of the SuSE 4.4.120-94.17 kernel, on which I had also reported
+> the original bug.
+>
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Both kexec and efi sides will be applied patches.
 
-sound/soc/codecs/rt1305.c:1179:23: error: implicit declaration of function =
-'ACPI_PTR'; did you mean 'ERR_PTR'? [-Werror=3Dimplicit-function-declaratio=
-n]
-   .acpi_match_table =3D ACPI_PTR(rt1305_acpi_match)
-                       ^~~~~~~~
-                       ERR_PTR
-sound/soc/codecs/rt1305.c:1179:23: warning: initialization makes pointer fr=
-om integer without a cast [-Wint-conversion]
-sound/soc/codecs/rt1305.c:1179:23: note: (near initialization for 'rt1305_i=
-2c_driver.driver.acpi_match_table')
-sound/soc/codecs/rt1305.c:1179:23: error: initializer element is not consta=
-nt
-sound/soc/codecs/rt1305.c:1179:23: note: (near initialization for 'rt1305_i=
-2c_driver.driver.acpi_match_table')
-
-Caused by commit
-
-  29bc643ddd7e ("ASoC: rt1305: Add RT1305/RT1306 amplifier driver")
-
-I have used the sound-asoc tree from next-20180416 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ah7BZ6fB0KAVxG=rOF2nG+x
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrVR6gACgkQAVBC80lX
-0Gw4bwf/Zn6nbHIe4ozQsNhKJZP9P5bTUdzMDcTW1E4KsmExP8D8DSJ2q3HCyq4A
-zj1t+278PlDtWqaM6SwKqQ7+FoUgcOvL3n6kV33lGAHIrJVhF8FEMLlTwqTzq8UB
-OAcdUpvu6xIfVlHjnSSDEK7x7QMgTBk9xfqPnvY+OCjmjT2AA1n4b6yZ0l6wHbef
-YAeYpNy44ftdgWsFz5w8I96MP8MsUiUcpm3hMQWZluaE3t1FRX548NhtX9D61+45
-Pxl8cez/wC6pla7PtpCsWOymJcsBWaKadTTRVUI76lpy6AzLdVfC1vF0fikXV8KM
-yB7ffNX5g0sEj4Yt9l3txjXNOeN8fQ==
-=p2VR
------END PGP SIGNATURE-----
-
---Sig_/ah7BZ6fB0KAVxG=rOF2nG+x--
+Thanks a lot!
+Joey Lee 
