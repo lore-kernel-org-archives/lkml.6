@@ -1,78 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751337AbeDQFtM convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 01:49:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34256 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750765AbeDQFtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 01:49:10 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2CC21726
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1751204AbeDQF6k (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 01:58:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40715 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbeDQF6i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 01:58:38 -0400
+Date: Mon, 16 Apr 2018 22:58:10 -0700
+From: tip-bot for Song Liu <tipbot@zytor.com>
+Message-ID: <tip-5c8dad48e4f53d6fd0a7e4f95d7c1c983374de88@git.kernel.org>
+Cc: hpa@zytor.com, tglx@linutronix.de, vincent.weaver@maine.edu,
+        mingo@kernel.org, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, songliubraving@fb.com,
+        peterz@infradead.org
+Reply-To: mingo@kernel.org, vincent.weaver@maine.edu, hpa@zytor.com,
+        tglx@linutronix.de, songliubraving@fb.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+In-Reply-To: <20180413185513.3626052-1-songliubraving@fb.com>
+References: <20180413185513.3626052-1-songliubraving@fb.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] trace_kprobe: Remove warning message "Could not
+ insert probe at..."
+Git-Commit-ID: 5c8dad48e4f53d6fd0a7e4f95d7c1c983374de88
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180416175743.20826-1-jbrunet@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180416175743.20826-1-jbrunet@baylibre.com>
-Message-ID: <152394414961.51482.3707791896217213422@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 0/3] clk: add duty cycle support
-Date: Mon, 16 Apr 2018 22:49:09 -0700
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jerome Brunet (2018-04-16 10:57:40)
-> This patchset adds the possibility to control the duty cycle ratio of a
-> clock within the clock framework.
-> 
-> This useful when the duty cycle ratio depends on another parameter
-> controlled by the clock framework. For example, the duty cycle ratio may
-> depends on the value of a divider (ratio = N / div).
-> 
-> This is also useful if the related clock is part of large tree. In this
-> case, using CCF to control the clock tree and the PWM framework for the
-> duty cycle would be a nightmare for the provider and the consumer.
+Commit-ID:  5c8dad48e4f53d6fd0a7e4f95d7c1c983374de88
+Gitweb:     https://git.kernel.org/tip/5c8dad48e4f53d6fd0a7e4f95d7c1c983374de88
+Author:     Song Liu <songliubraving@fb.com>
+AuthorDate: Fri, 13 Apr 2018 11:55:13 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 17 Apr 2018 07:54:57 +0200
 
-Can you please Cc the PWM maintainer on this patch series?
+trace_kprobe: Remove warning message "Could not insert probe at..."
 
-> 
-> A clock provider is not required to implement the operation to set and get
-> the duty cycle. If it does not implement .get_duty_cycle(), the ratio is
-> assumed to be 50%.
-> 
-> This series also provides pass-through operations ready to be used for
-> clock which don't resample the clock signal (such as gates and muxes).
-> This is provided to make things easier for consumers. Clocks are usually
-> made of several elements, like a composite clocks with a mux, a divider,
-> and a gate. With the pass-through ops set on the gate, the consumer does
-> not need to be aware that the duty cycle is actually controlled by the
-> divider, it can continue to use the clock through the gate, as usual.  The
-> simple propagation will stop at the first clock which resample the signal
-> (such as a divider).
-> 
-> Patch 2 and 3 add the pass-through ops to the generic gate and mux ops.  In
-> this first version, it is unconditional, but maybe we should provide a flag
-> to let people decide what is best for them ?
-> 
-> The series has been developed to handled the sample clocks provided by
-> audio clock controller of amlogic's A113 SoC. To support i2s modes, this
-> clock need to have a 50% duty cycle ratio, while it should be just one
-> pulse of the parent clock in dsp modes.
+This warning message is not very helpful, as the return value should
+already show information about the error. Also, this message will
+spam dmesg if the user space does testing in a loop, like:
 
-Cool. I've heard rumblings from some other SoC manufacturers that they
-want duty cycle control via the clk framework but nothing came of it, so
-thanks for picking this up.
+    for x in {0..5}
+    do
+        echo p:xx xx+$x >> /sys/kernel/debug/tracing/kprobe_events
+    done
 
-> 
-> PS: Checkpatch complains heavily about the white space in the trace header
-> file. I believe I have respected the style already used in this
-> file. Please let me know if it should be done differently.
+Reported-by: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kernel-team@fb.com
+Link: http://lkml.kernel.org/r/20180413185513.3626052-1-songliubraving@fb.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/trace/trace_kprobe.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-The trace file looks fine. Ignore checkpatch.
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 1cd3fb4d70f8..02aed76e0978 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -512,8 +512,6 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
+ 	if (ret == 0)
+ 		tk->tp.flags |= TP_FLAG_REGISTERED;
+ 	else {
+-		pr_warn("Could not insert probe at %s+%lu: %d\n",
+-			trace_kprobe_symbol(tk), trace_kprobe_offset(tk), ret);
+ 		if (ret == -ENOENT && trace_kprobe_is_on_module(tk)) {
+ 			pr_warn("This probe might be able to register after target module is loaded. Continue.\n");
+ 			ret = 0;
