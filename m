@@ -1,40 +1,36 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/Wk4C0vZN4ct5Idaj55W5YUxoqi4nYCtansNaZGGFb2MRVxpYdgM/ScxI3LCUpPFmVV5sz
-ARC-Seal: i=1; a=rsa-sha256; t=1523981455; cv=none;
+X-Google-Smtp-Source: AIpwx49BQNeqOWg0JJVVpBNbEcaxeekSCGOTmEh59reuv3lr9s3OLxs+DC6kx45CE+h2mbqbMD9U
+ARC-Seal: i=1; a=rsa-sha256; t=1523981452; cv=none;
         d=google.com; s=arc-20160816;
-        b=qogm+JEeN7wDL4MHFPfl0HwUA/JnEKhVmO67XaFZDjLNon6AqhzX/ijjXafO5t92il
-         BtjDRVfSGZvoVaiygSGrJUw+MuwhUKaopoT7HuotqDhiWLDgExvH75QOraKsb9g0q4OB
-         UCZ8qLk6qQ8tmahL7xc2JAwGZeV8wfm0C6k9I4OcSJnrPBd7Zl0Oc2MtMUMbogp0yf+I
-         IK8vT6O2V1M8GSMw5Tvm1kPqIjwoKUZUloX+oyWb/fZGsxtqnnQ3uTMifmQiH8QFlE1P
-         ViAmmw7pDI2px4GPOyeCSxl9r/vEuiCLpvyseuxL8mYvOVfOq0PUFSiJDosyc7mYVMD8
-         5B5w==
+        b=dalLuGdjNYtaJjRfPifuionxy9lB/2RrRmlOQBE9euA8Ceqh62wXgjJ3xzJEjmOCw1
+         sKaHcNboCv915AURIs/RxlLh0YiHRavnliVG4/Cpzcr1ve51WbEunJUhnW09L1eCJc3F
+         AGDXCkCp92B7OUgxFN91r1B+w7goHBleQcYgmdB5RLRczic+C7xGZo5vG4qffdvWMBMl
+         NC7I8MTF/0qwwO9HO2q3fDeB0Jm3rI0pBexDkb1eqyJRxE0fdix7QoLLGKJHlmzs3Nf+
+         tLOk8QcMgmnSGwK56bzhMQ0TVz+qcoWnrBJwxhiM2VXO1rx5SoPvMZP8T8SSSXoqRsE5
+         xDvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MJwLEdunmvtdW2UYhOHrrzQumAxVn104jvmAxgfUyMM=;
-        b=ExlJN0uCZrjYPANBWte3GXT+iNwTEgvCqX7A+jIbElWhhGL20R3cl2GJxlmMNbFEeT
-         bwh0hrI2ETlpb7uw92cp40tBYLxN0q39XZZkWJBTSYrcUt+qW1mFeAg3r+eKD+9cBlGT
-         XLoHpmemewh/snclgLUQta1JZYhcOh8BiPdJ5HdmfmBbfACBPmBCGCLjR0YbXMobcGgm
-         fSCuWInQ5DEHAHaKACO95m+P0h04vevjrPTCv4Q9XQvPgAvMIxgqE+T60InY8f2SFcLA
-         kl0N2Rlvuin6DB2cKnhkrC2Hb8caO6+5XHPsotNaLDTBsZx0DCK35ofxC5q75B1nWgbA
-         DQKw==
+        bh=fzcqnZq16Adhu6u7mHSUZEpqnsJFemZAhg5YgDaYJpQ=;
+        b=QXiCHk6QnhK+Z2CK2pyzzGVgO0EHrqovHsFTIG+zbPyYu0yCIx7nekoixJDUaLg4B8
+         vxydw076B3QeW4UHv9umujZC4qS08d7IU/6qCPWGEahE9xYMxw3h5vskGdsBDGtVQAwu
+         CYpgjf2FaojLxXxQuzeUkUoiv/cQ2awBz2GecSSYYoL37N7BO2iGg5Xpv9BLpW5NPdq2
+         6qDmzrI76A83OXEVrCrDtAvZEoT2Ji3vwLrZha9wYy4JZ7QXi0aVnsQ4itWrLLTi7xL/
+         fykkwxcwzCM9Dk+W3BRpAqngrIA7ix2GBbvRVPTd6l0EkOTfzJlHmLztyAJ0Eu6Nt/Vy
+         8Fjw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christoffer Dall <christoffer.dall@linaro.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Greg Hackmann <ghackmann@google.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.9 35/66] arm64: KVM: Increment PC after handling an SMC trap
-Date: Tue, 17 Apr 2018 17:59:08 +0200
-Message-Id: <20180417155647.391743183@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Phil Elwell <phil@raspberrypi.org>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 66/66] lan78xx: Correctly indicate invalid OTP
+Date: Tue, 17 Apr 2018 17:59:39 +0200
+Message-Id: <20180417155648.707734660@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -44,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010378012758243?=
-X-GMAIL-MSGID: =?utf-8?q?1598010378012758243?=
+X-GMAIL-THRID: =?utf-8?q?1598009755647099908?=
+X-GMAIL-MSGID: =?utf-8?q?1598010375464655649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,49 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Phil Elwell <phil@raspberrypi.org>
 
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+[ Upstream commit 4bfc33807a9a02764bdd1e42e794b3b401240f27 ]
 
-commit f5115e8869e1dfafac0e414b4f1664f3a84a4683 upstream.
+lan78xx_read_otp tries to return -EINVAL in the event of invalid OTP
+content, but the value gets overwritten before it is returned and the
+read goes ahead anyway. Make the read conditional as it should be
+and preserve the error code.
 
-When handling an SMC trap, the "preferred return address" is set
-to that of the SMC, and not the next PC (which is a departure from
-the behaviour of an SMC that isn't trapped).
-
-Increment PC in the handler, as the guest is otherwise forever
-stuck...
-
-Cc: stable@vger.kernel.org
-Fixes: acfb3b883f6d ("arm64: KVM: Fix SMCCC handling of unimplemented SMC/HVC calls")
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
-Tested-by: Greg Hackmann <ghackmann@google.com>
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kvm/handle_exit.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/usb/lan78xx.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kvm/handle_exit.c
-+++ b/arch/arm64/kvm/handle_exit.c
-@@ -53,7 +53,16 @@ static int handle_hvc(struct kvm_vcpu *v
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -873,7 +873,8 @@ static int lan78xx_read_otp(struct lan78
+ 			offset += 0x100;
+ 		else
+ 			ret = -EINVAL;
+-		ret = lan78xx_read_raw_otp(dev, offset, length, data);
++		if (!ret)
++			ret = lan78xx_read_raw_otp(dev, offset, length, data);
+ 	}
  
- static int handle_smc(struct kvm_vcpu *vcpu, struct kvm_run *run)
- {
-+	/*
-+	 * "If an SMC instruction executed at Non-secure EL1 is
-+	 * trapped to EL2 because HCR_EL2.TSC is 1, the exception is a
-+	 * Trap exception, not a Secure Monitor Call exception [...]"
-+	 *
-+	 * We need to advance the PC after the trap, as it would
-+	 * otherwise return to the same address...
-+	 */
- 	vcpu_set_reg(vcpu, 0, ~0UL);
-+	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
- 	return 1;
- }
- 
+ 	return ret;
