@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1954995-1523973606-2-1977858740704727606
+X-Cyrus-Session-Id: sloti22d1t05-2055735-1523976747-2-10178365680493780255
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523973605; b=KMCajbqlkfs2kDIqHmZgcyoy3aldE82kf/ZaPwBDEXti9aa/hH
-    EYQpkn2XLAi6/QcnSTo+ocXdYslxS1StQA/TH+OcUd9ts6RbCujhnRND7EPCsWO3
-    AaQwWFko0iQuYGUFRNHxMjwjUynxyU7D6qK9+HnMxn0EvB7MGBxXhyqoaqHP7hBe
-    wKCDyXvk2ZWqyxd08GTQk3AEJ9m/OzbYDZqFt9Vf8g5UB/OL4vYYn4hUIV6crkRT
-    Ykj01PINNoGLYba9ZdDIB/PBhJVlPH1xkmKKEP0s/ZLcgbxM9TOU3CWMKw+3HOgT
-    nKigTJ5v706SvDVWRQZb6QpPY21QqS75Ad/g==
+    1523976746; b=WEYLrlvAukASyN5O/rd8LVHs0JE3gfpWrRqTZP9tgNhMHwV/ZT
+    DPxp3LRs/JfAuql/+2PWsMvkknqdxb985guf11Ga9Dcqr3APLfAS1j1Pwy3cUWll
+    9xRFMNgoSrp0H1vhUsQ5gD7n601O7oOW3ObuyVOnnf+Jxrow7w1KbJCnGm/9EE9i
+    rvNRoPw1r9DaejD3810ocseYpRG46/X7ARa8vmYNOHK263gVIHJt/VLJoMIXqrOI
+    1JRySyR1lmdPz9hbOkCldzXeeeUt9N71H8Sh+s5FboVVUyFRvAS0a4wDnic/Yusb
+    5+Va2GOWYRAqF7QKYbWt5J5A725apIm28QEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523973605; bh=+xyQmeuMVe0zO4vv9aogpLVvm817+a
-    XYRTA+WDf2ddk=; b=ma+FPhl/yJOwdG0kWoGNEsNaTpNQVbMdhhS8OKmMz5HnJJ
-    KxbIyHmdGn/mAufTdd9CGAePdOolxb1A9ZZcvZoBnUZSwuRG3lY/2uuMZQYhpmpe
-    01NEw389P8HI51b2YS2ZPrA6/6ax2nrsJ1TMOdXnd7npCbU0X73m3DVeOUTGWFVs
-    ctyMUrezYmX5uH7G+gwv6GDpLeU+9xssby5UzC93pvRA5rLqhPwAbZGXTJ6bWjwq
-    6N2hygY0fcoy7V4S3jlXyPAAJ0tK9gEmIVIp28ImDnNjCCAPw1WeSHGLLAhQcTjO
-    NkoSQ3m2wGeNNy63qLiOui8bcQKXAfFF2NcVAeEA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1523976746; bh=ZSnUofhwLHUdEc3oQlm1cqCzs3elCQ
+    UBUQaQKRaAuHg=; b=mXPKwqukyrEzEkb4ouu7ZZVs8yYO3JnepKFQoAnvxgAUtt
+    Ls+lh66FYjGVIrXgtKYzizLsju+1br/QWQsunxFSGrTpzhqvLpmt7BE5L6iwC/f9
+    BX9JjiTZSWw1OTq2ZDmcCpFBjc9Qa97nEig9Mwc96/a+7u6GLLLKZZZnIZ3gqixN
+    fLOSC9g+TVk9I7A8hhUyZ8Qe6yyuhjGiQDclG56UMSBnxvFljcKqzl7i6NsIX2ff
+    KLDSdVWiWir+AnY4mXr8lXqICWvxtW5vDCU02Qci25l1WtTGSaILTNIZV2cKNOU4
+    TsPwKV/j+gpZfm6KXXCrbK+1noJWy0cFZK+zCWLQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
@@ -51,41 +51,41 @@ Authentication-Results: mx2.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDikOSl2e4I25iPDkPM72yyRVmSsVBRmR3gZyxVQjSpwdVMLDkuGK9l8l6NwUKdvoMOA7rDjvgxp41QZ2YHy+qTATBoZikuGvd6/S4x+7fkkd/yjh8OV
-    mJbGkjal4QZD+GvrvsrdU5kwIW2mVCqfYCVKSraiR0u5v/mUvqcuQU1IdiP7jyCRdnhgGSS9+aTq7N79lRlVdZ25LMcpeBzTvMOvMcyHjUdcOAu8usBWiHqA
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfCUrqdamWzpoLWL5nGGAx9Xo6QpGL2qic0JgBkBy/VHQz4DgArs0Rpr1fF61QSIK+9cLTWu3/KoiNVHnNB9oXN8CguBpbLG0Nk80Pwmh30y3G3z1COin
+    G0yCQqBVdfQW7HHrHnCZk/jdxuhdOJEiFMNHeC+Pz6XJnQxyOJokX3icdp6HLnoAHGhXoHzEfD4gjU75J+qRcVCt10NBt4FkuwEIu7xu1oWo52shaS/8AlMR
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IhDdiLrqHVMA:10 a=Kd1tUaAdevIA:10
-    a=VwQbUJbxAAAA:8 a=gPJu0pBYAAAA:8 a=b333JcFp3n9_ZgrTNBEA:9
-    a=WBTetW907MO-OYWo:21 a=YV9GH1qvtiaQjjMw:21 a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=gPJu0pBYAAAA:8 a=HnpANbPcaXmn5rhNS74A:9
+    a=Qd-Pl3kmOx3YZdV1:21 a=OAU2JCG9TKMzeOnh:21 a=AjGcO6oz07-iQ99wixmX:22
     a=AlIIF0cMT2hfDT4axODj:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753697AbeDQN7u (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 09:59:50 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:54738 "EHLO
+        id S1752507AbeDQOwZ (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 10:52:25 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:60610 "EHLO
         9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753383AbeDQN7t (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 09:59:49 -0400
+        with ESMTP id S1752357AbeDQOwZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 10:52:25 -0400
 From: Matt Redfearn <matt.redfearn@mips.com>
 To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
 CC: <linux-mips@linux-mips.org>,
         Matt Redfearn <matt.redfearn@mips.com>,
         <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] MIPS: memset.S: Fix return of __clear_user from Lpartial_fixup
-Date: Tue, 17 Apr 2018 14:59:50 +0100
-Message-ID: <1523973590-23356-1-git-send-email-matt.redfearn@mips.com>
+Subject: [PATCH v3] MIPS: memset.S: Fix return of __clear_user from Lpartial_fixup
+Date: Tue, 17 Apr 2018 15:52:21 +0100
+Message-ID: <1523976741-29916-1-git-send-email-matt.redfearn@mips.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20180416221340.GB23881@saruman>
-References: <20180416221340.GB23881@saruman>
+In-Reply-To: <1523973590-23356-1-git-send-email-matt.redfearn@mips.com>
+References: <1523973590-23356-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1523973580-321457-20211-1075-1
+X-BESS-ID: 1523976730-637138-28956-86998-1
 X-BESS-VER: 2018.4-r1804121647
 X-BESS-Apparent-Source-IP: 12.201.5.28
 X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192082
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192083
         Rule breakdown below
          pts rule name              description
         ---- ---------------------- --------------------------------
@@ -113,9 +113,6 @@ start address (t1), which has additionally has been clobbered to
 generate a jump target in memset_partial. Fix this by adding the block
 end address instead.
 
-Since this code is non-trivial to read, add comments to describe the
-fault handling.
-
 This issue was found with the following test code:
       int j, k;
       for (j = 0; j < 512; j++) {
@@ -132,34 +129,28 @@ Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
 
 ---
 
+Changes in v3:
+- Just fix the issue at hand
+
 Changes in v2:
 - Use James Hogan's suggestion of replacing t1 with a0 to get the
   correct remainder count.
-- Add comments to .Lpartial_fixup to aid those who next try to deciper
-  this code.
 
- arch/mips/lib/memset.S | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/mips/lib/memset.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/mips/lib/memset.S b/arch/mips/lib/memset.S
-index 90bcdf1224ee..fa3bec269331 100644
+index 90bcdf1224ee..184819c1d5c8 100644
 --- a/arch/mips/lib/memset.S
 +++ b/arch/mips/lib/memset.S
-@@ -250,11 +250,11 @@
- 
- .Lpartial_fixup\@:
+@@ -252,7 +252,7 @@
  	PTR_L		t0, TI_TASK($28)
--	andi		a2, STORMASK
--	LONG_L		t0, THREAD_BUADDR(t0)
+ 	andi		a2, STORMASK
+ 	LONG_L		t0, THREAD_BUADDR(t0)
 -	LONG_ADDU	a2, t1
-+	andi		a2, STORMASK	/* #Bytes beyond partial block */
-+	LONG_L		t0, THREAD_BUADDR(t0)	/* Get faulting address */
-+	LONG_ADDU	a2, a0		/* Add end address of partial block */
++	LONG_ADDU	a2, a0
  	jr		ra
--	LONG_SUBU	a2, t0
-+	 LONG_SUBU	a2, t0		/* a2 = partial_end + #bytes - fault */
+ 	LONG_SUBU	a2, t0
  
- .Llast_fixup\@:
- 	jr		ra
 -- 
 2.7.4
