@@ -1,267 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752686AbeDQJWx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 05:22:53 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46954 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752135AbeDQJWw (ORCPT
+        id S1752326AbeDQJYi (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 05:24:38 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:55295 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751230AbeDQJYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 05:22:52 -0400
-X-Google-Smtp-Source: AIpwx499EeOkEwgM2xLMF+x0qUSlDSUzoAE3m9wbJlMQiMS+adruaEnrxnR7+M9Z5xdDpu5in904/Q==
-Subject: Re: [PATCH v2 4/5] ALSA: xen-front: Implement handling of shared
- buffers
-To: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
-        tiwai@suse.com
-Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180416062453.24743-1-andr2000@gmail.com>
- <20180416062453.24743-5-andr2000@gmail.com>
- <6ab76dd7-ec6b-0756-5490-f5b5805998d6@suse.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <edbd53c6-3396-9293-4a04-2b22655eeb12@gmail.com>
-Date: Tue, 17 Apr 2018 12:22:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 17 Apr 2018 05:24:36 -0400
+Date: Tue, 17 Apr 2018 11:24:34 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Xiaoming Gao <gxm.linux.kernel@gmail.com>
+cc: x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
+        peterz@infradead.org, hpa@zytor.com
+Subject: Re: [PATCH] x86/tsc: fix 64bit divisor be truncated in
+ calc_hpet_ref
+In-Reply-To: <38894564-4fc9-b8ec-353f-de702839e44e@gmail.com>
+Message-ID: <alpine.DEB.2.21.1804171121450.1694@nanos.tec.linutronix.de>
+References: <38894564-4fc9-b8ec-353f-de702839e44e@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <6ab76dd7-ec6b-0756-5490-f5b5805998d6@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/mixed; boundary="8323329-1533368428-1523957074=:1694"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/2018 04:39 PM, Juergen Gross wrote:
-> On 16/04/18 08:24, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> Implement shared buffer handling according to the
->> para-virtualized sound device protocol at xen/interface/io/sndif.h:
->>    - manage buffer memory
->>    - handle granted references
->>    - handle page directories
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> ---
->>   sound/xen/Makefile              |   3 +-
->>   sound/xen/xen_snd_front.c       |   8 ++
->>   sound/xen/xen_snd_front_shbuf.c | 193 ++++++++++++++++++++++++++++++++++++++++
->>   sound/xen/xen_snd_front_shbuf.h |  36 ++++++++
->>   4 files changed, 239 insertions(+), 1 deletion(-)
->>   create mode 100644 sound/xen/xen_snd_front_shbuf.c
->>   create mode 100644 sound/xen/xen_snd_front_shbuf.h
->>
->> diff --git a/sound/xen/Makefile b/sound/xen/Makefile
->> index 03c669984000..f028bc30af5d 100644
->> --- a/sound/xen/Makefile
->> +++ b/sound/xen/Makefile
->> @@ -2,6 +2,7 @@
->>   
->>   snd_xen_front-objs := xen_snd_front.o \
->>   		      xen_snd_front_cfg.o \
->> -		      xen_snd_front_evtchnl.o
->> +		      xen_snd_front_evtchnl.o \
->> +		      xen_snd_front_shbuf.o
->>   
->>   obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
->> diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
->> index eb46bf4070f9..0569c6c596a3 100644
->> --- a/sound/xen/xen_snd_front.c
->> +++ b/sound/xen/xen_snd_front.c
->> @@ -11,6 +11,7 @@
->>   #include <linux/delay.h>
->>   #include <linux/module.h>
->>   
->> +#include <xen/page.h>
->>   #include <xen/platform_pci.h>
->>   #include <xen/xen.h>
->>   #include <xen/xenbus.h>
->> @@ -186,6 +187,13 @@ static struct xenbus_driver xen_driver = {
->>   
->>   static int __init xen_drv_init(void)
->>   {
->> +	/* At the moment we only support case with XEN_PAGE_SIZE == PAGE_SIZE */
->> +	if (XEN_PAGE_SIZE != PAGE_SIZE) {
->> +		pr_err(XENSND_DRIVER_NAME ": different kernel and Xen page sizes are not supported: XEN_PAGE_SIZE (%lu) != PAGE_SIZE (%lu)\n",
->> +		       XEN_PAGE_SIZE, PAGE_SIZE);
->> +		return -ENODEV;
->> +	}
-> Do you really want to print that error message on bare metal?
-will move it down after xen_domain/xen_has_pv_devices checks
->> +
->>   	if (!xen_domain())
->>   		return -ENODEV;
->>   
->> diff --git a/sound/xen/xen_snd_front_shbuf.c b/sound/xen/xen_snd_front_shbuf.c
->> new file mode 100644
->> index 000000000000..6845dbc7fdf5
->> --- /dev/null
->> +++ b/sound/xen/xen_snd_front_shbuf.c
->> @@ -0,0 +1,193 @@
->> +// SPDX-License-Identifier: GPL-2.0 OR MIT
->> +
->> +/*
->> + * Xen para-virtual sound device
->> + *
->> + * Copyright (C) 2016-2018 EPAM Systems Inc.
->> + *
->> + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> + */
->> +
->> +#include <xen/xen.h>
->> +#include <xen/xenbus.h>
->> +
->> +#include "xen_snd_front_shbuf.h"
->> +
->> +grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf)
->> +{
->> +	if (!buf->grefs)
->> +		return GRANT_INVALID_REF;
->> +
->> +	return buf->grefs[0];
->> +}
->> +
->> +void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf)
->> +{
->> +	memset(buf, 0, sizeof(*buf));
->> +}
->> +
->> +void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf)
->> +{
->> +	int i;
->> +
->> +	if (buf->grefs) {
->> +		for (i = 0; i < buf->num_grefs; i++)
->> +			if (buf->grefs[i] != GRANT_INVALID_REF)
->> +				gnttab_end_foreign_access(buf->grefs[i],
->> +							  0, 0UL);
->> +		kfree(buf->grefs);
->> +	}
->> +	kfree(buf->directory);
->> +	free_pages_exact(buf->buffer, buf->buffer_sz);
->> +	xen_snd_front_shbuf_clear(buf);
->> +}
->> +
->> +/*
->> + * number of grant references a page can hold with respect to the
->> + * xensnd_page_directory header
->> + */
->> +#define XENSND_NUM_GREFS_PER_PAGE ((XEN_PAGE_SIZE - \
->> +		offsetof(struct xensnd_page_directory, gref)) / \
->> +		sizeof(grant_ref_t))
->> +
->> +static void fill_page_dir(struct xen_snd_front_shbuf *buf,
->> +			  int num_pages_dir)
->> +{
->> +	struct xensnd_page_directory *page_dir;
->> +	unsigned char *ptr;
->> +	int i, cur_gref, grefs_left, to_copy;
->> +
->> +	ptr = buf->directory;
->> +	grefs_left = buf->num_grefs - num_pages_dir;
->> +	/*
->> +	 * skip grant references at the beginning, they are for pages granted
->> +	 * for the page directory itself
->> +	 */
->> +	cur_gref = num_pages_dir;
->> +	for (i = 0; i < num_pages_dir; i++) {
->> +		page_dir = (struct xensnd_page_directory *)ptr;
->> +		if (grefs_left <= XENSND_NUM_GREFS_PER_PAGE) {
->> +			to_copy = grefs_left;
->> +			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
->> +		} else {
->> +			to_copy = XENSND_NUM_GREFS_PER_PAGE;
->> +			page_dir->gref_dir_next_page = buf->grefs[i + 1];
->> +		}
->> +
->> +		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
->> +		       to_copy * sizeof(grant_ref_t));
->> +
->> +		ptr += XEN_PAGE_SIZE;
->> +		grefs_left -= to_copy;
->> +		cur_gref += to_copy;
->> +	}
->> +}
->> +
->> +static int grant_references(struct xenbus_device *xb_dev,
->> +			    struct xen_snd_front_shbuf *buf,
->> +			    int num_pages_dir, int num_pages_buffer,
->> +			    int num_grefs)
->> +{
->> +	grant_ref_t priv_gref_head;
->> +	unsigned long frame;
->> +	int ret, i, j, cur_ref;
->> +	int otherend_id;
->> +
->> +	ret = gnttab_alloc_grant_references(num_grefs, &priv_gref_head);
->> +	if (ret)
->> +		return ret;
->> +
->> +	buf->num_grefs = num_grefs;
->> +	otherend_id = xb_dev->otherend_id;
->> +	j = 0;
->> +
->> +	for (i = 0; i < num_pages_dir; i++) {
->> +		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
->> +		if (cur_ref < 0) {
->> +			ret = cur_ref;
->> +			goto fail;
->> +		}
->> +
->> +		frame = xen_page_to_gfn(virt_to_page(buf->directory +
->> +						     XEN_PAGE_SIZE * i));
->> +		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
->> +		buf->grefs[j++] = cur_ref;
->> +	}
->> +
->> +	for (i = 0; i < num_pages_buffer; i++) {
->> +		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
->> +		if (cur_ref < 0) {
->> +			ret = cur_ref;
->> +			goto fail;
->> +		}
->> +
->> +		frame = xen_page_to_gfn(virt_to_page(buf->buffer +
->> +						     XEN_PAGE_SIZE * i));
->> +		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
->> +		buf->grefs[j++] = cur_ref;
->> +	}
->> +
->> +	gnttab_free_grant_references(priv_gref_head);
->> +	fill_page_dir(buf, num_pages_dir);
->> +	return 0;
->> +
->> +fail:
->> +	gnttab_free_grant_references(priv_gref_head);
->> +	return ret;
->> +}
->> +
->> +static int alloc_int_buffers(struct xen_snd_front_shbuf *buf,
->> +			     int num_pages_dir, int num_pages_buffer,
->> +			     int num_grefs)
->> +{
->> +	buf->grefs = kcalloc(num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
->> +	if (!buf->grefs)
->> +		return -ENOMEM;
->> +
->> +	buf->directory = kcalloc(num_pages_dir, XEN_PAGE_SIZE, GFP_KERNEL);
->> +	if (!buf->directory)
->> +		goto fail;
->> +
->> +	buf->buffer_sz = num_pages_buffer * XEN_PAGE_SIZE;
->> +	buf->buffer = alloc_pages_exact(buf->buffer_sz, GFP_KERNEL);
->> +	if (!buf->buffer)
->> +		goto fail;
->> +
->> +	return 0;
->> +
->> +fail:
->> +	kfree(buf->grefs);
->> +	buf->grefs = NULL;
->> +	kfree(buf->directory);
-> Why do you need to free those here? Shouldn't that be done via
-> xen_snd_front_shbuf_free() in case of an error?
-At this place we only allocate memory, but xen_snd_front_shbuf_free
-will also try to gnttab_end_foreign_access if buf->grefs != NULL.
-> Juergen
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1533368428-1523957074=:1694
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Fri, 13 Apr 2018, Xiaoming Gao wrote:
+> From ba3d2fb699c4d8ee61b05d7e70be48b9c4e22baf Mon Sep 17 00:00:00 2001
+> From: Xiaoming Gao <newtongao@tencent.com>
+> Date: Fri, 13 Apr 2018 17:05:18 +0800
+> Subject: [PATCH] x86/tsc: fix 64bit divisor be truncated in calc_hpet_ref
+> 
+> the HPET frequency got larger on intel skylake, thus could cause tmp to
+> exceed 32bits.
+> do_div will truncate 64bits tmp to 32bits, so the frequency calced via
+> HPET will be wrong, use div64_u64 can fix it.
+> 
+> Signed-off-by: Xiaoming Gao <newtongao@tencent.com>
+> ---
+>  arch/x86/kernel/tsc.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+> index 9714a7a..8700269 100644
+> --- a/arch/x86/kernel/tsc.c
+> +++ b/arch/x86/kernel/tsc.c
+> @@ -160,7 +160,7 @@ static unsigned long calc_hpet_ref(u64 deltatsc, u64
+> hpet1, u64 hpet2)
+>      hpet2 -= hpet1;
+>      tmp = ((u64)hpet2 * hpet_readl(HPET_PERIOD));
+>      do_div(tmp, 1000000);
+> -    do_div(deltatsc, tmp);
+> +    deltatsc = div64_u64(deltatsc, tmp);
+> 
+>      return (unsigned long) deltatsc;
+
+Please fix your MUA so it does not whitespace damage
+patches. Documentation/process/email-clients.rst tells you how to teach
+thunderbird to do the right thing.
+
+Attaching the patch does not help either as it breaks the workflow. I've
+fixed it up manually this time, but please be more careful next time.
+
+Thanks,
+
+	tglx
+--8323329-1533368428-1523957074=:1694--
