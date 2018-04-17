@@ -1,49 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752310AbeDQEhE convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 00:37:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59214 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750831AbeDQEhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 00:37:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B4D21838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1751158AbeDQEoX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 00:44:23 -0400
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:51550 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750725AbeDQEoV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 00:44:21 -0400
+X-IronPort-AV: E=Sophos;i="5.48,462,1517875200";
+   d="scan'208";a="735647716"
+From: KarimAllah Ahmed <karahmed@amazon.de>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: KarimAllah Ahmed <karahmed@amazon.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH] x86/headers/UAPI: Move DISABLE_EXITS KVM capability bits to the UAPI
+Date: Tue, 17 Apr 2018 06:43:58 +0200
+Message-Id: <1523940238-10863-1-git-send-email-karahmed@amazon.de>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Amit Nischal <anischal@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1523254493-5313-4-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
-References: <1523254493-5313-1-git-send-email-anischal@codeaurora.org>
- <1523254493-5313-4-git-send-email-anischal@codeaurora.org>
-Message-ID: <152393982109.51482.13041572239300086606@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v4 3/3] clk: qcom: Add Global Clock controller (GCC) driver for
- SDM845
-Date: Mon, 16 Apr 2018 21:37:01 -0700
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Amit Nischal (2018-04-08 23:14:53)
-> From: Taniya Das <tdas@codeaurora.org>
-> 
-> Add support for the global clock controller found on SDM845
-> based devices. This should allow most non-multimedia device
-> drivers to probe and control their clocks.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> ---
+Move DISABLE_EXITS KVM capability bits to the UAPI just like the rest of
+capabilities.
 
-I think my review comments on v3 still apply to v4.
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+---
+ arch/x86/kvm/x86.h       | 7 -------
+ include/uapi/linux/kvm.h | 7 +++++++
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 98d3503..acb1502 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -303,13 +303,6 @@ static inline u64 nsec_to_cycles(struct kvm_vcpu *vcpu, u64 nsec)
+ 	    __rem;						\
+ 	 })
+ 
+-#define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
+-#define KVM_X86_DISABLE_EXITS_HTL            (1 << 1)
+-#define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
+-#define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
+-                                              KVM_X86_DISABLE_EXITS_HTL | \
+-                                              KVM_X86_DISABLE_EXITS_PAUSE)
+-
+ static inline bool kvm_mwait_in_guest(struct kvm *kvm)
+ {
+ 	return kvm->arch.mwait_in_guest;
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index aefaf6c..077d16f 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -676,6 +676,13 @@ struct kvm_ioeventfd {
+ 	__u8  pad[36];
+ };
+ 
++#define KVM_X86_DISABLE_EXITS_MWAIT          (1 << 0)
++#define KVM_X86_DISABLE_EXITS_HTL            (1 << 1)
++#define KVM_X86_DISABLE_EXITS_PAUSE          (1 << 2)
++#define KVM_X86_DISABLE_VALID_EXITS          (KVM_X86_DISABLE_EXITS_MWAIT | \
++                                              KVM_X86_DISABLE_EXITS_HTL | \
++                                              KVM_X86_DISABLE_EXITS_PAUSE)
++
+ /* for KVM_ENABLE_CAP */
+ struct kvm_enable_cap {
+ 	/* in */
+-- 
+2.7.4
