@@ -1,80 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753645AbeDQRIk (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 13:08:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60168 "EHLO mail.kernel.org"
+        id S1753911AbeDQRIh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 13:08:37 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:8546 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753823AbeDQRIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 13:08:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76738217D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 17 Apr 2018 14:08:22 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
- x86 syscall func names
-Message-ID: <20180417170821.GD7775@kernel.org>
-References: <20180417115440.2145f7f5@gandalf.local.home>
- <20180417163527.GA7775@kernel.org>
- <20180417124019.1e4350d5@gandalf.local.home>
- <20180417125723.6506e1d1@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417125723.6506e1d1@gandalf.local.home>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752617AbeDQRIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 13:08:17 -0400
+Message-Id: <7fbae252f24ec4d30f52f57a549901fa3f799f8f.1523984745.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 1/2] powerpc: avoid an unnecessary test and branch in
+ longjmp()
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Tue, 17 Apr 2018 19:08:16 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Apr 17, 2018 at 12:57:23PM -0400, Steven Rostedt escreveu:
-> On Tue, 17 Apr 2018 12:40:19 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > On Tue, 17 Apr 2018 13:35:27 -0300
-> > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > 
-> > 
-> > > [root@jouet ~]# perf test openat
-> > >  2: Detect openat syscall event                           : Ok
-> > >  3: Detect openat syscall event on all cpus               : Ok
-> > > 15: syscalls:sys_enter_openat event fields                : Ok
-> > > [root@jouet ~]#
-> > > 
-> > > [root@jouet ~]# perf trace -e nanosleep,syscalls:*nanosleep sleep 1
-> > >      0.000 (         ): syscalls:sys_enter_nanosleep:rqtp: 0x7ffd9f737950, rmtp: 0x00000000
-> > >      0.009 (         ): sleep/7905 nanosleep(rqtp: 0x7ffd9f737950                                        ) ...
-> > >   1000.204 (         ): syscalls:sys_exit_nanosleep:0x0
-> > >      0.009 (1000.217 ms): sleep/7905  ... [continued]: nanosleep()) = 0
-> > > [root@jouet ~]#
-> > > 
-> > > Works, so the regression seems to be fixed, without looking at the code
-> > > that much:
-> > > 
-> > > Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>  
-> > 
-> > But does this still work on x86_32? I'll test that out. Thanks for
-> > testing, but I may have another patch soon.
-> 
-> OK, it's still broken there with this patch. I got this:
-> 
-> # ls /sys/kernel/tracing/events/syscalls
-> enable
-> filter
-> sys_enter_nanosleep
-> sys_exit_nanosleep
-> 
-> But with this:
-> 
-> 	return !strcmp(sym + 9, name + 3) || !strcmp(sym + 3, name + 3);
-> 
-> I get all the syscalls back. I'll make another patch.
+Doing the test at exit of the function avoids an unnecessary
+test and branch inside longjmp()
 
-Argh, rebuilding the world, since lots of places include ftrace.h...
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ v2: Swapped both patches in the serie to reduce number of impacted lines
 
-- Arnaldo
+ arch/powerpc/kernel/misc.S | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/arch/powerpc/kernel/misc.S b/arch/powerpc/kernel/misc.S
+index e1f3a5d054c4..746ee0320ad4 100644
+--- a/arch/powerpc/kernel/misc.S
++++ b/arch/powerpc/kernel/misc.S
+@@ -74,10 +74,7 @@ _GLOBAL(setjmp)
+ 	blr
+ 
+ _GLOBAL(longjmp)
+-	PPC_LCMPI r4,0
+-	bne	1f
+-	li	r4,1
+-1:	PPC_LL	r13,4*SZL(r3)
++	PPC_LL	r13,4*SZL(r3)
+ 	PPC_LL	r14,5*SZL(r3)
+ 	PPC_LL	r15,6*SZL(r3)
+ 	PPC_LL	r16,7*SZL(r3)
+@@ -102,7 +99,9 @@ _GLOBAL(longjmp)
+ 	PPC_LL	r1,SZL(r3)
+ 	PPC_LL	r2,2*SZL(r3)
+ 	mtlr	r0
+-	mr	r3,r4
++	mr.	r3, r4
++	bnelr
++	li	r3, 1
+ 	blr
+ 
+ _GLOBAL(current_stack_pointer)
+-- 
+2.13.3
