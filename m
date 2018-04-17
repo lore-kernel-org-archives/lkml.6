@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx489sWItuJF6JjvHYm6nbB6CA34GEjkaG8aaxmRhRNpQwYNWvfhzV+Ihyz/EUHQROunZ/2tw
-ARC-Seal: i=1; a=rsa-sha256; t=1523981093; cv=none;
+X-Google-Smtp-Source: AIpwx49y6BwOC4YEe9oCUhQ6Tb2GAXOW79d/sZX5y9YcYUoTVPxN62+7KjkeNexlk47ktGjXwJkv
+ARC-Seal: i=1; a=rsa-sha256; t=1523981091; cv=none;
         d=google.com; s=arc-20160816;
-        b=KEp1W7/c/jdj738VR/z8RVprmr71mzASf7PkoHWLQUBHlVxL3VF2TefWYrEaqcfeFU
-         sTnkzzMGIvUZity408Tcq4dHrTj3fVPKJTm7gr39sA9qZTzLokwqJcLstYmNEQxN3T7r
-         5z/ljjgJUBGUlmveqXziNIvBqpTA1NPd6l/kDT6V8sgKvitLikQpXMSdYl53ZqzERe9N
-         z3/0AswLb6zh+2XnQFk620l4gLR8IPMc6RjrytIonf51Z7Sb5VpoUaOY8f7nBrWsLyTO
-         fuDN7eTMnVA47Ydk36ikQw/odvToCs8MXM2g+TR+haGyJ/nmurfVdpiTmJVHX/Q95cUi
-         ScjQ==
+        b=iLRPAmaRrHcPNRqnQhn3iIiQsbmVBYFG01oxqPzC2TzsX98F5rpYLeuhDLOFsOKo/2
+         3oQljDhDp9N1BOoYeiXN/hTC3RRdWOZL9eefccY1eedhhdF3v6eboaik3+BchOxFDroE
+         ZqB67oDi4xGUykYxf7dcj8+gaLn3e4pfEaIsaqVUmGEZaOgqtWBihkrLM0hmWnJTJCMI
+         VbTsBqULEREFzsSlrwiTZc3z+do3qz2PySwbhPCl4fXBWP2GK+odMyHy8HRP7pw1EOUv
+         7DNENtHbAJ3XYy8rcUGptP1R2AREJ5ky7iWa2aZj4QjUeAJxTIG2coTp8fEr4hC/GfeH
+         usYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=eBSAXKYAUYh8s8jTzuhc7lnle/Gs3YJQMcu1i9RjWTk=;
-        b=gWutGLIc5cI6PKSzdxg7qKcVkMyBhFabP1jyZL1iOuNuCnEU61n2FAZetIyTx+XX7c
-         1+z/bxtnJ2wszn7QSzjNybRex0DnkDSHR4+wFS5bLoj0MGJpoyUQWurlLUwMOQjM+C2q
-         nCelcw54znJpHRtmJiCIN1sX7tn+lawJDpYSy+me9byBmNLIJFTuVmyNHj8its8EzWck
-         xzkY3VXfHgIBmiKJjUvYPlFffC82tgUSrJFMEJkFQ8u+9WS4a6hJ2SSl0VajpqChtOkq
-         OrxH+pPy5ayAJs3JOyLxSOTqrURdsZYuOYAVstEMysQ7BeOE2adhNgKbadyYVlgl+4Z5
-         d6xQ==
+        bh=6Hrc4CfXEoCf7tF/wV7eVQ687HXlXwWfKro1CycxtSo=;
+        b=Z43imUuNZPVUKfjvScKqLxqWJY3EM1K782ZvNla3ucohns95N+iBTTXm51u5A5BPR7
+         gD7p9WVDR43fk7BGomB+NheD//sgDxETZ5m+8U+5pfTjzr/yJAiDIZmV0VdPmsrpQAWu
+         3L96OhzXCjoKr3nqJtGje51avV0B9mPXE+4p1wefRNuxhmm+4pkUqzL/V1k60MXOaN/G
+         DXtzo2SLgr9JFaR20iPH95MjqE/CSV/s6E3a7qIm3mQO8lgaT4LhZnh4jitjh92SG9TT
+         2k+M2Svq+P9BUNpIhAagS/R3sffkoWNuV9hpWiIQHqdTphKaDSs8sEKGu+QPtesNhO+g
+         ZXlw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Auger <eric.auger@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Xin Long <lucien.xin@gmail.com>,
+	William Tu <u9012063@gmail.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 10/53] vhost: Fix vhost_copy_to_user()
-Date: Tue, 17 Apr 2018 17:58:35 +0200
-Message-Id: <20180417155723.662183823@linuxfoundation.org>
+Subject: [PATCH 4.15 09/53] ip_gre: clear feature flags when incompatible o_flags are set
+Date: Tue, 17 Apr 2018 17:58:34 +0200
+Message-Id: <20180417155723.471375692@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009751810796107?=
-X-GMAIL-MSGID: =?utf-8?q?1598009999959860649?=
+X-GMAIL-THRID: =?utf-8?q?1598009748090374289?=
+X-GMAIL-MSGID: =?utf-8?q?1598009996399412182?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,32 +51,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Auger <eric.auger@redhat.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
 
-[ Upstream commit 7ced6c98c7ab7a1f6743931e28671b833af79b1e ]
+[ Upstream commit 1cc5954f44150bb70cac07c3cc5df7cf0dfb61ec ]
 
-vhost_copy_to_user is used to copy vring used elements to userspace.
-We should use VHOST_ADDR_USED instead of VHOST_ADDR_DESC.
+Commit dd9d598c6657 ("ip_gre: add the support for i/o_flags update via
+netlink") added the ability to change o_flags, but missed that the
+GSO/LLTX features are disabled by default, and only enabled some gre
+features are unused. Thus we also need to disable the GSO/LLTX features
+on the device when the TUNNEL_SEQ or TUNNEL_CSUM flags are set.
 
-Fixes: f88949138058 ("vhost: introduce O(1) vq metadata cache")
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+These two examples should result in the same features being set:
+
+    ip link add gre_none type gre local 192.168.0.10 remote 192.168.0.20 ttl 255 key 0
+
+    ip link set gre_none type gre seq
+    ip link add gre_seq type gre local 192.168.0.10 remote 192.168.0.20 ttl 255 key 1 seq
+
+Fixes: dd9d598c6657 ("ip_gre: add the support for i/o_flags update via netlink")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Reviewed-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: William Tu <u9012063@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/vhost/vhost.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/ip_gre.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -756,7 +756,7 @@ static int vhost_copy_to_user(struct vho
- 		struct iov_iter t;
- 		void __user *uaddr = vhost_vq_meta_fetch(vq,
- 				     (u64)(uintptr_t)to, size,
--				     VHOST_ADDR_DESC);
-+				     VHOST_ADDR_USED);
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -796,8 +796,14 @@ static void ipgre_link_update(struct net
+ 		    tunnel->encap.type == TUNNEL_ENCAP_NONE) {
+ 			dev->features |= NETIF_F_GSO_SOFTWARE;
+ 			dev->hw_features |= NETIF_F_GSO_SOFTWARE;
++		} else {
++			dev->features &= ~NETIF_F_GSO_SOFTWARE;
++			dev->hw_features &= ~NETIF_F_GSO_SOFTWARE;
+ 		}
+ 		dev->features |= NETIF_F_LLTX;
++	} else {
++		dev->hw_features &= ~NETIF_F_GSO_SOFTWARE;
++		dev->features &= ~(NETIF_F_LLTX | NETIF_F_GSO_SOFTWARE);
+ 	}
+ }
  
- 		if (uaddr)
- 			return __copy_to_user(uaddr, from, size);
