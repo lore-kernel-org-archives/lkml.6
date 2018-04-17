@@ -1,92 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeDQUwm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 16:52:42 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:41661 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751878AbeDQUwl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 16:52:41 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T.N1GZL_1523998342;
-Subject: Re: [v4 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: adobriyan@gmail.com, mhocko@kernel.org, willy@infradead.org,
-        mguzik@redhat.com, gorcunov@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1523730291-109696-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180417112957.84de526138f404a04298ec4c@linux-foundation.org>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <abe8d19e-e317-71ed-cb40-799047f91702@linux.alibaba.com>
-Date: Tue, 17 Apr 2018 13:52:21 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180417112957.84de526138f404a04298ec4c@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1752760AbeDQU5I (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 16:57:08 -0400
+Received: from mout.gmx.net ([212.227.15.15]:53065 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752658AbeDQU5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 16:57:06 -0400
+From: Heinrich Schuchardt <xypron.glpk@gmx.de>
+To: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Heinrich Schuchardt <xypron.glpk@gmx.de>
+Subject: [PATCH 1/1] arm: dts: rockchip: default serial for Tinker Board
+Date: Tue, 17 Apr 2018 22:56:23 +0200
+Message-Id: <20180417205623.764-1-xypron.glpk@gmx.de>
+X-Mailer: git-send-email 2.17.0
+X-Provags-ID: V03:K1:qciwsf6BDRuBCeddQN65cCR4xScOEu9WHAUyhlanXYHYuu6x5uJ
+ xNjADjoDqeVOyrSLFtf8IsgxtiFNYAr9HO+JHYg38Y2TAVsUqKgjbVdM2s08QfJxs5c6QNv
+ fy2JxWqYQ1ZNgtVhpTNIVi6KG17u/nqaWVr8JhyO/eaxpRqwNyqD1MEEyWplIBJiuPBf4ee
+ FlUlMY9MKCBmQj7HBS3Pw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:PZDequ+aSYo=:qSXG02XsAPElSBkhsKdu5Y
+ 5DGZgO4GjYoJWtPyEUUoLC/1FAgeflTIdwmro13u6gSDTjzRtxOHQ1Om8ilWXWYOWJUw/LOZy
+ cdflcBcoOmhtSld0/f3y3b+n2iGskNhSkxWEeSETJkoHIxSoRGRSDOjgswQ2xJo9aDQ9ueGRf
+ AJYIwZrSsGfymLeq8gx/MMcQF9TIsRWkj1gtsi18NHzvwycndBzXlV40VaG0cC+u43wDA8nJ2
+ HhuDsoFp0iAzMxHW9hbS0ur2WfII80C6o1WSM7PiHifxTx+f+f5Sbkdlw5Eaaq3625+ZSbeWh
+ EofyVtRwWTqRRDMeP5Dn8t2mu1j06wqGayJDsX5louJvkSLmzGn657hcXydX5cZNlYnm8JaBz
+ gWSnC9HaldjCqQKWgRBoxQSVxW6ulECd/XPvF+3cVSVpgUSbeXF65nDJELOnCVNyQ+WzMjJPN
+ HnfSBBpCEFrnr6iuyLsb0swf8kqufGPnl987kRbKV5SG0H3iuJgUYCDyqnWOKNdRa32BfbFR5
+ K5jE7GL/ldPAZW8KOmlrSN9/eCLRz6OSJrP7anY/e3Yi/SnPnj/nEtZIcaKBddZe7MaOA4N6J
+ miO5bxJKYm0pxSWwTJJ4yM3mf+0iBzd+2qSgOQtldUMKqdJeEgZSbwUJxUfxb3ODcS6hLDAPY
+ PupAfDbn1defZnnRvq6bXPoEO4G9x/+trrRIqWrHDSMmZozmJkhI2TTqudlmV7AJcFhPFrThI
+ WOhiRVwgntFZr9Qoe1ujJA/P+zCds6GGIgOn7v8/nmIZIi8qXxVRGVoAnPEFAwmL93f6tEpkC
+ N1wERVmyQkRA8/GjfAwdNE1/CYevw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The Asus Tinker Board uses serial 2 with 115,200 baud by default for
+communication in U-Boot. The same value is also chosen for other RK3288
+boards.
 
+So let us set the same value in the Tinker Board device tree.
 
-On 4/17/18 11:29 AM, Andrew Morton wrote:
-> On Sun, 15 Apr 2018 02:24:51 +0800 Yang Shi <yang.shi@linux.alibaba.com> wrote:
->
->> mmap_sem is on the hot path of kernel, and it very contended, but it is
->> abused too. It is used to protect arg_start|end and evn_start|end when
->> reading /proc/$PID/cmdline and /proc/$PID/environ, but it doesn't make
->> sense since those proc files just expect to read 4 values atomically and
->> not related to VM, they could be set to arbitrary values by C/R.
->>
->> And, the mmap_sem contention may cause unexpected issue like below:
->>
->> INFO: task ps:14018 blocked for more than 120 seconds.
->>         Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
->> message.
->>   ps              D    0 14018      1 0x00000004
->>    ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->>    ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->>    00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->>   Call Trace:
->>    [<ffffffff817154d0>] ? __schedule+0x250/0x730
->>    [<ffffffff817159e6>] schedule+0x36/0x80
->>    [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->>    [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->>    [<ffffffff81717db0>] down_read+0x20/0x40
->>    [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->>    [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->>    [<ffffffff81241d87>] __vfs_read+0x37/0x150
->>    [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->>    [<ffffffff81242266>] vfs_read+0x96/0x130
->>    [<ffffffff812437b5>] SyS_read+0x55/0xc0
->>    [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
->>
->> Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
->> for them to mitigate the abuse of mmap_sem.
->>
->> So, introduce a new spinlock in mm_struct to protect the concurrent
->> access to arg_start|end, env_start|end and others, as well as replace
->> write map_sem to read to protect the race condition between prctl and
->> sys_brk which might break check_data_rlimit(), and makes prctl more
->> friendly to other VM operations.
-> (We should move check_data_rlimit() out of the .h file)
+Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+---
+ arch/arm/boot/dts/rk3288-tinker.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I don't get the point, check_data_rlimit() is still used by both prctl 
-and sys_brk.
-
->
-> It seems inconsistent to be using mmap_sem to protect ->start_brk and
-> friends in sys_brk().  We've already declared that these are protected
-> by arg_lock so that's what we should be using?  And getting this
-> consistent should permit us to stop using mmap_sem in prctl()
-> altogether?
-
-Cyrill already helped to elaborate the reason. arg_lock just can protect 
-the concurrent access of brk between prctl calls, but not sys_brk.
-
-Thanks,
-Yang
+diff --git a/arch/arm/boot/dts/rk3288-tinker.dts b/arch/arm/boot/dts/rk3288-tinker.dts
+index 346b0d8b474d..127488f9f174 100644
+--- a/arch/arm/boot/dts/rk3288-tinker.dts
++++ b/arch/arm/boot/dts/rk3288-tinker.dts
+@@ -49,6 +49,10 @@
+ 	model = "Rockchip RK3288 Tinker Board";
+ 	compatible = "asus,rk3288-tinker", "rockchip,rk3288";
+ 
++	chosen {
++		stdout-path = "serial2:115200n8";
++	};
++
+ 	memory {
+ 		reg = <0x0 0x0 0x0 0x80000000>;
+ 		device_type = "memory";
+-- 
+2.17.0
