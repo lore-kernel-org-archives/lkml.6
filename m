@@ -1,64 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753088AbeDQTFo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 15:05:44 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:60212 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752609AbeDQTFl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 15:05:41 -0400
-Date: Tue, 17 Apr 2018 15:05:39 -0400 (EDT)
-Message-Id: <20180417.150539.348388784309198242.davem@davemloft.net>
-To: mschiffer@universe-factory.net
-Cc: netdev@vger.kernel.org, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        id S1753178AbeDQTG3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 15:06:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55492 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752780AbeDQTG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 15:06:26 -0400
+Date: Tue, 17 Apr 2018 15:06:24 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Christopher Lameter <cl@linux.com>
+cc: Mike Snitzer <snitzer@redhat.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
+        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND net-next] ipv6: provide Kconfig switch to
- disable accept_ra by default
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <b39b1b4304524c43dfd83280aea4cfb4e8ac97f5.1523959377.git.mschiffer@universe-factory.net>
-References: <b39b1b4304524c43dfd83280aea4cfb4e8ac97f5.1523959377.git.mschiffer@universe-factory.net>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH RESEND] slab: introduce the flag SLAB_MINIMIZE_WASTE
+In-Reply-To: <alpine.DEB.2.20.1804170940340.17557@nuc-kabylake>
+Message-ID: <alpine.LRH.2.02.1804171454020.26973@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1803201740280.21066@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211024220.2175@nuc-kabylake> <alpine.LRH.2.02.1803211153320.16017@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1803211226350.3174@nuc-kabylake>
+ <alpine.LRH.2.02.1803211425330.26409@file01.intranet.prod.int.rdu2.redhat.com> <20c58a03-90a8-7e75-5fc7-856facfb6c8a@suse.cz> <20180413151019.GA5660@redhat.com> <ee8807ff-d650-0064-70bf-e1d77fa61f5c@suse.cz> <20180416142703.GA22422@redhat.com>
+ <alpine.LRH.2.02.1804161031300.24222@file01.intranet.prod.int.rdu2.redhat.com> <20180416144638.GA22484@redhat.com> <alpine.LRH.2.02.1804161530360.19492@file01.intranet.prod.int.rdu2.redhat.com> <alpine.DEB.2.20.1804170940340.17557@nuc-kabylake>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Tue, 17 Apr 2018 12:04:50 +0200
 
-> Many distributions and users prefer to handle router advertisements in
-> userspace; one example is OpenWrt, which includes a combined RA and DHCPv6
-> client. For such configurations, accept_ra should not be enabled by
-> default.
+
+On Tue, 17 Apr 2018, Christopher Lameter wrote:
+
+> On Mon, 16 Apr 2018, Mikulas Patocka wrote:
 > 
-> As setting net.ipv6.conf.default.accept_ra via sysctl.conf or similar
-> facilities may be too late to catch all interfaces and common sysctl.conf
-> tools do not allow setting an option for all existing interfaces, this
-> patch provides a Kconfig option to control the default value of
-> default.accept_ra.
+> > This patch introduces a flag SLAB_MINIMIZE_WASTE for slab and slub. This
+> > flag causes allocation of larger slab caches in order to minimize wasted
+> > space.
+> >
+> > This is needed because we want to use dm-bufio for deduplication index and
+> > there are existing installations with non-power-of-two block sizes (such
+> > as 640KB). The performance of the whole solution depends on efficient
+> > memory use, so we must waste as little memory as possible.
 > 
-> Using default.accept_ra is preferable to all.accept_ra for our usecase,
-> as disabling all.accept_ra would preclude users from explicitly enabling
-> accept_ra on individual interfaces.
+> Hmmm. Can we come up with a generic solution instead?
 > 
-> Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+> This may mean relaxing the enforcement of the allocation max order a bit
+> so that we can get dense allocation through higher order allocs.
+> 
+> But then higher order allocs are generally seen as problematic.
+> 
+> Note that SLUB will fall back to smallest order already if a failure
+> occurs so increasing slub_max_order may not be that much of an issue.
+> 
+> Maybe drop the max order limit completely and use MAX_ORDER instead? That
+> means that callers need to be able to tolerate failures.
 
-This kind of Kconfig option makes an irreversible behavior choice at
-compile time, which satisfies one set of users whilst completely
-precluding another set.
+I can make a slub-only patch with no extra flag (on a freshly booted 
+system it increases only the order of caches "TCPv6" and "sighand_cache" 
+by one - so it should not have unexpected effects):
 
-So no matter what setting a distribution chooses, one set of users are
-basically out of luck.
+Doing a generic solution for slab would be more comlpicated because slab 
+assumes that all slabs have the same order, so it can't fall-back to 
+lower-order allocations.
 
-For that reason I consider this a poor approach.
 
-I hate module options, but at least with that the user can choose
-regardless of what the distribution maker decided to do with their
-kernel.
+From: Mikulas Patocka <mpatocka@redhat.com>
+Subject: [PATCH] slub: minimize wasted space
 
-This is essentially how we handle "disable_ipv6"
+When object size is greater than slub_max_order, the slub subsystem rounds
+up the size to the next power of two. This causes a lot of wasted space -
+i.e. 640KB block consumes 1MB of memory.
 
-I'm not applying this, because it is as much of a step backwards as
-it is a step forward, sorry.
+This patch makes the slub subsystem increase the order if it is benefical.
+The order is increased as long as it reduces wasted space. There is cutoff
+at 32 objects per slab.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+
+---
+ mm/slub.c |   21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+Index: linux-2.6/mm/slub.c
+===================================================================
+--- linux-2.6.orig/mm/slub.c	2018-04-17 19:59:49.000000000 +0200
++++ linux-2.6/mm/slub.c	2018-04-17 20:58:23.000000000 +0200
+@@ -3252,6 +3252,7 @@ static inline unsigned int slab_order(un
+ static inline int calculate_order(unsigned int size, unsigned int reserved)
+ {
+ 	unsigned int order;
++	unsigned int test_order;
+ 	unsigned int min_objects;
+ 	unsigned int max_objects;
+ 
+@@ -3277,7 +3278,7 @@ static inline int calculate_order(unsign
+ 			order = slab_order(size, min_objects,
+ 					slub_max_order, fraction, reserved);
+ 			if (order <= slub_max_order)
+-				return order;
++				goto ret_order;
+ 			fraction /= 2;
+ 		}
+ 		min_objects--;
+@@ -3289,15 +3290,25 @@ static inline int calculate_order(unsign
+ 	 */
+ 	order = slab_order(size, 1, slub_max_order, 1, reserved);
+ 	if (order <= slub_max_order)
+-		return order;
++		goto ret_order;
+ 
+ 	/*
+ 	 * Doh this slab cannot be placed using slub_max_order.
+ 	 */
+ 	order = slab_order(size, 1, MAX_ORDER, 1, reserved);
+-	if (order < MAX_ORDER)
+-		return order;
+-	return -ENOSYS;
++	if (order >= MAX_ORDER)
++		return -ENOSYS;
++
++ret_order:
++	for (test_order = order + 1; test_order < MAX_ORDER; test_order++) {
++		unsigned long order_objects = ((PAGE_SIZE << order) - reserved) / size;
++		unsigned long test_order_objects = ((PAGE_SIZE << test_order) - reserved) / size;
++		if (test_order_objects > min(32, MAX_OBJS_PER_PAGE))
++			break;
++		if (test_order_objects > order_objects << (test_order - order))
++			order = test_order;
++	}
++	return order;
+ }
+ 
+ static void
