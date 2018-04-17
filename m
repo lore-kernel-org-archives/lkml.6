@@ -1,130 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751337AbeDQHwh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 03:52:37 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:49062 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750821AbeDQHwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 03:52:35 -0400
-Date: Tue, 17 Apr 2018 09:52:33 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 08/11] ARM: sun9i: smp: Add is_sun8i field
-Message-ID: <20180417075233.f2z6wxcazwqheoib@flea>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
- <20180416215032.5023-9-mylene.josserand@bootlin.com>
+        id S1752004AbeDQHxE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 03:53:04 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:44705 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeDQHxC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 03:53:02 -0400
+X-Google-Smtp-Source: AIpwx49VyodnjznVSRQ2bYZuJUioNJH8uoDqQeBeQYB7oCyR0xtCbNRRkaD0pZsHVoKlnv40zdhOnw==
+Date: Tue, 17 Apr 2018 09:52:57 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>, mario.limonciello@dell.com,
+        andy@infradead.org, dvhart@infradead.org, mjg59@srcf.ucam.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] ALSA: hda: Disabled unused audio controller for
+ Dell platforms with Switchable Graphics
+Message-ID: <20180417075257.zjnju4jyyc3k5fez@pali>
+References: <s5hr2nk8zs5.wl-tiwai@suse.de>
+ <20180412105909.tbyfcjm55sb47hiq@pali>
+ <93DC0F40-81A5-49C6-A470-0D1B6AA85725@canonical.com>
+ <20180414104512.GA27158@wunner.de>
+ <20180414104950.ngomyjy5l5cwhb5i@pali>
+ <20180414111711.GA4245@wunner.de>
+ <20180415171746.futkvgbaoj6quy5z@pali>
+ <20180415190523.GA16129@wunner.de>
+ <20180416142512.bwsemgwrncyl5xan@pali>
+ <20180417023829.GA1533@wunner.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pwy6pi3nx75zjbfe"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180416215032.5023-9-mylene.josserand@bootlin.com>
-User-Agent: NeoMutt/20180323
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180417023829.GA1533@wunner.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tuesday 17 April 2018 04:38:29 Lukas Wunner wrote:
+> On Mon, Apr 16, 2018 at 04:25:12PM +0200, Pali Rohár wrote:
+> > On Sunday 15 April 2018 21:05:23 Lukas Wunner wrote:
+> > > On Sun, Apr 15, 2018 at 07:17:46PM +0200, Pali Rohár wrote:
+> > > > On Saturday 14 April 2018 13:17:11 Lukas Wunner wrote:
+> > > > > On Sat, Apr 14, 2018 at 12:49:50PM +0200, Pali Rohár wrote:
+> > > > > > On Saturday 14 April 2018 12:45:12 Lukas Wunner wrote:
+> > > > > > > On Thu, Apr 12, 2018 at 10:15:41PM +0800, Kai-Heng Feng wrote:
+> > > > > > > > Do you have any suggestion to check if it connects to the system via
+> > > > > > > > Thunderbolt?
+> > > > > > > 
+> > > > > > > Just use pci_is_thunderbolt_attached(), introduced by 8531e283bee6,
+> > > > > > > like this:
+> > > > > > > 
+> > > > > > > if (check_dell_switchable_gfx(pci) && !pci_is_thunderbolt_attached(pci))
+> > > > > > 
+> > > > > > And what about PCI-e device attached to ExpressCard slot?
+> > > > > 
+> > > > > I don't know of a bullet-proof way to recognize those.
+> > > > 
+> > > > Hm... maybe another idea: Is it possible to detect which audio pci
+> > > > device belongs to graphics card via vga_switcheroo? Currently, looking
+> > > > at output it is same PCI device as graphic card, just different PCI
+> > > > function.
+> > > 
+> > > No, the DRM drivers don't filter ExpressCard-attached GPUs when
+> > > registering with vga_switcheroo.
+> > 
+> > > They do filter Thunderbolt-attached GPUs.
+> > 
+> > So check via vga_switcheroo should at least work for Thunderbolt GPUs.
+> > 
+> > I do not know if it is possible, but for me it looks like that check via
+> > vga_switcheroo should be better then adding another heuristic to other
+> > drivers.
+> 
+> It is way simpler and more straightforward if hda_intel.c calls
+> pci_is_thunderbolt_attached() directly, as I've suggested above.
+> 
+> The DRM drivers call that as well and register with vga_switcheroo
+> only if it returns false.  So if hda_intel.c asked vga_switcheroo
+> and got back a negative answer, it would never know whether it's
+> because the DRM driver hasn't finished probing yet, or it's module
+> is blacklisted, or whatever.
 
---pwy6pi3nx75zjbfe
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, module blacklisting can be a problem.
 
-Hi,
+> 
+> > And once we would have good/reliable check for EC devices we can add it
+> > into vga_switcheroo and all users of it could benefit. Anyway, I think
+> > that vga_switcheroo should filter also EC GPU cards if it already
+> > filters Thunderbolt.
+> 
+> vga_switcheroo doesn't do the filtering, the DRM drivers themselves
+> decice whether to register with vga_switcheroo or not.  The motivation
+> is to avoid middle layers and instead provide the DRM drivers with
+> a library of helpers that they may call at their own discretion.
 
-On Mon, Apr 16, 2018 at 11:50:29PM +0200, Myl=E8ne Josserand wrote:
-> To prepare the support of sun8i-a83t, add a field in the smp_data
-> structure to know if we are on sun9i-a80 or sun8i-a83t.
->=20
-> Add also a global variable to retrieve which architecture we are
-> having.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
-> ---
->  arch/arm/mach-sunxi/mc_smp.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
-> index 03f021d0c73e..9d57ea27dacc 100644
-> --- a/arch/arm/mach-sunxi/mc_smp.c
-> +++ b/arch/arm/mach-sunxi/mc_smp.c
-> @@ -74,6 +74,7 @@ static void __iomem *sram_b_smp_base;
-> =20
->  extern void sunxi_mc_smp_secondary_startup(void);
->  extern void sunxi_mc_smp_resume(void);
-> +static int is_sun8i;
-> =20
->  static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int clu=
-ster)
->  {
-> @@ -624,6 +625,7 @@ struct sunxi_mc_smp_nodes {
->  struct sunxi_mc_smp_data {
->  	const char *enable_method;
->  	int (*get_smp_nodes)(struct sunxi_mc_smp_nodes *nodes);
-> +	int is_sun8i;
->  };
-> =20
->  static void __init sunxi_mc_smp_put_nodes(struct sunxi_mc_smp_nodes *nod=
-es)
-> @@ -664,6 +666,7 @@ static const struct sunxi_mc_smp_data sunxi_mc_smp_da=
-ta[] __initconst =3D {
->  	{
->  		.enable_method	=3D "allwinner,sun9i-a80-smp",
->  		.get_smp_nodes	=3D sun9i_a80_get_smp_nodes,
-> +		.is_sun8i	=3D false,
+Understood. Driver itself can also do more work, e.g. ask ACPI or do
+some other check to decide whatever to register to vga_switcheroo or
+not.
 
-I'm still not convinced about the name of that flag. sun8i doesn't
-mean anything, really. What you want to discriminate against it what
-you're writing in your commit log: if it is an A80 or an A83t. The
-A33, H3, A23, you name it are also part of the sun8i family, yet they
-are completely irrelevant to this file.
+But probably, hda_intel should have same logic for disabling device like
+gpu drivers for detection if they are going to register into
+vga_switcheroo or not.
 
-Also, false is the default value, you can leave it out.
+Right now this seems to be really complicated and suggested solution
+with pci_is_thunderbolt_attached() looks to be really simple and better
+for now.
 
->  	},
->  };
-> =20
-> @@ -697,6 +700,8 @@ static int __init sunxi_mc_smp_init(void)
->  			break;
->  	}
-> =20
-> +	is_sun8i =3D sunxi_mc_smp_data[i].is_sun8i;
-> +
+> See this blog post and the links therein for background info:
+> http://blog.ffwll.ch/2016/12/midlayers-once-more-with-feeling.html
+> 
+> Thanks,
+> 
+> Lukas
 
-Do we really need to cache it? Can't we just have a pointer to the SMP
-data structure and use that instead?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---pwy6pi3nx75zjbfe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrVp8AACgkQ0rTAlCFN
-r3Rifw/9Gl4bEy8NdYh8PZltDYtIne5lOveP6B50wOPrqnnhzqHmGT4daHqI4Hkd
-G/MHWDA4CY1al4AJ/tgdSAmO9G+akVAqb2PQzZf5WuTbt94QuFh2FXYeArfETlmC
-H+wom1lAe1Ub1OxMJWttTphLiwKMeeP1bmskhClWsmQl2/FK/xf6JD9SgyUgoUtE
-ad2fd+6lwEg4XGg5HjWoj0+T/fNI7CuyFFogaHF6CrKE5hzDdDZ2ap4TJPtQoBbJ
-m85VlCALsy7wMUZDFiLcd+qF9Ro7pyGgk4D615sWyJ3G54z5O8as1SimFnYE+bCM
-A1o2h7hOzsn/7I2L0ZcNg93R34GqyZVtty5FhRrPptMOlFZ6YKyNhN/8UJjN9xWy
-WJ4qVofdhZKyD2NtLYxAR883guagxQeO817sTr7EDbBDEa0BdSeUeCxYUwg6v7Ve
-eNITpT0miJk+xmp+9zd+/LyJvl3+nDE8OejlWPf7z6horVXDVypcU8+CF4cmPxPJ
-bFjOx1IPsPSoolwnruIgbxk4dbytQVHHTrgqss0mBdYcrwVs8iaQ126d8mmArqGv
-76PaNfSFaT4LYnnMm5c0gr3sjfI/RivAaLmWPmaJM+X3MIlvunBuMmunZKJK5Y9G
-kYtYQYQGI+eoltx2LCWBb1ZCup8S3STC1Sskp+gqCdovrp9+sVM=
-=PVeK
------END PGP SIGNATURE-----
-
---pwy6pi3nx75zjbfe--
+-- 
+Pali Rohár
+pali.rohar@gmail.com
