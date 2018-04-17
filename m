@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754500AbeDQQav (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:30:51 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:42179 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753178AbeDQQIO (ORCPT
+        id S1755224AbeDQQbl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:31:41 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38962 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755353AbeDQQIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:08:14 -0400
-X-Google-Smtp-Source: AIpwx4+6Flv1CFMIbQ9BZTOaUF0JDnUSrkG45EzrFmHDwn9BsFVRLdRD0V5FbRE4dZJgT1Dm+AuInQ==
+        Tue, 17 Apr 2018 12:08:13 -0400
+X-Google-Smtp-Source: AIpwx4/Or3xJozt8N+sxXnS0RmkTzchNBr3CbfaVlbS0qTr66UpS0zw0wIA/F5sokZzFoxdDQrvXug==
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: linux-arm-kernel@lists.infradead.org, corbet@lwn.net
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         rdunlap@infradead.org, Ben.Gainey@arm.com
-Subject: [PATCH v2 3/3] coresight: Grouping all perf tools oriented section together
-Date: Tue, 17 Apr 2018 10:08:07 -0600
-Message-Id: <1523981287-15370-4-git-send-email-mathieu.poirier@linaro.org>
+Subject: [PATCH v2 2/3] coresight: Add section for integration with the perf tools
+Date: Tue, 17 Apr 2018 10:08:06 -0600
+Message-Id: <1523981287-15370-3-git-send-email-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523981287-15370-1-git-send-email-mathieu.poirier@linaro.org>
 References: <1523981287-15370-1-git-send-email-mathieu.poirier@linaro.org>
@@ -22,100 +22,86 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch groups together section pertaining to the perf tools.  That way
-everything is at the same place rather than spread out.
+Adding a section that document how to use the Coresight framework and
+drivers from the perf tools.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- Documentation/trace/coresight.txt | 72 +++++++++++++++++++--------------------
- 1 file changed, 36 insertions(+), 36 deletions(-)
+ Documentation/trace/coresight.txt | 52 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 51 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
-index ab0d0f2d5cec..1d74ad0202b6 100644
+index 710c75b6c73f..ab0d0f2d5cec 100644
 --- a/Documentation/trace/coresight.txt
 +++ b/Documentation/trace/coresight.txt
-@@ -345,42 +345,7 @@ More information on the above and other example on how to use Coresight with
- the perf tools can be found in the "HOWTO.md" file of the openCSD gitHub
- repository [3].
+@@ -187,10 +187,19 @@ that can be performed on them (see "struct coresight_ops").  The
+ specific to that component only.  "Implementation defined" customisations are
+ expected to be accessed and controlled using those entries.
  
--How to use the STM module
---------------------------
--
--Using the System Trace Macrocell module is the same as the tracers - the only
--difference is that clients are driving the trace capture rather
--than the program flow through the code.
--
--As with any other CoreSight component, specifics about the STM tracer can be
--found in sysfs with more information on each entry being found in [1]:
--
--root@genericarmv8:~# ls /sys/bus/coresight/devices/20100000.stm
--enable_source   hwevent_select  port_enable     subsystem       uevent
--hwevent_enable  mgmt            port_select     traceid
--root@genericarmv8:~#
--
--Like any other source a sink needs to be identified and the STM enabled before
--being used:
--
--root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20010000.etf/enable_sink
--root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20100000.stm/enable_source
--
--From there user space applications can request and use channels using the devfs
--interface provided for that purpose by the generic STM API:
--
--root@genericarmv8:~# ls -l /dev/20100000.stm
--crw-------    1 root     root       10,  61 Jan  3 18:11 /dev/20100000.stm
--root@genericarmv8:~#
--
--Details on how to use the generic STM API can be found here [2].
--
--[1]. Documentation/ABI/testing/sysfs-bus-coresight-devices-stm
--[2]. Documentation/trace/stm.txt
--
--
--Using perf tools
------------------
-+2.1) AutoFDO analysis using the perf tools:
++
+ How to use the tracer modules
+ -----------------------------
  
- perf can be used to record and analyze trace of programs.
+-Before trace collection can start, a coresight sink needs to be identify.
++There are two ways to use the Coresight framework: 1) using the perf cmd line
++tools and 2) interacting directly with the Coresight devices using the sysFS
++interface.  Preference is given to the former as using the sysFS interface
++requires a deep understanding of the Coresight HW.  The following sections
++provide details on using both methods.
++
++1) Using the sysFS interface:
++
++Before trace collection can start, a coresight sink needs to be identified.
+ There is no limit on the amount of sinks (nor sources) that can be enabled at
+ any given moment.  As a generic operation, all device pertaining to the sink
+ class will have an "active" entry in sysfs:
+@@ -295,6 +304,47 @@ Instruction     13570831        0x8026B584      E28DD00C        false   ADD
+ Instruction     0       0x8026B588      E8BD8000        true    LDM      sp!,{pc}
+ Timestamp                                       Timestamp: 17107041535
  
-@@ -428,3 +393,38 @@ sort example is from the AutoFDO tutorial (https://gcc.gnu.org/wiki/AutoFDO/Tuto
- 	$ taskset -c 2 ./sort_autofdo
- 	Bubble sorting array of 30000 elements
- 	5806 ms
++2) Using perf framework:
 +
++Coresight tracers are represented using the Perf framework's Performance
++Monitoring Unit (PMU) abstraction.  As such the perf framework takes charge of
++controlling when tracing gets enabled based on when the process of interest is
++scheduled.  When configured in a system, Coresight PMUs will be listed when
++queried by the perf command line tool:
 +
-+How to use the STM module
-+-------------------------
++	linaro@linaro-nano:~$ ./perf list pmu
 +
-+Using the System Trace Macrocell module is the same as the tracers - the only
-+difference is that clients are driving the trace capture rather
-+than the program flow through the code.
++		List of pre-defined events (to be used in -e):
 +
-+As with any other CoreSight component, specifics about the STM tracer can be
-+found in sysfs with more information on each entry being found in [1]:
++		cs_etm//                                    [Kernel PMU event]
 +
-+root@genericarmv8:~# ls /sys/bus/coresight/devices/20100000.stm
-+enable_source   hwevent_select  port_enable     subsystem       uevent
-+hwevent_enable  mgmt            port_select     traceid
-+root@genericarmv8:~#
++	linaro@linaro-nano:~$
 +
-+Like any other source a sink needs to be identified and the STM enabled before
-+being used:
++Regardless of the number of tracers available in a system (usually equal to the
++amount of processor cores), the "cs_etm" PMU will be listed only once.
 +
-+root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20010000.etf/enable_sink
-+root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20100000.stm/enable_source
++A Coresight PMU works the same way as any other PMU, i.e the name of the PMU is
++listed along with configuration options within forward slashes '/'.  Since a
++Coresight system will typically have more than one sink, the name of the sink to
++work with needs to be specified as an event option.  Names for sink to choose
++from are listed in sysFS under ($SYSFS)/bus/coresight/devices:
 +
-+From there user space applications can request and use channels using the devfs
-+interface provided for that purpose by the generic STM API:
++	root@linaro-nano:~# ls /sys/bus/coresight/devices/
++		20010000.etf   20040000.funnel  20100000.stm  22040000.etm
++		22140000.etm  230c0000.funnel  23240000.etm 20030000.tpiu
++		20070000.etr     20120000.replicator  220c0000.funnel
++		23040000.etm  23140000.etm     23340000.etm
 +
-+root@genericarmv8:~# ls -l /dev/20100000.stm
-+crw-------    1 root     root       10,  61 Jan  3 18:11 /dev/20100000.stm
-+root@genericarmv8:~#
++	root@linaro-nano:~# perf record -e cs_etm/@20070000.etr/u --per-thread program
 +
-+Details on how to use the generic STM API can be found here [2].
++The syntax within the forward slashes '/' is important.  The '@' character
++tells the parser that a sink is about to be specified and that this is the sink
++to use for the trace session.
 +
-+[1]. Documentation/ABI/testing/sysfs-bus-coresight-devices-stm
-+[2]. Documentation/trace/stm.txt
-+[3]. https://github.com/Linaro/perf-opencsd
++More information on the above and other example on how to use Coresight with
++the perf tools can be found in the "HOWTO.md" file of the openCSD gitHub
++repository [3].
++
+ How to use the STM module
+ -------------------------
+ 
 -- 
 2.7.4
