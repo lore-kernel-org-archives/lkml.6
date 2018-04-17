@@ -1,65 +1,65 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2456659-1523989017-2-15784515843107552175
+X-Cyrus-Session-Id: sloti22d1t05-2456659-1523988931-2-17279309034167077110
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523989016; b=kz0fW+kHk3K9p9lpyrzMz6Gq8E9C6M+d0OnJQp38aQmT0ZlK/5
-    hnJF3yVgkHyjZi1UHUKZJ9GQ5GbICnLKSWe00hbR1J4p8ijVKxKlV3TWtTSXltTk
-    VQAScTVLvwzTRxJCne56ocyhWOtyLEWt8I9P1OgHjj3x8rbhEYjk55KuGnJ3fq2V
-    SRSD9Hi4XoeFwq0mtkrCSztMxm4OGQcbYT0Gnk6x+G09a6u9+p85HfRkVSpjkjv2
-    nGHgV2AeCR0Q0rnGlpCv0qEstX2hWny9XHzW7fZBixXOa5nmB6lEJAKx4Au3tUaB
-    YOv6K3MYwgTNzW1Nug5AiHFc06h39gRZSA4g==
+    1523988930; b=DTO8aUl+jQp/zOR4XrnSohgIC3E09SqiVwiVQD2+BiJEge3DoB
+    v5noE4LOx2rn6ycAXg0d5dV1hAi5tQO7sJF2DxUek9qxgytvFoIT0QjfOeUIElxH
+    40G8Hd1oL0g7j+va3SVnvgmE5XTR+7kLhkLIEV17t6oJ08YYKtq7Dbl1boluvo+6
+    hEUtEH7Rd8iJG3mImAF5v5a/4xhXmv/v5WZvaDQiTS4rScFFc+gAgjkqG4aT0zPw
+    aKzTPHqN273lJpCc6W2r4CtMrUsyF9B+MYBVcDCINkt14KIZOEPxC2B6SoWvCY3u
+    lkCDLTYjikdOYBv+QJ2+rzw4YCK4YtsF5/Sg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523989016; bh=pSjws
-    0SHcWdrupWvzCDL4Mr0wJOsCv1/wJwRs1SElo4=; b=H28j7Rl6mZNTrpIBKaJq/
-    Q1pAJWrnoHDHa9WcPLZVGyxY6Oc4xsXFwxMbhJndZht0FVCXhZtZ2NdatCnTi+0B
-    BDyrCOnRkPpNKwIKFKhzVK66ePa5lmo9/wdXkrP2P0xb4H0SOWizAO9d/sZHAwPP
-    p6tmxLFoRj/WjQbs3oR8NDzbTfHoWAKOG+BRk6ZhdfgNbjPbR0uo00dSKlS7wY8l
-    TNzxMcnSNVvO5WvUwQw/8j6wXsKOPcReWdsr2tlaGZ2ACUsE0bV4a3uq4wXJzilB
-    uc9gAIXmnfsDchSFpeOLe8/cXf12+bap20lr3Ey/s+uoZIgIv12PNz8e8jYgtqOi
+    :content-transfer-encoding:sender; s=fm2; t=1523988930; bh=jj3Fc
+    RTJmzUGPM6Va1B0s6rDvvdy4kZturzxViOOfSk=; b=eIHbkE8SxQNOVvsXAc/DQ
+    8xYSr2BLugwYQhduUqWck2G8oJqns8S9WFQRn7HVTkLilq/wsz/eWzfIuEBDFwXF
+    rwjVdof9aF9iuDFN0fxpECj+MecnGO4bCLaHZ1VItM0rHDWD3HlTln+DxheDtCPt
+    M4fe5cunxzDCEDvPwvoPDHgsy6edz+81GePFJp40bPGPovH1PD76NqMv4n3Zf3qJ
+    uGOMfM0byaDwQyBXMHc2yuXpE5RW8tEk+nohd7kmv4dEB3UOgBZ2TFSXlcPgSBaw
+    K7H6dy7YITgyyXQ1w4eOUPhtipYpzUwWRpHu2rLuwm9SgXayqm4hKJFStrAPVDgP
     Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEph59A7RaLn6f0UokJ2SdUgJIsH3FEW0YHi3aEila9DHREEKGUD9WXLbTUNWU/cO1IM3MrnULSLWOymvS1Fk3J3nDCa7U4cDdu18Qx6T/Hjq3Yiwb3C
-    PcvlQ1JYbYhY3NQQ3CPIDK5uHT6SgVZf7Mz5z5LrVGtk6pHOgjAIiXS09wfvOjGq9BYF2sxbkX4dEMfBG3lRB2QE7fZFT+u28IxdeBIN2v5MUcKdeVjbwQ4o
-    K1VSlj2mD7QzDXPbrniyxA==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+X-CM-Envelope: MS4wfO8oi3tyNhe0fVjgTLVFfj5RUYooaXda1lMFPd8IQWJBvJXclZUH6DMEcedBUr/WiZ/YhMV2lzkggkrZiMx9JwwvpiP5iWDzHEA7h9oEAS5kT1FE1DLp
+    42LApLv0kAQJ2jEbwuxbwIpWkC/HPMHOMwgob+yrinncIf5X6ViBId6gWBs8RMPigb4xsN94EGsgl7cnKrCxXnGVz662mNNkjaR06HLfLAafJ52HjfSwgu9f
+    /tFZOtbmoh5byfQwNcJwig==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8
     a=7CQSdrXTAAAA:8 a=DDOyTI_5AAAA:8 a=XNYVfk6J6KFTGUcfqe8A:9 a=CjuIK1q_8ugA:10
     a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
@@ -92,10 +92,10 @@ To: Christoph Hellwig <hch@lst.de>,
  Ohad Ben-Cohen <ohad@wizery.com>,
  Bjorn Andersson <bjorn.andersson@linaro.org>,
  Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH v3 02/20] ata: Remove depends on HAS_DMA in case of platform
- dependency
-Date: Tue, 17 Apr 2018 19:49:02 +0200
-Message-Id: <1523987360-18760-3-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH v3 11/20] mailbox: Remove depends on HAS_DMA in case of
+ platform dependency
+Date: Tue, 17 Apr 2018 19:49:11 +0200
+Message-Id: <1523987360-18760-12-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
 References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
@@ -145,35 +145,36 @@ Acked-by: Robin Murphy <robin.murphy@arm.com>
 ---
 v3:
   - Rebase to v4.17-rc1,
+  - Removed bogus notes,
 
 v2:
   - Add Reviewed-by, Acked-by,
   - Drop RFC state,
   - Split per subsystem.
 ---
- drivers/ata/Kconfig | 2 --
+ drivers/mailbox/Kconfig | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
-index 2b16e7c8fff35764..39b181d6bd0d8cf2 100644
---- a/drivers/ata/Kconfig
-+++ b/drivers/ata/Kconfig
-@@ -398,7 +398,6 @@ config SATA_DWC_VDEBUG
- 
- config SATA_HIGHBANK
- 	tristate "Calxeda Highbank SATA support"
+diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+index a2bb27446dce4e2b..725dce5ba62d5baf 100644
+--- a/drivers/mailbox/Kconfig
++++ b/drivers/mailbox/Kconfig
+@@ -162,7 +162,6 @@ config XGENE_SLIMPRO_MBOX
+ config BCM_PDC_MBOX
+ 	tristate "Broadcom FlexSparx DMA Mailbox"
+ 	depends on ARCH_BCM_IPROC || COMPILE_TEST
 -	depends on HAS_DMA
- 	depends on ARCH_HIGHBANK || COMPILE_TEST
  	help
- 	  This option enables support for the Calxeda Highbank SoC's
-@@ -408,7 +407,6 @@ config SATA_HIGHBANK
- 
- config SATA_MV
- 	tristate "Marvell SATA support"
+ 	  Mailbox implementation for the Broadcom FlexSparx DMA ring manager,
+ 	  which provides access to various offload engines on Broadcom
+@@ -172,7 +171,6 @@ config BCM_FLEXRM_MBOX
+ 	tristate "Broadcom FlexRM Mailbox"
+ 	depends on ARM64
+ 	depends on ARCH_BCM_IPROC || COMPILE_TEST
 -	depends on HAS_DMA
- 	depends on PCI || ARCH_DOVE || ARCH_MV78XX0 || \
- 		   ARCH_MVEBU || ARCH_ORION5X || COMPILE_TEST
- 	select GENERIC_PHY
+ 	select GENERIC_MSI_IRQ_DOMAIN
+ 	default m if ARCH_BCM_IPROC
+ 	help
 -- 
 2.7.4
 
