@@ -1,40 +1,84 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/TGUL5KT2CpQ9i9w8OCurqkeQBk4bbowzx7klCIrTu2ve7vKeWGlv5FFZ9XHvdfB3ytWnK
-ARC-Seal: i=1; a=rsa-sha256; t=1523981377; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jm/NXpS4CpfJruFEmtlCHZnQcbTlkQab7aOi5WAPGSOlUqr0MxjxqPLC2kiDLkM1uA
-         HDJJLOlqUWvPpjfh0uvD/jMroHlViMtyvOSpIS0vIkdTdVv0ARNRlpO1e36S9OrlBtEk
-         49pai7sj7C/goBKnSlZ1jxUWrc/dY3HhjihjA/nKxstx8Hrz4VETPzWKuT7GDoj9iEbc
-         8rfU1GlN2RAR/4hjx4iYWKdqlOsQno/fDgsGgx3ONZGCnmEvxced3nvtIqu2pXXSYlnf
-         Io86FRScIqDX7ZXhzz4xUxrvCGZjdsAw8GaInSlUtOdWNJ6x2npc2cSo6xsr64hhs4oJ
-         F8oA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=DCz/WwByDbruCaXTvJphaOvtQ1oLFIjtshS9XSvAro0=;
-        b=bHVPefe1t5dNDRBt3DUoU9kXvYOxtzJzuvbMd550i40kyuhSWwVRsspigCsiMNrlrS
-         vg7N191ucHVcqI90n0064HFCi+rtVUO+CPnVWOPn83p9v6avid5bTAtbI19L/LSOvA8D
-         KwyvvUAQikBHyB/HVIRi3vYSIdK0AU/xOgMC2TeTBzvWhkzwpjbsDT71VachRR0tQGmZ
-         Wpsa6iAus4/QPYkHBKPW4T0GO96ooQ6BUbZLzTdHkB1kqsF/E1qWu+0GlA/ZMOS857BV
-         Z5RTDeltdZbQ0BkMu2AeM2PS0sfR123ESYaCwQEs0mQ8fz2ZWXNeSB6S6pEBU22YKrbE
-         GjLQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2220351-1523981375-2-7091781585428463323
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523981375; b=oD/ctI7d77fV1B8K+g8ZhaUtzPIyUuJhIo5Bgc0z9iMfKBot6z
+    oqCM0C1OuMna+1pXPZgv/rDtZlvI2tSuMYhY3urMtIMmcSTN/JPP25t4ORGIJRXU
+    TfOFMRGTBWBcCQNx+Wegk9b5fm18rIjcET7ke3GHvisuZZWQSvPgxQn4sNl3C0Nh
+    Jh32nTFPobWBnEILZ8GHKtf0Hj5JpNjvwE+7LYv/JDXNFS1utt2DhQv0gf+D1tSH
+    hHcu/Z97EPXaLQoWKf/2jd24SNpc6Az/OBEq1Eb8GEO28Ioi2LmK5wWNEGU3GGPJ
+    C0eHpfDpQ3/WpMOXvpka42GL55QwDyDiVfSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523981375; bh=DmE9V5T9gCmqelhiR67sG40sHBIMkR
+    zKeszWEGRc5Kc=; b=twJ4RsMels+PCOBEv9+/+ScRTnKeWQALr3JiHXNOisc4Mc
+    uQt4YPzE3F5Z9zJCSRUZUYduZT7VznqTK5hXD1pgS2jmQ0VJI88kwr7EYjUhWkj7
+    2z/g/HeK1hhaOOz/Tj9vTXYUVWipjDf2vJaSlcDPOVa5gELw37CWaKtPXWjh/hAh
+    umV+oiCCtF6c7aGXfL313LGTUyTi6bFSbEZeL+Nnw+uy2fkh0KzlZnCsfiiqW6+5
+    fuRutkFAGU0R6C++mXD/4hvSZghIDumhyqqD0VbPrAEmpdLSwQSlqN4qqi17fMQK
+    3iYkm83YD9L4hwHEGyf4wPcLJhHXDeXcwDiu9rdw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfI3rsFllVhedrbpR0JdbJm9kjsI0WLiLuayTFXrOv2/GF37tkk3HWvcOxCUMl/RXvRCQGNXK1PLMCFmniOatnGae+V3q/alUVGNBBIlHaj0AXKAdFiTq
+    XsILRvTljONy/Rh2f/ri624EUvUELsHcrZZ1JKkBVNmYuCEXi53PI94J3l+9rJV4QYCPrNsdSW/eaIP6jIYXHOF3S/5ldZIhWJFwMOUl6J2qCLRvljO8/mJh
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=7CQSdrXTAAAA:8 a=KKAkSRfTAAAA:8 a=1XWaLZrsAAAA:8 a=ag1SF4gXAAAA:8
+    a=Yl9wlt2tm8I-GhEjR5sA:9 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932109AbeDQQJ3 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 12:09:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36116 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932107AbeDQQJ2 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 12:09:28 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Christoffer Dall <christoffer.dall@linaro.org>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Greg Hackmann <ghackmann@google.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.9 43/66] arm64: KVM: Report SMCCC_ARCH_WORKAROUND_1 BP hardening support
-Date: Tue, 17 Apr 2018 17:59:16 +0200
-Message-Id: <20180417155647.744959583@linuxfoundation.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Hackmann <ghackmann@google.com>
+Subject: [PATCH 4.9 32/66] arm64: cpu_errata: Allow an erratum to be match for all revisions of a core
+Date: Tue, 17 Apr 2018 17:59:05 +0200
+Message-Id: <20180417155647.267387199@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -42,10 +86,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010296822899917?=
-X-GMAIL-MSGID: =?utf-8?q?1598010296822899917?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,91 +101,40 @@ From: Mark Rutland <mark.rutland@arm.com>
 
 From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 6167ec5c9145cdf493722dfd80a5d48bafc4a18a upstream.
+commit 06f1494f837da8997d670a1ba87add7963b08922 upstream.
 
-A new feature of SMCCC 1.1 is that it offers firmware-based CPU
-workarounds. In particular, SMCCC_ARCH_WORKAROUND_1 provides
-BP hardening for CVE-2017-5715.
+Some minor erratum may not be fixed in further revisions of a core,
+leading to a situation where the workaround needs to be updated each
+time an updated core is released.
 
-If the host has some mitigation for this issue, report that
-we deal with it using SMCCC_ARCH_WORKAROUND_1, as we apply the
-host workaround on every guest exit.
+Introduce a MIDR_ALL_VERSIONS match helper that will work for all
+versions of that MIDR, once and for all.
 
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Christoffer Dall <christoffer.dall@linaro.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-[v4.9: account for files moved to virt/ upstream]
 Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
 Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/include/asm/kvm_host.h   |    6 ++++++
- arch/arm/kvm/psci.c               |    9 ++++++++-
- arch/arm64/include/asm/kvm_host.h |    5 +++++
- include/linux/arm-smccc.h         |    5 +++++
- 4 files changed, 24 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/cpu_errata.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/arm/include/asm/kvm_host.h
-+++ b/arch/arm/include/asm/kvm_host.h
-@@ -318,4 +318,10 @@ static inline int kvm_arm_vcpu_arch_has_
- 	return -ENXIO;
- }
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -127,6 +127,13 @@ static void  install_bp_hardening_cb(con
+ 	.midr_range_min = min, \
+ 	.midr_range_max = max
  
-+static inline bool kvm_arm_harden_branch_predictor(void)
-+{
-+	/* No way to detect it yet, pretend it is not there. */
-+	return false;
-+}
++#define MIDR_ALL_VERSIONS(model) \
++	.def_scope = SCOPE_LOCAL_CPU, \
++	.matches = is_affected_midr_range, \
++	.midr_model = model, \
++	.midr_range_min = 0, \
++	.midr_range_max = (MIDR_VARIANT_MASK | MIDR_REVISION_MASK)
 +
- #endif /* __ARM_KVM_HOST_H__ */
---- a/arch/arm/kvm/psci.c
-+++ b/arch/arm/kvm/psci.c
-@@ -403,13 +403,20 @@ int kvm_hvc_call_handler(struct kvm_vcpu
- {
- 	u32 func_id = smccc_get_function(vcpu);
- 	u32 val = PSCI_RET_NOT_SUPPORTED;
-+	u32 feature;
- 
- 	switch (func_id) {
- 	case ARM_SMCCC_VERSION_FUNC_ID:
- 		val = ARM_SMCCC_VERSION_1_1;
- 		break;
- 	case ARM_SMCCC_ARCH_FEATURES_FUNC_ID:
--		/* Nothing supported yet */
-+		feature = smccc_get_arg1(vcpu);
-+		switch(feature) {
-+		case ARM_SMCCC_ARCH_WORKAROUND_1:
-+			if (kvm_arm_harden_branch_predictor())
-+				val = 0;
-+			break;
-+		}
- 		break;
- 	default:
- 		return kvm_psci_call(vcpu);
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -393,4 +393,9 @@ static inline void __cpu_init_stage2(voi
- 		  "PARange is %d bits, unsupported configuration!", parange);
- }
- 
-+static inline bool kvm_arm_harden_branch_predictor(void)
-+{
-+	return cpus_have_cap(ARM64_HARDEN_BRANCH_PREDICTOR);
-+}
-+
- #endif /* __ARM64_KVM_HOST_H__ */
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -73,6 +73,11 @@
- 			   ARM_SMCCC_SMC_32,				\
- 			   0, 1)
- 
-+#define ARM_SMCCC_ARCH_WORKAROUND_1					\
-+	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,				\
-+			   ARM_SMCCC_SMC_32,				\
-+			   0, 0x8000)
-+
- #ifndef __ASSEMBLY__
- 
- #include <linux/linkage.h>
+ const struct arm64_cpu_capabilities arm64_errata[] = {
+ #if	defined(CONFIG_ARM64_ERRATUM_826319) || \
+ 	defined(CONFIG_ARM64_ERRATUM_827319) || \
