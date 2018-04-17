@@ -1,86 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752427AbeDQIeQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 04:34:16 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:37830 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751893AbeDQIeM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:34:12 -0400
-X-Google-Smtp-Source: AIpwx49AzBrj5AxGa6iqwm5W5H/67HSdwr3AcqNWVqjWv3iwEKLysTd1TvlMWcXdb9CucYvvsK1DZ6369bw4wR3cZdY=
+        id S1752206AbeDQIgK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 04:36:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44664 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751147AbeDQIgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 04:36:09 -0400
+Date: Tue, 17 Apr 2018 16:36:00 +0800
+From: Dave Young <dyoung@redhat.com>
+To: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org
+Cc: joeyli <jlee@suse.com>, Randy Wright <rwright@hpe.com>,
+        linux-efi@vger.kernel.org
+Subject: [PATCH] kexec_file: do not add extra alignment to efi memmap
+Message-ID: <20180417083600.GA1972@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180409091051.2944-1-benjamin.tissoires@redhat.com>
-References: <20180409091051.2944-1-benjamin.tissoires@redhat.com>
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date: Tue, 17 Apr 2018 10:34:11 +0200
-Message-ID: <CAO-hwJJnHPEQ+R+8qWb1Dn+otqgmbcKgiNDOyNkVBD+xdzY_zw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] Input: support for latest Lenovo thinkpads (series 80)
-To: =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>
-Cc: Oliver Haessler <oliver@redhat.com>, Benjamin Berg <bberg@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Aaron Ma <aaron.ma@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi KT,
+Chun-Yi reported a kernel warning message below:
+WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
+early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
 
-gentle ping :)
+The problem is x86 kexec_file_load adds extra alignment to the efi memmap:
+in bzImage64_load()
+        efi_map_sz = efi_get_runtime_map_size();
+        efi_map_sz = ALIGN(efi_map_sz, 16);
 
-Could you ACK/NACK this series?
+And __efi_memmap_init maps with the size including the alignment bytes
+but efi_memmap_unmap use nr_maps * desc_size which does not include the
+extra bytes.
 
-Dmitry, the first patch could go without KT's approval. Also I
-realized that Aaron submitted a similar patch for the X1 Carbon last
-October: https://patchwork.kernel.org/patch/10008513/
-So I think the first one should go ASAP now that the laptops are
-shipping from Lenovo.
+The alignment in kexec code is only needed for the kexec buffer internal use
+Actually kexec should pass exact size of the efi memmap to 2nd kernel.
 
-Cheers,
-Benjamin
+Signed-off-by: Dave Young <dyoung@redhat.com>
+Reported-by: joeyli <jlee@suse.com>
+Tested-by: Randy Wright <rwright@hpe.com>
+---
+ arch/x86/kernel/kexec-bzimage64.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-On Mon, Apr 9, 2018 at 11:10 AM, Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
-> Hi Dmitry,
->
-> Here is the v2 of the Lenovo 80 series.
-> Changes from v1:
-> - included patch to convert a function to static from build bot
-> - use of device property instead of platform data (thus the new device tree
->   binding)
->
-> BTW, KT, if you want to add your Signed-off-by on the patches, feel free to
-> do so. You were of tremendous help :)
->
-> Cheers,
-> Benjamin
->
-> Benjamin Tissoires (9):
->   Input: synaptics - add Lenovo 80 series ids to SMBus
->   input: elan_i2c_smbus - fix corrupted stack
->   Input: elan_i2c - add trackstick report
->   Input: elantech - split device info into a separate structure
->   Input: elantech_query_info() can be static
->   Input: elantech - query the resolution in query_info
->   Input: elantech - add support for SMBus devices
->   Input: elantech - detect new ICs and setup Host Notify for them
->   input: psmouse-smbus: allow to control psmouse_deactivate
->
->  .../devicetree/bindings/input/elan_i2c.txt         |   1 +
->  drivers/input/mouse/Kconfig                        |  12 +
->  drivers/input/mouse/elan_i2c_core.c                |  90 +++-
->  drivers/input/mouse/elan_i2c_smbus.c               |  22 +-
->  drivers/input/mouse/elantech.c                     | 479 +++++++++++++++------
->  drivers/input/mouse/elantech.h                     |  69 ++-
->  drivers/input/mouse/psmouse-base.c                 |  21 +-
->  drivers/input/mouse/psmouse-smbus.c                |  24 +-
->  drivers/input/mouse/psmouse.h                      |   2 +
->  drivers/input/mouse/synaptics.c                    |   5 +-
->  10 files changed, 565 insertions(+), 160 deletions(-)
->
-> --
-> 2.14.3
->
+--- linux.orig/arch/x86/kernel/kexec-bzimage64.c
++++ linux/arch/x86/kernel/kexec-bzimage64.c
+@@ -398,11 +398,10 @@ static void *bzImage64_load(struct kimag
+ 	 * little bit simple
+ 	 */
+ 	efi_map_sz = efi_get_runtime_map_size();
+-	efi_map_sz = ALIGN(efi_map_sz, 16);
+ 	params_cmdline_sz = sizeof(struct boot_params) + cmdline_len +
+ 				MAX_ELFCOREHDR_STR_LEN;
+ 	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
+-	kbuf.bufsz = params_cmdline_sz + efi_map_sz +
++	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
+ 				sizeof(struct setup_data) +
+ 				sizeof(struct efi_setup_data);
+ 
+@@ -410,7 +409,7 @@ static void *bzImage64_load(struct kimag
+ 	if (!params)
+ 		return ERR_PTR(-ENOMEM);
+ 	efi_map_offset = params_cmdline_sz;
+-	efi_setup_data_offset = efi_map_offset + efi_map_sz;
++	efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
+ 
+ 	/* Copy setup header onto bootparams. Documentation/x86/boot.txt */
+ 	setup_header_size = 0x0202 + kernel[0x0201] - setup_hdr_offset;
