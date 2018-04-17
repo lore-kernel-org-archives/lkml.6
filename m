@@ -1,102 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752632AbeDQUbr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 16:31:47 -0400
-Received: from mail-yb0-f173.google.com ([209.85.213.173]:40412 "EHLO
-        mail-yb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeDQUbq (ORCPT
+        id S1752684AbeDQUeK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 16:34:10 -0400
+Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:3236 "EHLO
+        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeDQUeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 16:31:46 -0400
-X-Google-Smtp-Source: AIpwx48IWFk7IjzTQO+XGollGy2sTQZaNefi28HVDwkWbHbQ6LRDzHFtuUZXGOvczlwKSWusgZVcG3SmoL9U7j+M60I=
+        Tue, 17 Apr 2018 16:34:08 -0400
+Date: Tue, 17 Apr 2018 14:34:05 -0600
+From: Randy Wright <rwright@hpe.com>
+To: joeyli <jlee@suse.com>, dyoung@redhat.com
+Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>, linux-efi@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Takashi Iwai <tiwai@suse.de>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        akpm@linux-foundation.org, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>
+Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
+ memory map
+Message-ID: <20180417203405.GA4574@rfwz>
+Reply-To: rwright@hpe.com
+References: <20180413062716.8040-1-jlee@suse.com>
+ <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
+ <20180416030904.GB26685@dhcp-128-65.nay.redhat.com>
+ <20180416063738.GH16023@linux-l9pv.suse>
+ <20180417003522.GA2741@rfwz>
 MIME-Version: 1.0
-In-Reply-To: <20180412150826.20988-20-mszeredi@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-20-mszeredi@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 17 Apr 2018 23:31:44 +0300
-Message-ID: <CAOQ4uxjKJHnM_ad9TnyQ8i0fUjEqCEG8ocPAs_L0oSraKhSEPA@mail.gmail.com>
-Subject: Re: [RFC PATCH 19/35] ovl: readd reflink/copyfile/dedup support
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417003522.GA2741@rfwz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
-> Since set of arguments are so similar, handle in a common helper.
->
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/overlayfs/file.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 79 insertions(+)
->
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index 9670e160967e..39b1b73334ad 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -352,6 +352,81 @@ long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->         return ret;
->  }
->
-> +enum ovl_copyop {
-> +       OVL_COPY,
-> +       OVL_CLONE,
-> +       OVL_DEDUPE,
-> +};
-> +
-> +static ssize_t ovl_copyfile(struct file *file_in, loff_t pos_in,
-> +                           struct file *file_out, loff_t pos_out,
-> +                           u64 len, unsigned int flags, enum ovl_copyop op)
-> +{
-> +       struct inode *inode_out = file_inode(file_out);
-> +       struct fd real_in, real_out;
-> +       const struct cred *old_cred;
-> +       int ret;
-> +
-> +       ret = ovl_real_file(file_out, &real_out);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = ovl_real_file(file_in, &real_in);
-> +       if (ret) {
-> +               fdput(real_out);
-> +               return ret;
-> +       }
-> +
-> +       old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
-> +       switch (op) {
-> +       case OVL_COPY:
-> +               ret = vfs_copy_file_range(real_in.file, pos_in,
-> +                                         real_out.file, pos_out, len, flags);
+On Mon, Apr 16, 2018 at 06:35:22PM -0600, Randy Wright wrote:
 
-Problem:
-vfs_copy_file_range(ovl_lower_file, ovl_upper_file) on non samefs
-will get -EXDEV from  ovl_copy_file_range(), so will not fall back
-to do_splice_direct().
-We may be better off checking in_sb != out_sb and returning
--EOPNOTSUPP? not sure.
+> ... I will plan to run the same test tomorrow on
+> a build of the SuSE 4.4.120-94.17 kernel, on which I had also reported
+> the original bug.
 
+I carried out the test on the older kernel today. I found the version of
+arch/x86/kernel/kexec-bzimage64.c in the SuSE kernel version
+4.4.120-94.17 was sufficiently different from the newer version that one
+chunk of the patch under discussion was rejected.  Specifically, the
+'struct kexec_buf kbuf' is not found in that older SuSE version of
+kexec-bzimage64.c.   But I made the same modification to the
+calculation of variable params_misc_sz in the older source, ran the same
+test, and there were no longer any warnings from early_ioremap.c.
 
-> +               break;
-> +
-> +       case OVL_CLONE:
-> +               ret = vfs_clone_file_range(real_in.file, pos_in,
-> +                                          real_out.file, pos_out, len);
-> +               break;
-> +
-> +       case OVL_DEDUPE:
-> +               ret = vfs_dedupe_file_range_one(real_in.file, pos_in, len,
-> +                                               real_out.file, pos_out);
-
-Problem:
-real_out can be a readonly fd (for is_admin), so we will be deduping
-the lower file.
-I guess this problem is mitigated in current code by may_write_real().
-
-How can we deal with that sort of "write leak" without patching
- mnt_want_write_file()?
-
-Thanks,
-Amir.
+-- 
+Randy Wright            Hewlett Packard Enterprise
+Phone: (970) 898-0998   Mail: rwright@hpe.com
