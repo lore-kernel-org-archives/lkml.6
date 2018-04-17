@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/8oJuz5XD1TBreY2nCRHeAmmW5luWx1FerMusxLTgDbX6SnrymT6lQrrPaPmV7RwCrW6Kc
-ARC-Seal: i=1; a=rsa-sha256; t=1523981149; cv=none;
+X-Google-Smtp-Source: AIpwx49EzAMoryHj/IO4GlYNbEwAChldOh8j4GEOfihbzlPjgPnsWWyCyFlZ5Pt01DeDP8h3qNtD
+ARC-Seal: i=1; a=rsa-sha256; t=1523981143; cv=none;
         d=google.com; s=arc-20160816;
-        b=UZl/bfElGRLduh2FB7IieukzVq9q1BYpV6F0sHMcq4w1hrV8fvOz7EbHaPKhTeeD12
-         +R0qtFZcWsYdQ7GZwrslG+Ny3m0pGcV1M/f6V78dCUFjeoVVpR+bD7PXHrn62pmzFeoh
-         i0Y9ygU7ZtxxST9pBMucQmCBJU04QaymsgHBWgd44CoMf70CsoBU9DdEbkEtBvMj9+dW
-         uHAe53lc3ZNcvpiH6T31NCKLjDs7+f3/SGdGJ3GL02CB8/ZKW4hHVNkNpAlydzxDj9ro
-         B2hIcbD6pEW45U6t3kkAYysNRgcffbjdeJn9VmqUKStwdgbPpmHBJbQK29nwwRASF1+G
-         +ZjA==
+        b=AXLP8H4qosvxnXfFlwmNKpIaoR1YN+VGZJEyd7mRX0qbLFOEGOfa+GA4y35euPmJCI
+         gPwa1HtOBekGTfzA7WCIVBIqH68tuHCLoNlYMz8bJuF6iI1WCJtxp7dt+04rQUrrdI+f
+         8PC/AJAF0ckAAN2OyOYdDrBnZ/cU1J/Yq0lMg5lA/tVbSs7TTFXd9qkxY0DdSOKNuVnH
+         sXKd7khOU5ZvCen711W0oobFDKIHA9pT0JK8TA4gaNMPYGwuY6rsBIs47YlmBhaMSQH5
+         SVJ3MFPeRxfSwGAOuDpKG64aspJUHAY3BQhZTSrzDzUPmlbTTwZWR+e3EohKkwcQE1DX
+         fQQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=GuPoM0Ex7VJOMHXlZvhTVOFU9VMwUjnynsKL5DI8VM0=;
-        b=DcsxXIxvpOvA+UF7npX2E2fEsdhM6Wd22haZ4atE/ni84q/xzlzVsBbUPd5adxepGE
-         3qCVajs7dzDi9Z6gsOc9NQCdsEIErid4j7DZbJGv+AfAPrTWQBP38yiwP7fG6whU9qKD
-         bBLyRKdZpVl/bNucqM0Q03+Bep+xvjq1QRdcHtFrILDjjq/XnZhXiUG0BCnK3gYU04eJ
-         UZM3X1ecq1eMd+h9shrasRl+CqB/emcVec8H5CYPI4dxuIeqeeMjjkVb/PqKEFQ7zKHY
-         2EEAUePfDTcuVBWma9I6nA1I0nydjNcRESYmHzIt5i6s2B6KwUbZLtD29q04PqZ0XrV4
-         SJAQ==
+        bh=HNmDiLV3pQtl4G4Fgjuc1DObfoPrT07/+5KXD6qDihE=;
+        b=VejC4fblEAWEH3WBf/pWQ7Pz6pM/l4OODGL60rfzlHEFa1XAddahIwEdBzcm/DxQ6e
+         vEOUDvmgZnWtJnoRixy2QkIkTKLYzOfSEUT8ZliEWHXNNhxkjscAgOWYKoO/OawwPgMT
+         KC35zeX3QE/7/PGX/xMzqqMnM+6fc+M4ePmjtIyWo3eCZzoK8a7Xt9Wza4okJkjjDHB8
+         SViuoUnhFD0WFAv8jyFEMlF4LHwmwb9eZDSfWCzLUvIz9dGEjAAp03WRksKeDoTa5Ylg
+         CcHc7JAyiqhzhKJGKgTmy1ZuIw1tjmOV557ABGUtzvKicGlTSRZeQeofyZg1b3M8iG1a
+         Ue+A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,21 +26,22 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.14 11/49] parisc: Fix HPMC handler by increasing size to multiple of 16 bytes
-Date: Tue, 17 Apr 2018 17:58:50 +0200
-Message-Id: <20180417155715.545576763@linuxfoundation.org>
+	Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+	syzbot+36b06f219f2439fe62e1@syzkaller.appspotmail.com,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.14 01/49] netfilter: ipset: Missing nfnl_lock()/nfnl_unlock() is added to ip_set_net_exit()
+Date: Tue, 17 Apr 2018 17:58:40 +0200
+Message-Id: <20180417155715.098569524@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009710354383751?=
-X-GMAIL-MSGID: =?utf-8?q?1598010057939963210?=
+X-GMAIL-THRID: =?utf-8?q?1598010006841981086?=
+X-GMAIL-MSGID: =?utf-8?q?1598010051909512816?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,46 +49,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 
-commit d5654e156bc4d68a87bbaa6d7e020baceddf6e68 upstream.
+commit f998b6b10144cd9809da6af02758615f789e8aa1 upstream.
 
-Make sure that the HPMC (High Priority Machine Check) handler is 16-byte
-aligned and that it's length in the IVT is a multiple of 16 bytes.
-Otherwise PDC may decide not to call the HPMC crash handler.
+Patch "netfilter: ipset: use nfnl_mutex_is_locked" is added the real
+mutex locking check, which revealed the missing locking in ip_set_net_exit().
 
-Signed-off-by: Helge Deller <deller@gmx.de>
-Cc: stable@vger.kernel.org
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Reported-by: syzbot+36b06f219f2439fe62e1@syzkaller.appspotmail.com
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/kernel/hpmc.S |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/netfilter/ipset/ip_set_core.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/parisc/kernel/hpmc.S
-+++ b/arch/parisc/kernel/hpmc.S
-@@ -84,6 +84,7 @@ END(hpmc_pim_data)
- 	.text
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -2055,6 +2055,7 @@ ip_set_net_exit(struct net *net)
  
- 	.import intr_save, code
-+	.align 16
- ENTRY_CFI(os_hpmc)
- .os_hpmc:
+ 	inst->is_deleted = true; /* flag for ip_set_nfnl_put */
  
-@@ -300,12 +301,15 @@ os_hpmc_6:
++	nfnl_lock(NFNL_SUBSYS_IPSET);
+ 	for (i = 0; i < inst->ip_set_max; i++) {
+ 		set = ip_set(inst, i);
+ 		if (set) {
+@@ -2062,6 +2063,7 @@ ip_set_net_exit(struct net *net)
+ 			ip_set_destroy_set(set);
+ 		}
+ 	}
++	nfnl_unlock(NFNL_SUBSYS_IPSET);
+ 	kfree(rcu_dereference_protected(inst->ip_set_list, 1));
+ }
  
- 	b .
- 	nop
-+	.align 16	/* make function length multiple of 16 bytes */
- ENDPROC_CFI(os_hpmc)
- .os_hpmc_end:
- 
- 
- 	__INITRODATA
-+.globl os_hpmc_size
- 	.align 4
--	.export os_hpmc_size
-+	.type   os_hpmc_size, @object
-+	.size   os_hpmc_size, 4
- os_hpmc_size:
- 	.word .os_hpmc_end-.os_hpmc
