@@ -1,96 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753368AbeDQXhV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 19:37:21 -0400
-Received: from victor.provo.novell.com ([137.65.250.26]:57832 "EHLO
-        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752728AbeDQXhH (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 17 Apr 2018 19:37:07 -0400
-From: Martin Wilck <mwilck@suse.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Reinecke <hare@suse.de>,
-        James Bottomley <jejb@linux.vnet.ibm.com>,
-        Xose Vazquez Perez <xose.vazquez@gmail.com>,
-        Bart Van Assche <Bart.VanAssche@sandisk.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Janusz Dziemidowicz <rraptorr@nails.eu.org>,
-        James Bottomley <JBottomley@Odin.com>, Kurt Garloff <garloff@suse.de>
-Subject: [PATCH v3 5/6] scsi: devinfo: add BLIST_RETRY_ITF for EMC Symmetrix
-Date: Wed, 18 Apr 2018 01:35:10 +0200
-Message-Id: <20180417233511.6573-6-mwilck@suse.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180417233511.6573-1-mwilck@suse.com>
-References: <20180417233511.6573-1-mwilck@suse.com>
+        id S1753421AbeDQXh0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 19:37:26 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:41092 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752728AbeDQXhX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 19:37:23 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0T.N9QRM_1524008232;
+Subject: Re: [RFC PATCH] fs: introduce ST_HUGE flag and set it to tmpfs and
+ hugetlbfs
+To: Matthew Wilcox <willy@infradead.org>
+Cc: viro@zeniv.linux.org.uk, nyc@holomorphy.com, mike.kravetz@oracle.com,
+        kirill.shutemov@linux.intel.com, hughd@google.com,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1523999293-94152-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180417232248.GA27631@bombadil.infradead.org>
+From: Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <6782cd11-48e5-6c12-db1c-9478ab37f77e@linux.alibaba.com>
+Date: Tue, 17 Apr 2018 16:37:11 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180417232248.GA27631@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-EMC Symmetrix returns 'internal target error' for a variety
-of conditions, most of which will be transient.
-So we should always retry it, even with failfast set.
-Otherwise we'd get spurious path flaps with multipath.
 
-Signed-off-by: Martin Wilck <mwilck@suse.com>
----
- drivers/scsi/scsi_devinfo.c | 3 ++-
- drivers/scsi/scsi_error.c   | 4 ++++
- include/scsi/scsi_devinfo.h | 4 +++-
- 3 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/scsi_devinfo.c b/drivers/scsi/scsi_devinfo.c
-index c05843a..f7b94c1 100644
---- a/drivers/scsi/scsi_devinfo.c
-+++ b/drivers/scsi/scsi_devinfo.c
-@@ -161,7 +161,8 @@ static struct {
- 	{"DGC", "RAID", NULL, BLIST_SPARSELUN},	/* EMC CLARiiON, storage on LUN 0 */
- 	{"DGC", "DISK", NULL, BLIST_SPARSELUN},	/* EMC CLARiiON, no storage on LUN 0 */
- 	{"EMC",  "Invista", "*", BLIST_SPARSELUN | BLIST_LARGELUN},
--	{"EMC", "SYMMETRIX", NULL, BLIST_SPARSELUN | BLIST_LARGELUN | BLIST_REPORTLUN2},
-+	{"EMC", "SYMMETRIX", NULL, BLIST_SPARSELUN | BLIST_LARGELUN |
-+	 BLIST_REPORTLUN2 | BLIST_RETRY_ITF},
- 	{"EMULEX", "MD21/S2     ESDI", NULL, BLIST_SINGLELUN},
- 	{"easyRAID", "16P", NULL, BLIST_NOREPORTLUN},
- 	{"easyRAID", "X6P", NULL, BLIST_NOREPORTLUN},
-diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
-index ac3b1c3..1dee91f 100644
---- a/drivers/scsi/scsi_error.c
-+++ b/drivers/scsi/scsi_error.c
-@@ -38,6 +38,7 @@
- #include <scsi/scsi_host.h>
- #include <scsi/scsi_ioctl.h>
- #include <scsi/scsi_dh.h>
-+#include <scsi/scsi_devinfo.h>
- #include <scsi/sg.h>
- 
- #include "scsi_priv.h"
-@@ -524,6 +525,9 @@ int scsi_check_sense(struct scsi_cmnd *scmd)
- 		if (sshdr.asc == 0x10) /* DIF */
- 			return SUCCESS;
- 
-+		if (sshdr.asc == 0x44 && sdev->sdev_bflags & BLIST_RETRY_ITF)
-+			return ADD_TO_MLQUEUE;
-+
- 		return NEEDS_RETRY;
- 	case NOT_READY:
- 	case UNIT_ATTENTION:
-diff --git a/include/scsi/scsi_devinfo.h b/include/scsi/scsi_devinfo.h
-index 3434e14..91a327e 100644
---- a/include/scsi/scsi_devinfo.h
-+++ b/include/scsi/scsi_devinfo.h
-@@ -63,8 +63,10 @@
- #define BLIST_MAX_1024		((__force blist_flags_t)(1ULL << 30))
- /* Use UNMAP limit for WRITE SAME */
- #define BLIST_UNMAP_LIMIT_WS	((__force blist_flags_t)(1ULL << 31))
-+/* Always retry ABORTED_COMMAND with Internal Target Failure */
-+#define BLIST_RETRY_ITF		((__force blist_flags_t)(1ULL << 32))
- 
--#define __BLIST_LAST_USED BLIST_UNMAP_LIMIT_WS
-+#define __BLIST_LAST_USED BLIST_RETRY_ITF
- 
- #define __BLIST_HIGH_UNUSED (~(__BLIST_LAST_USED | \
- 			       (__force blist_flags_t) \
--- 
-2.16.1
+On 4/17/18 4:22 PM, Matthew Wilcox wrote:
+> On Wed, Apr 18, 2018 at 05:08:13AM +0800, Yang Shi wrote:
+>> When applications use huge page on hugetlbfs, it just need check the
+>> filesystem magic number, but it is not enough for tmpfs. So, introduce
+>> ST_HUGE flag to statfs if super block has SB_HUGE set which indicates
+>> huge page is supported on the specific filesystem.
+> Hm.  What's the plan for communicating support for page sizes other
+> than PMD page sizes?  I know ARM has several different page sizes,
+> as do PA-RISC and ia64.  Even x86 might support 1G page sizes through
+> tmpfs one day.
+
+For THP page size, we already have 
+/sys/kernel/mm/transparent_hugepage/hpage_pmd_size exported. The 
+applications could read this to get the THP size. If PUD size THP 
+supported is added later, we can export hpage_pud_size.
+
+Please see the below commit log for more details:
+
+commit 49920d28781dcced10cd30cb9a938e7d045a1c94
+Author: Hugh Dickins <hughd@google.com>
+Date:   Mon Dec 12 16:44:50 2016 -0800
+
+     mm: make transparent hugepage size public
+
+     Test programs want to know the size of a transparent hugepage. While it
+     is commonly the same as the size of a hugetlbfs page (shown as
+     Hugepagesize in /proc/meminfo), that is not always so: powerpc
+     implements transparent hugepages in a different way from hugetlbfs
+     pages, so it's coincidence when their sizes are the same; and x86 and
+     others can support more than one hugetlbfs page size.
+
+     Add /sys/kernel/mm/transparent_hugepage/hpage_pmd_size to show the THP
+     size in bytes - it's the same for Anonymous and Shmem hugepages.  Call
+     it hpage_pmd_size (after HPAGE_PMD_SIZE) rather than hpage_size, in 
+case
+     some transparent support for pud and pgd pages is added later.
+
+
+Thanks,
+Yang
