@@ -1,85 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751970AbeDQAbP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 20:31:15 -0400
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:33856 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751218AbeDQAbN (ORCPT
+        id S1751893AbeDQAf1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 20:35:27 -0400
+Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:5750 "EHLO
+        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750972AbeDQAf0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 20:31:13 -0400
-X-Google-Smtp-Source: AIpwx498HJhdQTc5/FjUGHOHvdKrYDywVB8Awp0ZbZoccsUt/62ab7ksbmO9gDEPz+95S32zqmp1og==
-Date: Tue, 17 Apr 2018 03:31:09 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Thomas Garnier <thgarnie@google.com>
-Cc: Kees Cook <keescook@chromium.org>, tytso@mit.edu,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>
-Subject: Re: repeatable boot randomness inside KVM guest
-Message-ID: <20180417003109.GA10597@avx2>
-References: <20180414195921.GA10437@avx2>
- <20180414224419.GA21830@thunk.org>
- <CAGXu5j+qQE-MmpB7xq6z_SsXm9AhJe2QQAEVQnenYD=iLzJqWQ@mail.gmail.com>
- <CAJcbSZGpqZB2OjqdjoPtoUJrNw9nmms+U=CKvOLLptqjBn=YMQ@mail.gmail.com>
+        Mon, 16 Apr 2018 20:35:26 -0400
+Date: Mon, 16 Apr 2018 18:35:22 -0600
+From: Randy Wright <rwright@hpe.com>
+To: joeyli <jlee@suse.com>
+Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>, linux-efi@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Takashi Iwai <tiwai@suse.de>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        akpm@linux-foundation.org, Vivek Goyal <vgoyal@redhat.com>,
+        Dave Young <dyoung@redhat.com>
+Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
+ memory map
+Message-ID: <20180417003522.GA2741@rfwz>
+Reply-To: rwright@hpe.com
+References: <20180413062716.8040-1-jlee@suse.com>
+ <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
+ <20180416030904.GB26685@dhcp-128-65.nay.redhat.com>
+ <20180416063738.GH16023@linux-l9pv.suse>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJcbSZGpqZB2OjqdjoPtoUJrNw9nmms+U=CKvOLLptqjBn=YMQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180416063738.GH16023@linux-l9pv.suse>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 04:15:44PM +0000, Thomas Garnier wrote:
-> On Mon, Apr 16, 2018 at 8:54 AM Kees Cook <keescook@chromium.org> wrote:
+On Mon, Apr 16, 2018 at 02:37:38PM +0800, joeyli wrote:
+> Hi Randy,
+> ...
+> Randy, do you want to try Dave's kexec patch on your environment? Please remove
+> my patch first.  
 > 
-> > On Sat, Apr 14, 2018 at 3:44 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> > > +linux-mm@kvack.org
-> > > kvm@vger.kernel.org, security@kernel.org moved to bcc
-> > >
-> > > On Sat, Apr 14, 2018 at 10:59:21PM +0300, Alexey Dobriyan wrote:
-> > >> SLAB allocators got CONFIG_SLAB_FREELIST_RANDOM option which randomizes
-> > >> allocation pattern inside a slab:
-> > >>
-> > >>       int cache_random_seq_create(struct kmem_cache *cachep, unsigned
-> int count, gfp_t gfp)
-> > >>       {
-> > >>               ...
-> > >>               /* Get best entropy at this stage of boot */
-> > >>               prandom_seed_state(&state, get_random_long());
-> > >>
-> > >> Then I printed actual random sequences for each kmem cache.
-> > >> Turned out they were all the same for most of the caches and
-> > >> they didn't vary across guest reboots.
-> > >
-> > > The problem is at the super-early state of the boot path, kernel code
-> > > can't allocate memory.  This is something most device drivers kinda
-> > > assume they can do.  :-)
-> > >
-> > > So it means we haven't yet initialized the virtio-rng driver, and it's
-> > > before interrupts have been enabled, so we can't harvest any entropy
-> > > from interrupt timing.  So that's why trying to use virtio-rng didn't
-> > > help.
-> > >
-> > >> The only way to get randomness for SLAB is to enable RDRAND inside
-> guest.
-> > >>
-> > >> Is it KVM bug?
-> > >
-> > > No, it's not a KVM bug.  The fundamental issue is in how the
-> > > CONFIG_SLAB_FREELIST_RANDOM is currently implemented.
-> 
-> Entropy at early boot in VM has always been a problem for this feature or
-> others. Did you look at the impact on other boot security features fetching
-> random values? Does your VM had RDRAND support (we use get_random_long()
-> which will fetch from RDRAND to provide as much entropy as possible at this
-> point)?
+> Thanks a lot!
+> Joey Lee
 
-The problem is that "qemu-system-x86_64" by default doesn't use RDRAND nor
-does it use entropy from the host to bootstrap. You need "-cpu host" or
-equivalent.
+Hi Joey, 
 
-Given that DMI strings are acting as a seed and fixed creation order of
-core kernel caches those SLAB randomization sequences may be globally
-the same (I didn't check) or draw from a small set.
+I tried Dave's patch to kexec-bzimage64.c on my build of the SuSE
+4.12.14-15 kernel.   I ran the same test as I did with your patch: I
+verified the early_ioremap.c warnings occurred with a crash triggered
+from a kexec boot of the unmodified kernel. Then I applied the patch to
+kexec-bzimage64.c, rebuilt, re-ran the test to crash from the kexec'ed
+kernel, and verified the warnings are no longer seen.
 
-And of course there will be users which don't use RDRAND because it is
-NSA backdoor.
+I'm out of time today, but I will plan to run the same  test tomorrow on
+a build of the SuSE 4.4.120-94.17 kernel, on which I had also reported
+the original bug.
+
+-- 
+Randy Wright            Hewlett Packard Enterprise
+Phone: (970) 898-0998   Mail: rwright@hpe.com
