@@ -1,94 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753136AbeDQPXa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:23:30 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59863 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751836AbeDQPX3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:23:29 -0400
-Date: Tue, 17 Apr 2018 08:23:22 -0700
-From: tip-bot for Baolin Wang <tipbot@zytor.com>
-Message-ID: <tip-e142aa09ed88be98395dde7acb96fb2263566b68@git.kernel.org>
-Cc: tglx@linutronix.de, baolin.wang@linaro.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: tglx@linutronix.de, mingo@kernel.org, baolin.wang@linaro.org,
-        hpa@zytor.com, linux-kernel@vger.kernel.org
-In-Reply-To: <1a9dbea7ee2cda7efe9ed330874075cf17fdbff6.1523596316.git.baolin.wang@linaro.org>
-References: <1a9dbea7ee2cda7efe9ed330874075cf17fdbff6.1523596316.git.baolin.wang@linaro.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] timekeeping: Remove __current_kernel_time()
-Git-Commit-ID: e142aa09ed88be98395dde7acb96fb2263566b68
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752546AbeDQP1B (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:27:01 -0400
+Received: from mga14.intel.com ([192.55.52.115]:61296 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750741AbeDQP1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 11:27:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
+   d="scan'208";a="47649187"
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Souptick Joarder <jrdr.linux@gmail.com>,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH] gpu: drm: i915: Change return type to vm_fault_t
+In-Reply-To: <20180417151127.GA31655@jordon-HP-15-Notebook-PC>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20180417151127.GA31655@jordon-HP-15-Notebook-PC>
+Date: Tue, 17 Apr 2018 18:29:41 +0300
+Message-ID: <87h8o9g8be.fsf@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e142aa09ed88be98395dde7acb96fb2263566b68
-Gitweb:     https://git.kernel.org/tip/e142aa09ed88be98395dde7acb96fb2263566b68
-Author:     Baolin Wang <baolin.wang@linaro.org>
-AuthorDate: Fri, 13 Apr 2018 13:27:58 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 17 Apr 2018 17:18:05 +0200
+On Tue, 17 Apr 2018, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+>
+> Reference id -> 1c8f422059ae ("mm: change return type to
+> vm_fault_t")
+>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
+>  drivers/gpu/drm/i915/i915_drv.h |  3 ++-
+>  drivers/gpu/drm/i915/i915_gem.c | 15 ++++++++-------
+>  2 files changed, 10 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+> index a42deeb..95b0d50 100644
+> --- a/drivers/gpu/drm/i915/i915_drv.h
+> +++ b/drivers/gpu/drm/i915/i915_drv.h
+> @@ -51,6 +51,7 @@
+>  #include <drm/drm_gem.h>
+>  #include <drm/drm_auth.h>
+>  #include <drm/drm_cache.h>
+> +#include <linux/mm_types.h>
+>
+>  #include "i915_params.h"
+>  #include "i915_reg.h"
+> @@ -3363,7 +3364,7 @@ int i915_gem_wait_for_idle(struct drm_i915_private *dev_priv,
+>  			   unsigned int flags);
+>  int __must_check i915_gem_suspend(struct drm_i915_private *dev_priv);
+>  void i915_gem_resume(struct drm_i915_private *dev_priv);
+> -int i915_gem_fault(struct vm_fault *vmf);
+> +vm_fault_t i915_gem_fault(struct vm_fault *vmf);
+>  int i915_gem_object_wait(struct drm_i915_gem_object *obj,
+>  			 unsigned int flags,
+>  			 long timeout,
+> diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
+> index dd89abd..bdac690 100644
+> --- a/drivers/gpu/drm/i915/i915_gem.c
+> +++ b/drivers/gpu/drm/i915/i915_gem.c
+> @@ -1882,7 +1882,7 @@ int i915_gem_mmap_gtt_version(void)
+>   * The current feature set supported by i915_gem_fault() and thus GTT mmaps
+>   * is exposed via I915_PARAM_MMAP_GTT_VERSION (see i915_gem_mmap_gtt_version).
+>   */
+> -int i915_gem_fault(struct vm_fault *vmf)
+> +vm_fault_t i915_gem_fault(struct vm_fault *vmf)
+>  {
+>  #define MIN_CHUNK_PAGES ((1 << 20) >> PAGE_SHIFT) /* 1 MiB */
+>  	struct vm_area_struct *area = vmf->vma;
+> @@ -1895,6 +1895,7 @@ int i915_gem_fault(struct vm_fault *vmf)
+>  	pgoff_t page_offset;
+>  	unsigned int flags;
+>  	int ret;
+> +	vm_fault_t retval;
 
-timekeeping: Remove __current_kernel_time()
+What's the point of changing the name? An unnecessary change.
 
-The __current_kernel_time() function based on 'struct timespec' is no
-longer recommended for new code, and the only user of this function has
-been replaced by commit 6909e29fdefb ("kdb: use __ktime_get_real_seconds
-instead of __current_kernel_time").
+BR,
+Jani.
 
-Remove the obsolete interface.
+>
+>  	/* We don't use vmf->pgoff since that has the fake offset */
+>  	page_offset = (vmf->address - area->vm_start) >> PAGE_SHIFT;
+> @@ -2000,7 +2001,7 @@ int i915_gem_fault(struct vm_fault *vmf)
+>  		 * and so needs to be reported.
+>  		 */
+>  		if (!i915_terminally_wedged(&dev_priv->gpu_error)) {
+> -			ret = VM_FAULT_SIGBUS;
+> +			retval = VM_FAULT_SIGBUS;
+>  			break;
+>  		}
+>  	case -EAGAIN:
+> @@ -2017,21 +2018,21 @@ int i915_gem_fault(struct vm_fault *vmf)
+>  		 * EBUSY is ok: this just means that another thread
+>  		 * already did the job.
+>  		 */
+> -		ret = VM_FAULT_NOPAGE;
+> +		retval = VM_FAULT_NOPAGE;
+>  		break;
+>  	case -ENOMEM:
+> -		ret = VM_FAULT_OOM;
+> +		retval = VM_FAULT_OOM;
+>  		break;
+>  	case -ENOSPC:
+>  	case -EFAULT:
+> -		ret = VM_FAULT_SIGBUS;
+> +		retval = VM_FAULT_SIGBUS;
+>  		break;
+>  	default:
+>  		WARN_ONCE(ret, "unhandled error in i915_gem_fault: %i\n", ret);
+> -		ret = VM_FAULT_SIGBUS;
+> +		retval = VM_FAULT_SIGBUS;
+>  		break;
+>  	}
+> -	return ret;
+> +	return retval;
+>  }
+>
+>  static void __i915_gem_object_release_mmap(struct drm_i915_gem_object *obj)
+> --
+> 1.9.1
+>
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: arnd@arndb.de
-Cc: sboyd@kernel.org
-Cc: broonie@kernel.org
-Cc: john.stultz@linaro.org
-Link: https://lkml.kernel.org/r/1a9dbea7ee2cda7efe9ed330874075cf17fdbff6.1523596316.git.baolin.wang@linaro.org
-
----
- include/linux/timekeeping32.h | 3 ---
- kernel/time/timekeeping.c     | 7 -------
- 2 files changed, 10 deletions(-)
-
-diff --git a/include/linux/timekeeping32.h b/include/linux/timekeeping32.h
-index af4114d5dc17..3616b4becb59 100644
---- a/include/linux/timekeeping32.h
-+++ b/include/linux/timekeeping32.h
-@@ -9,9 +9,6 @@
- extern void do_gettimeofday(struct timeval *tv);
- unsigned long get_seconds(void);
- 
--/* does not take xtime_lock */
--struct timespec __current_kernel_time(void);
--
- static inline struct timespec current_kernel_time(void)
- {
- 	struct timespec64 now = current_kernel_time64();
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index ca90219a1e73..dcf7f20fcd12 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2139,13 +2139,6 @@ unsigned long get_seconds(void)
- }
- EXPORT_SYMBOL(get_seconds);
- 
--struct timespec __current_kernel_time(void)
--{
--	struct timekeeper *tk = &tk_core.timekeeper;
--
--	return timespec64_to_timespec(tk_xtime(tk));
--}
--
- struct timespec64 current_kernel_time64(void)
- {
- 	struct timekeeper *tk = &tk_core.timekeeper;
+-- 
+Jani Nikula, Intel Open Source Technology Center
