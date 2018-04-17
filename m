@@ -1,62 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752876AbeDQPMG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:12:06 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:48922 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752199AbeDQPMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:12:05 -0400
-Subject: Re: [PATCH v2] X.509: unpack RSA signatureValue field from BIT STRING
-To: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20180417134032epcas3p21dbb2d3a6d8650cd64e147d2ce89e6ea@epcas3p2.samsung.com>
- <6f5cdb8a-809e-6651-0e32-711d415a8b38@maciej.szmigiero.name>
- <f29df54e-48e1-12e0-f2d2-fd8353cc445f@partner.samsung.com>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Message-ID: <7497a6f6-b9fc-a249-a6c8-42ff2723aa4a@maciej.szmigiero.name>
-Date: Tue, 17 Apr 2018 17:11:54 +0200
+        id S1752871AbeDQPMh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:12:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44274 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752078AbeDQPMg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 11:12:36 -0400
+Subject: Re: [PATCH v4 05/15] KVM: s390: enable/disable AP interpretive
+ execution
+To: Halil Pasic <pasic@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        akrowiak@linux.vnet.ibm.com
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <dbd7a1fa-a5c4-a931-5606-e9e2301589f2@linux.vnet.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Tue, 17 Apr 2018 11:11:53 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <f29df54e-48e1-12e0-f2d2-fd8353cc445f@partner.samsung.com>
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-US
+In-Reply-To: <dbd7a1fa-a5c4-a931-5606-e9e2301589f2@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041715-0008-0000-0000-000002F8FDDD
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008871; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01019261; UDB=6.00519973; IPR=6.00798503;
+ MB=3.00020618; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 15:11:58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041715-0009-0000-0000-000038EF4787
+Message-Id: <71625879-b5cd-ee0a-8259-0ac1e1eb5180@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170135
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.04.2018 17:07, Kamil Konieczny wrote:
-> 
-> 
-> On 17.04.2018 15:39, Maciej S. Szmigiero wrote:
->> The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
->> For RSA signatures this BIT STRING is of so-called primitive subtype, which
->> contains a u8 prefix indicating a count of unused bits in the encoding.
+On 04/16/2018 07:12 AM, Halil Pasic wrote:
+>
+> On 04/15/2018 11:22 PM, Tony Krowiak wrote:
+>> The VFIO AP device model exploits interpretive execution of AP
+>> instructions (APIE) to provide guests passthrough access to AP
+>> devices. This patch introduces a new interface to enable and
+>> disable APIE.
 >>
->> We have to strip this prefix from signature data, just as we already do for
->> key data in x509_extract_key_data() function.
->>
->> This wasn't noticed earlier because this prefix byte is zero for RSA key
->> sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
->> prefixes has no bearing on its value.
->>
->> The signature length, however was incorrect, which is a problem for RSA
->> implementations that need it to be exactly correct (like AMD CCP).
->>
->> Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-> 
-> your e-mail address looks incorrect
-> 
-> [...]
-> 
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> LGTM, but should be squashed into #4. (Like this you have a
+> kernel that supports the cpu model feature 'ap' but does not
+> do 'interpretation is default'.)
 
-What's wrong with it?
-
-Maciej
+Okay
