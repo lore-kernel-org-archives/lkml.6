@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752690AbeDQJDZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 05:03:25 -0400
-Received: from mail-eopbgr40050.outbound.protection.outlook.com ([40.107.4.50]:61600
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        id S1752716AbeDQJDb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 05:03:31 -0400
+Received: from mail-he1eur01on0042.outbound.protection.outlook.com ([104.47.0.42]:47712
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752067AbeDQJDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 05:03:18 -0400
+        id S1752609AbeDQJD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 05:03:26 -0400
 From: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
 To: andrew@lunn.ch, robh@kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org, mark.rutland@arm.com,
         davem@davemloft.net, marcel@holtmann.org, devicetree@vger.kernel.org
 Cc: alexandru.marginean@nxp.com, madalin.bucur@nxp.com,
         vicentiu.galanopulo@nxp.com
-Subject: [PATCH net-next 1/3] net: phy: Add binding for vendor specific C45 MDIO address space
-Date: Tue, 17 Apr 2018 04:02:31 -0500
-Message-Id: <20180417090233.21548-2-vicentiu.galanopulo@nxp.com>
+Subject: [PATCH net-next 3/3] net: phy: Enable C45 PHYs with vendor specific address space
+Date: Tue, 17 Apr 2018 04:02:33 -0500
+Message-Id: <20180417090233.21548-4-vicentiu.galanopulo@nxp.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180417090233.21548-1-vicentiu.galanopulo@nxp.com>
 References: <20180417090233.21548-1-vicentiu.galanopulo@nxp.com>
@@ -29,48 +29,48 @@ X-ClientProxiedBy: MWHPR12CA0056.namprd12.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4116;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;3:aj5ioLW+YNcBcY6S6K9phgChaBHo66iRGGveM+x8pNadu5AtVQ76K8TnDa0oeQ9CCKbrJk2HPm6IMDeyiILRWeQKkiI/X5gKhLmsR8QqBY8rpJ7iW+WokViPwSTj8cKtJ9l/Q5MVLx04WW+w9QtckzdA70t30YVHzK5AC2b6LomfrLJ0lcvKrLrh4YdS3MzqIMjHuZjE78TUgIxZZlb0QLxp7dheX2xx708OmUKLOxV3ytx0bDsvyrZtF/LBG22/;25:2jutc/7ca9QVb76TeJ7nIsrEBxA0kPZg0Var06xoug2SF6UuINudQxH4Odp9+1ZcpQfZvyK4X6g3zKRdSwQxnoPMv1U/GOZcXa7N3U+n7AnD96ByNSrrdEpNqYG6w0lYcDvrb/9DSzDpecizStgHeGxcFJiTXW1ik+YPgReWXmgyOH11XXdYHX67Ox7djxj1Glf6Iak1C6zexsNUmz4HRf4v8qeNDu0G0ZgDLXQQQi7VUq1t5jEapvbin+8YY48F7W5NgnFBYmGkz+UXSQ70Q8Jrfp/Oy/U6NjRg4+FjoFqc0jk536xClLCVglle3+dWwW6XUUPdHHUWzUOtQn5mRw==;31:f6SI9IZGDVXs0aRKQdxyh6InWD5ka5A08MsB3tgt7HDC4L2j0qMhv4gtT72cmYtJAtPviI933yNKtCl5bUgbpn4liyC2e4WpeYEjCPI6DQG3sxwv6RmBkV4YdQyEzs3TAFEzwa7mF0NmbnhF+syd4TQ9ldg8L9aGv+Etaot0RRR/cXWd55ttM4xudxLnATzZv/kIuQZbxnTaTJy21HWNl1F6oLENXBgx+BturcLFYxM=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;3:QmfzAaEBmq0DHQPuYkQwx90we+QEOJaVxvHxSm+K2gr8HtbtU3to6d8IhZkb3E/c7VXzm5cqAInQo1NgCVWD0yvkPPo3l4hBAfyomNqnTHcwVYOljPAbFE42MKfl2aTFIhTAipWAD6+dcwjDLfv+O8kBHH6TgvH/8kpc1oma5XyowsIMwbzqGUx7u+Aa6uFWZLB2nQ++uxwYivhc3BocTxEqPAkwHKomjIOyAd+16gtw5cRv14BQufvhvA8//Asz;25:3uD9VhFbaLvThsUdQaEGWbzCF0oJsntlpOVt+qNUAtUaGezNVyG8gwEjUQigqfzcsaarxMTPJX2P2VklhCKqVIq4Vn3CDYXloluLkqEdpNXrXzYqKbuKUz2K0sbMgHPC6mU0v9T8hNapK0sUWWoS+p0F++CAyB2kzuk8aySBPvKB0P9kLvqj65M+GQXICQoVv8kZb96V1zeUjccusnsa0CO7pVVE84ms7FD2q8OHfoNExr+vucIPM0hRci7AOVRypc5uPU8LcQD7wz93D3loACsTBMYiSuVUMI0SmGw51wK/s2xTnM8gjEHGVp61ehgeG7u+j1Se/XQBQrm+PMk6UQ==;31:5wT3PxrFHzRsT1uMeek21auROw5hPBuBBwI2j7x/xr+IbszZIn1o5Vf756+pBctPaoGnYCemUkrJbHsrCAwOBwWqCGHqeWlgPU4BD+7dU3I89z+wgnbnL6OPg+lVJDK5WlcOHVFx/ecpJsVwHRLOPYgIm8Om5AlkUKgnPOP2AwOlu/JqAwnwRuoQQIGQS3vOulS08stVWjMWgw4tX37W/4lhwjI1azstKqXOaVTst7I=
 X-MS-TrafficTypeDiagnostic: AM0PR04MB4116:
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=vicentiu.galanopulo@nxp.com;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;20:v4lGqkDhF+gKEgMW2rDGxOkZj7wKkozFbpg1LlaIRWO8PaRQz5Fx/gNY1fRKN+jptmShxQxzsfnqQU914Rz5vwboi0B/uaN9A6YdGxuukLWgtiHA3QqR30aAZxXoAB2LDDZ/tv785m9y1Fr0e6JL7QNfGXOzEC0J9b3cMZaH8qQrYBHmH187je/FzOaKqK19Rxpl7AjF1TnGBRwBlS6ksqoQhaKKEb2QUR8/IUP+OuQQsHcYJ5+f2U8gaw12gMv767Qv+t0sF+Nc/bJlRq7tbrswYRwqFOxV0qQTYy6FFe4Te/yDY6Dx4CT1D+yTJY+pbgF2z0OJEA7JeaZy0Q+W6BUA4BAVwd62vX46P/m1Pe4c2/3bPQ5WUS7aUk9Vs9CVOZKmn0d9jrCXG5uyK2HNSK9YQ7EklNzVRz5CjN8kdATv91fRqm16+Xs6e7oDlEdiwuGZErnfpemRI7z/BmV1PAv9Vjd0sohkzcdXOgWYIENJOWCwFJxwfSqbmxOb5P+N;4:8GKfhfY42yq74U2QhM5NiYNyrYINITRzX0LhGk8Ct8XcdfrtpVBVaO8wtWNqLXu+kK50gLbe0ilv020lAMJZGxaq98+97IG7o8xJDo//zyWG/B1JLBov9exrW6ndk9UNaIZv5agPEscHTTeKKGmT2SfctUmecp0okXw7hWRbdeg+91x0xJaXIEVlZYLRO2JhP4TOMo1MQ4WIvyXRtJn7PUInAzu1QN8Ov1Pse4RDNuliZVMtF0a+fnoeR8SPqAMo5VJfVkBKqgZIQfvqVm9aXlsQ6jrxgpkFGGcUao0sNU6qq7yOWSwIzjOV4GsjbIFA
-X-Microsoft-Antispam-PRVS: <AM0PR04MB4116D4F86F943768B40835B1EEB70@AM0PR04MB4116.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;20:EjiM5VJOrLpBmUG6Kk1JFcdXmylRn89/W2WHa/I8CACd3c+JilRMwG4PuTVPSd8tlYGkYGV/3rf5swV30N2eptB+Rr9+p8Y9IUyYPjAGo9BJRVgA2IYFdJNbggL1yoWwpyWXWznFvH+RqFkgMuWTTpjZw8QrfIzYQ9xUzcW3Ct9qmxBVSCvHvi+kl44lITFtwuIbSXpmNFkrT2ZGG6fY6vDLtsudJCLzi1e6B4ghRwSdEkNBrovKUXM+RfsV/SgQ46M8uBFVVzUKCpSD0jnfc3oufYFgdw3glFXcv8nZZZoBI7uA7rjnyt9/sbgFbfAJc2/Z0+z73XNQ5gVx6z2hZ3c5+czYgJBhI0vpjW1dhSyPbnhh4NPwUD8+Q9ZN+HJ3a4pEHQMJN79yFUWMt8LQCmX0njh/Wv94N8+2tsmCBwCRsHeDqBpY2CkoQJ1LFKPAWCEwt74Ow+/JsfmuHmCZhxpmPj/YWeZsbEEAPe2FXlLHCLraRrzQmp0PkMhC5VeH;4:07JgzifiqBBPCgHex6Tr6fAhUp6L/PXgN8jTFxpuu2KQU4FYYqaKZ57VVoAoagXKVTEhoRS/cLbyNP23Mnkhxa9KxNZPmyD+SYxB8oghf909S9RV5xh9hpg8zwa3ZZaqHNcfrUhu5QNbmqONcGc8kVZQbkGv3pxT0kkWxkE7rhaNyJtMxyYylHDNzs/xYslxtd3kHtwNQX0avB+cukHi3UfibcWbSw0IrqB7ebdQnmuJuOI5r/D8gifjkJ7UNJXfWeRAQ0xVwniUSczz4E5HrpJaM4XvMFbNF6s4VSXHnWjErm+KizYea4GkEsOZcdn1
+X-Microsoft-Antispam-PRVS: <AM0PR04MB411651D7AF6522BCEDC1A92BEEB70@AM0PR04MB4116.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231232)(944501359)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:AM0PR04MB4116;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4116;
 X-Forefront-PRVS: 0645BEB7AA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(39380400002)(376002)(366004)(39860400002)(346002)(396003)(189003)(199004)(956004)(6506007)(11346002)(47776003)(105586002)(50226002)(305945005)(16526019)(8676002)(81166006)(81156014)(8936002)(2906002)(48376002)(68736007)(25786009)(50466002)(478600001)(386003)(97736004)(66066001)(6116002)(106356001)(316002)(16586007)(52116002)(3846002)(53936002)(36756003)(51416003)(1076002)(186003)(76176011)(6512007)(4326008)(44832011)(446003)(2616005)(486006)(476003)(7736002)(5660300001)(43066004)(3450700001)(86362001)(6666003)(6486002)(26005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4116;H:rhuath.am.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4116;23:+JPviFq+prkjsUv6psaq7vcbAFUKOrC8s73IZUtnm?=
- =?us-ascii?Q?lyhtaJSV4nN9ZeJ1hQa7Uccy1Irm2XvhSddg2lYbGLPzWsUS473Xxyph+gJQ?=
- =?us-ascii?Q?AWzBkOPpT2N0htYmXdhzgKydkavanlsxPuA8iD04oUKy4UimqDQdKyQeqaf1?=
- =?us-ascii?Q?J15Qi5okK5/Exr9fM7skqJ7l1v6uN/Sik5qMqXj5/RLC/t4hfb3JkJFvn/tO?=
- =?us-ascii?Q?Mq+BtH9kUgtF+Vsu9S1bulTHMuhzawH/VDplZ3gSjMe0DNKg5Oo1WazSW3+p?=
- =?us-ascii?Q?BuZilmEWFYwO+d64ojpbkrybmKDIV17p//ndl9KLvSya8oER3QcrZMECK+o3?=
- =?us-ascii?Q?d/TAiMvP9heEJVux++l+412hfItUyL/1d3NOAfNXqbNO5gC3RlboC7iCcxJQ?=
- =?us-ascii?Q?Vtqx9QLM1zgfS6umj6BYAfyQwoNjUTqRcMDRbo3n42VNwokuXMVbrpUK0T59?=
- =?us-ascii?Q?fFZJHSycpYMWYEdxYCKXu2xbRlrTE6Izz2qsvNV9NYnsh0rpATrDPrqGLTvc?=
- =?us-ascii?Q?kGV9/nc8DkwwZPTmI7qSZOJ3VMZWxuRi2Imc1a6paG28fIvqu8/9kuuDyRX1?=
- =?us-ascii?Q?s+04savItKP2IUr7CnmAJd+qWjJq5SKtrMbAtELG/XnKk2Wyjy0aWF1iPihx?=
- =?us-ascii?Q?uvlV0W4va/QzVQNxEPWDE61GE7TKg2jy8AV5MF6zCTubJIa3QCu2gMbEbJSp?=
- =?us-ascii?Q?QPzl0UFOj81fHb9UVF+QR3wPqgtGoy8+7NFtEcYfXkRYB//H8hHJYyY4CbkS?=
- =?us-ascii?Q?g1Jhcpuc0ukCqKIcZEAo/edinVU6Pyw6pT3SxuFU7Gdo8GcNP/UaGMEaW/+H?=
- =?us-ascii?Q?PRXFbRVwtTX+P4ntzRB+UMqLrCXwOj1a18qjFkx5EXCwkPWmupMbB+eGV8P0?=
- =?us-ascii?Q?IGapBwjfDR1RmcaBdJLp21c518G3+zqMk/kpxwq57Kb8zxSlnuYvDXGxGTq8?=
- =?us-ascii?Q?8rAWeiYI0FfyV1MS5SZs0qoUmRf8wjsCXY+70rnPX94/QCmGIriFoLA6U7Fe?=
- =?us-ascii?Q?xnVqu2Q3xc7kv0DrS8RcqnqXLMRwmUr5lIrV7ZU5G1F3CFV+gNCjq6ziieZZ?=
- =?us-ascii?Q?T459X/CQDKX0/kYp8fd1FMrBDcvAgnWEi3UsYNcVT2o7AFjidBkPP64grzTv?=
- =?us-ascii?Q?0o8v5EpcJP0WjTjmbFpddX17rlwmety/dckWgooleZaa+UvybcBgT3YyArG1?=
- =?us-ascii?Q?tK2dN7xNzJ51rJDRtCIGS3C2qjfTzuUcgTkZc2IuaDrZawpb0RuqW2Sf0Y+r?=
- =?us-ascii?Q?DWk+a7ErLvpu14klJZ1OrPCjRghsLq7GOHPQrafRG3tKuu5lroCvYkb4TxTk?=
- =?us-ascii?Q?ShQnEZjFxPgvyWgU2X9DA32FNJHq5iKAk+3jfGY8JN1?=
-X-Microsoft-Antispam-Message-Info: OTBNGvt/KhUa1e3vhGyyHOIaN/C/WFFRIRDHJ255x1pL17SXync4AEK10TXEcrU1gILHU1Ldwqc49LqTd943atvkgo0uWOchl7syJEVsJueL+fRikp19xJqA2fKzpzl3hLFTmAVNI3ywQ/272yLVkjK84eRiHyzmxgM4WMRkaBs40ww7NTRqLPYZN5/pgRYS
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;6:QtlPOSKrAVhFKV8GnRO8gxhVNcNAMQb6htYCmFzrbcrkGeRM2/17kQEssCPQMOFsM/evRtWU84pj7dMr0AVpDmSxl1Uc0iDZXpid+3wjm/ePQ5uehp0OCgTDoBiVqkSeLCD07O2TUldb5qp9wt415Lx0AHa9C6r35PLvZ/v8k65X8pwsA9cW8pkkhZFMjM9Fff5VZ18e4y2ArEH5nX6N48uC37L6DMAMpaJ7IrnijGDl2PA+5VUVjJMvf3Ldn3VDzz3dJxFVemaGeqSy0F8mhRTIha41+OQr7qi2ifyGot6mDlKIlHIH5e6txegwIRWFPYbPOMSObmBzGdVuQED0kIrYlcDZngKAnlvVdCu+/LP3z2mCIcJK/e4Fs4Uj8q3upx56pL+5UwyACPhrSoCc1Sy1pp9XGUOOIvqPidHKJCAqkh457xXRGIr2OLcVt0sIuENo8X6twoxFbMKn54powA==;5:2hdaDhz+Gb4Qm8P8iyPmlVDe7MEvcnrV1huq2DoyvrK9u72jgAGC+6OPKdwbdCWHjajSDDSfN6fOBTcc4dMkz+OtdEISYpKiXxkuDTZMdFkML6G/bbE7HxZXZfRjkqwSgcGDpK7orw+iUmJbmVW7lWvDLh7F55K2vuuGygm4I0Y=;24:dMmBr/8h/skupwO/ir7s6WmheHnUJGSduCa+mZt7pY2dbC5cFXb0Rz++KcStQk1Sc+/xVU95FXq3dtFEittyw/wIwLo0oSF5Y/f/cCHENdE=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39380400002)(376002)(366004)(39860400002)(346002)(396003)(189003)(199004)(50944005)(956004)(6506007)(11346002)(47776003)(105586002)(50226002)(305945005)(16526019)(8676002)(81166006)(81156014)(8936002)(2906002)(48376002)(68736007)(25786009)(50466002)(478600001)(386003)(97736004)(66066001)(6116002)(106356001)(316002)(16586007)(52116002)(3846002)(53936002)(36756003)(51416003)(1076002)(186003)(76176011)(6512007)(4326008)(59450400001)(44832011)(446003)(2616005)(486006)(476003)(7736002)(5660300001)(43066004)(3450700001)(86362001)(575784001)(6666003)(6486002)(26005)(309714004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4116;H:rhuath.am.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4116;23:/LFWDRmMpB6kyV6ObLubP+QGZauH2UztUKCz+V/+s?=
+ =?us-ascii?Q?/5qQVweT+RaS4eyv8ZR19suhUQ2kEIE9SlcjsRN4MTTs8bgk+tRoT9c8uYpN?=
+ =?us-ascii?Q?F5LVY71GEHiXViU/RFNt5z/XWEihkDAuIZ7YVLwGVtufAcpK1oNSqluCrK61?=
+ =?us-ascii?Q?a9kUvCB6YSq0Qvk2oSoMh3FVW2WogNaF4W3jaCgoPiziFNiFXVAxrnD1GMkq?=
+ =?us-ascii?Q?GkPQeR6fYFf4nb62O5NtGX4/YXbEvPDGFXmxi9rvn+ohTWHOFCxLqLdeZmfV?=
+ =?us-ascii?Q?zKI9CVi3VVfTS8WAk4W+RnlNBCiAkT/imevoXvntURp7s3X7W3o1dvxRkcK8?=
+ =?us-ascii?Q?I8iXTzPQ1bbtUc0tzMTTOfrD9juh/MNwDnyKiHO0PnqZpgyxIDZoCjbKpuq3?=
+ =?us-ascii?Q?mwAbKZnW6UeBOc/mCTc83Jv0AoMqowkMN1Ko7WsOYwdo2b8uPZXnSrqRLGFJ?=
+ =?us-ascii?Q?3Denchj5rShRzlv739F3Ej57WKI/bIORUMu5nX5ppaCxSBtomskifV1jofpY?=
+ =?us-ascii?Q?ww8UvDTvj00UdzTkAmUBPs2f9k6qJXldzg5V/vQBt9fnJVxqDqS+MbWWv+s/?=
+ =?us-ascii?Q?hvd4ktOIlMC81Oj4bIaixcfsDwzFO/ho9NuCNlVQOQR+nRb0gaRIdpPw3NQb?=
+ =?us-ascii?Q?R7rzuYFxnHbg5hgY4VvLCE5VwurWSjOM729Lh0Qxjcd5Qp5cWewSP4AiDMif?=
+ =?us-ascii?Q?xtniR8V3imb4ciZeDlAZGGCxsaE9oYYS0BCUwVJLZuVSrszlv5iqs4RwGhzi?=
+ =?us-ascii?Q?y3r/nF2GaPQ6ChDCJGvbm1EGSqWXzHJ4az7z24ClCOA/hmf+kqFaBDqvrh1/?=
+ =?us-ascii?Q?bhg1U8W+zAOUnP0I0UBCKnXifDzUrHCsLB5YJvuauERE7qMOc+wrgWtYizS/?=
+ =?us-ascii?Q?mlAhIy8DI7q2m6JCHISwTucLTDukRPc587jLkt0DuN7IAgsoXUWMGwbYcE4S?=
+ =?us-ascii?Q?LdVT0kePBXwiVVXHTy0FgJdwOZOtTD4NG37vkPaFot2tTrStR5CFrfrYRM5j?=
+ =?us-ascii?Q?juoaptsztMuBgIKCkHaenCzCCap7VNmgLn+9UTs3vYAGHeFjOhni/9E4zUsV?=
+ =?us-ascii?Q?fdQG+fl3PCl5pHA9hyGhtizipvab4fJw+tOcX+MKgNWh8ljMonRJXggL5gMs?=
+ =?us-ascii?Q?GGN4jNwrdm+BEo45FM1GjJnwP/fy/21bsF+o72tXQWy5xFxbk2VPI+6BisN2?=
+ =?us-ascii?Q?uZGa+e9Z3y8hohiyz2U36kb0SepF8BK29W0OJydKPwz2Pmf6W97M4teewv5a?=
+ =?us-ascii?Q?4+1vuPF0k02wMoCe6HiNTgjM1AyBP/flScBaTTGDqQIT1RdJhqrf9deiJtNC?=
+ =?us-ascii?Q?XatUmNsEtqa5w/MLMwnOrH9/XHciZ+rmQTbayvzKV9q?=
+X-Microsoft-Antispam-Message-Info: rY6hBIGxmFRfXB+sDAADBdzsUlAv5Ya/4pnHTtBsVbLnP9Cdxe4MK4W2QIs0ZLeA9rv3v8pfjSIqZBKSlhpP+NHefOtOj2JBqVXvaxtqznrdXjMrZsUijobRKCcbpII9kUBFrhE/TLJMEu6S4t7O8BjYHQYg9iGuDonsAyLs9CNRdOZeExyabOuJfUrHYcEg
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;6:QUYycMDg/X9g2rYCoBpXt4rUXD+XOq1a5R1PMKC05nE1bxypSz7AFKwc1nvIXQGXOpepJVO5f6lLVFBLnTOcpmSwRjDyCJvgOPalfIeOtqKnk9Jr4oNT6TRh2LtPDdfBvIhyRSFJa46Ka4iSyFm+PWEV5zUM5HNuwQH9P4z1aHalaglQuLrBuF22nQUtGwTrGtTLqw11Yl/OWxPXyywulxSBh76LOpDj0DPLtARsQ9rmDXLqQbsUhg+roozLq+2fzIg3HS2EfjJrP9OvQK1SFJIF6bt+mDJSPEImM/zLSvbQIEYijcr5QfRyMAtttwwABWMFepT6xaFoQ/7/6MmF/rU7jRfSi5UhLtGBDpGgQRoPTfFImROmKcXDs/NyZXXWNung8FSgLe+l0PCR20+kP+I6QXX7e9zqT4+1V4ESiQTYcjXDLUv0gSUeJZu8PMcqEoP+KvA/YfSy+zDfxod51A==;5:rS8eV9Kb5d4bSBXHrfQlc8vSDeT9jFI4T62fP3exFiytDVBU0fqemzThMfV4g9HNnXXoSPNh/Fr4lEnz/SZ9W0APUmbFR+S0Y+zN2Lxui9xB5sqQY4RLfKid9WGOCgaio/sbyT5cRcHqYbwLF08w3QIuK1JbFrQm3nBjiKtdKUQ=;24:9yQy7Stz4CIy+S+0H9a9rKr3QWwOb2JoLLYxvyLWGkO3eS0hlg7n5OiCKvxruSGU0/5lVTU87d6zKVL/4qYoFj43yfzLEvE8r9+fn1K+KmA=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;7:At34NjxICSsEYg9O+63uadD1+exdbI+k2u/G9b6Mpl8L9KTgBSzq8MCsnKZrVn5Zy3YILNifFMpMq1EZj2GdMo7VFNdXiaksXcnAr5PBpNcJdtN7QYiZVvUbI4aXIkyy/3y/wgjFIEKQgJ3pFgXra1g3CRex91vU4HCo2eFP+opc0nFTth9bzTsQR8YdHKfXdPHTaA3zstfORkapZs/SqYVV5e8LKcWkPtSn/w9ClsvhlUfb9Ukpg5DhTV/KdaYJ
-X-MS-Office365-Filtering-Correlation-Id: ba3c5ddb-7971-40a7-363d-08d5a4420e5c
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4116;7:5LTRwnuo5oec+Bz4NeqWFxAYT2yjLRgQywhdftGupwjsfsJ/UWaGEDQF77QC+oAtGS63ma3QpyLIlbSfajB9TXjyBCf7+i7p/soPuXvnkrxAHg0PKZQStj7mf4ofgDVOSNMUajOiSdwGOCsHgetL2/LwJp5RJcBe1RZH4I2E6wg8frkVl1WkP27mWO2LpABrEFlq70MZ0g9PZMDGXXGbxCR80phprNsiMatSnQvJ/DPOH6tQbQcHVwDNYggd8gJI
+X-MS-Office365-Filtering-Correlation-Id: 7db30442-c543-4af5-30bb-08d5a4421262
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 09:03:13.1795 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba3c5ddb-7971-40a7-363d-08d5a4420e5c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 09:03:19.9295 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7db30442-c543-4af5-30bb-08d5a4421262
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4116
@@ -78,36 +78,327 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The extra property enables the discovery on the MDIO bus
-of the PHYs which have a vendor specific address space
-for accessing the C45 MDIO registers.
+A search of the dev-addr property is done in of_mdiobus_register.
+If the property is found in the PHY node, of_mdiobus_register_vend_spec_phy()
+is called. This is a wrapper function for of_mdiobus_register_phy()
+which finds the device in package based on dev-addr, and fills
+devices_addrs, which is a new field added to phy_c45_device_ids.
+This new field will store the dev-addr property on the same index
+where the device in package has been found.
+
+The of_mdiobus_register_phy() now contains an extra parameter,
+which is struct phy_c45_device_ids *c45_ids.
+If c45_ids is not NULL, get_vend_spec_addr_phy_device() is called
+and c45_ids are propagated all the way to get_phy_c45_ids().
+
+Having dev-addr stored in devices_addrs, in get_phy_c45_ids(),
+when probing the identifiers, dev-addr can be extracted from
+devices_addrs and probed if devices_addrs[current_identifier] is not 0.
 
 Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
 ---
- Documentation/devicetree/bindings/net/phy.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/phy/phy_device.c |  49 +++++++++++++++++--
+ drivers/of/of_mdio.c         | 113 +++++++++++++++++++++++++++++++++++++++++--
+ include/linux/phy.h          |  14 ++++++
+ 3 files changed, 169 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/phy.txt b/Documentation/devicetree/bindings/net/phy.txt
-index d2169a5..82692e2 100644
---- a/Documentation/devicetree/bindings/net/phy.txt
-+++ b/Documentation/devicetree/bindings/net/phy.txt
-@@ -61,6 +61,11 @@ Optional Properties:
- - reset-deassert-us: Delay after the reset was deasserted in microseconds.
-   If this property is missing the delay will be skipped.
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index ac23322..5c79fd8 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -457,7 +457,7 @@ static int get_phy_c45_devs_in_pkg(struct mii_bus *bus, int addr, int dev_addr,
+ static int get_phy_c45_ids(struct mii_bus *bus, int addr, u32 *phy_id,
+ 			   struct phy_c45_device_ids *c45_ids) {
+ 	int phy_reg;
+-	int i, reg_addr;
++	int i, reg_addr, dev_addr;
+ 	const int num_ids = ARRAY_SIZE(c45_ids->device_ids);
+ 	u32 *devs = &c45_ids->devices_in_package;
  
-+- dev-addr: If set, it indicates the device address of the PHY to be used
-+  when accessing the C45 PHY registers over MDIO. It is used for vendor specific
-+  register space addresses that do no conform to standard address for the MDIO
-+  registers (e.g. MMD30)
+@@ -493,13 +493,23 @@ static int get_phy_c45_ids(struct mii_bus *bus, int addr, u32 *phy_id,
+ 		if (!(c45_ids->devices_in_package & (1 << i)))
+ 			continue;
+ 
+-		reg_addr = MII_ADDR_C45 | i << 16 | MII_PHYSID1;
++		/* if c45_ids->devices_addrs for the current id is not 0,
++		 * then dev-addr was defined in the PHY device tree node,
++		 * and the PHY has been seen as a valid device, and added
++		 * in the package. In this case we can use the
++		 * dev-addr(c45_ids->devices_addrs[i]) to do the MDIO
++		 * reading of the PHY ID.
++		 */
++		dev_addr = !!c45_ids->devices_addrs[i] ?
++					c45_ids->devices_addrs[i] : i;
 +
- Example:
++		reg_addr = MII_ADDR_C45 | dev_addr << 16 | MII_PHYSID1;
+ 		phy_reg = mdiobus_read(bus, addr, reg_addr);
+ 		if (phy_reg < 0)
+ 			return -EIO;
+ 		c45_ids->device_ids[i] = (phy_reg & 0xffff) << 16;
  
- ethernet-phy@0 {
-@@ -72,4 +77,5 @@ ethernet-phy@0 {
- 	reset-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
- 	reset-assert-us = <1000>;
- 	reset-deassert-us = <2000>;
-+	dev-addr = <0x1e>;
+-		reg_addr = MII_ADDR_C45 | i << 16 | MII_PHYSID2;
++		reg_addr = MII_ADDR_C45 | dev_addr << 16 | MII_PHYSID2;
+ 		phy_reg = mdiobus_read(bus, addr, reg_addr);
+ 		if (phy_reg < 0)
+ 			return -EIO;
+@@ -551,6 +561,39 @@ static int get_phy_id(struct mii_bus *bus, int addr, u32 *phy_id,
+ }
+ 
+ /**
++ * get_vend_spec_addr_phy_device - reads the specified PHY device
++ *				   and returns its @phy_device struct
++ * @bus: the target MII bus
++ * @addr: PHY address on the MII bus
++ * @is_c45: If true the PHY uses the 802.3 clause 45 protocol
++ * @c45_ids: Query the c45_ids to see if a PHY with a vendor specific
++ *           register address space was defined in the PHY device tree
++ *           node by adding the "dev-addr" property to the node.
++ *           Store the c45 ID information about the rest of the PHYs
++ *           found PHYs on the MDIO bus during probing.
++ *
++ * Description: Reads the ID registers of the PHY at @addr on the
++ *   @bus, then allocates and returns the phy_device to represent it.
++ */
++struct phy_device *get_vend_spec_addr_phy_device(struct mii_bus *bus,
++						 int addr, bool is_c45,
++						 struct phy_c45_device_ids *c45_ids)
++{
++	u32 phy_id = 0;
++	int r;
++
++	r = get_phy_id(bus, addr, &phy_id, is_c45, c45_ids);
++	if (r)
++		return ERR_PTR(r);
++
++	/* If the phy_id is mostly Fs, there is no device there */
++	if ((phy_id & 0x1fffffff) == 0x1fffffff)
++		return ERR_PTR(-ENODEV);
++
++	return phy_device_create(bus, addr, phy_id, is_c45, c45_ids);
++}
++
++/**
+  * get_phy_device - reads the specified PHY device and returns its @phy_device
+  *		    struct
+  * @bus: the target MII bus
+diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
+index 8c0c927..52e8bfb 100644
+--- a/drivers/of/of_mdio.c
++++ b/drivers/of/of_mdio.c
+@@ -45,7 +45,8 @@ static int of_get_phy_id(struct device_node *device, u32 *phy_id)
+ }
+ 
+ static int of_mdiobus_register_phy(struct mii_bus *mdio,
+-				    struct device_node *child, u32 addr)
++				   struct device_node *child, u32 addr,
++				   struct phy_c45_device_ids *c45_ids)
+ {
+ 	struct phy_device *phy;
+ 	bool is_c45;
+@@ -58,7 +59,12 @@ static int of_mdiobus_register_phy(struct mii_bus *mdio,
+ 	if (!is_c45 && !of_get_phy_id(child, &phy_id))
+ 		phy = phy_device_create(mdio, addr, phy_id, 0, NULL);
+ 	else
+-		phy = get_phy_device(mdio, addr, is_c45);
++		if (c45_ids)
++			phy = get_vend_spec_addr_phy_device(mdio,
++							    addr, is_c45,
++							    c45_ids);
++		else
++			phy = get_phy_device(mdio, addr, is_c45);
+ 	if (IS_ERR(phy))
+ 		return PTR_ERR(phy);
+ 
+@@ -190,6 +196,72 @@ static bool of_mdiobus_child_is_phy(struct device_node *child)
+ 	return false;
+ }
+ 
++static void of_fill_c45_devices_addrs(u32 dev_addr,
++				      struct phy_c45_device_ids *c45_ids)
++{
++	int i;
++	const int num_ids = ARRAY_SIZE(c45_ids->device_ids);
++
++	/* Search through all Device Identifiers
++	 * and set dev_addr in c45_ids->devices_addrs,
++	 * if the device bit is set in
++	 * c45_ids->devices_in_package
++	 */
++	for (i = 1; i < num_ids; i++) {
++		if (!(c45_ids->devices_in_package & (1 << i)))
++			continue;
++
++		c45_ids->devices_addrs[i] = dev_addr;
++	}
++}
++
++static int of_find_devaddr_in_pkg(struct mii_bus *bus, u32 addr, u32 dev_addr,
++				  struct phy_c45_device_ids *c45_ids)
++{
++	u32 *devs = &c45_ids->devices_in_package;
++	int phy_reg, reg_addr;
++
++	reg_addr = MII_ADDR_C45 | dev_addr << 16 | MDIO_DEVS2;
++	phy_reg = mdiobus_read(bus, addr, reg_addr);
++	if (phy_reg < 0)
++		return -EIO;
++
++	*devs = (phy_reg & 0xffff) << 16;
++
++	reg_addr = MII_ADDR_C45 | dev_addr << 16 | MDIO_DEVS1;
++	phy_reg = mdiobus_read(bus, addr, reg_addr);
++	if (phy_reg < 0)
++		return -EIO;
++
++	*devs |= (phy_reg & 0xffff);
++
++	return 0;
++}
++
++/*
++ * Finds the device in package and populates the c45_ids
++ * if any device is found at dev_addr address. After this
++ * the PHY is registered
++ */
++static int of_mdiobus_register_vend_spec_phy(struct mii_bus *mdio,
++					     struct device_node *child,
++					     u32 addr, u32 dev_addr)
++{
++	struct phy_c45_device_ids c45_ids = {0};
++	int dev_err = 0;
++
++	if (!dev_addr)
++		goto register_phy;
++
++	dev_err = of_find_devaddr_in_pkg(mdio, addr, dev_addr, &c45_ids);
++
++	if (!dev_err)
++		of_fill_c45_devices_addrs(dev_addr, &c45_ids);
++
++register_phy:
++	return of_mdiobus_register_phy(mdio, child, addr, &c45_ids);
++}
++
+ /**
+  * of_mdiobus_register - Register mii_bus and create PHYs from the device tree
+  * @mdio: pointer to mii_bus structure
+@@ -202,7 +274,10 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+ {
+ 	struct device_node *child;
+ 	bool scanphys = false;
++	bool dev_addr_found = true;
+ 	int addr, rc;
++	int dev_addr = 0;
++	int ret;
+ 
+ 	/* Do not continue if the node is disabled */
+ 	if (!of_device_is_available(np))
+@@ -226,6 +301,14 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+ 
+ 	/* Loop over the child nodes and register a phy_device for each phy */
+ 	for_each_available_child_of_node(np, child) {
++		/* Check if dev-addr is set in the PHY node */
++		ret = of_property_read_u32(child, "dev-addr", &dev_addr);
++
++		if (ret < 0) {
++			/* either not set or invalid */
++			dev_addr_found = false;
++		}
++
+ 		addr = of_mdio_parse_addr(&mdio->dev, child);
+ 		if (addr < 0) {
+ 			scanphys = true;
+@@ -233,7 +316,14 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+ 		}
+ 
+ 		if (of_mdiobus_child_is_phy(child))
+-			rc = of_mdiobus_register_phy(mdio, child, addr);
++			if (dev_addr_found)
++				rc = of_mdiobus_register_vend_spec_phy(mdio,
++								       child,
++								       addr,
++								       dev_addr);
++			else
++				rc = of_mdiobus_register_phy(mdio, child,
++							     addr, NULL);
+ 		else
+ 			rc = of_mdiobus_register_device(mdio, child, addr);
+ 
+@@ -248,8 +338,16 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+ 	if (!scanphys)
+ 		return 0;
+ 
++	/* reset device found variable */
++	dev_addr_found = true;
++
+ 	/* auto scan for PHYs with empty reg property */
+ 	for_each_available_child_of_node(np, child) {
++		/* Check if dev-addr is set in the PHY node,
++		 * for PHYs which don't have reg property set
++		 */
++		ret = of_property_read_u32(child, "dev-addr", &dev_addr);
++
+ 		/* Skip PHYs with reg property set */
+ 		if (of_find_property(child, "reg", NULL))
+ 			continue;
+@@ -264,7 +362,14 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+ 				 child->name, addr);
+ 
+ 			if (of_mdiobus_child_is_phy(child)) {
+-				rc = of_mdiobus_register_phy(mdio, child, addr);
++				if (dev_addr_found)
++					rc = of_mdiobus_register_vend_spec_phy(mdio,
++									       child,
++									       addr,
++									       dev_addr);
++				else
++					rc = of_mdiobus_register_phy(mdio, child,
++								     addr, NULL);
+ 				if (rc && rc != -ENODEV)
+ 					goto unregister;
+ 			}
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 26aa320..889d85e 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -357,10 +357,13 @@ enum phy_state {
+  * struct phy_c45_device_ids - 802.3-c45 Device Identifiers
+  * @devices_in_package: Bit vector of devices present.
+  * @device_ids: The device identifer for each present device.
++ * @devices_addrs: The devices addresses from the device tree
++ *		   for each present device.
+  */
+ struct phy_c45_device_ids {
+ 	u32 devices_in_package;
+ 	u32 device_ids[32];
++	u32 devices_addrs[32];
  };
+ 
+ /* phy_device: An instance of a PHY
+@@ -904,6 +907,9 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
+ 				     struct phy_c45_device_ids *c45_ids);
+ #if IS_ENABLED(CONFIG_PHYLIB)
+ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45);
++struct phy_device *get_vend_spec_addr_phy_device(struct mii_bus *bus, int addr,
++						 bool is_c45,
++						 struct phy_c45_device_ids *c45_ids);
+ int phy_device_register(struct phy_device *phy);
+ void phy_device_free(struct phy_device *phydev);
+ #else
+@@ -913,6 +919,14 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
+ 	return NULL;
+ }
+ 
++static inline
++struct phy_device *get_vend_spec_addr_phy_device(struct mii_bus *bus, int addr,
++						 bool is_c45,
++						 struct phy_c45_device_ids *c45_ids)
++{
++	return NULL;
++}
++
+ static inline int phy_device_register(struct phy_device *phy)
+ {
+ 	return 0;
 -- 
 2.7.4
