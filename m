@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48p4TSz8v+OPtSHYJCfI63/keYSVunaTRMAOH/EBhb09FHcQtf/qrnxcrzpFmkpTvMSFxoA
-ARC-Seal: i=1; a=rsa-sha256; t=1523981133; cv=none;
+X-Google-Smtp-Source: AIpwx48jt+sOj+vLSxkCkw9aH2ECGzNFs6fpqKAXSlWre25VlM2s31+xCnIlTmqfkJBJaqel6XKT
+ARC-Seal: i=1; a=rsa-sha256; t=1523981130; cv=none;
         d=google.com; s=arc-20160816;
-        b=qlXZ7H1SPTqv1EZVZs7Mt33m4vvLJdL91la3WgAf94ANuK3Zo/boIdTyY4eeWucfi4
-         Ser+gyVm4IGmUiIU+OezXFFtX2P3xd+/tW34tSrJWcKFRIDrztae41ZGCQyzwBmoa9Px
-         z17lFT5V+amRrHXZ9YJMh0vf45AvBSJwQgBHiLewCD5leDuZ2egwg5XmZwCZJ+cN2XqS
-         ip4NMXMhSf+nwenp439/+C49mtL/AlEb9PXHsaHGPxih3YBYhJqKMdPxp0QI5hsgui1i
-         8LvCLBp6fzk7zSrmCFd+WdWpAcLmaoFoJGBPxfDqzHqZe24i6npnVIBIQFvVmL8NSjxy
-         ZX8Q==
+        b=Tev2c/3bYZAUwqq2LBEe3Vv/+GRXHO+NFtGVTx+FlWygei+Il+pCjpv5eVhcL5A4hp
+         Mp3b6AHBzkCR30VO4pXRPM0sc4CeUXWeIQsr4kOSaSFV25gtMDoyoEwX037xmGCxGnHx
+         0yyNs7wvbXclpLca0b8fn+X57Gr8cxcQb98UjMWZUtxtsTfDNQjb4EHKZ+N8s0ncWULo
+         SmWHOL+fAPRpfo2m3pJpAnaaeAcAZ8znpcO+gADmnv/Kvjibyq+KpQ89Hw08NbTit0fy
+         hg7DDTJfne9nMMzCsOtU/w+aayyhvGMI75wYhVw8qHDJKfCx3GIo5znhGajif3WXCYgj
+         uGcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=QU95Cag0VF+yPrwu+s5y87iJtp5K4MC8b484xtYOHRM=;
-        b=EacRRQfFuPdS5rwDvieXyS+fT/nzjgR1TMK++SFbN6yq6TR9A8Ym+RB2lCmAPkOFAT
-         +YUDIYVAqFu5CQdnzennwspWg4QhdoPnbjvwRLsiE9MjutxC6y3mF73uHqbXIv/zTvnK
-         EGvw/yPBUOWpGWvitYaKt8FfrJXz0c88JpVaO/A9cje6nJ9JGNItQkZi5xjNOmJWE/Fl
-         m1a7sVFTbF2aJpiIYm1ngm9LaAnL+GcV5wA8Tdq21yXJtxBuvck1bkyVcuHwBEPKsfHV
-         FGy7Y4Ti6XU4gdd7/p+Nb0WubZtsWdwkcYScntiCqPbA9mbiksS1a0BQ8PvGSzgP56wr
-         pEGg==
+        bh=ycXCsW9xzF2Hjs/MtZyPKqrk/Vdq8olOuynLVk6kc5E=;
+        b=op0P1R1I7oC2xoHPMkSpEbcnw7eQ3wNAV0cVRNIFki3TH/MDtztRsXqVLoooY4SMHS
+         ojXJ+lDQAf5d+HPvigSNayczz1yp68wMSXMF4+5P9uv/nCzupCsQ0AQTlI6j34fU1ovM
+         TUHP6gxrjU1rFtCI1FjKRZSykQN5WFh83UMuGqS/gunbKvuzfqcPoawOWMIl9IOUyJc+
+         jWTpcprVdLhw8U5bUKZuoyrv6dQbgUedcm2ngCXD1tmjnN0HiDWDi+QrMqF3FcLzv4Qd
+         +zDi8PQMlG/pkFqAbAOYJnDf0e6L8/CoQZOtDdkQdWWgOoU8zZiVDoeRubdk4xjCCklf
+         Cr8g==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,19 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Thorsten Leemhuis <regressions@leemhuis.info>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 47/53] get_user_pages_fast(): return -EFAULT on access_ok failure
-Date: Tue, 17 Apr 2018 17:59:12 +0200
-Message-Id: <20180417155725.369805968@linuxfoundation.org>
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.15 46/53] s390/compat: fix setup_frame32
+Date: Tue, 17 Apr 2018 17:59:11 +0200
+Message-Id: <20180417155725.327864912@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -48,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009890881181716?=
-X-GMAIL-MSGID: =?utf-8?q?1598010040493326589?=
+X-GMAIL-THRID: =?utf-8?q?1598009851419242225?=
+X-GMAIL-MSGID: =?utf-8?q?1598010037963553957?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,68 +50,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael S. Tsirkin <mst@redhat.com>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-commit c61611f70958d86f659bca25c02ae69413747a8d upstream.
+commit 8b09ca746a643ca452cd41a522046a96ee5a55fd upstream.
 
-get_user_pages_fast is supposed to be a faster drop-in equivalent of
-get_user_pages.  As such, callers expect it to return a negative return
-code when passed an invalid address, and never expect it to return 0
-when passed a positive number of pages, since its documentation says:
+Git commit c60a03fee0e5 ("s390: switch to {get,put}_compat_sigset()")
+contains a typo and now copies the wrong pointer to user space.
+Use the correct pointer instead.
 
- * Returns number of pages pinned. This may be fewer than the number
- * requested. If nr_pages is 0 or negative, returns 0. If no pages
- * were pinned, returns -errno.
-
-When get_user_pages_fast fall back on get_user_pages this is exactly
-what happens.  Unfortunately the implementation is inconsistent: it
-returns 0 if passed a kernel address, confusing callers: for example,
-the following is pretty common but does not appear to do the right thing
-with a kernel address:
-
-        ret = get_user_pages_fast(addr, 1, writeable, &page);
-        if (ret < 0)
-                return ret;
-
-Change get_user_pages_fast to return -EFAULT when supplied a kernel
-address to make it match expectations.
-
-All callers have been audited for consistency with the documented
-semantics.
-
-Link: http://lkml.kernel.org/r/1522962072-182137-4-git-send-email-mst@redhat.com
-Fixes: 5b65c4677a57 ("mm, x86/mm: Fix performance regression in get_user_pages_fast()")
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Reported-by: syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-and-tested-by: Stefan Liebler <stli@linux.vnet.ibm.com>
+Fixes: c60a03fee0e5 ("s390: switch to {get,put}_compat_sigset()")
+Cc: <stable@vger.kernel.org> # v4.15+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/gup.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/s390/kernel/compat_signal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1816,9 +1816,12 @@ int get_user_pages_fast(unsigned long st
- 	len = (unsigned long) nr_pages << PAGE_SHIFT;
- 	end = start + len;
+--- a/arch/s390/kernel/compat_signal.c
++++ b/arch/s390/kernel/compat_signal.c
+@@ -379,7 +379,7 @@ static int setup_frame32(struct ksignal
+ 	if (put_compat_sigset((compat_sigset_t __user *)frame->sc.oldmask,
+ 			      set, sizeof(compat_sigset_t)))
+ 		return -EFAULT;
+-	if (__put_user(ptr_to_compat(&frame->sc), &frame->sc.sregs))
++	if (__put_user(ptr_to_compat(&frame->sregs), &frame->sc.sregs))
+ 		return -EFAULT;
  
-+	if (nr_pages <= 0)
-+		return 0;
-+
- 	if (unlikely(!access_ok(write ? VERIFY_WRITE : VERIFY_READ,
- 					(void __user *)start, len)))
--		return 0;
-+		return -EFAULT;
- 
- 	if (gup_fast_permitted(start, nr_pages, write)) {
- 		local_irq_disable();
+ 	/* Store registers needed to create the signal frame */
