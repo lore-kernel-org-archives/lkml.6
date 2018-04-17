@@ -1,85 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753299AbeDQVds (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:33:48 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:37828 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752939AbeDQVdq (ORCPT
+        id S1752848AbeDQVjw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:39:52 -0400
+Received: from mail-pl0-f45.google.com ([209.85.160.45]:42023 "EHLO
+        mail-pl0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751878AbeDQVjt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:33:46 -0400
-X-Google-Smtp-Source: AIpwx4+3F7tmEV1xyC5kpEKoh9NdtfoRauYPO+c1vvA3BTIfNIibcyOhkWfm4fGj/aX6N5DoVY4F15ECNykOl7ZmyYQ=
+        Tue, 17 Apr 2018 17:39:49 -0400
+X-Google-Smtp-Source: AIpwx48FyBUx5YSb8x2A71w/gCAm2jlwP3wx/zcYq7VGOaXWhMf3SQkhZsJ1I9XVER2YFXsVSfcO2g==
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Kees Cook <keescook@chromium.org>,
+        Paolo Valente <paolo.valente@linaro.org>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
+References: <10360653.ov98egbaqx@natalenko.name>
+ <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
+ <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
+ <2864697.7uzmEJovl2@natalenko.name>
+ <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
+ <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
+ <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
+ <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
+ <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
+ <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
+ <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
+ <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com>
+ <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk>
+ <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
+ <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <07f263ff-cea6-ac3c-944b-0f36fee8ba25@kernel.dk>
+Date: Tue, 17 Apr 2018 15:39:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-From: Gregory Panic <airman.price@gmail.com>
-Date: Tue, 17 Apr 2018 17:33:25 -0400
-Message-ID: <CAMB+E4gS=F8kXMNTtKdLr9y-C_+NaSPQm3M1m9xC0Sbhn+hjYw@mail.gmail.com>
-Subject: RW GDT replaced by Read-Only GDT and a GPL Interface
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 4/17/18 3:25 PM, Kees Cook wrote:
+> On Tue, Apr 17, 2018 at 1:46 PM, Kees Cook <keescook@chromium.org> wrote:
+>> I see elv.priv[1] assignments made in a few places -- is it possible
+>> there is some kind of uninitialized-but-not-NULL state that can leak
+>> in there?
+> 
+> Got it. This fixes it for me:
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 0dc9e341c2a7..859df3160303 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -363,7 +363,7 @@ static struct request *blk_mq_get_request(struct
+> request_queue *q,
+> 
+>         rq = blk_mq_rq_ctx_init(data, tag, op);
+>         if (!op_is_flush(op)) {
+> -               rq->elv.icq = NULL;
+> +               memset(&rq->elv, 0, sizeof(rq->elv));
+>                 if (e && e->type->ops.mq.prepare_request) {
+>                         if (e->type->icq_cache && rq_ioc(bio))
+>                                 blk_mq_sched_assign_ioc(rq, bio);
+> @@ -461,7 +461,7 @@ void blk_mq_free_request(struct request *rq)
+>                         e->type->ops.mq.finish_request(rq);
+>                 if (rq->elv.icq) {
+>                         put_io_context(rq->elv.icq->ioc);
+> -                       rq->elv.icq = NULL;
+> +                       memset(&rq->elv, 0, sizeof(rq->elv));
+>                 }
+>         }
 
-I have been working on a VMX driver for a custom hypervisor which
-depends on features that KVM is not built for.  Up until recently
-(4.12.x), our module has been working just fine.  When we started to
-build support for Ubuntu 18.04 (4.15.x+), we ran into an issue.
+This looks like a BFQ problem, this should not be necessary. Paolo,
+you're calling your own prepare request handler from the insert
+as well, and your prepare request does nothing if rq->elv.icq == NULL.
 
-Unfortunately the following commits broke functionality, causing
-kernel segfaults, due to a placing the GDT in the FIXMAP area, and
-setting that mapping to Read-Only.
-#69218e47994da614e7af600bf06887750ab6657a
-and
-#45fc8757d1d2128e342b4e7ef39adedf7752faac
-
-Up until now, the GDT has been Read-Write, which allowed for resetting
-the TSS to available, and then Reloading it after a VMExit.  The KVM
-and Xen work-arounds for this were implemented by creating a GPL'd
-interface to remap the GDT to the original Read/Write mapping and then
-back.
-
-Up to this point we've been able to maintain independence from GPL,
-but with this change the only alternative to using this interface
-would be to basically subvert the intent of the security patch in my
-module.  Unfortunately this leaves me with the choice of letting this
-one interface force GPL upon years of work, or implementing
-unsafe/unadvised code.
-
-I was wondering if it would be possible to change the gdt_page,
-load_direct_gdt, and load_fixmap_gdt functions to EXPORT_SYMBOL
-instead of EXPORT_SYMBOL_GPL as listed below.  This would restore the
-lost functionality which we had relied on while using the recommended
-interface to the kernel for this purpose.
-
-Thank you for your consideration
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 8a5b185..82fbd67 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -152,7 +152,7 @@ DEFINE_PER_CPU_PAGE_ALIGNED(struct gdt_page,
-gdt_page) = { .gdt = {
-        GDT_STACK_CANARY_INIT
- #endif
- } };
--EXPORT_PER_CPU_SYMBOL_GPL(gdt_page);
-+EXPORT_PER_CPU_SYMBOL(gdt_page);
-
- static int __init x86_mpx_setup(char *s)
- {
-@@ -519,7 +519,7 @@ void load_direct_gdt(int cpu)
-        gdt_descr.size = GDT_SIZE - 1;
-        load_gdt(&gdt_descr);
- }
--EXPORT_SYMBOL_GPL(load_direct_gdt);
-+EXPORT_SYMBOL(load_direct_gdt);
-
- /* Load a fixmap remapping of the per-cpu GDT */
- void load_fixmap_gdt(int cpu)
-@@ -530,7 +530,7 @@ void load_fixmap_gdt(int cpu)
-        gdt_descr.size = GDT_SIZE - 1;
-        load_gdt(&gdt_descr);
- }
--EXPORT_SYMBOL_GPL(load_fixmap_gdt);
-+EXPORT_SYMBOL(load_fixmap_gdt);
+-- 
+Jens Axboe
