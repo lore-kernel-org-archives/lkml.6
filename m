@@ -1,133 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753412AbeDQVdK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:33:10 -0400
-Received: from fieldses.org ([173.255.197.46]:35914 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752944AbeDQVdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:33:09 -0400
-Date: Tue, 17 Apr 2018 17:33:08 -0400
-From: "J. Bruce Fields" <bfields@fieldses.org>
-To: syzbot <syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com>
-Cc: anna.schumaker@netapp.com, davem@davemloft.net, jlayton@kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        trond.myklebust@primarydata.com
-Subject: Re: general protection fault in encode_rpcb_string
-Message-ID: <20180417213308.GC18217@fieldses.org>
-References: <f4f5e80803d08f47b9056a0366dd@google.com>
+        id S1753299AbeDQVds (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:33:48 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:37828 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752939AbeDQVdq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 17:33:46 -0400
+X-Google-Smtp-Source: AIpwx4+3F7tmEV1xyC5kpEKoh9NdtfoRauYPO+c1vvA3BTIfNIibcyOhkWfm4fGj/aX6N5DoVY4F15ECNykOl7ZmyYQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f4f5e80803d08f47b9056a0366dd@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+From: Gregory Panic <airman.price@gmail.com>
+Date: Tue, 17 Apr 2018 17:33:25 -0400
+Message-ID: <CAMB+E4gS=F8kXMNTtKdLr9y-C_+NaSPQm3M1m9xC0Sbhn+hjYw@mail.gmail.com>
+Subject: RW GDT replaced by Read-Only GDT and a GPL Interface
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 09:02:01PM -0700, syzbot wrote:
-> syzbot hit the following crash on bpf-next commit
-> 5d1365940a68dd57b031b6e3c07d7d451cd69daf (Thu Apr 12 18:09:05 2018 +0000)
-> Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=4b98281f2401ab849f4b
-> 
-> So far this crash happened 2 times on bpf-next.
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6433835633868800
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=6407311794896896
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=5861511176126464
+Hi,
 
-Based on that, looks like it's attempting an nfs mount while causing
-kmalloc failures?
+I have been working on a VMX driver for a custom hypervisor which
+depends on features that KVM is not built for.  Up until recently
+(4.12.x), our module has been working just fine.  When we started to
+build support for Ubuntu 18.04 (4.15.x+), we ran into an issue.
 
-Probably one of rpcb->r_netid, r_addr, or r_owner was bad in
-rpcb_enc_getaddr.
+Unfortunately the following commits broke functionality, causing
+kernel segfaults, due to a placing the GDT in the FIXMAP area, and
+setting that mapping to Read-Only.
+#69218e47994da614e7af600bf06887750ab6657a
+and
+#45fc8757d1d2128e342b4e7ef39adedf7752faac
 
-Hm, and previous log makes it look like it was an rpc_sockaddr2uaddr()
-in rpcb_getport_async() that was made to fail.  Do we need to check for
-failure of:
+Up until now, the GDT has been Read-Write, which allowed for resetting
+the TSS to available, and then Reloading it after a VMExit.  The KVM
+and Xen work-arounds for this were implemented by creating a GPL'd
+interface to remap the GDT to the original Read/Write mapping and then
+back.
 
-	map->r_addr = rpc_sockaddr2uaddr(sap, GFP_ATOMIC);
+Up to this point we've been able to maintain independence from GPL,
+but with this change the only alternative to using this interface
+would be to basically subvert the intent of the security patch in my
+module.  Unfortunately this leaves me with the choice of letting this
+one interface force GPL upon years of work, or implementing
+unsafe/unadvised code.
 
-?
+I was wondering if it would be possible to change the gdt_page,
+load_direct_gdt, and load_fixmap_gdt functions to EXPORT_SYMBOL
+instead of EXPORT_SYMBOL_GPL as listed below.  This would restore the
+lost functionality which we had relied on while using the recommended
+interface to the kernel for this purpose.
 
---b.
+Thank you for your consideration
 
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=-5947642240294114534
-> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> RBP: 00000000006dbc50 R08: 000000002000a000 R09: 0000000000003437
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe464ffed80
-> R13: 0030656c69662f2e R14: ffffffffffffffff R15: 0000000000000006
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 0 PID: 1861 Comm: kworker/u4:4 Not tainted 4.16.0+ #2
-> Hardware name: Google Google Compute Engine/Google Compute Engine,
-> BIOS Google 01/01/2011
-> Workqueue: rpciod rpc_async_schedule
-> RIP: 0010:strlen+0x1f/0xa0 lib/string.c:479
-> RSP: 0018:ffff8801cf75f318 EFLAGS: 00010296
-> RAX: dffffc0000000000 RBX: ffff8801cf68f200 RCX: ffffffff86a8c407
-> RDX: 0000000000000000 RSI: ffffffff86a84d7b RDI: 0000000000000000
-> RBP: ffff8801cf75f330 R08: ffff8801cf7de080 R09: ffffed0039ea3d43
-> R10: ffffed0039ea3d43 R11: ffff8801cf51ea1f R12: 0000000000000000
-> R13: 0000000002000000 R14: 0000000000000000 R15: ffff8801cf75f3e0
-> FS:  0000000000000000(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f64808a4000 CR3: 00000001b566a000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  strlen include/linux/string.h:267 [inline]
->  encode_rpcb_string+0x23/0x70 net/sunrpc/rpcb_clnt.c:914
->  rpcb_enc_getaddr+0x146/0x1f0 net/sunrpc/rpcb_clnt.c:940
->  rpcauth_wrap_req_encode net/sunrpc/auth.c:777 [inline]
->  rpcauth_wrap_req+0x1a8/0x230 net/sunrpc/auth.c:791
->  rpc_xdr_encode net/sunrpc/clnt.c:1754 [inline]
->  call_transmit+0x8a9/0xfe0 net/sunrpc/clnt.c:1949
->  __rpc_execute+0x28a/0xfe0 net/sunrpc/sched.c:784
->  rpc_async_schedule+0x16/0x20 net/sunrpc/sched.c:857
->  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
->  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
->  kthread+0x345/0x410 kernel/kthread.c:238
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
-> Code: 37 ff ff ff 0f 1f 84 00 00 00 00 00 48 b8 00 00 00 00 00 fc ff
-> df 55 48 89 fa 48 c1 ea 03 48 89 e5 41 54 49 89 fc 53 48 83 ec 08
-> <0f> b6 04 02 48 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 4d 41 80 3c
-> RIP: strlen+0x1f/0xa0 lib/string.c:479 RSP: ffff8801cf75f318
-> ---[ end trace bd76ed0378a56845 ]---
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug
-> is merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new
-> bug report.
-> Note: all commands must start from beginning of the line in the email body.
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 8a5b185..82fbd67 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -152,7 +152,7 @@ DEFINE_PER_CPU_PAGE_ALIGNED(struct gdt_page,
+gdt_page) = { .gdt = {
+        GDT_STACK_CANARY_INIT
+ #endif
+ } };
+-EXPORT_PER_CPU_SYMBOL_GPL(gdt_page);
++EXPORT_PER_CPU_SYMBOL(gdt_page);
+
+ static int __init x86_mpx_setup(char *s)
+ {
+@@ -519,7 +519,7 @@ void load_direct_gdt(int cpu)
+        gdt_descr.size = GDT_SIZE - 1;
+        load_gdt(&gdt_descr);
+ }
+-EXPORT_SYMBOL_GPL(load_direct_gdt);
++EXPORT_SYMBOL(load_direct_gdt);
+
+ /* Load a fixmap remapping of the per-cpu GDT */
+ void load_fixmap_gdt(int cpu)
+@@ -530,7 +530,7 @@ void load_fixmap_gdt(int cpu)
+        gdt_descr.size = GDT_SIZE - 1;
+        load_gdt(&gdt_descr);
+ }
+-EXPORT_SYMBOL_GPL(load_fixmap_gdt);
++EXPORT_SYMBOL(load_fixmap_gdt);
