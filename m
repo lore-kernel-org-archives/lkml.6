@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+FzCVmkaPt3b2+aBrG7j0uM2SUEpGlTSAui+/5Aj0vAhvTv6G8C7wVenUCCgRAZPyJTNPc
-ARC-Seal: i=1; a=rsa-sha256; t=1523980911; cv=none;
+X-Google-Smtp-Source: AIpwx49T6VCpwRYwS+lj1noNToCJKaKR1ODsKSZ/0+0hXas17Mnd5jw3lphDRVLeAOuLgVRs6j4N
+ARC-Seal: i=1; a=rsa-sha256; t=1523980908; cv=none;
         d=google.com; s=arc-20160816;
-        b=YuVMUeOOcII1mw0OFFinBa5V1DGmYPz4t77bkGK3YTGw9beHK1XW+u9OiufLvGx6/Y
-         LMVV4wOUsxbdiXSMqGGZCzxaxIq/tBqrru09cH1jLaylpVV4DV+Od3mEeBrMiWohz4Y7
-         7yOgwsiwux95nNCo/WFa/+L9rluGhrIv4zWeIMMmZdbxkzlhQ8aoca3JjZyMF7N54mIW
-         WHGX8h2HD73/sLl5QNUxpe0PLhkC2IwWJb99H3/PWMrTxBRY0vCHbI1DN9zhF7UB5dYz
-         pj8p4TGlAjE9zzIfhW8GuxdCyKbgHq46GZNJvihYHWPKqQ5Rfd2xyEqVgkyb4bvJ7BQU
-         k6AA==
+        b=pQkvAD2H+Uq/tMWnThAFm9hlavnfnmaKFGCEefoQnJShjAMJMqaPTQVwaOJrQ9JTTb
+         d9PFKDVMBSXlSgyneo6YU+3ZgJDmefQfgKhv5iu3I0RXUEAVUm6IuOSlUXzofzn0/1Ky
+         6g8gDKMunxxRnDkMYAWHWmFnAo0116tfwjTF/BdFymqKJsrWgLja+b43VmaYx3kYlhKH
+         7f6gyunMYgLlElHdt+t4RRJTSJFk8K/WyjxzoEzBsMwov0ptdLpm6pG/TgL+u+kdPR10
+         4Q8ZrqbsRXBhltOxwqGVuLpUxLOI5+EnjMbH1VbPCuv2KScsJve7IgjGw/I3x+BepesQ
+         O9oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=7E/3KsSd2O9ZIsq4ArtphsX39tPs42f76FzvjMV9zVY=;
-        b=qD6RXpRp6vQfCmlSsDwptWiOla5BZaRTHtlm9i5rSpoQI6+brTLNS0vHIKlmLBK00A
-         ukX5Uq63DGWfoYg6H3RF5VoFlbRqGJJ6RqtoyYQuiGtU4K20H5wtF2S6KtEpAu/c0tXO
-         o5I7tU/PXGjXmzNvmItFuzuspX1bu3uoeSCcDmm10toDqvEBr05b5amCCVmpqoHyubDN
-         g0z9LgHYa6189mYVBS/Hb/kmED/vpHoTNq09IIBsfRAVkydhwhpiJB8RBQKxnvhYi54B
-         2ccxwl/A4SHqzD2N3+coEztEM1b4lFFTD/5u0bjAVEGk5U06dO7Kod4MG+1ufGw+mUoM
-         zVbw==
+        bh=BK2Fwl419cQ6m9BbfYr/q2jKAQ/7r7nCXZ+vf9Q+MIg=;
+        b=deiIy3tlbfDSqi3sngbGHgpyQVd1tQuP4OsQ9feHStkefWeHn4+1RGee5++Ah3fvU4
+         iSmmYIsD4s5y47vQmVpOvDakGLOnzLiiIJmJ+nbDy4AXMQr6kt6j3fKL2BGWFaIvlmUU
+         tNEo9oKd5CJRyv3CIc00iq/k5yBipyoWS6LfS1QkkAdaQ9TjIAWRiGMzULEabDFCzc0S
+         OMeuudXwIUPve38eCOhudr0W6v2r32HK856XmQPIgXVwIWS9dC7srZ98idUf0pZKhI2e
+         omFPB+kqP6aiPhOgPROk8mciiF9fLlpvgnu4ltAzv+o5sxwWau9yHJ1YQHsX5g1xLcEd
+         rjKg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Simon Gaiser <simon@invisiblethingslab.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.16 48/68] xen: xenbus_dev_frontend: Fix XS_TRANSACTION_END handling
-Date: Tue, 17 Apr 2018 17:58:01 +0200
-Message-Id: <20180417155751.300069139@linuxfoundation.org>
+	Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.16 47/68] ovl: set lower layer st_dev only if setting lower st_ino
+Date: Tue, 17 Apr 2018 17:58:00 +0200
+Message-Id: <20180417155751.259519123@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009807855187650?=
-X-GMAIL-MSGID: =?utf-8?q?1598009807855187650?=
+X-GMAIL-THRID: =?utf-8?q?1598009805628929096?=
+X-GMAIL-MSGID: =?utf-8?q?1598009805628929096?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +49,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Simon Gaiser <simon@invisiblethingslab.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 2a22ee6c3ab1d761bc9c04f1e4117edd55b82f09 upstream.
+commit 9f99e50d460ac7fd5f6c9b97aad0088c28c8656d upstream.
 
-Commit fd8aa9095a95 ("xen: optimize xenbus driver for multiple
-concurrent xenstore accesses") made a subtle change to the semantic of
-xenbus_dev_request_and_reply() and xenbus_transaction_end().
+For broken hardlinks, we do not return lower st_ino, so we should
+also not return lower pseudo st_dev.
 
-Before on an error response to XS_TRANSACTION_END
-xenbus_dev_request_and_reply() would not decrement the active
-transaction counter. But xenbus_transaction_end() has always counted the
-transaction as finished regardless of the response.
-
-The new behavior is that xenbus_dev_request_and_reply() and
-xenbus_transaction_end() will always count the transaction as finished
-regardless the response code (handled in xs_request_exit()).
-
-But xenbus_dev_frontend tries to end a transaction on closing of the
-device if the XS_TRANSACTION_END failed before. Trying to close the
-transaction twice corrupts the reference count. So fix this by also
-considering a transaction closed if we have sent XS_TRANSACTION_END once
-regardless of the return code.
-
-Cc: <stable@vger.kernel.org> # 4.11
-Fixes: fd8aa9095a95 ("xen: optimize xenbus driver for multiple concurrent xenstore accesses")
-Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Fixes: a0c5ad307ac0 ("ovl: relax same fs constraint for constant st_ino")
+Cc: <stable@vger.kernel.org> #v4.15
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/xen/xenbus/xenbus_dev_frontend.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/overlayfs/inode.c |    7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
---- a/drivers/xen/xenbus/xenbus_dev_frontend.c
-+++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
-@@ -365,7 +365,7 @@ void xenbus_dev_queue_reply(struct xb_re
- 			if (WARN_ON(rc))
- 				goto out;
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -118,13 +118,10 @@ int ovl_getattr(const struct path *path,
+ 			 */
+ 			if (ovl_test_flag(OVL_INDEX, d_inode(dentry)) ||
+ 			    (!ovl_verify_lower(dentry->d_sb) &&
+-			     (is_dir || lowerstat.nlink == 1)))
++			     (is_dir || lowerstat.nlink == 1))) {
+ 				stat->ino = lowerstat.ino;
+-
+-			if (samefs)
+-				WARN_ON_ONCE(stat->dev != lowerstat.dev);
+-			else
+ 				stat->dev = ovl_get_pseudo_dev(dentry);
++			}
  		}
--	} else if (req->msg.type == XS_TRANSACTION_END) {
-+	} else if (req->type == XS_TRANSACTION_END) {
- 		trans = xenbus_get_transaction(u, req->msg.tx_id);
- 		if (WARN_ON(!trans))
- 			goto out;
+ 		if (samefs) {
+ 			/*
