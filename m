@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/XP2B6GW+CteVXa/7ydPl1wBrjbwRhUs0EEJuQmr4a36hk3GHmCCereL3cyTqPfqXurdpq
-ARC-Seal: i=1; a=rsa-sha256; t=1523981113; cv=none;
+X-Google-Smtp-Source: AIpwx4/ZNyFL8muVApzbxVsbENMaeeZocaKoc/4eXrciB2vAuq9tK5PGRX90YmTdHwrzD2og74lp
+ARC-Seal: i=1; a=rsa-sha256; t=1523981110; cv=none;
         d=google.com; s=arc-20160816;
-        b=FC/+zaWjxpVJ1VMeyUharlM9jIIk+XcxjN66QCUQgIdJMDX9ou/NQfPI26kIndSZoc
-         dKR+Pk+0p5D4KNG8hotVitRGPOHdSG+hQ+6OEyigzoFjcVym8Y7flrtkikYKVALDRBQn
-         u+c2Ws+imPXEXBI4WMjkFYJLceg8bs/hTp4rxuDaLmEIIiMM58XlUTrZiRjKL4I44xvc
-         m6brOdofLF/x7BmQkrK0RiTS/jNzcZJa1Af06iH6ruPZ+ZypUeejBFXI76vjPd2ckLJC
-         u7EVrvL22rpEgxm/zNnHVj3MR+PjmJuisEhQtOTnFnivCRdgxw7GZFZ7yiXgZ2VwTHQs
-         2Eig==
+        b=DHzAoLbZLhDjZ8+jg4CnGAsjcLcn2p0PkiOH417pHxVvzjD1EaniFQX1e6+FvRhG5I
+         6lBip6qdREeUQtIYDiBjRNTHxkBgFKr0AwfEI1nVpWKihzyzs1EklzjOJEJjZgeWosRN
+         QD61M+1YK3yCk4aNhgj4zHV2D/VCLWa6N8MGol9bRqe3AbF1BpVTJ1wqdON4w9SA3tMN
+         psJsKLaRnMcVHNnyPYyyMex70HaX4XU/9U6SQrll/Q6XhJ4+4CXeYM6ENGZX87YtlYJ9
+         2Xl1w0rKuXMLs6Dbhu112BovbkzKpuj63ObNt+Qw5i1IXicc2r/WlMPHEUthVnemz+Z1
+         jLoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=yNTdj9mSeCYMBDzxGoBDZc6F2jImqlObqZzMQyy7FYw=;
-        b=cBcU/rP+v9ZTcgz8TzAdVfQEcqXgjKo8X+iQ0k32fQ/wQqa6Zgm0Ga5+TzHVBVhl2D
-         ZEhhWNhkccI1Y2CRXaniOwC23ItLriS0vAtHGMu+dI8Tbz1wOrLJrzxxSuMY8dX62rSK
-         uDno7WtdYy1zmGp3EpRJDlNYWS3nko2TjYcCwg5dUNpLiOyMt77iYnLxsnsUwkDsUlba
-         BM5a8NKZHSMUPVAdd0vHRZ5XfJnbxIvR2W9D90Wmp4JqRp0/1TbtaCrPiHL1GK3Ah0bM
-         5BnYLIrTIkgFPqsNK26DuKmf/NPsWkV57d1k++evAsyRk9b76GrL1EuXrUG3M1JljkNT
-         sRBA==
+        bh=MG1QpszTBaZSXvHADhDCzIcItBcalKD6H2bsiFx+TZk=;
+        b=ySn3NrAZO32+Wz2DM9j7ApE1jv8YLMXGy11Op6NqnyZNpez9cZR+0sTSP7MODorJKP
+         w7BJevJNZtHcJSnEH9MppwqhPnTowu0hT5PUgE9IAx37vGUYzfsP2+taHJFw4fB9L38u
+         hR60m01NbhpcaGsokBcwc44gZhJmlPDkKKvM4z8OJdDI0FNnxQAkajjgRtP0mquJqMAy
+         6uIPLTW1ieQ6XtGcK6DG/+IM8NGsInEgq9/NC/+u0V7Kcj+sHcv2bwUyvWfsuJwrnrNZ
+         Kz6dz6RFjccCfxB0rLUzVQeVCVu8v7ai3dyuLVqZXO7Kb4bE1nrTeghH6HciEoD3fKn+
+         c5ZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sudhir Sreedharan <ssreedharan@mvista.com>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.15 52/53] rtl8187: Fix NULL pointer dereference in priv->conf_mutex
-Date: Tue, 17 Apr 2018 17:59:17 +0200
-Message-Id: <20180417155725.567620533@linuxfoundation.org>
+	Hans de Goede <hdegoede@redhat.com>,
+	Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.15 51/53] Bluetooth: hci_bcm: Treat Interrupt ACPI resources as always being active-low
+Date: Tue, 17 Apr 2018 17:59:16 +0200
+Message-Id: <20180417155725.533672126@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -40,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009886651691074?=
-X-GMAIL-MSGID: =?utf-8?q?1598010019410818558?=
+X-GMAIL-THRID: =?utf-8?q?1598009883606736978?=
+X-GMAIL-MSGID: =?utf-8?q?1598010016544313285?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,72 +49,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sudhir Sreedharan <ssreedharan@mvista.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 7972326a26b5bf8dc2adac575c4e03ee7e9d193a upstream.
+commit bb5208b314c5127b716b2ee4f55803a8bb73b750 upstream.
 
-This can be reproduced by bind/unbind the driver multiple times
-in AM3517 board.
+Older devices with a serdev attached bcm bt hci, use an Interrupt ACPI
+resource to describe the IRQ (rather then a GpioInt resource).
 
-Analysis revealed that rtl8187_start() was invoked before probe
-finishes(ie. before the mutex is initialized).
+These device seem to all claim the IRQ is active-high and seem to all need
+a DMI quirk to treat it as active-low. Instead simply always assume that
+Interrupt resource specified IRQs are always active-low.
 
- INFO: trying to register non-static key.
- the code is fine but needs lockdep annotation.
- turning off the locking correctness validator.
- CPU: 0 PID: 821 Comm: wpa_supplicant Not tainted 4.9.80-dirty #250
- Hardware name: Generic AM3517 (Flattened Device Tree)
- [<c010e0d8>] (unwind_backtrace) from [<c010beac>] (show_stack+0x10/0x14)
- [<c010beac>] (show_stack) from [<c017401c>] (register_lock_class+0x4f4/0x55c)
- [<c017401c>] (register_lock_class) from [<c0176fe0>] (__lock_acquire+0x74/0x1938)
- [<c0176fe0>] (__lock_acquire) from [<c0178cfc>] (lock_acquire+0xfc/0x23c)
- [<c0178cfc>] (lock_acquire) from [<c08aa2f8>] (mutex_lock_nested+0x50/0x3b0)
- [<c08aa2f8>] (mutex_lock_nested) from [<c05f5bf8>] (rtl8187_start+0x2c/0xd54)
- [<c05f5bf8>] (rtl8187_start) from [<c082dea0>] (drv_start+0xa8/0x320)
- [<c082dea0>] (drv_start) from [<c084d1d4>] (ieee80211_do_open+0x2bc/0x8e4)
- [<c084d1d4>] (ieee80211_do_open) from [<c069be94>] (__dev_open+0xb8/0x120)
- [<c069be94>] (__dev_open) from [<c069c11c>] (__dev_change_flags+0x88/0x14c)
- [<c069c11c>] (__dev_change_flags) from [<c069c1f8>] (dev_change_flags+0x18/0x48)
- [<c069c1f8>] (dev_change_flags) from [<c0710b08>] (devinet_ioctl+0x738/0x840)
- [<c0710b08>] (devinet_ioctl) from [<c067925c>] (sock_ioctl+0x164/0x2f4)
- [<c067925c>] (sock_ioctl) from [<c02883f8>] (do_vfs_ioctl+0x8c/0x9d0)
- [<c02883f8>] (do_vfs_ioctl) from [<c0288da8>] (SyS_ioctl+0x6c/0x7c)
- [<c0288da8>] (SyS_ioctl) from [<c0107760>] (ret_fast_syscall+0x0/0x1c)
- Unable to handle kernel NULL pointer dereference at virtual address 00000000
- pgd = cd1ec000
- [00000000] *pgd=8d1de831, *pte=00000000, *ppte=00000000
- Internal error: Oops: 817 [#1] PREEMPT ARM
- Modules linked in:
- CPU: 0 PID: 821 Comm: wpa_supplicant Not tainted 4.9.80-dirty #250
- Hardware name: Generic AM3517 (Flattened Device Tree)
- task: ce73eec0 task.stack: cd1ea000
- PC is at mutex_lock_nested+0xe8/0x3b0
- LR is at mutex_lock_nested+0xd0/0x3b0
+This fixes the bt device not being able to wake the host from runtime-
+suspend on the: Asus T100TAM, Asus T200TA, Lenovo Yoga2 and the Toshiba
+Encore, without the need to add 4 new DMI quirks for these models.
+
+This also allows us to remove 2 DMI quirks for the Asus T100TA and Asus
+T100CHI series. Likely the 2 remaining quirks can also be removed but I
+could not find a DSDT of these devices to verify this.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Sudhir Sreedharan <ssreedharan@mvista.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=198953
+Buglink: https://bugzilla.redhat.com/show_bug.cgi?id=1554835
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/hci_bcm.c |   20 +++-----------------
+ 1 file changed, 3 insertions(+), 17 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
-+++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
-@@ -1450,6 +1450,7 @@ static int rtl8187_probe(struct usb_inte
- 		goto err_free_dev;
- 	}
- 	mutex_init(&priv->io_mutex);
-+	mutex_init(&priv->conf_mutex);
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -701,22 +701,6 @@ static const struct acpi_gpio_mapping ac
+ #ifdef CONFIG_ACPI
+ /* IRQ polarity of some chipsets are not defined correctly in ACPI table. */
+ static const struct dmi_system_id bcm_active_low_irq_dmi_table[] = {
+-	{
+-		.ident = "Asus T100TA",
+-		.matches = {
+-			DMI_EXACT_MATCH(DMI_SYS_VENDOR,
+-					"ASUSTeK COMPUTER INC."),
+-			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "T100TA"),
+-		},
+-	},
+-	{
+-		.ident = "Asus T100CHI",
+-		.matches = {
+-			DMI_EXACT_MATCH(DMI_SYS_VENDOR,
+-					"ASUSTeK COMPUTER INC."),
+-			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "T100CHI"),
+-		},
+-	},
+ 	{	/* Handle ThinkPad 8 tablets with BCM2E55 chipset ACPI ID */
+ 		.ident = "Lenovo ThinkPad 8",
+ 		.matches = {
+@@ -744,7 +728,9 @@ static int bcm_resource(struct acpi_reso
+ 	switch (ares->type) {
+ 	case ACPI_RESOURCE_TYPE_EXTENDED_IRQ:
+ 		irq = &ares->data.extended_irq;
+-		dev->irq_active_low = irq->polarity == ACPI_ACTIVE_LOW;
++		if (irq->polarity != ACPI_ACTIVE_LOW)
++			dev_info(dev->dev, "ACPI Interrupt resource is active-high, this is usually wrong, treating the IRQ as active-low\n");
++		dev->irq_active_low = true;
+ 		break;
  
- 	SET_IEEE80211_DEV(dev, &intf->dev);
- 	usb_set_intfdata(intf, dev);
-@@ -1625,7 +1626,6 @@ static int rtl8187_probe(struct usb_inte
- 		printk(KERN_ERR "rtl8187: Cannot register device\n");
- 		goto err_free_dmabuf;
- 	}
--	mutex_init(&priv->conf_mutex);
- 	skb_queue_head_init(&priv->b_tx_status.queue);
- 
- 	wiphy_info(dev->wiphy, "hwaddr %pM, %s V%d + %s, rfkill mask %d\n",
+ 	case ACPI_RESOURCE_TYPE_GPIO:
