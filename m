@@ -1,49 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752840AbeDQTx4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 15:53:56 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:32771 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752387AbeDQTxv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 15:53:51 -0400
-X-Google-Smtp-Source: AIpwx48GPBch1cASA0tA2CmD3zJZf5W3J36kzpdwO1XcicMwTCzwVkOqWtX8K0e5JCFAh0Ookf/GLEJGJdQRvjCpxio=
+        id S1752790AbeDQTxz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 15:53:55 -0400
+Received: from mga04.intel.com ([192.55.52.120]:22065 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752310AbeDQTxu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 15:53:50 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
+   d="scan'208";a="32704635"
+Date: Wed, 18 Apr 2018 03:53:23 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: kbuild-all@01.org, linux-spi@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [spi:for-4.18 12/12] drivers/spi/spi-pxa2xx.c:914:5: sparse: symbol
+ 'pxa2xx_spi_transfer_one' was not declared. Should it be static?
+Message-ID: <201804180300.Pn9JAJQ2%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1523988865-26848-1-git-send-email-geert@linux-m68k.org>
-References: <1523988865-26848-1-git-send-email-geert@linux-m68k.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Tue, 17 Apr 2018 21:53:49 +0200
-X-Google-Sender-Auth: _xHoiGaCZOo0Wgc9oVivLc3EA4c
-Message-ID: <CAK8P3a0fRZmumK5zLRgqT1iPtn2HgEjg6qyv-PMEaM1Z1W6aDw@mail.gmail.com>
-Subject: Re: [PATCH/RFC] crypto: Add platform dependencies for CRYPTO_DEV_CCREE
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 8:14 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> The ARM TrustZone CryptoCell is found on ARM SoCs only.  Hence make it
-> depend on ARM or ARM64, unless compile-testing.
->
-> Drop the dependency on HAS_DMA, as DMA is always available on ARM and
-> ARM64 platforms, and doing so will increase compile coverage.
->
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> Is ARM || ARM64 OK?
-> Or should this be limited to either ARM or ARM64? Or something else?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-4.18
+head:   d5898e19c0d74cd41b9f5c8c8ea87e559c3fe0c1
+commit: d5898e19c0d74cd41b9f5c8c8ea87e559c3fe0c1 [12/12] spi: pxa2xx: Use core message processing loop
+reproduce:
+        # apt-get install sparse
+        git checkout d5898e19c0d74cd41b9f5c8c8ea87e559c3fe0c1
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-ARM || ARM64 seems fine, but don't you need '|| (HAS_DMA && COMPILE_TEST)'?
 
-I assume the HAS_DMA dependency was added to prevent compile
-testing to run into a build error.
+sparse warnings: (new ones prefixed by >>)
 
-        Arnd
+   drivers/spi/spi-pxa2xx.c:877:16: sparse: expression using sizeof(void)
+   drivers/spi/spi-pxa2xx.c:877:16: sparse: expression using sizeof(void)
+>> drivers/spi/spi-pxa2xx.c:914:5: sparse: symbol 'pxa2xx_spi_transfer_one' was not declared. Should it be static?
+   drivers/spi/spi-pxa2xx.c:1672:42: sparse: expression using sizeof(void)
+   drivers/spi/spi-pxa2xx.c:1672:42: sparse: expression using sizeof(void)
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
