@@ -1,30 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeDQJVU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 05:21:20 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:14320 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752082AbeDQJVT (ORCPT
+        id S1752652AbeDQJW3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 05:22:29 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:55308 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751211AbeDQJW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 05:21:19 -0400
-Subject: Re: [PATCH v4 03/10] PCI: endpoint: functions/pci-epf-test: Add
- second entry
+        Tue, 17 Apr 2018 05:22:28 -0400
+Subject: Re: [PATCH v4 06/10] misc: pci_endpoint_test: Add designware EP entry
 To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
         <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>
 References: <cover.1523881182.git.gustavo.pimentel@synopsys.com>
- <d025236bb2646eb3b4d4de9f2e745cab5d7ef2b9.1523881182.git.gustavo.pimentel@synopsys.com>
- <56bdafe6-1725-6e55-68a4-38667f114e5c@ti.com>
+ <11fa6ecaae3b0c004b18e57b6b16b2b89ad4dfd4.1523881182.git.gustavo.pimentel@synopsys.com>
 CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>
 From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <4336d1a4-e2d0-ebdb-93cd-1f741ff3d19c@ti.com>
-Date: Tue, 17 Apr 2018 14:51:08 +0530
+Message-ID: <549c7c45-4e01-33b6-a105-2a621128c748@ti.com>
+Date: Tue, 17 Apr 2018 14:52:17 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
  Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <56bdafe6-1725-6e55-68a4-38667f114e5c@ti.com>
+In-Reply-To: <11fa6ecaae3b0c004b18e57b6b16b2b89ad4dfd4.1523881182.git.gustavo.pimentel@synopsys.com>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -32,53 +30,37 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Tuesday 17 April 2018 02:49 PM, Kishon Vijay Abraham I wrote:
-> Hi,
+
+On Monday 16 April 2018 08:07 PM, Gustavo Pimentel wrote:
+> Adds the designware EP device ID entry to pci_endpoint_test driver table
+> to allow this device to be recognize and handle by the pci_endpoint_test
+> driver.
 > 
-> On Monday 16 April 2018 08:07 PM, Gustavo Pimentel wrote:
->> Adds a seconds entry on the pci_epf_test_ids structure that disables the
->> linkup_notifier parameter on driver.
->>
->> This allows EPs that doesn't have linkup notification signal to work
->> with pcitest.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->> Change v2->v3:
->>  - Added second entry in pci_epf_test_ids structure.
->>  - Remove test_reg_bar field assignment on second entry.
->> Changes v3->v4:
->> - Nothing changed, just to follow the patch set version.
->>
->>  drivers/pci/endpoint/functions/pci-epf-test.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
->> index 7cef851..63dca44 100644
->> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>  	return 0;
->>  }
->>  
->> +static const struct pci_epf_test_data data_cfg2 = {
->> +	.linkup_notifier = false
->> +};
->> +
->>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
->>  	{
->>  		.name = "pci_epf_test",
->>  	},
->> +	{
->> +		.name = "pci_epf_test_cfg2",
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+> Change v1->v2:
+> - Changed device id following Kishon's suggestion.
+> Change v2->v3:
+> - Nothing changed, just to follow the patch set version.
+> Changes v3->v4:
+> - Nothing changed, just to follow the patch set version.
 > 
-> I'd prefer this to be named pci_epf_test_designware so that configfs entry is
-> self explanatory.
-
-Please document the new epf binding in
-Documentation/PCI/endpoint/function/binding/pci-test.txt
-
-Thanks
-Kishon
+>  drivers/misc/pci_endpoint_test.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+> index fe8897e..37db0fc 100644
+> --- a/drivers/misc/pci_endpoint_test.c
+> +++ b/drivers/misc/pci_endpoint_test.c
+> @@ -634,6 +634,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+>  static const struct pci_device_id pci_endpoint_test_tbl[] = {
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, PCI_DEVICE_ID_SYNOPSYS_SMPL_EP) },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
+> 
