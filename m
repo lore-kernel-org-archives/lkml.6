@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752206AbeDQEOB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 00:14:01 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52440 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752085AbeDQEN7 (ORCPT
+        id S1752514AbeDQEOH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 00:14:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59496 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752252AbeDQEOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 00:13:59 -0400
+        Tue, 17 Apr 2018 00:14:03 -0400
 From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
 To: mhiramat@kernel.org, jolsa@redhat.com, acme@redhat.com
 Cc: kstewart@linuxfoundation.org, tglx@linutronix.de, pombredanne@nexb.com,
@@ -14,14 +14,16 @@ Cc: kstewart@linuxfoundation.org, tglx@linutronix.de, pombredanne@nexb.com,
         alexander.shishkin@linux.intel.com, namhyung@kernel.org,
         uneedsihyeon@gmail.com, kjlx@templeofstupid.com,
         Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: [PATCH v2 0/3] perf/buildid-cache: Add --list and --purge-all options
-Date: Tue, 17 Apr 2018 09:43:43 +0530
+Subject: [PATCH v2 1/3] tools/parse-options: Add '\n' at the end of error messages
+Date: Tue, 17 Apr 2018 09:43:44 +0530
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180417041346.5617-1-ravi.bangoria@linux.vnet.ibm.com>
+References: <20180417041346.5617-1-ravi.bangoria@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18041704-0044-0000-0000-00000548FF81
+x-cbid: 18041704-0040-0000-0000-0000044E530C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041704-0045-0000-0000-000028890AC0
-Message-Id: <20180417041346.5617-1-ravi.bangoria@linux.vnet.ibm.com>
+x-cbparentid: 18041704-0041-0000-0000-000020F29848
+Message-Id: <20180417041346.5617-2-ravi.bangoria@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -33,27 +35,50 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First patch is a trivial error message fix. Second and third
-adds new options --list and --purge-all to 'buildid-cache'
-subcommand.
+Few error messages does not have '\n' at the end and thus next
+prompt gets printed in the same line. Ex,
 
-v2 changes:
- - [PATCH v2 2/3] Display optput of 'perf buildid-cache -l' same as
-   'perf buildid-list'.
- - [PATCH v2 2/3] Other minor changes as suggested by Jiri.
+  linux~$ perf buildid-cache -verbose --add ./a.out
+   Error: did you mean `--verbose` (with two dashes ?)linux~$
 
-v1 can be found at:
-  https://lkml.org/lkml/2018/4/9/295
+Fix it.
 
-Ravi Bangoria (3):
-  tools/parse-options: Add '\n' at the end of error messages
-  perf/buildid-cache: Support --list option
-  perf/buildid-cache: Support --purge-all option
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ tools/lib/subcmd/parse-options.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- tools/lib/subcmd/parse-options.c                |  6 +-
- tools/perf/Documentation/perf-buildid-cache.txt |  7 ++-
- tools/perf/builtin-buildid-cache.c              | 77 ++++++++++++++++++++++++-
- 3 files changed, 83 insertions(+), 7 deletions(-)
-
+diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
+index f6a1babcbac4..cb7154eccbdc 100644
+--- a/tools/lib/subcmd/parse-options.c
++++ b/tools/lib/subcmd/parse-options.c
+@@ -433,7 +433,7 @@ static int parse_long_opt(struct parse_opt_ctx_t *p, const char *arg,
+ 
+ 	if (ambiguous_option) {
+ 		 fprintf(stderr,
+-			 " Error: Ambiguous option: %s (could be --%s%s or --%s%s)",
++			 " Error: Ambiguous option: %s (could be --%s%s or --%s%s)\n",
+ 			 arg,
+ 			 (ambiguous_flags & OPT_UNSET) ?  "no-" : "",
+ 			 ambiguous_option->long_name,
+@@ -458,7 +458,7 @@ static void check_typos(const char *arg, const struct option *options)
+ 		return;
+ 
+ 	if (strstarts(arg, "no-")) {
+-		fprintf(stderr, " Error: did you mean `--%s` (with two dashes ?)", arg);
++		fprintf(stderr, " Error: did you mean `--%s` (with two dashes ?)\n", arg);
+ 		exit(129);
+ 	}
+ 
+@@ -466,7 +466,7 @@ static void check_typos(const char *arg, const struct option *options)
+ 		if (!options->long_name)
+ 			continue;
+ 		if (strstarts(options->long_name, arg)) {
+-			fprintf(stderr, " Error: did you mean `--%s` (with two dashes ?)", arg);
++			fprintf(stderr, " Error: did you mean `--%s` (with two dashes ?)\n", arg);
+ 			exit(129);
+ 		}
+ 	}
 -- 
 2.14.3
