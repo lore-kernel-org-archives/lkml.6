@@ -1,54 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752684AbeDQUeK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 16:34:10 -0400
-Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:3236 "EHLO
-        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeDQUeI (ORCPT
+        id S1752738AbeDQUfb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 16:35:31 -0400
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:43418 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752699AbeDQUf3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 16:34:08 -0400
-Date: Tue, 17 Apr 2018 14:34:05 -0600
-From: Randy Wright <rwright@hpe.com>
-To: joeyli <jlee@suse.com>, dyoung@redhat.com
-Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>, linux-efi@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Takashi Iwai <tiwai@suse.de>, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        akpm@linux-foundation.org, Vivek Goyal <vgoyal@redhat.com>,
-        Dave Young <dyoung@redhat.com>
-Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
- memory map
-Message-ID: <20180417203405.GA4574@rfwz>
-Reply-To: rwright@hpe.com
-References: <20180413062716.8040-1-jlee@suse.com>
- <20180416025734.GA26685@dhcp-128-65.nay.redhat.com>
- <20180416030904.GB26685@dhcp-128-65.nay.redhat.com>
- <20180416063738.GH16023@linux-l9pv.suse>
- <20180417003522.GA2741@rfwz>
+        Tue, 17 Apr 2018 16:35:29 -0400
+X-Google-Smtp-Source: AIpwx4+91Sqpdr5fuiADDvLAoNEbgUnYdHmTUanNnhx7s6i9Fj3oycx/Gl9xa5/wCfS24QncByzvexINFSvG6LFA7KI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417003522.GA2741@rfwz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1523954340-8708-2-git-send-email-alankao@andestech.com>
+References: <1523954340-8708-1-git-send-email-alankao@andestech.com> <1523954340-8708-2-git-send-email-alankao@andestech.com>
+From: Alex Solomatnikov <sols@sifive.com>
+Date: Tue, 17 Apr 2018 13:35:27 -0700
+Message-ID: <CAJ2AOiP1-TnSRdrLxowQ7DqzxoBYENfbO1ZR5A0_kwzLJ0WztA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] perf: riscv: preliminary RISC-V support
+To: Alan Kao <alankao@andestech.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-riscv@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Hu <nickhu@andestech.com>, Greentime Hu <greentime@andestech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 06:35:22PM -0600, Randy Wright wrote:
+On Tue, Apr 17, 2018 at 1:38 AM, Alan Kao <alankao@andestech.com> wrote:
 
-> ... I will plan to run the same test tomorrow on
-> a build of the SuSE 4.4.120-94.17 kernel, on which I had also reported
-> the original bug.
+> +static inline void write_counter(int idx, u64 value)
+> +{
+> +       /* currently not supported */
+> +}
 
-I carried out the test on the older kernel today. I found the version of
-arch/x86/kernel/kexec-bzimage64.c in the SuSE kernel version
-4.4.120-94.17 was sufficiently different from the newer version that one
-chunk of the patch under discussion was rejected.  Specifically, the
-'struct kexec_buf kbuf' is not found in that older SuSE version of
-kexec-bzimage64.c.   But I made the same modification to the
-calculation of variable params_misc_sz in the older source, ran the same
-test, and there were no longer any warnings from early_ioremap.c.
+CSR writes can be emulated: https://github.com/riscv/riscv-pk/pull/98
 
--- 
-Randy Wright            Hewlett Packard Enterprise
-Phone: (970) 898-0998   Mail: rwright@hpe.com
+Or at least write_counter() should have BUG() or WARN_ONCE() or
+something like that.
