@@ -1,37 +1,80 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/tSe3GMqfJHR0/yIT1hkHKKEdm7EIPZ5G5VEEl3vxwevJ2ueyg0c5nO3qp51uJunlkRrGo
-ARC-Seal: i=1; a=rsa-sha256; t=1523980867; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PTx55pieO/VNp0clPsxDEg5urwBCF9a6GzpXCsatJhyxevMRoLeNWIXd37iCpDC3Lh
-         QHmX1P83b8ZStmRAsrOvAkqKJq36fY0YC8fhzArJ5Y8ulG0M9z5D7ahelDtxLZyz8EaW
-         IfMxnos4d6YqgRvOF25Wn3tvO2Aqz0hWmfMiKq/G5Tm1lwGkfZCYt/CkaDfXzRkB1gbP
-         Uy8rvHVGUWHNWXq3TgQ/r3TuxlCi3pFqdaY9gMlunBHERf7xvs6rH7gxdhoqw1oXg79m
-         LdofirfO/0El3gD7D1meTMhSBKuDU79spFYpFySB+eftdYCM3pEbOcwPcXcH/3muqkgd
-         KI1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=2izObECMuzei8vDZM7OtDi22GJ1c4SMR9adtaj4KQHo=;
-        b=OmTBerEFNEpZdlRfY9SeLauRhId2obpAwixR/esgUJZnCeDpLiCn8L9f/IdBk6J/kN
-         oHnVeaCEIQkUnNBbqlOK+gaqBnPXdLdKeWofatIFqG267frfj28uV6EWp6pK3smQ1CTw
-         wDjW8SxFRL0x2tznpHJCHCA+Zoxt//1cUnxW3kWeDPb35jnAMTBYqi7tYCK4oipA20x3
-         E5b3rm6bSn/klB0KQQ5PM6FAlM/owBOxi31CJHh8fVUIlCXh7Hd4xBEZ++xyh+khyOV+
-         S6yMpdjV4EakWOjfa6zvymvWkXWu4ZvjU2uL0tW0En0LYQBmnlQKAxEw/KxhV0Xf9oof
-         3a6A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2152363-1523980865-2-11554495322937942721
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523980865; b=XKSAK5yr3m6U751Vmt82wgQjKaipuGoCrpg/Ri4a1dpdPifyGX
+    VOs0znBk7/BC3bjRyRpKunNHTyGy8p4FBb0KdVY/vNdJ7qRIPVTjFkjfwl35Qw99
+    jBwJoyec0VD08DnlUVZ6c9qajokZQfO+w4jgql2Hf/3e8o6B3EObAWlndo1bwqVf
+    iUOpD4p4aP+QDT+WKQxlS/JgssZ0oY9HH3GOz0uhd/oD+TTUAYc5oD1HzqsxJ+5X
+    zrJo1TiSr5Uif6F7jJCZt/SJwe2DjelpEfkEr7IZu9nlZFYIEbwTHkOz7Lp+dFrE
+    DU43GkHoEkZGtxcq2F9OercubnBDaHpfTcPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523980865; bh=Ckl9slDY0rbSTvSeuUOKdqZE+Y+5n/
+    wMJHWB+4Pxicg=; b=rmOKrOT0FUSXxz/Bmh/+5R9R3nQKyj7nNjnFlCaiyf52j7
+    FTkihcdtstcdteFIQOqcNyNbIcHuzu3TWP2blU451uVW2km4IZlY5WuExIDg+HfQ
+    u2HPqEkG4/4/jdvLcO/QY5nzYuFMogVA6eGmZOe6c9LAAsvgTsOg9a9VFzjJ3RdJ
+    b8RXgL0fakxX7eT17LF6JA6J/UpfjTOxMIXY2/VVBmI+I8WO2/K/aaKyll9yIpWg
+    Sl7HLKpIHnrT2K7RwIa0OlSOigu5kZdQCnXGUz9looR8n9svMb1zIraEQ3aWCxxk
+    tP0ZXr+ljkQBRn/ErE8I+EqFAjFPgkNjBdXMxxJQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfBQMTp0+xDNgd8lc4shYFunlLJbxiDtjZuDpUj8qXNRpRGhjeljZDW24zqro2rBwqC9rMErQKmuww4j1pVFH5QtjanCVOXBGRvQ6twmlvvDp/TrQqcZD
+    zbjvTwqKXH4TqKvRtsXzzie31vWiNbHrsEM68epzpEbWai0syvuq6g/1I8W4IHoY8nyzByPZLVBNCKmHSaugy/KZ03g07omdy6Cf623Uq2RNzMW3jW31Ymet
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=WFZIRff2AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=s6jaqUFqpbjo0NHz2EsA:9
+    a=OWxO4o3BYeYy1wOv:21 a=ZSLHK6p4wIhUSrHV:21 a=QEXdDO2ut3YA:10
+    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753420AbeDQQBB (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 12:01:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60286 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751836AbeDQQBA (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 12:01:00 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.16 25/68] perf intel-pt: Fix timestamp following overflow
-Date: Tue, 17 Apr 2018 17:57:38 +0200
-Message-Id: <20180417155750.365693281@linuxfoundation.org>
+        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 09/68] lan78xx: Correctly indicate invalid OTP
+Date: Tue, 17 Apr 2018 17:57:22 +0200
+Message-Id: <20180417155749.715923658@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -39,10 +82,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009762717595342?=
-X-GMAIL-MSGID: =?utf-8?q?1598009762717595342?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +92,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Phil Elwell <phil@raspberrypi.org>
 
-commit 91d29b288aed3406caf7c454bf2b898c96cfd177 upstream.
 
-timestamp_insn_cnt is used to estimate the timestamp based on the number of
-instructions since the last known timestamp.
+[ Upstream commit 4bfc33807a9a02764bdd1e42e794b3b401240f27 ]
 
-If the estimate is not accurate enough decoding might not be correctly
-synchronized with side-band events causing more trace errors.
+lan78xx_read_otp tries to return -EINVAL in the event of invalid OTP
+content, but the value gets overwritten before it is returned and the
+read goes ahead anyway. Make the read conditional as it should be
+and preserve the error code.
 
-However there are always timestamps following an overflow, so the
-estimate is not needed and can indeed result in more errors.
-
-Suppress the estimate by setting timestamp_insn_cnt to zero.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1520431349-30689-5-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/usb/lan78xx.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1378,6 +1378,7 @@ static int intel_pt_overflow(struct inte
- 	intel_pt_clear_tx_flags(decoder);
- 	decoder->have_tma = false;
- 	decoder->cbr = 0;
-+	decoder->timestamp_insn_cnt = 0;
- 	decoder->pkt_state = INTEL_PT_STATE_ERR_RESYNC;
- 	decoder->overflow = true;
- 	return -EOVERFLOW;
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -928,7 +928,8 @@ static int lan78xx_read_otp(struct lan78
+ 			offset += 0x100;
+ 		else
+ 			ret = -EINVAL;
+-		ret = lan78xx_read_raw_otp(dev, offset, length, data);
++		if (!ret)
++			ret = lan78xx_read_raw_otp(dev, offset, length, data);
+ 	}
+ 
+ 	return ret;
