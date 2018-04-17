@@ -1,157 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753105AbeDQMGO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 08:06:14 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:43989 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752655AbeDQMGM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:06:12 -0400
-Date: Tue, 17 Apr 2018 20:06:00 +0800
-In-Reply-To: <CAGb2v66e+tWsYqzpOnRaJtjq4OneUOruszYML0FnvAGbXi5qsw@mail.gmail.com>
-References: <20180411141641.14675-1-icenowy@aosc.io> <20180411141641.14675-4-icenowy@aosc.io> <20180412145628.iaaeue2imiijwx5d@flea> <A027702A-F3F7-4896-B2B8-E024DA521661@aosc.io> <CAGb2v66Qi2D1qgF3-iVJFAiznMUzzen0nHM5vsPe7Cyi6QTYpw@mail.gmail.com> <20180416143130.tls6xtcq3hsv7u7f@flea> <CAGb2v65VLYc1X2bN5v0_1xokZCEkKFYNLzecnE3WeP8goc2KmQ@mail.gmail.com> <20180417115243.x42s7ygdpdbhtys2@flea> <CAGb2v66e+tWsYqzpOnRaJtjq4OneUOruszYML0FnvAGbXi5qsw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] Re: [PATCH 3/5] net: stmmac: dwmac-sun8i: Allow getting syscon regmap from device
-To: linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-CC: devicetree <devicetree@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <B885F825-6131-4F72-A762-17CEB8369893@aosc.io>
+        id S1753126AbeDQMGp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 08:06:45 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:46190 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752546AbeDQMGo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:06:44 -0400
+X-Google-Smtp-Source: AIpwx499+RTGbpzqkj6lhmdlb0soOWN9LO56osWpNa/sUyd7iNIgBtEdWcAdXS25kXAFPGdugMaV8w==
+From: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+To: davem@davemloft.net, bjorn.andersson@linaro.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Subject: [PATCH] net: qrtr: add MODULE_ALIAS_NETPROTO macro
+Date: Tue, 17 Apr 2018 14:03:26 +0200
+Message-Id: <20180417120326.11022-1-nicolas.dechesne@linaro.org>
+X-Mailer: git-send-email 2.14.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+To ensure that qrtr can be loaded automatically, when needed, if it is compiled
+as module.
 
+Signed-off-by: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+---
+ net/qrtr/qrtr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-于 2018年4月17日 GMT+08:00 下午7:59:38, Chen-Yu Tsai <wens@csie.org> 写到:
->On Tue, Apr 17, 2018 at 7:52 PM, Maxime Ripard
-><maxime.ripard@bootlin.com> wrote:
->> On Mon, Apr 16, 2018 at 10:51:55PM +0800, Chen-Yu Tsai wrote:
->>> On Mon, Apr 16, 2018 at 10:31 PM, Maxime Ripard
->>> <maxime.ripard@bootlin.com> wrote:
->>> > On Thu, Apr 12, 2018 at 11:23:30PM +0800, Chen-Yu Tsai wrote:
->>> >> On Thu, Apr 12, 2018 at 11:11 PM, Icenowy Zheng <icenowy@aosc.io>
->wrote:
->>> >> > 于 2018年4月12日 GMT+08:00 下午10:56:28, Maxime Ripard
-><maxime.ripard@bootlin.com> 写到:
->>> >> >>On Wed, Apr 11, 2018 at 10:16:39PM +0800, Icenowy Zheng wrote:
->>> >> >>> From: Chen-Yu Tsai <wens@csie.org>
->>> >> >>>
->>> >> >>> On the Allwinner R40 SoC, the "GMAC clock" register is in the
->CCU
->>> >> >>> address space; on the A64 SoC this register is in the SRAM
->controller
->>> >> >>> address space, and with a different offset.
->>> >> >>>
->>> >> >>> To access the register from another device and hide the
->internal
->>> >> >>> difference between the device, let it register a regmap named
->>> >> >>> "emac-clock". We can then get the device from the phandle,
->and
->>> >> >>> retrieve the regmap with dev_get_regmap(); in this situation
->the
->>> >> >>> regmap_field will be set up to access the only register in
->the
->>> >> >>regmap.
->>> >> >>>
->>> >> >>> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->>> >> >>> [Icenowy: change to use regmaps with single register, change
->commit
->>> >> >>>  message]
->>> >> >>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->>> >> >>> ---
->>> >> >>>  drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 48
->>> >> >>++++++++++++++++++++++-
->>> >> >>>  1 file changed, 46 insertions(+), 2 deletions(-)
->>> >> >>>
->>> >> >>> diff --git
->a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->>> >> >>b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->>> >> >>> index 1037f6c78bca..b61210c0d415 100644
->>> >> >>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->>> >> >>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->>> >> >>> @@ -85,6 +85,13 @@ const struct reg_field
->old_syscon_reg_field = {
->>> >> >>>      .msb = 31,
->>> >> >>>  };
->>> >> >>>
->>> >> >>> +/* Specially exported regmap which contains only EMAC
->register */
->>> >> >>> +const struct reg_field single_reg_field = {
->>> >> >>> +    .reg = 0,
->>> >> >>> +    .lsb = 0,
->>> >> >>> +    .msb = 31,
->>> >> >>> +};
->>> >> >>> +
->>> >> >>
->>> >> >>I'm not sure this would be wise. If we ever need some other
->register
->>> >> >>exported through the regmap, will have to change all the
->calling sites
->>> >> >>everywhere in the kernel, which will be a pain and will break
->>> >> >>bisectability.
->>> >> >
->>> >> > In this situation the register can be exported as another
->>> >> >  regmap. Currently the code will access a regmap with name
->>> >> > "emac-clock" for this register.
->>> >> >
->>> >> >>
->>> >> >>Chen-Yu's (or was it yours?) initial solution with a custom
->writeable
->>> >> >>hook only allowing a single register seemed like a better one.
->>> >> >
->>> >> > But I remember you mentioned that you want it to hide the
->>> >> > difference inside the device.
->>> >>
->>> >> The idea is that a device can export multiple regmaps. This one,
->>> >> the one named "gmac" (in my soon to come v2) or "emac-clock"
->here,
->>> >> is but one of many possible regmaps, and it only exports the
->register
->>> >> needed by the GMAC/EMAC.
->>> >
->>> > I'm not sure this would be wise either. There's a single register
->map,
->>> > and as far as I know we don't have a binding to express this in
->the
->>> > DT. This means that the customer and provider would have to use
->the
->>> > same name, but without anything actually enforcing it aside from
->>> > "someone in the community knows it".
->>> >
->>> > This is not a really good design, and I was actually preferring
->your
->>> > first option. We shouldn't rely on any undocumented rule. This
->will be
->>> > easy to break and hard to maintain.
->>>
->>> So, one regmap per device covering the whole register range, and the
->>> consumer knows which register to poke by looking at its own
->compatible.
->>>
->>> That sound right?
->>
->> Yep. And ideally, sending a single serie for both the A64 and the R40
->> cases, in order to provide the big picture.
->
->OK. I'll incorporate Icenowy's stuff into my series.
-
-In this situation maybe I should send newer revision of A64
-drivers to you?
-
->
->ChenYu
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
+index b33e5aeb4c06..2aa07b547b16 100644
+--- a/net/qrtr/qrtr.c
++++ b/net/qrtr/qrtr.c
+@@ -1135,3 +1135,4 @@ module_exit(qrtr_proto_fini);
+ 
+ MODULE_DESCRIPTION("Qualcomm IPC-router driver");
+ MODULE_LICENSE("GPL v2");
++MODULE_ALIAS_NETPROTO(PF_QIPCRTR);
+-- 
+2.14.2
