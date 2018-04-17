@@ -1,50 +1,47 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+OtVVsuRuXNflkR1wUAOcyqZgIm3NQynHq2vUfFvYXT/U/6DWfcJlB9nkRCTnrvILgA3lq
-ARC-Seal: i=1; a=rsa-sha256; t=1523981289; cv=none;
+X-Google-Smtp-Source: AIpwx49q7l+cXVQG5Z53Qs/vHMy4S3dZracz1nFxzAFLpnPYXlehKP+nhCUASPTw3TGECfAt+sU+
+ARC-Seal: i=1; a=rsa-sha256; t=1523981284; cv=none;
         d=google.com; s=arc-20160816;
-        b=PMvklK0WpvGONFAkryQlLDdS8F6osp8WtNXmyPTB5Y9r9aT77AfAACKeASOGadW5Be
-         2PQ2s3ANENdANJjOV6BPSfMaX1QieXkEnsL+lsKRG8u3ON/PKV/7QmK5y0dhDhsL/AJY
-         OFOdZP32OUcD2AFuh/36ZSXLAENayJ79pPZ6abHIUvBjDRUJimu8k2wuX6IPPMxGykl9
-         adiw7T8dbQSepcXxwaqtepn+MOvz2DjdyvXIMXKfdWvmg5khcYQmUi2B3nBZMOheh/Ob
-         9Wdg0gbkZDFz10rg2yr39rOIlE/LCdt0Nw/epyNL6fTWEMzULh3yW0qmWiimCG6Dfn5u
-         7wOQ==
+        b=Kd7cCQxgSJgB+ARGh3k96hWOaPbjPDho8oMKesChxNmQCtq9eYu3swNHW8Tg7sfdWu
+         MxA+yC9xzfgQHSWt29dCCFUn+V9M1iNAw0eHXT7niNt/YHfziZwBk2tVnedWiQM3I62a
+         08DJbartWPjmBjHbacSu+Cv2HXGDqyO+C1d/LBGoOjzE+QBF1HqteRXpYboXvJXKECsi
+         x2IS343ezfjITCAx0BQstW++wmrykGJGPDmocfPTd20qxwlTPoPzmLHDysK8NpohqGJN
+         R5g+eTIBhvRcwQTX6+TuH4GjWMQTSv0RX/zlIk1uoOS+RXilo+197+csTtbJFq2weJXQ
+         tP8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=MC4vd2Zb6FgIfLvCgpjSCfeSSnk/At+Rb5zcOG+WLkY=;
-        b=VwHGtOoSh+vKm5IMYDrNeyVSdwKzu60K7Qg47la5/wUfS7cycID91JWx9wr3euD4QM
-         jForbG6RxqNYxK75I2R7c9e6WDZQ8l2CtaaFxSsh/fvlza1ZICBbnkUDdhQjSRzROweP
-         Dsmvkgfnx4Kv2b2Yj3Ue5ljTpLj2mp3MdIt87Lc7PeqLPtcML9vEhKC/r8rlwIb2AaEs
-         fqT4IwQ54nOQkw7A1GB048JDEy7J2U/LnU8jFSFHPhNA1gVMcnOx0QWN4gG//axt6gX4
-         QqRv4iAh7+IAM5ZLy002CaDnRo0CjB0UH9xUvaqIaSwa+/CXpF34P9exlOylfnDkGn8N
-         I65g==
+        bh=d2Xb6xj+edp41iqcF1sw43sx38RbiNUX2LsvMzmEGmo=;
+        b=Aqnw8KLtrzgM1d/ssweER9wy+H19vEAhhmOIrkRG6C5wmWVpw3teiHf55OQZm5DTVk
+         RibBUF0X/OORMcJixUx7gH7NP0iDN8VJdagxGypDWVheeCbnfnQkls7N0uEwtsxHZtWp
+         kS8x2OcKmGIgitOUW6YLFrUXeCjCAALJmnypMxbFTJzc5Hd/gZ2gJrKC2ndM1q6X7yVH
+         ZsGJjYK7sOcofQ8j9JHlecPfW0gbb3d+3kjffXX3p6kTNaGmU6599n4CCzwen2Bd+WJY
+         WUeYgwCP8As5DBwTvLvZbOGOuuXDZoBTEzhLVzarAulssCwI0Ypd9eWlk/TYQDoVTJ+e
+         OMIg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Greg Hackmann <ghackmann@google.com>
-Subject: [PATCH 4.9 11/66] arm64: Implement array_index_mask_nospec()
-Date: Tue, 17 Apr 2018 17:58:44 +0200
-Message-Id: <20180417155646.325304070@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>
+Subject: [PATCH 4.9 01/66] media: v4l2-compat-ioctl32: dont oops on overlay
+Date: Tue, 17 Apr 2018 17:58:34 +0200
+Message-Id: <20180417155645.927913811@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010204368381214?=
-X-GMAIL-MSGID: =?utf-8?q?1598010204368381214?=
+X-GMAIL-THRID: =?utf-8?q?1598009699184942601?=
+X-GMAIL-MSGID: =?utf-8?q?1598010199191774949?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,59 +49,128 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
+commit 85ea29f19eab56ec16ec6b92bc67305998706afa upstream.
 
-From: Robin Murphy <robin.murphy@arm.com>
+At put_v4l2_window32(), it tries to access kp->clips. However,
+kp points to an userspace pointer. So, it should be obtained
+via get_user(), otherwise it can OOPS:
 
-commit 022620eed3d0bc4bf2027326f599f5ad71c2ea3f upstream.
+ vivid-000: ==================  END STATUS  ==================
+ BUG: unable to handle kernel paging request at 00000000fffb18e0
+ IP: [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
+ PGD 3f5776067 PUD 3f576f067 PMD 3f5769067 PTE 800000042548f067
+ Oops: 0001 [#1] SMP
+ Modules linked in: vivid videobuf2_vmalloc videobuf2_memops v4l2_dv_timings videobuf2_core v4l2_common videodev media xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill binfmt_misc snd_hda_codec_hdmi i915 snd_hda_intel snd_hda_controller snd_hda_codec intel_rapl x86_pkg_temp_thermal snd_hwdep intel_powerclamp snd_pcm coretemp snd_seq_midi kvm_intel kvm snd_seq_midi_event snd_rawmidi i2c_algo_bit drm_kms_helper snd_seq drm crct10dif_pclmul e1000e snd_seq_device crc32_pclmul snd_timer ghash_clmulni_intel snd mei_me mei ptp pps_core soundcore lpc_ich video crc32c_intel [last unloaded: media]
+ CPU: 2 PID: 28332 Comm: v4l2-compliance Not tainted 3.18.102+ #107
+ Hardware name:                  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
+ task: ffff8804293f8000 ti: ffff8803f5640000 task.ti: ffff8803f5640000
+ RIP: 0010:[<ffffffffc05468d9>]  [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
+ RSP: 0018:ffff8803f5643e28  EFLAGS: 00010246
+ RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00000000fffb1ab4
+ RDX: 00000000fffb1a68 RSI: 00000000fffb18d8 RDI: 00000000fffb1aa8
+ RBP: ffff8803f5643e48 R08: 0000000000000001 R09: ffff8803f54b0378
+ R10: 0000000000000000 R11: 0000000000000168 R12: 00000000fffb18c0
+ R13: 00000000fffb1a94 R14: 00000000fffb18c8 R15: 0000000000000000
+ FS:  0000000000000000(0000) GS:ffff880456d00000(0063) knlGS:00000000f7100980
+ CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+ CR2: 00000000fffb18e0 CR3: 00000003f552b000 CR4: 00000000003407e0
+ Stack:
+  00000000fffb1a94 00000000c0cc5640 0000000000000056 ffff8804274f3600
+  ffff8803f5643ed0 ffffffffc0547e16 0000000000000003 ffff8803f5643eb0
+  ffffffff81301460 ffff88009db44b01 ffff880441942520 ffff8800c0d05640
+ Call Trace:
+  [<ffffffffc0547e16>] v4l2_compat_ioctl32+0x12d6/0x1b1d [videodev]
+  [<ffffffff81301460>] ? file_has_perm+0x70/0xc0
+  [<ffffffff81252a2c>] compat_SyS_ioctl+0xec/0x1200
+  [<ffffffff8173241a>] sysenter_dispatch+0x7/0x21
+ Code: 00 00 48 8b 80 48 c0 ff ff 48 83 e8 38 49 39 c6 0f 87 2b ff ff ff 49 8d 45 1c e8 a3 ce e3 c0 85 c0 0f 85 1a ff ff ff 41 8d 40 ff <4d> 8b 64 24 20 41 89 d5 48 8d 44 40 03 4d 8d 34 c4 eb 15 0f 1f
+ RIP  [<ffffffffc05468d9>] __put_v4l2_format32+0x169/0x220 [videodev]
+ RSP <ffff8803f5643e28>
+ CR2: 00000000fffb18e0
 
-Provide an optimised, assembly implementation of array_index_mask_nospec()
-for arm64 so that the compiler is not in a position to transform the code
-in ways which affect its ability to inhibit speculation (e.g. by introducing
-conditional branches).
+Tested with vivid driver on Kernel v3.18.102.
 
-This is similar to the sequence used by x86, modulo architectural differences
-in the carry/borrow flags.
+Same bug happens upstream too:
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
-Tested-by: Greg Hackmann <ghackmann@google.com>
+ BUG: KASAN: user-memory-access in __put_v4l2_format32+0x98/0x4d0 [videodev]
+ Read of size 8 at addr 00000000ffe48400 by task v4l2-compliance/8713
+
+ CPU: 0 PID: 8713 Comm: v4l2-compliance Not tainted 4.16.0-rc4+ #108
+ Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
+ Call Trace:
+  dump_stack+0x5c/0x7c
+  kasan_report+0x164/0x380
+  ? __put_v4l2_format32+0x98/0x4d0 [videodev]
+  __put_v4l2_format32+0x98/0x4d0 [videodev]
+  v4l2_compat_ioctl32+0x1aec/0x27a0 [videodev]
+  ? __fsnotify_inode_delete+0x20/0x20
+  ? __put_v4l2_format32+0x4d0/0x4d0 [videodev]
+  compat_SyS_ioctl+0x646/0x14d0
+  ? do_ioctl+0x30/0x30
+  do_fast_syscall_32+0x191/0x3f4
+  entry_SYSENTER_compat+0x6b/0x7a
+ ==================================================================
+ Disabling lock debugging due to kernel taint
+ BUG: unable to handle kernel paging request at 00000000ffe48400
+ IP: __put_v4l2_format32+0x98/0x4d0 [videodev]
+ PGD 3a22fb067 P4D 3a22fb067 PUD 39b6f0067 PMD 39b6f1067 PTE 80000003256af067
+ Oops: 0001 [#1] SMP KASAN
+ Modules linked in: vivid videobuf2_vmalloc videobuf2_dma_contig videobuf2_memops v4l2_tpg v4l2_dv_timings videobuf2_v4l2 videobuf2_common v4l2_common videodev xt_CHECKSUM iptable_mangle ipt_MASQUERADE nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack libcrc32c tun bridge stp llc ebtable_filter ebtables ip6table_filter ip6_tables bluetooth rfkill ecdh_generic binfmt_misc snd_hda_codec_hdmi intel_rapl x86_pkg_temp_thermal intel_powerclamp i915 coretemp snd_hda_intel snd_hda_codec kvm_intel snd_hwdep snd_hda_core kvm snd_pcm irqbypass crct10dif_pclmul crc32_pclmul snd_seq_midi ghash_clmulni_intel snd_seq_midi_event i2c_algo_bit intel_cstate snd_rawmidi intel_uncore snd_seq drm_kms_helper e1000e snd_seq_device snd_timer intel_rapl_perf
+  drm ptp snd mei_me mei lpc_ich pps_core soundcore video crc32c_intel
+ CPU: 0 PID: 8713 Comm: v4l2-compliance Tainted: G    B            4.16.0-rc4+ #108
+ Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
+ RIP: 0010:__put_v4l2_format32+0x98/0x4d0 [videodev]
+ RSP: 0018:ffff8803b9be7d30 EFLAGS: 00010282
+ RAX: 0000000000000000 RBX: ffff8803ac983e80 RCX: ffffffff8cd929f2
+ RDX: 1ffffffff1d0a149 RSI: 0000000000000297 RDI: 0000000000000297
+ RBP: 00000000ffe485c0 R08: fffffbfff1cf5123 R09: ffffffff8e7a8948
+ R10: 0000000000000001 R11: fffffbfff1cf5122 R12: 00000000ffe483e0
+ R13: 00000000ffe485c4 R14: ffff8803ac985918 R15: 00000000ffe483e8
+ FS:  0000000000000000(0000) GS:ffff880407400000(0063) knlGS:00000000f7a46980
+ CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+ CR2: 00000000ffe48400 CR3: 00000003a83f2003 CR4: 00000000003606f0
+ Call Trace:
+  v4l2_compat_ioctl32+0x1aec/0x27a0 [videodev]
+  ? __fsnotify_inode_delete+0x20/0x20
+  ? __put_v4l2_format32+0x4d0/0x4d0 [videodev]
+  compat_SyS_ioctl+0x646/0x14d0
+  ? do_ioctl+0x30/0x30
+  do_fast_syscall_32+0x191/0x3f4
+  entry_SYSENTER_compat+0x6b/0x7a
+ Code: 4c 89 f7 4d 8d 7c 24 08 e8 e6 a4 69 cb 48 8b 83 98 1a 00 00 48 83 e8 10 49 39 c7 0f 87 9d 01 00 00 49 8d 7c 24 20 e8 c8 a4 69 cb <4d> 8b 74 24 20 4c 89 ef 4c 89 fe ba 10 00 00 00 e8 23 d9 08 cc
+ RIP: __put_v4l2_format32+0x98/0x4d0 [videodev] RSP: ffff8803b9be7d30
+ CR2: 00000000ffe48400
+
+cc: stable@vger.kernel.org
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/barrier.h |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
 
---- a/arch/arm64/include/asm/barrier.h
-+++ b/arch/arm64/include/asm/barrier.h
-@@ -40,6 +40,27 @@
- #define dma_rmb()	dmb(oshld)
- #define dma_wmb()	dmb(oshst)
+---
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
++++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+@@ -101,7 +101,7 @@ static int get_v4l2_window32(struct v4l2
+ static int put_v4l2_window32(struct v4l2_window __user *kp,
+ 			     struct v4l2_window32 __user *up)
+ {
+-	struct v4l2_clip __user *kclips = kp->clips;
++	struct v4l2_clip __user *kclips;
+ 	struct v4l2_clip32 __user *uclips;
+ 	compat_caddr_t p;
+ 	u32 clipcount;
+@@ -116,6 +116,8 @@ static int put_v4l2_window32(struct v4l2
+ 	if (!clipcount)
+ 		return 0;
  
-+/*
-+ * Generate a mask for array_index__nospec() that is ~0UL when 0 <= idx < sz
-+ * and 0 otherwise.
-+ */
-+#define array_index_mask_nospec array_index_mask_nospec
-+static inline unsigned long array_index_mask_nospec(unsigned long idx,
-+						    unsigned long sz)
-+{
-+	unsigned long mask;
-+
-+	asm volatile(
-+	"	cmp	%1, %2\n"
-+	"	sbc	%0, xzr, xzr\n"
-+	: "=r" (mask)
-+	: "r" (idx), "Ir" (sz)
-+	: "cc");
-+
-+	csdb();
-+	return mask;
-+}
-+
- #define __smp_mb()	dmb(ish)
- #define __smp_rmb()	dmb(ishld)
- #define __smp_wmb()	dmb(ishst)
++	if (get_user(kclips, &kp->clips))
++		return -EFAULT;
+ 	if (get_user(p, &up->clips))
+ 		return -EFAULT;
+ 	uclips = compat_ptr(p);
