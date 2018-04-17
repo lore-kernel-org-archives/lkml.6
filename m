@@ -1,146 +1,178 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2662433-1523997455-2-5002018266273408831
+X-Cyrus-Session-Id: sloti22d1t05-2548850-1523992809-2-15743607838412708416
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523997455; b=KKo3YVIK61S/mwK5WZ2HLzmlwJdcH3gf137AgFuCPdJ3hWxYFo
-    1enUc6QnHgvrroL21YR9QL4pSYeVdS/3K6wBdUw0awJ471nYE8PqvW4HrC5RiMZN
-    uYQz1mCWpWuEMtzc/T7oUb8t9B6FsunZ43bgu6uA8Kz/cnwZ351hrhZhQY7jaeEH
-    haXX8NfRztz0XWURYwYpZxn0J8HxWcEkxyAw6/pxUssJAjSsVo6Jxqhv+kSg31QE
-    w2W0Pepm4EfehXal9g4cybNoTOYhVrI4CgztWuCF1nS991S1DCI43LPAECG4Kbgp
-    OS4oEUPCkuSDICCB5dWcSvrFYm4PJFeMI7oQ==
+    1523992808; b=e/9E39YpwOZkq39u3VuYTMY3d6QVoudK+HKKFTQ44DsmswJ8/p
+    uM+3E0Bjhz+2fKzvRXYua/f/QcqzMyYYOytvBaXdMGeKlLh4OHUGqL2DFi20Zgaa
+    KktioDv99FGWkQ/xPispg2zL6UDMzSmC8edJceL0qnXpbNrcozcbVc9Sr+5Vb1Te
+    voRPZgN6eC5lnFm/Qp4QQTsz57GyetAAMI5MbJN2G4zvnxPA2Fa5VR/mXYpoXKRU
+    1jr0R/gtnQK1pw/pnbxQ93m2ZryaGfa6F3/dRSdK0AR6XVCYlwYchwu/QQtpla2u
+    cOXL3godP7f4B6eBn+6Znu2lSXqOmS2PNQZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1523997455; bh=DSNW4fa1Tr7ekhPeoFTL43WdoJfbGDglBJPlapgQzl
-    4=; b=YImXGXJf3FKFiOwwXJgvUIHYDKzdmd6Jd9GDf1l1S2IlPKqzKjMmBENuXH
-    93g5KLgMsEVxMqcEMADYDLyavVvntTppGbh7O5WSuUVRodlGPTdOvIivym7O0iov
-    yrsibIyI3UvtUuKR73MHwuGqdVHF/dUE7oBBoCOa5FyDO3t8OIVAYQf3UoXzjxvB
-    cjAsjM/wFSgscnXv/Sf+HjEmBHSN6vKsnZY1c+3Bo4w2/elYOdM6ehrCdNkbpDk8
-    r+TO0rMShjzxKPzTCWjget8wS6bWA1Jsyg5LlkvMYsJZvXutYBIyQsznr/2yl5jO
-    q3wE8k6kDZ3YtGa4lcVSwA33b0tQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Q6YMTZlJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:reply-to:sender:list-id; s=fm2; t=
+    1523992808; bh=JbHCDR1Sw3WKD89WLOCCztpfeJdxP59eJp0SYZugH4M=; b=e
+    6iwqvRYagqbf2p2Cb/AGYEJmjzGYnum4s3YnIUp1QwyxI4ITCl4xV9UsYBM+xMQo
+    abmzmOibkLhKkSZ/Va8xYQW8mnagzz6TlEnKAxXGT6YgY76y95+tcsw0QDFkJTgw
+    K0a1Gl+Rej7Ct11sCga9o4QES9lOt78HHOB3KMMkKEmboLBUVFh5bEYvAcKtUuKi
+    l/QAGSj+7taUADU9KtZotAofgmyBLFsMBLNB+7M4tBSTBkdrxxPbfBqciCa7Zcnf
+    RlIVk7/gKm8ErtEAmptwFFaj0Nr91A4Egd6bPsoMrWiHmVJ515ttauftvO7wVulN
+    tMwwLngz/7zEHM/QiXArg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxonhyperv.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UprVuIwH;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxonhyperv.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Q6YMTZlJ x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxonhyperv.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=UprVuIwH;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxonhyperv.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEVVc0ZrrnnnfJRYFhdCkj3or/hokGCz07ssTKOGO8amELTTMAC3+3O4sSnnASeDU9PT7xUVIx5/Jd8VpTmK9bhDL+PgNlbEyulsuRZip82ICT/Mukgh
-    Ntvg28S5WNhrFAx8/cAX0bH0jT2HiQcxGZGuMbOfOEQ/Aca5LLhu2v4FqOED63f54c1GA0VcKTNT73zAzB3q0jCZnUxShjJXphPo4fqKf4pl5UpAq8vUyz8K
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=W_uslV63yMIA:10 a=Kd1tUaAdevIA:10 a=hGzw-44bAAAA:8 a=VwQbUJbxAAAA:8
-    a=yMhMjlubAAAA:8 a=CbDCq_QkAAAA:8 a=86RP8W1o9Cg_u5Kl52AA:9 a=QEXdDO2ut3YA:10
-    a=HvKuF1_PTVFglORKqfwH:22 a=AjGcO6oz07-iQ99wixmX:22 a=1qrBK16LubpBFNPVNq2M:22
+X-CM-Envelope: MS4wfCvqCbIK1bxMD46AgW5xoOfH2PGhofInygKP1WhKcSSOhYTV7dcwvUhaxmLlAIQY8Kvr/rfZSlYsZI6xqL4mX9jCK0WV7ecd0EfRu64RTFs6fQUfVpXO
+    TzooD9chruk3iE/NmdxKvX/g0JZzdwZBNS2uvWWCnuP/fyymOHrLNJBvzCraVYkX2q6LHlQq4kCWX2VKfiMW1o5GXOcdNGX1x5T2uQWd5wyo2vAAqDLBF+ln
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wmH2h71lHiwA:10 a=Kd1tUaAdevIA:10
+    a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8 a=XqTFcmWXiVvMeVo3s_wA:9
+    a=dOhS9ErQSd7VLEHf:21 a=-KUCBwiW52P5O-PW:21 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752580AbeDQUhc (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 16:37:32 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:46566 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752254AbeDQUhb (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 16:37:31 -0400
-X-Google-Smtp-Source: AIpwx4/MYCMsm8D7voFdAOeqxCjjYvJ1/5f2Box9MUY4dFhsZhqjlMjG++bSGJE2kGa0gEKhRLwdh6GVTMWlnjmCGEY=
-MIME-Version: 1.0
-In-Reply-To: <MWHPR2101MB0729D25984E4C57E79355794CEB70@MWHPR2101MB0729.namprd21.prod.outlook.com>
+        id S1752710AbeDQTS1 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 15:18:27 -0400
+Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:53542
+        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752568AbeDQTSZ (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 15:18:25 -0400
+x-originating-ip: 107.180.71.197
+From: Long Li <longli@linuxonhyperv.com>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>, stable@vger.kernel.org
+Subject: [Patch v2 3/6] cifs: smbd: Avoid allocating iov on the stack
+Date: Tue, 17 Apr 2018 12:17:07 -0700
+Message-Id: <20180417191710.14855-3-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180417191710.14855-1-longli@linuxonhyperv.com>
 References: <20180417191710.14855-1-longli@linuxonhyperv.com>
- <20180417191710.14855-2-longli@linuxonhyperv.com> <VI1PR0502MB30080A26FFC2A6132397C549D1B70@VI1PR0502MB3008.eurprd05.prod.outlook.com>
- <MWHPR2101MB0729D25984E4C57E79355794CEB70@MWHPR2101MB0729.namprd21.prod.outlook.com>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 17 Apr 2018 15:37:10 -0500
-Message-ID: <CAH2r5muTc79_PLn=O1ZQfzMQLQO9JkW4yvEZyp1O9qTFRWS8ig@mail.gmail.com>
-Subject: Re: [Patch v2 2/6] cifs: Allocate validate negotiation request
- through kmalloc
-To: Long Li <longli@microsoft.com>
-Cc: Parav Pandit <parav@mellanox.com>,
-        Steve French <sfrench@samba.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Reply-To: longli@microsoft.com
+X-CMAE-Envelope: MS4wfFFyrHmGPBnp8v7gnOzs6TL6+PTuEYW9qQRTRaOW6pLf3JLYL3h7jsKrSwLAQzC8YqNzE9CGqmTR/njE8fC6VlaoYodhbiyOhurJ7kpsxknr1P4Jozj4
+ TI6M7fL0Qwu8qWHnOmA2z+p/iVzjjNpolxiOqFq2B7CG4rLvnd1x1g0rgplXJCTb5rz3Khx5iTmtSPdyJtPnUkvR5IeEA4fMVmwZhcK36z9K1liePqlnnFgh
+ YKDc6X4LU5Vb3AeVwUIau164vBT6hecDdW/8N1CtAfux16UKu9Piloe2lu998QsUDdLblXvGSSGmO8dpkDn92mpNh0iDykHYawVP77gjquesMPe2kmaD3kKS
+ 0zk6+njtwVzTCIX69y6qLqfBWsWLjvBlDUeqJyf73+gggsE1S0ZyIoxiMm8qGKvcXwJ18G7nuYoKap03O6qa2n19n3tXIi3nAKIFxQ9QyF6CjwJL0vw=
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 3:11 PM, Long Li via samba-technical
-<samba-technical@lists.samba.org> wrote:
->> Subject: RE: [Patch v2 2/6] cifs: Allocate validate negotiation request through
->> kmalloc
->>
->>
->>
->> > -----Original Message-----
->> > From: linux-rdma-owner@vger.kernel.org [mailto:linux-rdma-
->> > owner@vger.kernel.org] On Behalf Of Long Li
->> > Sent: Tuesday, April 17, 2018 2:17 PM
->> > To: Steve French <sfrench@samba.org>; linux-cifs@vger.kernel.org;
->> > samba- technical@lists.samba.org; linux-kernel@vger.kernel.org; linux-
->> > rdma@vger.kernel.org
->> > Cc: longli <longli@microsoft.com>; stable@vger.kernel.org
->> > Subject: [Patch v2 2/6] cifs: Allocate validate negotiation request
->> > through kmalloc
->> >
->> > From: Long Li <longli@microsoft.com>
->> >
->> > The data buffer allocated on the stack can't be DMA'ed, and hence
->> > can't send through RDMA via SMB Direct.
->> >
->> > Fix this by allocating the request on the heap in smb3_validate_negotiate.
->> >
->> > Fixes: ff1c038addc4f205d5f1ede449426c7d316c0eed "Check SMB3 dialects
->> > against downgrade attacks"
->> >
->>
->> Format is:
->> Fixes: ff1c038addc4 ("Check SMB3 dialects against downgrade attacks") It
->> should be right above Signed-off signature.
->
-> I will fix up and resend this patch.
->
-> How about the rest patches (1, 3-6) in the series? If they don't need any changes, is it okay that I resend this one only?
+From: Long Li <longli@microsoft.com>
 
-Doesn't matter to me either way - I already merged patch 1 in any case.
+It's not necessary to allocate another iov when going through the buffers
+in smbd_send() through RDMA send.
 
->> > Changes in v2:
->> > Removed duplicated code on freeing buffers on function exit.
->> > (Thanks to Parav Pandit <parav@mellanox.com>)
+Remove it to reduce stack size.
 
+Signed-off-by: Long Li <longli@microsoft.com>
+Cc: stable@vger.kernel.org
+---
+ fs/cifs/smbdirect.c | 36 ++++++++++++------------------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
-
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index b5c6c0d..f575e9a 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -2088,7 +2088,7 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
+ 	int start, i, j;
+ 	int max_iov_size =
+ 		info->max_send_size - sizeof(struct smbd_data_transfer);
+-	struct kvec iov[SMBDIRECT_MAX_SGE];
++	struct kvec *iov;
+ 	int rc;
+ 
+ 	info->smbd_send_pending++;
+@@ -2099,32 +2099,20 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
+ 	}
+ 
+ 	/*
+-	 * This usually means a configuration error
+-	 * We use RDMA read/write for packet size > rdma_readwrite_threshold
+-	 * as long as it's properly configured we should never get into this
+-	 * situation
+-	 */
+-	if (rqst->rq_nvec + rqst->rq_npages > SMBDIRECT_MAX_SGE) {
+-		log_write(ERR, "maximum send segment %x exceeding %x\n",
+-			 rqst->rq_nvec + rqst->rq_npages, SMBDIRECT_MAX_SGE);
+-		rc = -EINVAL;
+-		goto done;
+-	}
+-
+-	/*
+-	 * Remove the RFC1002 length defined in MS-SMB2 section 2.1
+-	 * It is used only for TCP transport
++	 * Skip the RFC1002 length defined in MS-SMB2 section 2.1
++	 * It is used only for TCP transport in the iov[0]
+ 	 * In future we may want to add a transport layer under protocol
+ 	 * layer so this will only be issued to TCP transport
+ 	 */
+-	iov[0].iov_base = (char *)rqst->rq_iov[0].iov_base + 4;
+-	iov[0].iov_len = rqst->rq_iov[0].iov_len - 4;
+-	buflen += iov[0].iov_len;
++
++	if (rqst->rq_iov[0].iov_len != 4) {
++		log_write(ERR, "expected the pdu length in 1st iov, but got 0x%lu\n", rqst->rq_iov[0].iov_len);
++		return -EINVAL;
++	}
++	iov = &rqst->rq_iov[1];
+ 
+ 	/* total up iov array first */
+-	for (i = 1; i < rqst->rq_nvec; i++) {
+-		iov[i].iov_base = rqst->rq_iov[i].iov_base;
+-		iov[i].iov_len = rqst->rq_iov[i].iov_len;
++	for (i = 0; i < rqst->rq_nvec-1; i++) {
+ 		buflen += iov[i].iov_len;
+ 	}
+ 
+@@ -2197,14 +2185,14 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
+ 						goto done;
+ 				}
+ 				i++;
+-				if (i == rqst->rq_nvec)
++				if (i == rqst->rq_nvec-1)
+ 					break;
+ 			}
+ 			start = i;
+ 			buflen = 0;
+ 		} else {
+ 			i++;
+-			if (i == rqst->rq_nvec) {
++			if (i == rqst->rq_nvec-1) {
+ 				/* send out all remaining vecs */
+ 				remaining_data_length -= buflen;
+ 				log_write(INFO,
 -- 
-Thanks,
-
-Steve
+2.7.4
