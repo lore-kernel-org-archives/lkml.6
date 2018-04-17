@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+oJ6QJ8dAOmpyafM5PWFVxAS6/mOOCdHfrjGGZp2wS25L/Kz2PURx9NDkM3ZdCkk9TFeHe
-ARC-Seal: i=1; a=rsa-sha256; t=1523981353; cv=none;
+X-Google-Smtp-Source: AIpwx4+veY+tsWwY+i6+xclT5DsmhzK1VXQTcm8gbY+5jQBnt1uJ2uYLhUuAaqtyCZm6wLjehJkM
+ARC-Seal: i=1; a=rsa-sha256; t=1523981350; cv=none;
         d=google.com; s=arc-20160816;
-        b=0w1GHBOBVxgtJoxXDNMNLDsRgYMpdoWMGqllASIppumUsP4VX9Hta2HNcwT2Ud5jXM
-         o5K7Jdmg6+y7hLgjTsGwU+d0OGRqT/1QUZ/7h3H9dk1GwN5M/nafitymRhXHus9Ul7lF
-         k4RlC1DGY7xb8UTCi6DrD8T7HSwOhKPKGDruiHPsAbwTV+TPllssDdoxf/kiOshR4P7k
-         CrXyop4F9A+GF7lR6QUq6tfo+RgpVjvEUuX1snWwY4cng1G230MTxqg0iXvCjfpfGILC
-         uEpzKIfc/oBTE779ksbQ+VHqcRIvjAk7LKItspxHcKoPvLmVI3LSciw1ex9SPyLIViGd
-         oxCQ==
+        b=w4NxyZBc2LYpBORU/g1T7W3Cyg4nig2ZIhNKmTvOWT2zOhCWtQqtMFFksnz+9Z82b8
+         UZObv7tEqAA07+nDbccCw0f+jrEKbUGi1FOpxnhiMS4HrDKotz/8/y/sh/+F1dQQ923e
+         I/ZeWweNw0Z6QhKkrfekOpNBihuYdB2fXN5gzUOPagJiD9kdUQ3EzZ0L30t08IjG9M33
+         telFHthGmtHMbI7awbbXmyTwq3m2QesFviJKo1HwShgfxMKagMUbHnTFMROtKTP6qIQN
+         +aO24X+JL+8Dy7KyCj0HmW5EZ4bRfp8e+c2/UfRQQ75K65FzaAqS4G87QkRxGjE7kfav
+         PdjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=edKyC8vMlYA67lnxUmhCGXtnsvN0KGkOJbJkNAAfiFI=;
-        b=PjzhWtjygd6a9WA4ZMCq4PJh//gyNBamS5xYNcsA/YPPFDwS0g/pPWnPZLreFwD/NO
-         0EOvpCjHJFMgbpifDKBRFUdERJKJMjKVXKqMZRKKGxZZGrNqlr40EIHnNIEpW2PJI+U4
-         fPWOObo2cghkjk3fhU/CtnUV16T+acroI1YyEUCZFKHt3BBC+YIuocT4w839J3R9iLR0
-         egCN5ni7ys+TL17+yIMRHmjN9kk3sda3Sof4nTTuEnGXNwL//KdcI4oDfQUzOWtipJhr
-         k0aDujPa5Wiebjb9MYsmwnqVqE1oq6i86cxbI9lPcyxBRsbl9FTT/LgxBLIhkx376I7p
-         hDWA==
+        bh=liDdafrFPXKtJHxf9R1IIYC6ksjW5vbqMgQ1efem6Hk=;
+        b=RvhthTSZN95dziwKjshfbGMMmb1fJ12VAD3/4vNaVYTdL4RDQ1A8aWkh0hFqJp8KSd
+         w9LFBZhFsyEqph/eqrqkX7Pc/P8BEiCVjbZtCQ1pS+RFps5+NBxkePO+wf34FcIS9NtO
+         qjiNOYfMQBuNaGSACyNdSl2jCoDURuslpaMrZH8BJVq7/8hqq2Rc/2ILjA6F/o5Hsyt+
+         4wsEhhMa83mzNQPvqyU+tOyUhmJJEVddIntkESmg9b3BEnUPjj+30P3FdUr3Xbkc9qbx
+         5Mhuz/PR7p49YBpZ10579MpJAfgaOf3OEz/dKv3Y8Ftpbkxm0oneJdVSjcWh9F0g5XdT
+         wUVA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	Jiri Olsa <jolsa@redhat.com>,
 	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 05/66] perf intel-pt: Fix sync_switch
-Date: Tue, 17 Apr 2018 17:58:38 +0200
-Message-Id: <20180417155646.082034660@linuxfoundation.org>
+Subject: [PATCH 4.9 04/66] perf intel-pt: Fix overlap detection to identify consecutive buffers correctly
+Date: Tue, 17 Apr 2018 17:58:37 +0200
+Message-Id: <20180417155646.044775793@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009733898369925?=
-X-GMAIL-MSGID: =?utf-8?q?1598010271516366520?=
+X-GMAIL-THRID: =?utf-8?q?1598009730584360732?=
+X-GMAIL-MSGID: =?utf-8?q?1598010268741669857?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,123 +52,216 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 63d8e38f6ae6c36dd5b5ba0e8c112e8861532ea2 upstream.
+commit 117db4b27bf08dba412faf3924ba55fe970c57b8 upstream.
 
-sync_switch is a facility to synchronize decoding more closely with the
-point in the kernel when the context actually switched.
-
-The flag when sync_switch is enabled was global to the decoding, whereas
-it is really specific to the CPU.
-
-The trace data for different CPUs is put on different queues, so add
-sync_switch to the intel_pt_queue structure and use that in preference
-to the global setting in the intel_pt structure.
-
-That fixes problems decoding one CPU's trace because sync_switch was
-disabled on a different CPU's queue.
+Overlap detection was not not updating the buffer's 'consecutive' flag.
+Marking buffers consecutive has the advantage that decoding begins from
+the start of the buffer instead of the first PSB. Fix overlap detection
+to identify consecutive buffers correctly.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1520431349-30689-3-git-send-email-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/1520431349-30689-2-git-send-email-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt.c |   32 +++++++++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 7 deletions(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   62 +++++++++-----------
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.h |    2 
+ tools/perf/util/intel-pt.c                          |    5 +
+ 3 files changed, 34 insertions(+), 35 deletions(-)
 
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -131,6 +131,7 @@ struct intel_pt_queue {
- 	bool stop;
- 	bool step_through_buffers;
- 	bool use_buffer_pid_tid;
-+	bool sync_switch;
- 	pid_t pid, tid;
- 	int cpu;
- 	int switch_state;
-@@ -931,10 +932,12 @@ static int intel_pt_setup_queue(struct i
- 			if (pt->timeless_decoding || !pt->have_sched_switch)
- 				ptq->use_buffer_pid_tid = true;
- 		}
-+
-+		ptq->sync_switch = pt->sync_switch;
- 	}
- 
- 	if (!ptq->on_heap &&
--	    (!pt->sync_switch ||
-+	    (!ptq->sync_switch ||
- 	     ptq->switch_state != INTEL_PT_SS_EXPECTING_SWITCH_EVENT)) {
- 		const struct intel_pt_state *state;
- 		int ret;
-@@ -1336,7 +1339,7 @@ static int intel_pt_sample(struct intel_
- 	if (pt->synth_opts.last_branch)
- 		intel_pt_update_last_branch_rb(ptq);
- 
--	if (!pt->sync_switch)
-+	if (!ptq->sync_switch)
- 		return 0;
- 
- 	if (intel_pt_is_switch_ip(ptq, state->to_ip)) {
-@@ -1417,6 +1420,21 @@ static u64 intel_pt_switch_ip(struct int
- 	return switch_ip;
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -2182,14 +2182,6 @@ const struct intel_pt_state *intel_pt_de
+ 	return &decoder->state;
  }
  
-+static void intel_pt_enable_sync_switch(struct intel_pt *pt)
-+{
-+	unsigned int i;
-+
-+	pt->sync_switch = true;
-+
-+	for (i = 0; i < pt->queues.nr_queues; i++) {
-+		struct auxtrace_queue *queue = &pt->queues.queue_array[i];
-+		struct intel_pt_queue *ptq = queue->priv;
-+
-+		if (ptq)
-+			ptq->sync_switch = true;
-+	}
-+}
-+
- static int intel_pt_run_decoder(struct intel_pt_queue *ptq, u64 *timestamp)
+-static bool intel_pt_at_psb(unsigned char *buf, size_t len)
+-{
+-	if (len < INTEL_PT_PSB_LEN)
+-		return false;
+-	return memmem(buf, INTEL_PT_PSB_LEN, INTEL_PT_PSB_STR,
+-		      INTEL_PT_PSB_LEN);
+-}
+-
+ /**
+  * intel_pt_next_psb - move buffer pointer to the start of the next PSB packet.
+  * @buf: pointer to buffer pointer
+@@ -2278,6 +2270,7 @@ static unsigned char *intel_pt_last_psb(
+  * @buf: buffer
+  * @len: size of buffer
+  * @tsc: TSC value returned
++ * @rem: returns remaining size when TSC is found
+  *
+  * Find a TSC packet in @buf and return the TSC value.  This function assumes
+  * that @buf starts at a PSB and that PSB+ will contain TSC and so stops if a
+@@ -2285,7 +2278,8 @@ static unsigned char *intel_pt_last_psb(
+  *
+  * Return: %true if TSC is found, false otherwise.
+  */
+-static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc)
++static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc,
++			      size_t *rem)
  {
- 	const struct intel_pt_state *state = ptq->state;
-@@ -1433,7 +1451,7 @@ static int intel_pt_run_decoder(struct i
- 			if (pt->switch_ip) {
- 				intel_pt_log("switch_ip: %"PRIx64" ptss_ip: %"PRIx64"\n",
- 					     pt->switch_ip, pt->ptss_ip);
--				pt->sync_switch = true;
-+				intel_pt_enable_sync_switch(pt);
- 			}
+ 	struct intel_pt_pkt packet;
+ 	int ret;
+@@ -2296,6 +2290,7 @@ static bool intel_pt_next_tsc(unsigned c
+ 			return false;
+ 		if (packet.type == INTEL_PT_TSC) {
+ 			*tsc = packet.payload;
++			*rem = len;
+ 			return true;
  		}
+ 		if (packet.type == INTEL_PT_PSBEND)
+@@ -2346,6 +2341,8 @@ static int intel_pt_tsc_cmp(uint64_t tsc
+  * @len_a: size of first buffer
+  * @buf_b: second buffer
+  * @len_b: size of second buffer
++ * @consecutive: returns true if there is data in buf_b that is consecutive
++ *               to buf_a
+  *
+  * If the trace contains TSC we can look at the last TSC of @buf_a and the
+  * first TSC of @buf_b in order to determine if the buffers overlap, and then
+@@ -2358,33 +2355,41 @@ static int intel_pt_tsc_cmp(uint64_t tsc
+ static unsigned char *intel_pt_find_overlap_tsc(unsigned char *buf_a,
+ 						size_t len_a,
+ 						unsigned char *buf_b,
+-						size_t len_b)
++						size_t len_b, bool *consecutive)
+ {
+ 	uint64_t tsc_a, tsc_b;
+ 	unsigned char *p;
+-	size_t len;
++	size_t len, rem_a, rem_b;
+ 
+ 	p = intel_pt_last_psb(buf_a, len_a);
+ 	if (!p)
+ 		return buf_b; /* No PSB in buf_a => no overlap */
+ 
+ 	len = len_a - (p - buf_a);
+-	if (!intel_pt_next_tsc(p, len, &tsc_a)) {
++	if (!intel_pt_next_tsc(p, len, &tsc_a, &rem_a)) {
+ 		/* The last PSB+ in buf_a is incomplete, so go back one more */
+ 		len_a -= len;
+ 		p = intel_pt_last_psb(buf_a, len_a);
+ 		if (!p)
+ 			return buf_b; /* No full PSB+ => assume no overlap */
+ 		len = len_a - (p - buf_a);
+-		if (!intel_pt_next_tsc(p, len, &tsc_a))
++		if (!intel_pt_next_tsc(p, len, &tsc_a, &rem_a))
+ 			return buf_b; /* No TSC in buf_a => assume no overlap */
  	}
-@@ -1449,9 +1467,9 @@ static int intel_pt_run_decoder(struct i
- 		if (state->err) {
- 			if (state->err == INTEL_PT_ERR_NODATA)
- 				return 1;
--			if (pt->sync_switch &&
-+			if (ptq->sync_switch &&
- 			    state->from_ip >= pt->kernel_start) {
--				pt->sync_switch = false;
-+				ptq->sync_switch = false;
- 				intel_pt_next_tid(pt, ptq);
- 			}
- 			if (pt->synth_opts.errors) {
-@@ -1477,7 +1495,7 @@ static int intel_pt_run_decoder(struct i
- 				     state->timestamp, state->est_timestamp);
- 			ptq->timestamp = state->est_timestamp;
- 		/* Use estimated TSC in unknown switch state */
--		} else if (pt->sync_switch &&
-+		} else if (ptq->sync_switch &&
- 			   ptq->switch_state == INTEL_PT_SS_UNKNOWN &&
- 			   intel_pt_is_switch_ip(ptq, state->to_ip) &&
- 			   ptq->next_tid == -1) {
-@@ -1624,7 +1642,7 @@ static int intel_pt_sync_switch(struct i
- 		return 1;
  
- 	ptq = intel_pt_cpu_to_ptq(pt, cpu);
--	if (!ptq)
-+	if (!ptq || !ptq->sync_switch)
- 		return 1;
+ 	while (1) {
+ 		/* Ignore PSB+ with no TSC */
+-		if (intel_pt_next_tsc(buf_b, len_b, &tsc_b) &&
+-		    intel_pt_tsc_cmp(tsc_a, tsc_b) < 0)
+-			return buf_b; /* tsc_a < tsc_b => no overlap */
++		if (intel_pt_next_tsc(buf_b, len_b, &tsc_b, &rem_b)) {
++			int cmp = intel_pt_tsc_cmp(tsc_a, tsc_b);
++
++			/* Same TSC, so buffers are consecutive */
++			if (!cmp && rem_b >= rem_a) {
++				*consecutive = true;
++				return buf_b + len_b - (rem_b - rem_a);
++			}
++			if (cmp < 0)
++				return buf_b; /* tsc_a < tsc_b => no overlap */
++		}
  
- 	switch (ptq->switch_state) {
+ 		if (!intel_pt_step_psb(&buf_b, &len_b))
+ 			return buf_b + len_b; /* No PSB in buf_b => no data */
+@@ -2398,6 +2403,8 @@ static unsigned char *intel_pt_find_over
+  * @buf_b: second buffer
+  * @len_b: size of second buffer
+  * @have_tsc: can use TSC packets to detect overlap
++ * @consecutive: returns true if there is data in buf_b that is consecutive
++ *               to buf_a
+  *
+  * When trace samples or snapshots are recorded there is the possibility that
+  * the data overlaps.  Note that, for the purposes of decoding, data is only
+@@ -2408,7 +2415,7 @@ static unsigned char *intel_pt_find_over
+  */
+ unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
+ 				     unsigned char *buf_b, size_t len_b,
+-				     bool have_tsc)
++				     bool have_tsc, bool *consecutive)
+ {
+ 	unsigned char *found;
+ 
+@@ -2420,7 +2427,8 @@ unsigned char *intel_pt_find_overlap(uns
+ 		return buf_b; /* No overlap */
+ 
+ 	if (have_tsc) {
+-		found = intel_pt_find_overlap_tsc(buf_a, len_a, buf_b, len_b);
++		found = intel_pt_find_overlap_tsc(buf_a, len_a, buf_b, len_b,
++						  consecutive);
+ 		if (found)
+ 			return found;
+ 	}
+@@ -2435,28 +2443,16 @@ unsigned char *intel_pt_find_overlap(uns
+ 	}
+ 
+ 	/* Now len_b >= len_a */
+-	if (len_b > len_a) {
+-		/* The leftover buffer 'b' must start at a PSB */
+-		while (!intel_pt_at_psb(buf_b + len_a, len_b - len_a)) {
+-			if (!intel_pt_step_psb(&buf_a, &len_a))
+-				return buf_b; /* No overlap */
+-		}
+-	}
+-
+ 	while (1) {
+ 		/* Potential overlap so check the bytes */
+ 		found = memmem(buf_a, len_a, buf_b, len_a);
+-		if (found)
++		if (found) {
++			*consecutive = true;
+ 			return buf_b + len_a;
++		}
+ 
+ 		/* Try again at next PSB in buffer 'a' */
+ 		if (!intel_pt_step_psb(&buf_a, &len_a))
+ 			return buf_b; /* No overlap */
+-
+-		/* The leftover buffer 'b' must start at a PSB */
+-		while (!intel_pt_at_psb(buf_b + len_a, len_b - len_a)) {
+-			if (!intel_pt_step_psb(&buf_a, &len_a))
+-				return buf_b; /* No overlap */
+-		}
+ 	}
+ }
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
+@@ -103,7 +103,7 @@ const struct intel_pt_state *intel_pt_de
+ 
+ unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
+ 				     unsigned char *buf_b, size_t len_b,
+-				     bool have_tsc);
++				     bool have_tsc, bool *consecutive);
+ 
+ int intel_pt__strerror(int code, char *buf, size_t buflen);
+ 
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -194,14 +194,17 @@ static void intel_pt_dump_event(struct i
+ static int intel_pt_do_fix_overlap(struct intel_pt *pt, struct auxtrace_buffer *a,
+ 				   struct auxtrace_buffer *b)
+ {
++	bool consecutive = false;
+ 	void *start;
+ 
+ 	start = intel_pt_find_overlap(a->data, a->size, b->data, b->size,
+-				      pt->have_tsc);
++				      pt->have_tsc, &consecutive);
+ 	if (!start)
+ 		return -EINVAL;
+ 	b->use_size = b->data + b->size - start;
+ 	b->use_data = start;
++	if (b->use_size && consecutive)
++		b->consecutive = true;
+ 	return 0;
+ }
+ 
