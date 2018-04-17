@@ -1,84 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751942AbeDPX62 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 19:58:28 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:37673 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751059AbeDPX60 (ORCPT
+        id S1751211AbeDQAJI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 20:09:08 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:33688 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751060AbeDQAJG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 19:58:26 -0400
-X-Google-Smtp-Source: AIpwx4/cZ4ZY9s84KYfntPM0VNOdkyY+3ajlMEMAG8SaPQ11hPkLSDLw/y+96FIcZEhq/7OlQ2zasg==
-Date: Mon, 16 Apr 2018 16:58:21 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Eugen Hristev <eugen.hristev@microchip.com>,
-        ludovic.desroches@microchip.com, alexandre.belloni@bootlin.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, nicolas.ferre@microchip.com,
-        robh@kernel.org
-Subject: Re: [PATCH v3 06/11] iio: inkern: add module put/get on iio dev
- module when requesting channels
-Message-ID: <20180416235821.GF77055@dtor-ws>
-References: <1523350677-27106-1-git-send-email-eugen.hristev@microchip.com>
- <1523350677-27106-7-git-send-email-eugen.hristev@microchip.com>
- <20180415203321.1aaaf91e@archlinux>
+        Mon, 16 Apr 2018 20:09:06 -0400
+X-Google-Smtp-Source: AIpwx48Df8AwgSbE1YSlI2Ae6KOxO9G3Jp7Qyc/j4wsdPddPiUoQ6/+SPiL/LEBbUwAE47KHWZBzJA==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180415203321.1aaaf91e@archlinux>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180412224111.35216-1-swboyd@chromium.org>
+In-Reply-To: <20180412224111.35216-1-swboyd@chromium.org>
+From: Evan Green <evgreen@chromium.org>
+Date: Tue, 17 Apr 2018 00:08:27 +0000
+X-Gmail-Original-Message-ID: <CAE=gft5Wo0JDk0+yN4LuEg-=xXXPecKxF8if9ksAXZrh+08QLA@mail.gmail.com>
+Message-ID: <CAE=gft5Wo0JDk0+yN4LuEg-=xXXPecKxF8if9ksAXZrh+08QLA@mail.gmail.com>
+Subject: Re: [PATCH] soc: qcom: cmd-db: Make endian-agnostic
+To: swboyd@chromium.org
+Cc: Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        msivasub@codeaurora.org, Lina Iyer <ilina@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 15, 2018 at 08:33:21PM +0100, Jonathan Cameron wrote:
-> On Tue, 10 Apr 2018 11:57:52 +0300
-> Eugen Hristev <eugen.hristev@microchip.com> wrote:
-> 
-> > When requesting channels for a particular consumer device,
-> > besides requesting the device (incrementing the reference counter), also
-> > do it for the driver module of the iio dev. This will avoid the situation
-> > where the producer IIO device can be removed and the consumer is still
-> > present in the kernel.
-> > 
-> > Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> > ---
-> >  drivers/iio/inkern.c | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
-> > index ec98790..68d9b87 100644
-> > --- a/drivers/iio/inkern.c
-> > +++ b/drivers/iio/inkern.c
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/mutex.h>
-> >  #include <linux/of.h>
-> > +#include <linux/module.h>
-> >  
-> >  #include <linux/iio/iio.h>
-> >  #include "iio_core.h"
-> > @@ -152,6 +153,7 @@ static int __of_iio_channel_get(struct iio_channel *channel,
-> >  	if (index < 0)
-> >  		goto err_put;
-> >  	channel->channel = &indio_dev->channels[index];
-> > +	try_module_get(channel->indio_dev->driver_module);
-> 
-> And if it fails? (the module we are trying to get is going away...)
-> 
-> We should try and handle it I think. Be it by just erroring out of here.
+On Thu, Apr 12, 2018 at 3:41 PM Stephen Boyd <swboyd@chromium.org> wrote:
 
-Even more, this has nothing to do with modules. A device can go away for
-any number of reasons (we unbind it manually via sysfs, we pull the USB
-plug from the host in case it is USB-connected device, we unload I2C
-adapter for the bus device resides on, we kick underlying PCI device)
-and we should be able to handle this in some fashion. Handling errors
-from reads and ignoring garbage is one of methods.
+> This driver deals with memory that is stored in little-endian format.
+> Update the structures with the proper little-endian types and then
+> do the proper conversions when reading the fields. Note that we compare
+> the ids with a memcmp() because we already pad out the string 'id' field
+> to exactly 8 bytes with the strncpy() onto the stack.
 
-FWIW this is a NACK from me.
+> Cc: Mahesh Sivasubramanian <msivasub@codeaurora.org>
+> Cc: Lina Iyer <ilina@codeaurora.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Evan Green <evgreen@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
 
-Thanks.
+> Changes from inline patch:
+>   * Fixed magic
+>   * Made function for memcmp()
+>   *
 
--- 
-Dmitry
+>   drivers/soc/qcom/cmd-db.c | 116 +++++++++++++++++++++-----------------
+>   1 file changed, 65 insertions(+), 51 deletions(-)
+
+> Sent by a computer through tubes
+
+
+Reviewed-by: Evan Green <evgreen@chromium.org>
