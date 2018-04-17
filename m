@@ -1,67 +1,67 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2397738-1523987425-2-11482711221263727589
+X-Cyrus-Session-Id: sloti22d1t05-2397738-1523987424-2-1605182327259382631
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523987424; b=tQk6b4H6OAiz3pr3JO9B+IwgEXguXGD156cSDhxOlKCGzqa3/W
-    dOCkd25OD874RLEGAphBFuhL9wfyha/WRz8zPNA7A/C2IxnOA2jDIyLt6ecSue9R
-    4eVrLip91TfFfqt6CTVAbZhT2m6Bu1kMGoIBIjAHk1qOzuanWYqF8sOWBySTSi0y
-    Us3o05zfVxM2XAG+Cr60u05aQlmKQ1yT8a/lgycOp7/Tf8DKPHAb+EYcDU5YtwAD
-    23lRvGqRA/ZZkAYd20yWd0nGRUhlN8bMAgx27hi0iUvEKSDOtdeUQ/PRFjq2Oawm
-    xJoAZqlgRAT40O09yiBadp8wQ+LdXHxe3O3Q==
+    1523987423; b=DtPcgMFcC1P8kaFgNhawUFZS7kLUekhcWtfUQWCw3ywQ8kurvt
+    SBHDYDFjkC6bISKm6D+neVKeWMBXxuLHB2EPvtubWLcpfrTHtgkrM+Yq7EvtVsGJ
+    tHjYZ9TlshSeZRxE1jNvGcRy1tDzFnFztJ+yZooVLB1s36kICfOhGEpLA08cZr4s
+    rMYFxTRV+brJOgKosjZyn47CB05GIxYAOBS1h8l/BdClo4R8bTIL/xDHcoxB0bWj
+    hcPHhTw+1WlyeKulDYyzDW3bWYbYm1SaaJDZURhVoLTEupouFIEQO5O3A9+p1iPW
+    NyrI6CPmMKcM6TrwTI0RWk5gipehJxb7C/Ww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523987424; bh=8hAX+
-    5htgj2QWP6FG1qRbE8dK8fLLIkpU+uzq87vYto=; b=OxiyjUrcUMjqhOgW27toI
-    ZGS4YZzyLpxrpdfFsPHDwvi9LJEIbsZVqvNmy3Vemh6iFYJcSK7wgFaZyDBkauEW
-    /7cVou3P+Wm4qyzoNZYnnMNYXpGWL6p3hnzQY8bC2GjO9Wo6pQfLXa4OA5JbYvg9
-    30W12khb9fDREdWNvQiMFbir1RYe3NNQId66tkj2tjuDsZQCdalcZ4jBGcVSyTeJ
-    UznrTLHhuB+pYYT3r+bWUYKOFhHJ9z3zBeBHvVrey1j7eRHwDPdDFpVPczJ72qkU
-    tdiPojAxXEH1mTw5+RryXr7XVOOmjvgYfZgA8Q+G5yM1SuU4fQn8j/l7Te/hWDNv
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523987423; bh=dlKo0
+    SbiCjReidoIRrJx33PshM9dCjgfAZzgp31M/nA=; b=i5MrYH4342GWgJ+UwIkT4
+    kBlYoy7YGyJJpOkT+CK3MSYf+SzbSWE26XrGuQrXXPUna3R3QocUVHLlKX5ACqCi
+    VoKSiDCHDZ9eW/aggr7riB9+Mo+5rQVKTRtQDV8i5yeJBJKPLNXeOF4L3i8hOSRI
+    UQou6B6/k1WLSlTMFq6vUA5fz3F+ZmfCZsKG0b16R9oL2C0ONhLU16zh6VRxlvpO
+    bYDOPEMQzMvy2j4MxcKlHBuul+Sgy3/iQfRHxmbtqGTh2suf8n25FFrncysOhhdw
+    lW3O6sr0ib8KbRXxxbAlc3f1s40YxYtYIlilK0snmZEN9ITRfa6YtCmcdtjyS0EH
     g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOhvUg4uO+QaIjdDQss1517d3SvizLLe+zb2YYZt+QlybewVqj7x0hi6zHdV4YE+Rl3hvDYEITYEpEe1W3QU9QxxEGAHVW3mREQH5xr1j29HxyrGznu8
-    ScPfXlx2SUycQ7IGsy1ylHwfxv/dgXJRoYaBo6Vy/2j/U96SfAcqTYSfa/rgZDMj5iBk7aQbmFFUvPGfTCAfoNquQ3mcwBwwKiXuN4coLUUxUFVfuBr+e5av
-    iLOO0KJCfelG/sd+DVgk+w==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+X-CM-Envelope: MS4wfKGqGHMtgU5TfK6tEzodG19pHZuDelspcOxEa/k7/ewLn4Oo60jsmzikqvGnZzlCrvkxTrr3r4o7RfLv/SpYX1u2/MoqJGuwqBGy2MkYHvCV3hzZ3aX7
+    DzugxRUni9cAcuzmcTDBTIfkD8SRERdkp8OhAwAzSTP2fS40/l6GVEzorCbxgh4KX97z1cJjeck7zYfd8VfCwjLm+zXNw2QFOtdJb6gJh1ZhljECBzdAIQjQ
+    lQncsq5DqtKjJQ0+xKJOfg==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8
-    a=7CQSdrXTAAAA:8 a=DDOyTI_5AAAA:8 a=TbWBU93eRZgzZTkg1z0A:9 a=CjuIK1q_8ugA:10
+    a=7CQSdrXTAAAA:8 a=DDOyTI_5AAAA:8 a=XNYVfk6J6KFTGUcfqe8A:9 a=QEXdDO2ut3YA:10
     a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
@@ -92,13 +92,14 @@ To: Christoph Hellwig <hch@lst.de>,
  Ohad Ben-Cohen <ohad@wizery.com>,
  Bjorn Andersson <bjorn.andersson@linaro.org>,
  Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH v3 09/20] iommu: Remove depends on HAS_DMA in case of platform
- dependency
-Date: Tue, 17 Apr 2018 19:49:09 +0200
-Message-Id: <1523987360-18760-10-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH v3 10/20] lightnvm: Remove depends on HAS_DMA in case of
+ platform dependency
+Date: Tue, 17 Apr 2018 19:49:10 +0200
+Message-Id: <1523987360-18760-11-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
 References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
+MIME-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -119,77 +120,37 @@ Cc: devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
  linux-serial@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
  linux-remoteproc@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
  linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-In most cases this other symbol is an architecture or platform specific
-symbol, or PCI.
-
-Generic symbols and drivers without platform dependencies keep their
-dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-cannot work anyway.
-
-This simplifies the dependencies, and allows to improve compile-testing.
-
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Joerg Roedel <jroedel@suse.de>
----
-v3:
-  - Add Acked-by,
-  - Rebase to v4.17-rc1,
-
-v2:
-  - Add Reviewed-by, Acked-by,
-  - Drop RFC state,
-  - Split per subsystem.
----
- drivers/iommu/Kconfig | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index df171cb8582296b9..c76157e57f6ba4ba 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -23,7 +23,7 @@ config IOMMU_IO_PGTABLE
- config IOMMU_IO_PGTABLE_LPAE
- 	bool "ARMv7/v8 Long Descriptor Format"
- 	select IOMMU_IO_PGTABLE
--	depends on HAS_DMA && (ARM || ARM64 || (COMPILE_TEST && !GENERIC_ATOMIC64))
-+	depends on ARM || ARM64 || (COMPILE_TEST && !GENERIC_ATOMIC64)
- 	help
- 	  Enable support for the ARM long descriptor pagetable format.
- 	  This allocator supports 4K/2M/1G, 16K/32M and 64K/512M page
-@@ -42,7 +42,7 @@ config IOMMU_IO_PGTABLE_LPAE_SELFTEST
- config IOMMU_IO_PGTABLE_ARMV7S
- 	bool "ARMv7/v8 Short Descriptor Format"
- 	select IOMMU_IO_PGTABLE
--	depends on HAS_DMA && (ARM || ARM64 || COMPILE_TEST)
-+	depends on ARM || ARM64 || COMPILE_TEST
- 	help
- 	  Enable support for the ARM Short-descriptor pagetable format.
- 	  This supports 32-bit virtual and physical addresses mapped using
-@@ -376,7 +376,6 @@ config QCOM_IOMMU
- 	# Note: iommu drivers cannot (yet?) be built as modules
- 	bool "Qualcomm IOMMU Support"
- 	depends on ARCH_QCOM || (COMPILE_TEST && !GENERIC_ATOMIC64)
--	depends on HAS_DMA
- 	select IOMMU_API
- 	select IOMMU_IO_PGTABLE_LPAE
- 	select ARM_DMA_USE_IOMMU
--- 
-2.7.4
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+UmVtb3ZlIGRlcGVuZGVuY2llcyBvbiBIQVNfRE1BIHdoZXJlIGEgS2NvbmZpZyBzeW1ib2wgZGVw
+ZW5kcyBvbiBhbm90aGVyCnN5bWJvbCB0aGF0IGltcGxpZXMgSEFTX0RNQSwgYW5kLCBvcHRpb25h
+bGx5LCBvbiAifHwgQ09NUElMRV9URVNUIi4KSW4gbW9zdCBjYXNlcyB0aGlzIG90aGVyIHN5bWJv
+bCBpcyBhbiBhcmNoaXRlY3R1cmUgb3IgcGxhdGZvcm0gc3BlY2lmaWMKc3ltYm9sLCBvciBQQ0ku
+CgpHZW5lcmljIHN5bWJvbHMgYW5kIGRyaXZlcnMgd2l0aG91dCBwbGF0Zm9ybSBkZXBlbmRlbmNp
+ZXMga2VlcCB0aGVpcgpkZXBlbmRlbmNpZXMgb24gSEFTX0RNQSwgdG8gcHJldmVudCBjb21waWxp
+bmcgc3Vic3lzdGVtcyBvciBkcml2ZXJzIHRoYXQKY2Fubm90IHdvcmsgYW55d2F5LgoKVGhpcyBz
+aW1wbGlmaWVzIHRoZSBkZXBlbmRlbmNpZXMsIGFuZCBhbGxvd3MgdG8gaW1wcm92ZSBjb21waWxl
+LXRlc3RpbmcuCgpTaWduZWQtb2ZmLWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0QGxpbnV4
+LW02OGsub3JnPgpSZXZpZXdlZC1ieTogTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPgpB
+Y2tlZC1ieTogUm9iaW4gTXVycGh5IDxyb2Jpbi5tdXJwaHlAYXJtLmNvbT4KUmV2aWV3ZWQtYnk6
+IE1hdGlhcyBCasO4cmxpbmcgPG1iQGxpZ2h0bnZtLmlvPgotLS0KdjM6CiAgLSBBZGQgUmV2aWV3
+ZWQtYnksCiAgLSBSZWJhc2UgdG8gdjQuMTctcmMxLAogIC0gUmVtb3ZlZCBib2d1cyBub3RlcywK
+CnYyOgogIC0gQWRkIFJldmlld2VkLWJ5LCBBY2tlZC1ieSwKICAtIERyb3AgUkZDIHN0YXRlLAog
+IC0gU3BsaXQgcGVyIHN1YnN5c3RlbS4KLS0tCiBkcml2ZXJzL2xpZ2h0bnZtL0tjb25maWcgfCAy
+ICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYg
+LS1naXQgYS9kcml2ZXJzL2xpZ2h0bnZtL0tjb25maWcgYi9kcml2ZXJzL2xpZ2h0bnZtL0tjb25m
+aWcKaW5kZXggMTBjMDg5ODIxODVhNTcyZi4uOWMwM2YzNWQ5ZGYxMTNjNiAxMDA2NDQKLS0tIGEv
+ZHJpdmVycy9saWdodG52bS9LY29uZmlnCisrKyBiL2RyaXZlcnMvbGlnaHRudm0vS2NvbmZpZwpA
+QCAtNCw3ICs0LDcgQEAKIAogbWVudWNvbmZpZyBOVk0KIAlib29sICJPcGVuLUNoYW5uZWwgU1NE
+IHRhcmdldCBzdXBwb3J0IgotCWRlcGVuZHMgb24gQkxPQ0sgJiYgSEFTX0RNQSAmJiBQQ0kKKwlk
+ZXBlbmRzIG9uIEJMT0NLICYmIFBDSQogCXNlbGVjdCBCTEtfREVWX05WTUUKIAloZWxwCiAJICBT
+YXkgWSBoZXJlIHRvIGdldCB0byBlbmFibGUgT3Blbi1jaGFubmVsIFNTRHMuCi0tIAoyLjcuNAoK
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2ZWwgbWFp
+bGluZyBsaXN0CmRldmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0cDovL2RyaXZlcmRldi5s
+aW51eGRyaXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVsCg==
