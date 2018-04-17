@@ -1,46 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752609AbeDQPbi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:31:38 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:54646 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750741AbeDQPbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:31:37 -0400
-Date: Tue, 17 Apr 2018 17:31:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: =?utf-8?B?SsO2cmc=?= Otte <jrg.otte@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: 4.17.0-rc1 doesn't boot.
-Message-ID: <20180417153101.GB2894@pd.tnic>
-References: <CADDKRnAp1EKCAosD-kLNRaJ4qJppUtmmP1n76wzcvNUVa0fQzg@mail.gmail.com>
- <20180417081458.GA2894@pd.tnic>
- <CADDKRnDmycResXxAsfYfM6sFoWffD_v_cMoR4XF7OxUps3mU+Q@mail.gmail.com>
- <20180417142715.GL18640@pd.tnic>
- <CADDKRnBtQKz5S3EdJbrVH8PN9_qTrSQ3owcK=PfxToHdxpu8rA@mail.gmail.com>
+        id S1752726AbeDQPcN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:32:13 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34233 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752192AbeDQPcL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 11:32:11 -0400
+X-Google-Smtp-Source: AIpwx4/XfA3AqXvfpYABRzbiaRx8kHdVFWNM5hwWaKKH9RkEc0AJCFLZDD/TGlbG4ap4LGXtz3qTyg==
+Date: Tue, 17 Apr 2018 17:32:07 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andi Shyti <andi@etezian.org>
+Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: exynos: Update x and y properties for mms114
+ touchscreen
+Message-ID: <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
+References: <CGME20180126060503epcas2p4befe2d3d43f4a2158b1e1a123bf7906f@epcas2p4.samsung.com>
+ <20180126060454.18082-1-andi.shyti@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADDKRnBtQKz5S3EdJbrVH8PN9_qTrSQ3owcK=PfxToHdxpu8rA@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180126060454.18082-1-andi.shyti@samsung.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 05:21:30PM +0200, Jörg Otte wrote:
-> finished bisection.
-> 39114b7a743e6759bab4d96b7d9651d44d17e3f9 is the first bad commit
-> (x86/pti: Never implicitly clear _PAGE_GLOBAL for kernel image).
+On Fri, Jan 26, 2018 at 03:04:54PM +0900, Andi Shyti wrote:
+> The mms114 binding [1] specifies that the 'x' and 'y' should be
+> called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
+> in coherence with the touchscreen [2] binding.
+> 
+> Update the mms114 node for trats2 and trats dts according to the
+> binding.
+> 
+> [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+> [2] Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+> Hi Krzysztof,
+> 
+> this patch depends on Simon's patchset [1] and must be applied after
+> that. If you want I can ping you when the patch gets or you can take
+> it in the next cycle.
+> 
+> Andi
+> 
+> [1] https://marc.info/?l=linux-kernel&m=151682273403098&w=2
+>
 
-Looks like you're not the only one:
+Hi Andi,
 
-http://marc.info/?i=20180417150130.GA11166@ak-laptop.emea.nsn-net.net
+As I understand, the dependencies are in and I can take this?
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Best regards,
+Krzysztof
