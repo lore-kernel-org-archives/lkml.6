@@ -1,72 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752135AbeDQI1z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 04:27:55 -0400
-Received: from mx0b-00176a03.pphosted.com ([67.231.157.48]:57604 "EHLO
-        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751793AbeDQI1x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:27:53 -0400
-Subject: Re: EXT: Re: [PATCHv1] Input: atmel_mxt_ts - fix the firmware update
-To: Nick Dyer <nick@shmanahar.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-CC: Sebastian Reichel <sre@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        <linux-input@vger.kernel.org>, Henrik Rydberg <rydberg@bitmath.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@collabora.com>
-References: <20180322164330.24809-1-sebastian.reichel@collabora.co.uk>
- <20180323194736.7fhgb6qjkwbivsvx@hairyalien>
-From: Nandor Han <nandor.han@ge.com>
-Message-ID: <18fcfdcc-d43a-6ee3-07d5-af618b600e12@ge.com>
-Date: Tue, 17 Apr 2018 09:37:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752536AbeDQI2j (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 04:28:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44636 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752273AbeDQI2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 04:28:37 -0400
+Date: Tue, 17 Apr 2018 10:28:15 +0200
+From: Borislav Petkov <bp@suse.de>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+Subject: Re: [PATCH 4/4] x86/CPU/AMD: Calculate LLC ID from number of sharing
+ threads
+Message-ID: <20180417082814.GB18808@pd.tnic>
+References: <1522046116-22578-1-git-send-email-suravee.suthikulpanit@amd.com>
+ <1522046116-22578-5-git-send-email-suravee.suthikulpanit@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20180323194736.7fhgb6qjkwbivsvx@hairyalien>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [3.159.19.191]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1804170060
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1522046116-22578-5-git-send-email-suravee.suthikulpanit@amd.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/03/18 21:47, Nick Dyer wrote:
-> On Thu, Mar 22, 2018 at 05:43:30PM +0100, Sebastian Reichel wrote:
->> The automatic update mechanism will trigger an update if the
->> info block CRCs are different between maxtouch configuration
->> file (maxtouch.cfg) and chip.
->>
->> The driver compared the CRCs without retrieving the chip CRC,
->> resulting always in a failure and firmware flashing action
->> triggered. The patch will fix this issue by retrieving the
->> chip info block CRC before the check.
-> 
-> Thanks for raising this, I agree it's definitely something we want to
-> fix.
-> 
-> However, I'm not convinced you're solving the problem in the best way.
-> You've attached it to the read_t9_resolution() code path, whereas the
-> info block is common between T9 and T100 and works in the same way.
-> 
-> Would you mind trying the below patch? I've dusted it off from some
-> work that I did back in 2012 and it should solve your issue.
-> 
-> It also has the benefit that by reading the information block and the
-> object table into a contiguous region of memory, we can verify the
-> checksum at probe time. This means we make sure that we are indeed
-> talking to a chip that supports object protocol correctly.
-> 
+On Mon, Mar 26, 2018 at 01:35:16AM -0500, Suravee Suthikulpanit wrote:
+> diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+> index 54d04d5..67f4790 100644
+> --- a/arch/x86/kernel/cpu/cacheinfo.c
+> +++ b/arch/x86/kernel/cpu/cacheinfo.c
+> @@ -637,6 +637,43 @@ static int find_num_cache_leaves(struct cpuinfo_x86 *c)
+>  	return i;
+>  }
+>  
+> +void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, int cpu, u8 node_id)
+> +{
+> +	/*
+> +	 * We may have multiple LLCs if L3 caches exist, so check if we
+> +	 * have an L3 cache by looking at the L3 cache CPUID leaf.
+> +	 */
+> +	if (!cpuid_edx(0x80000006))
+> +		return;
+> +
+> +	if (c->x86 < 0x17) {
+> +		/* LLC is at the node level. */
+> +		per_cpu(cpu_llc_id, cpu) = node_id;
+> +	} else if (c->x86 == 0x17 &&
+> +		   c->x86_model >= 0 && c->x86_model <= 0x1F) {
+> +		/*
+> +		 * LLC is at the core complex level.
+> +		 * Core complex id is ApicId[3] for these processors.
+> +		 */
+> +		per_cpu(cpu_llc_id, cpu) = c->apicid >> 3;
+> +	} else {
+> +		/* LLC ID is calculated from the number of thread sharing. */
+> +		u32 eax, ebx, ecx, edx, num_sharing_cache = 0;
+> +		u32 llc_index = find_num_cache_leaves(c) - 1;
+> +
+> +		cpuid_count(0x8000001d, llc_index, &eax, &ebx, &ecx, &edx);
+> +		if (eax)
+> +			num_sharing_cache = ((eax >> 14) & 0xfff) + 1;
+> +
+> +		if (num_sharing_cache) {
+> +			int bits = get_count_order(num_sharing_cache) - 1;
+> +
+> +			per_cpu(cpu_llc_id, cpu) = c->apicid >> bits;
+> +		}
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(cacheinfo_amd_init_llc_id);
 
-Thanks Nick. This looks like a better solution.
-Sebastian will test this and we can see the results.
+That function needs to be exported to modules because...?
 
+-- 
+Regards/Gruss,
+    Boris.
 
-Nandor
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
