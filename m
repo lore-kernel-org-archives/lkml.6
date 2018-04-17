@@ -1,104 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752620AbeDQLko (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 07:40:44 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1825 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752067AbeDQLkn (ORCPT
+        id S1752825AbeDQLmj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 07:42:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36575 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752254AbeDQLmh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 07:40:43 -0400
-From: Philippe Cornu <philippe.cornu@st.com>
-To: Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        David Airlie <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH] drm/stm: ltdc: add mode_valid()
-Date: Tue, 17 Apr 2018 13:40:26 +0200
-Message-ID: <20180417114026.8709-1-philippe.cornu@st.com>
-X-Mailer: git-send-email 2.15.1
+        Tue, 17 Apr 2018 07:42:37 -0400
+Subject: Re: [PATCH v2 0/9] Input: support for latest Lenovo thinkpads (series
+ 80)
+To: =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
+        "'Benjamin Tissoires'" <benjamin.tissoires@redhat.com>
+Cc: "'Oliver Haessler'" <oliver@redhat.com>,
+        "'Benjamin Berg'" <bberg@redhat.com>,
+        "'Rob Herring'" <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        "'open list:HID CORE LAYER'" <linux-input@vger.kernel.org>,
+        "'lkml'" <linux-kernel@vger.kernel.org>,
+        "'Dmitry Torokhov'" <dmitry.torokhov@gmail.com>
+References: <20180409091051.2944-1-benjamin.tissoires@redhat.com>
+ <CAO-hwJJnHPEQ+R+8qWb1Dn+otqgmbcKgiNDOyNkVBD+xdzY_zw@mail.gmail.com>
+ <00f701d3d627$bcf41de0$36dc59a0$@emc.com.tw>
+From: Aaron Ma <aaron.ma@canonical.com>
+Openpgp: preference=signencrypt
+Message-ID: <ca40347e-44cd-aa93-75ba-1bf0a63705be@canonical.com>
+Date: Tue, 17 Apr 2018 19:42:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.32]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_06:,,
- signatures=0
+In-Reply-To: <00f701d3d627$bcf41de0$36dc59a0$@emc.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add mode_valid() function to filter modes according to available
-pll clock values and "preferred" modes. It is particularly
-useful for hdmi modes that require precise pixel clocks.
+Hi Dmitry and Benjamin:
 
-Note that "preferred" modes are always accepted:
-- this is important for panels because panel clock tolerances are
-  bigger than hdmi ones and there is no reason to not accept them
-  (the fps may vary a little but it is not a problem).
-- the hdmi preferred mode will be accepted too, but userland will
-  be able to use others hdmi "valid" modes if necessary.
+Could you apply my patch too?
 
-Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
----
- drivers/gpu/drm/stm/ltdc.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+It add LEN0096 that Benjamin's patch doesn't include.
 
-diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-index 014cef8cef37..616191fe98ae 100644
---- a/drivers/gpu/drm/stm/ltdc.c
-+++ b/drivers/gpu/drm/stm/ltdc.c
-@@ -445,6 +445,43 @@ static void ltdc_crtc_atomic_disable(struct drm_crtc *crtc,
- 	reg_set(ldev->regs, LTDC_SRCR, SRCR_IMR);
- }
- 
-+#define CLK_TOLERANCE_HZ 50
-+
-+static enum drm_mode_status
-+ltdc_crtc_mode_valid(struct drm_crtc *crtc,
-+		     const struct drm_display_mode *mode)
-+{
-+	struct ltdc_device *ldev = crtc_to_ltdc(crtc);
-+	int target = mode->clock * 1000;
-+	int target_min = target - CLK_TOLERANCE_HZ;
-+	int target_max = target + CLK_TOLERANCE_HZ;
-+	int result;
-+
-+	/*
-+	 * Accept all "preferred" modes:
-+	 * - this is important for panels because panel clock tolerances are
-+	 *   bigger than hdmi ones and there is no reason to not accept them
-+	 *   (the fps may vary a little but it is not a problem).
-+	 * - the hdmi preferred mode will be accepted too, but userland will
-+	 *   be able to use others hdmi "valid" modes if necessary.
-+	 */
-+	if (mode->type & DRM_MODE_TYPE_PREFERRED)
-+		return MODE_OK;
-+
-+	result = clk_round_rate(ldev->pixel_clk, target);
-+
-+	DRM_DEBUG_DRIVER("clk rate target %d, available %d\n", target, result);
-+
-+	/*
-+	 * Filter modes according to the clock value, particularly useful for
-+	 * hdmi modes that require precise pixel clocks.
-+	 */
-+	if (result < target_min || result > target_max)
-+		return MODE_CLOCK_RANGE;
-+
-+	return MODE_OK;
-+}
-+
- static bool ltdc_crtc_mode_fixup(struct drm_crtc *crtc,
- 				 const struct drm_display_mode *mode,
- 				 struct drm_display_mode *adjusted_mode)
-@@ -559,6 +596,7 @@ static void ltdc_crtc_atomic_flush(struct drm_crtc *crtc,
- }
- 
- static const struct drm_crtc_helper_funcs ltdc_crtc_helper_funcs = {
-+	.mode_valid = ltdc_crtc_mode_valid,
- 	.mode_fixup = ltdc_crtc_mode_fixup,
- 	.mode_set_nofb = ltdc_crtc_mode_set_nofb,
- 	.atomic_flush = ltdc_crtc_atomic_flush,
--- 
-2.15.1
++	"LEN0096", /* X280 */
+
+Regards,
+Aaron
