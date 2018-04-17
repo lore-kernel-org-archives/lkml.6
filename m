@@ -1,110 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753141AbeDQPl1 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:41:27 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.225]:42663 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753089AbeDQPlZ (ORCPT
+        id S1752681AbeDQPmq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:42:46 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:52906 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751187AbeDQPmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:41:25 -0400
-From: Matt Redfearn <matt.redfearn@mips.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
-CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 4/4] MIPS: memset.S: Add comments to fault fixup handlers
-Date: Tue, 17 Apr 2018 16:40:03 +0100
-Message-ID: <1523979603-492-4-git-send-email-matt.redfearn@mips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523979603-492-1-git-send-email-matt.redfearn@mips.com>
-References: <1523979603-492-1-git-send-email-matt.redfearn@mips.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.155.41]
-X-BESS-ID: 1523979677-637139-30405-48655-1
-X-BESS-VER: 2018.4-r1804121647
-X-BESS-Apparent-Source-IP: 12.201.5.28
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192083
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+        Tue, 17 Apr 2018 11:42:44 -0400
+Message-ID: <1523979759.3310.7.camel@HansenPartnership.com>
+Subject: Re: repeatable boot randomness inside KVM guest
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Date: Tue, 17 Apr 2018 16:42:39 +0100
+In-Reply-To: <20180417151650.GA16738@thunk.org>
+References: <20180414195921.GA10437@avx2> <20180414224419.GA21830@thunk.org>
+         <20180415004134.GB15294@bombadil.infradead.org>
+         <1523956414.3250.5.camel@HansenPartnership.com>
+         <20180417114728.GA21954@bombadil.infradead.org>
+         <1523966232.3250.15.camel@HansenPartnership.com>
+         <20180417151650.GA16738@thunk.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is not immediately obvious what the expected inputs to these fault
-handlers is and how they calculate the number of unset bytes. Having
-stared deeply at this in order to fix some corner cases, add some
-comments to addist those who follow.
+On Tue, 2018-04-17 at 11:16 -0400, Theodore Y. Ts'o wrote:
+> On Tue, Apr 17, 2018 at 12:57:12PM +0100, James Bottomley wrote:
+> > 
+> > You don't have to compromise the bootloader to influence this, you
+> > merely have to trick it into providing the random number you
+> > wanted.  The bigger you make the attack surface (the more inputs)
+> > the more likelihood of finding a trick that works.
+> 
+> There is a large class of devices where the bootloader can be
+> considered trusted.  For example, all modern Chrome and Android
+> devices have signed bootloaders by default.  And if you are using an
+> Amazon or Chrome VM, you are generally started it with a known,
+> trusted boot image.
 
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
----
+Depends how the parameter is passed.  If it can be influenced from the
+command line then a large class of "trusted boot" systems actually
+don't verify the command line, so you can boot a trusted system and
+still inject bogus command line parameters.  This is definitely true of
+PC class secure boot.  Not saying it will always be so, just
+illustrating why you don't necessarily want to expand the attack
+surface.
 
-Changes in v2:
-- Add comments to fault handlers in new, separate, patch.
+> The reason why it's useful to have the bootloader get the entropy is
+> because it may device-specific access and be able to leverage
+> whatever infrastructure was used to load the kernel and/or
+> intialramfs to also load the equivalent of /var/lib/systemd/random-
+> seed (or /var/lib/urandom, et. al) --- and do this early enough that
+> we can have truely secure randomness for those kernel faciliteis that
+> need access to real randomness to initialize the stack canary, or
+> initializing the slab cache.
 
- arch/mips/lib/memset.S | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+OK, in the UEFI ideal world where every component is a perfectly
+written OS, perhaps you're right.  In the more real world, do you trust
+the people who wrote the bootloader to understand and correctly
+implement the cryptographically secure process of obtaining a random
+input?
 
-diff --git a/arch/mips/lib/memset.S b/arch/mips/lib/memset.S
-index 1cc306520a55..a06dabe99d4b 100644
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -231,16 +231,25 @@
- 
- #ifdef CONFIG_CPU_MIPSR6
- .Lbyte_fixup\@:
-+	/*
-+	 * unset_bytes = current_addr + 1
-+	 *      a2     =      t0      + 1
-+	 */
- 	PTR_SUBU	a2, $0, t0
- 	jr		ra
- 	 PTR_ADDIU	a2, 1
- #endif /* CONFIG_CPU_MIPSR6 */
- 
- .Lfirst_fixup\@:
-+	/* unset_bytes already in a2 */
- 	jr	ra
- 	 nop
- 
- .Lfwd_fixup\@:
-+	/*
-+	 * unset_bytes = partial_start_addr +  #bytes   -     fault_addr
-+	 *      a2     =         t1         + (a2 & 3f) - $28->task->BUADDR
-+	 */
- 	PTR_L		t0, TI_TASK($28)
- 	andi		a2, 0x3f
- 	LONG_L		t0, THREAD_BUADDR(t0)
-@@ -249,6 +258,10 @@
- 	 LONG_SUBU	a2, t0
- 
- .Lpartial_fixup\@:
-+	/*
-+	 * unset_bytes = partial_end_addr +      #bytes     -     fault_addr
-+	 *      a2     =       a0         + (a2 & STORMASK) - $28->task->BUADDR
-+	 */
- 	PTR_L		t0, TI_TASK($28)
- 	andi		a2, STORMASK
- 	LONG_L		t0, THREAD_BUADDR(t0)
-@@ -257,10 +270,15 @@
- 	 LONG_SUBU	a2, t0
- 
- .Llast_fixup\@:
-+	/* unset_bytes already in a2 */
- 	jr		ra
- 	 nop
- 
- .Lsmall_fixup\@:
-+	/*
-+	 * unset_bytes = end_addr - current_addr + 1
-+	 *      a2     =    t1    -      a0      + 1
-+	 */
- 	PTR_SUBU	a2, t1, a0
- 	jr		ra
- 	 PTR_ADDIU	a2, 1
--- 
-2.7.4
+> There are other ways that this could be done, of course.  If the UEFI
+> boot services are still available, you might be able to ask the UEFI
+> services to give you randomness.  And yes, the hardware might be
+> backdoored to the fare-the-well by the MSS (for devices manufactured
+> in China) or by an NSA Tailored Access Operations intercepting a
+> computer shipment in transit.  But my vision was that this wouldn't
+> necessarily bump the entropy accounting or mark the CRNG as fully
+> intialized.  (If you work for the NSA and you're sure you won't do an
+> own-goal, you could enable a kernel boot option which marks the CRNG
+> initialized from entropy coming from UEFI or RDRAND or a TPM.  But I
+> don't think it should be the default.)
+> 
+> The only goal was to get enough uncertainty so we can secure early
+> kernel users of entropy for security features such as kernel ASLR,
+> the kernel stack canary, SLAB freelist randomization, etc.
+> 
+> And by the way --- if you think it is easy / possible to get secure
+> random numbers easily from either a TPMv1 or TPMv2 w/o any early boot
+> services (e.g., no interrupts, no DMA, no page tables, no memory
+> allocation) that would be really good to know.
+
+Well, as I said, I was planning to use the EFI driver (actually for
+IMA, but it works here too) which should be present to the kernel on
+boot.  We also don't have quite the severe restrictions you say.  The
+bootmem interface is usable for allocations (even ones that persist
+beyond init discard) and, although most TPMs are actually polled
+devices, it is possible to use interrupt drivers that do DMA via UEFI
+in early boot provided you know what you're doing.
+
+James
