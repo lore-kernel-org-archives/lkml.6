@@ -1,99 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752681AbeDQPmq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:42:46 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:52906 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751187AbeDQPmo (ORCPT
+        id S1752900AbeDQPnF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:43:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49210 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752695AbeDQPnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:42:44 -0400
-Message-ID: <1523979759.3310.7.camel@HansenPartnership.com>
-Subject: Re: repeatable boot randomness inside KVM guest
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Date: Tue, 17 Apr 2018 16:42:39 +0100
-In-Reply-To: <20180417151650.GA16738@thunk.org>
-References: <20180414195921.GA10437@avx2> <20180414224419.GA21830@thunk.org>
-         <20180415004134.GB15294@bombadil.infradead.org>
-         <1523956414.3250.5.camel@HansenPartnership.com>
-         <20180417114728.GA21954@bombadil.infradead.org>
-         <1523966232.3250.15.camel@HansenPartnership.com>
-         <20180417151650.GA16738@thunk.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 17 Apr 2018 11:43:03 -0400
+Date: Tue, 17 Apr 2018 08:43:57 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: rcu_process_callbacks irqsoff latency caused by taking spinlock
+ with irqs disabled
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180405093414.2273203e@roar.ozlabs.ibm.com>
+ <20180405001358.GK3948@linux.vnet.ibm.com>
+ <20180405104512.25ada2bb@roar.ozlabs.ibm.com>
+ <20180405155320.GN3948@linux.vnet.ibm.com>
+ <20180407074042.0c50a59a@roar.ozlabs.ibm.com>
+ <20180408210618.GT3948@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180408210618.GT3948@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18041715-0044-0000-0000-00000405ECF5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008871; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01019272; UDB=6.00519979; IPR=6.00798513;
+ MB=3.00020619; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 15:43:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041715-0045-0000-0000-00000837F149
+Message-Id: <20180417154357.GA24235@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170139
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-17 at 11:16 -0400, Theodore Y. Ts'o wrote:
-> On Tue, Apr 17, 2018 at 12:57:12PM +0100, James Bottomley wrote:
+On Sun, Apr 08, 2018 at 02:06:18PM -0700, Paul E. McKenney wrote:
+> On Sat, Apr 07, 2018 at 07:40:42AM +1000, Nicholas Piggin wrote:
+> > On Thu, 5 Apr 2018 08:53:20 -0700
+> > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+
+[ . . . ]
+
+> > > > Note that rcu doesn't show up consistently at the top, this was
+> > > > just one that looked *maybe* like it can be improved. So I don't
+> > > > know how reproducible it is.  
+> > > 
+> > > Ah, that leads me to wonder whether the hypervisor preempted whoever is
+> > > currently holding the lock.  Do we have anything set up to detect that
+> > > sort of thing?
 > > 
-> > You don't have to compromise the bootloader to influence this, you
-> > merely have to trick it into providing the random number you
-> > wanted.  The bigger you make the attack surface (the more inputs)
-> > the more likelihood of finding a trick that works.
+> > In this case it was running on bare metal, so it was a genuine latency
+> > event. It just hasn't been consistently at the top (scheduler has been
+> > there, but I'm bringing that down with tuning).
 > 
-> There is a large class of devices where the bootloader can be
-> considered trusted.  For example, all modern Chrome and Android
-> devices have signed bootloaders by default.  And if you are using an
-> Amazon or Chrome VM, you are generally started it with a known,
-> trusted boot image.
-
-Depends how the parameter is passed.  If it can be influenced from the
-command line then a large class of "trusted boot" systems actually
-don't verify the command line, so you can boot a trusted system and
-still inject bogus command line parameters.  This is definitely true of
-PC class secure boot.  Not saying it will always be so, just
-illustrating why you don't necessarily want to expand the attack
-surface.
-
-> The reason why it's useful to have the bootloader get the entropy is
-> because it may device-specific access and be able to leverage
-> whatever infrastructure was used to load the kernel and/or
-> intialramfs to also load the equivalent of /var/lib/systemd/random-
-> seed (or /var/lib/urandom, et. al) --- and do this early enough that
-> we can have truely secure randomness for those kernel faciliteis that
-> need access to real randomness to initialize the stack canary, or
-> initializing the slab cache.
-
-OK, in the UEFI ideal world where every component is a perfectly
-written OS, perhaps you're right.  In the more real world, do you trust
-the people who wrote the bootloader to understand and correctly
-implement the cryptographically secure process of obtaining a random
-input?
-
-> There are other ways that this could be done, of course.  If the UEFI
-> boot services are still available, you might be able to ask the UEFI
-> services to give you randomness.  And yes, the hardware might be
-> backdoored to the fare-the-well by the MSS (for devices manufactured
-> in China) or by an NSA Tailored Access Operations intercepting a
-> computer shipment in transit.  But my vision was that this wouldn't
-> necessarily bump the entropy accounting or mark the CRNG as fully
-> intialized.  (If you work for the NSA and you're sure you won't do an
-> own-goal, you could enable a kernel boot option which marks the CRNG
-> initialized from entropy coming from UEFI or RDRAND or a TPM.  But I
-> don't think it should be the default.)
+> OK, never mind about vCPU preemption, then!  ;-)
 > 
-> The only goal was to get enough uncertainty so we can secure early
-> kernel users of entropy for security features such as kernel ASLR,
-> the kernel stack canary, SLAB freelist randomization, etc.
-> 
-> And by the way --- if you think it is easy / possible to get secure
-> random numbers easily from either a TPMv1 or TPMv2 w/o any early boot
-> services (e.g., no interrupts, no DMA, no page tables, no memory
-> allocation) that would be really good to know.
+> It looks like I will have other reasons to decrease rcu_node lock
+> contention, so let me see what I can do.
 
-Well, as I said, I was planning to use the EFI driver (actually for
-IMA, but it works here too) which should be present to the kernel on
-boot.  We also don't have quite the severe restrictions you say.  The
-bootmem interface is usable for allocations (even ones that persist
-beyond init discard) and, although most TPMs are actually polled
-devices, it is possible to use interrupt drivers that do DMA via UEFI
-in early boot provided you know what you're doing.
+And the intermittent contention behavior you saw makes is plausible
+given the current code structure, which avoids contention in the common
+case where grace periods follow immediately one after the other, but
+does not in the less-likely case where RCU is idle and a bunch of CPUs
+simultaneously see the need for a new grace period.  I have a fix in
+the works which occasionally actually makes it through rcutorture.  ;-)
 
-James
+I expect to have something robust enough to post to LKML by the end
+of this week.
+
+							Thanx, Paul
