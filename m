@@ -1,28 +1,28 @@
-Return-Path: <kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49t+FB9321jtV8RK5dUguo8XDKpfdIFRbqDN1fAd3/ksfdbaTM7bPb8EtF0lPEt9EIS2rAd
-ARC-Seal: i=1; a=rsa-sha256; t=1523990367; cv=none;
+Return-Path: <kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/iulMksLqQQLgKda7mQsk7HJgG52l3bygOHPo5qbBKfVIZFZ9sE4py3Z2UdJ5J+SL5vMJV
+ARC-Seal: i=1; a=rsa-sha256; t=1523990356; cv=none;
         d=google.com; s=arc-20160816;
-        b=nvZtlyr0cbc8vjvuPw/RawQGfg5LJP762SXKKMzeQtg2drD7zl/jPzlp/6l4VsGxNs
-         qVo5wMkl9OsptNR+2/oZ3f8SoxQdeuHD9ob6+51yKk0hRT6vXlBCJ7VdcvL3Hq6MQV2t
-         6yrDQK9ZbrOJE6xVDgQh3lqM4Pdgpmhsd0RdsX96eKmf2cRXtCagvhgYdUyBHG0U8X9G
-         IxxXvAarrkw+hHapACJVFKNZ+EcSorFbOZ3NLm1vsAmspzWF8sWKoO00ssc/PeGAIYJR
-         hc0+kX8z0KrVasGyAN+BJC1UDgIsT4xa6jrH0g+JvccnR1umL0qfdZX6+apWwC4XAAsM
-         qXzQ==
+        b=glJcKkeklgGzokjJwFbzjVQJDo28qtAf6hz7e1tdmcSijCkIsJmKAr7r9CM0uMaV0d
+         ZRPXVM0gh65f30vKkGlhRxYmPrHkRzqAkuUHChh5G72GOw3+EQdrq8enGslMA2ys3UWo
+         O12FDT0LM2sXOVq6VW7l4iTIthK9Nb8NKSaftC5TRFw5tP/YnIqrg5uoJq+p4vYoTScE
+         PFQZ9EjPGEzBMxlM3fXTEdyRzgQGDi4NsqOlVAQG0i/KDAeTEIwgWdqLUbC54yREgDhE
+         enR0O53TWoPMpTHCTqitBy0+/tzV5xpgCuGP91AEYR4hpa+QwQ2AAZMZoHe2Rr3eXHM9
+         l6cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=XRqeiWN62iYC/SKfswSUlXoSTH6ynOz0k/prXfeTS9Y=;
-        b=aJVak+6p8xUP79cWYy7/F/4W562oAKGlzOqxceqo2pGoJK7q1JzTBxkfyDTw8YJQM2
-         lu4HlZeD9DQnOcrBJFbahPl71cv+7sx85O9/C2GaqsmPCNOtV0iL5/vvYRy3kY+lTy1x
-         hRGKNx/a0hk4Aac2flnmSz40/YrPhzvs/R74+fw1fDEUxJP+KoInAjsrsQp+uP+KyETc
-         N9qiHGpcZUk6NB7woMOHqPYiJdCY6Mnqr6q/GK+0BUg5icgXGyQcVgz3DIYi2yuX1T52
-         Bp9Ls+IklFmn/YXBkKDZcoyb6X9dcBjW89ZaD+awDf3B0WrclA43nL5DZGJfAepl2EsX
-         ++/w==
+        bh=TvwDR9OtThvWmHFb7GOitVvR0DTVFGRzvYeJ7lkpaSk=;
+        b=b54FGjg6CnOTVeeK36Uj7aYG9sKyvMjxQB0ge+2KmhU7Qf2kisNckcKLhUhhi2Ao1w
+         UzOQGZs8Q9fYuotpcz7+vrApRGkKynchBL6GtFAKj1mBaDpYUzymmyosDPbB2vpd2DaA
+         ZiLd2qCjMGmqHzjle9DIUiI7J/IAR/G4549uIqP0gK9586aC09z1zmOz3Ubkc6YpUCpA
+         mFR6S//kTWjFcmtzbaNkBxIamHIIFDTgRwT30xWKUxxu7o4ikhE1YoETx14e7cI+AVsu
+         49OnQIO9Jml5Cnk55S6jAEsVZb6S+Ug2lXo/Hi5cgawhxjyHsPtwhjaQZe2pC5pnRKsm
+         Zf6w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13022-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
@@ -44,133 +44,177 @@ Cc: arnd@arndb.de,
 	linux-kernel@vger.kernel.org,
 	awallis@codeaurora.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCHv3 05/11] arm64/cpufeature: detect pointer authentication
-Date: Tue, 17 Apr 2018 19:37:29 +0100
-Message-Id: <20180417183735.56985-6-mark.rutland@arm.com>
+Subject: [PATCHv3 08/11] arm64: expose user PAC bit positions via ptrace
+Date: Tue, 17 Apr 2018 19:37:32 +0100
+Message-Id: <20180417183735.56985-9-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180417183735.56985-1-mark.rutland@arm.com>
 References: <20180417183735.56985-1-mark.rutland@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598019723101175336?=
-X-GMAIL-MSGID: =?utf-8?q?1598019723101175336?=
+X-GMAIL-THRID: =?utf-8?q?1598019712430835023?=
+X-GMAIL-MSGID: =?utf-8?q?1598019712430835023?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-So that we can dynamically handle the presence of pointer authentication
-functionality, wire up probing code in cpufeature.c.
+When pointer authentication is in use, data/instruction pointers have a
+number of PAC bits inserted into them. The number and position of these
+bits depends on the configured TCR_ELx.TxSZ and whether tagging is
+enabled. ARMv8.3 allows tagging to differ for instruction and data
+pointers.
 
->From ARMv8.3 onwards, ID_AA64ISAR1 is no longer entirely RES0, and now
-has four fields describing the presence of pointer authentication
-functionality:
+For userspace debuggers to unwind the stack and/or to follow pointer
+chains, they need to be able to remove the PAC bits before attempting to
+use a pointer.
 
-* APA - address authentication present, using an architected algorithm
-* API - address authentication present, using an IMP DEF algorithm
-* GPA - generic authentication present, using an architected algorithm
-* GPI - generic authentication present, using an IMP DEF algorithm
+This patch adds a new structure with masks describing the location of
+the PAC bits in userspace instruction and data pointers (i.e. those
+addressable via TTBR0), which userspace can query via PTRACE_GETREGSET.
+By clearing these bits from pointers, userspace can acquire the PAC-less
+versions.
 
-For the moment we only care about address authentication, so we only
-need to check APA and API. It is assumed that if all CPUs support an IMP
-DEF algorithm, the same algorithm is used across all CPUs.
-
-Note that when we implement KVM support, we will also need to ensure
-that CPUs have uniform support for GPA and GPI.
+This new regset is exposed when the kernel is built with (user) pointer
+authentication support, and the feature is enabled. Otherwise, it is
+hidden.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/cpucaps.h |  5 ++++-
- arch/arm64/kernel/cpufeature.c   | 47 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/pointer_auth.h |  8 ++++++++
+ arch/arm64/include/uapi/asm/ptrace.h  |  7 +++++++
+ arch/arm64/kernel/ptrace.c            | 38 +++++++++++++++++++++++++++++++++++
+ include/uapi/linux/elf.h              |  1 +
+ 4 files changed, 54 insertions(+)
 
-diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-index bc51b72fafd4..9dcb4d1b14f5 100644
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -48,7 +48,10 @@
- #define ARM64_HAS_CACHE_IDC			27
- #define ARM64_HAS_CACHE_DIC			28
- #define ARM64_HW_DBM				29
-+#define ARM64_HAS_ADDRESS_AUTH_ARCH		30
-+#define ARM64_HAS_ADDRESS_AUTH_IMP_DEF		31
-+#define ARM64_HAS_ADDRESS_AUTH			32
+diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
+index a2e8fb91fdee..5ff141245633 100644
+--- a/arch/arm64/include/asm/pointer_auth.h
++++ b/arch/arm64/include/asm/pointer_auth.h
+@@ -16,9 +16,11 @@
+ #ifndef __ASM_POINTER_AUTH_H
+ #define __ASM_POINTER_AUTH_H
  
--#define ARM64_NCAPS				30
-+#define ARM64_NCAPS				33
++#include <linux/bitops.h>
+ #include <linux/random.h>
  
- #endif /* __ASM_CPUCAPS_H */
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 536d572e5596..01b1a7e7d70f 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -142,6 +142,10 @@ static const struct arm64_ftr_bits ftr_id_aa64isar1[] = {
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_LRCPC_SHIFT, 4, 0),
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_FCMA_SHIFT, 4, 0),
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_JSCVT_SHIFT, 4, 0),
-+	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_PTR_AUTH),
-+		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_API_SHIFT, 4, 0),
-+	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_PTR_AUTH),
-+		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_APA_SHIFT, 4, 0),
- 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_DPB_SHIFT, 4, 0),
- 	ARM64_FTR_END,
- };
-@@ -1025,6 +1029,22 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
+ #include <asm/cpufeature.h>
++#include <asm/memory.h>
+ #include <asm/sysreg.h>
+ 
+ #ifdef CONFIG_ARM64_PTR_AUTH
+@@ -71,6 +73,12 @@ static inline void ptrauth_keys_dup(struct ptrauth_keys *old,
+ 	*new = *old;
  }
- #endif
+ 
++/*
++ * The EL0 pointer bits used by a pointer authentication code.
++ * This is dependent on TBI0 being enabled, or bits 63:56 would also apply.
++ */
++#define ptrauth_pac_mask() 	GENMASK(54, VA_BITS)
++
+ #define mm_ctx_ptrauth_init(ctx) \
+ 	ptrauth_keys_init(&(ctx)->ptrauth_keys)
+ 
+diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
+index 98c4ce55d9c3..4994d718771a 100644
+--- a/arch/arm64/include/uapi/asm/ptrace.h
++++ b/arch/arm64/include/uapi/asm/ptrace.h
+@@ -228,6 +228,13 @@ struct user_sve_header {
+ 		  SVE_PT_SVE_OFFSET + SVE_PT_SVE_SIZE(vq, flags)	\
+ 		: SVE_PT_FPSIMD_OFFSET + SVE_PT_FPSIMD_SIZE(vq, flags))
+ 
++/* pointer authentication masks (NT_ARM_PAC_MASK) */
++
++struct user_pac_mask {
++	__u64		data_mask;
++	__u64		insn_mask;
++};
++
+ #endif /* __ASSEMBLY__ */
+ 
+ #endif /* _UAPI__ASM_PTRACE_H */
+diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
+index 71d99af24ef2..f395649f755e 100644
+--- a/arch/arm64/kernel/ptrace.c
++++ b/arch/arm64/kernel/ptrace.c
+@@ -44,6 +44,7 @@
+ #include <asm/cpufeature.h>
+ #include <asm/debug-monitors.h>
+ #include <asm/pgtable.h>
++#include <asm/pointer_auth.h>
+ #include <asm/stacktrace.h>
+ #include <asm/syscall.h>
+ #include <asm/traps.h>
+@@ -951,6 +952,30 @@ static int sve_set(struct task_struct *target,
+ 
+ #endif /* CONFIG_ARM64_SVE */
  
 +#ifdef CONFIG_ARM64_PTR_AUTH
-+static bool has_address_auth(const struct arm64_cpu_capabilities *entry,
-+			     int __unused)
++static int pac_mask_get(struct task_struct *target,
++			const struct user_regset *regset,
++			unsigned int pos, unsigned int count,
++			void *kbuf, void __user *ubuf)
 +{
-+	u64 isar1 = read_sanitised_ftr_reg(SYS_ID_AA64ISAR1_EL1);
-+	bool api, apa;
++	/*
++	 * The PAC bits can differ across data and instruction pointers
++	 * depending on TCR_EL1.TBID*, which we may make use of in future, so
++	 * we expose separate masks.
++	 */
++	unsigned long mask = ptrauth_pac_mask();
++	struct user_pac_mask uregs = {
++		.data_mask = mask,
++		.insn_mask = mask,
++	};
 +
-+	apa = cpuid_feature_extract_unsigned_field(isar1,
-+					ID_AA64ISAR1_APA_SHIFT) > 0;
-+	api = cpuid_feature_extract_unsigned_field(isar1,
-+					ID_AA64ISAR1_API_SHIFT) > 0;
++	if (!cpus_have_cap(ARM64_HAS_ADDRESS_AUTH))
++		return -EINVAL;
 +
-+	return apa || api;
++	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, &uregs, 0, -1);
 +}
 +#endif /* CONFIG_ARM64_PTR_AUTH */
 +
- static const struct arm64_cpu_capabilities arm64_features[] = {
- 	{
- 		.desc = "GIC system register CPU interface",
-@@ -1201,6 +1221,33 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
- 		.cpu_enable = cpu_enable_hw_dbm,
+ enum aarch64_regset {
+ 	REGSET_GPR,
+ 	REGSET_FPR,
+@@ -963,6 +988,9 @@ enum aarch64_regset {
+ #ifdef CONFIG_ARM64_SVE
+ 	REGSET_SVE,
+ #endif
++#ifdef CONFIG_ARM64_PTR_AUTH
++	REGSET_PAC_MASK,
++#endif
+ };
+ 
+ static const struct user_regset aarch64_regsets[] = {
+@@ -1032,6 +1060,16 @@ static const struct user_regset aarch64_regsets[] = {
+ 		.get_size = sve_get_size,
  	},
  #endif
 +#ifdef CONFIG_ARM64_PTR_AUTH
-+	{
-+		.desc = "Address authentication (architected algorithm)",
-+		.capability = ARM64_HAS_ADDRESS_AUTH_ARCH,
-+		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.sys_reg = SYS_ID_AA64ISAR1_EL1,
-+		.sign = FTR_UNSIGNED,
-+		.field_pos = ID_AA64ISAR1_APA_SHIFT,
-+		.min_field_value = ID_AA64ISAR1_APA_ARCHITECTED,
-+		.matches = has_cpuid_feature,
++	[REGSET_PAC_MASK] = {
++		.core_note_type = NT_ARM_PAC_MASK,
++		.n = sizeof(struct user_pac_mask) / sizeof(u64),
++		.size = sizeof(u64),
++		.align = sizeof(u64),
++		.get = pac_mask_get,
++		/* this cannot be set dynamically */
 +	},
-+	{
-+		.desc = "Address authentication (IMP DEF algorithm)",
-+		.capability = ARM64_HAS_ADDRESS_AUTH_IMP_DEF,
-+		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.sys_reg = SYS_ID_AA64ISAR1_EL1,
-+		.sign = FTR_UNSIGNED,
-+		.field_pos = ID_AA64ISAR1_API_SHIFT,
-+		.min_field_value = ID_AA64ISAR1_API_IMP_DEF,
-+		.matches = has_cpuid_feature,
-+	},
-+	{
-+		.capability = ARM64_HAS_ADDRESS_AUTH,
-+		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.matches = has_address_auth,
-+	},
-+#endif /* CONFIG_ARM64_PTR_AUTH */
- 	{},
++#endif
  };
  
+ static const struct user_regset_view user_aarch64_view = {
+diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+index e2535d6dcec7..070c28121979 100644
+--- a/include/uapi/linux/elf.h
++++ b/include/uapi/linux/elf.h
+@@ -420,6 +420,7 @@ typedef struct elf64_shdr {
+ #define NT_ARM_HW_WATCH	0x403		/* ARM hardware watchpoint registers */
+ #define NT_ARM_SYSTEM_CALL	0x404	/* ARM system call number */
+ #define NT_ARM_SVE	0x405		/* ARM Scalable Vector Extension registers */
++#define NT_ARM_PAC_MASK		0x406	/* ARM pointer authentication code masks */
+ #define NT_ARC_V2	0x600		/* ARCv2 accumulator/extra registers */
+ 
+ /* Note header in a PT_NOTE section */
 -- 
 2.11.0
