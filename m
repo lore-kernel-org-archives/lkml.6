@@ -1,78 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754108AbeDQQ6v (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:58:51 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:52224 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753392AbeDQQ6t (ORCPT
+        id S1754198AbeDQRBX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 13:01:23 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:36956 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753598AbeDQRBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:58:49 -0400
-Subject: Re: [PATCH] clocksource: arc_timer: add comments about locking while
- read GFRC
-To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org"
-        <linux-snps-arc@lists.infradead.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <Alexey.Brodkin@synopsys.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20180417155232.4989-1-Eugeniy.Paltsev@synopsys.com>
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Message-ID: <a87ce229-2142-f393-aabf-2b0750f19ae5@synopsys.com>
-Date: Tue, 17 Apr 2018 09:58:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 17 Apr 2018 13:01:21 -0400
+Date: Tue, 17 Apr 2018 18:58:43 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
+ x86 syscall func names
+Message-ID: <20180417165843.GA14271@light.dominikbrodowski.net>
+References: <20180417115440.2145f7f5@gandalf.local.home>
+ <20180417161029.GA8733@light.dominikbrodowski.net>
+ <20180417123927.4406f990@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <20180417155232.4989-1-Eugeniy.Paltsev@synopsys.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.10.161.84]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417123927.4406f990@gandalf.local.home>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/17/2018 08:52 AM, Eugeniy Paltsev wrote:
-> This came to light in some internal discussions and it is nice to have
-> this documented rather than digging up the PRM (Prog Ref Manual) again.
->
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+On Tue, Apr 17, 2018 at 12:39:27PM -0400, Steven Rostedt wrote:
+> > > names, they do not match the default compare algorithm. As this was a
+> > > problem for power pc, the algorithm can be overwritten by the architecture.
+> > > The solution is to have x86 have its own algorithm to do the compare and
+> > > this brings back the system call trace events.  
+> > 
+> > this lets me wonder *which* syscall "function" should be included in this
+> > directory. Is it really the stub (__x64_sys_waitid, for example), or better
+> > the sign-extending C function (__se_sys_waitid) which then calls an
+> > internal helper (__do_sys_waitid). An additional advantage:
+> > __se_sys_waitid would be available on x86 and, AFAICS, on all other archs.
+> 
+> It should include anything that uses the "SYSCALL_DEFINE#()" macros.
 
-Minor nits below, otherwise LGTM !
-Acked-by: Vineet Gupta <vgupta@synopsys.com>
+Well, that's not a 1:1, but a 1:several translation... SYSCALL_DEFINEx()
+[SYSCALL_DEFINE0() is special] expands to
 
-> ---
->   drivers/clocksource/arc_timer.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
->
-> diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
-> index 4927355f9cbe..b594c373debc 100644
-> --- a/drivers/clocksource/arc_timer.c
-> +++ b/drivers/clocksource/arc_timer.c
-> @@ -61,6 +61,19 @@ static u64 arc_read_gfrc(struct clocksource *cs)
->   	unsigned long flags;
->   	u32 l, h;
->   
-> +	/*
-> +	 * MCIP_CMD/MCIP_READBACK registers are allocated
+	__do_sys_waitid     # inlined helper doing actual work
+	__se_sys_waitid     # C func calling inlined helper
 
- From a programming model pov, there seems to be just one instance of 
-MCIP_CMD/MCIP_READBACK however micro-architecturally there's an instance PER ARC 
-CORE.....
-> +	 * PER ARC CORE (not per cluster), and there are dedicated hardware
-> +	 * decode logic (per core) inside ARConnect to handle simultaneous
-> +	 * read/write accesses from cores via those two registers.
-> +	 * So several concurrent commands to ARConnect are OK if they are
-> +	 * trying to access two different sub-components (like GFRC,
-> +	 * inter-core interrupt, etc...). HW also support simultaneously
+on all architectures, with most (!= 64-bit x86) also having
 
-s/support/supports/
+	     sys_waitid	    # alias to __se_sys_waitid()
 
-> +	 * accessing GFRC by multiple cores.
-> +	 * That's why it is safe to disable hard interrupts on the local CPU
-> +	 * before access to GFRC instead of taking global MCIP spinlock
-> +	 * defined in arch/arc/kernel/mcip.c
-> +	 */
->   	local_irq_save(flags);
->   
->   	__mcip_cmd(CMD_GFRC_READ_LO, 0);
+On 64-bit x86, it does not only extend to the two functions mentioned above,
+but also to one or two stubs (depending on the configuration), namely
+
+	  __x64_sys_waitid  # x64 64-bit-ptregs -> C stub
+	 __ia32_sys_waitid  # ia32 32-bit-ptregs -> C stub
+
+Thanks,
+	Dominik
