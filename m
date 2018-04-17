@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/cC4CLjOnMuqvK3hZIt1AoehuffLfbVvnuye0TUDy3AUmNXD7vDxVfVJTkCMo7bWqJFgkm
-ARC-Seal: i=1; a=rsa-sha256; t=1523981100; cv=none;
+X-Google-Smtp-Source: AIpwx4/MhI8hD+1yyQTfBcqQX1rW3CyLXMX3yDOX/ZfkgcXXvbG4v5qiMJMRy5CYxeuDkDAkkmD1
+ARC-Seal: i=1; a=rsa-sha256; t=1523981097; cv=none;
         d=google.com; s=arc-20160816;
-        b=UvDjAhnqSUIqceJ1ckmGY/jCKvso4oIDMxA85ikAhge0x7YK73mWTFPHPnt768Ue6i
-         Qt+xzFmqrY4yZ3Xv0XZM0TQmtkyRR/dhjQFdRefKXVx0g47I03Y7OEZCHtfsSwAki0ER
-         lb6uX3C89OuPL7fIiG4uGqUdiF7emjrDdzOv06c5Rm2wuEMbhSqrni3cWVugoEy8jQlS
-         UYSpPdOLnPm+pZgkf0wt6h0Vf/DHzC+HKRCgzEWFCc9F6FrhTP10vs466IFwuSXnujdV
-         KNHZIX7xw99S4BI81LlyLthJGc7qP8ee3bRXmr4gSuWAF9s1+sUvT1y0gfn1MvVAEf0i
-         CL2g==
+        b=EJtp/rqDRxX66rguAUmBMCKClmtVxHSlXqnjkV4hc7kPrUSdHZNP0t2i0Rf8NsJbis
+         LM3/Q2vL7ZAF9p8J9izQpWytNG1FEqsCRceckCo8UEvBILhGkSyiXKGp8a1kJ4uOdoFM
+         JA2sulkNF7yN2pewEkToKZyf1OgAocGbzoiV3ozLXHpgS1Quh8wNw/BrjiD9EMA2z9td
+         8Wob4Sp7CpLxjt5xclr5ABksuq7+CknJ6X5SHHEJN4anSHtM5/pynl2cONQ7rrMvhDy4
+         v0aYPUnvXy+e8Bs9FJ2om5EHeXataY0a0Eoz7PGUpJM2lynbq4ChLuH4XMxUPU3cAM7/
+         6rZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Q5a7jCvws31bSNQFuDqwYTPRLmIowFAbkt7+sTNESjw=;
-        b=ReCSMLspjJ7XXxpuJEbFilZoubVPNPmtNywaglz4vuj8wa7I+NscPJxyAhet/hgzXC
-         PWjF7GY2lzrj+o1QbdQRLGYg+TJ3CgaHJlFqChE6Ca3sBTq3vqCfXdeOYnxoBmVHwCAp
-         bux/Mvs2CpHQ1qGPbwr7FmeaRePofQaqKdglOAS10AuBW+KQBkAW0A5m2/bdM4RpyHh4
-         Ssk/7QeZgzT05PfdmQKMxO9eCcrj0liC+k5gGqAkuuQkpmh6J8fJN8SbvJoHxkVssif/
-         Qrf4bgm4vnKPFT2GsztOuTKm+YhGblFUZK7RXXelhByYvludhVHFmT0IBqK9Yo/H2DIj
-         IvVQ==
+        bh=kmCAE9pbjEHILMwWxZEbeCv0fIQoGbjIAIPjRVwOkw4=;
+        b=Ts8cTKHSJqiy4LqEZNt/r/hEU9cx2viQi5P6t6vTUKrYd8hc9DCf57cONE379L7qN7
+         WIccCXh82ewpeJ8C3ryBTQa+OI0K6WqdIKq2hPdmoQfeyquTbfaQvYtXOPG+wsEom1uZ
+         Kkehrksr5Cqplo1TJHUxt3kbF9LEy4zcs6TC1tf5H+RMPcbctFDn+Aa65g9+MYV4id2Y
+         ZqkOu8hLI1NbDAip/Tzh0fmCBABOwBora0MSlhN45oZEvT0sVTKiRFCxZWdp5RHu/t/R
+         3MyucDOX0yOanUDv35XrHAarMZk94Z4tNTfRC06/jz/lQDLxDKygWY/Wv/skM8KNxaDb
+         C8Tg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-	syzbot+36b06f219f2439fe62e1@syzkaller.appspotmail.com,
-	Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.15 02/53] netfilter: ipset: Missing nfnl_lock()/nfnl_unlock() is added to ip_set_net_exit()
-Date: Tue, 17 Apr 2018 17:58:27 +0200
-Message-Id: <20180417155723.188401861@linuxfoundation.org>
+	Phil Elwell <phil@raspberrypi.org>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.15 11/53] lan78xx: Correctly indicate invalid OTP
+Date: Tue, 17 Apr 2018 17:58:36 +0200
+Message-Id: <20180417155723.706431040@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010006841981086?=
-X-GMAIL-MSGID: =?utf-8?q?1598010006841981086?=
+X-GMAIL-THRID: =?utf-8?q?1598009755647099908?=
+X-GMAIL-MSGID: =?utf-8?q?1598010003215479618?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,37 +49,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+From: Phil Elwell <phil@raspberrypi.org>
 
-commit f998b6b10144cd9809da6af02758615f789e8aa1 upstream.
 
-Patch "netfilter: ipset: use nfnl_mutex_is_locked" is added the real
-mutex locking check, which revealed the missing locking in ip_set_net_exit().
+[ Upstream commit 4bfc33807a9a02764bdd1e42e794b3b401240f27 ]
 
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Reported-by: syzbot+36b06f219f2439fe62e1@syzkaller.appspotmail.com
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+lan78xx_read_otp tries to return -EINVAL in the event of invalid OTP
+content, but the value gets overwritten before it is returned and the
+read goes ahead anyway. Make the read conditional as it should be
+and preserve the error code.
+
+Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/netfilter/ipset/ip_set_core.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/usb/lan78xx.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/netfilter/ipset/ip_set_core.c
-+++ b/net/netfilter/ipset/ip_set_core.c
-@@ -2055,6 +2055,7 @@ ip_set_net_exit(struct net *net)
- 
- 	inst->is_deleted = true; /* flag for ip_set_nfnl_put */
- 
-+	nfnl_lock(NFNL_SUBSYS_IPSET);
- 	for (i = 0; i < inst->ip_set_max; i++) {
- 		set = ip_set(inst, i);
- 		if (set) {
-@@ -2062,6 +2063,7 @@ ip_set_net_exit(struct net *net)
- 			ip_set_destroy_set(set);
- 		}
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -928,7 +928,8 @@ static int lan78xx_read_otp(struct lan78
+ 			offset += 0x100;
+ 		else
+ 			ret = -EINVAL;
+-		ret = lan78xx_read_raw_otp(dev, offset, length, data);
++		if (!ret)
++			ret = lan78xx_read_raw_otp(dev, offset, length, data);
  	}
-+	nfnl_unlock(NFNL_SUBSYS_IPSET);
- 	kfree(rcu_dereference_protected(inst->ip_set_list, 1));
- }
  
+ 	return ret;
