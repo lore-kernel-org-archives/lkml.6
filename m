@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/hR7RoJ/En+p1PNwnZlZBJof4cb6eT3+NMtHmmrU7YX7dixeDS4TSygW7vpvJBqYXaO0VY
-ARC-Seal: i=1; a=rsa-sha256; t=1523981160; cv=none;
+X-Google-Smtp-Source: AIpwx4+dhjeifUPZYsETetYwpgRf2FoEByhLV17QFcZ88+a2Z6ZZlIuOe4aZ5b4RQ3DpPg7NhmAM
+ARC-Seal: i=1; a=rsa-sha256; t=1523981157; cv=none;
         d=google.com; s=arc-20160816;
-        b=mr8Gf10otdJqM4H/EZzhbLwP0dcMYUrgDEr4FbnwZGho8iK1vnxUDqZ+YnwKayTvA1
-         VSBAso4HHHHUkASS9lDgYwTslOtA8i8/8MLdfR/Rhh+05+gP+OQJCKDifc1vKCkn0SXP
-         grB+hPHz+ha9OtaQfHHJl+sNZE7mjLLUZmxI1k5VBM9eRvnav+Kjlpl0akZ3POEwi+X3
-         mSNbhtbqp7jT88sTmq9wlVhsSHD3+Ats5NPdOCOXMFOfcKm5y1aoDK9dPV6GuLAfed0r
-         s4VqMe80FEqTtXyUR4enyevd/HtxdQu/OhxleJKIXr+OowMs8p+5dcKPa3/leRRkcaMR
-         3mpg==
+        b=j+jVm3JSgGnouOVqGyzag69KrWA6Gdydlo+84JslXux0EdpNVqhTUQK2zfHML8RNfD
+         nmR51YiX+bzp+kHalRb6aLFWJ+yjSw2Ap4CNyB4S99/xzvHQLtUVWumtfn1xUQhW7RQt
+         kqoVIGcve9MLu5QRPibfbV4jlK1BpVjTA5BSDI/MFrqEItirLYY5kO29iP5FopCVjiwU
+         nl+Tx0z5XYVCiw+ujiUFepfAEWRpCatXze+g1DUxc6bqhV6Ze9uPsSK7oA2RnpUMuM+s
+         L/pe9DmGivdC7ZK6oG7PpprKwGnT/X+zAJN7lcdNHDrdpZ+yTyaX/rA9F0BzK0Axk2Of
+         Bqrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=umGTrHPNCaqvGaxyKkXKpn9Uv/n19fsLPzwCajSsuFw=;
-        b=y1PmrB4OUaG+Z/vB2GoNE1TSdSQ66sR5OCBUNxgaRQhRikmBjOfmh3OM1OJ9fAUX99
-         m+12UL7Jwubv3IPs8B//mdq2mUhuq3YBr6sQjx71VNK/ZOltDSw7P/6xhqwxc2V+XEVS
-         SXdHpqfzvO/xLwyBBWCnZBYKLrQI79od5VE34fojlYK48FsaIXNUH+GElKPBiUmrqeVd
-         WhbYI0hUSbKkq+7mCRPi02zeVZmuv557118/alrL+GtZwt5gL0H9hbIQm6poSTl1d+60
-         E5lHr59DH1b5l3OpEjtjEBTHT+H1J4M9cw7xgCANLSmxHQG+wMRL8hF60u2lncU9iUuX
-         Fnvg==
+        bh=QAei+o/rnFpve0reAy6B1fYMl8q0OoPabTWWRxeCFLU=;
+        b=0+JNBjABSfnIQhy3TV9UFhAR04PDlV9h19bPa/Pp7WhGY6ntvuGKCr2t1CnKRw4aUR
+         jxLSNyk2MFwCo12sF8Li5NQuCZ/ZOSfIf1AeDxhvEMeN3F3fm4V77TBZFLXzLfumuBTK
+         hN8KyhEzSS0QQjVr8kZV67YyyivVBpeKd9sLgmko0zJyR/qZSAdOfJ7zEGq+92y/UU+N
+         giq7ZmVx/4XlukMcGeacT+IbFIVgqobC+YPjXEUdO9V6uJheZ1j6PuV8jlLH1W45oYD9
+         NWTIJki0QN4WsFNjINhKLE4aUJ93S5Hi40X8h1qanGU9CyPlrkpkYGfO14+D6qCbr/Ub
+         sz0w==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.14 15/49] perf intel-pt: Fix overlap detection to identify consecutive buffers correctly
-Date: Tue, 17 Apr 2018 17:58:54 +0200
-Message-Id: <20180417155715.733958316@linuxfoundation.org>
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 14/49] KVM: PPC: Book3S HV: trace_tlbie must not be called in realmode
+Date: Tue, 17 Apr 2018 17:58:53 +0200
+Message-Id: <20180417155715.687711563@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009730584360732?=
-X-GMAIL-MSGID: =?utf-8?q?1598010069051213839?=
+X-GMAIL-THRID: =?utf-8?q?1598009728604177210?=
+X-GMAIL-MSGID: =?utf-8?q?1598010065658086396?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,218 +49,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 117db4b27bf08dba412faf3924ba55fe970c57b8 upstream.
+commit 19ce7909ed11c49f7eddf59e7f49cd3062bf83d5 upstream.
 
-Overlap detection was not not updating the buffer's 'consecutive' flag.
-Marking buffers consecutive has the advantage that decoding begins from
-the start of the buffer instead of the first PSB. Fix overlap detection
-to identify consecutive buffers correctly.
+This crashes with a "Bad real address for load" attempting to load
+from the vmalloc region in realmode (faulting address is in DAR).
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1520431349-30689-2-git-send-email-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  Oops: Bad interrupt in KVM entry/exit code, sig: 6 [#1]
+  LE SMP NR_CPUS=2048 NUMA PowerNV
+  CPU: 53 PID: 6582 Comm: qemu-system-ppc Not tainted 4.16.0-01530-g43d1859f0994
+  NIP:  c0000000000155ac LR: c0000000000c2430 CTR: c000000000015580
+  REGS: c000000fff76dd80 TRAP: 0200   Not tainted  (4.16.0-01530-g43d1859f0994)
+  MSR:  9000000000201003 <SF,HV,ME,RI,LE>  CR: 48082222  XER: 00000000
+  CFAR: 0000000102900ef0 DAR: d00017fffd941a28 DSISR: 00000040 SOFTE: 3
+  NIP [c0000000000155ac] perf_trace_tlbie+0x2c/0x1a0
+  LR [c0000000000c2430] do_tlbies+0x230/0x2f0
+
+I suspect the reason is the per-cpu data is not in the linear chunk.
+This could be restored if that was able to be fixed, but for now,
+just remove the tracepoints.
+
+Fixes: 0428491cba92 ("powerpc/mm: Trace tlbie(l) instructions")
+Cc: stable@vger.kernel.org # v4.13+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   62 +++++++++-----------
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.h |    2 
- tools/perf/util/intel-pt.c                          |    5 +
- 3 files changed, 34 insertions(+), 35 deletions(-)
+ arch/powerpc/kvm/book3s_hv_rm_mmu.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -2390,14 +2390,6 @@ const struct intel_pt_state *intel_pt_de
- 	return &decoder->state;
- }
- 
--static bool intel_pt_at_psb(unsigned char *buf, size_t len)
--{
--	if (len < INTEL_PT_PSB_LEN)
--		return false;
--	return memmem(buf, INTEL_PT_PSB_LEN, INTEL_PT_PSB_STR,
--		      INTEL_PT_PSB_LEN);
--}
--
- /**
-  * intel_pt_next_psb - move buffer pointer to the start of the next PSB packet.
-  * @buf: pointer to buffer pointer
-@@ -2486,6 +2478,7 @@ static unsigned char *intel_pt_last_psb(
-  * @buf: buffer
-  * @len: size of buffer
-  * @tsc: TSC value returned
-+ * @rem: returns remaining size when TSC is found
-  *
-  * Find a TSC packet in @buf and return the TSC value.  This function assumes
-  * that @buf starts at a PSB and that PSB+ will contain TSC and so stops if a
-@@ -2493,7 +2486,8 @@ static unsigned char *intel_pt_last_psb(
-  *
-  * Return: %true if TSC is found, false otherwise.
-  */
--static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc)
-+static bool intel_pt_next_tsc(unsigned char *buf, size_t len, uint64_t *tsc,
-+			      size_t *rem)
- {
- 	struct intel_pt_pkt packet;
- 	int ret;
-@@ -2504,6 +2498,7 @@ static bool intel_pt_next_tsc(unsigned c
- 			return false;
- 		if (packet.type == INTEL_PT_TSC) {
- 			*tsc = packet.payload;
-+			*rem = len;
- 			return true;
+--- a/arch/powerpc/kvm/book3s_hv_rm_mmu.c
++++ b/arch/powerpc/kvm/book3s_hv_rm_mmu.c
+@@ -447,8 +447,6 @@ static void do_tlbies(struct kvm *kvm, u
+ 		for (i = 0; i < npages; ++i) {
+ 			asm volatile(PPC_TLBIE_5(%0,%1,0,0,0) : :
+ 				     "r" (rbvalues[i]), "r" (kvm->arch.lpid));
+-			trace_tlbie(kvm->arch.lpid, 0, rbvalues[i],
+-				kvm->arch.lpid, 0, 0, 0);
  		}
- 		if (packet.type == INTEL_PT_PSBEND)
-@@ -2554,6 +2549,8 @@ static int intel_pt_tsc_cmp(uint64_t tsc
-  * @len_a: size of first buffer
-  * @buf_b: second buffer
-  * @len_b: size of second buffer
-+ * @consecutive: returns true if there is data in buf_b that is consecutive
-+ *               to buf_a
-  *
-  * If the trace contains TSC we can look at the last TSC of @buf_a and the
-  * first TSC of @buf_b in order to determine if the buffers overlap, and then
-@@ -2566,33 +2563,41 @@ static int intel_pt_tsc_cmp(uint64_t tsc
- static unsigned char *intel_pt_find_overlap_tsc(unsigned char *buf_a,
- 						size_t len_a,
- 						unsigned char *buf_b,
--						size_t len_b)
-+						size_t len_b, bool *consecutive)
- {
- 	uint64_t tsc_a, tsc_b;
- 	unsigned char *p;
--	size_t len;
-+	size_t len, rem_a, rem_b;
- 
- 	p = intel_pt_last_psb(buf_a, len_a);
- 	if (!p)
- 		return buf_b; /* No PSB in buf_a => no overlap */
- 
- 	len = len_a - (p - buf_a);
--	if (!intel_pt_next_tsc(p, len, &tsc_a)) {
-+	if (!intel_pt_next_tsc(p, len, &tsc_a, &rem_a)) {
- 		/* The last PSB+ in buf_a is incomplete, so go back one more */
- 		len_a -= len;
- 		p = intel_pt_last_psb(buf_a, len_a);
- 		if (!p)
- 			return buf_b; /* No full PSB+ => assume no overlap */
- 		len = len_a - (p - buf_a);
--		if (!intel_pt_next_tsc(p, len, &tsc_a))
-+		if (!intel_pt_next_tsc(p, len, &tsc_a, &rem_a))
- 			return buf_b; /* No TSC in buf_a => assume no overlap */
+ 		asm volatile("eieio; tlbsync; ptesync" : : : "memory");
+ 		kvm->arch.tlbie_lock = 0;
+@@ -458,8 +456,6 @@ static void do_tlbies(struct kvm *kvm, u
+ 		for (i = 0; i < npages; ++i) {
+ 			asm volatile(PPC_TLBIEL(%0,%1,0,0,0) : :
+ 				     "r" (rbvalues[i]), "r" (0));
+-			trace_tlbie(kvm->arch.lpid, 1, rbvalues[i],
+-				0, 0, 0, 0);
+ 		}
+ 		asm volatile("ptesync" : : : "memory");
  	}
- 
- 	while (1) {
- 		/* Ignore PSB+ with no TSC */
--		if (intel_pt_next_tsc(buf_b, len_b, &tsc_b) &&
--		    intel_pt_tsc_cmp(tsc_a, tsc_b) < 0)
--			return buf_b; /* tsc_a < tsc_b => no overlap */
-+		if (intel_pt_next_tsc(buf_b, len_b, &tsc_b, &rem_b)) {
-+			int cmp = intel_pt_tsc_cmp(tsc_a, tsc_b);
-+
-+			/* Same TSC, so buffers are consecutive */
-+			if (!cmp && rem_b >= rem_a) {
-+				*consecutive = true;
-+				return buf_b + len_b - (rem_b - rem_a);
-+			}
-+			if (cmp < 0)
-+				return buf_b; /* tsc_a < tsc_b => no overlap */
-+		}
- 
- 		if (!intel_pt_step_psb(&buf_b, &len_b))
- 			return buf_b + len_b; /* No PSB in buf_b => no data */
-@@ -2606,6 +2611,8 @@ static unsigned char *intel_pt_find_over
-  * @buf_b: second buffer
-  * @len_b: size of second buffer
-  * @have_tsc: can use TSC packets to detect overlap
-+ * @consecutive: returns true if there is data in buf_b that is consecutive
-+ *               to buf_a
-  *
-  * When trace samples or snapshots are recorded there is the possibility that
-  * the data overlaps.  Note that, for the purposes of decoding, data is only
-@@ -2616,7 +2623,7 @@ static unsigned char *intel_pt_find_over
-  */
- unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
- 				     unsigned char *buf_b, size_t len_b,
--				     bool have_tsc)
-+				     bool have_tsc, bool *consecutive)
- {
- 	unsigned char *found;
- 
-@@ -2628,7 +2635,8 @@ unsigned char *intel_pt_find_overlap(uns
- 		return buf_b; /* No overlap */
- 
- 	if (have_tsc) {
--		found = intel_pt_find_overlap_tsc(buf_a, len_a, buf_b, len_b);
-+		found = intel_pt_find_overlap_tsc(buf_a, len_a, buf_b, len_b,
-+						  consecutive);
- 		if (found)
- 			return found;
- 	}
-@@ -2643,28 +2651,16 @@ unsigned char *intel_pt_find_overlap(uns
- 	}
- 
- 	/* Now len_b >= len_a */
--	if (len_b > len_a) {
--		/* The leftover buffer 'b' must start at a PSB */
--		while (!intel_pt_at_psb(buf_b + len_a, len_b - len_a)) {
--			if (!intel_pt_step_psb(&buf_a, &len_a))
--				return buf_b; /* No overlap */
--		}
--	}
--
- 	while (1) {
- 		/* Potential overlap so check the bytes */
- 		found = memmem(buf_a, len_a, buf_b, len_a);
--		if (found)
-+		if (found) {
-+			*consecutive = true;
- 			return buf_b + len_a;
-+		}
- 
- 		/* Try again at next PSB in buffer 'a' */
- 		if (!intel_pt_step_psb(&buf_a, &len_a))
- 			return buf_b; /* No overlap */
--
--		/* The leftover buffer 'b' must start at a PSB */
--		while (!intel_pt_at_psb(buf_b + len_a, len_b - len_a)) {
--			if (!intel_pt_step_psb(&buf_a, &len_a))
--				return buf_b; /* No overlap */
--		}
- 	}
- }
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.h
-@@ -117,7 +117,7 @@ const struct intel_pt_state *intel_pt_de
- 
- unsigned char *intel_pt_find_overlap(unsigned char *buf_a, size_t len_a,
- 				     unsigned char *buf_b, size_t len_b,
--				     bool have_tsc);
-+				     bool have_tsc, bool *consecutive);
- 
- int intel_pt__strerror(int code, char *buf, size_t buflen);
- 
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -209,14 +209,17 @@ static void intel_pt_dump_event(struct i
- static int intel_pt_do_fix_overlap(struct intel_pt *pt, struct auxtrace_buffer *a,
- 				   struct auxtrace_buffer *b)
- {
-+	bool consecutive = false;
- 	void *start;
- 
- 	start = intel_pt_find_overlap(a->data, a->size, b->data, b->size,
--				      pt->have_tsc);
-+				      pt->have_tsc, &consecutive);
- 	if (!start)
- 		return -EINVAL;
- 	b->use_size = b->data + b->size - start;
- 	b->use_data = start;
-+	if (b->use_size && consecutive)
-+		b->consecutive = true;
- 	return 0;
- }
- 
