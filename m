@@ -1,51 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeDQJhf (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 05:37:35 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40522 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751211AbeDQJhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 05:37:33 -0400
-Date: Tue, 17 Apr 2018 11:36:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
-        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
-        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
-        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
-        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
-Subject: Re: [RFC PATCH v2 1/4] EDAC, GHES: Remove unused argument to
- ghes_edac_report_mem_error
-Message-ID: <20180417093656.GA18640@pd.tnic>
-References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
- <20180416215903.7318-2-mr.nuke.me@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180416215903.7318-2-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1752306AbeDQJk6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 05:40:58 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42409 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751200AbeDQJky (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 05:40:54 -0400
+X-Google-Smtp-Source: AIpwx49or+1BbvBe9/TCTVIR1sV5lkLnzOxpdPy+p5DC0IEycnm68ZxUy/suex46MvU5dkOR0Pf8HQ==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Holger Brunck <holger.brunck@keymile.com>
+Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [RESEND PATCH 3/3] powerpc: dts: use a correct at24 compatible fallback in ac14xx
+Date: Tue, 17 Apr 2018 11:40:30 +0200
+Message-Id: <20180417094030.7224-3-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180417094030.7224-1-brgl@bgdev.pl>
+References: <20180417094030.7224-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 04:59:00PM -0500, Alexandru Gagniuc wrote:
+Using 'at24' as fallback is now deprecated - use the full
+'atmel,<model>' string.
 
-<--- Insert commit message here.
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ arch/powerpc/boot/dts/ac14xx.dts | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-A possible candidate would be some blurb about what commit removed the
-use of that first arg.
-
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
->  drivers/acpi/apei/ghes.c | 2 +-
->  drivers/edac/ghes_edac.c | 3 +--
->  include/acpi/ghes.h      | 5 ++---
->  3 files changed, 4 insertions(+), 6 deletions(-)
-
+diff --git a/arch/powerpc/boot/dts/ac14xx.dts b/arch/powerpc/boot/dts/ac14xx.dts
+index 83bcfd865167..0be5c4f3265d 100644
+--- a/arch/powerpc/boot/dts/ac14xx.dts
++++ b/arch/powerpc/boot/dts/ac14xx.dts
+@@ -176,12 +176,12 @@
+ 			clock-frequency = <400000>;
+ 
+ 			at24@30 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x30>;
+ 			};
+ 
+ 			at24@31 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x31>;
+ 			};
+ 
+@@ -191,42 +191,42 @@
+ 			};
+ 
+ 			at24@50 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x50>;
+ 			};
+ 
+ 			at24@51 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x51>;
+ 			};
+ 
+ 			at24@52 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x52>;
+ 			};
+ 
+ 			at24@53 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x53>;
+ 			};
+ 
+ 			at24@54 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x54>;
+ 			};
+ 
+ 			at24@55 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x55>;
+ 			};
+ 
+ 			at24@56 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x56>;
+ 			};
+ 
+ 			at24@57 {
+-				compatible = "at24,24c01";
++				compatible = "atmel,24c01";
+ 				reg = <0x57>;
+ 			};
+ 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.17.0
