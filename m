@@ -1,44 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeDQTSK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 15:18:10 -0400
-Received: from mail-ua0-f181.google.com ([209.85.217.181]:43156 "EHLO
-        mail-ua0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751204AbeDQTSH (ORCPT
+        id S1753008AbeDQTTN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 15:19:13 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:41316 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752944AbeDQTTJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 15:18:07 -0400
-X-Google-Smtp-Source: AIpwx4/Zrn6eNdZl/DnFOwwBK44LUgfb7CUeDNJejQfQxVuI4Y3vugg3J+htHRoL0fY6FOC2yRgBwHK8VQnwelz3avY=
+        Tue, 17 Apr 2018 15:19:09 -0400
+X-Google-Smtp-Source: AIpwx4/oEpNGkk1SGYhu6kGQmk76TYCBv1cLs6c5xKOy1EH7OcGY44o9u7HUioP3xuiGgTxOLlSWiA==
+Date: Tue, 17 Apr 2018 12:19:06 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Eugen Hristev <eugen.hristev@microchip.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, ludovic.desroches@microchip.com,
+        alexandre.belloni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        nicolas.ferre@microchip.com, robh@kernel.org
+Subject: Re: [PATCH v3 06/11] iio: inkern: add module put/get on iio dev
+ module when requesting channels
+Message-ID: <20180417191906.GB67621@dtor-ws>
+References: <1523350677-27106-1-git-send-email-eugen.hristev@microchip.com>
+ <1523350677-27106-7-git-send-email-eugen.hristev@microchip.com>
+ <20180415203321.1aaaf91e@archlinux>
+ <20180416235821.GF77055@dtor-ws>
+ <67771f4c-d30c-4a28-2a9b-d5585186d60a@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <20180414062718.3tbsdb6jhjurpfta@katana>
-References: <20180412213342.138010-1-hansens@google.com> <20180412222457.x4jdwt27ylgi74o3@katana>
- <20180413141359.793919fb@endymion> <CAP9bUy7rONNHYeRkYtaWHcfqoZcGKXJz-JocED26zBj9n+-ZbQ@mail.gmail.com>
- <20180413204937.440437e9@endymion> <CAP9bUy6Hf+cQzAAckou3QPTk0mJM4xJ4xq-hf+RwyVmD3Le+qg@mail.gmail.com>
- <20180414062718.3tbsdb6jhjurpfta@katana>
-From: Sam Hansen <hansens@google.com>
-Date: Tue, 17 Apr 2018 12:17:46 -0700
-Message-ID: <CAP9bUy6jiGpTGkRnUVM9mJO-pf=n=6AkSYLH_SiqOON4bG=WoQ@mail.gmail.com>
-Subject: Re: [PATCH] Documentation/i2c: sync docs with current state of i2c-tools.
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Jean Delvare <jdelvare@suse.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67771f4c-d30c-4a28-2a9b-d5585186d60a@microchip.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 11:27 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
->
->> (also, did I send the v3 patch series threaded correctly?)
->
-> Yes, that worked. Thanks!
->
-> Things to improve there: I was both in To: and CC: field, so I got mails
-> twice. Jean was missing completely.
+Hi Eugen,
 
-Ah, thanks.  I had been using scripts/get_maintainer.pl to determine
-the CC list, I'll make sure the right people are on the cc line in the
-future.
+On Tue, Apr 17, 2018 at 10:39:24AM +0300, Eugen Hristev wrote:
+> 
+> 
+> On 17.04.2018 02:58, Dmitry Torokhov wrote:
+> > On Sun, Apr 15, 2018 at 08:33:21PM +0100, Jonathan Cameron wrote:
+> > > On Tue, 10 Apr 2018 11:57:52 +0300
+> > > Eugen Hristev <eugen.hristev@microchip.com> wrote:
+> > > 
+> > > > When requesting channels for a particular consumer device,
+> > > > besides requesting the device (incrementing the reference counter), also
+> > > > do it for the driver module of the iio dev. This will avoid the situation
+> > > > where the producer IIO device can be removed and the consumer is still
+> > > > present in the kernel.
+> > > > 
+> > > > Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> > > > ---
+> > > >   drivers/iio/inkern.c | 8 +++++++-
+> > > >   1 file changed, 7 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+> > > > index ec98790..68d9b87 100644
+> > > > --- a/drivers/iio/inkern.c
+> > > > +++ b/drivers/iio/inkern.c
+> > > > @@ -11,6 +11,7 @@
+> > > >   #include <linux/slab.h>
+> > > >   #include <linux/mutex.h>
+> > > >   #include <linux/of.h>
+> > > > +#include <linux/module.h>
+> > > >   #include <linux/iio/iio.h>
+> > > >   #include "iio_core.h"
+> > > > @@ -152,6 +153,7 @@ static int __of_iio_channel_get(struct iio_channel *channel,
+> > > >   	if (index < 0)
+> > > >   		goto err_put;
+> > > >   	channel->channel = &indio_dev->channels[index];
+> > > > +	try_module_get(channel->indio_dev->driver_module);
+> > > 
+> > > And if it fails? (the module we are trying to get is going away...)
+> > > 
+> > > We should try and handle it I think. Be it by just erroring out of here.
+> > 
+> > Even more, this has nothing to do with modules. A device can go away for
+> > any number of reasons (we unbind it manually via sysfs, we pull the USB
+> > plug from the host in case it is USB-connected device, we unload I2C
+> > adapter for the bus device resides on, we kick underlying PCI device)
+> > and we should be able to handle this in some fashion. Handling errors
+> > from reads and ignoring garbage is one of methods.
+> > 
+> > FWIW this is a NACK from me.
+> > 
+> > Thanks.
+> Hello,
+> 
+> This patch is actually a "best effort attempt" for the consumer driver
+> (touch driver) to get a reference to the producer of the data (the IIO
+> device), when it requests the specific channels.
+> As of this moment, there is no attempt whatsoever for the consumer to have a
+> reference on the producer driver. Thus, the producer can be removed at any
+> time, and the consumer will fail ungraciously.
 
+This is the root of the issue. The consumer should be prepared to handle
+errors from producer.
 
->
+> I can change the perspective from "best effort" to "mandatory" to get a
+> reference to the producer, or you wish to stop trying to get any reference
+> at all (remove this patch completely) ?
+
+You should take reference to the device itself (if it is not taken
+already), so it does not disappear completely and you can continue using
+IIO API to access it, and IIO API should be prepared to deal with "dead"
+devices, but as I pointed in my other email, trying to pin the driver
+is quite pointless as there are myriad other ways of device stopping
+working besides module unloading.
+
+In any case, I think this problem is outside of the scope of this
+patchset that adds a generic resistive touchscreen, so if you want to
+continue working on this I'd recommend moving it into a separate series.
+
+Thanks.
+
+-- 
+Dmitry
