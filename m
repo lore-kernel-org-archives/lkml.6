@@ -1,28 +1,28 @@
-Return-Path: <kernel-hardening-return-13024-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4+JwRK+6BAKnbiH7ew3vSlQMGDp5A/2f9YdlfIQ9acKLSnIiKCgubKK1D2esqD3rydL16Z3
-ARC-Seal: i=1; a=rsa-sha256; t=1523990378; cv=none;
+Return-Path: <kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49t+FB9321jtV8RK5dUguo8XDKpfdIFRbqDN1fAd3/ksfdbaTM7bPb8EtF0lPEt9EIS2rAd
+ARC-Seal: i=1; a=rsa-sha256; t=1523990367; cv=none;
         d=google.com; s=arc-20160816;
-        b=lMqXvNlsh9ORcH/ltyQLJQMYJ2MgJaBkW7TRNqt+4/PijznYjO/4wqI/fD0gjUqlrc
-         syXKFctX5D6rDvwPRAnuv2wxDpnrjIUJanuVxGR4tWNX0fX4+2JYI3JNO3pvFZMWTQrO
-         LsL+BAdMuOI0vJKDyldjihDHb84Yu7HAy1LJ8BOIbZWI78KuBG8qg6CfGFM8YyKr062Z
-         Ge4AxeROJ6munbIWA+dHU8nFzTNK3f3vOjUGDkLIZY0v37VVoegW5MQ5Dp8UWhjvlyv5
-         OamfEfoOw/TUQ36jZy4JvRdaVpmH3KnRNesUFnalzpRkN55AdKn5HVC7DV/abASNttFu
-         l3oA==
+        b=nvZtlyr0cbc8vjvuPw/RawQGfg5LJP762SXKKMzeQtg2drD7zl/jPzlp/6l4VsGxNs
+         qVo5wMkl9OsptNR+2/oZ3f8SoxQdeuHD9ob6+51yKk0hRT6vXlBCJ7VdcvL3Hq6MQV2t
+         6yrDQK9ZbrOJE6xVDgQh3lqM4Pdgpmhsd0RdsX96eKmf2cRXtCagvhgYdUyBHG0U8X9G
+         IxxXvAarrkw+hHapACJVFKNZ+EcSorFbOZ3NLm1vsAmspzWF8sWKoO00ssc/PeGAIYJR
+         hc0+kX8z0KrVasGyAN+BJC1UDgIsT4xa6jrH0g+JvccnR1umL0qfdZX6+apWwC4XAAsM
+         qXzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :delivered-to:list-id:list-subscribe:list-unsubscribe:list-help
          :list-post:precedence:mailing-list:arc-authentication-results;
-        bh=I4QW1qdEk8tC8nDWOrEQmpFv3zVp92/g2kt8GUOONBg=;
-        b=e25ZOMfraoZF1UHEmupVDVc1ElPluV8F0W+WZcG8KjNfDWIDHBbbUBqgJHooCnS+m/
-         1KPEIwnmP8mC+AJlUIp3qxui1zU3GVu0Dh7WTFoKtSfGWsBKe0LCpFKfOdenKvoZuDhU
-         hTWw7+RAVcWmGaiXtD6xUAblTcUbPtQJYQqaF06Yz/l2nM0TDTzS5KEhISuTriId1VUp
-         cfMLSJ9lk+rCmCe9rjodTughc+ERpd+5rHz8XHc7kLc/Vn3jXrAr2ACtrwTFhm/4RfxB
-         InFhu5aEoQH2m0mzzGpNO2+gkELomFQfIlc8ejp0nh5PGC0iTmgXuc4uKpnG9xghaf+m
-         gKxQ==
+        bh=XRqeiWN62iYC/SKfswSUlXoSTH6ynOz0k/prXfeTS9Y=;
+        b=aJVak+6p8xUP79cWYy7/F/4W562oAKGlzOqxceqo2pGoJK7q1JzTBxkfyDTw8YJQM2
+         lu4HlZeD9DQnOcrBJFbahPl71cv+7sx85O9/C2GaqsmPCNOtV0iL5/vvYRy3kY+lTy1x
+         hRGKNx/a0hk4Aac2flnmSz40/YrPhzvs/R74+fw1fDEUxJP+KoInAjsrsQp+uP+KyETc
+         N9qiHGpcZUk6NB7woMOHqPYiJdCY6Mnqr6q/GK+0BUg5icgXGyQcVgz3DIYi2yuX1T52
+         Bp9Ls+IklFmn/YXBkKDZcoyb6X9dcBjW89ZaD+awDf3B0WrclA43nL5DZGJfAepl2EsX
+         ++/w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13024-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13024-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-13024-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13024-gregkh=linuxfoundation.org@lists.openwall.com
+       spf=pass (google.com: domain of kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13023-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
@@ -44,86 +44,133 @@ Cc: arnd@arndb.de,
 	linux-kernel@vger.kernel.org,
 	awallis@codeaurora.org,
 	kernel-hardening@lists.openwall.com
-Subject: [PATCHv3 09/11] arm64: perf: strip PAC when unwinding userspace
-Date: Tue, 17 Apr 2018 19:37:33 +0100
-Message-Id: <20180417183735.56985-10-mark.rutland@arm.com>
+Subject: [PATCHv3 05/11] arm64/cpufeature: detect pointer authentication
+Date: Tue, 17 Apr 2018 19:37:29 +0100
+Message-Id: <20180417183735.56985-6-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180417183735.56985-1-mark.rutland@arm.com>
 References: <20180417183735.56985-1-mark.rutland@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598019734783664993?=
-X-GMAIL-MSGID: =?utf-8?q?1598019734783664993?=
+X-GMAIL-THRID: =?utf-8?q?1598019723101175336?=
+X-GMAIL-MSGID: =?utf-8?q?1598019723101175336?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When the kernel is unwinding userspace callchains, we can't expect that
-the userspace consumer of these callchains has the data necessary to
-strip the PAC from the stored LR.
+So that we can dynamically handle the presence of pointer authentication
+functionality, wire up probing code in cpufeature.c.
 
-This patch has the kernel strip the PAC from user stackframes when the
-in-kernel unwinder is used. This only affects the LR value, and not the
-FP.
+>From ARMv8.3 onwards, ID_AA64ISAR1 is no longer entirely RES0, and now
+has four fields describing the presence of pointer authentication
+functionality:
 
-This only affects the in-kernel unwinder. When userspace performs
-unwinding, it is up to userspace to strip PACs as necessary (which can
-be determined from DWARF information).
+* APA - address authentication present, using an architected algorithm
+* API - address authentication present, using an IMP DEF algorithm
+* GPA - generic authentication present, using an architected algorithm
+* GPI - generic authentication present, using an IMP DEF algorithm
+
+For the moment we only care about address authentication, so we only
+need to check APA and API. It is assumed that if all CPUs support an IMP
+DEF algorithm, the same algorithm is used across all CPUs.
+
+Note that when we implement KVM support, we will also need to ensure
+that CPUs have uniform support for GPA and GPI.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/pointer_auth.h | 7 +++++++
- arch/arm64/kernel/perf_callchain.c    | 5 ++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/cpucaps.h |  5 ++++-
+ arch/arm64/kernel/cpufeature.c   | 47 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
-index 5ff141245633..a9ad81791c7f 100644
---- a/arch/arm64/include/asm/pointer_auth.h
-+++ b/arch/arm64/include/asm/pointer_auth.h
-@@ -79,6 +79,12 @@ static inline void ptrauth_keys_dup(struct ptrauth_keys *old,
-  */
- #define ptrauth_pac_mask() 	GENMASK(54, VA_BITS)
+diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
+index bc51b72fafd4..9dcb4d1b14f5 100644
+--- a/arch/arm64/include/asm/cpucaps.h
++++ b/arch/arm64/include/asm/cpucaps.h
+@@ -48,7 +48,10 @@
+ #define ARM64_HAS_CACHE_IDC			27
+ #define ARM64_HAS_CACHE_DIC			28
+ #define ARM64_HW_DBM				29
++#define ARM64_HAS_ADDRESS_AUTH_ARCH		30
++#define ARM64_HAS_ADDRESS_AUTH_IMP_DEF		31
++#define ARM64_HAS_ADDRESS_AUTH			32
  
-+/* Only valid for EL0 TTBR0 instruction pointers */
-+static inline unsigned long ptrauth_strip_insn_pac(unsigned long ptr)
+-#define ARM64_NCAPS				30
++#define ARM64_NCAPS				33
+ 
+ #endif /* __ASM_CPUCAPS_H */
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 536d572e5596..01b1a7e7d70f 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -142,6 +142,10 @@ static const struct arm64_ftr_bits ftr_id_aa64isar1[] = {
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_LRCPC_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_FCMA_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_JSCVT_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_PTR_AUTH),
++		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_API_SHIFT, 4, 0),
++	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_PTR_AUTH),
++		       FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_APA_SHIFT, 4, 0),
+ 	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64ISAR1_DPB_SHIFT, 4, 0),
+ 	ARM64_FTR_END,
+ };
+@@ -1025,6 +1029,22 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
+ }
+ #endif
+ 
++#ifdef CONFIG_ARM64_PTR_AUTH
++static bool has_address_auth(const struct arm64_cpu_capabilities *entry,
++			     int __unused)
 +{
-+	return ptr & ~ptrauth_pac_mask();
++	u64 isar1 = read_sanitised_ftr_reg(SYS_ID_AA64ISAR1_EL1);
++	bool api, apa;
++
++	apa = cpuid_feature_extract_unsigned_field(isar1,
++					ID_AA64ISAR1_APA_SHIFT) > 0;
++	api = cpuid_feature_extract_unsigned_field(isar1,
++					ID_AA64ISAR1_API_SHIFT) > 0;
++
++	return apa || api;
 +}
++#endif /* CONFIG_ARM64_PTR_AUTH */
 +
- #define mm_ctx_ptrauth_init(ctx) \
- 	ptrauth_keys_init(&(ctx)->ptrauth_keys)
+ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 	{
+ 		.desc = "GIC system register CPU interface",
+@@ -1201,6 +1221,33 @@ static const struct arm64_cpu_capabilities arm64_features[] = {
+ 		.cpu_enable = cpu_enable_hw_dbm,
+ 	},
+ #endif
++#ifdef CONFIG_ARM64_PTR_AUTH
++	{
++		.desc = "Address authentication (architected algorithm)",
++		.capability = ARM64_HAS_ADDRESS_AUTH_ARCH,
++		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.sys_reg = SYS_ID_AA64ISAR1_EL1,
++		.sign = FTR_UNSIGNED,
++		.field_pos = ID_AA64ISAR1_APA_SHIFT,
++		.min_field_value = ID_AA64ISAR1_APA_ARCHITECTED,
++		.matches = has_cpuid_feature,
++	},
++	{
++		.desc = "Address authentication (IMP DEF algorithm)",
++		.capability = ARM64_HAS_ADDRESS_AUTH_IMP_DEF,
++		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.sys_reg = SYS_ID_AA64ISAR1_EL1,
++		.sign = FTR_UNSIGNED,
++		.field_pos = ID_AA64ISAR1_API_SHIFT,
++		.min_field_value = ID_AA64ISAR1_API_IMP_DEF,
++		.matches = has_cpuid_feature,
++	},
++	{
++		.capability = ARM64_HAS_ADDRESS_AUTH,
++		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
++		.matches = has_address_auth,
++	},
++#endif /* CONFIG_ARM64_PTR_AUTH */
+ 	{},
+ };
  
-@@ -89,6 +95,7 @@ static inline void ptrauth_keys_dup(struct ptrauth_keys *old,
- 	ptrauth_keys_dup(&(oldctx)->ptrauth_keys, &(newctx)->ptrauth_keys)
- 
- #else
-+#define ptrauth_strip_insn_pac(lr)	(lr)
- #define mm_ctx_ptrauth_init(ctx)
- #define mm_ctx_ptrauth_switch(ctx)
- #define mm_ctx_ptrauth_dup(oldctx, newctx)
-diff --git a/arch/arm64/kernel/perf_callchain.c b/arch/arm64/kernel/perf_callchain.c
-index bcafd7dcfe8b..928204f6ab08 100644
---- a/arch/arm64/kernel/perf_callchain.c
-+++ b/arch/arm64/kernel/perf_callchain.c
-@@ -35,6 +35,7 @@ user_backtrace(struct frame_tail __user *tail,
- {
- 	struct frame_tail buftail;
- 	unsigned long err;
-+	unsigned long lr;
- 
- 	/* Also check accessibility of one struct frame_tail beyond */
- 	if (!access_ok(VERIFY_READ, tail, sizeof(buftail)))
-@@ -47,7 +48,9 @@ user_backtrace(struct frame_tail __user *tail,
- 	if (err)
- 		return NULL;
- 
--	perf_callchain_store(entry, buftail.lr);
-+	lr = ptrauth_strip_insn_pac(buftail.lr);
-+
-+	perf_callchain_store(entry, lr);
- 
- 	/*
- 	 * Frame pointers should strictly progress back up the stack
 -- 
 2.11.0
