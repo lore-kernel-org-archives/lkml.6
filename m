@@ -1,44 +1,78 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48Vi4cznn/XuYxuS3Z576extvv/Xs2fzvs6Mh7fiG2OYX6wgJz418dvcUPWgabxcAQFTEEe
-ARC-Seal: i=1; a=rsa-sha256; t=1523980831; cv=none;
-        d=google.com; s=arc-20160816;
-        b=d98ZprIsD+yntOMchGCFdVN5fTq2tt7IjbtNjYzYFT+y/QgpY1PRwT0ZQRaBhAufqA
-         tM+N3Pc9tkldLqK8HnOY0Re7oKw9HrSD5pB1Yn4mVV0vt+3Xj2G+MfaWyEPgS8NLRvLw
-         1+BJ/ph8ZfhJa6i3fF55MZpkFVNgFSu5P9gbN6nAl1CUwAasZOf4+C8zM/aLpWO7UG0F
-         AImSXd69wJN4QuL7QH02DqT3hLUNZvEbH7EybTutjiTtzqIJEziDGqT/GtrtavEw/6Yd
-         oIe6vM9HgBe48GGr7uFysftzgHQWR6BEz/7tJKVcWNCu8kQT+FgsxlIscNQkgAuQGFMa
-         iJrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=wg/XItSVVQgnaS3l5wjf79H5qXR/1/veE7vTIGsOp0I=;
-        b=TWeKdiRMInfxAIzuV9X0modJsTVaTDIn+EPlDl8E2YvOVALyaqOukTwEJgoZ5Nqfiv
-         Vp6iawYJiOb5JpIIAqefQOoR0IWOgG9umwoQFX7PgwJmT083/ZXRnos6g98prL7Gudkp
-         f5huGXJ+htsV5x3vUgZJFfCBS+QVCTXK+bCID9Ov9vM0Ct6lf6li8laH8BT6cyJ0Nzj7
-         xO69p1DeaEcjqS48s3ddOnUO/fkdWXlLAYrlvBtPjRquK6h1F5kAHFlg3/SSLthV/O9r
-         BYL5Ig633EsQS8zFUergeCUdqWdmyGVkBOZJ2nzteNxbtHx7TdLfHyNe4XzHEmLUGS/h
-         a9WA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2126129-1523980830-2-4021086450420316076
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523980828; b=UsecQ7SrD/d1B17Gkw0LJRAqT3Yotyn8JXxP5IkXq+tbUUQW/4
+    C2wVkLbUFg4l2BRFRJCjoxNTzd7O5DOEbIJ/EvIahj7bp+adjTFFMVOiKjt3Kyxb
+    joDpBsU2pU6QiCnekRE7MVGnHPaQ4slppB4P757jyrUGQF0u8Q60eyTh6FaTfIcH
+    zFdLLA7EuGAT/1qtty4cXqCiPsRkCKVh1evdmjirKXpI327oaYJORUTr7a4DGLsi
+    1NiEiGZW14Z3Z2lG72xDahn8DisLgDOeyQZYJHX/2JK5Xt2SGDKgAunfXt6pVc4+
+    oOhe8vxO8YpfD8n/YnP4rnIZ5CumaVumYabQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1523980828; bh=VAeNIQImamcwSSxQwUl6zdvkvxYBys
+    r8zg3hf4I4elk=; b=EDhXFwH17owFvQEy3DteNh5ekslYBKAc2yWLzg1jCguoeV
+    VQnxpHaa/ajNJlhwvw4HOINCRX/qegaYkCuGTbQxLOPzPjECeEFEYpjsBXzeokZl
+    nE8fyLf+ZGkV37qm1GD6UYv5pStK5TsnZ4i6tS5fmjbZy1OBktTlIyH/hCaT6X/n
+    S+dJZyK1LMO3Kb1/ruREbuGQXCyLwNuxzIQdgokx5TUzmAoKvWGYyMA4byY/24vo
+    xDnOraB8mNCGrBRCcHW6Ae9f1YubyD2d33uOClEMLsRoFuKT9MMAiIhcx+tA1QtW
+    u6P0S6pD8j3JuiIdTvi9k7PXGq5ROwy4R363SqKw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfONnE8ZXeL3XuasSq5wT8Rrb+PV0h94EUKMtSne1Xt2Zdnoyq3sWB+/VYw+5770SH0SpVGKCLdWhHlsi+BELYNCOuhSKjXJ1tECA7E4HYP8lTillYaNM
+    3MIfKmmj1R2jmvg6WtjABYij3Jt/HcY2/33ZW75Mop3xZngkIus+e98EcEuKqLu2WKDsVZA9XAiTacOL6Wx4yjFmRxdTnoKoq8bfIbqdtDMT2y/KFl0HEBpC
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=u2zLLAFrw9WH8eSvI3wA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753111AbeDQQAY (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 12:00:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60074 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752672AbeDQQAV (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 12:00:21 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Adrian Suhov <v-adsuho@microsoft.com>,
-	Chris Valean <v-chvale@microsoft.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Michael Kelley <mikelley@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Stephen Hemminger <sthemmin@microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Jack Morgenstein <jackm@mellanox.com>
-Subject: [PATCH 4.16 20/68] PCI: hv: Fix 2 hang issues in hv_compose_msi_msg()
-Date: Tue, 17 Apr 2018 17:57:33 +0200
-Message-Id: <20180417155750.160812585@linuxfoundation.org>
+        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 4.16 17/68] iwlwifi: add a bunch of new 9000 PCI IDs
+Date: Tue, 17 Apr 2018 17:57:30 +0200
+Message-Id: <20180417155750.035083803@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -46,10 +80,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009724979136034?=
-X-GMAIL-MSGID: =?utf-8?q?1598009724979136034?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,140 +90,264 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Luca Coelho <luciano.coelho@intel.com>
 
-commit de0aa7b2f97d348ba7d1e17a00744c989baa0cb6 upstream.
+commit 9e5053ad9d590e095829a8bb07adbbdbd893f0f9 upstream.
 
-1. With the patch "x86/vector/msi: Switch to global reservation mode",
-the recent v4.15 and newer kernels always hang for 1-vCPU Hyper-V VM
-with SR-IOV. This is because when we reach hv_compose_msi_msg() by
-request_irq() -> request_threaded_irq() ->__setup_irq()->irq_startup()
--> __irq_startup() -> irq_domain_activate_irq() -> ... ->
-msi_domain_activate() -> ... -> hv_compose_msi_msg(), local irq is
-disabled in __setup_irq().
+A lot of new PCI IDs were added for the 9000 series.  Add them to the
+list of supported PCI IDs.
 
-Note: when we reach hv_compose_msi_msg() by another code path:
-pci_enable_msix_range() -> ... -> irq_domain_activate_irq() -> ... ->
-hv_compose_msi_msg(), local irq is not disabled.
-
-hv_compose_msi_msg() depends on an interrupt from the host.
-With interrupts disabled, a UP VM always hangs in the busy loop in
-the function, because the interrupt callback hv_pci_onchannelcallback()
-can not be called.
-
-We can do nothing but work it around by polling the channel. This
-is ugly, but we don't have any other choice.
-
-2. If the host is ejecting the VF device before we reach
-hv_compose_msi_msg(), in a UP VM, we can hang in hv_compose_msi_msg()
-forever, because at this time the host doesn't respond to the
-CREATE_INTERRUPT request. This issue exists the first day the
-pci-hyperv driver appears in the kernel.
-
-Luckily, this can also by worked around by polling the channel
-for the PCI_EJECT message and hpdev->state, and by checking the
-PCI vendor ID.
-
-Note: actually the above 2 issues also happen to a SMP VM, if
-"hbus->hdev->channel->target_cpu == smp_processor_id()" is true.
-
-Fixes: 4900be83602b ("x86/vector/msi: Switch to global reservation mode")
-Tested-by: Adrian Suhov <v-adsuho@microsoft.com>
-Tested-by: Chris Valean <v-chvale@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Acked-by: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: <stable@vger.kernel.org>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Jack Morgenstein <jackm@mellanox.com>
+Cc: stable@vger.kernel.org # 4.13+
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/host/pci-hyperv.c |   58 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 57 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/drv.c |  157 +++++++++++++++++++++++++-
+ 1 file changed, 155 insertions(+), 2 deletions(-)
 
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -521,6 +521,8 @@ struct hv_pci_compl {
- 	s32 completion_status;
- };
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
+@@ -8,6 +8,7 @@
+  * Copyright(c) 2007 - 2014 Intel Corporation. All rights reserved.
+  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
+  * Copyright(c) 2016-2017 Intel Deutschland GmbH
++ * Copyright(c) 2018        Intel Corporation
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of version 2 of the GNU General Public License as
+@@ -36,6 +37,7 @@
+  * Copyright(c) 2013 - 2015 Intel Mobile Communications GmbH
+  * All rights reserved.
+  * Copyright(c) 2017 Intel Deutschland GmbH
++ * Copyright(c) 2018        Intel Corporation
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -517,9 +519,9 @@ static const struct pci_device_id iwl_hw
+ 	{IWL_PCI_DEVICE(0x24FD, 0x9074, iwl8265_2ac_cfg)},
  
-+static void hv_pci_onchannelcallback(void *context);
-+
- /**
-  * hv_pci_generic_compl() - Invoked for a completion packet
-  * @context:		Set up by the sender of the packet.
-@@ -665,6 +667,31 @@ static void _hv_pcifront_read_config(str
- 	}
- }
+ /* 9000 Series */
+-	{IWL_PCI_DEVICE(0x2526, 0x0000, iwl9260_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x0010, iwl9260_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x0014, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x2526, 0x0018, iwl9260_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x0030, iwl9560_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x0034, iwl9560_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x0038, iwl9560_2ac_cfg)},
+@@ -544,11 +546,15 @@ static const struct pci_device_id iwl_hw
+ 	{IWL_PCI_DEVICE(0x2526, 0x1410, iwl9270_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x1420, iwl9460_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x1610, iwl9270_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x2526, 0x2030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x2526, 0x2034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x4010, iwl9260_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x4030, iwl9560_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x2526, 0x4034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x40A4, iwl9460_2ac_cfg)},
+-	{IWL_PCI_DEVICE(0x2526, 0xA014, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x2526, 0x4234, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x2526, 0x42A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x2526, 0xA014, iwl9260_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x271B, 0x0010, iwl9160_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x271B, 0x0014, iwl9160_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x271B, 0x0210, iwl9160_2ac_cfg)},
+@@ -569,16 +575,42 @@ static const struct pci_device_id iwl_hw
+ 	{IWL_PCI_DEVICE(0x2720, 0x0264, iwl9461_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x2720, 0x02A0, iwl9462_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x2720, 0x02A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x2720, 0x1010, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x2720, 0x1030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x2720, 0x1210, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x2720, 0x2030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x2720, 0x2034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x2720, 0x4030, iwl9560_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x2720, 0x4034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x2720, 0x40A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x2720, 0x4234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x2720, 0x42A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x0030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x0034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x0038, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x003C, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x30DC, 0x0060, iwl9460_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x30DC, 0x0064, iwl9461_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x30DC, 0x00A0, iwl9462_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x30DC, 0x00A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x0230, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x0234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x0238, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x023C, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x30DC, 0x0260, iwl9461_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x30DC, 0x0264, iwl9461_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x30DC, 0x02A0, iwl9462_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x30DC, 0x02A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x1010, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x30DC, 0x1030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x1210, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x30DC, 0x2030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x2034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x4030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x4034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x40A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x4234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x30DC, 0x42A4, iwl9462_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x0030, iwl9560_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x0034, iwl9560_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x0038, iwl9560_2ac_cfg_shared_clk)},
+@@ -595,12 +627,94 @@ static const struct pci_device_id iwl_hw
+ 	{IWL_PCI_DEVICE(0x31DC, 0x0264, iwl9461_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x02A0, iwl9462_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x02A4, iwl9462_2ac_cfg_shared_clk)},
++	{IWL_PCI_DEVICE(0x31DC, 0x1010, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x31DC, 0x1030, iwl9560_2ac_cfg_shared_clk)},
++	{IWL_PCI_DEVICE(0x31DC, 0x1210, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x31DC, 0x2030, iwl9560_2ac_cfg_shared_clk)},
++	{IWL_PCI_DEVICE(0x31DC, 0x2034, iwl9560_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x4030, iwl9560_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x4034, iwl9560_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x31DC, 0x40A4, iwl9462_2ac_cfg_shared_clk)},
++	{IWL_PCI_DEVICE(0x31DC, 0x4234, iwl9560_2ac_cfg_shared_clk)},
++	{IWL_PCI_DEVICE(0x31DC, 0x42A4, iwl9462_2ac_cfg_shared_clk)},
+ 	{IWL_PCI_DEVICE(0x34F0, 0x0030, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x34F0, 0x0034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0038, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x003C, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0060, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0064, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x00A0, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x00A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0230, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0238, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x023C, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0260, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x0264, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x02A0, iwl9462_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x34F0, 0x02A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x1010, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x34F0, 0x1030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x1210, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x34F0, 0x2030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x2034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x4030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x4034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x40A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x4234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x34F0, 0x42A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0038, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x003C, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0060, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0064, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x00A0, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x00A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0230, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0238, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x023C, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0260, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x0264, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x02A0, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x02A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x1010, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x1030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x1210, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x2030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x2034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x4030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x4034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x40A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x4234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x3DF0, 0x42A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0038, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x003C, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0060, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0064, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x00A0, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x00A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0230, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0238, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x023C, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0260, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x0264, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x02A0, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x02A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x1010, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x43F0, 0x1030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x1210, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x43F0, 0x2030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x2034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x4030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x4034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x40A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x4234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x43F0, 0x42A4, iwl9462_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x0000, iwl9460_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x0010, iwl9460_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x0030, iwl9560_2ac_cfg_soc)},
+@@ -626,11 +740,44 @@ static const struct pci_device_id iwl_hw
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x0610, iwl9460_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x0710, iwl9460_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x0A10, iwl9460_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x9DF0, 0x1010, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0x9DF0, 0x1030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x9DF0, 0x1210, iwl9260_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x2010, iwl9460_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x9DF0, 0x2030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x9DF0, 0x2034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x2A10, iwl9460_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x4030, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x4034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0x9DF0, 0x40A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x9DF0, 0x4234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0x9DF0, 0x42A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0038, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x003C, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0060, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0064, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x00A0, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x00A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0230, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0238, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x023C, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0260, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x0264, iwl9461_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x02A0, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x02A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x1010, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x1030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x1210, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x2030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x2034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x4030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x4034, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x40A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x4234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA0F0, 0x42A4, iwl9462_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0xA370, 0x0030, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0xA370, 0x0034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0xA370, 0x0038, iwl9560_2ac_cfg_soc)},
+@@ -647,10 +794,16 @@ static const struct pci_device_id iwl_hw
+ 	{IWL_PCI_DEVICE(0xA370, 0x0264, iwl9461_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0xA370, 0x02A0, iwl9462_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0xA370, 0x02A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA370, 0x1010, iwl9260_2ac_cfg)},
+ 	{IWL_PCI_DEVICE(0xA370, 0x1030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA370, 0x1210, iwl9260_2ac_cfg)},
++	{IWL_PCI_DEVICE(0xA370, 0x2030, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA370, 0x2034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0xA370, 0x4030, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0xA370, 0x4034, iwl9560_2ac_cfg_soc)},
+ 	{IWL_PCI_DEVICE(0xA370, 0x40A4, iwl9462_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA370, 0x4234, iwl9560_2ac_cfg_soc)},
++	{IWL_PCI_DEVICE(0xA370, 0x42A4, iwl9462_2ac_cfg_soc)},
  
-+static u16 hv_pcifront_get_vendor_id(struct hv_pci_dev *hpdev)
-+{
-+	u16 ret;
-+	unsigned long flags;
-+	void __iomem *addr = hpdev->hbus->cfg_addr + CFG_PAGE_OFFSET +
-+			     PCI_VENDOR_ID;
-+
-+	spin_lock_irqsave(&hpdev->hbus->config_lock, flags);
-+
-+	/* Choose the function to be read. (See comment above) */
-+	writel(hpdev->desc.win_slot.slot, hpdev->hbus->cfg_addr);
-+	/* Make sure the function was chosen before we start reading. */
-+	mb();
-+	/* Read from that function's config space. */
-+	ret = readw(addr);
-+	/*
-+	 * mb() is not required here, because the spin_unlock_irqrestore()
-+	 * is a barrier.
-+	 */
-+
-+	spin_unlock_irqrestore(&hpdev->hbus->config_lock, flags);
-+
-+	return ret;
-+}
-+
- /**
-  * _hv_pcifront_write_config() - Internal PCI config write
-  * @hpdev:	The PCI driver's representation of the device
-@@ -1107,8 +1134,37 @@ static void hv_compose_msi_msg(struct ir
- 	 * Since this function is called with IRQ locks held, can't
- 	 * do normal wait for completion; instead poll.
- 	 */
--	while (!try_wait_for_completion(&comp.comp_pkt.host_event))
-+	while (!try_wait_for_completion(&comp.comp_pkt.host_event)) {
-+		/* 0xFFFF means an invalid PCI VENDOR ID. */
-+		if (hv_pcifront_get_vendor_id(hpdev) == 0xFFFF) {
-+			dev_err_once(&hbus->hdev->device,
-+				     "the device has gone\n");
-+			goto free_int_desc;
-+		}
-+
-+		/*
-+		 * When the higher level interrupt code calls us with
-+		 * interrupt disabled, we must poll the channel by calling
-+		 * the channel callback directly when channel->target_cpu is
-+		 * the current CPU. When the higher level interrupt code
-+		 * calls us with interrupt enabled, let's add the
-+		 * local_bh_disable()/enable() to avoid race.
-+		 */
-+		local_bh_disable();
-+
-+		if (hbus->hdev->channel->target_cpu == smp_processor_id())
-+			hv_pci_onchannelcallback(hbus);
-+
-+		local_bh_enable();
-+
-+		if (hpdev->state == hv_pcichild_ejecting) {
-+			dev_err_once(&hbus->hdev->device,
-+				     "the device is being ejected\n");
-+			goto free_int_desc;
-+		}
-+
- 		udelay(100);
-+	}
- 
- 	if (comp.comp_pkt.completion_status < 0) {
- 		dev_err(&hbus->hdev->device,
+ /* 22000 Series */
+ 	{IWL_PCI_DEVICE(0x2720, 0x0A10, iwl22000_2ac_cfg_hr_cdb)},
