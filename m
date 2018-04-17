@@ -1,146 +1,114 @@
-Return-Path: <rdunlap@infradead.org>
-X-Google-Smtp-Source: AIpwx48Pz6e9FPTwMb+kr8L7FYhxVCRm1dDYod47P3gu7JP8Z5wGObnK7tGv68a8lxvi9KExHFnl
-ARC-Seal: i=1; a=rsa-sha256; t=1523998717; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VEGgmXL5Fz3yPviAslrt2YapBZa0NhxwKzkV7epTCNYPxMb6Igk+z2yC3X6r4mgU5N
-         EjbMhsqq22APepz/xoivbODRv1QqYlefWnkuGpnS+7ZyYmu2TlLHHVCuAdi3H4e7IDZv
-         tXGcgPRdkeQAwO3Z6hSPT1yJBYNd/y7PaY+BCgyMfIuzWtEtB+zgfGmFjgTuIaMKHTO4
-         fTz5KJ2kGIT/IMRx3EUe7YsUgZA/rurAHqdfH5IniTv10dpP9MV+jjz9cCD7ceQVk/V4
-         8RcJmYu8dcOISbqV28XLJwnAT2nayuKCGDEtd0DGrHoS/VuP9ybVjVPPXs+qVzp5PJ8Q
-         kzIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=4RmPcgbPmGphuw6t0dfyrqYvBlisDNmTa6b0PKGg+XE=;
-        b=EKo8MybhBqfCa23wsYiGgwRVhcSz/H9O6W6rDcN4HTTXNR9Sic8TyDqQYyMK/UfhFI
-         4USt3U1G+FBQu/FQJAefDvhKU1ulbrRAgPet2Qw82ZK8KgsF7ODnOnWstwkLBVQcsvfg
-         UqYZdS+26pM2MKE+8GznjWfCSEZZig7XBxrohLM27xMJaBxbl34jBw9oRwlzouaobxRc
-         3j95Bs8HUh4J9LvO4wG/x7Shy6aPwM8lGiRKvTPnJSY959TMTcuxElsyCVyOqCMx/nOs
-         h4pcWVCTYbIO5nRFk1BLlZaM+LvIPjLu/BohPoJ7sc7DjpFrnlVmmjsbqbKXJZo12MQW
-         6MPQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=JxqKUUhQ;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=JxqKUUhQ;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-Subject: Re: [PATCH v2] firmware: Fix firmware documentation for recent file
- renames
-To: Hans de Goede <hdegoede@redhat.com>,
- "Luis R . Rodriguez" <mcgrof@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20180408160621.13042-1-hdegoede@redhat.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <18d60d18-24ce-2a02-b2a4-d1b5a6cc6310@infradead.org>
-Date: Tue, 17 Apr 2018 13:58:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180408160621.13042-1-hdegoede@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-442875-1523926943-2-16678660566056653248
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523926943; b=NtI4CtEtjC0kP0w+bFW/ISb3UMECTfAewDpbOp+rMN17WLyM1q
+    40U3HSyXdyr+aYxoY7pHG4YDh2ROLN0Rz3MdN7x7u7a6d3pzP95b+tcT3IK8yzWa
+    eAWbFZ4TTENEPIftv9oZ7P1OIVz4jjaGYEu2OsG38LZrt2k5+Up3yR9EEk3qWTeq
+    29/GF9rAmm3aB3zuxWQzuFtbhiqcRjYvA3lts+djXV/lmHpnMUT0qcishZMNX9so
+    DcxU8kyo5disYeENIe+gBXeVDrjTbcZYx8IcTiGVonfb6Uz4d+fW3PPOdsu42AnI
+    VUkGBuEPjpeH6PLVnI59/wtQumUlVBNGMZ8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :reply-to:sender:list-id; s=fm2; t=1523926943; bh=/NjPMtGP4dJ9nC
+    c+8my6wvjfrGpSw394exVTFZ/e7H4=; b=potQc3K2hnyLRf70dlx+3+VGRO6CSU
+    bix8TIjEltDuGWcNdyCyqH0Q+JZ7vpZg7MC5+M0P9B4G663CoAqw2DwznWbwu4n3
+    WiNFASQOyXwAAZkBupb4WpzJGluNWI8jQVoy2kfbjsFcIWtF6RMxaM2DJcyEnt6b
+    ee3/4nHKAokPh7q5Hu5rUVCpo0fBaVHKg2pUuFNRuMfck9zgkF2nc1nnLtAORiLo
+    3VmbZ9VvUayvFJbdmw9f/pIirGRuJFmwL0zh+YeMZ7C80PBr8mc7vp7qLXCKrYxa
+    nUAsbZtgu83zEn7uFFo4sLpVFHAwWrA+FtUOR87EGc4sivH3kdmem1yw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxonhyperv.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxonhyperv.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxonhyperv.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxonhyperv.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfOGvJ/5Fps81LHTP4iFRNSWWQeNydguipJBLWhDLD0bq7C1lf2RtrWLPwuxLcMe2zTpoxWJ7arM2eWt0gryJ4hgzseigYApdTnsfcgI1UCTZchDquNO1
+    nt+gp54rKDx65RJMiVFlvG5NpZ8SxNblGbAFw7/Qcbj9sxnRi1TDuhTN63rfzO6AZBgtEEDLqkE4FUPR9JqzeEbXnFxOIDyzklv0IrxY/dPMC16XAvRuT+kb
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wmH2h71lHiwA:10 a=Kd1tUaAdevIA:10
+    a=yMhMjlubAAAA:8 a=dihGPPrMb8lbbuB8swMA:9
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751211AbeDQBCU (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 16 Apr 2018 21:02:20 -0400
+Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:60352
+        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751060AbeDQBCT (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 16 Apr 2018 21:02:19 -0400
+x-originating-ip: 107.180.71.197
+From: Long Li <longli@linuxonhyperv.com>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, stable@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH 1/6] cifs: smbd: Check for iov length on sending the last iov
+Date: Mon, 16 Apr 2018 17:49:13 -0700
+Message-Id: <20180417004918.29213-1-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+Reply-To: longli@microsoft.com
+X-CMAE-Envelope: MS4wfP4N6ubxwmwRb4BfbpL3lDGzZhZP+lZl8mCXslQW9GIIEBzsU8hKslmNVl1nR+88F3qUpncPxNXVZPXBtwdnOnpTRTitnvT8pd09wZ4ubT49tR853y9+
+ GvDYBLKDp7uWx9V9eB010Ss+DETrTSf+0LUHB8z1s909WBihzPKKUku0yq4UII8aeLjfW0tDXSjdLKUDz8D7wk0ZAMZJGZ45bBdZ1d4Dm4g49n67Quvu5DeI
+ RGAs9PmliuI8GuzWco8jBB5yijR+GBY4xP+26oiDrgL9Mc9zdcFPTGGt6hWhMuWG2PvJwkqUyhNyJgjxrfNfMsBZvNCdCnmd3Q9RTmByxSKidT4B1fNhpr2X
+ AAUcpaWBF+i6pbaRwszZhaWf8cQd1lMr3Vef6Pps8QQ5FuXND1nWMMUrKN5eipBaEmtsNlAkpPovkTAScsyqHSiYKBHFAaVk7PRWSAXwloYiDRvLGRg=
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597194722140266854?=
-X-GMAIL-MSGID: =?utf-8?q?1598028478877810028?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/08/18 09:06, Hans de Goede wrote:
-> firmware_class.c was split into several files under
-> drivers/base/firmware_loader. The new main.c has the functions which
-> /request_firmware.rst references.
-> 
-> Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+From: Long Li <longli@microsoft.com>
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+When sending the last iov that breaks into smaller buffers to fit the
+transfer size, it's necessary to check if this is the last iov.
 
-Thanks.
+If this is the latest iov, stop and proceed to send pages.
 
-> ---
-> Changes in v2:
-> -Fix the same issue in 2 more files
-> -Add Luis' Acked-by
-> ---
->  Documentation/driver-api/firmware/request_firmware.rst | 10 +++++-----
->  Documentation/driver-api/infrastructure.rst            |  2 +-
->  Documentation/power/suspend-and-cpuhotplug.txt         |  2 +-
->  3 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
-> index cf4516dfbf96..20f21ed427a5 100644
-> --- a/Documentation/driver-api/firmware/request_firmware.rst
-> +++ b/Documentation/driver-api/firmware/request_firmware.rst
-> @@ -17,17 +17,17 @@ an error is returned.
->  
->  request_firmware
->  ----------------
-> -.. kernel-doc:: drivers/base/firmware_class.c
-> +.. kernel-doc:: drivers/base/firmware_loader/main.c
->     :functions: request_firmware
->  
->  request_firmware_direct
->  -----------------------
-> -.. kernel-doc:: drivers/base/firmware_class.c
-> +.. kernel-doc:: drivers/base/firmware_loader/main.c
->     :functions: request_firmware_direct
->  
->  request_firmware_into_buf
->  -------------------------
-> -.. kernel-doc:: drivers/base/firmware_class.c
-> +.. kernel-doc:: drivers/base/firmware_loader/main.c
->     :functions: request_firmware_into_buf
->  
->  Asynchronous firmware requests
-> @@ -41,7 +41,7 @@ in atomic contexts.
->  
->  request_firmware_nowait
->  -----------------------
-> -.. kernel-doc:: drivers/base/firmware_class.c
-> +.. kernel-doc:: drivers/base/firmware_loader/main.c
->     :functions: request_firmware_nowait
->  
->  Special optimizations on reboot
-> @@ -55,7 +55,7 @@ firmare to be loaded.
->  
->  firmware_request_cache()
->  -----------------------
-> -.. kernel-doc:: drivers/base/firmware_class.c
-> +.. kernel-doc:: drivers/base/firmware_loader/main.c
->     :functions: firmware_request_cache
->  
->  request firmware API expected driver use
-> diff --git a/Documentation/driver-api/infrastructure.rst b/Documentation/driver-api/infrastructure.rst
-> index 6d9ff316b608..bee1b9a1702f 100644
-> --- a/Documentation/driver-api/infrastructure.rst
-> +++ b/Documentation/driver-api/infrastructure.rst
-> @@ -28,7 +28,7 @@ Device Drivers Base
->  .. kernel-doc:: drivers/base/node.c
->     :internal:
->  
-> -.. kernel-doc:: drivers/base/firmware_class.c
-> +.. kernel-doc:: drivers/base/firmware_loader/main.c
->     :export:
->  
->  .. kernel-doc:: drivers/base/transport_class.c
-> diff --git a/Documentation/power/suspend-and-cpuhotplug.txt b/Documentation/power/suspend-and-cpuhotplug.txt
-> index 31abd04b9572..6f55eb960a6d 100644
-> --- a/Documentation/power/suspend-and-cpuhotplug.txt
-> +++ b/Documentation/power/suspend-and-cpuhotplug.txt
-> @@ -168,7 +168,7 @@ update on the CPUs, as discussed below:
->  
->  [Please bear in mind that the kernel requests the microcode images from
->  userspace, using the request_firmware() function defined in
-> -drivers/base/firmware_class.c]
-> +drivers/base/firmware_loader/main.c]
->  
->  
->  a. When all the CPUs are identical:
-> 
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ fs/cifs/smbdirect.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index 90e673c..b5c6c0d 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -2197,6 +2197,8 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
+ 						goto done;
+ 				}
+ 				i++;
++				if (i == rqst->rq_nvec)
++					break;
+ 			}
+ 			start = i;
+ 			buflen = 0;
 -- 
-~Randy
+2.7.4
