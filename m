@@ -1,28 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeDQBuY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 21:50:24 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59396 "EHLO
+        id S1752004AbeDQBw4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 21:52:56 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:59412 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751060AbeDQBuX (ORCPT
+        with ESMTP id S1751060AbeDQBwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 21:50:23 -0400
-Subject: Re: [PATCH] infiniband: mlx5: fix build error when
- INFINIBAND_USER_ACCESS=m
-To: Jason Gunthorpe <jgg@mellanox.com>
-Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Matan Barak <matanb@mellanox.com>,
+        Mon, 16 Apr 2018 21:52:55 -0400
+To: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Matan Barak <matanb@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Leon Romanovsky <leonro@mellanox.com>,
         Doug Ledford <dledford@redhat.com>
-References: <81ea9f01-4624-38d7-2bfe-1dd7063fa3f0@infradead.org>
- <20180416215526.GX23074@mellanox.com>
 From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c0f4198f-9b62-60e3-0a1e-4c04ec8ffabe@infradead.org>
-Date: Mon, 16 Apr 2018 18:49:37 -0700
+Subject: [PATCH v2] infiniband: mlx5: fix build errors when
+ INFINIBAND_USER_ACCESS=m
+Message-ID: <aa0dd9f7-3475-c2b3-8d5c-032a7ad72fe9@infradead.org>
+Date: Mon, 16 Apr 2018 18:51:50 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180416215526.GX23074@mellanox.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -30,50 +27,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/18 14:55, Jason Gunthorpe wrote:
-> On Mon, Apr 16, 2018 at 02:21:07PM -0700, Randy Dunlap wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Fix build errors when INFINIBAND_USER_ACCESS=m and MLX5_INFINIBAND=y.
->> The build error occurs when the mlx5 driver code attempts to use
->> USER_ACCESS interfaces, which are built as a loadable module.
->>
->> Fixes these build errors:
->>
->> drivers/infiniband/hw/mlx5/main.o: In function `populate_specs_root':
->> ../drivers/infiniband/hw/mlx5/main.c:4982: undefined reference to `uverbs_default_get_objects'
->> ../drivers/infiniband/hw/mlx5/main.c:4994: undefined reference to `uverbs_alloc_spec_tree'
->> drivers/infiniband/hw/mlx5/main.o: In function `depopulate_specs_root':
->> ../drivers/infiniband/hw/mlx5/main.c:5001: undefined reference to `uverbs_free_spec_tree'
->>
->> Reported-by: kbuild test robot <lkp@intel.com>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Matan Barak <matanb@mellanox.com>
->> Cc: Jason Gunthorpe <jgg@mellanox.com>
->> Cc: Leon Romanovsky <leonro@mellanox.com>
->> Cc: Doug Ledford <dledford@redhat.com>
->> Cc: linux-rdma@vger.kernel.org
->> Cc: stable@vger.kernel.org # reported against 4.16
->>  drivers/infiniband/hw/mlx5/Kconfig |    1 +
->>  1 file changed, 1 insertion(+)
->>
->> +++ lnx-417-rc1/drivers/infiniband/hw/mlx5/Kconfig
->> @@ -1,6 +1,7 @@
->>  config MLX5_INFINIBAND
->>  	tristate "Mellanox Connect-IB HCA support"
->>  	depends on NETDEVICES && ETHERNET && PCI && MLX5_CORE
->> +	select INFINIBAND_USER_ACCESS
-> 
-> Shouldn't this be done via
-> 
-> 	depends on m || INFINIBAND_USER_ACCESS != m
-> 
-> ?
-> 
-> We can turn off USER_ACCESS and still successfully compile the driver.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Argh, thanks, I didn't notice that.  v2 on the way but not quite the way
-that you mentioned, more like it's done in other (netdev) places.
+Fix build errors when INFINIBAND_USER_ACCESS=m and MLX5_INFINIBAND=y.
+The build error occurs when the mlx5 driver code attempts to use
+USER_ACCESS interfaces, which are built as a loadable module.
 
--- 
-~Randy
+Fixes these build errors:
+
+drivers/infiniband/hw/mlx5/main.o: In function `populate_specs_root':
+../drivers/infiniband/hw/mlx5/main.c:4982: undefined reference to `uverbs_default_get_objects'
+../drivers/infiniband/hw/mlx5/main.c:4994: undefined reference to `uverbs_alloc_spec_tree'
+drivers/infiniband/hw/mlx5/main.o: In function `depopulate_specs_root':
+../drivers/infiniband/hw/mlx5/main.c:5001: undefined reference to `uverbs_free_spec_tree'
+
+Build-tested with multiple config combinations.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Matan Barak <matanb@mellanox.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Leon Romanovsky <leonro@mellanox.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: linux-rdma@vger.kernel.org
+Cc: stable@vger.kernel.org # reported against 4.16
+---
+v2: allow building mxl5 even when INFINIBAND_USER_ACCESS is disabled.
+
+ drivers/infiniband/hw/mlx5/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- lnx-417-rc1.orig/drivers/infiniband/hw/mlx5/Kconfig
++++ lnx-417-rc1/drivers/infiniband/hw/mlx5/Kconfig
+@@ -1,6 +1,7 @@
+ config MLX5_INFINIBAND
+ 	tristate "Mellanox Connect-IB HCA support"
+ 	depends on NETDEVICES && ETHERNET && PCI && MLX5_CORE
++	depends on INFINIBAND_USER_ACCESS || INFINIBAND_USER_ACCESS=n
+ 	---help---
+ 	  This driver provides low-level InfiniBand support for
+ 	  Mellanox Connect-IB PCI Express host channel adapters (HCAs).
