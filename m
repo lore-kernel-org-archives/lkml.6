@@ -1,74 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753199AbeDQXnh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 19:43:37 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:60306 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751164AbeDQXnf (ORCPT
+        id S1753236AbeDQXpC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 19:45:02 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:41987 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752727AbeDQXpA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 19:43:35 -0400
-Subject: Re: [PATCH v4 3/3] mm: restructure memfd code
-To: Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
+        Tue, 17 Apr 2018 19:45:00 -0400
+X-Google-Smtp-Source: AIpwx49yYc7It3HSea/JYGSEJMn1VnxayYk5vJATdoiuLxmn+Ir93U5n1hm/uXVSlJHLxNxiyY9fKQ==
+Date: Tue, 17 Apr 2018 16:44:57 -0700
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Yafang Shao <laoar.shao@gmail.com>, davem@davemloft.net,
+        songliubraving@fb.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc: Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@gmail.com>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180415182119.4517-1-mike.kravetz@oracle.com>
- <20180415182119.4517-4-mike.kravetz@oracle.com>
-From: Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <3bcdcaba-3364-c633-2d9d-3df27c2a8f7c@oracle.com>
-Date: Tue, 17 Apr 2018 17:42:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Subject: Re: [PATCH net-next] net: introduce a new tracepoint for
+ tcp_rcv_space_adjust
+Message-ID: <20180417234455.q6fgn7oroehmxk6l@ast-mbp>
+References: <1523892818-12820-1-git-send-email-laoar.shao@gmail.com>
+ <d2ab1647-c832-c982-5952-ab7a415f7c76@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180415182119.4517-4-mike.kravetz@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8866 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804170204
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2ab1647-c832-c982-5952-ab7a415f7c76@gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/15/2018 12:21 PM, Mike Kravetz wrote:
-> With the addition of memfd hugetlbfs support, we now have the situation
-> where memfd depends on TMPFS -or- HUGETLBFS.  Previously, memfd was only
-> supported on tmpfs, so it made sense that the code resided in shmem.c.
-> In the current code, memfd is only functional if TMPFS is defined.  If
-> HUGETLFS is defined and TMPFS is not defined, then memfd functionality
-> will not be available for hugetlbfs.  This does not cause BUGs, just a
-> lack of potentially desired functionality.
+On Mon, Apr 16, 2018 at 08:43:31AM -0700, Eric Dumazet wrote:
 > 
-> Code is restructured in the following way:
-> - include/linux/memfd.h is a new file containing memfd specific
->    definitions previously contained in shmem_fs.h.
-> - mm/memfd.c is a new file containing memfd specific code previously
->    contained in shmem.c.
-> - memfd specific code is removed from shmem_fs.h and shmem.c.
-> - A new config option MEMFD_CREATE is added that is defined if TMPFS
->    or HUGETLBFS is defined.
 > 
-> No functional changes are made to the code: restructuring only.
+> On 04/16/2018 08:33 AM, Yafang Shao wrote:
+> > tcp_rcv_space_adjust is called every time data is copied to user space,
+> > introducing a tcp tracepoint for which could show us when the packet is
+> > copied to user.
+> > This could help us figure out whether there's latency in user process.
+> > 
+> > When a tcp packet arrives, tcp_rcv_established() will be called and with
+> > the existed tracepoint tcp_probe we could get the time when this packet
+> > arrives.
+> > Then this packet will be copied to user, and tcp_rcv_space_adjust will
+> > be called and with this new introduced tracepoint we could get the time
+> > when this packet is copied to user.
+> > 
+> > 	arrives time : user process time    => latency caused by user
+> > 	tcp_probe      tcp_rcv_space_adjust
+> > 
+> > Hence in the prink message, sk is printed as a key to connect these two
+> > tracepoints.
+> > 
 > 
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-> ---
->   fs/Kconfig               |   3 +
->   fs/fcntl.c               |   2 +-
->   include/linux/memfd.h    |  16 +++
->   include/linux/shmem_fs.h |  13 --
->   mm/Makefile              |   1 +
->   mm/memfd.c               | 345 +++++++++++++++++++++++++++++++++++++++++++++++
->   mm/shmem.c               | 324 --------------------------------------------
->   7 files changed, 366 insertions(+), 338 deletions(-)
->   create mode 100644 include/linux/memfd.h
->   create mode 100644 mm/memfd.c
+> socket pointer is not a key.
+> 
+> TCP sockets can be reused pretty fast after free.
+> 
+> I suggest you go for cookie instead, this is an unique 64bit identifier.
+> ( sock_gen_cookie() for details )
 
-Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+I think would be even better if the stack would do this sock_gen_cookie()
+on its own in some way that user cannnot infere the order.
+In many cases we wanted to use socket cookie, but since it's not inited
+by default it's kinda useless.
+Turning this tracepoint on just to get cookie would be an ugly workaround.
