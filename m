@@ -1,157 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751878AbeDQHRm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 03:17:42 -0400
-Received: from mail-wr0-f178.google.com ([209.85.128.178]:45153 "EHLO
-        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751183AbeDQHRj (ORCPT
+        id S1751256AbeDQHYG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 03:24:06 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:49646 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751118AbeDQHYD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 03:17:39 -0400
-X-Google-Smtp-Source: AIpwx49FqWlH0SJq/C4TxJ/o18EKF3X5uSreYUubDCC6pUCH0yBmhoYL+jhvnDnTFv6rP8O13lR8yw==
-Subject: Re: [PATCH v3 6/7] thermal/drivers/cpu_cooling: Introduce the cpu
- idle cooling driver
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>, edubezval@gmail.com,
-        kevin.wangtao@linaro.org, leo.yan@linaro.org,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
-        javi.merino@kernel.org, rui.zhang@intel.com,
-        daniel.thompson@linaro.org, linux-pm@vger.kernel.org,
-        Amit Daniel Kachhap <amit.kachhap@gmail.com>
-References: <20180416073729.GA4244@vireshk-i7>
- <0a3164f9-4738-e24e-6ed0-2c75024c304c@linaro.org>
- <20180416093747.GB4244@vireshk-i7>
- <4abf0d97-d2b8-46ab-3c05-4a11510ac3fe@linaro.org>
- <20180416095006.GC4244@vireshk-i7>
- <b0e7ff16-c947-89a0-6bd9-56ee9a76e7ad@linaro.org>
- <20180416101021.GD4244@vireshk-i7>
- <1c61128a-dea6-b12c-4cd8-ef53a5c8628d@linaro.org>
- <20180416123019.GA9341@e107981-ln.cambridge.arm.com>
- <633cdc63-ce6d-89af-26dd-bdc3a27556ed@linaro.org>
- <20180416142243.GB32565@red-moon>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <845fafa3-f0ab-2050-fe32-1780dc61b8a8@linaro.org>
-Date: Tue, 17 Apr 2018 09:17:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 17 Apr 2018 03:24:03 -0400
+X-Google-Smtp-Source: AIpwx4/8YmtyIcPjJFxb6nYqN4hxn4bTENJtAAhtfXYvsDE3vNvT9HOWChF7/7Br/a3ZFZggziPQ3n5uw/6nhHX8aE5UsbsUh1Ug
 MIME-Version: 1.0
-In-Reply-To: <20180416142243.GB32565@red-moon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Date: Tue, 17 Apr 2018 00:24:02 -0700
+In-Reply-To: <000000000000b696800568f4a6c6@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <001a1139d0ba06bddf056a063986@google.com>
+Subject: Re: KASAN: global-out-of-bounds Write in string
+From: syzbot <syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, linux-kernel@vger.kernel.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, reiserfs-devel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/04/2018 16:22, Lorenzo Pieralisi wrote:
-> On Mon, Apr 16, 2018 at 03:57:03PM +0200, Daniel Lezcano wrote:
->> On 16/04/2018 14:30, Lorenzo Pieralisi wrote:
->>> On Mon, Apr 16, 2018 at 02:10:30PM +0200, Daniel Lezcano wrote:
->>>> On 16/04/2018 12:10, Viresh Kumar wrote:
->>>>> On 16-04-18, 12:03, Daniel Lezcano wrote:
->>>>>> On 16/04/2018 11:50, Viresh Kumar wrote:
->>>>>>> On 16-04-18, 11:45, Daniel Lezcano wrote:
->>>>>>>> Can you elaborate a bit ? I'm not sure to get the point.
->>>>>>>
->>>>>>> Sure. With your current code on Hikey960 (big/LITTLE), you end up
->>>>>>> creating two cooling devices, one for the big cluster and one for
->>>>>>> small cluster. Which is the right thing to do, as we also have two
->>>>>>> cpufreq cooling devices.
->>>>>>>
->>>>>>> But with the change Sudeep is referring to, the helper you used to get
->>>>>>> cluster id will return 0 (SoC id) for all the 8 CPUs. So your code
->>>>>>> will end up creating a single cpuidle cooling device for all the CPUs.
->>>>>>> Which would be wrong.
->>>>>>
->>>>>> Is the semantic of topology_physical_package_id changing ?
->>>>>
->>>>> That's what I understood from his email.
->>>>>
->>>>>> I don't
->>>>>> understand the change Sudeep is referring to.
->>>>
->>>> Actually there is no impact with the change Sudeep is referring to. It
->>>> is for ACPI, we are DT based. Confirmed with Jeremy.
->>>>
->>>> So AFAICT, it is not a problem.
->>>
->>> It is a problem - DT or ACPI alike. Sudeep was referring to the notion
->>> of "cluster" that has no architectural meaning whatsoever and using
->>> topology_physical_package_id() to detect a "cluster" was/is/will always
->>> be the wrong thing to do. The notion of cluster must not appear in the
->>> kernel at all, it has no architectural meaning. I understand you need
->>> to group CPUs but that has to be done in a different way, through
->>> cooling devices, thermal domains or power domains DT/ACPI bindings but
->>> not by using topology masks.
->>
->> I don't get it. What is the cluster concept defined in the ARM
->> documentation?
->>
->> ARM Cortex-A53 MPCore Processor Technical Reference Manual
->>
->> 4.5.2. Multiprocessor Affinity Register
->>
->> I see the documentation says:
->>
->> A cluster with two cores, three cores, ...
->>
->> How the kernel can represent that if you kill the
->> topology_physical_package_id() ?
-> 
-> From an Arm ARM perspective (ARM v8 reference manual), the MPIDR_EL1 has
-> no notion of cluster which means that a cluster is not architecturally
-> defined on Arm systems.
+syzbot has found reproducer for the following crash on upstream commit
+a27fc14219f2e3c4a46ba9177b04d9b52c875532 (Mon Apr 16 21:07:39 2018 +0000)
+Merge branch 'parisc-4.17-3' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=b890b3335a4d8c608963
 
-Sorry, I'm lost :/ You say the MPIDR_EL1 has no notion of cluster but
-the documentation describing this register is all talking about cluster.
+So far this crash happened 3 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4639432657338368
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5739177354199040
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5837965024559104
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-5914490758943236750
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0500g/BABHBJCI.html
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed.
 
-> Currently, as Morten explained today, topology_physical_package_id()
-> is supposed to represent a "cluster" and that's completely wrong
-> because a "cluster" cannot be defined from an architectural perspective.
-> 
-> It was a bodge used as a shortcut, wrongly. We should have never used
-> that API for that purpose and there must be no code in the kernel
-> relying on:
-> 
-> topology_physical_package_id()
-> 
-> to define a cluster; the information you require to group CPUs must
-> come from something else, which is firmware bindings(DT or ACPI) as
-> I mentioned.
+VFS: Can't find a Minix filesystem V1 | V2 | V3 on device loop5.
+==================================================================
+BUG: KASAN: global-out-of-bounds in string+0x291/0x2c0 lib/vsprintf.c:608
+Write of size 1 at addr ffffffff8a5405c0 by task syzkaller915239/4487
 
-Why not ?
+CPU: 1 PID: 4487 Comm: syzkaller915239 Not tainted 4.17.0-rc1+ #6
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_store1_noabort+0x17/0x20 mm/kasan/report.c:435
+  string+0x291/0x2c0 lib/vsprintf.c:608
+  vsnprintf+0x4b7/0x1b40 lib/vsprintf.c:2292
+  vsprintf+0x2a/0x40 lib/vsprintf.c:2472
+  prepare_error_buf+0x23b/0x1aa0 fs/reiserfs/prints.c:240
+  __reiserfs_warning+0xb0/0xd0 fs/reiserfs/prints.c:267
+  reiserfs_getopt fs/reiserfs/super.c:1044 [inline]
+  reiserfs_parse_options+0x11f4/0x27f0 fs/reiserfs/super.c:1194
+  reiserfs_fill_super+0x520/0x3900 fs/reiserfs/super.c:1946
+  mount_bdev+0x30c/0x3e0 fs/super.c:1165
+  get_super_block+0x34/0x40 fs/reiserfs/super.c:2605
+  mount_fs+0xae/0x328 fs/super.c:1268
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2517 [inline]
+  do_mount+0x564/0x3070 fs/namespace.c:2847
+  ksys_mount+0x12d/0x140 fs/namespace.c:3063
+  __do_sys_mount fs/namespace.c:3077 [inline]
+  __se_sys_mount fs/namespace.c:3074 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x448bca
+RSP: 002b:00007f33571ccc68 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000040 RCX: 0000000000448bca
+RDX: 0000000020000000 RSI: 0000000020000040 RDI: 00007f33571ccc80
+RBP: 0000000000000004 R08: 0000000020000380 R09: 000000000000000a
+R10: 0000000001000000 R11: 0000000000000202 R12: 0000000000000043
+R13: 0000000000000044 R14: 0000000001000000 R15: 0000000000000004
 
-diff --git a/arch/arm64/include/asm/topology.h
-b/arch/arm64/include/asm/topology.h
-index c4f2d50..ac0776d 100644
---- a/arch/arm64/include/asm/topology.h
-+++ b/arch/arm64/include/asm/topology.h
-@@ -14,7 +14,8 @@ struct cpu_topology {
+The buggy address belongs to the variable:
+  error_buf+0x400/0x420
 
- extern struct cpu_topology cpu_topology[NR_CPUS];
-
--#define topology_physical_package_id(cpu)
-(cpu_topology[cpu].cluster_id)
-+#define topology_physical_package_id(cpu)      (0)
-+#define topology_physical_cluster_id(cpu)
-(cpu_topology[cpu].cluster_id)
- #define topology_core_id(cpu)          (cpu_topology[cpu].core_id)
- #define topology_core_cpumask(cpu)     (&cpu_topology[cpu].core_sibling)
- #define topology_sibling_cpumask(cpu)  (&cpu_topology[cpu].thread_sibling)
-
-
-> Please speak to Sudeep who will fill you on the reasoning above.
-
-Yes, Sudeep is next to me but I would prefer to keep the discussion on
-the mailing list so everyone can get the reasoning.
-
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Memory state around the buggy address:
+  ffffffff8a540480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffffffff8a540500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffffffff8a540580: 00 00 00 00 00 00 00 00 fa fa fa fa 04 fa fa fa
+                                            ^
+  ffffffff8a540600: fa fa fa fa 00 fa fa fa fa fa fa fa 00 fa fa fa
+  ffffffff8a540680: fa fa fa fa 00 fa fa fa fa fa fa fa 00 fa fa fa
+==================================================================
