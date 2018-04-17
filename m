@@ -1,60 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753364AbeDQMxQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 08:53:16 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:57444 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752087AbeDQMxO (ORCPT
+        id S1753412AbeDQMxW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 08:53:22 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:29621 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753370AbeDQMxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:53:14 -0400
-X-IronPort-AV: E=Sophos;i="5.48,463,1517842800";
-   d="scan'208";a="277046845"
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Carlo Caione <carlo@endlessm.com>,
-        Frank Rowand <frank.rowand@sony.com>, Juri Lelli <juri.lelli@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/3] ARM: dts: Renesas RZ/N1D SMP enable method
-Date: Tue, 17 Apr 2018 13:48:02 +0100
-Message-Id: <1523969291-41756-4-git-send-email-michel.pollet@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523969291-41756-1-git-send-email-michel.pollet@bp.renesas.com>
+        Tue, 17 Apr 2018 08:53:18 -0400
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=flawful.org
+Date: Tue, 17 Apr 2018 14:53:08 +0200
+From: Niklas Cassel <nks@flawful.org>
+To: arm@kernel.org
+Cc: linux-pci@vger.kernel.org, linux-arm-kernel@axis.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Remove myself as maintainer
+Message-ID: <20180417125308.GA30884@flawful.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a special enable method for the second CA7 of the Renesas RZ/N1D
-(R9A06G032), as well as the default value for the "cpu-release-addr"
-property.
+From: Niklas Cassel <niklas.cassel@axis.com>
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+I am leaving Axis, so this address will bounce in the not too
+distant future.
+
+Fortunately, I will still be working with the community.
+
+Signed-off-by: Niklas Cassel <niklas.cassel@axis.com>
 ---
- arch/arm/boot/dts/r9a06g032.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Hello arm-soc, could you please pick this up?
+The email address has started to bounce.
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 23c56d7..170376d 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -33,6 +33,8 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <1>;
-+			enable-method = "renesas,r9a06g032-smp";
-+			cpu-release-addr = <0x4000c204>;
- 		};
- 	};
+Kind regards,
+Niklas
+
+ MAINTAINERS | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 42b10dc55a49..71fa4312cc36 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1208,7 +1208,6 @@ F:	drivers/*/*alpine*
+ ARM/ARTPEC MACHINE SUPPORT
+ M:	Jesper Nilsson <jesper.nilsson@axis.com>
+ M:	Lars Persson <lars.persson@axis.com>
+-M:	Niklas Cassel <niklas.cassel@axis.com>
+ S:	Maintained
+ L:	linux-arm-kernel@axis.com
+ F:	arch/arm/mach-artpec
+@@ -10893,7 +10892,6 @@ F:	drivers/pci/host/
+ F:	drivers/pci/dwc/
  
+ PCIE DRIVER FOR AXIS ARTPEC
+-M:	Niklas Cassel <niklas.cassel@axis.com>
+ M:	Jesper Nilsson <jesper.nilsson@axis.com>
+ L:	linux-arm-kernel@axis.com
+ L:	linux-pci@vger.kernel.org
 -- 
-2.7.4
+2.14.3
