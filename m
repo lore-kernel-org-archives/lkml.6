@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/OteZXc9Zqy0PeP/V40GB95zlSi38gcs5hskmztGMudOsWq7YDAvnAAhAqkvZdWFL6TQVd
-ARC-Seal: i=1; a=rsa-sha256; t=1523981172; cv=none;
+X-Google-Smtp-Source: AIpwx4/daN8qGzzxHipLtiOkCdf4SHZUQPRnOtQLv5ljE0bxM5BOzyR8yP0V8CCc17lfIXFvo+a3
+ARC-Seal: i=1; a=rsa-sha256; t=1523981169; cv=none;
         d=google.com; s=arc-20160816;
-        b=WglskcKGvq92iemPLHDYx+3DNKvAyfrTFmTLiQysk6qeq1/FAAzJhjOiAAKRwAeAfM
-         LlVQTFk6QyHwQbfoWIByyth3hldMCPecruBKp7YfdfeHI0AUM1Ix+lCgFwCg30GPgSAX
-         WjJlJ8aLojnDwLpMe7tQffzigWgNxJz1G6mdd37VdRVQjwD1l1A3pmqG1kgZc0I8/LGv
-         QupIOy6T8LX/TVX0aordkWl02S53o0nvGbdIU3mJO9zi+E6VAgIxUIxfhaMZEcVXPUYn
-         feM3sD83OaS6suR1n8g+RZYYzLZJhSruSQTw03HuQUoHBMm12nTMmMl35mlssiSG8gFE
-         zKLg==
+        b=OthW31lvFZ/UYu63bEWc7mjTk+K2eeaHYPMwfmFDjrXFzVUGTMtJ+Y2SkOh7abjIqq
+         Csx/gAuIcIVOle7ETyDE+YS/hR+FNxpz3hkvxHqJXP8oV2p+z2zOhmyEYvFJhEF0QuXH
+         9YOYwdRtpRK7jsE1qh0l93CGRVTYOjVuXwsnZKSgsUr8rvIQypKIqFAYfY3knyMSnxiE
+         ZwCv0QdRFtLZErBP7FpXHYjWBZnIAl9WVdgkprE1pGAG/voT0fITy3BPi4QdrfZIgl6o
+         5LVCpboXoCi0Ys8TCnih9yletBtCOVt629YBxP3/sv2fwuyKA87g+6kVuGU1bBkEydcx
+         830w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Hin3MxnNbbHwgZXFSOo+BO3htI895WF8x2p6GCuIs9E=;
-        b=kE6bHJKOUAClAHb6Fo9ntG34Zyk2G/H4Zis6+a3c/+3E2A+BlqeTcXd5QDQX+FpKvE
-         D4BgBnu1fjHASPrFsuCIhD61cRK0AZzC2pqU3nn/vQCA3gyV66cqWmmBwyhmYQKRoqvT
-         4zXuTYLa1Jt15Dhlmdw5ZcighJAH9y1IZaP/qXEA13P5Zm/yLIpl/1CAt/gE2Yi8GqiV
-         cF9pWeuqVYD6VJhrwQj0eVs+xO5e8nGRDWEbPQrk9VKRR+e39L8ENvjt2Qi8PANbJQ++
-         FmQk0kJMWnyRJKg2/K2LXs/RbMT//sEx9pbjdtqhWuEw5auU5onuV5pePK9mkORMRsym
-         Bu2g==
+        bh=u8Avs1cmAC92PzBhb7DcH3Mv9+3OH93mjBM5NAVL2uE=;
+        b=p8fiaqhOKSyZoRrObj/p0X4igivjHP1nGAxUangehBBA6074d0SbNs/Zt2u+MNy0M9
+         7Fh5LA7dpJvQ8lkdxvwXmWVvS2SasXzTILcf9cw1Z8qQ88XiPSB6SIwWt1PjznpYlc5x
+         yuH5O4bsZlAiy6T4xpFdADhaoQMcr/cXL7OyLRJbSgEW6YmN9JcWzFAYoyxfL4khC2sI
+         C51Xp+Nxoypw38xQFV8XUGJFSud0HWjI8ApOqBSviaUpTa7oZdzgita12cR5EZOfWP/F
+         2gq5ItT7qYyy7H4pl6goLg8rVjJKsEwLT0tOKnfTeRBC/i1Tuy0gM9O8lHNJgRAhno25
+         Yuvw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,20 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-	Oleg Nesterov <oleg@redhat.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	stable@kernel.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
 	Jiri Olsa <jolsa@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 19/49] perf/core: Fix use-after-free in uprobe_perf_close()
-Date: Tue, 17 Apr 2018 17:58:58 +0200
-Message-Id: <20180417155715.935656482@linuxfoundation.org>
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.14 18/49] perf intel-pt: Fix timestamp following overflow
+Date: Tue, 17 Apr 2018 17:58:57 +0200
+Message-Id: <20180417155715.889699143@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -49,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009793844630333?=
-X-GMAIL-MSGID: =?utf-8?q?1598010081297595438?=
+X-GMAIL-THRID: =?utf-8?q?1598009762717595342?=
+X-GMAIL-MSGID: =?utf-8?q?1598010078903152784?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,172 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 621b6d2ea297d0fb6030452c5bcd221f12165fcf upstream.
+commit 91d29b288aed3406caf7c454bf2b898c96cfd177 upstream.
 
-A use-after-free bug was caught by KASAN while running usdt related
-code (BCC project. bcc/tests/python/test_usdt2.py):
+timestamp_insn_cnt is used to estimate the timestamp based on the number of
+instructions since the last known timestamp.
 
-	==================================================================
-	BUG: KASAN: use-after-free in uprobe_perf_close+0x222/0x3b0
-	Read of size 4 at addr ffff880384f9b4a4 by task test_usdt2.py/870
+If the estimate is not accurate enough decoding might not be correctly
+synchronized with side-band events causing more trace errors.
 
-	CPU: 4 PID: 870 Comm: test_usdt2.py Tainted: G        W         4.16.0-next-20180409 #215
-	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-	Call Trace:
-	 dump_stack+0xc7/0x15b
-	 ? show_regs_print_info+0x5/0x5
-	 ? printk+0x9c/0xc3
-	 ? kmsg_dump_rewind_nolock+0x6e/0x6e
-	 ? uprobe_perf_close+0x222/0x3b0
-	 print_address_description+0x83/0x3a0
-	 ? uprobe_perf_close+0x222/0x3b0
-	 kasan_report+0x1dd/0x460
-	 ? uprobe_perf_close+0x222/0x3b0
-	 uprobe_perf_close+0x222/0x3b0
-	 ? probes_open+0x180/0x180
-	 ? free_filters_list+0x290/0x290
-	 trace_uprobe_register+0x1bb/0x500
-	 ? perf_event_attach_bpf_prog+0x310/0x310
-	 ? probe_event_disable+0x4e0/0x4e0
-	 perf_uprobe_destroy+0x63/0xd0
-	 _free_event+0x2bc/0xbd0
-	 ? lockdep_rcu_suspicious+0x100/0x100
-	 ? ring_buffer_attach+0x550/0x550
-	 ? kvm_sched_clock_read+0x1a/0x30
-	 ? perf_event_release_kernel+0x3e4/0xc00
-	 ? __mutex_unlock_slowpath+0x12e/0x540
-	 ? wait_for_completion+0x430/0x430
-	 ? lock_downgrade+0x3c0/0x3c0
-	 ? lock_release+0x980/0x980
-	 ? do_raw_spin_trylock+0x118/0x150
-	 ? do_raw_spin_unlock+0x121/0x210
-	 ? do_raw_spin_trylock+0x150/0x150
-	 perf_event_release_kernel+0x5d4/0xc00
-	 ? put_event+0x30/0x30
-	 ? fsnotify+0xd2d/0xea0
-	 ? sched_clock_cpu+0x18/0x1a0
-	 ? __fsnotify_update_child_dentry_flags.part.0+0x1b0/0x1b0
-	 ? pvclock_clocksource_read+0x152/0x2b0
-	 ? pvclock_read_flags+0x80/0x80
-	 ? kvm_sched_clock_read+0x1a/0x30
-	 ? sched_clock_cpu+0x18/0x1a0
-	 ? pvclock_clocksource_read+0x152/0x2b0
-	 ? locks_remove_file+0xec/0x470
-	 ? pvclock_read_flags+0x80/0x80
-	 ? fcntl_setlk+0x880/0x880
-	 ? ima_file_free+0x8d/0x390
-	 ? lockdep_rcu_suspicious+0x100/0x100
-	 ? ima_file_check+0x110/0x110
-	 ? fsnotify+0xea0/0xea0
-	 ? kvm_sched_clock_read+0x1a/0x30
-	 ? rcu_note_context_switch+0x600/0x600
-	 perf_release+0x21/0x40
-	 __fput+0x264/0x620
-	 ? fput+0xf0/0xf0
-	 ? do_raw_spin_unlock+0x121/0x210
-	 ? do_raw_spin_trylock+0x150/0x150
-	 ? SyS_fchdir+0x100/0x100
-	 ? fsnotify+0xea0/0xea0
-	 task_work_run+0x14b/0x1e0
-	 ? task_work_cancel+0x1c0/0x1c0
-	 ? copy_fd_bitmaps+0x150/0x150
-	 ? vfs_read+0xe5/0x260
-	 exit_to_usermode_loop+0x17b/0x1b0
-	 ? trace_event_raw_event_sys_exit+0x1a0/0x1a0
-	 do_syscall_64+0x3f6/0x490
-	 ? syscall_return_slowpath+0x2c0/0x2c0
-	 ? lockdep_sys_exit+0x1f/0xaa
-	 ? syscall_return_slowpath+0x1a3/0x2c0
-	 ? lockdep_sys_exit+0x1f/0xaa
-	 ? prepare_exit_to_usermode+0x11c/0x1e0
-	 ? enter_from_user_mode+0x30/0x30
-	random: crng init done
-	 ? __put_user_4+0x1c/0x30
-	 entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-	RIP: 0033:0x7f41d95f9340
-	RSP: 002b:00007fffe71e4268 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-	RAX: 0000000000000000 RBX: 000000000000000d RCX: 00007f41d95f9340
-	RDX: 0000000000000000 RSI: 0000000000002401 RDI: 000000000000000d
-	RBP: 0000000000000000 R08: 00007f41ca8ff700 R09: 00007f41d996dd1f
-	R10: 00007fffe71e41e0 R11: 0000000000000246 R12: 00007fffe71e4330
-	R13: 0000000000000000 R14: fffffffffffffffc R15: 00007fffe71e4290
+However there are always timestamps following an overflow, so the
+estimate is not needed and can indeed result in more errors.
 
-	Allocated by task 870:
-	 kasan_kmalloc+0xa0/0xd0
-	 kmem_cache_alloc_node+0x11a/0x430
-	 copy_process.part.19+0x11a0/0x41c0
-	 _do_fork+0x1be/0xa20
-	 do_syscall_64+0x198/0x490
-	 entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+Suppress the estimate by setting timestamp_insn_cnt to zero.
 
-	Freed by task 0:
-	 __kasan_slab_free+0x12e/0x180
-	 kmem_cache_free+0x102/0x4d0
-	 free_task+0xfe/0x160
-	 __put_task_struct+0x189/0x290
-	 delayed_put_task_struct+0x119/0x250
-	 rcu_process_callbacks+0xa6c/0x1b60
-	 __do_softirq+0x238/0x7ae
-
-	The buggy address belongs to the object at ffff880384f9b480
-	 which belongs to the cache task_struct of size 12928
-
-It occurs because task_struct is freed before perf_event which refers
-to the task and task flags are checked while teardown of the event.
-perf_event_alloc() assigns task_struct to hw.target of perf_event,
-but there is no reference counting for it.
-
-As a fix we get_task_struct() in perf_event_alloc() at above mentioned
-assignment and put_task_struct() in _free_event().
-
-Signed-off-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <stable@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 63b6da39bb38e8f1a1ef3180d32a39d6 ("perf: Fix perf_event_exit_task() race")
-Link: http://lkml.kernel.org/r/20180409100346.6416-1-bhole_prashant_q7@lab.ntt.co.jp
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1520431349-30689-5-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/events/core.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -4199,6 +4199,9 @@ static void _free_event(struct perf_even
- 	if (event->ctx)
- 		put_ctx(event->ctx);
- 
-+	if (event->hw.target)
-+		put_task_struct(event->hw.target);
-+
- 	exclusive_event_destroy(event);
- 	module_put(event->pmu->module);
- 
-@@ -9508,6 +9511,7 @@ perf_event_alloc(struct perf_event_attr
- 		 * and we cannot use the ctx information because we need the
- 		 * pmu before we get a ctx.
- 		 */
-+		get_task_struct(task);
- 		event->hw.target = task;
- 	}
- 
-@@ -9623,6 +9627,8 @@ err_ns:
- 		perf_detach_cgroup(event);
- 	if (event->ns)
- 		put_pid_ns(event->ns);
-+	if (event->hw.target)
-+		put_task_struct(event->hw.target);
- 	kfree(event);
- 
- 	return ERR_PTR(err);
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1378,6 +1378,7 @@ static int intel_pt_overflow(struct inte
+ 	intel_pt_clear_tx_flags(decoder);
+ 	decoder->have_tma = false;
+ 	decoder->cbr = 0;
++	decoder->timestamp_insn_cnt = 0;
+ 	decoder->pkt_state = INTEL_PT_STATE_ERR_RESYNC;
+ 	decoder->overflow = true;
+ 	return -EOVERFLOW;
