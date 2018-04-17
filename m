@@ -1,43 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753130AbeDQMLE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 08:11:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39689 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753111AbeDQMLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:11:02 -0400
-Date: Tue, 17 Apr 2018 14:11:00 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-cc: Peter Hutterer <peter.hutterer@who-t.net>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] HID: input: do not increment usages when a
- duplicate is found
-In-Reply-To: <20180416235156.GE77055@dtor-ws>
-Message-ID: <nycvar.YFH.7.76.1804171410360.28129@cbobk.fhfr.pm>
-References: <20171208142818.15156-1-benjamin.tissoires@redhat.com> <20171208142818.15156-3-benjamin.tissoires@redhat.com> <20171210222926.GB11027@jelly> <20180416235156.GE77055@dtor-ws>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1753190AbeDQMLj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 08:11:39 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:33007 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753021AbeDQMLi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:11:38 -0400
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, shawn.lin@rock-chips.com,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [RFC 0/2] dw_mmc: add multislot support
+Date: Tue, 17 Apr 2018 15:11:28 +0300
+Message-Id: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Apr 2018, Dmitry Torokhov wrote:
+This series consists of two patches:
+1. revert removal of previously existed "pseudo-multislot" support.
+ * Revert "mmc: dw_mmc: remove the deprecated "num-slots""
+ * Revert "mmc: dw_mmc: fix the wrong condition check of getting num-slots from DT"
+ * Revert "mmc: dw_mmc: remove the unnecessary slot variable"
+ * Revert "mmc: dw_mmc: update kernel-doc comments for dw_mci"
+ * Revert "mmc: dw_mmc: use the 'slot' instead of 'cur_slot'"
+ * Revert "mmc: dw_mmc: remove the 'id' arguments about functions relevant to slot"
+ * Revert "mmc: dw_mmc: change the array of slots"
+ * Revert "mmc: dw_mmc: remove the loop about finding slots"
+ * Revert "mmc: dw_mmc: deprecated the "num-slots" property"
 
-> So what is happening with this series? I think we should get it them
-> in; there is really no reason for bumping ABS_MISC till it gets into
-> ABS_MT_* range on some devices that are out there.
-> 
-> FWIW
-> 
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+2. Add missing stuff to support multislot mode in DesignWare MMC driver.
+ * Add missing slot switch to __dw_mci_start_request() function.
+ * Refactor set_ios function:
+   a) Calculate common clock which is
+      suitable for all slots instead of directly use clock value
+      provided by mmc core. We calculate common clock as the minimum
+      among each used slot clocks. This clock is calculated in
+      dw_mci_calc_common_clock() function which is called
+      from set_ios()
+   b) Disable clock only if no other slots are ON.
+   c) Setup clock directly in set_ios() only if no other slots
+      are ON. Otherwise adjust clock in __dw_mci_start_request()
+      function before slot switch.
+   d) Move timings and bus_width setup to separate funcions.
+ * Use timing field in each slot structure instead of common field in
+   host structure.
+ * Add locks to serialize access to registers.
 
-Sorry, I somehow lost this one. Now queued for 4.18.
+NOTE: this patch is based off of v4.17-rc1
 
-Thanks,
+NOTE: as of today I tested this changes (in singleslot and multislot
+   modes) only on Synopsys HSDK board. But I will get ODROID-XU4 board
+   (with Exynos5422 which has DW MMC controller) the next week
+   so I will test it on this board too to catch any regressions.
+
+Eugeniy Paltsev (2):
+  dw_mmc: revert removal multislot support
+  dw_mmc: add multislot support
+
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   5 +
+ drivers/mmc/host/dw_mmc-exynos.c                   |   4 +-
+ drivers/mmc/host/dw_mmc-pci.c                      |   1 +
+ drivers/mmc/host/dw_mmc.c                          | 486 +++++++++++++++------
+ drivers/mmc/host/dw_mmc.h                          |  35 +-
+ 5 files changed, 387 insertions(+), 144 deletions(-)
 
 -- 
-Jiri Kosina
-SUSE Labs
+2.14.3
