@@ -1,76 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753786AbeDQNjs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 09:39:48 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:49610 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753551AbeDQNjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 09:39:42 -0400
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Subject: [PATCH v2] X.509: unpack RSA signatureValue field from BIT STRING
-To: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <6f5cdb8a-809e-6651-0e32-711d415a8b38@maciej.szmigiero.name>
-Date: Tue, 17 Apr 2018 15:39:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753755AbeDQNjr (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 09:39:47 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:64910 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753219AbeDQNjk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 09:39:40 -0400
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+To: <lee.jones@linaro.org>, <alexandre.torgue@st.com>
+CC: <dan.carpenter@oracle.com>, <thierry.reding@gmail.com>,
+        <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
+        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
+        <benjamin.gaignard@st.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pwm@vger.kernel.org>
+Subject: [PATCH v5 0/6] Add support for PWM input capture on STM32
+Date: Tue, 17 Apr 2018 15:38:27 +0200
+Message-ID: <1523972313-28765-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.116]
+X-ClientProxiedBy: GPXDAG5NODE6.st.com (10.75.127.79) To GPXDAG5NODE6.st.com
+ (10.75.127.79)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
-For RSA signatures this BIT STRING is of so-called primitive subtype, which
-contains a u8 prefix indicating a count of unused bits in the encoding.
+This series adds support for capture to stm32-pwm driver.
+Capture is based on DMAs.
+- First two patches add support for requesting DMAs to MFD core
+- Next three patches add support for capture to stm32-pwm driver
+- This has been tested on stm32429i-eval board.
 
-We have to strip this prefix from signature data, just as we already do for
-key data in x509_extract_key_data() function.
-
-This wasn't noticed earlier because this prefix byte is zero for RSA key
-sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
-prefixes has no bearing on its value.
-
-The signature length, however was incorrect, which is a problem for RSA
-implementations that need it to be exactly correct (like AMD CCP).
-
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
-Cc: stable@vger.kernel.org
 ---
-This is a resend of a patch that was previously submitted in one series
-with CCP driver changes since this particular patch should go through
-the security (rather than crypto) tree.
+Changes in v5:
+- update patch 2 (mfd: stm32-timers: add support for dmas)
+  move stm32_timers_dma struct to header file,
+  fix warning on dma_mapping_error().
 
-Changes from v1: Change '!' to '== 0'.
+Changes in v4:
+- Lee's comments on patch 2 (mfd: stm32-timers: add support for dmas)
+  Add kerneldoc header, better format comments.
 
- crypto/asymmetric_keys/x509_cert_parser.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Changes in v3:
+- Dropped 2 precusor patches applied by Thierry in pwm tree:
+  "pwm: stm32: fix, remove unused struct device"
+  "pwm: stm32: protect common prescaler for all channels"
+- Note: this series applies on top on pwm tree
+- Implements Lee's comments on MFD part: rework stm32_timers_dma struct,
+  exported routine prototype now use generic device struct, more
+  various comments (see patch 2 changelog).
 
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index 7d81e6bb461a..b6cabac4b62b 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -249,6 +249,15 @@ int x509_note_signature(void *context, size_t hdrlen,
- 		return -EINVAL;
- 	}
- 
-+	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0) {
-+		/* Discard the BIT STRING metadata */
-+		if (vlen < 1 || *(const u8 *)value != 0)
-+			return -EBADMSG;
-+
-+		value++;
-+		vlen--;
-+	}
-+
- 	ctx->cert->raw_sig = value;
- 	ctx->cert->raw_sig_size = vlen;
- 	return 0;
+Resend v2:
+- Add collected Acks
+
+Changes in v2:
+- Abstract DMA handling from child driver: move it to MFD core
+- Rework pwm capture routines to adopt this change
+- Comment on optional dma support, beautify DMAs probe
+
+Fabrice Gasnier (6):
+  dt-bindings: mfd: stm32-timers: add support for dmas
+  mfd: stm32-timers: add support for dmas
+  pwm: stm32: add capture support
+  pwm: stm32: improve capture by tuning counter prescaler
+  pwm: stm32: use input prescaler to improve period capture
+  ARM: dts: stm32: Enable pwm3 input capture on stm32f429i-eval
+
+ .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
+ arch/arm/boot/dts/stm32429i-eval.dts               |   3 +
+ drivers/mfd/stm32-timers.c                         | 201 +++++++++++++++-
+ drivers/pwm/pwm-stm32.c                            | 257 +++++++++++++++++++++
+ include/linux/mfd/stm32-timers.h                   |  58 +++++
+ 5 files changed, 537 insertions(+), 2 deletions(-)
+
+-- 
+1.9.1
