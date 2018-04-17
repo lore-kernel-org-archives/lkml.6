@@ -1,73 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752819AbeDQVSY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:18:24 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45318 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeDQVSW (ORCPT
+        id S1752707AbeDQVZc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:25:32 -0400
+Received: from mail-ua0-f180.google.com ([209.85.217.180]:33851 "EHLO
+        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752327AbeDQVZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:18:22 -0400
-Subject: Re: [PATCH -mm 10/21] mm, THP, swap: Support to count THP swapin and
- its fallback
-To: "Huang, Ying" <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: Tim Chen <tim.c.chen@intel.com>, Andi Kleen <ak@linux.intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Shaohua Li <shli@kernel.org>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-References: <20180417020230.26412-1-ying.huang@intel.com>
- <20180417020230.26412-11-ying.huang@intel.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <2d6c126d-eada-1791-4a31-fd0d806e3147@infradead.org>
-Date: Tue, 17 Apr 2018 14:18:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 17 Apr 2018 17:25:28 -0400
+X-Google-Smtp-Source: AIpwx4+wcM0bZ9s4KW1H7sADKy4qMOlfocO180KlNmlsdfhwbg9nJNhpVhFgLFgDkd1KY4zr6k+Kd51k956Ptwe13aA=
 MIME-Version: 1.0
-In-Reply-To: <20180417020230.26412-11-ying.huang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
+ <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
+ <2864697.7uzmEJovl2@natalenko.name> <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
+ <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
+ <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
+ <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
+ <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
+ <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
+ <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
+ <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com>
+ <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk> <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 17 Apr 2018 14:25:25 -0700
+X-Google-Sender-Auth: svKG9YO9hroYV27EgwP86sDx4yk
+Message-ID: <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Jens Axboe <axboe@kernel.dk>, Paolo Valente <paolo.valente@linaro.org>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/18 19:02, Huang, Ying wrote:
-> From: Huang Ying <ying.huang@intel.com>
-> 
-> 2 new /proc/vmstat fields are added, "thp_swapin" and
-> "thp_swapin_fallback" to count swapin a THP from swap device as a
-> whole and fallback to normal page swapin.
-> 
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Rik van Riel <riel@redhat.com>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-> ---
->  include/linux/vm_event_item.h |  2 ++
->  mm/huge_memory.c              |  4 +++-
->  mm/page_io.c                  | 15 ++++++++++++---
->  mm/vmstat.c                   |  2 ++
->  4 files changed, 19 insertions(+), 4 deletions(-)
-> 
+On Tue, Apr 17, 2018 at 1:46 PM, Kees Cook <keescook@chromium.org> wrote:
+> I see elv.priv[1] assignments made in a few places -- is it possible
+> there is some kind of uninitialized-but-not-NULL state that can leak
+> in there?
 
-Hi,
-Please also update Documentation/vm/transhuge.rst.
+Got it. This fixes it for me:
 
-Thanks.
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 0dc9e341c2a7..859df3160303 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -363,7 +363,7 @@ static struct request *blk_mq_get_request(struct
+request_queue *q,
+
+        rq = blk_mq_rq_ctx_init(data, tag, op);
+        if (!op_is_flush(op)) {
+-               rq->elv.icq = NULL;
++               memset(&rq->elv, 0, sizeof(rq->elv));
+                if (e && e->type->ops.mq.prepare_request) {
+                        if (e->type->icq_cache && rq_ioc(bio))
+                                blk_mq_sched_assign_ioc(rq, bio);
+@@ -461,7 +461,7 @@ void blk_mq_free_request(struct request *rq)
+                        e->type->ops.mq.finish_request(rq);
+                if (rq->elv.icq) {
+                        put_io_context(rq->elv.icq->ioc);
+-                       rq->elv.icq = NULL;
++                       memset(&rq->elv, 0, sizeof(rq->elv));
+                }
+        }
+
+
 
 -- 
-~Randy
+Kees Cook
+Pixel Security
