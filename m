@@ -1,132 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753775AbeDQOer (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:34:47 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:53651 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753630AbeDQOeh (ORCPT
+        id S1753751AbeDQOeo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:34:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37416 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753623AbeDQOeh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Apr 2018 10:34:37 -0400
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v5 10/10] PCI: dwc: Replace magic number by defines
-Date: Tue, 17 Apr 2018 15:34:28 +0100
-Message-Id: <c5728c9f71dff5aac0ff575106ecf4045ba30b40.1523973931.git.gustavo.pimentel@synopsys.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+To: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: [PATCH v10 15/25] mm: introduce __vm_normal_page()
+Date: Tue, 17 Apr 2018 16:33:21 +0200
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1523973931.git.gustavo.pimentel@synopsys.com>
-References: <cover.1523973931.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1523973931.git.gustavo.pimentel@synopsys.com>
-References: <cover.1523973931.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18041714-0040-0000-0000-0000044E8E56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041714-0041-0000-0000-000020F2D717
+Message-Id: <1523975611-15978-16-git-send-email-ldufour@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace magic numbers by a well known define in order to make the code
-human readable and also facilitate the code reusability.
+When dealing with the speculative fault path we should use the VMA's field
+cached value stored in the vm_fault structure.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Jingoo Han <jingoohan1@gmail.com>
+Currently vm_normal_page() is using the pointer to the VMA to fetch the
+vm_flags value. This patch provides a new __vm_normal_page() which is
+receiving the vm_flags flags value as parameter.
+
+Note: The speculative path is turned on for architecture providing support
+for special PTE flag. So only the first block of vm_normal_page is used
+during the speculative path.
+
+Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 ---
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
-Change v2->v3:
- - Nothing changed, just to follow the patch set version.
-Changes v3->v4:
- - Nothing changed, just to follow the patch set version.
-Changes v4->v5:
- - Nothing changed, just to follow the patch set version.
+ include/linux/mm.h | 18 +++++++++++++++---
+ mm/memory.c        | 25 ++++++++++++++++---------
+ 2 files changed, 31 insertions(+), 12 deletions(-)
 
- drivers/pci/dwc/pcie-designware-host.c | 34 ++++++++++++++++++++--------------
- drivers/pci/dwc/pcie-designware.h      |  1 +
- 2 files changed, 21 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
-index fc55fde..a7657ab 100644
---- a/drivers/pci/dwc/pcie-designware-host.c
-+++ b/drivers/pci/dwc/pcie-designware-host.c
-@@ -83,18 +83,23 @@ irqreturn_t dw_handle_msi_irq(struct pcie_port *pp)
- 	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c65205c8c558..f967bf84094f 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1275,9 +1275,21 @@ static inline void INIT_VMA(struct vm_area_struct *vma)
+ #endif
+ }
  
- 	for (i = 0; i < num_ctrls; i++) {
--		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
--				    &val);
-+		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS +
-+					(i * MSI_REG_CTRL_BLOCK_SIZE),
-+				    4, &val);
- 		if (!val)
- 			continue;
+-struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte, bool with_public_device);
+-#define vm_normal_page(vma, addr, pte) _vm_normal_page(vma, addr, pte, false)
++struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
++			      pte_t pte, bool with_public_device,
++			      unsigned long vma_flags);
++static inline struct page *_vm_normal_page(struct vm_area_struct *vma,
++					    unsigned long addr, pte_t pte,
++					    bool with_public_device)
++{
++	return __vm_normal_page(vma, addr, pte, with_public_device,
++				vma->vm_flags);
++}
++static inline struct page *vm_normal_page(struct vm_area_struct *vma,
++					  unsigned long addr, pte_t pte)
++{
++	return _vm_normal_page(vma, addr, pte, false);
++}
  
- 		ret = IRQ_HANDLED;
- 		pos = 0;
--		while ((pos = find_next_bit((unsigned long *) &val, 32,
--					    pos)) != 32) {
--			irq = irq_find_mapping(pp->irq_domain, i * 32 + pos);
-+		while ((pos = find_next_bit((unsigned long *) &val,
-+					    MAX_MSI_IRQS_PER_CTRL,
-+					    pos)) != MAX_MSI_IRQS_PER_CTRL) {
-+			irq = irq_find_mapping(pp->irq_domain,
-+					       (i * MAX_MSI_IRQS_PER_CTRL) +
-+					       pos);
- 			generic_handle_irq(irq);
--			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12,
-+			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS +
-+						(i * MSI_REG_CTRL_BLOCK_SIZE),
- 					    4, 1 << pos);
- 			pos++;
+ struct page *vm_normal_page_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 				pmd_t pmd);
+diff --git a/mm/memory.c b/mm/memory.c
+index 47af9e97f02a..d9146a0c3d25 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -780,7 +780,8 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+ }
+ 
+ /*
+- * vm_normal_page -- This function gets the "struct page" associated with a pte.
++ * __vm_normal_page -- This function gets the "struct page" associated with
++ * a pte.
+  *
+  * "Special" mappings do not wish to be associated with a "struct page" (either
+  * it doesn't exist, or it exists but they don't want to touch it). In this
+@@ -826,8 +827,9 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+ #else
+ # define HAVE_PTE_SPECIAL 0
+ #endif
+-struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+-			     pte_t pte, bool with_public_device)
++struct page *__vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
++			      pte_t pte, bool with_public_device,
++			      unsigned long vma_flags)
+ {
+ 	unsigned long pfn = pte_pfn(pte);
+ 
+@@ -836,7 +838,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 			goto check_pfn;
+ 		if (vma->vm_ops && vma->vm_ops->find_special_page)
+ 			return vma->vm_ops->find_special_page(vma, addr);
+-		if (vma->vm_flags & (VM_PFNMAP | VM_MIXEDMAP))
++		if (vma_flags & (VM_PFNMAP | VM_MIXEDMAP))
+ 			return NULL;
+ 		if (is_zero_pfn(pfn))
+ 			return NULL;
+@@ -867,9 +869,13 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 	}
+ 
+ 	/* !HAVE_PTE_SPECIAL case follows: */
++	/*
++	 * This part should never get called when CONFIG_SPECULATIVE_PAGE_FAULT
++	 * is set. This is mainly because we can't rely on vm_start.
++	 */
+ 
+-	if (unlikely(vma->vm_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
+-		if (vma->vm_flags & VM_MIXEDMAP) {
++	if (unlikely(vma_flags & (VM_PFNMAP|VM_MIXEDMAP))) {
++		if (vma_flags & VM_MIXEDMAP) {
+ 			if (!pfn_valid(pfn))
+ 				return NULL;
+ 			goto out;
+@@ -878,7 +884,7 @@ struct page *_vm_normal_page(struct vm_area_struct *vma, unsigned long addr,
+ 			off = (addr - vma->vm_start) >> PAGE_SHIFT;
+ 			if (pfn == vma->vm_pgoff + off)
+ 				return NULL;
+-			if (!is_cow_mapping(vma->vm_flags))
++			if (!is_cow_mapping(vma_flags))
+ 				return NULL;
  		}
-@@ -157,9 +162,9 @@ static void dw_pci_bottom_mask(struct irq_data *data)
- 	if (pp->ops->msi_clear_irq) {
- 		pp->ops->msi_clear_irq(pp, data->hwirq);
- 	} else {
--		ctrl = data->hwirq / 32;
--		res = ctrl * 12;
--		bit = data->hwirq % 32;
-+		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
-+		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
-+		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
+ 	}
+@@ -2743,7 +2749,8 @@ static int do_wp_page(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
  
- 		pp->irq_status[ctrl] &= ~(1 << bit);
- 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
-@@ -180,9 +185,9 @@ static void dw_pci_bottom_unmask(struct irq_data *data)
- 	if (pp->ops->msi_set_irq) {
- 		pp->ops->msi_set_irq(pp, data->hwirq);
- 	} else {
--		ctrl = data->hwirq / 32;
--		res = ctrl * 12;
--		bit = data->hwirq % 32;
-+		ctrl = data->hwirq / MAX_MSI_IRQS_PER_CTRL;
-+		res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
-+		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
+-	vmf->page = vm_normal_page(vma, vmf->address, vmf->orig_pte);
++	vmf->page = __vm_normal_page(vma, vmf->address, vmf->orig_pte, false,
++				     vmf->vma_flags);
+ 	if (!vmf->page) {
+ 		/*
+ 		 * VM_MIXEDMAP !pfn_valid() case, or VM_SOFTDIRTY clear on a
+@@ -3853,7 +3860,7 @@ static int do_numa_page(struct vm_fault *vmf)
+ 	ptep_modify_prot_commit(vma->vm_mm, vmf->address, vmf->pte, pte);
+ 	update_mmu_cache(vma, vmf->address, vmf->pte);
  
- 		pp->irq_status[ctrl] |= 1 << bit;
- 		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
-@@ -652,8 +657,9 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
- 
- 	/* Initialize IRQ Status array */
- 	for (ctrl = 0; ctrl < num_ctrls; ctrl++)
--		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE + (ctrl * 12), 4,
--				    &pp->irq_status[ctrl]);
-+		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
-+					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
-+				    4, &pp->irq_status[ctrl]);
- 
- 	/* Setup RC BARs */
- 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0x00000004);
-diff --git a/drivers/pci/dwc/pcie-designware.h b/drivers/pci/dwc/pcie-designware.h
-index fe811db..bee4e25 100644
---- a/drivers/pci/dwc/pcie-designware.h
-+++ b/drivers/pci/dwc/pcie-designware.h
-@@ -110,6 +110,7 @@
- #define MAX_MSI_IRQS			256
- #define MAX_MSI_IRQS_PER_CTRL		32
- #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
-+#define MSI_REG_CTRL_BLOCK_SIZE		12
- #define MSI_DEF_NUM_VECTORS		32
- 
- /* Maximum number of inbound/outbound iATUs */
+-	page = vm_normal_page(vma, vmf->address, pte);
++	page = __vm_normal_page(vma, vmf->address, pte, false, vmf->vma_flags);
+ 	if (!page) {
+ 		pte_unmap_unlock(vmf->pte, vmf->ptl);
+ 		return 0;
 -- 
 2.7.4
