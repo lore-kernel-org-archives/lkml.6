@@ -1,80 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2152363-1523980865-2-11554495322937942721
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523980865; b=XKSAK5yr3m6U751Vmt82wgQjKaipuGoCrpg/Ri4a1dpdPifyGX
-    VOs0znBk7/BC3bjRyRpKunNHTyGy8p4FBb0KdVY/vNdJ7qRIPVTjFkjfwl35Qw99
-    jBwJoyec0VD08DnlUVZ6c9qajokZQfO+w4jgql2Hf/3e8o6B3EObAWlndo1bwqVf
-    iUOpD4p4aP+QDT+WKQxlS/JgssZ0oY9HH3GOz0uhd/oD+TTUAYc5oD1HzqsxJ+5X
-    zrJo1TiSr5Uif6F7jJCZt/SJwe2DjelpEfkEr7IZu9nlZFYIEbwTHkOz7Lp+dFrE
-    DU43GkHoEkZGtxcq2F9OercubnBDaHpfTcPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1523980865; bh=Ckl9slDY0rbSTvSeuUOKdqZE+Y+5n/
-    wMJHWB+4Pxicg=; b=rmOKrOT0FUSXxz/Bmh/+5R9R3nQKyj7nNjnFlCaiyf52j7
-    FTkihcdtstcdteFIQOqcNyNbIcHuzu3TWP2blU451uVW2km4IZlY5WuExIDg+HfQ
-    u2HPqEkG4/4/jdvLcO/QY5nzYuFMogVA6eGmZOe6c9LAAsvgTsOg9a9VFzjJ3RdJ
-    b8RXgL0fakxX7eT17LF6JA6J/UpfjTOxMIXY2/VVBmI+I8WO2/K/aaKyll9yIpWg
-    Sl7HLKpIHnrT2K7RwIa0OlSOigu5kZdQCnXGUz9looR8n9svMb1zIraEQ3aWCxxk
-    tP0ZXr+ljkQBRn/ErE8I+EqFAjFPgkNjBdXMxxJQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBQMTp0+xDNgd8lc4shYFunlLJbxiDtjZuDpUj8qXNRpRGhjeljZDW24zqro2rBwqC9rMErQKmuww4j1pVFH5QtjanCVOXBGRvQ6twmlvvDp/TrQqcZD
-    zbjvTwqKXH4TqKvRtsXzzie31vWiNbHrsEM68epzpEbWai0syvuq6g/1I8W4IHoY8nyzByPZLVBNCKmHSaugy/KZ03g07omdy6Cf623Uq2RNzMW3jW31Ymet
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=WFZIRff2AAAA:8 a=J1Y8HTJGAAAA:8 a=ag1SF4gXAAAA:8 a=s6jaqUFqpbjo0NHz2EsA:9
-    a=OWxO4o3BYeYy1wOv:21 a=ZSLHK6p4wIhUSrHV:21 a=QEXdDO2ut3YA:10
-    a=y1Q9-5lHfBjTkpIzbSAN:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753420AbeDQQBB (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 12:01:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60286 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751836AbeDQQBA (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 12:01:00 -0400
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx49RmKEsPcnOam9gkwtYLVuofQHCAnGXU8861kcks6KVmDJuh3CctHXDkuJTkoy27N34TGEr
+ARC-Seal: i=1; a=rsa-sha256; t=1523980857; cv=none;
+        d=google.com; s=arc-20160816;
+        b=C2x0ewO4SrHGCAk+IkzIv160hIdOnV/SFPr6MEop74WfRRrddxRNFrJjwgaujcLKbV
+         6rMiJdgTIJwRGZYTxR70WonGaX3xMdaiDfRh5RftYO10dHTMZXREq1gAus5rJK/w7xgY
+         KPxTuI7VO8cF+P7t08UO6YQ6mhq+lo73jaogYUMuRTfj1WcG8Fe8AuDyWi+D9tM1kCbU
+         60/tZKr8jbb2oMlhMgxammV7ol2mtkdOhhB8kpPlzhtny5L1aHJ0KwuUP/kHj6wdGqVp
+         RWFC/uC1Opy2EDoPA4tU5DIjZi/li6k3wFgUV8noCYZNXpjMNG9/yPKucZulqUv+wnor
+         +Y1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=d7SFz7bmi7l+PJTs5FHigWgCeTKWG6D7L8Lz1IWU7yM=;
+        b=iTYrAhmmxYi0WCE2jLMxiygJBIhLg0ay/x4uSPGTy3MvwDwVdsEnNM/OsAM5LCglIQ
+         Pw3L6rW+j3paVx6IO7yB572a638tT7gYCEz6KiNrhsWw3TdQ5vMiaBEf3iCKC7/AgiHR
+         5fZfkMAKDNTFEkWAwHKjxmqG8M9/SFLzehdAfVuv4HpemTzn1q8IMpQNz8lETVwThe7s
+         BJf3487Eek77bp40aAe+bbxXzqVy13N4CT5Im8fGSqywNUMr+XInCjcnA85jL6XkfB8a
+         9zRN3Fg20wWXkks3lvoazCksNNoEoY6UL2KdoRhTXtKvMqslks9NvtmvyGL1nu8wICab
+         fWXA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 09/68] lan78xx: Correctly indicate invalid OTP
-Date: Tue, 17 Apr 2018 17:57:22 +0200
-Message-Id: <20180417155749.715923658@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Eric Auger <eric.auger@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 08/68] vhost: Fix vhost_copy_to_user()
+Date: Tue, 17 Apr 2018 17:57:21 +0200
+Message-Id: <20180417155749.679643795@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -82,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598009751810796107?=
+X-GMAIL-MSGID: =?utf-8?q?1598009751810796107?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -92,33 +51,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Phil Elwell <phil@raspberrypi.org>
+From: Eric Auger <eric.auger@redhat.com>
 
 
-[ Upstream commit 4bfc33807a9a02764bdd1e42e794b3b401240f27 ]
+[ Upstream commit 7ced6c98c7ab7a1f6743931e28671b833af79b1e ]
 
-lan78xx_read_otp tries to return -EINVAL in the event of invalid OTP
-content, but the value gets overwritten before it is returned and the
-read goes ahead anyway. Make the read conditional as it should be
-and preserve the error code.
+vhost_copy_to_user is used to copy vring used elements to userspace.
+We should use VHOST_ADDR_USED instead of VHOST_ADDR_DESC.
 
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Fixes: f88949138058 ("vhost: introduce O(1) vq metadata cache")
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/vhost/vhost.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -928,7 +928,8 @@ static int lan78xx_read_otp(struct lan78
- 			offset += 0x100;
- 		else
- 			ret = -EINVAL;
--		ret = lan78xx_read_raw_otp(dev, offset, length, data);
-+		if (!ret)
-+			ret = lan78xx_read_raw_otp(dev, offset, length, data);
- 	}
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -744,7 +744,7 @@ static int vhost_copy_to_user(struct vho
+ 		struct iov_iter t;
+ 		void __user *uaddr = vhost_vq_meta_fetch(vq,
+ 				     (u64)(uintptr_t)to, size,
+-				     VHOST_ADDR_DESC);
++				     VHOST_ADDR_USED);
  
- 	return ret;
+ 		if (uaddr)
+ 			return __copy_to_user(uaddr, from, size);
