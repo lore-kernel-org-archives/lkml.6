@@ -1,83 +1,105 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2983821-1524417206-5-8340144205815941665
+X-Cyrus-Session-Id: sloti22d1t05-2367869-1523987424-2-2070617909801745036
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enfrro,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524417205; b=msfc3oFeVpxc7Rtnnehz2I1oVPh6ttp/oxqtX77mzDaisFgPwC
-    czHIIHYJwnIqJff1ZzH5MVPUIxqnsivYlicN5aMyfF84/TpwYpp7DWw9qiGVsRcS
-    l355EhYl01F7oZ9eHaqJexcBmWNP4aUu+PW/fuVMVuSPdGb/sav+30GJbhmK6jjW
-    jkGrIrlo3dTEu6YWkLM9IvbHJNrlysj2Y+ZFAfpD+AdsvhG3Qgc/7slYGSOku63/
-    DAaSkAlwBb0E6TQuETKJhILrhyOfrxRBpCuY31o6N1zXQheLKECYR1+hPAe2jX4G
-    ups+9adxs43GuQAQg4H3Dr2LZ40mOm8orqQg==
+    1523987423; b=YDbMFyvqRfRPTbGDqRdgo2omvOH81CUo/YjcW665Fr79C9zePi
+    Odq82jUCiP2YWNciByLtBplhivJc1y+emkhhBArtjx0kFQY8s1x3aFDlz/VpO7EC
+    u3gBjZe1is3wdISCIgCMON4R0cLr9S+vRN5Sic4I9TnKAWYkDYF5sNRSmNrPp1A0
+    TvssVa1aYuc/x/LyqJZ58A0qX4VWsZfI6pr/BAVJgamep4dmFSJ97uFP4ftgrXOM
+    ha60fS0HD/WD0ECzu0QHKuVtOESaY+uLGn0BC8VnbLdEZSZKJkAuCNyt694VC/XT
+    nHYeC6wiJ2v/ikPLVDTrrWoge5xU0zJUqeNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524417205; bh=MgEN1
-    5vCJ2PZbCe6mOCMsQ9EL85BJIoJv0/9SwLswSE=; b=wfHO1PbL7dP1qNILGSGJP
-    B9sr6f6Ywde8Bw/cQkw7BpRcDVJm6/U+iZjWJkVfa0xQWmGPFQuryHRDRKN3GAm2
-    YB/OSbe/zbqpSPihVQqBFVN19PVfP1GuEDi7UV+4bHeWORIewoJBokWvpcWrI47Q
-    n6FemGHgfJtvQeW4XVQDKnEtmHv6dAJYcBzHQ/elL5GW12OIkeRCyqbDWzSMU64H
-    eMa5ttw0MydZruWDiPVACvvaA2IYAwFNkAlbuW7cQGuSSIRlqI5N78EKDIM7ctc3
-    0qA5DfJ2yUcgZkHlkzmD8Mlhaec0ikW6fp2AnNV1zaz81Vub2IB0yATFfR58YrYG
-    g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1523987423; bh=/nEtp
+    k+Nk5CHhy4qizJMW5mvxoAJQhQS0x4Vl5F6ArM=; b=Zf+cTT0/AzJ/cjLeOh8DK
+    zRzcymcEPCwUdASHhLwkBrG429SDL/TM6Dqk8etqtbFUHYVXUpW+pbjpNnwcepGQ
+    /gMVxzBa/9mAXvkAQDVP/o1v4+i7vhrTHqrL3PpmW10KERerpXc+IMrCGXfG+pSS
+    cVxGE7X9kQN1QB2XihrCIVt4SKXaR8qnoPy07IwZ4QvdVM1DXHEEJCqN5/8OwyFi
+    Aye4IvR2Ontop9sZkQS+Hr427neiHxDtV9r+c+3+JBG5T++II2NjP83oQXumdHA/
+    kw5ZkdL2aIkgoE0iWj4pZAo/MubFZ4j/SW2WzvqBmUwXBFw51y6f0P+RBFMQJ0ht
+    w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=bootlin.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=bootlin.com header.result=pass header_is_org_domain=yes;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOhJUp8ZT23UrDUx22wsOXFCg4zdSlm4B6rv8OXYJtYlncbpZFSyPShV+1Oapz5IHwE7RI0FEICV3j6dW//e/UQRim/ykHUpsj4CcxpUVbY9680b/XZS
-    VJ15SkfR59CFBE4DAf5WsfEagz87YFaKt7MPiocxIG63Eu3I4Ika8W2V1follpnjII6a8Mp6zX0ONhzTE1Snl9sQopPeOqf785NpmrX0iUlK9qoYtQwxg5R5
-    NYSRhZp/diDt7kmMtkJghg==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+X-CM-Envelope: MS4wfCY1oqHkx+YY0bSPjyIm2tiMii2hWOqXa76LRK1aoYOTMQv1ZBX8ZNituIzkXMJZ/toNi7kLdIcqXBb7rqJR2AJf16hUgZJgVAlxfb4ryTiYIquS8YuU
+    7zpp8Z2qv2WFIfTbb7Qk7FshZgjCMZXtGaM9gg9jU14DG1fBH+HAp2IOVpU2c8B3MGobgDJ9F+g7vSoFx7nT/1zU+AFr+HR0PXLXHsl6tKK2lXm7kis2yc1T
+    z+lZcq3flJhaw91Oijt2lQ==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8
-    a=7CQSdrXTAAAA:8 a=DDOyTI_5AAAA:8 a=1XBcy4zVM9dn8EyfbC8A:9 a=CjuIK1q_8ugA:10
-    a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    a=7CQSdrXTAAAA:8 a=DDOyTI_5AAAA:8 a=LaMeh0zo4_-7PgxjUM0A:9
+    a=fTD87SmaLnwOyg5t:21 a=0hhVhN_dTI4UiHV8:21 a=kvjkl5OTgg5uTMi3:21
+    a=CjuIK1q_8ugA:10 a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Sun, 22 Apr 2018 19:12:57 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 14/20] mtd: Remove depends on HAS_DMA in case of
- platform dependency
-Message-ID: <20180422191257.255bdd9f@bbrezillon>
-In-Reply-To: <1523987360-18760-15-git-send-email-geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, Felipe Balbi <balbi@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Tejun Heo <tj@kernel.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S . Miller" <davem@davemloft.net>,
+ Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+ Stefan Richter <stefanr@s5r6.in-berlin.de>, Alan Tull <atull@kernel.org>,
+ Moritz Fischer <mdf@kernel.org>, Wolfram Sang <wsa@the-dreams.de>,
+ Jonathan Cameron <jic23@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+ Matias Bjorling <mb@lightnvm.io>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ David Woodhouse <dwmw2@infradead.org>,
+ Brian Norris <computersforpeace@gmail.com>,
+ Marek Vasut <marek.vasut@gmail.com>,
+ Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Richard Weinberger <richard@nod.at>, Kalle Valo <kvalo@codeaurora.org>,
+ Ohad Ben-Cohen <ohad@wizery.com>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>,
+ Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
+Subject: [PATCH v3 15/20] net: Remove depends on HAS_DMA in case of platform
+ dependency
+Date: Tue, 17 Apr 2018 19:49:15 +0200
+Message-Id: <1523987360-18760-16-git-send-email-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
 References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
- <1523987360-18760-15-git-send-email-geert@linux-m68k.org>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -88,35 +110,17 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa@the-dreams.de>,
- linux-iio@vger.kernel.org, linux-fpga@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
- Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>,
- netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-i2c@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Stefan Wahren <stefan.wahren@i2se.com>,
- Boris Brezillon <boris.brezillon@free-electrons.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Richard Weinberger <richard@nod.at>,
- Joerg Roedel <joro@8bytes.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Marek Vasut <marek.vasut@gmail.com>, linux-serial@vger.kernel.org,
- Matias Bjorling <mb@lightnvm.io>, David Woodhouse <dwmw2@infradead.org>,
- linux-media@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>,
- devel@driverdev.osuosl.org, Alan Tull <atull@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- Mark Brown <broonie@kernel.org>, Moritz Fischer <mdf@kernel.org>,
- linux-fbdev@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Kalle Valo <kvalo@codeaurora.org>, Felipe Balbi <balbi@kernel.org>,
- linux-ide@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-usb@vger.kernel.org, linux-mmc@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org,
- iommu@lists.linux-foundation.org, Stefan Richter <stefanr@s5r6.in-berlin.de>,
- linux-crypto@vger.kernel.org, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
- Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Brian Norris <computersforpeace@gmail.com>,
- Robin Murphy <robin.murphy@arm.com>, "David S . Miller" <davem@davemloft.net>,
- Jonathan Cameron <jic23@kernel.org>
+Cc: devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+ linux-media@vger.kernel.org, linux-iio@vger.kernel.org, netdev@vger.kernel.org,
+ linux-fpga@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-ide@vger.kernel.org, iommu@lists.linux-foundation.org,
+ linux-mtd@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-serial@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-remoteproc@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -125,111 +129,248 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 17 Apr 2018 19:49:14 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
+symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
+In most cases this other symbol is an architecture or platform specific
+symbol, or PCI.
 
-> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-> In most cases this other symbol is an architecture or platform specific
-> symbol, or PCI.
-> 
-> Generic symbols and drivers without platform dependencies keep their
-> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-> cannot work anyway.
-> 
-> This simplifies the dependencies, and allows to improve compile-testing.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
+Generic symbols and drivers without platform dependencies keep their
+dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
+cannot work anyway.
 
-Applied to mtd/next.
+This simplifies the dependencies, and allows to improve compile-testing.
 
-Thanks,
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Acked-by: Robin Murphy <robin.murphy@arm.com>
+---
+v3:
+  - Rebase to v4.17-rc1,
+  - Drop obsolete note about FSL_FMAN,
 
-Boris
+v2:
+  - Add Reviewed-by, Acked-by,
+  - Drop RFC state,
+  - Split per subsystem.
+---
+ drivers/net/ethernet/amd/Kconfig                | 2 +-
+ drivers/net/ethernet/apm/xgene-v2/Kconfig       | 1 -
+ drivers/net/ethernet/apm/xgene/Kconfig          | 1 -
+ drivers/net/ethernet/arc/Kconfig                | 6 ++++--
+ drivers/net/ethernet/broadcom/Kconfig           | 2 --
+ drivers/net/ethernet/calxeda/Kconfig            | 2 +-
+ drivers/net/ethernet/hisilicon/Kconfig          | 2 +-
+ drivers/net/ethernet/marvell/Kconfig            | 8 +++-----
+ drivers/net/ethernet/mellanox/mlxsw/Kconfig     | 2 +-
+ drivers/net/ethernet/renesas/Kconfig            | 2 --
+ drivers/net/wireless/broadcom/brcm80211/Kconfig | 1 -
+ drivers/net/wireless/quantenna/qtnfmac/Kconfig  | 2 +-
+ 12 files changed, 12 insertions(+), 19 deletions(-)
 
-> ---
-> v3:
->   - Rebase to v4.17-rc1,
-> 
-> v2:
->   - Add Reviewed-by, Acked-by,
->   - Drop RFC state,
->   - Drop new dependency of MTD_NAND_MARVELL on HAS_DMA,
->   - Split per subsystem.
-> ---
->  drivers/mtd/nand/raw/Kconfig | 8 ++------
->  drivers/mtd/spi-nor/Kconfig  | 2 +-
->  2 files changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-> index 19a2b283fbbe627e..6871ff0fd300bb81 100644
-> --- a/drivers/mtd/nand/raw/Kconfig
-> +++ b/drivers/mtd/nand/raw/Kconfig
-> @@ -46,7 +46,7 @@ config MTD_NAND_DENALI
->  config MTD_NAND_DENALI_PCI
->          tristate "Support Denali NAND controller on Intel Moorestown"
->  	select MTD_NAND_DENALI
-> -	depends on HAS_DMA && PCI
-> +	depends on PCI
->          help
->            Enable the driver for NAND flash on Intel Moorestown, using the
->            Denali NAND controller core.
-> @@ -152,7 +152,6 @@ config MTD_NAND_S3C2410_CLKSTOP
->  config MTD_NAND_TANGO
->  	tristate "NAND Flash support for Tango chips"
->  	depends on ARCH_TANGO || COMPILE_TEST
-> -	depends on HAS_DMA
->  	help
->  	  Enables the NAND Flash controller on Tango chips.
->  
-> @@ -285,7 +284,7 @@ config MTD_NAND_MARVELL
->  	tristate "NAND controller support on Marvell boards"
->  	depends on PXA3xx || ARCH_MMP || PLAT_ORION || ARCH_MVEBU || \
->  		   COMPILE_TEST
-> -	depends on HAS_IOMEM && HAS_DMA
-> +	depends on HAS_IOMEM
->  	help
->  	  This enables the NAND flash controller driver for Marvell boards,
->  	  including:
-> @@ -447,7 +446,6 @@ config MTD_NAND_SH_FLCTL
->  	tristate "Support for NAND on Renesas SuperH FLCTL"
->  	depends on SUPERH || COMPILE_TEST
->  	depends on HAS_IOMEM
-> -	depends on HAS_DMA
->  	help
->  	  Several Renesas SuperH CPU has FLCTL. This option enables support
->  	  for NAND Flash using FLCTL.
-> @@ -515,7 +513,6 @@ config MTD_NAND_SUNXI
->  config MTD_NAND_HISI504
->  	tristate "Support for NAND controller on Hisilicon SoC Hip04"
->  	depends on ARCH_HISI || COMPILE_TEST
-> -	depends on HAS_DMA
->  	help
->  	  Enables support for NAND controller on Hisilicon SoC Hip04.
->  
-> @@ -529,7 +526,6 @@ config MTD_NAND_QCOM
->  config MTD_NAND_MTK
->  	tristate "Support for NAND controller on MTK SoCs"
->  	depends on ARCH_MEDIATEK || COMPILE_TEST
-> -	depends on HAS_DMA
->  	help
->  	  Enables support for NAND controller on MTK SoCs.
->  	  This controller is found on mt27xx, mt81xx, mt65xx SoCs.
-> diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
-> index 89da88e591215db1..c493b8230a38c059 100644
-> --- a/drivers/mtd/spi-nor/Kconfig
-> +++ b/drivers/mtd/spi-nor/Kconfig
-> @@ -71,7 +71,7 @@ config SPI_FSL_QUADSPI
->  config SPI_HISI_SFC
->  	tristate "Hisilicon SPI-NOR Flash Controller(SFC)"
->  	depends on ARCH_HISI || COMPILE_TEST
-> -	depends on HAS_IOMEM && HAS_DMA
-> +	depends on HAS_IOMEM
->  	help
->  	  This enables support for hisilicon SPI-NOR flash controller.
->  
+diff --git a/drivers/net/ethernet/amd/Kconfig b/drivers/net/ethernet/amd/Kconfig
+index d5c15e8bb3de706b..f273af136fc7c995 100644
+--- a/drivers/net/ethernet/amd/Kconfig
++++ b/drivers/net/ethernet/amd/Kconfig
+@@ -173,7 +173,7 @@ config SUNLANCE
+ 
+ config AMD_XGBE
+ 	tristate "AMD 10GbE Ethernet driver"
+-	depends on ((OF_NET && OF_ADDRESS) || ACPI || PCI) && HAS_IOMEM && HAS_DMA
++	depends on ((OF_NET && OF_ADDRESS) || ACPI || PCI) && HAS_IOMEM
+ 	depends on X86 || ARM64 || COMPILE_TEST
+ 	select BITREVERSE
+ 	select CRC32
+diff --git a/drivers/net/ethernet/apm/xgene-v2/Kconfig b/drivers/net/ethernet/apm/xgene-v2/Kconfig
+index 1205861b631896a0..eedd3f3dd22e2201 100644
+--- a/drivers/net/ethernet/apm/xgene-v2/Kconfig
++++ b/drivers/net/ethernet/apm/xgene-v2/Kconfig
+@@ -1,6 +1,5 @@
+ config NET_XGENE_V2
+ 	tristate "APM X-Gene SoC Ethernet-v2 Driver"
+-	depends on HAS_DMA
+ 	depends on ARCH_XGENE || COMPILE_TEST
+ 	help
+ 	  This is the Ethernet driver for the on-chip ethernet interface
+diff --git a/drivers/net/ethernet/apm/xgene/Kconfig b/drivers/net/ethernet/apm/xgene/Kconfig
+index afccb033177b3923..e4e33c900b577161 100644
+--- a/drivers/net/ethernet/apm/xgene/Kconfig
++++ b/drivers/net/ethernet/apm/xgene/Kconfig
+@@ -1,6 +1,5 @@
+ config NET_XGENE
+ 	tristate "APM X-Gene SoC Ethernet Driver"
+-	depends on HAS_DMA
+ 	depends on ARCH_XGENE || COMPILE_TEST
+ 	select PHYLIB
+ 	select MDIO_XGENE
+diff --git a/drivers/net/ethernet/arc/Kconfig b/drivers/net/ethernet/arc/Kconfig
+index e743ddf46343302f..5d0ab8e74b680cc6 100644
+--- a/drivers/net/ethernet/arc/Kconfig
++++ b/drivers/net/ethernet/arc/Kconfig
+@@ -24,7 +24,8 @@ config ARC_EMAC_CORE
+ config ARC_EMAC
+ 	tristate "ARC EMAC support"
+ 	select ARC_EMAC_CORE
+-	depends on OF_IRQ && OF_NET && HAS_DMA && (ARC || COMPILE_TEST)
++	depends on OF_IRQ && OF_NET
++	depends on ARC || COMPILE_TEST
+ 	---help---
+ 	  On some legacy ARC (Synopsys) FPGA boards such as ARCAngel4/ML50x
+ 	  non-standard on-chip ethernet device ARC EMAC 10/100 is used.
+@@ -33,7 +34,8 @@ config ARC_EMAC
+ config EMAC_ROCKCHIP
+ 	tristate "Rockchip EMAC support"
+ 	select ARC_EMAC_CORE
+-	depends on OF_IRQ && OF_NET && REGULATOR && HAS_DMA && (ARCH_ROCKCHIP || COMPILE_TEST)
++	depends on OF_IRQ && OF_NET && REGULATOR
++	depends on ARCH_ROCKCHIP || COMPILE_TEST
+ 	---help---
+ 	  Support for Rockchip RK3036/RK3066/RK3188 EMAC ethernet controllers.
+ 	  This selects Rockchip SoC glue layer support for the
+diff --git a/drivers/net/ethernet/broadcom/Kconfig b/drivers/net/ethernet/broadcom/Kconfig
+index af75156919edfead..4c3bfde6e8de00f2 100644
+--- a/drivers/net/ethernet/broadcom/Kconfig
++++ b/drivers/net/ethernet/broadcom/Kconfig
+@@ -157,7 +157,6 @@ config BGMAC
+ config BGMAC_BCMA
+ 	tristate "Broadcom iProc GBit BCMA support"
+ 	depends on BCMA && BCMA_HOST_SOC
+-	depends on HAS_DMA
+ 	depends on BCM47XX || ARCH_BCM_5301X || COMPILE_TEST
+ 	select BGMAC
+ 	select PHYLIB
+@@ -170,7 +169,6 @@ config BGMAC_BCMA
+ 
+ config BGMAC_PLATFORM
+ 	tristate "Broadcom iProc GBit platform support"
+-	depends on HAS_DMA
+ 	depends on ARCH_BCM_IPROC || COMPILE_TEST
+ 	depends on OF
+ 	select BGMAC
+diff --git a/drivers/net/ethernet/calxeda/Kconfig b/drivers/net/ethernet/calxeda/Kconfig
+index 07d2201530d26c85..9fdd496b90ff47cb 100644
+--- a/drivers/net/ethernet/calxeda/Kconfig
++++ b/drivers/net/ethernet/calxeda/Kconfig
+@@ -1,6 +1,6 @@
+ config NET_CALXEDA_XGMAC
+ 	tristate "Calxeda 1G/10G XGMAC Ethernet driver"
+-	depends on HAS_IOMEM && HAS_DMA
++	depends on HAS_IOMEM
+ 	depends on ARCH_HIGHBANK || COMPILE_TEST
+ 	select CRC32
+ 	help
+diff --git a/drivers/net/ethernet/hisilicon/Kconfig b/drivers/net/ethernet/hisilicon/Kconfig
+index 8bcf470ff5f38a4e..fb1a7251f45d3369 100644
+--- a/drivers/net/ethernet/hisilicon/Kconfig
++++ b/drivers/net/ethernet/hisilicon/Kconfig
+@@ -5,7 +5,7 @@
+ config NET_VENDOR_HISILICON
+ 	bool "Hisilicon devices"
+ 	default y
+-	depends on (OF || ACPI) && HAS_DMA
++	depends on OF || ACPI
+ 	depends on ARM || ARM64 || COMPILE_TEST
+ 	---help---
+ 	  If you have a network (Ethernet) card belonging to this class, say Y.
+diff --git a/drivers/net/ethernet/marvell/Kconfig b/drivers/net/ethernet/marvell/Kconfig
+index ebe5c91489355c9e..0704a1900bbca444 100644
+--- a/drivers/net/ethernet/marvell/Kconfig
++++ b/drivers/net/ethernet/marvell/Kconfig
+@@ -18,8 +18,8 @@ if NET_VENDOR_MARVELL
+ 
+ config MV643XX_ETH
+ 	tristate "Marvell Discovery (643XX) and Orion ethernet support"
+-	depends on (MV64X60 || PPC32 || PLAT_ORION || COMPILE_TEST) && INET
+-	depends on HAS_DMA
++	depends on MV64X60 || PPC32 || PLAT_ORION || COMPILE_TEST
++	depends on INET
+ 	select PHYLIB
+ 	select MVMDIO
+ 	---help---
+@@ -58,7 +58,6 @@ config MVNETA_BM_ENABLE
+ config MVNETA
+ 	tristate "Marvell Armada 370/38x/XP/37xx network interface support"
+ 	depends on ARCH_MVEBU || COMPILE_TEST
+-	depends on HAS_DMA
+ 	select MVMDIO
+ 	select PHYLINK
+ 	---help---
+@@ -84,7 +83,6 @@ config MVNETA_BM
+ config MVPP2
+ 	tristate "Marvell Armada 375/7K/8K network interface support"
+ 	depends on ARCH_MVEBU || COMPILE_TEST
+-	depends on HAS_DMA
+ 	select MVMDIO
+ 	---help---
+ 	  This driver supports the network interface units in the
+@@ -92,7 +90,7 @@ config MVPP2
+ 
+ config PXA168_ETH
+ 	tristate "Marvell pxa168 ethernet support"
+-	depends on HAS_IOMEM && HAS_DMA
++	depends on HAS_IOMEM
+ 	depends on CPU_PXA168 || ARCH_BERLIN || COMPILE_TEST
+ 	select PHYLIB
+ 	---help---
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/Kconfig b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
+index f4d9c9975ac3d857..82827a8d3d67cac7 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/Kconfig
++++ b/drivers/net/ethernet/mellanox/mlxsw/Kconfig
+@@ -30,7 +30,7 @@ config MLXSW_CORE_THERMAL
+ 
+ config MLXSW_PCI
+ 	tristate "PCI bus implementation for Mellanox Technologies Switch ASICs"
+-	depends on PCI && HAS_DMA && HAS_IOMEM && MLXSW_CORE
++	depends on PCI && HAS_IOMEM && MLXSW_CORE
+ 	default m
+ 	---help---
+ 	  This is PCI bus implementation for Mellanox Technologies Switch ASICs.
+diff --git a/drivers/net/ethernet/renesas/Kconfig b/drivers/net/ethernet/renesas/Kconfig
+index 27be51f0a421b43e..f3f7477043ce1061 100644
+--- a/drivers/net/ethernet/renesas/Kconfig
++++ b/drivers/net/ethernet/renesas/Kconfig
+@@ -17,7 +17,6 @@ if NET_VENDOR_RENESAS
+ 
+ config SH_ETH
+ 	tristate "Renesas SuperH Ethernet support"
+-	depends on HAS_DMA
+ 	depends on ARCH_RENESAS || SUPERH || COMPILE_TEST
+ 	select CRC32
+ 	select MII
+@@ -31,7 +30,6 @@ config SH_ETH
+ 
+ config RAVB
+ 	tristate "Renesas Ethernet AVB support"
+-	depends on HAS_DMA
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select CRC32
+ 	select MII
+diff --git a/drivers/net/wireless/broadcom/brcm80211/Kconfig b/drivers/net/wireless/broadcom/brcm80211/Kconfig
+index 9d99eb42d9176f0f..6acba67bca07abd7 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/Kconfig
++++ b/drivers/net/wireless/broadcom/brcm80211/Kconfig
+@@ -60,7 +60,6 @@ config BRCMFMAC_PCIE
+ 	bool "PCIE bus interface support for FullMAC driver"
+ 	depends on BRCMFMAC
+ 	depends on PCI
+-	depends on HAS_DMA
+ 	select BRCMFMAC_PROTO_MSGBUF
+ 	select FW_LOADER
+ 	---help---
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/Kconfig b/drivers/net/wireless/quantenna/qtnfmac/Kconfig
+index 025fa6018550895a..8d1492a90bd135c0 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/Kconfig
++++ b/drivers/net/wireless/quantenna/qtnfmac/Kconfig
+@@ -7,7 +7,7 @@ config QTNFMAC
+ config QTNFMAC_PEARL_PCIE
+ 	tristate "Quantenna QSR10g PCIe support"
+ 	default n
+-	depends on HAS_DMA && PCI && CFG80211
++	depends on PCI && CFG80211
+ 	select QTNFMAC
+ 	select FW_LOADER
+ 	select CRC32
+-- 
+2.7.4
 
 _______________________________________________
 devel mailing list
