@@ -1,94 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753014AbeDQOHm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:07:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752592AbeDQOHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:07:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E412183B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sre@kernel.org
-Date: Tue, 17 Apr 2018 16:07:37 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: viro@zeniv.linux.org.uk, arnd@arndb.de, linux-kernel@vger.kernel.org,
-        willy@infradead.org
-Subject: Re: [PATCH] hsi: clients: Change return type to vm_fault_t
-Message-ID: <20180417140737.45xtk7qanthxzgsm@earth.universe>
-References: <20180417135742.GA30368@jordon-HP-15-Notebook-PC>
+        id S1753106AbeDQOIc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:08:32 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55999 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752145AbeDQOI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:08:28 -0400
+From: Li Wei <liwei213@huawei.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <vinholikatti@gmail.com>, <jejb@linux.vnet.ibm.com>,
+        <martin.petersen@oracle.com>, <khilman@baylibre.com>, <arnd@arndb.de>,
+        <gregory.clement@free-electrons.com>,
+        <thomas.petazzoni@free-electrons.com>, <yamada.masahiro@socionext.com>,
+        <riku.voipio@linaro.org>, <treding@nvidia.com>, <krzk@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-scsi@vger.kernel.org>
+CC: <zangleigang@hisilicon.com>, <gengjianfeng@hisilicon.com>,
+        <guodong.xu@linaro.org>
+Subject: [PATCH v9 2/5] dt-bindings: scsi: ufs: add document for hisi-ufs
+Date: Tue, 17 Apr 2018 22:08:11 +0800
+Message-ID: <20180417140814.38098-3-liwei213@huawei.com>
+X-Mailer: git-send-email 2.15.0
+In-Reply-To: <20180417140814.38098-1-liwei213@huawei.com>
+References: <20180417140814.38098-1-liwei213@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gylny6llc5krr34d"
-Content-Disposition: inline
-In-Reply-To: <20180417135742.GA30368@jordon-HP-15-Notebook-PC>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain
+X-Originating-IP: [100.107.89.192]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+add ufs node document for Hisilicon.
 
---gylny6llc5krr34d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Li Wei <liwei213@huawei.com>
+---
+ Documentation/devicetree/bindings/ufs/ufs-hisi.txt | 29 ++++++++++++++++++++++
+ .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      | 10 +++++---
+ 2 files changed, 36 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
 
-Hi,
-
-On Tue, Apr 17, 2018 at 07:27:42PM +0530, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler. For
-> now, this is just documenting that the function returns
-> a VM_FAULT value rather than an errno. Once all instances
-> are converted, vm_fault_t will become a distinct type.
->=20
-> Reference id -> 1c8f422059ae ("mm: change return type to
-> vm_fault_t")
->=20
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  drivers/hsi/clients/cmt_speech.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/hsi/clients/cmt_speech.c b/drivers/hsi/clients/cmt_s=
-peech.c
-> index 324cb8e..a1d4b93 100644
-> --- a/drivers/hsi/clients/cmt_speech.c
-> +++ b/drivers/hsi/clients/cmt_speech.c
-> @@ -1098,7 +1098,7 @@ static void cs_hsi_stop(struct cs_hsi_iface *hi)
->  	kfree(hi);
->  }
->=20
-> -static int cs_char_vma_fault(struct vm_fault *vmf)
-> +static vm_fault_t cs_char_vma_fault(struct vm_fault *vmf)
->  {
->  	struct cs_char *csdata =3D vmf->vma->vm_private_data;
->  	struct page *page;
-> --
-> 1.9.1
->=20
-
-Thanks, queued to hsi-next.
-
--- Sebastian
-
---gylny6llc5krr34d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrV/6QACgkQ2O7X88g7
-+pobzA//ZAv/MiqmprUGMP+eBbi8Lpe9U5bRXJdJMT0BVz9v6XusbFtorIl4aG3b
-z0sMO0VlOBl5pqWlWhtQOYNDQVnadi0dbgY3UPdptJTss1MfneyndQZT16HsHnNI
-SmJOurADAjreE6TyBvbLNm6qCZoWIto0mMuMZPWt75pLSTcqnFsCUbx5gzqSUlli
-pfOKzWAvmluKaX3v8FeL9mu+CokC3NyLmJ3hJlmiu0laD9PQel3BRNY/B+Ko516Y
-vDPQXfDsGuEKzm+xkJY9mK7JgrmIrLD4jrJetqqPMnVLApxvKuDYJhj69Er85o0R
-8n/05/R4/EJ//HEDEBtFPvE6ATU55D4SzamjB1BsRi5YNuaxRL0pikqWJUi6aFgF
-iqloBmVfRuf5vChH15KzH+l4UQtFApLJ2gJOWgzezVq+CyTsBQgsmOptpB7w3M8M
-xFs8Fe83SDEgYhoQ+t0ve6Kc+dWyVrmUKAKZe7jkevWYrF6poa6XRCyoDIs4bK7p
-PdO0Q+CfZyfHDjDWGi+3L+APTBrun9glXbQw69oAs7ryIqmi1YtdbRViUOlA7xu2
-7gh6L6tOW0sIszs+sMMuBYSKYHV5k99h63wZSWS+wimJNPO6HRg87+Kz2eKg2nZk
-YiwckB64q3dCkcNuf0s2lWDn44XhhyZE/EpdHLOjzASI9C21bjY=
-=cj2n
------END PGP SIGNATURE-----
-
---gylny6llc5krr34d--
+diff --git a/Documentation/devicetree/bindings/ufs/ufs-hisi.txt b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
+new file mode 100644
+index 000000000000..d49ab7d8f31d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
+@@ -0,0 +1,29 @@
++* Hisilicon Universal Flash Storage (UFS) Host Controller
++
++UFS nodes are defined to describe on-chip UFS hardware macro.
++Each UFS Host Controller should have its own node.
++
++Required properties:
++- compatible        : compatible list, contains one of the following -
++					"hisilicon,hi3660-ufs", "jedec,ufs-1.1" for hisi ufs
++					host controller present on Hi36xx chipset.
++- reg               : should contain UFS register address space & UFS SYS CTRL register address,
++- interrupt-parent  : interrupt device
++- interrupts        : interrupt number
++- resets            : reset node register, the "arst" corresponds to reset the APB/AXI bus.
++- reset-names       : describe reset node register
++
++Example:
++
++	ufs: ufs@ff3b0000 {
++		compatible = "hisilicon,hi3660-ufs", "jedec,ufs-1.1";
++		/* 0: HCI standard */
++		/* 1: UFS SYS CTRL */
++		reg = <0x0 0xff3b0000 0x0 0x1000>,
++			<0x0 0xff3b1000 0x0 0x1000>;
++		interrupt-parent = <&gic>;
++		interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
++		/* offset: 0x84; bit: 7  */
++		resets = <&crg_rst 0x84 7>;
++		reset-names = "arst";
++	};
+diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+index c39dfef76a18..adcfb79f63f5 100644
+--- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
++++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+@@ -41,6 +41,8 @@ Optional properties:
+ -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
+ 			  Note that it is assume same number of lanes is used both
+ 			  directions at once. If not specified, default is 2 lanes per direction.
++- resets            : reset node register, the "rst" corresponds to reset the whole UFS IP.
++- reset-names       : describe reset node register
+ 
+ Note: If above properties are not defined it can be assumed that the supply
+ regulators or clocks are always on.
+@@ -61,9 +63,11 @@ Example:
+ 		vccq-max-microamp = 200000;
+ 		vccq2-max-microamp = 200000;
+ 
+-		clocks = <&core 0>, <&ref 0>, <&iface 0>;
+-		clock-names = "core_clk", "ref_clk", "iface_clk";
+-		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
++		clocks = <&core 0>, <&ref 0>, <&phy 0>, <&iface 0>;
++		clock-names = "core_clk", "ref_clk", "phy_clk", "iface_clk";
++		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>, <0 0>;
++		resets = <&reset 0 1>;
++		reset-names = "rst";
+ 		phys = <&ufsphy1>;
+ 		phy-names = "ufsphy";
+ 	};
+-- 
+2.15.0
