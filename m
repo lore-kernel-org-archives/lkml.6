@@ -1,70 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753080AbeDQWG2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 18:06:28 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33236 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752939AbeDQWG1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 18:06:27 -0400
-X-Google-Smtp-Source: AIpwx48FMCWjPcB1hFmB9FKrHvHdlAomIzr8aEt/5CSIu06/vckrt/kW+CDG0qg9CTsYIq+lYJ9iRSfq9657ux55zCw=
+        id S1752118AbeDQWIA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 18:08:00 -0400
+Received: from mga05.intel.com ([192.55.52.43]:35235 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750811AbeDQWH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 18:07:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
+   d="scan'208";a="34143767"
+Date: Tue, 17 Apr 2018 16:09:01 -0600
+From: Keith Busch <keith.busch@intel.com>
+To: Matias =?iso-8859-1?Q?Bj=F8rling?= <mb@lightnvm.io>
+Cc: Wei Xu <wxu@cnexlabs.com>, linux-nvme@lists.infradead.org,
+        javier@cnexlabs.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme: lightnvm: add granby support
+Message-ID: <20180417220901.GG11513@localhost.localdomain>
+References: <1523930112-7402-1-git-send-email-wxu@cnexlabs.com>
+ <6e50972d-f806-52ac-7983-2642bd211afa@lightnvm.io>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <08bd08ee9bc70f6e98b9e298ba6a2c0f4dcadb4b.1523372093.git.rgb@redhat.com>
-References: <08bd08ee9bc70f6e98b9e298ba6a2c0f4dcadb4b.1523372093.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 17 Apr 2018 18:06:24 -0400
-Message-ID: <CAHC9VhSxjEKNcdE2Mm-Vwef6RvTG2ykGFFmeAtVypAaPRvddmg@mail.gmail.com>
-Subject: Re: [PATCH ghak80 V1] audit: add syscall information to
- FEATURE_CHANGE records
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6e50972d-f806-52ac-7983-2642bd211afa@lightnvm.io>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 8:46 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Tie syscall information to FEATURE_CHANGE calls since it is a result of
-> user action.
->
-> See: https://github.com/linux-audit/audit-kernel/issues/80
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  kernel/audit.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 8da24ef..23f125b 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -1103,10 +1103,9 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
->  {
->         struct audit_buffer *ab;
->
-> -       if (audit_enabled == AUDIT_OFF)
-> +       if (!audit_enabled)
+On Tue, Apr 17, 2018 at 08:16:25AM +0200, Matias Bjørling wrote:
+> On 4/17/18 3:55 AM, Wei Xu wrote:
+> > Add a new lightnvm quirk to identify CNEX’s Granby controller.
+> > 
+> > Signed-off-by: Wei Xu <wxu@cnexlabs.com>
+> > ---
+> >   drivers/nvme/host/pci.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> > index cb73bc8..9419e88 100644
+> > --- a/drivers/nvme/host/pci.c
+> > +++ b/drivers/nvme/host/pci.c
+> > @@ -2529,6 +2529,8 @@ static const struct pci_device_id nvme_id_table[] = {
+> >   		.driver_data = NVME_QUIRK_LIGHTNVM, },
+> >   	{ PCI_DEVICE(0x1d1d, 0x2807),	/* CNEX WL */
+> >   		.driver_data = NVME_QUIRK_LIGHTNVM, },
+> > +	{ PCI_DEVICE(0x1d1d, 0x2601),	/* CNEX Granby */
+> > +		.driver_data = NVME_QUIRK_LIGHTNVM, },
+> >   	{ PCI_DEVICE_CLASS(PCI_CLASS_STORAGE_EXPRESS, 0xffffff) },
+> >   	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2001) },
+> >   	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
+> > 
+> 
+> Looks good to me.
+> 
+> Reviewed-by: Matias Bjørling <mb@lightnvm.io>
+> 
+> Keith, when convenient can you pick this up for 4.18?
 
-Sooo, this is an unrelated style change, why?  Looking at the rest of
-kernel/audit.c we seem to use a mix of "(!x)" and "(x == 0/CONST)" so
-why are you adding noise to this patch?
-
->                 return;
-> -
-> -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
-> +       ab = audit_log_start(current->audit_context, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
-
-This is the important part, and the Right Thing To Do.
-
->         if (!ab)
->                 return;
->         audit_log_task_info(ab, current);
-> --
-> 1.8.3.1
-
--- 
-paul moore
-www.paul-moore.com
+This looks safe for 4.17-rc2, no? Unless you want to wait for the next
+release.
