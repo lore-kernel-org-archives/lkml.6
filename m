@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/5bT+IQjEB8ILpUqK7i2z6F46BLLiNWCsAvmQFULbtzGaOZjE/Lc3QlgmPn7pX/lIx8vJq
-ARC-Seal: i=1; a=rsa-sha256; t=1523981220; cv=none;
+X-Google-Smtp-Source: AIpwx4+5IzkleN8l4a1QutZb7smBFH3m63h74J2eWqTynKJnC+PfRBDqILfvN/E7sOYKS1xlQ5Pa
+ARC-Seal: i=1; a=rsa-sha256; t=1523981217; cv=none;
         d=google.com; s=arc-20160816;
-        b=PJdjpIC8wvWfX5JN3xV92RvjI0x905+AxSlldi9Ta/Tl6nbxdarkogV72CmTNcgtI7
-         1IySuWwOQFNdNjh2Y+sqAchnbnr4nqsfa+RIgD7/9DsnmQ+KhvcR3P1ENCFJBeRkUr54
-         UojfnldGTsHgo4ZKblhEaptdwDMZYVXyPVyTGAXh2mAwxz6Eib07mbT8Eo8KOt3tltkc
-         lAP4BCJuzkx6QECB+Um9MiYlGBVC8FPWlRBHjFjxUDdJ35S6CiSjypOd6NUdAOiin3yJ
-         JlvyK5PPVGPU6MnQC4/FvyOHfVLMLf91apAMdnzXPb5+YPLqI9ofvyzpcL58kJfb0osa
-         k1jg==
+        b=COcavFZTl1HyFLVwBhbb3a45Mfmh53yI8ql0vddvCmO2hgoQaa8gA13RSmlEbJrKzH
+         xEa8P+jMKV3u+KoThY7ttVKnbPMXrLrB367RPzntRwvdLasGNyd0EQOuTLFZOQcw+WRW
+         +VPM77uvP9iafxCKzJP56tEtVGPsPsd2YtW66/tymAFa/W+JUtQv7UGaKWcLlaoL/BR/
+         p/axG6CHGOX/KGT0QAl/hw5JUD+MJP51Uwi/zGEKRDbZEJVmDig2b9F0/fKGu9oqz1Tr
+         d5DHfcF/IOhZ2wZIduWgFRXrNLJBmJvfdhx2snUiZfpJaGN65kb1PD4BEjwmbd156X4B
+         B9mA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=cX44EAS4NKcal9BritQaBhG0YLfjydDPyQyXYEQdU9U=;
-        b=FUTrVioomDHprflso7ClvqCRnYn/w2e81hAXY2Phd+cGwBVFBZRolFXLcRIEwCwWck
-         tZJqB/pcPoCDXlVqdMqaeMzZmpaas49Er8IDtemwEz5hu3eGlrvpjBDir0zESEsIxzve
-         8vWIYxH7rqnrSm5QaYiOG3TpfZbgBhm/MQbR8FCHF2DZwI0Ocq7lxOtJx2liC2dboc1w
-         FKZLfltDPva33GSe4wcwFqm+nX/LDrBgVueIjrm3cRyngdgjNyVWOEqvGytOzIuy8uAW
-         SGZ5TnFegILFfJiblIBW8K7OYB5vwPLInrh7D5pw9yldF7/xufHft9sf9F9W8j21cnjy
-         8iTg==
+        bh=Czv2eGdqcBcNKYJnfFQzL8prJO7U8FJsae16ATqjet4=;
+        b=inv+ejUvErHFpSsptPYoR306Vi/VBMjCHEj9fvPlMQVM868xK8t74TjikAq/qa1YZH
+         /AmRK3Ynyr5VPvwV6X09u/eOw86fbs2MFNAgipfH8LSH3dVQheItFhk40EKg2mGc8kuT
+         leYHDeq8gyjxylw62jXgcLhoQhBk5lDtej9ko1UgIYh+xzOfbLnlzQSQCIEWAPK0oiU+
+         OajdDXrdsTgKEHEM1jfWdbvppbDmP5BGqEs8ca3BXmURlKvYNFq849ElWnhSK8keY0gQ
+         3sG1B99lgR7p6oI19xOB/UtM+c8K34m7aKaBs2VPHO83uvR0cKAPW1OtXF86raBQ2ges
+         16hw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Borislav Petkov <bp@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.14 36/49] x86/MCE: Report only DRAM ECC as memory errors on AMD systems
-Date: Tue, 17 Apr 2018 17:59:15 +0200
-Message-Id: <20180417155716.737471721@linuxfoundation.org>
+	Sudhir Sreedharan <ssreedharan@mvista.com>,
+	Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 35/49] rtl8187: Fix NULL pointer dereference in priv->conf_mutex
+Date: Tue, 17 Apr 2018 17:59:14 +0200
+Message-Id: <20180417155716.690278125@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -41,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010132018413158?=
-X-GMAIL-MSGID: =?utf-8?q?1598010132018413158?=
+X-GMAIL-THRID: =?utf-8?q?1598009886651691074?=
+X-GMAIL-MSGID: =?utf-8?q?1598010128856481538?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,83 +49,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+From: Sudhir Sreedharan <ssreedharan@mvista.com>
 
-commit c6708d50f166bea2d763c96485d31fdbc50204f1 upstream.
+commit 7972326a26b5bf8dc2adac575c4e03ee7e9d193a upstream.
 
-The MCA_STATUS[ErrorCodeExt] field is very bank type specific.
-We currently check if the ErrorCodeExt value is 0x0 or 0x8 in
-mce_is_memory_error(), but we don't check the bank number. This means
-that we could flag non-memory errors as memory errors.
+This can be reproduced by bind/unbind the driver multiple times
+in AM3517 board.
 
-We know that we want to flag DRAM ECC errors as memory errors, so let's do
-those cases first. We can add more cases later when needed.
+Analysis revealed that rtl8187_start() was invoked before probe
+finishes(ie. before the mutex is initialized).
 
-Define a wrapper function in mce_amd.c so we can use SMCA enums.
+ INFO: trying to register non-static key.
+ the code is fine but needs lockdep annotation.
+ turning off the locking correctness validator.
+ CPU: 0 PID: 821 Comm: wpa_supplicant Not tainted 4.9.80-dirty #250
+ Hardware name: Generic AM3517 (Flattened Device Tree)
+ [<c010e0d8>] (unwind_backtrace) from [<c010beac>] (show_stack+0x10/0x14)
+ [<c010beac>] (show_stack) from [<c017401c>] (register_lock_class+0x4f4/0x55c)
+ [<c017401c>] (register_lock_class) from [<c0176fe0>] (__lock_acquire+0x74/0x1938)
+ [<c0176fe0>] (__lock_acquire) from [<c0178cfc>] (lock_acquire+0xfc/0x23c)
+ [<c0178cfc>] (lock_acquire) from [<c08aa2f8>] (mutex_lock_nested+0x50/0x3b0)
+ [<c08aa2f8>] (mutex_lock_nested) from [<c05f5bf8>] (rtl8187_start+0x2c/0xd54)
+ [<c05f5bf8>] (rtl8187_start) from [<c082dea0>] (drv_start+0xa8/0x320)
+ [<c082dea0>] (drv_start) from [<c084d1d4>] (ieee80211_do_open+0x2bc/0x8e4)
+ [<c084d1d4>] (ieee80211_do_open) from [<c069be94>] (__dev_open+0xb8/0x120)
+ [<c069be94>] (__dev_open) from [<c069c11c>] (__dev_change_flags+0x88/0x14c)
+ [<c069c11c>] (__dev_change_flags) from [<c069c1f8>] (dev_change_flags+0x18/0x48)
+ [<c069c1f8>] (dev_change_flags) from [<c0710b08>] (devinet_ioctl+0x738/0x840)
+ [<c0710b08>] (devinet_ioctl) from [<c067925c>] (sock_ioctl+0x164/0x2f4)
+ [<c067925c>] (sock_ioctl) from [<c02883f8>] (do_vfs_ioctl+0x8c/0x9d0)
+ [<c02883f8>] (do_vfs_ioctl) from [<c0288da8>] (SyS_ioctl+0x6c/0x7c)
+ [<c0288da8>] (SyS_ioctl) from [<c0107760>] (ret_fast_syscall+0x0/0x1c)
+ Unable to handle kernel NULL pointer dereference at virtual address 00000000
+ pgd = cd1ec000
+ [00000000] *pgd=8d1de831, *pte=00000000, *ppte=00000000
+ Internal error: Oops: 817 [#1] PREEMPT ARM
+ Modules linked in:
+ CPU: 0 PID: 821 Comm: wpa_supplicant Not tainted 4.9.80-dirty #250
+ Hardware name: Generic AM3517 (Flattened Device Tree)
+ task: ce73eec0 task.stack: cd1ea000
+ PC is at mutex_lock_nested+0xe8/0x3b0
+ LR is at mutex_lock_nested+0xd0/0x3b0
 
-[ bp: Remove brackets around return statements. ]
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20171207203955.118171-2-Yazen.Ghannam@amd.com
+Cc: stable@vger.kernel.org
+Signed-off-by: Sudhir Sreedharan <ssreedharan@mvista.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/mce.h           |    2 ++
- arch/x86/kernel/cpu/mcheck/mce.c     |    4 +---
- arch/x86/kernel/cpu/mcheck/mce_amd.c |   11 +++++++++++
- 3 files changed, 14 insertions(+), 3 deletions(-)
+ drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -376,6 +376,7 @@ struct smca_bank {
- extern struct smca_bank smca_banks[MAX_NR_BANKS];
+--- a/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
++++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c
+@@ -1450,6 +1450,7 @@ static int rtl8187_probe(struct usb_inte
+ 		goto err_free_dev;
+ 	}
+ 	mutex_init(&priv->io_mutex);
++	mutex_init(&priv->conf_mutex);
  
- extern const char *smca_get_long_name(enum smca_bank_types t);
-+extern bool amd_mce_is_memory_error(struct mce *m);
+ 	SET_IEEE80211_DEV(dev, &intf->dev);
+ 	usb_set_intfdata(intf, dev);
+@@ -1625,7 +1626,6 @@ static int rtl8187_probe(struct usb_inte
+ 		printk(KERN_ERR "rtl8187: Cannot register device\n");
+ 		goto err_free_dmabuf;
+ 	}
+-	mutex_init(&priv->conf_mutex);
+ 	skb_queue_head_init(&priv->b_tx_status.queue);
  
- extern int mce_threshold_create_device(unsigned int cpu);
- extern int mce_threshold_remove_device(unsigned int cpu);
-@@ -384,6 +385,7 @@ extern int mce_threshold_remove_device(u
- 
- static inline int mce_threshold_create_device(unsigned int cpu) { return 0; };
- static inline int mce_threshold_remove_device(unsigned int cpu) { return 0; };
-+static inline bool amd_mce_is_memory_error(struct mce *m) { return false; };
- 
- #endif
- 
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -512,10 +512,8 @@ static int mce_usable_address(struct mce
- bool mce_is_memory_error(struct mce *m)
- {
- 	if (m->cpuvendor == X86_VENDOR_AMD) {
--		/* ErrCodeExt[20:16] */
--		u8 xec = (m->status >> 16) & 0x1f;
-+		return amd_mce_is_memory_error(m);
- 
--		return (xec == 0x0 || xec == 0x8);
- 	} else if (m->cpuvendor == X86_VENDOR_INTEL) {
- 		/*
- 		 * Intel SDM Volume 3B - 15.9.2 Compound Error Codes
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -752,6 +752,17 @@ out_err:
- }
- EXPORT_SYMBOL_GPL(umc_normaddr_to_sysaddr);
- 
-+bool amd_mce_is_memory_error(struct mce *m)
-+{
-+	/* ErrCodeExt[20:16] */
-+	u8 xec = (m->status >> 16) & 0x1f;
-+
-+	if (mce_flags.smca)
-+		return smca_get_bank_type(m) == SMCA_UMC && xec == 0x0;
-+
-+	return m->bank == 4 && xec == 0x8;
-+}
-+
- static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
- {
- 	struct mce m;
+ 	wiphy_info(dev->wiphy, "hwaddr %pM, %s V%d + %s, rfkill mask %d\n",
