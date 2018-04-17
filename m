@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48i9aWq1iJPfC6bu26HRDxZTiuEwD41tNt0gPuSAeDAQexDmCOBdgp9ii66ScHQmxUw3T6u
-ARC-Seal: i=1; a=rsa-sha256; t=1523981319; cv=none;
+X-Google-Smtp-Source: AIpwx4+Eo+FOlM5ZUIeJ3J5DhwCdkpo9OcGT4DF1qv1MNvZAoPNSp/a7lyPc90iceg6AWa2Reec+
+ARC-Seal: i=1; a=rsa-sha256; t=1523981316; cv=none;
         d=google.com; s=arc-20160816;
-        b=qVB5aoM3zNwlmB4lKHKuUT3cndQhGeJMw7x15SARcdTePnjLUap3FHj4i58dchmJiM
-         ws4IZK79ChkjanabWuGAWkEfkgceY1/rvqb8ueNtoPubM+e3LBdV132oOgPcqrbKJKis
-         8UNhexBe9uLRSVZqwQglgqEcagtkoKzVHBk7OLYVwEpviE9hETWAg7IZHYzM8zyB6C8q
-         fnL/RdBReou6Bx2SW5sj67G+FaczLbEqcXfw3zJ/zOSS/jW9bmAYGsLw4Zj/1217H2lo
-         kBEaASFef42zEpg8TRarl7Zb6fOPCN7INGQGJx4vdpgoPs1R6JoowNRhKRPUpxRb/l9A
-         VQgQ==
+        b=OL9GOycYxtsn8uM6OpN9pi7EcHvZt8MTzyW31r7BySepBbw3otUX6yqq1gfT3xuo7U
+         052+M1dAQV94LY6EXbpR+GhrEdWn91U/ghgdFotXLtO8kO3S2EG60+wEKBIUJxwNrnVt
+         N0jU4HZpOlBV8ffAbJW/tuMtdE/eXVpFVtYV6WoeIFxJUAQ0IkN34W0yW5uSZlnxfhUU
+         B2JhpsjpEK2qYVxfZBVgItXeiLFf5cjlk4BkI8fBPBxWilaB8q9pU2kebPxgBUWxNniJ
+         1FM2whXS+QWPvJBij89Rr6VP8qysl+CLQdvrMBPyNtUL9JsrIMljnckG6x6PPxeGNIKP
+         FWNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Fq4Q5N5NVzYYlvaFn+DN/EJNOQ/FgywT9+yHtfyRiv4=;
-        b=X26/6If3agaAv9yIj2vxqUmiCp6lrtGnrsKXn/c4kIbD0VYuaxgQFJJuqtqgH/bBQn
-         kvzzU9K1I2LQXNfZ2GzQPDcnUmX2DCSXVnLFlEyestbid9iwOd+0nA/Fn4dUx7CEZ8Nx
-         JGEJ/6CzE63JslrWCH6QJKB3tt0978F+KkPWNW3zazVo4aVkYxo21z/MEG/j2a0bRary
-         DlrIiRIAw9mU4DRougw6qrE/MACqudhkT6pvXToe5jSmHctU2Ot9vm+clwlbwlq10DQI
-         5FFzAemZl6P57dNuch+3FlyFGclgwemISZk4+Ku4XDMhRj7j3iyRq7u0GiRnifnet2Pt
-         k2tg==
+        bh=CCT+Nym4+qNTeS9bPdvhuesU+KvOx6nEVl38fOmR/18=;
+        b=L4MLxHpzk6miKlTmyhq29bp7YR72vjqk5Chy3ujbLlPYqTqdBf8GXoP9p19LmsLvm8
+         ytGprhs6E5yFTMtLTfmSeqizwZDewTIl8L7QWxnqdzHb8x4hzPWHVOVT3W9geoJ1CSp0
+         ldcpd8lK88DOo89O/wvC9xoZQFt+MPCU6FIHz/lRK6mXJ1Sc5ISu8zY2TgPJ1efgSHu+
+         elqB8e3LLZEhjcxVStmXaKDf/vQKvLkw9A/NEjnc5l/Xn4XOGagJLyIjnnn/k8Cx6n/5
+         svgAeQxYZuLcQvpnXnMZgmOZGD6CH1oMjz8pXex2wWkEfpu5AOnOR8bC30JEpP9pnrFF
+         7Ekg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,14 +26,16 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
 	Will Deacon <will.deacon@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Dave Martin <dave.martin@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
-	Greg Hackmann <ghackmann@google.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.9 21/66] arm64: cpufeature: Pass capability structure to ->enable callback
-Date: Tue, 17 Apr 2018 17:58:54 +0200
-Message-Id: <20180417155646.768192153@linuxfoundation.org>
+	Greg Hackmann <ghackmann@google.com>
+Subject: [PATCH 4.9 20/66] arm64: Run enable method for errata work arounds on late CPUs
+Date: Tue, 17 Apr 2018 17:58:53 +0200
+Message-Id: <20180417155646.726727900@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010235863649524?=
-X-GMAIL-MSGID: =?utf-8?q?1598010235863649524?=
+X-GMAIL-THRID: =?utf-8?q?1598010233493316618?=
+X-GMAIL-MSGID: =?utf-8?q?1598010233493316618?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,44 +57,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 From: Mark Rutland <mark.rutland@arm.com>
 
 
-From: Will Deacon <will.deacon@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-commit 0a0d111d40fd1dc588cc590fab6b55d86ddc71d3 upstream.
+commit 55b35d070c2534dfb714b883f3c3ae05d02032da upstream.
 
-In order to invoke the CPU capability ->matches callback from the ->enable
-callback for applying local-CPU workarounds, we need a handle on the
-capability structure.
+When a CPU is brought up after we have finalised the system
+wide capabilities (i.e, features and errata), we make sure the
+new CPU doesn't need a new errata work around which has not been
+detected already. However we don't run enable() method on the new
+CPU for the errata work arounds already detected. This could
+cause the new CPU running without potential work arounds.
+It is upto the "enable()" method to decide if this CPU should
+do something about the errata.
 
-This patch passes a pointer to the capability structure to the ->enable
-callback.
-
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: commit 6a6efbb45b7d95c84 ("arm64: Verify CPU errata work arounds on hotplugged CPU")
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Andre Przywara <andre.przywara@arm.com>
+Cc: Dave Martin <dave.martin@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
 Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/kernel/cpufeature.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/cpu_errata.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1058,7 +1058,7 @@ void __init enable_cpu_capabilities(cons
- 			 * uses an IPI, giving us a PSTATE that disappears when
- 			 * we return.
- 			 */
--			stop_machine(caps->enable, NULL, cpu_online_mask);
-+			stop_machine(caps->enable, (void *)caps, cpu_online_mask);
- }
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -143,15 +143,18 @@ void verify_local_cpu_errata_workarounds
+ {
+ 	const struct arm64_cpu_capabilities *caps = arm64_errata;
  
- /*
-@@ -1115,7 +1115,7 @@ verify_local_cpu_features(const struct a
+-	for (; caps->matches; caps++)
+-		if (!cpus_have_cap(caps->capability) &&
+-			caps->matches(caps, SCOPE_LOCAL_CPU)) {
++	for (; caps->matches; caps++) {
++		if (cpus_have_cap(caps->capability)) {
++			if (caps->enable)
++				caps->enable((void *)caps);
++		} else if (caps->matches(caps, SCOPE_LOCAL_CPU)) {
+ 			pr_crit("CPU%d: Requires work around for %s, not detected"
+ 					" at boot time\n",
+ 				smp_processor_id(),
+ 				caps->desc ? : "an erratum");
  			cpu_die_early();
  		}
- 		if (caps->enable)
--			caps->enable(NULL);
-+			caps->enable((void *)caps);
- 	}
++	}
  }
  
+ void update_cpu_errata_workarounds(void)
