@@ -1,85 +1,181 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752306AbeDQKcu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 06:32:50 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46946 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751232AbeDQKct (ORCPT
+        id S1752332AbeDQKdm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 06:33:42 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:58214 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751230AbeDQKdk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 06:32:49 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Mark Brown <broonie@kernel.org>, Shuming Fan <shumingf@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        kbuild-all@01.org, Bard Liao <bardliao@realtek.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rt1305: fix platform_no_drv_owner.cocci warnings" to the asoc tree
-In-Reply-To: <20180416194124.GA75306@lkp-hsx02>
-Message-Id: <E1f8Num-0006oI-HY@debutante>
-Date: Tue, 17 Apr 2018 11:32:44 +0100
+        Tue, 17 Apr 2018 06:33:40 -0400
+Subject: Re: [RFC 06/10] misc: pci_endpoint_test: Add MSI-X support
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <niklas.cassel@axis.com>,
+        <jesper.nilsson@axis.com>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+ <8b88f8c2b766f36c71659deb0fce635154b2b39f.1523379766.git.gustavo.pimentel@synopsys.com>
+CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <b25dcfb1-e770-e302-d9aa-7c35f6c58fa5@ti.com>
+Date: Tue, 17 Apr 2018 16:03:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <8b88f8c2b766f36c71659deb0fce635154b2b39f.1523379766.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi,
 
-   ASoC: rt1305: fix platform_no_drv_owner.cocci warnings
+On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
+> Adds the MSI-X support and updates driver documentation accordingly.
+> 
+> Changes the driver parameter in order to allow the interruption type
+> selection.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+>  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
+>  drivers/misc/pci_endpoint_test.c                 | 102 +++++++++++++++++------
+>  2 files changed, 79 insertions(+), 26 deletions(-)
+> 
+> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+> index 4ebc359..fdfa0f6 100644
+> --- a/Documentation/misc-devices/pci-endpoint-test.txt
+> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
+> @@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
+>  	*) verifying addresses programmed in BAR
+>  	*) raise legacy IRQ
+>  	*) raise MSI IRQ
+> +	*) raise MSI-X IRQ
+>  	*) read data
+>  	*) write data
+>  	*) copy data
+> @@ -25,6 +26,8 @@ ioctl
+>   PCITEST_LEGACY_IRQ: Tests legacy IRQ
+>   PCITEST_MSI: Tests message signalled interrupts. The MSI number
+>  	      to be tested should be passed as argument.
+> + PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
+> +	      to be tested should be passed as argument.
+>   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+>  		as argument.
+>   PCITEST_READ: Perform read tests. The size of the buffer should be passed
+> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+> index 37db0fc..a7d9354 100644
+> --- a/drivers/misc/pci_endpoint_test.c
+> +++ b/drivers/misc/pci_endpoint_test.c
+> @@ -42,11 +42,16 @@
+>  #define PCI_ENDPOINT_TEST_COMMAND	0x4
+>  #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+>  #define COMMAND_RAISE_MSI_IRQ		BIT(1)
+> -#define MSI_NUMBER_SHIFT		2
+> -/* 6 bits for MSI number */
+> -#define COMMAND_READ                    BIT(8)
+> -#define COMMAND_WRITE                   BIT(9)
+> -#define COMMAND_COPY                    BIT(10)
+> +#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+> +#define IRQ_TYPE_SHIFT			3
+> +#define IRQ_TYPE_LEGACY			0
+> +#define IRQ_TYPE_MSI			1
+> +#define IRQ_TYPE_MSIX			2
+> +#define MSI_NUMBER_SHIFT		5
 
-has been applied to the asoc tree at
+Now that you are anyways fixing this, add a new register entry for MSI numbers.
+Let's not keep COMMAND and MSI's together.
+> +/* 12 bits for MSI number */
+> +#define COMMAND_READ                    BIT(17)
+> +#define COMMAND_WRITE                   BIT(18)
+> +#define COMMAND_COPY                    BIT(19)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+This change should be done along with the pci-epf-test in a single patch.
+>  
+>  #define PCI_ENDPOINT_TEST_STATUS	0x8
+>  #define STATUS_READ_SUCCESS             BIT(0)
+> @@ -73,9 +78,9 @@ static DEFINE_IDA(pci_endpoint_test_ida);
+>  #define to_endpoint_test(priv) container_of((priv), struct pci_endpoint_test, \
+>  					    miscdev)
+>  
+> -static bool no_msi;
+> -module_param(no_msi, bool, 0444);
+> -MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Let's not remove this just to make sure existing users doesn't get affected.
+> +static int irq_type = IRQ_TYPE_MSIX;
+> +module_param(irq_type, int, 0444);
+> +MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI, 2 - MSI-X)");
+>  
+>  enum pci_barno {
+>  	BAR_0,
+> @@ -103,7 +108,7 @@ struct pci_endpoint_test {
+>  struct pci_endpoint_test_data {
+>  	enum pci_barno test_reg_bar;
+>  	size_t alignment;
+> -	bool no_msi;
+> +	int irq_type;
+>  };
+>  
+>  static inline u32 pci_endpoint_test_readl(struct pci_endpoint_test *test,
+> @@ -177,10 +182,10 @@ static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
+>  
+>  static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
+>  {
+> -	u32 val;
+> +	u32 val = COMMAND_RAISE_LEGACY_IRQ;
+>  
+> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+> -				 COMMAND_RAISE_LEGACY_IRQ);
+> +	val |= (IRQ_TYPE_LEGACY << IRQ_TYPE_SHIFT);
+> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND, val);
+>  	val = wait_for_completion_timeout(&test->irq_raised,
+>  					  msecs_to_jiffies(1000));
+>  	if (!val)
+> @@ -192,12 +197,12 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
+>  static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
+>  				      u8 msi_num)
+>  {
+> -	u32 val;
+> +	u32 val = COMMAND_RAISE_MSI_IRQ;
+>  	struct pci_dev *pdev = test->pdev;
+>  
+> -	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+> -				 msi_num << MSI_NUMBER_SHIFT |
+> -				 COMMAND_RAISE_MSI_IRQ);
+> +	val |= (msi_num << MSI_NUMBER_SHIFT);
+> +	val |= (IRQ_TYPE_MSI << IRQ_TYPE_SHIFT);
+> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND, val);
+>  	val = wait_for_completion_timeout(&test->irq_raised,
+>  					  msecs_to_jiffies(1000));
+>  	if (!val)
+> @@ -209,6 +214,26 @@ static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
+>  	return false;
+>  }
+>  
+> +static bool pci_endpoint_test_msix_irq(struct pci_endpoint_test *test,
+> +				       u16 msix_num)
+> +{
+> +	u32 val = COMMAND_RAISE_MSIX_IRQ;
+> +	struct pci_dev *pdev = test->pdev;
+> +
+> +	val |= (msix_num << MSI_NUMBER_SHIFT);
+> +	val |= (IRQ_TYPE_MSIX << IRQ_TYPE_SHIFT);
+> +	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND, val);
+> +	val = wait_for_completion_timeout(&test->irq_raised,
+> +					  msecs_to_jiffies(1000));
+> +	if (!val)
+> +		return false;
+> +
+> +	if (test->last_irq - pdev->irq == msix_num - 1)
+> +		return true;
+> +
+> +	return false;
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I think you can have a single function for msix_irq and msi_irq.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From b999a19b3324ae3538bc13d11210bdfc8016616a Mon Sep 17 00:00:00 2001
-From: Fengguang Wu <fengguang.wu@intel.com>
-Date: Tue, 17 Apr 2018 03:41:24 +0800
-Subject: [PATCH] ASoC: rt1305: fix platform_no_drv_owner.cocci warnings
-
-sound/soc/codecs/rt1305.c:1174:3-8: No need to set .owner here. The core will do it.
-
- Remove .owner field if calls are used which set it automatically
-
-Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
-
-Fixes: 29bc643ddd7e ("ASoC: rt1305: Add RT1305/RT1306 amplifier driver")
-CC: Shuming Fan <shumingf@realtek.com>
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/rt1305.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/sound/soc/codecs/rt1305.c b/sound/soc/codecs/rt1305.c
-index 84043068c0b7..f4c8c45f4010 100644
---- a/sound/soc/codecs/rt1305.c
-+++ b/sound/soc/codecs/rt1305.c
-@@ -1172,7 +1172,6 @@ static void rt1305_i2c_shutdown(struct i2c_client *client)
- static struct i2c_driver rt1305_i2c_driver = {
- 	.driver = {
- 		.name = "rt1305",
--		.owner = THIS_MODULE,
- #if defined(CONFIG_OF)
- 		.of_match_table = rt1305_of_match,
- #endif
--- 
-2.17.0
+Thanks
+Kishon
