@@ -1,148 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752624AbeDQRiN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 13:38:13 -0400
-Received: from mail-bn3nam01on0062.outbound.protection.outlook.com ([104.47.33.62]:19424
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752043AbeDQRiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 13:38:11 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Gary.Hook@amd.com;
-Subject: Re: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
- AMD IOMMU
-To: "Mehta, Sohil" <sohil.mehta@intel.com>,
-        "gary.hook@amd.com" <gary.hook@amd.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <152302042701.47565.17954813724758433858.stgit@sosxen2.amd.com>
- <152302067362.47565.628887796165116844.stgit@sosxen2.amd.com>
- <1523664612.2747.13.camel@intel.com>
-From: "Hook, Gary" <ghook@amd.com>
-Message-ID: <efa2b7a3-04a7-20b1-3651-89ebafa85c27@amd.com>
-Date: Tue, 17 Apr 2018 13:38:04 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <1523664612.2747.13.camel@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1752687AbeDQRjX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 13:39:23 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:60634 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751230AbeDQRjV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 13:39:21 -0400
+From: Song Liu <songliubraving@fb.com>
+To: Yafang Shao <laoar.shao@gmail.com>
+CC: "eric.dumazet@gmail.com" <eric.dumazet@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
+        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 net-next] net: introduce a new tracepoint for
+ tcp_rcv_space_adjust
+Thread-Topic: [PATCH v2 net-next] net: introduce a new tracepoint for
+ tcp_rcv_space_adjust
+Thread-Index: AQHT1mqJ9xgfIFuRz0WmbFf0D1CdOKQFOQAA
+Date: Tue, 17 Apr 2018 17:38:39 +0000
+Message-ID: <A047B5AE-CA5F-4664-92F7-935E8ED4C0CA@fb.com>
+References: <1523983016-11005-1-git-send-email-laoar.shao@gmail.com>
+In-Reply-To: <1523983016-11005-1-git-send-email-laoar.shao@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [165.204.77.1]
-X-ClientProxiedBy: CY4PR1801CA0034.namprd18.prod.outlook.com
- (2603:10b6:910:74::47) To SN1PR12MB0702.namprd12.prod.outlook.com
- (2a01:111:e400:c42a::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0702;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0702;3:XvWRomorwNwpfC4bKSackQm7iQm12y5PqUd+zZMaFRIoVx4bpvkbDOG2nXgcVqv9RcCguUUs9Uva1d7QUcJNVhsXbSmBMo38ltEiXvUcnVI1qUnJUsIm6wL0Knj5KxZz+njYIduWKwMTgxnNqbykp4RkzRL1TmAKAXYST/TknnzV8lvMesDB2c5CKdL1bqUVASbB5P+PXbOMrMVq2X175B8KS0DG9ym/k4rgrct1L8YA6oD8U1e0G6PrpKjgYOP3;25:c1kx4XTSqEVKV8nR3sfEAmKfj/KxT5pdapoVMh6Eoy3krJ1zVq7SvQBDmU39e73zkZ5HjBKUd3GNSt/rwMe8CBTVqVGD2OTixE74zmKrkLbx+xEBNLj68poSu3bCYINSkJEzE++cNi5DCIrbCV6XmHkgdyY21K5Lul09wR55dR9DnnNSUbO21TZLeShmIIWLFf+v5xfMjeNvPiqJ3hvW3THZ1Gr8FqhV62FrMn238hJbFQNWEarTrGCHN3OPVHA1Sfmo2HMggKJcgFwdRbcVp/cI8BhooM487ZYfiBSpIU16lI9NSgglHId3haarjZ7N+xilAPCKPFg8uSfbSmQICQ==;31:9daKBEjpfGTFjeqWJ3MhtMiccBjwUePg+ZEBtYrFHa43BB2zXr53xF3Ec8osgYzxHpod75DG3odEshDwSgZTA4/q7Q5kqCg0a75c1fj1o7Qa3fEPwARQ6KgBsjZXol4M2vPrpr+GQ1y8EE4e7v/xLcLgz+m9B+IV5CAXghk7/Iatx+e5dS8E4HXx9U5hjALIjjX24YxSmxOscYBzkOUa5X5DQ0hMuTMDiz+vwwMnIbc=
-X-MS-TrafficTypeDiagnostic: SN1PR12MB0702:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0702;20:gEdZKA8Tq2AFfwQOPacZsKcmBfrP3A8MJDqpzhkCs6PUYmQhuKNew9k97mrh5k7yq4J4TgmMq6HHUE4FUGN7sUhJYi0dBEJ9aN/5paHVcZoz9xHl/EOLxF7gEwSEga9fjGViTN5DfLwtrS2K0r7ZHtvR/ERcHDBH0EbA6KuEFFE9kVKAaxG4PKG9rNZGq7WOtuETGqLfzyqtLQ7PvAcXs/fWXsOegrgkmiS12CmBw/zDmdl4/hCpm3uCCrYbWvh/c24wi7CRGiCHk1FWR+rADpvGfGTm5y0TWkBvxEr+ga03TE7nw+Nv/fiU2n3n7It593TSJBwm5yH1F6XF1rB7kthrZaKgPGQfsTp+lJFivPbBBOi6iIhRapB40m4Cp30XcMe5JO1vXCLe0uCkH3itu5+uBr0NIAyMaIjdo6aJSGlyLMvmi/SdFR5f7437Zipz27bpdhJk7ll9vib+2D8yKZrjCdp+/AgI8GoCOypsPpugKf1IxWI9C8i++nkvCJXR;4:hqmkxdXGDQ+8YSQaAMD0D3Ug79To0WSAG8m2c73lDdoRtpPB5KYMZFNHlVFo5Ae7JmPt1hjT4eNP8HowTl1j8z5wjzdlaTC4vac0iq+WHCGBK8ictbA2QBjgYs+nxBv1Cncbg4Vq8av9zF/4navotRcpuuWP+LTpqWhad5xdXi6UuMoQIqsBZGD2tbHkcI9gXRAieJniqTf1ab0Wwlt8V7PJSqbrl06Mpu5W/X4+IoHvYXxAdf5/938DwNALnTlF1HuI4yAXbGvIsqfgvc9pCQ==
-X-Microsoft-Antispam-PRVS: <SN1PR12MB07024A716B2BC46D32FFE2AAFDB70@SN1PR12MB0702.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231232)(944501327)(52105095)(10201501046)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(6072148)(201708071742011);SRVR:SN1PR12MB0702;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0702;
-X-Forefront-PRVS: 0645BEB7AA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6049001)(366004)(39380400002)(376002)(39860400002)(396003)(346002)(377424004)(189003)(199004)(16526019)(64126003)(106356001)(105586002)(8936002)(6246003)(53936002)(31696002)(25786009)(65826007)(81166006)(81156014)(3260700006)(8676002)(72206003)(58126008)(50466002)(16576012)(316002)(65956001)(97736004)(68736007)(6666003)(47776003)(65806001)(31686004)(66066001)(110136005)(2201001)(6486002)(5660300001)(229853002)(2501003)(52146003)(23676004)(2486003)(2906002)(53546011)(7736002)(476003)(67846002)(478600001)(3846002)(956004)(386003)(26005)(2616005)(52116002)(446003)(486006)(11346002)(77096007)(6116002)(4326008)(76176011)(305945005)(59450400001)(36756003)(2870700001)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0702;H:[10.224.10.182];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjFQUjEyTUIwNzAyOzIzOk9wMDJaTlJwY0pBMG1mUTdjNkRKNk9DTkh3?=
- =?utf-8?B?amJBcEdGdmhEY2NMLzZub21BeEV0RU9DcG1yM1J4amJWTnozQXZvSzlscFdv?=
- =?utf-8?B?MnUwNzlKbUJObHpmU1E3eDRyUHMwUXpHbVMwbVVQRjJoaEl6TjlqWlBEWjBZ?=
- =?utf-8?B?dTV0ZFRKdzRYWmFGOTlxVitNWHZUY2tBZ1BrUkJOdkFIcVN2Vm5FQ1g4Q3Aw?=
- =?utf-8?B?K2ZhSkhsTnIzY3ZYN0J4Vzhsa3d0RlN5Z0RXU001b0hLYzRLa1pRZGNzU3BQ?=
- =?utf-8?B?dzFSZlNWc21BOUJuR1B0aUxQenVWNko5a2RTQlNtUFpmRmU0amllQUd5ZjNj?=
- =?utf-8?B?Z3NBc2EyTXpudkhXWFVVNHRqcXI3NkwzOU93QTYzN3h5emsxVjBZVllkSVMv?=
- =?utf-8?B?Q3lKZ3NiOXVORjYwa3J3SXREZEhsZlFieVR2VTV0MjlpbGw2R0l1UmRxUlUy?=
- =?utf-8?B?QlBzekl2TzNGR3NVaEV0bUVQOFRnN2oyOGMyV0creG1ZTWxmTzZOb3Yza0lS?=
- =?utf-8?B?OXRqNWpnYWtKaitZUnRBQmJJQ3FvRllUUHRueE5PSnhmd0lNS1lDdmlVWUFs?=
- =?utf-8?B?dy9jQUZYVGdjUisvSWE3cEVIRDdPWldiL0pNdkNxS1V0VkMwZlVCK2Rkc3Zm?=
- =?utf-8?B?Ry96TmpQYm1wUWluZkJvc2dndG5uTlNBcE5BSmlqWUtzVEcybFNYNmIvTjFm?=
- =?utf-8?B?OGdoSzFkUmUyNFA0R1NpdmZGR09hWFM2eURya2xwUnVDUzZ2M1U0VnpUQlkr?=
- =?utf-8?B?dUcvQW1xdEFTNXB2bzhaUWx1a0lCMHlxaGRIQVlQUFFoTTgwWUQzZDZmYzNR?=
- =?utf-8?B?cm41d2NlenplV1k5aG9sUVdQaHRKS2krUHB0aFd3VjhBM2pJNmpBZ2xRYnlj?=
- =?utf-8?B?L2RQSzd5K0hqaU50NjczaitYbVIyREhiZHY5VmRKcHEvcC9xOUNidjdEN0Vi?=
- =?utf-8?B?TzFISmJXMGVsU1pWbTVSN05ieWlwd1JDUVBGSkhBT05RUURvLzRIOEEwWUx0?=
- =?utf-8?B?YkVUT3A2alBJUHhhaEFXcWVTYyt2bzlmcHVCSjhmZnFlamliL1lBaXFuWlpw?=
- =?utf-8?B?b0svYXBHdDR4Q0JDWHRhUEhmODlYTlJyMUllK2p0T01WRmVYK3ZUZ2NuT0d3?=
- =?utf-8?B?Rm5RVkk1WXhJVmh0UkFSK0cwbjhUM3hSUE56Wk1LOC9jZG9wMEliOHQ4OUQv?=
- =?utf-8?B?YVc2NVNvU1lMK21xM2hUNjk4RmN0VWZNSGE5NXVHWTF4bXQxSStJcFpncGlE?=
- =?utf-8?B?MUs5bTcxaC8wcUkvUWQwYktTZTlyYm0zcmY1cCtuM2preFhlcTA5OWFMSUEr?=
- =?utf-8?B?blRGVnA2WWNFL3cyeFZnVkQzVGoybHBHR01QcTh0cm80cnNQNWtnendYVENk?=
- =?utf-8?B?NXdlbzNabHRhL0dleGhvV0doMjQ2elJEcm00bTBOYjVIMlk5TWxmci9qRU5P?=
- =?utf-8?B?Wm8wMXZHbDhINVU3eExjdUU2NTYrOFNyREczUHZEVHdKWUtRYzdnYXI5RjhE?=
- =?utf-8?B?ZFVPNkQwaW5MNWxlek5vVkxEc3B4RUkzVXFlOVpoT1ZCYVFQbklIQnZPUTNX?=
- =?utf-8?B?ZWNqVUQwV1BsQXE2NUFTb1oycm91MzhvNlFGUkRHWlg5QjVqNFJ5ZlR3dWk4?=
- =?utf-8?B?SFgwOTJPQ2VyaytmYkJiNGFRa2JmT1JMK0laa3JOeVdZczEvVnhqaEpiRWdB?=
- =?utf-8?B?Z0xRQjVudVhSVS9Pbm9nU0dsczY1OC91QkdDbUYwS2RCZG54T3JWY0xBaGpG?=
- =?utf-8?B?MjQvbmlGdzhRdkVyek1LVDNickVuY2FCeTlNY0xlZEJsM3hpd0Fwa0cvYmZM?=
- =?utf-8?B?ckNyTlNhV0NJVi8wRURKRHdubzJDNkNhODRCYmhVa2Z1ckNSL0Fia3VpdzYv?=
- =?utf-8?B?Tk1WMElMZ2xkZnA4dVhHM3d1eGdOUnV6RXhkZ3dPR0Q4VFIzM21EdHR4OUpP?=
- =?utf-8?B?Q1k0UVVUd1A5anJqWUkwZWJsdlJhd1ZCaXpRV0c5UHlXaVlzQlJXM3ViQktj?=
- =?utf-8?B?cGhWT0FrRjRtOWpHYXVSNjVjU0JMbkJMQTZsZm1nUkN3Y2NhM3VMTWlLaTM1?=
- =?utf-8?B?QXNYUUFtUk4wVjJRWWl0R1cwZnpQaU1tZUdKVnpNVkJzL2RqVVp5MjRlZmxD?=
- =?utf-8?B?K2c9PQ==?=
-X-Microsoft-Antispam-Message-Info: 9i5rTcK6pzv/hd2FEI1BfM34jCy0TdfWglM7ms+cfGzbo98L8lWchonLSrlb9NsM1d0x9OKO8F0pQKYXPWuBjNr8qNiUxKWEq1I1dw9mPJ3D47xMnO9y0kf/GJAqOCsikvYMn9ldPDQ9Ard/TDc+Z5fjW6a/x1wUVKbUOgD/4y7lG0Ci6eWz9GA9UvrdMrUs
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0702;6:stsrapJ8xuF3E3pk6vh/RibyDZYqiKVrBu65djSjoVa+cl998Wof2D00n3f3kW3lAI0MpRfD1IiFRD/AEWi1sLX/uFiXzK/GNKEuXssmx3FeihQvc690xVXBxNHIM2Yh7Hcg/NsDVGFDDYWY1I9A5UlRvOJWU2YyZcpdmn1tbi0T5iwElDJOVMUwxGTbYn1rjT7cYkrwsPCAxaIMGr4x+cpkfnPvwIVB29+odkMlEPr+xI5Un9QZwyKcMVJd8f/mwZRuLyThT2gYGw1Phdzjhzg932HvfQ2O/pKdguYEqWDliNdjemu7TboRFn//SiLXNthFYxFzhjYr9vGCEhH5QH/wUTs2eEhYb6gT7xLhfgMBDdByFZUZ71+vKPUOI2WM3BrplTqhYxZDXJztG2QeM+nVuGoIIigSPx3V2ORGXTIWsdnoj9noXoAIABwzQjA9AJvRfYz1ZhMv0y1PdYRQdw==;5:kynBfBxaNnInh8g9nqRYKlLFZb53kN9aJQVhmeAf3nCWlD2ZdjsLV/g41ZaBP/KqCPdwft+8WuNzk6QlRcpeeJYqKT4s38XKQdKcNQNHC/KL4dN6oLClcLeHNXf6oEWWl79XBOMogKynia69vrxVo5j5rcRL/lX04zQr+vX730E=;24:4Q/mkdnbksn1WiQnnjm16y4iSQrYIfF3J2Skcd2EREbHzbCJrk3lcwoecwLuX0Dc893W7A8rZWDk5AtNj6WhhT0v5dIQRgRxuqnIuAhsy2k=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0702;7:0h5qoz6HZJi3F1Nkz6ttL+WtFv+gA4ni5eA9HDsJD4kn0cjPur88lpVgcQGLb3qNy+KSP5+/E8Eh/g2ai2TX1Sosnj816vC7DU1mraLy/f5mVU/sUAi1/tgszg8frnmqGEH2t7Oj3u+0GeZE8Pk4S5LEGASgaJxCqpbDHjTHP/9UJAgbNroTDZRP8CAI0L019RZJrsxfFJDPxBxflvUuNJIkuB7GDcFDjB/dukWnDwKleD3invyX+sL9whYY6Bo2;20:2ypqIyonzIoBpIQgQ2KIo0pHnbJs5uiF65rnsPRXAJNq9Cimetb/mDvWDLMiS4pBFud837iHX8m8tXimKkK61iTDcyfK80gAk6P8XScClgOtIR5Ls7/8bBSfPwc3pNO/fEpZEr1A59BtRPQr+4GzjCz050tSCXBwz3/13h/JjnnSqTwNRAIduU2uIZUH2Db0+nH1q7H2/nUQQWGaAhcYAGohl4ADhZfOxFLPeUzk38EYFyeUmNEgQS4XDv0mgRzq
-X-MS-Office365-Filtering-Correlation-Id: 6b94e719-9bc4-4f30-5581-08d5a489fc49
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 17:38:08.4963 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b94e719-9bc4-4f30-5581-08d5a489fc49
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0702
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.6.18)
+x-originating-ip: [2620:10d:c090:200::5:6fff]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR15MB1642;7:c+eAhB/A4fg0L2eWieWcbnPz3TNIeAO2MHy+p06uNJTPJqhzhvfRvgEcnaSTdlsKQ8XAAlSy9hRnXLEDgG0nUVBlFLape4safI/jkvivCmSl+2V56dWu14+JNMOXw48O5ULg1RrsTDYCeDJfrsIOVC5OJFZbG/w2V43wG6oaQdEDmpj2b2WDKsNKWUx36QxK4T0O1q+BXLe3BhNvkp58XGGlMERfyWm2IFDktwT3aEO7wND5ku7p2lY63F0MVU1Y;20:TtxiD2JJJ+KsGupfPLzyZLbIteBAx08EQr3fAtLqVMwE2UlqNrvMLaNUfCB9Eev9i+i6gHgGxjqMkPm5nW2VUXrbmxL5jFVm//TNbD7l1CBynxolvx2whtmVXvQEVL1gka/AP18GtjDaGn6Sn7HpY1n1OH+724wUsjUZhMkNXjI=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR15MB1642;
+x-ms-traffictypediagnostic: DM5PR15MB1642:
+x-microsoft-antispam-prvs: <DM5PR15MB164266C7152BF729267117B9B3B70@DM5PR15MB1642.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231232)(11241501184)(944501327)(52105095)(10201501046)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR15MB1642;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1642;
+x-forefront-prvs: 0645BEB7AA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(346002)(366004)(396003)(39380400002)(199004)(189003)(59450400001)(39060400002)(68736007)(2616005)(478600001)(5250100002)(14454004)(33656002)(53936002)(305945005)(102836004)(6246003)(53546011)(7736002)(99286004)(6506007)(105586002)(76176011)(106356001)(97736004)(5660300001)(6916009)(83716003)(6512007)(8676002)(81166006)(81156014)(316002)(11346002)(476003)(50226002)(446003)(229853002)(6486002)(486006)(2900100001)(54906003)(2906002)(82746002)(6116002)(6436002)(3660700001)(3280700002)(8936002)(57306001)(186003)(86362001)(46003)(25786009)(36756003)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1642;H:DM5PR15MB1548.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: U0BYtIb0ZeK6UvLUMdeSscURlE58TI+Sg8AadB+RmwLKybcj/y5znw+dH3CF6Ckovvxefvk2R2VDinZJs4D1qYH+aeb3DGZLLC8op6DeBqXUjUnicKCPb8lYRol9LzMkm5Bg5+ikGylZfn2CQMFHZcaNGcx7UbLu5iEaD8fo0z8tzgHJfl1SlAxQrs/Y83cF
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <4DEEA3228AE2C64187283981A4310806@namprd15.prod.outlook.com>
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: b565018c-0415-475c-d9bb-08d5a48a0e33
+X-MS-Exchange-CrossTenant-Network-Message-Id: b565018c-0415-475c-d9bb-08d5a48a0e33
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2018 17:38:39.1951
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1642
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3HHdSm6006623
 
-On 4/13/2018 8:08 PM, Mehta, Sohil wrote:
-> On Fri, 2018-04-06 at 08:17 -0500, Gary R Hook wrote:
->>   
->> +
->> +void amd_iommu_debugfs_setup(struct amd_iommu *iommu)
->> +{
->> +	char name[MAX_NAME_LEN + 1];
->> +	struct dentry *d_top;
->> +
->> +	if (!debugfs_initialized())
-> 
-> Probably not needed.
 
-Right.
 
+> On Apr 17, 2018, at 9:36 AM, Yafang Shao <laoar.shao@gmail.com> wrote:
 > 
->> +		return;
->> +
->> +	mutex_lock(&amd_iommu_debugfs_lock);
->> +	if (!amd_iommu_debugfs) {
->> +		d_top = iommu_debugfs_setup();
->> +		if (d_top)
->> +			amd_iommu_debugfs =
->> debugfs_create_dir("amd", d_top);
->> +	}
->> +	mutex_unlock(&amd_iommu_debugfs_lock);
+> tcp_rcv_space_adjust is called every time data is copied to user space,
+> introducing a tcp tracepoint for which could show us when the packet is
+> copied to user.
+> This could help us figure out whether there's latency in user process.
 > 
+> When a tcp packet arrives, tcp_rcv_established() will be called and with
+> the existed tracepoint tcp_probe we could get the time when this packet
+> arrives.
+> Then this packet will be copied to user, and tcp_rcv_space_adjust will
+> be called and with this new introduced tracepoint we could get the time
+> when this packet is copied to user.
 > 
-> You can do the above only once if you iterate over the IOMMUs here
->   instead of doing it in amd_iommu_init.
+>        arrives time : user process time    => latency caused by user
+>        tcp_probe      tcp_rcv_space_adjust
+> 
+> Hence in the printk message, sk_cookie is printed as a key to relate
+> tcp_rcv_space_adjust with tcp_probe.
+> 
+> Maybe we could export sockfd in this new tracepoint as well, then we
+> could relate this new tracepoint with epoll/read/recv* tracepoints, and
+> finally that could show us the whole lifespan of this packet. But we
+> could also implement that with pid as these functions are executed in
+> process context.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> 
+> ---
+> v1 -> v2: use sk_cookie as key suggested by Eric.
+> ---
+> include/trace/events/tcp.h | 33 +++++++++++++++++++++++++++------
+> net/ipv4/tcp_input.c       |  2 ++
+> 2 files changed, 29 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
+> index 3dd6802..814f754 100644
+> --- a/include/trace/events/tcp.h
+> +++ b/include/trace/events/tcp.h
+> @@ -10,6 +10,7 @@
+> #include <linux/tracepoint.h>
+> #include <net/ipv6.h>
+> #include <net/tcp.h>
+> +#include <linux/sock_diag.h>
+> 
+> #define TP_STORE_V4MAPPED(__entry, saddr, daddr)		\
+> 	do {							\
+> @@ -125,6 +126,7 @@
+> 		__array(__u8, daddr, 4)
+> 		__array(__u8, saddr_v6, 16)
+> 		__array(__u8, daddr_v6, 16)
+> +		__field(__u64, sock_cookie)
+> 	),
+> 
+> 	TP_fast_assign(
+> @@ -144,12 +146,24 @@
+> 
+> 		TP_STORE_ADDRS(__entry, inet->inet_saddr, inet->inet_daddr,
+> 			       sk->sk_v6_rcv_saddr, sk->sk_v6_daddr);
+> +
+> +		/*
+> +		 * sk_cookie is used to identify a socket, with which we could
+> +		 * relate this tracepoint with other tracepoints,
+> +		 * i.e. tcp_probe.
+> +		 * If we needn't this relation, then sk_cookie is useless;
+> +		 * if we need this relation, then tcp_probe is already set,
+> +		 * and sk_cookie is already set in tcp_probe, so we could get
+> +		 * the value directly.
+> +		 */
+> +		__entry->sock_cookie = atomic64_read(&sk->sk_cookie);
+> 	),
+> 
+> -	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c",
+> +	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c sock_cookie=%llu",
+> 		  __entry->sport, __entry->dport,
+> 		  __entry->saddr, __entry->daddr,
+> -		  __entry->saddr_v6, __entry->daddr_v6)
+> +		  __entry->saddr_v6, __entry->daddr_v6,
+> +		  __entry->sock_cookie)
+> );
+> 
+> DEFINE_EVENT(tcp_event_sk, tcp_receive_reset,
+> @@ -166,6 +180,13 @@
+> 	TP_ARGS(sk)
+> );
+> 
+> +DEFINE_EVENT(tcp_event_sk, tcp_rcv_space_adjust,
+> +
+> +	TP_PROTO(const struct sock *sk),
+> +
+> +	TP_ARGS(sk)
+> +);
+> +
+> TRACE_EVENT(tcp_retransmit_synack,
+> 
+> 	TP_PROTO(const struct sock *sk, const struct request_sock *req),
+> @@ -232,6 +253,7 @@
+> 		__field(__u32, snd_wnd)
+> 		__field(__u32, srtt)
+> 		__field(__u32, rcv_wnd)
+> +		__field(__u64, sock_cookie)
+> 	),
+> 
+> 	TP_fast_assign(
+> @@ -256,15 +278,14 @@
+> 		__entry->rcv_wnd = tp->rcv_wnd;
+> 		__entry->ssthresh = tcp_current_ssthresh(sk);
+> 		__entry->srtt = tp->srtt_us >> 3;
+> +		__entry->sock_cookie = sock_gen_cookie(sk);
+> 	),
+> 
+> -	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x "
+> -		  "snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u "
+> -		  "rcv_wnd=%u",
+> +	TP_printk("src=%pISpc dest=%pISpc mark=%#x length=%d snd_nxt=%#x snd_una=%#x snd_cwnd=%u ssthresh=%u snd_wnd=%u srtt=%u rcv_wnd=%u sock_cookie=%llu",
+> 		  __entry->saddr, __entry->daddr, __entry->mark,
+> 		  __entry->length, __entry->snd_nxt, __entry->snd_una,
+> 		  __entry->snd_cwnd, __entry->ssthresh, __entry->snd_wnd,
+> -		  __entry->srtt, __entry->rcv_wnd)
+> +		  __entry->srtt, __entry->rcv_wnd, __entry->sock_cookie)
+> );
+> 
+> #endif /* _TRACE_TCP_H */
+> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> index f93687f..43ad468 100644
+> --- a/net/ipv4/tcp_input.c
+> +++ b/net/ipv4/tcp_input.c
+> @@ -582,6 +582,8 @@ void tcp_rcv_space_adjust(struct sock *sk)
+> 	u32 copied;
+> 	int time;
+> 
+> +	trace_tcp_rcv_space_adjust(sk);
+> +
+> 	tcp_mstamp_refresh(tp);
+> 	time = tcp_stamp_us_delta(tp->tcp_mstamp, tp->rcvq_space.time);
+> 	if (time < (tp->rcv_rtt_est.rtt_us >> 3) || tp->rcv_rtt_est.rtt_us == 0)
+> -- 
+> 1.8.3.1
+> 
 
-I'm not sure it matters, given the finite number of IOMMUs in a system, 
-and the fact that this work is done exactly once. However, removal of a 
-lock is fine thing, so I'll move this around.
+If I understand this correctly, you can get all the information you need with
+a kprobe on tcp_rcv_space_adjust(). Why is it necessary to introduce a new 
+tracepoint? 
 
-> 
->> +	if (amd_iommu_debugfs) {
->> +		snprintf(name, MAX_NAME_LEN, "iommu%02d", iommu-
->>> index);
->> +		iommu->debugfs = debugfs_create_dir(name,
->> +						    amd_iommu_debugf
->> s);
->> +		if (!iommu->debugfs) {
->> +			debugfs_remove_recursive(amd_iommu_debugfs);
->> +			amd_iommu_debugfs = NULL;
->> +		}
->> +	}
->> +}
-> 
-> -Sohil
-> 
+Thanks,
+Song
