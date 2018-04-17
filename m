@@ -1,78 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753106AbeDQSQm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 14:16:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43094 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752710AbeDQSQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 14:16:41 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2C1721789
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Tue, 17 Apr 2018 14:16:38 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org
-Subject: Re: [PATCH v2] tracing/x86: Update syscall trace events to handle
- new x86 syscall func names
-Message-ID: <20180417141638.4bf42498@gandalf.local.home>
-In-Reply-To: <20180417181304.GA2895@kernel.org>
-References: <20180417130702.01575029@gandalf.local.home>
-        <20180417172236.GA17342@light.dominikbrodowski.net>
-        <20180417180430.GF3625@kernel.org>
-        <20180417181304.GA2895@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752844AbeDQSS4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 14:18:56 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:39695 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752696AbeDQSSx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 14:18:53 -0400
+X-Google-Smtp-Source: AIpwx48X05UvyOiwxLmFU1wlsE9YN6LLcTD3G/sIfBbraVBVvC9esIt848IGAcdTK+1byjbCHczkIQ==
+Subject: Re: [PATCH net-next 2/3] net: phy: Change the array size to 32 for
+ device_ids
+To: vicentiu.galanopulo@nxp.com, andrew@lunn.ch, robh@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, marcel@holtmann.org,
+        devicetree@vger.kernel.org
+Cc: alexandru.marginean@nxp.com, madalin.bucur@nxp.com
+References: <20180417090233.21548-1-vicentiu.galanopulo@nxp.com>
+ <20180417090233.21548-3-vicentiu.galanopulo@nxp.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <9e676fae-6c96-08a5-d27a-478d91416cb4@gmail.com>
+Date: Tue, 17 Apr 2018 11:18:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180417090233.21548-3-vicentiu.galanopulo@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 15:13:04 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+On 04/17/2018 02:02 AM, Vicentiu Galanopulo wrote:
+> In the context of enabling the discovery of the PHYs
+> which have the C45 MDIO address space in a non-standard
+> address:  num_ids in get_phy_c45_ids, has the
+> value 8 (ARRAY_SIZE(c45_ids->device_ids)), but the
+> u32 *devs can store 32 devices in the bitfield.
+> 
+> If a device is stored in *devs, in bits 32 to 9
+> (bit counting in lookup loop starts from 1), it will
+> not be found.
+> 
+> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
 
-> Em Tue, Apr 17, 2018 at 03:04:30PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Tue, Apr 17, 2018 at 07:22:36PM +0200, Dominik Brodowski escreveu:  
-> > > >   Added back original compare to not miss 32bit kernel syscalls  
-> > > 
-> > > s/32bit/32bit and 0-parameter syscalls.  
-> > 
-> > So this should have covered 0-parameter syscalls, ok, I'm double
-> > checking that the last patch is the one I have running... Because
-> > 0-parameter syscalls are not working for me, i.e. no
-> > syscalls:sys_enter_getppid, for instance.  
-> 
-> Yeah, failing:
-> 
-> [root@jouet ~]# strace -e openat -e file perf test -F -v "mmap interface" |& grep syscalls
-> openat(AT_FDCWD, "/sys/kernel/debug/tracing/events/syscalls/sys_enter_getsid/format", O_RDONLY) = 3
-> openat(AT_FDCWD, "/sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid/format", O_RDONLY) = -1 ENOENT (No such file or directory)
-> [root@jouet ~]# 
-> 
-> [root@jouet ~]# ls -la /sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid/format
-> ls: cannot access '/sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid/format': No such file or directory
-> [root@jouet ~]#
-> 
-> With:
-> 
-> +#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
-> +static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
-> +{
-> +       /*
-> +        * Compare the symbol name with the system call name. Skip the
-> +        * "__x64_sys" prefix.
-> +        */
-> +       return !strcmp(sym + 9, name + 3) || !strcmp(sym + 3, name + 3);
-> +}
-> 
-> in place.
->
-
-Yeah, I did a test too, and found that I'm missing sys_clock_nanosleep.
-I'm looking into it.
-
--- Steve
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
