@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+1lNuHCuY9PJNqSIq4Fu2S4FnPodW2SvaWGjXntVU23GnyQvTkgwv2w5nrytmm49HmjVDJ
-ARC-Seal: i=1; a=rsa-sha256; t=1523981076; cv=none;
+X-Google-Smtp-Source: AIpwx4/oYbmf0esZfVKseTCx8eWqXPW/D3WxaqZjlqljccmU262z5YhNmN+QfY5M5TZLMmFb+G5n
+ARC-Seal: i=1; a=rsa-sha256; t=1523981072; cv=none;
         d=google.com; s=arc-20160816;
-        b=XheSS//oqTUZf6oMgU60LbhC9/UtmUeFW1MTbZGd1GJX2SMzF5wuxJwdJLyiipBQVL
-         AmxtEWNeC454p4d6cMmIetd5f4IRd0LsBK0fxLV1bIZJ7FiDsC+bBobDSE9CQ0S2GpdW
-         HoGM4ykhPCR0F4m2cHzs0mL+aIbFsRID5kLvOdYkDkMW3l6w3w0dMPSpvzO0+LUitY6a
-         iL3pVlMdVL9Kks1lGhvZT/wxGfaCbQiv7dhQTev+18BqbM0lELRqBEsIC76uWlm5luvF
-         yU/3mx2zw4ZosfvuHXeGeojiCdb8FRofcTRH94n3sRGh1h7dHvbwKZ+aInsk9/QdFDu+
-         KWbQ==
+        b=qaQKtHQRN1kJ8nYKvmdaaMeo2KdsWeg50cP3zG///zbZbfKO81WJYzx1HNa7UqhZLE
+         ok3Wws0TXYh+P/4jGawEuU7o1Mxy6Y7SNPMUY4Y3hE6MnNkJ1Bk7IqfykvvkLhSuie6B
+         P96GkQcE1ABeNxwJI7V/X9W4icWxac9oBvqHF1qgnZiYcdDdeqnZSPE3C1XPtQsTnRRJ
+         yXA32y5dDTpCjTAyhu/sqTvRjR+xC0pLhNY1ejH+lLdMZpmj160pektfH9yBNwVhpuWi
+         ayT9LhNgoUc+7iGR2p7+U3/v4JmcfyTeqKysvS3TyQjBnkODTSbDnWzj37HOU8q+3HLE
+         23Yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4VWMIaV9XnJ9xfeAEDv+ZA8bIMr7iO7k3cF5KUaZX4w=;
-        b=z6h22BXqqJ+T0wlg/T/g41vo/lqAXZsR+YXMYS2w0BaLjr/eo21BeKMz0xx91SMTil
-         N4a+5aMOk4ZHioExrzykRVEY0Ls7DjLvnUvWK3vZerHAbVpe4qzZ4DSJN9U7FU/R2kh5
-         d4MLc+XmsyJMxfe1D2b0Ir35BF60H9t97cD5fa94gDf8HkVJ+rcjAFyXth1YoK8OftAd
-         u8D9pfFeIabp8PNcrDT1vztvArfnRy6oEFsMh+pGbSVJJ4Ko4MoYudVAC1gfTsHUNa8E
-         XIR00AsOpiVXWyCfDQTMy7wMReTvCIv2tJtrPrNvk/Q3Px/RLwt1OnBN4tYl/GOMtJab
-         vG5w==
+        bh=HLwXOpXo28q8lqdJCz7eB2czef6OHbEmRDt+Jkc3glY=;
+        b=RQr1yqpUxQsbmW/KFosHfV8tK7dyfo6EyXt58P0qGXof8Gyj5t2zhHiWawNRE3RB6p
+         /Yloq9nxMC7GnT9qrbOGl5Qv0mqcDRwxyRjpwcywLqdXZI+kYMmd5GbEdn9Y4nXaqRte
+         mhkWzzdUxQYNpM4iA2AlkDm+xy8RcoJ0c12QgRtzpcxGLd/Y2zn4d2O6zQmslxgoLa+D
+         HCBCIVMie2hVVoP3MtlKwqL+fvWR2oR0Yp7GV1Y51JIhE6h7YIryCBS4pLWmUdiXb28F
+         wOJuh4YXzBc1fnuVyT5W9Pk/sK4SsJBy525fQzlk4VmDeRtV9GaiOY9U3Cp0tYeUe8as
+         9sUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tejaswi Tanikella <tejaswit@codeaurora.org>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.15 05/53] slip: Check if rstate is initialized before uncompressing
-Date: Tue, 17 Apr 2018 17:58:30 +0200
-Message-Id: <20180417155723.313038973@linuxfoundation.org>
+	Yury Norov <ynorov@caviumnetworks.com>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot <syzbot+6887cbb011c8054e8a3d@syzkaller.appspotmail.com>,
+	Noam Camus <noamca@mellanox.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.15 30/53] lib: fix stall in __bitmap_parselist()
+Date: Tue, 17 Apr 2018 17:58:55 +0200
+Message-Id: <20180417155724.623157623@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -40,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009735919872133?=
-X-GMAIL-MSGID: =?utf-8?q?1598009981459093325?=
+X-GMAIL-THRID: =?utf-8?q?1598009776446596481?=
+X-GMAIL-MSGID: =?utf-8?q?1598009977461684485?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,74 +56,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tejaswi Tanikella <tejaswit@codeaurora.org>
+From: Yury Norov <ynorov@caviumnetworks.com>
 
+commit 8351760ff5b2042039554b4948ddabaac644a976 upstream.
 
-[ Upstream commit 3f01ddb962dc506916c243f9524e8bef97119b77 ]
+syzbot is catching stalls at __bitmap_parselist()
+(https://syzkaller.appspot.com/bug?id=ad7e0351fbc90535558514a71cd3edc11681997a).
+The trigger is
 
-On receiving a packet the state index points to the rstate which must be
-used to fill up IP and TCP headers. But if the state index points to a
-rstate which is unitialized, i.e. filled with zeros, it gets stuck in an
-infinite loop inside ip_fast_csum trying to compute the ip checsum of a
-header with zero length.
+  unsigned long v = 0;
+  bitmap_parselist("7:,", &v, BITS_PER_LONG);
 
-89.666953:   <2> [<ffffff9dd3e94d38>] slhc_uncompress+0x464/0x468
-89.666965:   <2> [<ffffff9dd3e87d88>] ppp_receive_nonmp_frame+0x3b4/0x65c
-89.666978:   <2> [<ffffff9dd3e89dd4>] ppp_receive_frame+0x64/0x7e0
-89.666991:   <2> [<ffffff9dd3e8a708>] ppp_input+0x104/0x198
-89.667005:   <2> [<ffffff9dd3e93868>] pppopns_recv_core+0x238/0x370
-89.667027:   <2> [<ffffff9dd4428fc8>] __sk_receive_skb+0xdc/0x250
-89.667040:   <2> [<ffffff9dd3e939e4>] pppopns_recv+0x44/0x60
-89.667053:   <2> [<ffffff9dd4426848>] __sock_queue_rcv_skb+0x16c/0x24c
-89.667065:   <2> [<ffffff9dd4426954>] sock_queue_rcv_skb+0x2c/0x38
-89.667085:   <2> [<ffffff9dd44f7358>] raw_rcv+0x124/0x154
-89.667098:   <2> [<ffffff9dd44f7568>] raw_local_deliver+0x1e0/0x22c
-89.667117:   <2> [<ffffff9dd44c8ba0>] ip_local_deliver_finish+0x70/0x24c
-89.667131:   <2> [<ffffff9dd44c92f4>] ip_local_deliver+0x100/0x10c
+which results in hitting infinite loop at
 
-./scripts/faddr2line vmlinux slhc_uncompress+0x464/0x468 output:
- ip_fast_csum at arch/arm64/include/asm/checksum.h:40
- (inlined by) slhc_uncompress at drivers/net/slip/slhc.c:615
+    while (a <= b) {
+	    off = min(b - a + 1, used_size);
+	    bitmap_set(maskp, a, off);
+	    a += group_size;
+    }
 
-Adding a variable to indicate if the current rstate is initialized. If
-such a packet arrives, move to toss state.
+due to used_size == group_size == 0.
 
-Signed-off-by: Tejaswi Tanikella <tejaswit@codeaurora.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/20180404162647.15763-1-ynorov@caviumnetworks.com
+Fixes: 0a5ce0831d04382a ("lib/bitmap.c: make bitmap_parselist() thread-safe and much faster")
+Signed-off-by: Yury Norov <ynorov@caviumnetworks.com>
+Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+6887cbb011c8054e8a3d@syzkaller.appspotmail.com>
+Cc: Noam Camus <noamca@mellanox.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/slip/slhc.c |    5 +++++
- include/net/slhc_vj.h   |    1 +
- 2 files changed, 6 insertions(+)
 
---- a/drivers/net/slip/slhc.c
-+++ b/drivers/net/slip/slhc.c
-@@ -509,6 +509,10 @@ slhc_uncompress(struct slcompress *comp,
- 		if(x < 0 || x > comp->rslot_limit)
- 			goto bad;
+---
+ lib/bitmap.c      |    2 +-
+ lib/test_bitmap.c |    4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -607,7 +607,7 @@ static int __bitmap_parselist(const char
+ 		/* if no digit is after '-', it's wrong*/
+ 		if (at_start && in_range)
+ 			return -EINVAL;
+-		if (!(a <= b) || !(used_size <= group_size))
++		if (!(a <= b) || group_size == 0 || !(used_size <= group_size))
+ 			return -EINVAL;
+ 		if (b >= nmaskbits)
+ 			return -ERANGE;
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -218,6 +218,10 @@ static const struct test_bitmap_parselis
+ 	{-EINVAL, "-1",	NULL, 8, 0},
+ 	{-EINVAL, "-0",	NULL, 8, 0},
+ 	{-EINVAL, "10-1", NULL, 8, 0},
++	{-EINVAL, "0-31:", NULL, 8, 0},
++	{-EINVAL, "0-31:0", NULL, 8, 0},
++	{-EINVAL, "0-31:0/0", NULL, 8, 0},
++	{-EINVAL, "0-31:1/0", NULL, 8, 0},
+ 	{-EINVAL, "0-31:10/1", NULL, 8, 0},
+ };
  
-+		/* Check if the cstate is initialized */
-+		if (!comp->rstate[x].initialized)
-+			goto bad;
-+
- 		comp->flags &=~ SLF_TOSS;
- 		comp->recv_current = x;
- 	} else {
-@@ -673,6 +677,7 @@ slhc_remember(struct slcompress *comp, u
- 	if (cs->cs_tcp.doff > 5)
- 	  memcpy(cs->cs_tcpopt, icp + ihl*4 + sizeof(struct tcphdr), (cs->cs_tcp.doff - 5) * 4);
- 	cs->cs_hsize = ihl*2 + cs->cs_tcp.doff*2;
-+	cs->initialized = true;
- 	/* Put headers back on packet
- 	 * Neither header checksum is recalculated
- 	 */
---- a/include/net/slhc_vj.h
-+++ b/include/net/slhc_vj.h
-@@ -127,6 +127,7 @@ typedef __u32 int32;
-  */
- struct cstate {
- 	byte_t	cs_this;	/* connection id number (xmit) */
-+	bool	initialized;	/* true if initialized */
- 	struct cstate *next;	/* next in ring (xmit) */
- 	struct iphdr cs_ip;	/* ip/tcp hdr from most recent packet */
- 	struct tcphdr cs_tcp;
