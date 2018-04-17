@@ -1,4793 +1,789 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753091AbeDQRrS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 13:47:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752733AbeDQRrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 13:47:10 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D4902170D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 17 Apr 2018 14:47:01 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: perf probe line numbers + CONFIG_DEBUG_INFO_SPLIT=y
-Message-ID: <20180417174701.GD3625@kernel.org>
+        id S1752813AbeDQRsR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 13:48:17 -0400
+Received: from mail-qt0-f181.google.com ([209.85.216.181]:41252 "EHLO
+        mail-qt0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752144AbeDQRsP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 13:48:15 -0400
+X-Google-Smtp-Source: AIpwx49e9Ju4sfKFper1i1wIH5hLKxlYXvhhEIBT22w+I4+RgjK+YsRe4NIsZQDHql6YbPQzzs++xTjNtC4RC6FwyJM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Reply-To: mceier@gmail.com
+In-Reply-To: <017d65c5-748b-eeae-a020-fa4473f4507c@linux.intel.com>
+References: <CADDKRnAp1EKCAosD-kLNRaJ4qJppUtmmP1n76wzcvNUVa0fQzg@mail.gmail.com>
+ <20180417081458.GA2894@pd.tnic> <CADDKRnDmycResXxAsfYfM6sFoWffD_v_cMoR4XF7OxUps3mU+Q@mail.gmail.com>
+ <20180417142715.GL18640@pd.tnic> <CADDKRnBtQKz5S3EdJbrVH8PN9_qTrSQ3owcK=PfxToHdxpu8rA@mail.gmail.com>
+ <20180417153101.GB2894@pd.tnic> <1523980839.7093.1.camel@gmx.de> <017d65c5-748b-eeae-a020-fa4473f4507c@linux.intel.com>
+From: Mariusz Ceier <mceier@gmail.com>
+Date: Tue, 17 Apr 2018 19:48:13 +0200
+Message-ID: <CAJTyqKOWWaUO4CqwJ8eiqctphU8gWjXqNGxw9mgFDtpjRh+CpQ@mail.gmail.com>
+Subject: Re: 4.17.0-rc1 doesn't boot.
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Mike Galbraith <efault@gmx.de>, Borislav Petkov <bp@alien8.de>,
+        =?UTF-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Aaro Koskinen <aaro.koskinen@nokia.com>
+Content-Type: multipart/mixed; boundary="001a11415148550e6f056a0ef1f0"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+--001a11415148550e6f056a0ef1f0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-	I just tried building the kernel using:
+On 17 April 2018 at 18:48, Dave Hansen <dave.hansen@linux.intel.com> wrote:
+> On 04/17/2018 09:00 AM, Mike Galbraith wrote:
+>> On Tue, 2018-04-17 at 17:31 +0200, Borislav Petkov wrote:
+>>> On Tue, Apr 17, 2018 at 05:21:30PM +0200, J=C3=B6rg Otte wrote:
+>>>> finished bisection.
+>>>> 39114b7a743e6759bab4d96b7d9651d44d17e3f9 is the first bad commit
+>>>> (x86/pti: Never implicitly clear _PAGE_GLOBAL for kernel image).
+>>>
+>>> Looks like you're not the only one:
+>>>
+>>> http://marc.info/?i=3D20180417150130.GA11166@ak-laptop.emea.nsn-net.net
+>>
+>> I'm hitting this too, but only with PREEMPT_RT.  I put a bandaid on it
+>> (tell pti_kernel_image_global_ok() to return true for PREEMPT_RT) while
+>> waiting to see if it was really really as non-rt as it appeared to be.
+>
+> It looks like pti_init() is too early for
+> change_page_attr()/set_memory_nonglobal() because they look for
+> irqs_off().  This *should* be OK in practice because we only need to
+> flush the boot CPU, not the others.  That's what ends up causing the
+> BUG_ON().
+>
+> But, there's apparently something else going on too because things don't
+> boot even with that BUG_ON() backed out.
+>
+> The good news is that its easy to reproduce.
 
-CONFIG_DEBUG_INFO=y
-# CONFIG_DEBUG_INFO_REDUCED is not set
-CONFIG_DEBUG_INFO_SPLIT=y
-# CONFIG_DEBUG_INFO_DWARF4 is not set
+I'm hitting the same bug on my PC. Git bisect points to the same
+commit (39114b7a743e6759bab4d96b7d9651d44d17e3f9).
+Afaik I don't use PREEMPT_RT, unless CONFIG_PREEMPT=3Dy is the same as PREE=
+MPT_RT.
+I'm attaching my .config. My CPU is i5 6600.
 
-	that info split looked interesting, and I thought that since we
-use elfutils we'd get that for free somehow, so I tried getname_flags
-and got the output at the end of this message, with these artifacts:
+Kernel seems to work in qemu when -enable-kvm and -cpu host are
+removed from the qemu-system-x86_64 command line from the other
+mailthread.
 
-1) the function signature doesn't appear at the start of the '-L
-getname_flags' output
 
-2) offsets are not calculated, just the line numbers in fs/namei.c (it
-matches the first line :130 with the first line number.
+PS. Resending mail as plain-text (hopefully, who knows what insane
+gmail does), sorry for the previous mail (please ignore it).
 
-And then if I try adding a probe at some places, say line 202, to
-collect the filename being brought from userspace to the kernel, it
-fails:
+--001a11415148550e6f056a0ef1f0
+Content-Type: application/gzip; name=".config.gz"
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_jg3yllf70
 
-[root@jouet perf]# perf probe "vfs_getname=getname_flags:202 pathname=result->name:string"
-Probe point 'getname_flags:202' not found.
-  Error: Failed to add events.
-[root@jouet perf]#
-
-If I just try putting the probe without renaming nor collecting vars, to
-have a simpler probe request:
-
-[root@jouet perf]# perf probe getname_flags:202 
-Probe point 'getname_flags:202' not found.
-  Error: Failed to add events.
-[root@jouet perf]# 
-
-Or even:
-
-[root@jouet perf]# perf probe getname_flags
-Failed to find scope of probe point.
-getname_flags is out of .text, skip it.
-  Error: Failed to add events.
-[root@jouet perf]# 
-
-[root@jouet perf]# grep getname_flags /proc/kallsyms 
-ffffffffb329a5a0 T getname_flags
-[root@jouet perf]#
-
-I'll try with CONFIG_DEBUG_INFO_SPLIT not set, but have you ever got
-such a report?
-
-- Arnaldo
-
-# perf probe -L getname_flags
-</home/acme/git/linux/fs/namei.c:130>
-    130  {
-         	struct filename *result;
-         	char *kname;
-         	int len;
-         	BUILD_BUG_ON(offsetof(struct filename, iname) % sizeof(long) != 0);
-         
-         	result = audit_reusename(filename);
-    137  	if (result)
-         		return result;
-         
-    140  	result = __getname();
-    141  	if (unlikely(!result))
-    142  		return ERR_PTR(-ENOMEM);
-         
-         	/*
-         	 * First, try to embed the struct filename inside the names_cache
-         	 * allocation
-         	 */
-    148  	kname = (char *)result->iname;
-    149  	result->name = kname;
-         
-    151  	len = strncpy_from_user(kname, filename, EMBEDDED_NAME_MAX);
-    152  	if (unlikely(len < 0)) {
-    153  		__putname(result);
-    154  		return ERR_PTR(len);
-         	}
-         
-         	/*
-         	 * Uh-oh. We have a name that's approaching PATH_MAX. Allocate a
-         	 * separate struct filename so we can dedicate the entire
-         	 * names_cache allocation for the pathname, and re-do the copy from
-         	 * userland.
-         	 */
-    163  	if (unlikely(len == EMBEDDED_NAME_MAX)) {
-         		const size_t size = offsetof(struct filename, iname[1]);
-         		kname = (char *)result;
-         
-         		/*
-         		 * size is chosen that way we to guarantee that
-         		 * result->iname[0] is within the same object and that
-         		 * kname can't be equal to result->iname, no matter what.
-         		 */
-         		result = kzalloc(size, GFP_KERNEL);
-    173  		if (unlikely(!result)) {
-    174  			__putname(kname);
-    175  			return ERR_PTR(-ENOMEM);
-         		}
-    177  		result->name = kname;
-    178  		len = strncpy_from_user(kname, filename, PATH_MAX);
-    179  		if (unlikely(len < 0)) {
-    180  			__putname(kname);
-    181  			kfree(result);
-    182  			return ERR_PTR(len);
-         		}
-    184  		if (unlikely(len == PATH_MAX)) {
-    185  			__putname(kname);
-    186  			kfree(result);
-    187  			return ERR_PTR(-ENAMETOOLONG);
-         		}
-         	}
-         
-    191  	result->refcnt = 1;
-         	/* The empty path is special. */
-    193  	if (unlikely(!len)) {
-    194  		if (empty)
-    195  			*empty = 1;
-    196  		if (!(flags & LOOKUP_EMPTY)) {
-    197  			putname(result);
-    198  			return ERR_PTR(-ENOENT);
-         		}
-         	}
-         
-    202  	result->uptr = filename;
-    203  	result->aname = NULL;
-         	audit_getname(result);
-         	return result;
-    206  }
-         
-         struct filename *
-         getname(const char __user * filename)
-    210  {
-    211  	return getname_flags(filename, 0, NULL);
-         }
-         
-         struct filename *
-         getname_kernel(const char * filename)
-    216  {
-         	struct filename *result;
-    218  	int len = strlen(filename) + 1;
-         
-    220  	result = __getname();
-    221  	if (unlikely(!result))
-    222  		return ERR_PTR(-ENOMEM);
-         
-    224  	if (len <= EMBEDDED_NAME_MAX) {
-    225  		result->name = (char *)result->iname;
-    226  	} else if (len <= PATH_MAX) {
-         		const size_t size = offsetof(struct filename, iname[1]);
-         		struct filename *tmp;
-         
-         		tmp = kmalloc(size, GFP_KERNEL);
-    231  		if (unlikely(!tmp)) {
-    232  			__putname(result);
-    233  			return ERR_PTR(-ENOMEM);
-         		}
-    235  		tmp->name = (char *)result;
-         		result = tmp;
-         	} else {
-    238  		__putname(result);
-    239  		return ERR_PTR(-ENAMETOOLONG);
-         	}
-    241  	memcpy((char *)result->name, filename, len);
-    242  	result->uptr = NULL;
-    243  	result->aname = NULL;
-    244  	result->refcnt = 1;
-         	audit_getname(result);
-         
-         	return result;
-    248  }
-         
-         void putname(struct filename *name)
-    251  {
-    252  	BUG_ON(name->refcnt <= 0);
-         
-    254  	if (--name->refcnt > 0)
-         		return;
-         
-    257  	if (name->name != name->iname) {
-    258  		__putname(name->name);
-    259  		kfree(name);
-         	} else
-    261  		__putname(name);
-    262  }
-         
-         static int check_acl(struct inode *inode, int mask)
-         {
-         #ifdef CONFIG_FS_POSIX_ACL
-         	struct posix_acl *acl;
-         
-    269  	if (mask & MAY_NOT_BLOCK) {
-    270  		acl = get_cached_acl_rcu(inode, ACL_TYPE_ACCESS);
-    271  	        if (!acl)
-         	                return -EAGAIN;
-         		/* no ->get_acl() calls in RCU mode... */
-    274  		if (is_uncached_acl(acl))
-    275  			return -ECHILD;
-    276  	        return posix_acl_permission(inode, acl, mask & ~MAY_NOT_BLOCK);
-         	}
-         
-    279  	acl = get_acl(inode, ACL_TYPE_ACCESS);
-    280  	if (IS_ERR(acl))
-         		return PTR_ERR(acl);
-    282  	if (acl) {
-    283  	        int error = posix_acl_permission(inode, acl, mask);
-         	        posix_acl_release(acl);
-         	        return error;
-         	}
-         #endif
-         
-         	return -EAGAIN;
-         }
-         
-         /*
-          * This does the basic permission checking
-          */
-         static int acl_permission_check(struct inode *inode, int mask)
-         {
-    297  	unsigned int mode = inode->i_mode;
-         
-    299  	if (likely(uid_eq(current_fsuid(), inode->i_uid)))
-    300  		mode >>= 6;
-         	else {
-    302  		if (IS_POSIXACL(inode) && (mode & S_IRWXG)) {
-         			int error = check_acl(inode, mask);
-    304  			if (error != -EAGAIN)
-         				return error;
-         		}
-         
-    308  		if (in_group_p(inode->i_gid))
-    309  			mode >>= 3;
-         	}
-         
-         	/*
-         	 * If the DACs are ok we don't need any capability check.
-         	 */
-    315  	if ((mask & ~mode & (MAY_READ | MAY_WRITE | MAY_EXEC)) == 0)
-    316  		return 0;
-         	return -EACCES;
-         }
-         
-         /**
-          * generic_permission -  check for access rights on a Posix-like filesystem
-          * @inode:	inode to check access rights for
-          * @mask:	right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC, ...)
-          *
-          * Used to check for read/write/execute permissions on a file.
-          * We use "fsuid" for this, letting us set arbitrary permissions
-          * for filesystem access without changing the "normal" uids which
-          * are used for other things.
-          *
-          * generic_permission is rcu-walk aware. It returns -ECHILD in case an rcu-walk
-          * request cannot be satisfied (eg. requires blocking or too much complexity).
-          * It would then be called again in ref-walk mode.
-          */
-         int generic_permission(struct inode *inode, int mask)
-    335  {
-         	int ret;
-         
-         	/*
-         	 * Do the basic permission checks.
-         	 */
-         	ret = acl_permission_check(inode, mask);
-    342  	if (ret != -EACCES)
-         		return ret;
-         
-    345  	if (S_ISDIR(inode->i_mode)) {
-         		/* DACs are overridable for directories */
-    347  		if (!(mask & MAY_WRITE))
-    348  			if (capable_wrt_inode_uidgid(inode,
-         						     CAP_DAC_READ_SEARCH))
-         				return 0;
-         		if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
-         			return 0;
-    353  		return -EACCES;
-         	}
-         
-         	/*
-         	 * Searching includes executable on directories, else just read.
-         	 */
-    359  	mask &= MAY_READ | MAY_WRITE | MAY_EXEC;
-    360  	if (mask == MAY_READ)
-    361  		if (capable_wrt_inode_uidgid(inode, CAP_DAC_READ_SEARCH))
-         			return 0;
-         	/*
-         	 * Read/write DACs are always overridable.
-         	 * Executable DACs are overridable when there is
-         	 * at least one exec bit set.
-         	 */
-    368  	if (!(mask & MAY_EXEC) || (inode->i_mode & S_IXUGO))
-    369  		if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
-         			return 0;
-         
-         	return -EACCES;
-    373  }
-         EXPORT_SYMBOL(generic_permission);
-         
-         /*
-          * We _really_ want to just do "generic_permission()" without
-          * even looking at the inode->i_op values. So we keep a cache
-          * flag in inode->i_opflags, that says "this has not special
-          * permission function, use the fast case".
-          */
-         static inline int do_inode_permission(struct inode *inode, int mask)
-         {
-    384  	if (unlikely(!(inode->i_opflags & IOP_FASTPERM))) {
-    385  		if (likely(inode->i_op->permission))
-    386  			return inode->i_op->permission(inode, mask);
-         
-         		/* This gets set once for the inode lifetime */
-         		spin_lock(&inode->i_lock);
-    390  		inode->i_opflags |= IOP_FASTPERM;
-         		spin_unlock(&inode->i_lock);
-         	}
-    393  	return generic_permission(inode, mask);
-         }
-         
-         /**
-          * sb_permission - Check superblock-level permissions
-          * @sb: Superblock of inode to check permission on
-          * @inode: Inode to check permission on
-          * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
-          *
-          * Separate out file-system wide checks from inode-specific permission checks.
-          */
-         static int sb_permission(struct super_block *sb, struct inode *inode, int mask)
-         {
-    406  	if (unlikely(mask & MAY_WRITE)) {
-    407  		umode_t mode = inode->i_mode;
-         
-         		/* Nobody gets write access to a read-only fs. */
-    410  		if (sb_rdonly(sb) && (S_ISREG(mode) || S_ISDIR(mode) || S_ISLNK(mode)))
-         			return -EROFS;
-         	}
-         	return 0;
-         }
-         
-         /**
-          * inode_permission - Check for access rights to a given inode
-          * @inode: Inode to check permission on
-          * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
-          *
-          * Check for read/write/execute permissions on an inode.  We use fs[ug]id for
-          * this, letting us set arbitrary permissions for filesystem access without
-          * changing the "normal" UIDs which are used for other things.
-          *
-          * When checking for MAY_APPEND, MAY_WRITE must also be set in @mask.
-          */
-         int inode_permission(struct inode *inode, int mask)
-    428  {
-         	int retval;
-         
-         	retval = sb_permission(inode->i_sb, inode, mask);
-         	if (retval)
-         		return retval;
-         
-         	if (unlikely(mask & MAY_WRITE)) {
-         		/*
-         		 * Nobody gets write access to an immutable file.
-         		 */
-    439  		if (IS_IMMUTABLE(inode))
-    440  			return -EPERM;
-         
-         		/*
-         		 * Updating mtime will likely cause i_uid and i_gid to be
-         		 * written back improperly if their true value is unknown
-         		 * to the vfs.
-         		 */
-         		if (HAS_UNMAPPED_ID(inode))
-    448  			return -EACCES;
-         	}
-         
-         	retval = do_inode_permission(inode, mask);
-    452  	if (retval)
-         		return retval;
-         
-    455  	retval = devcgroup_inode_permission(inode, mask);
-    456  	if (retval)
-         		return retval;
-         
-    459  	return security_inode_permission(inode, mask);
-    460  }
-         EXPORT_SYMBOL(inode_permission);
-         
-         /**
-          * path_get - get a reference to a path
-          * @path: path to get the reference to
-          *
-          * Given a path increment the reference count to the dentry and the vfsmount.
-          */
-         void path_get(const struct path *path)
-    470  {
-    471  	mntget(path->mnt);
-    472  	dget(path->dentry);
-    473  }
-         EXPORT_SYMBOL(path_get);
-         
-         /**
-          * path_put - put a reference to a path
-          * @path: path to put the reference to
-          *
-          * Given a path decrement the reference count to the dentry and the vfsmount.
-          */
-         void path_put(const struct path *path)
-    483  {
-    484  	dput(path->dentry);
-    485  	mntput(path->mnt);
-    486  }
-         EXPORT_SYMBOL(path_put);
-         
-         #define EMBEDDED_LEVELS 2
-         struct nameidata {
-         	struct path	path;
-         	struct qstr	last;
-         	struct path	root;
-         	struct inode	*inode; /* path.dentry.d_inode */
-         	unsigned int	flags;
-         	unsigned	seq, m_seq;
-         	int		last_type;
-         	unsigned	depth;
-         	int		total_link_count;
-         	struct saved {
-         		struct path link;
-         		struct delayed_call done;
-         		const char *name;
-         		unsigned seq;
-         	} *stack, internal[EMBEDDED_LEVELS];
-         	struct filename	*name;
-         	struct nameidata *saved;
-         	struct inode	*link_inode;
-         	unsigned	root_seq;
-         	int		dfd;
-         } __randomize_layout;
-         
-         static void set_nameidata(struct nameidata *p, int dfd, struct filename *name)
-         {
-    515  	struct nameidata *old = current->nameidata;
-    516  	p->stack = p->internal;
-    517  	p->dfd = dfd;
-    518  	p->name = name;
-    519  	p->total_link_count = old ? old->total_link_count : 0;
-    520  	p->saved = old;
-    521  	current->nameidata = p;
-         }
-         
-         static void restore_nameidata(void)
-    525  {
-    526  	struct nameidata *now = current->nameidata, *old = now->saved;
-         
-    528  	current->nameidata = old;
-    529  	if (old)
-    530  		old->total_link_count = now->total_link_count;
-    531  	if (now->stack != now->internal)
-    532  		kfree(now->stack);
-    533  }
-         
-         static int __nd_alloc_stack(struct nameidata *nd)
-    536  {
-         	struct saved *p;
-         
-    539  	if (nd->flags & LOOKUP_RCU) {
-         		p= kmalloc(MAXSYMLINKS * sizeof(struct saved),
-         				  GFP_ATOMIC);
-    542  		if (unlikely(!p))
-    543  			return -ECHILD;
-         	} else {
-         		p= kmalloc(MAXSYMLINKS * sizeof(struct saved),
-         				  GFP_KERNEL);
-    547  		if (unlikely(!p))
-    548  			return -ENOMEM;
-         	}
-    550  	memcpy(p, nd->internal, sizeof(nd->internal));
-    551  	nd->stack = p;
-    552  	return 0;
-    553  }
-         
-         /**
-          * path_connected - Verify that a path->dentry is below path->mnt.mnt_root
-          * @path: nameidate to verify
-          *
-          * Rename can sometimes move a file or directory outside of a bind
-          * mount, path_connected allows those cases to be detected.
-          */
-         static bool path_connected(const struct path *path)
-    563  {
-    564  	struct vfsmount *mnt = path->mnt;
-    565  	struct super_block *sb = mnt->mnt_sb;
-         
-         	/* Bind mounts and multi-root filesystems can have disconnected paths */
-    568  	if (!(sb->s_iflags & SB_I_MULTIROOT) && (mnt->mnt_root == sb->s_root))
-         		return true;
-         
-    571  	return is_subdir(path->dentry, mnt->mnt_root);
-    572  }
-         
-         static inline int nd_alloc_stack(struct nameidata *nd)
-         {
-    576  	if (likely(nd->depth != EMBEDDED_LEVELS))
-         		return 0;
-    578  	if (likely(nd->stack != nd->internal))
-         		return 0;
-    580  	return __nd_alloc_stack(nd);
-         }
-         
-         static void drop_links(struct nameidata *nd)
-         {
-    585  	int i = nd->depth;
-    586  	while (i--) {
-    587  		struct saved *last = nd->stack + i;
-         		do_delayed_call(&last->done);
-         		clear_delayed_call(&last->done);
-         	}
-         }
-         
-         static void terminate_walk(struct nameidata *nd)
-    594  {
-         	drop_links(nd);
-    596  	if (!(nd->flags & LOOKUP_RCU)) {
-         		int i;
-         		path_put(&nd->path);
-    599  		for (i = 0; i < nd->depth; i++)
-    600  			path_put(&nd->stack[i].link);
-    601  		if (nd->root.mnt && !(nd->flags & LOOKUP_ROOT)) {
-         			path_put(&nd->root);
-    603  			nd->root.mnt = NULL;
-         		}
-         	} else {
-    606  		nd->flags &= ~LOOKUP_RCU;
-    607  		if (!(nd->flags & LOOKUP_ROOT))
-    608  			nd->root.mnt = NULL;
-         		rcu_read_unlock();
-         	}
-    611  	nd->depth = 0;
-    612  }
-         
-         /* path_put is needed afterwards regardless of success or failure */
-    615  static bool legitimize_path(struct nameidata *nd,
-         			    struct path *path, unsigned seq)
-         {
-    618  	int res = __legitimize_mnt(path->mnt, nd->m_seq);
-    619  	if (unlikely(res)) {
-    620  		if (res > 0)
-    621  			path->mnt = NULL;
-    622  		path->dentry = NULL;
-    623  		return false;
-         	}
-    625  	if (unlikely(!lockref_get_not_dead(&path->dentry->d_lockref))) {
-         		path->dentry = NULL;
-         		return false;
-         	}
-    629  	return !read_seqcount_retry(&path->dentry->d_seq, seq);
-    630  }
-         
-         static bool legitimize_links(struct nameidata *nd)
-    633  {
-         	int i;
-    635  	for (i = 0; i < nd->depth; i++) {
-    636  		struct saved *last = nd->stack + i;
-    637  		if (unlikely(!legitimize_path(nd, &last->link, last->seq))) {
-         			drop_links(nd);
-    639  			nd->depth = i + 1;
-    640  			return false;
-         		}
-         	}
-    643  	return true;
-    644  }
-         
-         /*
-          * Path walking has 2 modes, rcu-walk and ref-walk (see
-          * Documentation/filesystems/path-lookup.txt).  In situations when we can't
-          * continue in RCU mode, we attempt to drop out of rcu-walk mode and grab
-          * normal reference counts on dentries and vfsmounts to transition to ref-walk
-          * mode.  Refcounts are grabbed at the last known good point before rcu-walk
-          * got stuck, so ref-walk may continue from there. If this is not successful
-          * (eg. a seqcount has changed), then failure is returned and it's up to caller
-          * to restart the path walk from the beginning in ref-walk mode.
-          */
-         
-         /**
-          * unlazy_walk - try to switch to ref-walk mode.
-          * @nd: nameidata pathwalk data
-          * Returns: 0 on success, -ECHILD on failure
-          *
-          * unlazy_walk attempts to legitimize the current nd->path and nd->root
-          * for ref-walk mode.
-          * Must be called from rcu-walk context.
-          * Nothing should touch nameidata between unlazy_walk() failure and
-          * terminate_walk().
-          */
-         static int unlazy_walk(struct nameidata *nd)
-    669  {
-    670  	struct dentry *parent = nd->path.dentry;
-         
-    672  	BUG_ON(!(nd->flags & LOOKUP_RCU));
-         
-    674  	nd->flags &= ~LOOKUP_RCU;
-    675  	if (unlikely(!legitimize_links(nd)))
-         		goto out2;
-    677  	if (unlikely(!legitimize_path(nd, &nd->path, nd->seq)))
-         		goto out1;
-    679  	if (nd->root.mnt && !(nd->flags & LOOKUP_ROOT)) {
-    680  		if (unlikely(!legitimize_path(nd, &nd->root, nd->root_seq)))
-         			goto out;
-         	}
-         	rcu_read_unlock();
-    684  	BUG_ON(nd->inode != parent->d_inode);
-    685  	return 0;
-         
-         out2:
-    688  	nd->path.mnt = NULL;
-    689  	nd->path.dentry = NULL;
-         out1:
-    691  	if (!(nd->flags & LOOKUP_ROOT))
-    692  		nd->root.mnt = NULL;
-         out:
-         	rcu_read_unlock();
-    695  	return -ECHILD;
-    696  }
-         
-         /**
-          * unlazy_child - try to switch to ref-walk mode.
-          * @nd: nameidata pathwalk data
-          * @dentry: child of nd->path.dentry
-          * @seq: seq number to check dentry against
-          * Returns: 0 on success, -ECHILD on failure
-          *
-          * unlazy_child attempts to legitimize the current nd->path, nd->root and dentry
-          * for ref-walk mode.  @dentry must be a path found by a do_lookup call on
-          * @nd.  Must be called from rcu-walk context.
-          * Nothing should touch nameidata between unlazy_child() failure and
-          * terminate_walk().
-          */
-         static int unlazy_child(struct nameidata *nd, struct dentry *dentry, unsigned seq)
-         {
-    713  	BUG_ON(!(nd->flags & LOOKUP_RCU));
-         
-    715  	nd->flags &= ~LOOKUP_RCU;
-    716  	if (unlikely(!legitimize_links(nd)))
-         		goto out2;
-    718  	if (unlikely(!legitimize_mnt(nd->path.mnt, nd->m_seq)))
-         		goto out2;
-    720  	if (unlikely(!lockref_get_not_dead(&nd->path.dentry->d_lockref)))
-         		goto out1;
-         
-         	/*
-         	 * We need to move both the parent and the dentry from the RCU domain
-         	 * to be properly refcounted. And the sequence number in the dentry
-         	 * validates *both* dentry counters, since we checked the sequence
-         	 * number of the parent after we got the child sequence number. So we
-         	 * know the parent must still be valid if the child sequence number is
-         	 */
-    730  	if (unlikely(!lockref_get_not_dead(&dentry->d_lockref)))
-         		goto out;
-    732  	if (unlikely(read_seqcount_retry(&dentry->d_seq, seq))) {
-         		rcu_read_unlock();
-    734  		dput(dentry);
-         		goto drop_root_mnt;
-         	}
-         	/*
-         	 * Sequence counts matched. Now make sure that the root is
-         	 * still valid and get it if required.
-         	 */
-    741  	if (nd->root.mnt && !(nd->flags & LOOKUP_ROOT)) {
-    742  		if (unlikely(!legitimize_path(nd, &nd->root, nd->root_seq))) {
-         			rcu_read_unlock();
-    744  			dput(dentry);
-         			return -ECHILD;
-         		}
-         	}
-         
-         	rcu_read_unlock();
-         	return 0;
-         
-         out2:
-    753  	nd->path.mnt = NULL;
-         out1:
-    755  	nd->path.dentry = NULL;
-         out:
-         	rcu_read_unlock();
-         drop_root_mnt:
-    759  	if (!(nd->flags & LOOKUP_ROOT))
-    760  		nd->root.mnt = NULL;
-         	return -ECHILD;
-         }
-         
-         static inline int d_revalidate(struct dentry *dentry, unsigned int flags)
-         {
-    766  	if (unlikely(dentry->d_flags & DCACHE_OP_REVALIDATE))
-    767  		return dentry->d_op->d_revalidate(dentry, flags);
-         	else
-    769  		return 1;
-         }
-         
-         /**
-          * complete_walk - successful completion of path walk
-          * @nd:  pointer nameidata
-          *
-          * If we had been in RCU mode, drop out of it and legitimize nd->path.
-          * Revalidate the final result, unless we'd already done that during
-          * the path walk or the filesystem doesn't ask for it.  Return 0 on
-          * success, -error on failure.  In case of failure caller does not
-          * need to drop nd->path.
-          */
-         static int complete_walk(struct nameidata *nd)
-    783  {
-    784  	struct dentry *dentry = nd->path.dentry;
-         	int status;
-         
-    787  	if (nd->flags & LOOKUP_RCU) {
-    788  		if (!(nd->flags & LOOKUP_ROOT))
-    789  			nd->root.mnt = NULL;
-    790  		if (unlikely(unlazy_walk(nd)))
-    791  			return -ECHILD;
-         	}
-         
-    794  	if (likely(!(nd->flags & LOOKUP_JUMPED)))
-    795  		return 0;
-         
-    797  	if (likely(!(dentry->d_flags & DCACHE_OP_WEAK_REVALIDATE)))
-         		return 0;
-         
-    800  	status = dentry->d_op->d_weak_revalidate(dentry, nd->flags);
-    801  	if (status > 0)
-         		return 0;
-         
-         	if (!status)
-    805  		status = -ESTALE;
-         
-         	return status;
-    808  }
-         
-         static void set_root(struct nameidata *nd)
-    811  {
-    812  	struct fs_struct *fs = current->fs;
-         
-    814  	if (nd->flags & LOOKUP_RCU) {
-         		unsigned seq;
-         
-         		do {
-         			seq = read_seqcount_begin(&fs->seq);
-    819  			nd->root = fs->root;
-    820  			nd->root_seq = __read_seqcount_begin(&nd->root.dentry->d_seq);
-    821  		} while (read_seqcount_retry(&fs->seq, seq));
-         	} else {
-    823  		get_fs_root(fs, &nd->root);
-         	}
-    825  }
-         
-         static void path_put_conditional(struct path *path, struct nameidata *nd)
-         {
-    829  	dput(path->dentry);
-    830  	if (path->mnt != nd->path.mnt)
-    831  		mntput(path->mnt);
-         }
-         
-         static inline void path_to_nameidata(const struct path *path,
-         					struct nameidata *nd)
-         {
-    837  	if (!(nd->flags & LOOKUP_RCU)) {
-    838  		dput(nd->path.dentry);
-    839  		if (nd->path.mnt != path->mnt)
-    840  			mntput(nd->path.mnt);
-         	}
-    842  	nd->path.mnt = path->mnt;
-    843  	nd->path.dentry = path->dentry;
-         }
-         
-         static int nd_jump_root(struct nameidata *nd)
-    847  {
-    848  	if (nd->flags & LOOKUP_RCU) {
-         		struct dentry *d;
-    850  		nd->path = nd->root;
-    851  		d = nd->path.dentry;
-    852  		nd->inode = d->d_inode;
-    853  		nd->seq = nd->root_seq;
-    854  		if (unlikely(read_seqcount_retry(&d->d_seq, nd->seq)))
-    855  			return -ECHILD;
-         	} else {
-         		path_put(&nd->path);
-    858  		nd->path = nd->root;
-    859  		path_get(&nd->path);
-    860  		nd->inode = nd->path.dentry->d_inode;
-         	}
-    862  	nd->flags |= LOOKUP_JUMPED;
-    863  	return 0;
-    864  }
-         
-         /*
-          * Helper to directly jump to a known parsed path from ->get_link,
-          * caller must have taken a reference to path beforehand.
-          */
-         void nd_jump_link(struct path *path)
-    871  {
-    872  	struct nameidata *nd = current->nameidata;
-         	path_put(&nd->path);
-         
-    875  	nd->path = *path;
-    876  	nd->inode = nd->path.dentry->d_inode;
-    877  	nd->flags |= LOOKUP_JUMPED;
-    878  }
-         
-         static inline void put_link(struct nameidata *nd)
-         {
-    882  	struct saved *last = nd->stack + --nd->depth;
-         	do_delayed_call(&last->done);
-    884  	if (!(nd->flags & LOOKUP_RCU))
-         		path_put(&last->link);
-         }
-         
-         int sysctl_protected_symlinks __read_mostly = 0;
-         int sysctl_protected_hardlinks __read_mostly = 0;
-         
-         /**
-          * may_follow_link - Check symlink following for unsafe situations
-          * @nd: nameidata pathwalk data
-          *
-          * In the case of the sysctl_protected_symlinks sysctl being enabled,
-          * CAP_DAC_OVERRIDE needs to be specifically ignored if the symlink is
-          * in a sticky world-writable directory. This is to protect privileged
-          * processes from failing races against path names that may change out
-          * from under them by way of other users creating malicious symlinks.
-          * It will permit symlinks to be followed only when outside a sticky
-          * world-writable directory, or when the uid of the symlink and follower
-          * match, or when the directory owner matches the symlink's owner.
-          *
-          * Returns 0 if following the symlink is allowed, -ve on error.
-          */
-         static inline int may_follow_link(struct nameidata *nd)
-         {
-         	const struct inode *inode;
-         	const struct inode *parent;
-         	kuid_t puid;
-         
-    912  	if (!sysctl_protected_symlinks)
-         		return 0;
-         
-         	/* Allowed if owner and follower match. */
-         	inode = nd->link_inode;
-    917  	if (uid_eq(current_cred()->fsuid, inode->i_uid))
-         		return 0;
-         
-         	/* Allowed if parent directory not sticky and world-writable. */
-    921  	parent = nd->inode;
-    922  	if ((parent->i_mode & (S_ISVTX|S_IWOTH)) != (S_ISVTX|S_IWOTH))
-         		return 0;
-         
-         	/* Allowed if parent directory and link owner match. */
-    926  	puid = parent->i_uid;
-    927  	if (uid_valid(puid) && uid_eq(puid, inode->i_uid))
-         		return 0;
-         
-    930  	if (nd->flags & LOOKUP_RCU)
-         		return -ECHILD;
-         
-    933  	audit_inode(nd->name, nd->stack[0].link.dentry, 0);
-    934  	audit_log_link_denied("follow_link");
-         	return -EACCES;
-         }
-         
-         /**
-          * safe_hardlink_source - Check for safe hardlink conditions
-          * @inode: the source inode to hardlink from
-          *
-          * Return false if at least one of the following conditions:
-          *    - inode is not a regular file
-          *    - inode is setuid
-          *    - inode is setgid and group-exec
-          *    - access failure for read and write
-          *
-          * Otherwise returns true.
-          */
-         static bool safe_hardlink_source(struct inode *inode)
-         {
-    952  	umode_t mode = inode->i_mode;
-         
-         	/* Special files should not get pinned to the filesystem. */
-    955  	if (!S_ISREG(mode))
-         		return false;
-         
-         	/* Setuid files should not get pinned to the filesystem. */
-    959  	if (mode & S_ISUID)
-         		return false;
-         
-         	/* Executable setgid files should not get pinned to the filesystem. */
-    963  	if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP))
-         		return false;
-         
-         	/* Hardlinking to unreadable or unwritable sources is dangerous. */
-    967  	if (inode_permission(inode, MAY_READ | MAY_WRITE))
-         		return false;
-         
-         	return true;
-         }
-         
-         /**
-          * may_linkat - Check permissions for creating a hardlink
-          * @link: the source to hardlink from
-          *
-          * Block hardlink when all of:
-          *  - sysctl_protected_hardlinks enabled
-          *  - fsuid does not match inode
-          *  - hardlink source is unsafe (see safe_hardlink_source() above)
-          *  - not CAP_FOWNER in a namespace with the inode owner uid mapped
-          *
-          * Returns 0 if successful, -ve on error.
-          */
-         static int may_linkat(struct path *link)
-         {
-         	struct inode *inode;
-         
-    989  	if (!sysctl_protected_hardlinks)
-         		return 0;
-         
-    992  	inode = link->dentry->d_inode;
-         
-         	/* Source inode owner (or CAP_FOWNER) can hardlink all they like,
-         	 * otherwise, it must be a safe source.
-         	 */
-    997  	if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
-         		return 0;
-         
-   1000  	audit_log_link_denied("linkat");
-   1001  	return -EPERM;
-         }
-         
-         static __always_inline
-         const char *get_link(struct nameidata *nd)
-         {
-   1007  	struct saved *last = nd->stack + nd->depth - 1;
-   1008  	struct dentry *dentry = last->link.dentry;
-   1009  	struct inode *inode = nd->link_inode;
-         	int error;
-         	const char *res;
-         
-   1013  	if (!(nd->flags & LOOKUP_RCU)) {
-   1014  		touch_atime(&last->link);
-   1015  		cond_resched();
-   1016  	} else if (atime_needs_update_rcu(&last->link, inode)) {
-   1017  		if (unlikely(unlazy_walk(nd)))
-   1018  			return ERR_PTR(-ECHILD);
-   1019  		touch_atime(&last->link);
-         	}
-         
-   1022  	error = security_inode_follow_link(dentry, inode,
-         					   nd->flags & LOOKUP_RCU);
-   1024  	if (unlikely(error))
-   1025  		return ERR_PTR(error);
-         
-   1027  	nd->last_type = LAST_BIND;
-   1028  	res = inode->i_link;
-   1029  	if (!res) {
-         		const char * (*get)(struct dentry *, struct inode *,
-         				struct delayed_call *);
-   1032  		get = inode->i_op->get_link;
-   1033  		if (nd->flags & LOOKUP_RCU) {
-   1034  			res = get(NULL, inode, &last->done);
-   1035  			if (res == ERR_PTR(-ECHILD)) {
-   1036  				if (unlikely(unlazy_walk(nd)))
-         					return ERR_PTR(-ECHILD);
-   1038  				res = get(dentry, inode, &last->done);
-         			}
-         		} else {
-   1041  			res = get(dentry, inode, &last->done);
-         		}
-         		if (IS_ERR_OR_NULL(res))
-         			return res;
-         	}
-   1046  	if (*res == '/') {
-   1047  		if (!nd->root.mnt)
-   1048  			set_root(nd);
-   1049  		if (unlikely(nd_jump_root(nd)))
-         			return ERR_PTR(-ECHILD);
-   1051  		while (unlikely(*++res == '/'))
-         			;
-         	}
-   1054  	if (!*res)
-         		res = NULL;
-         	return res;
-         }
-         
-         /*
-          * follow_up - Find the mountpoint of path's vfsmount
-          *
-          * Given a path, find the mountpoint of its source file system.
-          * Replace @path with the path of the mountpoint in the parent mount.
-          * Up is towards /.
-          *
-          * Return 1 if we went up a level and 0 if we were already at the
-          * root.
-          */
-         int follow_up(struct path *path)
-   1070  {
-   1071  	struct mount *mnt = real_mount(path->mnt);
-         	struct mount *parent;
-         	struct dentry *mountpoint;
-         
-         	read_seqlock_excl(&mount_lock);
-   1076  	parent = mnt->mnt_parent;
-   1077  	if (parent == mnt) {
-         		read_sequnlock_excl(&mount_lock);
-   1079  		return 0;
-         	}
-   1081  	mntget(&parent->mnt);
-   1082  	mountpoint = dget(mnt->mnt_mountpoint);
-         	read_sequnlock_excl(&mount_lock);
-   1084  	dput(path->dentry);
-   1085  	path->dentry = mountpoint;
-   1086  	mntput(path->mnt);
-   1087  	path->mnt = &parent->mnt;
-   1088  	return 1;
-   1089  }
-         EXPORT_SYMBOL(follow_up);
-         
-         /*
-          * Perform an automount
-          * - return -EISDIR to tell follow_managed() to stop and return the path we
-          *   were called with.
-          */
-         static int follow_automount(struct path *path, struct nameidata *nd,
-         			    bool *need_mntput)
-         {
-         	struct vfsmount *mnt;
-         	int err;
-         
-   1103  	if (!path->dentry->d_op || !path->dentry->d_op->d_automount)
-         		return -EREMOTE;
-         
-         	/* We don't want to mount if someone's just doing a stat -
-         	 * unless they're stat'ing a directory and appended a '/' to
-         	 * the name.
-         	 *
-         	 * We do, however, want to mount if someone wants to open or
-         	 * create a file of any type under the mountpoint, wants to
-         	 * traverse through the mountpoint or wants to open the
-         	 * mounted directory.  Also, autofs may mark negative dentries
-         	 * as being automount points.  These will need the attentions
-         	 * of the daemon to instantiate them before they can be used.
-         	 */
-   1117  	if (!(nd->flags & (LOOKUP_PARENT | LOOKUP_DIRECTORY |
-   1118  			   LOOKUP_OPEN | LOOKUP_CREATE | LOOKUP_AUTOMOUNT)) &&
-         	    path->dentry->d_inode)
-   1120  		return -EISDIR;
-         
-   1122  	nd->total_link_count++;
-   1123  	if (nd->total_link_count >= 40)
-   1124  		return -ELOOP;
-         
-   1126  	mnt = path->dentry->d_op->d_automount(path);
-   1127  	if (IS_ERR(mnt)) {
-         		/*
-         		 * The filesystem is allowed to return -EISDIR here to indicate
-         		 * it doesn't want to automount.  For instance, autofs would do
-         		 * this so that its userspace daemon can mount on this dentry.
-         		 *
-         		 * However, we can only permit this if it's a terminal point in
-         		 * the path being looked up; if it wasn't then the remainder of
-         		 * the path is inaccessible and we should say so.
-         		 */
-   1137  		if (PTR_ERR(mnt) == -EISDIR && (nd->flags & LOOKUP_PARENT))
-   1138  			return -EREMOTE;
-   1139  		return PTR_ERR(mnt);
-         	}
-         
-   1142  	if (!mnt) /* mount collision */
-   1143  		return 0;
-         
-   1145  	if (!*need_mntput) {
-         		/* lock_mount() may release path->mnt on error */
-   1147  		mntget(path->mnt);
-         		*need_mntput = true;
-         	}
-   1150  	err = finish_automount(mnt, path);
-         
-   1152  	switch (err) {
-         	case -EBUSY:
-         		/* Someone else made a mount here whilst we were busy */
-   1155  		return 0;
-         	case 0:
-         		path_put(path);
-   1158  		path->mnt = mnt;
-   1159  		path->dentry = dget(mnt->mnt_root);
-         		return 0;
-         	default:
-         		return err;
-         	}
-         
-         }
-         
-         /*
-          * Handle a dentry that is managed in some way.
-          * - Flagged for transit management (autofs)
-          * - Flagged as mountpoint
-          * - Flagged as automount point
-          *
-          * This may only be called in refwalk mode.
-          *
-          * Serialization is taken care of in namespace.c
-          */
-         static int follow_managed(struct path *path, struct nameidata *nd)
-   1178  {
-   1179  	struct vfsmount *mnt = path->mnt; /* held by caller, must be left alone */
-         	unsigned managed;
-   1181  	bool need_mntput = false;
-   1182  	int ret = 0;
-         
-         	/* Given that we're not holding a lock here, we retain the value in a
-         	 * local variable for each dentry as we look at it so that we don't see
-         	 * the components of that value change under us */
-   1187  	while (managed = READ_ONCE(path->dentry->d_flags),
-         	       managed &= DCACHE_MANAGED_DENTRY,
-         	       unlikely(managed != 0)) {
-         		/* Allow the filesystem to manage the transit without i_mutex
-         		 * being held. */
-   1192  		if (managed & DCACHE_MANAGE_TRANSIT) {
-   1193  			BUG_ON(!path->dentry->d_op);
-   1194  			BUG_ON(!path->dentry->d_op->d_manage);
-   1195  			ret = path->dentry->d_op->d_manage(path, false);
-   1196  			if (ret < 0)
-         				break;
-         		}
-         
-         		/* Transit to a mounted filesystem. */
-   1201  		if (managed & DCACHE_MOUNTED) {
-   1202  			struct vfsmount *mounted = lookup_mnt(path);
-   1203  			if (mounted) {
-   1204  				dput(path->dentry);
-   1205  				if (need_mntput)
-   1206  					mntput(path->mnt);
-   1207  				path->mnt = mounted;
-   1208  				path->dentry = dget(mounted->mnt_root);
-         				need_mntput = true;
-         				continue;
-         			}
-         
-         			/* Something is mounted on this dentry in another
-         			 * namespace and/or whatever was mounted there in this
-         			 * namespace got unmounted before lookup_mnt() could
-         			 * get it */
-         		}
-         
-         		/* Handle an automount point */
-   1220  		if (managed & DCACHE_NEED_AUTOMOUNT) {
-         			ret = follow_automount(path, nd, &need_mntput);
-   1222  			if (ret < 0)
-         				break;
-         			continue;
-         		}
-         
-         		/* We didn't change the current path point */
-         		break;
-         	}
-         
-   1231  	if (need_mntput && path->mnt == mnt)
-   1232  		mntput(path->mnt);
-   1233  	if (ret == -EISDIR || !ret)
-   1234  		ret = 1;
-         	if (need_mntput)
-   1236  		nd->flags |= LOOKUP_JUMPED;
-   1237  	if (unlikely(ret < 0))
-         		path_put_conditional(path, nd);
-         	return ret;
-   1240  }
-         
-         int follow_down_one(struct path *path)
-   1243  {
-         	struct vfsmount *mounted;
-         
-   1246  	mounted = lookup_mnt(path);
-   1247  	if (mounted) {
-   1248  		dput(path->dentry);
-   1249  		mntput(path->mnt);
-   1250  		path->mnt = mounted;
-   1251  		path->dentry = dget(mounted->mnt_root);
-   1252  		return 1;
-         	}
-         	return 0;
-   1255  }
-         EXPORT_SYMBOL(follow_down_one);
-         
-         static inline int managed_dentry_rcu(const struct path *path)
-         {
-   1260  	return (path->dentry->d_flags & DCACHE_MANAGE_TRANSIT) ?
-   1261  		path->dentry->d_op->d_manage(path, true) : 0;
-         }
-         
-         /*
-          * Try to skip to top of mountpoint pile in rcuwalk mode.  Fail if
-          * we meet a managed dentry that would need blocking.
-          */
-   1268  static bool __follow_mount_rcu(struct nameidata *nd, struct path *path,
-         			       struct inode **inode, unsigned *seqp)
-         {
-         	for (;;) {
-         		struct mount *mounted;
-         		/*
-         		 * Don't forget we might have a non-mountpoint managed dentry
-         		 * that wants to block transit.
-         		 */
-   1277  		switch (managed_dentry_rcu(path)) {
-         		case -ECHILD:
-         		default:
-         			return false;
-         		case -EISDIR:
-   1282  			return true;
-         		case 0:
-         			break;
-         		}
-         
-   1287  		if (!d_mountpoint(path->dentry))
-         			return !(path->dentry->d_flags & DCACHE_NEED_AUTOMOUNT);
-         
-   1290  		mounted = __lookup_mnt(path->mnt, path->dentry);
-   1291  		if (!mounted)
-         			break;
-   1293  		path->mnt = &mounted->mnt;
-   1294  		path->dentry = mounted->mnt.mnt_root;
-   1295  		nd->flags |= LOOKUP_JUMPED;
-   1296  		*seqp = read_seqcount_begin(&path->dentry->d_seq);
-         		/*
-         		 * Update the inode too. We don't need to re-check the
-         		 * dentry sequence number here after this d_inode read,
-         		 * because a mount-point is always pinned.
-         		 */
-   1302  		*inode = path->dentry->d_inode;
-         	}
-   1304  	return !read_seqretry(&mount_lock, nd->m_seq) &&
-   1305  		!(path->dentry->d_flags & DCACHE_NEED_AUTOMOUNT);
-   1306  }
-         
-         static int follow_dotdot_rcu(struct nameidata *nd)
-         {
-   1310  	struct inode *inode = nd->inode;
-         
-         	while (1) {
-         		if (path_equal(&nd->path, &nd->root))
-         			break;
-   1315  		if (nd->path.dentry != nd->path.mnt->mnt_root) {
-         			struct dentry *old = nd->path.dentry;
-   1317  			struct dentry *parent = old->d_parent;
-         			unsigned seq;
-         
-   1320  			inode = parent->d_inode;
-         			seq = read_seqcount_begin(&parent->d_seq);
-   1322  			if (unlikely(read_seqcount_retry(&old->d_seq, nd->seq)))
-   1323  				return -ECHILD;
-   1324  			nd->path.dentry = parent;
-   1325  			nd->seq = seq;
-   1326  			if (unlikely(!path_connected(&nd->path)))
-   1327  				return -ENOENT;
-         			break;
-         		} else {
-         			struct mount *mnt = real_mount(nd->path.mnt);
-   1331  			struct mount *mparent = mnt->mnt_parent;
-   1332  			struct dentry *mountpoint = mnt->mnt_mountpoint;
-   1333  			struct inode *inode2 = mountpoint->d_inode;
-         			unsigned seq = read_seqcount_begin(&mountpoint->d_seq);
-   1335  			if (unlikely(read_seqretry(&mount_lock, nd->m_seq)))
-         				return -ECHILD;
-   1337  			if (&mparent->mnt == nd->path.mnt)
-         				break;
-         			/* we know that mountpoint was pinned */
-   1340  			nd->path.dentry = mountpoint;
-   1341  			nd->path.mnt = &mparent->mnt;
-   1342  			inode = inode2;
-   1343  			nd->seq = seq;
-         		}
-         	}
-   1346  	while (unlikely(d_mountpoint(nd->path.dentry))) {
-         		struct mount *mounted;
-   1348  		mounted = __lookup_mnt(nd->path.mnt, nd->path.dentry);
-   1349  		if (unlikely(read_seqretry(&mount_lock, nd->m_seq)))
-         			return -ECHILD;
-   1351  		if (!mounted)
-         			break;
-   1353  		nd->path.mnt = &mounted->mnt;
-   1354  		nd->path.dentry = mounted->mnt.mnt_root;
-   1355  		inode = nd->path.dentry->d_inode;
-   1356  		nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
-         	}
-   1358  	nd->inode = inode;
-   1359  	return 0;
-         }
-         
-         /*
-          * Follow down to the covering mount currently visible to userspace.  At each
-          * point, the filesystem owning that dentry may be queried as to whether the
-          * caller is permitted to proceed or not.
-          */
-         int follow_down(struct path *path)
-   1368  {
-         	unsigned managed;
-         	int ret;
-         
-   1372  	while (managed = READ_ONCE(path->dentry->d_flags),
-         	       unlikely(managed & DCACHE_MANAGED_DENTRY)) {
-         		/* Allow the filesystem to manage the transit without i_mutex
-         		 * being held.
-         		 *
-         		 * We indicate to the filesystem if someone is trying to mount
-         		 * something here.  This gives autofs the chance to deny anyone
-         		 * other than its daemon the right to mount on its
-         		 * superstructure.
-         		 *
-         		 * The filesystem may sleep at this point.
-         		 */
-   1384  		if (managed & DCACHE_MANAGE_TRANSIT) {
-   1385  			BUG_ON(!path->dentry->d_op);
-   1386  			BUG_ON(!path->dentry->d_op->d_manage);
-   1387  			ret = path->dentry->d_op->d_manage(path, false);
-   1388  			if (ret < 0)
-   1389  				return ret == -EISDIR ? 0 : ret;
-         		}
-         
-         		/* Transit to a mounted filesystem. */
-   1393  		if (managed & DCACHE_MOUNTED) {
-   1394  			struct vfsmount *mounted = lookup_mnt(path);
-   1395  			if (!mounted)
-         				break;
-   1397  			dput(path->dentry);
-   1398  			mntput(path->mnt);
-   1399  			path->mnt = mounted;
-   1400  			path->dentry = dget(mounted->mnt_root);
-         			continue;
-         		}
-         
-         		/* Don't handle automount points here */
-         		break;
-         	}
-   1407  	return 0;
-   1408  }
-         EXPORT_SYMBOL(follow_down);
-         
-         /*
-          * Skip to top of mountpoint pile in refwalk mode for follow_dotdot()
-          */
-         static void follow_mount(struct path *path)
-   1415  {
-   1416  	while (d_mountpoint(path->dentry)) {
-   1417  		struct vfsmount *mounted = lookup_mnt(path);
-   1418  		if (!mounted)
-         			break;
-   1420  		dput(path->dentry);
-   1421  		mntput(path->mnt);
-   1422  		path->mnt = mounted;
-   1423  		path->dentry = dget(mounted->mnt_root);
-         	}
-   1425  }
-         
-         static int path_parent_directory(struct path *path)
-   1428  {
-   1429  	struct dentry *old = path->dentry;
-         	/* rare case of legitimate dget_parent()... */
-   1431  	path->dentry = dget_parent(path->dentry);
-   1432  	dput(old);
-   1433  	if (unlikely(!path_connected(path)))
-         		return -ENOENT;
-   1435  	return 0;
-   1436  }
-         
-         static int follow_dotdot(struct nameidata *nd)
-         {
-         	while(1) {
-   1441  		if (nd->path.dentry == nd->root.dentry &&
-         		    nd->path.mnt == nd->root.mnt) {
-         			break;
-         		}
-   1445  		if (nd->path.dentry != nd->path.mnt->mnt_root) {
-   1446  			int ret = path_parent_directory(&nd->path);
-   1447  			if (ret)
-         				return ret;
-         			break;
-         		}
-   1451  		if (!follow_up(&nd->path))
-         			break;
-         	}
-   1454  	follow_mount(&nd->path);
-   1455  	nd->inode = nd->path.dentry->d_inode;
-   1456  	return 0;
-         }
-         
-         /*
-          * This looks up the name in dcache and possibly revalidates the found dentry.
-          * NULL is returned if the dentry does not exist in the cache.
-          */
-         static struct dentry *lookup_dcache(const struct qstr *name,
-         				    struct dentry *dir,
-         				    unsigned int flags)
-   1466  {
-   1467  	struct dentry *dentry = d_lookup(dir, name);
-   1468  	if (dentry) {
-         		int error = d_revalidate(dentry, flags);
-   1470  		if (unlikely(error <= 0)) {
-   1471  			if (!error)
-   1472  				d_invalidate(dentry);
-   1473  			dput(dentry);
-   1474  			return ERR_PTR(error);
-         		}
-         	}
-         	return dentry;
-   1478  }
-         
-         /*
-          * Parent directory has inode locked exclusive.  This is one
-          * and only case when ->lookup() gets called on non in-lookup
-          * dentries - as the matter of fact, this only gets called
-          * when directory is guaranteed to have no in-lookup children
-          * at all.
-          */
-         static struct dentry *__lookup_hash(const struct qstr *name,
-         		struct dentry *base, unsigned int flags)
-   1489  {
-   1490  	struct dentry *dentry = lookup_dcache(name, base, flags);
-         	struct dentry *old;
-   1492  	struct inode *dir = base->d_inode;
-         
-   1494  	if (dentry)
-         		return dentry;
-         
-         	/* Don't create child dentry for a dead directory. */
-   1498  	if (unlikely(IS_DEADDIR(dir)))
-   1499  		return ERR_PTR(-ENOENT);
-         
-   1501  	dentry = d_alloc(base, name);
-   1502  	if (unlikely(!dentry))
-   1503  		return ERR_PTR(-ENOMEM);
-         
-   1505  	old = dir->i_op->lookup(dir, dentry, flags);
-   1506  	if (unlikely(old)) {
-   1507  		dput(dentry);
-         		dentry = old;
-         	}
-         	return dentry;
-   1511  }
-         
-         static int lookup_fast(struct nameidata *nd,
-         		       struct path *path, struct inode **inode,
-         		       unsigned *seqp)
-   1516  {
-   1517  	struct vfsmount *mnt = nd->path.mnt;
-   1518  	struct dentry *dentry, *parent = nd->path.dentry;
-         	int status = 1;
-         	int err;
-         
-         	/*
-         	 * Rename seqlock is not required here because in the off chance
-         	 * of a false negative due to a concurrent rename, the caller is
-         	 * going to fall back to non-racy lookup.
-         	 */
-   1527  	if (nd->flags & LOOKUP_RCU) {
-         		unsigned seq;
-         		bool negative;
-   1530  		dentry = __d_lookup_rcu(parent, &nd->last, &seq);
-   1531  		if (unlikely(!dentry)) {
-   1532  			if (unlazy_walk(nd))
-   1533  				return -ECHILD;
-         			return 0;
-         		}
-         
-         		/*
-         		 * This sequence count validates that the inode matches
-         		 * the dentry name information from lookup.
-         		 */
-   1541  		*inode = d_backing_inode(dentry);
-         		negative = d_is_negative(dentry);
-   1543  		if (unlikely(read_seqcount_retry(&dentry->d_seq, seq)))
-         			return -ECHILD;
-         
-         		/*
-         		 * This sequence count validates that the parent had no
-         		 * changes while we did the lookup of the dentry above.
-         		 *
-         		 * The memory barrier in read_seqcount_begin of child is
-         		 *  enough, we can use __read_seqcount_retry here.
-         		 */
-   1553  		if (unlikely(__read_seqcount_retry(&parent->d_seq, nd->seq)))
-         			return -ECHILD;
-         
-   1556  		*seqp = seq;
-         		status = d_revalidate(dentry, nd->flags);
-   1558  		if (likely(status > 0)) {
-         			/*
-         			 * Note: do negative dentry check after revalidation in
-         			 * case that drops it.
-         			 */
-   1563  			if (unlikely(negative))
-         				return -ENOENT;
-   1565  			path->mnt = mnt;
-   1566  			path->dentry = dentry;
-   1567  			if (likely(__follow_mount_rcu(nd, path, inode, seqp)))
-   1568  				return 1;
-         		}
-   1570  		if (unlazy_child(nd, dentry, seq))
-   1571  			return -ECHILD;
-   1572  		if (unlikely(status == -ECHILD))
-         			/* we'd been told to redo it in non-rcu mode */
-         			status = d_revalidate(dentry, nd->flags);
-         	} else {
-   1576  		dentry = __d_lookup(parent, &nd->last);
-   1577  		if (unlikely(!dentry))
-   1578  			return 0;
-         		status = d_revalidate(dentry, nd->flags);
-         	}
-   1581  	if (unlikely(status <= 0)) {
-   1582  		if (!status)
-   1583  			d_invalidate(dentry);
-   1584  		dput(dentry);
-   1585  		return status;
-         	}
-   1587  	if (unlikely(d_is_negative(dentry))) {
-   1588  		dput(dentry);
-   1589  		return -ENOENT;
-         	}
-         
-   1592  	path->mnt = mnt;
-   1593  	path->dentry = dentry;
-   1594  	err = follow_managed(path, nd);
-   1595  	if (likely(err > 0))
-   1596  		*inode = d_backing_inode(path->dentry);
-         	return err;
-   1598  }
-         
-         /* Fast lookup failed, do it the slow way */
-         static struct dentry *__lookup_slow(const struct qstr *name,
-         				    struct dentry *dir,
-         				    unsigned int flags)
-   1604  {
-         	struct dentry *dentry, *old;
-   1606  	struct inode *inode = dir->d_inode;
-   1607  	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
-         
-         	/* Don't go there if it's already dead */
-   1610  	if (unlikely(IS_DEADDIR(inode)))
-   1611  		return ERR_PTR(-ENOENT);
-         again:
-   1613  	dentry = d_alloc_parallel(dir, name, &wq);
-   1614  	if (IS_ERR(dentry))
-         		return dentry;
-   1616  	if (unlikely(!d_in_lookup(dentry))) {
-   1617  		if (!(flags & LOOKUP_NO_REVAL)) {
-         			int error = d_revalidate(dentry, flags);
-   1619  			if (unlikely(error <= 0)) {
-   1620  				if (!error) {
-   1621  					d_invalidate(dentry);
-   1622  					dput(dentry);
-   1623  					goto again;
-         				}
-   1625  				dput(dentry);
-   1626  				dentry = ERR_PTR(error);
-         			}
-         		}
-         	} else {
-   1630  		old = inode->i_op->lookup(inode, dentry, flags);
-         		d_lookup_done(dentry);
-   1632  		if (unlikely(old)) {
-   1633  			dput(dentry);
-         			dentry = old;
-         		}
-         	}
-         	return dentry;
-   1638  }
-         
-         static struct dentry *lookup_slow(const struct qstr *name,
-         				  struct dentry *dir,
-         				  unsigned int flags)
-   1643  {
-         	struct inode *inode = dir->d_inode;
-         	struct dentry *res;
-         	inode_lock_shared(inode);
-   1647  	res = __lookup_slow(name, dir, flags);
-         	inode_unlock_shared(inode);
-         	return res;
-   1650  }
-         
-         static inline int may_lookup(struct nameidata *nd)
-         {
-   1654  	if (nd->flags & LOOKUP_RCU) {
-   1655  		int err = inode_permission(nd->inode, MAY_EXEC|MAY_NOT_BLOCK);
-   1656  		if (err != -ECHILD)
-         			return err;
-   1658  		if (unlazy_walk(nd))
-         			return -ECHILD;
-         	}
-   1661  	return inode_permission(nd->inode, MAY_EXEC);
-         }
-         
-         static inline int handle_dots(struct nameidata *nd, int type)
-         {
-   1666  	if (type == LAST_DOTDOT) {
-   1667  		if (!nd->root.mnt)
-   1668  			set_root(nd);
-   1669  		if (nd->flags & LOOKUP_RCU) {
-         			return follow_dotdot_rcu(nd);
-         		} else
-         			return follow_dotdot(nd);
-         	}
-   1674  	return 0;
-         }
-         
-         static int pick_link(struct nameidata *nd, struct path *link,
-         		     struct inode *inode, unsigned seq)
-   1679  {
-         	int error;
-         	struct saved *last;
-   1682  	if (unlikely(nd->total_link_count++ >= MAXSYMLINKS)) {
-         		path_to_nameidata(link, nd);
-   1684  		return -ELOOP;
-         	}
-   1686  	if (!(nd->flags & LOOKUP_RCU)) {
-   1687  		if (link->mnt == nd->path.mnt)
-   1688  			mntget(link->mnt);
-         	}
-         	error = nd_alloc_stack(nd);
-   1691  	if (unlikely(error)) {
-   1692  		if (error == -ECHILD) {
-   1693  			if (unlikely(!legitimize_path(nd, link, seq))) {
-         				drop_links(nd);
-   1695  				nd->depth = 0;
-   1696  				nd->flags &= ~LOOKUP_RCU;
-   1697  				nd->path.mnt = NULL;
-   1698  				nd->path.dentry = NULL;
-   1699  				if (!(nd->flags & LOOKUP_ROOT))
-   1700  					nd->root.mnt = NULL;
-         				rcu_read_unlock();
-   1702  			} else if (likely(unlazy_walk(nd)) == 0)
-         				error = nd_alloc_stack(nd);
-         		}
-   1705  		if (error) {
-         			path_put(link);
-   1707  			return error;
-         		}
-         	}
-         
-   1711  	last = nd->stack + nd->depth++;
-   1712  	last->link = *link;
-         	clear_delayed_call(&last->done);
-   1714  	nd->link_inode = inode;
-   1715  	last->seq = seq;
-   1716  	return 1;
-   1717  }
-         
-         enum {WALK_FOLLOW = 1, WALK_MORE = 2};
-         
-         /*
-          * Do we need to follow links? We _really_ want to be able
-          * to do this check without having to look at inode->i_op,
-          * so we keep a cache of "no, this doesn't need follow_link"
-          * for the common case.
-          */
-         static inline int step_into(struct nameidata *nd, struct path *path,
-         			    int flags, struct inode *inode, unsigned seq)
-         {
-   1730  	if (!(flags & WALK_MORE) && nd->depth)
-         		put_link(nd);
-   1732  	if (likely(!d_is_symlink(path->dentry)) ||
-   1733  	   !(flags & WALK_FOLLOW || nd->flags & LOOKUP_FOLLOW)) {
-         		/* not a symlink or should not follow */
-         		path_to_nameidata(path, nd);
-   1736  		nd->inode = inode;
-   1737  		nd->seq = seq;
-         		return 0;
-         	}
-         	/* make sure that d_is_symlink above matches inode */
-   1741  	if (nd->flags & LOOKUP_RCU) {
-   1742  		if (read_seqcount_retry(&path->dentry->d_seq, seq))
-   1743  			return -ECHILD;
-         	}
-   1745  	return pick_link(nd, path, inode, seq);
-         }
-         
-         static int walk_component(struct nameidata *nd, int flags)
-   1749  {
-         	struct path path;
-         	struct inode *inode;
-         	unsigned seq;
-         	int err;
-         	/*
-         	 * "." and ".." are special - ".." especially so because it has
-         	 * to be able to know about the current root directory and
-         	 * parent relationships.
-         	 */
-   1759  	if (unlikely(nd->last_type != LAST_NORM)) {
-         		err = handle_dots(nd, nd->last_type);
-   1761  		if (!(flags & WALK_MORE) && nd->depth)
-         			put_link(nd);
-         		return err;
-         	}
-   1765  	err = lookup_fast(nd, &path, &inode, &seq);
-   1766  	if (unlikely(err <= 0)) {
-   1767  		if (err < 0)
-         			return err;
-   1769  		path.dentry = lookup_slow(&nd->last, nd->path.dentry,
-         					  nd->flags);
-   1771  		if (IS_ERR(path.dentry))
-         			return PTR_ERR(path.dentry);
-         
-   1774  		path.mnt = nd->path.mnt;
-   1775  		err = follow_managed(&path, nd);
-   1776  		if (unlikely(err < 0))
-         			return err;
-         
-   1779  		if (unlikely(d_is_negative(path.dentry))) {
-         			path_to_nameidata(&path, nd);
-   1781  			return -ENOENT;
-         		}
-         
-   1784  		seq = 0;	/* we are already out of RCU mode */
-   1785  		inode = d_backing_inode(path.dentry);
-         	}
-         
-         	return step_into(nd, &path, flags, inode, seq);
-   1789  }
-         
-         /*
-          * We can do the critical dentry name comparison and hashing
-          * operations one word at a time, but we are limited to:
-          *
-          * - Architectures with fast unaligned word accesses. We could
-          *   do a "get_unaligned()" if this helps and is sufficiently
-          *   fast.
-          *
-          * - non-CONFIG_DEBUG_PAGEALLOC configurations (so that we
-          *   do not trap on the (extremely unlikely) case of a page
-          *   crossing operation.
-          *
-          * - Furthermore, we need an efficient 64-bit compile for the
-          *   64-bit case in order to generate the "number of bytes in
-          *   the final mask". Again, that could be replaced with a
-          *   efficient population count instruction or similar.
-          */
-         #ifdef CONFIG_DCACHE_WORD_ACCESS
-         
-         #include <asm/word-at-a-time.h>
-         
-         #ifdef HASH_MIX
-         
-         /* Architecture provides HASH_MIX and fold_hash() in <asm/hash.h> */
-         
-         #elif defined(CONFIG_64BIT)
-         /*
-          * Register pressure in the mixing function is an issue, particularly
-          * on 32-bit x86, but almost any function requires one state value and
-          * one temporary.  Instead, use a function designed for two state values
-          * and no temporaries.
-          *
-          * This function cannot create a collision in only two iterations, so
-          * we have two iterations to achieve avalanche.  In those two iterations,
-          * we have six layers of mixing, which is enough to spread one bit's
-          * influence out to 2^6 = 64 state bits.
-          *
-          * Rotate constants are scored by considering either 64 one-bit input
-          * deltas or 64*63/2 = 2016 two-bit input deltas, and finding the
-          * probability of that delta causing a change to each of the 128 output
-          * bits, using a sample of random initial states.
-          *
-          * The Shannon entropy of the computed probabilities is then summed
-          * to produce a score.  Ideally, any input change has a 50% chance of
-          * toggling any given output bit.
-          *
-          * Mixing scores (in bits) for (12,45):
-          * Input delta: 1-bit      2-bit
-          * 1 round:     713.3    42542.6
-          * 2 rounds:   2753.7   140389.8
-          * 3 rounds:   5954.1   233458.2
-          * 4 rounds:   7862.6   256672.2
-          * Perfect:    8192     258048
-          *            (64*128) (64*63/2 * 128)
-          */
-         #define HASH_MIX(x, y, a)	\
-         	(	x ^= (a),	\
-         	y ^= x,	x = rol64(x,12),\
-         	x += y,	y = rol64(y,45),\
-         	y *= 9			)
-         
-         /*
-          * Fold two longs into one 32-bit hash value.  This must be fast, but
-          * latency isn't quite as critical, as there is a fair bit of additional
-          * work done before the hash value is used.
-          */
-         static inline unsigned int fold_hash(unsigned long x, unsigned long y)
-         {
-   1859  	y ^= x * GOLDEN_RATIO_64;
-   1860  	y *= GOLDEN_RATIO_64;
-   1861  	return y >> 32;
-         }
-         
-         #else	/* 32-bit case */
-         
-         /*
-          * Mixing scores (in bits) for (7,20):
-          * Input delta: 1-bit      2-bit
-          * 1 round:     330.3     9201.6
-          * 2 rounds:   1246.4    25475.4
-          * 3 rounds:   1907.1    31295.1
-          * 4 rounds:   2042.3    31718.6
-          * Perfect:    2048      31744
-          *            (32*64)   (32*31/2 * 64)
-          */
-         #define HASH_MIX(x, y, a)	\
-         	(	x ^= (a),	\
-         	y ^= x,	x = rol32(x, 7),\
-         	x += y,	y = rol32(y,20),\
-         	y *= 9			)
-         
-         static inline unsigned int fold_hash(unsigned long x, unsigned long y)
-         {
-         	/* Use arch-optimized multiply if one exists */
-         	return __hash_32(y ^ __hash_32(x));
-         }
-         
-         #endif
-         
-         /*
-          * Return the hash of a string of known length.  This is carfully
-          * designed to match hash_name(), which is the more critical function.
-          * In particular, we must end by hashing a final word containing 0..7
-          * payload bytes, to match the way that hash_name() iterates until it
-          * finds the delimiter after the name.
-          */
-         unsigned int full_name_hash(const void *salt, const char *name, unsigned int len)
-   1898  {
-   1899  	unsigned long a, x = 0, y = (unsigned long)salt;
-         
-         	for (;;) {
-   1902  		if (!len)
-         			goto done;
-         		a = load_unaligned_zeropad(name);
-   1905  		if (len < sizeof(unsigned long))
-         			break;
-   1907  		HASH_MIX(x, y, a);
-   1908  		name += sizeof(unsigned long);
-         		len -= sizeof(unsigned long);
-         	}
-   1911  	x ^= a & bytemask_from_count(len);
-         done:
-         	return fold_hash(x, y);
-   1914  }
-         EXPORT_SYMBOL(full_name_hash);
-         
-         /* Return the "hash_len" (hash and length) of a null-terminated string */
-         u64 hashlen_string(const void *salt, const char *name)
-   1919  {
-   1920  	unsigned long a = 0, x = 0, y = (unsigned long)salt;
-         	unsigned long adata, mask, len;
-         	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
-         
-   1924  	len = 0;
-   1925  	goto inside;
-         
-         	do {
-   1928  		HASH_MIX(x, y, a);
-   1929  		len += sizeof(unsigned long);
-         inside:
-         		a = load_unaligned_zeropad(name+len);
-   1932  	} while (!has_zero(a, &adata, &constants));
-         
-         	adata = prep_zero_mask(a, adata, &constants);
-         	mask = create_zero_mask(adata);
-   1936  	x ^= a & zero_bytemask(mask);
-         
-   1938  	return hashlen_create(fold_hash(x, y), len + find_zero(mask));
-   1939  }
-         EXPORT_SYMBOL(hashlen_string);
-         
-         /*
-          * Calculate the length and hash of the path component, and
-          * return the "hash_len" as the result.
-          */
-         static inline u64 hash_name(const void *salt, const char *name)
-         {
-   1948  	unsigned long a = 0, b, x = 0, y = (unsigned long)salt;
-         	unsigned long adata, bdata, mask, len;
-         	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
-         
-   1952  	len = 0;
-         	goto inside;
-         
-         	do {
-   1956  		HASH_MIX(x, y, a);
-   1957  		len += sizeof(unsigned long);
-         inside:
-         		a = load_unaligned_zeropad(name+len);
-   1960  		b = a ^ REPEAT_BYTE('/');
-   1961  	} while (!(has_zero(a, &adata, &constants) | has_zero(b, &bdata, &constants)));
-         
-         	adata = prep_zero_mask(a, adata, &constants);
-         	bdata = prep_zero_mask(b, bdata, &constants);
-         	mask = create_zero_mask(adata | bdata);
-   1966  	x ^= a & zero_bytemask(mask);
-         
-   1968  	return hashlen_create(fold_hash(x, y), len + find_zero(mask));
-         }
-         
-         #else	/* !CONFIG_DCACHE_WORD_ACCESS: Slow, byte-at-a-time version */
-         
-         /* Return the hash of a string of known length */
-         unsigned int full_name_hash(const void *salt, const char *name, unsigned int len)
-         {
-         	unsigned long hash = init_name_hash(salt);
-         	while (len--)
-         		hash = partial_name_hash((unsigned char)*name++, hash);
-         	return end_name_hash(hash);
-         }
-         EXPORT_SYMBOL(full_name_hash);
-         
-         /* Return the "hash_len" (hash and length) of a null-terminated string */
-         u64 hashlen_string(const void *salt, const char *name)
-         {
-         	unsigned long hash = init_name_hash(salt);
-         	unsigned long len = 0, c;
-         
-         	c = (unsigned char)*name;
-         	while (c) {
-         		len++;
-         		hash = partial_name_hash(c, hash);
-         		c = (unsigned char)name[len];
-         	}
-         	return hashlen_create(end_name_hash(hash), len);
-         }
-         EXPORT_SYMBOL(hashlen_string);
-         
-         /*
-          * We know there's a real path component here of at least
-          * one character.
-          */
-         static inline u64 hash_name(const void *salt, const char *name)
-         {
-         	unsigned long hash = init_name_hash(salt);
-         	unsigned long len = 0, c;
-         
-         	c = (unsigned char)*name;
-         	do {
-         		len++;
-         		hash = partial_name_hash(c, hash);
-         		c = (unsigned char)name[len];
-         	} while (c && c != '/');
-         	return hashlen_create(end_name_hash(hash), len);
-         }
-         
-         #endif
-         
-         /*
-          * Name resolution.
-          * This is the basic name resolution function, turning a pathname into
-          * the final dentry. We expect 'base' to be positive and a directory.
-          *
-          * Returns 0 and nd will have valid dentry and mnt on success.
-          * Returns error and drops reference to input namei data on failure.
-          */
-         static int link_path_walk(const char *name, struct nameidata *nd)
-   2028  {
-         	int err;
-         
-   2031  	while (*name=='/')
-   2032  		name++;
-   2033  	if (!*name)
-   2034  		return 0;
-         
-         	/* At this point we know we have a real path component. */
-         	for(;;) {
-         		u64 hash_len;
-         		int type;
-         
-         		err = may_lookup(nd);
-   2042  		if (err)
-         			return err;
-         
-   2045  		hash_len = hash_name(nd->path.dentry, name);
-         
-         		type = LAST_NORM;
-   2048  		if (name[0] == '.') switch (hashlen_len(hash_len)) {
-         			case 2:
-   2050  				if (name[1] == '.') {
-   2051  					type = LAST_DOTDOT;
-   2052  					nd->flags |= LOOKUP_JUMPED;
-         				}
-         				break;
-         			case 1:
-   2056  				type = LAST_DOT;
-         		}
-         		if (likely(type == LAST_NORM)) {
-         			struct dentry *parent = nd->path.dentry;
-   2060  			nd->flags &= ~LOOKUP_JUMPED;
-   2061  			if (unlikely(parent->d_flags & DCACHE_OP_HASH)) {
-   2062  				struct qstr this = { { .hash_len = hash_len }, .name = name };
-   2063  				err = parent->d_op->d_hash(parent, &this);
-   2064  				if (err < 0)
-         					return err;
-   2066  				hash_len = this.hash_len;
-   2067  				name = this.name;
-         			}
-         		}
-         
-   2071  		nd->last.hash_len = hash_len;
-   2072  		nd->last.name = name;
-   2073  		nd->last_type = type;
-         
-   2075  		name += hashlen_len(hash_len);
-   2076  		if (!*name)
-         			goto OK;
-         		/*
-         		 * If it wasn't NUL, we know it was '/'. Skip that
-         		 * slash, and continue until no more slashes.
-         		 */
-         		do {
-   2083  			name++;
-   2084  		} while (unlikely(*name == '/'));
-   2085  		if (unlikely(!*name)) {
-         OK:
-         			/* pathname body, done */
-   2088  			if (!nd->depth)
-         				return 0;
-   2090  			name = nd->stack[nd->depth - 1].name;
-         			/* trailing symlink, done */
-   2092  			if (!name)
-         				return 0;
-         			/* last component of nested symlink */
-   2095  			err = walk_component(nd, WALK_FOLLOW);
-         		} else {
-         			/* not the last component */
-   2098  			err = walk_component(nd, WALK_FOLLOW | WALK_MORE);
-         		}
-   2100  		if (err < 0)
-         			return err;
-         
-   2103  		if (err) {
-         			const char *s = get_link(nd);
-         
-   2106  			if (IS_ERR(s))
-   2107  				return PTR_ERR(s);
-         			err = 0;
-   2109  			if (unlikely(!s)) {
-         				/* jumped */
-         				put_link(nd);
-         			} else {
-   2113  				nd->stack[nd->depth - 1].name = name;
-         				name = s;
-   2115  				continue;
-         			}
-         		}
-   2118  		if (unlikely(!d_can_lookup(nd->path.dentry))) {
-   2119  			if (nd->flags & LOOKUP_RCU) {
-   2120  				if (unlazy_walk(nd))
-         					return -ECHILD;
-         			}
-   2123  			return -ENOTDIR;
-         		}
-         	}
-   2126  }
-         
-         static const char *path_init(struct nameidata *nd, unsigned flags)
-   2129  {
-   2130  	const char *s = nd->name->name;
-         
-   2132  	if (!*s)
-   2133  		flags &= ~LOOKUP_RCU;
-         
-   2135  	nd->last_type = LAST_ROOT; /* if there are only slashes... */
-   2136  	nd->flags = flags | LOOKUP_JUMPED | LOOKUP_PARENT;
-         	nd->depth = 0;
-   2138  	if (flags & LOOKUP_ROOT) {
-   2139  		struct dentry *root = nd->root.dentry;
-   2140  		struct inode *inode = root->d_inode;
-   2141  		if (*s && unlikely(!d_can_lookup(root)))
-         			return ERR_PTR(-ENOTDIR);
-   2143  		nd->path = nd->root;
-   2144  		nd->inode = inode;
-   2145  		if (flags & LOOKUP_RCU) {
-         			rcu_read_lock();
-   2147  			nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
-   2148  			nd->root_seq = nd->seq;
-   2149  			nd->m_seq = read_seqbegin(&mount_lock);
-         		} else {
-   2151  			path_get(&nd->path);
-         		}
-         		return s;
-         	}
-         
-   2156  	nd->root.mnt = NULL;
-   2157  	nd->path.mnt = NULL;
-   2158  	nd->path.dentry = NULL;
-         
-   2160  	nd->m_seq = read_seqbegin(&mount_lock);
-   2161  	if (*s == '/') {
-         		if (flags & LOOKUP_RCU)
-         			rcu_read_lock();
-   2164  		set_root(nd);
-   2165  		if (likely(!nd_jump_root(nd)))
-         			return s;
-   2167  		nd->root.mnt = NULL;
-         		rcu_read_unlock();
-   2169  		return ERR_PTR(-ECHILD);
-   2170  	} else if (nd->dfd == AT_FDCWD) {
-   2171  		if (flags & LOOKUP_RCU) {
-   2172  			struct fs_struct *fs = current->fs;
-         			unsigned seq;
-         
-         			rcu_read_lock();
-         
-         			do {
-         				seq = read_seqcount_begin(&fs->seq);
-   2179  				nd->path = fs->pwd;
-   2180  				nd->inode = nd->path.dentry->d_inode;
-   2181  				nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
-   2182  			} while (read_seqcount_retry(&fs->seq, seq));
-         		} else {
-   2184  			get_fs_pwd(current->fs, &nd->path);
-   2185  			nd->inode = nd->path.dentry->d_inode;
-         		}
-         		return s;
-         	} else {
-         		/* Caller must check execute permissions on the starting path component */
-         		struct fd f = fdget_raw(nd->dfd);
-         		struct dentry *dentry;
-         
-   2193  		if (!f.file)
-   2194  			return ERR_PTR(-EBADF);
-         
-   2196  		dentry = f.file->f_path.dentry;
-         
-   2198  		if (*s) {
-   2199  			if (!d_can_lookup(dentry)) {
-         				fdput(f);
-   2201  				return ERR_PTR(-ENOTDIR);
-         			}
-         		}
-         
-   2205  		nd->path = f.file->f_path;
-   2206  		if (flags & LOOKUP_RCU) {
-         			rcu_read_lock();
-   2208  			nd->inode = nd->path.dentry->d_inode;
-   2209  			nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
-         		} else {
-   2211  			path_get(&nd->path);
-   2212  			nd->inode = nd->path.dentry->d_inode;
-         		}
-         		fdput(f);
-         		return s;
-         	}
-   2217  }
-         
-         static const char *trailing_symlink(struct nameidata *nd)
-   2220  {
-         	const char *s;
-         	int error = may_follow_link(nd);
-         	if (unlikely(error))
-         		return ERR_PTR(error);
-   2225  	nd->flags |= LOOKUP_PARENT;
-   2226  	nd->stack[0].name = NULL;
-         	s = get_link(nd);
-   2228  	return s ? s : "";
-   2229  }
-         
-         static inline int lookup_last(struct nameidata *nd)
-         {
-   2233  	if (nd->last_type == LAST_NORM && nd->last.name[nd->last.len])
-   2234  		nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-         
-   2236  	nd->flags &= ~LOOKUP_PARENT;
-   2237  	return walk_component(nd, 0);
-         }
-         
-         static int handle_lookup_down(struct nameidata *nd)
-         {
-   2242  	struct path path = nd->path;
-   2243  	struct inode *inode = nd->inode;
-   2244  	unsigned seq = nd->seq;
-         	int err;
-         
-   2247  	if (nd->flags & LOOKUP_RCU) {
-         		/*
-         		 * don't bother with unlazy_walk on failure - we are
-         		 * at the very beginning of walk, so we lose nothing
-         		 * if we simply redo everything in non-RCU mode
-         		 */
-   2253  		if (unlikely(!__follow_mount_rcu(nd, &path, &inode, &seq)))
-   2254  			return -ECHILD;
-         	} else {
-   2256  		dget(path.dentry);
-   2257  		err = follow_managed(&path, nd);
-   2258  		if (unlikely(err < 0))
-         			return err;
-   2260  		inode = d_backing_inode(path.dentry);
-   2261  		seq = 0;
-         	}
-         	path_to_nameidata(&path, nd);
-   2264  	nd->inode = inode;
-   2265  	nd->seq = seq;
-         	return 0;
-         }
-         
-         /* Returns 0 and nd will be valid on success; Retuns error, otherwise. */
-         static int path_lookupat(struct nameidata *nd, unsigned flags, struct path *path)
-   2271  {
-   2272  	const char *s = path_init(nd, flags);
-         	int err;
-         
-   2275  	if (IS_ERR(s))
-         		return PTR_ERR(s);
-         
-   2278  	if (unlikely(flags & LOOKUP_DOWN)) {
-         		err = handle_lookup_down(nd);
-         		if (unlikely(err < 0)) {
-         			terminate_walk(nd);
-         			return err;
-         		}
-         	}
-         
-   2286  	while (!(err = link_path_walk(s, nd))
-   2287  		&& ((err = lookup_last(nd)) > 0)) {
-   2288  		s = trailing_symlink(nd);
-   2289  		if (IS_ERR(s)) {
-         			err = PTR_ERR(s);
-         			break;
-         		}
-         	}
-   2294  	if (!err)
-   2295  		err = complete_walk(nd);
-         
-   2297  	if (!err && nd->flags & LOOKUP_DIRECTORY)
-   2298  		if (!d_can_lookup(nd->path.dentry))
-   2299  			err = -ENOTDIR;
-         	if (!err) {
-   2301  		*path = nd->path;
-   2302  		nd->path.mnt = NULL;
-   2303  		nd->path.dentry = NULL;
-         	}
-   2305  	terminate_walk(nd);
-         	return err;
-   2307  }
-         
-         static int filename_lookup(int dfd, struct filename *name, unsigned flags,
-         			   struct path *path, struct path *root)
-   2311  {
-         	int retval;
-         	struct nameidata nd;
-   2314  	if (IS_ERR(name))
-   2315  		return PTR_ERR(name);
-   2316  	if (unlikely(root)) {
-   2317  		nd.root = *root;
-   2318  		flags |= LOOKUP_ROOT;
-         	}
-         	set_nameidata(&nd, dfd, name);
-   2321  	retval = path_lookupat(&nd, flags | LOOKUP_RCU, path);
-   2322  	if (unlikely(retval == -ECHILD))
-   2323  		retval = path_lookupat(&nd, flags, path);
-   2324  	if (unlikely(retval == -ESTALE))
-   2325  		retval = path_lookupat(&nd, flags | LOOKUP_REVAL, path);
-         
-   2327  	if (likely(!retval))
-         		audit_inode(name, path->dentry, flags & LOOKUP_PARENT);
-   2329  	restore_nameidata();
-   2330  	putname(name);
-         	return retval;
-   2332  }
-         
-         /* Returns 0 and nd will be valid on success; Retuns error, otherwise. */
-         static int path_parentat(struct nameidata *nd, unsigned flags,
-         				struct path *parent)
-   2337  {
-   2338  	const char *s = path_init(nd, flags);
-         	int err;
-   2340  	if (IS_ERR(s))
-   2341  		return PTR_ERR(s);
-   2342  	err = link_path_walk(s, nd);
-   2343  	if (!err)
-   2344  		err = complete_walk(nd);
-   2345  	if (!err) {
-   2346  		*parent = nd->path;
-   2347  		nd->path.mnt = NULL;
-   2348  		nd->path.dentry = NULL;
-         	}
-   2350  	terminate_walk(nd);
-         	return err;
-   2352  }
-         
-         static struct filename *filename_parentat(int dfd, struct filename *name,
-         				unsigned int flags, struct path *parent,
-         				struct qstr *last, int *type)
-   2357  {
-         	int retval;
-         	struct nameidata nd;
-         
-   2361  	if (IS_ERR(name))
-         		return name;
-         	set_nameidata(&nd, dfd, name);
-   2364  	retval = path_parentat(&nd, flags | LOOKUP_RCU, parent);
-   2365  	if (unlikely(retval == -ECHILD))
-   2366  		retval = path_parentat(&nd, flags, parent);
-   2367  	if (unlikely(retval == -ESTALE))
-   2368  		retval = path_parentat(&nd, flags | LOOKUP_REVAL, parent);
-   2369  	if (likely(!retval)) {
-   2370  		*last = nd.last;
-   2371  		*type = nd.last_type;
-         		audit_inode(name, parent->dentry, LOOKUP_PARENT);
-         	} else {
-   2374  		putname(name);
-   2375  		name = ERR_PTR(retval);
-         	}
-   2377  	restore_nameidata();
-         	return name;
-   2379  }
-         
-         /* does lookup, returns the object with parent locked */
-         struct dentry *kern_path_locked(const char *name, struct path *path)
-   2383  {
-         	struct filename *filename;
-         	struct dentry *d;
-         	struct qstr last;
-         	int type;
-         
-   2389  	filename = filename_parentat(AT_FDCWD, getname_kernel(name), 0, path,
-         				    &last, &type);
-   2391  	if (IS_ERR(filename))
-   2392  		return ERR_CAST(filename);
-   2393  	if (unlikely(type != LAST_NORM)) {
-         		path_put(path);
-   2395  		putname(filename);
-   2396  		return ERR_PTR(-EINVAL);
-         	}
-         	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
-   2399  	d = __lookup_hash(&last, path->dentry, 0);
-   2400  	if (IS_ERR(d)) {
-   2401  		inode_unlock(path->dentry->d_inode);
-         		path_put(path);
-         	}
-   2404  	putname(filename);
-         	return d;
-   2406  }
-         
-         int kern_path(const char *name, unsigned int flags, struct path *path)
-   2409  {
-   2410  	return filename_lookup(AT_FDCWD, getname_kernel(name),
-         			       flags, path, NULL);
-   2412  }
-         EXPORT_SYMBOL(kern_path);
-         
-         /**
-          * vfs_path_lookup - lookup a file path relative to a dentry-vfsmount pair
-          * @dentry:  pointer to dentry of the base directory
-          * @mnt: pointer to vfs mount of the base directory
-          * @name: pointer to file name
-          * @flags: lookup flags
-          * @path: pointer to struct path to fill
-          */
-         int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
-         		    const char *name, unsigned int flags,
-         		    struct path *path)
-   2426  {
-   2427  	struct path root = {.mnt = mnt, .dentry = dentry};
-         	/* the first argument of filename_lookup() is ignored with root */
-   2429  	return filename_lookup(AT_FDCWD, getname_kernel(name),
-         			       flags , path, &root);
-   2431  }
-         EXPORT_SYMBOL(vfs_path_lookup);
-         
-         static int lookup_one_len_common(const char *name, struct dentry *base,
-         				 int len, struct qstr *this)
-   2436  {
-   2437  	this->name = name;
-   2438  	this->len = len;
-   2439  	this->hash = full_name_hash(base, name, len);
-   2440  	if (!len)
-   2441  		return -EACCES;
-         
-   2443  	if (unlikely(name[0] == '.')) {
-   2444  		if (len < 2 || (len == 2 && name[1] == '.'))
-         			return -EACCES;
-         	}
-         
-   2448  	while (len--) {
-   2449  		unsigned int c = *(const unsigned char *)name++;
-   2450  		if (c == '/' || c == '\0')
-         			return -EACCES;
-         	}
-         	/*
-         	 * See if the low-level filesystem might want
-         	 * to use its own hash..
-         	 */
-   2457  	if (base->d_flags & DCACHE_OP_HASH) {
-   2458  		int err = base->d_op->d_hash(base, this);
-   2459  		if (err < 0)
-         			return err;
-         	}
-         
-   2463  	return inode_permission(base->d_inode, MAY_EXEC);
-   2464  }
-         
-         /**
-          * lookup_one_len - filesystem helper to lookup single pathname component
-          * @name:	pathname component to lookup
-          * @base:	base directory to lookup from
-          * @len:	maximum length @len should be interpreted to
-          *
-          * Note that this routine is purely a helper for filesystem usage and should
-          * not be called by generic code.
-          *
-          * The caller must hold base->i_mutex.
-          */
-         struct dentry *lookup_one_len(const char *name, struct dentry *base, int len)
-   2478  {
-         	struct dentry *dentry;
-         	struct qstr this;
-         	int err;
-         
-   2483  	WARN_ON_ONCE(!inode_is_locked(base->d_inode));
-         
-   2485  	err = lookup_one_len_common(name, base, len, &this);
-   2486  	if (err)
-   2487  		return ERR_PTR(err);
-         
-   2489  	dentry = lookup_dcache(&this, base, 0);
-   2490  	return dentry ? dentry : __lookup_slow(&this, base, 0);
-   2491  }
-         EXPORT_SYMBOL(lookup_one_len);
-         
-         /**
-          * lookup_one_len_unlocked - filesystem helper to lookup single pathname component
-          * @name:	pathname component to lookup
-          * @base:	base directory to lookup from
-          * @len:	maximum length @len should be interpreted to
-          *
-          * Note that this routine is purely a helper for filesystem usage and should
-          * not be called by generic code.
-          *
-          * Unlike lookup_one_len, it should be called without the parent
-          * i_mutex held, and will take the i_mutex itself if necessary.
-          */
-         struct dentry *lookup_one_len_unlocked(const char *name,
-         				       struct dentry *base, int len)
-   2508  {
-         	struct qstr this;
-         	int err;
-         	struct dentry *ret;
-         
-   2513  	err = lookup_one_len_common(name, base, len, &this);
-   2514  	if (err)
-   2515  		return ERR_PTR(err);
-         
-   2517  	ret = lookup_dcache(&this, base, 0);
-   2518  	if (!ret)
-   2519  		ret = lookup_slow(&this, base, 0);
-         	return ret;
-   2521  }
-         EXPORT_SYMBOL(lookup_one_len_unlocked);
-         
-         #ifdef CONFIG_UNIX98_PTYS
-         int path_pts(struct path *path)
-   2526  {
-         	/* Find something mounted on "pts" in the same directory as
-         	 * the input path.
-         	 */
-         	struct dentry *child, *parent;
-         	struct qstr this;
-         	int ret;
-         
-   2534  	ret = path_parent_directory(path);
-   2535  	if (ret)
-         		return ret;
-         
-   2538  	parent = path->dentry;
-   2539  	this.name = "pts";
-   2540  	this.len = 3;
-   2541  	child = d_hash_and_lookup(parent, &this);
-   2542  	if (!child)
-   2543  		return -ENOENT;
-         
-   2545  	path->dentry = child;
-   2546  	dput(parent);
-   2547  	follow_mount(path);
-   2548  	return 0;
-   2549  }
-         #endif
-         
-         int user_path_at_empty(int dfd, const char __user *name, unsigned flags,
-         		 struct path *path, int *empty)
-   2554  {
-   2555  	return filename_lookup(dfd, getname_flags(name, flags, empty),
-         			       flags, path, NULL);
-   2557  }
-         EXPORT_SYMBOL(user_path_at_empty);
-         
-         /**
-          * mountpoint_last - look up last component for umount
-          * @nd:   pathwalk nameidata - currently pointing at parent directory of "last"
-          *
-          * This is a special lookup_last function just for umount. In this case, we
-          * need to resolve the path without doing any revalidation.
-          *
-          * The nameidata should be the result of doing a LOOKUP_PARENT pathwalk. Since
-          * mountpoints are always pinned in the dcache, their ancestors are too. Thus,
-          * in almost all cases, this lookup will be served out of the dcache. The only
-          * cases where it won't are if nd->last refers to a symlink or the path is
-          * bogus and it doesn't exist.
-          *
-          * Returns:
-          * -error: if there was an error during lookup. This includes -ENOENT if the
-          *         lookup found a negative dentry.
-          *
-          * 0:      if we successfully resolved nd->last and found it to not to be a
-          *         symlink that needs to be followed.
-          *
-          * 1:      if we successfully resolved nd->last and found it to be a symlink
-          *         that needs to be followed.
-          */
-         static int
-         mountpoint_last(struct nameidata *nd)
-         {
-         	int error = 0;
-   2587  	struct dentry *dir = nd->path.dentry;
-         	struct path path;
-         
-         	/* If we're in rcuwalk, drop out of it to handle last component */
-   2591  	if (nd->flags & LOOKUP_RCU) {
-   2592  		if (unlazy_walk(nd))
-         			return -ECHILD;
-         	}
-         
-   2596  	nd->flags &= ~LOOKUP_PARENT;
-         
-   2598  	if (unlikely(nd->last_type != LAST_NORM)) {
-         		error = handle_dots(nd, nd->last_type);
-         		if (error)
-         			return error;
-   2602  		path.dentry = dget(nd->path.dentry);
-         	} else {
-   2604  		path.dentry = d_lookup(dir, &nd->last);
-   2605  		if (!path.dentry) {
-         			/*
-         			 * No cached dentry. Mounted dentries are pinned in the
-         			 * cache, so that means that this dentry is probably
-         			 * a symlink or the path doesn't actually point
-         			 * to a mounted dentry.
-         			 */
-   2612  			path.dentry = lookup_slow(&nd->last, dir,
-         					     nd->flags | LOOKUP_NO_REVAL);
-   2614  			if (IS_ERR(path.dentry))
-         				return PTR_ERR(path.dentry);
-         		}
-         	}
-   2618  	if (d_is_negative(path.dentry)) {
-   2619  		dput(path.dentry);
-   2620  		return -ENOENT;
-         	}
-   2622  	path.mnt = nd->path.mnt;
-   2623  	return step_into(nd, &path, 0, d_backing_inode(path.dentry), 0);
-         }
-         
-         /**
-          * path_mountpoint - look up a path to be umounted
-          * @nd:		lookup context
-          * @flags:	lookup flags
-          * @path:	pointer to container for result
-          *
-          * Look up the given name, but don't attempt to revalidate the last component.
-          * Returns 0 and "path" will be valid on success; Returns error otherwise.
-          */
-         static int
-         path_mountpoint(struct nameidata *nd, unsigned flags, struct path *path)
-   2637  {
-   2638  	const char *s = path_init(nd, flags);
-         	int err;
-   2640  	if (IS_ERR(s))
-   2641  		return PTR_ERR(s);
-   2642  	while (!(err = link_path_walk(s, nd)) &&
-         		(err = mountpoint_last(nd)) > 0) {
-   2644  		s = trailing_symlink(nd);
-   2645  		if (IS_ERR(s)) {
-         			err = PTR_ERR(s);
-         			break;
-         		}
-         	}
-   2650  	if (!err) {
-   2651  		*path = nd->path;
-   2652  		nd->path.mnt = NULL;
-   2653  		nd->path.dentry = NULL;
-   2654  		follow_mount(path);
-         	}
-   2656  	terminate_walk(nd);
-         	return err;
-   2658  }
-         
-         static int
-         filename_mountpoint(int dfd, struct filename *name, struct path *path,
-         			unsigned int flags)
-   2663  {
-         	struct nameidata nd;
-         	int error;
-   2666  	if (IS_ERR(name))
-   2667  		return PTR_ERR(name);
-         	set_nameidata(&nd, dfd, name);
-   2669  	error = path_mountpoint(&nd, flags | LOOKUP_RCU, path);
-   2670  	if (unlikely(error == -ECHILD))
-   2671  		error = path_mountpoint(&nd, flags, path);
-   2672  	if (unlikely(error == -ESTALE))
-   2673  		error = path_mountpoint(&nd, flags | LOOKUP_REVAL, path);
-   2674  	if (likely(!error))
-         		audit_inode(name, path->dentry, 0);
-   2676  	restore_nameidata();
-   2677  	putname(name);
-         	return error;
-   2679  }
-         
-         /**
-          * user_path_mountpoint_at - lookup a path from userland in order to umount it
-          * @dfd:	directory file descriptor
-          * @name:	pathname from userland
-          * @flags:	lookup flags
-          * @path:	pointer to container to hold result
-          *
-          * A umount is a special case for path walking. We're not actually interested
-          * in the inode in this situation, and ESTALE errors can be a problem. We
-          * simply want track down the dentry and vfsmount attached at the mountpoint
-          * and avoid revalidating the last component.
-          *
-          * Returns 0 and populates "path" on success.
-          */
-         int
-         user_path_mountpoint_at(int dfd, const char __user *name, unsigned int flags,
-         			struct path *path)
-   2698  {
-   2699  	return filename_mountpoint(dfd, getname(name), path, flags);
-   2700  }
-         
-         int
-         kern_path_mountpoint(int dfd, const char *name, struct path *path,
-         			unsigned int flags)
-   2705  {
-   2706  	return filename_mountpoint(dfd, getname_kernel(name), path, flags);
-   2707  }
-         EXPORT_SYMBOL(kern_path_mountpoint);
-         
-         int __check_sticky(struct inode *dir, struct inode *inode)
-   2711  {
-   2712  	kuid_t fsuid = current_fsuid();
-         
-   2714  	if (uid_eq(inode->i_uid, fsuid))
-   2715  		return 0;
-   2716  	if (uid_eq(dir->i_uid, fsuid))
-         		return 0;
-   2718  	return !capable_wrt_inode_uidgid(inode, CAP_FOWNER);
-   2719  }
-         EXPORT_SYMBOL(__check_sticky);
-         
-         /*
-          *	Check whether we can remove a link victim from directory dir, check
-          *  whether the type of victim is right.
-          *  1. We can't do it if dir is read-only (done in permission())
-          *  2. We should have write and exec permissions on dir
-          *  3. We can't remove anything from append-only dir
-          *  4. We can't do anything with immutable dir (done in permission())
-          *  5. If the sticky bit on dir is set we should either
-          *	a. be owner of dir, or
-          *	b. be owner of victim, or
-          *	c. have CAP_FOWNER capability
-          *  6. If the victim is append-only or immutable we can't do antyhing with
-          *     links pointing to it.
-          *  7. If the victim has an unknown uid or gid we can't change the inode.
-          *  8. If we were asked to remove a directory and victim isn't one - ENOTDIR.
-          *  9. If we were asked to remove a non-directory and victim isn't one - EISDIR.
-          * 10. We can't remove a root or mountpoint.
-          * 11. We don't allow removal of NFS sillyrenamed files; it's handled by
-          *     nfs_async_unlink().
-          */
-         static int may_delete(struct inode *dir, struct dentry *victim, bool isdir)
-   2743  {
-   2744  	struct inode *inode = d_backing_inode(victim);
-         	int error;
-         
-   2747  	if (d_is_negative(victim))
-   2748  		return -ENOENT;
-   2749  	BUG_ON(!inode);
-         
-   2751  	BUG_ON(victim->d_parent->d_inode != dir);
-         	audit_inode_child(dir, victim, AUDIT_TYPE_CHILD_DELETE);
-         
-   2754  	error = inode_permission(dir, MAY_WRITE | MAY_EXEC);
-   2755  	if (error)
-         		return error;
-   2757  	if (IS_APPEND(dir))
-   2758  		return -EPERM;
-         
-   2760  	if (check_sticky(dir, inode) || IS_APPEND(inode) ||
-   2761  	    IS_IMMUTABLE(inode) || IS_SWAPFILE(inode) || HAS_UNMAPPED_ID(inode))
-         		return -EPERM;
-   2763  	if (isdir) {
-         		if (!d_is_dir(victim))
-   2765  			return -ENOTDIR;
-   2766  		if (IS_ROOT(victim))
-         			return -EBUSY;
-         	} else if (d_is_dir(victim))
-   2769  		return -EISDIR;
-   2770  	if (IS_DEADDIR(dir))
-         		return -ENOENT;
-         	if (victim->d_flags & DCACHE_NFSFS_RENAMED)
-   2773  		return -EBUSY;
-         	return 0;
-   2775  }
-         
-         /*	Check whether we can create an object with dentry child in directory
-          *  dir.
-          *  1. We can't do it if child already exists (open has special treatment for
-          *     this case, but since we are inlined it's OK)
-          *  2. We can't do it if dir is read-only (done in permission())
-          *  3. We can't do it if the fs can't represent the fsuid or fsgid.
-          *  4. We should have write and exec permissions on dir
-          *  5. We can't do it if dir is immutable (done in permission())
-          */
-         static inline int may_create(struct inode *dir, struct dentry *child)
-         {
-         	struct user_namespace *s_user_ns;
-         	audit_inode_child(dir, child, AUDIT_TYPE_CHILD_CREATE);
-   2790  	if (child->d_inode)
-   2791  		return -EEXIST;
-   2792  	if (IS_DEADDIR(dir))
-   2793  		return -ENOENT;
-   2794  	s_user_ns = dir->i_sb->s_user_ns;
-   2795  	if (!kuid_has_mapping(s_user_ns, current_fsuid()) ||
-         	    !kgid_has_mapping(s_user_ns, current_fsgid()))
-   2797  		return -EOVERFLOW;
-   2798  	return inode_permission(dir, MAY_WRITE | MAY_EXEC);
-         }
-         
-         /*
-          * p1 and p2 should be directories on the same fs.
-          */
-         struct dentry *lock_rename(struct dentry *p1, struct dentry *p2)
-   2805  {
-         	struct dentry *p;
-         
-   2808  	if (p1 == p2) {
-         		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
-   2810  		return NULL;
-         	}
-         
-   2813  	mutex_lock(&p1->d_sb->s_vfs_rename_mutex);
-         
-   2815  	p = d_ancestor(p2, p1);
-   2816  	if (p) {
-         		inode_lock_nested(p2->d_inode, I_MUTEX_PARENT);
-         		inode_lock_nested(p1->d_inode, I_MUTEX_CHILD);
-         		return p;
-         	}
-         
-   2822  	p = d_ancestor(p1, p2);
-         	if (p) {
-         		inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
-         		inode_lock_nested(p2->d_inode, I_MUTEX_CHILD);
-         		return p;
-         	}
-         
-         	inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
-         	inode_lock_nested(p2->d_inode, I_MUTEX_PARENT2);
-         	return NULL;
-   2832  }
-         EXPORT_SYMBOL(lock_rename);
-         
-         void unlock_rename(struct dentry *p1, struct dentry *p2)
-   2836  {
-         	inode_unlock(p1->d_inode);
-   2838  	if (p1 != p2) {
-         		inode_unlock(p2->d_inode);
-   2840  		mutex_unlock(&p1->d_sb->s_vfs_rename_mutex);
-         	}
-   2842  }
-         EXPORT_SYMBOL(unlock_rename);
-         
-         int vfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
-         		bool want_excl)
-   2847  {
-         	int error = may_create(dir, dentry);
-   2849  	if (error)
-         		return error;
-         
-   2852  	if (!dir->i_op->create)
-   2853  		return -EACCES;	/* shouldn't it be ENOSYS? */
-         	mode &= S_IALLUGO;
-   2855  	mode |= S_IFREG;
-   2856  	error = security_inode_create(dir, dentry, mode);
-   2857  	if (error)
-         		return error;
-   2859  	error = dir->i_op->create(dir, dentry, mode, want_excl);
-   2860  	if (!error)
-         		fsnotify_create(dir, dentry);
-         	return error;
-   2863  }
-         EXPORT_SYMBOL(vfs_create);
-         
-         int vfs_mkobj(struct dentry *dentry, umode_t mode,
-         		int (*f)(struct dentry *, umode_t, void *),
-         		void *arg)
-   2869  {
-   2870  	struct inode *dir = dentry->d_parent->d_inode;
-         	int error = may_create(dir, dentry);
-   2872  	if (error)
-         		return error;
-         
-         	mode &= S_IALLUGO;
-   2876  	mode |= S_IFREG;
-   2877  	error = security_inode_create(dir, dentry, mode);
-   2878  	if (error)
-         		return error;
-   2880  	error = f(dentry, mode, arg);
-   2881  	if (!error)
-         		fsnotify_create(dir, dentry);
-         	return error;
-   2884  }
-         EXPORT_SYMBOL(vfs_mkobj);
-         
-         bool may_open_dev(const struct path *path)
-   2888  {
-   2889  	return !(path->mnt->mnt_flags & MNT_NODEV) &&
-   2890  		!(path->mnt->mnt_sb->s_iflags & SB_I_NODEV);
-   2891  }
-         
-         static int may_open(const struct path *path, int acc_mode, int flag)
-   2894  {
-         	struct dentry *dentry = path->dentry;
-   2896  	struct inode *inode = dentry->d_inode;
-         	int error;
-         
-   2899  	if (!inode)
-   2900  		return -ENOENT;
-         
-   2902  	switch (inode->i_mode & S_IFMT) {
-         	case S_IFLNK:
-   2904  		return -ELOOP;
-         	case S_IFDIR:
-   2906  		if (acc_mode & MAY_WRITE)
-   2907  			return -EISDIR;
-         		break;
-         	case S_IFBLK:
-         	case S_IFCHR:
-         		if (!may_open_dev(path))
-   2912  			return -EACCES;
-         		/*FALLTHRU*/
-         	case S_IFIFO:
-         	case S_IFSOCK:
-   2916  		flag &= ~O_TRUNC;
-         		break;
-         	}
-         
-   2920  	error = inode_permission(inode, MAY_OPEN | acc_mode);
-   2921  	if (error)
-         		return error;
-         
-         	/*
-         	 * An append-only file must be opened in append mode for writing.
-         	 */
-   2927  	if (IS_APPEND(inode)) {
-   2928  		if  ((flag & O_ACCMODE) != O_RDONLY && !(flag & O_APPEND))
-   2929  			return -EPERM;
-   2930  		if (flag & O_TRUNC)
-         			return -EPERM;
-         	}
-         
-         	/* O_NOATIME can only be set by the owner or superuser */
-   2935  	if (flag & O_NOATIME && !inode_owner_or_capable(inode))
-         		return -EPERM;
-         
-         	return 0;
-   2939  }
-         
-         static int handle_truncate(struct file *filp)
-         {
-         	const struct path *path = &filp->f_path;
-   2944  	struct inode *inode = path->dentry->d_inode;
-         	int error = get_write_access(inode);
-         	if (error)
-         		return error;
-         	/*
-         	 * Refuse to truncate files with mandatory locks held on them.
-         	 */
-         	error = locks_verify_locked(filp);
-         	if (!error)
-         		error = security_path_truncate(path);
-         	if (!error) {
-   2955  		error = do_truncate(path->dentry, 0,
-         				    ATTR_MTIME|ATTR_CTIME|ATTR_OPEN,
-         				    filp);
-         	}
-         	put_write_access(inode);
-         	return error;
-         }
-         
-         static inline int open_to_namei_flags(int flag)
-         {
-   2965  	if ((flag & O_ACCMODE) == 3)
-   2966  		flag--;
-         	return flag;
-         }
-         
-         static int may_o_create(const struct path *dir, struct dentry *dentry, umode_t mode)
-         {
-         	struct user_namespace *s_user_ns;
-         	int error = security_path_mknod(dir, dentry, mode, 0);
-         	if (error)
-         		return error;
-         
-   2977  	s_user_ns = dir->dentry->d_sb->s_user_ns;
-   2978  	if (!kuid_has_mapping(s_user_ns, current_fsuid()) ||
-         	    !kgid_has_mapping(s_user_ns, current_fsgid()))
-   2980  		return -EOVERFLOW;
-         
-   2982  	error = inode_permission(dir->dentry->d_inode, MAY_WRITE | MAY_EXEC);
-   2983  	if (error)
-         		return error;
-         
-   2986  	return security_inode_create(dir->dentry->d_inode, dentry, mode);
-         }
-         
-         /*
-          * Attempt to atomically look up, create and open a file from a negative
-          * dentry.
-          *
-          * Returns 0 if successful.  The file will have been created and attached to
-          * @file by the filesystem calling finish_open().
-          *
-          * Returns 1 if the file was looked up only or didn't need creating.  The
-          * caller will need to perform the open themselves.  @path will have been
-          * updated to point to the new dentry.  This may be negative.
-          *
-          * Returns an error code otherwise.
-          */
-         static int atomic_open(struct nameidata *nd, struct dentry *dentry,
-         			struct path *path, struct file *file,
-         			const struct open_flags *op,
-         			int open_flag, umode_t mode,
-         			int *opened)
-         {
-         	struct dentry *const DENTRY_NOT_SET = (void *) -1UL;
-   3009  	struct inode *dir =  nd->path.dentry->d_inode;
-         	int error;
-         
-   3012  	if (!(~open_flag & (O_EXCL | O_CREAT)))	/* both O_EXCL and O_CREAT */
-   3013  		open_flag &= ~O_TRUNC;
-         
-         	if (nd->flags & LOOKUP_DIRECTORY)
-   3016  		open_flag |= O_DIRECTORY;
-         
-   3018  	file->f_path.dentry = DENTRY_NOT_SET;
-   3019  	file->f_path.mnt = nd->path.mnt;
-   3020  	error = dir->i_op->atomic_open(dir, dentry, file,
-         				       open_to_namei_flags(open_flag),
-         				       mode, opened);
-         	d_lookup_done(dentry);
-   3024  	if (!error) {
-         		/*
-         		 * We didn't have the inode before the open, so check open
-         		 * permission here.
-         		 */
-   3029  		int acc_mode = op->acc_mode;
-   3030  		if (*opened & FILE_CREATED) {
-   3031  			WARN_ON(!(open_flag & O_CREAT));
-         			fsnotify_create(dir, dentry);
-         			acc_mode = 0;
-         		}
-   3035  		error = may_open(&file->f_path, acc_mode, open_flag);
-   3036  		if (WARN_ON(error > 0))
-   3037  			error = -EINVAL;
-   3038  	} else if (error > 0) {
-   3039  		if (WARN_ON(file->f_path.dentry == DENTRY_NOT_SET)) {
-   3040  			error = -EIO;
-         		} else {
-   3042  			if (file->f_path.dentry) {
-   3043  				dput(dentry);
-   3044  				dentry = file->f_path.dentry;
-         			}
-   3046  			if (*opened & FILE_CREATED)
-         				fsnotify_create(dir, dentry);
-   3048  			if (unlikely(d_is_negative(dentry))) {
-         				error = -ENOENT;
-         			} else {
-         				path->dentry = dentry;
-         				path->mnt = nd->path.mnt;
-         				return 1;
-         			}
-         		}
-         	}
-   3057  	dput(dentry);
-         	return error;
-         }
-         
-         /*
-          * Look up and maybe create and open the last component.
-          *
-          * Must be called with i_mutex held on parent.
-          *
-          * Returns 0 if the file was successfully atomically created (if necessary) and
-          * opened.  In this case the file will be returned attached to @file.
-          *
-          * Returns 1 if the file was not completely opened at this time, though lookups
-          * and creations will have been performed and the dentry returned in @path will
-          * be positive upon return if O_CREAT was specified.  If O_CREAT wasn't
-          * specified then a negative dentry may be returned.
-          *
-          * An error code is returned otherwise.
-          *
-          * FILE_CREATE will be set in @*opened if the dentry was created and will be
-          * cleared otherwise prior to returning.
-          */
-         static int lookup_open(struct nameidata *nd, struct path *path,
-         			struct file *file,
-         			const struct open_flags *op,
-         			bool got_write, int *opened)
-         {
-   3084  	struct dentry *dir = nd->path.dentry;
-   3085  	struct inode *dir_inode = dir->d_inode;
-   3086  	int open_flag = op->open_flag;
-         	struct dentry *dentry;
-         	int error, create_error = 0;
-   3089  	umode_t mode = op->mode;
-   3090  	DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
-         
-   3092  	if (unlikely(IS_DEADDIR(dir_inode)))
-   3093  		return -ENOENT;
-         
-   3095  	*opened &= ~FILE_CREATED;
-   3096  	dentry = d_lookup(dir, &nd->last);
-         	for (;;) {
-   3098  		if (!dentry) {
-   3099  			dentry = d_alloc_parallel(dir, &nd->last, &wq);
-   3100  			if (IS_ERR(dentry))
-   3101  				return PTR_ERR(dentry);
-         		}
-   3103  		if (d_in_lookup(dentry))
-         			break;
-         
-         		error = d_revalidate(dentry, nd->flags);
-   3107  		if (likely(error > 0))
-         			break;
-   3109  		if (error)
-         			goto out_dput;
-   3111  		d_invalidate(dentry);
-   3112  		dput(dentry);
-         		dentry = NULL;
-         	}
-   3115  	if (dentry->d_inode) {
-         		/* Cached positive dentry: will open in f_op->open */
-         		goto out_no_open;
-         	}
-         
-         	/*
-         	 * Checking write permission is tricky, bacuse we don't know if we are
-         	 * going to actually need it: O_CREAT opens should work as long as the
-         	 * file exists.  But checking existence breaks atomicity.  The trick is
-         	 * to check access and if not granted clear O_CREAT from the flags.
-         	 *
-         	 * Another problem is returing the "right" error value (e.g. for an
-         	 * O_EXCL open we want to return EEXIST not EROFS).
-         	 */
-   3129  	if (open_flag & O_CREAT) {
-   3130  		if (!IS_POSIXACL(dir->d_inode))
-   3131  			mode &= ~current_umask();
-   3132  		if (unlikely(!got_write)) {
-   3133  			create_error = -EROFS;
-   3134  			open_flag &= ~O_CREAT;
-   3135  			if (open_flag & (O_EXCL | O_TRUNC))
-         				goto no_open;
-         			/* No side effects, safe to clear O_CREAT */
-         		} else {
-   3139  			create_error = may_o_create(&nd->path, dentry, mode);
-   3140  			if (create_error) {
-   3141  				open_flag &= ~O_CREAT;
-   3142  				if (open_flag & O_EXCL)
-         					goto no_open;
-         			}
-         		}
-   3146  	} else if ((open_flag & (O_TRUNC|O_WRONLY|O_RDWR)) &&
-         		   unlikely(!got_write)) {
-         		/*
-         		 * No O_CREATE -> atomicity not a requirement -> fall
-         		 * back to lookup + open
-         		 */
-         		goto no_open;
-         	}
-         
-   3155  	if (dir_inode->i_op->atomic_open) {
-         		error = atomic_open(nd, dentry, path, file, op, open_flag,
-         				    mode, opened);
-   3158  		if (unlikely(error == -ENOENT) && create_error)
-         			error = create_error;
-         		return error;
-         	}
-         
-         no_open:
-   3164  	if (d_in_lookup(dentry)) {
-   3165  		struct dentry *res = dir_inode->i_op->lookup(dir_inode, dentry,
-         							     nd->flags);
-         		d_lookup_done(dentry);
-   3168  		if (unlikely(res)) {
-   3169  			if (IS_ERR(res)) {
-         				error = PTR_ERR(res);
-         				goto out_dput;
-         			}
-   3173  			dput(dentry);
-         			dentry = res;
-         		}
-         	}
-         
-         	/* Negative dentry, just create the file */
-   3179  	if (!dentry->d_inode && (open_flag & O_CREAT)) {
-   3180  		*opened |= FILE_CREATED;
-         		audit_inode_child(dir_inode, dentry, AUDIT_TYPE_CHILD_CREATE);
-   3182  		if (!dir_inode->i_op->create) {
-   3183  			error = -EACCES;
-         			goto out_dput;
-         		}
-   3186  		error = dir_inode->i_op->create(dir_inode, dentry, mode,
-         						open_flag & O_EXCL);
-   3188  		if (error)
-         			goto out_dput;
-         		fsnotify_create(dir_inode, dentry);
-         	}
-   3192  	if (unlikely(create_error) && !dentry->d_inode) {
-         		error = create_error;
-         		goto out_dput;
-         	}
-         out_no_open:
-   3197  	path->dentry = dentry;
-   3198  	path->mnt = nd->path.mnt;
-         	return 1;
-         
-         out_dput:
-   3202  	dput(dentry);
-         	return error;
-         }
-         
-         /*
-          * Handle the last step of open()
-          */
-         static int do_last(struct nameidata *nd,
-         		   struct file *file, const struct open_flags *op,
-         		   int *opened)
-         {
-   3213  	struct dentry *dir = nd->path.dentry;
-   3214  	int open_flag = op->open_flag;
-   3215  	bool will_truncate = (open_flag & O_TRUNC) != 0;
-   3216  	bool got_write = false;
-   3217  	int acc_mode = op->acc_mode;
-         	unsigned seq;
-         	struct inode *inode;
-         	struct path path;
-         	int error;
-         
-   3223  	nd->flags &= ~LOOKUP_PARENT;
-   3224  	nd->flags |= op->intent;
-         
-   3226  	if (nd->last_type != LAST_NORM) {
-         		error = handle_dots(nd, nd->last_type);
-         		if (unlikely(error))
-         			return error;
-         		goto finish_open;
-         	}
-         
-   3233  	if (!(open_flag & O_CREAT)) {
-   3234  		if (nd->last.name[nd->last.len])
-   3235  			nd->flags |= LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
-         		/* we _can_ be in RCU mode here */
-   3237  		error = lookup_fast(nd, &path, &inode, &seq);
-   3238  		if (likely(error > 0))
-         			goto finish_lookup;
-         
-   3241  		if (error < 0)
-         			return error;
-         
-   3244  		BUG_ON(nd->inode != dir->d_inode);
-   3245  		BUG_ON(nd->flags & LOOKUP_RCU);
-         	} else {
-         		/* create side of things */
-         		/*
-         		 * This will *only* deal with leaving RCU mode - LOOKUP_JUMPED
-         		 * has been cleared when we got to the last component we are
-         		 * about to look up
-         		 */
-   3253  		error = complete_walk(nd);
-   3254  		if (error)
-         			return error;
-         
-         		audit_inode(nd->name, dir, LOOKUP_PARENT);
-         		/* trailing slashes? */
-   3259  		if (unlikely(nd->last.name[nd->last.len]))
-         			return -EISDIR;
-         	}
-         
-   3263  	if (open_flag & (O_CREAT | O_TRUNC | O_WRONLY | O_RDWR)) {
-   3264  		error = mnt_want_write(nd->path.mnt);
-   3265  		if (!error)
-         			got_write = true;
-         		/*
-         		 * do _not_ fail yet - we might not need that or fail with
-         		 * a different error; let lookup_open() decide; we'll be
-         		 * dropping this one anyway.
-         		 */
-         	}
-         	if (open_flag & O_CREAT)
-         		inode_lock(dir->d_inode);
-         	else
-         		inode_lock_shared(dir->d_inode);
-         	error = lookup_open(nd, &path, file, op, got_write, opened);
-   3278  	if (open_flag & O_CREAT)
-         		inode_unlock(dir->d_inode);
-         	else
-         		inode_unlock_shared(dir->d_inode);
-         
-   3283  	if (error <= 0) {
-   3284  		if (error)
-         			goto out;
-         
-   3287  		if ((*opened & FILE_CREATED) ||
-   3288  		    !S_ISREG(file_inode(file)->i_mode))
-         			will_truncate = false;
-         
-         		audit_inode(nd->name, file->f_path.dentry, 0);
-         		goto opened;
-         	}
-         
-   3295  	if (*opened & FILE_CREATED) {
-         		/* Don't check for write permission, don't truncate */
-   3297  		open_flag &= ~O_TRUNC;
-   3298  		will_truncate = false;
-   3299  		acc_mode = 0;
-         		path_to_nameidata(&path, nd);
-         		goto finish_open_created;
-         	}
-         
-         	/*
-         	 * If atomic_open() acquired write access it is dropped now due to
-         	 * possible mount and symlink following (this might be optimized away if
-         	 * necessary...)
-         	 */
-   3309  	if (got_write) {
-   3310  		mnt_drop_write(nd->path.mnt);
-         		got_write = false;
-         	}
-         
-   3314  	error = follow_managed(&path, nd);
-   3315  	if (unlikely(error < 0))
-         		return error;
-         
-   3318  	if (unlikely(d_is_negative(path.dentry))) {
-         		path_to_nameidata(&path, nd);
-         		return -ENOENT;
-         	}
-         
-         	/*
-         	 * create/update audit record if it already exists.
-         	 */
-         	audit_inode(nd->name, path.dentry, 0);
-         
-   3328  	if (unlikely((open_flag & (O_EXCL | O_CREAT)) == (O_EXCL | O_CREAT))) {
-         		path_to_nameidata(&path, nd);
-   3330  		return -EEXIST;
-         	}
-         
-   3333  	seq = 0;	/* out of RCU mode, so the value doesn't matter */
-   3334  	inode = d_backing_inode(path.dentry);
-         finish_lookup:
-         	error = step_into(nd, &path, 0, inode, seq);
-   3337  	if (unlikely(error))
-         		return error;
-         finish_open:
-         	/* Why this, you ask?  _Now_ we might have grown LOOKUP_JUMPED... */
-   3341  	error = complete_walk(nd);
-   3342  	if (error)
-         		return error;
-   3344  	audit_inode(nd->name, nd->path.dentry, 0);
-   3345  	error = -EISDIR;
-   3346  	if ((open_flag & O_CREAT) && d_is_dir(nd->path.dentry))
-         		goto out;
-   3348  	error = -ENOTDIR;
-   3349  	if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dentry))
-         		goto out;
-   3351  	if (!d_is_reg(nd->path.dentry))
-   3352  		will_truncate = false;
-         
-   3354  	if (will_truncate) {
-   3355  		error = mnt_want_write(nd->path.mnt);
-   3356  		if (error)
-         			goto out;
-   3358  		got_write = true;
-         	}
-         finish_open_created:
-   3361  	error = may_open(&nd->path, acc_mode, open_flag);
-   3362  	if (error)
-         		goto out;
-   3364  	BUG_ON(*opened & FILE_OPENED); /* once it's opened, it's opened */
-   3365  	error = vfs_open(&nd->path, file, current_cred());
-   3366  	if (error)
-         		goto out;
-   3368  	*opened |= FILE_OPENED;
-         opened:
-         	error = ima_file_check(file, op->acc_mode, *opened);
-   3371  	if (!error && will_truncate)
-         		error = handle_truncate(file);
-         out:
-   3374  	if (unlikely(error) && (*opened & FILE_OPENED))
-   3375  		fput(file);
-   3376  	if (unlikely(error > 0)) {
-   3377  		WARN_ON(1);
-   3378  		error = -EINVAL;
-         	}
-   3380  	if (got_write)
-   3381  		mnt_drop_write(nd->path.mnt);
-         	return error;
-         }
-         
-         struct dentry *vfs_tmpfile(struct dentry *dentry, umode_t mode, int open_flag)
-   3386  {
-   3387  	struct dentry *child = NULL;
-   3388  	struct inode *dir = dentry->d_inode;
-         	struct inode *inode;
-         	int error;
-         
-         	/* we want directory to be writable */
-   3393  	error = inode_permission(dir, MAY_WRITE | MAY_EXEC);
-   3394  	if (error)
-         		goto out_err;
-         	error = -EOPNOTSUPP;
-   3397  	if (!dir->i_op->tmpfile)
-         		goto out_err;
-         	error = -ENOMEM;
-   3400  	child = d_alloc(dentry, &slash_name);
-   3401  	if (unlikely(!child))
-         		goto out_err;
-   3403  	error = dir->i_op->tmpfile(dir, child, mode);
-   3404  	if (error)
-         		goto out_err;
-         	error = -ENOENT;
-   3407  	inode = child->d_inode;
-   3408  	if (unlikely(!inode))
-         		goto out_err;
-   3410  	if (!(open_flag & O_EXCL)) {
-         		spin_lock(&inode->i_lock);
-   3412  		inode->i_state |= I_LINKABLE;
-         		spin_unlock(&inode->i_lock);
-         	}
-         	return child;
-         
-   3417  out_err:
-   3418  	dput(child);
-         	return ERR_PTR(error);
-   3420  }
-         EXPORT_SYMBOL(vfs_tmpfile);
-         
-         static int do_tmpfile(struct nameidata *nd, unsigned flags,
-         		const struct open_flags *op,
-         		struct file *file, int *opened)
-         {
-         	struct dentry *child;
-         	struct path path;
-   3429  	int error = path_lookupat(nd, flags | LOOKUP_DIRECTORY, &path);
-   3430  	if (unlikely(error))
-         		return error;
-   3432  	error = mnt_want_write(path.mnt);
-   3433  	if (unlikely(error))
-         		goto out;
-   3435  	child = vfs_tmpfile(path.dentry, op->mode, op->open_flag);
-   3436  	error = PTR_ERR(child);
-   3437  	if (IS_ERR(child))
-         		goto out2;
-   3439  	dput(path.dentry);
-   3440  	path.dentry = child;
-         	audit_inode(nd->name, child, 0);
-         	/* Don't check for other permissions, the inode was just created */
-   3443  	error = may_open(&path, 0, op->open_flag);
-   3444  	if (error)
-         		goto out2;
-   3446  	file->f_path.mnt = path.mnt;
-   3447  	error = finish_open(file, child, NULL, opened);
-         	if (error)
-         		goto out2;
-         out2:
-   3451  	mnt_drop_write(path.mnt);
-         out:
-         	path_put(&path);
-         	return error;
-         }
-         
-         static int do_o_path(struct nameidata *nd, unsigned flags, struct file *file)
-         {
-         	struct path path;
-   3460  	int error = path_lookupat(nd, flags, &path);
-   3461  	if (!error) {
-         		audit_inode(nd->name, path.dentry, 0);
-   3463  		error = vfs_open(&path, file, current_cred());
-         		path_put(&path);
-         	}
-         	return error;
-         }
-         
-         static struct file *path_openat(struct nameidata *nd,
-         			const struct open_flags *op, unsigned flags)
-   3471  {
-         	const char *s;
-         	struct file *file;
-   3474  	int opened = 0;
-         	int error;
-         
-   3477  	file = get_empty_filp();
-   3478  	if (IS_ERR(file))
-         		return file;
-         
-   3481  	file->f_flags = op->open_flag;
-         
-   3483  	if (unlikely(file->f_flags & __O_TMPFILE)) {
-         		error = do_tmpfile(nd, flags, op, file, &opened);
-   3485  		goto out2;
-         	}
-         
-   3488  	if (unlikely(file->f_flags & O_PATH)) {
-         		error = do_o_path(nd, flags, file);
-   3490  		if (!error)
-         			opened |= FILE_OPENED;
-         		goto out2;
-         	}
-         
-   3495  	s = path_init(nd, flags);
-   3496  	if (IS_ERR(s)) {
-   3497  		put_filp(file);
-   3498  		return ERR_CAST(s);
-         	}
-   3500  	while (!(error = link_path_walk(s, nd)) &&
-         		(error = do_last(nd, file, op, &opened)) > 0) {
-   3502  		nd->flags &= ~(LOOKUP_OPEN|LOOKUP_CREATE|LOOKUP_EXCL);
-   3503  		s = trailing_symlink(nd);
-   3504  		if (IS_ERR(s)) {
-   3505  			error = PTR_ERR(s);
-         			break;
-         		}
-         	}
-   3509  	terminate_walk(nd);
-         out2:
-   3511  	if (!(opened & FILE_OPENED)) {
-   3512  		BUG_ON(!error);
-   3513  		put_filp(file);
-         	}
-   3515  	if (unlikely(error)) {
-   3516  		if (error == -EOPENSTALE) {
-   3517  			if (flags & LOOKUP_RCU)
-         				error = -ECHILD;
-         			else
-         				error = -ESTALE;
-         		}
-         		file = ERR_PTR(error);
-         	}
-         	return file;
-   3525  }
-         
-         struct file *do_filp_open(int dfd, struct filename *pathname,
-         		const struct open_flags *op)
-   3529  {
-         	struct nameidata nd;
-   3531  	int flags = op->lookup_flags;
-         	struct file *filp;
-         
-         	set_nameidata(&nd, dfd, pathname);
-   3535  	filp = path_openat(&nd, op, flags | LOOKUP_RCU);
-   3536  	if (unlikely(filp == ERR_PTR(-ECHILD)))
-   3537  		filp = path_openat(&nd, op, flags);
-   3538  	if (unlikely(filp == ERR_PTR(-ESTALE)))
-   3539  		filp = path_openat(&nd, op, flags | LOOKUP_REVAL);
-   3540  	restore_nameidata();
-         	return filp;
-   3542  }
-         
-         struct file *do_file_open_root(struct dentry *dentry, struct vfsmount *mnt,
-         		const char *name, const struct open_flags *op)
-   3546  {
-         	struct nameidata nd;
-         	struct file *file;
-         	struct filename *filename;
-   3550  	int flags = op->lookup_flags | LOOKUP_ROOT;
-         
-   3552  	nd.root.mnt = mnt;
-   3553  	nd.root.dentry = dentry;
-         
-   3555  	if (d_is_symlink(dentry) && op->intent & LOOKUP_OPEN)
-   3556  		return ERR_PTR(-ELOOP);
-         
-   3558  	filename = getname_kernel(name);
-   3559  	if (IS_ERR(filename))
-   3560  		return ERR_CAST(filename);
-         
-         	set_nameidata(&nd, -1, filename);
-   3563  	file = path_openat(&nd, op, flags | LOOKUP_RCU);
-   3564  	if (unlikely(file == ERR_PTR(-ECHILD)))
-   3565  		file = path_openat(&nd, op, flags);
-   3566  	if (unlikely(file == ERR_PTR(-ESTALE)))
-   3567  		file = path_openat(&nd, op, flags | LOOKUP_REVAL);
-   3568  	restore_nameidata();
-   3569  	putname(filename);
-         	return file;
-   3571  }
-         
-         static struct dentry *filename_create(int dfd, struct filename *name,
-         				struct path *path, unsigned int lookup_flags)
-   3575  {
-   3576  	struct dentry *dentry = ERR_PTR(-EEXIST);
-         	struct qstr last;
-         	int type;
-         	int err2;
-         	int error;
-         	bool is_dir = (lookup_flags & LOOKUP_DIRECTORY);
-         
-         	/*
-         	 * Note that only LOOKUP_REVAL and LOOKUP_DIRECTORY matter here. Any
-         	 * other flags passed in are ignored!
-         	 */
-   3587  	lookup_flags &= LOOKUP_REVAL;
-         
-   3589  	name = filename_parentat(dfd, name, lookup_flags, path, &last, &type);
-   3590  	if (IS_ERR(name))
-   3591  		return ERR_CAST(name);
-         
-         	/*
-         	 * Yucky last component or no last component at all?
-         	 * (foo/., foo/.., /////)
-         	 */
-   3597  	if (unlikely(type != LAST_NORM))
-         		goto out;
-         
-         	/* don't fail immediately if it's r/o, at least try to report other errors */
-   3601  	err2 = mnt_want_write(path->mnt);
-         	/*
-         	 * Do the final lookup.
-         	 */
-   3605  	lookup_flags |= LOOKUP_CREATE | LOOKUP_EXCL;
-   3606  	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
-   3607  	dentry = __lookup_hash(&last, path->dentry, lookup_flags);
-   3608  	if (IS_ERR(dentry))
-         		goto unlock;
-         
-         	error = -EEXIST;
-   3612  	if (d_is_positive(dentry))
-         		goto fail;
-         
-         	/*
-         	 * Special case - lookup gave negative, but... we had foo/bar/
-         	 * From the vfs_mknod() POV we just have a negative dentry -
-         	 * all is fine. Let's be bastards - you had / on the end, you've
-         	 * been asking for (non-existent) directory. -ENOENT for you.
-         	 */
-   3621  	if (unlikely(!is_dir && last.name[last.len])) {
-         		error = -ENOENT;
-         		goto fail;
-         	}
-   3625  	if (unlikely(err2)) {
-         		error = err2;
-         		goto fail;
-         	}
-         	putname(name);
-         	return dentry;
-   3631  fail:
-   3632  	dput(dentry);
-   3633  	dentry = ERR_PTR(error);
-         unlock:
-   3635  	inode_unlock(path->dentry->d_inode);
-   3636  	if (!err2)
-   3637  		mnt_drop_write(path->mnt);
-         out:
-         	path_put(path);
-   3640  	putname(name);
-         	return dentry;
-   3642  }
-         
-         struct dentry *kern_path_create(int dfd, const char *pathname,
-         				struct path *path, unsigned int lookup_flags)
-   3646  {
-   3647  	return filename_create(dfd, getname_kernel(pathname),
-         				path, lookup_flags);
-   3649  }
-         EXPORT_SYMBOL(kern_path_create);
-         
-         void done_path_create(struct path *path, struct dentry *dentry)
-   3653  {
-   3654  	dput(dentry);
-   3655  	inode_unlock(path->dentry->d_inode);
-   3656  	mnt_drop_write(path->mnt);
-         	path_put(path);
-   3658  }
-         EXPORT_SYMBOL(done_path_create);
-         
-         inline struct dentry *user_path_create(int dfd, const char __user *pathname,
-         				struct path *path, unsigned int lookup_flags)
-   3663  {
-   3664  	return filename_create(dfd, getname(pathname), path, lookup_flags);
-   3665  }
-         EXPORT_SYMBOL(user_path_create);
-         
-         int vfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t dev)
-   3669  {
-         	int error = may_create(dir, dentry);
-         
-   3672  	if (error)
-         		return error;
-         
-   3675  	if ((S_ISCHR(mode) || S_ISBLK(mode)) && !capable(CAP_MKNOD))
-   3676  		return -EPERM;
-         
-   3678  	if (!dir->i_op->mknod)
-         		return -EPERM;
-         
-         	error = devcgroup_inode_mknod(mode, dev);
-   3682  	if (error)
-         		return error;
-         
-   3685  	error = security_inode_mknod(dir, dentry, mode, dev);
-   3686  	if (error)
-         		return error;
-         
-   3689  	error = dir->i_op->mknod(dir, dentry, mode, dev);
-   3690  	if (!error)
-         		fsnotify_create(dir, dentry);
-         	return error;
-   3693  }
-         EXPORT_SYMBOL(vfs_mknod);
-         
-         static int may_mknod(umode_t mode)
-         {
-   3698  	switch (mode & S_IFMT) {
-         	case S_IFREG:
-         	case S_IFCHR:
-         	case S_IFBLK:
-         	case S_IFIFO:
-         	case S_IFSOCK:
-         	case 0: /* zero mode translates to S_IFREG */
-         		return 0;
-         	case S_IFDIR:
-         		return -EPERM;
-         	default:
-         		return -EINVAL;
-         	}
-         }
-         
-         long do_mknodat(int dfd, const char __user *filename, umode_t mode,
-         		unsigned int dev)
-   3715  {
-         	struct dentry *dentry;
-         	struct path path;
-         	int error;
-   3719  	unsigned int lookup_flags = 0;
-         
-         	error = may_mknod(mode);
-         	if (error)
-         		return error;
-         retry:
-         	dentry = user_path_create(dfd, filename, &path, lookup_flags);
-   3726  	if (IS_ERR(dentry))
-         		return PTR_ERR(dentry);
-         
-   3729  	if (!IS_POSIXACL(path.dentry->d_inode))
-   3730  		mode &= ~current_umask();
-   3731  	error = security_path_mknod(&path, dentry, mode, dev);
-         	if (error)
-         		goto out;
-   3734  	switch (mode & S_IFMT) {
-         		case 0: case S_IFREG:
-   3736  			error = vfs_create(path.dentry->d_inode,dentry,mode,true);
-         			if (!error)
-         				ima_post_path_mknod(dentry);
-         			break;
-         		case S_IFCHR: case S_IFBLK:
-   3741  			error = vfs_mknod(path.dentry->d_inode,dentry,mode,
-         					new_decode_dev(dev));
-         			break;
-         		case S_IFIFO: case S_IFSOCK:
-   3745  			error = vfs_mknod(path.dentry->d_inode,dentry,mode,0);
-         			break;
-         	}
-         out:
-   3749  	done_path_create(&path, dentry);
-   3750  	if (retry_estale(error, lookup_flags)) {
-   3751  		lookup_flags |= LOOKUP_REVAL;
-         		goto retry;
-         	}
-         	return error;
-   3755  }
-         
-   3757  SYSCALL_DEFINE4(mknodat, int, dfd, const char __user *, filename, umode_t, mode,
-         		unsigned int, dev)
-         {
-   3760  	return do_mknodat(dfd, filename, mode, dev);
-         }
-         
-   3763  SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, dev)
-         {
-   3765  	return do_mknodat(AT_FDCWD, filename, mode, dev);
-         }
-         
-         int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
-   3769  {
-         	int error = may_create(dir, dentry);
-   3771  	unsigned max_links = dir->i_sb->s_max_links;
-         
-   3773  	if (error)
-         		return error;
-         
-   3776  	if (!dir->i_op->mkdir)
-   3777  		return -EPERM;
-         
-         	mode &= (S_IRWXUGO|S_ISVTX);
-   3780  	error = security_inode_mkdir(dir, dentry, mode);
-   3781  	if (error)
-         		return error;
-         
-   3784  	if (max_links && dir->i_nlink >= max_links)
-   3785  		return -EMLINK;
-         
-   3787  	error = dir->i_op->mkdir(dir, dentry, mode);
-   3788  	if (!error)
-         		fsnotify_mkdir(dir, dentry);
-         	return error;
-   3791  }
-         EXPORT_SYMBOL(vfs_mkdir);
-         
-         long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
-   3795  {
-         	struct dentry *dentry;
-         	struct path path;
-         	int error;
-   3799  	unsigned int lookup_flags = LOOKUP_DIRECTORY;
-         
-         retry:
-         	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
-   3803  	if (IS_ERR(dentry))
-         		return PTR_ERR(dentry);
-         
-   3806  	if (!IS_POSIXACL(path.dentry->d_inode))
-   3807  		mode &= ~current_umask();
-   3808  	error = security_path_mkdir(&path, dentry, mode);
-         	if (!error)
-   3810  		error = vfs_mkdir(path.dentry->d_inode, dentry, mode);
-   3811  	done_path_create(&path, dentry);
-   3812  	if (retry_estale(error, lookup_flags)) {
-   3813  		lookup_flags |= LOOKUP_REVAL;
-         		goto retry;
-         	}
-         	return error;
-   3817  }
-         
-   3819  SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
-         {
-   3821  	return do_mkdirat(dfd, pathname, mode);
-         }
-         
-   3824  SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
-         {
-   3826  	return do_mkdirat(AT_FDCWD, pathname, mode);
-         }
-         
-         int vfs_rmdir(struct inode *dir, struct dentry *dentry)
-   3830  {
-   3831  	int error = may_delete(dir, dentry, 1);
-         
-   3833  	if (error)
-         		return error;
-         
-   3836  	if (!dir->i_op->rmdir)
-   3837  		return -EPERM;
-         
-         	dget(dentry);
-         	inode_lock(dentry->d_inode);
-         
-   3842  	error = -EBUSY;
-   3843  	if (is_local_mountpoint(dentry))
-         		goto out;
-         
-   3846  	error = security_inode_rmdir(dir, dentry);
-   3847  	if (error)
-         		goto out;
-         
-   3850  	shrink_dcache_parent(dentry);
-   3851  	error = dir->i_op->rmdir(dir, dentry);
-   3852  	if (error)
-         		goto out;
-         
-   3855  	dentry->d_inode->i_flags |= S_DEAD;
-         	dont_mount(dentry);
-         	detach_mounts(dentry);
-         
-         out:
-         	inode_unlock(dentry->d_inode);
-   3861  	dput(dentry);
-         	if (!error)
-   3863  		d_delete(dentry);
-         	return error;
-   3865  }
-         EXPORT_SYMBOL(vfs_rmdir);
-         
-         long do_rmdir(int dfd, const char __user *pathname)
-   3869  {
-         	int error = 0;
-         	struct filename *name;
-         	struct dentry *dentry;
-         	struct path path;
-         	struct qstr last;
-         	int type;
-   3876  	unsigned int lookup_flags = 0;
-         retry:
-   3878  	name = filename_parentat(dfd, getname(pathname), lookup_flags,
-         				&path, &last, &type);
-   3880  	if (IS_ERR(name))
-   3881  		return PTR_ERR(name);
-         
-   3883  	switch (type) {
-         	case LAST_DOTDOT:
-         		error = -ENOTEMPTY;
-         		goto exit1;
-         	case LAST_DOT:
-         		error = -EINVAL;
-         		goto exit1;
-         	case LAST_ROOT:
-         		error = -EBUSY;
-         		goto exit1;
-         	}
-         
-   3895  	error = mnt_want_write(path.mnt);
-   3896  	if (error)
-         		goto exit1;
-         
-   3899  	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
-   3900  	dentry = __lookup_hash(&last, path.dentry, lookup_flags);
-         	error = PTR_ERR(dentry);
-   3902  	if (IS_ERR(dentry))
-         		goto exit2;
-   3904  	if (!dentry->d_inode) {
-         		error = -ENOENT;
-         		goto exit3;
-         	}
-         	error = security_path_rmdir(&path, dentry);
-         	if (error)
-         		goto exit3;
-   3911  	error = vfs_rmdir(path.dentry->d_inode, dentry);
-         exit3:
-   3913  	dput(dentry);
-         exit2:
-   3915  	inode_unlock(path.dentry->d_inode);
-   3916  	mnt_drop_write(path.mnt);
-         exit1:
-         	path_put(&path);
-   3919  	putname(name);
-         	if (retry_estale(error, lookup_flags)) {
-   3921  		lookup_flags |= LOOKUP_REVAL;
-         		goto retry;
-         	}
-         	return error;
-   3925  }
-         
-   3927  SYSCALL_DEFINE1(rmdir, const char __user *, pathname)
-         {
-   3929  	return do_rmdir(AT_FDCWD, pathname);
-         }
-         
-         /**
-          * vfs_unlink - unlink a filesystem object
-          * @dir:	parent directory
-          * @dentry:	victim
-          * @delegated_inode: returns victim inode, if the inode is delegated.
-          *
-          * The caller must hold dir->i_mutex.
-          *
-          * If vfs_unlink discovers a delegation, it will return -EWOULDBLOCK and
-          * return a reference to the inode in delegated_inode.  The caller
-          * should then break the delegation on that inode and retry.  Because
-          * breaking a delegation may take a long time, the caller should drop
-          * dir->i_mutex before doing so.
-          *
-          * Alternatively, a caller may pass NULL for delegated_inode.  This may
-          * be appropriate for callers that expect the underlying filesystem not
-          * to be NFS exported.
-          */
-         int vfs_unlink(struct inode *dir, struct dentry *dentry, struct inode **delegated_inode)
-   3951  {
-   3952  	struct inode *target = dentry->d_inode;
-   3953  	int error = may_delete(dir, dentry, 0);
-         
-   3955  	if (error)
-         		return error;
-         
-   3958  	if (!dir->i_op->unlink)
-   3959  		return -EPERM;
-         
-         	inode_lock(target);
-   3962  	if (is_local_mountpoint(dentry))
-   3963  		error = -EBUSY;
-         	else {
-   3965  		error = security_inode_unlink(dir, dentry);
-   3966  		if (!error) {
-         			error = try_break_deleg(target, delegated_inode);
-   3968  			if (error)
-         				goto out;
-   3970  			error = dir->i_op->unlink(dir, dentry);
-   3971  			if (!error) {
-         				dont_mount(dentry);
-         				detach_mounts(dentry);
-         			}
-         		}
-         	}
-         out:
-         	inode_unlock(target);
-         
-         	/* We don't d_delete() NFS sillyrenamed files--they still exist. */
-   3981  	if (!error && !(dentry->d_flags & DCACHE_NFSFS_RENAMED)) {
-         		fsnotify_link_count(target);
-   3983  		d_delete(dentry);
-         	}
-         
-         	return error;
-   3987  }
-         EXPORT_SYMBOL(vfs_unlink);
-         
-         /*
-          * Make sure that the actual truncation of the file will occur outside its
-          * directory's i_mutex.  Truncate can take a long time if there is a lot of
-          * writeout happening, and we don't want to prevent access to the directory
-          * while waiting on the I/O.
-          */
-         long do_unlinkat(int dfd, struct filename *name)
-   3997  {
-         	int error;
-         	struct dentry *dentry;
-         	struct path path;
-         	struct qstr last;
-         	int type;
-         	struct inode *inode = NULL;
-   4004  	struct inode *delegated_inode = NULL;
-   4005  	unsigned int lookup_flags = 0;
-         retry:
-   4007  	name = filename_parentat(dfd, name, lookup_flags, &path, &last, &type);
-   4008  	if (IS_ERR(name))
-   4009  		return PTR_ERR(name);
-         
-         	error = -EISDIR;
-   4012  	if (type != LAST_NORM)
-         		goto exit1;
-         
-   4015  	error = mnt_want_write(path.mnt);
-   4016  	if (error)
-         		goto exit1;
-         retry_deleg:
-   4019  	inode_lock_nested(path.dentry->d_inode, I_MUTEX_PARENT);
-   4020  	dentry = __lookup_hash(&last, path.dentry, lookup_flags);
-   4021  	error = PTR_ERR(dentry);
-   4022  	if (!IS_ERR(dentry)) {
-         		/* Why not before? Because we want correct error value */
-   4024  		if (last.name[last.len])
-         			goto slashes;
-   4026  		inode = dentry->d_inode;
-   4027  		if (d_is_negative(dentry))
-         			goto slashes;
-   4029  		ihold(inode);
-         		error = security_path_unlink(&path, dentry);
-         		if (error)
-         			goto exit2;
-   4033  		error = vfs_unlink(path.dentry->d_inode, dentry, &delegated_inode);
-         exit2:
-   4035  		dput(dentry);
-         	}
-   4037  	inode_unlock(path.dentry->d_inode);
-   4038  	if (inode)
-   4039  		iput(inode);	/* truncate the inode here */
-         	inode = NULL;
-   4041  	if (delegated_inode) {
-         		error = break_deleg_wait(&delegated_inode);
-   4043  		if (!error)
-         			goto retry_deleg;
-         	}
-   4046  	mnt_drop_write(path.mnt);
-         exit1:
-         	path_put(&path);
-   4049  	if (retry_estale(error, lookup_flags)) {
-   4050  		lookup_flags |= LOOKUP_REVAL;
-         		inode = NULL;
-         		goto retry;
-         	}
-   4054  	putname(name);
-         	return error;
-         
-         slashes:
-   4058  	if (d_is_negative(dentry))
-   4059  		error = -ENOENT;
-         	else if (d_is_dir(dentry))
-   4061  		error = -EISDIR;
-         	else
-   4063  		error = -ENOTDIR;
-         	goto exit2;
-   4065  }
-         
-   4067  SYSCALL_DEFINE3(unlinkat, int, dfd, const char __user *, pathname, int, flag)
-         {
-   4069  	if ((flag & ~AT_REMOVEDIR) != 0)
-         		return -EINVAL;
-         
-   4072  	if (flag & AT_REMOVEDIR)
-   4073  		return do_rmdir(dfd, pathname);
-         
-   4075  	return do_unlinkat(dfd, getname(pathname));
-         }
-         
-   4078  SYSCALL_DEFINE1(unlink, const char __user *, pathname)
-         {
-   4080  	return do_unlinkat(AT_FDCWD, getname(pathname));
-         }
-         
-         int vfs_symlink(struct inode *dir, struct dentry *dentry, const char *oldname)
-   4084  {
-         	int error = may_create(dir, dentry);
-         
-   4087  	if (error)
-         		return error;
-         
-   4090  	if (!dir->i_op->symlink)
-   4091  		return -EPERM;
-         
-   4093  	error = security_inode_symlink(dir, dentry, oldname);
-   4094  	if (error)
-         		return error;
-         
-   4097  	error = dir->i_op->symlink(dir, dentry, oldname);
-   4098  	if (!error)
-         		fsnotify_create(dir, dentry);
-         	return error;
-   4101  }
-         EXPORT_SYMBOL(vfs_symlink);
-         
-         long do_symlinkat(const char __user *oldname, int newdfd,
-         		  const char __user *newname)
-   4106  {
-         	int error;
-         	struct filename *from;
-         	struct dentry *dentry;
-         	struct path path;
-         	unsigned int lookup_flags = 0;
-         
-         	from = getname(oldname);
-   4114  	if (IS_ERR(from))
-         		return PTR_ERR(from);
-         retry:
-         	dentry = user_path_create(newdfd, newname, &path, lookup_flags);
-   4118  	error = PTR_ERR(dentry);
-   4119  	if (IS_ERR(dentry))
-         		goto out_putname;
-         
-         	error = security_path_symlink(&path, dentry, from->name);
-         	if (!error)
-   4124  		error = vfs_symlink(path.dentry->d_inode, dentry, from->name);
-   4125  	done_path_create(&path, dentry);
-         	if (retry_estale(error, lookup_flags)) {
-   4127  		lookup_flags |= LOOKUP_REVAL;
-         		goto retry;
-         	}
-         out_putname:
-   4131  	putname(from);
-   4132  	return error;
-   4133  }
-         
-   4135  SYSCALL_DEFINE3(symlinkat, const char __user *, oldname,
-         		int, newdfd, const char __user *, newname)
-         {
-   4138  	return do_symlinkat(oldname, newdfd, newname);
-         }
-         
-   4141  SYSCALL_DEFINE2(symlink, const char __user *, oldname, const char __user *, newname)
-         {
-   4143  	return do_symlinkat(oldname, AT_FDCWD, newname);
-         }
-         
-         /**
-          * vfs_link - create a new link
-          * @old_dentry:	object to be linked
-          * @dir:	new parent
-          * @new_dentry:	where to create the new link
-          * @delegated_inode: returns inode needing a delegation break
-          *
-          * The caller must hold dir->i_mutex
-          *
-          * If vfs_link discovers a delegation on the to-be-linked file in need
-          * of breaking, it will return -EWOULDBLOCK and return a reference to the
-          * inode in delegated_inode.  The caller should then break the delegation
-          * and retry.  Because breaking a delegation may take a long time, the
-          * caller should drop the i_mutex before doing so.
-          *
-          * Alternatively, a caller may pass NULL for delegated_inode.  This may
-          * be appropriate for callers that expect the underlying filesystem not
-          * to be NFS exported.
-          */
-         int vfs_link(struct dentry *old_dentry, struct inode *dir, struct dentry *new_dentry, struct inode **delegated_inode)
-   4166  {
-   4167  	struct inode *inode = old_dentry->d_inode;
-   4168  	unsigned max_links = dir->i_sb->s_max_links;
-         	int error;
-         
-   4171  	if (!inode)
-         		return -ENOENT;
-         
-         	error = may_create(dir, new_dentry);
-   4175  	if (error)
-         		return error;
-         
-   4178  	if (dir->i_sb != inode->i_sb)
-   4179  		return -EXDEV;
-         
-         	/*
-         	 * A link to an append-only or immutable file cannot be created.
-         	 */
-   4184  	if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
-   4185  		return -EPERM;
-         	/*
-         	 * Updating the link count will likely cause i_uid and i_gid to
-         	 * be writen back improperly if their true value is unknown to
-         	 * the vfs.
-         	 */
-         	if (HAS_UNMAPPED_ID(inode))
-         		return -EPERM;
-   4193  	if (!dir->i_op->link)
-         		return -EPERM;
-   4195  	if (S_ISDIR(inode->i_mode))
-         		return -EPERM;
-         
-   4198  	error = security_inode_link(old_dentry, dir, new_dentry);
-   4199  	if (error)
-         		return error;
-         
-         	inode_lock(inode);
-         	/* Make sure we don't allow creating hardlink to an unlinked file */
-   4204  	if (inode->i_nlink == 0 && !(inode->i_state & I_LINKABLE))
-   4205  		error =  -ENOENT;
-   4206  	else if (max_links && inode->i_nlink >= max_links)
-   4207  		error = -EMLINK;
-         	else {
-         		error = try_break_deleg(inode, delegated_inode);
-   4210  		if (!error)
-   4211  			error = dir->i_op->link(old_dentry, dir, new_dentry);
-         	}
-         
-   4214  	if (!error && (inode->i_state & I_LINKABLE)) {
-         		spin_lock(&inode->i_lock);
-   4216  		inode->i_state &= ~I_LINKABLE;
-         		spin_unlock(&inode->i_lock);
-         	}
-         	inode_unlock(inode);
-         	if (!error)
-         		fsnotify_link(dir, inode, new_dentry);
-         	return error;
-   4223  }
-         EXPORT_SYMBOL(vfs_link);
-         
-         /*
-          * Hardlinks are often used in delicate situations.  We avoid
-          * security-related surprises by not following symlinks on the
-          * newname.  --KAB
-          *
-          * We don't follow them on the oldname either to be compatible
-          * with linux 2.0, and to avoid hard-linking to directories
-          * and other special files.  --ADM
-          */
-         int do_linkat(int olddfd, const char __user *oldname, int newdfd,
-         	      const char __user *newname, int flags)
-   4237  {
-         	struct dentry *new_dentry;
-         	struct path old_path, new_path;
-   4240  	struct inode *delegated_inode = NULL;
-         	int how = 0;
-         	int error;
-         
-   4244  	if ((flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) != 0)
-   4245  		return -EINVAL;
-         	/*
-         	 * To use null names we require CAP_DAC_READ_SEARCH
-         	 * This ensures that not everyone will be able to create
-         	 * handlink using the passed filedescriptor.
-         	 */
-   4251  	if (flags & AT_EMPTY_PATH) {
-   4252  		if (!capable(CAP_DAC_READ_SEARCH))
-   4253  			return -ENOENT;
-   4254  		how = LOOKUP_EMPTY;
-         	}
-         
-         	if (flags & AT_SYMLINK_FOLLOW)
-   4258  		how |= LOOKUP_FOLLOW;
-         retry:
-         	error = user_path_at(olddfd, oldname, how, &old_path);
-   4261  	if (error)
-         		return error;
-         
-   4264  	new_dentry = user_path_create(newdfd, newname, &new_path,
-         					(how & LOOKUP_REVAL));
-         	error = PTR_ERR(new_dentry);
-   4267  	if (IS_ERR(new_dentry))
-         		goto out;
-         
-   4270  	error = -EXDEV;
-   4271  	if (old_path.mnt != new_path.mnt)
-         		goto out_dput;
-         	error = may_linkat(&old_path);
-         	if (unlikely(error))
-         		goto out_dput;
-         	error = security_path_link(old_path.dentry, &new_path, new_dentry);
-         	if (error)
-         		goto out_dput;
-   4279  	error = vfs_link(old_path.dentry, new_path.dentry->d_inode, new_dentry, &delegated_inode);
-         out_dput:
-   4281  	done_path_create(&new_path, new_dentry);
-   4282  	if (delegated_inode) {
-         		error = break_deleg_wait(&delegated_inode);
-   4284  		if (!error) {
-         			path_put(&old_path);
-         			goto retry;
-         		}
-         	}
-         	if (retry_estale(error, how)) {
-         		path_put(&old_path);
-   4291  		how |= LOOKUP_REVAL;
-   4292  		goto retry;
-         	}
-         out:
-         	path_put(&old_path);
-         
-   4297  	return error;
-   4298  }
-         
-   4300  SYSCALL_DEFINE5(linkat, int, olddfd, const char __user *, oldname,
-         		int, newdfd, const char __user *, newname, int, flags)
-         {
-   4303  	return do_linkat(olddfd, oldname, newdfd, newname, flags);
-         }
-         
-   4306  SYSCALL_DEFINE2(link, const char __user *, oldname, const char __user *, newname)
-         {
-   4308  	return do_linkat(AT_FDCWD, oldname, AT_FDCWD, newname, 0);
-         }
-         
-         /**
-          * vfs_rename - rename a filesystem object
-          * @old_dir:	parent of source
-          * @old_dentry:	source
-          * @new_dir:	parent of destination
-          * @new_dentry:	destination
-          * @delegated_inode: returns an inode needing a delegation break
-          * @flags:	rename flags
-          *
-          * The caller must hold multiple mutexes--see lock_rename()).
-          *
-          * If vfs_rename discovers a delegation in need of breaking at either
-          * the source or destination, it will return -EWOULDBLOCK and return a
-          * reference to the inode in delegated_inode.  The caller should then
-          * break the delegation and retry.  Because breaking a delegation may
-          * take a long time, the caller should drop all locks before doing
-          * so.
-          *
-          * Alternatively, a caller may pass NULL for delegated_inode.  This may
-          * be appropriate for callers that expect the underlying filesystem not
-          * to be NFS exported.
-          *
-          * The worst of all namespace operations - renaming directory. "Perverted"
-          * doesn't even start to describe it. Somebody in UCB had a heck of a trip...
-          * Problems:
-          *
-          *	a) we can get into loop creation.
-          *	b) race potential - two innocent renames can create a loop together.
-          *	   That's where 4.4 screws up. Current fix: serialization on
-          *	   sb->s_vfs_rename_mutex. We might be more accurate, but that's another
-          *	   story.
-          *	c) we have to lock _four_ objects - parents and victim (if it exists),
-          *	   and source (if it is not a directory).
-          *	   And that - after we got ->i_mutex on parents (until then we don't know
-          *	   whether the target exists).  Solution: try to be smart with locking
-          *	   order for inodes.  We rely on the fact that tree topology may change
-          *	   only under ->s_vfs_rename_mutex _and_ that parent of the object we
-          *	   move will be locked.  Thus we can rank directories by the tree
-          *	   (ancestors first) and rank all non-directories after them.
-          *	   That works since everybody except rename does "lock parent, lookup,
-          *	   lock child" and rename is under ->s_vfs_rename_mutex.
-          *	   HOWEVER, it relies on the assumption that any object with ->lookup()
-          *	   has no more than 1 dentry.  If "hybrid" objects will ever appear,
-          *	   we'd better make sure that there's no link(2) for them.
-          *	d) conversion from fhandle to dentry may come in the wrong moment - when
-          *	   we are removing the target. Solution: we will have to grab ->i_mutex
-          *	   in the fhandle_to_dentry code. [FIXME - current nfsfh.c relies on
-          *	   ->i_mutex on parents, which works but leads to some truly excessive
-          *	   locking].
-          */
-         int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
-         	       struct inode *new_dir, struct dentry *new_dentry,
-         	       struct inode **delegated_inode, unsigned int flags)
-   4364  {
-         	int error;
-         	bool is_dir = d_is_dir(old_dentry);
-   4367  	struct inode *source = old_dentry->d_inode;
-   4368  	struct inode *target = new_dentry->d_inode;
-   4369  	bool new_is_dir = false;
-   4370  	unsigned max_links = new_dir->i_sb->s_max_links;
-         	struct name_snapshot old_name;
-         
-   4373  	if (source == target)
-   4374  		return 0;
-         
-   4376  	error = may_delete(old_dir, old_dentry, is_dir);
-   4377  	if (error)
-         		return error;
-         
-   4380  	if (!target) {
-         		error = may_create(new_dir, new_dentry);
-         	} else {
-         		new_is_dir = d_is_dir(new_dentry);
-         
-   4385  		if (!(flags & RENAME_EXCHANGE))
-   4386  			error = may_delete(new_dir, new_dentry, is_dir);
-         		else
-   4388  			error = may_delete(new_dir, new_dentry, new_is_dir);
-         	}
-   4390  	if (error)
-         		return error;
-         
-   4393  	if (!old_dir->i_op->rename)
-   4394  		return -EPERM;
-         
-         	/*
-         	 * If we are going to change the parent - check write permissions,
-         	 * we'll need to flip '..'.
-         	 */
-   4400  	if (new_dir != old_dir) {
-   4401  		if (is_dir) {
-   4402  			error = inode_permission(source, MAY_WRITE);
-   4403  			if (error)
-         				return error;
-         		}
-   4406  		if ((flags & RENAME_EXCHANGE) && new_is_dir) {
-   4407  			error = inode_permission(target, MAY_WRITE);
-   4408  			if (error)
-         				return error;
-         		}
-         	}
-         
-   4413  	error = security_inode_rename(old_dir, old_dentry, new_dir, new_dentry,
-         				      flags);
-   4415  	if (error)
-         		return error;
-         
-   4418  	take_dentry_name_snapshot(&old_name, old_dentry);
-         	dget(new_dentry);
-   4420  	if (!is_dir || (flags & RENAME_EXCHANGE))
-   4421  		lock_two_nondirectories(source, target);
-   4422  	else if (target)
-         		inode_lock(target);
-         
-   4425  	error = -EBUSY;
-   4426  	if (is_local_mountpoint(old_dentry) || is_local_mountpoint(new_dentry))
-         		goto out;
-         
-   4429  	if (max_links && new_dir != old_dir) {
-   4430  		error = -EMLINK;
-   4431  		if (is_dir && !new_is_dir && new_dir->i_nlink >= max_links)
-         			goto out;
-   4433  		if ((flags & RENAME_EXCHANGE) && !is_dir && new_is_dir &&
-         		    old_dir->i_nlink >= max_links)
-         			goto out;
-         	}
-   4437  	if (is_dir && !(flags & RENAME_EXCHANGE) && target)
-   4438  		shrink_dcache_parent(new_dentry);
-         	if (!is_dir) {
-         		error = try_break_deleg(source, delegated_inode);
-   4441  		if (error)
-         			goto out;
-         	}
-   4444  	if (target && !new_is_dir) {
-         		error = try_break_deleg(target, delegated_inode);
-   4446  		if (error)
-         			goto out;
-         	}
-   4449  	error = old_dir->i_op->rename(old_dir, old_dentry,
-         				       new_dir, new_dentry, flags);
-   4451  	if (error)
-         		goto out;
-         
-   4454  	if (!(flags & RENAME_EXCHANGE) && target) {
-   4455  		if (is_dir)
-   4456  			target->i_flags |= S_DEAD;
-         		dont_mount(new_dentry);
-         		detach_mounts(new_dentry);
-         	}
-   4460  	if (!(old_dir->i_sb->s_type->fs_flags & FS_RENAME_DOES_D_MOVE)) {
-         		if (!(flags & RENAME_EXCHANGE))
-   4462  			d_move(old_dentry, new_dentry);
-         		else
-   4464  			d_exchange(old_dentry, new_dentry);
-         	}
-         out:
-   4467  	if (!is_dir || (flags & RENAME_EXCHANGE))
-   4468  		unlock_two_nondirectories(source, target);
-   4469  	else if (target)
-         		inode_unlock(target);
-   4471  	dput(new_dentry);
-         	if (!error) {
-   4473  		fsnotify_move(old_dir, new_dir, old_name.name, is_dir,
-   4474  			      !(flags & RENAME_EXCHANGE) ? target : NULL, old_dentry);
-   4475  		if (flags & RENAME_EXCHANGE) {
-   4476  			fsnotify_move(new_dir, old_dir, old_dentry->d_name.name,
-         				      new_is_dir, NULL, new_dentry);
-         		}
-         	}
-   4480  	release_dentry_name_snapshot(&old_name);
-         
-   4482  	return error;
-   4483  }
-         EXPORT_SYMBOL(vfs_rename);
-         
-         static int do_renameat2(int olddfd, const char __user *oldname, int newdfd,
-         			const char __user *newname, unsigned int flags)
-   4488  {
-         	struct dentry *old_dentry, *new_dentry;
-         	struct dentry *trap;
-         	struct path old_path, new_path;
-         	struct qstr old_last, new_last;
-         	int old_type, new_type;
-   4494  	struct inode *delegated_inode = NULL;
-         	struct filename *from;
-         	struct filename *to;
-   4497  	unsigned int lookup_flags = 0, target_flags = LOOKUP_RENAME_TARGET;
-         	bool should_retry = false;
-         	int error;
-         
-   4501  	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE | RENAME_WHITEOUT))
-   4502  		return -EINVAL;
-         
-   4504  	if ((flags & (RENAME_NOREPLACE | RENAME_WHITEOUT)) &&
-         	    (flags & RENAME_EXCHANGE))
-         		return -EINVAL;
-         
-   4508  	if ((flags & RENAME_WHITEOUT) && !capable(CAP_MKNOD))
-   4509  		return -EPERM;
-         
-   4511  	if (flags & RENAME_EXCHANGE)
-         		target_flags = 0;
-         
-   4514  retry:
-   4515  	from = filename_parentat(olddfd, getname(oldname), lookup_flags,
-         				&old_path, &old_last, &old_type);
-   4517  	if (IS_ERR(from)) {
-   4518  		error = PTR_ERR(from);
-   4519  		goto exit;
-         	}
-         
-   4522  	to = filename_parentat(newdfd, getname(newname), lookup_flags,
-         				&new_path, &new_last, &new_type);
-   4524  	if (IS_ERR(to)) {
-   4525  		error = PTR_ERR(to);
-         		goto exit1;
-         	}
-         
-   4529  	error = -EXDEV;
-   4530  	if (old_path.mnt != new_path.mnt)
-         		goto exit2;
-         
-   4533  	error = -EBUSY;
-   4534  	if (old_type != LAST_NORM)
-         		goto exit2;
-         
-   4537  	if (flags & RENAME_NOREPLACE)
-   4538  		error = -EEXIST;
-   4539  	if (new_type != LAST_NORM)
-         		goto exit2;
-         
-   4542  	error = mnt_want_write(old_path.mnt);
-   4543  	if (error)
-         		goto exit2;
-         
-         retry_deleg:
-   4547  	trap = lock_rename(new_path.dentry, old_path.dentry);
-         
-   4549  	old_dentry = __lookup_hash(&old_last, old_path.dentry, lookup_flags);
-   4550  	error = PTR_ERR(old_dentry);
-   4551  	if (IS_ERR(old_dentry))
-         		goto exit3;
-         	/* source must exist */
-   4554  	error = -ENOENT;
-   4555  	if (d_is_negative(old_dentry))
-         		goto exit4;
-   4557  	new_dentry = __lookup_hash(&new_last, new_path.dentry, lookup_flags | target_flags);
-   4558  	error = PTR_ERR(new_dentry);
-   4559  	if (IS_ERR(new_dentry))
-         		goto exit4;
-   4561  	error = -EEXIST;
-   4562  	if ((flags & RENAME_NOREPLACE) && d_is_positive(new_dentry))
-         		goto exit5;
-   4564  	if (flags & RENAME_EXCHANGE) {
-   4565  		error = -ENOENT;
-   4566  		if (d_is_negative(new_dentry))
-         			goto exit5;
-         
-         		if (!d_is_dir(new_dentry)) {
-         			error = -ENOTDIR;
-   4571  			if (new_last.name[new_last.len])
-         				goto exit5;
-         		}
-         	}
-         	/* unless the source is a directory trailing slashes give -ENOTDIR */
-         	if (!d_is_dir(old_dentry)) {
-   4577  		error = -ENOTDIR;
-   4578  		if (old_last.name[old_last.len])
-         			goto exit5;
-   4580  		if (!(flags & RENAME_EXCHANGE) && new_last.name[new_last.len])
-         			goto exit5;
-         	}
-         	/* source should not be ancestor of target */
-   4584  	error = -EINVAL;
-   4585  	if (old_dentry == trap)
-         		goto exit5;
-         	/* target should not be an ancestor of source */
-         	if (!(flags & RENAME_EXCHANGE))
-   4589  		error = -ENOTEMPTY;
-   4590  	if (new_dentry == trap)
-         		goto exit5;
-         
-         	error = security_path_rename(&old_path, old_dentry,
-         				     &new_path, new_dentry, flags);
-         	if (error)
-         		goto exit5;
-   4597  	error = vfs_rename(old_path.dentry->d_inode, old_dentry,
-         			   new_path.dentry->d_inode, new_dentry,
-         			   &delegated_inode, flags);
-         exit5:
-   4601  	dput(new_dentry);
-         exit4:
-   4603  	dput(old_dentry);
-         exit3:
-   4605  	unlock_rename(new_path.dentry, old_path.dentry);
-   4606  	if (delegated_inode) {
-         		error = break_deleg_wait(&delegated_inode);
-   4608  		if (!error)
-         			goto retry_deleg;
-         	}
-   4611  	mnt_drop_write(old_path.mnt);
-         exit2:
-         	if (retry_estale(error, lookup_flags))
-         		should_retry = true;
-         	path_put(&new_path);
-   4616  	putname(to);
-         exit1:
-         	path_put(&old_path);
-   4619  	putname(from);
-   4620  	if (should_retry) {
-         		should_retry = false;
-   4622  		lookup_flags |= LOOKUP_REVAL;
-         		goto retry;
-         	}
-         exit:
-         	return error;
-   4627  }
-         
-   4629  SYSCALL_DEFINE5(renameat2, int, olddfd, const char __user *, oldname,
-         		int, newdfd, const char __user *, newname, unsigned int, flags)
-         {
-   4632  	return do_renameat2(olddfd, oldname, newdfd, newname, flags);
-         }
-         
-   4635  SYSCALL_DEFINE4(renameat, int, olddfd, const char __user *, oldname,
-         		int, newdfd, const char __user *, newname)
-         {
-   4638  	return do_renameat2(olddfd, oldname, newdfd, newname, 0);
-         }
-         
-   4641  SYSCALL_DEFINE2(rename, const char __user *, oldname, const char __user *, newname)
-         {
-   4643  	return do_renameat2(AT_FDCWD, oldname, AT_FDCWD, newname, 0);
-         }
-         
-         int vfs_whiteout(struct inode *dir, struct dentry *dentry)
-   4647  {
-         	int error = may_create(dir, dentry);
-   4649  	if (error)
-         		return error;
-         
-   4652  	if (!dir->i_op->mknod)
-   4653  		return -EPERM;
-         
-   4655  	return dir->i_op->mknod(dir, dentry,
-         				S_IFCHR | WHITEOUT_MODE, WHITEOUT_DEV);
-   4657  }
-         EXPORT_SYMBOL(vfs_whiteout);
-         
-         int readlink_copy(char __user *buffer, int buflen, const char *link)
-   4661  {
-   4662  	int len = PTR_ERR(link);
-   4663  	if (IS_ERR(link))
-         		goto out;
-         
-   4666  	len = strlen(link);
-         	if (len > (unsigned) buflen)
-         		len = buflen;
-   4669  	if (copy_to_user(buffer, link, len))
-   4670  		len = -EFAULT;
-         out:
-         	return len;
-   4673  }
-         
-         /*
-          * A helper for ->readlink().  This should be used *ONLY* for symlinks that
-          * have ->get_link() not calling nd_jump_link().  Using (or not using) it
-          * for any given inode is up to filesystem.
-          */
-         static int generic_readlink(struct dentry *dentry, char __user *buffer,
-         			    int buflen)
-         {
-   4683  	DEFINE_DELAYED_CALL(done);
-         	struct inode *inode = d_inode(dentry);
-   4685  	const char *link = inode->i_link;
-         	int res;
-         
-   4688  	if (!link) {
-   4689  		link = inode->i_op->get_link(dentry, inode, &done);
-   4690  		if (IS_ERR(link))
-   4691  			return PTR_ERR(link);
-         	}
-   4693  	res = readlink_copy(buffer, buflen, link);
-         	do_delayed_call(&done);
-         	return res;
-         }
-         
-         /**
-          * vfs_readlink - copy symlink body into userspace buffer
-          * @dentry: dentry on which to get symbolic link
-          * @buffer: user memory pointer
-          * @buflen: size of buffer
-          *
-          * Does not touch atime.  That's up to the caller if necessary
-          *
-          * Does not call security hook.
-          */
-         int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen)
-   4709  {
-   4710  	struct inode *inode = d_inode(dentry);
-         
-   4712  	if (unlikely(!(inode->i_opflags & IOP_DEFAULT_READLINK))) {
-   4713  		if (unlikely(inode->i_op->readlink))
-   4714  			return inode->i_op->readlink(dentry, buffer, buflen);
-         
-   4716  		if (!d_is_symlink(dentry))
-   4717  			return -EINVAL;
-         
-         		spin_lock(&inode->i_lock);
-   4720  		inode->i_opflags |= IOP_DEFAULT_READLINK;
-         		spin_unlock(&inode->i_lock);
-         	}
-         
-         	return generic_readlink(dentry, buffer, buflen);
-   4725  }
-         EXPORT_SYMBOL(vfs_readlink);
-         
-         /**
-          * vfs_get_link - get symlink body
-          * @dentry: dentry on which to get symbolic link
-          * @done: caller needs to free returned data with this
-          *
-          * Calls security hook and i_op->get_link() on the supplied inode.
-          *
-          * It does not touch atime.  That's up to the caller if necessary.
-          *
-          * Does not work on "special" symlinks like /proc/$$/fd/N
-          */
-         const char *vfs_get_link(struct dentry *dentry, struct delayed_call *done)
-   4740  {
-         	const char *res = ERR_PTR(-EINVAL);
-   4742  	struct inode *inode = d_inode(dentry);
-         
-   4744  	if (d_is_symlink(dentry)) {
-   4745  		res = ERR_PTR(security_inode_readlink(dentry));
-   4746  		if (!res)
-   4747  			res = inode->i_op->get_link(dentry, inode, done);
-         	}
-         	return res;
-   4750  }
-         EXPORT_SYMBOL(vfs_get_link);
-         
-         /* get the link contents into pagecache */
-         const char *page_get_link(struct dentry *dentry, struct inode *inode,
-         			  struct delayed_call *callback)
-   4756  {
-         	char *kaddr;
-         	struct page *page;
-   4759  	struct address_space *mapping = inode->i_mapping;
-         
-   4761  	if (!dentry) {
-         		page = find_get_page(mapping, 0);
-   4763  		if (!page)
-         			return ERR_PTR(-ECHILD);
-         		if (!PageUptodate(page)) {
-         			put_page(page);
-   4767  			return ERR_PTR(-ECHILD);
-         		}
-         	} else {
-         		page = read_mapping_page(mapping, 0, NULL);
-   4771  		if (IS_ERR(page))
-         			return (char*)page;
-         	}
-         	set_delayed_call(callback, page_put_link, page);
-   4775  	BUG_ON(mapping_gfp_mask(mapping) & __GFP_HIGHMEM);
-         	kaddr = page_address(page);
-         	nd_terminate_link(kaddr, inode->i_size, PAGE_SIZE - 1);
-         	return kaddr;
-   4779  }
-         
-         EXPORT_SYMBOL(page_get_link);
-         
-         void page_put_link(void *arg)
-   4784  {
-         	put_page(arg);
-   4786  }
-         EXPORT_SYMBOL(page_put_link);
-         
-         int page_readlink(struct dentry *dentry, char __user *buffer, int buflen)
-   4790  {
-   4791  	DEFINE_DELAYED_CALL(done);
-   4792  	int res = readlink_copy(buffer, buflen,
-         				page_get_link(dentry, d_inode(dentry),
-         					      &done));
-         	do_delayed_call(&done);
-         	return res;
-   4797  }
-         EXPORT_SYMBOL(page_readlink);
-         
-         /*
-          * The nofs argument instructs pagecache_write_begin to pass AOP_FLAG_NOFS
-          */
-         int __page_symlink(struct inode *inode, const char *symname, int len, int nofs)
-   4804  {
-   4805  	struct address_space *mapping = inode->i_mapping;
-         	struct page *page;
-         	void *fsdata;
-         	int err;
-   4809  	unsigned int flags = 0;
-         	if (nofs)
-         		flags |= AOP_FLAG_NOFS;
-         
-         retry:
-   4814  	err = pagecache_write_begin(NULL, mapping, 0, len-1,
-         				flags, &page, &fsdata);
-   4816  	if (err)
-         		goto fail;
-         
-   4819  	memcpy(page_address(page), symname, len-1);
-         
-   4821  	err = pagecache_write_end(NULL, mapping, 0, len-1, len-1,
-         							page, fsdata);
-   4823  	if (err < 0)
-         		goto fail;
-   4825  	if (err < len-1)
-         		goto retry;
-         
-         	mark_inode_dirty(inode);
-   4829  	return 0;
-         fail:
-         	return err;
-   4832  }
-         EXPORT_SYMBOL(__page_symlink);
-         
-         int page_symlink(struct inode *inode, const char *symname, int len)
-   4836  {
-   4837  	return __page_symlink(inode, symname, len,
-         			!mapping_gfp_constraint(inode->i_mapping, __GFP_FS));
-         }
-         EXPORT_SYMBOL(page_symlink);
+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
+y4TNOjVR/wfJH4ELBoYCAA==
+--001a11415148550e6f056a0ef1f0--
