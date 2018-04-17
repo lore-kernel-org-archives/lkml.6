@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49sed/NwvZhihET+YXRcGCOgJ2VsUcCG6cYcchAg78JQ1e6VyAtwk29jkeX8NBSW3WrwZEV
-ARC-Seal: i=1; a=rsa-sha256; t=1523980915; cv=none;
+X-Google-Smtp-Source: AIpwx4+FzCVmkaPt3b2+aBrG7j0uM2SUEpGlTSAui+/5Aj0vAhvTv6G8C7wVenUCCgRAZPyJTNPc
+ARC-Seal: i=1; a=rsa-sha256; t=1523980911; cv=none;
         d=google.com; s=arc-20160816;
-        b=xHY6nIRP9OH+Jo2wobJjl5WY4FhADu9nUXmEByYX1oPMyJR7s+gNzBRjrroVqHsJwo
-         NCUYXdk4JfgZWJjYSfaXh1o3Bh/xcRymAq4iNhJMIpcxlYLos49EGXrgGV6tUALxE52M
-         ENzq73kUwRslDIwUV4BljlirFo7NOAIiL3x6G68C2maQJRwrA+syFtQu5JCp5u5CzqxS
-         raUq8OAoDoZmkIbmIuFRgZKD07H32W4r1RDhzgWFNznNInsm2GgxugNj5im0Hj9xwc/9
-         YX9cffE93Vs5al9iprB07DEcCgk119NSamEqGuvnVTml8MYzH/c70mW59IU9HQHChEj8
-         AeZQ==
+        b=YuVMUeOOcII1mw0OFFinBa5V1DGmYPz4t77bkGK3YTGw9beHK1XW+u9OiufLvGx6/Y
+         LMVV4wOUsxbdiXSMqGGZCzxaxIq/tBqrru09cH1jLaylpVV4DV+Od3mEeBrMiWohz4Y7
+         7yOgwsiwux95nNCo/WFa/+L9rluGhrIv4zWeIMMmZdbxkzlhQ8aoca3JjZyMF7N54mIW
+         WHGX8h2HD73/sLl5QNUxpe0PLhkC2IwWJb99H3/PWMrTxBRY0vCHbI1DN9zhF7UB5dYz
+         pj8p4TGlAjE9zzIfhW8GuxdCyKbgHq46GZNJvihYHWPKqQ5Rfd2xyEqVgkyb4bvJ7BQU
+         k6AA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=1zb4rtzV2w8TALktvbYxktRyvieWGwbcgPF77adn5yE=;
-        b=iFi3JNa2sd6G6Xlhj0tIVQe7L3a4Zcz7dljveEI4tVz6qYGVNX7Bmxbu7HEgXkc3Rw
-         3UTVNjJ7mRncFWa9zJYVkEJE72/l0sWDKbbxTUGG5b2i69x/yiEtRUzFa7U5ehX402EW
-         t4tbccSvICmTA658b19rbog//YyF1cDEQOgUQm2ItE9JkoldWQ9W3xuodNV4vCCr1ERn
-         vxlgovymbNwKMtEuo3MBMjFSjXekIQ5Emf1FzrmC7X8CxjQrhJRYGFVG0miNtFmtq7ZW
-         kurGSAtllwxfXbvgmjyJL8T/hRpSzcWCZ2P8nBj3b1pv/YNRgpMDNdt7o3wbxl3f+YBL
-         yvuw==
+        bh=7E/3KsSd2O9ZIsq4ArtphsX39tPs42f76FzvjMV9zVY=;
+        b=qD6RXpRp6vQfCmlSsDwptWiOla5BZaRTHtlm9i5rSpoQI6+brTLNS0vHIKlmLBK00A
+         ukX5Uq63DGWfoYg6H3RF5VoFlbRqGJJ6RqtoyYQuiGtU4K20H5wtF2S6KtEpAu/c0tXO
+         o5I7tU/PXGjXmzNvmItFuzuspX1bu3uoeSCcDmm10toDqvEBr05b5amCCVmpqoHyubDN
+         g0z9LgHYa6189mYVBS/Hb/kmED/vpHoTNq09IIBsfRAVkydhwhpiJB8RBQKxnvhYi54B
+         2ccxwl/A4SHqzD2N3+coEztEM1b4lFFTD/5u0bjAVEGk5U06dO7Kod4MG+1ufGw+mUoM
+         zVbw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Rue <dan.rue@linaro.org>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Yisheng Xie <xieyisheng1@huawei.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nic Losby <blurbdust@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 49/68] hugetlbfs: fix bug in pgoff overflow checking
-Date: Tue, 17 Apr 2018 17:58:02 +0200
-Message-Id: <20180417155751.346424626@linuxfoundation.org>
+	Simon Gaiser <simon@invisiblethingslab.com>,
+	Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.16 48/68] xen: xenbus_dev_frontend: Fix XS_TRANSACTION_END handling
+Date: Tue, 17 Apr 2018 17:58:01 +0200
+Message-Id: <20180417155751.300069139@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -47,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009812086723888?=
-X-GMAIL-MSGID: =?utf-8?q?1598009812086723888?=
+X-GMAIL-THRID: =?utf-8?q?1598009807855187650?=
+X-GMAIL-MSGID: =?utf-8?q?1598009807855187650?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,55 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Simon Gaiser <simon@invisiblethingslab.com>
 
-commit 5df63c2a149ae65a9ec239e7c2af44efa6f79beb upstream.
+commit 2a22ee6c3ab1d761bc9c04f1e4117edd55b82f09 upstream.
 
-This is a fix for a regression in 32 bit kernels caused by an invalid
-check for pgoff overflow in hugetlbfs mmap setup.  The check incorrectly
-specified that the size of a loff_t was the same as the size of a long.
-The regression prevents mapping hugetlbfs files at offsets greater than
-4GB on 32 bit kernels.
+Commit fd8aa9095a95 ("xen: optimize xenbus driver for multiple
+concurrent xenstore accesses") made a subtle change to the semantic of
+xenbus_dev_request_and_reply() and xenbus_transaction_end().
 
-On 32 bit kernels conversion from a page based unsigned long can not
-overflow a loff_t byte offset.  Therefore, skip this check if
-sizeof(unsigned long) != sizeof(loff_t).
+Before on an error response to XS_TRANSACTION_END
+xenbus_dev_request_and_reply() would not decrement the active
+transaction counter. But xenbus_transaction_end() has always counted the
+transaction as finished regardless of the response.
 
-Link: http://lkml.kernel.org/r/20180330145402.5053-1-mike.kravetz@oracle.com
-Fixes: 63489f8e8211 ("hugetlbfs: check for pgoff value overflow")
-Reported-by: Dan Rue <dan.rue@linaro.org>
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Nic Losby <blurbdust@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+The new behavior is that xenbus_dev_request_and_reply() and
+xenbus_transaction_end() will always count the transaction as finished
+regardless the response code (handled in xs_request_exit()).
+
+But xenbus_dev_frontend tries to end a transaction on closing of the
+device if the XS_TRANSACTION_END failed before. Trying to close the
+transaction twice corrupts the reference count. So fix this by also
+considering a transaction closed if we have sent XS_TRANSACTION_END once
+regardless of the return code.
+
+Cc: <stable@vger.kernel.org> # 4.11
+Fixes: fd8aa9095a95 ("xen: optimize xenbus driver for multiple concurrent xenstore accesses")
+Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/hugetlbfs/inode.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/xen/xenbus/xenbus_dev_frontend.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -138,10 +138,14 @@ static int hugetlbfs_file_mmap(struct fi
- 
- 	/*
- 	 * page based offset in vm_pgoff could be sufficiently large to
--	 * overflow a (l)off_t when converted to byte offset.
-+	 * overflow a loff_t when converted to byte offset.  This can
-+	 * only happen on architectures where sizeof(loff_t) ==
-+	 * sizeof(unsigned long).  So, only check in those instances.
- 	 */
--	if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
--		return -EINVAL;
-+	if (sizeof(unsigned long) == sizeof(loff_t)) {
-+		if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
-+			return -EINVAL;
-+	}
- 
- 	/* must be huge page aligned */
- 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
+--- a/drivers/xen/xenbus/xenbus_dev_frontend.c
++++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
+@@ -365,7 +365,7 @@ void xenbus_dev_queue_reply(struct xb_re
+ 			if (WARN_ON(rc))
+ 				goto out;
+ 		}
+-	} else if (req->msg.type == XS_TRANSACTION_END) {
++	} else if (req->type == XS_TRANSACTION_END) {
+ 		trans = xenbus_get_transaction(u, req->msg.tx_id);
+ 		if (WARN_ON(!trans))
+ 			goto out;
