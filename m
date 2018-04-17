@@ -1,65 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752989AbeDQLTQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 07:19:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54783 "EHLO mail.bootlin.com"
+        id S1752732AbeDQLUw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 07:20:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54901 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752694AbeDQLTO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 07:19:14 -0400
-Date: Tue, 17 Apr 2018 13:19:02 +0200
+        id S1752116AbeDQLUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 07:20:50 -0400
+Date: Tue, 17 Apr 2018 13:20:38 +0200
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Simon <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 08/11] ARM: sun9i: smp: Add is_sun8i field
-Message-ID: <20180417111902.4u6d3mxehxjqibe4@flea>
+To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/11] ARM: sun8i: smp: Add support for A83T
+Message-ID: <20180417112038.mw7bfhqw4xwvzxcw@flea>
 References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
- <20180416215032.5023-9-mylene.josserand@bootlin.com>
- <20180417075233.f2z6wxcazwqheoib@flea>
- <CAGb2v643iepq4B9ukNag8pzAFWiQ6A31ChfXLkxeExhK4jRm=Q@mail.gmail.com>
+ <20180416215032.5023-10-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mgjhdnizrdjxc2v3"
+        protocol="application/pgp-signature"; boundary="lgwud7yazkhhokzr"
 Content-Disposition: inline
-In-Reply-To: <CAGb2v643iepq4B9ukNag8pzAFWiQ6A31ChfXLkxeExhK4jRm=Q@mail.gmail.com>
+In-Reply-To: <20180416215032.5023-10-mylene.josserand@bootlin.com>
 User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---mgjhdnizrdjxc2v3
-Content-Type: text/plain; charset=us-ascii
+--lgwud7yazkhhokzr
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 17, 2018 at 03:57:07PM +0800, Chen-Yu Tsai wrote:
-> >> @@ -697,6 +700,8 @@ static int __init sunxi_mc_smp_init(void)
-> >>                       break;
-> >>       }
-> >>
-> >> +     is_sun8i =3D sunxi_mc_smp_data[i].is_sun8i;
-> >> +
-> >
-> > Do we really need to cache it? Can't we just have a pointer to the SMP
-> > data structure and use that instead?
->=20
-> I recommended that. We don't need any of the other fields in the SMP
-> data structure once we're past the init phase. This saves a dereference
-> or two.
+On Mon, Apr 16, 2018 at 11:50:30PM +0200, Myl=E8ne Josserand wrote:
+> @@ -535,8 +599,12 @@ static int sunxi_mc_smp_cpu_kill(unsigned int l_cpu)
+>  	return !ret;
+>  }
+> =20
+> -static bool sunxi_mc_smp_cpu_can_disable(unsigned int __unused)
+> +static bool sunxi_mc_smp_cpu_can_disable(unsigned int cpu)
+>  {
+> +	/* CPU0 hotplug not handled for sun8i-a83t */
+> +	if (is_sun8i)
+> +		if (cpu =3D=3D 0)
+> +			return false;
+>  	return true;
 
-Fair enough.
+I think Chen-Yu told you how to implement the hotplug in the previous
+iteration, did you have time to test it?
 
 Maxime
 
@@ -68,24 +60,24 @@ Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---mgjhdnizrdjxc2v3
+--lgwud7yazkhhokzr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrV2CUACgkQ0rTAlCFN
-r3QFRw/+JjrjBNJt+HNnDm8GaE7ITOndVszG5cE5okgfzSBft3JehFRr3mfM6d0I
-9dhnN4pMpELEyf6ElSqCd60wKPpVaEzLZ/XvOHIHKi12SqoZbSJ05A0DcDLwolyv
-FD7KRCd4336kERulK+tGnxkv3FOR2q9mPvqXtpehwVoI0z3rNu2HxnpDnfbKyXyD
-PTYNtFCU+04O+hY4WNZPdW0bBFevzKqxCI0ZLpAfx9UILeHh6Mdd3WBXINnPpffw
-B/XJ1m9vhtsQtnUiIpXF9+B6nJ6UPInU/gzmyIHEUetV26rN0eUm6beOPHOgiuLu
-Et5JDY0MNwqQWf5R76OqFJ7RtqkUZ9jiJM/g5RJdXSf3NUTesKRqOYWXnAMVowRy
-tO6y/KYhqoyZ4nUQ+kA0wx7spNUoVFjU4Tc8/SfZBGjKFjczWaax83m7/JgjZrk6
-ItAvTWcR7EhtBrD6gMUspHssLX0/0czjzMflEdgFVteSWiWHxbE0T4B1GWA5AKpM
-8TofCx0JKMcJ2kugCI2h4CPs+8Od0DbzLzhzAltc/+H4wU0oIyRiH+HDDy0g2wBA
-UB8s8aJWofnKwHRzhyW+wZDqYYHPwo1LdG0Y7fZRnGKZMWCk+JmjD42ZDfv9jtb7
-zM/XN6mdfXvsHw+VYBop1IoNF896m83Q85LVrXDdZGQCLnSFWqA=
-=2G36
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrV2IYACgkQ0rTAlCFN
+r3QEvQ//YNKIPOzNoGa2Ejl3faAXyCu/JYHhZv5UefGzirp0ZGAkXxwtGsVxVsU2
+UA8ANWgoTabJ63vqsQE9C0cyVSOg6o/maP/dSwob3RsdeXvBY6Tmeb2UIm9MUYiM
+UDkEM7Da1VVK15r6raCgnkb1Dk3jiGoWUD2TqXjT8VE97R6t0f9KYQeI2tm8RVUV
+UB9o1kJ/tTvLdsCi32Y0DfDYUe/uWPa/x1n1Ks4sZgt/493Z/1zUN0qrIzR8Cwwp
+P45P1byWjmK+Rm9DijUO6DiEutmpdLcThogh3K52KRuyWIIW6fdZCjLT11NUDpDo
+Q/YCt7tF/0xsupP6dPQJYtveoMhXxK7HjI/HjA2RuW4+LC9794QI6/eVMe+5USLw
+E49ReIJoY3THaVICOyTllKpRyiQ9Q78fnb45i5JiyUrP4pn4m1YtcEBt8MjZ0pre
+G/MbGgMcUYSYixLjU6SJiiirWuwY6SDmpeIOSUP2YfFL1rZcHvt0KMfZoZ6GJz28
+ojzBqXvNitOdLiTUvv6d1FIOZ2A1WZBtLdDQTR7bj1v0wKOGH9teqtsiucP3IRak
+nA1U9TCrtMNW0I4Jq4nE0mpg3c4i0+p1cLzrU5FgQahoq2VGiZ1Mj1M6Nt83kHWx
+u7Y2NQ0k86EhrSP4wR7GtXsaA2EzGqkvCyltVFQJ3daV/2QqAuI=
+=tbwW
 -----END PGP SIGNATURE-----
 
---mgjhdnizrdjxc2v3--
+--lgwud7yazkhhokzr--
