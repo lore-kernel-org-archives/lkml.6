@@ -1,79 +1,103 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx4/uhY9l3ljPxigQntbsslwRvJtV6PGZ/903WIDS2+3LjSyNeMmZiaMkJrZboBGhFbKEO8Gp
-ARC-Seal: i=1; a=rsa-sha256; t=1523952371; cv=none;
+X-Google-Smtp-Source: AIpwx4+9Eytk6miO0qzufgRk2ONMQakxBwH2MDcJVpY1jrD70q22OEcEyI/GM7LW2KwRFlJ9JzwM
+ARC-Seal: i=1; a=rsa-sha256; t=1523971532; cv=none;
         d=google.com; s=arc-20160816;
-        b=RfeW5yiA5gOK25/SzPS+y2BI4bnL6trNSyq06vWo+3RnSSJdX+QlUhQzhTbb4qlqS8
-         cJehcHp/PtPB2GeRlIyJLw4EXb0mQP9zlJ6Pb3sBrq62eVRw1z5zrCETf7PdsuKHOs/b
-         ILlwYp+nGI5QLLFlmK8eZUl6PM+vrqMNi/UUl9q7jeToLzwPhF0klKesfWl2XsDnhCYM
-         OJp6bzs7uva2K4kNOaB564A/7Gml4yXVABqsUIKXOw/z5ylBZ8sXINNPV+MExKKpBOjS
-         8LdGU2WFcxAPLPoUNpjLEK9owAhDyqN2xDakVmrc+cgx7WqiY4KKDcccb9jp+zzikJee
-         uJcw==
+        b=xEcrUxNSkrK2MwT03lpCHidiY94i2xuxmIaUHSj4KID+xEvtxAlZNzQCRsTOezZTPA
+         AS/zvckRneekRBD0+8HrD1vc1pIYc8auU9C9FZTVGcKQE+4O/t2BWQuO5WagHHJRIgRD
+         IV1J9PSLpLjHClg7OGr9CVxq0PSg1sqemL5HrvO1xJklGIOWbyFEZQq9ZvOjAuZr8W65
+         XVB4fUixQiAoFs7MeKNZJAz6xKV5TjBMQzno/EGNHib2TQzSt8g0n272JQlbngvNBq0e
+         ynU7X8x5F9jCM/73Pv8eVAZzd3phwlXmtBevph2+x7XGWooORozZxCupH5xDisWDMt4x
+         P3Pw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:mime-version:user-agent:references
-         :message-id:in-reply-to:subject:cc:to:from:date
+        h=list-id:precedence:sender:content-transfer-encoding
+         :content-language:in-reply-to:mime-version:user-agent:date
+         :message-id:organization:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=ywvFQCx/pAMC9bsQAL8ZpopkVmHUnLiH93DfNxva8Jc=;
-        b=j5dwP8BdCPsvWV0OwQVYbs/qJqWjYri9QsNVdE8OOpnULjLM5DWDQVBftBkrwRjuoa
-         Sffe4/XGx78OiVkrAMrql4rrrqfGhMEaVZQ0O1F4+4I+l3FCwWIsjNX6YSovFyWrFbXM
-         Eo3Whi5n+ccR6laaTc+E559vpwyszTm0at0a5lh603TkmnEjRDSJX5yPv1rMbxP6KEA9
-         6WITUwP8xsmiLDGl+0cLbZSux86ao/uqFscVTP5rgsBsajvEmMwwS4wPoDX+vM+IWJsY
-         u7VjBcRaTHA8tV/P6TwvSl+/GOeO4BmRLKSOXB4VavmeNMxemF10sFVhbenBo3a3rm80
-         NIIw==
+        bh=Tv8TL28qK+Lem9Tc4vYDyb5onhzZELlpW4jZypGJz88=;
+        b=CToq2j7aeuwIQfDwPgm7OIT/I+FxHsX2ts/6iMOJacI9xLnrZr1q/yykMnLjY8p2hL
+         2nLfU1kJc4St2BRoc6SKSpWxTV3KrvP4CnSqyVSvJ7XNMS7lxdRIiGLUtSAaAC4RUSF2
+         lQ4TBroZrGxcOCeLvAKXLf90wijFC75Ka23U/sytUAY6FHzrPRJyRDRLYXy2R7oGRpna
+         dicJXXJHRYwnqpVqVFOUv8O5/eHKjJOn9p4BNWXmWLBj9YZuC/u9sSD2FXQM8oo9G6GC
+         vOZAdTmtsKXdg3EyT5E9zpJ+Q/AwB/e5hAB2ErhLXeHXpziGpxEjFdA0MBDen5WYypCv
+         Prtg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751183AbeDQIGK (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 17 Apr 2018 04:06:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42976 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750971AbeDQIGH (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:06:07 -0400
-Date: Tue, 17 Apr 2018 10:06:04 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Petr Mladek <pmladek@suse.com>
-cc: Joe Lawrence <joe.lawrence@redhat.com>,
-        live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        id S1753394AbeDQNZc (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Tue, 17 Apr 2018 09:25:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47948 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753074AbeDQNZb (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
+        Tue, 17 Apr 2018 09:25:31 -0400
+Subject: Re: [PATCH v3] selftests/livepatch: introduce tests
+To: Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>
+Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jiri Kosina <jikos@kernel.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
-        =?ISO-8859-2?Q?Libor_Pech=E1=E8ek?= <lpechacek@suse.com>,
+        =?UTF-8?Q?Libor_Pech=c3=a1=c4=8dek?= <lpechacek@suse.com>,
         Nicolai Stange <nstange@suse.de>,
         Artem Savkov <asavkov@redhat.com>
-Subject: Re: [PATCH v3] selftests/livepatch: introduce tests
-In-Reply-To: <20180416150230.6ys6ya7alpodxp3d@pathway.suse.cz>
-Message-ID: <alpine.LSU.2.21.1804171004410.12184@pobox.suse.cz>
-References: <1523544871-29444-1-git-send-email-joe.lawrence@redhat.com> <1523544871-29444-2-git-send-email-joe.lawrence@redhat.com> <alpine.LSU.2.21.1804131118080.17969@pobox.suse.cz> <c9f4b440-c672-e45f-ddcc-63548b0411e2@redhat.com>
- <alpine.LSU.2.21.1804161329040.23118@pobox.suse.cz> <20180416150230.6ys6ya7alpodxp3d@pathway.suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+References: <1523544871-29444-1-git-send-email-joe.lawrence@redhat.com>
+ <1523544871-29444-2-git-send-email-joe.lawrence@redhat.com>
+ <alpine.LSU.2.21.1804131118080.17969@pobox.suse.cz>
+ <c9f4b440-c672-e45f-ddcc-63548b0411e2@redhat.com>
+ <alpine.LSU.2.21.1804161329040.23118@pobox.suse.cz>
+ <20180416150230.6ys6ya7alpodxp3d@pathway.suse.cz>
+ <alpine.LSU.2.21.1804171004410.12184@pobox.suse.cz>
+From: Joe Lawrence <joe.lawrence@redhat.com>
+Organization: Red Hat
+Message-ID: <771e3d3b-214f-a49c-20f8-d0e8a4baffac@redhat.com>
+Date: Tue, 17 Apr 2018 09:25:30 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <alpine.LSU.2.21.1804171004410.12184@pobox.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597552611970926096?=
-X-GMAIL-MSGID: =?utf-8?q?1597979881998493143?=
+X-GMAIL-MSGID: =?utf-8?q?1597999973884545756?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 16 Apr 2018, Petr Mladek wrote:
-
-> On Mon 2018-04-16 13:33:55, Miroslav Benes wrote:
-> > On Fri, 13 Apr 2018, Joe Lawrence wrote:
-> > > Thanks for reviewing.  I'll hold off on posting v4 until Petr (and
-> > > others) get a chance to comment.  Perhaps there are other tests that
-> > > would be helpful?
+On 04/17/2018 04:06 AM, Miroslav Benes wrote:
+> On Mon, 16 Apr 2018, Petr Mladek wrote:
 > 
-> > I think it would be useful to have tests for a stack checking and a 
-> > consistency. Nicolai has written some lately for our internal testing, but 
-> > it would take some time to transform them appropriately, I think.
+>> On Mon 2018-04-16 13:33:55, Miroslav Benes wrote:
+>>> On Fri, 13 Apr 2018, Joe Lawrence wrote:
+>>>> Thanks for reviewing.  I'll hold off on posting v4 until Petr (and
+>>>> others) get a chance to comment.  Perhaps there are other tests that
+>>>> would be helpful?
+>>
+>>> I think it would be useful to have tests for a stack checking and a 
+>>> consistency. Nicolai has written some lately for our internal testing, but 
+>>> it would take some time to transform them appropriately, I think.
+>>
+>> The future of the stack handling is not clear at the moment. We should
+>> wait how the discussion goes before spending time on test cases for
+>> the current behavior.
+
+Roger that on the patch stack discussion.  Once we figure out where that
+is heading, we can create tests to verify that we're accurately
+following the new rules.
+
 > 
-> The future of the stack handling is not clear at the moment. We should
-> wait how the discussion goes before spending time on test cases for
-> the current behavior.
+> You're talking about something different. We have to check stacks of all 
+> tasks while patching in order to achieve consistency. Tests for that would 
+> be useful.
 
-You're talking about something different. We have to check stacks of all 
-tasks while patching in order to achieve consistency. Tests for that would 
-be useful.
+FWIW there is the "busy target module" test in this patch.  It's main
+purpose is to verify the behavior of the callbacks in a situation where
+one livepatch target holds up the transition (aka the "busy mod").
 
-Miroslav
+If Nicolai has created test(s) that specifically target the stack
+safeness, even better for future inclusion.
+
+-- Joe
