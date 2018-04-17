@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753262AbeDQV3D (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:29:03 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:41290 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753099AbeDQV21 (ORCPT
+        id S1753315AbeDQV33 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:29:29 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:23130 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753071AbeDQV20 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:28:27 -0400
+        Tue, 17 Apr 2018 17:28:26 -0400
 From: Murali Karicheri <m-karicheri2@ti.com>
 To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <ssantosh@kernel.org>,
         <malat@debian.org>, <w-kwok2@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <davem@davemloft.net>, <netdev@vger.kernel.org>,
         <grygorii.strashko@ti.com>, <nsekhar@ti.com>
-Subject: [net-next PATCH v4 13/13] net: netcp: ethss: k2g: add promiscuous mode support
-Date: Tue, 17 Apr 2018 17:30:42 -0400
-Message-ID: <1524000642-23944-14-git-send-email-m-karicheri2@ti.com>
+Subject: [net-next PATCH v4 06/13] net: netcp: ethss: use rgmii link status for 2u cpsw hardware
+Date: Tue, 17 Apr 2018 17:30:35 -0400
+Message-ID: <1524000642-23944-7-git-send-email-m-karicheri2@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1524000642-23944-1-git-send-email-m-karicheri2@ti.com>
 References: <1524000642-23944-1-git-send-email-m-karicheri2@ti.com>
@@ -26,96 +26,89 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: WingMan Kwok <w-kwok2@ti.com>
+Introduce rgmii link status to handle link state events for 2u
+cpsw hardware on K2G.
 
-This patch adds support for promiscuous mode in k2g's network
-driver. When upper layer instructs to transition from
-non-promiscuous mode to promiscuous mode or vice versa
-K2G network driver needs to configure ALE accordingly
-so that in case of non-promiscuous mode, ALE will not flood
-all unicast packets to host port, while in promiscuous
-mode, it will pass all received unicast packets to
-host port.
-
-Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
 Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
 ---
- drivers/net/ethernet/ti/netcp_ethss.c | 56 +++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ drivers/net/ethernet/ti/netcp_ethss.c | 34 +++++++++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/net/ethernet/ti/netcp_ethss.c b/drivers/net/ethernet/ti/netcp_ethss.c
-index 5bc7921..6a728d3 100644
+index 68b10b5..83acb72 100644
 --- a/drivers/net/ethernet/ti/netcp_ethss.c
 +++ b/drivers/net/ethernet/ti/netcp_ethss.c
-@@ -2775,6 +2775,61 @@ static inline int gbe_hwtstamp_set(struct gbe_intf *gbe_intf, struct ifreq *req)
- }
- #endif /* CONFIG_TI_CPTS */
+@@ -171,6 +171,11 @@
+ #define	GBE_RXHOOK_ORDER			0
+ #define GBE_DEFAULT_ALE_AGEOUT			30
+ #define SLAVE_LINK_IS_XGMII(s) ((s)->link_interface >= XGMII_LINK_MAC_PHY)
++#define SLAVE_LINK_IS_RGMII(s) \
++	(((s)->link_interface >= RGMII_LINK_MAC_PHY) && \
++	 ((s)->link_interface <= RGMII_LINK_MAC_PHY_NO_MDIO))
++#define SLAVE_LINK_IS_SGMII(s) \
++	((s)->link_interface <= SGMII_LINK_MAC_PHY_NO_MDIO)
+ #define NETCP_LINK_STATE_INVALID		-1
  
-+static int gbe_set_rx_mode(void *intf_priv, bool promisc)
+ #define GBE_SET_REG_OFS(p, rb, rn) p->rb##_ofs.rn = \
+@@ -554,6 +559,7 @@ struct gbe_ss_regs {
+ struct gbe_ss_regs_ofs {
+ 	u16	id_ver;
+ 	u16	control;
++	u16	rgmii_status; /* 2U */
+ };
+ 
+ struct gbe_switch_regs {
+@@ -2122,23 +2128,35 @@ static bool gbe_phy_link_status(struct gbe_slave *slave)
+ 	 return !slave->phy || slave->phy->link;
+ }
+ 
++#define RGMII_REG_STATUS_LINK	BIT(0)
++
++static void netcp_2u_rgmii_get_port_link(struct gbe_priv *gbe_dev, bool *status)
 +{
-+	struct gbe_intf *gbe_intf = intf_priv;
-+	struct gbe_priv *gbe_dev = gbe_intf->gbe_dev;
-+	struct cpsw_ale *ale = gbe_dev->ale;
-+	unsigned long timeout;
-+	int i, ret = -ETIMEDOUT;
++	u32 val = 0;
 +
-+	/* Disable(1)/Enable(0) Learn for all ports (host is port 0 and
-+	 * slaves are port 1 and up
-+	 */
-+	for (i = 0; i <= gbe_dev->num_slaves; i++) {
-+		cpsw_ale_control_set(ale, i,
-+				     ALE_PORT_NOLEARN, !!promisc);
-+		cpsw_ale_control_set(ale, i,
-+				     ALE_PORT_NO_SA_UPDATE, !!promisc);
-+	}
-+
-+	if (!promisc) {
-+		/* Don't Flood All Unicast Packets to Host port */
-+		cpsw_ale_control_set(ale, 0, ALE_P0_UNI_FLOOD, 0);
-+		dev_vdbg(gbe_dev->dev, "promiscuous mode disabled\n");
-+		return 0;
-+	}
-+
-+	timeout = jiffies + HZ;
-+
-+	/* Clear All Untouched entries */
-+	cpsw_ale_control_set(ale, 0, ALE_AGEOUT, 1);
-+	do {
-+		cpu_relax();
-+		if (cpsw_ale_control_get(ale, 0, ALE_AGEOUT)) {
-+			ret = 0;
-+			break;
-+		}
-+
-+	} while (time_after(timeout, jiffies));
-+
-+	/* Make sure it is not a false timeout */
-+	if (ret && !cpsw_ale_control_get(ale, 0, ALE_AGEOUT))
-+		return ret;
-+
-+	cpsw_ale_control_set(ale, 0, ALE_AGEOUT, 1);
-+
-+	/* Clear all mcast from ALE */
-+	cpsw_ale_flush_multicast(ale,
-+				 GBE_PORT_MASK(gbe_dev->ale_ports),
-+				 -1);
-+
-+	/* Flood All Unicast Packets to Host port */
-+	cpsw_ale_control_set(ale, 0, ALE_P0_UNI_FLOOD, 1);
-+	dev_vdbg(gbe_dev->dev, "promiscuous mode enabled\n");
-+	return ret;
++	val = readl(GBE_REG_ADDR(gbe_dev, ss_regs, rgmii_status));
++	*status = !!(val & RGMII_REG_STATUS_LINK);
 +}
 +
- static int gbe_ioctl(void *intf_priv, struct ifreq *req, int cmd)
+ static void netcp_ethss_update_link_state(struct gbe_priv *gbe_dev,
+ 					  struct gbe_slave *slave,
+ 					  struct net_device *ndev)
  {
- 	struct gbe_intf *gbe_intf = intf_priv;
-@@ -3529,6 +3584,7 @@ static int gbe_probe(struct netcp_device *netcp_device, struct device *dev,
- 		gbe_dev->max_num_slaves = 8;
- 	} else if (of_device_is_compatible(node, "ti,netcp-gbe-2")) {
- 		gbe_dev->max_num_slaves = 1;
-+		gbe_module.set_rx_mode = gbe_set_rx_mode;
- 	} else if (of_device_is_compatible(node, "ti,netcp-xgbe")) {
- 		gbe_dev->max_num_slaves = 2;
- 	} else {
+-	int sp = slave->slave_num;
+-	int phy_link_state, sgmii_link_state = 1, link_state;
++	bool sw_link_state = true, phy_link_state;
++	int sp = slave->slave_num, link_state;
+ 
+ 	if (!slave->open)
+ 		return;
+ 
+-	if (!SLAVE_LINK_IS_XGMII(slave)) {
+-		sgmii_link_state =
+-			netcp_sgmii_get_port_link(SGMII_BASE(gbe_dev, sp), sp);
+-	}
++	if (SLAVE_LINK_IS_RGMII(slave))
++		netcp_2u_rgmii_get_port_link(gbe_dev,
++					     &sw_link_state);
++	if (SLAVE_LINK_IS_SGMII(slave))
++		sw_link_state =
++		netcp_sgmii_get_port_link(SGMII_BASE(gbe_dev, sp), sp);
+ 
+ 	phy_link_state = gbe_phy_link_status(slave);
+-	link_state = phy_link_state & sgmii_link_state;
++	link_state = phy_link_state & sw_link_state;
+ 
+ 	if (atomic_xchg(&slave->link_state, link_state) != link_state)
+ 		netcp_ethss_link_state_action(gbe_dev, ndev, slave,
+@@ -3437,6 +3455,8 @@ static int set_gbenu_ethss_priv(struct gbe_priv *gbe_dev,
+ 
+ 	/* Subsystem registers */
+ 	GBENU_SET_REG_OFS(gbe_dev, ss_regs, id_ver);
++	/* ok to set for MU, but used by 2U only */
++	GBENU_SET_REG_OFS(gbe_dev, ss_regs, rgmii_status);
+ 
+ 	/* Switch module registers */
+ 	GBENU_SET_REG_OFS(gbe_dev, switch_regs, id_ver);
 -- 
 1.9.1
