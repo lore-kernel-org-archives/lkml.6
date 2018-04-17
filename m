@@ -1,94 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752696AbeDQOB5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:01:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32896 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751345AbeDQOBz (ORCPT
+        id S1752570AbeDQOEb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:04:31 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:44382 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751270AbeDQOE3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:01:55 -0400
-Date: Tue, 17 Apr 2018 07:01:10 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: jlayton@kernel.org, bfields@fieldses.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        boqun.feng@gmail.com, longman@redhat.com, peterz@infradead.org,
-        mingo@redhat.com
-Subject: Re: [PATCH] fasync: Fix deadlock between task-context and
- interrupt-context kill_fasync()
-Message-ID: <20180417140110.GB21954@bombadil.infradead.org>
-References: <152292939368.19745.13784475656016424647.stgit@localhost.localdomain>
+        Tue, 17 Apr 2018 10:04:29 -0400
+X-Google-Smtp-Source: AIpwx4+3sQNh2FB82JAIHphQ9d1YmtJB880buMh2A9wW+OnNms6O4jDftpNj1PyeaE/3wQsRXOyll6dM57GA4uEHCGo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152292939368.19745.13784475656016424647.stgit@localhost.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 17 Apr 2018 16:04:27 +0200
+X-Google-Sender-Auth: 16_Wvygr1pCXa4LEQ3mqhWwwPmk
+Message-ID: <CAMuHMdX876iXo-Mio-VxUmR9hq9WFhNtOAn_XdhjFgNvDvXJvg@mail.gmail.com>
+Subject: Re: [PATCH] sh: mm: Fix unprotected access to struct device
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 02:58:06PM +0300, Kirill Tkhai wrote:
-> I observed the following deadlock between them:
-> 
-> [task 1]                          [task 2]                         [task 3]
-> kill_fasync()                     mm_update_next_owner()           copy_process()
->  spin_lock_irqsave(&fa->fa_lock)   read_lock(&tasklist_lock)        write_lock_irq(&tasklist_lock)
->   send_sigio()                    <IRQ>                             ...
->    read_lock(&fown->lock)         kill_fasync()                     ...
->     read_lock(&tasklist_lock)      spin_lock_irqsave(&fa->fa_lock)  ...
-> 
-> Task 1 can't acquire read locked tasklist_lock, since there is
-> already task 3 expressed its wish to take the lock exclusive.
-> Task 2 holds the read locked lock, but it can't take the spin lock.
+Hi Jacopo,
 
-I think the important question is to Peter ... why didn't lockdep catch this?
+Thanks for your patch!
 
-> -		spin_lock_irq(&fa->fa_lock);
-> +		write_lock_irq(&fa->fa_lock);
->  		fa->fa_file = NULL;
-> -		spin_unlock_irq(&fa->fa_lock);
-> +		write_unlock_irq(&fa->fa_lock);
-...
-> -		spin_lock_irq(&fa->fa_lock);
-> +		write_lock_irq(&fa->fa_lock);
->  		fa->fa_fd = fd;
-> -		spin_unlock_irq(&fa->fa_lock);
-> +		write_unlock_irq(&fa->fa_lock);
+On Tue, Apr 17, 2018 at 3:35 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
+> operations observe dev->dma_pfn_offset") the generic DMA allocation
+> function on which the SH 'dma_alloc_coherent()' function relies on,
+> access the 'dma_pfn_offset' field of struct device.
 
-Do we really need a lock here?  If we convert each of these into WRITE_ONCE,
-then 
+accesses
 
-...
-> -		spin_lock_irqsave(&fa->fa_lock, flags);
-> +		read_lock(&fa->fa_lock);
->  		if (fa->fa_file) {
+> Unfortunately the 'dma_generic_alloc_coherent()' function is called from
+> several places with a NULL struct device argument, halting the CPU
+> during the boot process.
+>
+> This patch fixes the issue protecting access to dev->dma_pfn_offset,
 
-file = READ_ONCE(fa->fa_file)
+by protecting access to the
 
-then we're not opening any new races, are we?
+> with a trivial check for validity. It also passes a valid 'struct device'
+> in the 'platform_resource_setup_memory' function which is the main user
+> of 'dma_alloc_coherent()', and inserting a WARN_ON() check to make future
+> (and existing) bogus users of this function they're should provide a valid
 
->  			fown = &fa->fa_file->f_owner;
->  			/* Don't send SIGURG to processes which have not set a
-> @@ -997,7 +996,7 @@ static void kill_fasync_rcu(struct fasync_struct *fa, int sig, int band)
->  			if (!(sig == SIGURG && fown->signum == 0))
->  				send_sigio(fown, fa->fa_fd, band);
->  		}
-> -		spin_unlock_irqrestore(&fa->fa_lock, flags);
-> +		read_unlock(&fa->fa_lock);
->  		fa = rcu_dereference(fa->fa_next);
->  	}
+drop "they're should"?
+
+> 'struct device' whenever possible.
+
+> --- a/arch/sh/mm/consistent.c
+> +++ b/arch/sh/mm/consistent.c
+> @@ -39,6 +39,8 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+>         void *ret, *ret_nocache;
+>         int order = get_order(size);
+>
+> +       WARN_ON(!dev);
+> +
+>         gfp |= __GFP_ZERO;
+>
+>         ret = (void *)__get_free_pages(gfp, order);
+> @@ -59,7 +61,9 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+>
+>         split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
+>
+> -       *dma_handle = virt_to_phys(ret) - PFN_PHYS(dev->dma_pfn_offset);
+> +       *dma_handle = virt_to_phys(ret);
+> +       if (dev)
+> +               *dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
+
+I would keep the WARN_ON() and the (ideally unneeded) dev check as close
+to each other as possible:
+
+        if (!WARN_ON(!dev))
+                *dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
+
+>
+>         return ret_nocache;
 >  }
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c6baf767619e..297e2dcd9dd2 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1250,7 +1250,7 @@ static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
->  }
->  
->  struct fasync_struct {
-> -	spinlock_t		fa_lock;
-> +	rwlock_t		fa_lock;
->  	int			magic;
->  	int			fa_fd;
->  	struct fasync_struct	*fa_next; /* singly linked list */
-> 
+> @@ -69,9 +73,14 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
+>                                unsigned long attrs)
+>  {
+>         int order = get_order(size);
+> -       unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
+> +       unsigned long pfn = (dma_handle >> PAGE_SHIFT);
+>         int k;
+>
+> +       WARN_ON(!dev);
+> +
+> +       if (dev)
+> +               pfn += dev->dma_pfn_offset;
+
+        if (!WARN_ON(!dev))
+                pfn += dev->dma_pfn_offset;
+
+> +
+>         for (k = 0; k < (1 << order); k++)
+>                 __free_pages(pfn_to_page(pfn + k), 0);
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
