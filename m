@@ -1,98 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753768AbeDQNld (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 09:41:33 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:11320 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753384AbeDQNjl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 09:39:41 -0400
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <lee.jones@linaro.org>, <alexandre.torgue@st.com>
-CC: <dan.carpenter@oracle.com>, <thierry.reding@gmail.com>,
-        <benjamin.gaignard@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux@armlinux.org.uk>,
-        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
-        <benjamin.gaignard@st.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>
-Subject: [PATCH v5 4/6] pwm: stm32: improve capture by tuning counter prescaler
-Date: Tue, 17 Apr 2018 15:38:31 +0200
-Message-ID: <1523972313-28765-5-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1523972313-28765-1-git-send-email-fabrice.gasnier@st.com>
-References: <1523972313-28765-1-git-send-email-fabrice.gasnier@st.com>
+        id S1753800AbeDQNlh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 09:41:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753773AbeDQNle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 09:41:34 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C838D21727
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Tue, 17 Apr 2018 10:41:31 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Stephane Eranian <eranian@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@kernel.org>,
+        Milian Wolff <milian.wolff@kdab.com>, linux-perf-users@vger.kernel.org,
+        Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: measuring system wide CPU usage ignoring idle process
+Message-ID: <20180417134131.GA3027@kernel.org>
+References: <3344812.IFj9h2T05j@agathebauer>
+ <215895928.dRJQAAs51a@agathebauer>
+ <20171120234438.GA22397@krava>
+ <6754554.PRelPk1P9n@milian-kdab2>
+ <20171123140931.GA5575@krava>
+ <20171123142100.GA7066@krava>
+ <20171123144220.GB8789@kernel.org>
+ <20171123151536.3vzjtbs5e4pccxpw@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.121]
-X-ClientProxiedBy: GPXDAG4NODE6.st.com (10.75.127.76) To GPXDAG5NODE6.st.com
- (10.75.127.79)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_07:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20171123151536.3vzjtbs5e4pccxpw@hirez.programming.kicks-ass.net>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, capture is based on timeout window to configure prescaler.
-PWM capture framework provides 1s window at the time of writing.
+Em Thu, Nov 23, 2017 at 04:15:36PM +0100, Peter Zijlstra escreveu:
+> On Thu, Nov 23, 2017 at 11:42:20AM -0300, Arnaldo Carvalho de Melo wrote:
+> > What is wrong with perf_event_attr.exclude_idle? :-)
+> 
+> Neither task- nor cpu-clock actually implement that..
+> 
+> Something like the _completely_untested_ below might cure that for
+> cpu-clock. I have the nagging feeling we actually already account the
+> idle time _somewhere_, but I couldn't remember and was too lazy to go
+> find -- but someone should if this were to become an actual patch.
+> 
 
-There's place for improvement, after input signal has been captured once:
-- Finer tune counter clock prescaler, by using 1st capture result (with
-arbitrary margin).
-- Do a 2nd capture, with scaled capture window.
-This increases accuracy, especially at high rates.
+Stephane, this was the thread,
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Acked-by: Thierry Reding <thierry.reding@gmail.com>
----
-Changes in v2:
-- Adopt DMA read from MFD core.
----
- drivers/pwm/pwm-stm32.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-index ed3961b..9a50acd 100644
---- a/drivers/pwm/pwm-stm32.c
-+++ b/drivers/pwm/pwm-stm32.c
-@@ -168,7 +168,7 @@ static int stm32_pwm_capture(struct pwm_chip *chip, struct pwm_device *pwm,
- 	struct stm32_pwm *priv = to_stm32_pwm_dev(chip);
- 	unsigned long long prd, div, dty;
- 	unsigned long rate;
--	unsigned int psc = 0;
-+	unsigned int psc = 0, scale;
- 	u32 raw_prd, raw_dty;
- 	int ret = 0;
+- Arnaldo
  
-@@ -219,6 +219,28 @@ static int stm32_pwm_capture(struct pwm_chip *chip, struct pwm_device *pwm,
- 	if (ret)
- 		goto stop;
- 
-+	/*
-+	 * Got a capture. Try to improve accuracy at high rates:
-+	 * - decrease counter clock prescaler, scale up to max rate.
-+	 */
-+	if (raw_prd) {
-+		u32 max_arr = priv->max_arr - 0x1000; /* arbitrary margin */
-+
-+		scale = max_arr / min(max_arr, raw_prd);
-+	} else {
-+		scale = priv->max_arr; /* bellow resolution, use max scale */
-+	}
-+
-+	if (psc && scale > 1) {
-+		/* 2nd measure with new scale */
-+		psc /= scale;
-+		regmap_write(priv->regmap, TIM_PSC, psc);
-+		ret = stm32_pwm_raw_capture(priv, pwm, tmo_ms, &raw_prd,
-+					    &raw_dty);
-+		if (ret)
-+			goto stop;
-+	}
-+
- 	prd = (unsigned long long)raw_prd * (psc + 1) * NSEC_PER_SEC;
- 	result->period = DIV_ROUND_UP_ULL(prd, rate);
- 	dty = (unsigned long long)raw_dty * (psc + 1) * NSEC_PER_SEC;
--- 
-1.9.1
+> ---
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index a59fe11558a4..5386d551b373 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8900,6 +8908,10 @@ static void cpu_clock_event_update(struct perf_event *event)
+>  	u64 now;
+>  
+>  	now = local_clock();
+> +
+> +	if (event->attr.exclude_idle)
+> +		now -= idle_task(event->oncpu)->se.sum_exec_runtime;
+> +
+>  	prev = local64_xchg(&event->hw.prev_count, now);
+>  	local64_add(now - prev, &event->count);
+>  }
+> diff --git a/kernel/sched/idle_task.c b/kernel/sched/idle_task.c
+> index d518664cce4f..419c620510c6 100644
+> --- a/kernel/sched/idle_task.c
+> +++ b/kernel/sched/idle_task.c
+> @@ -27,9 +27,14 @@ static void check_preempt_curr_idle(struct rq *rq, struct task_struct *p, int fl
+>  static struct task_struct *
+>  pick_next_task_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+>  {
+> +	struct task_struct *idle = rq->idle;
+> +
+>  	put_prev_task(rq, prev);
+>  	update_idle_core(rq);
+>  	schedstat_inc(rq->sched_goidle);
+> +
+> +	idle->se.exec_start = rq_clock_task(rq);
+> +
+>  	return rq->idle;
+>  }
+>  
+> @@ -48,6 +53,17 @@ dequeue_task_idle(struct rq *rq, struct task_struct *p, int flags)
+>  
+>  static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
+>  {
+> +	struct task_struct *idle = rq->idle;
+> +	u64 delta, now;
+> +
+> +	now = rq_clock_task(rq);
+> +	delta = now - idle->se.exec_start;
+> +	if (unlikely((s64)delta < 0))
+> +		delta = 0;
+> +
+> +	idle->se.sum_exec_runtime += delta;
+> +	idle->se.exec_start = now;
+> +
+>  	rq_last_tick_reset(rq);
+>  }
+>  
+> @@ -57,6 +73,9 @@ static void task_tick_idle(struct rq *rq, struct task_struct *curr, int queued)
+>  
+>  static void set_curr_task_idle(struct rq *rq)
+>  {
+> +	struct task_struct *idle = rq->idle;
+> +
+> +	idle->se.exec_start = rq_clock_task(rq);
+>  }
+>  
+>  static void switched_to_idle(struct rq *rq, struct task_struct *p)
