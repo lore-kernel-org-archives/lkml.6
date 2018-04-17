@@ -1,98 +1,112 @@
-Return-Path: <okaya@codeaurora.org>
-X-Google-Smtp-Source: AIpwx48RCBwUZGcyH6iqJ1rC/RlGp43gdAPyP6VIt6nsfSW3IvcmeVjV4A008UA4UY+u1vaWFeLL
-ARC-Seal: i=1; a=rsa-sha256; t=1523974413; cv=none;
+Return-Path: <James.Bottomley@hansenpartnership.com>
+X-Google-Smtp-Source: AIpwx4/MgA9xfBdL74JD1WMYV5/741Uw+RO+n/oe8JJdAQf+ob14JPiafFgIO80KifkmHtiQOOdY
+ARC-Seal: i=1; a=rsa-sha256; t=1523980515; cv=none;
         d=google.com; s=arc-20160816;
-        b=j1SpBC9XNFy2Gg+9TKW+TGse0/y/znAqJd8mRW1AM2kbirOww0W3c0nzLnWqL/v9It
-         SKgWXP1vkbDNdjFbRegmi8y+G0wsuuVyzBs+t1Cijv0gXXdGWj6JQyPaiYizF67Eseks
-         dhbeOD7+YFcZfIvX68tVl3J5cXb/ta7btodJKdgSzGbjqqOb35kS1KJ/ISGnNFMrnqcA
-         mqklzgno+0zzxgTWye/l0Fln76+Rnm1G8nmt5R1LXrSKO6ohPwBtcAkCxIJ3l8SllraF
-         W/JNMqlxC6rsHufnkpBliVErm0XAm4mTYzLy68oIMzq7yKmyT7wCzIQBWcaBA931JH7Q
-         7SbA==
+        b=JP6twBjDfNvtUtIEtM5mqI0ZDJYUC0atQPd5bIvUQebAcDLf2fvn5QpTc/Ig2lCX8Z
+         +jS80DZM9sVeEksIpNxM0pUHxbYKzZAUTNaCGA12G0J+RDbxvk2BkDcAXZf24fOVA7el
+         zg1MfOqzSfFUx7eekUexMfGTbea80z0jlNMJ/PqfqZlapp5XoVMORzB1lDnAT2f6x9sU
+         ZVQe6e9ea0tSk1k32JW8G6EiPtoBKzAtBImO2UOH05Tj+iTx8V/JbcTLhCyTTSFGAJGl
+         rssWcnj+Re7h6M39+ZDm0LLtV5Bfl5VA09wk9T8MIu+pHo9UTgLk8YYP7sLoqyOj97ZB
+         3Cmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature
+        h=content-transfer-encoding:mime-version:references:in-reply-to:date
+         :cc:to:from:subject:message-id:dkim-signature
          :arc-authentication-results;
-        bh=9MX6o8ylcXA1YFOfejF6HYU8mPVTGRQXYpSrOn5cYLo=;
-        b=ipwHFhcJIfENUfKylQ6G8C7zsJ2oeXUD++oiQC5P0ceRpB8VZZ5f/QM14QzG86qrQ6
-         HmhjTGrvLUSz/2VqOcrxQSUNJcWAesnf17cJEKGVyzDV3j7vGDGc3lS7kFT6lwBTqoNC
-         0GTMUekWIVeCYP62BiYbaJ/024vvX5CztgLTCb7tK7cRPyrl93l/HhfolrfNmxY5wgcD
-         wDEd8WxNmrribn6bvLweet+e7GzEUjrj6b9iITyPWQBAm8ayUhU5DZ5pgbu/bE+2ljer
-         2OO7I1HG8HLH48QyMa5vba3n9fGnVJ4pNIVyZk6M44CUfG/1HuirT/JjB+KGWGmeHdpl
-         WkhA==
+        bh=LMTzPy6jABguNYoMCZlOZ86me0wrd2UcWgB4weit2S0=;
+        b=Okab7cJcPp97hz/JM+pkzb0T4lBfYTEav2TbotTr8jLeWTpJcwMEJauC3qWnc+0bAL
+         CBYFYzZCeLuEJuxoal915WQ4FLDPiMad+BmK+iGL2t+zYSu7D0OOkK6i39Wj6PkoCKm7
+         n4KhANkyAyIYA+Fv3Yga0NF0zJwR1bCeHWHxMyFhNijHQQ74qFhO/lyw4SvwDOTaV0xA
+         kFYYu+2MFmRbm5uScuLrcnr542tmIVe5Rr8x93a8ECs3TsJpqD/a3bMuF68bJh5AZSoL
+         yK5S5tcOdA1DL8X19l/KDIusUgLrIk3L0/DFC2MUYSWM0q0rOq0FmIti7tY1MIRnqtNi
+         xXKw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=SFzaliwh;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=HI0yn72g;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+       dkim=pass header.i=@hansenpartnership.com header.s=20151216 header.b=t9JGPo+Z;
+       spf=pass (google.com: domain of james.bottomley@hansenpartnership.com designates 66.63.167.143 as permitted sender) smtp.mailfrom=James.Bottomley@hansenpartnership.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=hansenpartnership.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=SFzaliwh;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=HI0yn72g;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 23C7D60C64
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+       dkim=pass header.i=@hansenpartnership.com header.s=20151216 header.b=t9JGPo+Z;
+       spf=pass (google.com: domain of james.bottomley@hansenpartnership.com designates 66.63.167.143 as permitted sender) smtp.mailfrom=James.Bottomley@hansenpartnership.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=hansenpartnership.com
+Message-ID: <1523980508.3310.9.camel@HansenPartnership.com>
 Subject: Re: [PATCH v2 2/2] parisc: define stronger ordering for the default
  readX()
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- linux-parisc@vger.kernel.org, arnd@arndb.de, timur@codeaurora.org,
- sulrich@codeaurora.org
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Sinan Kaya <okaya@codeaurora.org>, linux-parisc@vger.kernel.org,
+	arnd@arndb.de, timur@codeaurora.org, sulrich@codeaurora.org
 Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Helge Deller <deller@gmx.de>, Philippe Ombredanne <pombredanne@nexb.com>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+	Helge Deller
+	 <deller@gmx.de>, Philippe Ombredanne <pombredanne@nexb.com>, Kate Stewart
+	 <kstewart@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, Greg
+	Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Date: Tue, 17 Apr 2018 16:55:08 +0100
+In-Reply-To: <38a1d4e3-cabe-6c39-4355-8d8111637382@codeaurora.org>
 References: <1523938133-3224-1-git-send-email-okaya@codeaurora.org>
- <1523938133-3224-2-git-send-email-okaya@codeaurora.org>
- <1523957852.3250.9.camel@HansenPartnership.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <38a1d4e3-cabe-6c39-4355-8d8111637382@codeaurora.org>
-Date: Tue, 17 Apr 2018 10:13:28 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1523957852.3250.9.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+	 <1523938133-3224-2-git-send-email-okaya@codeaurora.org>
+	 <1523957852.3250.9.camel@HansenPartnership.com>
+	 <38a1d4e3-cabe-6c39-4355-8d8111637382@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597964966697704374?=
-X-GMAIL-MSGID: =?utf-8?q?1598002994114205632?=
+X-GMAIL-MSGID: =?utf-8?q?1598009393043249543?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi James,
-
+On Tue, 2018-04-17 at 10:13 -0400, Sinan Kaya wrote:
+> Hi James,
 > 
-> Perhaps if you gave an example of the actual problem you're trying to
-> fix we could assess if it affects parisc.
+> > 
+> > Perhaps if you gave an example of the actual problem you're trying
+> > to fix we could assess if it affects parisc.
+> 
+> Let me clarify myself here. Maybe, there is a better solution.
+> 
+> 		/* assign ownership */
+> 		desc->status = DEVICE_OWN;
+> 
+> 		/* notify device of new descriptors */
+> 		writel(DESC_NOTIFY, doorbell);
+> 
+> The difference between writel() and writel_relax() is writel()
+> guarantees memory transactions to be flushed to the device before the
+> register write.
 
-Let me clarify myself here. Maybe, there is a better solution.
+Um, no it doesn't, at least not in PCI.  It guarantees the write will
+be issued by the memory system, but it may still be cached (called
+posting) in the PCI bridge.  So it doesn't guarantee the write reaches
+the device by the time it returns.
 
-		/* assign ownership */
-		desc->status = DEVICE_OWN;
+>  writel_relaxed() does not provide any guarantees about the memory
+> and IO operations.
+> 
+> Similarly, readl() provides following code to observe the DMA result
+> while readl_relaxed() does not provide this guarantee.
 
-		/* notify device of new descriptors */
-		writel(DESC_NOTIFY, doorbell);
+Right, the relaxed operator provides no guarantee of ordering between
+the memory and IO domains.  However, it's only really a problem on
+multiple memory controller systems (i.e. NUMA).  Parisc (except
+superdome, which we don't support) doesn't have this problem.  We also
+turn of CPU stream reordering, so compile order is retire order on our
+CPUs (which makes life a lot simpler).
 
-The difference between writel() and writel_relax() is writel() guarantees
-memory transactions to be flushed to the device before the register write.
-writel_relaxed() does not provide any guarantees about the memory and IO
-operations.
+> Ideally, you want to embed rmb() and wmb() into the writel() and
+> readl() to provide this guarantee.
+>  
+> PA-RISC doesn't seem to support neither one of the barrier types. If
+> you are familiar with the architecture, maybe you could guide us
+> here.
+> 
+> Is __raw_writeX() enough to provide this guarantee for this
+> architecture?
 
-Similarly, readl() provides following code to observe the DMA result while
-readl_relaxed() does not provide this guarantee.
+Well, with the volatile address it is.
 
-Ideally, you want to embed rmb() and wmb() into the writel() and readl()
-to provide this guarantee.
+The current implementations provide the expected semantics: namely the
+position in the instruction stream is compile (retire) ordered and
+issued from memory once retired.  We still do have the write posting
+problem, but you'll find additional reads in the drivers to flush the
+posted writes, so I don't actually believe we need anything changing.
 
-PA-RISC doesn't seem to support neither one of the barrier types. If you are
-familiar with the architecture, maybe you could guide us here.
-
-Is __raw_writeX() enough to provide this guarantee for this architecture?
-
-Sinan
-
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+James
