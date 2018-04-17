@@ -1,121 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752633AbeDQHjL (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 03:39:11 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:7728 "EHLO pegase1.c-s.fr"
+        id S1752681AbeDQHje (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 03:39:34 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:37488 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752177AbeDQHir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 03:38:47 -0400
-Message-Id: <79db4096efe199b5b0e489de6805405a4f20b918.1523950415.git.christophe.leroy@c-s.fr>
+        id S1751270AbeDQHin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 03:38:43 -0400
+Message-Id: <cb1d94ed485382a51c34a79f2886ea19821eef31.1523950415.git.christophe.leroy@c-s.fr>
 In-Reply-To: <a04660fd2b51246f8feeb49e49334fc943c1b9e8.1523950415.git.christophe.leroy@c-s.fr>
 References: <a04660fd2b51246f8feeb49e49334fc943c1b9e8.1523950415.git.christophe.leroy@c-s.fr>
 From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH  6/7] powerpc/lib: inline more NUL size verifications
+Subject: [PATCH  4/7] powerpc/lib: inline memcmp() for small constant sizes
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Tue, 17 Apr 2018 09:38:45 +0200 (CEST)
+Date: Tue, 17 Apr 2018 09:38:41 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-strncmp(), strncpy(), memchr() are often called with constant
-size.
+In my 8xx configuration, I get 208 calls to memcmp()
+Within those 208 calls, about half of them have constant sizes,
+46 have a size of 8, 17 have a size of 16, only a few have a
+size over 16. Other fixed sizes are mostly 4, 6 and 10.
 
-This patch gives GCC a chance to optimise NULL size verification out
+This patch inlines calls to memcmp() when size
+is constant and lower than or equal to 16
+
+In my 8xx configuration, this reduces the number of calls
+to memcmp() from 208 to 123
+
+The following table shows the number of TB timeticks to perform
+a constant size memcmp() before and after the patch depending on
+the size
+
+	Before	After	Improvement
+01:	 7577	 5682	25%
+02:	41668	 5682	86%
+03:	51137	13258	74%
+04:	45455	 5682	87%
+05:	58713	13258	77%
+06:	58712	13258	77%
+07:	68183	20834	70%
+08:	56819	15153	73%
+09:	70077	28411	60%
+10:	70077	28411	60%
+11:	79546	35986	55%
+12:	68182	28411	58%
+13:	81440	35986	55%
+14:	81440	39774	51%
+15:	94697	43562	54%
+16:	79546	37881	52%
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/string.h | 24 ++++++++++++++++++++++++
- arch/powerpc/lib/string.S         |  8 ++++++++
- 2 files changed, 32 insertions(+)
+ arch/powerpc/include/asm/string.h | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
 diff --git a/arch/powerpc/include/asm/string.h b/arch/powerpc/include/asm/string.h
-index 196ac5d587fb..1465d5629ef2 100644
+index cf6f495134c3..196ac5d587fb 100644
 --- a/arch/powerpc/include/asm/string.h
 +++ b/arch/powerpc/include/asm/string.h
-@@ -30,6 +30,22 @@ extern void * memchr(const void *,int,__kernel_size_t);
+@@ -4,6 +4,8 @@
+ 
+ #ifdef __KERNEL__
+ 
++#include <linux/kernel.h>
++
+ #define __HAVE_ARCH_STRNCPY
+ #define __HAVE_ARCH_STRNCMP
+ #define __HAVE_ARCH_MEMSET
+@@ -28,10 +30,45 @@ extern void * memchr(const void *,int,__kernel_size_t);
  extern void * memcpy_flushcache(void *,const void *,__kernel_size_t);
  
  #ifndef CONFIG_FORTIFY_SOURCE
-+static inline char *__strncpy(char *p, const char *q, __kernel_size_t size)
++static inline int ___memcmp(const void *p,const void *q,__kernel_size_t size, int offset)
 +{
-+	if (unlikely(!size))
-+		return p;
-+	return strncpy(p, q, size);
-+}
-+#define strncpy __strncpy
++	int dif;
 +
-+static inline int __strncmp(const char *p, const char *q, __kernel_size_t size)
-+{
-+	if (unlikely(!size))
-+		return 0;
-+	return strncmp(p, q, size);
-+}
-+#define strncmp __strncmp
++	BUILD_BUG_ON(!size || size > 8);
 +
- static inline int ___memcmp(const void *p,const void *q,__kernel_size_t size, int offset)
++	p += offset, q += offset;
++	if (size == 1)
++		return *(u8*)p - *(u8*)q;
++	if (size == 2)
++		return be16_to_cpu(*(u16*)p) - be16_to_cpu(*(u16*)q);
++	if (size == 3) {
++		dif = be16_to_cpu(*(u16*)p) - be16_to_cpu(*(u16*)q);
++		if (dif)
++			return dif;
++		return *(u8*)(p + 2) - *(u8*)(q + 2);
++	}
++	if (size == 8) {
++		s64 tmp = be64_to_cpu(*(u64*)p) - be64_to_cpu(*(u64*)q);
++		return tmp >> 32 ? : (int)tmp;
++	}
++
++	dif = be32_to_cpu(*(u32*)p) - be32_to_cpu(*(u32*)q);
++	if (size == 4 || dif)
++		return dif;
++
++	return ___memcmp(p, q, size - 4, 4);
++}
++
+ static inline int __memcmp(const void *p,const void *q,__kernel_size_t size)
  {
- 	int dif;
-@@ -72,6 +88,14 @@ static inline int __memcmp(const void *p,const void *q,__kernel_size_t size)
+ 	if (unlikely(!size))
+ 		return 0;
++	if (__builtin_constant_p(size) && size <= 16) {
++		int dif = ___memcmp(p, q, size < 8 ? size : 8, 0);
++		if (size <= 8 || dif)
++			return dif;
++		return ___memcmp(p, q, size - 8, 8);
++	}
  	return memcmp(p, q, size);
  }
  #define memcmp __memcmp
-+
-+static inline void *__memchr(const void *p, int c, __kernel_size_t size)
-+{
-+	if (unlikely(!size))
-+		return NULL;
-+	return memchr(p, c, size);
-+}
-+#define memchr __memchr
- #endif
- 
- #ifdef CONFIG_PPC64
-diff --git a/arch/powerpc/lib/string.S b/arch/powerpc/lib/string.S
-index cbb90fdc672d..89af53b08b4a 100644
---- a/arch/powerpc/lib/string.S
-+++ b/arch/powerpc/lib/string.S
-@@ -18,8 +18,10 @@
- /* This clears out any unused part of the destination buffer,
-    just as the libc version does.  -- paulus */
- _GLOBAL(strncpy)
-+#ifdef CONFIG_FORTIFY_SOURCE
- 	PPC_LCMPI 0,r5,0
- 	beqlr
-+#endif
- 	mtctr	r5
- 	addi	r6,r3,-1
- 	addi	r4,r4,-1
-@@ -38,8 +40,10 @@ _GLOBAL(strncpy)
- EXPORT_SYMBOL(strncpy)
- 
- _GLOBAL(strncmp)
-+#ifdef CONFIG_FORTIFY_SOURCE
- 	PPC_LCMPI 0,r5,0
- 	beq-	2f
-+#endif
- 	mtctr	r5
- 	addi	r5,r3,-1
- 	addi	r4,r4,-1
-@@ -51,13 +55,17 @@ _GLOBAL(strncmp)
- 	beqlr	1
- 	bdnzt	eq,1b
- 	blr
-+#ifdef CONFIG_FORTIFY_SOURCE
- 2:	li	r3,0
- 	blr
-+#endif
- EXPORT_SYMBOL(strncmp)
- 
- _GLOBAL(memchr)
-+#ifdef CONFIG_FORTIFY_SOURCE
- 	PPC_LCMPI 0,r5,0
- 	beq-	2f
-+#endif
- 	mtctr	r5
- 	addi	r3,r3,-1
- 	.balign 16
 -- 
 2.13.3
