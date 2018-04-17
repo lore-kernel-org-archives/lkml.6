@@ -1,161 +1,95 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2781072-1523999124-2-189475890600921782
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523999124; b=ahT5eRR6wqCDQCnNDoJyzPckW3ItKT/Q0jSlxmsDMpoHfM6u8z
-    2IitQoQss6Qf5rmZLC3lS+NQFXTmOUzNu5JeBtMWqhYQa/THubH+zxDmJoniw6Hn
-    P9pZU6nvucPJhRcpxJjFzRNKM+f8KtSKKiL6flTKqFqU0x9CaHJx3eICEE8BHlKd
-    3v3h/gfXkxi4lXydCEJ5QGWJWJcEJkaq804rM58p5Eh21BZSG8tNYmyj0crCvUsG
-    DPxLCCzZn63Rk/MsyqFmNuWbQP/xDhrvPDlCLdYbpBuz54sma3puJGUz2oz2vGMR
-    NG13L91YD0ROfhPrJpfZ86IONM+g8aN7xedQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1523999124;
-    bh=/3CxCpIaFvkXISJj64bR1sI02PPxKN1UGKH8RXn3C8g=; b=E2O2bX00Pi85
-    yznVeAs9bKsOAtDh4/dEgvsvj2ZtRgMdi9tlugCUJFLbvLM3ktWMgmy0X5ENMoXN
-    GMUXwx3eua8EGN6DHALEhvyb9N/wavWbId7GU3CWhMYJ43QlO7iJN+x2FO+6XEYI
-    1/c+Fq7aiDWqURiwAr5+/Iw7dv+YUrMXUItbb7j3qt3Qe4iIk3Hgw15Nl1xzDyOR
-    B8Ods2wBMWytENrsCIqPZt0ovgVmIgGqgelVDR2p4MXXggJEt/3+U4xxdfwZ6f71
-    69v4hlOMOH7UeP6vMXm5bd9izYJLGyNiB9b/kTWxxQIMy3YzvqyQlvIBU6RVujLN
-    k133snySGg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=osg.samsung.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=osg.samsung.com header.result=pass header_org.domain=samsung.com header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPN4x/03rE3ixb2+XdBCqWTZBZ82cZ6XUz2/CPvfsL5Y3eSdOB8tds5e6X74HPH4juLqMRB8h3ZLyogyuEtTsApyPbpV/1rMRMBJZRn3SzEEwvyhPqRE
-    sMG+abC8IKR55VELcKSkFHL2CDdXjE2U2LVmZ4Jqty184CGcmRxwB9Dttbsiiopg2CoJeH/iWkjoMsK3Ht1d51Tsuf8pfel7vwL04eg57PP0n7nD+LE+z1k0
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=dj8Mge5Oz2kA:10
-    a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753151AbeDQVFX (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 17 Apr 2018 17:05:23 -0400
-Received: from osg.samsung.com ([64.30.133.232]:34211 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752699AbeDQVFW (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:05:22 -0400
-Subject: Re: [PATCH 4.14 00/49] 4.14.35-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, Shuah Khan <shuahkh@osg.samsung.com>
-References: <20180417155715.032245882@linuxfoundation.org>
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuahkh@osg.samsung.com; prefer-encrypt=mutual; keydata=
- xsFNBFIzbI0BEADtNDUjCT2vg2pVl9+XAwjq43AnDpggRIWjq8c82lcGgt9WYeQ2ezoGHADx
- 9XS5dP8OUdf2e1j2GtxOA9DpuAE6KNp9q4n2WHl9Q6Y06JwaXcMKlqH1WzAu8QWDou8KC8UL
- k+Ma/80uqlwQDmy+SDuLSLSPXP03P3NfKII8vAdREVTDfDzle+IKXDgYB8E5On1533QNVXdH
- rWQOU/SggOF8pGklv/a8VMR6KUYbkkkFy9wGLSLeBUx6ZfRkZSYBcAinwHLqWyDGB1993l1K
- y/FArlfEYLjKZ9od9ZGmnA3Ww9EMqpUUTP9b7a/sNuBhmsk5WVwMhMEtCxtIxHj0PVX8+m2R
- mj7mvdBukwsBOfu4ef0tK8CJHUNOXpWwNEl8LY1S+yJS/AZuwvzjpmfNQCzdixGG48oAeb11
- 9YKDCAUP0gjI44jZOiWb38jUn1SGqphW4i2jSiDi9R82mCtrcEXFHUuom2aRGyXEVdL9cEor
- 9/e4uaLDDZPGI4QqlbH6VoJkLzNFTAZnCKW9UsPXonQ7lP9hzH4+3sekYDkpmm2FcIXfVBRC
- XQPri2YuJtk/tgjuTC/5Y+b1itiI/xuKj7YmTYwFICUjYF9ehNe/6giG7zYZPIp2cr+oKwW5
- OTo49wqTdUVm84gULn90p2YQlXnbcw81l+K09AvGj5BntvmjDQARAQABzSFTaHVhaCBLaGFu
- IDxzaHVhaEBnb25laGlraW5nLm9yZz7CwXoEEwECACQCGwMCHgECF4AFCwkIBwMFFQoJCAsF
- FgIDAQAFAlIzc34CGQEACgkQCwJExA0NQxyAmhAAiIg5u11jeZtK2T1cGqITPyrzMg+Mu5WB
- /8xKvbc8wYuStJ6mn84zedBzAjjpCUpdZBfGKGV4Piyj6RyVtPOUe1aze7xNl6jq2XodyHpz
- yCBpVozvQGlWdSO34vTA+iwmbQat4DDHoIjvuGf2gqMzSNXiP6KG0erKOP0l5wBGOgjRtJAn
- 6LSrxC/q7M0OKdSxOQpLd9JHc9MPhjRiEHJGxRTYwb93kzJVZTYVIi5ns709/VvR9dA2kcJx
- mE7AxFduFYEkndF1eS15YRHzPUgH6qlcmpd+BqFDd9Xr4qlEygcOKbUktAbi0iqGJZQiAm7k
- Bc1C/WLVmf6w1Hmd5kc+9JU4nYN3LzsvUHVkzY+XqaTkYYIlziRec40XvIDE6J55ByJYTO94
- iBswwY7IwcxL1qUWrBDvJC8jJFtZw+hcuCZr8cwH9UpFRPejZ2iuXycLagtYAe6ppor8uepj
- FB3yJjrFwwe5XSxjAQyBRvGpzLjZTvSGfsJ6WUwE+7/my9Ab+wnDhebxEbyCuGoIQsNaA5qh
- JHL5xXEw0yVrYSiuBTuOVyTwZvyisvOWAnehIlVok+Oq372vjXitfAr43doeyKoQJkpKdcgD
- wMfU2Sxbiqvfqid/9g+GaySvA9jnkO11INvUqQAnFwQ8QjmzRCMRVK3/ZP4lQ8d4rkks+Rsy
- 7HvOwU0EUjNzxQEQALrsbTCFLIY0/JmCNZ4Wdy6iWdAYjLBqKVxLQ9hBD+y8cQ/tF183XfP/
- oVQrRHiJXJHFN94KjL05g9ww4HHoqSq66f8nYFBtZ58kvhY1qgZDbnXaraz5dTN+um5jUTNp
- jmnqmVRiEs+UredmKUIQkQOnbY+sZNUPb25BX6ebdQ0p+aiJysJtO6fi/Au2K2PIj26RmwAK
- L2+DGSqFR183N8/XTBtb2qtFsvm1hO+jUtt7MB6+jf35AR+CDZd6c+ypqO+RpoS3G+5Cbiv0
- D8jMQxWgZ8MTxAKlI5aUT2J2ep+cQxnm8J1NXM996MkUZE8+6CFeH8y/JftlsZ1dvaBs4eHC
- UqeE2xc6dFxrftDuDlFTtEDGCPmd/z5KWUAM0yX+pJXUiu4ljxtu0drdo/QfcNf4RTSw4JoI
- WE8WjHTnONfyMW860qJknddYB2/m+tpF4C/5ocNms3SaFYnMPOu1orn3imBMEeYmiX778FU+
- CgZBIlftMwcY2+3EeWBTjbJdZnhJ0jD+akLRnjJWUXY9RtxYLS2D7nFZCiUiwjGrh+ctEs7U
- we4in7KOb1lZKykrH/DM70HgKRkSHnFqNSinbRA2ty8QoE04RIy56JNNgqDSthlgW/aY7Q4g
- d70eu5/GMuqvMAa8ONceuJZ6vEZ9vvPL0Boolac+I0hiS71KqqpvABEBAAHCwV8EGAECAAkF
- AlIzc8UCGwwACgkQCwJExA0NQxyxXxAAqaLaK7pYT+z89HDsIrgWIbOv1Fr+LuEWYLk9UFEm
- Y0S/Hl7WIII1XHnspeWauaA6XDQ14Lyw7ywmhwhbwfUPC+W2UXRZ/6azE+pxJYcde41pLXgY
- vBHrvs2thzsZNUHslwHoN/tNwRZLpg2tbRVCbjV7/xAWXl0WCmvOd0C5yMVKx4oQ6/Eg1EaW
- TiPpZ5DM0TKBQ99nzwx8yQs2AZSzgl/mx0e9jWFzsn0XiH8DJKiGK5biKiHN3gsorEULkAje
- /GqbYDQuHbT7khmKiLtLcXktV8OVTGAg+cJaHtmpRSUQ16Gji4IkZCt0ZTZclAs2EstECa5a
- zuehlSFo7wmVteR4/ox+qJvQjwI+CU2l4Rcz9l9QgAo5bhW74oQ4mcN3o9OzRo85e8DVaR8K
- jKe2BHpSRV7mpiRXQ/t7sNKZN3w8mMIXzq5xa+TFWaVHJfOLwKvtFpL/7gRBZV2+yqV/J35b
- CjTFOY1/+fA5hwODGBz/SiHv21t11Nnk6yg9Solpc4HG47V24h2lTwlEfIUTpuwhYG+LBY48
- uPJXU+CdBcyHUwWSA/O1/vXMuJ6byXTbcwtrwBnIO3hoBfxIfGVIgzjwI+/PkDEyn3m0+IAX
- 7ipOURNtfmY71UIeV+kk2j9tHWlcx8yOmStvZ3JFpAuqgZhrDa9aAlaq9GyT/t3HsKs=
-Message-ID: <086399d4-e741-8bb4-a23e-01d0ed34337e@osg.samsung.com>
-Date: Tue, 17 Apr 2018 15:05:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
+Return-Path: <gregkh@linuxfoundation.org>
+X-Google-Smtp-Source: AIpwx4/4zJTsF51mcZ5mFLiB3xC8j1soeJs1MbCBQbz5153P90rl4mds9MjBYBwUq2a2UUBBVLv2
+ARC-Seal: i=1; a=rsa-sha256; t=1523981281; cv=none;
+        d=google.com; s=arc-20160816;
+        b=KtcJCxlAeuO4GOM3Hq/74ORLhoiAFTPxvYnqOK45YXGupIpDIzp68jNu92MgfctbaT
+         1CwAMCJ3Br+gcaky28Sdymnx5CxXAabQfb7uVkKzW2tAkg7lt1u4yGS84E2uwl4PTM0J
+         NaPbe4B/TEkkqpCNDZHGSxzjQeAMSRCJL9F8X/DTxaPDYgX5xqd5Zp43SnhXZquQMrzc
+         y6GobAbO4ps7kB07Uo+fwoGXc0shBxhPOu999cA3qEIn60efbQO8g1pVuTVUSM7p85hU
+         Jc6WxQQ3azbxKNGwqURMex2csNoyHHxH+gM+LFuru+d+bVQoSCgtCNYBnNg991a55lCS
+         EZvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:arc-authentication-results;
+        bh=6baTkydM2ocs//sdJBD7RvQWCgkTudrwS7ZvomYNb5c=;
+        b=Veo5dt08GQStgnFqScE8Ta8E6bHw7L69p7nMtFg/+XGWKnN10coYnCh8Z97xClpBp2
+         4en0UEbnlbdeidj01nu3SPuRyZ2eDKzWlt5wFXtrQB8wgk0ahl7c1lNL3g0m7nt1UbZ2
+         n1+XYoFFAUp9F831PloosSqmvA78DDZw3B8XRuig/DVGzOLyOgu2fhMJrXFzaQJBMjkq
+         1ZroW+X9ybKh+cmP7h3uUZTRfKtsrO9ql02MIIBLGtD7LJbqwUaPiF6cjzl0r9tg5GJL
+         TDwhrTCkW5jzV0exglpYKfmAEWONbLxCKdlsIyB6X/l24zQmfepkeHtHFsI6Uq1zTyXK
+         cnQw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	John Johansen <john.johansen@canonical.com>
+Subject: [PATCH 4.14 25/49] apparmor: fix resource audit messages when auditing peer
+Date: Tue, 17 Apr 2018 17:59:04 +0200
+Message-Id: <20180417155716.223390678@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+References: <20180417155715.032245882@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1598009833879299855?=
+X-GMAIL-MSGID: =?utf-8?q?1598010196381612868?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/17/2018 09:58 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.35 release.
-> There are 49 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Apr 19 15:56:59 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.35-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Compiled and booted on my test system. No dmesg regressions.
+------------------
 
-thanks,
--- Shuah
+From: John Johansen <john.johansen@canonical.com>
+
+commit b5beb07ad32ab533027aa988d96a44965ec116f7 upstream.
+
+Resource auditing is using the peer field which is not available
+when the rlim data struct is used, because it is a different element
+of the same union. Accessing peer during resource auditing could
+cause garbage log entries or even oops the kernel.
+
+Move the rlim data block into the same struct as the peer field
+so they can be used together.
+
+CC: <stable@vger.kernel.org>
+Fixes: 86b92cb782b3 ("apparmor: move resource checks to using labels")
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ security/apparmor/include/audit.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- a/security/apparmor/include/audit.h
++++ b/security/apparmor/include/audit.h
+@@ -126,6 +126,10 @@ struct apparmor_audit_data {
+ 					const char *target;
+ 					kuid_t ouid;
+ 				} fs;
++				struct {
++					int rlim;
++					unsigned long max;
++				} rlim;
+ 				int signal;
+ 			};
+ 		};
+@@ -135,10 +139,6 @@ struct apparmor_audit_data {
+ 			long pos;
+ 		} iface;
+ 		struct {
+-			int rlim;
+-			unsigned long max;
+-		} rlim;
+-		struct {
+ 			const char *src_name;
+ 			const char *type;
+ 			const char *trans;
