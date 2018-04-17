@@ -1,107 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752085AbeDQHZt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 03:25:49 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35310 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751183AbeDQHZq (ORCPT
+        id S1751970AbeDQHcc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 03:32:32 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36787 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750831AbeDQHcb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 03:25:46 -0400
-X-Google-Smtp-Source: AIpwx4+IqOxmmOkUmyr/keZBPCk69KzyO53s7yvjHr9K1XH4wzs1Su7AEJyLrZiAc8YBHB3jQweEcw==
-Date: Tue, 17 Apr 2018 09:25:30 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        orsonzhai@gmail.com, zhang.lyra@gmail.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xiaotong.lu@spreadtrum.com
-Subject: Re: [PATCH 2/2] input: misc: Add Spreadtrum vibrator driver
-Message-ID: <20180417072530.GA4629@gmail.com>
-References: <0bfdc811c2b3da3aa1cde2feef278a86503e3804.1523934640.git.baolin.wang@linaro.org>
- <b5580f22aaed9845af9b981319d6cefa04fddd35.1523934640.git.baolin.wang@linaro.org>
+        Tue, 17 Apr 2018 03:32:31 -0400
+Date: Tue, 17 Apr 2018 09:32:28 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: v4.17-rc1 on motorola droid d4: WARN_ON from
+ drivers/gpu/drm/omapdrm/dss/hdmi4.c
+Message-ID: <20180417073228.GA9246@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
 Content-Disposition: inline
-In-Reply-To: <b5580f22aaed9845af9b981319d6cefa04fddd35.1523934640.git.baolin.wang@linaro.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiaotong,
 
-On Tue, Apr 17, 2018 at 11:18:24AM +0800, Baolin Wang wrote:
-> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+--OgqxwSJOaUobr8KG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[snip]
+Hi!
 
-> +static int sc27xx_vibra_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *node = pdev->dev.of_node;
-> +	struct vibra_info *info;
-> +	int ret;
-> +
-> +	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
-> +	if (!info)
-> +		return -ENOMEM;
-> +
-> +	info->regmap = dev_get_regmap(pdev->dev.parent, NULL);
-> +	if (!info->regmap) {
-> +		dev_err(&pdev->dev, "failed to get vibrator regmap.\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = of_property_read_u32(node, "reg", &info->base);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to get vibrator base address.\n");
-> +		return ret;
-> +	}
-> +
-> +	info->input_dev = devm_input_allocate_device(&pdev->dev);
-> +	if (!info->input_dev) {
-> +		dev_err(&pdev->dev, "failed to allocate input device.\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	info->input_dev->name = "sc27xx:vibrator";
-> +	info->input_dev->id.version = 0;
-> +	info->input_dev->dev.parent = pdev->dev.parent;
-> +	info->input_dev->close = sc27xx_vibra_close;
-> +
-> +	input_set_drvdata(info->input_dev, info);
-> +	input_set_capability(info->input_dev, EV_FF, FF_RUMBLE);
-> +	INIT_WORK(&info->play_work, sc27xx_vibra_play_work);
-> +	info->enabled = false;
-> +
-> +	ret = input_ff_create_memless(info->input_dev, NULL, sc27xx_vibra_play);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to register vibrator to FF.\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = input_register_device(info->input_dev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to register input device.\n");
-> +		input_ff_destroy(info->input_dev);
+While playing with screensaver on droid4:
 
-I'm not sure how the input_ff is freed for managed devices.
+[ 1047.117462] omap-mcbsp 40124000.mcbsp: CLKS: could not
+clk_set_parent() to prcm_fck
+[ 1047.130432] ------------[ cut here ]------------
+[ 1047.135559] WARNING: CPU: 1 PID: 2942 at
+drivers/gpu/drm/omapdrm/dss/hdmi4.c:667 hdmi_audio_stop+0x5c/0x68
+[ 1047.145294] Modules linked in:
+[ 1047.148376] CPU: 1 PID: 2942 Comm: pulseaudio Not tainted
+4.17.0-rc1-73412-g8f3e00d-dirty #623
+[ 1047.157043] Hardware name: Generic OMAP4 (Flattened Device Tree)
+[ 1047.163085] [<c0111854>] (unwind_backtrace) from [<c010d740>]
+(show_stack+0x10/0x14)
+[ 1047.170898] [<c010d740>] (show_stack) from [<c08fc244>]
+(dump_stack+0xa8/0xe0)
+[ 1047.178161] [<c08fc244>] (dump_stack) from [<c0134d50>]
+(__warn+0xf8/0x124)
+[ 1047.185180] [<c0134d50>] (__warn) from [<c0134db8>]
+(warn_slowpath_null+0x3c/0x48)
+[ 1047.192962] [<c0134db8>] (warn_slowpath_null) from [<c053d9dc>]
+(hdmi_audio_stop+0x5c/0x68)
+[ 1047.192993] [<c053d9dc>] (hdmi_audio_stop) from [<c06f3e2c>]
+(hdmi_dai_trigger+0x6c/0x88)
+[ 1047.193023] [<c06f3e2c>] (hdmi_dai_trigger) from [<c06e0308>]
+(soc_pcm_trigger+0x140/0x184)
+[ 1047.193023] [<c06e0308>] (soc_pcm_trigger) from [<c06afc68>]
+(snd_pcm_do_stop+0x54/0x58)
+[ 1047.193054] [<c06afc68>] (snd_pcm_do_stop) from [<c06afa10>]
+(snd_pcm_action_single+0x38/0x78)
+[ 1047.193054] [<c06afa10>] (snd_pcm_action_single) from [<c06b1c24>]
+(snd_pcm_drop+0x48/0x94)
+[ 1047.193054] [<c06b1c24>] (snd_pcm_drop) from [<c06b2d24>]
+(snd_pcm_ioctl+0x8e0/0x1308)
+[ 1047.193084] [<c06b2d24>] (snd_pcm_ioctl) from [<c02c80cc>]
+(do_vfs_ioctl+0x84/0xa70)
+[ 1047.193084] [<c02c80cc>] (do_vfs_ioctl) from [<c02c8b14>]
+(ksys_ioctl+0x5c/0x80)
+[ 1047.193115] [<c02c8b14>] (ksys_ioctl) from [<c0101000>]
+(ret_fast_syscall+0x0/0x28)
+[ 1047.193115] Exception stack(0xecfc1fa8 to 0xecfc1ff0)
+[ 1047.193115] 1fa0:                   00562308 b1986394 00000015
+00004143 00000000 00562e20
+[ 1047.193115] 1fc0: 00562308 b1986394 0053d4e0 00000036 0000000e
+b6fdbce8 00507d80 bed64644
+[ 1047.193145] 1fe0: b19867c4 bed644c4 b1916be7 b6c8e716
+[ 1047.193145] irq event stamp: 60448
+[ 1047.193145] hardirqs last  enabled at (60447): [<c01c6df4>]
+ktime_get_ts64+0x19c/0x1dc
+[ 1047.193176] hardirqs last disabled at (60448): [<c06b099c>]
+snd_pcm_stream_lock_irq+0x24/0x34
+[ 1047.193176] softirqs last  enabled at (60078): [<c01024a0>]
+__do_softirq+0x2e0/0x59c
+[ 1047.193176] softirqs last disabled at (60031): [<c013c684>]
+irq_exit+0x144/0x194
+[ 1047.193206] ---[ end trace 07b005c418b9f99b ]---
+[ 1062.235626] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+[ 1092.313934] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
 
-Either you don't have to destroy it here, or you also need to destroy it
-in a release() function.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-> +		return ret;
-> +	}
-> +
-> +	ret = sc27xx_vibra_hw_init(info);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to initialize the vibrator.\n");
-> +		input_ff_destroy(info->input_dev);
-> +		input_unregister_device(info->input_dev);
+--OgqxwSJOaUobr8KG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-No need to unregister managed input devices.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> +		return ret;
-> +	}
+iEYEARECAAYFAlrVowwACgkQMOfwapXb+vLX0ACgqtQxgXXS53SFCo6OJZrWtBjF
+/7gAn32SuiZKu4CSMhX1LjM675PXQoi+
+=S4Cg
+-----END PGP SIGNATURE-----
 
-Cheers,
-Marcus Folkesson
+--OgqxwSJOaUobr8KG--
