@@ -1,168 +1,340 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752871AbeDQOPx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:15:53 -0400
-Received: from mail-eopbgr30107.outbound.protection.outlook.com ([40.107.3.107]:15771
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752273AbeDQOPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:15:50 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com;
-Subject: Re: [PATCH] fasync: Fix deadlock between task-context and
- interrupt-context kill_fasync()
-To: Matthew Wilcox <willy@infradead.org>
-Cc: jlayton@kernel.org, bfields@fieldses.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        boqun.feng@gmail.com, longman@redhat.com, peterz@infradead.org,
-        mingo@redhat.com
-References: <152292939368.19745.13784475656016424647.stgit@localhost.localdomain>
- <20180417140110.GB21954@bombadil.infradead.org>
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <3518b26a-2a81-1fb6-e01d-8d0b06eb0ad3@virtuozzo.com>
-Date: Tue, 17 Apr 2018 17:15:43 +0300
+        id S1752975AbeDQOQF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:16:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60292 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752915AbeDQOQB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:16:01 -0400
+Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Tue, 17 Apr 2018 10:15:53 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180417140110.GB21954@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: HE1PR05CA0192.eurprd05.prod.outlook.com
- (2603:10a6:3:f9::16) To DB6PR0801MB1335.eurprd08.prod.outlook.com
- (2603:10a6:4:b::7)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1335;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1335;3:pcwXfi6DBZKwvwTWWugOrCG+SaCpl0cdGQAxasaFXxX9XxHfq35sHR+6WnzVJ1qiewRKCGpss7V6RxnO8ByRWGbGhgyYV1vQSBaJRfN5DvEK1HCEVQIpOwhCat8OJ+zANcIrIaedMUD+n0Q7jETorL0BW/etevW7zh21saTDwbOzLX373bx3lapwVMj0SxRkuQ6JN4rYmoH0nPGGaHChMPZ06yrDdnwRblZxaSAzicjceHtqsDZkDID0+JQdr1/9;25:nJDamtCltU7vl2TXQOYQHEp4oxWZj6hUR27AliJaLUOzWVnuZYpvA602virJL/9H+c/Uassly5QdlQZsHjAlVYhbn0JY++7dcSvdB+09oDd3FG+vCzMxoBPt82RMwWYYqm/LpeApVsSgGQ7fLUO/SxIDzpLGLdLaVu6DCYtw2hLGAdYJ6Fni2tjkOLLD1e39V59mVnK7n20rECLAOp2kVlOPG5bUhUdepMEmqw7w6FglspxDNeFvJyD9a4o4rTyxwBcLUnvv4ZswaG9O3FEvZ0ig71pSgFNsqCui/rHgdtJ85ksudBf5xJVWCRqLp9XTxc0UnbbGywwjcmNo9uYH/g==;31:NfvOfxURa+ouRe596Nsrcr6Wm+Z7aKViXL1U7/CNN9lXGara0uNqG/52UPJITKKxFxWsvI7NqIDg2OohZg6Dvr+epMFo7SWeYJncTnWegddyTQ9G+erFWC2+AXezzCUCkpYnI2AXUO+e5OqKMCx+m4PI3SoMDqkMrBhhl/6DrJb3gIzsxCxbE+i6RWGvb+9zzXVv2fhUGR1akGWbrLmnZtUeNvrHQLOnjJLQVlT35a4=
-X-MS-TrafficTypeDiagnostic: DB6PR0801MB1335:
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1335;20:pheyS51CezbadU36W7GZiU+ytfrfoJnMJ45KxWJdPgc5ET89LWUU6IyroH7AZ0U7IZXQPK8cYeGKPnaHtUuJJ8L2V/xobeE3A2eKVkF5J5o0xNx7yhZTUn6L5zlwBMD9SyFUnb4PVVj5ZxWahbck/Q+a0CLm0hMSYabDgHxDawA3qVfzMCbjGC4+7YrTB5nw1+b9AulOxB+nFaDB/Fmscl9jZuhPjZ6jHIk8MW119XCR902Uc4ixORcbKju7iJfgkP+OdpvX8NuD+S5ouF0XwlGqKF+UL6XL3kpKRkNUhKU50yoiayYdC7uyOvKT4+idHYqQVaQXDtpiJXI4yYw8pMrczPliKzsu/N9Qpu+SinhKn7oG04Ofzi727K9Z+LRLq1WUDk5QDPlO0GtHie6OzQI8x+rs5L9F16QvXGKQYGJr2MSXYhf0bmZWvfZfwhLDhQethExGPe4KUYsCweZEdeH1vtIP2bH9ryjr7AxmPt4HYysMip6AmGH4PJNiD67x;4:tfCQQaIhXnZY/YSyvlq5MJhzWIT+pT0g18oXmy0iIrMy1qjAXA1IsDMhbZWQz8nk6gY5qoWpDo/fKW5yL2CyZQw6el579cLYiTtzfuFDKFx8EKD9elWGxn9R2e0oHWWcGZM2iM/h891jwwCONciUbDwWPksDqsF9+Lx3Rjqw8jwhWfDbXiGcA/qbkLgV1MidEV+s9ZvTCh9dsm97V48zeIe0ox/6++H7rtBctuP8qhtAFsZ7YTK9m7V3xI8vWfcOj8TWRzGnNBulg6RZUVufdw==
-X-Microsoft-Antispam-PRVS: <DB6PR0801MB1335A06E9D6ADA673CCD6757CDB70@DB6PR0801MB1335.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231232)(944501327)(52105095)(10201501046)(3002001)(93006095)(93001095)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DB6PR0801MB1335;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0801MB1335;
-X-Forefront-PRVS: 0645BEB7AA
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(376002)(366004)(39850400004)(346002)(39380400002)(396003)(189003)(199004)(50466002)(31686004)(7416002)(305945005)(5660300001)(7736002)(478600001)(6486002)(229853002)(105586002)(2906002)(64126003)(4326008)(106356001)(6246003)(39060400002)(53936002)(36756003)(25786009)(8676002)(6916009)(68736007)(6666003)(81166006)(97736004)(81156014)(55236004)(230700001)(77096007)(8936002)(66066001)(65806001)(65956001)(47776003)(52116002)(186003)(59450400001)(53546011)(26005)(386003)(76176011)(16526019)(86362001)(23676004)(52146003)(2486003)(31696002)(65826007)(446003)(11346002)(486006)(316002)(2616005)(476003)(3846002)(956004)(58126008)(16576012)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0801MB1335;H:[172.16.25.5];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjA4MDFNQjEzMzU7MjM6Y0xaYjI2Y0lBVlh6anc3WlpLZUdRd1I3?=
- =?utf-8?B?d29hcE8xMjlrYTREWmljQmk1UTJCR1ZCbDlWWmJrSnJEVVJUM0Z4ZVFMNjMv?=
- =?utf-8?B?Y29UYXA2M3hZY1ZlMGNKMUZUZm9HUURpYnNiQ0NKY0VvQzVTOERuUEEycGFL?=
- =?utf-8?B?TDNjZTlKeGg3eXMxb1BEMmlUVlJ1elFtZUlhckI0Zm92WFFCNTBGeEl3RWJX?=
- =?utf-8?B?a0k4ajRDR0FnZ2FqZDhmV3hmcjVFTFN5MEdFTmc1eUhjSkYzcXczOGJMY21J?=
- =?utf-8?B?Q3U1czZCdi9xYXFreUtCNkZ3U2cvc3RrOHA2ZGowN2FQS2Y0d1Q2VTJXQ2JS?=
- =?utf-8?B?a0xNbDhzTUhKU2kvZ1U4ZEZCMjIrS01QRjlpdmhCSm1qR0dNajdGUWdqTTcw?=
- =?utf-8?B?YUVNdnJSTUpQbmN5U0JIbXRzeW16T2lmN2pMQ0RDZHdVYXlSVXgxSU1RQSs2?=
- =?utf-8?B?L0U0ZEpkVU56SmxjNm9uTStVNkxwZ3YwWVlBYVV5dCsrcnByQnFLNGdPdFJD?=
- =?utf-8?B?aWRkSmZOeGVIWnkyNWRlU3dMS3pFOThPWEZTWkpDYXl4WGxxa2Z6dmtVWFBo?=
- =?utf-8?B?bGRVclMzUVE4TFlRT1c1VnJxS3ErdnR1ZzNxMTRFNWhWcUxGRElGME94Qnhu?=
- =?utf-8?B?ekxidXp2RDFOdkJwODgva1A5V3VJMHh2VlFhSEo1MXZlVk1XcnZNenNPdzJu?=
- =?utf-8?B?TEdmQUt5SjYva2tVeCt5SUdmbk5GZ0dCT0g2Z2dhZEo5ZGgvL3F6eGt2K1FX?=
- =?utf-8?B?Tm9hNnhPSFJ0R0UxVkxXZlRHY1BpaTNtaVVuK2VGeTJsWTBSMFg1RW5oNzRw?=
- =?utf-8?B?V1dhRFlZaTI2WVdmRXBCVklGVC9MMEo2Y2Z3NDdnWUxRWkptd254QmRsSzBi?=
- =?utf-8?B?OThaV0JOd3pQeitoUllERGpKK1JjaS9NbzhJNXlwZ1RDdVNMWWhWVUw4Q21L?=
- =?utf-8?B?V0sya3pvR1RTQzA4U21aN1VWempSbEdsTmhNUGVXcnRLVkhuVkNmWjYxZk5R?=
- =?utf-8?B?VEtNOWVyVnkxbzNPZ3VON2ZFaytMWjBHVm5QZU0yVHBQYWc2UVhvVk9xbVBm?=
- =?utf-8?B?bUdabHRkZDYyaS9jcldkNnRPTThxT1F1OVNjL09RbFk4VS9hNklpc2owdUIy?=
- =?utf-8?B?bldPOUJHS3BkS01YWUlyWWRmL0pSYmZSWFBOdEpYT2dyelUvTUtzT1g5dlg4?=
- =?utf-8?B?eXBTZWVQVzRqN3lNQi8rUzcxMzdYaWc5Um9vcWI0T2ZHb3ZxLzZlbEFjaHlG?=
- =?utf-8?B?UkxVYzBaYVR4a1NqdU8rZnhOazNmR1lPUDBaRys3M21zM2hwUjFMZWNaZzgz?=
- =?utf-8?B?L3YwRkNlaUFmdlRXVXpVQ09PQk5ETUdaU04wWlBpbk5TZjd5MXE3ZWJ0S2JS?=
- =?utf-8?B?SEZEMGovV2FZWjNzYmthVmxxRWZIWTdkQVQ3SXVwclcvTGlQNzY4SjkyMUNa?=
- =?utf-8?B?b3UyK1hmbTFnRC8zU1ZFZXhFVkJ4dko5M1V6ck8rSVArRDl2S2QwNFdQblZJ?=
- =?utf-8?B?RVAxVmFMQXhaZFR3WlVZNC8xMnAvSnlxSEhYYm4rYnlmZExZRGMvNHRRRjZW?=
- =?utf-8?B?SWdpNmZ3VTVrT2c2eStsOXZKbFRENlBjMDFOcytaRWtjZVEzKzBJN3VqTVcy?=
- =?utf-8?B?TnBDMzhLNWpqa1NQWWxHVWthaE9BRU9XTDhqUG91Z2RhZUZ6QmJSQXVNZFFn?=
- =?utf-8?B?QXVxK1gzN3FFamJta09zSUVuQ2Q2VXZPZTNJVW00Vmppb1diZ2cyOVZHZDBR?=
- =?utf-8?B?QVMrM3ZGbFVJSDNiZ2pIMHRjOG0wRkpIdjhUdVVSbXVjQjArU3Q0NStBazYr?=
- =?utf-8?B?ZkZaRk9hMkxMWXZKdmxBVjNQa1RVS0Q3WXQzWUp0TFo4aW9KTEZmQ3BsRlkr?=
- =?utf-8?B?VVY5R21sYkNkZDhFVkhnRXRjekt3TjJWek55V0paTnJkRVJSSnNFL0ZkWXdE?=
- =?utf-8?B?R3FjaURWdGdTNnlQVjJsZGhiNlpDSU1kM1hVR2FjYVYyZkl5Ry9IMTVtYmh1?=
- =?utf-8?B?OXBrM0hZVDJiaEtTRGkzbzNHMVVIYWU2RUQ5a01tUVZ2c3M5MXJzTW55cUVo?=
- =?utf-8?Q?6ptwS8=3D?=
-X-Microsoft-Antispam-Message-Info: 3lsKw06jonVHOVX3rfw/VaMmbrsDjrj5k44BKcLkOMtM7uwKza7HxeYeatoAI4uyj+gGLlmzmJCqDjdBwwYZ6u70Q4WXu7XLoGC4BdV6ATTxM3hzcKeZkpoSqM7k7xLnygRJ93l/Mzk3l96cPwdDM5/lHYozZtZ+czRJP/FAxVsDkICpOD9k+Nq5cFzOYahQ
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1335;6:JWa4qs1kKsGqPmXDHNYnmSnx5DU9xFrEnZG34be+MY7FESE1wpA+v8GJr4zy3Wt8vOqUPM/VPgUqOfGcVq+hYzVtyTsNQ0dKF9HNXblZ1RE/LfdOZL7G2r+8eQzqQe7fib68b7W//SqdafmKbulooL2+r+F5GEJfSm0TeBl7Gxwx68rokMIiC/68l6vzzaoOfplAVMmM2uwc/1nCX5GyaiuxvZqmDh63puzWLilwi4w2xPCObHAqEfF2ecjDRmFlAfvqpbydLrcWuCsFu+df8AP5pnOS5vaR1dFUJH5oSwPIssEpG+ihRVzKSEiiuSNjUOdiDJ7SOiM0GD3tNU4kXygykVKFfT6bVFTKT8hIIm5uI6b0ONQhSObdK//9ef+dFtq+Oawkn5uFt1Fzw8j+LGqIW2f23mPN1SuABVX7kZjwtimr/qgngqX8YQ+QWZVwuskpv4L600I7hyboWo2J7A==;5:vDZ3U46ShgKNhIqWm4FTCsazkpe6hfJ391GJAPfggt8qTfAyVzlaqDtZ/phq4jve6kfBy5dDWhxd+1OGtxduGaJ1XP01Fov1yKzhzk/u6gDO2Z1erGB5GqOLNv3H1/dt8qTwax6tv72LGxDjmoj2p4wsZxGGzG0A56O1nKvn96w=;24:OZMTwC5Btm9cmQHcio38jpaQSWgXGMjM/P0eH5WSB8Q4aAiwaQ5YhKqWggOwaXQLiNlOXGtEF3pJ+DtDYgv4u7iMfvRm3VtXMALsbp8D5Xw=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1335;7:vSXcRmVw5ep9H8EzfwH7vzfQ3nQDz4dFiRCBRAdG/YaMO15rlc5LSYNRdO7bAw9prmpxCFGGYXitaw33tO4oHkaJOb9+c+O5Xmjzjyd04oVyovZmfnORWsmmEd2ek45d696BaFzmePp5dbUTfCT3D/ira+NnwVE4mCoJtlxn/JJBn1VqQNcsiPDkVh4Rx6pGukfRSyeiqhrA+t5Uwy3lc+loj01kmaEsiFSiCNGmluplXkKa3UWCwUTyl9n5pqUM;20:XiLlpWxL8415QdW6E0zr0SMjAmlCD2Xzh23ZqhIkMFgwPFszIHX3xhAfwUB6cb6PbjBOaYpgymAy//yNsXhbXn6iOI/+2ZDSG0chTwuOe6+yze/s/JCVZPx7z5EogL3qzoQOv8JRlrO4hDeqW/6VEMeIKLgldqCMaz8oxYVX3+M=
-X-MS-Office365-Filtering-Correlation-Id: bbe0db15-ca50-46fc-436c-08d5a46db766
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2018 14:15:46.9209 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbe0db15-ca50-46fc-436c-08d5a46db766
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1335
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041714-0044-0000-0000-00000405DA28
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008870; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01019243; UDB=6.00519962; IPR=6.00798484;
+ MB=3.00020614; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 14:15:59
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041714-0045-0000-0000-00000837DE6A
+Message-Id: <f9327dfe-a7c2-340d-12c7-6cf76a8c1b0d@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170128
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.04.2018 17:01, Matthew Wilcox wrote:
-> On Thu, Apr 05, 2018 at 02:58:06PM +0300, Kirill Tkhai wrote:
->> I observed the following deadlock between them:
+On 04/16/2018 04:56 AM, Pierre Morel wrote:
+> On 15/04/2018 23:22, Tony Krowiak wrote:
+>> This patch refactors the code that initializes the crypto
+>> configuration for a guest. The crypto configuration is contained in
+>> a crypto control block (CRYCB) which is a satellite control block to
+>> our main hardware virtualization control block. The CRYCB is
+>> attached to the main virtualization control block via a CRYCB
+>> designation (CRYCBD) designation field containing the address of
+>> the CRYCB as well as its format.
 >>
->> [task 1]                          [task 2]                         [task 3]
->> kill_fasync()                     mm_update_next_owner()           copy_process()
->>  spin_lock_irqsave(&fa->fa_lock)   read_lock(&tasklist_lock)        write_lock_irq(&tasklist_lock)
->>   send_sigio()                    <IRQ>                             ...
->>    read_lock(&fown->lock)         kill_fasync()                     ...
->>     read_lock(&tasklist_lock)      spin_lock_irqsave(&fa->fa_lock)  ...
+>> Prior to the introduction of AP device virtualization, there was
+>> no need to provide access to or specify the format of the CRYCB for
+>> a guest unless the MSA extension 3 (MSAX3) facility was installed
+>> on the host system. With the introduction of AP device virtualization,
+>> the CRYCB and its format must be made accessible to the guest
+>> regardless of the presence of the MSAX3 facility.
 >>
->> Task 1 can't acquire read locked tasklist_lock, since there is
->> already task 3 expressed its wish to take the lock exclusive.
->> Task 2 holds the read locked lock, but it can't take the spin lock.
-> 
-> I think the important question is to Peter ... why didn't lockdep catch this?
-> 
->> -		spin_lock_irq(&fa->fa_lock);
->> +		write_lock_irq(&fa->fa_lock);
->>  		fa->fa_file = NULL;
->> -		spin_unlock_irq(&fa->fa_lock);
->> +		write_unlock_irq(&fa->fa_lock);
-> ...
->> -		spin_lock_irq(&fa->fa_lock);
->> +		write_lock_irq(&fa->fa_lock);
->>  		fa->fa_fd = fd;
->> -		spin_unlock_irq(&fa->fa_lock);
->> +		write_unlock_irq(&fa->fa_lock);
-> 
-> Do we really need a lock here?  If we convert each of these into WRITE_ONCE,
+>> The crypto initialization code is restructured as follows:
+>>
+>> * A new compilation unit is introduced to contain all interfaces
+>>    and data structures related to configuring a guest's CRYCB for
+>>    both the refactoring of crypto initialization as well as all
+>>    subsequent patches introducing AP virtualization support.
+>>
+>> * Currently, the asm code for querying the AP configuration is
+>>    duplicated in the AP bus as well as in KVM. Since the KVM
+>>    code was introduced, the AP bus has externalized the interface
+>>    for querying the AP configuration. The KVM interface will be
+>>    replaced with a call to the AP bus interface. Of course, this
+>>    will be moved to the new compilation unit mentioned above.
+>>
+>> * An interface to format the CRYCBD field will be provided via
+>>    the new compilation unit and called from the KVM vm
+>>    initialization.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>> ---
+>>   arch/s390/include/asm/kvm-ap.h   |   15 +++++++++
+>>   arch/s390/include/asm/kvm_host.h |    1 +
+>>   arch/s390/kvm/kvm-ap.c           |   39 ++++++++++++++++++++++++
+>>   arch/s390/kvm/kvm-s390.c         |   60 
+>> ++++----------------------------------
+>>   4 files changed, 61 insertions(+), 54 deletions(-)
+>>
+>> diff --git a/arch/s390/include/asm/kvm-ap.h 
+>> b/arch/s390/include/asm/kvm-ap.h
+>> index 84412a9..736e93e 100644
+>> --- a/arch/s390/include/asm/kvm-ap.h
+>> +++ b/arch/s390/include/asm/kvm-ap.h
+>> @@ -10,6 +10,9 @@
+>>   #ifndef _ASM_KVM_AP
+>>   #define _ASM_KVM_AP
+>>
+>> +#include <linux/types.h>
+>> +#include <linux/kvm_host.h>
+>> +
+>>   /**
+>>    * kvm_ap_instructions_installed()
+>>    *
+>> @@ -20,4 +23,16 @@
+>>    */
+>>   int kvm_ap_instructions_installed(void);
+>>
+>> +/**
+>> + * kvm_ap_build_crycbd
+>> + *
+>> + * The crypto control block designation (CRYCBD) is a 32-bit field that
+>> + * designates both the host real address and format of the CRYCB. 
+>> This function
+>> + * builds the CRYCBD field for use by the KVM guest.
+>> + *
+>> + * @kvm:    the KVM guest
+>> + * @crycbd:    reference to the CRYCBD
+>> + */
+>> +void kvm_ap_build_crycbd(struct kvm *kvm);
+>> +
+>>   #endif /* _ASM_KVM_AP */
+>> diff --git a/arch/s390/include/asm/kvm_host.h 
+>> b/arch/s390/include/asm/kvm_host.h
+>> index 81cdb6b..c990a1d 100644
+>> --- a/arch/s390/include/asm/kvm_host.h
+>> +++ b/arch/s390/include/asm/kvm_host.h
+>> @@ -257,6 +257,7 @@ struct kvm_s390_sie_block {
+>>       __u8    reservedf0[12];        /* 0x00f0 */
+>>   #define CRYCB_FORMAT1 0x00000001
+>>   #define CRYCB_FORMAT2 0x00000003
+>> +#define CRYCB_FORMAT_MASK 0x00000003
+>>       __u32    crycbd;            /* 0x00fc */
+>>       __u64    gcr[16];        /* 0x0100 */
+>>       __u64    gbea;            /* 0x0180 */
+>> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+>> index 1267588..991bae4 100644
+>> --- a/arch/s390/kvm/kvm-ap.c
+>> +++ b/arch/s390/kvm/kvm-ap.c
+>> @@ -10,6 +10,8 @@
+>>   #include <asm/kvm-ap.h>
+>>   #include <asm/ap.h>
+>>
+>> +#include "kvm-s390.h"
+>> +
+>>   int kvm_ap_instructions_installed(void)
+>>   {
+>>   #ifdef CONFIG_ZCRYPT
+>> @@ -19,3 +21,40 @@ int kvm_ap_instructions_installed(void)
+>>   #endif
+>>   }
+>>   EXPORT_SYMBOL(kvm_ap_instructions_installed);
+>> +
+>> +static inline int kvm_ap_query_config(struct ap_config_info *config)
+>> +{
+>> +    memset(config, 0, sizeof(*config));
+>> +
+>> +#ifdef CONFIG_ZCRYPT
+>
+> I would prefer that you define the interface in an include file
+> with stubs for the case ZCRYPT is not set.
 
-We want to pass specific fd to send_sigio(), not a random one. Also, we do want
-to dereference specific file in kill_fasync_rcu() without a danger it will be freed
-in parallel. So, since there is no rcu_read_lock() or another protection in readers
-of this data, we *can't* drop the lock.
+This is a static function only called internally, but I suppose there is
+no harm in defining it as an interface in kvm-ap.h ... it may come
+in handy down the road.
 
-> then 
-> 
-> ...
->> -		spin_lock_irqsave(&fa->fa_lock, flags);
->> +		read_lock(&fa->fa_lock);
->>  		if (fa->fa_file) {
-> 
-> file = READ_ONCE(fa->fa_file)
-> 
-> then we're not opening any new races, are we?
-> 
->>  			fown = &fa->fa_file->f_owner;
->>  			/* Don't send SIGURG to processes which have not set a
->> @@ -997,7 +996,7 @@ static void kill_fasync_rcu(struct fasync_struct *fa, int sig, int band)
->>  			if (!(sig == SIGURG && fown->signum == 0))
->>  				send_sigio(fown, fa->fa_fd, band);
->>  		}
->> -		spin_unlock_irqrestore(&fa->fa_lock, flags);
->> +		read_unlock(&fa->fa_lock);
->>  		fa = rcu_dereference(fa->fa_next);
->>  	}
->>  }
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index c6baf767619e..297e2dcd9dd2 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -1250,7 +1250,7 @@ static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
->>  }
->>  
->>  struct fasync_struct {
->> -	spinlock_t		fa_lock;
->> +	rwlock_t		fa_lock;
->>  	int			magic;
->>  	int			fa_fd;
->>  	struct fasync_struct	*fa_next; /* singly linked list */
+>
+>
+>> +    if (kvm_ap_instructions_installed())
+>> +        return ap_query_configuration(config);
+>> +#endif
+>> +
+>> +    return -EOPNOTSUPP;
+>> +}
+>> +
+>> +static int kvm_ap_apxa_installed(void)
+>> +{
+>> +    struct ap_config_info config;
+>> +
+>> +    if (kvm_ap_query_config(&config) == 0)
+>> +        return (config.apxa == 1);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +void kvm_ap_build_crycbd(struct kvm *kvm)
+>> +{
+>> +    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
+>> kvm->arch.crypto.crycb;
+>> +    kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK);
+>> +
+>> +    /* check whether MSAX3 is installed */
+>
+> It means we do not support AP virtualization without MSA3.
+> It follows we do not support CRYCB_FORMAT0
 
-Kirill
+If MSAX3 is not installed, that means there is no key wrapping support,
+hence CRYCB_FORMAT0. The CRYCB_FORMAT1 and CRYCB_FORMAT2 CRYCBs
+both include wrapping key masks. I don't follow your logic here.
+
+>
+>
+> It is different from what you explain in the comment.
+
+How is it different? Above, we are setting the CRYCBD value regardless
+of whether MSAX3 is installed or not. Previously, the CRYCBD value
+was set only if MSAX3 is installed (see comments below)
+
+>
+>
+>> +    if (kvm_ap_instructions_installed() && test_kvm_facility(kvm, 
+>> 76)) {
+>> +        if (kvm_ap_apxa_installed())
+>> +            kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
+>> +        else
+>> +            kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
+>> +    }
+>> +}
+>> +EXPORT_SYMBOL(kvm_ap_build_crycbd);
+>> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+>> index d0c3518..b47ff11 100644
+>> --- a/arch/s390/kvm/kvm-s390.c
+>> +++ b/arch/s390/kvm/kvm-s390.c
+>> @@ -40,6 +40,7 @@
+>>   #include <asm/sclp.h>
+>>   #include <asm/cpacf.h>
+>>   #include <asm/timex.h>
+>> +#include <asm/kvm-ap.h>
+>>   #include "kvm-s390.h"
+>>   #include "gaccess.h"
+>>
+>> @@ -1881,55 +1882,6 @@ long kvm_arch_vm_ioctl(struct file *filp,
+>>       return r;
+>>   }
+>>
+>> -static int kvm_s390_query_ap_config(u8 *config)
+>> -{
+>> -    u32 fcn_code = 0x04000000UL;
+>> -    u32 cc = 0;
+>> -
+>> -    memset(config, 0, 128);
+>> -    asm volatile(
+>> -        "lgr 0,%1\n"
+>> -        "lgr 2,%2\n"
+>> -        ".long 0xb2af0000\n"        /* PQAP(QCI) */
+>> -        "0: ipm %0\n"
+>> -        "srl %0,28\n"
+>> -        "1:\n"
+>> -        EX_TABLE(0b, 1b)
+>> -        : "+r" (cc)
+>> -        : "r" (fcn_code), "r" (config)
+>> -        : "cc", "0", "2", "memory"
+>> -    );
+>> -
+>> -    return cc;
+>> -}
+>> -
+>> -static int kvm_s390_apxa_installed(void)
+>> -{
+>> -    u8 config[128];
+>> -    int cc;
+>> -
+>> -    if (test_facility(12)) {
+>> -        cc = kvm_s390_query_ap_config(config);
+>> -
+>> -        if (cc)
+>> -            pr_err("PQAP(QCI) failed with cc=%d", cc);
+>> -        else
+>> -            return config[0] & 0x40;
+>> -    }
+>> -
+>> -    return 0;
+>> -}
+>> -
+>> -static void kvm_s390_set_crycb_format(struct kvm *kvm)
+>> -{
+>> -    kvm->arch.crypto.crycbd = (__u32)(unsigned long) 
+>> kvm->arch.crypto.crycb;
+>> -
+>> -    if (kvm_s390_apxa_installed())
+>> -        kvm->arch.crypto.crycbd |= CRYCB_FORMAT2;
+>> -    else
+>> -        kvm->arch.crypto.crycbd |= CRYCB_FORMAT1;
+>> -}
+>> -
+>>   static u64 kvm_s390_get_initial_cpuid(void)
+>>   {
+>>       struct cpuid cpuid;
+>> @@ -1941,12 +1893,12 @@ static u64 kvm_s390_get_initial_cpuid(void)
+>>
+>>   static void kvm_s390_crypto_init(struct kvm *kvm)
+>>   {
+>> +    kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
+>> +    kvm_ap_build_crycbd(kvm);
+>> +
+
+Notice the call to kvm_ap_build_crycbd(kvm) above was added, so
+the CRYCBD is being set regardless of the presence of MSAX3.
+
+>>       if (!test_kvm_facility(kvm, 76))
+>>           return;
+>>
+>> -    kvm->arch.crypto.crycb = &kvm->arch.sie_page2->crycb;
+>> -    kvm_s390_set_crycb_format(kvm);
+Notice that this code that was removed to set the CRYCBD is called
+only if MSAX3 is not installed - i.e., see the if statement
+immediately preceding the two statements above.
+>> -
+>>       /* Enable AES/DEA protected key functions by default */
+>>       kvm->arch.crypto.aes_kw = 1;
+>>       kvm->arch.crypto.dea_kw = 1;
+>> @@ -2475,6 +2427,8 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu 
+>> *vcpu)
+>>
+>>   static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu)
+>>   {
+>> +    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
+>> +
+>>       if (!test_kvm_facility(vcpu->kvm, 76))
+>>           return;
+>>
+>> @@ -2484,8 +2438,6 @@ static void kvm_s390_vcpu_crypto_setup(struct 
+>> kvm_vcpu *vcpu)
+>>           vcpu->arch.sie_block->ecb3 |= ECB3_AES;
+>>       if (vcpu->kvm->arch.crypto.dea_kw)
+>>           vcpu->arch.sie_block->ecb3 |= ECB3_DEA;
+>> -
+>> -    vcpu->arch.sie_block->crycbd = vcpu->kvm->arch.crypto.crycbd;
+>>   }
+>>
+>>   void kvm_s390_vcpu_unsetup_cmma(struct kvm_vcpu *vcpu)
+>
+>
