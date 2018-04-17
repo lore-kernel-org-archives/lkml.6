@@ -1,64 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753901AbeDQOAT (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:00:19 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42615 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753575AbeDQOAR (ORCPT
+        id S1752696AbeDQOB5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:01:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:32896 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751345AbeDQOBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:00:17 -0400
-X-Google-Smtp-Source: AIpwx48M1rJ0lGu4mFyh2V8yyN3vrjjpIjm5pzJjHwdchduVm8m+f7iF7ICFeDkCXMrVKnjBk3+KYw==
-Date: Tue, 17 Apr 2018 08:00:13 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] tpm: Add explicit endianness cast
-Message-ID: <20180417140013.GA2029@ziepe.ca>
-References: <20180412101350.210547-1-tweek@google.com>
- <20180412101350.210547-2-tweek@google.com>
- <20180417030202.GA30624@ziepe.ca>
- <CA+zpnLdU=t6eOY9GOLAyiXkZBw=NueckiejHSexd8P7MKYuRww@mail.gmail.com>
+        Tue, 17 Apr 2018 10:01:55 -0400
+Date: Tue, 17 Apr 2018 07:01:10 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: jlayton@kernel.org, bfields@fieldses.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        boqun.feng@gmail.com, longman@redhat.com, peterz@infradead.org,
+        mingo@redhat.com
+Subject: Re: [PATCH] fasync: Fix deadlock between task-context and
+ interrupt-context kill_fasync()
+Message-ID: <20180417140110.GB21954@bombadil.infradead.org>
+References: <152292939368.19745.13784475656016424647.stgit@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+zpnLdU=t6eOY9GOLAyiXkZBw=NueckiejHSexd8P7MKYuRww@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <152292939368.19745.13784475656016424647.stgit@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 08:32:33AM +0000, Thiebaud Weksteen wrote:
-> On Tue, Apr 17, 2018 at 5:02 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+On Thu, Apr 05, 2018 at 02:58:06PM +0300, Kirill Tkhai wrote:
+> I observed the following deadlock between them:
 > 
-> > On Thu, Apr 12, 2018 at 12:13:47PM +0200, Thiebaud Weksteen wrote:
-> > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
-> b/drivers/char/tpm/tpm_eventlog_of.c
-> > > index 96fd5646f866..d74568d58a66 100644
-> > > +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> > > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
-> > >        * but physical tpm needs the conversion.
-> > >        */
-> > >       if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0) {
-> > > -             size = be32_to_cpup(sizep);
-> > > -             base = be64_to_cpup(basep);
-> > > +             size = be32_to_cpup((__be32 *)sizep);
-> > > +             base = be64_to_cpup((__be64 *)basep);
+> [task 1]                          [task 2]                         [task 3]
+> kill_fasync()                     mm_update_next_owner()           copy_process()
+>  spin_lock_irqsave(&fa->fa_lock)   read_lock(&tasklist_lock)        write_lock_irq(&tasklist_lock)
+>   send_sigio()                    <IRQ>                             ...
+>    read_lock(&fown->lock)         kill_fasync()                     ...
+>     read_lock(&tasklist_lock)      spin_lock_irqsave(&fa->fa_lock)  ...
 > 
-> > Er, no.. change the definitions of sizep and basep to be __be
-> 
-> > Jason
-> 
-> Please read the comment before the condition. sizep and
-> basep may contain either little endian or big endian and this block is used
-> to adjust that. Let me know if there is a better way for handling this.
+> Task 1 can't acquire read locked tasklist_lock, since there is
+> already task 3 expressed its wish to take the lock exclusive.
+> Task 2 holds the read locked lock, but it can't take the spin lock.
 
-Well a cast like that will throw sparse warnings, you need __force at
-least
+I think the important question is to Peter ... why didn't lockdep catch this?
 
-Jason
+> -		spin_lock_irq(&fa->fa_lock);
+> +		write_lock_irq(&fa->fa_lock);
+>  		fa->fa_file = NULL;
+> -		spin_unlock_irq(&fa->fa_lock);
+> +		write_unlock_irq(&fa->fa_lock);
+...
+> -		spin_lock_irq(&fa->fa_lock);
+> +		write_lock_irq(&fa->fa_lock);
+>  		fa->fa_fd = fd;
+> -		spin_unlock_irq(&fa->fa_lock);
+> +		write_unlock_irq(&fa->fa_lock);
+
+Do we really need a lock here?  If we convert each of these into WRITE_ONCE,
+then 
+
+...
+> -		spin_lock_irqsave(&fa->fa_lock, flags);
+> +		read_lock(&fa->fa_lock);
+>  		if (fa->fa_file) {
+
+file = READ_ONCE(fa->fa_file)
+
+then we're not opening any new races, are we?
+
+>  			fown = &fa->fa_file->f_owner;
+>  			/* Don't send SIGURG to processes which have not set a
+> @@ -997,7 +996,7 @@ static void kill_fasync_rcu(struct fasync_struct *fa, int sig, int band)
+>  			if (!(sig == SIGURG && fown->signum == 0))
+>  				send_sigio(fown, fa->fa_fd, band);
+>  		}
+> -		spin_unlock_irqrestore(&fa->fa_lock, flags);
+> +		read_unlock(&fa->fa_lock);
+>  		fa = rcu_dereference(fa->fa_next);
+>  	}
+>  }
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c6baf767619e..297e2dcd9dd2 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1250,7 +1250,7 @@ static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
+>  }
+>  
+>  struct fasync_struct {
+> -	spinlock_t		fa_lock;
+> +	rwlock_t		fa_lock;
+>  	int			magic;
+>  	int			fa_fd;
+>  	struct fasync_struct	*fa_next; /* singly linked list */
+> 
