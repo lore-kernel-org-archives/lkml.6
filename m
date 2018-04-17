@@ -1,210 +1,407 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752725AbeDQSai (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 14:30:38 -0400
-Received: from mail-by2nam03on0085.outbound.protection.outlook.com ([104.47.42.85]:56320
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751230AbeDQSag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 14:30:36 -0400
-From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
- systems
-Thread-Topic: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
- systems
-Thread-Index: AQHTyrzRqCN7fg42eUKg23bN8kMvXKQFS3EAgAAGZOA=
-Date: Tue, 17 Apr 2018 18:30:34 +0000
-Message-ID: <CY4PR12MB15574493593120818D9BFE11F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
-References: <20180402195707.42875-1-Yazen.Ghannam@amd.com>
- <20180417172102.GA3633@pd.tnic>
-In-Reply-To: <20180417172102.GA3633@pd.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com;
-x-originating-ip: [165.204.84.17]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR12MB1816;7:CbhKAuZxkv4eqbSlrjZOkjOadYL9KOzeHtJoNXYAaejbadw7M02u3828IvdxC9BJ8ufHfr6NMgxNTnVI0ZeAyC0dXbLWZxB/U6mpPaxK1O1HHtSZnix5/BQdecTE+B9YW02keYGLF5MRbfVeRRwO6Q/lBkKFDdI4ushKFq+kZrhnH9wfK6abn6KD8m+kd2zgdZWPxEhZQ1Fxs/+Ei1Yb+jdSOghTClQAw8sVBnFtL8BELQ9ce/SZeniibYiYOiSf;20:yHfiFCLIqandmbgMcAcDGJGI/btjVepOt313xWrEO79YoChq7o9Ma+afVAQNaAXQ+wiQEZm/bOqCXSZekjY7MauXQlI1MlX7d4az1JkjseB094Dw79fhIFyxDE8fJ7kGxjSVce5FhEQF2gPzGl3rjxBD/ZHdOYF01IkyYa1Gdl2xBwC/Fp4rIUCR1y7MSedXA6nFKmsttE8phcBpuhIiUPQz6IvQ+xFnzHQ33c7+BO2exf8bCJj2Sm8OkULK6k8n
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:CY4PR12MB1816;
-x-ms-traffictypediagnostic: CY4PR12MB1816:
-x-microsoft-antispam-prvs: <CY4PR12MB181645516EC5404956E2484DF8B70@CY4PR12MB1816.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231232)(944501327)(52105095)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:CY4PR12MB1816;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1816;
-x-forefront-prvs: 0645BEB7AA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(376002)(346002)(39380400002)(396003)(189003)(199004)(13464003)(86362001)(106356001)(7696005)(14454004)(4326008)(6916009)(26005)(74316002)(305945005)(102836004)(8676002)(478600001)(59450400001)(2906002)(6506007)(53546011)(76176011)(54906003)(55016002)(6436002)(5250100002)(229853002)(68736007)(186003)(6246003)(9686003)(53936002)(11346002)(486006)(476003)(105586002)(2900100001)(3280700002)(446003)(316002)(33656002)(97736004)(25786009)(6116002)(3660700001)(3846002)(7736002)(8936002)(99286004)(81156014)(72206003)(81166006)(5660300001)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1816;H:CY4PR12MB1557.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 2fp3HblizvYacRbVEz/4akPuh0jmXAZjUxEWfnGA45PxRbzFWYWKjA8O9VZtk01gmCiEgOFTVhgTCYElqy1K8ghdVQF/IHrZz8u81Fwsm0WmG3QHqyS+l5E3PBbqg/nPi4geDOiWhdoujPfi0SgNMkue5pSefDlUNB+qGN8w/e/VuxJ6NIC5dcCa24rnKb1J
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1752250AbeDQSd7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 14:33:59 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35102 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751157AbeDQSd5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 14:33:57 -0400
+X-Google-Smtp-Source: AIpwx4/fmtMnCopOeScBBujkPGT7/pl5DXANM8IFXN66ymfUtS1mgYFa4cQg3EWYxksQ3w+OPW6Zdw==
+Subject: Re: [PATCH net-next 3/3] net: phy: Enable C45 PHYs with vendor
+ specific address space
+To: vicentiu.galanopulo@nxp.com, andrew@lunn.ch, robh@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, davem@davemloft.net, marcel@holtmann.org,
+        devicetree@vger.kernel.org
+Cc: alexandru.marginean@nxp.com, madalin.bucur@nxp.com
+References: <20180417090233.21548-1-vicentiu.galanopulo@nxp.com>
+ <20180417090233.21548-4-vicentiu.galanopulo@nxp.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <b62735bd-d411-2d21-16a2-f6cf7e5d7e4d@gmail.com>
+Date: Tue, 17 Apr 2018 11:27:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: a783a959-22b7-4b76-7413-08d5a4914ef2
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a783a959-22b7-4b76-7413-08d5a4914ef2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2018 18:30:34.2956
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1816
+In-Reply-To: <20180417090233.21548-4-vicentiu.galanopulo@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3HIUnlI012128
 
-> -----Original Message-----
-> From: Borislav Petkov <bp@alien8.de>
-> Sent: Tuesday, April 17, 2018 1:21 PM
-> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
-> Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org;
-> tony.luck@intel.com; x86@kernel.org
-> Subject: Re: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on
-> SMCA systems
+On 04/17/2018 02:02 AM, Vicentiu Galanopulo wrote:
+> A search of the dev-addr property is done in of_mdiobus_register.
+> If the property is found in the PHY node, of_mdiobus_register_vend_spec_phy()
+> is called. This is a wrapper function for of_mdiobus_register_phy()
+> which finds the device in package based on dev-addr, and fills
+> devices_addrs, which is a new field added to phy_c45_device_ids.
+> This new field will store the dev-addr property on the same index
+> where the device in package has been found.
 > 
-> On Mon, Apr 02, 2018 at 02:57:07PM -0500, Yazen Ghannam wrote:
-> > From: Yazen Ghannam <yazen.ghannam@amd.com>
-> >
-> > The Intel SDM and AMD APM both state that the auxiliary MCA registers
-> > should be read if their respective valid bits are set in MCA_STATUS.
-> >
-> > The Processor Programming Reference for AMD Fam17h systems has a new
-> > recommendation that the auxiliary registers should be saved
-> > unconditionally. This recommendation can be retroactively applied to
-> > older AMD systems. However, we only need to apply this to SMCA systems
-> > to avoid modifying behavior on older systems.
+> The of_mdiobus_register_phy() now contains an extra parameter,
+> which is struct phy_c45_device_ids *c45_ids.
+> If c45_ids is not NULL, get_vend_spec_addr_phy_device() is called
+> and c45_ids are propagated all the way to get_phy_c45_ids().
 > 
-> Applying the logic of that recommendation on older systems: wouldn't it
-> be prudent to save them there too, if it helps debugging an MCE?
+> Having dev-addr stored in devices_addrs, in get_phy_c45_ids(),
+> when probing the identifiers, dev-addr can be extracted from
+> devices_addrs and probed if devices_addrs[current_identifier] is not 0.
+
+I must clearly be missing something, but why are you introducing all
+these conditionals instead of updating the existing code to be able to
+operate against an arbitrary dev-addr value, and then just making sure
+the first thing you do is fetch that property from Device Tree? There is
+no way someone is going to be testing with your specific use case in the
+future (except yourselves) so unless you make supporting an arbitrary
+"dev-addr" value become part of how the code works, this is going to be
+breaking badly.
+
+And please, can you keep me copied for next submissions?
+
+> 
+> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@nxp.com>
+> ---
+>  drivers/net/phy/phy_device.c |  49 +++++++++++++++++--
+>  drivers/of/of_mdio.c         | 113 +++++++++++++++++++++++++++++++++++++++++--
+>  include/linux/phy.h          |  14 ++++++
+>  3 files changed, 169 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index ac23322..5c79fd8 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -457,7 +457,7 @@ static int get_phy_c45_devs_in_pkg(struct mii_bus *bus, int addr, int dev_addr,
+>  static int get_phy_c45_ids(struct mii_bus *bus, int addr, u32 *phy_id,
+>  			   struct phy_c45_device_ids *c45_ids) {
+>  	int phy_reg;
+> -	int i, reg_addr;
+> +	int i, reg_addr, dev_addr;
+>  	const int num_ids = ARRAY_SIZE(c45_ids->device_ids);
+>  	u32 *devs = &c45_ids->devices_in_package;
+>  
+> @@ -493,13 +493,23 @@ static int get_phy_c45_ids(struct mii_bus *bus, int addr, u32 *phy_id,
+>  		if (!(c45_ids->devices_in_package & (1 << i)))
+>  			continue;
+>  
+> -		reg_addr = MII_ADDR_C45 | i << 16 | MII_PHYSID1;
+> +		/* if c45_ids->devices_addrs for the current id is not 0,
+> +		 * then dev-addr was defined in the PHY device tree node,
+> +		 * and the PHY has been seen as a valid device, and added
+> +		 * in the package. In this case we can use the
+> +		 * dev-addr(c45_ids->devices_addrs[i]) to do the MDIO
+> +		 * reading of the PHY ID.
+> +		 */
+> +		dev_addr = !!c45_ids->devices_addrs[i] ?
+> +					c45_ids->devices_addrs[i] : i;
+> +
+> +		reg_addr = MII_ADDR_C45 | dev_addr << 16 | MII_PHYSID1;
+>  		phy_reg = mdiobus_read(bus, addr, reg_addr);
+>  		if (phy_reg < 0)
+>  			return -EIO;
+>  		c45_ids->device_ids[i] = (phy_reg & 0xffff) << 16;
+>  
+> -		reg_addr = MII_ADDR_C45 | i << 16 | MII_PHYSID2;
+> +		reg_addr = MII_ADDR_C45 | dev_addr << 16 | MII_PHYSID2;
+>  		phy_reg = mdiobus_read(bus, addr, reg_addr);
+>  		if (phy_reg < 0)
+>  			return -EIO;
+> @@ -551,6 +561,39 @@ static int get_phy_id(struct mii_bus *bus, int addr, u32 *phy_id,
+>  }
+>  
+>  /**
+> + * get_vend_spec_addr_phy_device - reads the specified PHY device
+> + *				   and returns its @phy_device struct
+> + * @bus: the target MII bus
+> + * @addr: PHY address on the MII bus
+> + * @is_c45: If true the PHY uses the 802.3 clause 45 protocol
+> + * @c45_ids: Query the c45_ids to see if a PHY with a vendor specific
+> + *           register address space was defined in the PHY device tree
+> + *           node by adding the "dev-addr" property to the node.
+> + *           Store the c45 ID information about the rest of the PHYs
+> + *           found PHYs on the MDIO bus during probing.
+> + *
+> + * Description: Reads the ID registers of the PHY at @addr on the
+> + *   @bus, then allocates and returns the phy_device to represent it.
+> + */
+> +struct phy_device *get_vend_spec_addr_phy_device(struct mii_bus *bus,
+> +						 int addr, bool is_c45,
+> +						 struct phy_c45_device_ids *c45_ids)
+> +{
+> +	u32 phy_id = 0;
+> +	int r;
+> +
+> +	r = get_phy_id(bus, addr, &phy_id, is_c45, c45_ids);
+> +	if (r)
+> +		return ERR_PTR(r);
+> +
+> +	/* If the phy_id is mostly Fs, there is no device there */
+> +	if ((phy_id & 0x1fffffff) == 0x1fffffff)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	return phy_device_create(bus, addr, phy_id, is_c45, c45_ids);
+> +}
+> +
+> +/**
+>   * get_phy_device - reads the specified PHY device and returns its @phy_device
+>   *		    struct
+>   * @bus: the target MII bus
+> diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
+> index 8c0c927..52e8bfb 100644
+> --- a/drivers/of/of_mdio.c
+> +++ b/drivers/of/of_mdio.c
+> @@ -45,7 +45,8 @@ static int of_get_phy_id(struct device_node *device, u32 *phy_id)
+>  }
+>  
+>  static int of_mdiobus_register_phy(struct mii_bus *mdio,
+> -				    struct device_node *child, u32 addr)
+> +				   struct device_node *child, u32 addr,
+> +				   struct phy_c45_device_ids *c45_ids)
+>  {
+>  	struct phy_device *phy;
+>  	bool is_c45;
+> @@ -58,7 +59,12 @@ static int of_mdiobus_register_phy(struct mii_bus *mdio,
+>  	if (!is_c45 && !of_get_phy_id(child, &phy_id))
+>  		phy = phy_device_create(mdio, addr, phy_id, 0, NULL);
+>  	else
+> -		phy = get_phy_device(mdio, addr, is_c45);
+> +		if (c45_ids)
+> +			phy = get_vend_spec_addr_phy_device(mdio,
+> +							    addr, is_c45,
+> +							    c45_ids);
+> +		else
+> +			phy = get_phy_device(mdio, addr, is_c45);
+>  	if (IS_ERR(phy))
+>  		return PTR_ERR(phy);
+>  
+> @@ -190,6 +196,72 @@ static bool of_mdiobus_child_is_phy(struct device_node *child)
+>  	return false;
+>  }
+>  
+> +static void of_fill_c45_devices_addrs(u32 dev_addr,
+> +				      struct phy_c45_device_ids *c45_ids)
+> +{
+> +	int i;
+> +	const int num_ids = ARRAY_SIZE(c45_ids->device_ids);
+> +
+> +	/* Search through all Device Identifiers
+> +	 * and set dev_addr in c45_ids->devices_addrs,
+> +	 * if the device bit is set in
+> +	 * c45_ids->devices_in_package
+> +	 */
+> +	for (i = 1; i < num_ids; i++) {
+> +		if (!(c45_ids->devices_in_package & (1 << i)))
+> +			continue;
+> +
+> +		c45_ids->devices_addrs[i] = dev_addr;
+> +	}
+> +}
+> +
+> +static int of_find_devaddr_in_pkg(struct mii_bus *bus, u32 addr, u32 dev_addr,
+> +				  struct phy_c45_device_ids *c45_ids)
+> +{
+> +	u32 *devs = &c45_ids->devices_in_package;
+> +	int phy_reg, reg_addr;
+> +
+> +	reg_addr = MII_ADDR_C45 | dev_addr << 16 | MDIO_DEVS2;
+> +	phy_reg = mdiobus_read(bus, addr, reg_addr);
+> +	if (phy_reg < 0)
+> +		return -EIO;
+> +
+> +	*devs = (phy_reg & 0xffff) << 16;
+> +
+> +	reg_addr = MII_ADDR_C45 | dev_addr << 16 | MDIO_DEVS1;
+> +	phy_reg = mdiobus_read(bus, addr, reg_addr);
+> +	if (phy_reg < 0)
+> +		return -EIO;
+> +
+> +	*devs |= (phy_reg & 0xffff);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Finds the device in package and populates the c45_ids
+> + * if any device is found at dev_addr address. After this
+> + * the PHY is registered
+> + */
+> +static int of_mdiobus_register_vend_spec_phy(struct mii_bus *mdio,
+> +					     struct device_node *child,
+> +					     u32 addr, u32 dev_addr)
+> +{
+> +	struct phy_c45_device_ids c45_ids = {0};
+> +	int dev_err = 0;
+> +
+> +	if (!dev_addr)
+> +		goto register_phy;
+> +
+> +	dev_err = of_find_devaddr_in_pkg(mdio, addr, dev_addr, &c45_ids);
+> +
+> +	if (!dev_err)
+> +		of_fill_c45_devices_addrs(dev_addr, &c45_ids);
+> +
+> +register_phy:
+> +	return of_mdiobus_register_phy(mdio, child, addr, &c45_ids);
+> +}
+> +
+>  /**
+>   * of_mdiobus_register - Register mii_bus and create PHYs from the device tree
+>   * @mdio: pointer to mii_bus structure
+> @@ -202,7 +274,10 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+>  {
+>  	struct device_node *child;
+>  	bool scanphys = false;
+> +	bool dev_addr_found = true;
+>  	int addr, rc;
+> +	int dev_addr = 0;
+> +	int ret;
+>  
+>  	/* Do not continue if the node is disabled */
+>  	if (!of_device_is_available(np))
+> @@ -226,6 +301,14 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+>  
+>  	/* Loop over the child nodes and register a phy_device for each phy */
+>  	for_each_available_child_of_node(np, child) {
+> +		/* Check if dev-addr is set in the PHY node */
+> +		ret = of_property_read_u32(child, "dev-addr", &dev_addr);
+> +
+> +		if (ret < 0) {
+> +			/* either not set or invalid */
+> +			dev_addr_found = false;
+> +		}
+> +
+>  		addr = of_mdio_parse_addr(&mdio->dev, child);
+>  		if (addr < 0) {
+>  			scanphys = true;
+> @@ -233,7 +316,14 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+>  		}
+>  
+>  		if (of_mdiobus_child_is_phy(child))
+> -			rc = of_mdiobus_register_phy(mdio, child, addr);
+> +			if (dev_addr_found)
+> +				rc = of_mdiobus_register_vend_spec_phy(mdio,
+> +								       child,
+> +								       addr,
+> +								       dev_addr);
+> +			else
+> +				rc = of_mdiobus_register_phy(mdio, child,
+> +							     addr, NULL);
+>  		else
+>  			rc = of_mdiobus_register_device(mdio, child, addr);
+>  
+> @@ -248,8 +338,16 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+>  	if (!scanphys)
+>  		return 0;
+>  
+> +	/* reset device found variable */
+> +	dev_addr_found = true;
+> +
+>  	/* auto scan for PHYs with empty reg property */
+>  	for_each_available_child_of_node(np, child) {
+> +		/* Check if dev-addr is set in the PHY node,
+> +		 * for PHYs which don't have reg property set
+> +		 */
+> +		ret = of_property_read_u32(child, "dev-addr", &dev_addr);
+> +
+>  		/* Skip PHYs with reg property set */
+>  		if (of_find_property(child, "reg", NULL))
+>  			continue;
+> @@ -264,7 +362,14 @@ int of_mdiobus_register(struct mii_bus *mdio, struct device_node *np)
+>  				 child->name, addr);
+>  
+>  			if (of_mdiobus_child_is_phy(child)) {
+> -				rc = of_mdiobus_register_phy(mdio, child, addr);
+> +				if (dev_addr_found)
+> +					rc = of_mdiobus_register_vend_spec_phy(mdio,
+> +									       child,
+> +									       addr,
+> +									       dev_addr);
+> +				else
+> +					rc = of_mdiobus_register_phy(mdio, child,
+> +								     addr, NULL);
+>  				if (rc && rc != -ENODEV)
+>  					goto unregister;
+>  			}
+> diff --git a/include/linux/phy.h b/include/linux/phy.h
+> index 26aa320..889d85e 100644
+> --- a/include/linux/phy.h
+> +++ b/include/linux/phy.h
+> @@ -357,10 +357,13 @@ enum phy_state {
+>   * struct phy_c45_device_ids - 802.3-c45 Device Identifiers
+>   * @devices_in_package: Bit vector of devices present.
+>   * @device_ids: The device identifer for each present device.
+> + * @devices_addrs: The devices addresses from the device tree
+> + *		   for each present device.
+>   */
+>  struct phy_c45_device_ids {
+>  	u32 devices_in_package;
+>  	u32 device_ids[32];
+> +	u32 devices_addrs[32];
+>  };
+>  
+>  /* phy_device: An instance of a PHY
+> @@ -904,6 +907,9 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
+>  				     struct phy_c45_device_ids *c45_ids);
+>  #if IS_ENABLED(CONFIG_PHYLIB)
+>  struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45);
+> +struct phy_device *get_vend_spec_addr_phy_device(struct mii_bus *bus, int addr,
+> +						 bool is_c45,
+> +						 struct phy_c45_device_ids *c45_ids);
+>  int phy_device_register(struct phy_device *phy);
+>  void phy_device_free(struct phy_device *phydev);
+>  #else
+> @@ -913,6 +919,14 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
+>  	return NULL;
+>  }
+>  
+> +static inline
+> +struct phy_device *get_vend_spec_addr_phy_device(struct mii_bus *bus, int addr,
+> +						 bool is_c45,
+> +						 struct phy_c45_device_ids *c45_ids)
+> +{
+> +	return NULL;
+> +}
+> +
+>  static inline int phy_device_register(struct phy_device *phy)
+>  {
+>  	return 0;
 > 
 
-We could but it's an issue of documentation and testing the older systems.
 
-My first pass at this was to unconditionally read the registers because my
-understanding was that registers that aren't accessible would be read-as-zero.
-I thought this was a common MCA implementation. But Tony pointed out that
-this isn't the case on Intel systems. This is the case on recent AMD systems. But
-I don't know if it's the case on older systems which may or may not have
-followed the Intel implementation more closely.
-
-So to be safe, HW folks said we can restrict this to only SMCA systems because
-1) The recommendation first shows up in the Fam17h PPR.
-2) We know it's safe from Fam17h onwards.
-
-> > Define a separate function to save all auxiliary registers on SMCA
-> > systems. Call this function from both the MCE handlers and the AMD LVT
-> > interrupt handlers so that we don't duplicate code.
-> >
-> > Print all auxiliary registers in EDAC/mce_amd. Don't restrict this to
-> > SMCA systems in order to save a conditional and keep the format similar
-> > between SMCA and non-SMCA systems.
-> >
-> > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> 
-> ...
-> 
-> > diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-> b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-> > index f7666eef4a87..b00d5fff1848 100644
-> > --- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-> > +++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-> > @@ -244,6 +244,47 @@ static void smca_configure(unsigned int bank,
-> unsigned int cpu)
-> >  	}
-> >  }
-> >
-> > +
-> > +static bool _smca_read_aux(struct mce *m, int bank, bool read_addr)
-> > +{
-> > +	if (!mce_flags.smca)
-> > +		return false;
-> > +
-> > +	rdmsrl(MSR_AMD64_SMCA_MCx_IPID(bank), m->ipid);
-> > +	rdmsrl(MSR_AMD64_SMCA_MCx_SYND(bank), m->synd);
-> > +
-> > +	/*
-> > +	 * We should already have a value if we're coming from the
-> Threshold LVT
-> > +	 * interrupt handler. Otherwise, read it now.
-> > +	 */
-> > +	if (!m->misc)
-> > +		rdmsrl(msr_ops.misc(bank), m->misc);
-> > +
-> > +	/*
-> > +	 * Read MCA_ADDR if we don't have it already. We should already
-> have it
-> > +	 * if we're coming from the interrupt handlers.
-> > +	 */
-> > +	if (read_addr)
-> 
-> Why not
-> 
-> 	if (!m->addr)
-> 
-> ?
-> 
-> And yeah, if it has been read to 0 already, reading it again won't
-> change anything.
-> 
-> And thinking about it more, you don't really need those if-tests, I'd
-> say. So what, you'll read one or two MSRs once more. It is not such a
-> hot path that we can't stomach the perf penalty of reading the MSRs.
-> 
-
-The issue here is because we share this path with the interrupt handlers,
-specifically the Deferred error interrupt handler. The DFR handler will
-read from MCA_ADDR or MCA_DEADDR so we should just use what it
-got. Otherwise, we may read MCA_ADDR and assume it's correct for
-the error.
-
-For example,
-
-Deferred error occurs:
-- MCA_{STATUS,ADDR,DESTAT,DEADDR} all have valid data.
-
-MCE occurs
-- MCA_{STATUS,ADDR} are overwritten with non-zero data.
-- MCE handler clears MCA_STATUS. MCA_ADDR is non-zero.
-
-DFR handler finds MCA_STATUS[Deferred] is clear, so it saves
-MCA_DESTAT and MCA_DEADDR which is 0.
-
-If !m->addr (which has MCA_DEADDR), then we read MCA_STATUS
-which has the address from the MCE.
-
-
-> > +		rdmsrl(msr_ops.addr(bank), m->addr);
-> > +
-> > +	/*
-> > +	 * Extract [55:<lsb>] where lsb is the least significant
-> > +	 * *valid* bit of the address bits.
-> > +	 */
-> > +	if (m->addr) {
-> 
-> And that test is probably not needed either: if m->addr is 0, the
-> below would be 0 anyway.
-> 
-> > +		u8 lsb = (m->addr >> 56) & 0x3f;
-> > +
-> > +		m->addr &= GENMASK_ULL(55, lsb);
-> > +	}
-> > +
-> > +	return true;
-> > +}
-> 
-> IOW, those tests are probably ok but getting rid of them would make the
-> code more readable and I think we can afford that here.
-> 
-
-Okay, I'll get rid the last test. But the first one is necessary with our current
-code flow.
-
-Thanks,
-Yazen
+-- 
+Florian
