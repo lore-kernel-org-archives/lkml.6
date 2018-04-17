@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49BQNeqOWg0JJVVpBNbEcaxeekSCGOTmEh59reuv3lr9s3OLxs+DC6kx45CE+h2mbqbMD9U
-ARC-Seal: i=1; a=rsa-sha256; t=1523981452; cv=none;
+X-Google-Smtp-Source: AIpwx4/MtQyXHLhlsdoox733JoJG1WCI37esS1m8QNhFTBV1SWIkXqI8Zktx9q//wLQjUw+QLTr8
+ARC-Seal: i=1; a=rsa-sha256; t=1523981449; cv=none;
         d=google.com; s=arc-20160816;
-        b=dalLuGdjNYtaJjRfPifuionxy9lB/2RrRmlOQBE9euA8Ceqh62wXgjJ3xzJEjmOCw1
-         sKaHcNboCv915AURIs/RxlLh0YiHRavnliVG4/Cpzcr1ve51WbEunJUhnW09L1eCJc3F
-         AGDXCkCp92B7OUgxFN91r1B+w7goHBleQcYgmdB5RLRczic+C7xGZo5vG4qffdvWMBMl
-         NC7I8MTF/0qwwO9HO2q3fDeB0Jm3rI0pBexDkb1eqyJRxE0fdix7QoLLGKJHlmzs3Nf+
-         tLOk8QcMgmnSGwK56bzhMQ0TVz+qcoWnrBJwxhiM2VXO1rx5SoPvMZP8T8SSSXoqRsE5
-         xDvA==
+        b=vjjjYfyKuBfZ0VmmYE1jSFTN5c60vWySIkIFTBx+ncmQKra2X/6fuBm8Bsnaf7PjUa
+         px2niJfnoUJruBq9jsE8b2L/F7vI64MGTCMbYygpROpPVbrNPmUjoFI9vHWxSWMLMZPw
+         7Q/ar95JBp0akHoN7iZtXKN800EfV23AO8wjSDWx2i/DQV2px1q9iROo35es+GhzoX8z
+         OWpiRuVN3BkIN2FNiLt5ZDbe2ZrR/XRQClHs0poZaSQwSJUVPcF7Nw26xiogFZhJO75F
+         N8kNvE1zSoDL/7CBqVQdewvGk/aurvWsoVv/rnaZIrQ6rpy4orbhJmJKRz6g/NjxPztX
+         2mNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=fzcqnZq16Adhu6u7mHSUZEpqnsJFemZAhg5YgDaYJpQ=;
-        b=QXiCHk6QnhK+Z2CK2pyzzGVgO0EHrqovHsFTIG+zbPyYu0yCIx7nekoixJDUaLg4B8
-         vxydw076B3QeW4UHv9umujZC4qS08d7IU/6qCPWGEahE9xYMxw3h5vskGdsBDGtVQAwu
-         CYpgjf2FaojLxXxQuzeUkUoiv/cQ2awBz2GecSSYYoL37N7BO2iGg5Xpv9BLpW5NPdq2
-         6qDmzrI76A83OXEVrCrDtAvZEoT2Ji3vwLrZha9wYy4JZ7QXi0aVnsQ4itWrLLTi7xL/
-         fykkwxcwzCM9Dk+W3BRpAqngrIA7ix2GBbvRVPTd6l0EkOTfzJlHmLztyAJ0Eu6Nt/Vy
-         8Fjw==
+        bh=OmWPE69hCHHAIGAvkc1QFvjNuVEmfo6KNiEdzbPJKfw=;
+        b=n6Gzs4nYsKHbpX3ze58cWVZWVW3UuMoH0pLsD46A30d+9c343GL9WAkr0Q1Y4Dj+/L
+         lLDhT+A0Jbg26TRTCexQhzdIL1UP2W6gRCAPk3s2HpWCKOSw4sVxI2I//wHmRAEFpZB0
+         YsgtQ4NKX6xygk+dNCYUOJ5AvqqmyaSBxgNQWT01Jyh2lNiWLx7/TxFfCBKJSrlHKjTI
+         HC6rNbjVvqCCuvNWfiiawazfdA/lDZSY7MvditWlC+E3l8EB5JCgpFO3dPLv/8PeI2F+
+         5MQRfycNOPc0xDwYhEyCeFUS+AwS0p317WZLHPYWzK6dxZNvQFDDjFM4tM+hkUuGJ6LB
+         0LNA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,14 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Phil Elwell <phil@raspberrypi.org>,
+	syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com,
+	Jason Wang <jasowang@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 66/66] lan78xx: Correctly indicate invalid OTP
-Date: Tue, 17 Apr 2018 17:59:39 +0200
-Message-Id: <20180417155648.707734660@linuxfoundation.org>
+Subject: [PATCH 4.9 65/66] vhost: fix vhost_vq_access_ok() log check
+Date: Tue, 17 Apr 2018 17:59:38 +0200
+Message-Id: <20180417155648.670658993@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -40,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009755647099908?=
-X-GMAIL-MSGID: =?utf-8?q?1598010375464655649?=
+X-GMAIL-THRID: =?utf-8?q?1598009739151968451?=
+X-GMAIL-MSGID: =?utf-8?q?1598010372907799403?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,33 +52,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Phil Elwell <phil@raspberrypi.org>
+From: Stefan Hajnoczi <stefanha@redhat.com>
 
 
-[ Upstream commit 4bfc33807a9a02764bdd1e42e794b3b401240f27 ]
+[ Upstream commit d14d2b78090c7de0557362b26a4ca591aa6a9faa ]
 
-lan78xx_read_otp tries to return -EINVAL in the event of invalid OTP
-content, but the value gets overwritten before it is returned and the
-read goes ahead anyway. Make the read conditional as it should be
-and preserve the error code.
+Commit d65026c6c62e7d9616c8ceb5a53b68bcdc050525 ("vhost: validate log
+when IOTLB is enabled") introduced a regression.  The logic was
+originally:
 
-Fixes: 55d7de9de6c3 ("Microchip's LAN7800 family USB 2/3 to 10/100/1000 Ethernet device driver")
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+  if (vq->iotlb)
+      return 1;
+  return A && B;
+
+After the patch the short-circuit logic for A was inverted:
+
+  if (A || vq->iotlb)
+      return A;
+  return B;
+
+This patch fixes the regression by rewriting the checks in the obvious
+way, no longer returning A when vq->iotlb is non-NULL (which is hard to
+understand).
+
+Reported-by: syzbot+65a84dde0214b0387ccd@syzkaller.appspotmail.com
+Cc: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/vhost/vhost.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -873,7 +873,8 @@ static int lan78xx_read_otp(struct lan78
- 			offset += 0x100;
- 		else
- 			ret = -EINVAL;
--		ret = lan78xx_read_raw_otp(dev, offset, length, data);
-+		if (!ret)
-+			ret = lan78xx_read_raw_otp(dev, offset, length, data);
- 	}
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1175,10 +1175,12 @@ static int vq_log_access_ok(struct vhost
+ /* Caller should have vq mutex and device mutex */
+ int vhost_vq_access_ok(struct vhost_virtqueue *vq)
+ {
+-	int ret = vq_log_access_ok(vq, vq->log_base);
++	if (!vq_log_access_ok(vq, vq->log_base))
++		return 0;
  
- 	return ret;
+-	if (ret || vq->iotlb)
+-		return ret;
++	/* Access validation occurs at prefetch time with IOTLB */
++	if (vq->iotlb)
++		return 1;
+ 
+ 	return vq_access_ok(vq, vq->num, vq->desc, vq->avail, vq->used);
+ }
