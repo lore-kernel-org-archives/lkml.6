@@ -1,171 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753402AbeDQPy7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:54:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49066 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753362AbeDQPy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:54:56 -0400
-Date: Tue, 17 Apr 2018 18:54:51 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: Jason Wang <jasowang@redhat.com>, wexu@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jfreimann@redhat.com
-Subject: Re: [RFC v2] virtio: support packed ring
-Message-ID: <20180417184810-mutt-send-email-mst@kernel.org>
-References: <20180401141216.8969-1-tiwei.bie@intel.com>
- <ebfbfc3e-9e52-9331-61b6-258e131f822d@redhat.com>
- <20180413071529.f4esh654dakodf4f@debian>
- <8dee7d62-ac0b-54ba-6bec-4bc4a6fb34e9@redhat.com>
- <20180417025133.7t7exmizgolr565z@debian>
- <20180417151654-mutt-send-email-mst@kernel.org>
- <20180417124716.wsypd5zl4n4galrz@debian>
- <20180417170354-mutt-send-email-mst@kernel.org>
- <20180417145626.y5vei4y6irrdw7ky@debian>
+        id S1753219AbeDQP4K (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:56:10 -0400
+Received: from www381.your-server.de ([78.46.137.84]:32807 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752592AbeDQPzy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 11:55:54 -0400
+Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
+ to netdev dma client
+To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Radhey Shyam Pandey <radheys@xilinx.com>,
+        Vinod Koul <vinod.koul@intel.com>
+Cc: "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
+ <1522665546-10035-3-git-send-email-radheys@xilinx.com>
+ <20180411090854.GY6014@localhost>
+ <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
+ <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
+ <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
+ <1fc10bec-5c2c-98f1-1d5b-b768dea844ed@metafoo.de>
+ <78828d31-e4cd-5211-f1b6-8918ac38f599@ti.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <e5a6c1ad-e263-7b9d-a5e2-744884c9d6de@metafoo.de>
+Date: Tue, 17 Apr 2018 17:54:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <78828d31-e4cd-5211-f1b6-8918ac38f599@ti.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180417145626.y5vei4y6irrdw7ky@debian>
+X-Authenticated-Sender: lars@metafoo.de
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 10:56:26PM +0800, Tiwei Bie wrote:
-> On Tue, Apr 17, 2018 at 05:04:59PM +0300, Michael S. Tsirkin wrote:
-> > On Tue, Apr 17, 2018 at 08:47:16PM +0800, Tiwei Bie wrote:
-> > > On Tue, Apr 17, 2018 at 03:17:41PM +0300, Michael S. Tsirkin wrote:
-> > > > On Tue, Apr 17, 2018 at 10:51:33AM +0800, Tiwei Bie wrote:
-> > > > > On Tue, Apr 17, 2018 at 10:11:58AM +0800, Jason Wang wrote:
-> > > > > > On 2018年04月13日 15:15, Tiwei Bie wrote:
-> > > > > > > On Fri, Apr 13, 2018 at 12:30:24PM +0800, Jason Wang wrote:
-> > > > > > > > On 2018年04月01日 22:12, Tiwei Bie wrote:
-> > > > > [...]
-> > > > > > > > > +static int detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
-> > > > > > > > > +			      void **ctx)
-> > > > > > > > > +{
-> > > > > > > > > +	struct vring_packed_desc *desc;
-> > > > > > > > > +	unsigned int i, j;
-> > > > > > > > > +
-> > > > > > > > > +	/* Clear data ptr. */
-> > > > > > > > > +	vq->desc_state[head].data = NULL;
-> > > > > > > > > +
-> > > > > > > > > +	i = head;
-> > > > > > > > > +
-> > > > > > > > > +	for (j = 0; j < vq->desc_state[head].num; j++) {
-> > > > > > > > > +		desc = &vq->vring_packed.desc[i];
-> > > > > > > > > +		vring_unmap_one_packed(vq, desc);
-> > > > > > > > > +		desc->flags = 0x0;
-> > > > > > > > Looks like this is unnecessary.
-> > > > > > > It's safer to zero it. If we don't zero it, after we
-> > > > > > > call virtqueue_detach_unused_buf_packed() which calls
-> > > > > > > this function, the desc is still available to the
-> > > > > > > device.
-> > > > > > 
-> > > > > > Well detach_unused_buf_packed() should be called after device is stopped,
-> > > > > > otherwise even if you try to clear, there will still be a window that device
-> > > > > > may use it.
-> > > > > 
-> > > > > This is not about whether the device has been stopped or
-> > > > > not. We don't have other places to re-initialize the ring
-> > > > > descriptors and wrap_counter. So they need to be set to
-> > > > > the correct values when doing detach_unused_buf.
-> > > > > 
-> > > > > Best regards,
-> > > > > Tiwei Bie
-> > > > 
-> > > > find vqs is the time to do it.
-> > > 
-> > > The .find_vqs() will call .setup_vq() which will eventually
-> > > call vring_create_virtqueue(). It's a different case. Here
-> > > we're talking about re-initializing the descs and updating
-> > > the wrap counter when detaching the unused descs (In this
-> > > case, split ring just needs to decrease vring.avail->idx).
-> > > 
-> > > Best regards,
-> > > Tiwei Bie
-> > 
-> > There's no requirement that  virtqueue_detach_unused_buf re-initializes
-> > the descs. It happens on cleanup path just before drivers delete the
-> > vqs.
+On 04/17/2018 04:53 PM, Peter Ujfalusi wrote:
+> On 2018-04-17 16:58, Lars-Peter Clausen wrote:
+>>>> There are two options.
+>>>>
+>>>> Either you extend the generic interfaces so it can cover your usecase in a
+>>>> generic way. E.g. the ability to attach meta data to transfer.
+>>>
+>>> Fwiw I have this patch as part of a bigger work to achieve similar results:
+>>
+>> That's good stuff. Is this in a public tree somewhere?
 > 
-> Cool, I wasn't aware of it. I saw split ring decrease
-> vring.avail->idx after detaching an unused desc, so I
-> thought detaching unused desc also needs to make sure
-> that the ring state will be updated correspondingly.
-
-
-Hmm. You are right. Seems to be out console driver being out of spec.
-Will have to look at how to fix that :(
-
-It was done here:
-
-Commit b3258ff1d6086bd2b9eeb556844a868ad7d49bc8
-Author: Amit Shah <amit.shah@redhat.com>
-Date:   Wed Mar 16 19:12:10 2011 +0530
-
-    virtio: Decrement avail idx on buffer detach
-    
-    When detaching a buffer from a vq, the avail.idx value should be
-    decremented as well.
-    
-    This was noticed by hot-unplugging a virtio console port and then
-    plugging in a new one on the same number (re-using the vqs which were
-    just 'disowned').  qemu reported
-    
-       'Guest moved used index from 0 to 256'
-    
-    when any IO was attempted on the new port.
-    
-    CC: stable@kernel.org
-    Reported-by: juzhang <juzhang@redhat.com>
-    Signed-off-by: Amit Shah <amit.shah@redhat.com>
-    Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
-
-The spec is quite explicit though:
-	A driver MUST NOT decrement the available idx on a live virtqueue (ie. there is no way to “unexpose”
-	buffers).
-
-
-
-
-
-> If there is no such requirement, do you think it's OK
-> to remove below two lines:
+> Not atm. I can not send the user of the new API and I did not wanted to
+> send something like this out of the blue w/o context.
 > 
-> vq->avail_idx_shadow--;
-> vq->vring.avail->idx = cpu_to_virtio16(_vq->vdev, vq->avail_idx_shadow);
+> But as it is a generic patch, I can send it as well. The only thing is
+> that the need for the memcpy, so I might end up with
+> ptr = get_metadata_ptr(desc, &size); /* size: in RX the valid size */
 > 
-> from virtqueue_detach_unused_buf(), and we could have
-> one generic function to handle both rings:
+> and set_metadata_size(); /* in TX to tell how the client placed */
 > 
-> void *virtqueue_detach_unused_buf(struct virtqueue *_vq)
-> {
-> 	struct vring_virtqueue *vq = to_vvq(_vq);
-> 	unsigned int num, i;
-> 	void *buf;
+> Or something like that, the attach_metadata() as it is works just fine,
+> but high throughput might not like the memcpy.
 > 
-> 	START_USE(vq);
+
+In the most abstracted way I'd say metadata and data are two different data
+streams that are correlated and send/received at the same time.
+
+Think multi-planar transfer, like for audio when the right and left channel
+are in separate buffers and not interleaved. Or video with different
+color/luminance components in separate buffers. This is something that is at
+the moment not covered by the dmaengine API either.
+
+>>>> Or you can implement a interface that is specific to your DMA controller and
+>>>> any client using this interface knows it is talking to your DMA controller.
+>>>
+>>> Hrm, so we can have DMA driver specific calls? The reason why TI's keystone 2
+>>> navigator DMA support was rejected that it was introducing NAV specific calls
+>>> for clients to configure features not yet supported by the framework.
+>>
+>> In my opinion it is OK, somebody else might have different ideas. I mean it
+>> is not nice, but it is better than the alternative of overloading the
+>> generic API with driver specific semantics or introducing some kind of IOCTL
+>> catch all callback.
 > 
-> 	num = vq->packed ? vq->vring_packed.num : vq->vring.num;
+> True, but the generic API can be extended as well to cover new grounds,
+> features. Like this metadata thing.
 > 
-> 	for (i = 0; i < num; i++) {
-> 		if (!vq->desc_state[i].data)
-> 			continue;
-> 		/* detach_buf clears data, so grab it now. */
-> 		buf = vq->desc_state[i].data;
-> 		detach_buf(vq, i, NULL);
-> 		END_USE(vq);
-> 		return buf;
-> 	}
-> 	/* That should have freed everything. */
-> 	BUG_ON(vq->vq.num_free != num);
+>> If there is tight coupling between the DMA core and client and there is no
+>> intention of using a generic client the best solution might even be to no
+>> use DMAengine at all.
 > 
-> 	END_USE(vq);
-> 	return NULL;
-> }
-> 
-> Best regards,
-> Tiwei Bie
+> This is how the knav stuff ended up. Well it is only used by networking
+> atm, so it is 'fine' to have custom API, but it is not portable.
+
+I totally agree generic APIs are better, but not everybody has the resources
+to rewrite the whole framework just because they want to do this tiny thing
+that isn't covered by the framework yet. In that case it is better to go
+with a custom API (that might evolve into a generic API), rather than
+overloading the generic API and putting a strain on everybody who works on
+the generic API.
