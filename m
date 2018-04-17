@@ -1,51 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752916AbeDQAvj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 20:51:39 -0400
-Received: from mail-pg0-f48.google.com ([74.125.83.48]:37621 "EHLO
-        mail-pg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752813AbeDQAvd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 20:51:33 -0400
-X-Google-Smtp-Source: AIpwx48OjXh+kMxxCyJ5E0eR3V6/Y+ok6FltWSFysZmj3Td0k1CG6ghXf7tZxvgy2xgvTDn0Yz5EP7HRoEZRABd/B+c=
+        id S1753041AbeDQAwc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 20:52:32 -0400
+Received: from mga02.intel.com ([134.134.136.20]:25175 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752981AbeDQAwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 20:52:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,461,1517904000";
+   d="scan'208";a="33878543"
+From: "Mehta, Sohil" <sohil.mehta@intel.com>
+To: "gary.hook@amd.com" <gary.hook@amd.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+Thread-Topic: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+Thread-Index: AQHT1eZcbGSq7dmBrE2nNUs46v6qOg==
+Date: Tue, 17 Apr 2018 00:52:29 +0000
+Message-ID: <1523926423.2747.19.camel@intel.com>
+References: <152302042701.47565.17954813724758433858.stgit@sosxen2.amd.com>
+         <152302067362.47565.628887796165116844.stgit@sosxen2.amd.com>
+In-Reply-To: <152302067362.47565.628887796165116844.stgit@sosxen2.amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.110.4]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B5DC3B183190CD4097E64C96E61F3ED1@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180417092859.358573be@canb.auug.org.au>
-References: <20180417092859.358573be@canb.auug.org.au>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Mon, 16 Apr 2018 17:51:12 -0700
-Message-ID: <CAM_iQpXT2p1tQFHdRG9iZf_Wc5=H6P+0Q493k3VOLJ+fqr8GYQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the netfilter tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3H0qaje028944
 
-On Mon, Apr 16, 2018 at 4:28 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> After merging the netfilter tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> net/netfilter/nf_conntrack_extend.c: In function 'nf_ct_ext_
-> add':
-> net/netfilter/nf_conntrack_extend.c:74:2: error: implicit declaration of function 'kmemleak_not_leak' [-Werror=implicit-function-declaration]
->   kmemleak_not_leak(old);
->   ^~~~~~~~~~~~~~~~~
-> cc1: some warnings being treated as errors
->
-> Caused by commit
->
->   114aa35d06d4 ("netfilter: conntrack: silent a memory leak warning")
->
-> I have added this patch for today:
+On Fri, 2018-04-06 at 08:17 -0500, Gary R Hook wrote:
+> 
+> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> index 5eb1121d54b9..0ca250f626d9 100644
+> --- a/drivers/iommu/Makefile
+> +++ b/drivers/iommu/Makefile
+> @@ -11,6 +11,7 @@ obj-$(CONFIG_IOMMU_IOVA) += iova.o
+>  obj-$(CONFIG_OF_IOMMU) += of_iommu.o
+>  obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
+>  obj-$(CONFIG_AMD_IOMMU) += amd_iommu.o amd_iommu_init.o
+> +obj-$(CONFIG_IOMMU_DEBUG) += amd_iommu_debugfs.o
 
-Ouch, this is actually a correct fix.
+Compiling amd_iommu_debugfs.c seems to depend only
+on CONFIG_IOMMU_DEBUG. Can we prevent the code within
+amd_iommu_debugfs.c from getting compiled when either CONFIG_AMD_IOMMU
+or CONFIG_IOMMU_DEBUG is disabled?
 
-Can you please send it formally or maybe Pablo can just take it directly?
-
-Thanks!
+>  obj-$(CONFIG_AMD_IOMMU_V2) += amd_iommu_v2.o
+>  obj-$(CONFIG_ARM_SMMU) += arm-smmu.o
+>  obj-$(CONFIG_ARM_SMMU_V3) += arm-smmu-v3.o
