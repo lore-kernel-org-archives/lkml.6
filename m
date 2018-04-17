@@ -1,115 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751266AbeDQHt7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 03:49:59 -0400
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:33111 "EHLO
-        mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750967AbeDQHt4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 03:49:56 -0400
-X-Google-Smtp-Source: AIpwx4/GQEjF2YNcMdHx/yyIiHGT1ay3+HzGPC3Q19g/wNoUTEOoGdF9YYsJQN8Sx3t8o7UpZwAodSm/KBA9SSdp00M=
+        id S1751337AbeDQHwh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 03:52:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:49062 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750821AbeDQHwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 03:52:35 -0400
+Date: Tue, 17 Apr 2018 09:52:33 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 08/11] ARM: sun9i: smp: Add is_sun8i field
+Message-ID: <20180417075233.f2z6wxcazwqheoib@flea>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+ <20180416215032.5023-9-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180417072530.GA4629@gmail.com>
-References: <0bfdc811c2b3da3aa1cde2feef278a86503e3804.1523934640.git.baolin.wang@linaro.org>
- <b5580f22aaed9845af9b981319d6cefa04fddd35.1523934640.git.baolin.wang@linaro.org>
- <20180417072530.GA4629@gmail.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Tue, 17 Apr 2018 15:49:55 +0800
-Message-ID: <CAMz4ku+HLt3cmYcTKSuoqmLp-65feqiz2kjuoTN+tWJHa_NvuA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] input: misc: Add Spreadtrum vibrator driver
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        xiaotong.lu@spreadtrum.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pwy6pi3nx75zjbfe"
+Content-Disposition: inline
+In-Reply-To: <20180416215032.5023-9-mylene.josserand@bootlin.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcus,
 
-On 17 April 2018 at 15:25, Marcus Folkesson <marcus.folkesson@gmail.com> wrote:
-> Hi Xiaotong,
->
-> On Tue, Apr 17, 2018 at 11:18:24AM +0800, Baolin Wang wrote:
->> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
->
-> [snip]
->
->> +static int sc27xx_vibra_probe(struct platform_device *pdev)
->> +{
->> +     struct device_node *node = pdev->dev.of_node;
->> +     struct vibra_info *info;
->> +     int ret;
->> +
->> +     info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
->> +     if (!info)
->> +             return -ENOMEM;
->> +
->> +     info->regmap = dev_get_regmap(pdev->dev.parent, NULL);
->> +     if (!info->regmap) {
->> +             dev_err(&pdev->dev, "failed to get vibrator regmap.\n");
->> +             return -ENODEV;
->> +     }
->> +
->> +     ret = of_property_read_u32(node, "reg", &info->base);
->> +     if (ret) {
->> +             dev_err(&pdev->dev, "failed to get vibrator base address.\n");
->> +             return ret;
->> +     }
->> +
->> +     info->input_dev = devm_input_allocate_device(&pdev->dev);
->> +     if (!info->input_dev) {
->> +             dev_err(&pdev->dev, "failed to allocate input device.\n");
->> +             return -ENOMEM;
->> +     }
->> +
->> +     info->input_dev->name = "sc27xx:vibrator";
->> +     info->input_dev->id.version = 0;
->> +     info->input_dev->dev.parent = pdev->dev.parent;
->> +     info->input_dev->close = sc27xx_vibra_close;
->> +
->> +     input_set_drvdata(info->input_dev, info);
->> +     input_set_capability(info->input_dev, EV_FF, FF_RUMBLE);
->> +     INIT_WORK(&info->play_work, sc27xx_vibra_play_work);
->> +     info->enabled = false;
->> +
->> +     ret = input_ff_create_memless(info->input_dev, NULL, sc27xx_vibra_play);
->> +     if (ret) {
->> +             dev_err(&pdev->dev, "failed to register vibrator to FF.\n");
->> +             return ret;
->> +     }
->> +
->> +     ret = input_register_device(info->input_dev);
->> +     if (ret) {
->> +             dev_err(&pdev->dev, "failed to register input device.\n");
->> +             input_ff_destroy(info->input_dev);
->
-> I'm not sure how the input_ff is freed for managed devices.
->
-> Either you don't have to destroy it here, or you also need to destroy it
-> in a release() function.
+--pwy6pi3nx75zjbfe
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I checked again, we do not need to destroy it manually. Will remove in
-next version.
+Hi,
 
->
->> +             return ret;
->> +     }
->> +
->> +     ret = sc27xx_vibra_hw_init(info);
->> +     if (ret) {
->> +             dev_err(&pdev->dev, "failed to initialize the vibrator.\n");
->> +             input_ff_destroy(info->input_dev);
->> +             input_unregister_device(info->input_dev);
->
-> No need to unregister managed input devices.
+On Mon, Apr 16, 2018 at 11:50:29PM +0200, Myl=E8ne Josserand wrote:
+> To prepare the support of sun8i-a83t, add a field in the smp_data
+> structure to know if we are on sun9i-a80 or sun8i-a83t.
+>=20
+> Add also a global variable to retrieve which architecture we are
+> having.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
+> ---
+>  arch/arm/mach-sunxi/mc_smp.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+> index 03f021d0c73e..9d57ea27dacc 100644
+> --- a/arch/arm/mach-sunxi/mc_smp.c
+> +++ b/arch/arm/mach-sunxi/mc_smp.c
+> @@ -74,6 +74,7 @@ static void __iomem *sram_b_smp_base;
+> =20
+>  extern void sunxi_mc_smp_secondary_startup(void);
+>  extern void sunxi_mc_smp_resume(void);
+> +static int is_sun8i;
+> =20
+>  static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int clu=
+ster)
+>  {
+> @@ -624,6 +625,7 @@ struct sunxi_mc_smp_nodes {
+>  struct sunxi_mc_smp_data {
+>  	const char *enable_method;
+>  	int (*get_smp_nodes)(struct sunxi_mc_smp_nodes *nodes);
+> +	int is_sun8i;
+>  };
+> =20
+>  static void __init sunxi_mc_smp_put_nodes(struct sunxi_mc_smp_nodes *nod=
+es)
+> @@ -664,6 +666,7 @@ static const struct sunxi_mc_smp_data sunxi_mc_smp_da=
+ta[] __initconst =3D {
+>  	{
+>  		.enable_method	=3D "allwinner,sun9i-a80-smp",
+>  		.get_smp_nodes	=3D sun9i_a80_get_smp_nodes,
+> +		.is_sun8i	=3D false,
 
-You are correct. Will remove these in next version. Thanks for your comments.
+I'm still not convinced about the name of that flag. sun8i doesn't
+mean anything, really. What you want to discriminate against it what
+you're writing in your commit log: if it is an A80 or an A83t. The
+A33, H3, A23, you name it are also part of the sun8i family, yet they
+are completely irrelevant to this file.
 
--- 
-Baolin.wang
-Best Regards
+Also, false is the default value, you can leave it out.
+
+>  	},
+>  };
+> =20
+> @@ -697,6 +700,8 @@ static int __init sunxi_mc_smp_init(void)
+>  			break;
+>  	}
+> =20
+> +	is_sun8i =3D sunxi_mc_smp_data[i].is_sun8i;
+> +
+
+Do we really need to cache it? Can't we just have a pointer to the SMP
+data structure and use that instead?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--pwy6pi3nx75zjbfe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrVp8AACgkQ0rTAlCFN
+r3Rifw/9Gl4bEy8NdYh8PZltDYtIne5lOveP6B50wOPrqnnhzqHmGT4daHqI4Hkd
+G/MHWDA4CY1al4AJ/tgdSAmO9G+akVAqb2PQzZf5WuTbt94QuFh2FXYeArfETlmC
+H+wom1lAe1Ub1OxMJWttTphLiwKMeeP1bmskhClWsmQl2/FK/xf6JD9SgyUgoUtE
+ad2fd+6lwEg4XGg5HjWoj0+T/fNI7CuyFFogaHF6CrKE5hzDdDZ2ap4TJPtQoBbJ
+m85VlCALsy7wMUZDFiLcd+qF9Ro7pyGgk4D615sWyJ3G54z5O8as1SimFnYE+bCM
+A1o2h7hOzsn/7I2L0ZcNg93R34GqyZVtty5FhRrPptMOlFZ6YKyNhN/8UJjN9xWy
+WJ4qVofdhZKyD2NtLYxAR883guagxQeO817sTr7EDbBDEa0BdSeUeCxYUwg6v7Ve
+eNITpT0miJk+xmp+9zd+/LyJvl3+nDE8OejlWPf7z6horVXDVypcU8+CF4cmPxPJ
+bFjOx1IPsPSoolwnruIgbxk4dbytQVHHTrgqss0mBdYcrwVs8iaQ126d8mmArqGv
+76PaNfSFaT4LYnnMm5c0gr3sjfI/RivAaLmWPmaJM+X3MIlvunBuMmunZKJK5Y9G
+kYtYQYQGI+eoltx2LCWBb1ZCup8S3STC1Sskp+gqCdovrp9+sVM=
+=PVeK
+-----END PGP SIGNATURE-----
+
+--pwy6pi3nx75zjbfe--
