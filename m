@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/MXraAdlMh2MozgiwKIymEtashTsTXZxvcORcHRVL/4pgGOYnDdCIu8zVtfu8nZH0PNEeM
-ARC-Seal: i=1; a=rsa-sha256; t=1523981363; cv=none;
+X-Google-Smtp-Source: AIpwx49GPpuBFu7hNt547f1MpBmJBaE0kRjcD6oRM/VoJXrj8UFVSrlHf/XmKwmCObwBplgF/zQu
+ARC-Seal: i=1; a=rsa-sha256; t=1523981360; cv=none;
         d=google.com; s=arc-20160816;
-        b=qabJCGhd5CmSuwRU+iN1MAZHtRJQJpQ2znnUlmtsFtACl9gCw/yTywxnuNmhGEzNE1
-         E17Lgbiv28bGv4nHMP6ts/mjnnANgIqBAKYTOI17OsYoja+9EmrIhX4QxPCv5dpMdH1O
-         Xrkx/7tU8C1AIDJ8CeRlKT6/VItb13fiTsJWn0LweQZcGuUJebCiJuVpBrDFpnxTEHEF
-         AnZApBKyzEpyuZ4d5CcvxahjUM7mTKHf/K/GR6oiPtvDjp3ZIUMr+bIzzWINDp/PlzBw
-         cBoXp6gUBT4Q5JZxUdKFgPXlEF5zS+w0SX+iURoz1htOxSvj+FC0oS2Ye74vXCG1/WpM
-         8d+Q==
+        b=ISHIN7SN26ElF7QfybPkgga2FL4nFxbPpOFBssnOD0k9oVLJySt7te8zzEunsS6nNS
+         CciSF8iQwfUNMNMDz4/Zh9jFw6wE6xMMKbYt/rvXWc3nb0grZk49dL73BTquk2+eJCL+
+         EbQwGn/IlodKSBpKQqAYzvGWM3BIvX8ohQlWwhx1hKYT/etxPtRXxdGHBbhZkDNsn2+N
+         kqN1+JaoyQ+B00NFRu4AJOUkJx9Ewr+xBIYydt8QrFoW/dSGlwWTW+oXrQjaCPua4UlX
+         d1yxK0Mvo/05KgkCdXMepQ8BdvyaZAUEwuwShTS/I8+FTrNZQdDLhHFWhqNwFWoYZj3e
+         ojnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=4rH6KBcTQLLTn1mSaH5xIuz/92wpV8xOKMH4VgKABY4=;
-        b=vvUV8Zk3bugjYVuS3Q1gnXGqeUsuUvaJsoTPCa4ImA7uhaeFq0mg7H9fmb7TRaKRoj
-         FwT/WmfM2lSINjxoqnX84MmSPqvaAXK+6GazAJYKMLelwvqhdzf9Tb2d5LEotOMCHzyB
-         PTxQPq2TmS+atF2QZ0MulYsvoN5huVWXlLRVjm3Y1rP+Z+i356dDEdEt8Gfp4bD+GJTi
-         JYbewjDoqPT/9qnUpR7WF9aInAwl/liB8ff213jsm0qJs1gXWVdNrSwCCkpx2zi7B52d
-         4yeM5hVzL7bcLCH+Zo1FW9pB5ZDdB8y6lUQ4zGN6HDDuG/jVNkAZFiCzoSPqzw2Lyziy
-         VKwQ==
+        bh=sBXDjQE6O3XKX4nait0HYGIXbBiF2KwpkWJ6aLiUN8s=;
+        b=DJtfUVyke7V6q0i6ZjNOtm/pHFURY7a4bfGyWM1XrzalLNo6U6l5xAqPzp9MkIN11d
+         0dtLjzgUQhzhx9ThulYlL1Ik6XFr/EL/VtsPUt9phcMCsINx7w9LmfWOcTd/S7uBrvUz
+         u38YdqlURn7b6JhWmrMVtJdIBRmuJd/EcUAgKUcUULxJtdj0DrCL+oJz7ESPOOQAY6SZ
+         IM/aiypj7Oc9saqsgbuf2VLLDuQWoQ8OwD2c22CNGX4ehdZ4BtGBl5RF29V/HbmiAbik
+         NvIAePs0iWwp1jqBQLOAP7g+lxejPWv2T8sqC6FFyvnIbvuptbm1Yb1rNAZGkTmVupxN
+         Duww==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,20 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.9 09/66] radeon: hide pointless #warning when compile testing
-Date: Tue, 17 Apr 2018 17:58:42 +0200
-Message-Id: <20180417155646.242666420@linuxfoundation.org>
+	Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
+	Oleg Nesterov <oleg@redhat.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	stable@kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 08/66] perf/core: Fix use-after-free in uprobe_perf_close()
+Date: Tue, 17 Apr 2018 17:58:41 +0200
+Message-Id: <20180417155646.204859072@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -41,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009827562745795?=
-X-GMAIL-MSGID: =?utf-8?q?1598010281399810132?=
+X-GMAIL-THRID: =?utf-8?q?1598009793844630333?=
+X-GMAIL-MSGID: =?utf-8?q?1598010279008752041?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,48 +58,172 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
 
-commit c02216acf4177c4411d33735c81cad687790fa59 upstream.
+commit 621b6d2ea297d0fb6030452c5bcd221f12165fcf upstream.
 
-In randconfig testing, we sometimes get this warning:
+A use-after-free bug was caught by KASAN while running usdt related
+code (BCC project. bcc/tests/python/test_usdt2.py):
 
-drivers/gpu/drm/radeon/radeon_object.c: In function 'radeon_bo_create':
-drivers/gpu/drm/radeon/radeon_object.c:242:2: error: #warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance thanks to write-combining [-Werror=cpp]
- #warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
+	==================================================================
+	BUG: KASAN: use-after-free in uprobe_perf_close+0x222/0x3b0
+	Read of size 4 at addr ffff880384f9b4a4 by task test_usdt2.py/870
 
-This is rather annoying since almost all other code produces no build-time
-output unless we have found a real bug. We already fixed this in the
-amdgpu driver in commit 31bb90f1cd08 ("drm/amdgpu: shut up #warning for
-compile testing") by adding a CONFIG_COMPILE_TEST check last year and
-agreed to do the same here, but both Michel and I then forgot about it
-until I came across the issue again now.
+	CPU: 4 PID: 870 Comm: test_usdt2.py Tainted: G        W         4.16.0-next-20180409 #215
+	Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+	Call Trace:
+	 dump_stack+0xc7/0x15b
+	 ? show_regs_print_info+0x5/0x5
+	 ? printk+0x9c/0xc3
+	 ? kmsg_dump_rewind_nolock+0x6e/0x6e
+	 ? uprobe_perf_close+0x222/0x3b0
+	 print_address_description+0x83/0x3a0
+	 ? uprobe_perf_close+0x222/0x3b0
+	 kasan_report+0x1dd/0x460
+	 ? uprobe_perf_close+0x222/0x3b0
+	 uprobe_perf_close+0x222/0x3b0
+	 ? probes_open+0x180/0x180
+	 ? free_filters_list+0x290/0x290
+	 trace_uprobe_register+0x1bb/0x500
+	 ? perf_event_attach_bpf_prog+0x310/0x310
+	 ? probe_event_disable+0x4e0/0x4e0
+	 perf_uprobe_destroy+0x63/0xd0
+	 _free_event+0x2bc/0xbd0
+	 ? lockdep_rcu_suspicious+0x100/0x100
+	 ? ring_buffer_attach+0x550/0x550
+	 ? kvm_sched_clock_read+0x1a/0x30
+	 ? perf_event_release_kernel+0x3e4/0xc00
+	 ? __mutex_unlock_slowpath+0x12e/0x540
+	 ? wait_for_completion+0x430/0x430
+	 ? lock_downgrade+0x3c0/0x3c0
+	 ? lock_release+0x980/0x980
+	 ? do_raw_spin_trylock+0x118/0x150
+	 ? do_raw_spin_unlock+0x121/0x210
+	 ? do_raw_spin_trylock+0x150/0x150
+	 perf_event_release_kernel+0x5d4/0xc00
+	 ? put_event+0x30/0x30
+	 ? fsnotify+0xd2d/0xea0
+	 ? sched_clock_cpu+0x18/0x1a0
+	 ? __fsnotify_update_child_dentry_flags.part.0+0x1b0/0x1b0
+	 ? pvclock_clocksource_read+0x152/0x2b0
+	 ? pvclock_read_flags+0x80/0x80
+	 ? kvm_sched_clock_read+0x1a/0x30
+	 ? sched_clock_cpu+0x18/0x1a0
+	 ? pvclock_clocksource_read+0x152/0x2b0
+	 ? locks_remove_file+0xec/0x470
+	 ? pvclock_read_flags+0x80/0x80
+	 ? fcntl_setlk+0x880/0x880
+	 ? ima_file_free+0x8d/0x390
+	 ? lockdep_rcu_suspicious+0x100/0x100
+	 ? ima_file_check+0x110/0x110
+	 ? fsnotify+0xea0/0xea0
+	 ? kvm_sched_clock_read+0x1a/0x30
+	 ? rcu_note_context_switch+0x600/0x600
+	 perf_release+0x21/0x40
+	 __fput+0x264/0x620
+	 ? fput+0xf0/0xf0
+	 ? do_raw_spin_unlock+0x121/0x210
+	 ? do_raw_spin_trylock+0x150/0x150
+	 ? SyS_fchdir+0x100/0x100
+	 ? fsnotify+0xea0/0xea0
+	 task_work_run+0x14b/0x1e0
+	 ? task_work_cancel+0x1c0/0x1c0
+	 ? copy_fd_bitmaps+0x150/0x150
+	 ? vfs_read+0xe5/0x260
+	 exit_to_usermode_loop+0x17b/0x1b0
+	 ? trace_event_raw_event_sys_exit+0x1a0/0x1a0
+	 do_syscall_64+0x3f6/0x490
+	 ? syscall_return_slowpath+0x2c0/0x2c0
+	 ? lockdep_sys_exit+0x1f/0xaa
+	 ? syscall_return_slowpath+0x1a3/0x2c0
+	 ? lockdep_sys_exit+0x1f/0xaa
+	 ? prepare_exit_to_usermode+0x11c/0x1e0
+	 ? enter_from_user_mode+0x30/0x30
+	random: crng init done
+	 ? __put_user_4+0x1c/0x30
+	 entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+	RIP: 0033:0x7f41d95f9340
+	RSP: 002b:00007fffe71e4268 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+	RAX: 0000000000000000 RBX: 000000000000000d RCX: 00007f41d95f9340
+	RDX: 0000000000000000 RSI: 0000000000002401 RDI: 000000000000000d
+	RBP: 0000000000000000 R08: 00007f41ca8ff700 R09: 00007f41d996dd1f
+	R10: 00007fffe71e41e0 R11: 0000000000000246 R12: 00007fffe71e4330
+	R13: 0000000000000000 R14: fffffffffffffffc R15: 00007fffe71e4290
 
-For stable kernels, as this is one of very few remaining randconfig
-warnings in 4.14.
+	Allocated by task 870:
+	 kasan_kmalloc+0xa0/0xd0
+	 kmem_cache_alloc_node+0x11a/0x430
+	 copy_process.part.19+0x11a0/0x41c0
+	 _do_fork+0x1be/0xa20
+	 do_syscall_64+0x198/0x490
+	 entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-Cc: stable@vger.kernel.org
-Link: https://patchwork.kernel.org/patch/9550009/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+	Freed by task 0:
+	 __kasan_slab_free+0x12e/0x180
+	 kmem_cache_free+0x102/0x4d0
+	 free_task+0xfe/0x160
+	 __put_task_struct+0x189/0x290
+	 delayed_put_task_struct+0x119/0x250
+	 rcu_process_callbacks+0xa6c/0x1b60
+	 __do_softirq+0x238/0x7ae
+
+	The buggy address belongs to the object at ffff880384f9b480
+	 which belongs to the cache task_struct of size 12928
+
+It occurs because task_struct is freed before perf_event which refers
+to the task and task flags are checked while teardown of the event.
+perf_event_alloc() assigns task_struct to hw.target of perf_event,
+but there is no reference counting for it.
+
+As a fix we get_task_struct() in perf_event_alloc() at above mentioned
+assignment and put_task_struct() in _free_event().
+
+Signed-off-by: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <stable@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 63b6da39bb38e8f1a1ef3180d32a39d6 ("perf: Fix perf_event_exit_task() race")
+Link: http://lkml.kernel.org/r/20180409100346.6416-1-bhole_prashant_q7@lab.ntt.co.jp
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/radeon/radeon_object.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/events/core.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/gpu/drm/radeon/radeon_object.c
-+++ b/drivers/gpu/drm/radeon/radeon_object.c
-@@ -238,9 +238,10 @@ int radeon_bo_create(struct radeon_devic
- 	 * may be slow
- 	 * See https://bugs.freedesktop.org/show_bug.cgi?id=88758
- 	 */
--
-+#ifndef CONFIG_COMPILE_TEST
- #warning Please enable CONFIG_MTRR and CONFIG_X86_PAT for better performance \
- 	 thanks to write-combining
-+#endif
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4091,6 +4091,9 @@ static void _free_event(struct perf_even
+ 	if (event->ctx)
+ 		put_ctx(event->ctx);
  
- 	if (bo->flags & RADEON_GEM_GTT_WC)
- 		DRM_INFO_ONCE("Please enable CONFIG_MTRR and CONFIG_X86_PAT for "
++	if (event->hw.target)
++		put_task_struct(event->hw.target);
++
+ 	exclusive_event_destroy(event);
+ 	module_put(event->pmu->module);
+ 
+@@ -9214,6 +9217,7 @@ perf_event_alloc(struct perf_event_attr
+ 		 * and we cannot use the ctx information because we need the
+ 		 * pmu before we get a ctx.
+ 		 */
++		get_task_struct(task);
+ 		event->hw.target = task;
+ 	}
+ 
+@@ -9331,6 +9335,8 @@ err_ns:
+ 		perf_detach_cgroup(event);
+ 	if (event->ns)
+ 		put_pid_ns(event->ns);
++	if (event->hw.target)
++		put_task_struct(event->hw.target);
+ 	kfree(event);
+ 
+ 	return ERR_PTR(err);
