@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48daWZGzV4xAECNGCqnZEg+zRpqYy0Sgn7HUYELDfqbqDR9wXmWKJI1bAeU3jlWE7ilBO3W
-ARC-Seal: i=1; a=rsa-sha256; t=1523980818; cv=none;
+X-Google-Smtp-Source: AIpwx489bh9NILpRf7hkbeKFqpKJ2YqqJJ0hwaDsiCFM5bM8nA4IvIgwkrLS9GXogdvdB1bUWShs
+ARC-Seal: i=1; a=rsa-sha256; t=1523980815; cv=none;
         d=google.com; s=arc-20160816;
-        b=Rx1pUmkwOu0FBxu2phpX8W2ZNA0Vnp8cbA4nPPfO5iQ1MwdAX8LxBz+cZlc2mq6/vf
-         R5VwSifU+tcTgI4nBFjTxyjXYGYsf1t1bPVmWSO12jHtzpyNkQwvlKLwgv7VC9+oOFeJ
-         +mXP8l6cpA1oux4/zjZ9+vm0/fRJ5tEcKQLu7QTYUe+vbZr5I40pImWzAEnk4uVal/eU
-         6KdHaeFJyvGaopuAUhloctvbvlBcQU8jWCyFyqmd2o9BbyDGkkhNJRYXokzkcroFa9CO
-         /9+vKSAV5m5B+UNqzAKbgQx1oKPLZhQHKMv4bQSWvuM+7xhmK1kIqGxHx7zAAw5RqBPl
-         nZ7A==
+        b=H6LHbq54HURxGvfqN4OJZmVaHK3PtZzvYTuo02pjt3dakmfVS8sA10y40X+Yl++E4T
+         eLgTBVagNoaZJnH7iGQRvkO9OZjDAGb/AIDk+nvbU0ySdHhEFKuUVHTZEdFnsp+aUWZi
+         dAYhrXRNZhxCoQI2z9T3Wvi8Bo1LwBbV/2lpKuFHy5COMZWsiJgxGh0SGPMGhHnBWnuX
+         JBqcg/3K8ahmGbqE2qcn20yCWiOCnDCBzzl/+PVXdjXqqyjroG3lpiZITJb0UCyAAqrT
+         TpvUNUgHSU1betphF8xD71a50wRDDwkDU0AcbMaQ+i2+UNFdSNix8eTcPG7qXiVEV+Fi
+         DSbw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=6+rU9AIL2K8+rMFPasm0L62BtbwHsxp6YkDMk9gjuVM=;
-        b=a+9qCNlCi0zTXlbJzF0Dpt7qT1MLq5etqdJ+gIUril11G27bYUhcDTIYMIEGnG+wrL
-         99gCxLHfyJ5zH1+xNPgSYpw9au1/Y6mtyohg7h9iJO9Tq7UPl6fXl9xxrmGWo4GvTOZs
-         zwSCLtWHWOETMHcAmM4Po6yqMWtLTHNkl8F/ThQPLde6FSvwbbL4TH1cKdyQTLyRze2/
-         Vgi1GFHVCfF9eS9c54QA3H6QyYXoJMPd1iIRPIxUvLkWy+ePqdWJADFFy0H2umq+TS+G
-         P0+6EP9a0VMsg1dbs3SCjgQ1E6zJtpeF+skTjPby1m6dUo3+S3+8wHh2KjvwBqFBO5Cz
-         n4Zg==
+        bh=5oK+oxHz2M8ch8FlAU96Py5cAmM81GjgT5r3G85fKX4=;
+        b=l/nOTQDnhOj4wnw7XA/3z6BBrD/TnafX1T+1JX95IQzAU85iAQq6VQIYpFIscibafC
+         ZaI/LTSi166OCwKEOPh8vxBMl5m1BCGkw67LFT+/m4jrttIA7rky97x/210xjhxFyv4C
+         cAcKVK1zhYznoFeKOZdOvCIICoqWjBad+sMnAkZSCfoKekMlq7T9lsOt6JIp122T+xF2
+         jy7G7BX62ZghIwoXl1lqhMk8QOdMrSkd+z+f02ujd+1sSLFoPKzllYBtQw8bK6Wk6Oey
+         9Da0voqdSP37qiyLd0uQEEIDodlXpuY6khokrCq+ZLqXqvYDAZNL989gfsLBrGgvD81k
+         uoqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -27,9 +27,9 @@ To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.16 16/68] parisc: Fix HPMC handler by increasing size to multiple of 16 bytes
-Date: Tue, 17 Apr 2018 17:57:29 +0200
-Message-Id: <20180417155749.993691531@linuxfoundation.org>
+Subject: [PATCH 4.16 15/68] parisc: Fix out of array access in match_pci_device()
+Date: Tue, 17 Apr 2018 17:57:28 +0200
+Message-Id: <20180417155749.950091084@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -39,8 +39,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009710354383751?=
-X-GMAIL-MSGID: =?utf-8?q?1598009710354383751?=
+X-GMAIL-THRID: =?utf-8?q?1598009707455572846?=
+X-GMAIL-MSGID: =?utf-8?q?1598009707455572846?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,44 +50,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Helge Deller <deller@gmx.de>
 
-commit d5654e156bc4d68a87bbaa6d7e020baceddf6e68 upstream.
+commit 615b2665fd20c327b631ff1e79426775de748094 upstream.
 
-Make sure that the HPMC (High Priority Machine Check) handler is 16-byte
-aligned and that it's length in the IVT is a multiple of 16 bytes.
-Otherwise PDC may decide not to call the HPMC crash handler.
+As found by the ubsan checker, the value of the 'index' variable can be
+out of range for the bc[] array:
+
+UBSAN: Undefined behaviour in arch/parisc/kernel/drivers.c:655:21
+index 6 is out of range for type 'char [6]'
+Backtrace:
+ [<104fa850>] __ubsan_handle_out_of_bounds+0x68/0x80
+ [<1019d83c>] check_parent+0xc0/0x170
+ [<1019d91c>] descend_children+0x30/0x6c
+ [<1059e164>] device_for_each_child+0x60/0x98
+ [<1019cd54>] parse_tree_node+0x40/0x54
+ [<1019d86c>] check_parent+0xf0/0x170
+ [<1019d91c>] descend_children+0x30/0x6c
+ [<1059e164>] device_for_each_child+0x60/0x98
+ [<1019d938>] descend_children+0x4c/0x6c
+ [<1059e164>] device_for_each_child+0x60/0x98
+ [<1019cd54>] parse_tree_node+0x40/0x54
+ [<1019cffc>] hwpath_to_device+0xa4/0xc4
 
 Signed-off-by: Helge Deller <deller@gmx.de>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/kernel/hpmc.S |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/parisc/kernel/drivers.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/parisc/kernel/hpmc.S
-+++ b/arch/parisc/kernel/hpmc.S
-@@ -84,6 +84,7 @@ END(hpmc_pim_data)
- 	.text
+--- a/arch/parisc/kernel/drivers.c
++++ b/arch/parisc/kernel/drivers.c
+@@ -651,6 +651,10 @@ static int match_pci_device(struct devic
+ 					(modpath->mod == PCI_FUNC(devfn)));
+ 	}
  
- 	.import intr_save, code
-+	.align 16
- ENTRY_CFI(os_hpmc)
- .os_hpmc:
- 
-@@ -300,12 +301,15 @@ os_hpmc_6:
- 
- 	b .
- 	nop
-+	.align 16	/* make function length multiple of 16 bytes */
- ENDPROC_CFI(os_hpmc)
- .os_hpmc_end:
- 
- 
- 	__INITRODATA
-+.globl os_hpmc_size
- 	.align 4
--	.export os_hpmc_size
-+	.type   os_hpmc_size, @object
-+	.size   os_hpmc_size, 4
- os_hpmc_size:
- 	.word .os_hpmc_end-.os_hpmc
++	/* index might be out of bounds for bc[] */
++	if (index >= 6)
++		return 0;
++
+ 	id = PCI_SLOT(pdev->devfn) | (PCI_FUNC(pdev->devfn) << 5);
+ 	return (modpath->bc[index] == id);
+ }
