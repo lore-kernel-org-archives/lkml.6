@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+jLPQb1GfEgGZIyGQ5rMfreZOkWrGFgLmfWmdLQoWN00wnnBE+v2z9Uei/6Roh1li/Dlxh
+X-Google-Smtp-Source: AIpwx48666N/zQHPoPV7HtUtnigN2F3ZFeu1BnqdMbJOyF29Sm6gRWvixXwSp43t5FbSAsWg8GVb
 ARC-Seal: i=1; a=rsa-sha256; t=1523981078; cv=none;
         d=google.com; s=arc-20160816;
-        b=lfCpSF8auSlg6QmIqr3ixECRJwO0EzSK873bIs1XvPaJJq4yjaFLA96s4JxkI4Ur3h
-         o9X5ONyzBtrpws0KSdbYP4HsLMRQksZ/qKA+2SMFS+xkaSgb0KT5UQNuKm++EUTNrYBn
-         E/KY4I9SXx1/4p3prAk0+7t/oUArIJ/pV65DMquOiTfC0hJTQX1UnCDUtKdGUoXzRQYz
-         6JZJJyPhPodiTioLe++aLI9pc0rO4R99HC60i5xu5zDjqUK0XmVFe4l8yBXgi76UdbOg
-         GZ1i9f6MrYC6KWeXt0eKVyA3ZuaIT7bJ40DFVv50W2Mr/k8cLl1ZlSodJNNSgD1IzRJH
-         VHGQ==
+        b=CyYMHHctBjkbhh4Xp3PgXbA7W3BgwZlHtq4JjtqeHxb8xxbsN6j7bklBrEoI+JRzSa
+         ika3KG6C9G/a0Dap7Bpt6U2khmtgCAA9awN05H+W7x4vrWc0avrpnVhDsgYVUOFqYKO+
+         Uk0U38UgXKLQ9yD2i+ywKy0k5antEg08SQkA7ke0iOXiLV9uFZ4zZXM+gbtpWr8NWKsu
+         7ZYUFIg9E2Van1cel5uQBwqyMBPj1uyxtPMsbm3N+7JsVwlTP9VJa7+bQmv99e16zVEq
+         QfcqbYMDyTzGnm5haoyN9AzKSgSoEMoWc1WsOYQizFGfkgb3QeO9xdublmEnNw6H/6Ft
+         ll8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=XcyuSLxRa7wYPP3Qng1iYWHmumMIOGZtErY22awf5Rg=;
-        b=z3+hn+W544RS/6fdW9fyjGwSq+LOuLth/V3Mz1ZAqxaviPSm9jReg3BA3BosQDDHtc
-         ku5VDnCmUc0Wy0qW/Kbpdu4MQOLurDrsnoe/PRzT/qJxmaJnIZ1Ip8BNtv7pbLobBuFk
-         /UfdId8gUskZCqRUt14jmiNQTs4ZKmLVByU46ToKsot3xtWmGO8dC6MVYCAqA4mHHs9B
-         A6NEEfyIYdFccHiD6fC/VB3YWBn1raosRbaNIrwWQ7Z5+m6m1gzvwiurV7mjhy2VU7/Q
-         0GYhV/HO4FTHilhgZnWvUia0jDaLS9zA9H1b/lnnKeCXVYlWUPMQGShwL4dN/3umwH5B
-         40TA==
+        bh=8zRb3zvWrJpsh1R08jNTQVgElk+riMOY09ZmDbFVUyc=;
+        b=D7eRs6RbkKTxpf0w+V3UrPjQS/DGsGQiMxlLYknE6lKxlYmaIs+4TwUsK+0XbPaRYo
+         3xmGhwMfBsAGbacoMVs/qSNqysSX06c0cHNS2eYdvoc7wmp4J3GKpQ02ZVPgQx4lRcHW
+         lVwkQOa2Lm7NJqG0I1QkGt3OSXH/O+p1JsVnwKep7sGJg5dwHxE7LtGxC/ToCBKm+LUx
+         UZ5rMPoWcKnwkbpUfBCX8h+a4P4KPHKPaJ8OZ+86R/FDnrVqAmpEoVCB1ALlDLEZ879E
+         kaUm/CjPh3RDWGx9hRzuvl7EdxOsFUZO1ndIxwn9HLTzWmBTBQXs85uN9LY52AqCOnmi
+         kLnw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dan Rue <dan.rue@linaro.org>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Yisheng Xie <xieyisheng1@huawei.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nic Losby <blurbdust@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.15 35/53] hugetlbfs: fix bug in pgoff overflow checking
-Date: Tue, 17 Apr 2018 17:59:00 +0200
-Message-Id: <20180417155724.841264329@linuxfoundation.org>
+	Bill Kuzeja <william.kuzeja@stratus.com>,
+	Himanshu Madhani <himanshu.madhani@cavium.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.15 37/53] scsi: qla2xxx: Fix small memory leak in qla2x00_probe_one on probe failure
+Date: Tue, 17 Apr 2018 17:59:02 +0200
+Message-Id: <20180417155724.932574324@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -47,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009812086723888?=
-X-GMAIL-MSGID: =?utf-8?q?1598009983116114066?=
+X-GMAIL-THRID: =?utf-8?q?1598009819441657999?=
+X-GMAIL-MSGID: =?utf-8?q?1598009983510688225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,55 +50,230 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Bill Kuzeja <William.Kuzeja@stratus.com>
 
-commit 5df63c2a149ae65a9ec239e7c2af44efa6f79beb upstream.
+commit 6d6340672ba3a99c4cf7af79c2edf7aa25595c84 upstream.
 
-This is a fix for a regression in 32 bit kernels caused by an invalid
-check for pgoff overflow in hugetlbfs mmap setup.  The check incorrectly
-specified that the size of a loff_t was the same as the size of a long.
-The regression prevents mapping hugetlbfs files at offsets greater than
-4GB on 32 bit kernels.
+The code that fixes the crashes in the following commit introduced a small
+memory leak:
 
-On 32 bit kernels conversion from a page based unsigned long can not
-overflow a loff_t byte offset.  Therefore, skip this check if
-sizeof(unsigned long) != sizeof(loff_t).
+commit 6a2cf8d3663e ("scsi: qla2xxx: Fix crashes in qla2x00_probe_one on probe failure")
 
-Link: http://lkml.kernel.org/r/20180330145402.5053-1-mike.kravetz@oracle.com
-Fixes: 63489f8e8211 ("hugetlbfs: check for pgoff value overflow")
-Reported-by: Dan Rue <dan.rue@linaro.org>
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Nic Losby <blurbdust@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixing this requires a bit of reworking, which I've explained. Also provide
+some code cleanup.
+
+There is a small window in qla2x00_probe_one where if qla2x00_alloc_queues
+fails, we end up never freeing req and rsp and leak 0xc0 and 0xc8 bytes
+respectively (the sizes of req and rsp).
+
+I originally put in checks to test for this condition which were based on
+the incorrect assumption that if ha->rsp_q_map and ha->req_q_map were
+allocated, then rsp and req were allocated as well. This is incorrect.
+There is a window between these allocations:
+
+       ret = qla2x00_mem_alloc(ha, req_length, rsp_length, &req, &rsp);
+                goto probe_hw_failed;
+
+[if successful, both rsp and req allocated]
+
+       base_vha = qla2x00_create_host(sht, ha);
+                goto probe_hw_failed;
+
+       ret = qla2x00_request_irqs(ha, rsp);
+                goto probe_failed;
+
+       if (qla2x00_alloc_queues(ha, req, rsp)) {
+                goto probe_failed;
+
+[if successful, now ha->rsp_q_map and ha->req_q_map allocated]
+
+To simplify this, we should just set req and rsp to NULL after we free
+them. Sounds simple enough? The problem is that req and rsp are pointers
+defined in the qla2x00_probe_one and they are not always passed by reference
+to the routines that free them.
+
+Here are paths which can free req and rsp:
+
+PATH 1:
+qla2x00_probe_one
+   ret = qla2x00_mem_alloc(ha, req_length, rsp_length, &req, &rsp);
+   [req and rsp are passed by reference, but if this fails, we currently
+    do not NULL out req and rsp. Easily fixed]
+
+PATH 2:
+qla2x00_probe_one
+   failing in qla2x00_request_irqs or qla2x00_alloc_queues
+      probe_failed:
+         qla2x00_free_device(base_vha);
+            qla2x00_free_req_que(ha, req)
+            qla2x00_free_rsp_que(ha, rsp)
+
+PATH 3:
+qla2x00_probe_one:
+   failing in qla2x00_mem_alloc or qla2x00_create_host
+      probe_hw_failed:
+         qla2x00_free_req_que(ha, req)
+         qla2x00_free_rsp_que(ha, rsp)
+
+PATH 1: This should currently work, but it doesn't because rsp and rsp are
+not set to NULL in qla2x00_mem_alloc. Easily remedied.
+
+PATH 2: req and rsp aren't passed in at all to qla2x00_free_device but are
+derived from ha->req_q_map[0] and ha->rsp_q_map[0]. These are only set up if
+qla2x00_alloc_queues succeeds.
+
+In qla2x00_free_queues, we are protected from crashing if these don't exist
+because req_qid_map and rsp_qid_map are only set on their allocation. We are
+guarded in this way:
+
+        for (cnt = 0; cnt < ha->max_req_queues; cnt++) {
+                if (!test_bit(cnt, ha->req_qid_map))
+                        continue;
+
+PATH 3: This works. We haven't freed req or rsp yet (or they were never
+allocated if qla2x00_mem_alloc failed), so we'll attempt to free them here.
+
+To summarize, there are a few small changes to make this work correctly and
+(and for some cleanup):
+
+1) (For PATH 1) Set *rsp and *req to NULL in case of failure in
+qla2x00_mem_alloc so these are correctly set to NULL back in
+qla2x00_probe_one
+
+2) After jumping to probe_failed: and calling qla2x00_free_device,
+explicitly set rsp and req to NULL so further calls with these pointers do
+not crash, i.e. the free queue calls in the probe_hw_failed section we fall
+through to.
+
+3) Fix return code check in the call to qla2x00_alloc_queues. We currently
+drop the return code on the floor. The probe fails but the caller of the
+probe doesn't have an error code, so it attaches to pci. This can result in
+a crash on module shutdown.
+
+4) Remove unnecessary NULL checks in qla2x00_free_req_que,
+qla2x00_free_rsp_que, and the egregious NULL checks before kfrees and vfrees
+in qla2x00_mem_free.
+
+I tested this out running a scenario where the card breaks at various times
+during initialization. I made sure I forced every error exit path in
+qla2x00_probe_one.
+
+Cc: <stable@vger.kernel.org> # v4.16
+Fixes: 6a2cf8d3663e ("scsi: qla2xxx: Fix crashes in qla2x00_probe_one on probe failure")
+Signed-off-by: Bill Kuzeja <william.kuzeja@stratus.com>
+Acked-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/hugetlbfs/inode.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/scsi/qla2xxx/qla_os.c |   44 ++++++++++++++++++++----------------------
+ 1 file changed, 21 insertions(+), 23 deletions(-)
 
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -148,10 +148,14 @@ static int hugetlbfs_file_mmap(struct fi
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -466,9 +466,6 @@ fail_req_map:
  
- 	/*
- 	 * page based offset in vm_pgoff could be sufficiently large to
--	 * overflow a (l)off_t when converted to byte offset.
-+	 * overflow a loff_t when converted to byte offset.  This can
-+	 * only happen on architectures where sizeof(loff_t) ==
-+	 * sizeof(unsigned long).  So, only check in those instances.
- 	 */
--	if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
--		return -EINVAL;
-+	if (sizeof(unsigned long) == sizeof(loff_t)) {
-+		if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
-+			return -EINVAL;
-+	}
+ static void qla2x00_free_req_que(struct qla_hw_data *ha, struct req_que *req)
+ {
+-	if (!ha->req_q_map)
+-		return;
+-
+ 	if (IS_QLAFX00(ha)) {
+ 		if (req && req->ring_fx00)
+ 			dma_free_coherent(&ha->pdev->dev,
+@@ -479,17 +476,14 @@ static void qla2x00_free_req_que(struct
+ 		(req->length + 1) * sizeof(request_t),
+ 		req->ring, req->dma);
  
- 	/* must be huge page aligned */
- 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
+-	if (req) {
++	if (req)
+ 		kfree(req->outstanding_cmds);
+-		kfree(req);
+-	}
++
++	kfree(req);
+ }
+ 
+ static void qla2x00_free_rsp_que(struct qla_hw_data *ha, struct rsp_que *rsp)
+ {
+-	if (!ha->rsp_q_map)
+-		return;
+-
+ 	if (IS_QLAFX00(ha)) {
+ 		if (rsp && rsp->ring)
+ 			dma_free_coherent(&ha->pdev->dev,
+@@ -500,8 +494,7 @@ static void qla2x00_free_rsp_que(struct
+ 		(rsp->length + 1) * sizeof(response_t),
+ 		rsp->ring, rsp->dma);
+ 	}
+-	if (rsp)
+-		kfree(rsp);
++	kfree(rsp);
+ }
+ 
+ static void qla2x00_free_queues(struct qla_hw_data *ha)
+@@ -3083,7 +3076,8 @@ qla2x00_probe_one(struct pci_dev *pdev,
+ 		goto probe_failed;
+ 
+ 	/* Alloc arrays of request and response ring ptrs */
+-	if (qla2x00_alloc_queues(ha, req, rsp)) {
++	ret = qla2x00_alloc_queues(ha, req, rsp);
++	if (ret) {
+ 		ql_log(ql_log_fatal, base_vha, 0x003d,
+ 		    "Failed to allocate memory for queue pointers..."
+ 		    "aborting.\n");
+@@ -3384,8 +3378,15 @@ probe_failed:
+ 	}
+ 
+ 	qla2x00_free_device(base_vha);
+-
+ 	scsi_host_put(base_vha->host);
++	/*
++	 * Need to NULL out local req/rsp after
++	 * qla2x00_free_device => qla2x00_free_queues frees
++	 * what these are pointing to. Or else we'll
++	 * fall over below in qla2x00_free_req/rsp_que.
++	 */
++	req = NULL;
++	rsp = NULL;
+ 
+ probe_hw_failed:
+ 	qla2x00_mem_free(ha);
+@@ -4078,6 +4079,7 @@ fail_npiv_info:
+ 	(*rsp)->dma = 0;
+ fail_rsp_ring:
+ 	kfree(*rsp);
++	*rsp = NULL;
+ fail_rsp:
+ 	dma_free_coherent(&ha->pdev->dev, ((*req)->length + 1) *
+ 		sizeof(request_t), (*req)->ring, (*req)->dma);
+@@ -4085,6 +4087,7 @@ fail_rsp:
+ 	(*req)->dma = 0;
+ fail_req_ring:
+ 	kfree(*req);
++	*req = NULL;
+ fail_req:
+ 	dma_free_coherent(&ha->pdev->dev, sizeof(struct ct_sns_pkt),
+ 		ha->ct_sns, ha->ct_sns_dma);
+@@ -4452,16 +4455,11 @@ qla2x00_mem_free(struct qla_hw_data *ha)
+ 		dma_free_coherent(&ha->pdev->dev, ha->init_cb_size,
+ 			ha->init_cb, ha->init_cb_dma);
+ 
+-	if (ha->optrom_buffer)
+-		vfree(ha->optrom_buffer);
+-	if (ha->nvram)
+-		kfree(ha->nvram);
+-	if (ha->npiv_info)
+-		kfree(ha->npiv_info);
+-	if (ha->swl)
+-		kfree(ha->swl);
+-	if (ha->loop_id_map)
+-		kfree(ha->loop_id_map);
++	vfree(ha->optrom_buffer);
++	kfree(ha->nvram);
++	kfree(ha->npiv_info);
++	kfree(ha->swl);
++	kfree(ha->loop_id_map);
+ 
+ 	ha->srb_mempool = NULL;
+ 	ha->ctx_mempool = NULL;
