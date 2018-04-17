@@ -1,78 +1,72 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AIpwx48ZOssj/9r2ELC0TN/unn3MdnEYgaImDKIqglUitJSVv28Y2PQaor0SX7mldAOa/URfZvAj
-ARC-Seal: i=1; a=rsa-sha256; t=1524319045; cv=none;
+Return-Path: <andresx7@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1523979205; cv=none;
         d=google.com; s=arc-20160816;
-        b=CjIwVi/fK+rt3Y9BDpZ53cUtNm0ZWtKEJJrO2ErQJu2VJVXOB2Ddyg/QNuU2Fhe52D
-         rgbgwIq01WgWPggpHcKwhzZUBmp/PyX4+8lOfBEDj85cAieVtDJEkxPlzGUqf4Pu04tw
-         Gaa6vJI8SURoXC2hj+3VNESJ1JRwSbyHid4x74m/iOLMpSqXiGes1w8AqQCmpiyE6wJm
-         Nh8L0UT1u4EeZ8rXJEM8slBTAsLnlZS6cHXcIYM7uFMbUAutWutxG9gweInAMyVdtQEQ
-         UZRxGZ3iZ8FnfCr9xXVqCMmQPXeHIgSG2TcQM4ndg3gM375szumVASSsWEGhKrp0BRup
-         ys1Q==
+        b=cilKTl7uXokIoDsqE2W09st3WmsEgDvkXnltWCiiE4twgATeOXaDO2V0R10lltYgnw
+         1a8gKvGjCcSpg4wY4A3H2GMfcnlTrQpujFe9TVn5RSTDBQlGnyRQBvCmECAVmmhD/LOL
+         bezvq/ltDNjoTZ19n9DBdHoXN1GpwHQEzysFJYp+qlcZl34S0g5EFAffw6r14NS2xDL0
+         w79LSQ53hmr+PsATYyRkoRKcF/hAsK2z0Qjc7Vx6jD/nQoJSfi6PThKEHHWKYoBSfesf
+         N1FqEHcOEvHfrrWuuWWjxfW2xHpLi8xB7wB7Dq1fS4jhq6X+wMunmOlw5CrlH67Br7eo
+         chWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=K4TUijuLJBoX+aGAenl/bcQfJo+boa4kWUAjscUgAdg=;
-        b=P5yqd4l0WDZmyIp4phzaMGw0FUmUSsX7BCaKN3PvdLyTjUY7KEDbo13hhhksPaEXjp
-         0kGDKJ07sIyIL8MfBcO+gVCSXW2kau4u5CaHQp493XknSWgu9/keWAWmkybldUGjod2J
-         Xb9FvjIwX4v+G35O5zNg/UyCKGtjBOLV/HuAnXFFHpU0OxB3GwA/+huCXEXqbPZ/lA9L
-         czt/6qP30nw7JODKY9MWlkiR43tr3lU9Jf4LfXSa5rlLSLFf1UFSwqo6Nf3ss0J6ZgTQ
-         cFBoSHUmiwxVPUsEAFqPEyU66fBrSHV9jwpRRqHclyRtZmczKnacVErbId9qjKpFazRn
-         qZiw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=FZqLMfP5Fq/FiDTtpf8kPf0+q86JiGVc41UC5mU3ikw=;
+        b=mLZus+dQAT7lx9O5JfCZjyigOTT6IozGKc6eE8FNcrv5hM10D90cGg/DYOnKmZ7FaO
+         4h8LNdyShl2kVqZiFHSikFXq7cc8EI0KP45E+HMlMo8gcEKOfteCBIlzwXiE+pWWliui
+         dC93s9W3AESmdcarpvok2tpoHfGi15xSRZKGd4CSaCx6BxH1OSSezfOeQwvzjH6Z7zuW
+         p7v5NMiGf9UjFCrNJRutU7A5YACwtnEp917X4JgQCCX5VfPirc36lAIHWI+3MsIl6hDC
+         4soPGeXWxMs/DgL18HBx4ZPbg8aMoU0RCD/7jv18ISltnoFA6vb0fvQnhN1tElFpMfBQ
+         l7PQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=skgAl55K;
+       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de
-Date: Sat, 21 Apr 2018 15:57:23 +0200
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Andres Rodriguez <andresx7@gmail.com>
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-	mcgrof@kernel.org, alexdeucher@gmail.com,
-	ckoenig.leichtzumerken@gmail.com, kvalo@codeaurora.org,
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=skgAl55K;
+       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx48DytQ9921vJpH+vB+1xG42x7YB3PDBeuJTo9wEPOwijOCDQguKOqbhLaPmmOoQmST/ubvaqg==
+From: Andres Rodriguez <andresx7@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: andresx7@gmail.com,
+	gregkh@linuxfoundation.org,
+	mcgrof@kernel.org,
+	alexdeucher@gmail.com,
+	ckoenig.leichtzumerken@gmail.com,
+	kvalo@codeaurora.org,
 	arend.vanspriel@broadcom.com
-Subject: Re: [PATCH 2/9] firmware: wrap FW_OPT_* into an enum
-Message-ID: <20180421135723.GO14440@wotan.suse.de>
+Subject: [PATCH 8/9] ath10k: use request_firmware_nowarn to load firmware
+Date: Tue, 17 Apr 2018 11:33:06 -0400
+Message-Id: <20180417153307.3693-9-andresx7@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180417153307.3693-1-andresx7@gmail.com>
 References: <20180417153307.3693-1-andresx7@gmail.com>
- <20180417153307.3693-3-andresx7@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417153307.3693-3-andresx7@gmail.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598008012071756488?=
-X-GMAIL-MSGID: =?utf-8?q?1598364367148072920?=
+X-GMAIL-THRID: =?utf-8?q?1598008019864458634?=
+X-GMAIL-MSGID: =?utf-8?q?1598008019864458634?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 11:33:00AM -0400, Andres Rodriguez wrote:
-> This should let us associate enum kdoc to these values.
-> 
-> Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
-> ---
-> diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
-> index d11d37db370b..957396293b92 100644
-> --- a/drivers/base/firmware_loader/firmware.h
-> +++ b/drivers/base/firmware_loader/firmware.h
-> @@ -10,13 +10,14 @@
->  
->  #include <generated/utsrelease.h>
->  
-> -/* firmware behavior options */
-> -#define FW_OPT_UEVENT			(1U << 0)
-> -#define FW_OPT_NOWAIT			(1U << 1)
-> -#define FW_OPT_USERHELPER		(1U << 2)
-> -#define FW_OPT_NO_WARN			(1U << 3)
-> -#define FW_OPT_NOCACHE			(1U << 4)
-> -#define FW_OPT_NOFALLBACK		(1U << 5)
-> +enum fw_opt {
-> +	FW_OPT_UEVENT =         (1U << 0),
-> +	FW_OPT_NOWAIT =         (1U << 1),
-> +	FW_OPT_USERHELPER =     (1U << 2),
-> +	FW_OPT_NO_WARN =        (1U << 3),
-> +	FW_OPT_NOCACHE =        (1U << 4),
-> +	FW_OPT_NOFALLBACK =     (1U << 5),
-> +};
+This reduces the unnecessary spew when trying to load optional firmware:
+"Direct firmware load for ... failed with error -2"
 
-Please use BIT(i) and include linux/bitops.h instead.
+Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
+---
+ drivers/net/wireless/ath/ath10k/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Luis
+diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
+index f3ec13b80b20..9a225b7ad2d7 100644
+--- a/drivers/net/wireless/ath/ath10k/core.c
++++ b/drivers/net/wireless/ath/ath10k/core.c
+@@ -652,7 +652,7 @@ static const struct firmware *ath10k_fetch_fw_file(struct ath10k *ar,
+ 		dir = ".";
+ 
+ 	snprintf(filename, sizeof(filename), "%s/%s", dir, file);
+-	ret = request_firmware(&fw, filename, ar->dev);
++	ret = request_firmware_nowarn(&fw, filename, ar->dev);
+ 	ath10k_dbg(ar, ATH10K_DBG_BOOT, "boot fw request '%s': %d\n",
+ 		   filename, ret);
+ 
+-- 
+2.14.1
