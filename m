@@ -1,74 +1,273 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755237AbeDQQfc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:35:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754093AbeDQQfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:35:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B16021838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Tue, 17 Apr 2018 13:35:27 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
- x86 syscall func names
-Message-ID: <20180417163527.GA7775@kernel.org>
-References: <20180417115440.2145f7f5@gandalf.local.home>
+        id S1755233AbeDQQgq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:36:46 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59336 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754843AbeDQQgm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:36:42 -0400
+Subject: Re: [PATCH v4 13/15] KVM: s390: configure the guest's AP devices
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <2e7387b9-ceb4-cdca-56ac-f5344084e10a@linux.vnet.ibm.com>
+ <c81ae786-1f37-e9b0-1f1a-1bb00180784c@linux.vnet.ibm.com>
+ <105bce81-9359-6096-88ce-01ec1aef523e@linux.vnet.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Tue, 17 Apr 2018 12:36:33 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417115440.2145f7f5@gandalf.local.home>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <105bce81-9359-6096-88ce-01ec1aef523e@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18041716-0052-0000-0000-000002DD23B2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008871; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01019289; UDB=6.00519990; IPR=6.00798531;
+ MB=3.00020619; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 16:36:38
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041716-0053-0000-0000-00005C5D99A6
+Message-Id: <6eb66344-d200-81d8-6533-aa1f9b53271e@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804170145
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Apr 17, 2018 at 11:54:40AM -0400, Steven Rostedt escreveu:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> Arnaldo noticed that the latest kernel is missing the syscall event system
-> directory in x86. I bisected it down to d5a00528b58c ("syscalls/core,
-> syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()").
-> 
-> The system call trace events are special, as there is only one trace event
-> for all system calls (the raw_syscalls). But a macro that wraps the system
-> calls creates meta data for them that copies the name to find the system
-> call that maps to the system call table (the number). At boot up, it does a
-> kallsyms lookup for this mapping. If it does not find a function, then that
-> system call is ignored.
-> 
-> Because the x86 system calls had "__x86_" appended to the "sys" for the
-> names, they do not match the default compare algorithm. As this was a
-> problem for power pc, the algorithm can be overwritten by the architecture.
-> The solution is to have x86 have its own algorithm to do the compare and
-> this brings back the system call trace events.
-> 
-> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+On 04/17/2018 12:18 PM, Pierre Morel wrote:
+> On 17/04/2018 18:08, Tony Krowiak wrote:
+>> On 04/16/2018 09:05 AM, Pierre Morel wrote:
+>>> On 15/04/2018 23:22, Tony Krowiak wrote:
+>>>> Registers a group notifier during the open of the mediated
+>>>> matrix device to get information on KVM presence through the
+>>>> VFIO_GROUP_NOTIFY_SET_KVM event. When notified, the pointer
+>>>> to the kvm structure is saved inside the mediated matrix
+>>>> device. Once the VFIO AP device driver has access to KVM,
+>>>> access to the APs can be configured for the guest.
+>>>>
+>>>> Access to APs is configured when the file descriptor for the
+>>>> mediated matrix device is opened by userspace. The items to be
+>>>> configured are:
+>>>>
+>>>> 1. The ECA.28 bit in the SIE state description determines whether
+>>>>     AP instructions are interpreted by the hardware or intercepted.
+>>>>     The VFIO AP device driver relies interpretive execution of
+>>>>     AP instructions so the ECA.28 bit will be set
+>>>>
+>>>> 2. Guest access to AP adapters, usage domains and control domains
+>>>>     is controlled by three bit masks referenced from the
+>>>>     Crypto Control Block (CRYCB) referenced from the guest's SIE state
+>>>>     description:
+>>>>
+>>>>     * The AP Mask (APM) controls access to the AP adapters. Each bit
+>>>>       in the APM represents an adapter number - from most significant
+>>>>       to least significant bit - from 0 to 255. The bits in the APM
+>>>>       are set according to the adapter numbers assigned to the 
+>>>> mediated
+>>>>       matrix device via its 'assign_adapter' sysfs attribute file.
+>>>>
+>>>>     * The AP Queue (AQM) controls access to the AP queues. Each bit
+>>>>       in the AQM represents an AP queue index - from most significant
+>>>>       to least significant bit - from 0 to 255. A queue index 
+>>>> references
+>>>>       a specific domain and is synonymous with the domian number. The
+>>>>       bits in the AQM are set according to the domain numbers assigned
+>>>>       to the mediated matrix device via its 'assign_domain' sysfs
+>>>>       attribute file.
+>>>>
+>>>>     * The AP Domain Mask (ADM) controls access to the AP control 
+>>>> domains.
+>>>>       Each bit in the ADM represents a control domain - from most
+>>>>       significant to least significant bit - from 0-255. The
+>>>>       bits in the ADM are set according to the domain numbers assigned
+>>>>       to the mediated matrix device via its 'assign_control_domain'
+>>>>       sysfs attribute file.
+>>>>
+>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>>>> ---
+>>>>   drivers/s390/crypto/vfio_ap_ops.c     |   50 
+>>>> +++++++++++++++++++++++++++++++++
+>>>>   drivers/s390/crypto/vfio_ap_private.h |    2 +
+>>>>   2 files changed, 52 insertions(+), 0 deletions(-)
+>>>>
+>>>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
+>>>> b/drivers/s390/crypto/vfio_ap_ops.c
+>>>> index bc2b05e..e3ff5ab 100644
+>>>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>>>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>>>> @@ -53,6 +53,54 @@ static int vfio_ap_mdev_remove(struct 
+>>>> mdev_device *mdev)
+>>>>       return 0;
+>>>>   }
+>>>>
+>>>> +static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
+>>>> +                       unsigned long action, void *data)
+>>>> +{
+>>>> +    struct ap_matrix_mdev *matrix_mdev;
+>>>> +
+>>>> +    if (action == VFIO_GROUP_NOTIFY_SET_KVM) {
+>>>> +        matrix_mdev = container_of(nb, struct ap_matrix_mdev,
+>>>> +                       group_notifier);
+>>>> +        matrix_mdev->kvm = data;
+>>>> +    }
+>>>> +
+>>>> +    return NOTIFY_OK;
+>>>> +}
+>>>> +
+>>>> +static int vfio_ap_mdev_open(struct mdev_device *mdev)
+>>>> +{
+>>>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>>>> +    unsigned long events;
+>>>> +    int ret;
+>>>> +
+>>>> +    matrix_mdev->group_notifier.notifier_call = 
+>>>> vfio_ap_mdev_group_notifier;
+>>>> +    events = VFIO_GROUP_NOTIFY_SET_KVM;
+>>>> +
+>>>> +    ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+>>>> +                     &events, &matrix_mdev->group_notifier);
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +
+>>>> +    ret = kvm_ap_interpret_instructions(matrix_mdev->kvm, true);
+>>>
+>>> Do you need this call ?
+>>> apie is always enabled in KVM if AP instructions are available.
+>>
+>> I suppose we don't, in which case we don't need the 
+>> kvm_ap_interpret_instructions()
+>> function either ... at least not until we implement interception.
+>>
+>>>
+>>>
+>>> Setting or not the interpretation is done for the VM in a all.
+>>> It is not the right place to do it here since open is device dependent.
+>>
+>> As I stated above, at this time we probably do not need this, however;
+>> that will not always be the case. The setting is and always will be 
+>> for the
+>> VM in all - unless the architecture changes - because it is 
+>> controlled by a
+>> single bit (ECA.28). If you recall, I originally set interpretation 
+>> in the
+>> vfio_ap device driver when notified of the VFIO_GROUP_NOTIFY_SET_KVM 
+>> event.
+>> I believe ultimately that it is the device driver that should set the 
+>> value
+>> for apie.
+>>
+>>
+>>
+>>>
+>>>
+>>> Or we only have one device in the VM at a time.
+>>> In this case, shouldn't we make it official by returning -EEXIST for 
+>>> the second call?
+>>
+>> We do allow only one vfio-ap device at a time. QEMU will allow only 
+>> one vfio-ap device
+>> to be configured for a guest. Should we also put a check in here?
+>
+> QEMU is not the only possible user of this interface.
 
-[root@jouet ~]# perf test openat
- 2: Detect openat syscall event                           : Ok
- 3: Detect openat syscall event on all cpus               : Ok
-15: syscalls:sys_enter_openat event fields                : Ok
-[root@jouet ~]#
+True .... I will put a check in here to make sure only one device is 
+created.
 
-[root@jouet ~]# perf trace -e nanosleep,syscalls:*nanosleep sleep 1
-     0.000 (         ): syscalls:sys_enter_nanosleep:rqtp: 0x7ffd9f737950, rmtp: 0x00000000
-     0.009 (         ): sleep/7905 nanosleep(rqtp: 0x7ffd9f737950                                        ) ...
-  1000.204 (         ): syscalls:sys_exit_nanosleep:0x0
-     0.009 (1000.217 ms): sleep/7905  ... [continued]: nanosleep()) = 0
-[root@jouet ~]#
+>
+>
+>>
+>>>
+>>>
+>>>
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +
+>>>> +    ret = kvm_ap_configure_matrix(matrix_mdev->kvm,
+>>>> +                      matrix_mdev->matrix);
+>>>> +
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +static void vfio_ap_mdev_release(struct mdev_device *mdev)
+>>>> +{
+>>>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>>>> +
+>>>> +    kvm_ap_deconfigure_matrix(matrix_mdev->kvm);
+>>>> +    kvm_ap_interpret_instructions(matrix_mdev->kvm, false);
+>>>
+>>> This call clears the apie in KVM.
+>>> This is only OK if we have a single device present until the end of 
+>>> the VM,
+>>> otherwise AP instructions in the guest will fail after the release 
+>>> until the end of the VM
+>>> or until a new device is plugged.
+>>
+>> See Message ID: 
+>> <1523819244-29954-5-git-send-email-akrowiak@linux.vnet.ibm.com> on the
+>> qemu mailing list. There will be only one vfio-ap device allowed for 
+>> the MVP model.
+>
+> dito.
+> Anyone can write a userland application using this interface.
 
-Works, so the regression seems to be fixed, without looking at the code
-that much:
+See comments above, not to mention I will probably remove this call.
 
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-- Arnaldo
+>
+> <2b053349-071e-17ed-6ebd-a37bcfd2f330@linux.vnet.ibm.com>
+>>
+>>>
+>>>
+>>>
+>>>> + vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+>>>> +                 &matrix_mdev->group_notifier);
+>>>> +}
+>>>> +
+>>>>   static ssize_t name_show(struct kobject *kobj, struct device 
+>>>> *dev, char *buf)
+>>>>   {
+>>>>       return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
+>>>> @@ -754,6 +802,8 @@ static ssize_t matrix_show(struct device *dev, 
+>>>> struct device_attribute *attr,
+>>>>       .mdev_attr_groups    = vfio_ap_mdev_attr_groups,
+>>>>       .create            = vfio_ap_mdev_create,
+>>>>       .remove            = vfio_ap_mdev_remove,
+>>>> +    .open            = vfio_ap_mdev_open,
+>>>> +    .release        = vfio_ap_mdev_release,
+>>>>   };
+>>>>
+>>>>   int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
+>>>> diff --git a/drivers/s390/crypto/vfio_ap_private.h 
+>>>> b/drivers/s390/crypto/vfio_ap_private.h
+>>>> index f248faf..48e2806 100644
+>>>> --- a/drivers/s390/crypto/vfio_ap_private.h
+>>>> +++ b/drivers/s390/crypto/vfio_ap_private.h
+>>>> @@ -31,6 +31,8 @@ struct ap_matrix {
+>>>>
+>>>>   struct ap_matrix_mdev {
+>>>>       struct kvm_ap_matrix *matrix;
+>>>> +    struct notifier_block group_notifier;
+>>>> +    struct kvm *kvm;
+>>>>   };
+>>>>
+>>>>   static inline struct ap_matrix *to_ap_matrix(struct device *dev)
+>>>
+>>>
+>>
+>
