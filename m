@@ -1,47 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752713AbeDQOVZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:21:25 -0400
-Received: from mail-pl0-f49.google.com ([209.85.160.49]:37004 "EHLO
-        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751270AbeDQOVX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:21:23 -0400
-X-Google-Smtp-Source: AIpwx4/l+aAK3gHbuexhJl00kYgpux3qJtYVcwThyZ+uN/0F8AP8Xs5QqQ+V//aDALT/P9iRjrs/1A==
-Date: Tue, 17 Apr 2018 15:21:19 +0100
-From: Matt Fleming <matt@codeblueprint.co.uk>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Mike Galbraith <umgwanakikbuti@gmail.com>
-Subject: cpu stopper threads and load balancing leads to deadlock
-Message-ID: <20180417142119.GA4511@codeblueprint.co.uk>
+        id S1752747AbeDQOVf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:21:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40912 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751270AbeDQOVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:21:33 -0400
+Date: Tue, 17 Apr 2018 22:21:25 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Philipp Rudo <prudo@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+        Dave Young <dyoung@redhat.com>
+Subject: Re: [PATCH v1 0/2] kexec: Remove "weak" annotations from headers
+Message-ID: <20180417142125.GE1750@localhost.localdomain>
+References: <152355706051.36693.9856090891621551967.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180413110820.662d4879@ThinkPad>
+ <20180413092908.GB2119@localhost.localdomain>
+ <20180417140714.GF28657@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24+42 (6e565710a064) (2015-08-30)
+In-Reply-To: <20180417140714.GF28657@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
+On 04/17/18 at 09:07am, Bjorn Helgaas wrote:
+> On Fri, Apr 13, 2018 at 05:29:08PM +0800, Baoquan He wrote:
+> > Hi Bjorn,
+> > 
+> > There are changes I have made to solve 5-level conflict with
+> > kexec/kdump and also interface unification task, they will involve x86
+> > 64 only changes on these functions, I don't think we need remove them if
+> > without any obvious impact or error reported.
+> 
+> Removing the weak attribute from the declaration in the header file
+> does not prevent you from defining a weak function later in the .c
+> file.
 
-We've seen a bug in one of our SLE kernels where the cpu stopper
-thread ("migration/15") is entering idle balance. This then triggers
-active load balance.
+OK, sounds good to me. Then I have no concern to this, thanks.
+Will see if other people have comments.
 
-At the same time, a task on another CPU triggers a page fault and NUMA
-balancing kicks in to try and migrate the task closer to the NUMA node
-for that page (we're inside stop_two_cpus()). This faulting task is
-spinning in try_to_wake_up() (inside smp_cond_load_acquire(&p->on_cpu,
-!VAL)), waiting for "migration/15" to context switch.
-
-Unfortunately, because "migration/15" is doing active load balance
-it's spinning waiting for the NUMA-page-faulting CPU's stopper lock,
-which is already held (since it's inside stop_two_cpus()).
-
-Deadlock ensues.
-
-This seems like a situation that should be prohibited, but I cannot
-find any code to prevent it. Is it OK for stopper threads to load
-balance? Is there something that should prevent this situation from
-happening?
+Thanks
+Baoquan
