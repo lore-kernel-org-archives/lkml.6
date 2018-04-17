@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4/1NcI/AlH+eoy2obh6rx/Fv2dry3xu97TfRCWldaw7BtuuL6ZusLJOF7zhBS3WRxvCi2dW
-ARC-Seal: i=1; a=rsa-sha256; t=1523981297; cv=none;
+X-Google-Smtp-Source: AIpwx4+2Avx5Vum9Q7AYSZx6jEeZ7Riq2XEyErJiNNShYrpyYVE9xz7nxQDxG8sJa9x+ujhZv7Ow
+ARC-Seal: i=1; a=rsa-sha256; t=1523981294; cv=none;
         d=google.com; s=arc-20160816;
-        b=UNuPnnN5TWERrl/5/JZLCE58y9Ym+J23waxba3RoRv+6tsGS3F+AWImIOtbQGW5Z/k
-         YN3hrUX7DkusnEHFccWbFyNaq117L+KkHLgYZpP99trxZQvUlKUVmAh3y/L1xJKpnDpd
-         jou7+t5PvZFY0bm1ADHSEy4f+Jh55xvDt3d+wZgFlAJk7kopaQ2V7ehf7vuoEfYxGfHm
-         NyBEzu+bCM+BCnY0Tppo0WWACas6IAhNI+BHIDX97lqcKWoCcnAMjk0MbMoY5JbwBiaz
-         l7poC555tTKc56KYea7b3o650+4KeiT3jpbVA/4+cY5cOPze0y9O9Ng1Ih0QDBI1ywL3
-         3R9w==
+        b=FXPk/xJzvR3EH6pxBb0NEBtvZVDTaE14gfSMEXcYsHwNLeIeEAEf87rFAjjANPUXf+
+         BnDISXvcaWcUcZky9HjniIb9qt20lUd5l8h26OfD2vdn2zfHU9OoEWnlv6gl5n413lF9
+         j3CkGOIFvhki3TJHPtIBhHlGVLORTko6NF/N2+PXibLZE5P3csCzs2sDXuVwmP44aOAe
+         KB4mw38cv0Kz7b1hdjbPFkbBR3FeRj64c3kjXqqR3PKccSt4DErKNVJZP5ntcWWMc1Rz
+         VtuuQbvOuNu4KvXx7eVBzn27XNtfRGToK6dtYW9f2kMTnvau8f0SoT0viq4NkyYBhl7A
+         mUGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=ilNKYfVdMdrzvAM8nORJTrAF6BlaRIAbNfK7T8WqzYw=;
-        b=Ta1Knmb0rGNFNzjLoGQBsSsGvIRF5qyvmQKa4rKWgG0JeIfBP27nLZo5fGKhjMYBND
-         96HpqRWBIKe4v7b/4bA9Nt7Wx1ZNn/n6qrOv3FfZHc6lCIpkWltV5za2VigyR+mLEh5w
-         IumiC+QE1wCfRzAqCy5x5u109gQBMsZP57OGQJR08nx/vLNESxLh5DQbiozbEvJ8xrbb
-         6G/IbzsfgJ1glCDj5g0Scfr+o9Cs5UiArWaYAJ8SHHsZqDaNILRdr35zKAnIUD5Wedec
-         t7mhQ+oGxPYXfvn7kcPufq6OsgY91lCzdO/co9T2GuTmxjm35F6x208CIAt8u3OhWlUk
-         ea7g==
+        bh=+eTBaY3ygIElg2u4TNSyETlkkkSciCJSynTAWKyaF7I=;
+        b=UhaH4B7DuvPX5/Xu1ZptZ/thSasqD1YrrbZp5oKUi6peCAPlIVFslTl4gDkbrTP+dk
+         BZRm3dsxGSlVvqh8JZ95NGFJYpSaRgl+i+A0Sv4pb7t5ocYog6UGHNxLkrOfWskLqAIg
+         pU0XOomvx7TFCMJXDM2ye0cPb4WiEHB8wyLrRhrmj63w/E3e9BG7obEiVg6/y2qpgZ1g
+         FRx4m4287ALqSQ7wQ/C/eqfubJhU2YgetDGm1ijODz2XUQA9vanO7saoCt/idndrAGeS
+         1p0GYHXabVNWvHBcUMvMUmWFVbcpW2W5wnq82QU4xuZSB0D5ZA6ljhAnd/VGoPTb2Fi/
+         fVAw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Greg Hackmann <ghackmann@google.com>,
 	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.9 14/66] arm64: Use pointer masking to limit uaccess speculation
-Date: Tue, 17 Apr 2018 17:58:47 +0200
-Message-Id: <20180417155646.457770527@linuxfoundation.org>
+Subject: [PATCH 4.9 13/66] arm64: Make USER_DS an inclusive limit
+Date: Tue, 17 Apr 2018 17:58:46 +0200
+Message-Id: <20180417155646.416874832@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010212913590085?=
-X-GMAIL-MSGID: =?utf-8?q?1598010212913590085?=
+X-GMAIL-THRID: =?utf-8?q?1598010210208261632?=
+X-GMAIL-MSGID: =?utf-8?q?1598010210208261632?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,79 +57,147 @@ From: Mark Rutland <mark.rutland@arm.com>
 
 From: Robin Murphy <robin.murphy@arm.com>
 
-commit 4d8efc2d5ee4c9ccfeb29ee8afd47a8660d0c0ce upstream.
+commit 51369e398d0d33e8f524314e672b07e8cf870e79 upstream.
 
-Similarly to x86, mitigate speculation past an access_ok() check by
-masking the pointer against the address limit before use.
+Currently, USER_DS represents an exclusive limit while KERNEL_DS is
+inclusive. In order to do some clever trickery for speculation-safe
+masking, we need them both to behave equivalently - there aren't enough
+bits to make KERNEL_DS exclusive, so we have precisely one option. This
+also happens to correct a longstanding false negative for a range
+ending on the very top byte of kernel memory.
 
-Even if we don't expect speculative writes per se, it is plausible that
-a CPU may still speculate at least as far as fetching a cache line for
-writing, hence we also harden put_user() and clear_user() for peace of
-mind.
+Mark Rutland points out that we've actually got the semantics of
+addresses vs. segments muddled up in most of the places we need to
+amend, so shuffle the {USER,KERNEL}_DS definitions around such that we
+can correct those properly instead of just pasting "-1"s everywhere.
 
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+[v4.9: avoid dependence on TTBR0 SW PAN and THREAD_INFO_IN_TASK_STRUCT]
 Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
 Tested-by: Greg Hackmann <ghackmann@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/uaccess.h |   26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ arch/arm64/include/asm/processor.h |    3 ++
+ arch/arm64/include/asm/uaccess.h   |   46 +++++++++++++++++++++----------------
+ arch/arm64/kernel/entry.S          |    4 +--
+ arch/arm64/mm/fault.c              |    2 -
+ 4 files changed, 33 insertions(+), 22 deletions(-)
 
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -129,6 +129,26 @@ static inline unsigned long __range_ok(u
- 	"	.popsection\n"
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -21,6 +21,9 @@
+ 
+ #define TASK_SIZE_64		(UL(1) << VA_BITS)
+ 
++#define KERNEL_DS	UL(-1)
++#define USER_DS		(TASK_SIZE_64 - 1)
++
+ #ifndef __ASSEMBLY__
  
  /*
-+ * Sanitise a uaccess pointer such that it becomes NULL if above the
-+ * current addr_limit.
-+ */
-+#define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
-+static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -28,6 +28,7 @@
+ 
+ #include <asm/alternative.h>
+ #include <asm/cpufeature.h>
++#include <asm/processor.h>
+ #include <asm/ptrace.h>
+ #include <asm/sysreg.h>
+ #include <asm/errno.h>
+@@ -59,10 +60,7 @@ struct exception_table_entry
+ 
+ extern int fixup_exception(struct pt_regs *regs);
+ 
+-#define KERNEL_DS	(-1UL)
+ #define get_ds()	(KERNEL_DS)
+-
+-#define USER_DS		TASK_SIZE_64
+ #define get_fs()	(current_thread_info()->addr_limit)
+ 
+ static inline void set_fs(mm_segment_t fs)
+@@ -87,22 +85,32 @@ static inline void set_fs(mm_segment_t f
+  * Returns 1 if the range is valid, 0 otherwise.
+  *
+  * This is equivalent to the following test:
+- * (u65)addr + (u65)size <= current->addr_limit
+- *
+- * This needs 65-bit arithmetic.
++ * (u65)addr + (u65)size <= (u65)current->addr_limit + 1
+  */
+-#define __range_ok(addr, size)						\
+-({									\
+-	unsigned long __addr = (unsigned long __force)(addr);		\
+-	unsigned long flag, roksum;					\
+-	__chk_user_ptr(addr);						\
+-	asm("adds %1, %1, %3; ccmp %1, %4, #2, cc; cset %0, ls"		\
+-		: "=&r" (flag), "=&r" (roksum)				\
+-		: "1" (__addr), "Ir" (size),				\
+-		  "r" (current_thread_info()->addr_limit)		\
+-		: "cc");						\
+-	flag;								\
+-})
++static inline unsigned long __range_ok(unsigned long addr, unsigned long size)
 +{
-+	void __user *safe_ptr;
++	unsigned long limit = current_thread_info()->addr_limit;
 +
++	__chk_user_ptr(addr);
 +	asm volatile(
-+	"	bics	xzr, %1, %2\n"
-+	"	csel	%0, %1, xzr, eq\n"
-+	: "=&r" (safe_ptr)
-+	: "r" (ptr), "r" (current_thread_info()->addr_limit)
-+	: "cc");
++	// A + B <= C + 1 for all A,B,C, in four easy steps:
++	// 1: X = A + B; X' = X % 2^64
++	"	adds	%0, %0, %2\n"
++	// 2: Set C = 0 if X > 2^64, to guarantee X' > C in step 4
++	"	csel	%1, xzr, %1, hi\n"
++	// 3: Set X' = ~0 if X >= 2^64. For X == 2^64, this decrements X'
++	//    to compensate for the carry flag being set in step 4. For
++	//    X > 2^64, X' merely has to remain nonzero, which it does.
++	"	csinv	%0, %0, xzr, cc\n"
++	// 4: For X < 2^64, this gives us X' - C - 1 <= 0, where the -1
++	//    comes from the carry in being clear. Otherwise, we are
++	//    testing X' - C == 0, subject to the previous adjustments.
++	"	sbcs	xzr, %0, %1\n"
++	"	cset	%0, ls\n"
++	: "+r" (addr), "+r" (limit) : "Ir" (size) : "cc");
 +
-+	csdb();
-+	return safe_ptr;
++	return addr;
 +}
-+
-+/*
-  * The "__xxx" versions of the user access functions do not verify the address
-  * space - it must have been done previously with a separate "access_ok()"
-  * call.
-@@ -202,7 +222,7 @@ do {									\
- 	__typeof__(*(ptr)) __user *__p = (ptr);				\
- 	might_fault();							\
- 	access_ok(VERIFY_READ, __p, sizeof(*__p)) ?			\
--		__get_user((x), __p) :					\
-+		__p = uaccess_mask_ptr(__p), __get_user((x), __p) :	\
- 		((x) = 0, -EFAULT);					\
- })
  
-@@ -270,7 +290,7 @@ do {									\
- 	__typeof__(*(ptr)) __user *__p = (ptr);				\
- 	might_fault();							\
- 	access_ok(VERIFY_WRITE, __p, sizeof(*__p)) ?			\
--		__put_user((x), __p) :					\
-+		__p = uaccess_mask_ptr(__p), __put_user((x), __p) :	\
- 		-EFAULT;						\
- })
+ /*
+  * When dealing with data aborts, watchpoints, or instruction traps we may end
+@@ -111,7 +119,7 @@ static inline void set_fs(mm_segment_t f
+  */
+ #define untagged_addr(addr)		sign_extend64(addr, 55)
  
-@@ -331,7 +351,7 @@ static inline unsigned long __must_check
- static inline unsigned long __must_check clear_user(void __user *to, unsigned long n)
- {
- 	if (access_ok(VERIFY_WRITE, to, n))
--		n = __clear_user(to, n);
-+		n = __clear_user(__uaccess_mask_ptr(to), n);
- 	return n;
- }
+-#define access_ok(type, addr, size)	__range_ok(addr, size)
++#define access_ok(type, addr, size)	__range_ok((unsigned long)(addr), size)
+ #define user_addr_max			get_fs
  
+ #define _ASM_EXTABLE(from, to)						\
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -126,10 +126,10 @@ alternative_else_nop_endif
+ 	.else
+ 	add	x21, sp, #S_FRAME_SIZE
+ 	get_thread_info tsk
+-	/* Save the task's original addr_limit and set USER_DS (TASK_SIZE_64) */
++	/* Save the task's original addr_limit and set USER_DS */
+ 	ldr	x20, [tsk, #TI_ADDR_LIMIT]
+ 	str	x20, [sp, #S_ORIG_ADDR_LIMIT]
+-	mov	x20, #TASK_SIZE_64
++	mov	x20, #USER_DS
+ 	str	x20, [tsk, #TI_ADDR_LIMIT]
+ 	/* No need to reset PSTATE.UAO, hardware's already set it to 0 for us */
+ 	.endif /* \el == 0 */
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -332,7 +332,7 @@ static int __kprobes do_page_fault(unsig
+ 		mm_flags |= FAULT_FLAG_WRITE;
+ 	}
+ 
+-	if (is_permission_fault(esr) && (addr < USER_DS)) {
++	if (is_permission_fault(esr) && (addr < TASK_SIZE)) {
+ 		/* regs->orig_addr_limit may be 0 if we entered from EL0 */
+ 		if (regs->orig_addr_limit == KERNEL_DS)
+ 			die("Accessing user space memory with fs=KERNEL_DS", regs, esr);
