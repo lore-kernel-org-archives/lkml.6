@@ -1,121 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752570AbeDQOEb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:04:31 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:44382 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751270AbeDQOE3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:04:29 -0400
-X-Google-Smtp-Source: AIpwx4+3sQNh2FB82JAIHphQ9d1YmtJB880buMh2A9wW+OnNms6O4jDftpNj1PyeaE/3wQsRXOyll6dM57GA4uEHCGo=
+        id S1752833AbeDQOFD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:05:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56106 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752082AbeDQOFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:05:00 -0400
+Date: Tue, 17 Apr 2018 17:04:59 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: Jason Wang <jasowang@redhat.com>, wexu@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        jfreimann@redhat.com
+Subject: Re: [RFC v2] virtio: support packed ring
+Message-ID: <20180417170354-mutt-send-email-mst@kernel.org>
+References: <20180401141216.8969-1-tiwei.bie@intel.com>
+ <ebfbfc3e-9e52-9331-61b6-258e131f822d@redhat.com>
+ <20180413071529.f4esh654dakodf4f@debian>
+ <8dee7d62-ac0b-54ba-6bec-4bc4a6fb34e9@redhat.com>
+ <20180417025133.7t7exmizgolr565z@debian>
+ <20180417151654-mutt-send-email-mst@kernel.org>
+ <20180417124716.wsypd5zl4n4galrz@debian>
 MIME-Version: 1.0
-In-Reply-To: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Apr 2018 16:04:27 +0200
-X-Google-Sender-Auth: 16_Wvygr1pCXa4LEQ3mqhWwwPmk
-Message-ID: <CAMuHMdX876iXo-Mio-VxUmR9hq9WFhNtOAn_XdhjFgNvDvXJvg@mail.gmail.com>
-Subject: Re: [PATCH] sh: mm: Fix unprotected access to struct device
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180417124716.wsypd5zl4n4galrz@debian>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On Tue, Apr 17, 2018 at 08:47:16PM +0800, Tiwei Bie wrote:
+> On Tue, Apr 17, 2018 at 03:17:41PM +0300, Michael S. Tsirkin wrote:
+> > On Tue, Apr 17, 2018 at 10:51:33AM +0800, Tiwei Bie wrote:
+> > > On Tue, Apr 17, 2018 at 10:11:58AM +0800, Jason Wang wrote:
+> > > > On 2018年04月13日 15:15, Tiwei Bie wrote:
+> > > > > On Fri, Apr 13, 2018 at 12:30:24PM +0800, Jason Wang wrote:
+> > > > > > On 2018年04月01日 22:12, Tiwei Bie wrote:
+> > > [...]
+> > > > > > > +static int detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
+> > > > > > > +			      void **ctx)
+> > > > > > > +{
+> > > > > > > +	struct vring_packed_desc *desc;
+> > > > > > > +	unsigned int i, j;
+> > > > > > > +
+> > > > > > > +	/* Clear data ptr. */
+> > > > > > > +	vq->desc_state[head].data = NULL;
+> > > > > > > +
+> > > > > > > +	i = head;
+> > > > > > > +
+> > > > > > > +	for (j = 0; j < vq->desc_state[head].num; j++) {
+> > > > > > > +		desc = &vq->vring_packed.desc[i];
+> > > > > > > +		vring_unmap_one_packed(vq, desc);
+> > > > > > > +		desc->flags = 0x0;
+> > > > > > Looks like this is unnecessary.
+> > > > > It's safer to zero it. If we don't zero it, after we
+> > > > > call virtqueue_detach_unused_buf_packed() which calls
+> > > > > this function, the desc is still available to the
+> > > > > device.
+> > > > 
+> > > > Well detach_unused_buf_packed() should be called after device is stopped,
+> > > > otherwise even if you try to clear, there will still be a window that device
+> > > > may use it.
+> > > 
+> > > This is not about whether the device has been stopped or
+> > > not. We don't have other places to re-initialize the ring
+> > > descriptors and wrap_counter. So they need to be set to
+> > > the correct values when doing detach_unused_buf.
+> > > 
+> > > Best regards,
+> > > Tiwei Bie
+> > 
+> > find vqs is the time to do it.
+> 
+> The .find_vqs() will call .setup_vq() which will eventually
+> call vring_create_virtqueue(). It's a different case. Here
+> we're talking about re-initializing the descs and updating
+> the wrap counter when detaching the unused descs (In this
+> case, split ring just needs to decrease vring.avail->idx).
+> 
+> Best regards,
+> Tiwei Bie
 
-Thanks for your patch!
-
-On Tue, Apr 17, 2018 at 3:35 PM, Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
-> operations observe dev->dma_pfn_offset") the generic DMA allocation
-> function on which the SH 'dma_alloc_coherent()' function relies on,
-> access the 'dma_pfn_offset' field of struct device.
-
-accesses
-
-> Unfortunately the 'dma_generic_alloc_coherent()' function is called from
-> several places with a NULL struct device argument, halting the CPU
-> during the boot process.
->
-> This patch fixes the issue protecting access to dev->dma_pfn_offset,
-
-by protecting access to the
-
-> with a trivial check for validity. It also passes a valid 'struct device'
-> in the 'platform_resource_setup_memory' function which is the main user
-> of 'dma_alloc_coherent()', and inserting a WARN_ON() check to make future
-> (and existing) bogus users of this function they're should provide a valid
-
-drop "they're should"?
-
-> 'struct device' whenever possible.
-
-> --- a/arch/sh/mm/consistent.c
-> +++ b/arch/sh/mm/consistent.c
-> @@ -39,6 +39,8 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
->         void *ret, *ret_nocache;
->         int order = get_order(size);
->
-> +       WARN_ON(!dev);
-> +
->         gfp |= __GFP_ZERO;
->
->         ret = (void *)__get_free_pages(gfp, order);
-> @@ -59,7 +61,9 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
->
->         split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
->
-> -       *dma_handle = virt_to_phys(ret) - PFN_PHYS(dev->dma_pfn_offset);
-> +       *dma_handle = virt_to_phys(ret);
-> +       if (dev)
-> +               *dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
-
-I would keep the WARN_ON() and the (ideally unneeded) dev check as close
-to each other as possible:
-
-        if (!WARN_ON(!dev))
-                *dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
-
->
->         return ret_nocache;
->  }
-> @@ -69,9 +73,14 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
->                                unsigned long attrs)
->  {
->         int order = get_order(size);
-> -       unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
-> +       unsigned long pfn = (dma_handle >> PAGE_SHIFT);
->         int k;
->
-> +       WARN_ON(!dev);
-> +
-> +       if (dev)
-> +               pfn += dev->dma_pfn_offset;
-
-        if (!WARN_ON(!dev))
-                pfn += dev->dma_pfn_offset;
-
-> +
->         for (k = 0; k < (1 << order); k++)
->                 __free_pages(pfn_to_page(pfn + k), 0);
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
+There's no requirement that  virtqueue_detach_unused_buf re-initializes
+the descs. It happens on cleanup path just before drivers delete the
+vqs.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MST
