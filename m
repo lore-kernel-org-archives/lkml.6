@@ -1,151 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754007AbeDQOgr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:36:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752744AbeDQOgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:36:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 189DB206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
-From: Andy Lutomirski <luto@kernel.org>
-To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH] x86/entry/64/compat: Preserve r8-r11 in int $0x80
-Date: Tue, 17 Apr 2018 07:36:36 -0700
-Message-Id: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
-X-Mailer: git-send-email 2.14.3
+        id S1754029AbeDQOhK (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:37:10 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:38147 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752687AbeDQOhG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:37:06 -0400
+X-Google-Smtp-Source: AIpwx4/++qPYpLYz3V2X1Rqg6tjjIfTaq9HzmR3G/dVHHnvJQaIT1WBLv+u43AhPkMXFv7P6xDCcHw==
+From: "Jingoo Han" <jingoohan1@gmail.com>
+To: "'Gustavo Pimentel'" <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <kishon@ti.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+Cc: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <cover.1523973931.git.gustavo.pimentel@synopsys.com> <4fc069a2b82cc7a3790bc528a6b67636654a3a35.1523973931.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <4fc069a2b82cc7a3790bc528a6b67636654a3a35.1523973931.git.gustavo.pimentel@synopsys.com>
+Subject: Re: [PATCH v5 09/10] PCI: dwc: Small computation improvement
+Date: Tue, 17 Apr 2018 10:37:00 -0400
+Message-ID: <000001d3d659$8dd02c20$a9708460$@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-us
+Thread-Index: AQHVbgOWkc7ZUiVCjpvNKWyHNduXLQKl7+1qo+ynS+A=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-32-bit user code that uses int $80 doesn't care about r8-r11.  There is,
-however, some 64-bit user code that intentionally uses int $0x80 to
-invoke 32-bit system calls.  From what I've seen, basically all such
-code assumes that r8-r15 are all preserved, but the kernel clobbers
-r8-r11.  Since I doubt that there's any code that depends on int $0x80
-zeroing r8-r11, change the kernel to preserve them.
+On Tuesday, April 17, 2018 10:34 AM, Gustavo Pimentel wrote:
+> 
+> Replaces a simple division by 2 to a right shift rotation of 1 bit.
+> 
+> Probably any recent and decent compiler does this kind of substitution
+> in order to improve code performance. Nevertheless it's a coding good
+> practice whenever there is a division / multiplication by multiple of 2
+> to replace it by the equivalent operation in this case, the shift
+> rotation.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 
-I suspect that very little user code is broken by the old clobber,
-since r8-r11 are only rarely allocated by gcc, and they're clobbered
-by function calls, so they only way we'd see a problem is if the
-same function that invokes int $0x80 also spills something important
-to one of these registers.
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
 
-The current behavior seems to date back to the historical commit
-"[PATCH] x86-64 merge for 2.6.4".  Before that, all regs were
-preserved.  I can't find any explanation of why this change was made.
-
-This patch also updates the test_syscall_vdso_32 testcase to verify
-the new behavior, and it strengthens the test to make sure that
-the kernel doesn't accidentally permute r8..r15.
-
-Suggested-by: Denys Vlasenko <dvlasenk@redhat.com>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
-
-Ingo, Thomas: this could be a -stable candidate, but it's apparently not
-severe enough for many people to have noticed.
-
- arch/x86/entry/entry_64_compat.S                |  8 +++---
- tools/testing/selftests/x86/test_syscall_vdso.c | 35 +++++++++++++++----------
- 2 files changed, 25 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index 08425c42f8b7..e4b94b7494c6 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -368,13 +368,13 @@ ENTRY(entry_INT80_compat)
- 	pushq	%rdx			/* pt_regs->dx */
- 	pushq	%rcx			/* pt_regs->cx */
- 	pushq	$-ENOSYS		/* pt_regs->ax */
--	pushq   $0			/* pt_regs->r8  = 0 */
-+	pushq   %r8			/* pt_regs->r8 */
- 	xorl	%r8d, %r8d		/* nospec   r8 */
--	pushq   $0			/* pt_regs->r9  = 0 */
-+	pushq   %r9			/* pt_regs->r9 */
- 	xorl	%r9d, %r9d		/* nospec   r9 */
--	pushq   $0			/* pt_regs->r10 = 0 */
-+	pushq   %r10			/* pt_regs->r10 */
- 	xorl	%r10d, %r10d		/* nospec   r10 */
--	pushq   $0			/* pt_regs->r11 = 0 */
-+	pushq   %r11			/* pt_regs->r11 */
- 	xorl	%r11d, %r11d		/* nospec   r11 */
- 	pushq   %rbx                    /* pt_regs->rbx */
- 	xorl	%ebx, %ebx		/* nospec   rbx */
-diff --git a/tools/testing/selftests/x86/test_syscall_vdso.c b/tools/testing/selftests/x86/test_syscall_vdso.c
-index 40370354d4c1..c9c3281077bc 100644
---- a/tools/testing/selftests/x86/test_syscall_vdso.c
-+++ b/tools/testing/selftests/x86/test_syscall_vdso.c
-@@ -100,12 +100,19 @@ asm (
- 	"	shl	$32, %r8\n"
- 	"	orq	$0x7f7f7f7f, %r8\n"
- 	"	movq	%r8, %r9\n"
--	"	movq	%r8, %r10\n"
--	"	movq	%r8, %r11\n"
--	"	movq	%r8, %r12\n"
--	"	movq	%r8, %r13\n"
--	"	movq	%r8, %r14\n"
--	"	movq	%r8, %r15\n"
-+	"	incq	%r9\n"
-+	"	movq	%r9, %r10\n"
-+	"	incq	%r10\n"
-+	"	movq	%r10, %r11\n"
-+	"	incq	%r11\n"
-+	"	movq	%r11, %r12\n"
-+	"	incq	%r12\n"
-+	"	movq	%r12, %r13\n"
-+	"	incq	%r13\n"
-+	"	movq	%r13, %r14\n"
-+	"	incq	%r14\n"
-+	"	movq	%r14, %r15\n"
-+	"	incq	%r15\n"
- 	"	ret\n"
- 	"	.code32\n"
- 	"	.popsection\n"
-@@ -128,12 +135,13 @@ int check_regs64(void)
- 	int err = 0;
- 	int num = 8;
- 	uint64_t *r64 = &regs64.r8;
-+	uint64_t expected = 0x7f7f7f7f7f7f7f7fULL;
- 
- 	if (!kernel_is_64bit)
- 		return 0;
- 
- 	do {
--		if (*r64 == 0x7f7f7f7f7f7f7f7fULL)
-+		if (*r64 == expected++)
- 			continue; /* register did not change */
- 		if (syscall_addr != (long)&int80) {
- 			/*
-@@ -147,18 +155,17 @@ int check_regs64(void)
- 				continue;
- 			}
- 		} else {
--			/* INT80 syscall entrypoint can be used by
-+			/*
-+			 * INT80 syscall entrypoint can be used by
- 			 * 64-bit programs too, unlike SYSCALL/SYSENTER.
- 			 * Therefore it must preserve R12+
- 			 * (they are callee-saved registers in 64-bit C ABI).
- 			 *
--			 * This was probably historically not intended,
--			 * but R8..11 are clobbered (cleared to 0).
--			 * IOW: they are the only registers which aren't
--			 * preserved across INT80 syscall.
-+			 * Starting in Linux 4.17 (and any kernel that
-+			 * backports the change), R8..11 are preserved.
-+			 * Historically (and probably unintentionally), they
-+			 * were clobbered or zeroed.
- 			 */
--			if (*r64 == 0 && num <= 11)
--				continue;
- 		}
- 		printf("[FAIL]\tR%d has changed:%016llx\n", num, *r64);
- 		err++;
--- 
-2.14.3
+> ---
+> Change v1->v2:
+>  - Nothing changed, just to follow the patch set version.
+> Change v2->v3:
+>  - Nothing changed, just to follow the patch set version.
+> Changes v3->v4:
+>  - Added a small explication to the log description.
+> Changes v4->v5:
+>  - Nothing changed, just to follow the patch set version.
+> 
+>  drivers/pci/dwc/pcie-designware-host.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/dwc/pcie-designware-host.c
+> b/drivers/pci/dwc/pcie-designware-host.c
+> index 5a23f78..fc55fde 100644
+> --- a/drivers/pci/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/dwc/pcie-designware-host.c
+> @@ -332,8 +332,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
+> 
+>  	cfg_res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> "config");
+>  	if (cfg_res) {
+> -		pp->cfg0_size = resource_size(cfg_res) / 2;
+> -		pp->cfg1_size = resource_size(cfg_res) / 2;
+> +		pp->cfg0_size = resource_size(cfg_res) >> 1;
+> +		pp->cfg1_size = resource_size(cfg_res) >> 1;
+>  		pp->cfg0_base = cfg_res->start;
+>  		pp->cfg1_base = cfg_res->start + pp->cfg0_size;
+>  	} else if (!pp->va_cfg0_base) {
+> @@ -377,8 +377,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
+>  			break;
+>  		case 0:
+>  			pp->cfg = win->res;
+> -			pp->cfg0_size = resource_size(pp->cfg) / 2;
+> -			pp->cfg1_size = resource_size(pp->cfg) / 2;
+> +			pp->cfg0_size = resource_size(pp->cfg) >> 1;
+> +			pp->cfg1_size = resource_size(pp->cfg) >> 1;
+>  			pp->cfg0_base = pp->cfg->start;
+>  			pp->cfg1_base = pp->cfg->start + pp->cfg0_size;
+>  			break;
+> --
+> 2.7.4
+> 
