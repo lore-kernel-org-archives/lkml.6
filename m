@@ -1,134 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752709AbeDQLeN (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 07:34:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34120 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752048AbeDQLeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 07:34:11 -0400
-Date: Tue, 17 Apr 2018 13:34:03 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-Subject: Re: [PATCH v4 02/15] KVM: s390: reset crypto attributes for all
- vcpus
-Message-ID: <20180417133403.6fd7627a.cohuck@redhat.com>
-In-Reply-To: <1523827345-11600-3-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1523827345-11600-3-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1752757AbeDQLfL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 07:35:11 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:15975 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752087AbeDQLfJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 07:35:09 -0400
+From: Philippe Cornu <philippe.cornu@st.com>
+To: Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH] drm/stm: ltdc: fix deferred endpoint management
+Date: Tue, 17 Apr 2018 13:34:41 +0200
+Message-ID: <20180417113441.8214-1-philippe.cornu@st.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.32]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 15 Apr 2018 17:22:12 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+When a driver related to one of the endpoints is deferred
+due to probe dependencies (i2c, spi...) but the other one
+is ready, ltdc probe continues and the deferred driver
+will never be probed again.
 
-> Introduces a new function to reset the crypto attributes for all
-> vcpus whether they are running or not. Each vcpu in KVM will
-> be removed from SIE prior to resetting the crypto attributes in its
-> SIE state description. After all vcpus have had their crypto attributes
-> reset the vcpus will be restored to SIE.
-> 
-> This function will be used in a later patch to set the ECA.28
-> bit in the SIE state description to enable interpretive execution of
-> AP instructions. It will also be incorporated into the
-> kvm_s390_vm_set_crypto(kvm) function to fix an issue whereby the crypto
-> key wrapping attributes could potentially get out of synch for running
-> vcpus.
+The fix consists in waiting for all deferred endpoints before
+continuing the ltdc probe.
 
-So, this description leads me to think it would make sense to queue
-this patch (fixing the key wrapping) independently of this series,
-wouldn't it?
+Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+---
+ drivers/gpu/drm/stm/ltdc.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
->  arch/s390/kvm/kvm-s390.c |   19 +++++++++++++------
->  arch/s390/kvm/kvm-s390.h |   14 ++++++++++++++
->  2 files changed, 27 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-> index 64c9862..d0c3518 100644
-> --- a/arch/s390/kvm/kvm-s390.c
-> +++ b/arch/s390/kvm/kvm-s390.c
-> @@ -791,11 +791,21 @@ static int kvm_s390_set_mem_control(struct kvm *kvm, struct kvm_device_attr *att
->  
->  static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu);
->  
-> -static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
-> +void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
-
-_reset_all() or _set_all()? Don't really care much, tbh.
-
->  {
-> -	struct kvm_vcpu *vcpu;
->  	int i;
-> +	struct kvm_vcpu *vcpu;
-
-I'd avoid swapping the order of the declarations.
-
-> +
-> +	kvm_s390_vcpu_block_all(kvm);
-> +
-> +	kvm_for_each_vcpu(i, vcpu, kvm)
-> +		kvm_s390_vcpu_crypto_setup(vcpu);
->  
-> +	kvm_s390_vcpu_unblock_all(kvm);
-> +}
-> +
-> +static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
-> +{
->  	if (!test_kvm_facility(kvm, 76))
->  		return -EINVAL;
->  
-> @@ -832,10 +842,7 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_attr *attr)
->  		return -ENXIO;
->  	}
->  
-> -	kvm_for_each_vcpu(i, vcpu, kvm) {
-> -		kvm_s390_vcpu_crypto_setup(vcpu);
-> -		exit_sie(vcpu);
-> -	}
-> +	kvm_s390_vcpu_crypto_reset_all(kvm);
->  	mutex_unlock(&kvm->lock);
->  	return 0;
->  }
-> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
-> index 1b5621f..76324b7 100644
-> --- a/arch/s390/kvm/kvm-s390.h
-> +++ b/arch/s390/kvm/kvm-s390.h
-> @@ -410,4 +410,18 @@ static inline int kvm_s390_use_sca_entries(void)
->  }
->  void kvm_s390_reinject_machine_check(struct kvm_vcpu *vcpu,
->  				     struct mcck_volatile_info *mcck_info);
-> +
-> +/**
-> + * kvm_s390_vcpu_crypto_reset_all
-> + *
-> + * Reset the crypto attributes for each vcpu. This can be done while the vcpus
-> + * are running as each vcpu will be removed from SIE before resetting the crypto
-> + * attributes and restored to SIE afterward.
-> + *
-> + * Note: The kvm->lock mutex must be locked prior to calling this function and
-> + *	 unlocked after it returns.
-
-"Must be called with kvm->lock held"?
-
-> + *
-> + * @kvm: the KVM guest
-> + */
-> +void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm);
->  #endif
-
-Other than the nits above, looks good to me.
+diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+index e3121d9e4230..014cef8cef37 100644
+--- a/drivers/gpu/drm/stm/ltdc.c
++++ b/drivers/gpu/drm/stm/ltdc.c
+@@ -987,14 +987,13 @@ int ltdc_load(struct drm_device *ddev)
+ 						  &bridge[i]);
+ 
+ 		/*
+-		 * If at least one endpoint is ready, continue probing,
+-		 * else if at least one endpoint is -EPROBE_DEFER and
+-		 * there is no previous ready endpoints, defer probing.
++		 * If at least one endpoint is -EPROBE_DEFER, defer probing,
++		 * else if at least one endpoint is ready, continue probing.
+ 		 */
+-		if (!ret)
++		if (ret == -EPROBE_DEFER)
++			return ret;
++		else if (!ret)
+ 			endpoint_not_ready = 0;
+-		else if (ret == -EPROBE_DEFER && endpoint_not_ready)
+-			endpoint_not_ready = -EPROBE_DEFER;
+ 	}
+ 
+ 	if (endpoint_not_ready)
+-- 
+2.15.1
