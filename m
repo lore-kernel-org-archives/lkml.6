@@ -1,157 +1,167 @@
-Return-Path: <kernel-hardening-return-13047-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49bGe7ALPvqPeGSU36roli2BpjrSmnXSPWG2YeAj3hKMuQS61DiKreRmTKn23q7oWhHqeVH
-ARC-Seal: i=1; a=rsa-sha256; t=1524089750; cv=none;
-        d=google.com; s=arc-20160816;
-        b=bPgkIYHGtGohrhrV0SLPK6efX/1SDjTAZzmMpA54cXpn9w+EIqRJGApCpqa0m5Kme7
-         CZJf2v13faWuIjsfnobhs1wNs4ZVYnbFPeyw8OD22mocBRGu9S4FS8vqZ4F2Kw1YDZXt
-         9SUH/2bj3vC9qoKB34M08DacoGcoP9Jeg0Hgud3xi/SjRoNeZGv2USIPLexQszphq7I3
-         tZkZr2roYnBqJlJZzkq94Apzsll9oP35c/CJpCY96wJbaH08rSu5kjkQ5HRj+r8w3tO2
-         8JPi8uG2gx4xB/2+cssywaoZg7tWpSl6zmi2n6sH3plIZhVSipq5hDcd/+DKouhbJx4E
-         LAYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:autocrypt:openpgp:from:references:cc:to
-         :subject:dkim-signature:delivered-to:list-id:list-subscribe
-         :list-unsubscribe:list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=uvxD4iSbQH9WJVabfMLQNudXlUsd3hnIcA5SSWtqJIE=;
-        b=AYzTUbEkP6Iy4/UHK/qP0mGrHkoCZnr4eiMJRZnJT4qOX4IccdEbYPSPVIXXNqhS86
-         EneryGqJPyUESICPv6VC01YsYVfDk8t96KntdYUN9HvVcyw+kRzQFHKab2KSRDRxPRli
-         QpAHo3Roh2rh0iHWqb50z/hPZMQGnmEc9sbN0IAb0gnY7a3MQhR108B1kXdGlf5VC99n
-         o54G8vcFRk5wr8tuHIlarCla2KeH+iBY3IjN4eaIZ+sNbm9IBQ3KSOhohijtEJlkxVVz
-         XvXFomoMOzuHtKEgEq2sunooTmlS6dUYZUp2Db+MyaTcbC1ILNF8wq16Pjz4dBinUSTC
-         zuQQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=PbKwra8t;
-       spf=pass (google.com: domain of kernel-hardening-return-13047-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13047-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=PbKwra8t;
-       spf=pass (google.com: domain of kernel-hardening-return-13047-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13047-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCHv2] x86/xen: Remove use of VLAs
-To: Laura Abbott <labbott@redhat.com>, Juergen Gross <jgross@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-References: <20180418170832.8798-1-labbott@redhat.com>
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <b4a28e8b-d4ec-bbd2-cfaf-9a416ef08ef6@oracle.com>
-Date: Wed, 18 Apr 2018 18:17:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2126129-1523979613-2-6463223216059544025
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1523979612; b=eaxqUgDLF8MrUGmwjOSLbmC+PRdPFQfzAuwTzKGlTZu/oKAC+X
+    VaOBUWwTMIrLlYrnpX0e37P/Vjwlg0odWzOhAO24K6siRMcsOQwZeyzB4yAcW+o3
+    UzIEdvwXvhlExNpn+rQSowxuhIEhLKS0ZlybFRvwIovYmdH4sufTlFkVN+1Jmr0s
+    H7cYV/8Kn+SKkk4npdFkggXzzOq78nIZNC+dlo4QlNCbjK15JsQtXmf7vsstScLT
+    27nN7b4FCMwG8lZU+9wyESCeEZtkKyVH3+ipeIs2LybujFXfScO5PVNPzenmx1lM
+    ozFzcuxPA1VFlzsNuvyjCpTzfsVCPxbbtarg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1523979612;
+    bh=cgquiRe//D89IitZiNOW/XkIQ/UIKnSjT9aZajOvfiY=; b=D7yDtDGqbnoT
+    gkZ2B95JSNojnzQFAnuEke1GjnHttqTpBAQXPHA6QKdTX4wxtleUY+faK4YuG47A
+    1WTLvjVeWMZrZSEN8lfi4kN4XIamWj8nY4+MzKvGgb3y5Fz48YvgZslQGnUBrMnJ
+    T1DG8pH4mRTTSNzDfAg0R1PXUdcd+uf8F5XmGZCBuIDAbAUXtdoNAmwuHPkHnsJF
+    idIyVM+EwxC98zLZvuoeDsJSqAbgBzoFBNZuVHaevdxGMatFdNuEhhSYJc/kEKg/
+    T7TqlsSscpzX+p/P/eKRb1jRfkZpow8DpfKEtFyAFWxbuHuS6F4X5nmd3MOMgds/
+    DLJu2DFO/w==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mips.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfH6cuJMcNWihngBkuTrfeKBnmaFP4E+W8eJl6JCNy3uEMB4G83pW26fL/cK3Yo6slnDoOTczImh75Tfjgb66v1zH4lhA0AtNWV83RvFmSIhbNWK1v+6K
+    yDe2jomvDW0TcRbIAWgyluS3ymJxRawXtuNan1tjeLdJJE5y6dZILzAcj8YgsWAsU2TFpwCNKFtleHW0cakv7qP3jIeCqJBrOYNXslei02eKpDy0/3mHlH1Y
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IhDdiLrqHVMA:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=gPJu0pBYAAAA:8 a=e7LufI87OJsagcwBs9QA:9
+    a=AjGcO6oz07-iQ99wixmX:22 a=AlIIF0cMT2hfDT4axODj:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751863AbeDQPkK (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 17 Apr 2018 11:40:10 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:35876 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751187AbeDQPkK (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 17 Apr 2018 11:40:10 -0400
+From: Matt Redfearn <matt.redfearn@mips.com>
+To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
+CC: <linux-mips@linux-mips.org>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/4] MIPS: memset.S: Fix clobber of v1 in last_fixup
+Date: Tue, 17 Apr 2018 16:40:00 +0100
+Message-ID: <1523979603-492-1-git-send-email-matt.redfearn@mips.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180418170832.8798-1-labbott@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8867 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804180201
+Content-Type: text/plain
+X-Originating-IP: [192.168.155.41]
+X-BESS-ID: 1523979597-298553-5506-31410-1
+X-BESS-VER: 2018.4-r1804121647
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192083
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598104627872343121?=
-X-GMAIL-MSGID: =?utf-8?q?1598123934455317964?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/18/2018 01:08 PM, Laura Abbott wrote:
-> There's an ongoing effort to remove VLAs[1] from the kernel to eventually
-> turn on -Wvla. It turns out, the few VLAs in use in Xen produce only a
-> single entry array that is always bounded by GDT_SIZE. Clean up the code to
-> get rid of the VLA and the loop.
->
-> [1] https://lkml.org/lkml/2018/3/7/621
->
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v2: Updated the code to reflect that we know size is always bounded by
-> GDT_SIZE. This gets rid of the array and the loop. I can throw a few
-> more comments in there if someone thinks they need to be updated.
-> ---
->  arch/x86/xen/enlighten_pv.c | 84 ++++++++++++++++-----------------------------
->  1 file changed, 29 insertions(+), 55 deletions(-)
->
-> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> index c36d23aa6c35..1254f2fa3a89 100644
-> --- a/arch/x86/xen/enlighten_pv.c
-> +++ b/arch/x86/xen/enlighten_pv.c
-> @@ -421,45 +421,32 @@ static void xen_load_gdt(const struct desc_ptr *dtr)
->  {
->  	unsigned long va = dtr->address;
->  	unsigned int size = dtr->size + 1;
-> -	unsigned pages = DIV_ROUND_UP(size, PAGE_SIZE);
-> -	unsigned long frames[pages];
-> -	int f;
-> -
-> -	/*
-> -	 * A GDT can be up to 64k in size, which corresponds to 8192
-> -	 * 8-byte entries, or 16 4k pages..
-> -	 */
-> +	unsigned long pfn, mfn;
-> +	int level;
-> +	pte_t *ptep;
-> +	void *virt;
->  
-> -	BUG_ON(size > 65536);
-> +	BUG_ON(size > GDT_SIZE);
+The label .Llast_fixup\@ is jumped to on page fault within the final
+byte set loop of memset (on < MIPSR6 architectures). For some reason, in
+this fault handler, the v1 register is randomly set to a2 & STORMASK.
+This clobbers v1 for the calling function. This can be observed with the
+following test code:
 
+static int __init __attribute__((optimize("O0"))) test_clear_user(void)
+{
+  register int t asm("v1");
+  char *test;
+  int j, k;
 
-I'd probably BUG_ON(size>PAGE_SIZE) because that's what we are really
-trying to avoid. Maybe with a comment that we expect GDT_SIZE at most,
-and it is less than PAGE_SIZE.
+  pr_info("\n\n\nTesting clear_user\n");
+  test = vmalloc(PAGE_SIZE);
 
-I can fix it while committing if you don't object.
+  for (j = 256; j < 512; j++) {
+    t = 0xa5a5a5a5;
+    if ((k = clear_user(test + PAGE_SIZE - 256, j)) != j - 256) {
+        pr_err("clear_user (%px %d) returned %d\n", test + PAGE_SIZE - 256, j, k);
+    }
+    if (t != 0xa5a5a5a5) {
+       pr_err("v1 was clobbered to 0x%x!\n", t);
+    }
+  }
 
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+  return 0;
+}
+late_initcall(test_clear_user);
+
+Which demonstrates that v1 is indeed clobbered (MIPS64):
+
+Testing clear_user
+v1 was clobbered to 0x1!
+v1 was clobbered to 0x2!
+v1 was clobbered to 0x3!
+v1 was clobbered to 0x4!
+v1 was clobbered to 0x5!
+v1 was clobbered to 0x6!
+v1 was clobbered to 0x7!
+
+Since the number of bytes that could not be set is already contained in
+a2, the andi placing a value in v1 is not necessary and actively
+harmful in clobbering v1.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Reported-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+---
+
+Changes in v2: None
+
+ arch/mips/lib/memset.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/lib/memset.S b/arch/mips/lib/memset.S
+index 184819c1d5c8..f7327979a8f8 100644
+--- a/arch/mips/lib/memset.S
++++ b/arch/mips/lib/memset.S
+@@ -258,7 +258,7 @@
+ 
+ .Llast_fixup\@:
+ 	jr		ra
+-	andi		v1, a2, STORMASK
++	 nop
+ 
+ .Lsmall_fixup\@:
+ 	PTR_SUBU	a2, t1, a0
+-- 
+2.7.4
