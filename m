@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49CRzpVK0W2CEaSfPvY1ckLN0Ygt4FJtw0f4TFy9mpvhL68ZYRBuiGwlwmaw9wC1p0PWWPh
-ARC-Seal: i=1; a=rsa-sha256; t=1523981127; cv=none;
+X-Google-Smtp-Source: AIpwx493yPML+IQxPkh3vPTmyMCf0HGmdLqCXW5d3QRv18aqlHHTyihl5D4UdzrxIQWxRCPWXgGI
+ARC-Seal: i=1; a=rsa-sha256; t=1523981125; cv=none;
         d=google.com; s=arc-20160816;
-        b=uOaad2zYchuUm5ynqNF6b/jl/Cti6i98DRg5/9Gul7qvUf4XazZA/g4g9LskHKK0kV
-         jnzsjEWocDE8jqFc/CIiBOzaBCswCi67xc40affV5VCIKD5tBAqrbrh+RJBLx5v7cwzy
-         C2w4uuc9fiTBx1hkXnh6k1F1o2zEClBB+HJ1F0gTON5VFOSYPb9Ges+47wRVDxR1oESr
-         viF+vNqLNnoaPnUEy08hk9gSGsrLW/Me0v3mdzNHcXjsosbQ80KP7nOxFWzqVUN7CYM7
-         Z7tBP0ElwQOjvImrUES5rnZ1PbU8OvjWR8RpDHbpr86yHDxs5P/Yb0Pm9sStFAFjMZH2
-         tTng==
+        b=CvqWzMqO3hDlozLu5iLx5dbXajvFKLn1L/91EM5aM97WEXpHf2cq7gRn1A81bCbt0g
+         WIes2K/vI+390Ucp0RDPfHl8Ey6C7NTGqUaXLzhQaqdd5J2CrW7BoxOhjXHT76nKexJt
+         DeLguOxj+G54C9IQJ00rZuV+1kMuOxN7BMsSckkFa/DG3hRxb5XeNnErxci8DnplIjim
+         6+wlXffL2pg12R4ZOu8wdWgFPQL21rieOIxUIY24xt9syBMECbExDqsCvtp+er+c4GkZ
+         6YkFcuXcfrjgTXLDjVeHHWqRwhXiGOQeX4sjiqpoPEfbZB8qzi/0k4KFG+YZ3jJKcrEx
+         huOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=+gTL72jxeb5zBDcWT3bCqUvPihRtKnThlxPdFuTD3oo=;
-        b=ZjCk2IsuXaamWSOWkMsjCv/JN3swvyIbqsfS3oaDv7LrKXNMdo/SGQ20qhm2mGFn1R
-         vZ34fjX1bgbxgvzk9jJS/5JNKfSDRFVGS78WtepWZfur0Qam6rPLnhOdxEVE7134/yvQ
-         B8TrVhjC5+32LWqkjahCrZ4ouLe1CgbHgcLsMj8aOTNvE8PW5rCqa3T5H1Z8IGR5K9u/
-         LxXylUeChZOVh6JUWhq0jUFjLHXTfoD1pYGsM/CAu7PjjsDWXliAk7SEeDSUiuy0/pZ1
-         yJgyAQ8ATLabmI/MlYnLclrRTgvLyO/zWaqXApWahEz+UjOE33/71HjuT2vcFXTX4kg+
-         ajeg==
+        bh=Tt0g7DR5Cj9fmXGKU4l/yqilzlptq19wM0QMNqY0fXA=;
+        b=OZuehhNTsgY9JIm//rJTvULft2qeHfaqO1YBYMQ9sxBzMM6+vkDLfN9+QV4Gy9DDTE
+         ui9naPUvoKFZzrxWuO2J+cvDxgBRQJdxIsz+Ai1DSheG/BRNb6j0v8UDZPMIefzS7LCf
+         VIV8nvD0MFQwFoMuBbTGwaSZnIAh8NUnE5gZpVPCGu5FAXmZHHyAGHekq65jXIjKxAL2
+         PodHRSJzMdX1rrAy8sbDtOcBQZU/XFYVntRf3qQiZP1a6OE37771D3tOIxjgxsx+SkzX
+         3YrcFsnqMEGSZ3RkcTPdluMY7pE+cZGaq9UmWIwT5lcRECtUGxndO8i1BoC0X6sk1BuL
+         mGSw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,13 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Heiko Carstens <heiko.carstens@de.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
+	Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+	Ursula Braun <ubraun@linux.vnet.ibm.com>,
+	Benjamin Block <bblock@linux.vnet.ibm.com>,
 	Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.15 45/53] s390/ipl: ensure loadparm valid flag is set
-Date: Tue, 17 Apr 2018 17:59:10 +0200
-Message-Id: <20180417155725.283831655@linuxfoundation.org>
+Subject: [PATCH 4.15 44/53] s390/qdio: dont merge ERROR output buffers
+Date: Tue, 17 Apr 2018 17:59:09 +0200
+Message-Id: <20180417155725.236665808@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -41,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009848537812841?=
-X-GMAIL-MSGID: =?utf-8?q?1598010035078134296?=
+X-GMAIL-THRID: =?utf-8?q?1598009846096502118?=
+X-GMAIL-MSGID: =?utf-8?q?1598010032377298250?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,33 +51,91 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
-commit 15deb080a6087b73089139569558965750e69d67 upstream.
+commit 0cf1e05157b9e5530dcc3ca9fec9bf617fc93375 upstream.
 
-When loadparm is set in reipl parm block, the kernel should also set
-DIAG308_FLAGS_LP_VALID flag.
+On an Output queue, both EMPTY and PENDING buffer states imply that the
+buffer is ready for completion-processing by the upper-layer drivers.
 
-This fixes loadparm ignoring during z/VM fcp -> ccw reipl and kvm direct
-boot -> ccw reipl.
+So for a non-QEBSM Output queue, get_buf_states() merges mixed
+batches of PENDING and EMPTY buffers into one large batch of EMPTY
+buffers. The upper-layer driver (ie. qeth) later distuingishes PENDING
+from EMPTY by inspecting the slsb_state for
+QDIO_OUTBUF_STATE_FLAG_PENDING.
 
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+But the merge logic in get_buf_states() contains a bug that causes us to
+erronously also merge ERROR buffers into such a batch of EMPTY buffers
+(ERROR is 0xaf, EMPTY is 0xa1; so ERROR & EMPTY == EMPTY).
+Effectively, most outbound ERROR buffers are currently discarded
+silently and processed as if they had succeeded.
+
+Note that this affects _all_ non-QEBSM device types, not just IQD with CQ.
+
+Fix it by explicitly spelling out the exact conditions for merging.
+
+For extracting the "get initial state" part out of the loop, this relies
+on the fact that get_buf_states() is never called with a count of 0. The
+QEBSM path already strictly requires this, and the two callers with
+variable 'count' make sure of it.
+
+Fixes: 104ea556ee7f ("qdio: support asynchronous delivery of storage blocks")
+Cc: <stable@vger.kernel.org> #v3.2+
+Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Reviewed-by: Ursula Braun <ubraun@linux.vnet.ibm.com>
+Reviewed-by: Benjamin Block <bblock@linux.vnet.ibm.com>
 Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/ipl.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/s390/cio/qdio_main.c |   31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
---- a/arch/s390/kernel/ipl.c
-+++ b/arch/s390/kernel/ipl.c
-@@ -779,6 +779,7 @@ static ssize_t reipl_generic_loadparm_st
- 	/* copy and convert to ebcdic */
- 	memcpy(ipb->hdr.loadparm, buf, lp_len);
- 	ASCEBC(ipb->hdr.loadparm, LOADPARM_LEN);
-+	ipb->hdr.flags |= DIAG308_FLAGS_LP_VALID;
- 	return len;
+--- a/drivers/s390/cio/qdio_main.c
++++ b/drivers/s390/cio/qdio_main.c
+@@ -206,7 +206,10 @@ again:
+ 	return 0;
  }
  
+-/* returns number of examined buffers and their common state in *state */
++/*
++ * Returns number of examined buffers and their common state in *state.
++ * Requested number of buffers-to-examine must be > 0.
++ */
+ static inline int get_buf_states(struct qdio_q *q, unsigned int bufnr,
+ 				 unsigned char *state, unsigned int count,
+ 				 int auto_ack, int merge_pending)
+@@ -217,17 +220,23 @@ static inline int get_buf_states(struct
+ 	if (is_qebsm(q))
+ 		return qdio_do_eqbs(q, state, bufnr, count, auto_ack);
+ 
+-	for (i = 0; i < count; i++) {
+-		if (!__state) {
+-			__state = q->slsb.val[bufnr];
+-			if (merge_pending && __state == SLSB_P_OUTPUT_PENDING)
+-				__state = SLSB_P_OUTPUT_EMPTY;
+-		} else if (merge_pending) {
+-			if ((q->slsb.val[bufnr] & __state) != __state)
+-				break;
+-		} else if (q->slsb.val[bufnr] != __state)
+-			break;
++	/* get initial state: */
++	__state = q->slsb.val[bufnr];
++	if (merge_pending && __state == SLSB_P_OUTPUT_PENDING)
++		__state = SLSB_P_OUTPUT_EMPTY;
++
++	for (i = 1; i < count; i++) {
+ 		bufnr = next_buf(bufnr);
++
++		/* merge PENDING into EMPTY: */
++		if (merge_pending &&
++		    q->slsb.val[bufnr] == SLSB_P_OUTPUT_PENDING &&
++		    __state == SLSB_P_OUTPUT_EMPTY)
++			continue;
++
++		/* stop if next state differs from initial state: */
++		if (q->slsb.val[bufnr] != __state)
++			break;
+ 	}
+ 	*state = __state;
+ 	return i;
