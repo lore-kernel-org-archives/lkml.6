@@ -1,69 +1,70 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2480911-1523991235-2-16325463335755872473
+X-Cyrus-Session-Id: sloti22d1t05-2456659-1523989067-2-15874329068301471525
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523991234; b=l5Qo+13jvtcaTN9nKjwhlbejiuJjCwbOd5NS5smZax3mTH6qsH
-    nx6K5H4NvlcE0jxxE25JmK1ZZ1Wu1TlM1wsbPf4PT7E4TtI5loeLqXiHPPR8mabz
-    CvTjGjmXe54lno25gYupwjDHy+HYgtPBabpZyOiPOv6uHGYnwbbfiuDGxMJot/27
-    bgWJGB6CtMb4p2IADAPAAJG/M6EiiHdR4+BMzKoGxGCZT5c0Znyrehv70qRRi54+
-    ipqWYUeWjeCMAZvj6pVLaqt1gGOz8azLswrqcC0PzB5LACRMqrKtnnGaegJAy0u/
-    3Ggms65vPSH0qBXT8QoYhC+NyTys+4WOFZyA==
+    1523989066; b=DybgY3ddM8/orM/tuTK8MoFN/iZ14irz0MAeZEro7TuRWXFeQw
+    wOEKGVJX/YlG0TLIRlu8GDGmhcztRp6fGWNWv8TRcu5/srFyORtEJO4Bx0Wt8+Xi
+    SF8f/aPnfwrWESO4qv8TGJ5NuuOZEOD9y+duiyWURYlw48PgysXheEYHlTHErKuV
+    nSPwL2MDw3Zj1NLT6KuOv7KSc04UvI6nETYoQNeuoEhzV8lhHlRgrT5MOM/s8lhB
+    BS68XHGaJ0ce/095NE8d3+jjR2PXHKslWY/x/IVlRbfL1rOnKnzRluN86SGPtnw3
+    anSER9dpOUUwDHl8jzeulObQjZUPygx9CjiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523991234; bh=H1Cw7
-    9xE7a/KyLFRmcrPHm7f7ejvoXhfE74ORCBFXEs=; b=hgtXeKEOXzoE1k3PTQ5l4
-    Ui9zATDuNp3GgdvYo8256R0ZlR9MVlR/jri/2FwLAH9IJjY2GFB31lgFnd1a5nUY
-    6QjWISEDqUuTmajVUK3Cigf+nuPivAHmW7uRjjoxzkmG/0p6/wPPkUkataFi2ePs
-    TN5QWxjr61dDfDome+8dVMHJou1zJlaz4VUrLmtvYF85oX8aGBoTw/+Nvbvu3rue
-    potFm6ac1aHXjZtf7XusOoBuNYS+2an5CMCpqYzKk+pi92y6HPot2+Bt2i/byseA
-    nOYdK7B2Rzr5U8u8KOEsiHkbtzj5TFnqN7kW/aiFq6PNrYxcKFZCSkTMYOG+4vF/
-    g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1523989066; bh=tWC2f
+    dsoSf44s0aoNUW1Dnj45U0I2d4kRWAJzEX0RQg=; b=BfK4rUXO0XCFARWY1x2kp
+    XbSDVi+18Ez31PrR2mlORsUGzMvgSaS/IhGdXERVl6bTnxt3zdkpbpjVVW4jSD4T
+    vuhcWnFIx00dp9IvOKZko2n1OctOBX9wHQwpYkrjtvC4PtlC5dT5FDggtqxp0kns
+    3aNeVXOVTQfLc9AQyCJ9Z4Vp0+i2LfPJNgGknPJlw5BT85DChyTu1EkKT0spR2MR
+    9Q9vSzvQwzNLSbaaX5YVq1xMv2IamYNp6GaAEsjlhlHGTyBuCN41nrZKskHYhfZ4
+    5jsqzFtNf3YQCRKY4uNhTPW/1PD+OZdAzMYYUktF4WyJc2CMrkwkkzC44CDqLON8
+    A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDBYkgGNdmesHEyxfOxQClFFxculiBAF1mcL8MDvjxjoBy3fgzlvTYWdgL/GpzqbQeGjhcM14nzEmiL7s0gKl4sSVa9s1IJYsceGzFEPnGuIbY7hOtv+
-    AysZMD8Dmmb/okv/tHJBl1Ubwm98YIUC7aQaTPuW3nlju75DQkWpoF2bE2D5vOQ4ACiEGZjPYsL0HtzRfHZ1t0vldptb/iKk0uOFa0ftngMhsDFBr0LWcpa1
-    6T1SOwityRM6wnd01iZUtQ==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+X-CM-Envelope: MS4wfLvGCNTOQoWTLLC9DmdE09jT8P/76ZU5wNW8Yn/mEXiPXH7xzzEelOmt53dzapq3aOEAiS12l7MPtRZm2OSokKAbsptkZZuDwVt0yrenFNtpk5OiayaY
+    uJR+kiMDxySfiEBaaQIQNmcp3p7SgtMEbBs814x2Z4fGeWXUeO9aLktu4SDfbQGleJ8/04GSwwNinb6aPefcAXDUXVr1n/o38kiYvtuhHxtWFUqIh/T3Ik2S
+    jlqDCTZRQYBFChB+zJCZWw==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8
-    a=7CQSdrXTAAAA:8 a=DDOyTI_5AAAA:8 a=XNYVfk6J6KFTGUcfqe8A:9 a=CjuIK1q_8ugA:10
-    a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    a=7CQSdrXTAAAA:8 a=KKAkSRfTAAAA:8 a=DDOyTI_5AAAA:8 a=XNYVfk6J6KFTGUcfqe8A:9
+    a=CjuIK1q_8ugA:10 a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=cvBusfyB2V15izCimMoJ:22 a=_BcfOz0m4U4ohdxiHPKc:22
+    cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
@@ -92,10 +93,10 @@ To: Christoph Hellwig <hch@lst.de>,
  Ohad Ben-Cohen <ohad@wizery.com>,
  Bjorn Andersson <bjorn.andersson@linaro.org>,
  Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH v3 06/20] fpga: Remove depends on HAS_DMA in case of platform
- dependency
-Date: Tue, 17 Apr 2018 19:49:06 +0200
-Message-Id: <1523987360-18760-7-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH v3 16/20] remoteproc: Remove depends on HAS_DMA in case of
+ platform dependency
+Date: Tue, 17 Apr 2018 19:49:16 +0200
+Message-Id: <1523987360-18760-17-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
 References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
@@ -142,7 +143,7 @@ This simplifies the dependencies, and allows to improve compile-testing.
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Reviewed-by: Mark Brown <broonie@kernel.org>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Alan Tull <atull@kernel.org>
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 v3:
   - Add Acked-by,
@@ -153,21 +154,21 @@ v2:
   - Drop RFC state,
   - Split per subsystem.
 ---
- drivers/fpga/Kconfig | 1 -
+ drivers/remoteproc/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index f47ef848bcd056d5..fd539132542e30ee 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -53,7 +53,6 @@ config FPGA_MGR_ALTERA_CVP
- config FPGA_MGR_ZYNQ_FPGA
- 	tristate "Xilinx Zynq FPGA"
- 	depends on ARCH_ZYNQ || COMPILE_TEST
--	depends on HAS_DMA
- 	help
- 	  FPGA manager driver support for Xilinx Zynq FPGAs.
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 027274008b086d6f..cd1c168fd18898dc 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -24,7 +24,6 @@ config IMX_REMOTEPROC
  
+ config OMAP_REMOTEPROC
+ 	tristate "OMAP remoteproc support"
+-	depends on HAS_DMA
+ 	depends on ARCH_OMAP4 || SOC_OMAP5
+ 	depends on OMAP_IOMMU
+ 	select MAILBOX
 -- 
 2.7.4
 
