@@ -1,116 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751256AbeDQECE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 00:02:04 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:45708 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750988AbeDQECC (ORCPT
+        id S1751980AbeDQEIS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 00:08:18 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:33727 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750744AbeDQEIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 00:02:02 -0400
-X-Google-Smtp-Source: AIpwx4/pttQoQC7gKzmSo4Zkhjea3hecoihD8eRZiadPztyckWx77lwW/futoHo3ihDPILO/Gg65g3m9o7ABgavADyg8YESml1V4
-MIME-Version: 1.0
-Date: Mon, 16 Apr 2018 21:02:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <f4f5e80803d08f47b9056a0366dd@google.com>
-Subject: general protection fault in encode_rpcb_string
-From: syzbot <syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com>
-To: anna.schumaker@netapp.com, bfields@fieldses.org, davem@davemloft.net,
-        jlayton@kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, trond.myklebust@primarydata.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Tue, 17 Apr 2018 00:08:13 -0400
+X-Google-Smtp-Source: AIpwx4+5YTeDK24ziZvmYfgAPdyE6Xnp2BrgE1PL1wwNCIkY1JDaVa+w0RaUBems4R+RAr8AIRYv+Q==
+From: Joel Fernandes <joelaf@google.com>
+To: linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Cc: Joel Fernandes <joelaf@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>
+Subject: [RFC v4 2/4] softirq: reorder trace_softirqs_on to prevent lockdep splat
+Date: Mon, 16 Apr 2018 21:07:46 -0700
+Message-Id: <20180417040748.212236-3-joelaf@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+In-Reply-To: <20180417040748.212236-1-joelaf@google.com>
+References: <20180417040748.212236-1-joelaf@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Currently there's an issue which is not always reproducible, where the
+softirqs annotation in lockdep goes out of sync with the reality of the
+world and causes a lockdep splat. This is because the preemptoff tracer
+calls into lockdep which can cause a softirqs invalid annotation splat.
 
-syzbot hit the following crash on bpf-next commit
-5d1365940a68dd57b031b6e3c07d7d451cd69daf (Thu Apr 12 18:09:05 2018 +0000)
-Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=4b98281f2401ab849f4b
+The same issue was fixed in local_bh_disable_ip.
+/*
+ * The preempt tracer hooks into preempt_count_add and will break
+ * lockdep because it calls back into lockdep after SOFTIRQ_OFFSET
+ * is set and before current->softirq_enabled is cleared.
+ * We must manually increment preempt_count here and manually
+ * call the trace_preempt_off later.
+ */
 
-So far this crash happened 2 times on bpf-next.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6433835633868800
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=6407311794896896
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5861511176126464
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-5947642240294114534
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+I am not fully sure why the issue is reproducible with my patches easily,
+but it seems like the same ordering issue can exist so we ought to fix
+it.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-RBP: 00000000006dbc50 R08: 000000002000a000 R09: 0000000000003437
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe464ffed80
-R13: 0030656c69662f2e R14: ffffffffffffffff R15: 0000000000000006
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 1861 Comm: kworker/u4:4 Not tainted 4.16.0+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: rpciod rpc_async_schedule
-RIP: 0010:strlen+0x1f/0xa0 lib/string.c:479
-RSP: 0018:ffff8801cf75f318 EFLAGS: 00010296
-RAX: dffffc0000000000 RBX: ffff8801cf68f200 RCX: ffffffff86a8c407
-RDX: 0000000000000000 RSI: ffffffff86a84d7b RDI: 0000000000000000
-RBP: ffff8801cf75f330 R08: ffff8801cf7de080 R09: ffffed0039ea3d43
-R10: ffffed0039ea3d43 R11: ffff8801cf51ea1f R12: 0000000000000000
-R13: 0000000002000000 R14: 0000000000000000 R15: ffff8801cf75f3e0
-FS:  0000000000000000(0000) GS:ffff8801db000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f64808a4000 CR3: 00000001b566a000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  strlen include/linux/string.h:267 [inline]
-  encode_rpcb_string+0x23/0x70 net/sunrpc/rpcb_clnt.c:914
-  rpcb_enc_getaddr+0x146/0x1f0 net/sunrpc/rpcb_clnt.c:940
-  rpcauth_wrap_req_encode net/sunrpc/auth.c:777 [inline]
-  rpcauth_wrap_req+0x1a8/0x230 net/sunrpc/auth.c:791
-  rpc_xdr_encode net/sunrpc/clnt.c:1754 [inline]
-  call_transmit+0x8a9/0xfe0 net/sunrpc/clnt.c:1949
-  __rpc_execute+0x28a/0xfe0 net/sunrpc/sched.c:784
-  rpc_async_schedule+0x16/0x20 net/sunrpc/sched.c:857
-  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
-  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
-  kthread+0x345/0x410 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
-Code: 37 ff ff ff 0f 1f 84 00 00 00 00 00 48 b8 00 00 00 00 00 fc ff df 55  
-48 89 fa 48 c1 ea 03 48 89 e5 41 54 49 89 fc 53 48 83 ec 08 <0f> b6 04 02  
-48 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 4d 41 80 3c
-RIP: strlen+0x1f/0xa0 lib/string.c:479 RSP: ffff8801cf75f318
----[ end trace bd76ed0378a56845 ]---
-
-
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zilstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Glexiner <tglx@linutronix.de>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Fenguang Wu <fengguang.wu@intel.com>
+Cc: Baohong Liu <baohong.liu@intel.com>
+Cc: Vedang Patel <vedang.patel@intel.com>
+Signed-off-by: Joel Fernandes <joelaf@google.com>
 ---
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+ kernel/softirq.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 177de3640c78..8a040bcaa033 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -139,9 +139,13 @@ static void __local_bh_enable(unsigned int cnt)
+ {
+ 	lockdep_assert_irqs_disabled();
+ 
++	if (preempt_count() == cnt)
++		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
++
+ 	if (softirq_count() == (cnt & SOFTIRQ_MASK))
+ 		trace_softirqs_on(_RET_IP_);
+-	preempt_count_sub(cnt);
++
++	__preempt_count_sub(cnt);
+ }
+ 
+ /*
+-- 
+2.17.0.484.g0c8726318c-goog
