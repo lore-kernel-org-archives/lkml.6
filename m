@@ -1,39 +1,37 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+ILiBJdW3BqXO7Vu5JnNfP1J1vADppnOZqwX9efsXeslKLP/qAJWcHnykMG1zxPmzfsYbP
-ARC-Seal: i=1; a=rsa-sha256; t=1523981434; cv=none;
+X-Google-Smtp-Source: AIpwx48z8C+W/s+IzV9TPYRs8+FJpaZuA26zT5lU8pBt4EbrOpq6VbXgmgFWiKvWrqsEW63VEV8k
+ARC-Seal: i=1; a=rsa-sha256; t=1523981424; cv=none;
         d=google.com; s=arc-20160816;
-        b=YZdhqESXiUpgFYQK0XcM39SsE5Nt5YFcMLP3eYH8IvshB800KKWIQm0Ubi5tOXKa3g
-         HzXgbvOmo1cftBXhw6xDVkdGjogorpPn/guKTT8JVtiOOQqhRjPE1IFScq4P33ZvkfcA
-         eGk9avyvZ+d7Haebnj0vWLWd3NeJ4+if/jxmn6rrAaiHNLN7Yj09Mot2sw8IFws0fTp/
-         ISEj8Jq6xUhsMA0Z+Oi8upQt9aso/Me4+FFfTEVUzX3zNn+DLzuxENhTltgeTbNXdzLk
-         i55S7+XFWCvfGKgGn3gO/TINA1VnA9cRdnFilVldQ+Cu+y61f+y0hGvUJ4vK4SW27AzF
-         22yA==
+        b=z0eaUmNow4uziIADArntv4A9u5HOzIkCaj4JSpVuhym6dvLIEgbb7QrdrbCKaJis/q
+         XYAleskd6FN+MylCUwJTLFjOvKqiDPrWucN8aDEcUTcwQdRLmAx1guOidaGV02Bhoa9T
+         4YB5ewX58uqiLZD47QxvcQewxx3dMdRfV+XNSPQIjDjrHSkWbTm4ptZdmXHO67mSHpEl
+         T1RD+l7twP3JkcJuUHi1lWXoGk+Bw8Jap92KJcVTj/xoLxeoetlU5glEaO4++JyxRa64
+         fnwKgZ/nDrOxk4ABjKPE6U52X+RxYy8uVqSoE0KSg2GYZJuYfXrEVkVphVI99pBm4o4F
+         eF6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Clal5mOmSIUY1/XLZb4vuYzibPiUKoFO1CJg2/DnttA=;
-        b=hrrSdT0VUhYhXBoBGjnzaUqqDlhYEMH4FZkaQpIEaPUFlQFidJcT5+P3Xt+UPtijrV
-         s04u2CFbrnpwMr2yB5FCVumt/LJLWuANbLwx6CL6Ap71LvHSWWQdR+Y+Pzl7LJdNN0ug
-         9FRxhZ9H5UgIL8gsw+JqFhC9reSljopwbqwvtk7ViGctgvB/MoqOdk8kqJvLPpqCKFdA
-         rnn75K6RHO97VDxchxuCJGgFU6djlcwooQj6VkjZBLkKVRFPuQfdY+QdQRU7KKolVnoa
-         iDAiw3DLdmX0DmOT68QFiRpV6pm/VOwNF8KPD8UetRF9hV4lp5mEae1JOvLSdmrjUFHM
-         i7Ag==
+        bh=U7FdNbmT3Ua19r+CUkbkZp5zqc/mlbr39Yg15cfDROo=;
+        b=t0813y3S3ZLm60QANbuSgF0YIOu6eu2mTyDbtqJ4y/6fh07UIXnddlMxye2msTTbB+
+         WdYE3Lx46QPZp+BhdoBErosQ6tHYVK9u7RLkGgegUgicKQBW7xCSpAa7zZ6iVrfQaNTr
+         LbKdJuyCdB0tQ3hVT2V/FnmpBI/z8u09aZ30qv0qXvbux7tEdEG952vcNAdWi4NHP+H9
+         wr8Dl2AjLtYCwpSc0E0kvdtRWpGfX9l3gBgACOvW7v0EZeOl9WAgeCGbyOICRyFsmXr6
+         ejEWBZmmk1L1XqQhmrlGpC4riV3ru2Nw2sa+uP2B2TkznpE5IhuUF7rA1QiBy5h9uMsx
+         S7JQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
+To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>,
-	Jayachandran C <jnair@caviumnetworks.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Greg Hackmann <ghackmann@google.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 4.9 34/66] arm64: Branch predictor hardening for Cavium ThunderX2
-Date: Tue, 17 Apr 2018 17:59:07 +0200
-Message-Id: <20180417155647.352640375@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Heiko Carstens <heiko.carstens@de.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 57/66] s390/ipl: ensure loadparm valid flag is set
+Date: Tue, 17 Apr 2018 17:59:30 +0200
+Message-Id: <20180417155648.353033990@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010356550945880?=
-X-GMAIL-MSGID: =?utf-8?q?1598010356550945880?=
+X-GMAIL-THRID: =?utf-8?q?1598009848537812841?=
+X-GMAIL-MSGID: =?utf-8?q?1598010345481307067?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,44 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
+commit 15deb080a6087b73089139569558965750e69d67 upstream.
 
-From: Jayachandran C <jnair@caviumnetworks.com>
+When loadparm is set in reipl parm block, the kernel should also set
+DIAG308_FLAGS_LP_VALID flag.
 
-commit f3d795d9b360523beca6d13ba64c2c532f601149 upstream.
+This fixes loadparm ignoring during z/VM fcp -> ccw reipl and kvm direct
+boot -> ccw reipl.
 
-Use PSCI based mitigation for speculative execution attacks targeting
-the branch predictor. We use the same mechanism as the one used for
-Cortex-A CPUs, we expect the PSCI version call to have a side effect
-of clearing the BTBs.
-
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Jayachandran C <jnair@caviumnetworks.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com> [v4.9 backport]
-Tested-by: Greg Hackmann <ghackmann@google.com>
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpu_errata.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
 
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -252,6 +252,16 @@ const struct arm64_cpu_capabilities arm6
- 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
- 		.enable = enable_psci_bp_hardening,
- 	},
-+	{
-+		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-+		MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
-+		.enable = enable_psci_bp_hardening,
-+	},
-+	{
-+		.capability = ARM64_HARDEN_BRANCH_PREDICTOR,
-+		MIDR_ALL_VERSIONS(MIDR_CAVIUM_THUNDERX2),
-+		.enable = enable_psci_bp_hardening,
-+	},
- #endif
- 	{
- 	}
+---
+ arch/s390/kernel/ipl.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/s390/kernel/ipl.c
++++ b/arch/s390/kernel/ipl.c
+@@ -798,6 +798,7 @@ static ssize_t reipl_generic_loadparm_st
+ 	/* copy and convert to ebcdic */
+ 	memcpy(ipb->hdr.loadparm, buf, lp_len);
+ 	ASCEBC(ipb->hdr.loadparm, LOADPARM_LEN);
++	ipb->hdr.flags |= DIAG308_FLAGS_LP_VALID;
+ 	return len;
+ }
+ 
