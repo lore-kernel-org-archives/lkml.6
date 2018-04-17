@@ -1,104 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753219AbeDQP4K (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:56:10 -0400
-Received: from www381.your-server.de ([78.46.137.84]:32807 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752592AbeDQPzy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:55:54 -0400
-Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
- to netdev dma client
-To: Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Radhey Shyam Pandey <radheys@xilinx.com>,
-        Vinod Koul <vinod.koul@intel.com>
-Cc: "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
- <1522665546-10035-3-git-send-email-radheys@xilinx.com>
- <20180411090854.GY6014@localhost>
- <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
- <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
- <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
- <1fc10bec-5c2c-98f1-1d5b-b768dea844ed@metafoo.de>
- <78828d31-e4cd-5211-f1b6-8918ac38f599@ti.com>
-From: Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <e5a6c1ad-e263-7b9d-a5e2-744884c9d6de@metafoo.de>
-Date: Tue, 17 Apr 2018 17:54:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <78828d31-e4cd-5211-f1b6-8918ac38f599@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: lars@metafoo.de
+        id S1753693AbeDQQBV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:01:21 -0400
+Received: from mout.gmx.net ([212.227.17.22]:57507 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753596AbeDQQBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:01:16 -0400
+Message-ID: <1523980839.7093.1.camel@gmx.de>
+Subject: Re: 4.17.0-rc1 doesn't boot.
+From: Mike Galbraith <efault@gmx.de>
+To: Borislav Petkov <bp@alien8.de>,
+        =?ISO-8859-1?Q?J=F6rg?= Otte <jrg.otte@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Date: Tue, 17 Apr 2018 18:00:39 +0200
+In-Reply-To: <20180417153101.GB2894@pd.tnic>
+References: <CADDKRnAp1EKCAosD-kLNRaJ4qJppUtmmP1n76wzcvNUVa0fQzg@mail.gmail.com>
+         <20180417081458.GA2894@pd.tnic>
+         <CADDKRnDmycResXxAsfYfM6sFoWffD_v_cMoR4XF7OxUps3mU+Q@mail.gmail.com>
+         <20180417142715.GL18640@pd.tnic>
+         <CADDKRnBtQKz5S3EdJbrVH8PN9_qTrSQ3owcK=PfxToHdxpu8rA@mail.gmail.com>
+         <20180417153101.GB2894@pd.tnic>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:Uzw7xQvRawY1E5QJbuV9WMqB8qi4/USNz7aoWCkwNJYaNbRx3FS
+ l7kIwlOgFw+ZSHHCDebfCb4PrXFfime86SzDDdwdCxV8abxkdMWgjBnKcPJ1ZToe0WkAjGp
+ zraM5dm9o673zNtIQn8Jw+wThPdri3BUVzEGWdh9ok8iCREOiv9FI9ggzRdht7hnvpoghOs
+ OYgM4O/GHszn8BZ5+FyOw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:6T30hPawJFg=:3SLFQ81wSfsPZ4/VQsMJbm
+ S+NISmrkJTLUh4aqthRR0xF5WxXacwdwwyFDAjrQNgIu2d+dKGx213jlpMC4cebgl4Ve/XQEt
+ ncOOLGDEe8AA5sGgJRbQxp0OSoysfcZXyXsvsDZup0qO3+KBQKevOtky88dSZQJd59z6hjxUt
+ VgyD3AedDIcGZQRw2+WTHIfFtZE1tvRJJ301G66QGgKJ6apf/s9y7DjpD9pfOH1lGx0U7O7hg
+ q9nl7eIZA22/DJM/L+DFV3ThxAb6ECPJn7mKchvUdrVRHdfHh0Eqg2CxIK/syxCEeSTckaDfD
+ HqkNfY+Xtx1KkuXccU6KFNgfDmth91YBrKN+nklzUHcPyRInS66C6c+PGTdrdMosgTvvktGmz
+ u6AAGNUXHtB3COleyqKEKI6jrO8pDZ6jPv8NZ9Z/vk28VVouNguHL3mkzQsBh0BMF2MaHdWYa
+ 8OIRGAeCaAoKL2XwLQZqAholH4yH2VVe0F2ZpyZiYsr4qymBHx4yNANk9h1owfOejOSVsjgiY
+ NTO8Hiw8R50FLvam26jxbMlCSFxCt1NOhHwjpjHkwt7rULoIxFCFCHG5Lj6n728UEYNVKS5QZ
+ cf0qlj+haNgIzvbQ+WPPHQ93dBGvAo3uEp37Tdc8SLT8aWyMTLNCjvi22BomkIVtutAFtKO2t
+ MHned2WczybjKKt15sQ9ZtWftp+eLPOHQ0OTylYfnJzDHJRfku4goD3192o0VBUlp17QZ+ONc
+ 5YeowsZNaP90m38GaPNdKp0fL8o1JbGzonoquKJPBcxwQcZb/SdrIqYK7aAf2PJ37JL9ktqH6
+ /f8uEzqsHk/7wSxJxNns+R0wq6E3HJmawk/pmFTDWsqTTkQpqk=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/17/2018 04:53 PM, Peter Ujfalusi wrote:
-> On 2018-04-17 16:58, Lars-Peter Clausen wrote:
->>>> There are two options.
->>>>
->>>> Either you extend the generic interfaces so it can cover your usecase in a
->>>> generic way. E.g. the ability to attach meta data to transfer.
->>>
->>> Fwiw I have this patch as part of a bigger work to achieve similar results:
->>
->> That's good stuff. Is this in a public tree somewhere?
+On Tue, 2018-04-17 at 17:31 +0200, Borislav Petkov wrote:
+> On Tue, Apr 17, 2018 at 05:21:30PM +0200, Jörg Otte wrote:
+> > finished bisection.
+> > 39114b7a743e6759bab4d96b7d9651d44d17e3f9 is the first bad commit
+> > (x86/pti: Never implicitly clear _PAGE_GLOBAL for kernel image).
 > 
-> Not atm. I can not send the user of the new API and I did not wanted to
-> send something like this out of the blue w/o context.
+> Looks like you're not the only one:
 > 
-> But as it is a generic patch, I can send it as well. The only thing is
-> that the need for the memcpy, so I might end up with
-> ptr = get_metadata_ptr(desc, &size); /* size: in RX the valid size */
-> 
-> and set_metadata_size(); /* in TX to tell how the client placed */
-> 
-> Or something like that, the attach_metadata() as it is works just fine,
-> but high throughput might not like the memcpy.
-> 
+> http://marc.info/?i=20180417150130.GA11166@ak-laptop.emea.nsn-net.net
 
-In the most abstracted way I'd say metadata and data are two different data
-streams that are correlated and send/received at the same time.
+I'm hitting this too, but only with PREEMPT_RT.  I put a bandaid on it
+(tell pti_kernel_image_global_ok() to return true for PREEMPT_RT) while
+waiting to see if it was really really as non-rt as it appeared to be.
 
-Think multi-planar transfer, like for audio when the right and left channel
-are in separate buffers and not interleaved. Or video with different
-color/luminance components in separate buffers. This is something that is at
-the moment not covered by the dmaengine API either.
-
->>>> Or you can implement a interface that is specific to your DMA controller and
->>>> any client using this interface knows it is talking to your DMA controller.
->>>
->>> Hrm, so we can have DMA driver specific calls? The reason why TI's keystone 2
->>> navigator DMA support was rejected that it was introducing NAV specific calls
->>> for clients to configure features not yet supported by the framework.
->>
->> In my opinion it is OK, somebody else might have different ideas. I mean it
->> is not nice, but it is better than the alternative of overloading the
->> generic API with driver specific semantics or introducing some kind of IOCTL
->> catch all callback.
-> 
-> True, but the generic API can be extended as well to cover new grounds,
-> features. Like this metadata thing.
-> 
->> If there is tight coupling between the DMA core and client and there is no
->> intention of using a generic client the best solution might even be to no
->> use DMAengine at all.
-> 
-> This is how the knav stuff ended up. Well it is only used by networking
-> atm, so it is 'fine' to have custom API, but it is not portable.
-
-I totally agree generic APIs are better, but not everybody has the resources
-to rewrite the whole framework just because they want to do this tiny thing
-that isn't covered by the framework yet. In that case it is better to go
-with a custom API (that might evolve into a generic API), rather than
-overloading the generic API and putting a strain on everybody who works on
-the generic API.
+	-Mike
