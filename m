@@ -1,39 +1,39 @@
 Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AIpwx49dCh6I+ikqwC9JmeMtqDc8fjlWoXEDN2PQv6GrOxXz8XzrainooHEcDid1ZHTMsujLBxvL
-ARC-Seal: i=1; a=rsa-sha256; t=1523985123; cv=none;
+X-Google-Smtp-Source: AIpwx49lLPqNPm3ZmY943SaXN9E7szYClbru+NlNtw0i111t8A27wJNdelJx7XxMfqfHtjJJwSHz
+ARC-Seal: i=1; a=rsa-sha256; t=1523984980; cv=none;
         d=google.com; s=arc-20160816;
-        b=Flma7hjgr1Hvv31VFXTSEJXxqao0uS2CDTDBn5bmsKEuSyJKW/np/Za9KPR0X6QR2D
-         zxZ4Hw1Mt+DQesJ7G/aIqaQ7TCYqGTrrSjKn5smVh9doWnqrzom6qbgawrDx6ZfcmW31
-         ODCPkHd71+cXH5Ieggfg2L7OYfqHKIYIn11/hUAgXmPrCWXbEccw6PbYLwoAghFAJQSc
-         sA09dl0yCRzRuhL8grLw+4mOKRTGEt5+UXdFXTwgb/Bvtfs22r5pgr5TOd6why7nGvlS
-         Z0ZHTAhfCB5PpNj2OCDc905kY+Y644Rs5cIOih65CoJ7C715EjdSZbReaByC1MX1iy1Y
-         lWzg==
+        b=GQBYe5Ie73zG1KpfL46l4wQQ2NsXOKewyrZlHd7/Dx1AcNeRHKjW6FHG9t9e01KQRc
+         /01llm+TSRsqijvj0mZbxQZnRmBTYwbuFcgBK8282N9JzJNamth7B2NPX+MN5gcxdlwW
+         q8+DfbwFjSUZrMS0AzUBmul4oU0FsgXuEsVQ5gQT4RaUoL4No2Nu5l1ii38/5JAKNdU8
+         Mx3sp3OZTJC9L0OhMu8sahMBZznpV6PJo+aQi8YjG9u896xA+lNafFPYTTeSQETORroT
+         x/6MrmY6tOSPoKH6mORsv7bLX6JFvVw3pTvfVEXxgN39ipjxWS0zD7vMAjfPqjEACp63
+         W/Sw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
         bh=QLz8w1MMxB08hgidcbuyJCLbu8RvwUeVdHIPf8jCpHw=;
-        b=M6waQh0FY+Fm0V7rf79Ve35bUPm7LK/jPkSx55sCcatZ3KzZYGdYxtGXAe+5cSp4dt
-         M1VJFLfAf/vfX7pyWUuqG3DGnp1S2t04rgmEUmwQpXKBqIE9Ttt0AwlyQz/oWeUCTkA/
-         kd/5O3UdCAHji8A53gDxyTDC++VL4UE0v8TWb4+2aKKMEfSXLVyVT8vj0STQ212tp1UB
-         Z0hT/CJHGRqiefHMJeoTL1uZ9bUnKkF+RuQvgNtCMPMmsNsnWZY1ZMJVL8DYdeR8zs4M
-         /n6yPeKLHNa3dxRVshyMAUW8tCiT66+IOI0q3mmz2LK5Q10kF4InLcjeHFAj0Ae7PXlJ
-         Fqeg==
+        b=VlvEAXTv66VoslXF1Ajrgp6rVJjXDuZEMumuefsTL+lDr0t6PLfhIfH6D8mmSMVnmA
+         mwBgIR7IZuc5AGsWRKW+AS94O7pqXcIOUfJTmwogvG0gCjexefwAc5QPkuuRwLAzJkjq
+         nzijK0AmAuZ1DussmY34jDGjqEyMCU47FXXe3mITJM+Jo/ga86nvKAWGzL2GnpXdKOeQ
+         HHxDSI8SD4N2J2PCwyODuws6fCSZH9WbGuI6L2OlvbLI7AOnQRKS70nINpSOvTLvKEu4
+         RfAmPmpdEXmUV7LNlmMzSTi/8ngEec+2aEhtuGIbutCJnjRnEs/PIhEc34zqTmUo9/ys
+         dlEg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=Qn6NXe6O;
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=sfO8WFMc;
        spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=Qn6NXe6O;
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=sfO8WFMc;
        spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
 From: Mark Brown <broonie@kernel.org>
 To: Mukunda@sirena.org.uk, Vijendar <Vijendar.Mukunda@amd.com>
 Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Mark Brown <broonie@kernel.org>, , "moderated list:SOUND - SOC LAYER / DYNAMIC, AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Takashi Iwai <tiwai@suse.com>, Jason Clinton <jclinton@chromium.org>, Mark Brown <broonie@kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Akshu Agrawal <akshu.agrawal@amd.com>, Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org
 Subject: Applied "ASoC: amd: fixed checkpatch pl warnings" to the asoc tree
 In-Reply-To: <1523941201-15665-3-git-send-email-Vijendar.Mukunda@amd.com>
-Message-Id: <E1f8U98-0001yy-Fj@debutante>
-Date: Tue, 17 Apr 2018 18:11:58 +0100
+Message-Id: <E1f8U6m-0001gW-Pf@debutante>
+Date: Tue, 17 Apr 2018 18:09:32 +0100
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598014074889832395?=
-X-GMAIL-MSGID: =?utf-8?q?1598014225145592807?=
+X-GMAIL-MSGID: =?utf-8?q?1598014074889832395?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
