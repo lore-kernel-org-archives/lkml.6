@@ -1,66 +1,100 @@
-Return-Path: <kernel-hardening-return-13013-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/tHIUdsgVQ1qodPC1kqo0+8OLoyY2MAZ0a/wpIYWbNMiUJzKk2q0TTwToVJq08r4EbnqoR
-ARC-Seal: i=1; a=rsa-sha256; t=1523901580; cv=none;
+Return-Path: <kernel-hardening-return-13033-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4/QJZQE2ToXAOpqfO8NYDXs1DhUymzh32tdol1V43kKNlxw6zPlQv3J9DyR/wj9xWmNKuAb
+ARC-Seal: i=1; a=rsa-sha256; t=1524003502; cv=none;
         d=google.com; s=arc-20160816;
-        b=reUw2oiajv2RYH0fAWzgEi2pmrzrC6g537GMYTpN4ou3/oy5yvFbJdB6dP+hyJ5Ttu
-         1ycGAZ+GbOuorndK+mv9g++PN+VetJFu3VX0mV73/km8RWV7WjniWim5JA2MzY8i+yi2
-         yt/s0EsO/jq7tdFK+RoTngXtGbGu4l4OhJsnmgNjmcGlIWW/5ygN9XP0MRjyusbsQK7g
-         LWP8XY8MR8TZh2vsDMXE6JIgFy+hMonIsPSOh1JkFTasVh2jE6le5VJNVfwGnuI5L3Mv
-         HP6tQU+RIfTW37rIKbQ5Xq7LVgEIfbwaTA2F/tiey5M2Ry3L73oxrlLPoSYsMcqr5Rn0
-         0YXg==
+        b=wB9Qz3ySZ2jNa1RDTP75VUFPQNSZGuShatbrnel4/e/Jr4LENgNqYgYBM839lDK9bp
+         zcqYnY3z90p2Xzi+T7QqitKpKJ8EX3ZWKE/JCWaozYsIQaWwB7OieJH2V/Qsrqx5ZaEO
+         4wGSd1bfOhbF809+r601QR0Xjn4j0iCOeFmEZWDaTNzyuqbM3cvukZohMdS8/kfPQaTs
+         AXTS/bqpv3jo322qF5gUkUwX+pa06K082OKMY0I+WPAqfODhQAi3HDfNDyc79oG0+bbm
+         FwGaFifWU6X13FNyddA9f3Mxzm3pUwz8VgC0UepoFAaCcl9lk44Ohr1MbFP7qrF62hwk
+         FuKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=CNC88z6sleaW8STVafgNNOROOdBGL0slPbtQOICfr5w=;
-        b=lyS57o/ae5K6sxf0BDAi5EdLRHBhulY96Z0WynIQ4e7BMVVQvwGaziS+/B/VP3/q2m
-         AwXo38aKa7+pTMwPO21ybCNMsCxIhGf/njmB+b+ziZVTqzQEJRTOEd8d/3LAso9LUJk1
-         rcKPwkobBJF/JXzkyaqlEHrctgXIo4Mz6N773fXrKbqC5C9zISDK9DemYMX9VOaknmSX
-         hOrUkj443+wnKt8iqxeC+M03IzXcyPjR+Z7U3a1g7OewrzudKqji/B/HskidDv/iM6ZN
-         D7E3J9YcU0SageTE3L9rJvXtNCWJjav7OQe9d46UOyD2Tx4Nbtrop1YrKO4h4H8qSgPT
-         wcsA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=Z+PF1+6dmjVxFP5hIBEtdcr+hkTFNkwQXpszTqU/2oA=;
+        b=c0W7s+ZUpg/cJA/8W8MopserBTS6Wd/gPtTmudPHfycXX+9Ah4DAijwX88u4e5ZyUX
+         i4FOwRpKou4g69EZnvev9u/Sh8ildc/QYh2vtf9GvclK+BJAJk8U/UfHfPI1i5U8SAjL
+         BNhKaudlIguibEZ1U4tWVlwMjxPZYlLfmYEBTH/jFELv9PRLJj5vpx4rlTeUmluw7zzz
+         MsLWF+Svr2rB1ryJOV0oK0inOTWX+YGmRTMpYDBPaZWhWnzYW5LjrAVxyULHgVt8UhSB
+         3QBgjBBjr8RDqOn46mMemHejHmvMKT6bO/75ghJYXGWlT2Z6y55nYgk8YRSlXzjPYNby
+         7jww==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=Wc7RLS21;
-       spf=pass (google.com: domain of kernel-hardening-return-13013-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13013-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-13033-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13033-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=Wc7RLS21;
-       spf=pass (google.com: domain of kernel-hardening-return-13013-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13013-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-13033-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13033-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Mon, 16 Apr 2018 10:59:18 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
+Date: Tue, 17 Apr 2018 15:17:58 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kees Cook <keescook@chromium.org>
 Cc: Solar Designer <solar@openwall.com>,
-	kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v5] namei: Allow restricted O_CREAT of FIFOs and regular files
-Message-ID: <20180416175918.GA13494@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+ kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org, Al Viro
+ <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5] namei: Allow restricted O_CREAT of FIFOs and regular
+ files
+Message-Id: <20180417151758.af56d5303cad4e82d2207755@linux-foundation.org>
+In-Reply-To: <20180416175918.GA13494@beast>
+References: <20180416175918.GA13494@beast>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597926623941277944?=
-X-GMAIL-MSGID: =?utf-8?q?1597926623941277944?=
+X-GMAIL-MSGID: =?utf-8?q?1598033496501536915?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Mon, 16 Apr 2018 10:59:18 -0700 Kees Cook <keescook@chromium.org> wrote:
+
+> Disallows open of FIFOs or regular files not owned by the user in world
+> writable sticky directories, unless the owner is the same as that of the
+> directory or the file is opened without the O_CREAT flag. The purpose
+> is to make data spoofing attacks harder. This protection can be turned
+> on and off separately for FIFOs and regular files via sysctl, just like
+> the symlinks/hardlinks protection. This patch is based on Openwall's
+> "HARDEN_FIFO" feature by Solar Designer.
+> 
+> This is a brief list of old vulnerabilities that could have been prevented
+> by this feature, some of them even allow for privilege escalation:
+> CVE-2000-1134
+> CVE-2007-3852
+> CVE-2008-0525
+> CVE-2009-0416
+> CVE-2011-4834
+> CVE-2015-1838
+> CVE-2015-7442
+> CVE-2016-7489
+> 
+> This list is not meant to be complete. It's difficult to track down
+> all vulnerabilities of this kind because they were often reported
+> without any mention of this particular attack vector. In fact, before
+> hardlinks/symlinks restrictions, fifos/regular files weren't the favorite
+> vehicle to exploit them.
+
+Well, I'll toss it in there, but would much prefer it if Al were to
+take a look, please.
+
+
 From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Subject: namei: allow restricted O_CREAT of FIFOs and regular files
 
 Disallows open of FIFOs or regular files not owned by the user in world
 writable sticky directories, unless the owner is the same as that of the
-directory or the file is opened without the O_CREAT flag. The purpose
-is to make data spoofing attacks harder. This protection can be turned
-on and off separately for FIFOs and regular files via sysctl, just like
-the symlinks/hardlinks protection. This patch is based on Openwall's
+directory or the file is opened without the O_CREAT flag.  The purpose is
+to make data spoofing attacks harder.  This protection can be turned on
+and off separately for FIFOs and regular files via sysctl, just like the
+symlinks/hardlinks protection.  This patch is based on Openwall's
 "HARDEN_FIFO" feature by Solar Designer.
 
 This is a brief list of old vulnerabilities that could have been prevented
 by this feature, some of them even allow for privilege escalation:
+
 CVE-2000-1134
 CVE-2007-3852
 CVE-2008-0525
@@ -70,30 +104,33 @@ CVE-2015-1838
 CVE-2015-7442
 CVE-2016-7489
 
-This list is not meant to be complete. It's difficult to track down
-all vulnerabilities of this kind because they were often reported
-without any mention of this particular attack vector. In fact, before
+This list is not meant to be complete.  It's difficult to track down all
+vulnerabilities of this kind because they were often reported without any
+mention of this particular attack vector.  In fact, before
 hardlinks/symlinks restrictions, fifos/regular files weren't the favorite
 vehicle to exploit them.
 
+[keescook@chromium.org: drop pr_warn_ratelimited() in favor of audit changes in the future]
+[keescook@chromium.org: adjust commit subjet]
+Link: http://lkml.kernel.org/r/20180416175918.GA13494@beast
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Suggested-by: Solar Designer <solar@openwall.com>
 Suggested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-[kees: drop pr_warn_ratelimited() in favor of audit changes in the future]
-[kees: adjust commit subjet]
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- Documentation/sysctl/fs.txt | 36 +++++++++++++++++++++++++++++++
- fs/namei.c                  | 52 ++++++++++++++++++++++++++++++++++++++++++---
- include/linux/fs.h          |  2 ++
- kernel/sysctl.c             | 18 ++++++++++++++++
+
+ Documentation/sysctl/fs.txt |   36 +++++++++++++++++++++++
+ fs/namei.c                  |   52 ++++++++++++++++++++++++++++++++--
+ include/linux/fs.h          |    2 +
+ kernel/sysctl.c             |   18 +++++++++++
  4 files changed, 105 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
-index 6c00c1e2743f..819caf8ca05f 100644
---- a/Documentation/sysctl/fs.txt
-+++ b/Documentation/sysctl/fs.txt
-@@ -34,7 +34,9 @@ Currently, these files are in /proc/sys/fs:
+diff -puN Documentation/sysctl/fs.txt~namei-allow-restricted-o_creat-of-fifos-and-regular-files Documentation/sysctl/fs.txt
+--- a/Documentation/sysctl/fs.txt~namei-allow-restricted-o_creat-of-fifos-and-regular-files
++++ a/Documentation/sysctl/fs.txt
+@@ -34,7 +34,9 @@ Currently, these files are in /proc/sys/
  - overflowgid
  - pipe-user-pages-hard
  - pipe-user-pages-soft
@@ -128,7 +165,7 @@ index 6c00c1e2743f..819caf8ca05f 100644
  protected_hardlinks:
  
  A long-standing class of security issues is the hardlink-based
-@@ -202,6 +222,22 @@ This protection is based on the restrictions in Openwall and grsecurity.
+@@ -202,6 +222,22 @@ This protection is based on the restrict
  
  ==============================================================
  
@@ -151,11 +188,10 @@ index 6c00c1e2743f..819caf8ca05f 100644
  protected_symlinks:
  
  A long-standing class of security issues is the symlink-based
-diff --git a/fs/namei.c b/fs/namei.c
-index 186bd2464fd5..3157c984414b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -887,6 +887,8 @@ static inline void put_link(struct nameidata *nd)
+diff -puN fs/namei.c~namei-allow-restricted-o_creat-of-fifos-and-regular-files fs/namei.c
+--- a/fs/namei.c~namei-allow-restricted-o_creat-of-fifos-and-regular-files
++++ a/fs/namei.c
+@@ -887,6 +887,8 @@ static inline void put_link(struct namei
  
  int sysctl_protected_symlinks __read_mostly = 0;
  int sysctl_protected_hardlinks __read_mostly = 0;
@@ -210,7 +246,7 @@ index 186bd2464fd5..3157c984414b 100644
  static __always_inline
  const char *get_link(struct nameidata *nd)
  {
-@@ -3342,9 +3383,14 @@ static int do_last(struct nameidata *nd,
+@@ -3342,9 +3383,14 @@ finish_open:
  	if (error)
  		return error;
  	audit_inode(nd->name, nd->path.dentry, 0);
@@ -228,10 +264,9 @@ index 186bd2464fd5..3157c984414b 100644
  	error = -ENOTDIR;
  	if ((nd->flags & LOOKUP_DIRECTORY) && !d_can_lookup(nd->path.dentry))
  		goto out;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 760d8da1b6c7..dbd4ae431910 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
+diff -puN include/linux/fs.h~namei-allow-restricted-o_creat-of-fifos-and-regular-files include/linux/fs.h
+--- a/include/linux/fs.h~namei-allow-restricted-o_creat-of-fifos-and-regular-files
++++ a/include/linux/fs.h
 @@ -73,6 +73,8 @@ extern struct inodes_stat_t inodes_stat;
  extern int leases_enable, lease_break_time;
  extern int sysctl_protected_symlinks;
@@ -241,10 +276,9 @@ index 760d8da1b6c7..dbd4ae431910 100644
  
  typedef __kernel_rwf_t rwf_t;
  
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 6a78cf70761d..f45ed9e696eb 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
+diff -puN kernel/sysctl.c~namei-allow-restricted-o_creat-of-fifos-and-regular-files kernel/sysctl.c
+--- a/kernel/sysctl.c~namei-allow-restricted-o_creat-of-fifos-and-regular-files
++++ a/kernel/sysctl.c
 @@ -1805,6 +1805,24 @@ static struct ctl_table fs_table[] = {
  		.extra2		= &one,
  	},
@@ -270,10 +304,4 @@ index 6a78cf70761d..f45ed9e696eb 100644
  		.procname	= "suid_dumpable",
  		.data		= &suid_dumpable,
  		.maxlen		= sizeof(int),
--- 
-2.7.4
-
-
--- 
-Kees Cook
-Pixel Security
+_
