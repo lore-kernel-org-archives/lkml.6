@@ -1,74 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752690AbeDQTqY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 15:46:24 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42526 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752629AbeDQTqX (ORCPT
+        id S1752609AbeDQTr7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 15:47:59 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:45947 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751879AbeDQTr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 15:46:23 -0400
-X-Google-Smtp-Source: AIpwx49rNCwihwxFHkIUsi9CtOe2Btwn4xpsyuJE6INskeC/8ZwU1xHDdGlWrxN3Ih3ZLeL06UBTWg==
-Date: Tue, 17 Apr 2018 21:46:19 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: andi@etezian.org
-Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: exynos: Update x and y properties for mms114
- touchscreen
-Message-ID: <20180417194619.djrggjqogfwtxrwp@kozik-lap>
-References: <CGME20180126060503epcas2p4befe2d3d43f4a2158b1e1a123bf7906f@epcas2p4.samsung.com>
- <20180126060454.18082-1-andi.shyti@samsung.com>
- <20180417153207.fgfg5f4msggbtiuu@kozik-lap>
- <f75382b5953a9f4f9f80bb0db5b2f249@etezian.org>
+        Tue, 17 Apr 2018 15:47:56 -0400
+X-Google-Smtp-Source: AIpwx4+AGqJ0szIWm2pYN5FW6MJpok71wjwa6UhRG8o9megQVlkzTkwL6wQIwf4v1ekNRp1hUmJ2Iw==
+Date: Tue, 17 Apr 2018 12:47:55 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: David Collins <collinsd@codeaurora.org>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rnayak@codeaurora.org, sboyd@kernel.org,
+        dianders@chromium.org
+Subject: Re: [v2,2/2] regulator: add QCOM RPMh regulator driver
+Message-ID: <20180417194755.GE244487@google.com>
+References: <4b45f41996ea3344340e44fab2dc9e487572e209.1523673467.git.collinsd@codeaurora.org>
+ <20180417182347.GD244487@google.com>
+ <2e45c0e5-7e79-3479-de18-9613e8eacf15@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f75382b5953a9f4f9f80bb0db5b2f249@etezian.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <2e45c0e5-7e79-3479-de18-9613e8eacf15@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 03:06:39AM +0900, andi@etezian.org wrote:
-> Hi Krzysztof,
-> 
-> On 18.04.2018 00:32, Krzysztof Kozlowski wrote:
-> > On Fri, Jan 26, 2018 at 03:04:54PM +0900, Andi Shyti wrote:
-> > > The mms114 binding [1] specifies that the 'x' and 'y' should be
-> > > called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
-> > > in coherence with the touchscreen [2] binding.
-> > > 
-> > > Update the mms114 node for trats2 and trats dts according to the
-> > > binding.
-> > > 
-> > > [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
-> > > [2]
-> > > Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-> > > 
-> > > Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> > > ---
-> > > Hi Krzysztof,
-> > > 
-> > > this patch depends on Simon's patchset [1] and must be applied after
-> > > that. If you want I can ping you when the patch gets or you can take
-> > > it in the next cycle.
-> > > 
-> > > Andi
-> > > 
-> > > [1] https://marc.info/?l=linux-kernel&m=151682273403098&w=2
-> > > 
+On Tue, Apr 17, 2018 at 12:15:18PM -0700, David Collins wrote:
+> On 04/17/2018 11:23 AM, Matthias Kaehlcke wrote:
+> > On Fri, Apr 13, 2018 at 07:50:35PM -0700, David Collins wrote:
+> >> Add the QCOM RPMh regulator driver to manage PMIC regulators
+> >> which are controlled via RPMh on some Qualcomm Technologies, Inc.
+> >> SoCs.  RPMh is a hardware block which contains several
+> >> accelerators which are used to manage various hardware resources
+> >> that are shared between the processors of the SoC.  The final
+> >> hardware state of a regulator is determined within RPMh by
+> >> performing max aggregation of the requests made by all of the
+> >> processors.
+> >> [...]
+> >> +/**
+> >> + * struct rpmh_vreg_hw_data - RPMh regulator hardware configurations
+> >> + * @regulator_type:		RPMh accelerator type used to manage this
+> >> + *				regulator
+> >> + * @ops:			Pointer to regulator ops callback structure
+> >> + * @voltage_range:		The single range of voltages supported by this
+> >> + *				PMIC regulator type
+> >> + * @n_voltages:			The number of unique voltage set points defined
+> >> + *				by voltage_range
+> >> + * @pmic_mode_map:		Array indexed by regulator framework mode
+> >> + *				containing PMIC hardware modes.  Must be large
+> >> + *				enough to index all framework modes supported
+> >> + *				by this regulator hardware type.
+> >> + * @of_map_mode:		Maps an RPMH_REGULATOR_MODE_* mode value defined
+> >> + *				in device tree to a regulator framework mode
 > > 
-> > Hi Andi,
+> > The name of the field is a bit misleading, this is a map of RPMh mode
+> > to regulator framework mode, the device tree just happens to be the
+> > place where this mapping is defined.
+> 
+> of_map_mode name is used here to match the struct regulator_desc field by
+> the same name that it is assigned to [1].  Do you think that the name
+> should be changed to something else?
+
+Thanks, I missed that it's the name of the field in struct
+regulator_desc field, in that case it certainly makes sense to use the
+same name.
+
+> >> +/**
+> >> + * struct rpmh_vreg - individual rpmh regulator data structure encapsulating a
+> >> + *		single regulator device
+> >> + * @rpmh_client:		Handle used for rpmh communications
 > > 
-> > As I understand, the dependencies are in and I can take this?
+> > nit: RPMh
 > 
-> Thanks a lot, somehow I missed it,
+> I'll change this.
 > 
-> Please take it.
+> 
+> >> +struct rpmh_vreg {
+> >> +	struct rpmh_client		*rpmh_client;
+> >> +	u32				addr;
+> >> +	struct regulator_desc		rdesc;
+> >> +	const struct rpmh_vreg_hw_data	*hw_data;
+> >> +	enum rpmh_regulator_type	regulator_type;
+> > 
+> > This value is already available via rpmh_vreg->hw_data->regulator_type,
+> > why duplicate it? The field is assigned in rpmh_regulator_init_vreg()
+> > and only read once in the same function, there seems to be no need for
+> > it, not even to improve readability.
+> 
+> This is present to specifically allow for a future change to support
+> overriding the regulator_type value from device tree in order to force
+> RPMh resources to be handled via XOB instead of VRM in a board-specific
+> manner.  I included support of the property qcom,rpmh-resource-type in the
+> first version of this patch.  I removed this property from the second
+> version of the patch based upon review feedback since SDM845 does not
+> explicitly need it (though an upcoming chip will).
+> 
+> I'll remove regulator_type from struct rpmh_vreg.  It shouldn't be
+> particularly painful to add it back in when needed for XOB override support.
+> 
+> 
+> >> +static int rpmh_regulator_vrm_set_load(struct regulator_dev *rdev, int load_uA)
+> >> +{
+> >> +	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
+> >> +	int i;
+> >> +
+> >> +	for (i = 0; i < vreg->drms_mode_count - 1; i++)
+> >> +		if (load_uA < vreg->drms_mode_max_uA[i])
+> > 
+> > Shouldn't this be '<='?
+> > 
+> > nit: IMO 'vreg->drms_mode_max_uA[i] >= load_uA' would be more readable.
+> 
+> I chose to use '<' here in order to maintain the non-inclusive limit
+> semantics of the downstream RPMh regulator driver.  E.g. with an LPM
+> threshold of 10000 uA, load_uA == 10000 would result in a request for HPM
+> instead of LPM.
+> 
+> I suppose that I can change this to '<=' to be more logically consistent.
+> 
+> 
+> >> +static const u32 pmic_mode_map_pmic4_ldo[REGULATOR_MODE_STANDBY + 1] = {
+> >> +	[REGULATOR_MODE_STANDBY] = 4,
+> >> +	[REGULATOR_MODE_IDLE]    = 5,
+> >> +	[REGULATOR_MODE_NORMAL]  = -EINVAL,
+> >> +	[REGULATOR_MODE_FAST]    = 7,
+> >> +};
+> > 
+> > Define constants for the modes on the PMIC4 side?
+> 
+> Are you suggesting something like this?
+> 
+> #define PMIC4_LDO_MODE_RETENTION	4
+> #define PMIC4_LDO_MODE_LPM		5
+> #define PMIC4_LDO_MODE_HPM		7
+> 
+> static const u32 pmic_mode_map_pmic4_ldo[REGULATOR_MODE_STANDBY + 1] = {
+> 	[REGULATOR_MODE_STANDBY] = PMIC4_LDO_MODE_RETENTION,
+> 	[REGULATOR_MODE_IDLE]    = PMIC4_LDO_MODE_LPM,
+> 	[REGULATOR_MODE_NORMAL]  = -EINVAL,
+> 	[REGULATOR_MODE_FAST]    = PMIC4_LDO_MODE_HPM,
+> };
+> 
+> #define PMIC4_SMPS_MODE_RETENTION	4
+> #define PMIC4_SMPS_MODE_PFM		5
+> #define PMIC4_SMPS_MODE_AUTO		6
+> #define PMIC4_SMPS_MODE_PWM		7
+> 
+> static const u32 pmic_mode_map_pmic4_smps[REGULATOR_MODE_STANDBY + 1] = {
+> 	[REGULATOR_MODE_STANDBY] = PMIC4_SMPS_MODE_RETENTION,
+> 	[REGULATOR_MODE_IDLE]    = PMIC4_SMPS_MODE_PFM,
+> 	[REGULATOR_MODE_NORMAL]  = PMIC4_SMPS_MODE_AUTO,
+> 	[REGULATOR_MODE_FAST]    = PMIC4_SMPS_MODE_PWM,
+> };
+> 
+> I considered using this approach, but it didn't seem like it increased
+> readability and did increase the line count.  Each of the constants would
+> only be used once.  Would you prefer this style (or something else)?
 
-Unfortunately it does not apply anymore. Probably because the Trats2 DTS
-was renamed.  Also another board was added so please rebase on v4.17-rc1
-or linux-next.
+Personally I prefer this style, since the constants are more
+expressive than the literals. I agree that the 'inline' constant
+definition is a bit noisy, perhaps it would be better to move the
+definitions to the top of the file or group them before the definition
+of pmic_mode_map_pmic4_ldo. Alteratively you could create a
+drivers/regulator/qcom_rpmh-regulator.h and also move the definitions
+of struct struct rpmh_vreg_hw_data, rpmh_vreg, ... there.
 
-Best regards,
-Krzysztof
+Thanks
+
+Matthias
