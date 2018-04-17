@@ -1,93 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755212AbeDQQbF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:31:05 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:41824 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754021AbeDQQbB (ORCPT
+        id S1754500AbeDQQav (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:30:51 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:42179 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753178AbeDQQIO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:31:01 -0400
-X-Google-Smtp-Source: AIpwx4/8NxblANNdLOmqk88fRrjf+ODMPiBx2cNwLjXQUjpNSRGmaPtfwLapMMBlYI6n8cUKhbDWIfku7UOtg9m1tZM=
-MIME-Version: 1.0
-In-Reply-To: <1523959328.3250.11.camel@linux.vnet.ibm.com>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+-PNYxSc3v+QtQLK0S3wdtFthFSxNM_69kFDnPQX0Gaw@mail.gmail.com>
- <CAGXu5j+_UH0h9qeYCKKjhC7jw-mi_=fg4ASHi2=pCF9xGTpA4Q@mail.gmail.com>
- <2864697.7uzmEJovl2@natalenko.name> <CAGXu5jLSmJv9AstzsgSscrv-wA7FwfrxAKRxj-FVBmihQvnj1g@mail.gmail.com>
- <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
- <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
- <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
- <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com> <1523959328.3250.11.camel@linux.vnet.ibm.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 17 Apr 2018 09:30:59 -0700
-X-Google-Sender-Auth: oHTr8X0bUt6HvZwmEd9ciWtCnUY
-Message-ID: <CAGXu5jJK3JuwLBGLbS1i6hBdyg_mkbVibbu6irfsnTOE1QhtfA@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: James Bottomley <jejb@linux.vnet.ibm.com>
-Cc: Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Jens Axboe <axboe@kernel.dk>, Bart Van Assche <bart.vanassche@wdc.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        David Windsor <dave@nullcore.net>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Apr 2018 12:08:14 -0400
+X-Google-Smtp-Source: AIpwx4+6Flv1CFMIbQ9BZTOaUF0JDnUSrkG45EzrFmHDwn9BsFVRLdRD0V5FbRE4dZJgT1Dm+AuInQ==
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, corbet@lwn.net
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rdunlap@infradead.org, Ben.Gainey@arm.com
+Subject: [PATCH v2 3/3] coresight: Grouping all perf tools oriented section together
+Date: Tue, 17 Apr 2018 10:08:07 -0600
+Message-Id: <1523981287-15370-4-git-send-email-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523981287-15370-1-git-send-email-mathieu.poirier@linaro.org>
+References: <1523981287-15370-1-git-send-email-mathieu.poirier@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 3:02 AM, James Bottomley
-<jejb@linux.vnet.ibm.com> wrote:
-> On Mon, 2018-04-16 at 20:12 -0700, Kees Cook wrote:
->> I still haven't figured this out, though... any have a moment to look
->> at this?
->
-> Just to let you know you're not alone ... but I can't make any sense of
-> this either.  The bfdq is the elevator_data, which is initialised when
-> the scheduler is attached, so it shouldn't change.  Is it possible to
-> set a data break point on elevator_data after it's initialised and see
-> if it got changed by something?
+This patch groups together section pertaining to the perf tools.  That way
+everything is at the same place rather than spread out.
 
-Yeah, it seems like some pointer chain is getting overwritten outside
-of a lock or rcu or ?. I don't know this code well enough to guess at
-where to check, though. What I find so strange is that the structure
-offsets are different between bfpd's rq_in_driver field and
-scsi_request's sense field, so even THAT doesn't look to be clear-cut
-either:
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ Documentation/trace/coresight.txt | 72 +++++++++++++++++++--------------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
 
-struct bfq_data {
-        struct request_queue *     queue;                /*     0     8 */
-        struct list_head           dispatch;             /*     8    16 */
-        struct bfq_group *         root_group;           /*    24     8 */
-        struct rb_root             queue_weights_tree;   /*    32     8 */
-        struct rb_root             group_weights_tree;   /*    40     8 */
-        int                        busy_queues;          /*    48     4 */
-        int                        wr_busy_queues;       /*    52     4 */
-        int                        queued;               /*    56     4 */
-        int                        rq_in_driver;         /*    60     4 */
-...
-
-struct scsi_request {
-        unsigned char              __cmd[16];            /*     0    16 */
-        unsigned char *            cmd;                  /*    16     8 */
-        short unsigned int         cmd_len;              /*    24     2 */
-
-        /* XXX 2 bytes hole, try to pack */
-
-        int                        result;               /*    28     4 */
-        unsigned int               sense_len;            /*    32     4 */
-        unsigned int               resid_len;            /*    36     4 */
-        int                        retries;              /*    40     4 */
-
-        /* XXX 4 bytes hole, try to pack */
-
-        void *                     sense;                /*    48     8 */
-...
-
-This is _so_ weird. :P
-
--Kees
-
+diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
+index ab0d0f2d5cec..1d74ad0202b6 100644
+--- a/Documentation/trace/coresight.txt
++++ b/Documentation/trace/coresight.txt
+@@ -345,42 +345,7 @@ More information on the above and other example on how to use Coresight with
+ the perf tools can be found in the "HOWTO.md" file of the openCSD gitHub
+ repository [3].
+ 
+-How to use the STM module
+--------------------------
+-
+-Using the System Trace Macrocell module is the same as the tracers - the only
+-difference is that clients are driving the trace capture rather
+-than the program flow through the code.
+-
+-As with any other CoreSight component, specifics about the STM tracer can be
+-found in sysfs with more information on each entry being found in [1]:
+-
+-root@genericarmv8:~# ls /sys/bus/coresight/devices/20100000.stm
+-enable_source   hwevent_select  port_enable     subsystem       uevent
+-hwevent_enable  mgmt            port_select     traceid
+-root@genericarmv8:~#
+-
+-Like any other source a sink needs to be identified and the STM enabled before
+-being used:
+-
+-root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20010000.etf/enable_sink
+-root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20100000.stm/enable_source
+-
+-From there user space applications can request and use channels using the devfs
+-interface provided for that purpose by the generic STM API:
+-
+-root@genericarmv8:~# ls -l /dev/20100000.stm
+-crw-------    1 root     root       10,  61 Jan  3 18:11 /dev/20100000.stm
+-root@genericarmv8:~#
+-
+-Details on how to use the generic STM API can be found here [2].
+-
+-[1]. Documentation/ABI/testing/sysfs-bus-coresight-devices-stm
+-[2]. Documentation/trace/stm.txt
+-
+-
+-Using perf tools
+-----------------
++2.1) AutoFDO analysis using the perf tools:
+ 
+ perf can be used to record and analyze trace of programs.
+ 
+@@ -428,3 +393,38 @@ sort example is from the AutoFDO tutorial (https://gcc.gnu.org/wiki/AutoFDO/Tuto
+ 	$ taskset -c 2 ./sort_autofdo
+ 	Bubble sorting array of 30000 elements
+ 	5806 ms
++
++
++How to use the STM module
++-------------------------
++
++Using the System Trace Macrocell module is the same as the tracers - the only
++difference is that clients are driving the trace capture rather
++than the program flow through the code.
++
++As with any other CoreSight component, specifics about the STM tracer can be
++found in sysfs with more information on each entry being found in [1]:
++
++root@genericarmv8:~# ls /sys/bus/coresight/devices/20100000.stm
++enable_source   hwevent_select  port_enable     subsystem       uevent
++hwevent_enable  mgmt            port_select     traceid
++root@genericarmv8:~#
++
++Like any other source a sink needs to be identified and the STM enabled before
++being used:
++
++root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20010000.etf/enable_sink
++root@genericarmv8:~# echo 1 > /sys/bus/coresight/devices/20100000.stm/enable_source
++
++From there user space applications can request and use channels using the devfs
++interface provided for that purpose by the generic STM API:
++
++root@genericarmv8:~# ls -l /dev/20100000.stm
++crw-------    1 root     root       10,  61 Jan  3 18:11 /dev/20100000.stm
++root@genericarmv8:~#
++
++Details on how to use the generic STM API can be found here [2].
++
++[1]. Documentation/ABI/testing/sysfs-bus-coresight-devices-stm
++[2]. Documentation/trace/stm.txt
++[3]. https://github.com/Linaro/perf-opencsd
 -- 
-Kees Cook
-Pixel Security
+2.7.4
