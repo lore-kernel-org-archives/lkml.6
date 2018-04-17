@@ -1,193 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753187AbeDQNCb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 09:02:31 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:19290 "EHLO pegase1.c-s.fr"
+        id S1753281AbeDQNEs (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 09:04:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752871AbeDQNCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 09:02:30 -0400
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/time: remove to_tm and use RTC_LIB
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Vitaly Bordug <vitb@kernel.crashing.org>,
-        Geoff Levand <geoff@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Message-Id: <20180417130228.819936C0B7@po15720vm.idsi0.si.c-s.fr>
-Date: Tue, 17 Apr 2018 15:02:28 +0200 (CEST)
+        id S1752359AbeDQNEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 09:04:46 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C001E2183F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AIpwx49autyU1t422MqWjP9Tfp2F8bKrQUQfJmB2HbDVGUGkdDr6Ph+4ShJza5jbHsBg38UuFcxM5m1DY2p+Rgwh1R8=
+MIME-Version: 1.0
+In-Reply-To: <1523968977-4241-1-git-send-email-phil.edworthy@renesas.com>
+References: <1523968977-4241-1-git-send-email-phil.edworthy@renesas.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 17 Apr 2018 08:04:24 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKrBa5Rneu+BJOXd6n-xZEVqkKg4RqXHYvNs5xz7gdS2Q@mail.gmail.com>
+Message-ID: <CAL_JsqKrBa5Rneu+BJOXd6n-xZEVqkKg4RqXHYvNs5xz7gdS2Q@mail.gmail.com>
+Subject: Re: [PATCH v4] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RTC_LIB includes a generic function to convert
-RTC data into struct rtc_time. Use it and remove to_tm().
+On Tue, Apr 17, 2018 at 7:42 AM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
+>
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> One point to mention is that I have made it possible for users to have
+> unconncted interrupts by specifying holes in the list of interrupts. This is
+> done by supporting the interrupts-extended DT prop.
+> However, I have no use for this and had to hack some test case for this.
+> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+>
+> v4:
+>  - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
+> v3:
+>  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
+> v2:
+>  - Replaced interrupt-mask DT prop with support for the interrupts-extended
+>    prop. This means replacing the call to irq_of_parse_and_map() with calls
+>    to of_irq_parse_one() and irq_create_of_mapping().
+>
+> Note: There are a few *code* lines over 80 chars, but this is just guidance,
+>    right? Especially as there are already some lines over 80 chars.
+>
+> snps:gpio fix
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+>  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++--
+>  drivers/gpio/gpio-dwapb.c                          | 42 +++++++++++++++++-----
+>  drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+>  include/linux/platform_data/gpio-dwapb.h           |  3 +-
+>  4 files changed, 44 insertions(+), 13 deletions(-)
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/Kconfig                    |  1 +
- arch/powerpc/include/asm/time.h         |  1 -
- arch/powerpc/kernel/rtas-proc.c         |  4 +--
- arch/powerpc/kernel/time.c              | 52 +--------------------------------
- arch/powerpc/platforms/8xx/m8xx_setup.c |  2 +-
- arch/powerpc/platforms/powermac/time.c  |  2 +-
- arch/powerpc/platforms/ps3/time.c       |  2 +-
- 7 files changed, 7 insertions(+), 57 deletions(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index edbbd2ea1298..e1fac49cf465 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -232,6 +232,7 @@ config PPC
- 	select OF_RESERVED_MEM
- 	select OLD_SIGACTION			if PPC32
- 	select OLD_SIGSUSPEND
-+	select RTC_LIB
- 	select SPARSE_IRQ
- 	select SYSCTL_EXCEPTION_TRACE
- 	select VIRT_TO_BUS			if !PPC64
-diff --git a/arch/powerpc/include/asm/time.h b/arch/powerpc/include/asm/time.h
-index db546c034905..0ad1cf2285b1 100644
---- a/arch/powerpc/include/asm/time.h
-+++ b/arch/powerpc/include/asm/time.h
-@@ -27,7 +27,6 @@ extern unsigned long tb_ticks_per_sec;
- extern struct clock_event_device decrementer_clockevent;
- 
- struct rtc_time;
--extern void to_tm(int tim, struct rtc_time * tm);
- extern void tick_broadcast_ipi_handler(void);
- 
- extern void generic_calibrate_decr(void);
-diff --git a/arch/powerpc/kernel/rtas-proc.c b/arch/powerpc/kernel/rtas-proc.c
-index fb070d8cad07..6de77f9434b0 100644
---- a/arch/powerpc/kernel/rtas-proc.c
-+++ b/arch/powerpc/kernel/rtas-proc.c
-@@ -314,7 +314,7 @@ static ssize_t ppc_rtas_poweron_write(struct file *file,
- 
- 	power_on_time = nowtime; /* save the time */
- 
--	to_tm(nowtime, &tm);
-+	rtc_time64_to_tm(nowtime, &tm);
- 
- 	error = rtas_call(rtas_token("set-time-for-power-on"), 7, 1, NULL, 
- 			tm.tm_year, tm.tm_mon, tm.tm_mday, 
-@@ -378,7 +378,7 @@ static ssize_t ppc_rtas_clock_write(struct file *file,
- 	if (error)
- 		return error;
- 
--	to_tm(nowtime, &tm);
-+	rtc_time64_to_tm(nowtime, &tm);
- 	error = rtas_call(rtas_token("set-time-of-day"), 7, 1, NULL, 
- 			tm.tm_year, tm.tm_mon, tm.tm_mday, 
- 			tm.tm_hour, tm.tm_min, tm.tm_sec, 0);
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index 56869fd879ed..362673cc09f2 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -788,7 +788,7 @@ int update_persistent_clock(struct timespec now)
- 	if (!ppc_md.set_rtc_time)
- 		return -ENODEV;
- 
--	to_tm(now.tv_sec + 1 + timezone_offset, &tm);
-+	rtc_time64_to_tm(now.tv_sec + 1 + timezone_offset, &tm);
- 	tm.tm_year -= 1900;
- 	tm.tm_mon -= 1;
- 
-@@ -1141,56 +1141,6 @@ void __init time_init(void)
- #endif
- }
- 
--
--#define FEBRUARY	2
--#define	STARTOFTIME	1970
--#define SECDAY		86400L
--#define SECYR		(SECDAY * 365)
--#define	leapyear(year)		((year) % 4 == 0 && \
--				 ((year) % 100 != 0 || (year) % 400 == 0))
--#define	days_in_year(a) 	(leapyear(a) ? 366 : 365)
--#define	days_in_month(a) 	(month_days[(a) - 1])
--
--static int month_days[12] = {
--	31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
--};
--
--void to_tm(int tim, struct rtc_time * tm)
--{
--	register int    i;
--	register long   hms, day;
--
--	day = tim / SECDAY;
--	hms = tim % SECDAY;
--
--	/* Hours, minutes, seconds are easy */
--	tm->tm_hour = hms / 3600;
--	tm->tm_min = (hms % 3600) / 60;
--	tm->tm_sec = (hms % 3600) % 60;
--
--	/* Number of years in days */
--	for (i = STARTOFTIME; day >= days_in_year(i); i++)
--		day -= days_in_year(i);
--	tm->tm_year = i;
--
--	/* Number of months in days left */
--	if (leapyear(tm->tm_year))
--		days_in_month(FEBRUARY) = 29;
--	for (i = 1; day >= days_in_month(i); i++)
--		day -= days_in_month(i);
--	days_in_month(FEBRUARY) = 28;
--	tm->tm_mon = i;
--
--	/* Days are what is left over (+1) from all that. */
--	tm->tm_mday = day + 1;
--
--	/*
--	 * No-one uses the day of the week.
--	 */
--	tm->tm_wday = -1;
--}
--EXPORT_SYMBOL(to_tm);
--
- /*
-  * Divide a 128-bit dividend by a 32-bit divisor, leaving a 128 bit
-  * result.
-diff --git a/arch/powerpc/platforms/8xx/m8xx_setup.c b/arch/powerpc/platforms/8xx/m8xx_setup.c
-index 2188d691a40f..0f9740185eb9 100644
---- a/arch/powerpc/platforms/8xx/m8xx_setup.c
-+++ b/arch/powerpc/platforms/8xx/m8xx_setup.c
-@@ -192,7 +192,7 @@ void mpc8xx_get_rtc_time(struct rtc_time *tm)
- 
- 	/* Get time from the RTC. */
- 	data = in_be32(&sys_tmr->sit_rtc);
--	to_tm(data, tm);
-+	rtc_time64_to_tm(data, tm);
- 	tm->tm_year -= 1900;
- 	tm->tm_mon -= 1;
- 	immr_unmap(sys_tmr);
-diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index 274af6fa388e..6db8cdacbf3d 100644
---- a/arch/powerpc/platforms/powermac/time.c
-+++ b/arch/powerpc/platforms/powermac/time.c
-@@ -87,7 +87,7 @@ long __init pmac_time_init(void)
- #if defined(CONFIG_ADB_CUDA) || defined(CONFIG_ADB_PMU)
- static void to_rtc_time(unsigned long now, struct rtc_time *tm)
- {
--	to_tm(now, tm);
-+	rtc_time64_to_tm(now, tm);
- 	tm->tm_year -= 1900;
- 	tm->tm_mon -= 1;
- }
-diff --git a/arch/powerpc/platforms/ps3/time.c b/arch/powerpc/platforms/ps3/time.c
-index 11b45b58c81b..4455abf707ae 100644
---- a/arch/powerpc/platforms/ps3/time.c
-+++ b/arch/powerpc/platforms/ps3/time.c
-@@ -46,7 +46,7 @@ static void __maybe_unused _dump_time(int time, const char *func,
- {
- 	struct rtc_time tm;
- 
--	to_tm(time, &tm);
-+	rtc_time64_to_tm(time, &tm);
- 
- 	pr_debug("%s:%d time    %d\n", func, line, time);
- 	_dump_tm(&tm, func, line);
--- 
-2.13.3
+Reviewed-by: Rob Herring <robh@kernel.org>
