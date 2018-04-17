@@ -1,177 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752978AbeDQLK3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 07:10:29 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:65391 "EHLO
-        relmlie1.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752144AbeDQLKZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 07:10:25 -0400
-X-IronPort-AV: E=Sophos;i="5.48,463,1517842800";
-   d="scan'208";a="278455921"
-From: Michel Pollet <michel.pollet@bp.renesas.com>
-To: linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>
-Cc: phil.edworthy@renesas.com, Michel Pollet <buserror+upstream@gmail.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v5 6/6] reset: Renesas RZ/N1 reboot driver
-Date: Tue, 17 Apr 2018 12:04:21 +0100
-Message-Id: <1523963101-56725-7-git-send-email-michel.pollet@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com>
+        id S1752514AbeDQLOV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 07:14:21 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:58440 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751810AbeDQLOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 07:14:20 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Sandy Huang <hjc@rock-chips.com>
+Cc: dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/rockchip: vop: fixup linebuffer mode calc error
+Date: Tue, 17 Apr 2018 13:14:08 +0200
+Message-ID: <2475172.s4GHAT5PDW@phil>
+In-Reply-To: <1523960108-190541-1-git-send-email-hjc@rock-chips.com>
+References: <1523960108-190541-1-git-send-email-hjc@rock-chips.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Renesas RZ/N1 Family (Part #R9A06G0xx) needs a small driver
-to reboot the Cortex-A7 cores. This driver is a sub driver of
-the sysctrl MFD.
+Hi Sandy,
 
-Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
----
- drivers/power/reset/Kconfig       |  7 +++
- drivers/power/reset/Makefile      |  1 +
- drivers/power/reset/rzn1-reboot.c | 96 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 104 insertions(+)
- create mode 100644 drivers/power/reset/rzn1-reboot.c
+Am Dienstag, 17. April 2018, 12:15:07 CEST schrieb Sandy Huang:
+> When video width is bigger than 3840 the linebuffer mode
+> should be LB_YUV_3840X5.
 
-diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-index df58fc8..1416d88 100644
---- a/drivers/power/reset/Kconfig
-+++ b/drivers/power/reset/Kconfig
-@@ -144,6 +144,13 @@ config POWER_RESET_RESTART
- 	  Instead they restart, and u-boot holds the SoC until the
- 	  user presses a key. u-boot then boots into Linux.
- 
-+config POWER_RESET_RZN1
-+	bool "Renesas RZ/N1 reboot driver"
-+	depends on ARCH_RZN1
-+	help
-+	  This driver allows rebooting the CA7 cores of the
-+	  Renesas RZ/N1 Family of SoC (Part # R9A06G0xx).
-+
- config POWER_RESET_ST
- 	bool "ST restart driver"
- 	depends on ARCH_STI
-diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
-index 7778c74..bad9702 100644
---- a/drivers/power/reset/Makefile
-+++ b/drivers/power/reset/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_POWER_RESET_PIIX4_POWEROFF) += piix4-poweroff.o
- obj-$(CONFIG_POWER_RESET_LTC2952) += ltc2952-poweroff.o
- obj-$(CONFIG_POWER_RESET_QNAP) += qnap-poweroff.o
- obj-$(CONFIG_POWER_RESET_RESTART) += restart-poweroff.o
-+obj-$(CONFIG_POWER_RESET_RZN1) += rzn1-reboot.o
- obj-$(CONFIG_POWER_RESET_ST) += st-poweroff.o
- obj-$(CONFIG_POWER_RESET_VERSATILE) += arm-versatile-reboot.o
- obj-$(CONFIG_POWER_RESET_VEXPRESS) += vexpress-poweroff.o
-diff --git a/drivers/power/reset/rzn1-reboot.c b/drivers/power/reset/rzn1-reboot.c
-new file mode 100644
-index 0000000..43876d5
---- /dev/null
-+++ b/drivers/power/reset/rzn1-reboot.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/N1 reboot driver
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-+ * Derived from zx-reboot.c
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/notifier.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+
-+/* Definitions from the SDK rzn1-sysctrl.h autogenerated file */
-+#define RZN1_SYSCTRL_REG_RSTEN_MRESET_EN		0
-+#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN		1
-+#define RZN1_SYSCTRL_REG_RSTEN_WDA7RST_EN_MASK		0x6
-+#define RZN1_SYSCTRL_REG_RSTEN_WDM3RST_EN		3
-+#define RZN1_SYSCTRL_REG_RSTEN_CM3LOCKUPRST_EN		4
-+#define RZN1_SYSCTRL_REG_RSTEN_CM3SYSRESET_EN		5
-+#define RZN1_SYSCTRL_REG_RSTEN_SWRST_EN			6
-+#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ		1
-+#define RZN1_SYSCTRL_REG_RSTCTRL_WDA7RST_REQ_MASK	0x6
-+#define RZN1_SYSCTRL_REG_RSTCTRL_WDM3RST_REQ		3
-+#define RZN1_SYSCTRL_REG_RSTCTRL_CM3LOCKUPRST_REQ	4
-+#define RZN1_SYSCTRL_REG_RSTCTRL_CM3SYSRESET_REQ	5
-+#define RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ		6
-+
-+static void __iomem *reg_rsten, *reg_rstctrl;
-+
-+static int rzn1_reboot_handler(struct notifier_block *this,
-+			      unsigned long mode, void *cmd)
-+{
-+	writel(readl(reg_rsten) |
-+			BIT(RZN1_SYSCTRL_REG_RSTEN_SWRST_EN) |
-+			BIT(RZN1_SYSCTRL_REG_RSTEN_MRESET_EN),
-+		reg_rsten);
-+	writel(readl(reg_rstctrl) |
-+			BIT(RZN1_SYSCTRL_REG_RSTCTRL_SWRST_REQ),
-+		reg_rstctrl);
-+
-+	mdelay(50);
-+	pr_emerg("Unable to restart system\n");
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block rzn1_reboot_nb = {
-+	.notifier_call = rzn1_reboot_handler,
-+	.priority = 128,
-+};
-+
-+static int rzn1_reboot_probe(struct platform_device *ofdev)
-+{
-+	int err;
-+
-+	reg_rsten = of_iomap(ofdev->dev.of_node, 0);
-+	reg_rstctrl = of_iomap(ofdev->dev.of_node, 1);
-+
-+	if (!reg_rsten || !reg_rstctrl) {
-+		dev_err(&ofdev->dev, "invalid register mapping\n");
-+		return -ENODEV;
-+	}
-+
-+	err = register_restart_handler(&rzn1_reboot_nb);
-+	if (err) {
-+		dev_err(&ofdev->dev, "register restart handler failed(err=%d)\n",
-+			err);
-+	}
-+
-+	return err;
-+}
-+
-+static const struct of_device_id rzn1_reboot_of_match[] = {
-+	{ .compatible = "renesas,rzn1-reboot" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, rzn1_reboot_of_match);
-+
-+static struct platform_driver rzn1_reboot_driver = {
-+	.probe = rzn1_reboot_probe,
-+	.driver = {
-+		.name = "rzn1-reboot",
-+		.of_match_table = rzn1_reboot_of_match,
-+	},
-+};
-+module_platform_driver(rzn1_reboot_driver);
-+
-+MODULE_DESCRIPTION("RZ/N1 reboot driver");
-+MODULE_AUTHOR("Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+Can you explain that a bit better?
+
+I.e. when looking at the code, the very first check is width > 2560.
+
+So it seems your change targets some YUV mode with width > 3840
+which should be mentioned in the commit message, so people like
+me don't scratch their head in confusion ;-)
+
+Similarly that check is actually width > 1280 to set LB_YUV_3840X5,
+so I guess you're actually wanting any YUV mode bigger than
+1280px should use LB_YUV_3840X5?
+
+
+Heiko
+
+> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+> ---
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
+> index 56bbd2e..3e7501b 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
+> @@ -332,7 +332,7 @@ static inline int scl_vop_cal_lb_mode(int width, bool is_yuv)
+>  
+>  	if (width > 2560)
+>  		lb_mode = LB_RGB_3840X2;
+> -	else if (width > 1920)
+> +	else if (!is_yuv && width > 1920)
+>  		lb_mode = LB_RGB_2560X4;
+>  	else if (!is_yuv)
+>  		lb_mode = LB_RGB_1920X5;
+> 
