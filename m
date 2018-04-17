@@ -1,96 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755108AbeDQQ0A (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:26:00 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53228 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753848AbeDQQZ6 (ORCPT
+        id S1755560AbeDQQ0a (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:26:30 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:34602 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754365AbeDQQ00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:25:58 -0400
-Subject: Re: [PATCH v4 15/15] s390: doc: detailed specifications for AP
- virtualization
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-16-git-send-email-akrowiak@linux.vnet.ibm.com>
- <04a0cf49-71a1-214a-7261-d8e55adee1de@linux.vnet.ibm.com>
- <65d3b123-7a0a-4de3-687f-5b6707e797f7@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Tue, 17 Apr 2018 18:25:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 17 Apr 2018 12:26:26 -0400
+Date: Tue, 17 Apr 2018 18:10:29 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH] tracing/x86: Update syscall trace events to handle new
+ x86 syscall func names
+Message-ID: <20180417161029.GA8733@light.dominikbrodowski.net>
+References: <20180417115440.2145f7f5@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <65d3b123-7a0a-4de3-687f-5b6707e797f7@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041716-0044-0000-0000-00000549445F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041716-0045-0000-0000-0000288953AE
-Message-Id: <53283f8e-52b5-5653-044c-843b5b033a1e@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170143
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417115440.2145f7f5@gandalf.local.home>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/04/2018 18:14, Tony Krowiak wrote:
-> On 04/16/2018 09:13 AM, Pierre Morel wrote:
->> On 15/04/2018 23:22, Tony Krowiak wrote:
->>> This patch provides documentation describing the AP architecture and
->>> design concepts behind the virtualization of AP devices. It also
->>>
-...snip...
->>> +The process for reserving an AP queue for use by a KVM guest is:
->>> +
->>> +* The vfio-ap driver during its initialization will perform the 
->>> following:
->>> +  * Create the 'vfio_ap' root device - /sys/devices/vfio_ap
->>> +  * Create the 'matrix' device in the 'vfio_ap' root
->>> +  * Register the matrix device with the device core
->>> +* Register with the ap_bus for AP queue devices of type CEX4, CEX5 and
->>> +  CEX6 and to provide the vfio_ap driver's probe and remove 
->>> callback interfaces.
->>
->> I wonder why the type of card has anything to do with this driver.
->> It should be transparent, the driver should be able to provide the 
->> matrix (APM/AQM/ADM)
->> independently from the type of card in the slot.
->
-> We've been down this road several times before. We are only supporting 
-> virtualization of
-> CEX4 and newer cards. Also, the AP bus requires registering for 
-> specific card types.
+Steven,
 
-Yes I know, but the AP BUS design may be not the optimal for the AP Matrix.
-The AP Matrix is device independent.
-We just write/clear bits in a matrix and we do not care what is plugged.
+On Tue, Apr 17, 2018 at 11:54:40AM -0400, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> 
+> Arnaldo noticed that the latest kernel is missing the syscall event system
+> directory in x86. I bisected it down to d5a00528b58c ("syscalls/core,
+> syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()").
+> 
+> The system call trace events are special, as there is only one trace event
+> for all system calls (the raw_syscalls). But a macro that wraps the system
+> calls creates meta data for them that copies the name to find the system
+> call that maps to the system call table (the number). At boot up, it does a
+> kallsyms lookup for this mapping. If it does not find a function, then that
+> system call is ignored.
+> 
+> Because the x86 system calls had "__x86_" appended to the "sys" for the
 
-So may be make clear that this device dependence is due to the actual AP 
-BUS interface design.
+__x64 actually.
 
->
->>
->>
->> Regards,
->>
->> Pierre
->>
->
+> names, they do not match the default compare algorithm. As this was a
+> problem for power pc, the algorithm can be overwritten by the architecture.
+> The solution is to have x86 have its own algorithm to do the compare and
+> this brings back the system call trace events.
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+this lets me wonder *which* syscall "function" should be included in this
+directory. Is it really the stub (__x64_sys_waitid, for example), or better
+the sign-extending C function (__se_sys_waitid) which then calls an
+internal helper (__do_sys_waitid). An additional advantage:
+__se_sys_waitid would be available on x86 and, AFAICS, on all other archs.
+
+> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  arch/x86/include/asm/ftrace.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
+> index 09ad88572746..c30b3fac20ae 100644
+> --- a/arch/x86/include/asm/ftrace.h
+> +++ b/arch/x86/include/asm/ftrace.h
+> @@ -31,6 +31,16 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
+>  	return addr;
+>  }
+>  
+> +#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
+> +static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
+> +{
+> +	/*
+> +	 * Compare the symbol name with the system call name. Skip the
+> +	 * "__x64_sys" prefix.
+> +	 */
+> +	return !strcmp(sym + 9, name + 3);
+> +}
+
+What are the first three chars you skip for *name?
+
+Thanks,
+	Dominik
