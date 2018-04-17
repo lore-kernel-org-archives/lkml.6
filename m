@@ -1,102 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752058AbeDQGoh (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 02:44:37 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6740 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751297AbeDQGog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 02:44:36 -0400
-Subject: Re: [PATCH] f2fs: set deadline to drop expired inmem pages
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180408081312.6190-1-yuchao0@huawei.com>
- <09fd3144-d1c5-ca02-178d-b467d6fbe0e1@huawei.com>
- <20180413010433.GB51348@jaegeuk-macbookpro.roam.corp.google.com>
- <bb7d3b60-0629-ea80-c4ae-976a76abb034@huawei.com>
- <20180413040525.GB59368@jaegeuk-macbookpro.roam.corp.google.com>
- <51d2e16a-3a69-71ef-86f5-aee63cd6731c@huawei.com>
- <20180416201603.GA76077@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <b4aba32d-e57a-add4-19d5-7d19a8ccd90c@huawei.com>
-Date: Tue, 17 Apr 2018 14:44:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180416201603.GA76077@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1752154AbeDQGqa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 02:46:30 -0400
+Received: from mout.gmx.net ([212.227.17.22]:54217 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751085AbeDQGq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 02:46:28 -0400
+From: Chengguang Xu <cgxu519@gmx.com>
+To: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net
+Cc: v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Chengguang Xu <cgxu519@gmx.com>
+Subject: [V9fs-developer][PATCH v2 2/2] fs/9p: detecting invalid options as much as possible
+Date: Tue, 17 Apr 2018 14:45:02 +0800
+Message-Id: <1523947502-6103-2-git-send-email-cgxu519@gmx.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1523947502-6103-1-git-send-email-cgxu519@gmx.com>
+References: <1523947502-6103-1-git-send-email-cgxu519@gmx.com>
+X-Provags-ID: V03:K1:kk5Hsk+f/wxwV5eBgyPqAxvgnSWN+sN31LYcddfp6MElhODz1l2
+ nY13khAqB8XCwUjVjhfnzPUwmOS4qsube2ho/xFrLtL1yLGKrWXyyhQkeGKZ7wG5uLab+be
+ CbGYIeBhB4pzTrHwL/5L6OqJoPKyLxSQMh43sQDzf5ajM77JM1+3QBcKtKrwngS3ii41YJc
+ 6mRL4MfJFSuKcsmqd9w8g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:S6u/kWvtgvs=:L913qFNmDXcAZjYCkVrnjP
+ ADdxBT2XxWUMxT9BTJVbkeMNKzJVEClHzAW4Lby2tR8JXSjs3/fzrAm3jOFd9aNCdr8mWW9DQ
+ vsokdDE+q7nInTmAcn+xoFvBRH+5ieoKcWENGKqcSYPZgFhvxvdjG4D6GNdR/pKc9/XH4mGvJ
+ BPA0G951Jbyd1I4XJOXOjxAPt1TeFuh1u/MIEHXHlEwLN0osEQHJHTOnxPGRFTEk0E9k2XZHN
+ g+tVSwnuS2syNzG0ecKhmpQ3ZYf0al74vwXRQ43THfNXu5ruxSKoflaTQpfz9uLID/bPAQZ3U
+ dIQKQd5ihycOvkViFmHixbxw2XP6uAfnptfD0r3gjGDXTvuluIbxW6WEOmC24iv68KR0Ufmba
+ DAdJrUd/x2Hmv5TGYn7t057X1yXNir0kUBACxg8zYqbmk38TvKqs9h8YCtslmub6EIbxbEzgD
+ OX3KCxmddgle7wItEOPOuK2AjCrthRQ14NvU/voVVL63ipKkVf+h3JOZAQD6l2mWeNfwVDPN1
+ b1vycpA0+e0zrQaJxIOU+8B2v2btibea2wuUm3ypeB0JPERdRQOF6i4m70p/jziq18sVjd7hC
+ UrI4g0pI7ZV7jmXNRSGVCAvDWHCit7HnY9Nno3FNdZ1xDu5V2it81DIKzpKMmUHffIhrwHHPB
+ /XdDM0ANCZajI2ojKbnB1AUPlXfbyxWVgj8/7sKQEvfXpMt3Nmq3nQ1NJu/d1YRgQkpKWAUBi
+ mQFShHmfohVjYHNVoxo3rwYymF4RQfABAsvCVJos5hi6BACWxHBfWDixeIqiyvbCbfncPQozp
+ Kjx+1wwZjwApt+yLzM5GykI83It5w==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/17 4:16, Jaegeuk Kim wrote:
-> On 04/13, Chao Yu wrote:
->> On 2018/4/13 12:05, Jaegeuk Kim wrote:
->>> On 04/13, Chao Yu wrote:
->>>> On 2018/4/13 9:04, Jaegeuk Kim wrote:
->>>>> On 04/10, Chao Yu wrote:
->>>>>> Hi Jaegeuk,
->>>>>>
->>>>>> On 2018/4/8 16:13, Chao Yu wrote:
->>>>>>> f2fs doesn't allow abuse on atomic write class interface, so except
->>>>>>> limiting in-mem pages' total memory usage capacity, we need to limit
->>>>>>> start-commit time as well, otherwise we may run into infinite loop
->>>>>>> during foreground GC because target blocks in victim segment are
->>>>>>> belong to atomic opened file for long time.
->>>>>>>
->>>>>>> Now, we will check the condition with f2fs_balance_fs_bg in
->>>>>>> background threads, once if user doesn't commit data exceeding 30
->>>>>>> seconds, we will drop all cached data, so I expect it can keep our
->>>>>>> system running safely to prevent Dos attack.
->>>>>>
->>>>>> Is it worth to add this patch to avoid abuse on atomic write interface by user?
->>>>>
->>>>> Hmm, hope to see a real problem first in this case.
->>>>
->>>> I think this can be a more critical security leak instead of a potential issue
->>>> which we can wait for someone reporting that can be too late.
->>>>
->>>> For example, user can simply write a huge file whose data spread in all f2fs
->>>> segments, once user open that file as atomic, foreground GC will suffer
->>>> deadloop, causing denying any further service of f2fs.
->>>
->>> How can you guarantee it won't happen within 30sec? If you want to avoid that,
->>
->> Now the value is smaller than generic hang task threshold in order to avoid
->> foreground GC helding gc_mutex too long, we can tune that parameter?
->>
->>> you have to take a look at foreground gc.
->>
->> What do you mean? let GC moves blocks of atomic write opened file?
-> 
-> I thought that we first need to detect when foreground GC is stuck by such the
-> huge number of atomic writes. Then, we need to do something like dropping all
-> the atomic writes.
+Currently when detecting invalid options in option parsing,
+some options(e.g. msize) just set errno and allow to continuously
+validate other options so that it can detect invalid options
+as much as possible and give proper error messages together.
 
-Yup, that will be reasonable. :)
+This patch applies same rule to option 'cache' and 'access'
+when detecting EINVAL.
 
-Thanks,
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+Changes since v1:
+- Do not change behavior when detecting ENOMEM or unrecognized options. 
 
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>> Thanks,
->>>>>
->>>>> .
->>>>>
->>>
->>> .
->>>
-> 
-> .
-> 
+ fs/9p/v9fs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index e622f0f..2c7a0ef 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -309,7 +309,7 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 			ret = get_cache_mode(s);
+ 			if (ret == -EINVAL) {
+ 				kfree(s);
+-				goto free_and_return;
++				continue;
+ 			}
+ 
+ 			v9ses->cache = ret;
+@@ -341,14 +341,14 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 					pr_info("Unknown access argument %s\n",
+ 						s);
+ 					kfree(s);
+-					goto free_and_return;
++					continue;
+ 				}
+ 				v9ses->uid = make_kuid(current_user_ns(), uid);
+ 				if (!uid_valid(v9ses->uid)) {
+ 					ret = -EINVAL;
+ 					pr_info("Uknown uid %s\n", s);
+ 					kfree(s);
+-					goto free_and_return;
++					continue;
+ 				}
+ 			}
+ 
+-- 
+1.8.3.1
