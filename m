@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752788AbeDQK3k (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 06:29:40 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35046 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752634AbeDQK3b (ORCPT
+        id S1752800AbeDQK36 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 06:29:58 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41198 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752709AbeDQK33 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 06:29:31 -0400
-X-Google-Smtp-Source: AIpwx4+ikdOlWbgokx2kvzZVsyYzyyEXkM/cKnvIwmhY3mv/jTg8cyz9PrSJP2ov6ZwojhJ/AK8JlA==
+        Tue, 17 Apr 2018 06:29:29 -0400
+X-Google-Smtp-Source: AIpwx496nWnV9YoXhj+XZbktriQWfg8Ni0FBp3DcsUXCzFIKCjLiUTKg8bRSNVFNFHBuckABLx2/6w==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         Santosh Shilimkar <ssantosh@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v2 4/4] ARM: davinci: use aemif platform driver in legacy mode for da850-evm
-Date: Tue, 17 Apr 2018 12:29:17 +0200
-Message-Id: <20180417102917.7794-5-brgl@bgdev.pl>
+Subject: [RESEND PATCH v2 3/4] ARM: davinci: add aemif & nand support to da850-lcdk in legacy mode
+Date: Tue, 17 Apr 2018 12:29:16 +0200
+Message-Id: <20180417102917.7794-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417102917.7794-1-brgl@bgdev.pl>
 References: <20180417102917.7794-1-brgl@bgdev.pl>
@@ -26,147 +26,170 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We now support board files in aemif. Use the platform driver instead
-of the handcrafted API in da850-evm.
-
-Note: the id of davinci_nand is changed to 0 in order to make it work
-with the new common-clock framework based psc driver.
+We now have support for aemif & nand from board files. As an example
+add support for nand to da850-lcdk in legacy mode.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-da850-evm.c | 93 ++++++++++++++-----------
- 1 file changed, 51 insertions(+), 42 deletions(-)
+ arch/arm/mach-davinci/board-omapl138-hawk.c | 132 ++++++++++++++++++++
+ 1 file changed, 132 insertions(+)
 
-diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-index 78a670aafea0..f1c2c8c8c4af 100644
---- a/arch/arm/mach-davinci/board-da850-evm.c
-+++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@ -33,6 +33,7 @@
+diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
+index 6c997c59a3cd..9c3de56b54e4 100644
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -16,6 +16,11 @@
+ #include <linux/gpio.h>
+ #include <linux/gpio/machine.h>
  #include <linux/platform_data/gpio-davinci.h>
- #include <linux/platform_data/mtd-davinci.h>
- #include <linux/platform_data/mtd-davinci-aemif.h>
 +#include <linux/platform_data/ti-aemif.h>
- #include <linux/platform_data/spi-davinci.h>
- #include <linux/platform_data/uio_pruss.h>
++#include <linux/mtd/rawnand.h>
++#include <linux/mtd/partitions.h>
++#include <linux/platform_data/mtd-davinci.h>
++#include <linux/platform_data/mtd-davinci-aemif.h>
  #include <linux/regulator/machine.h>
-@@ -185,16 +186,6 @@ static struct resource da850_evm_norflash_resource[] = {
- 	},
- };
  
--static struct platform_device da850_evm_norflash_device = {
--	.name		= "physmap-flash",
--	.id		= 0,
--	.dev		= {
--		.platform_data  = &da850_evm_norflash_data,
--	},
--	.num_resources	= 1,
--	.resource	= da850_evm_norflash_resource,
--};
--
- /* DA850/OMAP-L138 EVM includes a 512 MByte large-page NAND flash
-  * (128K blocks). It may be used instead of the (default) SPI flash
-  * to boot, using TI's tools to install the secondary boot loader
-@@ -265,37 +256,58 @@ static struct resource da850_evm_nandflash_resource[] = {
- 	},
- };
+ #include <asm/mach-types.h>
+@@ -162,6 +167,129 @@ static __init void omapl138_hawk_mmc_init(void)
+ 	gpiod_remove_lookup_table(&mmc_gpios_table);
+ }
  
--static struct platform_device da850_evm_nandflash_device = {
--	.name		= "davinci_nand",
--	.id		= 1,
--	.dev		= {
--		.platform_data	= &da850_evm_nandflash_data,
--	},
--	.num_resources	= ARRAY_SIZE(da850_evm_nandflash_resource),
--	.resource	= da850_evm_nandflash_resource,
-+static struct resource da850_evm_aemif_resource[] = {
++static struct mtd_partition omapl138_hawk_nandflash_partition[] = {
++	{
++		.name		= "u-boot env",
++		.offset		= 0,
++		.size		= SZ_128K,
++		.mask_flags	= MTD_WRITEABLE,
++	 },
++	{
++		.name		= "u-boot",
++		.offset		= MTDPART_OFS_APPEND,
++		.size		= SZ_128K,
++		.mask_flags	= MTD_WRITEABLE,
++	},
++	{
++		.name		= "free space",
++		.offset		= MTDPART_OFS_APPEND,
++		.size		= MTDPART_SIZ_FULL,
++		.mask_flags	= 0,
++	},
++};
++
++static struct davinci_aemif_timing omapl138_hawk_nandflash_timing = {
++	.wsetup		= 24,
++	.wstrobe	= 21,
++	.whold		= 14,
++	.rsetup		= 19,
++	.rstrobe	= 50,
++	.rhold		= 0,
++	.ta		= 20,
++};
++
++static struct davinci_nand_pdata omapl138_hawk_nandflash_data = {
++	.parts		= omapl138_hawk_nandflash_partition,
++	.nr_parts	= ARRAY_SIZE(omapl138_hawk_nandflash_partition),
++	.ecc_mode	= NAND_ECC_HW,
++	.ecc_bits	= 4,
++	.bbt_options	= NAND_BBT_USE_FLASH,
++	.options	= NAND_BUSWIDTH_16,
++	.timing		= &omapl138_hawk_nandflash_timing,
++	.mask_chipsel	= 0,
++	.mask_ale	= 0,
++	.mask_cle	= 0,
++};
++
++static struct resource omapl138_hawk_nandflash_resource[] = {
++	{
++		.start	= DA8XX_AEMIF_CS3_BASE,
++		.end	= DA8XX_AEMIF_CS3_BASE + SZ_32M,
++		.flags	= IORESOURCE_MEM,
++	},
++	{
++		.start	= DA8XX_AEMIF_CTL_BASE,
++		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
++		.flags	= IORESOURCE_MEM,
++	},
++};
++
++static struct resource omapl138_hawk_aemif_resource[] = {
 +	{
 +		.start	= DA8XX_AEMIF_CTL_BASE,
 +		.end	= DA8XX_AEMIF_CTL_BASE + SZ_32K,
 +		.flags	= IORESOURCE_MEM,
 +	}
- };
- 
--static struct platform_device *da850_evm_devices[] = {
--	&da850_evm_nandflash_device,
--	&da850_evm_norflash_device,
-+static struct aemif_abus_data da850_evm_aemif_abus_data[] = {
++};
++
++static struct aemif_abus_data omapl138_hawk_aemif_abus_data[] = {
 +	{
 +		.cs	= 3,
 +	}
- };
- 
--#define DA8XX_AEMIF_CE2CFG_OFFSET	0x10
--#define DA8XX_AEMIF_ASIZE_16BIT		0x1
--
--static void __init da850_evm_init_nor(void)
--{
--	void __iomem *aemif_addr;
--
--	aemif_addr = ioremap(DA8XX_AEMIF_CTL_BASE, SZ_32K);
-+static struct platform_device da850_evm_aemif_devices[] = {
++};
++
++static struct platform_device omapl138_hawk_aemif_devices[] = {
 +	{
 +		.name		= "davinci_nand",
-+		.id		= 0,
++		.id		= 1,
 +		.dev		= {
-+			.platform_data	= &da850_evm_nandflash_data,
++			.platform_data	= &omapl138_hawk_nandflash_data,
 +		},
-+		.num_resources	= ARRAY_SIZE(da850_evm_nandflash_resource),
-+		.resource	= da850_evm_nandflash_resource,
-+	},
-+	{
-+		.name		= "physmap-flash",
++		.resource	= omapl138_hawk_nandflash_resource,
++		.num_resources	= ARRAY_SIZE(omapl138_hawk_nandflash_resource),
 +		.id		= 0,
-+		.dev		= {
-+			.platform_data  = &da850_evm_norflash_data,
-+		},
-+		.num_resources	= 1,
-+		.resource	= da850_evm_norflash_resource,
 +	}
 +};
- 
--	/* Configure data bus width of CS2 to 16 bit */
--	writel(readl(aemif_addr + DA8XX_AEMIF_CE2CFG_OFFSET) |
--		DA8XX_AEMIF_ASIZE_16BIT,
--		aemif_addr + DA8XX_AEMIF_CE2CFG_OFFSET);
-+static struct aemif_platform_data da850_evm_aemif_pdata = {
++
++static struct aemif_platform_data omapl138_hawk_aemif_pdata = {
 +	.cs_offset = 2,
-+	.abus_data = da850_evm_aemif_abus_data,
-+	.num_abus_data = ARRAY_SIZE(da850_evm_aemif_abus_data),
-+	.sub_devices = da850_evm_aemif_devices,
-+	.num_sub_devices = ARRAY_SIZE(da850_evm_aemif_devices),
++	.abus_data = omapl138_hawk_aemif_abus_data,
++	.num_abus_data = ARRAY_SIZE(omapl138_hawk_aemif_abus_data),
++	.sub_devices = omapl138_hawk_aemif_devices,
++	.num_sub_devices = ARRAY_SIZE(omapl138_hawk_aemif_devices),
 +};
- 
--	iounmap(aemif_addr);
--}
-+static struct platform_device da850_evm_aemif_device = {
++
++static struct platform_device omapl138_hawk_aemif_device = {
 +	.name		= "ti-aemif",
 +	.dev = {
-+		.platform_data	= &da850_evm_aemif_pdata,
++		.platform_data	= &omapl138_hawk_aemif_pdata,
 +	},
-+	.resource	= da850_evm_aemif_resource,
-+	.num_resources	= ARRAY_SIZE(da850_evm_aemif_resource),
++	.resource	= omapl138_hawk_aemif_resource,
++	.num_resources	= ARRAY_SIZE(omapl138_hawk_aemif_resource),
 +	.id		= -1,
 +};
++
++static const short omapl138_hawk_nand_pins[] = {
++	DA850_EMA_WAIT_1, DA850_NEMA_OE, DA850_NEMA_WE, DA850_NEMA_CS_3,
++	DA850_EMA_D_0, DA850_EMA_D_1, DA850_EMA_D_2, DA850_EMA_D_3,
++	DA850_EMA_D_4, DA850_EMA_D_5, DA850_EMA_D_6, DA850_EMA_D_7,
++	DA850_EMA_D_8, DA850_EMA_D_9, DA850_EMA_D_10, DA850_EMA_D_11,
++	DA850_EMA_D_12, DA850_EMA_D_13, DA850_EMA_D_14, DA850_EMA_D_15,
++	DA850_EMA_A_1, DA850_EMA_A_2,
++	-1
++};
++
++static int omapl138_hawk_register_aemif(void)
++{
++	int ret;
++
++	ret = davinci_cfg_reg_list(omapl138_hawk_nand_pins);
++	if (ret)
++		pr_warn("%s: NAND mux setup failed: %d\n", __func__, ret);
++
++	return platform_device_register(&omapl138_hawk_aemif_device);
++}
++
+ static irqreturn_t omapl138_hawk_usb_ocic_irq(int irq, void *dev_id);
+ static da8xx_ocic_handler_t hawk_usb_ocic_handler;
  
- static const short da850_evm_nand_pins[] = {
- 	DA850_EMA_D_0, DA850_EMA_D_1, DA850_EMA_D_2, DA850_EMA_D_3,
-@@ -338,13 +350,10 @@ static inline void da850_evm_setup_nor_nand(void)
- 			pr_warn("%s: NOR mux setup failed: %d\n",
- 				__func__, ret);
+@@ -294,6 +422,10 @@ static __init void omapl138_hawk_init(void)
  
--		da850_evm_init_nor();
--
--		platform_add_devices(da850_evm_devices,
--					ARRAY_SIZE(da850_evm_devices));
--
--		if (davinci_aemif_setup(&da850_evm_nandflash_device))
--			pr_warn("%s: Cannot configure AEMIF.\n", __func__);
-+		ret = platform_device_register(&da850_evm_aemif_device);
-+		if (ret)
-+			pr_warn("%s: registering aemif failed: %d\n",
-+				__func__, ret);
- 	}
- }
+ 	omapl138_hawk_usb_init();
  
++	ret = omapl138_hawk_register_aemif();
++	if (ret)
++		pr_warn("%s: aemif registration failed: %d\n", __func__, ret);
++
+ 	ret = da8xx_register_watchdog();
+ 	if (ret)
+ 		pr_warn("%s: watchdog registration failed: %d\n",
 -- 
 2.17.0
