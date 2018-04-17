@@ -1,73 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752792AbeDQPt3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 11:49:29 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:33097 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751863AbeDQPt1 (ORCPT
+        id S1752580AbeDQPwN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 11:52:13 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:55680 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751187AbeDQPwM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 11:49:27 -0400
-X-Google-Smtp-Source: AIpwx4/4uI3l9gsmk6wxDgzYp+ZkYCxzLtUHVXhN73YeE1132pRq6clvs3303eYBeVH1ENtJODTZUxrmMFQ7Qhw+O9M=
+        Tue, 17 Apr 2018 11:52:12 -0400
+Subject: Re: [RFC 03/10] PCI: endpoint: Add MSI-X interfaces
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>
+Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1523379766.git.gustavo.pimentel@synopsys.com>
+ <c76688ee290a9ed4f0f70f5e350b906950ec05df.1523379766.git.gustavo.pimentel@synopsys.com>
+ <7fec2005-d7a8-daea-9451-7f3593afe285@ti.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <27b67ebd-b585-f3a1-091d-a3cdf13f03eb@synopsys.com>
+Date: Tue, 17 Apr 2018 16:51:05 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1523963101-56725-4-git-send-email-michel.pollet@bp.renesas.com>
-References: <1523963101-56725-1-git-send-email-michel.pollet@bp.renesas.com> <1523963101-56725-4-git-send-email-michel.pollet@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 17 Apr 2018 17:49:25 +0200
-X-Google-Sender-Auth: WH-zOjlBvnCti7FljDztxO4S5aI
-Message-ID: <CAMuHMdU4upXcYZ_yD2a_=J5VAUE28fni7_NotmchjpYUqCxV=A@mail.gmail.com>
-Subject: Re: [PATCH v5 3/6] dt-bindings: arm: Document the RZN1D-DB board
-To: Michel Pollet <michel.pollet@bp.renesas.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7fec2005-d7a8-daea-9451-7f3593afe285@ti.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michel,
+Hi Kishon,
 
-On Tue, Apr 17, 2018 at 1:04 PM, Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> This documents the RZ/N1 bindings for the RZN1D-DB board.
->
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/arm/shmobile.txt | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-> index 61b486f..6efb3f1 100644
-> --- a/Documentation/devicetree/bindings/arm/shmobile.txt
-> +++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-> @@ -51,7 +51,8 @@ SoCs:
->      compatible = "renesas,r8a77990"
->    - R-Car D3 (R8A77995)
->      compatible = "renesas,r8a77995"
-> -
-> +  - RZ/N1D (R9A06G032)
-> +    compatible = "renesas,r9a06g032", "renesas,rzn1"
+On 17/04/2018 11:24, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Tuesday 10 April 2018 10:44 PM, Gustavo Pimentel wrote:
+>> Implements the generic method for calling the get/set callbacks.
+>>
+>> Adds the PCI_EPC_IRQ_MSIX type.
+>>
+>> Adds the MSI-X callbacks signatures to the ops structure.
+>>
+>> Adds sysfs interface for altering the number of MSI-X entries.
+>>
+>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>> ---
+>>  drivers/pci/endpoint/pci-ep-cfs.c   | 24 ++++++++++++++++
+>>  drivers/pci/endpoint/pci-epc-core.c | 57 +++++++++++++++++++++++++++++++++++++
+>>  include/linux/pci-epc.h             | 11 ++++++-
+>>  include/linux/pci-epf.h             |  1 +
+>>  4 files changed, 92 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+>> index 018ea34..d1288a0 100644
+>> --- a/drivers/pci/endpoint/pci-ep-cfs.c
+>> +++ b/drivers/pci/endpoint/pci-ep-cfs.c
+>> @@ -286,6 +286,28 @@ static ssize_t pci_epf_msi_interrupts_show(struct config_item *item,
+>>  		       to_pci_epf_group(item)->epf->msi_interrupts);
+>>  }
+>>  
+>> +static ssize_t pci_epf_msix_interrupts_store(struct config_item *item,
+>> +					     const char *page, size_t len)
+>> +{
+>> +	u16 val;
+>> +	int ret;
+>> +
+>> +	ret = kstrtou16(page, 0, &val);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	to_pci_epf_group(item)->epf->msix_interrupts = val;
+>> +
+>> +	return len;
+>> +}
+>> +
+>> +static ssize_t pci_epf_msix_interrupts_show(struct config_item *item,
+>> +					    char *page)
+>> +{
+>> +	return sprintf(page, "%d\n",
+>> +		       to_pci_epf_group(item)->epf->msix_interrupts);
+>> +}
+>> +
+>>  PCI_EPF_HEADER_R(vendorid)
+>>  PCI_EPF_HEADER_W_u16(vendorid)
+>>  
+>> @@ -327,6 +349,7 @@ CONFIGFS_ATTR(pci_epf_, subsys_vendor_id);
+>>  CONFIGFS_ATTR(pci_epf_, subsys_id);
+>>  CONFIGFS_ATTR(pci_epf_, interrupt_pin);
+>>  CONFIGFS_ATTR(pci_epf_, msi_interrupts);
+>> +CONFIGFS_ATTR(pci_epf_, msix_interrupts);
+>>  
+>>  static struct configfs_attribute *pci_epf_attrs[] = {
+>>  	&pci_epf_attr_vendorid,
+>> @@ -340,6 +363,7 @@ static struct configfs_attribute *pci_epf_attrs[] = {
+>>  	&pci_epf_attr_subsys_id,
+>>  	&pci_epf_attr_interrupt_pin,
+>>  	&pci_epf_attr_msi_interrupts,
+>> +	&pci_epf_attr_msix_interrupts,
+>>  	NULL,
+>>  };
+>>  
+>> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+>> index b0ee427..294a383 100644
+>> --- a/drivers/pci/endpoint/pci-epc-core.c
+>> +++ b/drivers/pci/endpoint/pci-epc-core.c
+>> @@ -218,6 +218,63 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+>>  EXPORT_SYMBOL_GPL(pci_epc_set_msi);
+>>  
+>>  /**
+>> + * pci_epc_get_msix() - get the number of MSI-X interrupt numbers allocated
+>> + * @epc: the EPC device to which MSI-X interrupts was requested
+>> + * @func_no: the endpoint function number in the EPC device
+>> + *
+>> + * Invoke to get the number of MSI-X interrupts allocated by the RC
+>> + */
+>> +int pci_epc_get_msix(struct pci_epc *epc, u8 func_no)
+>> +{
+>> +	int interrupt;
+>> +	unsigned long flags;
+>> +
+>> +	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
+>> +		return 0;
+>> +
+>> +	if (!epc->ops->get_msix)
+>> +		return 0;
+>> +
+>> +	spin_lock_irqsave(&epc->lock, flags);
+>> +	interrupt = epc->ops->get_msix(epc, func_no);
+>> +	spin_unlock_irqrestore(&epc->lock, flags);
+>> +
+>> +	if (interrupt < 0)
+>> +		return 0;
+>> +
+>> +	return interrupt++;
+> 
+> return interrupt + 1?
 
-Why do you need a family-specific compatible value ("renesas,rzn1",
-which is a marketing name)?
+I'll change it.
 
-Gr{oetje,eeting}s,
+>> +}
+>> +EXPORT_SYMBOL_GPL(pci_epc_get_msix);
+>> +
+>> +/**
+>> + * pci_epc_set_msix() - set the number of MSI-X interrupt numbers required
+>> + * @epc: the EPC device on which MSI-X has to be configured
+>> + * @func_no: the endpoint function number in the EPC device
+>> + * @interrupts: number of MSI-X interrupts required by the EPF
+>> + *
+>> + * Invoke to set the required number of MSI-X interrupts.
+>> + */
+>> +int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
+>> +{
+>> +	int ret;
+>> +	unsigned long flags;
+>> +
+>> +	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
+>> +	    interrupts < 1 || interrupts > 2048)
+>> +		return -EINVAL;
+>> +
+>> +	if (!epc->ops->set_msix)
+>> +		return 0;
+>> +
+>> +	spin_lock_irqsave(&epc->lock, flags);
+>> +	ret = epc->ops->set_msix(epc, func_no, interrupts - 1);
+>> +	spin_unlock_irqrestore(&epc->lock, flags);
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(pci_epc_set_msix);
+>> +
+>> +/**
+>>   * pci_epc_unmap_addr() - unmap CPU address from PCI address
+>>   * @epc: the EPC device on which address is allocated
+>>   * @func_no: the endpoint function number in the EPC device
+>> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+>> index af657ca..32e8961 100644
+>> --- a/include/linux/pci-epc.h
+>> +++ b/include/linux/pci-epc.h
+>> @@ -17,6 +17,7 @@ enum pci_epc_irq_type {
+>>  	PCI_EPC_IRQ_UNKNOWN,
+>>  	PCI_EPC_IRQ_LEGACY,
+>>  	PCI_EPC_IRQ_MSI,
+>> +	PCI_EPC_IRQ_MSIX,
+>>  };
+>>  
+>>  /**
+>> @@ -30,6 +31,10 @@ enum pci_epc_irq_type {
+>>   *	     capability register
+>>   * @get_msi: ops to get the number of MSI interrupts allocated by the RC from
+>>   *	     the MSI capability register
+>> + * @set_msix: ops to set the requested number of MSI-X interrupts in the
+>> + *	     MSI-X capability register
+>> + * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
+>> + *	     from the MSI-X capability register
+>>   * @raise_irq: ops to raise a legacy or MSI interrupt
+>>   * @start: ops to start the PCI link
+>>   * @stop: ops to stop the PCI link
+>> @@ -48,8 +53,10 @@ struct pci_epc_ops {
+>>  			      phys_addr_t addr);
+>>  	int	(*set_msi)(struct pci_epc *epc, u8 func_no, u8 interrupts);
+>>  	int	(*get_msi)(struct pci_epc *epc, u8 func_no);
+>> +	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
+>> +	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
+> 
+> The 1st patch in the series is already using get_msix, set_msix. This patch
+> should precede the 1st patch.
 
-                        Geert
+Yes, you're right.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> Thanks
+> Kishon
+> 
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Gustavo
