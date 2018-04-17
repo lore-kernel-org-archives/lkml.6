@@ -1,76 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752707AbeDQSaB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 14:30:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:39902 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752670AbeDQS36 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 14:29:58 -0400
-Date: Tue, 17 Apr 2018 11:29:57 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: adobriyan@gmail.com, mhocko@kernel.org, willy@infradead.org,
-        mguzik@redhat.com, gorcunov@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v4 PATCH] mm: introduce arg_lock to protect arg_start|end and
- env_start|end in mm_struct
-Message-Id: <20180417112957.84de526138f404a04298ec4c@linux-foundation.org>
-In-Reply-To: <1523730291-109696-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1523730291-109696-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752725AbeDQSai (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 14:30:38 -0400
+Received: from mail-by2nam03on0085.outbound.protection.outlook.com ([104.47.42.85]:56320
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751230AbeDQSag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 14:30:36 -0400
+From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: RE: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
+ systems
+Thread-Topic: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
+ systems
+Thread-Index: AQHTyrzRqCN7fg42eUKg23bN8kMvXKQFS3EAgAAGZOA=
+Date: Tue, 17 Apr 2018 18:30:34 +0000
+Message-ID: <CY4PR12MB15574493593120818D9BFE11F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
+References: <20180402195707.42875-1-Yazen.Ghannam@amd.com>
+ <20180417172102.GA3633@pd.tnic>
+In-Reply-To: <20180417172102.GA3633@pd.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Yazen.Ghannam@amd.com;
+x-originating-ip: [165.204.84.17]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR12MB1816;7:CbhKAuZxkv4eqbSlrjZOkjOadYL9KOzeHtJoNXYAaejbadw7M02u3828IvdxC9BJ8ufHfr6NMgxNTnVI0ZeAyC0dXbLWZxB/U6mpPaxK1O1HHtSZnix5/BQdecTE+B9YW02keYGLF5MRbfVeRRwO6Q/lBkKFDdI4ushKFq+kZrhnH9wfK6abn6KD8m+kd2zgdZWPxEhZQ1Fxs/+Ei1Yb+jdSOghTClQAw8sVBnFtL8BELQ9ce/SZeniibYiYOiSf;20:yHfiFCLIqandmbgMcAcDGJGI/btjVepOt313xWrEO79YoChq7o9Ma+afVAQNaAXQ+wiQEZm/bOqCXSZekjY7MauXQlI1MlX7d4az1JkjseB094Dw79fhIFyxDE8fJ7kGxjSVce5FhEQF2gPzGl3rjxBD/ZHdOYF01IkyYa1Gdl2xBwC/Fp4rIUCR1y7MSedXA6nFKmsttE8phcBpuhIiUPQz6IvQ+xFnzHQ33c7+BO2exf8bCJj2Sm8OkULK6k8n
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:CY4PR12MB1816;
+x-ms-traffictypediagnostic: CY4PR12MB1816:
+x-microsoft-antispam-prvs: <CY4PR12MB181645516EC5404956E2484DF8B70@CY4PR12MB1816.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231232)(944501327)(52105095)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:CY4PR12MB1816;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1816;
+x-forefront-prvs: 0645BEB7AA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(376002)(346002)(39380400002)(396003)(189003)(199004)(13464003)(86362001)(106356001)(7696005)(14454004)(4326008)(6916009)(26005)(74316002)(305945005)(102836004)(8676002)(478600001)(59450400001)(2906002)(6506007)(53546011)(76176011)(54906003)(55016002)(6436002)(5250100002)(229853002)(68736007)(186003)(6246003)(9686003)(53936002)(11346002)(486006)(476003)(105586002)(2900100001)(3280700002)(446003)(316002)(33656002)(97736004)(25786009)(6116002)(3660700001)(3846002)(7736002)(8936002)(99286004)(81156014)(72206003)(81166006)(5660300001)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1816;H:CY4PR12MB1557.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: 2fp3HblizvYacRbVEz/4akPuh0jmXAZjUxEWfnGA45PxRbzFWYWKjA8O9VZtk01gmCiEgOFTVhgTCYElqy1K8ghdVQF/IHrZz8u81Fwsm0WmG3QHqyS+l5E3PBbqg/nPi4geDOiWhdoujPfi0SgNMkue5pSefDlUNB+qGN8w/e/VuxJ6NIC5dcCa24rnKb1J
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: a783a959-22b7-4b76-7413-08d5a4914ef2
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a783a959-22b7-4b76-7413-08d5a4914ef2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2018 18:30:34.2956
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1816
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3HIUnlI012128
 
-On Sun, 15 Apr 2018 02:24:51 +0800 Yang Shi <yang.shi@linux.alibaba.com> wrote:
+> -----Original Message-----
+> From: Borislav Petkov <bp@alien8.de>
+> Sent: Tuesday, April 17, 2018 1:21 PM
+> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
+> Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org;
+> tony.luck@intel.com; x86@kernel.org
+> Subject: Re: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on
+> SMCA systems
+> 
+> On Mon, Apr 02, 2018 at 02:57:07PM -0500, Yazen Ghannam wrote:
+> > From: Yazen Ghannam <yazen.ghannam@amd.com>
+> >
+> > The Intel SDM and AMD APM both state that the auxiliary MCA registers
+> > should be read if their respective valid bits are set in MCA_STATUS.
+> >
+> > The Processor Programming Reference for AMD Fam17h systems has a new
+> > recommendation that the auxiliary registers should be saved
+> > unconditionally. This recommendation can be retroactively applied to
+> > older AMD systems. However, we only need to apply this to SMCA systems
+> > to avoid modifying behavior on older systems.
+> 
+> Applying the logic of that recommendation on older systems: wouldn't it
+> be prudent to save them there too, if it helps debugging an MCE?
+> 
 
-> mmap_sem is on the hot path of kernel, and it very contended, but it is
-> abused too. It is used to protect arg_start|end and evn_start|end when
-> reading /proc/$PID/cmdline and /proc/$PID/environ, but it doesn't make
-> sense since those proc files just expect to read 4 values atomically and
-> not related to VM, they could be set to arbitrary values by C/R.
-> 
-> And, the mmap_sem contention may cause unexpected issue like below:
-> 
-> INFO: task ps:14018 blocked for more than 120 seconds.
->        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
->  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
-> message.
->  ps              D    0 14018      1 0x00000004
->   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
->   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
->   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
->  Call Trace:
->   [<ffffffff817154d0>] ? __schedule+0x250/0x730
->   [<ffffffff817159e6>] schedule+0x36/0x80
->   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
->   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
->   [<ffffffff81717db0>] down_read+0x20/0x40
->   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
->   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
->   [<ffffffff81241d87>] __vfs_read+0x37/0x150
->   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
->   [<ffffffff81242266>] vfs_read+0x96/0x130
->   [<ffffffff812437b5>] SyS_read+0x55/0xc0
->   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
-> 
-> Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
-> for them to mitigate the abuse of mmap_sem.
-> 
-> So, introduce a new spinlock in mm_struct to protect the concurrent
-> access to arg_start|end, env_start|end and others, as well as replace
-> write map_sem to read to protect the race condition between prctl and
-> sys_brk which might break check_data_rlimit(), and makes prctl more
-> friendly to other VM operations.
+We could but it's an issue of documentation and testing the older systems.
 
-(We should move check_data_rlimit() out of the .h file)
+My first pass at this was to unconditionally read the registers because my
+understanding was that registers that aren't accessible would be read-as-zero.
+I thought this was a common MCA implementation. But Tony pointed out that
+this isn't the case on Intel systems. This is the case on recent AMD systems. But
+I don't know if it's the case on older systems which may or may not have
+followed the Intel implementation more closely.
 
-It seems inconsistent to be using mmap_sem to protect ->start_brk and
-friends in sys_brk().  We've already declared that these are protected
-by arg_lock so that's what we should be using?  And getting this
-consistent should permit us to stop using mmap_sem in prctl()
-altogether?
+So to be safe, HW folks said we can restrict this to only SMCA systems because
+1) The recommendation first shows up in the Fam17h PPR.
+2) We know it's safe from Fam17h onwards.
+
+> > Define a separate function to save all auxiliary registers on SMCA
+> > systems. Call this function from both the MCE handlers and the AMD LVT
+> > interrupt handlers so that we don't duplicate code.
+> >
+> > Print all auxiliary registers in EDAC/mce_amd. Don't restrict this to
+> > SMCA systems in order to save a conditional and keep the format similar
+> > between SMCA and non-SMCA systems.
+> >
+> > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> ...
+> 
+> > diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c
+> b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+> > index f7666eef4a87..b00d5fff1848 100644
+> > --- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
+> > +++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+> > @@ -244,6 +244,47 @@ static void smca_configure(unsigned int bank,
+> unsigned int cpu)
+> >  	}
+> >  }
+> >
+> > +
+> > +static bool _smca_read_aux(struct mce *m, int bank, bool read_addr)
+> > +{
+> > +	if (!mce_flags.smca)
+> > +		return false;
+> > +
+> > +	rdmsrl(MSR_AMD64_SMCA_MCx_IPID(bank), m->ipid);
+> > +	rdmsrl(MSR_AMD64_SMCA_MCx_SYND(bank), m->synd);
+> > +
+> > +	/*
+> > +	 * We should already have a value if we're coming from the
+> Threshold LVT
+> > +	 * interrupt handler. Otherwise, read it now.
+> > +	 */
+> > +	if (!m->misc)
+> > +		rdmsrl(msr_ops.misc(bank), m->misc);
+> > +
+> > +	/*
+> > +	 * Read MCA_ADDR if we don't have it already. We should already
+> have it
+> > +	 * if we're coming from the interrupt handlers.
+> > +	 */
+> > +	if (read_addr)
+> 
+> Why not
+> 
+> 	if (!m->addr)
+> 
+> ?
+> 
+> And yeah, if it has been read to 0 already, reading it again won't
+> change anything.
+> 
+> And thinking about it more, you don't really need those if-tests, I'd
+> say. So what, you'll read one or two MSRs once more. It is not such a
+> hot path that we can't stomach the perf penalty of reading the MSRs.
+> 
+
+The issue here is because we share this path with the interrupt handlers,
+specifically the Deferred error interrupt handler. The DFR handler will
+read from MCA_ADDR or MCA_DEADDR so we should just use what it
+got. Otherwise, we may read MCA_ADDR and assume it's correct for
+the error.
+
+For example,
+
+Deferred error occurs:
+- MCA_{STATUS,ADDR,DESTAT,DEADDR} all have valid data.
+
+MCE occurs
+- MCA_{STATUS,ADDR} are overwritten with non-zero data.
+- MCE handler clears MCA_STATUS. MCA_ADDR is non-zero.
+
+DFR handler finds MCA_STATUS[Deferred] is clear, so it saves
+MCA_DESTAT and MCA_DEADDR which is 0.
+
+If !m->addr (which has MCA_DEADDR), then we read MCA_STATUS
+which has the address from the MCE.
+
+
+> > +		rdmsrl(msr_ops.addr(bank), m->addr);
+> > +
+> > +	/*
+> > +	 * Extract [55:<lsb>] where lsb is the least significant
+> > +	 * *valid* bit of the address bits.
+> > +	 */
+> > +	if (m->addr) {
+> 
+> And that test is probably not needed either: if m->addr is 0, the
+> below would be 0 anyway.
+> 
+> > +		u8 lsb = (m->addr >> 56) & 0x3f;
+> > +
+> > +		m->addr &= GENMASK_ULL(55, lsb);
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> 
+> IOW, those tests are probably ok but getting rid of them would make the
+> code more readable and I think we can afford that here.
+> 
+
+Okay, I'll get rid the last test. But the first one is necessary with our current
+code flow.
+
+Thanks,
+Yazen
