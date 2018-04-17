@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49/oqej91yqbkq7gn9boxaMrrFRCRfubwFlwuLZ2ndC3yKfLwrqv8iBLDexFefUAnJwL27J
-ARC-Seal: i=1; a=rsa-sha256; t=1523981413; cv=none;
+X-Google-Smtp-Source: AIpwx489VaZ5RrGdQ5oQCjWLvUWMPcJXmcWnao/HNgR9o9NuavL5cMr9L7+NJV04qX0iG5rjA7Bk
+ARC-Seal: i=1; a=rsa-sha256; t=1523981410; cv=none;
         d=google.com; s=arc-20160816;
-        b=HUNdIGx+eZrapeJ7jfCOaAFvu/Nl7FP6Onrigs5Hs5fQZrrR7JZkcp07aynR2IqXuI
-         8jM5sa//rXvdHr6abk8KSszo/FNfoFBmsOwE+A/+98opkv/l707TXJ4BjxTDVmI6/sUc
-         RSDR9R5m51pIkVvgkWm2UqTaVYCHg5CiSer3YEbYUFzfZmYdUENuM4NYW6lT8jI8BKx1
-         EF3tS3czH083F9UrK0Cb0xBIDaa3smGtXeNfDKbJbL9rXvFFHNH5Yai1k8Ynhgk4xl1J
-         e7NtCpX6uwsrMl/xdXviJMsf1yiPnVnzj0l5dmcFWUrN07JrYZs0CjMrFAWhc40wygIV
-         lPAw==
+        b=BEyIv/hKYOTudhR62FAdKYkgTpEPnEwse0+7x8iqcj+BOcDNqkdqk4CiYFnLjCompZ
+         fZEpfbUaM/mBMkNOZj1QEq5l3BBviAGXtCQTXxZN9W0v+lCV9zVBFoi9YT2bSCVM8z7i
+         KwmZd7hNX71mgOKJM8H1YhzuxkL2JtRC76A4xD6tYr62VF+H+xpKXfPyQYCVfGqGgaz3
+         UzX1rdAYn4YR5l8OUo5FkmTzeAxXPQnene58xwhifXaA/EW7qDFikoYwyQsy/qN2z3xi
+         srhjdibK9V+yjWi2LnRxYqN5Zu6mzKEZ35xUxOpfGQ5VDgk8qAkrCzjqDeh4LM+WKxV7
+         zLnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=PQkDWt/9+0ve8oo5fA0rGOuUpZb08h0TC69DKgVMDlc=;
-        b=tcH+6Ibtf+FHc7chWk+XMl6cEhwC/TO05LR//zbA77I5JNV6F8ZwFH2AaX4/pLFmsT
-         o0HbMuL27K3KEWkxNYsZvN9LCOTJkjpjd4IT5X1DkWEhLYyIjC++KcUzVg1BWSVzXzeH
-         k1yVdbE27ZQ7T/fTckur+a3sBULlnsaXnzncFPt8b61EvboTad94/oAF/DHlIrB1oDPJ
-         b1TkLHSHlUC5V0dxUy03M0N2yEUpHU0o97kC+t74eSzbj8Jdyh21JOZvf4Fr91LYlCAN
-         h4TDBJJ63r/FYSwB0m4gQLzCD8Ma+itZmZJqbM82E/J6EE83u7kMX6eQ87qdl9e0bcAQ
-         6ZNg==
+        bh=RYRs53b01d3K2vFSPna4W8tqcZNmT6PDzJC2d+9Insw=;
+        b=UMALnkbMxZW9QWBuAGI4ldreI1SHihDelplnnv63CMFLYQwt4XdpGOfNF3YS7No4QS
+         5r4VTtjgEOqJdS93O2FocmVr9EyEgLIt5jeiOy9zkJ8t6bRwzdivSP8rNAOwsWyk/J67
+         Ti4nPxG2HOkv3CaS17bSQSLqiX9/7cJdo/NCNmYq0PL2ZJqbkEt5TtGuw84W0VLhEWWF
+         YP9mYu39LkRtefJ8HidsK+OIC7iCAmCSEvdLuTyFdB82qsi0jVmayH27LFjfMpv3MbW7
+         zG5lYzrxmx5Fs9+WmDtsYVla3vleLnXTMud3bf2HVFeyHrZvkcQpUEp8bU8gZPcj6Spe
+         KiJA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,21 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
-	Ming Lei <tom.leiming@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jens Axboe <axboe@fb.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 53/66] block/loop: fix deadlock after loop_set_status
-Date: Tue, 17 Apr 2018 17:59:26 +0200
-Message-Id: <20180417155648.189650226@linuxfoundation.org>
+	Pavlos Parissis <pavlos.parissis@gmail.com>,
+	Lei Chen <chenl.lei@gmail.com>,
+	Maxime Hadjinlian <maxime.hadjinlian@gmail.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	David Ahern <dsahern@gmail.com>,
+	Peter Zijlstra <a.p.zijlstra@chello.nl>,
+	Wang Nan <wangnan0@huawei.com>,
+	kernel-team@lge.com,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.9 52/66] Revert "perf tests: Decompress kernel module before objdump"
+Date: Tue, 17 Apr 2018 17:59:25 +0200
+Message-Id: <20180417155648.152933169@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155645.868055442@linuxfoundation.org>
 References: <20180417155645.868055442@linuxfoundation.org>
@@ -44,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009837369883753?=
-X-GMAIL-MSGID: =?utf-8?q?1598010334607213817?=
+X-GMAIL-THRID: =?utf-8?q?1598010331907044022?=
+X-GMAIL-MSGID: =?utf-8?q?1598010331907044022?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,130 +59,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 1e047eaab3bb5564f25b41e9cd3a053009f4e789 upstream.
+This reverts commit 7525a238be8f46617cdda29d1be5b85ffe3b042d which is
+commit 94df1040b1e6aacd8dec0ba3c61d7e77cd695f26 upstream.
 
-syzbot is reporting deadlocks at __blkdev_get() [1].
+It breaks the build of perf on 4.9.y, so I'm dropping it.
 
-----------------------------------------
-[   92.493919] systemd-udevd   D12696   525      1 0x00000000
-[   92.495891] Call Trace:
-[   92.501560]  schedule+0x23/0x80
-[   92.502923]  schedule_preempt_disabled+0x5/0x10
-[   92.504645]  __mutex_lock+0x416/0x9e0
-[   92.510760]  __blkdev_get+0x73/0x4f0
-[   92.512220]  blkdev_get+0x12e/0x390
-[   92.518151]  do_dentry_open+0x1c3/0x2f0
-[   92.519815]  path_openat+0x5d9/0xdc0
-[   92.521437]  do_filp_open+0x7d/0xf0
-[   92.527365]  do_sys_open+0x1b8/0x250
-[   92.528831]  do_syscall_64+0x6e/0x270
-[   92.530341]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[   92.931922] 1 lock held by systemd-udevd/525:
-[   92.933642]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x73/0x4f0
-----------------------------------------
-
-The reason of deadlock turned out that wait_event_interruptible() in
-blk_queue_enter() got stuck with bdev->bd_mutex held at __blkdev_put()
-due to q->mq_freeze_depth == 1.
-
-----------------------------------------
-[   92.787172] a.out           S12584   634    633 0x80000002
-[   92.789120] Call Trace:
-[   92.796693]  schedule+0x23/0x80
-[   92.797994]  blk_queue_enter+0x3cb/0x540
-[   92.803272]  generic_make_request+0xf0/0x3d0
-[   92.807970]  submit_bio+0x67/0x130
-[   92.810928]  submit_bh_wbc+0x15e/0x190
-[   92.812461]  __block_write_full_page+0x218/0x460
-[   92.815792]  __writepage+0x11/0x50
-[   92.817209]  write_cache_pages+0x1ae/0x3d0
-[   92.825585]  generic_writepages+0x5a/0x90
-[   92.831865]  do_writepages+0x43/0xd0
-[   92.836972]  __filemap_fdatawrite_range+0xc1/0x100
-[   92.838788]  filemap_write_and_wait+0x24/0x70
-[   92.840491]  __blkdev_put+0x69/0x1e0
-[   92.841949]  blkdev_close+0x16/0x20
-[   92.843418]  __fput+0xda/0x1f0
-[   92.844740]  task_work_run+0x87/0xb0
-[   92.846215]  do_exit+0x2f5/0xba0
-[   92.850528]  do_group_exit+0x34/0xb0
-[   92.852018]  SyS_exit_group+0xb/0x10
-[   92.853449]  do_syscall_64+0x6e/0x270
-[   92.854944]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[   92.943530] 1 lock held by a.out/634:
-[   92.945105]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x3c/0x1e0
-----------------------------------------
-
-The reason of q->mq_freeze_depth == 1 turned out that loop_set_status()
-forgot to call blk_mq_unfreeze_queue() at error paths for
-info->lo_encrypt_type != NULL case.
-
-----------------------------------------
-[   37.509497] CPU: 2 PID: 634 Comm: a.out Tainted: G        W        4.16.0+ #457
-[   37.513608] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[   37.518832] RIP: 0010:blk_freeze_queue_start+0x17/0x40
-[   37.521778] RSP: 0018:ffffb0c2013e7c60 EFLAGS: 00010246
-[   37.524078] RAX: 0000000000000000 RBX: ffff8b07b1519798 RCX: 0000000000000000
-[   37.527015] RDX: 0000000000000002 RSI: ffffb0c2013e7cc0 RDI: ffff8b07b1519798
-[   37.529934] RBP: ffffb0c2013e7cc0 R08: 0000000000000008 R09: 47a189966239b898
-[   37.532684] R10: dad78b99b278552f R11: 9332dca72259d5ef R12: ffff8b07acd73678
-[   37.535452] R13: 0000000000004c04 R14: 0000000000000000 R15: ffff8b07b841e940
-[   37.538186] FS:  00007fede33b9740(0000) GS:ffff8b07b8e80000(0000) knlGS:0000000000000000
-[   37.541168] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   37.543590] CR2: 00000000206fdf18 CR3: 0000000130b30006 CR4: 00000000000606e0
-[   37.546410] Call Trace:
-[   37.547902]  blk_freeze_queue+0x9/0x30
-[   37.549968]  loop_set_status+0x67/0x3c0 [loop]
-[   37.549975]  loop_set_status64+0x3b/0x70 [loop]
-[   37.549986]  lo_ioctl+0x223/0x810 [loop]
-[   37.549995]  blkdev_ioctl+0x572/0x980
-[   37.550003]  block_ioctl+0x34/0x40
-[   37.550006]  do_vfs_ioctl+0xa7/0x6d0
-[   37.550017]  ksys_ioctl+0x6b/0x80
-[   37.573076]  SyS_ioctl+0x5/0x10
-[   37.574831]  do_syscall_64+0x6e/0x270
-[   37.576769]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-----------------------------------------
-
-[1] https://syzkaller.appspot.com/bug?id=cd662bc3f6022c0979d01a262c318fab2ee9b56f
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>
-Fixes: ecdd09597a572513 ("block/loop: fix race between I/O and set_status")
-Cc: Ming Lei <tom.leiming@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: Jens Axboe <axboe@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Pavlos Parissis <pavlos.parissis@gmail.com>
+Reported-by: Lei Chen <chenl.lei@gmail.com>
+Reported-by: Maxime Hadjinlian <maxime.hadjinlian@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: kernel-team@lge.com
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/block/loop.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ tools/perf/tests/code-reading.c |   20 +-------------------
+ 1 file changed, 1 insertion(+), 19 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1110,11 +1110,15 @@ loop_set_status(struct loop_device *lo,
- 	if (info->lo_encrypt_type) {
- 		unsigned int type = info->lo_encrypt_type;
+--- a/tools/perf/tests/code-reading.c
++++ b/tools/perf/tests/code-reading.c
+@@ -224,8 +224,6 @@ static int read_object_code(u64 addr, si
+ 	unsigned char buf2[BUFSZ];
+ 	size_t ret_len;
+ 	u64 objdump_addr;
+-	const char *objdump_name;
+-	char decomp_name[KMOD_DECOMP_LEN];
+ 	int ret;
  
--		if (type >= MAX_LO_CRYPT)
--			return -EINVAL;
-+		if (type >= MAX_LO_CRYPT) {
-+			err = -EINVAL;
-+			goto exit;
-+		}
- 		xfer = xfer_funcs[type];
--		if (xfer == NULL)
--			return -EINVAL;
-+		if (xfer == NULL) {
-+			err = -EINVAL;
-+			goto exit;
-+		}
- 	} else
- 		xfer = NULL;
+ 	pr_debug("Reading object code for memory address: %#"PRIx64"\n", addr);
+@@ -286,25 +284,9 @@ static int read_object_code(u64 addr, si
+ 		state->done[state->done_cnt++] = al.map->start;
+ 	}
  
+-	objdump_name = al.map->dso->long_name;
+-	if (dso__needs_decompress(al.map->dso)) {
+-		if (dso__decompress_kmodule_path(al.map->dso, objdump_name,
+-						 decomp_name,
+-						 sizeof(decomp_name)) < 0) {
+-			pr_debug("decompression failed\n");
+-			return -1;
+-		}
+-
+-		objdump_name = decomp_name;
+-	}
+-
+ 	/* Read the object code using objdump */
+ 	objdump_addr = map__rip_2objdump(al.map, al.addr);
+-	ret = read_via_objdump(objdump_name, objdump_addr, buf2, len);
+-
+-	if (dso__needs_decompress(al.map->dso))
+-		unlink(objdump_name);
+-
++	ret = read_via_objdump(al.map->dso->long_name, objdump_addr, buf2, len);
+ 	if (ret > 0) {
+ 		/*
+ 		 * The kernel maps are inaccurate - assume objdump is right in
