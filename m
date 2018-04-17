@@ -1,70 +1,69 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2480911-1523991449-2-3926542154997498494
+X-Cyrus-Session-Id: sloti22d1t05-2480911-1523991407-2-2485924444651480648
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enda,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523991449; b=VqoPt0WgZjHqI1RG3IlN07SovTG20lsBoSE+200kjZge2neRpi
-    1bEthJcqC4LbHAm/HqZePVUGF3RscwjPWZ9sJUNB4w3EZLf3sZw+HbSbaOY12ZiJ
-    yt8k8edRCd3AqfN90MGvZKMHhKTlZE0B9kAapRETj0YPTEzHBKWpN8LJaYk5qREo
-    tBD9NS2Sz3xUeOHT4MzgSYhsr8tsx0OLtZ3Ksue9Xn05FKMYafQbBAUU6jazONIi
-    cuhxoqzPJxtVcYnugCjccwnNLur9gngcNqlkHRUb0BrMJUNaoWhz8bVRx2fbhiUH
-    MyAcB1Y88EuUJ+g/em55+oGvPMWkLxmkpdRw==
+    1523991407; b=kJLHLlhZakbaplbLFjdzTQvnvEf1Ox03c+kXcm4+ANQLYZBOd6
+    bN3qtLj16xFgE5uZMZyGdTmdwv3Rp6vvvY83RNBrFxA/jnH2RdPOp7fA+OeWIjOW
+    y1wBw/xkxuPbHANKnGTmWzvLPMs0n2Iw2F1n5DD0uRbMUarDkrf+S89IpkxvraHn
+    N83IC1zYLCY7kRARFYI1OI3HAQBx6hO6goXFPTm7NdhTzVXEieNYouJNNmGEzTtl
+    ZjzfJc5vQSNNKOh8o5yNH3INMIiOnJKJZMu7osRXyeBYhoHJ5j2lhqwXaGk0S/s4
+    1d6SmtVqZ+BsW1CIV2E8JwFlSYrZI+9lQJKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1523991449; bh=dd6PQ
-    zMd+6BeTQlJJ4pSLlL2Zv4q3y0z1+6WY9eDuD0=; b=IkABq6X7V0n5+xuHz5ZEJ
-    tRAprWS4jvXsFeiOAJH8Di4cGsBJWRu4inuChFXLYTf3Eu0U4VbAQhJ6Z4P4Oyoc
-    TWNzmaNy9MVVm2R1zdhsiMZbwpBJ3LazcATzTKLjyJd57Ox8FwL4R/Lt8WUZZubr
-    +IONU1kpPFxYvOIAjJz1bHhVBD1y2L8e2h3B7VTHMMJ2Ir+BX5L3BtdieCfn2ZSe
-    eMQSBQvZ7RC5/9K3BcMrRAu5DR/7BMQwOeWF6ulqF5wiAHANhzM6762t//S/AnF3
-    9qXBXLhhYQ5YOmRi/4bmnDxxdcS/AQ3oWC6xbwPiL8GNpbZm9QAvLPRduaLhWNB9
-    Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1523991407; bh=+CC29
+    h3QYmb0rfwsk6L8ged3yL7bLHKuq2Se1z0G5HI=; b=ZIuKng84iYLVCPT18If45
+    RNhnj/zj6Cz75ljERC7b8yV82P9wEqjnTzjvYYwzFUs6vTECYDaP6uCKAiOYhlh8
+    xmu4vkYLlgVp5gOhq5MhmYj+ecqXaE0KZQ/r9enU6s/D88hA9KmBcdRJar7VBadk
+    MBlokLG8h7xmVBKI0RtyGuaW/LmrywI90p4NuxL0ABeRzy93khUxaHwFbml66I50
+    2lbn4wWrfDf8aohDY1eQKu3KOCvZLqL6KXOXHo7IWUfHnlqcoL0o9nNj118yaNhI
+    vim+n/VRAF1NHf3XGv/zUHHKvGw3WraTIhRxludfjU/d8Tu8Uc9cTE5smdF2nUCx
+    w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=linux-m68k.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK2DxEW/6IxHYyYGFpynjbhe8CBU5XOz526oVMLEzfHLuArf/FlAsyjhCcRigLfMDxaDcMPgCHyIj82zKLRgmcbYl25F4/6uV2XbhYSKJz1oVXyPhojy
-    KMM1bj8SBuyjJfLQkyrJLu6dpo4WDg1oIFvGqRg1omJHZIktoF+A9vJ4urGw0LsgxHknAKK51WEFQWFgBrnVTHUUEbmmvljxxLYX2lTBhUFShlFDixs47wcq
-    3ek+Gj1iG2LdfqYMU52D1A==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+X-CM-Envelope: MS4wfGNDda9HNRT0mJmVj5FnyVX+RWEICUVeNuDjka7Fco7X37BPKy4XirYHfEfiq5PP5QsOacXSofqZi2Ec2xbtViEZLGyvhaRuA14vYfQmSvKKuQqr3GE/
+    8ZO9W/DFB2Ybk6l9CuVXuaEfIeAjAOiWqtaBT+hPFF3atfn3rSq6+V1hMiVJMijOrpmFdcq+QfWt15iOp2QszBm8Mz3ba/dqwvUeUWeukoIoOIq5zq/ax2yR
+    D+d2ijlsK3jEzlSwcURI7Q==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8
-    a=7CQSdrXTAAAA:8 a=ag1SF4gXAAAA:8 a=DDOyTI_5AAAA:8 a=XNYVfk6J6KFTGUcfqe8A:9
-    a=CjuIK1q_8ugA:10 a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=a-qgeE7W1pNrGK8U0ZQC:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=_BcfOz0m4U4ohdxiHPKc:22
-    cc=dsc
+    a=7CQSdrXTAAAA:8 a=DDOyTI_5AAAA:8 a=XNYVfk6J6KFTGUcfqe8A:9 a=CjuIK1q_8ugA:10
+    a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
@@ -93,10 +92,10 @@ To: Christoph Hellwig <hch@lst.de>,
  Ohad Ben-Cohen <ohad@wizery.com>,
  Bjorn Andersson <bjorn.andersson@linaro.org>,
  Eric Anholt <eric@anholt.net>, Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH v3 19/20] staging: vc04_services: Remove depends on HAS_DMA in
- case of platform dependency
-Date: Tue, 17 Apr 2018 19:49:19 +0200
-Message-Id: <1523987360-18760-20-git-send-email-geert@linux-m68k.org>
+Subject: [PATCH v3 05/20] firewire: Remove depends on HAS_DMA in case of
+ platform dependency
+Date: Tue, 17 Apr 2018 19:49:05 +0200
+Message-Id: <1523987360-18760-6-git-send-email-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
 References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
@@ -143,10 +142,8 @@ This simplifies the dependencies, and allows to improve compile-testing.
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Reviewed-by: Mark Brown <broonie@kernel.org>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 v3:
-  - Add Acked-by,
   - Rebase to v4.17-rc1,
 
 v2:
@@ -154,20 +151,19 @@ v2:
   - Drop RFC state,
   - Split per subsystem.
 ---
- drivers/staging/vc04_services/Kconfig | 1 -
+ drivers/firewire/Kconfig | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/vc04_services/Kconfig b/drivers/staging/vc04_services/Kconfig
-index f5aaf7d629f0fae9..98064ce2c2b47c7f 100644
---- a/drivers/staging/vc04_services/Kconfig
-+++ b/drivers/staging/vc04_services/Kconfig
-@@ -1,6 +1,5 @@
- menuconfig BCM_VIDEOCORE
- 	tristate "Broadcom VideoCore support"
+diff --git a/drivers/firewire/Kconfig b/drivers/firewire/Kconfig
+index 145974f9662b63e6..4199849e37585181 100644
+--- a/drivers/firewire/Kconfig
++++ b/drivers/firewire/Kconfig
+@@ -1,5 +1,4 @@
+ menu "IEEE 1394 (FireWire) support"
 -	depends on HAS_DMA
- 	depends on OF
- 	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
- 	default y
+ 	depends on PCI || COMPILE_TEST
+ 	# firewire-core does not depend on PCI but is
+ 	# not useful without PCI controller driver
 -- 
 2.7.4
 
