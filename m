@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48QcUqL+3CoEexEgwQ7HgxdM08/j4Hy5ANe/bvQyqN5Wqf/HOjiFFNqncEUPFPJSKZukFAV
-ARC-Seal: i=1; a=rsa-sha256; t=1523981231; cv=none;
+X-Google-Smtp-Source: AIpwx4/8oouJR38oW+m0TLMGCvalC/Q0PCaat5nv/09Vi+KpxXKc744bTiHkuH+TH4J2pHPTPs4p
+ARC-Seal: i=1; a=rsa-sha256; t=1523981228; cv=none;
         d=google.com; s=arc-20160816;
-        b=JQWPBaPQEDsJ+fA00/PjQJNPwYYjYMFTi0V0cgRaxZN43f81CpJ5Eg2/b4+MMzrNXg
-         zC9VTpvXqVkRXdlJmSwmYL4m5wLchbygTy3DrUNDnVg8RET2mDmDOVSkjwuqAaL1gUXI
-         qNuxDbKMspP64wht0YS3meEXCcg+urI15xpmBc1trdLukUHlXSlzXKnd18sm5jtpDbx2
-         u34igJLbx14PWjY45T696Qud2+7J3huhlS8C0yLJEjdPI1mq/GnPxyqVsENnceFzcqWY
-         bnH6Q/gM0XFuNBf45l/5sTdYDYbrxRtKB+W+rpxHaQarytorajeX3jsDKy94l1xPQ6dw
-         8B4Q==
+        b=xXKcoeDN9pbz1xtPUSRwv4Nu6dSrKmUNtCWCL1OPRcVoLzNjIll4NlfMHtohXtZL+X
+         WjL7SjoB1j8gaFs8FmgE8BY9QP+HCuJMJHfWwvXud0PSzhGdez9rCLQOPrai+ABW+Zv8
+         3QbbqecmXvwFiiWTLCQT2vWekpJXGn/lb0TpRRAnPOtzVsSciM09Upqb+QWoUvQnNLut
+         SurL+mmgzVGbUJLLfFWCpabTgL6YB3kWdU33Oa4gXidcEqcoMTFmxCrrr6tfMZzceHEr
+         UUEnNTPAR3R/+E4A6rqXBf/udAhFB3Mv82n3ioRV70CmMunj6CZQZttGW0uWfoeHMG4+
+         mCaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=chA+mxwY2dPohzlqG5bt9BhbqKIOE1R6qUR7c/3t5Uk=;
-        b=a/ASijLawHwa7eyBgKfMwJf7Z+rutkW10AL52KImv+WandKsEzOTxlDHBdjQboqAMS
-         eaXA7fLvXLryVqdRX5KrFNrOutiu9k+df3BGW6WszhsUiGgwXUm22eD+b4p//n+vl8/n
-         cVnQ9JlJ3uIY6YtvpBIpgk96ElSVwgyhPbOwQx9QcBQBvcRz2/ZGSLForoVeSIdtuxpf
-         DSNb3E4myJInrRYpPoc4d8jlT5MxQz0z0iruuZlh+wTE5i70WYD8qsmaQD3NI3EBUIC2
-         mMVeGKWpG5YTLpBcYQt0QoStknJbqJ1MmElx3mNX3rSvJj1OaID3rZTvE0kWbFymStt2
-         FFtw==
+        bh=OtZWjni0tua+Fqgg5cNw/stv83UDTz5ZyGWP+m+GDDM=;
+        b=BCxnR5wdqMVb2WQwIt7KM9megK6R7GU8OSbN+1VkzDhLcLWbSABcV2xDlVv6TVMtPK
+         7pY0OCxi+V5qdhcUYw9wdK83xv/uS15zrwoHl2wNyrbp2DWmgJYOvfSMwv/0DSSwXfll
+         NyrHrpr1CPWWfviHDqoXKnl4nvUh7rqdNo114UhUkrtl1bGNvZ6p+e9+Bwo+u92Fl65z
+         jRDKk3j3Vgi8J8QyE+7FTQ0KLNGF2XBtIqyBDx4NQE4Du53ROq6OLENQHQEcmqNDODRa
+         iTwXecA+0moCQcl9CILiWwef0x+oSCBvxj6c4wip2g5W6VRuKKHdJDCO9ItOl5IdvOKV
+         jtbw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,11 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 40/49] hwmon: (ina2xx) Fix access to uninitialized mutex
-Date: Tue, 17 Apr 2018 17:59:19 +0200
-Message-Id: <20180417155716.941997264@linuxfoundation.org>
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Borislav Petkov <bp@suse.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-edac <linux-edac@vger.kernel.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 39/49] x86/mce/AMD: Get address from already initialized block
+Date: Tue, 17 Apr 2018 17:59:18 +0200
+Message-Id: <20180417155716.895432903@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -40,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009936138504780?=
-X-GMAIL-MSGID: =?utf-8?q?1598010143716477122?=
+X-GMAIL-THRID: =?utf-8?q?1598009860124329571?=
+X-GMAIL-MSGID: =?utf-8?q?1598010140442309933?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -49,65 +56,61 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-commit 0c4c5860e9983eb3da7a3d73ca987643c3ed034b upstream.
+commit 27bd59502702fe51d9eb00450a75b727ec6bfcb4 upstream.
 
-Initialize data->config_lock mutex before it is used by the driver code.
+The block address is saved after the block is initialized when
+threshold_init_device() is called.
 
-This fixes following warning on Odroid XU3 boards:
+Use the saved block address, if available, rather than trying to
+rediscover it.
 
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 5 PID: 1 Comm: swapper/0 Not tainted 4.15.0-rc7-next-20180115-00001-gb75575dee3f2 #107
-Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-[<c0111504>] (unwind_backtrace) from [<c010dbec>] (show_stack+0x10/0x14)
-[<c010dbec>] (show_stack) from [<c09b3f74>] (dump_stack+0x90/0xc8)
-[<c09b3f74>] (dump_stack) from [<c0179528>] (register_lock_class+0x1c0/0x59c)
-[<c0179528>] (register_lock_class) from [<c017bd1c>] (__lock_acquire+0x78/0x1850)
-[<c017bd1c>] (__lock_acquire) from [<c017de30>] (lock_acquire+0xc8/0x2b8)
-[<c017de30>] (lock_acquire) from [<c09ca59c>] (__mutex_lock+0x60/0xa0c)
-[<c09ca59c>] (__mutex_lock) from [<c09cafd0>] (mutex_lock_nested+0x1c/0x24)
-[<c09cafd0>] (mutex_lock_nested) from [<c068b0d0>] (ina2xx_set_shunt+0x70/0xb0)
-[<c068b0d0>] (ina2xx_set_shunt) from [<c068b218>] (ina2xx_probe+0x88/0x1b0)
-[<c068b218>] (ina2xx_probe) from [<c0673d90>] (i2c_device_probe+0x1e0/0x2d0)
-[<c0673d90>] (i2c_device_probe) from [<c053a268>] (driver_probe_device+0x2b8/0x4a0)
-[<c053a268>] (driver_probe_device) from [<c053a54c>] (__driver_attach+0xfc/0x120)
-[<c053a54c>] (__driver_attach) from [<c05384cc>] (bus_for_each_dev+0x58/0x7c)
-[<c05384cc>] (bus_for_each_dev) from [<c0539590>] (bus_add_driver+0x174/0x250)
-[<c0539590>] (bus_add_driver) from [<c053b5e0>] (driver_register+0x78/0xf4)
-[<c053b5e0>] (driver_register) from [<c0675ef0>] (i2c_register_driver+0x38/0xa8)
-[<c0675ef0>] (i2c_register_driver) from [<c0102b40>] (do_one_initcall+0x48/0x18c)
-[<c0102b40>] (do_one_initcall) from [<c0e00df0>] (kernel_init_freeable+0x110/0x1d4)
-[<c0e00df0>] (kernel_init_freeable) from [<c09c8120>] (kernel_init+0x8/0x114)
-[<c09c8120>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+This will avoid a call trace, when resuming from suspend, due to the
+rdmsr_safe_on_cpu() call in get_block_address(). The rdmsr_safe_on_cpu()
+call issues an IPI but we're running with interrupts disabled. This
+triggers:
 
-Fixes: 5d389b125186 ("hwmon: (ina2xx) Make calibration register value fixed")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+    WARNING: CPU: 0 PID: 11523 at kernel/smp.c:291 smp_call_function_single+0xdc/0xe0
+
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: <stable@vger.kernel.org> # 4.14.x
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180221101900.10326-8-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwmon/ina2xx.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce_amd.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/hwmon/ina2xx.c
-+++ b/drivers/hwmon/ina2xx.c
-@@ -454,6 +454,7 @@ static int ina2xx_probe(struct i2c_clien
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -434,6 +434,21 @@ static u32 get_block_address(unsigned in
+ {
+ 	u32 addr = 0, offset = 0;
  
- 	/* set the device type */
- 	data->config = &ina2xx_config[chip];
-+	mutex_init(&data->config_lock);
- 
- 	if (of_property_read_u32(dev->of_node, "shunt-resistor", &val) < 0) {
- 		struct ina2xx_platform_data *pdata = dev_get_platdata(dev);
-@@ -480,8 +481,6 @@ static int ina2xx_probe(struct i2c_clien
- 		return -ENODEV;
- 	}
- 
--	mutex_init(&data->config_lock);
--
- 	data->groups[group++] = &ina2xx_group;
- 	if (id->driver_data == ina226)
- 		data->groups[group++] = &ina226_group;
++	if ((bank >= mca_cfg.banks) || (block >= NR_BLOCKS))
++		return addr;
++
++	/* Get address from already initialized block. */
++	if (per_cpu(threshold_banks, cpu)) {
++		struct threshold_bank *bankp = per_cpu(threshold_banks, cpu)[bank];
++
++		if (bankp && bankp->blocks) {
++			struct threshold_block *blockp = &bankp->blocks[block];
++
++			if (blockp)
++				return blockp->address;
++		}
++	}
++
+ 	if (mce_flags.smca) {
+ 		if (smca_get_bank_type(bank) == SMCA_RESERVED)
+ 			return addr;
