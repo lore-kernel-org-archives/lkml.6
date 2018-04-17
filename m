@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+XNhjcCGUlT/qFyEbueDiuFwSEfOnJXndRpUsqaEpWStDCs5VUvp4GSBjiPks9JaKEZzEB
-ARC-Seal: i=1; a=rsa-sha256; t=1523980975; cv=none;
+X-Google-Smtp-Source: AIpwx4/keSixQTwz0jYAfM98zrjg06GxXwseljMhnFZddMQ8CGmCTrv7UedBfhyAAf8yWQbrNtHx
+ARC-Seal: i=1; a=rsa-sha256; t=1523980972; cv=none;
         d=google.com; s=arc-20160816;
-        b=PxfMEvZbUYDjqib3drcTh+89sDhkqGVMomAhA75Rs2UWoYBb+NYebwd3HfbY64GbeX
-         TgjbeK95Oj2bml++PgzRAB4RAn+TO2/pi5i5xo5aqYmiQm63lylQaiUPg6Ax2UEP2B2O
-         yAGiAfCtU0/jfCOZMD0/yH0chBWvW/ebufe6wwwBmFKxtR23pXfecD3soBbwtBW3IvhG
-         wWuRj1n7ad43kWyln19lw8uPbyF725yDuoIeeM1cTvcc3PROl1GHM6cGauDi1m+zB42F
-         ygAg0p2KEEhbig8xZvctHxHK47F7nthNc6lpqsQfA6EFeW8IIwXi/4onRbd/UzsR+qBI
-         HulA==
+        b=vSyR2o1stpPvHx/fKv5XvMeSElOcn9jflKNPLIDaVpdNKcaluKAnKusMvNZKCWxMlP
+         oPiu2/Ix3i6h7YzHRIKgAEVbfskJHNUzPp0JO6KZGrXQ6eOnKtQvRPtzyV/pvevBq7GI
+         N4BCVe0sZSFzGkvOYSdyYD+r8T9tabIlacGeSd9yL2yIRkKyGSOYS88suaPXMu9ma11E
+         xUid1UUlRV1lWiz05ZXstlvOZ/Cof5G6lPLoizeMYeT8fAfaxsxe1mFCDrrzV0JCZLFl
+         OxtzFvvGc8AbeZT2Kqy0WqWLpDlZvADvLSKpvArOVEgZa+W3dEoUpa3RMkNCeuSyh0cY
+         u5TA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=qxznT3jt8kVxh2Fp+zdVJ3m3TFLhMnw/58hCfiQET0g=;
-        b=Y1/GrVmEYdZ6KaQXZBUpqL/XkFBq8TH2N/kcu3UAiTZDtLJryxJTxsT1ncOn+YB7bV
-         X3szA3cWiD5PXu/1OGbPJRPa9AoLjuxdeNY1puvzBdOHrDW8zqJrnwec8/F5flTk9rOm
-         zHoxWAN56Y1JNrX5OVpz9GGyhKcqQmJXFRwNhqs/Cd5BpKeT98cI3GTl2qo7Fm/sEj+m
-         9Ia56IUk9LfX9EIb7T+/qpORqj8QFRdpOoNF5QhM8LstDgE+0AtQqRG1hjDCiiPfGYsn
-         ARQU47IZm1vNBWK/Zz69Lioz71YUQmEuoT97iT/i/0jr+i1b2n+G3Pxp6j9iQuBQUEvt
-         Hqsw==
+        bh=gqezzMYgCl7fodxb8vYQDlKNTsUfKviqyZRc1w4rcCg=;
+        b=yDHiVUTPqGhq+E6sOZMkySDPjg9L17yF3ZAgGYfck7EARUbiDxMlT9di6kX6e2UHLx
+         vekpUJo757g6uMPLHieExUcnIgcC4reci6HPAG5G45zsvz3E3ExcS1TqnnSBxcA1ncwF
+         j3qJNRvsn8jh9PREm8IYPKVsWVV6gBmnfwjF3dWrbbXCkpTsxY7kMkzC9re0mUl/2U0f
+         SLVup5nsm5qmICi6AUX70qaen6JECrggys+KtO9ka2JC3XRAGZYrcJ0PHxyHeLhqE0DE
+         3cSBrNWtejgMhRNgBVjDMeP8j4EX5DAKgyb5yCl9QYX8laliopBESYP5zAFW5y+l44Oo
+         1z7A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,18 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Thorsten Leemhuis <regressions@leemhuis.info>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 64/68] mm/gup_benchmark: handle gup failures
-Date: Tue, 17 Apr 2018 17:58:17 +0200
-Message-Id: <20180417155751.942473855@linuxfoundation.org>
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.16 24/68] perf intel-pt: Fix error recovery from missing TIP packet
+Date: Tue, 17 Apr 2018 17:57:37 +0200
+Message-Id: <20180417155750.329344267@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -47,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009875820230550?=
-X-GMAIL-MSGID: =?utf-8?q?1598009875820230550?=
+X-GMAIL-THRID: =?utf-8?q?1598009872047467983?=
+X-GMAIL-MSGID: =?utf-8?q?1598009872047467983?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,68 +50,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michael S. Tsirkin <mst@redhat.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 09e35a4a1ca8b9988ca9b8557d17948cd6c0808b upstream.
+commit 1c196a6c771c47a2faa63d38d913e03284f73a16 upstream.
 
-Patch series "mm/get_user_pages_fast fixes, cleanups", v2.
+When a TIP packet is expected but there is a different packet, it is an
+error. However the unexpected packet might be something important like a
+TSC packet, so after the error, it is necessary to continue from there,
+rather than the next packet. That is achieved by setting pkt_step to
+zero.
 
-Turns out get_user_pages_fast and __get_user_pages_fast return different
-values on error when given a single page: __get_user_pages_fast returns
-0.  get_user_pages_fast returns either 0 or an error.
-
-Callers of get_user_pages_fast expect an error so fix it up to return an
-error consistently.
-
-Stress the difference between get_user_pages_fast and
-__get_user_pages_fast to make sure callers aren't confused.
-
-This patch (of 3):
-
-__gup_benchmark_ioctl does not handle the case where get_user_pages_fast
-fails:
-
- - a negative return code will cause a buffer overrun
-
- - returning with partial success will cause use of uninitialized
-   memory.
-
-[akpm@linux-foundation.org: simplification]
-Link: http://lkml.kernel.org/r/1522962072-182137-3-git-send-email-mst@redhat.com
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1520431349-30689-4-git-send-email-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/gup_benchmark.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/gup_benchmark.c
-+++ b/mm/gup_benchmark.c
-@@ -23,7 +23,7 @@ static int __gup_benchmark_ioctl(unsigne
- 	struct page **pages;
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1616,6 +1616,7 @@ static int intel_pt_walk_fup_tip(struct
+ 		case INTEL_PT_PWRX:
+ 			intel_pt_log("ERROR: Missing TIP after FUP\n");
+ 			decoder->pkt_state = INTEL_PT_STATE_ERR3;
++			decoder->pkt_step = 0;
+ 			return -ENOENT;
  
- 	nr_pages = gup->size / PAGE_SIZE;
--	pages = kvmalloc(sizeof(void *) * nr_pages, GFP_KERNEL);
-+	pages = kvzalloc(sizeof(void *) * nr_pages, GFP_KERNEL);
- 	if (!pages)
- 		return -ENOMEM;
- 
-@@ -41,6 +41,8 @@ static int __gup_benchmark_ioctl(unsigne
- 		}
- 
- 		nr = get_user_pages_fast(addr, nr, gup->flags & 1, pages + i);
-+		if (nr <= 0)
-+			break;
- 		i += nr;
- 	}
- 	end_time = ktime_get();
+ 		case INTEL_PT_OVF:
