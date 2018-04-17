@@ -1,80 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752888AbeDQOH0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:07:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33472 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751865AbeDQOHX (ORCPT
+        id S1752911AbeDQOHc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:07:32 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:39558 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752387AbeDQOHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:07:23 -0400
-Date: Tue, 17 Apr 2018 07:07:22 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: repeatable boot randomness inside KVM guest
-Message-ID: <20180417140722.GC21954@bombadil.infradead.org>
-References: <20180414195921.GA10437@avx2>
- <20180414224419.GA21830@thunk.org>
- <20180415004134.GB15294@bombadil.infradead.org>
- <1523956414.3250.5.camel@HansenPartnership.com>
- <20180417114728.GA21954@bombadil.infradead.org>
- <1523966232.3250.15.camel@HansenPartnership.com>
+        Tue, 17 Apr 2018 10:07:30 -0400
+From: Matt Redfearn <matt.redfearn@mips.com>
+To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>
+CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 3/3] MIPS: memset.S: Reinstate delay slot indentation
+Date: Tue, 17 Apr 2018 15:06:12 +0100
+Message-ID: <1523973972-25633-3-git-send-email-matt.redfearn@mips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1523973972-25633-1-git-send-email-matt.redfearn@mips.com>
+References: <1523973972-25633-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1523966232.3250.15.camel@HansenPartnership.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [192.168.155.41]
+X-BESS-ID: 1523973990-452060-18537-58458-3
+X-BESS-VER: 2018.4.1-r1804121648
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192082
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 12:57:12PM +0100, James Bottomley wrote:
-> On Tue, 2018-04-17 at 04:47 -0700, Matthew Wilcox wrote:
-> > On Tue, Apr 17, 2018 at 10:13:34AM +0100, James Bottomley wrote:
-> > > On Sat, 2018-04-14 at 17:41 -0700, Matthew Wilcox wrote:
-> > > > On Sat, Apr 14, 2018 at 06:44:19PM -0400, Theodore Y. Ts'o wrote:
-> > > > > What needs to happen is freelist should get randomized much
-> > > > > later in the boot sequence.  Doing it later will require
-> > > > > locking; I don't know enough about the slab/slub code to know
-> > > > > whether the slab_mutex would be sufficient, or some other lock
-> > > > > might need to be added.
-> > > > 
-> > > > Could we have the bootloader pass in some initial randomness?
-> > > 
-> > > Where would the bootloader get it from (securely) that the kernel
-> > > can't?
-> > 
-> > In this particular case, qemu is booting the kernel, so it can apply
-> > to /dev/random for some entropy.
-> 
-> Well, yes, but wouldn't qemu virtualize /dev/random anyway so the guest
->  kernel can get it from the HWRNG provided by qemu?
+Assembly language within the MIPS kernel conventionally indents
+instructions which are in a branch delay slot to make them easier to
+see. Commit 8483b14aaa81 ("MIPS: lib: memset: Whitespace fixes") rather
+inexplicably removed all of these indentations from memset.S. Reinstate
+the convention for all instructions in a branch delay slot. This
+effectively reverts the above commit, plus other locations introduced
+with MIPSR6 support.
 
-The part of Ted's mail that I snipped explained that virtio-rng relies on
-being able to kmalloc memory, so by definition it can't provide entropy
-before kmalloc is initialised.
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+---
 
-> > I thought our model was that if somebody had compromised the
-> > bootloader, all bets were off.
-> 
-> You don't have to compromise the bootloader to influence this, you
-> merely have to trick it into providing the random number you wanted. 
-> The bigger you make the attack surface (the more inputs) the more
-> likelihood of finding a trick that works.
-> 
-> >   And also that we were free to mix in as many untrustworthy bytes of
-> > alleged entropy into the random pool as we liked.
-> 
-> No, entropy mixing ensures that all you do with bad entropy is degrade
-> the quality, but if the quality degrades to zero (as it might at boot
-> when you've no other entropy sources so you feed in 100% bad entropy),
-> then the random sequences become predictable.
+ arch/mips/lib/memset.S | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-I don't understand that.  If I estimate that I have 'k' bytes of entropy
-in my pool, and then I mix in 'n' entirely predictable bytes, I should
-still have k bytes of entropy in the pool.  If I withdraw k bytes from
-the pool, then yes the future output from the pool may be entirely
-predictable, but I have to know what those k bytes were.
+diff --git a/arch/mips/lib/memset.S b/arch/mips/lib/memset.S
+index 84e91f4fdf53..085cc86f624f 100644
+--- a/arch/mips/lib/memset.S
++++ b/arch/mips/lib/memset.S
+@@ -95,7 +95,7 @@
+ 
+ 	sltiu		t0, a2, STORSIZE	/* very small region? */
+ 	bnez		t0, .Lsmall_memset\@
+-	andi		t0, a0, STORMASK	/* aligned? */
++	 andi		t0, a0, STORMASK	/* aligned? */
+ 
+ #ifdef CONFIG_CPU_MICROMIPS
+ 	move		t8, a1			/* used by 'swp' instruction */
+@@ -103,12 +103,12 @@
+ #endif
+ #ifndef CONFIG_CPU_DADDI_WORKAROUNDS
+ 	beqz		t0, 1f
+-	PTR_SUBU	t0, STORSIZE		/* alignment in bytes */
++	 PTR_SUBU	t0, STORSIZE		/* alignment in bytes */
+ #else
+ 	.set		noat
+ 	li		AT, STORSIZE
+ 	beqz		t0, 1f
+-	PTR_SUBU	t0, AT			/* alignment in bytes */
++	 PTR_SUBU	t0, AT			/* alignment in bytes */
+ 	.set		at
+ #endif
+ 
+@@ -149,7 +149,7 @@
+ 1:	ori		t1, a2, 0x3f		/* # of full blocks */
+ 	xori		t1, 0x3f
+ 	beqz		t1, .Lmemset_partial\@	/* no block to fill */
+-	andi		t0, a2, 0x40-STORSIZE
++	 andi		t0, a2, 0x40-STORSIZE
+ 
+ 	PTR_ADDU	t1, a0			/* end address */
+ 	.set		reorder
+@@ -174,7 +174,7 @@
+ 	.set		at
+ #endif
+ 	jr		t1
+-	PTR_ADDU	a0, t0			/* dest ptr */
++	 PTR_ADDU	a0, t0			/* dest ptr */
+ 
+ 	.set		push
+ 	.set		noreorder
+@@ -186,7 +186,7 @@
+ 
+ 	beqz		a2, 1f
+ #ifndef CONFIG_CPU_MIPSR6
+-	PTR_ADDU	a0, a2			/* What's left */
++	 PTR_ADDU	a0, a2			/* What's left */
+ 	R10KCBARRIER(0(ra))
+ #ifdef __MIPSEB__
+ 	EX(LONG_S_R, a1, -1(a0), .Llast_fixup\@)
+@@ -194,7 +194,7 @@
+ 	EX(LONG_S_L, a1, -1(a0), .Llast_fixup\@)
+ #endif
+ #else
+-	PTR_SUBU	t0, $0, a2
++	 PTR_SUBU	t0, $0, a2
+ 	PTR_ADDIU	t0, 1
+ 	STORE_BYTE(0)
+ 	STORE_BYTE(1)
+@@ -210,11 +210,11 @@
+ 0:
+ #endif
+ 1:	jr		ra
+-	move		a2, zero
++	 move		a2, zero
+ 
+ .Lsmall_memset\@:
+ 	beqz		a2, 2f
+-	PTR_ADDU	t1, a0, a2
++	 PTR_ADDU	t1, a0, a2
+ 
+ 1:	PTR_ADDIU	a0, 1			/* fill bytewise */
+ 	R10KCBARRIER(0(ra))
+@@ -222,7 +222,7 @@
+ 	 EX(sb, a1, -1(a0), .Lsmall_fixup\@)
+ 
+ 2:	jr		ra			/* done */
+-	move		a2, zero
++	 move		a2, zero
+ 	.if __memset == 1
+ 	END(memset)
+ 	.set __memset, 0
+@@ -238,7 +238,7 @@
+ 
+ .Lfirst_fixup\@:
+ 	jr	ra
+-	nop
++	 nop
+ 
+ .Lfwd_fixup\@:
+ 	PTR_L		t0, TI_TASK($28)
+@@ -246,7 +246,7 @@
+ 	LONG_L		t0, THREAD_BUADDR(t0)
+ 	LONG_ADDU	a2, t1
+ 	jr		ra
+-	LONG_SUBU	a2, t0
++	 LONG_SUBU	a2, t0
+ 
+ .Lpartial_fixup\@:
+ 	PTR_L		t0, TI_TASK($28)
+@@ -278,7 +278,7 @@
+ LEAF(memset)
+ EXPORT_SYMBOL(memset)
+ 	beqz		a1, 1f
+-	move		v0, a0			/* result */
++	 move		v0, a0			/* result */
+ 
+ 	andi		a1, 0xff		/* spread fillword */
+ 	LONG_SLL		t1, a1, 8
+-- 
+2.7.4
