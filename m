@@ -1,104 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753436AbeDQNen (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 09:34:43 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:52304 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753099AbeDQNel (ORCPT
+        id S1753592AbeDQNfo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 09:35:44 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:46427 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753099AbeDQNfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 09:34:41 -0400
-Subject: Re: [PATCH v4 04/10] bindings: PCI: designware: Add support for the
- EP in Designware driver
-To: Rob Herring <robh@kernel.org>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <cover.1523881182.git.gustavo.pimentel@synopsys.com>
- <7d3445e3f8bb15d27987e0d061275d7d69f2c519.1523881182.git.gustavo.pimentel@synopsys.com>
- <20180416214324.wcyghdwejucoutki@rob-hp-laptop>
-From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Message-ID: <e61b75ac-bd19-4e69-3138-702156a36d73@synopsys.com>
-Date: Tue, 17 Apr 2018 14:33:35 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180416214324.wcyghdwejucoutki@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Apr 2018 09:35:43 -0400
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: ysato@users.sourceforge.jp, dalias@libc.org,
+        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] sh: mm: Fix unprotected access to struct device
+Date: Tue, 17 Apr 2018 15:35:23 +0200
+Message-Id: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
+operations observe dev->dma_pfn_offset") the generic DMA allocation
+function on which the SH 'dma_alloc_coherent()' function relies on,
+access the 'dma_pfn_offset' field of struct device.
 
-On 16/04/2018 22:43, Rob Herring wrote:
-> On Mon, Apr 16, 2018 at 03:37:52PM +0100, Gustavo Pimentel wrote:
->> Add device tree binding documentation for the Endpoint in PCIe Designware
->> driver.
->>
->> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->> ---
->> Change v1->v2:
->>  - Add a missing log description.
->>  - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
->> Change v2->v3:
->> - Reverted pcie_ep name to pcie.
->> Changes v3->v4:
->> - Reverted "snps,dw-pcie-rc" compatible string requested by Rob Herring.
->>
->>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> index 7f9804d..980fc9a 100644
->> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
->> @@ -3,6 +3,7 @@
->>  Required properties:
->>  - compatible:
->>  	"snps,dw-pcie" for RC mode;
->> +	"snps,dw-pcie-ep" for EP mode;
->>  - reg: Should contain the configuration address space.
->>  - reg-names: Must be "config" for the PCIe configuration space.
->>      (The old way of getting the configuration address space from "ranges"
->> @@ -56,3 +57,15 @@ Example configuration:
->>  		#interrupt-cells = <1>;
->>  		num-lanes = <1>;
->>  	};
->> +or
->> +	pcie: pcie@dfc00000 {
->> +		compatible = "snps,dw-pcie-ep";
->> +		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
->> +		      <0xdfc01000 0x0001000>, /* IP registers 2 */
->> +		      <0xd0000000 0x2000000>; /* Configuration space */
->> +		reg-names = "dbi", "dbi2", "addr_space";
->> +		device_type = "pci";
-> 
-> This should not be present for endpoints.
+Unfortunately the 'dma_generic_alloc_coherent()' function is called from
+several places with a NULL struct device argument, halting the CPU
+during the boot process.
 
-You're correct. I'll remove it.
+This patch fixes the issue protecting access to dev->dma_pfn_offset,
+with a trivial check for validity. It also passes a valid 'struct device'
+in the 'platform_resource_setup_memory' function which is the main user
+of 'dma_alloc_coherent()', and inserting a WARN_ON() check to make future
+(and existing) bogus users of this function they're should provide a valid
+'struct device' whenever possible.
 
-> 
-> With that dropped,
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> 
->> +		num-ib-windows = <6>;
->> +		num-ob-windows = <2>;
->> +		num-lanes = <1>;
->> +	};
->> -- 
->> 2.7.4
->>
->>
+Fixes: ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset")
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ arch/sh/mm/consistent.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-Thanks,
-Gustavo
+diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
+index 8ce9869..b257155 100644
+--- a/arch/sh/mm/consistent.c
++++ b/arch/sh/mm/consistent.c
+@@ -39,6 +39,8 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+ 	void *ret, *ret_nocache;
+ 	int order = get_order(size);
+
++	WARN_ON(!dev);
++
+ 	gfp |= __GFP_ZERO;
+
+ 	ret = (void *)__get_free_pages(gfp, order);
+@@ -59,7 +61,9 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+
+ 	split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
+
+-	*dma_handle = virt_to_phys(ret) - PFN_PHYS(dev->dma_pfn_offset);
++	*dma_handle = virt_to_phys(ret);
++	if (dev)
++		*dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
+
+ 	return ret_nocache;
+ }
+@@ -69,9 +73,14 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
+ 			       unsigned long attrs)
+ {
+ 	int order = get_order(size);
+-	unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
++	unsigned long pfn = (dma_handle >> PAGE_SHIFT);
+ 	int k;
+
++	WARN_ON(!dev);
++
++	if (dev)
++		pfn += dev->dma_pfn_offset;
++
+ 	for (k = 0; k < (1 << order); k++)
+ 		__free_pages(pfn_to_page(pfn + k), 0);
+
+@@ -143,7 +152,7 @@ int __init platform_resource_setup_memory(struct platform_device *pdev,
+ 	if (!memsize)
+ 		return 0;
+
+-	buf = dma_alloc_coherent(NULL, memsize, &dma_handle, GFP_KERNEL);
++	buf = dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
+ 	if (!buf) {
+ 		pr_warning("%s: unable to allocate memory\n", name);
+ 		return -ENOMEM;
+--
+2.7.4
