@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx49V+tAm2WkYlhcklF4gALDO8Sh5PFbdMt9MA5tG2T8uBHXukDlMqQhgL5iUCbEQ+fnNktAz
-ARC-Seal: i=1; a=rsa-sha256; t=1523981239; cv=none;
+X-Google-Smtp-Source: AIpwx49X+l218XCwME3xf2XSu4cvEzohE/Sg/VACynD5vrVrim/R+A7LgCEJhhdtksIYO4Y1EElq
+ARC-Seal: i=1; a=rsa-sha256; t=1523981233; cv=none;
         d=google.com; s=arc-20160816;
-        b=tjFwFT3N5e4/9OTEq0TC5ZEdHhuloqERAwJV9hP0Xue3pyV2w1k8gj9dbmO5bzeVI+
-         ovjE/1Ek7YAtXYLNrekvJ1nL3fw/cIiK4BE63b51LB+7e7RVXuNcLatI2gSIltswc81E
-         2zDH2eDrI+4GdxisA5FCWOMRgSwxOAwqZQgM1XzMZOpA1DcqOQVzVloLPWIc3iBV9Cf+
-         5xlisP5p/5+4O/qdb6hSdLhLKDL18eVtKsm3z6bqDd58+G9zw0XTKeFg4vKq6NvXVJp5
-         PqKQarQlrI1fcxobjJ4ymMotMldcIvNz9i28moY5HGpvlnieia9BQQWDW9z9fOXdHREj
-         Gw3A==
+        b=Grqz78xmrF1V6rNH9xoCRbHRD6wDg2O4PAbAh9YpBtIW5wCPQOV31s1xj4okafBAMo
+         NAOWt4RoQySEshKEPRCIgA+l46CARm389dOL0ejOLWyk/ZsHYsVgB5GEmrS4ctpfSc7C
+         58NhIFM+0h2U8tMs9ZOZo+aOpSWAItu286601aYfai4oDZQrQyY2aLS2A84HXixv+VRd
+         CRpwCjMXbtqvgsJIw91XeVRQNCs7GxN/Hgpy5z9tDTZlw1SA3RZKcpDAIUuYZRGfSjbm
+         93NTjh07UBh9zwyWJ0xw7U8z6GTMMtJvPn+KpltBxswBw03TI8nboiMHvQi0HZB4xYJX
+         WwRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=Lkq/mOT/QKPw9S2MpRqpt0CNtvcxM8Slp2RaKuUZkaM=;
-        b=S6ynmN5H9FSmFvqdQytA2uo26kkLl9HQt4awDX7141fGLthKuSsjKXDuz1Sf7rlF0G
-         KBtHNGNZ+rZm+dpjcJr80bPRLv9rv5dANowEr75jichQ4QPolxlYUMY0ZTUHIEWafwhI
-         q6uD+RakJi5HHu8JhHRdTw5fy2cY+xniICbET/OsPX1FYcRj6Gf0eZnxzRkTOGq2k5pP
-         tw5L0CGCZx17FmuNtbABR8thu06d6E2jDTcKhEZD7ZuTQDEkQVckIQm66Wf1ITiIgfFX
-         MlDEdxyQbgKX+8yJSFbxV6WkQkq/rJN3Azl2C6LtI44j+b/6rQ6RG+xifmZqCYHAF9kb
-         v0rg==
+        bh=uvpRq8wz8IUGEihtbYlJHh7WTngYbZKhTZ8hEp4QBmI=;
+        b=utgPER3YqyWXoXxo0QGjZ+Pr9fvAAVxMuV7DFu7uMpEARWUPVNmofgmP2NqisJW8z0
+         bcXrpfYAVf0MuvVq5ijO1Ie+4IZabY8VGlDjtE6OCzcPK2GRSB1L3No4CNX+/q3B2QSL
+         Gw8z7VP184eyE8IIiC3Pe4SZSt5ld+XdItvWilLg/jqP63dgiyGWxarrk4lpCCzCzU12
+         orMSJV6QN+k6gz5XaZWwj+nna1Cic+tTqqZgBKJbryCnvJ4fX+NznGBieP5jCiR5eP7s
+         pWwvd+UqdgCRF1v6IoPZACBa1XEiKnIrm2Q87x/FsgU9PG4wozAKy2xw3q55S+1z4gHN
+         IjRA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,12 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Yunlong Song <yunlong.song@huawei.com>,
-	Chao Yu <yuchao0@huawei.com>,
-	Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.14 43/49] f2fs: fix heap mode to reset it back
-Date: Tue, 17 Apr 2018 17:59:22 +0200
-Message-Id: <20180417155717.090403971@linuxfoundation.org>
+	Ben Greear <greearb@candelatech.com>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+	Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 41/49] ath9k: Protect queue draining by rcu_read_lock()
+Date: Tue, 17 Apr 2018 17:59:20 +0200
+Message-Id: <20180417155716.999760963@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009767226616026?=
-X-GMAIL-MSGID: =?utf-8?q?1598010151766351440?=
+X-GMAIL-THRID: =?utf-8?q?1598009863461041684?=
+X-GMAIL-MSGID: =?utf-8?q?1598010146497497089?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,49 +50,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yunlong Song <yunlong.song@huawei.com>
+From: Toke Høiland-Jørgensen <toke@toke.dk>
 
-commit b94929d975c8423defc9aededb0f499ff936b509 upstream.
+commit 182b1917109892ab9f26d66bfdcbc4ba6f0a0a65 upstream.
 
-Commit 7a20b8a61eff81bdb7097a578752a74860e9d142 ("f2fs: allocate node
-and hot data in the beginning of partition") introduces another mount
-option, heap, to reset it back. But it does not do anything for heap
-mode, so fix it.
+When ath9k was switched over to use the mac80211 intermediate queues,
+node cleanup now drains the mac80211 queues. However, this call path is
+not protected by rcu_read_lock() as it was previously entirely internal
+to the driver which uses its own locking.
 
+This leads to a possible rcu_dereference() without holding
+rcu_read_lock(); but only if a station is cleaned up while having
+packets queued on the TXQ. Fix this by adding the rcu_read_lock() to the
+caller in ath9k.
+
+Fixes: 50f08edf9809 ("ath9k: Switch to using mac80211 intermediate software queues.")
 Cc: stable@vger.kernel.org
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Reported-by: Ben Greear <greearb@candelatech.com>
+Signed-off-by: Toke Høiland-Jørgensen <toke@toke.dk>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/gc.c      |    5 +++--
- fs/f2fs/segment.c |    3 ++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ath/ath9k/xmit.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -191,8 +191,9 @@ static void select_policy(struct f2fs_sb
- 	if (gc_type != FG_GC && p->max_search > sbi->max_victim_search)
- 		p->max_search = sbi->max_victim_search;
+--- a/drivers/net/wireless/ath/ath9k/xmit.c
++++ b/drivers/net/wireless/ath/ath9k/xmit.c
+@@ -2892,6 +2892,8 @@ void ath_tx_node_cleanup(struct ath_soft
+ 	struct ath_txq *txq;
+ 	int tidno;
  
--	/* let's select beginning hot/small space first */
--	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
-+	/* let's select beginning hot/small space first in no_heap mode*/
-+	if (test_opt(sbi, NOHEAP) &&
-+		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
- 		p->offset = 0;
- 	else
- 		p->offset = SIT_I(sbi)->last_victim[p->gc_mode];
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1992,7 +1992,8 @@ static unsigned int __get_next_segno(str
- 	if (sbi->segs_per_sec != 1)
- 		return CURSEG_I(sbi, type)->segno;
++	rcu_read_lock();
++
+ 	for (tidno = 0; tidno < IEEE80211_NUM_TIDS; tidno++) {
+ 		tid = ath_node_to_tid(an, tidno);
+ 		txq = tid->txq;
+@@ -2909,6 +2911,8 @@ void ath_tx_node_cleanup(struct ath_soft
+ 		if (!an->sta)
+ 			break; /* just one multicast ath_atx_tid */
+ 	}
++
++	rcu_read_unlock();
+ }
  
--	if (type == CURSEG_HOT_DATA || IS_NODESEG(type))
-+	if (test_opt(sbi, NOHEAP) &&
-+		(type == CURSEG_HOT_DATA || IS_NODESEG(type)))
- 		return 0;
- 
- 	if (SIT_I(sbi)->last_victim[ALLOC_NEXT])
+ #ifdef CONFIG_ATH9K_TX99
