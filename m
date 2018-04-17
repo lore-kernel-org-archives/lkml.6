@@ -1,93 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752503AbeDQOyE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:54:04 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:13022 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752043AbeDQOyC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:54:02 -0400
-Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
- to netdev dma client
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Radhey Shyam Pandey <radheys@xilinx.com>,
-        Vinod Koul <vinod.koul@intel.com>
-CC: "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
- <1522665546-10035-3-git-send-email-radheys@xilinx.com>
- <20180411090854.GY6014@localhost>
- <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
- <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
- <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
- <1fc10bec-5c2c-98f1-1d5b-b768dea844ed@metafoo.de>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <78828d31-e4cd-5211-f1b6-8918ac38f599@ti.com>
-Date: Tue, 17 Apr 2018 17:53:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752707AbeDQOyx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:54:53 -0400
+Received: from smtp1-g21.free.fr ([212.27.42.1]:22542 "EHLO smtp1-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751836AbeDQOyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:54:51 -0400
+Date: Tue, 17 Apr 2018 16:54:20 +0200
+From: Alban <albeu@free.fr>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Alban <albeu@free.fr>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode
+ for the cells list
+Message-ID: <20180417165420.423a691b@avionic-0020>
+In-Reply-To: <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
+References: <1521933899-362-1-git-send-email-albeu@free.fr>
+        <1521933899-362-2-git-send-email-albeu@free.fr>
+        <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1fc10bec-5c2c-98f1-1d5b-b768dea844ed@metafoo.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/00OHJ=59GszSgSCM9WZWFKb"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-17 16:58, Lars-Peter Clausen wrote:
->>> There are two options.
->>>
->>> Either you extend the generic interfaces so it can cover your usecase in a
->>> generic way. E.g. the ability to attach meta data to transfer.
->>
->> Fwiw I have this patch as part of a bigger work to achieve similar results:
-> 
-> That's good stuff. Is this in a public tree somewhere?
+--Sig_/00OHJ=59GszSgSCM9WZWFKb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Not atm. I can not send the user of the new API and I did not wanted to
-send something like this out of the blue w/o context.
+On Tue, 17 Apr 2018 13:54:07 +0100
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
 
-But as it is a generic patch, I can send it as well. The only thing is
-that the need for the memcpy, so I might end up with
-ptr = get_metadata_ptr(desc, &size); /* size: in RX the valid size */
+> On 24/03/18 23:24, Alban Bedel wrote:
+> > Having the cells as subnodes of the provider device without any
+> > compatible property might clash with other bindings. To avoid this
+> > problem update the binding to have all the cells in a 'nvmem-cells'
+> > subnode with a 'nvmem-cells' compatible string. This new binding
+> > guarantee that we can turn any kind of device in a nvmem provider.
+> >=20
+> > While discouraged for new uses the old scheme is still supported for
+> > backward compatibility. =20
+>=20
+> Am not sure if this a really good idea to change nvmem bindings based on=
+=20
+> provider requirements. This can be a beginning of other problems!!
 
-and set_metadata_size(); /* in TX to tell how the client placed */
+I think you misunderstood something here, this proposed new binding
+would be for all new nvmem bindings, not just mtd backed nvmem.
 
-Or something like that, the attach_metadata() as it is works just fine,
-but high throughput might not like the memcpy.
+> Did you know that we can pass nvmem cells info via nvmem config ?
+>=20
+> Why can't mtd-nvmem provider populate the nvmem_config->cells from
+> its dt "nvmem-cells" subnode before it registers the provider?
 
->>> Or you can implement a interface that is specific to your DMA controller and
->>> any client using this interface knows it is talking to your DMA controller.
->>
->> Hrm, so we can have DMA driver specific calls? The reason why TI's keystone 2
->> navigator DMA support was rejected that it was introducing NAV specific calls
->> for clients to configure features not yet supported by the framework.
-> 
-> In my opinion it is OK, somebody else might have different ideas. I mean it
-> is not nice, but it is better than the alternative of overloading the
-> generic API with driver specific semantics or introducing some kind of IOCTL
-> catch all callback.
+The DT based lookup of nvmem-cells doesn't use nvmem_config->cells, so
+that's not an option. In fact here the problem come from the MTD side
+because it also had a similar binding using subnodes without compatible
+string. Just to make things clear, here is an example of the clash
+using the current nvmem binding on an unpartitioned MTD device:
 
-True, but the generic API can be extended as well to cover new grounds,
-features. Like this metadata thing.
+flash@0 {
+	#address-cells =3D <1>;
+	#size-cells =3D <1>;
+	compatible =3D "s25sl064a";
+	reg =3D <0>;
 
-> If there is tight coupling between the DMA core and client and there is no
-> intention of using a generic client the best solution might even be to no
-> use DMAengine at all.
+	calibration: calib@404 {
+		reg =3D <0x404 0x10>;
+	};
+};
 
-This is how the knav stuff ended up. Well it is only used by networking
-atm, so it is 'fine' to have custom API, but it is not portable.
+This will not only allow reading the calibration data from nvmem, but
+will also create a partition on the MTD device, which is not acceptable.
+With my proposed binding this would become:
 
-> 
+flash@0 {
+	#address-cells =3D <1>;
+	#size-cells =3D <1>;
+	compatible =3D "s25sl064a";
+	reg =3D <0>;
 
-- Péter
+	nvmem-cells {
+		compatible =3D "nvmem-cells";
+		#address-cells =3D <1>;
+		#address-cells =3D <1>;
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+		calibration: calib@404 {
+			reg =3D <0x404 0x10>;
+		};
+	};
+};
+
+Which would work fine as the MTD code will ignore the nvmem-cells
+subnode thanks to its compatible string.
+
+IMHO subnodes without any compatible properties should never be used in
+such generic bindings, as it is very likely that it will at some point
+clash with another generic binding or with a device specific binding.
+
+Alban
+
+--Sig_/00OHJ=59GszSgSCM9WZWFKb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJa1gqdAAoJEHSUmkuduC28wiQQAN81pxiNZy1GBNnelz+TqmWz
+QoQqmaiwcBDs0/H0Dnx01Kwo5mUFTQW++GP0Ae2ybdNF5ONFBesTYzhA7FB1Ew7e
+z9IdDJVhco5zgINFlc8gdvtfHAMkif407hGDt3c0rZoE7Se+93H6oEEZXBERIg36
+96xlzzctk0FRSx5vFRYXcKdf+2EQn3KBm5ni/Q1WnMgqHY6A7hjNEFzWjpbySSIO
+iAdX7D3zU/+wd8rr+PBTVbt3zdOgO/W92tUFWPwtw37AjEr74NavZ2hidK/XUJfp
+qPubryYr+Iuye6uhIbn/Fu4BE/zGHO2BqBRsLxd3BKSkys4ver7BJiu73WEwZpNt
+9swIG7yNQtC/ZJytCspEn8K+BM3NgPTDSR8bjbg9NdHmuWONRhQTD1rxqz79pSWl
++xj5ZqTco8uZh6/V3XNvlbswYX7HRGWS0pUmAm5eOw40mfTDyo9dRZcAsnM96nSy
+37W4JtQ6sC442MtR9FXPG3tYjhoG2rTl6w13j7hNf5MfEvzcLKmDH75mmxu6YE8P
+lKhZdSabrDPuGc1n3X7jbUQ3dQ7vEaqC3A3XYZ2xemVNbYp3Hb30R4hldmuIgABb
+bPPB+7aHF7uh27aJusfkrBAAV/bcR8IIYTGbi2Yd/d27Wo2xYAHZLhG3K044Pih1
+2Or0U4M0QyWAgiA4TFN4
+=DCd6
+-----END PGP SIGNATURE-----
+
+--Sig_/00OHJ=59GszSgSCM9WZWFKb--
