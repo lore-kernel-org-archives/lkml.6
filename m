@@ -1,51 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752824AbeDQOHU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 10:07:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752387AbeDQOHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 10:07:18 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A108D21727
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Tue, 17 Apr 2018 09:07:14 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Baoquan He <bhe@redhat.com>
-Cc: Philipp Rudo <prudo@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-        Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
-        Dave Young <dyoung@redhat.com>
-Subject: Re: [PATCH v1 0/2] kexec: Remove "weak" annotations from headers
-Message-ID: <20180417140714.GF28657@bhelgaas-glaptop.roam.corp.google.com>
-References: <152355706051.36693.9856090891621551967.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180413110820.662d4879@ThinkPad>
- <20180413092908.GB2119@localhost.localdomain>
+        id S1752888AbeDQOH0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 10:07:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33472 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751865AbeDQOHX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 10:07:23 -0400
+Date: Tue, 17 Apr 2018 07:07:22 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: repeatable boot randomness inside KVM guest
+Message-ID: <20180417140722.GC21954@bombadil.infradead.org>
+References: <20180414195921.GA10437@avx2>
+ <20180414224419.GA21830@thunk.org>
+ <20180415004134.GB15294@bombadil.infradead.org>
+ <1523956414.3250.5.camel@HansenPartnership.com>
+ <20180417114728.GA21954@bombadil.infradead.org>
+ <1523966232.3250.15.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180413092908.GB2119@localhost.localdomain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523966232.3250.15.camel@HansenPartnership.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 13, 2018 at 05:29:08PM +0800, Baoquan He wrote:
-> Hi Bjorn,
+On Tue, Apr 17, 2018 at 12:57:12PM +0100, James Bottomley wrote:
+> On Tue, 2018-04-17 at 04:47 -0700, Matthew Wilcox wrote:
+> > On Tue, Apr 17, 2018 at 10:13:34AM +0100, James Bottomley wrote:
+> > > On Sat, 2018-04-14 at 17:41 -0700, Matthew Wilcox wrote:
+> > > > On Sat, Apr 14, 2018 at 06:44:19PM -0400, Theodore Y. Ts'o wrote:
+> > > > > What needs to happen is freelist should get randomized much
+> > > > > later in the boot sequence.  Doing it later will require
+> > > > > locking; I don't know enough about the slab/slub code to know
+> > > > > whether the slab_mutex would be sufficient, or some other lock
+> > > > > might need to be added.
+> > > > 
+> > > > Could we have the bootloader pass in some initial randomness?
+> > > 
+> > > Where would the bootloader get it from (securely) that the kernel
+> > > can't?
+> > 
+> > In this particular case, qemu is booting the kernel, so it can apply
+> > to /dev/random for some entropy.
 > 
-> There are changes I have made to solve 5-level conflict with
-> kexec/kdump and also interface unification task, they will involve x86
-> 64 only changes on these functions, I don't think we need remove them if
-> without any obvious impact or error reported.
+> Well, yes, but wouldn't qemu virtualize /dev/random anyway so the guest
+>  kernel can get it from the HWRNG provided by qemu?
 
-Removing the weak attribute from the declaration in the header file
-does not prevent you from defining a weak function later in the .c
-file.
+The part of Ted's mail that I snipped explained that virtio-rng relies on
+being able to kmalloc memory, so by definition it can't provide entropy
+before kmalloc is initialised.
 
-We should remove the weak attribute from the header file declaration
-because it can lead to non-obvious errors, e.g., calling the wrong
-version of the function.  There's no build-time or run-time indication
-that this happens, so it's a real trap.
+> > I thought our model was that if somebody had compromised the
+> > bootloader, all bets were off.
+> 
+> You don't have to compromise the bootloader to influence this, you
+> merely have to trick it into providing the random number you wanted. 
+> The bigger you make the attack surface (the more inputs) the more
+> likelihood of finding a trick that works.
+> 
+> >   And also that we were free to mix in as many untrustworthy bytes of
+> > alleged entropy into the random pool as we liked.
+> 
+> No, entropy mixing ensures that all you do with bad entropy is degrade
+> the quality, but if the quality degrades to zero (as it might at boot
+> when you've no other entropy sources so you feed in 100% bad entropy),
+> then the random sequences become predictable.
 
-Bjorn
+I don't understand that.  If I estimate that I have 'k' bytes of entropy
+in my pool, and then I mix in 'n' entirely predictable bytes, I should
+still have k bytes of entropy in the pool.  If I withdraw k bytes from
+the pool, then yes the future output from the pool may be entirely
+predictable, but I have to know what those k bytes were.
