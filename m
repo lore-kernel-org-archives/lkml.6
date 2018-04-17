@@ -1,102 +1,90 @@
 Return-Path: <DavidWang@zhaoxin.com>
-X-Google-Smtp-Source: AIpwx4+9pjaZSSGwUvi9Xiv1cwp5jCEJtSO5iSHENb6cTXc5HdYYbz6uNYROaX52SsOU3IRKPSi5
-ARC-Seal: i=1; a=rsa-sha256; t=1523870830; cv=none;
+X-Google-Smtp-Source: AIpwx49qdGaTZY9nfhc+mPxVH+7nM8KDGw7SR7youBfEvWR1oA9NIsBGbDz/duHMJJ0oNK35Ky4v
+ARC-Seal: i=1; a=rsa-sha256; t=1523954706; cv=none;
         d=google.com; s=arc-20160816;
-        b=NGRB4z/kqkmN3ikzQNvELDc0SXEFYuSahclXe82VuR0rmi6c82zRRxxzy+Lns9CS50
-         d2v8OzHGJleS6xYjIHiIaL0SanKX2sUMuzjoCeOBPokYUSyW4ZWnXlWptfnDGGAY3D6N
-         U6IEsB1LRVn5goGcJSDU9jCPsehJiHNz1bYvxT+5QoYekODCvuBwyHZ+ydMhMoZ1XAQP
-         TFJt46tn1Aw7zrjrofPE2Pn+avuhKp6fKvlCtXeHiJGVDlZ9kLFDIMD1p4ttnMEBf241
-         xQ8dvl/MIgIqIy2RhVU6CpjmyoSL9iaDVgqk1ZRwIkAFXr7fideVavuy3rgWHR+cZ7F8
-         01eg==
+        b=yWj7fgX2rz8mAsFRIeBKTUGYQcphuG6BGDGnPiyXuISBjcPCnKmNb3q3ES7SMEtMVu
+         uKzpJh+RrxCr/a0w8p7+w88M+51LOXkzvivyEBwsJ5mOFT446S6946Q9b+UfTuUPUmfY
+         GZug1Vcu9/Y9EE8oaq8HR2XPrGjGNr8OwrwrNzdD+IVUI3NVdxfTm0YE6YUJwswskZ8e
+         N7/C0+un7hZMz3vyxkFkyWP/QbT2iWwWQwPGSFNz/7b5iF5jRR4HEq85CEHUNLRCQEes
+         n5ftfXFgXid49VPkx3W3r35rAIieKxDb0EFTgJmwjHxqn6hCcbmngtgDUnq4C30kn4K8
+         wz1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:cc:to:from
+        h=content-language:thread-index:content-transfer-encoding
+         :mime-version:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=AFrBNc4W0uiI0UJ1AnypIeVK9e6FCVWJWCUN1hNu7tQ=;
-        b=Y5rPrgHRtZgkBIjvhTXU3H4lA3Les/GkZWwuQsvfVsKWZwInDoB+GgIrGdJMaoGjFa
-         +tetR+iWctSt+m7jeapgpznoChSuoPABid4KsECelNBWkrYXwLfw2Nz7Uuzjz8VU+cRQ
-         CTYzSrD/rA1tP6Dw3EbpVeSzNn6tjZPHvhXFRqx9cN++JM2Ofo9EodXp86R2ft050QwB
-         M2jW112B/8E485pCzGWLLcYJhZNiCMmdo5/30EDX4FQiWvEiJUr30aObBiOXKThgFRZQ
-         PmrhChGhvYSWKX91RYqFlWfuWGpoBrP6eCB8YDr2ba9U9CfMNcEG/hB1Y4WGp8P8YsdC
-         khFQ==
+        bh=ihsfGQsSzOzLpy1WU5m4pnBxPrxY6W8kYB78qdoja40=;
+        b=0eS5+RknII3L2pcNK46pu7mBFS9KDE9BDlZA5HdIQjXoxw5qS+hO+XbG9M653Tf2t1
+         DS9X+mWtL5vEROPwRnPhU5n4Gpune2iABeChWppqWTYIoxGS3/fKs0BnWGYl1giJT3wQ
+         D5VKQnqJl8g8IRQTXPpl3lKnfjL/bkwA8AaPM9um/+YJ6N1hB/WWqqpRS/KBW67dpfVK
+         lycWBMzMhw0zFqHCHOSsyRQKmxHx54Tvg+EhLTSBO9mjOVdAOzUljKHvj4V6yWVaCzst
+         XrCOFrhwOCwhVvtIAXV+cAlzkB8DVoTLupRamllODjfVUht4h7z+TtrLZLEreRQaSQ46
+         z8hw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 180.169.121.91 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
 Authentication-Results: mx.google.com;
        spf=neutral (google.com: 180.169.121.91 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
 From: David Wang <davidwang@zhaoxin.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+To: 'Christoph Hellwig' <hch@infradead.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
 	<gregkh@linuxfoundation.org>, <x86@kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
-	<qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>, <lukelin@viacpu.com>,
-	<timguo@zhaoxin.com>, David Wang <davidwang@zhaoxin.com>
-Subject: [PATCH] x86/dma-mapping: override via_no_dac for new VIA PCI bridges
-Date: Mon, 16 Apr 2018 17:26:56 +0800
-Message-ID: <1523870816-6214-1-git-send-email-davidwang@zhaoxin.com>
-X-Mailer: git-send-email 1.9.1
+	<linux-kernel@vger.kernel.org>, <brucechang@via-alliance.com>,
+	<cooperyan@zhaoxin.com>, <qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>,
+	<lukelin@viacpu.com>, <timguo@zhaoxin.com>
+Subject: Re: [PATCH] x86/dma-mapping: override via_no_dac for new VIA PCI bridges
+Date: Tue, 17 Apr 2018 16:44:32 +0800
+Message-ID: <000001d3d628$4e91a4c0$ebb4ee40$@zhaoxin.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.29.8.54]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdPWJWP7w0EjoZkeTnm5pu211P7x3g==
+Content-Language: zh-cn
+X-Originating-IP: [10.29.8.18]
 X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
  zxbjmbx3.zhaoxin.com (10.29.252.165)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597894379144798679?=
-X-GMAIL-MSGID: =?utf-8?q?1597894379144798679?=
+X-GMAIL-MSGID: =?utf-8?q?1597982329344314331?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-PCI bridges integrated in new VIA chipset/SoC have no DAC issue.
-Enable DAC for the platforms with these chipset/SoC can improve DMA performance about
-20% when DRAM size > 4GB.
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
+
+> -----=D3=CA=BC=FE=D4=AD=BC=FE-----
+> =B7=A2=BC=FE=C8=CB: Christoph Hellwig [mailto:hch@infradead.org]
+> =B7=A2=CB=CD=CA=B1=BC=E4: 2018=C4=EA4=D4=C216=C8=D5 20:34
+> =CA=D5=BC=FE=C8=CB: David Wang <davidwang@zhaoxin.com>
+> =B3=AD=CB=CD: tglx@linutronix.de; mingo@redhat.com; hpa@zytor.com;
+> gregkh@linuxfoundation.org; x86@kernel.org; linux-
+> kernel@vger.kernel.org; brucechang@via-alliance.com;
+> cooperyan@zhaoxin.com; qiyuanwang@zhaoxin.com;
+> benjaminpan@viatech.com; lukelin@viacpu.com; timguo@zhaoxin.com
+> =D6=F7=CC=E2: Re: [PATCH] x86/dma-mapping: override via_no_dac for new =
+VIA PCI
+> bridges
+>=20
+> On Mon, Apr 16, 2018 at 05:26:56PM +0800, David Wang wrote:
+> > PCI bridges integrated in new VIA chipset/SoC have no DAC issue.
+> > Enable DAC for the platforms with these chipset/SoC can improve DMA
+> > performance about 20% when DRAM size > 4GB.
+> >
+>=20
+> So we get an exception to an exception?  Is there any way to figure =
+out
+the
+> PCI IDs actually affected?
+Yes.
+
+Do you mean we should list the PCI IDs of the PCI bridges which have no =
+DAC
+issue?
+There are lots of PCI bridges(PCIE root ports) in our new chipsets/SoCs. =
+And
+no DMA issues found.=20
+So, we only want to recognize the chipset/SoC by reading VID/DID of Bus =
+0,
+Device 17, function 0.
+
+Thx.
 ---
- arch/x86/kernel/pci-dma.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
-index cb9c1fa..6e37b0e 100644
---- a/arch/x86/kernel/pci-dma.c
-+++ b/arch/x86/kernel/pci-dma.c
-@@ -47,6 +47,10 @@
- 
- extern struct iommu_table_entry __iommu_table[], __iommu_table_end[];
- 
-+#ifdef CONFIG_PCI
-+static int override_via_dac __read_mostly;
-+#endif
-+
- /* Dummy device used for NULL arguments (normally ISA). */
- struct device x86_dma_fallback_dev = {
- 	.init_name = "fallback device",
-@@ -279,6 +283,9 @@ static int __init pci_iommu_init(void)
- 
- static void via_no_dac(struct pci_dev *dev)
- {
-+	if (override_via_dac)
-+		return;
-+
- 	if (forbid_dac == 0) {
- 		dev_info(&dev->dev, "disabling DAC on VIA PCI bridge\n");
- 		forbid_dac = 1;
-@@ -286,4 +293,19 @@ static void via_no_dac(struct pci_dev *dev)
- }
- DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_VIA, PCI_ANY_ID,
- 				PCI_CLASS_BRIDGE_PCI, 8, via_no_dac);
-+
-+static void via_can_dac(struct pci_dev *dev)
-+{
-+	/*
-+	 * New VIA bridges have no issues for DAC.
-+	 * Disable the "via_no_dac" fixup code for these new VIA bridges.
-+	 */
-+	override_via_dac = 1;
-+}
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_VIA, 0x345B,
-+				PCI_CLASS_BRIDGE_ISA, 8, via_can_dac);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_VIA, 0x1001,
-+				PCI_CLASS_BRIDGE_ISA, 8, via_can_dac);
-+DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_VIA, 0x300A,
-+				PCI_CLASS_BRIDGE_ISA, 8, via_can_dac);
- #endif
--- 
-1.9.1
+David
