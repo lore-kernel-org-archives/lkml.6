@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+q6M6VMBIXnVr8ZSVd44wkeB1RdA7OCbusQvzc1k4facTLOnlo0Bo6DiYRHWYxBiWnMz2D
-ARC-Seal: i=1; a=rsa-sha256; t=1523980853; cv=none;
+X-Google-Smtp-Source: AIpwx49ORrzirWoYRpZThtJ+VbuXwMh8C0TR+O7tYhlGDzAtktBVa9oj5EKtwdg3Bc1wC9iCw23b
+ARC-Seal: i=1; a=rsa-sha256; t=1523980851; cv=none;
         d=google.com; s=arc-20160816;
-        b=vJ6xkJGH4ERUkrWokjLl153fcNsxqVvWWfIyeUU1D8bYI8ylZElMOSm9ECqXwsZERf
-         RMgBADL6KKMMk0iLJneqwkcw+ZUr4a85hZUMKgkZW/06hB+fR3x0s56X6QqV08NRz5Z6
-         HA3Mj12MZrL+T68M+5DrJO0Dq0yF5q8rmZCz94lBa5NW9WtxS5BlXtQID5MLAc/kaNHH
-         vuytnYyMU6Gu4ygAvKr199nc1J0XRvr1RIFBXaDBsvgE34RaD3OCFJnlFHI9XpzTalNa
-         DMkGQgvR8+CYYPlWRKtkjdiH2UvzBoUPfnr+Xg2jDCjxUADAXzoJuzNEe4VLZnpInjov
-         4TnA==
+        b=oCMn89DBswtC+KVllHNs+cU8SXgxVr9FA6AiUZOutua1i5Dr5LBMNj6AGuNch9I+I2
+         BdiVwHCuP8+tQlGVEpuHdv7f2quA6oUiIpXCckMcRVZxfbJvkIrJ8neUUXwPVsE534FN
+         IGXTRwed+/EwiNnL9GGNRh2vmrNy8zmCIPFOOD+q78cnq8LjYD/CwfjRl70S8COeCT2I
+         ir4YkwZe0QQzt1lIwD6I9EmOBD+1ZWOHq5Lw4bhaTRf6kL+EXn53COy0NyjbcRjdQZtk
+         MyLiI7wEYSFA4E/1OpQcqOmuVsUcRuK/fnjHogbO7z3+v+mIEs1nBbs25ofz16/dHo6A
+         qiZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=K6wifGSUsCzPuxuwjB6vZYsnjY8DC2nL31L8ILA7lIA=;
-        b=Becn5J5To2bTE5idKmhRrjvmst63tk+95jXzpihJ66lQH+2z9ZctaZXUF49tVYqhgf
-         K1U0w5ZUipb584ordF2uAX60wHUx7d9okHNSQCF8wQVM1qu3l35iN/2EJx7/RPMHRQiF
-         bIZYQwnvyqPcBXgS9M8Fyq7b3b7ElNQM/NH6Y8XWi12mDWiumlvUc0X7iz2TF6SgkX+R
-         I1OqlJtj5epg9kLq71qAcZ5Q928qVGFVOFgOexUSAO66JLMv81BTZU6upwcbEp8GeOXW
-         bd+VPc3nvwM3x3CgsBak5mpOD9HlGzOShbFn6oheYtvKdnthVqfBrW4rj2bt29k8Z6Gm
-         Kelg==
+        bh=texO1TTFz/gFTDtlZboWciZgh/DfQidOetvKISwQIDs=;
+        b=ZnXLzgoSZy5MFJSUjZzdEy8frrOnWMu2eXvOTgcWdgaQJ4+j9CzjRBNTIdwXQQVUsF
+         dscalKmEx4mFp713y0Csf+v9i5UuzYt/3xOOxOSvIUWn6MZ2/N2oKWgKLguWd74hMIRf
+         /sV0Uue339280Za4XBKlXeFODn2qtKlc3DEK5h/nOPJ4N/1rxwj0YLB3hAX8mIfPHDSN
+         HJdh0mWoRSh6dBpxPErpQMYjFKUj2sHsEf56PcDEfnObxQ9xRDjAEJe+kluuAAY2uyZ+
+         pk7KRa2edkIuzH/Jk6LgKZxKDS/ubGrvYXU6os5rRBSs9OQNyS0R7OuoGEEkHiTgWZMD
+         odbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,13 +26,11 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Xin Long <lucien.xin@gmail.com>,
-	William Tu <u9012063@gmail.com>,
+	Guillaume Nault <g.nault@alphalink.fr>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 07/68] ip_gre: clear feature flags when incompatible o_flags are set
-Date: Tue, 17 Apr 2018 17:57:20 +0200
-Message-Id: <20180417155749.638564160@linuxfoundation.org>
+Subject: [PATCH 4.16 06/68] l2tp: fix race in duplicate tunnel detection
+Date: Tue, 17 Apr 2018 17:57:19 +0200
+Message-Id: <20180417155749.597425588@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
 References: <20180417155749.341779147@linuxfoundation.org>
@@ -42,8 +40,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009748090374289?=
-X-GMAIL-MSGID: =?utf-8?q?1598009748090374289?=
+X-GMAIL-THRID: =?utf-8?q?1598009745128989148?=
+X-GMAIL-MSGID: =?utf-8?q?1598009745128989148?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,48 +49,117 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
 
-[ Upstream commit 1cc5954f44150bb70cac07c3cc5df7cf0dfb61ec ]
+[ Upstream commit f6cd651b056ffd3b4e8496afd44d4ed44bf69136 ]
 
-Commit dd9d598c6657 ("ip_gre: add the support for i/o_flags update via
-netlink") added the ability to change o_flags, but missed that the
-GSO/LLTX features are disabled by default, and only enabled some gre
-features are unused. Thus we also need to disable the GSO/LLTX features
-on the device when the TUNNEL_SEQ or TUNNEL_CSUM flags are set.
+We can't use l2tp_tunnel_find() to prevent l2tp_nl_cmd_tunnel_create()
+from creating a duplicate tunnel. A tunnel can be concurrently
+registered after l2tp_tunnel_find() returns. Therefore, searching for
+duplicates must be done at registration time.
 
-These two examples should result in the same features being set:
+Finally, remove l2tp_tunnel_find() entirely as it isn't use anywhere
+anymore.
 
-    ip link add gre_none type gre local 192.168.0.10 remote 192.168.0.20 ttl 255 key 0
-
-    ip link set gre_none type gre seq
-    ip link add gre_seq type gre local 192.168.0.10 remote 192.168.0.20 ttl 255 key 1 seq
-
-Fixes: dd9d598c6657 ("ip_gre: add the support for i/o_flags update via netlink")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Reviewed-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: William Tu <u9012063@gmail.com>
+Fixes: 309795f4bec2 ("l2tp: Add netlink control API for L2TP")
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/ip_gre.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ net/l2tp/l2tp_core.c    |   35 ++++++++++++++---------------------
+ net/l2tp/l2tp_core.h    |    1 -
+ net/l2tp/l2tp_netlink.c |    6 ------
+ 3 files changed, 14 insertions(+), 28 deletions(-)
 
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -778,8 +778,14 @@ static void ipgre_link_update(struct net
- 		    tunnel->encap.type == TUNNEL_ENCAP_NONE) {
- 			dev->features |= NETIF_F_GSO_SOFTWARE;
- 			dev->hw_features |= NETIF_F_GSO_SOFTWARE;
-+		} else {
-+			dev->features &= ~NETIF_F_GSO_SOFTWARE;
-+			dev->hw_features &= ~NETIF_F_GSO_SOFTWARE;
- 		}
- 		dev->features |= NETIF_F_LLTX;
-+	} else {
-+		dev->hw_features &= ~NETIF_F_GSO_SOFTWARE;
-+		dev->features &= ~(NETIF_F_LLTX | NETIF_F_GSO_SOFTWARE);
- 	}
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -335,26 +335,6 @@ err_tlock:
  }
+ EXPORT_SYMBOL_GPL(l2tp_session_register);
  
+-/* Lookup a tunnel by id
+- */
+-struct l2tp_tunnel *l2tp_tunnel_find(const struct net *net, u32 tunnel_id)
+-{
+-	struct l2tp_tunnel *tunnel;
+-	struct l2tp_net *pn = l2tp_pernet(net);
+-
+-	rcu_read_lock_bh();
+-	list_for_each_entry_rcu(tunnel, &pn->l2tp_tunnel_list, list) {
+-		if (tunnel->tunnel_id == tunnel_id) {
+-			rcu_read_unlock_bh();
+-			return tunnel;
+-		}
+-	}
+-	rcu_read_unlock_bh();
+-
+-	return NULL;
+-}
+-EXPORT_SYMBOL_GPL(l2tp_tunnel_find);
+-
+ struct l2tp_tunnel *l2tp_tunnel_find_nth(const struct net *net, int nth)
+ {
+ 	struct l2tp_net *pn = l2tp_pernet(net);
+@@ -1501,6 +1481,7 @@ static int l2tp_validate_socket(const st
+ int l2tp_tunnel_register(struct l2tp_tunnel *tunnel, struct net *net,
+ 			 struct l2tp_tunnel_cfg *cfg)
+ {
++	struct l2tp_tunnel *tunnel_walk;
+ 	struct l2tp_net *pn;
+ 	struct socket *sock;
+ 	struct sock *sk;
+@@ -1529,7 +1510,16 @@ int l2tp_tunnel_register(struct l2tp_tun
+ 	tunnel->l2tp_net = net;
+ 
+ 	pn = l2tp_pernet(net);
++
+ 	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
++	list_for_each_entry(tunnel_walk, &pn->l2tp_tunnel_list, list) {
++		if (tunnel_walk->tunnel_id == tunnel->tunnel_id) {
++			spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
++
++			ret = -EEXIST;
++			goto err_sock;
++		}
++	}
+ 	list_add_rcu(&tunnel->list, &pn->l2tp_tunnel_list);
+ 	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
+ 
+@@ -1558,7 +1548,10 @@ int l2tp_tunnel_register(struct l2tp_tun
+ 	return 0;
+ 
+ err_sock:
+-	sockfd_put(sock);
++	if (tunnel->fd < 0)
++		sock_release(sock);
++	else
++		sockfd_put(sock);
+ err:
+ 	return ret;
+ }
+--- a/net/l2tp/l2tp_core.h
++++ b/net/l2tp/l2tp_core.h
+@@ -220,7 +220,6 @@ struct l2tp_session *l2tp_session_get(co
+ struct l2tp_session *l2tp_session_get_nth(struct l2tp_tunnel *tunnel, int nth);
+ struct l2tp_session *l2tp_session_get_by_ifname(const struct net *net,
+ 						const char *ifname);
+-struct l2tp_tunnel *l2tp_tunnel_find(const struct net *net, u32 tunnel_id);
+ struct l2tp_tunnel *l2tp_tunnel_find_nth(const struct net *net, int nth);
+ 
+ int l2tp_tunnel_create(struct net *net, int fd, int version, u32 tunnel_id,
+--- a/net/l2tp/l2tp_netlink.c
++++ b/net/l2tp/l2tp_netlink.c
+@@ -236,12 +236,6 @@ static int l2tp_nl_cmd_tunnel_create(str
+ 	if (info->attrs[L2TP_ATTR_DEBUG])
+ 		cfg.debug = nla_get_u32(info->attrs[L2TP_ATTR_DEBUG]);
+ 
+-	tunnel = l2tp_tunnel_find(net, tunnel_id);
+-	if (tunnel != NULL) {
+-		ret = -EEXIST;
+-		goto out;
+-	}
+-
+ 	ret = -EINVAL;
+ 	switch (cfg.encap) {
+ 	case L2TP_ENCAPTYPE_UDP:
