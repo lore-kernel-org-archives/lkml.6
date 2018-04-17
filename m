@@ -1,39 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752915AbeDQXXA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 19:23:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48542 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751164AbeDQXW7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 19:22:59 -0400
-Date: Tue, 17 Apr 2018 16:22:48 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: viro@zeniv.linux.org.uk, nyc@holomorphy.com, mike.kravetz@oracle.com,
-        kirill.shutemov@linux.intel.com, hughd@google.com,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fs: introduce ST_HUGE flag and set it to tmpfs and
- hugetlbfs
-Message-ID: <20180417232248.GA27631@bombadil.infradead.org>
-References: <1523999293-94152-1-git-send-email-yang.shi@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523999293-94152-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752915AbeDQXfh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 19:35:37 -0400
+Received: from victor.provo.novell.com ([137.65.250.26]:41021 "EHLO
+        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751882AbeDQXfg (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 17 Apr 2018 19:35:36 -0400
+From: Martin Wilck <mwilck@suse.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hannes Reinecke <hare@suse.de>,
+        James Bottomley <jejb@linux.vnet.ibm.com>,
+        Xose Vazquez Perez <xose.vazquez@gmail.com>,
+        Bart Van Assche <Bart.VanAssche@sandisk.com>
+Subject: [PATCH v3 0/6] scsi: handle special return codes for ABORTED COMMAND
+Date: Wed, 18 Apr 2018 01:35:05 +0200
+Message-Id: <20180417233511.6573-1-mwilck@suse.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 05:08:13AM +0800, Yang Shi wrote:
-> When applications use huge page on hugetlbfs, it just need check the
-> filesystem magic number, but it is not enough for tmpfs. So, introduce
-> ST_HUGE flag to statfs if super block has SB_HUGE set which indicates
-> huge page is supported on the specific filesystem.
+Here is another attempt to handle the special return codes for ABORTED COMMAND
+for certain SCSI devices. Following MKP's recommendation, I've created two
+new BLIST flags, simplifying the code in scsi_error.c compared to the previous
+versions. Rather than using "free" bits, I increased the length of
+blist_flag_t to 64 bit, and used previously unused bits. I also added checking
+for obsolete and unused bits.
 
-Hm.  What's the plan for communicating support for page sizes other
-than PMD page sizes?  I know ARM has several different page sizes,
-as do PA-RISC and ia64.  Even x86 might support 1G page sizes through
-tmpfs one day.
+For the blist_flag_t size increase, I used sparse to try and avoid regressions;
+that necessitated fixing sparse's errors for the current code first.
+
+Martin Wilck (6):
+  ilog2: create truly constant version for sparse
+  scsi: use const_ilog2 for array indices
+  scsi: devinfo: change blist_flag_t to 64bit
+  scsi: devinfo: warn on undefined blist flags
+  scsi: devinfo: add BLIST_RETRY_ITF for EMC Symmetrix
+  scsi: devinfo: BLIST_RETRY_ASC_C1 for Fujitsu ETERNUS
+
+ drivers/scsi/Makefile       |  2 +-
+ drivers/scsi/scsi_debugfs.c |  2 +-
+ drivers/scsi/scsi_devinfo.c | 28 +++++++++++++----
+ drivers/scsi/scsi_error.c   |  7 +++++
+ drivers/scsi/scsi_sysfs.c   |  2 +-
+ include/linux/log2.h        | 35 ++++++++++++++-------
+ include/scsi/scsi_device.h  |  2 +-
+ include/scsi/scsi_devinfo.h | 75 ++++++++++++++++++++++++++++++---------------
+ 8 files changed, 107 insertions(+), 46 deletions(-)
+
+-- 
+2.16.1
