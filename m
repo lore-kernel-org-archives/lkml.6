@@ -1,154 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752883AbeDQVIs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 17:08:48 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:53660 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752359AbeDQVIq (ORCPT
+        id S1752687AbeDQVKW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 17:10:22 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:34186 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751879AbeDQVKT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 17:08:46 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0T.MzdCX_1523999293;
-From: Yang Shi <yang.shi@linux.alibaba.com>
-To: viro@zeniv.linux.org.uk, nyc@holomorphy.com, mike.kravetz@oracle.com,
-        kirill.shutemov@linux.intel.com, hughd@google.com,
-        akpm@linux-foundation.org
-Cc: yang.shi@linux.alibaba.com, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] fs: introduce ST_HUGE flag and set it to tmpfs and hugetlbfs
-Date: Wed, 18 Apr 2018 05:08:13 +0800
-Message-Id: <1523999293-94152-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 17 Apr 2018 17:10:19 -0400
+X-Google-Smtp-Source: AIpwx48LTfcwr/gVqpGyHLJp6CUYTz8fUGLWDopJAQcl77Ldc2YoZkyjrlbP7zJR0SdXrX1bC/KMiQ==
+Subject: Re: [PATCH V3 3/4] soc: mediatek: pwrap: add mt6351 for mt6797 SoCs
+To: argus.lin@mediatek.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Chenglin Xu <chenglin.xu@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>, wsd_upstream@mediatek.com,
+        henryc.chen@mediatek.com, flora.fu@mediatek.com,
+        Chen Zhong <chen.zhong@mediatek.com>,
+        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+        "shailendra . v" <shailendra.v@samsung.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20180323083238.13569-1-argus.lin@mediatek.com>
+ <20180323083238.13569-4-argus.lin@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <427130f0-9f7e-22cc-3679-2a8d22124515@gmail.com>
+Date: Tue, 17 Apr 2018 23:10:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180323083238.13569-4-argus.lin@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since tmpfs THP was supported in 4.8, hugetlbfs is not the only
-filesystem with huge page support anymore. tmpfs can use huge page via
-THP when mounting by "huge=" mount option.
+Please update the subject line, we don't add mt5797 here.
 
-When applications use huge page on hugetlbfs, it just need check the
-filesystem magic number, but it is not enough for tmpfs. So, introduce
-ST_HUGE flag to statfs if super block has SB_HUGE set which indicates
-huge page is supported on the specific filesystem.
+More comments below.
 
-Some applications could benefit from this change, for example QEMU.
-When use mmap file as guest VM backend memory, QEMU typically mmap the
-file size plus one extra page. If the file is on hugetlbfs the extra
-page is huge page size (i.e. 2MB), but it is still 4KB on tmpfs even
-though THP is enabled. tmpfs THP requires VMA is huge page aligned, so
-if 4KB page is used THP will not be used at all. The below /proc/meminfo
-fragment shows the THP use of QEMU with 4K page:
+On 03/23/2018 09:32 AM, argus.lin@mediatek.com wrote:
+> From: Argus Lin <argus.lin@mediatek.com>
+> 
+> mt6351 is a new power management IC and it is
+> used for mt6797 SoCs. We need to add mt6351_regs for
+> pmic register mapping and pmic_mt6351 for
+> register accessing by regmap.
+> 
+> Signed-off-by: Argus Lin <argus.lin@mediatek.com>
+> ---
+>  drivers/soc/mediatek/mtk-pmic-wrap.c | 31 +++++++++++++++++++++++++++++--
+>  1 file changed, 29 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> index d0a0a3d7e88d..d81a585fadf5 100644
+> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
+> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> @@ -153,6 +153,21 @@ static const u32 mt6397_regs[] = {
+>  	[PWRAP_DEW_CIPHER_SWRST] =	0xbc24,
+>  };
+>  
+> +static const u32 mt6351_regs[] = {
+> +	[PWRAP_DEW_DIO_EN] =		0x02F2,
+> +	[PWRAP_DEW_READ_TEST] =		0x02F4,
+> +	[PWRAP_DEW_WRITE_TEST] =	0x02F6,
+> +	[PWRAP_DEW_CRC_EN] =		0x02FA,
+> +	[PWRAP_DEW_CRC_VAL] =		0x02FC,
+> +	[PWRAP_DEW_CIPHER_KEY_SEL] =	0x0300,
+> +	[PWRAP_DEW_CIPHER_IV_SEL] =	0x0302,
+> +	[PWRAP_DEW_CIPHER_EN] =		0x0304,
+> +	[PWRAP_DEW_CIPHER_RDY] =	0x0306,
+> +	[PWRAP_DEW_CIPHER_MODE] =	0x0308,
+> +	[PWRAP_DEW_CIPHER_SWRST] =	0x030A,
+> +	[PWRAP_DEW_RDDMY_NO] =		0x030C,
+> +};
+> +
+>  enum pwrap_regs {
+>  	PWRAP_MUX_SEL,
+>  	PWRAP_WRAP_EN,
+> @@ -721,6 +736,7 @@ static int mt8135_regs[] = {
+>  
+>  enum pmic_type {
+>  	PMIC_MT6323,
+> +	PMIC_MT6351,
+>  	PMIC_MT6380,
+>  	PMIC_MT6397,
+>  };
+> @@ -1179,8 +1195,6 @@ static int pwrap_init_cipher(struct pmic_wrapper *wrp)
+>  	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_SWRST], 0x0);
+>  	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_KEY_SEL], 0x1);
+>  	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_IV_SEL], 0x2);
+> -	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_LOAD], 0x1);
+> -	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_START], 0x1);
 
-ShmemHugePages:   679936 kB
-ShmemPmdMapped:        0 kB
+That might break the driver for other devices. You can't just delete these lines
+without explanation. If you think these lines are not needed, then please put
+the deletion in another patch explaining why.
 
-With ST_HUGE flag, QEMU can get huge page, then /proc/meminfo looks
-like:
+Other then these two comments, patch looks fine.
 
-ShmemHugePages:    77824 kB
-ShmemPmdMapped:     6144 kB
-
-With this flag, the applications can know if huge page is supported on
-the filesystem then optimize the behavior of the applications
-accordingly. Although the similar function can be implemented in
-applications by traversing the mount options, it looks more convenient
-if kernel can provide such flag.
-
-Even though ST_HUGE is set, f_bsize still returns 4KB for tmpfs since
-THP could be split, and it also my fallback to 4KB page silently if
-there is not enough huge page.
-
-And, set the flag for hugetlbfs as well to keep the consistency, and the
-applications don't have to know what filesystem is used to use huge
-page, just need to check ST_HUGE flag.
-
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Nadia Yvette Chambers <nyc@holomorphy.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
----
- fs/hugetlbfs/inode.c   | 1 +
- fs/statfs.c            | 2 ++
- include/linux/fs.h     | 1 +
- include/linux/statfs.h | 1 +
- mm/shmem.c             | 8 ++++++++
- 5 files changed, 13 insertions(+)
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index b9a254d..3754b45 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -1265,6 +1265,7 @@ static void init_once(void *foo)
- 	sb->s_op = &hugetlbfs_ops;
- 	sb->s_time_gran = 1;
- 	sb->s_root = d_make_root(hugetlbfs_get_root(sb, &config));
-+	sb->s_flags |= SB_HUGE;
- 	if (!sb->s_root)
- 		goto out_free;
- 	return 0;
-diff --git a/fs/statfs.c b/fs/statfs.c
-index 5b2a24f..ac0403a 100644
---- a/fs/statfs.c
-+++ b/fs/statfs.c
-@@ -41,6 +41,8 @@ static int flags_by_sb(int s_flags)
- 		flags |= ST_MANDLOCK;
- 	if (s_flags & SB_RDONLY)
- 		flags |= ST_RDONLY;
-+	if (s_flags & SB_HUGE)
-+		flags |= ST_HUGE;
- 	return flags;
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c6baf76..df246e9 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1287,6 +1287,7 @@ struct fasync_struct {
- #define SB_SYNCHRONOUS	16	/* Writes are synced at once */
- #define SB_MANDLOCK	64	/* Allow mandatory locks on an FS */
- #define SB_DIRSYNC	128	/* Directory modifications are synchronous */
-+#define SB_HUGE		256	/* Support hugepage/THP */
- #define SB_NOATIME	1024	/* Do not update access times. */
- #define SB_NODIRATIME	2048	/* Do not update directory access times */
- #define SB_SILENT	32768
-diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-index 3142e98..79a634b 100644
---- a/include/linux/statfs.h
-+++ b/include/linux/statfs.h
-@@ -40,5 +40,6 @@ struct kstatfs {
- #define ST_NOATIME	0x0400	/* do not update access times */
- #define ST_NODIRATIME	0x0800	/* do not update directory access times */
- #define ST_RELATIME	0x1000	/* update atime relative to mtime/ctime */
-+#define ST_HUGE		0x2000	/* support hugepage/thp */
- 
- #endif
-diff --git a/mm/shmem.c b/mm/shmem.c
-index b859192..d5312ec 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3632,6 +3632,11 @@ static int shmem_remount_fs(struct super_block *sb, int *flags, char *data)
- 	sbinfo->max_inodes  = config.max_inodes;
- 	sbinfo->free_inodes = config.max_inodes - inodes;
- 
-+	if (sbinfo->huge > 0)
-+		sb->s_flags |= SB_HUGE;
-+	else
-+		sb->s_flags &= ~SB_HUGE;
-+
- 	/*
- 	 * Preserve previous mempolicy unless mpol remount option was specified.
- 	 */
-@@ -3804,6 +3809,9 @@ int shmem_fill_super(struct super_block *sb, void *data, int silent)
- 	}
- 	sb->s_export_op = &shmem_export_ops;
- 	sb->s_flags |= SB_NOSEC;
-+
-+	if (sbinfo->huge > 0)
-+		sb->s_flags |= SB_HUGE;
- #else
- 	sb->s_flags |= SB_NOUSER;
- #endif
--- 
-1.8.3.1
+Regards,
+Matthias
