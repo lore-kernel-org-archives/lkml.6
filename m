@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48EDcUmeLBGPd/08LtO8iaR3kcrNq4c5oV+4hqyX65XB5F4VBCQWw6egTtCchIy0YA9Em6I
-ARC-Seal: i=1; a=rsa-sha256; t=1523981272; cv=none;
+X-Google-Smtp-Source: AIpwx48PCEUE5KN1yNtXpQj+wudSOK7Cs2j9oieOBIPatH7x+LlezcU+7Pd/N8UpJ0G3jSuRvRjk
+ARC-Seal: i=1; a=rsa-sha256; t=1523981269; cv=none;
         d=google.com; s=arc-20160816;
-        b=bgQ7y7ZpQLqOd9Twr8XJSomdRnTH7u5hgt8xynAjmA1Kx7SlIFoHAE/gGNqRyInXVN
-         +2R3KyUv/ZGhhNUmj/Fp4dG/9Q6srzFXj+PkCXvO9ALSDU9b0/rtB+uZot56bbWma3Xq
-         cOOf41F0RkazwiGYE9omIdcFAz3YQ6wFu3iOptvDf3A/ceqp26JT0AXmWysQkynMXObJ
-         DxwXvIS6ArW4v0vglyiwI+jDORG7aOLi0XuZ6awYfMdKt+xzoS6N29O6bojYyY4HvGDk
-         88cHLcvLocWph5jK+oII+Wkoc7pxWyZG7K4KNoh5za6O8aEQSpF8mHIg6v28aPKvgGm3
-         DUTw==
+        b=qj5izZV4gO38XxC/qielnS0M5SDtdw9XZVpaZhC2oaRYkmOm7XlsV8+T/yVWPZT6TJ
+         BLtmNogn3mXW88+wDsVhP1deOoa9p8bzdSmtWITfHN6DsbZLZq0JLOvF4ysCP0UA/mbd
+         uhyXPavbF6TaN8RV6I24Y0YFemnZDVAyG+PYy/HUHWetDBJW4mtF/qhb4DWu7soPmkqT
+         C/egV8AlHaFa2CiXC3cgseAYmDlEo0uI9/8YBL8gP9YJCq5VHeZrZ5f6w7MX7lKwIVYs
+         gslCrARGzBofCYdn6kgicjeLpOwLpwWU8fHOeGvAzB2ILOWzrwkMguV7K3Sn7mggcUvI
+         Pv5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=RHPUp5O2QGTrfVsuCNHUdiNtzdny0kqrTb3pZhEQvBk=;
-        b=F9OdNJhYLLr4ivaZ/LxhmUdD4KzU2VKQxM5P9Hdu8UbYmYg1vTq+KGCe5dDWJNiy+W
-         qJPSyxNGiLe4o1aelMZM/cy/3zlcU4C1wILfTFm+X5qmwAkdvVD2Y8lZ3hXiLY2WHUw5
-         LIZxwJ7CQeovQC/Q4HXK/jIuD76XBDs/DiHuZQyZpp1Rqyf/CN48vW38/ZlZR6dTq0fG
-         MHCmIxAI+Z02hrnKr9HogticAhU5qqrbWFvGuBq1dp1HF2JC9JWL+zG3v7l4OVA6l1Jx
-         a5prA9M8ss3zuz9SNf3bItZPsBhM3Owk2qmpZfNr7dQ47evmMEmeZrC55plhLauxbx5w
-         LR1Q==
+        bh=/sy6HVfNXUNmEhGR7yCqI6/+BBeDqVG5o946hVgnbXg=;
+        b=TmmspzwlcZ8ez1AtciG4oKBUz7OQrE5ebhJMkz3d4+wn41YPqiJcLeddJYWPiUWEiR
+         HaJQqcaXuWgUsYt29ltT5o+xzSnwLnIFdxAZtHHWmAvprIEYpdY6kW63IixBg/4uaLwT
+         vxiZCoU8QVHyFEFwKLhPoLpy5iE6kEIULobtr2c3hS5ebfA5nrjnMxoTR+1g0w5v2Luu
+         Cjz2eJpdM+/tINw+slx7z2Cg1xs/2evEiRBDb1GLnnKQA3wtNIs2357Bd5fFg51ZlMv3
+         HsrN6/43cKRjtF4bc7NFRw548uiMlm4DnOmJkRfxwxR6cz0RYenJJKZbhzBIvRHRbiy8
+         qHwg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,19 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 4.14 32/49] getname_kernel() needs to make sure that ->name != ->iname in long case
-Date: Tue, 17 Apr 2018 17:59:11 +0200
-Message-Id: <20180417155716.555089785@linuxfoundation.org>
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Thorsten Leemhuis <regressions@leemhuis.info>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 31/49] get_user_pages_fast(): return -EFAULT on access_ok failure
+Date: Tue, 17 Apr 2018 17:59:10 +0200
+Message-Id: <20180417155716.507362957@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
 References: <20180417155715.032245882@linuxfoundation.org>
@@ -39,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009878581722556?=
-X-GMAIL-MSGID: =?utf-8?q?1598010186587209360?=
+X-GMAIL-THRID: =?utf-8?q?1598009890881181716?=
+X-GMAIL-MSGID: =?utf-8?q?1598010183568664301?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,31 +57,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+From: Michael S. Tsirkin <mst@redhat.com>
 
-commit 30ce4d1903e1d8a7ccd110860a5eef3c638ed8be upstream.
+commit c61611f70958d86f659bca25c02ae69413747a8d upstream.
 
-missed it in "kill struct filename.separate" several years ago.
+get_user_pages_fast is supposed to be a faster drop-in equivalent of
+get_user_pages.  As such, callers expect it to return a negative return
+code when passed an invalid address, and never expect it to return 0
+when passed a positive number of pages, since its documentation says:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+ * Returns number of pages pinned. This may be fewer than the number
+ * requested. If nr_pages is 0 or negative, returns 0. If no pages
+ * were pinned, returns -errno.
+
+When get_user_pages_fast fall back on get_user_pages this is exactly
+what happens.  Unfortunately the implementation is inconsistent: it
+returns 0 if passed a kernel address, confusing callers: for example,
+the following is pretty common but does not appear to do the right thing
+with a kernel address:
+
+        ret = get_user_pages_fast(addr, 1, writeable, &page);
+        if (ret < 0)
+                return ret;
+
+Change get_user_pages_fast to return -EFAULT when supplied a kernel
+address to make it match expectations.
+
+All callers have been audited for consistency with the documented
+semantics.
+
+Link: http://lkml.kernel.org/r/1522962072-182137-4-git-send-email-mst@redhat.com
+Fixes: 5b65c4677a57 ("mm, x86/mm: Fix performance regression in get_user_pages_fast()")
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Reported-by: syzbot+6304bf97ef436580fede@syzkaller.appspotmail.com
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namei.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/gup.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -222,9 +222,10 @@ getname_kernel(const char * filename)
- 	if (len <= EMBEDDED_NAME_MAX) {
- 		result->name = (char *)result->iname;
- 	} else if (len <= PATH_MAX) {
-+		const size_t size = offsetof(struct filename, iname[1]);
- 		struct filename *tmp;
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1816,9 +1816,12 @@ int get_user_pages_fast(unsigned long st
+ 	len = (unsigned long) nr_pages << PAGE_SHIFT;
+ 	end = start + len;
  
--		tmp = kmalloc(sizeof(*tmp), GFP_KERNEL);
-+		tmp = kmalloc(size, GFP_KERNEL);
- 		if (unlikely(!tmp)) {
- 			__putname(result);
- 			return ERR_PTR(-ENOMEM);
++	if (nr_pages <= 0)
++		return 0;
++
+ 	if (unlikely(!access_ok(write ? VERIFY_WRITE : VERIFY_READ,
+ 					(void __user *)start, len)))
+-		return 0;
++		return -EFAULT;
+ 
+ 	if (gup_fast_permitted(start, nr_pages, write)) {
+ 		local_irq_disable();
