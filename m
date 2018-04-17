@@ -1,201 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752209AbeDQCYt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 16 Apr 2018 22:24:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57898 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751193AbeDQCYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Apr 2018 22:24:47 -0400
-Subject: Re: [RFC v2] virtio: support packed ring
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Tiwei Bie <tiwei.bie@intel.com>, wexu@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        jfreimann@redhat.com
-References: <20180401141216.8969-1-tiwei.bie@intel.com>
- <ebfbfc3e-9e52-9331-61b6-258e131f822d@redhat.com>
- <20180413071529.f4esh654dakodf4f@debian>
- <8dee7d62-ac0b-54ba-6bec-4bc4a6fb34e9@redhat.com>
- <20180417051343-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <665c828e-6699-7688-cfea-b23b2b0f5fe3@redhat.com>
-Date: Tue, 17 Apr 2018 10:24:32 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752652AbeDQCY7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 16 Apr 2018 22:24:59 -0400
+Received: from vps.xff.cz ([195.181.215.36]:39316 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752306AbeDQCY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Apr 2018 22:24:57 -0400
+Date: Tue, 17 Apr 2018 04:15:00 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <doudahwezomiechahtah@xff.cz>
+To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
+        devicetree@vger.kernel.org, quentin.schulz@bootlin.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 00/11] Sunxi: Add SMP support on A83T
+Message-ID: <20180417021500.ufcp3fhlcpcu7vmt@core>
+Mail-Followup-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>,
+        linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
+        devicetree@vger.kernel.org, quentin.schulz@bootlin.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180417051343-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20180416215032.5023-1-mylene.josserand@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Myl�ne,
 
+Please also add this:
 
-On 2018年04月17日 10:17, Michael S. Tsirkin wrote:
-> On Tue, Apr 17, 2018 at 10:11:58AM +0800, Jason Wang wrote:
->>
->> On 2018年04月13日 15:15, Tiwei Bie wrote:
->>> On Fri, Apr 13, 2018 at 12:30:24PM +0800, Jason Wang wrote:
->>>> On 2018年04月01日 22:12, Tiwei Bie wrote:
->>>>> Hello everyone,
->>>>>
->>>>> This RFC implements packed ring support for virtio driver.
->>>>>
->>>>> The code was tested with DPDK vhost (testpmd/vhost-PMD) implemented
->>>>> by Jens at http://dpdk.org/ml/archives/dev/2018-January/089417.html
->>>>> Minor changes are needed for the vhost code, e.g. to kick the guest.
->>>>>
->>>>> TODO:
->>>>> - Refinements and bug fixes;
->>>>> - Split into small patches;
->>>>> - Test indirect descriptor support;
->>>>> - Test/fix event suppression support;
->>>>> - Test devices other than net;
->>>>>
->>>>> RFC v1 -> RFC v2:
->>>>> - Add indirect descriptor support - compile test only;
->>>>> - Add event suppression supprt - compile test only;
->>>>> - Move vring_packed_init() out of uapi (Jason, MST);
->>>>> - Merge two loops into one in virtqueue_add_packed() (Jason);
->>>>> - Split vring_unmap_one() for packed ring and split ring (Jason);
->>>>> - Avoid using '%' operator (Jason);
->>>>> - Rename free_head -> next_avail_idx (Jason);
->>>>> - Add comments for virtio_wmb() in virtqueue_add_packed() (Jason);
->>>>> - Some other refinements and bug fixes;
->>>>>
->>>>> Thanks!
->>>>>
->>>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
->>>>> ---
->>>>>     drivers/virtio/virtio_ring.c       | 1094 +++++++++++++++++++++++++++++-------
->>>>>     include/linux/virtio_ring.h        |    8 +-
->>>>>     include/uapi/linux/virtio_config.h |   12 +-
->>>>>     include/uapi/linux/virtio_ring.h   |   61 ++
->>>>>     4 files changed, 980 insertions(+), 195 deletions(-)
->>> [...]
+diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+index ce53ceaf4cc5..d9c8ecf88ec6 100644
+--- a/arch/arm/mach-sunxi/Kconfig
++++ b/arch/arm/mach-sunxi/Kconfig
+@@ -51,7 +51,7 @@ config MACH_SUN9I
+ config ARCH_SUNXI_MC_SMP
+        bool
+        depends on SMP
+-   default MACH_SUN9I
++ default MACH_SUN9I || MACH_SUN8I
+        select ARM_CCI400_PORT_CTRL
+        select ARM_CPU_SUSPEND
 
-[...]
+Because otherwise when I'm building kernel just for sun8i and I don't have sun9i
+enabled, this new SMP code for A83T (which is sun8i) will not be built.
 
->>>> It looks to me we should examine RING_EVENT_FLAGS_DESC in desc_event_flags
->>>> instead of vq->event here. Spec does not forces to use evenf_off and
->>>> event_wrap if event index is enabled.
->>>>
->>>>> +		// FIXME: fix this!
->>>>> +		needs_kick = ((off_wrap >> 15) == vq->wrap_counter) &&
->>>>> +			     vring_need_event(off_wrap & ~(1<<15), new, old);
->>>> Why need a & here?
->>> Because wrap_counter (the most significant bit in off_wrap)
->>> isn't part of the index.
->>>
->>>>> +	} else {
->>>> Need a smp_rmb() to make sure desc_event_flags was checked before flags.
->>> I don't get your point, if my understanding is correct,
->>> desc_event_flags is vq->vring_packed.device->flags. So
->>> what's the "flags"?
->> Sorry, I mean we need check device.flags before off_warp. So it needs an
->> smp_rmb() in the middle.
-> It's best to just read all flags atomically as u32.
+thank you,
+  Ondrej
 
-Yes it is.
-
->
->> It looks to me there's no guarantee that
->> VRING_EVENT_F_DESC is set if event index is supported.
->>
->>>>> +		needs_kick = (vq->vring_packed.device->flags !=
->>>>> +			      cpu_to_virtio16(_vq->vdev, VRING_EVENT_F_DISABLE));
->>>>> +	}
->>>>> +	END_USE(vq);
->>>>> +	return needs_kick;
->>>>> +}
->>> [...]
->>>>> +static int detach_buf_packed(struct vring_virtqueue *vq, unsigned int head,
->>>>> +			      void **ctx)
->>>>> +{
->>>>> +	struct vring_packed_desc *desc;
->>>>> +	unsigned int i, j;
->>>>> +
->>>>> +	/* Clear data ptr. */
->>>>> +	vq->desc_state[head].data = NULL;
->>>>> +
->>>>> +	i = head;
->>>>> +
->>>>> +	for (j = 0; j < vq->desc_state[head].num; j++) {
->>>>> +		desc = &vq->vring_packed.desc[i];
->>>>> +		vring_unmap_one_packed(vq, desc);
->>>>> +		desc->flags = 0x0;
->>>> Looks like this is unnecessary.
->>> It's safer to zero it. If we don't zero it, after we
->>> call virtqueue_detach_unused_buf_packed() which calls
->>> this function, the desc is still available to the
->>> device.
->> Well detach_unused_buf_packed() should be called after device is stopped,
->> otherwise even if you try to clear, there will still be a window that device
->> may use it.
->>
->>>>> +		i++;
->>>>> +		if (i >= vq->vring_packed.num)
->>>>> +			i = 0;
->>>>> +	}
->>> [...]
->>>>> +static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
->>>>> +{
->>>>> +	struct vring_virtqueue *vq = to_vvq(_vq);
->>>>> +	u16 last_used_idx, wrap_counter, off_wrap;
->>>>> +
->>>>> +	START_USE(vq);
->>>>> +
->>>>> +	last_used_idx = vq->last_used_idx;
->>>>> +	wrap_counter = vq->wrap_counter;
->>>>> +
->>>>> +	if (last_used_idx > vq->next_avail_idx)
->>>>> +		wrap_counter ^= 1;
->>>>> +
->>>>> +	off_wrap = last_used_idx | (wrap_counter << 15);
->>>>> +
->>>>> +	/* We optimistically turn back on interrupts, then check if there was
->>>>> +	 * more to do. */
->>>>> +	/* Depending on the VIRTIO_RING_F_EVENT_IDX feature, we need to
->>>>> +	 * either clear the flags bit or point the event index at the next
->>>>> +	 * entry. Always do both to keep code simple. */
->>>>> +	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
->>>>> +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC:
->>>>> +						     VRING_EVENT_F_ENABLE;
->>>>> +		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
->>>>> +							vq->event_flags_shadow);
->>>>> +	}
->>>> A smp_wmb() is missed here?
->>>>
->>>>> +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev, off_wrap);
->>>> And according to the spec, it looks to me write a VRING_EVENT_F_ENABLE is
->>>> sufficient here.
->>> I didn't think much when implementing the event suppression
->>> for packed ring previously. After I saw your comments, I found
->>> something new. Indeed, unlike the split ring, for the packed
->>> ring, spec doesn't say we must use VRING_EVENT_F_DESC when
->>> EVENT_IDX is negotiated. So do you think below thought is
->>> right or makes sense?
->>>
->>> - For virtqueue_enable_cb_prepare(), we just need to enable
->>>     the ring by setting flags to VRING_EVENT_F_ENABLE in any
->>>     case.
->>>
->>> - We will try to use VRING_EVENT_F_DESC (if EVENT_IDX is
->>>     negotiated) only when we want to delay the interrupts
->>>     virtqueue_enable_cb_delayed().
->> This looks good to me.
-> I suspect this will lead to extra interrupts if host is fast.
-> So I think for now we should always use VRING_EVENT_F_DESC
-> if EVENT_IDX is negotiated.
-
-Right, so if this is true, maybe we'd better force this in the spec?
-
-Thanks
-
->
-> VRING_EVENT_F_DISABLE makes more sense to me.
->
-
-[...]
+On Mon, Apr 16, 2018 at 11:50:21PM +0200, Myl�ne Josserand wrote:
+> Hello everyone,
+> 
+> This is a V6 of my series that adds SMP support for Allwinner sun8i-a83t.
+> Based on sunxi's tree, sunxi/for-next branch.
+> Depends on a patch from Doug Berger that allows to include the "cpu-type"
+> header on assembly files:
+> 6c7dd080ba4b ("ARM: Allow this header to be included by assembly files")
+> 
+> This new series refactors the shmobile code to use the function introduced
+> in this series: "secure_cntvoff_init".
+> Geert Uytterhoeven and Simon Horman, could you review and test this series
+> on Renesas boards? Thank you very much!
+> 
+> If you have any remarks/questions, let me know.
+> Thank you in advance,
+> Myl�ne
+> 
+> Changes since v5:
+>     - Remove my patch 01 and use the patch of Doug Berger to be able to
+>     include the cpu-type header on assembly files.
+>     - Rename smp_init_cntvoff function into secure_cntvoff_init according
+>     to Marc Zyngier's review.
+>     - According to Chen-Yu and Maxime's reviews, remove the patch that was
+>     moving structures. Instead of using an index to retrieve which
+>     architecture we are having, use a global variable.
+>     - Merge the 2 patches that move assembly code from C to assembly file.
+>     - Use a sun8i field instead of sun9i to know on which architecture we
+>     are using because many modifications/additions of the code are for
+>     sun8i-a83t.
+>     - Rework the patch "add is_sun8i field" to add only this field in this
+>     patch. The part of the patch that was starting to handle the differences
+>     between sun8i-a83t and sun9i-a80 is merged in the patch that adds the
+>     support of sun8i-a83t.
+>     - Add a new patch that refactor the shmobile code to use the new function
+>     secure_cntvoff_init introduced in this series.
+> 
+> Changes since v4:
+>     - Rebased my series according to new Chen-Yu series:
+>        "ARM: sunxi: Clean and improvements for multi-cluster SMP"
+>        https://lkml.org/lkml/2018/3/8/886
+>     - Updated my series according to Marc Zyngier's reviews to add CNTVOFF
+>     initialization's function into ARM's common part. Thanks to that, other
+>     platforms such as Renesa can use this function.
+>     - For boot CPU, create a new machine to handle the CNTVOFF initialization
+>     using "init_early" callback.
+> Changes since v3:
+>     - Take into account Maxime's reviews:
+> 	- split the first patch into 4 new patches: add sun9i device tree
+> 	parsing, rename some variables, add a83t support and finally,
+> 	add hotplug support.
+> 	- Move the code of previous patch 07 (to disable CPU0 disabling)
+> 	into hotplug support patch (see patch 04)
+> 	- Remove the patch that added PRCM register because it is already
+> 	available. Because of that, update the device tree parsing to use
+> 	"sun8i-a83t-r-ccu".
+> 	- Use a variable to know which SoC we currently have
+>     - Take into account Chen-Yu's reviews: create two iounmap functions
+>     to release the resources of the device tree parsing.
+>     - Take into account Marc's review: Update the code to initialize CNTVOFF
+>     register. As there is already assembly code in the driver, I decided
+>     to create an assembly file not to mix assembly and C code.
+>     For that, I create 3 new patches: move the current assembly code that
+>     handles the cluster cache enabling into a file, move the cpu_resume entry
+>     in this file and finally, add a new assembly entry to initialize the timer
+>     offset for boot CPU and secondary CPUs.
+> 
+> Changes since v2:
+>     - Rebased my modifications according to new Chen Yu's patch series
+>     that adds SMP support for sun9i-a80 (without MCPM).
+>     - Split the device-tree patches into 3 patches for CPUCFG, R_CPUCFG
+>     and PRCM registers for more visibility.
+>     - The hotplug of CPU0 is currently not working (even after trying what
+>     Allwinner's code is doing) so remove the possibility of disabling
+>     this CPU. Created a new patch for it.
+> 
+> Changes since v1:
+>     - Add Chen Yu's patch in my series (see path 01)
+>     - Add new compatibles for prcm and cpucfg registers for sun8i-a83t.
+>     Create two functions to separate the DT parsing of sun9i-a80 and
+>     sun8i-a83t.
+>     - Thanks to Maxime's review: order device tree's nodes according
+>     to physical addresses, remove unused label and fix registers' sizes.
+>     Update the commit log and commit title of my last patch (see
+>     patch 05).
+> 
+> Myl�ne Josserand (11):
+>   ARM: sunxi: smp: Move assembly code into a file
+>   ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
+>   ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
+>   ARM: dts: sun8i: a83t: Add CCI-400 node
+>   ARM: smp: Add initialization of CNTVOFF
+>   ARM: sunxi: Add initialization of CNTVOFF
+>   ARM: sun9i: smp: Rename clusters's power-off
+>   ARM: sun9i: smp: Add is_sun8i field
+>   ARM: sun8i: smp: Add support for A83T
+>   ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
+>   ARM: shmobile: Convert file to use cntvoff
+> 
+>  arch/arm/boot/dts/sun8i-a83t.dtsi        |  59 ++++++++
+>  arch/arm/common/Makefile                 |   1 +
+>  arch/arm/common/secure_cntvoff.S         |  31 ++++
+>  arch/arm/include/asm/secure_cntvoff.h    |   8 ++
+>  arch/arm/mach-shmobile/common.h          |   1 -
+>  arch/arm/mach-shmobile/headsmp-apmu.S    |  22 +--
+>  arch/arm/mach-shmobile/setup-rcar-gen2.c |   3 +-
+>  arch/arm/mach-sunxi/Makefile             |   4 +-
+>  arch/arm/mach-sunxi/headsmp.S            |  81 +++++++++++
+>  arch/arm/mach-sunxi/mc_smp.c             | 240 +++++++++++++++++++------------
+>  arch/arm/mach-sunxi/sunxi.c              |  20 ++-
+>  11 files changed, 349 insertions(+), 121 deletions(-)
+>  create mode 100644 arch/arm/common/secure_cntvoff.S
+>  create mode 100644 arch/arm/include/asm/secure_cntvoff.h
+>  create mode 100644 arch/arm/mach-sunxi/headsmp.S
+> 
+> -- 
+> 2.11.0
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
