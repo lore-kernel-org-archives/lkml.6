@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx4+YUFc6gEFz/B9eM34l5w3XGlst10MHDrM/NCcnSEqllAcur+e/7Egy+IWLRP9Zo38g9AVZ
-ARC-Seal: i=1; a=rsa-sha256; t=1523981079; cv=none;
+X-Google-Smtp-Source: AIpwx4+jLPQb1GfEgGZIyGQ5rMfreZOkWrGFgLmfWmdLQoWN00wnnBE+v2z9Uei/6Roh1li/Dlxh
+ARC-Seal: i=1; a=rsa-sha256; t=1523981078; cv=none;
         d=google.com; s=arc-20160816;
-        b=yvPGJlTZTW5kX9EC9EiYyWoATt1ayuO1tnahAvYFGsGLop+NARzZOWzfspIRfU78xJ
-         LDtlxpwSBmWabecLUzbuuGeRBOOJQvEEtSuZ3Yt/u/6s7cxSF67UdljA60NjheyYZ+92
-         YyWXSMQIIIpaqr/z3UUthFYW008/kytAu4k/r7Rue2j6XP1m+BSgIaJx71WNzoSIZQTl
-         4W7q0Gh40sbIV8RY54FpdXc/fE0qzcYM3vWIqtYf1mMpIDX1UPwEUdrj4+K9+9K51yWp
-         VkKLdcpI0Hi16P6yMTaLr0XUBbAoIQQcG4Y+zoI0lEK+fROLVXxoVtfMD+6ANsHxcaKq
-         ooqg==
+        b=lfCpSF8auSlg6QmIqr3ixECRJwO0EzSK873bIs1XvPaJJq4yjaFLA96s4JxkI4Ur3h
+         o9X5ONyzBtrpws0KSdbYP4HsLMRQksZ/qKA+2SMFS+xkaSgb0KT5UQNuKm++EUTNrYBn
+         E/KY4I9SXx1/4p3prAk0+7t/oUArIJ/pV65DMquOiTfC0hJTQX1UnCDUtKdGUoXzRQYz
+         6JZJJyPhPodiTioLe++aLI9pc0rO4R99HC60i5xu5zDjqUK0XmVFe4l8yBXgi76UdbOg
+         GZ1i9f6MrYC6KWeXt0eKVyA3ZuaIT7bJ40DFVv50W2Mr/k8cLl1ZlSodJNNSgD1IzRJH
+         VHGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=0v163CqwVBUrHmJe//CfCqwRTymrOoBxcHphQd5dB5o=;
-        b=OkGUY9wm8G6JPdd36HBmoTiF0hokj4rNoe+DrfRxGAFeb+4JIvEQA/2Cke2DbVHlck
-         sEB3Ju2s0sFR7fnCo3h4B4OTPlhPnRguoKCHdELv6922oKZ9G+q1wOv+FydEumtXYmmk
-         YFJNz6MrfNbgmDLyJeDrEqSqWpq1NBtfcwAOyb+lhzLncN8+rK5lbQgKtMlF4VsrXYVU
-         h8N/sOaF7H4gJKel1ON71Gm7QXctmUocxnLMajGetbbLi+jiM87u4Voxns/pjr7caLwu
-         LAfHi3PCfmy+vo5nZq1m2wlQb6/x5ec9HPkYK7SlDPa3mGIj3jR+noYi9vgV6nmgOkyd
-         6O/A==
+        bh=XcyuSLxRa7wYPP3Qng1iYWHmumMIOGZtErY22awf5Rg=;
+        b=z3+hn+W544RS/6fdW9fyjGwSq+LOuLth/V3Mz1ZAqxaviPSm9jReg3BA3BosQDDHtc
+         ku5VDnCmUc0Wy0qW/Kbpdu4MQOLurDrsnoe/PRzT/qJxmaJnIZ1Ip8BNtv7pbLobBuFk
+         /UfdId8gUskZCqRUt14jmiNQTs4ZKmLVByU46ToKsot3xtWmGO8dC6MVYCAqA4mHHs9B
+         A6NEEfyIYdFccHiD6fC/VB3YWBn1raosRbaNIrwWQ7Z5+m6m1gzvwiurV7mjhy2VU7/Q
+         0GYhV/HO4FTHilhgZnWvUia0jDaLS9zA9H1b/lnnKeCXVYlWUPMQGShwL4dN/3umwH5B
+         40TA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,10 +26,18 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	John Johansen <john.johansen@canonical.com>
-Subject: [PATCH 4.15 38/53] apparmor: fix logging of the existence test for signals
-Date: Tue, 17 Apr 2018 17:59:03 +0200
-Message-Id: <20180417155724.975046596@linuxfoundation.org>
+	Dan Rue <dan.rue@linaro.org>,
+	Mike Kravetz <mike.kravetz@oracle.com>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Yisheng Xie <xieyisheng1@huawei.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Nic Losby <blurbdust@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.15 35/53] hugetlbfs: fix bug in pgoff overflow checking
+Date: Tue, 17 Apr 2018 17:59:00 +0200
+Message-Id: <20180417155724.841264329@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -39,8 +47,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009829328873460?=
-X-GMAIL-MSGID: =?utf-8?q?1598009983519267807?=
+X-GMAIL-THRID: =?utf-8?q?1598009812086723888?=
+X-GMAIL-MSGID: =?utf-8?q?1598009983116114066?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -48,58 +56,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: John Johansen <john.johansen@canonical.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-commit 98cf5bbff413eadf1b9cb195a7b80cc61c72a50e upstream.
+commit 5df63c2a149ae65a9ec239e7c2af44efa6f79beb upstream.
 
-The existence test is not being properly logged as the signal mapping
-maps it to the last entry in the named signal table. This is done
-to help catch bugs by making the 0 mapped signal value invalid so
-that we can catch the signal value not being filled in.
+This is a fix for a regression in 32 bit kernels caused by an invalid
+check for pgoff overflow in hugetlbfs mmap setup.  The check incorrectly
+specified that the size of a loff_t was the same as the size of a long.
+The regression prevents mapping hugetlbfs files at offsets greater than
+4GB on 32 bit kernels.
 
-When fixing the off-by-one comparision logic the reporting of the
-existence test was broken, because the logic behind the mapped named
-table was hidden. Fix this by adding a define for the name lookup
-and using it.
+On 32 bit kernels conversion from a page based unsigned long can not
+overflow a loff_t byte offset.  Therefore, skip this check if
+sizeof(unsigned long) != sizeof(loff_t).
 
-Cc: Stable <stable@vger.kernel.org>
-Fixes: f7dc4c9a855a1 ("apparmor: fix off-by-one comparison on MAXMAPPED_SIG")
-Signed-off-by: John Johansen <john.johansen@canonical.com>
+Link: http://lkml.kernel.org/r/20180330145402.5053-1-mike.kravetz@oracle.com
+Fixes: 63489f8e8211 ("hugetlbfs: check for pgoff value overflow")
+Reported-by: Dan Rue <dan.rue@linaro.org>
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Nic Losby <blurbdust@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/apparmor/include/sig_names.h |    4 +++-
- security/apparmor/ipc.c               |    2 +-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/hugetlbfs/inode.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/security/apparmor/include/sig_names.h
-+++ b/security/apparmor/include/sig_names.h
-@@ -2,6 +2,8 @@
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -148,10 +148,14 @@ static int hugetlbfs_file_mmap(struct fi
  
- #define SIGUNKNOWN 0
- #define MAXMAPPED_SIG 35
-+#define MAXMAPPED_SIGNAME (MAXMAPPED_SIG + 1)
-+
- /* provide a mapping of arch signal to internal signal # for mediation
-  * those that are always an alias SIGCLD for SIGCLHD and SIGPOLL for SIGIO
-  * map to the same entry those that may/or may not get a separate entry
-@@ -56,7 +58,7 @@ static const int sig_map[MAXMAPPED_SIG]
- };
+ 	/*
+ 	 * page based offset in vm_pgoff could be sufficiently large to
+-	 * overflow a (l)off_t when converted to byte offset.
++	 * overflow a loff_t when converted to byte offset.  This can
++	 * only happen on architectures where sizeof(loff_t) ==
++	 * sizeof(unsigned long).  So, only check in those instances.
+ 	 */
+-	if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
+-		return -EINVAL;
++	if (sizeof(unsigned long) == sizeof(loff_t)) {
++		if (vma->vm_pgoff & PGOFF_LOFFT_MAX)
++			return -EINVAL;
++	}
  
- /* this table is ordered post sig_map[sig] mapping */
--static const char *const sig_names[MAXMAPPED_SIG + 1] = {
-+static const char *const sig_names[MAXMAPPED_SIGNAME] = {
- 	"unknown",
- 	"hup",
- 	"int",
---- a/security/apparmor/ipc.c
-+++ b/security/apparmor/ipc.c
-@@ -174,7 +174,7 @@ static void audit_signal_cb(struct audit
- 			audit_signal_mask(ab, aad(sa)->denied);
- 		}
- 	}
--	if (aad(sa)->signal < MAXMAPPED_SIG)
-+	if (aad(sa)->signal < MAXMAPPED_SIGNAME)
- 		audit_log_format(ab, " signal=%s", sig_names[aad(sa)->signal]);
- 	else
- 		audit_log_format(ab, " signal=rtmin+%d",
+ 	/* must be huge page aligned */
+ 	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
