@@ -1,75 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755863AbeDQQMt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 12:12:49 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32852 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755653AbeDQQMn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 12:12:43 -0400
-Subject: Re: [PATCH v4 13/15] KVM: s390: configure the guest's AP devices
-To: Halil Pasic <pasic@linux.vnet.ibm.com>,
-        Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, berrange@redhat.com, fiuczy@linux.vnet.ibm.com,
-        buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-14-git-send-email-akrowiak@linux.vnet.ibm.com>
- <2e7387b9-ceb4-cdca-56ac-f5344084e10a@linux.vnet.ibm.com>
- <a233848d-9f71-75bc-b720-66d9a54f8185@linux.vnet.ibm.com>
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Date: Tue, 17 Apr 2018 12:12:35 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <a233848d-9f71-75bc-b720-66d9a54f8185@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18041716-0056-0000-0000-0000043FF4E9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008871; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01019282; UDB=6.00519985; IPR=6.00798523;
- MB=3.00020619; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-17 16:12:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041716-0057-0000-0000-00000883F947
-Message-Id: <80a8ddcc-6536-060b-0f34-616b7dcaf620@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804170142
+        id S1756041AbeDQQNN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 12:13:13 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:56942 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756020AbeDQQNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 12:13:11 -0400
+From: Borislav Petkov <bp@alien8.de>
+To: X86 ML <x86@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/9] x86/dumpstack: Remove code_bytes
+Date: Tue, 17 Apr 2018 18:11:16 +0200
+Message-Id: <20180417161124.5294-2-bp@alien8.de>
+X-Mailer: git-send-email 2.13.0
+In-Reply-To: <20180417161124.5294-1-bp@alien8.de>
+References: <20180417161124.5294-1-bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/16/2018 10:51 AM, Halil Pasic wrote:
->
-> On 04/16/2018 03:05 PM, Pierre Morel wrote:
->>> +static void vfio_ap_mdev_release(struct mdev_device *mdev)
->>> +{
->>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
->>> +
->>> +    kvm_ap_deconfigure_matrix(matrix_mdev->kvm);
->>> +    kvm_ap_interpret_instructions(matrix_mdev->kvm, false);
->> This call clears the apie in KVM.
->> This is only OK if we have a single device present until the end of the VM,
->> otherwise AP instructions in the guest will fail after the release until the end of the VM
->> or until a new device is plugged.
-> I agree, this seems wrong.
+From: Borislav Petkov <bp@suse.de>
 
-As I think about this more, you may be correct. I believe that one can 
-remove a VFIO mediated
-device via a sysfs file descriptor. I suppose that could happen while 
-the guest is still running,
-which would mean AP instructions executed on the guest would meet with 
-an operation exception.
-I will have to explore this some more.
+This was added by
+
+  86c418374223 ("[PATCH] i386: add option to show more code in oops reports")
+
+long time ago but experience shows that 64 instruction bytes are plenty
+when deciphering an oops. So get rid of it.
+
+Removing it will simplify further enhancements to the opcodes dumping
+machinery coming in the following patches.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  5 -----
+ arch/x86/kernel/dumpstack.c                     | 27 ++++---------------------
+ 2 files changed, 4 insertions(+), 28 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11fc28ecdb6d..47aa554e41b7 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -587,11 +587,6 @@
+ 			Sets the size of memory pool for coherent, atomic dma
+ 			allocations, by default set to 256K.
+ 
+-	code_bytes	[X86] How many bytes of object code to print
+-			in an oops report.
+-			Range: 0 - 8192
+-			Default: 64
+-
+ 	com20020=	[HW,NET] ARCnet - COM20020 chipset
+ 			Format:
+ 			<io>[,<irq>[,<nodeID>[,<backplane>[,<ckp>[,<timeout>]]]]]
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index 18fa9d74c182..593db796374d 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -22,9 +22,10 @@
+ #include <asm/stacktrace.h>
+ #include <asm/unwind.h>
+ 
++#define OPCODE_BUFSIZE 64
++
+ int panic_on_unrecovered_nmi;
+ int panic_on_io_nmi;
+-static unsigned int code_bytes = 64;
+ static int die_counter;
+ 
+ bool in_task_stack(unsigned long *stack, struct task_struct *task,
+@@ -356,26 +357,6 @@ void die(const char *str, struct pt_regs *regs, long err)
+ 	oops_end(flags, regs, sig);
+ }
+ 
+-static int __init code_bytes_setup(char *s)
+-{
+-	ssize_t ret;
+-	unsigned long val;
+-
+-	if (!s)
+-		return -EINVAL;
+-
+-	ret = kstrtoul(s, 0, &val);
+-	if (ret)
+-		return ret;
+-
+-	code_bytes = val;
+-	if (code_bytes > 8192)
+-		code_bytes = 8192;
+-
+-	return 1;
+-}
+-__setup("code_bytes=", code_bytes_setup);
+-
+ void show_regs(struct pt_regs *regs)
+ {
+ 	bool all = true;
+@@ -393,8 +374,8 @@ void show_regs(struct pt_regs *regs)
+ 	 * time of the fault..
+ 	 */
+ 	if (!user_mode(regs)) {
+-		unsigned int code_prologue = code_bytes * 43 / 64;
+-		unsigned int code_len = code_bytes;
++		unsigned int code_prologue = OPCODE_BUFSIZE * 43 / 64;
++		unsigned int code_len = OPCODE_BUFSIZE;
+ 		unsigned char c;
+ 		u8 *ip;
+ 
+-- 
+2.13.0
