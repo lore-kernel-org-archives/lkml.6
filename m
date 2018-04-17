@@ -1,23 +1,23 @@
 Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48xrJ7m79FfAV2JbADXx5JHoW3PGO2FL2J/2D7ax6SnLP29epp7Tle0xMX+cGNjUNti7RQe
-ARC-Seal: i=1; a=rsa-sha256; t=1523981104; cv=none;
+X-Google-Smtp-Source: AIpwx4/cC4CLjOnMuqvK3hZIt1AoehuffLfbVvnuye0TUDy3AUmNXD7vDxVfVJTkCMo7bWqJFgkm
+ARC-Seal: i=1; a=rsa-sha256; t=1523981100; cv=none;
         d=google.com; s=arc-20160816;
-        b=mZfA4H9EpAxOGbcUcPBmVpHUfy2bxZy+wvQWStAhnYm9988GZwZYSbcxwYmuoh88M+
-         2zuFy7p+Y78z89+RdspRnNuAgZmFohZ56G16rQ8uPVR8iDvcItRXbZMfYvqRoWkzjJIu
-         Nyjdo4bZ8GoNqmxxY1quLUT/9s4p4Y7UiBHIPHubsxgPATuFippMJWz6wHR+x0c8b0/9
-         b/eL9BXdIXNdKoeCnu+lUvnjHB73NjrwtaYsME6D0A6u/zqz/xtfBXh4VFJVHI2/Sel0
-         6xCJApxixXosZsfJ5OmYPIsexmW6oVudoa5b0BP1/EI0QQwolOU3CqW7kuiJwAbBjhKw
-         f4dA==
+        b=UvDjAhnqSUIqceJ1ckmGY/jCKvso4oIDMxA85ikAhge0x7YK73mWTFPHPnt768Ue6i
+         Qt+xzFmqrY4yZ3Xv0XZM0TQmtkyRR/dhjQFdRefKXVx0g47I03Y7OEZCHtfsSwAki0ER
+         lb6uX3C89OuPL7fIiG4uGqUdiF7emjrDdzOv06c5Rm2wuEMbhSqrni3cWVugoEy8jQlS
+         UYSpPdOLnPm+pZgkf0wt6h0Vf/DHzC+HKRCgzEWFCc9F6FrhTP10vs466IFwuSXnujdV
+         KNHZIX7xw99S4BI81LlyLthJGc7qP8ee3bRXmr4gSuWAF9s1+sUvT1y0gfn1MvVAEf0i
+         CL2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:arc-authentication-results;
-        bh=j9hm6J7S34SK5C/P2tgyaD6fnfPfkXsJi3Hnk7NFvVA=;
-        b=x22vCqkdMGy7Z5auR3IkMdMbFdE2J7CtZXr2CzFCkNWOEm45+b1hqYmTkEOtuMUqO7
-         usqWmo48o4D2GuiwJr4JK04RzgJFSrjn9lTXX1GXRUloPMjErwF5qDuFgO+CrunaTp9A
-         xSoXyHDiUTkEn5ROVBa1K41hSGtpm8FjdgTXBJAxS2T2qpW1wyvnsLv05aK0F+tOsAYv
-         ckop0E3goj6g0eCAZb6Dm7uROgElgsis9v9Eq7CKscmyUmy6DN3j4ZkYaBQgst+lV1GU
-         TqcKGnV6do4uyzljwF9dA5qaTiChEr/tiJhbdXAjEIJEacsjI8sGJGxdVN2jXq+u7Lfc
-         /Cuw==
+        bh=Q5a7jCvws31bSNQFuDqwYTPRLmIowFAbkt7+sTNESjw=;
+        b=ReCSMLspjJ7XXxpuJEbFilZoubVPNPmtNywaglz4vuj8wa7I+NscPJxyAhet/hgzXC
+         PWjF7GY2lzrj+o1QbdQRLGYg+TJ3CgaHJlFqChE6Ca3sBTq3vqCfXdeOYnxoBmVHwCAp
+         bux/Mvs2CpHQ1qGPbwr7FmeaRePofQaqKdglOAS10AuBW+KQBkAW0A5m2/bdM4RpyHh4
+         Ssk/7QeZgzT05PfdmQKMxO9eCcrj0liC+k5gGqAkuuQkpmh6J8fJN8SbvJoHxkVssif/
+         Qrf4bgm4vnKPFT2GsztOuTKm+YhGblFUZK7RXXelhByYvludhVHFmT0IBqK9Yo/H2DIj
+         IvVQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
 Authentication-Results: mx.google.com;
@@ -26,15 +26,12 @@ From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>,
-	Ming Lei <tom.leiming@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jens Axboe <axboe@fb.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.15 41/53] block/loop: fix deadlock after loop_set_status
-Date: Tue, 17 Apr 2018 17:59:06 +0200
-Message-Id: <20180417155725.109576354@linuxfoundation.org>
+	Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+	syzbot+36b06f219f2439fe62e1@syzkaller.appspotmail.com,
+	Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.15 02/53] netfilter: ipset: Missing nfnl_lock()/nfnl_unlock() is added to ip_set_net_exit()
+Date: Tue, 17 Apr 2018 17:58:27 +0200
+Message-Id: <20180417155723.188401861@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180417155723.091120060@linuxfoundation.org>
 References: <20180417155723.091120060@linuxfoundation.org>
@@ -44,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598009837369883753?=
-X-GMAIL-MSGID: =?utf-8?q?1598010010700134966?=
+X-GMAIL-THRID: =?utf-8?q?1598010006841981086?=
+X-GMAIL-MSGID: =?utf-8?q?1598010006841981086?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,130 +50,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 
-commit 1e047eaab3bb5564f25b41e9cd3a053009f4e789 upstream.
+commit f998b6b10144cd9809da6af02758615f789e8aa1 upstream.
 
-syzbot is reporting deadlocks at __blkdev_get() [1].
+Patch "netfilter: ipset: use nfnl_mutex_is_locked" is added the real
+mutex locking check, which revealed the missing locking in ip_set_net_exit().
 
-----------------------------------------
-[   92.493919] systemd-udevd   D12696   525      1 0x00000000
-[   92.495891] Call Trace:
-[   92.501560]  schedule+0x23/0x80
-[   92.502923]  schedule_preempt_disabled+0x5/0x10
-[   92.504645]  __mutex_lock+0x416/0x9e0
-[   92.510760]  __blkdev_get+0x73/0x4f0
-[   92.512220]  blkdev_get+0x12e/0x390
-[   92.518151]  do_dentry_open+0x1c3/0x2f0
-[   92.519815]  path_openat+0x5d9/0xdc0
-[   92.521437]  do_filp_open+0x7d/0xf0
-[   92.527365]  do_sys_open+0x1b8/0x250
-[   92.528831]  do_syscall_64+0x6e/0x270
-[   92.530341]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[   92.931922] 1 lock held by systemd-udevd/525:
-[   92.933642]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x73/0x4f0
-----------------------------------------
-
-The reason of deadlock turned out that wait_event_interruptible() in
-blk_queue_enter() got stuck with bdev->bd_mutex held at __blkdev_put()
-due to q->mq_freeze_depth == 1.
-
-----------------------------------------
-[   92.787172] a.out           S12584   634    633 0x80000002
-[   92.789120] Call Trace:
-[   92.796693]  schedule+0x23/0x80
-[   92.797994]  blk_queue_enter+0x3cb/0x540
-[   92.803272]  generic_make_request+0xf0/0x3d0
-[   92.807970]  submit_bio+0x67/0x130
-[   92.810928]  submit_bh_wbc+0x15e/0x190
-[   92.812461]  __block_write_full_page+0x218/0x460
-[   92.815792]  __writepage+0x11/0x50
-[   92.817209]  write_cache_pages+0x1ae/0x3d0
-[   92.825585]  generic_writepages+0x5a/0x90
-[   92.831865]  do_writepages+0x43/0xd0
-[   92.836972]  __filemap_fdatawrite_range+0xc1/0x100
-[   92.838788]  filemap_write_and_wait+0x24/0x70
-[   92.840491]  __blkdev_put+0x69/0x1e0
-[   92.841949]  blkdev_close+0x16/0x20
-[   92.843418]  __fput+0xda/0x1f0
-[   92.844740]  task_work_run+0x87/0xb0
-[   92.846215]  do_exit+0x2f5/0xba0
-[   92.850528]  do_group_exit+0x34/0xb0
-[   92.852018]  SyS_exit_group+0xb/0x10
-[   92.853449]  do_syscall_64+0x6e/0x270
-[   92.854944]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-[   92.943530] 1 lock held by a.out/634:
-[   92.945105]  #0: 00000000a2849e25 (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0x3c/0x1e0
-----------------------------------------
-
-The reason of q->mq_freeze_depth == 1 turned out that loop_set_status()
-forgot to call blk_mq_unfreeze_queue() at error paths for
-info->lo_encrypt_type != NULL case.
-
-----------------------------------------
-[   37.509497] CPU: 2 PID: 634 Comm: a.out Tainted: G        W        4.16.0+ #457
-[   37.513608] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[   37.518832] RIP: 0010:blk_freeze_queue_start+0x17/0x40
-[   37.521778] RSP: 0018:ffffb0c2013e7c60 EFLAGS: 00010246
-[   37.524078] RAX: 0000000000000000 RBX: ffff8b07b1519798 RCX: 0000000000000000
-[   37.527015] RDX: 0000000000000002 RSI: ffffb0c2013e7cc0 RDI: ffff8b07b1519798
-[   37.529934] RBP: ffffb0c2013e7cc0 R08: 0000000000000008 R09: 47a189966239b898
-[   37.532684] R10: dad78b99b278552f R11: 9332dca72259d5ef R12: ffff8b07acd73678
-[   37.535452] R13: 0000000000004c04 R14: 0000000000000000 R15: ffff8b07b841e940
-[   37.538186] FS:  00007fede33b9740(0000) GS:ffff8b07b8e80000(0000) knlGS:0000000000000000
-[   37.541168] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   37.543590] CR2: 00000000206fdf18 CR3: 0000000130b30006 CR4: 00000000000606e0
-[   37.546410] Call Trace:
-[   37.547902]  blk_freeze_queue+0x9/0x30
-[   37.549968]  loop_set_status+0x67/0x3c0 [loop]
-[   37.549975]  loop_set_status64+0x3b/0x70 [loop]
-[   37.549986]  lo_ioctl+0x223/0x810 [loop]
-[   37.549995]  blkdev_ioctl+0x572/0x980
-[   37.550003]  block_ioctl+0x34/0x40
-[   37.550006]  do_vfs_ioctl+0xa7/0x6d0
-[   37.550017]  ksys_ioctl+0x6b/0x80
-[   37.573076]  SyS_ioctl+0x5/0x10
-[   37.574831]  do_syscall_64+0x6e/0x270
-[   37.576769]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-----------------------------------------
-
-[1] https://syzkaller.appspot.com/bug?id=cd662bc3f6022c0979d01a262c318fab2ee9b56f
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <bot+48594378e9851eab70bcd6f99327c7db58c5a28a@syzkaller.appspotmail.com>
-Fixes: ecdd09597a572513 ("block/loop: fix race between I/O and set_status")
-Cc: Ming Lei <tom.leiming@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: Jens Axboe <axboe@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Reported-by: syzbot+36b06f219f2439fe62e1@syzkaller.appspotmail.com
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ net/netfilter/ipset/ip_set_core.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1103,11 +1103,15 @@ loop_set_status(struct loop_device *lo,
- 	if (info->lo_encrypt_type) {
- 		unsigned int type = info->lo_encrypt_type;
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -2055,6 +2055,7 @@ ip_set_net_exit(struct net *net)
  
--		if (type >= MAX_LO_CRYPT)
--			return -EINVAL;
-+		if (type >= MAX_LO_CRYPT) {
-+			err = -EINVAL;
-+			goto exit;
-+		}
- 		xfer = xfer_funcs[type];
--		if (xfer == NULL)
--			return -EINVAL;
-+		if (xfer == NULL) {
-+			err = -EINVAL;
-+			goto exit;
-+		}
- 	} else
- 		xfer = NULL;
+ 	inst->is_deleted = true; /* flag for ip_set_nfnl_put */
+ 
++	nfnl_lock(NFNL_SUBSYS_IPSET);
+ 	for (i = 0; i < inst->ip_set_max; i++) {
+ 		set = ip_set(inst, i);
+ 		if (set) {
+@@ -2062,6 +2063,7 @@ ip_set_net_exit(struct net *net)
+ 			ip_set_destroy_set(set);
+ 		}
+ 	}
++	nfnl_unlock(NFNL_SUBSYS_IPSET);
+ 	kfree(rcu_dereference_protected(inst->ip_set_list, 1));
+ }
  
