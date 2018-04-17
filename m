@@ -1,159 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753105AbeDQM27 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 08:28:59 -0400
-Received: from mail-sn1nam02on0072.outbound.protection.outlook.com ([104.47.36.72]:12896
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752087AbeDQM25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 08:28:57 -0400
-From: Radhey Shyam Pandey <radheys@xilinx.com>
-To: Vinod Koul <vinod.koul@intel.com>
-CC: "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "Appana Durga Kedareswara Rao" <appanad@xilinx.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "'RADHEYCS@GMAIL.COM'" <RADHEYCS@GMAIL.COM>
-Subject: RE: [RFC 4/6] dmaengine: xilinx_dma: Freeup active list based on
- descriptor completion bit
-Thread-Topic: [RFC 4/6] dmaengine: xilinx_dma: Freeup active list based on
- descriptor completion bit
-Thread-Index: AQHTym7jpd5Sj2JFfE2h6FzaUbI5DaP7VSmAgAmZbjA=
-Date: Tue, 17 Apr 2018 12:28:52 +0000
-Message-ID: <BN6PR02MB3282D60BCF6A4B40BCC7A5B8C7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
-References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
- <1522665546-10035-5-git-send-email-radheys@xilinx.com>
- <20180411091102.GZ6014@localhost>
-In-Reply-To: <20180411091102.GZ6014@localhost>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com;
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR02MB2370;7:WmtUxtM6HFF476u1cJRJplh3lo8qAK4GsU/4vb3FVMR3XSE1lxABovM+Fn4fZ0HAMYYOAaOjaxDujMmcpfEBMlOPisuUoApwrlNjr0oz19obZLlkJpIJFXlocW2lrNoubkX+k1raL8X6z8Vp4dcRnT7ArBCfmjMKVwNgwwCgHfhldohcJOViIRaHfCCyjyyef4c9M5q2dMZIV0zvWax1JjVRtOHSgH6nRNh5bSaBFmDlcNCMu1KRUvd4UOc0hkHf
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(366004)(39380400002)(39860400002)(13464003)(199004)(189003)(74316002)(53936002)(6916009)(305945005)(4326008)(9686003)(2900100001)(6436002)(25786009)(5250100002)(11346002)(476003)(7736002)(3660700001)(8936002)(3280700002)(2906002)(55016002)(81156014)(8676002)(81166006)(446003)(486006)(14454004)(54906003)(575784001)(86362001)(316002)(7696005)(76176011)(105586002)(53546011)(102836004)(55236004)(59450400001)(39060400002)(33656002)(186003)(5660300001)(229853002)(6116002)(478600001)(66066001)(97736004)(6506007)(6246003)(106356001)(68736007)(99286004)(26005)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR02MB2370;H:BN6PR02MB3282.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:BN6PR02MB2370;
-x-ms-traffictypediagnostic: BN6PR02MB2370:
-x-microsoft-antispam-prvs: <BN6PR02MB2370DA145B8B0D6AD364A684C7B70@BN6PR02MB2370.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(192813158149592)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231232)(944501327)(52105095)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:BN6PR02MB2370;BCL:0;PCL:0;RULEID:;SRVR:BN6PR02MB2370;
-x-forefront-prvs: 0645BEB7AA
-x-microsoft-antispam-message-info: 63CylYm7pKjUWdJ64ImmulBzBwp7+At9d7xnv7hHVXjhUjJ5VkRT85sdN51wBsIBTZ015HkqO5B2SHmTMpa9ENlJTTTuEnt+lsb/IUB7JEd6d4qZaNH/P87sMTMoqi8MnpUIbkMO2dmN9VHPwmWxN/ag0bORONIbAO+hi/N7hWdtw99/kgNdckrTcIcpxEdO
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1753201AbeDQMas (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 08:30:48 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:9580 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752580AbeDQMar (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 08:30:47 -0400
+X-UUID: 7e91da36efe44c53a116c020d05e7dca-20180417
+From: Ryder Lee <ryder.lee@mediatek.com>
+To: Stephen Boyd <sboyd@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        chunhui dai <chunhui.dai@mediatek.com>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v1] clk: mediatek: correct the clocks for MT2701 HDMI PHY module
+Date: Tue, 17 Apr 2018 20:30:27 +0800
+Message-ID: <dc75b5b289d1f6e4914e60543c2611f387f0c164.1523944160.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: d42e3f2f-9c6f-44d8-3190-08d5a45ec7ae
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d42e3f2f-9c6f-44d8-3190-08d5a45ec7ae
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2018 12:28:52.5818
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR02MB2370
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3HCT53x011986
 
-Hi  Vinod,
+The hdmitx_dig_cts clock signal is not a child of clk26m,
+and the actual output of the PLL block is derived from
+the tvdpll via a configurable PLL post-divider.
 
-> -----Original Message-----
-> From: Vinod Koul [mailto:vinod.koul@intel.com]
-> Sent: Wednesday, April 11, 2018 2:41 PM
-> To: Radhey Shyam Pandey <radheys@xilinx.com>
-> Cc: dan.j.williams@intel.com; michal.simek@xilinx.com; Appana Durga
-> Kedareswara Rao <appanad@xilinx.com>; Radhey Shyam Pandey
-> <radheys@xilinx.com>; lars@metafoo.de; dmaengine@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: Re: [RFC 4/6] dmaengine: xilinx_dma: Freeup active list based on
-> descriptor completion bit
-> 
-> On Mon, Apr 02, 2018 at 04:09:04PM +0530, Radhey Shyam Pandey wrote:
-> > AXIDMA IP sets completion bit to 1 when the transfer is completed. Read
-> > this bit to move descriptor from active list to the done list. This feature
-> > is needed when interrupt delay timeout and IRQThreshold is enabled i.e
-> > Dly_IrqEn is triggered w/o completing Interrupt Threshold.
-> >
-> > Signed-off-by: Radhey Shyam Pandey <radheys@xilinx.com>
-> > ---
-> >  drivers/dma/xilinx/xilinx_dma.c |   18 ++++++++++++++----
-> >  1 files changed, 14 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/dma/xilinx/xilinx_dma.c
-> b/drivers/dma/xilinx/xilinx_dma.c
-> > index 36e1ab9..518465e 100644
-> > --- a/drivers/dma/xilinx/xilinx_dma.c
-> > +++ b/drivers/dma/xilinx/xilinx_dma.c
-> > @@ -103,6 +103,7 @@
-> >  #define XILINX_DMA_PARK_PTR_RD_REF_SHIFT	0
-> >  #define XILINX_DMA_PARK_PTR_RD_REF_MASK		GENMASK(4,
-> 0)
-> >  #define XILINX_DMA_REG_VDMA_VERSION		0x002c
-> > +#define XILINX_DMA_COMP_MASK			BIT(31)
-> >
-> >  /* Register Direct Mode Registers */
-> >  #define XILINX_DMA_REG_VSIZE			0x0000
-> > @@ -1387,16 +1388,25 @@ static void xilinx_dma_issue_pending(struct
-> dma_chan *dchan)
-> >  static void xilinx_dma_complete_descriptor(struct xilinx_dma_chan *chan)
-> >  {
-> >  	struct xilinx_dma_tx_descriptor *desc, *next;
-> > +	struct xilinx_axidma_tx_segment *seg;
-> >
-> >  	/* This function was invoked with lock held */
-> >  	if (list_empty(&chan->active_list))
-> >  		return;
-> >
-> >  	list_for_each_entry_safe(desc, next, &chan->active_list, node) {
-> > -		list_del(&desc->node);
-> > -		if (!desc->cyclic)
-> > -			dma_cookie_complete(&desc->async_tx);
-> > -		list_add_tail(&desc->node, &chan->done_list);
-> > +
-> > +		seg = list_last_entry(&desc->segments,
-> > +				      struct xilinx_axidma_tx_segment, node);
-> > +		if ((seg->hw.status & XILINX_DMA_COMP_MASK) ||
-> > +			(!chan->xdev->has_axieth_connected)) {
-> 
-> why the second case ? That is not expalined in log?
-In the current implementation, delay timeout is enabled only for
-has_axieth_connected usecase. For ethernet, we need real-time processing
-while still having benefit of interrupt coalescing. Example: In RX interrupt
-coalescing is set to 0x3.  Without delay timeout, DMA engine will wait for
-all frames and then issue completion interrupt. In ethernet usecase, this
-can introduce huge latencies. Delay timeout interrupt will trigger if delay
-time period has expired and we can notify dma client with received frames.
+It is used as the PLL reference input to the HDMI PHY module.
 
-The second case is added to keep the previous implementation as is.(i.e when
-Delay timeout interrupt is not enabled - move all active desc to done list). 
-Sure I will add a description for it in the commit log.
+Fixes: e9862118272a ("clk: mediatek: Add MT2701 clock support")
+Signed-off-by: Chunhui Dai <chunhui.dai@mediatek.com>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+changes since v1:
+ - add the "Fixes:" tag.
+---
+ drivers/clk/mediatek/clk-mt2701.c      |  8 ++++++--
+ include/dt-bindings/clock/mt2701-clk.h | 16 ++++++++--------
+ 2 files changed, 14 insertions(+), 10 deletions(-)
 
-> 
-> > +			list_del(&desc->node);
-> > +			if (!desc->cyclic)
-> > +				dma_cookie_complete(&desc->async_tx);
-> > +			list_add_tail(&desc->node, &chan->done_list);
-> > +		} else {
-> > +			break;
-> > +		}
-> >  	}
-> >  }
-> >
-> > --
-> > 1.7.1
-> >
-> 
-> --
-> ~Vinod
+diff --git a/drivers/clk/mediatek/clk-mt2701.c b/drivers/clk/mediatek/clk-mt2701.c
+index deca752..4dda898 100644
+--- a/drivers/clk/mediatek/clk-mt2701.c
++++ b/drivers/clk/mediatek/clk-mt2701.c
+@@ -46,8 +46,6 @@
+ 		340 * MHZ),
+ 	FIXED_CLK(CLK_TOP_HDMI_0_PLL340M, "hdmi_0_pll340m", "clk26m",
+ 		340 * MHZ),
+-	FIXED_CLK(CLK_TOP_HDMITX_CLKDIG_CTS, "hdmitx_dig_cts", "clk26m",
+-		300 * MHZ),
+ 	FIXED_CLK(CLK_TOP_HADDS2_FB, "hadds2_fbclk", "clk26m",
+ 		27 * MHZ),
+ 	FIXED_CLK(CLK_TOP_WBG_DIG_416M, "wbg_dig_ck_416m", "clk26m",
+@@ -977,6 +975,10 @@ static int mtk_pericfg_init(struct platform_device *pdev)
+ 				21, 0x2d0, 4, 0x0, 0x2d4, 0),
+ };
+ 
++static const struct mtk_fixed_factor apmixed_fixed_divs[] = {
++	FACTOR(CLK_APMIXED_HDMI_REF, "hdmi_ref", "tvdpll", 1, 1),
++};
++
+ static int mtk_apmixedsys_init(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+@@ -988,6 +990,8 @@ static int mtk_apmixedsys_init(struct platform_device *pdev)
+ 
+ 	mtk_clk_register_plls(node, apmixed_plls, ARRAY_SIZE(apmixed_plls),
+ 								clk_data);
++	mtk_clk_register_factors(apmixed_fixed_divs, ARRAY_SIZE(apmixed_fixed_divs),
++								clk_data);
+ 
+ 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ }
+diff --git a/include/dt-bindings/clock/mt2701-clk.h b/include/dt-bindings/clock/mt2701-clk.h
+index 24e93df..1956ebb 100644
+--- a/include/dt-bindings/clock/mt2701-clk.h
++++ b/include/dt-bindings/clock/mt2701-clk.h
+@@ -171,13 +171,12 @@
+ #define CLK_TOP_8BDAC				151
+ #define CLK_TOP_WBG_DIG_416M			152
+ #define CLK_TOP_DPI				153
+-#define CLK_TOP_HDMITX_CLKDIG_CTS		154
+-#define CLK_TOP_DSI0_LNTC_DSI			155
+-#define CLK_TOP_AUD_EXT1			156
+-#define CLK_TOP_AUD_EXT2			157
+-#define CLK_TOP_NFI1X_PAD			158
+-#define CLK_TOP_AXISEL_D4			159
+-#define CLK_TOP_NR				160
++#define CLK_TOP_DSI0_LNTC_DSI			154
++#define CLK_TOP_AUD_EXT1			155
++#define CLK_TOP_AUD_EXT2			156
++#define CLK_TOP_NFI1X_PAD			157
++#define CLK_TOP_AXISEL_D4			158
++#define CLK_TOP_NR				159
+ 
+ /* APMIXEDSYS */
+ 
+@@ -194,7 +193,8 @@
+ #define CLK_APMIXED_HADDS2PLL			11
+ #define CLK_APMIXED_AUD2PLL			12
+ #define CLK_APMIXED_TVD2PLL			13
+-#define CLK_APMIXED_NR				14
++#define CLK_APMIXED_HDMI_REF			14
++#define CLK_APMIXED_NR				15
+ 
+ /* DDRPHY */
+ 
+-- 
+1.9.1
