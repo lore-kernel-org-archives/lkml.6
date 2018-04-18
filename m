@@ -1,95 +1,87 @@
-Return-Path: <okaya@codeaurora.org>
-X-Google-Smtp-Source: AIpwx4/7+WFYg8c5BO1Xg50SmporEhO2ovTEef0RKzn/ecUg/foEfc6e8Fxl/1nogHkFckezRtFT
-ARC-Seal: i=1; a=rsa-sha256; t=1524058773; cv=none;
+Return-Path: <gustavo@embeddedor.com>
+X-Google-Smtp-Source: AIpwx4+FKZfjVMo6ghto1/eYcLgHPAVrtkt/8Il2CLsnr2Cp4+IG/Bl9pdV+LDxaGeSYEBJtJcjh
+ARC-Seal: i=1; a=rsa-sha256; t=1524055819; cv=none;
         d=google.com; s=arc-20160816;
-        b=EM8eR0t96jSpAXsNANSXWv+bXlygcsNLfNKp405VcH1kLYkMUG2oq+6UPtW5C++e6L
-         qnec5VLt1qBUJY+zfdsbsK3iBtj9V63frAcuUnNg6Su4roPMJlaA9qaHFdLhHU+h2wxZ
-         FH8xn3MsYybzZEHM7pYtKNLNI+vcdYnEv216X29qWYx28Ju+pnAgf0XHAkJb38YOxO/t
-         jLaBu4n7uU1Ltm1bl3FXHJO1nVAuZxKw5d8f1ZYnc6eWsxSsQUGceLqu9z6goyyL5GAZ
-         49LjhfiG+bmffJqMId1lmWmd/3B7Ja37ACGH27a+fKK5siakWxF1wHdAS7koEQxY1BJG
-         lT4w==
+        b=CzCpz+49I5eqKEPWWzwCQ9bCutP3neWy1L2gqmeY6JUcUrSj016hkOmFCcLq/SBTYe
+         NOuroIwjhm0k3KwtA1lpDxU4igNuVfEkIPjcBDm6TIIhA6k7TlwhVVVgVPJoHO5O/bg+
+         OCxjUgtmFLHyU45qRfGbhWHG2Yr8Reh1zS30OU5r4zmhKQ3dk9t9RrMIXrcu3E3ETPWA
+         YMPmiTe89DxZFs+qUpUMS/HGNXsN8X0OBnTaXi5tr1wiBM/FATBXt24lDd5C0biftIiL
+         Kqqj92PPJpbn/Q6dK66B8T5cM7sAAuqm+934MH1W76zdKwWZ5EgrNH5vN/rZ+8DB94AD
+         oqdQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=esxgcIvF0NFkQmcoWNj9Q1H8XVTfXn7jaUbAMTcIJIk=;
-        b=wPMNwRwRGgCX4JeRq0fXkqXje8qhyXDJjAWiizt4La5RBh6uEMoxmV8T0rjm1KdQm4
-         0a7cLiPy0smTV1f152Iaj/vaUZVsMHXOzRaBcMU12wAwsRYa4tfhi8vV0yKBy4gh8BUs
-         5iQxFPBXcAZ0UnNxhP6Vl7xO4ZF6wSB2r52cbXjuDSm29tDVm1QPR7I2Ob08xhYmWlb5
-         fH52WY63tLvBe8t81kNN7Y4vxqLOzP5a79BQWZ++/NnKbNaEGM8rUU2gXFizi8E8qToh
-         TbR4Uzmr+XkoMs5YNCDtD+EoAkkPQYdOqdeZdz3g1/5+u8F/8iesMLoEm8ZefaSRkFg9
-         CxAg==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:arc-authentication-results;
+        bh=bc6GnhqgLEYRImjtBip58vamWjDzse+HfkKSdtA2lBc=;
+        b=uLKQomqZq1smDDnb11AQWKZB5yVnfM6MysCmrFr5HQlR1L5+TE0s34WJcYCgClr5BW
+         a2yJ0lHSmZkb3BozhUKQZO+lWtEESAnhh4rsohtLQuJRRfolqNVZ8JnEs3iFGHwUAV0v
+         SCEK59F+h/0AGEy86BSpUqguYTtDYN7IdOseK5BMns58BIHictPOMNlpZCD94Ua0dQRe
+         gjFwh+I5tS3d/sNO+uvkTpR9k9iM5tIayQYI/12ZMZh0RCg/T8dhYF9MKTfiyM/dchRq
+         kwlt5yo2qDNkpMcR33QCKKW8s22aUSJjlGkw8wiIiKvqdHvXvMWMXulJwdM8bwuc6fgw
+         nSeg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=F3Ix1qwa;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=W3F39e3G;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
+       spf=pass (google.com: domain of gustavo@embeddedor.com designates 192.185.45.2 as permitted sender) smtp.mailfrom=gustavo@embeddedor.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=F3Ix1qwa;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=W3F39e3G;
-       spf=pass (google.com: domain of okaya@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=okaya@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FC57602BD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH v2 2/2] parisc: define stronger ordering for the default
- readX()
-To: John David Anglin <dave.anglin@bell.net>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- linux-parisc@vger.kernel.org, arnd@arndb.de, timur@codeaurora.org,
- sulrich@codeaurora.org
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Helge Deller <deller@gmx.de>, Philippe Ombredanne <pombredanne@nexb.com>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-References: <1523938133-3224-1-git-send-email-okaya@codeaurora.org>
- <1523938133-3224-2-git-send-email-okaya@codeaurora.org>
- <1523957852.3250.9.camel@HansenPartnership.com>
- <38a1d4e3-cabe-6c39-4355-8d8111637382@codeaurora.org>
- <1523980508.3310.9.camel@HansenPartnership.com>
- <86252a65-265d-e081-b71f-42a0be6b1693@codeaurora.org>
- <97fc18a7-b321-0039-0413-d461abc2097b@bell.net>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <a8c3391d-7109-47bf-e1c4-9217fc68bfd0@codeaurora.org>
-Date: Wed, 18 Apr 2018 09:39:30 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       spf=pass (google.com: domain of gustavo@embeddedor.com designates 192.185.45.2 as permitted sender) smtp.mailfrom=gustavo@embeddedor.com
+X-Authority-Reason: nr=8
+Date: Wed, 18 Apr 2018 07:50:16 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <garsilva@embeddedor.com>
+Subject: [PATCH] staging: media: davinci_vpfe: fix spin_lock/unlock imbalance
+Message-ID: <20180418125016.GA25606@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <97fc18a7-b321-0039-0413-d461abc2097b@bell.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - linuxfoundation.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.145.54.118
+X-Source-L: No
+X-Exim-ID: 1f8mXS-000EH2-2t
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.145.54.118]:58532
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597964966697704374?=
-X-GMAIL-MSGID: =?utf-8?q?1598091452664806443?=
+X-GMAIL-THRID: =?utf-8?q?1598088354667190914?=
+X-GMAIL-MSGID: =?utf-8?q?1598088354667190914?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 4/17/2018 6:53 PM, John David Anglin wrote:
-> On 2018-04-17 2:28 PM, Sinan Kaya wrote:
->> The correct terminology here would be to use observability. Yes, it can be
->> cached in whatever part of the system for some amount of time as long as
->> PCI device sees it in the correct order.
->>
->> Let's do this exercise.
->> 1. OS writes to memory for some descriptor update
->> 2. OS writes to the device via writel to hit a doorbell
->> 3. Device comes and fetches the memory contents for the descriptor
->>
->> writel() of PA-RISC needs to ensure that 3. cannot bypass 1. This is typically
->> done by a write barrier embedded into the writel() on relaxed architectures.
-> The sequence point after the argument evaluation for writel prevents the compiler from reordering
-> 1 and 2.  Accesses to I/O space are strongly ordered on PA-RISC, so 1 must occur before 2 (Page G-1
-> of the PA-RISC 2.0 Architecture).  Thus, the current code is okay.
-> 
+It seems that this is a copy-paste error and that the proper
+variable to use in this particular case is video_out2 instead
+of video_out.
 
-Many thanks for the clarification.
+Addresses-Coverity-ID: 1467961 ("Copy-paste error")
+Fixes: 45e46b3bbe18 ("[media] davinci: vpfe: dm365: resizer driver based on media framework")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/staging/media/davinci_vpfe/dm365_resizer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Dave
-> 
-
-
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_resizer.c b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+index df6d55e..2b79747 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_resizer.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_resizer.c
+@@ -1060,7 +1060,7 @@ static void resizer_ss_isr(struct vpfe_resizer_device *resizer)
+ 	/* If resizer B is enabled */
+ 	if (pipe->output_num > 1 && resizer->resizer_b.output ==
+ 	    RESIZER_OUTPUT_MEMORY) {
+-		spin_lock(&video_out->dma_queue_lock);
++		spin_lock(&video_out2->dma_queue_lock);
+ 		vpfe_video_process_buffer_complete(video_out2);
+ 		video_out2->state = VPFE_VIDEO_BUFFER_NOT_QUEUED;
+ 		vpfe_video_schedule_next_buffer(video_out2);
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.7.4
