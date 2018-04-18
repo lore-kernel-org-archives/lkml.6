@@ -1,168 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752463AbeDRVqq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 17:46:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750981AbeDRVqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 17:46:44 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C48B32175C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jhogan@kernel.org
-Date: Wed, 18 Apr 2018 22:46:38 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        Florian Fainelli <f.fainelli@gmail.com>, linux-mips@linux-mips.org,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Maciej W. Rozycki" <macro@mips.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        Paul Burton <paul.burton@mips.com>, Ingo Molnar <mingo@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH v2 1/6] MIPS: perf: More robustly probe for the presence
- of per-tc counters
-Message-ID: <20180418214637.GB16439@saruman>
-References: <1523525786-29153-1-git-send-email-matt.redfearn@mips.com>
- <1523525786-29153-2-git-send-email-matt.redfearn@mips.com>
+        id S1752731AbeDRVwg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 17:52:36 -0400
+Received: from mail-cys01nam02on0095.outbound.protection.outlook.com ([104.47.37.95]:34203
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751407AbeDRVwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 17:52:34 -0400
+From: Long Li <longli@microsoft.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+CC: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: RE: linux-next: build warning after merge of the scsi tree
+Thread-Topic: linux-next: build warning after merge of the scsi tree
+Thread-Index: AQHT1fOOBLalvKqH7Umf2deWJ/NHdKQHEY2Q
+Date: Wed, 18 Apr 2018 21:52:32 +0000
+Message-ID: <MWHPR2101MB072925FF18BBA2F84B2EE470CEB60@MWHPR2101MB0729.namprd21.prod.outlook.com>
+References: <20180417122540.1c0a3fee@canb.auug.org.au>
+In-Reply-To: <20180417122540.1c0a3fee@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2001:4898:80e8:7::2e0]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2101MB0809;7:o4jD5QXu40nBUKhHYIzE69vCupygD1T96NAcz9y6BRw7stkWnQLoXxkf08duya9O2/kau9tfu7ahZ5DWYpK4AVuA+fBszqnGGp8QY/26MGtstEHoU7SRERgJ89YqBzzLPU2KI3U575/QWstQSBuqmNHgHnJqWMlkl3JE9PifY3eFLkG1N9jHGeaFx7WRx5t8hIX4GPda0T/sjbjkng1yKQHdj6xRImBCRkeelEwYoWBGQAtj48s0qjx06oGP2dr7;20:JIxHtz5sIovBrrHrdCpc+MWvscHbKGXeIBtZ+Q6r3mqytSG5L8sW5NyhNw6/EjQRGpcfRw0cEH8RAXT12J2tyTuzbP22yjsNY7DNh0akgGy5EvZeV0Nn+RRa26jTvEX1Wt1t4MDlZ29Hq72DunznLyz+L036EwcBH7WW3YYwcAc=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:MWHPR2101MB0809;
+x-ms-traffictypediagnostic: MWHPR2101MB0809:
+authentication-results: outbound.protection.outlook.com; spf=skipped
+ (originating message); dkim=none (message not signed) header.d=none;
+ dmarc=none action=none header.from=microsoft.com;
+x-microsoft-antispam-prvs: <MWHPR2101MB08097AEBC9B2996E0204E430CEB60@MWHPR2101MB0809.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(3231232)(944501368)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(61426038)(61427038)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR2101MB0809;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2101MB0809;
+x-forefront-prvs: 06469BCC91
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(376002)(396003)(39860400002)(366004)(7736002)(6116002)(53936002)(5250100002)(186003)(5660300001)(102836004)(2906002)(99286004)(478600001)(7696005)(11346002)(76176011)(305945005)(10290500003)(446003)(9686003)(6506007)(476003)(59450400001)(6246003)(74316002)(14454004)(33656002)(25786009)(86362001)(8990500004)(6436002)(2900100001)(229853002)(8936002)(81166006)(46003)(22452003)(8676002)(4326008)(10090500001)(54906003)(86612001)(316002)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2101MB0809;H:MWHPR2101MB0729.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
+x-microsoft-antispam-message-info: EYvn7ZIaIzdYMLsVxmBdUacc9tFqLZw4NcH32jWchZecW9YMC47EDbJ5qveH0kqxZd9Rgf2ck5RLCUh9JvTQ/e425KicJJCql3OB78ZDXUYtsZiDJwft458kJIzzCqpI0sJXUZoI8kwAV/MDBzSCoGwmUaEB+PEnHP1oOv+vfdKvndB9fEdOpojyQN+EZGjw
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
-Content-Disposition: inline
-In-Reply-To: <1523525786-29153-2-git-send-email-matt.redfearn@mips.com>
-User-Agent: Mutt/1.7.2 (2016-11-26)
+X-MS-Office365-Filtering-Correlation-Id: 594e1cf4-1d71-46cb-a7af-08d5a576b045
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 594e1cf4-1d71-46cb-a7af-08d5a576b045
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2018 21:52:32.3465
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2101MB0809
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3ILqiug004104
 
+> Subject: linux-next: build warning after merge of the scsi tree
+> 
+> Hi James,
+> 
+> After merging the scsi tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/scsi/storvsc_drv.c: In function 'storvsc_do_io':
+> drivers/scsi/storvsc_drv.c:1402:1: warning: the frame size of 2216 bytes is
+> larger than 2048 bytes [-Wframe-larger-than=]  }  ^
+> 
+> Introduced by commit
+> 
+>   0b9bc24b8304 ("csi: storvsc: Select channel based on available percentage of
+> ring buffer to write")
 
---lEGEL1/lMxI0MVQ2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for catching this. This is due to the size of struct cpumask is too big, when CONFIG_NR_CPUS=8192 is used in most kernel config.
 
-On Thu, Apr 12, 2018 at 10:36:21AM +0100, Matt Redfearn wrote:
-> Processors implementing the MIPS MT ASE may have performance counters
-> implemented per core or per TC. Processors implemented by MIPS
-> Technologies signify presence per TC through a bit in the implementation
-> specific Config7 register. Currently the code which probes for their
-> presence blindly reads a magic number corresponding to this bit, despite
-> it potentially having a different meaning in the CPU implementation.
->=20
-> The test of Config7.PTC was previously enabled when CONFIG_BMIPS5000 was
-> enabled. However, according to [florian], the BMIPS5000 manual does not
-> define this bit, so we can assume it is 0 and the feature is not
-> supported.
->=20
-> Introduce probe_mipsmt_pertccounters() to probe for the presence of per
-> TC counters. This detects the ases implemented in the CPU, and reads any
-> implementation specific bit flagging their presence. In the case of MIPS
-> implementations, this bit is Config7.PTC. A definition of this bit is
-> added in mipsregs.h for MIPS Technologies. No other implementations
-> support this feature.
->=20
-> Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-> ---
->=20
-> Changes in v2: None
->=20
->  arch/mips/include/asm/mipsregs.h     |  5 +++++
->  arch/mips/kernel/perf_event_mipsxx.c | 29 ++++++++++++++++++++++++++++-
->  2 files changed, 33 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mip=
-sregs.h
-> index 858752dac337..a4baaaa02bc8 100644
-> --- a/arch/mips/include/asm/mipsregs.h
-> +++ b/arch/mips/include/asm/mipsregs.h
-> @@ -684,6 +684,11 @@
->  #define MIPS_CONF7_IAR		(_ULCAST_(1) << 10)
->  #define MIPS_CONF7_AR		(_ULCAST_(1) << 16)
-> =20
-> +/* Config7 Bits specific to MIPS Technologies. */
-> +
-> +/* Performance counters implemented Per TC */
-> +#define MTI_CONF7_PTC		(_ULCAST_(1) << 19)
-> +
->  /* WatchLo* register definitions */
->  #define MIPS_WATCHLO_IRW	(_ULCAST_(0x7) << 0)
-> =20
-> diff --git a/arch/mips/kernel/perf_event_mipsxx.c b/arch/mips/kernel/perf=
-_event_mipsxx.c
-> index 6668f67a61c3..f3ec4a36921d 100644
-> --- a/arch/mips/kernel/perf_event_mipsxx.c
-> +++ b/arch/mips/kernel/perf_event_mipsxx.c
-> @@ -1708,6 +1708,33 @@ static const struct mips_perf_event *xlp_pmu_map_r=
-aw_event(u64 config)
->  	return &raw_event;
->  }
-> =20
-> +#ifdef CONFIG_MIPS_PERF_SHARED_TC_COUNTERS
-> +/*
-> + * The MIPS MT ASE specifies that performance counters may be implemented
-> + * per core or per TC. If implemented per TC then all Linux CPUs have th=
-eir
-> + * own unique counters. If implemented per core, then VPEs in the core m=
-ust
-> + * treat the counters as a shared resource.
-> + * Probe for the presence of per-TC counters
-> + */
-> +static int probe_mipsmt_pertccounters(void)
-> +{
-> +	struct cpuinfo_mips *c =3D &current_cpu_data;
-> +
-> +	/* Non-MT cores by definition cannot implement per-TC counters */
-> +	if (!cpu_has_mipsmt)
-> +		return 0;
-> +
-> +	switch (c->processor_id & PRID_COMP_MASK) {
-> +	case PRID_COMP_MIPS:
-> +		/* MTI implementations use CONFIG7.PTC to signify presence */
-> +		return read_c0_config7() & MTI_CONF7_PTC;
-> +	default:
-> +		break;
-> +	}
-> +	return 0;
-> +}
-> +#endif /* CONFIG_MIPS_PERF_SHARED_TC_COUNTERS */
-> +
->  static int __init
->  init_hw_perf_events(void)
->  {
-> @@ -1723,7 +1750,7 @@ init_hw_perf_events(void)
->  	}
-> =20
->  #ifdef CONFIG_MIPS_PERF_SHARED_TC_COUNTERS
-> -	cpu_has_mipsmt_pertccounters =3D read_c0_config7() & (1<<19);
-> +	cpu_has_mipsmt_pertccounters =3D probe_mipsmt_pertccounters();
+I will fix this by moving those data structure to kmalloc pre-allocated when channel is first created.
 
-Similar code also exists in arch/mips/oprofile/op_model_mipsxx.c.
-Perhaps it is time to unify it into more standard places, i.e.
-asm/cpu-features.h and cpu-probe.c.
-
-Cheers
-James
-
---lEGEL1/lMxI0MVQ2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAlrXvL0ACgkQbAtpk944
-dnoEchAAs/Wvsj9CcOyu5VFABli3Noxu0unPVHgaPcX/yUE1orPBClDTZ3haDlgi
-KBb8nZlaOWT3zw4ShM6KYGG3ektcSttmFR/fO+dFuNnqeIbsKFb4fn0QqBFzosv1
-ilHJZrNiwv4CsM7t8KAGbTRsItAlRhHvq40NC2Sq0/V+KUC0ExSPHKS0nnJWiddG
-FA+Sfc7gWGRtKNWsJOg9vpNS/cAzfYdqKYSsDR94v8ieGAP9zkCkkJV8mEd+7yLZ
-vMVSmSFOY+8PeyXnr6sYvY+FplaYGMXeBg98pQQloUwxEBLCxMOAvKToRBLpcsza
-+Kl/hPOMZpa2+ZlIDVWXRyElRWP45TTMn76yJjWpPUMkIL2shqIzPROm79k3zrqX
-DFXEAT4hhRYeL5i4QssLTdzUOU/AC6hMZ392DU7bs+45baiBiHRnQ5io0jSab01X
-n7vp8k1BfhcBROVp9qVrFf/ojA/fL/AGvPqy+AUqT9M9u0JwtlXpg5tqo3/xuvrb
-8gvmytEveB4eSFtn6/tlG7pnYZ/8VkguZTFw9mnRCummXqsb3ZAkuUSpJ/MKPWfZ
-rL8F5qWWbOlAbkxxOMx2tGvWOc9khnz/O1U+M29nHsxvyB9it0dfY+BzKOq5wDkj
-pUBRORa4aTsRuuG0oLBre60FN1UY118ri6NB7CF5YTjfx62hv90=
-=MMGa
------END PGP SIGNATURE-----
-
---lEGEL1/lMxI0MVQ2--
+> 
+> --
+> Cheers,
+> Stephen Rothwell
