@@ -1,63 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753819AbeDROk3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:40:29 -0400
-Received: from mail-it0-f46.google.com ([209.85.214.46]:55584 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753658AbeDROkX (ORCPT
+        id S1753943AbeDROkw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:40:52 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:57137 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753868AbeDROkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:40:23 -0400
-X-Google-Smtp-Source: AIpwx48o5Ru1o703HmiQyPa8xJsC4ZwU5RUIzhRwIpttEZh2yCyEKSjH8HUIa8NqyHqp3kDwUoiB9w==
-Subject: Re: [PATCH] blkcg: not hold blkcg lock when deactivating policy.
-To: jiang.biao2@zte.com.cn, paolo.valente@linaro.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tj@kernel.org, zhong.weidong@zte.com.cn, wen.yang99@zte.com.cn,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org, broonie@kernel.org
-References: <201804181718167747438@zte.com.cn>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <3a699198-edf4-7337-f5e7-faaa6b058713@kernel.dk>
-Date: Wed, 18 Apr 2018 08:40:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 18 Apr 2018 10:40:51 -0400
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
+        vladimir_zapolskiy@mentor.com, horms@verge.net.au,
+        magnus.damm@gmail.com, geert@linux-m68k.org,
+        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/2] drm: Add Thine THC63LVD1024 LVDS decoder bridge
+Date: Wed, 18 Apr 2018 16:40:27 +0200
+Message-Id: <1524062429-325-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <201804181718167747438@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/18/18 3:18 AM, jiang.biao2@zte.com.cn wrote:
-> Hi,
->>> Il giorno 17 apr 2018, alle ore 09:10, Jiang Biao <jiang.biao2@zte.com.cn> ha scritto:
->>>
->>> As described in the comment of blkcg_activate_policy(),
->>> *Update of each blkg is protected by both queue and blkcg locks so
->>> that holding either lock and testing blkcg_policy_enabled() is
->>> always enough for dereferencing policy data.*
->>> with queue lock held, there is no need to hold blkcg lock in
->>> blkcg_deactivate_policy(). Similar case is in
->>> blkcg_activate_policy(), which has removed holding of blkcg lock in
->>> commit 4c55f4f9ad3001ac1fefdd8d8ca7641d18558e23.
->>>
->>
->> Hi,
->> by chance, did you check whether this may cause problems with bfq,
->> being the latter not protected by the queue lock as cfq?
-> Checked the bfq code, bfq seems never used blkcg lock derectly, and 
-> update of blkg in the common code is protected by both queue and 
-> blkcg locks, so IMHO this patch would not introduce any new problem
-> with bfq, even though bfq is not protected by queue lock.
-> On the other hand, the locks (queue lock/blkcg lock) used to protected
-> the update of blkg seems a bit too heavyweight, especially the queue lock 
-> which is used too widely may cause races with other contexts. I wonder
-> if there is any way to ease the case? e.g. add a new lock for blkg's own.:) 
+As I have another series which is based on this one + Eagle board display
+support, I'm re-sending this one to fix the small issue I pointed out in my
+reply to v8.
 
-It might make sense to lock it separately, but I would not worry
-about it unless it shows up as hot in your testing.
+Simon: no changes to Eagle DTS series, so the last one sent is still the good
+one.
 
-I've applied your patch, thanks.
+DRM: I have collected several reviewed-by tags both on driver and bindings.
+Can I send out incremental patches on this series and consider this one to
+be ready to be collected?
 
--- 
-Jens Axboe
+Thanks
+   j
+
+v8 -> v9:
+- Put 'remote' OF node after usage not just in error path during device
+  tree parsing routine
+- Add Rob's Reviewed-by tag to the device tree bindings documentation
+
+v7 -> b8:
+- Make 'vcc' supply mandatory
+- Use 'oe' property name to describe "OE" pin
+- Minor fixes as suggested by Laurent on bindings and driver
+
+v6 -> v7:
+- Use semi-standard names for powerdown and output enable GPIOs as suggested
+  by Rob and Vladimir
+- Use 'regulator_get()' not the optional version, and list only 'vcc' as
+  requested supply
+- Addressed Laurent's review comments and removed Eagle display enablement patch
+  to be sent separately
+
+v5 -> v6:
+- Drop check for CONFIG_OF as it is a Kconfig dependency
+- Add Niklas Reviewed-by tags
+- List [3/3] depenencies below commit message to ease integration
+
+v4 -> v5:
+- Fix punctuation in bindings documentation
+- Add small statement to bindings document to clarify the chip has no
+  control bus
+- Print regulator name in enable/disable routines error path
+- Add Andrzej Reviewed-by tag
+
+v3 -> v4:
+- Rename permutations of "pdwn" to just "pdwn" everywhere in the series
+- Improve power enable/disable routines as suggested by Andrzej and Sergei
+- Change "pdwn" gpio initialization to use the logical output level
+- Change Kconfig description
+
+v2 -> v3:
+- Drop support for "lvds-decoder" and make the driver THC63LVD1024 specific
+-- Rework bindings to describe multiple input/output ports
+-- Rename driver and remove "lvds-decoder" references
+-- Rework Eagle DTS to use new bindings
+
+v1 -> v2:
+- Drop support for THC63LVD1024
+
+Jacopo Mondi (2):
+  dt-bindings: display: bridge: Document THC63LVD1024 LVDS decoder
+  drm: bridge: Add thc63lvd1024 LVDS decoder driver
+
+ .../bindings/display/bridge/thine,thc63lvd1024.txt |  60 ++++++
+ drivers/gpu/drm/bridge/Kconfig                     |   6 +
+ drivers/gpu/drm/bridge/Makefile                    |   1 +
+ drivers/gpu/drm/bridge/thc63lvd1024.c              | 205 +++++++++++++++++++++
+ 4 files changed, 272 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+ create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+
+--
+2.7.4
