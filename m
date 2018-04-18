@@ -1,79 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753347AbeDRNtJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 09:49:09 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:45532 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753071AbeDRNtD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:49:03 -0400
-X-Google-Smtp-Source: AIpwx48trVB9SGkaFWzZCvvSNbe6vmhgG/GSiu7Ey71mbrndkfHKz4lruT0ej1ZBa5RBtld4gSJicxcl0H1LTWoaE/8=
+        id S1753499AbeDRNt3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 09:49:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753071AbeDRNt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 09:49:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A574F21726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 18 Apr 2018 09:49:24 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>, tglx@linutronix.de,
+        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel.opensrc@gmail.com, joelaf@google.com,
+        mathieu.desnoyers@efficios.com, baohong.liu@intel.com,
+        rajvi.jingar@intel.com, julia@ni.com, fengguang.wu@intel.com,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH 2/6] tracing: Add trace event error log
+Message-ID: <20180418094924.3ad22dbf@gandalf.local.home>
+In-Reply-To: <20180418183434.34eb10004275c9e89a9e709c@kernel.org>
+References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
+        <194bd34e689dd6df9e48855111fd6c5c66e37fc9.1523545519.git.tom.zanussi@linux.intel.com>
+        <20180412182001.75bfb4e2@gandalf.local.home>
+        <1523577133.11817.31.camel@tzanussi-mobl.amr.corp.intel.com>
+        <20180413094515.19fb3691@gandalf.local.home>
+        <1523629474.25328.14.camel@tzanussi-mobl.amr.corp.intel.com>
+        <20180413104432.148f13dc@gandalf.local.home>
+        <20180418183434.34eb10004275c9e89a9e709c@kernel.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <20180418093845.19ca33f3@gandalf.local.home>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-32-mszeredi@redhat.com>
- <CAOQ4uxgdWCWvwWgjUu06H=BeMxh-BVAjxVE5Ckj-poKRGgwvMQ@mail.gmail.com>
- <CAJfpegtLdmnxieDx7+FBUoc-fKsTEwA+oHinhAfa4E9SDFfSNw@mail.gmail.com> <20180418093845.19ca33f3@gandalf.local.home>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 18 Apr 2018 15:49:02 +0200
-Message-ID: <CAJfpeguJN0+m9Vhtv0fo79xq-P1UzWki9GqQq9WyJRMEwiJBqQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 31/35] Revert "vfs: add d_real_inode() helper"
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Howard McLauchlan <hmclauchlan@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 3:38 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Wed, 18 Apr 2018 13:42:03 +0200
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
->> On Wed, Apr 18, 2018 at 10:19 AM, Amir Goldstein <amir73il@gmail.com> wrote:
->> > On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
->> >> This reverts commit a118084432d642eeccb961c7c8cc61525a941fcb.
->> >>
->> >> No user of d_real_inode() remains, so it can be removed.
->> >>
->> >
->> > FYI, there is a new user in v4.17-rc1 added by commit
->> > f0a2aa5a2a40 tracing/uprobe: Add support for overlayfs
->> >
->> > Seems like this patch got merged without any CC to overlayfs
->> > mailing list nor maintainer?
->
-> It appeared to be a small change with lots of reviewers. I didn't think
-> it was something to notify the overlayfs folks with. But perhaps I was
-> wrong.
+On Wed, 18 Apr 2018 18:34:34 +0900
+Masami Hiramatsu <mhiramat@kernel.org> wrote:
 
-The patch is correct.  The code surrounding it isn't, though.
+> On Fri, 13 Apr 2018 10:44:32 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > On Fri, 13 Apr 2018 09:24:34 -0500
+> > Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
+> >   
+> > > Yeah, I agree - I'd rather get it right than get it in now.  I thought
+> > > this made sense, and was based on input from Masami, which I may have
+> > > misinterpreted, but I'll wait for some more ideas about the best way to
+> > > do this.  
+> > 
+> > Too bad we are not closer to November, as this would actually be a good
+> > Plumbers topic. Maybe it's not that important and we should wait until
+> > then. I'd like to get some brain storming ideas out before we decide on
+> > anything, and this is something I believe is better done face to face
+> > than over email.  
+> 
+> OK, sounds good for me too :)
+> My point was that printk buffer is not good place for the parser error
+> of ftrace, nor each sub-features (like hist, trigger, probe_events etc.) 
+> has different place to show it. I just want to unify the user experience
+> over the ftrace UI.
 
->
->> >
->> > Not sure yet if overlayfs-rorw patches would allow reverting this
->> > change.
->>
->> Not trivial, because uprobe is looking at i_mapping to get a list of
->> current memory maps.   We could set i_mapping at overlay inode
->> initialization time, but we definitely can't *change* i_mapping at
->> copy up.  Which is bound to result in some weird inconsistencies.  So
->> likely we'll need to keep d_real_inode() for the time being.
->
-> I just received this patch:
->
->  http://lkml.kernel.org/r/20180418062907.3210386-1-songliubraving@fb.com
->
-> Which removes this code. Can you review it and I'll take it.
+I totally agree. I just want to make sure that whatever we come up with
+will be well thought out. Perhaps we can wait till November to talk
+about it.
 
-It shouldn't remove d_real_inode(), because that part is correct and
-fixes a real bug in handling overlayfs files.
-
-I'll review, but apparently I wasn't CC-d on that patch.   Weird.
-
-Thanks,
-Miklos
+-- Steve
