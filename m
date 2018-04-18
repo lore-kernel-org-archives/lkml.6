@@ -1,274 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753270AbeDRBKZ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 21:10:25 -0400
-Received: from mga12.intel.com ([192.55.52.136]:25105 "EHLO mga12.intel.com"
+        id S1753696AbeDRBMC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 21:12:02 -0400
+Received: from mga05.intel.com ([192.55.52.43]:43224 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752736AbeDRBKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 21:10:21 -0400
+        id S1753666AbeDRBL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 21:11:57 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
-   d="yaml'?scan'208";a="47788248"
-Date: Wed, 18 Apr 2018 09:07:53 +0800
+   d="xz'?scan'208";a="192324786"
+Date: Wed, 18 Apr 2018 09:09:29 +0800
 From: kernel test robot <xiaolong.ye@intel.com>
-To: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Tony Lindgren <tony@atomide.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Laura Abbott <lauraa@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>, Michal Nazarewicz <mina86@mina86.com>,
-        Minchan Kim <minchan@kernel.org>, Rik van Riel <riel@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-Subject: [lkp-robot] [mm/cma]  a57a290bd3:  vm-scalability.throughput -15.5%
- regression
-Message-ID: <20180418010753.GA20825@yexl-desktop>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+Subject: [lkp-robot] [kvm]  d5edb7f8e7:
+ kernel_selftests.kvm.vmx_tsc_adjust_test.fail
+Message-ID: <20180418010929.GB20825@yexl-desktop>
 Reply-To: kernel test robot <xiaolong.ye@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ew6BAiZeqk4r7MaW"
+Content-Type: multipart/mixed; boundary="zx4FCpZtqtKETZ7O"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=iso-8859-1
+--zx4FCpZtqtKETZ7O
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 
 
-Greeting,
+FYI, we noticed the following commit (built with gcc-7):
 
-FYI, we noticed a -15.5% regression of vm-scalability.throughput due to commit:
+commit: d5edb7f8e7ab9fd5fd54a77d957b1733f117a813 ("kvm: selftests: add vmx_tsc_adjust_test")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-
-commit: a57a290bd38f64bde9b8f797600aee3925109061 ("mm/cma: manage the memory of the CMA area by using the ZONE_MOVABLE")
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-
-in testcase: vm-scalability
-on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 128G memory
+in testcase: kernel_selftests
 with following parameters:
 
-	runtime: 300s
-	test: lru-file-readonce
-	cpufreq_governor: performance
+	group: kselftests-01
 
-test-description: The motivation behind this suite is to exercise functions and regions of the mm/ of the Linux kernel which are of interest to us.
-test-url: https://git.kernel.org/cgit/linux/kernel/git/wfg/vm-scalability.git/
+test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
+test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
 
 
-Details are as below:
--------------------------------------------------------------------------------------------------->
+on test machine: qemu-system-x86_64 -enable-kvm -cpu host -smp 2 -m 4G
+
+caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+
+
+
+
+selftests: vmx_tsc_adjust_test
+========================================
+==== Test Assertion Failure ====
+  lib/kvm_util.c:422: kvm_fd >= 0
+  pid=9812 tid=9812
+     1	0x000000000040174a: kvm_get_supported_cpuid at kvm_util.c:421
+     2	0x0000000000401b5a: kvm_get_supported_cpuid at kvm_util.c:461
+     3	 (inlined by) kvm_get_supported_cpuid_index at kvm_util.c:449
+     4	0x0000000000400e58: kvm_get_supported_cpuid_entry at kvm_util.h:125
+     5	 (inlined by) main at vmx_tsc_adjust_test.c:189
+     6	0x00007f2ef6225a86: ?? ??:0
+     7	0x00000000004010a9: _start at ??:?
+  open /dev/kvm failed, rc: -1 errno: 2
+not ok 1..3 selftests:  vmx_tsc_adjust_test [FAIL]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kvm'
 
 
 To reproduce:
 
         git clone https://github.com/intel/lkp-tests.git
         cd lkp-tests
-        bin/lkp install job.yaml  # job file is attached in this email
-        bin/lkp run     job.yaml
+        bin/lkp qemu -k <bzImage> job-script  # job-script is attached in this email
 
-=========================================================================================
-compiler/cpufreq_governor/kconfig/rootfs/runtime/tbox_group/test/testcase:
-  gcc-7/performance/x86_64-rhel-7.2/debian-x86_64-2016-08-31.cgz/300s/lkp-bdw-ep2/lru-file-readonce/vm-scalability
-
-commit: 
-  d92b1ec27c ("mm/page_alloc: don't reserve ZONE_HIGHMEM for ZONE_MOVABLE request")
-  a57a290bd3 ("mm/cma: manage the memory of the CMA area by using the ZONE_MOVABLE")
-
-d92b1ec27cae2c99 a57a290bd38f64bde9b8f79760 
----------------- -------------------------- 
-         %stddev     %change         %stddev
-             \          |                \  
-    308089           -15.7%     259785        vm-scalability.median
-      0.70 ± 56%    +696.1%       5.56 ±  4%  vm-scalability.stddev
-  27142495           -15.5%   22927797        vm-scalability.throughput
-    186.93           +23.9%     231.56        vm-scalability.time.elapsed_time
-    186.93           +23.9%     231.56        vm-scalability.time.elapsed_time.max
-    298206            +5.4%     314171        vm-scalability.time.involuntary_context_switches
-      4022 ±  3%      -6.1%       3778        vm-scalability.time.maximum_resident_set_size
-      7329            -4.5%       7003        vm-scalability.time.percent_of_cpu_this_job_got
-     13376           +18.9%      15903        vm-scalability.time.system_time
-    324.95            -3.2%     314.71        vm-scalability.time.user_time
-      1345            +1.3%       1363        vm-scalability.time.voluntary_context_switches
-  12905097           -21.5%   10131265 ±  3%  vmstat.memory.free
-     16.12 ±  3%      +2.7       18.81        mpstat.cpu.idle%
-      1.98            -0.4        1.56        mpstat.cpu.usr%
-   7092821 ±  2%     -22.0%    5529796 ± 12%  numa-meminfo.node0.MemFree
-   6466966 ±  2%     -21.4%    5082116 ± 11%  numa-meminfo.node1.MemFree
-    467.06            -3.7%     449.96        pmeter.Average_Active_Power
-     58116           -12.3%      50956        pmeter.performance_per_watt
-      9546 ±  8%     +50.7%      14381 ± 27%  softirqs.NET_RX
-    157856 ±  2%     +31.5%     207560 ±  3%  softirqs.SCHED
-   5556773           +24.1%    6893563        softirqs.TIMER
-    118309 ±  3%     +19.4%     141262        meminfo.Active
-    117637 ±  3%     +19.6%     140648        meminfo.Active(anon)
-     31240 ±  2%     -71.6%       8879 ± 25%  meminfo.CmaFree
-  13541103           -22.3%   10519830 ±  3%  meminfo.MemFree
-     97674 ±  4%     +25.1%     122193        meminfo.Shmem
-     19884 ± 14%     +39.9%      27813 ± 12%  cpuidle.C1.usage
-   4626065 ±  4%     +55.5%    7193168 ±  6%  cpuidle.C3.time
-     16850 ±  6%     +45.7%      24551 ±  3%  cpuidle.C3.usage
- 2.556e+09 ±  4%     +46.8%  3.752e+09        cpuidle.C6.time
-   2612869 ±  4%     +47.0%    3841894        cpuidle.C6.usage
-    286.50 ± 18%     +53.9%     441.00 ±  8%  cpuidle.POLL.usage
-  12919583 ± 21%    +584.0%   88376315        numa-numastat.node0.numa_foreign
-  13098152 ± 21%     +80.1%   23585358 ± 15%  numa-numastat.node0.numa_miss
-  13110934 ± 21%     +80.0%   23593876 ± 15%  numa-numastat.node0.other_node
- 5.278e+08           -17.0%  4.381e+08        numa-numastat.node1.local_node
-  13098152 ± 21%     +80.1%   23585358 ± 15%  numa-numastat.node1.numa_foreign
- 5.278e+08           -17.0%  4.381e+08        numa-numastat.node1.numa_hit
-  12919583 ± 21%    +584.0%   88376315        numa-numastat.node1.numa_miss
-  12923938 ± 21%    +583.9%   88384876        numa-numastat.node1.other_node
-   1779873 ±  4%     -21.4%    1398188 ± 11%  numa-vmstat.node0.nr_free_pages
-   6386636 ± 12%    +691.1%   50521587        numa-vmstat.node0.numa_foreign
-      7869 ±  2%     -71.2%       2268 ± 25%  numa-vmstat.node1.nr_free_cma
-   1613920           -20.6%    1281336 ± 11%  numa-vmstat.node1.nr_free_pages
-    305.75 ±  7%     -15.3%     259.00 ±  3%  numa-vmstat.node1.nr_isolated_file
-  3.11e+08           -17.7%   2.56e+08        numa-vmstat.node1.numa_hit
- 3.108e+08           -17.7%  2.559e+08        numa-vmstat.node1.numa_local
-   6388941 ± 12%    +691.0%   50534071        numa-vmstat.node1.numa_miss
-   6564139 ± 12%    +672.6%   50713295        numa-vmstat.node1.numa_other
-      2361            -3.4%       2281        turbostat.Avg_MHz
-     18023 ± 13%     +43.9%      25927 ± 14%  turbostat.C1
-     16372 ±  6%     +45.6%      23844 ±  5%  turbostat.C3
-   2610248 ±  4%     +47.1%    3838846        turbostat.C6
-     15.38 ±  2%      +2.9       18.30        turbostat.C6%
-      4.11 ±  6%     +79.8%       7.38        turbostat.CPU%c1
-  18087951 ±  2%     +22.2%   22101137        turbostat.IRQ
-      5.18 ±  2%     -19.9%       4.15        turbostat.Pkg%pc2
-    235.95            -3.4%     227.98        turbostat.PkgWatt
-     24.09            -1.4%      23.76        turbostat.RAMWatt
-   2839703 ±  7%     -31.7%    1939146 ± 13%  sched_debug.cfs_rq:/.min_vruntime.min
-    397053 ±  4%     +25.8%     499507 ±  3%  sched_debug.cfs_rq:/.min_vruntime.stddev
-      6.28 ±  2%     -16.4%       5.25 ±  7%  sched_debug.cfs_rq:/.nr_spread_over.avg
-    192.50 ± 15%     -26.1%     142.25 ± 19%  sched_debug.cfs_rq:/.nr_spread_over.max
-     27.64 ± 13%     -24.3%      20.92 ± 15%  sched_debug.cfs_rq:/.nr_spread_over.stddev
-    -37835          +121.3%     -83735        sched_debug.cfs_rq:/.spread0.avg
-  -2599772           +34.8%   -3503649        sched_debug.cfs_rq:/.spread0.min
-    396913 ±  4%     +25.8%     499460 ±  3%  sched_debug.cfs_rq:/.spread0.stddev
-     21.88 ± 27%    +114.6%      46.94 ±  6%  sched_debug.cfs_rq:/.util_est_enqueued.avg
-    647.08 ± 19%     +25.4%     811.67 ±  5%  sched_debug.cfs_rq:/.util_est_enqueued.max
-    103.42 ± 23%     +52.1%     157.30        sched_debug.cfs_rq:/.util_est_enqueued.stddev
-    126173 ±  4%     -15.6%     106542 ± 10%  sched_debug.cpu.nr_switches.max
-      1975 ±  3%     -23.1%       1519        sched_debug.cpu.nr_switches.min
-    122036 ±  4%     -18.0%     100120 ± 10%  sched_debug.cpu.sched_count.max
-      1720 ±  2%     -29.7%       1210        sched_debug.cpu.sched_count.min
-     60707 ±  5%     -17.4%      50149 ± 10%  sched_debug.cpu.ttwu_count.max
-    830.08 ±  3%     -41.9%     482.17 ±  2%  sched_debug.cpu.ttwu_count.min
-     60276 ±  5%     -17.7%      49636 ± 11%  sched_debug.cpu.ttwu_local.max
-    785.33 ±  3%     -42.8%     449.00 ±  2%  sched_debug.cpu.ttwu_local.min
- 2.823e+12           +15.8%  3.268e+12        perf-stat.branch-instructions
-      0.64            -0.1        0.56        perf-stat.branch-miss-rate%
-      7.68            +0.5        8.17        perf-stat.cache-miss-rate%
- 1.475e+10            +6.7%  1.573e+10        perf-stat.cache-misses
-   1689793 ±  3%     +21.3%    2049799 ±  3%  perf-stat.context-switches
-      2.97            +5.0%       3.12        perf-stat.cpi
- 3.878e+13           +19.4%  4.631e+13        perf-stat.cpu-cycles
-     11366           +25.0%      14205        perf-stat.cpu-migrations
- 3.505e+12           +13.0%  3.959e+12        perf-stat.dTLB-loads
- 1.306e+13           +13.7%  1.485e+13        perf-stat.instructions
-      4324 ±  6%     +17.0%       5062 ±  6%  perf-stat.instructions-per-iTLB-miss
-      0.34            -4.8%       0.32        perf-stat.ipc
-    529440           +18.3%     626390        perf-stat.minor-faults
-     46.54 ±  3%     +15.3       61.85        perf-stat.node-load-miss-rate%
- 8.175e+08 ±  6%     +68.9%  1.381e+09        perf-stat.node-load-misses
- 9.372e+08            -9.1%  8.517e+08        perf-stat.node-loads
-     13.14 ±  4%     +10.2       23.31        perf-stat.node-store-miss-rate%
- 8.107e+08 ±  5%     +84.7%  1.497e+09        perf-stat.node-store-misses
- 5.359e+09            -8.1%  4.925e+09        perf-stat.node-stores
-    529444           +18.3%     626391        perf-stat.page-faults
-      3040           +13.7%       3458        perf-stat.path-length
-    126389           -13.8%     108944        proc-vmstat.allocstall_movable
-      1015 ±  4%     +29.0%       1309 ±  5%  proc-vmstat.allocstall_normal
-      1672 ±106%    +360.9%       7708 ± 49%  proc-vmstat.compact_migrate_scanned
-      2597 ±  4%     -31.8%       1771 ±  6%  proc-vmstat.kswapd_low_wmark_hit_quickly
-     29424 ±  3%     +19.9%      35279        proc-vmstat.nr_active_anon
-      7830 ±  3%     -71.7%       2216 ± 26%  proc-vmstat.nr_free_cma
-   3340670 ±  2%     -21.6%    2618440        proc-vmstat.nr_free_pages
-    610.75 ±  2%     -10.1%     549.00        proc-vmstat.nr_isolated_file
-     24391 ±  4%     +25.6%      30642        proc-vmstat.nr_shmem
-     29425 ±  3%     +19.9%      35285        proc-vmstat.nr_zone_active_anon
-  26017735 ± 21%    +330.3%   1.12e+08 ±  2%  proc-vmstat.numa_foreign
-      1247 ± 13%     +26.3%       1575 ±  4%  proc-vmstat.numa_hint_faults
-  26017735 ± 21%    +330.3%   1.12e+08 ±  2%  proc-vmstat.numa_miss
-  26034889 ± 21%    +330.1%   1.12e+08 ±  2%  proc-vmstat.numa_other
-      2602 ±  4%     -31.5%       1782 ±  7%  proc-vmstat.pageoutrun
-    544184           +18.3%     643659        proc-vmstat.pgfault
- 9.827e+08           -13.3%  8.519e+08        proc-vmstat.pgscan_direct
-  59757667 ± 12%    +218.9%  1.906e+08 ±  2%  proc-vmstat.pgscan_kswapd
- 9.827e+08           -13.3%  8.518e+08        proc-vmstat.pgsteal_direct
-  59757604 ± 12%    +218.9%  1.906e+08 ±  2%  proc-vmstat.pgsteal_kswapd
-
-
-                                                                                
-                               vm-scalability.throughput                        
-                                                                                
-  2.8e+07 +-+---------------------------------------------------------------+   
-          |  +.+.      +   ++.++.+. +. + +   ++. .+  +.+ .+.+           .+  |   
-  2.7e+07 +-+    + .+.+            +  +         +       +    +.      +.+  +.|   
-          |       +                                            +     :      |   
-          |                                                     +.+.+       |   
-  2.6e+07 +-+                                                               |   
-          |                                                                 |   
-  2.5e+07 +-+                                                               |   
-          |                                                                 |   
-  2.4e+07 +-+                                                               |   
-          |                                                                 |   
-          O                   O         O                                   |   
-  2.3e+07 +-OO O  O         O  O   O  O  O O                                |   
-          |      O  O OO O O     O  O                                       |   
-  2.2e+07 +-+---------------------------------------------------------------+   
-                                                                                
-                                                                                                                                                                
-                                vm-scalability.median                           
-                                                                                
-  320000 +-+----------------------------------------------------------------+   
-         |.++.+        .+.++.+.++. .+  +.+.++.+  +.+.++                     |   
-  310000 +-+   +  .+.++           +  :+        + :     + .++.        +. .++ |   
-         |      ++                   +          +       +    +.+     : +   +|   
-  300000 +-+                                                    +.+.+       |   
-         |                                                                  |   
-  290000 +-+                                                                |   
-         |                                                                  |   
-  280000 +-+                                                                |   
-         |                                                                  |   
-  270000 +-+                                                                |   
-         |                             O                                    |   
-  260000 O-OO                O       O   O                                  |   
-         |    O OO O OO O OO   OO O O      O                                |   
-  250000 +-+----------------------------------------------------------------+   
-                                                                                
-                                                                                                                                                                
-
-
-Disclaimer:
-Results have been estimated based on internal Intel analysis and are provided
-for informational purposes only. Any difference in system hardware or software
-design or configuration may affect actual performance.
 
 
 Thanks,
 Xiaolong
 
---ew6BAiZeqk4r7MaW
+--zx4FCpZtqtKETZ7O
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="config-4.16.0-11359-ga57a290"
+Content-Disposition: attachment; filename="config-4.16.0-rc4-00203-gd5edb7f"
 
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86_64 4.16.0 Kernel Configuration
+# Linux/x86_64 4.16.0-rc4 Kernel Configuration
 #
 CONFIG_64BIT=y
 CONFIG_X86_64=y
@@ -383,6 +204,7 @@ CONFIG_NO_HZ_COMMON=y
 # CONFIG_HZ_PERIODIC is not set
 # CONFIG_NO_HZ_IDLE is not set
 CONFIG_NO_HZ_FULL=y
+# CONFIG_NO_HZ_FULL_ALL is not set
 CONFIG_NO_HZ=y
 CONFIG_HIGH_RES_TIMERS=y
 
@@ -542,6 +364,7 @@ CONFIG_JUMP_LABEL=y
 CONFIG_OPTPROBES=y
 CONFIG_KPROBES_ON_FTRACE=y
 CONFIG_UPROBES=y
+# CONFIG_HAVE_64BIT_ALIGNED_ACCESS is not set
 CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS=y
 CONFIG_ARCH_USE_BUILTIN_BSWAP=y
 CONFIG_KRETPROBES=y
@@ -587,6 +410,7 @@ CONFIG_CC_STACKPROTECTOR_NONE=y
 # CONFIG_CC_STACKPROTECTOR_REGULAR is not set
 # CONFIG_CC_STACKPROTECTOR_STRONG is not set
 # CONFIG_CC_STACKPROTECTOR_AUTO is not set
+CONFIG_THIN_ARCHIVES=y
 CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES=y
 CONFIG_HAVE_CONTEXT_TRACKING=y
 CONFIG_HAVE_VIRT_CPU_ACCOUNTING_GEN=y
@@ -607,14 +431,20 @@ CONFIG_ARCH_MMAP_RND_COMPAT_BITS=8
 CONFIG_HAVE_ARCH_COMPAT_MMAP_BASES=y
 CONFIG_HAVE_COPY_THREAD_TLS=y
 CONFIG_HAVE_STACK_VALIDATION=y
+# CONFIG_HAVE_ARCH_HASH is not set
+# CONFIG_ISA_BUS_API is not set
 CONFIG_OLD_SIGSUSPEND3=y
 CONFIG_COMPAT_OLD_SIGACTION=y
+# CONFIG_CPU_NO_EFFICIENT_FFS is not set
 CONFIG_HAVE_ARCH_VMAP_STACK=y
 CONFIG_VMAP_STACK=y
+# CONFIG_ARCH_OPTIONAL_KERNEL_RWX is not set
+# CONFIG_ARCH_OPTIONAL_KERNEL_RWX_DEFAULT is not set
 CONFIG_ARCH_HAS_STRICT_KERNEL_RWX=y
 CONFIG_STRICT_KERNEL_RWX=y
 CONFIG_ARCH_HAS_STRICT_MODULE_RWX=y
 CONFIG_STRICT_MODULE_RWX=y
+CONFIG_ARCH_HAS_PHYS_TO_DMA=y
 CONFIG_ARCH_HAS_REFCOUNT=y
 # CONFIG_REFCOUNT_FULL is not set
 
@@ -623,6 +453,7 @@ CONFIG_ARCH_HAS_REFCOUNT=y
 #
 # CONFIG_GCOV_KERNEL is not set
 CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
+# CONFIG_HAVE_GENERIC_DMA_COHERENT is not set
 CONFIG_RT_MUTEXES=y
 CONFIG_BASE_SMALL=0
 CONFIG_MODULES=y
@@ -714,6 +545,7 @@ CONFIG_FREEZER=y
 CONFIG_ZONE_DMA=y
 CONFIG_SMP=y
 CONFIG_X86_FEATURE_NAMES=y
+CONFIG_X86_FAST_FEATURE_TESTS=y
 CONFIG_X86_X2APIC=y
 CONFIG_X86_MPPARSE=y
 # CONFIG_GOLDFISH is not set
@@ -805,6 +637,7 @@ CONFIG_PERF_EVENTS_INTEL_UNCORE=y
 CONFIG_PERF_EVENTS_INTEL_RAPL=y
 CONFIG_PERF_EVENTS_INTEL_CSTATE=y
 # CONFIG_PERF_EVENTS_AMD_POWER is not set
+# CONFIG_VM86 is not set
 CONFIG_X86_16BIT=y
 CONFIG_X86_ESPFIX64=y
 CONFIG_X86_VSYSCALL_EMULATION=y
@@ -941,6 +774,7 @@ CONFIG_HOTPLUG_CPU=y
 CONFIG_BOOTPARAM_HOTPLUG_CPU0=y
 # CONFIG_DEBUG_HOTPLUG_CPU0 is not set
 # CONFIG_COMPAT_VDSO is not set
+# CONFIG_LEGACY_VSYSCALL_NATIVE is not set
 CONFIG_LEGACY_VSYSCALL_EMULATE=y
 # CONFIG_LEGACY_VSYSCALL_NONE is not set
 # CONFIG_CMDLINE_BOOL is not set
@@ -991,7 +825,6 @@ CONFIG_ACPI_BATTERY=y
 CONFIG_ACPI_BUTTON=y
 CONFIG_ACPI_VIDEO=m
 CONFIG_ACPI_FAN=y
-# CONFIG_ACPI_TAD is not set
 CONFIG_ACPI_DOCK=y
 CONFIG_ACPI_CPU_FREQ_PSS=y
 CONFIG_ACPI_PROCESSOR_CSTATE=y
@@ -1003,6 +836,7 @@ CONFIG_ACPI_HOTPLUG_CPU=y
 CONFIG_ACPI_PROCESSOR_AGGREGATOR=m
 CONFIG_ACPI_THERMAL=y
 CONFIG_ACPI_NUMA=y
+# CONFIG_ACPI_CUSTOM_DSDT is not set
 CONFIG_ARCH_HAS_ACPI_TABLE_UPGRADE=y
 CONFIG_ACPI_TABLE_UPGRADE=y
 CONFIG_ACPI_DEBUG=y
@@ -1075,6 +909,7 @@ CONFIG_X86_SPEEDSTEP_LIB=m
 CONFIG_CPU_IDLE=y
 # CONFIG_CPU_IDLE_GOV_LADDER is not set
 CONFIG_CPU_IDLE_GOV_MENU=y
+# CONFIG_ARCH_NEEDS_CPU_IDLE_COUPLED is not set
 CONFIG_INTEL_IDLE=y
 
 #
@@ -1085,7 +920,6 @@ CONFIG_PCI_DIRECT=y
 CONFIG_PCI_MMCONFIG=y
 CONFIG_PCI_XEN=y
 CONFIG_PCI_DOMAINS=y
-CONFIG_MMCONF_FAM10H=y
 # CONFIG_PCI_CNB20LE_QUIRK is not set
 CONFIG_PCIEPORTBUS=y
 CONFIG_HOTPLUG_PCI_PCIE=y
@@ -1172,6 +1006,7 @@ CONFIG_COMPAT_BINFMT_ELF=y
 CONFIG_ELFCORE=y
 CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS=y
 CONFIG_BINFMT_SCRIPT=y
+# CONFIG_HAVE_AOUT is not set
 CONFIG_BINFMT_MISC=m
 CONFIG_COREDUMP=y
 CONFIG_IA32_EMULATION=y
@@ -1221,7 +1056,6 @@ CONFIG_NET_IPGRE_DEMUX=m
 CONFIG_NET_IP_TUNNEL=m
 CONFIG_NET_IPGRE=m
 CONFIG_NET_IPGRE_BROADCAST=y
-CONFIG_IP_MROUTE_COMMON=y
 CONFIG_IP_MROUTE=y
 CONFIG_IP_MROUTE_MULTIPLE_TABLES=y
 CONFIG_IP_PIMSM_V1=y
@@ -1535,13 +1369,18 @@ CONFIG_IP_VS_PE_SIP=m
 CONFIG_NF_DEFRAG_IPV4=m
 CONFIG_NF_CONNTRACK_IPV4=m
 # CONFIG_NF_SOCKET_IPV4 is not set
-# CONFIG_NF_TABLES_IPV4 is not set
+CONFIG_NF_TABLES_IPV4=m
+CONFIG_NFT_CHAIN_ROUTE_IPV4=m
+# CONFIG_NFT_REJECT_IPV4 is not set
+# CONFIG_NFT_DUP_IPV4 is not set
+# CONFIG_NFT_FIB_IPV4 is not set
 # CONFIG_NF_TABLES_ARP is not set
 CONFIG_NF_DUP_IPV4=m
 # CONFIG_NF_LOG_ARP is not set
 CONFIG_NF_LOG_IPV4=m
 CONFIG_NF_REJECT_IPV4=m
 CONFIG_NF_NAT_IPV4=m
+CONFIG_NFT_CHAIN_NAT_IPV4=m
 CONFIG_NF_NAT_MASQUERADE_IPV4=m
 CONFIG_NF_NAT_SNMP_BASIC=m
 CONFIG_NF_NAT_PROTO_GRE=m
@@ -1575,11 +1414,16 @@ CONFIG_IP_NF_ARP_MANGLE=m
 CONFIG_NF_DEFRAG_IPV6=m
 CONFIG_NF_CONNTRACK_IPV6=m
 # CONFIG_NF_SOCKET_IPV6 is not set
-# CONFIG_NF_TABLES_IPV6 is not set
+CONFIG_NF_TABLES_IPV6=m
+CONFIG_NFT_CHAIN_ROUTE_IPV6=m
+# CONFIG_NFT_REJECT_IPV6 is not set
+# CONFIG_NFT_DUP_IPV6 is not set
+# CONFIG_NFT_FIB_IPV6 is not set
 CONFIG_NF_DUP_IPV6=m
 CONFIG_NF_REJECT_IPV6=m
 CONFIG_NF_LOG_IPV6=m
 CONFIG_NF_NAT_IPV6=m
+CONFIG_NFT_CHAIN_NAT_IPV6=m
 # CONFIG_NF_NAT_MASQUERADE_IPV6 is not set
 CONFIG_IP6_NF_IPTABLES=m
 CONFIG_IP6_NF_MATCH_AH=m
@@ -1600,7 +1444,9 @@ CONFIG_IP6_NF_MANGLE=m
 CONFIG_IP6_NF_RAW=m
 CONFIG_IP6_NF_SECURITY=m
 # CONFIG_IP6_NF_NAT is not set
-# CONFIG_NF_TABLES_BRIDGE is not set
+CONFIG_NF_TABLES_BRIDGE=m
+# CONFIG_NFT_BRIDGE_META is not set
+# CONFIG_NF_LOG_BRIDGE is not set
 CONFIG_BRIDGE_NF_EBTABLES=m
 CONFIG_BRIDGE_EBT_BROUTE=m
 CONFIG_BRIDGE_EBT_T_FILTER=m
@@ -1648,7 +1494,6 @@ CONFIG_INET_SCTP_DIAG=m
 # CONFIG_RDS is not set
 CONFIG_TIPC=m
 CONFIG_TIPC_MEDIA_UDP=y
-CONFIG_TIPC_DIAG=m
 CONFIG_ATM=m
 CONFIG_ATM_CLIP=m
 # CONFIG_ATM_CLIP_NO_ICMP is not set
@@ -1744,7 +1589,6 @@ CONFIG_NET_EMATCH_META=m
 CONFIG_NET_EMATCH_TEXT=m
 # CONFIG_NET_EMATCH_CANID is not set
 CONFIG_NET_EMATCH_IPSET=m
-# CONFIG_NET_EMATCH_IPT is not set
 CONFIG_NET_CLS_ACT=y
 CONFIG_NET_ACT_POLICE=m
 CONFIG_NET_ACT_GACT=m
@@ -1920,6 +1764,7 @@ CONFIG_ALLOW_DEV_COREDUMP=y
 # CONFIG_DEBUG_TEST_DRIVER_REMOVE is not set
 # CONFIG_TEST_ASYNC_DRIVER_PROBE is not set
 CONFIG_SYS_HYPERVISOR=y
+# CONFIG_GENERIC_CPU_DEVICES is not set
 CONFIG_GENERIC_CPU_AUTOPROBE=y
 CONFIG_GENERIC_CPU_VULNERABILITIES=y
 CONFIG_REGMAP=y
@@ -1978,8 +1823,13 @@ CONFIG_MTD_BLOCK=m
 CONFIG_MTD_MAP_BANK_WIDTH_1=y
 CONFIG_MTD_MAP_BANK_WIDTH_2=y
 CONFIG_MTD_MAP_BANK_WIDTH_4=y
+# CONFIG_MTD_MAP_BANK_WIDTH_8 is not set
+# CONFIG_MTD_MAP_BANK_WIDTH_16 is not set
+# CONFIG_MTD_MAP_BANK_WIDTH_32 is not set
 CONFIG_MTD_CFI_I1=y
 CONFIG_MTD_CFI_I2=y
+# CONFIG_MTD_CFI_I4 is not set
+# CONFIG_MTD_CFI_I8 is not set
 # CONFIG_MTD_RAM is not set
 # CONFIG_MTD_ROM is not set
 # CONFIG_MTD_ABSENT is not set
@@ -2007,8 +1857,8 @@ CONFIG_MTD_CFI_I2=y
 # Disk-On-Chip Device Drivers
 #
 # CONFIG_MTD_DOCG3 is not set
-# CONFIG_MTD_ONENAND is not set
 # CONFIG_MTD_NAND is not set
+# CONFIG_MTD_ONENAND is not set
 
 #
 # LPDDR & LPDDR2 PCM memory drivers
@@ -2028,6 +1878,7 @@ CONFIG_PARPORT_PC=m
 CONFIG_PARPORT_SERIAL=m
 # CONFIG_PARPORT_PC_FIFO is not set
 # CONFIG_PARPORT_PC_SUPERIO is not set
+# CONFIG_PARPORT_GSC is not set
 # CONFIG_PARPORT_AX88796 is not set
 CONFIG_PARPORT_1284=y
 CONFIG_PARPORT_NOT_PC=y
@@ -2048,6 +1899,7 @@ CONFIG_BLK_DEV_PCIESSD_MTIP32XX=m
 # CONFIG_ZRAM is not set
 # CONFIG_BLK_DEV_DAC960 is not set
 # CONFIG_BLK_DEV_UMEM is not set
+# CONFIG_BLK_DEV_COW_COMMON is not set
 CONFIG_BLK_DEV_LOOP=m
 CONFIG_BLK_DEV_LOOP_MIN_COUNT=0
 # CONFIG_BLK_DEV_CRYPTOLOOP is not set
@@ -2108,6 +1960,7 @@ CONFIG_VMWARE_BALLOON=m
 # CONFIG_LATTICE_ECP3_CONFIG is not set
 # CONFIG_SRAM is not set
 # CONFIG_PCI_ENDPOINT_TEST is not set
+# CONFIG_MISC_RTSX is not set
 # CONFIG_C2PORT is not set
 
 #
@@ -2175,6 +2028,10 @@ CONFIG_VMWARE_VMCI=m
 #
 # CONFIG_GENWQE is not set
 # CONFIG_ECHO is not set
+# CONFIG_CXL_BASE is not set
+# CONFIG_CXL_AFU_DRIVER_OPS is not set
+# CONFIG_CXL_LIB is not set
+# CONFIG_OCXL_BASE is not set
 # CONFIG_MISC_RTSX_PCI is not set
 # CONFIG_MISC_RTSX_USB is not set
 CONFIG_HAVE_IDE=y
@@ -2270,6 +2127,8 @@ CONFIG_FCOE=m
 CONFIG_FCOE_FNIC=m
 # CONFIG_SCSI_SNIC is not set
 # CONFIG_SCSI_DMX3191D is not set
+# CONFIG_SCSI_EATA is not set
+# CONFIG_SCSI_FUTURE_DOMAIN is not set
 # CONFIG_SCSI_GDTH is not set
 CONFIG_SCSI_ISCI=m
 # CONFIG_SCSI_IPS is not set
@@ -2306,6 +2165,7 @@ CONFIG_SCSI_OSD_ULD=m
 CONFIG_SCSI_OSD_DPRINT_SENSE=1
 # CONFIG_SCSI_OSD_DEBUG is not set
 CONFIG_ATA=m
+# CONFIG_ATA_NONSTANDARD is not set
 CONFIG_ATA_VERBOSE_ERROR=y
 CONFIG_ATA_ACPI=y
 # CONFIG_SATA_ZPODD is not set
@@ -2539,6 +2399,8 @@ CONFIG_NET_CADENCE=y
 CONFIG_NET_VENDOR_BROADCOM=y
 CONFIG_B44=m
 CONFIG_B44_PCI_AUTOSELECT=y
+CONFIG_B44_PCICORE_AUTOSELECT=y
+CONFIG_B44_PCI=y
 CONFIG_BNX2=m
 CONFIG_CNIC=m
 CONFIG_TIGON3=y
@@ -2605,7 +2467,6 @@ CONFIG_IXGBEVF=m
 CONFIG_I40E=m
 # CONFIG_I40E_DCB is not set
 # CONFIG_I40EVF is not set
-# CONFIG_ICE is not set
 # CONFIG_FM10K is not set
 # CONFIG_NET_VENDOR_I825XX is not set
 CONFIG_JME=m
@@ -2629,14 +2490,12 @@ CONFIG_MLX4_CORE_GEN2=y
 CONFIG_NET_VENDOR_MICROCHIP=y
 # CONFIG_ENC28J60 is not set
 # CONFIG_ENCX24J600 is not set
-# CONFIG_LAN743X is not set
 CONFIG_NET_VENDOR_MYRI=y
 CONFIG_MYRI10GE=m
 # CONFIG_FEALNX is not set
 # CONFIG_NET_VENDOR_NATSEMI is not set
 CONFIG_NET_VENDOR_NETRONOME=y
 # CONFIG_NFP is not set
-CONFIG_NET_VENDOR_NI=y
 # CONFIG_NET_VENDOR_NVIDIA is not set
 CONFIG_NET_VENDOR_OKI=y
 CONFIG_ETHOC=m
@@ -2911,7 +2770,6 @@ CONFIG_IEEE802154_FAKELB=m
 # CONFIG_IEEE802154_ATUSB is not set
 # CONFIG_IEEE802154_ADF7242 is not set
 # CONFIG_IEEE802154_CA8210 is not set
-# CONFIG_IEEE802154_MCR20A is not set
 CONFIG_XEN_NETDEV_FRONTEND=m
 # CONFIG_XEN_NETDEV_BACKEND is not set
 CONFIG_VMXNET3=m
@@ -2959,6 +2817,8 @@ CONFIG_ISDN_DRV_AVMB1_C4=m
 # CONFIG_CAPI_EICON is not set
 CONFIG_ISDN_DRV_GIGASET=m
 CONFIG_GIGASET_CAPI=y
+# CONFIG_GIGASET_I4L is not set
+# CONFIG_GIGASET_DUMMYLL is not set
 CONFIG_GIGASET_BASE=m
 CONFIG_GIGASET_M105=m
 CONFIG_GIGASET_M101=m
@@ -3227,6 +3087,7 @@ CONFIG_SERIAL_8250_MANY_PORTS=y
 CONFIG_SERIAL_8250_SHARE_IRQ=y
 # CONFIG_SERIAL_8250_DETECT_IRQ is not set
 CONFIG_SERIAL_8250_RSA=y
+# CONFIG_SERIAL_8250_FSL is not set
 CONFIG_SERIAL_8250_DW=y
 # CONFIG_SERIAL_8250_RT288X is not set
 CONFIG_SERIAL_8250_LPSS=y
@@ -3299,7 +3160,7 @@ CONFIG_TCG_NSC=m
 CONFIG_TCG_ATMEL=m
 CONFIG_TCG_INFINEON=m
 # CONFIG_TCG_XEN is not set
-CONFIG_TCG_CRB=y
+# CONFIG_TCG_CRB is not set
 # CONFIG_TCG_VTPM_PROXY is not set
 # CONFIG_TCG_TIS_ST33ZP24_I2C is not set
 # CONFIG_TCG_TIS_ST33ZP24_SPI is not set
@@ -3374,6 +3235,7 @@ CONFIG_I2C_DESIGNWARE_PCI=m
 # CONFIG_I2C_GPIO is not set
 # CONFIG_I2C_OCORES is not set
 CONFIG_I2C_PCA_PLATFORM=m
+# CONFIG_I2C_PXA_PCI is not set
 CONFIG_I2C_SIMTEC=m
 # CONFIG_I2C_XILINX is not set
 
@@ -3496,8 +3358,6 @@ CONFIG_GPIO_MOCKUP=y
 # CONFIG_GPIO_IT87 is not set
 # CONFIG_GPIO_SCH is not set
 # CONFIG_GPIO_SCH311X is not set
-# CONFIG_GPIO_WINBOND is not set
-# CONFIG_GPIO_WS16C48 is not set
 
 #
 # I2C GPIO expanders
@@ -3784,7 +3644,6 @@ CONFIG_WDAT_WDT=m
 # CONFIG_ADVANTECH_WDT is not set
 CONFIG_ALIM1535_WDT=m
 CONFIG_ALIM7101_WDT=m
-# CONFIG_EBC_C384_WDT is not set
 CONFIG_F71808E_WDT=m
 CONFIG_SP5100_TCO=m
 CONFIG_SBC_FITPC2_WATCHDOG=m
@@ -3839,10 +3698,13 @@ CONFIG_SSB=m
 CONFIG_SSB_SPROM=y
 CONFIG_SSB_PCIHOST_POSSIBLE=y
 CONFIG_SSB_PCIHOST=y
+# CONFIG_SSB_B43_PCI_BRIDGE is not set
 CONFIG_SSB_SDIOHOST_POSSIBLE=y
 CONFIG_SSB_SDIOHOST=y
 # CONFIG_SSB_SILENT is not set
 # CONFIG_SSB_DEBUG is not set
+CONFIG_SSB_DRIVER_PCICORE_POSSIBLE=y
+CONFIG_SSB_DRIVER_PCICORE=y
 # CONFIG_SSB_DRIVER_GPIO is not set
 CONFIG_BCMA_POSSIBLE=y
 CONFIG_BCMA=m
@@ -3936,6 +3798,7 @@ CONFIG_MFD_SM501=m
 # CONFIG_TWL6040_CORE is not set
 # CONFIG_MFD_WL1273_CORE is not set
 # CONFIG_MFD_LM3533 is not set
+# CONFIG_MFD_TMIO is not set
 CONFIG_MFD_VX855=m
 # CONFIG_MFD_ARIZONA_I2C is not set
 # CONFIG_MFD_ARIZONA_SPI is not set
@@ -3958,12 +3821,10 @@ CONFIG_IR_SANYO_DECODER=m
 CONFIG_IR_SHARP_DECODER=m
 CONFIG_IR_MCE_KBD_DECODER=m
 CONFIG_IR_XMP_DECODER=m
-# CONFIG_IR_IMON_DECODER is not set
 CONFIG_RC_DEVICES=y
 CONFIG_RC_ATI_REMOTE=m
 CONFIG_IR_ENE=m
 CONFIG_IR_IMON=m
-# CONFIG_IR_IMON_RAW is not set
 CONFIG_IR_MCEUSB=m
 CONFIG_IR_ITE_CIR=m
 CONFIG_IR_FINTEK=m
@@ -4362,11 +4223,6 @@ CONFIG_VIDEO_M52790=m
 #
 # Sensors used on soc_camera driver
 #
-
-#
-# Media SPI Adapters
-#
-# CONFIG_CXD2880_SPI_DRV is not set
 CONFIG_MEDIA_TUNER=m
 CONFIG_MEDIA_TUNER_SIMPLE=m
 CONFIG_MEDIA_TUNER_TDA18250=m
@@ -4481,6 +4337,7 @@ CONFIG_DVB_CXD2841ER=m
 CONFIG_DVB_RTL2830=m
 CONFIG_DVB_RTL2832=m
 CONFIG_DVB_SI2168=m
+# CONFIG_DVB_AS102_FE is not set
 CONFIG_DVB_GP8PSK_FE=m
 
 #
@@ -4546,13 +4403,9 @@ CONFIG_DVB_M88RS2000=m
 CONFIG_DVB_AF9033=m
 
 #
-# Common Interface (EN50221) controller drivers
-#
-CONFIG_DVB_CXD2099=m
-
-#
 # Tools to develop new frontends
 #
+# CONFIG_DVB_DUMMY_FE is not set
 
 #
 # Graphics support
@@ -4593,6 +4446,7 @@ CONFIG_DRM_I2C_NXP_TDA998X=m
 #
 # AMD Library routines
 #
+# CONFIG_CHASH is not set
 # CONFIG_DRM_NOUVEAU is not set
 CONFIG_DRM_I915=m
 # CONFIG_DRM_I915_ALPHA_SUPPORT is not set
@@ -4641,6 +4495,7 @@ CONFIG_DRM_PANEL_BRIDGE=y
 # CONFIG_DRM_TINYDRM is not set
 # CONFIG_DRM_LEGACY is not set
 CONFIG_DRM_PANEL_ORIENTATION_QUIRKS=y
+# CONFIG_DRM_LIB_RANDOM is not set
 
 #
 # Frame buffer Devices
@@ -4649,16 +4504,22 @@ CONFIG_FB=y
 # CONFIG_FIRMWARE_EDID is not set
 CONFIG_FB_CMDLINE=y
 CONFIG_FB_NOTIFY=y
+# CONFIG_FB_DDC is not set
 CONFIG_FB_BOOT_VESA_SUPPORT=y
 CONFIG_FB_CFB_FILLRECT=y
 CONFIG_FB_CFB_COPYAREA=y
 CONFIG_FB_CFB_IMAGEBLIT=y
+# CONFIG_FB_CFB_REV_PIXELS_IN_BYTE is not set
 CONFIG_FB_SYS_FILLRECT=m
 CONFIG_FB_SYS_COPYAREA=m
 CONFIG_FB_SYS_IMAGEBLIT=m
+# CONFIG_FB_PROVIDE_GET_FB_UNMAPPED_AREA is not set
 # CONFIG_FB_FOREIGN_ENDIAN is not set
 CONFIG_FB_SYS_FOPS=m
 CONFIG_FB_DEFERRED_IO=y
+# CONFIG_FB_SVGALIB is not set
+# CONFIG_FB_MACMODES is not set
+# CONFIG_FB_BACKLIGHT is not set
 # CONFIG_FB_MODE_HELPERS is not set
 CONFIG_FB_TILEBLITTING=y
 
@@ -4744,6 +4605,7 @@ CONFIG_BACKLIGHT_APPLE=m
 # CONFIG_BACKLIGHT_LV5207LP is not set
 # CONFIG_BACKLIGHT_BD6107 is not set
 # CONFIG_BACKLIGHT_ARCXCNN is not set
+# CONFIG_VGASTATE is not set
 CONFIG_HDMI=y
 
 #
@@ -4799,6 +4661,7 @@ CONFIG_SND_SEQ_VIRMIDI=m
 CONFIG_SND_MPU401_UART=m
 CONFIG_SND_OPL3_LIB=m
 CONFIG_SND_OPL3_LIB_SEQ=m
+# CONFIG_SND_OPL4_LIB_SEQ is not set
 CONFIG_SND_VX_LIB=m
 CONFIG_SND_AC97_CODEC=m
 CONFIG_SND_DRIVERS=y
@@ -4978,7 +4841,6 @@ CONFIG_HID_CYPRESS=y
 CONFIG_HID_DRAGONRISE=m
 # CONFIG_DRAGONRISE_FF is not set
 # CONFIG_HID_EMS_FF is not set
-# CONFIG_HID_ELAN is not set
 CONFIG_HID_ELECOM=m
 # CONFIG_HID_ELO is not set
 CONFIG_HID_EZKEY=y
@@ -4986,7 +4848,6 @@ CONFIG_HID_EZKEY=y
 # CONFIG_HID_GFRM is not set
 CONFIG_HID_HOLTEK=m
 # CONFIG_HOLTEK_FF is not set
-# CONFIG_HID_GOOGLE_HAMMER is not set
 # CONFIG_HID_GT683R is not set
 CONFIG_HID_KEYTOUCH=m
 CONFIG_HID_KYE=m
@@ -5111,6 +4972,7 @@ CONFIG_USB_EHCI_PCI=y
 # CONFIG_USB_EHCI_HCD_PLATFORM is not set
 # CONFIG_USB_OXU210HP_HCD is not set
 # CONFIG_USB_ISP116X_HCD is not set
+# CONFIG_USB_ISP1362_HCD is not set
 # CONFIG_USB_FOTG210_HCD is not set
 # CONFIG_USB_MAX3421_HCD is not set
 CONFIG_USB_OHCI_HCD=y
@@ -5416,7 +5278,6 @@ CONFIG_LEDS_INTEL_SS4200=m
 #
 CONFIG_LEDS_BLINKM=m
 # CONFIG_LEDS_MLXCPLD is not set
-# CONFIG_LEDS_MLXREG is not set
 # CONFIG_LEDS_USER is not set
 # CONFIG_LEDS_NIC78BX is not set
 
@@ -5684,6 +5545,7 @@ CONFIG_XEN_ACPI=y
 CONFIG_XEN_SYMS=y
 CONFIG_XEN_HAVE_VPMU=y
 CONFIG_STAGING=y
+# CONFIG_IRDA is not set
 # CONFIG_IPX is not set
 # CONFIG_NCP_FS is not set
 # CONFIG_PRISM2_USB is not set
@@ -5734,14 +5596,14 @@ CONFIG_FWTTY_MAX_CARD_PORTS=32
 #
 # CONFIG_DRM_VBOXVIDEO is not set
 # CONFIG_PI433 is not set
-# CONFIG_MTK_MMC is not set
 CONFIG_X86_PLATFORM_DEVICES=y
 CONFIG_ACER_WMI=m
 # CONFIG_ACER_WIRELESS is not set
 CONFIG_ACERHDF=m
 # CONFIG_ALIENWARE_WMI is not set
 CONFIG_ASUS_LAPTOP=m
-# CONFIG_DELL_SMBIOS is not set
+# CONFIG_DELL_SMBIOS_WMI is not set
+# CONFIG_DELL_SMBIOS_SMM is not set
 # CONFIG_DELL_LAPTOP is not set
 # CONFIG_DELL_WMI is not set
 CONFIG_DELL_WMI_AIO=m
@@ -5818,7 +5680,10 @@ CONFIG_COMMON_CLK=y
 # CONFIG_COMMON_CLK_SI5351 is not set
 # CONFIG_COMMON_CLK_CDCE706 is not set
 # CONFIG_COMMON_CLK_CS2000_CP is not set
+# CONFIG_COMMON_CLK_NXP is not set
 # CONFIG_COMMON_CLK_PWM is not set
+# CONFIG_COMMON_CLK_PXA is not set
+# CONFIG_COMMON_CLK_PIC32 is not set
 # CONFIG_HWSPINLOCK is not set
 
 #
@@ -5827,6 +5692,11 @@ CONFIG_COMMON_CLK=y
 CONFIG_CLKEVT_I8253=y
 CONFIG_I8253_LOCK=y
 CONFIG_CLKBLD_I8253=y
+# CONFIG_ATMEL_PIT is not set
+# CONFIG_SH_TIMER_CMT is not set
+# CONFIG_SH_TIMER_MTU2 is not set
+# CONFIG_SH_TIMER_TMU is not set
+# CONFIG_EM_TIMER_STI is not set
 CONFIG_MAILBOX=y
 CONFIG_PCC=y
 # CONFIG_ALTERA_MBOX is not set
@@ -5877,6 +5747,7 @@ CONFIG_IRQ_REMAP=y
 #
 # Qualcomm SoC drivers
 #
+# CONFIG_SUNXI_SRAM is not set
 # CONFIG_SOC_TI is not set
 
 #
@@ -5932,6 +5803,7 @@ CONFIG_PWM_LPSS_PLATFORM=m
 # IRQ chip support
 #
 CONFIG_ARM_GIC_MAX_NR=1
+# CONFIG_ARM_GIC_V3_ITS is not set
 # CONFIG_IPACK_BUS is not set
 # CONFIG_RESET_CONTROLLER is not set
 # CONFIG_FMC is not set
@@ -5967,15 +5839,10 @@ CONFIG_BTT=y
 CONFIG_ND_PFN=m
 CONFIG_NVDIMM_PFN=y
 CONFIG_NVDIMM_DAX=y
-CONFIG_DAX_DRIVER=y
 CONFIG_DAX=y
 CONFIG_DEV_DAX=m
 CONFIG_DEV_DAX_PMEM=m
 CONFIG_NVMEM=y
-
-#
-# HW tracing support
-#
 CONFIG_STM=m
 CONFIG_STM_DUMMY=m
 CONFIG_STM_SOURCE_CONSOLE=m
@@ -5983,13 +5850,13 @@ CONFIG_STM_SOURCE_HEARTBEAT=m
 CONFIG_STM_SOURCE_FTRACE=m
 CONFIG_INTEL_TH=m
 CONFIG_INTEL_TH_PCI=m
-# CONFIG_INTEL_TH_ACPI is not set
 CONFIG_INTEL_TH_GTH=m
 CONFIG_INTEL_TH_STH=m
 CONFIG_INTEL_TH_MSU=m
 CONFIG_INTEL_TH_PTI=m
 # CONFIG_INTEL_TH_DEBUG is not set
 # CONFIG_FPGA is not set
+# CONFIG_FSI is not set
 CONFIG_PM_OPP=y
 # CONFIG_UNISYS_VISORBUS is not set
 # CONFIG_SIOX is not set
@@ -6027,6 +5894,7 @@ CONFIG_EFI_RUNTIME_WRAPPERS=y
 # CONFIG_APPLE_PROPERTIES is not set
 # CONFIG_RESET_ATTACK_MITIGATION is not set
 CONFIG_UEFI_CPER=y
+# CONFIG_EFI_DEV_PATH_PARSER is not set
 
 #
 # Tegra firmware driver
@@ -6202,14 +6070,9 @@ CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE=3
 # CONFIG_QNX6FS_FS is not set
 # CONFIG_ROMFS_FS is not set
 CONFIG_PSTORE=y
-CONFIG_PSTORE_DEFLATE_COMPRESS=y
+CONFIG_PSTORE_ZLIB_COMPRESS=y
 # CONFIG_PSTORE_LZO_COMPRESS is not set
 # CONFIG_PSTORE_LZ4_COMPRESS is not set
-# CONFIG_PSTORE_LZ4HC_COMPRESS is not set
-# CONFIG_PSTORE_842_COMPRESS is not set
-CONFIG_PSTORE_COMPRESS=y
-CONFIG_PSTORE_DEFLATE_COMPRESS_DEFAULT=y
-CONFIG_PSTORE_COMPRESS_DEFAULT="deflate"
 CONFIG_PSTORE_CONSOLE=y
 CONFIG_PSTORE_PMSG=y
 # CONFIG_PSTORE_FTRACE is not set
@@ -6424,15 +6287,13 @@ CONFIG_SCHEDSTATS=y
 #
 # Lock Debugging (spinlocks, mutexes, etc...)
 #
-CONFIG_LOCK_DEBUGGING_SUPPORT=y
-# CONFIG_PROVE_LOCKING is not set
-# CONFIG_LOCK_STAT is not set
 # CONFIG_DEBUG_RT_MUTEXES is not set
 # CONFIG_DEBUG_SPINLOCK is not set
 # CONFIG_DEBUG_MUTEXES is not set
 # CONFIG_DEBUG_WW_MUTEX_SLOWPATH is not set
-# CONFIG_DEBUG_RWSEMS is not set
 # CONFIG_DEBUG_LOCK_ALLOC is not set
+# CONFIG_PROVE_LOCKING is not set
+# CONFIG_LOCK_STAT is not set
 CONFIG_DEBUG_ATOMIC_SLEEP=y
 # CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
 CONFIG_LOCK_TORTURE_TEST=m
@@ -6450,6 +6311,7 @@ CONFIG_DEBUG_LIST=y
 #
 # RCU Debugging
 #
+# CONFIG_PROVE_RCU is not set
 CONFIG_TORTURE_TEST=m
 # CONFIG_RCU_PERF_TEST is not set
 CONFIG_RCU_TORTURE_TEST=m
@@ -6561,6 +6423,7 @@ CONFIG_TEST_KMOD=m
 CONFIG_HAVE_ARCH_KGDB=y
 # CONFIG_KGDB is not set
 CONFIG_ARCH_HAS_UBSAN_SANITIZE_ALL=y
+# CONFIG_ARCH_WANTS_UBSAN_NO_NULL is not set
 # CONFIG_UBSAN is not set
 CONFIG_ARCH_HAS_DEVMEM_IS_ALLOWED=y
 CONFIG_STRICT_DEVMEM=y
@@ -6571,6 +6434,7 @@ CONFIG_EARLY_PRINTK=y
 CONFIG_EARLY_PRINTK_DBGP=y
 # CONFIG_EARLY_PRINTK_EFI is not set
 # CONFIG_EARLY_PRINTK_USB_XDBC is not set
+# CONFIG_X86_PTDUMP_CORE is not set
 # CONFIG_X86_PTDUMP is not set
 # CONFIG_EFI_PGT_DUMP is not set
 # CONFIG_DEBUG_WX is not set
@@ -6706,6 +6570,7 @@ CONFIG_CRYPTO_CRYPTD=m
 CONFIG_CRYPTO_MCRYPTD=m
 CONFIG_CRYPTO_AUTHENC=m
 CONFIG_CRYPTO_TEST=m
+CONFIG_CRYPTO_ABLK_HELPER=m
 CONFIG_CRYPTO_SIMD=m
 CONFIG_CRYPTO_GLUE_HELPER_X86=m
 CONFIG_CRYPTO_ENGINE=m
@@ -6723,7 +6588,6 @@ CONFIG_CRYPTO_ECHAINIV=m
 # Block modes
 #
 CONFIG_CRYPTO_CBC=y
-# CONFIG_CRYPTO_CFB is not set
 CONFIG_CRYPTO_CTR=y
 CONFIG_CRYPTO_CTS=y
 CONFIG_CRYPTO_ECB=y
@@ -6808,8 +6672,6 @@ CONFIG_CRYPTO_SERPENT=m
 CONFIG_CRYPTO_SERPENT_SSE2_X86_64=m
 CONFIG_CRYPTO_SERPENT_AVX_X86_64=m
 CONFIG_CRYPTO_SERPENT_AVX2_X86_64=m
-# CONFIG_CRYPTO_SM4 is not set
-# CONFIG_CRYPTO_SPECK is not set
 CONFIG_CRYPTO_TEA=m
 CONFIG_CRYPTO_TWOFISH=m
 CONFIG_CRYPTO_TWOFISH_COMMON=m
@@ -6820,7 +6682,7 @@ CONFIG_CRYPTO_TWOFISH_AVX_X86_64=m
 #
 # Compression
 #
-CONFIG_CRYPTO_DEFLATE=y
+CONFIG_CRYPTO_DEFLATE=m
 CONFIG_CRYPTO_LZO=y
 # CONFIG_CRYPTO_842 is not set
 # CONFIG_CRYPTO_LZ4 is not set
@@ -6846,6 +6708,7 @@ CONFIG_CRYPTO_HW=y
 CONFIG_CRYPTO_DEV_PADLOCK=m
 CONFIG_CRYPTO_DEV_PADLOCK_AES=m
 CONFIG_CRYPTO_DEV_PADLOCK_SHA=m
+# CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_DESC is not set
 # CONFIG_CRYPTO_DEV_CCP is not set
 # CONFIG_CRYPTO_DEV_QAT_DH895xCC is not set
 # CONFIG_CRYPTO_DEV_QAT_C3XXX is not set
@@ -6901,6 +6764,7 @@ CONFIG_BINARY_PRINTF=y
 #
 CONFIG_RAID6_PQ=m
 CONFIG_BITREVERSE=y
+# CONFIG_HAVE_ARCH_BITREVERSE is not set
 CONFIG_RATIONAL=y
 CONFIG_GENERIC_STRNCPY_FROM_USER=y
 CONFIG_GENERIC_STRNLEN_USER=y
@@ -6925,6 +6789,7 @@ CONFIG_CRC32_SLICEBY8=y
 CONFIG_LIBCRC32C=y
 CONFIG_CRC8=m
 CONFIG_XXHASH=m
+# CONFIG_AUDIT_ARCH_COMPAT_GENERIC is not set
 # CONFIG_RANDOM32_SELFTEST is not set
 CONFIG_ZLIB_INFLATE=y
 CONFIG_ZLIB_DEFLATE=y
@@ -6964,7 +6829,8 @@ CONFIG_HAS_IOMEM=y
 CONFIG_HAS_IOPORT_MAP=y
 CONFIG_HAS_DMA=y
 CONFIG_SGL_ALLOC=y
-CONFIG_DMA_DIRECT_OPS=y
+# CONFIG_DMA_DIRECT_OPS is not set
+# CONFIG_DMA_VIRT_OPS is not set
 CONFIG_CHECK_SIGNATURE=y
 CONFIG_CPUMASK_OFFSTACK=y
 CONFIG_CPU_RMAP=y
@@ -6984,6 +6850,7 @@ CONFIG_FONT_SUPPORT=y
 # CONFIG_FONTS is not set
 CONFIG_FONT_8x8=y
 CONFIG_FONT_8x16=y
+# CONFIG_SG_SPLIT is not set
 CONFIG_SG_POOL=y
 CONFIG_ARCH_HAS_SG_CHAIN=y
 CONFIG_ARCH_HAS_PMEM_API=y
@@ -6991,7 +6858,7 @@ CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE=y
 CONFIG_SBITMAP=y
 # CONFIG_STRING_SELFTEST is not set
 
---ew6BAiZeqk4r7MaW
+--zx4FCpZtqtKETZ7O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=job-script
 
@@ -6999,53 +6866,97 @@ Content-Disposition: attachment; filename=job-script
 
 export_top_env()
 {
-	export suite='vm-scalability'
-	export testcase='vm-scalability'
-	export category='benchmark'
-	export runtime=300
-	export size=
-	export job_origin='/lkp/lkp/.src-20180412-090831/allot/cyclic:linux-next:master/lkp-bdw-ep2/vm-scalability.yaml'
-	export queue='bisect'
-	export testbox='lkp-bdw-ep2'
-	export tbox_group='lkp-bdw-ep2'
-	export submit_id='5ad6612f0b9a93f7fb0a5005'
-	export job_file='/lkp/scheduled/lkp-bdw-ep2/vm-scalability-300s-lru-file-readonce-performance-debian-x86_64-2016-08-31.cgz-a57a290bd38f64bde9b8f797600aee3925109061-20180418-63483-1jwq5cr-0.yaml'
-	export id='5ae09ee8d332accc435d3fcd6b7975cc0d31b12a'
-	export model='Broadwell-EP'
-	export nr_node=2
-	export nr_cpu=88
-	export memory='128G'
-	export nr_ssd_partitions=1
-	export ssd_partitions='/dev/disk/by-id/ata-INTEL_SSDSC2BW360H6_CVTR551405ZP360DGN-part1'
-	export swap_partitions=
-	export rootfs_partition='/dev/disk/by-id/ata-INTEL_SSDSC2BA800G4_BTHV539600YR800OGN-part1'
-	export brand='Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz'
-	export need_kconfig='CONFIG_BLK_DEV_LOOP'
-	export commit='a57a290bd38f64bde9b8f797600aee3925109061'
+	export suite='kernel_selftests'
+	export testcase='kernel_selftests'
+	export category='functional'
+	export need_cpu=2
+	export kernel_cmdline='erst_disable'
+	export job_origin='/lkp/lkp/src/allot/rand/vm-lkp-nex04-4G/kernel_selftests.yaml'
+	export testbox='vm-lkp-nex04-4G-16'
+	export tbox_group='vm-lkp-nex04-4G'
 	export kconfig='x86_64-rhel-7.2'
 	export compiler='gcc-7'
+	export queue='bisect'
+	export branch='linux-devel/devel-spot-201804171827'
+	export commit='d5edb7f8e7ab9fd5fd54a77d957b1733f117a813'
+	export submit_id='5ad617a40b9a932ce0d6640d'
+	export job_file='/lkp/scheduled/vm-lkp-nex04-4G-16/kernel_selftests-kselftests-01-debian-x86_64-2016-08-31.cgz-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813-20180417-77024-bbuq2x-0.yaml'
+	export id='b1884d5d7d48e246e2d8afc19a38443a58b519e5'
+	export model='qemu-system-x86_64 -enable-kvm -cpu host'
+	export nr_vm=20
+	export nr_cpu=2
+	export memory='4G'
+	export hdd_partitions='/dev/vda'
+	export swap_partitions='/dev/vdb'
+	export need_kernel_headers=true
+	export need_kernel_selftests=true
+	export need_kconfig='CONFIG_RUNTIME_TESTING_MENU=y
+CONFIG_TEST_FIRMWARE
+CONFIG_TEST_USER_COPY
+CONFIG_MEMORY_NOTIFIER_ERROR_INJECT
+CONFIG_MEMORY_HOTPLUG_SPARSE=y
+CONFIG_NOTIFIER_ERROR_INJECTION
+CONFIG_FTRACE=y
+CONFIG_TEST_BITMAP
+CONFIG_TEST_PRINTF
+CONFIG_TEST_STATIC_KEYS
+CONFIG_BPF_SYSCALL=y
+CONFIG_NET_CLS_BPF=m
+CONFIG_BPF_EVENTS=y
+CONFIG_TEST_BPF=m
+CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG=y
+CONFIG_HIST_TRIGGERS=y
+CONFIG_EMBEDDED=y
+CONFIG_GPIO_MOCKUP=y
+CONFIG_USERFAULTFD=y
+CONFIG_SYNC_FILE=y
+CONFIG_SW_SYNC=y
+CONFIG_MISC_FILESYSTEMS=y
+CONFIG_PSTORE=y
+CONFIG_PSTORE_PMSG=y
+CONFIG_PSTORE_CONSOLE=y
+CONFIG_PSTORE_RAM=m
+CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
+CONFIG_EXPERT=y
+CONFIG_CHECKPOINT_RESTORE=y
+CONFIG_EFIVAR_FS
+CONFIG_TEST_KMOD=m
+CONFIG_TEST_LKM=m
+CONFIG_XFS_FS=m
+CONFIG_TUN=m
+CONFIG_BTRFS_FS=m
+CONFIG_TEST_SYSCTL=m
+CONFIG_BPF_STREAM_PARSER=y
+CONFIG_CGROUP_BPF=y
+CONFIG_IPV6_MULTIPLE_TABLES=y
+CONFIG_NET_L3_MASTER_DEV=y
+CONFIG_NET_VRF=y
+CONFIG_NET_FOU=m
+CONFIG_NET_FOU_IP_TUNNELS=y
+CONFIG_MACSEC=y
+CONFIG_X86_INTEL_MPX=y
+CONFIG_KVM_GUEST=y'
+	export ssh_base_port=23230
 	export rootfs='debian-x86_64-2016-08-31.cgz'
-	export enqueue_time='2018-04-18 05:03:43 +0800'
-	export _id='5ad6612f0b9a93f7fb0a5005'
-	export _rt='/result/vm-scalability/300s-lru-file-readonce-performance/lkp-bdw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061'
+	export enqueue_time='2018-04-17 23:49:56 +0800'
+	export _id='5ad617a40b9a932ce0d6640d'
+	export _rt='/result/kernel_selftests/kselftests-01/vm-lkp-nex04-4G/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/d5edb7f8e7ab9fd5fd54a77d957b1733f117a813'
 	export user='lkp'
-	export head_commit='d4de96abc879d1eaa6e487df361081934d30df93'
-	export base_commit='0adb32858b0bddf4ada5f364a84ed60b196dbcda'
-	export branch='linux-next/master'
-	export result_root='/result/vm-scalability/300s-lru-file-readonce-performance/lkp-bdw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/0'
+	export result_root='/result/kernel_selftests/kselftests-01/vm-lkp-nex04-4G/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/0'
 	export LKP_SERVER='inn'
-	export max_uptime=1500
+	export max_uptime=3600
 	export initrd='/osimage/debian/debian-x86_64-2016-08-31.cgz'
 	export bootloader_append='root=/dev/ram0
 user=lkp
-job=/lkp/scheduled/lkp-bdw-ep2/vm-scalability-300s-lru-file-readonce-performance-debian-x86_64-2016-08-31.cgz-a57a290bd38f64bde9b8f797600aee3925109061-20180418-63483-1jwq5cr-0.yaml
+job=/lkp/scheduled/vm-lkp-nex04-4G-16/kernel_selftests-kselftests-01-debian-x86_64-2016-08-31.cgz-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813-20180417-77024-bbuq2x-0.yaml
 ARCH=x86_64
 kconfig=x86_64-rhel-7.2
-branch=linux-next/master
-commit=a57a290bd38f64bde9b8f797600aee3925109061
-BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/vmlinuz-4.16.0-11359-ga57a290
-max_uptime=1500
-RESULT_ROOT=/result/vm-scalability/300s-lru-file-readonce-performance/lkp-bdw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/0
+branch=linux-devel/devel-spot-201804171827
+commit=d5edb7f8e7ab9fd5fd54a77d957b1733f117a813
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/vmlinuz-4.16.0-rc4-00203-gd5edb7f
+erst_disable
+max_uptime=3600
+RESULT_ROOT=/result/kernel_selftests/kselftests-01/vm-lkp-nex04-4G/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/0
 LKP_SERVER=inn
 debug
 apic=debug
@@ -7067,18 +6978,19 @@ earlyprintk=ttyS0,115200
 console=ttyS0,115200
 vga=normal
 rw'
-	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/modules.cgz'
-	export bm_initrd='/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-04-04.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-f8cf2f16a7c9_2018-04-09.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/vm-scalability_2018-02-09.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/vm-scalability-x86_64-1.0-0_2018-02-09.cgz,/osimage/pkg/common/vm-scalability-x86_64.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz'
+	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/modules.cgz'
+	export bm_initrd='/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/kernel_selftests_2018-04-01.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/kernel_selftests-x86_64-10b84daddbec_2018-04-01.cgz'
+	export linux_headers_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/linux-headers.cgz'
+	export linux_selftests_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/linux-selftests.cgz'
 	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
 	export site='inn'
 	export LKP_CGI_PORT=80
 	export LKP_CIFS_PORT=139
-	export repeat_to=2
-	export tbox_host_file='/lkp/lkp/.src-20180417-175914/hosts/lkp-bdw-ep2'
+	export tbox_host_file='/lkp/lkp/.src-20180417-175914/hosts/vm-lkp-nex04-4G-16'
 	export verify_tbox_config='true'
-	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/vmlinuz-4.16.0-11359-ga57a290'
-	export dequeue_time='2018-04-18 05:07:44 +0800'
-	export job_initrd='/lkp/scheduled/lkp-bdw-ep2/vm-scalability-300s-lru-file-readonce-performance-debian-x86_64-2016-08-31.cgz-a57a290bd38f64bde9b8f797600aee3925109061-20180418-63483-1jwq5cr-0.cgz'
+	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/vmlinuz-4.16.0-rc4-00203-gd5edb7f'
+	export dequeue_time='2018-04-17 23:59:52 +0800'
+	export job_initrd='/lkp/scheduled/vm-lkp-nex04-4G-16/kernel_selftests-kselftests-01-debian-x86_64-2016-08-31.cgz-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813-20180417-77024-bbuq2x-0.cgz'
 
 	[ -n "$LKP_SRC" ] ||
 	export LKP_SRC=/lkp/${user:-lkp}/src
@@ -7094,69 +7006,20 @@ run_job()
 
 	export_top_env
 
-	run_setup $LKP_SRC/setup/cpufreq_governor 'performance'
-
-	run_monitor $LKP_SRC/monitors/no-stdout/wrapper perf-profile
 	run_monitor $LKP_SRC/monitors/wrapper kmsg
-	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
-	run_monitor $LKP_SRC/monitors/wrapper iostat
 	run_monitor $LKP_SRC/monitors/wrapper heartbeat
-	run_monitor $LKP_SRC/monitors/wrapper vmstat
-	run_monitor $LKP_SRC/monitors/wrapper numa-numastat
-	run_monitor $LKP_SRC/monitors/wrapper numa-vmstat
-	run_monitor $LKP_SRC/monitors/wrapper numa-meminfo
-	run_monitor $LKP_SRC/monitors/wrapper proc-vmstat
-	run_monitor $LKP_SRC/monitors/wrapper proc-stat
-	run_monitor $LKP_SRC/monitors/wrapper meminfo
-	run_monitor $LKP_SRC/monitors/wrapper slabinfo
-	run_monitor $LKP_SRC/monitors/wrapper interrupts
-	run_monitor $LKP_SRC/monitors/wrapper lock_stat
-	run_monitor $LKP_SRC/monitors/wrapper latency_stats
-	run_monitor $LKP_SRC/monitors/wrapper softirqs
-	run_monitor $LKP_SRC/monitors/one-shot/wrapper bdi_dev_mapping
-	run_monitor $LKP_SRC/monitors/wrapper diskstats
-	run_monitor $LKP_SRC/monitors/wrapper nfsstat
-	run_monitor $LKP_SRC/monitors/wrapper cpuidle
-	run_monitor $LKP_SRC/monitors/wrapper cpufreq-stats
-	run_monitor $LKP_SRC/monitors/wrapper turbostat
-	run_monitor $LKP_SRC/monitors/wrapper sched_debug
-	run_monitor $LKP_SRC/monitors/wrapper perf-stat
-	run_monitor $LKP_SRC/monitors/wrapper mpstat
-	run_monitor pmeter_server='lkp-nhm-dp2' pmeter_device='yokogawa-wt310' $LKP_SRC/monitors/wrapper pmeter
 	run_monitor $LKP_SRC/monitors/wrapper oom-killer
 	run_monitor $LKP_SRC/monitors/plain/watchdog
 
-	run_test test='lru-file-readonce' $LKP_SRC/tests/wrapper vm-scalability
+	run_test group='kselftests-01' $LKP_SRC/tests/wrapper kernel_selftests
 }
 
 extract_stats()
 {
-	$LKP_SRC/stats/wrapper perf-profile
-	$LKP_SRC/stats/wrapper vm-scalability
+	$LKP_SRC/stats/wrapper kernel_selftests
 	$LKP_SRC/stats/wrapper kmsg
-	$LKP_SRC/stats/wrapper boot-time
-	$LKP_SRC/stats/wrapper iostat
-	$LKP_SRC/stats/wrapper vmstat
-	$LKP_SRC/stats/wrapper numa-numastat
-	$LKP_SRC/stats/wrapper numa-vmstat
-	$LKP_SRC/stats/wrapper numa-meminfo
-	$LKP_SRC/stats/wrapper proc-vmstat
-	$LKP_SRC/stats/wrapper meminfo
-	$LKP_SRC/stats/wrapper slabinfo
-	$LKP_SRC/stats/wrapper interrupts
-	$LKP_SRC/stats/wrapper lock_stat
-	$LKP_SRC/stats/wrapper latency_stats
-	$LKP_SRC/stats/wrapper softirqs
-	$LKP_SRC/stats/wrapper diskstats
-	$LKP_SRC/stats/wrapper nfsstat
-	$LKP_SRC/stats/wrapper cpuidle
-	$LKP_SRC/stats/wrapper turbostat
-	$LKP_SRC/stats/wrapper sched_debug
-	$LKP_SRC/stats/wrapper perf-stat
-	$LKP_SRC/stats/wrapper mpstat
-	$LKP_SRC/stats/wrapper pmeter
 
-	$LKP_SRC/stats/wrapper time vm-scalability.time
+	$LKP_SRC/stats/wrapper time kernel_selftests.time
 	$LKP_SRC/stats/wrapper time
 	$LKP_SRC/stats/wrapper dmesg
 	$LKP_SRC/stats/wrapper kmsg
@@ -7166,269 +7029,1854 @@ extract_stats()
 
 "$@"
 
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="job.yaml"
+--zx4FCpZtqtKETZ7O
+Content-Type: application/x-xz
+Content-Disposition: attachment; filename="dmesg.xz"
+Content-Transfer-Encoding: base64
 
----
+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
 
-#! jobs/vm-scalability.yaml
-suite: vm-scalability
-testcase: vm-scalability
-category: benchmark
-perf-profile: 
-runtime: 300s
-size: 
-vm-scalability:
-  test: lru-file-readonce
-job_origin: "/lkp/lkp/.src-20180412-090831/allot/cyclic:linux-next:master/lkp-bdw-ep2/vm-scalability.yaml"
+--zx4FCpZtqtKETZ7O
+Content-Type: text/plain; charset=utf8
+Content-Disposition: attachment; filename=kernel_selftests
+Content-Transfer-Encoding: quoted-printable
 
-#! queue options
-queue: bisect
-testbox: lkp-bdw-ep2
-tbox_group: lkp-bdw-ep2
-submit_id: 5ad6612f0b9a93f7fb0a5005
-job_file: "/lkp/scheduled/lkp-bdw-ep2/vm-scalability-300s-lru-file-readonce-performance-debian-x86_64-2016-08-31.cgz-a57a290bd38f64bde9b8f797600aee3925109061-20180418-63483-1jwq5cr-0.yaml"
-id: 5ae09ee8d332accc435d3fcd6b7975cc0d31b12a
+KERNEL SELFTESTS: linux_headers_dir is /usr/src/linux-headers-x86_64-rhel-7=
+=2E2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813
+2018-04-18 00:00:27 ln -sf /usr/bin/gcc-5 /usr/bin/gcc
+2018-04-18 00:00:28 ln -sf /usr/bin/clang-7 /usr/bin/clang
+2018-04-18 00:00:28 ln -sf /usr/bin/llc-7 /usr/bin/llc
 
-#! hosts/lkp-bdw-ep2
-model: Broadwell-EP
-nr_node: 2
-nr_cpu: 88
-memory: 128G
-nr_ssd_partitions: 1
-ssd_partitions: "/dev/disk/by-id/ata-INTEL_SSDSC2BW360H6_CVTR551405ZP360DGN-part1"
-swap_partitions: 
-rootfs_partition: "/dev/disk/by-id/ata-INTEL_SSDSC2BA800G4_BTHV539600YR800OGN-part1"
-brand: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+2018-04-18 00:00:28 chown lkp capabilities -R
+2018-04-18 00:00:28 su lkp -c make run_tests -C capabilities 2>&1
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/capabilities'
+gcc -O2 -g -std=3Dgnu99 -Wall    test_execve.c -lcap-ng -lrt -ldl -o /usr/s=
+rc/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813=
+/tools/testing/selftests/capabilities/test_execve
+gcc -O2 -g -std=3Dgnu99 -Wall    validate_cap.c -lcap-ng -lrt -ldl -o /usr/=
+src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a81=
+3/tools/testing/selftests/capabilities/validate_cap
+TAP version 13
+selftests: test_execve
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+# validate_cap:: Capabilities after execve were correct
+# validate_cap:: Capabilities after execve were correct
+# validate_cap:: Capabilities after execve were correct
+TAP version 13
+# [RUN]	+++ Tests with uid =3D=3D 0 +++
+# [NOTE]	Using a user namespace for tests
+# [RUN]	Root =3D> ep
+ok 1 Passed
+# Check cap_ambient manipulation rules
+ok 2 PR_CAP_AMBIENT_RAISE failed on non-inheritable cap
+ok 3 PR_CAP_AMBIENT_RAISE failed on non-permitted cap
+ok 4 PR_CAP_AMBIENT_RAISE worked
+ok 5 Basic manipulation appears to work
+# [RUN]	Root +i =3D> eip
+ok 6 Passed
+# [RUN]	UID 0 +ia =3D> eipa
+ok 7 Passed
+ok 8 # skip SUID/SGID tests (needs privilege)
+Pass 7 Fail 0 Xfail 0 Xpass 0 Skip 1 Error 0
+1..8
+# validate_cap:: Capabilities after execve were correct
+# validate_cap:: Capabilities after execve were correct
+# validate_cap:: Capabilities after execve were correct
+TAP version 13
+# =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+# [RUN]	+++ Tests with uid !=3D 0 +++
+# [NOTE]	Using a user namespace for tests
+# [RUN]	Non-root =3D> no caps
+ok 1 Passed
+# Check cap_ambient manipulation rules
+ok 2 PR_CAP_AMBIENT_RAISE failed on non-inheritable cap
+ok 3 PR_CAP_AMBIENT_RAISE failed on non-permitted cap
+ok 4 PR_CAP_AMBIENT_RAISE worked
+ok 5 Basic manipulation appears to work
+# [RUN]	Non-root +i =3D> i
+ok 6 Passed
+# [RUN]	UID 1 +ia =3D> eipa
+ok 7 Passed
+ok 8 # skip SUID/SGID tests (needs privilege)
+Pass 7 Fail 0 Xfail 0 Xpass 0 Skip 1 Error 0
+1..8
+TAP version 13
+# =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+ok 1..1 selftests: test_execve [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/capabilities'
 
-#! include/category/benchmark
-kmsg: 
-boot-time: 
-iostat: 
-heartbeat: 
-vmstat: 
-numa-numastat: 
-numa-vmstat: 
-numa-meminfo: 
-proc-vmstat: 
-proc-stat: 
-meminfo: 
-slabinfo: 
-interrupts: 
-lock_stat: 
-latency_stats: 
-softirqs: 
-bdi_dev_mapping: 
-diskstats: 
-nfsstat: 
-cpuidle: 
-cpufreq-stats: 
-turbostat: 
-sched_debug: 
-perf-stat: 
-mpstat: 
+2018-04-18 00:00:30 make run_tests -C cpu-hotplug
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/cpu-hotplug'
+TAP version 13
+selftests: cpu-on-off-test.sh
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+pid 948's current affinity mask: 3
+pid 948's new affinity mask: 1
+CPU online/offline summary:
+	 Cpus in online state: 0-1
+	 Cpus in offline state: 0
+Limited scope test: one hotplug cpu
+	 (leaves cpu in the original state):
+	 online to offline to online: cpu 1
+ok 1..1 selftests: cpu-on-off-test.sh [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/cpu-hotplug'
 
-#! include/category/ALL
-cpufreq_governor: performance
+2018-04-18 00:00:30 make run_tests -C cpufreq
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/cpufreq'
+TAP version 13
+selftests: main.sh
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+pid 1002's current affinity mask: 3
+pid 1002's new affinity mask: 1
+not ok 1..1 selftests:  main.sh [FAIL]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/cpufreq'
+ignored_by_lkp efivarfs test: /sys/firmware/efi dir does not exist
 
-#! include/vm-scalability
-need_kconfig: CONFIG_BLK_DEV_LOOP
+2018-04-18 00:00:30 make run_tests -C exec
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/exec'
+gcc -Wall    execveat.c  -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7=
+f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/exec/execveat
+cd /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b173=
+3f117a813/tools/testing/selftests/exec && ln -s -f execveat execveat.symlink
+cp /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b173=
+3f117a813/tools/testing/selftests/exec/execveat /usr/src/linux-selftests-x8=
+6_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selfte=
+sts/exec/execveat.denatured
+chmod -x /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d9=
+57b1733f117a813/tools/testing/selftests/exec/execveat.denatured
+echo '#!/bin/sh' > /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd=
+5fd54a77d957b1733f117a813/tools/testing/selftests/exec/script
+echo 'exit $*' >> /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5=
+fd54a77d957b1733f117a813/tools/testing/selftests/exec/script
+chmod +x /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d9=
+57b1733f117a813/tools/testing/selftests/exec/script
+mkdir -p /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d9=
+57b1733f117a813/tools/testing/selftests/exec/subdir
+TAP version 13
+selftests: execveat
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+/bin/sh: 0: Can't open /dev/fd/7/usr/src/linux-selftests-x86_64-rhel-7.2-d5=
+edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/exec/xxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy=
+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy=
+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+Check success of execveat(4, '../execveat', 0)... [OK]
+Check success of execveat(6, 'execveat', 0)... [OK]
+Check success of execveat(8, 'execveat', 0)... [OK]
+Check success of execveat(-100, '/usr/src/linux-selft...ftests/exec/execvea=
+t', 0)... [OK]
+Check success of execveat(99, '/usr/src/linux-selft...ftests/exec/execveat'=
+, 0)... [OK]
+Check success of execveat(10, '', 4096)... [OK]
+Check success of execveat(19, '', 4096)... [OK]
+Check success of execveat(11, '', 4096)... [OK]
+Check success of execveat(16, '', 4096)... [OK]
+Check success of execveat(16, '', 4096)... [OK]
+Check success of execveat(17, '', 4096)... [OK]
+Check failure of execveat(10, '', 0) with ENOENT... [OK]
+Check failure of execveat(10, '(null)', 4096) with EFAULT... [OK]
+Check success of execveat(6, 'execveat.symlink', 0)... [OK]
+Check success of execveat(8, 'execveat.symlink', 0)... [OK]
+Check success of execveat(-100, '/usr/src/linux-selft...xec/execveat.symlin=
+k', 0)... [OK]
+Check success of execveat(12, '', 4096)... [OK]
+Check success of execveat(12, '', 4352)... [OK]
+Check failure of execveat(6, 'execveat.symlink', 256) with ELOOP... [OK]
+Check failure of execveat(8, 'execveat.symlink', 256) with ELOOP... [OK]
+Check failure of execveat(-100, '/usr/src/linux-selftests-x86_64-rhel-7.2-d=
+5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/exec/execve=
+at.symlink', 256) with ELOOP... [OK]
+Check success of execveat(4, '../script', 0)... [OK]
+Check success of execveat(6, 'script', 0)... [OK]
+Check success of execveat(8, 'script', 0)... [OK]
+Check success of execveat(-100, '/usr/src/linux-selft...elftests/exec/scrip=
+t', 0)... [OK]
+Check success of execveat(15, '', 4096)... [OK]
+Check success of execveat(15, '', 4352)... [OK]
+Check failure of execveat(20, '', 4096) with ENOENT... [OK]
+Check failure of execveat(9, 'script', 0) with ENOENT... [OK]
+Check success of execveat(18, '', 4096)... [OK]
+Check success of execveat(18, '', 4096)... [OK]
+Check success of execveat(5, '../script', 0)... [OK]
+Check success of execveat(5, 'script', 0)... [OK]
+Check success of execveat(5, '../script', 0)... [OK]
+Check failure of execveat(5, 'script', 0) with ENOENT... [OK]
+Check failure of execveat(6, 'execveat', 65535) with EINVAL... [OK]
+Check failure of execveat(6, 'no-such-file', 0) with ENOENT... [OK]
+Check failure of execveat(8, 'no-such-file', 0) with ENOENT... [OK]
+Check failure of execveat(-100, 'no-such-file', 0) with ENOENT... [OK]
+Check failure of execveat(6, '', 4096) with EACCES... [OK]
+Check failure of execveat(6, 'Makefile', 0) with EACCES... [OK]
+Check failure of execveat(13, '', 4096) with EACCES... [OK]
+Check failure of execveat(14, '', 4096) with EACCES... [OK]
+Check failure of execveat(99, '', 4096) with EBADF... [OK]
+Check failure of execveat(99, 'execveat', 0) with EBADF... [OK]
+Check failure of execveat(10, 'execveat', 0) with ENOTDIR... [OK]
+Invoke copy of 'execveat' via filename of length 4094:
+Check success of execveat(21, '', 4096)... [OK]
+Check success of execveat(7, 'usr/src/linux-selfte...yyyyyyyyyyyyyyyyyyyy',=
+ 0)... [OK]
+Invoke copy of 'script' via filename of length 4094:
+Check success of execveat(22, '', 4096)... [OK]
+Check success of execveat(7, 'usr/src/linux-selfte...yyyyyyyyyyyyyyyyyyyy',=
+ 0)... [OK]
+ok 1..1 selftests: execveat [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/exec'
+ignored_by_lkp filesystems test
+2018-04-18 00:00:31 mv /lib/udev/rules.d/50-firmware.rules .
+2018-04-18 00:00:31 /etc/init.d/udev restart
+Restarting udev (via systemctl): udev.service.
 
-#! include/queue/cyclic
-commit: a57a290bd38f64bde9b8f797600aee3925109061
+2018-04-18 00:00:31 make run_tests -C firmware
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/firmware'
+TAP version 13
+selftests: fw_filesystem.sh
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=2E/fw_filesystem.sh: timeout works
+=2E/fw_filesystem.sh: filesystem loading works
+=2E/fw_filesystem.sh: async filesystem loading works
 
-#! include/testbox/lkp-bdw-ep2
-pmeter:
-  pmeter_server: lkp-nhm-dp2
-  pmeter_device: yokogawa-wt310
+Testing with the file present...
+Batched request_firmware() try #1: OK
+Batched request_firmware() try #2: OK
+Batched request_firmware() try #3: OK
+Batched request_firmware() try #4: OK
+Batched request_firmware() try #5: OK
+Batched request_firmware_direct() try #1: OK
+Batched request_firmware_direct() try #2: OK
+Batched request_firmware_direct() try #3: OK
+Batched request_firmware_direct() try #4: OK
+Batched request_firmware_direct() try #5: OK
+Batched request_firmware_nowait(uevent=3Dtrue) try #1: OK
+Batched request_firmware_nowait(uevent=3Dtrue) try #2: OK
+Batched request_firmware_nowait(uevent=3Dtrue) try #3: OK
+Batched request_firmware_nowait(uevent=3Dtrue) try #4: OK
+Batched request_firmware_nowait(uevent=3Dtrue) try #5: OK
+Batched request_firmware_nowait(uevent=3Dfalse) try #1: OK
+Batched request_firmware_nowait(uevent=3Dfalse) try #2: OK
+Batched request_firmware_nowait(uevent=3Dfalse) try #3: OK
+Batched request_firmware_nowait(uevent=3Dfalse) try #4: OK
+Batched request_firmware_nowait(uevent=3Dfalse) try #5: OK
 
-#! default params
-kconfig: x86_64-rhel-7.2
-compiler: gcc-7
-rootfs: debian-x86_64-2016-08-31.cgz
-enqueue_time: 2018-04-18 05:03:43.916235126 +08:00
-_id: 5ad6612f0b9a93f7fb0a5005
-_rt: "/result/vm-scalability/300s-lru-file-readonce-performance/lkp-bdw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061"
+Testing with the file missing...
+Batched request_firmware() nofile try #1: OK
+Batched request_firmware() nofile try #2: OK
+Batched request_firmware() nofile try #3: OK
+Batched request_firmware() nofile try #4: OK
+Batched request_firmware() nofile try #5: OK
+Batched request_firmware_direct() nofile try #1: OK
+Batched request_firmware_direct() nofile try #2: OK
+Batched request_firmware_direct() nofile try #3: OK
+Batched request_firmware_direct() nofile try #4: OK
+Batched request_firmware_direct() nofile try #5: OK
+Batched request_firmware_nowait(uevent=3Dtrue) nofile try #1: OK
+Batched request_firmware_nowait(uevent=3Dtrue) nofile try #2: OK
+Batched request_firmware_nowait(uevent=3Dtrue) nofile try #3: OK
+Batched request_firmware_nowait(uevent=3Dtrue) nofile try #4: OK
+Batched request_firmware_nowait(uevent=3Dtrue) nofile try #5: OK
+Batched request_firmware_nowait(uevent=3Dfalse) nofile try #1: OK
+Batched request_firmware_nowait(uevent=3Dfalse) nofile try #2: OK
+Batched request_firmware_nowait(uevent=3Dfalse) nofile try #3: OK
+Batched request_firmware_nowait(uevent=3Dfalse) nofile try #4: OK
+Batched request_firmware_nowait(uevent=3Dfalse) nofile try #5: OK
+ok 1..1 selftests: fw_filesystem.sh [PASS]
+selftests: fw_fallback.sh
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=2E/fw_fallback.sh: timeout works
+=2E/fw_fallback.sh: firmware comparison works
+=2E/fw_fallback.sh: fallback mechanism works
+=2E/fw_fallback.sh: cancelling fallback mechanism works
+=2E/fw_fallback.sh: SIGCHLD on sync ignored as expected
+=2E/fw_fallback.sh: custom fallback loading mechanism works
+=2E/fw_fallback.sh: custom fallback loading mechanism works
+=2E/fw_fallback.sh: cancelling custom fallback mechanism works
+ok 1..2 selftests: fw_fallback.sh [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/firmware'
+2018-04-18 00:01:32 mv 50-firmware.rules /lib/udev/rules.d/50-firmware.rules
 
-#! schedule options
-user: lkp
-head_commit: d4de96abc879d1eaa6e487df361081934d30df93
-base_commit: 0adb32858b0bddf4ada5f364a84ed60b196dbcda
-branch: linux-next/master
-result_root: "/result/vm-scalability/300s-lru-file-readonce-performance/lkp-bdw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/0"
-LKP_SERVER: inn
-max_uptime: 1500
-initrd: "/osimage/debian/debian-x86_64-2016-08-31.cgz"
-bootloader_append:
-- root=/dev/ram0
-- user=lkp
-- job=/lkp/scheduled/lkp-bdw-ep2/vm-scalability-300s-lru-file-readonce-performance-debian-x86_64-2016-08-31.cgz-a57a290bd38f64bde9b8f797600aee3925109061-20180418-63483-1jwq5cr-0.yaml
-- ARCH=x86_64
-- kconfig=x86_64-rhel-7.2
-- branch=linux-next/master
-- commit=a57a290bd38f64bde9b8f797600aee3925109061
-- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/vmlinuz-4.16.0-11359-ga57a290
-- max_uptime=1500
-- RESULT_ROOT=/result/vm-scalability/300s-lru-file-readonce-performance/lkp-bdw-ep2/debian-x86_64-2016-08-31.cgz/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/0
-- LKP_SERVER=inn
-- debug
-- apic=debug
-- sysrq_always_enabled
-- rcupdate.rcu_cpu_stall_timeout=100
-- net.ifnames=0
-- printk.devkmsg=on
-- panic=-1
-- softlockup_panic=1
-- nmi_watchdog=panic
-- oops=panic
-- load_ramdisk=2
-- prompt_ramdisk=0
-- drbd.minor_count=8
-- systemd.log_level=err
-- ignore_loglevel
-- console=tty0
-- earlyprintk=ttyS0,115200
-- console=ttyS0,115200
-- vga=normal
-- rw
-modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/modules.cgz"
-bm_initrd: "/osimage/deps/debian-x86_64-2016-08-31.cgz/run-ipconfig_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/lkp_2017-12-14.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/rsync-rootfs_2016-11-15.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/perf_2018-04-04.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/perf-x86_64-f8cf2f16a7c9_2018-04-09.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/vm-scalability_2018-02-09.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/vm-scalability-x86_64-1.0-0_2018-02-09.cgz,/osimage/pkg/common/vm-scalability-x86_64.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/mpstat_2017-12-25.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/turbostat_2016-11-15.cgz,/osimage/pkg/debian-x86_64-2016-08-31.cgz/turbostat-x86_64-d5256b2_2017-06-20.cgz,/osimage/deps/debian-x86_64-2016-08-31.cgz/hw_2016-11-15.cgz"
-lkp_initrd: "/lkp/lkp/lkp-x86_64.cgz"
-site: inn
+2018-04-18 00:01:32 make run_tests -C ftrace
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/ftrace'
+TAP version 13
+selftests: ftracetest
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=3D=3D=3D Ftrace unit tests =3D=3D=3D
+[1] Basic trace file check	[PASS]
+[2] Basic test for tracers	[PASS]
+[3] Basic trace clock test	[PASS]
+[4] Basic event tracing check	[PASS]
+[5] event tracing - enable/disable with event level files	[PASS]
+[6] event tracing - restricts events based on pid	[PASS]
+[7] event tracing - enable/disable with subsystem level files	[PASS]
+[8] event tracing - enable/disable with top level files	[PASS]
+[9] ftrace - function graph filters with stack tracer	[PASS]
+[10] ftrace - function graph filters	[PASS]
+[11] ftrace - function glob filters	[PASS]
+[12] ftrace - function pid filters	[PASS]
+[13] ftrace - test for function event triggers	[PASS]
+[14] ftrace - function profiler with function tracing	[PASS]
+[15] ftrace - test reading of set_ftrace_filter	[PASS]
+[16] ftrace - test for function traceon/off triggers	[PASS]
+[17] Test creation and deletion of trace instances while setting an event	[=
+PASS]
+[18] Test creation and deletion of trace instances	[PASS]
+[19] Kprobe dynamic event - adding and removing	[PASS]
+[20] Kprobe dynamic event - busy event check	[PASS]
+[21] Kprobe dynamic event with arguments	[PASS]
+[22] Kprobes event arguments with types	[PASS]
+[23] Kprobe event auto/manual naming	[PASS]
+[24] Kprobe dynamic event with function tracer	[PASS]
+[25] Kprobe dynamic event - probing module	[PASS]
+[26] Kretprobe dynamic event with arguments	[PASS]
+[27] Kretprobe dynamic event with maxactive	[PASS]
+[28] Register/unregister many kprobe events	[PASS]
+[29] event trigger - test event enable/disable trigger	[PASS]
+[30] event trigger - test trigger filter	[PASS]
+[31] event trigger - test histogram modifiers	[PASS]
+[32] event trigger - test histogram trigger	[PASS]
+[33] event trigger - test multiple histogram triggers	[PASS]
+[34] event trigger - test snapshot-trigger	[PASS]
+[35] event trigger - test stacktrace-trigger	[PASS]
+[36] event trigger - test traceon/off trigger	[PASS]
+[37] (instance)  Basic test for tracers	[PASS]
+[38] (instance)  Basic trace clock test	[PASS]
+[39] (instance)  event tracing - enable/disable with event level files	[PAS=
+S]
+[40] (instance)  event tracing - restricts events based on pid	[PASS]
+[41] (instance)  event tracing - enable/disable with subsystem level files	=
+[PASS]
+[42] (instance)  ftrace - test for function event triggers	[PASS]
+[43] (instance)  ftrace - test for function traceon/off triggers	[PASS]
+[44] (instance)  event trigger - test event enable/disable trigger	[PASS]
+[45] (instance)  event trigger - test trigger filter	[PASS]
+[46] (instance)  event trigger - test histogram modifiers	[PASS]
+[47] (instance)  event trigger - test histogram trigger	[PASS]
+[48] (instance)  event trigger - test multiple histogram triggers	[PASS]
 
-#! /lkp/lkp/.src-20180412-090831/include/site/inn
-LKP_CGI_PORT: 80
-LKP_CIFS_PORT: 139
-oom-killer: 
-watchdog: 
+# of passed:  48
+# of failed:  0
+# of unresolved:  0
+# of untested:  0
+# of unsupported:  0
+# of xfailed:  0
+# of undefined(test bug):  0
+ok 1..1 selftests: ftracetest [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/ftrace'
 
-#! runtime status
-repeat_to: 2
+2018-04-18 00:02:57 make run_tests -C futex
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/futex'
+make[1]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb=
+7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/futex/functiona=
+l'
+gcc  -g -O2 -Wall -D_GNU_SOURCE -pthread -I../include -I../../   -pthread -=
+lrt  futex_wait_timeout.c ../include/futextest.h ../include/atomic.h ../inc=
+lude/logging.h  -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd=
+5fd54a77d957b1733f117a813/tools/testing/selftests/futex/functional/futex_wa=
+it_timeout
+gcc  -g -O2 -Wall -D_GNU_SOURCE -pthread -I../include -I../../   -pthread -=
+lrt  futex_wait_wouldblock.c ../include/futextest.h ../include/atomic.h ../=
+include/logging.h  -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab=
+9fd5fd54a77d957b1733f117a813/tools/testing/selftests/futex/functional/futex=
+_wait_wouldblock
+gcc  -g -O2 -Wall -D_GNU_SOURCE -pthread -I../include -I../../   -pthread -=
+lrt  futex_requeue_pi.c ../include/futextest.h ../include/atomic.h ../inclu=
+de/logging.h  -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5f=
+d54a77d957b1733f117a813/tools/testing/selftests/futex/functional/futex_requ=
+eue_pi
+gcc  -g -O2 -Wall -D_GNU_SOURCE -pthread -I../include -I../../   -pthread -=
+lrt  futex_requeue_pi_signal_restart.c ../include/futextest.h ../include/at=
+omic.h ../include/logging.h  -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5=
+edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/futex/functi=
+onal/futex_requeue_pi_signal_restart
+gcc  -g -O2 -Wall -D_GNU_SOURCE -pthread -I../include -I../../   -pthread -=
+lrt  futex_requeue_pi_mismatched_ops.c ../include/futextest.h ../include/at=
+omic.h ../include/logging.h  -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5=
+edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/futex/functi=
+onal/futex_requeue_pi_mismatched_ops
+gcc  -g -O2 -Wall -D_GNU_SOURCE -pthread -I../include -I../../   -pthread -=
+lrt  futex_wait_uninitialized_heap.c ../include/futextest.h ../include/atom=
+ic.h ../include/logging.h  -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5ed=
+b7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/futex/function=
+al/futex_wait_uninitialized_heap
+gcc  -g -O2 -Wall -D_GNU_SOURCE -pthread -I../include -I../../   -pthread -=
+lrt  futex_wait_private_mapped_file.c ../include/futextest.h ../include/ato=
+mic.h ../include/logging.h  -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5e=
+db7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/futex/functio=
+nal/futex_wait_private_mapped_file
+make[1]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7=
+f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/futex/functional'
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
 
-#! user overrides
-tbox_host_file: "/lkp/lkp/.src-20180417-175914/hosts/lkp-bdw-ep2"
-verify_tbox_config: 'true'
-kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/a57a290bd38f64bde9b8f797600aee3925109061/vmlinuz-4.16.0-11359-ga57a290"
-dequeue_time: 2018-04-18 05:07:44.025775988 +08:00
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D0 owner=3D0 timeout=3D0ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D0 owner=3D0 timeout=3D0ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D1 owner=3D0 timeout=3D0ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D0 owner=3D1 timeout=3D0ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D1 owner=3D0 timeout=3D0ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D0 owner=3D1 timeout=3D0ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D1 owner=3D0 timeout=3D5000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D1 owner=3D0 timeout=3D5000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D1 owner=3D0 timeout=3D500000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D1 owner=3D0 timeout=3D500000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D0 owner=3D0 timeout=3D5000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D0 owner=3D0 timeout=3D5000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D0 owner=3D0 timeout=3D500000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D0 owner=3D0 timeout=3D500000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D0 owner=3D1 timeout=3D5000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D1 owner=3D0 timeout=3D5000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D0 owner=3D1 timeout=3D500000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D1 owner=3D0 timeout=3D500000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D1 locked=3D1 owner=3D0 timeout=3D2000000000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_requeue_pi: Test requeue functionality
+# 	Arguments: broadcast=3D0 locked=3D1 owner=3D0 timeout=3D2000000000ns
+ok 1 futex-requeue-pi
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
 
-#! /lkp/lkp/.src-20180417-175914/include/site/inn
-job_state: finished
-loadavg: 29.12 33.81 15.44 1/770 7908
-start_time: '1523999327'
-end_time: '1523999559'
-version: "/lkp/lkp/.src-20180417-175914"
+TAP version 13
+# futex_requeue_pi_mismatched_ops: Detect mismatched requeue_pi operations
+ok 1 futex-requeue-pi-mismatched-ops
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
 
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=reproduce
+TAP version 13
+# futex_requeue_pi_signal_restart: Test signal handling during requeue_pi
+# 	Arguments: <none>
+ok 1 futex-requeue-pi-signal-restart
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
 
+TAP version 13
+# futex_wait_timeout: Block on a futex and wait for timeout
+# 	Arguments: timeout=3D100000ns
+ok 1 futex-wait-timeout
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
 
-for cpu_dir in /sys/devices/system/cpu/cpu[0-9]*
-do
-	online_file="$cpu_dir"/online
-	[ -f "$online_file" ] && [ "$(cat "$online_file")" -eq 0 ] && continue
+TAP version 13
+# futex_wait_wouldblock: Test the unexpected futex value in FUTEX_WAIT
+ok 1 futex-wait-wouldblock
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
 
-	file="$cpu_dir"/cpufreq/scaling_governor
-	[ -f "$file" ] && echo "performance" > "$file"
-done
+TAP version 13
+# futex_wait_uninitialized_heap: Test the uninitialized futex value in FUTE=
+X_WAIT
+ok 1 futex-wait-uninitialized-heap
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+TAP version 13
+# futex_wait_private_mapped_file: Test the futex value of private file mapp=
+ings in FUTEX_WAIT
+ok 1 futex-wait-private-mapped-file
+Pass 1 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..1
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/futex'
 
-cd /lkp/benchmarks/vm-scalability
- mount -t tmpfs -o size=100% vm-scalability-tmp /tmp/vm-scalability-tmp
- truncate -s 135059169280 /tmp/vm-scalability-tmp/vm-scalability.img
- mkfs.xfs -q /tmp/vm-scalability-tmp/vm-scalability.img
- mount -o loop /tmp/vm-scalability-tmp/vm-scalability.img /tmp/vm-scalability-tmp/vm-scalability
- ./case-lru-file-readonce
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-1 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-2 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-3 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-4 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-5 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-6 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-7 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-8 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-9 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-10 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-11 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-12 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-13 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-14 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-15 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-16 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-17 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-18 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-19 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-20 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-21 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-22 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-23 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-24 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-25 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-26 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-27 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-28 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-29 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-30 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-31 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-32 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-33 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-34 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-35 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-36 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-37 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-38 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-39 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-40 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-41 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-42 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-43 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-44 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-45 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-46 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-47 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-48 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-49 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-50 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-51 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-52 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-53 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-54 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-55 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-56 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-57 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-58 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-59 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-60 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-61 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-62 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-63 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-64 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-65 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-66 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-67 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-68 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-69 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-70 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-71 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-72 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-73 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-74 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-75 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-76 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-77 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-78 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-79 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-80 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-81 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-82 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-83 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-84 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-85 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-86 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-87 -s 49977801262
- truncate /tmp/vm-scalability-tmp/vm-scalability/sparse-lru-file-readonce-88 -s 49977801262
- umount /tmp/vm-scalability-tmp/vm-scalability
- rm /tmp/vm-scalability-tmp/vm-scalability.img
- umount /tmp/vm-scalability-tmp
+2018-04-18 00:03:11 make run_tests -C gpio
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/gpio'
+make ARCH=3D CROSS_COMPILE=3D -C ../../../gpio
+make[1]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb=
+7f8e7ab9fd5fd54a77d957b1733f117a813/tools/gpio'
+mkdir -p include/linux 2>&1 || true
+ln -sf /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957=
+b1733f117a813/tools/gpio/../../include/uapi/linux/gpio.h include/linux/gpio=
+=2Eh
+make -f /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d95=
+7b1733f117a813/tools/build/Makefile.build dir=3D. obj=3Dlsgpio
+make[2]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb=
+7f8e7ab9fd5fd54a77d957b1733f117a813/tools/gpio'
+  CC       lsgpio.o
+  CC       gpio-utils.o
+  LD       lsgpio-in.o
+make[2]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7=
+f8e7ab9fd5fd54a77d957b1733f117a813/tools/gpio'
+  LINK     lsgpio
+make -f /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d95=
+7b1733f117a813/tools/build/Makefile.build dir=3D. obj=3Dgpio-hammer
+make[2]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb=
+7f8e7ab9fd5fd54a77d957b1733f117a813/tools/gpio'
+  CC       gpio-hammer.o
+  LD       gpio-hammer-in.o
+make[2]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7=
+f8e7ab9fd5fd54a77d957b1733f117a813/tools/gpio'
+  LINK     gpio-hammer
+make -f /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d95=
+7b1733f117a813/tools/build/Makefile.build dir=3D. obj=3Dgpio-event-mon
+make[2]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb=
+7f8e7ab9fd5fd54a77d957b1733f117a813/tools/gpio'
+  CC       gpio-event-mon.o
+gpio-event-mon.c: In function =E2=80=98monitor_device=E2=80=99:
+gpio-event-mon.c:102:19: warning: format =E2=80=98%lu=E2=80=99 expects argu=
+ment of type =E2=80=98long unsigned int=E2=80=99, but argument 3 has type =
+=E2=80=98__u64 {aka long long unsigned int}=E2=80=99 [-Wformat=3D]
+   fprintf(stdout, "GPIO EVENT %" PRIu64 ": ", event.timestamp);
+                   ^
+  LD       gpio-event-mon-in.o
+make[2]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7=
+f8e7ab9fd5fd54a77d957b1733f117a813/tools/gpio'
+  LINK     gpio-event-mon
+make[1]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7=
+f8e7ab9fd5fd54a77d957b1733f117a813/tools/gpio'
+gcc -O2 -g -std=3Dgnu99 -Wall -I../../../../usr/include/    gpio-mockup-cha=
+rdev.c ../../../gpio/gpio-utils.o ../../../../usr/include/linux/gpio.h  -lm=
+ount -I/usr/include/libmount -o gpio-mockup-chardev
+TAP version 13
+selftests: gpio-mockup.sh
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+1.  Test dynamic allocation of gpio successful means insert gpiochip and
+    manipulate gpio pin successful
+GPIO gpio-mockup test with ranges: <-1,32>:=20
+-1,32     =20
+gpio<gpio-mockup> test failed
+Test gpiochip gpio-mockup: GPIO gpio-mockup test with ranges: <-1,32,-1,32>=
+:=20
+-1,32,-1,32=20
+gpio<gpio-mockup> test failed
+Test gpiochip gpio-mockup: GPIO gpio-mockup test with ranges: <-1,32,-1,32,=
+-1,32>:=20
+-1,32,-1,32,-1,32=20
+gpio<gpio-mockup> test failed
+Test gpiochip gpio-mockup: 3.  Error test: successful means insert gpiochip=
+ failed
+3.1 Test number of gpio overflow
+GPIO gpio-mockup test with ranges: <-1,32,-1,1024>:=20
+-1,32,-1,1024=20
+Test gpiochip gpio-mockup: Invalid test successful
+GPIO test PASS
+ok 1..1 selftests: gpio-mockup.sh [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/gpio'
+ia64 test: not in Makefile
+2018-04-18 00:03:13 make TARGETS=3Dia64
+make[1]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb=
+7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/ia64'
+Makefile:9: warning: overriding recipe for target 'clean'
+=2E./lib.mk:97: warning: ignoring old recipe for target 'clean'
+gcc     aliasing-test.c   -o aliasing-test
+make[1]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7=
+f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/ia64'
 
---ew6BAiZeqk4r7MaW--
+2018-04-18 00:03:13 make run_tests -C ia64
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/ia64'
+Makefile:9: warning: overriding recipe for target 'clean'
+=2E./lib.mk:97: warning: ignoring old recipe for target 'clean'
+TAP version 13
+selftests: aliasing-test
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+PASS: /dev/mem 0x0-0xa0000 is readable
+PASS: /dev/mem 0xa0000-0xc0000 is mappable
+PASS: /dev/mem 0xc0000-0x100000 is readable
+PASS: /dev/mem 0x0-0x100000 is mappable
+PASS: /sys/devices/pci0000:00/0000:00:02.0/rom read 39422 bytes
+PASS: /sys/devices/pci0000:00/0000:00:03.0/rom read 231422 bytes
+PASS: /proc/bus/pci/00/00.0 0x0-0xa0000 not mappable
+PASS: /proc/bus/pci/00/01.0 0x0-0xa0000 not mappable
+PASS: /proc/bus/pci/00/01.1 0x0-0xa0000 not mappable
+PASS: /proc/bus/pci/00/01.3 0x0-0xa0000 not mappable
+PASS: /proc/bus/pci/00/02.0 0x0-0xa0000 not mappable
+PASS: /proc/bus/pci/00/03.0 0x0-0xa0000 not mappable
+PASS: /proc/bus/pci/00/04.0 0x0-0xa0000 not mappable
+PASS: /proc/bus/pci/00/05.0 0x0-0xa0000 not mappable
+PASS: /proc/bus/pci/00/06.0 0x0-0xa0000 not mappable
+PASS: /proc/bus/pci/00/00.0 0xa0000-0xc0000 not mappable
+PASS: /proc/bus/pci/00/01.0 0xa0000-0xc0000 not mappable
+PASS: /proc/bus/pci/00/01.1 0xa0000-0xc0000 not mappable
+PASS: /proc/bus/pci/00/01.3 0xa0000-0xc0000 not mappable
+PASS: /proc/bus/pci/00/02.0 0xa0000-0xc0000 not mappable
+PASS: /proc/bus/pci/00/03.0 0xa0000-0xc0000 not mappable
+PASS: /proc/bus/pci/00/04.0 0xa0000-0xc0000 not mappable
+PASS: /proc/bus/pci/00/05.0 0xa0000-0xc0000 not mappable
+PASS: /proc/bus/pci/00/06.0 0xa0000-0xc0000 not mappable
+PASS: /proc/bus/pci/00/00.0 0xc0000-0x100000 not mappable
+PASS: /proc/bus/pci/00/01.0 0xc0000-0x100000 not mappable
+PASS: /proc/bus/pci/00/01.1 0xc0000-0x100000 not mappable
+PASS: /proc/bus/pci/00/01.3 0xc0000-0x100000 not mappable
+PASS: /proc/bus/pci/00/02.0 0xc0000-0x100000 not mappable
+PASS: /proc/bus/pci/00/03.0 0xc0000-0x100000 not mappable
+PASS: /proc/bus/pci/00/04.0 0xc0000-0x100000 not mappable
+PASS: /proc/bus/pci/00/05.0 0xc0000-0x100000 not mappable
+PASS: /proc/bus/pci/00/06.0 0xc0000-0x100000 not mappable
+PASS: /proc/bus/pci/00/00.0 0x0-0x100000 not mappable
+PASS: /proc/bus/pci/00/01.0 0x0-0x100000 not mappable
+PASS: /proc/bus/pci/00/01.1 0x0-0x100000 not mappable
+PASS: /proc/bus/pci/00/01.3 0x0-0x100000 not mappable
+PASS: /proc/bus/pci/00/02.0 0x0-0x100000 not mappable
+PASS: /proc/bus/pci/00/03.0 0x0-0x100000 not mappable
+PASS: /proc/bus/pci/00/04.0 0x0-0x100000 not mappable
+PASS: /proc/bus/pci/00/05.0 0x0-0x100000 not mappable
+PASS: /proc/bus/pci/00/06.0 0x0-0x100000 not mappable
+ok 1..1 selftests: aliasing-test [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/ia64'
+
+2018-04-18 00:03:14 make run_tests -C intel_pstate
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/intel_pstate'
+gcc  -Wall -D_GNU_SOURCE    msr.c  -lm -o /usr/src/linux-selftests-x86_64-r=
+hel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/in=
+tel_pstate/msr
+gcc  -Wall -D_GNU_SOURCE    aperf.c  -lm -o /usr/src/linux-selftests-x86_64=
+-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/=
+intel_pstate/aperf
+TAP version 13
+selftests: run.sh
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Setting maximum frequency to 0
+launching aperf load on 0
+launching aperf load on 1
+sleeping for 5 seconds
+cat: /sys/devices/system/cpu/intel_pstate/max_perf_pct: No such file or dir=
+ectory
+waiting for job id 5589
+runTime: 36.11
+freq:   20531
+runTime: 36.30
+freq:   23706
+waiting for job id 5590
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+The marketing frequency of the cpu is 2270 MHz
+The maximum frequency of the cpu is 0 MHz
+The minimum frequency of the cpu is 0 MHz
+Target      Actual      Difference     MSR(0x199)     max_perf_pct
+=2E/run.sh: line 110: *0: syntax error: operand expected (error token is "*=
+0")
+ok 1..1 selftests: run.sh [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/intel_pstate'
+
+2018-04-18 00:03:51 make run_tests -C ipc
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/ipc'
+gcc -DCONFIG_X86_64 -D__x86_64__ -I../../../../usr/include/    msgque.c  -o=
+ /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f=
+117a813/tools/testing/selftests/ipc/msgque
+msgque.c: In function =E2=80=98restore_queue=E2=80=99:
+msgque.c:52:7: warning: implicit declaration of function =E2=80=98msgget=E2=
+=80=99 [-Wimplicit-function-declaration]
+  id =3D msgget(msgque->key, msgque->mode | IPC_CREAT | IPC_EXCL);
+       ^
+msgque.c:66:7: warning: implicit declaration of function =E2=80=98msgsnd=E2=
+=80=99 [-Wimplicit-function-declaration]
+   if (msgsnd(msgque->msq_id, &msgque->messages[i].mtype,
+       ^
+msgque.c:76:6: warning: implicit declaration of function =E2=80=98msgctl=E2=
+=80=99 [-Wimplicit-function-declaration]
+  if (msgctl(id, IPC_RMID, 0))
+      ^
+msgque.c: In function =E2=80=98check_and_destroy_queue=E2=80=99:
+msgque.c:87:9: warning: implicit declaration of function =E2=80=98msgrcv=E2=
+=80=99 [-Wimplicit-function-declaration]
+   ret =3D msgrcv(msgque->msq_id, &message.mtype, MAX_MSG_SIZE,
+         ^
+msgque.c: In function =E2=80=98main=E2=80=99:
+msgque.c:204:15: warning: implicit declaration of function =E2=80=98ftok=E2=
+=80=99 [-Wimplicit-function-declaration]
+  msgque.key =3D ftok(argv[0], 822155650);
+               ^
+TAP version 13
+selftests: msgque
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..0
+ok 1..1 selftests: msgque [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/ipc'
+
+2018-04-18 00:03:51 make run_tests -C kcmp
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kcmp'
+gcc -I../../../../usr/include/    kcmp_test.c  -o /usr/src/linux-selftests-=
+x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/self=
+tests/kcmp/kcmp_test
+TAP version 13
+selftests: kcmp_test
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+pid1:   5719 pid2:   5720 FD:  1 FILES:  1 VM:  2 FS:  1 SIGHAND:  2 IO:  0=
+ SYSVSEM:  0 INV: -1
+PASS: 0 returned as expected
+PASS: 0 returned as expected
+PASS: 0 returned as expected
+Pass 3 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..3
+Pass 3 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..3
+Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+1..0
+ok 1..1 selftests: kcmp_test [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kcmp'
+kmod test: not in Makefile
+2018-04-18 00:03:52 make TARGETS=3Dkmod
+make[1]: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb=
+7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kmod'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7=
+f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kmod'
+
+2018-04-18 00:03:52 make run_tests -C kmod
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kmod'
+TAP version 13
+selftests: kmod.sh
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Wed Apr 18 00:03:52 CST 2018
+Running test: kmod_test_0001 - run #0
+kmod_test_0001_driver: OK! - loading kmod test
+kmod_test_0001_driver: OK! - Return value: 256 (MODULE_NOT_FOUND), expected=
+ MODULE_NOT_FOUND
+kmod_test_0001_fs: OK! - loading kmod test
+kmod_test_0001_fs: OK! - Return value: -22 (-EINVAL), expected -EINVAL
+Wed Apr 18 00:03:52 CST 2018
+Running test: kmod_test_0001 - run #1
+kmod_test_0001_driver: OK! - loading kmod test
+kmod_test_0001_driver: OK! - Return value: 256 (MODULE_NOT_FOUND), expected=
+ MODULE_NOT_FOUND
+kmod_test_0001_fs: OK! - loading kmod test
+kmod_test_0001_fs: OK! - Return value: -22 (-EINVAL), expected -EINVAL
+Wed Apr 18 00:03:52 CST 2018
+Running test: kmod_test_0001 - run #2
+kmod_test_0001_driver: OK! - loading kmod test
+kmod_test_0001_driver: OK! - Return value: 256 (MODULE_NOT_FOUND), expected=
+ MODULE_NOT_FOUND
+kmod_test_0001_fs: OK! - loading kmod test
+kmod_test_0001_fs: OK! - Return value: -22 (-EINVAL), expected -EINVAL
+Wed Apr 18 00:03:53 CST 2018
+Running test: kmod_test_0002 - run #0
+kmod_test_0002_driver: OK! - loading kmod test
+kmod_test_0002_driver: OK! - Return value: 256 (MODULE_NOT_FOUND), expected=
+ MODULE_NOT_FOUND
+kmod_test_0002_fs: OK! - loading kmod test
+kmod_test_0002_fs: OK! - Return value: -22 (-EINVAL), expected -EINVAL
+Wed Apr 18 00:03:53 CST 2018
+Running test: kmod_test_0002 - run #1
+kmod_test_0002_driver: OK! - loading kmod test
+kmod_test_0002_driver: OK! - Return value: 256 (MODULE_NOT_FOUND), expected=
+ MODULE_NOT_FOUND
+kmod_test_0002_fs: OK! - loading kmod test
+kmod_test_0002_fs: OK! - Return value: -22 (-EINVAL), expected -EINVAL
+Wed Apr 18 00:03:53 CST 2018
+Running test: kmod_test_0002 - run #2
+kmod_test_0002_driver: OK! - loading kmod test
+kmod_test_0002_driver: OK! - Return value: 256 (MODULE_NOT_FOUND), expected=
+ MODULE_NOT_FOUND
+kmod_test_0002_fs: OK! - loading kmod test
+kmod_test_0002_fs: OK! - Return value: -22 (-EINVAL), expected -EINVAL
+Wed Apr 18 00:03:54 CST 2018
+Running test: kmod_test_0003 - run #0
+kmod_test_0003: OK! - loading kmod test
+kmod_test_0003: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:54 CST 2018
+Running test: kmod_test_0004 - run #0
+kmod_test_0004: OK! - loading kmod test
+kmod_test_0004: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:54 CST 2018
+Running test: kmod_test_0005 - run #0
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:54 CST 2018
+Running test: kmod_test_0005 - run #1
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:55 CST 2018
+Running test: kmod_test_0005 - run #2
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:55 CST 2018
+Running test: kmod_test_0005 - run #3
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:55 CST 2018
+Running test: kmod_test_0005 - run #4
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:56 CST 2018
+Running test: kmod_test_0005 - run #5
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:56 CST 2018
+Running test: kmod_test_0005 - run #6
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:56 CST 2018
+Running test: kmod_test_0005 - run #7
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:56 CST 2018
+Running test: kmod_test_0005 - run #8
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:57 CST 2018
+Running test: kmod_test_0005 - run #9
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:57 CST 2018
+Running test: kmod_test_0006 - run #0
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:58 CST 2018
+Running test: kmod_test_0006 - run #1
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:03:59 CST 2018
+Running test: kmod_test_0006 - run #2
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:00 CST 2018
+Running test: kmod_test_0006 - run #3
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:01 CST 2018
+Running test: kmod_test_0006 - run #4
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:02 CST 2018
+Running test: kmod_test_0006 - run #5
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:03 CST 2018
+Running test: kmod_test_0006 - run #6
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:04 CST 2018
+Running test: kmod_test_0006 - run #7
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:05 CST 2018
+Running test: kmod_test_0006 - run #8
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:06 CST 2018
+Running test: kmod_test_0006 - run #9
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:06 CST 2018
+Running test: kmod_test_0007 - run #0
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:08 CST 2018
+Running test: kmod_test_0007 - run #1
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:08 CST 2018
+Running test: kmod_test_0007 - run #2
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:10 CST 2018
+Running test: kmod_test_0007 - run #3
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+Wed Apr 18 00:04:11 CST 2018
+Running test: kmod_test_0007 - run #4
+kmod_test_0005: OK! - loading kmod test
+kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+kmod_test_0006: OK! - loading kmod test
+kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
+=2E/kmod.sh: line 526: [[: 1 0002:3:1 0003:1:1 0004:1:1 0005:10:1 0006:10:1=
+ 0007:5:1 0008:150:1 0009:150:1: syntax error in expression (error token is=
+ "0002:3:1 0003:1:1 0004:1:1 0005:10:1 0006:10:1 0007:5:1 0008:150:1 0009:1=
+50:1")
+=2E/kmod.sh: line 526: [[: 1 0002:3:1 0003:1:1 0004:1:1 0005:10:1 0006:10:1=
+ 0007:5:1 0008:150:1 0009:150:1: syntax error in expression (error token is=
+ "0002:3:1 0003:1:1 0004:1:1 0005:10:1 0006:10:1 0007:5:1 0008:150:1 0009:1=
+50:1")
+Test completed
+ok 1..1 selftests: kmod.sh [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kmod'
+
+2018-04-18 00:04:12 make run_tests -C kvm
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kvm'
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -Ilib   -c li=
+b/assert.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54=
+a77d957b1733f117a813/tools/testing/selftests/kvm/lib/assert.o
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -Ilib   -c li=
+b/elf.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77=
+d957b1733f117a813/tools/testing/selftests/kvm/lib/elf.o
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -Ilib   -c li=
+b/io.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d=
+957b1733f117a813/tools/testing/selftests/kvm/lib/io.o
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -Ilib   -c li=
+b/kvm_util.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd=
+54a77d957b1733f117a813/tools/testing/selftests/kvm/lib/kvm_util.o
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -Ilib   -c li=
+b/sparsebit.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5f=
+d54a77d957b1733f117a813/tools/testing/selftests/kvm/lib/sparsebit.o
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -Ilib   -c li=
+b/x86.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77=
+d957b1733f117a813/tools/testing/selftests/kvm/lib/x86.o
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -Ilib   -c li=
+b/vmx.c -o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77=
+d957b1733f117a813/tools/testing/selftests/kvm/lib/vmx.o
+ar crs /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957=
+b1733f117a813/tools/testing/selftests/kvm/libkvm.a /usr/src/linux-selftests=
+-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/sel=
+ftests/kvm/lib/assert.o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7=
+ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kvm/lib/elf.o /usr/s=
+rc/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813=
+/tools/testing/selftests/kvm/lib/io.o /usr/src/linux-selftests-x86_64-rhel-=
+7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kvm/li=
+b/kvm_util.o /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a=
+77d957b1733f117a813/tools/testing/selftests/kvm/lib/sparsebit.o /usr/src/li=
+nux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tool=
+s/testing/selftests/kvm/lib/x86.o /usr/src/linux-selftests-x86_64-rhel-7.2-=
+d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kvm/lib/vm=
+x.o
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -I.    set_sr=
+egs_test.c /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77=
+d957b1733f117a813/tools/testing/selftests/kvm/libkvm.a  -o /usr/src/linux-s=
+elftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/tes=
+ting/selftests/kvm/set_sregs_test
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -I.    sync_r=
+egs_test.c /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77=
+d957b1733f117a813/tools/testing/selftests/kvm/libkvm.a  -o /usr/src/linux-s=
+elftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tools/tes=
+ting/selftests/kvm/sync_regs_test
+gcc -O2 -g -std=3Dgnu99 -I../../../..//usr/include/ -Iinclude -I.    vmx_ts=
+c_adjust_test.c /usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd=
+54a77d957b1733f117a813/tools/testing/selftests/kvm/libkvm.a  -o /usr/src/li=
+nux-selftests-x86_64-rhel-7.2-d5edb7f8e7ab9fd5fd54a77d957b1733f117a813/tool=
+s/testing/selftests/kvm/vmx_tsc_adjust_test
+TAP version 13
+selftests: set_sregs_test
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=3D=3D=3D=3D Test Assertion Failure =3D=3D=3D=3D
+  lib/kvm_util.c:95: kvm_fd >=3D 0
+  pid=3D9792 tid=3D9792
+     1	0x0000000000401c6e: vm_create at kvm_util.c:94
+     2	0x0000000000406349: vm_create_default at x86.c:688
+     3	0x0000000000400ea1: main at set_sregs_test.c:39
+     4	0x00007efc0be0fa86: ?? ??:0
+     5	0x0000000000400f89: _start at ??:?
+  open /dev/kvm failed, rc: -1 errno: 2
+not ok 1..1 selftests:  set_sregs_test [FAIL]
+selftests: sync_regs_test
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=3D=3D=3D=3D Test Assertion Failure =3D=3D=3D=3D
+  lib/kvm_util.c:54: kvm_fd >=3D 0
+  pid=3D9802 tid=3D9802
+     1	0x0000000000401bdb: kvm_check_cap at kvm_util.c:53
+     2	0x0000000000400ea2: main at sync_regs_test.c:100
+     3	0x00007ff526487a86: ?? ??:0
+     4	0x0000000000401439: _start at ??:?
+  open /dev/kvm failed, rc: -1 errno: 2
+not ok 1..2 selftests:  sync_regs_test [FAIL]
+selftests: vmx_tsc_adjust_test
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=3D=3D=3D=3D Test Assertion Failure =3D=3D=3D=3D
+  lib/kvm_util.c:422: kvm_fd >=3D 0
+  pid=3D9812 tid=3D9812
+     1	0x000000000040174a: kvm_get_supported_cpuid at kvm_util.c:421
+     2	0x0000000000401b5a: kvm_get_supported_cpuid at kvm_util.c:461
+     3	 (inlined by) kvm_get_supported_cpuid_index at kvm_util.c:449
+     4	0x0000000000400e58: kvm_get_supported_cpuid_entry at kvm_util.h:125
+     5	 (inlined by) main at vmx_tsc_adjust_test.c:189
+     6	0x00007f2ef6225a86: ?? ??:0
+     7	0x00000000004010a9: _start at ??:?
+  open /dev/kvm failed, rc: -1 errno: 2
+not ok 1..3 selftests:  vmx_tsc_adjust_test [FAIL]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/kvm'
+
+2018-04-18 00:04:16 make run_tests -C lib
+make: Entering directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8=
+e7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/lib'
+TAP version 13
+selftests: printf.sh
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+printf: ok
+ok 1..1 selftests: printf.sh [PASS]
+selftests: bitmap.sh
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+bitmap: ok
+ok 1..2 selftests: bitmap.sh [PASS]
+make: Leaving directory '/usr/src/linux-selftests-x86_64-rhel-7.2-d5edb7f8e=
+7ab9fd5fd54a77d957b1733f117a813/tools/testing/selftests/lib'
+
+--zx4FCpZtqtKETZ7O--
