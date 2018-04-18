@@ -1,120 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753289AbeDRA7o (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 20:59:44 -0400
-Received: from mail-pl0-f44.google.com ([209.85.160.44]:33372 "EHLO
-        mail-pl0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751248AbeDRA7l (ORCPT
+        id S1753170AbeDRBCF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 21:02:05 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:56758 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752314AbeDRBCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 20:59:41 -0400
-X-Google-Smtp-Source: AIpwx48qktzeUcjLLIQuAQzjbNmQqtesIEvj7du+mU3z6MWw8LKqeZcPG16i+ztrSrqySrKSxfnj8w==
-Date: Tue, 17 Apr 2018 17:59:36 -0700
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, viro@zeniv.linux.org.uk,
-        bart.vanassche@wdc.com, ming.lei@redhat.com, tytso@mit.edu,
-        darrick.wong@oracle.com, jikos@kernel.org, rjw@rjwysocki.net,
-        pavel@ucw.cz, len.brown@intel.com, linux-fsdevel@vger.kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        todd.e.brandt@linux.intel.com, nborisov@suse.com,
-        martin.petersen@oracle.com, ONeukum@suse.com, oleksandr@natalenko.name,
-        oleg.b.antonyan@gmail.com, yu.chen.surf@gmail.com,
-        dan.j.williams@intel.com, linux-pm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jlayton@redhat.com
-Subject: Re: [PATCH 03/11] fs: add frozen sb state helpers
-Message-ID: <20180418005936.j3fa5rogfm353clf@garbanzo.do-not-panic.com>
-References: <20171129232356.28296-1-mcgrof@kernel.org>
- <20171129232356.28296-4-mcgrof@kernel.org>
- <20171130171310.GG28180@quack2.suse.cz>
- <20171130190548.GJ729@wotan.suse.de>
- <20171201114724.GC8365@quack2.suse.cz>
- <20171201211327.GQ729@wotan.suse.de>
- <20171221110329.GG31584@quack2.suse.cz>
+        Tue, 17 Apr 2018 21:02:03 -0400
+X-Google-Smtp-Source: AB8JxZrv73QC72LtTVeSEKy4FFodY4mFt0qJcfeFyD95c0foomMP4jY4SljQM43Rpqh2CzhFlPFcUTS78S59ZOMt0hBQB6Yz0bBW
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20171221110329.GG31584@quack2.suse.cz>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Date: Tue, 17 Apr 2018 18:02:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b607cf056a150083@google.com>
+Subject: KASAN: use-after-free Read in iput
+From: syzbot <syzbot+c6f45f6af72a45097be2@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 21, 2017 at 12:03:29PM +0100, Jan Kara wrote:
-> Hello,
-> 
-> I think I owe you a reply here... Sorry that it took so long.
+Hello,
 
-Took me just as long :)
+syzbot hit the following crash on upstream commit
+a27fc14219f2e3c4a46ba9177b04d9b52c875532 (Mon Apr 16 21:07:39 2018 +0000)
+Merge branch 'parisc-4.17-3' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=c6f45f6af72a45097be2
 
-> On Fri 01-12-17 22:13:27, Luis R. Rodriguez wrote:
-> > 
-> > I'll note that its still not perfectly clear if really the semantics behind
-> > freeze_bdev() match what I described above fully. That still needs to be
-> > vetted for. For instance, does thaw_bdev() keep a superblock frozen if we
-> > an ioctl initiated freeze had occurred before? If so then great. Otherwise
-> > I think we'll need to distinguish the ioctl interface. Worst possible case
-> > is that bdev semantics and in-kernel semantics differ somehow, then that
-> > will really create a holy fucking mess.
-> 
-> I believe nobody really thought about mixing those two interfaces to fs
-> freezing and so the behavior is basically defined by the implementation.
-> That is:
-> 
-> freeze_bdev() on sb frozen by ioctl_fsfreeze() -> EBUSY
+So far this crash happened 2 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5638195895074816
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5154296156913664
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5743820952043520
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-5914490758943236750
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-Note below as well on your *future* freeze_super() implementation.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c6f45f6af72a45097be2@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-> freeze_bdev() on sb frozen by freeze_bdev() -> success
-> ioctl_fsfreeze() on sb frozen by freeze_bdev() -> EBUSY
-> ioctl_fsfreeze() on sb frozen by ioctl_fsfreeze() -> EBUSY
-> 
-> thaw_bdev() on sb frozen by ioctl_fsfreeze() -> EINVAL
+VFS: Busy inodes after unmount of fuse. Self-destruct in 5 seconds.  Have a  
+nice day...
+==================================================================
+BUG: KASAN: use-after-free in iput_final fs/inode.c:1489 [inline]
+BUG: KASAN: use-after-free in iput+0xa05/0xa80 fs/inode.c:1545
+Read of size 8 at addr ffff8801d9752770 by task syzkaller802106/4482
 
-Phew, so this is what we want for the in-kernel freezing so we're good
-and *can* combine these then.
+CPU: 1 PID: 4482 Comm: syzkaller802106 Not tainted 4.17.0-rc1+ #6
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  iput_final fs/inode.c:1489 [inline]
+  iput+0xa05/0xa80 fs/inode.c:1545
+  free_trace_uprobe+0xe2/0x1f0 kernel/trace/trace_uprobe.c:292
+  destroy_local_trace_uprobe+0x63/0x7e kernel/trace/trace_uprobe.c:1395
+  perf_uprobe_destroy+0xf2/0x130 kernel/trace/trace_event_perf.c:342
+  _free_event+0x3ff/0x1430 kernel/events/core.c:4445
+  put_event+0x48/0x60 kernel/events/core.c:4531
+  perf_event_release_kernel+0x8bd/0xf90 kernel/events/core.c:4637
+  perf_release+0x37/0x50 kernel/events/core.c:4647
+  __fput+0x34d/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1aee/0x2730 kernel/exit.c:865
+  do_group_exit+0x16f/0x430 kernel/exit.c:968
+  get_signal+0x886/0x1960 kernel/signal.c:2469
+  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
+  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4457b9
+RSP: 002b:00007f98cec58da8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 0000000000000000 RCX: 00000000004457b9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000006dac3c
+RBP: 00000000006dac3c R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dac38
+R13: 0030656c69662f2e R14: 00007f98cec599c0 R15: 0000000000000001
 
-> ioctl_fsthaw() on sb frozen by freeze_bdev() -> success
-> 
-> What I propose is the following API:
-> 
-> freeze_super_excl()
->   - freezes superblock, returns EBUSY if the superblock is already frozen
->     (either by another freeze_super_excl() or by freeze_super())
-> freeze_super()
->   - this function will make sure superblock is frozen when the function
->     returns with success. 
+Allocated by task 4481:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
+  kmalloc include/linux/slab.h:512 [inline]
+  kzalloc include/linux/slab.h:701 [inline]
+  alloc_super fs/super.c:186 [inline]
+  sget_userns+0x1c7/0xf20 fs/super.c:503
+  sget+0x10b/0x150 fs/super.c:558
+  mount_nodev+0x33/0x110 fs/super.c:1206
+  fuse_mount+0x2c/0x40 fs/fuse/inode.c:1192
+  mount_fs+0xae/0x328 fs/super.c:1268
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2517 [inline]
+  do_mount+0x564/0x3070 fs/namespace.c:2847
+  ksys_mount+0x12d/0x140 fs/namespace.c:3063
+  __do_sys_mount fs/namespace.c:3077 [inline]
+  __se_sys_mount fs/namespace.c:3074 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-That's straight forward.
+Freed by task 25:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3813
+  destroy_super_work+0x40/0x50 fs/super.c:149
+  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
+  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
+  kthread+0x345/0x410 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
 
->     It can be nested with other freeze_super() or
->     freeze_super_excl() calls 
+The buggy address belongs to the object at ffff8801d9752740
+  which belongs to the cache kmalloc-4096 of size 4096
+The buggy address is located 48 bytes inside of
+  4096-byte region [ffff8801d9752740, ffff8801d9753740)
+The buggy address belongs to the page:
+page:ffffea000765d480 count:1 mapcount:0 mapping:ffff8801d9752740 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801d9752740 0000000000000000 0000000100000001
+raw: ffffea000765a1a0 ffffea00076665a0 ffff8801dac00dc0 0000000000000000
+page dumped because: kasan: bad access detected
 
-This is where it can get hairy. More below.
+Memory state around the buggy address:
+  ffff8801d9752600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d9752680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801d9752700: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                                              ^
+  ffff8801d9752780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801d9752800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
->     (this second part is different from how
->     freeze_bdev() behaves currently but AFAICT this behavior is actually
->     what all current users of freeze_bdev() really want - just make sure
->     fs cannot be written to)
 
-If we can agree to this, then sure. However there are two types of
-possible nested calls to consider, one where the sb was already frozen
-by an IOCTL, and the other where it was initiated by either another
-freeze_super_excl() or another freeze_super() call which is currently
-being processed. For the first type, its easy to say the device is
-already frozen as such return success. If the freezing is ongoing,
-we may want to wait or not wait, and this will depend on our current
-use cases for freeze_bdev().
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-As you noted above, freeze_bdev() currently returns EBUSY if we had
-the sb already frozen by ioctl_fsfreeze(). It may be a welcomed
-enhancement to correct the semantics first to address the first case,
-but keep the EBUSY for the other case. A secondary patch could then
-add a completion mechanism and let callers decide to either wait or not.
-*Iff* the caller did not opt-in to wait we keep the EBUSY return.
-
-Seem reasonable?
-
-I'll address the rest of the mail later.
-
-  Luis
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
