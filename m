@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753392AbeDRIkJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:40:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39596 "EHLO mx1.redhat.com"
+        id S1753158AbeDRIkA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:40:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39286 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752762AbeDRIkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:40:07 -0400
+        id S1752597AbeDRIj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 04:39:58 -0400
 From: Peter Xu <peterx@redhat.com>
 To: Linux IOMMU Mailing List <iommu@lists.linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
@@ -13,73 +13,48 @@ Cc: Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         Jintack Lim <jintack@cs.columbia.edu>,
         Alexander Witte <alexander.witte@baicanada.com>, peterx@redhat.com
-Subject: [PATCH v2 2/3] intel-iommu: generalize __mapping_notify_one()
-Date: Wed, 18 Apr 2018 16:39:52 +0800
-Message-Id: <20180418083953.21492-3-peterx@redhat.com>
-In-Reply-To: <20180418083953.21492-1-peterx@redhat.com>
-References: <20180418083953.21492-1-peterx@redhat.com>
+Subject: [PATCH v2 0/3] intel-iommu: fix mapping PSI missing for iommu_map()
+Date: Wed, 18 Apr 2018 16:39:50 +0800
+Message-Id: <20180418083953.21492-1-peterx@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Generalize this new helper to notify one newly created mapping on one
-single IOMMU.  We can further leverage this helper in the next patch.
+v2:
+- cc correct people and iommu list
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- drivers/iommu/intel-iommu.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+(PSI stands for: Page Selective Invalidations)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index a64da83e867c..bf111e60857c 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1607,6 +1607,18 @@ static void iommu_flush_iotlb_psi(struct intel_iommu *iommu,
- 		iommu_flush_dev_iotlb(domain, addr, mask);
- }
- 
-+/* Notification for newly created mappings */
-+static inline void __mapping_notify_one(struct intel_iommu *iommu,
-+					struct dmar_domain *domain,
-+					unsigned long pfn, unsigned int pages)
-+{
-+	/* It's a non-present to present mapping. Only flush if caching mode */
-+	if (cap_caching_mode(iommu->cap))
-+		iommu_flush_iotlb_psi(iommu, domain, pfn, pages, 0, 1);
-+	else
-+		iommu_flush_write_buffer(iommu);
-+}
-+
- static void iommu_flush_iova(struct iova_domain *iovad)
- {
- 	struct dmar_domain *domain;
-@@ -3626,13 +3638,7 @@ static dma_addr_t __intel_map_single(struct device *dev, phys_addr_t paddr,
- 	if (ret)
- 		goto error;
- 
--	/* it's a non-present to present mapping. Only flush if caching mode */
--	if (cap_caching_mode(iommu->cap))
--		iommu_flush_iotlb_psi(iommu, domain,
--				      mm_to_dma_pfn(iova_pfn),
--				      size, 0, 1);
--	else
--		iommu_flush_write_buffer(iommu);
-+	__mapping_notify_one(iommu, domain, mm_to_dma_pfn(iova_pfn), size);
- 
- 	start_paddr = (phys_addr_t)iova_pfn << PAGE_SHIFT;
- 	start_paddr += paddr & ~PAGE_MASK;
-@@ -3851,11 +3857,7 @@ static int intel_map_sg(struct device *dev, struct scatterlist *sglist, int nele
- 		return 0;
- 	}
- 
--	/* it's a non-present to present mapping. Only flush if caching mode */
--	if (cap_caching_mode(iommu->cap))
--		iommu_flush_iotlb_psi(iommu, domain, start_vpfn, size, 0, 1);
--	else
--		iommu_flush_write_buffer(iommu);
-+	__mapping_notify_one(iommu, domain, start_vpfn, size);
- 
- 	return nelems;
- }
+Intel IOMMU has the caching mode to ease emulation of the device.
+When that bit is set, we need to send PSIs even for newly mapped
+pages.  However current driver is not fully obey the rule.  E.g.,
+iommu_map() API will only do the mapping but it never sent the PSIs
+before.  That can be problematic to emulated IOMMU devices since
+they'll never be able to build up the shadow page tables if without
+such information.  This patchset tries to fix the problem.
+
+Patch 1 is a tracing enhancement that helped me to triage the problem.
+It might even be useful in the future.
+
+Patch 2 generalized a helper to notify the MAP PSIs.
+
+Patch 3 fixes the real problem by making sure every domain mapping
+will trigger the MAP PSI notifications.
+
+Without the patchset, nested device assignment (assign one device
+firstly to L1 guest, then to L2 guest) won't work for QEMU.  After
+applying the patchset, it works.
+
+Please review.  Thanks.
+
+Peter Xu (3):
+  intel-iommu: add some traces for PSIs
+  intel-iommu: generalize __mapping_notify_one()
+  intel-iommu: fix iotlb psi missing for mappings
+
+ drivers/iommu/dmar.c        |  3 ++
+ drivers/iommu/intel-iommu.c | 68 ++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 52 insertions(+), 19 deletions(-)
+
 -- 
 2.14.3
