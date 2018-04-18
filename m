@@ -1,118 +1,210 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753623AbeDROKo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:10:44 -0400
-Received: from mail-wr0-f175.google.com ([209.85.128.175]:36639 "EHLO
-        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752659AbeDROKl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:10:41 -0400
-X-Google-Smtp-Source: AIpwx493pEsm5emnrQ/wV08Yc/PJiIHL80BVMPAadGBHLgLsoBx7WMhBJiZwyM0uMkBITLXkM8Berw==
-Date: Wed, 18 Apr 2018 07:10:30 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL V3] Thermal SoC management updates for v4.17-rc1
-Message-ID: <20180418141027.GA3303@localhost.localdomain>
-References: <20180414183051.GA27921@localhost.localdomain>
- <1524037889.2553.13.camel@intel.com>
+        id S1753551AbeDRONm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:13:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36219 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753244AbeDRONj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 10:13:39 -0400
+Date: Wed, 18 Apr 2018 16:13:37 +0200
+From: Jan Kara <jack@suse.cz>
+To: jglisse@redhat.com
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
+        Josef Bacik <jbacik@fb.com>, Mel Gorman <mgorman@techsingularity.net>,
+        Jeff Layton <jlayton@redhat.com>
+Subject: Re: [RFC PATCH 00/79] Generic page write protection and a solution
+ to page waitqueue
+Message-ID: <20180418141337.mrnxqolo6aar3ud3@quack2.suse.cz>
+References: <20180404191831.5378-1-jglisse@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1524037889.2553.13.camel@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-On Wed, Apr 18, 2018 at 03:51:29PM +0800, Zhang Rui wrote:
-> Hi, Eduardo,
+so I finally got to this :)
+
+On Wed 04-04-18 15:17:50, jglisse@redhat.com wrote:
+> From: J�r�me Glisse <jglisse@redhat.com>
 > 
-> On 六, 2018-04-14 at 11:30 -0700, Eduardo Valentin wrote:
-> > Hello Linus,
-> > 
-> > Please find thermal-soc changes for v4.17-rc1.
-> > Rui asked me to send the pull request directly to you
-> > as we are close to the end of the merge window.
-> > Essentially this pull removes the series that caused
-> > warning regression. I will work with the developer
-> > to get that fixed later on, but I am still sending
-> > the other few patches that are unrelated to that.
-> > Let me know if this causes any issues and can still
-> > be pulled.
-> > 
-> > Changelog:
-> > - New i.MX7 thermal sensor
-> > - Mediatek driver now supports MT7622 SoC
-> > - Removal of min max cpu cooling DT property
-> > 
-> > Differences in V3:
-> > - Rebased on top current linus/master, to avoid and merge issues
-> > from previous pulled thermal code.
-> > 
-> > Differences in V2:
-> > - Reordered the patches to drop exynos changes for now until we get
-> > agreement on the fix on that driver for the compilation warns
-> > caused by the confusing conversion functions.
-> > 
-> > 
-> > The following changes since commit
-> > 48023102b7078a6674516b1fe0d639669336049d:
-> > 
-> >   Merge branch 'overlayfs-linus' of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs (2018-04-
-> > 13 16:55:41 -0700)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-
-> > thermal linus
-> > 
-> > for you to fetch changes up to
-> > 15a32df1918259be6c23fc36014fc26ee66c836c:
-> > 
-> >   dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
-> > (2018-04-14 09:37:55 -0700)
-> > 
-> This pull request does not catch this merge window.
-> So do you want to split it into 2 separate pull requests, one for 4.17-
-> rc and another for 4.18-rc1?
-
-OK. Yeah, I am fine with that.
-
+> https://cgit.freedesktop.org/~glisse/linux/log/?h=generic-write-protection-rfc
 > 
-> > ----------------------------------------------------------------
-> > Anson Huang (1):
-> >       thermal: imx: add i.MX7 thermal sensor support
-> > 
-> > Bartlomiej Zolnierkiewicz (1):
-> >       dt-bindings: thermal: remove no longer needed samsung thermal
-> > properties
-> > 
-> > Sean Wang (2):
-> >       dt-bindings: thermal: add binding for MT7622 SoC
-> >       thermal: mediatek: add support for MT7622 SoC
-> > 
-> > Viresh Kumar (1):
-> >       dt-bindings: thermal: Remove "cooling-{min|max}-level"
-> > properties
-> > 
-> IMO, together with the refreshed exynos fixes, the one from Viresh and
-> the one from Bartlomiej can be queued for 4.17-rc, and the others have
-> to wait until next merge window.
+> This is an RFC for LSF/MM discussions. It impacts the file subsystem,
+> the block subsystem and the mm subsystem. Hence it would benefit from
+> a cross sub-system discussion.
 > 
+> Patchset is not fully bake so take it with a graint of salt. I use it
+> to illustrate the fact that it is doable and now that i did it once i
+> believe i have a better and cleaner plan in my head on how to do this.
+> I intend to share and discuss it at LSF/MM (i still need to write it
+> down). That plan lead to quite different individual steps than this
+> patchset takes and his also easier to split up in more manageable
+> pieces.
+> 
+> I also want to apologize for the size and number of patches (and i am
+> not even sending them all).
+> 
+> ----------------------------------------------------------------------
+> The Why ?
+> 
+> I have two objectives: duplicate memory read only accross nodes and or
+> devices and work around PCIE atomic limitations. More on each of those
+> objective below. I also want to put forward that it can solve the page
+> wait list issue ie having each page with its own wait list and thus
+> avoiding long wait list traversale latency recently reported [1].
+> 
+> It does allow KSM for file back pages (truely generic KSM even between
+> both anonymous and file back page). I am not sure how useful this can
+> be, this was not an objective i did pursue, this is just a for free
+> feature (see below).
 
-Correct, the new chip support will need to wait for the next merge
-window. I have already split the patches into the two categories.
-The patches removing stuff are in my -fixes branch. All the other adding
-new chip support are in my -linus branch.
+I know some people (Matthew Wilcox?) wanted to do something like KSM for
+file pages - not all virtualization schemes use overlayfs and e.g. if you
+use reflinks (essentially shared on-disk extents among files) for your
+container setup, you could save significant amounts of memory with the
+ability to share pages in page cache among files that are reflinked.
 
-Now, Do you have anything for this -rc2 ? If not, I will send directly
-to Linus the stuff in my -fixes branch. Let me know.
+> [1] https://groups.google.com/forum/#!topic/linux.kernel/Iit1P5BNyX8
+> 
+> ----------------------------------------------------------------------
+> Per page wait list, so long page_waitqueue() !
+> 
+> Not implemented in this RFC but below is the logic and pseudo code
+> at bottom of this email.
+> 
+> When there is a contention on struct page lock bit, the caller which
+> is trying to lock the page will add itself to a waitqueue. The issues
+> here is that multiple pages share the same wait queue and on large
+> system with a lot of ram this means we can quickly get to a long list
+> of waiters for differents pages (or for the same page) on the same
+> list [1].
+> 
+> The present patchset virtualy kills all places that need to access the
+> page->mapping field and only a handfull are left, namely for testing
+> page truncation and for vmscan. The former can be remove if we reuse
+> the PG_waiters flag for a new PG_truncate flag set on truncation then
+> we can virtualy kill all derefence of page->mapping (this patchset
+> proves it is doable). NOTE THIS DOES NOT MEAN THAT MAPPING is FREE TO
+> BE USE BY ANYONE TO STORE WHATEVER IN STRUCT PAGE. SORRY NO !
 
-Eduardo
+It is interesting that you can get rid of page->mapping uses in most
+places. For page reclaim (vmscan) you'll still need a way to get from a
+page to an address_space so that you can reclaim the page so you can hardly
+get rid of page->mapping completely but you're right that with such limited
+use that transition could be more complex / expensive.
+
+What I wonder though is what is the cost of this (in the terms of code size
+and speed) - propagating the mapping down the stack costs something... Also
+in terms of maintainability, code readability suffers a bit.
+
+This could be helped though. In some cases it seems we just use the mapping
+because it was easily available but could get away without it. In other
+case (e.g. lot of fs/buffer.c) we could make bh -> mapping transition easy
+by storing the mapping in the struct buffer_head - possibly it could
+replace b_bdev pointer as we could get to that from the mapping with a bit
+of magic and pointer chasing and accessing b_bdev is not very performance
+critical. OTOH such optimizations make a rather complex patches from mostly
+mechanical replacement so I can see why you didn't go that route.
+
+Overall I think you'd need to make a good benchmarking comparison showing
+how much this helps some real workloads (your motivation) and also how
+other loads on lower end machines are affected.
+
+> ----------------------------------------------------------------------
+> The What ?
+> 
+> Aim of this patch serie is to introduce generic page write protection
+> for any kind of regular page in a process (private anonymous or back
+> by regular file). This feature already exist, in one form, for private
+> anonymous page, as part of KSM (Kernel Share Memory).
+> 
+> So this patch serie is two fold. First it factors out the page write
+> protection of KSM into a generic write protection mechanim which KSM
+> becomes the first user of. Then it add support for regular file back
+> page memory (regular file or share memory aka shmem). To achieve this
+> i need to cut the dependency lot of code have on page->mapping so i
+> can set page->mapping to point to special structure when write
+> protected.
+
+So I'm interested in this write protection mechanism but I didn't find much
+about it in the series. How does it work? I can see KSM writeprotects pages
+in page tables so that works for userspace mappings but what about
+in-kernel users modifying pages - e.g. pages in page cache carrying
+filesystem metadata do get modified a lot like this.
+
+> ----------------------------------------------------------------------
+> The How ?
+> 
+> The corner stone assumption in this patch serie is that page->mapping
+> is always the same as vma->vm_file->f_mapping (modulo when a page is
+> truncated). The one exception is in respect to swaping with nfs file.
+> 
+> Am i fundamentaly wrong in my assumption ?
+
+AFAIK you're right.
+
+> I believe this is a do-able plan because virtually all place do know
+> the address_space a page belongs to, or someone in the callchain do.
+> Hence this patchset is all about passing down that information. The
+> only exception i am aware of is page reclamation (vmscan) but this can
+> be handled as a special case as there we not interested in the page
+> mapping per say but in reclaiming memory.
+> 
+> Once you have both struct page and mapping (without relying on the
+> struct page to get the latter) you can use mapping that as a unique
+> key to lookup page->private/page->index value. So all dereference of
+> those fields become:
+>     page_offset(page) -> page_offset(page, mapping)
+>     page_buffers(page) -> page_buffers(page, mapping)
+> 
+> Note than this only need special handling for write protected page ie
+> it is the same as before if page is not write protected so it just add
+> a test each time code call either helper.
+> 
+> Sinful function (all existing usage are remove in this patchset):
+>     page_mapping(page)
+> 
+> You can also use the page buffer head as a unique key. So following
+> helpers are added (thought i do not use them):
+>     page_mapping_with_buffers(page, (struct buffer_head *)bh)
+>     page_offset_with_buffers(page, (struct buffer_head *)bh)
+> 
+> A write protected page has page->mapping pointing to a structure like
+> struct rmap_item for KSM. So this structure has a list for each unique
+> combination:
+>     struct write_protect {
+>         struct list_head *mappings; /* write_protect_mapping list */
+>         ...
+>     };
+> 
+>     struct write_protect_mapping {
+>         struct list_head list
+>         struct address_space *mapping;
+>         unsigned long offset;
+>         unsigned long private;
+>         ...
+>     };
+
+Auch, the fact that we could share a page as data storage for several
+inode+offset combinations that are not sharing underlying storage just
+looks viciously twisted ;) But is it really that useful to warrant
+complications? In particular I'm afraid that filesystems expect consistency
+between their internal state (attached to page->private) and page state
+(e.g. page->flags) and when there are multiple internal states attached to
+the same page this could go easily wrong...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
