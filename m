@@ -1,216 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753911AbeDRL4w (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:56:52 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:39008 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752911AbeDRL4u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:56:50 -0400
-X-Google-Smtp-Source: AB8JxZo8T/80vxWIVb7lN3wwhwKNbRmDNNCsuZFaJu3NdwmFXKlLxUypKtUE/v73VU87U3mz/RDtQQ==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <EEDD4DC1-9DB6-441C-89EB-39B8723959DD@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_4CF863C9-B1B8-4FCB-9000-E90AF17F3FF1";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] lightnvm: pblk: take bitmap alloc. out of critical
- section
-Date: Wed, 18 Apr 2018 04:56:39 -0700
-In-Reply-To: <76bed955-2e70-7540-0836-f93fbd677d7e@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-References: <1523874066-4459-1-git-send-email-javier@cnexlabs.com>
- <76bed955-2e70-7540-0836-f93fbd677d7e@lightnvm.io>
-X-Mailer: Apple Mail (2.3445.6.18)
+        id S1753672AbeDRL6f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:58:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55245 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752116AbeDRL6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 07:58:33 -0400
+Date: Wed, 18 Apr 2018 13:58:30 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: rientjes@google.com, akpm@linux-foundation.org, aarcange@redhat.com,
+        guro@fb.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
+Message-ID: <20180418115830.GA17484@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1804171545460.53786@chino.kir.corp.google.com>
+ <201804180057.w3I0vieV034949@www262.sakura.ne.jp>
+ <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
+ <20180418075051.GO17484@dhcp22.suse.cz>
+ <201804182049.EDJ21857.OHJOMOLFQVFFtS@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201804182049.EDJ21857.OHJOMOLFQVFFtS@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed 18-04-18 20:49:11, Tetsuo Handa wrote:
+> Michal Hocko wrote:
+> > On Tue 17-04-18 19:52:41, David Rientjes wrote:
+> > > Since exit_mmap() is done without the protection of mm->mmap_sem, it is
+> > > possible for the oom reaper to concurrently operate on an mm until
+> > > MMF_OOM_SKIP is set.
+> > > 
+> > > This allows munlock_vma_pages_all() to concurrently run while the oom
+> > > reaper is operating on a vma.  Since munlock_vma_pages_range() depends on
+> > > clearing VM_LOCKED from vm_flags before actually doing the munlock to
+> > > determine if any other vmas are locking the same memory, the check for
+> > > VM_LOCKED in the oom reaper is racy.
+> > > 
+> > > This is especially noticeable on architectures such as powerpc where
+> > > clearing a huge pmd requires serialize_against_pte_lookup().  If the pmd
+> > > is zapped by the oom reaper during follow_page_mask() after the check for
+> > > pmd_none() is bypassed, this ends up deferencing a NULL ptl.
+> > > 
+> > > Fix this by reusing MMF_UNSTABLE to specify that an mm should not be
+> > > reaped.  This prevents the concurrent munlock_vma_pages_range() and
+> > > unmap_page_range().  The oom reaper will simply not operate on an mm that
+> > > has the bit set and leave the unmapping to exit_mmap().
+> > 
+> > This will further complicate the protocol and actually theoretically
+> > restores the oom lockup issues because the oom reaper doesn't set
+> > MMF_OOM_SKIP when racing with exit_mmap so we fully rely that nothing
+> > blocks there... So the resulting code is more fragile and tricky.
+> > 
+> > Can we try a simpler way and get back to what I was suggesting before
+> > [1] and simply not play tricks with
+> > 		down_write(&mm->mmap_sem);
+> > 		up_write(&mm->mmap_sem);
+> > 
+> > and use the write lock in exit_mmap for oom_victims?
+> 
+> You mean something like this?
 
---Apple-Mail=_4CF863C9-B1B8-4FCB-9000-E90AF17F3FF1
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+or simply hold the write lock until we unmap and free page tables.
+It would make the locking rules much more straightforward.
+What you are proposing is more focused on this particular fix and it
+would work as well but the subtle locking would still stay in place.
+I am not sure we want the trickiness.
 
-> On 17 Apr 2018, at 04.48, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 4/16/18 12:21 PM, Javier Gonz=C3=A1lez wrote:
->> Allocate line bitmaps outside of the line lock on line preparation.
->> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
->=20
->=20
-> The patch description tells what the patch does, it should tell why
-> the change the done.
->=20
+> Then, I'm tempted to call __oom_reap_task_mm() before holding mmap_sem for write.
+> It would be OK to call __oom_reap_task_mm() at the beginning of __mmput()...
 
-Taking an allocation out of a critical zone should be a reason on =
-itself.
+I am not sure I understand.
 
->> ---
->>  drivers/lightnvm/pblk-core.c | 96 =
-+++++++++++++++++++++++++-------------------
->>  1 file changed, 55 insertions(+), 41 deletions(-)
->> diff --git a/drivers/lightnvm/pblk-core.c =
-b/drivers/lightnvm/pblk-core.c
->> index 5f960a6609c8..7762e89984ee 100644
->> --- a/drivers/lightnvm/pblk-core.c
->> +++ b/drivers/lightnvm/pblk-core.c
->> @@ -1058,6 +1058,25 @@ static int pblk_line_init_metadata(struct pblk =
-*pblk, struct pblk_line *line,
->>  	return 1;
->>  }
->>  +static int pblk_line_alloc_bitmaps(struct pblk *pblk, struct =
-pblk_line *line)
->> +{
->> +	struct pblk_line_meta *lm =3D &pblk->lm;
->> +
->> +	line->map_bitmap =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
->> +	if (!line->map_bitmap)
->> +		return -ENOMEM;
->> +
->> +	/* will be initialized using bb info from map_bitmap */
->> +	line->invalid_bitmap =3D kmalloc(lm->sec_bitmap_len, =
-GFP_KERNEL);
->> +	if (!line->invalid_bitmap) {
->> +		kfree(line->map_bitmap);
->> +		line->map_bitmap =3D NULL;
->> +		return -ENOMEM;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  /* For now lines are always assumed full lines. Thus, smeta former =
-and current
->>   * lun bitmaps are omitted.
->>   */
->> @@ -1162,18 +1181,7 @@ static int pblk_line_prepare(struct pblk =
-*pblk, struct pblk_line *line)
->>  {
->>  	struct pblk_line_meta *lm =3D &pblk->lm;
->>  	int blk_in_line =3D atomic_read(&line->blk_in_line);
->> -	int blk_to_erase, ret;
->> -
->> -	line->map_bitmap =3D kzalloc(lm->sec_bitmap_len, GFP_ATOMIC);
->> -	if (!line->map_bitmap)
->> -		return -ENOMEM;
->> -
->> -	/* will be initialized using bb info from map_bitmap */
->> -	line->invalid_bitmap =3D kmalloc(lm->sec_bitmap_len, =
-GFP_ATOMIC);
->> -	if (!line->invalid_bitmap) {
->> -		ret =3D -ENOMEM;
->> -		goto fail_free_map_bitmap;
->> -	}
->> +	int blk_to_erase;
->>    	/* Bad blocks do not need to be erased */
->>  	bitmap_copy(line->erase_bitmap, line->blk_bitmap, =
-lm->blk_per_line);
->> @@ -1191,15 +1199,15 @@ static int pblk_line_prepare(struct pblk =
-*pblk, struct pblk_line *line)
->>  	}
->>    	if (blk_in_line < lm->min_blk_line) {
->> -		ret =3D -EAGAIN;
->> -		goto fail_free_invalid_bitmap;
->> +		spin_unlock(&line->lock);
->> +		return -EAGAIN;
->>  	}
->>    	if (line->state !=3D PBLK_LINESTATE_FREE) {
->>  		WARN(1, "pblk: corrupted line %d, state %d\n",
->>  							line->id, =
-line->state);
->> -		ret =3D -EINTR;
->> -		goto fail_free_invalid_bitmap;
->> +		spin_unlock(&line->lock);
->> +		return -EINTR;
->>  	}
->>    	line->state =3D PBLK_LINESTATE_OPEN;
->> @@ -1213,16 +1221,6 @@ static int pblk_line_prepare(struct pblk =
-*pblk, struct pblk_line *line)
->>  	kref_init(&line->ref);
->>    	return 0;
->> -
->> -fail_free_invalid_bitmap:
->> -	spin_unlock(&line->lock);
->> -	kfree(line->invalid_bitmap);
->> -	line->invalid_bitmap =3D NULL;
->> -fail_free_map_bitmap:
->> -	kfree(line->map_bitmap);
->> -	line->map_bitmap =3D NULL;
->> -
->> -	return ret;
->>  }
->>    int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line =
-*line)
->> @@ -1242,13 +1240,15 @@ int pblk_line_recov_alloc(struct pblk *pblk, =
-struct pblk_line *line)
->>  	}
->>  	spin_unlock(&l_mg->free_lock);
->>  -	pblk_rl_free_lines_dec(&pblk->rl, line, true);
->> +	if (pblk_line_alloc_bitmaps(pblk, line))
->> +		return -EINTR;
->=20
-> Why return -EINTR, instead of the return value from (0, -ENOMEM) from =
-pblk_line_alloc_bitmap?
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 188f195..ba7083b 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -3011,17 +3011,22 @@ void exit_mmap(struct mm_struct *mm)
+>  	struct mmu_gather tlb;
+>  	struct vm_area_struct *vma;
+>  	unsigned long nr_accounted = 0;
+> +	const bool is_oom_mm = mm_is_oom_victim(mm);
+>  
+>  	/* mm's last user has gone, and its about to be pulled down */
+>  	mmu_notifier_release(mm);
+>  
+>  	if (mm->locked_vm) {
+> +		if (is_oom_mm)
+> +			down_write(&mm->mmap_sem);
+>  		vma = mm->mmap;
+>  		while (vma) {
+>  			if (vma->vm_flags & VM_LOCKED)
+>  				munlock_vma_pages_all(vma);
+>  			vma = vma->vm_next;
+>  		}
+> +		if (is_oom_mm)
+> +			up_write(&mm->mmap_sem);
+>  	}
+>  
+>  	arch_exit_mmap(mm);
+> @@ -3037,7 +3042,7 @@ void exit_mmap(struct mm_struct *mm)
+>  	/* Use -1 here to ensure all VMAs in the mm are unmapped */
+>  	unmap_vmas(&tlb, vma, 0, -1);
+>  
+> -	if (unlikely(mm_is_oom_victim(mm))) {
+> +	if (unlikely(is_oom_mm)) {
+>  		/*
+>  		 * Wait for oom_reap_task() to stop working on this
+>  		 * mm. Because MMF_OOM_SKIP is already set before
 
-Sure.
-
->=20
->=20
->>    	if (!pblk_line_init_bb(pblk, line, 0)) {
->>  		list_add(&line->list, &l_mg->free_list);
->>  		return -EINTR;
->>  	}
->>  +	pblk_rl_free_lines_dec(&pblk->rl, line, true);
->>  	return 0;
->>  }
->>  @@ -1260,6 +1260,24 @@ void pblk_line_recov_close(struct pblk *pblk, =
-struct pblk_line *line)
->>  	line->emeta =3D NULL;
->>  }
->>  +static void pblk_line_clear(struct pblk_line *line)
->> +{
->> +	*line->vsc =3D cpu_to_le32(EMPTY_ENTRY);
->> +
->> +	line->map_bitmap =3D NULL;
->> +	line->invalid_bitmap =3D NULL;
->> +	line->smeta =3D NULL;
->> +	line->emeta =3D NULL;
->> +}
->=20
-> Instead of pblk_line_clear, how about pblk_line_reinit?
-
-Emmmmm... yes, why not.
-
-I'll resend.
-
-Javier
-
---Apple-Mail=_4CF863C9-B1B8-4FCB-9000-E90AF17F3FF1
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlrXMngACgkQPEYBfS0l
-eOBMqg/+LIr6QhGVp/H+pftufFk4rB9QO+0hUjsOgRLLj5YUf8b6LQpu7P3gzpAO
-BSF3A2Ef+kf3C/D2xlzqGTAeWEvfWNKVjPJ7xWmVPo+PO13ayxG6kBGbxwyFevm8
-egA6kfYZxrSFQwJaxtALphW0YQRQ6NxB9PDgAiyrXqbyljPT42QTMCvCrxHno9yg
-6TM3lWb1LRVMhJygJ4U6j1nvW3Cga84CzUDXn7hJqdgGuMUn/y1wjWVQYSdZoJhU
-Oy85hWgxb2vYo1R7LgJw1ycDxe51IZl9keBaoodyEZJ4ECn2c1Z8pna9WIy2F1jd
-RImv5dwAN7fYYy6GS5aNlyDVMqNetAJ5lAzP1AmnwFZjaeaM6GMXSl/hkwia55kA
-S/AWGmiOy9QxzhGecxy+2Moyv/8pm86pS8mtjVvSyIts/AqMfLhr0DbVI8ou7zFP
-/dCtGnlRFJEMyiD9ma398919U4sQjjMDt1yncEhVDVyd8bWFrNPAD6x1WL5mqJsm
-t8FKnlAIgYLDUgWwsLJ+W1kqPq2qFveGqayiEBpXIACgzCoX9z4t2QH12q6whOu+
-GJpiP5D7GAse5Ma+WSJ8xvfXOGpvTE4MwDnX/tHWOQgDEWXJCUzfc2d7VquMtq8C
-iR+F9YwUJo5IYJx9GptSE5vyOlnUl4vE5kqiAj6aWDEsbV4Ue4g=
-=CVen
------END PGP SIGNATURE-----
-
---Apple-Mail=_4CF863C9-B1B8-4FCB-9000-E90AF17F3FF1--
+-- 
+Michal Hocko
+SUSE Labs
