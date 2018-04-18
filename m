@@ -1,118 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753672AbeDRL6f (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:58:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55245 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752116AbeDRL6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:58:33 -0400
-Date: Wed, 18 Apr 2018 13:58:30 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: rientjes@google.com, akpm@linux-foundation.org, aarcange@redhat.com,
-        guro@fb.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
-Message-ID: <20180418115830.GA17484@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1804171545460.53786@chino.kir.corp.google.com>
- <201804180057.w3I0vieV034949@www262.sakura.ne.jp>
- <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
- <20180418075051.GO17484@dhcp22.suse.cz>
- <201804182049.EDJ21857.OHJOMOLFQVFFtS@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201804182049.EDJ21857.OHJOMOLFQVFFtS@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1753840AbeDRL6n (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:58:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39160 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753713AbeDRL6k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 07:58:40 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: Robin Gong <yibin.gong@nxp.com>, Mark Brown <broonie@kernel.org>,
+        yibin.gong@nxp.com, shawnguo@kernel.org, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, lgirdwood@gmail.com, broonie@kernel.org,
+        Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: pfuze100: update voltage setting for pfuze3000 sw1a" to the regulator tree
+In-Reply-To: <1521269828-8874-2-git-send-email-Anson.Huang@nxp.com>
+Message-Id: <E1f8ljG-0002hm-G4@debutante>
+Date: Wed, 18 Apr 2018 12:58:26 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18-04-18 20:49:11, Tetsuo Handa wrote:
-> Michal Hocko wrote:
-> > On Tue 17-04-18 19:52:41, David Rientjes wrote:
-> > > Since exit_mmap() is done without the protection of mm->mmap_sem, it is
-> > > possible for the oom reaper to concurrently operate on an mm until
-> > > MMF_OOM_SKIP is set.
-> > > 
-> > > This allows munlock_vma_pages_all() to concurrently run while the oom
-> > > reaper is operating on a vma.  Since munlock_vma_pages_range() depends on
-> > > clearing VM_LOCKED from vm_flags before actually doing the munlock to
-> > > determine if any other vmas are locking the same memory, the check for
-> > > VM_LOCKED in the oom reaper is racy.
-> > > 
-> > > This is especially noticeable on architectures such as powerpc where
-> > > clearing a huge pmd requires serialize_against_pte_lookup().  If the pmd
-> > > is zapped by the oom reaper during follow_page_mask() after the check for
-> > > pmd_none() is bypassed, this ends up deferencing a NULL ptl.
-> > > 
-> > > Fix this by reusing MMF_UNSTABLE to specify that an mm should not be
-> > > reaped.  This prevents the concurrent munlock_vma_pages_range() and
-> > > unmap_page_range().  The oom reaper will simply not operate on an mm that
-> > > has the bit set and leave the unmapping to exit_mmap().
-> > 
-> > This will further complicate the protocol and actually theoretically
-> > restores the oom lockup issues because the oom reaper doesn't set
-> > MMF_OOM_SKIP when racing with exit_mmap so we fully rely that nothing
-> > blocks there... So the resulting code is more fragile and tricky.
-> > 
-> > Can we try a simpler way and get back to what I was suggesting before
-> > [1] and simply not play tricks with
-> > 		down_write(&mm->mmap_sem);
-> > 		up_write(&mm->mmap_sem);
-> > 
-> > and use the write lock in exit_mmap for oom_victims?
-> 
-> You mean something like this?
+The patch
 
-or simply hold the write lock until we unmap and free page tables.
-It would make the locking rules much more straightforward.
-What you are proposing is more focused on this particular fix and it
-would work as well but the subtle locking would still stay in place.
-I am not sure we want the trickiness.
+   regulator: pfuze100: update voltage setting for pfuze3000 sw1a
 
-> Then, I'm tempted to call __oom_reap_task_mm() before holding mmap_sem for write.
-> It would be OK to call __oom_reap_task_mm() at the beginning of __mmput()...
+has been applied to the regulator tree at
 
-I am not sure I understand.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 188f195..ba7083b 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -3011,17 +3011,22 @@ void exit_mmap(struct mm_struct *mm)
->  	struct mmu_gather tlb;
->  	struct vm_area_struct *vma;
->  	unsigned long nr_accounted = 0;
-> +	const bool is_oom_mm = mm_is_oom_victim(mm);
->  
->  	/* mm's last user has gone, and its about to be pulled down */
->  	mmu_notifier_release(mm);
->  
->  	if (mm->locked_vm) {
-> +		if (is_oom_mm)
-> +			down_write(&mm->mmap_sem);
->  		vma = mm->mmap;
->  		while (vma) {
->  			if (vma->vm_flags & VM_LOCKED)
->  				munlock_vma_pages_all(vma);
->  			vma = vma->vm_next;
->  		}
-> +		if (is_oom_mm)
-> +			up_write(&mm->mmap_sem);
->  	}
->  
->  	arch_exit_mmap(mm);
-> @@ -3037,7 +3042,7 @@ void exit_mmap(struct mm_struct *mm)
->  	/* Use -1 here to ensure all VMAs in the mm are unmapped */
->  	unmap_vmas(&tlb, vma, 0, -1);
->  
-> -	if (unlikely(mm_is_oom_victim(mm))) {
-> +	if (unlikely(is_oom_mm)) {
->  		/*
->  		 * Wait for oom_reap_task() to stop working on this
->  		 * mm. Because MMF_OOM_SKIP is already set before
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 1dced996ee702e6af82a57c7b6c56b0cceaa6425 Mon Sep 17 00:00:00 2001
+From: Anson Huang <Anson.Huang@nxp.com>
+Date: Sun, 18 Mar 2018 11:23:21 +0800
+Subject: [PATCH] regulator: pfuze100: update voltage setting for pfuze3000
+ sw1a
+
+pfuze3000 datasheet(Rev.9.0) from:
+
+https://www.nxp.com/docs/en/data-sheet/PF3000.pdf
+
+updates sw1a's voltage range, the settings for 1.450V and 1.475V
+are replaced with 1.8V and 3.3V:
+
+5b'11110 1.450 (SW1B), 1.8 (SW1A/SW1AB)
+5b'11111 1.475 (SW1B), 3.3 (SW1A/SW1AB)
+
+the voltage calculation using steps is NOT available for sw1a now,
+use voltage table instead.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/pfuze100-regulator.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index 63922a2167e5..680f076e3d85 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -86,6 +86,13 @@ static const int pfuze100_coin[] = {
+ 	2500000, 2700000, 2800000, 2900000, 3000000, 3100000, 3200000, 3300000,
+ };
+ 
++static const int pfuze3000_sw1a[] = {
++	700000, 725000, 750000, 775000, 800000, 825000, 850000, 875000,
++	900000, 925000, 950000, 975000, 1000000, 1025000, 1050000, 1075000,
++	1100000, 1125000, 1150000, 1175000, 1200000, 1225000, 1250000, 1275000,
++	1300000, 1325000, 1350000, 1375000, 1400000, 1425000, 1800000, 3300000,
++};
++
+ static const int pfuze3000_sw2lo[] = {
+ 	1500000, 1550000, 1600000, 1650000, 1700000, 1750000, 1800000, 1850000,
+ };
+@@ -343,7 +350,7 @@ static struct pfuze_regulator pfuze200_regulators[] = {
+ };
+ 
+ static struct pfuze_regulator pfuze3000_regulators[] = {
+-	PFUZE100_SW_REG(PFUZE3000, SW1A, PFUZE100_SW1ABVOL, 700000, 1475000, 25000),
++	PFUZE100_SWB_REG(PFUZE3000, SW1A, PFUZE100_SW1ABVOL, 0x1f, pfuze3000_sw1a),
+ 	PFUZE100_SW_REG(PFUZE3000, SW1B, PFUZE100_SW1CVOL, 700000, 1475000, 25000),
+ 	PFUZE100_SWB_REG(PFUZE3000, SW2, PFUZE100_SW2VOL, 0x7, pfuze3000_sw2lo),
+ 	PFUZE3000_SW3_REG(PFUZE3000, SW3, PFUZE100_SW3AVOL, 900000, 1650000, 50000),
 -- 
-Michal Hocko
-SUSE Labs
+2.17.0
