@@ -1,101 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752283AbeDRTOc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 15:14:32 -0400
-Received: from mail-pl0-f41.google.com ([209.85.160.41]:33871 "EHLO
-        mail-pl0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751256AbeDRTOb (ORCPT
+        id S1752440AbeDRTSI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 15:18:08 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:44246 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752166AbeDRTSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 15:14:31 -0400
-X-Google-Smtp-Source: AIpwx497Kxk8sl/8SE5xM+V7hPkufMBs14d3tEoH8MEIQw/rLrs9Kx3N8J7VS4YqG/OhI6LY36dYqw==
-Date: Wed, 18 Apr 2018 12:14:29 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Michal Hocko <mhocko@kernel.org>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrea Arcangeli <aarcange@redhat.com>, Roman Gushchin <guro@fb.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper
- unmap
-In-Reply-To: <20180418075051.GO17484@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1804181159020.227784@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1804171545460.53786@chino.kir.corp.google.com> <201804180057.w3I0vieV034949@www262.sakura.ne.jp> <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com> <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
- <20180418075051.GO17484@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 18 Apr 2018 15:18:06 -0400
+X-Google-Smtp-Source: AIpwx48dX2ZRzHspdQAU2kuOSg1uldhsK0KzPFdqDl3zBQ/GavQwU8frhi+DKsv62gIIrwEgNbZc6A==
+Date: Thu, 19 Apr 2018 00:49:58 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: jhogan@kernel.org, ralf@linux-mips.org, paulus@ozlabs.org,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, borntraeger@de.ibm.com,
+        frankja@linux.vnet.ibm.com, david@redhat.com, cohuck@redhat.com,
+        schwidefsky@de.ibm.com, pbonzini@redhat.com, tglx@linutronix.de,
+        mingo@redhat.com, christoffer.dall@linaro.org, marc.zyngier@arm.com
+Cc: linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        willy@infradead.org
+Subject: [PATCH] kvm: Change return type to vm_fault_t
+Message-ID: <20180418191958.GA25806@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018, Michal Hocko wrote:
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
-> > Since exit_mmap() is done without the protection of mm->mmap_sem, it is
-> > possible for the oom reaper to concurrently operate on an mm until
-> > MMF_OOM_SKIP is set.
-> > 
-> > This allows munlock_vma_pages_all() to concurrently run while the oom
-> > reaper is operating on a vma.  Since munlock_vma_pages_range() depends on
-> > clearing VM_LOCKED from vm_flags before actually doing the munlock to
-> > determine if any other vmas are locking the same memory, the check for
-> > VM_LOCKED in the oom reaper is racy.
-> > 
-> > This is especially noticeable on architectures such as powerpc where
-> > clearing a huge pmd requires serialize_against_pte_lookup().  If the pmd
-> > is zapped by the oom reaper during follow_page_mask() after the check for
-> > pmd_none() is bypassed, this ends up deferencing a NULL ptl.
-> > 
-> > Fix this by reusing MMF_UNSTABLE to specify that an mm should not be
-> > reaped.  This prevents the concurrent munlock_vma_pages_range() and
-> > unmap_page_range().  The oom reaper will simply not operate on an mm that
-> > has the bit set and leave the unmapping to exit_mmap().
-> 
-> This will further complicate the protocol and actually theoretically
-> restores the oom lockup issues because the oom reaper doesn't set
-> MMF_OOM_SKIP when racing with exit_mmap so we fully rely that nothing
-> blocks there... So the resulting code is more fragile and tricky.
-> 
+commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-exit_mmap() does not block before set_bit(MMF_OOM_SKIP) once it is 
-entered.
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ arch/mips/kvm/mips.c       | 2 +-
+ arch/powerpc/kvm/powerpc.c | 2 +-
+ arch/s390/kvm/kvm-s390.c   | 2 +-
+ arch/x86/kvm/x86.c         | 2 +-
+ include/linux/kvm_host.h   | 2 +-
+ virt/kvm/arm/arm.c         | 2 +-
+ virt/kvm/kvm_main.c        | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-> Can we try a simpler way and get back to what I was suggesting before
-> [1] and simply not play tricks with
-> 		down_write(&mm->mmap_sem);
-> 		up_write(&mm->mmap_sem);
-> 
-> and use the write lock in exit_mmap for oom_victims?
-> 
-> Andrea wanted to make this more clever but this is the second fallout
-> which could have been prevented. The patch would be smaller and the
-> locking protocol easier
-> 
-> [1] http://lkml.kernel.org/r/20170727065023.GB20970@dhcp22.suse.cz
-> 
+diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
+index 2549fdd..03e0e0f 100644
+--- a/arch/mips/kvm/mips.c
++++ b/arch/mips/kvm/mips.c
+@@ -1076,7 +1076,7 @@ int kvm_arch_vcpu_ioctl_set_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
+ 	return -ENOIOCTLCMD;
+ }
 
-exit_mmap() doesn't need to protect munlock, unmap, or freeing pgtables 
-with mm->mmap_sem; the issue is that you need to start holding it in this 
-case before munlock and then until at least the end of free_pgtables().  
-Anything in between also needlessly holds it so could introduce weird 
-lockdep issues that only trigger for oom victims, i.e. they could be very 
-rare on some configs.  I don't necessarily like holding a mutex over 
-functions where it's actually not needed, not only as a general principle 
-but also because the oom reaper can now infer that reaping isn't possible 
-just because it can't do down_read() and isn't aware the thread is 
-actually in exit_mmap() needlessly holding it.
+-int kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
++vm_fault_t kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
+ {
+ 	return VM_FAULT_SIGBUS;
+ }
+diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
+index 403e642..3099dee 100644
+--- a/arch/powerpc/kvm/powerpc.c
++++ b/arch/powerpc/kvm/powerpc.c
+@@ -1825,7 +1825,7 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 	return r;
+ }
 
-I like how the oom reaper currently retries on failing to grab 
-mm->mmap_sem and then backs out because it's assumed it can't make forward 
-progress.  Adding additional complication for situations where 
-mm->mmap_sem is contended (and munlock to free_pgtables() can take a long 
-time for certain processes) to check if it's actually already in 
-exit_mmap() would seem more complicated than this.
+-int kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
++vm_fault_t kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
+ {
+ 	return VM_FAULT_SIGBUS;
+ }
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index ba4c709..24af487 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -3941,7 +3941,7 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 	return r;
+ }
 
-The patch is simply using MMF_UNSTABLE rather than MMF_OOM_SKIP to 
-serialize exit_mmap() with the oom reaper and doing it before anything 
-interesting in exit_mmap() because without it the munlock can trivially 
-race with unmap_page_range() and cause a NULL pointer or #GP on a pmd or 
-pte.  The way Andrea implemented it is fine, we simply have revealed a 
-race between munlock_vma_pages_all() and unmap_page_range() that needs it 
-to do set_bit(); down_write(); up_write(); earlier.
+-int kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
++vm_fault_t kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
+ {
+ #ifdef CONFIG_KVM_S390_UCONTROL
+ 	if ((vmf->pgoff == KVM_S390_SIE_PAGE_OFFSET)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index c8a0b54..95d8102 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -3827,7 +3827,7 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 	return r;
+ }
+
+-int kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
++vm_fault_t kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
+ {
+ 	return VM_FAULT_SIGBUS;
+ }
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index ac0062b..8eeb062 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -736,7 +736,7 @@ long kvm_arch_dev_ioctl(struct file *filp,
+ 			unsigned int ioctl, unsigned long arg);
+ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 			 unsigned int ioctl, unsigned long arg);
+-int kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf);
++vm_fault_t kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf);
+
+ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext);
+
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index 86941f6..6c8cc31 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -163,7 +163,7 @@ int kvm_arch_create_vcpu_debugfs(struct kvm_vcpu *vcpu)
+ 	return 0;
+ }
+
+-int kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
++vm_fault_t kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
+ {
+ 	return VM_FAULT_SIGBUS;
+ }
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 4501e65..45eb54b 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -2341,7 +2341,7 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_on_spin);
+
+-static int kvm_vcpu_fault(struct vm_fault *vmf)
++static vm_fault_t kvm_vcpu_fault(struct vm_fault *vmf)
+ {
+ 	struct kvm_vcpu *vcpu = vmf->vma->vm_file->private_data;
+ 	struct page *page;
+--
+1.9.1
