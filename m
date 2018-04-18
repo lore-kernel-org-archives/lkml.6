@@ -1,48 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753774AbeDRLAP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:00:15 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56373 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752145AbeDRLAN (ORCPT
+        id S1753473AbeDRLB2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:01:28 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:43996 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751879AbeDRLBZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:00:13 -0400
-From: Colin King <colin.king@canonical.com>
-To: Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net: caif: fix spelling mistake "UKNOWN" -> "UNKNOWN"
-Date: Wed, 18 Apr 2018 12:00:08 +0100
-Message-Id: <20180418110008.29841-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 18 Apr 2018 07:01:25 -0400
+Date: Wed, 18 Apr 2018 19:01:15 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: "Dey, Megha" <megha.dey@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+ support
+Message-ID: <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
+References: <1515542948-24041-1-git-send-email-megha.dey@linux.intel.com>
+ <1515542948-24041-2-git-send-email-megha.dey@linux.intel.com>
+ <20180118113905.GA19904@gondor.apana.org.au>
+ <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
+ <20180316145351.GA6231@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Tue, Apr 17, 2018 at 06:40:17PM +0000, Dey, Megha wrote:
+> 
+> 
+> >-----Original Message-----
+> >From: Herbert Xu [mailto:herbert@gondor.apana.org.au]
+> >Sent: Friday, March 16, 2018 7:54 AM
+> >To: Dey, Megha <megha.dey@intel.com>
+> >Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org;
+> >davem@davemloft.net
+> >Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+> >support
+> >
+> >I have taken a deeper look and I'm even more convinced now that mcryptd is
+> >simply not needed in your current model.
+> >
+> >The only reason you would need mcryptd is if you need to limit the rate of
+> >requests going into the underlying mb algorithm.
+> >
+> >However, it doesn't do that all.  Even though it seems to have a batch size of
+> >10, but because it immediately reschedules itself after the batch runs out,
+> >it's essentially just dumping all requests at the underlying algorithm as fast
+> >as they're coming in.  The underlying algorithm doesn't have need throttling
+> >anyway because it'll do the work when the queue is full synchronously.
+> >
+> >So why not just get rid of mcryptd completely and expose the underlying
+> >algorithm as a proper async skcipher/hash?
+> 
+> Hi Herbert,
+> 
+> Most part of the cryptd.c and mcryptd.c are similar, except the logic used to flush out partially completed jobs
+> in the case of multibuffer algorithms.
+> 
+> I think I will try to merge the cryptd and mcryptd adding necessary quirks for multibuffer where needed.
 
-Trivial fix to spelling mistake
+I think you didn't quite get my point.  From what I'm seeing you
+don't need either cryptd or mcryptd.  You just need to expose the
+underlying mb algorithm directly.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/caif/chnl_net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So I'm not sure what we would gain from merging cryptd and mcryptd.
 
-diff --git a/net/caif/chnl_net.c b/net/caif/chnl_net.c
-index 53ecda10b790..13e2ae6be620 100644
---- a/net/caif/chnl_net.c
-+++ b/net/caif/chnl_net.c
-@@ -174,7 +174,7 @@ static void chnl_flowctrl_cb(struct cflayer *layr, enum caif_ctrlcmd flow,
- 		flow == CAIF_CTRLCMD_DEINIT_RSP ? "CLOSE/DEINIT" :
- 		flow == CAIF_CTRLCMD_INIT_FAIL_RSP ? "OPEN_FAIL" :
- 		flow == CAIF_CTRLCMD_REMOTE_SHUTDOWN_IND ?
--		 "REMOTE_SHUTDOWN" : "UKNOWN CTRL COMMAND");
-+		 "REMOTE_SHUTDOWN" : "UNKNOWN CTRL COMMAND");
- 
- 
- 
+Cheers,
 -- 
-2.17.0
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
