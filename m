@@ -1,66 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753655AbeDRDdJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 23:33:09 -0400
-Received: from ozlabs.org ([203.11.71.1]:36461 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752612AbeDRDdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 23:33:08 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 18 Apr 2018 13:31:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Russell King <rmk@armlinux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: linux-next: build failure after merge of the arm-current tree
-Message-ID: <20180418133155.0931baf7@canb.auug.org.au>
+        id S1753694AbeDRDfW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 23:35:22 -0400
+Received: from mail-ua0-f177.google.com ([209.85.217.177]:43876 "EHLO
+        mail-ua0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752911AbeDRDfV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 23:35:21 -0400
+X-Google-Smtp-Source: AIpwx4/WNCkr50u5pybFpkWDqGKOOF653oMYax6/1C4pire9LB0YOV3juH5sE8oHpWPKPn+8ZNvOHz9FMxotzDibjCw=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Y3hgY4AeRmmxpTuTCb=qRl2"; protocol="application/pgp-signature"
+In-Reply-To: <CABxcv=n6HFXB+sAW_8qwMJWwWXDgspFgNs9Kk37hMO53EimWCg@mail.gmail.com>
+References: <20180417171204.259146-1-dianders@chromium.org>
+ <20180417172229.GK8973@sirena.org.uk> <CABxcv=n6HFXB+sAW_8qwMJWwWXDgspFgNs9Kk37hMO53EimWCg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 17 Apr 2018 20:35:18 -0700
+X-Google-Sender-Auth: 7w1N88Iv0vibg-wwPbsYddONGb0
+Message-ID: <CAD=FV=WOZn2vqeZp=EbWjR80Q=6HbdRZbqXr-jK6rBn_dpsyqw@mail.gmail.com>
+Subject: Re: [PATCH] regulator: Fix return type of of_map_mode()
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Mark Brown <broonie@kernel.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>, swboyd@chromium.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        linux-omap <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Y3hgY4AeRmmxpTuTCb=qRl2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Russell,
+On Tue, Apr 17, 2018 at 10:48 AM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+>>> Let's fix the return type of all of the current of_map_mode()
+>>> functions.  While we're at it, we'll remove one pointless "inline".
+>>
+>> Ah, I see...  the thing here is that the mode is always an unsigned int
+>> since it's a bitmask - this goes out beying the use in of_map_mode() and
+>> into all the other APIs.  We only actually use 4 bits currently so I
+>> think there's no problem switching to int but it seems we should
+>> probably do that consistently throughout the API so that things don't
+>> get missed later on.
+>
+> Maybe another option could be to add a REGULATOR_MODE_INVALID with
+> value 0x0, and fix the drivers that are returning -EINVAL to return
+> that instead?
+>
+> In of_get_regulation_constraints() we could check for that and
+> propagate -EINVAL.
 
-After merging the arm-current tree, today's linux-next build
-(lots of configs) failed like this:
+I like this idea.  Posted at
+<https://patchwork.kernel.org/patch/10347345/>.  Note that there's no
+actual error to propagate since of_get_regulation_constraints() just
+prints the error and continues on its merry way.
 
-/bin/sh: 1: arithmetic expression: expecting primary: " "
-(lots of these)
-
-Caused by commit
-
-  fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )=
-) operator")
-
-(pointed out by Michael Ellerman)
-
-Our /bin/sh is dash not bash ...
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Y3hgY4AeRmmxpTuTCb=qRl2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrWvCsACgkQAVBC80lX
-0GwXUgf9G06XjDPKVrEcDo+cs4LQk7TU0o3/ZNzHtILTXpt4cnQZeWLXpGvwDSEk
-JxPjqFp/VHmHZDRkI1mr/Pxvc8Pu5PACZXonKF6yh2SlDgXrm8imGPLampWA4HlQ
-O5nFa8zEyYvLPxvY8NaU9v+jxDdg6UH5yPHg7/f6QuU/zxiqdcRW1fgbOqVT6Ede
-+VUIgvh88HVn8WAOKRmDs8MwZ3kwzCSquooL/qkkZYqZ6fYePeqVRaspUwzExAwM
-KfkQx1oMtsJphIj7iDj7sBApudND5rSWnkcIuEGp5ctAdeaTwvKw4FZeQ9nO5mUt
-1sGKil1QRXp8D8XKkl2plZFHrRX4Qw==
-=4V5q
------END PGP SIGNATURE-----
-
---Sig_/Y3hgY4AeRmmxpTuTCb=qRl2--
+-Doug
