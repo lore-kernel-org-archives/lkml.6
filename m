@@ -1,117 +1,141 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3943267-1524036809-2-2760491530746709817
+X-Cyrus-Session-Id: sloti22d1t05-3768412-1524033585-2-9422494303567331080
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524036809; b=T2f+AI28RSrhHMpjABbZWHGLCxsCfbFmBatxuhF06E6ZIE8Wdf
-    XZgsr7IIXnQUbdtWeE/FXViGg8yhiBs17w/1JhoPTwwtHaYd5uzIvjTXD5F+LL1B
-    ZZUctrnuiZMy0CCuXLIjZUjd0ObF0+bJ1yrD6eQFDwPWllZ/ZLsVzc0ynF+zOjkv
-    6XDIK6A4p3U7yHr7v/nW/Yb4IL0XvPHM0/9k/ksVhWzEbP/vw9v5tTLsc8fm7yAn
-    /0t34P00mVmVPMjePHahrkG9X9cIEHYtnBfh5VRYQgF9cYwLIptpgdxFBX3U4nWp
-    8Ykj1cjIyRQHeTICaMPsB5nTGuN+RzyG5b3A==
+    1524033585; b=mfEAZ8J+f1edttU8P3T4udIagFCjPmd+Gd5Hf25BEZP7TT66Zd
+    rlT/v7TV2ulY0KDYewsj8z/vbfi+HqqHnSv4BQqKYIaoUqFRMO49AHCuVRokxZAY
+    JpGatqUd8O373YZ+/zZpVHohVggJQDPOyheZM5Cqi0JPCqm9tE6w1m04FHtenx8B
+    P2dzgyLrttYilZ/7taa5HkoOea9P197anGTfLnSWJOgOzAw/kUqypiTyjZnal9GF
+    Lu4R1n3G6lltYTGJ8PM73+1bkRrfOdWaMgfdmhc0ddZMoeu90SB2iPElzjC14i/c
+    Hg/tOAWdsZyXbm3+nNIR+cq/1FqDOK0Kwdyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:mime-version:subject:from
-    :in-reply-to:date:cc:content-transfer-encoding:message-id
-    :references:to:sender:list-id; s=fm2; t=1524036809; bh=s3Af1CS5C
-    JwU0N69VMGfGu/9J/tTXvrmZ+LP5YoIT3w=; b=ZbSEapkjFvAuREqn4h5xL+CsI
-    Oyw1UGhqtUUhL7i0CWBZoxY8XYYguVTPVJ9eVa9RiRaP5WM9o1jQily1TeMrpGr1
-    nG88ny9Kcs+2Xa4l14RGWTFjWNcT7grXaNepHxMnMLgdLpm4jddNZXHoUQAGnk9m
-    /XpkXi27HrZKXSMg18OI0FG0ML8mQTysrV6n9JGQs3+MMBN9Pey4LZpfbbW0AItK
-    yOaVceymxzNKA6VBybk5e815M9eJLzvEtELxkdpq9tVwKd/+YNyrvgW7so7hzSMZ
-    Ao5I+fP2uffnOnHQluVhG0L7c/kBYE0rKtpAMLYXGexOt39zJUU19cshW9Dyg==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1524033585; bh=CRVBqAA0ILR2DHvtQrUn/qDsSk1OX8
+    i6L8/0KOUc9k4=; b=Q1dnS9oeNbpWLPaP1XrIyg+HhWRFxEaHozrt1ZZqyfQlJz
+    dMXP6FAonnrYWHnA2Y2DRF7rqpR6aIh7ckEne60ClXBifa+4DIwPlXl43VVNdck8
+    J3XTLUQoQ3iOx73B/DUC8oYdLMEz3A3T9Fx4q7cYk4+/BodrCCMmfI70uFCRzhrC
+    GuLrhwXn8w8zYxcm9eC5uVFFS7Qhq/ayZ/s50Y8pcJ6LFMQQnGAUkYHFFmWadRGe
+    qs1kNCGFAH81VQ3NM6B04w5FQJKKL+y2EA8Q/DpQ4foYJKZK6GqXvMjVwgYki09R
+    CKgRuKgsAaiXyTX7euwKcTjMBGGpoGscBAEEB0ew==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=holtmann.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=holtmann.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=holtmann.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=linux.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=holtmann.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linux.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLHw21Gq8qWpIZ0/FT8b1R6i6vCTXj3tPXeD1NSCNOzVSPpZJfeLWvrBJV2keJ/W4HzJ/KYwf8EoINjVvyA3CcOITSmCWcGDs5ec7R1sjunAa4ULEskS
-    ajKnKdgpc+TTSAnL38jd5+gLECpgiVfkDe8p41pfziEIetmlDXkC9OSDeuGa59FsOeJ3eYoekmC5nebuCIHgbdgxNcQyBPZlFoThrqASF3UYaFP1V1fBE+Qq
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=KKAkSRfTAAAA:8 a=Dei6p5SHAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
-    a=Lq4HHxXSK_lPJjLtylgA:9 a=CjuIK1q_8ugA:10 a=cvBusfyB2V15izCimMoJ:22
-    a=M-Yerj1wOn-OpK7r_3ei:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfEJxbhvriYo199pfqYHTO9rdRM1/KW39tBCOcKTU3TMxzYI8iA0inGYHvKDGgAAKhixfSkMnz20Tbq1a44EPgIRzYSSXbZbvdAOjg6zi2XaBiyDAnd0E
+    crW9zfMm5ihlvfsujsO07wHLItvcRWteZ9FfI987Z1NH7IidNyJmmF+f85qFeNku5lNnmgJK7e0sTKlV7G1rrSlLSiUOxHdqzE62SeMDyMR1u0gWWfgGzLDt
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=Z4Rwk6OoAAAA:8
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=4hirlG-2ErW7RMWNpGEA:9
+    a=T9KE5mTaSm2qF8Kh:21 a=H4AH90sMA9K8_StT:21 a=HkZW87K1Qel5hWWM3VKY:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753197AbeDRHdP (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 18 Apr 2018 03:33:15 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:35059 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752989AbeDRHdO (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 18 Apr 2018 03:33:14 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] Bluetooth: hci_qca: Avoid missing rampatch failure with
- userspace fw loader
-From: Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <1523860824-3392-1-git-send-email-amit.pundir@linaro.org>
-Date: Wed, 18 Apr 2018 09:33:11 +0200
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        dragonboard@lists.96boards.org,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Stable <stable@vger.kernel.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <1C10FB33-04EA-4409-BE56-6C8BFC28B3ED@holtmann.org>
-References: <1523860824-3392-1-git-send-email-amit.pundir@linaro.org>
-To: Amit Pundir <amit.pundir@linaro.org>
-X-Mailer: Apple Mail (2.3445.6.18)
+        id S1752776AbeDRGjb (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 18 Apr 2018 02:39:31 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55790 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751955AbeDRGjb (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 18 Apr 2018 02:39:31 -0400
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: jeyu@kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Cc: borntraeger@de.ibm.com, schwidefsky@de.ibm.com,
+        brueckner@linux.vnet.ibm.com, heiko.carstens@de.ibm.com,
+        peterz@infradead.org, acme@kernel.org, me@tobin.cc,
+        keescook@chromium.org, stable@vger.kernel.org,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH v2] module: Fix display of wrong  module .text address
+Date: Wed, 18 Apr 2018 08:39:04 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18041806-0044-0000-0000-000005497423
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041806-0045-0000-0000-000028898653
+Message-Id: <20180418063904.100200-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804180061
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Amit,
+Fixes: ef0010a30935 ("vsprintf: don't use 'restricted_pointer()'
+when not restricting") for /sys/module/*/sections/.text file.
 
-> AOSP use userspace firmware loader to load firmwares, which will
-> return -EAGAIN in case qca/rampatch_00440302.bin is not found.
-> Since there is no rampatch for dragonboard820c QCA controller
-> revision, just make it work as is.
-> 
-> CC: Loic Poulain <loic.poulain@linaro.org>
-> CC: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-> CC: Marcel Holtmann <marcel@holtmann.org>
-> CC: Johan Hedberg <johan.hedberg@gmail.com>
-> CC: Stable <stable@vger.kernel.org>
-> Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-> ---
-> drivers/bluetooth/hci_qca.c | 6 ++++++
-> 1 file changed, 6 insertions(+)
+Reading file /proc/modules shows the correct address:
+[root@s35lp76 ~]# cat /proc/modules | egrep '^qeth_l2'
+qeth_l2 94208 1 - Live 0x000003ff80401000
 
-patch has been applied to bluetooth-next tree.
+and reading file /sys/module/qeth_l2/sections/.text
+[root@s35lp76 ~]# cat /sys/module/qeth_l2/sections/.text
+0x0000000018ea8363
+displays a random address.
 
-Regards
+This breaks the perf tool which uses this address on s390
+to calculate start of .text section in memory.
 
-Marcel
+Fix this by printing the correct (unhashed) address.
+
+Thanks to Jessica Yu for helping on this.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: stable@vger.kernel.org
+---
+ kernel/module.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/module.c b/kernel/module.c
+index a6e43a5806a1..40b42000bd80 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1472,7 +1472,8 @@ static ssize_t module_sect_show(struct module_attribute *mattr,
+ {
+ 	struct module_sect_attr *sattr =
+ 		container_of(mattr, struct module_sect_attr, mattr);
+-	return sprintf(buf, "0x%pK\n", (void *)sattr->address);
++	return sprintf(buf, "0x%px\n", kptr_restrict < 2 ?
++		       (void *)sattr->address : 0);
+ }
+ 
+ static void free_sect_attrs(struct module_sect_attrs *sect_attrs)
+-- 
+2.14.3
