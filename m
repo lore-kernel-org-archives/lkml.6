@@ -1,130 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753540AbeDRDb5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 23:31:57 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36301 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753002AbeDRDb4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 23:31:56 -0400
-X-Google-Smtp-Source: AIpwx4+MbDaEJk+KQqoVCTn6GcHxRzJr/RTa1tdP6xvKIj//21xm2wiCus1u/KrLkzznkHcSjzbG5A==
-From: Douglas Anderson <dianders@chromium.org>
-To: broonie@kernel.org
-Cc: David Collins <collinsd@codeaurora.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>, evgreen@chromium.org,
-        swboyd@chromium.org, Douglas Anderson <dianders@chromium.org>,
-        linux-omap@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] regulator: Don't return or expect -errno from of_map_mode()
-Date: Tue, 17 Apr 2018 20:31:43 -0700
-Message-Id: <20180418033143.208986-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+        id S1753655AbeDRDdJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 23:33:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:36461 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752612AbeDRDdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 23:33:08 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 18 Apr 2018 13:31:55 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Russell King <rmk@armlinux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: linux-next: build failure after merge of the arm-current tree
+Message-ID: <20180418133155.0931baf7@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Y3hgY4AeRmmxpTuTCb=qRl2"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In of_get_regulation_constraints() we were taking the result of
-of_map_mode() (an unsigned int) and assigning it to an int.  We were
-then checking whether this value was -EINVAL.  Some implementers of
-of_map_mode() were returning -EINVAL (even though the return type of
-their function needed to be unsigned int) because they needed to to
-signal an error back to of_get_regulation_constraints().
+--Sig_/Y3hgY4AeRmmxpTuTCb=qRl2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In general in the regulator framework the mode is always referred to
-as an unsigned int.  While we could fix this to be a signed int (the
-highest value we store in there right now is 0x8), it's actually
-pretty clean to just define the regulator mode 0x0 (the lack of any
-bits set) as an invalid mode.  Let's do that.
+Hi Russell,
 
-Suggested-by: Javier Martinez Canillas <javier@dowhile0.org>
-Fixes: 5e5e3a42c653 ("regulator: of: Add support for parsing initial and suspend modes")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+After merging the arm-current tree, today's linux-next build
+(lots of configs) failed like this:
 
-Changes in v2:
-- Use Javier's suggestion of defining 0x0 as invalid
+/bin/sh: 1: arithmetic expression: expecting primary: " "
+(lots of these)
 
- drivers/regulator/cpcap-regulator.c |  2 +-
- drivers/regulator/of_regulator.c    | 15 +++++++++------
- drivers/regulator/twl-regulator.c   |  2 +-
- include/linux/regulator/consumer.h  |  1 +
- 4 files changed, 12 insertions(+), 8 deletions(-)
+Caused by commit
 
-diff --git a/drivers/regulator/cpcap-regulator.c b/drivers/regulator/cpcap-regulator.c
-index f541b80f1b54..bd910fe123d9 100644
---- a/drivers/regulator/cpcap-regulator.c
-+++ b/drivers/regulator/cpcap-regulator.c
-@@ -222,7 +222,7 @@ static unsigned int cpcap_map_mode(unsigned int mode)
- 	case CPCAP_BIT_AUDIO_LOW_PWR:
- 		return REGULATOR_MODE_STANDBY;
- 	default:
--		return -EINVAL;
-+		return REGULATOR_MODE_INVALID;
- 	}
- }
- 
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index f47264fa1940..22c02b7a338b 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -124,11 +124,12 @@ static void of_get_regulation_constraints(struct device_node *np,
- 
- 	if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
- 		if (desc && desc->of_map_mode) {
--			ret = desc->of_map_mode(pval);
--			if (ret == -EINVAL)
-+			unsigned int mode = desc->of_map_mode(pval);
-+
-+			if (mode == REGULATOR_MODE_INVALID)
- 				pr_err("%s: invalid mode %u\n", np->name, pval);
- 			else
--				constraints->initial_mode = ret;
-+				constraints->initial_mode = mode;
- 		} else {
- 			pr_warn("%s: mapping for mode %d not defined\n",
- 				np->name, pval);
-@@ -163,12 +164,14 @@ static void of_get_regulation_constraints(struct device_node *np,
- 		if (!of_property_read_u32(suspend_np, "regulator-mode",
- 					  &pval)) {
- 			if (desc && desc->of_map_mode) {
--				ret = desc->of_map_mode(pval);
--				if (ret == -EINVAL)
-+				unsigned int mode = desc->of_map_mode(pval);
-+
-+				mode = desc->of_map_mode(pval);
-+				if (mode == REGULATOR_MODE_INVALID)
- 					pr_err("%s: invalid mode %u\n",
- 					       np->name, pval);
- 				else
--					suspend_state->mode = ret;
-+					suspend_state->mode = mode;
- 			} else {
- 				pr_warn("%s: mapping for mode %d not defined\n",
- 					np->name, pval);
-diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
-index a4456db5849d..884c7505ed91 100644
---- a/drivers/regulator/twl-regulator.c
-+++ b/drivers/regulator/twl-regulator.c
-@@ -274,7 +274,7 @@ static inline unsigned int twl4030reg_map_mode(unsigned int mode)
- 	case RES_STATE_SLEEP:
- 		return REGULATOR_MODE_STANDBY;
- 	default:
--		return -EINVAL;
-+		return REGULATOR_MODE_INVALID;
- 	}
- }
- 
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index df176d7c2b87..25602afd4844 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -80,6 +80,7 @@ struct regmap;
-  * These modes can be OR'ed together to make up a mask of valid register modes.
-  */
- 
-+#define REGULATOR_MODE_INVALID			0x0
- #define REGULATOR_MODE_FAST			0x1
- #define REGULATOR_MODE_NORMAL			0x2
- #define REGULATOR_MODE_IDLE			0x4
--- 
-2.17.0.484.g0c8726318c-goog
+  fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )=
+) operator")
+
+(pointed out by Michael Ellerman)
+
+Our /bin/sh is dash not bash ...
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Y3hgY4AeRmmxpTuTCb=qRl2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrWvCsACgkQAVBC80lX
+0GwXUgf9G06XjDPKVrEcDo+cs4LQk7TU0o3/ZNzHtILTXpt4cnQZeWLXpGvwDSEk
+JxPjqFp/VHmHZDRkI1mr/Pxvc8Pu5PACZXonKF6yh2SlDgXrm8imGPLampWA4HlQ
+O5nFa8zEyYvLPxvY8NaU9v+jxDdg6UH5yPHg7/f6QuU/zxiqdcRW1fgbOqVT6Ede
++VUIgvh88HVn8WAOKRmDs8MwZ3kwzCSquooL/qkkZYqZ6fYePeqVRaspUwzExAwM
+KfkQx1oMtsJphIj7iDj7sBApudND5rSWnkcIuEGp5ctAdeaTwvKw4FZeQ9nO5mUt
+1sGKil1QRXp8D8XKkl2plZFHrRX4Qw==
+=4V5q
+-----END PGP SIGNATURE-----
+
+--Sig_/Y3hgY4AeRmmxpTuTCb=qRl2--
