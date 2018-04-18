@@ -1,64 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752903AbeDRHn0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:43:26 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:42301 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752634AbeDRHnY (ORCPT
+        id S1752058AbeDRHoc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:44:32 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43533 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751232AbeDRHob (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:43:24 -0400
-X-Google-Smtp-Source: AIpwx48JMg9/QZajpJ13NMwhbM0GN5wWhdnos2uBnlYjxjh8PaLKwRwg6DG8FnAsTGbF/DwsBm62mkp2aCKrdSbpawA=
+        Wed, 18 Apr 2018 03:44:31 -0400
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+To: <alexandre.torgue@st.com>, <robh+dt@kernel.org>
+CC: <mcoquelin.stm32@gmail.com>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <fabrice.gasnier@st.com>
+Subject: [PATCH] ARM: dts: stm32: Add LPtimer support to stm32mp157c
+Date: Wed, 18 Apr 2018 09:43:53 +0200
+Message-ID: <1524037433-25915-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0fRZmumK5zLRgqT1iPtn2HgEjg6qyv-PMEaM1Z1W6aDw@mail.gmail.com>
-References: <1523988865-26848-1-git-send-email-geert@linux-m68k.org> <CAK8P3a0fRZmumK5zLRgqT1iPtn2HgEjg6qyv-PMEaM1Z1W6aDw@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 18 Apr 2018 09:43:23 +0200
-X-Google-Sender-Auth: zprCh2gch7OTl1qmatgLDd-fkZc
-Message-ID: <CAMuHMdWyuo+y6bTv39gwg4VH7NvzHNSDXprNcM_m854g6ZfiPg@mail.gmail.com>
-Subject: Re: [PATCH/RFC] crypto: Add platform dependencies for CRYPTO_DEV_CCREE
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Gilad Ben-Yossef <gilad@benyossef.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.118]
+X-ClientProxiedBy: GPXDAG7NODE6.st.com (10.75.127.85) To GPXDAG5NODE6.st.com
+ (10.75.127.79)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_02:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Add LPtimer definitions, depending on features they provide:
+- lptimer1 & 2 can act as PWM, trigger and encoder/counter
+- lptimer3 can act as PWM and trigger
+- lptimer4 & 5 can act as PWM
 
-On Tue, Apr 17, 2018 at 9:53 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tue, Apr 17, 2018 at 8:14 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> The ARM TrustZone CryptoCell is found on ARM SoCs only.  Hence make it
->> depend on ARM or ARM64, unless compile-testing.
->>
->> Drop the dependency on HAS_DMA, as DMA is always available on ARM and
->> ARM64 platforms, and doing so will increase compile coverage.
->>
->> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> ---
->> Is ARM || ARM64 OK?
->> Or should this be limited to either ARM or ARM64? Or something else?
->
-> ARM || ARM64 seems fine, but don't you need '|| (HAS_DMA && COMPILE_TEST)'?
->
-> I assume the HAS_DMA dependency was added to prevent compile
-> testing to run into a build error.
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c.dtsi | 108 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
 
-Probably it was. But in v4.17-rc1, dummies are present in the NO_DMA case,
-so everything compile-tests fine.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index bc3eddc..7e6301c 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -104,6 +104,33 @@
+ 		interrupt-parent = <&intc>;
+ 		ranges;
+ 
++		lptimer1: timer@40009000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32-lptimer";
++			reg = <0x40009000 0x400>;
++			clocks = <&rcc LPTIM1_K>;
++			clock-names = "mux";
++			status = "disabled";
++
++			pwm {
++				compatible = "st,stm32-pwm-lp";
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++
++			trigger@0 {
++				compatible = "st,stm32-lptimer-trigger";
++				reg = <0>;
++				status = "disabled";
++			};
++
++			counter {
++				compatible = "st,stm32-lptimer-counter";
++				status = "disabled";
++			};
++		};
++
+ 		usart2: serial@4000e000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x4000e000 0x400>;
+@@ -167,6 +194,87 @@
+ 			#reset-cells = <1>;
+ 		};
+ 
++		lptimer2: timer@50021000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32-lptimer";
++			reg = <0x50021000 0x400>;
++			clocks = <&rcc LPTIM2_K>;
++			clock-names = "mux";
++			status = "disabled";
++
++			pwm {
++				compatible = "st,stm32-pwm-lp";
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++
++			trigger@1 {
++				compatible = "st,stm32-lptimer-trigger";
++				reg = <1>;
++				status = "disabled";
++			};
++
++			counter {
++				compatible = "st,stm32-lptimer-counter";
++				status = "disabled";
++			};
++		};
++
++		lptimer3: timer@50022000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32-lptimer";
++			reg = <0x50022000 0x400>;
++			clocks = <&rcc LPTIM3_K>;
++			clock-names = "mux";
++			status = "disabled";
++
++			pwm {
++				compatible = "st,stm32-pwm-lp";
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++
++			trigger@2 {
++				compatible = "st,stm32-lptimer-trigger";
++				reg = <2>;
++				status = "disabled";
++			};
++		};
++
++		lptimer4: timer@50023000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32-lptimer";
++			reg = <0x50023000 0x400>;
++			clocks = <&rcc LPTIM4_K>;
++			clock-names = "mux";
++			status = "disabled";
++
++			pwm {
++				compatible = "st,stm32-pwm-lp";
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++		};
++
++		lptimer5: timer@50024000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "st,stm32-lptimer";
++			reg = <0x50024000 0x400>;
++			clocks = <&rcc LPTIM5_K>;
++			clock-names = "mux";
++			status = "disabled";
++
++			pwm {
++				compatible = "st,stm32-pwm-lp";
++				#pwm-cells = <3>;
++				status = "disabled";
++			};
++		};
++
+ 		usart1: serial@5c000000 {
+ 			compatible = "st,stm32h7-uart";
+ 			reg = <0x5c000000 0x400>;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+1.9.1
