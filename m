@@ -1,95 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752864AbeDRSRi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 14:17:38 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:46160 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752705AbeDRSRe (ORCPT
+        id S1752786AbeDRSRh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 14:17:37 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:42138 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752707AbeDRSRf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 14:17:34 -0400
-Date: Wed, 18 Apr 2018 19:17:23 +0100
-From: Russell King <rmk@armlinux.org.uk>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the arm-current tree
-Message-ID: <20180418181722.GA7852@flint.armlinux.org.uk>
-References: <20180418133155.0931baf7@canb.auug.org.au>
- <20180418175442.GA7234@flint.armlinux.org.uk>
+        Wed, 18 Apr 2018 14:17:35 -0400
+Date: Wed, 18 Apr 2018 20:17:29 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>, x86@kernel.org
+Subject: Re: [PATCH v3] tracing/x86: Update syscall trace events to handle
+ new prefixed syscall func names
+Message-ID: <20180418181729.GA4816@light.dominikbrodowski.net>
+References: <20180418114509.5a76847d@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180418175442.GA7234@flint.armlinux.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180418114509.5a76847d@gandalf.local.home>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 06:54:42PM +0100, Russell King wrote:
-> On Wed, Apr 18, 2018 at 01:31:55PM +1000, Stephen Rothwell wrote:
-> > Hi Russell,
-> > 
-> > After merging the arm-current tree, today's linux-next build
-> > (lots of configs) failed like this:
-> > 
-> > /bin/sh: 1: arithmetic expression: expecting primary: " "
-> > (lots of these)
-> > 
-> > Caused by commit
-> > 
-> >   fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )) operator")
-> > 
-> > (pointed out by Michael Ellerman)
-> > 
-> > Our /bin/sh is dash not bash ...
+
+On Wed, Apr 18, 2018 at 11:45:09AM -0400, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> I tested this on 32-bit ARM with dash:
+> Arnaldo noticed that the latest kernel is missing the syscall event system
+> directory in x86. I bisected it down to d5a00528b58c ("syscalls/core,
+> syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()").
 > 
-> foo# dash
-> # echo $(($(nm /boot/vmlinux-4.16.0+ | sed -n -e 's/^\([^ ]*\) B __bss_start$/-0x\1/p' -e 's/^\([^ ]*\) B __bss_stop$/+0x\1/p') ))
-> 6409680
-> #
+> The system call trace events are special, as there is only one trace event
+> for all system calls (the raw_syscalls). But a macro that wraps the system
+> calls creates meta data for them that copies the name to find the system
+> call that maps to the system call table (the number). At boot up, it does a
+> kallsyms lookup of the system call table to find the function that maps to
+> the meta data of the system call. If it does not find a function, then that
+> system call is ignored.
 > 
-> Any clues what '/bin/sh: 1: arithmetic expression: expecting primary: " "'
-> actually means in reality?
+> Because the x86 system calls had "__x64_", or "__ia32_" prefixed to the
+> "sys" for the names, they do not match the default compare algorithm. As
+> this was a problem for power pc, the algorithm can be overwritten by the
+> architecture. The solution is to have x86 have its own algorithm to do the
+> compare and this brings back the system call trace events.
 > 
-> I don't see why you should end up with lots of them either, unless maybe
-> the sed expression isn't working for you.
+> Link: http://lkml.kernel.org/r/20180417174128.0f3457f0@gandalf.local.home
 > 
-> The sed expression should end up producing output such as:
-> 
-> -0xc09138c4
-> +0xc0f30694
-> 
-> and that's it, two values, one preceded by a + and the other by a -.
+> Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-Hmm, I guess it's a result of:
-
-# echo $(( ))
-dash: 4: arithmetic expression: expecting primary: " "
-
-which points to the sed expression producing no output.  If that's the
-case, then something else went wrong with the build earlier - there
-should be no case where the built vmlinux does not contain the
-__bss_start and __bss_stop symbols on ARM, since every kernel contains
-a .bss section.
-
-Olof's autobuilder shows no errors, but that could be because it's
-using bash - I don't know.  kernelci.org also shows no failures.
-
-I think more information is needed to debug this, such as:
-
-- does nm of the vmlinux contain the __bss_start and __bss_stop
-  symbols, and are they formatted as one would expect (iow, marked
-  as a global BSS symbol?)
-- does the nm | sed pipeline produce the expected output when run
-  outside of everything else?
-- does dash evaluate the output correctly outside of the makefile?
-
-As I'm not currently aware of a failing environment that I have
-access to, I'm not able to debug this myself, sorry.
-
--- 
-Russell King
-ARM architecture Linux Kernel maintainer
+Acked-by: Dominik Brodowski <linux@dominikbrodowski.net>
