@@ -1,143 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753824AbeDRMdP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 08:33:15 -0400
-Received: from smtp1-g21.free.fr ([212.27.42.1]:47968 "EHLO smtp1-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752027AbeDRMdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 08:33:14 -0400
-Date: Wed, 18 Apr 2018 14:32:43 +0200
-From: Alban <albeu@free.fr>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Alban <albeu@free.fr>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode
- for the cells list
-Message-ID: <20180418143243.3c23493c@avionic-0020>
-In-Reply-To: <9f7d2987-b33e-79b5-ae58-2985fd7334e4@linaro.org>
-References: <1521933899-362-1-git-send-email-albeu@free.fr>
-        <1521933899-362-2-git-send-email-albeu@free.fr>
-        <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
-        <20180417165420.423a691b@avionic-0020>
-        <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
-        <20180417180040.04f53495@avionic-0020>
-        <20180418134119.2e587621@avionic-0020>
-        <9f7d2987-b33e-79b5-ae58-2985fd7334e4@linaro.org>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1753625AbeDRMi6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 08:38:58 -0400
+Received: from www381.your-server.de ([78.46.137.84]:58010 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752617AbeDRMiz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 08:38:55 -0400
+Subject: Re: [PATCH v3 06/11] iio: inkern: add module put/get on iio dev
+ module when requesting channels
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Eugen Hristev <eugen.hristev@microchip.com>,
+        Jonathan Cameron <jic23@kernel.org>, ludovic.desroches@microchip.com,
+        alexandre.belloni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        nicolas.ferre@microchip.com, robh@kernel.org
+References: <1523350677-27106-1-git-send-email-eugen.hristev@microchip.com>
+ <1523350677-27106-7-git-send-email-eugen.hristev@microchip.com>
+ <20180415203321.1aaaf91e@archlinux> <20180416235821.GF77055@dtor-ws>
+ <67771f4c-d30c-4a28-2a9b-d5585186d60a@microchip.com>
+ <20180417191906.GB67621@dtor-ws> <20180418103548.000078b7@huawei.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <79d51d4e-eea7-7295-7e32-26149d6aeadd@metafoo.de>
+Date: Wed, 18 Apr 2018 14:37:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qRNXTY2_RtgSGW0qHQjEJ5b"; protocol="application/pgp-signature"
+In-Reply-To: <20180418103548.000078b7@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: lars@metafoo.de
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/qRNXTY2_RtgSGW0qHQjEJ5b
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 04/18/2018 11:35 AM, Jonathan Cameron wrote:
+> On Tue, 17 Apr 2018 12:19:06 -0700
+> Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> 
+>> Hi Eugen,
+>>
+>> On Tue, Apr 17, 2018 at 10:39:24AM +0300, Eugen Hristev wrote:
+>>>
+>>>
+>>> On 17.04.2018 02:58, Dmitry Torokhov wrote:  
+>>>> On Sun, Apr 15, 2018 at 08:33:21PM +0100, Jonathan Cameron wrote:  
+>>>>> On Tue, 10 Apr 2018 11:57:52 +0300
+>>>>> Eugen Hristev <eugen.hristev@microchip.com> wrote:
+>>>>>   
+>>>>>> When requesting channels for a particular consumer device,
+>>>>>> besides requesting the device (incrementing the reference counter), also
+>>>>>> do it for the driver module of the iio dev. This will avoid the situation
+>>>>>> where the producer IIO device can be removed and the consumer is still
+>>>>>> present in the kernel.
+>>>>>>
+>>>>>> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+>>>>>> ---
+>>>>>>   drivers/iio/inkern.c | 8 +++++++-
+>>>>>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+>>>>>> index ec98790..68d9b87 100644
+>>>>>> --- a/drivers/iio/inkern.c
+>>>>>> +++ b/drivers/iio/inkern.c
+>>>>>> @@ -11,6 +11,7 @@
+>>>>>>   #include <linux/slab.h>
+>>>>>>   #include <linux/mutex.h>
+>>>>>>   #include <linux/of.h>
+>>>>>> +#include <linux/module.h>
+>>>>>>   #include <linux/iio/iio.h>
+>>>>>>   #include "iio_core.h"
+>>>>>> @@ -152,6 +153,7 @@ static int __of_iio_channel_get(struct iio_channel *channel,
+>>>>>>   	if (index < 0)
+>>>>>>   		goto err_put;
+>>>>>>   	channel->channel = &indio_dev->channels[index];
+>>>>>> +	try_module_get(channel->indio_dev->driver_module);  
+>>>>>
+>>>>> And if it fails? (the module we are trying to get is going away...)
+>>>>>
+>>>>> We should try and handle it I think. Be it by just erroring out of here.  
+>>>>
+>>>> Even more, this has nothing to do with modules. A device can go away for
+>>>> any number of reasons (we unbind it manually via sysfs, we pull the USB
+>>>> plug from the host in case it is USB-connected device, we unload I2C
+>>>> adapter for the bus device resides on, we kick underlying PCI device)
+>>>> and we should be able to handle this in some fashion. Handling errors
+>>>> from reads and ignoring garbage is one of methods.
+>>>>
+>>>> FWIW this is a NACK from me.
+>>>>
+>>>> Thanks.  
+>>> Hello,
+>>>
+>>> This patch is actually a "best effort attempt" for the consumer driver
+>>> (touch driver) to get a reference to the producer of the data (the IIO
+>>> device), when it requests the specific channels.
+>>> As of this moment, there is no attempt whatsoever for the consumer to have a
+>>> reference on the producer driver. Thus, the producer can be removed at any
+>>> time, and the consumer will fail ungraciously.  
+>>
+>> This is the root of the issue. The consumer should be prepared to handle
+>> errors from producer.
+>>
+>>> I can change the perspective from "best effort" to "mandatory" to get a
+>>> reference to the producer, or you wish to stop trying to get any reference
+>>> at all (remove this patch completely) ?  
+>>
+>> You should take reference to the device itself (if it is not taken
+>> already), so it does not disappear completely and you can continue using
+>> IIO API to access it, and IIO API should be prepared to deal with "dead"
+>> devices, but as I pointed in my other email, trying to pin the driver
+>> is quite pointless as there are myriad other ways of device stopping
+>> working besides module unloading.
+>>
+>> In any case, I think this problem is outside of the scope of this
+>> patchset that adds a generic resistive touchscreen, so if you want to
+>> continue working on this I'd recommend moving it into a separate series.
+>>
+>> Thanks.
+>>
+> Agreed, this one has come up a number of times before.  Quite a lot of
+> work got done by (IIRC) Lars Peter Clausen to stabilize things in various
+> unexpected 'going away' events.  Of course there may be paths we have
+> added since that (it was years ago) that can cause trouble...
+> 
+> Anyhow, separate issue as Dmitry says, let's deal with it separately.
 
-On Wed, 18 Apr 2018 13:12:48 +0100
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
-
-> On 18/04/18 12:41, Alban wrote:
-> > On Tue, 17 Apr 2018 18:00:40 +0200
-> > Alban <albeu@free.fr> wrote:
-> >  =20
-> >> On Tue, 17 Apr 2018 16:44:01 +0100
-> >> Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
-> >> =20
-> >>> Thanks for explaining,
-> >>>
-> >>> On 17/04/18 15:54, Alban wrote: =20
-> >>>> This will not only allow reading the calibration data from nvmem, but
-> >>>> will also create a partition on the MTD device, which is not accepta=
-ble.
-> >>>> With my proposed binding this would become:
-> >>>>
-> >>>> flash@0 {
-> >>>> 	#address-cells =3D <1>;
-> >>>> 	#size-cells =3D <1>;
-> >>>> 	compatible =3D "s25sl064a";
-> >>>> 	reg =3D <0>;
-> >>>>
-> >>>> 	nvmem-cells {
-> >>>> 		compatible =3D "nvmem-cells";
-> >>>> 		#address-cells =3D <1>;
-> >>>> 		#address-cells =3D <1>;
-> >>>>
-> >>>> 		calibration: calib@404 {
-> >>>> 			reg =3D <0x404 0x10>;
-> >>>> 		};
-> >>>> 	}; =20
-> >>>
-> >>> Why can't we make nvmem-cells node a nvmem provider in this case?
-> >>> Which should work! =20
-> >>
-> >> TBH I just copied what have been done to fix the same problem with the
-> >> MTD partitions. But yes we could also just extend the current binding
-> >> to require a compatible string on each nvmem-cell, which would not
-> >> require any code change to support. =20
-> >=20
-> > However this scheme will not work if the device node binding already
-> > have subnodes with addresses. The addressing, as specified by
-> > #address-cells and #size-cells, might be incompatible or might overlap.
-> > Using the nvmem-cells subnode solve this problem.
-> >  =20
->=20
-> I was also suggesting you to use nvmem-cell subnode, but make it a=20
-> proper nvmem provider device, rather than reusing its parent device.
->=20
-> You would end up some thing like this in dt.
->=20
-> flash@0 {
-> 	#address-cells =3D <1>;
-> 	#size-cells =3D <1>;
-> 	compatible =3D "s25sl064a";
-> 	reg =3D <0>;
->=20
-> 	nvmem-cells {
-> 		compatible =3D "mtd-nvmem";
-> 		#address-cells =3D <1>;
-> 		#size-cells =3D <1>;
->=20
-> 		calibration: calib@404 {
-> 			reg =3D <0x404 0x10>;
-> 		};
-> 	};
-> };
-
-But the root cause is in the nvmem binding, this conflict could exists
-with any device type, not just MTD. I don't understand why we would want
-such workarounds instead of just fixing the problem once and for all.
-
-Alban
-
---Sig_/qRNXTY2_RtgSGW0qHQjEJ5b
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJa1zrsAAoJEHSUmkuduC28Q0cQAKQdYP/RHd/RrlAkHhAMFwBM
-1lGLrNYd2ob3AzA5Xa/JvpRrYHCj3YNYktT9T2nrEaoXeCDPKqCnZQOBUm6h4UH3
-R4YvfcPxbk8ZcDJ3hcymaVuF7ol544u53a1PPwOMJWcmHJ0D/u8FP4fkilFlvKYA
-SsJZtKb9Gi7ja7p9ZKB3xmfuQQImLem4WxVuopGvKwKm4J83J3wge8Xic/nYV1kP
-zMG+ZMzOvfcGToZSn/0l+2y/Y8Weg5vf/quDAgc6qk6zKSird7+f+EEZZ1OOfS3M
-BuoHizAsurZvU/QiwvMnE2VJUdTTcuZfDVv++VoyFPIDkGiuzphx2COBHLCQFqEq
-ywiN9QWjLPa5uh6I4OfDsnnfZCgVG1IbgmKcxNpc12my0hS/0U6tqs7ucJMX+7Iw
-WfKs6ttf4Y+pOxJK/e4RZ9tiyUeK6aDLWRVuVavgNrAh0dTHtb/XTao1P/JfMqP4
-shsqkWRkx06C17ghBI11HnsSzpVM3DfYcpDuRpkk0MRtm1qF698TjH/HGZ/3iOCj
-gZqQVrKr690AMpT0etdTR46W1Nz5kAXP+IzL5oSfUkYM8jPK8Ub6X29aZglbNcdM
-RiSiMiF4JD3mrcIJ7qy4nFsmKXfiy7hqTcREvZOCzH+BZEKxJDLOcW+UY0nEs29a
-AlzkOVuaZsa2Spxh8iDa
-=uFJx
------END PGP SIGNATURE-----
-
---Sig_/qRNXTY2_RtgSGW0qHQjEJ5b--
+We do properly get a ref to the device. Not getting a ref to the module is
+on purpose. Cause as Dmitry said it does nothing the device can disappear at
+any point either way. I second the NACK.
