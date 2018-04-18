@@ -1,107 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeDRHt6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:49:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35734 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751865AbeDRHt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:49:56 -0400
-Date: Wed, 18 Apr 2018 09:49:49 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: Harald Freudenberger <FREUDE@de.ibm.com>,
-        Pierre Morel <pmorel@linux.vnet.ibm.com>, alex.williamson@redhat.com,
-        alifm@linux.vnet.ibm.com, berrange@redhat.com,
-        bjsdjshi@linux.vnet.ibm.com, borntrae@linux.ibm.com,
-        fiuczy@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, kvm@vger.kernel.org, kwankhede@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        mjrosato@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com,
-        pasic@linux.vnet.ibm.com, pbonzini@redhat.com,
-        Reinhard Buendgen <BUENDGEN@de.ibm.com>, thuth@redhat.com
-Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
-Message-ID: <20180418094949.0403dcaf.cohuck@redhat.com>
-In-Reply-To: <7276785e-2183-3204-ec80-99fba1546364@linux.vnet.ibm.com>
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
-        <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
-        <OFE3FE11B1.8E1BDDEF-ON00258272.002AEDB1-C1258272.002B06EF@notes.na.collabserv.com>
-        <20180417121044.5c8f2182.cohuck@redhat.com>
-        <2ac8b862-e2dc-843e-a0b8-906fa32b42f4@linux.vnet.ibm.com>
-        <20180417172139.0a2b148b.cohuck@redhat.com>
-        <7276785e-2183-3204-ec80-99fba1546364@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1752604AbeDRHuy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:50:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38801 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751180AbeDRHux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 03:50:53 -0400
+Date: Wed, 18 Apr 2018 09:50:51 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrea Arcangeli <aarcange@redhat.com>, Roman Gushchin <guro@fb.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
+Message-ID: <20180418075051.GO17484@dhcp22.suse.cz>
+References: <alpine.DEB.2.21.1804171545460.53786@chino.kir.corp.google.com>
+ <201804180057.w3I0vieV034949@www262.sakura.ne.jp>
+ <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 14:08:59 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-
-> On 04/17/2018 11:21 AM, Cornelia Huck wrote:
-> > On Tue, 17 Apr 2018 10:26:57 -0400
-> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-> >  
-> >> On 04/17/2018 06:10 AM, Cornelia Huck wrote:  
-> >>> On Tue, 17 Apr 2018 09:49:58 +0200
-> >>> "Harald Freudenberger" <FREUDE@de.ibm.com> wrote:
-> >>>     
-> >>>> Didn't we say that when APXA is not available there is no Crypto support
-> >>>> for KVM ?  
-> >>> [Going by the code, as I don't have access to the architecture]
-> >>>
-> >>> Current status seems to be:
-> >>> - setup crycb if facility 76 is available (that's MSAX3, I guess?)  
-> >> The crycb is set up regardless of whether STFLE.76 (MSAX3) is
-> >> installed or not.  
-> > Hm, the current code does a quick exit if bit 76 is not set, doesn't
-> > it?  
+On Tue 17-04-18 19:52:41, David Rientjes wrote:
+> Since exit_mmap() is done without the protection of mm->mmap_sem, it is
+> possible for the oom reaper to concurrently operate on an mm until
+> MMF_OOM_SKIP is set.
 > 
-> I guess that depends upon what you mean by current code. If you are talking
-> about the code as it is distributed today - i.e., before my patch series -
-> then you are correct. This patch changes that; it initializes the
-> kvm->arch.crypto.crycbd to point to the CRYCB, then clears the format bits
-> (kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK)) which is the same as
-> setting the CRYCB format to format 0. It is only after this that the
-> check is done to determine whether STFLE.76 is set.
-
-Ah yes, with "current" I referred to current upstream.
-
+> This allows munlock_vma_pages_all() to concurrently run while the oom
+> reaper is operating on a vma.  Since munlock_vma_pages_range() depends on
+> clearing VM_LOCKED from vm_flags before actually doing the munlock to
+> determine if any other vmas are locking the same memory, the check for
+> VM_LOCKED in the oom reaper is racy.
 > 
-> >  
-> >>> - use format 2 if APXA is available, else use format 1  
-> >> Use format 0 if MSAX3 is not available
-> >> Use format 1 if MSAX3 is available but APXA is not
-> >> Use format 2 if MSAX3 and APXA is available
-> >>  
-> >>>   From Tony's patch description, the goal seems to be:
-> >>> - setup crycb even if MSAX3 is not available  
-> >> Yes, that is true
-> >>  
-> >>> So my understanding is that we use APXA only to decide on the format of
-> >>> the crycb, but provide it in any case?  
-> >> Yes, that is true  
-> > With the format selection you outlined above, I guess. Makes sense from
-> > my point of view (just looking at the source code).  
-> It also implements what is stated in the architecture doc.
-
-OK, great.
-
-> >  
-> >>> (Not providing a crycb if APXA is not available would be loss of
-> >>> functionality, I guess? Deciding not to provide vfio-ap if APXA is not
-> >>> available is a different game, of course.)  
-> >> This would require a change to enabling the CPU model feature for
-> >> AP.  
-> > But would it actually make sense to tie vfio-ap to APXA? This needs to
-> > be answered by folks with access to the architecture :)  
+> This is especially noticeable on architectures such as powerpc where
+> clearing a huge pmd requires serialize_against_pte_lookup().  If the pmd
+> is zapped by the oom reaper during follow_page_mask() after the check for
+> pmd_none() is bypassed, this ends up deferencing a NULL ptl.
 > 
-> I don't see any reason to do that from an architectural perspective.
-> One can access AP devices whether APXA is installed or not, it just limits
-> the range of devices that can be addressed
+> Fix this by reusing MMF_UNSTABLE to specify that an mm should not be
+> reaped.  This prevents the concurrent munlock_vma_pages_range() and
+> unmap_page_range().  The oom reaper will simply not operate on an mm that
+> has the bit set and leave the unmapping to exit_mmap().
 
-So I guess we should not introduce a tie-in then (unless it radically
-simplifies the code...)
+This will further complicate the protocol and actually theoretically
+restores the oom lockup issues because the oom reaper doesn't set
+MMF_OOM_SKIP when racing with exit_mmap so we fully rely that nothing
+blocks there... So the resulting code is more fragile and tricky.
+
+Can we try a simpler way and get back to what I was suggesting before
+[1] and simply not play tricks with
+		down_write(&mm->mmap_sem);
+		up_write(&mm->mmap_sem);
+
+and use the write lock in exit_mmap for oom_victims?
+
+Andrea wanted to make this more clever but this is the second fallout
+which could have been prevented. The patch would be smaller and the
+locking protocol easier
+
+[1] http://lkml.kernel.org/r/20170727065023.GB20970@dhcp22.suse.cz
+
+> Fixes: 212925802454 ("mm: oom: let oom_reap_task and exit_mmap run concurrently")
+> Cc: stable@vger.kernel.org [4.14+]
+> Signed-off-by: David Rientjes <rientjes@google.com>
+> ---
+>  v2:
+>   - oom reaper only sets MMF_OOM_SKIP if MMF_UNSTABLE was never set (either
+>     by itself or by exit_mmap(), per Tetsuo
+>   - s/kick_all_cpus_sync/serialize_against_pte_lookup/ in changelog as more
+>     isolated way of forcing cpus as non-idle on power
+> 
+>  mm/mmap.c     | 38 ++++++++++++++++++++------------------
+>  mm/oom_kill.c | 28 +++++++++++++---------------
+>  2 files changed, 33 insertions(+), 33 deletions(-)
+> 
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -3015,6 +3015,25 @@ void exit_mmap(struct mm_struct *mm)
+>  	/* mm's last user has gone, and its about to be pulled down */
+>  	mmu_notifier_release(mm);
+>  
+> +	if (unlikely(mm_is_oom_victim(mm))) {
+> +		/*
+> +		 * Wait for oom_reap_task() to stop working on this mm.  Because
+> +		 * MMF_UNSTABLE is already set before calling down_read(),
+> +		 * oom_reap_task() will not run on this mm after up_write().
+> +		 * oom_reap_task() also depends on a stable VM_LOCKED flag to
+> +		 * indicate it should not unmap during munlock_vma_pages_all().
+> +		 *
+> +		 * mm_is_oom_victim() cannot be set from under us because
+> +		 * victim->mm is already set to NULL under task_lock before
+> +		 * calling mmput() and victim->signal->oom_mm is set by the oom
+> +		 * killer only if victim->mm is non-NULL while holding
+> +		 * task_lock().
+> +		 */
+> +		set_bit(MMF_UNSTABLE, &mm->flags);
+> +		down_write(&mm->mmap_sem);
+> +		up_write(&mm->mmap_sem);
+> +	}
+> +
+>  	if (mm->locked_vm) {
+>  		vma = mm->mmap;
+>  		while (vma) {
+> @@ -3036,26 +3055,9 @@ void exit_mmap(struct mm_struct *mm)
+>  	/* update_hiwater_rss(mm) here? but nobody should be looking */
+>  	/* Use -1 here to ensure all VMAs in the mm are unmapped */
+>  	unmap_vmas(&tlb, vma, 0, -1);
+> -
+> -	if (unlikely(mm_is_oom_victim(mm))) {
+> -		/*
+> -		 * Wait for oom_reap_task() to stop working on this
+> -		 * mm. Because MMF_OOM_SKIP is already set before
+> -		 * calling down_read(), oom_reap_task() will not run
+> -		 * on this "mm" post up_write().
+> -		 *
+> -		 * mm_is_oom_victim() cannot be set from under us
+> -		 * either because victim->mm is already set to NULL
+> -		 * under task_lock before calling mmput and oom_mm is
+> -		 * set not NULL by the OOM killer only if victim->mm
+> -		 * is found not NULL while holding the task_lock.
+> -		 */
+> -		set_bit(MMF_OOM_SKIP, &mm->flags);
+> -		down_write(&mm->mmap_sem);
+> -		up_write(&mm->mmap_sem);
+> -	}
+>  	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+>  	tlb_finish_mmu(&tlb, 0, -1);
+> +	set_bit(MMF_OOM_SKIP, &mm->flags);
+>  
+>  	/*
+>  	 * Walk the list again, actually closing and freeing it,
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -521,12 +521,17 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+>  	}
+>  
+>  	/*
+> -	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
+> -	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
+> +	 * Tell all users of get_user/copy_from_user etc... that the content
+> +	 * is no longer stable. No barriers really needed because unmapping
+> +	 * should imply barriers already and the reader would hit a page fault
+> +	 * if it stumbled over reaped memory.
+> +	 *
+> +	 * MMF_UNSTABLE is also set by exit_mmap when the OOM reaper shouldn't
+> +	 * work on the mm anymore. The check for MMF_OOM_UNSTABLE must run
+>  	 * under mmap_sem for reading because it serializes against the
+>  	 * down_write();up_write() cycle in exit_mmap().
+>  	 */
+> -	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
+> +	if (test_and_set_bit(MMF_UNSTABLE, &mm->flags)) {
+>  		up_read(&mm->mmap_sem);
+>  		trace_skip_task_reaping(tsk->pid);
+>  		goto unlock_oom;
+> @@ -534,14 +539,6 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+>  
+>  	trace_start_task_reaping(tsk->pid);
+>  
+> -	/*
+> -	 * Tell all users of get_user/copy_from_user etc... that the content
+> -	 * is no longer stable. No barriers really needed because unmapping
+> -	 * should imply barriers already and the reader would hit a page fault
+> -	 * if it stumbled over a reaped memory.
+> -	 */
+> -	set_bit(MMF_UNSTABLE, &mm->flags);
+> -
+>  	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
+>  		if (!can_madv_dontneed_vma(vma))
+>  			continue;
+> @@ -567,6 +564,7 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+>  			tlb_finish_mmu(&tlb, start, end);
+>  		}
+>  	}
+> +	set_bit(MMF_OOM_SKIP, &mm->flags);
+>  	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+>  			task_pid_nr(tsk), tsk->comm,
+>  			K(get_mm_counter(mm, MM_ANONPAGES)),
+> @@ -594,7 +592,6 @@ static void oom_reap_task(struct task_struct *tsk)
+>  	    test_bit(MMF_OOM_SKIP, &mm->flags))
+>  		goto done;
+>  
+> -
+>  	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
+>  		task_pid_nr(tsk), tsk->comm);
+>  	debug_show_all_locks();
+> @@ -603,10 +600,11 @@ static void oom_reap_task(struct task_struct *tsk)
+>  	tsk->oom_reaper_list = NULL;
+>  
+>  	/*
+> -	 * Hide this mm from OOM killer because it has been either reaped or
+> -	 * somebody can't call up_write(mmap_sem).
+> +	 * If the oom reaper could not get started on this mm and it has not yet
+> +	 * reached exit_mmap(), set MMF_OOM_SKIP to disregard.
+>  	 */
+> -	set_bit(MMF_OOM_SKIP, &mm->flags);
+> +	if (!test_bit(MMF_UNSTABLE, &mm->flags))
+> +		set_bit(MMF_OOM_SKIP, &mm->flags);
+>  
+>  	/* Drop a reference taken by wake_oom_reaper */
+>  	put_task_struct(tsk);
+
+-- 
+Michal Hocko
+SUSE Labs
