@@ -1,159 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752743AbeDRIuL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:50:11 -0400
-Received: from zxshcas2.zhaoxin.com ([180.169.121.92]:40443 "EHLO
-        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751444AbeDRIuJ (ORCPT
+        id S1753097AbeDRIvJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:51:09 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53159 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752786AbeDRIvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:50:09 -0400
-From: David Wang <davidwang@zhaoxin.com>
-To: "'Thomas Gleixner'" <tglx@linutronix.de>
-CC: <mingo@redhat.com>, <hpa@zytor.com>, <mingo@kernel.org>,
-        <grehkg@linuxfoundation.org>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <brucechang@via-alliance.com>,
-        <cooperyan@zhaoxin.com>, <qiyuanwang@zhaoxin.com>,
-        <benjaminpan@viatech.com>, <lukelin@viacpu.com>, <timguo@zhaoxin.com>
-Subject: Re: [PATCH] x86/Centaur: show more HW features in /proc/cpuinfo
-Date: Wed, 18 Apr 2018 16:49:30 +0800
-Message-ID: <000101d3d6f2$2a82ef10$7f88cd30$@zhaoxin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+        Wed, 18 Apr 2018 04:51:07 -0400
+Message-ID: <1524041429.3528.3.camel@pengutronix.de>
+Subject: Re: [PATCH v6 6/7] remoteproc/davinci: use the reset framework
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Suman Anna <s-anna@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Wed, 18 Apr 2018 10:50:29 +0200
+In-Reply-To: <20180417173038.25510-7-brgl@bgdev.pl>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
+         <20180417173038.25510-7-brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AdPW8Vv/AOehcyEeSUi9LI0aEieWNA==
-Content-Language: zh-cn
-X-Originating-IP: [10.29.8.18]
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- zxbjmbx3.zhaoxin.com (10.29.252.165)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> -----Original Mail-----
-> Sender: Thomas Gleixner [mailto:tglx@linutronix.de]
-> Time: 2018/4/17 18:19
-> Receiver: David Wang <davidwang@zhaoxin.com>
-> CC: mingo@redhat.com; hpa@zytor.com; mingo@kernel.org;
-> grehkg@linuxfoundation.org; x86@kernel.org; linux-
-> kernel@vger.kernel.org; brucechang@via-alliance.com;
-> cooperyan@zhaoxin.com; qiyuanwang@zhaoxin.com;
-> benjaminpan@viatech.com; lukelin@viacpu.com; timguo@zhaoxin.com
-> Subject: Re: [PATCH] x86/Centaur: show more HW features in /proc/cpuinfo
+On Tue, 2018-04-17 at 19:30 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> On Sun, 8 Apr 2018, David Wang wrote:
+> Switch to using the reset framework instead of handcoded reset routines
+> we used so far.
 > 
-> > We add this patch to show correct HW features(arch_perfmon,
-> > tpr_shadow, vnmi, flexpriority, ept and vpid) when user execute "cat
-> /proc/cpuinfo".
-> 
-> See the other mail vs. the changelog.
->
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
- 
-OK. Thanks.
+[...]
+> @@ -268,6 +282,15 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  		return PTR_ERR(dsp_clk);
+>  	}
+>  
+> +	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
+> +	if (IS_ERR(dsp_reset)) {
+> +		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
+> +			dev_err(dev, "unable to get reset control: %ld\n",
+> +				PTR_ERR(dsp_reset));
+> +
+> +		return PTR_ERR(dsp_reset);
+> +	}
+> +
+>  	if (dev->of_node) {
+>  		ret = of_reserved_mem_device_init(dev);
+>  		if (ret) {
+[...]
+> @@ -309,7 +333,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+>  	 * *not* in reset, but da8xx_rproc_start() needs the DSP to be
+>  	 * held in reset at the time it is called.
 
-> >
-> > Signed-off-by: David Wang <davidwang@zhaoxin.com>
-> > ---
-> >  arch/x86/kernel/cpu/centaur.c | 49
-> > +++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 49 insertions(+)
-> >
-> > diff --git a/arch/x86/kernel/cpu/centaur.c
-> > b/arch/x86/kernel/cpu/centaur.c index e5ec0f1..969fb8f 100644
-> > --- a/arch/x86/kernel/cpu/centaur.c
-> > +++ b/arch/x86/kernel/cpu/centaur.c
-> > @@ -112,6 +112,44 @@ static void early_init_centaur(struct cpuinfo_x86
-> *c)
-> >  	}
-> >  }
-> >
-> > +static void centaur_detect_vmx_virtcap(struct cpuinfo_x86 *c) {
-> > +#define X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW	0x00200000
-> > +#define X86_VMX_FEATURE_PROC_CTLS_VNMI		0x00400000
-> > +#define X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS	0x80000000
-> > +#define X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC	0x00000001
-> > +#define X86_VMX_FEATURE_PROC_CTLS2_EPT		0x00000002
-> > +#define X86_VMX_FEATURE_PROC_CTLS2_VPID		0x00000020
-> 
-> Please move the defines outside the function. This is horrible to read,
+Given this requirement, devm_reset_control_get_exclusive above is the
+correct choice.
 
-OK.
+>  	 */
+> -	ret = davinci_clk_reset_assert(drproc->dsp_clk);
+> +	ret = reset_control_assert(dsp_reset);
 
-> 
-> > +
-> > +	u32 vmx_msr_low, vmx_msr_high, msr_ctl, msr_ctl2;
-> > +
-> > +	clear_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
-> > +	clear_cpu_cap(c, X86_FEATURE_VNMI);
-> > +	clear_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
-> > +	clear_cpu_cap(c, X86_FEATURE_EPT);
-> > +	clear_cpu_cap(c, X86_FEATURE_VPID);
-> 
-> Why are you clearing the capabilities? They are cleared at boot time.
-> 
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-OK. It's really useless. 
-
-> > +	rdmsr(MSR_IA32_VMX_PROCBASED_CTLS, vmx_msr_low,
-> vmx_msr_high);
-> > +	msr_ctl = vmx_msr_high | vmx_msr_low;
-> > +
-> > +	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW)
-> > +		set_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
-> > +	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_VNMI)
-> > +		set_cpu_cap(c, X86_FEATURE_VNMI);
-> > +	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS) {
-> > +		rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
-> > +		      vmx_msr_low, vmx_msr_high);
-> > +		msr_ctl2 = vmx_msr_high | vmx_msr_low;
-> > +		if ((msr_ctl2 &
-> X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC) &&
-> > +		    (msr_ctl &
-> X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW))
-> > +			set_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
-> > +		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_EPT)
-> > +			set_cpu_cap(c, X86_FEATURE_EPT);
-> > +		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VPID)
-> > +			set_cpu_cap(c, X86_FEATURE_VPID);
-> > +	}
-> > +}
-> > +
-> >  static void init_centaur(struct cpuinfo_x86 *c)  {  #ifdef
-> > CONFIG_X86_32 @@ -128,6 +166,14 @@ static void init_centaur(struct
-> > cpuinfo_x86 *c)
-> >  	clear_cpu_cap(c, 0*32+31);
-> >  #endif
-> >  	early_init_centaur(c);
-> > +
-> > +	if (c->cpuid_level > 9) {
-> > +		unsigned eax = cpuid_eax(10);
-> 
-> Missing newline between variable declaration and code. checkpatch.pl
-> should have told you that.
-> 
-
-OK. 
-
-> > +		/* Check for version and the number of counters */
-> > +		if ((eax & 0xff) && (((eax >> 8) & 0xff) > 1))
-> 
-> Magic constants and a comment which does not explain how the check
-> works.
-> 
-
-OK. I will explain more detail in the comments.
-
-> > +			set_cpu_cap(c, X86_FEATURE_ARCH_PERFMON);
-> 
-> Thanks,
-> 
-> 	tglx
-
-Thanks,
-
----
-David
+regards
+Philipp
