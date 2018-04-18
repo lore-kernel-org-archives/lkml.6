@@ -1,65 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754078AbeDRLqS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:46:18 -0400
-Received: from mail-wr0-f169.google.com ([209.85.128.169]:33893 "EHLO
-        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753765AbeDRLqO (ORCPT
+        id S1753932AbeDRLr5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:47:57 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57165 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752788AbeDRLrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:46:14 -0400
-X-Google-Smtp-Source: AIpwx49tsz44i1HffvorQ25eIrWw34FDpzLm7wHa/IcUYUKPiiinYSelS9rL50MDzKgziO5nHE1FNg==
-Date: Wed, 18 Apr 2018 13:46:10 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Jean Delvare <jdelvare@suse.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
-        Steven Honeyman <stevenhoneyman@gmail.com>,
-        Valdis Kletnieks <Valdis.Kletnieks@vt.edu>,
-        Jochen Eisinger <jochen@penguin-breeder.org>,
-        Gabriele Mazzotta <gabriele.mzt@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mario Limonciello <Mario_Limonciello@dell.com>,
-        Alex Hung <alex.hung@canonical.com>, Takashi Iwai <tiwai@suse.de>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Subject: Re: [PATCH v2] i2c: i801: Register optional lis3lv02d i2c device on
- Dell machines
-Message-ID: <20180418114610.rohdk5mnzv4km4z2@pali>
-References: <CAHp75VdU1OMTqLcDuzhQMHuX9rMhjw6p3CkSWaW5Y4kOy8ggqg@mail.gmail.com>
- <20180131120348.azy25aqvn5wrdkeh@pali>
- <CAHp75Vf=-RQvCtS684Q5+X=YKmZXgP_1kr0to8BGZX0jQAsuZw@mail.gmail.com>
- <20180212153012.vffvjmz26ifyxbj5@pali>
- <CAHp75VfF+qwCXcr3yuayE-Z+UG9wuMOKfGzLhdyPk79daEi9gQ@mail.gmail.com>
- <20180213150004.5d2v7y7wwuure4io@pali>
- <CAHp75VfxgbFiDxyrqyMRE8s85L1_EzkVvrA1NGYA5_su=5oGVQ@mail.gmail.com>
- <20180213165023.xmzovx7fd3gdljxw@pali>
- <20180226203255.lnnzipipjz5l2itz@ninjato>
- <20180308225330.5ywfokfhxcl5j3ju@pali>
+        Wed, 18 Apr 2018 07:47:55 -0400
+From: Colin King <colin.king@canonical.com>
+To: Stanislaw Gruszka <sgruszka@redhat.com>,
+        Helmut Schaa <helmut.schaa@googlemail.com>,
+        Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] rt2x00: fix spelling mistake in various macros, UKNOWN -> UNKNOWN
+Date: Wed, 18 Apr 2018 12:47:50 +0100
+Message-Id: <20180418114750.1978-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180308225330.5ywfokfhxcl5j3ju@pali>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 08 March 2018 23:53:30 Pali Rohár wrote:
-> On Monday 26 February 2018 21:32:55 Wolfram Sang wrote:
-> > 
-> > > I'm not maintainer of i2c-i801.ko, Jean Delvare & Wolfram Sang are.
-> > > Therefore instructing future contributors would be up to them.
-> > 
-> > This is really Jean's realm.
-> > 
-> 
-> Jean, ping.
+From: Colin Ian King <colin.king@canonical.com>
 
-Jean, gently ping again. Waiting for your maintainer response/decision
-on this problem.
+Rename several macros that contain mispellings of UNKNOWN
 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ralink/rt2x00/rt2800.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/wireless/ralink/rt2x00/rt2800.h b/drivers/net/wireless/ralink/rt2x00/rt2800.h
+index 6a8c93fb6a43..8eccfbb5d6f8 100644
+--- a/drivers/net/wireless/ralink/rt2x00/rt2800.h
++++ b/drivers/net/wireless/ralink/rt2x00/rt2800.h
+@@ -1193,10 +1193,10 @@
+ #define TX_PWR_CFG_3_MCS13		FIELD32(0x000000f0)
+ #define TX_PWR_CFG_3_MCS14		FIELD32(0x00000f00)
+ #define TX_PWR_CFG_3_MCS15		FIELD32(0x0000f000)
+-#define TX_PWR_CFG_3_UKNOWN1		FIELD32(0x000f0000)
+-#define TX_PWR_CFG_3_UKNOWN2		FIELD32(0x00f00000)
+-#define TX_PWR_CFG_3_UKNOWN3		FIELD32(0x0f000000)
+-#define TX_PWR_CFG_3_UKNOWN4		FIELD32(0xf0000000)
++#define TX_PWR_CFG_3_UNKNOWN1		FIELD32(0x000f0000)
++#define TX_PWR_CFG_3_UNKNOWN2		FIELD32(0x00f00000)
++#define TX_PWR_CFG_3_UNKNOWN3		FIELD32(0x0f000000)
++#define TX_PWR_CFG_3_UNKNOWN4		FIELD32(0xf0000000)
+ /* bits for 3T devices */
+ #define TX_PWR_CFG_3_MCS12_CH0		FIELD32(0x0000000f)
+ #define TX_PWR_CFG_3_MCS12_CH1		FIELD32(0x000000f0)
+@@ -1216,10 +1216,10 @@
+  * TX_PWR_CFG_4:
+  */
+ #define TX_PWR_CFG_4			0x1324
+-#define TX_PWR_CFG_4_UKNOWN5		FIELD32(0x0000000f)
+-#define TX_PWR_CFG_4_UKNOWN6		FIELD32(0x000000f0)
+-#define TX_PWR_CFG_4_UKNOWN7		FIELD32(0x00000f00)
+-#define TX_PWR_CFG_4_UKNOWN8		FIELD32(0x0000f000)
++#define TX_PWR_CFG_4_UNKNOWN5		FIELD32(0x0000000f)
++#define TX_PWR_CFG_4_UNKNOWN6		FIELD32(0x000000f0)
++#define TX_PWR_CFG_4_UNKNOWN7		FIELD32(0x00000f00)
++#define TX_PWR_CFG_4_UNKNOWN8		FIELD32(0x0000f000)
+ /* bits for 3T devices */
+ #define TX_PWR_CFG_4_STBC4_CH0		FIELD32(0x0000000f)
+ #define TX_PWR_CFG_4_STBC4_CH1		FIELD32(0x000000f0)
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+2.17.0
