@@ -1,115 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752806AbeDRHvj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:51:39 -0400
-Received: from mga05.intel.com ([192.55.52.43]:25511 "EHLO mga05.intel.com"
+        id S1753059AbeDRHym (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:54:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39033 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752166AbeDRHvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:51:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
-   d="scan'208";a="192401955"
-Message-ID: <1524037889.2553.13.camel@intel.com>
-Subject: Re: [GIT PULL V3] Thermal SoC management updates for v4.17-rc1
-From: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date: Wed, 18 Apr 2018 15:51:29 +0800
-In-Reply-To: <20180414183051.GA27921@localhost.localdomain>
-References: <20180414183051.GA27921@localhost.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1752256AbeDRHyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 03:54:39 -0400
+Date: Wed, 18 Apr 2018 09:54:37 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH] mm:memcg: add __GFP_NOWARN in
+ __memcg_schedule_kmem_cache_create
+Message-ID: <20180418075437.GP17484@dhcp22.suse.cz>
+References: <20180418022912.248417-1-minchan@kernel.org>
+ <20180418072002.GN17484@dhcp22.suse.cz>
+ <20180418074117.GA210164@rodete-desktop-imager.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418074117.GA210164@rodete-desktop-imager.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Eduardo,
+On Wed 18-04-18 16:41:17, Minchan Kim wrote:
+> On Wed, Apr 18, 2018 at 09:20:02AM +0200, Michal Hocko wrote:
+> > On Wed 18-04-18 11:29:12, Minchan Kim wrote:
+[...]
+> > > Let's not make user scared.
+> > 
+> > This is not a proper explanation. So what exactly happens when this
+> > allocation fails? I would suggest something like the following
+> > "
+> > __memcg_schedule_kmem_cache_create tries to create a shadow slab cache
+> > and the worker allocation failure is not really critical because we will
+> > retry on the next kmem charge. We might miss some charges but that
+> > shouldn't be critical. The excessive allocation failure report is not
+> > very much helpful. Replace it with a rate limited single line output so
+> > that we know that there is a lot of these failures and that we need to
+> > do something about it in future.
+> > "
+> > 
+> > With the last part to be implemented of course.
+> 
+> If you want to see warning and catch on it in future, I don't see any reason
+> to change it. Because I didn't see any excessive warning output that it could
+> make system slow unless we did ratelimiting.
 
-On 六, 2018-04-14 at 11:30 -0700, Eduardo Valentin wrote:
-> Hello Linus,
-> 
-> Please find thermal-soc changes for v4.17-rc1.
-> Rui asked me to send the pull request directly to you
-> as we are close to the end of the merge window.
-> Essentially this pull removes the series that caused
-> warning regression. I will work with the developer
-> to get that fixed later on, but I am still sending
-> the other few patches that are unrelated to that.
-> Let me know if this causes any issues and can still
-> be pulled.
-> 
-> Changelog:
-> - New i.MX7 thermal sensor
-> - Mediatek driver now supports MT7622 SoC
-> - Removal of min max cpu cooling DT property
-> 
-> Differences in V3:
-> - Rebased on top current linus/master, to avoid and merge issues
-> from previous pulled thermal code.
-> 
-> Differences in V2:
-> - Reordered the patches to drop exynos changes for now until we get
-> agreement on the fix on that driver for the compilation warns
-> caused by the confusing conversion functions.
-> 
-> 
-> The following changes since commit
-> 48023102b7078a6674516b1fe0d639669336049d:
-> 
->   Merge branch 'overlayfs-linus' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs (2018-04-
-> 13 16:55:41 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-
-> thermal linus
-> 
-> for you to fetch changes up to
-> 15a32df1918259be6c23fc36014fc26ee66c836c:
-> 
->   dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
-> (2018-04-14 09:37:55 -0700)
-> 
-This pull request does not catch this merge window.
-So do you want to split it into 2 separate pull requests, one for 4.17-
-rc and another for 4.18-rc1?
+Yeah, but a single line would be as much informative and less scary to
+users.
 
-> ----------------------------------------------------------------
-> Anson Huang (1):
->       thermal: imx: add i.MX7 thermal sensor support
-> 
-> Bartlomiej Zolnierkiewicz (1):
->       dt-bindings: thermal: remove no longer needed samsung thermal
-> properties
-> 
-> Sean Wang (2):
->       dt-bindings: thermal: add binding for MT7622 SoC
->       thermal: mediatek: add support for MT7622 SoC
-> 
-> Viresh Kumar (1):
->       dt-bindings: thermal: Remove "cooling-{min|max}-level"
-> properties
-> 
-IMO, together with the refreshed exynos fixes, the one from Viresh and
-the one from Bartlomiej can be queued for 4.17-rc, and the others have
-to wait until next merge window.
+> It was a just report from non-MM guys who have a concern that somethings
+> might go wrong on the system. I just wanted them relax since it's not
+> critical.
 
-thanks,
-rui
+I do agree with __GFP_NOWARN but I think a single line warning is due
+and helpful for further debugging.
 
-
->  .../devicetree/bindings/thermal/exynos-thermal.txt |  23 +-
->  .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
->  .../bindings/thermal/mediatek-thermal.txt          |   1 +
->  .../devicetree/bindings/thermal/thermal.txt        |  16 +-
->  drivers/thermal/imx_thermal.c                      | 295
-> ++++++++++++++++-----
->  drivers/thermal/mtk_thermal.c                      |  35 +++
->  6 files changed, 281 insertions(+), 98 deletions(-)
+-- 
+Michal Hocko
+SUSE Labs
