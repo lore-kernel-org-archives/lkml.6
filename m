@@ -1,290 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754012AbeDROlH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:41:07 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:41889 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752707AbeDROlE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:41:04 -0400
-X-Originating-IP: 2.224.242.101
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        vladimir_zapolskiy@mentor.com, horms@verge.net.au,
-        magnus.damm@gmail.com, geert@linux-m68k.org,
-        niklas.soderlund@ragnatech.se, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 2/2] drm: bridge: Add thc63lvd1024 LVDS decoder driver
-Date: Wed, 18 Apr 2018 16:40:29 +0200
-Message-Id: <1524062429-325-3-git-send-email-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524062429-325-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1524062429-325-1-git-send-email-jacopo+renesas@jmondi.org>
+        id S1752247AbeDROoY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:44:24 -0400
+Received: from mga01.intel.com ([192.55.52.88]:24161 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750872AbeDROoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 10:44:23 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,465,1517904000";
+   d="scan'208";a="221413639"
+Date: Wed, 18 Apr 2018 08:45:25 -0600
+From: Keith Busch <keith.busch@intel.com>
+To: Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc: axboe@fb.com, hch@lst.de, sagi@grimberg.me,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme: fix the suspicious RCU usage warning in
+ nvme_mpath_clear_current_path
+Message-ID: <20180418144524.GL11513@localhost.localdomain>
+References: <1524036767-3701-1-git-send-email-jianchao.w.wang@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524036767-3701-1-git-send-email-jianchao.w.wang@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
-output converter.
+On Wed, Apr 18, 2018 at 03:32:47PM +0800, Jianchao Wang wrote:
+> With lockdep enabled, when trigger nvme_remove, suspicious RCU
+> usage warning will be printed out.
+> Fix it with adding srcu_read_lock/unlock in it.
+> 
+> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+> ---
+>  drivers/nvme/host/nvme.h | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index 061fecf..d326c23 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -446,9 +446,14 @@ void nvme_mpath_remove_disk(struct nvme_ns_head *head);
+>  static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
+>  {
+>  	struct nvme_ns_head *head = ns->head;
+> +	int srcu_idx;
+>  
+> -	if (head && ns == srcu_dereference(head->current_path, &head->srcu))
+> -		rcu_assign_pointer(head->current_path, NULL);
+> +	if (head) {
+> +		srcu_idx = srcu_read_lock(&head->srcu);
+> +		if (ns == srcu_dereference(head->current_path, &head->srcu))
+> +			rcu_assign_pointer(head->current_path, NULL);
+> +		srcu_read_unlock(&head->srcu, srcu_idx);
+> +	}
+>  }
+>  struct nvme_ns *nvme_find_path(struct nvme_ns_head *head);
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- drivers/gpu/drm/bridge/Kconfig        |   6 +
- drivers/gpu/drm/bridge/Makefile       |   1 +
- drivers/gpu/drm/bridge/thc63lvd1024.c | 206 ++++++++++++++++++++++++++++++++++
- 3 files changed, 213 insertions(+)
- create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+Nothing against this patch. This just doesn't look correct even from
+before since nvme_find_path can set head->current_path right back to
+this namespace that we're trying to clear.
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 3aa65bd..42c9c2d 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -93,6 +93,12 @@ config DRM_SII9234
- 	  It is an I2C driver, that detects connection of MHL bridge
- 	  and starts encapsulation of HDMI signal.
- 
-+config DRM_THINE_THC63LVD1024
-+	tristate "Thine THC63LVD1024 LVDS decoder bridge"
-+	depends on OF
-+	---help---
-+	  Thine THC63LVD1024 LVDS/parallel converter driver.
-+
- config DRM_TOSHIBA_TC358767
- 	tristate "Toshiba TC358767 eDP bridge"
- 	depends on OF
-diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index 373eb28..fd90b16 100644
---- a/drivers/gpu/drm/bridge/Makefile
-+++ b/drivers/gpu/drm/bridge/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
- obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
- obj-$(CONFIG_DRM_SII902X) += sii902x.o
- obj-$(CONFIG_DRM_SII9234) += sii9234.o
-+obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
- obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
- obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
- obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
-diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
-new file mode 100644
-index 0000000..c8b9edd
---- /dev/null
-+++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
-@@ -0,0 +1,206 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * THC63LVD1024 LVDS to parallel data DRM bridge driver.
-+ *
-+ * Copyright (C) 2018 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ */
-+
-+#include <drm/drmP.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_panel.h>
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/of_graph.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+
-+enum thc63_ports {
-+	THC63_LVDS_IN0,
-+	THC63_LVDS_IN1,
-+	THC63_RGB_OUT0,
-+	THC63_RGB_OUT1,
-+};
-+
-+struct thc63_dev {
-+	struct device *dev;
-+
-+	struct regulator *vcc;
-+
-+	struct gpio_desc *pdwn;
-+	struct gpio_desc *oe;
-+
-+	struct drm_bridge bridge;
-+	struct drm_bridge *next;
-+};
-+
-+static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
-+{
-+	return container_of(bridge, struct thc63_dev, bridge);
-+}
-+
-+static int thc63_attach(struct drm_bridge *bridge)
-+{
-+	struct thc63_dev *thc63 = to_thc63(bridge);
-+
-+	return drm_bridge_attach(bridge->encoder, thc63->next, bridge);
-+}
-+
-+static void thc63_enable(struct drm_bridge *bridge)
-+{
-+	struct thc63_dev *thc63 = to_thc63(bridge);
-+	int ret;
-+
-+	ret = regulator_enable(thc63->vcc);
-+	if (ret) {
-+		dev_err(thc63->dev,
-+			"Failed to enable regulator \"vcc\": %d\n", ret);
-+		return;
-+	}
-+
-+	gpiod_set_value(thc63->pdwn, 0);
-+	gpiod_set_value(thc63->oe, 1);
-+}
-+
-+static void thc63_disable(struct drm_bridge *bridge)
-+{
-+	struct thc63_dev *thc63 = to_thc63(bridge);
-+	int ret;
-+
-+	gpiod_set_value(thc63->oe, 0);
-+	gpiod_set_value(thc63->pdwn, 1);
-+
-+	ret = regulator_disable(thc63->vcc);
-+	if (ret)
-+		dev_err(thc63->dev,
-+			"Failed to disable regulator \"vcc\": %d\n", ret);
-+}
-+
-+static const struct drm_bridge_funcs thc63_bridge_func = {
-+	.attach	= thc63_attach,
-+	.enable = thc63_enable,
-+	.disable = thc63_disable,
-+};
-+
-+static int thc63_parse_dt(struct thc63_dev *thc63)
-+{
-+	struct device_node *thc63_out;
-+	struct device_node *remote;
-+
-+	thc63_out = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
-+						  THC63_RGB_OUT0, -1);
-+	if (!thc63_out) {
-+		dev_err(thc63->dev, "Missing endpoint in port@%u\n",
-+			THC63_RGB_OUT0);
-+		return -ENODEV;
-+	}
-+
-+	remote = of_graph_get_remote_port_parent(thc63_out);
-+	of_node_put(thc63_out);
-+	if (!remote) {
-+		dev_err(thc63->dev, "Endpoint in port@%u unconnected\n",
-+			THC63_RGB_OUT0);
-+		return -ENODEV;
-+	}
-+
-+	if (!of_device_is_available(remote)) {
-+		dev_err(thc63->dev, "port@%u remote endpoint is disabled\n",
-+			THC63_RGB_OUT0);
-+		of_node_put(remote);
-+		return -ENODEV;
-+	}
-+
-+	thc63->next = of_drm_find_bridge(remote);
-+	of_node_put(remote);
-+	if (!thc63->next)
-+		return -EPROBE_DEFER;
-+
-+	return 0;
-+}
-+
-+static int thc63_gpio_init(struct thc63_dev *thc63)
-+{
-+	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
-+	if (IS_ERR(thc63->oe)) {
-+		dev_err(thc63->dev, "Unable to get \"oe-gpios\": %ld\n",
-+			PTR_ERR(thc63->oe));
-+		return PTR_ERR(thc63->oe);
-+	}
-+
-+	thc63->pdwn = devm_gpiod_get_optional(thc63->dev, "powerdown",
-+					      GPIOD_OUT_HIGH);
-+	if (IS_ERR(thc63->pdwn)) {
-+		dev_err(thc63->dev, "Unable to get \"powerdown-gpios\": %ld\n",
-+			PTR_ERR(thc63->pdwn));
-+		return PTR_ERR(thc63->pdwn);
-+	}
-+
-+	return 0;
-+}
-+
-+static int thc63_probe(struct platform_device *pdev)
-+{
-+	struct thc63_dev *thc63;
-+	int ret;
-+
-+	thc63 = devm_kzalloc(&pdev->dev, sizeof(*thc63), GFP_KERNEL);
-+	if (!thc63)
-+		return -ENOMEM;
-+
-+	thc63->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, thc63);
-+
-+	thc63->vcc = devm_regulator_get_optional(thc63->dev, "vcc");
-+	if (IS_ERR(thc63->vcc)) {
-+		if (PTR_ERR(thc63->vcc) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+
-+		dev_err(thc63->dev, "Unable to get \"vcc\" supply: %ld\n",
-+			PTR_ERR(thc63->vcc));
-+		return PTR_ERR(thc63->vcc);
-+	}
-+
-+	ret = thc63_gpio_init(thc63);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc63_parse_dt(thc63);
-+	if (ret)
-+		return ret;
-+
-+	thc63->bridge.driver_private = thc63;
-+	thc63->bridge.of_node = pdev->dev.of_node;
-+	thc63->bridge.funcs = &thc63_bridge_func;
-+
-+	drm_bridge_add(&thc63->bridge);
-+
-+	return 0;
-+}
-+
-+static int thc63_remove(struct platform_device *pdev)
-+{
-+	struct thc63_dev *thc63 = platform_get_drvdata(pdev);
-+
-+	drm_bridge_remove(&thc63->bridge);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id thc63_match[] = {
-+	{ .compatible = "thine,thc63lvd1024", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, thc63_match);
-+
-+static struct platform_driver thc63_driver = {
-+	.probe	= thc63_probe,
-+	.remove	= thc63_remove,
-+	.driver	= {
-+		.name		= "thc63lvd1024",
-+		.of_match_table	= thc63_match,
-+	},
-+};
-+module_platform_driver(thc63_driver);
-+
-+MODULE_AUTHOR("Jacopo Mondi <jacopo@jmondi.org>");
-+MODULE_DESCRIPTION("Thine THC63LVD1024 LVDS decoder DRM bridge driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+Christoph, am I missing something here or does this need additional
+checks/synchronization?
