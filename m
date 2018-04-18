@@ -1,101 +1,90 @@
-Return-Path: <andrew.donnellan@au1.ibm.com>
-X-Google-Smtp-Source: AB8JxZrcxN76TKM6rmjG91rjH82Ire/veOdWpBGsWVNj2WLRKb6xRqNL8HNG02O+gXzPkcaUnupu
-ARC-Seal: i=1; a=rsa-sha256; t=1524209124; cv=none;
+Return-Path: <alastair@au1.ibm.com>
+X-Google-Smtp-Source: AIpwx4+L3iyzS3WRX/CgBPHjl6OHk3VlDdZmcL/xCRKNwgx8/nVakWzcyjZTlW8EAfnWwaGQquhX
+ARC-Seal: i=1; a=rsa-sha256; t=1524013870; cv=none;
         d=google.com; s=arc-20160816;
-        b=eKH0+0nUfTzbNGcTXaZNErjMVgPLP5EILRMZg5g0B/hozZ5vbZG3hn1nsg/Rmfa3FI
-         47Tnaivn7CgolnOt/g0xURj2yaJn7RqCXxBtgA9ApvAyzwHmXveUzL8QgVJxZmgP0o4g
-         mnyyvtPeWu+jqFRmGpBDJ7ZLYjbn8znljFkDmpijg7AQZsFZnpRjBL2JHgMukFTPStPf
-         mZV7et08ncjk7wyryqzbMvdigx5M3ok42PTQ8T7SUiXqrCWXYcVTh2axdKSLgbUH4arj
-         5mS6MI7OR9knJtCQ6KAHlgmPr9yygr7f+wCJ4wf3FGjCjkUATk19uvET7Zl1K3IXpLDz
-         ta3w==
+        b=V/ilOdhJmtx23BUvPLfRuz5aw69NROrxzmpfdTsbRwgK3A8ZBUdXJ2niehNNYFS7AH
+         XldQ0Ibepc/uwjyBjjGKNaFBf+NWPsa6ekBR5ho/mrjEr2btLDyuxhwyBbTkJZrgL2nA
+         7SiConhD7XXhpOATD9XbBwmdtPRnCV+5yZwSrBlfdGDfC/9v84pQmCAYc/k34QzKonXs
+         4YWVAy1ET173gnvPx2yulWwXIPPGMJNmWfZ6v4N5SMs+0pLChQFBd4Rg6+1sGQJHliXP
+         tm+ljHxMIPQFGDEyQIaJ/UDLVCwL5peLUA5R6Qd8mEzhTLppmGPq6OxW2RZMHvr6Ml3G
+         7Z5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:content-language:in-reply-to
-         :mime-version:user-agent:date:from:references:cc:to:subject
+        h=message-id:references:in-reply-to:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=yX8DGmScmQFlAZ09+Xm0IUO1s2Et0xLxLvu1zr2wHT0=;
-        b=PY0VvO5DrbVjJ4IYuy0oVTybktLoSocXy6KZTUJIi1x1w9rihk3/3bHQDu/mQhbqqn
-         EPbhygY88X73cykTvW8G8s2OmP+BzsHk1zZePw1LROQGasc16yUl/WzDSpSa8oy+RZs1
-         qRtZU80G8QkH+uJ5pa9z98gRNSvA6bWCrNgxVZkSm5Z1J6pSU0fXnA51rsqqnLa3M2Oi
-         HQ5hEE5L1fehI1HPI0yu2IXLyxMpxh6j0BJetYl2iiomuMY7sB4U9stE9D25zmWfVUiC
-         cEOvEXU1kMkuLSNDtBQF97Xl26gYpmYmAmhM6mguZSO3Z7+3W/f3LCp4J23s0WkkRKDH
-         UBRQ==
+        bh=XRGTnWIbj6n7f1xRbLWljtrn3ycqyeapIpbgdtFNOwc=;
+        b=OX/F5eB1WmSpmWQDc/x+FpmQx+J5aZLb46avQdfZamCIEPwZHtgLtudr0G9N1kqJJx
+         j+/01o9+U06uo6vIMX8FVbChFnDYIEMXjY9pPMPR8PEjihLDy8Vf1zOz4F/aNoZJSIF6
+         pItAd6tldekgYWcR2/Ar76f7Jtgcelbt2QghzwbKP+e2IeiNe8wdHkJem2r+QX7LpTKJ
+         0yEHxKLRWg5WTFnWgsUTrUCmZkHlUpdhbsRfqHMrl71prwiwUEytZnTrGOryDf6vC758
+         PZhoa/UTgbC9yqWq3gciafv7ihGXS2p+ZwlfhLTm9CtbPOoTQbtlqKz3+BcDfCTpvSnl
+         UMiA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of andrew.donnellan@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=andrew.donnellan@au1.ibm.com;
+       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of andrew.donnellan@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=andrew.donnellan@au1.ibm.com;
+       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v2 6/7] ocxl: Add an IOCTL so userspace knows what CPU
- features are available
-To: "Alastair D'Silva" <alastair@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
+From: "Alastair D'Silva" <alastair@au1.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org
 Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, mikey@neuling.org,
         vaibhav@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
         malat@debian.org, felix@linux.vnet.ibm.com, pombredanne@nexb.com,
         sukadev@linux.vnet.ibm.com, npiggin@gmail.com,
-        gregkh@linuxfoundation.org, arnd@arndb.de, fbarrat@linux.vnet.ibm.com,
+        gregkh@linuxfoundation.org, arnd@arndb.de,
+        andrew.donnellan@au1.ibm.com, fbarrat@linux.vnet.ibm.com,
         corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
+Subject: [PATCH v2 7/7] ocxl: Document new OCXL IOCTLs
+Date: Wed, 18 Apr 2018 11:08:10 +1000
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180418010810.30937-1-alastair@au1.ibm.com>
 References: <20180417020950.21446-1-alastair@au1.ibm.com>
  <20180418010810.30937-1-alastair@au1.ibm.com>
- <20180418010810.30937-7-alastair@au1.ibm.com>
-From: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date: Fri, 20 Apr 2018 17:25:13 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180418010810.30937-7-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 18042007-0012-0000-0000-000005CCE6C7
+x-cbid: 18041801-0008-0000-0000-000004EC75A8
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042007-0013-0000-0000-000019494342
-Message-Id: <c846eecc-6044-c50a-35e9-a79d803a509c@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_02:,,
+x-cbparentid: 18041801-0009-0000-0000-00001E807C83
+Message-Id: <20180418010810.30937-8-alastair@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-17_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804200075
+ definitions=main-1804180008
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598044369272237673?=
-X-GMAIL-MSGID: =?utf-8?q?1598249106288130607?=
+X-GMAIL-THRID: =?utf-8?q?1597957551491860164?=
+X-GMAIL-MSGID: =?utf-8?q?1598044368574554545?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 18/04/18 11:08, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> In order for a userspace AFU driver to call the Power9 specific
-> OCXL_IOCTL_ENABLE_P9_WAIT, it needs to verify that it can actually
-> make that call.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+From: Alastair D'Silva <alastair@d-silva.org>
 
-Looks good to me
+Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+---
+ Documentation/accelerators/ocxl.rst | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-
-> ---
->   Documentation/accelerators/ocxl.rst |  1 -
->   drivers/misc/ocxl/file.c            | 25 +++++++++++++++++++++++++
->   include/uapi/misc/ocxl.h            |  4 ++++
->   3 files changed, 29 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/accelerators/ocxl.rst b/Documentation/accelerators/ocxl.rst
-> index ddcc58d01cfb..7904adcc07fd 100644
-> --- a/Documentation/accelerators/ocxl.rst
-> +++ b/Documentation/accelerators/ocxl.rst
-> @@ -157,7 +157,6 @@ OCXL_IOCTL_GET_METADATA:
->     Obtains configuration information from the card, such at the size of
->     MMIO areas, the AFU version, and the PASID for the current context.
->   
-> -
-
-This is stray
-
-
+diff --git a/Documentation/accelerators/ocxl.rst b/Documentation/accelerators/ocxl.rst
+index 7904adcc07fd..3b8d3b99795c 100644
+--- a/Documentation/accelerators/ocxl.rst
++++ b/Documentation/accelerators/ocxl.rst
+@@ -157,6 +157,17 @@ OCXL_IOCTL_GET_METADATA:
+   Obtains configuration information from the card, such at the size of
+   MMIO areas, the AFU version, and the PASID for the current context.
+ 
++OCXL_IOCTL_ENABLE_P9_WAIT:
++
++  Allows the AFU to wake a userspace thread executing 'wait'. Returns
++  information to userspace to allow it to configure the AFU. Note that
++  this is only available on Power 9.
++
++OCXL_IOCTL_GET_FEATURES:
++
++  Reports on which CPU features that affect OpenCAPI are usable from
++  userspace.
++
+ mmap
+ ----
+ 
 -- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
+2.14.3
