@@ -1,58 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752702AbeDRSR2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 14:17:28 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:45236 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751256AbeDRSR0 (ORCPT
+        id S1752864AbeDRSRi (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 14:17:38 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:46160 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752705AbeDRSRe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 14:17:26 -0400
-X-Google-Smtp-Source: AIpwx4/ozI0wIy+C3yer7hbVRoSW/OqSqeBFa1n3xIIzEYo9Xe2gF9F9lcCKl+cgVBynp14n7uY4Fg==
-Date: Wed, 18 Apr 2018 23:49:19 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: sakari.ailus@iki.fi, mchehab@kernel.org, jack@suse.cz,
-        dan.j.williams@intel.com, akpm@linux-foundation.org
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org
-Subject: [PATCH v2] media: v4l2-core: videobuf-dma-sg: Change return type to
- vm_fault_t
-Message-ID: <20180418181919.GA25052@jordon-HP-15-Notebook-PC>
+        Wed, 18 Apr 2018 14:17:34 -0400
+Date: Wed, 18 Apr 2018 19:17:23 +0100
+From: Russell King <rmk@armlinux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: build failure after merge of the arm-current tree
+Message-ID: <20180418181722.GA7852@flint.armlinux.org.uk>
+References: <20180418133155.0931baf7@canb.auug.org.au>
+ <20180418175442.GA7234@flint.armlinux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180418175442.GA7234@flint.armlinux.org.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler. For
-now, this is just documenting that the function returns
-a VM_FAULT value rather than an errno. Once all instances
-are converted, vm_fault_t will become a distinct type.
+On Wed, Apr 18, 2018 at 06:54:42PM +0100, Russell King wrote:
+> On Wed, Apr 18, 2018 at 01:31:55PM +1000, Stephen Rothwell wrote:
+> > Hi Russell,
+> > 
+> > After merging the arm-current tree, today's linux-next build
+> > (lots of configs) failed like this:
+> > 
+> > /bin/sh: 1: arithmetic expression: expecting primary: " "
+> > (lots of these)
+> > 
+> > Caused by commit
+> > 
+> >   fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )) operator")
+> > 
+> > (pointed out by Michael Ellerman)
+> > 
+> > Our /bin/sh is dash not bash ...
+> 
+> I tested this on 32-bit ARM with dash:
+> 
+> foo# dash
+> # echo $(($(nm /boot/vmlinux-4.16.0+ | sed -n -e 's/^\([^ ]*\) B __bss_start$/-0x\1/p' -e 's/^\([^ ]*\) B __bss_stop$/+0x\1/p') ))
+> 6409680
+> #
+> 
+> Any clues what '/bin/sh: 1: arithmetic expression: expecting primary: " "'
+> actually means in reality?
+> 
+> I don't see why you should end up with lots of them either, unless maybe
+> the sed expression isn't working for you.
+> 
+> The sed expression should end up producing output such as:
+> 
+> -0xc09138c4
+> +0xc0f30694
+> 
+> and that's it, two values, one preceded by a + and the other by a -.
 
-Reference id -> 1c8f422059ae ("mm: change return type to
-vm_fault_t")
+Hmm, I guess it's a result of:
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-v2: Updated patch subject
+# echo $(( ))
+dash: 4: arithmetic expression: expecting primary: " "
 
- drivers/media/v4l2-core/videobuf-dma-sg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+which points to the sed expression producing no output.  If that's the
+case, then something else went wrong with the build earlier - there
+should be no case where the built vmlinux does not contain the
+__bss_start and __bss_stop symbols on ARM, since every kernel contains
+a .bss section.
 
-diff --git a/drivers/media/v4l2-core/videobuf-dma-sg.c b/drivers/media/v4l2-core/videobuf-dma-sg.c
-index f412429..54257ea 100644
---- a/drivers/media/v4l2-core/videobuf-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf-dma-sg.c
-@@ -435,7 +435,7 @@ static void videobuf_vm_close(struct vm_area_struct *vma)
-  * now ...).  Bounce buffers don't work very well for the data rates
-  * video capture has.
-  */
--static int videobuf_vm_fault(struct vm_fault *vmf)
-+static vm_fault_t videobuf_vm_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	struct page *page;
---
-1.9.1
+Olof's autobuilder shows no errors, but that could be because it's
+using bash - I don't know.  kernelci.org also shows no failures.
+
+I think more information is needed to debug this, such as:
+
+- does nm of the vmlinux contain the __bss_start and __bss_stop
+  symbols, and are they formatted as one would expect (iow, marked
+  as a global BSS symbol?)
+- does the nm | sed pipeline produce the expected output when run
+  outside of everything else?
+- does dash evaluate the output correctly outside of the makefile?
+
+As I'm not currently aware of a failing environment that I have
+access to, I'm not able to debug this myself, sorry.
+
+-- 
+Russell King
+ARM architecture Linux Kernel maintainer
