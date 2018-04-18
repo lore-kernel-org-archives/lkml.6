@@ -1,267 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752941AbeDRPE5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:04:57 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33025 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751204AbeDRPEz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:04:55 -0400
-X-Google-Smtp-Source: AIpwx4++YM2RZrfS34W/Vg7toN0LKDW0Bo/tA6I9UP/hXYOKg1t2yeeE8JB/BY+8xWmbxHP0Gl1KFg==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
-        jgross@suse.com, lyan@suse.com, boris.ostrovsky@oracle.com
-Cc: andr2000@gmail.com, andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH] Input: xen-kbdfront - allow better run-time configuration
-Date: Wed, 18 Apr 2018 18:04:45 +0300
-Message-Id: <20180418150445.9805-1-andr2000@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752812AbeDRPFh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:05:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43644 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751836AbeDRPFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 11:05:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD13A2178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 18 Apr 2018 12:05:16 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        systemtap@sourceware.org, Mark Wielaard <mark@klomp.org>
+Subject: Re: perf probe line numbers + CONFIG_DEBUG_INFO_SPLIT=y
+Message-ID: <20180418150516.GB10084@kernel.org>
+References: <20180417174701.GD3625@kernel.org>
+ <20180418122343.67575c580c0dc5cf11b6ddeb@kernel.org>
+ <20180418230301.fd26676ece5b2dc16d98b266@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418230301.fd26676ece5b2dc16d98b266@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Em Wed, Apr 18, 2018 at 11:03:01PM +0900, Masami Hiramatsu escreveu:
+> And I found below description in systemtap document(man/error::dwarf.7stap).
+> ===
+> debuginfo configuration
+> Some tools may generate debuginfo that is unsupported by systemtap, such
+> as the linux kernel CONFIG_DEBUG_INFO_SPLIT (\f2.dwo\f1 files) option.
+> Stick with plain ELF/DWARF (optinally split, Fedora-style), if possible.
+> ===
+ 
+> So, it seems that elfutils may not support this split debuginfo yet.
 
-It is now only possible to control if multi-touch virtual device
-is created or not (via the corresponding XenStore entries),
-but keyboard and pointer devices are always created.
-In some cases this is not desirable. For example, if virtual
-keyboard device is exposed to Android then the latter won't
-automatically show on-screen keyboard as it expects that a
-physical keyboard device can be used for typing.
+Ok, what about detecting that this is the case: .dwo is being used, as
+detected by the presence of those .debug_*.dwo ELF sections and then
+warning the user that this mode of operation is not supported yet?
 
-Make it possible to configure which virtual devices are created
-with module parameters:
-  - no_ptr_dev=1 if no pointer device needs to be created
-  - no_kbd_dev=1 if no keyboard device needs to be created
-Keep old behavior by default.
-
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
-Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
----
- drivers/input/misc/xen-kbdfront.c | 159 +++++++++++++++++-------------
- 1 file changed, 92 insertions(+), 67 deletions(-)
-
-diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
-index d91f3b1c5375..a3306aad40b0 100644
---- a/drivers/input/misc/xen-kbdfront.c
-+++ b/drivers/input/misc/xen-kbdfront.c
-@@ -51,6 +51,16 @@ module_param_array(ptr_size, int, NULL, 0444);
- MODULE_PARM_DESC(ptr_size,
- 	"Pointing device width, height in pixels (default 800,600)");
- 
-+static unsigned int no_ptr_dev;
-+module_param(no_ptr_dev, uint, 0);
-+MODULE_PARM_DESC(no_ptr_dev,
-+	"If set then no virtual pointing device exposed to the guest");
-+
-+static unsigned int no_kbd_dev;
-+module_param(no_kbd_dev, uint, 0);
-+MODULE_PARM_DESC(no_kbd_dev,
-+	"If set then no virtual keyboard device exposed to the guest");
-+
- static int xenkbd_remove(struct xenbus_device *);
- static int xenkbd_connect_backend(struct xenbus_device *, struct xenkbd_info *);
- static void xenkbd_disconnect_backend(struct xenkbd_info *);
-@@ -63,6 +73,9 @@ static void xenkbd_disconnect_backend(struct xenkbd_info *);
- static void xenkbd_handle_motion_event(struct xenkbd_info *info,
- 				       struct xenkbd_motion *motion)
- {
-+	if (unlikely(!info->ptr))
-+		return;
-+
- 	input_report_rel(info->ptr, REL_X, motion->rel_x);
- 	input_report_rel(info->ptr, REL_Y, motion->rel_y);
- 	if (motion->rel_z)
-@@ -73,6 +86,9 @@ static void xenkbd_handle_motion_event(struct xenkbd_info *info,
- static void xenkbd_handle_position_event(struct xenkbd_info *info,
- 					 struct xenkbd_position *pos)
- {
-+	if (unlikely(!info->ptr))
-+		return;
-+
- 	input_report_abs(info->ptr, ABS_X, pos->abs_x);
- 	input_report_abs(info->ptr, ABS_Y, pos->abs_y);
- 	if (pos->rel_z)
-@@ -97,6 +113,9 @@ static void xenkbd_handle_key_event(struct xenkbd_info *info,
- 		return;
- 	}
- 
-+	if (unlikely(!dev))
-+		return;
-+
- 	input_event(dev, EV_KEY, key->keycode, value);
- 	input_sync(dev);
- }
-@@ -192,7 +211,7 @@ static int xenkbd_probe(struct xenbus_device *dev,
- 				  const struct xenbus_device_id *id)
- {
- 	int ret, i;
--	unsigned int abs, touch;
-+	unsigned int touch;
- 	struct xenkbd_info *info;
- 	struct input_dev *kbd, *ptr, *mtouch;
- 
-@@ -211,24 +230,6 @@ static int xenkbd_probe(struct xenbus_device *dev,
- 	if (!info->page)
- 		goto error_nomem;
- 
--	/* Set input abs params to match backend screen res */
--	abs = xenbus_read_unsigned(dev->otherend,
--				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
--	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
--						  XENKBD_FIELD_WIDTH,
--						  ptr_size[KPARAM_X]);
--	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
--						  XENKBD_FIELD_HEIGHT,
--						  ptr_size[KPARAM_Y]);
--	if (abs) {
--		ret = xenbus_write(XBT_NIL, dev->nodename,
--				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
--		if (ret) {
--			pr_warn("xenkbd: can't request abs-pointer\n");
--			abs = 0;
--		}
--	}
--
- 	touch = xenbus_read_unsigned(dev->nodename,
- 				     XENKBD_FIELD_FEAT_MTOUCH, 0);
- 	if (touch) {
-@@ -241,60 +242,84 @@ static int xenkbd_probe(struct xenbus_device *dev,
- 	}
- 
- 	/* keyboard */
--	kbd = input_allocate_device();
--	if (!kbd)
--		goto error_nomem;
--	kbd->name = "Xen Virtual Keyboard";
--	kbd->phys = info->phys;
--	kbd->id.bustype = BUS_PCI;
--	kbd->id.vendor = 0x5853;
--	kbd->id.product = 0xffff;
--
--	__set_bit(EV_KEY, kbd->evbit);
--	for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
--		__set_bit(i, kbd->keybit);
--	for (i = KEY_OK; i < KEY_MAX; i++)
--		__set_bit(i, kbd->keybit);
--
--	ret = input_register_device(kbd);
--	if (ret) {
--		input_free_device(kbd);
--		xenbus_dev_fatal(dev, ret, "input_register_device(kbd)");
--		goto error;
-+	if (!no_kbd_dev) {
-+		kbd = input_allocate_device();
-+		if (!kbd)
-+			goto error_nomem;
-+		kbd->name = "Xen Virtual Keyboard";
-+		kbd->phys = info->phys;
-+		kbd->id.bustype = BUS_PCI;
-+		kbd->id.vendor = 0x5853;
-+		kbd->id.product = 0xffff;
-+
-+		__set_bit(EV_KEY, kbd->evbit);
-+		for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
-+			__set_bit(i, kbd->keybit);
-+		for (i = KEY_OK; i < KEY_MAX; i++)
-+			__set_bit(i, kbd->keybit);
-+
-+		ret = input_register_device(kbd);
-+		if (ret) {
-+			input_free_device(kbd);
-+			xenbus_dev_fatal(dev, ret, "input_register_device(kbd)");
-+			goto error;
-+		}
-+		info->kbd = kbd;
- 	}
--	info->kbd = kbd;
- 
- 	/* pointing device */
--	ptr = input_allocate_device();
--	if (!ptr)
--		goto error_nomem;
--	ptr->name = "Xen Virtual Pointer";
--	ptr->phys = info->phys;
--	ptr->id.bustype = BUS_PCI;
--	ptr->id.vendor = 0x5853;
--	ptr->id.product = 0xfffe;
--
--	if (abs) {
--		__set_bit(EV_ABS, ptr->evbit);
--		input_set_abs_params(ptr, ABS_X, 0, ptr_size[KPARAM_X], 0, 0);
--		input_set_abs_params(ptr, ABS_Y, 0, ptr_size[KPARAM_Y], 0, 0);
--	} else {
--		input_set_capability(ptr, EV_REL, REL_X);
--		input_set_capability(ptr, EV_REL, REL_Y);
--	}
--	input_set_capability(ptr, EV_REL, REL_WHEEL);
-+	if (!no_ptr_dev) {
-+		unsigned int abs;
-+
-+		/* Set input abs params to match backend screen res */
-+		abs = xenbus_read_unsigned(dev->otherend,
-+					   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
-+		ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
-+							  XENKBD_FIELD_WIDTH,
-+							  ptr_size[KPARAM_X]);
-+		ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
-+							  XENKBD_FIELD_HEIGHT,
-+							  ptr_size[KPARAM_Y]);
-+		if (abs) {
-+			ret = xenbus_write(XBT_NIL, dev->nodename,
-+					   XENKBD_FIELD_REQ_ABS_POINTER, "1");
-+			if (ret) {
-+				pr_warn("xenkbd: can't request abs-pointer\n");
-+				abs = 0;
-+			}
-+		}
- 
--	__set_bit(EV_KEY, ptr->evbit);
--	for (i = BTN_LEFT; i <= BTN_TASK; i++)
--		__set_bit(i, ptr->keybit);
-+		ptr = input_allocate_device();
-+		if (!ptr)
-+			goto error_nomem;
-+		ptr->name = "Xen Virtual Pointer";
-+		ptr->phys = info->phys;
-+		ptr->id.bustype = BUS_PCI;
-+		ptr->id.vendor = 0x5853;
-+		ptr->id.product = 0xfffe;
-+
-+		if (abs) {
-+			__set_bit(EV_ABS, ptr->evbit);
-+			input_set_abs_params(ptr, ABS_X, 0, ptr_size[KPARAM_X], 0, 0);
-+			input_set_abs_params(ptr, ABS_Y, 0, ptr_size[KPARAM_Y], 0, 0);
-+		} else {
-+			input_set_capability(ptr, EV_REL, REL_X);
-+			input_set_capability(ptr, EV_REL, REL_Y);
-+		}
-+		input_set_capability(ptr, EV_REL, REL_WHEEL);
- 
--	ret = input_register_device(ptr);
--	if (ret) {
--		input_free_device(ptr);
--		xenbus_dev_fatal(dev, ret, "input_register_device(ptr)");
--		goto error;
-+		__set_bit(EV_KEY, ptr->evbit);
-+		for (i = BTN_LEFT; i <= BTN_TASK; i++)
-+			__set_bit(i, ptr->keybit);
-+
-+		ret = input_register_device(ptr);
-+		if (ret) {
-+			input_free_device(ptr);
-+			xenbus_dev_fatal(dev, ret, "input_register_device(ptr)");
-+			goto error;
-+		}
-+		info->ptr = ptr;
- 	}
--	info->ptr = ptr;
- 
- 	/* multi-touch device */
- 	if (touch) {
--- 
-2.17.0
+- Arnaldo
