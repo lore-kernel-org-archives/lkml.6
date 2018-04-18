@@ -1,114 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753318AbeDRMMx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 08:12:53 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:37146 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752116AbeDRMMv (ORCPT
+        id S1753668AbeDRMNG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 08:13:06 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40656 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753519AbeDRMNF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 08:12:51 -0400
-X-Google-Smtp-Source: AIpwx49765xJYBRbD84fDtX3o6RPMPRDufMhOZvxjkOq8JpYQCxN3j8cxqaLFCG1ZjQWZwgj8lYHkA==
-Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode for
- the cells list
-To: Alban <albeu@free.fr>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <1521933899-362-1-git-send-email-albeu@free.fr>
- <1521933899-362-2-git-send-email-albeu@free.fr>
- <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
- <20180417165420.423a691b@avionic-0020>
- <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
- <20180417180040.04f53495@avionic-0020> <20180418134119.2e587621@avionic-0020>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <9f7d2987-b33e-79b5-ae58-2985fd7334e4@linaro.org>
-Date: Wed, 18 Apr 2018 13:12:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180418134119.2e587621@avionic-0020>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Apr 2018 08:13:05 -0400
+X-Google-Smtp-Source: AIpwx4+GFK5hw11dPNkrSXiQMHZQxo9cCsG/4DHI6bZCDyMLRh+T53Wm7Si/jmjYvlBQFV2I8GcQhw==
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Li Wang <liwang@redhat.com>, Zi Yan <zi.yan@cs.rutgers.edu>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, ltp@lists.linux.it,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: [PATCH] mm: Fix do_pages_move status handling
+Date: Wed, 18 Apr 2018 14:12:55 +0200
+Message-Id: <20180418121255.334-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Michal Hocko <mhocko@suse.com>
 
+Li Wang has reported that LTP move_pages04 test fails with the current
+tree:
+LTP move_pages04:
+   TFAIL  :  move_pages04.c:143: status[1] is EPERM, expected EFAULT
 
-On 18/04/18 12:41, Alban wrote:
-> On Tue, 17 Apr 2018 18:00:40 +0200
-> Alban <albeu@free.fr> wrote:
-> 
->> On Tue, 17 Apr 2018 16:44:01 +0100
->> Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
->>
->>> Thanks for explaining,
->>>
->>> On 17/04/18 15:54, Alban wrote:
->>>> This will not only allow reading the calibration data from nvmem, but
->>>> will also create a partition on the MTD device, which is not acceptable.
->>>> With my proposed binding this would become:
->>>>
->>>> flash@0 {
->>>> 	#address-cells = <1>;
->>>> 	#size-cells = <1>;
->>>> 	compatible = "s25sl064a";
->>>> 	reg = <0>;
->>>>
->>>> 	nvmem-cells {
->>>> 		compatible = "nvmem-cells";
->>>> 		#address-cells = <1>;
->>>> 		#address-cells = <1>;
->>>>
->>>> 		calibration: calib@404 {
->>>> 			reg = <0x404 0x10>;
->>>> 		};
->>>> 	};
->>>
->>> Why can't we make nvmem-cells node a nvmem provider in this case?
->>> Which should work!
->>
->> TBH I just copied what have been done to fix the same problem with the
->> MTD partitions. But yes we could also just extend the current binding
->> to require a compatible string on each nvmem-cell, which would not
->> require any code change to support.
-> 
-> However this scheme will not work if the device node binding already
-> have subnodes with addresses. The addressing, as specified by
-> #address-cells and #size-cells, might be incompatible or might overlap.
-> Using the nvmem-cells subnode solve this problem.
-> 
+The test allocates an array of two pages, one is present while the other
+is not (resp. backed by zero page) and it expects EFAULT for the second
+page as the man page suggests. We are reporting EPERM which doesn't make
+any sense and this is a result of a bug from cf5f16b23ec9 ("mm:
+unclutter THP migration").
 
-I was also suggesting you to use nvmem-cell subnode, but make it a 
-proper nvmem provider device, rather than reusing its parent device.
+do_pages_move tries to handle as many pages in one batch as possible so
+we queue all pages with the same node target together and that
+corresponds to [start, i] range which is then used to update status
+array. add_page_for_migration will correctly notice the zero (resp.
+!present) page and returns with EFAULT which gets written to the status.
+But if this is the last page in the array we do not update start and so
+the last store_status after the loop will overwrite the range of the
+last batch with NUMA_NO_NODE (which corresponds to EPERM).
 
-You would end up some thing like this in dt.
+Fix this by simply bailing out from the last flush if the pagelist
+is empty as there is clearly nothing more to do.
 
-flash@0 {
-	#address-cells = <1>;
-	#size-cells = <1>;
-	compatible = "s25sl064a";
-	reg = <0>;
+Fixes: cf5f16b23ec9 ("mm: unclutter THP migration")
+Reported-and-Tested-by: Li Wang <liwang@redhat.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+Hi Andrew,
+this is a new regression in 4.17-rc1 so it would be great to merge
+sooner rather than later. It is a user visible change. The original
+bug report is http://lkml.kernel.org/r/20180417110615.16043-1-liwang@redhat.com
+Thanks to Li Wang for his testing!
 
-	nvmem-cells {
-		compatible = "mtd-nvmem";
-		#address-cells = <1>;
-		#size-cells = <1>;
+ mm/migrate.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-		calibration: calib@404 {
-			reg = <0x404 0x10>;
-		};
-	};
-};
-
---srini
-
-> Alban
-> 
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 507cf9ba21bf..c7e5f6447417 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1634,6 +1634,9 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
+ 		current_node = NUMA_NO_NODE;
+ 	}
+ out_flush:
++	if (list_empty(&pagelist))
++		return err;
++
+ 	/* Make sure we do not overwrite the existing error */
+ 	err1 = do_move_pages_to_node(mm, &pagelist, current_node);
+ 	if (!err1)
+-- 
+2.16.3
