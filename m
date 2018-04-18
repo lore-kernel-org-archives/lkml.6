@@ -1,63 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752779AbeDRFrb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 01:47:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51615 "EHLO mail.bootlin.com"
+        id S1752825AbeDRFs1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 01:48:27 -0400
+Received: from mout.gmx.net ([212.227.15.19]:44119 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751407AbeDRFr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 01:47:29 -0400
-Date: Wed, 18 Apr 2018 07:46:43 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 09/11] ARM: sun8i: smp: Add support for A83T
-Message-ID: <20180418074643.5bd68168@dell-desktop.home>
-In-Reply-To: <20180417112038.mw7bfhqw4xwvzxcw@flea>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
-        <20180416215032.5023-10-mylene.josserand@bootlin.com>
-        <20180417112038.mw7bfhqw4xwvzxcw@flea>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1752606AbeDRFsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 01:48:24 -0400
+Message-ID: <1524030475.5645.2.camel@gmx.de>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+From: Mike Galbraith <gleep@gmx.de>
+To: Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
+Date: Wed, 18 Apr 2018 07:47:55 +0200
+In-Reply-To: <20180417142119.GA4511@codeblueprint.co.uk>
+References: <20180417142119.GA4511@codeblueprint.co.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Xbn6KhsCiaNRUeE1TAjtk7jqMQr2bsRsXj3NtGT4o79R+IRl9+9
+ TUXDlyPdERcHKwW4CK1fI5ZRFFpxnwpaEaTSK7UdmoN2ujiRMYKonE5SmvnqR+YnFnzse/e
+ WRJZUEpR1V4mGRPBe84zpPQsQze5dZbKqY0xxnhNxWmT5uD9dIgaFcOtnX6MF+xt8fk+703
+ ngIaWVJWtyBf9XuI+PcYQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:NGLFDCHFbZo=:IY6JAJ4s5x7SlP0dVH8SPq
+ wEdThlnlV82UAGy883zxaHvq4fN5q5E8eJACZz8M6Z+Pra0X9973s4FUBgGs3wndRQDc6w/Hy
+ xiRrnpZlpRB9+ZmfPNaJ4pZJ471RSY81azV1x2NCighycws8PY5iikcopCBDXtzg5ybGvppnn
+ Eyl4l1zh+KfvYdueuwhYg41HyUFhTJ1UHG5zpIo9SPxxdri93n5iGI/7pALTiRNfbojGMTELc
+ lpugWPcDFMJqH7RW/VHO3h7lHdn4EwUnR8wnVeYyn1H1WzkwmIghs60bqLMXmiBFsexw7VU+n
+ uZ1r8f4xdW7sVXpd5efqwvKSNdjz7LoKsYqrz+qTnK0ZTbfq5yrIDly6vV2VPwUIH3nCTzoS4
+ Q2s+73KnSCkIezpDv9k8BoEUMlKktI4lZEnDaO7zg5pZzznMCHmINTSBf6kFqHhdFDm393A9S
+ ljtZiJTVxIwIa82UPExr1VpSPEgOHrZkyK95tGwHt9fcwtLM8n+rAO5gCalFnG00hKsNNX9G+
+ T/6R762kljuBCuDIYIV0Iraix1o97cX4zHXfjxP008o67FqMKCSbnAObWdyD7BMHJkjCSgBq2
+ 5lVZHzTV6RmSEUrhlS6n2zIjHtdk0JiVgXPFWy8VadBthA6JOT4F5peiFNgZpmzNDq/jCbMKt
+ 5RQhAjYqHvKAq95R5nZzQO9KSavNBJXyXprZipQU3qeQFKbxxDcgft/EuUonKG56LMMC8vDvi
+ 9W8dfgIcTTd43nBaZFoyR2PrtxUuZYUSmYs6h7JyipX4cTqwmDX6ucBvsPpT7fevJscHEYR72
+ eMreQ3KFxViTaf1yFhPyylXIeekjLzKJ3IonACcTqrvzXeO3bI=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Maxime,
-
-On Tue, 17 Apr 2018 13:20:38 +0200
-Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-
-> On Mon, Apr 16, 2018 at 11:50:30PM +0200, Mylène Josserand wrote:
-> > @@ -535,8 +599,12 @@ static int sunxi_mc_smp_cpu_kill(unsigned int l_cpu)
-> >  	return !ret;
-> >  }
-> >  
-> > -static bool sunxi_mc_smp_cpu_can_disable(unsigned int __unused)
-> > +static bool sunxi_mc_smp_cpu_can_disable(unsigned int cpu)
-> >  {
-> > +	/* CPU0 hotplug not handled for sun8i-a83t */
-> > +	if (is_sun8i)
-> > +		if (cpu == 0)
-> > +			return false;
-> >  	return true;  
+On Tue, 2018-04-17 at 15:21 +0100, Matt Fleming wrote:
+> Hi guys,
 > 
-> I think Chen-Yu told you how to implement the hotplug in the previous
-> iteration, did you have time to test it?
+> We've seen a bug in one of our SLE kernels where the cpu stopper
+> thread ("migration/15") is entering idle balance. This then triggers
+> active load balance.
+> 
+> At the same time, a task on another CPU triggers a page fault and NUMA
+> balancing kicks in to try and migrate the task closer to the NUMA node
+> for that page (we're inside stop_two_cpus()). This faulting task is
+> spinning in try_to_wake_up() (inside smp_cond_load_acquire(&p->on_cpu,
+> !VAL)), waiting for "migration/15" to context switch.
+> 
+> Unfortunately, because "migration/15" is doing active load balance
+> it's spinning waiting for the NUMA-page-faulting CPU's stopper lock,
+> which is already held (since it's inside stop_two_cpus()).
+> 
+> Deadlock ensues.
+> 
+> This seems like a situation that should be prohibited, but I cannot
+> find any code to prevent it. Is it OK for stopper threads to load
+> balance? Is there something that should prevent this situation from
+> happening?
 
-Not yet, I will have a look this evening.
+I don't see anything to stop the deadlock either, would exclude stop
+class from playing idle balancer entirely, though I suppose you could
+check for caller being stop class in need_active_balance().  I don't
+think any RT class playing idle balancer is particularly wonderful.
 
-Best regards,
-
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+	-Mike
