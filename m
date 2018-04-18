@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752963AbeDROqz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:46:55 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:38740 "EHLO
+        id S1752888AbeDROqy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:46:54 -0400
+Received: from smtprelay.synopsys.com ([198.182.60.111]:38733 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751305AbeDROqu (ORCPT
+        with ESMTP id S1751204AbeDROqu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Apr 2018 10:46:50 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
@@ -13,77 +13,50 @@ To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v6 1/9] bindings: PCI: designware: Example update
-Date: Wed, 18 Apr 2018 15:46:36 +0100
-Message-Id: <96c1e63ce9e869626996a918fcb2dbcf642519a7.1524062073.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v6 0/9] Designware EP support and code clean up
+Date: Wed, 18 Apr 2018 15:46:35 +0100
+Message-Id: <cover.1524062073.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1524062073.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524062073.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1524062073.git.gustavo.pimentel@synopsys.com>
-References: <cover.1524062073.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaces "ctrlreg" reg-name by "dbi" to be coherent with similar drivers,
-however it still be compatible with any previous DT that uses the old
-reg-name.
+The patch set was made against the Lorenzo's master branch.
 
-Replaces the PCIe base address example by a real PCIe base address in use.
+Adds support Designware EP support.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes v1->v2:
- - Removed any iATU reference or changes to avoid confusion.
- - Add "snps,dw-pcie" compatible string following Kishon's suggestion.
-Changes v2->v3:
- - Nothing changed, just to follow the patch set version.
-Changes v3->v4:
- - Reverted "snps,dw-pcie-rc" compatible string requested by Rob Herring.
-Changes v4->v5:
- - Nothing changed, just to follow the patch set version.
-Changes v5->v6:
- - Nothing changed, just to follow the patch set version.
+Increases the maximum number of interrupts allowed for Designware IP
+controller.
 
- Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Does a code cleanup on Designware driver:
+ - Replaces magic numbers without a easy meaning by a well known define
+   that helps the human compreension.
+ - Replaces a division by 2 by a simple right shift rotation of 1 bit.
+ - Fixes all first letter characters on comments and debug messages to
+   upper case to maintain coherency.
 
-diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-index 1da7ade..7f9804d 100644
---- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-@@ -1,7 +1,8 @@
- * Synopsys DesignWare PCIe interface
- 
- Required properties:
--- compatible: should contain "snps,dw-pcie" to identify the core.
-+- compatible:
-+	"snps,dw-pcie" for RC mode;
- - reg: Should contain the configuration address space.
- - reg-names: Must be "config" for the PCIe configuration space.
-     (The old way of getting the configuration address space from "ranges"
-@@ -41,11 +42,11 @@ EP mode:
- 
- Example configuration:
- 
--	pcie: pcie@dffff000 {
-+	pcie: pcie@dfc00000 {
- 		compatible = "snps,dw-pcie";
--		reg = <0xdffff000 0x1000>, /* Controller registers */
--		      <0xd0000000 0x2000>; /* PCI config space */
--		reg-names = "ctrlreg", "config";
-+		reg = <0xdfc00000 0x0001000>, /* IP registers */
-+		      <0xd0000000 0x0002000>; /* Configuration space */
-+		reg-names = "dbi", "config";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		device_type = "pci";
-@@ -54,5 +55,4 @@ Example configuration:
- 		interrupts = <25>, <24>;
- 		#interrupt-cells = <1>;
- 		num-lanes = <1>;
--		num-viewport = <3>;
- 	};
+Gustavo Pimentel (9):
+  bindings: PCI: designware: Example update
+  PCI: dwc: Add support for endpoint mode
+  PCI: endpoint: functions/pci-epf-test: Add second entry
+  bindings: PCI: designware: Add support for the EP in Designware driver
+  misc: pci_endpoint_test: Add designware EP entry
+  PCI: dwc: Define maximum number of vectors
+  PCI: dwc: Replace lower into upper case characters
+  PCI: dwc: Small computation improvement
+  PCI: dwc: Replace magic number by defines
+
+ .../PCI/endpoint/function/binding/pci-test.txt     |   2 +
+ .../devicetree/bindings/pci/designware-pcie.txt    |  24 +++-
+ drivers/misc/pci_endpoint_test.c                   |   1 +
+ drivers/pci/dwc/Kconfig                            |  41 ++++--
+ drivers/pci/dwc/pcie-designware-ep.c               |  16 +--
+ drivers/pci/dwc/pcie-designware-host.c             |  77 +++++-----
+ drivers/pci/dwc/pcie-designware-plat.c             | 155 +++++++++++++++++++--
+ drivers/pci/dwc/pcie-designware.c                  |  22 +--
+ drivers/pci/dwc/pcie-designware.h                  |   1 +
+ drivers/pci/endpoint/functions/pci-epf-test.c      |   8 ++
+ 10 files changed, 267 insertions(+), 80 deletions(-)
+
 -- 
 2.7.4
