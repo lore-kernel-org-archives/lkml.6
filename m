@@ -1,47 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753149AbeDRKrU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 06:47:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41482 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750861AbeDRKrS (ORCPT
+        id S1753002AbeDRKvW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 06:51:22 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:47455 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751870AbeDRKvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 06:47:18 -0400
-Date: Wed, 18 Apr 2018 03:47:03 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: ysato@users.sourceforge.jp, dalias@libc.org,
-        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com,
-        geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sh: mm: Fix unprotected access to struct device
-Message-ID: <20180418104703.GA12462@infradead.org>
-References: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
+        Wed, 18 Apr 2018 06:51:21 -0400
+Subject: Re: [PATCH 2/2] fs, elf: drop MAP_FIXED usage from elf_map
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>
+Cc: linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+References: <20171213092550.2774-1-mhocko@kernel.org>
+ <20171213092550.2774-3-mhocko@kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <0b5c541a-91ee-220b-3196-f64264f9f0bc@I-love.SAKURA.ne.jp>
+Date: Wed, 18 Apr 2018 19:51:05 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20171213092550.2774-3-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 03:35:23PM +0200, Jacopo Mondi wrote:
-> With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
-> operations observe dev->dma_pfn_offset") the generic DMA allocation
-> function on which the SH 'dma_alloc_coherent()' function relies on,
-> access the 'dma_pfn_offset' field of struct device.
-> 
-> Unfortunately the 'dma_generic_alloc_coherent()' function is called from
-> several places with a NULL struct device argument, halting the CPU
-> during the boot process.
-> 
-> This patch fixes the issue protecting access to dev->dma_pfn_offset,
-> with a trivial check for validity. It also passes a valid 'struct device'
-> in the 'platform_resource_setup_memory' function which is the main user
-> of 'dma_alloc_coherent()', and inserting a WARN_ON() check to make future
-> (and existing) bogus users of this function they're should provide a valid
-> 'struct device' whenever possible.
+>From 0ba20dcbbc40b703413c9a6907a77968b087811b Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 18 Apr 2018 15:31:48 +0900
+Subject: [PATCH] fs, elf: don't complain MAP_FIXED_NOREPLACE if mapping
+ failed.
 
-Please fix those callers to not pass a NULL pointer instead.
+Commit 4ed28639519c7bad ("fs, elf: drop MAP_FIXED usage from elf_map") is
+printing spurious messages under memory pressure due to map_addr == -ENOMEM.
+
+ 9794 (a.out): Uhuuh, elf segment at 00007f2e34738000(fffffffffffffff4) requested but the memory is mapped already
+ 14104 (a.out): Uhuuh, elf segment at 00007f34fd76c000(fffffffffffffff4) requested but the memory is mapped already
+ 16843 (a.out): Uhuuh, elf segment at 00007f930ecc7000(fffffffffffffff4) requested but the memory is mapped already
+
+Don't complain if IS_ERR_VALUE(), and use %px for printing the address.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrei Vagin <avagin@openvz.org>
+Cc: Khalid Aziz <khalid.aziz@oracle.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+---
+ fs/binfmt_elf.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 41e0418..559d35b 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -377,10 +377,10 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
+ 	} else
+ 		map_addr = vm_mmap(filep, addr, size, prot, type, off);
+ 
+-	if ((type & MAP_FIXED_NOREPLACE) && BAD_ADDR(map_addr))
+-		pr_info("%d (%s): Uhuuh, elf segment at %p requested but the memory is mapped already\n",
+-				task_pid_nr(current), current->comm,
+-				(void *)addr);
++	if ((type & MAP_FIXED_NOREPLACE) && BAD_ADDR(map_addr) &&
++	    !IS_ERR_VALUE(map_addr))
++		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
++			task_pid_nr(current), current->comm, (void *)addr);
+ 
+ 	return(map_addr);
+ }
+-- 
+1.8.3.1
