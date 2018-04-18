@@ -1,112 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752634AbeDRIpj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:45:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55771 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751407AbeDRIph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:45:37 -0400
-Date: Wed, 18 Apr 2018 10:45:35 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Simon <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LABBE Corentin <clabbe.montjoie@gmail.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 01/11] ARM: sunxi: smp: Move assembly code into a file
-Message-ID: <20180418084535.lqdvjgcbxtnwqwri@flea>
-References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
- <20180416215032.5023-2-mylene.josserand@bootlin.com>
- <CAGb2v67VL70yqTF7xq4T3_9zA9T3UT2AV0gGarh1mqvC17r3Mg@mail.gmail.com>
- <20180417111737.6dous6eiuvjn33jf@flea>
- <CAGb2v67qvk=T7u7bOjVZ7q_qsjJuEOM6iarw7by42ga=EYuYDg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="o4k7srs655m3j7t2"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v67qvk=T7u7bOjVZ7q_qsjJuEOM6iarw7by42ga=EYuYDg@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+        id S1752864AbeDRIrW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:47:22 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:41533 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751407AbeDRIrU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 04:47:20 -0400
+X-Google-Smtp-Source: AIpwx4/6HUcfHVDTq/r9HXLLikLXTUdH1xggP/yXH9X7bMq2Fh6cC2S/Dfdm1+Ufgd5nivNBnaJteg==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
+Subject: Re: [PATCH] blk-mq: Clear out elevator private data
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <20180417214218.GA44753@beast>
+Date: Wed, 18 Apr 2018 10:47:17 +0200
+Cc: Jens Axboe <axboe@kernel.dk>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
+Message-Id: <D8B8B059-149B-4A7D-8537-31052A51AAD1@linaro.org>
+References: <20180417214218.GA44753@beast>
+To: Kees Cook <keescook@chromium.org>
+X-Mailer: Apple Mail (2.3445.5.20)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3I8lTob017769
 
 
---o4k7srs655m3j7t2
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 17, 2018 at 07:25:15PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Apr 17, 2018 at 7:17 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Tue, Apr 17, 2018 at 11:12:41AM +0800, Chen-Yu Tsai wrote:
-> >> On Tue, Apr 17, 2018 at 5:50 AM, Myl=E8ne Josserand
-> >> <mylene.josserand@bootlin.com> wrote:
-> >> > Move the assembly code for cluster cache enabling and resuming
-> >> > into an assembly file instead of having it directly in C code.
-> >> >
-> >> > Remove the CFLAGS because we are using the ARM directive "arch"
-> >> > instead.
-> >> >
-> >> > Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
-> >> > ---
-> >> >  arch/arm/mach-sunxi/Makefile  |  4 +--
-> >> >  arch/arm/mach-sunxi/headsmp.S | 80 ++++++++++++++++++++++++++++++++=
-+++++++++
-> >> >  arch/arm/mach-sunxi/mc_smp.c  | 82 +++-----------------------------=
------------
-> >> >  3 files changed, 85 insertions(+), 81 deletions(-)
-> >> >  create mode 100644 arch/arm/mach-sunxi/headsmp.S
-> >>
-> >> I'm still not convinced about this whole "move ASM to separate
-> >> file" thing, especially now that you aren't actually adding any
-> >> sunxi-specific ASM code beyond a simple function call.
-> >>
-> >> Could you drop this for now?
-> >
-> > I'd really like to have this merged actually. There's a significant
-> > readibility improvement, so even if there's no particular functional
-> > improvement, I'd still call it a win.
->=20
-> What parts do you consider hard to read? The extra quotes? Trailing
-> newline? Or perhaps the __stringify bits?
+> Il giorno 17 apr 2018, alle ore 23:42, Kees Cook <keescook@chromium.org> ha scritto:
+> 
+> Some elevators may not correctly check rq->rq_flags & RQF_ELVPRIV, and
+> may attempt to read rq->elv fields. When requests got reused, this
+> caused BFQ to think it already had a bfqq (rq->elv.priv[1]) allocated.
 
-All of this, plus the clobbers and operands.
+Hi Kees,
+where does BFQ gets confused and operates on a request not destined to
+it?  I'm asking because I paid attention to always avoid such a
+mistake.
 
-Maxime
+Thanks,
+Paolo
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---o4k7srs655m3j7t2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrXBa4ACgkQ0rTAlCFN
-r3SsRg//ZieKDRJoIHs9a5V8pamTZtxCiW41aetlRvlWtZOhxQkTjPxiTAtUsg4Q
-M6ZVjKvPqSemN64xYMpvakIU3I6KCfmL4HMpqdYhlQBohIrS7gx12/6Vc0rAmrtU
-6Ms+UvV8oo2dEjFv8p7Y3x2GBnWqD4UdC+5vnheVh9DihOiSXAo5vAZ+UqS8+JwB
-dsLkmdvy5iVngIiy0vdAAGREmn/E84jLhRbZTrN+BKpiUG8zz8mOHUBIJ0lWRsmJ
-mnXtuptgWJkY2W7ehPe0qp8uU+VGUsF6vegoYIauEcjBS6wuAvKKyLlLIs2npvYf
-UzkR0Hk9gXFU9fvMOovgmw2PfxPD1e7Aci1MDn3bTfBoN4dM3q2wKm2lWOX2D0UK
-a2Q8p4DYYw4ClaAGv0x3b4QIbH3GfFu9H0YuFV+s1spv1/cKjNwWwPQgsrSxAjYF
-sbCdsaM62FLko0RXCG3DFKcYfaVkGN0p95IDk5wOUO7rQfkFX1vdKkKu7cAHCOqW
-3Eg4VAH6YttyQB/4Z2UYgzj5oD3nmzG/oT5ElREVt986PjNV2/9Z529d9ZieX0jZ
-rSeF4IcgKhj1EYehrJv5KvcpsiWc0Ip/EqYfUY2k4THuTIcQIJ1RclJTVyiSxqfg
-oQxw+a5XltDfpau5il5nv7l1mccaGCgx6ViiS1M1OP6HT+mdWaE=
-=QJnY
------END PGP SIGNATURE-----
-
---o4k7srs655m3j7t2--
+> This could lead to odd behaviors like having the sense buffer address
+> slowly start incrementing. This eventually tripped HARDENED_USERCOPY
+> and KASAN.
+> 
+> This patch wipes all of rq->elv instead of just rq->elv.icq. While
+> it shouldn't technically be needed, this ends up being a robustness
+> improvement that should lead to at least finding bugs in elevators faster.
+> 
+> Reported-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+> Fixes: bd166ef183c26 ("blk-mq-sched: add framework for MQ capable IO schedulers")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> In theory, BFQ needs to also check the RQF_ELVPRIV flag, but I'll leave that
+> to Paolo to figure out. Also, my Fixes line is kind of a best-guess. This
+> is where icq was originally wiped, so it seemed as good a commit as any.
+> ---
+> block/blk-mq.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 0dc9e341c2a7..859df3160303 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -363,7 +363,7 @@ static struct request *blk_mq_get_request(struct request_queue *q,
+> 
+> 	rq = blk_mq_rq_ctx_init(data, tag, op);
+> 	if (!op_is_flush(op)) {
+> -		rq->elv.icq = NULL;
+> +		memset(&rq->elv, 0, sizeof(rq->elv));
+> 		if (e && e->type->ops.mq.prepare_request) {
+> 			if (e->type->icq_cache && rq_ioc(bio))
+> 				blk_mq_sched_assign_ioc(rq, bio);
+> @@ -461,7 +461,7 @@ void blk_mq_free_request(struct request *rq)
+> 			e->type->ops.mq.finish_request(rq);
+> 		if (rq->elv.icq) {
+> 			put_io_context(rq->elv.icq->ioc);
+> -			rq->elv.icq = NULL;
+> +			memset(&rq->elv, 0, sizeof(rq->elv));
+> 		}
+> 	}
+> 
+> -- 
+> 2.7.4
+> 
+> 
+> -- 
+> Kees Cook
+> Pixel Security
