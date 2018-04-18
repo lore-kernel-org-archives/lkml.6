@@ -1,193 +1,164 @@
-Return-Path: <christian.brauner@canonical.com>
-X-Google-Smtp-Source: AIpwx492jv7pC8MvYJqcY4lN1Lud7jUlfaRszBqC8FJWwL8Mp0LPhJYdoJquuIDiF9b1O97+g0fF
-ARC-Seal: i=1; a=rsa-sha256; t=1524325755; cv=none;
+Return-Path: <christianvanbrauner@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524064880; cv=none;
         d=google.com; s=arc-20160816;
-        b=l38j5y/mPG2oF7olH+23kN3nPTF388UfpwbFF9+BzU4joZf7ScLp0gEFAP2khtzyzg
-         uCMZftnLPtLAGuwx6X/5d/vqM4Wqs3mUAFfxbJKtr66lTuKOTzqLchUb9b6+cHVkoLU1
-         kFML683UfY4GUjRaXHePn+oRRt+F70vE5RoURUAD7Tum2pWy56LoEFpbkgMbYZivQCj1
-         AmVA6iPnIWbf9h5GLeRovEfUiZAoDNhWMN3sL5nJ90AUnVQzYNK6YQU0KGhlGm32pEdr
-         GhZl8svUzIRXEayuMG4Z5LzarC23ZwBADQE+wL1qApfkAmdr9VZZ1jp7dncGIO2qY5G7
-         Z7IA==
+        b=cHHuhQwU39fwpEEQicXMVyVvXKIeIHkoIB9TX7IHUS/gLd8V26Xaz+oTYVaTwx85j/
+         82eM7Ykrk/6qwu3/qiSMKc9Xc6fOEfg6zML02YtfXnBsbftBOYp1Laulqv8zK+tmas8g
+         uIOo6nLrDR4CK27ttDqwj2j6wj2pR9eSeQHVONoJZ8Ku788c2l8igMtRdc+eFufnTDIN
+         OtVjbP5llVbN9eILweLwK9xyEH9/3zPDI8B+kfO1JuGHCUVqoqxoKtWH8C2e6ie1trRy
+         NFuXD355X5+FHrNVwBZToqGuweiwkRIE8zwR11/ev/avs4hnjo3kyXlstJ2XgG7yYEuS
+         QWIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:date:from:arc-authentication-results;
-        bh=5AEvJrLsfFLSXPhfIKy7GBFOTogRtb+gOp25x1MYDBg=;
-        b=PZd1tjbymenbBhETkrCZKvYE/crUoyaC/a6R2twKTR4ALBMi2D8SuYTd6Z2mEUQRjv
-         HRENQP86cySwNlCSobiHaHN8UJ9S4xqTAP6WKMHCjiKwjiNRe0EoGQZ02WuapbxL5Wos
-         PUe9G6KS+P+CpBtLatc7usehgD24lz9xAOHwwhqeSitlluucjCnFJPaVLpXFE4cQK5mg
-         988LDFoqjHbrDeFHSplQvYuJ94Qha/QMcXw3m1tSt1iw6wCYfEAz+GItouVlnwkhIYGK
-         4f+Ycfwn66Ll3VY+92F3+HyCCqxZUn8yEzYAl4Av7YMUvU0JFrOP0zmwEvFLwu5XHsuy
-         4zqQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=liAcqvAGobgDX+bD9RSznY/yQ+9B4RjTg3IK2sG6Mnw=;
+        b=uls0+OJPIotWu2goHdS+yxSR7uEkBpwekDy2HoPniqt/Hb2m/W3Byr0QZodZ3sIwwE
+         z7hamj96ENQh9wK2w7w8fjYiqbcmmSn1hLVCK0q5jsmDkukuHsWJV/zF7jdcJ1lY6ft/
+         y8avtSEnKmprho3JvNacFzNkIznq0Cz/NRfSybCePN5/ukSL/sG13S4IGHw5diO3kpXc
+         /m77ubILla1ZHlnFhOYCqOSHGy3aKHaR1coFfLigpjXQOqjA0dxpyeu8AwHPu68LFi1n
+         nlILt2TEuprg9+5RCHba0iSty4BRgCsuv8RhZ1KvkoMeJyFCpSOzvp4XnFvjnX60kIUo
+         TP1A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of christian.brauner@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=christian.brauner@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of christian.brauner@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=christian.brauner@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-From: Christian Brauner <christian.brauner@canonical.com>
-X-Google-Original-From: Christian Brauner <christian.brauner@ubuntu.com>
-Date: Sat, 21 Apr 2018 17:49:12 +0200
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, avagin@virtuozzo.com,
-	ktkhai@virtuozzo.com, serge@hallyn.com, gregkh@linuxfoundation.org
-Subject: Re: [PATCH net-next 2/2] netns: isolate seqnums to use per-netns
- locks
-Message-ID: <20180421154910.GA31964@gmail.com>
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+X-Google-Smtp-Source: AIpwx4/Og8fV2DvW+CEzkGd0fVPmJUb4sb+GAFpf6fmgYMsg0CNlSuKGMxxaaWTeqVTuidVrcr/0eA==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: ebiederm@xmission.com,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: avagin@virtuozzo.com,
+	ktkhai@virtuozzo.com,
+	serge@hallyn.com,
+	gregkh@linuxfoundation.org,
+	Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH net-next 1/2] netns: restrict uevents
+Date: Wed, 18 Apr 2018 17:21:05 +0200
+Message-Id: <20180418152106.18519-2-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180418152106.18519-1-christian.brauner@ubuntu.com>
 References: <20180418152106.18519-1-christian.brauner@ubuntu.com>
- <20180418152106.18519-3-christian.brauner@ubuntu.com>
- <874lk8wj1j.fsf@xmission.com>
- <20180418215246.GA24000@gmail.com>
- <20180420135627.GA8350@gmail.com>
- <20180420161643.GA15182@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180420161643.GA15182@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598097857058546891?=
-X-GMAIL-MSGID: =?utf-8?q?1598371403549418018?=
+X-GMAIL-THRID: =?utf-8?q?1598097855783382881?=
+X-GMAIL-MSGID: =?utf-8?q?1598097855783382881?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 20, 2018 at 06:16:44PM +0200, Christian Brauner wrote:
-> On Fri, Apr 20, 2018 at 03:56:28PM +0200, Christian Brauner wrote:
-> > On Wed, Apr 18, 2018 at 11:52:47PM +0200, Christian Brauner wrote:
-> > > On Wed, Apr 18, 2018 at 11:55:52AM -0500, Eric W. Biederman wrote:
-> > > > Christian Brauner <christian.brauner@ubuntu.com> writes:
-> > > > 
-> > > > > Now that it's possible to have a different set of uevents in different
-> > > > > network namespaces, per-network namespace uevent sequence numbers are
-> > > > > introduced. This increases performance as locking is now restricted to the
-> > > > > network namespace affected by the uevent rather than locking
-> > > > > everything.
-> > > > 
-> > > > Numbers please.  I personally expect that the netlink mc_list issues
-> > > > will swamp any benefit you get from this.
-> > > 
-> > > I wouldn't see how this would be the case. The gist of this is:
-> > > Everytime you send a uevent into a network namespace *not* owned by
-> > > init_user_ns you currently *have* to take mutex_lock(uevent_sock_list)
-> > > effectively blocking the host from processing uevents even though
-> > > - the uevent you're receiving might be totally different from the
-> > >   uevent that you're sending
-> > > - the uevent socket of the non-init_user_ns owned network namespace
-> > >   isn't even recorded in the list.
-> > > 
-> > > The other argument is that we now have properly isolated network
-> > > namespaces wrt to uevents such that each netns can have its own set of
-> > > uevents. This can either happen by a sufficiently privileged userspace
-> > > process sending it uevents that are only dedicated to that specific
-> > > netns. Or - and this *has been true for a long time* - because network
-> > > devices are *properly namespaced*. Meaning a uevent for that network
-> > > device is *tied to a network namespace*. For both cases the uevent
-> > > sequence numbering will be absolutely misleading. For example, whenever
-> > > you create e.g. a new veth device in a new network namespace it
-> > > shouldn't be accounted against the initial network namespace but *only*
-> > > against the network namespace that has that device added to it.
-> > 
-> > Eric, I did the testing. Here's what I did:
-> > 
-> > I compiled two 4.17-rc1 Kernels:
-> > - one with per netns uevent seqnums with decoupled locking
-> > - one without per netns uevent seqnums with decoupled locking
-> > 
-> > # Testcase 1:
-> > Only Injecting Uevents into network namespaces not owned by the initial user
-> > namespace.
-> > - created 1000 new user namespace + network namespace pairs
-> > - opened a uevent listener in each of those namespace pairs
-> > - injected uevents into each of those network namespaces 10,000 times meaning
-> >   10,000,000 (10 million) uevents were injected. (The high number of
-> >   uevent injections should get rid of a lot of jitter.)
-> > - Calculated the mean transaction time.
-> > - *without* uevent sequence number namespacing:
-> >   67 μs
-> > - *with* uevent sequence number namespacing:
-> >   55 μs
-> > - makes a difference of 12 μs
-> > 
-> > # Testcase 2:
-> > Injecting Uevents into network namespaces not owned by the initial user
-> > namespace and network namespaces owned by the initial user namespace.
-> > - created 500 new user namespace + network namespace pairs
-> > - created 500 new network namespace pairs
-> > - opened a uevent listener in each of those namespace pairs
-> > - injected uevents into each of those network namespaces 10,000 times meaning
-> >   10,000,000 (10 million) uevents were injected. (The high number of
-> >   uevent injections should get rid of a lot of jitter.)
-> > - Calculated the mean transaction time.
-> > - *without* uevent sequence number namespacing:
-> >   572 μs
-> > - *with* uevent sequence number namespacing:
-> >   514 μs
-> > - makes a difference of 58 μs
-> > 
-> > So there's performance gain. The third case would be to create a bunch
-> > of hanging processes that send SIGSTOP to themselves but do not actually
-> > open a uevent socket in their respective namespaces and then inject
-> > uevents into them. I expect there to be an even more performance
-> > benefits since the rtnl_table_lock() isn't hit in this case because
-> > there are no listeners.
-> 
-> I did the third test-case as well so:
-> - created 500 new user namespace + network namespace pairs *without
->   uevent listeners*
-> - created 500 new network namespace pairs *without uevent listeners*
-> - injected uevents into each of those network namespaces 10,000 times meaning
->   10,000,000 (10 million) uevents were injected. (The high number of
->   uevent injections should get rid of a lot of jitter.)
-> - Calculated the mean transaction time.
-> - *without* uevent sequence number namespacing:
->   206 μs
-> - *with* uevent sequence number namespacing:
->   163 μs
-> - makes a difference of 43 μs
-> 
-> So this test-case shows performance improvement as well.
+commit 07e98962fa77 ("kobject: Send hotplug events in all network namespaces")
 
-Just for fun, I did a simple statistical anlysis using t-tests and they
-all show significant differences at alpha-level 0.001 (Which I chose
-because it seemed 0.05 is a bit too lax.).
+enabled sending hotplug events into all network namespaces back in 2010.
+Over time the set of uevents that get sent into all network namespaces has
+shrunk a little. We have now reached the point where hotplug events for all
+devices that carry a namespace tag are filtered according to that
+namespace. Specifically, they are filtered whenever the namespace tag of
+the kobject does not match the namespace tag of the netlink socket. One
+example are network devices. Uevents for network devices only show up in
+the network namespaces these devices are moved to or created in.
 
-Testcase 1:
-        Welch Two Sample t-test
+However, any uevent for a kobject that does not have a namespace tag
+associated with it will not be filtered and we will broadcast it into all
+network namespaces. This behavior stopped making sense when user namespaces
+were introduced.
 
-data:  x1 and y1
-t = 405.16, df = 18883000, p-value < 2.2e-16
-alternative hypothesis: true difference in means is not equal to 0
-95 percent confidence interval:
- 12.14949 12.26761
-sample estimates:
-mean of x mean of y
- 68.48594  56.27739
+This patch restricts uevents to the initial user namespace for a couple of
+reasons that have been extensively discusses on the mailing list [1].
+- Thundering herd:
+  Broadcasting uevents into all network namespaces introduces significant
+  overhead.
+  All processes that listen to uevents running in non-initial user
+  namespaces will end up responding to uevents that will be meaningless to
+  them. Mainly, because non-initial user namespaces cannot easily manage
+  devices unless they have a privileged host-process helping them out. This
+  means that there will be a thundering herd of activity when there
+  shouldn't be any.
+- Uevents from non-root users are already filtered in userspace:
+  Uevents are filtered by userspace in a user namespace because the
+  received uid != 0. Instead the uid associated with the event will be
+  65534 == "nobody" because the global root uid is not mapped.
+  This means we can safely and without introducing regressions modify the
+  kernel to not send uevents into all network namespaces whose owning user
+  namespace is not the initial user namespace because we know that
+  userspace will ignore the message because of the uid anyway. I have
+  a) verified that is is true for every udev implementation out there b)
+  that this behavior has been present in all udev implementations from the
+  very beginning.
+- Removing needless overhead/Increasing performance:
+  Currently, the uevent socket for each network namespace is added to the
+  global variable uevent_sock_list. The list itself needs to be protected
+  by a mutex. So everytime a uevent is generated the mutex is taken on the
+  list. The mutex is held *from the creation of the uevent (memory
+  allocation, string creation etc. until all uevent sockets have been
+  handled*. This is aggravated by the fact that for each uevent socket that
+  has listeners the mc_list must be walked as well which means we're
+  talking O(n^2) here. Given that a standard Linux workload usually has
+  quite a lot of network namespaces and - in the face of containers - a lot
+  of user namespaces this quickly becomes a performance problem (see
+  "Thundering herd" above). By just recording uevent sockets of network
+  namespaces that are owned by the initial user namespace we significantly
+  increase performance in this codepath.
+- Injecting uevents:
+  There's a valid argument that containers might be interested in receiving
+  device events especially if they are delegated to them by a privileged
+  userspace process. One prime example are SR-IOV enabled devices that are
+  explicitly designed to be handed of to other users such as VMs or
+  containers.
+  This use-case can now be correctly handled since
+  commit 692ec06d7c92 ("netns: send uevent messages"). This commit
+  introduced the ability to send uevents from userspace. As such we can let
+  a sufficiently privileged (CAP_SYS_ADMIN in the owning user namespace of
+  the network namespace of the netlink socket) userspace process make a
+  decision what uevents should be sent. This removes the need to blindly
+  broadcast uevents into all user namespaces and provides a performant and
+  safe solution to this problem.
+- Filtering logic:
+  This patch filters by *owning user namespace of the network namespace a
+  given task resides in* and not by user namespace of the task per se. This
+  means if the user namespace of a given task is unshared but the network
+  namespace is kept and is owned by the initial user namespace a listener
+  that is opening the uevent socket in that network namespace can still
+  listen to uevents.
 
-Testcase 2:
-        Welch Two Sample t-test
+[1]: https://lkml.org/lkml/2018/4/4/739
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ lib/kobject_uevent.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-data:  x2 and y2
-t = 38.685, df = 19682000, p-value < 2.2e-16
-alternative hypothesis: true difference in means is not equal to 0
-95 percent confidence interval:
- 55.10630 60.98815
-sample estimates:
-mean of x mean of y
- 572.9684  514.9211
-
-Testcase 3:
-        Welch Two Sample t-test
-
-data:  x3 and y3
-t = 58.37, df = 17711000, p-value < 2.2e-16
-alternative hypothesis: true difference in means is not equal to 0
-95 percent confidence interval:
- 41.77860 44.68178
-sample estimates:
-mean of x mean of y
- 207.2632  164.0330
-
-Thanks!
-Christian
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 15ea216a67ce..f5f5038787ac 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -703,9 +703,13 @@ static int uevent_net_init(struct net *net)
+ 
+ 	net->uevent_sock = ue_sk;
+ 
+-	mutex_lock(&uevent_sock_mutex);
+-	list_add_tail(&ue_sk->list, &uevent_sock_list);
+-	mutex_unlock(&uevent_sock_mutex);
++	/* Restrict uevents to initial user namespace. */
++	if (sock_net(ue_sk->sk)->user_ns == &init_user_ns) {
++		mutex_lock(&uevent_sock_mutex);
++		list_add_tail(&ue_sk->list, &uevent_sock_list);
++		mutex_unlock(&uevent_sock_mutex);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -713,9 +717,11 @@ static void uevent_net_exit(struct net *net)
+ {
+ 	struct uevent_sock *ue_sk = net->uevent_sock;
+ 
+-	mutex_lock(&uevent_sock_mutex);
+-	list_del(&ue_sk->list);
+-	mutex_unlock(&uevent_sock_mutex);
++	if (sock_net(ue_sk->sk)->user_ns == &init_user_ns) {
++		mutex_lock(&uevent_sock_mutex);
++		list_del(&ue_sk->list);
++		mutex_unlock(&uevent_sock_mutex);
++	}
+ 
+ 	netlink_kernel_release(ue_sk->sk);
+ 	kfree(ue_sk);
+-- 
+2.17.0
