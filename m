@@ -1,103 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753690AbeDRMIx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 08:08:53 -0400
-Received: from mail-dm3nam03on0089.outbound.protection.outlook.com ([104.47.41.89]:47872
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752027AbeDRMIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 08:08:51 -0400
-From: Javier Gonzalez <javier@cnexlabs.com>
-To: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 07/11] lightnvm: pblk: remove unnecessary indirection
-Thread-Topic: [PATCH 07/11] lightnvm: pblk: remove unnecessary indirection
-Thread-Index: AQHT1W1M0cLBp3Ly+EGuqeEQ98TOUKQE37EAgAGRcgA=
-Date: Wed, 18 Apr 2018 12:08:47 +0000
-Message-ID: <B2B2C448-938C-49FD-ADA6-D35C8E9F66F1@cnexlabs.com>
-References: <1523874332-6272-1-git-send-email-javier@cnexlabs.com>
- <1523874332-6272-8-git-send-email-javier@cnexlabs.com>
- <62002f4f-bfca-03be-c54f-23b15223446b@lightnvm.io>
-In-Reply-To: <62002f4f-bfca-03be-c54f-23b15223446b@lightnvm.io>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-authentication-results: lightnvm.io; dkim=none (message not signed)
- header.d=none;lightnvm.io; dmarc=none action=none header.from=cnexlabs.com;
-x-originating-ip: [193.106.164.211]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR06MB524;7:DA7yjZHzB8Fh9yBIOuSj5vGvNJbRKVURPFQr2fra3jsfKG6Wrh7ktFd1t/rD2ZIod9uED1fUEOyFiC6u9ekOtecrdSn3LDyMLJFjjXQwMIK2xJd6plo1BjiC84TPsq61r8jzjN21qwy0j4nrF34s74z1zpbkVG70n7Re2E82oeIa05V+Fu2cGcZVOAvHlh8WVs2NLw1khEowQYzV9Ih8mkDraQXMDNZBvnZchtMAVAfEoahCv+2WhVcg6l530rNy
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB524;
-x-ms-traffictypediagnostic: CO2PR06MB524:
-x-microsoft-antispam-prvs: <CO2PR06MB5248942BD6FE5F5F7AF4AACBAB60@CO2PR06MB524.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231232)(944501327)(52105095)(3002001)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CO2PR06MB524;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB524;
-x-forefront-prvs: 06469BCC91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(39840400004)(39380400002)(81166006)(2616005)(6512007)(476003)(82746002)(25786009)(86362001)(446003)(229853002)(99936001)(26005)(11346002)(5660300001)(8676002)(6486002)(102836004)(66066001)(76176011)(53936002)(8936002)(6916009)(99286004)(53546011)(83716003)(6506007)(2906002)(4326008)(2900100001)(7736002)(6436002)(5250100002)(6116002)(36756003)(14454004)(33656002)(54906003)(478600001)(3846002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB524;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
-x-microsoft-antispam-message-info: IqiTtHpdhQZV52QORkv3HmUHnjILIFqViJopvYKRc+RO4wdjeM+QqzyrDBVPx+/FTVGa+7NYJS4m1ktGHwezdta+k/0OJzL9Ayh5y5JceC9+GT4U3ecr9nbzZ/p5FnPJzQnwy9tCuPwY4f2n0C+X78pYFE3LR7Cn/LM7LsS7Fh8o+j75sHOaJE8F57CFhHJd
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_457CFC07-E92E-4168-9173-8AEE28253AF5";
-        protocol="application/pgp-signature"; micalg=pgp-sha512
+        id S1753318AbeDRMMx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 08:12:53 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37146 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752116AbeDRMMv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 08:12:51 -0400
+X-Google-Smtp-Source: AIpwx49765xJYBRbD84fDtX3o6RPMPRDufMhOZvxjkOq8JpYQCxN3j8cxqaLFCG1ZjQWZwgj8lYHkA==
+Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode for
+ the cells list
+To: Alban <albeu@free.fr>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <1521933899-362-1-git-send-email-albeu@free.fr>
+ <1521933899-362-2-git-send-email-albeu@free.fr>
+ <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
+ <20180417165420.423a691b@avionic-0020>
+ <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
+ <20180417180040.04f53495@avionic-0020> <20180418134119.2e587621@avionic-0020>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <9f7d2987-b33e-79b5-ae58-2985fd7334e4@linaro.org>
+Date: Wed, 18 Apr 2018 13:12:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 6c8600ef-3a67-4e3b-8072-08d5a525245e
-X-OriginatorOrg: cnexlabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c8600ef-3a67-4e3b-8072-08d5a525245e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2018 12:08:47.6120
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB524
+In-Reply-To: <20180418134119.2e587621@avionic-0020>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_457CFC07-E92E-4168-9173-8AEE28253AF5
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
 
-> On 17 Apr 2018, at 05.11, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 4/16/18 12:25 PM, Javier Gonz=C3=A1lez wrote:
->> Remove unnecessary indirection on the read path.
->=20
-> Title and description are the same. Can you elaborate what changed
-> since pblk_submit_io now directly can be returned, and doesn't have
-> its return value rewritten to NVM_IO_ERR?
->=20
 
-My bad - I assumed submit_io was giving NVM_ errors. I'll resend
-returning NVM_IO_ERR - the indirection is still unnecessary (and it's
-not used anywhere else in the code).
+On 18/04/18 12:41, Alban wrote:
+> On Tue, 17 Apr 2018 18:00:40 +0200
+> Alban <albeu@free.fr> wrote:
+> 
+>> On Tue, 17 Apr 2018 16:44:01 +0100
+>> Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
+>>
+>>> Thanks for explaining,
+>>>
+>>> On 17/04/18 15:54, Alban wrote:
+>>>> This will not only allow reading the calibration data from nvmem, but
+>>>> will also create a partition on the MTD device, which is not acceptable.
+>>>> With my proposed binding this would become:
+>>>>
+>>>> flash@0 {
+>>>> 	#address-cells = <1>;
+>>>> 	#size-cells = <1>;
+>>>> 	compatible = "s25sl064a";
+>>>> 	reg = <0>;
+>>>>
+>>>> 	nvmem-cells {
+>>>> 		compatible = "nvmem-cells";
+>>>> 		#address-cells = <1>;
+>>>> 		#address-cells = <1>;
+>>>>
+>>>> 		calibration: calib@404 {
+>>>> 			reg = <0x404 0x10>;
+>>>> 		};
+>>>> 	};
+>>>
+>>> Why can't we make nvmem-cells node a nvmem provider in this case?
+>>> Which should work!
+>>
+>> TBH I just copied what have been done to fix the same problem with the
+>> MTD partitions. But yes we could also just extend the current binding
+>> to require a compatible string on each nvmem-cell, which would not
+>> require any code change to support.
+> 
+> However this scheme will not work if the device node binding already
+> have subnodes with addresses. The addressing, as specified by
+> #address-cells and #size-cells, might be incompatible or might overlap.
+> Using the nvmem-cells subnode solve this problem.
+> 
 
-Javier
+I was also suggesting you to use nvmem-cell subnode, but make it a 
+proper nvmem provider device, rather than reusing its parent device.
 
---Apple-Mail=_457CFC07-E92E-4168-9173-8AEE28253AF5
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Message signed with OpenPGP
+You would end up some thing like this in dt.
 
------BEGIN PGP SIGNATURE-----
+flash@0 {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	compatible = "s25sl064a";
+	reg = <0>;
 
-iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlrXNU0ACgkQIX4xUKFR
-nnSKUA/+OTbeU+76Le3pvzM5zNIAsNhUY58fu9jPBVpYEbYgZX2C4ieY94K395az
-dKAlSYF8aJ4ZQRKvgctyjXDHBJAj10c98n8cbz/i01Is3pw5uNsQWD3lnsFPUffe
-Usrzt+mOXqkejATGDcpsYsL9vv9Hdjs8NweFsKDTkjc0SCEUnQBEy6Zd5QVyvYeB
-A2z8OHrOJJ3i8c5wuAjpTO9zYaX88ZkSVNZJidj7wLa0bWtIrwoolClJg76rLth+
-EHOa1mkvay5QhW/XeQa1sWbhcNuKl/L7X4wz9FXAphga92sFIYuWxT9Zdrm1qGGC
-Q4ZTlSH7AjECNOxiLB77TedIz7ahwOiu5wfW8dS5Mk4VyjK7lxgMuPU0PdkVz8Oy
-kJnIoqO/tyUFWXWfEGVj0CiQsN9sUaKHhz5hV4TtBP1S/DQH2bJVwUMrKX/goHuu
-rXGas1/caijA4L6T5NECH92PI9Y9aQoHRCnYsm7slxuJSyrTpkMTqHDUJIV6lAZb
-uyIBy+EqMrMTzpq+nLahZ9ZfKiudwi3Sp+4ouqypypCQhcrptA4n3gBvr/TmMxHa
-ZloIbdj+I+zSPeyBW4LHozwzwkE7Z663uBi7h4rwiQpTZ34DsavQS7BbH+zBVO0L
-MAz+xp32e6DOlksvQsc4aPl5f6vXnnQTMgOMnPLJUjbPKuxgHFA=
-=H3sQ
------END PGP SIGNATURE-----
+	nvmem-cells {
+		compatible = "mtd-nvmem";
+		#address-cells = <1>;
+		#size-cells = <1>;
 
---Apple-Mail=_457CFC07-E92E-4168-9173-8AEE28253AF5--
+		calibration: calib@404 {
+			reg = <0x404 0x10>;
+		};
+	};
+};
+
+--srini
+
+> Alban
+> 
