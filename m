@@ -1,232 +1,83 @@
-Return-Path: <mathieu.poirier@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1523912016; cv=none;
+Return-Path: <acme@kernel.org>
+X-Google-Smtp-Source: AIpwx4+6F3LWxc5Ldn93bmEmcl42ii7I7xpsXfO+YKc32zVtQmeSPePKnPzfoxMCuBxZBmiqDOLJ
+ARC-Seal: i=1; a=rsa-sha256; t=1524071993; cv=none;
         d=google.com; s=arc-20160816;
-        b=vOE7zlvecnfU4+ETRWCp2eksZK41V9Qlvuls88wTIeic88EbsEkA6c+hE9GSld2TyZ
-         G+u2N1nr+g0NGcafISx8jgCwN8S8tiuzk6qEv2Y4sNo20eQelg8EphyUpcYP+gpEiiI9
-         njL4xD2fPWVqp0yiiTuBnxaJGlv/BhZsfGnq4wPgv6aIBeFhtUm/u4yOIyylzeQYveWi
-         3/hE9sYgoRETS3useyUpddl9Nu9IRkFZBNjRYQdBNKUIBcrHv7pkpgYJ9QVjGaYj46fM
-         pQXNHyh7jW+elW2DNDzIugtC7+T4q1CJlVsrVtfXEt1wGWKXGRECZ3Wxjt9jUR1MibL1
-         eL2w==
+        b=Z8tiyR3oFKNUovTob315J11iHexmGvyAu1APtcUCW0gIbWnu7p89GySXJVQiADoVYQ
+         tDfldBWNtzLt0eetqKkg54omXK6Z/PUdkNkF7TCVX6bBQoNiHrMknnuUts/8VdnlRPcL
+         0J0rhmod00JAjdi8qHNEyngqWiGHgzw31H/ZXicAjcAnW4cIK1j4ANLP56xe5GmSVD2i
+         eMFPD40B9Lhkm8i+Ee5nkpqQDF7+XwXI2X3Rd2KlEOUTCFf0ydhVM3pBI0gWTF/U2h3x
+         WTS5RS7oB13PLIkjtWj0YEnhOftDcF+JyUV9vF43V9vSsv+JSkq7ijCPDqIo5/ppup+A
+         5MYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dmarc-filter
          :arc-authentication-results;
-        bh=oKyZsRtdqGdCCBxR58nrOY5LCqgTPu214VikLsFrL0U=;
-        b=sPmne3f226Rpf7xbP1d8quTpBOUZrOLf2OvkVjktp/051WC077JOMAXoWL8Laep6b2
-         vnVKE5y5QGnhEUO4mbcPotEwGTvxDZn/NYWgmJSdzpfYJ81oR0PyVLaVCnNwWm34MsZd
-         bfFihVsBVvFCNZmlSz0yGcF3ZbYGLqSRMW0NSwXFG3+xAXopJkDQPViROIcC03c52ISD
-         JQPXQbrhzYCoJgCVV6ucIUj5CqVszGdJGwBIgrRUUETwwP1TIYLBriS4YQPeG6pUJETF
-         xs+t68dj/x7ApSZEtZskObXpK85dsqmkO/B8Oom0NSj4dV9e+X5UNppyF+4PS94YsLl1
-         AXnw==
+        bh=U+qKbDbrhA8twgjYGmhxR/qGSQ73Bz6g/yfSBk6r4SA=;
+        b=vokMLdrR1sJc1PcyoSgpUqsQr81ceYRwHNZRkzXX99hqq/+/PBazPsmrpDFQO5YJUV
+         9fYrtiAVC6u9oQlaI+qxtccqdssRydcR0OygYS6y0vne34bhzWSJgUHD7xZBfS/yHNDu
+         UImdg5Wdo6J4ysFj9h19QgEaz/I/5KGoehsY46qjgteVyu8O84mU35WEOjJO8jEl0yw+
+         7Y2FdCwerFptNQVtAGglD777+dQrQaRttoM0ZrwlN1pe4NIdiufuGl6ZNElcEhVC6VbJ
+         AKsipVGLQtwH1oNa9Jm6zgGDVaVP9QpHQ1U3Jp0Y1bunxH3TnVItyqT/UA3SMX7OkmqQ
+         5jzQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=VIuURp9Z;
-       spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: best guess record for domain of acme@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=acme@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=VIuURp9Z;
-       spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx48jS28E1RVALG6+BVVZRdwml4y5IPDdK6ajDA4AJX8pj0mRw+bze8lm27pIsqeW+cDzmasb6A==
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: acme@kernel.org
-Cc: peterz@infradead.org,
-	mingo@redhat.com,
-	jolsa@redhat.com,
-	alexander.shishkin@linux.intel.com,
-	namhyung@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
+       spf=pass (google.com: best guess record for domain of acme@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=acme@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D384217D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+Date: Wed, 18 Apr 2018 14:19:50 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: peterz@infradead.org, mingo@redhat.com, jolsa@redhat.com,
+	alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] perf tools: coresight: Moving to SPDX identifier
-Date: Mon, 16 Apr 2018 14:53:33 -0600
-Message-Id: <1523912013-29331-1-git-send-email-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.7.4
+Subject: Re: [PATCH] perf tools: coresight: Moving to SPDX identifier
+Message-ID: <20180418171950.GA22762@kernel.org>
+References: <1523912013-29331-1-git-send-email-mathieu.poirier@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523912013-29331-1-git-send-email-mathieu.poirier@linaro.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597937566509126674?=
-X-GMAIL-MSGID: =?utf-8?q?1597937566509126674?=
+X-GMAIL-MSGID: =?utf-8?q?1598105315102889226?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Moving perf tools CoreSight support to the SPDX identifier.
+Em Mon, Apr 16, 2018 at 02:53:33PM -0600, Mathieu Poirier escreveu:
+> Moving perf tools CoreSight support to the SPDX identifier.
+> 
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>  tools/include/linux/coresight-pmu.h             | 13 +------------
+>  tools/perf/arch/arm/util/auxtrace.c             | 13 +------------
+>  tools/perf/arch/arm/util/cs-etm.c               | 13 +------------
+>  tools/perf/arch/arm/util/cs-etm.h               | 13 +------------
+>  tools/perf/arch/arm/util/pmu.c                  | 13 +------------
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c |  3 +--
+>  tools/perf/util/cs-etm.c                        |  3 +--
+>  tools/perf/util/cs-etm.h                        | 13 +------------
+>  8 files changed, 8 insertions(+), 76 deletions(-)
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- tools/include/linux/coresight-pmu.h             | 13 +------------
- tools/perf/arch/arm/util/auxtrace.c             | 13 +------------
- tools/perf/arch/arm/util/cs-etm.c               | 13 +------------
- tools/perf/arch/arm/util/cs-etm.h               | 13 +------------
- tools/perf/arch/arm/util/pmu.c                  | 13 +------------
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c |  3 +--
- tools/perf/util/cs-etm.c                        |  3 +--
- tools/perf/util/cs-etm.h                        | 13 +------------
- 8 files changed, 8 insertions(+), 76 deletions(-)
+So now I get:
 
-diff --git a/tools/include/linux/coresight-pmu.h b/tools/include/linux/coresight-pmu.h
-index edfeaba95429..a1a959ba24ff 100644
---- a/tools/include/linux/coresight-pmu.h
-+++ b/tools/include/linux/coresight-pmu.h
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef _LINUX_CORESIGHT_PMU_H
-diff --git a/tools/perf/arch/arm/util/auxtrace.c b/tools/perf/arch/arm/util/auxtrace.c
-index fa639e3e52ac..1ce6bdbda561 100644
---- a/tools/perf/arch/arm/util/auxtrace.c
-+++ b/tools/perf/arch/arm/util/auxtrace.c
-@@ -1,18 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <stdbool.h>
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index 5c655ad4621e..2f595cd73da6 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -1,18 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <api/fs/fs.h>
-diff --git a/tools/perf/arch/arm/util/cs-etm.h b/tools/perf/arch/arm/util/cs-etm.h
-index 5256741be549..1a12e64f5127 100644
---- a/tools/perf/arch/arm/util/cs-etm.h
-+++ b/tools/perf/arch/arm/util/cs-etm.h
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef INCLUDE__PERF_CS_ETM_H__
-diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
-index ac4dffc807b8..e047571e6080 100644
---- a/tools/perf/arch/arm/util/pmu.c
-+++ b/tools/perf/arch/arm/util/pmu.c
-@@ -1,18 +1,7 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #include <string.h>
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index 640af88331b4..c8b98fa22997 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -1,6 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * SPDX-License-Identifier: GPL-2.0
-- *
-  * Copyright(C) 2015-2018 Linaro Limited.
-  *
-  * Author: Tor Jeremiassen <tor@ti.com>
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 1b0d422373be..40020b1ca54f 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1,6 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-- * SPDX-License-Identifier: GPL-2.0
-- *
-  * Copyright(C) 2015-2018 Linaro Limited.
-  *
-  * Author: Tor Jeremiassen <tor@ti.com>
-diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
-index 5864d5dca616..37f8d48179ca 100644
---- a/tools/perf/util/cs-etm.h
-+++ b/tools/perf/util/cs-etm.h
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright(C) 2015 Linaro Limited. All rights reserved.
-  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms of the GNU General Public License version 2 as published by
-- * the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- #ifndef INCLUDE__UTIL_PERF_CS_ETM_H__
--- 
-2.7.4
+[acme@jouet perf]$ make -C tools/perf
+make: Entering directory '/home/acme/git/perf/tools/perf'
+  BUILD:   Doing 'make -j4' parallel build
+Warning: Kernel ABI header at 'tools/include/linux/coresight-pmu.h' differs from latest version at 'include/linux/coresight-pmu.h'
+  INSTALL  GTK UI
+  INSTALL  trace_plugin
+<SNIP>
+
+You should either send the patch to both files or first send it to the
+kernel, then to tools/, I just checked and this SPDX using
+coresight-pmu.h file hasn't hit upstream, so we're in the future here,
+i.e. tools/include has a _copy_ of what is in include/ :-)
+
+I'm dropping this patch from my tree till this gets resolved.
+
+- Arnaldo
