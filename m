@@ -1,225 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753560AbeDRMGn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 08:06:43 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45278 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752162AbeDRMG3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 08:06:29 -0400
-X-Google-Smtp-Source: AIpwx4+vqkjwE2t/74+Ke1WZR+rKeevaoNZxWH5qMknD7tvVgf+IwayUwv/7n1MsrfdSoWpO+RPaHA==
-From: "=?UTF-8?q?Javier=20Gonz=C3=A1lez?=" <javier@javigon.com>
-X-Google-Original-From: =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-To: mb@lightnvm.io
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>
-Subject: [PATCH] lightnvm: pblk: take bitmap alloc. out of critical section
-Date: Wed, 18 Apr 2018 14:06:08 +0200
-Message-Id: <1524053168-30476-2-git-send-email-javier@cnexlabs.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524053168-30476-1-git-send-email-javier@cnexlabs.com>
-References: <1524053168-30476-1-git-send-email-javier@cnexlabs.com>
+        id S1753690AbeDRMIx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 08:08:53 -0400
+Received: from mail-dm3nam03on0089.outbound.protection.outlook.com ([104.47.41.89]:47872
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752027AbeDRMIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 08:08:51 -0400
+From: Javier Gonzalez <javier@cnexlabs.com>
+To: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>
+CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 07/11] lightnvm: pblk: remove unnecessary indirection
+Thread-Topic: [PATCH 07/11] lightnvm: pblk: remove unnecessary indirection
+Thread-Index: AQHT1W1M0cLBp3Ly+EGuqeEQ98TOUKQE37EAgAGRcgA=
+Date: Wed, 18 Apr 2018 12:08:47 +0000
+Message-ID: <B2B2C448-938C-49FD-ADA6-D35C8E9F66F1@cnexlabs.com>
+References: <1523874332-6272-1-git-send-email-javier@cnexlabs.com>
+ <1523874332-6272-8-git-send-email-javier@cnexlabs.com>
+ <62002f4f-bfca-03be-c54f-23b15223446b@lightnvm.io>
+In-Reply-To: <62002f4f-bfca-03be-c54f-23b15223446b@lightnvm.io>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: lightnvm.io; dkim=none (message not signed)
+ header.d=none;lightnvm.io; dmarc=none action=none header.from=cnexlabs.com;
+x-originating-ip: [193.106.164.211]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB524;7:DA7yjZHzB8Fh9yBIOuSj5vGvNJbRKVURPFQr2fra3jsfKG6Wrh7ktFd1t/rD2ZIod9uED1fUEOyFiC6u9ekOtecrdSn3LDyMLJFjjXQwMIK2xJd6plo1BjiC84TPsq61r8jzjN21qwy0j4nrF34s74z1zpbkVG70n7Re2E82oeIa05V+Fu2cGcZVOAvHlh8WVs2NLw1khEowQYzV9Ih8mkDraQXMDNZBvnZchtMAVAfEoahCv+2WhVcg6l530rNy
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB524;
+x-ms-traffictypediagnostic: CO2PR06MB524:
+x-microsoft-antispam-prvs: <CO2PR06MB5248942BD6FE5F5F7AF4AACBAB60@CO2PR06MB524.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231232)(944501327)(52105095)(3002001)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CO2PR06MB524;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB524;
+x-forefront-prvs: 06469BCC91
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(39840400004)(39380400002)(81166006)(2616005)(6512007)(476003)(82746002)(25786009)(86362001)(446003)(229853002)(99936001)(26005)(11346002)(5660300001)(8676002)(6486002)(102836004)(66066001)(76176011)(53936002)(8936002)(6916009)(99286004)(53546011)(83716003)(6506007)(2906002)(4326008)(2900100001)(7736002)(6436002)(5250100002)(6116002)(36756003)(14454004)(33656002)(54906003)(478600001)(3846002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB524;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
+x-microsoft-antispam-message-info: IqiTtHpdhQZV52QORkv3HmUHnjILIFqViJopvYKRc+RO4wdjeM+QqzyrDBVPx+/FTVGa+7NYJS4m1ktGHwezdta+k/0OJzL9Ayh5y5JceC9+GT4U3ecr9nbzZ/p5FnPJzQnwy9tCuPwY4f2n0C+X78pYFE3LR7Cn/LM7LsS7Fh8o+j75sHOaJE8F57CFhHJd
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_457CFC07-E92E-4168-9173-8AEE28253AF5";
+        protocol="application/pgp-signature"; micalg=pgp-sha512
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Office365-Filtering-Correlation-Id: 6c8600ef-3a67-4e3b-8072-08d5a525245e
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c8600ef-3a67-4e3b-8072-08d5a525245e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2018 12:08:47.6120
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB524
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pblk allocates line bitmaps within the line lock unnecessarily. In order
-to take pressure out of the fast patch, allocate line bitmaps outside
-of this lock and refactor accordingly.
+--Apple-Mail=_457CFC07-E92E-4168-9173-8AEE28253AF5
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Signed-off-by: Javier González <javier@cnexlabs.com>
----
- drivers/lightnvm/pblk-core.c | 97 +++++++++++++++++++++++++-------------------
- 1 file changed, 56 insertions(+), 41 deletions(-)
+> On 17 Apr 2018, at 05.11, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 4/16/18 12:25 PM, Javier Gonz=C3=A1lez wrote:
+>> Remove unnecessary indirection on the read path.
+>=20
+> Title and description are the same. Can you elaborate what changed
+> since pblk_submit_io now directly can be returned, and doesn't have
+> its return value rewritten to NVM_IO_ERR?
+>=20
 
-diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-index 5f960a6609c8..09d89a568cd5 100644
---- a/drivers/lightnvm/pblk-core.c
-+++ b/drivers/lightnvm/pblk-core.c
-@@ -1058,6 +1058,25 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
- 	return 1;
- }
- 
-+static int pblk_line_alloc_bitmaps(struct pblk *pblk, struct pblk_line *line)
-+{
-+	struct pblk_line_meta *lm = &pblk->lm;
-+
-+	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	if (!line->map_bitmap)
-+		return -ENOMEM;
-+
-+	/* will be initialized using bb info from map_bitmap */
-+	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_KERNEL);
-+	if (!line->invalid_bitmap) {
-+		kfree(line->map_bitmap);
-+		line->map_bitmap = NULL;
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
- /* For now lines are always assumed full lines. Thus, smeta former and current
-  * lun bitmaps are omitted.
-  */
-@@ -1162,18 +1181,7 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
- {
- 	struct pblk_line_meta *lm = &pblk->lm;
- 	int blk_in_line = atomic_read(&line->blk_in_line);
--	int blk_to_erase, ret;
--
--	line->map_bitmap = kzalloc(lm->sec_bitmap_len, GFP_ATOMIC);
--	if (!line->map_bitmap)
--		return -ENOMEM;
--
--	/* will be initialized using bb info from map_bitmap */
--	line->invalid_bitmap = kmalloc(lm->sec_bitmap_len, GFP_ATOMIC);
--	if (!line->invalid_bitmap) {
--		ret = -ENOMEM;
--		goto fail_free_map_bitmap;
--	}
-+	int blk_to_erase;
- 
- 	/* Bad blocks do not need to be erased */
- 	bitmap_copy(line->erase_bitmap, line->blk_bitmap, lm->blk_per_line);
-@@ -1191,15 +1199,15 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
- 	}
- 
- 	if (blk_in_line < lm->min_blk_line) {
--		ret = -EAGAIN;
--		goto fail_free_invalid_bitmap;
-+		spin_unlock(&line->lock);
-+		return -EAGAIN;
- 	}
- 
- 	if (line->state != PBLK_LINESTATE_FREE) {
- 		WARN(1, "pblk: corrupted line %d, state %d\n",
- 							line->id, line->state);
--		ret = -EINTR;
--		goto fail_free_invalid_bitmap;
-+		spin_unlock(&line->lock);
-+		return -EINTR;
- 	}
- 
- 	line->state = PBLK_LINESTATE_OPEN;
-@@ -1213,16 +1221,6 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
- 	kref_init(&line->ref);
- 
- 	return 0;
--
--fail_free_invalid_bitmap:
--	spin_unlock(&line->lock);
--	kfree(line->invalid_bitmap);
--	line->invalid_bitmap = NULL;
--fail_free_map_bitmap:
--	kfree(line->map_bitmap);
--	line->map_bitmap = NULL;
--
--	return ret;
- }
- 
- int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
-@@ -1242,13 +1240,16 @@ int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line *line)
- 	}
- 	spin_unlock(&l_mg->free_lock);
- 
--	pblk_rl_free_lines_dec(&pblk->rl, line, true);
-+	ret = pblk_line_alloc_bitmaps(pblk, line);
-+	if (ret)
-+		return ret;
- 
- 	if (!pblk_line_init_bb(pblk, line, 0)) {
- 		list_add(&line->list, &l_mg->free_list);
- 		return -EINTR;
- 	}
- 
-+	pblk_rl_free_lines_dec(&pblk->rl, line, true);
- 	return 0;
- }
- 
-@@ -1260,6 +1261,24 @@ void pblk_line_recov_close(struct pblk *pblk, struct pblk_line *line)
- 	line->emeta = NULL;
- }
- 
-+static void pblk_line_reinit(struct pblk_line *line)
-+{
-+	*line->vsc = cpu_to_le32(EMPTY_ENTRY);
-+
-+	line->map_bitmap = NULL;
-+	line->invalid_bitmap = NULL;
-+	line->smeta = NULL;
-+	line->emeta = NULL;
-+}
-+
-+void pblk_line_free(struct pblk_line *line)
-+{
-+	kfree(line->map_bitmap);
-+	kfree(line->invalid_bitmap);
-+
-+	pblk_line_reinit(line);
-+}
-+
- struct pblk_line *pblk_line_get(struct pblk *pblk)
- {
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
-@@ -1326,11 +1345,14 @@ static struct pblk_line *pblk_line_retry(struct pblk *pblk,
- 		return NULL;
- 	}
- 
-+	retry_line->map_bitmap = line->map_bitmap;
-+	retry_line->invalid_bitmap = line->invalid_bitmap;
- 	retry_line->smeta = line->smeta;
- 	retry_line->emeta = line->emeta;
- 	retry_line->meta_line = line->meta_line;
- 
--	pblk_line_free(line);
-+	pblk_line_reinit(line);
-+
- 	l_mg->data_line = retry_line;
- 	spin_unlock(&l_mg->free_lock);
- 
-@@ -1383,6 +1405,9 @@ struct pblk_line *pblk_line_get_first_data(struct pblk *pblk)
- 	}
- 	spin_unlock(&l_mg->free_lock);
- 
-+	if (pblk_line_alloc_bitmaps(pblk, line))
-+		return NULL;
-+
- 	if (pblk_line_erase(pblk, line)) {
- 		line = pblk_line_retry(pblk, line);
- 		if (!line)
-@@ -1527,6 +1552,9 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
- 		goto retry_erase;
- 	}
- 
-+	if (pblk_line_alloc_bitmaps(pblk, new))
-+		return NULL;
-+
- retry_setup:
- 	if (!pblk_line_init_metadata(pblk, new, cur)) {
- 		new = pblk_line_retry(pblk, new);
-@@ -1566,19 +1594,6 @@ struct pblk_line *pblk_line_replace_data(struct pblk *pblk)
- 	return new;
- }
- 
--void pblk_line_free(struct pblk_line *line)
--{
--	kfree(line->map_bitmap);
--	kfree(line->invalid_bitmap);
--
--	*line->vsc = cpu_to_le32(EMPTY_ENTRY);
--
--	line->map_bitmap = NULL;
--	line->invalid_bitmap = NULL;
--	line->smeta = NULL;
--	line->emeta = NULL;
--}
--
- static void __pblk_line_put(struct pblk *pblk, struct pblk_line *line)
- {
- 	struct pblk_line_mgmt *l_mg = &pblk->l_mg;
--- 
-2.7.4
+My bad - I assumed submit_io was giving NVM_ errors. I'll resend
+returning NVM_IO_ERR - the indirection is still unnecessary (and it's
+not used anywhere else in the code).
+
+Javier
+
+--Apple-Mail=_457CFC07-E92E-4168-9173-8AEE28253AF5
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlrXNU0ACgkQIX4xUKFR
+nnSKUA/+OTbeU+76Le3pvzM5zNIAsNhUY58fu9jPBVpYEbYgZX2C4ieY94K395az
+dKAlSYF8aJ4ZQRKvgctyjXDHBJAj10c98n8cbz/i01Is3pw5uNsQWD3lnsFPUffe
+Usrzt+mOXqkejATGDcpsYsL9vv9Hdjs8NweFsKDTkjc0SCEUnQBEy6Zd5QVyvYeB
+A2z8OHrOJJ3i8c5wuAjpTO9zYaX88ZkSVNZJidj7wLa0bWtIrwoolClJg76rLth+
+EHOa1mkvay5QhW/XeQa1sWbhcNuKl/L7X4wz9FXAphga92sFIYuWxT9Zdrm1qGGC
+Q4ZTlSH7AjECNOxiLB77TedIz7ahwOiu5wfW8dS5Mk4VyjK7lxgMuPU0PdkVz8Oy
+kJnIoqO/tyUFWXWfEGVj0CiQsN9sUaKHhz5hV4TtBP1S/DQH2bJVwUMrKX/goHuu
+rXGas1/caijA4L6T5NECH92PI9Y9aQoHRCnYsm7slxuJSyrTpkMTqHDUJIV6lAZb
+uyIBy+EqMrMTzpq+nLahZ9ZfKiudwi3Sp+4ouqypypCQhcrptA4n3gBvr/TmMxHa
+ZloIbdj+I+zSPeyBW4LHozwzwkE7Z663uBi7h4rwiQpTZ34DsavQS7BbH+zBVO0L
+MAz+xp32e6DOlksvQsc4aPl5f6vXnnQTMgOMnPLJUjbPKuxgHFA=
+=H3sQ
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_457CFC07-E92E-4168-9173-8AEE28253AF5--
