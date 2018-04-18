@@ -1,68 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753823AbeDREsj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 00:48:39 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:53379 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751407AbeDREsi (ORCPT
+        id S1753696AbeDRFGV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 01:06:21 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:12964 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753244AbeDRFGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 00:48:38 -0400
-Message-Id: <201804180447.w3I4lq60017956@www262.sakura.ne.jp>
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
-        Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
+        Wed, 18 Apr 2018 01:06:18 -0400
+Subject: Re: [PATCH v6 3/7] remoteproc/davinci: add the missing retval check
+ for clk_enable()
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Suman Anna <s-anna@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
+ <20180417173038.25510-4-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <887cabcb-ebb5-0ad9-5bf4-8bb5eba2a017@ti.com>
+Date: Wed, 18 Apr 2018 10:34:42 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Wed, 18 Apr 2018 13:47:52 +0900
-References: <201804180355.w3I3tM6T001187@www262.sakura.ne.jp> <alpine.DEB.2.21.1804172103050.113086@chino.kir.corp.google.com>
-In-Reply-To: <alpine.DEB.2.21.1804172103050.113086@chino.kir.corp.google.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
+In-Reply-To: <20180417173038.25510-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Rientjes wrote:
-> On Wed, 18 Apr 2018, Tetsuo Handa wrote:
-> > > Fix this by reusing MMF_UNSTABLE to specify that an mm should not be
-> > > reaped.  This prevents the concurrent munlock_vma_pages_range() and
-> > > unmap_page_range().  The oom reaper will simply not operate on an mm that
-> > > has the bit set and leave the unmapping to exit_mmap().
-> > 
-> > This change assumes that munlock_vma_pages_all()/unmap_vmas()/free_pgtables()
-> > are never blocked for memory allocation. Is that guaranteed? For example,
-> > i_mmap_lock_write() from unmap_single_vma() from unmap_vmas() is never blocked
-> > for memory allocation? Commit 97b1255cb27c551d ("mm,oom_reaper: check for
-> > MMF_OOM_SKIP before complaining") was waiting for i_mmap_lock_write() from
-> > unlink_file_vma() from free_pgtables(). Is it really guaranteed that somebody
-> > else who is holding that lock is never waiting for memory allocation?
-> > 
+On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Commit 97b1255cb27c is referencing MMF_OOM_SKIP already being set by 
-> exit_mmap().  The only thing this patch changes is where that is done: 
-> before or after free_pgtables().  We can certainly move it to before 
-> free_pgtables() at the risk of subsequent (and eventually unnecessary) oom 
-> kills.  It's not exactly the point of this patch.
+> The davinci platform is being switched to using the common clock
+> framework, where clk_enable() can fail. Add the return value check.
 > 
-> I have thousands of real-world examples where additional processes were 
-> oom killed while the original victim was in free_pgtables().  That's why 
-> we've moved the MMF_OOM_SKIP to after free_pgtables().
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Acked-by: Suman Anna <s-anna@ti.com>
+> Reviewed-by: David Lechner <david@lechnology.com>
 
-"we have moved"? No, not yet. Your patch is about to move it.
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-My question is: is it guaranteed that munlock_vma_pages_all()/unmap_vmas()/free_pgtables()
-by exit_mmap() are never blocked for memory allocation. Note that exit_mmap() tries to unmap
-all pages while the OOM reaper tries to unmap only safe pages. If there is possibility that
-munlock_vma_pages_all()/unmap_vmas()/free_pgtables() by exit_mmap() are blocked for memory
-allocation, your patch will introduce an OOM livelock.
+This should be safe to apply to v4.17-rc1 and should be queued by Ohad /
+Bjorn.
 
->                                                         I'm not sure how 
-> likely your scenario is in the real world, but if it poses a problem then 
-> I believe it should be fixed by eventually deferring previous victims as a 
-> change to oom_evaluate_task(), not exit_mmap().  If you'd like me to fix 
-> that, please send along your test case that triggers it and I will send a 
-> patch.
-> 
+Thanks,
+Sekhar
