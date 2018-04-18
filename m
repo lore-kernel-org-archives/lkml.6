@@ -1,108 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753551AbeDRINS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:13:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753149AbeDRIIK (ORCPT
+        id S1753703AbeDRIOc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:14:32 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35118 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753254AbeDRINR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:08:10 -0400
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 3/7] docs/vm: pagemap: formatting and spelling updates
-Date: Wed, 18 Apr 2018 11:07:46 +0300
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524038870-413-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1524038870-413-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18041808-0008-0000-0000-000004EC91C4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041808-0009-0000-0000-00001E809A7C
-Message-Id: <1524038870-413-4-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804180076
+        Wed, 18 Apr 2018 04:13:17 -0400
+X-Google-Smtp-Source: AIpwx48nHtT+J9LFbTMByKk2heLeiHLO4UrxAEhTzyA0CbTkPuhiLnebJWqk997HTiaYy71yIj8r2g==
+Date: Wed, 18 Apr 2018 09:13:13 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Hoan Tran <hotran@apm.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] gpio: dwapb: Add support for 1 interrupt per port A
+ GPIO
+Message-ID: <20180418081313.dqxdtjqmw4z27uny@dell>
+References: <1523968977-4241-1-git-send-email-phil.edworthy@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1523968977-4241-1-git-send-email-phil.edworthy@renesas.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- Documentation/vm/pagemap.rst | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+On Tue, 17 Apr 2018, Phil Edworthy wrote:
 
-diff --git a/Documentation/vm/pagemap.rst b/Documentation/vm/pagemap.rst
-index d54b4bf..9644bc0 100644
---- a/Documentation/vm/pagemap.rst
-+++ b/Documentation/vm/pagemap.rst
-@@ -13,7 +13,7 @@ There are four components to pagemap:
-  * ``/proc/pid/pagemap``.  This file lets a userspace process find out which
-    physical frame each virtual page is mapped to.  It contains one 64-bit
-    value for each virtual page, containing the following data (from
--   fs/proc/task_mmu.c, above pagemap_read):
-+   ``fs/proc/task_mmu.c``, above pagemap_read):
- 
-     * Bits 0-54  page frame number (PFN) if present
-     * Bits 0-4   swap type if swapped
-@@ -36,7 +36,7 @@ There are four components to pagemap:
-    precisely which pages are mapped (or in swap) and comparing mapped
-    pages between processes.
- 
--   Efficient users of this interface will use /proc/pid/maps to
-+   Efficient users of this interface will use ``/proc/pid/maps`` to
-    determine which areas of memory are actually mapped and llseek to
-    skip over unmapped regions.
- 
-@@ -79,11 +79,11 @@ There are four components to pagemap:
-    memory cgroup each page is charged to, indexed by PFN. Only available when
-    CONFIG_MEMCG is set.
- 
--Short descriptions to the page flags:
--=====================================
-+Short descriptions to the page flags
-+====================================
- 
- 0 - LOCKED
--   page is being locked for exclusive access, eg. by undergoing read/write IO
-+   page is being locked for exclusive access, e.g. by undergoing read/write IO
- 7 - SLAB
-    page is managed by the SLAB/SLOB/SLUB/SLQB kernel memory allocator
-    When compound page is used, SLUB/SLQB will only set this flag on the head
-@@ -132,7 +132,7 @@ IO related page flags
-    ie. for file backed page: (in-memory data revision >= on-disk one)
- 4 - DIRTY
-    page has been written to, hence contains new data
--   ie. for file backed page: (in-memory data revision >  on-disk one)
-+   i.e. for file backed page: (in-memory data revision >  on-disk one)
- 8 - WRITEBACK
-    page is being synced to disk
- 
-@@ -145,7 +145,7 @@ LRU related page flags
-    page is in the active LRU list
- 18 - UNEVICTABLE
-    page is in the unevictable (non-)LRU list It is somehow pinned and
--   not a candidate for LRU page reclaims, eg. ramfs pages,
-+   not a candidate for LRU page reclaims, e.g. ramfs pages,
-    shmctl(SHM_LOCK) and mlock() memory segments
- 2 - REFERENCED
-    page has been referenced since last LRU list enqueue/requeue
-@@ -156,7 +156,7 @@ LRU related page flags
- 12 - ANON
-    a memory mapped page that is not part of a file
- 13 - SWAPCACHE
--   page is mapped to swap space, ie. has an associated swap entry
-+   page is mapped to swap space, i.e. has an associated swap entry
- 14 - SWAPBACKED
-    page is backed by swap/RAM
- 
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
+> 
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> One point to mention is that I have made it possible for users to have
+> unconncted interrupts by specifying holes in the list of interrupts. This is
+> done by supporting the interrupts-extended DT prop.
+> However, I have no use for this and had to hack some test case for this.
+> Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+> 
+> v4:
+>  - Use of_irq_get() instead of of_irq_parse_one()+irq_create_of_mapping()
+> v3:
+>  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid bisect problems
+> v2:
+>  - Replaced interrupt-mask DT prop with support for the interrupts-extended
+>    prop. This means replacing the call to irq_of_parse_and_map() with calls
+>    to of_irq_parse_one() and irq_create_of_mapping().
+> 
+> Note: There are a few *code* lines over 80 chars, but this is just guidance,
+>    right? Especially as there are already some lines over 80 chars.
+> 
+> snps:gpio fix
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+>  .../devicetree/bindings/gpio/snps-dwapb-gpio.txt   |  9 +++--
+>  drivers/gpio/gpio-dwapb.c                          | 42 +++++++++++++++++-----
+>  drivers/mfd/intel_quark_i2c_gpio.c                 |  3 +-
+
+If Linus, is happy with the GPIO implementation, then the changes in
+MFD look fine:
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
 -- 
-2.7.4
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
