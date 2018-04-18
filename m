@@ -1,75 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752805AbeDRNoE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 09:44:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33847 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752714AbeDRNoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:44:03 -0400
-Date: Wed, 18 Apr 2018 15:44:01 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: rientjes@google.com, akpm@linux-foundation.org, aarcange@redhat.com,
-        guro@fb.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
-Message-ID: <20180418134401.GF17484@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
- <20180418075051.GO17484@dhcp22.suse.cz>
- <201804182049.EDJ21857.OHJOMOLFQVFFtS@I-love.SAKURA.ne.jp>
- <20180418115830.GA17484@dhcp22.suse.cz>
- <201804182225.EII57887.OLMHOFVtQSFJOF@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201804182225.EII57887.OLMHOFVtQSFJOF@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752825AbeDRNqu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 09:46:50 -0400
+Received: from mail-pg0-f41.google.com ([74.125.83.41]:41312 "EHLO
+        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752714AbeDRNqs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 09:46:48 -0400
+X-Google-Smtp-Source: AIpwx4929/YjE0nhzcoZn96Ojro5Vw0n6+KEJY3UTWvPADBn+bPE1i+rmCTHgj0NlY/M5MVPJYfZIw==
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: linus.walleij@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        catalin.marinas@arm.com, bjorn.andersson@linaro.org,
+        will.deacon@arm.com
+Cc: amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        todor.tomov@linaro.org, dragonboard@lists.96boards.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 0/1] Add gpio-line-names property for Dragonboard820c
+Date: Wed, 18 Apr 2018 19:16:00 +0530
+Message-Id: <20180418134601.8502-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18-04-18 22:25:54, Tetsuo Handa wrote:
-> Michal Hocko wrote:
-> > > > Can we try a simpler way and get back to what I was suggesting before
-> > > > [1] and simply not play tricks with
-> > > > 		down_write(&mm->mmap_sem);
-> > > > 		up_write(&mm->mmap_sem);
-> > > > 
-> > > > and use the write lock in exit_mmap for oom_victims?
-> > > 
-> > > You mean something like this?
-> > 
-> > or simply hold the write lock until we unmap and free page tables.
-> 
-> That increases possibility of __oom_reap_task_mm() giving up reclaim and
-> setting MMF_OOM_SKIP when exit_mmap() is making forward progress, doesn't it?
+Add gpio-line-names property for 96Boards Dragonboard820c development
+board based on APQ8096 SoC. The lines are named after the 96Boards
+CE Specification 1.0, Appendix "Expansion Connector Signal Description".
+There are 4 gpio-controllers present on this board, including the
+APQ8096 SoC, PM8994 (GPIO, MPP) and PMI8994 (GPIO).
 
-Yes it does. But it is not that likely and easily noticeable from the
-logs so we can make the locking protocol more complex if this really
-hits two often.
+Considering the regular 96Boards Consumer Edition boards, this board belongs
+to Entended edition form factor, hence includes additional Primary,
+Secondary High Speed Connectors and one Camera Connector.
 
-> I think that it is better that __oom_reap_task_mm() does not give up when
-> exit_mmap() can make progress. In that aspect, the section protected by
-> mmap_sem held for write should be as short as possible.
+Line names for PMI8994 MPP pins are not added due to the absence of the
+gpio-controller support.
 
-Sure, but then weight the complexity on the other side and try to think
-whether simpler code which works most of the time is better than a buggy
-complex one. The current protocol has 2 followup fixes which speaks for
-itself.
- 
-[...]
-> > > Then, I'm tempted to call __oom_reap_task_mm() before holding mmap_sem for write.
-> > > It would be OK to call __oom_reap_task_mm() at the beginning of __mmput()...
-> > 
-> > I am not sure I understand.
-> 
-> To reduce possibility of __oom_reap_task_mm() giving up reclaim and
-> setting MMF_OOM_SKIP.
+Changes in v2:
 
-Still do not understand. Do you want to call __oom_reap_task_mm from
-__mmput? If yes why would you do so when exit_mmap does a stronger
-version of it?
+* Added schematic names in comments for lines with 96Boards spec names
+
+Manivannan Sadhasivam (1):
+  dts: qcom: db820c: Add gpio-line-names property
+
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 239 +++++++++++++++++++++++++++
+ 1 file changed, 239 insertions(+)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.14.1
