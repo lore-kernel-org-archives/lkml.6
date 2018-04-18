@@ -1,72 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753359AbeDRLRp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:17:45 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:39390 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752027AbeDRLRm (ORCPT
+        id S1753157AbeDRLZ0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:25:26 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39824 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752630AbeDRLZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:17:42 -0400
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: <lee.jones@linaro.org>
-CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <patches@opensource.cirrus.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>
-Subject: [RESEND PATCH v5] mfd: arizona: Update DT doc to support more standard reset binding
-Date: Wed, 18 Apr 2018 12:17:34 +0100
-Message-ID: <20180418111734.11466-1-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 18 Apr 2018 07:25:25 -0400
+Date: Wed, 18 Apr 2018 12:24:42 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] ASoC: dwc: I2S Controller instance param added
+Message-ID: <20180418112442.GB10061@sirena.org.uk>
+References: <1524049494-19526-1-git-send-email-Vijendar.Mukunda@amd.com>
+ <1524049494-19526-2-git-send-email-Vijendar.Mukunda@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1804180102
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GRPZ8SYKNexpdSJ7"
+Content-Disposition: inline
+In-Reply-To: <1524049494-19526-2-git-send-email-Vijendar.Mukunda@amd.com>
+X-Cookie: Sank heaven for leetle curls.
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
 
-No changes since v4.
+--GRPZ8SYKNexpdSJ7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The corresponding code changes have already been merged.
+On Wed, Apr 18, 2018 at 04:34:52PM +0530, Vijendar Mukunda wrote:
+> When multiple I2S controller instances created,
+> i2s_instance parameter refers to i2s controller instance value.
 
-Thanks,
-Charles
+You're missing the point here a bit - it's not just the defines for the
+magic numbers that are the problem, it's the whole idea of passing
+instance numbers around like this that's the big problem.  Whatever you
+are trying to do here is most likely better accomplished at the machine
+driver level.  If I'm missing something here and this is a useful
+concept to have in the driver it really needs to be articulated much
+more clearly than in your very brief changelog, and most likely done at
+the subsystem level (though the fact that we've managed to get this far
+without needing it is a bit of a red flag).
 
- Documentation/devicetree/bindings/mfd/arizona.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+--GRPZ8SYKNexpdSJ7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/Documentation/devicetree/bindings/mfd/arizona.txt b/Documentation/devicetree/bindings/mfd/arizona.txt
-index bdd017686ea5a..a014afb079023 100644
---- a/Documentation/devicetree/bindings/mfd/arizona.txt
-+++ b/Documentation/devicetree/bindings/mfd/arizona.txt
-@@ -50,7 +50,7 @@ Required properties:
- 
- Optional properties:
- 
--  - wlf,reset : GPIO specifier for the GPIO controlling /RESET
-+  - reset-gpios : GPIO specifier for the GPIO controlling /RESET
- 
-   - clocks: Should reference the clocks supplied on MCLK1 and MCLK2
-   - clock-names: Should contains two strings:
-@@ -70,6 +70,10 @@ Optional properties:
-     Documentation/devicetree/bindings/regulator/regulator.txt
-     (wm5102, wm5110, wm8280, wm8997, wm8998, wm1814)
- 
-+Deprecated properties:
-+
-+  - wlf,reset : GPIO specifier for the GPIO controlling /RESET
-+
- Also see child specific device properties:
-   Regulator - ../regulator/arizona-regulator.txt
-   Extcon    - ../extcon/extcon-arizona.txt
--- 
-2.11.0
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrXKvoACgkQJNaLcl1U
+h9A0TQgAgCxN6Hh4RzagIfL5GE3Aq/Ea1B+j/UiKbKEz9jfK8rcpFzB2YBM+ibsV
+UCFEAWpA+b+cAXT4itIdy8OfLq0lqvqLLVPUzke8q5yzCCbjdBDRZNeLXmFEiPvv
+UIqP6YAMUjrsTtdQ0MkH+30XcB+k+CoWusfRI5NMI505sUrTydJUVF3g3mBy9NMa
+L2dvwddgX3nGsIRMl0DiBTGcW3qOp296ArLpUQILB3irMXqAB0P6+irr9fFhcRCe
+bkaG2gBEqFY+fJkV31ONqUlq3BegNps2xyJ1rwkUoKSwHscATrswgbPNwQgJPGbv
+DkuDztSNOh6C2BF+UJ7cy47hAwg26g==
+=UssD
+-----END PGP SIGNATURE-----
+
+--GRPZ8SYKNexpdSJ7--
