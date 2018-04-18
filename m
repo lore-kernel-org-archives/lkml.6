@@ -1,114 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753001AbeDRHAD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:00:03 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36533 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752811AbeDRG7u (ORCPT
+        id S1752738AbeDRHCf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:02:35 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:40163 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752085AbeDRHCd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 02:59:50 -0400
-X-Google-Smtp-Source: AIpwx4/OIFcSm6J7QLlJm7NoNTSdleejrFrLpZHuFOM61KYRVbVirK7Sj8sPlu/kOj8K2TszQLktNw==
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-Subject: Re: [v5,05/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
-Date: Wed, 18 Apr 2018 08:59:46 +0200
-Message-ID: <2641190.FRMBLJWkCS@bentobox>
-User-Agent: KMail/5.2.3 (Linux/4.14.0-0.bpo.3-amd64; KDE/5.28.0; x86_64; ; )
-In-Reply-To: <1521800336-19266-6-git-send-email-sricharan@codeaurora.org>
-References: <1521800336-19266-6-git-send-email-sricharan@codeaurora.org>
+        Wed, 18 Apr 2018 03:02:33 -0400
+X-Google-Smtp-Source: AB8JxZoDUuXMbIxn8OhFAI7j+dO0G+Rqq2GZUiVqWXGcQoC0m8pPHBqt8+sPj0reb5B4+LE0DxYOrNMeNOXUqpCmimc=
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3043434.9TQ9TfbtKO"; micalg="pgp-sha512"; protocol="application/pgp-signature"
+In-Reply-To: <TY1PR01MB1769DB39F986BEADEF61F8C9F5B30@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <1523609472-4481-1-git-send-email-phil.edworthy@renesas.com>
+ <CAFHUOYziPaZC-Zcb7rXqC9p24H+CU4wK4NQShQkYLgH7c5mVwA@mail.gmail.com> <TY1PR01MB1769DB39F986BEADEF61F8C9F5B30@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From: Hoan Tran <hotran@apm.com>
+Date: Wed, 18 Apr 2018 00:02:31 -0700
+Message-ID: <CAFHUOYzPO+99HMLV7i1=ZoQG3vKRp2v5GzJdpW9yoWovx8D91Q@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3I72fKg010370
 
---nextPart3043434.9TQ9TfbtKO
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Hi Phil,
 
-On Freitag, 23. M=E4rz 2018 15:48:48 CEST Sricharan R wrote:
-> Add the common parts for the dk04 boards.
->=20
-> Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> ---
->  arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi | 115 ++++++++++++++++++++=
-++++++
->  arch/arm/boot/dts/qcom-ipq4019.dtsi           |   2 +-
->  2 files changed, 116 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
+On Fri, Apr 13, 2018 at 9:47 AM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
+> Hi Hoan,
+>
+> On 13 April 2018 17:37 Hoan Tran wrote:
+>> On Fri, Apr 13, 2018 at 1:51 AM, Phil Edworthy wrote:
+>> > The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+>> > per GPIO in port A, but the driver currently only supports 1 interrupt.
+>> > See the DesignWare DW_apb_gpio Databook description of the
+>> > 'GPIO_INTR_IO' parameter.
+>> >
+>> > This change allows the driver to work with up to 32 interrupts, it
+>> > will get as many interrupts as specified in the DT 'interrupts' property.
+>> > It doesn't do anything clever with the different interrupts, it just
+>> > calls the same handler used for single interrupt hardware.
+>> >
+>> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+>> > ---
+>> > One point to mention is that I have made it possible for users to have
+>> > unconncted interrupts by specifying holes in the list of interrupts.
+>> > This is done by supporting the interrupts-extended DT prop.
+>> > However, I have no use for this and had to hack some test case for this.
+>> > Perhaps the driver should support 1 interrupt or all GPIOa as interrupts?
+>> >
+>> > v3:
+>> >  - Rolled mfd: intel_quark_i2c_gpio fix into this patch to avoid
+>> > bisect problems
+>> > v2:
+>> >  - Replaced interrupt-mask DT prop with support for the interrupts-
+>> extended
+>> >    prop. This means replacing the call to irq_of_parse_and_map() with calls
+>> >    to of_irq_parse_one() and irq_create_of_mapping().
+>> >
+>> > Note: There are a few *code* lines over 80 chars, but this is just guidance,
+>> >    right? Especially as there are already some lines over 80 chars.
+>> > ---
+> [snip]
+>
+>> > -               if (has_acpi_companion(dev) && pp->idx == 0)
+>> > -                       pp->irq = platform_get_irq(to_platform_device(dev), 0);
+>> > +               if (has_acpi_companion(dev) && pp->idx == 0) {
+>> > +                       pp->irq[0] = platform_get_irq(to_platform_device(dev), 0);
+>> > +                       if (pp->irq[0])
+>> > +                               pp->has_irq = true;
+>> > +               }
+>>
+>> It doesn't work for ACPI. Could you do the same logic for ACPI?
+> I don’t have access to any device that was baked (i.e. fabbed) with multiple
+> output interrupts from the Synopsys GPIO blocks and use ACPI. I don't
+> know if any such device exists.
 
-The no-map reserved-memory for tz and smem are missing. Linux doesn't have=
-=20
-control over these regions and they are placed in the middle of the ram bef=
-ore=20
-Linux even starts. And u-boot is also not adding these ranges automatically.
+Below code is tested on X-Gene system which supports 1 interrupt per
+GPIO on Port A. You can update it into your patch.
 
-    	reserved-memory {
-    		#address-cells =3D <0x1>;
-    		#size-cells =3D <0x1>;
-    		ranges;
-   =20
-    		smem@87e00000 {
-    			reg =3D <0x87e00000 0x080000>;
-    			no-map;
-    		};
-   =20
-    		tz@87e80000 {
-    			reg =3D <0x87e80000 0x180000>;
-    			no-map;
-    		};
-    	};
+-               if (has_acpi_companion(dev) && pp->idx == 0)
+-                       pp->irq = platform_get_irq(to_platform_device(dev), 0);
++               if (has_acpi_companion(dev) && pp->idx == 0) {
++                       unsigned int j;
++                       for (j = 0; j < pp->ngpio; j++) {
++                               pp->irq[j] =
+platform_get_irq(to_platform_device(dev), j);
++                               if (pp->irq[j])
++                                       pp->has_irq = true;
++                       }
++               }
 
-This can either (depending on HW/SW configuration) lead to a failed boot [1=
-]=20
-or to runtime crashes like:
+Thanks
+Hoan
 
-    root@OpenWrt:/# /tmp/memory-allocator-test
-    main 0
-    [  571.758058] Unhandled fault: imprecise external abort (0xc06) at 0x0=
-1715ff8
-    [  571.758099] pgd =3D cebec000
-    [  571.763826] [01715ff8] *pgd=3D8e7fa835, *pte=3D87e7f75f, *ppte=3D87e=
-7fc7f
-    Bus error
-
-I would not know how to disable QSEE on these boards and thus would assume=
-=20
-that it should be part of this dtsi.
-
-Kind regards,
-	Sven
-
-[1] https://www.spinics.net/lists/linux-arm-msm/msg21536.html
-
---nextPart3043434.9TQ9TfbtKO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlrW7OIACgkQXYcKB8Em
-e0aC/A//SFl29P4JrehoVB558QcgRW5yqR1YFSEsPH3w2UxV4Dptj2OSI/jbqNC+
-p13mYZhBXEq0tyPQV7jR3VW6Lj8Z68LOIDxTXMp+Qc9kuSNWpWFT7uW6Mw8no0kp
-NIxvMr+oY2wlhZD1Sxaba6n2O9rVF6w58nQIloi96bRSlrS3Ig2Qz4XRU5cGYZsk
-xhLjSLogSJMvgqsvB7OaxML8ao41CLxxnYssadU6THltzH6GMjJyja9bQSVJVINk
-zqjjf1nWevwPiFz75/BKXvzb7sUIjRoEKMJ8hlf9bvkKo0ccSQCcxSrIIqtSZp0O
-rWcJtVYrjK/WURy3i/yV6hMH6cHiW0lJgI87uHM7CLfJuiteui1ks7RcPAbZIWeO
-yTcjARIYvBbWFiZXSpgYvXzHrlSbH5JGIbnN9ZDPG2tqsxDqEbNBoPlE+yXqluva
-mCOxD4SuQ/tECsCHe4hSzoWW5XOoyVsXBBliZSHbgxpDvcJLx/Nb5wdmE7FKp2WB
-SQvxdLPGHnngOLk2sKekISazh1FP9RBO8KgOIbcoyt7BreOGw1CVOEsW8PP47c9d
-WcGZktS/JVxIbrSIAdHSrFSeDxW80V4RfrFABz27wPt4zZzOo0EPfJBcKS5loVIJ
-Gq1MYhhhlqTXmi4N7swpDl3+fNG5TgCw9jkPjxRwbv1+RV3zGAM=
-=kUPf
------END PGP SIGNATURE-----
-
---nextPart3043434.9TQ9TfbtKO--
+>
+> I would prefer not writing code that can be tested easily. I cannot even
+> test the current, albeit small, changes to the Intel Quark MFD.
+>
+> Regards
+> Phil
+>
+>> Thanks
+>> Hoan
+>>
+>> >
+>> >                 pp->irq_shared  = false;
+>> >                 pp->gpio_base   = -1;
+>> > diff --git a/drivers/mfd/intel_quark_i2c_gpio.c
+>> > b/drivers/mfd/intel_quark_i2c_gpio.c
+>> > index 90e35de..5bddb84 100644
+>> > --- a/drivers/mfd/intel_quark_i2c_gpio.c
+>> > +++ b/drivers/mfd/intel_quark_i2c_gpio.c
+>> > @@ -233,7 +233,8 @@ static int intel_quark_gpio_setup(struct pci_dev
+>> *pdev, struct mfd_cell *cell)
+>> >         pdata->properties->idx          = 0;
+>> >         pdata->properties->ngpio        = INTEL_QUARK_MFD_NGPIO;
+>> >         pdata->properties->gpio_base    = INTEL_QUARK_MFD_GPIO_BASE;
+>> > -       pdata->properties->irq          = pdev->irq;
+>> > +       pdata->properties->irq[0]       = pdev->irq;
+>> > +       pdata->properties->has_irq      = true;
+>> >         pdata->properties->irq_shared   = true;
+>> >
+>> >         cell->platform_data = pdata;
+>> > diff --git a/include/linux/platform_data/gpio-dwapb.h
+>> > b/include/linux/platform_data/gpio-dwapb.h
+>> > index 2dc7f4a..5a52d69 100644
+>> > --- a/include/linux/platform_data/gpio-dwapb.h
+>> > +++ b/include/linux/platform_data/gpio-dwapb.h
+>> > @@ -19,7 +19,8 @@ struct dwapb_port_property {
+>> >         unsigned int    idx;
+>> >         unsigned int    ngpio;
+>> >         unsigned int    gpio_base;
+>> > -       unsigned int    irq;
+>> > +       unsigned int    irq[32];
+>> > +       bool            has_irq;
+>> >         bool            irq_shared;
+>> >  };
+>> >
+>> > --
+>> > 2.7.4
+>> >
