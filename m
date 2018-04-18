@@ -1,46 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753861AbeDRM1t (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 08:27:49 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:40886 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752747AbeDRM1s (ORCPT
+        id S1753713AbeDRMcJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 08:32:09 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:44790 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752027AbeDRMcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 08:27:48 -0400
-From: Richard Weinberger <richard@nod.at>
-To: linux-kernel@vger.kernel.org
-Cc: linux-um@lists.infradead.org,
-        user-mode-linux-devel@lists.sourceforge.net,
-        user-mode-linux-user@lists.sourceforge.net,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH] um: Update mailing list address
-Date: Wed, 18 Apr 2018 14:27:21 +0200
-Message-Id: <20180418122721.21818-1-richard@nod.at>
-X-Mailer: git-send-email 2.13.6
+        Wed, 18 Apr 2018 08:32:04 -0400
+Date: Wed, 18 Apr 2018 18:01:16 +0530
+From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+To: Dave Young <dyoung@redhat.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Indranil Choudhury <indranil@chelsio.com>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        "stephen@networkplumber.org" <stephen@networkplumber.org>,
+        Ganesh GR <ganeshgr@chelsio.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH net-next v4 0/3] kernel: add support to collect hardware
+ logs in crash recovery kernel
+Message-ID: <20180418123114.GA19159@chelsio.com>
+References: <cover.1523950321.git.rahul.lakkireddy@chelsio.com>
+ <20180418061546.GA4551@dhcp-128-65.nay.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418061546.GA4551@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have a new mailing list, so update the MAINTAINERS file.
+On Wednesday, April 04/18/18, 2018 at 11:45:46 +0530, Dave Young wrote:
+> Hi Rahul,
+> On 04/17/18 at 01:14pm, Rahul Lakkireddy wrote:
+> > On production servers running variety of workloads over time, kernel
+> > panic can happen sporadically after days or even months. It is
+> > important to collect as much debug logs as possible to root cause
+> > and fix the problem, that may not be easy to reproduce. Snapshot of
+> > underlying hardware/firmware state (like register dump, firmware
+> > logs, adapter memory, etc.), at the time of kernel panic will be very
+> > helpful while debugging the culprit device driver.
+> > 
+> > This series of patches add new generic framework that enable device
+> > drivers to collect device specific snapshot of the hardware/firmware
+> > state of the underlying device in the crash recovery kernel. In crash
+> > recovery kernel, the collected logs are added as elf notes to
+> > /proc/vmcore, which is copied by user space scripts for post-analysis.
+> > 
+> > The sequence of actions done by device drivers to append their device
+> > specific hardware/firmware logs to /proc/vmcore are as follows:
+> > 
+> > 1. During probe (before hardware is initialized), device drivers
+> > register to the vmcore module (via vmcore_add_device_dump()), with
+> > callback function, along with buffer size and log name needed for
+> > firmware/hardware log collection.
+> 
+> I assumed the elf notes info should be prepared while kexec_[file_]load
+> phase. But I did not read the old comment, not sure if it has been discussed
+> or not.
+> 
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
- MAINTAINERS | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+We must not collect dumps in crashing kernel. Adding more things in
+crash dump path risks not collecting vmcore at all. Eric had
+discussed this in more detail at:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b60179d948bb..4834d1551248 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14768,8 +14768,7 @@ F:	drivers/media/usb/zr364xx/
- USER-MODE LINUX (UML)
- M:	Jeff Dike <jdike@addtoit.com>
- M:	Richard Weinberger <richard@nod.at>
--L:	user-mode-linux-devel@lists.sourceforge.net
--L:	user-mode-linux-user@lists.sourceforge.net
-+L:	linux-um@lists.infradead.org
- W:	http://user-mode-linux.sourceforge.net
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git
- S:	Maintained
--- 
-2.13.6
+https://lkml.org/lkml/2018/3/24/319
+
+We are safe to collect dumps in the second kernel. Each device dump
+will be exported as an elf note in /proc/vmcore.
+
+> If do this in 2nd kernel a question is driver can be loaded later than vmcore init.
+
+Yes, drivers will add their device dumps after vmcore init.
+
+> How to guarantee the function works if vmcore reading happens before
+> the driver is loaded?
+> 
+> Also it is possible that kdump initramfs does not contains the driver
+> module.
+> 
+> Am I missing something?
+> 
+
+Yes, driver must be in initramfs if it wants to collect and add device
+dump to /proc/vmcore in second kernel.
+
+> > 
+> > 2. vmcore module allocates the buffer with requested size. It adds
+> > an elf note and invokes the device driver's registered callback
+> > function.
+> > 
+> > 3. Device driver collects all hardware/firmware logs into the buffer
+> > and returns control back to vmcore module.
+> > 
+> > The device specific hardware/firmware logs can be seen as elf notes:
+> > 
+> > # readelf -n /proc/vmcore
+> > 
+> > Displaying notes found at file offset 0x00001000 with length 0x04003288:
+> >   Owner                 Data size	Description
+> >   VMCOREDD_cxgb4_0000:02:00.4 0x02000fd8	Unknown note type: (0x00000700)
+> >   VMCOREDD_cxgb4_0000:04:00.4 0x02000fd8	Unknown note type: (0x00000700)
+> >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> >   VMCOREINFO           0x0000074f	Unknown note type: (0x00000000)
+> > 
+> > Patch 1 adds API to vmcore module to allow drivers to register callback
+> > to collect the device specific hardware/firmware logs.  The logs will
+> > be added to /proc/vmcore as elf notes.
+> > 
+> > Patch 2 updates read and mmap logic to append device specific hardware/
+> > firmware logs as elf notes.
+> > 
+> > Patch 3 shows a cxgb4 driver example using the API to collect
+> > hardware/firmware logs in crash recovery kernel, before hardware is
+> > initialized.
+> > 
+> > Thanks,
+> > Rahul
+> > 
+> > RFC v1: https://lkml.org/lkml/2018/3/2/542
+> > RFC v2: https://lkml.org/lkml/2018/3/16/326
+> > 
+[...]
+
+Thanks,
+Rahul
