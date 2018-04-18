@@ -1,47 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753584AbeDREQp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 00:16:45 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:41162 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751305AbeDREQo (ORCPT
+        id S1753755AbeDREce (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 00:32:34 -0400
+Received: from mail-vk0-f44.google.com ([209.85.213.44]:38953 "EHLO
+        mail-vk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753165AbeDREcc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 00:16:44 -0400
-X-Google-Smtp-Source: AIpwx4+k4lktME5iBPMb9v+Xb0t3jkkYYB1qGsrRq3inWCJZKNmzfy0AReJsMr8F4SVmbHWrsZ00Gw==
-Date: Tue, 17 Apr 2018 21:16:42 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Matthew Wilcox <willy@infradead.org>
-cc: Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH] mm:memcg: add __GFP_NOWARN in
- __memcg_schedule_kmem_cache_create
-In-Reply-To: <20180418030824.GA7320@bombadil.infradead.org>
-Message-ID: <alpine.DEB.2.21.1804172113400.114494@chino.kir.corp.google.com>
-References: <20180418022912.248417-1-minchan@kernel.org> <20180418030824.GA7320@bombadil.infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 18 Apr 2018 00:32:32 -0400
+X-Google-Smtp-Source: AIpwx48iLr1+N1rzcEkk7WjFpIzvMM3ZUm7SQOTgainrLf3vE54m7QXe4/p2Nzjmp8uChNWcXUyMhyOjcs23IaUqJkQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Originating-IP: [62.219.136.235]
+In-Reply-To: <1523988865-26848-1-git-send-email-geert@linux-m68k.org>
+References: <1523988865-26848-1-git-send-email-geert@linux-m68k.org>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Wed, 18 Apr 2018 07:32:31 +0300
+Message-ID: <CAOtvUMeJLXxB3v2wr8EQFKxXpMo3Oi64Ac8aGA5vLDo37dQWjw@mail.gmail.com>
+Subject: Re: [PATCH/RFC] crypto: Add platform dependencies for CRYPTO_DEV_CCREE
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018, Matthew Wilcox wrote:
+Hi Geert,
 
-> Not arguing against this patch.  But how many places do we want to use
-> GFP_NOWAIT without __GFP_NOWARN?  Not many, and the few which do do this
-> seem like they simply haven't added it yet.  Maybe this would be a good idea?
-> 
-> -#define GFP_NOWAIT      (__GFP_KSWAPD_RECLAIM)
-> +#define GFP_NOWAIT      (__GFP_KSWAPD_RECLAIM | __GFP_NOWARN)
-> 
+On Tue, Apr 17, 2018 at 9:14 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> The ARM TrustZone CryptoCell is found on ARM SoCs only.  Hence make it
+> depend on ARM or ARM64, unless compile-testing.
+>
 
-I don't think that's a good idea, slab allocators use GFP_NOWAIT during 
-init, for example, followed up with a BUG_ON() if it fails.  With an 
-implicit __GFP_NOWARN we wouldn't be able to see the state of memory when 
-it crashes (likely memory that wasn't freed to the allocator).  I think 
-whether the allocation failure should trigger a warning is up to the 
-caller.
+Actually it is not. Despite what the name suggest, CryptoCell is
+designed by Arm but is
+not in fact limited to Arm cores. I think the only requirement is
+ability to provide an AMBA bus
+interface. Kudos to our marketing department to make that so clear and
+so on... :-)
+
+There are in fact licensees of this IP which use it with other (Linux
+running) architectures, perhaps
+thanks to the fact that the design originated in an outside company
+(Discretix) which was bought by Arm.
+
+Therefore, NAK on the specific patch. However, if there is some build
+issue with a none Arm
+architecture I of course very interested to hear about it.
+
+Many thanks,
+Gilad
+
+
+
+
+
+-- 
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
