@@ -1,90 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753636AbeDRLdE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:33:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53603 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753520AbeDRLdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:33:03 -0400
-Date: Wed, 18 Apr 2018 13:33:01 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] fs, elf: drop MAP_FIXED usage from elf_map
-Message-ID: <20180418113301.GY17484@dhcp22.suse.cz>
-References: <20171213092550.2774-1-mhocko@kernel.org>
- <20171213092550.2774-3-mhocko@kernel.org>
- <0b5c541a-91ee-220b-3196-f64264f9f0bc@I-love.SAKURA.ne.jp>
+        id S1753859AbeDRLkj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:40:39 -0400
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:34227 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753813AbeDRLke (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 07:40:34 -0400
+X-Google-Smtp-Source: AIpwx48FW+Lzifn8SzIEkNJGAT9Z20eSJhl1Hj/vJQZ3egtQ9OIOUrwTDU7j6tcl0WderBSy0tH11A==
+Date: Wed, 18 Apr 2018 13:40:30 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Masaki Ota <masaki.ota@jp.alps.com>
+Subject: Re: [PATCH] Input: alps - Demystify trackstick initialization for v3
+ and v6 protocols
+Message-ID: <20180418114030.5xkvynzeqf63ir7j@pali>
+References: <20180312230915.26050-1-pali.rohar@gmail.com>
+ <20180312231335.fnfxgenu22utr3z6@pali>
+ <TYXPR01MB0719092EDE164BA6C576A1C7C7D10@TYXPR01MB0719.jpnprd01.prod.outlook.com>
+ <20180314225816.634w64kggycj67ec@pali>
+ <TYXPR01MB07191C487C66BA03E5D9AB3DC7D10@TYXPR01MB0719.jpnprd01.prod.outlook.com>
+ <20180316105811.t2nkwowqs66f6ji6@pali>
+ <TYXPR01MB0719CA528857480EC046DEF6C7D40@TYXPR01MB0719.jpnprd01.prod.outlook.com>
+ <20180321164126.fr4srexf5pxz4pud@pali>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0b5c541a-91ee-220b-3196-f64264f9f0bc@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180321164126.fr4srexf5pxz4pud@pali>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18-04-18 19:51:05, Tetsuo Handa wrote:
-> >From 0ba20dcbbc40b703413c9a6907a77968b087811b Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Wed, 18 Apr 2018 15:31:48 +0900
-> Subject: [PATCH] fs, elf: don't complain MAP_FIXED_NOREPLACE if mapping
->  failed.
-> 
-> Commit 4ed28639519c7bad ("fs, elf: drop MAP_FIXED usage from elf_map") is
-> printing spurious messages under memory pressure due to map_addr == -ENOMEM.
-> 
->  9794 (a.out): Uhuuh, elf segment at 00007f2e34738000(fffffffffffffff4) requested but the memory is mapped already
->  14104 (a.out): Uhuuh, elf segment at 00007f34fd76c000(fffffffffffffff4) requested but the memory is mapped already
->  16843 (a.out): Uhuuh, elf segment at 00007f930ecc7000(fffffffffffffff4) requested but the memory is mapped already
+Dmitry, ping
 
-Hmm this is ENOMEM.
-
-> Don't complain if IS_ERR_VALUE(),
-
-this is simply wrong. We do want to warn on the failure because this is
-when the actual clash happens. We should just warn on EEXIST.
-
-> and use %px for printing the address.
+On Wednesday 21 March 2018 17:41:26 Pali Rohár wrote:
+> That is pity, but OK.
 > 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Andrei Vagin <avagin@openvz.org>
-> Cc: Khalid Aziz <khalid.aziz@oracle.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-> Cc: Joel Stanley <joel@jms.id.au>
-> Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> ---
->  fs/binfmt_elf.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> Anyway, as wrote patch which I sent in the first email matches this
+> documentation.
 > 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 41e0418..559d35b 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -377,10 +377,10 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
->  	} else
->  		map_addr = vm_mmap(filep, addr, size, prot, type, off);
->  
-> -	if ((type & MAP_FIXED_NOREPLACE) && BAD_ADDR(map_addr))
-> -		pr_info("%d (%s): Uhuuh, elf segment at %p requested but the memory is mapped already\n",
-> -				task_pid_nr(current), current->comm,
-> -				(void *)addr);
-> +	if ((type & MAP_FIXED_NOREPLACE) && BAD_ADDR(map_addr) &&
-> +	    !IS_ERR_VALUE(map_addr))
-> +		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
-> +			task_pid_nr(current), current->comm, (void *)addr);
->  
->  	return(map_addr);
->  }
-> -- 
-> 1.8.3.1
+> Dmitry, can you review/comment/accept/reject this patch?
 > 
+> On Monday 19 March 2018 08:41:19 Masaki Ota wrote:
+> > Hi, Pali,
+> > 
+> > v3/v6 devices are T3 type, and it can use only Method 2.
+> > P36 (At this time GLIDEPOINT_T3 uses the Method 2 ....)
+> > T3 has the potential that uses Method2, but I think it needs to change Firmware.
+> > 
+> > Best Regards,
+> > Masaki Ota
+> > -----Original Message-----
+> > From: Pali Rohár [mailto:pali.rohar@gmail.com] 
+> > Sent: Friday, March 16, 2018 7:58 PM
+> > To: 太田 真喜 Masaki Ota <masaki.ota@jp.alps.com>
+> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH] Input: alps - Demystify trackstick initialization for v3 and v6 protocols
+> > 
+> > Great, thank you. Enabling that RAW/extended/SP4 mode is done by sequence E6, E6, E6, F3, C8, F3, 14 (written in page 35) and it matches what function alps_trackstick_enter_extended_mode_v3_v6() in my patch is doing. So is correct.
+> > 
+> > On page 36 I see that there is described Method 1 for reporting stick data which prevents cursor jumps. Seems that kernel uses Method 2.
+> > Method 1 depends on some prioritization.
+> > 
+> > Do you have some information how to activate Method 1? Sometimes I observe that problem with "cursor jumps" and from Method 1 could prevent it. So I would like to try experimenting...
+> > 
+> > On Wednesday 14 March 2018 23:56:46 Masaki Ota wrote:
+> > > Hi, Pali,
+> > > 
+> > > I have added Appendix.
+> > > According to this spec documents, SP raw mode is SP 4 byte mode.
+> > > I think Extended mode meaning is almost all the same as Raw mode.
+> > > The description of how to set is written in Page 35.
+> > > 
+> > > Best Regards,
+> > > Masaki Ota
+> > > -----Original Message-----
+> > > From: Pali Rohár [mailto:pali.rohar@gmail.com]
+> > > Sent: Thursday, March 15, 2018 7:58 AM
+> > > To: 太田 真喜 Masaki Ota <masaki.ota@jp.alps.com>
+> > > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>; 
+> > > linux-input@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > Subject: Re: [PATCH] Input: alps - Demystify trackstick initialization 
+> > > for v3 and v6 protocols
+> > > 
+> > > Hi! Thank you for information.
+> > > 
+> > > Your PS/2 Aux Port Control description seems to really matches. Just there is reverse order of bits. Bit 0 in description is highest, therefore matches BIT(7) macro.
+> > > 
+> > > Bit 6 in description (BIT(1) in code) describes SP Extended Mode which alps.c enabled. And in that description is written:
+> > > 
+> > > "If 1 SP is extended packet format (driver must set SP raw mode and GP absolute mode)."
+> > > 
+> > > Do you have any idea what "SP raw mode" is? How to set it? For me it looks like it could be that extended mode of trackstick itself.
+> > > 
+> > > "GP absolute mode" I guess is GlidePoint absolute mode, therefore 
+> > > enable
+> > > 6 byte absolute mode for touchpad.
+> > > 
+> > > And for Bit 7 (BIT(0)) is written:
+> > > 
+> > > This bit is used with the PS/2 Aux port to use the Pass-Thru mode ( see appendix A ). Do you have some information about this appendix A?
+> > > 
+> > > On Wednesday 14 March 2018 10:21:43 Masaki Ota wrote:
+> > > > Hi, Pali,
+> > > > 
+> > > > I just picked up the spec which relates with trackstic.
+> > > > 
+> > > > Best Regards,
+> > > > Masaki Ota
+> > > > -----Original Message-----
+> > > > From: Pali Rohár [mailto:pali.rohar@gmail.com]
+> > > > Sent: Tuesday, March 13, 2018 8:14 AM
+> > > > To: 太田 真喜 Masaki Ota <masaki.ota@jp.alps.com>; Dmitry Torokhov 
+> > > > <dmitry.torokhov@gmail.com>
+> > > > Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > > Subject: Re: [PATCH] Input: alps - Demystify trackstick 
+> > > > initialization for v3 and v6 protocols
+> > > > 
+> > > > Masaki, if you have access to the internal ALPS v3 / Rushmore 
+> > > > documentation, I would like to have a review of this patch or 
+> > > > confirmation of those information :-)
+> > > 
+> > > --
+> > > Pali Rohár
+> > > pali.rohar@gmail.com
+> > 
+> > --
+> > Pali Rohár
+> > pali.rohar@gmail.com
 > 
 
 -- 
-Michal Hocko
-SUSE Labs
+Pali Rohár
+pali.rohar@gmail.com
