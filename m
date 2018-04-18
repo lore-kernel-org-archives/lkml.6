@@ -1,166 +1,137 @@
-Return-Path: <jsimmons@infradead.org>
-X-Google-Smtp-Source: AIpwx4/blGPEn0BQNhT56L3i4NDlApviGtpjwqOrIVOL85+7zngbh3yrvvppaT4gsfX+uXC2eClh
-ARC-Seal: i=1; a=rsa-sha256; t=1523936157; cv=none;
+Return-Path: <neilb@suse.com>
+X-Google-Smtp-Source: AIpwx49h97471nFK65WshPNo1OlwEKn+evwCwDtSOANZnVtti/5T710IDNXeqh60Mh0K+d5fKa7+
+ARC-Seal: i=1; a=rsa-sha256; t=1524021436; cv=none;
         d=google.com; s=arc-20160816;
-        b=z5+ynHPFm5w+XmQGdNd5qhSrwKao7evzNgGlQ6+gFzox2jToxSI/TB9/RxRo/zoGZ8
-         PQDA6ASk+v0n711LRCpXxfqpGZl7tyMcnqtAlQLbkYLfj4CxUSCzZZ6RsTmafyazqi2m
-         ZNiE3xvnOiu24vccDb8rNVldbnrrqvMMlB/NdpRBBtVWTOOmSgfIillCRzbG/UqYTDd9
-         ooOe0OcF6fd1fPl/LM0WYTwgPgIG5pbw37JfQvr6UqV//3MFuaiiZEahyg1S7UiG7Kci
-         7E3zU7jhLwselXb1pNz9uhwG0t5YL3rIoY2xDzfyQJM38Q1U0ayydw0rbCLn292PvH1E
-         AYyA==
+        b=OQs5gfO7viUIKFt1AmB3HDlvu5WhJmqbFrpj0tnK5K0tQzzAbw6iEU1FrTqnlZ9psI
+         Zk+h4DIpIMkQeC7Wi6+gK/KqAJty7oHf+KTbw/jEOIkAibANpxBHvTTY/Ej+qbNAAm/k
+         iz0B9zFzfxjUFZTf680JbTixcdWL6nY33E6jYHDJHPj82BeKwnmMNmB1VbbNpMHROgrc
+         KaNeYdWYDSxZ/fBbIHcDYZ6tnLVLzD1X6hVOk89HwEzj3yhhzd27oihhZX5nC/+h2NMH
+         fX36eSYqNfqzpAeK91k/Kj24HKkIJZfDDm30686mVsoGEYfCNWVoDVR+NzeYAfp6JGEz
+         tQig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=rVCpwtdfBVMDGYDBpaPU3gzx4+mNvHvpY8x6oxTpyhY=;
-        b=XXoiYB8Du6CVFymGVSW7Fimkg/m0mzaUT5RAy0vlqjgFJXgpPB1MW4yhhLuBpXqxMv
-         Qrj6QCpdknz6cuoIQ+JBeYbAjprp+HVYedkw8LnfugzvBT2Cb5kUXP2/DxSbYe6xuKMm
-         S3imqz7vy/62/utVMAlvR515lWMBW0LttB2hDAdWbaYU22DucZatX6JDCMoZ+ukYAZ70
-         +/1vBUCzoo7JGewvk4Ug2kCi7b8h1cAjpkwPoSHTl22I8QR2CDh4Y/KdTFTmyunNz4Rn
-         saKfKysNPt3iLQrvi2QQFGDYQtpZDP3uk/p+N1f14ZEzrucLdeiroYb44zeJCejJ92tU
-         HyZA==
+        h=mime-version:message-id:references:in-reply-to:subject:cc:date:to
+         :from:arc-authentication-results;
+        bh=jPHv12eoeJiObZlMAfTKCNoFtW+/ZaXdSQNSG54Hijw=;
+        b=Yj0YtaQvq++mUm85vWJUi3kdYQHE65oeJXFTez3soyWU7QHBmyZzICV5QZ41MiR6gt
+         wNWo9SBB62UhiTksTfF1hSr8xSTfAhYNkw03Z8PTs+aRqB12xE9l6NygS4nxVPjJr8/c
+         eaelfVI3IDEeLaFFr8LOUHBRe3lZ+JhpDQ+xfKGNtoJOj0DBjYAr2Ys3xWtkuUXX6xxA
+         T6MI+kY0jKcOnwwzteS9SBM5YtP5mOqbRQN80qiG+pQQxTkmPrzxK07B8LQyHLOiq9TW
+         NGcAaq3X2tPHXRjvTR7Ro11WR2Tnbr3wA92mkyVme4TjTx60U7+JO+Sfo1Bz54a5p0Zg
+         9EGw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=Jm6z7plb;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=Jm6z7plb;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
-Date: Tue, 17 Apr 2018 04:35:43 +0100 (BST)
-From: James Simmons <jsimmons@infradead.org>
-To: NeilBrown <neilb@suse.com>
-cc: Oleg Drokin <oleg.drokin@intel.com>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Andreas Dilger <andreas.dilger@intel.com>,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-    Lustre Development List <lustre-devel@lists.lustre.org>
+       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
+From: NeilBrown <neilb@suse.com>
+To: James Simmons <jsimmons@infradead.org>
+Date: Wed, 18 Apr 2018 13:17:07 +1000
+Cc: Oleg Drokin <oleg.drokin@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andreas Dilger <andreas.dilger@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lustre Development List <lustre-devel@lists.lustre.org>
 Subject: Re: [PATCH 00/20] staging: lustre: convert to rhashtable
-In-Reply-To: <152348312863.12394.11915752362061083241.stgit@noble>
-Message-ID: <alpine.LFD.2.21.1804170429300.14398@casper.infradead.org>
-References: <152348312863.12394.11915752362061083241.stgit@noble>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+In-Reply-To: <alpine.LFD.2.21.1804170429300.14398@casper.infradead.org>
+References: <152348312863.12394.11915752362061083241.stgit@noble> <alpine.LFD.2.21.1804170429300.14398@casper.infradead.org>
+Message-ID: <87y3hlqk3w.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20180417_043543_766628_E51A92F1 
-X-CRM114-Status: GOOD (  31.46  )
-X-Spam-Score: -0.0 (/)
-X-Spam-Report: SpamAssassin version 3.4.1 on casper.infradead.org summary:
- Content analysis details:   (-0.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -0.0 NO_RELAYS              Informational: message was not relayed via SMTP
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha256; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597488463998050383?=
-X-GMAIL-MSGID: =?utf-8?q?1597962880233421595?=
+X-GMAIL-MSGID: =?utf-8?q?1598052301459530839?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> libcfs in lustre has a resizeable hashtable.
-> Linux already has a resizeable hashtable, rhashtable, which is better
-> is most metrics. See https://lwn.net/Articles/751374/ in a few days
-> for an introduction to rhashtable.
+On Tue, Apr 17 2018, James Simmons wrote:
 
-Thansk for starting this work. I was think about cleaning the libcfs
-hash but your port to rhashtables is way better. How did you gather
-metrics to see that rhashtable was better than libcfs hash?
- 
-> This series converts lustre to use rhashtable.  This affects several
-> different tables, and each is different is various ways.
-> 
-> There are two outstanding issues.  One is that a bug in rhashtable
-> means that we cannot enable auto-shrinking in one of the tables.  That
-> is documented as appropriate and should be fixed soon.
-> 
-> The other is that rhashtable has an atomic_t which counts the elements
-> in a hash table.  At least one table in lustre went to some trouble to
-> avoid any table-wide atomics, so that could lead to a regression.
-> I'm hoping that rhashtable can be enhanced with the option of a
-> per-cpu counter, or similar.
-> 
+>> libcfs in lustre has a resizeable hashtable.
+>> Linux already has a resizeable hashtable, rhashtable, which is better
+>> is most metrics. See https://lwn.net/Articles/751374/ in a few days
+>> for an introduction to rhashtable.
+>
+> Thansk for starting this work. I was think about cleaning the libcfs
+> hash but your port to rhashtables is way better. How did you gather
+> metrics to see that rhashtable was better than libcfs hash?
 
-This doesn't sound quite ready to land just yet. This will have to do some
-soak testing and a larger scope of test to make sure no new regressions
-happen. Believe me I did work to make lustre work better on tickless 
-systems, which I'm preparing for the linux client, and small changes could 
-break things in interesting ways. I will port the rhashtable change to the 
-Intel developement branch and get people more familar with the hash code
-to look at it. 
+Code inspection and reputation.  It is hard to beat inlined lockless
+code for lookups.  And rhashtable is heavily used in the network
+subsystem and they are very focused on latency there.  I'm not sure that
+insertion is as fast as it can be (I have some thoughts on that) but I'm
+sure lookup will be better.
+I haven't done any performance testing myself, only correctness.
 
-> I have enabled automatic shrinking on all tables where it makes sense
-> and doesn't trigger the bug.  I have also removed all hints concerning
-> min/max size - I cannot see how these could be useful.
-> 
-> The dump_pgcache debugfs file provided some interesting challenges.  I
-> think I have cleaned it up enough so that it all makes sense.  An
-> extra pair of eyes examining that code in particular would be
-> appreciated.
-> 
-> This series passes all the same tests that pass before the patches are
-> applied.
-> 
-> Thanks,
-> NeilBrown
-> 
-> 
-> ---
-> 
-> NeilBrown (20):
->       staging: lustre: ptlrpc: convert conn_hash to rhashtable
->       staging: lustre: convert lov_pool to use rhashtable
->       staging: lustre: convert obd uuid hash to rhashtable
->       staging: lustre: convert osc_quota hash to rhashtable
->       staging: lustre: separate buckets from ldlm hash table
->       staging: lustre: ldlm: add a counter to the per-namespace data
->       staging: lustre: ldlm: store name directly in namespace.
->       staging: lustre: simplify ldlm_ns_hash_defs[]
->       staging: lustre: convert ldlm_resource hash to rhashtable.
->       staging: lustre: make struct lu_site_bkt_data private
->       staging: lustre: lu_object: discard extra lru count.
->       staging: lustre: lu_object: factor out extra per-bucket data
->       staging: lustre: lu_object: move retry logic inside htable_lookup
->       staging: lustre: fold lu_object_new() into lu_object_find_at()
->       staging: lustre: llite: use more private data in dump_pgcache
->       staging: lustre: llite: remove redundant lookup in dump_pgcache
->       staging: lustre: use call_rcu() to free lu_object_headers
->       staging: lustre: change how "dump_page_cache" walks a hash table
->       staging: lustre: convert lu_object cache to rhashtable
->       staging: lustre: remove cfs_hash resizeable hashtable implementation.
-> 
-> 
->  .../staging/lustre/include/linux/libcfs/libcfs.h   |    1 
->  .../lustre/include/linux/libcfs/libcfs_hash.h      |  866 --------
->  drivers/staging/lustre/lnet/libcfs/Makefile        |    2 
->  drivers/staging/lustre/lnet/libcfs/hash.c          | 2064 --------------------
->  drivers/staging/lustre/lnet/libcfs/module.c        |   12 
->  drivers/staging/lustre/lustre/include/lu_object.h  |   55 -
->  drivers/staging/lustre/lustre/include/lustre_dlm.h |   19 
->  .../staging/lustre/lustre/include/lustre_export.h  |    2 
->  drivers/staging/lustre/lustre/include/lustre_net.h |    4 
->  drivers/staging/lustre/lustre/include/obd.h        |   11 
->  .../staging/lustre/lustre/include/obd_support.h    |    9 
->  drivers/staging/lustre/lustre/ldlm/ldlm_request.c  |   31 
->  drivers/staging/lustre/lustre/ldlm/ldlm_resource.c |  370 +---
->  drivers/staging/lustre/lustre/llite/lcommon_cl.c   |    8 
->  drivers/staging/lustre/lustre/llite/vvp_dev.c      |  332 +--
->  drivers/staging/lustre/lustre/llite/vvp_object.c   |    9 
->  drivers/staging/lustre/lustre/lov/lov_internal.h   |   11 
->  drivers/staging/lustre/lustre/lov/lov_obd.c        |   12 
->  drivers/staging/lustre/lustre/lov/lov_object.c     |    8 
->  drivers/staging/lustre/lustre/lov/lov_pool.c       |  159 +-
->  drivers/staging/lustre/lustre/lov/lovsub_object.c  |    9 
->  drivers/staging/lustre/lustre/obdclass/genops.c    |   34 
->  drivers/staging/lustre/lustre/obdclass/lu_object.c |  564 ++---
->  .../staging/lustre/lustre/obdclass/obd_config.c    |  161 +-
->  .../staging/lustre/lustre/obdecho/echo_client.c    |    8 
->  drivers/staging/lustre/lustre/osc/osc_internal.h   |    5 
->  drivers/staging/lustre/lustre/osc/osc_quota.c      |  136 -
->  drivers/staging/lustre/lustre/osc/osc_request.c    |   12 
->  drivers/staging/lustre/lustre/ptlrpc/connection.c  |  164 +-
->  29 files changed, 870 insertions(+), 4208 deletions(-)
->  delete mode 100644 drivers/staging/lustre/include/linux/libcfs/libcfs_hash.h
->  delete mode 100644 drivers/staging/lustre/lnet/libcfs/hash.c
-> 
-> --
-> Signature
-> 
-> 
+>=20=20
+>> This series converts lustre to use rhashtable.  This affects several
+>> different tables, and each is different is various ways.
+>>=20
+>> There are two outstanding issues.  One is that a bug in rhashtable
+>> means that we cannot enable auto-shrinking in one of the tables.  That
+>> is documented as appropriate and should be fixed soon.
+>>=20
+>> The other is that rhashtable has an atomic_t which counts the elements
+>> in a hash table.  At least one table in lustre went to some trouble to
+>> avoid any table-wide atomics, so that could lead to a regression.
+>> I'm hoping that rhashtable can be enhanced with the option of a
+>> per-cpu counter, or similar.
+>>=20
+>
+> This doesn't sound quite ready to land just yet. This will have to do some
+> soak testing and a larger scope of test to make sure no new regressions
+> happen. Believe me I did work to make lustre work better on tickless=20
+> systems, which I'm preparing for the linux client, and small changes coul=
+d=20
+> break things in interesting ways. I will port the rhashtable change to th=
+e=20
+> Intel developement branch and get people more familar with the hash code
+> to look at it.
+
+Whether it is "ready" or not probably depends on perspective and
+priorities.  As I see it, getting lustre cleaned up and out of staging
+is a fairly high priority, and it will require a lot of code change.
+It is inevitable that regressions will slip in (some already have) and
+it is important to keep testing (the test suite is of great benefit, but
+is only part of the story of course).  But to test the code, it needs to
+land.  Testing the code in Intel's devel branch and then porting it
+across doesn't really prove much.  For testing to be meaningful, it
+needs to be tested in a branch that up-to-date with mainline and on
+track to be merged into mainline.
+
+I have no particular desire to rush this in, but I don't see any
+particular benefit in delaying it either.
+
+I guess I see staging as implicitly a 'devel' branch.  You seem to be
+treating it a bit like a 'stable' branch - is that right?
+
+As mentioned, I think there is room for improvement in rhashtable.
+=2D making the atomic counter optional
+=2D replacing the separate spinlocks with bit-locks in the hash-chain head
+  so that the lock and chain are in the same cache line
+=2D for the common case of inserting in an empty chain, a single atomic
+  cmpxchg() should be sufficient
+I think we have a better chance of being heard if we have "skin in the
+game" and have upstream code that would use this.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrWuLMACgkQOeye3VZi
+gblQhxAAokHsWpgyZ720VM9Xq9qXhxCENMtSZSpcz3H3BqkgTloyb/JGz3ovGU5+
+Tq1WIJU+oLNyYqp0ThH8/uAnLoqZCnbmbPg0VcAXTRcVPKQ7j71ZNVtmbYc3/Nfn
+tbGBaXpNjys09CqkriqHbN+Zfa2+ssiO8zkw3lY7/z2DDIrJTMSsT4NQlCpFgl1z
+H7hT/vnQNfHiKxYktiWwPaQ0DcGBV9dBYU4//e0dCnrP70K/ObSp9KID0vHhI3kX
+Kgf3+A0YAGeMyc93WOCYvQgazKFFBaGTNKCQhGZoqiDzSxrnlFlAOX8AWbA6+Tdv
+Q6sJu+jy0b8NFMD6MEJrF3DmHUFx4BcbBJ+J+jLeILVjbvxb3X40bGLeyI6WMBdB
+gxU8rKP2kpSsPUWj/p36OsRjD50jOx6NV2O5TiytSLH/7IHG+RtM4oQsUe0AgRgN
+WtA2fTdwhnd8UVutAmwcL6hYlWqfDvf6ceyQHWaWv/YdDQCml3+liGKZNB0DCiU2
+LKrNVyG90Oyhn8Tw68EZ43VMN/hHAvyUzaBswPrVmUDUQ8VRl3GdEESGCxXWQFsM
+fCr2mLRtB3EHoUz1LyWfLfDeMMo43XGjnSCn+DfJZz4QNzCP4aS/3TKVx1wwLp/A
+fCM0ThfpSDfQtNstR7gpreictsEm4cRqmBFycaY4cpYFdoGpjcw=
+=qQDF
+-----END PGP SIGNATURE-----
+--=-=-=--
