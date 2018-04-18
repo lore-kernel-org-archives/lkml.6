@@ -1,60 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeDRK6M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 06:58:12 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48896 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751878AbeDRK6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 06:58:11 -0400
-From: Xu Yandong <xuyandong2@huawei.com>
-To: <alex.williamson@redhat.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhang.zhanghailiang@huawei.com>, <wangxinxin.wang@huawei.com>,
-        Xu Yandong <xuyandong2@huawei.com>
-Subject: [PATCH] vfio iommu type1: no need to check task->mm if task has been destroyed
-Date: Wed, 18 Apr 2018 18:55:45 +0800
-Message-ID: <20180418105545.13488-1-xuyandong2@huawei.com>
-X-Mailer: git-send-email 2.8.4.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.33.58]
-X-CFilter-Loop: Reflected
+        id S1753196AbeDRK7I (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 06:59:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50912 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751940AbeDRK7H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 06:59:07 -0400
+From: Sandipan Das <sandipan@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@redhat.com
+Cc: linux-kernel@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
+        ravi.bangoria@linux.vnet.ibm.com, sukadev@linux.vnet.ibm.com,
+        maynard@us.ibm.com
+Subject: [PATCH v2 0/3] perf: Fixes for callchain ip handling on powerpc
+Date: Wed, 18 Apr 2018 16:28:57 +0530
+X-Mailer: git-send-email 2.14.3
+X-TM-AS-GCONF: 00
+x-cbid: 18041810-0012-0000-0000-000005CC2ECC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041810-0013-0000-0000-000019487F64
+Message-Id: <20180418105900.5899-1-sandipan@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804180101
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The task structure in vfio_dma struct used to identify the same
-task who map it or other task who shares same adress space is
-allowed to unmap. But if the task who map it has exited, mm of
-the task has been set to null, we should unmap the vfio dma directly.
+The first patch fixes the callchain ip filtering mechanism for powerpc
+from skipping entries in case the LR value is still valid and yet to
+be written to the stack frame. This was previously posted as an RFC
+here: https://lkml.org/lkml/2018/4/4/633
 
-Signed-off-by: Xu Yandong <xuyandong2@huawei.com>
----
-Hi all,
-When I unplug a vcpu from a VM lanched with a VFIO hostdev device,
-I found that the *vfio_dma* mapped by this vcpu task could not be unmaped
-in the future, so I send this patch to unmap vfio_dma directly if the
-task who mapped it has exited. 
+The second patch fixes a crash caused by attempting to access an empty
+callchain.
 
-Howerver this patch may introduce a new security risk because any task can 
-unmap the *vfio_dma* if the mapper task has exited.  
+The third patch fixes a shell test which used to fail on powerpc as
+the back trace from perf output did not match the expected pattern.
+Also, because of the issue described in the first patch, some entries
+from the callchain were incorrectly skipped. So, this has also been
+readjusted to work with the fix in the first patch.
 
----
- drivers/vfio/vfio_iommu_type1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+ - Consider case when return address is in R0 as pointed out by Ravi.
+ - Add another patch to fix crash when callchain is empty.
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 5c212bf..601a353 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -947,7 +947,7 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 		 * Task with same address space who mapped this iova range is
- 		 * allowed to unmap the iova range.
- 		 */
--		if (dma->task->mm != current->mm)
-+		if (dma->task->mm && (dma->task->mm != current->mm))
- 			break;
- 
- 		if (!RB_EMPTY_ROOT(&dma->pfn_list)) {
+Sandipan Das (3):
+  perf tools powerpc: Fix callchain ip filtering
+  perf tools powerpc: Fix crash if callchain is empty
+  perf tests: Fix record+probe_libc_inet_pton.sh for powerpc64
+
+ tools/perf/arch/powerpc/util/skip-callchain-idx.c  | 74 +++++++++++++---------
+ .../tests/shell/record+probe_libc_inet_pton.sh     |  8 +++
+ 2 files changed, 53 insertions(+), 29 deletions(-)
+
 -- 
-1.8.3.1
+2.14.3
