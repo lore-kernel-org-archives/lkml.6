@@ -1,118 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753056AbeDRHUF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:20:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36702 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752665AbeDRHUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:20:04 -0400
-Date: Wed, 18 Apr 2018 09:20:02 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH] mm:memcg: add __GFP_NOWARN in
- __memcg_schedule_kmem_cache_create
-Message-ID: <20180418072002.GN17484@dhcp22.suse.cz>
-References: <20180418022912.248417-1-minchan@kernel.org>
+        id S1753145AbeDRHUj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:20:39 -0400
+Received: from mail-vk0-f44.google.com ([209.85.213.44]:38948 "EHLO
+        mail-vk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753051AbeDRHUh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 03:20:37 -0400
+X-Google-Smtp-Source: AIpwx4+acpzd9c4KVTs+nalsOQcYRqz3tkk9L0a+ZxiMbkBi0r7wUHcOAmrgZs3+1iwDGbEUgeEnggEZaM6KEuTwZv4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180418022912.248417-1-minchan@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com>
+References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
+ <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com> <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com>
+From: Greentime Hu <green.hu@gmail.com>
+Date: Wed, 18 Apr 2018 15:19:56 +0800
+Message-ID: <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com>
+Subject: Re: nds32 build failures
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Guenter Roeck <private@roeck-us.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vincent Chen <vincentc@andestech.com>,
+        Greentime Hu <greentime@andestech.com>, kito.cheng@gmail.com,
+        wuiw@andestech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18-04-18 11:29:12, Minchan Kim wrote:
-> If there are heavy memory pressure, page allocation with __GFP_NOWAIT
-> fails easily although it's order-0 request.
-> I got below warning 9 times for normal boot.
-> 
-> [   17.072747] c0 0      <snip >: page allocation failure: order:0, mode:0x2200000(GFP_NOWAIT|__GFP_NOTRACK)
-> < snip >
-> [   17.072789] c0 0      Call trace:
-> [   17.072803] c0 0      [<ffffff8009914da4>] dump_backtrace+0x0/0x4
-> [   17.072813] c0 0      [<ffffff80086bfb5c>] dump_stack+0xa4/0xc0
-> [   17.072822] c0 0      [<ffffff800831a4f8>] warn_alloc+0xd4/0x15c
-> [   17.072829] c0 0      [<ffffff8008318c3c>] __alloc_pages_nodemask+0xf88/0x10fc
-> [   17.072838] c0 0      [<ffffff8008392b34>] alloc_slab_page+0x40/0x18c
-> [   17.072843] c0 0      [<ffffff8008392acc>] new_slab+0x2b8/0x2e0
-> [   17.072849] c0 0      [<ffffff800839220c>] ___slab_alloc+0x25c/0x464
-> [   17.072858] c0 0      [<ffffff8008393dd0>] __kmalloc+0x394/0x498
-> [   17.072865] c0 0      [<ffffff80083a658c>] memcg_kmem_get_cache+0x114/0x2b8
-> [   17.072870] c0 0      [<ffffff8008392f38>] kmem_cache_alloc+0x98/0x3e8
-> [   17.072878] c0 0      [<ffffff8008370be8>] mmap_region+0x3bc/0x8c0
-> [   17.072884] c0 0      [<ffffff80083707fc>] do_mmap+0x40c/0x43c
-> [   17.072890] c0 0      [<ffffff8008343598>] vm_mmap_pgoff+0x15c/0x1e4
-> [   17.072898] c0 0      [<ffffff800814be28>] sys_mmap+0xb0/0xc8
-> [   17.072904] c0 0      [<ffffff8008083730>] el0_svc_naked+0x24/0x28
-> [   17.072908] c0 0      Mem-Info:
-> [   17.072920] c0 0      active_anon:17124 inactive_anon:193 isolated_anon:0
-> [   17.072920] c0 0       active_file:7898 inactive_file:712955 isolated_file:55
-> [   17.072920] c0 0       unevictable:0 dirty:27 writeback:18 unstable:0
-> [   17.072920] c0 0       slab_reclaimable:12250 slab_unreclaimable:23334
-> [   17.072920] c0 0       mapped:19310 shmem:212 pagetables:816 bounce:0
-> [   17.072920] c0 0       free:36561 free_pcp:1205 free_cma:35615
-> [   17.072933] c0 0      Node 0 active_anon:68496kB inactive_anon:772kB active_file:31592kB inactive_file:2851820kB unevictable:0kB isolated(anon):0kB isolated(file):220kB mapped:77240kB dirty:108kB writeback:72kB shmem:848kB writeback_tmp:0kB unstable:0kB all_unreclaimable? no
-> [   17.072945] c0 0      DMA free:142188kB min:3056kB low:3820kB high:4584kB active_anon:10052kB inactive_anon:12kB active_file:312kB inactive_file:1412620kB unevictable:0kB writepending:0kB present:1781412kB managed:1604728kB mlocked:0kB slab_reclaimable:3592kB slab_unreclaimable:876kB kernel_stack:400kB pagetables:52kB bounce:0kB free_pcp:1436kB local_pcp:124kB free_cma:142492kB
-> [   17.072949] c0 0      lowmem_reserve[]: 0 1842 1842
-> [   17.072966] c0 0      Normal free:4056kB min:4172kB low:5212kB high:6252kB active_anon:58376kB inactive_anon:760kB active_file:31348kB inactive_file:1439040kB unevictable:0kB writepending:180kB present:2000636kB managed:1923688kB mlocked:0kB slab_reclaimable:45408kB slab_unreclaimable:92460kB kernel_stack:9680kB pagetables:3212kB bounce:0kB free_pcp:3392kB local_pcp:688kB free_cma:0kB
-> [   17.072971] c0 0      lowmem_reserve[]: 0 0 0
-> [   17.072982] c0 0      DMA: 0*4kB 0*8kB 1*16kB (C) 0*32kB 0*64kB 0*128kB 1*256kB (C) 1*512kB (C) 0*1024kB 1*2048kB (C) 34*4096kB (C) = 142096kB
-> [   17.073024] c0 0      Normal: 228*4kB (UMEH) 172*8kB (UMH) 23*16kB (UH) 24*32kB (H) 5*64kB (H) 1*128kB (H) 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 3872kB
-> [   17.073069] c0 0      721350 total pagecache pages
-> [   17.073073] c0 0      0 pages in swap cache
-> [   17.073078] c0 0      Swap cache stats: add 0, delete 0, find 0/0
-> [   17.073081] c0 0      Free swap  = 0kB
-> [   17.073085] c0 0      Total swap = 0kB
-> [   17.073089] c0 0      945512 pages RAM
-> [   17.073093] c0 0      0 pages HighMem/MovableOnly
-> [   17.073097] c0 0      63408 pages reserved
-> [   17.073100] c0 0      51200 pages cma reserved
-> 
-> Let's not make user scared.
+2018-04-17 20:47 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
+> On Mon, Apr 16, 2018 at 11:06 AM, Greentime Hu <green.hu@gmail.com> wrote:
+>> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
+>>
+>> This built failure is because the toolchain version you used is not
+>> supported the latest intrinsic function/macro.
+>> We are sending the latest patchset now and we expect the whole new
+>> features will be supported in gcc8.0.0 and binutil2.31+.
+>>
+>> If you'd like to get these new features of toolchain, you may use the
+>> github version.
+>> This is the built-script repo. https://github.com/andestech/build_script.git
+>
+> I've taken the gcc-6.3 sources from there, and updated them to gcc-6.4.0
+> in order to build a nds32le-linux toolchain based on the same version as
+> the other ones.
+>
+> Unfortunately neither the usual binutils-2.29.1 nor your binutils worked
+> for me, but I eventually managed to get a build using the binutils-2.30
+> release.
+>
+> With this, I could build a mainline kernel with a couple of warnings,
+> but an 'allmodconfig' build still failed.
+>
+> Guenter, can you try my binary from
+> www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
+> ?
+>
+> If that works for you, I'll update the front-page and remove the nds32-elf
+> toolchains.
+>
+> Greentime, do you have a patch set for gcc-7.3 as well, or are 6.3 and 8.0 the
+> only working compilers for nds32le-linux?
+>
 
-This is not a proper explanation. So what exactly happens when this
-allocation fails? I would suggest something like the following
-"
-__memcg_schedule_kmem_cache_create tries to create a shadow slab cache
-and the worker allocation failure is not really critical because we will
-retry on the next kmem charge. We might miss some charges but that
-shouldn't be critical. The excessive allocation failure report is not
-very much helpful. Replace it with a rate limited single line output so
-that we know that there is a lot of these failures and that we need to
-do something about it in future.
-"
+Hi, all:
 
-With the last part to be implemented of course.
- 
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> Signed-off-by: Minchan Kim <minchan@kernel.org>
-> ---
->  mm/memcontrol.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 448db08d97a0..671d07e73a3b 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2200,7 +2200,7 @@ static void __memcg_schedule_kmem_cache_create(struct mem_cgroup *memcg,
->  {
->  	struct memcg_kmem_cache_create_work *cw;
->  
-> -	cw = kmalloc(sizeof(*cw), GFP_NOWAIT);
-> +	cw = kmalloc(sizeof(*cw), GFP_NOWAIT | __GFP_NOWARN);
->  	if (!cw)
->  		return;
->  
-> -- 
-> 2.17.0.484.g0c8726318c-goog
-
--- 
-Michal Hocko
-SUSE Labs
+I just discuss with our toolchain colleagues. We have only gcc6.3 and
+gcc8.0 for nds32le-linux.
+I have the ld segmentation fault issue too when building kernel with
+'allmodconfig'. We are dealing with it.
