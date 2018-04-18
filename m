@@ -1,40 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753895AbeDRLms (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:42:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54140 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753566AbeDRLmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:42:47 -0400
-Date: Wed, 18 Apr 2018 13:42:45 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] vsprintf: Tweak pF/pf comment
-Message-ID: <20180418114244.uhxdxhr4lhoryqrl@pathway.suse.cz>
-References: <20180414030005.25831-1-sergey.senozhatsky@gmail.com>
-MIME-Version: 1.0
+        id S1753833AbeDRLnV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:43:21 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:14267 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753405AbeDRLnT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 07:43:19 -0400
+To: mhocko@kernel.org
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs, elf: drop MAP_FIXED usage from elf_map
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <20171213092550.2774-1-mhocko@kernel.org>
+        <20171213092550.2774-3-mhocko@kernel.org>
+        <0b5c541a-91ee-220b-3196-f64264f9f0bc@I-love.SAKURA.ne.jp>
+        <20180418113301.GY17484@dhcp22.suse.cz>
+In-Reply-To: <20180418113301.GY17484@dhcp22.suse.cz>
+Message-Id: <201804182043.JFH90161.LStOOMFFOJQHVF@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Wed, 18 Apr 2018 20:43:11 +0900
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180414030005.25831-1-sergey.senozhatsky@gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 2018-04-14 12:00:05, Sergey Senozhatsky wrote:
-> Reflect changes that have happened to pf/pF (deprecation)
-> specifiers in pointer() comment section.
+Michal Hocko wrote:
+> > Don't complain if IS_ERR_VALUE(),
 > 
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> this is simply wrong. We do want to warn on the failure because this is
+> when the actual clash happens. We should just warn on EEXIST.
 
-Good catch!
+>From 25442cdd31aa5cc8522923a0153a77dfd2ebc832 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 18 Apr 2018 20:38:15 +0900
+Subject: [PATCH] fs, elf: don't complain MAP_FIXED_NOREPLACE unless -EEXIST
+ error.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Commit 4ed28639519c7bad ("fs, elf: drop MAP_FIXED usage from elf_map") is
+printing spurious messages under memory pressure due to map_addr == -ENOMEM.
 
-I have pushed this into printk.git, branch for-4.18-vsprintf-cleanup.
+ 9794 (a.out): Uhuuh, elf segment at 00007f2e34738000(fffffffffffffff4) requested but the memory is mapped already
+ 14104 (a.out): Uhuuh, elf segment at 00007f34fd76c000(fffffffffffffff4) requested but the memory is mapped already
+ 16843 (a.out): Uhuuh, elf segment at 00007f930ecc7000(fffffffffffffff4) requested but the memory is mapped already
 
-Best Regards,
-Petr
+Complain only if -EEXIST, and use %px for printing the address.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrei Vagin <avagin@openvz.org>
+Cc: Khalid Aziz <khalid.aziz@oracle.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: Joel Stanley <joel@jms.id.au>
+Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+---
+ fs/binfmt_elf.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 41e0418..96615d9 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -377,10 +377,9 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
+ 	} else
+ 		map_addr = vm_mmap(filep, addr, size, prot, type, off);
+ 
+-	if ((type & MAP_FIXED_NOREPLACE) && BAD_ADDR(map_addr))
+-		pr_info("%d (%s): Uhuuh, elf segment at %p requested but the memory is mapped already\n",
+-				task_pid_nr(current), current->comm,
+-				(void *)addr);
++	if ((type & MAP_FIXED_NOREPLACE) && map_addr == -EEXIST)
++		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
++			task_pid_nr(current), current->comm, (void *)addr);
+ 
+ 	return(map_addr);
+ }
+-- 
+1.8.3.1
