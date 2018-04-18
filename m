@@ -1,163 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeDRScI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 14:32:08 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57576 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752645AbeDRScG (ORCPT
+        id S1752841AbeDRSdn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 14:33:43 -0400
+Received: from mail-pl0-f46.google.com ([209.85.160.46]:42657 "EHLO
+        mail-pl0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750872AbeDRSdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 14:32:06 -0400
-Subject: Re: [PATCH v2] docs: kernel-parameters.txt: Fix whitespace
-To: Thymo van Beers <thymovanbeers@gmail.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180416214939.GA11304@thinkpad>
- <31612fbd-6624-140a-ed92-04b8f0bd5f64@infradead.org>
- <20180418181635.GA24031@thinkpad>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f1c6c111-c9bb-e3d0-f76f-15705c96ac0f@infradead.org>
-Date: Wed, 18 Apr 2018 11:32:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 18 Apr 2018 14:33:41 -0400
+X-Google-Smtp-Source: AIpwx49qXownBU8vYJBrvirbUDXhVOv3mabWcMumHNLpiRQc/kUKYDFEf8NjNwMKD0X8EM6Wkk1PsRT2fQKOof2aRL4=
 MIME-Version: 1.0
-In-Reply-To: <20180418181635.GA24031@thinkpad>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <93351718-7314-70c4-61a7-2c7b3582b5a0@infradead.org>
+References: <CACT4Y+babw_2NJa+oym2VN7-Z4Bt_rZx2sMi68AD+1KzNpr=KQ@mail.gmail.com>
+ <CA+55aFzxDYGLUPY802rJN=wgJ1aEZHLRE+W8J82eFz2nzKOMBg@mail.gmail.com>
+ <CACT4Y+YDqJMb4mC6c--Ku=ZL9MpELmUKMXe4uQJ6H0av2FJC9w@mail.gmail.com>
+ <20180323201634.GA16350@gmail.com> <CA+55aFwZpMB=VUTCNUgc4dcCEy9_T4iE0R0pAfDets=zDFJunQ@mail.gmail.com>
+ <CACT4Y+YjD68zBdN7zCViB5ab9-R2JgBEf5OBiDauxMsyuEkLRw@mail.gmail.com>
+ <CA+55aFwJ=fiuV+QF+-b+H58tquCzek6CNpssZn40r0z4E0Q6kA@mail.gmail.com>
+ <CACT4Y+YUFbbQgE9C1awsVVBFOjLbTXANRQwPK+R58FLjhTb-Vg@mail.gmail.com> <93351718-7314-70c4-61a7-2c7b3582b5a0@infradead.org>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 18 Apr 2018 20:33:20 +0200
+Message-ID: <CACT4Y+be+HpPtgFhrJP8ANE4_0nQBQctqPSs8QGF09Y4_tRYOQ@mail.gmail.com>
+Subject: Re: syzbot dashboard
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/18/18 11:16, Thymo van Beers wrote:
-> On Mon, Apr 16, 2018 at 03:03:47PM -0700, Randy Dunlap wrote:
->> On 04/16/18 14:49, Thymo van Beers wrote:
->>> Some lines used spaces instead of tabs at line start.
->>> This can cause mangled lines in editors due to inconsistency.
+On Mon, Apr 16, 2018 at 5:55 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 04/16/2018 04:15 AM, Dmitry Vyukov wrote:
+>> On Sat, Apr 14, 2018 at 8:25 PM, Linus Torvalds
+>> <torvalds@linux-foundation.org> wrote:
+>>> Coming back to this now that the merge window is almost over ]
 >>>
->>> Replace spaces for tabs where appropriate.
+>>> On Mon, Mar 26, 2018 at 1:46 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>>>>
+>>>> I've switched emails to links instead of attachments, here are few
+>>>> recent examples:
+>>>> https://lkml.org/lkml/2018/3/25/31
+>>>> https://lkml.org/lkml/2018/3/25/256
+>>>> https://lkml.org/lkml/2018/3/25/257
 >>>
->>> Signed-off-by: Thymo van Beers <thymovanbeers@gmail.com>
->>> ---
->>> Changes in v2:
->>>   - Rebase against docs-next
->>>   - Fix indentation modifications
+>>> Looks good to me. I notice that only the last one got any replies, though.
 >>>
->>>  Documentation/admin-guide/kernel-parameters.txt | 136 ++++++++++++------------
->>>  1 file changed, 68 insertions(+), 68 deletions(-)
+>>> I wonder if some people auto-ignore the new reports because of having
+>>> been burned by the previous "huge illegible emails" issue.
 >>>
->>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->>> index 3487be79847c..f625f65c286f 100644
->>> --- a/Documentation/admin-guide/kernel-parameters.txt
->>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>> I do see syzbot fixes in rdma, though, just not for that
+>>> cma_listen_on_all issue. So maybe that bug is nastier.
 >>
->> Most of the patch is OK IMO, but not the intel_pstate part:
->> The 2-space extra indents work fine here, while the extra tab makes a lot of the
->> lines go beyond the 80-column mark.
+>> "possible deadlock in handle_rx" is now marked as fixed with
+>> "vhost_net: add missing lock nesting notation".
+>> "KASAN: use-after-free Read in pppol2tp_connect (3)" is marked as
+>> fixed with "l2tp: fix races in tunnel creation".
+>> "KASAN: use-after-free Read in __list_add_valid (5)" is still open.
 >>
->>> @@ -1650,39 +1650,39 @@
->>>  			0	disables intel_idle and fall back on acpi_idle.
->>>  			1 to 9	specify maximum depth of C-state.
->>>  
->>> -	intel_pstate=  [X86]
->>> -		       disable
->>> -		         Do not enable intel_pstate as the default
->>> -		         scaling driver for the supported processors
->>> -		       passive
->>> -			 Use intel_pstate as a scaling driver, but configure it
->>> -			 to work with generic cpufreq governors (instead of
->>> -			 enabling its internal governor).  This mode cannot be
->>> -			 used along with the hardware-managed P-states (HWP)
->>> -			 feature.
->>> -		       force
->>> -			 Enable intel_pstate on systems that prohibit it by default
->>> -			 in favor of acpi-cpufreq. Forcing the intel_pstate driver
->>> -			 instead of acpi-cpufreq may disable platform features, such
->>> -			 as thermal controls and power capping, that rely on ACPI
->>> -			 P-States information being indicated to OSPM and therefore
->>> -			 should be used with caution. This option does not work with
->>> -			 processors that aren't supported by the intel_pstate driver
->>> -			 or on platforms that use pcc-cpufreq instead of acpi-cpufreq.
->>> -		       no_hwp
->>> -		         Do not enable hardware P state control (HWP)
->>> -			 if available.
->>> -		hwp_only
->>> -			Only load intel_pstate on systems which support
->>> -			hardware P state control (HWP) if available.
->>> -		support_acpi_ppc
->>> -			Enforce ACPI _PPC performance limits. If the Fixed ACPI
->>> -			Description Table, specifies preferred power management
->>> -			profile as "Enterprise Server" or "Performance Server",
->>> -			then this feature is turned on by default.
->>> -		per_cpu_perf_limits
->>> -			Allow per-logical-CPU P-State performance control limits using
->>> -			cpufreq sysfs interface
->>> +	intel_pstate=	[X86]
->>> +			disable
->>> +				Do not enable intel_pstate as the default
->>> +				scaling driver for the supported processors
->>> +			passive
->>> +				Use intel_pstate as a scaling driver, but configure it
->>> +				to work with generic cpufreq governors (instead of
->>> +				enabling its internal governor).  This mode cannot be
->>> +				used along with the hardware-managed P-states (HWP)
->>> +				feature.
->>> +			force
->>> +				Enable intel_pstate on systems that prohibit it by default
->>> +				in favor of acpi-cpufreq. Forcing the intel_pstate driver
->>> +				instead of acpi-cpufreq may disable platform features, such
->>> +				as thermal controls and power capping, that rely on ACPI
->>> +				P-States information being indicated to OSPM and therefore
->>> +				should be used with caution. This option does not work with
->>> +				processors that aren't supported by the intel_pstate driver
->>> +				or on platforms that use pcc-cpufreq instead of acpi-cpufreq.
->>> +			no_hwp
->>> +				Do not enable hardware P state control (HWP)
->>> +				if available.
->>> +			hwp_only
->>> +				Only load intel_pstate on systems which support
->>> +				hardware P state control (HWP) if available.
->>> +			support_acpi_ppc
->>> +				Enforce ACPI _PPC performance limits. If the Fixed ACPI
->>> +				Description Table, specifies preferred power management
->>> +				profile as "Enterprise Server" or "Performance Server",
->>> +				then this feature is turned on by default.
->>> +			per_cpu_perf_limits
->>> +				Allow per-logical-CPU P-State performance control limits using
->>> +				cpufreq sysfs interface
->>>  
->>>  	intremap=	[X86-64, Intel-IOMMU]
->>>  			on	enable Interrupt Remapping (default)
->>> @@ -2027,7 +2027,7 @@
->>>  			* [no]ncqtrim: Turn off queued DSM TRIM.
->>>  
->>>  			* nohrst, nosrst, norst: suppress hard, soft
->>> -                          and both resets.
->>> +			and both resets.
+>> Though, there are still 182 open bugs on dashboard:
+>> https://syzkaller.appspot.com/
 >>
->> I would leave that line above indented like the one after "rstonce" below.
+>> 80+ have reproducers and happened last time recently enough. Few
+>> dozens without reproducers, but as history shows ~2/3 of them are
+>> fixable. Part of the remaining ones is probably fixed, but nobody told
+>> syzbot about the fixes. Part is probably still unfixed but happen
+>> episodically.
 >>
->>>  
->>>  			* rstonce: only attempt one reset during
->>>  			  hot-unplug link recovery
->>
->>
->> -- 
->> ~Randy
-> 
-> Okay, thanks for your feedback.
-> 
-> I reindented intel_pstate as you said and I can still see the whole
-> description for the 'advanced' option is going past the 80-column mark.
-> 
-> I'll leave it indented with two spaces for this patch.
-> If you wish I can make a separate patch that addresses 80-column overrun
-> for intel_pstate.
-> 
-> I'll indent the nohrst,... section like rstonce.
-> 
-> Does that sound good to you?
+>
+> https://syzkaller.appspot.com/bug?id=0627d4551fdc39bf1ef5d82cd9eef587047f7718
+> is fixed by 9ad553abe66f ("fs/reiserfs/journal.c: add missing resierfs_warning() arg"),
+>
+> which does contain the string:
+> Reported-by: <syzbot+6bd77b88c1977c03f584@syzkaller.appspotmail.com>
+>
+> Is one of those hex strings incorrect?
 
-Yes, it does.  Go for it!
+Hi Randy,
 
-thanks,
--- 
-~Randy
+They are correct and no action is needed. It's just that the commit
+did not reach any of the trees that syzbot polls, so it did not know
+about them yet. You can see that now syzbot has picked the commit.
