@@ -1,185 +1,62 @@
-Return-Path: <vdavydov.dev@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524417419; cv=none;
+Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
+X-Google-Smtp-Source: AIpwx49JhmEgARymMsEMVscCt1yHh4cBwU4KxHb4sMgUarPgVTnEbkqA09UGF2ns5KNZFcn0Vdjh
+ARC-Seal: i=1; a=rsa-sha256; t=1524060999; cv=none;
         d=google.com; s=arc-20160816;
-        b=GuAXeQmdUA1T2xyl4O7T7XyiCyYR0b4NWWr2di+ghB1Vw5g/quU3TukGC195hGggHK
-         PDCT9zelW/MpoWoTmrZDQiDuMhbLwm3nRB4OnUTA04KJzTAnxP4tljron4TwLoL4uGqO
-         ljdNvmeVq0D/uA8ah3Nn8mYrCBqk6yfpep5FcI809zeKzs9CZXLJlePxGFXRY7C94dll
-         s9bikIfgojjyLkm5he0BmkO4aoIlSRYwF6MB/D80f4eGPQthrBgtPUQBeVdsUKjh7WPv
-         NTrLpJeIMdADXK/VJ+vnp6QIFO6/gaMTF6ph7/FjTDluJUevzR91zx8qvWBzzdT3s/2r
-         C0dQ==
+        b=QwW3dbOCGu6eFdWuCeRO8LM2YdSsX+tbi3BWBytMQyax2XkN4Co4ZwoaQPL1RU7ajy
+         3jA4QI3WiUR922j6p9gVYnC1xaVSglUGCyk1QY23AETxSyYqHwXwMjgj7Vj7bwQYRaiH
+         mEvkZ2SPwfifMtyBiOzmXqeK1pRQpgvOWL0lZH1kQE2Sb/TmBOpVHZjUkaFoWiEUfGcO
+         DKiwWddhcT/E1T96m+HyCE8EJI5LZujOcMKK4ZTxfMyNO+1JVH5Uf6me2ojCHfMlEZ6l
+         85GwEAkTxNmXGAt2pokq8NGyBwj7kVh0wwSNTKbO48fRUwkOG/XWLkpFLHbd003scAeX
+         QQKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=gOkJNJoboUwDuK4tSeSyXPB0tEPGmMaeZyBU9yb1CeI=;
-        b=OyoSissRI7RcClZu/0pkXjjJ9iMPMBWL5XrU+rLwU5FeH+VN5XL0evfKfzTiI7XIul
-         0iMBIuiPC1bWppnC6mr9GRcgg88Krkv3papAqt225mjd9ERPZHzJikEQdHpS/ExCMNNJ
-         4GhPbXN/x2jnL9Vav8YF4DbZMvOfWLrTJsL7PNSOq6cTFEDc+dS/BXdFSjZ0Dj1X2+e4
-         kgH5/8w3tw58iYlukUGsRPkUES2G8aYmmIGYnJwpgIf3aWot+03PnVCXgA/sPDyzaL3W
-         NEyKFNXTUVYeErvZD/EmBK6+HjK/0KtEde5EYPJiv74AEPuJgi0b3xwritT/extL09/6
-         dCdA==
+        h=mime-version:date:message-id:in-reply-to:references:from:subject:cc
+         :to:arc-authentication-results;
+        bh=WTOEDBi9ShVxmoCC4jT56ZSrh4U4aDp4oZTNzZQRQvQ=;
+        b=PCUPw6F3gbE5n4v/nS8c6po+kUMX40ZC5EVdsUxM29/0PvTu1btpqnmd60NpGs9Iue
+         syG1HjLUpKY/w3J5nWMkLWg3meQDhvgX5PlJNR5BlgtpionTnrz0FoJ62cAbFRbDSZLb
+         0VIDuEmnRdCY9/+7+/Ah4Jktu1dE4HyUoFZU0pvIEGHF2nUOEbXReVeM7Mk4TQhX32wC
+         qwM8iKTavUffxalDRHM/N+FWyORPMjwTl1MTuYygFyXniOer+YnewYC5/TaEpVcOZF/5
+         RtD82Q0/wqMblvuTgQi7nOOpUXEabPWVipJE2nXopaXKT+TxNRjxqTEFxqHGAFC0kZHW
+         isng==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=F9LMKekE;
-       spf=pass (google.com: domain of vdavydov.dev@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=vdavydov.dev@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=F9LMKekE;
-       spf=pass (google.com: domain of vdavydov.dev@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=vdavydov.dev@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZqUl42XThqgMKD5HmVCOLUoDTYcbwrV7FP6TMCibjcm3ehqb7vxW6OW1mXFR3+rMUJgQprnQw==
-Date: Sun, 22 Apr 2018 20:16:55 +0300
-From: Vladimir Davydov <vdavydov.dev@gmail.com>
-To: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: akpm@linux-foundation.org, shakeelb@google.com, viro@zeniv.linux.org.uk,
-	hannes@cmpxchg.org, mhocko@kernel.org, tglx@linutronix.de,
-	pombredanne@nexb.com, stummala@codeaurora.org,
-	gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
-	mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
-	chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
-	hillf.zj@alibaba-inc.com, ying.huang@intel.com,
-	mgorman@techsingularity.net, jbacik@fb.com, linux@roeck-us.net,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	willy@infradead.org, lirongqing@baidu.com, aryabinin@virtuozzo.com
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
+To: ktkhai@virtuozzo.com
+Cc: akpm@linux-foundation.org, vdavydov.dev@gmail.com, shakeelb@google.com,
+        viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
+        tglx@linutronix.de, pombredanne@nexb.com, stummala@codeaurora.org,
+        gregkh@linuxfoundation.org, sfr@canb.auug.org.au, guro@fb.com,
+        mka@chromium.org, chris@chris-wilson.co.uk, longman@redhat.com,
+        minchan@kernel.org, hillf.zj@alibaba-inc.com, ying.huang@intel.com,
+        mgorman@techsingularity.net, jbacik@fb.com, linux@roeck-us.net,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+        lirongqing@baidu.com, aryabinin@virtuozzo.com
 Subject: Re: [PATCH v2 01/12] mm: Assign id to every memcg-aware shrinker
-Message-ID: <20180422171655.llxowifnxzpf5hee@esperanza>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 References: <152397794111.3456.1281420602140818725.stgit@localhost.localdomain>
- <152399118252.3456.17590357803686895373.stgit@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+	<152399118252.3456.17590357803686895373.stgit@localhost.localdomain>
 In-Reply-To: <152399118252.3456.17590357803686895373.stgit@localhost.localdomain>
+Message-Id: <201804182314.IIG86990.MFVJSFQLFOtHOO@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Wed, 18 Apr 2018 23:14:45 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598009267479229519?=
-X-GMAIL-MSGID: =?utf-8?q?1598467520034470017?=
+X-GMAIL-MSGID: =?utf-8?q?1598093787051671361?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 09:53:02PM +0300, Kirill Tkhai wrote:
+Kirill Tkhai wrote:
 > The patch introduces shrinker::id number, which is used to enumerate
 > memcg-aware shrinkers. The number start from 0, and the code tries
 > to maintain it as small as possible.
 > 
 > This will be used as to represent a memcg-aware shrinkers in memcg
 > shrinkers map.
-> 
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> ---
->  include/linux/shrinker.h |    2 ++
->  mm/vmscan.c              |   51 ++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 53 insertions(+)
-> 
-> diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-> index a3894918a436..86b651fa2846 100644
-> --- a/include/linux/shrinker.h
-> +++ b/include/linux/shrinker.h
-> @@ -66,6 +66,8 @@ struct shrinker {
->  
->  	/* These are for internal use */
->  	struct list_head list;
 
-> +	/* ID in shrinkers_id_idr */
-> +	int id;
-
-This should be under ifdef CONFIG_MEMCG && CONFIG_SLOB.
-
->  	/* objs pending delete, per node */
->  	atomic_long_t *nr_deferred;
->  };
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 8b920ce3ae02..4f02fe83537e 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -169,6 +169,43 @@ unsigned long vm_total_pages;
->  static LIST_HEAD(shrinker_list);
->  static DECLARE_RWSEM(shrinker_rwsem);
->  
-> +#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
-
-> +static DEFINE_IDR(shrinkers_id_idr);
-
-IMO shrinker_idr would be a better name.
-
-> +
-> +static int add_memcg_shrinker(struct shrinker *shrinker)
-> +{
-> +	int id, ret;
-> +
-> +	down_write(&shrinker_rwsem);
-> +	ret = id = idr_alloc(&shrinkers_id_idr, shrinker, 0, 0, GFP_KERNEL);
-> +	if (ret < 0)
-> +		goto unlock;
-> +	shrinker->id = id;
-> +	ret = 0;
-> +unlock:
-> +	up_write(&shrinker_rwsem);
-> +	return ret;
-> +}
-> +
-> +static void del_memcg_shrinker(struct shrinker *shrinker)
-> +{
-> +	int id = shrinker->id;
-> +
-> +	down_write(&shrinker_rwsem);
-> +	idr_remove(&shrinkers_id_idr, id);
-> +	up_write(&shrinker_rwsem);
-> +}
-> +#else /* CONFIG_MEMCG && !CONFIG_SLOB */
-> +static int add_memcg_shrinker(struct shrinker *shrinker)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void del_memcg_shrinker(struct shrinker *shrinker)
-> +{
-> +}
-> +#endif /* CONFIG_MEMCG && !CONFIG_SLOB */
-> +
->  #ifdef CONFIG_MEMCG
->  static bool global_reclaim(struct scan_control *sc)
->  {
-> @@ -306,6 +343,7 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
->  int register_shrinker(struct shrinker *shrinker)
->  {
->  	size_t size = sizeof(*shrinker->nr_deferred);
-> +	int ret;
->  
->  	if (shrinker->flags & SHRINKER_NUMA_AWARE)
->  		size *= nr_node_ids;
-> @@ -314,10 +352,21 @@ int register_shrinker(struct shrinker *shrinker)
->  	if (!shrinker->nr_deferred)
->  		return -ENOMEM;
->  
-> +	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
-> +		ret = add_memcg_shrinker(shrinker);
-> +		if (ret)
-> +			goto free_deferred;
-> +	}
-> +
-
-This doesn't apply anymore, not after commit 8e04944f0ea8a ("mm,vmscan:
-Allow preallocating memory for register_shrinker()"). Please rebase.
-
-I guess now you have to allocate an id in prealloc_shrinker and set the
-pointer (with idr_replace) in register_shrinker_prepared.
-
->  	down_write(&shrinker_rwsem);
->  	list_add_tail(&shrinker->list, &shrinker_list);
->  	up_write(&shrinker_rwsem);
->  	return 0;
-> +
-> +free_deferred:
-> +	kfree(shrinker->nr_deferred);
-> +	shrinker->nr_deferred = NULL;
-> +	return -ENOMEM;
->  }
->  EXPORT_SYMBOL(register_shrinker);
->  
-> @@ -328,6 +377,8 @@ void unregister_shrinker(struct shrinker *shrinker)
->  {
->  	if (!shrinker->nr_deferred)
->  		return;
-> +	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
-> +		del_memcg_shrinker(shrinker);
->  	down_write(&shrinker_rwsem);
->  	list_del(&shrinker->list);
->  	up_write(&shrinker_rwsem);
-> 
+I'm not reading this thread. But is there reason "id" needs to be managed
+using smallest numbers? Can't we use address of shrinker object as "id"
+(which will be sparse bitmap, and would be managed using linked list for now)?
