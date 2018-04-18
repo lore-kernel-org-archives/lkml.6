@@ -1,62 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753326AbeDRIkG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:40:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60770 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752597AbeDRIkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:40:03 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Linux IOMMU Mailing List <iommu@lists.linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jintack Lim <jintack@cs.columbia.edu>,
-        Alexander Witte <alexander.witte@baicanada.com>, peterx@redhat.com
-Subject: [PATCH v2 1/3] intel-iommu: add some traces for PSIs
-Date: Wed, 18 Apr 2018 16:39:51 +0800
-Message-Id: <20180418083953.21492-2-peterx@redhat.com>
-In-Reply-To: <20180418083953.21492-1-peterx@redhat.com>
-References: <20180418083953.21492-1-peterx@redhat.com>
+        id S1753540AbeDRIku (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:40:50 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:39685 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752699AbeDRIj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 04:39:59 -0400
+X-Google-Smtp-Source: AIpwx48ZH7Oougx2B5gvajeJTiAxxcSFibBa+SffjYLIqAsfJo0sZmqbFUQ4sbUeEiPlALVAnL/O/WZ+IXAjb3vCiWY=
+MIME-Version: 1.0
+In-Reply-To: <CAOQ4uxjKJHnM_ad9TnyQ8i0fUjEqCEG8ocPAs_L0oSraKhSEPA@mail.gmail.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-20-mszeredi@redhat.com>
+ <CAOQ4uxjKJHnM_ad9TnyQ8i0fUjEqCEG8ocPAs_L0oSraKhSEPA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 18 Apr 2018 11:39:57 +0300
+Message-ID: <CAOQ4uxgMfrA=-cgdoJ3QQe0oTh4-W+gyPBO+nx+rukaaJNd=kA@mail.gmail.com>
+Subject: Re: [RFC PATCH 19/35] ovl: readd reflink/copyfile/dedup support
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is helpful to debug and triage PSI notification missings.
+On Tue, Apr 17, 2018 at 11:31 PM, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+>> Since set of arguments are so similar, handle in a common helper.
+>>
+>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>> ---
+>>  fs/overlayfs/file.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 79 insertions(+)
+>>
+>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+>> index 9670e160967e..39b1b73334ad 100644
+>> --- a/fs/overlayfs/file.c
+>> +++ b/fs/overlayfs/file.c
+>> @@ -352,6 +352,81 @@ long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>>         return ret;
+>>  }
+>>
+>> +enum ovl_copyop {
+>> +       OVL_COPY,
+>> +       OVL_CLONE,
+>> +       OVL_DEDUPE,
+>> +};
+>> +
+>> +static ssize_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+>> +                           struct file *file_out, loff_t pos_out,
+>> +                           u64 len, unsigned int flags, enum ovl_copyop op)
+>> +{
+>> +       struct inode *inode_out = file_inode(file_out);
+>> +       struct fd real_in, real_out;
+>> +       const struct cred *old_cred;
+>> +       int ret;
+>> +
+>> +       ret = ovl_real_file(file_out, &real_out);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = ovl_real_file(file_in, &real_in);
+>> +       if (ret) {
+>> +               fdput(real_out);
+>> +               return ret;
+>> +       }
+>> +
+>> +       old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
+>> +       switch (op) {
+>> +       case OVL_COPY:
+>> +               ret = vfs_copy_file_range(real_in.file, pos_in,
+>> +                                         real_out.file, pos_out, len, flags);
+>
+> Problem:
+> vfs_copy_file_range(ovl_lower_file, ovl_upper_file) on non samefs
+> will get -EXDEV from  ovl_copy_file_range(), so will not fall back
+> to do_splice_direct().
+> We may be better off checking in_sb != out_sb and returning
+> -EOPNOTSUPP? not sure.
+>
+>
+>> +               break;
+>> +
+>> +       case OVL_CLONE:
+>> +               ret = vfs_clone_file_range(real_in.file, pos_in,
+>> +                                          real_out.file, pos_out, len);
+>> +               break;
+>> +
+>> +       case OVL_DEDUPE:
+>> +               ret = vfs_dedupe_file_range_one(real_in.file, pos_in, len,
+>> +                                               real_out.file, pos_out);
+>
+> Problem:
+> real_out can be a readonly fd (for is_admin), so we will be deduping
+> the lower file.
+> I guess this problem is mitigated in current code by may_write_real().
+>
+> How can we deal with that sort of "write leak" without patching
+>  mnt_want_write_file()?
+>
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- drivers/iommu/dmar.c        | 3 +++
- drivers/iommu/intel-iommu.c | 3 +++
- 2 files changed, 6 insertions(+)
+Possible solution:
+Add interface file_oprations->permission().
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index 9a7ffd13c7f0..62ae26c3f7b7 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1325,6 +1325,9 @@ void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64 addr,
- 	struct qi_desc desc;
- 	int ih = 0;
- 
-+	pr_debug("%s: iommu %d did %u addr 0x%llx order %u type %llx\n",
-+		 __func__, iommu->seq_id, did, addr, size_order, type);
-+
- 	if (cap_write_drain(iommu->cap))
- 		dw = 1;
- 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 582fd01cb7d1..a64da83e867c 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1396,6 +1396,9 @@ static void __iommu_flush_iotlb(struct intel_iommu *iommu, u16 did,
- 	u64 val = 0, val_iva = 0;
- 	unsigned long flag;
- 
-+	pr_debug("%s: iommu %d did %u addr 0x%llx order %u type %llx\n",
-+		 __func__, iommu->seq_id, did, addr, size_order, type);
-+
- 	switch (type) {
- 	case DMA_TLB_GLOBAL_FLUSH:
- 		/* global flush doesn't need set IVA_REG */
--- 
-2.14.3
+At least in rw_verify_area() and clone_verify_area() it is clear
+how this would be used. Instead if calling security_file_permission()
+call it via a helper file_permission() like with inode_permission.
+
+My understanding in the VFS permission checks model is too
+limited to say if this makes sense.
+
+Thanks,
+Amir.
