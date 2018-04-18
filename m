@@ -1,289 +1,119 @@
-Return-Path: <gregkh@linuxfoundation.org>
-X-Google-Smtp-Source: AIpwx48W++4QQ8JH0/whsJj+pJ8CNy1fQ67NVb6lzydNmvrgo5Gd9T1JRuOEsawogv9dR7/iGQR3
-ARC-Seal: i=1; a=rsa-sha256; t=1523981211; cv=none;
-        d=google.com; s=arc-20160816;
-        b=yVrCAMa6nZoEBzMz6qXuLqYWXnvOQVvAhDEY1dRMYOf/3/CfoS5m1807FNvy87Qhft
-         TslvwUGCSPa8+pJV6TDpgB7GaEN+6zqA6oR+xT2AThkF4XBvy0dYxsH/1O65HS/bcNrW
-         2gxbiwDgdU+c+M7qDTRQIHMskJepGDCgQYKICIlKVYTtmKcIDtScF5ApCy3udlYJTrW5
-         8dbctwPADrr+VzsfsyBnbluEVRcHMFZGPFHJ4WEv8+5pPrh4mtbkhj7dig8bmAOOy1nI
-         Pa8PPNwGDu1dN+uz4BF8DgvGtDIg+tbXK35s1sUzagDznITGVxVrfKjpbG5pcAcHf1gP
-         3n7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:user-agent:mime-version:message-id:date
-         :subject:cc:to:from:arc-authentication-results;
-        bh=vPBppJplWXEiGnfIpdWL7JM7c3PN0lBd4bsSdij1x3A=;
-        b=v0PUODF/hNTALuKtg7++W6Divp/VCDG+toubi9JUvqiKesuS0XTMM0Hg0tLBAr/tBr
-         DTkoO/U1WFCwG6xOMRhsEpDp90/7RRpDavZ20Am7DL1gsP+p0aqc2APkkQ5XJgBt2w2J
-         cwZMxF6O466apr8PGExek5lfUn7ZHtp7vKUsovTxIwHDuS3LaU8oNc4gIhHxirliJTTR
-         4U3vIcSUAlxWyiYUq5z6giYcCbJLncw/s8oyl5/FwytD3FGSQCbvZPmfpDTRCLD7/sH4
-         mevDTX0QdMVLrMYyF6KQRQtrlvAkEKqPiJeBpYW95ZOQm1U/BxP6pVBpxFm8UeqoGdaa
-         yENw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gregkh@linuxfoundation.org does not designate 46.44.180.42 as permitted sender) smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuahkh@osg.samsung.com,
-	patches@kernelci.org,
-	ben.hutchings@codethink.co.uk,
-	lkft-triage@lists.linaro.org,
-	stable@vger.kernel.org
-Subject: [PATCH 4.14 00/49] 4.14.35-stable review
-Date: Tue, 17 Apr 2018 17:58:39 +0200
-Message-Id: <20180417155715.032245882@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-732471-1524065936-2-6154679889404126513
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='net', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524065936; b=PALj0WtAc+zsbxfaO9ihIx5Lq6B/ycZpad0u8ql8lh1mwriOjY
+    74i5Tv8kP3FzE0ZNqZE6usi8i643IkYLUUuxNxI4zK4Gwk4wFfMi8aN+A7RWjmMr
+    yp5jdkOyav8xq+6iT+pDYizM5KSJwqY20HtoV4/tVbrKmxqYcN0lkuYTVtK7rwDh
+    vgU/6gj7tCi/hUroJ7S0ntVDLfvvY7UN5AxGwaosMWlhroaKmW43rg2FCWRSCGTs
+    ne6ysp+R52e+Wi2QQMKyTT9jkGzxH4c/kc8ClJnkGBoxvsNhlKpPdX4Tadua8Hi5
+    xAorkcN8G7pMw37GUpOONlZT8qNpo0dh3wUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1524065936; bh=ncm1NzWqVr7691GvtfcGDK4DD4kVoe
+    uzhAmHuI+MA9g=; b=mu1rD59NTuLhqNZy0yLh67SiFNABTpd65RgfKGnH8DUg5N
+    77t0x0L33Lf5rg6eO89xri8GjRs1cp1X8gVpQ6dEUZHuJGOo8JS/Q5SWtJzySmtE
+    FSU/Y73mCexnWJrj6ImuyO84JSpcdCg9SmvmNbsSanu6JqXCEpEwVe1h4/sxJe0J
+    r2vqSkhfhtz5/kQA2Zudvq+czibJWRX6zGk8HPlTj5xcGbXTbyiX5HW7y5AEapWi
+    puZ9HafkdzBROr0tYlmSrk+elYGNIcnFe0GdQRIzbJnvnNVhfrRrN20ALe2fmL4N
+    VruUtGDQ/b/pVJVx7CTSvFOz9IMBovVfcd5rSnAQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=roeck-us.net header.i=@roeck-us.net header.b=yUfDFaXG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=roeck-us.net header.i=@roeck-us.net header.b=yUfDFaXG x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=roeck-us.net header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLg/Ygyu3VHSxKKvKgl44fGEGOa+9VG0ePN0FGMCW04JAq3sXTgXHPJ6EFo5wNZfDKIo1rfBYsSMWNgSXoNohcllOzOikAiQtYO85AJyF8oHBfIEMlwD
+    4ooBSZo83lkIia2MNjo+0S6aREQ5eWcHjhI+hvwl0+sLqVh8J8pN06o5Lzc/0SFo99GT5WuVEOc98YRbEtAXdEiQE5UBR0XFCya4dIRIs7r0scO0FTg4QhFU
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=9+rZDBEiDlHhcck0kWbJtElFXBc=:19
+    a=kj9zAlcOel0A:10 a=dj8Mge5Oz2kA:10 a=Kd1tUaAdevIA:10 a=YWtRXzOXAAAA:8
+    a=wSFAT0bzRL9SllPayaAA:9 a=CjuIK1q_8ugA:10 a=eX-Bu5Fvq_kA:10
+    a=XosyFl2cby_8ldcV-F0Q:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753925AbeDRPiy (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 18 Apr 2018 11:38:54 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:52109 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753894AbeDRPix (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 18 Apr 2018 11:38:53 -0400
+Date: Wed, 18 Apr 2018 08:38:51 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuahkh@osg.samsung.com,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/49] 4.14.35-stable review
+Message-ID: <20180418153851.GB8888@roeck-us.net>
+References: <20180417155715.032245882@linuxfoundation.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.35-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.35-rc1
-X-KernelTest-Deadline: 2018-04-19T15:57+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417155715.032245882@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598010122739110875?=
-X-GMAIL-MSGID: =?utf-8?q?1598010122739110875?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.14.35 release.
-There are 49 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On Tue, Apr 17, 2018 at 05:58:39PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.35 release.
+> There are 49 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu Apr 19 15:56:59 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-Responses should be made by Thu Apr 19 15:56:59 UTC 2018.
-Anything received after that time might be too late.
+Build results:
+	total: 145 pass: 145 fail: 0
+Qemu test results:
+	total: 141 pass: 141 fail: 0
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.35-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
+Details are available at http://kerneltests.org/builders.
 
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.35-rc1
-
-J. Bruce Fields <bfields@redhat.com>
-    nfsd: fix incorrect umasks
-
-Mike Kravetz <mike.kravetz@oracle.com>
-    hugetlbfs: fix bug in pgoff overflow checking
-
-Simon Gaiser <simon@invisiblethingslab.com>
-    xen: xenbus_dev_frontend: Fix XS_TRANSACTION_END handling
-
-Amir Goldstein <amir73il@gmail.com>
-    ovl: fix lookup with middle layer opaque dir and absolute path redirects
-
-Ming Lei <ming.lei@redhat.com>
-    blk-mq: don't keep offline CPUs mapped to hctx 0
-
-Yury Norov <ynorov@caviumnetworks.com>
-    lib: fix stall in __bitmap_parselist()
-
-Yunlong Song <yunlong.song@huawei.com>
-    f2fs: fix heap mode to reset it back
-
-Eric Biggers <ebiggers@google.com>
-    sunrpc: remove incorrect HMAC request initialization
-
-Toke Høiland-Jørgensen <toke@toke.dk>
-    ath9k: Protect queue draining by rcu_read_lock()
-
-Marek Szyprowski <m.szyprowski@samsung.com>
-    hwmon: (ina2xx) Fix access to uninitialized mutex
-
-Yazen Ghannam <yazen.ghannam@amd.com>
-    x86/mce/AMD: Get address from already initialized block
-
-Yazen Ghannam <yazen.ghannam@amd.com>
-    x86/mce/AMD, EDAC/mce_amd: Enumerate Reserved SMCA bank type
-
-Yazen Ghannam <yazen.ghannam@amd.com>
-    x86/mce/AMD: Pass the bank number to smca_get_bank_type()
-
-Yazen Ghannam <yazen.ghannam@amd.com>
-    x86/MCE: Report only DRAM ECC as memory errors on AMD systems
-
-Sudhir Sreedharan <ssreedharan@mvista.com>
-    rtl8187: Fix NULL pointer dereference in priv->conf_mutex
-
-Hans de Goede <hdegoede@redhat.com>
-    Bluetooth: hci_bcm: Treat Interrupt ACPI resources as always being active-low
-
-Szymon Janc <szymon.janc@codecoup.pl>
-    Bluetooth: Fix connection if directed advertising and privacy is used
-
-Al Viro <viro@zeniv.linux.org.uk>
-    getname_kernel() needs to make sure that ->name != ->iname in long case
-
-Michael S. Tsirkin <mst@redhat.com>
-    get_user_pages_fast(): return -EFAULT on access_ok failure
-
-Vasily Gorbik <gor@linux.ibm.com>
-    s390/ipl: ensure loadparm valid flag is set
-
-Julian Wiedmann <jwi@linux.vnet.ibm.com>
-    s390/qdio: don't merge ERROR output buffers
-
-Julian Wiedmann <jwi@linux.vnet.ibm.com>
-    s390/qdio: don't retry EQBS after CCQ 96
-
-Dan Williams <dan.j.williams@intel.com>
-    nfit: fix region registration vs block-data-window ranges
-
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-    block/loop: fix deadlock after loop_set_status
-
-John Johansen <john.johansen@canonical.com>
-    apparmor: fix resource audit messages when auditing peer
-
-John Johansen <john.johansen@canonical.com>
-    apparmor: fix display of .ns_name for containers
-
-John Johansen <john.johansen@canonical.com>
-    apparmor: fix logging of the existence test for signals
-
-Bill Kuzeja <William.Kuzeja@stratus.com>
-    scsi: qla2xxx: Fix small memory leak in qla2x00_probe_one on probe failure
-
-Yazen Ghannam <yazen.ghannam@amd.com>
-    x86/MCE/AMD: Define a function to get SMCA bank type
-
-Arnd Bergmann <arnd@arndb.de>
-    radeon: hide pointless #warning when compile testing
-
-Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-    perf/core: Fix use-after-free in uprobe_perf_close()
-
-Adrian Hunter <adrian.hunter@intel.com>
-    perf intel-pt: Fix timestamp following overflow
-
-Adrian Hunter <adrian.hunter@intel.com>
-    perf intel-pt: Fix error recovery from missing TIP packet
-
-Adrian Hunter <adrian.hunter@intel.com>
-    perf intel-pt: Fix sync_switch
-
-Adrian Hunter <adrian.hunter@intel.com>
-    perf intel-pt: Fix overlap detection to identify consecutive buffers correctly
-
-Nicholas Piggin <npiggin@gmail.com>
-    KVM: PPC: Book3S HV: trace_tlbie must not be called in realmode
-
-Dexuan Cui <decui@microsoft.com>
-    PCI: hv: Serialize the present and eject work items
-
-Dexuan Cui <decui@microsoft.com>
-    Drivers: hv: vmbus: do not mark HV_PCIE as perf_device
-
-Helge Deller <deller@gmx.de>
-    parisc: Fix HPMC handler by increasing size to multiple of 16 bytes
-
-Helge Deller <deller@gmx.de>
-    parisc: Fix out of array access in match_pci_device()
-
-Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-    media: v4l: vsp1: Fix header display list status check in continuous mode
-
-Mauro Carvalho Chehab <mchehab@kernel.org>
-    media: v4l2-compat-ioctl32: don't oops on overlay
-
-Phil Elwell <phil@raspberrypi.org>
-    lan78xx: Correctly indicate invalid OTP
-
-Eric Auger <eric.auger@redhat.com>
-    vhost: Fix vhost_copy_to_user()
-
-Stefan Hajnoczi <stefanha@redhat.com>
-    vhost: fix vhost_vq_access_ok() log check
-
-Tejaswi Tanikella <tejaswit@codeaurora.org>
-    slip: Check if rstate is initialized before uncompressing
-
-Ka-Cheong Poon <ka-cheong.poon@oracle.com>
-    rds: MP-RDS may use an invalid c_path
-
-Bassem Boubaker <bassem.boubaker@actia.fr>
-    cdc_ether: flag the Cinterion AHS8 modem by gemalto as WWAN
-
-Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-    netfilter: ipset: Missing nfnl_lock()/nfnl_unlock() is added to ip_set_net_exit()
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  4 +-
- arch/parisc/kernel/drivers.c                       |  4 ++
- arch/parisc/kernel/hpmc.S                          |  6 +-
- arch/powerpc/kvm/book3s_hv_rm_mmu.c                |  4 --
- arch/s390/kernel/ipl.c                             |  1 +
- arch/x86/include/asm/mce.h                         |  3 +
- arch/x86/kernel/cpu/mcheck/mce.c                   |  4 +-
- arch/x86/kernel/cpu/mcheck/mce_amd.c               | 54 ++++++++++++++++--
- block/blk-mq-cpumap.c                              |  5 --
- drivers/acpi/nfit/core.c                           | 22 +++++---
- drivers/block/loop.c                               | 12 ++--
- drivers/bluetooth/hci_bcm.c                        | 20 +------
- drivers/edac/mce_amd.c                             | 11 ++--
- drivers/gpu/drm/radeon/radeon_object.c             |  3 +-
- drivers/hv/channel_mgmt.c                          |  2 +-
- drivers/hwmon/ina2xx.c                             |  3 +-
- drivers/media/platform/vsp1/vsp1_dl.c              |  3 +-
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c      |  4 +-
- drivers/net/slip/slhc.c                            |  5 ++
- drivers/net/usb/cdc_ether.c                        |  6 ++
- drivers/net/usb/lan78xx.c                          |  3 +-
- drivers/net/wireless/ath/ath9k/xmit.c              |  4 ++
- drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c |  2 +-
- drivers/pci/host/pci-hyperv.c                      | 34 ++++++------
- drivers/s390/cio/qdio_main.c                       | 42 +++++++-------
- drivers/scsi/qla2xxx/qla_os.c                      | 44 +++++++--------
- drivers/vhost/vhost.c                              | 10 ++--
- drivers/xen/xenbus/xenbus_dev_frontend.c           |  2 +-
- fs/f2fs/gc.c                                       |  5 +-
- fs/f2fs/segment.c                                  |  3 +-
- fs/hugetlbfs/inode.c                               | 10 +++-
- fs/namei.c                                         |  3 +-
- fs/nfsd/nfs4proc.c                                 | 12 +++-
- fs/nfsd/nfs4xdr.c                                  |  8 +--
- fs/nfsd/xdr4.h                                     |  2 +
- fs/overlayfs/namei.c                               |  9 +++
- include/net/bluetooth/hci_core.h                   |  2 +-
- include/net/slhc_vj.h                              |  1 +
- kernel/events/core.c                               |  6 ++
- lib/bitmap.c                                       |  2 +-
- lib/test_bitmap.c                                  |  4 ++
- mm/gup.c                                           |  5 +-
- net/bluetooth/hci_conn.c                           | 29 +++++++---
- net/bluetooth/hci_event.c                          | 15 +++--
- net/bluetooth/l2cap_core.c                         |  2 +-
- net/netfilter/ipset/ip_set_core.c                  |  2 +
- net/rds/send.c                                     | 15 +++--
- net/sunrpc/auth_gss/gss_krb5_crypto.c              |  3 -
- security/apparmor/apparmorfs.c                     |  4 +-
- security/apparmor/include/audit.h                  |  8 +--
- security/apparmor/include/sig_names.h              |  4 +-
- security/apparmor/ipc.c                            |  2 +-
- .../perf/util/intel-pt-decoder/intel-pt-decoder.c  | 64 +++++++++++-----------
- .../perf/util/intel-pt-decoder/intel-pt-decoder.h  |  2 +-
- tools/perf/util/intel-pt.c                         | 37 ++++++++++---
- 55 files changed, 361 insertions(+), 215 deletions(-)
+Guenter
