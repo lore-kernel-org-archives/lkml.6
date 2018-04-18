@@ -1,46 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753051AbeDRSTw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 14:19:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751870AbeDRSTv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 14:19:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EFAC2175C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 18 Apr 2018 14:19:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>, x86@kernel.org
-Subject: Re: [PATCH v3] tracing/x86: Update syscall trace events to handle
- new prefixed syscall func names
-Message-ID: <20180418141948.46a77ebc@gandalf.local.home>
-In-Reply-To: <20180418181729.GA4816@light.dominikbrodowski.net>
-References: <20180418114509.5a76847d@gandalf.local.home>
-        <20180418181729.GA4816@light.dominikbrodowski.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752463AbeDRSbW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 14:31:22 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:43915 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752166AbeDRSbU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 14:31:20 -0400
+X-Google-Smtp-Source: AIpwx4+4Tk/UHZJDFLTF8fYawNcU9kgj3vdLj/7KUWPVq5OecHZoovUz+RMPyxMqKE6GiHj2yL0JZg==
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: correct SATA addresses for Stingray
+Date: Wed, 18 Apr 2018 11:31:17 -0700
+Message-Id: <20180418183117.14237-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <1524040889-6876-1-git-send-email-srinath.mannam@broadcom.com>
+References: <1524040889-6876-1-git-send-email-srinath.mannam@broadcom.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 20:17:29 +0200
-Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+On Wed, 18 Apr 2018 14:11:29 +0530, Srinath Mannam <srinath.mannam@broadcom.com> wrote:
+> Correct all SATA ahci and phy controller register
+> addresses and interrupt lines to proper values.
+> 
+> Fixes: 344a2e514182 ("arm64: dts: Add SATA DT nodes for Stingray SoC")
+> 
+> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> Reviewed-by: Andrew Gospodarek <andrew.gospodarek@broadcom.com>
+> ---
 
-> Acked-by: Dominik Brodowski <linux@dominikbrodowski.net>
-
-Thanks!
-
-Ingo, Thomas, Peter,
-
-I can take this in my tree, as I have a couple of patches that need to
-go mainline as well.
-
-OK with you if I do?
-
--- Steve
+Applied to devicetree-arm64/fixes, thanks!
+--
+Florian
