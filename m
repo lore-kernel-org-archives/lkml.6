@@ -1,103 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752806AbeDRPRV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:17:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50486 "EHLO mail.kernel.org"
+        id S1752665AbeDRPTU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:19:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751204AbeDRPRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:17:20 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B84C62178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
-Date: Wed, 18 Apr 2018 12:17:16 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Wang Nan <wangnan0@huawei.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: [PATCH v2] tracing/x86: Update syscall trace events to handle
- new x86 syscall func names
-Message-ID: <20180418151716.GC10084@kernel.org>
-References: <20180417130702.01575029@gandalf.local.home>
- <20180417172236.GA17342@light.dominikbrodowski.net>
- <20180417180430.GF3625@kernel.org>
- <20180417181304.GA2895@kernel.org>
- <20180417174128.0f3457f0@gandalf.local.home>
- <20180418125322.GB2895@kernel.org>
- <20180418103606.4118b35f@gandalf.local.home>
- <20180418150212.GA10084@kernel.org>
+        id S1751204AbeDRPTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 11:19:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8B072178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 18 Apr 2018 11:19:16 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Song Liu <songliubraving@fb.com>, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
+        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH 1/2] tracing: fix bad use of igrab in trace_uprobe.c
+Message-ID: <20180418111916.2325bf9c@gandalf.local.home>
+In-Reply-To: <CAJfpegtKsMBjqfg6Ewz3o9197GyqS6wTauuuMExj3DDZU+CPFA@mail.gmail.com>
+References: <20180418062907.3210386-1-songliubraving@fb.com>
+        <CAELBmZCvrL4s+cx2cECMQLQUx0hMxVP-dv9UGBfh64AS6unaBA@mail.gmail.com>
+        <20180418102504.7673a7f3@gandalf.local.home>
+        <CAJfpegtKsMBjqfg6Ewz3o9197GyqS6wTauuuMExj3DDZU+CPFA@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180418150212.GA10084@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Apr 18, 2018 at 12:02:12PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Wed, Apr 18, 2018 at 10:36:06AM -0400, Steven Rostedt escreveu:
-> > On Wed, 18 Apr 2018 09:53:22 -0300
-> > Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > > Em Tue, Apr 17, 2018 at 05:41:28PM -0400, Steven Rostedt escreveu:
-> > > > On Tue, 17 Apr 2018 15:13:04 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:  
-> > > > > Yeah, failing:  
-> 
-> > > > > [root@jouet ~]# strace -e openat -e file perf test -F -v "mmap interface" |& grep syscalls
-> > > > > openat(AT_FDCWD, "/sys/kernel/debug/tracing/events/syscalls/sys_enter_getsid/format", O_RDONLY) = 3
-> > > > > openat(AT_FDCWD, "/sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid/format", O_RDONLY) = -1 ENOENT (No such file or directory)  
-> > >  
-> > > > It doesn't have to do with the number of parameters, not everything
-> > > > has "__x64" on it.  
-> 
-> > > > Try this patch:  
-> 
-> > > Trying...
->  
-> > You're keeping me in suspense!
-> 
-> I switched locations, had trouble reconnecting, those tests are ok now,
-> there is just one case left, related to the syscall routines renames,
-> but not related to the syscalls:sys_{enter,exit}_NAME tracepoints:
-> 40: BPF filter                                            :
-> 40.1: Basic BPF filtering                                 : FAILED!
-> 40.2: BPF pinning                                         : Skip
-> 40.3: BPF prologue generation                             : Skip
-> 40.4: BPF relocation checker                              : Skip
-> 
-> If we use -v for that test we see the problem:
-> 
-> To the point:
-> 
->   Probe point 'SyS_epoll_pwait' not found.
-> 
-> This is not there anymore, I'll change this test to first figure out
-> what is the syscall routine for the epoll_pwait syscall so that it works
-> with pre-syscall-routines-rename and after that.
+On Wed, 18 Apr 2018 16:40:19 +0200
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-This does the trick, by not using the main syscall routine, but one
-called from it and not renamed, should work with older kernels.
 
-This test should be improved to look if the desired routine is in place,
-if not just skip the test and tell about the unavailability of the
-wanted function, but that is for later.
+> > The trace_uprobe (the probe event) is created, it doesn't do anything
+> > until it is enabled. This function is called when it is enabled. The
+> > trace_uprobe (probe event) can not be deleted while it is enabled
+> > (EBUSY).
+> >
+> > Are you asking what happens if the file is deleted while it has probe?
+> > That I don't know about (haven't tried it out). But I would hope that
+> > it keeps a reference to the inode, isn't that what the igrab is for?
+> > And is now being replaced by a reference on the path, or is that the
+> > problem?  
+> 
+> No, that's not the problem.
+> 
+> What I don't see is how the uprobe object relates to the trace_uprobe object.
+> 
+> Because after the patch the uprobe object still only has a ref to the
+> inode, and that can lead to the same issue as with trace_uprobe.
+> OTOH if uprobe can't survive its creating trace_uprobe, then it
+> doesn't need to take a ref to the inode at all, since trace_uprobe
+> already holds it.   Taking an extra ref isn't incorrect, it's just
+> unnecessary and confusing.
+> 
+> So this needs to be cleared up in some way.
 
-- Arnaldo
+The uprobe created by the trace_uprobe creation must be deleted before
+the trace_uprobe can be deleted. Basically we have this:
 
-diff --git a/tools/perf/tests/bpf-script-example.c b/tools/perf/tests/bpf-script-example.c
-index e4123c1b0e88..1ca5106df5f1 100644
---- a/tools/perf/tests/bpf-script-example.c
-+++ b/tools/perf/tests/bpf-script-example.c
-@@ -31,7 +31,7 @@ struct bpf_map_def SEC("maps") flip_table = {
- 	.max_entries = 1,
- };
- 
--SEC("func=SyS_epoll_pwait")
-+SEC("func=do_epoll_wait")
- int bpf_func__SyS_epoll_pwait(void *ctx)
- {
- 	int ind =0;
+ # cd /sys/kernel/tracing
+ # echo "uprobe creation text" > uprobe_events
+
+The trace_uprobe is created (but not the uprobe itself). This is what
+calls create_trace_uprobe().
+
+ # echo 1 > events/uprobes/enable
+
+This enables all the trace uprobe events, which creates the uprobes.
+This is the action that calls probe_event_enable(), which creates
+uprobes.
+
+At this point, any write to uprobe_events that would destroy the trace
+uprobes would return with -EBUSY, and the trace uprobes will not be
+deleted.
+
+ # echo 0 > events/uprobes/enable
+
+This will call the probe_event_disable() which will call
+uprobe_unregister() which will destroy the uprobe.
+
+Now we can delete the trace uprobe.
+
+Does that answer your question? A uprobe created for trace uprobes can
+not survive the trace uprobe itself.
+
+-- Steve
