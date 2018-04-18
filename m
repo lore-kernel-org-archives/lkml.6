@@ -1,71 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752719AbeDRFyg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 01:54:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50182 "EHLO mail.kernel.org"
+        id S1752606AbeDRGEo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 02:04:44 -0400
+Received: from mga14.intel.com ([192.55.52.115]:51538 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750718AbeDRFyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 01:54:35 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7734421727
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Wed, 18 Apr 2018 14:54:32 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: jolsa@redhat.com, acme@redhat.com, kstewart@linuxfoundation.org,
-        tglx@linutronix.de, pombredanne@nexb.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        uneedsihyeon@gmail.com, kjlx@templeofstupid.com
-Subject: Re: [PATCH v2 0/3] perf/buildid-cache: Add --list and --purge-all
- options
-Message-Id: <20180418145432.c6b12acf050d9f2d8ff05dc6@kernel.org>
-In-Reply-To: <20180417041346.5617-1-ravi.bangoria@linux.vnet.ibm.com>
-References: <20180417041346.5617-1-ravi.bangoria@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1750861AbeDRGEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 02:04:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
+   d="scan'208";a="32807767"
+Subject: Re: [RFC PATCH spi] spi: pxa2xx: pxa2xx_spi_transfer_one() can be
+ static
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, linux-spi@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <201804180300.Pn9JAJQ2%fengguang.wu@intel.com>
+ <20180417195323.GA69680@ivb43>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Message-ID: <22cf611b-6a88-ec72-bb3c-51f8b62a8019@linux.intel.com>
+Date: Wed, 18 Apr 2018 09:04:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180417195323.GA69680@ivb43>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 09:43:43 +0530
-Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
-
-> First patch is a trivial error message fix. Second and third
-> adds new options --list and --purge-all to 'buildid-cache'
-> subcommand.
+On 04/17/18 22:53, kbuild test robot wrote:
 > 
-> v2 changes:
->  - [PATCH v2 2/3] Display optput of 'perf buildid-cache -l' same as
->    'perf buildid-list'.
->  - [PATCH v2 2/3] Other minor changes as suggested by Jiri.
+> Fixes: d5898e19c0d7 ("spi: pxa2xx: Use core message processing loop")
+> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+> ---
+>   spi-pxa2xx.c |    6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> v1 can be found at:
->   https://lkml.org/lkml/2018/4/9/295
+> diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+> index c852ea5..40f1346 100644
+> --- a/drivers/spi/spi-pxa2xx.c
+> +++ b/drivers/spi/spi-pxa2xx.c
+> @@ -911,9 +911,9 @@ static bool pxa2xx_spi_can_dma(struct spi_controller *master,
+>   	       xfer->len >= chip->dma_burst_size;
+>   }
+>   
+> -int pxa2xx_spi_transfer_one(struct spi_controller *master,
+> -			    struct spi_device *spi,
+> -			    struct spi_transfer *transfer)
+> +static int pxa2xx_spi_transfer_one(struct spi_controller *master,
+> +				   struct spi_device *spi,
+> +				   struct spi_transfer *transfer)
 
-All patches in this series looks good to me.
+Thanks Fengguang. I don't understand how I managed to drop "static" 
+while doing manual s/pump_transfers/pxa2xx_spi_transfer_one/ :-)
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thanks,
-
-> 
-> Ravi Bangoria (3):
->   tools/parse-options: Add '\n' at the end of error messages
->   perf/buildid-cache: Support --list option
->   perf/buildid-cache: Support --purge-all option
-> 
->  tools/lib/subcmd/parse-options.c                |  6 +-
->  tools/perf/Documentation/perf-buildid-cache.txt |  7 ++-
->  tools/perf/builtin-buildid-cache.c              | 77 ++++++++++++++++++++++++-
->  3 files changed, 83 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 2.14.3
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
