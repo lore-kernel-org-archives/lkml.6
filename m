@@ -1,113 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753186AbeDRKze (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 06:55:34 -0400
-Received: from smtp.eu.citrix.com ([185.25.65.24]:28934 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751879AbeDRKzd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 06:55:33 -0400
-X-IronPort-AV: E=Sophos;i="5.48,464,1517875200";
-   d="scan'208";a="71739631"
-Date: Wed, 18 Apr 2018 11:55:26 +0100
-From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To: Oleksandr Andrushchenko <andr2000@gmail.com>
-CC: Paul Durrant <Paul.Durrant@citrix.com>,
-        "jgross@suse.com" <jgross@suse.com>,
-        Artem Mygaiev <Artem_Mygaiev@epam.com>,
-        Dongwon Kim <dongwon.kim@intel.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "daniel.vetter@intel.com" <daniel.vetter@intel.com>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        Matt Roper <matthew.d.roper@intel.com>
-Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
- DRM driver
-Message-ID: <20180418105526.a4qtlhofrn3gubsl@MacBook-Pro-de-Roger.local>
-References: <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
- <20180416192905.GA18096@downor-Z87X-UD5H>
- <20180417075928.GT31310@phenom.ffwll.local>
- <20180417205744.GA15930@downor-Z87X-UD5H>
- <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
- <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
- <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
- <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
- <7d6710a76b9a42299139d7914358ed52@AMSPEX02CL03.citrite.net>
- <46489b33-e6fc-b874-6cd4-dbb94c002ef8@gmail.com>
+        id S1752774AbeDRK6M (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 06:58:12 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48896 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751878AbeDRK6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 06:58:11 -0400
+From: Xu Yandong <xuyandong2@huawei.com>
+To: <alex.williamson@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhang.zhanghailiang@huawei.com>, <wangxinxin.wang@huawei.com>,
+        Xu Yandong <xuyandong2@huawei.com>
+Subject: [PATCH] vfio iommu type1: no need to check task->mm if task has been destroyed
+Date: Wed, 18 Apr 2018 18:55:45 +0800
+Message-ID: <20180418105545.13488-1-xuyandong2@huawei.com>
+X-Mailer: git-send-email 2.8.4.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <46489b33-e6fc-b874-6cd4-dbb94c002ef8@gmail.com>
-User-Agent: NeoMutt/20180323
-X-ClientProxiedBy: AMSPEX02CAS02.citrite.net (10.69.22.113) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+Content-Type: text/plain
+X-Originating-IP: [10.177.33.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 01:39:35PM +0300, Oleksandr Andrushchenko wrote:
-> On 04/18/2018 01:18 PM, Paul Durrant wrote:
-> > > -----Original Message-----
-> > > From: Xen-devel [mailto:xen-devel-bounces@lists.xenproject.org] On Behalf
-> > > Of Roger Pau Monné
-> > > Sent: 18 April 2018 11:11
-> > > To: Oleksandr Andrushchenko <andr2000@gmail.com>
-> > > Cc: jgross@suse.com; Artem Mygaiev <Artem_Mygaiev@epam.com>;
-> > > Dongwon Kim <dongwon.kim@intel.com>; airlied@linux.ie;
-> > > Oleksandr_Andrushchenko@epam.com; linux-kernel@vger.kernel.org; dri-
-> > > devel@lists.freedesktop.org; Potrola, MateuszX
-> > > <mateuszx.potrola@intel.com>; xen-devel@lists.xenproject.org;
-> > > daniel.vetter@intel.com; boris.ostrovsky@oracle.com; Matt Roper
-> > > <matthew.d.roper@intel.com>
-> > > Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy
-> > > helper DRM driver
-> > > 
-> > > On Wed, Apr 18, 2018 at 11:01:12AM +0300, Oleksandr Andrushchenko
-> > > wrote:
-> > > > On 04/18/2018 10:35 AM, Roger Pau Monné wrote:
-> > > After speaking with Oleksandr on IRC, I think the main usage of the
-> > > gntdev extension is to:
-> > > 
-> > > 1. Create a dma-buf from a set of grant references.
-> > > 2. Share dma-buf and get a list of grant references.
-> > > 
-> > > I think this set of operations could be broken into:
-> > > 
-> > > 1.1 Map grant references into user-space using the gntdev.
-> > > 1.2 Create a dma-buf out of a set of user-space virtual addresses.
-> > > 
-> > > 2.1 Map a dma-buf into user-space.
-> > > 2.2 Get grefs out of the user-space addresses where the dma-buf is
-> > >      mapped.
-> > > 
-> > > So it seems like what's actually missing is a way to:
-> > > 
-> > >   - Create a dma-buf from a list of user-space virtual addresses.
-> > >   - Allow to map a dma-buf into user-space, so it can then be used with
-> > >     the gntdev.
-> > > 
-> > > I think this is generic enough that it could be implemented by a
-> > > device not tied to Xen. AFAICT the hyper_dma guys also wanted
-> > > something similar to this.
-> Ok, so just to summarize, xen-zcopy/hyper-dmabuf as they are now,
-> are no go from your POV?
+The task structure in vfio_dma struct used to identify the same
+task who map it or other task who shares same adress space is
+allowed to unmap. But if the task who map it has exited, mm of
+the task has been set to null, we should unmap the vfio dma directly.
 
-My opinion is that there seems to be a more generic way to implement
-this, and thus I would prefer that one.
+Signed-off-by: Xu Yandong <xuyandong2@huawei.com>
+---
+Hi all,
+When I unplug a vcpu from a VM lanched with a VFIO hostdev device,
+I found that the *vfio_dma* mapped by this vcpu task could not be unmaped
+in the future, so I send this patch to unmap vfio_dma directly if the
+task who mapped it has exited. 
 
-> Instead, we have to make all that fancy stuff
-> with VAs <-> device-X and have that device-X driver live out of drivers/xen
-> as it is not a Xen specific driver?
+Howerver this patch may introduce a new security risk because any task can 
+unmap the *vfio_dma* if the mapper task has exited.  
 
-That would be my preference if feasible, simply because it can be
-reused by other use-cases that need to create dma-bufs in user-space.
+---
+ drivers/vfio/vfio_iommu_type1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In any case I just knew about dma-bufs this morning, there might be
-things that I'm missing.
-
-Roger.
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 5c212bf..601a353 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -947,7 +947,7 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
+ 		 * Task with same address space who mapped this iova range is
+ 		 * allowed to unmap the iova range.
+ 		 */
+-		if (dma->task->mm != current->mm)
++		if (dma->task->mm && (dma->task->mm != current->mm))
+ 			break;
+ 
+ 		if (!RB_EMPTY_ROOT(&dma->pfn_list)) {
+-- 
+1.8.3.1
