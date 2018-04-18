@@ -1,75 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752876AbeDRHiT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:38:19 -0400
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:42340 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752085AbeDRHiR (ORCPT
+        id S1752760AbeDRHlV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:41:21 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:47718 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751879AbeDRHlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:38:17 -0400
-X-Google-Smtp-Source: AIpwx49X3Q5+X0F6hmrCaFyYHi5s/D6RlXG/GUry+/vZt7Evy4gqKSony7qv+9HimEB5tmAULTtYNg==
-From: Sven Eckelmann <sven.eckelmann@openmesh.com>
-To: Sricharan R <sricharan@codeaurora.org>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-Subject: Re: [v5,05/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
-Date: Wed, 18 Apr 2018 09:38:12 +0200
-Message-ID: <2715737.hC3rduhfyA@bentobox>
-User-Agent: KMail/5.2.3 (Linux/4.14.0-0.bpo.3-amd64; KDE/5.28.0; x86_64; ; )
-In-Reply-To: <734eb6eb-9af9-d599-81f1-ec66d9cd839c@codeaurora.org>
-References: <1521800336-19266-6-git-send-email-sricharan@codeaurora.org> <2284833.pBtR1QS54F@bentobox> <734eb6eb-9af9-d599-81f1-ec66d9cd839c@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart12205840.CKSMYhIfR3"; micalg="pgp-sha512"; protocol="application/pgp-signature"
+        Wed, 18 Apr 2018 03:41:20 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH v7 0/4] Bluetooth: hci_qca: Add serdev support
+From: Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20180329191524.30225-1-thierry.escande@linaro.org>
+Date: Wed, 18 Apr 2018 09:41:17 +0200
+Cc: Rob Herring <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <A9CF38EA-6562-4791-9633-DE1BB45C74A3@holtmann.org>
+References: <20180329191524.30225-1-thierry.escande@linaro.org>
+To: Thierry Escande <thierry.escande@linaro.org>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart12205840.CKSMYhIfR3
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Hi Thierry,
 
-Hi,
+> This patchset enables the Qualcomm BT controller QCA6174 node in the
+> device tree of the db820c board. This allows the bluetooth chipset to
+> be probed and registered against the hci layer by using the serdev
+> framework.
+> 
+> This patchset also contains the documentation for the compatible
+> string "qcom,qca6174-bt" related to this chipset.
+> 
+> v7:
+> - Add a new patch enabling regulators and gpios for the bt/wlan
+>  combo chip
+> 
+> v6:
+> - Move pinctrl properties into subnodes
+> - fix binding documentation
+> 
+> v5:
+> - Rename 'bt-disable-n' gpio as 'enable'
+> 
+> v4:
+> - Fix dt binding documentation
+> - Address some other issues in patch #3
+> 
+> v3:
+> - Address comments for patch #3 (details in patch)
+> 
+> v2:
+> - Fix author email
+> 
+> 
+> Srinivas Kandagatla (1):
+>  arm64: dts: apq8096-db820c: Enable wlan and bt en pins
+> 
+> Thierry Escande (3):
+>  arm64: dts: apq8096-db820c: enable bluetooth node
+>  dt-bindings: net: bluetooth: Add qualcomm-bluetooth
+>  Bluetooth: hci_qca: Add serdev support
+> 
+> .../devicetree/bindings/net/qualcomm-bluetooth.txt |  30 ++++++
+> arch/arm64/boot/dts/qcom/apq8096-db820c-pins.dtsi  |  26 +++++
+> .../boot/dts/qcom/apq8096-db820c-pmic-pins.dtsi    |  32 ++++++
+> arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi       |  62 ++++++++++++
+> arch/arm64/boot/dts/qcom/msm8996.dtsi              |  10 ++
+> drivers/bluetooth/Kconfig                          |   1 +
+> drivers/bluetooth/hci_qca.c                        | 109 ++++++++++++++++++++-
+> 7 files changed, 268 insertions(+), 2 deletions(-)
+> create mode 100644 Documentation/devicetree/bindings/net/qualcomm-bluetooth.txt
 
-On Mittwoch, 18. April 2018 12:45:20 CEST Sricharan R wrote:
->  Right, will add the above change to soc.dtsi in V6. Does that sound ok for 
-> you ?
+all 4 patches have been applied to bluetooth-next tree.
 
-I have submitted a patch for this now [1] because I need this for OpenWrt 
-(sooner rather than later). And I am not sure whether it is good to have this 
-in your feature series because it is a bugfix which might even qualify for 
-stable@vger.kernel.org.
+Regards
 
-I hope this patch [1] is ok for you.
-
-Kind regards,
-	Sven
-
-[1] https://patchwork.kernel.org/patch/10347459/
---nextPart12205840.CKSMYhIfR3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlrW9eQACgkQXYcKB8Em
-e0bQ1hAAlJVAO98+uVP4boEF80XV3bWUszisCClqdPZ/NqwHyurG/Ma+jzXKT6N6
-gBANfCrSKDgbsyckfjOsSgVMnuXFjdjKLLXdMEcng/DnegDz6ljxomiwB3Gb5AxL
-GqZNS9w6XPSm1il0UC0Xh5rD/uUgAO/VwZfZOYwvcVpiX1UpsCz1cHRzrF1gpX9O
-nPuPWE+rskHp1NDzwOhmvjgwk6gTjorcrJ2CAlUAXbdcTno+mu/noF1wxzM0T/Ew
-ppGmJEeAn8JQOxdO/ywdUM5RRYSWxalGGPvgioJvsRm+6vbMX3GVAcrU5S433DZJ
-n26BtzfCcCe9u/GOtAIdTL3DqTzIitApdiZqprUZ/zv7H22zVHzG0Ij0te8SgFK2
-5SqvBS66KWO2YvozoVyeB3WSdHDE3xp7xdEV3keZLVjI/iuNCu+Y5V/r6/NlA1vE
-Zpo6NBks+BDqfW3HyJYaCXgzKnlZKIHpF0bO/RjrLGQNtjvp0mh/4pNQJmUhhgld
-d1oKlQkUsoe27r4tvhcD+phMMjcZDDaUYBV5GxSNd0LO/UDztcRAuSCL1WwdQKYQ
-aSmu/bN+zvENOS49M04oPX4kC//Q+T35kEHvb5vFSZUgdgLzgawbGwMIUH+J1JnI
-BnEICQGA4UzMulCCcmjCJZ41q484wjCviuU/o9Bxa5JzPdSOaoU=
-=4IUN
------END PGP SIGNATURE-----
-
---nextPart12205840.CKSMYhIfR3--
+Marcel
