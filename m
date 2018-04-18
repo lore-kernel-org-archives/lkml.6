@@ -1,64 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753201AbeDRXJN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 19:09:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46838 "EHLO mx2.suse.de"
+        id S1753269AbeDRX12 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 19:27:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753146AbeDRXJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 19:09:12 -0400
-From: NeilBrown <neilb@suse.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 19 Apr 2018 09:09:05 +1000
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] rhashtable: remove outdated comments about grow_decision etc
-In-Reply-To: <20180418142940.qd34y2ykjvmyjjh5@gondor.apana.org.au>
-References: <152403346237.16895.8767189357062722046.stgit2@noble> <152403402187.16895.84802790561768231.stgit2@noble> <20180418142940.qd34y2ykjvmyjjh5@gondor.apana.org.au>
-Message-ID: <878t9kqfhq.fsf@notabene.neil.brown.name>
+        id S1752849AbeDRX11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 19:27:27 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7457121781
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8BIT
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-clk@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1524052351-14103-1-git-send-email-yamada.masahiro@socionext.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Nicholas Piggin <npiggin@gmail.com>, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
+References: <1524052351-14103-1-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <152409404578.51482.16644171573677016161@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: sunxi-ng: replace lib-y with obj-y
+Date: Wed, 18 Apr 2018 16:27:25 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Quoting Masahiro Yamada (2018-04-18 04:52:31)
+> We had commit 06e226c7fb23 ("clk: sunxi-ng: Move all clock types to a
+> library") and commit 799c43415442 ("kbuild: thin archives make default
+> for all archs") in the same development cycle, from different trees.
+> 
+> With migration to the thin archive, the entire drivers/clk/sunxi-ng/lib.a
+> is linked to the vmlinux.  This does not break build, but we do not get
+> any size saving.
+> 
+> However, we do not need to go back to the individual Kconfig options.
+> The default configuration pulls in all (or most) of the CCU parts anyway.
+> Also, once we enable CONFIG_LD_DEAD_CODE_DATA_ELIMINATION, we can simply
+> list all files with obj-y, and the linker will drop all unused functions
+> by itself.
+> 
+> After the long discussion [1], people there agreed to fix this, but
+> nobody sent a patch after all.  I am doing it now.
+> 
+> I lifted up CONFIG_SUNXI_CCU to drivers/clk/Makefile because everything
+> in drivers/clk/sunxi-ng/ depends on SUNXI_CCU.
+> 
+> [1] https://patchwork.kernel.org/patch/9796521/
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-On Wed, Apr 18 2018, Herbert Xu wrote:
+Thanks for remembering to take care of this. I forgot about it all.
 
-> On Wed, Apr 18, 2018 at 04:47:01PM +1000, NeilBrown wrote:
->> grow_decision and shink_decision no longer exist, so remove
->> the remaining references to them.
->>=20
->> Signed-off-by: NeilBrown <neilb@suse.com>
->
-> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-Thanks.  Is that Ack sufficient for this patch to go upstream, or is
-there something else that I need to do?
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrX0BEACgkQOeye3VZi
-gbng0Q//XDvEOmoazxs0/J7XxadbkZzs4zmmKjpk92IlAsLQsynlNeJTO8gbLH7Z
-MzSksfGDU52RcObZxYDgbQ4VtRW3qM7Y7psfUNIeWdtrZtXL3BkoJ6JkaCPCWf+O
-6+0oJ3wbbFYU0e3QB9whvjbgXcmskdR8QsQ6Gzri1Bg4NZxpzReAczYq4M2yQ2yX
-Z+rOb6y5ornTutSaw33xrxOs7fXulxieoQZT/uWa2shP5eM/p+InP+xZU65GzCbY
-i3T6jwGgGXP+t5Veoum75j50ijQoUl8WlQMJb1C4psUtxaZiesr7s3EQVwNpstCw
-jdBsfwl9OPLUg4DTPmREr5GTHwPk6kMPpsQNS63xjW/PZq7IntN8sEtM+8m0/3dv
-YQZgYwd4sqfJswIupPc0HOFQCUTrniO7VX9TLrkygUzpKzmMSVyuYs2m2iYHzoK8
-MjmjbyI+SdvuGECo38HbMjBPmLFRFDWEzl0OgQnH1Lu23zQICkviGwBBRbRekq1i
-zIbGXsgDqFqpbh+C1gj+aAtCWVFQoRxzHjdfC7W1sORCgZ3cL3CX0z12dOUpadHR
-VVmWgPyLNT7PszwG+DY50ng4eddgKh1HlFM2nC/rgg5bzXPt+yLjVY4Ml7jueRvM
-F+flXSSoD32WOgup7EHeoF/epfBluXZqI009gXOsXvbf3/9rOYw=
-=F9Y+
------END PGP SIGNATURE-----
---=-=-=--
+Or I can pick this up directly. Let me know.
