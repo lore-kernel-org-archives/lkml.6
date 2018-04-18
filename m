@@ -1,52 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753788AbeDRO2T (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:28:19 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:24141 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752659AbeDRO2S (ORCPT
+        id S1753821AbeDRO3E (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:29:04 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:44100 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752899AbeDRO3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:28:18 -0400
-To: mhocko@kernel.org
-Cc: rientjes@google.com, akpm@linux-foundation.org, aarcange@redhat.com,
-        guro@fb.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <20180418075051.GO17484@dhcp22.suse.cz>
-        <201804182049.EDJ21857.OHJOMOLFQVFFtS@I-love.SAKURA.ne.jp>
-        <20180418115830.GA17484@dhcp22.suse.cz>
-        <201804182225.EII57887.OLMHOFVtQSFJOF@I-love.SAKURA.ne.jp>
-        <20180418134401.GF17484@dhcp22.suse.cz>
-In-Reply-To: <20180418134401.GF17484@dhcp22.suse.cz>
-Message-Id: <201804182328.HIC57360.QHMFJtOLVFOSFO@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Wed, 18 Apr 2018 23:28:01 +0900
-Mime-Version: 1.0
+        Wed, 18 Apr 2018 10:29:02 -0400
+Date: Wed, 18 Apr 2018 22:28:54 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: NeilBrown <neilb@suse.com>
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] rhashtable: remove incorrect comment on r{hl,
+ hash}table_walk_enter()
+Message-ID: <20180418142854.wacgjdycxvfjh77s@gondor.apana.org.au>
+References: <152403346237.16895.8767189357062722046.stgit2@noble>
+ <152403402192.16895.9740762152906281009.stgit2@noble>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152403402192.16895.9740762152906281009.stgit2@noble>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko wrote:
-> > > > Then, I'm tempted to call __oom_reap_task_mm() before holding mmap_sem for write.
-> > > > It would be OK to call __oom_reap_task_mm() at the beginning of __mmput()...
-> > > 
-> > > I am not sure I understand.
-> > 
-> > To reduce possibility of __oom_reap_task_mm() giving up reclaim and
-> > setting MMF_OOM_SKIP.
+On Wed, Apr 18, 2018 at 04:47:01PM +1000, NeilBrown wrote:
+> Neither rhashtable_walk_enter() or rhltable_walk_enter() sleep, so
+> remove the comments which suggest that they do.
 > 
-> Still do not understand. Do you want to call __oom_reap_task_mm from
-> __mmput?
+> Signed-off-by: NeilBrown <neilb@suse.com>
+> ---
+>  include/linux/rhashtable.h |    3 ---
+>  lib/rhashtable.c           |    3 ---
+>  2 files changed, 6 deletions(-)
+> 
+> diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
+> index 87d443a5b11d..b01d88e196c2 100644
+> --- a/include/linux/rhashtable.h
+> +++ b/include/linux/rhashtable.h
+> @@ -1268,9 +1268,6 @@ static inline int rhashtable_walk_init(struct rhashtable *ht,
+>   * For a completely stable walk you should construct your own data
+>   * structure outside the hash table.
+>   *
+> - * This function may sleep so you must not call it from interrupt
+> - * context or with spin locks held.
 
-Yes.
+It does a naked spin lock so even though we removed the memory
+allocation you still mustn't call it from interrupt context.
 
->          If yes why would you do so when exit_mmap does a stronger
-> version of it?
+Why do you need to do that anyway?
 
-Because memory which can be reclaimed by the OOM reaper is guaranteed
-to be reclaimed before setting MMF_OOM_SKIP when the OOM reaper and
-exit_mmap() contended, because the OOM reaper (weak reclaim) sets
-MMF_OOM_SKIP after one second for safety in case of exit_mmap()
-(strong reclaim) failing to make forward progress.
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
