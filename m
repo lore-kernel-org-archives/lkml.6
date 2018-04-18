@@ -1,45 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeDRQZl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 12:25:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750981AbeDRQZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 12:25:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A564A2077A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 18 Apr 2018 12:25:36 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Song Liu <songliubraving@fb.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-        LKML <linux-kernel@vger.kernel.org>, Kernel Team <Kernel-team@fb.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Howard McLauchlan" <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
-        "Srikar Dronamraju" <srikar@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/2] tracing: fix bad use of igrab in trace_uprobe.c
-Message-ID: <20180418122536.32e62b5e@gandalf.local.home>
-In-Reply-To: <6E88C284-7EEB-43EF-8C54-3DCB5F13124B@fb.com>
-References: <20180418062907.3210386-1-songliubraving@fb.com>
-        <CAELBmZCvrL4s+cx2cECMQLQUx0hMxVP-dv9UGBfh64AS6unaBA@mail.gmail.com>
-        <6E88C284-7EEB-43EF-8C54-3DCB5F13124B@fb.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752760AbeDRQga (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 12:36:30 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34169 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752159AbeDRQg2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 12:36:28 -0400
+X-Google-Smtp-Source: AIpwx48ut2GrJTGrCa+gA1uNR9OKasnZvtE6PN79nUtkhrnSF+hVMA717JanVbaPWXicq8LQwaCDRg==
+From: srinivas.kandagatla@linaro.org
+To: andy.gross@linaro.org, linux-arm-msm@vger.kernel.org
+Cc: david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] arm64: msm8916: fix gic_irq_domain_translate warnings
+Date: Wed, 18 Apr 2018 17:34:15 +0100
+Message-Id: <20180418163415.21646-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 16:08:50 +0000
-Song Liu <songliubraving@fb.com> wrote:
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-> > This is not against -linus tree.  
-> 
-> These patches are against tip/perf/core. I can also send version against 
-> -linus tree. 
+Remove the usage of IRQ_TYPE_NONE to fix loud warnings from
+patch (83a86fbb5b56b "irqchip/gic: Loudly complain about
+the use of IRQ_TYPE_NONE").
 
-I can take this patch in my tree (which is currently equal to
-4.17-rc1). The other patch should go through tip.
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
--- Steve
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index cfbd72186762..5d66a575c7e1 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -180,7 +180,7 @@
+ 
+ 	pmu {
+ 		compatible = "arm,cortex-a53-pmu";
+-		interrupts = <GIC_PPI 7 GIC_CPU_MASK_SIMPLE(4)>;
++		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4)| IRQ_TYPE_LEVEL_HIGH)>;
+ 	};
+ 
+ 	thermal-zones {
+@@ -513,7 +513,7 @@
+ 		blsp_i2c2: i2c@78b6000 {
+ 			compatible = "qcom,i2c-qup-v2.2.1";
+ 			reg = <0x078b6000 0x500>;
+-			interrupts = <GIC_SPI 96 0>;
++			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+ 				 <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
+ 			clock-names = "iface", "core";
+@@ -528,7 +528,7 @@
+ 		blsp_i2c4: i2c@78b8000 {
+ 			compatible = "qcom,i2c-qup-v2.2.1";
+ 			reg = <0x078b8000 0x500>;
+-			interrupts = <GIC_SPI 98 0>;
++			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+ 				 <&gcc GCC_BLSP1_QUP4_I2C_APPS_CLK>;
+ 			clock-names = "iface", "core";
+@@ -543,7 +543,7 @@
+ 		blsp_i2c6: i2c@78ba000 {
+ 			compatible = "qcom,i2c-qup-v2.2.1";
+ 			reg = <0x078ba000 0x500>;
+-			interrupts = <GIC_SPI 100 0>;
++			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+ 				 <&gcc GCC_BLSP1_QUP6_I2C_APPS_CLK>;
+ 			clock-names = "iface", "core";
+@@ -575,7 +575,7 @@
+ 					"mi2s-bit-clk3";
+ 			#sound-dai-cells = <1>;
+ 
+-			interrupts = <0 160 0>;
++			interrupts = <0 160 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "lpass-irq-lpaif";
+ 			reg = <0x07708000 0x10000>;
+ 			reg-names = "lpass-lpaif";
+@@ -595,7 +595,7 @@
+ 			reg = <0x07824900 0x11c>, <0x07824000 0x800>;
+ 			reg-names = "hc_mem", "core_mem";
+ 
+-			interrupts = <0 123 0>, <0 138 0>;
++			interrupts = <0 123 IRQ_TYPE_LEVEL_HIGH>, <0 138 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "hc_irq", "pwr_irq";
+ 			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
+ 				 <&gcc GCC_SDCC1_AHB_CLK>,
+@@ -612,7 +612,7 @@
+ 			reg = <0x07864900 0x11c>, <0x07864000 0x800>;
+ 			reg-names = "hc_mem", "core_mem";
+ 
+-			interrupts = <0 125 0>, <0 221 0>;
++			interrupts = <0 125 IRQ_TYPE_LEVEL_HIGH>, <0 221 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "hc_irq", "pwr_irq";
+ 			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
+ 				 <&gcc GCC_SDCC2_AHB_CLK>,
+@@ -819,7 +819,7 @@
+ 			iommu-ctx@2000 {
+ 				compatible = "qcom,msm-iommu-v1-ns";
+ 				reg = <0x2000 0x1000>;
+-				interrupts = <GIC_SPI 242 0>;
++				interrupts = <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>;
+ 			};
+ 		};
+ 
+@@ -864,7 +864,7 @@
+ 				      "bus_clk",
+ 				      "vsync_clk";
+ 
+-			interrupts = <0 72 0>;
++			interrupts = <0 72 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			interrupt-controller;
+ 			#interrupt-cells = <1>;
+-- 
+2.16.2
