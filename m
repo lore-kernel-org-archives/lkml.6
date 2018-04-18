@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752948AbeDRQFZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 12:05:25 -0400
-Received: from smtp-out-no.shaw.ca ([64.59.134.12]:48136 "EHLO
-        smtp-out-no.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751972AbeDRQFX (ORCPT
+        id S1753060AbeDRQFl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 12:05:41 -0400
+Received: from smtp-out-so.shaw.ca ([64.59.136.137]:38314 "EHLO
+        smtp-out-so.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752999AbeDRQFj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 12:05:23 -0400
-X-Authority-Analysis: v=2.3 cv=Tai4SyYh c=1 sm=1 tr=0
+        Wed, 18 Apr 2018 12:05:39 -0400
+X-Authority-Analysis: v=2.3 cv=OeS28CbY c=1 sm=1 tr=0
  a=IfKG9KDHjPrX0SZ8gMoyrg==:117 a=IfKG9KDHjPrX0SZ8gMoyrg==:17
- a=Kd1tUaAdevIA:10 a=Q-fNiiVtAAAA:8 a=RkFuY0_d7oPJuhCzoScA:9
+ a=Kd1tUaAdevIA:10 a=pGLkceISAAAA:8 a=Q-fNiiVtAAAA:8 a=XW4pkaav5ZQx9IFfAeAA:9
  a=Fp8MccfUoT0GBdDC_Lng:22
 From: Markus Mayer <code@mmayer.net>
 To: Viresh Kumar <viresh.kumar@linaro.org>,
@@ -17,425 +17,71 @@ To: Viresh Kumar <viresh.kumar@linaro.org>,
         Brian Norris <computersforpeace@gmail.com>,
         Gregory Fong <gregory.0xf0@gmail.com>,
         Florian Fainelli <f.fainelli@gmail.com>
-Cc: Markus Mayer <mmayer@broadcom.com>,
+Cc: Jim Quinlan <jim2101024@gmail.com>,
         Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
         Power Management List <linux-pm@vger.kernel.org>,
         ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/2] cpufreq: brcmstb-avs-cpufreq: remove development debug support
-Date: Wed, 18 Apr 2018 08:56:42 -0700
-Message-Id: <20180418155643.36464-2-code@mmayer.net>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Markus Mayer <mmayer@broadcom.com>
+Subject: [PATCH 2/2] cpufreq: brcmstb-avs-cpufreq: prefer SCMI cpufreq if supported
+Date: Wed, 18 Apr 2018 08:56:43 -0700
+Message-Id: <20180418155643.36464-3-code@mmayer.net>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180418155643.36464-1-code@mmayer.net>
 References: <20180418155643.36464-1-code@mmayer.net>
-X-CMAE-Envelope: MS4wfPcTbjN9SDl7+MvEf9xj2E266/L7YGI7aeM2lITg4tU5xXfDxdvzN9Sn4p3A92uGvo5MRpmAXXlgwSDZvyMGM7U/6Il+kBI/PucFxFjlPVw74aTbvcid
- IjJov6bnithY5JX9xX1JwDac/IKEi4Q7ZTFbuqHSrqZPiOGuy+TpVhGhyp/OtcRhMkBBMkDs77IrXaYN+IJdPA03C6XcDO9yCAOs/HtmtojTmOcGDCKv4Szu
- WqoBBB8CIR1tDS7DG1AL8yIm9/LQRQiHupjyKVHZEwnMATD3zkn4XckOuNqCry00FwULVmDBTAA7lEC2OnUIr8vxEvbTYnNUBaHTCgAeQ/V3ExNMSnuUI+P/
- xSDAhznKIG+av68sifd1vz9OwOgTQqXuyzdEJuCjWgbBSy44KS01QvBuU5AYPzVab+gTJVROGwLx62W8DXKJC7EZ//g+plGb2601ddTzJ1GEXGCdHI2+EzCI
- 8jFqvuEDSjB1GZXdyISMCJq20eH4FbrJR47Phr4UIEhRq0fv/zFpeF+L7dY=
+X-CMAE-Envelope: MS4wfI7G2cWSXehu2rOtki/wOTMDEpmKOxM7RtnOULAht0YItSq65Wqsw+lz8c025yGGXNNIVOnoGBbzcDKYY8S3zdmoyy0fKlb5p1WTd/BrZ4JYXr0ZqbkX
+ ou7vLufXngcH4rlm2bEDIZlR8zEfaeiquMxwHhfi63yBWZqho9PWt2bJ55lsZqJpFySqEyCdiNfoJqZXVz8K5ZJE/NimLXC9oi2IPCUiBqIW2l98NBkyyfpR
+ 1wnPIkiStonciztMZRupmsAdV+cldr1bwUjN0aisV3h2mFY03RtBXzfUw25tc/4wBk1WaHyc0kPeLdmKvq38gVv96U4Dhet5MEj4DEnz6TBdrEPN40yPKdRd
+ zzmTfW5v5CLjisbeEiJ33B4+MdHGh0s/iTdmjAmchst/sc7bOR3L4r4E4T0hm0FvaVClexawBm/qFHS62h8GWRUpX73qOZfA9EAwg3Wq7FaJC7ZtczEFZ+O3
+ GVdNyxg/1AAOnDj/yktO+mgVOBNaZHScxpVkL4owx951CgS7eu/zBeoyYUUAoe4zdxyqOkM1UdH3oW2H
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Mayer <mmayer@broadcom.com>
+From: Jim Quinlan <jim2101024@gmail.com>
 
-This debug code was helpful while developing the driver, but it isn't
-being used for anything anymore.
+If the SCMI cpufreq driver is supported, we bail, so that the new
+approach can be used.
 
+Signed-off-by: Jim Quinlan <jim2101024@gmail.com>
 Signed-off-by: Markus Mayer <mmayer@broadcom.com>
 ---
- drivers/cpufreq/Kconfig.arm           |  10 --
- drivers/cpufreq/brcmstb-avs-cpufreq.c | 323 +---------------------------------
- 2 files changed, 1 insertion(+), 332 deletions(-)
+ drivers/cpufreq/brcmstb-avs-cpufreq.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 7f56fe5183f2..de55c7d57438 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -71,16 +71,6 @@ config ARM_BRCMSTB_AVS_CPUFREQ
- 
- 	  Say Y, if you have a Broadcom SoC with AVS support for DFS or DVFS.
- 
--config ARM_BRCMSTB_AVS_CPUFREQ_DEBUG
--	bool "Broadcom STB AVS CPUfreq driver sysfs debug capability"
--	depends on ARM_BRCMSTB_AVS_CPUFREQ
--	help
--	  Enabling this option turns on debug support via sysfs under
--	  /sys/kernel/debug/brcmstb-avs-cpufreq. It is possible to read all and
--	  write some AVS mailbox registers through sysfs entries.
--
--	  If in doubt, say N.
--
- config ARM_EXYNOS5440_CPUFREQ
- 	tristate "SAMSUNG EXYNOS5440"
- 	depends on SOC_EXYNOS5440
 diff --git a/drivers/cpufreq/brcmstb-avs-cpufreq.c b/drivers/cpufreq/brcmstb-avs-cpufreq.c
-index 6cdac1aaf23c..b07559b9ed99 100644
+index b07559b9ed99..b4861a730162 100644
 --- a/drivers/cpufreq/brcmstb-avs-cpufreq.c
 +++ b/drivers/cpufreq/brcmstb-avs-cpufreq.c
-@@ -49,13 +49,6 @@
- #include <linux/platform_device.h>
- #include <linux/semaphore.h>
+@@ -164,6 +164,8 @@
+ #define BRCM_AVS_CPU_INTR	"brcm,avs-cpu-l2-intr"
+ #define BRCM_AVS_HOST_INTR	"sw_intr"
  
--#ifdef CONFIG_ARM_BRCMSTB_AVS_CPUFREQ_DEBUG
--#include <linux/ctype.h>
--#include <linux/debugfs.h>
--#include <linux/slab.h>
--#include <linux/uaccess.h>
--#endif
--
- /* Max number of arguments AVS calls take */
- #define AVS_MAX_CMD_ARGS	4
- /*
-@@ -182,88 +175,11 @@ struct private_data {
- 	void __iomem *base;
- 	void __iomem *avs_intr_base;
++#define ARM_SCMI_COMPAT		"arm,scmi"
++
+ struct pmap {
+ 	unsigned int mode;
+ 	unsigned int p1;
+@@ -511,6 +513,20 @@ static int brcm_avs_prepare_init(struct platform_device *pdev)
  	struct device *dev;
--#ifdef CONFIG_ARM_BRCMSTB_AVS_CPUFREQ_DEBUG
--	struct dentry *debugfs;
--#endif
- 	struct completion done;
- 	struct semaphore sem;
- 	struct pmap pmap;
- };
+ 	int host_irq, ret;
  
--#ifdef CONFIG_ARM_BRCMSTB_AVS_CPUFREQ_DEBUG
--
--enum debugfs_format {
--	DEBUGFS_NORMAL,
--	DEBUGFS_FLOAT,
--	DEBUGFS_REV,
--};
--
--struct debugfs_data {
--	struct debugfs_entry *entry;
--	struct private_data *priv;
--};
--
--struct debugfs_entry {
--	char *name;
--	u32 offset;
--	fmode_t mode;
--	enum debugfs_format format;
--};
--
--#define DEBUGFS_ENTRY(name, mode, format)	{ \
--	#name, AVS_MBOX_##name, mode, format \
--}
--
--/*
-- * These are used for debugfs only. Otherwise we use AVS_MBOX_PARAM() directly.
-- */
--#define AVS_MBOX_PARAM1		AVS_MBOX_PARAM(0)
--#define AVS_MBOX_PARAM2		AVS_MBOX_PARAM(1)
--#define AVS_MBOX_PARAM3		AVS_MBOX_PARAM(2)
--#define AVS_MBOX_PARAM4		AVS_MBOX_PARAM(3)
--
--/*
-- * This table stores the name, access permissions and offset for each hardware
-- * register and is used to generate debugfs entries.
-- */
--static struct debugfs_entry debugfs_entries[] = {
--	DEBUGFS_ENTRY(COMMAND, S_IWUSR, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(STATUS, S_IWUSR, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(VOLTAGE0, 0, DEBUGFS_FLOAT),
--	DEBUGFS_ENTRY(TEMP0, 0, DEBUGFS_FLOAT),
--	DEBUGFS_ENTRY(PV0, 0, DEBUGFS_FLOAT),
--	DEBUGFS_ENTRY(MV0, 0, DEBUGFS_FLOAT),
--	DEBUGFS_ENTRY(PARAM1, S_IWUSR, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(PARAM2, S_IWUSR, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(PARAM3, S_IWUSR, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(PARAM4, S_IWUSR, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(REVISION, 0, DEBUGFS_REV),
--	DEBUGFS_ENTRY(PSTATE, 0, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(HEARTBEAT, 0, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(MAGIC, S_IWUSR, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(SIGMA_HVT, 0, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(SIGMA_SVT, 0, DEBUGFS_NORMAL),
--	DEBUGFS_ENTRY(VOLTAGE1, 0, DEBUGFS_FLOAT),
--	DEBUGFS_ENTRY(TEMP1, 0, DEBUGFS_FLOAT),
--	DEBUGFS_ENTRY(PV1, 0, DEBUGFS_FLOAT),
--	DEBUGFS_ENTRY(MV1, 0, DEBUGFS_FLOAT),
--	DEBUGFS_ENTRY(FREQUENCY, 0, DEBUGFS_NORMAL),
--};
--
--static int brcm_avs_target_index(struct cpufreq_policy *, unsigned int);
--
--static char *__strtolower(char *s)
--{
--	char *p;
--
--	for (p = s; *p; p++)
--		*p = tolower(*p);
--
--	return s;
--}
--
--#endif /* CONFIG_ARM_BRCMSTB_AVS_CPUFREQ_DEBUG */
--
- static void __iomem *__map_region(const char *name)
- {
- 	struct device_node *np;
-@@ -516,238 +432,6 @@ brcm_avs_get_freq_table(struct device *dev, struct private_data *priv)
- 	return table;
- }
- 
--#ifdef CONFIG_ARM_BRCMSTB_AVS_CPUFREQ_DEBUG
--
--#define MANT(x)	(unsigned int)(abs((x)) / 1000)
--#define FRAC(x)	(unsigned int)(abs((x)) - abs((x)) / 1000 * 1000)
--
--static int brcm_avs_debug_show(struct seq_file *s, void *data)
--{
--	struct debugfs_data *dbgfs = s->private;
--	void __iomem *base;
--	u32 val, offset;
--
--	if (!dbgfs) {
--		seq_puts(s, "No device pointer\n");
--		return 0;
--	}
--
--	base = dbgfs->priv->base;
--	offset = dbgfs->entry->offset;
--	val = readl(base + offset);
--	switch (dbgfs->entry->format) {
--	case DEBUGFS_NORMAL:
--		seq_printf(s, "%u\n", val);
--		break;
--	case DEBUGFS_FLOAT:
--		seq_printf(s, "%d.%03d\n", MANT(val), FRAC(val));
--		break;
--	case DEBUGFS_REV:
--		seq_printf(s, "%c.%c.%c.%c\n", (val >> 24 & 0xff),
--			   (val >> 16 & 0xff), (val >> 8 & 0xff),
--			   val & 0xff);
--		break;
--	}
--	seq_printf(s, "0x%08x\n", val);
--
--	return 0;
--}
--
--#undef MANT
--#undef FRAC
--
--static ssize_t brcm_avs_seq_write(struct file *file, const char __user *buf,
--				  size_t size, loff_t *ppos)
--{
--	struct seq_file *s = file->private_data;
--	struct debugfs_data *dbgfs = s->private;
--	struct private_data *priv = dbgfs->priv;
--	void __iomem *base, *avs_intr_base;
--	bool use_issue_command = false;
--	unsigned long val, offset;
--	char str[128];
--	int ret;
--	char *str_ptr = str;
--
--	if (size >= sizeof(str))
--		return -E2BIG;
--
--	memset(str, 0, sizeof(str));
--	ret = copy_from_user(str, buf, size);
--	if (ret)
--		return ret;
--
--	base = priv->base;
--	avs_intr_base = priv->avs_intr_base;
--	offset = dbgfs->entry->offset;
--	/*
--	 * Special case writing to "command" entry only: if the string starts
--	 * with a 'c', we use the driver's __issue_avs_command() function.
--	 * Otherwise, we perform a raw write. This should allow testing of raw
--	 * access as well as using the higher level function. (Raw access
--	 * doesn't clear the firmware return status after issuing the command.)
--	 */
--	if (str_ptr[0] == 'c' && offset == AVS_MBOX_COMMAND) {
--		use_issue_command = true;
--		str_ptr++;
--	}
--	if (kstrtoul(str_ptr, 0, &val) != 0)
--		return -EINVAL;
--
--	/*
--	 * Setting the P-state is a special case. We need to update the CPU
--	 * frequency we report.
--	 */
--	if (val == AVS_CMD_SET_PSTATE) {
--		struct cpufreq_policy *policy;
--		unsigned int pstate;
--
--		policy = cpufreq_cpu_get(smp_processor_id());
--		/* Read back the P-state we are about to set */
--		pstate = readl(base + AVS_MBOX_PARAM(0));
--		if (use_issue_command) {
--			ret = brcm_avs_target_index(policy, pstate);
--			return ret ? ret : size;
--		}
--		policy->cur = policy->freq_table[pstate].frequency;
--	}
--
--	if (use_issue_command) {
--		ret = __issue_avs_command(priv, val, false, NULL);
--	} else {
--		/* Locking here is not perfect, but is only for debug. */
--		ret = down_interruptible(&priv->sem);
--		if (ret)
--			return ret;
--
--		writel(val, base + offset);
--		/* We have to wake up the firmware to process a command. */
--		if (offset == AVS_MBOX_COMMAND)
--			writel(AVS_CPU_L2_INT_MASK,
--			       avs_intr_base + AVS_CPU_L2_SET0);
--		up(&priv->sem);
--	}
--
--	return ret ? ret : size;
--}
--
--static struct debugfs_entry *__find_debugfs_entry(const char *name)
--{
--	int i;
--
--	for (i = 0; i < ARRAY_SIZE(debugfs_entries); i++)
--		if (strcasecmp(debugfs_entries[i].name, name) == 0)
--			return &debugfs_entries[i];
--
--	return NULL;
--}
--
--static int brcm_avs_debug_open(struct inode *inode, struct file *file)
--{
--	struct debugfs_data *data;
--	fmode_t fmode;
--	int ret;
--
--	/*
--	 * seq_open(), which is called by single_open(), clears "write" access.
--	 * We need write access to some files, so we preserve our access mode
--	 * and restore it.
--	 */
--	fmode = file->f_mode;
--	/*
--	 * Check access permissions even for root. We don't want to be writing
--	 * to read-only registers. Access for regular users has already been
--	 * checked by the VFS layer.
--	 */
--	if ((fmode & FMODE_WRITER) && !(inode->i_mode & S_IWUSR))
--		return -EACCES;
--
--	data = kmalloc(sizeof(*data), GFP_KERNEL);
--	if (!data)
--		return -ENOMEM;
--	/*
--	 * We use the same file system operations for all our debug files. To
--	 * produce specific output, we look up the file name upon opening a
--	 * debugfs entry and map it to a memory offset. This offset is then used
--	 * in the generic "show" function to read a specific register.
--	 */
--	data->entry = __find_debugfs_entry(file->f_path.dentry->d_iname);
--	data->priv = inode->i_private;
--
--	ret = single_open(file, brcm_avs_debug_show, data);
--	if (ret)
--		kfree(data);
--	file->f_mode = fmode;
--
--	return ret;
--}
--
--static int brcm_avs_debug_release(struct inode *inode, struct file *file)
--{
--	struct seq_file *seq_priv = file->private_data;
--	struct debugfs_data *data = seq_priv->private;
--
--	kfree(data);
--	return single_release(inode, file);
--}
--
--static const struct file_operations brcm_avs_debug_ops = {
--	.open		= brcm_avs_debug_open,
--	.read		= seq_read,
--	.write		= brcm_avs_seq_write,
--	.llseek		= seq_lseek,
--	.release	= brcm_avs_debug_release,
--};
--
--static void brcm_avs_cpufreq_debug_init(struct platform_device *pdev)
--{
--	struct private_data *priv = platform_get_drvdata(pdev);
--	struct dentry *dir;
--	int i;
--
--	if (!priv)
--		return;
--
--	dir = debugfs_create_dir(BRCM_AVS_CPUFREQ_NAME, NULL);
--	if (IS_ERR_OR_NULL(dir))
--		return;
--	priv->debugfs = dir;
--
--	for (i = 0; i < ARRAY_SIZE(debugfs_entries); i++) {
--		/*
--		 * The DEBUGFS_ENTRY macro generates uppercase strings. We
--		 * convert them to lowercase before creating the debugfs
--		 * entries.
--		 */
--		char *entry = __strtolower(debugfs_entries[i].name);
--		fmode_t mode = debugfs_entries[i].mode;
--
--		if (!debugfs_create_file(entry, S_IFREG | S_IRUGO | mode,
--					 dir, priv, &brcm_avs_debug_ops)) {
--			priv->debugfs = NULL;
--			debugfs_remove_recursive(dir);
--			break;
--		}
--	}
--}
--
--static void brcm_avs_cpufreq_debug_exit(struct platform_device *pdev)
--{
--	struct private_data *priv = platform_get_drvdata(pdev);
--
--	if (priv && priv->debugfs) {
--		debugfs_remove_recursive(priv->debugfs);
--		priv->debugfs = NULL;
--	}
--}
--
--#else
--
--static void brcm_avs_cpufreq_debug_init(struct platform_device *pdev) {}
--static void brcm_avs_cpufreq_debug_exit(struct platform_device *pdev) {}
--
--#endif /* CONFIG_ARM_BRCMSTB_AVS_CPUFREQ_DEBUG */
--
- /*
-  * To ensure the right firmware is running we need to
-  *    - check the MAGIC matches what we expect
-@@ -1016,11 +700,8 @@ static int brcm_avs_cpufreq_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	brcm_avs_driver.driver_data = pdev;
--	ret = cpufreq_register_driver(&brcm_avs_driver);
--	if (!ret)
--		brcm_avs_cpufreq_debug_init(pdev);
- 
--	return ret;
-+	return cpufreq_register_driver(&brcm_avs_driver);
- }
- 
- static int brcm_avs_cpufreq_remove(struct platform_device *pdev)
-@@ -1032,8 +713,6 @@ static int brcm_avs_cpufreq_remove(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	brcm_avs_cpufreq_debug_exit(pdev);
--
- 	priv = platform_get_drvdata(pdev);
- 	iounmap(priv->base);
- 	iounmap(priv->avs_intr_base);
++	/*
++	 * If the SCMI cpufreq driver is supported, we bail, so that the more
++	 * modern approach can be used.
++	 */
++	if (IS_ENABLED(CONFIG_ARM_SCMI_PROTOCOL)) {
++		struct device_node *np;
++
++		np = of_find_compatible_node(NULL, NULL, ARM_SCMI_COMPAT);
++		if (np) {
++			of_node_put(np);
++			return -ENXIO;
++		}
++	}
++
+ 	dev = &pdev->dev;
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
 -- 
 2.7.4
