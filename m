@@ -1,85 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752659AbeDRVYi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 17:24:38 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33393 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751407AbeDRVYh (ORCPT
+        id S1752706AbeDRVdN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 17:33:13 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40241 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750981AbeDRVdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 17:24:37 -0400
-Date: Wed, 18 Apr 2018 23:24:34 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: Screen brightness behaves _very_ differently across different
- machines
-Message-ID: <20180418212434.GB26962@amd>
+        Wed, 18 Apr 2018 17:33:11 -0400
+Subject: Re: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        tycho@docker.com, serge@hallyn.com, sunyuqiong1988@gmail.com,
+        david.safford@ge.com, mkayaalp@cs.binghamton.edu,
+        James.Bottomley@HansenPartnership.com, Yuqiong Sun <suny@us.ibm.com>,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
+ <1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
+ <87sh8lcecn.fsf@xmission.com> <1523636702.3272.63.camel@linux.vnet.ibm.com>
+ <d8c30d7d-c679-9323-7a25-d3148e9b96c6@canonical.com>
+ <1524081472.3272.319.camel@linux.vnet.ibm.com> <87wox4s282.fsf@xmission.com>
+From: John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+Message-ID: <8895cb9c-7b9e-2f82-e3d8-a15f5fc26e25@canonical.com>
+Date: Wed, 18 Apr 2018 14:32:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <87wox4s282.fsf@xmission.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04/18/2018 01:12 PM, Eric W. Biederman wrote:
+> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+> 
+>> On Wed, 2018-04-18 at 09:09 -0700, John Johansen wrote:
+>>> On 04/13/2018 09:25 AM, Mimi Zohar wrote:
+>>>> [Cc'ing John Johansen]
+>>>>
+>>>> On Tue, 2018-03-27 at 18:01 -0500, Eric W. Biederman wrote:
+>>>> [...]
+>>>>> As such I expect the best way to create the ima namespace is by simply
+>>>>> writing to securityfs/imafs.  Possibly before the user namespace is
+>>>>> even unshared.  That would allow IMA to keep track of things from
+>>>>> before a container is created.
+>>>>
+>>>
+>>> I do think this is generally the right approach for LSMs when looking
+>>> forward to LSM stacking and more LSMs.
+>>>
+>>>
+>>>> My initial thought was to stage IMA namespacing with just IMA-audit
+>>>> first, followed by either IMA-measurement or IMA-appraisal.  This
+>>>> would allow us to get the basic IMA namespacing framework working and
+>>>> defer dealing with the securityfs related namespacing of the IMA
+>>>> policy and measurement list issues to later.
+>>>>
+>>>> By tying IMA namespacing to a securityfs ima/unshare file, we would
+>>>> need to address the securityfs issues first.
+>>>>
+>>>
+>>> well it depends on what you want to do. It would be possible to have
+>>> a simple file (not a jump link) within securityfs that IMA could use
+>>> without having to deal with all the securityfs issues first. However it
+>>> does require that securityfs (not necessarily imafs) be visible within
+>>> the mount namespace of the task doing the setup.
+>>
+>> Eric, would you be OK with that?
+> 
+> Roughly.  My understanding is that you have to have a write to some
+> filesystem to set the ima policy.
+> 
+> I was expecting having to write an "create ima namespace" value
+> to the filesystem would not be any special effort.
+> 
+> Now it sounds like providing the "create an ima namespace" is going to
+> be a special case, and that does not sound correct.
+> 
+not necessarily special case, but they do need to settle on an interface
+that will work for them, and will work with the order they want to land
+things. I was just trying to point out that there are fs solutions that
+can work without having deal with the full securityfs/imafs namespacing
+solution landing first.
 
---Fba/0zbH8Xs+Fj9o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+While create a file directly in securityfs that lives along side the imafs
+dir.
+ima_create_ns
+ima/
+does feel like a special case. It could work
 
-Hi!
+what I was thinking of when I proposed a simple is to do it within the ima
+dir, say
+ima/create_ns
 
-I tried to run auto brightness settings tuned for Nokia N900 on Droid
-4, and results were not nice.
+For now its just a single file but once imafs becomes "virtualized" to a
+namespace view, each dir that imafs jumplinks to contains a instance of the
+file.
 
-So I tried matching brightness between Nokia N900 and Droid 4, and I
-have a reason:
 
-Brightness 1 on n900 corresponds to brightness _50_ on droid 4.
+Or they could avoid securityfs/imafs entirely and leverage a file in
+procfs
 
-| n900 |  d4 |
-|    1 |  50 |
-|    2 |  70 |
-|    6 | 100 |
-|    8 | 120 |
-|   20 | 130 |
-|   30 | 140 |
-|   40 | 150 |
-|  100 | 180 |
-|  128 | 190 |
-|  150 | 200 |
-|  200 | 210 |
-|  255 | 220 |
+/proc/<pid>/attr/{current,exec,...}
 
-Values are very approximate, I did manually. (Light sensors are funny,
-Nokia seems to have calibscale on intensity input, which should be
-unitless, but not on illumination input, which should be in lux. And
-I'm not sure... is value_in_lux =3D illumination_input /
-illumination_scale?)
+currently those are claimed by the LSMs but new file could be added or
+perhaps even better we could lift the some code from the LSM stacking work
+to provide an ima specific dir
 
-I'll get some sleep now, if you know what is going on there, let me
-know...
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---Fba/0zbH8Xs+Fj9o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrXt5IACgkQMOfwapXb+vLoFgCgiDghCe0L4O5mw9K5XDLyUCxg
-134AnRYd+jKxPPqxzuyfTeLZfuNQ4AbL
-=dp2w
------END PGP SIGNATURE-----
-
---Fba/0zbH8Xs+Fj9o--
+  /proc/<pid>/attr/ima/{current,exec,...}
