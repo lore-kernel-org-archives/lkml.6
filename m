@@ -1,83 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753868AbeDRElu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 00:41:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51290 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753639AbeDREls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 00:41:48 -0400
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>,
-        peterx@redhat.com
-Subject: [PATCH 2/3] intel-iommu: generalize __mapping_notify_one()
-Date: Wed, 18 Apr 2018 12:41:29 +0800
-Message-Id: <20180418044130.12339-3-peterx@redhat.com>
-In-Reply-To: <20180418044130.12339-1-peterx@redhat.com>
-References: <20180418044130.12339-1-peterx@redhat.com>
+        id S1753927AbeDREmo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 00:42:44 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:34854 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750983AbeDREmn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 00:42:43 -0400
+X-Google-Smtp-Source: AIpwx49O5T4Ylxs7NNL+h0yuapVfo+Sxw5R+BTow7XHoZbAH3+gbciyDoJ9DuBtP2LNR3Gga9UY2pTqbbiHVJ2QA5Ug=
+MIME-Version: 1.0
+In-Reply-To: <20180417234455.q6fgn7oroehmxk6l@ast-mbp>
+References: <1523892818-12820-1-git-send-email-laoar.shao@gmail.com>
+ <d2ab1647-c832-c982-5952-ab7a415f7c76@gmail.com> <20180417234455.q6fgn7oroehmxk6l@ast-mbp>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Wed, 18 Apr 2018 12:42:02 +0800
+Message-ID: <CALOAHbCmC4xjyk8wd9nk6X0CKDp9YWPhGJuNoOAwEV82i4gN-Q@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: introduce a new tracepoint for tcp_rcv_space_adjust
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        David Miller <davem@davemloft.net>, Song Liu <songliubraving@fb.com>,
+        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Generalize this new helper to notify one newly created mapping on one
-single IOMMU.  We can further leverage this helper in the next patch.
+On Wed, Apr 18, 2018 at 7:44 AM, Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Mon, Apr 16, 2018 at 08:43:31AM -0700, Eric Dumazet wrote:
+>>
+>>
+>> On 04/16/2018 08:33 AM, Yafang Shao wrote:
+>> > tcp_rcv_space_adjust is called every time data is copied to user space,
+>> > introducing a tcp tracepoint for which could show us when the packet is
+>> > copied to user.
+>> > This could help us figure out whether there's latency in user process.
+>> >
+>> > When a tcp packet arrives, tcp_rcv_established() will be called and with
+>> > the existed tracepoint tcp_probe we could get the time when this packet
+>> > arrives.
+>> > Then this packet will be copied to user, and tcp_rcv_space_adjust will
+>> > be called and with this new introduced tracepoint we could get the time
+>> > when this packet is copied to user.
+>> >
+>> >     arrives time : user process time    => latency caused by user
+>> >     tcp_probe      tcp_rcv_space_adjust
+>> >
+>> > Hence in the prink message, sk is printed as a key to connect these two
+>> > tracepoints.
+>> >
+>>
+>> socket pointer is not a key.
+>>
+>> TCP sockets can be reused pretty fast after free.
+>>
+>> I suggest you go for cookie instead, this is an unique 64bit identifier.
+>> ( sock_gen_cookie() for details )
+>
+> I think would be even better if the stack would do this sock_gen_cookie()
+> on its own in some way that user cannnot infere the order.
+> In many cases we wanted to use socket cookie, but since it's not inited
+> by default it's kinda useless.
+> Turning this tracepoint on just to get cookie would be an ugly workaround.
+>
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- drivers/iommu/intel-iommu.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+Could we init it in sk_alloc() ?
+Then in other code paths, for example sock_getsockopt or tracepoints,
+we only read the value through a new inline function named
+sock_read_cookie().
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index a64da83e867c..bf111e60857c 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1607,6 +1607,18 @@ static void iommu_flush_iotlb_psi(struct intel_iommu *iommu,
- 		iommu_flush_dev_iotlb(domain, addr, mask);
- }
- 
-+/* Notification for newly created mappings */
-+static inline void __mapping_notify_one(struct intel_iommu *iommu,
-+					struct dmar_domain *domain,
-+					unsigned long pfn, unsigned int pages)
-+{
-+	/* It's a non-present to present mapping. Only flush if caching mode */
-+	if (cap_caching_mode(iommu->cap))
-+		iommu_flush_iotlb_psi(iommu, domain, pfn, pages, 0, 1);
-+	else
-+		iommu_flush_write_buffer(iommu);
-+}
-+
- static void iommu_flush_iova(struct iova_domain *iovad)
- {
- 	struct dmar_domain *domain;
-@@ -3626,13 +3638,7 @@ static dma_addr_t __intel_map_single(struct device *dev, phys_addr_t paddr,
- 	if (ret)
- 		goto error;
- 
--	/* it's a non-present to present mapping. Only flush if caching mode */
--	if (cap_caching_mode(iommu->cap))
--		iommu_flush_iotlb_psi(iommu, domain,
--				      mm_to_dma_pfn(iova_pfn),
--				      size, 0, 1);
--	else
--		iommu_flush_write_buffer(iommu);
-+	__mapping_notify_one(iommu, domain, mm_to_dma_pfn(iova_pfn), size);
- 
- 	start_paddr = (phys_addr_t)iova_pfn << PAGE_SHIFT;
- 	start_paddr += paddr & ~PAGE_MASK;
-@@ -3851,11 +3857,7 @@ static int intel_map_sg(struct device *dev, struct scatterlist *sglist, int nele
- 		return 0;
- 	}
- 
--	/* it's a non-present to present mapping. Only flush if caching mode */
--	if (cap_caching_mode(iommu->cap))
--		iommu_flush_iotlb_psi(iommu, domain, start_vpfn, size, 0, 1);
--	else
--		iommu_flush_write_buffer(iommu);
-+	__mapping_notify_one(iommu, domain, start_vpfn, size);
- 
- 	return nelems;
- }
--- 
-2.14.3
+
+Thanks
+Yafang
