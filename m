@@ -1,148 +1,193 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753654AbeDRIbs convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:31:48 -0400
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:39373
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753178AbeDRIbr (ORCPT
+        id S1753541AbeDRIdK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:33:10 -0400
+Received: from mail-vk0-f42.google.com ([209.85.213.42]:41219 "EHLO
+        mail-vk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753202AbeDRIdI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:31:47 -0400
-X-ASG-Debug-ID: 1524040303-093b7e10b3b9fa0001-xx1T2L
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-To: "sohil.mehta@intel.com" <sohil.mehta@intel.com>,
-        "gary.hook@amd.com" <gary.hook@amd.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "ghook@amd.com" <ghook@amd.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
- AMD IOMMU
-Thread-Topic: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
- AMD IOMMU
-X-ASG-Orig-Subj: Re: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
- AMD IOMMU
-Thread-Index: AQHT1tpRJAZW59A4ZEqPfHlYD/OogKQFmZcAgAAR5AA=
-Date: Wed, 18 Apr 2018 08:31:36 +0000
-Message-ID: <1524040290.4031.25.camel@hxt-semitech.com>
-References: <152302042701.47565.17954813724758433858.stgit@sosxen2.amd.com>
-         <152302067362.47565.628887796165116844.stgit@sosxen2.amd.com>
-         <1523664612.2747.13.camel@intel.com>
-         <efa2b7a3-04a7-20b1-3651-89ebafa85c27@amd.com>
-         <1524031122.4031.5.camel@hxt-semitech.com>
-         <1524036520.2747.31.camel@intel.com>
-In-Reply-To: <1524036520.2747.31.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.64.6.80]
-Content-Type: text/plain; charset="iso-8859-15"
-Content-ID: <1C2E6DF8FCA0C8448B44B1E023EB6DEE@hxt-semitech.com>
-Content-Transfer-Encoding: 8BIT
+        Wed, 18 Apr 2018 04:33:08 -0400
+X-Google-Smtp-Source: AIpwx4+lgTQ8DjnxR3v0DxbWDiUqd14IJingGdKbMZaF8bBWBrTr6ppKc9Y9pKwPRnniadDfzpdEla3Mj7TRXpSrG8Y=
 MIME-Version: 1.0
-X-Barracuda-Connect: localhost[10.128.0.14]
-X-Barracuda-Start-Time: 1524040303
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5345 1.0000 0.7500
-X-Barracuda-Spam-Score: 0.75
-X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.50013
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+In-Reply-To: <CAK7LNAQxxNddpr2PiOR=izKuH5tQhFKP91XFzdY8i6HJ_H3Fgw@mail.gmail.com>
+References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
+ <1523595999-27433-18-git-send-email-yamada.masahiro@socionext.com>
+ <CAFkk2KQu-GUcocDpRO=VZrjSXaZe8Bo-1feJwABX5PXhsYu+XA@mail.gmail.com> <CAK7LNAQxxNddpr2PiOR=izKuH5tQhFKP91XFzdY8i6HJ_H3Fgw@mail.gmail.com>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Wed, 18 Apr 2018 10:33:06 +0200
+Message-ID: <CAFkk2KTStSumsC1ZESgttJCHw6xJXA5PL3-cUY81AE9piOnmRw@mail.gmail.com>
+Subject: Re: [PATCH 17/30] Documentation: kconfig: document a new Kconfig
+ macro language
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Nicholas Piggin <npiggin@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Emese Revfy <re.emese@gmail.com>,
+        X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Sohil
+On Tue, Apr 17, 2018 at 5:07 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-04-15 17:08 GMT+09:00 Ulf Magnusson <ulfalizer@gmail.com>:
+>> On Fri, Apr 13, 2018 at 7:06 AM, Masahiro Yamada
+>> <yamada.masahiro@socionext.com> wrote:
+>>> Add a document for the macro language introduced to Kconfig.
+>>>
+>>> The motivation of this work is to move the compiler option tests to
+>>> Kconfig from Makefile.  A number of kernel features require the
+>>> compiler support.  Enabling such features blindly in Kconfig ends up
+>>> with a lot of nasty build-time testing in Makefiles.  If a chosen
+>>> feature turns out unsupported by the compiler, what the build system
+>>> can do is either to disable it (silently!) or to forcibly break the
+>>> build, despite Kconfig has let the user to enable it.
+>>>
+>>> This change was strongly prompted by Linus Torvalds.  You can find
+>>> his suggestions [1] [2] in ML.  The original idea was to add a new
+>>> 'option', but I found generalized text expansion would make Kconfig
+>>> more powerful and lovely.  While polishing up the implementation, I
+>>> noticed sort of similarity between Make and Kconfig.  This might be
+>>> too immature to be called 'language', but anyway here it is.  All
+>>> ideas are from Make (you can even say it is addicted), so people
+>>> will easily understand how it works.
+>>>
+>>> [1]: https://lkml.org/lkml/2016/12/9/577
+>>> [2]: https://lkml.org/lkml/2018/2/7/527
+>>>
+>>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>> ---
+>>>
+>>> Changes in v3: None
+>>> Changes in v2: None
+>>>
+>>>  Documentation/kbuild/kconfig-macro-language.txt | 179 ++++++++++++++++++++++++
+>>>  MAINTAINERS                                     |   2 +-
+>>>  2 files changed, 180 insertions(+), 1 deletion(-)
+>>>  create mode 100644 Documentation/kbuild/kconfig-macro-language.txt
+>>>
+>>> diff --git a/Documentation/kbuild/kconfig-macro-language.txt b/Documentation/kbuild/kconfig-macro-language.txt
+>>> new file mode 100644
+>>> index 0000000..1f6281b
+>>> --- /dev/null
+>>> +++ b/Documentation/kbuild/kconfig-macro-language.txt
+>>> @@ -0,0 +1,179 @@
+>>> +Concept
+>>> +-------
+>>> +
+>>> +The basic idea was inspired by Make. When we look at Make, we notice sort of
+>>> +two languages in one. One language describes dependency graphs consisting of
+>>> +targets and prerequisites. The other is a macro language for performing textual
+>>> +substitution.
+>>> +
+>>> +There is clear distinction between the two language stages. For example, you
+>>> +can write a makefile like follows:
+>>> +
+>>> +    APP := foo
+>>> +    SRC := foo.c
+>>> +    CC := gcc
+>>> +
+>>> +    $(APP): $(SRC)
+>>> +            $(CC) -o $(APP) $(SRC)
+>>> +
+>>> +The macro language replaces the variable references with their expanded form,
+>>> +and handles as if the source file were input like follows:
+>>> +
+>>> +    foo: foo.c
+>>> +            gcc -o foo foo.c
+>>> +
+>>> +Then, Make analyzes the dependency graph and determines the targets to be
+>>> +updated.
+>>> +
+>>> +The idea is quite similar in Kconfig - it is possible to describe a Kconfig
+>>> +file like this:
+>>> +
+>>> +    CC := gcc
+>>> +
+>>> +    config CC_HAS_FOO
+>>> +            def_bool $(shell $(srctree)/scripts/gcc-check-foo.sh $(CC))
+>>> +
+>>> +The macro language in Kconfig processes the source file into the following
+>>> +intermediate:
+>>> +
+>>> +    config CC_HAS_FOO
+>>> +            def_bool y
+>>> +
+>>> +Then, Kconfig moves onto the evaluation stage to resolve inter-symbol
+>>> +dependency, which is explained in kconfig-language.txt.
+>>> +
+>>> +
+>>> +Variables
+>>> +---------
+>>> +
+>>> +Like in Make, a variable in Kconfig works as a macro variable.  A macro
+>>> +variable is expanded "in place" to yield a text string that may then expanded
+>>> +further. To get the value of a variable, enclose the variable name in $( ).
+>>> +As a special case, single-letter variable names can omit the parentheses and is
+>>> +simply referenced like $X. Unlike Make, Kconfig does not support curly braces
+>>> +as in ${CC}.
+>>
+>> Do we need single-letter variable names for anything? It looks like
+>> we're deviating
+>> a bit from Make behavior already.
+>>
+>> I suspect they're just a side effect of Make having automatic variables like $@.
+>> The Make manual discourages them otherwise:
+>>
+>> "A dollar sign followed by a character other than a dollar sign,
+>> open-parenthesis or
+>> open-brace treats that single character as the variable name. Thus, you could
+>> reference the variable x with `$x'. However, this practice is strongly
+>> discouraged,
+>> except in the case of the automatic variables (see section Automatic
+>> Variables)."
+>>
+>
+> OK.  We do not need two ways to do the same thing.
+>
+> I will consider it
+> although supporting single-letter variable is not costly.
+>
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
-On Wed, 2018-04-18 at 07:27 +0000, Mehta, Sohil wrote:
-> On Wed, 2018-04-18 at 05:58 +0000, Yang, Shunyong wrote:
-> > 
-> > Hi, Gary and Sohil,
-> > 
-> > On Tue, 2018-04-17 at 13:38 -0400, Hook, Gary wrote:
-> > > 
-> > > On 4/13/2018 8:08 PM, Mehta, Sohil wrote:
-> > > > 
-> > > >  
-> > > > On Fri, 2018-04-06 at 08:17 -0500, Gary R Hook wrote:
-> > > > > 
-> > > > >  
-> > > > >   
-> > > > > +
-> > > > > +void amd_iommu_debugfs_setup(struct amd_iommu *iommu)
-> > > > > +{
-> > > > > + char name[MAX_NAME_LEN + 1];
-> > > > > + struct dentry *d_top;
-> > > > > +
-> > > > > + if (!debugfs_initialized())
-> > > > Probably not needed.
-> > > Right.
-> > When will this check is needed?
-> > IMO, this function is to check debugfs ready status before we want
-> > to
-> > use debugfs. I just want to understand when we should use
-> > debugfs_initialized();
-> > 
-> You are right debugfs_initialized() can be used to check if debugfs
-> is
-> ready. However in this case we can also rely on debugfs_create_dir()
-> which is called in iommu_debufs_setup().
-> 
-> debugfs_create_dir() says:
-> 
->  * If debugfs is not enabled in the kernel, the value -%ENODEV will
-> be
->  * returned.
+Can you think of any cases where dynamic generation of Kconfig symbol
+names would be a good solution by the way?
 
-It seems "If debugfs is not enabled in the kernel"
-means CONFIG_DEBUG_FS is not configured. Following is the code of no
-such config.
+Personally, I'd make the semantics obvious by requiring quotes, so you
+could do e.g.
 
-  static inline struct dentry *debugfs_create_dir(const char *name,
-						struct dentry *parent)
-  {
-	return ERR_PTR(-ENODEV);
-  }
+    bar := "bar value"
+    baz := "baz value"
+    foo := " $(bar)  $(baz) "
 
-Looking into the code, debugfs_initialized() return the value of
-debugfs_registered. debugfs_registered is set to true after
-debugfs_init() has been called.
-However, debugfs_create_dir() doesn't call debugfs_initialized() or
-check debugfs_registered value.
-So, there is tiny different of checking status by debugfs_create_dir()
-and debugfs_initialized(). Although it can achieve functionality here.
+and get " bar value  baz value " in 'foo'.
 
-Maybe the original design is to call debugfs_initialized() before
-calling debugfs_create_xxx()?
+That'd get rid of those $(empty) hacks and the like, and would make
+things super easy to understand.
 
-Thanks.
-Shunyong.
+If expansion was then also limited to within "" (so that you always
+produce values), things would get absolutely ridiculously simple, both
+behavior- and implementation-wise. All the unput() shenanigans would
+disappear (shaving off code), and everyone would be able to tell at a
+glance how stuff works.
 
-> 
-> Sohil
-> 
-> > 
-> > Thanks.
-> > Shunyong.
-> > 
-> > > 
-> > >  
-> > > > 
-> > > >  
-> > > >  
-> > > > > 
-> > > > >  
-> > > > > +         return;
-> > > > > +
-> > > > > + mutex_lock(&amd_iommu_debugfs_lock);
-> > > > > + if (!amd_iommu_debugfs) {
-> > > > > +         d_top = iommu_debugfs_setup();
-> > > > > +         if (d_top)
-> > > > > +                 amd_iommu_debugfs =
-> > > > > debugfs_create_dir("amd", d_top);
-> > > > > + }
-> > > > > + mutex_unlock(&amd_iommu_debugfs_lock);
+I know that you're trying to create something that will be immediately
+familiar to people used to Make, and that allows things to be easily
+moved over, but I wonder if it's worthwhile to carry over the parts that
+people find the most confusing and subtle about Make. Simply and
+recursively expanded variables and functions are great and make sense,
+but the rest I'm not so sure about, especially in Kconfig context.
+
+When I see $(foo) outside of quotes, I assume a textual substitution,
+like in Make, because it sticks out like a sore thumb compared to the
+rest of the Kconfig syntax (I also think "Perl scalar"). It's actually a
+token substitution here. "$(foo)" makes it obvious.
+
+Cheers,
+Ulf
