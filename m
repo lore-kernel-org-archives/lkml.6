@@ -1,228 +1,225 @@
-Return-Path: <andresx7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524514337; cv=none;
+Return-Path: <srinivas.kandagatla@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1524065756; cv=none;
         d=google.com; s=arc-20160816;
-        b=FeZHc5k9eVqjS4LbbVP7W26Hs3FUkvd+8cSjQNyWt3TkYPDEBzIFTvukDZmoUGrJ8B
-         xp9I9W8mL8ePdT3B78fnS/6+XGgT46Jgcwm5B1y/Q7um95eokprHOD91bU2AvZXEPvSo
-         SfHuZk06G5mPejGlW5/b6gMewCxZ69fGTrPBbkDc8vLxOmfPMgiQcy3y+krEJslEGmxx
-         UCnNBnZC/pfDuZZj5/IBi4vxzv/H5sOy1RVdtuUeAvhXexMU9mttIBA0s5PRzuzUg5Ll
-         3oW9vHDoarcxB+gYrnlL/f3wWF6GP466nYwDXaY/44Fbe0uztaDZDSOIwqXlQsxLM3Av
-         1G3g==
+        b=iH8za94LvsS0B1S5qiVsYchaTClerPXk9jL4ZNHVae7FLbLPXvOxjylCouS1dQKcEt
+         WcWRhCCPJngMxNRHb3C9UDluN80uPC3Xo/3qhqRmkvSxvIAIfS0OZR8moeaIAjtTZt0K
+         Bm5r8gKNgV3nur65M+rALaR9KavKCHfkB+tT9WG7imAEAMVUmnAqM1xJRhnd6d3P+c4b
+         sLVhNxc2M7rx2mNXRR4rkbjXZsTyHYzfpfWh58xgXelVZE3jnHsjTzd45VJs3EXnyMFb
+         HOYOEaVVCIuN2d/OEycKWYptzC5+fusTM3Z028RsIZYxbvl5vl0DAOE6vAJ2TZe0Pw8/
+         YBRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=jEOrXEBJ5q4H7gZxyL04RcCqBLEI4IqpgTddPR6ZPCs=;
-        b=MMNyBZHcFfDzvhcKbRRsKFHrkbHTwODxQHkl7qUiAoHs4howBu4B+koTvhnsd2Fpvs
-         dU6yaFUv7xgQ7H+SdzThMhaEoUiaLbBb1Z8iy6A6bO2DvTadA5lVvDrpxjEmilk1HVPr
-         m9dMkFJtLAYFk7U5jdCSEIj0KlI+UY13LQgx0TMEmGjm2AFHzLJA4JV8eF9GiFLbjCD6
-         8g3TH7Q82NeOebH3UCJuPDiL0b2W2JO/I99G/dlBY4w5bs37AX8UgGmgmiaDfr0BjRn5
-         3trODDIvz1847x79n1TF4B2WHANLS26Xn/g404Gr4ZvnUJ5g84Q8/14KBziF/WJvp7QD
-         Ct5w==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=9EnCiOeYSIl/GqlIy3NOJ+ihvohwchpbM6dKX1Im4GY=;
+        b=Yh2GQlF8QOfqKa9LAQWqN5e+XQCEc/Uyy8z2Lc+WiCoyTmXJCCPUWbNXgfVu/FwxCJ
+         2dQTSpLBFHO39KDGQCFkZouFXVlvmGyEP1uxwwoJgsyzMozfMBWtzR+ojUkAEHc4pZKZ
+         0C18FjCJYyCu1giE15NpewdlnRX7Xd58Pjm1aMRse6rS7l+HqikhlE4JrTePqmyz6xwB
+         m+qKmZ1FzbiygbsdN9Zu4rpTeXZb6FimOz06fZSUldqHSNAd15b0Jm/4T6/vo+8Y514M
+         ozC0edVvXncP+FEGeTfzghsmk0YEU0ihIqB9b3VmxMd73zuLMNtX7sAw6xYrSUtQAAQl
+         20WA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=m9eD5RJ3;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=Hn0c6eLD;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=m9eD5RJ3;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx489c2AowpjhKNg1X2scWIsOOB33aQf3pq7B1YVtFpZ3XwiSVyY3j4I1ycp/odOz7vEearaKAw==
-From: Andres Rodriguez <andresx7@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: andresx7@gmail.com,
-	gregkh@linuxfoundation.org,
-	mcgrof@kernel.org,
-	alexdeucher@gmail.com,
-	christian.koenig@amd.com,
-	kvalo@codeaurora.org,
-	arend.vanspriel@broadcom.com,
-	linux-wireless@vger.kernel.org,
-	ath10k@lists.infradead.org,
-	hdegoede@redhat.com
-Subject: [PATCH 2/9] firmware: wrap FW_OPT_* into an enum
-Date: Mon, 23 Apr 2018 16:11:58 -0400
-Message-Id: <20180423201205.20533-3-andresx7@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180423201205.20533-1-andresx7@gmail.com>
-References: <20180423201205.20533-1-andresx7@gmail.com>
+       dkim=pass header.i=@linaro.org header.s=google header.b=Hn0c6eLD;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AIpwx4+Hs5NYrV/fE0d2Zn5Y3ZN5CGAmwhl4HHtuVaReOLtz7FQCjtI8Ruc8nBcureHO613jQXFciQ==
+From: srinivas.kandagatla@linaro.org
+To: andy.gross@linaro.org,
+	broonie@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	robh+dt@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	david.brown@linaro.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	plai@codeaurora.org,
+	bgoswami@codeaurora.org,
+	tiwai@suse.com,
+	perex@perex.cz,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rohkumar@qti.qualcomm.com,
+	spatakok@qti.qualcomm.com,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v5 00/23] ASoC: qcom: Add support to QDSP based Audio
+Date: Wed, 18 Apr 2018 16:31:34 +0100
+Message-Id: <20180418153157.1960-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598569145599096304?=
-X-GMAIL-MSGID: =?utf-8?q?1598569145599096304?=
+X-GMAIL-THRID: =?utf-8?q?1598098774806419519?=
+X-GMAIL-MSGID: =?utf-8?q?1598098774806419519?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This should let us associate enum kdoc to these values.
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-v2: use BIT() macro
+Thankyou everyone for providing feedback on v4 patchset.
+This patchset aims to provide a basic version of QCOM DSP based
+audio support which is available in downstream andriod kernels.
+This patchset support audio playback on HDMI-RX, MI2S, SLIMBus and
+will add support to other features as we move on.
 
-Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
----
- drivers/base/firmware_loader/fallback.c | 12 ++++++------
- drivers/base/firmware_loader/fallback.h |  6 ++++--
- drivers/base/firmware_loader/firmware.h | 18 ++++++++++--------
- drivers/base/firmware_loader/main.c     |  6 +++---
- 4 files changed, 23 insertions(+), 19 deletions(-)
+QDSP has both static and dynamic modules. static modules like AFE
+(Audio FrontEnd), ADM (Audio Device Manager), ASM(Audio Stream Manager)
+and CORE to provide this audio services.
+All these services use APR (Asynchronous Packet Router) protocol
+via smd/glink transport to communicate with Application processor.
+More details on each module is availble in there respective patch.
 
-diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index da97fc26119c..ecc49a619298 100644
---- a/drivers/base/firmware_loader/fallback.c
-+++ b/drivers/base/firmware_loader/fallback.c
-@@ -511,7 +511,7 @@ static const struct attribute_group *fw_dev_attr_groups[] = {
- 
- static struct fw_sysfs *
- fw_create_instance(struct firmware *firmware, const char *fw_name,
--		   struct device *device, unsigned int opt_flags)
-+		   struct device *device, enum fw_opt opt_flags)
- {
- 	struct fw_sysfs *fw_sysfs;
- 	struct device *f_dev;
-@@ -544,7 +544,7 @@ fw_create_instance(struct firmware *firmware, const char *fw_name,
-  * In charge of constructing a sysfs fallback interface for firmware loading.
-  **/
- static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
--				  unsigned int opt_flags, long timeout)
-+				  enum fw_opt opt_flags, long timeout)
- {
- 	int retval = 0;
- 	struct device *f_dev = &fw_sysfs->dev;
-@@ -598,7 +598,7 @@ static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
- 
- static int fw_load_from_user_helper(struct firmware *firmware,
- 				    const char *name, struct device *device,
--				    unsigned int opt_flags)
-+				    enum fw_opt opt_flags)
- {
- 	struct fw_sysfs *fw_sysfs;
- 	long timeout;
-@@ -639,7 +639,7 @@ static int fw_load_from_user_helper(struct firmware *firmware,
- 	return ret;
- }
- 
--static bool fw_force_sysfs_fallback(unsigned int opt_flags)
-+static bool fw_force_sysfs_fallback(enum fw_opt opt_flags)
- {
- 	if (fw_fallback_config.force_sysfs_fallback)
- 		return true;
-@@ -648,7 +648,7 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
- 	return true;
- }
- 
--static bool fw_run_sysfs_fallback(unsigned int opt_flags)
-+static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
- {
- 	if (fw_fallback_config.ignore_sysfs_fallback) {
- 		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
-@@ -663,7 +663,7 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
- 
- int fw_sysfs_fallback(struct firmware *fw, const char *name,
- 		      struct device *device,
--		      unsigned int opt_flags,
-+		      enum fw_opt opt_flags,
- 		      int ret)
- {
- 	if (!fw_run_sysfs_fallback(opt_flags))
-diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
-index f8255670a663..a3b73a09db6c 100644
---- a/drivers/base/firmware_loader/fallback.h
-+++ b/drivers/base/firmware_loader/fallback.h
-@@ -5,6 +5,8 @@
- #include <linux/firmware.h>
- #include <linux/device.h>
- 
-+#include "firmware.h"
-+
- /**
-  * struct firmware_fallback_config - firmware fallback configuration settings
-  *
-@@ -31,7 +33,7 @@ struct firmware_fallback_config {
- #ifdef CONFIG_FW_LOADER_USER_HELPER
- int fw_sysfs_fallback(struct firmware *fw, const char *name,
- 		      struct device *device,
--		      unsigned int opt_flags,
-+		      enum fw_opt opt_flags,
- 		      int ret);
- void kill_pending_fw_fallback_reqs(bool only_kill_custom);
- 
-@@ -43,7 +45,7 @@ void unregister_sysfs_loader(void);
- #else /* CONFIG_FW_LOADER_USER_HELPER */
- static inline int fw_sysfs_fallback(struct firmware *fw, const char *name,
- 				    struct device *device,
--				    unsigned int opt_flags,
-+				    enum fw_opt opt_flags,
- 				    int ret)
- {
- 	/* Keep carrying over the same error */
-diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
-index d11d37db370b..b252bfa82295 100644
---- a/drivers/base/firmware_loader/firmware.h
-+++ b/drivers/base/firmware_loader/firmware.h
-@@ -2,6 +2,7 @@
- #ifndef __FIRMWARE_LOADER_H
- #define __FIRMWARE_LOADER_H
- 
-+#include <linux/bitops.h>
- #include <linux/firmware.h>
- #include <linux/types.h>
- #include <linux/kref.h>
-@@ -10,13 +11,14 @@
- 
- #include <generated/utsrelease.h>
- 
--/* firmware behavior options */
--#define FW_OPT_UEVENT			(1U << 0)
--#define FW_OPT_NOWAIT			(1U << 1)
--#define FW_OPT_USERHELPER		(1U << 2)
--#define FW_OPT_NO_WARN			(1U << 3)
--#define FW_OPT_NOCACHE			(1U << 4)
--#define FW_OPT_NOFALLBACK		(1U << 5)
-+enum fw_opt {
-+	FW_OPT_UEVENT =         BIT(0),
-+	FW_OPT_NOWAIT =         BIT(1),
-+	FW_OPT_USERHELPER =     BIT(2),
-+	FW_OPT_NO_WARN =        BIT(3),
-+	FW_OPT_NOCACHE =        BIT(4),
-+	FW_OPT_NOFALLBACK =     BIT(5),
-+};
- 
- enum fw_status {
- 	FW_STATUS_UNKNOWN,
-@@ -110,6 +112,6 @@ static inline void fw_state_done(struct fw_priv *fw_priv)
- }
- 
- int assign_fw(struct firmware *fw, struct device *device,
--	      unsigned int opt_flags);
-+	      enum fw_opt opt_flags);
- 
- #endif /* __FIRMWARE_LOADER_H */
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 5812148694b6..5baadad3012d 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -443,7 +443,7 @@ static int fw_add_devm_name(struct device *dev, const char *name)
- #endif
- 
- int assign_fw(struct firmware *fw, struct device *device,
--	      unsigned int opt_flags)
-+	      enum fw_opt opt_flags)
- {
- 	struct fw_priv *fw_priv = fw->priv;
- 	int ret;
-@@ -558,7 +558,7 @@ static void fw_abort_batch_reqs(struct firmware *fw)
- static int
- _firmware_request(const struct firmware **firmware_p, const char *name,
- 		  struct device *device, void *buf, size_t size,
--		  unsigned int opt_flags)
-+		  enum fw_opt opt_flags)
- {
- 	struct firmware *fw = NULL;
- 	int ret;
-@@ -734,7 +734,7 @@ struct firmware_work {
- 	struct device *device;
- 	void *context;
- 	void (*cont)(const struct firmware *fw, void *context);
--	unsigned int opt_flags;
-+	enum fw_opt opt_flags;
- };
- 
- static void firmware_request_work_func(struct work_struct *work)
+This patchset is tested on DB820c, with HDMI audio playback, MI2S on
+DB410c on top of mainline, Also tested SLIMBus analog audio using
+wcd9355 with an additional patches. Previous version of these
+patches are also tested on SDM845 by Rohit.
+
+Here is my test branch incase someone want to try these patches
+https://git.linaro.org/people/srinivas.kandagatla/linux.git/log/?h=v4.16-qdsp6-v5
+
+Here is block diagram to give a quick overview of the components
+
+
+  +---------+          +---------+         +---------+   
+  |  q6asm  |          |q6routing|         | q6afe   | 
+  |   dais  | <------> |  mixers | <-----> |  dais   |  
+  +---------+          +---------+         +---------+   
+      ^                     ^                   ^
+      |                     |                   |
+      |  +------------------+----------------+  |       
+      |  |                  |                |  |       
+      v  v                  v                v  v       
+  +---------+          +---------+         +---------+ 
+  |   q6ASM |          |  q6ADM  |         |   q6AFE |  
+  +---------+          +---------+         +---------+  
+      ^                     ^                   ^          ^
+      |                     |                   | CPU Side |
+------+---------------------+-------------------+--------
+      |                     |                   |
+      |                     |APR(smd/glink)     | 
+      |                     |                   |
+      |  +------------------+----------------+  |
+      |  |                  |                |  |
++-----+--+-----------------------------------+--+-------
+      |  |                  |                |  | QDSP Side |
+      v  v                  v                v  v           v
+ +---------+          +---------+         +---------+
+ |   ASM   | <------> |   ADM   | <-----> |   AFE   |
+ +---------+          +---------+         +---------+
+                                               ^
+                                               | 
+                           +-------------------+
+                           |
+---------------------------+--------------------------
+                           |            Audio I/O |
+                           v                      v
+    +--------------------------------------------------+
+    |                Audio devices                     |
+    | CODEC | HDMI-TX | PCM  | SLIMBUS | I2S |MI2S |...|
+    |                                                  |
+    +--------------------------------------------------+
+
+
+Changes since v4 (https://lkml.org/lkml/2018/3/9/1207)
+ - Updated dt bindings as suggested by Rob H.
+ - removed dt patch as db820c requires some more display
+	 dt patches to get hdmi audio.
+ - remove static flags in q6core as suggested by Rohit.
+ - add Rohits tested and reviewed tag
+ - fixed few static checker warnings.
+ - use NULL topology flag as suggested by Rohit.
+
+Thanks,
+srini
+
+Srinivas Kandagatla (23):
+  soc: qcom dt-bindings: Add APR bus bindings
+  soc: qcom: Add APR bus driver
+  ASoC: qdsp6: q6common: Add qdsp6 helper functions
+  ASoC: qdsp6: dt-bindings: Add q6afe dt bindings
+  ASoC: qdsp6: dt-bindings: Add q6adm dt bindings
+  ASoC: qdsp6: dt-bindings: Add q6asm dt bindings
+  ASoC: qdsp6: q6afe: Add q6afe driver
+  ASoC: qdsp6: qdafe: Add SLIMBus port Support
+  ASoC: qdsp6: q6afe: Add support to MI2S ports
+  ASoC: qdsp6: q6afe: Add support to MI2S sysclks
+  ASoC: qdsp6: q6adm: Add q6adm driver
+  ASoC: qdsp6: q6asm: Add q6asm driver
+  ASoC: qdsp6: q6asm: Add support to memory map and unmap
+  ASoC: qdsp6: q6asm: Add support to audio stream apis
+  ASoC: qdsp6: q6core: Add q6core driver
+  ASoC: qdsp6: q6routing: Add q6routing driver
+  ASoC: qdsp6: q6routing: Add support to all SLIMBus Mixers
+  ASoC: qdsp6: q6routing: Add support to MI2S Mixers
+  ASoC: qdsp6: q6afe: Add q6afe dai driver
+  ASoC: qdsp6: q6asm: Add q6asm dai driver
+  ASoC: qdsp6: dt-bindings: Add apq8096 machine bindings
+  ASoC: qcom: apq8096: Add db820c machine driver
+  MAINTAINERS: Add myself as co-maintainer of qcom audio
+
+ .../devicetree/bindings/soc/qcom/qcom,apr.txt      |   85 ++
+ .../devicetree/bindings/sound/qcom,apq8096.txt     |   76 ++
+ .../devicetree/bindings/sound/qcom,q6adm.txt       |   33 +
+ .../devicetree/bindings/sound/qcom,q6afe.txt       |   88 ++
+ .../devicetree/bindings/sound/qcom,q6asm.txt       |   33 +
+ MAINTAINERS                                        |    1 +
+ drivers/soc/qcom/Kconfig                           |    9 +
+ drivers/soc/qcom/Makefile                          |    1 +
+ drivers/soc/qcom/apr.c                             |  385 ++++++
+ include/dt-bindings/soc/qcom,apr.h                 |   27 +
+ include/dt-bindings/sound/qcom,q6afe.h             |   31 +
+ include/dt-bindings/sound/qcom,q6asm.h             |   22 +
+ include/linux/mod_devicetable.h                    |   11 +
+ include/linux/soc/qcom/apr.h                       |  132 ++
+ sound/soc/qcom/Kconfig                             |   50 +
+ sound/soc/qcom/Makefile                            |    5 +
+ sound/soc/qcom/apq8096.c                           |  238 ++++
+ sound/soc/qcom/qdsp6/Makefile                      |    8 +
+ sound/soc/qcom/qdsp6/q6adm.c                       |  633 ++++++++++
+ sound/soc/qcom/qdsp6/q6adm.h                       |   25 +
+ sound/soc/qcom/qdsp6/q6afe-dai.c                   |  752 +++++++++++
+ sound/soc/qcom/qdsp6/q6afe.c                       | 1068 ++++++++++++++++
+ sound/soc/qcom/qdsp6/q6afe.h                       |  193 +++
+ sound/soc/qcom/qdsp6/q6asm-dai.c                   |  632 ++++++++++
+ sound/soc/qcom/qdsp6/q6asm.c                       | 1310 ++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6asm.h                       |   69 ++
+ sound/soc/qcom/qdsp6/q6core.c                      |  380 ++++++
+ sound/soc/qcom/qdsp6/q6core.h                      |   15 +
+ sound/soc/qcom/qdsp6/q6dsp-common.c                |   66 +
+ sound/soc/qcom/qdsp6/q6dsp-common.h                |   24 +
+ sound/soc/qcom/qdsp6/q6dsp-errno.h                 |   51 +
+ sound/soc/qcom/qdsp6/q6routing.c                   |  982 +++++++++++++++
+ sound/soc/qcom/qdsp6/q6routing.h                   |    9 +
+ 33 files changed, 7444 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8096.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6adm.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6afe.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6asm.txt
+ create mode 100644 drivers/soc/qcom/apr.c
+ create mode 100644 include/dt-bindings/soc/qcom,apr.h
+ create mode 100644 include/dt-bindings/sound/qcom,q6afe.h
+ create mode 100644 include/dt-bindings/sound/qcom,q6asm.h
+ create mode 100644 include/linux/soc/qcom/apr.h
+ create mode 100644 sound/soc/qcom/apq8096.c
+ create mode 100644 sound/soc/qcom/qdsp6/Makefile
+ create mode 100644 sound/soc/qcom/qdsp6/q6adm.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6adm.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6afe-dai.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6afe.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6afe.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6asm-dai.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6asm.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6asm.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6core.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6core.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6dsp-common.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6dsp-common.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6dsp-errno.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6routing.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6routing.h
+
 -- 
-2.14.1
+2.16.2
