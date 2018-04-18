@@ -1,67 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753168AbeDRRy4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 13:54:56 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:45896 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753145AbeDRRyz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 13:54:55 -0400
-Date: Wed, 18 Apr 2018 18:54:43 +0100
-From: Russell King <rmk@armlinux.org.uk>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the arm-current tree
-Message-ID: <20180418175442.GA7234@flint.armlinux.org.uk>
-References: <20180418133155.0931baf7@canb.auug.org.au>
+        id S1753180AbeDRRzP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 13:55:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53002 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751407AbeDRRzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 13:55:14 -0400
+Date: Wed, 18 Apr 2018 20:55:13 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Joby Poriyath <joby.poriyath@citrix.com>,
+        Ben Hutchings <bhutchings@solarflare.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: don't use kvzalloc for DMA memory
+Message-ID: <20180418204229-mutt-send-email-mst@kernel.org>
+References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
+ <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180418133155.0931baf7@canb.auug.org.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 01:31:55PM +1000, Stephen Rothwell wrote:
-> Hi Russell,
+On Wed, Apr 18, 2018 at 09:05:54AM -0700, Eric Dumazet wrote:
 > 
-> After merging the arm-current tree, today's linux-next build
-> (lots of configs) failed like this:
 > 
-> /bin/sh: 1: arithmetic expression: expecting primary: " "
-> (lots of these)
+> On 04/18/2018 07:34 AM, Mikulas Patocka wrote:
+> > The patch 74d332c13b21 changes alloc_netdev_mqs to use vzalloc if kzalloc
+> > fails (later patches change it to kvzalloc).
+> > 
+> > The problem with this is that if the vzalloc function is actually used, 
+> > virtio_net doesn't work (because it expects that the extra memory should 
+> > be accessible with DMA-API and memory allocated with vzalloc isn't).
+> > 
+> > This patch changes it back to kzalloc and adds a warning if the allocated
+> > size is too large (the allocation is unreliable in this case).
+> > 
+> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> > Fixes: 74d332c13b21 ("net: extend net_device allocation to vmalloc()")
+> > 
+> > ---
+> >  net/core/dev.c |    3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > Index: linux-2.6/net/core/dev.c
+> > ===================================================================
+> > --- linux-2.6.orig/net/core/dev.c	2018-04-16 21:08:36.000000000 +0200
+> > +++ linux-2.6/net/core/dev.c	2018-04-18 16:24:43.000000000 +0200
+> > @@ -8366,7 +8366,8 @@ struct net_device *alloc_netdev_mqs(int
+> >  	/* ensure 32-byte alignment of whole construct */
+> >  	alloc_size += NETDEV_ALIGN - 1;
+> >  
+> > -	p = kvzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
+> > +	WARN_ON(alloc_size > PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER);
+> > +	p = kzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
+> >  	if (!p)
+> >  		return NULL;
+> >  
+> > 
 > 
-> Caused by commit
-> 
->   fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )) operator")
-> 
-> (pointed out by Michael Ellerman)
-> 
-> Our /bin/sh is dash not bash ...
+> Since when a net_device needs to be in DMA zone ???
 
-I tested this on 32-bit ARM with dash:
+It's likely that we are not the only device like this.
+It would be better to find a way to find devices like this.
 
-foo# dash
-# echo $(($(nm /boot/vmlinux-4.16.0+ | sed -n -e 's/^\([^ ]*\) B __bss_start$/-0x\1/p' -e 's/^\([^ ]*\) B __bss_stop$/+0x\1/p') ))
-6409680
-#
+Imagine you want to pass some data to card.
+Natural thing is to just put it in a variable and start DMA.
+However DMA API disallows stack access nowdays,
+so it's natural to put this within struct device.
 
-Any clues what '/bin/sh: 1: arithmetic expression: expecting primary: " "'
-actually means in reality?
+See e.g.
 
-I don't see why you should end up with lots of them either, unless maybe
-the sed expression isn't working for you.
+	commit a725ee3e44e39dab1ec82cc745899a785d2a555e
+	Author: Andy Lutomirski <luto@kernel.org>
+	Date:   Mon Jul 18 15:34:49 2016 -0700
 
-The sed expression should end up producing output such as:
+	    virtio-net: Remove more stack DMA
 
--0xc09138c4
-+0xc0f30694
 
-and that's it, two values, one preceded by a + and the other by a -.
+
+> I would rather fix virtio_net, this looks very suspect to me.
+
+
+It's been done for years. I'm fine with changing virtio-net and
+allocating DMA memory separately but I am not sure it's appropriate on
+net.
+
+And OTOH, shouldn't drivers avoid allocating such huge device structs?
+Abusing vmalloc won't work well on 32 bit platforms.
+
+> Each virtio_net should probably allocate the exact amount of DMA-memory it wants,
+> instead of expecting core networking stack to have a huge chunk of DMA-memory for everything.
+
+It's not a DMA memory at all (not a synchronous memory) and it is not
+huge.  It's a small chunk of regular memory that is mapped for DMA for a
+short while, then unmapped.
 
 -- 
-Russell King
-ARM architecture Linux Kernel maintainer
+MST
