@@ -1,120 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753499AbeDRHPh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:15:37 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51910 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752705AbeDRHPe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:15:34 -0400
-X-Google-Smtp-Source: AIpwx49tZoMvWnW29zD5QKfJ/b66bmMDx+r1UJToQlWIWgc6AluNZScFVWLCp6gZkt4p3AtLOcyTkqUOnTLERGMxxWw=
+        id S1753524AbeDRHQS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:16:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36361 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753251AbeDRHO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 03:14:58 -0400
+From: NeilBrown <neilb@suse.com>
+To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 18 Apr 2018 16:47:02 +1000
+Subject: [PATCH 4/6] rhashtable: improve rhashtable_walk stability when
+ stop/start used.
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <152403402199.16895.1078171273848104695.stgit2@noble>
+In-Reply-To: <152403346237.16895.8767189357062722046.stgit2@noble>
+References: <152403346237.16895.8767189357062722046.stgit2@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-Originating-IP: [90.77.100.34]
-In-Reply-To: <20180418033143.208986-1-dianders@chromium.org>
-References: <20180418033143.208986-1-dianders@chromium.org>
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Date: Wed, 18 Apr 2018 09:15:33 +0200
-Message-ID: <CABxcv=kx9KVJYPyRFBR5mzGgezoSmjrXpGa214E2v85YJYd1+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] regulator: Don't return or expect -errno from of_map_mode()
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>,
-        David Collins <collinsd@codeaurora.org>, evgreen@chromium.org,
-        swboyd@chromium.org, linux-omap@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
+When a walk of an rhashtable is interrupted with rhastable_walk_stop()
+and then rhashtable_walk_start(), the location to restart from is based
+on a 'skip' count in the current hash chain, and this can be incorrect
+if insertions or deletions have happened.  This does not happen when
+the walk is not stopped and started as iter->p is a placeholder which
+is safe to use while holding the RCU read lock.
 
-Patch looks good to me, I just have some minor comments.
+In rhashtable_walk_start() we can revalidate that 'p' is still in the
+same hash chain.  If it isn't then the current method is still used.
 
-On Wed, Apr 18, 2018 at 5:31 AM, Douglas Anderson <dianders@chromium.org> wrote:
-> In of_get_regulation_constraints() we were taking the result of
-> of_map_mode() (an unsigned int) and assigning it to an int.  We were
-> then checking whether this value was -EINVAL.  Some implementers of
-> of_map_mode() were returning -EINVAL (even though the return type of
-> their function needed to be unsigned int) because they needed to to
+With this patch, if a rhashtable walker ensures that the current
+object remains in the table over a stop/start period (possibly by
+elevating the reference count if that is sufficient), it can be sure
+that a walk will not miss objects that were in the hashtable for the
+whole time of the walk.
 
-s/to to/to
+rhashtable_walk_start() may not find the object even though it is
+still in the hashtable if a rehash has moved it to a new table.  In
+this case it will (eventually) get -EAGAIN and will need to proceed
+through the whole table again to be sure to see everything at least
+once.
 
-> signal an error back to of_get_regulation_constraints().
->
-> In general in the regulator framework the mode is always referred to
-> as an unsigned int.  While we could fix this to be a signed int (the
-> highest value we store in there right now is 0x8), it's actually
-> pretty clean to just define the regulator mode 0x0 (the lack of any
-> bits set) as an invalid mode.  Let's do that.
->
-> Suggested-by: Javier Martinez Canillas <javier@dowhile0.org>
-> Fixes: 5e5e3a42c653 ("regulator: of: Add support for parsing initial and suspend modes")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->
-> Changes in v2:
-> - Use Javier's suggestion of defining 0x0 as invalid
->
->  drivers/regulator/cpcap-regulator.c |  2 +-
->  drivers/regulator/of_regulator.c    | 15 +++++++++------
->  drivers/regulator/twl-regulator.c   |  2 +-
->  include/linux/regulator/consumer.h  |  1 +
->  4 files changed, 12 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/regulator/cpcap-regulator.c b/drivers/regulator/cpcap-regulator.c
-> index f541b80f1b54..bd910fe123d9 100644
-> --- a/drivers/regulator/cpcap-regulator.c
-> +++ b/drivers/regulator/cpcap-regulator.c
-> @@ -222,7 +222,7 @@ static unsigned int cpcap_map_mode(unsigned int mode)
->         case CPCAP_BIT_AUDIO_LOW_PWR:
->                 return REGULATOR_MODE_STANDBY;
->         default:
-> -               return -EINVAL;
-> +               return REGULATOR_MODE_INVALID;
->         }
->  }
->
-> diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-> index f47264fa1940..22c02b7a338b 100644
-> --- a/drivers/regulator/of_regulator.c
-> +++ b/drivers/regulator/of_regulator.c
-> @@ -124,11 +124,12 @@ static void of_get_regulation_constraints(struct device_node *np,
->
->         if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
->                 if (desc && desc->of_map_mode) {
-> -                       ret = desc->of_map_mode(pval);
-> -                       if (ret == -EINVAL)
-> +                       unsigned int mode = desc->of_map_mode(pval);
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: NeilBrown <neilb@suse.com>
+---
+ lib/rhashtable.c |   44 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 3 deletions(-)
 
-I think the convention is to always declare local variables at the
-start of the function? Although I couldn't find anything in the coding
-style document...
-
-> +
-> +                       if (mode == REGULATOR_MODE_INVALID)
->                                 pr_err("%s: invalid mode %u\n", np->name, pval);
->                         else
-> -                               constraints->initial_mode = ret;
-> +                               constraints->initial_mode = mode;
->                 } else {
->                         pr_warn("%s: mapping for mode %d not defined\n",
->                                 np->name, pval);
-> @@ -163,12 +164,14 @@ static void of_get_regulation_constraints(struct device_node *np,
->                 if (!of_property_read_u32(suspend_np, "regulator-mode",
->                                           &pval)) {
->                         if (desc && desc->of_map_mode) {
-> -                               ret = desc->of_map_mode(pval);
-> -                               if (ret == -EINVAL)
-> +                               unsigned int mode = desc->of_map_mode(pval);
-> +
-> +                               mode = desc->of_map_mode(pval);
-
-You are calling .of_map_mode and assigning the return value twice here.
-
-If you post a new version, feel free to add:
-
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-
-Best regards,
-Javier
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 28e1be9f681b..16cde54a553b 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -723,6 +723,7 @@ int rhashtable_walk_start_check(struct rhashtable_iter *iter)
+ 	__acquires(RCU)
+ {
+ 	struct rhashtable *ht = iter->ht;
++	bool rhlist = ht->rhlist;
+ 
+ 	rcu_read_lock();
+ 
+@@ -731,13 +732,52 @@ int rhashtable_walk_start_check(struct rhashtable_iter *iter)
+ 		list_del(&iter->walker.list);
+ 	spin_unlock(&ht->lock);
+ 
+-	if (!iter->walker.tbl && !iter->end_of_table) {
++	if (iter->end_of_table)
++		return 0;
++	if (!iter->walker.tbl) {
+ 		iter->walker.tbl = rht_dereference_rcu(ht->tbl, ht);
+ 		iter->slot = 0;
+ 		iter->skip = 0;
+ 		return -EAGAIN;
+ 	}
+ 
++	if (iter->p && !rhlist) {
++		/*
++		 * We need to validate that 'p' is still in the table, and
++		 * if so, update 'skip'
++		 */
++		struct rhash_head *p;
++		int skip = 0;
++		rht_for_each_rcu(p, iter->walker.tbl, iter->slot) {
++			skip++;
++			if (p == iter->p) {
++				iter->skip = skip;
++				goto found;
++			}
++		}
++		iter->p = NULL;
++	} else if (iter->p && rhlist) {
++		/* Need to validate that 'list' is still in the table, and
++		 * if so, update 'skip' and 'p'.
++		 */
++		struct rhash_head *p;
++		struct rhlist_head *list;
++		int skip = 0;
++		rht_for_each_rcu(p, iter->walker.tbl, iter->slot) {
++			for (list = container_of(p, struct rhlist_head, rhead);
++			     list;
++			     list = rcu_dereference(list->next)) {
++				skip++;
++				if (list == iter->list) {
++					iter->p = p;
++					skip = skip;
++					goto found;
++				}
++			}
++		}
++		iter->p = NULL;
++	}
++found:
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(rhashtable_walk_start_check);
+@@ -913,8 +953,6 @@ void rhashtable_walk_stop(struct rhashtable_iter *iter)
+ 		iter->walker.tbl = NULL;
+ 	spin_unlock(&ht->lock);
+ 
+-	iter->p = NULL;
+-
+ out:
+ 	rcu_read_unlock();
+ }
