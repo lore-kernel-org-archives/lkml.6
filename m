@@ -1,47 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753165AbeDRNju (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 09:39:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33532 "EHLO mx2.suse.de"
+        id S1752629AbeDRNkj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 09:40:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753082AbeDRNjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:39:49 -0400
-Date: Wed, 18 Apr 2018 15:39:47 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH] mm:memcg: add __GFP_NOWARN in
- __memcg_schedule_kmem_cache_create
-Message-ID: <20180418133947.GE17484@dhcp22.suse.cz>
-References: <20180418022912.248417-1-minchan@kernel.org>
- <20180418133139.GB27475@bombadil.infradead.org>
+        id S1751383AbeDRNkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 09:40:37 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE10621726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Wed, 18 Apr 2018 08:40:35 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Cc: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 05/10] PCI: Adds device ID for Synopsys Sample
+ Endpoint.
+Message-ID: <20180418134035.GM28657@bhelgaas-glaptop.roam.corp.google.com>
+References: <cover.1523973931.git.gustavo.pimentel@synopsys.com>
+ <5d20185e88e7b6738d6b6aca41b1a237033fc36f.1523973931.git.gustavo.pimentel@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180418133139.GB27475@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <5d20185e88e7b6738d6b6aca41b1a237033fc36f.1523973931.git.gustavo.pimentel@synopsys.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18-04-18 06:31:39, Matthew Wilcox wrote:
-> On Wed, Apr 18, 2018 at 11:29:12AM +0900, Minchan Kim wrote:
-> > If there are heavy memory pressure, page allocation with __GFP_NOWAIT
-> > fails easily although it's order-0 request.
-> > I got below warning 9 times for normal boot.
-> > 
-> > Let's not make user scared.
+On Tue, Apr 17, 2018 at 03:34:23PM +0100, Gustavo Pimentel wrote:
+> The PCIe controller dual mode is capable of operating in host mode as well
+> as endpoint mode by configuration.
 > 
-> Actually, can you explain why it's OK if this fails?  As I understand this
-> code, we'll fail to create a kmalloc cache for this memcg.  What problems
-> does that cause?
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+> Change v1->v2:
+>  - Register new device id following Kishon's suggestion.
+> Change v2->v3:
+>  - Nothing changed, just to follow the patch set version.
+> Changes v3->v4:
+>  - Nothing changed, just to follow the patch set version.
+> Changes v4->v5:
+>  - Nothing changed, just to follow the patch set version.
+> 
+>  include/linux/pci_ids.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> index cc608fc5..22b1c1b 100644
+> --- a/include/linux/pci_ids.h
+> +++ b/include/linux/pci_ids.h
+> @@ -2350,6 +2350,7 @@
+>  #define PCI_DEVICE_ID_CENATEK_IDE	0x0001
+>  
+>  #define PCI_VENDOR_ID_SYNOPSYS		0x16c3
+> +#define PCI_DEVICE_ID_SYNOPSYS_SMPL_EP	0xedda
 
-See http://lkml.kernel.org/r/20180418072002.GN17484@dhcp22.suse.cz
+This definition is only used once, so it fails the test at the top of
+pci_ids.h (we only add entries that will be shared between multiple
+drivers).  Just use the 0xedda constant in the driver.
 
--- 
-Michal Hocko
-SUSE Labs
+I'm not really sure there's much value in the device ID definitions at
+all.  Maybe we should consider adding only new vendor IDs?
+
+>  #define PCI_VENDOR_ID_VITESSE		0x1725
+>  #define PCI_DEVICE_ID_VITESSE_VSC7174	0x7174
+> -- 
+> 2.7.4
+> 
+> 
