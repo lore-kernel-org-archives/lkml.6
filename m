@@ -1,76 +1,264 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753664AbeDRIld (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:41:33 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55668 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752514AbeDRIlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:41:31 -0400
-Date: Wed, 18 Apr 2018 10:41:28 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 5/6] drm/atmel-hlcdc: add support for connecting to
- tda998x HDMI encoder
-Message-ID: <20180418104128.6747ad47@bbrezillon>
-In-Reply-To: <0155b3cc-29ce-fa43-5588-b465c6ee064a@axentia.se>
-References: <20180417131052.16336-1-peda@axentia.se>
-        <20180417131052.16336-6-peda@axentia.se>
-        <20180418093649.2c304f29@bbrezillon>
-        <0155b3cc-29ce-fa43-5588-b465c6ee064a@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753704AbeDRIlr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:41:47 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:42353 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753679AbeDRIlp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 04:41:45 -0400
+X-Google-Smtp-Source: AB8JxZrNYd6Uhyu0KwzpwJVbRziR6ktQda49hsnnhPH1F0/cvT6wPBiLlYBQ8+93DTUnKV3SuNqX3A==
+From: Srinath Mannam <srinath.mannam@broadcom.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH] arm64: dts: correct SATA addresses for Stingray
+Date: Wed, 18 Apr 2018 14:11:29 +0530
+Message-Id: <1524040889-6876-1-git-send-email-srinath.mannam@broadcom.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 10:02:12 +0200
-Peter Rosin <peda@axentia.se> wrote:
+Correct all SATA ahci and phy controller register
+addresses and interrupt lines to proper values.
 
-> On 2018-04-18 09:36, Boris Brezillon wrote:
-> > On Tue, 17 Apr 2018 15:10:51 +0200
-> > Peter Rosin <peda@axentia.se> wrote:
-> >   
-> >> When the of-graph points to a tda998x-compatible HDMI encoder, register
-> >> as a component master and bind to the encoder/connector provided by
-> >> the tda998x driver.  
-> > 
-> > Can't we do the opposite: make the tda998x driver expose its devices as
-> > drm bridges. I'd rather not add another way to connect external
-> > encoders (or bridges) to display controller drivers, especially since,
-> > when I asked DRM maintainers/devs what was the good approach to
-> > represent such external encoders they pointed me to the drm_bridge
-> > interface.  
-> 
-> From the cover letter:
-> 
-> "However, I don't know if the tilcdc driver is interfacing with the
-> tda998x driver in a sane and modern way"
-> 
-> So, which way is the future? Should bridges become components or should
-> existing bridge-like components no longer be components? Are there others?
+Fixes: 344a2e514182 ("arm64: dts: Add SATA DT nodes for Stingray SoC")
 
-Well, what I've been told a while ago is that drm_bridge will take over
-drm_encoder_slave and custom drm_encoder/drm_connector implementations
-when it comes to representing bridges.
+Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Reviewed-by: Andrew Gospodarek <andrew.gospodarek@broadcom.com>
+---
+ .../boot/dts/broadcom/stingray/stingray-sata.dtsi  | 80 +++++++++++-----------
+ 1 file changed, 40 insertions(+), 40 deletions(-)
 
-AFAIU, using the component framework to bind all elements of the
-pipeline to the display controller is orthogonal to how you represent
-elements in the pipeline. I mean, you could have a bridge that
-registers as a component so that display controllers drivers who want
-to use the component framework don't have to re-code the
-component-to-bridge glue every time, and those who don't use the
-component framework can still get access to the bridge.
+diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi b/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
+index 4b5465d..8c68e0c 100644
+--- a/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
++++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
+@@ -36,11 +36,11 @@
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0x0 0x67d00000 0x00800000>;
+ 
+-		sata0: ahci@210000 {
++		sata0: ahci@0 {
+ 			compatible = "brcm,iproc-ahci", "generic-ahci";
+-			reg = <0x00210000 0x1000>;
++			reg = <0x00000000 0x1000>;
+ 			reg-names = "ahci";
+-			interrupts = <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -52,9 +52,9 @@
+ 			};
+ 		};
+ 
+-		sata_phy0: sata_phy@212100 {
++		sata_phy0: sata_phy@2100 {
+ 			compatible = "brcm,iproc-sr-sata-phy";
+-			reg = <0x00212100 0x1000>;
++			reg = <0x00002100 0x1000>;
+ 			reg-names = "phy";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -66,11 +66,11 @@
+ 			};
+ 		};
+ 
+-		sata1: ahci@310000 {
++		sata1: ahci@10000 {
+ 			compatible = "brcm,iproc-ahci", "generic-ahci";
+-			reg = <0x00310000 0x1000>;
++			reg = <0x00010000 0x1000>;
+ 			reg-names = "ahci";
+-			interrupts = <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -82,9 +82,9 @@
+ 			};
+ 		};
+ 
+-		sata_phy1: sata_phy@312100 {
++		sata_phy1: sata_phy@12100 {
+ 			compatible = "brcm,iproc-sr-sata-phy";
+-			reg = <0x00312100 0x1000>;
++			reg = <0x00012100 0x1000>;
+ 			reg-names = "phy";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -96,11 +96,11 @@
+ 			};
+ 		};
+ 
+-		sata2: ahci@120000 {
++		sata2: ahci@20000 {
+ 			compatible = "brcm,iproc-ahci", "generic-ahci";
+-			reg = <0x00120000 0x1000>;
++			reg = <0x00020000 0x1000>;
+ 			reg-names = "ahci";
+-			interrupts = <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -112,9 +112,9 @@
+ 			};
+ 		};
+ 
+-		sata_phy2: sata_phy@122100 {
++		sata_phy2: sata_phy@22100 {
+ 			compatible = "brcm,iproc-sr-sata-phy";
+-			reg = <0x00122100 0x1000>;
++			reg = <0x00022100 0x1000>;
+ 			reg-names = "phy";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -126,11 +126,11 @@
+ 			};
+ 		};
+ 
+-		sata3: ahci@130000 {
++		sata3: ahci@30000 {
+ 			compatible = "brcm,iproc-ahci", "generic-ahci";
+-			reg = <0x00130000 0x1000>;
++			reg = <0x00030000 0x1000>;
+ 			reg-names = "ahci";
+-			interrupts = <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -142,9 +142,9 @@
+ 			};
+ 		};
+ 
+-		sata_phy3: sata_phy@132100 {
++		sata_phy3: sata_phy@32100 {
+ 			compatible = "brcm,iproc-sr-sata-phy";
+-			reg = <0x00132100 0x1000>;
++			reg = <0x00032100 0x1000>;
+ 			reg-names = "phy";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -156,11 +156,11 @@
+ 			};
+ 		};
+ 
+-		sata4: ahci@330000 {
++		sata4: ahci@100000 {
+ 			compatible = "brcm,iproc-ahci", "generic-ahci";
+-			reg = <0x00330000 0x1000>;
++			reg = <0x00100000 0x1000>;
+ 			reg-names = "ahci";
+-			interrupts = <GIC_SPI 351 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -172,9 +172,9 @@
+ 			};
+ 		};
+ 
+-		sata_phy4: sata_phy@332100 {
++		sata_phy4: sata_phy@102100 {
+ 			compatible = "brcm,iproc-sr-sata-phy";
+-			reg = <0x00332100 0x1000>;
++			reg = <0x00102100 0x1000>;
+ 			reg-names = "phy";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -186,11 +186,11 @@
+ 			};
+ 		};
+ 
+-		sata5: ahci@400000 {
++		sata5: ahci@110000 {
+ 			compatible = "brcm,iproc-ahci", "generic-ahci";
+-			reg = <0x00400000 0x1000>;
++			reg = <0x00110000 0x1000>;
+ 			reg-names = "ahci";
+-			interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -202,9 +202,9 @@
+ 			};
+ 		};
+ 
+-		sata_phy5: sata_phy@402100 {
++		sata_phy5: sata_phy@112100 {
+ 			compatible = "brcm,iproc-sr-sata-phy";
+-			reg = <0x00402100 0x1000>;
++			reg = <0x00112100 0x1000>;
+ 			reg-names = "phy";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -216,11 +216,11 @@
+ 			};
+ 		};
+ 
+-		sata6: ahci@410000 {
++		sata6: ahci@120000 {
+ 			compatible = "brcm,iproc-ahci", "generic-ahci";
+-			reg = <0x00410000 0x1000>;
++			reg = <0x00120000 0x1000>;
+ 			reg-names = "ahci";
+-			interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -232,9 +232,9 @@
+ 			};
+ 		};
+ 
+-		sata_phy6: sata_phy@412100 {
++		sata_phy6: sata_phy@122100 {
+ 			compatible = "brcm,iproc-sr-sata-phy";
+-			reg = <0x00412100 0x1000>;
++			reg = <0x00122100 0x1000>;
+ 			reg-names = "phy";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -246,11 +246,11 @@
+ 			};
+ 		};
+ 
+-		sata7: ahci@420000 {
++		sata7: ahci@130000 {
+ 			compatible = "brcm,iproc-ahci", "generic-ahci";
+-			reg = <0x00420000 0x1000>;
++			reg = <0x00130000 0x1000>;
+ 			reg-names = "ahci";
+-			interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
+@@ -262,9 +262,9 @@
+ 			};
+ 		};
+ 
+-		sata_phy7: sata_phy@422100 {
++		sata_phy7: sata_phy@132100 {
+ 			compatible = "brcm,iproc-sr-sata-phy";
+-			reg = <0x00422100 0x1000>;
++			reg = <0x00132100 0x1000>;
+ 			reg-names = "phy";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-- 
+2.7.4
