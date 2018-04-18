@@ -1,91 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752665AbeDRPTU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:19:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751204AbeDRPTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:19:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8B072178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 18 Apr 2018 11:19:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Song Liu <songliubraving@fb.com>, LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@redhat.com>,
-        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/2] tracing: fix bad use of igrab in trace_uprobe.c
-Message-ID: <20180418111916.2325bf9c@gandalf.local.home>
-In-Reply-To: <CAJfpegtKsMBjqfg6Ewz3o9197GyqS6wTauuuMExj3DDZU+CPFA@mail.gmail.com>
-References: <20180418062907.3210386-1-songliubraving@fb.com>
-        <CAELBmZCvrL4s+cx2cECMQLQUx0hMxVP-dv9UGBfh64AS6unaBA@mail.gmail.com>
-        <20180418102504.7673a7f3@gandalf.local.home>
-        <CAJfpegtKsMBjqfg6Ewz3o9197GyqS6wTauuuMExj3DDZU+CPFA@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752983AbeDRPU3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:20:29 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:10879 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751232AbeDRPU0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 11:20:26 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180418152023epoutp0143aea23134cf3e3ac11783bb28a2ed29~mkOHwV7nH2231722317epoutp01I
+X-AuditID: b6c32a48-8d9ff70000000ff2-8c-5ad76236d7d7
+Subject: Re: [PATCH] [media] include/media: fix missing | operator when
+ setting cfg
+To: Colin King <colin.king@canonical.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <ebce8e36-9125-aecb-b0d1-87f068646e67@samsung.com>
+Date: Wed, 18 Apr 2018 17:20:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
+MIME-version: 1.0
+In-reply-to: <20180418150617.22489-1-colin.king@canonical.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXfOzs6Gi+PUfHFgNOyDUl5q2QHLruQJCgMJdAS69DA1p2NH
+        RyrVMNG51EyZyCYWKGabwTanmIHZvBHpRhlZUo0yL6RGmOTyVm6HYN9+z/v8+PP84cURURs3
+        As8rLKbVhfICCSZA+4ajjx1KvDYti/dsHiU3LXUY2TsjJu/NLiGk223lkZMVyzzSPvuOS04N
+        tGJkrbWXS7a4Bzlkp32Lc0pAGbV1GGU312BUT8dtqt5hBtQve+RlrkxwPIcuyNPQ6rjkLEHu
+        48k2RFWN3nBZ1jlaYEb0AMchIYW/rZgeCHAR0Q9gU30NYId1AFctTzh6wPdLI3dfcdnFMwDH
+        5mZ47OABcKbdgfisEOIKHDL1+GNDiWjodql9DkJMcKCu5YffwYgEWDdaD3wsJJLhy7lRno9R
+        4gDUf9z2cxiRDisW/vBYJxh6mz6jPubv+s19lf4cZDd/ca0RZTkcjnk+AJb3wZ7uFYS9egGD
+        lpVItuY56HpBs88h8Pu4g8eyGM6bbYDlclhTpff3gkQlgFvNbzB2kQSHx19z2fw9UDfsu9OX
+        KYS6KhGrUPCb4wvK8mloHnnkzxcR9wH02rIaQKQxoI0xoIExoIExoMFDgJrBXlrFKBU0c1gl
+        jWXkSqakUBGbXaS0A/+viaH6wZDrohMQOJAECbNSp2UirlzDlCqdAOKIJFT4dPatTCTMkZeW
+        0eqiTHVJAc04gRhHJeFC7aUJmYhQyIvp6zStotX/txycH6EFYm+rvVia+f7ITn+Yqb2rAUlL
+        q079K/IgFQ/2Mwrd4Jn8r43CTluc5ucFWi81rbq2m4RdJxLvZARPOTPOZpcntaovx9dKuqOp
+        jT4+brip0rgONi5zo8rXrVcNKdKyqLhbfQP00nlT+o4hZb5jMehkfoTNQK1tVLq8zz8ZNyQo
+        kytPiEHUjPwfS06wTDEDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsVy+t9jAV2zpOtRBisuSVr8Xt3LZrH1lrRF
+        /+PXzBbnz29gtzjb9IbdYtPja6wWl3fNYbPo2bCV1WLG+X1MFss2/WFy4PKY1dDL5rFpVSeb
+        x+Yl9R59W1YxenzeJBfAGsVlk5Kak1mWWqRvl8CVsfLsPOaCdpaKc6u/MzUwrmLuYuTkkBAw
+        kTjSfZq1i5GLQ0hgJ6PEpVU9TBDOQ0aJH1PWM4FUCQuESuzacZuli5GDQ0RAU+L8uSKQGmaB
+        M0wSMxbMZYdomMwosX/dNXaQBjYBQ4neo32MIDavgJ3EyadHweIsAqoSXXf+gtmiAhES985/
+        YoOoEZT4MfkeC4jNCVQ/bVsLM8gyZgF1iSlTckHCzALiEsfu32SEsOUlNq95yzyBUWAWku5Z
+        CB2zkHTMQtKxgJFlFaNkakFxbnpusVGBUV5quV5xYm5xaV66XnJ+7iZGYHxsO6zVv4Px8ZL4
+        Q4wCHIxKPLwJ/tejhFgTy4orcw8xSnAwK4nw7nx8JUqINyWxsiq1KD++qDQntfgQozQHi5I4
+        L3/+sUghgfTEktTs1NSC1CKYLBMHp1QDowpvgsaKOzPK9b3ulRT6SnW832zJqLx0e+HsmG/a
+        m4pncaidqZgyZzNHD/8DvgmnHtvyCF8/ba7t63XhZQO3sOQrpxPbDPJOmy44/iRmN7PLs9UV
+        1mmHzBpNLzn9uVS7LPlggFCqUGf57OnpzWb63sY9x94l1P3i2lozfeLVyoU+HtVHBMUOKbEU
+        ZyQaajEXFScCAJDJ+liLAgAA
+X-CMS-MailID: 20180418152022epcas2p363283e895d5673ad5da1313495f5e4b5
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180418150622epcas4p4be934b89937c0e50a2f236116c02d7cb
+X-RootMTR: 20180418150622epcas4p4be934b89937c0e50a2f236116c02d7cb
+References: <CGME20180418150622epcas4p4be934b89937c0e50a2f236116c02d7cb@epcas4p4.samsung.com>
+        <20180418150617.22489-1-colin.king@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 16:40:19 +0200
-Miklos Szeredi <miklos@szeredi.hu> wrote:
-
-
-> > The trace_uprobe (the probe event) is created, it doesn't do anything
-> > until it is enabled. This function is called when it is enabled. The
-> > trace_uprobe (probe event) can not be deleted while it is enabled
-> > (EBUSY).
-> >
-> > Are you asking what happens if the file is deleted while it has probe?
-> > That I don't know about (haven't tried it out). But I would hope that
-> > it keeps a reference to the inode, isn't that what the igrab is for?
-> > And is now being replaced by a reference on the path, or is that the
-> > problem?  
+On 04/18/2018 05:06 PM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> No, that's not the problem.
+> The value from a readl is being masked with ITE_REG_CIOCAN_MASK however
+> this is not being used and cfg is being re-assigned.  I believe the
+> assignment operator should actually be instead the |= operator.
 > 
-> What I don't see is how the uprobe object relates to the trace_uprobe object.
+> Detected by CoverityScan, CID#1467987 ("Unused value")
 > 
-> Because after the patch the uprobe object still only has a ref to the
-> inode, and that can lead to the same issue as with trace_uprobe.
-> OTOH if uprobe can't survive its creating trace_uprobe, then it
-> doesn't need to take a ref to the inode at all, since trace_uprobe
-> already holds it.   Taking an extra ref isn't incorrect, it's just
-> unnecessary and confusing.
-> 
-> So this needs to be cleared up in some way.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The uprobe created by the trace_uprobe creation must be deleted before
-the trace_uprobe can be deleted. Basically we have this:
+Thanks for the patch.
 
- # cd /sys/kernel/tracing
- # echo "uprobe creation text" > uprobe_events
-
-The trace_uprobe is created (but not the uprobe itself). This is what
-calls create_trace_uprobe().
-
- # echo 1 > events/uprobes/enable
-
-This enables all the trace uprobe events, which creates the uprobes.
-This is the action that calls probe_event_enable(), which creates
-uprobes.
-
-At this point, any write to uprobe_events that would destroy the trace
-uprobes would return with -EBUSY, and the trace uprobes will not be
-deleted.
-
- # echo 0 > events/uprobes/enable
-
-This will call the probe_event_disable() which will call
-uprobe_unregister() which will destroy the uprobe.
-
-Now we can delete the trace uprobe.
-
-Does that answer your question? A uprobe created for trace uprobes can
-not survive the trace uprobe itself.
-
--- Steve
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
