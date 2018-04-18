@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524065778; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524065776; cv=none;
         d=google.com; s=arc-20160816;
-        b=xBKgE7mlh+6dYsQD3o5rPI2pmtkxdXhQBYvZ+n8lCFHkjVKFNS3Wfoiv4C4e8XuAhu
-         b9Df0h3fpsYBIT+djhN5ITZ2D7YtEfqE8bLxwUfN7ONGneHrhCMfsb0ydq9nw6uhpjWM
-         OooIpj6Ln/QCEPOGLBPuPi3ZGt+z6kJNt1PtpZ2j5sAJgarEf0JyUqVHV5B9HUcxpct/
-         Tp8mMVu2TVwJN77n0AoufWD1kSHadmM8EGmnE1Km5QZNPav4I05VaiILQKDQYNktNtAT
-         U8y4iv2hcvp6q2NZmNbOUY340Sryd+IkGAal1vF1TTTFxt+cpUUOm4EkwbGia4ElFxB0
-         5tHQ==
+        b=semqsla5gIsrHlQUVaFL6CaNODk0HhZ3OVpEtA2cbg4VtJyYnUaybnA0mRmuCnfWVm
+         aQUpe2MF/M7lrkbQYH2erkHkESm089Jd4uS2xPL12SRQQron9GgWSlVI+DgZHB9WLGA9
+         ea6M6Nzvu31XiBnAt60AGDyt4TcutX85DP3aTn3nGtpMa7t3aCSOsFipAEz1c5VmLnb1
+         84vgt+m8bSpPcHRb9cYJT0+TxFvt+lswKYfZ/SlbeX1C4N9/mdilxYvB2P5jIdO9XsfP
+         sgBsIF1yTHMvHoUynPdrPccAECFj2dujADA0TNH2Y0wOLZMNuDP5YDUIK/jOiN6kahSK
+         gA4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=939XqZSukR5YqfxnRE7xajvMmMoSvO/JjJJ0qIvIWWA=;
-        b=vWMGgY+AGfsCmVaN1ipT3fpXiyEbFulzc6dUkiCPP+wId/5Kh5qPSm89DZBYJ60TBr
-         tGy3GRByxInhhCl7urgoQmOHgBH3odCU09BlWp/jiGnJum59XmfN+R64ZjhWPabfoNJQ
-         zGn+IeYGK6f6jqt6j9hUtwiXO5mfTu84XDfg9p9pV6RIkFOTvSYD21uy5woIOSzI5ueq
-         e4djqCvlMYCh1hOpG48p9/RPaaGRnWin86orjtKAoK3NDtYS8siMOQAzVOO+LxiSoj8M
-         ORDJTUMQpqPdZg0asjTWlx+KKpRY0B9AHW9TgHXAT58xetR3jljK8+fEg66af+GW9k4d
-         5AAg==
+        bh=tcrUhGU2hqiOTPUnPLrCmG7DDVfGqr+/70PZmphgcfs=;
+        b=JYZUMVOFo4l2vjRHcLzed6/NFDe39YhHlPPYtiv2uPiNxv0zAqCVGNFne19TE5BBub
+         jEWyi4BUkyIVOpcj5e7R90bL2DY/UKAVq2pV+M9g8b0tmXzfBuAAslC/I+VAB3ArPt4W
+         nuWNcezFPuqcatIN4rU9WG9x1FXTPcEo/DvkloW3qmRJk+chqqpd+re1xMg8+eOFEN4V
+         VIfABhCpueT49VKuP8C1O4reWb1ygebE68y0DO80qw/AiPY+DP6SoO9xWuR6J0l2NA1r
+         Vh1OEV8o53s+AuMo4Hp0pCeUP8CEqleo4aQiyWFFllhuKs73R6pfgl56EHWOtwoHBCn/
+         orwQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=j4AFTiHe;
+       dkim=pass header.i=@linaro.org header.s=google header.b=OWV156Su;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=j4AFTiHe;
+       dkim=pass header.i=@linaro.org header.s=google header.b=OWV156Su;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AIpwx4/Xid/5GRGj+z7ZQFGSPnBm06ugjyRjI7Fw+eiAiyFEZqV5T38Q3c7asWYEPp0q+9VEaUCajw==
+X-Google-Smtp-Source: AIpwx49XsTM4oxXUPIEmtATqLUoYB2SpbvxLzUeZGzdeCLY96IzrqNIdj/qlPhGFHbION3p6V1d1mg==
 From: srinivas.kandagatla@linaro.org
 To: andy.gross@linaro.org,
 	broonie@kernel.org,
@@ -46,482 +46,471 @@ Cc: gregkh@linuxfoundation.org,
 	rohkumar@qti.qualcomm.com,
 	spatakok@qti.qualcomm.com,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v5 16/23] ASoC: qdsp6: q6routing: Add q6routing driver
-Date: Wed, 18 Apr 2018 16:31:50 +0100
-Message-Id: <20180418153157.1960-17-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v5 15/23] ASoC: qdsp6: q6core: Add q6core driver
+Date: Wed, 18 Apr 2018 16:31:49 +0100
+Message-Id: <20180418153157.1960-16-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180418153157.1960-1-srinivas.kandagatla@linaro.org>
 References: <20180418153157.1960-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598098797538486997?=
-X-GMAIL-MSGID: =?utf-8?q?1598098797538486997?=
+X-GMAIL-THRID: =?utf-8?q?1598098795853403191?=
+X-GMAIL-MSGID: =?utf-8?q?1598098795853403191?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-This patch adds support to q6 routing driver which configures route
-between ASM and AFE module using ADM apis.
-
-This driver uses dapm widgets to setup the matrix between AFE ports and
-ASM streams.
+This patch adds support to core apr service, which is used to query
+status of other static and dynamic services on the dsp.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 ---
- sound/soc/qcom/Kconfig           |   4 +
- sound/soc/qcom/qdsp6/Makefile    |   1 +
- sound/soc/qcom/qdsp6/q6routing.c | 392 +++++++++++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6routing.h |   9 +
- 4 files changed, 406 insertions(+)
- create mode 100644 sound/soc/qcom/qdsp6/q6routing.c
- create mode 100644 sound/soc/qcom/qdsp6/q6routing.h
+ sound/soc/qcom/Kconfig        |   4 +
+ sound/soc/qcom/qdsp6/Makefile |   1 +
+ sound/soc/qcom/qdsp6/q6core.c | 380 ++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6core.h |  15 ++
+ 4 files changed, 400 insertions(+)
+ create mode 100644 sound/soc/qcom/qdsp6/q6core.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6core.h
 
 diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 488ee93ee084..7a868a6fac1b 100644
+index a07181290624..488ee93ee084 100644
 --- a/sound/soc/qcom/Kconfig
 +++ b/sound/soc/qcom/Kconfig
-@@ -53,6 +53,9 @@ config SND_SOC_QDSP6_AFE
- config SND_SOC_QDSP6_ADM
- 	tristate
- 
-+config SND_SOC_QDSP6_ROUTING
-+	tristate
-+
+@@ -56,6 +56,9 @@ config SND_SOC_QDSP6_ADM
  config SND_SOC_QDSP6_ASM
  	tristate
  
-@@ -65,6 +68,7 @@ config SND_SOC_QDSP6
- 	select SND_SOC_QDSP6_COMMON
++config SND_SOC_QDSP6_CORE
++	tristate
++
+ config SND_SOC_QDSP6
+ 	tristate "SoC ALSA audio driver for QDSP6"
+ 	depends on QCOM_APR && HAS_DMA
+@@ -63,6 +66,7 @@ config SND_SOC_QDSP6
  	select SND_SOC_QDSP6_AFE
  	select SND_SOC_QDSP6_ADM
-+	select SND_SOC_QDSP6_ROUTING
  	select SND_SOC_QDSP6_ASM
- 	select SND_SOC_QDSP6_CORE
++	select SND_SOC_QDSP6_CORE
  	help
+ 	 To add support for MSM QDSP6 Soc Audio.
+ 	 This will enable sound soc platform specific
 diff --git a/sound/soc/qcom/qdsp6/Makefile b/sound/soc/qcom/qdsp6/Makefile
-index 61f089bc0d25..6640bceccc18 100644
+index eea962315ab3..61f089bc0d25 100644
 --- a/sound/soc/qcom/qdsp6/Makefile
 +++ b/sound/soc/qcom/qdsp6/Makefile
-@@ -1,5 +1,6 @@
- obj-$(CONFIG_SND_SOC_QDSP6_COMMON) += q6dsp-common.o
+@@ -2,3 +2,4 @@ obj-$(CONFIG_SND_SOC_QDSP6_COMMON) += q6dsp-common.o
  obj-$(CONFIG_SND_SOC_QDSP6_AFE) += q6afe.o
  obj-$(CONFIG_SND_SOC_QDSP6_ADM) += q6adm.o
-+obj-$(CONFIG_SND_SOC_QDSP6_ROUTING) += q6routing.o
  obj-$(CONFIG_SND_SOC_QDSP6_ASM) += q6asm.o
- obj-$(CONFIG_SND_SOC_QDSP6_CORE) += q6core.o
-diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
++obj-$(CONFIG_SND_SOC_QDSP6_CORE) += q6core.o
+diff --git a/sound/soc/qcom/qdsp6/q6core.c b/sound/soc/qcom/qdsp6/q6core.c
 new file mode 100644
-index 000000000000..b72bd9045fea
+index 000000000000..244ec153ab71
 --- /dev/null
-+++ b/sound/soc/qcom/qdsp6/q6routing.c
-@@ -0,0 +1,392 @@
++++ b/sound/soc/qcom/qdsp6/q6core.c
+@@ -0,0 +1,380 @@
 +// SPDX-License-Identifier: GPL-2.0
 +// Copyright (c) 2011-2017, The Linux Foundation
 +// Copyright (c) 2018, Linaro Limited
 +
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of_platform.h>
-+#include <linux/bitops.h>
-+#include <linux/component.h>
-+#include <linux/mutex.h>
-+#include <linux/of_device.h>
 +#include <linux/slab.h>
-+#include <sound/core.h>
-+#include <sound/soc.h>
-+#include <sound/soc-dapm.h>
-+#include <sound/pcm.h>
-+#include <sound/control.h>
-+#include <sound/asound.h>
-+#include <sound/pcm_params.h>
-+#include "q6afe.h"
-+#include "q6asm.h"
-+#include "q6adm.h"
-+#include "q6routing.h"
++#include <linux/wait.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/sched.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/jiffies.h>
++#include <linux/wait.h>
++#include <linux/soc/qcom/apr.h>
++#include "q6core.h"
++#include "q6dsp-errno.h"
 +
-+struct session_data {
-+	int state;
-+	int port_id;
-+	int path_type;
-+	int app_type;
-+	int acdb_id;
-+	int sample_rate;
-+	int bits_per_sample;
-+	int channels;
-+	int perf_mode;
-+	int numcopps;
-+	int fedai_id;
-+	unsigned long copp_map;
-+};
++#define ADSP_STATE_READY_TIMEOUT_MS    3000
++#define Q6_READY_TIMEOUT_MS 100
++#define AVCS_CMD_ADSP_EVENT_GET_STATE		0x0001290C
++#define AVCS_CMDRSP_ADSP_EVENT_GET_STATE	0x0001290D
++#define AVCS_GET_VERSIONS       0x00012905
++#define AVCS_GET_VERSIONS_RSP   0x00012906
++#define AVCS_CMD_GET_FWK_VERSION	0x001292c
++#define AVCS_CMDRSP_GET_FWK_VERSION	0x001292d
 +
-+struct msm_routing_data {
-+	struct session_data sessions[MAX_SESSIONS];
-+	struct session_data port_data[AFE_MAX_PORTS];
-+	struct device *dev;
++struct avcs_svc_info {
++	uint32_t service_id;
++	uint32_t version;
++} __packed;
++
++struct avcs_cmdrsp_get_version {
++	uint32_t build_id;
++	uint32_t num_services;
++	struct avcs_svc_info svc_api_info[];
++} __packed;
++
++/* for ADSP2.8 and above */
++struct avcs_svc_api_info {
++	uint32_t service_id;
++	uint32_t api_version;
++	uint32_t api_branch_version;
++} __packed;
++
++struct avcs_cmdrsp_get_fwk_version {
++	uint32_t build_major_version;
++	uint32_t build_minor_version;
++	uint32_t build_branch_version;
++	uint32_t build_subbranch_version;
++	uint32_t num_services;
++	struct avcs_svc_api_info svc_api_info[];
++} __packed;
++
++struct q6core {
++	struct apr_device *adev;
++	wait_queue_head_t wait;
++	uint32_t avcs_state;
 +	struct mutex lock;
++	bool resp_received;
++	uint32_t num_services;
++	struct avcs_cmdrsp_get_fwk_version *fwk_version;
++	struct avcs_cmdrsp_get_version *svc_version;
++	bool fwk_version_supported;
++	bool get_state_supported;
++	bool get_version_supported;
++	bool is_version_requested;
 +};
 +
-+static struct msm_routing_data *routing_data;
++static struct q6core *g_core;
 +
-+/**
-+ * q6routing_stream_open() - Register a new stream for route setup
-+ *
-+ * @fedai_id: Frontend dai id.
-+ * @perf_mode: Performance mode.
-+ * @stream_id: ASM stream id to map.
-+ * @stream_type: Direction of stream
-+ *
-+ * Return: Will be an negative on error or a zero on success.
-+ */
-+int q6routing_stream_open(int fedai_id, int perf_mode,
-+			   int stream_id, int stream_type)
++static int q6core_callback(struct apr_device *adev,
++			 struct apr_client_message *data)
 +{
-+	int j, topology, num_copps = 0;
-+	struct route_payload payload;
-+	int copp_idx;
-+	struct session_data *session, *pdata;
++	struct q6core *core = dev_get_drvdata(&adev->dev);
++	struct aprv2_ibasic_rsp_result_t *result;
 +
-+	if (!routing_data) {
-+		pr_err("Routing driver not yet ready\n");
-+		return -EINVAL;
-+	}
-+
-+	session = &routing_data->sessions[stream_id - 1];
-+	pdata = &routing_data->port_data[session->port_id];
-+
-+	mutex_lock(&routing_data->lock);
-+	session->fedai_id = fedai_id;
-+
-+	session->path_type = pdata->path_type;
-+	session->sample_rate = pdata->sample_rate;
-+	session->channels = pdata->channels;
-+	session->bits_per_sample = pdata->bits_per_sample;
-+
-+	payload.num_copps = 0; /* only RX needs to use payload */
-+	topology = NULL_COPP_TOPOLOGY;
-+	copp_idx = q6adm_open(routing_data->dev, session->port_id,
-+			      session->path_type, session->sample_rate,
-+			      session->channels, topology, perf_mode,
-+			      session->bits_per_sample, 0, 0);
-+
-+	if (copp_idx < 0) {
-+		mutex_unlock(&routing_data->lock);
-+		return -EINVAL;
-+	}
-+
-+	set_bit(copp_idx, &session->copp_map);
-+
-+	for_each_set_bit(j, &session->copp_map, MAX_COPPS_PER_PORT) {
-+		payload.port_id[num_copps] = session->port_id;
-+		payload.copp_idx[num_copps] = j;
-+		num_copps++;
-+	}
-+
-+	if (num_copps) {
-+		payload.num_copps = num_copps;
-+		payload.session_id = stream_id;
-+		q6adm_matrix_map(routing_data->dev, session->path_type,
-+				 payload, perf_mode);
-+	}
-+	mutex_unlock(&routing_data->lock);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(q6routing_stream_open);
-+
-+static struct session_data *get_session_from_id(struct msm_routing_data *data,
-+						int fedai_id)
-+{
-+	int i;
-+
-+	for (i = 0; i < MAX_SESSIONS; i++) {
-+		if (fedai_id == data->sessions[i].fedai_id)
-+			return &data->sessions[i];
-+	}
-+
-+	return NULL;
-+}
-+/**
-+ * q6routing_stream_close() - Deregister a stream
-+ *
-+ * @fedai_id: Frontend dai id.
-+ * @stream_type: Direction of stream
-+ *
-+ * Return: Will be an negative on error or a zero on success.
-+ */
-+void q6routing_stream_close(int fedai_id, int stream_type)
-+{
-+	struct session_data *session;
-+	int idx;
-+
-+	session = get_session_from_id(routing_data, fedai_id);
-+	if (!session)
-+		return;
-+
-+	for_each_set_bit(idx, &session->copp_map, MAX_COPPS_PER_PORT)
-+		q6adm_close(routing_data->dev, session->port_id,
-+			    session->perf_mode, idx);
-+
-+	session->fedai_id = -1;
-+	session->copp_map = 0;
-+}
-+EXPORT_SYMBOL_GPL(q6routing_stream_close);
-+
-+static int msm_routing_get_audio_mixer(struct snd_kcontrol *kcontrol,
-+				       struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_dapm_context *dapm =
-+	    snd_soc_dapm_kcontrol_dapm(kcontrol);
-+	struct soc_mixer_control *mc =
-+	    (struct soc_mixer_control *)kcontrol->private_value;
-+	int session_id = mc->shift;
-+	struct snd_soc_platform *platform = snd_soc_dapm_to_platform(dapm);
-+	struct msm_routing_data *priv = dev_get_drvdata(platform->dev);
-+	struct session_data *session = &priv->sessions[session_id];
-+
-+	if (session->port_id == mc->reg)
-+		ucontrol->value.integer.value[0] = 1;
-+	else
-+		ucontrol->value.integer.value[0] = 0;
-+
-+	return 0;
-+}
-+
-+static int msm_routing_put_audio_mixer(struct snd_kcontrol *kcontrol,
-+				       struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_dapm_context *dapm =
-+				    snd_soc_dapm_kcontrol_dapm(kcontrol);
-+	struct snd_soc_platform *platform = snd_soc_dapm_to_platform(dapm);
-+	struct msm_routing_data *data = dev_get_drvdata(platform->dev);
-+	struct soc_mixer_control *mc =
-+		    (struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_dapm_update *update = NULL;
-+	int be_id = mc->reg;
-+	int session_id = mc->shift;
-+	struct session_data *session = &data->sessions[session_id];
-+
-+	if (ucontrol->value.integer.value[0]) {
-+		session->port_id = be_id;
-+		snd_soc_dapm_mixer_update_power(dapm, kcontrol, 1, update);
-+	} else {
-+		session->port_id = -1;
-+		snd_soc_dapm_mixer_update_power(dapm, kcontrol, 0, update);
-+	}
-+
-+	return 1;
-+}
-+
-+static const struct snd_kcontrol_new hdmi_mixer_controls[] = {
-+	SOC_SINGLE_EXT("MultiMedia1", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA1, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia2", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA2, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia3", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA3, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia4", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA4, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia5", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA5, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia6", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA6, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia7", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA7, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+	SOC_SINGLE_EXT("MultiMedia8", HDMI_RX,
-+		       MSM_FRONTEND_DAI_MULTIMEDIA8, 1, 0,
-+		       msm_routing_get_audio_mixer,
-+		       msm_routing_put_audio_mixer),
-+};
-+
-+static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
-+	/* Frontend AIF */
-+	SND_SOC_DAPM_AIF_IN("MM_DL1", "MultiMedia1 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL2", "MultiMedia2 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL3", "MultiMedia3 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL4", "MultiMedia4 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL5", "MultiMedia5 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL6", "MultiMedia6 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL7", "MultiMedia7 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_IN("MM_DL8", "MultiMedia8 Playback", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL1", "MultiMedia1 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL2", "MultiMedia2 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL3", "MultiMedia3 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL4", "MultiMedia4 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL5", "MultiMedia5 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL6", "MultiMedia6 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL7", "MultiMedia7 Capture", 0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("MM_UL8", "MultiMedia8 Capture", 0, 0, 0, 0),
-+
-+	/* Mixer definitions */
-+	SND_SOC_DAPM_MIXER("HDMI Mixer", SND_SOC_NOPM, 0, 0,
-+			   hdmi_mixer_controls,
-+			   ARRAY_SIZE(hdmi_mixer_controls)),
-+};
-+
-+static const struct snd_soc_dapm_route intercon[] = {
-+	{"HDMI Mixer", "MultiMedia1", "MM_DL1"},
-+	{"HDMI Mixer", "MultiMedia2", "MM_DL2"},
-+	{"HDMI Mixer", "MultiMedia3", "MM_DL3"},
-+	{"HDMI Mixer", "MultiMedia4", "MM_DL4"},
-+	{"HDMI Mixer", "MultiMedia5", "MM_DL5"},
-+	{"HDMI Mixer", "MultiMedia6", "MM_DL6"},
-+	{"HDMI Mixer", "MultiMedia7", "MM_DL7"},
-+	{"HDMI Mixer", "MultiMedia8", "MM_DL8"},
-+	{"HDMI_RX", NULL, "HDMI Mixer"},
-+};
-+
-+static int routing_hw_params(struct snd_pcm_substream *substream,
-+				     struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	unsigned int be_id = rtd->cpu_dai->id;
-+	struct snd_soc_platform *platform = rtd->platform;
-+	struct msm_routing_data *data = dev_get_drvdata(platform->dev);
-+	struct session_data *session;
-+	int path_type;
-+
-+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+		path_type = ADM_PATH_PLAYBACK;
-+	else
-+		path_type = ADM_PATH_LIVE_REC;
-+
-+	if (be_id > AFE_MAX_PORTS)
-+		return -EINVAL;
-+
-+	session = &data->port_data[be_id];
-+
-+	mutex_lock(&data->lock);
-+
-+	session->path_type = path_type;
-+	session->sample_rate = params_rate(params);
-+	session->channels = params_channels(params);
-+
-+	switch (params_format(params)) {
-+	case SNDRV_PCM_FORMAT_S16_LE:
-+			session->bits_per_sample = 16;
++	result = data->payload;
++	switch (data->opcode) {
++	case APR_BASIC_RSP_RESULT:{
++		result = data->payload;
++		switch (result->opcode) {
++		case AVCS_GET_VERSIONS:
++			if (result->status == ADSP_EUNSUPPORTED)
++				core->get_version_supported = false;
++			core->resp_received = true;
++			break;
++		case AVCS_CMD_GET_FWK_VERSION:
++			if (result->status == ADSP_EUNSUPPORTED)
++				core->fwk_version_supported = false;
++			core->resp_received = true;
++			break;
++		case AVCS_CMD_ADSP_EVENT_GET_STATE:
++			if (result->status == ADSP_EUNSUPPORTED)
++				core->get_state_supported = false;
++			core->resp_received = true;
++			break;
++		}
 +		break;
-+	case SNDRV_PCM_FORMAT_S24_LE:
-+			session->bits_per_sample = 24;
++	}
++	case AVCS_CMDRSP_GET_FWK_VERSION: {
++		struct avcs_cmdrsp_get_fwk_version *fwk;
++		int bytes;
++
++		fwk = data->payload;
++		core->fwk_version_supported = true;
++		bytes = sizeof(*fwk) + fwk->num_services *
++				sizeof(fwk->svc_api_info[0]);
++
++		core->fwk_version = kzalloc(bytes, GFP_ATOMIC);
++		if (!core->fwk_version)
++			return -ENOMEM;
++
++		memcpy(core->fwk_version, data->payload, bytes);
++
++		core->resp_received = true;
++
++		break;
++	}
++	case AVCS_GET_VERSIONS_RSP: {
++		struct avcs_cmdrsp_get_version *v;
++		int len;
++
++		v = data->payload;
++		core->get_version_supported = true;
++
++		len = sizeof(*v) + v->num_services * sizeof(v->svc_api_info[0]);
++
++		core->svc_version = kzalloc(len, GFP_ATOMIC);
++		if (!core->svc_version)
++			return -ENOMEM;
++
++		memcpy(core->svc_version, data->payload, len);
++
++		core->resp_received = true;
++
++		break;
++	}
++	case AVCS_CMDRSP_ADSP_EVENT_GET_STATE:
++		core->get_state_supported = true;
++		core->avcs_state = result->opcode;
++
++		core->resp_received = true;
 +		break;
 +	default:
++		dev_err(&adev->dev, "Message id from adsp core svc: 0x%x\n",
++			data->opcode);
 +		break;
 +	}
 +
-+	mutex_unlock(&data->lock);
++	if (core->resp_received)
++		wake_up(&core->wait);
++
 +	return 0;
 +}
 +
-+static struct snd_pcm_ops q6pcm_routing_ops = {
-+	.hw_params = routing_hw_params,
-+};
++static int q6core_get_fwk_versions(struct q6core *core)
++{
++	struct apr_device *adev = core->adev;
++	struct apr_hdr hdr = {0};
++	int rc;
 +
-+static int msm_routing_probe(struct snd_soc_platform *platform)
++	hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
++				      APR_HDR_LEN(APR_HDR_SIZE), APR_PKT_VER);
++	hdr.pkt_size = APR_HDR_SIZE;
++	hdr.opcode = AVCS_CMD_GET_FWK_VERSION;
++
++	rc = apr_send_pkt(adev, &hdr);
++	if (rc < 0)
++		return rc;
++
++	rc = wait_event_timeout(core->wait, (core->resp_received),
++				msecs_to_jiffies(Q6_READY_TIMEOUT_MS));
++	if (rc > 0 && core->resp_received) {
++		core->resp_received = false;
++
++		if (!core->fwk_version_supported)
++			return -ENOTSUPP;
++		else
++			return 0;
++	}
++
++
++	return rc;
++}
++
++static int q6core_get_svc_versions(struct q6core *core)
++{
++	struct apr_device *adev = core->adev;
++	struct apr_hdr hdr = {0};
++	int rc;
++
++	hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
++				      APR_HDR_LEN(APR_HDR_SIZE), APR_PKT_VER);
++	hdr.pkt_size = APR_HDR_SIZE;
++	hdr.opcode = AVCS_GET_VERSIONS;
++
++	rc = apr_send_pkt(adev, &hdr);
++	if (rc < 0)
++		return rc;
++
++	rc = wait_event_timeout(core->wait, (core->resp_received),
++				msecs_to_jiffies(Q6_READY_TIMEOUT_MS));
++	if (rc > 0 && core->resp_received) {
++		core->resp_received = false;
++		return 0;
++	}
++
++	return rc;
++}
++
++static bool __q6core_is_adsp_ready(struct q6core *core)
++{
++	struct apr_device *adev = core->adev;
++	struct apr_hdr hdr = {0};
++	int rc;
++
++	core->get_state_supported = false;
++
++	hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
++				      APR_HDR_LEN(APR_HDR_SIZE), APR_PKT_VER);
++	hdr.pkt_size = APR_HDR_SIZE;
++	hdr.opcode = AVCS_CMD_ADSP_EVENT_GET_STATE;
++
++	rc = apr_send_pkt(adev, &hdr);
++	if (rc < 0)
++		return false;
++
++	rc = wait_event_timeout(core->wait, (core->resp_received),
++				msecs_to_jiffies(Q6_READY_TIMEOUT_MS));
++	if (rc > 0 && core->resp_received) {
++		core->resp_received = false;
++
++		if (core->avcs_state == 0x1)
++			return true;
++	}
++
++	/* assume that the adsp is up if we not support this command */
++	if (!core->get_state_supported)
++		return true;
++
++	return false;
++}
++
++/**
++ * q6core_get_svc_api_info() - Get version number of a service.
++ *
++ * @svc_id: service id of the service.
++ * @info: Valid struct pointer to fill svc api information.
++ *
++ * Return: zero on success and error code on failure or unsupported
++ */
++int q6core_get_svc_api_info(int svc_id, struct q6core_svc_api_info *ainfo)
 +{
 +	int i;
++	int ret = -ENOTSUPP;
 +
-+	for (i = 0; i < MAX_SESSIONS; i++)
-+		routing_data->sessions[i].port_id = -1;
++	if (!g_core || !ainfo)
++		return 0;
 +
-+	return 0;
++	mutex_lock(&g_core->lock);
++	if (!g_core->is_version_requested) {
++		if (q6core_get_fwk_versions(g_core) == -ENOTSUPP)
++			q6core_get_svc_versions(g_core);
++		g_core->is_version_requested = true;
++	}
++
++	if (g_core->fwk_version_supported) {
++		for (i = 0; i < g_core->fwk_version->num_services; i++) {
++			struct avcs_svc_api_info *info;
++
++			info = &g_core->fwk_version->svc_api_info[i];
++			if (svc_id != info->service_id)
++				continue;
++
++			ainfo->api_version = info->api_version;
++			ainfo->api_branch_version = info->api_branch_version;
++			ret = 0;
++			break;
++		}
++	} else if (g_core->get_version_supported) {
++		for (i = 0; i < g_core->svc_version->num_services; i++) {
++			struct avcs_svc_info *info;
++
++			info = &g_core->svc_version->svc_api_info[i];
++			if (svc_id != info->service_id)
++				continue;
++
++			ainfo->api_version = info->version;
++			ainfo->api_branch_version = 0;
++			ret = 0;
++			break;
++		}
++	}
++
++	mutex_unlock(&g_core->lock);
++
++	return ret;
 +}
++EXPORT_SYMBOL_GPL(q6core_get_svc_api_info);
 +
-+static struct snd_soc_platform_driver msm_soc_routing_platform = {
-+	.ops = &q6pcm_routing_ops,
-+	.probe = msm_routing_probe,
-+	.component_driver = {
-+		.name		= "q6routing-component",
-+		.dapm_widgets = msm_qdsp6_widgets,
-+		.num_dapm_widgets = ARRAY_SIZE(msm_qdsp6_widgets),
-+		.dapm_routes = intercon,
-+		.num_dapm_routes = ARRAY_SIZE(intercon),
-+	},
-+};
-+
-+static int q6routing_dai_bind(struct device *dev, struct device *master,
-+			      void *data)
++/**
++ * q6core_is_adsp_ready() - Get status of adsp
++ *
++ * Return: Will be an true if adsp is ready and false if not.
++ */
++bool q6core_is_adsp_ready(void)
 +{
-+	routing_data = kzalloc(sizeof(*routing_data), GFP_KERNEL);
-+	if (!routing_data)
++	unsigned long  timeout;
++	bool ret = false;
++
++	if (!g_core)
++		return false;
++
++	mutex_lock(&g_core->lock);
++	timeout = jiffies + msecs_to_jiffies(ADSP_STATE_READY_TIMEOUT_MS);
++	for (;;) {
++		if (__q6core_is_adsp_ready(g_core)) {
++			ret = true;
++			break;
++		}
++
++		if (!time_after(timeout, jiffies)) {
++			ret = false;
++			break;
++		}
++	}
++
++	mutex_unlock(&g_core->lock);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(q6core_is_adsp_ready);
++
++static int q6core_probe(struct apr_device *adev)
++{
++	g_core = kzalloc(sizeof(*g_core), GFP_KERNEL);
++	if (!g_core)
 +		return -ENOMEM;
 +
-+	routing_data->dev = dev;
++	dev_set_drvdata(&adev->dev, g_core);
 +
-+	mutex_init(&routing_data->lock);
-+	dev_set_drvdata(dev, routing_data);
-+
-+	return snd_soc_register_platform(dev,
-+					      &msm_soc_routing_platform);
-+}
-+static void q6routing_dai_unbind(struct device *dev, struct device *master,
-+				 void *d)
-+{
-+	struct msm_routing_data *data = dev_get_drvdata(dev);
-+
-+	snd_soc_unregister_platform(dev);
-+
-+	kfree(data);
-+
-+	routing_data = NULL;
-+}
-+
-+static const struct component_ops q6routing_dai_comp_ops = {
-+	.bind   = q6routing_dai_bind,
-+	.unbind = q6routing_dai_unbind,
-+};
-+
-+static int q6pcm_routing_probe(struct platform_device *pdev)
-+{
-+	return component_add(&pdev->dev, &q6routing_dai_comp_ops);
-+}
-+
-+static int q6pcm_routing_remove(struct platform_device *pdev)
-+{
-+	component_del(&pdev->dev, &q6routing_dai_comp_ops);
++	mutex_init(&g_core->lock);
++	g_core->adev = adev;
++	init_waitqueue_head(&g_core->wait);
 +	return 0;
 +}
 +
-+static struct platform_driver q6pcm_routing_platform_driver = {
-+	.driver = {
-+		.name = "q6routing",
-+	},
-+	.probe = q6pcm_routing_probe,
-+	.remove = q6pcm_routing_remove,
++static int q6core_exit(struct apr_device *adev)
++{
++	struct q6core *core = dev_get_drvdata(&adev->dev);
++
++	if (core->fwk_version_supported)
++		kfree(core->fwk_version);
++	if (core->get_version_supported)
++		kfree(core->svc_version);
++
++	kfree(core);
++	g_core = NULL;
++
++	return 0;
++}
++
++static const struct of_device_id q6core_device_id[]  = {
++	{ .compatible = "qcom,q6core" },
++	{},
 +};
-+module_platform_driver(q6pcm_routing_platform_driver);
++MODULE_DEVICE_TABLE(of, q6core_device_id);
 +
-+MODULE_DESCRIPTION("Q6 Routing platform");
++static struct apr_driver qcom_q6core_driver = {
++	.probe = q6core_probe,
++	.remove = q6core_exit,
++	.callback = q6core_callback,
++	.driver = {
++		.name = "qcom-q6core",
++		.of_match_table = of_match_ptr(q6core_device_id),
++	},
++};
++
++module_apr_driver(qcom_q6core_driver);
++MODULE_DESCRIPTION("q6 core");
 +MODULE_LICENSE("GPL v2");
-diff --git a/sound/soc/qcom/qdsp6/q6routing.h b/sound/soc/qcom/qdsp6/q6routing.h
+diff --git a/sound/soc/qcom/qdsp6/q6core.h b/sound/soc/qcom/qdsp6/q6core.h
 new file mode 100644
-index 000000000000..aa41e4f45742
+index 000000000000..7678abd8fd46
 --- /dev/null
-+++ b/sound/soc/qcom/qdsp6/q6routing.h
-@@ -0,0 +1,9 @@
++++ b/sound/soc/qcom/qdsp6/q6core.h
+@@ -0,0 +1,15 @@
 +// SPDX-License-Identifier: GPL-2.0
-+#ifndef _Q6_PCM_ROUTING_H
-+#define _Q6_PCM_ROUTING_H
 +
-+int q6routing_stream_open(int fedai_id, int perf_mode,
-+			   int stream_id, int stream_type);
-+void q6routing_stream_close(int fedai_id, int stream_type);
++#ifndef __Q6CORE_H__
++#define __Q6CORE_H__
 +
-+#endif /*_Q6_PCM_ROUTING_H */
++struct q6core_svc_api_info {
++	uint32_t service_id;
++	uint32_t api_version;
++	uint32_t api_branch_version;
++};
++
++bool q6core_is_adsp_ready(void);
++int q6core_get_svc_api_info(int svc_id, struct q6core_svc_api_info *ainfo);
++
++#endif /* __Q6CORE_H__ */
 -- 
 2.16.2
