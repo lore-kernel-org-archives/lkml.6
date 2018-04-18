@@ -1,154 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753751AbeDRLxT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:53:19 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:44482 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753421AbeDRLxR (ORCPT
+        id S1753924AbeDRLyB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:54:01 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:38992 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753560AbeDRLx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:53:17 -0400
-X-Google-Smtp-Source: AIpwx4+nrnzxLVEBOgKpvIcAjWEK89+KxlNgq+5jPP3SYFJrsmRztferbbigjdoqgtXPHvj9/6NkIA==
-From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <5C311756-8AF8-47B1-98A0-C76F650F3BC2@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_0B178F72-CFFD-4312-B725-3168A27EFD5A";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH 03/11] lightnvm: pblk: check read lba on gc path
-Date: Wed, 18 Apr 2018 04:53:06 -0700
-In-Reply-To: <f41f6858-77d1-5856-0719-a765251f5679@lightnvm.io>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
-References: <1523874332-6272-1-git-send-email-javier@cnexlabs.com>
- <1523874332-6272-4-git-send-email-javier@cnexlabs.com>
- <f41f6858-77d1-5856-0719-a765251f5679@lightnvm.io>
-X-Mailer: Apple Mail (2.3445.6.18)
+        Wed, 18 Apr 2018 07:53:59 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w3IBqaYC007367
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-clk@vger.kernel.org
+Cc: Stephen Boyd <stephen.boyd@linaro.org>,
+        Nicholas Piggin <npiggin@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: sunxi-ng: replace lib-y with obj-y
+Date: Wed, 18 Apr 2018 20:52:31 +0900
+Message-Id: <1524052351-14103-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We had commit 06e226c7fb23 ("clk: sunxi-ng: Move all clock types to a
+library") and commit 799c43415442 ("kbuild: thin archives make default
+for all archs") in the same development cycle, from different trees.
 
---Apple-Mail=_0B178F72-CFFD-4312-B725-3168A27EFD5A
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+With migration to the thin archive, the entire drivers/clk/sunxi-ng/lib.a
+is linked to the vmlinux.  This does not break build, but we do not get
+any size saving.
 
-> On 17 Apr 2018, at 05.03, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
->=20
-> On 4/16/18 12:25 PM, Javier Gonz=C3=A1lez wrote:
->> Check that the lba stored in the LBA metadata is correct in the GC =
-path
->> too. This requires a new helper function to check random reads in the
->> vector read.
->> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
->> ---
->>  drivers/lightnvm/pblk-read.c | 39 =
-+++++++++++++++++++++++++++++++++------
->>  1 file changed, 33 insertions(+), 6 deletions(-)
->> diff --git a/drivers/lightnvm/pblk-read.c =
-b/drivers/lightnvm/pblk-read.c
->> index 9eee10f69df0..0d45d4ffc370 100644
->> --- a/drivers/lightnvm/pblk-read.c
->> +++ b/drivers/lightnvm/pblk-read.c
->> @@ -113,15 +113,14 @@ static int pblk_submit_read_io(struct pblk =
-*pblk, struct nvm_rq *rqd)
->>  	return NVM_IO_OK;
->>  }
->>  -static void pblk_read_check(struct pblk *pblk, struct nvm_rq *rqd,
->> -			   sector_t blba)
->> +static void pblk_read_check_seq(struct pblk *pblk, void *meta_list,
->> +				sector_t blba, int nr_lbas)
->>  {
->> -	struct pblk_sec_meta *meta_list =3D rqd->meta_list;
->> -	int nr_lbas =3D rqd->nr_ppas;
->> +	struct pblk_sec_meta *meta_lba_list =3D meta_list;
->>  	int i;
->>    	for (i =3D 0; i < nr_lbas; i++) {
->> -		u64 lba =3D le64_to_cpu(meta_list[i].lba);
->> +		u64 lba =3D le64_to_cpu(meta_lba_list[i].lba);
->>    		if (lba =3D=3D ADDR_EMPTY)
->>  			continue;
->> @@ -130,6 +129,32 @@ static void pblk_read_check(struct pblk *pblk, =
-struct nvm_rq *rqd,
->>  	}
->>  }
->>  +/*
->> + * There can be wholes in the lba list.
->> + */
->=20
-> holes
+However, we do not need to go back to the individual Kconfig options.
+The default configuration pulls in all (or most) of the CCU parts anyway.
+Also, once we enable CONFIG_LD_DEAD_CODE_DATA_ELIMINATION, we can simply
+list all files with obj-y, and the linker will drop all unused functions
+by itself.
 
-Can you change it?
+After the long discussion [1], people there agreed to fix this, but
+nobody sent a patch after all.  I am doing it now.
 
->=20
->> +static void pblk_read_check_rand(struct pblk *pblk, void *meta_list,
->> +				u64 *lba_list, int nr_lbas)
->> +{
->> +	struct pblk_sec_meta *meta_lba_list =3D meta_list;
->> +	int i, j;
->> +
->> +	for (i =3D 0, j =3D 0; i < nr_lbas; i++) {
->> +		u64 lba =3D lba_list[i];
->> +		u64 meta_lba;
->> +
->> +		if (lba =3D=3D ADDR_EMPTY)
->> +			continue;
->> +
->> +		meta_lba =3D le64_to_cpu(meta_lba_list[j++].lba);
->=20
-> You can move the j++ into the for loop. Although, why not use just the =
-i iterator?
+I lifted up CONFIG_SUNXI_CCU to drivers/clk/Makefile because everything
+in drivers/clk/sunxi-ng/ depends on SUNXI_CCU.
 
-Look above, we only increase on valid lbas.
+[1] https://patchwork.kernel.org/patch/9796521/
 
->=20
->> +
->> +		if (lba !=3D meta_lba) {
->> +			pr_err("pblk: corrupted read LBA (%llu/%llu)\n",
->> +								lba, =
-meta_lba);
->> +			WARN_ON(1);
->=20
-> I don't understand this, if a corrupted LBA is found here, how is it
-> communicated back to pblk and the LBA can be recovered from elsewhere.
-> If the data is wrong, this should have been communicated by the drive
-> on the completion path. The drive is defect if this happens.
->=20
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-This happens if a read does not match the lba stored on the LBA. This is
-definitely an error and it has helped us in the past to find race
-conditions on pblk's read path, specially when forming partial I/Os.
+ drivers/clk/Makefile          |  2 +-
+ drivers/clk/sunxi-ng/Makefile | 39 +++++++++++++++------------------------
+ 2 files changed, 16 insertions(+), 25 deletions(-)
 
-If the read failed from the drive (e.g., when enabling HECC), we still
-want information about where it failed for debugging purposes. Same we
-do on the normal read path.
-
-Javier
-
---Apple-Mail=_0B178F72-CFFD-4312-B725-3168A27EFD5A
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlrXMaIACgkQPEYBfS0l
-eODjeA/9Fox9qyYRikEBg8oV/nJLu5I2UkcIH44IHOQfICfnlcmfXhZZbVsG9WZZ
-w9URG2rv6V4roBVqAHKmkYFmflgqWqtzMbytbvn7J2KYBjNy7BtmYOfyCWfLTyxU
-EGNV7bQODzgJYrjzRuqCOHuMe5ZsAXjd7ofWKSo+njaP0Kt7xEHESSNNolDhtXoD
-MtupRECA86WgkAmMjvWb+AR7PmsFAQ3o++Ig27xJlsU2qrh7rf1sGaLDe7CVs6N/
-IGV2uQuiFj5Kj0VElHDQ8lQ0W/wUfx+ZwBArkmHBvKPyjWrcdhW9Tfxjwv4Cd4ph
-eo0E9RQAbdiFmsO+XZpDnPuBKOCWYsfXGxEiNVpsze18dXYbntRGjqEinpDlGRt4
-mVFx1pE9iWr33e8AJDBPPRS8Bx8Ub8H4K93TEkFPMOOUbdy682pchBHOHJ/Ifm5l
-mzW5Q5hzeFkijsoWKnjypDJK2KhhkuT3pMs3JJiUadD4S7jnDLk8HVOnocC8XsF2
-dZNgjE6wTSAmRFIqTYw58kl76is+tO6ESaV3ADfVFP+Cq3HWdVBVXnPtOy3pq+vF
-Og9kqK+VJdRgyBcmluonnuD6jn2E8DEq/yZyiWJImDdTqIl38XuhcLiUBNh/oSoH
-NqTY1+1TaL26nEUjHIN6MtgdpiaVgeDQuiynJwwVTxS4RFE9BsM=
-=iksq
------END PGP SIGNATURE-----
-
---Apple-Mail=_0B178F72-CFFD-4312-B725-3168A27EFD5A--
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index de6d06a..23a7fdc 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -94,7 +94,7 @@ obj-$(CONFIG_ARCH_SPRD)			+= sprd/
+ obj-$(CONFIG_ARCH_STI)			+= st/
+ obj-$(CONFIG_ARCH_STRATIX10)		+= socfpga/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
+-obj-$(CONFIG_ARCH_SUNXI)		+= sunxi-ng/
++obj-$(CONFIG_SUNXI_CCU)			+= sunxi-ng/
+ obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
+ obj-y					+= ti/
+ obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
+diff --git a/drivers/clk/sunxi-ng/Makefile b/drivers/clk/sunxi-ng/Makefile
+index 128a40e..9ac0fb9 100644
+--- a/drivers/clk/sunxi-ng/Makefile
++++ b/drivers/clk/sunxi-ng/Makefile
+@@ -1,24 +1,24 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Common objects
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_common.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_mmc_timing.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_reset.o
++obj-y				+= ccu_common.o
++obj-y				+= ccu_mmc_timing.o
++obj-y				+= ccu_reset.o
+ 
+ # Base clock types
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_div.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_frac.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_gate.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_mux.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_mult.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_phase.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_sdm.o
++obj-y				+= ccu_div.o
++obj-y				+= ccu_frac.o
++obj-y				+= ccu_gate.o
++obj-y				+= ccu_mux.o
++obj-y				+= ccu_mult.o
++obj-y				+= ccu_phase.o
++obj-y				+= ccu_sdm.o
+ 
+ # Multi-factor clocks
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_nk.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_nkm.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_nkmp.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_nm.o
+-lib-$(CONFIG_SUNXI_CCU)		+= ccu_mp.o
++obj-y				+= ccu_nk.o
++obj-y				+= ccu_nkm.o
++obj-y				+= ccu_nkmp.o
++obj-y				+= ccu_nm.o
++obj-y				+= ccu_mp.o
+ 
+ # SoC support
+ obj-$(CONFIG_SUN50I_A64_CCU)	+= ccu-sun50i-a64.o
+@@ -37,12 +37,3 @@ obj-$(CONFIG_SUN8I_R40_CCU)	+= ccu-sun8i-r40.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-de.o
+ obj-$(CONFIG_SUN9I_A80_CCU)	+= ccu-sun9i-a80-usb.o
+-
+-# The lib-y file goals is supposed to work only in arch/*/lib or lib/. In our
+-# case, we want to use that goal, but even though lib.a will be properly
+-# generated, it will not be linked in, eventually resulting in a linker error
+-# for missing symbols.
+-#
+-# We can work around that by explicitly adding lib.a to the obj-y goal. This is
+-# an undocumented behaviour, but works well for now.
+-obj-$(CONFIG_SUNXI_CCU)		+= lib.a
+-- 
+2.7.4
