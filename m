@@ -1,99 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752241AbeDRQv3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 12:51:29 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41769 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751232AbeDRQv1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 12:51:27 -0400
-X-Google-Smtp-Source: AIpwx4+fpetrFForvSq8WInLe0u9eoIs4Tq1cEh+tmK3bS6472606QTSeCkQBS7MsFmPs2uPTPgGJA==
-Subject: Re: [PATCH] net: don't use kvzalloc for DMA memory
-To: Mikulas Patocka <mpatocka@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Joby Poriyath <joby.poriyath@citrix.com>,
-        Ben Hutchings <bhutchings@solarflare.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org
-References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
- <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
- <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <5f4e1286-b79f-0b9f-9a30-47d7654f3889@gmail.com>
-Date: Wed, 18 Apr 2018 09:51:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1752261AbeDRQxj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 12:53:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750885AbeDRQxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 12:53:38 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B992178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=luto@kernel.org
+X-Google-Smtp-Source: AIpwx4+W5Km5Cvk+SFA3CPDzkWY4OfGSb0o880IYUclryIyH6wXqUcREdsRTon9dx+2Dc0WV/o81W8FUIzyCIjNNzKU=
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <cd1a4b8c-dd8e-d88d-c154-fcf02aca5d74@redhat.com>
+References: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
+ <cd1a4b8c-dd8e-d88d-c154-fcf02aca5d74@redhat.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 18 Apr 2018 09:53:16 -0700
+X-Gmail-Original-Message-ID: <CALCETrU3KLXwToBTOTnHpKrUhENFUVFJbWxfiPMbs2iQHoDDZA@mail.gmail.com>
+Message-ID: <CALCETrU3KLXwToBTOTnHpKrUhENFUVFJbWxfiPMbs2iQHoDDZA@mail.gmail.com>
+Subject: Re: [PATCH] x86/entry/64/compat: Preserve r8-r11 in int $0x80
+To: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 17, 2018 at 8:00 AM, Denys Vlasenko <dvlasenk@redhat.com> wrote:
+> This means that the new behavior is there for some 8 years already.
+> Whoever was impacted by it, probably already switched to the new ABI.
+>
+> Current ABI is "weaker", it allows kernel to save fewer registers.
+>
+> Which is generally a good thing, since saving/restoring things cost
+> cycles, and sometimes painful on entry paths where you may desperately
+> need a scratch register or two. (Recall this one? -
+> ...
+>         movq    %rsp, PER_CPU_VAR(rsp_scratch)
+>         movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+>         /* Construct struct pt_regs on stack */
+>         pushq   $__USER_DS                      /* pt_regs->ss */
+>         pushq   PER_CPU_VAR(rsp_scratch)        /* pt_regs->sp */
+> ...
+> wouldn't it be _great_ if one of GPRs would be available here
+> to hold userspace %rsp?
+> )
 
+But this is the int $0x80 entry, which uses the stack sanely and
+doesn't have this problem at all.
 
-On 04/18/2018 09:44 AM, Mikulas Patocka wrote:
-> 
-> 
-> On Wed, 18 Apr 2018, Eric Dumazet wrote:
-> 
->>
->>
->> On 04/18/2018 07:34 AM, Mikulas Patocka wrote:
->>> The patch 74d332c13b21 changes alloc_netdev_mqs to use vzalloc if kzalloc
->>> fails (later patches change it to kvzalloc).
->>>
->>> The problem with this is that if the vzalloc function is actually used, 
->>> virtio_net doesn't work (because it expects that the extra memory should 
->>> be accessible with DMA-API and memory allocated with vzalloc isn't).
->>>
->>> This patch changes it back to kzalloc and adds a warning if the allocated
->>> size is too large (the allocation is unreliable in this case).
->>>
->>> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
->>> Fixes: 74d332c13b21 ("net: extend net_device allocation to vmalloc()")
->>>
->>> ---
->>>  net/core/dev.c |    3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> Index: linux-2.6/net/core/dev.c
->>> ===================================================================
->>> --- linux-2.6.orig/net/core/dev.c	2018-04-16 21:08:36.000000000 +0200
->>> +++ linux-2.6/net/core/dev.c	2018-04-18 16:24:43.000000000 +0200
->>> @@ -8366,7 +8366,8 @@ struct net_device *alloc_netdev_mqs(int
->>>  	/* ensure 32-byte alignment of whole construct */
->>>  	alloc_size += NETDEV_ALIGN - 1;
->>>  
->>> -	p = kvzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
->>> +	WARN_ON(alloc_size > PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER);
->>> +	p = kzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
->>>  	if (!p)
->>>  		return NULL;
->>>  
->>>
->>
->> Since when a net_device needs to be in DMA zone ???
->>
->> I would rather fix virtio_net, this looks very suspect to me.
->>
->> Each virtio_net should probably allocate the exact amount of DMA-memory it wants,
->> instead of expecting core networking stack to have a huge chunk of DMA-memory for everything.
-> 
-> The structure net_device is followed by arbitrary driver-specific data 
-> (accessible with the function netdev_priv). And for virtio-net, these 
-> driver-specific data must be in DMA memory.
+>
+> If userspace needs some registers saved, it's trivial for it to have:
+>
+>         push reg1
+>         push reg2
+>         int  0x80
+>         pop  reg2
+>         pop  reg1
+>
+> OTOH if userspace _does not_ need some registers saved,
+> but they are defined as saved by the entrypoint ABI, then save/restore work
+> is done every time, even when not needed.
+>
+> Thus, I propose to retain the current behavior.
 
-I get that, but how is the original xenvif problem will be solved ?
+The problems are:
 
-Your patch would add a bug in some other driver(s)
+1. If you look up how to do int $0x80, every answer you get doesn't
+mention any clobbers.  The code works on x86_32 and seems to work on
+x86_64.  I think we should make it actually work.
 
-I suggest that virtio_net clearly identifies which part needs a specific allocation
-and does its itself, instead of abusing the netdev_priv storage.
+2. It's very easy to make this mistake and get away with it for a long
+time, and the failure modes are hard to debug.  gcc doesn't allocate
+r8..r11 that often, and there are plenty of contexts (near end of a
+leaf function) where r8..r11 are dead even if they were allocated.  So
+there is probably a decent body of code out there that makes this
+mistake and is okay for now.  But if anyone ever compiles it with LTO,
+it's reasonably likely to go boom.
 
-Ie use a pointer to a block of memory, allocated by virtio_net, for virtio_net.
+So I think we should fix it in the interest of avoiding weird bugs.
