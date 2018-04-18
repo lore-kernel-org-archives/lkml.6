@@ -1,86 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753644AbeDRINU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:13:20 -0400
-Received: from victor.provo.novell.com ([137.65.250.26]:55647 "EHLO
-        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752592AbeDRINQ (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 18 Apr 2018 04:13:16 -0400
-Message-ID: <1524039174.3028.24.camel@suse.com>
-Subject: Re: [PATCH v3 1/6] ilog2: create truly constant version for sparse
-From: Martin Wilck <mwilck@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        James Bottomley <jejb@linux.vnet.ibm.com>,
-        Xose Vazquez Perez <xose.vazquez@gmail.com>,
-        Bart Van Assche <Bart.VanAssche@sandisk.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
-        Randy Dunlap <rdunlap@infradead.org>
-Date: Wed, 18 Apr 2018 10:12:54 +0200
-In-Reply-To: <CA+55aFxLY2=RVAD8m-3bf4vKWpPKWSmjN_tLVWwb4Y7w81UTbA@mail.gmail.com>
-References: <20180417233511.6573-1-mwilck@suse.com>
-         <20180417233511.6573-2-mwilck@suse.com>
-         <CA+55aFxLY2=RVAD8m-3bf4vKWpPKWSmjN_tLVWwb4Y7w81UTbA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.4 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1753320AbeDRIN0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:13:26 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:43186 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752592AbeDRINW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 04:13:22 -0400
+X-Google-Smtp-Source: AIpwx48U3rS+jbgdL83L8RTP+KgHEKi9wFtfCKc0yuI92Sw9t64Hza9CgwD0a4zT0PHAlFF6qoA8jQ==
+Date: Wed, 18 Apr 2018 10:13:17 +0200
+From: Vitaly Wool <vitalywool@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, mawilcox@microsoft.com,
+        asavery@chromium.org, gwendal@chromium.org
+Subject: Re: Crashes/hung tasks with z3pool under memory pressure
+Message-ID: <20180418101317.74abe632@seldlx21914.corpusers.net>
+In-Reply-To: <20180417160032.46915216@seldlx21914.corpusers.net>
+References: <20180417160032.46915216@seldlx21914.corpusers.net>
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-17 at 17:07 -0700, Linus Torvalds wrote:
-> On Tue, Apr 17, 2018 at 4:35 PM, Martin Wilck <mwilck@suse.com>
-> wrote:
-> > Sparse emits errors about ilog2() in array indices because of the
-> > use of
-> > __ilog2_32() and __ilog2_64(),
-> 
-> If sparse warns about it, then presumably gcc with -Wvla warns about
-> it too?
+Den tis 17 apr. 2018 kl 18:35 skrev Guenter Roeck <linux@roeck-us.net>:
 
-No, it doesn't (gcc 7.3.0). -> https://paste.opensuse.org/27471594
-It doesn't even warn on an expression like this:
+<snip>
 
-  #define SIZE (1<<10)
-  static int foo[ilog2(SIZE)];
+> Getting better; the log is much less noisy. Unfortunately, there are still
+> locking problems, resulting in a hung task. I copied the log message to [1].
+> This is with [2] applied on top of v4.17-rc1.
 
-sparse 0.5.2 doesn't warn about that either. It emits "error: bad
-integer constant expression" only if ilog2 is used in an array
-initializer, like this:
+Now this version (this is a full patch to be applied instead of the previous one) should have the above problem resolved too:
 
-  #define SIZE (1<<10)
-  #define SUBS (1<<5)
-  static int foo [ilog2(SIZE)] = {
-          [ilog2(SUBS)] = 0,
-  };
-
-So maybe I was wrong, and this is actually a false positive in sparse.
-
-> So I suspect that what you'd want is
-> 
->   #define ilog2(n) \
->         __builtin_choose_expr(__is_constexpr(n), \
->                 const_ilog2(n), \
->                 __builtin_choose_expr(sizeof(n) <= 4, \
->                         __ilog2_u32(n), \
->                         __ilog2_u64(n)))
-> 
-> or something. Hmm?
-
-Do you want me to convert the patch to your approach anyway?
-Or should I throw this away and report to sparse?
-
-Regards and thanks,
-Martin
-
-PS: apologies to all recipients for the broken cc list in my post.
--- 
-Dr. Martin Wilck <mwilck@suse.com>, Tel. +49 (0)911 74053 2107
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index c0bca6153b95..901c0b07cbda 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -144,7 +144,8 @@ enum z3fold_page_flags {
+ 	PAGE_HEADLESS = 0,
+ 	MIDDLE_CHUNK_MAPPED,
+ 	NEEDS_COMPACTING,
+-	PAGE_STALE
++	PAGE_STALE,
++	UNDER_RECLAIM
+ };
+ 
+ /*****************
+@@ -173,6 +174,7 @@ static struct z3fold_header *init_z3fold_page(struct page *page,
+ 	clear_bit(MIDDLE_CHUNK_MAPPED, &page->private);
+ 	clear_bit(NEEDS_COMPACTING, &page->private);
+ 	clear_bit(PAGE_STALE, &page->private);
++	clear_bit(UNDER_RECLAIM, &page->private);
+ 
+ 	spin_lock_init(&zhdr->page_lock);
+ 	kref_init(&zhdr->refcount);
+@@ -756,6 +758,10 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
+ 		atomic64_dec(&pool->pages_nr);
+ 		return;
+ 	}
++	if (test_bit(UNDER_RECLAIM, &page->private)) {
++		z3fold_page_unlock(zhdr);
++		return;
++	}
+ 	if (test_and_set_bit(NEEDS_COMPACTING, &page->private)) {
+ 		z3fold_page_unlock(zhdr);
+ 		return;
+@@ -840,6 +846,8 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 			kref_get(&zhdr->refcount);
+ 			list_del_init(&zhdr->buddy);
+ 			zhdr->cpu = -1;
++			set_bit(UNDER_RECLAIM, &page->private);
++			break;
+ 		}
+ 
+ 		list_del_init(&page->lru);
+@@ -887,25 +895,35 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 				goto next;
+ 		}
+ next:
+-		spin_lock(&pool->lock);
+ 		if (test_bit(PAGE_HEADLESS, &page->private)) {
+ 			if (ret == 0) {
+-				spin_unlock(&pool->lock);
+ 				free_z3fold_page(page);
+ 				return 0;
+ 			}
+-		} else if (kref_put(&zhdr->refcount, release_z3fold_page)) {
+-			atomic64_dec(&pool->pages_nr);
++			spin_lock(&pool->lock);
++			list_add(&page->lru, &pool->lru);
++			spin_unlock(&pool->lock);
++		} else {
++			z3fold_page_lock(zhdr);
++			clear_bit(UNDER_RECLAIM, &page->private);
++			 if (kref_put(&zhdr->refcount,
++					release_z3fold_page_locked)) {
++				atomic64_dec(&pool->pages_nr);
++				return 0;
++			}
++			/*
++			 * if we are here, the page is still not completely
++			 * free. Take the global pool lock then to be able
++			 * to add it back to the lru list
++			 */
++			spin_lock(&pool->lock);
++			list_add(&page->lru, &pool->lru);
+ 			spin_unlock(&pool->lock);
+-			return 0;
++			z3fold_page_unlock(zhdr);
+ 		}
+ 
+-		/*
+-		 * Add to the beginning of LRU.
+-		 * Pool lock has to be kept here to ensure the page has
+-		 * not already been released
+-		 */
+-		list_add(&page->lru, &pool->lru);
++		/* We started off locked to we need to lock the pool back */
++		spin_lock(&pool->lock);
+ 	}
+ 	spin_unlock(&pool->lock);
+ 	return -EAGAIN;
