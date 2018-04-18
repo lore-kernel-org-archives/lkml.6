@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752902AbeDRG7v (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 02:59:51 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:35752 "EHLO
+        id S1753001AbeDRHAD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:00:03 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:36533 "EHLO
         mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752786AbeDRG7s (ORCPT
+        with ESMTP id S1752811AbeDRG7u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 02:59:48 -0400
-X-Google-Smtp-Source: AIpwx481jZA+5fthzhOq+uD+TAIw6zxJgySWFshYQLDxqmuI9GYZQeE+fHq7j4tbPfuTgsxz+m8Edg==
+        Wed, 18 Apr 2018 02:59:50 -0400
+X-Google-Smtp-Source: AIpwx4/OIFcSm6J7QLlJm7NoNTSdleejrFrLpZHuFOM61KYRVbVirK7Sj8sPlu/kOj8K2TszQLktNw==
 From: Sven Eckelmann <sven.eckelmann@openmesh.com>
 To: Sricharan R <sricharan@codeaurora.org>
 Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
@@ -17,32 +17,33 @@ Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-Subject: Re: [v5,08/13] ARM: dts: ipq4019: Add ipq4019-ap.dk07.1 common data
-Date: Wed, 18 Apr 2018 08:59:40 +0200
-Message-ID: <1724020.V9x0kZZp2B@bentobox>
+Subject: Re: [v5,05/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
+Date: Wed, 18 Apr 2018 08:59:46 +0200
+Message-ID: <2641190.FRMBLJWkCS@bentobox>
 User-Agent: KMail/5.2.3 (Linux/4.14.0-0.bpo.3-amd64; KDE/5.28.0; x86_64; ; )
-In-Reply-To: <1521800336-19266-9-git-send-email-sricharan@codeaurora.org>
-References: <1521800336-19266-9-git-send-email-sricharan@codeaurora.org>
+In-Reply-To: <1521800336-19266-6-git-send-email-sricharan@codeaurora.org>
+References: <1521800336-19266-6-git-send-email-sricharan@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3149418.CWxpNlAdMz"; micalg="pgp-sha512"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart3043434.9TQ9TfbtKO"; micalg="pgp-sha512"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart3149418.CWxpNlAdMz
+--nextPart3043434.9TQ9TfbtKO
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="iso-8859-1"
 
-On Freitag, 23. M=E4rz 2018 15:48:51 CEST Sricharan R wrote:
-> Add the common data for all dk07 based boards.
+On Freitag, 23. M=E4rz 2018 15:48:48 CEST Sricharan R wrote:
+> Add the common parts for the dk04 boards.
 >=20
 > Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
 > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 > ---
->  arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi | 69 +++++++++++++++++++++=
+>  arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi | 115 ++++++++++++++++++++=
 ++++++
->  1 file changed, 69 insertions(+)
->  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
+>  arch/arm/boot/dts/qcom-ipq4019.dtsi           |   2 +-
+>  2 files changed, 116 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk04.1.dtsi
 
 The no-map reserved-memory for tz and smem are missing. Linux doesn't have=
 =20
@@ -87,26 +88,27 @@ Kind regards,
 	Sven
 
 [1] https://www.spinics.net/lists/linux-arm-msm/msg21536.html
---nextPart3149418.CWxpNlAdMz
+
+--nextPart3043434.9TQ9TfbtKO
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part.
 Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlrW7NwACgkQXYcKB8Em
-e0YjBRAApz1LT5s+FDpjPcHxGXVgTFUBV4sVKerHkJ3tJlIMxchv+ejAaEG3xaSZ
-bik2ISjlRDL+6RCR3AC3JT0BBLj1oIIQH9ARxQECGu5YPk0lEDpUpasHfVvA5WXd
-CjsA/aNGeaXGcPNRXiVhBsteJKa9zwqMfSzyi/H67r6WML4c+1DbxCYus+ksqnXF
-C7D7tukGmsGEA+MCigJ7m6eRqW5TbL9SzWiO8dUXYU1M+Nx3TIzbY9Y0cRE2w4aT
-/0tNuVMpFwpH0y0DFzKDwton4z3hvVMlJ/ts7XYneUgfEAXFWi9mjxsBi7mvb3xc
-AlzVmGjaxVFU1wONiDs9/IjDFZyHC7VJoUqH/NMRPoHWHZ5FYgRP8c77jffa9/xV
-ivtl4RYefDgwrC9LkgptvXF5AUSnDuQThGR6C2VajetZvygi9VSI598LXW1eYr4c
-188Gw/bQsW2SRN+n0U7dDswLOlO4L1MZENphOCxcX8p1E/OgKS5ONFr8lTMOB7Cy
-MGBN2nZ2uNuhbzOhPAxq/2yt2T6CWpCu/TZLXOOU2gQqIAuKJjJf/YpEz9ggazf6
-5w2y+vrbAHtEGMOYsrMOO7uPClCJEXD7e66vJzzWMpun6MTLiHV3YWcnZueIF5Rv
-2lKqnlg4udUf9Ep0XJPkxFFNCkmUNBINUfdZLNJEvBfPmQnbCHw=
-=2ax+
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlrW7OIACgkQXYcKB8Em
+e0aC/A//SFl29P4JrehoVB558QcgRW5yqR1YFSEsPH3w2UxV4Dptj2OSI/jbqNC+
+p13mYZhBXEq0tyPQV7jR3VW6Lj8Z68LOIDxTXMp+Qc9kuSNWpWFT7uW6Mw8no0kp
+NIxvMr+oY2wlhZD1Sxaba6n2O9rVF6w58nQIloi96bRSlrS3Ig2Qz4XRU5cGYZsk
+xhLjSLogSJMvgqsvB7OaxML8ao41CLxxnYssadU6THltzH6GMjJyja9bQSVJVINk
+zqjjf1nWevwPiFz75/BKXvzb7sUIjRoEKMJ8hlf9bvkKo0ccSQCcxSrIIqtSZp0O
+rWcJtVYrjK/WURy3i/yV6hMH6cHiW0lJgI87uHM7CLfJuiteui1ks7RcPAbZIWeO
+yTcjARIYvBbWFiZXSpgYvXzHrlSbH5JGIbnN9ZDPG2tqsxDqEbNBoPlE+yXqluva
+mCOxD4SuQ/tECsCHe4hSzoWW5XOoyVsXBBliZSHbgxpDvcJLx/Nb5wdmE7FKp2WB
+SQvxdLPGHnngOLk2sKekISazh1FP9RBO8KgOIbcoyt7BreOGw1CVOEsW8PP47c9d
+WcGZktS/JVxIbrSIAdHSrFSeDxW80V4RfrFABz27wPt4zZzOo0EPfJBcKS5loVIJ
+Gq1MYhhhlqTXmi4N7swpDl3+fNG5TgCw9jkPjxRwbv1+RV3zGAM=
+=kUPf
 -----END PGP SIGNATURE-----
 
---nextPart3149418.CWxpNlAdMz--
+--nextPart3043434.9TQ9TfbtKO--
