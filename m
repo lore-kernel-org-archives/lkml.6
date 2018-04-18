@@ -1,70 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753938AbeDRPmJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:42:09 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:60680 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753364AbeDRPmG (ORCPT
+        id S1753361AbeDRPgF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:36:05 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:40183 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752699AbeDRPgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:42:06 -0400
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-Subject: Re: [PATCH v9 7/9] pinctrl: madera: Add DT bindings for Cirrus Logic
- Madera codecs
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, <patches@opensource.cirrus.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180313131904.13700-1-rf@opensource.cirrus.com>
- <20180313131904.13700-8-rf@opensource.cirrus.com>
- <CACRpkdZspUbmCk7OwA-rva6zd89TZXt45t5mFes0feuRyOUp9w@mail.gmail.com>
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-Message-ID: <1af9880f-3427-8fde-c1a9-90b47b51a7a2@opensource.cirrus.com>
-Date: Mon, 16 Apr 2018 10:53:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CACRpkdZspUbmCk7OwA-rva6zd89TZXt45t5mFes0feuRyOUp9w@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1804180141
+        Wed, 18 Apr 2018 11:36:00 -0400
+X-Google-Smtp-Source: AIpwx4+tfA+u3V7Nas6EMUxe3VlJYHwwSzkdUIkPsi088HVZqXyy0pZL2BWIG/4f1meqZyBrXPjCUQ==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 2/2] memory: aemif: add support for board files
+Date: Wed, 18 Apr 2018 17:35:52 +0200
+Message-Id: <20180418153552.14632-3-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180418153552.14632-1-brgl@bgdev.pl>
+References: <20180418153552.14632-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/03/18 12:29, Linus Walleij wrote:
-> On Tue, Mar 13, 2018 at 2:19 PM, Richard Fitzgerald
-> <rf@opensource.cirrus.com> wrote:
-> 
->> This is the binding description of the pinctrl driver for Cirrus Logic
->> Madera codecs. The binding uses the generic pinctrl binding so  the main
->> purpose here is to describe the device-specific names for groups and
->> functions.
->>
->> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
->> Acked-by: Rob Herring <robh@kernel.org>
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> I can also just apply this if you want, as it has no dependencies to
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-No let's leave it. There's no point the kernel source containing a
-binding description for drivers that don't exist and I've no idea
-how long it might take for the drivers to actually get into the
-kernel. We've been going about a year now with these patches...
+Currently aemif is supported in two places separately. By the platform
+driver in drivers/memory and by a hand crafted driver in mach-davinci.
 
-> anything else. I just assume you want to keep it together with the
-> rest of this complex series.
-> 
-> Yours,
-> Linus Walleij
-> 
+We want to drop the latter but also keep the legacy mode. Add support
+for board files to the aemif driver.
+
+The new structure in platform data currently only contains the chip
+select number, since currently existing users don't require anything
+else, but it can be extended in the future.
+
+While extending the platform data struct, add kernel docs describing
+its members.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/memory/ti-aemif.c              | 58 +++++++++++++++++---------
+ include/linux/platform_data/ti-aemif.h | 25 +++++++++++
+ 2 files changed, 63 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+index 588e58d40d1b..c9577fda967c 100644
+--- a/drivers/memory/ti-aemif.c
++++ b/drivers/memory/ti-aemif.c
+@@ -339,9 +339,6 @@ static int aemif_probe(struct platform_device *pdev)
+ 	struct aemif_platform_data *pdata;
+ 	struct of_dev_auxdata *dev_lookup;
+ 
+-	if (np == NULL)
+-		return 0;
+-
+ 	aemif = devm_kzalloc(dev, sizeof(*aemif), GFP_KERNEL);
+ 	if (!aemif)
+ 		return -ENOMEM;
+@@ -363,8 +360,10 @@ static int aemif_probe(struct platform_device *pdev)
+ 
+ 	aemif->clk_rate = clk_get_rate(aemif->clk) / MSEC_PER_SEC;
+ 
+-	if (of_device_is_compatible(np, "ti,da850-aemif"))
++	if (np && of_device_is_compatible(np, "ti,da850-aemif"))
+ 		aemif->cs_offset = 2;
++	else if (pdata)
++		aemif->cs_offset = pdata->cs_offset;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	aemif->base = devm_ioremap_resource(dev, res);
+@@ -373,15 +372,23 @@ static int aemif_probe(struct platform_device *pdev)
+ 		goto error;
+ 	}
+ 
+-	/*
+-	 * For every controller device node, there is a cs device node that
+-	 * describe the bus configuration parameters. This functions iterate
+-	 * over these nodes and update the cs data array.
+-	 */
+-	for_each_available_child_of_node(np, child_np) {
+-		ret = of_aemif_parse_abus_config(pdev, child_np);
+-		if (ret < 0)
+-			goto error;
++	if (np) {
++		/*
++		 * For every controller device node, there is a cs device node
++		 * that describe the bus configuration parameters. This
++		 * functions iterate over these nodes and update the cs data
++		 * array.
++		 */
++		for_each_available_child_of_node(np, child_np) {
++			ret = of_aemif_parse_abus_config(pdev, child_np);
++			if (ret < 0)
++				goto error;
++		}
++	} else if (pdata && pdata->num_abus_data > 0) {
++		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
++			aemif->cs_data[i].cs = pdata->abus_data->cs;
++			aemif_get_hw_params(pdev, i);
++		}
+ 	}
+ 
+ 	for (i = 0; i < aemif->num_cs; i++) {
+@@ -394,14 +401,25 @@ static int aemif_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/*
+-	 * Create a child devices explicitly from here to
+-	 * guarantee that the child will be probed after the AEMIF timing
+-	 * parameters are set.
++	 * Create a child devices explicitly from here to guarantee that the
++	 * child will be probed after the AEMIF timing parameters are set.
+ 	 */
+-	for_each_available_child_of_node(np, child_np) {
+-		ret = of_platform_populate(child_np, NULL, dev_lookup, dev);
+-		if (ret < 0)
+-			goto error;
++	if (np) {
++		for_each_available_child_of_node(np, child_np) {
++			ret = of_platform_populate(child_np, NULL,
++						   dev_lookup, dev);
++			if (ret < 0)
++				goto error;
++		}
++	} else {
++		for (i = 0; i < pdata->num_sub_devices; i++) {
++			pdata->sub_devices[i].dev.parent = dev;
++			ret = platform_device_register(&pdata->sub_devices[i]);
++			if (ret) {
++				dev_warn(dev, "Error register sub device %s\n",
++					 pdata->sub_devices[i].name);
++			}
++		}
+ 	}
+ 
+ 	return 0;
+diff --git a/include/linux/platform_data/ti-aemif.h b/include/linux/platform_data/ti-aemif.h
+index ac72e115093c..e6407bafcbf8 100644
+--- a/include/linux/platform_data/ti-aemif.h
++++ b/include/linux/platform_data/ti-aemif.h
+@@ -16,8 +16,33 @@
+ 
+ #include <linux/of_platform.h>
+ 
++/**
++ * struct aemif_abus_data - Async bus configuration parameters.
++ *
++ * @cs - Chip-select number.
++ */
++struct aemif_abus_data {
++	u32 cs;
++};
++
++/**
++ * struct aemif_platform_data - Data to set up the TI aemif driver.
++ *
++ * @dev_lookup: of_dev_auxdata passed to of_platform_populate() for aemif
++ *              subdevices.
++ * @cs_offset: Lowest allowed chip-select number.
++ * @abus_data: Array of async bus configuration entries.
++ * @num_abus_data: Number of abus entries.
++ * @sub_devices: Array of platform subdevices.
++ * @num_sub_devices: Number of subdevices.
++ */
+ struct aemif_platform_data {
+ 	struct of_dev_auxdata *dev_lookup;
++	u32 cs_offset;
++	struct aemif_abus_data *abus_data;
++	size_t num_abus_data;
++	struct platform_device *sub_devices;
++	size_t num_sub_devices;
+ };
+ 
+ #endif /* __TI_DAVINCI_AEMIF_DATA_H__ */
+-- 
+2.17.0
