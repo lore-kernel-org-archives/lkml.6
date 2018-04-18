@@ -1,56 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753549AbeDROe2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:34:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55180 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752684AbeDROe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:34:27 -0400
-Date: Wed, 18 Apr 2018 10:34:26 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>
-cc: Joby Poriyath <joby.poriyath@citrix.com>,
-        Ben Hutchings <bhutchings@solarflare.com>, netdev@vger.kernel.org,
+        id S1753965AbeDROfK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:35:10 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:44144 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753719AbeDROfI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 10:35:08 -0400
+Date: Wed, 18 Apr 2018 22:35:02 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: NeilBrown <neilb@suse.com>
+Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] net: don't use kvzalloc for DMA memory
-Message-ID: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+Subject: Re: [PATCH 6/6] rhashtable: add rhashtable_walk_prev()
+Message-ID: <20180418143501.kzvknyvgnjo7v75k@gondor.apana.org.au>
+References: <152403346237.16895.8767189357062722046.stgit2@noble>
+ <152403402206.16895.14563720960374849428.stgit2@noble>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152403402206.16895.14563720960374849428.stgit2@noble>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch 74d332c13b21 changes alloc_netdev_mqs to use vzalloc if kzalloc
-fails (later patches change it to kvzalloc).
+On Wed, Apr 18, 2018 at 04:47:02PM +1000, NeilBrown wrote:
+> rhashtable_walk_prev() returns the object returned by
+> the previous rhashtable_walk_next(), providing it is still in the
+> table (or was during this grace period).
+> This works even if rhashtable_walk_stop() and rhashtable_talk_start()
+> have been called since the last rhashtable_walk_next().
+> 
+> If there have been no calls to rhashtable_walk_next(), or if the
+> object is gone from the table, then NULL is returned.
+> 
+> This can usefully be used in a seq_file ->start() function.
+> If the pos is the same as was returned by the last ->next() call,
+> then rhashtable_walk_prev() can be used to re-establish the
+> current location in the table.  If it returns NULL, then
+> rhashtable_walk_next() should be used.
+> 
+> Signed-off-by: NeilBrown <neilb@suse.com>
 
-The problem with this is that if the vzalloc function is actually used, 
-virtio_net doesn't work (because it expects that the extra memory should 
-be accessible with DMA-API and memory allocated with vzalloc isn't).
+Can you explain the need for this function and its difference
+from the existing rhashtable_walk_peek?
 
-This patch changes it back to kzalloc and adds a warning if the allocated
-size is too large (the allocation is unreliable in this case).
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Fixes: 74d332c13b21 ("net: extend net_device allocation to vmalloc()")
-
----
- net/core/dev.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-Index: linux-2.6/net/core/dev.c
-===================================================================
---- linux-2.6.orig/net/core/dev.c	2018-04-16 21:08:36.000000000 +0200
-+++ linux-2.6/net/core/dev.c	2018-04-18 16:24:43.000000000 +0200
-@@ -8366,7 +8366,8 @@ struct net_device *alloc_netdev_mqs(int
- 	/* ensure 32-byte alignment of whole construct */
- 	alloc_size += NETDEV_ALIGN - 1;
- 
--	p = kvzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
-+	WARN_ON(alloc_size > PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER);
-+	p = kzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
- 	if (!p)
- 		return NULL;
- 
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
