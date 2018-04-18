@@ -1,116 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeDRVdN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 17:33:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40241 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750981AbeDRVdL (ORCPT
+        id S1752757AbeDRVeq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 17:34:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56172 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752328AbeDRVeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 17:33:11 -0400
-Subject: Re: [RFC PATCH v3 1/3] ima: extend clone() with IMA namespace support
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        tycho@docker.com, serge@hallyn.com, sunyuqiong1988@gmail.com,
-        david.safford@ge.com, mkayaalp@cs.binghamton.edu,
-        James.Bottomley@HansenPartnership.com, Yuqiong Sun <suny@us.ibm.com>,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-References: <1522159038-14175-1-git-send-email-stefanb@linux.vnet.ibm.com>
- <1522159038-14175-2-git-send-email-stefanb@linux.vnet.ibm.com>
- <87sh8lcecn.fsf@xmission.com> <1523636702.3272.63.camel@linux.vnet.ibm.com>
- <d8c30d7d-c679-9323-7a25-d3148e9b96c6@canonical.com>
- <1524081472.3272.319.camel@linux.vnet.ibm.com> <87wox4s282.fsf@xmission.com>
-From: John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-Message-ID: <8895cb9c-7b9e-2f82-e3d8-a15f5fc26e25@canonical.com>
-Date: Wed, 18 Apr 2018 14:32:59 -0700
+        Wed, 18 Apr 2018 17:34:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B83C60376
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [v2,2/2] regulator: add QCOM RPMh regulator driver
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rnayak@codeaurora.org, sboyd@kernel.org,
+        dianders@chromium.org
+References: <4b45f41996ea3344340e44fab2dc9e487572e209.1523673467.git.collinsd@codeaurora.org>
+ <20180417182347.GD244487@google.com>
+ <2e45c0e5-7e79-3479-de18-9613e8eacf15@codeaurora.org>
+ <20180417194755.GE244487@google.com>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <68fd7aa7-25fc-73d6-ffc9-ca8ce5c3d9b9@codeaurora.org>
+Date: Wed, 18 Apr 2018 14:34:42 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-In-Reply-To: <87wox4s282.fsf@xmission.com>
+In-Reply-To: <20180417194755.GE244487@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/18/2018 01:12 PM, Eric W. Biederman wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> 
->> On Wed, 2018-04-18 at 09:09 -0700, John Johansen wrote:
->>> On 04/13/2018 09:25 AM, Mimi Zohar wrote:
->>>> [Cc'ing John Johansen]
->>>>
->>>> On Tue, 2018-03-27 at 18:01 -0500, Eric W. Biederman wrote:
+On 04/17/2018 12:47 PM, Matthias Kaehlcke wrote:
+> On Tue, Apr 17, 2018 at 12:15:18PM -0700, David Collins wrote:
+>> On 04/17/2018 11:23 AM, Matthias Kaehlcke wrote:
+>>> On Fri, Apr 13, 2018 at 07:50:35PM -0700, David Collins wrote:
 >>>> [...]
->>>>> As such I expect the best way to create the ima namespace is by simply
->>>>> writing to securityfs/imafs.  Possibly before the user namespace is
->>>>> even unshared.  That would allow IMA to keep track of things from
->>>>> before a container is created.
->>>>
+>>>> +static const u32 pmic_mode_map_pmic4_ldo[REGULATOR_MODE_STANDBY + 1] = {
+>>>> +	[REGULATOR_MODE_STANDBY] = 4,
+>>>> +	[REGULATOR_MODE_IDLE]    = 5,
+>>>> +	[REGULATOR_MODE_NORMAL]  = -EINVAL,
+>>>> +	[REGULATOR_MODE_FAST]    = 7,
+>>>> +};
 >>>
->>> I do think this is generally the right approach for LSMs when looking
->>> forward to LSM stacking and more LSMs.
->>>
->>>
->>>> My initial thought was to stage IMA namespacing with just IMA-audit
->>>> first, followed by either IMA-measurement or IMA-appraisal.  This
->>>> would allow us to get the basic IMA namespacing framework working and
->>>> defer dealing with the securityfs related namespacing of the IMA
->>>> policy and measurement list issues to later.
->>>>
->>>> By tying IMA namespacing to a securityfs ima/unshare file, we would
->>>> need to address the securityfs issues first.
->>>>
->>>
->>> well it depends on what you want to do. It would be possible to have
->>> a simple file (not a jump link) within securityfs that IMA could use
->>> without having to deal with all the securityfs issues first. However it
->>> does require that securityfs (not necessarily imafs) be visible within
->>> the mount namespace of the task doing the setup.
+>>> Define constants for the modes on the PMIC4 side?
 >>
->> Eric, would you be OK with that?
+>> Are you suggesting something like this?
+>>
+>> #define PMIC4_LDO_MODE_RETENTION	4
+>> #define PMIC4_LDO_MODE_LPM		5
+>> #define PMIC4_LDO_MODE_HPM		7
+>>
+>> static const u32 pmic_mode_map_pmic4_ldo[REGULATOR_MODE_STANDBY + 1] = {
+>> 	[REGULATOR_MODE_STANDBY] = PMIC4_LDO_MODE_RETENTION,
+>> 	[REGULATOR_MODE_IDLE]    = PMIC4_LDO_MODE_LPM,
+>> 	[REGULATOR_MODE_NORMAL]  = -EINVAL,
+>> 	[REGULATOR_MODE_FAST]    = PMIC4_LDO_MODE_HPM,
+>> };
+>>
+>> #define PMIC4_SMPS_MODE_RETENTION	4
+>> #define PMIC4_SMPS_MODE_PFM		5
+>> #define PMIC4_SMPS_MODE_AUTO		6
+>> #define PMIC4_SMPS_MODE_PWM		7
+>>
+>> static const u32 pmic_mode_map_pmic4_smps[REGULATOR_MODE_STANDBY + 1] = {
+>> 	[REGULATOR_MODE_STANDBY] = PMIC4_SMPS_MODE_RETENTION,
+>> 	[REGULATOR_MODE_IDLE]    = PMIC4_SMPS_MODE_PFM,
+>> 	[REGULATOR_MODE_NORMAL]  = PMIC4_SMPS_MODE_AUTO,
+>> 	[REGULATOR_MODE_FAST]    = PMIC4_SMPS_MODE_PWM,
+>> };
+>>
+>> I considered using this approach, but it didn't seem like it increased
+>> readability and did increase the line count.  Each of the constants would
+>> only be used once.  Would you prefer this style (or something else)?
 > 
-> Roughly.  My understanding is that you have to have a write to some
-> filesystem to set the ima policy.
-> 
-> I was expecting having to write an "create ima namespace" value
-> to the filesystem would not be any special effort.
-> 
-> Now it sounds like providing the "create an ima namespace" is going to
-> be a special case, and that does not sound correct.
-> 
-not necessarily special case, but they do need to settle on an interface
-that will work for them, and will work with the order they want to land
-things. I was just trying to point out that there are fs solutions that
-can work without having deal with the full securityfs/imafs namespacing
-solution landing first.
+> Personally I prefer this style, since the constants are more
+> expressive than the literals. I agree that the 'inline' constant
+> definition is a bit noisy, perhaps it would be better to move the
+> definitions to the top of the file or group them before the definition
+> of pmic_mode_map_pmic4_ldo. Alteratively you could create a
+> drivers/regulator/qcom_rpmh-regulator.h and also move the definitions
+> of struct struct rpmh_vreg_hw_data, rpmh_vreg, ... there.
 
-While create a file directly in securityfs that lives along side the imafs
-dir.
-ima_create_ns
-ima/
-does feel like a special case. It could work
+I'll add constants for the per-type regulator modes at the top of the
+file.  We'll see if other reviewers like them.
 
-what I was thinking of when I proposed a simple is to do it within the ima
-dir, say
-ima/create_ns
+Take care,
+David
 
-For now its just a single file but once imafs becomes "virtualized" to a
-namespace view, each dir that imafs jumplinks to contains a instance of the
-file.
-
-
-Or they could avoid securityfs/imafs entirely and leverage a file in
-procfs
-
-/proc/<pid>/attr/{current,exec,...}
-
-currently those are claimed by the LSMs but new file could be added or
-perhaps even better we could lift the some code from the LSM stacking work
-to provide an ima specific dir
-
-  /proc/<pid>/attr/ima/{current,exec,...}
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
