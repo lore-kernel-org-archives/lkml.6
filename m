@@ -1,78 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752159AbeDRQsJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 12:48:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44848 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750961AbeDRQsI (ORCPT
+        id S1752241AbeDRQv3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 12:51:29 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41769 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751232AbeDRQv1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 12:48:08 -0400
-Date: Wed, 18 Apr 2018 17:48:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>, swboyd@chromium.org,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] regulator: Don't return or expect -errno from
- of_map_mode()
-Message-ID: <20180418164804.GJ10061@sirena.org.uk>
-References: <20180418033143.208986-1-dianders@chromium.org>
- <CABxcv=kx9KVJYPyRFBR5mzGgezoSmjrXpGa214E2v85YJYd1+Q@mail.gmail.com>
- <CAD=FV=U2_G=6yPndd0Fdd=e0zoM6x+h0Zqqyt6qcWx3TDohSdg@mail.gmail.com>
+        Wed, 18 Apr 2018 12:51:27 -0400
+X-Google-Smtp-Source: AIpwx4+fpetrFForvSq8WInLe0u9eoIs4Tq1cEh+tmK3bS6472606QTSeCkQBS7MsFmPs2uPTPgGJA==
+Subject: Re: [PATCH] net: don't use kvzalloc for DMA memory
+To: Mikulas Patocka <mpatocka@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Joby Poriyath <joby.poriyath@citrix.com>,
+        Ben Hutchings <bhutchings@solarflare.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org
+References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
+ <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
+ <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <5f4e1286-b79f-0b9f-9a30-47d7654f3889@gmail.com>
+Date: Wed, 18 Apr 2018 09:51:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Xssso5lpTBgMxDfe"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=U2_G=6yPndd0Fdd=e0zoM6x+h0Zqqyt6qcWx3TDohSdg@mail.gmail.com>
-X-Cookie: Sank heaven for leetle curls.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Xssso5lpTBgMxDfe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 18, 2018 at 08:56:22AM -0700, Doug Anderson wrote:
-> On Wed, Apr 18, 2018 at 12:15 AM, Javier Martinez Canillas
+On 04/18/2018 09:44 AM, Mikulas Patocka wrote:
+> 
+> 
+> On Wed, 18 Apr 2018, Eric Dumazet wrote:
+> 
+>>
+>>
+>> On 04/18/2018 07:34 AM, Mikulas Patocka wrote:
+>>> The patch 74d332c13b21 changes alloc_netdev_mqs to use vzalloc if kzalloc
+>>> fails (later patches change it to kvzalloc).
+>>>
+>>> The problem with this is that if the vzalloc function is actually used, 
+>>> virtio_net doesn't work (because it expects that the extra memory should 
+>>> be accessible with DMA-API and memory allocated with vzalloc isn't).
+>>>
+>>> This patch changes it back to kzalloc and adds a warning if the allocated
+>>> size is too large (the allocation is unreliable in this case).
+>>>
+>>> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+>>> Fixes: 74d332c13b21 ("net: extend net_device allocation to vmalloc()")
+>>>
+>>> ---
+>>>  net/core/dev.c |    3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> Index: linux-2.6/net/core/dev.c
+>>> ===================================================================
+>>> --- linux-2.6.orig/net/core/dev.c	2018-04-16 21:08:36.000000000 +0200
+>>> +++ linux-2.6/net/core/dev.c	2018-04-18 16:24:43.000000000 +0200
+>>> @@ -8366,7 +8366,8 @@ struct net_device *alloc_netdev_mqs(int
+>>>  	/* ensure 32-byte alignment of whole construct */
+>>>  	alloc_size += NETDEV_ALIGN - 1;
+>>>  
+>>> -	p = kvzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
+>>> +	WARN_ON(alloc_size > PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER);
+>>> +	p = kzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
+>>>  	if (!p)
+>>>  		return NULL;
+>>>  
+>>>
+>>
+>> Since when a net_device needs to be in DMA zone ???
+>>
+>> I would rather fix virtio_net, this looks very suspect to me.
+>>
+>> Each virtio_net should probably allocate the exact amount of DMA-memory it wants,
+>> instead of expecting core networking stack to have a huge chunk of DMA-memory for everything.
+> 
+> The structure net_device is followed by arbitrary driver-specific data 
+> (accessible with the function netdev_priv). And for virtio-net, these 
+> driver-specific data must be in DMA memory.
 
-> >>         if (!of_property_read_u32(np, "regulator-initial-mode", &pval)=
-) {
-> >>                 if (desc && desc->of_map_mode) {
-> >> -                       ret =3D desc->of_map_mode(pval);
-> >> -                       if (ret =3D=3D -EINVAL)
-> >> +                       unsigned int mode =3D desc->of_map_mode(pval);
+I get that, but how is the original xenvif problem will be solved ?
 
-> > I think the convention is to always declare local variables at the
-> > start of the function? Although I couldn't find anything in the coding
-> > style document...
+Your patch would add a bug in some other driver(s)
 
-> I haven't seen this as a consistent kernel convention.  It seems a bit
-> up to the subsystem and/or driver maintainer.  However, I'm happy to
-> put it up at the top if it makes people happy.
+I suggest that virtio_net clearly identifies which part needs a specific allocation
+and does its itself, instead of abusing the netdev_priv storage.
 
-It's *fairly* consistent (this is C code after all) - doing something
-different usually has some form of motivation. =20
-
---Xssso5lpTBgMxDfe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrXdsMACgkQJNaLcl1U
-h9Cgwgf+L45bv3e9yxNHJhGSZS3zTVaDeXbSKorw2sho86f0DYSEneXEyBqHgI14
-dBMe4KL0Q7miw3+YPmgzMc81v1m+wj72NOmaxO849mEK2t8LUxFgf+SlI2f2dozk
-WaTRUQsJODb4ncvh40pzXVZE5Iwx31wRQufKaOP+BMZNIUkkVtYCZFk23l10kEjJ
-QCzAcSC1Wyms8hhdWrwzggKLPTp49xw3Y77pxgDfmMED1BB5nYE3aN58+uDZmQhb
-K4iIM3PtJ77H2e1FWMBYv1irZG23zw1Rk+cj9u5w/TNyw2wQmY6xylI6JZzBcMkM
-1Crl75ctzHNv+bTk8ZQtCL1arm4ovg==
-=GCTt
------END PGP SIGNATURE-----
-
---Xssso5lpTBgMxDfe--
+Ie use a pointer to a block of memory, allocated by virtio_net, for virtio_net.
