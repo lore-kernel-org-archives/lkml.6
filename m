@@ -1,76 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753955AbeDRLzt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:55:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55041 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753937AbeDRLzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:55:48 -0400
-Date: Wed, 18 Apr 2018 13:55:46 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] fs, elf: drop MAP_FIXED usage from elf_map
-Message-ID: <20180418115546.GZ17484@dhcp22.suse.cz>
-References: <20171213092550.2774-1-mhocko@kernel.org>
- <20171213092550.2774-3-mhocko@kernel.org>
- <0b5c541a-91ee-220b-3196-f64264f9f0bc@I-love.SAKURA.ne.jp>
- <20180418113301.GY17484@dhcp22.suse.cz>
- <201804182043.JFH90161.LStOOMFFOJQHVF@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201804182043.JFH90161.LStOOMFFOJQHVF@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1753911AbeDRL4w (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:56:52 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:39008 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752911AbeDRL4u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 07:56:50 -0400
+X-Google-Smtp-Source: AB8JxZo8T/80vxWIVb7lN3wwhwKNbRmDNNCsuZFaJu3NdwmFXKlLxUypKtUE/v73VU87U3mz/RDtQQ==
+From: =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Message-Id: <EEDD4DC1-9DB6-441C-89EB-39B8723959DD@javigon.com>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_4CF863C9-B1B8-4FCB-9000-E90AF17F3FF1";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] lightnvm: pblk: take bitmap alloc. out of critical
+ section
+Date: Wed, 18 Apr 2018 04:56:39 -0700
+In-Reply-To: <76bed955-2e70-7540-0836-f93fbd677d7e@lightnvm.io>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+To: =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>
+References: <1523874066-4459-1-git-send-email-javier@cnexlabs.com>
+ <76bed955-2e70-7540-0836-f93fbd677d7e@lightnvm.io>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18-04-18 20:43:11, Tetsuo Handa wrote:
-> Michal Hocko wrote:
-> > > Don't complain if IS_ERR_VALUE(),
-> > 
-> > this is simply wrong. We do want to warn on the failure because this is
-> > when the actual clash happens. We should just warn on EEXIST.
-> 
-> >From 25442cdd31aa5cc8522923a0153a77dfd2ebc832 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Wed, 18 Apr 2018 20:38:15 +0900
-> Subject: [PATCH] fs, elf: don't complain MAP_FIXED_NOREPLACE unless -EEXIST
->  error.
-> 
-> Commit 4ed28639519c7bad ("fs, elf: drop MAP_FIXED usage from elf_map") is
-> printing spurious messages under memory pressure due to map_addr == -ENOMEM.
-> 
->  9794 (a.out): Uhuuh, elf segment at 00007f2e34738000(fffffffffffffff4) requested but the memory is mapped already
->  14104 (a.out): Uhuuh, elf segment at 00007f34fd76c000(fffffffffffffff4) requested but the memory is mapped already
->  16843 (a.out): Uhuuh, elf segment at 00007f930ecc7000(fffffffffffffff4) requested but the memory is mapped already
-> 
-> Complain only if -EEXIST, and use %px for printing the address.
 
-Yes this is better. But...
+--Apple-Mail=_4CF863C9-B1B8-4FCB-9000-E90AF17F3FF1
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-[...]
-> -	if ((type & MAP_FIXED_NOREPLACE) && BAD_ADDR(map_addr))
-> -		pr_info("%d (%s): Uhuuh, elf segment at %p requested but the memory is mapped already\n",
-> -				task_pid_nr(current), current->comm,
-> -				(void *)addr);
-> +	if ((type & MAP_FIXED_NOREPLACE) && map_addr == -EEXIST)
+> On 17 Apr 2018, at 04.48, Matias Bj=C3=B8rling <mb@lightnvm.io> wrote:
+>=20
+> On 4/16/18 12:21 PM, Javier Gonz=C3=A1lez wrote:
+>> Allocate line bitmaps outside of the line lock on line preparation.
+>> Signed-off-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
+>=20
+>=20
+> The patch description tells what the patch does, it should tell why
+> the change the done.
+>=20
 
-... please use PTR_ERR(map_addr) == -EEXIST
+Taking an allocation out of a critical zone should be a reason on =
+itself.
 
-then you can add 
-Acked-by: Michal Hocko <mhocko@suse.com>
+>> ---
+>>  drivers/lightnvm/pblk-core.c | 96 =
++++++++++++++++++++++++++-------------------
+>>  1 file changed, 55 insertions(+), 41 deletions(-)
+>> diff --git a/drivers/lightnvm/pblk-core.c =
+b/drivers/lightnvm/pblk-core.c
+>> index 5f960a6609c8..7762e89984ee 100644
+>> --- a/drivers/lightnvm/pblk-core.c
+>> +++ b/drivers/lightnvm/pblk-core.c
+>> @@ -1058,6 +1058,25 @@ static int pblk_line_init_metadata(struct pblk =
+*pblk, struct pblk_line *line,
+>>  	return 1;
+>>  }
+>>  +static int pblk_line_alloc_bitmaps(struct pblk *pblk, struct =
+pblk_line *line)
+>> +{
+>> +	struct pblk_line_meta *lm =3D &pblk->lm;
+>> +
+>> +	line->map_bitmap =3D kzalloc(lm->sec_bitmap_len, GFP_KERNEL);
+>> +	if (!line->map_bitmap)
+>> +		return -ENOMEM;
+>> +
+>> +	/* will be initialized using bb info from map_bitmap */
+>> +	line->invalid_bitmap =3D kmalloc(lm->sec_bitmap_len, =
+GFP_KERNEL);
+>> +	if (!line->invalid_bitmap) {
+>> +		kfree(line->map_bitmap);
+>> +		line->map_bitmap =3D NULL;
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  /* For now lines are always assumed full lines. Thus, smeta former =
+and current
+>>   * lun bitmaps are omitted.
+>>   */
+>> @@ -1162,18 +1181,7 @@ static int pblk_line_prepare(struct pblk =
+*pblk, struct pblk_line *line)
+>>  {
+>>  	struct pblk_line_meta *lm =3D &pblk->lm;
+>>  	int blk_in_line =3D atomic_read(&line->blk_in_line);
+>> -	int blk_to_erase, ret;
+>> -
+>> -	line->map_bitmap =3D kzalloc(lm->sec_bitmap_len, GFP_ATOMIC);
+>> -	if (!line->map_bitmap)
+>> -		return -ENOMEM;
+>> -
+>> -	/* will be initialized using bb info from map_bitmap */
+>> -	line->invalid_bitmap =3D kmalloc(lm->sec_bitmap_len, =
+GFP_ATOMIC);
+>> -	if (!line->invalid_bitmap) {
+>> -		ret =3D -ENOMEM;
+>> -		goto fail_free_map_bitmap;
+>> -	}
+>> +	int blk_to_erase;
+>>    	/* Bad blocks do not need to be erased */
+>>  	bitmap_copy(line->erase_bitmap, line->blk_bitmap, =
+lm->blk_per_line);
+>> @@ -1191,15 +1199,15 @@ static int pblk_line_prepare(struct pblk =
+*pblk, struct pblk_line *line)
+>>  	}
+>>    	if (blk_in_line < lm->min_blk_line) {
+>> -		ret =3D -EAGAIN;
+>> -		goto fail_free_invalid_bitmap;
+>> +		spin_unlock(&line->lock);
+>> +		return -EAGAIN;
+>>  	}
+>>    	if (line->state !=3D PBLK_LINESTATE_FREE) {
+>>  		WARN(1, "pblk: corrupted line %d, state %d\n",
+>>  							line->id, =
+line->state);
+>> -		ret =3D -EINTR;
+>> -		goto fail_free_invalid_bitmap;
+>> +		spin_unlock(&line->lock);
+>> +		return -EINTR;
+>>  	}
+>>    	line->state =3D PBLK_LINESTATE_OPEN;
+>> @@ -1213,16 +1221,6 @@ static int pblk_line_prepare(struct pblk =
+*pblk, struct pblk_line *line)
+>>  	kref_init(&line->ref);
+>>    	return 0;
+>> -
+>> -fail_free_invalid_bitmap:
+>> -	spin_unlock(&line->lock);
+>> -	kfree(line->invalid_bitmap);
+>> -	line->invalid_bitmap =3D NULL;
+>> -fail_free_map_bitmap:
+>> -	kfree(line->map_bitmap);
+>> -	line->map_bitmap =3D NULL;
+>> -
+>> -	return ret;
+>>  }
+>>    int pblk_line_recov_alloc(struct pblk *pblk, struct pblk_line =
+*line)
+>> @@ -1242,13 +1240,15 @@ int pblk_line_recov_alloc(struct pblk *pblk, =
+struct pblk_line *line)
+>>  	}
+>>  	spin_unlock(&l_mg->free_lock);
+>>  -	pblk_rl_free_lines_dec(&pblk->rl, line, true);
+>> +	if (pblk_line_alloc_bitmaps(pblk, line))
+>> +		return -EINTR;
+>=20
+> Why return -EINTR, instead of the return value from (0, -ENOMEM) from =
+pblk_line_alloc_bitmap?
 
-> +		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
-> +			task_pid_nr(current), current->comm, (void *)addr);
->  
->  	return(map_addr);
->  }
-> -- 
-> 1.8.3.1
+Sure.
 
--- 
-Michal Hocko
-SUSE Labs
+>=20
+>=20
+>>    	if (!pblk_line_init_bb(pblk, line, 0)) {
+>>  		list_add(&line->list, &l_mg->free_list);
+>>  		return -EINTR;
+>>  	}
+>>  +	pblk_rl_free_lines_dec(&pblk->rl, line, true);
+>>  	return 0;
+>>  }
+>>  @@ -1260,6 +1260,24 @@ void pblk_line_recov_close(struct pblk *pblk, =
+struct pblk_line *line)
+>>  	line->emeta =3D NULL;
+>>  }
+>>  +static void pblk_line_clear(struct pblk_line *line)
+>> +{
+>> +	*line->vsc =3D cpu_to_le32(EMPTY_ENTRY);
+>> +
+>> +	line->map_bitmap =3D NULL;
+>> +	line->invalid_bitmap =3D NULL;
+>> +	line->smeta =3D NULL;
+>> +	line->emeta =3D NULL;
+>> +}
+>=20
+> Instead of pblk_line_clear, how about pblk_line_reinit?
+
+Emmmmm... yes, why not.
+
+I'll resend.
+
+Javier
+
+--Apple-Mail=_4CF863C9-B1B8-4FCB-9000-E90AF17F3FF1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlrXMngACgkQPEYBfS0l
+eOBMqg/+LIr6QhGVp/H+pftufFk4rB9QO+0hUjsOgRLLj5YUf8b6LQpu7P3gzpAO
+BSF3A2Ef+kf3C/D2xlzqGTAeWEvfWNKVjPJ7xWmVPo+PO13ayxG6kBGbxwyFevm8
+egA6kfYZxrSFQwJaxtALphW0YQRQ6NxB9PDgAiyrXqbyljPT42QTMCvCrxHno9yg
+6TM3lWb1LRVMhJygJ4U6j1nvW3Cga84CzUDXn7hJqdgGuMUn/y1wjWVQYSdZoJhU
+Oy85hWgxb2vYo1R7LgJw1ycDxe51IZl9keBaoodyEZJ4ECn2c1Z8pna9WIy2F1jd
+RImv5dwAN7fYYy6GS5aNlyDVMqNetAJ5lAzP1AmnwFZjaeaM6GMXSl/hkwia55kA
+S/AWGmiOy9QxzhGecxy+2Moyv/8pm86pS8mtjVvSyIts/AqMfLhr0DbVI8ou7zFP
+/dCtGnlRFJEMyiD9ma398919U4sQjjMDt1yncEhVDVyd8bWFrNPAD6x1WL5mqJsm
+t8FKnlAIgYLDUgWwsLJ+W1kqPq2qFveGqayiEBpXIACgzCoX9z4t2QH12q6whOu+
+GJpiP5D7GAse5Ma+WSJ8xvfXOGpvTE4MwDnX/tHWOQgDEWXJCUzfc2d7VquMtq8C
+iR+F9YwUJo5IYJx9GptSE5vyOlnUl4vE5kqiAj6aWDEsbV4Ue4g=
+=CVen
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_4CF863C9-B1B8-4FCB-9000-E90AF17F3FF1--
