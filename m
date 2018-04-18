@@ -1,187 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752684AbeDRG3i (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 02:29:38 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34504 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752357AbeDRG3g (ORCPT
+        id S1752770AbeDRGbt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 02:31:49 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:40159 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752597AbeDRGbr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 02:29:36 -0400
-Smtp-Origin-Hostprefix: devbig
-From: Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig102.frc2.facebook.com
-To: <linux-kernel@vger.kernel.org>
-CC: <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Smtp-Origin-Cluster: frc2c02
-Subject: [PATCH 2/2] perf/core: fix bad use of igrab in kernel/event/core.c
-Date: Tue, 17 Apr 2018 23:29:07 -0700
-Message-ID: <20180418062907.3210386-2-songliubraving@fb.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20180418062907.3210386-1-songliubraving@fb.com>
-References: <20180418062907.3210386-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Wed, 18 Apr 2018 02:31:47 -0400
+Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
+ to netdev dma client
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Radhey Shyam Pandey <radheys@xilinx.com>,
+        Vinod Koul <vinod.koul@intel.com>
+CC: "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
+ <1522665546-10035-3-git-send-email-radheys@xilinx.com>
+ <20180411090854.GY6014@localhost>
+ <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
+ <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
+ <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
+ <1fc10bec-5c2c-98f1-1d5b-b768dea844ed@metafoo.de>
+ <78828d31-e4cd-5211-f1b6-8918ac38f599@ti.com>
+ <e5a6c1ad-e263-7b9d-a5e2-744884c9d6de@metafoo.de>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <a6ac9ca8-91b4-c7b1-0f0c-c04dd10048e2@ti.com>
+Date: Wed, 18 Apr 2018 09:31:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_02:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <e5a6c1ad-e263-7b9d-a5e2-744884c9d6de@metafoo.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Miklos reported and suggested:
 
-  This pattern repeats two times in trace_uprobe.c and in
-  kernel/events/core.c as well:
+On 2018-04-17 18:54, Lars-Peter Clausen wrote:
+> On 04/17/2018 04:53 PM, Peter Ujfalusi wrote:
+>> On 2018-04-17 16:58, Lars-Peter Clausen wrote:
+>>>>> There are two options.
+>>>>>
+>>>>> Either you extend the generic interfaces so it can cover your usecase in a
+>>>>> generic way. E.g. the ability to attach meta data to transfer.
+>>>>
+>>>> Fwiw I have this patch as part of a bigger work to achieve similar results:
+>>>
+>>> That's good stuff. Is this in a public tree somewhere?
+>>
+>> Not atm. I can not send the user of the new API and I did not wanted to
+>> send something like this out of the blue w/o context.
+>>
+>> But as it is a generic patch, I can send it as well. The only thing is
+>> that the need for the memcpy, so I might end up with
+>> ptr = get_metadata_ptr(desc, &size); /* size: in RX the valid size */
+>>
+>> and set_metadata_size(); /* in TX to tell how the client placed */
+>>
+>> Or something like that, the attach_metadata() as it is works just fine,
+>> but high throughput might not like the memcpy.
+>>
+> 
+> In the most abstracted way I'd say metadata and data are two different data
+> streams that are correlated and send/received at the same time.
 
-      ret = kern_path(filename, LOOKUP_FOLLOW, &path);
-      if (ret)
-          goto fail_address_parse;
+In my case the meatdata is sideband information or parameters for/from
+the remote end. Like timestamp, algorithm parameters, keys, etc.
 
-      inode = igrab(d_inode(path.dentry));
-      path_put(&path);
+It is tight to the data payload, but it is not part of it.
 
-  And it's wrong.  You can only hold a reference to the inode if you
-  have an active ref to the superblock as well (which is normally
-  through path.mnt) or holding s_umount.
+But the API should be generic enough to cover other use cases where
+clients need to provide additional information.
+For me, the metadata is part of the descriptor we give and receive back
+from the DMA, others might have sideband channel to send that.
 
-  This way unmounting the containing filesystem while the tracepoint is
-  active will give you the "VFS: Busy inodes after unmount..." message
-  and a crash when the inode is finally put.
+For metadata handling we could have:
 
-  Solution: store path instead of inode.
+struct dma_desc_metadata_ops {
+   /* To give a buffer for the DMA with the metadata, as it was in my
+    * original patch
+    */
+   int (*desc_attach_metadata)(struct dma_async_tx_descriptor *desc,
+                               void *data, size_t len);
 
-This patch fixes the issue in kernel/event/core.c.
+   void *(*desc_get_metadata_ptr)(struct dma_async_tx_descriptor *desc,
+                                  size_t *payload_len, size_t *max_len);
+   int (*desc_set_payload_len)(struct dma_async_tx_descriptor *desc,
+                              size_t payload_len);
+};
 
-NOTE: Based on my understanding, perf_addr_filter only supports intel_pt.
-However, my test system doesn't support address filtering (or I made a
-mistake?). Therefore, I have NOT tested this patch.
+Probably a simple flag variable to indicate which of the two modes are
+supported:
+1. Client provided metadata buffer handling
+Clients provide the buffer via desc_attach_metadata(), the DMA driver
+will do whatever it needs to do, copy it in place, send it differently,
+use parameters.
+In RX the received metadata is going to be placed to the provided buffer.
+2. Ability to give the metadata pointer to user to work on it.
+In TX, clients can use desc_get_metadata_ptr() to get the pointer,
+current payload size and maximum size of the metadata and can work
+directly on the buffer to place the data. Then desc_set_payload_len() to
+let the DMA know how much data is actually placed there.
+In RX, desc_get_metadata_ptr() will give the user the pointer and the
+payload size so it can process that information correctly.
 
-Could someone please help test it?
+DMA driver can implement either or both, but clients must only use
+either 1 or 2 to work with the metadata.
 
-Fixes: 375637bc5249 ("perf/core: Introduce address range filtering")
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reported-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- arch/x86/events/intel/pt.c |  4 ++--
- include/linux/perf_event.h |  2 +-
- kernel/events/core.c       | 21 +++++++++------------
- 3 files changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index 3b99394..8d016ce 100644
---- a/arch/x86/events/intel/pt.c
-+++ b/arch/x86/events/intel/pt.c
-@@ -1194,7 +1194,7 @@ static int pt_event_addr_filters_validate(struct list_head *filters)
- 		    filter->action == PERF_ADDR_FILTER_ACTION_START)
- 			return -EOPNOTSUPP;
- 
--		if (!filter->inode) {
-+		if (!filter->path.dentry) {
- 			if (!valid_kernel_ip(filter->offset))
- 				return -EINVAL;
- 
-@@ -1221,7 +1221,7 @@ static void pt_event_addr_filters_sync(struct perf_event *event)
- 		return;
- 
- 	list_for_each_entry(filter, &head->list, entry) {
--		if (filter->inode && !offs[range]) {
-+		if (filter->path.dentry && !offs[range]) {
- 			msr_a = msr_b = 0;
- 		} else {
- 			/* apply the offset */
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index e71e99e..88922d8 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -467,7 +467,7 @@ enum perf_addr_filter_action_t {
-  */
- struct perf_addr_filter {
- 	struct list_head	entry;
--	struct inode		*inode;
-+	struct path		path;
- 	unsigned long		offset;
- 	unsigned long		size;
- 	enum perf_addr_filter_action_t	action;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index d7af828..7d711ed 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6668,7 +6668,7 @@ static void perf_event_addr_filters_exec(struct perf_event *event, void *data)
- 
- 	raw_spin_lock_irqsave(&ifh->lock, flags);
- 	list_for_each_entry(filter, &ifh->list, entry) {
--		if (filter->inode) {
-+		if (filter->path.dentry) {
- 			event->addr_filters_offs[count] = 0;
- 			restart++;
- 		}
-@@ -7333,7 +7333,7 @@ static bool perf_addr_filter_match(struct perf_addr_filter *filter,
- 				     struct file *file, unsigned long offset,
- 				     unsigned long size)
- {
--	if (filter->inode != file_inode(file))
-+	if (d_inode(filter->path.dentry) != file_inode(file))
- 		return false;
- 
- 	if (filter->offset > offset + size)
-@@ -8674,8 +8674,7 @@ static void free_filters_list(struct list_head *filters)
- 	struct perf_addr_filter *filter, *iter;
- 
- 	list_for_each_entry_safe(filter, iter, filters, entry) {
--		if (filter->inode)
--			iput(filter->inode);
-+		path_put(&filter->path);
- 		list_del(&filter->entry);
- 		kfree(filter);
- 	}
-@@ -8772,7 +8771,7 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
- 		 * Adjust base offset if the filter is associated to a binary
- 		 * that needs to be mapped:
- 		 */
--		if (filter->inode)
-+		if (filter->path.dentry)
- 			event->addr_filters_offs[count] =
- 				perf_addr_filter_apply(filter, mm);
- 
-@@ -8846,7 +8845,6 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- {
- 	struct perf_addr_filter *filter = NULL;
- 	char *start, *orig, *filename = NULL;
--	struct path path;
- 	substring_t args[MAX_OPT_ARGS];
- 	int state = IF_STATE_ACTION, token;
- 	unsigned int kernel = 0;
-@@ -8959,19 +8957,18 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
- 					goto fail_free_name;
- 
- 				/* look up the path and grab its inode */
--				ret = kern_path(filename, LOOKUP_FOLLOW, &path);
-+				ret = kern_path(filename, LOOKUP_FOLLOW,
-+						&filter->path);
- 				if (ret)
- 					goto fail_free_name;
- 
--				filter->inode = igrab(d_inode(path.dentry));
--				path_put(&path);
- 				kfree(filename);
- 				filename = NULL;
- 
- 				ret = -EINVAL;
--				if (!filter->inode ||
--				    !S_ISREG(filter->inode->i_mode))
--					/* free_filters_list() will iput() */
-+				if (!filter->path.dentry ||
-+				    !S_ISREG(d_inode(filter->path.dentry)
-+					     ->i_mode))
- 					goto fail;
- 
- 				event->addr_filters.nr_file_filters++;
--- 
-2.9.5
+> Think multi-planar transfer, like for audio when the right and left channel
+> are in separate buffers and not interleaved. Or video with different
+> color/luminance components in separate buffers. This is something that is at
+> the moment not covered by the dmaengine API either.
+
+Hrm, true, but it is hardly the metadata use case. It is more like
+different DMA transfer type.
+
+>>>>> Or you can implement a interface that is specific to your DMA controller and
+>>>>> any client using this interface knows it is talking to your DMA controller.
+>>>>
+>>>> Hrm, so we can have DMA driver specific calls? The reason why TI's keystone 2
+>>>> navigator DMA support was rejected that it was introducing NAV specific calls
+>>>> for clients to configure features not yet supported by the framework.
+>>>
+>>> In my opinion it is OK, somebody else might have different ideas. I mean it
+>>> is not nice, but it is better than the alternative of overloading the
+>>> generic API with driver specific semantics or introducing some kind of IOCTL
+>>> catch all callback.
+>>
+>> True, but the generic API can be extended as well to cover new grounds,
+>> features. Like this metadata thing.
+>>
+>>> If there is tight coupling between the DMA core and client and there is no
+>>> intention of using a generic client the best solution might even be to no
+>>> use DMAengine at all.
+>>
+>> This is how the knav stuff ended up. Well it is only used by networking
+>> atm, so it is 'fine' to have custom API, but it is not portable.
+> 
+> I totally agree generic APIs are better, but not everybody has the resources
+> to rewrite the whole framework just because they want to do this tiny thing
+> that isn't covered by the framework yet. In that case it is better to go
+> with a custom API (that might evolve into a generic API), rather than
+> overloading the generic API and putting a strain on everybody who works on
+> the generic API.
+
+At some point a threshold is reached when the burden of maintaining a
+custom API is more costly than investing on the extension of the framework.
+What happens when an existing driver (using DMAengine API) need to be
+supported on platform where only custom DMA code is available or if you
+want to migrate to a new DMA from the custom API the drier is wired for?
+It is just plain pain.
+At the end what we want to do with DMA: move data from opne place to
+another (in oversimplified view).
+
+The framework can be extended to cover new features w/o much impact on
+generality or drivers do not need the feature, like the metadata. The
+impact is minimal for drivers who don't care.
+
+If there is interest I can send the core patches for the metadata in
+couple of days (need to update the documentation as well) and test the
+new give me the metadata pointer support.
+Unfortunately I can not send atm the DMA driver itself which is using this.
+If this helps others to move ahead, I'm fine spending extra time to get
+it in a good shape for upstream.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
