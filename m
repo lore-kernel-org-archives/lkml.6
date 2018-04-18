@@ -1,120 +1,267 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753071AbeDRPCZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:02:25 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56168 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752948AbeDRPCW (ORCPT
+        id S1752941AbeDRPE5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:04:57 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:33025 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751204AbeDRPEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:02:22 -0400
-Subject: Re: [PATCH v2 2/2] tpm: reduce polling time to usecs for even finer
- granularity
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Nayna Jain <nayna@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, tpmdd@selhorst.net,
-        jgunthorpe@obsidianresearch.com, patrickc@us.ibm.com
-Date: Wed, 18 Apr 2018 11:02:12 -0400
-In-Reply-To: <20180417131246.434-3-nayna@linux.vnet.ibm.com>
-References: <20180417131246.434-1-nayna@linux.vnet.ibm.com>
-         <20180417131246.434-3-nayna@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18041815-0008-0000-0000-000004ECBAA2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041815-0009-0000-0000-00001E80C637
-Message-Id: <1524063732.3272.302.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804180135
+        Wed, 18 Apr 2018 11:04:55 -0400
+X-Google-Smtp-Source: AIpwx4++YM2RZrfS34W/Vg7toN0LKDW0Bo/tA6I9UP/hXYOKg1t2yeeE8JB/BY+8xWmbxHP0Gl1KFg==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
+        jgross@suse.com, lyan@suse.com, boris.ostrovsky@oracle.com
+Cc: andr2000@gmail.com, andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH] Input: xen-kbdfront - allow better run-time configuration
+Date: Wed, 18 Apr 2018 18:04:45 +0300
+Message-Id: <20180418150445.9805-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-17 at 09:12 -0400, Nayna Jain wrote:
-> The TPM burstcount and status commands are supposed to return very
-> quickly [1][2]. This patch further reduces the TPM poll sleep time to usecs
-> in get_burstcount() and wait_for_tpm_stat() by calling usleep_range()
-> directly.
-> 
-> After this change, performance on a TPM 1.2 with an 8 byte burstcount for
-> 1000 extends improved from ~10.7 sec to ~7 sec.
-> 
-> [1] From TCG Specification "TCG PC Client Specific TPM Interface
-> Specification (TIS), Family 1.2":
-> 
-> "NOTE : It takes roughly 330 ns per byte transfer on LPC. 256 bytes would
-> take 84 us, which is a long time to stall the CPU. Chipsets may not be
-> designed to post this much data to LPC; therefore, the CPU itself is
-> stalled for much of this time. Sending 1 kB would take 350 μs. Therefore,
-> even if the TPM_STS_x.burstCount field is a high value, software SHOULD
-> be interruptible during this period."
-> 
-> [2] From TCG Specification 2.0, "TCG PC Client Platform TPM Profile
-> (PTP) Specification":
-> 
-> "It takes roughly 330 ns per byte transfer on LPC. 256 bytes would take
-> 84 us. Chipsets may not be designed to post this much data to LPC;
-> therefore, the CPU itself is stalled for much of this time. Sending 1 kB
-> would take 350 us. Therefore, even if the TPM_STS_x.burstCount field is a
-> high value, software should be interruptible during this period. For SPI,
-> assuming 20MHz clock and 64-byte transfers, it would take about 120 usec
-> to move 256B of data. Sending 1kB would take about 500 usec. If the
-> transactions are done using 4 bytes at a time, then it would take about
-> 1 msec. to transfer 1kB of data."
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+It is now only possible to control if multi-touch virtual device
+is created or not (via the corresponding XenStore entries),
+but keyboard and pointer devices are always created.
+In some cases this is not desirable. For example, if virtual
+keyboard device is exposed to Android then the latter won't
+automatically show on-screen keyboard as it expects that a
+physical keyboard device can be used for typing.
 
+Make it possible to configure which virtual devices are created
+with module parameters:
+  - no_ptr_dev=1 if no pointer device needs to be created
+  - no_kbd_dev=1 if no keyboard device needs to be created
+Keep old behavior by default.
 
-> ---
->  drivers/char/tpm/tpm.h          | 4 +++-
->  drivers/char/tpm/tpm_tis_core.c | 5 +++--
->  2 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 7e797377e1eb..f0e4d290c347 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -54,7 +54,9 @@ enum tpm_timeout {
->  	TPM_TIMEOUT = 5,	/* msecs */
->  	TPM_TIMEOUT_RETRY = 100, /* msecs */
->  	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
-> -	TPM_TIMEOUT_POLL = 1	/* msecs */
-> +	TPM_TIMEOUT_POLL = 1,	/* msecs */
-> +	TPM_TIMEOUT_USECS_MIN = 100,      /* usecs */
-> +	TPM_TIMEOUT_USECS_MAX = 500      /* usecs */
->  };
-> 
->  /* TPM addresses */
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 021e6b68f2db..5bba5c662423 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -84,7 +84,8 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
->  		}
->  	} else {
->  		do {
-> -			tpm_msleep(TPM_TIMEOUT_POLL);
-> +			usleep_range(TPM_TIMEOUT_USECS_MIN,
-> +					TPM_TIMEOUT_USECS_MAX);
->  			status = chip->ops->status(chip);
->  			if ((status & mask) == mask)
->  				return 0;
-> @@ -226,7 +227,7 @@ static int get_burstcount(struct tpm_chip *chip)
->  		burstcnt = (value >> 8) & 0xFFFF;
->  		if (burstcnt)
->  			return burstcnt;
-> -		tpm_msleep(TPM_TIMEOUT_POLL);
-> +		usleep_range(TPM_TIMEOUT_USECS_MIN, TPM_TIMEOUT_USECS_MAX);
->  	} while (time_before(jiffies, stop));
->  	return -EBUSY;
->  }
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+---
+ drivers/input/misc/xen-kbdfront.c | 159 +++++++++++++++++-------------
+ 1 file changed, 92 insertions(+), 67 deletions(-)
+
+diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
+index d91f3b1c5375..a3306aad40b0 100644
+--- a/drivers/input/misc/xen-kbdfront.c
++++ b/drivers/input/misc/xen-kbdfront.c
+@@ -51,6 +51,16 @@ module_param_array(ptr_size, int, NULL, 0444);
+ MODULE_PARM_DESC(ptr_size,
+ 	"Pointing device width, height in pixels (default 800,600)");
+ 
++static unsigned int no_ptr_dev;
++module_param(no_ptr_dev, uint, 0);
++MODULE_PARM_DESC(no_ptr_dev,
++	"If set then no virtual pointing device exposed to the guest");
++
++static unsigned int no_kbd_dev;
++module_param(no_kbd_dev, uint, 0);
++MODULE_PARM_DESC(no_kbd_dev,
++	"If set then no virtual keyboard device exposed to the guest");
++
+ static int xenkbd_remove(struct xenbus_device *);
+ static int xenkbd_connect_backend(struct xenbus_device *, struct xenkbd_info *);
+ static void xenkbd_disconnect_backend(struct xenkbd_info *);
+@@ -63,6 +73,9 @@ static void xenkbd_disconnect_backend(struct xenkbd_info *);
+ static void xenkbd_handle_motion_event(struct xenkbd_info *info,
+ 				       struct xenkbd_motion *motion)
+ {
++	if (unlikely(!info->ptr))
++		return;
++
+ 	input_report_rel(info->ptr, REL_X, motion->rel_x);
+ 	input_report_rel(info->ptr, REL_Y, motion->rel_y);
+ 	if (motion->rel_z)
+@@ -73,6 +86,9 @@ static void xenkbd_handle_motion_event(struct xenkbd_info *info,
+ static void xenkbd_handle_position_event(struct xenkbd_info *info,
+ 					 struct xenkbd_position *pos)
+ {
++	if (unlikely(!info->ptr))
++		return;
++
+ 	input_report_abs(info->ptr, ABS_X, pos->abs_x);
+ 	input_report_abs(info->ptr, ABS_Y, pos->abs_y);
+ 	if (pos->rel_z)
+@@ -97,6 +113,9 @@ static void xenkbd_handle_key_event(struct xenkbd_info *info,
+ 		return;
+ 	}
+ 
++	if (unlikely(!dev))
++		return;
++
+ 	input_event(dev, EV_KEY, key->keycode, value);
+ 	input_sync(dev);
+ }
+@@ -192,7 +211,7 @@ static int xenkbd_probe(struct xenbus_device *dev,
+ 				  const struct xenbus_device_id *id)
+ {
+ 	int ret, i;
+-	unsigned int abs, touch;
++	unsigned int touch;
+ 	struct xenkbd_info *info;
+ 	struct input_dev *kbd, *ptr, *mtouch;
+ 
+@@ -211,24 +230,6 @@ static int xenkbd_probe(struct xenbus_device *dev,
+ 	if (!info->page)
+ 		goto error_nomem;
+ 
+-	/* Set input abs params to match backend screen res */
+-	abs = xenbus_read_unsigned(dev->otherend,
+-				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
+-	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
+-						  XENKBD_FIELD_WIDTH,
+-						  ptr_size[KPARAM_X]);
+-	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
+-						  XENKBD_FIELD_HEIGHT,
+-						  ptr_size[KPARAM_Y]);
+-	if (abs) {
+-		ret = xenbus_write(XBT_NIL, dev->nodename,
+-				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
+-		if (ret) {
+-			pr_warn("xenkbd: can't request abs-pointer\n");
+-			abs = 0;
+-		}
+-	}
+-
+ 	touch = xenbus_read_unsigned(dev->nodename,
+ 				     XENKBD_FIELD_FEAT_MTOUCH, 0);
+ 	if (touch) {
+@@ -241,60 +242,84 @@ static int xenkbd_probe(struct xenbus_device *dev,
+ 	}
+ 
+ 	/* keyboard */
+-	kbd = input_allocate_device();
+-	if (!kbd)
+-		goto error_nomem;
+-	kbd->name = "Xen Virtual Keyboard";
+-	kbd->phys = info->phys;
+-	kbd->id.bustype = BUS_PCI;
+-	kbd->id.vendor = 0x5853;
+-	kbd->id.product = 0xffff;
+-
+-	__set_bit(EV_KEY, kbd->evbit);
+-	for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
+-		__set_bit(i, kbd->keybit);
+-	for (i = KEY_OK; i < KEY_MAX; i++)
+-		__set_bit(i, kbd->keybit);
+-
+-	ret = input_register_device(kbd);
+-	if (ret) {
+-		input_free_device(kbd);
+-		xenbus_dev_fatal(dev, ret, "input_register_device(kbd)");
+-		goto error;
++	if (!no_kbd_dev) {
++		kbd = input_allocate_device();
++		if (!kbd)
++			goto error_nomem;
++		kbd->name = "Xen Virtual Keyboard";
++		kbd->phys = info->phys;
++		kbd->id.bustype = BUS_PCI;
++		kbd->id.vendor = 0x5853;
++		kbd->id.product = 0xffff;
++
++		__set_bit(EV_KEY, kbd->evbit);
++		for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
++			__set_bit(i, kbd->keybit);
++		for (i = KEY_OK; i < KEY_MAX; i++)
++			__set_bit(i, kbd->keybit);
++
++		ret = input_register_device(kbd);
++		if (ret) {
++			input_free_device(kbd);
++			xenbus_dev_fatal(dev, ret, "input_register_device(kbd)");
++			goto error;
++		}
++		info->kbd = kbd;
+ 	}
+-	info->kbd = kbd;
+ 
+ 	/* pointing device */
+-	ptr = input_allocate_device();
+-	if (!ptr)
+-		goto error_nomem;
+-	ptr->name = "Xen Virtual Pointer";
+-	ptr->phys = info->phys;
+-	ptr->id.bustype = BUS_PCI;
+-	ptr->id.vendor = 0x5853;
+-	ptr->id.product = 0xfffe;
+-
+-	if (abs) {
+-		__set_bit(EV_ABS, ptr->evbit);
+-		input_set_abs_params(ptr, ABS_X, 0, ptr_size[KPARAM_X], 0, 0);
+-		input_set_abs_params(ptr, ABS_Y, 0, ptr_size[KPARAM_Y], 0, 0);
+-	} else {
+-		input_set_capability(ptr, EV_REL, REL_X);
+-		input_set_capability(ptr, EV_REL, REL_Y);
+-	}
+-	input_set_capability(ptr, EV_REL, REL_WHEEL);
++	if (!no_ptr_dev) {
++		unsigned int abs;
++
++		/* Set input abs params to match backend screen res */
++		abs = xenbus_read_unsigned(dev->otherend,
++					   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
++		ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
++							  XENKBD_FIELD_WIDTH,
++							  ptr_size[KPARAM_X]);
++		ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
++							  XENKBD_FIELD_HEIGHT,
++							  ptr_size[KPARAM_Y]);
++		if (abs) {
++			ret = xenbus_write(XBT_NIL, dev->nodename,
++					   XENKBD_FIELD_REQ_ABS_POINTER, "1");
++			if (ret) {
++				pr_warn("xenkbd: can't request abs-pointer\n");
++				abs = 0;
++			}
++		}
+ 
+-	__set_bit(EV_KEY, ptr->evbit);
+-	for (i = BTN_LEFT; i <= BTN_TASK; i++)
+-		__set_bit(i, ptr->keybit);
++		ptr = input_allocate_device();
++		if (!ptr)
++			goto error_nomem;
++		ptr->name = "Xen Virtual Pointer";
++		ptr->phys = info->phys;
++		ptr->id.bustype = BUS_PCI;
++		ptr->id.vendor = 0x5853;
++		ptr->id.product = 0xfffe;
++
++		if (abs) {
++			__set_bit(EV_ABS, ptr->evbit);
++			input_set_abs_params(ptr, ABS_X, 0, ptr_size[KPARAM_X], 0, 0);
++			input_set_abs_params(ptr, ABS_Y, 0, ptr_size[KPARAM_Y], 0, 0);
++		} else {
++			input_set_capability(ptr, EV_REL, REL_X);
++			input_set_capability(ptr, EV_REL, REL_Y);
++		}
++		input_set_capability(ptr, EV_REL, REL_WHEEL);
+ 
+-	ret = input_register_device(ptr);
+-	if (ret) {
+-		input_free_device(ptr);
+-		xenbus_dev_fatal(dev, ret, "input_register_device(ptr)");
+-		goto error;
++		__set_bit(EV_KEY, ptr->evbit);
++		for (i = BTN_LEFT; i <= BTN_TASK; i++)
++			__set_bit(i, ptr->keybit);
++
++		ret = input_register_device(ptr);
++		if (ret) {
++			input_free_device(ptr);
++			xenbus_dev_fatal(dev, ret, "input_register_device(ptr)");
++			goto error;
++		}
++		info->ptr = ptr;
+ 	}
+-	info->ptr = ptr;
+ 
+ 	/* multi-touch device */
+ 	if (touch) {
+-- 
+2.17.0
