@@ -1,132 +1,125 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1980664-1524239455-2-6838326666220176161
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1111413-1524078566-2-8430517874698943399
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524239454; b=WWqcNRGEszQiVJniaY9f99fnzFffvvHuZYFwNilt15LzmYmf7k
-    Hpb7BQ5T8/vUbeR9z9POqWleEgfXzIObK6MKaF1bpv+GowNy5NZj3HtJP5sUSpWP
-    DrNM9g6D7V5sL0vk/JSVyu9pjB66fF3/WAUFOQG5nE6ciL21dzyiUiIMRu8n+XmN
-    f7XfsQojvfBNGhe0Esg5Ukg2IjvWT3BA47v6MZ/ESS5VED4H9ezt7gwwokEZKYsx
-    CMLPhJshNFsV9xTq57Qlz2FoLxmvyt64y1PN6SJd6jwoIlIyfWRB38qxTSwJoyDz
-    KXpuDv6dXilUboUJfq4UDXt5VNiRWyyEuCVw==
+    1524078564; b=rQLQd0E3sex7VakAbBGxx5dPZs+jZ1IgRt73RpE8YJ/q/n+2qW
+    Gm9dzGlr5xR3rcjYVwCFocY1kUjcCqb7lPFK31wPbbn2dVyWtHWMW+KlxfP9iIX7
+    nM7pZtpvT8AnM+W0qLeGcpzEcj3mYTUEsxDx/mPUyDdvf/hJhyFLgbwBcOhoO9sH
+    T5frQhrdWyTckX7/a5/LQrPdnjbHMEZvlBzMzzBraD+8IsbOx0qiv5XFREOWEVY9
+    jyg/GO2Z9DlyehAY2aBQXTVb6UGIrjXiXQpPC2zuNVUBcLzmJIpqmSHyRy2K6MaF
+    /ejllHMBBI0yzbOSJMjTE8UT87ZUsoPRT6rQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524239454; bh=o6UbT
-    6AGbrEDy8uENIY7IybrUjKFuVge/gf+YOLXb60=; b=Ln9QgSubglPOrHlOGE8CA
-    lRX5DzDjfrolIXPrB2VdZ7j03fjZf+tZCmV3gopQRv1Bc2au3JvgfUPaijNj+s00
-    qWzMFn5FtQhA4ARk3Nc27nuTZTtCXofWUUc+HngF+XBEeTzbZACTw+iZp7P1VCuP
-    n0uQsg6JrY8G64d1ivpGeLSrWT1JP0IWZicIZ9Su36o+JcH0KsbGcIqAYm3czq3r
-    Y+KnbJf3USUT8ZR00EZyWzy8zfYfzCvXc70btSP585Z77wF7TO3rcdgVGTIQAm6l
-    6i3a6BcBee1vrYTRAG4/IniOhuwnJdraVl1/uG59xT27IV4aL2qKCkUJ/Cmz1MG0
-    w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b=v/A/lg9O x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=networkplumber.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1524078564;
+    bh=CIXHmcxC89BoheF5mnUcVQ0DsYKbwfefQpYxjwj1hK4=; b=WfB6KUeHUnHt
+    MlBLUXeKvxL6cXfsYv4JRvj24P7yjyr2Lun1URQUI5jO2kZK1HQa79jsTIyJxVqd
+    1yvagg4GQXpAwc4rhaNxSwSxoyXeL3x6/E2GyR5EbvM0Z3PYZZPLEhj8kRxF1+yt
+    tLnLXFqnDJ2djBf9FfMHTwEPfMl52tGf0ASPMFmjIBjoZxo3cuovVY/aJ1g9xy/X
+    x3KUdhP04mqA0s4vAOSfZMGByLj3PP0wzQZG1DVrYsDzjI+5//lyx/QtoNEBRHa/
+    usqcmul63f8nYlOiZzLxQ+79hPvw/MR+yE6Fky035BElhmHyyynv5c2faFB3gpHI
+    k1NVRKOuQQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=deneb.enyo.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lmLZrS7s;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=networkplumber.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=deneb.enyo.de header.result=pass header_org.domain=enyo.de header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b=v/A/lg9O x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=networkplumber.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=deneb.enyo.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=lmLZrS7s;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=networkplumber.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=deneb.enyo.de header.result=pass header_org.domain=enyo.de header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOr2BdgY8s1FxJ6p7DKHwWTIBvsIwZrZRS54yIrn6niQDtUILcJDWQW/mBWefykQlKokclL2PlgOCgx717jNxE3GuMDtygzIZy2pU4lizn6EXCQ+mMHq
-    GaeW7xDWQH7waAxlWJKmtn0twG27rmbYwn/TkJgqSo+QDPUYfWf3TrehZ7LLr4RMu0JmvaJYrlD1TUvOkp+16UxxMxeLESuU0yf9WsLxMRFDu5W8f52ZfVQu
-    BRYxFckBYv/WQqrNuTfcvw==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Odnh0R2cAAAA:8 a=yMhMjlubAAAA:8
-    a=DDOyTI_5AAAA:8 a=t2t0aVZkuDpWksqkN2gA:9 a=CjuIK1q_8ugA:10
-    a=lNAA6UHySJB7qmBR1x20:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfMK+C8DHaoc4wxSUJi5SkOVIp6Z1pFgxZldkbEGd2K2NVQnoHI8D9wvhmOLEomj8Lr7Qc9Qi+b+tm7eMHSsbrXBDBMJA2yP/4+FWsHEIOOQAJfodwnFJ
+    cV8ZeeLUbnqxmm7fGSDZasuBCRVsXtCSPrU6MLlDh0WFPBU+faJVkKPYAgGJIopKHnIF6QbI/7DwSczFLHtEm/nfSXpDlrmbhN0A6tCm8pOYiXHmNjlWOJyw
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=2JrL-qRpAAAA:8
+    a=J1Y8HTJGAAAA:8 a=CCpqsmhAAAAA:8 a=VwQbUJbxAAAA:8 a=t_UD1IztM3YQhmpX3YcA:9
+    a=x8gzFH9gYPwA:10 a=u-Ic724avHVFXizCq7cn:22 a=y1Q9-5lHfBjTkpIzbSAN:22
+    a=ul9cdbp4aOFLsgKbc677:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AIpwx4/cXbXCHcZY9XYFZ3qmOLbSZJj0FmZv+DSibJEtmF9kw0ha68Mi+W/tPubQL8u4XousOHKaug==
-Date: Fri, 20 Apr 2018 08:50:43 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Long Li <longli@linuxonhyperv.com>
-Subject: Re: [Patch v2] Storvsc: Select channel based on available
- percentage of ring buffer to write
-Message-ID: <20180420085043.3a678b89@xeon-e3>
-In-Reply-To: <20180419215424.3557-1-longli@linuxonhyperv.com>
-References: <20180419215424.3557-1-longli@linuxonhyperv.com>
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751692AbeDRTJV (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 18 Apr 2018 15:09:21 -0400
+Received: from albireo.enyo.de ([5.158.152.32]:58754 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751256AbeDRTJU (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Wed, 18 Apr 2018 15:09:20 -0400
+From: Florian Weimer <fw@deneb.enyo.de>
+To: linux-api@vger.kernel.org, netdev@vger.kernel.org,
+        linux-sctp@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Tom Herbert <tom@herbertland.com>,
+        mjw@fedoraproject.org
+Subject: sendmmsg flags userspace ABI change in kernel 4.6
+Date: Wed, 18 Apr 2018 21:03:55 +0200
+Message-ID: <874lk8jq04.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>, linux-scsi@vger.kernel.org,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- "James E . J . Bottomley" <JBottomley@odin.com>, linux-kernel@vger.kernel.org,
- devel@linuxdriverproject.org, Haiyang Zhang <haiyangz@microsoft.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 19 Apr 2018 14:54:24 -0700
-Long Li <longli@linuxonhyperv.com> wrote:
+Since this commit:
 
-> From: Long Li <longli@microsoft.com>
-> 
-> This is a best effort for estimating on how busy the ring buffer is for
-> that channel, based on available buffer to write in percentage. It is still
-> possible that at the time of actual ring buffer write, the space may not be
-> available due to other processes may be writing at the time.
-> 
-> Selecting a channel based on how full it is can reduce the possibility that
-> a ring buffer write will fail, and avoid the situation a channel is over
-> busy.
-> 
-> Now it's possible that storvsc can use a smaller ring buffer size
-> (e.g. 40k bytes) to take advantage of cache locality.
-> 
-> Changes.
-> v2: Pre-allocate struct cpumask on the heap.
-> Struct cpumask is a big structure (1k bytes) when CONFIG_NR_CPUS=8192 (default
-> value when CONFIG_MAXSMP=y). Don't use kernel stack for it by pre-allocating
-> them using kmalloc when channels are first initialized.
-> 
-> Signed-off-by: Long Li <longli@microsoft.com>
+commit 28a94d8fb35b3a75b802f368ae6f4a9f6b0d435a
+Author: Tom Herbert <tom@herbertland.com>
+Date:   Mon Mar 7 14:11:02 2016 -0800
 
-Reviewed-by: Stephen Hemminger <sthemmin@microsoft.com>
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+    net: Allow MSG_EOR in each msghdr of sendmmsg
+
+    This patch allows setting MSG_EOR in each individual msghdr passed
+    in sendmmsg. This allows a sendmmsg to send multiple messages when
+    using SOCK_SEQPACKET.
+
+    Signed-off-by: Tom Herbert <tom@herbertland.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+the msg_flags argument in individual msghdr arguments is longer
+completely ignored for SOCK_SEQPACKET sockets.  msg_flags was and is
+still documented as ignored for sendmsg(2), so by analogy for
+sendmmsg(2) as well.
+
+It seems that valgrind does not know about this yet, and due to
+limited use of SCTP, this userspace ABI change has not been noticed so
+far.
+
+What are the plans in this area?  Will other kinds of sockets start
+using the msghdr flags for sending?
+
+A fully backwards-compatibility way to achieve this would be to
+specify that you have to pass a new flag to sendmmsg (MSG_PERHDR?), in
+its flags argument, to activate the per-msghdr flags.
+
+The glibc DNS stub resolver relies on the previously documented
+behavior, and I wonder how widely we should backport the change:
+
+  https://sourceware.org/bugzilla/show_bug.cgi?id=23037
+
+If the MSG_PERHDR route will be taken, we can skip this work, and
+valgrind can flag uninitialized bits in msg_flags only if MSG_PERHDR
+is passed.  (I believe it would be difficult for valgrind to look at
+the socket type to determine whether undefined bits need reporting.)
