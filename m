@@ -1,70 +1,599 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753145AbeDRHUj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:20:39 -0400
-Received: from mail-vk0-f44.google.com ([209.85.213.44]:38948 "EHLO
-        mail-vk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753051AbeDRHUh (ORCPT
+        id S1753169AbeDRH1Y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:27:24 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34688 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753112AbeDRH1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:20:37 -0400
-X-Google-Smtp-Source: AIpwx4+acpzd9c4KVTs+nalsOQcYRqz3tkk9L0a+ZxiMbkBi0r7wUHcOAmrgZs3+1iwDGbEUgeEnggEZaM6KEuTwZv4=
+        Wed, 18 Apr 2018 03:27:22 -0400
+X-Google-Smtp-Source: AIpwx48GkTIT2S3ZqVLBEnOUPhtraU0yZ0s/3OSqg2sA/wtWIJM6U1O1XaPtAKdcPUP150K7WLNqmg==
+Subject: Re: [PATCH] drm/xen-front: Remove CMA support
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org, gustavo@padovan.org,
+        jgross@suse.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180417074012.21311-1-andr2000@gmail.com>
+ <20180417090401.GA31310@phenom.ffwll.local>
+ <d85e6232-6815-8ae2-4e26-cb6d508f7570@gmail.com>
+Message-ID: <b8dd14f6-8226-e8b1-b099-a907b670f189@gmail.com>
+Date: Wed, 18 Apr 2018 10:27:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com>
-References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
- <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com> <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com>
-From: Greentime Hu <green.hu@gmail.com>
-Date: Wed, 18 Apr 2018 15:19:56 +0800
-Message-ID: <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com>
-Subject: Re: nds32 build failures
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Guenter Roeck <private@roeck-us.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vincent Chen <vincentc@andestech.com>,
-        Greentime Hu <greentime@andestech.com>, kito.cheng@gmail.com,
-        wuiw@andestech.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d85e6232-6815-8ae2-4e26-cb6d508f7570@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-17 20:47 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
-> On Mon, Apr 16, 2018 at 11:06 AM, Greentime Hu <green.hu@gmail.com> wrote:
->> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
+On 04/17/2018 12:08 PM, Oleksandr Andrushchenko wrote:
+> On 04/17/2018 12:04 PM, Daniel Vetter wrote:
+>> On Tue, Apr 17, 2018 at 10:40:12AM +0300, Oleksandr Andrushchenko wrote:
+>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>>
+>>> Even if xen-front allocates its buffers from contiguous memory
+>>> those are still not contiguous in PA space, e.g. the buffer is only
+>>> contiguous in IPA space.
+>>> The only use-case for this mode was if xen-front is used to allocate
+>>> dumb buffers which later be used by some other driver requiring
+>>> contiguous memory, but there is no currently such a use-case or
+>>> it can be worked around with xen-front.
+>> Please also mention the nents confusion here, and the patch that 
+>> fixes it.
+>> Or just outright take the commit message from my patch with all the
+>> details:
+> ok, if you don't mind then I'll use your commit message entirely
+>>      drm/xen: Dissable CMA support
+>>           It turns out this was only needed to paper over a bug in 
+>> the CMA
+>>      helpers, which was addressed in
+>>           commit 998fb1a0f478b83492220ff79583bf9ad538bdd8
+>>      Author: Liviu Dudau <Liviu.Dudau@arm.com>
+>>      Date:   Fri Nov 10 13:33:10 2017 +0000
+>>               drm: gem_cma_helper.c: Allow importing of contiguous 
+>> scatterlists with nents > 1
+>>           Without this the following pipeline didn't work:
+>>           domU:
+>>      1. xen-front allocates a non-contig buffer
+>>      2. creates grants out of it
+>>           dom0:
+>>      3. converts the grants into a dma-buf. Since they're non-contig, 
+>> the
+>>      scatter-list is huge.
+>>      4. imports it into rcar-du, which requires dma-contig memory for
+>>      scanout.
+>>           -> On this given platform there's an IOMMU, so in theory 
+>> this should
+>>      work. But in practice this failed, because of the huge number of sg
+>>      entries, even though the IOMMU driver mapped it all into a 
+>> dma-contig
+>>      range.
+>>           With a guest-contig buffer allocated in step 1, this 
+>> problem doesn't
+>>      exist. But there's technically no reason to require guest-contig
+>>      memory for xen buffer sharing using grants.
 >>
->> This built failure is because the toolchain version you used is not
->> supported the latest intrinsic function/macro.
->> We are sending the latest patchset now and we expect the whole new
->> features will be supported in gcc8.0.0 and binutil2.31+.
+>> With the commit message improved:
 >>
->> If you'd like to get these new features of toolchain, you may use the
->> github version.
->> This is the built-script repo. https://github.com/andestech/build_script.git
+>> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Thank you,
+> I'll wait for a day and apply to drm-misc-next if this is ok
+applied to drm-misc-next
+>>
+>>> Signed-off-by: Oleksandr Andrushchenko 
+>>> <oleksandr_andrushchenko@epam.com>
+>>> Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+>>> ---
+>>>   Documentation/gpu/xen-front.rst             | 12 ----
+>>>   drivers/gpu/drm/xen/Kconfig                 | 13 ----
+>>>   drivers/gpu/drm/xen/Makefile                |  9 +--
+>>>   drivers/gpu/drm/xen/xen_drm_front.c         | 62 +++-------------
+>>>   drivers/gpu/drm/xen/xen_drm_front.h         | 42 ++---------
+>>>   drivers/gpu/drm/xen/xen_drm_front_gem.c     | 12 +---
+>>>   drivers/gpu/drm/xen/xen_drm_front_gem.h     |  3 -
+>>>   drivers/gpu/drm/xen/xen_drm_front_gem_cma.c | 79 
+>>> ---------------------
+>>>   drivers/gpu/drm/xen/xen_drm_front_shbuf.c   | 22 ------
+>>>   drivers/gpu/drm/xen/xen_drm_front_shbuf.h   |  8 ---
+>>>   10 files changed, 21 insertions(+), 241 deletions(-)
+>>>   delete mode 100644 drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+>>>
+>>> diff --git a/Documentation/gpu/xen-front.rst 
+>>> b/Documentation/gpu/xen-front.rst
+>>> index 009d942386c5..d988da7d1983 100644
+>>> --- a/Documentation/gpu/xen-front.rst
+>>> +++ b/Documentation/gpu/xen-front.rst
+>>> @@ -18,18 +18,6 @@ Buffers allocated by the frontend driver
+>>>   .. kernel-doc:: drivers/gpu/drm/xen/xen_drm_front.h
+>>>      :doc: Buffers allocated by the frontend driver
+>>>   -With GEM CMA helpers
+>>> -~~~~~~~~~~~~~~~~~~~~
+>>> -
+>>> -.. kernel-doc:: drivers/gpu/drm/xen/xen_drm_front.h
+>>> -   :doc: With GEM CMA helpers
+>>> -
+>>> -Without GEM CMA helpers
+>>> -~~~~~~~~~~~~~~~~~~~~~~~
+>>> -
+>>> -.. kernel-doc:: drivers/gpu/drm/xen/xen_drm_front.h
+>>> -   :doc: Without GEM CMA helpers
+>>> -
+>>>   Buffers allocated by the backend
+>>>   --------------------------------
+>>>   diff --git a/drivers/gpu/drm/xen/Kconfig 
+>>> b/drivers/gpu/drm/xen/Kconfig
+>>> index 4f4abc91f3b6..4cca160782ab 100644
+>>> --- a/drivers/gpu/drm/xen/Kconfig
+>>> +++ b/drivers/gpu/drm/xen/Kconfig
+>>> @@ -15,16 +15,3 @@ config DRM_XEN_FRONTEND
+>>>       help
+>>>         Choose this option if you want to enable a para-virtualized
+>>>         frontend DRM/KMS driver for Xen guest OSes.
+>>> -
+>>> -config DRM_XEN_FRONTEND_CMA
+>>> -    bool "Use DRM CMA to allocate dumb buffers"
+>>> -    depends on DRM_XEN_FRONTEND
+>>> -    select DRM_KMS_CMA_HELPER
+>>> -    select DRM_GEM_CMA_HELPER
+>>> -    help
+>>> -      Use DRM CMA helpers to allocate display buffers.
+>>> -      This is useful for the use-cases when guest driver needs to
+>>> -      share or export buffers to other drivers which only expect
+>>> -      contiguous buffers.
+>>> -      Note: in this mode driver cannot use buffers allocated
+>>> -      by the backend.
+>>> diff --git a/drivers/gpu/drm/xen/Makefile 
+>>> b/drivers/gpu/drm/xen/Makefile
+>>> index 352730dc6c13..712afff5ffc3 100644
+>>> --- a/drivers/gpu/drm/xen/Makefile
+>>> +++ b/drivers/gpu/drm/xen/Makefile
+>>> @@ -5,12 +5,7 @@ drm_xen_front-objs := xen_drm_front.o \
+>>>                 xen_drm_front_conn.o \
+>>>                 xen_drm_front_evtchnl.o \
+>>>                 xen_drm_front_shbuf.o \
+>>> -              xen_drm_front_cfg.o
+>>> -
+>>> -ifeq ($(CONFIG_DRM_XEN_FRONTEND_CMA),y)
+>>> -    drm_xen_front-objs += xen_drm_front_gem_cma.o
+>>> -else
+>>> -    drm_xen_front-objs += xen_drm_front_gem.o
+>>> -endif
+>>> +              xen_drm_front_cfg.o \
+>>> +              xen_drm_front_gem.o
+>>>     obj-$(CONFIG_DRM_XEN_FRONTEND) += drm_xen_front.o
+>>> diff --git a/drivers/gpu/drm/xen/xen_drm_front.c 
+>>> b/drivers/gpu/drm/xen/xen_drm_front.c
+>>> index 4a08b77f1c9e..1b0ea9ac330e 100644
+>>> --- a/drivers/gpu/drm/xen/xen_drm_front.c
+>>> +++ b/drivers/gpu/drm/xen/xen_drm_front.c
+>>> @@ -12,7 +12,6 @@
+>>>   #include <drm/drm_atomic_helper.h>
+>>>   #include <drm/drm_crtc_helper.h>
+>>>   #include <drm/drm_gem.h>
+>>> -#include <drm/drm_gem_cma_helper.h>
+>>>     #include <linux/of_device.h>
+>>>   @@ -167,10 +166,9 @@ int xen_drm_front_mode_set(struct 
+>>> xen_drm_front_drm_pipeline *pipeline,
+>>>       return ret;
+>>>   }
+>>>   -static int be_dbuf_create_int(struct xen_drm_front_info *front_info,
+>>> +int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
+>>>                     u64 dbuf_cookie, u32 width, u32 height,
+>>> -                  u32 bpp, u64 size, struct page **pages,
+>>> -                  struct sg_table *sgt)
+>>> +                  u32 bpp, u64 size, struct page **pages)
+>>>   {
+>>>       struct xen_drm_front_evtchnl *evtchnl;
+>>>       struct xen_drm_front_shbuf *shbuf;
+>>> @@ -187,7 +185,6 @@ static int be_dbuf_create_int(struct 
+>>> xen_drm_front_info *front_info,
+>>>       buf_cfg.xb_dev = front_info->xb_dev;
+>>>       buf_cfg.pages = pages;
+>>>       buf_cfg.size = size;
+>>> -    buf_cfg.sgt = sgt;
+>>>       buf_cfg.be_alloc = front_info->cfg.be_alloc;
+>>>         shbuf = xen_drm_front_shbuf_alloc(&buf_cfg);
+>>> @@ -237,22 +234,6 @@ static int be_dbuf_create_int(struct 
+>>> xen_drm_front_info *front_info,
+>>>       return ret;
+>>>   }
+>>>   -int xen_drm_front_dbuf_create_from_sgt(struct xen_drm_front_info 
+>>> *front_info,
+>>> -                       u64 dbuf_cookie, u32 width, u32 height,
+>>> -                       u32 bpp, u64 size, struct sg_table *sgt)
+>>> -{
+>>> -    return be_dbuf_create_int(front_info, dbuf_cookie, width, height,
+>>> -                  bpp, size, NULL, sgt);
+>>> -}
+>>> -
+>>> -int xen_drm_front_dbuf_create_from_pages(struct xen_drm_front_info 
+>>> *front_info,
+>>> -                     u64 dbuf_cookie, u32 width, u32 height,
+>>> -                     u32 bpp, u64 size, struct page **pages)
+>>> -{
+>>> -    return be_dbuf_create_int(front_info, dbuf_cookie, width, height,
+>>> -                  bpp, size, pages, NULL);
+>>> -}
+>>> -
+>>>   static int xen_drm_front_dbuf_destroy(struct xen_drm_front_info 
+>>> *front_info,
+>>>                         u64 dbuf_cookie)
+>>>   {
+>>> @@ -434,24 +415,11 @@ static int xen_drm_drv_dumb_create(struct 
+>>> drm_file *filp,
+>>>           goto fail;
+>>>       }
+>>>   -    /*
+>>> -     * In case of CONFIG_DRM_XEN_FRONTEND_CMA gem_obj is constructed
+>>> -     * via DRM CMA helpers and doesn't have ->pages allocated
+>>> -     * (xendrm_gem_get_pages will return NULL), but instead can 
+>>> provide
+>>> -     * sg table
+>>> -     */
+>>> -    if (xen_drm_front_gem_get_pages(obj))
+>>> -        ret = 
+>>> xen_drm_front_dbuf_create_from_pages(drm_info->front_info,
+>>> -                xen_drm_front_dbuf_to_cookie(obj),
+>>> -                args->width, args->height, args->bpp,
+>>> -                args->size,
+>>> -                xen_drm_front_gem_get_pages(obj));
+>>> -    else
+>>> -        ret = xen_drm_front_dbuf_create_from_sgt(drm_info->front_info,
+>>> -                xen_drm_front_dbuf_to_cookie(obj),
+>>> -                args->width, args->height, args->bpp,
+>>> -                args->size,
+>>> -                xen_drm_front_gem_get_sg_table(obj));
+>>> +    ret = xen_drm_front_dbuf_create(drm_info->front_info,
+>>> +                    xen_drm_front_dbuf_to_cookie(obj),
+>>> +                    args->width, args->height, args->bpp,
+>>> +                    args->size,
+>>> +                    xen_drm_front_gem_get_pages(obj));
+>>>       if (ret)
+>>>           goto fail_backend;
+>>>   @@ -523,11 +491,7 @@ static const struct file_operations 
+>>> xen_drm_dev_fops = {
+>>>       .poll           = drm_poll,
+>>>       .read           = drm_read,
+>>>       .llseek         = no_llseek,
+>>> -#ifdef CONFIG_DRM_XEN_FRONTEND_CMA
+>>> -    .mmap           = drm_gem_cma_mmap,
+>>> -#else
+>>>       .mmap           = xen_drm_front_gem_mmap,
+>>> -#endif
+>>>   };
+>>>     static const struct vm_operations_struct xen_drm_drv_vm_ops = {
+>>> @@ -547,6 +511,9 @@ static struct drm_driver xen_drm_driver = {
+>>>       .gem_prime_export          = drm_gem_prime_export,
+>>>       .gem_prime_import_sg_table = xen_drm_front_gem_import_sg_table,
+>>>       .gem_prime_get_sg_table    = xen_drm_front_gem_get_sg_table,
+>>> +    .gem_prime_vmap            = xen_drm_front_gem_prime_vmap,
+>>> +    .gem_prime_vunmap          = xen_drm_front_gem_prime_vunmap,
+>>> +    .gem_prime_mmap            = xen_drm_front_gem_prime_mmap,
+>>>       .dumb_create               = xen_drm_drv_dumb_create,
+>>>       .fops                      = &xen_drm_dev_fops,
+>>>       .name                      = "xendrm-du",
+>>> @@ -555,15 +522,6 @@ static struct drm_driver xen_drm_driver = {
+>>>       .major                     = 1,
+>>>       .minor                     = 0,
+>>>   -#ifdef CONFIG_DRM_XEN_FRONTEND_CMA
+>>> -    .gem_prime_vmap            = drm_gem_cma_prime_vmap,
+>>> -    .gem_prime_vunmap          = drm_gem_cma_prime_vunmap,
+>>> -    .gem_prime_mmap            = drm_gem_cma_prime_mmap,
+>>> -#else
+>>> -    .gem_prime_vmap            = xen_drm_front_gem_prime_vmap,
+>>> -    .gem_prime_vunmap          = xen_drm_front_gem_prime_vunmap,
+>>> -    .gem_prime_mmap            = xen_drm_front_gem_prime_mmap,
+>>> -#endif
+>>>   };
+>>>     static int xen_drm_drv_init(struct xen_drm_front_info *front_info)
+>>> diff --git a/drivers/gpu/drm/xen/xen_drm_front.h 
+>>> b/drivers/gpu/drm/xen/xen_drm_front.h
+>>> index 16554b2463d8..2c2479b571ae 100644
+>>> --- a/drivers/gpu/drm/xen/xen_drm_front.h
+>>> +++ b/drivers/gpu/drm/xen/xen_drm_front.h
+>>> @@ -23,40 +23,14 @@
+>>>    *
+>>>    * Depending on the requirements for the para-virtualized 
+>>> environment, namely
+>>>    * requirements dictated by the accompanying DRM/(v)GPU drivers 
+>>> running in both
+>>> - * host and guest environments, number of operating modes of 
+>>> para-virtualized
+>>> - * display driver are supported:
+>>> - *
+>>> - * - display buffers can be allocated by either frontend driver or 
+>>> backend
+>>> - * - display buffers can be allocated to be contiguous in memory or 
+>>> not
+>>> - *
+>>> - * Note! Frontend driver itself has no dependency on contiguous 
+>>> memory for
+>>> - * its operation.
+>>> + * host and guest environments, display buffers can be allocated by 
+>>> either
+>>> + * frontend driver or backend.
+>>>    */
+>>>     /**
+>>>    * DOC: Buffers allocated by the frontend driver
+>>>    *
+>>> - * The below modes of operation are configured at compile-time via
+>>> - * frontend driver's kernel configuration:
+>>> - */
+>>> -
+>>> -/**
+>>> - * DOC: With GEM CMA helpers
+>>> - *
+>>> - * This use-case is useful when used with accompanying DRM/vGPU 
+>>> driver in
+>>> - * guest domain which was designed to only work with contiguous 
+>>> buffers,
+>>> - * e.g. DRM driver based on GEM CMA helpers: such drivers can only 
+>>> import
+>>> - * contiguous PRIME buffers, thus requiring frontend driver to provide
+>>> - * such. In order to implement this mode of operation para-virtualized
+>>> - * frontend driver can be configured to use GEM CMA helpers.
+>>> - */
+>>> -
+>>> -/**
+>>> - * DOC: Without GEM CMA helpers
+>>> - *
+>>> - * If accompanying drivers can cope with non-contiguous memory 
+>>> then, to
+>>> - * lower pressure on CMA subsystem of the kernel, driver can allocate
+>>> - * buffers from system memory.
+>>> + * In this mode of operation driver allocates buffers from system 
+>>> memory.
+>>>    *
+>>>    * Note! If used with accompanying DRM/(v)GPU drivers this mode of 
+>>> operation
+>>>    * may require IOMMU support on the platform, so accompanying 
+>>> DRM/vGPU
+>>> @@ -164,13 +138,9 @@ int xen_drm_front_mode_set(struct 
+>>> xen_drm_front_drm_pipeline *pipeline,
+>>>                  u32 x, u32 y, u32 width, u32 height,
+>>>                  u32 bpp, u64 fb_cookie);
+>>>   -int xen_drm_front_dbuf_create_from_sgt(struct xen_drm_front_info 
+>>> *front_info,
+>>> -                       u64 dbuf_cookie, u32 width, u32 height,
+>>> -                       u32 bpp, u64 size, struct sg_table *sgt);
+>>> -
+>>> -int xen_drm_front_dbuf_create_from_pages(struct xen_drm_front_info 
+>>> *front_info,
+>>> -                     u64 dbuf_cookie, u32 width, u32 height,
+>>> -                     u32 bpp, u64 size, struct page **pages);
+>>> +int xen_drm_front_dbuf_create(struct xen_drm_front_info *front_info,
+>>> +                  u64 dbuf_cookie, u32 width, u32 height,
+>>> +                  u32 bpp, u64 size, struct page **pages);
+>>>     int xen_drm_front_fb_attach(struct xen_drm_front_info *front_info,
+>>>                   u64 dbuf_cookie, u64 fb_cookie, u32 width,
+>>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c 
+>>> b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>>> index 3b04a2269d7a..c85bfe7571cb 100644
+>>> --- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>>> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+>>> @@ -210,15 +210,9 @@ xen_drm_front_gem_import_sg_table(struct 
+>>> drm_device *dev,
+>>>       if (ret < 0)
+>>>           return ERR_PTR(ret);
+>>>   -    /*
+>>> -     * N.B. Although we have an API to create display buffer from sgt
+>>> -     * we use pages API, because we still need those for GEM handling,
+>>> -     * e.g. for mapping etc.
+>>> -     */
+>>> -    ret = xen_drm_front_dbuf_create_from_pages(drm_info->front_info,
+>>> - xen_drm_front_dbuf_to_cookie(&xen_obj->base),
+>>> -                           0, 0, 0, size,
+>>> -                           xen_obj->pages);
+>>> +    ret = xen_drm_front_dbuf_create(drm_info->front_info,
+>>> + xen_drm_front_dbuf_to_cookie(&xen_obj->base),
+>>> +                    0, 0, 0, size, xen_obj->pages);
+>>>       if (ret < 0)
+>>>           return ERR_PTR(ret);
+>>>   diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.h 
+>>> b/drivers/gpu/drm/xen/xen_drm_front_gem.h
+>>> index 55e531f5a763..d5ab734fdafe 100644
+>>> --- a/drivers/gpu/drm/xen/xen_drm_front_gem.h
+>>> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.h
+>>> @@ -27,8 +27,6 @@ struct page **xen_drm_front_gem_get_pages(struct 
+>>> drm_gem_object *obj);
+>>>     void xen_drm_front_gem_free_object_unlocked(struct 
+>>> drm_gem_object *gem_obj);
+>>>   -#ifndef CONFIG_DRM_XEN_FRONTEND_CMA
+>>> -
+>>>   int xen_drm_front_gem_mmap(struct file *filp, struct 
+>>> vm_area_struct *vma);
+>>>     void *xen_drm_front_gem_prime_vmap(struct drm_gem_object *gem_obj);
+>>> @@ -38,6 +36,5 @@ void xen_drm_front_gem_prime_vunmap(struct 
+>>> drm_gem_object *gem_obj,
+>>>     int xen_drm_front_gem_prime_mmap(struct drm_gem_object *gem_obj,
+>>>                    struct vm_area_struct *vma);
+>>> -#endif
+>>>     #endif /* __XEN_DRM_FRONT_GEM_H */
+>>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem_cma.c 
+>>> b/drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+>>> deleted file mode 100644
+>>> index ba30a4bc2a39..000000000000
+>>> --- a/drivers/gpu/drm/xen/xen_drm_front_gem_cma.c
+>>> +++ /dev/null
+>>> @@ -1,79 +0,0 @@
+>>> -// SPDX-License-Identifier: GPL-2.0 OR MIT
+>>> -
+>>> -/*
+>>> - *  Xen para-virtual DRM device
+>>> - *
+>>> - * Copyright (C) 2016-2018 EPAM Systems Inc.
+>>> - *
+>>> - * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>> - */
+>>> -
+>>> -#include <drm/drmP.h>
+>>> -#include <drm/drm_gem.h>
+>>> -#include <drm/drm_fb_cma_helper.h>
+>>> -#include <drm/drm_gem_cma_helper.h>
+>>> -
+>>> -#include "xen_drm_front.h"
+>>> -#include "xen_drm_front_gem.h"
+>>> -
+>>> -struct drm_gem_object *
+>>> -xen_drm_front_gem_import_sg_table(struct drm_device *dev,
+>>> -                  struct dma_buf_attachment *attach,
+>>> -                  struct sg_table *sgt)
+>>> -{
+>>> -    struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>>> -    struct drm_gem_object *gem_obj;
+>>> -    struct drm_gem_cma_object *cma_obj;
+>>> -    int ret;
+>>> -
+>>> -    gem_obj = drm_gem_cma_prime_import_sg_table(dev, attach, sgt);
+>>> -    if (IS_ERR_OR_NULL(gem_obj))
+>>> -        return gem_obj;
+>>> -
+>>> -    cma_obj = to_drm_gem_cma_obj(gem_obj);
+>>> -
+>>> -    ret = xen_drm_front_dbuf_create_from_sgt(drm_info->front_info,
+>>> - xen_drm_front_dbuf_to_cookie(gem_obj),
+>>> -                         0, 0, 0, gem_obj->size,
+>>> - drm_gem_cma_prime_get_sg_table(gem_obj));
+>>> -    if (ret < 0)
+>>> -        return ERR_PTR(ret);
+>>> -
+>>> -    DRM_DEBUG("Imported CMA buffer of size %zu\n", gem_obj->size);
+>>> -
+>>> -    return gem_obj;
+>>> -}
+>>> -
+>>> -struct sg_table *xen_drm_front_gem_get_sg_table(struct 
+>>> drm_gem_object *gem_obj)
+>>> -{
+>>> -    return drm_gem_cma_prime_get_sg_table(gem_obj);
+>>> -}
+>>> -
+>>> -struct drm_gem_object *xen_drm_front_gem_create(struct drm_device 
+>>> *dev,
+>>> -                        size_t size)
+>>> -{
+>>> -    struct xen_drm_front_drm_info *drm_info = dev->dev_private;
+>>> -    struct drm_gem_cma_object *cma_obj;
+>>> -
+>>> -    if (drm_info->front_info->cfg.be_alloc) {
+>>> -        /* This use-case is not yet supported and probably won't be */
+>>> -        DRM_ERROR("Backend allocated buffers and CMA helpers are 
+>>> not supported at the same time\n");
+>>> -        return ERR_PTR(-EINVAL);
+>>> -    }
+>>> -
+>>> -    cma_obj = drm_gem_cma_create(dev, size);
+>>> -    if (IS_ERR_OR_NULL(cma_obj))
+>>> -        return ERR_CAST(cma_obj);
+>>> -
+>>> -    return &cma_obj->base;
+>>> -}
+>>> -
+>>> -void xen_drm_front_gem_free_object_unlocked(struct drm_gem_object 
+>>> *gem_obj)
+>>> -{
+>>> -    drm_gem_cma_free_object(gem_obj);
+>>> -}
+>>> -
+>>> -struct page **xen_drm_front_gem_get_pages(struct drm_gem_object 
+>>> *gem_obj)
+>>> -{
+>>> -    return NULL;
+>>> -}
+>>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c 
+>>> b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+>>> index 19914dde4b3d..d5705251a0d6 100644
+>>> --- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+>>> +++ b/drivers/gpu/drm/xen/xen_drm_front_shbuf.c
+>>> @@ -89,10 +89,6 @@ void xen_drm_front_shbuf_free(struct 
+>>> xen_drm_front_shbuf *buf)
+>>>       }
+>>>       kfree(buf->grefs);
+>>>       kfree(buf->directory);
+>>> -    if (buf->sgt) {
+>>> -        sg_free_table(buf->sgt);
+>>> -        kvfree(buf->pages);
+>>> -    }
+>>>       kfree(buf);
+>>>   }
+>>>   @@ -350,17 +346,6 @@ static int grant_references(struct 
+>>> xen_drm_front_shbuf *buf)
+>>>     static int alloc_storage(struct xen_drm_front_shbuf *buf)
+>>>   {
+>>> -    if (buf->sgt) {
+>>> -        buf->pages = kvmalloc_array(buf->num_pages,
+>>> -                        sizeof(struct page *), GFP_KERNEL);
+>>> -        if (!buf->pages)
+>>> -            return -ENOMEM;
+>>> -
+>>> -        if (drm_prime_sg_to_page_addr_arrays(buf->sgt, buf->pages,
+>>> -                             NULL, buf->num_pages) < 0)
+>>> -            return -EINVAL;
+>>> -    }
+>>> -
+>>>       buf->grefs = kcalloc(buf->num_grefs, sizeof(*buf->grefs), 
+>>> GFP_KERNEL);
+>>>       if (!buf->grefs)
+>>>           return -ENOMEM;
+>>> @@ -396,12 +381,6 @@ xen_drm_front_shbuf_alloc(struct 
+>>> xen_drm_front_shbuf_cfg *cfg)
+>>>       struct xen_drm_front_shbuf *buf;
+>>>       int ret;
+>>>   -    /* either pages or sgt, not both */
+>>> -    if (unlikely(cfg->pages && cfg->sgt)) {
+>>> -        DRM_ERROR("Cannot handle buffer allocation with both pages 
+>>> and sg table provided\n");
+>>> -        return NULL;
+>>> -    }
+>>> -
+>>>       buf = kzalloc(sizeof(*buf), GFP_KERNEL);
+>>>       if (!buf)
+>>>           return NULL;
+>>> @@ -413,7 +392,6 @@ xen_drm_front_shbuf_alloc(struct 
+>>> xen_drm_front_shbuf_cfg *cfg)
+>>>         buf->xb_dev = cfg->xb_dev;
+>>>       buf->num_pages = DIV_ROUND_UP(cfg->size, PAGE_SIZE);
+>>> -    buf->sgt = cfg->sgt;
+>>>       buf->pages = cfg->pages;
+>>>         buf->ops->calc_num_grefs(buf);
+>>> diff --git a/drivers/gpu/drm/xen/xen_drm_front_shbuf.h 
+>>> b/drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+>>> index 8c037fd7608b..7545c692539e 100644
+>>> --- a/drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+>>> +++ b/drivers/gpu/drm/xen/xen_drm_front_shbuf.h
+>>> @@ -29,16 +29,9 @@ struct xen_drm_front_shbuf {
+>>>       grant_ref_t *grefs;
+>>>       unsigned char *directory;
+>>>   -    /*
+>>> -     * there are 2 ways to provide backing storage for this shared 
+>>> buffer:
+>>> -     * either pages or sgt. if buffer created from sgt then we own
+>>> -     * the pages and must free those ourselves on closure
+>>> -     */
+>>>       int num_pages;
+>>>       struct page **pages;
+>>>   -    struct sg_table *sgt;
+>>> -
+>>>       struct xenbus_device *xb_dev;
+>>>         /* these are the ops used internally depending on be_alloc 
+>>> mode */
+>>> @@ -52,7 +45,6 @@ struct xen_drm_front_shbuf_cfg {
+>>>       struct xenbus_device *xb_dev;
+>>>       size_t size;
+>>>       struct page **pages;
+>>> -    struct sg_table *sgt;
+>>>       bool be_alloc;
+>>>   };
+>>>   --
+>>> 2.17.0
+>>>
+>>> _______________________________________________
+>>> dri-devel mailing list
+>>> dri-devel@lists.freedesktop.org
+>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 >
-> I've taken the gcc-6.3 sources from there, and updated them to gcc-6.4.0
-> in order to build a nds32le-linux toolchain based on the same version as
-> the other ones.
->
-> Unfortunately neither the usual binutils-2.29.1 nor your binutils worked
-> for me, but I eventually managed to get a build using the binutils-2.30
-> release.
->
-> With this, I could build a mainline kernel with a couple of warnings,
-> but an 'allmodconfig' build still failed.
->
-> Guenter, can you try my binary from
-> www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
-> ?
->
-> If that works for you, I'll update the front-page and remove the nds32-elf
-> toolchains.
->
-> Greentime, do you have a patch set for gcc-7.3 as well, or are 6.3 and 8.0 the
-> only working compilers for nds32le-linux?
->
-
-Hi, all:
-
-I just discuss with our toolchain colleagues. We have only gcc6.3 and
-gcc8.0 for nds32le-linux.
-I have the ld segmentation fault issue too when building kernel with
-'allmodconfig'. We are dealing with it.
