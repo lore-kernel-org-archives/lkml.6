@@ -1,105 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeDRRzP (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 13:55:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53002 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751407AbeDRRzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 13:55:14 -0400
-Date: Wed, 18 Apr 2018 20:55:13 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Mikulas Patocka <mpatocka@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Joby Poriyath <joby.poriyath@citrix.com>,
-        Ben Hutchings <bhutchings@solarflare.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: don't use kvzalloc for DMA memory
-Message-ID: <20180418204229-mutt-send-email-mst@kernel.org>
-References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
- <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
+        id S1753213AbeDRRzX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 13:55:23 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:51306 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752760AbeDRRzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 13:55:18 -0400
+Date: Wed, 18 Apr 2018 19:54:52 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
+        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
+        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
+        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
+Subject: Re: [RFC PATCH v2 4/4] acpi: apei: Warn when GHES marks correctable
+ errors as "fatal"
+Message-ID: <20180418175452.GK4795@pd.tnic>
+References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
+ <20180416215903.7318-5-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
+In-Reply-To: <20180416215903.7318-5-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 09:05:54AM -0700, Eric Dumazet wrote:
+On Mon, Apr 16, 2018 at 04:59:03PM -0500, Alexandru Gagniuc wrote:
+> There seems to be a culture amongst BIOS teams to want to crash the
+> OS when an error can't be handled in firmware. Marking GHES errors as
+> "fatal" is a very common way to do this.
 > 
+> However, a number of errors reported by GHES may be fatal in the sense
+> a device or link is lost, but are not fatal to the system. When there
+> is a disagreement with firmware about the handleability of an error,
+> print a warning message.
 > 
-> On 04/18/2018 07:34 AM, Mikulas Patocka wrote:
-> > The patch 74d332c13b21 changes alloc_netdev_mqs to use vzalloc if kzalloc
-> > fails (later patches change it to kvzalloc).
-> > 
-> > The problem with this is that if the vzalloc function is actually used, 
-> > virtio_net doesn't work (because it expects that the extra memory should 
-> > be accessible with DMA-API and memory allocated with vzalloc isn't).
-> > 
-> > This patch changes it back to kzalloc and adds a warning if the allocated
-> > size is too large (the allocation is unreliable in this case).
-> > 
-> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> > Fixes: 74d332c13b21 ("net: extend net_device allocation to vmalloc()")
-> > 
-> > ---
-> >  net/core/dev.c |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > Index: linux-2.6/net/core/dev.c
-> > ===================================================================
-> > --- linux-2.6.orig/net/core/dev.c	2018-04-16 21:08:36.000000000 +0200
-> > +++ linux-2.6/net/core/dev.c	2018-04-18 16:24:43.000000000 +0200
-> > @@ -8366,7 +8366,8 @@ struct net_device *alloc_netdev_mqs(int
-> >  	/* ensure 32-byte alignment of whole construct */
-> >  	alloc_size += NETDEV_ALIGN - 1;
-> >  
-> > -	p = kvzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
-> > +	WARN_ON(alloc_size > PAGE_SIZE << PAGE_ALLOC_COSTLY_ORDER);
-> > +	p = kzalloc(alloc_size, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
-> >  	if (!p)
-> >  		return NULL;
-> >  
-> > 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+>  drivers/acpi/apei/ghes.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
-> Since when a net_device needs to be in DMA zone ???
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index e0528da4e8f8..6a117825611d 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -535,13 +535,14 @@ static const struct ghes_handler *get_handler(const guid_t *type)
+>  static void ghes_do_proc(struct ghes *ghes,
+>  			 const struct acpi_hest_generic_status *estatus)
+>  {
+> -	int sev, sec_sev;
+> +	int sev, sec_sev, corrected_sev;
+>  	struct acpi_hest_generic_data *gdata;
+>  	const struct ghes_handler *handler;
+>  	guid_t *sec_type;
+>  	guid_t *fru_id = &NULL_UUID_LE;
+>  	char *fru_text = "";
+>  
+> +	corrected_sev = GHES_SEV_NO;
+>  	sev = ghes_severity(estatus->error_severity);
+>  	apei_estatus_for_each_section(estatus, gdata) {
+>  		sec_type = (guid_t *)gdata->section_type;
+> @@ -563,6 +564,13 @@ static void ghes_do_proc(struct ghes *ghes,
+>  					       sec_sev, err,
+>  					       gdata->error_data_length);
+>  		}
+> +
+> +		corrected_sev = max(corrected_sev, sec_sev);
+> +	}
+> +
+> +	if ((sev >= GHES_SEV_PANIC) && (corrected_sev < sev)) {
+> +		pr_warn("FIRMWARE BUG: Firmware sent fatal error that we were able to correct");
+> +		pr_warn("BROKEN FIRMWARE: Complain to your hardware vendor");
 
-It's likely that we are not the only device like this.
-It would be better to find a way to find devices like this.
+No, I don't want any of that crap issuing stuff in dmesg and then people
+opening bugs and running around and trying to replace hardware.
 
-Imagine you want to pass some data to card.
-Natural thing is to just put it in a variable and start DMA.
-However DMA API disallows stack access nowdays,
-so it's natural to put this within struct device.
-
-See e.g.
-
-	commit a725ee3e44e39dab1ec82cc745899a785d2a555e
-	Author: Andy Lutomirski <luto@kernel.org>
-	Date:   Mon Jul 18 15:34:49 2016 -0700
-
-	    virtio-net: Remove more stack DMA
-
-
-
-> I would rather fix virtio_net, this looks very suspect to me.
-
-
-It's been done for years. I'm fine with changing virtio-net and
-allocating DMA memory separately but I am not sure it's appropriate on
-net.
-
-And OTOH, shouldn't drivers avoid allocating such huge device structs?
-Abusing vmalloc won't work well on 32 bit platforms.
-
-> Each virtio_net should probably allocate the exact amount of DMA-memory it wants,
-> instead of expecting core networking stack to have a huge chunk of DMA-memory for everything.
-
-It's not a DMA memory at all (not a synchronous memory) and it is not
-huge.  It's a small chunk of regular memory that is mapped for DMA for a
-short while, then unmapped.
+We either can handle the error and log a normal record somewhere or we
+cannot and explode. The complaining about the FW doesn't bring shit.
 
 -- 
-MST
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
