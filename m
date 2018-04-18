@@ -1,131 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752739AbeDRXx3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 19:53:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:58411 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752499AbeDRXx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 19:53:27 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 19 Apr 2018 09:51:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Russell King <rmk@armlinux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the arm-current tree
-Message-ID: <20180419095155.194217f5@canb.auug.org.au>
-In-Reply-To: <20180418181722.GA7852@flint.armlinux.org.uk>
-References: <20180418133155.0931baf7@canb.auug.org.au>
-        <20180418175442.GA7234@flint.armlinux.org.uk>
-        <20180418181722.GA7852@flint.armlinux.org.uk>
+        id S1752895AbeDRXyX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 19:54:23 -0400
+Received: from icp-osb-irony-out6.external.iinet.net.au ([203.59.1.106]:10019
+        "EHLO icp-osb-irony-out6.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752392AbeDRXyV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 19:54:21 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CHAQB92dda/zXSMGcNUBwBAQEEAQEKA?=
+ =?us-ascii?q?QGEI4Eig2iVVgZ6KXUalGAKIwuERgKDBDgUAQIBAQEBAQECgQiFLwEBAQMjKys?=
+ =?us-ascii?q?QCw0LAgImAgIxJgYBBwUGAgEBGQSEXxylUm2CHBqEPYNpgiWBCYRZgzCBB4EPI?=
+ =?us-ascii?q?4IzNYMRA4EogzeCVAKXawcBhVmIXYF1hW2EcSuJCIgYM4FzMxoIKAg7gkMJghc?=
+ =?us-ascii?q?XiFmFUF0BjQCCRgEB?=
+X-IPAS-Result: =?us-ascii?q?A2CHAQB92dda/zXSMGcNUBwBAQEEAQEKAQGEI4Eig2iVVgZ?=
+ =?us-ascii?q?6KXUalGAKIwuERgKDBDgUAQIBAQEBAQECgQiFLwEBAQMjKysQCw0LAgImAgIxJ?=
+ =?us-ascii?q?gYBBwUGAgEBGQSEXxylUm2CHBqEPYNpgiWBCYRZgzCBB4EPI4IzNYMRA4Eogze?=
+ =?us-ascii?q?CVAKXawcBhVmIXYF1hW2EcSuJCIgYM4FzMxoIKAg7gkMJghcXiFmFUF0BjQCCR?=
+ =?us-ascii?q?gEB?=
+X-IronPort-AV: E=Sophos;i="5.48,467,1517846400";
+   d="scan'208";a="64024644"
+Subject: Re: [PATCH -next] m68k: fix return value check in mcf_pci_init()
+To: Wei Yongjun <weiyongjun1@huawei.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <1524059842-22099-1-git-send-email-weiyongjun1@huawei.com>
+From: Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <f5eca74a-972f-dca0-b6e3-3d5978418b88@linux-m68k.org>
+Date: Thu, 19 Apr 2018 09:54:34 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4=PHvLC0GIfZzkMd5bMVCQB"; protocol="application/pgp-signature"
+In-Reply-To: <1524059842-22099-1-git-send-email-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4=PHvLC0GIfZzkMd5bMVCQB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Wei,
 
-Hi Russell,
+On 18/04/18 23:57, Wei Yongjun wrote:
+> In case of error, the function ioremap() returns NULL pointer not
+> ERR_PTR(). The IS_ERR() test in the return value check should be
+> replaced with NULL test.
+> 
+> Fixes: bf114d773167 ("m68k: force use of __raw_read/__raw_write address to be iomem")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-On Wed, 18 Apr 2018 19:17:23 +0100 Russell King <rmk@armlinux.org.uk> wrote:
->
-> Hmm, I guess it's a result of:
->=20
-> # echo $(( ))
-> dash: 4: arithmetic expression: expecting primary: " "
->=20
-> which points to the sed expression producing no output.  If that's the
-> case, then something else went wrong with the build earlier - there
-> should be no case where the built vmlinux does not contain the
-> __bss_start and __bss_stop symbols on ARM, since every kernel contains
-> a .bss section.
->=20
-> Olof's autobuilder shows no errors, but that could be because it's
-> using bash - I don't know.  kernelci.org also shows no failures.
->=20
-> I think more information is needed to debug this, such as:
->=20
-> - does nm of the vmlinux contain the __bss_start and __bss_stop
->   symbols, and are they formatted as one would expect (iow, marked
->   as a global BSS symbol?)
+Thanks for the patch. I plan on dropping that commit completely
+from next soon. Autobuilder has shown it is missing some conversions
+that it was intended to cover.
 
-$ /opt/cross/gcc-4.6.3-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-lin=
-ux-gnueabi-nm vmlinux | grep __bss_st
-008af260 A __bss_start
-008b4394 A __bss_stop
+Regards
+Greg
 
-so, that's our problem.  Note we are building with gcc 4.6.3 and binutils 2=
-.22
 
-> - does the nm | sed pipeline produce the expected output when run
->   outside of everything else?
-> - does dash evaluate the output correctly outside of the makefile?
-
-so dash returns the above error for 'echo $(( ))' and bash returns '0'
-
-I had to actually symlink /bin/sh to dash to get it to fail - running
-with in dash and setting SHELL to /bin/dash was not sufficient.
-
-So under bash, we don't get an error, but we use 0 as the bss length :-(
-
-I will this patch to linux-next today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 19 Apr 2018 09:46:22 +1000
-Subject: [PATCH] arm: check for A as well as B type sybols when calculating=
- BSS size
-
-older compilers produce those
-
-Fixes: 429f7a062e3b ("ARM: decompressor: fix BSS size calculation")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/boot/compressed/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/M=
-akefile
-index b0354dfc7055..6a4e7341ecd3 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -118,8 +118,8 @@ asflags-y :=3D -DZIMAGE
-=20
- # Supply kernel BSS size to the decompressor via a linker symbol.
- KBSS_SZ =3D $(shell echo $$(($$($(CROSS_COMPILE)nm $(obj)/../../../../vmli=
-nux | \
--		sed -n -e 's/^\([^ ]*\) B __bss_start$$/-0x\1/p' \
--		       -e 's/^\([^ ]*\) B __bss_stop$$/+0x\1/p') )) )
-+		sed -n -e 's/^\([^ ]*\) [AB] __bss_start$$/-0x\1/p' \
-+		       -e 's/^\([^ ]*\) [AB] __bss_stop$$/+0x\1/p') )) )
- LDFLAGS_vmlinux =3D --defsym _kernel_bss_size=3D$(KBSS_SZ)
- # Supply ZRELADDR to the decompressor via a linker symbol.
- ifneq ($(CONFIG_AUTO_ZRELADDR),y)
---=20
-2.17.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/4=PHvLC0GIfZzkMd5bMVCQB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrX2hsACgkQAVBC80lX
-0GzYsQf/WTxeJVKQ5E/6ivajKOTbEb0YqdDNG2WIxHRkkTcQzR9129g3k7WYTzfV
-atM0QnnJWhGFLxyHQyOVpph+9o+bjupmFPnf/xj5Ya0jCQCBVIP3DmAE2VBbAPBX
-B6vv1C6IaxomJbbTiudxW7HwLFHjJcjbjIDXTn+z7F0c2qF/fylNviqXaixkeqAS
-SY5pZcV0vOfZqCcUfXUOJdgkeDyOaFT0+fueAyx/9JvOeMG/92IFTjktHKstOTKy
-ViI01hN1ngTTGUybzBAnCyhricYoM8axox2MSockoOImSAIiEY1wlZO5sYegIFZH
-yZ4oybECkZySjsnFKEaKWTQxptnFcQ==
-=6DMN
------END PGP SIGNATURE-----
-
---Sig_/4=PHvLC0GIfZzkMd5bMVCQB--
+> ---
+>  arch/m68k/coldfire/pci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/m68k/coldfire/pci.c b/arch/m68k/coldfire/pci.c
+> index 9d6342c..a7c2332 100644
+> --- a/arch/m68k/coldfire/pci.c
+> +++ b/arch/m68k/coldfire/pci.c
+> @@ -218,7 +218,7 @@ static int __init mcf_pci_init(void)
+>  
+>  	/* Keep a virtual mapping to IO/config space active */
+>  	iospace = ioremap(PCI_IO_PA, PCI_IO_SIZE);
+> -	if (IS_ERR(iospace))
+> +	if (!iospace)
+>  		return -ENODEV;
+>  	pr_info("Coldfire: PCI IO/config window mapped to 0x%p\n", iospace);
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-m68k" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
