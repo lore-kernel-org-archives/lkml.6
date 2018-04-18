@@ -1,50 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752617AbeDRPN0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:13:26 -0400
-Received: from ozlabs.org ([203.11.71.1]:37417 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751232AbeDRPNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:13:25 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Mathieu Malaterre <malat@debian.org>,
-        Christophe LEROY <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] powerpc: Allow selection of CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
-In-Reply-To: <CA+7wUszJzG4CyfO2_Tvmc_u9oMPxLQMaiP+HnhpEex6KCRgSYw@mail.gmail.com>
-References: <20180417104909.22D416C07D@po15720vm.idsi0.si.c-s.fr> <CA+7wUszKbPKu86jSprEBJsxJOmyAc42x5S4XmPce_RFXTsHTfQ@mail.gmail.com> <e49e2296-11f8-a2fa-6b64-db18ba5db641@c-s.fr> <CA+7wUswJoGnb50y8jbPfsi9ztCO1jZ+O4cirHtXc7gp7MXRm5Q@mail.gmail.com> <48cdb73c-f0c4-0c8a-19f5-8fce000e7050@c-s.fr> <CA+7wUszJzG4CyfO2_Tvmc_u9oMPxLQMaiP+HnhpEex6KCRgSYw@mail.gmail.com>
-Date: Thu, 19 Apr 2018 01:13:18 +1000
-Message-ID: <87fu3spmy9.fsf@concordia.ellerman.id.au>
+        id S1752762AbeDRPPw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:15:52 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:43046 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751256AbeDRPPu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 11:15:50 -0400
+X-Google-Smtp-Source: AIpwx49x5mbd8TOKbGGAdPg/DHgEb5HhEsQ+MrSurIocRZpSSTwn+WnTdON0fmrOzQW585emIVX31g==
+Subject: Re: [PATCH v2 0/5] ALSA: xen-front: Add Xen para-virtualized frontend
+ driver
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, jgross@suse.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
+        tiwai@suse.com
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180416062453.24743-1-andr2000@gmail.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <9729eb3b-d331-cf3c-9816-f520748c5f9a@gmail.com>
+Date: Wed, 18 Apr 2018 18:15:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180416062453.24743-1-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mathieu Malaterre <malat@debian.org> writes:
-> On Wed, Apr 18, 2018 at 8:34 AM, Christophe LEROY
-...
+On 04/16/2018 09:24 AM, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 >
->> Can you also provide a copy of the messages you can see (prom_init ...) when
->> boot is ok ?
+> Please note: this patch series depends on [3].
+The dependency is now merged into Xen kernel tree [4] for-linus-4.17
 >
-> Hum. I've always been interested in seeing it also myself. Is there a
-> way to setup env to see those message (netconsole, delayed boot
-> messages ...) ? I never found a clear documentation on how to do that
-> on (closed) Apple hardware.
-
-If you see nothing after prom_init it usually indicates the kernel died
-very early in boot before it could find the console.
-
-The only option then is to enable one of the hard-coded EARLY_DEBUG
-options.
-
-I don't know which one works on a G4, maybe CONFIG_PPC_EARLY_DEBUG_BOOTX ?
-
-I assume it doesn't have a serial port.
-
-cheers
+> This patch series adds support for Xen [1] para-virtualized
+> sound frontend driver. It implements the protocol from
+> include/xen/interface/io/sndif.h with the following limitations:
+> - mute/unmute is not supported
+> - get/set volume is not supported
+> Volume control is not supported for the reason that most of the
+> use-cases (at the moment) are based on scenarious where
+> unprivileged OS (e.g. Android, AGL etc) use software mixers.
+>
+> Both capture and playback are supported.
+>
+> Corresponding backend, implemented as a user-space application, can be
+> found at [2].
+>
+> Thank you,
+> Oleksandr
+>
+> Changes since v1:
+> *****************
+>
+> 1. Moved driver from sound/drivers to sound/xen
+>
+> 2. Coding style changes to better meet Linux Kernel
+>
+> 3. Added explicit back and front synchronization
+>     In order to provide explicit synchronization between backend and
+>     frontend the following changes are introduced in the protocol:
+>      - add new ring buffer for sending asynchronous events from
+>        backend to frontend to report number of bytes played by the
+>        frontend (XENSND_EVT_CUR_POS)
+>      - introduce trigger events for playback control: start/stop/pause/resume
+>      - add "req-" prefix to event-channel and ring-ref to unify naming
+>        of the Xen event channels for requests and events
+>
+> 4. Added explicit back and front parameter negotiation
+>     In order to provide explicit stream parameter negotiation between
+>     backend and frontend the following changes are introduced in the protocol:
+>     add XENSND_OP_HW_PARAM_QUERY request to read/update
+>     configuration space for the parameters given: request passes
+>     desired parameter's intervals/masks and the response to this request
+>     returns allowed min/max intervals/masks to be used.
+>
+> [1] https://xenproject.org/
+> [2] https://github.com/xen-troops/snd_be
+> [3] https://lkml.org/lkml/2018/4/12/522
+>
+> Oleksandr Andrushchenko (5):
+>    ALSA: xen-front: Introduce Xen para-virtualized sound frontend driver
+>    ALSA: xen-front: Read sound driver configuration from Xen store
+>    ALSA: xen-front: Implement Xen event channel handling
+>    ALSA: xen-front: Implement handling of shared buffers
+>    ALSA: xen-front: Implement ALSA virtual sound driver
+>
+>   sound/Kconfig                     |   2 +
+>   sound/Makefile                    |   2 +-
+>   sound/xen/Kconfig                 |  10 +
+>   sound/xen/Makefile                |   9 +
+>   sound/xen/xen_snd_front.c         | 410 +++++++++++++++++++
+>   sound/xen/xen_snd_front.h         |  57 +++
+>   sound/xen/xen_snd_front_alsa.c    | 830 ++++++++++++++++++++++++++++++++++++++
+>   sound/xen/xen_snd_front_alsa.h    |  23 ++
+>   sound/xen/xen_snd_front_cfg.c     | 517 ++++++++++++++++++++++++
+>   sound/xen/xen_snd_front_cfg.h     |  46 +++
+>   sound/xen/xen_snd_front_evtchnl.c | 478 ++++++++++++++++++++++
+>   sound/xen/xen_snd_front_evtchnl.h |  92 +++++
+>   sound/xen/xen_snd_front_shbuf.c   | 193 +++++++++
+>   sound/xen/xen_snd_front_shbuf.h   |  36 ++
+>   14 files changed, 2704 insertions(+), 1 deletion(-)
+>   create mode 100644 sound/xen/Kconfig
+>   create mode 100644 sound/xen/Makefile
+>   create mode 100644 sound/xen/xen_snd_front.c
+>   create mode 100644 sound/xen/xen_snd_front.h
+>   create mode 100644 sound/xen/xen_snd_front_alsa.c
+>   create mode 100644 sound/xen/xen_snd_front_alsa.h
+>   create mode 100644 sound/xen/xen_snd_front_cfg.c
+>   create mode 100644 sound/xen/xen_snd_front_cfg.h
+>   create mode 100644 sound/xen/xen_snd_front_evtchnl.c
+>   create mode 100644 sound/xen/xen_snd_front_evtchnl.h
+>   create mode 100644 sound/xen/xen_snd_front_shbuf.c
+>   create mode 100644 sound/xen/xen_snd_front_shbuf.h
+>
+[4] 
+https://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git/commit/?h=for-linus-4.17&id=cd6e992b3aab072cc90839508aaf5573c8f7e066
