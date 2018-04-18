@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753707AbeDRKwK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 06:52:10 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59151 "EHLO mail.bootlin.com"
+        id S1753875AbeDRKwn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 06:52:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59140 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753473AbeDRKwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 06:52:08 -0400
+        id S1753186AbeDRKv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 06:51:59 -0400
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>,
@@ -13,9 +13,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
         Boris Brezillon <boris.brezillon@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v4 5/6] ARM: configs: at91: use new TCB timer driver
-Date: Wed, 18 Apr 2018 12:51:42 +0200
-Message-Id: <20180418105143.3577-6-alexandre.belloni@bootlin.com>
+Subject: [PATCH v4 3/6] clocksource/drivers: atmel-pit: make option silent
+Date: Wed, 18 Apr 2018 12:51:40 +0200
+Message-Id: <20180418105143.3577-4-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180418105143.3577-1-alexandre.belloni@bootlin.com>
 References: <20180418105143.3577-1-alexandre.belloni@bootlin.com>
@@ -23,38 +23,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unselecting ATMEL_TCLIB switches the TCB timer driver from tcb_clksrc to
-timer-atmel-tcb.
+To conform with the other option, make the ATMEL_PIT option silent so it
+can be selected from the platform
 
+Tested-by: Alexander Dahl <ada@thorsis.com>
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- arch/arm/configs/at91_dt_defconfig | 1 -
- arch/arm/configs/sama5_defconfig   | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/clocksource/Kconfig | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/at91_dt_defconfig b/arch/arm/configs/at91_dt_defconfig
-index e4b1be66b3f5..09f262e59fef 100644
---- a/arch/arm/configs/at91_dt_defconfig
-+++ b/arch/arm/configs/at91_dt_defconfig
-@@ -64,7 +64,6 @@ CONFIG_BLK_DEV_LOOP=y
- CONFIG_BLK_DEV_RAM=y
- CONFIG_BLK_DEV_RAM_COUNT=4
- CONFIG_BLK_DEV_RAM_SIZE=8192
--CONFIG_ATMEL_TCLIB=y
- CONFIG_ATMEL_SSC=y
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
-diff --git a/arch/arm/configs/sama5_defconfig b/arch/arm/configs/sama5_defconfig
-index 2080025556b5..f2bbc6339ca6 100644
---- a/arch/arm/configs/sama5_defconfig
-+++ b/arch/arm/configs/sama5_defconfig
-@@ -75,7 +75,6 @@ CONFIG_BLK_DEV_LOOP=y
- CONFIG_BLK_DEV_RAM=y
- CONFIG_BLK_DEV_RAM_COUNT=4
- CONFIG_BLK_DEV_RAM_SIZE=8192
--CONFIG_ATMEL_TCLIB=y
- CONFIG_ATMEL_SSC=y
- CONFIG_EEPROM_AT24=y
- CONFIG_SCSI=y
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 540892273a8d..cb635d5d7f42 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -384,8 +384,11 @@ config ARMV7M_SYSTICK
+ 	  This options enables support for the ARMv7M system timer unit
+ 
+ config ATMEL_PIT
++	bool "Microchip ARM Periodic Interval Timer (PIT)" if COMPILE_TEST
+ 	select TIMER_OF if OF
+-	def_bool SOC_AT91SAM9 || SOC_SAMA5
++	help
++	  This enables build of clocksource and clockevent driver for
++	  the integrated PIT in Microchip ARM SoCs.
+ 
+ config ATMEL_ST
+ 	bool "Atmel ST timer support" if COMPILE_TEST
 -- 
 2.17.0
