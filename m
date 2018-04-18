@@ -1,69 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753602AbeDRCdg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 22:33:36 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44952 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753002AbeDRCdd (ORCPT
+        id S1753399AbeDRCjc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 22:39:32 -0400
+Received: from mail-pl0-f47.google.com ([209.85.160.47]:40650 "EHLO
+        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753002AbeDRCja (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 22:33:33 -0400
-X-Google-Smtp-Source: AIpwx4+LUm1JF7hMnn8KkLpPeBtI5VjGqucdXA7G+Ci5eWwtfqUJPEeEKEfqvM3e2ksOAamWZvPfFg==
-Date: Tue, 17 Apr 2018 19:33:27 -0700
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: oss-drivers@netronome.com, Tal Gilboa <talgi@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: Add PCIe to pcie_print_link_status() messages
-Message-ID: <20180417193327.41a3ff9a@cakuba.netronome.com>
-In-Reply-To: <20180413181638.6424-1-jakub.kicinski@netronome.com>
-References: <20180413181638.6424-1-jakub.kicinski@netronome.com>
-Organization: Netronome Systems, Ltd.
+        Tue, 17 Apr 2018 22:39:30 -0400
+X-Google-Smtp-Source: AIpwx49hdvskXCmI7OrhspcCBaTUeHUCRSHtn1pNxQG93MpjeAf8BdPelyRnFc8px84SctnJjUkjsg==
+Date: Tue, 17 Apr 2018 19:39:28 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
+        Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [patch] mm, oom: fix concurrent munlock and oom reaper unmap
+In-Reply-To: <201804180057.w3I0vieV034949@www262.sakura.ne.jp>
+Message-ID: <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1804171545460.53786@chino.kir.corp.google.com> <201804180057.w3I0vieV034949@www262.sakura.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Apr 2018 11:16:38 -0700, Jakub Kicinski wrote:
-> Currently the pcie_print_link_status() will print PCIe bandwidth
-> and link width information but does not mention it is pertaining
-> to the PCIe.  Since this and related functions are used exclusively
-> by networking drivers today users may get confused into thinking
-> that it's the NIC bandwidth that is being talked about.  Insert a
-> "PCIe" into the messages.
+On Wed, 18 Apr 2018, Tetsuo Handa wrote:
+
+> > Since exit_mmap() is done without the protection of mm->mmap_sem, it is
+> > possible for the oom reaper to concurrently operate on an mm until
+> > MMF_OOM_SKIP is set.
+> > 
+> > This allows munlock_vma_pages_all() to concurrently run while the oom
+> > reaper is operating on a vma.  Since munlock_vma_pages_range() depends on
+> > clearing VM_LOCKED from vm_flags before actually doing the munlock to
+> > determine if any other vmas are locking the same memory, the check for
+> > VM_LOCKED in the oom reaper is racy.
+> > 
+> > This is especially noticeable on architectures such as powerpc where
+> > clearing a huge pmd requires kick_all_cpus_sync().  If the pmd is zapped
+> > by the oom reaper during follow_page_mask() after the check for pmd_none()
+> > is bypassed, this ends up deferencing a NULL ptl.
 > 
-> Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-
-Hi Bjorn!
-
-Could this small change still make it into 4.17 or are you planning to
-apply it in 4.18 cycle?  IMHO the message clarification may be worth
-considering for 4.17..
-
->  drivers/pci/pci.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> I don't know whether the explanation above is correct.
+> Did you actually see a crash caused by this race?
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index aa86e904f93c..73a0a4993f6a 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5273,11 +5273,11 @@ void pcie_print_link_status(struct pci_dev *dev)
->  	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width);
->  
->  	if (bw_avail >= bw_cap)
-> -		pci_info(dev, "%u.%03u Gb/s available bandwidth (%s x%d link)\n",
-> +		pci_info(dev, "%u.%03u Gb/s available PCIe bandwidth (%s x%d link)\n",
->  			 bw_cap / 1000, bw_cap % 1000,
->  			 PCIE_SPEED2STR(speed_cap), width_cap);
->  	else
-> -		pci_info(dev, "%u.%03u Gb/s available bandwidth, limited by %s x%d link at %s (capable of %u.%03u Gb/s with %s x%d link)\n",
-> +		pci_info(dev, "%u.%03u Gb/s available PCIe bandwidth, limited by %s x%d link at %s (capable of %u.%03u Gb/s with %s x%d link)\n",
->  			 bw_avail / 1000, bw_avail % 1000,
->  			 PCIE_SPEED2STR(speed), width,
->  			 limiting_dev ? pci_name(limiting_dev) : "<unknown>",
+
+Yes, it's trivially reproducible on power by simply mlocking a ton of 
+memory and triggering oom kill.
+
+> > Fix this by reusing MMF_UNSTABLE to specify that an mm should not be
+> > reaped.  This prevents the concurrent munlock_vma_pages_range() and
+> > unmap_page_range().  The oom reaper will simply not operate on an mm that
+> > has the bit set and leave the unmapping to exit_mmap().
+> 
+> But this patch is setting MMF_OOM_SKIP without reaping any memory as soon as
+> MMF_UNSTABLE is set, which is the situation described in 212925802454:
+> 
+
+Oh, you're referring to __oom_reap_task_mm() returning true because of 
+MMF_UNSTABLE and then setting MMF_OOM_SKIP itself?  Yes, that is dumb.  We 
+could change __oom_reap_task_mm() to only set MMF_OOM_SKIP if MMF_UNSTABLE 
+hasn't been set.  I'll send a v2, which I needed to do anyway to do 
+s/kick_all_cpus_sync/serialize_against_pte_lookup/ in the changelog (power 
+only does it for the needed cpus).
