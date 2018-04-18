@@ -1,64 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753442AbeDRNgM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 09:36:12 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:30558 "EHLO pegase1.c-s.fr"
+        id S1752826AbeDRNjB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 09:39:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753244AbeDRNgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:36:07 -0400
-Message-Id: <0051d3c950c957983c018230b7fd3c7ddde513f7.1524055122.git.christophe.leroy@c-s.fr>
-In-Reply-To: <fe9959328efb520e6030476553ed23541c547639.1524055122.git.christophe.leroy@c-s.fr>
-References: <fe9959328efb520e6030476553ed23541c547639.1524055122.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 2/2] powerpc: Allow selection of
- CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Wed, 18 Apr 2018 15:36:05 +0200 (CEST)
+        id S1751580AbeDRNit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 09:38:49 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D54221726
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 18 Apr 2018 09:38:45 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Howard McLauchlan <hmclauchlan@fb.com>
+Subject: Re: [RFC PATCH 31/35] Revert "vfs: add d_real_inode() helper"
+Message-ID: <20180418093845.19ca33f3@gandalf.local.home>
+In-Reply-To: <CAJfpegtLdmnxieDx7+FBUoc-fKsTEwA+oHinhAfa4E9SDFfSNw@mail.gmail.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com>
+        <20180412150826.20988-32-mszeredi@redhat.com>
+        <CAOQ4uxgdWCWvwWgjUu06H=BeMxh-BVAjxVE5Ckj-poKRGgwvMQ@mail.gmail.com>
+        <CAJfpegtLdmnxieDx7+FBUoc-fKsTEwA+oHinhAfa4E9SDFfSNw@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This option does dead code and data elimination with the linker by
-compiling with -ffunction-sections -fdata-sections and linking with
---gc-sections.
+On Wed, 18 Apr 2018 13:42:03 +0200
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-By selecting this option on mpc885_ads_defconfig,
-vmlinux LOAD segment size gets reduced by 10%
+> On Wed, Apr 18, 2018 at 10:19 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+> > On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:  
+> >> This reverts commit a118084432d642eeccb961c7c8cc61525a941fcb.
+> >>
+> >> No user of d_real_inode() remains, so it can be removed.
+> >>  
+> >
+> > FYI, there is a new user in v4.17-rc1 added by commit
+> > f0a2aa5a2a40 tracing/uprobe: Add support for overlayfs
+> >
+> > Seems like this patch got merged without any CC to overlayfs
+> > mailing list nor maintainer?
 
-Program Header before the patch:
-    LOAD off    0x00010000 vaddr 0xc0000000 paddr 0x00000000 align 2**16
-         filesz 0x0036eda4 memsz 0x0038de04 flags rwx
+It appeared to be a small change with lots of reviewers. I didn't think
+it was something to notify the overlayfs folks with. But perhaps I was
+wrong.
 
-Program Header after the patch:
-    LOAD off    0x00010000 vaddr 0xc0000000 paddr 0x00000000 align 2**16
-         filesz 0x00316da4 memsz 0x00334268 flags rwx
+> >
+> > Not sure yet if overlayfs-rorw patches would allow reverting this
+> > change.  
+> 
+> Not trivial, because uprobe is looking at i_mapping to get a list of
+> current memory maps.   We could set i_mapping at overlay inode
+> initialization time, but we definitely can't *change* i_mapping at
+> copy up.  Which is bound to result in some weird inconsistencies.  So
+> likely we'll need to keep d_real_inode() for the time being.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/Kconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I just received this patch:
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8fe4353be5e3..e1fac49cf465 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -888,6 +888,14 @@ config PPC_MEM_KEYS
- 
- 	  If unsure, say y.
- 
-+config PPC_UNUSED_ELIMINATION
-+	bool "Eliminate unused functions and data from vmlinux"
-+	default n
-+	select LD_DEAD_CODE_DATA_ELIMINATION
-+	help
-+	  Select this to do dead code and data elimination with the linker
-+	  by compiling with -ffunction-sections -fdata-sections and linking
-+	  with --gc-sections.
- endmenu
- 
- config ISA_DMA_API
--- 
-2.13.3
+ http://lkml.kernel.org/r/20180418062907.3210386-1-songliubraving@fb.com
+
+Which removes this code. Can you review it and I'll take it.
+
+-- Steve
