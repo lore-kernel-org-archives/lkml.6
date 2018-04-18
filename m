@@ -1,101 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752790AbeDRH5k (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:57:40 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:58378 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbeDRH5i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:57:38 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180418075736epoutp0332a75d1a9ae7bdfd828945e09f681865~meLguYgyr2545825458epoutp03Z
-X-AuditID: b6c32a35-151ff70000000fee-14-5ad6fa6f183a
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH] PM / devfreq: use put_device() instead of kfree()
-Reply-To: myungjoo.ham@samsung.com
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-        arvindY <arvind.yadav.cs@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <5AD01937.1070504@samsung.com>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20180418075735epcms1p3c59f097441aabc6af5d7892298c6fdb2@epcms1p3>
-Date: Wed, 18 Apr 2018 16:57:35 +0900
-X-CMS-MailID: 20180418075735epcms1p3c59f097441aabc6af5d7892298c6fdb2
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180418075735epcms1p3c59f097441aabc6af5d7892298c6fdb2
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFKsWRmVeSWpSXmKPExsWy7bCmvm7+r2tRBo1fLCyu9S5ktrj+5Tmr
-        xdmmN+wWl3fNYbP43HuE0YHVY+esu+wefVtWMXp83iQXwByVapORmpiSWqSQmpecn5KZl26r
-        5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDtFJJoSwxpxQoFJBYXKykb2dTlF9akqqQ
-        kV9cYqsUbWhopGdoYK5nZGSkZ2Ica2VkClSSkJqx8MgaloK9AhWvX81gbmBsEehi5OSQEDCR
-        OPL8IFsXIxeHkMAORokHMw+ydDFycPAKCEr83SEMUiMs4CXxe9oOZhBbSEBJouHmPmaIuL5E
-        x4NtjCA2m4CuxNYNd1lAbBGBKokXtw6C2cxA9pO5Z9ggdvFKzGh/ygJhS0tsX74VrJdTQFvi
-        xM+77BBxUYmbq9/C2e+PzWeEsEUkWu+dZYawBSUe/NwNFZeSePJ2IVR9vcT1z4uYQH6REJjA
-        KPH7xn+ohL7EoyuzwY7gFfCV2P3mOFicRUBV4un+ViaIGheJDRMhDmIGOmjZwtfMoHBgFtCU
-        WL9LH6LEVuL+/kmsECV8Eu++9rDC/LVj3hOoMWoSh3YvgVorI3F6+kKomz0kns27A2U7SjSs
-        Xcg+gVFxFiKkZyFZPAth8QJG5lWMYqkFxbnpqcWGBYZ6xYm5xaV56XrJ+bmbGMHpTst0B+OU
-        cz6HGAU4GJV4eBcIXIsSYk0sK67MPcQowcGsJMK78/GVKCHelMTKqtSi/Pii0pzU4kOMpkD/
-        T2SWEk3OB6bivJJ4QxNLAxMzI2CKszQ0VBLnfepzJkpIID2xJDU7NbUgtQimj4mDU6qB0UKc
-        97uqaFJ69eEzFQmMjR3FD0L21v2d9vZ6a+rJ/ttamulhIaGb/Pv93nS3vIxL2f/qe69q8AbG
-        P/bnT3+aVHX+U8ZO47Ls6/OtJx2O54wU+toTuOXA6jfXrm9WiUpdrDL3YtKdlG3iD6U3i01+
-        Gfu5UW6VwWTtsNm3g2ZzzV/Gtdd/tWTpLiWW4oxEQy3mouJEAIHV8rmNAwAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180330114418epcas5p1affd1c3d97e7422dd33e6d3ca73073be
-X-RootMTR: 20180330114418epcas5p1affd1c3d97e7422dd33e6d3ca73073be
-References: <5AD01937.1070504@samsung.com>
-        <d8d8708d2283349c2c4f3e9f3c9fd5f47126d2bc.1522410143.git.arvind.yadav.cs@gmail.com>
-        <5AD001C5.2040406@samsung.com> <5AD0041D.2050506@samsung.com>
-        <5AD012CB.7030003@gmail.com> <5AD0160E.7050601@samsung.com>
-        <5AD017E8.7020901@gmail.com>
-        <CGME20180330114418epcas5p1affd1c3d97e7422dd33e6d3ca73073be@epcms1p3>
+        id S1752658AbeDRIA7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:00:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39371 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751180AbeDRIA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 04:00:57 -0400
+Date: Wed, 18 Apr 2018 10:00:56 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>, adobriyan@gmail.com,
+        willy@infradead.org, mguzik@redhat.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v4 PATCH] mm: introduce arg_lock to protect arg_start|end and
+ env_start|end in mm_struct
+Message-ID: <20180418080056.GQ17484@dhcp22.suse.cz>
+References: <1523730291-109696-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180417112957.84de526138f404a04298ec4c@linux-foundation.org>
+ <20180417203919.GF19578@uranus.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180417203919.GF19578@uranus.lan>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3I7vj6I014099
 
->On 2018년 04월 13일 11:37, arvindY wrote:
->> On Friday 13 April 2018 07:59 AM, Chanwoo Choi wrote:
->>> On 2018년 04월 13일 11:15, arvindY wrote:
->>>> On Friday 13 April 2018 06:43 AM, Chanwoo Choi wrote:
->>>>> On 2018년 04월 13일 10:03, Chanwoo Choi wrote:
-[]
->>>>>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>>>>>> index fe2af6a..a225b94 100644
->>>>>>> --- a/drivers/devfreq/devfreq.c
->>>>>>> +++ b/drivers/devfreq/devfreq.c
->>>>>>> @@ -625,7 +625,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
->>>>>>>        err = device_register(&devfreq->dev);
->>>>>>>        if (err) {
->>>>>>>            mutex_unlock(&devfreq->lock);
->>>>>>> -        goto err_dev;
->>>>>>> +        put_device(&devfreq->dev);
->>>>>>> +        goto err_out;
->>>>>>>        }
->>>>>>>          devfreq->trans_table =    devm_kzalloc(&devfreq->dev,
->>>>>>> @@ -671,6 +672,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
->>>>>>>        mutex_unlock(&devfreq_list_lock);
->>>>>>>          device_unregister(&devfreq->dev);
->>>>>>> +    devfreq = NULL;
->>>>>>>    err_dev:
->>>>>>>        if (devfreq)
->>>>>>>            kfree(devfreq);
->>>>>>>
+On Tue 17-04-18 23:39:19, Cyrill Gorcunov wrote:
+> On Tue, Apr 17, 2018 at 11:29:57AM -0700, Andrew Morton wrote:
+> > On Sun, 15 Apr 2018 02:24:51 +0800 Yang Shi <yang.shi@linux.alibaba.com> wrote:
+> > 
+> > > mmap_sem is on the hot path of kernel, and it very contended, but it is
+> > > abused too. It is used to protect arg_start|end and evn_start|end when
+> > > reading /proc/$PID/cmdline and /proc/$PID/environ, but it doesn't make
+> > > sense since those proc files just expect to read 4 values atomically and
+> > > not related to VM, they could be set to arbitrary values by C/R.
+> > > 
+> > > And, the mmap_sem contention may cause unexpected issue like below:
+> > > 
+> > > INFO: task ps:14018 blocked for more than 120 seconds.
+> > >        Tainted: G            E 4.9.79-009.ali3000.alios7.x86_64 #1
+> > >  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+> > > message.
+> > >  ps              D    0 14018      1 0x00000004
+> > >   ffff885582f84000 ffff885e8682f000 ffff880972943000 ffff885ebf499bc0
+> > >   ffff8828ee120000 ffffc900349bfca8 ffffffff817154d0 0000000000000040
+> > >   00ffffff812f872a ffff885ebf499bc0 024000d000948300 ffff880972943000
+> > >  Call Trace:
+> > >   [<ffffffff817154d0>] ? __schedule+0x250/0x730
+> > >   [<ffffffff817159e6>] schedule+0x36/0x80
+> > >   [<ffffffff81718560>] rwsem_down_read_failed+0xf0/0x150
+> > >   [<ffffffff81390a28>] call_rwsem_down_read_failed+0x18/0x30
+> > >   [<ffffffff81717db0>] down_read+0x20/0x40
+> > >   [<ffffffff812b9439>] proc_pid_cmdline_read+0xd9/0x4e0
+> > >   [<ffffffff81253c95>] ? do_filp_open+0xa5/0x100
+> > >   [<ffffffff81241d87>] __vfs_read+0x37/0x150
+> > >   [<ffffffff812f824b>] ? security_file_permission+0x9b/0xc0
+> > >   [<ffffffff81242266>] vfs_read+0x96/0x130
+> > >   [<ffffffff812437b5>] SyS_read+0x55/0xc0
+> > >   [<ffffffff8171a6da>] entry_SYSCALL_64_fastpath+0x1a/0xc5
+> > > 
+> > > Both Alexey Dobriyan and Michal Hocko suggested to use dedicated lock
+> > > for them to mitigate the abuse of mmap_sem.
+> > > 
+> > > So, introduce a new spinlock in mm_struct to protect the concurrent
+> > > access to arg_start|end, env_start|end and others, as well as replace
+> > > write map_sem to read to protect the race condition between prctl and
+> > > sys_brk which might break check_data_rlimit(), and makes prctl more
+> > > friendly to other VM operations.
+> > 
+> > (We should move check_data_rlimit() out of the .h file)
+> > 
+> > It seems inconsistent to be using mmap_sem to protect ->start_brk and
+> > friends in sys_brk().  We've already declared that these are protected
+> > by arg_lock so that's what we should be using?  And getting this
+> > consistent should permit us to stop using mmap_sem in prctl()
+> > altogether?
+> 
+> Nope, we still can't. Look, the down_read part order the call with
+> sys_brk. while arg_lock orders prctl call itself. That said if
+> someone is calling sys_brk while we're in a middle of prctl it
+> should wait until prctl finished. But two simultaneous prcl
+> may proceed without taking a write lock using arg_lock as
+> a barrier.
 
-Ah.. this was critcal. Thanks!
+A small comment would be due. The changelog mentions this but it would
+be nicer to comment why we care about mmap_sem for read in prctl.
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-
->Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-
-Cheers,
-MyungJoo
+-- 
+Michal Hocko
+SUSE Labs
