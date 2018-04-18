@@ -1,106 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752732AbeDRQFE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 12:05:04 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:44074 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751972AbeDRQE6 (ORCPT
+        id S1752813AbeDRQFP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 12:05:15 -0400
+Received: from smtp-out-no.shaw.ca ([64.59.134.12]:48136 "EHLO
+        smtp-out-no.shaw.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751972AbeDRQFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 12:04:58 -0400
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <lee.jones@linaro.org>, <linus.walleij@linaro.org>,
-        <andy.shevchenko@gmail.com>, <robh+dt@kernel.org>
-CC: <patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v10 0/9] Add support for Cirrus Logic CS47L35/L85/L90/L91 codecs
-Date: Tue, 17 Apr 2018 15:29:06 +0100
-Message-ID: <20180417142915.15772-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=544 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1804180144
+        Wed, 18 Apr 2018 12:05:13 -0400
+X-Authority-Analysis: v=2.3 cv=Tai4SyYh c=1 sm=1 tr=0
+ a=IfKG9KDHjPrX0SZ8gMoyrg==:117 a=IfKG9KDHjPrX0SZ8gMoyrg==:17
+ a=Kd1tUaAdevIA:10 a=Q-fNiiVtAAAA:8 a=fr2UWt6uMMg7Tx45QH4A:9
+ a=Fp8MccfUoT0GBdDC_Lng:22
+From: Markus Mayer <code@mmayer.net>
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+        Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+        Power Management List <linux-pm@vger.kernel.org>,
+        ARM Kernel List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] brcmstb-avs-cpufreq changes
+Date: Wed, 18 Apr 2018 08:56:41 -0700
+Message-Id: <20180418155643.36464-1-code@mmayer.net>
+X-Mailer: git-send-email 2.14.1
+X-CMAE-Envelope: MS4wfDR2pbn3KI2jlJmtcT/4mybYHlgHV4ts4Zpi/oNP41H67KRAmgtpGkPgZjHwUGAKUFthxuOyMr+eRXLM0Ky3Jd1tNjtc7ksOS9AhO1cQvZRU2rzrCKt3
+ j7kQ1zv9ApOZdUoVPmI/SdXFcg0f7hsd0ehiUV7r7atsoW4lH6EqdIEUbyyb3ibTNBOLHzcInzrZGQhOXO5TLDD5yqOiPGyiL96n0qX/WPJ/KKQ2aoJqfcIz
+ uBH/oWFQbDN26/ACtbXecneTLCruFT2QMbkTd3ZPeO6cneib2j+GkK/7apKKHPZUouQFWjxQyPU4OzDhI3yWphygPch6bFCaplE1n27J7rfFLqYioBMnKIjU
+ 5YgZqm1s+lspY5LcWbsC2ldpOcsqlaaPvlah+gmXt0VDwI72h0KFmfkEc6iRKUrlXW3SMB9XY3go8jbI0txB/CBeKn5Fu0rQUeetk25S8Kg44n8zP+5T4ojv
+ JMYHWfqB+nNCMnulwOsJY5A7sQ5ORHuqT9CP3i9J2JjXMjX0xm/kTWbusps=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NOTE: Compared to older versions of this chain I have removed patches at the
-end of the chain that were being ignored until the earlier patches had been
-merged - an impossible circular dependency. There were too many moving targets
-to keep the whole chain up-to-date and so patches that were already acked were
-getting stale. The subset of patches here are all acked or close-to-acked, and
-can be built and used as they are to produce a working pinctrl and gpio.
+From: Markus Mayer <mmayer@broadcom.com>
 
-The Cirrus Logic CS47L35, CS47L85, CS47L90/91 codecs are complex audio SoC
-devices. In addition to the core audio capability they have onboard GPIO,
-regulators, DSPs and interrupt controller and a large register map space
-accessed over SPI or I2C. This family of codecs is based around common IP
-blocks and they are managed by a set of common drivers referred to as "Madera".
+These changes are based on v4.17-rc1. The two patches are unrelated.
 
-Richard Fitzgerald (9):
-  mfd: madera: Add register definitions for Cirrus Logic Madera codecs
-  mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
-  mfd: madera: Add common support for Cirrus Logic Madera codecs
-  mfd: madera: Register map tables for Cirrus Logic CS47L35
-  mfd: madera: Register map tables for Cirrus Logic CS47L85
-  mfd: madera: Register map tables for Cirrus Logic CS47L90/91
-  pinctrl: madera: Add DT bindings for Cirrus Logic Madera codecs
-  pinctrl: madera: Add driver for Cirrus Logic Madera codecs
-  gpio: madera: Support Cirrus Logic Madera class codecs
+Patch 1/2 removes unused code that was only useful during driver
+development and that has been disabled by default for a long time.
 
- Documentation/devicetree/bindings/mfd/madera.txt   |  102 +
- .../bindings/pinctrl/cirrus,madera-pinctrl.txt     |   99 +
- MAINTAINERS                                        |   16 +
- drivers/gpio/Kconfig                               |    6 +
- drivers/gpio/Makefile                              |    1 +
- drivers/gpio/gpio-madera.c                         |  206 +
- drivers/mfd/Kconfig                                |   50 +
- drivers/mfd/Makefile                               |   14 +
- drivers/mfd/cs47l35-tables.c                       | 1609 ++++++++
- drivers/mfd/cs47l85-tables.c                       | 3009 +++++++++++++++
- drivers/mfd/cs47l90-tables.c                       | 2674 +++++++++++++
- drivers/mfd/madera-core.c                          |  609 +++
- drivers/mfd/madera-i2c.c                           |  140 +
- drivers/mfd/madera-spi.c                           |  139 +
- drivers/mfd/madera.h                               |   44 +
- drivers/pinctrl/Kconfig                            |    1 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/cirrus/Kconfig                     |   15 +
- drivers/pinctrl/cirrus/Makefile                    |   13 +
- drivers/pinctrl/cirrus/pinctrl-cs47l35.c           |   45 +
- drivers/pinctrl/cirrus/pinctrl-cs47l85.c           |   59 +
- drivers/pinctrl/cirrus/pinctrl-cs47l90.c           |   57 +
- drivers/pinctrl/cirrus/pinctrl-madera-core.c       | 1076 ++++++
- drivers/pinctrl/cirrus/pinctrl-madera.h            |   41 +
- include/linux/mfd/madera/core.h                    |  187 +
- include/linux/mfd/madera/pdata.h                   |   59 +
- include/linux/mfd/madera/registers.h               | 3917 ++++++++++++++++++++
- 27 files changed, 14189 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
- create mode 100644 drivers/gpio/gpio-madera.c
- create mode 100644 drivers/mfd/cs47l35-tables.c
- create mode 100644 drivers/mfd/cs47l85-tables.c
- create mode 100644 drivers/mfd/cs47l90-tables.c
- create mode 100644 drivers/mfd/madera-core.c
- create mode 100644 drivers/mfd/madera-i2c.c
- create mode 100644 drivers/mfd/madera-spi.c
- create mode 100644 drivers/mfd/madera.h
- create mode 100644 drivers/pinctrl/cirrus/Kconfig
- create mode 100644 drivers/pinctrl/cirrus/Makefile
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l35.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l85.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-cs47l90.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera-core.c
- create mode 100644 drivers/pinctrl/cirrus/pinctrl-madera.h
- create mode 100644 include/linux/mfd/madera/core.h
- create mode 100644 include/linux/mfd/madera/pdata.h
- create mode 100644 include/linux/mfd/madera/registers.h
+Patch 2/2 allows the driver to detect if the system supports SCMI cpufreq
+
+Jim Quinlan (1):
+  cpufreq: brcmstb-avs-cpufreq: prefer SCMI cpufreq if supported
+
+Markus Mayer (1):
+  cpufreq: brcmstb-avs-cpufreq: remove development debug support
+
+ drivers/cpufreq/Kconfig.arm           |  10 -
+ drivers/cpufreq/brcmstb-avs-cpufreq.c | 339 ++--------------------------------
+ 2 files changed, 17 insertions(+), 332 deletions(-)
 
 -- 
-2.11.0
+2.7.4
