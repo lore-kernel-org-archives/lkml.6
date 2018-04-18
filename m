@@ -1,95 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752441AbeDRXex convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 19:34:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51974 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752091AbeDRXev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 19:34:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF76D21781
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
+        id S1752414AbeDRXis (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 19:38:48 -0400
+Received: from mail-ot0-f170.google.com ([74.125.82.170]:37020 "EHLO
+        mail-ot0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752135AbeDRXiq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 19:38:46 -0400
+X-Google-Smtp-Source: AIpwx4/ucDDyqib0AGPV7W3U7F9X/dBsldonndTOIULD6gwRMymEcUXN3C24VIGUspGni7ufBpSNqA==
+Date: Wed, 18 Apr 2018 18:38:25 -0500
+From: Dennis Zhou <dennisszhou@gmail.com>
+To: Fengguang Wu <fengguang.wu@intel.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: linux-mm@kvack.org, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Josef Bacik <jbacik@fb.com>, linux-kernel@vger.kernel.org, lkp@01.org
+Subject: Re: [per_cpu_ptr_to_phys] PANIC: early exception 0x0d IP
+ 10:ffffffffa892f15f error 0 cr2 0xffff88001fbff000
+Message-ID: <20180418233825.GA33106@big-sky.local>
+References: <20180418135300.inazvpxjxowogyge@wfg-t540p.sh.intel.com>
+ <20180418135553.zvw3loh52gbr7e2b@wfg-t540p.sh.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Amit Nischal <anischal@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <f563532b5c43960a61ae12a37a131be8@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
- <1522761761-15262-4-git-send-email-anischal@codeaurora.org>
- <152393708031.51482.15076025836699678476@swboyd.mtv.corp.google.com>
- <f563532b5c43960a61ae12a37a131be8@codeaurora.org>
-Message-ID: <152409449007.51482.18266317845214727195@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC) driver for
- SDM845
-Date: Wed, 18 Apr 2018 16:34:50 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418135553.zvw3loh52gbr7e2b@wfg-t540p.sh.intel.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Amit Nischal (2018-04-18 06:03:49)
-> On 2018-04-17 09:21, Stephen Boyd wrote:
-> > Quoting Amit Nischal (2018-04-03 06:22:41)
-> >> +
-> >> +static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
-> >> +       .cmd_rcgr = 0xf030,
-> >> +       .mnd_width = 0,
-> >> +       .hid_width = 5,
-> >> +       .parent_map = gcc_parent_map_0,
-> >> +       .freq_tbl = ftbl_gcc_usb30_prim_mock_utmi_clk_src,
-> >> +       .clkr.hw.init = &(struct clk_init_data){
-> >> +               .name = "gcc_usb30_prim_mock_utmi_clk_src",
-> >> +               .parent_names = gcc_parent_names_0,
-> >> +               .num_parents = 4,
-> >> +               .ops = &clk_rcg2_shared_ops,
-> > 
-> > Still shared? Why?
+Hi,
+
+On Wed, Apr 18, 2018 at 09:55:53PM +0800, Fengguang Wu wrote:
 > 
-> We would require the shared_ops for clocks which are configured by
-> bootloader.
-
-Why? The bootloader is not active anymore.
-
-> > 
-> >> +
-> >> +       return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
-> >> +}
-> >> +
-> >> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h 
-> >> b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-> >> new file mode 100644
-> >> index 0000000..e27d8e2
-> >> --- /dev/null
-> >> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-> >> @@ -0,0 +1,242 @@
-> > [...]
-> >> +#define GCC_VDDA_VS_CLK                                               
-> >>  180
-> >> +#define GCC_VDDCX_VS_CLK                                       181
-> >> +#define GCC_VDDMX_VS_CLK                                       182
-> >> +#define GCC_VS_CTRL_AHB_CLK                                    183
-> >> +#define GCC_VS_CTRL_CLK                                               
-> >>  184
-> >> +#define GCC_VS_CTRL_CLK_SRC                                    185
-> >> +#define GCC_VSENSOR_CLK_SRC                                    186
-> >> +#define GPLL4                                                  187
-> > 
-> > Do you have the define for the quad spi clks? And the implementation 
-> > for
-> > it?
-> > 
+> Hello,
 > 
-> In SDM845, Quad SPI clocks are part of gcc_qupv*_wrap*_s* clock group.
+> FYI here is a slightly different boot error in mainline kernel 4.17.0-rc1.
+> It also dates back to v4.16 .
+> 
+> It occurs in 4 out of 4 boots.
+> 
+> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 128873
+> [    0.000000] Kernel command line: root=/dev/ram0 hung_task_panic=1 debug apic=debug sysrq_always_enabled rcupdate.rcu_cpu_stall_timeout=100 net.ifnames=0 printk.devkmsg=on panic=-1 softlockup_panic=1 nmi_watchdog=panic oops=panic load_ramdisk=2 prompt_ramdisk=0 drbd.minor_count=8 systemd.log_level=err ignore_loglevel console=tty0 earlyprintk=ttyS0,115200 console=ttyS0,115200 vga=normal rw link=/kbuild-tests/run-queue/kvm/x86_64-randconfig-a0-04172313/linux-devel:devel-hourly-2018041714:60cc43fc888428bb2f18f08997432d426a243338/.vmlinuz-60cc43fc888428bb2f18f08997432d426a243338-20180418000325-19:yocto-lkp-nhm-dp2-4 branch=linux-devel/devel-hourly-2018041714 BOOT_IMAGE=/pkg/linux/x86_64-randconfig-a0-04172313/gcc-7/60cc43fc888428bb2f18f08997432d426a243338/vmlinuz-4.17.0-rc1 drbd.minor_count=8 rcuperf.shutdown=0
+> [    0.000000] sysrq: sysrq always enabled.
+> [    0.000000] Dentry cache hash table entries: 65536 (order: 7, 524288 bytes)
+> [    0.000000] Inode-cache hash table entries: 32768 (order: 6, 262144 bytes)
+> PANIC: early exception 0x0d IP 10:ffffffffa892f15f error 0 cr2 0xffff88001fbff000
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Tainted: G                T 4.17.0-rc1 #238
+> [    0.000000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [    0.000000] RIP: 0010:per_cpu_ptr_to_phys+0x16a/0x298:
+> 						__section_mem_map_addr at include/linux/mmzone.h:1188
+> 						 (inlined by) per_cpu_ptr_to_phys at mm/percpu.c:1849
+> [    0.000000] RSP: 0000:ffffffffab407e50 EFLAGS: 00010046 ORIG_RAX: 0000000000000000
+> [    0.000000] RAX: dffffc0000000000 RBX: ffff88001f17c340 RCX: 000000000000000f
+> [    0.000000] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffffacfbf580
+> [    0.000000] RBP: ffffffffab40d000 R08: fffffbfff57c4eca R09: 0000000000000000
+> [    0.000000] R10: ffff880015421000 R11: fffffbfff57c4ec9 R12: 0000000000000000
+> [    0.000000] R13: ffff88001fb03ff8 R14: ffff88001fc051c0 R15: 0000000000000000
+> [    0.000000] FS:  0000000000000000(0000) GS:ffffffffab4c5000(0000) knlGS:0000000000000000
+> [    0.000000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    0.000000] CR2: ffff88001fbff000 CR3: 000000001a06c000 CR4: 00000000000006b0
+> [    0.000000] Call Trace:
+> [    0.000000]  setup_cpu_entry_areas+0x7b/0x27b:
+> 						setup_cpu_entry_area at arch/x86/mm/cpu_entry_area.c:104
+> 						 (inlined by) setup_cpu_entry_areas at arch/x86/mm/cpu_entry_area.c:177
+> [    0.000000]  trap_init+0xb/0x13d:
+> 						trap_init at arch/x86/kernel/traps.c:949
+> [    0.000000]  start_kernel+0x2a5/0x91d:
+> 						mm_init at init/main.c:519
+> 						 (inlined by) start_kernel at init/main.c:589
+> [    0.000000]  ? thread_stack_cache_init+0x6/0x6
+> [    0.000000]  ? memcpy_orig+0x16/0x110:
+> 						memcpy_orig at arch/x86/lib/memcpy_64.S:77
+> [    0.000000]  ? x86_family+0x5/0x1d:
+> 						x86_family at arch/x86/lib/cpu.c:8
+> [    0.000000]  ? load_ucode_bsp+0x42/0x13e:
+> 						load_ucode_bsp at arch/x86/kernel/cpu/microcode/core.c:183
+> [    0.000000]  secondary_startup_64+0xa5/0xb0:
+> 						secondary_startup_64 at arch/x86/kernel/head_64.S:242
+> [    0.000000] Code: 78 06 00 49 8b 45 00 48 85 c0 74 a5 49 c1 ec 28 41 81 e4 e0 0f 00 00 49 01 c4 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 74 08 4c 89 e7 e8 63 78 06 00 49 8b 04 24 81 e5 ff
+> BUG: kernel hang in boot stage
+> 
 
-Ok thanks. I must have messed up my math before because it didn't match
-what bootloader was doing last time I checked.
+I spent some time bisecting this one and it seemse to be an intermittent
+issue starting with this commit for me:
+c9e97a1997, mm: initialize pages on demand during boot. The prior
+commit, 3a2d7fa8a3, did not run into this issue after 10+ boots.
+
+I don't have that much time right now, nor the expertise with this code.
+Pavel could you take a look at this?
+
+Thanks,
+Dennis
