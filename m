@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753986AbeDRLpC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:45:02 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42309 "EHLO huawei.com"
+        id S1753846AbeDRLpB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:45:01 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42314 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753996AbeDRLny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:43:54 -0400
+        id S1754032AbeDRLnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 07:43:55 -0400
 From: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 To: <alex.williamson@redhat.com>, <eric.auger@redhat.com>,
         <pmorel@linux.vnet.ibm.com>
 CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
         <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
-        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Subject: [PATCH v6 3/7] vfio/type1: Update iova list on detach
-Date: Wed, 18 Apr 2018 12:40:41 +0100
-Message-ID: <20180418114045.7968-4-shameerali.kolothum.thodi@huawei.com>
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: [PATCH v6 4/7] iommu/dma: Move PCI window region reservation back into dma specific path.
+Date: Wed, 18 Apr 2018 12:40:42 +0100
+Message-ID: <20180418114045.7968-5-shameerali.kolothum.thodi@huawei.com>
 X-Mailer: git-send-email 2.12.0.windows.1
 In-Reply-To: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
 References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
@@ -27,140 +28,103 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Get a copy of iova list on _group_detach and try to update the list.
-On success replace the current one with the copy. Leave the list as
-it is if update fails.
+This pretty much reverts commit 273df9635385 ("iommu/dma: Make PCI
+window reservation generic")  by moving the PCI window region
+reservation back into the dma specific path so that these regions
+doesn't get exposed via the IOMMU API interface. With this change,
+the vfio interface will report only iommu specific reserved regions
+to the user space.
 
+Cc: Joerg Roedel <joro@8bytes.org>
 Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 91 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
+ drivers/iommu/dma-iommu.c | 54 ++++++++++++++++++++++-------------------------
+ 1 file changed, 25 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index a0a79e1..6fd6841 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1776,12 +1776,88 @@ static void vfio_sanity_check_pfn_list(struct vfio_iommu *iommu)
- 	WARN_ON(iommu->notifier.head);
- }
- 
-+/*
-+ * Called when a domain is removed in detach. It is possible that
-+ * the removed domain decided the iova aperture window. Modify the
-+ * iova aperture with the smallest window among existing domains.
-+ */
-+static void vfio_iommu_aper_expand(struct vfio_iommu *iommu,
-+				   struct list_head *iova_copy)
-+{
-+	struct vfio_domain *domain;
-+	struct iommu_domain_geometry geo;
-+	struct vfio_iova *node;
-+	dma_addr_t start = 0;
-+	dma_addr_t end = (dma_addr_t)~0;
-+
-+	list_for_each_entry(domain, &iommu->domain_list, next) {
-+		iommu_domain_get_attr(domain->domain, DOMAIN_ATTR_GEOMETRY,
-+				      &geo);
-+		if (geo.aperture_start > start)
-+			start = geo.aperture_start;
-+		if (geo.aperture_end < end)
-+			end = geo.aperture_end;
-+	}
-+
-+	/* Modify aperture limits. The new aper is either same or bigger */
-+	node = list_first_entry(iova_copy, struct vfio_iova, list);
-+	node->start = start;
-+	node = list_last_entry(iova_copy, struct vfio_iova, list);
-+	node->end = end;
-+}
-+
-+/*
-+ * Called when a group is detached. The reserved regions for that
-+ * group can be part of valid iova now. But since reserved regions
-+ * may be duplicated among groups, populate the iova valid regions
-+ * list again.
-+ */
-+static int vfio_iommu_resv_refresh(struct vfio_iommu *iommu,
-+				   struct list_head *iova_copy)
-+{
-+	struct vfio_domain *d;
-+	struct vfio_group *g;
-+	struct vfio_iova *node;
-+	dma_addr_t start, end;
-+	LIST_HEAD(resv_regions);
-+	int ret;
-+
-+	list_for_each_entry(d, &iommu->domain_list, next) {
-+		list_for_each_entry(g, &d->group_list, next)
-+			iommu_get_group_resv_regions(g->iommu_group,
-+							 &resv_regions);
-+	}
-+
-+	if (list_empty(&resv_regions))
-+		return 0;
-+
-+	node = list_first_entry(iova_copy, struct vfio_iova, list);
-+	start = node->start;
-+	node = list_last_entry(iova_copy, struct vfio_iova, list);
-+	end = node->end;
-+
-+	/* purge the iova list and create new one */
-+	vfio_iommu_iova_free(iova_copy);
-+
-+	ret = vfio_iommu_aper_resize(iova_copy, start, end);
-+	if (ret)
-+		goto done;
-+
-+	/* Exclude current reserved regions from iova ranges */
-+	ret = vfio_iommu_resv_exclude(iova_copy, &resv_regions);
-+done:
-+	vfio_iommu_resv_free(&resv_regions);
-+	return ret;
-+}
-+
- static void vfio_iommu_type1_detach_group(void *iommu_data,
- 					  struct iommu_group *iommu_group)
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index f05f3cf..ddcbbdb 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -167,40 +167,16 @@ EXPORT_SYMBOL(iommu_put_dma_cookie);
+  * @list: Reserved region list from iommu_get_resv_regions()
+  *
+  * IOMMU drivers can use this to implement their .get_resv_regions callback
+- * for general non-IOMMU-specific reservations. Currently, this covers host
+- * bridge windows for PCI devices and GICv3 ITS region reservation on ACPI
+- * based ARM platforms that may require HW MSI reservation.
++ * for general non-IOMMU-specific reservations. Currently, this covers GICv3
++ * ITS region reservation on ACPI based ARM platforms that may require HW MSI
++ * reservation.
+  */
+ void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
  {
- 	struct vfio_iommu *iommu = iommu_data;
- 	struct vfio_domain *domain;
- 	struct vfio_group *group;
-+	bool iova_copy_fail;
-+	LIST_HEAD(iova_copy);
+-	struct pci_host_bridge *bridge;
+-	struct resource_entry *window;
+-
+-	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode) &&
+-		iort_iommu_msi_get_resv_regions(dev, list) < 0)
+-		return;
+-
+-	if (!dev_is_pci(dev))
+-		return;
+-
+-	bridge = pci_find_host_bridge(to_pci_dev(dev)->bus);
+-	resource_list_for_each_entry(window, &bridge->windows) {
+-		struct iommu_resv_region *region;
+-		phys_addr_t start;
+-		size_t length;
+-
+-		if (resource_type(window->res) != IORESOURCE_MEM)
+-			continue;
  
- 	mutex_lock(&iommu->lock);
+-		start = window->res->start - window->offset;
+-		length = window->res->end - window->res->start + 1;
+-		region = iommu_alloc_resv_region(start, length, 0,
+-				IOMMU_RESV_RESERVED);
+-		if (!region)
+-			return;
++	if (!is_of_node(dev->iommu_fwspec->iommu_fwnode))
++		iort_iommu_msi_get_resv_regions(dev, list);
  
-@@ -1804,6 +1880,12 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 		}
- 	}
- 
-+	/*
-+	 * Get a copy of iova list. If success, use copy to update the
-+	 * list and to replace the current one.
-+	 */
-+	iova_copy_fail = !!vfio_iommu_iova_get_copy(iommu, &iova_copy);
-+
- 	list_for_each_entry(domain, &iommu->domain_list, next) {
- 		group = find_iommu_group(domain, iommu_group);
- 		if (!group)
-@@ -1829,10 +1911,19 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
- 			iommu_domain_free(domain->domain);
- 			list_del(&domain->next);
- 			kfree(domain);
-+			if (!iova_copy_fail && !list_empty(&iommu->domain_list))
-+				vfio_iommu_aper_expand(iommu, &iova_copy);
- 		}
- 		break;
- 	}
- 
-+	if (!iova_copy_fail && !list_empty(&iommu->domain_list)) {
-+		if (!vfio_iommu_resv_refresh(iommu, &iova_copy))
-+			vfio_iommu_iova_insert_copy(iommu, &iova_copy);
-+		else
-+			vfio_iommu_iova_free(&iova_copy);
-+	}
-+
- detach_group_done:
- 	mutex_unlock(&iommu->lock);
+-		list_add_tail(&region->list, list);
+-	}
  }
+ EXPORT_SYMBOL(iommu_dma_get_resv_regions);
+ 
+@@ -229,6 +205,23 @@ static int cookie_init_hw_msi_region(struct iommu_dma_cookie *cookie,
+ 	return 0;
+ }
+ 
++static void iova_reserve_pci_windows(struct pci_dev *dev,
++		struct iova_domain *iovad)
++{
++	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
++	struct resource_entry *window;
++	unsigned long lo, hi;
++
++	resource_list_for_each_entry(window, &bridge->windows) {
++		if (resource_type(window->res) != IORESOURCE_MEM)
++			continue;
++
++		lo = iova_pfn(iovad, window->res->start - window->offset);
++		hi = iova_pfn(iovad, window->res->end - window->offset);
++		reserve_iova(iovad, lo, hi);
++	}
++}
++
+ static int iova_reserve_iommu_regions(struct device *dev,
+ 		struct iommu_domain *domain)
+ {
+@@ -238,6 +231,9 @@ static int iova_reserve_iommu_regions(struct device *dev,
+ 	LIST_HEAD(resv_regions);
+ 	int ret = 0;
+ 
++	if (dev_is_pci(dev))
++		iova_reserve_pci_windows(to_pci_dev(dev), iovad);
++
+ 	iommu_get_resv_regions(dev, &resv_regions);
+ 	list_for_each_entry(region, &resv_regions, list) {
+ 		unsigned long lo, hi;
 -- 
 2.7.4
