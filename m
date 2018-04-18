@@ -1,34 +1,39 @@
-Return-Path: <catalin.marinas@arm.com>
-X-Google-Smtp-Source: AB8JxZplXu/Awjminna7Rc+Xi9tPigkgqzH4idmu7sE05VKZGrRryUtpyCKddVCLt+x3l1m0GBa9
-ARC-Seal: i=1; a=rsa-sha256; t=1524757653; cv=none;
+Return-Path: <andreyknvl@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524077609; cv=none;
         d=google.com; s=arc-20160816;
-        b=EpPSRPcJstc4CUrT65bMnUwubUHIdbZrvZzydWOj7ClaQOuaHCFM9aDphbVMgA7Qjz
-         PoFWqqbn08tIdf0yg96+qTiak/odk4poICEnmezYw+iytKYK1zjl9NsLZihq4Q7Yd0Fy
-         dWCX3XnC1vd87XidCpo71yptSEr2UcafXMKJRg2ujGtyCufASDV5Ik8UyWsTG0EFsdnu
-         qEYgggI06aE2Fi4ykAnn8iBpClOMdinpSpjBExqVF1nhxhxJ5CqdUIJP/DeGKLNsEuSV
-         mccgBp/OMnfXv+zI/xVBQ4/Ihx4Lo/NCtCBcyPn9sak6L7dWhMpRE2Zl7ih3rr+dnt2h
-         Oi7w==
+        b=0fbvA/tV4dNHUaH/Wls2VWEfs47Sw7FTQ+EZ5s70tlAswnRethONbF7Usky+oY16Sj
+         C+mhFSlhKfMgnLJ56zCzyKdsQXhhJVYYcw3LS/kO7uecZYzGsE+ISUCQKDwX0JLi6U0r
+         yQMpF9tzK5Ek7FUmnE3BGGhXlyK9sHUDrFSJ8jaB8OYsLasa1PGf2VR11L+3j3uk46Oa
+         JpnisjmXErIISB367IygU1yBu8zebT7JNDEQM72RbEKe41aVI1YtUXpb3xfGniYYyoR4
+         SUd0gd5MQC58k9kr3mNRYGhDecECN9xtCWz0I5F5T/NHth+nQGSc2Ru2P6lo0sfhCIef
+         nIgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=OG9B5dNycAAY30vBTOJqUq+f3w3nvMf2/Po6sjvVRCU=;
-        b=bLkmH29jR/9LqxkojvyHerR5IeexVayfAOi0D3BWwib3bFWYsalax7/IiCyonbzJeC
-         MnpyVN17E4IT0LnkPkPC5ZZgiljSoI4jNkAG+GvN+Z3MS31jrGFbTdOBPR4uEms7DXF+
-         fDkMno+mqvUbM5UoNZ+Fa2ozcXhOcswlIod84Ja5Fu8m9U26+sCpD3ABjS0MvgHbn+9C
-         czgqUUBz/NOeyhVQxGj/j9XcPnncfyzoAtg4nvRgxjX+GhleD00de/eWcqc0gOjulO39
-         jlYvbL3m5rVWLUguX/P7rzzalMoMQCn5Pahghl1QSp81t5iRTKY27cRA4IFMwOR+vfMA
-         XIHQ==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=EZGWuFfiHqjCbpQnzR64TWy+WxEaujGKaSajXvCUFAc=;
+        b=f+cyOtB3SKktAuGKL87rbvTTmmO036a7x5o95GOY4p5pBmigezus40TLCWv8Ptnv7b
+         asvrESvbApt4hu1hVSnjTVlm7w8eT+e2oruehreDh5sVnLWFl1snwmk/sCZ/BG0WS+4f
+         MEsoyyCtUI64sZhMqgzy/76ixBDF4HZZoEyf6J2aibWhsTY2qPq9kMo+vUrhQUYiIH95
+         aHxwAoG3PSKbMZsUzXPPW0biO+eXKhwa4auhSPkWQBYgecA6Ez/Jq0W6Xd71DCpGUSMu
+         UELvjA4qLImUMS9LF0Ide5idlOx0JSmO9WnmzVsro317v164Sx0/f3g2HHWI8wSu9s8J
+         1ITQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of catalin.marinas@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=catalin.marinas@arm.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=XoOfHGDK;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of catalin.marinas@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=catalin.marinas@arm.com
-Date: Thu, 26 Apr 2018 16:47:25 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: Will Deacon <will.deacon@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+       dkim=pass header.i=@google.com header.s=20161025 header.b=XoOfHGDK;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AIpwx4+jqENAWip/MUW3PGvlX0PAg25j/IaqTVI58MpVYsnVtxnKfu+qYLlIBk/+1UQ8zcYiy7iy7A==
+From: Andrey Konovalov <andreyknvl@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Robin Murphy <robin.murphy@arm.com>,
 	Al Viro <viro@zeniv.linux.org.uk>,
+	Andrey Konovalov <andreyknvl@google.com>,
 	James Morse <james.morse@arm.com>,
 	Kees Cook <keescook@chromium.org>,
 	Bart Van Assche <bart.vanassche@wdc.com>,
@@ -42,73 +47,54 @@ Cc: Will Deacon <will.deacon@arm.com>, Jonathan Corbet <corbet@lwn.net>,
 	Dan Williams <dan.j.williams@intel.com>,
 	"Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
 	Zi Yan <zi.yan@cs.rutgers.edu>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Jacob Bramley <Jacob.Bramley@arm.com>,
-	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-	Lee Smith <Lee.Smith@arm.com>, Kostya Serebryany <kcc@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+	Kostya Serebryany <kcc@google.com>,
+	Evgeniy Stepanov <eugenis@google.com>,
+	Lee Smith <Lee.Smith@arm.com>,
 	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-	Evgeniy Stepanov <eugenis@google.com>
-Subject: Re: [PATCH 3/6] arm64: untag user addresses in copy_from_user and
- others
-Message-ID: <20180426154725.74a33tnevvbtqx63@armageddon.cambridge.arm.com>
+	Jacob Bramley <Jacob.Bramley@arm.com>,
+	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>
+Subject: [PATCH 6/6] arm64: update Documentation/arm64/tagged-pointers.txt
+Date: Wed, 18 Apr 2018 20:53:15 +0200
+Message-Id: <0fdb6332cc5bf333f80212d0b17edadd2bdc9fcf.1524077494.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+In-Reply-To: <cover.1524077494.git.andreyknvl@google.com>
 References: <cover.1524077494.git.andreyknvl@google.com>
- <949c343a4b02b41b80f324c2b7cd56b75e6a04f3.1524077494.git.andreyknvl@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <949c343a4b02b41b80f324c2b7cd56b75e6a04f3.1524077494.git.andreyknvl@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <cover.1524077494.git.andreyknvl@google.com>
+References: <cover.1524077494.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598111197844196620?=
-X-GMAIL-MSGID: =?utf-8?q?1598824281513969643?=
+X-GMAIL-THRID: =?utf-8?q?1598111203386194872?=
+X-GMAIL-MSGID: =?utf-8?q?1598111203386194872?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 18, 2018 at 08:53:12PM +0200, Andrey Konovalov wrote:
-> @@ -238,12 +239,15 @@ static inline void uaccess_enable_not_uao(void)
->  /*
->   * Sanitise a uaccess pointer such that it becomes NULL if above the
->   * current addr_limit.
-> + * Also untag user pointers that have the top byte tag set.
->   */
->  #define uaccess_mask_ptr(ptr) (__typeof__(ptr))__uaccess_mask_ptr(ptr)
->  static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
->  {
->  	void __user *safe_ptr;
->  
-> +	ptr = untagged_addr(ptr);
-> +
->  	asm volatile(
->  	"	bics	xzr, %1, %2\n"
->  	"	csel	%0, %1, xzr, eq\n"
+Add a note that work on passing tagged user pointers to the kernel via
+syscalls has started, but might not be complete yet.
 
-First of all, passing a tagged user pointer throughout the kernel is
-safe with uaccess routines but not suitable for find_vma() etc.
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ Documentation/arm64/tagged-pointers.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-With this change, we may have an inconsistent behaviour on the tag
-masking, depending on whether the entry code uses __uaccess_mask_ptr()
-or not. We could preserve the tag with something like:
-
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
-index e66b0fca99c2..ed15bfcbd797 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -244,10 +244,11 @@ static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
- 	void __user *safe_ptr;
+diff --git a/Documentation/arm64/tagged-pointers.txt b/Documentation/arm64/tagged-pointers.txt
+index a25a99e82bb1..361481283f00 100644
+--- a/Documentation/arm64/tagged-pointers.txt
++++ b/Documentation/arm64/tagged-pointers.txt
+@@ -35,8 +35,9 @@ Using non-zero address tags in any of these locations may result in an
+ error code being returned, a (fatal) signal being raised, or other modes
+ of failure.
  
- 	asm volatile(
--	"	bics	xzr, %1, %2\n"
-+	"	bics	xzr, %3, %2\n"
- 	"	csel	%0, %1, xzr, eq\n"
- 	: "=&r" (safe_ptr)
--	: "r" (ptr), "r" (current_thread_info()->addr_limit)
-+	: "r" (ptr), "r" (current_thread_info()->addr_limit),
-+	  "r" (untagged_addr(ptr))
- 	: "cc");
+-For these reasons, passing non-zero address tags to the kernel via
+-system calls is forbidden, and using a non-zero address tag for sp is
++Some initial work for supporting non-zero address tags passed to the
++kernel via system calls has been done, but the kernel doesn't provide
++any guarantees at this point. Using a non-zero address tag for sp is
+ strongly discouraged.
  
- 	csdb();
-
+ Programs maintaining a frame pointer and frame records that use non-zero
 -- 
-Catalin
+2.17.0.484.g0c8726318c-goog
