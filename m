@@ -1,68 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753275AbeDRBas (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 21:30:48 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42015 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752757AbeDRBaq (ORCPT
+        id S1753454AbeDRBvc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 21:51:32 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36301 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752800AbeDRBva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 21:30:46 -0400
-X-Google-Smtp-Source: AIpwx48gUYfAKDJ71nzrz4D+jCTskCKhBD6M/uU636jBK2TVP3K0XyI7TgCnimfZXcZ6b0qIYpLvTg==
-Date: Tue, 17 Apr 2018 19:30:40 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Matan Barak <matanb@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: Re: [PATCH v2] infiniband: mlx5: fix build errors when
- INFINIBAND_USER_ACCESS=m
-Message-ID: <20180418013040.GA9616@ziepe.ca>
-References: <aa0dd9f7-3475-c2b3-8d5c-032a7ad72fe9@infradead.org>
+        Tue, 17 Apr 2018 21:51:30 -0400
+X-Google-Smtp-Source: AIpwx49x5OaOleDLa2bg7l38JPer69yl8rtyv2ewspXpDrgc+nsZDl4towo5+bThaXMUGP1LgfBNlExtCJv1VaxIBCU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aa0dd9f7-3475-c2b3-8d5c-032a7ad72fe9@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180417220947.vyq4dd3ah2mvwgjf@madcap2.tricolour.ca>
+References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
+ <CAHC9VhQzt4-f5zYkh18NWcp0HALXNR3iB+jeGOPkxdZZx8SdLQ@mail.gmail.com>
+ <CAHC9VhTJN0bR73ZUrPY8=wSHBYdrszQXaxBNUfxweuMDGevgcA@mail.gmail.com> <20180417220947.vyq4dd3ah2mvwgjf@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 17 Apr 2018 21:51:27 -0400
+Message-ID: <CAHC9VhQZdSeD7AfpLzk683Z9SPMezs5Xo_a+WJY-FPVqpWasQg@mail.gmail.com>
+Subject: Re: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 06:51:50PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix build errors when INFINIBAND_USER_ACCESS=m and MLX5_INFINIBAND=y.
-> The build error occurs when the mlx5 driver code attempts to use
-> USER_ACCESS interfaces, which are built as a loadable module.
-> 
-> Fixes these build errors:
-> 
-> drivers/infiniband/hw/mlx5/main.o: In function `populate_specs_root':
-> ../drivers/infiniband/hw/mlx5/main.c:4982: undefined reference to `uverbs_default_get_objects'
-> ../drivers/infiniband/hw/mlx5/main.c:4994: undefined reference to `uverbs_alloc_spec_tree'
-> drivers/infiniband/hw/mlx5/main.o: In function `depopulate_specs_root':
-> ../drivers/infiniband/hw/mlx5/main.c:5001: undefined reference to `uverbs_free_spec_tree'
-> 
-> Build-tested with multiple config combinations.
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Matan Barak <matanb@mellanox.com>
-> Cc: Jason Gunthorpe <jgg@mellanox.com>
-> Cc: Leon Romanovsky <leonro@mellanox.com>
-> Cc: Doug Ledford <dledford@redhat.com>
-> Cc: linux-rdma@vger.kernel.org
-> Cc: stable@vger.kernel.org # reported against 4.16
-> ---
-> v2: allow building mxl5 even when INFINIBAND_USER_ACCESS is disabled.
-> 
->  drivers/infiniband/hw/mlx5/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
+On Tue, Apr 17, 2018 at 6:09 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-04-17 17:59, Paul Moore wrote:
+>> On Wed, Apr 11, 2018 at 5:08 PM, Paul Moore <paul@paul-moore.com> wrote:
+>> > On Mon, Apr 9, 2018 at 7:34 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+>> >> There were two formats of the audit MAC_STATUS record, one of which was more
+>> >> standard than the other.  One listed enforcing status changes and the
+>> >> other listed enabled status changes with a non-standard label.  In
+>> >> addition, the record was missing information about which LSM was
+>> >> responsible and the operation's completion status.  While this record is
+>> >> only issued on success, the parser expects the res= field to be present.
+>> >>
+>> >> old enforcing/permissive:
+>> >> type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
+>> >> old enable/disable:
+>> >> type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
+>> >>
+>> >> List both sets of status and old values and add the lsm= field and the
+>> >> res= field.
+>> >>
+>> >> Here is the new format:
+>> >> type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
+>> >>
+>> >> This record already accompanied a SYSCALL record.
+>> >>
+>> >> See: https://github.com/linux-audit/audit-kernel/issues/46
+>> >> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>> >> ---
+>> >>  security/selinux/selinuxfs.c | 11 +++++++----
+>> >>  1 file changed, 7 insertions(+), 4 deletions(-)
+>> >>
+>> >> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+>> >> index 00eed84..00b21b2 100644
+>> >> --- a/security/selinux/selinuxfs.c
+>> >> +++ b/security/selinux/selinuxfs.c
+>> >> @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+>> >>                 if (length)
+>> >>                         goto out;
+>> >>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+>> >> -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
+>> >> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+>> >> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+>> >>                         new_value, selinux_enforcing,
+>> >>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>> >> -                       audit_get_sessionid(current));
+>> >> +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
+>> >
+>> > This looks fine.
+>> >
+>> >>                 selinux_enforcing = new_value;
+>> >>                 if (selinux_enforcing)
+>> >>                         avc_ss_reset(0);
+>> >> @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
+>> >>                 if (length)
+>> >>                         goto out;
+>> >>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
+>> >> -                       "selinux=0 auid=%u ses=%u",
+>> >> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
+>> >> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
+>> >> +                       selinux_enforcing, selinux_enforcing,
+>> >>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
+>> >> -                       audit_get_sessionid(current));
+>> >> +                       audit_get_sessionid(current), 0, 1);
+>> >
+>> > It needs to be said again that I'm opposed to changes like this:
+>> > inserting new fields, removing fields, or otherwise changing the
+>> > format in ways that aren't strictly the addition of new fields to the
+>> > end of a record is a Bad Thing.  However, there are exceptions (there
+>> > are *always* exceptions), and this seems like a reasonable change that
+>> > shouldn't negatively affect anyone.
+>> >
+>> > I'll merge this once the merge window comes to a close (we are going
+>> > to need to base selinux/next on v4.17-rc1).
+>>
+>> Merged into selinux/next, although I should mention that there were
+>> some actual code changes because of the SELinux state consolidation
+>> patches that went into v4.17.  The changes were small but please take
+>> a look and make sure everything still looks okay to you.
+>
+> Ok, that was a bit disruptive, but looks ok to me.
 
-I added a
+Yes, it was a pretty big change, but it sets the stage for a few
+things we are trying to do with SELinux.
 
-Fixes: 8c84660bb437 ("IB/mlx5: Initialize the parsing tree root without the help of uverbs")
+Regardless, thanks for giving the merge a quick look.
 
-Applied to for-rc thanks
-
-Jason
+-- 
+paul moore
+www.paul-moore.com
