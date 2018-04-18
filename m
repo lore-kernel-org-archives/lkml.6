@@ -1,61 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeDRHHL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:07:11 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36519 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752022AbeDRHHJ (ORCPT
+        id S1752999AbeDRHHd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:07:33 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:34528 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752707AbeDRHHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:07:09 -0400
-Date: Wed, 18 Apr 2018 09:07:04 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: Alexander Popov <alex.popov@linux.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sil2review@lists.osadl.org,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH 1/1] i2c: dev: check i2c_msg len before memdup_user() to
- prevent ZERO_SIZE_PTR deref
-Message-ID: <20180418070704.35zj5chpdkirnmdt@pengutronix.de>
-References: <1524010605-21552-1-git-send-email-alex.popov@linux.com>
+        Wed, 18 Apr 2018 03:07:30 -0400
+X-Google-Smtp-Source: AIpwx4/LvpxVmQ5jL9WPGr7F3krugT/85jkhkgGFvXjjiR2WfaVzB+9HOC874IQuJHNSK8fekRAGGA==
+From: Sven Eckelmann <sven.eckelmann@openmesh.com>
+To: Sricharan R <sricharan@codeaurora.org>
+Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
+Subject: Re: [v5,05/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
+Date: Wed, 18 Apr 2018 09:07:27 +0200
+Message-ID: <2284833.pBtR1QS54F@bentobox>
+User-Agent: KMail/5.2.3 (Linux/4.14.0-0.bpo.3-amd64; KDE/5.28.0; x86_64; ; )
+In-Reply-To: <2641190.FRMBLJWkCS@bentobox>
+References: <1521800336-19266-6-git-send-email-sricharan@codeaurora.org> <2641190.FRMBLJWkCS@bentobox>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1524010605-21552-1-git-send-email-alex.popov@linux.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; boundary="nextPart1974979.3aonjUcCjS"; micalg="pgp-sha512"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+--nextPart1974979.3aonjUcCjS
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Apr 18, 2018 at 03:16:45AM +0300, Alexander Popov wrote:
-> Currently i2cdev_ioctl_rdwr() doesn't check i2c_msg len against zero
-> before calling memdup_user(). If this len is zero memdup_user() returns
-> ZERO_SIZE_PTR, which is later considered as valid since
-> IS_ERR(ZERO_SIZE_PTR) is false. That causes ZERO_SIZE_PTR deref oops.
+On Mittwoch, 18. April 2018 08:59:46 CEST Sven Eckelmann wrote:
+[...]
+> I would not know how to disable QSEE on these boards and thus would assume 
+> that it should be part of this dtsi.
 
-You're saying that
 
-	memdup_user(ptr, 0)
+Just did some reviews of the reserved-memory regions in other QCA devices and 
+it looks like this tz and smem are often directly added to the SoC dtsi. So I 
+will prepare a similar change for qcom-ipq4019.dtsi and this would then solve 
+it for AP-DK01/04/07 and no changes in the board-family specific dtsi would be 
+necessary.
 
-reads from *ptr? I'd say this is a bug in memdup_user, not its user.
+But maybe someone has an objection because tz and smem can actually be 
+disabled in a sane way on these SoCs and thus it would be better to have these 
+regions in the board specific dts(i) files. We will see...
 
-If however the problem only happens later in
+Kind regards,
+	Sven
+--nextPart1974979.3aonjUcCjS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-	if (msgs[i].flags & I2C_M_RECV_LEN) {
-		if (!(msgs[i].flags & I2C_M_RD) || msgs[i].buf[0] < 1 || ...)
+-----BEGIN PGP SIGNATURE-----
 
-Your commit log is wrong (and I think the patch, too).
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlrW7q8ACgkQXYcKB8Em
+e0Z3kQ//Z5t4uSTLYRLvGFbaVhbCRSNH2o9qKGb2R5DHu/yXKVDqVsFMVsneGOsH
+WqsgXsxaDG27FbfscsLLcCcvALnrsvJliKjI0FafdU3cF5TUQJZqV+A631qW1JQS
+ipUGM01wA3Wn/xluWa6hFRllzUdNh7FQXb6YQ/o5t1KiQvFFHJaRArBsbq/BnFLR
+PGCIi4TvJsT3U1QgpAKXmGqay2bHwQA1sv7wIQ+eCBLiSCt9aKPlSmyA20UeX6ZG
+VpVsvK2xrIH0ClXU8soQPPtAxwWgazEbpSLH19z2oI/sG3TH1gjEC6NeA97pLLVi
+HkDH1pADUvdEPx0X8qWfdjkyw5OhQYcGS9R1snMJIK//ebofDUU8DbLnekSZjvQd
+efLwCdSONm8x1nFub/1/Sl1evu4/HsjF3D33qNdErakzVxjPmqku5Jt9XcNPksC/
+PAPTVLMA2ZS0ecoEzgia1JDOeDBLTqdFhqYvXA3cU/FOMjk47wcJHus4glvhhePV
+1zkoJaUETgT0lWoR1Qs0eizOYdSqVGvj5EAFHTVLpvEKbvJ2FwMfNcdVpH9vtPbC
+81rPtmFrGHXCSHbLMVnIfmxHw57jmswRRxORl8ulayg6uY2Wkaj2P09xBRSWpAV8
+yp9Bz5sSAX00Nc3eR4CIfzRociDoshuClJ8dcI81Xhe14MC5E2c=
+=nY8x
+-----END PGP SIGNATURE-----
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+--nextPart1974979.3aonjUcCjS--
