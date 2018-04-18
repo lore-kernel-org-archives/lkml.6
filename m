@@ -1,60 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752392AbeDRQSs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 12:18:48 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:35810 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751232AbeDRQSr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 12:18:47 -0400
-From: Colin King <colin.king@canonical.com>
-To: Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        linux-spi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] spi: pxa2xx: make function pxa2xx_spi_transfer_one static
-Date: Wed, 18 Apr 2018 17:18:42 +0100
-Message-Id: <20180418161842.19846-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752646AbeDRQUO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 12:20:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60710 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751232AbeDRQUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 12:20:13 -0400
+Date: Wed, 18 Apr 2018 19:20:10 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>, robh@kernel.org,
+        aik@ozlabs.ru, jasowang@redhat.com, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, joe@perches.com,
+        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net
+Subject: Re: [RFC] virtio: Use DMA MAP API for devices without an IOMMU
+Message-ID: <20180418191722-mutt-send-email-mst@kernel.org>
+References: <3e1b113b-79ca-b700-5be9-10c66d74aabe@linux.vnet.ibm.com>
+ <20180405175326-mutt-send-email-mst@kernel.org>
+ <1522940983.21446.205.camel@kernel.crashing.org>
+ <20180405213042-mutt-send-email-mst@kernel.org>
+ <1522963113.21446.211.camel@kernel.crashing.org>
+ <70cb433f-a8f7-5199-3c96-a760c7624804@linux.vnet.ibm.com>
+ <20180406071634.GA31108@infradead.org>
+ <1523003838.21446.238.camel@kernel.crashing.org>
+ <20180415121157.GA17726@infradead.org>
+ <002f153f-452d-f64b-4fc7-7f3383b39162@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <002f153f-452d-f64b-4fc7-7f3383b39162@linux.vnet.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Apr 18, 2018 at 08:47:10AM +0530, Anshuman Khandual wrote:
+> On 04/15/2018 05:41 PM, Christoph Hellwig wrote:
+> > On Fri, Apr 06, 2018 at 06:37:18PM +1000, Benjamin Herrenschmidt wrote:
+> >>>> implemented as DMA API which the virtio core understands. There is no
+> >>>> need for an IOMMU to be involved for the device representation in this
+> >>>> case IMHO.
+> >>>
+> >>> This whole virtio translation issue is a mess.  I think we need to
+> >>> switch it to the dma API, and then quirk the legacy case to always
+> >>> use the direct mapping inside the dma API.
+> >>
+> >> Fine with using a dma API always on the Linux side, but we do want to
+> >> special case virtio still at the arch and qemu side to have a "direct
+> >> mapping" mode. Not sure how (special flags on PCI devices) to avoid
+> >> actually going through an emulated IOMMU on the qemu side, because that
+> >> slows things down, esp. with vhost.
+> >>
+> >> IE, we can't I think just treat it the same as a physical device.
+> > 
+> > We should have treated it like a physical device from the start, but
+> > that device has unfortunately sailed.
+> > 
+> > But yes, we'll need a per-device quirk that says 'don't attach an
+> > iommu'.
+> 
+> How about doing it per platform basis as suggested in this RFC through
+> an arch specific callback. Because all the virtio devices in the given
+> platform would require and exercise this option (to avail bounce buffer
+> mechanism for secure guests as an example). So the flag basically is a
+> platform specific one not a device specific one.
 
-The function pxa2xx_spi_transfer_one is local to the source and
-do not need to be in global scope, so make it static.
+That's not the case. A single platform can have a mix of virtio and
+non-virtio devices. Same applies even within virtio, e.g. the balloon
+device always bypasses an iommu.  Further, QEMU supports out of process
+devices some of which might bypass the IOMMU.
 
-Cleans up sparse warning:
-drivers/spi/spi-pxa2xx.c:914:5: warning: symbol 'pxa2xx_spi_transfer_one'
-was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/spi/spi-pxa2xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index c852ea5c28c6..40f1346b8188 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -911,9 +911,9 @@ static bool pxa2xx_spi_can_dma(struct spi_controller *master,
- 	       xfer->len >= chip->dma_burst_size;
- }
- 
--int pxa2xx_spi_transfer_one(struct spi_controller *master,
--			    struct spi_device *spi,
--			    struct spi_transfer *transfer)
-+static int pxa2xx_spi_transfer_one(struct spi_controller *master,
-+				   struct spi_device *spi,
-+				   struct spi_transfer *transfer)
- {
- 	struct driver_data *drv_data = spi_controller_get_devdata(master);
- 	struct spi_message *message = master->cur_msg;
 -- 
-2.17.0
+MST
