@@ -1,250 +1,300 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-909730-1524071768-2-10793358638872055616
+X-Cyrus-Session-Id: sloti22d1t05-909730-1524073394-2-8789698520885484362
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enroca, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524071768; b=JXtALqezt7xfY6o+np6UqLRShfbvxthhVEKjh27L2A15Bd1YeE
-    NYxxCOTrvhnwJbmXG871b6Y6OuVeG7gkr3kwLW4kqN9BmYwSY93/IRZZZZ12H5TK
-    ib/mlsFkPpBoq3bdxHy4r28rKgMbuuKikcq1huWH1ZRaG7Op+8eq9R5tStqbzo8w
-    0m8TDOGrunohiEPH0ZtZT39XUaV3T2+MpzczXWGj1fOZy/xT3fgT71YHuojFtLsn
-    KVsLz/jUllOZokW2Z8wSd0Q561WHjye6huBgUkay6CWB0hzEynaKepF+r1jN8pJV
-    k90oojoBUMGYuVTZvl0FoTK0TJbE3cZh5FWQ==
+    1524073393; b=ucnhBtKc9dRgz0MFTUFeq5XRFa1g+s/DASfeLtabbEWk/agKOw
+    it/oKT+SuAC/Fwt125W8Qzpt2SoZ72ocSM2MN9SBOiRVj10bBUDOZOuT/LQGuFDq
+    +hGiMms80DNn4R6Y4Yvz3zz7j/EIG8vyVlzG3LMesj+0dQ9SYlEwo84e9dr/nm2s
+    ndJhmeSHDnbxyInGNWPO2e2E66MAKAzGGVtKFDrgRCsCKb/B7emGFPmAKpwgN4Zi
+    ob5OD2L6PNvkiPFmF6ynunI5kXm4N2i9C/RlNxmC/hSX14YWt2nNAfexgYZ419Vg
+    rrx53gzvSC60sQfaKNdw3+e/brxzNXnf2egg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1524071768; bh=S+8t9XojZy
-    5R0e7S0DvjarFVZBqEQgLs9VVQFDgdqj0=; b=WjObuZj8XJ/3m9wRQsAtmQ31Ec
-    ZRKIpATPcuhxN/EqoV2D/ZjV6l8J2PbV1r/pthoHRQc/IHDuCMM/B4cZl6Nx5lYG
-    guLxYLr80NClruCgAjz+u/wojciay0jCcdhalFze3oiB+YTwe4Mi1qqXkTkjpa0f
-    td1Qsi0o56jK3f56fN58k585xwvShODh3dKgp9m2UNQ21IAGy/huCkbT6y6nuOY3
-    kLJ56eIgOIQKOGdexoNQccrpax/2ZTAxF/r00QUwJ6FBy9IIbIgfb8/C0r53hHcJ
-    ROdKEx+tQa0HHw8JMRwLsX34zXum/nC4S0zXp9rbJ/0OE1Ha4dVekd0W/XIw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=dE4g8Inx x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524073393;
+    bh=RcMtlKM/teT9DMqDkSY/tj7fwBJk7jac4IH5//dzmD8=; b=PZXEPtkZRV4L
+    7LnVy4rVywdAmVTFPzZv3SZf754UWSltATUUws4kz6wZCnGJLG24mTGpvAZh00ND
+    CUGZ1zSZjDO2I40ysoCbrT7biVVOFirlc/sLjhUP7C0+ImucGZGixY3HIhswFqgT
+    +V2v2QqpIQ7SN46Ar1eVoXUd1PgDrKKMc8pnsYPzqoUw1wDPYHJ/2y2wTW7d2vs5
+    8qhT5jgGIL2yeymFK6IUVvJS3AVU5Y5Xi3/11yMjWxkt9UMpHU58XI+/pG5Snvq2
+    bNkBB7El2Sy//9Rv0CwtZKD333zahhpvCKTZHjK2s8oVRNSjfxW24zq/wRHGRYIi
+    Q+upK82nNA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=talpey.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=talpey.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=dE4g8Inx x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=talpey.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=talpey.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEJNMYVxOTRVjWRLnH2NOHDMTuW/1kJR3DfZIfVu1PbmEvOQLuz5Vw3LZjiS+BUO13MiKghDK5tKx3CgvuAQt+AhxbOv8Q6WKbMdRbJoh69N2VJ/tqtg
-    zkPh/VBe6BFeAp7OTYr9PdVZmZd9DkXkY4wMSRh2LK/+uKD4X4WhhcWCZGEhvKNmuUJnxoq0g7L1APaVzqkwvVydsBM57cIpqYiN/m+i794GPazLmv44w3c3
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=R4fxTKrshSIA:10 a=IYp8n1Yz95QA:10
-    a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10 a=Lf-vpJhqX20A:10
-    a=yMhMjlubAAAA:8 a=CbDCq_QkAAAA:8 a=VwQbUJbxAAAA:8 a=Nhoi9vVKwS4RbA6556UA:9
-    a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfIT1opJisPeDzYoUq2CBcSCaa2GCq31yiyWT9/LuFnNUJ+Mi3d+jqgu1NegX+j9CeBxX0uhAMOmhxPvgkO2V2Ydi7M6rza5XThFJTq+jF3cp3p1SUNvk
+    uy6mNKPTbeDzC5dzGsig/Phe9kNvgZ+AHaBk0DkJS7lJuM9g90y5fqBhykGqgwmUnJybfHv5PHqMBuuxrhV6yApD3EmWef+seNf30395EAkZvbHf/cXOGcrp
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=h6HYFqFZYC0A:10 a=IkcTkHD0fZMA:10
+    a=Kd1tUaAdevIA:10 a=yMhMjlubAAAA:8 a=CbDCq_QkAAAA:8 a=VwQbUJbxAAAA:8
+    a=BOB88Glp3cpl7VA-vX8A:9 a=QEXdDO2ut3YA:10 a=1qrBK16LubpBFNPVNq2M:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752077AbeDRRQF (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 18 Apr 2018 13:16:05 -0400
-Received: from mail-by2nam03on0121.outbound.protection.outlook.com ([104.47.42.121]:22560
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751335AbeDRRQD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 18 Apr 2018 13:16:03 -0400
-From: Long Li <longli@microsoft.com>
-To: Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>,
+        id S1751692AbeDRRmu (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 18 Apr 2018 13:42:50 -0400
+Received: from p3plsmtpa11-05.prod.phx3.secureserver.net ([68.178.252.106]:43368
+        "EHLO p3plsmtpa11-05.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752337AbeDRRmr (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 18 Apr 2018 13:42:47 -0400
+Subject: Re: [Patch v3 2/6] cifs: Allocate validate negotiation request
+ through kmalloc
+To: Long Li <longli@microsoft.com>, Steve French <sfrench@samba.org>,
         "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
         "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-CC: "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [Patch v3 2/6] cifs: Allocate validate negotiation request
- through kmalloc
-Thread-Topic: [Patch v3 2/6] cifs: Allocate validate negotiation request
- through kmalloc
-Thread-Index: AQHT1q0nc3yHaleoh0CJYtibUbzbEqQGZIIAgABfECA=
-Date: Wed, 18 Apr 2018 17:16:00 +0000
-Message-ID: <MWHPR2101MB07298108AA78EBC4B8D10B4BCEB60@MWHPR2101MB0729.namprd21.prod.outlook.com>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>
 References: <20180418003358.25098-1-longli@linuxonhyperv.com>
  <d7e569b6-d268-b8c1-e91d-d6dc0e7cdfc2@talpey.com>
-In-Reply-To: <d7e569b6-d268-b8c1-e91d-d6dc0e7cdfc2@talpey.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [2001:4898:80e8:7::2e0]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2101MB0874;7:w7WSEh4RJW19ZrSKuQ74Ea/+TaWXgxXXVnRUQU287D4NcUAH7f1220rYjCH4I+fxaDnhkH1yzdbw+GkNFiQkrsOIFpHIRQb2PsDwsqqoT0vIEGSF1zZZYS5JyOGrQ7YEKeZlxvUjhWqBxCM8Kg9QiGW3A0HLZz1XOaWBvi+z8Jq/R4JQRyB6k4fJAOwHzlQMEzlmmnDHMnBR4vBDW6RhZXk2+LqWMtmE++WEYEQC/p/7ui0YLgFTx/SV+ZczbY3O;20:Oyy4mMK717rK/G2D2uuvKz/cKKYnA2TPHJmUprd5vsunn/Nk+NKXWpjDeL7mMMXB9+uFr0kC2vxBcDDyzBr17tjZeeX03TZpaVcVUmUh7to0JQioCp4ZYminsG5a1fHlzVC735zrHQgVWZYJ7Q530O7/hLqMrDrrkOqBiATXYug=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7193020);SRVR:MWHPR2101MB0874;
-x-ms-traffictypediagnostic: MWHPR2101MB0874:
-authentication-results: outbound.protection.outlook.com; spf=skipped
- (originating message); dkim=none (message not signed) header.d=none;
- dmarc=none action=none header.from=microsoft.com;
-x-microsoft-antispam-prvs: <MWHPR2101MB0874B1CE46BFA9D4C545D2BECEB60@MWHPR2101MB0874.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(158342451672863)(89211679590171)(192374486261705)(9452136761055);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231232)(944501368)(52105095)(3002001)(6055026)(61426038)(61427038)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:MWHPR2101MB0874;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2101MB0874;
-x-forefront-prvs: 06469BCC91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(39860400002)(366004)(346002)(376002)(69234005)(81166006)(2201001)(15650500001)(316002)(86612001)(5250100002)(2501003)(6116002)(2906002)(8676002)(59450400001)(3280700002)(5660300001)(8936002)(6246003)(3660700001)(86362001)(22452003)(4326008)(7696005)(6436002)(9686003)(14454004)(76176011)(53936002)(55016002)(11346002)(446003)(7736002)(305945005)(53546011)(476003)(6506007)(102836004)(25786009)(10290500003)(478600001)(186003)(99286004)(229853002)(110136005)(10090500001)(33656002)(74316002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2101MB0874;H:MWHPR2101MB0729.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
-x-microsoft-antispam-message-info: dYGW48GbxslwVVaPN+7expMogoWfsAGjam+dD9+l6e+LTsscLSe5rCIbhvkYDh5cUsVGf6GspBPEOkYyx6Xzhd3QK2UD6uDCTTf3D270GyK1bnxgEFbJVjYxr2fqK1q9TDecFhxm8dnC7LUsTiaZmNRLPhEjP/K2w4cpxxn6cm0eSgVRSuUho2GFScsf9BTN
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <MWHPR2101MB07298108AA78EBC4B8D10B4BCEB60@MWHPR2101MB0729.namprd21.prod.outlook.com>
+From: Tom Talpey <tom@talpey.com>
+Message-ID: <aabd22d8-3644-6987-1d51-5592f9e04ced@talpey.com>
+Date: Wed, 18 Apr 2018 13:42:44 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: d09b9427-0bba-41f9-5dee-08d5a5500edd
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d09b9427-0bba-41f9-5dee-08d5a5500edd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2018 17:16:00.7679
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2101MB0874
+In-Reply-To: <MWHPR2101MB07298108AA78EBC4B8D10B4BCEB60@MWHPR2101MB0729.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfPjs3boyOoqXtBLrK6fF3hWYorRfqSwJle7iwUzxVJZqdvBa4P2j1848Pig2XprAkVBV04Zerqg43KFyIeBsPra+E24saMrwSUOgGOfk9MNCa/hxeqWq
+ vRiGLGhgbnD6w3KhcRqGw225g6Jnklyd/GRplqyCpNFnFK7aCeESqRcpaS3j2CxWULl4O5Kwl9FM1mkzlNVIQBDcnLV/V09UapwpEM3WtPnTA+bqCK15NBvj
+ xeIsGmQzSUvaPSx4tbjJv8qeRO0fTRtkVpTXewHwF4oUKsRu7ikt8L55zkwSdcUgQ32MF7uvwlog9F9HfmpMVF1Wm+D8P9LkQYs+Nd5xYh1woN8mPMIwun3J
+ 1zRFJp9+42g8fpErzsNNn/4wTzdmTOPB5lrLjwniL19XKEJ7ja0=
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-PiBTdWJqZWN0OiBSZTogW1BhdGNoIHYzIDIvNl0gY2lmczogQWxsb2NhdGUgdmFsaWRhdGUgbmVn
-b3RpYXRpb24gcmVxdWVzdCB0aHJvdWdoDQo+IGttYWxsb2MNCj4gDQo+IFR3byBjb21tZW50cy4N
-Cj4gDQo+IE9uIDQvMTcvMjAxOCA4OjMzIFBNLCBMb25nIExpIHdyb3RlOg0KPiA+IEZyb206IExv
-bmcgTGkgPGxvbmdsaUBtaWNyb3NvZnQuY29tPg0KPiA+DQo+ID4gVGhlIGRhdGEgYnVmZmVyIGFs
-bG9jYXRlZCBvbiB0aGUgc3RhY2sgY2FuJ3QgYmUgRE1BJ2VkLCBhbmQgaGVuY2UNCj4gPiBjYW4n
-dCBzZW5kIHRocm91Z2ggUkRNQSB2aWEgU01CIERpcmVjdC4NCj4gDQo+IFRoaXMgY29tbWVudCBp
-cyBjb25mdXNpbmcuIEFueSByZWdpc3RlcmVkIG1lbW9yeSBjYW4gYmUgRE1BJ2QsIG5lZWQgdG8N
-Cj4gc3RhdGUgdGhlIHJlYXNvbiBmb3IgdGhlIGNob2ljZSBoZXJlIG1vcmUgY2xlYXJseS4NCj4g
-DQo+ID4NCj4gPiBGaXggdGhpcyBieSBhbGxvY2F0aW5nIHRoZSByZXF1ZXN0IG9uIHRoZSBoZWFw
-IGluIHNtYjNfdmFsaWRhdGVfbmVnb3RpYXRlLg0KPiA+DQo+ID4gQ2hhbmdlcyBpbiB2MjoNCj4g
-PiBSZW1vdmVkIGR1cGxpY2F0ZWQgY29kZSBvbiBmcmVlaW5nIGJ1ZmZlcnMgb24gZnVuY3Rpb24g
-ZXhpdC4NCj4gPiAoVGhhbmtzIHRvIFBhcmF2IFBhbmRpdCA8cGFyYXZAbWVsbGFub3guY29tPikg
-Rml4ZWQgdHlwbyBpbiB0aGUgcGF0Y2gNCj4gPiB0aXRsZS4NCj4gPg0KPiA+IENoYW5nZXMgaW4g
-djM6DQo+ID4gQWRkZWQgIkZpeGVzIiB0byB0aGUgcGF0Y2guDQo+ID4gQ2hhbmdlZCBzaXplb2Yo
-KSB0byB1c2UgKnBvaW50ZXIgaW4gcGxhY2Ugb2Ygc3RydWN0Lg0KPiA+DQo+ID4gRml4ZXM6IGZm
-MWMwMzhhZGRjNCAoIkNoZWNrIFNNQjMgZGlhbGVjdHMgYWdhaW5zdCBkb3duZ3JhZGUgYXR0YWNr
-cyIpDQo+ID4gU2lnbmVkLW9mZi1ieTogTG9uZyBMaSA8bG9uZ2xpQG1pY3Jvc29mdC5jb20+DQo+
-ID4gQ2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiAtLS0NCj4gPiAgIGZzL2NpZnMvc21i
-MnBkdS5jIHwgNTkgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0N
-Cj4gLS0tLS0tLS0tLS0NCj4gPiAgIDEgZmlsZSBjaGFuZ2VkLCAzMiBpbnNlcnRpb25zKCspLCAy
-NyBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9mcy9jaWZzL3NtYjJwZHUuYyBi
-L2ZzL2NpZnMvc21iMnBkdS5jIGluZGV4DQo+ID4gMGYwNDRjNC4uNTU4MmEwMiAxMDA2NDQNCj4g
-PiAtLS0gYS9mcy9jaWZzL3NtYjJwZHUuYw0KPiA+ICsrKyBiL2ZzL2NpZnMvc21iMnBkdS5jDQo+
-ID4gQEAgLTcyOSw4ICs3MjksOCBAQCBTTUIyX25lZ290aWF0ZShjb25zdCB1bnNpZ25lZCBpbnQg
-eGlkLCBzdHJ1Y3QNCj4gPiBjaWZzX3NlcyAqc2VzKQ0KPiA+DQo+ID4gICBpbnQgc21iM192YWxp
-ZGF0ZV9uZWdvdGlhdGUoY29uc3QgdW5zaWduZWQgaW50IHhpZCwgc3RydWN0IGNpZnNfdGNvbiAq
-dGNvbikNCj4gPiAgIHsNCj4gPiAtCWludCByYyA9IDA7DQo+ID4gLQlzdHJ1Y3QgdmFsaWRhdGVf
-bmVnb3RpYXRlX2luZm9fcmVxIHZuZWdfaW5idWY7DQo+ID4gKwlpbnQgcmV0LCByYyA9IC1FSU87
-DQo+ID4gKwlzdHJ1Y3QgdmFsaWRhdGVfbmVnb3RpYXRlX2luZm9fcmVxICpwbmVnX2luYnVmOw0K
-PiA+ICAgCXN0cnVjdCB2YWxpZGF0ZV9uZWdvdGlhdGVfaW5mb19yc3AgKnBuZWdfcnNwID0gTlVM
-TDsNCj4gPiAgIAl1MzIgcnNwbGVuOw0KPiA+ICAgCXUzMiBpbmJ1ZmxlbjsgLyogbWF4IG9mIDQg
-ZGlhbGVjdHMgKi8gQEAgLTc0MSw2ICs3NDEsOSBAQCBpbnQNCj4gPiBzbWIzX3ZhbGlkYXRlX25l
-Z290aWF0ZShjb25zdCB1bnNpZ25lZCBpbnQgeGlkLCBzdHJ1Y3QgY2lmc190Y29uICp0Y29uKQ0K
-PiA+ICAgCWlmICh0Y29uLT5zZXMtPnNlcnZlci0+cmRtYSkNCj4gPiAgIAkJcmV0dXJuIDA7DQo+
-ID4gICAjZW5kaWYNCj4gPiArCXBuZWdfaW5idWYgPSBrbWFsbG9jKHNpemVvZigqcG5lZ19pbmJ1
-ZiksIEdGUF9LRVJORUwpOw0KPiA+ICsJaWYgKCFwbmVnX2luYnVmKQ0KPiA+ICsJCXJldHVybiAt
-RU5PTUVNOw0KPiANCj4gV2h5IGlzIHRoaXMgYSBub25ibG9ja2luZyBhbGxvY2F0aW9uPyBJdCB3
-b3VsZCBzZWVtIG1vcmUgcm9idXN0IHRvIHVzZQ0KPiBHRlBfTk9GUyBoZXJlLg0KDQpJIGFncmVl
-IGl0IG1ha2VzIHNlbnNlIHRvIHVzZSBHRlBfTk9GUy4gDQoNClRoZSBjaG9pY2UgaGVyZSBpcyBt
-YWRlIGNvbnNpc3RlbnQgd2l0aCBhbGwgdGhlIHJlc3QgQ0lGUyBjb2RlIGFsbG9jYXRpbmcgcHJv
-dG9jb2wgcmVxdWVzdCBidWZmZXJzLiBNYXliZSB3ZSBzaG91bGQgZG8gYW5vdGhlciBwYXRjaCB0
-byBjbGVhbnVwIGFsbCB0aG9zZSBjb2RlLg0KDQo+IA0KPiBUb20uDQo+IA0KPiA+DQo+ID4gICAJ
-LyogSW4gU01CMy4xMSBwcmVhdXRoIGludGVncml0eSBzdXBlcnNlZGVzIHZhbGlkYXRlIG5lZ290
-aWF0ZSAqLw0KPiA+ICAgCWlmICh0Y29uLT5zZXMtPnNlcnZlci0+ZGlhbGVjdCA9PSBTTUIzMTFf
-UFJPVF9JRCkgQEAgLTc2NCw2Mw0KPiA+ICs3NjcsNjMgQEAgaW50IHNtYjNfdmFsaWRhdGVfbmVn
-b3RpYXRlKGNvbnN0IHVuc2lnbmVkIGludCB4aWQsIHN0cnVjdA0KPiBjaWZzX3Rjb24gKnRjb24p
-DQo+ID4gICAJaWYgKHRjb24tPnNlcy0+c2Vzc2lvbl9mbGFncyAmIFNNQjJfU0VTU0lPTl9GTEFH
-X0lTX05VTEwpDQo+ID4gICAJCWNpZnNfZGJnKFZGUywgIlVuZXhwZWN0ZWQgbnVsbCB1c2VyIChh
-bm9ueW1vdXMpIGF1dGggZmxhZw0KPiBzZW50IGJ5DQo+ID4gc2VydmVyXG4iKTsNCj4gPg0KPiA+
-IC0Jdm5lZ19pbmJ1Zi5DYXBhYmlsaXRpZXMgPQ0KPiA+ICsJcG5lZ19pbmJ1Zi0+Q2FwYWJpbGl0
-aWVzID0NCj4gPiAgIAkJCWNwdV90b19sZTMyKHRjb24tPnNlcy0+c2VydmVyLT52YWxzLQ0KPiA+
-cmVxX2NhcGFiaWxpdGllcyk7DQo+ID4gLQltZW1jcHkodm5lZ19pbmJ1Zi5HdWlkLCB0Y29uLT5z
-ZXMtPnNlcnZlci0+Y2xpZW50X2d1aWQsDQo+ID4gKwltZW1jcHkocG5lZ19pbmJ1Zi0+R3VpZCwg
-dGNvbi0+c2VzLT5zZXJ2ZXItPmNsaWVudF9ndWlkLA0KPiA+ICAgCQkJCQlTTUIyX0NMSUVOVF9H
-VUlEX1NJWkUpOw0KPiA+DQo+ID4gICAJaWYgKHRjb24tPnNlcy0+c2lnbikNCj4gPiAtCQl2bmVn
-X2luYnVmLlNlY3VyaXR5TW9kZSA9DQo+ID4gKwkJcG5lZ19pbmJ1Zi0+U2VjdXJpdHlNb2RlID0N
-Cj4gPg0KPiAJY3B1X3RvX2xlMTYoU01CMl9ORUdPVElBVEVfU0lHTklOR19SRVFVSVJFRCk7DQo+
-ID4gICAJZWxzZSBpZiAoZ2xvYmFsX3NlY2ZsYWdzICYgQ0lGU1NFQ19NQVlfU0lHTikNCj4gPiAt
-CQl2bmVnX2luYnVmLlNlY3VyaXR5TW9kZSA9DQo+ID4gKwkJcG5lZ19pbmJ1Zi0+U2VjdXJpdHlN
-b2RlID0NCj4gPg0KPiAJY3B1X3RvX2xlMTYoU01CMl9ORUdPVElBVEVfU0lHTklOR19FTkFCTEVE
-KTsNCj4gPiAgIAllbHNlDQo+ID4gLQkJdm5lZ19pbmJ1Zi5TZWN1cml0eU1vZGUgPSAwOw0KPiA+
-ICsJCXBuZWdfaW5idWYtPlNlY3VyaXR5TW9kZSA9IDA7DQo+ID4NCj4gPg0KPiA+ICAgCWlmIChz
-dHJjbXAodGNvbi0+c2VzLT5zZXJ2ZXItPnZhbHMtPnZlcnNpb25fc3RyaW5nLA0KPiA+ICAgCQlT
-TUIzQU5ZX1ZFUlNJT05fU1RSSU5HKSA9PSAwKSB7DQo+ID4gLQkJdm5lZ19pbmJ1Zi5EaWFsZWN0
-c1swXSA9IGNwdV90b19sZTE2KFNNQjMwX1BST1RfSUQpOw0KPiA+IC0JCXZuZWdfaW5idWYuRGlh
-bGVjdHNbMV0gPSBjcHVfdG9fbGUxNihTTUIzMDJfUFJPVF9JRCk7DQo+ID4gLQkJdm5lZ19pbmJ1
-Zi5EaWFsZWN0Q291bnQgPSBjcHVfdG9fbGUxNigyKTsNCj4gPiArCQlwbmVnX2luYnVmLT5EaWFs
-ZWN0c1swXSA9IGNwdV90b19sZTE2KFNNQjMwX1BST1RfSUQpOw0KPiA+ICsJCXBuZWdfaW5idWYt
-PkRpYWxlY3RzWzFdID0gY3B1X3RvX2xlMTYoU01CMzAyX1BST1RfSUQpOw0KPiA+ICsJCXBuZWdf
-aW5idWYtPkRpYWxlY3RDb3VudCA9IGNwdV90b19sZTE2KDIpOw0KPiA+ICAgCQkvKiBzdHJ1Y3R1
-cmUgaXMgYmlnIGVub3VnaCBmb3IgMyBkaWFsZWN0cywgc2VuZGluZyBvbmx5IDIgKi8NCj4gPiAg
-IAkJaW5idWZsZW4gPSBzaXplb2Yoc3RydWN0IHZhbGlkYXRlX25lZ290aWF0ZV9pbmZvX3JlcSkg
-LSAyOw0KPiA+ICAgCX0gZWxzZSBpZiAoc3RyY21wKHRjb24tPnNlcy0+c2VydmVyLT52YWxzLT52
-ZXJzaW9uX3N0cmluZywNCj4gPiAgIAkJU01CREVGQVVMVF9WRVJTSU9OX1NUUklORykgPT0gMCkg
-ew0KPiA+IC0JCXZuZWdfaW5idWYuRGlhbGVjdHNbMF0gPSBjcHVfdG9fbGUxNihTTUIyMV9QUk9U
-X0lEKTsNCj4gPiAtCQl2bmVnX2luYnVmLkRpYWxlY3RzWzFdID0gY3B1X3RvX2xlMTYoU01CMzBf
-UFJPVF9JRCk7DQo+ID4gLQkJdm5lZ19pbmJ1Zi5EaWFsZWN0c1syXSA9IGNwdV90b19sZTE2KFNN
-QjMwMl9QUk9UX0lEKTsNCj4gPiAtCQl2bmVnX2luYnVmLkRpYWxlY3RDb3VudCA9IGNwdV90b19s
-ZTE2KDMpOw0KPiA+ICsJCXBuZWdfaW5idWYtPkRpYWxlY3RzWzBdID0gY3B1X3RvX2xlMTYoU01C
-MjFfUFJPVF9JRCk7DQo+ID4gKwkJcG5lZ19pbmJ1Zi0+RGlhbGVjdHNbMV0gPSBjcHVfdG9fbGUx
-NihTTUIzMF9QUk9UX0lEKTsNCj4gPiArCQlwbmVnX2luYnVmLT5EaWFsZWN0c1syXSA9IGNwdV90
-b19sZTE2KFNNQjMwMl9QUk9UX0lEKTsNCj4gPiArCQlwbmVnX2luYnVmLT5EaWFsZWN0Q291bnQg
-PSBjcHVfdG9fbGUxNigzKTsNCj4gPiAgIAkJLyogc3RydWN0dXJlIGlzIGJpZyBlbm91Z2ggZm9y
-IDMgZGlhbGVjdHMgKi8NCj4gPiAgIAkJaW5idWZsZW4gPSBzaXplb2Yoc3RydWN0IHZhbGlkYXRl
-X25lZ290aWF0ZV9pbmZvX3JlcSk7DQo+ID4gICAJfSBlbHNlIHsNCj4gPiAgIAkJLyogb3RoZXJ3
-aXNlIHNwZWNpZmljIGRpYWxlY3Qgd2FzIHJlcXVlc3RlZCAqLw0KPiA+IC0JCXZuZWdfaW5idWYu
-RGlhbGVjdHNbMF0gPQ0KPiA+ICsJCXBuZWdfaW5idWYtPkRpYWxlY3RzWzBdID0NCj4gPiAgIAkJ
-CWNwdV90b19sZTE2KHRjb24tPnNlcy0+c2VydmVyLT52YWxzLT5wcm90b2NvbF9pZCk7DQo+ID4g
-LQkJdm5lZ19pbmJ1Zi5EaWFsZWN0Q291bnQgPSBjcHVfdG9fbGUxNigxKTsNCj4gPiArCQlwbmVn
-X2luYnVmLT5EaWFsZWN0Q291bnQgPSBjcHVfdG9fbGUxNigxKTsNCj4gPiAgIAkJLyogc3RydWN0
-dXJlIGlzIGJpZyBlbm91Z2ggZm9yIDMgZGlhbGVjdHMsIHNlbmRpbmcgb25seSAxICovDQo+ID4g
-ICAJCWluYnVmbGVuID0gc2l6ZW9mKHN0cnVjdCB2YWxpZGF0ZV9uZWdvdGlhdGVfaW5mb19yZXEp
-IC0gNDsNCj4gPiAgIAl9DQo+ID4NCj4gPiAtCXJjID0gU01CMl9pb2N0bCh4aWQsIHRjb24sIE5P
-X0ZJTEVfSUQsIE5PX0ZJTEVfSUQsDQo+ID4gKwlyZXQgPSBTTUIyX2lvY3RsKHhpZCwgdGNvbiwg
-Tk9fRklMRV9JRCwgTk9fRklMRV9JRCwNCj4gPiAgIAkJRlNDVExfVkFMSURBVEVfTkVHT1RJQVRF
-X0lORk8sIHRydWUgLyogaXNfZnNjdGwgKi8sDQo+ID4gLQkJKGNoYXIgKikmdm5lZ19pbmJ1Ziwg
-c2l6ZW9mKHN0cnVjdA0KPiB2YWxpZGF0ZV9uZWdvdGlhdGVfaW5mb19yZXEpLA0KPiA+ICsJCShj
-aGFyICopcG5lZ19pbmJ1Ziwgc2l6ZW9mKCpwbmVnX2luYnVmKSwNCj4gPiAgIAkJKGNoYXIgKiop
-JnBuZWdfcnNwLCAmcnNwbGVuKTsNCj4gPg0KPiA+IC0JaWYgKHJjICE9IDApIHsNCj4gPiAtCQlj
-aWZzX2RiZyhWRlMsICJ2YWxpZGF0ZSBwcm90b2NvbCBuZWdvdGlhdGUgZmFpbGVkOiAlZFxuIiwg
-cmMpOw0KPiA+IC0JCXJldHVybiAtRUlPOw0KPiA+ICsJaWYgKHJldCkgew0KPiA+ICsJCWNpZnNf
-ZGJnKFZGUywgInZhbGlkYXRlIHByb3RvY29sIG5lZ290aWF0ZSBmYWlsZWQ6ICVkXG4iLCByZXQp
-Ow0KPiA+ICsJCWdvdG8gb3V0X2ZyZWVfaW5idWY7DQo+ID4gICAJfQ0KPiA+DQo+ID4gLQlpZiAo
-cnNwbGVuICE9IHNpemVvZihzdHJ1Y3QgdmFsaWRhdGVfbmVnb3RpYXRlX2luZm9fcnNwKSkgew0K
-PiA+ICsJaWYgKHJzcGxlbiAhPSBzaXplb2YoKnBuZWdfcnNwKSkgew0KPiA+ICAgCQljaWZzX2Ri
-ZyhWRlMsICJpbnZhbGlkIHByb3RvY29sIG5lZ290aWF0ZSByZXNwb25zZQ0KPiBzaXplOiAlZFxu
-IiwNCj4gPiAgIAkJCSByc3BsZW4pOw0KPiA+DQo+ID4gICAJCS8qIHJlbGF4IGNoZWNrIHNpbmNl
-IE1hYyByZXR1cm5zIG1heCBidWZzaXplIGFsbG93ZWQgb24gaW9jdGwNCj4gKi8NCj4gPiAgIAkJ
-aWYgKChyc3BsZW4gPiBDSUZTTWF4QnVmU2l6ZSkNCj4gPiAgIAkJICAgICB8fCAocnNwbGVuIDwg
-c2l6ZW9mKHN0cnVjdCB2YWxpZGF0ZV9uZWdvdGlhdGVfaW5mb19yc3ApKSkNCj4gPiAtCQkJZ290
-byBlcnJfcnNwX2ZyZWU7DQo+ID4gKwkJCWdvdG8gb3V0X2ZyZWVfcnNwOw0KPiA+ICAgCX0NCj4g
-Pg0KPiA+ICAgCS8qIGNoZWNrIHZhbGlkYXRlIG5lZ290aWF0ZSBpbmZvIHJlc3BvbnNlIG1hdGNo
-ZXMgd2hhdCB3ZSBnb3QNCj4gPiBlYXJsaWVyICovIEBAIC04MzgsMTQgKzg0MSwxNiBAQCBpbnQg
-c21iM192YWxpZGF0ZV9uZWdvdGlhdGUoY29uc3QNCj4gPiB1bnNpZ25lZCBpbnQgeGlkLCBzdHJ1
-Y3QgY2lmc190Y29uICp0Y29uKQ0KPiA+DQo+ID4gICAJLyogdmFsaWRhdGUgbmVnb3RpYXRlIHN1
-Y2Nlc3NmdWwgKi8NCj4gPiAgIAljaWZzX2RiZyhGWUksICJ2YWxpZGF0ZSBuZWdvdGlhdGUgaW5m
-byBzdWNjZXNzZnVsXG4iKTsNCj4gPiAtCWtmcmVlKHBuZWdfcnNwKTsNCj4gPiAtCXJldHVybiAw
-Ow0KPiA+ICsJcmMgPSAwOw0KPiA+ICsJZ290byBvdXRfZnJlZV9yc3A7DQo+ID4NCj4gPiAgIHZu
-ZWdfb3V0Og0KPiA+ICAgCWNpZnNfZGJnKFZGUywgInByb3RvY29sIHJldmFsaWRhdGlvbiAtIHNl
-Y3VyaXR5IHNldHRpbmdzDQo+ID4gbWlzbWF0Y2hcbiIpOw0KPiA+IC1lcnJfcnNwX2ZyZWU6DQo+
-ID4gK291dF9mcmVlX3JzcDoNCj4gPiAgIAlrZnJlZShwbmVnX3JzcCk7DQo+ID4gLQlyZXR1cm4g
-LUVJTzsNCj4gPiArb3V0X2ZyZWVfaW5idWY6DQo+ID4gKwlrZnJlZShwbmVnX2luYnVmKTsNCj4g
-PiArCXJldHVybiByYzsNCj4gPiAgIH0NCj4gPg0KPiA+ICAgZW51bSBzZWN1cml0eUVudW0NCj4g
-Pg0K
+On 4/18/2018 1:16 PM, Long Li wrote:
+>> Subject: Re: [Patch v3 2/6] cifs: Allocate validate negotiation request through
+>> kmalloc
+>>
+>> Two comments.
+>>
+>> On 4/17/2018 8:33 PM, Long Li wrote:
+>>> From: Long Li <longli@microsoft.com>
+>>>
+>>> The data buffer allocated on the stack can't be DMA'ed, and hence
+>>> can't send through RDMA via SMB Direct.
+>>
+>> This comment is confusing. Any registered memory can be DMA'd, need to
+>> state the reason for the choice here more clearly.
+>>
+>>>
+>>> Fix this by allocating the request on the heap in smb3_validate_negotiate.
+>>>
+>>> Changes in v2:
+>>> Removed duplicated code on freeing buffers on function exit.
+>>> (Thanks to Parav Pandit <parav@mellanox.com>) Fixed typo in the patch
+>>> title.
+>>>
+>>> Changes in v3:
+>>> Added "Fixes" to the patch.
+>>> Changed sizeof() to use *pointer in place of struct.
+>>>
+>>> Fixes: ff1c038addc4 ("Check SMB3 dialects against downgrade attacks")
+>>> Signed-off-by: Long Li <longli@microsoft.com>
+>>> Cc: stable@vger.kernel.org
+>>> ---
+>>>    fs/cifs/smb2pdu.c | 59 ++++++++++++++++++++++++++++++--------------
+>> -----------
+>>>    1 file changed, 32 insertions(+), 27 deletions(-)
+>>>
+>>> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c index
+>>> 0f044c4..5582a02 100644
+>>> --- a/fs/cifs/smb2pdu.c
+>>> +++ b/fs/cifs/smb2pdu.c
+>>> @@ -729,8 +729,8 @@ SMB2_negotiate(const unsigned int xid, struct
+>>> cifs_ses *ses)
+>>>
+>>>    int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+>>>    {
+>>> -	int rc = 0;
+>>> -	struct validate_negotiate_info_req vneg_inbuf;
+>>> +	int ret, rc = -EIO;
+>>> +	struct validate_negotiate_info_req *pneg_inbuf;
+>>>    	struct validate_negotiate_info_rsp *pneg_rsp = NULL;
+>>>    	u32 rsplen;
+>>>    	u32 inbuflen; /* max of 4 dialects */ @@ -741,6 +741,9 @@ int
+>>> smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+>>>    	if (tcon->ses->server->rdma)
+>>>    		return 0;
+>>>    #endif
+>>> +	pneg_inbuf = kmalloc(sizeof(*pneg_inbuf), GFP_KERNEL);
+>>> +	if (!pneg_inbuf)
+>>> +		return -ENOMEM;
+>>
+>> Why is this a nonblocking allocation? It would seem more robust to use
+>> GFP_NOFS here.
+> 
+> I agree it makes sense to use GFP_NOFS.
+> 
+> The choice here is made consistent with all the rest CIFS code allocating protocol request buffers. Maybe we should do another patch to cleanup all those code.
+
+It'll be required sooner or later. I'm agnostic as to how you apply it,
+but I still suggest you change this one now rather than continue the
+fragile behavior. It may not be a global search-and-replace since some
+allocations may require nonblocking.
+
+
+> 
+>>
+>> Tom.
+>>
+>>>
+>>>    	/* In SMB3.11 preauth integrity supersedes validate negotiate */
+>>>    	if (tcon->ses->server->dialect == SMB311_PROT_ID) @@ -764,63
+>>> +767,63 @@ int smb3_validate_negotiate(const unsigned int xid, struct
+>> cifs_tcon *tcon)
+>>>    	if (tcon->ses->session_flags & SMB2_SESSION_FLAG_IS_NULL)
+>>>    		cifs_dbg(VFS, "Unexpected null user (anonymous) auth flag
+>> sent by
+>>> server\n");
+>>>
+>>> -	vneg_inbuf.Capabilities =
+>>> +	pneg_inbuf->Capabilities =
+>>>    			cpu_to_le32(tcon->ses->server->vals-
+>>> req_capabilities);
+>>> -	memcpy(vneg_inbuf.Guid, tcon->ses->server->client_guid,
+>>> +	memcpy(pneg_inbuf->Guid, tcon->ses->server->client_guid,
+>>>    					SMB2_CLIENT_GUID_SIZE);
+>>>
+>>>    	if (tcon->ses->sign)
+>>> -		vneg_inbuf.SecurityMode =
+>>> +		pneg_inbuf->SecurityMode =
+>>>
+>> 	cpu_to_le16(SMB2_NEGOTIATE_SIGNING_REQUIRED);
+>>>    	else if (global_secflags & CIFSSEC_MAY_SIGN)
+>>> -		vneg_inbuf.SecurityMode =
+>>> +		pneg_inbuf->SecurityMode =
+>>>
+>> 	cpu_to_le16(SMB2_NEGOTIATE_SIGNING_ENABLED);
+>>>    	else
+>>> -		vneg_inbuf.SecurityMode = 0;
+>>> +		pneg_inbuf->SecurityMode = 0;
+>>>
+>>>
+>>>    	if (strcmp(tcon->ses->server->vals->version_string,
+>>>    		SMB3ANY_VERSION_STRING) == 0) {
+>>> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
+>>> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
+>>> -		vneg_inbuf.DialectCount = cpu_to_le16(2);
+>>> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
+>>> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
+>>> +		pneg_inbuf->DialectCount = cpu_to_le16(2);
+>>>    		/* structure is big enough for 3 dialects, sending only 2 */
+>>>    		inbuflen = sizeof(struct validate_negotiate_info_req) - 2;
+>>>    	} else if (strcmp(tcon->ses->server->vals->version_string,
+>>>    		SMBDEFAULT_VERSION_STRING) == 0) {
+>>> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
+>>> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
+>>> -		vneg_inbuf.Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
+>>> -		vneg_inbuf.DialectCount = cpu_to_le16(3);
+>>> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
+>>> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
+>>> +		pneg_inbuf->Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
+>>> +		pneg_inbuf->DialectCount = cpu_to_le16(3);
+>>>    		/* structure is big enough for 3 dialects */
+>>>    		inbuflen = sizeof(struct validate_negotiate_info_req);
+>>>    	} else {
+>>>    		/* otherwise specific dialect was requested */
+>>> -		vneg_inbuf.Dialects[0] =
+>>> +		pneg_inbuf->Dialects[0] =
+>>>    			cpu_to_le16(tcon->ses->server->vals->protocol_id);
+>>> -		vneg_inbuf.DialectCount = cpu_to_le16(1);
+>>> +		pneg_inbuf->DialectCount = cpu_to_le16(1);
+>>>    		/* structure is big enough for 3 dialects, sending only 1 */
+>>>    		inbuflen = sizeof(struct validate_negotiate_info_req) - 4;
+>>>    	}
+>>>
+>>> -	rc = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
+>>> +	ret = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
+>>>    		FSCTL_VALIDATE_NEGOTIATE_INFO, true /* is_fsctl */,
+>>> -		(char *)&vneg_inbuf, sizeof(struct
+>> validate_negotiate_info_req),
+>>> +		(char *)pneg_inbuf, sizeof(*pneg_inbuf),
+>>>    		(char **)&pneg_rsp, &rsplen);
+>>>
+>>> -	if (rc != 0) {
+>>> -		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
+>>> -		return -EIO;
+>>> +	if (ret) {
+>>> +		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", ret);
+>>> +		goto out_free_inbuf;
+>>>    	}
+>>>
+>>> -	if (rsplen != sizeof(struct validate_negotiate_info_rsp)) {
+>>> +	if (rsplen != sizeof(*pneg_rsp)) {
+>>>    		cifs_dbg(VFS, "invalid protocol negotiate response
+>> size: %d\n",
+>>>    			 rsplen);
+>>>
+>>>    		/* relax check since Mac returns max bufsize allowed on ioctl
+>> */
+>>>    		if ((rsplen > CIFSMaxBufSize)
+>>>    		     || (rsplen < sizeof(struct validate_negotiate_info_rsp)))
+>>> -			goto err_rsp_free;
+>>> +			goto out_free_rsp;
+>>>    	}
+>>>
+>>>    	/* check validate negotiate info response matches what we got
+>>> earlier */ @@ -838,14 +841,16 @@ int smb3_validate_negotiate(const
+>>> unsigned int xid, struct cifs_tcon *tcon)
+>>>
+>>>    	/* validate negotiate successful */
+>>>    	cifs_dbg(FYI, "validate negotiate info successful\n");
+>>> -	kfree(pneg_rsp);
+>>> -	return 0;
+>>> +	rc = 0;
+>>> +	goto out_free_rsp;
+>>>
+>>>    vneg_out:
+>>>    	cifs_dbg(VFS, "protocol revalidation - security settings
+>>> mismatch\n");
+>>> -err_rsp_free:
+>>> +out_free_rsp:
+>>>    	kfree(pneg_rsp);
+>>> -	return -EIO;
+>>> +out_free_inbuf:
+>>> +	kfree(pneg_inbuf);
+>>> +	return rc;
+>>>    }
+>>>
+>>>    enum securityEnum
+>>>
+> N�����r��y���b�X��ǧv�^�)޺{.n�+����{��ٚ�{ay�ʇڙ�,j��f���h���z��w������j:+v���w�j�m��������zZ+�����ݢj"��!tml=
+> 
