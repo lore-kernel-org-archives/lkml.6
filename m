@@ -1,80 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753921AbeDROHR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:07:17 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52827 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753729AbeDROHQ (ORCPT
+        id S1752972AbeDROIe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:08:34 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:39364 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751383AbeDROId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:07:16 -0400
-To: akpm@linux-foundation.org
-Cc: mhocko@kernel.org, avagin@openvz.org, khalid.aziz@oracle.com,
-        mpe@ellerman.id.au, keescook@chromium.org, abdhalee@linux.vnet.ibm.com,
-        joel@jms.id.au, khandual@linux.vnet.ibm.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] fs, elf: don't complain MAP_FIXED_NOREPLACE unless -EEXIST error.
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <20171213092550.2774-3-mhocko@kernel.org>
-        <0b5c541a-91ee-220b-3196-f64264f9f0bc@I-love.SAKURA.ne.jp>
-        <20180418113301.GY17484@dhcp22.suse.cz>
-        <201804182043.JFH90161.LStOOMFFOJQHVF@I-love.SAKURA.ne.jp>
-        <20180418115546.GZ17484@dhcp22.suse.cz>
-In-Reply-To: <20180418115546.GZ17484@dhcp22.suse.cz>
-Message-Id: <201804182307.FAC17665.SFMOFJVFtHOLOQ@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Wed, 18 Apr 2018 23:07:12 +0900
-Mime-Version: 1.0
+        Wed, 18 Apr 2018 10:08:33 -0400
+Date: Wed, 18 Apr 2018 16:08:29 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: renesas: replace toshiba,
+ mmc-wrprotect-disable with disable-wp
+Message-ID: <20180418140829.oi5pkn6hsiabe62i@verge.net.au>
+References: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523890952-20866-1-git-send-email-yamada.masahiro@socionext.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 3f396857d23d4bf1fac4d4332316b5ba0af6d2f9 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Wed, 18 Apr 2018 23:00:53 +0900
-Subject: [PATCH v2] fs, elf: don't complain MAP_FIXED_NOREPLACE unless -EEXIST error.
+On Tue, Apr 17, 2018 at 12:02:32AM +0900, Masahiro Yamada wrote:
+> Follow up commit 788778b0d21a ("mmc: tmio: deprecate "toshiba,
+> mmc-wrprotect-disable" DT property").
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Commit 4ed28639519c7bad ("fs, elf: drop MAP_FIXED usage from elf_map") is
-printing spurious messages under memory pressure due to map_addr == -ENOMEM.
-
- 9794 (a.out): Uhuuh, elf segment at 00007f2e34738000(fffffffffffffff4) requested but the memory is mapped already
- 14104 (a.out): Uhuuh, elf segment at 00007f34fd76c000(fffffffffffffff4) requested but the memory is mapped already
- 16843 (a.out): Uhuuh, elf segment at 00007f930ecc7000(fffffffffffffff4) requested but the memory is mapped already
-
-Complain only if -EEXIST, and use %px for printing the address.
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Andrei Vagin <avagin@openvz.org>
-Cc: Khalid Aziz <khalid.aziz@oracle.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>
----
- fs/binfmt_elf.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 41e0418..4ad6f66 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -377,10 +377,10 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
- 	} else
- 		map_addr = vm_mmap(filep, addr, size, prot, type, off);
- 
--	if ((type & MAP_FIXED_NOREPLACE) && BAD_ADDR(map_addr))
--		pr_info("%d (%s): Uhuuh, elf segment at %p requested but the memory is mapped already\n",
--				task_pid_nr(current), current->comm,
--				(void *)addr);
-+	if ((type & MAP_FIXED_NOREPLACE) &&
-+	    PTR_ERR((void *)map_addr) == -EEXIST)
-+		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
-+			task_pid_nr(current), current->comm, (void *)addr);
- 
- 	return(map_addr);
- }
--- 
-1.8.3.1
+Thanks, applied.
