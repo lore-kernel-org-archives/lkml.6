@@ -1,83 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753206AbeDRIIL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:08:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60406 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753117AbeDRIIH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:08:07 -0400
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH 2/7] docs/vm: hugetlbpage: move section about kernel development to hugetlbfs_reserv
-Date: Wed, 18 Apr 2018 11:07:45 +0300
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524038870-413-1-git-send-email-rppt@linux.vnet.ibm.com>
-References: <1524038870-413-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18041808-0020-0000-0000-000004132F0F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041808-0021-0000-0000-000042A77388
-Message-Id: <1524038870-413-3-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804180076
+        id S1753644AbeDRINU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:13:20 -0400
+Received: from victor.provo.novell.com ([137.65.250.26]:55647 "EHLO
+        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752592AbeDRINQ (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Wed, 18 Apr 2018 04:13:16 -0400
+Message-ID: <1524039174.3028.24.camel@suse.com>
+Subject: Re: [PATCH v3 1/6] ilog2: create truly constant version for sparse
+From: Martin Wilck <mwilck@suse.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>,
+        James Bottomley <jejb@linux.vnet.ibm.com>,
+        Xose Vazquez Perez <xose.vazquez@gmail.com>,
+        Bart Van Assche <Bart.VanAssche@sandisk.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>
+Date: Wed, 18 Apr 2018 10:12:54 +0200
+In-Reply-To: <CA+55aFxLY2=RVAD8m-3bf4vKWpPKWSmjN_tLVWwb4Y7w81UTbA@mail.gmail.com>
+References: <20180417233511.6573-1-mwilck@suse.com>
+         <20180417233511.6573-2-mwilck@suse.com>
+         <CA+55aFxLY2=RVAD8m-3bf4vKWpPKWSmjN_tLVWwb4Y7w81UTbA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.4 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hugetlbpage describes hugetlbfs from the user perspective and newer
-hugetlbfs_reserv document targets kernel developers. Hence the section
-about hugetlbfs kernel development naturally belongs there.
+On Tue, 2018-04-17 at 17:07 -0700, Linus Torvalds wrote:
+> On Tue, Apr 17, 2018 at 4:35 PM, Martin Wilck <mwilck@suse.com>
+> wrote:
+> > Sparse emits errors about ilog2() in array indices because of the
+> > use of
+> > __ilog2_32() and __ilog2_64(),
+> 
+> If sparse warns about it, then presumably gcc with -Wvla warns about
+> it too?
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
- Documentation/vm/hugetlbfs_reserv.rst | 8 ++++++++
- Documentation/vm/hugetlbpage.rst      | 8 --------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+No, it doesn't (gcc 7.3.0). -> https://paste.opensuse.org/27471594
+It doesn't even warn on an expression like this:
 
-diff --git a/Documentation/vm/hugetlbfs_reserv.rst b/Documentation/vm/hugetlbfs_reserv.rst
-index 36a87a2..9d20076 100644
---- a/Documentation/vm/hugetlbfs_reserv.rst
-+++ b/Documentation/vm/hugetlbfs_reserv.rst
-@@ -583,5 +583,13 @@ of cpusets or memory policy there is no guarantee that huge pages will be
- available on the required nodes.  This is true even if there are a sufficient
- number of global reservations.
- 
-+Hugetlbfs regression testing
-+============================
- 
-+The most complete set of hugetlb tests are in the libhugetlbfs repository.
-+If you modify any hugetlb related code, use the libhugetlbfs test suite
-+to check for regressions.  In addition, if you add any new hugetlb
-+functionality, please add appropriate tests to libhugetlbfs.
-+
-+--
- Mike Kravetz, 7 April 2017
-diff --git a/Documentation/vm/hugetlbpage.rst b/Documentation/vm/hugetlbpage.rst
-index 99ad5d9..2b374d1 100644
---- a/Documentation/vm/hugetlbpage.rst
-+++ b/Documentation/vm/hugetlbpage.rst
-@@ -379,11 +379,3 @@ The `libhugetlbfs`_  library provides a wide range of userspace tools
- to help with huge page usability, environment setup, and control.
- 
- .. _libhugetlbfs: https://github.com/libhugetlbfs/libhugetlbfs
--
--Kernel development regression testing
--=====================================
--
--The most complete set of hugetlb tests are in the libhugetlbfs repository.
--If you modify any hugetlb related code, use the libhugetlbfs test suite
--to check for regressions.  In addition, if you add any new hugetlb
--functionality, please add appropriate tests to libhugetlbfs.
+  #define SIZE (1<<10)
+  static int foo[ilog2(SIZE)];
+
+sparse 0.5.2 doesn't warn about that either. It emits "error: bad
+integer constant expression" only if ilog2 is used in an array
+initializer, like this:
+
+  #define SIZE (1<<10)
+  #define SUBS (1<<5)
+  static int foo [ilog2(SIZE)] = {
+          [ilog2(SUBS)] = 0,
+  };
+
+So maybe I was wrong, and this is actually a false positive in sparse.
+
+> So I suspect that what you'd want is
+> 
+>   #define ilog2(n) \
+>         __builtin_choose_expr(__is_constexpr(n), \
+>                 const_ilog2(n), \
+>                 __builtin_choose_expr(sizeof(n) <= 4, \
+>                         __ilog2_u32(n), \
+>                         __ilog2_u64(n)))
+> 
+> or something. Hmm?
+
+Do you want me to convert the patch to your approach anyway?
+Or should I throw this away and report to sparse?
+
+Regards and thanks,
+Martin
+
+PS: apologies to all recipients for the broken cc list in my post.
 -- 
-2.7.4
+Dr. Martin Wilck <mwilck@suse.com>, Tel. +49 (0)911 74053 2107
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
