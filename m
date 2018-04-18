@@ -1,102 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752864AbeDRIrW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:47:22 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:41533 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751407AbeDRIrU (ORCPT
+        id S1752743AbeDRIuL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:50:11 -0400
+Received: from zxshcas2.zhaoxin.com ([180.169.121.92]:40443 "EHLO
+        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751444AbeDRIuJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:47:20 -0400
-X-Google-Smtp-Source: AIpwx4/6HUcfHVDTq/r9HXLLikLXTUdH1xggP/yXH9X7bMq2Fh6cC2S/Dfdm1+Ufgd5nivNBnaJteg==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.2 \(3445.5.20\))
-Subject: Re: [PATCH] blk-mq: Clear out elevator private data
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <20180417214218.GA44753@beast>
-Date: Wed, 18 Apr 2018 10:47:17 +0200
-Cc: Jens Axboe <axboe@kernel.dk>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>, linux-block@vger.kernel.org
-Message-Id: <D8B8B059-149B-4A7D-8537-31052A51AAD1@linaro.org>
-References: <20180417214218.GA44753@beast>
-To: Kees Cook <keescook@chromium.org>
-X-Mailer: Apple Mail (2.3445.5.20)
+        Wed, 18 Apr 2018 04:50:09 -0400
+From: David Wang <davidwang@zhaoxin.com>
+To: "'Thomas Gleixner'" <tglx@linutronix.de>
+CC: <mingo@redhat.com>, <hpa@zytor.com>, <mingo@kernel.org>,
+        <grehkg@linuxfoundation.org>, <x86@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <brucechang@via-alliance.com>,
+        <cooperyan@zhaoxin.com>, <qiyuanwang@zhaoxin.com>,
+        <benjaminpan@viatech.com>, <lukelin@viacpu.com>, <timguo@zhaoxin.com>
+Subject: Re: [PATCH] x86/Centaur: show more HW features in /proc/cpuinfo
+Date: Wed, 18 Apr 2018 16:49:30 +0800
+Message-ID: <000101d3d6f2$2a82ef10$7f88cd30$@zhaoxin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdPW8Vv/AOehcyEeSUi9LI0aEieWNA==
+Content-Language: zh-cn
+X-Originating-IP: [10.29.8.18]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3I8lTob017769
 
 
 
-> Il giorno 17 apr 2018, alle ore 23:42, Kees Cook <keescook@chromium.org> ha scritto:
+> -----Original Mail-----
+> Sender: Thomas Gleixner [mailto:tglx@linutronix.de]
+> Time: 2018/4/17 18:19
+> Receiver: David Wang <davidwang@zhaoxin.com>
+> CC: mingo@redhat.com; hpa@zytor.com; mingo@kernel.org;
+> grehkg@linuxfoundation.org; x86@kernel.org; linux-
+> kernel@vger.kernel.org; brucechang@via-alliance.com;
+> cooperyan@zhaoxin.com; qiyuanwang@zhaoxin.com;
+> benjaminpan@viatech.com; lukelin@viacpu.com; timguo@zhaoxin.com
+> Subject: Re: [PATCH] x86/Centaur: show more HW features in /proc/cpuinfo
 > 
-> Some elevators may not correctly check rq->rq_flags & RQF_ELVPRIV, and
-> may attempt to read rq->elv fields. When requests got reused, this
-> caused BFQ to think it already had a bfqq (rq->elv.priv[1]) allocated.
+> On Sun, 8 Apr 2018, David Wang wrote:
+> 
+> > We add this patch to show correct HW features(arch_perfmon,
+> > tpr_shadow, vnmi, flexpriority, ept and vpid) when user execute "cat
+> /proc/cpuinfo".
+> 
+> See the other mail vs. the changelog.
+>
 
-Hi Kees,
-where does BFQ gets confused and operates on a request not destined to
-it?  I'm asking because I paid attention to always avoid such a
-mistake.
+ 
+OK. Thanks.
+
+> >
+> > Signed-off-by: David Wang <davidwang@zhaoxin.com>
+> > ---
+> >  arch/x86/kernel/cpu/centaur.c | 49
+> > +++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 49 insertions(+)
+> >
+> > diff --git a/arch/x86/kernel/cpu/centaur.c
+> > b/arch/x86/kernel/cpu/centaur.c index e5ec0f1..969fb8f 100644
+> > --- a/arch/x86/kernel/cpu/centaur.c
+> > +++ b/arch/x86/kernel/cpu/centaur.c
+> > @@ -112,6 +112,44 @@ static void early_init_centaur(struct cpuinfo_x86
+> *c)
+> >  	}
+> >  }
+> >
+> > +static void centaur_detect_vmx_virtcap(struct cpuinfo_x86 *c) {
+> > +#define X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW	0x00200000
+> > +#define X86_VMX_FEATURE_PROC_CTLS_VNMI		0x00400000
+> > +#define X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS	0x80000000
+> > +#define X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC	0x00000001
+> > +#define X86_VMX_FEATURE_PROC_CTLS2_EPT		0x00000002
+> > +#define X86_VMX_FEATURE_PROC_CTLS2_VPID		0x00000020
+> 
+> Please move the defines outside the function. This is horrible to read,
+
+OK.
+
+> 
+> > +
+> > +	u32 vmx_msr_low, vmx_msr_high, msr_ctl, msr_ctl2;
+> > +
+> > +	clear_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
+> > +	clear_cpu_cap(c, X86_FEATURE_VNMI);
+> > +	clear_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
+> > +	clear_cpu_cap(c, X86_FEATURE_EPT);
+> > +	clear_cpu_cap(c, X86_FEATURE_VPID);
+> 
+> Why are you clearing the capabilities? They are cleared at boot time.
+> 
+
+OK. It's really useless. 
+
+> > +	rdmsr(MSR_IA32_VMX_PROCBASED_CTLS, vmx_msr_low,
+> vmx_msr_high);
+> > +	msr_ctl = vmx_msr_high | vmx_msr_low;
+> > +
+> > +	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW)
+> > +		set_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
+> > +	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_VNMI)
+> > +		set_cpu_cap(c, X86_FEATURE_VNMI);
+> > +	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS) {
+> > +		rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
+> > +		      vmx_msr_low, vmx_msr_high);
+> > +		msr_ctl2 = vmx_msr_high | vmx_msr_low;
+> > +		if ((msr_ctl2 &
+> X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC) &&
+> > +		    (msr_ctl &
+> X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW))
+> > +			set_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
+> > +		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_EPT)
+> > +			set_cpu_cap(c, X86_FEATURE_EPT);
+> > +		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VPID)
+> > +			set_cpu_cap(c, X86_FEATURE_VPID);
+> > +	}
+> > +}
+> > +
+> >  static void init_centaur(struct cpuinfo_x86 *c)  {  #ifdef
+> > CONFIG_X86_32 @@ -128,6 +166,14 @@ static void init_centaur(struct
+> > cpuinfo_x86 *c)
+> >  	clear_cpu_cap(c, 0*32+31);
+> >  #endif
+> >  	early_init_centaur(c);
+> > +
+> > +	if (c->cpuid_level > 9) {
+> > +		unsigned eax = cpuid_eax(10);
+> 
+> Missing newline between variable declaration and code. checkpatch.pl
+> should have told you that.
+> 
+
+OK. 
+
+> > +		/* Check for version and the number of counters */
+> > +		if ((eax & 0xff) && (((eax >> 8) & 0xff) > 1))
+> 
+> Magic constants and a comment which does not explain how the check
+> works.
+> 
+
+OK. I will explain more detail in the comments.
+
+> > +			set_cpu_cap(c, X86_FEATURE_ARCH_PERFMON);
+> 
+> Thanks,
+> 
+> 	tglx
 
 Thanks,
-Paolo
 
-> This could lead to odd behaviors like having the sense buffer address
-> slowly start incrementing. This eventually tripped HARDENED_USERCOPY
-> and KASAN.
-> 
-> This patch wipes all of rq->elv instead of just rq->elv.icq. While
-> it shouldn't technically be needed, this ends up being a robustness
-> improvement that should lead to at least finding bugs in elevators faster.
-> 
-> Reported-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-> Fixes: bd166ef183c26 ("blk-mq-sched: add framework for MQ capable IO schedulers")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> In theory, BFQ needs to also check the RQF_ELVPRIV flag, but I'll leave that
-> to Paolo to figure out. Also, my Fixes line is kind of a best-guess. This
-> is where icq was originally wiped, so it seemed as good a commit as any.
-> ---
-> block/blk-mq.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 0dc9e341c2a7..859df3160303 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -363,7 +363,7 @@ static struct request *blk_mq_get_request(struct request_queue *q,
-> 
-> 	rq = blk_mq_rq_ctx_init(data, tag, op);
-> 	if (!op_is_flush(op)) {
-> -		rq->elv.icq = NULL;
-> +		memset(&rq->elv, 0, sizeof(rq->elv));
-> 		if (e && e->type->ops.mq.prepare_request) {
-> 			if (e->type->icq_cache && rq_ioc(bio))
-> 				blk_mq_sched_assign_ioc(rq, bio);
-> @@ -461,7 +461,7 @@ void blk_mq_free_request(struct request *rq)
-> 			e->type->ops.mq.finish_request(rq);
-> 		if (rq->elv.icq) {
-> 			put_io_context(rq->elv.icq->ioc);
-> -			rq->elv.icq = NULL;
-> +			memset(&rq->elv, 0, sizeof(rq->elv));
-> 		}
-> 	}
-> 
-> -- 
-> 2.7.4
-> 
-> 
-> -- 
-> Kees Cook
-> Pixel Security
+---
+David
