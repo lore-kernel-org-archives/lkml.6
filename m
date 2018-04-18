@@ -1,128 +1,285 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753945AbeDRNA3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 09:00:29 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:42376 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753807AbeDRNA1 (ORCPT
+        id S1753828AbeDRNDx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 09:03:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47690 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752027AbeDRNDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:00:27 -0400
-X-Google-Smtp-Source: AIpwx49hCuxu3aL77hcZ57DuhGjNMRbeZZgL7GQ2fppaAKm4YaB+Squ2aQLBIiTq/BdEy+JY0y6wFw==
-Reply-To: alex.popov@linux.com
-Subject: Re: [PATCH 1/1] i2c: dev: check i2c_msg len before memdup_user() to
- prevent ZERO_SIZE_PTR deref
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sil2review@lists.osadl.org,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <1524010605-21552-1-git-send-email-alex.popov@linux.com>
- <20180418070704.35zj5chpdkirnmdt@pengutronix.de>
- <92f44b44-a5a1-c844-4d96-db0697b2e090@linux.com>
- <20180418082319.wxxhwxwhblwh6llo@pengutronix.de>
-From: Alexander Popov <alex.popov@linux.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
- 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
- jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
-Message-ID: <684dc732-88f0-31dd-c1ae-ba54a733abbb@linux.com>
-Date: Wed, 18 Apr 2018 16:00:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 18 Apr 2018 09:03:51 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180418082319.wxxhwxwhblwh6llo@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 18 Apr 2018 18:33:49 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC)
+ driver for SDM845
+In-Reply-To: <152393708031.51482.15076025836699678476@swboyd.mtv.corp.google.com>
+References: <1522761761-15262-1-git-send-email-anischal@codeaurora.org>
+ <1522761761-15262-4-git-send-email-anischal@codeaurora.org>
+ <152393708031.51482.15076025836699678476@swboyd.mtv.corp.google.com>
+Message-ID: <f563532b5c43960a61ae12a37a131be8@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18.04.2018 11:23, Uwe Kleine-König wrote:
-> On Wed, Apr 18, 2018 at 10:56:03AM +0300, Alexander Popov wrote:
->> On 18.04.2018 10:07, Uwe Kleine-König wrote:
->>> Your commit log is wrong (and I think the patch, too).
->>
->> I believe this bug is not a memdup_user() issue. There is a nice selection from
->> LKML discussions about ZERO_SIZE_PTR, which convinces me:
->> http://yarchive.net/comp/linux/malloc_0.html
+On 2018-04-17 09:21, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-04-03 06:22:41)
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index fbf4532..c961e89 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -218,6 +218,15 @@ config MSM_MMCC_8996
+>>           Say Y if you want to support multimedia devices such as 
+>> display,
+>>           graphics, video encode/decode, camera, etc.
+>> 
+>> +config SDM_GCC_845
+>> +       tristate "SDM845 Global Clock Controller"
+>> +       depends on COMMON_CLK_QCOM
+>> +       help
+>> +         Support for the global clock controller on Qualcomm 
+>> Technologies, Inc
+>> +         sdm845 devices.
+>> +         Say Y if you want to use peripheral devices such as UART, 
+>> SPI,
+>> +         i2c, USB, UFS, SD/eMMC, PCIe, etc.
 > 
-> Ack, no memdup_user problem. i2cdev_ioctl_rdwr() should not access
-> msgs[i].buf[0] if msgs[i].len is 0.
-> 
-> But you should not prohibit i2c transfers with length 0 in general.
+> Is there eMMC?
 
-Ok, thanks for that info. I should fix the patch.
+Thanks for the review comments. There is no eMMC for SDM845. I will fix 
+the
+above in next patch series.
 
-> So a better patch is the following:
 > 
+>> +
+>>  config SPMI_PMIC_CLKDIV
+>>         tristate "SPMI PMIC clkdiv Support"
+>>         depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+>> diff --git a/drivers/clk/qcom/gcc-sdm845.c 
+>> b/drivers/clk/qcom/gcc-sdm845.c
+>> new file mode 100644
+>> index 0000000..b1b7a1e
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/gcc-sdm845.c
+>> @@ -0,0 +1,3546 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/bitops.h>
+>> +#include <linux/err.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/clk.h>
 > 
-> diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
-> index 036a03f0d0a6..0137538c36a0 100644
-> --- a/drivers/i2c/i2c-dev.c
-> +++ b/drivers/i2c/i2c-dev.c
-> @@ -280,6 +280,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
->  		 */
->  		if (msgs[i].flags & I2C_M_RECV_LEN) {
->  			if (!(msgs[i].flags & I2C_M_RD) ||
-> +			    msgs[i].len < 1 ||
->  			    msgs[i].buf[0] < 1 ||
->  			    msgs[i].len < msgs[i].buf[0] +
->  					     I2C_SMBUS_BLOCK_MAX) {
-> 
-> But having said that and after reading the comment above the if, I'm not
-> sure this is enough. 
+> Is this include used?
 
-I'll check that carefully and come back with the next version.
+No, it is not getting used. We will remove this in next patch series.
 
-Thanks!
-Alexander
+> 
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/reset-controller.h>
+>> +
+> [...]
+>> +
+>> +static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
+>> +       .cmd_rcgr = 0xf030,
+>> +       .mnd_width = 0,
+>> +       .hid_width = 5,
+>> +       .parent_map = gcc_parent_map_0,
+>> +       .freq_tbl = ftbl_gcc_usb30_prim_mock_utmi_clk_src,
+>> +       .clkr.hw.init = &(struct clk_init_data){
+>> +               .name = "gcc_usb30_prim_mock_utmi_clk_src",
+>> +               .parent_names = gcc_parent_names_0,
+>> +               .num_parents = 4,
+>> +               .ops = &clk_rcg2_shared_ops,
+> 
+> Still shared? Why?
+
+We would require the shared_ops for clocks which are configured by
+bootloader.
+
+> 
+>> +
+>> +static struct clk_branch gcc_video_ahb_clk = {
+>> +       .halt_reg = 0xb004,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .hwcg_reg = 0xb004,
+>> +       .hwcg_bit = 1,
+>> +       .clkr = {
+>> +               .enable_reg = 0xb004,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_video_ahb_clk",
+>> +                       .flags = CLK_IS_CRITICAL,
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +
+> 
+> Weird double space here.
+
+We will fix this in next patch series.
+
+> 
+>> +static struct clk_branch gcc_video_xo_clk = {
+>> +       .halt_reg = 0xb028,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0xb028,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_video_xo_clk",
+>> +                       .flags = CLK_IS_CRITICAL,
+> 
+> For these "critical" clks that don't have parents can you just throw 
+> the
+> enable part in the gcc driver probe and remove these clks from being
+> exposed? They don't seem to provide any value to expose them as clks
+> when they don't hook into the final clk tree.
+> 
+
+For all of the "critical" clocks which don't have parents, we have
+removed the CRITICAL flag and mandate the clients to put their vote
+to enable/disable them. Other than this, some of the "critical" clock
+instances we have completely removed and enabled them in the probe.
+This will be fixed in the next patch series.
+
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch gcc_vs_ctrl_ahb_clk = {
+>> +       .halt_reg = 0x7a014,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .hwcg_reg = 0x7a014,
+>> +       .hwcg_bit = 1,
+>> +       .clkr = {
+>> +               .enable_reg = 0x7a014,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_vs_ctrl_ahb_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch gcc_vs_ctrl_clk = {
+>> +       .halt_reg = 0x7a010,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0x7a010,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_vs_ctrl_clk",
+>> +                       .parent_names = (const char *[]){
+>> +                               "gcc_vs_ctrl_clk_src",
+>> +                       },
+>> +                       .num_parents = 1,
+>> +                       .flags = CLK_SET_RATE_PARENT,
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +
+>> +static int gcc_sdm845_probe(struct platform_device *pdev)
+>> +{
+>> +       struct device *dev = &pdev->dev;
+>> +       struct regmap *regmap;
+>> +       int i, ret;
+>> +
+>> +       regmap = qcom_cc_map(pdev, &gcc_sdm845_desc);
+>> +       if (IS_ERR(regmap))
+>> +               return PTR_ERR(regmap);
+>> +
+>> +       for (i = 0; i < ARRAY_SIZE(gcc_sdm845_hws); i++) {
+>> +               ret = devm_clk_hw_register(dev, gcc_sdm845_hws[i]);
+>> +               if (ret)
+>> +                       return ret;
+>> +       }
+>> +
+>> +       /* Disable the GPLL0 active input to MMSS and GPU via MISC 
+>> registers */
+>> +       regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+>> +       regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+> 
+> I think we'll have to throw in the pipe clk branch stuff in here too?
+> And then drop the pipe clks from the driver?
+
+All the USB pipe clocks would be taken care. The PCIE pipe branch
+clocks would have to be explicitly disabled so as to retain the
+memory logic. Otherwise, it would lead to memory corruption in case
+the external source is directly disabled without disabling the branch 
+clock.
+
+> 
+>> +
+>> +       return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+>> +}
+>> +
+>> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h 
+>> b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+>> new file mode 100644
+>> index 0000000..e27d8e2
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+>> @@ -0,0 +1,242 @@
+> [...]
+>> +#define GCC_VDDA_VS_CLK                                               
+>>  180
+>> +#define GCC_VDDCX_VS_CLK                                       181
+>> +#define GCC_VDDMX_VS_CLK                                       182
+>> +#define GCC_VS_CTRL_AHB_CLK                                    183
+>> +#define GCC_VS_CTRL_CLK                                               
+>>  184
+>> +#define GCC_VS_CTRL_CLK_SRC                                    185
+>> +#define GCC_VSENSOR_CLK_SRC                                    186
+>> +#define GPLL4                                                  187
+> 
+> Do you have the define for the quad spi clks? And the implementation 
+> for
+> it?
+> 
+
+In SDM845, Quad SPI clocks are part of gcc_qupv*_wrap*_s* clock group.
+
+>> +
+>> +/* GCC reset clocks */
+> 
+> They're just resets, not reset clks.
+
+Will fix this in next patch series.
+
+> 
+>> +#define GCC_MMSS_BCR                                           0
+>> +#define GCC_PCIE_0_BCR                                         1
+>> +#define GCC_PCIE_1_BCR                                         2
+>> +#define GCC_PCIE_PHY_BCR                                       3
+>> +#define GCC_PDM_BCR                                            4
+>> +#define GCC_PRNG_BCR                                           5
+>> +#define GCC_QUPV3_WRAPPER_0_BCR                                       
+>>  6
+>> +#define GCC_QUPV3_WRAPPER_1_BCR                                       
+>>  7
