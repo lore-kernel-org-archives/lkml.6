@@ -1,60 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753089AbeDROtR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:49:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42980 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752774AbeDROtN (ORCPT
+        id S1753584AbeDROuc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:50:32 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:43100 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752881AbeDROuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:49:13 -0400
-Date: Wed, 18 Apr 2018 15:49:08 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20180418144908.GE10061@sirena.org.uk>
-References: <20180418095113.21c84c83@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sfyO1m2EN8ZOtJL6"
-Content-Disposition: inline
-In-Reply-To: <20180418095113.21c84c83@canb.auug.org.au>
-X-Cookie: Sank heaven for leetle curls.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 18 Apr 2018 10:50:21 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 4/5] soc/tegra: pmc: Use of_clk_get_parent_count() instead of open coding
+Date: Wed, 18 Apr 2018 16:50:04 +0200
+Message-Id: <1524063005-1716-5-git-send-email-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As of_clk_get_parent_count() returns zero on failure, while
+of_count_phandle_with_args() might return a negative error code, this
+also fixes the issue of possibly using a very big number in the
+allocation below.
 
---sfyO1m2EN8ZOtJL6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+---
+This depends on "[PATCH v3 1/5] clk: Extract OF clock helpers in
+<linux/of_clk.h>".
 
-On Wed, Apr 18, 2018 at 09:51:13AM +1000, Stephen Rothwell wrote:
+v3:
+  - Add Acked-by,
 
-> Caused by commit
+v2:
+  - of_clk_get_parent_count() was moved to <linux/of_clk.h>.
+---
+ drivers/soc/tegra/pmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->   81e9b0a07889 ("ASoC: topology: Give more data to clients via callbacks")
-
-> I have used the sound-aoc tree from next-20180416 again today.
-
-Ugh, reverted that and the following commit which depends on it.
-
---sfyO1m2EN8ZOtJL6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrXWuMACgkQJNaLcl1U
-h9AnRgf7B0ogG9V8ubU5Jn6zvsNDUSyuJKHKJRGItycMv7zcXc7gjL7N06TbOW0V
-L/WWo0+g5ncADhLIPsHBOF1EbTK/5CIHJZARIXSQhSTgIggN4tJcUdOu+SijOI6+
-gNABrP1z/vI8ODYcBkoQK3qoIqLbaXq/T5qTk/jux/l8VdHEmGtaTRUOfYdl/T1i
-pbS4aBPiZdPQ8mU9zotHxc4vNhTeW3sf4/lCYSOOG50eMU3WRJgf44wQzzMalXfP
-lBqTMmyFDAVzuExsD97QtIgvMXXdCSsuAGiFjYQgHC2Bca3XIFnij5sQp7jblU+m
-tK0Mps5ck21faErjn4x1gNRxIUdgPQ==
-=BSMR
------END PGP SIGNATURE-----
-
---sfyO1m2EN8ZOtJL6--
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index d9fcdb592b3966a5..d8cb48a4b8eb1b78 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -31,6 +31,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/of_clk.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+@@ -725,7 +726,7 @@ static int tegra_powergate_of_get_clks(struct tegra_powergate *pg,
+ 	unsigned int i, count;
+ 	int err;
+ 
+-	count = of_count_phandle_with_args(np, "clocks", "#clock-cells");
++	count = of_clk_get_parent_count(np);
+ 	if (count == 0)
+ 		return -ENODEV;
+ 
+-- 
+2.7.4
