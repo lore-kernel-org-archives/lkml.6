@@ -1,76 +1,134 @@
-Return-Path: <kernel-hardening-return-13139-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AB8JxZoM9MxpgKQjTbUrMTl8l0pRK4WWrsvQe0goiPCXMOBl5SGajHeI0roGUZc83oWTAAO7PwKl
-ARC-Seal: i=1; a=rsa-sha256; t=1524667365; cv=none;
+Return-Path: <youquan.song@intel.com>
+X-Google-Smtp-Source: AIpwx4+PWDfHjOM82ZdVS9B/GU1rG4GDrsXp+ruNRiDPR1/NI7qBH5PFJ0oMqAfgCZIl9XO0zSN0
+ARC-Seal: i=1; a=rsa-sha256; t=1524021586; cv=none;
         d=google.com; s=arc-20160816;
-        b=aj8JSYz730fId3qzvlmc5V+AWRI+apFVZLJTCGJqJ27eQS/pfJLNVLJ7V3DcNzuqLi
-         W1PUaL0erUQEQGoOCOROvP+jfUS1D0HnC7v3++L9yoTIno+13Px1hpxrqm8Lt0hzoM1y
-         +g1R9OnX7tsz2feXpAVqVulGAVai2Ww/oXH/EHb33z/VO09z6FnSZFnY3xdSkfkNcVE/
-         7tqvwiOXh3hpA5qe+nVyTmOrycMd7Ni/qiaBp2Dv9GhSxrHyuZgq8mhy0gH23vVqxq3U
-         fhxw6Riok0rHM8PnNEq4WHBYRIhcnWHu9NrlYWawS4aay/4x0K8LN5fDjUXVpKv1+zQk
-         oFuQ==
+        b=OjVl6CuQxFeE8Xypukx6AqZ26BwwrQsWcq7oI8fSQPvWreykf0Ux6viJ+o49UEvGkJ
+         nzsG1pBgI3Y7vJc3Cs0IPSePh9sJbSyry7TRSPZ7Ir/CrSXEAyPQJ54gp03gtdJiarEz
+         rCMxlpUzsXtwNmESyXfTieWKTSLXlfHVIWCjGw/8bjDDCG5BrBmUlEosqzNVqsaDr2QE
+         YuydDQLNHi1oeZZUmS8p5nltIr6XuCNIrbajypq/sEpCJT2P2h5+nXXQrwlU/5emsa4Y
+         bcHF0+un0U1XDj9wkFUzwa1lzLKGxNUEwWSjZ4L5tisVLNQoNcCc4ufaDQrUiRGLsKdq
+         7aVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=ZQWoQPNM6GJ8UVjeRZYtuPZD9WLyhxVUa/o/h27VuFA=;
-        b=fCeLEDFK+SkwGY2Db4CBbzz9JyovbcirkQwdv6S+AxOGvKV0MgxrtbGRoDVk9TjTY8
-         HT9LQNQgHHK9RENhvIDrocsXjqX0xW4pYBX5Qo0M+n7p2ym2FtdLQA0GIaUchT5Pt1/U
-         DG5nRI+jbANbs7rR0yU4zvLoRw6Y6Q2YD+9d+nFrc9QQHln0vUhwrcUFrBCGQgfnNiyt
-         NLlly6BP8ec4hY3z0GvSJZzev4HKAl/apSTXOo++ecs71ZoP+5N8xk0u2FSc8J2Vkv6A
-         /+judDv2U+/Cn0STONCMIXAVnvjB2ve1DZSyhQstsbXuMA++SzubNJpDGLZmze/lrwUa
-         BbAQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=L3Fa1hLE7gRLvHJGIVKv0bvTkfUhBLi156LLb2KS9/o=;
+        b=WTvGxT12rrXYnKQTeqUdfv3yLo7vvrudU4CtrURhyCboJh8UbPypd80MtAfOa/3Ud8
+         Ar1DSKj/UQ0wbec4I9zlz0CzB/5CL7AyRnn+dQTJJPIN9gdBrqsAkQKVwaWEO3Q+ioTt
+         WbW0+6qLHbCK/SSBKlk06EwLb4L4rxvKVX3x3V1xTBehacRVDPs3UY3Sr/owSj77Jgps
+         G6ECedTnCODxhAqufkkUcgyPDMKGp39r/NJS1CvVE6jwxro2nlTdzEoakr6lrDR1bIR8
+         fC+HakW+I+8S2+1UsuXioZxPpofPrdQ1TNvbwyFKICSGqvsp0Ckgpp60KVVW3ngIoBHb
+         Cqkg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=ncOE2spr;
-       dkim=pass header.i=@chromium.org header.s=google header.b=HyU3NwY5;
-       spf=pass (google.com: domain of kernel-hardening-return-13139-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13139-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of youquan.song@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=youquan.song@intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=ncOE2spr;
-       dkim=pass header.i=@chromium.org header.s=google header.b=HyU3NwY5;
-       spf=pass (google.com: domain of kernel-hardening-return-13139-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13139-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <87po2nagrk.fsf@kamboji.qca.qualcomm.com>
-References: <20180424235752.GA37317@beast> <87po2nagrk.fsf@kamboji.qca.qualcomm.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 25 Apr 2018 07:42:25 -0700
-X-Google-Sender-Auth: wrHTAL7FySnNnrlDVNmn1PGTm_A
-Message-ID: <CAGXu5jJrd94=RQJHqfdP9wTfhsp61+aCnOmr06bia3mmi79_Mg@mail.gmail.com>
-Subject: Re: [PATCH v3] ath9k: dfs: Remove VLA usage
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Andreas Christoforou <andreaschristofo@gmail.com>, Rosen Penev <rosenp@gmail.com>,
-	Eric Dumazet <eric.dumazet@gmail.com>, Joe Perches <joe@perches.com>,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	Network Development <netdev@vger.kernel.org>,
-	QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+       spf=pass (google.com: domain of youquan.song@intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=youquan.song@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
+   d="scan'208";a="35084908"
+From: Youquan Song <youquan.song@intel.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: tim.c.chen@linux.intel.com,
+	ashok.raj@intel.com,
+	dave.hansen@intel.com,
+	yi.y.sun@linux.intel.com,
+	youquan.song@intel.com,
+	youquan.song@linux.intel.com,
+	Ingo Molnar <mingo@kernel.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	arjan.van.de.ven@intel.com,
+	bp@alien8.de,
+	jmattson@google.com,
+	karahmed@amazon.de,
+	kvm@vger.kernel.org,
+	pbonzini@redhat.com,
+	rkrcmar@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 14/24] x86/speculation: Move firmware_restrict_branch_speculation_*() from C to CPP
+Date: Wed, 18 Apr 2018 11:18:22 +0800
+Message-Id: <1524021512-24022-15-git-send-email-youquan.song@intel.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1524021512-24022-1-git-send-email-youquan.song@intel.com>
+References: <1524021512-24022-1-git-send-email-youquan.song@intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598673960782559388?=
-X-GMAIL-MSGID: =?utf-8?q?1598729606906591859?=
+X-GMAIL-THRID: =?utf-8?q?1598052459247189744?=
+X-GMAIL-MSGID: =?utf-8?q?1598052459247189744?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, Apr 25, 2018 at 12:26 AM, Kalle Valo <kvalo@codeaurora.org> wrote:
-> I have already applied an almost identical patch:
->
-> ath9k: dfs: remove accidental use of stack VLA
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=ath-next&id=9c27489a34548913baaaf3b2776e05d4a9389e3e
+From: Ingo Molnar <mingo@kernel.org>
 
-Ah! Cool, no worries. I didn't see that in linux-next yet. :)
+(cherry picked from commit d72f4e29e6d84b7ec02ae93088aa459ac70e733b)
 
-Thanks!
+firmware_restrict_branch_speculation_*() recently started using
+preempt_enable()/disable(), but those are relatively high level
+primitives and cause build failures on some 32-bit builds.
 
--Kees
+Since we want to keep <asm/nospec-branch.h> low level, convert
+them to macros to avoid header hell...
 
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: arjan.van.de.ven@intel.com
+Cc: bp@alien8.de
+Cc: dave.hansen@intel.com
+Cc: jmattson@google.com
+Cc: karahmed@amazon.de
+Cc: kvm@vger.kernel.org
+Cc: pbonzini@redhat.com
+Cc: rkrcmar@redhat.com
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Youquan Song <youquan.song@linux.intel.com> [v4.4 backport]
+---
+ arch/x86/include/asm/nospec-branch.h | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 27582aa..4675f65 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -214,20 +214,22 @@ static inline void indirect_branch_prediction_barrier(void)
+ /*
+  * With retpoline, we must use IBRS to restrict branch prediction
+  * before calling into firmware.
++ *
++ * (Implemented as CPP macros due to header hell.)
+  */
+-static inline void firmware_restrict_branch_speculation_start(void)
+-{
+-	preempt_disable();
+-	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,
+-			      X86_FEATURE_USE_IBRS_FW);
+-}
++#define firmware_restrict_branch_speculation_start()			\
++do {									\
++	preempt_disable();						\
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, SPEC_CTRL_IBRS,	\
++			      X86_FEATURE_USE_IBRS_FW);			\
++} while (0)
+ 
+-static inline void firmware_restrict_branch_speculation_end(void)
+-{
+-	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,
+-			      X86_FEATURE_USE_IBRS_FW);
+-	preempt_enable();
+-}
++#define firmware_restrict_branch_speculation_end()			\
++do {									\
++	alternative_msr_write(MSR_IA32_SPEC_CTRL, 0,			\
++			      X86_FEATURE_USE_IBRS_FW);			\
++	preempt_enable();						\
++} while (0)
+ 
+ #endif /* __ASSEMBLY__ */
+ 
 -- 
-Kees Cook
-Pixel Security
+1.8.3.1
