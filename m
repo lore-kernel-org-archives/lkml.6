@@ -1,56 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753942AbeDRNbm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 09:31:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45852 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753442AbeDRNbl (ORCPT
+        id S1752765AbeDRNfE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 09:35:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40086 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752624AbeDRNfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:31:41 -0400
-Date: Wed, 18 Apr 2018 06:31:39 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH] mm:memcg: add __GFP_NOWARN in
- __memcg_schedule_kmem_cache_create
-Message-ID: <20180418133139.GB27475@bombadil.infradead.org>
-References: <20180418022912.248417-1-minchan@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180418022912.248417-1-minchan@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 18 Apr 2018 09:35:00 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5985B60500
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
+Subject: [PATCH v5 0/2] Misc patches to support clocks for SDM845
+Date: Wed, 18 Apr 2018 19:04:31 +0530
+Message-Id: <1524058473-15860-1-git-send-email-anischal@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 11:29:12AM +0900, Minchan Kim wrote:
-> If there are heavy memory pressure, page allocation with __GFP_NOWAIT
-> fails easily although it's order-0 request.
-> I got below warning 9 times for normal boot.
-> 
-> Let's not make user scared.
+Changes in v5:
+1. Adressed review comments for v3 and v4 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/16/1129
+2. Removed bi_tcxo clock being modelled from the GCC driver, as RPMH clock
+   driver would provide the same. https://lkml.org/lkml/2018/4/13/685
+3. The GCC clock driver(patch 2) depends upon the below patches related to
+   GDSC operation and RPMh clock driver, which are under review.
+   https://lkml.org/lkml/2018/4/2/143
+   https://lkml.org/lkml/2018/4/13/685
 
-Actually, can you explain why it's OK if this fails?  As I understand this
-code, we'll fail to create a kmalloc cache for this memcg.  What problems
-does that cause?
+Changes in v4:
+1. Adressed review comments for v2 version of GCC driver for SDM845
+   https://lkml.org/lkml/2018/4/9/55.
+2. The GCC clock driver(patch 3) depends upon the below patches
+   related to GDSC operation and are under review.
 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 448db08d97a0..671d07e73a3b 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2200,7 +2200,7 @@ static void __memcg_schedule_kmem_cache_create(struct mem_cgroup *memcg,
->  {
->  	struct memcg_kmem_cache_create_work *cw;
->  
-> -	cw = kmalloc(sizeof(*cw), GFP_NOWAIT);
-> +	cw = kmalloc(sizeof(*cw), GFP_NOWAIT | __GFP_NOWARN);
->  	if (!cw)
->  		return;
->  
-> -- 
-> 2.17.0.484.g0c8726318c-goog
-> 
+   https://lkml.org/lkml/2018/4/2/142
+
+Changes in v3:
+1. Adressed review comments given for v2 series.
+2. The GCC clock driver(patch 3) depends upon the below patches related
+   to GDSC operation and are under review.
+
+   https://lkml.org/lkml/2018/4/2/142
+
+Changes in v2:
+Fixup for recalc_rate ops for clk_rcg2_shared_ops:
+There could be few scenarios where shared clocks are configured
+at rate other than CXO by boot. In those cases there would be a
+mismatch between the rate calculated by the recalc shared ops
+and the actual HW register configuration. Fix the same by adding
+an additional check to read current src from CFG register and
+make a decision based on that.
+
+Changes in v1:
+https://lkml.org/lkml/2018/1/31/209
+
+This patch series does the miscellaneous changes to support
+clock nodes for SDM845. Below are the major changes for
+which the existing code does not have support.
+
+1. Clear hardware clock control bit of RCGs where HW clock
+   control bit is set by default so that software can control
+   those root clocks.
+2. Introduces clk_rcg2_shared_ops to support clock controller
+   drivers for SDM845. With new shared ops, RCGs with shared
+   branches will be configured to a safe source in disable
+   path and actual RCG update configuration will be done in
+   enable path instead of doing config update in set_rate.
+   In set_rate(), just cache the rate instead of doing actual
+   configuration update. Also each RCG in clock controller
+   driver will have their own safe configuration frequency
+   table to switch to safe frequency.
+3. Add support for controlling Fabia PLL for which the support
+   is not available in existing alpha PLL code.
+4. Add Global Clock controller (GCC) driver for SDM845. This
+   should allow most non-multimedia device drivers to probe
+   and control their clocks.
+
+[v1] : https://lkml.org/lkml/2018/1/31/209
+[v2] : https://lkml.org/lkml/2018/3/8/495
+[v3] : https://www.spinics.net/lists/linux-arm-msm/msg35009.html
+[v4] : https://lkml.org/lkml/2018/4/9/79
+
+Amit Nischal (1):
+  clk: qcom: Configure the RCGs to a safe source as needed
+
+Taniya Das (1):
+  clk: qcom: Add Global Clock controller (GCC) driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-rcg.h                         |    7 +-
+ drivers/clk/qcom/clk-rcg2.c                        |  173 +-
+ drivers/clk/qcom/gcc-sdm845.c                      | 3456 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  237 ++
+ 7 files changed, 3882 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
