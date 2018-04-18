@@ -1,235 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753565AbeDRODs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:03:48 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:41516 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753185AbeDRODp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:03:45 -0400
-X-Google-Smtp-Source: AIpwx499LPyBK86SQ+tWJHkzJBJ0LfVqFqzu039v5Q6izry1O4dEomvbg51jh5Vxs0JPS/kOcBitfA==
+        id S1753653AbeDROEM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:04:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35542 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752939AbeDROEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 10:04:10 -0400
+Date: Wed, 18 Apr 2018 16:04:09 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] printk: wake up klogd in vprintk_emit
+Message-ID: <20180418140409.6hvkbip4skfs4x7y@pathway.suse.cz>
+References: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180418062907.3210386-1-songliubraving@fb.com>
-References: <20180418062907.3210386-1-songliubraving@fb.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 18 Apr 2018 16:03:42 +0200
-X-Gmail-Original-Message-ID: <CAELBmZCvrL4s+cx2cECMQLQUx0hMxVP-dv9UGBfh64AS6unaBA@mail.gmail.com>
-Message-ID: <CAELBmZCvrL4s+cx2cECMQLQUx0hMxVP-dv9UGBfh64AS6unaBA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] tracing: fix bad use of igrab in trace_uprobe.c
-To: Song Liu <songliubraving@fb.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 8:29 AM, Song Liu <songliubraving@fb.com> wrote:
-> As Miklos reported and suggested:
->
->   This pattern repeats two times in trace_uprobe.c and in
->   kernel/events/core.c as well:
->
->       ret = kern_path(filename, LOOKUP_FOLLOW, &path);
->       if (ret)
->           goto fail_address_parse;
->
->       inode = igrab(d_inode(path.dentry));
->       path_put(&path);
->
->   And it's wrong.  You can only hold a reference to the inode if you
->   have an active ref to the superblock as well (which is normally
->   through path.mnt) or holding s_umount.
->
->   This way unmounting the containing filesystem while the tracepoint is
->   active will give you the "VFS: Busy inodes after unmount..." message
->   and a crash when the inode is finally put.
->
->   Solution: store path instead of inode.
->
-> This patch fixes two instances in trace_uprobe.c.
->
-> Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
-> Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Howard McLauchlan <hmclauchlan@fb.com>
-> Cc: Josef Bacik <jbacik@fb.com>
-> Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-> Reported-by: Miklos Szeredi <miklos@szeredi.hu>
-> Signed-off-by: Song Liu <songliubraving@fb.com>
+On Sat 2018-04-14 12:01:45, Sergey Senozhatsky wrote:
+> We wake up klogd very late - only when current console_sem owner
+> is done pushing pending kernel messages to the serial/net consoles.
+> In some cases this results in lost syslog messages, because kernel
+> log buffer is a circular buffer and if we don't wakeup syslog long
+> enough there are chances that logbuf simply will wrap around.
+> 
+> The patch moves the klog wake up call to vprintk_emit(), which is
+> the only legit way for a kernel message to appear in the logbuf,
+> right before we attempt to grab the console_sem (possibly spinning
+> on it waiting for the hand off) and call console drivers.
+> 
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 > ---
->  kernel/trace/trace_uprobe.c | 42 ++++++++++++++----------------------------
->  1 file changed, 14 insertions(+), 28 deletions(-)
->
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index 0d450b4..80dfcdf 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -55,7 +55,7 @@ struct trace_uprobe {
->         struct list_head                list;
->         struct trace_uprobe_filter      filter;
->         struct uprobe_consumer          consumer;
-> -       struct inode                    *inode;
-> +       struct path                     path;
->         char                            *filename;
->         unsigned long                   offset;
->         unsigned long                   nhit;
-> @@ -289,7 +289,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
->         for (i = 0; i < tu->tp.nr_args; i++)
->                 traceprobe_free_probe_arg(&tu->tp.args[i]);
->
-> -       iput(tu->inode);
-> +       path_put(&tu->path);
->         kfree(tu->tp.call.class->system);
->         kfree(tu->tp.call.name);
->         kfree(tu->filename);
-> @@ -363,7 +363,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
->  static int create_trace_uprobe(int argc, char **argv)
->  {
->         struct trace_uprobe *tu;
-> -       struct inode *inode;
->         char *arg, *event, *group, *filename;
->         char buf[MAX_EVENT_NAME_LEN];
->         struct path path;
-> @@ -371,7 +370,6 @@ static int create_trace_uprobe(int argc, char **argv)
->         bool is_delete, is_return;
->         int i, ret;
->
-> -       inode = NULL;
->         ret = 0;
->         is_delete = false;
->         is_return = false;
-> @@ -448,14 +446,6 @@ static int create_trace_uprobe(int argc, char **argv)
->         if (ret)
->                 goto fail_address_parse;
->
-> -       inode = igrab(d_inode(path.dentry));
+>  kernel/printk/printk.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 2f4af216bd6e..86f0b337cbf6 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1888,6 +1888,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  
+>  	printed_len = log_output(facility, level, lflags, dict, dictlen, text, text_len);
+>  
+> +	wake_up_klogd();
+>  	logbuf_unlock_irqrestore(flags);
 
-This is not against -linus tree.
+The change makes perfect sense and I am fine with the idea. I just
+wonder if there is a strong reason to do the wake_up before
+releasing the logbuf_lock. It makes an assumption that it needs
+to be synchronized by logbuf_lock.
 
-> -       path_put(&path);
-> -
-> -       if (!inode || !S_ISREG(inode->i_mode)) {
-> -               ret = -EINVAL;
-> -               goto fail_address_parse;
-> -       }
-> -
->         ret = kstrtoul(arg, 0, &offset);
->         if (ret)
->                 goto fail_address_parse;
-> @@ -490,7 +480,8 @@ static int create_trace_uprobe(int argc, char **argv)
->                 goto fail_address_parse;
->         }
->         tu->offset = offset;
-> -       tu->inode = inode;
-> +       tu->path.mnt = path.mnt;
-> +       tu->path.dentry = path.dentry;
+In fact, I would feel more comfortable if we move this to the end
+of vprintk_emit() right before return printk_len. This will be
+more close to the current behavior (console first). But it will
+still wakeup klogd much earlier and regularly if there is
+a flood of messages.
 
-You can just assign the whole structure.  No need to mess with
-individual members.
-
-        tu->path = path;
-
->         tu->filename = kstrdup(filename, GFP_KERNEL);
->
->         if (!tu->filename) {
-> @@ -558,7 +549,7 @@ static int create_trace_uprobe(int argc, char **argv)
->         return ret;
->
->  fail_address_parse:
-> -       iput(inode);
-> +       path_put(&path);
->
->         pr_info("Failed to parse address or file.\n");
->
-> @@ -937,7 +928,8 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
->                 goto err_flags;
->
->         tu->consumer.filter = filter;
-> -       ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
-> +       ret = uprobe_register(d_inode(tu->path.dentry), tu->offset,
-> +                             &tu->consumer);
-
-It is not entirely clear how the lifetime of uprobe relates to the
-lifetime of trace_uprobe.  Is the uprobe object never going to survive
-its creator trace_uprobe object?
-
-If that's the case, it warrants a comment.  If that's not the case,
-then the path would need to be passed to uprobe_resister() which would
-need to obtain its own reference.
-
->         if (ret)
->                 goto err_buffer;
->
-> @@ -981,7 +973,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
->
->         WARN_ON(!uprobe_filter_is_empty(&tu->filter));
->
-> -       uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
-> +       uprobe_unregister(d_inode(tu->path.dentry), tu->offset, &tu->consumer);
->         tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
->
->         uprobe_buffer_disable();
-> @@ -1056,7 +1048,8 @@ static int uprobe_perf_close(struct trace_uprobe *tu, struct perf_event *event)
->         write_unlock(&tu->filter.rwlock);
->
->         if (!done)
-> -               return uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
-> +               return uprobe_apply(d_inode(tu->path.dentry), tu->offset,
-> +                                   &tu->consumer, false);
->
->         return 0;
->  }
-> @@ -1088,7 +1081,8 @@ static int uprobe_perf_open(struct trace_uprobe *tu, struct perf_event *event)
->
->         err = 0;
->         if (!done) {
-> -               err = uprobe_apply(tu->inode, tu->offset, &tu->consumer, true);
-> +               err = uprobe_apply(d_inode(tu->path.dentry),
-> +                                  tu->offset, &tu->consumer, true);
->                 if (err)
->                         uprobe_perf_close(tu, event);
->         }
-> @@ -1352,7 +1346,6 @@ struct trace_event_call *
->  create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
->  {
->         struct trace_uprobe *tu;
-> -       struct inode *inode;
->         struct path path;
->         int ret;
->
-> @@ -1360,14 +1353,6 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
->         if (ret)
->                 return ERR_PTR(ret);
->
-> -       inode = igrab(d_inode(path.dentry));
-> -       path_put(&path);
-> -
-> -       if (!inode || !S_ISREG(inode->i_mode)) {
-> -               iput(inode);
-> -               return ERR_PTR(-EINVAL);
-> -       }
-> -
->         /*
->          * local trace_kprobes are not added to probe_list, so they are never
->          * searched in find_trace_kprobe(). Therefore, there is no concern of
-> @@ -1383,7 +1368,8 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
->         }
->
->         tu->offset = offs;
-> -       tu->inode = inode;
-> +       tu->path.mnt = path.mnt;
-> +       tu->path.dentry = path.dentry;
-
-tu->path = path
-
-
->         tu->filename = kstrdup(name, GFP_KERNEL);
->         init_trace_event_call(tu, &tu->tp.call);
->
-> --
-> 2.9.5
->
+Best Regards,
+Petr
