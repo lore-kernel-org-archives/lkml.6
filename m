@@ -1,468 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753002AbeDQX6C (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 19:58:02 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:42655 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752760AbeDQX56 (ORCPT
+        id S1753080AbeDRAHH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 20:07:07 -0400
+Received: from mail-io0-f171.google.com ([209.85.223.171]:36237 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752757AbeDRAHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 19:57:58 -0400
-X-Google-Smtp-Source: AIpwx4/8+NYuX3/C0smH7f1JGLMBbEfZdwecdU/S7svxHGbromDJx01pEGnIYg9Zp2IO5tiVCmd+5w==
-Date: Tue, 17 Apr 2018 16:57:56 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Taniya Das <tdas@codeaurora.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        David Collins <collinsd@codeaurora.org>
-Subject: Re: [v3,2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Message-ID: <20180417235756.GF244487@google.com>
-References: <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
+        Tue, 17 Apr 2018 20:07:05 -0400
+X-Google-Smtp-Source: AIpwx487ZtlDnxP68wofeTttVYD59JPOLC2AlYVz2DAfZZff7LffZIpcKnTfFi4DTo/dcZrKlp734XijGuqP30pafkU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1523673401-21611-3-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180417233511.6573-2-mwilck@suse.com>
+References: <20180417233511.6573-1-mwilck@suse.com> <20180417233511.6573-2-mwilck@suse.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 17 Apr 2018 17:07:04 -0700
+X-Google-Sender-Auth: bq0Vc3R39WQFishxi-Aj04Ic5-U
+Message-ID: <CA+55aFxLY2=RVAD8m-3bf4vKWpPKWSmjN_tLVWwb4Y7w81UTbA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] ilog2: create truly constant version for sparse
+To: Martin Wilck <mwilck@suse.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>,
+        James Bottomley <jejb@linux.vnet.ibm.com>,
+        Xose Vazquez Perez <xose.vazquez@gmail.com>,
+        Bart Van Assche <Bart.VanAssche@sandisk.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 14, 2018 at 08:06:41AM +0530, Taniya Das wrote:
-> Add the RPMh clock driver to control the RPMh managed clock resources on
-> some of the Qualcomm Technologies, Inc. SoCs.
-> 
-> Signed-off-by: David Collins <collinsd@codeaurora.org>
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-> ---
->  drivers/clk/qcom/Kconfig    |   9 ++
->  drivers/clk/qcom/Makefile   |   1 +
->  drivers/clk/qcom/clk-rpmh.c | 367 ++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 377 insertions(+)
->  create mode 100644 drivers/clk/qcom/clk-rpmh.c
->
-> --
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index fbf4532..63c3372 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -112,6 +112,15 @@ config IPQ_GCC_8074
->  	  i2c, USB, SD/eMMC, etc. Select this for the root clock
->  	  of ipq8074.
-> 
-> +config QCOM_CLK_RPMH
-> +	tristate "RPMh Clock Driver"
-> +	depends on COMMON_CLK_QCOM && QCOM_RPMH
-> +	help
-> +	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
-> +	 SoCs. It accepts requests from other hardware subsystems via RSC.
-> +	 Say Y if you want to support the clocks exposed by RPMh on
-> +	 platforms such as sdm845.
-> +
->  config MSM_GCC_8660
->  	tristate "MSM8660 Global Clock Controller"
->  	depends on COMMON_CLK_QCOM
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 230332c..b2b5babf 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -36,5 +36,6 @@ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
->  obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
->  obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
->  obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
-> +obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
->  obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
->  obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> new file mode 100644
-> index 0000000..fa61284
-> --- /dev/null
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -0,0 +1,367 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <soc/qcom/cmd-db.h>
-> +#include <soc/qcom/rpmh.h>
-> +
-> +#include <dt-bindings/clock/qcom,rpmh.h>
-> +
-> +#define CLK_RPMH_ARC_EN_OFFSET	0
-> +#define CLK_RPMH_VRM_EN_OFFSET	4
-> +#define CLK_RPMH_APPS_RSC_AO_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
-> +					 BIT(RPMH_ACTIVE_ONLY_STATE))
-> +#define CLK_RPMH_APPS_RSC_STATE_MASK (BIT(RPMH_WAKE_ONLY_STATE) | \
-> +				      BIT(RPMH_ACTIVE_ONLY_STATE) | \
-> +				      BIT(RPMH_SLEEP_STATE))
-> +struct clk_rpmh {
-> +	struct clk_hw hw;
-> +	const char *res_name;
-> +	u32 res_addr;
-> +	u32 res_en_offset;
-> +	u32 res_on_val;
-> +	u32 res_off_val;
-> +	u32 state;
-> +	u32 aggr_state;
-> +	u32 last_sent_aggr_state;
-> +	u32 valid_state_mask;
-> +	struct rpmh_client *rpmh_client;
-> +	struct device *dev;
-> +	struct clk_rpmh *peer;
-> +	unsigned long rate;
-> +};
-> +
-> +struct rpmh_cc {
-> +	struct clk_onecell_data data;
-> +	struct clk *clks[];
-> +};
-> +
-> +struct clk_rpmh_desc {
-> +	struct clk_hw **clks;
-> +	size_t num_clks;
-> +};
+On Tue, Apr 17, 2018 at 4:35 PM, Martin Wilck <mwilck@suse.com> wrote:
+> Sparse emits errors about ilog2() in array indices because of the use of
+> __ilog2_32() and __ilog2_64(),
 
-Could you briefly document the struct members, especially struct clk_rpmh?
+If sparse warns about it, then presumably gcc with -Wvla warns about it too?
 
-> +static DEFINE_MUTEX(rpmh_clk_lock);
-> +
-> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
-> +			  _res_en_offset, _res_on, _res_off, _rate)	\
-> +	static struct clk_rpmh _platform##_##_name_active;		      \
-> +	static struct clk_rpmh _platform##_##_name = {			      \
-> +		.res_name = _res_name,					      \
-> +		.res_en_offset = _res_en_offset,			      \
-> +		.res_on_val = _res_on,					      \
-> +		.res_off_val = _res_off,				      \
-> +		.rate = _rate,						      \
-> +		.peer = &_platform##_##_name_active,			      \
-> +		.valid_state_mask = CLK_RPMH_APPS_RSC_STATE_MASK,	      \
-> +		.hw.init = &(struct clk_init_data){			      \
-> +			.ops = &clk_rpmh_ops,			              \
-> +			.name = #_name,					      \
-> +		},							      \
-> +	};								      \
-> +	static struct clk_rpmh _platform##_##_name_active = {		      \
-> +		.res_name = _res_name,					      \
-> +		.res_en_offset = _res_en_offset,			      \
-> +		.res_on_val = _res_on,					      \
-> +		.res_off_val = _res_off,				      \
-> +		.rate = _rate,						      \
-> +		.peer = &_platform##_##_name,				      \
-> +		.valid_state_mask = CLK_RPMH_APPS_RSC_AO_STATE_MASK,	      \
-> +		.hw.init = &(struct clk_init_data){			      \
-> +			.ops = &clk_rpmh_ops,				      \
-> +			.name = #_name_active,				      \
-> +		},							      \
-> +	}
-> +
-> +#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name, \
-> +			    _res_on, _res_off, _rate) \
-> +	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
-> +			  CLK_RPMH_ARC_EN_OFFSET, _res_on, _res_off, _rate)
-> +
-> +#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name,	\
-> +			    _rate)					 \
-> +	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,     \
-> +			  CLK_RPMH_VRM_EN_OFFSET, true, false, _rate)
-> +
-> +static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
-> +{
-> +	return container_of(_hw, struct clk_rpmh, hw);
-> +}
-> +
-> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
-> +{
-> +	return ((c->last_sent_aggr_state & BIT(state))
-> +		!= (c->aggr_state & BIT(state)));
-> +}
-> +
-> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
-> +{
-> +	struct tcs_cmd cmd = { 0 };
-> +	u32 cmd_state, on_val;
-> +	enum rpmh_state state = RPMH_SLEEP_STATE;
-> +	int ret = 0;
+And if thats the case, then __builtin_constant_p() and a ternary
+operation isn't good enough, because gcc -Wvla is even more anal than
+sparse is.
 
-nit: initialization of 'ret' is not needed.
+Which is why we have that __is_constexpr() magic for min/max().
 
-> +
-> +	cmd.addr = c->res_addr + c->res_en_offset;
-> +	cmd_state = c->aggr_state;
-> +	on_val = c->res_on_val;
-> +
-> +	for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
+So I suspect that what you'd want is
 
-It would be clearer to initialize 'state' here.
+  #define ilog2(n) \
+        __builtin_choose_expr(__is_constexpr(n), \
+                const_ilog2(n), \
+                __builtin_choose_expr(sizeof(n) <= 4, \
+                        __ilog2_u32(n), \
+                        __ilog2_u64(n)))
 
-> +		if (has_state_changed(c, state)) {
-> +			cmd.data = (cmd_state & BIT(state)) ? on_val : 0;
-                                                                       ~
-Shouldn't this be c->res_off_val?
+or something. Hmm?
 
-> +			ret = rpmh_write_async(c->rpmh_client, state,
-> +						&cmd, 1);
-> +			if (ret) {
-> +				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
-> +					(!state) ? "sleep" :
-> +					(state == RPMH_WAKE_ONLY_STATE)	?
-> +					"wake" : "active", c->res_name, ret);
-> +				return ret;
-> +			}
-> +		}
-> +	}
-> +
-> +	c->last_sent_aggr_state = c->aggr_state;
-> +	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
-> +
-> +	return 0;
-> +}
-> +
-> +static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
-> +						bool enable)
-> +{
-> +	int ret;
-> +
-> +	/* Update state and aggregate state values based on enable value. */
-> +	c->state = enable ? c->valid_state_mask : 0;
-> +	c->aggr_state = c->state | c->peer->state;
-> +	c->peer->aggr_state = c->aggr_state;
-> +
-> +	ret = clk_rpmh_send_aggregate_command(c);
-> +	if (ret && enable) {
-> +		c->state = 0;
-> +	} else if (ret) {
-> +		c->state = c->valid_state_mask;
-> +		WARN(1, "clk: %s failed to disable\n", c->res_name);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int clk_rpmh_prepare(struct clk_hw *hw)
-> +{
-> +	struct clk_rpmh *c = to_clk_rpmh(hw);
-> +	int ret = 0;
-> +
-> +	mutex_lock(&rpmh_clk_lock);
-> +
-> +	if (c->state)
-> +		goto out;
-> +
-> +	ret = clk_rpmh_aggregate_state_send_command(c, true);
-
-This ends up calling rpmh_write_async(), hence the operation might
-still be in flight when the function returns. Is this intended?
-
-> +out:
-> +	mutex_unlock(&rpmh_clk_lock);
-> +	return ret;
-> +};
-> +
-> +static void clk_rpmh_unprepare(struct clk_hw *hw)
-> +{
-> +	struct clk_rpmh *c = to_clk_rpmh(hw);
-> +
-> +	mutex_lock(&rpmh_clk_lock);
-> +
-> +	if (!c->state)
-> +		goto out;
-> +
-> +	clk_rpmh_aggregate_state_send_command(c, false);
-> +out:
-> +	mutex_unlock(&rpmh_clk_lock);
-> +	return;
-> +};
-> +
-> +static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
-> +					  unsigned long parent_rate)
-> +{
-> +	struct clk_rpmh *r = to_clk_rpmh(hw);
-> +
-> +	/*
-> +	 * RPMh clocks have a fixed rate. Return static rate set
-> +	 * at init time.
-> +	 */
-> +	return r->rate;
-> +}
-> +
-> +static const struct clk_ops clk_rpmh_ops = {
-> +	.prepare	= clk_rpmh_prepare,
-> +	.unprepare	= clk_rpmh_unprepare,
-> +	.recalc_rate	= clk_rpmh_recalc_rate,
-> +};
-> +
-> +/* Resource name must match resource id present in cmd-db. */
-> +DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 0x0, 19200000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 19200000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 19200000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 38400000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 38400000);
-> +DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 38400000);
-> +
-> +static struct clk_hw *sdm845_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-> +	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
-> +	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
-> +	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
-> +	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
-> +	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
-> +	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
-> +	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
-> +	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
-> +	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
-> +	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
-> +	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
-> +	.clks = sdm845_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
-> +};
-> +
-> +static int clk_rpmh_probe(struct platform_device *pdev)
-> +{
-> +	struct clk **clks;
-> +	struct clk *clk;
-> +	struct rpmh_cc *rcc;
-> +	struct clk_onecell_data *data;
-> +	struct clk_hw **hw_clks;
-> +	struct clk_rpmh *rpmh_clk;
-> +	const struct clk_rpmh_desc *desc;
-> +	struct rpmh_client *rpmh_client;
-> +	struct device *dev;
-> +	size_t num_clks, i;
-> +	int ret;
-> +
-> +	dev = &pdev->dev;
-> +
-> +	ret = cmd_db_ready();
-> +	if (ret) {
-> +		if (ret != -EPROBE_DEFER) {
-> +			dev_err(dev, "Command DB not available (%d)\n",	ret);
-> +			goto fail;
-> +		}
-> +		return ret;
-> +	}
-> +
-> +	rpmh_client = rpmh_get_client(pdev);
-> +	if (IS_ERR(rpmh_client)) {
-> +		ret = PTR_ERR(rpmh_client);
-> +		dev_err(dev, "Failed to request RPMh client, ret=%d\n",	ret);
-> +		return ret;
-> +	}
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-> +	hw_clks = desc->clks;
-> +	num_clks = desc->num_clks;
-> +
-> +	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc) + sizeof(*clks) * num_clks,
-> +			   GFP_KERNEL);
-> +	if (!rcc) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +
-> +	clks = rcc->clks;
-> +	data = &rcc->data;
-> +	data->clks = clks;
-> +	data->clk_num = num_clks;
-> +
-> +	for (i = 0; i < num_clks; i++) {
-> +		rpmh_clk = to_clk_rpmh(hw_clks[i]);
-> +		rpmh_clk->res_addr = cmd_db_read_addr(rpmh_clk->res_name);
-> +		if (!rpmh_clk->res_addr) {
-> +			dev_err(dev, "missing RPMh resource address for %s\n",
-> +					rpmh_clk->res_name);
-> +			ret = -ENODEV;
-> +			goto err;
-> +		}
-> +
-> +		rpmh_clk->rpmh_client = rpmh_client;
-> +
-> +		clk = devm_clk_register(&pdev->dev, hw_clks[i]);
-> +		if (IS_ERR(clk)) {
-> +			ret = PTR_ERR(clk);
-> +			dev_err(dev, "failed to register %s\n",
-> +					hw_clks[i]->init->name);
-> +			goto err;
-> +		}
-> +
-> +		clks[i] = clk;
-> +		rpmh_clk->dev = &pdev->dev;
-> +	}
-> +
-> +	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
-> +				  data);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to add clock provider\n");
-> +		goto err;
-> +	}
-> +
-> +	dev_dbg(dev, "Registered RPMh clocks\n");
-> +
-> +	return 0;
-> +err:
-> +	if (rpmh_client)
-> +		rpmh_release(rpmh_client);
-> +fail:
-> +	dev_err(dev, "Error registering RPMh Clock driver (%d)\n", ret);
-> +	return ret;
-> +}
-> +
-> +static int clk_rpmh_remove(struct platform_device *pdev)
-> +{
-> +	const struct clk_rpmh_desc *desc =
-> +			of_device_get_match_data(&pdev->dev);
-> +	struct clk_hw **hw_clks = desc->clks;
-> +	struct clk_rpmh *rpmh_clk = to_clk_rpmh(hw_clks[0]);
-> +
-> +	rpmh_release(rpmh_clk->rpmh_client);
-> +	of_clk_del_provider(pdev->dev.of_node);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id clk_rpmh_match_table[] = {
-> +	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
-> +
-> +static struct platform_driver clk_rpmh_driver = {
-> +	.probe		= clk_rpmh_probe,
-> +	.remove		= clk_rpmh_remove,
-> +	.driver		= {
-> +		.name	= "clk-rpmh",
-> +		.of_match_table = clk_rpmh_match_table,
-> +	},
-> +};
-> +
-> +static int __init clk_rpmh_init(void)
-> +{
-> +	return platform_driver_register(&clk_rpmh_driver);
-> +}
-> +subsys_initcall(clk_rpmh_init);
-> +
-> +static void __exit clk_rpmh_exit(void)
-> +{
-> +	platform_driver_unregister(&clk_rpmh_driver);
-> +}
-> +module_exit(clk_rpmh_exit);
-> +
-> +MODULE_DESCRIPTION("QCOM RPMh Clock Driver");
-> +MODULE_LICENSE("GPL v2");
+           Linus
