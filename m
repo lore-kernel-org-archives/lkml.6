@@ -1,25 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752221AbeDRG3a (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 02:29:30 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40016 "EHLO
+        id S1752684AbeDRG3i (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 02:29:38 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34504 "EHLO
         mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751305AbeDRG32 (ORCPT
+        by vger.kernel.org with ESMTP id S1752357AbeDRG3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 02:29:28 -0400
+        Wed, 18 Apr 2018 02:29:36 -0400
 Smtp-Origin-Hostprefix: devbig
 From: Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig102.frc2.facebook.com
 To: <linux-kernel@vger.kernel.org>
 CC: <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
 Smtp-Origin-Cluster: frc2c02
-Subject: [PATCH 1/2] tracing: fix bad use of igrab in trace_uprobe.c
-Date: Tue, 17 Apr 2018 23:29:06 -0700
-Message-ID: <20180418062907.3210386-1-songliubraving@fb.com>
+Subject: [PATCH 2/2] perf/core: fix bad use of igrab in kernel/event/core.c
+Date: Tue, 17 Apr 2018 23:29:07 -0700
+Message-ID: <20180418062907.3210386-2-songliubraving@fb.com>
 X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180418062907.3210386-1-songliubraving@fb.com>
+References: <20180418062907.3210386-1-songliubraving@fb.com>
 X-FB-Internal: Safe
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -53,164 +54,134 @@ As Miklos reported and suggested:
 
   Solution: store path instead of inode.
 
-This patch fixes two instances in trace_uprobe.c.
+This patch fixes the issue in kernel/event/core.c.
 
-Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
-Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
-Cc: Steven Rostedt <rostedt@goodmis.org>
+NOTE: Based on my understanding, perf_addr_filter only supports intel_pt.
+However, my test system doesn't support address filtering (or I made a
+mistake?). Therefore, I have NOT tested this patch.
+
+Could someone please help test it?
+
+Fixes: 375637bc5249 ("perf/core: Introduce address range filtering")
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Howard McLauchlan <hmclauchlan@fb.com>
-Cc: Josef Bacik <jbacik@fb.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reported-by: Miklos Szeredi <miklos@szeredi.hu>
 Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- kernel/trace/trace_uprobe.c | 42 ++++++++++++++----------------------------
- 1 file changed, 14 insertions(+), 28 deletions(-)
+ arch/x86/events/intel/pt.c |  4 ++--
+ include/linux/perf_event.h |  2 +-
+ kernel/events/core.c       | 21 +++++++++------------
+ 3 files changed, 12 insertions(+), 15 deletions(-)
 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 0d450b4..80dfcdf 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -55,7 +55,7 @@ struct trace_uprobe {
- 	struct list_head		list;
- 	struct trace_uprobe_filter	filter;
- 	struct uprobe_consumer		consumer;
--	struct inode			*inode;
-+	struct path			path;
- 	char				*filename;
- 	unsigned long			offset;
- 	unsigned long			nhit;
-@@ -289,7 +289,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
- 	for (i = 0; i < tu->tp.nr_args; i++)
- 		traceprobe_free_probe_arg(&tu->tp.args[i]);
+diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+index 3b99394..8d016ce 100644
+--- a/arch/x86/events/intel/pt.c
++++ b/arch/x86/events/intel/pt.c
+@@ -1194,7 +1194,7 @@ static int pt_event_addr_filters_validate(struct list_head *filters)
+ 		    filter->action == PERF_ADDR_FILTER_ACTION_START)
+ 			return -EOPNOTSUPP;
  
--	iput(tu->inode);
-+	path_put(&tu->path);
- 	kfree(tu->tp.call.class->system);
- 	kfree(tu->tp.call.name);
- 	kfree(tu->filename);
-@@ -363,7 +363,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
- static int create_trace_uprobe(int argc, char **argv)
+-		if (!filter->inode) {
++		if (!filter->path.dentry) {
+ 			if (!valid_kernel_ip(filter->offset))
+ 				return -EINVAL;
+ 
+@@ -1221,7 +1221,7 @@ static void pt_event_addr_filters_sync(struct perf_event *event)
+ 		return;
+ 
+ 	list_for_each_entry(filter, &head->list, entry) {
+-		if (filter->inode && !offs[range]) {
++		if (filter->path.dentry && !offs[range]) {
+ 			msr_a = msr_b = 0;
+ 		} else {
+ 			/* apply the offset */
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index e71e99e..88922d8 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -467,7 +467,7 @@ enum perf_addr_filter_action_t {
+  */
+ struct perf_addr_filter {
+ 	struct list_head	entry;
+-	struct inode		*inode;
++	struct path		path;
+ 	unsigned long		offset;
+ 	unsigned long		size;
+ 	enum perf_addr_filter_action_t	action;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index d7af828..7d711ed 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6668,7 +6668,7 @@ static void perf_event_addr_filters_exec(struct perf_event *event, void *data)
+ 
+ 	raw_spin_lock_irqsave(&ifh->lock, flags);
+ 	list_for_each_entry(filter, &ifh->list, entry) {
+-		if (filter->inode) {
++		if (filter->path.dentry) {
+ 			event->addr_filters_offs[count] = 0;
+ 			restart++;
+ 		}
+@@ -7333,7 +7333,7 @@ static bool perf_addr_filter_match(struct perf_addr_filter *filter,
+ 				     struct file *file, unsigned long offset,
+ 				     unsigned long size)
  {
- 	struct trace_uprobe *tu;
--	struct inode *inode;
- 	char *arg, *event, *group, *filename;
- 	char buf[MAX_EVENT_NAME_LEN];
- 	struct path path;
-@@ -371,7 +370,6 @@ static int create_trace_uprobe(int argc, char **argv)
- 	bool is_delete, is_return;
- 	int i, ret;
+-	if (filter->inode != file_inode(file))
++	if (d_inode(filter->path.dentry) != file_inode(file))
+ 		return false;
  
--	inode = NULL;
- 	ret = 0;
- 	is_delete = false;
- 	is_return = false;
-@@ -448,14 +446,6 @@ static int create_trace_uprobe(int argc, char **argv)
- 	if (ret)
- 		goto fail_address_parse;
+ 	if (filter->offset > offset + size)
+@@ -8674,8 +8674,7 @@ static void free_filters_list(struct list_head *filters)
+ 	struct perf_addr_filter *filter, *iter;
  
--	inode = igrab(d_inode(path.dentry));
--	path_put(&path);
--
--	if (!inode || !S_ISREG(inode->i_mode)) {
--		ret = -EINVAL;
--		goto fail_address_parse;
--	}
--
- 	ret = kstrtoul(arg, 0, &offset);
- 	if (ret)
- 		goto fail_address_parse;
-@@ -490,7 +480,8 @@ static int create_trace_uprobe(int argc, char **argv)
- 		goto fail_address_parse;
+ 	list_for_each_entry_safe(filter, iter, filters, entry) {
+-		if (filter->inode)
+-			iput(filter->inode);
++		path_put(&filter->path);
+ 		list_del(&filter->entry);
+ 		kfree(filter);
  	}
- 	tu->offset = offset;
--	tu->inode = inode;
-+	tu->path.mnt = path.mnt;
-+	tu->path.dentry = path.dentry;
- 	tu->filename = kstrdup(filename, GFP_KERNEL);
+@@ -8772,7 +8771,7 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
+ 		 * Adjust base offset if the filter is associated to a binary
+ 		 * that needs to be mapped:
+ 		 */
+-		if (filter->inode)
++		if (filter->path.dentry)
+ 			event->addr_filters_offs[count] =
+ 				perf_addr_filter_apply(filter, mm);
  
- 	if (!tu->filename) {
-@@ -558,7 +549,7 @@ static int create_trace_uprobe(int argc, char **argv)
- 	return ret;
- 
- fail_address_parse:
--	iput(inode);
-+	path_put(&path);
- 
- 	pr_info("Failed to parse address or file.\n");
- 
-@@ -937,7 +928,8 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
- 		goto err_flags;
- 
- 	tu->consumer.filter = filter;
--	ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
-+	ret = uprobe_register(d_inode(tu->path.dentry), tu->offset,
-+			      &tu->consumer);
- 	if (ret)
- 		goto err_buffer;
- 
-@@ -981,7 +973,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
- 
- 	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
- 
--	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
-+	uprobe_unregister(d_inode(tu->path.dentry), tu->offset, &tu->consumer);
- 	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
- 
- 	uprobe_buffer_disable();
-@@ -1056,7 +1048,8 @@ static int uprobe_perf_close(struct trace_uprobe *tu, struct perf_event *event)
- 	write_unlock(&tu->filter.rwlock);
- 
- 	if (!done)
--		return uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
-+		return uprobe_apply(d_inode(tu->path.dentry), tu->offset,
-+				    &tu->consumer, false);
- 
- 	return 0;
- }
-@@ -1088,7 +1081,8 @@ static int uprobe_perf_open(struct trace_uprobe *tu, struct perf_event *event)
- 
- 	err = 0;
- 	if (!done) {
--		err = uprobe_apply(tu->inode, tu->offset, &tu->consumer, true);
-+		err = uprobe_apply(d_inode(tu->path.dentry),
-+				   tu->offset, &tu->consumer, true);
- 		if (err)
- 			uprobe_perf_close(tu, event);
- 	}
-@@ -1352,7 +1346,6 @@ struct trace_event_call *
- create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+@@ -8846,7 +8845,6 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
  {
- 	struct trace_uprobe *tu;
--	struct inode *inode;
- 	struct path path;
- 	int ret;
+ 	struct perf_addr_filter *filter = NULL;
+ 	char *start, *orig, *filename = NULL;
+-	struct path path;
+ 	substring_t args[MAX_OPT_ARGS];
+ 	int state = IF_STATE_ACTION, token;
+ 	unsigned int kernel = 0;
+@@ -8959,19 +8957,18 @@ perf_event_parse_addr_filter(struct perf_event *event, char *fstr,
+ 					goto fail_free_name;
  
-@@ -1360,14 +1353,6 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
- 	if (ret)
- 		return ERR_PTR(ret);
+ 				/* look up the path and grab its inode */
+-				ret = kern_path(filename, LOOKUP_FOLLOW, &path);
++				ret = kern_path(filename, LOOKUP_FOLLOW,
++						&filter->path);
+ 				if (ret)
+ 					goto fail_free_name;
  
--	inode = igrab(d_inode(path.dentry));
--	path_put(&path);
--
--	if (!inode || !S_ISREG(inode->i_mode)) {
--		iput(inode);
--		return ERR_PTR(-EINVAL);
--	}
--
- 	/*
- 	 * local trace_kprobes are not added to probe_list, so they are never
- 	 * searched in find_trace_kprobe(). Therefore, there is no concern of
-@@ -1383,7 +1368,8 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
- 	}
+-				filter->inode = igrab(d_inode(path.dentry));
+-				path_put(&path);
+ 				kfree(filename);
+ 				filename = NULL;
  
- 	tu->offset = offs;
--	tu->inode = inode;
-+	tu->path.mnt = path.mnt;
-+	tu->path.dentry = path.dentry;
- 	tu->filename = kstrdup(name, GFP_KERNEL);
- 	init_trace_event_call(tu, &tu->tp.call);
+ 				ret = -EINVAL;
+-				if (!filter->inode ||
+-				    !S_ISREG(filter->inode->i_mode))
+-					/* free_filters_list() will iput() */
++				if (!filter->path.dentry ||
++				    !S_ISREG(d_inode(filter->path.dentry)
++					     ->i_mode))
+ 					goto fail;
  
+ 				event->addr_filters.nr_file_filters++;
 -- 
 2.9.5
