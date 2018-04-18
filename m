@@ -1,102 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753243AbeDRI2K (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:28:10 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53707 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752927AbeDRI2I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:28:08 -0400
-From: Aaron Ma <aaron.ma@canonical.com>
-To: aaron.ma@canonical.com, dan.carpenter@oracle.com, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] HID: i2c-hid: Fix resume issue on Raydium touchscreen device
-Date: Wed, 18 Apr 2018 16:27:57 +0800
-Message-Id: <1524040077-6162-1-git-send-email-aaron.ma@canonical.com>
-X-Mailer: git-send-email 1.8.5.5
-In-Reply-To: <nycvar.YFH.7.76.1804121506360.28129@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1804121506360.28129@cbobk.fhfr.pm>
+        id S1753469AbeDRI3R (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:29:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55340 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753114AbeDRI3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 04:29:15 -0400
+Date: Wed, 18 Apr 2018 10:29:00 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/6] dt-bindings: display: atmel: optional
+ video-interface of endpoints
+Message-ID: <20180418102900.3d36e424@bbrezillon>
+In-Reply-To: <ffa56109-db0a-5619-2214-d163a2a42ef6@axentia.se>
+References: <20180417131052.16336-1-peda@axentia.se>
+        <20180417131052.16336-3-peda@axentia.se>
+        <20180418091658.690e3d5e@bbrezillon>
+        <ffa56109-db0a-5619-2214-d163a2a42ef6@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When Rayd touchscreen resumed from S3, it issues too many errors like:
-i2c_hid i2c-RAYD0001:00: i2c_hid_get_input: incomplete report (58/5442)
+On Wed, 18 Apr 2018 09:31:53 +0200
+Peter Rosin <peda@axentia.se> wrote:
 
-And all the report data are corrupted, touchscreen is unresponsive.
+> On 2018-04-18 09:16, Boris Brezillon wrote:
+> > Hi Peter,
+> > 
+> > On Tue, 17 Apr 2018 15:10:48 +0200
+> > Peter Rosin <peda@axentia.se> wrote:
+> >   
+> >> With bus-type/bus-width properties in the endpoint nodes, the video-
+> >> interface of the connection can be specified for cases where the
+> >> heuristic fails to select the correct output mode. This can happen
+> >> e.g. if not all RGB pins are routed on the PCB; the driver has no
+> >> way of knowing this, and needs to be told explicitly.
+> >>
+> >> This is critical for the devices that have the "conflicting output
+> >> formats" issue (SAM9N12, SAM9X5, SAMA5D3), since the most significant
+> >> RGB bits move around depending on the selected output mode. For
+> >> devices that do not have the "conflicting output formats" issue
+> >> (SAMA5D2, SAMA5D4), this is completely irrelevant.
+> >>
+> >> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >> ---
+> >>  Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt | 8 ++++++++
+> >>  1 file changed, 8 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
+> >> index 82f2acb3d374..244b48869eb4 100644
+> >> --- a/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
+> >> +++ b/Documentation/devicetree/bindings/display/atmel/hlcdc-dc.txt
+> >> @@ -15,6 +15,14 @@ Required children nodes:
+> >>   to external devices using the OF graph reprensentation (see ../graph.txt).
+> >>   At least one port node is required.
+> >>  
+> >> +Optional properties in grandchild nodes:
+> >> + Any endpoint grandchild node may specify a desired video interface
+> >> + according to ../../media/video-interfaces.txt, specifically
+> >> + - bus-type: must be <0>.
+> >> + - bus-width: recognized values are <12>, <16>, <18> and <24>, and
+> >> +   override any output mode selection hueristic, forcing "rgb444",  
+> 
+> heuristic, I'll fix that for v3, so please review as if it wasn't there...
+> 
+> >> +   "rgb565", "rgb666" and "rgb888" respectively.
+> >> +  
+> > 
+> > Can you add an example or update the existing one to show how this
+> > should be defined?  
+> 
+> For v3, I'll extend the binding with this after the preexisting example:
+> 
+> ------------------8<-----------------
+> Example 2: With a video interface override to force rgb565, as above
+> but with these changes/additions:
+> 
+> &hlcdc {
+> 	hlcdc-display-controller {
+> 		pinctrl-names = "default";
+> 		pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb565>;
+> 
+> 		port@0 {
+> 			hlcdc_panel_output: endpoint@0 {
+> 				bus-type = <0>;
+> 				bus-width = <16>;
+> 			};
+> 		};
+> 	};
+> };
+> ------------------8<-----------------
+> 
+> Is that a good plan, or should I perhaps duplicate the whole example?
 
-Fix this by re-sending report description command after resume.
-Add device ID as a quirk.
+Looks good to me, no need to add a new example.
 
-V2:
-The V1 patch leads to the following static checker warning:
+Thanks,
 
-	drivers/hid/i2c-hid/i2c-hid.c:1244 i2c_hid_resume()
-	info: return a literal instead of 'ret'
-
-This test was inverted in V1 patch.
-Change the condition of condition.
-
-Cc: stable@vger.kernel.org
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
----
- drivers/hid/hid-ids.h         |  3 +++
- drivers/hid/i2c-hid/i2c-hid.c | 13 +++++++++++++
- 2 files changed, 16 insertions(+)
-
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 5a3a7ead3012..0b5cc910f62e 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -525,6 +525,9 @@
- #define I2C_VENDOR_ID_HANTICK		0x0911
- #define I2C_PRODUCT_ID_HANTICK_5288	0x5288
- 
-+#define I2C_VENDOR_ID_RAYD		0x2386
-+#define I2C_PRODUCT_ID_RAYD_3118	0x3118
-+
- #define USB_VENDOR_ID_HANWANG		0x0b57
- #define USB_DEVICE_ID_HANWANG_TABLET_FIRST	0x5000
- #define USB_DEVICE_ID_HANWANG_TABLET_LAST	0x8fff
-diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-index 97689e98e53f..963328674e93 100644
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -47,6 +47,7 @@
- /* quirks to control the device */
- #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
- #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
-+#define I2C_HID_QUIRK_RESEND_REPORT_DESCR	BIT(2)
- 
- /* flags */
- #define I2C_HID_STARTED		0
-@@ -171,6 +172,8 @@ static const struct i2c_hid_quirks {
- 		I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV },
- 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
- 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET },
-+	{ I2C_VENDOR_ID_RAYD, I2C_PRODUCT_ID_RAYD_3118,
-+		I2C_HID_QUIRK_RESEND_REPORT_DESCR },
- 	{ 0, 0 }
- };
- 
-@@ -1220,6 +1223,16 @@ static int i2c_hid_resume(struct device *dev)
- 	if (ret)
- 		return ret;
- 
-+	/* RAYDIUM device (2386:3118) need to re-send report descr cmd
-+	 * after resume, after this it will be back normal.
-+	 * otherwise it issues too many incomplete reports.
-+	 */
-+	if (ihid->quirks & I2C_HID_QUIRK_RESEND_REPORT_DESCR) {
-+		ret = i2c_hid_command(client, &hid_report_descr_cmd, NULL, 0);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (hid->driver && hid->driver->reset_resume) {
- 		ret = hid->driver->reset_resume(hid);
- 		return ret;
--- 
-2.14.3
+Boris
