@@ -1,75 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753537AbeDRFU1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 01:20:27 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43870 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752864AbeDRFU0 (ORCPT
+        id S1753597AbeDRF2l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 01:28:41 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:49436 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752864AbeDRF2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 01:20:26 -0400
-X-Google-Smtp-Source: AIpwx4//Z945nK2IEnO05oAlm/QAvLuV7m0dXZO/AQbjhYH7d9E7uoUKW/kdRHrU/1PHtYaTN4m7Gw==
-Date: Tue, 17 Apr 2018 22:20:24 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>,
-        Roman Gushchin <guro@fb.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper
- unmap
-In-Reply-To: <201804180447.w3I4lq60017956@www262.sakura.ne.jp>
-Message-ID: <alpine.DEB.2.21.1804172204420.123546@chino.kir.corp.google.com>
-References: <201804180355.w3I3tM6T001187@www262.sakura.ne.jp> <alpine.DEB.2.21.1804172103050.113086@chino.kir.corp.google.com> <201804180447.w3I4lq60017956@www262.sakura.ne.jp>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 18 Apr 2018 01:28:39 -0400
+Subject: Re: [PATCH v6 4/7] remoteproc/davinci: prepare and unprepare the
+ clock where needed
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Suman Anna <s-anna@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
+ <20180417173038.25510-5-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <a0c390ae-53fe-5d17-1ebf-d55e805f4118@ti.com>
+Date: Wed, 18 Apr 2018 10:57:07 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180417173038.25510-5-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018, Tetsuo Handa wrote:
-
-> > Commit 97b1255cb27c is referencing MMF_OOM_SKIP already being set by 
-> > exit_mmap().  The only thing this patch changes is where that is done: 
-> > before or after free_pgtables().  We can certainly move it to before 
-> > free_pgtables() at the risk of subsequent (and eventually unnecessary) oom 
-> > kills.  It's not exactly the point of this patch.
-> > 
-> > I have thousands of real-world examples where additional processes were 
-> > oom killed while the original victim was in free_pgtables().  That's why 
-> > we've moved the MMF_OOM_SKIP to after free_pgtables().
+On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> "we have moved"? No, not yet. Your patch is about to move it.
+> We're currently switching the platform to using the common clock
+> framework. We need to explicitly prepare and unprepare the rproc
+> clock.
 > 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Acked-by: Suman Anna <s-anna@ti.com>
+> Reviewed-by: David Lechner <david@lechnology.com>
 
-I'm referring to our own kernel, we have thousands of real-world examples 
-where additional processes have been oom killed where the original victim 
-is in free_pgtables().  It actually happens about 10-15% of the time in 
-automated testing where you create a 128MB memcg, fork a canary, and then 
-fork a >128MB memory hog.  10-15% of the time both processes get oom 
-killed: the memory hog first (higher rss), the canary second.  The pgtable 
-stat is unchanged between oom kills.
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-> My question is: is it guaranteed that munlock_vma_pages_all()/unmap_vmas()/free_pgtables()
-> by exit_mmap() are never blocked for memory allocation. Note that exit_mmap() tries to unmap
-> all pages while the OOM reaper tries to unmap only safe pages. If there is possibility that
-> munlock_vma_pages_all()/unmap_vmas()/free_pgtables() by exit_mmap() are blocked for memory
-> allocation, your patch will introduce an OOM livelock.
-> 
+This should be safe to apply to v4.17-rc1 as well (for inclusion in v4.18).
 
-If munlock_vma_pages_all(), unmap_vmas(), or free_pgtables() require 
-memory to make forward progress, then we have bigger problems :)
+Bartosz, I noticed that CONFIG_REMOTEPROC and the DA8XX driver is not
+enabled in davinci_all_defconfig. Can you please send a patch enabling
+that too?
 
-I just ran a query of real-world oom kill logs that I have.  In 33,773,705 
-oom kills, I have no evidence of a thread failing to exit after reaching 
-exit_mmap().
-
-You may recall from my support of your patch to emit the stack trace when 
-the oom reaper fails, in https://marc.info/?l=linux-mm&m=152157881518627, 
-that I have logs of 28,222,058 occurrences of the oom reaper where it 
-successfully frees memory and the victim exits.
-
-If you'd like to pursue the possibility that exit_mmap() blocks before 
-freeing memory that we have somehow been lucky to miss in 33 million 
-occurrences, I'd appreciate the test case.
+Thanks,
+Sekhar
