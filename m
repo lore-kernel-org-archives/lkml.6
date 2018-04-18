@@ -1,72 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752825AbeDRFs1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 01:48:27 -0400
-Received: from mout.gmx.net ([212.227.15.19]:44119 "EHLO mout.gmx.net"
+        id S1752624AbeDRFu2 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 01:50:28 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51729 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752606AbeDRFsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 01:48:24 -0400
-Message-ID: <1524030475.5645.2.camel@gmx.de>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-From: Mike Galbraith <gleep@gmx.de>
-To: Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
-Date: Wed, 18 Apr 2018 07:47:55 +0200
-In-Reply-To: <20180417142119.GA4511@codeblueprint.co.uk>
-References: <20180417142119.GA4511@codeblueprint.co.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:Xbn6KhsCiaNRUeE1TAjtk7jqMQr2bsRsXj3NtGT4o79R+IRl9+9
- TUXDlyPdERcHKwW4CK1fI5ZRFFpxnwpaEaTSK7UdmoN2ujiRMYKonE5SmvnqR+YnFnzse/e
- WRJZUEpR1V4mGRPBe84zpPQsQze5dZbKqY0xxnhNxWmT5uD9dIgaFcOtnX6MF+xt8fk+703
- ngIaWVJWtyBf9XuI+PcYQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:NGLFDCHFbZo=:IY6JAJ4s5x7SlP0dVH8SPq
- wEdThlnlV82UAGy883zxaHvq4fN5q5E8eJACZz8M6Z+Pra0X9973s4FUBgGs3wndRQDc6w/Hy
- xiRrnpZlpRB9+ZmfPNaJ4pZJ471RSY81azV1x2NCighycws8PY5iikcopCBDXtzg5ybGvppnn
- Eyl4l1zh+KfvYdueuwhYg41HyUFhTJ1UHG5zpIo9SPxxdri93n5iGI/7pALTiRNfbojGMTELc
- lpugWPcDFMJqH7RW/VHO3h7lHdn4EwUnR8wnVeYyn1H1WzkwmIghs60bqLMXmiBFsexw7VU+n
- uZ1r8f4xdW7sVXpd5efqwvKSNdjz7LoKsYqrz+qTnK0ZTbfq5yrIDly6vV2VPwUIH3nCTzoS4
- Q2s+73KnSCkIezpDv9k8BoEUMlKktI4lZEnDaO7zg5pZzznMCHmINTSBf6kFqHhdFDm393A9S
- ljtZiJTVxIwIa82UPExr1VpSPEgOHrZkyK95tGwHt9fcwtLM8n+rAO5gCalFnG00hKsNNX9G+
- T/6R762kljuBCuDIYIV0Iraix1o97cX4zHXfjxP008o67FqMKCSbnAObWdyD7BMHJkjCSgBq2
- 5lVZHzTV6RmSEUrhlS6n2zIjHtdk0JiVgXPFWy8VadBthA6JOT4F5peiFNgZpmzNDq/jCbMKt
- 5RQhAjYqHvKAq95R5nZzQO9KSavNBJXyXprZipQU3qeQFKbxxDcgft/EuUonKG56LMMC8vDvi
- 9W8dfgIcTTd43nBaZFoyR2PrtxUuZYUSmYs6h7JyipX4cTqwmDX6ucBvsPpT7fevJscHEYR72
- eMreQ3KFxViTaf1yFhPyylXIeekjLzKJ3IonACcTqrvzXeO3bI=
+        id S1750718AbeDRFuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 01:50:25 -0400
+Date: Wed, 18 Apr 2018 07:50:12 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: =?UTF-8?B?T25kxZllag==?= Jirman <doudahwezomiechahtah@xff.cz>
+Cc: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com,
+        devicetree@vger.kernel.org, quentin.schulz@bootlin.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        clabbe.montjoie@gmail.com, thomas.petazzoni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 00/11] Sunxi: Add SMP support on A83T
+Message-ID: <20180418075012.2f70013c@dell-desktop.home>
+In-Reply-To: <20180417021500.ufcp3fhlcpcu7vmt@core>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+        <20180417021500.ufcp3fhlcpcu7vmt@core>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-04-17 at 15:21 +0100, Matt Fleming wrote:
-> Hi guys,
-> 
-> We've seen a bug in one of our SLE kernels where the cpu stopper
-> thread ("migration/15") is entering idle balance. This then triggers
-> active load balance.
-> 
-> At the same time, a task on another CPU triggers a page fault and NUMA
-> balancing kicks in to try and migrate the task closer to the NUMA node
-> for that page (we're inside stop_two_cpus()). This faulting task is
-> spinning in try_to_wake_up() (inside smp_cond_load_acquire(&p->on_cpu,
-> !VAL)), waiting for "migration/15" to context switch.
-> 
-> Unfortunately, because "migration/15" is doing active load balance
-> it's spinning waiting for the NUMA-page-faulting CPU's stopper lock,
-> which is already held (since it's inside stop_two_cpus()).
-> 
-> Deadlock ensues.
-> 
-> This seems like a situation that should be prohibited, but I cannot
-> find any code to prevent it. Is it OK for stopper threads to load
-> balance? Is there something that should prevent this situation from
-> happening?
+Hello Ondrej,
 
-I don't see anything to stop the deadlock either, would exclude stop
-class from playing idle balancer entirely, though I suppose you could
-check for caller being stop class in need_active_balance().  I don't
-think any RT class playing idle balancer is particularly wonderful.
+On Tue, 17 Apr 2018 04:15:00 +0200
+Ondřej Jirman <doudahwezomiechahtah@xff.cz> wrote:
 
-	-Mike
+> Hello Mylène,
+> 
+> Please also add this:
+> 
+> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+> index ce53ceaf4cc5..d9c8ecf88ec6 100644
+> --- a/arch/arm/mach-sunxi/Kconfig
+> +++ b/arch/arm/mach-sunxi/Kconfig
+> @@ -51,7 +51,7 @@ config MACH_SUN9I
+>  config ARCH_SUNXI_MC_SMP
+>         bool
+>         depends on SMP
+> -   default MACH_SUN9I
+> + default MACH_SUN9I || MACH_SUN8I
+>         select ARM_CCI400_PORT_CTRL
+>         select ARM_CPU_SUSPEND
+> 
+> Because otherwise when I'm building kernel just for sun8i and I don't have sun9i
+> enabled, this new SMP code for A83T (which is sun8i) will not be built.
+> 
+
+True, I forgot to add this, thanks!
+
+Best regards,
+
+Mylène
+
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
+
+
+> thank you,
+>   Ondrej
+> 
+> On Mon, Apr 16, 2018 at 11:50:21PM +0200, Mylène Josserand wrote:
+> > Hello everyone,
+> > 
+> > This is a V6 of my series that adds SMP support for Allwinner sun8i-a83t.
+> > Based on sunxi's tree, sunxi/for-next branch.
+> > Depends on a patch from Doug Berger that allows to include the "cpu-type"
+> > header on assembly files:
+> > 6c7dd080ba4b ("ARM: Allow this header to be included by assembly files")
+> > 
+> > This new series refactors the shmobile code to use the function introduced
+> > in this series: "secure_cntvoff_init".
+> > Geert Uytterhoeven and Simon Horman, could you review and test this series
+> > on Renesas boards? Thank you very much!
+> > 
+> > If you have any remarks/questions, let me know.
+> > Thank you in advance,
+> > Mylène
+> > 
+> > Changes since v5:
+> >     - Remove my patch 01 and use the patch of Doug Berger to be able to
+> >     include the cpu-type header on assembly files.
+> >     - Rename smp_init_cntvoff function into secure_cntvoff_init according
+> >     to Marc Zyngier's review.
+> >     - According to Chen-Yu and Maxime's reviews, remove the patch that was
+> >     moving structures. Instead of using an index to retrieve which
+> >     architecture we are having, use a global variable.
+> >     - Merge the 2 patches that move assembly code from C to assembly file.
+> >     - Use a sun8i field instead of sun9i to know on which architecture we
+> >     are using because many modifications/additions of the code are for
+> >     sun8i-a83t.
+> >     - Rework the patch "add is_sun8i field" to add only this field in this
+> >     patch. The part of the patch that was starting to handle the differences
+> >     between sun8i-a83t and sun9i-a80 is merged in the patch that adds the
+> >     support of sun8i-a83t.
+> >     - Add a new patch that refactor the shmobile code to use the new function
+> >     secure_cntvoff_init introduced in this series.
+> > 
+> > Changes since v4:
+> >     - Rebased my series according to new Chen-Yu series:
+> >        "ARM: sunxi: Clean and improvements for multi-cluster SMP"
+> >        https://lkml.org/lkml/2018/3/8/886
+> >     - Updated my series according to Marc Zyngier's reviews to add CNTVOFF
+> >     initialization's function into ARM's common part. Thanks to that, other
+> >     platforms such as Renesa can use this function.
+> >     - For boot CPU, create a new machine to handle the CNTVOFF initialization
+> >     using "init_early" callback.
+> > Changes since v3:
+> >     - Take into account Maxime's reviews:
+> > 	- split the first patch into 4 new patches: add sun9i device tree
+> > 	parsing, rename some variables, add a83t support and finally,
+> > 	add hotplug support.
+> > 	- Move the code of previous patch 07 (to disable CPU0 disabling)
+> > 	into hotplug support patch (see patch 04)
+> > 	- Remove the patch that added PRCM register because it is already
+> > 	available. Because of that, update the device tree parsing to use
+> > 	"sun8i-a83t-r-ccu".
+> > 	- Use a variable to know which SoC we currently have
+> >     - Take into account Chen-Yu's reviews: create two iounmap functions
+> >     to release the resources of the device tree parsing.
+> >     - Take into account Marc's review: Update the code to initialize CNTVOFF
+> >     register. As there is already assembly code in the driver, I decided
+> >     to create an assembly file not to mix assembly and C code.
+> >     For that, I create 3 new patches: move the current assembly code that
+> >     handles the cluster cache enabling into a file, move the cpu_resume entry
+> >     in this file and finally, add a new assembly entry to initialize the timer
+> >     offset for boot CPU and secondary CPUs.
+> > 
+> > Changes since v2:
+> >     - Rebased my modifications according to new Chen Yu's patch series
+> >     that adds SMP support for sun9i-a80 (without MCPM).
+> >     - Split the device-tree patches into 3 patches for CPUCFG, R_CPUCFG
+> >     and PRCM registers for more visibility.
+> >     - The hotplug of CPU0 is currently not working (even after trying what
+> >     Allwinner's code is doing) so remove the possibility of disabling
+> >     this CPU. Created a new patch for it.
+> > 
+> > Changes since v1:
+> >     - Add Chen Yu's patch in my series (see path 01)
+> >     - Add new compatibles for prcm and cpucfg registers for sun8i-a83t.
+> >     Create two functions to separate the DT parsing of sun9i-a80 and
+> >     sun8i-a83t.
+> >     - Thanks to Maxime's review: order device tree's nodes according
+> >     to physical addresses, remove unused label and fix registers' sizes.
+> >     Update the commit log and commit title of my last patch (see
+> >     patch 05).
+> > 
+> > Mylène Josserand (11):
+> >   ARM: sunxi: smp: Move assembly code into a file
+> >   ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
+> >   ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
+> >   ARM: dts: sun8i: a83t: Add CCI-400 node
+> >   ARM: smp: Add initialization of CNTVOFF
+> >   ARM: sunxi: Add initialization of CNTVOFF
+> >   ARM: sun9i: smp: Rename clusters's power-off
+> >   ARM: sun9i: smp: Add is_sun8i field
+> >   ARM: sun8i: smp: Add support for A83T
+> >   ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
+> >   ARM: shmobile: Convert file to use cntvoff
+> > 
+> >  arch/arm/boot/dts/sun8i-a83t.dtsi        |  59 ++++++++
+> >  arch/arm/common/Makefile                 |   1 +
+> >  arch/arm/common/secure_cntvoff.S         |  31 ++++
+> >  arch/arm/include/asm/secure_cntvoff.h    |   8 ++
+> >  arch/arm/mach-shmobile/common.h          |   1 -
+> >  arch/arm/mach-shmobile/headsmp-apmu.S    |  22 +--
+> >  arch/arm/mach-shmobile/setup-rcar-gen2.c |   3 +-
+> >  arch/arm/mach-sunxi/Makefile             |   4 +-
+> >  arch/arm/mach-sunxi/headsmp.S            |  81 +++++++++++
+> >  arch/arm/mach-sunxi/mc_smp.c             | 240 +++++++++++++++++++------------
+> >  arch/arm/mach-sunxi/sunxi.c              |  20 ++-
+> >  11 files changed, 349 insertions(+), 121 deletions(-)
+> >  create mode 100644 arch/arm/common/secure_cntvoff.S
+> >  create mode 100644 arch/arm/include/asm/secure_cntvoff.h
+> >  create mode 100644 arch/arm/mach-sunxi/headsmp.S
+> > 
+> > -- 
+> > 2.11.0
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel  
