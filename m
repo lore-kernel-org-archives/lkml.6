@@ -1,64 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753754AbeDRIKx (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:10:53 -0400
-Received: from sauhun.de ([88.99.104.3]:34704 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753693AbeDRIKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:10:47 -0400
-Date: Wed, 18 Apr 2018 10:10:45 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Sam Hansen <hansens@google.com>
-Cc: linux-i2c@vger.kernel.org, corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] Documentation/i2c: adopt kernel commenting style
- in examples
-Message-ID: <20180418081045.btkr3cdfdka34ph6@ninjato>
-References: <20180413174257.139182-1-hansens@google.com>
- <20180413174257.139182-3-hansens@google.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="h7p3f5dcjag6inyh"
-Content-Disposition: inline
-In-Reply-To: <20180413174257.139182-3-hansens@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1753575AbeDRIMn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:12:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50504 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753178AbeDRIIL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 04:08:11 -0400
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: [PATCH 4/7] docs/vm: pagemap: change document title
+Date: Wed, 18 Apr 2018 11:07:47 +0300
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524038870-413-1-git-send-email-rppt@linux.vnet.ibm.com>
+References: <1524038870-413-1-git-send-email-rppt@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18041808-0008-0000-0000-000004EC91C7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041808-0009-0000-0000-00001E809A7D
+Message-Id: <1524038870-413-5-git-send-email-rppt@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804180076
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+"pagemap from the Userspace Perspective" is not very descriptive for
+unaware readers. Since the document describes how to examine a process page
+tables, let's title it "Examining Process Page Tables"
 
---h7p3f5dcjag6inyh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+---
+ Documentation/vm/pagemap.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Fri, Apr 13, 2018 at 10:42:57AM -0700, Sam Hansen wrote:
-> The example I2C code is rewritten to adopt the preferred kernel block
-> commenting style.
->=20
-> Signed-off-by: Sam Hansen <hansens@google.com>
-
-Applied to for-current, thanks!
-
-
---h7p3f5dcjag6inyh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrW/YUACgkQFA3kzBSg
-KbYIFg/+LjKEfIdoy/XaK6bFryLQ+mF+9Wmt7LmGsWUm3i0bUtfkwfY5qvgergCo
-sX1gwvFeBzGkMpLspO1vcv3/uV37eKJpotlQ8SP6wb0ucB/YZNtmCkrfcGZofwdB
-8lLfeJ8wMkU2Y7RxahXmCkRqCbvh7uKtHj37fu8gEhnErvWbB3o0njGkJSOyv36x
-EfQOFIYIhuaxA2W2JV2l4v/AiZqUQ1HeKmRXKsqYdrdzbeiwSdGEa+LsiQprC10f
-ZoyPhaoFIWzDOjnqTvGga3swdIG0mVz4N1OaeiECvzfl0E+9UvuuyPwdQb6WHSLg
-DJzNtE5JvyajdAIOey618LmyFR/3GEJJJtzViXizpnzk2inTUNkeXAlJ95dlA5ez
-iWsI0J8Sl3tDO/QbrdDXp9V8pt4FC53sF5VB7/pVNIyZ5UZcuDsyLjsBAueGkD21
-bTKoxSOUW4CNS7ZmdMl4m0ID8K4D751IBE0ql0sZJEVLt75szMljNYnEU7nV4M7K
-5KPfxiAq4Kxv++4z47g/O5TZxshBfkHAL/rKX4PgDnpoqmNquKB2cp21WOQYd4+a
-w7zQ+d9+vO7ayHxkJzuQWWcDtG/wIcCJssIy4/D26O/tdw2qiznA70ncv5MMvafy
-Oo9OeXwC+Kuf+cswT/vF9BYjL//DVNyXWC4XW7KE+je2mfoG4Hk=
-=kUkQ
------END PGP SIGNATURE-----
-
---h7p3f5dcjag6inyh--
+diff --git a/Documentation/vm/pagemap.rst b/Documentation/vm/pagemap.rst
+index 9644bc0..7ba8cbd 100644
+--- a/Documentation/vm/pagemap.rst
++++ b/Documentation/vm/pagemap.rst
+@@ -1,8 +1,8 @@
+ .. _pagemap:
+ 
+-======================================
+-pagemap from the Userspace Perspective
+-======================================
++=============================
++Examining Process Page Tables
++=============================
+ 
+ pagemap is a new (as of 2.6.25) set of interfaces in the kernel that allow
+ userspace programs to examine the page tables and related information by
+-- 
+2.7.4
