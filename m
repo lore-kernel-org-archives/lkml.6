@@ -1,143 +1,235 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752696AbeDRODG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:03:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36160 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751232AbeDRODF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:03:05 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA4542178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mhiramat@kernel.org
-Date: Wed, 18 Apr 2018 23:03:01 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        systemtap@sourceware.org, Mark Wielaard <mark@klomp.org>
-Subject: Re: perf probe line numbers + CONFIG_DEBUG_INFO_SPLIT=y
-Message-Id: <20180418230301.fd26676ece5b2dc16d98b266@kernel.org>
-In-Reply-To: <20180418122343.67575c580c0dc5cf11b6ddeb@kernel.org>
-References: <20180417174701.GD3625@kernel.org>
-        <20180418122343.67575c580c0dc5cf11b6ddeb@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753565AbeDRODs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:03:48 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:41516 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753185AbeDRODp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 10:03:45 -0400
+X-Google-Smtp-Source: AIpwx499LPyBK86SQ+tWJHkzJBJ0LfVqFqzu039v5Q6izry1O4dEomvbg51jh5Vxs0JPS/kOcBitfA==
+MIME-Version: 1.0
+In-Reply-To: <20180418062907.3210386-1-songliubraving@fb.com>
+References: <20180418062907.3210386-1-songliubraving@fb.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 18 Apr 2018 16:03:42 +0200
+X-Gmail-Original-Message-ID: <CAELBmZCvrL4s+cx2cECMQLQUx0hMxVP-dv9UGBfh64AS6unaBA@mail.gmail.com>
+Message-ID: <CAELBmZCvrL4s+cx2cECMQLQUx0hMxVP-dv9UGBfh64AS6unaBA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] tracing: fix bad use of igrab in trace_uprobe.c
+To: Song Liu <songliubraving@fb.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 12:23:43 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Wed, Apr 18, 2018 at 8:29 AM, Song Liu <songliubraving@fb.com> wrote:
+> As Miklos reported and suggested:
+>
+>   This pattern repeats two times in trace_uprobe.c and in
+>   kernel/events/core.c as well:
+>
+>       ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+>       if (ret)
+>           goto fail_address_parse;
+>
+>       inode = igrab(d_inode(path.dentry));
+>       path_put(&path);
+>
+>   And it's wrong.  You can only hold a reference to the inode if you
+>   have an active ref to the superblock as well (which is normally
+>   through path.mnt) or holding s_umount.
+>
+>   This way unmounting the containing filesystem while the tracepoint is
+>   active will give you the "VFS: Busy inodes after unmount..." message
+>   and a crash when the inode is finally put.
+>
+>   Solution: store path instead of inode.
+>
+> This patch fixes two instances in trace_uprobe.c.
+>
+> Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
+> Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Howard McLauchlan <hmclauchlan@fb.com>
+> Cc: Josef Bacik <jbacik@fb.com>
+> Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> Reported-by: Miklos Szeredi <miklos@szeredi.hu>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  kernel/trace/trace_uprobe.c | 42 ++++++++++++++----------------------------
+>  1 file changed, 14 insertions(+), 28 deletions(-)
+>
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index 0d450b4..80dfcdf 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -55,7 +55,7 @@ struct trace_uprobe {
+>         struct list_head                list;
+>         struct trace_uprobe_filter      filter;
+>         struct uprobe_consumer          consumer;
+> -       struct inode                    *inode;
+> +       struct path                     path;
+>         char                            *filename;
+>         unsigned long                   offset;
+>         unsigned long                   nhit;
+> @@ -289,7 +289,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
+>         for (i = 0; i < tu->tp.nr_args; i++)
+>                 traceprobe_free_probe_arg(&tu->tp.args[i]);
+>
+> -       iput(tu->inode);
+> +       path_put(&tu->path);
+>         kfree(tu->tp.call.class->system);
+>         kfree(tu->tp.call.name);
+>         kfree(tu->filename);
+> @@ -363,7 +363,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
+>  static int create_trace_uprobe(int argc, char **argv)
+>  {
+>         struct trace_uprobe *tu;
+> -       struct inode *inode;
+>         char *arg, *event, *group, *filename;
+>         char buf[MAX_EVENT_NAME_LEN];
+>         struct path path;
+> @@ -371,7 +370,6 @@ static int create_trace_uprobe(int argc, char **argv)
+>         bool is_delete, is_return;
+>         int i, ret;
+>
+> -       inode = NULL;
+>         ret = 0;
+>         is_delete = false;
+>         is_return = false;
+> @@ -448,14 +446,6 @@ static int create_trace_uprobe(int argc, char **argv)
+>         if (ret)
+>                 goto fail_address_parse;
+>
+> -       inode = igrab(d_inode(path.dentry));
 
-> Hi Arnaldo,
-> 
-> On Tue, 17 Apr 2018 14:47:01 -0300
-> Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> 
-> > Hi Masami,
-> > 
-> > 	I just tried building the kernel using:
-> > 
-> > CONFIG_DEBUG_INFO=y
-> > # CONFIG_DEBUG_INFO_REDUCED is not set
-> > CONFIG_DEBUG_INFO_SPLIT=y
-> > # CONFIG_DEBUG_INFO_DWARF4 is not set
-> 
-> Yeah, this is what I have to solve...
-> 
-> > 
-> > 	that info split looked interesting, and I thought that since we
-> > use elfutils we'd get that for free somehow, so I tried getname_flags
-> > and got the output at the end of this message, with these artifacts:
-> > 
-> > 1) the function signature doesn't appear at the start of the '-L
-> > getname_flags' output
-> > 
-> > 2) offsets are not calculated, just the line numbers in fs/namei.c (it
-> > matches the first line :130 with the first line number.
-> 
-> I think we need to use elfutils with different way, maybe passing
-> correct debuginfo file, instead of vmlinux.
-> Oh, did you got the source code lines? I'll try to reproduce it.
+This is not against -linus tree.
 
-OK, I found this gcc article what actually happen if we enable that option.
+> -       path_put(&path);
+> -
+> -       if (!inode || !S_ISREG(inode->i_mode)) {
+> -               ret = -EINVAL;
+> -               goto fail_address_parse;
+> -       }
+> -
+>         ret = kstrtoul(arg, 0, &offset);
+>         if (ret)
+>                 goto fail_address_parse;
+> @@ -490,7 +480,8 @@ static int create_trace_uprobe(int argc, char **argv)
+>                 goto fail_address_parse;
+>         }
+>         tu->offset = offset;
+> -       tu->inode = inode;
+> +       tu->path.mnt = path.mnt;
+> +       tu->path.dentry = path.dentry;
 
-https://gcc.gnu.org/wiki/DebugFission
+You can just assign the whole structure.  No need to mess with
+individual members.
 
-With CONFIG_DEBUG_INFO_SPLIT=y, we will get very limited debuginfo
-in vmlinux. It seems only have address-to-line information in
-vmlinux, and the main DIE tree will be stored in .dwo files,
-which is generated for each .o file.
+        tu->path = path;
 
-That is why you could get source lines by "perf probe -L", but
-failed to get variables etc. by "perf probe -a". (Note that perf-probe
-always search DIE tree for finding correct "subprogram"(function) info.)
+>         tu->filename = kstrdup(filename, GFP_KERNEL);
+>
+>         if (!tu->filename) {
+> @@ -558,7 +549,7 @@ static int create_trace_uprobe(int argc, char **argv)
+>         return ret;
+>
+>  fail_address_parse:
+> -       iput(inode);
+> +       path_put(&path);
+>
+>         pr_info("Failed to parse address or file.\n");
+>
+> @@ -937,7 +928,8 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
+>                 goto err_flags;
+>
+>         tu->consumer.filter = filter;
+> -       ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
+> +       ret = uprobe_register(d_inode(tu->path.dentry), tu->offset,
+> +                             &tu->consumer);
+
+It is not entirely clear how the lifetime of uprobe relates to the
+lifetime of trace_uprobe.  Is the uprobe object never going to survive
+its creator trace_uprobe object?
+
+If that's the case, it warrants a comment.  If that's not the case,
+then the path would need to be passed to uprobe_resister() which would
+need to obtain its own reference.
+
+>         if (ret)
+>                 goto err_buffer;
+>
+> @@ -981,7 +973,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
+>
+>         WARN_ON(!uprobe_filter_is_empty(&tu->filter));
+>
+> -       uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
+> +       uprobe_unregister(d_inode(tu->path.dentry), tu->offset, &tu->consumer);
+>         tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
+>
+>         uprobe_buffer_disable();
+> @@ -1056,7 +1048,8 @@ static int uprobe_perf_close(struct trace_uprobe *tu, struct perf_event *event)
+>         write_unlock(&tu->filter.rwlock);
+>
+>         if (!done)
+> -               return uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
+> +               return uprobe_apply(d_inode(tu->path.dentry), tu->offset,
+> +                                   &tu->consumer, false);
+>
+>         return 0;
+>  }
+> @@ -1088,7 +1081,8 @@ static int uprobe_perf_open(struct trace_uprobe *tu, struct perf_event *event)
+>
+>         err = 0;
+>         if (!done) {
+> -               err = uprobe_apply(tu->inode, tu->offset, &tu->consumer, true);
+> +               err = uprobe_apply(d_inode(tu->path.dentry),
+> +                                  tu->offset, &tu->consumer, true);
+>                 if (err)
+>                         uprobe_perf_close(tu, event);
+>         }
+> @@ -1352,7 +1346,6 @@ struct trace_event_call *
+>  create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+>  {
+>         struct trace_uprobe *tu;
+> -       struct inode *inode;
+>         struct path path;
+>         int ret;
+>
+> @@ -1360,14 +1353,6 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+>         if (ret)
+>                 return ERR_PTR(ret);
+>
+> -       inode = igrab(d_inode(path.dentry));
+> -       path_put(&path);
+> -
+> -       if (!inode || !S_ISREG(inode->i_mode)) {
+> -               iput(inode);
+> -               return ERR_PTR(-EINVAL);
+> -       }
+> -
+>         /*
+>          * local trace_kprobes are not added to probe_list, so they are never
+>          * searched in find_trace_kprobe(). Therefore, there is no concern of
+> @@ -1383,7 +1368,8 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+>         }
+>
+>         tu->offset = offs;
+> -       tu->inode = inode;
+> +       tu->path.mnt = path.mnt;
+> +       tu->path.dentry = path.dentry;
+
+tu->path = path
 
 
-$ eu-readelf --debug-dump=info ~/kbin/linux.x86_64/vmlinux
-DWARF section [63] '.debug_info' at offset 0x23f1db0:
- [Offset]
- Compilation unit at offset 0:
- Version: 2, Abbreviation section offset: 0, Address size: 8, Offset size: 4
- [     b]  compile_unit
-           stmt_list            (data4) 0
-           ranges               (data4) range list [     0]
-           name                 (strp) "/home/mhiramat/ksrc/linux/arch/x86/kerne
-l/head_64.S"
-           comp_dir             (strp) "/home/mhiramat/kbin/linux.x86_64"
-           producer             (strp) "GNU AS 2.27"
-           language             (data2) Mips_Assembler (32769)
- Compilation unit at offset 34:
- Version: 4, Abbreviation section offset: 18, Address size: 8, Offset size: 4
- [    2d]  compile_unit
-           ranges               (sec_offset) range list [   3b0]
-           low_pc               (addr) 000000000000000000 <irq_stack_union>
-           stmt_list            (sec_offset) 409
-           lo_user+0x130        (strp) "arch/x86/kernel/head64.dwo"
-           comp_dir             (strp) "/home/mhiramat/kbin/linux.x86_64"
-           lo_user+0x134        (flag_present) yes
- Compilation unit at offset 86:
- Version: 4, Abbreviation section offset: 47, Address size: 8, Offset size: 4
- [    61]  compile_unit
-           ranges               (sec_offset) range list [   470]
-           low_pc               (addr) 000000000000000000 <irq_stack_union>
-           stmt_list            (sec_offset) 4388
-           lo_user+0x130        (strp) "arch/x86/kernel/ebda.dwo"
-           comp_dir             (strp) "/home/mhiramat/kbin/linux.x86_64"
-           lo_user+0x134        (flag_present) yes
-
-It shows where we can see the .dwo file.
-However, it seems elfutils doesn't support dwo.
-
-$ eu-readelf --debug-dump=info ~/kbin/linux.x86_64/fs/namei.dwo 
-eu-readelf: cannot get debug context descriptor: No DWARF information found
-
-As above gcc article said, the section name has been changed.
-
-$ eu-readelf -S ~/kbin/linux.x86_64/fs/namei.dwo There are 10 section headers, starting at offset 0x49440:
-
-Section Headers:
-[Nr] Name                 Type         Addr             Off      Size     ES Flags Lk Inf Al
-[ 0]                      NULL         0000000000000000 00000000 00000000  0        0   0  0
-[ 1] .debug_info.dwo      PROGBITS     0000000000000000 00000040 000252d7  0 E      0   0  1
-[ 2] .debug_abbrev.dwo    PROGBITS     0000000000000000 00025317 00000f2f  0 E      0   0  1
-[ 3] .debug_loc.dwo       PROGBITS     0000000000000000 00026246 00004f9b  0 E      0   0  1
-
-
-And I found below description in systemtap document(man/error::dwarf.7stap).
-===
-debuginfo configuration
-Some tools may generate debuginfo that is unsupported by systemtap, such
-as the linux kernel CONFIG_DEBUG_INFO_SPLIT (\f2.dwo\f1 files) option.
-Stick with plain ELF/DWARF (optinally split, Fedora-style), if possible.
-===
-
-So, it seems that elfutils may not support this split debuginfo yet.
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+>         tu->filename = kstrdup(name, GFP_KERNEL);
+>         init_trace_event_call(tu, &tu->tp.call);
+>
+> --
+> 2.9.5
+>
