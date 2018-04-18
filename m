@@ -1,142 +1,272 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753138AbeDRKM2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 06:12:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48618 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752153AbeDRKMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 06:12:25 -0400
-Date: Wed, 18 Apr 2018 12:12:21 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk,
-        bart.vanassche@wdc.com, ming.lei@redhat.com, tytso@mit.edu,
-        darrick.wong@oracle.com, jikos@kernel.org, rjw@rjwysocki.net,
-        pavel@ucw.cz, len.brown@intel.com, linux-fsdevel@vger.kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com,
-        todd.e.brandt@linux.intel.com, nborisov@suse.com,
-        martin.petersen@oracle.com, ONeukum@suse.com, oleksandr@natalenko.name,
-        oleg.b.antonyan@gmail.com, yu.chen.surf@gmail.com,
-        dan.j.williams@intel.com, linux-pm@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jlayton@redhat.com
-Subject: Re: [PATCH 03/11] fs: add frozen sb state helpers
-Message-ID: <20180418101221.nzkpkuoojruuiqoc@quack2.suse.cz>
-References: <20171129232356.28296-1-mcgrof@kernel.org>
- <20171129232356.28296-4-mcgrof@kernel.org>
- <20171130171310.GG28180@quack2.suse.cz>
- <20171130190548.GJ729@wotan.suse.de>
- <20171201114724.GC8365@quack2.suse.cz>
- <20171201211327.GQ729@wotan.suse.de>
- <20171221110329.GG31584@quack2.suse.cz>
- <20180418005936.j3fa5rogfm353clf@garbanzo.do-not-panic.com>
+        id S1752699AbeDRKS3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 06:18:29 -0400
+Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:26990 "EHLO
+        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750861AbeDRKS2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 06:18:28 -0400
+X-IronPort-AV: E=Sophos;i="5.48,464,1517875200";
+   d="scan'208";a="71737621"
+From: Paul Durrant <Paul.Durrant@citrix.com>
+To: Roger Pau Monne <roger.pau@citrix.com>,
+        Oleksandr Andrushchenko <andr2000@gmail.com>
+CC: "jgross@suse.com" <jgross@suse.com>,
+        Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "daniel.vetter@intel.com" <daniel.vetter@intel.com>,
+        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        Matt Roper <matthew.d.roper@intel.com>
+Subject: RE: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+Thread-Topic: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+Thread-Index: AQHT1ZBFZFTlMYYSZ0+T898rRourpKQDpbWAgADRqACAANlxAIAAok+AgAAPyACAAAdIAIAAJEIAgAAi7tA=
+Date: Wed, 18 Apr 2018 10:18:20 +0000
+Message-ID: <7d6710a76b9a42299139d7914358ed52@AMSPEX02CL03.citrite.net>
+References: <20180329131931.29957-1-andr2000@gmail.com>
+ <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
+ <20180416192905.GA18096@downor-Z87X-UD5H>
+ <20180417075928.GT31310@phenom.ffwll.local>
+ <20180417205744.GA15930@downor-Z87X-UD5H>
+ <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
+ <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
+ <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+In-Reply-To: <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180418005936.j3fa5rogfm353clf@garbanzo.do-not-panic.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3IAIXfH021645
 
-On Tue 17-04-18 17:59:36, Luis R. Rodriguez wrote:
-> On Thu, Dec 21, 2017 at 12:03:29PM +0100, Jan Kara wrote:
-> > On Fri 01-12-17 22:13:27, Luis R. Rodriguez wrote:
-> > > 
-> > > I'll note that its still not perfectly clear if really the semantics behind
-> > > freeze_bdev() match what I described above fully. That still needs to be
-> > > vetted for. For instance, does thaw_bdev() keep a superblock frozen if we
-> > > an ioctl initiated freeze had occurred before? If so then great. Otherwise
-> > > I think we'll need to distinguish the ioctl interface. Worst possible case
-> > > is that bdev semantics and in-kernel semantics differ somehow, then that
-> > > will really create a holy fucking mess.
-> > 
-> > I believe nobody really thought about mixing those two interfaces to fs
-> > freezing and so the behavior is basically defined by the implementation.
-> > That is:
-> > 
-> > freeze_bdev() on sb frozen by ioctl_fsfreeze() -> EBUSY
+> -----Original Message-----
+> From: Xen-devel [mailto:xen-devel-bounces@lists.xenproject.org] On Behalf
+> Of Roger Pau Monné
+> Sent: 18 April 2018 11:11
+> To: Oleksandr Andrushchenko <andr2000@gmail.com>
+> Cc: jgross@suse.com; Artem Mygaiev <Artem_Mygaiev@epam.com>;
+> Dongwon Kim <dongwon.kim@intel.com>; airlied@linux.ie;
+> Oleksandr_Andrushchenko@epam.com; linux-kernel@vger.kernel.org; dri-
+> devel@lists.freedesktop.org; Potrola, MateuszX
+> <mateuszx.potrola@intel.com>; xen-devel@lists.xenproject.org;
+> daniel.vetter@intel.com; boris.ostrovsky@oracle.com; Matt Roper
+> <matthew.d.roper@intel.com>
+> Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy
+> helper DRM driver
 > 
-> Note below as well on your *future* freeze_super() implementation.
+> On Wed, Apr 18, 2018 at 11:01:12AM +0300, Oleksandr Andrushchenko
+> wrote:
+> > On 04/18/2018 10:35 AM, Roger Pau Monné wrote:
+> > > On Wed, Apr 18, 2018 at 09:38:39AM +0300, Oleksandr Andrushchenko
+> wrote:
+> > > > On 04/17/2018 11:57 PM, Dongwon Kim wrote:
+> > > > > On Tue, Apr 17, 2018 at 09:59:28AM +0200, Daniel Vetter wrote:
+> > > > > > On Mon, Apr 16, 2018 at 12:29:05PM -0700, Dongwon Kim wrote:
+> > > > 3.2 Backend exports dma-buf to xen-front
+> > > >
+> > > > In this case Dom0 pages are shared with DomU. As before, DomU can
+> only write
+> > > > to these pages, not any other page from Dom0, so it can be still
+> considered
+> > > > safe.
+> > > > But, the following must be considered (highlighted in xen-front's Kernel
+> > > > documentation):
+> > > >   - If guest domain dies then pages/grants received from the backend
+> cannot
+> > > >     be claimed back - think of it as memory lost to Dom0 (won't be used
+> for
+> > > > any
+> > > >     other guest)
+> > > >   - Misbehaving guest may send too many requests to the backend
+> exhausting
+> > > >     its grant references and memory (consider this from security POV).
+> As the
+> > > >     backend runs in the trusted domain we also assume that it is trusted
+> as
+> > > > well,
+> > > >     e.g. must take measures to prevent DDoS attacks.
+> > > I cannot parse the above sentence:
+> > >
+> > > "As the backend runs in the trusted domain we also assume that it is
+> > > trusted as well, e.g. must take measures to prevent DDoS attacks."
+> > >
+> > > What's the relation between being trusted and protecting from DoS
+> > > attacks?
+> > I mean that we trust the backend that it can prevent Dom0
+> > from crashing in case DomU's frontend misbehaves, e.g.
+> > if the frontend sends too many memory requests etc.
+> > > In any case, all? PV protocols are implemented with the frontend
+> > > sharing pages to the backend, and I think there's a reason why this
+> > > model is used, and it should continue to be used.
+> > This is the first use-case above. But there are real-world
+> > use-cases (embedded in my case) when physically contiguous memory
+> > needs to be shared, one of the possible ways to achieve this is
+> > to share contiguous memory from Dom0 to DomU (the second use-case
+> above)
+> > > Having to add logic in the backend to prevent such attacks means
+> > > that:
+> > >
+> > >   - We need more code in the backend, which increases complexity and
+> > >     chances of bugs.
+> > >   - Such code/logic could be wrong, thus allowing DoS.
+> > You can live without this code at all, but this is then up to
+> > backend which may make Dom0 down because of DomU's frontend doing
+> evil
+> > things
 > 
-> > freeze_bdev() on sb frozen by freeze_bdev() -> success
-> > ioctl_fsfreeze() on sb frozen by freeze_bdev() -> EBUSY
-> > ioctl_fsfreeze() on sb frozen by ioctl_fsfreeze() -> EBUSY
-> > 
-> > thaw_bdev() on sb frozen by ioctl_fsfreeze() -> EINVAL
+> IMO we should design protocols that do not allow such attacks instead
+> of having to defend against them.
 > 
-> Phew, so this is what we want for the in-kernel freezing so we're good
-> and *can* combine these then.
+> > > > 4. xen-front/backend/xen-zcopy synchronization
+> > > >
+> > > > 4.1. As I already said in 2) all the inter VM communication happens
+> between
+> > > > xen-front and the backend, xen-zcopy is NOT involved in that.
+> > > > When xen-front wants to destroy a display buffer (dumb/dma-buf) it
+> issues a
+> > > > XENDISPL_OP_DBUF_DESTROY command (opposite to
+> XENDISPL_OP_DBUF_CREATE).
+> > > > This call is synchronous, so xen-front expects that backend does free
+> the
+> > > > buffer pages on return.
+> > > >
+> > > > 4.2. Backend, on XENDISPL_OP_DBUF_DESTROY:
+> > > >    - closes all dumb handles/fd's of the buffer according to [3]
+> > > >    - issues DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE IOCTL to xen-
+> zcopy to make
+> > > > sure
+> > > >      the buffer is freed (think of it as it waits for dma-buf->release
+> > > > callback)
+> > > So this zcopy thing keeps some kind of track of the memory usage? Why
+> > > can't the user-space backend keep track of the buffer usage?
+> > Because there is no dma-buf UAPI which allows to track the buffer life cycle
+> > (e.g. wait until dma-buf's .release callback is called)
+> > > >    - replies to xen-front that the buffer can be destroyed.
+> > > > This way deletion of the buffer happens synchronously on both Dom0
+> and DomU
+> > > > sides. In case if DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE returns
+> with time-out
+> > > > error
+> > > > (BTW, wait time is a parameter of this IOCTL), Xen will defer grant
+> > > > reference
+> > > > removal and will retry later until those are free.
+> > > >
+> > > > Hope this helps understand how buffers are synchronously deleted in
+> case
+> > > > of xen-zcopy with a single protocol command.
+> > > >
+> > > > I think the above logic can also be re-used by the hyper-dmabuf driver
+> with
+> > > > some additional work:
+> > > >
+> > > > 1. xen-zcopy can be split into 2 parts and extend:
+> > > > 1.1. Xen gntdev driver [4], [5] to allow creating dma-buf from grefs and
+> > > > vise versa,
+> > > I don't know much about the dma-buf implementation in Linux, but
+> > > gntdev is a user-space device, and AFAICT user-space applications
+> > > don't have any notion of dma buffers. How are such buffers useful for
+> > > user-space? Why can't this just be called memory?
+> > A dma-buf is seen by user-space as a file descriptor and you can
+> > pass it to different drivers then. For example, you can share a buffer
+> > used by a display driver for scanout with a GPU, to compose a picture
+> > into it:
+> > 1. User-space (US) allocates a display buffer from display driver
+> > 2. US asks display driver to export the dma-buf which backs up that buffer,
+> > US gets buffer's fd: dma_buf_fd
+> > 3. US asks GPU driver to import a buffer and provides it with dma_buf_fd
+> > 4. GPU renders contents into display buffer (dma_buf_fd)
 > 
-> > ioctl_fsthaw() on sb frozen by freeze_bdev() -> success
-> > 
-> > What I propose is the following API:
-> > 
-> > freeze_super_excl()
-> >   - freezes superblock, returns EBUSY if the superblock is already frozen
-> >     (either by another freeze_super_excl() or by freeze_super())
-> > freeze_super()
-> >   - this function will make sure superblock is frozen when the function
-> >     returns with success. 
+> After speaking with Oleksandr on IRC, I think the main usage of the
+> gntdev extension is to:
 > 
-> That's straight forward.
+> 1. Create a dma-buf from a set of grant references.
+> 2. Share dma-buf and get a list of grant references.
 > 
-> >     It can be nested with other freeze_super() or
-> >     freeze_super_excl() calls 
+> I think this set of operations could be broken into:
 > 
-> This is where it can get hairy. More below.
+> 1.1 Map grant references into user-space using the gntdev.
+> 1.2 Create a dma-buf out of a set of user-space virtual addresses.
 > 
-> >     (this second part is different from how
-> >     freeze_bdev() behaves currently but AFAICT this behavior is actually
-> >     what all current users of freeze_bdev() really want - just make sure
-> >     fs cannot be written to)
+> 2.1 Map a dma-buf into user-space.
+> 2.2 Get grefs out of the user-space addresses where the dma-buf is
+>     mapped.
 > 
-> If we can agree to this, then sure. However there are two types of
-> possible nested calls to consider, one where the sb was already frozen
-> by an IOCTL, and the other where it was initiated by either another
-> freeze_super_excl() or another freeze_super() call which is currently
-> being processed. For the first type, its easy to say the device is
-> already frozen as such return success. If the freezing is ongoing,
-> we may want to wait or not wait, and this will depend on our current
-> use cases for freeze_bdev().
+> So it seems like what's actually missing is a way to:
+> 
+>  - Create a dma-buf from a list of user-space virtual addresses.
+>  - Allow to map a dma-buf into user-space, so it can then be used with
+>    the gntdev.
+> 
+> I think this is generic enough that it could be implemented by a
+> device not tied to Xen. AFAICT the hyper_dma guys also wanted
+> something similar to this.
+> 
+> > Finally, this is indeed some memory, but a bit more [1]
+> > >
+> > > Also, (with my FreeBSD maintainer hat) how is this going to translate
+> > > to other OSes? So far the operations performed by the gntdev device
+> > > are mostly OS-agnostic because this just map/unmap memory, and in fact
+> > > they are implemented by Linux and FreeBSD.
+> > At the moment I can only see Linux implementation and it seems
+> > to be perfectly ok as we do not change Xen's APIs etc. and only
+> > use the existing ones (remember, we only extend gntdev/balloon
+> > drivers, all the changes in the Linux kernel)
+> > As the second note I can also think that we do not extend gntdev/balloon
+> > drivers and have re-worked xen-zcopy driver be a separate entity,
+> > say drivers/xen/dma-buf
+> > > > implement "wait" ioctl (wait for dma-buf->release): currently these are
+> > > > DRM_XEN_ZCOPY_DUMB_FROM_REFS,
+> DRM_XEN_ZCOPY_DUMB_TO_REFS and
+> > > > DRM_XEN_ZCOPY_DUMB_WAIT_FREE
+> > > > 1.2. Xen balloon driver [6] to allow allocating contiguous buffers (not
+> > > > needed
+> > > > by current hyper-dmabuf, but is a must for xen-zcopy use-cases)
+> > > I think this needs clarifying. In which memory space do you need those
+> > > regions to be contiguous?
+> > Use-case: Dom0 has a HW driver which only works with contig memory
+> > and I want DomU to be able to directly write into that memory, thus
+> > implementing zero copying
+> > >
+> > > Do they need to be contiguous in host physical memory, or guest
+> > > physical memory?
+> > Host
+> > >
+> > > If it's in guest memory space, isn't there any generic interface that
+> > > you can use?
+> > >
+> > > If it's in host physical memory space, why do you need this buffer to
+> > > be contiguous in host physical memory space? The IOMMU should hide
+> all
+> > > this.
+> > There are drivers/HW which can only work with contig memory and
+> > if it is backed by an IOMMU then still it has to be contig in IPA
+> > space (real device doesn't know that it is actually IPA contig, not PA)
+> 
+> What's IPA contig?
 
-A side note since I'm not sure I wrote this down in my previous email:
-I want ioctl_fsfreeze() directly use freeze_super_excl().
+I assume 'IPA' means 'IOMMU Physical Address'. I wonder whether this means what I've termed 'Bus Address' elsewhere?
 
-Now to your freeze in progress question: freeze_super_excl() can
-immediately return EBUSY when there's freezing in progress. OTOH
-freeze_super() always has to wait for the current freeze / thaw to finish
-and then do what's necessary. I don't see a use case where you'd like to
-have freeze_super() not wait.
+  Paul
 
-> As you noted above, freeze_bdev() currently returns EBUSY if we had
-> the sb already frozen by ioctl_fsfreeze(). It may be a welcomed
-> enhancement to correct the semantics first to address the first case,
-> but keep the EBUSY for the other case. A secondary patch could then
-> add a completion mechanism and let callers decide to either wait or not.
-> *Iff* the caller did not opt-in to wait we keep the EBUSY return.
-
-You're now speaking about steps to transition to the new API, right? I'd
-structure the transition as follows:
-
-1) Move bdev->bd_fsfreeze_count to a superblock.
-2) Make freeze_super() grab the counter as well, thaw_super() drops it and
-  unfreezes the filesystem only if the counter dropped to zero.
-3) Rename freeze_super() to freeze_super_excl().
-4) Only now I'd go for messing with freeze_bdev() as it now combines sanely
-with freeze_super_excl(). Probably I'd just implement new freeze_super()
-with the desired semantics (including waiting for ongoing operation to
-finish).
-5) And then switch all users (there are 4 in the kernel) from freeze_bdev()
-to freeze_super() with the justification in each case why the new semantics
-is actually desirable.
-6) Drop old freeze_bdev() - note that only one freeze_bdev() user (in
-drivers/md/dm.c) is actually interested in passing bdev, all the others are
-better off just passing in superblock to new freeze_super(). Anyway for
-that user in dm we might still provide a convenience wrapper to grab the
-superblock and call new freeze_super() on it.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> Thanks, Roger.
+> 
+> _______________________________________________
+> Xen-devel mailing list
+> Xen-devel@lists.xenproject.org
+> https://lists.xenproject.org/mailman/listinfo/xen-devel
