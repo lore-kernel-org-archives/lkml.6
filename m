@@ -1,120 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753454AbeDRBvc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 21:51:32 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:36301 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752800AbeDRBva (ORCPT
+        id S1753435AbeDRBxS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 21:53:18 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:28220 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751248AbeDRBxQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 21:51:30 -0400
-X-Google-Smtp-Source: AIpwx49x5OaOleDLa2bg7l38JPer69yl8rtyv2ewspXpDrgc+nsZDl4towo5+bThaXMUGP1LgfBNlExtCJv1VaxIBCU=
+        Tue, 17 Apr 2018 21:53:16 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w3I1r4ew019073
+X-Nifty-SrcIP: [209.85.213.49]
+X-Google-Smtp-Source: AIpwx4+24HNJTj44l56THcJNiymJ4YkVkLjkxX6dAQ8eZoK/Z1kmEJweJqS6JRVqp7DgERFd0GduMYrRF1EHxgnD4zM=
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <20180417220947.vyq4dd3ah2mvwgjf@madcap2.tricolour.ca>
-References: <6b939250a519668af109adf877d85ff018b217d7.1523316267.git.rgb@redhat.com>
- <CAHC9VhQzt4-f5zYkh18NWcp0HALXNR3iB+jeGOPkxdZZx8SdLQ@mail.gmail.com>
- <CAHC9VhTJN0bR73ZUrPY8=wSHBYdrszQXaxBNUfxweuMDGevgcA@mail.gmail.com> <20180417220947.vyq4dd3ah2mvwgjf@madcap2.tricolour.ca>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 17 Apr 2018 21:51:27 -0400
-Message-ID: <CAHC9VhQZdSeD7AfpLzk683Z9SPMezs5Xo_a+WJY-FPVqpWasQg@mail.gmail.com>
-Subject: Re: [PATCH ghak46 V1] audit: normalize MAC_STATUS record
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
+In-Reply-To: <20180417230921.GA29046@saruman>
+References: <1523433019-17419-1-git-send-email-matt.redfearn@mips.com>
+ <1523433019-17419-3-git-send-email-matt.redfearn@mips.com> <20180417230921.GA29046@saruman>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 18 Apr 2018 10:52:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASLPT4jiPiNJ5aDXg-kR70jN1zZbbLQqyO53DtsEgYVAw@mail.gmail.com>
+Message-ID: <CAK7LNASLPT4jiPiNJ5aDXg-kR70jN1zZbbLQqyO53DtsEgYVAw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] MIPS: vmlinuz: Use generic ashldi3
+To: James Hogan <jhogan@kernel.org>
+Cc: Matt Redfearn <matt.redfearn@mips.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Antony Pavlov <antonynpavlov@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 6:09 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2018-04-17 17:59, Paul Moore wrote:
->> On Wed, Apr 11, 2018 at 5:08 PM, Paul Moore <paul@paul-moore.com> wrote:
->> > On Mon, Apr 9, 2018 at 7:34 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
->> >> There were two formats of the audit MAC_STATUS record, one of which was more
->> >> standard than the other.  One listed enforcing status changes and the
->> >> other listed enabled status changes with a non-standard label.  In
->> >> addition, the record was missing information about which LSM was
->> >> responsible and the operation's completion status.  While this record is
->> >> only issued on success, the parser expects the res= field to be present.
->> >>
->> >> old enforcing/permissive:
->> >> type=MAC_STATUS msg=audit(1523312831.378:24514): enforcing=0 old_enforcing=1 auid=0 ses=1
->> >> old enable/disable:
->> >> type=MAC_STATUS msg=audit(1523312831.378:24514): selinux=0 auid=0 ses=1
->> >>
->> >> List both sets of status and old values and add the lsm= field and the
->> >> res= field.
->> >>
->> >> Here is the new format:
->> >> type=MAC_STATUS msg=audit(1523293828.657:891): enforcing=0 old_enforcing=1 auid=0 ses=1 enabled=1 old-enabled=1 lsm=selinux res=1
->> >>
->> >> This record already accompanied a SYSCALL record.
->> >>
->> >> See: https://github.com/linux-audit/audit-kernel/issues/46
->> >> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
->> >> ---
->> >>  security/selinux/selinuxfs.c | 11 +++++++----
->> >>  1 file changed, 7 insertions(+), 4 deletions(-)
->> >>
->> >> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
->> >> index 00eed84..00b21b2 100644
->> >> --- a/security/selinux/selinuxfs.c
->> >> +++ b/security/selinux/selinuxfs.c
->> >> @@ -145,10 +145,11 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
->> >>                 if (length)
->> >>                         goto out;
->> >>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
->> >> -                       "enforcing=%d old_enforcing=%d auid=%u ses=%u",
->> >> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
->> >> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
->> >>                         new_value, selinux_enforcing,
->> >>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
->> >> -                       audit_get_sessionid(current));
->> >> +                       audit_get_sessionid(current), selinux_enabled, selinux_enabled);
->> >
->> > This looks fine.
->> >
->> >>                 selinux_enforcing = new_value;
->> >>                 if (selinux_enforcing)
->> >>                         avc_ss_reset(0);
->> >> @@ -272,9 +273,11 @@ static ssize_t sel_write_disable(struct file *file, const char __user *buf,
->> >>                 if (length)
->> >>                         goto out;
->> >>                 audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
->> >> -                       "selinux=0 auid=%u ses=%u",
->> >> +                       "enforcing=%d old_enforcing=%d auid=%u ses=%u"
->> >> +                       " enabled=%d old-enabled=%d lsm=selinux res=1",
->> >> +                       selinux_enforcing, selinux_enforcing,
->> >>                         from_kuid(&init_user_ns, audit_get_loginuid(current)),
->> >> -                       audit_get_sessionid(current));
->> >> +                       audit_get_sessionid(current), 0, 1);
->> >
->> > It needs to be said again that I'm opposed to changes like this:
->> > inserting new fields, removing fields, or otherwise changing the
->> > format in ways that aren't strictly the addition of new fields to the
->> > end of a record is a Bad Thing.  However, there are exceptions (there
->> > are *always* exceptions), and this seems like a reasonable change that
->> > shouldn't negatively affect anyone.
->> >
->> > I'll merge this once the merge window comes to a close (we are going
->> > to need to base selinux/next on v4.17-rc1).
+2018-04-18 8:09 GMT+09:00 James Hogan <jhogan@kernel.org>:
+> On Wed, Apr 11, 2018 at 08:50:18AM +0100, Matt Redfearn wrote:
+>> diff --git a/arch/mips/boot/compressed/Makefile b/arch/mips/boot/compressed/Makefile
+>> index adce180f3ee4..e03f522c33ac 100644
+>> --- a/arch/mips/boot/compressed/Makefile
+>> +++ b/arch/mips/boot/compressed/Makefile
+>> @@ -46,9 +46,12 @@ $(obj)/uart-ath79.c: $(srctree)/arch/mips/ath79/early_printk.c
 >>
->> Merged into selinux/next, although I should mention that there were
->> some actual code changes because of the SELinux state consolidation
->> patches that went into v4.17.  The changes were small but please take
->> a look and make sure everything still looks okay to you.
+>>  vmlinuzobjs-$(CONFIG_KERNEL_XZ) += $(obj)/ashldi3.o $(obj)/bswapsi.o
+>>
+>> -extra-y += ashldi3.c bswapsi.c
+>> -$(obj)/ashldi3.o $(obj)/bswapsi.o: KBUILD_CFLAGS += -I$(srctree)/arch/mips/lib
+>> -$(obj)/ashldi3.c $(obj)/bswapsi.c: $(obj)/%.c: $(srctree)/arch/mips/lib/%.c
+>> +extra-y += ashldi3.c
+>> +$(obj)/ashldi3.c: $(obj)/%.c: $(srctree)/lib/%.c
+>> +     $(call cmd,shipped)
+>> +
+>> +extra-y += bswapsi.c
+>> +$(obj)/bswapsi.c: $(obj)/%.c: $(srctree)/arch/mips/lib/%.c
+>>       $(call cmd,shipped)
 >
-> Ok, that was a bit disruptive, but looks ok to me.
+> ci20_defconfig:
+>
+> arch/mips/boot/compressed/ashldi3.c:4:10: fatal error: libgcc.h: No such file or directory
+>  #include "libgcc.h"
+>            ^~~~~~~~~~
+>
+> It looks like it had already copied ashldi3.c from arch/mips/lib/ when
+> building an older commit, and it hasn't been regenerated from lib/ since
+> the Makefile changed, so its still using the old version.
+>
+> I think it should be using FORCE and if_changed like this:
+>
+> diff --git a/arch/mips/boot/compressed/Makefile b/arch/mips/boot/compressed/Makefile
+> index e03f522c33ac..abe77add8789 100644
+> --- a/arch/mips/boot/compressed/Makefile
+> +++ b/arch/mips/boot/compressed/Makefile
+> @@ -47,12 +47,12 @@ $(obj)/uart-ath79.c: $(srctree)/arch/mips/ath79/early_printk.c
+>  vmlinuzobjs-$(CONFIG_KERNEL_XZ) += $(obj)/ashldi3.o $(obj)/bswapsi.o
+>
+>  extra-y += ashldi3.c
+> -$(obj)/ashldi3.c: $(obj)/%.c: $(srctree)/lib/%.c
+> -       $(call cmd,shipped)
+> +$(obj)/ashldi3.c: $(obj)/%.c: $(srctree)/lib/%.c FORCE
+> +       $(call if_changed,shipped)
+>
+>  extra-y += bswapsi.c
+> -$(obj)/bswapsi.c: $(obj)/%.c: $(srctree)/arch/mips/lib/%.c
+> -       $(call cmd,shipped)
+> +$(obj)/bswapsi.c: $(obj)/%.c: $(srctree)/arch/mips/lib/%.c FORCE
+> +       $(call if_changed,shipped)
+>
+>  targets := $(notdir $(vmlinuzobjs-y))
+>
+> That resolves the build failures when checking out old -> new without
+> cleaning, since the .ashldi3.c.cmd is missing so it gets rebuilt.
+>
+> It should also resolve issues if the path it copies from is updated in
+> future since the .ashldi3.c.cmd will get updated.
+>
+> If you checkout new -> old without cleaning, the now removed
+> arch/mips/lib/ashldi3.c will get added which will trigger regeneration,
+> so it won't error.
+>
+> However if you do new -> old -> new then the .ashldi3.cmd file isn't
+> updated while at old, so you get the same error as above. I'm not sure
+> there's much we can practically do about that, aside perhaps avoiding
+> the issue in future by somehow auto-deleting stale .*.cmd files.
+>
+> Cc'ing kbuild folk in case they have any bright ideas.
 
-Yes, it was a pretty big change, but it sets the stage for a few
-things we are trying to do with SELinux.
 
-Regardless, thanks for giving the merge a quick look.
+
+I do not have any idea better than if_changed.
+
+
+
+
+> At least the straightforward old->new upgrade will work with the above
+> fixup though. If you're okay with it I'm happy to apply as a fixup.
+>
+
+
+
+
+
 
 -- 
-paul moore
-www.paul-moore.com
+Best Regards
+Masahiro Yamada
