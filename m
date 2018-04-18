@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753359AbeDROsS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 10:48:18 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:50245 "EHLO
+        id S1753333AbeDROsR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:48:17 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:50252 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752162AbeDROqv (ORCPT
+        with ESMTP id S1752511AbeDROqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Apr 2018 10:46:51 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
@@ -13,9 +13,9 @@ To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         robh+dt@kernel.org, mark.rutland@arm.com
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com
-Subject: [PATCH v6 5/9] misc: pci_endpoint_test: Add designware EP entry
-Date: Wed, 18 Apr 2018 15:46:40 +0100
-Message-Id: <ea0659b21104e692832fabfc094d9b9c7a722dd4.1524062073.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v6 8/9] PCI: dwc: Small computation improvement
+Date: Wed, 18 Apr 2018 15:46:43 +0100
+Message-Id: <6d3c32707fbae671715d502d72fc87e881c79d28.1524062073.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1524062073.git.gustavo.pimentel@synopsys.com>
 References: <cover.1524062073.git.gustavo.pimentel@synopsys.com>
@@ -25,38 +25,57 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds the designware EP device ID entry to pci_endpoint_test driver table
-to allow this device to be recognize and handle by the pci_endpoint_test
-driver.
+Replaces a simple division by 2 to a right shift rotation of 1 bit.
+
+Probably any recent and decent compiler does this kind of substitution
+in order to improve code performance. Nevertheless it's a coding good
+practice whenever there is a division / multiplication by multiple of 2
+to replace it by the equivalent operation in this case, the shift
+rotation.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Acked-by: Jingoo Han <jingoohan1@gmail.com>
+Acked-by: Joao Pinto <jpinto@synopsys.com>
 ---
 Change v1->v2:
- - Changed device id following Kishon's suggestion.
+ - Nothing changed, just to follow the patch set version.
 Change v2->v3:
  - Nothing changed, just to follow the patch set version.
 Changes v3->v4:
- - Nothing changed, just to follow the patch set version.
+ - Added a small explication to the log description.
 Changes v4->v5:
  - Nothing changed, just to follow the patch set version.
 Changes v5->v6:
- - Reverted Kishon's suggestion by Bjorn request.
+ - Nothing changed, just to follow the patch set version.
 
- drivers/misc/pci_endpoint_test.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/dwc/pcie-designware-host.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index fe8897e..58a88ba 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -634,6 +634,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, 0xedda) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
+diff --git a/drivers/pci/dwc/pcie-designware-host.c b/drivers/pci/dwc/pcie-designware-host.c
+index 5a23f78..fc55fde 100644
+--- a/drivers/pci/dwc/pcie-designware-host.c
++++ b/drivers/pci/dwc/pcie-designware-host.c
+@@ -332,8 +332,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 
+ 	cfg_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config");
+ 	if (cfg_res) {
+-		pp->cfg0_size = resource_size(cfg_res) / 2;
+-		pp->cfg1_size = resource_size(cfg_res) / 2;
++		pp->cfg0_size = resource_size(cfg_res) >> 1;
++		pp->cfg1_size = resource_size(cfg_res) >> 1;
+ 		pp->cfg0_base = cfg_res->start;
+ 		pp->cfg1_base = cfg_res->start + pp->cfg0_size;
+ 	} else if (!pp->va_cfg0_base) {
+@@ -377,8 +377,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 			break;
+ 		case 0:
+ 			pp->cfg = win->res;
+-			pp->cfg0_size = resource_size(pp->cfg) / 2;
+-			pp->cfg1_size = resource_size(pp->cfg) / 2;
++			pp->cfg0_size = resource_size(pp->cfg) >> 1;
++			pp->cfg1_size = resource_size(pp->cfg) >> 1;
+ 			pp->cfg0_base = pp->cfg->start;
+ 			pp->cfg1_base = pp->cfg->start + pp->cfg0_size;
+ 			break;
 -- 
 2.7.4
