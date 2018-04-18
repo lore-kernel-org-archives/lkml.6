@@ -1,116 +1,81 @@
-Return-Path: <joro@8bytes.org>
-X-Google-Smtp-Source: AIpwx4/rHbAqx5VAaUuYkYQpRZ+qakT8ZZzCf1lxNFYGyg4iGu/EHN4JxteP5QkToUk8d6AhxZt5
-ARC-Seal: i=1; a=rsa-sha256; t=1523892340; cv=none;
+Return-Path: <ak@linux.intel.com>
+X-Google-Smtp-Source: AIpwx48INb0WgGPyvbFSSKqBBfxk0nLWk4b3tPGEewE4Tnkyxc7/sqGho7aCsZMVmZJToIgRF+A9
+ARC-Seal: i=1; a=rsa-sha256; t=1524093989; cv=none;
         d=google.com; s=arc-20160816;
-        b=CWI8fqlF7wz+HSnH3LUaVJ9ETjAs/nNeiJuhV65dg0S1qiEmyKUv1aOu6bKb2tUT80
-         GSOWaI8xEOZf/gA/qT05o5PHTSp17v1sj8TTkUu8zYl94EyS/wvDmqFKb4AnnAwUA02y
-         xSMXE+oLFAExhZL24QeYg5ZJtQO59K+G+jDO4JXwgMbIyITtU3O9Miz0qsXc6eHu85Gc
-         igaMEYm27NPJ//AJRQ5hpgSiRymBxYPmtYtB8TTXH9XInrsJjJne9MgL1zI+epkFUlvV
-         gwuSfJwtL8PQMy+F/+MOB9vA5bhAJc/tYqn/nRxC9wh3kjtSDv49TLGzu2U1N7f4hcVv
-         bjhA==
+        b=ausk5XEF7nqXFpf4m0Bdp75Pd70kghoUZJzNRAmbUcv6cHDV9ErkBEgXoAeuyPjWJT
+         jpKZBgYRwHyKu9ZBmx/WA8ev85DTx7v+t/aYRTjtYeVZ3ERi73X3JzvBrbqye6m2e60h
+         n9SHt/NRjDIEqGe9vY8OiTNnEyXPOU+bjLDNog7X8a6xR5+LF+ib6j1FDepB6lFGQN7H
+         zBDRybaxpqpi4Ex3Skg8LjWLfn+PrMDPzVyn0DpIsZ9qR8tGl0Hn0CIRXOZJpPQstivj
+         phyVBlwR1846oQLzuIKzmQvduhHHOLHBkRmf4Vbjh0xCPCSfNF9F7T+AdjsZkFxs3CVf
+         APUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=5T9WHrF2RxYDrEVlUM21Rm6lHtReRrNdR/Ri8/yymOg=;
-        b=EOKl51YCCJiNeMPmkzSy3iZAcC/L+GmGNbxOu1sYm+z7Z8GA0GZ/J3eQrktVPbitEQ
-         pBAPz1EboBRN9rhnOdGLA9usGMaxHCzU0olIF4xTuJxsdSpiy0X/7lXVaryS8XVu5z3v
-         TdfRMT+G7UxY9qQkeq2QYoFRu/MY8lIxy6JfysW8lkbCDgR7Fd0U3gMx+gj9r4sk+ZuD
-         HCYEcEgtpmRFPrkHq44dvE4wScKzQB7Dr0OzFDXQpkFg0IZdu7jQNjRQcSAkP0e6jgl2
-         GJncz/ZOyLKD74UM5X20TCxAYuzxszAc0cmHnms9i4meFuxaTodLhLgQT1+Qvk/G/B/8
-         GpYQ==
+        h=mime-version:user-agent:message-id:in-reply-to:date:references
+         :subject:cc:to:from:arc-authentication-results;
+        bh=Y6vDmzOGPF7aTzUs7gR6ZJ0UPZuz4YljP53JHWx15y0=;
+        b=XpHgr85f9qn+tutATMoLLF/nw6dqcQIwpxgfSzVaJuoaiePaVjzFpwocYzOTWmxgjO
+         FWKkCLBww2/Kb032nlfRAFUAmyoNEPN5f3894B233IPEMLH8XOGHPm6x3dVGKjslULou
+         sxJqHWKsQQ2HjR1q7b6u9+bODfPKofdJ34EM+BoullucG6dGNb3350q6wkAY0dxUb3u/
+         LbG8Ddwu+0mhA1ybMSSHqjRUkbNG21McFTFmYWyJ2uzr3MTggSOxqd4TCk/VY01OR83E
+         mphWOtcKnk8ghe+rD4S+wONQ4WDr6eZT0ZKynSdUGbws10uqrFHezx/lUx3prIYXOOut
+         xnww==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=mCfTYHe1;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
+       spf=pass (google.com: best guess record for domain of ak@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=ak@linux.intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass (test mode) header.i=@8bytes.org header.s=mail-1 header.b=mCfTYHe1;
-       spf=pass (google.com: domain of joro@8bytes.org designates 2a01:238:4383:600:38bc:a715:4b6d:a889 as permitted sender) smtp.mailfrom=joro@8bytes.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=8bytes.org
-From: Joerg Roedel <joro@8bytes.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
+       spf=pass (google.com: best guess record for domain of ak@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=ak@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,467,1517904000";
+   d="scan'208";a="48989804"
+From: Andi Kleen <ak@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Andy Lutomirski <luto@kernel.org>,
 	Dave Hansen <dave.hansen@intel.com>,
 	Josh Poimboeuf <jpoimboe@redhat.com>,
 	Juergen Gross <jgross@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Jiri Kosina <jkosina@suse.cz>,
+	Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
 	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
 	Brian Gerst <brgerst@gmail.com>,
 	David Laight <David.Laight@aculab.com>,
 	Denys Vlasenko <dvlasenk@redhat.com>,
 	Eduardo Valentin <eduval@amazon.com>,
 	Greg KH <gregkh@linuxfoundation.org>,
-	Will Deacon <will.deacon@arm.com>,
-	aliguori@amazon.com,
-	daniel.gruss@iaik.tugraz.at,
-	hughd@google.com,
-	keescook@google.com,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Waiman Long <llong@redhat.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	"David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-	jroedel@suse.de,
-	joro@8bytes.org
-Subject: [PATCH 03/35] x86/entry/32: Load task stack from x86_tss.sp1 in SYSENTER handler
-Date: Mon, 16 Apr 2018 17:24:51 +0200
-Message-Id: <1523892323-14741-4-git-send-email-joro@8bytes.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1523892323-14741-1-git-send-email-joro@8bytes.org>
+	Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+	daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+	Andrea Arcangeli <aarcange@redhat.com>, Waim@linux.intel.com
+Subject: Re: [PATCH 03/35] x86/entry/32: Load task stack from x86_tss.sp1 in SYSENTER handler
 References: <1523892323-14741-1-git-send-email-joro@8bytes.org>
+	<1523892323-14741-4-git-send-email-joro@8bytes.org>
+Date: Wed, 18 Apr 2018 16:26:19 -0700
+In-Reply-To: <1523892323-14741-4-git-send-email-joro@8bytes.org> (Joerg
+	Roedel's message of "Mon, 16 Apr 2018 17:24:51 +0200")
+Message-ID: <87k1t4t7tw.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597916934570630846?=
-X-GMAIL-MSGID: =?utf-8?q?1597916934570630846?=
+X-GMAIL-MSGID: =?utf-8?q?1598128378694956739?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Joerg Roedel <jroedel@suse.de>
+Joerg Roedel <joro@8bytes.org> writes:
 
-We want x86_tss.sp0 point to the entry stack later to use
-it as a trampoline stack for other kernel entry points
-besides SYSENTER.
+> From: Joerg Roedel <jroedel@suse.de>
+>
+> We want x86_tss.sp0 point to the entry stack later to use
+> it as a trampoline stack for other kernel entry points
+> besides SYSENTER.
+>
+> So store the task stack pointer in x86_tss.sp1, which is
+> otherwise unused by the hardware, as Linux doesn't make use
+> of Ring 1.
 
-So store the task stack pointer in x86_tss.sp1, which is
-otherwise unused by the hardware, as Linux doesn't make use
-of Ring 1.
+Seems like a hack. Why can't that be stored in a per cpu variable?
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- arch/x86/kernel/asm-offsets_32.c | 2 +-
- arch/x86/kernel/process_32.c     | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/asm-offsets_32.c b/arch/x86/kernel/asm-offsets_32.c
-index c6ac48f..5f05329 100644
---- a/arch/x86/kernel/asm-offsets_32.c
-+++ b/arch/x86/kernel/asm-offsets_32.c
-@@ -47,7 +47,7 @@ void foo(void)
- 	BLANK();
- 
- 	/* Offset from the sysenter stack to tss.sp0 */
--	DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
-+	DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp1) -
- 	       offsetofend(struct cpu_entry_area, entry_stack_page.stack));
- 
- #ifdef CONFIG_CC_STACKPROTECTOR
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index 5224c60..097d36a 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -292,6 +292,8 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
- 	this_cpu_write(cpu_current_top_of_stack,
- 		       (unsigned long)task_stack_page(next_p) +
- 		       THREAD_SIZE);
-+	/* SYSENTER reads the task-stack from tss.sp1 */
-+	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
- 
- 	/*
- 	 * Restore %gs if needed (which is common)
--- 
-2.7.4
+-Andi
