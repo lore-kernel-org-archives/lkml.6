@@ -1,89 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753951AbeDRPpO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:45:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39922 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753279AbeDRPpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:45:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCE0C217D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 18 Apr 2018 11:45:09 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>, x86@kernel.org,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: [PATCH v3] tracing/x86: Update syscall trace events to handle new
- prefixed syscall func names
-Message-ID: <20180418114509.5a76847d@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1754021AbeDRPpv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:45:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56204 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753186AbeDRPpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 11:45:49 -0400
+Date: Wed, 18 Apr 2018 10:45:48 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ORC unwinder bad backtrace
+Message-ID: <20180418154548.eh5oq5inz3l3agyu@treble>
+References: <20180418135438.GC27475@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180418135438.GC27475@bombadil.infradead.org>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Wed, Apr 18, 2018 at 06:54:38AM -0700, Matthew Wilcox wrote:
+> f81061192 <pte_clear.constprop.18>:
+> ...
+> ffffffff810611bf:       90                      nop
+> ffffffff810611c0 <perf_trace_x86_exceptions>:
+> 
+> I suspect an off-by-one error; you don't really mean to point to the
+> byte before perf_trace_x86_exception, you mean to point to byte 0 of
+> perf_trace_x86_exception.
+> 
+> I'm going to archive up this compilation in case there's anything useful
+> I can extract for you from it later.
 
-Arnaldo noticed that the latest kernel is missing the syscall event system
-directory in x86. I bisected it down to d5a00528b58c ("syscalls/core,
-syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()").
+Thanks for reporting this.  So there are really two issues:
 
-The system call trace events are special, as there is only one trace event
-for all system calls (the raw_syscalls). But a macro that wraps the system
-calls creates meta data for them that copies the name to find the system
-call that maps to the system call table (the number). At boot up, it does a
-kallsyms lookup of the system call table to find the function that maps to
-the meta data of the system call. If it does not find a function, then that
-system call is ignored.
+1) The question marks mean the ORC unwinder got confused (and had to
+   fall back to the crude "just print all text addresses on the stack").
+   This is the real issue.
 
-Because the x86 system calls had "__x64_", or "__ia32_" prefixed to the
-"sys" for the names, they do not match the default compare algorithm. As
-this was a problem for power pc, the algorithm can be overwritten by the
-architecture. The solution is to have x86 have its own algorithm to do the
-compare and this brings back the system call trace events.
+2) As you found, what should be "perf_trace_x86_exceptions+0x0" is
+   actually printed as "pte_clear.constprop.18+0x2e".  I don't think
+   this is fixable, because this is printed by the oops fallback code
+   which just blindly prints out all the text addresses it finds on the
+   stack when the unwinder fails.  It can't know whether the address was
+   a call return address (the usual case) or was something else (in this
+   case I suspect it's just a function pointer which just happens to be
+   on the stack), so it assumes the former, and prints it accordingly.
+   This isn't fixable per se -- but it will be "fixed" when we fix #1,
+   which will give a deterministic stack trace instead of using the dumb
+   fallback code.
 
-Link: http://lkml.kernel.org/r/20180417174128.0f3457f0@gandalf.local.home
+Is it possible for you to copy the vmlinux somewhere?  That would be the
+easiest option for debugging.
 
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Fixes: d5a00528b58c ("syscalls/core, syscalls/x86: Rename struct pt_regs-based sys_*() to __x64_sys_*()")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
+Otherwise I may ask for some specifics for you to gather from it.
 
-Changes from v2:
+Is it recreatable?  Once I come up with a fix, it would be helpful to
+test with the same scenario.
 
-  Included check for "__ia32_" as well.
+Also has the root cause of the stack recursion been found?  It looks
+like the perf_trace_x86_exceptions() tracepoint code is doing something
+bad.
 
- arch/x86/include/asm/ftrace.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-index 09ad88572746..06196a302c89 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -31,6 +31,18 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
- 	return addr;
- }
- 
-+#define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
-+static inline bool arch_syscall_match_sym_name(const char *sym, const char *name)
-+{
-+	/*
-+	 * Compare the symbol name with the system call name. Skip the
-+	 * "__x64_sys", "__ia32_sys" or simple "sys" prefix.
-+	 */
-+	return !strcmp(sym + 3, name + 3) ||
-+		(!strncmp(sym, "__x64_", 6) && !strcmp(sym + 9, name + 3)) ||
-+		(!strncmp(sym, "__ia32_", 7) && !strcmp(sym + 10, name + 3));
-+}
-+
- #ifdef CONFIG_DYNAMIC_FTRACE
- 
- struct dyn_arch_ftrace {
 -- 
-2.13.6
+Josh
