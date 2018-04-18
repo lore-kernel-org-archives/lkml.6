@@ -1,63 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753436AbeDRHPb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:15:31 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48862 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752705AbeDRHP2 (ORCPT
+        id S1753499AbeDRHPh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:15:37 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:51910 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752705AbeDRHPe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:15:28 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8CBB26030D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [v5,05/13] ARM: dts: ipq4019: Add ipq4019-ap.dk04.dtsi
-To: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-References: <1521800336-19266-6-git-send-email-sricharan@codeaurora.org>
- <2641190.FRMBLJWkCS@bentobox> <2284833.pBtR1QS54F@bentobox>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <734eb6eb-9af9-d599-81f1-ec66d9cd839c@codeaurora.org>
-Date: Wed, 18 Apr 2018 12:45:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 18 Apr 2018 03:15:34 -0400
+X-Google-Smtp-Source: AIpwx49tZoMvWnW29zD5QKfJ/b66bmMDx+r1UJToQlWIWgc6AluNZScFVWLCp6gZkt4p3AtLOcyTkqUOnTLERGMxxWw=
 MIME-Version: 1.0
-In-Reply-To: <2284833.pBtR1QS54F@bentobox>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [90.77.100.34]
+In-Reply-To: <20180418033143.208986-1-dianders@chromium.org>
+References: <20180418033143.208986-1-dianders@chromium.org>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Date: Wed, 18 Apr 2018 09:15:33 +0200
+Message-ID: <CABxcv=kx9KVJYPyRFBR5mzGgezoSmjrXpGa214E2v85YJYd1+Q@mail.gmail.com>
+Subject: Re: [PATCH v2] regulator: Don't return or expect -errno from of_map_mode()
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Mark Brown <broonie@kernel.org>,
+        David Collins <collinsd@codeaurora.org>, evgreen@chromium.org,
+        swboyd@chromium.org, linux-omap@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sven,
+Hi Doug,
 
-On 4/18/2018 12:37 PM, Sven Eckelmann wrote:
-> On Mittwoch, 18. April 2018 08:59:46 CEST Sven Eckelmann wrote:
-> [...]
->> I would not know how to disable QSEE on these boards and thus would assume 
->> that it should be part of this dtsi.
-> 
-> 
-> Just did some reviews of the reserved-memory regions in other QCA devices and 
-> it looks like this tz and smem are often directly added to the SoC dtsi. So I 
-> will prepare a similar change for qcom-ipq4019.dtsi and this would then solve 
-> it for AP-DK01/04/07 and no changes in the board-family specific dtsi would be 
-> necessary.
-> 
-> But maybe someone has an objection because tz and smem can actually be 
-> disabled in a sane way on these SoCs and thus it would be better to have these 
-> regions in the board specific dts(i) files. We will see...
+Patch looks good to me, I just have some minor comments.
 
- Right, will add the above change to soc.dtsi in V6. Does that sound ok for you ?
+On Wed, Apr 18, 2018 at 5:31 AM, Douglas Anderson <dianders@chromium.org> wrote:
+> In of_get_regulation_constraints() we were taking the result of
+> of_map_mode() (an unsigned int) and assigning it to an int.  We were
+> then checking whether this value was -EINVAL.  Some implementers of
+> of_map_mode() were returning -EINVAL (even though the return type of
+> their function needed to be unsigned int) because they needed to to
 
-Regards,
- Sricharan
+s/to to/to
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> signal an error back to of_get_regulation_constraints().
+>
+> In general in the regulator framework the mode is always referred to
+> as an unsigned int.  While we could fix this to be a signed int (the
+> highest value we store in there right now is 0x8), it's actually
+> pretty clean to just define the regulator mode 0x0 (the lack of any
+> bits set) as an invalid mode.  Let's do that.
+>
+> Suggested-by: Javier Martinez Canillas <javier@dowhile0.org>
+> Fixes: 5e5e3a42c653 ("regulator: of: Add support for parsing initial and suspend modes")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>
+> Changes in v2:
+> - Use Javier's suggestion of defining 0x0 as invalid
+>
+>  drivers/regulator/cpcap-regulator.c |  2 +-
+>  drivers/regulator/of_regulator.c    | 15 +++++++++------
+>  drivers/regulator/twl-regulator.c   |  2 +-
+>  include/linux/regulator/consumer.h  |  1 +
+>  4 files changed, 12 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/regulator/cpcap-regulator.c b/drivers/regulator/cpcap-regulator.c
+> index f541b80f1b54..bd910fe123d9 100644
+> --- a/drivers/regulator/cpcap-regulator.c
+> +++ b/drivers/regulator/cpcap-regulator.c
+> @@ -222,7 +222,7 @@ static unsigned int cpcap_map_mode(unsigned int mode)
+>         case CPCAP_BIT_AUDIO_LOW_PWR:
+>                 return REGULATOR_MODE_STANDBY;
+>         default:
+> -               return -EINVAL;
+> +               return REGULATOR_MODE_INVALID;
+>         }
+>  }
+>
+> diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+> index f47264fa1940..22c02b7a338b 100644
+> --- a/drivers/regulator/of_regulator.c
+> +++ b/drivers/regulator/of_regulator.c
+> @@ -124,11 +124,12 @@ static void of_get_regulation_constraints(struct device_node *np,
+>
+>         if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
+>                 if (desc && desc->of_map_mode) {
+> -                       ret = desc->of_map_mode(pval);
+> -                       if (ret == -EINVAL)
+> +                       unsigned int mode = desc->of_map_mode(pval);
+
+I think the convention is to always declare local variables at the
+start of the function? Although I couldn't find anything in the coding
+style document...
+
+> +
+> +                       if (mode == REGULATOR_MODE_INVALID)
+>                                 pr_err("%s: invalid mode %u\n", np->name, pval);
+>                         else
+> -                               constraints->initial_mode = ret;
+> +                               constraints->initial_mode = mode;
+>                 } else {
+>                         pr_warn("%s: mapping for mode %d not defined\n",
+>                                 np->name, pval);
+> @@ -163,12 +164,14 @@ static void of_get_regulation_constraints(struct device_node *np,
+>                 if (!of_property_read_u32(suspend_np, "regulator-mode",
+>                                           &pval)) {
+>                         if (desc && desc->of_map_mode) {
+> -                               ret = desc->of_map_mode(pval);
+> -                               if (ret == -EINVAL)
+> +                               unsigned int mode = desc->of_map_mode(pval);
+> +
+> +                               mode = desc->of_map_mode(pval);
+
+You are calling .of_map_mode and assigning the return value twice here.
+
+If you post a new version, feel free to add:
+
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+
+Best regards,
+Javier
