@@ -1,214 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeDRHuy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:50:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38801 "EHLO mx2.suse.de"
+        id S1752806AbeDRHvj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:51:39 -0400
+Received: from mga05.intel.com ([192.55.52.43]:25511 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751180AbeDRHux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:50:53 -0400
-Date: Wed, 18 Apr 2018 09:50:51 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrea Arcangeli <aarcange@redhat.com>, Roman Gushchin <guro@fb.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
-Message-ID: <20180418075051.GO17484@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1804171545460.53786@chino.kir.corp.google.com>
- <201804180057.w3I0vieV034949@www262.sakura.ne.jp>
- <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752166AbeDRHvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 03:51:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
+   d="scan'208";a="192401955"
+Message-ID: <1524037889.2553.13.camel@intel.com>
+Subject: Re: [GIT PULL V3] Thermal SoC management updates for v4.17-rc1
+From: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date: Wed, 18 Apr 2018 15:51:29 +0800
+In-Reply-To: <20180414183051.GA27921@localhost.localdomain>
+References: <20180414183051.GA27921@localhost.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 17-04-18 19:52:41, David Rientjes wrote:
-> Since exit_mmap() is done without the protection of mm->mmap_sem, it is
-> possible for the oom reaper to concurrently operate on an mm until
-> MMF_OOM_SKIP is set.
+Hi, Eduardo,
+
+On 六, 2018-04-14 at 11:30 -0700, Eduardo Valentin wrote:
+> Hello Linus,
 > 
-> This allows munlock_vma_pages_all() to concurrently run while the oom
-> reaper is operating on a vma.  Since munlock_vma_pages_range() depends on
-> clearing VM_LOCKED from vm_flags before actually doing the munlock to
-> determine if any other vmas are locking the same memory, the check for
-> VM_LOCKED in the oom reaper is racy.
+> Please find thermal-soc changes for v4.17-rc1.
+> Rui asked me to send the pull request directly to you
+> as we are close to the end of the merge window.
+> Essentially this pull removes the series that caused
+> warning regression. I will work with the developer
+> to get that fixed later on, but I am still sending
+> the other few patches that are unrelated to that.
+> Let me know if this causes any issues and can still
+> be pulled.
 > 
-> This is especially noticeable on architectures such as powerpc where
-> clearing a huge pmd requires serialize_against_pte_lookup().  If the pmd
-> is zapped by the oom reaper during follow_page_mask() after the check for
-> pmd_none() is bypassed, this ends up deferencing a NULL ptl.
+> Changelog:
+> - New i.MX7 thermal sensor
+> - Mediatek driver now supports MT7622 SoC
+> - Removal of min max cpu cooling DT property
 > 
-> Fix this by reusing MMF_UNSTABLE to specify that an mm should not be
-> reaped.  This prevents the concurrent munlock_vma_pages_range() and
-> unmap_page_range().  The oom reaper will simply not operate on an mm that
-> has the bit set and leave the unmapping to exit_mmap().
-
-This will further complicate the protocol and actually theoretically
-restores the oom lockup issues because the oom reaper doesn't set
-MMF_OOM_SKIP when racing with exit_mmap so we fully rely that nothing
-blocks there... So the resulting code is more fragile and tricky.
-
-Can we try a simpler way and get back to what I was suggesting before
-[1] and simply not play tricks with
-		down_write(&mm->mmap_sem);
-		up_write(&mm->mmap_sem);
-
-and use the write lock in exit_mmap for oom_victims?
-
-Andrea wanted to make this more clever but this is the second fallout
-which could have been prevented. The patch would be smaller and the
-locking protocol easier
-
-[1] http://lkml.kernel.org/r/20170727065023.GB20970@dhcp22.suse.cz
-
-> Fixes: 212925802454 ("mm: oom: let oom_reap_task and exit_mmap run concurrently")
-> Cc: stable@vger.kernel.org [4.14+]
-> Signed-off-by: David Rientjes <rientjes@google.com>
-> ---
->  v2:
->   - oom reaper only sets MMF_OOM_SKIP if MMF_UNSTABLE was never set (either
->     by itself or by exit_mmap(), per Tetsuo
->   - s/kick_all_cpus_sync/serialize_against_pte_lookup/ in changelog as more
->     isolated way of forcing cpus as non-idle on power
+> Differences in V3:
+> - Rebased on top current linus/master, to avoid and merge issues
+> from previous pulled thermal code.
 > 
->  mm/mmap.c     | 38 ++++++++++++++++++++------------------
->  mm/oom_kill.c | 28 +++++++++++++---------------
->  2 files changed, 33 insertions(+), 33 deletions(-)
+> Differences in V2:
+> - Reordered the patches to drop exynos changes for now until we get
+> agreement on the fix on that driver for the compilation warns
+> caused by the confusing conversion functions.
 > 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -3015,6 +3015,25 @@ void exit_mmap(struct mm_struct *mm)
->  	/* mm's last user has gone, and its about to be pulled down */
->  	mmu_notifier_release(mm);
->  
-> +	if (unlikely(mm_is_oom_victim(mm))) {
-> +		/*
-> +		 * Wait for oom_reap_task() to stop working on this mm.  Because
-> +		 * MMF_UNSTABLE is already set before calling down_read(),
-> +		 * oom_reap_task() will not run on this mm after up_write().
-> +		 * oom_reap_task() also depends on a stable VM_LOCKED flag to
-> +		 * indicate it should not unmap during munlock_vma_pages_all().
-> +		 *
-> +		 * mm_is_oom_victim() cannot be set from under us because
-> +		 * victim->mm is already set to NULL under task_lock before
-> +		 * calling mmput() and victim->signal->oom_mm is set by the oom
-> +		 * killer only if victim->mm is non-NULL while holding
-> +		 * task_lock().
-> +		 */
-> +		set_bit(MMF_UNSTABLE, &mm->flags);
-> +		down_write(&mm->mmap_sem);
-> +		up_write(&mm->mmap_sem);
-> +	}
-> +
->  	if (mm->locked_vm) {
->  		vma = mm->mmap;
->  		while (vma) {
-> @@ -3036,26 +3055,9 @@ void exit_mmap(struct mm_struct *mm)
->  	/* update_hiwater_rss(mm) here? but nobody should be looking */
->  	/* Use -1 here to ensure all VMAs in the mm are unmapped */
->  	unmap_vmas(&tlb, vma, 0, -1);
-> -
-> -	if (unlikely(mm_is_oom_victim(mm))) {
-> -		/*
-> -		 * Wait for oom_reap_task() to stop working on this
-> -		 * mm. Because MMF_OOM_SKIP is already set before
-> -		 * calling down_read(), oom_reap_task() will not run
-> -		 * on this "mm" post up_write().
-> -		 *
-> -		 * mm_is_oom_victim() cannot be set from under us
-> -		 * either because victim->mm is already set to NULL
-> -		 * under task_lock before calling mmput and oom_mm is
-> -		 * set not NULL by the OOM killer only if victim->mm
-> -		 * is found not NULL while holding the task_lock.
-> -		 */
-> -		set_bit(MMF_OOM_SKIP, &mm->flags);
-> -		down_write(&mm->mmap_sem);
-> -		up_write(&mm->mmap_sem);
-> -	}
->  	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
->  	tlb_finish_mmu(&tlb, 0, -1);
-> +	set_bit(MMF_OOM_SKIP, &mm->flags);
->  
->  	/*
->  	 * Walk the list again, actually closing and freeing it,
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -521,12 +521,17 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
->  	}
->  
->  	/*
-> -	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
-> -	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
-> +	 * Tell all users of get_user/copy_from_user etc... that the content
-> +	 * is no longer stable. No barriers really needed because unmapping
-> +	 * should imply barriers already and the reader would hit a page fault
-> +	 * if it stumbled over reaped memory.
-> +	 *
-> +	 * MMF_UNSTABLE is also set by exit_mmap when the OOM reaper shouldn't
-> +	 * work on the mm anymore. The check for MMF_OOM_UNSTABLE must run
->  	 * under mmap_sem for reading because it serializes against the
->  	 * down_write();up_write() cycle in exit_mmap().
->  	 */
-> -	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
-> +	if (test_and_set_bit(MMF_UNSTABLE, &mm->flags)) {
->  		up_read(&mm->mmap_sem);
->  		trace_skip_task_reaping(tsk->pid);
->  		goto unlock_oom;
-> @@ -534,14 +539,6 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
->  
->  	trace_start_task_reaping(tsk->pid);
->  
-> -	/*
-> -	 * Tell all users of get_user/copy_from_user etc... that the content
-> -	 * is no longer stable. No barriers really needed because unmapping
-> -	 * should imply barriers already and the reader would hit a page fault
-> -	 * if it stumbled over a reaped memory.
-> -	 */
-> -	set_bit(MMF_UNSTABLE, &mm->flags);
-> -
->  	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
->  		if (!can_madv_dontneed_vma(vma))
->  			continue;
-> @@ -567,6 +564,7 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
->  			tlb_finish_mmu(&tlb, start, end);
->  		}
->  	}
-> +	set_bit(MMF_OOM_SKIP, &mm->flags);
->  	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
->  			task_pid_nr(tsk), tsk->comm,
->  			K(get_mm_counter(mm, MM_ANONPAGES)),
-> @@ -594,7 +592,6 @@ static void oom_reap_task(struct task_struct *tsk)
->  	    test_bit(MMF_OOM_SKIP, &mm->flags))
->  		goto done;
->  
-> -
->  	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
->  		task_pid_nr(tsk), tsk->comm);
->  	debug_show_all_locks();
-> @@ -603,10 +600,11 @@ static void oom_reap_task(struct task_struct *tsk)
->  	tsk->oom_reaper_list = NULL;
->  
->  	/*
-> -	 * Hide this mm from OOM killer because it has been either reaped or
-> -	 * somebody can't call up_write(mmap_sem).
-> +	 * If the oom reaper could not get started on this mm and it has not yet
-> +	 * reached exit_mmap(), set MMF_OOM_SKIP to disregard.
->  	 */
-> -	set_bit(MMF_OOM_SKIP, &mm->flags);
-> +	if (!test_bit(MMF_UNSTABLE, &mm->flags))
-> +		set_bit(MMF_OOM_SKIP, &mm->flags);
->  
->  	/* Drop a reference taken by wake_oom_reaper */
->  	put_task_struct(tsk);
+> 
+> The following changes since commit
+> 48023102b7078a6674516b1fe0d639669336049d:
+> 
+>   Merge branch 'overlayfs-linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs (2018-04-
+> 13 16:55:41 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-
+> thermal linus
+> 
+> for you to fetch changes up to
+> 15a32df1918259be6c23fc36014fc26ee66c836c:
+> 
+>   dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
+> (2018-04-14 09:37:55 -0700)
+> 
+This pull request does not catch this merge window.
+So do you want to split it into 2 separate pull requests, one for 4.17-
+rc and another for 4.18-rc1?
 
--- 
-Michal Hocko
-SUSE Labs
+> ----------------------------------------------------------------
+> Anson Huang (1):
+>       thermal: imx: add i.MX7 thermal sensor support
+> 
+> Bartlomiej Zolnierkiewicz (1):
+>       dt-bindings: thermal: remove no longer needed samsung thermal
+> properties
+> 
+> Sean Wang (2):
+>       dt-bindings: thermal: add binding for MT7622 SoC
+>       thermal: mediatek: add support for MT7622 SoC
+> 
+> Viresh Kumar (1):
+>       dt-bindings: thermal: Remove "cooling-{min|max}-level"
+> properties
+> 
+IMO, together with the refreshed exynos fixes, the one from Viresh and
+the one from Bartlomiej can be queued for 4.17-rc, and the others have
+to wait until next merge window.
+
+thanks,
+rui
+
+
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |  23 +-
+>  .../devicetree/bindings/thermal/imx-thermal.txt    |   9 +-
+>  .../bindings/thermal/mediatek-thermal.txt          |   1 +
+>  .../devicetree/bindings/thermal/thermal.txt        |  16 +-
+>  drivers/thermal/imx_thermal.c                      | 295
+> ++++++++++++++++-----
+>  drivers/thermal/mtk_thermal.c                      |  35 +++
+>  6 files changed, 281 insertions(+), 98 deletions(-)
