@@ -1,93 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752871AbeDRHM3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:12:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46202 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752022AbeDRHM1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:12:27 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BB29360246
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [v5,08/13] ARM: dts: ipq4019: Add ipq4019-ap.dk07.1 common data
-To: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Cc: robh+dt@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org, david.brown@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, sboyd@codeaurora.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        absahu@codeaurora.org, marc.zyngier@arm.com, richardcochran@gmail.com
-References: <1521800336-19266-9-git-send-email-sricharan@codeaurora.org>
- <1724020.V9x0kZZp2B@bentobox>
-From: Sricharan R <sricharan@codeaurora.org>
-Message-ID: <4e687302-6c42-315b-e76d-2274131da3a0@codeaurora.org>
-Date: Wed, 18 Apr 2018 12:42:18 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753082AbeDRHOe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:14:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36313 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752634AbeDRHOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 03:14:33 -0400
+From: NeilBrown <neilb@suse.com>
+To: Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>
+Date: Wed, 18 Apr 2018 16:47:01 +1000
+Subject: [PATCH 0/6] Assorted rhashtable improvements. RESEND
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <152403346237.16895.8767189357062722046.stgit2@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <1724020.V9x0kZZp2B@bentobox>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sven,
+[[ I mistyped linux-kernel the first time I sent these, so
+   resending.  Please reply to this set.  Sorry - neilb ]]
 
-On 4/18/2018 12:29 PM, Sven Eckelmann wrote:
-> On Freitag, 23. März 2018 15:48:51 CEST Sricharan R wrote:
->> Add the common data for all dk07 based boards.
->>
->> Reviewed-by: Abhishek Sahu <absahu@codeaurora.org>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->>  arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi | 69 +++++++++++++++++++++++++++
->>  1 file changed, 69 insertions(+)
->>  create mode 100644 arch/arm/boot/dts/qcom-ipq4019-ap.dk07.1.dtsi
-> 
-> The no-map reserved-memory for tz and smem are missing. Linux doesn't have 
-> control over these regions and they are placed in the middle of the ram before 
-> Linux even starts. And u-boot is also not adding these ranges automatically.
-> 
->     	reserved-memory {
->     		#address-cells = <0x1>;
->     		#size-cells = <0x1>;
->     		ranges;
->     
->     		smem@87e00000 {
->     			reg = <0x87e00000 0x080000>;
->     			no-map;
->     		};
->     
->     		tz@87e80000 {
->     			reg = <0x87e80000 0x180000>;
->     			no-map;
->     		};
->     	};
-> 
-> This can either (depending on HW/SW configuration) lead to a failed boot [1] 
-> or to runtime crashes like:
-> 
->     root@OpenWrt:/# /tmp/memory-allocator-test
->     main 0
->     [  571.758058] Unhandled fault: imprecise external abort (0xc06) at 0x01715ff8
->     [  571.758099] pgd = cebec000
->     [  571.763826] [01715ff8] *pgd=8e7fa835, *pte=87e7f75f, *ppte=87e7fc7f
->     Bus error
-> 
-> I would not know how to disable QSEE on these boards and thus would assume 
-> that it should be part of this dtsi.
 
- As we discussed offline, i agree that the smem and tz reserved memory nodes need to
- be added. It still boots today without that, but would abort when that memory
- region is allocated and written. I will add the reserved-memory node for that
- in V6 along with other comments.
+Some of these have been posted before and a couple
+received an Ack from Herbert, but haven't appeared in any git tree
+yet.
+Another (the first) has been sent but received no ack.
 
-Regards,
- Sricharan
+I've added the second patch, which removes more incorrect
+documentation, and added the last two patches.
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+One further improves rhashtable_walk stability.
+The last added rhashtable_walk_prev(), as discussed with Herbert,
+which should be useful for seq_files.
+(Separately I've posted a patch to Al Viro to make seq_file even
+easier to use with rhashtables, but this series does not depend
+on that patch).
+
+I don't see these patches as particularly urgent, though the third is a
+bugfix that currently prevents me from allowing one rhashtable in
+lustre to auto-shrink.
+
+I previously suggested it might be good for some of these patches to
+go upstream through 'staging' with the lustre patches.  I no longer
+think that is necessary.  It is probably best for them to go upstream
+through net or net-next.
+
+Thanks,
+NeilBrown
+
+
+---
+
+NeilBrown (6):
+      rhashtable: remove outdated comments about grow_decision etc
+      rhashtable: remove incorrect comment on r{hl,hash}table_walk_enter()
+      rhashtable: reset iter when rhashtable_walk_start sees new table
+      rhashtable: improve rhashtable_walk stability when stop/start used.
+      rhashtable: further improve stability of rhashtable_walk
+      rhashtable: add rhashtable_walk_prev()
+
+
+ include/linux/rhashtable.h |   49 +++++++++---------
+ lib/rhashtable.c           |  121 +++++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 126 insertions(+), 44 deletions(-)
+
+--
+Signature
