@@ -1,103 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeDRHDy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:03:54 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:41339 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752085AbeDRHDw (ORCPT
+        id S1752812AbeDRHHL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:07:11 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36519 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752022AbeDRHHJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:03:52 -0400
-Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
- to netdev dma client
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: Vinod Koul <vinod.koul@intel.com>
-CC: Lars-Peter Clausen <lars@metafoo.de>,
-        Radhey Shyam Pandey <radheys@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
- <1522665546-10035-3-git-send-email-radheys@xilinx.com>
- <20180411090854.GY6014@localhost>
- <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
- <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
- <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
- <20180417154231.GV6014@localhost>
- <994c184c-e915-7735-5a8b-81a02c5449b0@ti.com>
-Message-ID: <43634e42-a3fd-c189-ea2c-0d3b7e62fc46@ti.com>
-Date: Wed, 18 Apr 2018 10:03:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 18 Apr 2018 03:07:09 -0400
+Date: Wed, 18 Apr 2018 09:07:04 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+To: Alexander Popov <alex.popov@linux.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sil2review@lists.osadl.org,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH 1/1] i2c: dev: check i2c_msg len before memdup_user() to
+ prevent ZERO_SIZE_PTR deref
+Message-ID: <20180418070704.35zj5chpdkirnmdt@pengutronix.de>
+References: <1524010605-21552-1-git-send-email-alex.popov@linux.com>
 MIME-Version: 1.0
-In-Reply-To: <994c184c-e915-7735-5a8b-81a02c5449b0@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1524010605-21552-1-git-send-email-alex.popov@linux.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
+On Wed, Apr 18, 2018 at 03:16:45AM +0300, Alexander Popov wrote:
+> Currently i2cdev_ioctl_rdwr() doesn't check i2c_msg len against zero
+> before calling memdup_user(). If this len is zero memdup_user() returns
+> ZERO_SIZE_PTR, which is later considered as valid since
+> IS_ERR(ZERO_SIZE_PTR) is false. That causes ZERO_SIZE_PTR deref oops.
 
-On 2018-04-18 09:39, Peter Ujfalusi wrote:
-> 
-> 
-> On 2018-04-17 18:42, Vinod Koul wrote:
->> On Tue, Apr 17, 2018 at 04:46:43PM +0300, Peter Ujfalusi wrote:
->>
->>> @@ -709,6 +709,11 @@ struct dma_filter {
->>>   *	be called after period_len bytes have been transferred.
->>>   * @device_prep_interleaved_dma: Transfer expression in a generic way.
->>>   * @device_prep_dma_imm_data: DMA's 8 byte immediate data to the dst address
->>> + * @device_attach_metadata: Some DMA engines can send and receive side band
->>> + *	information, commands or parameters which is not transferred within the
->>> + *	data stream itself. In such case clients can set the metadata to the
->>> + *	given descriptor and it is going to be sent to the peripheral, or in
->>> + *	case of DEV_TO_MEM the provided buffer will receive the metadata.
->>>   * @device_config: Pushes a new configuration to a channel, return 0 or an error
->>>   *	code
->>>   * @device_pause: Pauses any transfer happening on a channel. Returns
->>> @@ -796,6 +801,9 @@ struct dma_device {
->>>  		struct dma_chan *chan, dma_addr_t dst, u64 data,
->>>  		unsigned long flags);
->>>  
->>> +	int (*device_attach_metadata)(struct dma_async_tx_descriptor *desc,
->>> +				      void *data, size_t len);
->>
->> while i am okay with the concept, I would not want to go again the custom
->> pointer route, this is a no-go for me.
->>
->> Instead lets add the vendor data, define that explicitly. We can use struct,
->> tokens or something else to define these. But lets try to stay away from
->> opaque objects please :-)
-> 
-> The DMA does not interpret the metadata, it is information which can be
-> only understood by the client driver and the remote peripheral. It is
-> just chunk of data (parameters, timestamps, keys, etc) that needs to
-> travel along with the payload.
-> 
-> The content is not relevant for the DMA itself.
+You're saying that
 
-To add: different peripherals needs to send receive different metadata
-and even the same peripheral might pass different information based on
-their operating mode. The size of metadata can be different as well.
+	memdup_user(ptr, 0)
 
-So it is not really vendor specific metadata, but peripheral, operating
-mode and other factors affected chunk of data.
+reads from *ptr? I'd say this is a bug in memdup_user, not its user.
 
-> 
-> - Péter
-> 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-> 
+If however the problem only happens later in
 
-- Péter
+	if (msgs[i].flags & I2C_M_RECV_LEN) {
+		if (!(msgs[i].flags & I2C_M_RD) || msgs[i].buf[0] < 1 || ...)
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Your commit log is wrong (and I think the patch, too).
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-K�nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
