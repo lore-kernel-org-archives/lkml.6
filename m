@@ -1,67 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753922AbeDRMtT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 08:49:19 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:36494 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753815AbeDRMtR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 08:49:17 -0400
-From: Stefan Agner <stefan@agner.ch>
-To: shawnguo@kernel.org, kernel@pengutronix.de
-Cc: fabio.estevam@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
-Date: Wed, 18 Apr 2018 14:49:08 +0200
-Message-Id: <20180418124908.3079-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.17.0
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         RCVD_TLS_ALL(0.00)[];
-         ASN(0.00)[asn:13030, ipnet:2001:1620::/32, country:CH];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_HAS_DN(0.00)[];
-         MID_CONTAINS_FROM(1.00)[];
-         TO_DN_SOME(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_EQ_ENVFROM(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[9]
+        id S1753946AbeDRMu0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 08:50:26 -0400
+Received: from mail.sysgo.com ([176.9.12.79]:50860 "EHLO mail.sysgo.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753902AbeDRMuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 08:50:24 -0400
+From: David Engraf <david.engraf@sysgo.com>
+To: ludovic.desroches@microchip.com, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com
+Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, David Engraf <david.engraf@sysgo.com>
+Subject: [PATCH] i2c: at91: Read all available bytes at once
+Date: Wed, 18 Apr 2018 14:40:55 +0200
+Message-Id: <20180418124055.21333-1-david.engraf@sysgo.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On i.MX6 ULL using PLL3 seems to cause a freeze when setting
-the parent to IMX6UL_CLK_PLL3_USB_OTG. This only seems to appear
-since commit 6f9575e55632 ("clk: imx: Add CLK_IS_CRITICAL flag
-for busy divider and busy mux"), probably because the clock is
-now forced to be on.
+With FIFO enabled it is possible to read multiple bytes
+at once in the interrupt handler as long as RXRDY is
+set. This may also reduce the number of interrupts.
 
-Fixes: 6f9575e55632("clk: imx: Add CLK_IS_CRITICAL flag for busy divider and busy mux")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: David Engraf <david.engraf@sysgo.com>
 ---
-This addresses a regression ssen on v4.17-rc1 where the kernel
-boots during clock initialization, see also:
-https://patchwork.kernel.org/patch/10295927/
+ drivers/i2c/busses/i2c-at91.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
- drivers/clk/imx/clk-imx6ul.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 114ecbb94ec5..12320118f8de 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -464,7 +464,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	clk_set_rate(clks[IMX6UL_CLK_AHB], 99000000);
+diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
+index bfd1fdff64a9..d01c2b2384bd 100644
+--- a/drivers/i2c/busses/i2c-at91.c
++++ b/drivers/i2c/busses/i2c-at91.c
+@@ -518,8 +518,12 @@ static irqreturn_t atmel_twi_interrupt(int irq, void *dev_id)
+ 	 * the RXRDY interrupt first in order to not keep garbage data in the
+ 	 * Receive Holding Register for the next transfer.
+ 	 */
+-	if (irqstatus & AT91_TWI_RXRDY)
+-		at91_twi_read_next_byte(dev);
++	if (irqstatus & AT91_TWI_RXRDY) {
++		/* read all available bytes at once when FIFO is used */
++		do {
++			at91_twi_read_next_byte(dev);
++		} while (at91_twi_read(dev, AT91_TWI_SR) & AT91_TWI_RXRDY);
++	}
  
- 	/* Change periph_pre clock to pll2_bus to adjust AXI rate to 264MHz */
--	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_PLL3_USB_OTG]);
-+	clk_set_parent(clks[IMX6UL_CLK_PERIPH_CLK2_SEL], clks[IMX6UL_CLK_OSC]);
- 	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_CLK2]);
- 	clk_set_parent(clks[IMX6UL_CLK_PERIPH_PRE], clks[IMX6UL_CLK_PLL2_BUS]);
- 	clk_set_parent(clks[IMX6UL_CLK_PERIPH], clks[IMX6UL_CLK_PERIPH_PRE]);
+ 	/*
+ 	 * When a NACK condition is detected, the I2C controller sets the NACK,
 -- 
-2.17.0
+2.14.1
