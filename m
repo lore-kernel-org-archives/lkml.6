@@ -1,123 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeDRIYo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 04:24:44 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:33238 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752592AbeDRIYm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 04:24:42 -0400
-X-Google-Smtp-Source: AIpwx4841zqSXC0UwO18DxlEY1z8GUPGBhWI91uGeDB6xCe5ffEXa3MI3a1TeklVgk4uCPhcyatTCQ==
-Date: Wed, 18 Apr 2018 10:24:39 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: airlied@linux.ie, jonathanh@nvidia.com,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH] gpu: drm: tegra: Adding new typedef vm_fault_t
-Message-ID: <20180418082439.GA4646@ulmo>
-References: <20180417134755.GA30291@jordon-HP-15-Notebook-PC>
+        id S1753365AbeDRI2L (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 04:28:11 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55300 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753080AbeDRI2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 04:28:08 -0400
+Date: Wed, 18 Apr 2018 10:27:55 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 4/6] drm/atmel-hlcdc: support bus-width (12/16/18/24)
+ in endpoint nodes
+Message-ID: <20180418102755.0491bc9d@bbrezillon>
+In-Reply-To: <8c5847d0-cde1-73fa-9ed1-4f4a5420afbd@axentia.se>
+References: <20180417131052.16336-1-peda@axentia.se>
+        <20180417131052.16336-5-peda@axentia.se>
+        <20180418092948.6dace10a@bbrezillon>
+        <8c5847d0-cde1-73fa-9ed1-4f4a5420afbd@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
-Content-Disposition: inline
-In-Reply-To: <20180417134755.GA30291@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 18 Apr 2018 09:46:09 +0200
+Peter Rosin <peda@axentia.se> wrote:
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 2018-04-18 09:29, Boris Brezillon wrote:
+> > On Tue, 17 Apr 2018 15:10:50 +0200
+> > Peter Rosin <peda@axentia.se> wrote:
+> >   
+> >> This beats the heuristic that the connector is involved in what format
+> >> should be output for cases where this fails.
+> >>
+> >> E.g. if there is a bridge that changes format between the encoder and the
+> >> connector, or if some of the RGB pins between the lcd controller and the
+> >> encoder are not routed on the PCB.
+> >>
+> >> This is critical for the devices that have the "conflicting output
+> >> formats" issue (SAM9N12, SAM9X5, SAMA5D3), since the most significant
+> >> RGB bits move around depending on the selected output mode. For
+> >> devices that do not have the "conflicting output formats" issue
+> >> (SAMA5D2, SAMA5D4), this is completely irrelevant.
+> >>
+> >> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >> ---
+> >>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c | 85 ++++++++++++++++++++------
+> >>  1 file changed, 65 insertions(+), 20 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+> >> index d73281095fac..2e718959981e 100644
+> >> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+> >> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+> >> @@ -19,12 +19,14 @@
+> >>   */
+> >>  
+> >>  #include <linux/clk.h>
+> >> +#include <linux/of_graph.h>
+> >>  #include <linux/pm.h>
+> >>  #include <linux/pm_runtime.h>
+> >>  #include <linux/pinctrl/consumer.h>
+> >>  
+> >>  #include <drm/drm_crtc.h>
+> >>  #include <drm/drm_crtc_helper.h>
+> >> +#include <drm/drm_of.h>
+> >>  #include <drm/drmP.h>
+> >>  
+> >>  #include <video/videomode.h>
+> >> @@ -226,6 +228,68 @@ static void atmel_hlcdc_crtc_atomic_enable(struct drm_crtc *c,
+> >>  #define ATMEL_HLCDC_RGB888_OUTPUT	BIT(3)
+> >>  #define ATMEL_HLCDC_OUTPUT_MODE_MASK	GENMASK(3, 0)
+> >>  
+> >> +static int atmel_hlcdc_connector_output_mode(struct drm_connector_state *state)
+> >> +{
+> >> +	struct drm_connector *connector = state->connector;
+> >> +	struct drm_display_info *info = &connector->display_info;
+> >> +	unsigned int supported_fmts = 0;
+> >> +	struct device_node *ep;
+> >> +	int j;
+> >> +
+> >> +	/*
+> >> +	 * Use the connector index as an approximation of the
+> >> +	 * endpoint node index. We know it's true for our case
+> >> +	 * depending on the driver implementation.
+> >> +	 */
+> >> +	ep = of_graph_get_endpoint_by_regs(connector->dev->dev->of_node, 0,
+> >> +					   connector->index);
+> >> +  
+> > 
+> > Hm, this sounds a bit fragile. Can't we have a reference to the of_node
+> > attached to the connector? Or maybe we can parse this earlier and set a
+> > constraint on the accepted modes.
+> >   
+> >> +	if (ep) {
+> >> +		int bus_fmt = drm_of_media_bus_fmt(ep);  
+> > 
+> > Hm, you're extracting this piece of information from the DT every time
+> > an atomic modeset is done. I'd really prefer to have this done once at  
+> 
+> Yes, not happy about it either. I looked for other sensible places too
+> hook the info at probe time, but this was just the simplest. I'll take
+> another look...
+> 
+> > probe time. Since this property is attached to the connector, maybe we
+> > should overwrite the info->bus_formats[] array or mark some of its
+> > entries as invalid.  
+> 
+> I find it very wrong to mix the connector format with what you want to
+> output. In my mind it's a broken assumption that they are related. It is
+> only correct for trivial cases. Also note my comment about the connector
+> index and the endpoint index, they are only coincidentally the same
+> based on our implementation. If the driver has more than one port or
+> initializes endpoints out of order for some reason, this is no longer
+> true.
+> 
+> I think it would be better to store this info somewhere near the encoder,
+> since that is what I find closest to what I'm trying to change.
 
-On Tue, Apr 17, 2018 at 07:17:55PM +0530, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler. For
-> now, this is just documenting that the function returns
-> a VM_FAULT value rather than an errno. Once all instances
-> are converted, vm_fault_t will become a distinct type.
->=20
-> Reference id -> 1c8f422059ae ("mm: change return type to
-> vm_fault_t")
->=20
-> Previously vm_insert_page() returns err which driver
-> mapped into VM_FAULT_* type. The new function=20
-> vmf_insert_page() will replace this inefficiency by
-> returning VM_FAULT_* type.
->=20
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/gem.c | 18 ++----------------
->  1 file changed, 2 insertions(+), 16 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> index 49b9bf2..6121493 100644
-> --- a/drivers/gpu/drm/tegra/gem.c
-> +++ b/drivers/gpu/drm/tegra/gem.c
-> @@ -422,14 +422,13 @@ int tegra_bo_dumb_create(struct drm_file *file, str=
-uct drm_device *drm,
->  	return 0;
->  }
->=20
-> -static int tegra_bo_fault(struct vm_fault *vmf)
-> +static vm_fault_t tegra_bo_fault(struct vm_fault *vmf)
->  {
->  	struct vm_area_struct *vma =3D vmf->vma;
->  	struct drm_gem_object *gem =3D vma->vm_private_data;
->  	struct tegra_bo *bo =3D to_tegra_bo(gem);
->  	struct page *page;
->  	pgoff_t offset;
-> -	int err;
->=20
->  	if (!bo->pages)
->  		return VM_FAULT_SIGBUS;
-> @@ -437,20 +436,7 @@ static int tegra_bo_fault(struct vm_fault *vmf)
->  	offset =3D (vmf->address - vma->vm_start) >> PAGE_SHIFT;
->  	page =3D bo->pages[offset];
->=20
-> -	err =3D vm_insert_page(vma, vmf->address, page);
-> -	switch (err) {
-> -	case -EAGAIN:
-> -	case 0:
-> -	case -ERESTARTSYS:
-> -	case -EINTR:
-> -	case -EBUSY:
-> -		return VM_FAULT_NOPAGE;
-> -
-> -	case -ENOMEM:
-> -		return VM_FAULT_OOM;
-> -	}
-> -
-> -	return VM_FAULT_SIGBUS;
-> +	return vmf_insert_page(vma, vmf->address, page);
->  }
+Totally agree with you on that: the connector has nothing to do with
+how intermediate encoders/bridges exchange data with each other.
 
-This new function returns VM_FAULT_NOPAGE only for 0 and -EBUSY, whereas
-we used to return VM_FAULT_NOPAGE for -EAGAIN, -ERESTARTSYS and -EINTR
-as well. Was this previously wrong?
+> 
+> As I said, I'll take another look and see if I can hook this in at some
+> other place.
 
-Thierry
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrXAMQACgkQ3SOs138+
-s6H+Iw/+L7jhIyd/NNbJuxvRpWH8R9K98cWBfD2fvAjaNapXrsZx+t1yhKNjZ6+w
-3jG8S+RqiMXvt+I6ewOzlZybJ0T6J+HuuAtV816uJT4G76yi8FGlriR2YOMjY/Pe
-VyIlvoZ8DcFPfPSkq5ZK3hF61fPdpfUIW2GJJ8Owr5QmNt66Fv0SQ1r4Sjvvraz/
-sPQzNTRbfBbvKb9JuCe5VsxGEn3aI10EDzXk0bz/liwpe+YsZ5TeBS3mvvSraYVK
-DAao7d4Ax/IAL9E+DymlEDaWwQv3Du6DNs0aatgc4PbPovDW/89oE45svVKq5x9K
-GnRxvS1zlRv+hDY1rTw/TEgIAuEVYdaGJj/tTeP3EpJkRtFi7yYEch5gy07+RDaI
-uUSCQvGsrpJAo9YdKeer+TsUTvKvD7ZmNi3UQcjrozyZh7tOUSK7BDN6cCsExWPH
-hYSeLNhPE1SctteWbeaUd0/YdWBwj0JuL/LRa7+Es1j1PBaUp9I+TzSqLjI4UONg
-0Ma7arhxY2z8AAX0KtlHmWawT/Glp2xKEUh1+l7tAA31vkPA3CWt7WJmEm1hZw1X
-fHQDt6Ue4AwE8KQ4jZh3SrCDhjS/MO+nj3mJ4ch+7WIMosSPMQRcqFX46D21UBEe
-b9DDjWWw5WCTY3hj+3Djugw1JJ3KU6RAaClmbYGz8yH0qjO80ek=
-=JPtB
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
+Okay, cool.
