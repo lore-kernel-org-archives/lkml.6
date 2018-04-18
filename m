@@ -1,59 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753031AbeDRHsu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 03:48:50 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43974 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752027AbeDRHss (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 03:48:48 -0400
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <alexandre.torgue@st.com>, <robh+dt@kernel.org>
-CC: <mcoquelin.stm32@gmail.com>, <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <fabrice.gasnier@st.com>
-Subject: [PATCH] ARM: dts: stm32: Add vrefbuf support to stm32mp157c
-Date: Wed, 18 Apr 2018 09:47:45 +0200
-Message-ID: <1524037665-26178-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
+        id S1752731AbeDRHt6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 03:49:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35734 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751865AbeDRHt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 03:49:56 -0400
+Date: Wed, 18 Apr 2018 09:49:49 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Cc: Harald Freudenberger <FREUDE@de.ibm.com>,
+        Pierre Morel <pmorel@linux.vnet.ibm.com>, alex.williamson@redhat.com,
+        alifm@linux.vnet.ibm.com, berrange@redhat.com,
+        bjsdjshi@linux.vnet.ibm.com, borntrae@linux.ibm.com,
+        fiuczy@linux.vnet.ibm.com, heicars2@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, kvm@vger.kernel.org, kwankhede@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        mjrosato@linux.vnet.ibm.com, mschwid2@linux.vnet.ibm.com,
+        pasic@linux.vnet.ibm.com, pbonzini@redhat.com,
+        Reinhard Buendgen <BUENDGEN@de.ibm.com>, thuth@redhat.com
+Subject: Re: [PATCH v4 03/15] KVM: s390: refactor crypto initialization
+Message-ID: <20180418094949.0403dcaf.cohuck@redhat.com>
+In-Reply-To: <7276785e-2183-3204-ec80-99fba1546364@linux.vnet.ibm.com>
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1523827345-11600-4-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <4fb50a31-1893-5cfb-0f35-fb2501c2afa8@linux.vnet.ibm.com>
+        <OFE3FE11B1.8E1BDDEF-ON00258272.002AEDB1-C1258272.002B06EF@notes.na.collabserv.com>
+        <20180417121044.5c8f2182.cohuck@redhat.com>
+        <2ac8b862-e2dc-843e-a0b8-906fa32b42f4@linux.vnet.ibm.com>
+        <20180417172139.0a2b148b.cohuck@redhat.com>
+        <7276785e-2183-3204-ec80-99fba1546364@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.119]
-X-ClientProxiedBy: GPXDAG1NODE4.st.com (10.75.127.65) To GPXDAG5NODE6.st.com
- (10.75.127.79)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_02:,,
- signatures=0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stm32mp157c has vrefbuf regulator that can provide analog reference
-voltage from 1500mV to 2500mV.
+On Tue, 17 Apr 2018 14:08:59 -0400
+Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> On 04/17/2018 11:21 AM, Cornelia Huck wrote:
+> > On Tue, 17 Apr 2018 10:26:57 -0400
+> > Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
+> >  
+> >> On 04/17/2018 06:10 AM, Cornelia Huck wrote:  
+> >>> On Tue, 17 Apr 2018 09:49:58 +0200
+> >>> "Harald Freudenberger" <FREUDE@de.ibm.com> wrote:
+> >>>     
+> >>>> Didn't we say that when APXA is not available there is no Crypto support
+> >>>> for KVM ?  
+> >>> [Going by the code, as I don't have access to the architecture]
+> >>>
+> >>> Current status seems to be:
+> >>> - setup crycb if facility 76 is available (that's MSAX3, I guess?)  
+> >> The crycb is set up regardless of whether STFLE.76 (MSAX3) is
+> >> installed or not.  
+> > Hm, the current code does a quick exit if bit 76 is not set, doesn't
+> > it?  
+> 
+> I guess that depends upon what you mean by current code. If you are talking
+> about the code as it is distributed today - i.e., before my patch series -
+> then you are correct. This patch changes that; it initializes the
+> kvm->arch.crypto.crycbd to point to the CRYCB, then clears the format bits
+> (kvm->arch.crypto.crycbd &= ~(CRYCB_FORMAT_MASK)) which is the same as
+> setting the CRYCB format to format 0. It is only after this that the
+> check is done to determine whether STFLE.76 is set.
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index bc3eddc..7df3c99 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -167,6 +167,15 @@
- 			#reset-cells = <1>;
- 		};
- 
-+		vrefbuf: vrefbuf@50025000 {
-+			compatible = "st,stm32-vrefbuf";
-+			reg = <0x50025000 0x8>;
-+			regulator-min-microvolt = <1500000>;
-+			regulator-max-microvolt = <2500000>;
-+			clocks = <&rcc VREF>;
-+			status = "disabled";
-+		};
-+
- 		usart1: serial@5c000000 {
- 			compatible = "st,stm32h7-uart";
- 			reg = <0x5c000000 0x400>;
--- 
-1.9.1
+Ah yes, with "current" I referred to current upstream.
+
+> 
+> >  
+> >>> - use format 2 if APXA is available, else use format 1  
+> >> Use format 0 if MSAX3 is not available
+> >> Use format 1 if MSAX3 is available but APXA is not
+> >> Use format 2 if MSAX3 and APXA is available
+> >>  
+> >>>   From Tony's patch description, the goal seems to be:
+> >>> - setup crycb even if MSAX3 is not available  
+> >> Yes, that is true
+> >>  
+> >>> So my understanding is that we use APXA only to decide on the format of
+> >>> the crycb, but provide it in any case?  
+> >> Yes, that is true  
+> > With the format selection you outlined above, I guess. Makes sense from
+> > my point of view (just looking at the source code).  
+> It also implements what is stated in the architecture doc.
+
+OK, great.
+
+> >  
+> >>> (Not providing a crycb if APXA is not available would be loss of
+> >>> functionality, I guess? Deciding not to provide vfio-ap if APXA is not
+> >>> available is a different game, of course.)  
+> >> This would require a change to enabling the CPU model feature for
+> >> AP.  
+> > But would it actually make sense to tie vfio-ap to APXA? This needs to
+> > be answered by folks with access to the architecture :)  
+> 
+> I don't see any reason to do that from an architectural perspective.
+> One can access AP devices whether APXA is installed or not, it just limits
+> the range of devices that can be addressed
+
+So I guess we should not introduce a tie-in then (unless it radically
+simplifies the code...)
