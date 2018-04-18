@@ -1,289 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752903AbeDRNfM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 09:35:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40222 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752624AbeDRNfI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:35:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 840506071A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v5 1/2] clk: qcom: Configure the RCGs to a safe source as needed
-Date: Wed, 18 Apr 2018 19:04:32 +0530
-Message-Id: <1524058473-15860-2-git-send-email-anischal@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1524058473-15860-1-git-send-email-anischal@codeaurora.org>
-References: <1524058473-15860-1-git-send-email-anischal@codeaurora.org>
+        id S1753001AbeDRNfP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 09:35:15 -0400
+Received: from smtp1-g21.free.fr ([212.27.42.1]:37567 "EHLO smtp1-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752812AbeDRNfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 09:35:13 -0400
+Date: Wed, 18 Apr 2018 15:34:40 +0200
+From: Alban <albeu@free.fr>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Alban <albeu@free.fr>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode
+ for the cells list
+Message-ID: <20180418153440.187ed16e@avionic-0020>
+In-Reply-To: <e34619a4-e9b6-9945-a1cc-a3680aac6819@linaro.org>
+References: <1521933899-362-1-git-send-email-albeu@free.fr>
+        <1521933899-362-2-git-send-email-albeu@free.fr>
+        <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
+        <20180417165420.423a691b@avionic-0020>
+        <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
+        <20180417180040.04f53495@avionic-0020>
+        <20180418134119.2e587621@avionic-0020>
+        <9f7d2987-b33e-79b5-ae58-2985fd7334e4@linaro.org>
+        <20180418143243.3c23493c@avionic-0020>
+        <e34619a4-e9b6-9945-a1cc-a3680aac6819@linaro.org>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AZ+RuJxPdBoTxXd12bCw6CQ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some root clock generators, there could be child branches which are
-controlled by an entity other than application processor subsystem. For
-such RCGs, as per application processor subsystem clock driver, all of
-its downstream clocks are disabled and RCG is in disabled state but in
-reality downstream clocks can be left enabled before.
+--Sig_/AZ+RuJxPdBoTxXd12bCw6CQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-So in this scenario, when RCG is disabled as per clock driver's point of
-view and when rate scaling request comes before downstream clock enable
-request, then RCG fails to update its configuration because in reality
-RCG is on and it expects its new source to alredy be in enable state but
-in reality new source is off. In order to avoid having the RCG to go into
-an invalid state, add support to cache the rate of RCG during set_rate(),
-defer actual RCG configuration update to be done during clk_enable() as
-at this point of time, both its new parent and safe source will be
-already enabled and RCG can safely switch to new parent.
+On Wed, 18 Apr 2018 13:53:56 +0100
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
 
-During clk_disable() request, configure it to safe source as both its
-parents, safe source and current parent will be enabled and RCG can
-safely execute a switch. Also add support to have safe configuration
-frequency table structure for each shared RCG.
+> On 18/04/18 13:32, Alban wrote:
+> >> I was also suggesting you to use nvmem-cell subnode, but make it a
+> >> proper nvmem provider device, rather than reusing its parent device.
+> >>
+> >> You would end up some thing like this in dt.
+> >>
+> >> flash@0 {
+> >> 	#address-cells =3D <1>;
+> >> 	#size-cells =3D <1>;
+> >> 	compatible =3D "s25sl064a";
+> >> 	reg =3D <0>;
+> >>
+> >> 	nvmem-cells {
+> >> 		compatible =3D "mtd-nvmem";
+> >> 		#address-cells =3D <1>;
+> >> 		#size-cells =3D <1>;
+> >>
+> >> 		calibration: calib@404 {
+> >> 			reg =3D <0x404 0x10>;
+> >> 		};
+> >> 	};
+> >> }; =20
+> > But the root cause is in the nvmem binding, this conflict could exists =
+=20
+> No, the root cause is because of passing wrong device instance to nvmem=20
+> core. And trying to workaround is the actual issue.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
----
- drivers/clk/qcom/clk-rcg.h  |   7 +-
- drivers/clk/qcom/clk-rcg2.c | 173 +++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 178 insertions(+), 2 deletions(-)
+The data is stored on the MTD, so the nvmem provider is the MTD device.
+I don't think it is a good idea to have a virtual device in the DT to
+accommodate the nvmem API.
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 2a7489a..9d9d59d 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2013, 2018, The Linux Foundation. All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -144,8 +144,10 @@ struct clk_dyn_rcg {
-  * @cmd_rcgr: corresponds to *_CMD_RCGR
-  * @mnd_width: number of bits in m/n/d values
-  * @hid_width: number of bits in half integer divider
-+ * @safe_src_index: safe src index value
-  * @parent_map: map from software's parent index to hardware's src_sel field
-  * @freq_tbl: frequency table
-+ * @current_freq: last cached frequency when using branches with shared RCGs
-  * @clkr: regmap clock handle
-  *
-  */
-@@ -153,8 +155,10 @@ struct clk_rcg2 {
- 	u32			cmd_rcgr;
- 	u8			mnd_width;
- 	u8			hid_width;
-+	const u8		safe_src_index;
- 	const struct parent_map	*parent_map;
- 	const struct freq_tbl	*freq_tbl;
-+	unsigned long		current_freq;
- 	struct clk_regmap	clkr;
- };
+> > with any device type, not just MTD. I don't understand why we would want
+> > such workarounds instead of just fixing the problem once and for all. =
+=20
+> AFAIU, This is not a workaround, this is how nvmem provider bindings are=
+=20
+> and all providers should try to follow it.
+>=20
+> I still do not understand what is the issue in making nvmem-cells node a=
+=20
+> proper nvmem provider device?
 
-@@ -167,5 +171,6 @@ struct clk_rcg2 {
- extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
-+extern const struct clk_ops clk_rcg2_shared_ops;
+It is doable, but beside making the code more complex, AFAIU that would
+goes against DT best practice as no such device exists in the hardware.
+The DT should only represent that this device contains data that can be
+requested by a driver, and ideally in the same way for all kind of
+storages.
 
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 984de9c..4d971bf 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2013, 2018 The Linux Foundation. All rights reserved.
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -790,3 +790,174 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
- 	.determine_rate = clk_gfx3d_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
-+
-+static int clk_rcg2_set_force_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	const char *name = clk_hw_get_name(hw);
-+	int ret, count;
-+
-+	/* Force enable bit */
-+	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+				 CMD_ROOT_EN, CMD_ROOT_EN);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for RCG to turn ON */
-+	for (count = 500; count > 0; count--) {
-+		if (clk_rcg2_is_enabled(hw))
-+			return 0;
-+
-+		/* Delay for 1usec and retry polling the status bit */
-+		udelay(1);
-+	}
-+	if (!count)
-+		pr_err("%s: RCG did not turn on\n", name);
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int clk_rcg2_clear_force_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/* Clear force enable bit */
-+	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+					CMD_ROOT_EN, 0);
-+}
-+
-+static int
-+clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, unsigned long rate)
-+{
-+	int ret;
-+
-+	ret = clk_rcg2_set_force_enable(hw);
-+	if (ret)
-+		return ret;
-+
-+	/* set clock rate */
-+	ret = __clk_rcg2_set_rate(hw, rate, CEIL);
-+	if (ret)
-+		return ret;
-+
-+	return clk_rcg2_clear_force_enable(hw);
-+}
-+
-+static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int ret;
-+
-+	/*
-+	 * Return if the RCG is currently disabled. This configuration
-+	 * update will happen as part of the RCG enable sequence.
-+	 */
-+	if (!__clk_is_enabled(hw->clk)) {
-+		rcg->current_freq = rate;
-+		return 0;
-+	}
-+
-+	ret = clk_rcg2_shared_force_enable_clear(hw, rate);
-+	if (ret)
-+		return ret;
-+
-+	/* Update current frequency with the requested frequency. */
-+	rcg->current_freq = rate;
-+
-+	return ret;
-+}
-+
-+static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
-+		unsigned long rate, unsigned long parent_rate, u8 index)
-+{
-+	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
-+}
-+
-+static unsigned long
-+clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	if (!__clk_is_enabled(hw->clk) && rcg->current_freq)
-+		return rcg->current_freq;
-+
-+	return rcg->current_freq = clk_rcg2_recalc_rate(hw, parent_rate);
-+}
-+
-+static unsigned long clk_rcg2_get_safe_src_rate(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int index;
-+
-+	index = qcom_find_src_index(hw, rcg->parent_map, rcg->safe_src_index);
-+	if (index < 0)
-+		index = 0;
-+
-+	return clk_hw_get_rate(clk_hw_get_parent_by_index(hw, index));
-+}
-+
-+static int clk_rcg2_shared_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	struct freq_tbl safe_src_freq_tbl = { 0 };
-+
-+	safe_src_freq_tbl.freq = clk_rcg2_get_safe_src_rate(hw);
-+
-+	if (rcg->current_freq == safe_src_freq_tbl.freq) {
-+		safe_src_freq_tbl.src = rcg->safe_src_index;
-+		/*
-+		 * Reconfigure the RCG - Incase if any other sub system updates
-+		 * the div or src without the knowledge of application processor
-+		 * subsystem and RCG could run at different rate other than
-+		 * software cached rate.
-+		 */
-+		clk_rcg2_set_force_enable(hw);
-+		clk_rcg2_configure(rcg, &safe_src_freq_tbl);
-+		clk_rcg2_clear_force_enable(hw);
-+
-+		return 0;
-+	}
-+
-+	/*
-+	 * Switch from safe source to the stashed mux selection. The current
-+	 * parent has already been prepared and enabled at this point, and
-+	 * the safe source is always on while application processor subsystem
-+	 * is online. Therefore, the RCG can safely switch its source.
-+	 */
-+
-+	return clk_rcg2_shared_force_enable_clear(hw, rcg->current_freq);
-+}
-+
-+static void clk_rcg2_shared_disable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	struct freq_tbl safe_src_freq_tbl = { 0 };
-+
-+	safe_src_freq_tbl.src = rcg->safe_src_index;
-+	safe_src_freq_tbl.freq = clk_rcg2_get_safe_src_rate(hw);
-+
-+	/*
-+	 * Park the RCG at a safe configuration - sourced off from safe source.
-+	 * Force enable and disable the RCG while configuring it to safeguard
-+	 * against any update signal coming from the downstream clock.
-+	 * The current parent is still prepared and enabled at this point, and
-+	 * the safe source is always on while application processor subsystem
-+	 * is online. Therefore, the RCG can safely switch its parent.
-+	 */
-+	clk_rcg2_set_force_enable(hw);
-+	clk_rcg2_configure(rcg, &safe_src_freq_tbl);
-+	clk_rcg2_clear_force_enable(hw);
-+}
-+
-+const struct clk_ops clk_rcg2_shared_ops = {
-+	.enable = clk_rcg2_shared_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_get_parent,
-+	.set_parent = clk_rcg2_set_parent,
-+	.recalc_rate = clk_rcg2_shared_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_rate,
-+	.set_rate = clk_rcg2_shared_set_rate,
-+	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
-+};
-+EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Alban
+
+--Sig_/AZ+RuJxPdBoTxXd12bCw6CQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJa10lxAAoJEHSUmkuduC28ohsQAOU+13gwBBmeFX9rVtwI/Et/
+pz5qPpHgMWlofIb5UqqNP+jFYZQzd69H17rmHLXXB04pF6UA7qxvorYLsoHp9PAJ
+uavZ3e4Wiavaj/g1iYkO6G5LQNWun5P/X6Cck86Wyz6JhTFhX3i6+0xDdmCC9ToY
+X5sbA47pFFOq0N2s6H+NdYqL0RRtbW5vDzH8QN430h0hU/IFaWnfWKRovrznGVhP
+/x8Wrv3SL2/HrL3anx5P2rcmNWv5cATrlpD6ASjZn8rXrDZJUGgsLQ3W9hYWgh1O
+gAwv6to8REwmkiry4Ui9lJG2n3OEt+24fgtQxXs5s8p60z4rCgnMSNzqEHZwIzog
+pF+tgV3l+xWzb8WlOtnBZbs3JM1fmg82vQrWEPH9j9c3iIqB1GjxQ/RnWT7r039u
+xCeOeFZYJ92niRSzeD1xEID6oeW9gG2ezBL+3n6zLtk6Y+gAYMra6OJPBo+20Thu
+A82PJd9Ah9NIrzTbB/fXkbvubzOJp49BBjR8mHolCRB9y8RJ3+G0Eeg+fYoADC5c
+T/O+URuv//n1+g27t2BzBfAjFnLDWtqeaVknkw1FzOb/vzzsLaeqpKWMw6OM0gf1
+jjjZeOK6bCgA5XN2nWxjgrkwFYrCIg0sZLEuMe9OlDAg7uV9OAxUrjlr9y4uNmqN
+gqFr4TjR+/UNEElgsOHo
+=kviY
+-----END PGP SIGNATURE-----
+
+--Sig_/AZ+RuJxPdBoTxXd12bCw6CQ--
