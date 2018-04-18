@@ -1,64 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752606AbeDRGEo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 02:04:44 -0400
-Received: from mga14.intel.com ([192.55.52.115]:51538 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750861AbeDRGEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 02:04:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
-   d="scan'208";a="32807767"
-Subject: Re: [RFC PATCH spi] spi: pxa2xx: pxa2xx_spi_transfer_one() can be
- static
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <201804180300.Pn9JAJQ2%fengguang.wu@intel.com>
- <20180417195323.GA69680@ivb43>
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Message-ID: <22cf611b-6a88-ec72-bb3c-51f8b62a8019@linux.intel.com>
-Date: Wed, 18 Apr 2018 09:04:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180417195323.GA69680@ivb43>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1752087AbeDRGPf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 02:15:35 -0400
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:36408
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750861AbeDRGPe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 02:15:34 -0400
+X-ASG-Debug-ID: 1524031124-093b7e10b3b7e50001-xx1T2L
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+To: "sohil.mehta@intel.com" <sohil.mehta@intel.com>,
+        "gary.hook@amd.com" <gary.hook@amd.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "ghook@amd.com" <ghook@amd.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+Thread-Topic: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+X-ASG-Orig-Subj: Re: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+Thread-Index: AQHT1tpRJAZW59A4ZEqPfHlYD/OogA==
+Date: Wed, 18 Apr 2018 05:58:48 +0000
+Message-ID: <1524031122.4031.5.camel@hxt-semitech.com>
+References: <152302042701.47565.17954813724758433858.stgit@sosxen2.amd.com>
+         <152302067362.47565.628887796165116844.stgit@sosxen2.amd.com>
+         <1523664612.2747.13.camel@intel.com>
+         <efa2b7a3-04a7-20b1-3651-89ebafa85c27@amd.com>
+In-Reply-To: <efa2b7a3-04a7-20b1-3651-89ebafa85c27@amd.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.64.6.80]
+Content-Type: text/plain; charset="iso-8859-15"
+Content-ID: <EC3196134C782D4F8A962BA6463288F5@hxt-semitech.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Barracuda-Connect: localhost[10.128.0.15]
+X-Barracuda-Start-Time: 1524031124
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5132 1.0000 0.7500
+X-Barracuda-Spam-Score: 0.75
+X-Barracuda-Spam-Status: No, SCORE=0.75 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.50009
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/17/18 22:53, kbuild test robot wrote:
-> 
-> Fixes: d5898e19c0d7 ("spi: pxa2xx: Use core message processing loop")
-> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-> ---
->   spi-pxa2xx.c |    6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-> index c852ea5..40f1346 100644
-> --- a/drivers/spi/spi-pxa2xx.c
-> +++ b/drivers/spi/spi-pxa2xx.c
-> @@ -911,9 +911,9 @@ static bool pxa2xx_spi_can_dma(struct spi_controller *master,
->   	       xfer->len >= chip->dma_burst_size;
->   }
->   
-> -int pxa2xx_spi_transfer_one(struct spi_controller *master,
-> -			    struct spi_device *spi,
-> -			    struct spi_transfer *transfer)
-> +static int pxa2xx_spi_transfer_one(struct spi_controller *master,
-> +				   struct spi_device *spi,
-> +				   struct spi_transfer *transfer)
+Hi, Gary and Sohil,
 
-Thanks Fengguang. I don't understand how I managed to drop "static" 
-while doing manual s/pump_transfers/pxa2xx_spi_transfer_one/ :-)
+On Tue, 2018-04-17 at 13:38 -0400, Hook, Gary wrote:
+> On 4/13/2018 8:08 PM, Mehta, Sohil wrote:
+> > 
+> > On Fri, 2018-04-06 at 08:17 -0500, Gary R Hook wrote:
+> > > 
+> > >   
+> > > +
+> > > +void amd_iommu_debugfs_setup(struct amd_iommu *iommu)
+> > > +{
+> > > +	char name[MAX_NAME_LEN + 1];
+> > > +	struct dentry *d_top;
+> > > +
+> > > +	if (!debugfs_initialized())
+> > Probably not needed.
+> Right.
 
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+When will this check is needed?
+IMO, this function is to check debugfs ready status before we want to
+use debugfs. I just want to understand when we should use
+debugfs_initialized();
+
+Thanks.
+Shunyong.
+
+> 
+> > 
+> > 
+> > > 
+> > > +		return;
+> > > +
+> > > +	mutex_lock(&amd_iommu_debugfs_lock);
+> > > +	if (!amd_iommu_debugfs) {
+> > > +		d_top = iommu_debugfs_setup();
+> > > +		if (d_top)
+> > > +			amd_iommu_debugfs =
+> > > debugfs_create_dir("amd", d_top);
+> > > +	}
+> > > +	mutex_unlock(&amd_iommu_debugfs_lock);
+> > 
+> > You can do the above only once if you iterate over the IOMMUs here
+> >   instead of doing it in amd_iommu_init.
+> I'm not sure it matters, given the finite number of IOMMUs in a
+> system, 
+> and the fact that this work is done exactly once. However, removal of
+> a 
+> lock is fine thing, so I'll move this around.
+> 
+> > 
+> > 
+> > > 
+> > > +	if (amd_iommu_debugfs) {
+> > > +		snprintf(name, MAX_NAME_LEN, "iommu%02d", iommu-
+> > > > 
+> > > > index);
+> > > +		iommu->debugfs = debugfs_create_dir(name,
+> > > +						    amd_iommu_de
+> > > bugf
+> > > s);
+> > > +		if (!iommu->debugfs) {
+> > > +			debugfs_remove_recursive(amd_iommu_debug
+> > > fs);
+> > > +			amd_iommu_debugfs = NULL;
+> > > +		}
+> > > +	}
+> > > +}
+> > -Sohil
+> > 
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
