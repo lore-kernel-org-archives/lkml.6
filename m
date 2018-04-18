@@ -1,72 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752826AbeDRNjB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 09:39:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32976 "EHLO mail.kernel.org"
+        id S1753165AbeDRNju (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 09:39:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33532 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751580AbeDRNit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 09:38:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D54221726
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 18 Apr 2018 09:38:45 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Howard McLauchlan <hmclauchlan@fb.com>
-Subject: Re: [RFC PATCH 31/35] Revert "vfs: add d_real_inode() helper"
-Message-ID: <20180418093845.19ca33f3@gandalf.local.home>
-In-Reply-To: <CAJfpegtLdmnxieDx7+FBUoc-fKsTEwA+oHinhAfa4E9SDFfSNw@mail.gmail.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com>
-        <20180412150826.20988-32-mszeredi@redhat.com>
-        <CAOQ4uxgdWCWvwWgjUu06H=BeMxh-BVAjxVE5Ckj-poKRGgwvMQ@mail.gmail.com>
-        <CAJfpegtLdmnxieDx7+FBUoc-fKsTEwA+oHinhAfa4E9SDFfSNw@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1753082AbeDRNjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 09:39:49 -0400
+Date: Wed, 18 Apr 2018 15:39:47 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH] mm:memcg: add __GFP_NOWARN in
+ __memcg_schedule_kmem_cache_create
+Message-ID: <20180418133947.GE17484@dhcp22.suse.cz>
+References: <20180418022912.248417-1-minchan@kernel.org>
+ <20180418133139.GB27475@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418133139.GB27475@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 13:42:03 +0200
-Miklos Szeredi <miklos@szeredi.hu> wrote:
-
-> On Wed, Apr 18, 2018 at 10:19 AM, Amir Goldstein <amir73il@gmail.com> wrote:
-> > On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:  
-> >> This reverts commit a118084432d642eeccb961c7c8cc61525a941fcb.
-> >>
-> >> No user of d_real_inode() remains, so it can be removed.
-> >>  
-> >
-> > FYI, there is a new user in v4.17-rc1 added by commit
-> > f0a2aa5a2a40 tracing/uprobe: Add support for overlayfs
-> >
-> > Seems like this patch got merged without any CC to overlayfs
-> > mailing list nor maintainer?
-
-It appeared to be a small change with lots of reviewers. I didn't think
-it was something to notify the overlayfs folks with. But perhaps I was
-wrong.
-
-> >
-> > Not sure yet if overlayfs-rorw patches would allow reverting this
-> > change.  
+On Wed 18-04-18 06:31:39, Matthew Wilcox wrote:
+> On Wed, Apr 18, 2018 at 11:29:12AM +0900, Minchan Kim wrote:
+> > If there are heavy memory pressure, page allocation with __GFP_NOWAIT
+> > fails easily although it's order-0 request.
+> > I got below warning 9 times for normal boot.
+> > 
+> > Let's not make user scared.
 > 
-> Not trivial, because uprobe is looking at i_mapping to get a list of
-> current memory maps.   We could set i_mapping at overlay inode
-> initialization time, but we definitely can't *change* i_mapping at
-> copy up.  Which is bound to result in some weird inconsistencies.  So
-> likely we'll need to keep d_real_inode() for the time being.
+> Actually, can you explain why it's OK if this fails?  As I understand this
+> code, we'll fail to create a kmalloc cache for this memcg.  What problems
+> does that cause?
 
-I just received this patch:
+See http://lkml.kernel.org/r/20180418072002.GN17484@dhcp22.suse.cz
 
- http://lkml.kernel.org/r/20180418062907.3210386-1-songliubraving@fb.com
-
-Which removes this code. Can you review it and I'll take it.
-
--- Steve
+-- 
+Michal Hocko
+SUSE Labs
