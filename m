@@ -1,135 +1,293 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-623030-1524063971-2-1616835965786096893
+X-Cyrus-Session-Id: sloti22d1t05-3573188-1524028413-2-17375500041799444917
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524063971; b=b7ESR6mXo/MkCB/VJOfTBgRnJbNHgPZvG4JdoPNq3sHBl32fyg
-    mER8xWXcTzbSKoSl9BWG8hrkvXTw1dDZ0rquREJo/c89pV5bnZK32RcMrdc4EHmC
-    yeJ+cvE+eTLe1KddXFQRJ40u/tx2hd/RA+Edrw0GZjBORxY9OWi4YNpe/9DUH8ur
-    z60Zb+c83esZqsOfQOlsiQfgPHZ10NmgV7YSiFshwx7i9INri1oU7UTuxNiDGT6l
-    DCAXH9fCb2fT0n3q8hvWNIHs6B7WGq6JSNJRagWsYkXQeVZyIwAExYrUVncI6DUZ
-    NBxXOXfNN8GhLkFkFOhngxaiDeFpY+mODTqw==
+    1524028413; b=WfQbSlp8f5yEQCRnr7QLEFUvx5RdnBHEgFJTHBh0XDppSbTjwe
+    cG7PMLrmstNWoDU+VHtHRzEFtz7KSz3TCwLdBiJc7zIzsVu8yoUIpxcm+/zya2Ao
+    fXtECLW3CKfDc9RkGqieO0jfDLYUj5MyDkxKuIiwHJwVRCSqTtPLgYKjpWHLwVA5
+    SuEprTzIlZYOViJNSR4i+oxM3sSTR5NvWUQmC2yR0m6H+M1V1eBHwEgcT019j88c
+    fUjRVLzT+ykRH6CGPa5x2qnHC2q3kI5f4Ap0MZDGtN1coCgy/z+215bhi34Q/xmL
+    N0ioKuOZ6P8KFBxg3WODrC62+6luzS9acxsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524063971; bh=g2tUBzjIg3ldyNFzcEaSDjD/wF3aIf
-    d/3jMWhjU5TnQ=; b=rGlefG/jMAEjZaZPfpe9WDx1I3qQhs3Q5sT0EokDEVe/Wn
-    sOqUn+MHa6F0PlNlL9uSXP4dTmuFRp+ah5DKiqozvwc9RRfb83bL16sH49UpsqbS
-    FVQJL2jnvViv81ZknFGiDWtbs21qKczbekAA2bjRHhkJJII+KSrBIbWnxNC4aBB2
-    7E81oozzizJg8zZ/NfwOsLiXEkFkUXnRTlfY/YRK1vWslhXw5WnDwFWHokPUd69Z
-    HFCnzkLtLGcdPpZkwctyGPcJU50B4uk4L+kX8oc3n74hQmxNcrgvlfpqrvyX2IQo
-    2IO2YCmsNR4e42/IZhoNddnjzR1YiYB1hwbJYngA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hallyn.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1524028413;
+    bh=NPKeipIBkRspmll02dCrA0o7NZoJ5GLQzBT3ZEJAgvY=; b=O8CZB0lMoAsT
+    xll5qW09C27rRJalxbTSc3zRcf7oLAOaYL1WjnvdnV1p0eZ2yJcsG8g5IIxNnTAr
+    rrMWE7MAwFC+xbDMZy3i4yB3MWhoINx9RY8zM4s06aqKSBXBV9sDk7NrzFyTqLAP
+    W+Pv/Fua/YZOL3wlfKVUA462IQ5f7gkk8Cma5AkpKTp3X4dwSoq+uRmusC0RqLoE
+    5OUMG/Cr4oFde2Ju1yA4pyWyvhde3VXG9npTBsJcmRamgdqYRlFw0YwpCITMqh08
+    t14YxQ9SbURY4Y41BHZdvMXsaM8tVUteRJtn+cZIkK1rYSb/4UHQe0UzxXdSX+7b
+    v3f7nNLPZg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=HvaUugIp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GwgtWV4x;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hallyn.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hallyn.com;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org header.i=@linaro.org header.b=HvaUugIp x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=GwgtWV4x;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=hallyn.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCEXWH9gO4V8oe3nktgNoVVax5g/OPf4xfu75vIxAxThmyllkT7GXn5v1qBV92YoflNxFKWfF3pjFiNJ+qYqVQ6ESy+x8kLWJqV9bwh6bf1fJKUnNzj0
-    cMESgaLyjWqdZ724NWjPnz91ZEgWQIcvjEC/eDWUUVqlFVTxDX1G+xBalVjVlnee69jk2p+3jyJ1UWUH5vabDDuSYoslwQAPOR9GthJzG5MBFCbUT1DI+P4o
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=ag1SF4gXAAAA:8 a=DfNHnWVPAAAA:8 a=danhDmx_AAAA:8 a=VwQbUJbxAAAA:8
-    a=hBqU3vQJAAAA:8 a=wEO7SVL8iM3TIgd1UdoA:9 a=CjuIK1q_8ugA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22 a=rjTVMONInIDnV1a_A2c_:22 a=P4VdviVPEcjfz_PVVggX:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=WLjMIN4s_96MqnBbPenP:22
+X-CM-Envelope: MS4wfBjIiplLwlqS4Ie587eeeS06K2Sqjj3YHSouUKZiVQY46jnkmpufF9pLZVOScF25UY7YcWi+uCircZ9VymBxSh95Smv0ieMkmWoQB5IL3TxNDJ7/iSkO
+    Ve3DL4PZH1si0emfAVSsOc9YRS+hpKDMIVSMQHivBbRpFCElIE9gvkXX/g0aDs0YZ7QrrHWE4ae3HDnxtYq/MMq3eDVuIGJRgi7E66SngEuFqiYqPBJAGWZI
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=BXg2v55r-qUA:10
+    a=Kd1tUaAdevIA:10 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+    a=vDXKdsNl0ZZUCx9pplsA:9 a=QEXdDO2ut3YA:10 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753158AbeDRPFx (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 18 Apr 2018 11:05:53 -0400
-Received: from h2.hallyn.com ([78.46.35.8]:38208 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753153AbeDRPFw (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:05:52 -0400
-Date: Wed, 18 Apr 2018 10:05:51 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        John Johansen <john.johansen@canonical.com>
-Subject: Re: [PATCH 4.16 55/68] apparmor: fix display of .ns_name for
- containers
-Message-ID: <20180418150551.GB15395@mail.hallyn.com>
-References: <20180417155749.341779147@linuxfoundation.org>
- <20180417155751.583001796@linuxfoundation.org>
+        id S1753270AbeDRFNa (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 18 Apr 2018 01:13:30 -0400
+Received: from mail-lf0-f54.google.com ([209.85.215.54]:38905 "EHLO
+        mail-lf0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751444AbeDRFN3 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 18 Apr 2018 01:13:29 -0400
+X-Google-Smtp-Source: AIpwx48ygQw0c/5KNL+pYHTo+q/3+S6k4cuNCDwla8cXhlxqisK0Ud8ILqIgv/rZAWu223djXNMI33NvhRnc/bweiTM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417155751.583001796@linuxfoundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180417155749.341779147@linuxfoundation.org>
+References: <20180417155749.341779147@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 18 Apr 2018 10:43:26 +0530
+Message-ID: <CA+G9fYsih6wHab7LPAUBP0gTAEK5aC2oyZ3gp8UQ+xdnxpeQSw@mail.gmail.com>
+Subject: Re: [PATCH 4.16 00/68] 4.16.3-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuahkh@osg.samsung.com>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Quoting Greg Kroah-Hartman (gregkh@linuxfoundation.org):
-> 4.16-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: John Johansen <john.johansen@canonical.com>
-> 
-> commit 040d9e2bce0a5b321c402b79ee43a8e8d2fd3b06 upstream.
-> 
-> The .ns_name should not be virtualized by the current ns view. It
-> needs to report the ns base name as that is being used during startup
-> as part of determining apparmor policy namespace support.
-> 
-> BugLink: http://bugs.launchpad.net/bugs/1746463
-> Fixes: d9f02d9c237aa ("apparmor: fix display of ns name")
-> Cc: Stable <stable@vger.kernel.org>
-> Reported-by: Serge Hallyn <serge@hallyn.com>
+On 17 April 2018 at 21:27, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> This is the start of the stable review cycle for the 4.16.3 release.
+> There are 68 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu Apr 19 15:57:33 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.16.3-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Excellent, thank you - this has been a pretty invasive bug for
-nested container usage.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-> Tested-by: Serge Hallyn <serge@hallyn.com>
-> Signed-off-by: John Johansen <john.johansen@canonical.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> ---
->  security/apparmor/apparmorfs.c |    4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -1189,9 +1189,7 @@ static int seq_ns_level_show(struct seq_
->  static int seq_ns_name_show(struct seq_file *seq, void *v)
->  {
->  	struct aa_label *label = begin_current_label_crit_section();
-> -
-> -	seq_printf(seq, "%s\n", aa_ns_name(labels_ns(label),
-> -					   labels_ns(label), true));
-> +	seq_printf(seq, "%s\n", labels_ns(label)->base.name);
->  	end_current_label_crit_section(label);
->  
->  	return 0;
-> 
+kselftest: BPF tests test_xdp_meta.sh and test_xdp_redirect.sh were being
+skipped with "Could not run test without the ip {xdp,xdpgeneric} support",
+which got added into iproute2 4.11 and now being run and reported failed
+on stable-rc-4.16.3-rc1 and also on linux-mainline kernel 4.16 to 4.17.
+
+We have an open bug to investigate this failure.
+LKFT: mainline: BPF: test_xdp_redirect.sh and test_xdp_meta.sh skipped -
+Could not run test without the ip xdpgeneric support
+https://bugs.linaro.org/show_bug.cgi?id=3D3630
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.16.3-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.16.y
+git commit: 8485fd17d21b5d9a07b276f1c35c90a5ed529a36
+git describe: v4.16.2-69-g8485fd17d21b
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.16-oe/bu=
+ild/v4.16.2-69-g8485fd17d21b
+
+No regressions (compared to build v4.16.2)
+------------------------------------------------------------------------
+
+Boards, architectures and test suites:
+-------------------------------------
+
+dragonboard-410c - arm64
+* boot - fail: 1, pass: 19
+* kselftest - skip: 20, fail: 2, pass: 43
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-fs-tests - skip: 6, pass: 57
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 1, pass: 21
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - pass: 14
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 133, pass: 1017
+* ltp-timers-tests - pass: 13
+
+hi6220-hikey - arm64
+* boot - pass: 20
+* kselftest - skip: 17, fail: 2, pass: 46
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 6, pass: 57
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 1, pass: 21
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 4, pass: 10
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 134, pass: 1016
+* ltp-timers-tests - pass: 13
+
+juno-r2 - arm64
+* boot - pass: 20
+* kselftest - skip: 18, fail: 2, pass: 45
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 6, pass: 57
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 4, pass: 10
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 133, pass: 1017
+* ltp-timers-tests - pass: 13
+
+qemu_x86_64
+* boot - pass: 22
+* kselftest - skip: 23, fail: 2, pass: 55
+* kselftest-vsyscall-mode-native - skip: 23, fail: 2, pass: 55
+* kselftest-vsyscall-mode-none - skip: 23, fail: 2, pass: 55
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 6, pass: 57
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 1, pass: 13
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 147, pass: 1003
+* ltp-timers-tests - pass: 13
+
+x15 - arm
+* boot - pass: 20
+* kselftest - skip: 21, fail: 3, pass: 38
+* libhugetlbfs - skip: 1, pass: 87
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 18, pass: 63
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 5, pass: 58
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - skip: 2, pass: 20
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 1, pass: 13
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 75, pass: 1075
+* ltp-timers-tests - pass: 13
+
+x86_64
+* boot - pass: 22
+* kselftest - skip: 19, fail: 2, pass: 59
+* kselftest-vsyscall-mode-native - skip: 19, fail: 2, pass: 59
+* kselftest-vsyscall-mode-none - skip: 19, fail: 3, pass: 58
+* libhugetlbfs - skip: 1, pass: 90
+* ltp-cap_bounds-tests - pass: 2
+* ltp-containers-tests - skip: 17, pass: 64
+* ltp-fcntl-locktests-tests - pass: 2
+* ltp-filecaps-tests - pass: 2
+* ltp-fs-tests - skip: 5, pass: 58
+* ltp-fs_bind-tests - pass: 2
+* ltp-fs_perms_simple-tests - pass: 19
+* ltp-fsx-tests - pass: 2
+* ltp-hugetlb-tests - pass: 22
+* ltp-io-tests - pass: 3
+* ltp-ipc-tests - pass: 9
+* ltp-math-tests - pass: 11
+* ltp-nptl-tests - pass: 2
+* ltp-pty-tests - pass: 4
+* ltp-sched-tests - skip: 5, pass: 9
+* ltp-securebits-tests - pass: 4
+* ltp-syscalls-tests - skip: 116, pass: 1034
+* ltp-timers-tests - pass: 13
+
+--=20
+Linaro QA (beta)
+https://qa-reports.linaro.org
