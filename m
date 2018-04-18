@@ -1,138 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeDRFnG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 01:43:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59386 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751273AbeDRFnC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 01:43:02 -0400
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Gerd Hoffmann <kraxel@redhat.com>, Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR QXL
-        VIRTUAL GPU),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] qxl: keep separate release_bo pointer
-Date: Wed, 18 Apr 2018 07:42:57 +0200
-Message-Id: <20180418054257.15388-3-kraxel@redhat.com>
-In-Reply-To: <20180418054257.15388-1-kraxel@redhat.com>
-References: <20180418054257.15388-1-kraxel@redhat.com>
+        id S1752580AbeDRFqN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 01:46:13 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:50189 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750718AbeDRFqK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 01:46:10 -0400
+Subject: Re: [PATCH v6 6/7] remoteproc/davinci: use the reset framework
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Suman Anna <s-anna@ti.com>,
+        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180417173038.25510-1-brgl@bgdev.pl>
+ <20180417173038.25510-7-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <14b8384d-707d-42b7-b3ac-1ad914997a2e@ti.com>
+Date: Wed, 18 Apr 2018 11:14:47 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180417173038.25510-7-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qxl expects that list_first_entry(release->bos) returns the first
-element qxl added to the list.  ttm_eu_reserve_buffers() may reorder
-the list though.
+On Tuesday 17 April 2018 11:00 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Switch to using the reset framework instead of handcoded reset routines
+> we used so far.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a release_bo field to struct qxl_release and use that instead.
+Looks good!
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/qxl/qxl_drv.h     |  1 +
- drivers/gpu/drm/qxl/qxl_cmd.c     |  6 ++----
- drivers/gpu/drm/qxl/qxl_release.c | 12 ++++++------
- 3 files changed, 9 insertions(+), 10 deletions(-)
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 
-diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
-index 00a1a66b05..864b456080 100644
---- a/drivers/gpu/drm/qxl/qxl_drv.h
-+++ b/drivers/gpu/drm/qxl/qxl_drv.h
-@@ -167,6 +167,7 @@ struct qxl_release {
- 
- 	int id;
- 	int type;
-+	struct qxl_bo *release_bo;
- 	uint32_t release_offset;
- 	uint32_t surface_release_id;
- 	struct ww_acquire_ctx ticket;
-diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
-index c0fb52c6d4..01665b98c5 100644
---- a/drivers/gpu/drm/qxl/qxl_cmd.c
-+++ b/drivers/gpu/drm/qxl/qxl_cmd.c
-@@ -179,10 +179,9 @@ qxl_push_command_ring_release(struct qxl_device *qdev, struct qxl_release *relea
- 			      uint32_t type, bool interruptible)
- {
- 	struct qxl_command cmd;
--	struct qxl_bo_list *entry = list_first_entry(&release->bos, struct qxl_bo_list, tv.head);
- 
- 	cmd.type = type;
--	cmd.data = qxl_bo_physical_address(qdev, to_qxl_bo(entry->tv.bo), release->release_offset);
-+	cmd.data = qxl_bo_physical_address(qdev, release->release_bo, release->release_offset);
- 
- 	return qxl_ring_push(qdev->command_ring, &cmd, interruptible);
- }
-@@ -192,10 +191,9 @@ qxl_push_cursor_ring_release(struct qxl_device *qdev, struct qxl_release *releas
- 			     uint32_t type, bool interruptible)
- {
- 	struct qxl_command cmd;
--	struct qxl_bo_list *entry = list_first_entry(&release->bos, struct qxl_bo_list, tv.head);
- 
- 	cmd.type = type;
--	cmd.data = qxl_bo_physical_address(qdev, to_qxl_bo(entry->tv.bo), release->release_offset);
-+	cmd.data = qxl_bo_physical_address(qdev, release->release_bo, release->release_offset);
- 
- 	return qxl_ring_push(qdev->cursor_ring, &cmd, interruptible);
- }
-diff --git a/drivers/gpu/drm/qxl/qxl_release.c b/drivers/gpu/drm/qxl/qxl_release.c
-index a0b4244d28..7cb2145772 100644
---- a/drivers/gpu/drm/qxl/qxl_release.c
-+++ b/drivers/gpu/drm/qxl/qxl_release.c
-@@ -173,6 +173,7 @@ qxl_release_free_list(struct qxl_release *release)
- 		list_del(&entry->tv.head);
- 		kfree(entry);
- 	}
-+	release->release_bo = NULL;
- }
- 
- void
-@@ -296,7 +297,6 @@ int qxl_alloc_surface_release_reserved(struct qxl_device *qdev,
- {
- 	if (surface_cmd_type == QXL_SURFACE_CMD_DESTROY && create_rel) {
- 		int idr_ret;
--		struct qxl_bo_list *entry = list_first_entry(&create_rel->bos, struct qxl_bo_list, tv.head);
- 		struct qxl_bo *bo;
- 		union qxl_release_info *info;
- 
-@@ -304,8 +304,9 @@ int qxl_alloc_surface_release_reserved(struct qxl_device *qdev,
- 		idr_ret = qxl_release_alloc(qdev, QXL_RELEASE_SURFACE_CMD, release);
- 		if (idr_ret < 0)
- 			return idr_ret;
--		bo = to_qxl_bo(entry->tv.bo);
-+		bo = create_rel->release_bo;
- 
-+		(*release)->release_bo = bo;
- 		(*release)->release_offset = create_rel->release_offset + 64;
- 
- 		qxl_release_list_add(*release, bo);
-@@ -365,6 +366,7 @@ int qxl_alloc_release_reserved(struct qxl_device *qdev, unsigned long size,
- 
- 	bo = qxl_bo_ref(qdev->current_release_bo[cur_idx]);
- 
-+	(*release)->release_bo = bo;
- 	(*release)->release_offset = qdev->current_release_bo_offset[cur_idx] * release_size_per_bo[cur_idx];
- 	qdev->current_release_bo_offset[cur_idx]++;
- 
-@@ -408,8 +410,7 @@ union qxl_release_info *qxl_release_map(struct qxl_device *qdev,
- {
- 	void *ptr;
- 	union qxl_release_info *info;
--	struct qxl_bo_list *entry = list_first_entry(&release->bos, struct qxl_bo_list, tv.head);
--	struct qxl_bo *bo = to_qxl_bo(entry->tv.bo);
-+	struct qxl_bo *bo = release->release_bo;
- 
- 	ptr = qxl_bo_kmap_atomic_page(qdev, bo, release->release_offset & PAGE_MASK);
- 	if (!ptr)
-@@ -422,8 +423,7 @@ void qxl_release_unmap(struct qxl_device *qdev,
- 		       struct qxl_release *release,
- 		       union qxl_release_info *info)
- {
--	struct qxl_bo_list *entry = list_first_entry(&release->bos, struct qxl_bo_list, tv.head);
--	struct qxl_bo *bo = to_qxl_bo(entry->tv.bo);
-+	struct qxl_bo *bo = release->release_bo;
- 	void *ptr;
- 
- 	ptr = ((void *)info) - (release->release_offset & ~PAGE_MASK);
--- 
-2.9.3
+This depends on DaVinci gaining common clock / reset framework support
+though. I am guessing remoteproc maintainers will have to be reminded
+when its safe to apply.
+
+Thanks,
+Sekhar
