@@ -1,371 +1,127 @@
-Return-Path: <kernel-hardening-return-13040-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx4/Czth4tRGb6y8yn0kG0iU3Ydxsg1eXCzhKsf4N8GH5sqDMBDm9jeK+6kUnfgduEVejlgO+
-ARC-Seal: i=1; a=rsa-sha256; t=1524069369; cv=none;
-        d=google.com; s=arc-20160816;
-        b=WUeQhGOT5kiR9qwyk9uRaS0VC25cuwn0gyrbR74IzaBIzCfea0HU7Px9Y6E/sCWIN7
-         WJt1u5xe3kCFIaiIQcrFKk+WRF74PNLgOxDQJYUuqcod7+G3Vf7tjyvV0GJPF7N+Ludp
-         ntA5fAr9od7n+9IZZVb8kIHsvNHJHqTotNYJeeLIRekwntDwhknPJU+rlCZHEhjP8Lxy
-         3JWB1eSD0JZ4Vr7vik2LHJ3TcYyDEKYQvfeyFLKrvUVJh8alMORy7FxBa0VKGl2QAzIl
-         Q2uPZZMAyW9ZRv0taBaWIzo0Pw9bEigRyq3evRcT2j04vugprqpitr+dq7sCgohCT4zC
-         dMTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
-         :list-help:list-post:precedence:mailing-list
-         :arc-authentication-results;
-        bh=1cguWvSJRWZyeQErjYrUT+a/f1HXehWpCw3NGQ+TTFY=;
-        b=iTyOErMsLE9Run8kMVpvKZmdMP/xdIP0tvpgDGNvETJCgHbhCGNON4KFwfwigKKQmd
-         tBgVS7g33cqJghoAEoKq7bjv92FLyVSOPvYbYeiFNCQqO9MZpZY0nAN1U9c8zzFYV17o
-         9d9WNjWYWt4C2HfEnYwkshBKCWV7jJ+onHRFSgk25j+sL4yFyoxR7H9UuNpk2mKyb0El
-         Iucjf9Pe1fnTbw9THEun6dDYBx7VgMHGm/XC2cmC6KaYNAm4H9YLq+T9CGQmFTyeGMlL
-         nRaK8poetBcriJpYjSN7ihnlMLgiSfew8iTrHMc56wU6GjUtEO6D8vtlIyjE7dXRohTt
-         km2Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=CfeQwm56;
-       spf=pass (google.com: domain of kernel-hardening-return-13040-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13040-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@chromium.org header.s=google header.b=CfeQwm56;
-       spf=pass (google.com: domain of kernel-hardening-return-13040-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13040-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Wed, 18 Apr 2018 09:35:46 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Boaz Harrosh <ooo@electrozaur.com>
-Cc: linux-kernel@vger.kernel.org,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	kernel-hardening@lists.openwall.com
-Subject: [PATCH v2] exofs: Avoid VLA in structures
-Message-ID: <20180418163546.GA45794@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-705158-1524066388-2-7121189259947510405
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524066387; b=OodWjczv7h3jqgI+VjY/6ZKYxv6prewQvYhFiGomB3U4DxwZ9h
+    M+XyVCzXskwUWehSgsF9+aWwgRm6Mc5xdffkPGsiY4lMJuGrbc2DtwDgfrdXZ4so
+    +X+y40e5XqhinCrWX78gWsHiGGVNGSa1crOoMWSjrKF4OL7ZbnyeEMvmnQHFn5tX
+    Io+gnAysaH+2yIrsf3wY7qmcIoeM3rIWoKkefGIs1Ceqvlp9AU5MqUahqiuQPd29
+    NeaTbyQfpR/tpGPChr6vseklgTpsi/jGDy1XqSSj/TVROWEJQUYdM21mgzdAbfU1
+    9F6TyvN/K+Mh0DjPY0u1Cm10UowbaHB11Hhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1524066387; bh=gS0x6FeO152qx/nOF+vBIwTdHsGufc
+    o2r1eLZ+DUux8=; b=ZkNM3v4mKyHr4ZX0JAUnZGItRfh05O0G1zHGRz8JwBuyWC
+    cMY/5g0K30DWU6JcIognOM5Z/sl8sI9xGyu6tUlt3Sw4QdshKE2+y8Wep2VAfM/3
+    BkxZGAviOcsghH/s82ZYnpBUsq9443csvL+1bdk/1yuT5yaEhCEiF2iisTK92Jm3
+    zsLm3CYzK/yoRsfgr+Fa/1P8gKcYzwLKwo8mimKMGCiGhXqZjT+ryZ4M4Iw24fhp
+    11pfRAvKMsxsOiO1EQHEXVQ9Cx9dd0F9hduqsOnc4LF4dmnl1hEvW9fP+w/aKdDR
+    MiZiOEr7rROA3u20FMrlrbKvTauw0Bgg86vFyYuA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=X4ROZSxj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=azOLKV5J x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FGogIZUB;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=X4ROZSxj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=azOLKV5J x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FGogIZUB;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfDGN153m5sgV9Kc4q6NUwwUcGMPSqAeuF9EN6kzFkywWJD1CYnH6FrvXinYwC6nCVdSDS0rC5IVF3PnEcB0QSgOi8y7qUh6ESa7zSgp+vIMRBzXzdGjs
+    YO4y3mTNI/co/hQUH3MYe45QIJ4oDgTCEaDUmDJmZqwF7SvA49UCaIJ1IcUjuxfaA0lImMmLgkZvyHJ+zjxSQ+IiQ1D+bMZyzEBpKPWjlFhS+7FAKSOtMNYr
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=0GvlxcLphg-QamNhedUA:9 a=QvQ_zLigowP9PyKG:21
+    a=AWK9gw6Ur_CXYYSx:21 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753182AbeDRPpe (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 18 Apr 2018 11:45:34 -0400
+Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:34381 "EHLO
+        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752921AbeDRPpb (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 18 Apr 2018 11:45:31 -0400
+X-Google-Smtp-Source: AIpwx4+A0Z2NDlkdfCN/JmOre6Vnl5dp9Gu+4pBHVal5kDfDquSDcEpi0NFQLELUv9hRh3xcl9lScQ==
+From: Phil Elwell <phil@raspberrypi.org>
+To: Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Cc: Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH v2 0/3] lan78xx: Read configuration from Device Tree
+Date: Wed, 18 Apr 2018 16:45:20 +0100
+Message-Id: <1524066323-109628-1-git-send-email-phil@raspberrypi.org>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-18_03:,,
+ signatures=0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598102563104906228?=
-X-GMAIL-MSGID: =?utf-8?q?1598102563104906228?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On the quest to remove all VLAs from the kernel[1] this adjusts several
-cases where allocation is made after an array of structures that points
-back into the allocation. The allocations are changed to perform explicit
-calculations instead of using a Variable Length Array in a structure.
-Additionally, this lets Clang compile this code now, since Clang does not
-support VLAIS[2].
+The Microchip LAN78XX family of devices are Ethernet controllers with
+a USB interface. Despite being discoverable devices it can be useful to
+be able to configure them from Device Tree, particularly in low-cost
+applications without an EEPROM or programmed OTP.
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-[2] https://lkml.kernel.org/r/CA+55aFy6h1c3_rP_bXFedsTXzwW+9Q9MfJaW7GUmMBrAp-fJ9A@mail.gmail.com
+This patch set adds support for reading the MAC address and LED modes from
+Device Tree.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
----
 v2:
-- use DRY for easier to read stripe updates (ndesaulniers)
-- add const to unchanging variable (ndesaulniers)
-- update references with message-id URLs
-- add Reviewed-by
----
- fs/exofs/ore.c      | 84 +++++++++++++++++++++++++++++++----------------------
- fs/exofs/ore_raid.c | 75 ++++++++++++++++++++++++++++++++++-------------
- fs/exofs/super.c    | 23 +++++++--------
- 3 files changed, 115 insertions(+), 67 deletions(-)
+- Use eth_platform_get_mac_address.
+- Support up to 4 LEDs, and move LED mode constants into dt-bindings header.
+- Improve bindings document.
+- Remove EEE support.
 
-diff --git a/fs/exofs/ore.c b/fs/exofs/ore.c
-index 3c6a9c156b7a..cfa862ea19d2 100644
---- a/fs/exofs/ore.c
-+++ b/fs/exofs/ore.c
-@@ -146,68 +146,82 @@ int  _ore_get_io_state(struct ore_layout *layout,
- 			struct ore_io_state **pios)
- {
- 	struct ore_io_state *ios;
--	struct page **pages;
--	struct osd_sg_entry *sgilist;
-+	size_t size_ios, size_extra, size_total;
-+	void *ios_extra;
-+
-+	/*
-+	 * The desired layout looks like this, with the extra_allocation
-+	 * items pointed at from fields within ios or per_dev:
-+
- 	struct __alloc_all_io_state {
- 		struct ore_io_state ios;
- 		struct ore_per_dev_state per_dev[numdevs];
- 		union {
- 			struct osd_sg_entry sglist[sgs_per_dev * numdevs];
- 			struct page *pages[num_par_pages];
--		};
--	} *_aios;
--
--	if (likely(sizeof(*_aios) <= PAGE_SIZE)) {
--		_aios = kzalloc(sizeof(*_aios), GFP_KERNEL);
--		if (unlikely(!_aios)) {
--			ORE_DBGMSG("Failed kzalloc bytes=%zd\n",
--				   sizeof(*_aios));
-+		} extra_allocation;
-+	} whole_allocation;
-+
-+	*/
-+
-+	/* This should never happen, so abort early if it ever does. */
-+	if (sgs_per_dev && num_par_pages) {
-+		ORE_DBGMSG("Tried to use both pages and sglist\n");
-+		*pios = NULL;
-+		return -EINVAL;
-+	}
-+
-+	if (numdevs > (INT_MAX - sizeof(*ios)) /
-+		       sizeof(struct ore_per_dev_state))
-+		return -ENOMEM;
-+	size_ios = sizeof(*ios) + sizeof(struct ore_per_dev_state) * numdevs;
-+
-+	if (sgs_per_dev * numdevs > INT_MAX / sizeof(struct osd_sg_entry))
-+		return -ENOMEM;
-+	if (num_par_pages > INT_MAX / sizeof(struct page *))
-+		return -ENOMEM;
-+	size_extra = max(sizeof(struct osd_sg_entry) * (sgs_per_dev * numdevs),
-+			 sizeof(struct page *) * num_par_pages);
-+
-+	size_total = size_ios + size_extra;
-+
-+	if (likely(size_total <= PAGE_SIZE)) {
-+		ios = kzalloc(size_total, GFP_KERNEL);
-+		if (unlikely(!ios)) {
-+			ORE_DBGMSG("Failed kzalloc bytes=%zd\n", size_total);
- 			*pios = NULL;
- 			return -ENOMEM;
- 		}
--		pages = num_par_pages ? _aios->pages : NULL;
--		sgilist = sgs_per_dev ? _aios->sglist : NULL;
--		ios = &_aios->ios;
-+		ios_extra = (char *)ios + size_ios;
- 	} else {
--		struct __alloc_small_io_state {
--			struct ore_io_state ios;
--			struct ore_per_dev_state per_dev[numdevs];
--		} *_aio_small;
--		union __extra_part {
--			struct osd_sg_entry sglist[sgs_per_dev * numdevs];
--			struct page *pages[num_par_pages];
--		} *extra_part;
--
--		_aio_small = kzalloc(sizeof(*_aio_small), GFP_KERNEL);
--		if (unlikely(!_aio_small)) {
-+		ios = kzalloc(size_ios, GFP_KERNEL);
-+		if (unlikely(!ios)) {
- 			ORE_DBGMSG("Failed alloc first part bytes=%zd\n",
--				   sizeof(*_aio_small));
-+				   size_ios);
- 			*pios = NULL;
- 			return -ENOMEM;
- 		}
--		extra_part = kzalloc(sizeof(*extra_part), GFP_KERNEL);
--		if (unlikely(!extra_part)) {
-+		ios_extra = kzalloc(size_extra, GFP_KERNEL);
-+		if (unlikely(!ios_extra)) {
- 			ORE_DBGMSG("Failed alloc second part bytes=%zd\n",
--				   sizeof(*extra_part));
--			kfree(_aio_small);
-+				   size_extra);
-+			kfree(ios);
- 			*pios = NULL;
- 			return -ENOMEM;
- 		}
- 
--		pages = num_par_pages ? extra_part->pages : NULL;
--		sgilist = sgs_per_dev ? extra_part->sglist : NULL;
- 		/* In this case the per_dev[0].sgilist holds the pointer to
- 		 * be freed
- 		 */
--		ios = &_aio_small->ios;
- 		ios->extra_part_alloc = true;
- 	}
- 
--	if (pages) {
--		ios->parity_pages = pages;
-+	if (num_par_pages) {
-+		ios->parity_pages = ios_extra;
- 		ios->max_par_pages = num_par_pages;
- 	}
--	if (sgilist) {
-+	if (sgs_per_dev) {
-+		struct osd_sg_entry *sgilist = ios_extra;
- 		unsigned d;
- 
- 		for (d = 0; d < numdevs; ++d) {
-diff --git a/fs/exofs/ore_raid.c b/fs/exofs/ore_raid.c
-index 27cbdb697649..199590f36203 100644
---- a/fs/exofs/ore_raid.c
-+++ b/fs/exofs/ore_raid.c
-@@ -71,6 +71,11 @@ static int _sp2d_alloc(unsigned pages_in_unit, unsigned group_width,
- {
- 	struct __stripe_pages_2d *sp2d;
- 	unsigned data_devs = group_width - parity;
-+
-+	/*
-+	 * Desired allocation layout is, though when larger than PAGE_SIZE,
-+	 * each struct __alloc_1p_arrays is separately allocated:
-+
- 	struct _alloc_all_bytes {
- 		struct __alloc_stripe_pages_2d {
- 			struct __stripe_pages_2d sp2d;
-@@ -82,55 +87,85 @@ static int _sp2d_alloc(unsigned pages_in_unit, unsigned group_width,
- 			char page_is_read[data_devs];
- 		} __a1pa[pages_in_unit];
- 	} *_aab;
-+
- 	struct __alloc_1p_arrays *__a1pa;
- 	struct __alloc_1p_arrays *__a1pa_end;
--	const unsigned sizeof__a1pa = sizeof(_aab->__a1pa[0]);
-+
-+	*/
-+
-+	char *__a1pa;
-+	char *__a1pa_end;
-+
-+	const size_t sizeof_stripe_pages_2d =
-+		sizeof(struct __stripe_pages_2d) +
-+		sizeof(struct __1_page_stripe) * pages_in_unit;
-+	const size_t sizeof__a1pa =
-+		ALIGN(sizeof(struct page *) * (2 * group_width) + data_devs,
-+		      sizeof(void *));
-+	const size_t sizeof__a1pa_arrays = sizeof__a1pa * pages_in_unit;
-+	const size_t alloc_total = sizeof_stripe_pages_2d +
-+				   sizeof__a1pa_arrays;
-+
- 	unsigned num_a1pa, alloc_size, i;
- 
- 	/* FIXME: check these numbers in ore_verify_layout */
--	BUG_ON(sizeof(_aab->__asp2d) > PAGE_SIZE);
-+	BUG_ON(sizeof_stripe_pages_2d > PAGE_SIZE);
- 	BUG_ON(sizeof__a1pa > PAGE_SIZE);
- 
--	if (sizeof(*_aab) > PAGE_SIZE) {
--		num_a1pa = (PAGE_SIZE - sizeof(_aab->__asp2d)) / sizeof__a1pa;
--		alloc_size = sizeof(_aab->__asp2d) + sizeof__a1pa * num_a1pa;
-+	/*
-+	 * If alloc_total would be larger than PAGE_SIZE, only allocate
-+	 * as many a1pa items as would fill the rest of the page, instead
-+	 * of the full pages_in_unit count.
-+	 */
-+	if (alloc_total > PAGE_SIZE) {
-+		num_a1pa = (PAGE_SIZE - sizeof_stripe_pages_2d) / sizeof__a1pa;
-+		alloc_size = sizeof_stripe_pages_2d + sizeof__a1pa * num_a1pa;
- 	} else {
- 		num_a1pa = pages_in_unit;
--		alloc_size = sizeof(*_aab);
-+		alloc_size = alloc_total;
- 	}
- 
--	_aab = kzalloc(alloc_size, GFP_KERNEL);
--	if (unlikely(!_aab)) {
-+	*psp2d = sp2d = kzalloc(alloc_size, GFP_KERNEL);
-+	if (unlikely(!sp2d)) {
- 		ORE_DBGMSG("!! Failed to alloc sp2d size=%d\n", alloc_size);
- 		return -ENOMEM;
- 	}
-+	/* From here Just call _sp2d_free */
- 
--	sp2d = &_aab->__asp2d.sp2d;
--	*psp2d = sp2d; /* From here Just call _sp2d_free */
--
--	__a1pa = _aab->__a1pa;
--	__a1pa_end = __a1pa + num_a1pa;
-+	/* Find start of a1pa area. */
-+	__a1pa = (char *)sp2d + sizeof_stripe_pages_2d;
-+	/* Find end of the _allocated_ a1pa area. */
-+	__a1pa_end = __a1pa + alloc_size;
- 
-+	/* Allocate additionally needed a1pa items in PAGE_SIZE chunks. */
- 	for (i = 0; i < pages_in_unit; ++i) {
-+		struct __1_page_stripe *stripe = &sp2d->_1p_stripes[i];
-+
- 		if (unlikely(__a1pa >= __a1pa_end)) {
- 			num_a1pa = min_t(unsigned, PAGE_SIZE / sizeof__a1pa,
- 							pages_in_unit - i);
-+			alloc_size = sizeof__a1pa * num_a1pa;
- 
--			__a1pa = kcalloc(num_a1pa, sizeof__a1pa, GFP_KERNEL);
-+			__a1pa = kzalloc(alloc_size, GFP_KERNEL);
- 			if (unlikely(!__a1pa)) {
- 				ORE_DBGMSG("!! Failed to _alloc_1p_arrays=%d\n",
- 					   num_a1pa);
- 				return -ENOMEM;
- 			}
--			__a1pa_end = __a1pa + num_a1pa;
-+			__a1pa_end = __a1pa + alloc_size;
- 			/* First *pages is marked for kfree of the buffer */
--			sp2d->_1p_stripes[i].alloc = true;
-+			stripe->alloc = true;
- 		}
- 
--		sp2d->_1p_stripes[i].pages = __a1pa->pages;
--		sp2d->_1p_stripes[i].scribble = __a1pa->scribble ;
--		sp2d->_1p_stripes[i].page_is_read = __a1pa->page_is_read;
--		++__a1pa;
-+		/*
-+		 * Attach all _lp_stripes pointers to the allocation for
-+		 * it which was either part of the original PAGE_SIZE
-+		 * allocation or the subsequent allocation in this loop.
-+		 */
-+		stripe->pages = (void *)__a1pa;
-+		stripe->scribble = stripe->pages + group_width;
-+		stripe->page_is_read = (char *)stripe->scribble + group_width;
-+		__a1pa += sizeof__a1pa;
- 	}
- 
- 	sp2d->parity = parity;
-diff --git a/fs/exofs/super.c b/fs/exofs/super.c
-index 179cd5c2f52a..fabd15e482be 100644
---- a/fs/exofs/super.c
-+++ b/fs/exofs/super.c
-@@ -549,27 +549,26 @@ static int exofs_devs_2_odi(struct exofs_dt_device_info *dt_dev,
- static int __alloc_dev_table(struct exofs_sb_info *sbi, unsigned numdevs,
- 		      struct exofs_dev **peds)
- {
--	struct __alloc_ore_devs_and_exofs_devs {
--		/* Twice bigger table: See exofs_init_comps() and comment at
--		 * exofs_read_lookup_dev_table()
--		 */
--		struct ore_dev *oreds[numdevs * 2 - 1];
--		struct exofs_dev eds[numdevs];
--	} *aoded;
-+	/* Twice bigger table: See exofs_init_comps() and comment at
-+	 * exofs_read_lookup_dev_table()
-+	 */
-+	const size_t numores = numdevs * 2 - 1;
- 	struct exofs_dev *eds;
- 	unsigned i;
- 
--	aoded = kzalloc(sizeof(*aoded), GFP_KERNEL);
--	if (unlikely(!aoded)) {
-+	sbi->oc.ods = kzalloc(numores * sizeof(struct ore_dev *) +
-+			      numdevs * sizeof(struct exofs_dev), GFP_KERNEL);
-+	if (unlikely(!sbi->oc.ods)) {
- 		EXOFS_ERR("ERROR: failed allocating Device array[%d]\n",
- 			  numdevs);
- 		return -ENOMEM;
- 	}
- 
--	sbi->oc.ods = aoded->oreds;
--	*peds = eds = aoded->eds;
-+	/* Start of allocated struct exofs_dev entries */
-+	*peds = eds = (void *)sbi->oc.ods[numores];
-+	/* Initialize pointers into struct exofs_dev */
- 	for (i = 0; i < numdevs; ++i)
--		aoded->oreds[i] = &eds[i].ored;
-+		sbi->oc.ods[i] = &eds[i].ored;
- 	return 0;
- }
- 
+Phil Elwell (3):
+  lan78xx: Read MAC address from DT if present
+  lan78xx: Read LED states from Device Tree
+  dt-bindings: Document the DT bindings for lan78xx
+
+ .../devicetree/bindings/net/microchip,lan78xx.txt  | 43 +++++++++++++++
+ MAINTAINERS                                        |  2 +
+ drivers/net/usb/lan78xx.c                          | 62 ++++++++++++++--------
+ include/dt-bindings/net/microchip-78xx.h           | 40 ++++++++++++++
+ 4 files changed, 125 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/microchip,lan78xx.txt
+ create mode 100644 include/dt-bindings/net/microchip-78xx.h
+
 -- 
 2.7.4
 
-
--- 
-Kees Cook
-Pixel Security
