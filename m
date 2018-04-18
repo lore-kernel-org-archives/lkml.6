@@ -1,56 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753510AbeDRCcw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 22:32:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753358AbeDRCcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 22:32:51 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90C982175C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Wed, 18 Apr 2018 10:32:16 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Abel Vesa <abelvesa@linux.com>, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] clk: imx: Set CLK_SET_RATE_GATE for gate and divider
- clocks
-Message-ID: <20180418023214.GN25429@dragon>
-References: <1521812006-6173-1-git-send-email-abel.vesa@nxp.com>
- <1523455409-7771-1-git-send-email-abel.vesa@nxp.com>
+        id S1753602AbeDRCdg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 22:33:36 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44952 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753002AbeDRCdd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 22:33:33 -0400
+X-Google-Smtp-Source: AIpwx4+LUm1JF7hMnn8KkLpPeBtI5VjGqucdXA7G+Ci5eWwtfqUJPEeEKEfqvM3e2ksOAamWZvPfFg==
+Date: Tue, 17 Apr 2018 19:33:27 -0700
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: oss-drivers@netronome.com, Tal Gilboa <talgi@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: Add PCIe to pcie_print_link_status() messages
+Message-ID: <20180417193327.41a3ff9a@cakuba.netronome.com>
+In-Reply-To: <20180413181638.6424-1-jakub.kicinski@netronome.com>
+References: <20180413181638.6424-1-jakub.kicinski@netronome.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523455409-7771-1-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 11, 2018 at 05:03:29PM +0300, Abel Vesa wrote:
-> From: Shawn Guo <shawnguo@kernel.org>
+On Fri, 13 Apr 2018 11:16:38 -0700, Jakub Kicinski wrote:
+> Currently the pcie_print_link_status() will print PCIe bandwidth
+> and link width information but does not mention it is pertaining
+> to the PCIe.  Since this and related functions are used exclusively
+> by networking drivers today users may get confused into thinking
+> that it's the NIC bandwidth that is being talked about.  Insert a
+> "PCIe" into the messages.
 > 
-> Add flag CLK_SET_RATE_GATE for i.MX gate and divider clocks on which the
-> client drivers usually make clk_set_rate() call, so that the call will fail
-> when clock is still on instead of standing the risk of running into glitch
-> issue. Rate cannot be changed when the clock is enabled due to the glitchy
-> multiplexers.
-> 
-> Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-> [initial patch from imx internal repo]
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> [carried over from 3.14 and also applied the flag to newer functions]
-> ---
-> 
-> Changes since v1:
->  - changed ownership as per initial patch
+> Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-IIRC, the patch was created on vendor kernel long time ago to work
-around a specific glitchy multiplexer issue seen on particular SoC.
-I'm not sure it's good for the upstream kernel today.
+Hi Bjorn!
 
-Shawn
+Could this small change still make it into 4.17 or are you planning to
+apply it in 4.18 cycle?  IMHO the message clarification may be worth
+considering for 4.17..
+
+>  drivers/pci/pci.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index aa86e904f93c..73a0a4993f6a 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5273,11 +5273,11 @@ void pcie_print_link_status(struct pci_dev *dev)
+>  	bw_avail = pcie_bandwidth_available(dev, &limiting_dev, &speed, &width);
+>  
+>  	if (bw_avail >= bw_cap)
+> -		pci_info(dev, "%u.%03u Gb/s available bandwidth (%s x%d link)\n",
+> +		pci_info(dev, "%u.%03u Gb/s available PCIe bandwidth (%s x%d link)\n",
+>  			 bw_cap / 1000, bw_cap % 1000,
+>  			 PCIE_SPEED2STR(speed_cap), width_cap);
+>  	else
+> -		pci_info(dev, "%u.%03u Gb/s available bandwidth, limited by %s x%d link at %s (capable of %u.%03u Gb/s with %s x%d link)\n",
+> +		pci_info(dev, "%u.%03u Gb/s available PCIe bandwidth, limited by %s x%d link at %s (capable of %u.%03u Gb/s with %s x%d link)\n",
+>  			 bw_avail / 1000, bw_avail % 1000,
+>  			 PCIE_SPEED2STR(speed), width,
+>  			 limiting_dev ? pci_name(limiting_dev) : "<unknown>",
