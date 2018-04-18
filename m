@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754095AbeDRLoN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:44:13 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7179 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754070AbeDRLoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754081AbeDRLoK (ORCPT <rfc822;w@1wt.eu>);
         Wed, 18 Apr 2018 07:44:10 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42340 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753566AbeDRLoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 07:44:05 -0400
 From: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 To: <alex.williamson@redhat.com>, <eric.auger@redhat.com>,
         <pmorel@linux.vnet.ibm.com>
@@ -13,9 +13,9 @@ CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <iommu@lists.linux-foundation.org>, <linuxarm@huawei.com>,
         <john.garry@huawei.com>, <xuwei5@hisilicon.com>,
         Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Subject: [PATCH v6 5/7] vfio/type1: check dma map request is within a valid iova range
-Date: Wed, 18 Apr 2018 12:40:43 +0100
-Message-ID: <20180418114045.7968-6-shameerali.kolothum.thodi@huawei.com>
+Subject: [PATCH v6 7/7] vfio/type1: remove duplicate retrieval of reserved regions
+Date: Wed, 18 Apr 2018 12:40:45 +0100
+Message-ID: <20180418114045.7968-8-shameerali.kolothum.thodi@huawei.com>
 X-Mailer: git-send-email 2.12.0.windows.1
 In-Reply-To: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
 References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
@@ -27,53 +27,56 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This checks and rejects any dma map request outside valid iova
-range.
+As we now already have the reserved regions list, just pass that into
+vfio_iommu_has_sw_msi() fn.
 
 Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 ---
- drivers/vfio/vfio_iommu_type1.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/vfio/vfio_iommu_type1.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 6fd6841..bf33281 100644
+index 44d0f13d..13c631a 100644
 --- a/drivers/vfio/vfio_iommu_type1.c
 +++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -1091,6 +1091,23 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
+@@ -1313,15 +1313,13 @@ static struct vfio_group *find_iommu_group(struct vfio_domain *domain,
+ 	return NULL;
+ }
+ 
+-static bool vfio_iommu_has_sw_msi(struct iommu_group *group, phys_addr_t *base)
++static bool vfio_iommu_has_sw_msi(struct list_head *group_resv_regions,
++						phys_addr_t *base)
+ {
+-	struct list_head group_resv_regions;
+-	struct iommu_resv_region *region, *next;
++	struct iommu_resv_region *region;
+ 	bool ret = false;
+ 
+-	INIT_LIST_HEAD(&group_resv_regions);
+-	iommu_get_group_resv_regions(group, &group_resv_regions);
+-	list_for_each_entry(region, &group_resv_regions, list) {
++	list_for_each_entry(region, group_resv_regions, list) {
+ 		/*
+ 		 * The presence of any 'real' MSI regions should take
+ 		 * precedence over the software-managed one if the
+@@ -1337,8 +1335,7 @@ static bool vfio_iommu_has_sw_msi(struct iommu_group *group, phys_addr_t *base)
+ 			ret = true;
+ 		}
+ 	}
+-	list_for_each_entry_safe(region, next, &group_resv_regions, list)
+-		kfree(region);
++
  	return ret;
  }
  
-+/*
-+ * Check dma map request is within a valid iova range
-+ */
-+static bool vfio_iommu_iova_dma_valid(struct vfio_iommu *iommu,
-+				dma_addr_t start, dma_addr_t end)
-+{
-+	struct list_head *iova = &iommu->iova_list;
-+	struct vfio_iova *node;
-+
-+	list_for_each_entry(node, iova, list) {
-+		if ((start >= node->start) && (end <= node->end))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static int vfio_dma_do_map(struct vfio_iommu *iommu,
- 			   struct vfio_iommu_type1_dma_map *map)
- {
-@@ -1129,6 +1146,11 @@ static int vfio_dma_do_map(struct vfio_iommu *iommu,
- 		goto out_unlock;
- 	}
+@@ -1673,7 +1670,7 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+ 	if (ret)
+ 		goto out_detach;
  
-+	if (!vfio_iommu_iova_dma_valid(iommu, iova, iova + size - 1)) {
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
- 	dma = kzalloc(sizeof(*dma), GFP_KERNEL);
- 	if (!dma) {
- 		ret = -ENOMEM;
+-	resv_msi = vfio_iommu_has_sw_msi(iommu_group, &resv_msi_base);
++	resv_msi = vfio_iommu_has_sw_msi(&group_resv_regions, &resv_msi_base);
+ 
+ 	INIT_LIST_HEAD(&domain->group_list);
+ 	list_add(&group->next, &domain->group_list);
 -- 
 2.7.4
