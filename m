@@ -1,474 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752629AbeDRGgO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 02:36:14 -0400
-Received: from mail-it0-f52.google.com ([209.85.214.52]:39552 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751305AbeDRGgM (ORCPT
+        id S1752765AbeDRGjJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 02:39:09 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:60825 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752145AbeDRGjI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 02:36:12 -0400
-X-Google-Smtp-Source: AIpwx48t7by4j2+M4irJJzEaWYmJNW/Iw5+4YpvZDx16TrLwnT4wglhte5yXWNwQ+AwW2X329Odzy9bJtrW/aRJ61Z8=
+        Wed, 18 Apr 2018 02:39:08 -0400
+Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
+ to netdev dma client
+To: Vinod Koul <vinod.koul@intel.com>
+CC: Lars-Peter Clausen <lars@metafoo.de>,
+        Radhey Shyam Pandey <radheys@xilinx.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
+ <1522665546-10035-3-git-send-email-radheys@xilinx.com>
+ <20180411090854.GY6014@localhost>
+ <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
+ <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
+ <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
+ <20180417154231.GV6014@localhost>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <994c184c-e915-7735-5a8b-81a02c5449b0@ti.com>
+Date: Wed, 18 Apr 2018 09:39:00 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-Originating-IP: [202.83.97.154]
-From: Daniel J Blueman <daniel@quora.org>
-Date: Wed, 18 Apr 2018 14:36:10 +0800
-Message-ID: <CAMVG2ss4w8m6DXaU=RQ_Y8P4uLy2EJkqm6_MP6_P9aR4aUkiQA@mail.gmail.com>
-Subject: 4.14.34: kernel stack regs has bad 'bp' value
-To: Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180417154231.GV6014@localhost>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running stress-ng on 4.14.34 mainline on x86, I ran into a
-"kernel stack regs has bad 'bp' value" warning [1].
 
-Let me know if any more information/debug is useful.
 
-Thanks,
-  Daniel
+On 2018-04-17 18:42, Vinod Koul wrote:
+> On Tue, Apr 17, 2018 at 04:46:43PM +0300, Peter Ujfalusi wrote:
+> 
+>> @@ -709,6 +709,11 @@ struct dma_filter {
+>>   *	be called after period_len bytes have been transferred.
+>>   * @device_prep_interleaved_dma: Transfer expression in a generic way.
+>>   * @device_prep_dma_imm_data: DMA's 8 byte immediate data to the dst address
+>> + * @device_attach_metadata: Some DMA engines can send and receive side band
+>> + *	information, commands or parameters which is not transferred within the
+>> + *	data stream itself. In such case clients can set the metadata to the
+>> + *	given descriptor and it is going to be sent to the peripheral, or in
+>> + *	case of DEV_TO_MEM the provided buffer will receive the metadata.
+>>   * @device_config: Pushes a new configuration to a channel, return 0 or an error
+>>   *	code
+>>   * @device_pause: Pauses any transfer happening on a channel. Returns
+>> @@ -796,6 +801,9 @@ struct dma_device {
+>>  		struct dma_chan *chan, dma_addr_t dst, u64 data,
+>>  		unsigned long flags);
+>>  
+>> +	int (*device_attach_metadata)(struct dma_async_tx_descriptor *desc,
+>> +				      void *data, size_t len);
+> 
+> while i am okay with the concept, I would not want to go again the custom
+> pointer route, this is a no-go for me.
+> 
+> Instead lets add the vendor data, define that explicitly. We can use struct,
+> tokens or something else to define these. But lets try to stay away from
+> opaque objects please :-)
 
--- [1]
+The DMA does not interpret the metadata, it is information which can be
+only understood by the client driver and the remote peripheral. It is
+just chunk of data (parameters, timestamps, keys, etc) that needs to
+travel along with the payload.
 
-WARNING: kernel stack regs at ffff880638ad76b8 in
-stress-ng-af-al:32670 has bad 'bp' value 737a756eb765e87a
-unwind stack type:0 next_sp:     (null) mask:0x6 graph_idx:0
-ffff88105ef47af8: ffff88105ef47b88 (0xffff88105ef47b88)
-ffff88105ef47b00: ffffffff810a5a22 (__save_stack_trace+0x82/0x100)
-ffff88105ef47b08: 0000000000000000 ...
-ffff88105ef47b10: ffff880638ad0000 (0xffff880638ad0000)
-ffff88105ef47b18: ffff880638ad8000 (0xffff880638ad8000)
-ffff88105ef47b20: 0000000000000000 ...
-ffff88105ef47b28: 0000000000000006 (0x6)
-ffff88105ef47b30: ffff881004cd9f40 (0xffff881004cd9f40)
-ffff88105ef47b38: 0000010100000000 (0x10100000000)
-ffff88105ef47b40: 0000000000000000 ...
-ffff88105ef47b48: ffff88105ef47af8 (0xffff88105ef47af8)
-ffff88105ef47b50: ffffffffa0e201e3 (._mainloop+0x8c/0x4ca [salsa20_x86_64])
-ffff88105ef47b58: ffff880638ad76b8 (0xffff880638ad76b8)
-ffff88105ef47b60: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff88105ef47b68: 0000000001000000 (0x1000000)
-ffff88105ef47b70: ffff8810513d4a00 (0xffff8810513d4a00)
-ffff88105ef47b78: ffff8810513d4b00 (0xffff8810513d4b00)
-ffff88105ef47b80: ffffffff816b2fb3 (file_free_rcu+0x53/0x70)
-ffff88105ef47b88: ffff88105ef47b98 (0xffff88105ef47b98)
-ffff88105ef47b90: ffffffff810a5abb (save_stack_trace+0x1b/0x20)
-ffff88105ef47b98: ffff88105ef47dc8 (0xffff88105ef47dc8)
-ffff88105ef47ba0: ffffffff81648e53 (save_stack+0x43/0xd0)
-ffff88105ef47ba8: 000000400000000b (0x400000000b)
-ffff88105ef47bb0: ffff88105ef47bc0 (0xffff88105ef47bc0)
-ffff88105ef47bb8: ffffffff00000000 (0xffffffff00000000)
-ffff88105ef47bc0: ffffffff810a5abb (save_stack_trace+0x1b/0x20)
-ffff88105ef47bc8: ffffffff81648e53 (save_stack+0x43/0xd0)
-ffff88105ef47bd0: ffffffff81649762 (kasan_slab_free+0x72/0xc0)
-ffff88105ef47bd8: ffffffff8164473c (kmem_cache_free+0x7c/0x1f0)
-ffff88105ef47be0: ffffffff816b2fb3 (file_free_rcu+0x53/0x70)
-ffff88105ef47be8: ffffffff812b8cbd (rcu_process_callbacks+0x39d/0xde0)
-ffff88105ef47bf0: ffffffff82c00184 (__do_softirq+0x184/0x5b7)
-ffff88105ef47bf8: ffffffff811721e8 (irq_exit+0x1e8/0x220)
-ffff88105ef47c00: ffffffff82a03ca8 (smp_apic_timer_interrupt+0xd8/0x2f0)
-ffff88105ef47c08: ffffffff82a0213e (apic_timer_interrupt+0x8e/0xa0)
-ffff88105ef47c10: ffffffffa0e201e3 (._mainloop+0x8c/0x4ca [salsa20_x86_64])
-ffff88105ef47c18: ffffffff8332be80 (inat_primary_table+0x17efc0/0x1d0d97)
-ffff88105ef47c20: ffffffff812ef0a0 (posix_cpu_timers_exit_group+0x50/0x50)
-ffff88105ef47c28: 0000000000000008 (0x8)
-ffff88105ef47c30: ffff88105ef47c88 (0xffff88105ef47c88)
-ffff88105ef47c38: ffffffff811f9feb (__update_load_avg_se.isra.30+0x3cb/0x550)
-ffff88105ef47c40: ffffffff811f9feb (__update_load_avg_se.isra.30+0x3cb/0x550)
-ffff88105ef47c48: ffff88100a5b9f90 (0xffff88100a5b9f90)
-ffff88105ef47c50: ffffffff000003b5 (0xffffffff000003b5)
-ffff88105ef47c58: ffff88100a5b9f01 (0xffff88100a5b9f01)
-ffff88105ef47c60: 0000000000000007 (0x7)
-ffff88105ef47c68: 0000000000000005 (0x5)
-ffff88105ef47c70: ffff88105ef6bbf8 (0xffff88105ef6bbf8)
-ffff88105ef47c78: 0000000000000000 ...
-ffff88105ef47c80: 0000000000000007 (0x7)
-ffff88105ef47c88: ffff88105ef47d28 (0xffff88105ef47d28)
-ffff88105ef47c90: ffffffff811fd2f6 (cpu_load_update+0x1b6/0x3a0)
-ffff88105ef47c98: 000000015ef6bc30 (0x15ef6bc30)
-ffff88105ef47ca0: ffff88100a5b9e00 (0xffff88100a5b9e00)
-ffff88105ef47ca8: ffff88105ef6bc30 (0xffff88105ef6bc30)
-ffff88105ef47cb0: 0000000000002432 (0x2432)
-ffff88105ef47cb8: 0000000000000001 (0x1)
-ffff88105ef47cc0: dffffc0000000000 (0xdffffc0000000000)
-ffff88105ef47cc8: ffff88105ef47d00 (0xffff88105ef47d00)
-ffff88105ef47cd0: 000000008120eaef (0x8120eaef)
-ffff88105ef47cd8: 0000000000000007 (0x7)
-ffff88105ef47ce0: ffff88105ef6bc30 (0xffff88105ef6bc30)
-ffff88105ef47ce8: ffff88105ef6bbc0 (0xffff88105ef6bbc0)
-ffff88105ef47cf0: ffff88105ef47cf0 (0xffff88105ef47cf0)
-ffff88105ef47cf8: ffff88105ef47cf0 (0xffff88105ef47cf0)
-ffff88105ef47d00: ffff88105ef6bbc0 (0xffff88105ef6bbc0)
-ffff88105ef47d08: 00000001002fda17 (0x1002fda17)
-ffff88105ef47d10: 0000000000000007 (0x7)
-ffff88105ef47d18: ffffffff83382628 (__per_cpu_offset+0x268/0x10000)
-ffff88105ef47d20: 0000000004cd9f40 (0x4cd9f40)
-ffff88105ef47d28: ffff88105ef67b80 (0xffff88105ef67b80)
-ffff88105ef47d30: ffffffff8354b600 (rcu_sched_state+0xa00/0x413e0)
-ffff88105ef47d38: ffff88105ef6ca78 (0xffff88105ef6ca78)
-ffff88105ef47d40: ffff88105ef6ca40 (0xffff88105ef6ca40)
-ffff88105ef47d48: ffffffff8354ac00 (rcu_bh_varname+0x60/0x60)
-ffff88105ef47d50: ffffffff8354ac00 (rcu_bh_varname+0x60/0x60)
-ffff88105ef47d58: ffff88105ef47d90 (0xffff88105ef47d90)
-ffff88105ef47d60: ffffffff812b313d (rcu_accelerate_cbs+0x7d/0xd0)
-ffff88105ef47d68: ffff88105ef663e0 (0xffff88105ef663e0)
-ffff88105ef47d70: ffff88105ef6ca40 (0xffff88105ef6ca40)
-ffff88105ef47d78: ffff88105ef6ca78 (0xffff88105ef6ca78)
-ffff88105ef47d80: ffffffff8354b600 (rcu_sched_state+0xa00/0x413e0)
-ffff88105ef47d88: ffffffff8354ac00 (rcu_bh_varname+0x60/0x60)
-ffff88105ef47d90: ffff88105ef47dc0 (0xffff88105ef47dc0)
-ffff88105ef47d98: ffffffff812b31fb (rcu_advance_cbs+0x6b/0x80)
-ffff88105ef47da0: ffff88105ef6ca40 (0xffff88105ef6ca40)
-ffff88105ef47da8: ffffffff8354b600 (rcu_sched_state+0xa00/0x413e0)
-ffff88105ef47db0: ffff88105ef6ca5c (0xffff88105ef6ca5c)
-ffff88105ef47db8: ffffffff8354b610 (rcu_sched_state+0xa10/0x413e0)
-ffff88105ef47dc0: ffff88105e42b100 (0xffff88105e42b100)
-ffff88105ef47dc8: ffff88105ef47df0 (0xffff88105ef47df0)
-ffff88105ef47dd0: ffffffff81649762 (kasan_slab_free+0x72/0xc0)
-ffff88105ef47dd8: ffff8810513d4a00 (0xffff8810513d4a00)
-ffff88105ef47de0: ffffea004144f500 (0xffffea004144f500)
-ffff88105ef47de8: ffff88105e42b100 (0xffff88105e42b100)
-ffff88105ef47df0: ffff88105ef47e20 (0xffff88105ef47e20)
-ffff88105ef47df8: ffffffff8164473c (kmem_cache_free+0x7c/0x1f0)
-ffff88105ef47e00: ffffffff8354ac00 (rcu_bh_varname+0x60/0x60)
-ffff88105ef47e08: dffffc0000000000 (0xdffffc0000000000)
-ffff88105ef47e10: ffff88105ef6ca78 (0xffff88105ef6ca78)
-ffff88105ef47e18: ffff88105ef47ef8 (0xffff88105ef47ef8)
-ffff88105ef47e20: ffff88105ef47e38 (0xffff88105ef47e38)
-ffff88105ef47e28: ffffffff816b2fb3 (file_free_rcu+0x53/0x70)
-ffff88105ef47e30: ffffffff8354ac00 (rcu_bh_varname+0x60/0x60)
-ffff88105ef47e38: ffff88105ef47f20 (0xffff88105ef47f20)
-ffff88105ef47e40: ffffffff812b8cbd (rcu_process_callbacks+0x39d/0xde0)
-ffff88105ef47e48: ffffed020bdec9a1 (0xffffed020bdec9a1)
-ffff88105ef47e50: 0000000000000202 (0x202)
-ffff88105ef47e58: 1ffff1020bde8fcf (0x1ffff1020bde8fcf)
-ffff88105ef47e60: ffff88105ef6caf0 (0xffff88105ef6caf0)
-ffff88105ef47e68: 000000000000000a (0xa)
-ffff88105ef47e70: ffff88105ef47e98 (0xffff88105ef47e98)
-ffff88105ef47e78: 0000000041b58ab3 (0x41b58ab3)
-ffff88105ef47e80: ffffffff8332a2f0 (inat_primary_table+0x17d430/0x1d0d97)
-ffff88105ef47e88: ffffffff812b8920 (note_gp_changes+0x1b0/0x1b0)
-ffff88105ef47e90: ffff88105ef47eb0 (0xffff88105ef47eb0)
-ffff88105ef47e98: ffff88103bfc5ce8 (0xffff88103bfc5ce8)
-ffff88105ef47ea0: ffff88103bfc5ce8 (0xffff88103bfc5ce8)
-ffff88105ef47ea8: ffffffffffffffff (0xffffffffffffffff)
-ffff88105ef47eb0: 0000000000000000 ...
-ffff88105ef47eb8: ffffffff812f561b (clockevents_program_event+0x21b/0x2d0)
-ffff88105ef47ec0: 000000005ef660a8 (0x5ef660a8)
-ffff88105ef47ec8: ffff88105ef5ef00 (0xffff88105ef5ef00)
-ffff88105ef47ed0: 0000032002fd6e00 (0x32002fd6e00)
-ffff88105ef47ed8: ffff88105ef47f00 (0xffff88105ef47f00)
-ffff88105ef47ee0: ffffffff812f9f5e (tick_program_event+0x6e/0xb0)
-ffff88105ef47ee8: 7fffffffffffffff (0x7fffffffffffffff)
-ffff88105ef47ef0: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff88105ef47ef8: ffffffff83409148 (softirq_vec+0x48/0x80)
-ffff88105ef47f00: 0000000000000008 (0x8)
-ffff88105ef47f08: 0000000000000009 (0x9)
-ffff88105ef47f10: 0000000000000009 (0x9)
-ffff88105ef47f18: dffffc0000000000 (0xdffffc0000000000)
-ffff88105ef47f20: ffff88105ef47f98 (0xffff88105ef47f98)
-ffff88105ef47f28: ffffffff82c00184 (__do_softirq+0x184/0x5b7)
-ffff88105ef47f30: ffff8806143a76b8 (0xffff8806143a76b8)
-ffff88105ef47f38: 004000405ef65fa0 (0x4000405ef65fa0)
-ffff88105ef47f40: 00000001002fda19 (0x1002fda19)
-ffff88105ef47f48: 0000000000000009 (0x9)
-ffff88105ef47f50: 0000000000000040 (0x40)
-ffff88105ef47f58: 000001000000000a (0x1000000000a)
-ffff88105ef47f60: ffffffff83409110 (softirq_vec+0x10/0x80)
-ffff88105ef47f68: 0000008000000008 (0x8000000008)
-ffff88105ef47f70: ffff881057119f40 (0xffff881057119f40)
-ffff88105ef47f78: 0000000000000000 ...
-ffff88105ef47f98: ffff88105ef47fb8 (0xffff88105ef47fb8)
-ffff88105ef47fa0: ffffffff811721e8 (irq_exit+0x1e8/0x220)
-ffff88105ef47fa8: ffff88105ef5ef00 (0xffff88105ef5ef00)
-ffff88105ef47fb0: 0000000000000000 ...
-ffff88105ef47fb8: ffff88105ef47fe8 (0xffff88105ef47fe8)
-ffff88105ef47fc0: ffffffff82a03ca8 (smp_apic_timer_interrupt+0xd8/0x2f0)
-ffff88105ef47fc8: 0000000000000000 ...
-ffff88105ef47fe8: ffff880638ad76b9 (0xffff880638ad76b9)
-ffff88105ef47ff0: ffffffff82a0213e (apic_timer_interrupt+0x8e/0xa0)
-ffff88105ef47ff8: ffff880638ad76b8 (0xffff880638ad76b8)
-ffff880638ad76b8: ce8bd4df1f0f98ec (0xce8bd4df1f0f98ec)
-ffff880638ad76c0: 75616d6ad63282ae (0x75616d6ad63282ae)
-ffff880638ad76c8: 000000006839d2e4 (0x6839d2e4)
-ffff880638ad76d0: 000000007e8dd1c8 (0x7e8dd1c8)
-ffff880638ad76d8: 737a756eb765e87a (0x737a756eb765e87a)
-ffff880638ad76e0: 6b206574c1c7ad24 (0x6b206574c1c7ad24)
-ffff880638ad76e8: 00000000448ac799 (0x448ac799)
-ffff880638ad76f0: 00000000557975f9 (0x557975f9)
-ffff880638ad76f8: 3320646e0dc92ebe (0x3320646e0dc92ebe)
-ffff880638ad7700: 00000000fa9c936e (0xfa9c936e)
-ffff880638ad7708: 007a66714cdfd06d (0x7a66714cdfd06d)
-ffff880638ad7710: 636b6f6a5d47ebc8 (0x636b6f6a5d47ebc8)
-ffff880638ad7718: 776d6e686cdbdfe5 (0x776d6e686cdbdfe5)
-ffff880638ad7720: 00000000cfe50861 (0xcfe50861)
-ffff880638ad7728: 000000001f53f32a (0x1f53f32a)
-ffff880638ad7730: ffffffffffffff10 (0xffffffffffffff10)
-ffff880638ad7738: ffffffffa0e201e3 (._mainloop+0x8c/0x4ca [salsa20_x86_64])
-ffff880638ad7740: 0000000000000010 (0x10)
-ffff880638ad7748: 0000000000000202 (0x202)
-ffff880638ad7750: ffff880638ad7760 (0xffff880638ad7760)
-ffff880638ad7758: 0000000000000018 (0x18)
-ffff880638ad7760: 0000000000000108 (0x108)
-ffff880638ad7768: ffff88103a9b1540 (0xffff88103a9b1540)
-ffff880638ad7770: ffff880638ad78b0 (0xffff880638ad78b0)
-ffff880638ad7778: 1ffff100c715af12 (0x1ffff100c715af12)
-ffff880638ad7780: ffffffffa0e20760 (salsa20_ivsetup+0x40/0x40 [salsa20_x86_64])
-ffff880638ad7788: ffff880638ad79e8 (0xffff880638ad79e8)
-ffff880638ad7790: ffff880638ad79a0 (0xffff880638ad79a0)
-ffff880638ad7798: 776d6e6861707865 (0x776d6e6861707865)
-ffff880638ad77a0: 636b6f6a616c6577 (0x636b6f6a616c6577)
-ffff880638ad77a8: 3320646e6a687365 (0x3320646e6a687365)
-ffff880638ad77b0: 007a66717a716178 (0x7a66717a716178)
-ffff880638ad77b8: 0000000000000008 (0x8)
-ffff880638ad77c0: 737a756e79622d32 (0x737a756e79622d32)
-ffff880638ad77c8: 75616d6a6a6f6272 (0x75616d6a6a6f6272)
-ffff880638ad77d0: 6b20657400737765 (0x6b20657400737765)
-ffff880638ad77d8: ffff88103a9b1540 (0xffff88103a9b1540)
-ffff880638ad77e0: ffffffff816b1672 (SyS_read+0xd2/0x1b0)
-ffff880638ad77e8: ffff880f7fc8c7d0 (0xffff880f7fc8c7d0)
-ffff880638ad77f0: ffff88105e784200 (0xffff88105e784200)
-ffff880638ad77f8: 0000000000000200 (0x200)
-ffff880638ad7800: 00000000eb8a4cbf (0xeb8a4cbf)
-ffff880638ad7808: 737a756eb765e87a (0x737a756eb765e87a)
-ffff880638ad7810: 00000000e8dec55c (0xe8dec55c)
-ffff880638ad7818: 0000000000000004 (0x4)
-ffff880638ad7820: 1ffff100c715af12 (0x1ffff100c715af12)
-ffff880638ad7828: ffffffffa0e20760 (salsa20_ivsetup+0x40/0x40 [salsa20_x86_64])
-ffff880638ad7830: ffff880638ad7860 (0xffff880638ad7860)
-ffff880638ad7838: ffffffff819911ed (blkcipher_walk_virt_block+0x21d/0x310)
-ffff880638ad7840: 0000000000000001 (0x1)
-ffff880638ad7848: 0000000041b58ab3 (0x41b58ab3)
-ffff880638ad7850: ffff880638ad79e8 (0xffff880638ad79e8)
-ffff880638ad7858: ffff88103a9b1540 (0xffff88103a9b1540)
-ffff880638ad7860: ffff880638ad79a0 (0xffff880638ad79a0)
-ffff880638ad7868: ffffffffa0e20861 (encrypt+0x101/0x1e0 [salsa20_x86_64])
-ffff880638ad7870: ffffffff81648eb3 (save_stack+0xa3/0xd0)
-ffff880638ad7878: 000000400000000a (0x400000000a)
-ffff880638ad7880: ffff881033df3a90 (0xffff881033df3a90)
-ffff880638ad7888: 0000000000000000 ...
-ffff880638ad7890: 0000000041b58ab3 (0x41b58ab3)
-ffff880638ad7898: ffffffffa0e21024
-(_GLOBAL__sub_I_65535_1_salsa20_glue.c+0x694/0x670 [salsa20_x86_64])
-ffff880638ad78a0: ffffffffa0e20760 (salsa20_ivsetup+0x40/0x40 [salsa20_x86_64])
-ffff880638ad78a8: ffff881033df3a80 (0xffff881033df3a80)
-ffff880638ad78b0: ffffea004179e100 (0xffffea004179e100)
-ffff880638ad78b8: ffff88105e784000 (0xffff88105e784000)
-ffff880638ad78c0: ffffea003dff2300 (0xffffea003dff2300)
-ffff880638ad78c8: ffff880f7fc8c5d0 (0xffff880f7fc8c5d0)
-ffff880638ad78d0: ffff88105566f2a0 (0xffff88105566f2a0)
-ffff880638ad78d8: 0000000000000000 ...
-ffff880638ad78e0: 0000000000000400 (0x400)
-ffff880638ad78e8: ffff881033df3a90 (0xffff881033df3a90)
-ffff880638ad78f0: 00000000000005d0 (0x5d0)
-ffff880638ad78f8: b5d8152a00000400 (0xb5d8152a00000400)
-ffff880638ad7900: 0000000000000000 ...
-ffff880638ad7910: ffff881054f17db0 (0xffff881054f17db0)
-ffff880638ad7918: ffff880800000008 (0xffff880800000008)
-ffff880638ad7920: 0000000100000040 (0x100000040)
-ffff880638ad7928: ffff881000000003 (0xffff881000000003)
-ffff880638ad7930: ffffea00404a2600 (0xffffea00404a2600)
-ffff880638ad7938: ffffffff823640ef (sock_kfree_s+0x1f/0x40)
-ffff880638ad7940: ffff880638ad7970 (0xffff880638ad7970)
-ffff880638ad7948: ffffffff81644cf6 (kfree+0x96/0x1a0)
-ffff880638ad7950: ffff88102587f080 (0xffff88102587f080)
-ffff880638ad7958: 0000000000000ff8 (0xff8)
-ffff880638ad7960: ffff88100a193e00 (0xffff88100a193e00)
-ffff880638ad7968: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7970: ffff880638ad7990 (0xffff880638ad7990)
-ffff880638ad7978: ffff881033df3d80 (0xffff881033df3d80)
-ffff880638ad7980: ffff880638ad79b8 (0xffff880638ad79b8)
-ffff880638ad7988: ffff880638ad7a28 (0xffff880638ad7a28)
-ffff880638ad7990: 1ffff100c715af39 (0x1ffff100c715af39)
-ffff880638ad7998: ffff880620a23be8 (0xffff880620a23be8)
-ffff880638ad79a0: ffff880638ad7a50 (0xffff880638ad7a50)
-ffff880638ad79a8: ffffffff81991ba7 (skcipher_decrypt_blkcipher+0x1b7/0x270)
-ffff880638ad79b0: ffffffff81991ba7 (skcipher_decrypt_blkcipher+0x1b7/0x270)
-ffff880638ad79b8: ffff88100a193e48 (0xffff88100a193e48)
-ffff880638ad79c0: ffff88102587f080 (0xffff88102587f080)
-ffff880638ad79c8: 0000000041b58ab3 (0x41b58ab3)
-ffff880638ad79d0: ffffffff83348b4d (inat_primary_table+0x19bc8d/0x1d0d97)
-ffff880638ad79d8: ffffffff819919f0 (skcipher_encrypt_blkcipher+0x270/0x270)
-ffff880638ad79e0: ffffffff81645c51 (__kmalloc+0x111/0x230)
-ffff880638ad79e8: ffff88103a9b1500 (0xffff88103a9b1500)
-ffff880638ad79f0: ffff881054f17db0 (0xffff881054f17db0)
-ffff880638ad79f8: 0000000100000600 (0x100000600)
-ffff880638ad7a00: ffffed02014327c9 (0xffffed02014327c9)
-ffff880638ad7a08: ffff88105566f2a0 (0xffff88105566f2a0)
-ffff880638ad7a10: ffff88100a193e00 (0xffff88100a193e00)
-ffff880638ad7a18: ffff88100a193e00 (0xffff88100a193e00)
-ffff880638ad7a20: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7a28: dffffc0000000000 (0xdffffc0000000000)
-ffff880638ad7a30: ffff88100a193e20 (0xffff88100a193e20)
-ffff880638ad7a38: ffff880620a23bc0 (0xffff880620a23bc0)
-ffff880638ad7a40: ffff881033df3d80 (0xffff881033df3d80)
-ffff880638ad7a48: ffff881033df3a80 (0xffff881033df3a80)
-ffff880638ad7a50: ffff880638ad7b60 (0xffff880638ad7b60)
-ffff880638ad7a58: ffffffff819f103f (skcipher_recvmsg+0x7af/0xda0)
-ffff880638ad7a60: 0000000000000000 ...
-ffff880638ad7a78: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7a80: ffff8805e358ce20 (0xffff8805e358ce20)
-ffff880638ad7a88: 1ffff100c715af5b (0x1ffff100c715af5b)
-ffff880638ad7a90: ffff88102587f080 (0xffff88102587f080)
-ffff880638ad7a98: ffff880638ad7af8 (0xffff880638ad7af8)
-ffff880638ad7aa0: ffff880638ad7c00 (0xffff880638ad7c00)
-ffff880638ad7aa8: ffffed00bc6b19c4 (0xffffed00bc6b19c4)
-ffff880638ad7ab0: ffff8805e358ce00 (0xffff8805e358ce00)
-ffff880638ad7ab8: 0000000000000000 ...
-ffff880638ad7ac0: ffff881033df3d70 (0xffff881033df3d70)
-ffff880638ad7ac8: ffff880638ad7be0 (0xffff880638ad7be0)
-ffff880638ad7ad0: ffff88100a193e00 (0xffff88100a193e00)
-ffff880638ad7ad8: 0000000041b58ab3 (0x41b58ab3)
-ffff880638ad7ae0: ffffffff8334d6c3 (inat_primary_table+0x1a0803/0x1d0d97)
-ffff880638ad7ae8: ffffffff819f0890 (skcipher_bind+0xf0/0xf0)
-ffff880638ad7af0: 1ffff100c715af6a (0x1ffff100c715af6a)
-ffff880638ad7af8: 0000000000000400 (0x400)
-ffff880638ad7b00: ffff880638ad7e40 (0xffff880638ad7e40)
-ffff880638ad7b08: ffff881004706400 (0xffff881004706400)
-ffff880638ad7b10: ffff880638ad7d80 (0xffff880638ad7d80)
-ffff880638ad7b18: ffffffff82357618 (___sys_sendmsg+0x148/0x910)
-ffff880638ad7b20: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7b28: ffff880638ad7e78 (0xffff880638ad7e78)
-ffff880638ad7b30: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7b38: ffff880638ad7be0 (0xffff880638ad7be0)
-ffff880638ad7b40: ffff8805e358ce00 (0xffff8805e358ce00)
-ffff880638ad7b48: ffff880638ad7c00 (0xffff880638ad7c00)
-ffff880638ad7b50: 0000000000000000 ...
-ffff880638ad7b58: ffffffff819f0890 (skcipher_bind+0xf0/0xf0)
-ffff880638ad7b60: ffff880638ad7b98 (0xffff880638ad7b98)
-ffff880638ad7b68: ffffffff823512ee (sock_recvmsg+0xbe/0x100)
-ffff880638ad7b70: ffff880638ad7d80 (0xffff880638ad7d80)
-ffff880638ad7b78: ffff880638ad7c60 (0xffff880638ad7c60)
-ffff880638ad7b80: ffff880638ad7d20 (0xffff880638ad7d20)
-ffff880638ad7b88: 1ffff100c715af78 (0x1ffff100c715af78)
-ffff880638ad7b90: ffff8810513d5540 (0xffff8810513d5540)
-ffff880638ad7b98: ffff880638ad7c88 (0xffff880638ad7c88)
-ffff880638ad7ba0: ffffffff8235155b (sock_read_iter+0x22b/0x3d0)
-ffff880638ad7ba8: ffffffff8235c702 (sock_kmalloc+0x72/0xb0)
-ffff880638ad7bb0: 00007ffddaab65d0 (0x7ffddaab65d0)
-ffff880638ad7bb8: ffff880638ad7da7 (0xffff880638ad7da7)
-ffff880638ad7bc0: 0000000041b58ab3 (0x41b58ab3)
-ffff880638ad7bc8: ffffffff83372de1 (inat_primary_table+0x1c5f21/0x1d0d97)
-ffff880638ad7bd0: ffffffff82351330 (sock_recvmsg+0x100/0x100)
-ffff880638ad7bd8: 1ffff100c715af82 (0x1ffff100c715af82)
-ffff880638ad7be0: 0000000000000000 ...
-ffff880638ad7bf0: ffff881000000000 (0xffff881000000000)
-ffff880638ad7bf8: 0000000000000000 ...
-ffff880638ad7c08: ffff880638ad7cf0 (0xffff880638ad7cf0)
-ffff880638ad7c10: 0000000000000000 ...
-ffff880638ad7c30: ffff880638ad7d20 (0xffff880638ad7d20)
-ffff880638ad7c38: 0000000000000000 ...
-ffff880638ad7c40: ffff880638ad7c68 (0xffff880638ad7c68)
-ffff880638ad7c48: ffff8810513d5550 (0xffff8810513d5550)
-ffff880638ad7c50: 0000000100000000 (0x100000000)
-ffff880638ad7c58: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7c60: 1ffff100c715af98 (0x1ffff100c715af98)
-ffff880638ad7c68: ffffffff8315f320 (sockfs_ops+0x100/0x100)
-ffff880638ad7c70: ffff880638ad7d80 (0xffff880638ad7d80)
-ffff880638ad7c78: ffff880638ad7e90 (0xffff880638ad7e90)
-ffff880638ad7c80: ffff880638ad7de0 (0xffff880638ad7de0)
-ffff880638ad7c88: ffff880638ad7e08 (0xffff880638ad7e08)
-ffff880638ad7c90: ffffffff816afe25 (__vfs_read+0x445/0x730)
-ffff880638ad7c98: 1ffff100c715afa0 (0x1ffff100c715afa0)
-ffff880638ad7ca0: 0000000000000000 ...
-ffff880638ad7ca8: 0000000000000005 (0x5)
-ffff880638ad7cb0: ffff880ec1cc2700 (0xffff880ec1cc2700)
-ffff880638ad7cb8: ffff8810513d5568 (0xffff8810513d5568)
-ffff880638ad7cc0: 0000000041b58ab3 (0x41b58ab3)
-ffff880638ad7cc8: ffffffff8333c4a0 (inat_primary_table+0x18f5e0/0x1d0d97)
-ffff880638ad7cd0: ffffffff816af9e0 (vfs_copy_file_range+0x970/0x970)
-ffff880638ad7cd8: 0000000100000001 (0x100000001)
-ffff880638ad7ce0: 00007ffddaab65d0 (0x7ffddaab65d0)
-ffff880638ad7ce8: 0000000000000400 (0x400)
-ffff880638ad7cf0: ffffffff81787fd0
-(__fsnotify_update_child_dentry_flags.part.1+0x260/0x260)
-ffff880638ad7cf8: ffff8805e358ce28 (0xffff8805e358ce28)
-ffff880638ad7d00: 0000000041b58ab3 (0x41b58ab3)
-ffff880638ad7d08: ffffffff833400b0 (inat_primary_table+0x1931f0/0x1d0d97)
-ffff880638ad7d10: ffffffff81786d50 (__fsnotify_inode_delete+0x20/0x20)
-ffff880638ad7d18: 0000000000000000 ...
-ffff880638ad7d20: ffff8810513d5540 (0xffff8810513d5540)
-ffff880638ad7d28: 0000000000000000 ...
-ffff880638ad7d48: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7d50: 1ffff100c715afb4 (0x1ffff100c715afb4)
-ffff880638ad7d58: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7d60: 0000000000020000 (0x20000)
-ffff880638ad7d68: ffff8810513d5550 (0xffff8810513d5550)
-ffff880638ad7d70: ffff8805e358ce30 (0xffff8805e358ce30)
-ffff880638ad7d78: 0000000000000004 (0x4)
-ffff880638ad7d80: ffff881000000000 (0xffff881000000000)
-ffff880638ad7d88: 0000000000000000 ...
-ffff880638ad7d90: 0000000000000400 (0x400)
-ffff880638ad7d98: ffff880638ad7ce0 (0xffff880638ad7ce0)
-ffff880638ad7da0: 0000000000000001 (0x1)
-ffff880638ad7da8: ffff8805e358ce30 (0xffff8805e358ce30)
-ffff880638ad7db0: 0000000000000000 ...
-ffff880638ad7dc0: ffff880638ad7e08 (0xffff880638ad7e08)
-ffff880638ad7dc8: ffffffff816ac15d (rw_verify_area+0xbd/0x2b0)
-ffff880638ad7dd0: 0000000000000020 (0x20)
-ffff880638ad7dd8: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7de0: 0000000000000000 ...
-ffff880638ad7de8: 0000000000000400 (0x400)
-ffff880638ad7df0: ffff8810513d5540 (0xffff8810513d5540)
-ffff880638ad7df8: 00007ffddaab65d0 (0x7ffddaab65d0)
-ffff880638ad7e00: ffff8810513d5584 (0xffff8810513d5584)
-ffff880638ad7e08: ffff880638ad7e48 (0xffff880638ad7e48)
-ffff880638ad7e10: ffffffff816b01ff (vfs_read+0xef/0x2f0)
-ffff880638ad7e18: ffff880638ad7e90 (0xffff880638ad7e90)
-ffff880638ad7e20: ffff8810513d5540 (0xffff8810513d5540)
-ffff880638ad7e28: 1ffff100c715afce (0x1ffff100c715afce)
-ffff880638ad7e30: ffff8810513d5540 (0xffff8810513d5540)
-ffff880638ad7e38: ffff880638ad7ed0 (0xffff880638ad7ed0)
-ffff880638ad7e40: ffff8810513d55a8 (0xffff8810513d55a8)
-ffff880638ad7e48: ffff880638ad7ef8 (0xffff880638ad7ef8)
-ffff880638ad7e50: ffffffff816b1672 (SyS_read+0xd2/0x1b0)
-ffff880638ad7e58: 00007ffddaab65d0 (0x7ffddaab65d0)
-ffff880638ad7e60: 0000000000000400 (0x400)
-ffff880638ad7e68: dffffc0000000000 (0xdffffc0000000000)
-ffff880638ad7e70: 0000000041b58ab3 (0x41b58ab3)
-ffff880638ad7e78: ffffffff8332f7eb (inat_primary_table+0x18292b/0x1d0d97)
-ffff880638ad7e80: ffffffff816b15a0 (kernel_write+0x130/0x130)
-ffff880638ad7e88: 0000000000000000 ...
-ffff880638ad7e98: ffff881004cd9f8c (0xffff881004cd9f8c)
-ffff880638ad7ea0: 0000000000000002 (0x2)
-ffff880638ad7ea8: dffffc0000000000 (0xdffffc0000000000)
-ffff880638ad7eb0: ffff880638ad7f58 (0xffff880638ad7f58)
-ffff880638ad7eb8: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7ec0: ffff880638ad7f58 (0xffff880638ad7f58)
-ffff880638ad7ec8: b5d8152ac2b05d00 (0xb5d8152ac2b05d00)
-ffff880638ad7ed0: ffff880638ad7f58 (0xffff880638ad7f58)
-ffff880638ad7ed8: ffffffff816b15a0 (kernel_write+0x130/0x130)
-ffff880638ad7ee0: ffff881004cd9f40 (0xffff881004cd9f40)
-ffff880638ad7ee8: 0000000000000000 ...
-ffff880638ad7ef8: ffff880638ad7f48 (0xffff880638ad7f48)
-ffff880638ad7f00: ffffffff810073d9 (do_syscall_64+0x199/0x4c0)
-ffff880638ad7f08: 0000000000000000 ...
-ffff880638ad7f10: ffff880638ad7f58 (0xffff880638ad7f58)
-ffff880638ad7f18: 0000000000000000 ...
-ffff880638ad7f20: ffff880638ad7f48 (0xffff880638ad7f48)
-ffff880638ad7f28: ffffffff8100702e (prepare_exit_to_usermode+0x11e/0x150)
-ffff880638ad7f30: 0000000000000000 ...
-ffff880638ad7f50: ffffffff82a00081 (entry_SYSCALL_64_after_hwframe+0x3d/0xa2)
-ffff880638ad7f58: 0000000000000005 (0x5)
-ffff880638ad7f60: 00007ffddaab61d0 (0x7ffddaab61d0)
-ffff880638ad7f68: 00007ffddaab65d0 (0x7ffddaab65d0)
-ffff880638ad7f70: 0000000000000048 (0x48)
-ffff880638ad7f78: 00007ffddaab6a10 (0x7ffddaab6a10)
-ffff880638ad7f80: 0000000000000008 (0x8)
-ffff880638ad7f88: 0000000000000246 (0x246)
-ffff880638ad7f90: 00007ffddaab60a0 (0x7ffddaab60a0)
-ffff880638ad7f98: 0000000000004000 (0x4000)
-ffff880638ad7fa0: 00007ffddaab6050 (0x7ffddaab6050)
-ffff880638ad7fa8: ffffffffffffffda (0xffffffffffffffda)
-ffff880638ad7fb0: 00007f504bfe56f0 (0x7f504bfe56f0)
-ffff880638ad7fb8: 0000000000000400 (0x400)
-ffff880638ad7fc0: 00007ffddaab65d0 (0x7ffddaab65d0)
-ffff880638ad7fc8: 0000000000000005 (0x5)
-ffff880638ad7fd0: 0000000000000000 ...
-ffff880638ad7fd8: 00007f504bfe56f0 (0x7f504bfe56f0)
-ffff880638ad7fe0: 0000000000000033 (0x33)
-ffff880638ad7fe8: 0000000000000246 (0x246)
-ffff880638ad7ff0: 00007ffddaab6048 (0x7ffddaab6048)
-ffff880638ad7ff8: 000000000000002b (0x2b)
--- 
-Daniel J Blueman
+The content is not relevant for the DMA itself.
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
