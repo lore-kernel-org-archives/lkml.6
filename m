@@ -1,50 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752864AbeDRPKn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:10:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752599AbeDRPKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:10:42 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC5D22178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Wed, 18 Apr 2018 11:10:38 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        id S1753032AbeDRPLK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:11:10 -0400
+Received: from resqmta-ch2-06v.sys.comcast.net ([69.252.207.38]:54486 "EHLO
+        resqmta-ch2-06v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752744AbeDRPLJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 11:11:09 -0400
+Date: Wed, 18 Apr 2018 10:11:06 -0500 (CDT)
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Mikulas Patocka <mpatocka@redhat.com>
+cc: Vlastimil Babka <vbabka@suse.cz>, Mike Snitzer <snitzer@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
+        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] printk: wake up klogd in vprintk_emit
-Message-ID: <20180418111038.209cc0cc@gandalf.local.home>
-In-Reply-To: <20180418150214.z7oyughldrktj6e4@pathway.suse.cz>
-References: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
-        <20180418102943.5aa0ffc4@gandalf.local.home>
-        <20180418150214.z7oyughldrktj6e4@pathway.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Subject: Re: [PATCH] SLUB: Do not fallback to mininum order if __GFP_NORETRY
+ is set
+In-Reply-To: <alpine.LRH.2.02.1804181102490.13213@file01.intranet.prod.int.rdu2.redhat.com>
+Message-ID: <alpine.DEB.2.20.1804181010320.1530@nuc-kabylake>
+References: <alpine.DEB.2.20.1804180944180.1062@nuc-kabylake> <alpine.LRH.2.02.1804181102490.13213@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfJzpnjc7gtd8bV9Q1GjJ2pMyybECbTKSADxaiiGP6dBXum4RLZl2i7IzbqDb3n4MvUHdovXteN5KV80xMhE/0xMF3QtFBny4DDxjhYJhU3K0U4UjOyDf
+ fNIfwcbfEgEcwxtqMWEGzMTEciRkk6gD7K9EtYsxuDygUM05WUgXc/VhbKY4Sscb4RG5itMiYl99l/kG+1HgIgK4uCtoj9NOf0RK3j8+PY1vxNlHlE39Cwer
+ 3wyp9hr9BumvgUvGvuJo6bNQvGXOGh/+zzxueXTG9D+NntiEP/cH+Ea5cqCk0JdHMAiYBGD329DuH2n47ZBfcuWd1w6FysTBwUvrph1EFEPziLCUW1QnvvAy
+ qe6k91azntiTvkjlOI/H+s4su9ZeqfpzoMXnKMFh8Age7pfy/pEomQ2EmzBKe0aD49xkL8nux3KOFJ8MB2ABKx592mGXgou1cXwuHHgpL559jNt4II4jhn+y
+ s3nFw9O3YWElpGZw
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 17:02:14 +0200
-Petr Mladek <pmladek@suse.com> wrote:
+On Wed, 18 Apr 2018, Mikulas Patocka wrote:
 
-> > Calling wake_up_klogd() will grab the rq lock and give us a A-B<->B-A
-> > locking order.  
-> 
-> wake_up_klogd() uses the lockless irq_work_queue(). So it is actually
-> safe.
+> No, this would hit NULL pointer dereference if page is NULL and
+> __GFP_NORETRY is set. You want this:
 
-I didn't look at the code. OK then we don't need to worry about that.
+You are right
 
-> 
-> But the name is confusing. We should rename it.
-
-Yes, I would because the old wake_up_klogd() did do a wakeup. Perhaps
-we should name it: kick_klogd().
-
--- Steve
+Acked-by: Christoph Lameter <cl@linux.com>
