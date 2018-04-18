@@ -1,158 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753211AbeDRPuQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:50:16 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37262 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752162AbeDRPuO (ORCPT
+        id S1752871AbeDRPyd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:54:33 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:45152 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751830AbeDRPyb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:50:14 -0400
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <lee.jones@linaro.org>, <linus.walleij@linaro.org>,
-        <andy.shevchenko@gmail.com>, <robh+dt@kernel.org>
-CC: <patches@opensource.cirrus.com>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v10 2/9] mfd: madera: Add DT bindings for Cirrus Logic Madera codecs
-Date: Tue, 17 Apr 2018 15:29:08 +0100
-Message-ID: <20180417142915.15772-3-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180417142915.15772-1-rf@opensource.cirrus.com>
-References: <20180417142915.15772-1-rf@opensource.cirrus.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1804180142
+        Wed, 18 Apr 2018 11:54:31 -0400
+X-Google-Smtp-Source: AIpwx49ClOkrqGpAS/L8IFK7rElvZFjD8eE1cQEgiIbDY9LtxuG7tBS+Rpv7ydqRnIwRzU8CQoWoww==
+From: Douglas Anderson <dianders@chromium.org>
+To: broonie@kernel.org
+Cc: David Collins <collinsd@codeaurora.org>,
+        Javier Martinez Canillas <javier@dowhile0.org>, evgreen@chromium.org,
+        swboyd@chromium.org, Douglas Anderson <dianders@chromium.org>,
+        linux-omap@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Tony Lindgren <tony@atomide.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] regulator: Don't return or expect -errno from of_map_mode()
+Date: Wed, 18 Apr 2018 08:54:18 -0700
+Message-Id: <20180418155418.111278-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Specification of the bindings for the parent MFD driver component
-of the Cirrus Logic Madera codec drivers.
+In of_get_regulation_constraints() we were taking the result of
+of_map_mode() (an unsigned int) and assigning it to an int.  We were
+then checking whether this value was -EINVAL.  Some implementers of
+of_map_mode() were returning -EINVAL (even though the return type of
+their function needed to be unsigned int) because they needed to
+signal an error back to of_get_regulation_constraints().
 
-Note that although the interrupt controller and GPIO are child
-drivers their required bindings are trivial, mandatory, and exist
-within the parent MFD node so are documented here.
+In general in the regulator framework the mode is always referred to
+as an unsigned int.  While we could fix this to be a signed int (the
+highest value we store in there right now is 0x8), it's actually
+pretty clean to just define the regulator mode 0x0 (the lack of any
+bits set) as an invalid mode.  Let's do that.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Fixes: 5e5e3a42c653 ("regulator: of: Add support for parsing initial and suspend modes")
+Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 ---
- Documentation/devicetree/bindings/mfd/madera.txt | 102 +++++++++++++++++++++++
- 1 file changed, 102 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/madera.txt
 
-diff --git a/Documentation/devicetree/bindings/mfd/madera.txt b/Documentation/devicetree/bindings/mfd/madera.txt
-new file mode 100644
-index 000000000000..db3266088386
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/madera.txt
-@@ -0,0 +1,102 @@
-+Cirrus Logic Madera class audio codecs Multi-Functional Device
-+
-+These devices are audio SoCs with extensive digital capabilities and a range
-+of analogue I/O.
-+
-+See also the child driver bindings in:
-+bindings/pinctrl/cirrus,madera-pinctrl.txt
-+bindings/regulator/arizona-regulator.txt
-+bindings/sound/madera.txt
-+
-+Required properties:
-+
-+  - compatible : One of the following chip-specific strings:
-+        "cirrus,cs47l35"
-+        "cirrus,cs47l85"
-+        "cirrus,cs47l90"
-+        "cirrus,cs47l91"
-+        "cirrus,wm1840"
-+
-+  - reg : I2C slave address when connected using I2C, chip select number when
-+    using SPI.
-+
-+  - DCVDD-supply : Power supply for the device as defined in
-+    bindings/regulator/regulator.txt
-+    Mandatory on CS47L35, CS47L90, CS47L91
-+    Optional on CS47L85, WM1840
-+
-+  - AVDD-supply, DBVDD1-supply, DBVDD2-supply, CPVDD1-supply, CPVDD2-supply :
-+    Power supplies for the device
-+
-+  - DBVDD3-supply, DBVDD4-supply : Power supplies for the device
-+    (CS47L85, CS47L90, CS47L91, WM1840)
-+
-+  - SPKVDDL-supply, SPKVDDR-supply : Power supplies for the device
-+    (CS47L85, WM1840)
-+
-+  - SPKVDD-supply : Power supply for the device
-+    (CS47L35)
-+
-+  - interrupt-controller : Indicates that this device is an interrupt controller
-+
-+  - #interrupt-cells: the number of cells to describe an IRQ, must be 2.
-+    The first cell is the IRQ number.
-+    The second cell is the flags, encoded as the trigger masks from
-+    bindings/interrupt-controller/interrupts.txt
-+
-+  - gpio-controller : Indicates this device is a GPIO controller.
-+
-+  - #gpio-cells : Must be 2. The first cell is the pin number. The second cell
-+    is reserved for future use and must be zero
-+
-+  - interrupt-parent : The parent interrupt controller.
-+
-+  - interrupts : The interrupt line the /IRQ signal for the device is
-+    connected to.
-+
-+Optional properties:
-+
-+  - MICVDD-supply : Power supply, only need to be specified if
-+    powered externally
-+
-+  - reset-gpios : One entry specifying the GPIO controlling /RESET.
-+    As defined in bindings/gpio.txt.
-+    Although optional, it is strongly recommended to use a hardware reset
-+
-+  - MICBIASx : Initial data for the MICBIAS regulators, as covered in
-+    Documentation/devicetree/bindings/regulator/regulator.txt.
-+    One for each MICBIAS generator (MICBIAS1, MICBIAS2, ...)
-+    (all codecs)
-+
-+    One for each output pin (MICBIAS1A, MIBCIAS1B, MICBIAS2A, ...)
-+    (all except CS47L85, WM1840)
-+
-+    The following following additional property is supported for the generator
-+    nodes:
-+      - cirrus,ext-cap : Set to 1 if the MICBIAS has external decoupling
-+        capacitors attached.
-+
-+Optional child nodes:
-+    micvdd : Node containing initialization data for the micvdd regulator
-+    See bindings/regulator/arizona-regulator.txt
-+
-+    ldo1 : Node containing initialization data for the LDO1 regulator
-+    See bindings/regulator/arizona-regulator.txt
-+    (cs47l85, wm1840)
-+
-+Example:
-+
-+cs47l85@0 {
-+	compatible = "cirrus,cs47l85";
-+	reg = <0>;
-+
-+	reset-gpios = <&gpio 0>;
-+
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+	interrupts = <&host_irq1>;
-+	interrupt-parent = <&gic>;
-+
-+	gpio-controller;
-+	#gpio-cells = <2>;
-+};
+Changes in v3:
+- Move local variable declaration to top of func
+- s/to to/to in commit message
+- Avoid calling of_map_mode() twice in one case (oops)
+- Updated Suggested-by to Javier's redhat address to match review.
+
+Changes in v2:
+- Use Javier's suggestion of defining 0x0 as invalid
+
+ drivers/regulator/cpcap-regulator.c |  2 +-
+ drivers/regulator/of_regulator.c    | 13 +++++++------
+ drivers/regulator/twl-regulator.c   |  2 +-
+ include/linux/regulator/consumer.h  |  1 +
+ 4 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/regulator/cpcap-regulator.c b/drivers/regulator/cpcap-regulator.c
+index f541b80f1b54..bd910fe123d9 100644
+--- a/drivers/regulator/cpcap-regulator.c
++++ b/drivers/regulator/cpcap-regulator.c
+@@ -222,7 +222,7 @@ static unsigned int cpcap_map_mode(unsigned int mode)
+ 	case CPCAP_BIT_AUDIO_LOW_PWR:
+ 		return REGULATOR_MODE_STANDBY;
+ 	default:
+-		return -EINVAL;
++		return REGULATOR_MODE_INVALID;
+ 	}
+ }
+ 
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index f47264fa1940..0d3f73eacb99 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -31,6 +31,7 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 	struct regulation_constraints *constraints = &(*init_data)->constraints;
+ 	struct regulator_state *suspend_state;
+ 	struct device_node *suspend_np;
++	unsigned int mode;
+ 	int ret, i;
+ 	u32 pval;
+ 
+@@ -124,11 +125,11 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 
+ 	if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
+ 		if (desc && desc->of_map_mode) {
+-			ret = desc->of_map_mode(pval);
+-			if (ret == -EINVAL)
++			mode = desc->of_map_mode(pval);
++			if (mode == REGULATOR_MODE_INVALID)
+ 				pr_err("%s: invalid mode %u\n", np->name, pval);
+ 			else
+-				constraints->initial_mode = ret;
++				constraints->initial_mode = mode;
+ 		} else {
+ 			pr_warn("%s: mapping for mode %d not defined\n",
+ 				np->name, pval);
+@@ -163,12 +164,12 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 		if (!of_property_read_u32(suspend_np, "regulator-mode",
+ 					  &pval)) {
+ 			if (desc && desc->of_map_mode) {
+-				ret = desc->of_map_mode(pval);
+-				if (ret == -EINVAL)
++				mode = desc->of_map_mode(pval);
++				if (mode == REGULATOR_MODE_INVALID)
+ 					pr_err("%s: invalid mode %u\n",
+ 					       np->name, pval);
+ 				else
+-					suspend_state->mode = ret;
++					suspend_state->mode = mode;
+ 			} else {
+ 				pr_warn("%s: mapping for mode %d not defined\n",
+ 					np->name, pval);
+diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
+index a4456db5849d..884c7505ed91 100644
+--- a/drivers/regulator/twl-regulator.c
++++ b/drivers/regulator/twl-regulator.c
+@@ -274,7 +274,7 @@ static inline unsigned int twl4030reg_map_mode(unsigned int mode)
+ 	case RES_STATE_SLEEP:
+ 		return REGULATOR_MODE_STANDBY;
+ 	default:
+-		return -EINVAL;
++		return REGULATOR_MODE_INVALID;
+ 	}
+ }
+ 
+diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
+index df176d7c2b87..25602afd4844 100644
+--- a/include/linux/regulator/consumer.h
++++ b/include/linux/regulator/consumer.h
+@@ -80,6 +80,7 @@ struct regmap;
+  * These modes can be OR'ed together to make up a mask of valid register modes.
+  */
+ 
++#define REGULATOR_MODE_INVALID			0x0
+ #define REGULATOR_MODE_FAST			0x1
+ #define REGULATOR_MODE_NORMAL			0x2
+ #define REGULATOR_MODE_IDLE			0x4
 -- 
-2.11.0
+2.17.0.484.g0c8726318c-goog
