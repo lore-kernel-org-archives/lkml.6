@@ -1,86 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753966AbeDRLlV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 07:41:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37658 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753922AbeDRLk5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 07:40:57 -0400
-From: Mark Brown <broonie@kernel.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: Fengguang Wu <fengguang.wu@intel.com>, Mark Brown <broonie@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>, kbuild-all@01.org,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: pxa2xx: pxa2xx_spi_transfer_one() can be static" to the spi tree
-In-Reply-To: <20180417195323.GA69680@ivb43>
-Message-Id: <E1f8lSA-00025Y-3G@debutante>
-Date: Wed, 18 Apr 2018 12:40:46 +0100
+        id S1753995AbeDRLlv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 07:41:51 -0400
+Received: from smtp1-g21.free.fr ([212.27.42.1]:27247 "EHLO smtp1-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753971AbeDRLlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 07:41:49 -0400
+Date: Wed, 18 Apr 2018 13:41:19 +0200
+From: Alban <albeu@free.fr>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Alban <albeu@free.fr>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] nvmem: Update the OF binding to use a subnode
+ for the cells list
+Message-ID: <20180418134119.2e587621@avionic-0020>
+In-Reply-To: <20180417180040.04f53495@avionic-0020>
+References: <1521933899-362-1-git-send-email-albeu@free.fr>
+        <1521933899-362-2-git-send-email-albeu@free.fr>
+        <344e0087-7410-aebb-8a66-c6976064df10@linaro.org>
+        <20180417165420.423a691b@avionic-0020>
+        <8c4b48ad-e99e-030a-a4ee-b6df0fa59c79@linaro.org>
+        <20180417180040.04f53495@avionic-0020>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6UANJLWS_b0VD=xXkYsV.zT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+--Sig_/6UANJLWS_b0VD=xXkYsV.zT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-   spi: pxa2xx: pxa2xx_spi_transfer_one() can be static
+On Tue, 17 Apr 2018 18:00:40 +0200
+Alban <albeu@free.fr> wrote:
 
-has been applied to the spi tree at
+> On Tue, 17 Apr 2018 16:44:01 +0100
+> Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
+>=20
+> > Thanks for explaining,
+> >=20
+> > On 17/04/18 15:54, Alban wrote: =20
+> > > This will not only allow reading the calibration data from nvmem, but
+> > > will also create a partition on the MTD device, which is not acceptab=
+le.
+> > > With my proposed binding this would become:
+> > >=20
+> > > flash@0 {
+> > > 	#address-cells =3D <1>;
+> > > 	#size-cells =3D <1>;
+> > > 	compatible =3D "s25sl064a";
+> > > 	reg =3D <0>;
+> > >=20
+> > > 	nvmem-cells {
+> > > 		compatible =3D "nvmem-cells";
+> > > 		#address-cells =3D <1>;
+> > > 		#address-cells =3D <1>;
+> > >=20
+> > > 		calibration: calib@404 {
+> > > 			reg =3D <0x404 0x10>;
+> > > 		};
+> > > 	};   =20
+> >=20
+> > Why can't we make nvmem-cells node a nvmem provider in this case?
+> > Which should work! =20
+>=20
+> TBH I just copied what have been done to fix the same problem with the
+> MTD partitions. But yes we could also just extend the current binding
+> to require a compatible string on each nvmem-cell, which would not
+> require any code change to support.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+However this scheme will not work if the device node binding already
+have subnodes with addresses. The addressing, as specified by
+#address-cells and #size-cells, might be incompatible or might overlap.
+Using the nvmem-cells subnode solve this problem.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Alban
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+--Sig_/6UANJLWS_b0VD=xXkYsV.zT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Thanks,
-Mark
+iQIcBAEBCAAGBQJa1y7gAAoJEHSUmkuduC286NAP/1mYRWkrmms4OOs0JteVDswv
+xo+aBOqxH2ju4yUUOlkt9VBNmt+HSmHPM+Wn/MEEQXrkY+fgK5ai+sz/RXGgAhu2
+aq+5ZrsgDORpHpljPNAYMEmXSAud7lXzKlYBiEn7UiuA1nuJTxKhrsMJ35UQmBx7
+A0DJDcDreXJqI09rVja0oU1IESkxZD9Aazl/36rvSrC2ZtOg977oMbagWaNHPhwb
+4PGuW1MqVAxfR5dyBsKixiGhz2mLMnpO7sn+EpLoe/jez7OnjEMHKTG9BcrRAu7n
+/OjjanxuZ/k6ISDXtcoHO5wrIvzdCLmemRXehuQ5OwgLZdKRr5CPmgBsc9Hp+82z
+XAMJOhAvGl1q4J2bVm3GyNN8HepGwZSp8c0bp6/2ButkHVsFy1fO7qxNS0AcQsMt
+bIEIEHTmYC/L80h/l8wQQXii3MvtP0SSCCHdoSXyukg2QGIof1WWeXW9VjQ3kp2a
+7R4zodG7Px5SWRRuXuHQ+Uw5eYfxiBzRwt1NCyT6tns1cTD95UJhsMkc4kn8k82S
+sUnkIuGlUIzIYdR9u5ANb7TEoqvnMbLhB0L5EquZKQ9pk/+UD2nbvU8Cdx9reOVQ
+EaySaKuplXm1a4qASx8PeUw4bP6EAwu6RCxHZ0SlS9EYdgAlNykR2DOTExb8qWng
+xpgYJQEaCm3JytPF9Kwy
+=b649
+-----END PGP SIGNATURE-----
 
->From 71293a60e38f44b1d18c14803f0dd2744f6b9a12 Mon Sep 17 00:00:00 2001
-From: kbuild test robot <lkp@intel.com>
-Date: Wed, 18 Apr 2018 03:53:23 +0800
-Subject: [PATCH] spi: pxa2xx: pxa2xx_spi_transfer_one() can be static
-
-Fixes: d5898e19c0d7 ("spi: pxa2xx: Use core message processing loop")
-Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-pxa2xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index c852ea5c28c6..40f1346b8188 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -911,9 +911,9 @@ static bool pxa2xx_spi_can_dma(struct spi_controller *master,
- 	       xfer->len >= chip->dma_burst_size;
- }
- 
--int pxa2xx_spi_transfer_one(struct spi_controller *master,
--			    struct spi_device *spi,
--			    struct spi_transfer *transfer)
-+static int pxa2xx_spi_transfer_one(struct spi_controller *master,
-+				   struct spi_device *spi,
-+				   struct spi_transfer *transfer)
- {
- 	struct driver_data *drv_data = spi_controller_get_devdata(master);
- 	struct spi_message *message = master->cur_msg;
--- 
-2.17.0
+--Sig_/6UANJLWS_b0VD=xXkYsV.zT--
