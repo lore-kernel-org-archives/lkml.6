@@ -1,85 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753057AbeDRPFj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 11:05:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47116 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752871AbeDRPFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 11:05:37 -0400
-Date: Wed, 18 Apr 2018 11:05:31 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Christopher Lameter <cl@linux.com>
-cc: Vlastimil Babka <vbabka@suse.cz>, Mike Snitzer <snitzer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] SLUB: Do not fallback to mininum order if __GFP_NORETRY
- is set
-In-Reply-To: <alpine.DEB.2.20.1804180944180.1062@nuc-kabylake>
-Message-ID: <alpine.LRH.2.02.1804181102490.13213@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.DEB.2.20.1804180944180.1062@nuc-kabylake>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1753318AbeDRPGZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 11:06:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34133 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751204AbeDRPGX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 11:06:23 -0400
+From: Colin King <colin.king@canonical.com>
+To: Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] [media] include/media: fix missing | operator when setting cfg
+Date: Wed, 18 Apr 2018 16:06:17 +0100
+Message-Id: <20180418150617.22489-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+The value from a readl is being masked with ITE_REG_CIOCAN_MASK however
+this is not being used and cfg is being re-assigned.  I believe the
+assignment operator should actually be instead the |= operator.
 
-On Wed, 18 Apr 2018, Christopher Lameter wrote:
+Detected by CoverityScan, CID#1467987 ("Unused value")
 
-> Mikulas Patoka wants to ensure that no fallback to lower order happens. I
-> think __GFP_NORETRY should work correctly in that case too and not fall
-> back.
-> 
-> 
-> 
-> Allocating at a smaller order is a retry operation and should not
-> be attempted.
-> 
-> If the caller does not want retries then respect that.
-> 
-> GFP_NORETRY allows callers to ensure that only maximum order
-> allocations are attempted.
-> 
-> Signed-off-by: Christoph Lameter <cl@linux.com>
-> 
-> Index: linux/mm/slub.c
-> ===================================================================
-> --- linux.orig/mm/slub.c
-> +++ linux/mm/slub.c
-> @@ -1598,7 +1598,7 @@ static struct page *allocate_slab(struct
->  		alloc_gfp = (alloc_gfp | __GFP_NOMEMALLOC) & ~(__GFP_RECLAIM|__GFP_NOFAIL);
-> 
->  	page = alloc_slab_page(s, alloc_gfp, node, oo);
-> -	if (unlikely(!page)) {
-> +	if (unlikely(!page) && !(flags & __GFP_NORETRY)) {
->  		oo = s->min;
->  		alloc_gfp = flags;
->  		/*
-
-No, this would hit NULL pointer dereference if page is NULL and 
-__GFP_NORETRY is set. You want this:
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- mm/slub.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/exynos4-is/fimc-lite-reg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: linux-2.6/mm/slub.c
-===================================================================
---- linux-2.6.orig/mm/slub.c	2018-04-17 20:58:23.000000000 +0200
-+++ linux-2.6/mm/slub.c	2018-04-18 17:04:01.000000000 +0200
-@@ -1599,6 +1599,8 @@ static struct page *allocate_slab(struct
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite-reg.c b/drivers/media/platform/exynos4-is/fimc-lite-reg.c
+index f0acc550d065..16565a0b4bf1 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite-reg.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite-reg.c
+@@ -254,7 +254,7 @@ void flite_hw_set_dma_window(struct fimc_lite *dev, struct flite_frame *f)
+ 	/* Maximum output pixel size */
+ 	cfg = readl(dev->regs + FLITE_REG_CIOCAN);
+ 	cfg &= ~FLITE_REG_CIOCAN_MASK;
+-	cfg = (f->f_height << 16) | f->f_width;
++	cfg |= (f->f_height << 16) | f->f_width;
+ 	writel(cfg, dev->regs + FLITE_REG_CIOCAN);
  
- 	page = alloc_slab_page(s, alloc_gfp, node, oo);
- 	if (unlikely(!page)) {
-+		if (flags & __GFP_NORETRY)
-+			goto out;
- 		oo = s->min;
- 		alloc_gfp = flags;
- 		/*
+ 	/* DMA offsets */
+-- 
+2.17.0
