@@ -1,39 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753997AbeDRO3s (ORCPT <rfc822;w@1wt.eu>);
+        id S1754037AbeDRO3z (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 10:29:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39288 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753975AbeDRO3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Apr 2018 10:29:48 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:44108 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753957AbeDRO3q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 10:29:46 -0400
-Date: Wed, 18 Apr 2018 22:29:40 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: NeilBrown <neilb@suse.com>
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95824204EF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Wed, 18 Apr 2018 10:29:43 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] rhashtable: remove outdated comments about
- grow_decision etc
-Message-ID: <20180418142940.qd34y2ykjvmyjjh5@gondor.apana.org.au>
-References: <152403346237.16895.8767189357062722046.stgit2@noble>
- <152403402187.16895.84802790561768231.stgit2@noble>
+Subject: Re: [PATCH 2/2] printk: wake up klogd in vprintk_emit
+Message-ID: <20180418102943.5aa0ffc4@gandalf.local.home>
+In-Reply-To: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
+References: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152403402187.16895.84802790561768231.stgit2@noble>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 04:47:01PM +1000, NeilBrown wrote:
-> grow_decision and shink_decision no longer exist, so remove
-> the remaining references to them.
-> 
-> Signed-off-by: NeilBrown <neilb@suse.com>
+On Sat, 14 Apr 2018 12:01:45 +0900
+Sergey Senozhatsky <sergey.senozhatsky@gmail.com> wrote:
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1888,6 +1888,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  
+>  	printed_len = log_output(facility, level, lflags, dict, dictlen, text, text_len);
+>  
+> +	wake_up_klogd();
+>  	logbuf_unlock_irqrestore(flags);
+
+You can't do this, because the scheduler can call printk_deferred()
+with the rq lock held, and printk_deferred() will grab the logbuf lock.
+
+Calling wake_up_klogd() will grab the rq lock and give us a A-B<->B-A
+locking order.
+
+-- Steve
