@@ -1,74 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752732AbeDRFqn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 01:46:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59670 "EHLO mx2.suse.de"
+        id S1752779AbeDRFrb convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 01:47:31 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51615 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752086AbeDRFql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 01:46:41 -0400
-From: Takashi Iwai <tiwai@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stuart Hayes <stuart.w.hayes@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH RESENT v4] dell_rbu: make firmware payload memory uncachable
-Date: Wed, 18 Apr 2018 07:46:34 +0200
-Message-Id: <20180418054634.10289-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.3
+        id S1751407AbeDRFr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 01:47:29 -0400
+Date: Wed, 18 Apr 2018 07:46:43 +0200
+From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/11] ARM: sun8i: smp: Add support for A83T
+Message-ID: <20180418074643.5bd68168@dell-desktop.home>
+In-Reply-To: <20180417112038.mw7bfhqw4xwvzxcw@flea>
+References: <20180416215032.5023-1-mylene.josserand@bootlin.com>
+        <20180416215032.5023-10-mylene.josserand@bootlin.com>
+        <20180417112038.mw7bfhqw4xwvzxcw@flea>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stuart Hayes <stuart.w.hayes@gmail.com>
+Hello Maxime,
 
-The dell_rbu driver takes firmware update payloads and puts them in memory so
-the system BIOS can find them after a reboot.  This sometimes fails (though
-rarely), because the memory containing the payload is in the CPU cache but
-never gets written back to main memory before the system is rebooted (CPU
-cache contents are lost on reboot).
+On Tue, 17 Apr 2018 13:20:38 +0200
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-With this patch, the payload memory will be changed to uncachable to ensure
-that the payload is actually in main memory before the system is rebooted.
+> On Mon, Apr 16, 2018 at 11:50:30PM +0200, Mylène Josserand wrote:
+> > @@ -535,8 +599,12 @@ static int sunxi_mc_smp_cpu_kill(unsigned int l_cpu)
+> >  	return !ret;
+> >  }
+> >  
+> > -static bool sunxi_mc_smp_cpu_can_disable(unsigned int __unused)
+> > +static bool sunxi_mc_smp_cpu_can_disable(unsigned int cpu)
+> >  {
+> > +	/* CPU0 hotplug not handled for sun8i-a83t */
+> > +	if (is_sun8i)
+> > +		if (cpu == 0)
+> > +			return false;
+> >  	return true;  
+> 
+> I think Chen-Yu told you how to implement the hotplug in the previous
+> iteration, did you have time to test it?
 
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
-v2 Added include, removed extra parentheses
-v3 Corrected formatting and include line
-v4 Moved set_memory_uc() outside the while loop so that the memory is
-   definitely allocated before it is set to uncachable
+Not yet, I will have a look this evening.
 
-Andrew, could you pick up this orphan one?  Thanks!
+Best regards,
 
-diff --git a/drivers/firmware/dell_rbu.c b/drivers/firmware/dell_rbu.c
-index 2f452f1f7c8a..53f27a6e2d76 100644
---- a/drivers/firmware/dell_rbu.c
-+++ b/drivers/firmware/dell_rbu.c
-@@ -45,6 +45,7 @@
- #include <linux/moduleparam.h>
- #include <linux/firmware.h>
- #include <linux/dma-mapping.h>
-+#include <asm/set_memory.h>
- 
- MODULE_AUTHOR("Abhay Salunke <abhay_salunke@dell.com>");
- MODULE_DESCRIPTION("Driver for updating BIOS image on DELL systems");
-@@ -181,6 +182,11 @@ static int create_packet(void *data, size_t length)
- 			packet_data_temp_buf = NULL;
- 		}
- 	}
-+	/*
-+	 * set to uncachable or it may never get written back before reboot
-+	 */
-+	set_memory_uc((unsigned long)packet_data_temp_buf, 1 << ordernum);
-+
- 	spin_lock(&rbu_data.lock);
- 
- 	newpacket->data = packet_data_temp_buf;
-@@ -349,6 +355,8 @@ static void packet_empty_list(void)
- 		 * to make sure there are no stale RBU packets left in memory
- 		 */
- 		memset(newpacket->data, 0, rbu_data.packetsize);
-+		set_memory_wb((unsigned long)newpacket->data,
-+			1 << newpacket->ordernum);
- 		free_pages((unsigned long) newpacket->data,
- 			newpacket->ordernum);
- 		kfree(newpacket);
+-- 
+Mylène Josserand, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
