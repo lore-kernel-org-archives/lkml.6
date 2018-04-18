@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752841AbeDRAiW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 17 Apr 2018 20:38:22 -0400
-Received: from mga17.intel.com ([192.55.52.151]:19725 "EHLO mga17.intel.com"
+        id S1753211AbeDRAjV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 17 Apr 2018 20:39:21 -0400
+Received: from mga11.intel.com ([192.55.52.93]:45722 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751248AbeDRAiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Apr 2018 20:38:21 -0400
+        id S1753139AbeDRAjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Apr 2018 20:39:20 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.48,464,1517904000";
-   d="scan'208";a="44118498"
+   d="scan'208";a="44118626"
 From: "Huang\, Ying" <ying.huang@intel.com>
 To: Randy Dunlap <rdunlap@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -18,20 +18,20 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
         <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Andrea Arcangeli <aarcange@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, "Shaohua Li" <shli@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, Shaohua Li <shli@kernel.org>,
         Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
         Rik van Riel <riel@redhat.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: Re: [PATCH -mm 06/21] mm, THP, swap: Support PMD swap mapping when splitting huge PMD
+Subject: Re: [PATCH -mm 10/21] mm, THP, swap: Support to count THP swapin and its fallback
 References: <20180417020230.26412-1-ying.huang@intel.com>
-        <20180417020230.26412-7-ying.huang@intel.com>
-        <7ae64b5e-79ee-5768-34a3-75e33ea45246@infradead.org>
-Date: Wed, 18 Apr 2018 08:38:16 +0800
-In-Reply-To: <7ae64b5e-79ee-5768-34a3-75e33ea45246@infradead.org> (Randy
-        Dunlap's message of "Tue, 17 Apr 2018 14:12:05 -0700")
-Message-ID: <87tvs9z6vb.fsf@yhuang-dev.intel.com>
+        <20180417020230.26412-11-ying.huang@intel.com>
+        <2d6c126d-eada-1791-4a31-fd0d806e3147@infradead.org>
+Date: Wed, 18 Apr 2018 08:39:15 +0800
+In-Reply-To: <2d6c126d-eada-1791-4a31-fd0d806e3147@infradead.org> (Randy
+        Dunlap's message of "Tue, 17 Apr 2018 14:18:08 -0700")
+Message-ID: <87po2xz6to.fsf@yhuang-dev.intel.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ascii
@@ -44,24 +44,9 @@ Randy Dunlap <rdunlap@infradead.org> writes:
 > On 04/16/18 19:02, Huang, Ying wrote:
 >> From: Huang Ying <ying.huang@intel.com>
 >> 
->> A huge PMD need to be split when zap a part of the PMD mapping etc.
->> If the PMD mapping is a swap mapping, we need to split it too.  This
->> patch implemented the support for this.  This is similar as splitting
->> the PMD page mapping, except we need to decrease the PMD swap mapping
->> count for the huge swap cluster too.  If the PMD swap mapping count
->> becomes 0, the huge swap cluster will be split.
->> 
->> Notice: is_huge_zero_pmd() and pmd_page() doesn't work well with swap
->> PMD, so pmd_present() check is called before them.
->
-> FWIW, I would prefer to see that comment in the source code, not just
-> in the commit description.
-
-Sure.  I will add comment in source code too.
-
-Best Regards,
-Huang, Ying
-
+>> 2 new /proc/vmstat fields are added, "thp_swapin" and
+>> "thp_swapin_fallback" to count swapin a THP from swap device as a
+>> whole and fallback to normal page swapin.
 >> 
 >> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 >> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -76,7 +61,17 @@ Huang, Ying
 >> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 >> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 >> ---
->>  include/linux/swap.h |  6 +++++
->>  mm/huge_memory.c     | 54 ++++++++++++++++++++++++++++++++++++++++----
->>  mm/swapfile.c        | 28 +++++++++++++++++++++++
->>  3 files changed, 83 insertions(+), 5 deletions(-)
+>>  include/linux/vm_event_item.h |  2 ++
+>>  mm/huge_memory.c              |  4 +++-
+>>  mm/page_io.c                  | 15 ++++++++++++---
+>>  mm/vmstat.c                   |  2 ++
+>>  4 files changed, 19 insertions(+), 4 deletions(-)
+>> 
+>
+> Hi,
+> Please also update Documentation/vm/transhuge.rst.
+
+Thanks for reminding!  Will do that.
+
+Best Regards,
+Huang, Ying
