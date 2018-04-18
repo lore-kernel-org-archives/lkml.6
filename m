@@ -1,68 +1,87 @@
-Return-Path: <colin.king@canonical.com>
-X-Google-Smtp-Source: AIpwx48THsLWKyOCqyVBySIEycr86y+Co61I6f1SLsch+gjn2OoK+G83XnT/y2C1kioqIJUZX+0D
-ARC-Seal: i=1; a=rsa-sha256; t=1524051329; cv=none;
+Return-Path: <christianvanbrauner@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524043650; cv=none;
         d=google.com; s=arc-20160816;
-        b=aOET6SHlkljyYSrJi/y+rDQiftdqkTLs2qN+lwycXQASi29drGm3fY2iyRksZHkwLs
-         KiTJTj7rcq0iPeNDiz3BgwFv1LV0lOglNSJ4vwLCHJYyiiGs96iutSjskhFDL4Fy4Qf0
-         V8UysYzmxsTQ7y/le3ugOmaaCd1rJkxXIkKzUk7TBoiQN++vxNv61/utqsOQbWgEySCu
-         xqR6WGq30hHULoeebiiiEX/N+xQ17TCmFmCGUby/ROv6Wft2wGKpy88GKjJrvG8yMSnJ
-         ZW5+L6mvByNtAIstBFDStVX3pUftHAUrKgVP69U/+F/3C74tKasa2Vz0R+B98fBzciCN
-         z7pg==
+        b=CB6T7ExN7JkkXtA1Ckkbrm7M3P7hciIiPl1wAUCwo2i0KfLclF3a7vtQxtO2LqgY87
+         YBp5cAjHIhYq/wfC9RWDGJUQfctF3IT6N7JvCzFQ4hLvuiyofp9ai1qhD8WNMEa+t3hE
+         n7e38wyeZ85ljQ4ibp4krPL0wBHIZ6U9N/NHx4p+t7VNjXPZlucb8Wvz8ijyOQaYeD8A
+         TMEFtIPfbP6kmwJXrURz6yrMKb4jfDtRhsVzjkVRvGGdw8pvwJxCHpHJbY69ylM59h85
+         e8VhCQRvQOpwf/RNDhH81HkPfnNamxJGWTOAd87Pi5s2KN8+AJS4+j+PZb1BSvlKADUe
+         SIzQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:arc-authentication-results;
-        bh=ZkxJRMQLyP7wsDaqqeXYbp16uEhRZsDyu41aA1MEfzc=;
-        b=GzK/c0P8Xfe6h9TmKhaIf0R9KmnIHhvh3pxKI1dmefz27/ejOhqhCwGFJ3OgXDpjJd
-         M8gN6JkdSmgyTO9TatXPZo1WIaxoQvTGrJkvxpYeE0KveP8gT4B9/c9jc+FhVk2yU4lD
-         bA3NWyUl8SGStLWCtkRTZYmS4IXU3ZHEPlv6FsaXiBvPRkdv30ORj1Cng5+RBOPIY8VF
-         fOEtS5aIp0g2g67cOdPVcoz5gtiuUk0akDosBAE3avukKXu7yloYwbvPu1NVP0txb2s1
-         /qvTzXybkjQrt9EypG6+T8ZzB6I4yieG84X0MbCdvvf2NNymdqdC1TRx6kg1HLOvyprS
-         /AoQ==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=WSzaiK3OT99QuuBALKYbUGR3soGvOx2fkEygmhACZUo=;
+        b=attmLA607hAb0MZhmzO2vtiInwxq/ZsUlQenYtRnvoXa+xjZgDyvGfE7g9ynwPt9Bw
+         W7kbgICXUYtDjREGlyLw9Q1O1Xd/RkL45jQ+eH8Y6Kdql3mpQDuK5VGpGlojbzZ3tglz
+         uw9MIEpG5s0FjW90GYlyyU++PXRmCmB93+e+cl1OYVtrSL9K6WpKLGRxJt+BQ8cZcdb5
+         efLCCky1Yxc1jrOSFVjxAmyl57tCHvRdk1n9CjFcPnLqBJtYcjdG9bBPr3b2bQ84M1KC
+         ctZ81ZnddCF7Ov/IXJ6lZleSBonocdj+3k6JHvFG7sqWr3i6CNrSKShpmZKtEDwX5VIw
+         wmbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-From: Colin King <colin.king@canonical.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tty: nozomi: fix spelling mistake in macro NOZOMI_STATE_UKNOWN
-Date: Wed, 18 Apr 2018 12:35:28 +0100
-Message-Id: <20180418113528.1468-1-colin.king@canonical.com>
+       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+X-Google-Smtp-Source: AIpwx4+/JD/iC1cdDhavG0zIVze4pQk/E9UAQuHxHswsGTllVKi9iloQ8x91nowAFqrypLWRAnPH7Q==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: viro@zeniv.linux.org.uk,
+	kstewart@linuxfoundation.org,
+	tglx@linutronix.de,
+	pombredanne@nexb.com,
+	gregkh@linuxfoundation.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 0/6 RESEND] statfs: handle mount propagation
+Date: Wed, 18 Apr 2018 11:27:16 +0200
+Message-Id: <20180418092722.20136-1-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598083647326458964?=
-X-GMAIL-MSGID: =?utf-8?q?1598083647326458964?=
+X-GMAIL-THRID: =?utf-8?q?1598075594839612012?=
+X-GMAIL-MSGID: =?utf-8?q?1598075594839612012?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Hey,
 
-Rename NOZOMI_STATE_UKNOWN to NOZOMI_STATE_UNKNOWN (add missing N)
+This is a resend of this to CC more people and because it seems to have
+gotten lost in the prior merge window. I should've sent it afterwards
+right away.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/tty/nozomi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series:
+- unifies the definition of constants in statfs.h and fs.h
+  Please note the comments by Greg and others on this part:
+  https://patchwork.kernel.org/patch/10340403/
+  https://patchwork.kernel.org/patch/10340379/
+  I haven't yet changed the fs.h and statfs.h header changes to not
+  bitshifts. I wanted to wait what Al would think of it.
+- extends statfs to handle mount propagation. This will let userspace
+  easily query a given mountpoint for MS_UNBINDABLE, MS_SHARED,
+  MS_PRIVATE and MS_SLAVE without always having to do costly parsing of
+  /proc/<pid>/mountinfo.
+  To this end the flags:
+  - ST_UNBINDABLE
+  - ST_SHARED
+  - ST_PRIVATE
+  - ST_SLAVE
+  are added. They have the same value as their MS_* counterparts.
 
-diff --git a/drivers/tty/nozomi.c b/drivers/tty/nozomi.c
-index b57b35066ebe..bf05946d80a1 100644
---- a/drivers/tty/nozomi.c
-+++ b/drivers/tty/nozomi.c
-@@ -155,7 +155,7 @@ enum card_type {
- 
- /* Initialization states a card can be in */
- enum card_state {
--	NOZOMI_STATE_UKNOWN	= 0,
-+	NOZOMI_STATE_UNKNOWN	= 0,
- 	NOZOMI_STATE_ENABLED	= 1,	/* pci device enabled */
- 	NOZOMI_STATE_ALLOCATED	= 2,	/* config setup done */
- 	NOZOMI_STATE_READY	= 3,	/* flowcontrols received */
+The patchset was made against Al's vfs/for-next tree.
+
+Thanks!
+Christian
+
+Christian Brauner (6):
+  fs: use << for MS_* flags
+  statfs: use << to align with fs header
+  statfs: add ST_UNBINDABLE
+  statfs: add ST_SHARED
+  statfs: add ST_PRIVATE
+  statfs: add ST_SLAVE
+
+ fs/statfs.c             | 16 +++++++++++++++-
+ include/linux/statfs.h  | 30 +++++++++++++++++-------------
+ include/uapi/linux/fs.h | 33 +++++++++++++++++----------------
+ 3 files changed, 49 insertions(+), 30 deletions(-)
+
 -- 
 2.17.0
