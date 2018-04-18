@@ -1,56 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752762AbeDRRNI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 13:13:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58652 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752096AbeDRRNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 13:13:07 -0400
-Subject: Re: [PATCH] x86/entry/64/compat: Preserve r8-r11 in int $0x80
-To: Andy Lutomirski <luto@kernel.org>
-Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-References: <d4c4d9985fbe64f8c9e19291886453914b48caee.1523975710.git.luto@kernel.org>
- <cd1a4b8c-dd8e-d88d-c154-fcf02aca5d74@redhat.com>
- <CALCETrU3KLXwToBTOTnHpKrUhENFUVFJbWxfiPMbs2iQHoDDZA@mail.gmail.com>
-From: Denys Vlasenko <dvlasenk@redhat.com>
-Message-ID: <7332768e-8afd-980b-19ee-0a9fadf2d625@redhat.com>
-Date: Wed, 18 Apr 2018 19:13:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        id S1752826AbeDRROJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 13:14:09 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50114 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752077AbeDRROI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 13:14:08 -0400
+Date: Wed, 18 Apr 2018 19:13:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
+ systems
+Message-ID: <20180418171347.GH4795@pd.tnic>
+References: <20180402195707.42875-1-Yazen.Ghannam@amd.com>
+ <20180417172102.GA3633@pd.tnic>
+ <CY4PR12MB15574493593120818D9BFE11F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrU3KLXwToBTOTnHpKrUhENFUVFJbWxfiPMbs2iQHoDDZA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CY4PR12MB15574493593120818D9BFE11F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/18/2018 06:53 PM, Andy Lutomirski wrote:
-> On Tue, Apr 17, 2018 at 8:00 AM, Denys Vlasenko <dvlasenk@redhat.com> wrote:
->> This means that the new behavior is there for some 8 years already.
->> Whoever was impacted by it, probably already switched to the new ABI.
->>
->> Current ABI is "weaker", it allows kernel to save fewer registers.
->>
->> Which is generally a good thing, since saving/restoring things cost
->> cycles, and sometimes painful on entry paths where you may desperately
->> need a scratch register or two. (Recall this one? -
->> ...
->>          movq    %rsp, PER_CPU_VAR(rsp_scratch)
->>          movq    PER_CPU_VAR(cpu_current_top_of_stack), %rsp
->>          /* Construct struct pt_regs on stack */
->>          pushq   $__USER_DS                      /* pt_regs->ss */
->>          pushq   PER_CPU_VAR(rsp_scratch)        /* pt_regs->sp */
->> ...
->> wouldn't it be _great_ if one of GPRs would be available here
->> to hold userspace %rsp?
->> )
+On Tue, Apr 17, 2018 at 06:30:34PM +0000, Ghannam, Yazen wrote:
+> We could but it's an issue of documentation and testing the older systems.
 > 
-> But this is the int $0x80 entry, which uses the stack sanely and
-> doesn't have this problem at all.
+> My first pass at this was to unconditionally read the registers because my
+> understanding was that registers that aren't accessible would be read-as-zero.
+> I thought this was a common MCA implementation. But Tony pointed out that
+> this isn't the case on Intel systems. This is the case on recent AMD systems. But
+> I don't know if it's the case on older systems which may or may not have
+> followed the Intel implementation more closely.
 
-It was a general point why not committing to save every register
-may help on the callee (in this case kernel) side.
+So if our worry is the #GPs, we can always use the rdmsr*_safe()
+variants and look at the return value. And dump a invalid value like
+0xdeadbeef or so, if the read failed.
+
+But if any bit of info we've gotten this way, helps us debug an MCE,
+we're already golden!
+
+> For example,
+> 
+> Deferred error occurs:
+> - MCA_{STATUS,ADDR,DESTAT,DEADDR} all have valid data.
+> 
+> MCE occurs
+> - MCA_{STATUS,ADDR} are overwritten with non-zero data.
+> - MCE handler clears MCA_STATUS. MCA_ADDR is non-zero.
+> 
+> DFR handler finds MCA_STATUS[Deferred] is clear, so it saves
+> MCA_DESTAT and MCA_DEADDR which is 0.
+> 
+> If !m->addr (which has MCA_DEADDR), then we read MCA_STATUS
+> which has the address from the MCE.
+
+The code could use a shorter version of this as a comment to state why
+we're doing it. Because it is not obvious.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
