@@ -1,59 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753335AbeDSOfz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:35:55 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54907 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753122AbeDSOfy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:35:54 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 1/2] ARM: dts: stm32: add RTC support to stm32mp157c
-Date: Thu, 19 Apr 2018 16:35:24 +0200
-Message-ID: <1524148525-25209-2-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524148525-25209-1-git-send-email-amelie.delaunay@st.com>
-References: <1524148525-25209-1-git-send-email-amelie.delaunay@st.com>
+        id S1753375AbeDSOgv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:36:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48040 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752628AbeDSOgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:36:48 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68152170D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Thu, 19 Apr 2018 10:36:45 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>, tglx@linutronix.de,
+        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
+        joelaf@google.com, mathieu.desnoyers@efficios.com,
+        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
+        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [PATCH 2/6] tracing: Add trace event error log
+Message-ID: <20180419103645.5e244e22@gandalf.local.home>
+In-Reply-To: <20180419004033.GA13370@sejong>
+References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
+        <194bd34e689dd6df9e48855111fd6c5c66e37fc9.1523545519.git.tom.zanussi@linux.intel.com>
+        <20180412182001.75bfb4e2@gandalf.local.home>
+        <1523577133.11817.31.camel@tzanussi-mobl.amr.corp.intel.com>
+        <20180413094515.19fb3691@gandalf.local.home>
+        <1523629474.25328.14.camel@tzanussi-mobl.amr.corp.intel.com>
+        <20180413104432.148f13dc@gandalf.local.home>
+        <20180418183434.34eb10004275c9e89a9e709c@kernel.org>
+        <20180418094924.3ad22dbf@gandalf.local.home>
+        <20180419004033.GA13370@sejong>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
- signatures=0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for RTC (Real Time Clock) to STM32MP157C SoC.
+On Thu, 19 Apr 2018 09:40:33 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> > I totally agree. I just want to make sure that whatever we come up with
+> > will be well thought out. Perhaps we can wait till November to talk
+> > about it.  
+> 
+> I'm not sure I can go to LPC this year, but definitely interested in
+> improving error logging for tracing.
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index bc3eddc..3333954 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -174,5 +174,14 @@
- 			clocks = <&rcc USART1_K>;
- 			status = "disabled";
- 		};
-+
-+		rtc: rtc@5c004000 {
-+			compatible = "st,stm32mp1-rtc";
-+			reg = <0x5c004000 0x400>;
-+			clocks = <&rcc RTCAPB>, <&rcc RTC>;
-+			clock-names = "pclk", "rtc_ck";
-+			interrupts = <GIC_SPI 3 IRQ_TYPE_HIGH_LEVEL>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.7.4
+Feel free to send any ideas to us that you would like for us to add to
+this discussion.
+
+-- Steve
