@@ -1,58 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeDSKIn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:08:43 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:52664 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeDSKIl (ORCPT
+        id S1752812AbeDSKKX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:10:23 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:48875 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752754AbeDSKKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:08:41 -0400
-Date: Thu, 19 Apr 2018 13:08:28 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] regulator: ab8500: tidy ab8500_regulator_get_mode()
-Message-ID: <20180419100828.GA10724@mwanda>
+        Thu, 19 Apr 2018 06:10:13 -0400
+Subject: Re: [PATCH v8 1/2] dt-bindings: display: bridge: Document
+ THC63LVD1024 LVDS decoder
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>, <architt@codeaurora.org>,
+        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
+        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
+        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
+        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+References: <1523357590-3841-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1523357590-3841-2-git-send-email-jacopo+renesas@jmondi.org>
+ <29caaf6f-1783-9b01-5304-8748398d41c6@mentor.com>
+ <55ac6669-3dc6-8c6f-d9a0-f6c44f7f0953@mentor.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-renesas-soc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <eee8f364-3f3f-564a-515c-82f848b23ca8@mentor.com>
+Date: Thu, 19 Apr 2018 13:10:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
+ Icedove/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8867 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804190089
+In-Reply-To: <55ac6669-3dc6-8c6f-d9a0-f6c44f7f0953@mentor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The indenting here is confusing.
+Hi Jacopo,
 
-Also we don't check "ret".  That isn't likely to cause a runtime issue
-because if it fails here fails then we'd probably return -EINVAL at the
-end anyway.  But it does introduce a static checker warning since "val"
-is only inititialized on the success path.
+On 04/19/2018 12:48 PM, Vladimir Zapolskiy wrote:
+> Hi Jacopo,
+> 
+> On 04/19/2018 12:44 PM, Vladimir Zapolskiy wrote:
+>> Hi Jacopo, Laurent,
+>>
+>> On 04/10/2018 01:53 PM, Jacopo Mondi wrote:
+>>> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+>>>
+>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+>>> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>
+>> Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+>>
+>>> ---
 
-    drivers/regulator/ab8500.c:429 ab8500_regulator_get_mode()
-    error: uninitialized symbol 'val'.
+[snip]
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>>> +Optional properties:
+>>> +- powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
+>>
+> 
+> sorry for a follow-up, I've just noticed it, could you please double check
+> spelling PDWN vs PWDN? Thank you in advance.
+> 
 
-diff --git a/drivers/regulator/ab8500.c b/drivers/regulator/ab8500.c
-index 83dba3fbfe0c..4fab417f1803 100644
---- a/drivers/regulator/ab8500.c
-+++ b/drivers/regulator/ab8500.c
-@@ -425,7 +425,10 @@ static unsigned int ab8500_regulator_get_mode(struct regulator_dev *rdev)
- 	if (info->mode_mask) {
- 		/* Dedicated register for handling mode */
- 		ret = abx500_get_register_interruptible(info->dev,
--		info->mode_bank, info->mode_reg, &val);
-+							info->mode_bank,
-+							info->mode_reg, &val);
-+		if (ret)
-+			return ret;
- 		val = val & info->mode_mask;
- 
- 		val_normal = info->mode_val_normal;
+please ignore it, I did it myself and the datasheet describes pin as /PDWN,
+I won't exclude a typo in the datasheet though...
+
+--
+With best wishes,
+Vladimir
