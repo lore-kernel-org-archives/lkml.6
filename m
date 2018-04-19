@@ -1,156 +1,345 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3458146-1524153089-2-4894990548721950747
+X-Cyrus-Session-Id: sloti22d1t05-3352333-1524149077-2-2722321366874136524
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, DCC_CHECK 1.1, HEADER_FROM_DIFFERENT_DOMAINS 0.25,
+  MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524153088; b=Q7AVxk8iUqbWiZPvVsHTp2QHJBEThHJBbRBVl1o3OqNPZeTsbG
-    02zJWPa8lMw9F/x6cpIx7W7iNt9+xRulWWBmwQ7pgyWI8MzlWJeRrdf06p492tCe
-    tw+lb7j0Npp8Vs1rekN6D4ui88VS7xBpBVDgm41i2VniE3uJy78OPgTQmR5VARWB
-    +fFr7JHA0Tpwbwdd32Dw2/hNI8ge31Rl8Q/zqgW8xZipQhBo17FZoNrfhtEDay84
-    N8fmjj0f5YvVaHQ8cmNmNTf7NOt4B4GkEBWSn/IqGuLwIwveLPgpbAccauwsO0xA
-    O/v+KaYBdvhVC4PgN94CmEUSqNE0SPUOXGLQ==
+    1524149075; b=j8Wva3uLxhAm88TjCi9GgNE1sAXocxSkNnMYTmsrtIPGnjrW9L
+    PriBvoyQ36IeEe9NRcGnxChnIMe18+SzADOO14LGNqetgHMkFAxQm0azXKFPrwdT
+    H7G7mqEp3VgTeI78Ds3c1i54Q72YCrhIvchOfoqVfP7yFY8D1eqHTsK4xc05g9Ww
+    +8JWKABmXIgRkRAW6B4pQC7AjHfoYjRGOsktiN4xFD2u6hynE2qwbOrzdrKZdKMp
+    etKsbvhQrr4Fd3U9IYxuhUtGMcwFmzW4hOCxQaINK13Pchehdyk/lGc7YbdIUV/z
+    24Z2EdHs0b6QvA/Tx1btgY7CT+fUtQVhh/cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1524153088; bh=VkrdqWbFVhDhc+5Dq3On1Zn9WIGW0PQ8zRMnMWMFl/
-    c=; b=HiA/kPcBWznEvD8kIHhwEF3MYI3WIK6zW0Na5n/s4QSqeg/RFdp7xTQgpZ
-    8lzD2HqZvHjTGBv83PakApl79cOuCqwK/cH7Dla4CqdzNkrmoN3Oo7qj8NfhTvy0
-    X+0AaAV4fny/zppkDG0c1R0lrxTpeu3WGocJWVmjCZJe3dw5daeWOMWlsATjiDXE
-    djopKiVVEQohi9piqCd9vb3bYhOdplb/0uT3nKWtLNZaL0bvtgWF+jgS3WSKwhWk
-    uW5iWT0Vb4uZ7ytS8yRFI8e1EbSh24wZgdtBbeiZCF6+OYU6rSMzUNLZ2DNitk0d
-    ILDPVWmxuYxXm2Br+hiRJgJUGW5Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Vo3s9H+o x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524149075; bh=
+    Su/MrxE+4ECgNrJlTPECVBnLcGuU3OzIThuPodLZdSA=; b=nRE13//jJh8OUpg+
+    xjC+v9HDTsMcKBW78lZ6qvAJk0F/kyVSr9CG8KNRigaUIAmthJKRVndipm5Zt3/c
+    wLyXYQJ4Uxx9vNh2KrracQI/kAauPxYjQJpiYttxSEPFUwE8P9R/wyMzlq9VQszi
+    OuhB8y3DWBOl4LeNxinZjhKjWmRMmZDqRj4QRhtKoVI6bf+0pdgyIkRsWq7UYDmP
+    wpGeRZFKJ/obC+jkw4RvSHcCYjvP/HU7OmNS2SZfbbtgJUxkCBhLTAqhKOLyWxdI
+    dUrl3bNy2CfsFH56gXPphpjMM/80U8fxEiFEPxzpUThiDZqXzA1DxSF05bJZyby6
+    DuxSzQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NxZbpiq3;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=Vo3s9H+o x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=NxZbpiq3;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKMFrifxnMUgza01Bl4ARUpOcWDBiPDGI4rgoeZYhq8bL8FWNHne2PaCvJeV8nxOQVbvsBGJfex2naESK4GWaItjggwA0TGvMvU2RzhTScGs0dmP6iS6
-    Fmgh4e9K/7jEpOy4SJWjwhZxnuGzoLeYF7vbCp9TgUcuCVdiBSJC/rtfXZWkADNSvjY/yfiwhdmd3ERRxhxyBll3cL9eaWxfriSYpG7QDCr8I8BL9Vu+/ytl
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=VUfPOBp7AAAA:8 a=VwQbUJbxAAAA:8 a=oM7PcXJ99-fy6KmUrIwA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=h9p_k6br8ecoN9AbG9pA:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfCHbnZvkIxKdwwkihL+ZjzDTUjZzLOe7QgSJa5ymdlmY0GCwTh4fEu76CUYvrcmFw49b9ta1B8vHaJ2lN+25rS/dFlrzNINbtybUUy2gvwotTtWza4j5
+    IhXRHTqbg+Ud88kNQEiTJ+GC1Tigu3FH4oCi6lY18GjM/7C1WTUrYpkjjC2JJeF9tEf4Cho+yrHwbIV4VTeq6y5FTLnZBZeLp2TjTW0JbfQKE7pJfgKM+UDw
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=ndcGF5aaS97bXtANCUoA:9 a=5H-_3iZhzYS8U9oN:21 a=nJmb99yM-QQndeiP:21
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753328AbeDSPvZ (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 11:51:25 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:42505 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753251AbeDSPvY (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 11:51:24 -0400
-X-Google-Smtp-Source: AB8JxZo2/ANMPCi/soAEwZVYhs8/O51+ROWA9vubIIMjBCVhZxyGn2lKKQ8TtETcv3j93nVg07KwOyKHF21zg/AtRj0=
-MIME-Version: 1.0
-In-Reply-To: <CAKCAbMiaX31mpfEMRQrQbPO+kTfowA6=_KhBSs56=zZ1s0aXhw@mail.gmail.com>
-References: <20180419143737.606138-1-arnd@arndb.de> <20180419143737.606138-2-arnd@arndb.de>
- <CAKCAbMiaX31mpfEMRQrQbPO+kTfowA6=_KhBSs56=zZ1s0aXhw@mail.gmail.com>
+        id S1752757AbeDSOoc (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 10:44:32 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:57395 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752255AbeDSOi3 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 10:38:29 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 19 Apr 2018 17:51:23 +0200
-X-Google-Sender-Auth: jkfyb8ndsFgLuuaCuScy46_CIBE
-Message-ID: <CAK8P3a0psMUhA-wzNmTnrcgrhmHY=n-u9kp23aEKVQ9wxcf3zg@mail.gmail.com>
-Subject: Re: [PATCH v3 01/17] y2038: asm-generic: Extend sysvipc data structures
-To: Zack Weinberg <zackw@panix.com>
-Cc: y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, libc-alpha@sourceware.org,
+        tglx@linutronix.de, deepa.kernel@gmail.com,
+        viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+        albert.aribaud@3adev.fr, linux-s390@vger.kernel.org,
+        schwidefsky@de.ibm.com, x86@kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux-mips@linux-mips.org, jhogan@kernel.org,
+        ralf@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org
+Subject: [PATCH v3 04/17] y2038: s390: Remove unneeded ipc uapi header files
+Date: Thu, 19 Apr 2018 16:37:24 +0200
+Message-Id: <20180419143737.606138-5-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180419143737.606138-1-arnd@arndb.de>
+References: <20180419143737.606138-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:gAFodFrE669l798gMw1l1+4ZzPohNc/YiRhd2A04AT20er4li9F
+ dzBx/a45P3LxMsDSu+TGGi2U05BOnmalX7Qb3WcOryG+VM+oEhzxrkdm+nXTUFm5iu0S0b1
+ X1d2dwVqSMsRudtF0qdkkhcXCV7FNnFfLL0/RJVvS3CkIa2uqpPNUFicq+P6/oStg3V4+ei
+ 7jCa8tXLvrV2xwC8yoU+w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:J32XI7yflj0=:bTG6RbenhvfmIM5bDstiIO
+ SavGxK8VJrirMariKnvfOH9wYz51SN5yWSmS0DfAge73SpM3FWVI6WMzJm4+DuOcTjC3K5ewM
+ 73ledxuDYyARuM6mkhtcXr7adDu0px+u29DAKYoS3EvoIFwy6O/n3eF0YZJDT48fKW1f+PO+E
+ JUE6nQzCthahIWL4QjWiI6lCYTx6TCir5sm2cZ4TMNmLTIP5V2XLh3FePDR4WhF30UcSwVgoO
+ 6GrKKwLIIjEoFdL0nuDNlgJ//4wTpp9MC6n5mH7XDGRNRdFzLCDyERBY1NGwfCe7YDEm2D1HN
+ ht4yDYwbvDGscdFh9i9AJJ7klGlh4CSmyCi7DIEQiiT+4l69mQgyXW61BDttj/fnBk6JzMSSN
+ D2sQFMOu2/0IKUli0HgT8XAHSWSfAjtWIS450fov6W+yCttNC2lKMP/B/bgAsCuHcZ6UuM/g5
+ YeWtcHQFp7n4zsbo44fzZwI2tP4jBp+LUfRSkEzAXvyaHnXo9e0ENchvpFMXHlH96gMF2pT0i
+ jd9h9rOnDcifKCZSG1SrVAMPg0V2L+obY36zaiZq+Kj7GhkKYr9DaiB1EFrwq6li1yEemdIsh
+ GWbRRtZ8deRjCVrPfe2PbrUzsTRoZ4GNitcFpfJz10wlkkpzPNNYPSVvXJpWKImC4aVWBGuud
+ P1vW1uPQ+Jirgqa3I1DrAR0T8AzsQU0ubjKsKqCq8jSfCyZQOoI1bsJjm8asJRJ75vvh8oK27
+ rNlYuzlvdAPTO/iE2NLZcFpDG2WV6sWSQWj/AQ==
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 5:30 PM, Zack Weinberg <zackw@panix.com> wrote:
-> On Thu, Apr 19, 2018 at 10:37 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->> Most architectures now use the asm-generic copy of the sysvipc data
->> structures (msqid64_ds, semid64_ds, shmid64_ds), which use 32-bit
->> __kernel_time_t on 32-bit architectures but have padding behind them to
->> allow extending the type to 64-bit.
->>
->> Unfortunately, that fails on all big-endian architectures, which have the
->> padding on the wrong side. As so many of them get it wrong, we decided to
->> not bother even trying to fix it up when we introduced the asm-generic
->> copy. Instead we always use the padding word now to provide the upper
->> 32 bits of the seconds value, regardless of the endianess.
->>
->> A libc implementation on a typical big-endian system can deal with
->> this by providing its own copy of the structure definition to user
->> space, and swapping the two 32-bit words before returning from the
->> semctl/shmctl/msgctl system calls.
->
-> This seems generally like a sound approach, but I need to ask whether
-> any of the structures involved can ever appear in a sendmsg() control
-> message (that is, in the data pointed to by msg_control), or an
-> AF_NETLINK message, or any other situation where the kernel
-> communicates a structured message of arbitrary size to user space or
-> vice versa.  libc can't munge those messages, because new message
-> types can be added faster than libc can keep up with them, and because
-> I/O primitives like sendmsg() generally aren't allowed to allocate
-> arbitrarily-large scratch buffers.
+The s390 msgbuf/sembuf/shmbuf header files are all identical to the
+version from asm-generic.
 
-I'm fairly sure that the sysvipc data structures are entirely distinct from
-the structures that get passed over sockets, so the question of socket
-data is unrelated to this series and will be addressed in a separate
-series.
+This patch removes the files and replaces them with 'generic-y'
+statements, to avoid having to modify each copy when we extend sysvipc
+to deal with 64-bit time_t in 32-bit user space.
 
-To give some background on what needs to be done for sockets, the
-only incompatibility I'm aware of are socket timestamps that
-get enabled with SO_TIMESTAMP, SO_TIMESTAMPNS or
-SO_TIMESTAMPING and get passed from kernel to user space
-as SCM_TIMESTAMP/SCM_TIMESTAMPNS/SCM_TIMESTAMPING
-cmsg data.
+Note that unlike alpha and ia64, the ipcbuf.h header file is slightly
+different here, so I'm leaving the private copy.
 
-We already have code for handling 32-bit compat applications
-on 64-bit kernels, but that cannot work for 32-bit applications
-if the kernel has no idea whether the application uses 32-bit or
-64-bit time_t, and we don't have a function like in_compat_syscall()
-that we can use to find that out.
+To deal with 32-bit compat tasks, we also have to adapt the definitions
+of compat_{shm,sem,msg}id_ds to match the changes to the respective
+asm-generic files.
 
-Our plan here is to change asm/socket.h to have three additional
-timestamp flags that correspond to the existing SO_TIMESTAMP*
-flags but signify that user space expects the new structure layout
-(which is compatible with the existing layout on 64-bit kernels).
-For each flag, the kernel then defines a wrapper that (on 32-bit
-user space) looks like
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/s390/include/asm/compat.h      | 32 ++++++++++++------------
+ arch/s390/include/uapi/asm/Kbuild   |  3 +++
+ arch/s390/include/uapi/asm/msgbuf.h | 38 ----------------------------
+ arch/s390/include/uapi/asm/sembuf.h | 30 -----------------------
+ arch/s390/include/uapi/asm/shmbuf.h | 49 -------------------------------------
+ 5 files changed, 19 insertions(+), 133 deletions(-)
+ delete mode 100644 arch/s390/include/uapi/asm/msgbuf.h
+ delete mode 100644 arch/s390/include/uapi/asm/sembuf.h
+ delete mode 100644 arch/s390/include/uapi/asm/shmbuf.h
 
-#define SO_TIMESTAMP (sizeof(time_t) > sizeof(__kernel_long_t) ? \
-             SO_TIMESTAMP_TIME64 : SO_TIMESTAMP_OLD)
+diff --git a/arch/s390/include/asm/compat.h b/arch/s390/include/asm/compat.h
+index 501aaff85304..97db2fba546a 100644
+--- a/arch/s390/include/asm/compat.h
++++ b/arch/s390/include/asm/compat.h
+@@ -232,10 +232,10 @@ struct compat_ipc64_perm {
+ 
+ struct compat_semid64_ds {
+ 	struct compat_ipc64_perm sem_perm;
+-	compat_time_t  sem_otime;
+-	compat_ulong_t __pad1;
+-	compat_time_t  sem_ctime;
+-	compat_ulong_t __pad2;
++	compat_ulong_t sem_otime;
++	compat_ulong_t sem_otime_high;
++	compat_ulong_t sem_ctime;
++	compat_ulong_t sem_ctime_high;
+ 	compat_ulong_t sem_nsems;
+ 	compat_ulong_t __unused1;
+ 	compat_ulong_t __unused2;
+@@ -243,12 +243,12 @@ struct compat_semid64_ds {
+ 
+ struct compat_msqid64_ds {
+ 	struct compat_ipc64_perm msg_perm;
+-	compat_time_t   msg_stime;
+-	compat_ulong_t __pad1;
+-	compat_time_t   msg_rtime;
+-	compat_ulong_t __pad2;
+-	compat_time_t   msg_ctime;
+-	compat_ulong_t __pad3;
++	compat_ulong_t msg_stime;
++	compat_ulong_t msg_stime_high;
++	compat_ulong_t msg_rtime;
++	compat_ulong_t msg_rtime_high;
++	compat_ulong_t msg_ctime;
++	compat_ulong_t msg_ctime_high;
+ 	compat_ulong_t msg_cbytes;
+ 	compat_ulong_t msg_qnum;
+ 	compat_ulong_t msg_qbytes;
+@@ -261,12 +261,12 @@ struct compat_msqid64_ds {
+ struct compat_shmid64_ds {
+ 	struct compat_ipc64_perm shm_perm;
+ 	compat_size_t  shm_segsz;
+-	compat_time_t  shm_atime;
+-	compat_ulong_t __pad1;
+-	compat_time_t  shm_dtime;
+-	compat_ulong_t __pad2;
+-	compat_time_t  shm_ctime;
+-	compat_ulong_t __pad3;
++	compat_ulong_t shm_atime;
++	compat_ulong_t shm_atime_high;
++	compat_ulong_t shm_dtime;
++	compat_ulong_t shm_dtime_high;
++	compat_ulong_t shm_ctime;
++	compat_ulong_t shm_ctime_high;
+ 	compat_pid_t   shm_cpid;
+ 	compat_pid_t   shm_lpid;
+ 	compat_ulong_t shm_nattch;
+diff --git a/arch/s390/include/uapi/asm/Kbuild b/arch/s390/include/uapi/asm/Kbuild
+index faef3f7e8353..e364873e0d10 100644
+--- a/arch/s390/include/uapi/asm/Kbuild
++++ b/arch/s390/include/uapi/asm/Kbuild
+@@ -9,9 +9,12 @@ generic-y += errno.h
+ generic-y += fcntl.h
+ generic-y += ioctl.h
+ generic-y += mman.h
++generic-y += msgbuf.h
+ generic-y += param.h
+ generic-y += poll.h
+ generic-y += resource.h
++generic-y += sembuf.h
++generic-y += shmbuf.h
+ generic-y += sockios.h
+ generic-y += swab.h
+ generic-y += termbits.h
+diff --git a/arch/s390/include/uapi/asm/msgbuf.h b/arch/s390/include/uapi/asm/msgbuf.h
+deleted file mode 100644
+index 604f847cd68c..000000000000
+--- a/arch/s390/include/uapi/asm/msgbuf.h
++++ /dev/null
+@@ -1,38 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _S390_MSGBUF_H
+-#define _S390_MSGBUF_H
+-
+-/* 
+- * The msqid64_ds structure for S/390 architecture.
+- * Note extra padding because this structure is passed back and forth
+- * between kernel and user space.
+- *
+- * Pad space is left for:
+- * - 64-bit time_t to solve y2038 problem
+- * - 2 miscellaneous 32-bit values
+- */
+-
+-struct msqid64_ds {
+-	struct ipc64_perm msg_perm;
+-	__kernel_time_t msg_stime;	/* last msgsnd time */
+-#ifndef __s390x__
+-	unsigned long	__unused1;
+-#endif /* ! __s390x__ */
+-	__kernel_time_t msg_rtime;	/* last msgrcv time */
+-#ifndef __s390x__
+-	unsigned long	__unused2;
+-#endif /* ! __s390x__ */
+-	__kernel_time_t msg_ctime;	/* last change time */
+-#ifndef __s390x__
+-	unsigned long	__unused3;
+-#endif /* ! __s390x__ */
+-	unsigned long  msg_cbytes;	/* current number of bytes on queue */
+-	unsigned long  msg_qnum;	/* number of messages in queue */
+-	unsigned long  msg_qbytes;	/* max number of bytes on queue */
+-	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
+-	__kernel_pid_t msg_lrpid;	/* last receive pid */
+-	unsigned long  __unused4;
+-	unsigned long  __unused5;
+-};
+-
+-#endif /* _S390_MSGBUF_H */
+diff --git a/arch/s390/include/uapi/asm/sembuf.h b/arch/s390/include/uapi/asm/sembuf.h
+deleted file mode 100644
+index 3e917697b668..000000000000
+--- a/arch/s390/include/uapi/asm/sembuf.h
++++ /dev/null
+@@ -1,30 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _S390_SEMBUF_H
+-#define _S390_SEMBUF_H
+-
+-/* 
+- * The semid64_ds structure for S/390 architecture.
+- * Note extra padding because this structure is passed back and forth
+- * between kernel and user space.
+- *
+- * Pad space is left for:
+- * - 64-bit time_t to solve y2038 problem (for !__s390x__)
+- * - 2 miscellaneous 32-bit values
+- */
+-
+-struct semid64_ds {
+-	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
+-	__kernel_time_t	sem_otime;		/* last semop time */
+-#ifndef __s390x__
+-	unsigned long	__unused1;
+-#endif /* ! __s390x__ */
+-	__kernel_time_t	sem_ctime;		/* last change time */
+-#ifndef __s390x__
+-	unsigned long	__unused2;
+-#endif /* ! __s390x__ */
+-	unsigned long	sem_nsems;		/* no. of semaphores in array */
+-	unsigned long	__unused3;
+-	unsigned long	__unused4;
+-};
+-
+-#endif /* _S390_SEMBUF_H */
+diff --git a/arch/s390/include/uapi/asm/shmbuf.h b/arch/s390/include/uapi/asm/shmbuf.h
+deleted file mode 100644
+index 9cdce8d7ce60..000000000000
+--- a/arch/s390/include/uapi/asm/shmbuf.h
++++ /dev/null
+@@ -1,49 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _S390_SHMBUF_H
+-#define _S390_SHMBUF_H
+-
+-/* 
+- * The shmid64_ds structure for S/390 architecture.
+- * Note extra padding because this structure is passed back and forth
+- * between kernel and user space.
+- *
+- * Pad space is left for:
+- * - 64-bit time_t to solve y2038 problem (for !__s390x__)
+- * - 2 miscellaneous 32-bit values
+- */
+-
+-struct shmid64_ds {
+-	struct ipc64_perm	shm_perm;	/* operation perms */
+-	size_t			shm_segsz;	/* size of segment (bytes) */
+-	__kernel_time_t		shm_atime;	/* last attach time */
+-#ifndef __s390x__
+-	unsigned long		__unused1;
+-#endif /* ! __s390x__ */
+-	__kernel_time_t		shm_dtime;	/* last detach time */
+-#ifndef __s390x__
+-	unsigned long		__unused2;
+-#endif /* ! __s390x__ */
+-	__kernel_time_t		shm_ctime;	/* last change time */
+-#ifndef __s390x__
+-	unsigned long		__unused3;
+-#endif /* ! __s390x__ */
+-	__kernel_pid_t		shm_cpid;	/* pid of creator */
+-	__kernel_pid_t		shm_lpid;	/* pid of last operator */
+-	unsigned long		shm_nattch;	/* no. of current attaches */
+-	unsigned long		__unused4;
+-	unsigned long		__unused5;
+-};
+-
+-struct shminfo64 {
+-	unsigned long	shmmax;
+-	unsigned long	shmmin;
+-	unsigned long	shmmni;
+-	unsigned long	shmseg;
+-	unsigned long	shmall;
+-	unsigned long	__unused1;
+-	unsigned long	__unused2;
+-	unsigned long	__unused3;
+-	unsigned long	__unused4;
+-};
+-
+-#endif /* _S390_SHMBUF_H */
+-- 
+2.9.0
 
-Any application asking for SO_TIMESTAMP_OLD will get the
-traditional behavior, while applications that are built with a
-64-bit time_t will pass SO_TIMESTAMP_TIME64 into
-setsockopts, causing the kernel to use the new behavior.
-In 64-bit tasks, we probably want to define both to have existing
-behavior even though one would never see the new macro.
-
-         Arnd
