@@ -1,155 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753477AbeDSO41 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:56:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40319 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752854AbeDSO4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:56:25 -0400
-Message-ID: <b8d7f6606b880962d23323cb794111580de948ac.camel@bootlin.com>
-Subject: Re: [PATCH 6/9] sunxi-cedrus: Add device tree binding document
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        "Signed-off-by : Bob Ham" <rah@settrans.net>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Florent Revest <revestflo@gmail.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Icenowy Zheng <icenowy@aosc.xyz>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas van Kleef <thomas@vitsch.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date: Thu, 19 Apr 2018 16:55:10 +0200
-In-Reply-To: <20180318124800.7soqh34fxvwjm7pn@rob-hp-laptop>
-References: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
-         <20180309101445.16190-4-paul.kocialkowski@bootlin.com>
-         <20180318124800.7soqh34fxvwjm7pn@rob-hp-laptop>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-y+arpT7OIZ5LFWnZA2uN"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S1753537AbeDSO5P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:57:15 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:36021 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752455AbeDSO5K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:57:10 -0400
+X-Google-Smtp-Source: AIpwx4/P9+x4qgnrMPzzurLq6jv/wVt2CuLHRwliWBrXgPHrSaboJV0lY3ceTcH5DW/svaaBFqaX+A==
+Subject: Re: [RFC PATCH v2 3/4] acpi: apei: Do not panic() when correctable
+ errors are marked as fatal.
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
+        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
+        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
+        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
+References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
+ <20180416215903.7318-4-mr.nuke.me@gmail.com> <20180418175415.GJ4795@pd.tnic>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <bdc1d19b-3cc1-3f90-d276-414aaacdbd3a@gmail.com>
+Date: Thu, 19 Apr 2018 09:57:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180418175415.GJ4795@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-y+arpT7OIZ5LFWnZA2uN
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 04/18/2018 12:54 PM, Borislav Petkov wrote:
+> On Mon, Apr 16, 2018 at 04:59:02PM -0500, Alexandru Gagniuc wrote:
+>> Firmware is evil:
+>>  - ACPI was created to "try and make the 'ACPI' extensions somehow
+>>  Windows specific" in order to "work well with NT and not the others
+>>  even if they are open"
+>>  - EFI was created to hide "secret" registers from the OS.
+>>  - UEFI was created to allow compromising an otherwise secure OS.
+>>
+>> Never has firmware been created to solve a problem or simplify an
+>> otherwise cumbersome process. It is of no surprise then, that
+>> firmware nowadays intentionally crashes an OS.
+> 
+> I don't believe I'm saying this but, get rid of that rant. Even though I
+> agree, it doesn't belong in a commit message.
 
-On Sun, 2018-03-18 at 07:48 -0500, Rob Herring wrote:
-> On Fri, Mar 09, 2018 at 11:14:42AM +0100, Paul Kocialkowski wrote:
-> > From: Florent Revest <florent.revest@free-electrons.com>
->=20
-> "device tree binding document" can all be summarized with the subject=20
-> prefix "dt-bindings: media: ".
+Of course.
 
-Will do in v2, thanks.
+(snip)> Well, Tyler touched that AER error severity handling recently
+and we had
+> it all nicely documented in the comment above ghes_handle_aer().
+> 
+> Your ghes_handle_aer_irqsafe() graft basically bypasses
+> ghes_handle_aer() instead of incorporating in it.
+> 
+> If all you wanna say is, the severity computation should go through all
+> the sections and look at each error's severity before making a decision,
+> then add that to ghes_severity() instead of doing that "deferrable"
+> severity dance.
 
-> Also, email should be updated to @bootlin.com?
+ghes_severity() is a one-to-one mapping from a set of unsorted
+severities to monotonically increasing numbers. The "one-to-one" mapping
+part of the sentence is obvious from the function name. To change it to
+parse the entire GHES would completely destroy this, and I think it
+would apply policy in the wrong place.
 
-I will keep the address @free-electrons.com (since there is no matching
-@bootlin.com address). Although that address was broken at the time of
-sending v1, it should be a valid redirect nowadays.
+Should I do that, I might have to call it something like
+ghes_parse_and_apply_policy_to_severity(). But that misses the whole
+point if these changes.
 
-> >=20
-> > Device Tree bindings for the Allwinner's video engine
-> >=20
-> > Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
-> > ---
-> >  .../devicetree/bindings/media/sunxi-cedrus.txt     | 44
-> > ++++++++++++++++++++++
-> >  1 file changed, 44 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/media/sunxi-
-> > cedrus.txt
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/media/sunxi-
-> > cedrus.txt b/Documentation/devicetree/bindings/media/sunxi-
-> > cedrus.txt
-> > new file mode 100644
-> > index 000000000000..138581113c49
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
-> > @@ -0,0 +1,44 @@
-> > +Device-Tree bindings for SUNXI video engine found in sunXi SoC
-> > family
-> > +
-> > +Required properties:
-> > +- compatible	    : "allwinner,sun4i-a10-video-engine";
-> > +- memory-region     : DMA pool for buffers allocation;
->=20
-> Why do you need this linkage? Many drivers use CMA and don't need
-> this.
+I would like to get to the handlers first, and then decide if things are
+okay or not, but the ARM guys didn't exactly like this approach. It
+seems there are quite some per-error-type considerations.
+The logical step is to associate these considerations with the specific
+error type they apply to, rather than hide them as a decision under an
+innocent ghes_severity().
 
-The VPU can only access the first 256 MiB of DRAM, that are DMA-mapped
-starting from the DRAM base. This requires specific memory allocation
-and handling. I'll add the information in v2.
+> And add the changes to the policy to the comment above
+> ghes_handle_aer(). I don't want any changes from people coming and going
+> and leaving us scratching heads why we did it this way.
+>
+> And no need for those handlers and so on - make it simple first - then we
+> can talk more complex handling.
 
-> > +- clocks	    : list of clock specifiers, corresponding to
-> > +		      entries in clock-names property;
-> > +- clock-names	    : should contain "ahb", "mod" and "ram"
-> > entries;
-> > +- resets	    : phandle for reset;
-> > +- interrupts	    : should contain VE interrupt number;
-> > +- reg		    : should contain register base and length
-> > of VE.
-> > +
-> > +Example:
-> > +
-> > +reserved-memory {
-> > +	#address-cells =3D <1>;
-> > +	#size-cells =3D <1>;
-> > +	ranges;
-> > +
-> > +	ve_reserved: cma {
-> > +		compatible =3D "shared-dma-pool";
-> > +		reg =3D <0x43d00000 0x9000000>;
-> > +		no-map;
-> > +		linux,cma-default;
-> > +	};
-> > +};
-> > +
-> > +video-engine {
-> > +	compatible =3D "allwinner,sun4i-a10-video-engine";
-> > +	memory-region =3D <&ve_reserved>;
-> > +
-> > +	clocks =3D <&ahb_gates 32>, <&ccu CLK_VE>,
-> > +		 <&dram_gates 0>;
-> > +	clock-names =3D "ahb", "mod", "ram";
-> > +
-> > +	assigned-clocks =3D <&ccu CLK_VE>;
-> > +	assigned-clock-rates =3D <320000000>;
->=20
-> Not documented.
+I don't want to leave people scratching their heads, but I also don't
+want to make AER a special case without having a generic way to handle
+these cases. People are just as susceptible to scratch their heads
+wondering why AER is a special case and everything else crashes.
 
-Will do in v2.
+Maybe it's better move the AER handling to NMI/IRQ context, since
+ghes_handle_aer() is only scheduling the real AER andler, and is irq
+safe. I'm scratching my head about why we're messing with IRQ work from
+NMI context, instead of just scheduling a regular handler to take care
+of things.
 
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-y+arpT7OIZ5LFWnZA2uN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrYrc4ACgkQ3cLmz3+f
-v9E6Ogf/f1f6J5mtla35B01CUFcA7QlVM5My+Dle7hi8P9z2YzzxrjmMTv399EQe
-oRi8QMXSmULQNTbUaQfUzXQD+5Q6Y5gtfiZlLX8y/NNDkRwhGyJWCUbCMspR/kFn
-fria3jo2qTLMnf8R+daBTGO7yTdCq5g8xqKcUJuAim7vWyvQt1r2RKx3fGfKM25P
-9oe9nbpup22sexlf3m94SFRobqOePaw32mTfwNvnJ4ch2H9FTpw209mhDwr9RwWT
-F2ii5TdIFbl+QX8Z37yuWuQzd1tD+/WJxMNdXNmdp4/LhLi6fxkedLeNFW26Nxbl
-r5vHhG01SJwgUFO0Ti9IR1nZdDe4ng==
-=NLng
------END PGP SIGNATURE-----
-
---=-y+arpT7OIZ5LFWnZA2uN--
+Alex
