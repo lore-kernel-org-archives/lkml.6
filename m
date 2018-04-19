@@ -1,70 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751882AbeDSIRG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 04:17:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59916 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750972AbeDSIRD (ORCPT
+        id S1752306AbeDSITn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 04:19:43 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36609 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750884AbeDSITl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 04:17:03 -0400
-Date: Thu, 19 Apr 2018 01:16:57 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180419081657.GA16735@infradead.org>
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-4-christian.koenig@amd.com>
- <20180329065753.GD3881@phenom.ffwll.local>
- <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
- <20180403090909.GN3881@phenom.ffwll.local>
- <20180403170645.GB5935@redhat.com>
- <20180403180832.GZ3881@phenom.ffwll.local>
- <20180416123937.GA9073@infradead.org>
- <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
+        Thu, 19 Apr 2018 04:19:41 -0400
+X-Google-Smtp-Source: AIpwx48fYDTxpkquZrawRPjE+z7tjcNRCykUIBUjv2hhTZ3cWWK2b8VxnZT3RETxHnab4LfrzDeKZA==
+Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+To: Dongwon Kim <dongwon.kim@intel.com>
+Cc: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        Paul Durrant <Paul.Durrant@citrix.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "daniel.vetter@intel.com" <daniel.vetter@intel.com>,
+        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+        Matt Roper <matthew.d.roper@intel.com>
+References: <20180417075928.GT31310@phenom.ffwll.local>
+ <20180417205744.GA15930@downor-Z87X-UD5H>
+ <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
+ <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
+ <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+ <7d6710a76b9a42299139d7914358ed52@AMSPEX02CL03.citrite.net>
+ <46489b33-e6fc-b874-6cd4-dbb94c002ef8@gmail.com>
+ <20180418105526.a4qtlhofrn3gubsl@MacBook-Pro-de-Roger.local>
+ <11ec6f16-6eff-6439-2e66-f1ef14cdff21@gmail.com>
+ <20180418160115.GA20588@downor-Z87X-UD5H>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <b18acfeb-64fc-74ff-1ac1-3b8c6da2b73b@gmail.com>
+Date: Thu, 19 Apr 2018 11:19:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180418160115.GA20588@downor-Z87X-UD5H>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 03:38:56PM +0200, Daniel Vetter wrote:
-> We've broken that assumption in i915 years ago. Not struct page backed
-> gpu memory is very real.
-> 
-> Of course we'll never feed such a strange sg table to a driver which
-> doesn't understand it, but allowing sg_page == NULL works perfectly
-> fine. At least for gpu drivers.
+On 04/18/2018 07:01 PM, Dongwon Kim wrote:
+> On Wed, Apr 18, 2018 at 03:42:29PM +0300, Oleksandr Andrushchenko wrote:
+>> On 04/18/2018 01:55 PM, Roger Pau Monné wrote:
+>>> On Wed, Apr 18, 2018 at 01:39:35PM +0300, Oleksandr Andrushchenko wrote:
+>>>> On 04/18/2018 01:18 PM, Paul Durrant wrote:
+>>>>>> -----Original Message-----
+>>>>>> From: Xen-devel [mailto:xen-devel-bounces@lists.xenproject.org] On Behalf
+>>>>>> Of Roger Pau Monné
+>>>>>> Sent: 18 April 2018 11:11
+>>>>>> To: Oleksandr Andrushchenko <andr2000@gmail.com>
+>>>>>> Cc: jgross@suse.com; Artem Mygaiev <Artem_Mygaiev@epam.com>;
+>>>>>> Dongwon Kim <dongwon.kim@intel.com>; airlied@linux.ie;
+>>>>>> Oleksandr_Andrushchenko@epam.com; linux-kernel@vger.kernel.org; dri-
+>>>>>> devel@lists.freedesktop.org; Potrola, MateuszX
+>>>>>> <mateuszx.potrola@intel.com>; xen-devel@lists.xenproject.org;
+>>>>>> daniel.vetter@intel.com; boris.ostrovsky@oracle.com; Matt Roper
+>>>>>> <matthew.d.roper@intel.com>
+>>>>>> Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy
+>>>>>> helper DRM driver
+>>>>>>
+>>>>>> On Wed, Apr 18, 2018 at 11:01:12AM +0300, Oleksandr Andrushchenko
+>>>>>> wrote:
+>>>>>>> On 04/18/2018 10:35 AM, Roger Pau Monné wrote:
+>>>>>> After speaking with Oleksandr on IRC, I think the main usage of the
+>>>>>> gntdev extension is to:
+>>>>>>
+>>>>>> 1. Create a dma-buf from a set of grant references.
+>>>>>> 2. Share dma-buf and get a list of grant references.
+>>>>>>
+>>>>>> I think this set of operations could be broken into:
+>>>>>>
+>>>>>> 1.1 Map grant references into user-space using the gntdev.
+>>>>>> 1.2 Create a dma-buf out of a set of user-space virtual addresses.
+>>>>>>
+>>>>>> 2.1 Map a dma-buf into user-space.
+>>>>>> 2.2 Get grefs out of the user-space addresses where the dma-buf is
+>>>>>>       mapped.
+>>>>>>
+>>>>>> So it seems like what's actually missing is a way to:
+>>>>>>
+>>>>>>    - Create a dma-buf from a list of user-space virtual addresses.
+>>>>>>    - Allow to map a dma-buf into user-space, so it can then be used with
+>>>>>>      the gntdev.
+>>>>>>
+>>>>>> I think this is generic enough that it could be implemented by a
+>>>>>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
+>>>>>> something similar to this.
+>>>> Ok, so just to summarize, xen-zcopy/hyper-dmabuf as they are now,
+>>>> are no go from your POV?
+> FYI,
+>
+> our use-case is "surface sharing" or "graphic obj sharing" where a client
+> application in one guest renders and export this render target(e.g. EGL surface)
+> as dma-buf. This dma-buf is then exported to another guest/host via hyper_dmabuf
+> drv where a compositor is running. This importing domain creates a dmabuf with
+> shared reference then it is imported as EGL image that later can be used as
+> texture object via EGL api.
 
-For GPU drivers on x86 with no dma coherency problems, sure.  But not
-all the world is x86.  We already have problems due to dmabugs use
-of the awkward get_sgtable interface (see the common on
-arm_dma_get_sgtable that I fully agree with), and doing this for memory
-that doesn't have a struct page at all will make things even worse.
-
-> If that's not acceptable then I guess we could go over the entire tree
-> and frob all the gpu related code to switch over to a new struct
-> sg_table_might_not_be_struct_page_backed, including all the other
-> functions we added over the past few years to iterate over sg tables.
-> But seems slightly silly, given that sg tables seem to do exactly what
-> we need.
-
-It isn't silly.  We will have to do some surgery like that anyway
-because the current APIs don't work.  So relax, sit back and come up
-with an API that solves the existing issues and serves us well in
-the future.
+>   Mapping dmabuf to the userspace or vice versa
+> might be possible with modifying user space drivers/applications but it is an
+> unnecessary extra step from our perspective.
++1. I also feel like if it is implemented in the kernel space it
+will be *much* more easier then inventing workarounds with
+gntdev, user-space and helper dma-buf driver (which obviously can be
+implemented). Of course, this approach is easier for Xen as we do not
+touch its kernel code ;)
+But there is a demand for changes as number of embedded/multimedia use-cases
+is constantly growing and we have to react.
+> Also, we want to keep all objects
+> in the kernel level.
+>
+>>> My opinion is that there seems to be a more generic way to implement
+>>> this, and thus I would prefer that one.
+>>>
+>>>> Instead, we have to make all that fancy stuff
+>>>> with VAs <-> device-X and have that device-X driver live out of drivers/xen
+>>>> as it is not a Xen specific driver?
+>>> That would be my preference if feasible, simply because it can be
+>>> reused by other use-cases that need to create dma-bufs in user-space.
+>> There is a use-case I have: a display unit on my target has a DMA
+>> controller which can't do scatter-gather, e.g. it only expects a
+>> single starting address of the buffer.
+>> In order to create a dma-buf from grefs in this case
+>> I allocate memory with dma_alloc_xxx and then balloon pages of the
+>> buffer and finally map grefs onto this DMA buffer.
+>> This way I can give this shared buffer to the display unit as its bus
+>> addresses are contiguous.
+>>
+>> With the proposed solution (gntdev + device-X) I won't be able to achieve
+>> this,
+>> as I have no control over from where gntdev/balloon drivers get the pages
+>> (even more, those can easily be out of DMA address space of the display
+>> unit).
+>>
+>> Thus, even if implemented, I can't use this approach.
+>>> In any case I just knew about dma-bufs this morning, there might be
+>>> things that I'm missing.
+>>>
+>>> Roger.
