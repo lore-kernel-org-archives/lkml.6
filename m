@@ -1,72 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeDSLSl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 07:18:41 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:55371 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751876AbeDSLSk (ORCPT
+        id S1752241AbeDSLWn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:22:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51472 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbeDSLWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 07:18:40 -0400
-Subject: Re: [PATCH v8 2/2] drm: bridge: Add thc63lvd1024 LVDS decoder driver
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, <architt@codeaurora.org>,
-        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
-        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
-        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-References: <1523357590-3841-1-git-send-email-jacopo+renesas@jmondi.org>
- <1523357590-3841-3-git-send-email-jacopo+renesas@jmondi.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-renesas-soc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <241462f3-0396-c763-6fb4-aff8fc5d29bd@mentor.com>
-Date: Thu, 19 Apr 2018 14:18:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Thu, 19 Apr 2018 07:22:42 -0400
+Date: Thu, 19 Apr 2018 12:22:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [BUG] NULL pointer on next-20180419 on Odroid XU3
+ (snd_soc_register_card)
+Message-ID: <20180419112232.GB27188@sirena.org.uk>
+References: <CAJKOXPd-+jp99p=5MsCa=68TNSJk57+drcFgUr2Y1rWW3RPbSA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1523357590-3841-3-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="DKU6Jbt7q3WqK7+M"
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPd-+jp99p=5MsCa=68TNSJk57+drcFgUr2Y1rWW3RPbSA@mail.gmail.com>
+X-Cookie: We've upped our standards, so up yours!
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
 
-On 04/10/2018 01:53 PM, Jacopo Mondi wrote:
-> Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
-> output converter.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+--DKU6Jbt7q3WqK7+M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+On Thu, Apr 19, 2018 at 09:08:07AM +0200, Krzysztof Kozlowski wrote:
 
-Generally I have only one pretty ignorable comment.
+> On today's next-20180419, NULL pointer exception appeared in
+> snd_soc_instantiate_card() on Odroid XU3 and XU boards (Samsung,
+> Exynos5422, Exynos5410, max98090 codec). Built with exynos_defconfig
+> (ARM).
 
-> +
-> +enum thc63_ports {
-> +	THC63_LVDS_IN0,
-> +	THC63_LVDS_IN1,
-> +	THC63_RGB_OUT0,
-> +	THC63_RGB_OUT1,
-> +};
-> +
+> I bisected it to:
+> 45f8cb57da0d7a9ead4b39d7f5def333a5b0c08b is the first bad commit
+> commit 45f8cb57da0d7a9ead4b39d7f5def333a5b0c08b
+> Author: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+> Date:   Tue Mar 27 14:30:40 2018 +0100
+>=20
+>     ASoC: core: Allow topology to override machine driver FE DAI link con=
+fig.
 
-The driver uses only THC63_RGB_OUT0 value, or port@2, and MODE{0,1,2} IC
-configuration is ignored.
+OK, reverting this one as well for now along with f11a5c27f9287 "ASoC:
+core: Add name prefix for machines with topology rewrites" which depends
+on it :(
 
-I don't know if right from the beginning it would be better to support
-dual-out modes, preferably both single-in and dual-in ones. Will it
-impact port enumeration?
+--DKU6Jbt7q3WqK7+M
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I do understand that the extension is possible, and likely only hardware
-accessibility postpones it.
+-----BEGIN PGP SIGNATURE-----
 
---
-With best wishes,
-Vladimir
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrYe/cACgkQJNaLcl1U
+h9B76gf9HlWxBpQgKJSERvvphkwHewaLd2GMKeK+9jQtL3CelbLKeJgs4BKKPj3S
+iCcYpC+wTumtc/xV41okaOZLalAKDRR+Skhrjb94RDKK4wmFFB9sFRqxAEMK6yF4
+baQJ0gyKB35kIdsBFuc/zUXD4rm8icOCiEuivvz8dgFE6uHVRdeOYlq8deqde+6G
+dQ11do0uEQNBMvTvKE3cQP/Dlq4MFz29k0VjD0/zNTo7RqBBWAHBuO+eVSTEHB1D
+JzjsJxDqG7qlqniqpHjt//7yGuMpXp/g0JpzGAkSUtceqp2x1OyLI6w4w9+feRaQ
+F3KvpNdhBuLrKW4/M08tc0FWRS2Huw==
+=R69U
+-----END PGP SIGNATURE-----
+
+--DKU6Jbt7q3WqK7+M--
