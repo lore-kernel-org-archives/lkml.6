@@ -1,56 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753375AbeDSOgv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:36:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48040 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752628AbeDSOgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:36:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68152170D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Thu, 19 Apr 2018 10:36:45 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>, tglx@linutronix.de,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH 2/6] tracing: Add trace event error log
-Message-ID: <20180419103645.5e244e22@gandalf.local.home>
-In-Reply-To: <20180419004033.GA13370@sejong>
-References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
-        <194bd34e689dd6df9e48855111fd6c5c66e37fc9.1523545519.git.tom.zanussi@linux.intel.com>
-        <20180412182001.75bfb4e2@gandalf.local.home>
-        <1523577133.11817.31.camel@tzanussi-mobl.amr.corp.intel.com>
-        <20180413094515.19fb3691@gandalf.local.home>
-        <1523629474.25328.14.camel@tzanussi-mobl.amr.corp.intel.com>
-        <20180413104432.148f13dc@gandalf.local.home>
-        <20180418183434.34eb10004275c9e89a9e709c@kernel.org>
-        <20180418094924.3ad22dbf@gandalf.local.home>
-        <20180419004033.GA13370@sejong>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1753539AbeDSOjF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:39:05 -0400
+Received: from gateway36.websitewelcome.com ([192.185.200.11]:41162 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753162AbeDSOjC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:39:02 -0400
+X-Authority-Reason: nr=8
+Date: Thu, 19 Apr 2018 08:53:16 -0500
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] mmc: sdhci-cadence: fix logically and structurally dead code
+Message-ID: <20180419135316.GA14790@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.6.211
+X-Source-L: No
+X-Exim-ID: 1f99zx-001dxw-AF
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.175.6.211]:39794
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018 09:40:33 +0900
-Namhyung Kim <namhyung@kernel.org> wrote:
+Currently, the code block inside the for loop will never execute
+more than once, because the function returns inmediately after
+the first iteration, hence the execution of the code at the second
+iteration is structurally dead and, code at line 281: return 0; is
+never reached.
 
-> > I totally agree. I just want to make sure that whatever we come up with
-> > will be well thought out. Perhaps we can wait till November to talk
-> > about it.  
-> 
-> I'm not sure I can go to LPC this year, but definitely interested in
-> improving error logging for tracing.
+Based on the code comments, it seems that the actual intention is
+to execute the code inside the for loop twice instead of once.
 
-Feel free to send any ideas to us that you would like for us to add to
-this discussion.
+So, fix this issue by removing the return statement inside the for
+loop and replace the "return 0" with "return ret".
 
--- Steve
+Addresses-Coverity-ID: 1468009 ("Logically dead code")
+Addresses-Coverity-ID: 1468002 ("Structurally dead code")
+Fixes: 213fae74318b ("mmc: sdhci-cadence: send tune request twice to
+work around errata")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/mmc/host/sdhci-cadence.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+index bc30d16..facbad8 100644
+--- a/drivers/mmc/host/sdhci-cadence.c
++++ b/drivers/mmc/host/sdhci-cadence.c
+@@ -275,10 +275,9 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
+ 					 !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
+ 					 0, 1);
+ 
+-		return ret;
+ 	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)
+-- 
+2.7.4
