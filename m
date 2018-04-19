@@ -1,59 +1,89 @@
-Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
-X-Google-Smtp-Source: AB8JxZpLwLTCDd0nSKEUxxCLBZ2AZ1yEHCmrvAWzhPOPaJ1HxHy7CKOqisqODr/BM29wpadMa1fN
-ARC-Seal: i=1; a=rsa-sha256; t=1524307304; cv=none;
+Return-Path: <kernel-hardening-return-13051-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx49XpZ2kx/qZfWNJbdhqRdaBoVijp34FPOq5E6YkEuKuOjHvpcVCbGiWiT1wUc6kL24OKObE
+ARC-Seal: i=1; a=rsa-sha256; t=1524132647; cv=none;
         d=google.com; s=arc-20160816;
-        b=uurd+F2u991v5KMMsLN2FmJkPUNxu0lqEvQH355t4fDArHi8kmCjzRDUpjQ9McPLT3
-         p5+wJ2iITHqm/jgpj9eBIA/RrNe2mmV4AqQa9HkODoTiemHBvCI0nojmnOl76dRaNKrf
-         M8tFLu4vx9RYUi4mGNT4vJas/xtJr7IoyyA6bcdl3ceTVjQUYXwvXgz+o/Qs1O5zPjsY
-         ZxMgIU3Lwzid2eTbEM2k6wERk2T/TjDs2KuWdsluJPm5f/C+19qg2Qf4dlcxzsElJr6r
-         rBjBQfqruTA902AXsNNL5xDiSZBobfmPY+5O8bcno9VCbSQAAGQo5NDVTnt8TPAu53Ir
-         R64Q==
+        b=rGuCzsMcHAeYf+TUBSU6a2sNgdThkwxlfss6ezoU1vtstbAUeE5ik2mKRw8GU32aUz
+         eQ/WLxfN2Om1Y584Gj0ikW07up+6heg+VzqF25BW53kHKo3FpvQXGjiwBlzu0Je0W/fV
+         VdxVXB7XlH0ASsMvUXkxMKAf7c4xPgQ1gwL36jrXJM0eW/hfiru9Gz0s+Qd+UAgpf72w
+         wm6KpH/j7wLHwYCbv0N1mSD8ob2MgMREyyG2f3Q3Ix+ZvaxekV7Dt2A/aD/nLi7BZ5TT
+         Tj/gcPyuu8GISn10mSFfmi1U6j5ShUnirCXyb8OdKm1prYUuqA4LxdmGNVWmeuoZg9u0
+         QH5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:cc:references:to:subject
-         :arc-authentication-results;
-        bh=+EQWhNLpvIZUKZM4TqXi6L6cfymXTPaq/XGQtDtte0w=;
-        b=uB/puxe9vFcVXF5CiTnu9mI7hn/k07HIFbz8AU41anwD8vSBtWu2zkVoOdxUpaXn/Y
-         TtSGZsqaCjFGHMB9lBX5MMrgsR8clODspFaYFS5bWxYbCSvIViENOBrER+esSITw5RxS
-         VkA7RL2HvIaSOdMu5UMu6uLEO475cdX/NDJiDq6IwRWqMY+YgwDFaTxl47akSmJtzez3
-         DVYk0h0eeEMDsP2LIsqjGcZO2cpv2KPXtwULV64RrmyQonZEdFdfRrx3M9JqAV/xrOLK
-         Qo26P3mo4vxEqDY8DwRDgPibcGd3EzHo4HaHo8FVa9OOEBrySEUagc5eiupJoKCJ38M4
-         yI9Q==
+        h=subject:cc:to:from:date:user-agent:message-id:delivered-to:list-id
+         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
+         :mailing-list:arc-authentication-results;
+        bh=NPN7+RYHAufAceInr0Btq9ljNFwiz+RrblPczx++tCo=;
+        b=F8fkZtVwq3Fnga3vbUOezTdEKdqMr/+KhJFgiCAWKVkpH9nIoJfWy+OWBoLRxIMtwV
+         RZdpRXXj0eKFzS9kB2esrWMnCWxwggf3n63Y7FBvvJHID5b6khTnAxPIWtBP9kZC2iHh
+         NqGUsroAy8tBfUCEznfFgqEkVH9nv1faXxNvX9mEO/xtGjS6ukrfbD8OgubTcHEkVjXY
+         7DMR+mZT1jhzy8XcKMiGSVUJFtPt5S6JSySqeP7x49znqexvXvogHvr4fJFdXfL45Xc9
+         JdYZmvC0V8Gmxa1eNKEcLBrKQ0WfH7fsMTCS2fvVk+A268nuOyX7Z1LgR5WJfWs6Nf1J
+         71Mg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
+       spf=pass (google.com: domain of kernel-hardening-return-13051-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13051-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
-Subject: Re: WARNING: refcount bug in put_pid_ns
-To: syzbot <syzbot+66a731f39da94bb14930@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-References: <001a113f8bf6c849030568bb75d3@google.com>
-Cc: gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, pombredanne@nexb.com,
-        tglx@linutronix.de
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <44a322fa-6341-4b88-7f54-705c039f1538@I-love.SAKURA.ne.jp>
-Date: Sat, 21 Apr 2018 19:41:21 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <001a113f8bf6c849030568bb75d3@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+       spf=pass (google.com: domain of kernel-hardening-return-13051-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13051-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Message-Id: <20180419100441.548834519@linutronix.de>
+User-Agent: quilt/0.63-1
+Date: Thu, 19 Apr 2018 12:04:41 +0200
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+ Segher Boessenkool <segher@kernel.crashing.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Andrew Morton <akpm@linuxfoundation.org>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+ Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
+ Tony Luck <tony.luck@intel.com>
+Subject: [patch V2 0/8] rslib: Cleanup and VLA removal
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596487607739609259?=
-X-GMAIL-MSGID: =?utf-8?q?1598352055916545205?=
+X-GMAIL-THRID: =?utf-8?q?1598168914949440380?=
+X-GMAIL-MSGID: =?utf-8?q?1598168914949440380?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018/04/01 5:47, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on upstream commit
-> 9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
-> Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
-> syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=66a731f39da94bb14930
+Kees tried to get rid of the Variable Length Arrays in the Reed-Solomon
+library by replacing them with fixed length arrays on stack. Though they
+are rather large and Andrew did not fall in love with that solution.
 
-OK. The patch was sent to linux.git as commit 8e04944f0ea8b838.
+This series addresses that in a different way by splitting the rs control
+structure up, so that each invocation of rs_init() returns a new instance
+in which the decoder buffers are allocated. The polynom tables which build
+the base for the RS codecs are still shareable between the instances to
+avoid large allocations and initializations of the same data over and over.
 
-#syz fix: mm,vmscan: Allow preallocating memory for register_shrinker().
+The usage sites have been audited and fixed up where necessary to
+accomodate the decoder change which forbids parallel decoder invocation for
+a particular rs control instance to prevent buffer corruption.
+
+While at it the patch set tidies up the code and converts the related files
+over to use SPDX license identifiers.
+
+Changes since V1:
+
+   Simplify error path in the diskonchip code and use the proper
+   function to free the decoder.
+
+As this spawns multiple subsystems it should either go through Andrews tree
+or Kees can route it with his other hardening stuff.
+
+Thanks,
+
+        tglx
+
+8<---------------
+ drivers/md/dm-verity-fec.c        |    7 +
+ drivers/mtd/nand/raw/cafe_nand.c  |    7 -
+ drivers/mtd/nand/raw/diskonchip.c |   67 +++++-------
+ include/linux/rslib.h             |   46 ++++----
+ lib/reed_solomon/decode_rs.c      |   34 +++---
+ lib/reed_solomon/encode_rs.c      |   15 --
+ lib/reed_solomon/reed_solomon.c   |  203 ++++++++++++++++++++++----------------
+ 7 files changed, 205 insertions(+), 174 deletions(-)
