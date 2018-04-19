@@ -1,157 +1,255 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1763119-1524100578-2-6365007015760241858
+X-Cyrus-Session-Id: sloti22d1t05-1828774-1524102435-2-760121070998121157
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524100578; b=hADPJ2A8tfv62KdlBD6LN9/EFjZUn2Lvdjoaw5ylA+HXXwVaih
-    y/q/gmzS9v6iVcAjATB3e8XwaNCmMoCvYATEGqKjr67HrO/q9UOoBp/LIPc1QodZ
-    xtCPi/7wJdLX7ycqLrw//GGWI+FnYkOB38CpS12ioiwn/dGBVycO+5HSCeBJb3J4
-    zlmdS5WAFd61/zTmTb85fdHOnHbD+9cPISXIFn2gEaxO8F3wrQ8nUpnwPA+CAJbZ
-    EuDcjvMlRc2DhkOdAVNdiFv704G3sJXYmthtAmbVhHZTTKIy2Q3PjTAjnyLlv9yD
-    UpdmBDS+oMgbc7itB4GGPwJQ1qtgCrnmzZ+Q==
+    1524102435; b=LKxp7L1RyZkkOnVID8TTFjq3XFSOHhOlT0V07H4EByS8Is5WYU
+    P+cgK/y5+ROK4FGNvbSueVQ1Ku74yCDWYgLc09u1LMYCEbL7od2cqTsf+K2fiznB
+    GQLYghKxi341VQLz6bDx+U3afjFsDHIgS/0BIOt3/NWzF9ZK8qdx4358WkoP+v9T
+    M/9lsk89bub/q1dIeeBq3S5J7oSuJ7k4xLIHCKOnlDmG/INgL/6cNsvqjgd2cyc+
+    TIvIzGS1wVZB7MNjqWCLM20Q7yeOGlVyC4UEWZ6bqjZKpWDrIApNXm26z868spZW
+    BLbdzmoeLGWyQA9A2nWKnHd/NIaX3TKG0KCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524100578;
-    bh=bZyRvNFsE3MuHCIIyc+sOl+9HIdDqmbPD1XpEUlfxPs=; b=vPRfoFFhQwMc
-    2AnpEfY9PiT0vrNzPep+HfGliHMrYVFeN9fHIqNvPmX5snEFq+SmDBPpxQAIJCb3
-    exLuJjZMzr3G/luv1q2+9PgBjHx85rieZovW/6yqH0Sk0Fi1xShjJF5+l54Jte+T
-    lzJ0F2T8tgv9rD5In2k1KnIZ4KXfWJ253OVvc5+/HdIqDzCDjWs9rZZ5yBFAvrO3
-    3guTBeK6V2Ym2/TzKLiZzorpqsqXclthZozocyQv5x8fIiIPgekjYh6PrSi6e3Cb
-    H+w91mDQEEL6ps38brF4evQfBxI1G/QpsSYj6uEcHt8qz1hlnwe/BE0y9WT9Jxer
-    OrNwT9HAHQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=yahoo.com header.i=@yahoo.com header.b=PLazFpB9 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=s2048;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1524102435; bh=bSPsG8C2KUPUODfGMZ2Mab3PDO/6NTqKITkLVS4UJK
+    0=; b=XZOP9Y/VRNUc4spJrpl3Wplbjhuql5/+dW12J8BLuJNJ4Q3DWryHGrfng7
+    qNyw1djYaZPn6RMzFWcHsXAfGI7leSmnf1154uxjR69PY0R+2n1D8eI48m0TbE8O
+    m4KWCwrvrSUseOsP5EUWKR+LhggubgzSZY1qcR54HHTH/E0yFhnFSQG3lzhDRuo9
+    Q+STx2t5RgdiGZngiA4kAcxxvIgHbJ2j8IutLrQn8ED3wNRF8FaD62F/TizygP1D
+    sFd3N4XlgOL4OZb9n+S36kzMVBfEHkCkQLg9u2/BHoP1Sozo6pX0gle/Zi2hNVXK
+    9Sn81vRTtPBAgaMJDk79cAak9X9g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=E+AwJVaW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Yleo9/0L;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=schaufler-ca.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-80 state=0
-Authentication-Results: mx6.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=yahoo.com header.i=@yahoo.com header.b=PLazFpB9 x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=s2048;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=schaufler-ca.com;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=E+AwJVaW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Yleo9/0L;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=schaufler-ca.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-80 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK1edi2tTXidpUT4EvyGJwmHml3p1t5EN1+Im/5owjE0iT7fXriMgfXzwN0vCbTywAHjwwll0dn0gs3glxXmQ2WRcDr3/BXQCcIWrngpIM7PKDrvvQ5a
-    7Dxy18KWx1y6bgoiHkhiZ2Ra5K+qgZwl/iSc5REEOaAjGLRJ0Qu1oQ47KhswEVD01voRbO657zGrQs7XPHzTsgwmjRvJ+A595BfW0Y4HsBrE8PjcNkxofJaI
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=5HJ6KZJP-kkA:10
-    a=Kd1tUaAdevIA:10 a=YOyEBbWWr2YA:10 a=3NGxsLzzGfgA:10 a=ZZnuYtJkoWoA:10
-    a=vpqfxihKAAAA:8 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=0Oo42m8BVYP7GxH5SdkA:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AULIiLoY-XQsE5F6gcqX:22
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfOfIbeEpQgrYMeFntzaq9ZKkA/HfBG4z2FDd8n2M1xrF+v+Nu82gPJQ7DhYJq9BSBY87g8XmdCDxocGwaE/iDHy9GgZD4pTkUJ3EmVc1ED+Ea4lGoHaD
+    DNjyCdfSMD6AC4vlOaCNB+PnQ/9+jeOYAGtae6Zf6wRhKwxyv2J9l3B9D/Rndh5hZG96VTZJ4KBYOev6TfaOC269twZ1ukVYq/wjEbmn+0qGJnYIKvmyWNkS
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=EmDd13E5pkEA:10 a=IkcTkHD0fZMA:10
+    a=Kd1tUaAdevIA:10 a=20KFwNOVAAAA:8 a=NEAV23lmAAAA:8 a=xVhDTqbCAAAA:8
+    a=VwQbUJbxAAAA:8 a=qRfYg4EXcgQVTRYvy6MA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=GrmWmAYt4dzCMttCBZOh:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752308AbeDSBP6 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 18 Apr 2018 21:15:58 -0400
-Received: from sonic316-20.consmr.mail.bf2.yahoo.com ([74.6.130.194]:44946
-        "EHLO sonic316-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752135AbeDSBP6 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 18 Apr 2018 21:15:58 -0400
-X-YMail-OSG: 6ETDIScVM1ngf1IZvXwAtgJzQf3EaZScWdTJ3y9dzUpW7u3iFXGKYLj96v7W8.U
- _l8R9HTkwUwcQCBvSsmR4Aj9YuvZQ9idZBrfU6WmCFwJWHXrt3aSVqampSfcwFZR5V678QMqn8w4
- gztM39f33TfQIt1nVV5QsdLe1qwshjrxZlTToqlHRTJHKE.swX0pB9fBQc6qoFvXWAd2Wjf_l0LB
- N.WtZQb0OkJG12xgjk_9QymAMzREFD8pG7wqRBdee4tA3us.MAGmmr46SmYqqRsdZXRBbtTPeLob
- 4dXB.EvZDYVA0D2dw87ROb1coH2DqDFgiPAdbTzGyvYRlO2VXCDZOO9XffcU80d4NqxnUvnSd3Ax
- 4GpSWYRIkoN.ZTMyuL0VmHwMW1XMdPgmn4MC4m3f2.hcNy4qJ1.NWe3rTs2Evga8S08ZWwuez2rX
- ge.48rT_Q7txMtoL1x.dwdU1CHnRVmrT8AWsS_mPs8gDqtE6Kesem5DMHTO6iDzPE_PWqkH1Gwqi
- UtJl5gMRCmXS4mG8Y8o0riNhoyssuRhaDXQuqz2E9B4W082W0yleUHA8v7xdJaknJMTsAjCb1SB0
- jxN.kHK2HZjjpRTFgZToW
-Subject: Re: [RFC PATCH ghak32 V2 01/13] audit: add container id
-To: Paul Moore <paul@paul-moore.com>
-Cc: Richard Guy Briggs <rgb@redhat.com>, cgroups@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        id S1752696AbeDSBqx (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 18 Apr 2018 21:46:53 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:39449 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752308AbeDSBqw (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 18 Apr 2018 21:46:52 -0400
+X-Google-Smtp-Source: AIpwx4/tFMsCZ7RLbFOLrj0veBg6g1Tg+G5NqSRHRraCdqcIkcTXaHZlPHHsYA9uHrocpY97cZcAOf+yobS13PEn3Ao=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <11b43a498e768a14764594c808a96b34d52be0af.1521179281.git.rgb@redhat.com>
+References: <cover.1521179281.git.rgb@redhat.com> <11b43a498e768a14764594c808a96b34d52be0af.1521179281.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 18 Apr 2018 21:46:49 -0400
+Message-ID: <CAHC9VhRkstDMjd5T3w+iOUDjzDAs1AOm0xd3p6v_xn6fNGYQhA@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak32 V2 11/13] audit: add support for containerid to
+ network namespaces
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org,
         Linux-Audit Mailing List <linux-audit@redhat.com>,
         linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         netdev@vger.kernel.org, ebiederm@xmission.com, luto@kernel.org,
         jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
         viro@zeniv.linux.org.uk, simo@redhat.com,
         Eric Paris <eparis@parisplace.org>, serge@hallyn.com
-References: <cover.1521179281.git.rgb@redhat.com>
- <e284617ad667ad8f17958dd8babb87fe1b4d7205.1521179281.git.rgb@redhat.com>
- <CAHC9VhTyvxxj2e2Gn+iyW6iLLeYB7hp8a+JvfeMmJ2nUPqtEaw@mail.gmail.com>
- <32d3e7a6-36f0-571a-bb91-67f746c7eafa@schaufler-ca.com>
- <CAHC9VhTz-pr-iUVv-+R3ShwEKSHDsweDGuN7255HV7Cu3ZYPEw@mail.gmail.com>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <1adffa90-020d-54e1-fbf5-7fc929ccb44c@schaufler-ca.com>
-Date: Wed, 18 Apr 2018 18:15:46 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAHC9VhTz-pr-iUVv-+R3ShwEKSHDsweDGuN7255HV7Cu3ZYPEw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 4/18/2018 5:46 PM, Paul Moore wrote:
-> On Wed, Apr 18, 2018 at 8:41 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 4/18/2018 4:47 PM, Paul Moore wrote:
->>> On Fri, Mar 16, 2018 at 5:00 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
->>>> Implement the proc fs write to set the audit container ID of a process,
->>>> emitting an AUDIT_CONTAINER record to document the event.
->>>> ...
->>>>
->>>> diff --git a/include/linux/sched.h b/include/linux/sched.h
->>>> index d258826..1b82191 100644
->>>> --- a/include/linux/sched.h
->>>> +++ b/include/linux/sched.h
->>>> @@ -796,6 +796,7 @@ struct task_struct {
->>>>  #ifdef CONFIG_AUDITSYSCALL
->>>>         kuid_t                          loginuid;
->>>>         unsigned int                    sessionid;
->>>> +       u64                             containerid;
->>> This one line addition to the task_struct scares me the most of
->>> anything in this patchset.  Why?  It's a field named "containerid" in
->>> a perhaps one of the most widely used core kernel structures; the
->>> possibilities for abuse are endless, and it's foolish to think we
->>> would ever be able to adequately police this.
->> If we can get the LSM infrastructure managed task blobs from
->> module stacking in ahead of this we could create a trivial security
->> module to manage this. It's not as if there aren't all sorts of
->> interactions between security modules and the audit system already.
-> While yes, there are plenty of interactions between the two, it is
-> possible to use audit without the LSMs and I would like to preserve
-> that.  
+On Fri, Mar 16, 2018 at 5:00 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Audit events could happen in a network namespace outside of a task
+> context due to packets received from the net that trigger an auditing
+> rule prior to being associated with a running task.  The network
+> namespace could in use by multiple containers by association to the
+> tasks in that network namespace.  We still want a way to attribute
+> these events to any potential containers.  Keep a list per network
+> namespace to track these container identifiiers.
+>
+> Add/increment the container identifier on:
+> - initial setting of the container id via /proc
+> - clone/fork call that inherits a container identifier
+> - unshare call that inherits a container identifier
+> - setns call that inherits a container identifier
+> Delete/decrement the container identifier on:
+> - an inherited container id dropped when child set
+> - process exit
+> - unshare call that drops a net namespace
+> - setns call that drops a net namespace
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/32
+> See: https://github.com/linux-audit/audit-testsuite/issues/64
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  include/linux/audit.h       |  7 +++++++
+>  include/net/net_namespace.h | 12 ++++++++++++
+>  kernel/auditsc.c            |  9 ++++++---
+>  kernel/nsproxy.c            |  6 ++++++
+>  net/core/net_namespace.c    | 45 +++++++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 76 insertions(+), 3 deletions(-)
 
-Fair enough.
+...
 
-> Further, I don't want to entangle two very complicated code
-> changes or make the audit container ID effort dependent on LSM
-> stacking.
+> diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+> index 0490084..343a428 100644
+> --- a/include/net/net_namespace.h
+> +++ b/include/net/net_namespace.h
+> @@ -33,6 +33,7 @@
+>  #include <linux/ns_common.h>
+>  #include <linux/idr.h>
+>  #include <linux/skbuff.h>
+> +#include <linux/audit.h>
+>
+>  struct user_namespace;
+>  struct proc_dir_entry;
+> @@ -150,6 +151,7 @@ struct net {
+>  #endif
+>         struct sock             *diag_nlsk;
+>         atomic_t                fnhe_genid;
+> +       struct list_head        audit_containerid;
+>  } __randomize_layout;
 
-Also fair, although the use case for container audit IDs is
-already pulling in audit, namespaces (yeah, I know it's not
-necessary for a container to use namespaces) security modules
-(stacked and/or namespaced), cgroups and who knows what else.
+We talked about this briefly off-list, you should be using audit_net
+and the net_generic mechanism instead of this.
 
-> You're a good salesman Casey, but you're not that good ;)
+>  #include <linux/seq_file_net.h>
+> @@ -301,6 +303,16 @@ static inline struct net *read_pnet(const possible_net_t *pnet)
+>  #define __net_initconst        __initconst
+>  #endif
+>
+> +#ifdef CONFIG_NET_NS
+> +void net_add_audit_containerid(struct net *net, u64 containerid);
+> +void net_del_audit_containerid(struct net *net, u64 containerid);
+> +#else
+> +static inline void net_add_audit_containerid(struct net *, u64)
+> +{ }
+> +static inline void net_del_audit_containerid(struct net *, u64)
+> +{ }
+> +#endif
+> +
+>  int peernet2id_alloc(struct net *net, struct net *peer);
+>  int peernet2id(struct net *net, struct net *peer);
+>  bool peernet_has_id(struct net *net, struct net *peer);
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 2f02ed9..208da962 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -75,6 +75,7 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/fsnotify_backend.h>
+>  #include <uapi/linux/limits.h>
+> +#include <net/net_namespace.h>
+>
+>  #include "audit.h"
+>
+> @@ -2175,16 +2176,18 @@ static void audit_log_set_containerid(struct task_struct *task, u64 oldcontainer
+>   */
+>  int audit_set_containerid(struct task_struct *task, u64 containerid)
+>  {
+> -       u64 oldcontainerid;
+> +       u64 oldcontainerid = audit_get_containerid(task);
+>         int rc;
+> -
+> -       oldcontainerid = audit_get_containerid(task);
+> +       struct net *net = task->nsproxy->net_ns;
+>
+>         rc = audit_set_containerid_perm(task, containerid);
+>         if (!rc) {
+> +               if (cid_valid(oldcontainerid))
+> +                       net_del_audit_containerid(net, oldcontainerid);
 
-I have to keep the skills sharpened somehow!
+Using audit_net we can handle this internal to audit, which is a Good Thing.
 
-OK, I'll grant that this isn't a great fit.
+>                 task_lock(task);
+>                 task->containerid = containerid;
+>                 task_unlock(task);
+> +               net_add_audit_containerid(net, containerid);
 
+Same.
+
+>         }
+>
+>         audit_log_set_containerid(task, oldcontainerid, containerid, rc);
+> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+> index f6c5d33..d9f1090 100644
+> --- a/kernel/nsproxy.c
+> +++ b/kernel/nsproxy.c
+> @@ -140,6 +140,7 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
+>         struct nsproxy *old_ns = tsk->nsproxy;
+>         struct user_namespace *user_ns = task_cred_xxx(tsk, user_ns);
+>         struct nsproxy *new_ns;
+> +       u64 containerid = audit_get_containerid(tsk);
+>
+>         if (likely(!(flags & (CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWIPC |
+>                               CLONE_NEWPID | CLONE_NEWNET |
+> @@ -167,6 +168,7 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
+>                 return  PTR_ERR(new_ns);
+>
+>         tsk->nsproxy = new_ns;
+> +       net_add_audit_containerid(new_ns->net_ns, containerid);
+>         return 0;
+>  }
+
+Hopefully we can handle this in audit_net_init(), we just need to
+figure out where we can get the correct task_struct for the audit
+container ID (some backpointer in the net struct?).
+
+> @@ -217,6 +219,7 @@ int unshare_nsproxy_namespaces(unsigned long unshare_flags,
+>  void switch_task_namespaces(struct task_struct *p, struct nsproxy *new)
+>  {
+>         struct nsproxy *ns;
+> +       u64 containerid = audit_get_containerid(p);
+>
+>         might_sleep();
+>
+> @@ -224,6 +227,9 @@ void switch_task_namespaces(struct task_struct *p, struct nsproxy *new)
+>         ns = p->nsproxy;
+>         p->nsproxy = new;
+>         task_unlock(p);
+> +       net_del_audit_containerid(ns->net_ns, containerid);
+> +       if (new)
+> +               net_add_audit_containerid(new->net_ns, containerid);
+
+Okay, we might need a hook here for switching namespaces, but I would
+much rather it be a generic audit hook that calls directly into audit.
+
+-- 
+paul moore
+www.paul-moore.com
