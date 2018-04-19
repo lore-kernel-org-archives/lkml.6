@@ -1,34 +1,32 @@
-Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AIpwx49eqvEuIk3ynb+tW4e8NSqiNRsFfZZ0Kz0G3Janft6wFCuEe1dzk1Q2KBl5OD9tzBpTwvyg
-ARC-Seal: i=1; a=rsa-sha256; t=1524060051; cv=none;
+Return-Path: <pavel@ucw.cz>
+X-Google-Smtp-Source: AIpwx4/Qh0Tq7ux8YErxcdYI+V7e8rtYc0O4fhMdmYiHVwSeESeKhVkbr6OiRQj9NIR6zQ6c6pjM
+ARC-Seal: i=1; a=rsa-sha256; t=1524168837; cv=none;
         d=google.com; s=arc-20160816;
-        b=YL1RfpphxRrr8Cs7UuIpnv/TGwLMS+ZCHCuKEJoNRt8PM2L3mo2FdwFm7h8uHBz2DO
-         ifIRgLF9AHBceY2ipniBdffBbtfgD80mBlnJrZoyjd9DuI0jv6459ShZtRSgDgj7aoDY
-         oy+5WRAahINOnrtjkVvThinW9dqImIOs6JhwJFs2AXQ8fZo6zQk+ItsLB7eUgZRNXuV1
-         xBFXJlYPeBN6DfYMWPoDs/oPp4gnyWY9+iyUo7r/ZHljq7Ytbb0D9CniZ2rjoRudzeY2
-         a+a4TL3NO0c5UQrcTB0ebnFIWxYOqtuvTtlcBEQRFjc+BCo1c1I4qm5koYWmwX4VGII8
-         TYcQ==
+        b=LmJbt7sA9IPcfexaZye0kPTf/O2jHw1KQArv2oFpgFSUIAQVXrScU1MfpzLNYGp/bU
+         jTh7qGDLw0hda0/i2Fqk8o5ZbiRVaUOBj1NY0fSzwbd5UOsh8EoOB/+oPHFCoVY427lg
+         rFoaVg66xA7oC/lDQqOi0iWnkfDlSXEOK9bg1JPz13RYFUKTNY+VggJsU9YV5MXRyWyB
+         MjHi0+v9CsKyw9Q0oJ2wkpAYHlvL5JpMcSgS8h4gw+e0nY0f0z8ANV1QMW5QQ6gL5Uu3
+         Hk+5Y/p3XSyMs5mYz5mTc/aSmp9S6YtvR74udO0oMch7g9J8C43T0kFDX3R9Y+hH7MMN
+         s10A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=EYPByxSrWiJpX6wPiv6WNi5XMCle679VIzzTj9GK6ms=;
-        b=sPNDZlq5CHPAEVHzCYkg+QkB9GCdBqfDWjIvowyzzag7YjmV4OZNKO/lygYSatNcUW
-         dY5dkpoKC/gGLqch8mufaJZVnMNPGPX2ORwZPTRkYh03c/AFEFp8Im51AO5jAYfeTM01
-         LD2PDKqawlgvvRZSip+nlbHcxeb8jBo51ETdYVL7V48lrPZ2Olq4GVTPvr4aCi51ygKd
-         u2iDKn6cqoeWusxCrO1Gyqahkfusurge36Qfd76BbLMAjTGIFJ+4eQ5lHiBhCO/LJUVe
-         BuQYobF5bJeyFw8MPzEPl4onPzIPPCoj3fX6boj1vFiaS4NHvNwHyFHUOs5ObGlGDdI/
-         tj4A==
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=zR2bqg3zM/RK30ITJ0MloKFdIF6gxbMOzfyz5fLy8Cw=;
+        b=XkJGJxcAZn04DzG5euGPgD3SL3GBTjfZnAqq1zdl5nGbnPpKSxzeFQ9NI7kQjIJVof
+         kaPrjrwTssN4MURgJLvCeyoHea2ep5RB9CfGY5pbdKritSjiDbCkLVh9uMcIapGIV+cU
+         elN+j1LlavUmSLvi8VZKspu2aDs3IdXUVbSSamPHJ6bk8U1nBPF2pGu5uHq8DYD9Xp9L
+         N5DsDuyj47vddv5NqIhTwC/DVn7352/LGkxXooKpk5MrOyFG6CrqBOO27vfyNWuktUh7
+         60JV9/DQ7WSDn4CWr7zRXpRQA9KZbujfIbilfvlbM5KNescJyUmM7I3HXQ8KSwrnJ29a
+         6J9A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=KY52i07e;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=KY52i07e;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk
-Date: Wed, 18 Apr 2018 15:00:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>,
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+Date: Thu, 19 Apr 2018 22:13:56 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Mark Brown <broonie@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
 	Len Brown <len.brown@intel.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -38,60 +36,72 @@ Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH/RFC 0/2] regulator: bd9571mwv: Add support for toggle
  power switches
-Message-ID: <20180418140041.GD10061@sirena.org.uk>
+Message-ID: <20180419201356.GC25034@amd>
 References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
  <CAMuHMdXyWs1v_D4EUd-H75Q3cpQv6yD2V_MptjJP7FjYhu5c3g@mail.gmail.com>
+ <20180418140041.GD10061@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d01dLTUuW90fS44H"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Clx92ZfkiYIKRjnr"
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXyWs1v_D4EUd-H75Q3cpQv6yD2V_MptjJP7FjYhu5c3g@mail.gmail.com>
-X-Cookie: Sank heaven for leetle curls.
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180418140041.GD10061@sirena.org.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594912189945282587?=
-X-GMAIL-MSGID: =?utf-8?q?1598092792840028547?=
+X-GMAIL-MSGID: =?utf-8?q?1598206862979433121?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
---d01dLTUuW90fS44H
+--Clx92ZfkiYIKRjnr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 18, 2018 at 03:29:36PM +0200, Geert Uytterhoeven wrote:
+On Wed 2018-04-18 15:00:41, Mark Brown wrote:
+> On Wed, Apr 18, 2018 at 03:29:36PM +0200, Geert Uytterhoeven wrote:
+>=20
+> > Any comments/suggestions?
+>=20
+> > In case you lost the patches from the thread:
+> > https://www.spinics.net/lists/linux-renesas-soc/msg24955.html
+>=20
+> Please don't send content free pings and please allow a reasonable time
+> for review.  People get busy, go on holiday, attend conferences and so=20
+> on so unless there is some reason for urgency (like critical bug fixes)
+> please allow at least a couple of weeks for review.  If there have been
+> review comments then people may be waiting for those to be
 
-> Any comments/suggestions?
+If I follow the logs right, there was one month before ping. That
+seems pretty reasonable time.
 
-> In case you lost the patches from the thread:
-> https://www.spinics.net/lists/linux-renesas-soc/msg24955.html
+> Sending content free pings adds to the mail volume (if they are seen at
+> all) which is often the problem and since they can't be reviewed
 
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
+Yep, and sending content free complains about pings also adds to the
+main volume :-(.
 
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, though there are some other maintainers who like them - if in
-doubt look at how patches for the subsystem are normally handled.
+Anyway, last time I sent you a patch... you _had_ time to complain
+that I'm pinging too often, but you apparently did not have time to
+look at the patch. That patch would have been in time for v4.16-rc1
+IIRC.
 
---d01dLTUuW90fS44H
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Clx92ZfkiYIKRjnr
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrXT4gACgkQJNaLcl1U
-h9BGRgf/UK0584WhI/uF11UE360O9nzjxeZ0V49GOZeeNGdDKuEocD8E0WDJyjsC
-7fS3e1O65HWrpo41ZwNKxPrlZJjjXLkpKc6K48RYKqSnJXHvrFFDkUXQcRDDfTl5
-yJmxcpR08MUNvktu/Hnok7dMMN4G5p91uYEQX9PzNQriUkHLNAS/OXYlTQV+Ilig
-Cls2T6V0KUSZeSRKyvyEaBrQWQ6BSHSXeGozmyCpZtgzhjW966HVvlEBOzHaaldd
-vyeU+LWpKR1n8S0SPIeEJyXKzC/c3QNiof2p1G2DpHL5TbjdObm8cItiR1257lbC
-ZP/hE90KJKrHZs7L5GM0LkJM2Pf5iw==
-=GAQa
+iEYEARECAAYFAlrY+IQACgkQMOfwapXb+vLzqgCeL7ZTf7fKhjiIrRwjNAwROwiz
+kdsAni5RaYPZ16cP2+bhWpf5juj0RsL5
+=aa5D
 -----END PGP SIGNATURE-----
 
---d01dLTUuW90fS44H--
+--Clx92ZfkiYIKRjnr--
