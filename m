@@ -1,100 +1,100 @@
-Return-Path: <kernel-hardening-return-13071-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AB8JxZrMDJvFTXVhH03qpEZwPrMjVgMbgfSqfoxTH3cy38RJjLD4yulJXXhQf7GCRqR8IsAi5s0J
-ARC-Seal: i=1; a=rsa-sha256; t=1524265364; cv=none;
+Return-Path: <kernel-hardening-return-13058-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AIpwx4+o5dhMUO9Yyb1W+kDFn6m5jEqFcPvD47DW82cY2F9WC8FYcKUg62SSfRPpC2wwtn9RSuBB
+ARC-Seal: i=1; a=rsa-sha256; t=1524132715; cv=none;
         d=google.com; s=arc-20160816;
-        b=Z7uMUKdPwBOFBlKhAVgtxkPPVJQ1m6smmN08FXLOseVjxJ6fRFzgRUHa0RTYcJxy6V
-         IY4Az5ug8rS76B5p89LHQ6qOkeXXY869BnS4yqHTXtz4+Y6zY+eYzpv751QKZMR6cUa3
-         qpttgi4lMh81iVKPbWURBWzUhwUvZEnn5B4bD+R4nh3T8mswH8VNrovUUnPbpYJegO0P
-         ZQFBYwIBRGID8ijCFsEFZh7lEd+qfmm5DBUI4RW7tmZoLFgub6Vv7r2+rMexQ+ZxGDNA
-         nVq+5lxpXThS3C6VnMUO3pR1GiybcFKOkZMNISjGezlnhj0TSjxI59J5JaV0I4exKGDy
-         O5Qg==
+        b=R9hTdbyzoIM58ixmrY9K9i6I2EdMyM7J9e2mbSQFsATrMRIyNnaEN8QyvHIqezZAoI
+         dIsBKcFxH/kvDnTf81AnQygG4rEjVrEO8xvzGsKlm/JMNDbW8XP2ol6n6zb4LMIrpVYx
+         SoCnEwnN8GxZyoan45GB4OctdSRXeSMMCqbv5KzacJK5CS634BPS5Id9ACFdwYYvcTAb
+         CUQIVIg7SLoJU6X+9+tgH3r98J8EwG9DMWga3r3AjHxkdEj0cklh3BHmU5Aojc7DLMs7
+         3Hc8rahKhns4V1A3No/VNghkuQjvljclehXnESqrwZGWOpI53fdVAgJw+/f9TyEDxqIv
+         S2PA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature:delivered-to:list-id
-         :list-subscribe:list-unsubscribe:list-help:list-post:precedence
-         :mailing-list:arc-authentication-results;
-        bh=f36b3S68UGE2ELMJ/4gx+1P8nKeu7OJTKZnKYv2xhKw=;
-        b=ZQs/fIetDnllQk7ztDQ+HR/w+K2MU6rCDB/guTvyrweQCoodfkWa61naZ+zFQfi76R
-         UHPp+7SE8Co1Crie9LPw7L8+Iu4KDSPxcfpL4e1K9MjsFT9SQLm6aY3tsqiRqBlymD7h
-         ZsanDVAnH/4u2Su7F/p4ooRHh9ZBGho+t6Hd0aKkAlvZAwaaouwcSpV+1K5JvBImptN2
-         OotDUJGa3/F2d/JAYxrebrr1VjfGxPLFJV62F0BK/z9WILsxW3fXhJitbRXB/yEyQ9/F
-         vnun6xq2PXe+Nd9hiY5rsxA5FAQXBu/duy6O2PnUXjHmeLsRtCSxiQRbz3V8kieOe/7s
-         1a5w==
+        h=content-disposition:mime-version:references:subject:cc:to:from:date
+         :user-agent:message-id:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
+         :arc-authentication-results;
+        bh=gfB842Af8PWCWK746Zpy1GVFG1SIhWGgMQPDQhH/W/0=;
+        b=OsHN6i306z+DE0eHxeLX9sGRt8R4vZnU899Offc0gOlqDJyEL5eSefRieAviiUSSdu
+         zwbwBKKkLummIJE3sj07wengdC33tev33hB2n2tNzoVIYBYO1sjF2YX0HT8O/NOQPeMc
+         CJiWSH7JK6p2m5Nuco1oPOdZlKchvshW+L7cNioEvyCEA//6GccaMpQUycH0VwOhwwfY
+         uP2FFnlPry5170SGj2BVvtNhWEvDaU/94OxUs6Sb673Py2Mfvk6O/3Ppbr0pJjeanJ8u
+         dU6d9z6QCaqfeWeuHu5PCLH4Mx0ILxD9L9XY41e5NXORbTYHSvDw/PXPaWCGEpweFtRZ
+         fIdA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=hRvKC+BQ;
-       dkim=pass header.i=@chromium.org header.s=google header.b=BzFY6vey;
-       spf=pass (google.com: domain of kernel-hardening-return-13071-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13071-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-13058-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13058-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=hRvKC+BQ;
-       dkim=pass header.i=@chromium.org header.s=google header.b=BzFY6vey;
-       spf=pass (google.com: domain of kernel-hardening-return-13071-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13071-gregkh=linuxfoundation.org@lists.openwall.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: domain of kernel-hardening-return-13058-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13058-gregkh=linuxfoundation.org@lists.openwall.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <20180419100441.548834519@linutronix.de>
+Message-Id: <20180419100935.340306831@linutronix.de>
+User-Agent: quilt/0.63-1
+Date: Thu, 19 Apr 2018 12:04:48 +0200
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+ Segher Boessenkool <segher@kernel.crashing.org>,
+ Kernel Hardening <kernel-hardening@lists.openwall.com>,
+ Andrew Morton <akpm@linuxfoundation.org>,
+ Boris Brezillon <boris.brezillon@free-electrons.com>,
+ Richard Weinberger <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+ Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
+ Tony Luck <tony.luck@intel.com>
+Subject: [patch V2 7/8] dm verity fec: Check result of init_rs()
 References: <20180419100441.548834519@linutronix.de>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 20 Apr 2018 16:02:23 -0700
-X-Google-Sender-Auth: x1-kAjkSXt0hm8jVAByFLCIhZJk
-Message-ID: <CAGXu5jLs43nUASmLPrKf-eycoYZR3K_vuWi8Q+RaruFfodB0oQ@mail.gmail.com>
-Subject: Re: [patch V2 0/8] rslib: Cleanup and VLA removal
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Segher Boessenkool <segher@kernel.crashing.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>,
-	Andrew Morton <akpm@linuxfoundation.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-	Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline;
+ filename=dm_verity_fec--Check_result_of_init_rs--.patch
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598168914949440380?=
-X-GMAIL-MSGID: =?utf-8?q?1598308078574338650?=
+X-GMAIL-THRID: =?utf-8?q?1598168985985100525?=
+X-GMAIL-MSGID: =?utf-8?q?1598168985985100525?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 3:04 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> Kees tried to get rid of the Variable Length Arrays in the Reed-Solomon
-> library by replacing them with fixed length arrays on stack. Though they
-> are rather large and Andrew did not fall in love with that solution.
->
-> This series addresses that in a different way by splitting the rs control
-> structure up, so that each invocation of rs_init() returns a new instance
-> in which the decoder buffers are allocated. The polynom tables which build
-> the base for the RS codecs are still shareable between the instances to
-> avoid large allocations and initializations of the same data over and over.
->
-> The usage sites have been audited and fixed up where necessary to
-> accomodate the decoder change which forbids parallel decoder invocation for
-> a particular rs control instance to prevent buffer corruption.
->
-> While at it the patch set tidies up the code and converts the related files
-> over to use SPDX license identifiers.
->
-> Changes since V1:
->
->    Simplify error path in the diskonchip code and use the proper
->    function to free the decoder.
->
-> As this spawns multiple subsystems it should either go through Andrews tree
-> or Kees can route it with his other hardening stuff.
+From: Thomas Gleixner <tglx@linutronix.de>
 
-I can start collecting ignored VLA patches. I haven't done that yet as
-most maintainers have been taking them. There are only a handful
-unapplied. Should I start the tree with rslib? :)
+The allocation of the reed solomon control structure can fail, but
+fec_alloc_bufs() ignores that and subsequent operations in dm verity use
+the potential NULL pointer unconditionally.
 
-Either way:
+Add a proper check and abort if init_rs() fails.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Anton Vorontsov <anton@enomsg.org>
+Cc: Colin Cross <ccross@android.com>
+Cc: Andrew Morton <akpm@linuxfoundation.org>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Alasdair Kergon <agk@redhat.com>
 
--Kees
+---
+ drivers/md/dm-verity-fec.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
--- 
-Kees Cook
-Pixel Security
+--- a/drivers/md/dm-verity-fec.c
++++ b/drivers/md/dm-verity-fec.c
+@@ -308,8 +308,13 @@ static int fec_alloc_bufs(struct dm_veri
+ {
+ 	unsigned n;
+ 
+-	if (!fio->rs)
++	if (!fio->rs) {
+ 		fio->rs = mempool_alloc(v->fec->rs_pool, GFP_NOIO);
++		if (!fio->rs) {
++			DMERR("failed to allocate RS control structure");
++			return -ENOMEM;
++		}
++	}
+ 
+ 	fec_for_each_prealloc_buffer(n) {
+ 		if (fio->bufs[n])
