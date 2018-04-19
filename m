@@ -1,270 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753436AbeDSNjs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:39:48 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:41702 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753040AbeDSNjo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:39:44 -0400
-X-Google-Smtp-Source: AB8JxZrcIfKYeQZbZRQm45vrVsHebBvBcZtMx9gGdx2ZGBuvYcZg9rG+emEPFhuloQjQW27KAMtkiA==
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-To: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
-        jgross@suse.com, lyan@suse.com, boris.ostrovsky@oracle.com
-Cc: andr2000@gmail.com, andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v2] Input: xen-kbdfront - allow better run-time configuration
-Date: Thu, 19 Apr 2018 16:39:34 +0300
-Message-Id: <20180419133934.31306-1-andr2000@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753428AbeDSNkR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:40:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35321 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753022AbeDSNb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 09:31:56 -0400
+Date: Thu, 19 Apr 2018 15:31:54 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: David Airlie <airlied@linux.ie>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Liu <net147@gmail.com>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/6] drm/sun4i: tcon: Add dithering support for
+ RGB565/RGB666 LCD panels
+Message-ID: <20180419133154.2w2obz2su4pfmk25@flea>
+References: <20180419093225.614-1-wens@csie.org>
+ <20180419093225.614-4-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ljq2lntxmyrq7fgp"
+Content-Disposition: inline
+In-Reply-To: <20180419093225.614-4-wens@csie.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-It is now only possible to control if multi-touch virtual device
-is created or not (via the corresponding XenStore entries),
-but keyboard and pointer devices are always created.
-In some cases this is not desirable. For example, if virtual
-keyboard device is exposed to Android then the latter won't
-automatically show on-screen keyboard as it expects that a
-physical keyboard device can be used for typing.
+--ljq2lntxmyrq7fgp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Make it possible to configure which virtual devices are created
-with module parameters:
-  - provide no_ptr_dev if no pointer device needs to be created
-  - provide no_kbd_dev if no keyboard device needs to be created
-Keep old behavior by default.
+Hi,
 
-Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
-Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
----
-Changes since v1:
-  - changed module parameters from uint to bool
+On Thu, Apr 19, 2018 at 05:32:22PM +0800, Chen-Yu Tsai wrote:
+> From: Jonathan Liu <net147@gmail.com>
+>=20
+> The hardware supports dithering on TCON channel 0 which is used for LCD
+> panels.
+>=20
+> Dithering is a method of approximating a color from a mixture of other
+> colors when the required color isn't available. It reduces color
+> banding artifacts that can be observed when displaying gradients
+> (e.g. grayscale gradients). This may occur when the image that needs
+> to be displayed is 24-bit but the LCD panel is a lower bit depth and
+> does not perform dithering on its own.
+>=20
+> Signed-off-by: Jonathan Liu <net147@gmail.com>
+> [wens@csie.org: check display_info.bpc first; handle LVDS and MIPI DSI]
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+>=20
+> Hi Maxime,
+>=20
+> The dithering parameters used here are different from the ones you used
+> in your MIPI DSI series. You might want to check if it still works for
+> you.
+>=20
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 63 +++++++++++++++++++++++++++++-
+>  1 file changed, 62 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
+un4i_tcon.c
+> index 2bd53ef7d4b8..827518f4790e 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> @@ -12,6 +12,7 @@
+> =20
+>  #include <drm/drmP.h>
+>  #include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_connector.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_encoder.h>
+> @@ -276,8 +277,59 @@ static void sun4i_tcon0_mode_set_common(struct sun4i=
+_tcon *tcon,
+>  		     SUN4I_TCON0_BASIC0_Y(mode->crtc_vdisplay));
+>  }
+> =20
+> +static void sun4i_tcon0_mode_set_dithering(struct sun4i_tcon *tcon,
+> +					   const struct drm_connector *connector)
+> +{
+> +	u32 bus_format =3D 0;
+> +	u32 val =3D 0;
+> +
+> +	/* XXX Would this ever happen? */
+> +	if (!connector)
+> +		return;
+> +
+> +	/*
+> +	 * FIXME: Undocumented bits
+> +	 *
+> +	 * The whole dithering process and these parameters are not
+> +	 * explained in the vendor documents or BSP kernel code.
+> +	 */
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_SEED_PR_REG, 0x11111111);
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_SEED_PG_REG, 0x11111111);
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_SEED_PB_REG, 0x11111111);
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_SEED_LR_REG, 0x11111111);
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_SEED_LG_REG, 0x11111111);
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_SEED_LB_REG, 0x11111111);
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_TBL0_REG, 0x01010000);
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_TBL1_REG, 0x15151111);
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_TBL2_REG, 0x57575555);
+> +	regmap_write(tcon->regs, SUN4I_TCON0_FRM_TBL3_REG, 0x7f7f7777);
+> +
+> +	/* Do dithering if panel only supports 6 bits per color */
+> +	if (connector->display_info.bpc =3D=3D 6)
+> +		val |=3D SUN4I_TCON0_FRM_CTL_EN;
+> +
+> +	if (connector->display_info.num_bus_formats =3D=3D 1)
+> +		bus_format =3D connector->display_info.bus_formats[0];
+> +
+> +	/* Check the connection format */
+> +	switch (bus_format) {
+> +	case MEDIA_BUS_FMT_RGB565_1X16:
+> +		/* R and B components are only 5 bits deep */
+> +		val |=3D SUN4I_TCON0_FRM_CTL_MODE_R;
+> +		val |=3D SUN4I_TCON0_FRM_CTL_MODE_B;
+> +	case MEDIA_BUS_FMT_RGB666_1X18:
+> +	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
+> +		/* Fall through: enable dithering */
+> +		val |=3D SUN4I_TCON0_FRM_CTL_EN;
+> +		break;
+> +	}
+> +
+> +	/* Write dithering settings */
+> +	regmap_write(tcon->regs, SUN4I_TCON_FRM_CTL_REG, val);
+> +}
+> +
+>  static void sun4i_tcon0_mode_set_cpu(struct sun4i_tcon *tcon,
+> -				     struct drm_encoder *encoder,
+> +				     const struct drm_encoder *encoder,
 
- drivers/input/misc/xen-kbdfront.c | 159 +++++++++++++++++-------------
- 1 file changed, 92 insertions(+), 67 deletions(-)
+The whole serie looks good, but that should probbaly be part of the
+first patch?
 
-diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
-index d91f3b1c5375..d8cca212f737 100644
---- a/drivers/input/misc/xen-kbdfront.c
-+++ b/drivers/input/misc/xen-kbdfront.c
-@@ -51,6 +51,16 @@ module_param_array(ptr_size, int, NULL, 0444);
- MODULE_PARM_DESC(ptr_size,
- 	"Pointing device width, height in pixels (default 800,600)");
- 
-+static bool no_ptr_dev;
-+module_param(no_ptr_dev, bool, 0);
-+MODULE_PARM_DESC(no_ptr_dev,
-+	"If set then no virtual pointing device exposed to the guest");
-+
-+static bool no_kbd_dev;
-+module_param(no_kbd_dev, bool, 0);
-+MODULE_PARM_DESC(no_kbd_dev,
-+	"If set then no virtual keyboard device exposed to the guest");
-+
- static int xenkbd_remove(struct xenbus_device *);
- static int xenkbd_connect_backend(struct xenbus_device *, struct xenkbd_info *);
- static void xenkbd_disconnect_backend(struct xenkbd_info *);
-@@ -63,6 +73,9 @@ static void xenkbd_disconnect_backend(struct xenkbd_info *);
- static void xenkbd_handle_motion_event(struct xenkbd_info *info,
- 				       struct xenkbd_motion *motion)
- {
-+	if (unlikely(!info->ptr))
-+		return;
-+
- 	input_report_rel(info->ptr, REL_X, motion->rel_x);
- 	input_report_rel(info->ptr, REL_Y, motion->rel_y);
- 	if (motion->rel_z)
-@@ -73,6 +86,9 @@ static void xenkbd_handle_motion_event(struct xenkbd_info *info,
- static void xenkbd_handle_position_event(struct xenkbd_info *info,
- 					 struct xenkbd_position *pos)
- {
-+	if (unlikely(!info->ptr))
-+		return;
-+
- 	input_report_abs(info->ptr, ABS_X, pos->abs_x);
- 	input_report_abs(info->ptr, ABS_Y, pos->abs_y);
- 	if (pos->rel_z)
-@@ -97,6 +113,9 @@ static void xenkbd_handle_key_event(struct xenkbd_info *info,
- 		return;
- 	}
- 
-+	if (unlikely(!dev))
-+		return;
-+
- 	input_event(dev, EV_KEY, key->keycode, value);
- 	input_sync(dev);
- }
-@@ -192,7 +211,7 @@ static int xenkbd_probe(struct xenbus_device *dev,
- 				  const struct xenbus_device_id *id)
- {
- 	int ret, i;
--	unsigned int abs, touch;
-+	unsigned int touch;
- 	struct xenkbd_info *info;
- 	struct input_dev *kbd, *ptr, *mtouch;
- 
-@@ -211,24 +230,6 @@ static int xenkbd_probe(struct xenbus_device *dev,
- 	if (!info->page)
- 		goto error_nomem;
- 
--	/* Set input abs params to match backend screen res */
--	abs = xenbus_read_unsigned(dev->otherend,
--				   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
--	ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
--						  XENKBD_FIELD_WIDTH,
--						  ptr_size[KPARAM_X]);
--	ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
--						  XENKBD_FIELD_HEIGHT,
--						  ptr_size[KPARAM_Y]);
--	if (abs) {
--		ret = xenbus_write(XBT_NIL, dev->nodename,
--				   XENKBD_FIELD_REQ_ABS_POINTER, "1");
--		if (ret) {
--			pr_warn("xenkbd: can't request abs-pointer\n");
--			abs = 0;
--		}
--	}
--
- 	touch = xenbus_read_unsigned(dev->nodename,
- 				     XENKBD_FIELD_FEAT_MTOUCH, 0);
- 	if (touch) {
-@@ -241,60 +242,84 @@ static int xenkbd_probe(struct xenbus_device *dev,
- 	}
- 
- 	/* keyboard */
--	kbd = input_allocate_device();
--	if (!kbd)
--		goto error_nomem;
--	kbd->name = "Xen Virtual Keyboard";
--	kbd->phys = info->phys;
--	kbd->id.bustype = BUS_PCI;
--	kbd->id.vendor = 0x5853;
--	kbd->id.product = 0xffff;
--
--	__set_bit(EV_KEY, kbd->evbit);
--	for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
--		__set_bit(i, kbd->keybit);
--	for (i = KEY_OK; i < KEY_MAX; i++)
--		__set_bit(i, kbd->keybit);
--
--	ret = input_register_device(kbd);
--	if (ret) {
--		input_free_device(kbd);
--		xenbus_dev_fatal(dev, ret, "input_register_device(kbd)");
--		goto error;
-+	if (!no_kbd_dev) {
-+		kbd = input_allocate_device();
-+		if (!kbd)
-+			goto error_nomem;
-+		kbd->name = "Xen Virtual Keyboard";
-+		kbd->phys = info->phys;
-+		kbd->id.bustype = BUS_PCI;
-+		kbd->id.vendor = 0x5853;
-+		kbd->id.product = 0xffff;
-+
-+		__set_bit(EV_KEY, kbd->evbit);
-+		for (i = KEY_ESC; i < KEY_UNKNOWN; i++)
-+			__set_bit(i, kbd->keybit);
-+		for (i = KEY_OK; i < KEY_MAX; i++)
-+			__set_bit(i, kbd->keybit);
-+
-+		ret = input_register_device(kbd);
-+		if (ret) {
-+			input_free_device(kbd);
-+			xenbus_dev_fatal(dev, ret, "input_register_device(kbd)");
-+			goto error;
-+		}
-+		info->kbd = kbd;
- 	}
--	info->kbd = kbd;
- 
- 	/* pointing device */
--	ptr = input_allocate_device();
--	if (!ptr)
--		goto error_nomem;
--	ptr->name = "Xen Virtual Pointer";
--	ptr->phys = info->phys;
--	ptr->id.bustype = BUS_PCI;
--	ptr->id.vendor = 0x5853;
--	ptr->id.product = 0xfffe;
--
--	if (abs) {
--		__set_bit(EV_ABS, ptr->evbit);
--		input_set_abs_params(ptr, ABS_X, 0, ptr_size[KPARAM_X], 0, 0);
--		input_set_abs_params(ptr, ABS_Y, 0, ptr_size[KPARAM_Y], 0, 0);
--	} else {
--		input_set_capability(ptr, EV_REL, REL_X);
--		input_set_capability(ptr, EV_REL, REL_Y);
--	}
--	input_set_capability(ptr, EV_REL, REL_WHEEL);
-+	if (!no_ptr_dev) {
-+		unsigned int abs;
-+
-+		/* Set input abs params to match backend screen res */
-+		abs = xenbus_read_unsigned(dev->otherend,
-+					   XENKBD_FIELD_FEAT_ABS_POINTER, 0);
-+		ptr_size[KPARAM_X] = xenbus_read_unsigned(dev->otherend,
-+							  XENKBD_FIELD_WIDTH,
-+							  ptr_size[KPARAM_X]);
-+		ptr_size[KPARAM_Y] = xenbus_read_unsigned(dev->otherend,
-+							  XENKBD_FIELD_HEIGHT,
-+							  ptr_size[KPARAM_Y]);
-+		if (abs) {
-+			ret = xenbus_write(XBT_NIL, dev->nodename,
-+					   XENKBD_FIELD_REQ_ABS_POINTER, "1");
-+			if (ret) {
-+				pr_warn("xenkbd: can't request abs-pointer\n");
-+				abs = 0;
-+			}
-+		}
- 
--	__set_bit(EV_KEY, ptr->evbit);
--	for (i = BTN_LEFT; i <= BTN_TASK; i++)
--		__set_bit(i, ptr->keybit);
-+		ptr = input_allocate_device();
-+		if (!ptr)
-+			goto error_nomem;
-+		ptr->name = "Xen Virtual Pointer";
-+		ptr->phys = info->phys;
-+		ptr->id.bustype = BUS_PCI;
-+		ptr->id.vendor = 0x5853;
-+		ptr->id.product = 0xfffe;
-+
-+		if (abs) {
-+			__set_bit(EV_ABS, ptr->evbit);
-+			input_set_abs_params(ptr, ABS_X, 0, ptr_size[KPARAM_X], 0, 0);
-+			input_set_abs_params(ptr, ABS_Y, 0, ptr_size[KPARAM_Y], 0, 0);
-+		} else {
-+			input_set_capability(ptr, EV_REL, REL_X);
-+			input_set_capability(ptr, EV_REL, REL_Y);
-+		}
-+		input_set_capability(ptr, EV_REL, REL_WHEEL);
- 
--	ret = input_register_device(ptr);
--	if (ret) {
--		input_free_device(ptr);
--		xenbus_dev_fatal(dev, ret, "input_register_device(ptr)");
--		goto error;
-+		__set_bit(EV_KEY, ptr->evbit);
-+		for (i = BTN_LEFT; i <= BTN_TASK; i++)
-+			__set_bit(i, ptr->keybit);
-+
-+		ret = input_register_device(ptr);
-+		if (ret) {
-+			input_free_device(ptr);
-+			xenbus_dev_fatal(dev, ret, "input_register_device(ptr)");
-+			goto error;
-+		}
-+		info->ptr = ptr;
- 	}
--	info->ptr = ptr;
- 
- 	/* multi-touch device */
- 	if (touch) {
--- 
-2.17.0
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ljq2lntxmyrq7fgp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrYmkkACgkQ0rTAlCFN
+r3R7ghAAlvS3ytxEXd5ZaGTeI+NwFS7UvygZk1Yk8KyJ2GZnx2xyDwx3d9S27Slo
+gWArRPiKwP3tYfzvBoi54XEw7Vg9NC9lpFF91DsRRAQikMmqVnw3Gs+K55Augxwx
+OmBbtSo3Vd1U17zVlNM8sdKvC9cmXX19+Fz08tytIb1OXZVzj84AcY9sr3RURKXI
+QmnCCzi+VApPnUFoRZ467ozXYczQA1QjxByWxt1CzmQCJOdGkt9SgUtvBBG8VayC
+0xyx51adKdlwDbqT5VL09M3nsrBbbu/4/7fPJIknIpEuva+l2m2bDPhD7L+MIrcr
+j0ujAgCESQuLUy7ZaW1H4x8j3DldEwY1+Y4olsxR3xzSs5f6l4QEiHFZmyebDzSg
+UMv0w2WLycWRar77X+9dr8IQssq4Vlnxqi6jVlQVi0YYFVltdw/eiaviB4fFksun
+xfIL45ovF+hhC4QNpGw20NrhF/nowrjhydS9Xj+MWT+us/SVSc26JHAkeJvVPM6Z
+7+Ex9Gg7tmKFO51nKFHB5MrjOKCN3Wu5nMia2G4wHUuE2/HjumLI9+Vp1P7v2rjH
+BRN6LrHXQOTg8QL7MEqas5TGc1/j99GvqtbvPypPL7w6qQWlaicUgcZrM7x49m1e
+QhoRqCUuQWYAuNIWekrQpjYgPM/cNShBMn6eVQVKWyvMVa7oeCE=
+=jc4r
+-----END PGP SIGNATURE-----
+
+--ljq2lntxmyrq7fgp--
