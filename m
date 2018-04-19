@@ -1,77 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752308AbeDSLZZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 07:25:25 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51861 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751184AbeDSLZX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 07:25:23 -0400
-Date: Thu, 19 Apr 2018 04:25:13 -0700
-From: tip-bot for Anson Huang <tipbot@zytor.com>
-Message-ID: <tip-7407188489c62a7b5694bc75a6db2b82af94c9a5@git.kernel.org>
-Cc: tglx@linutronix.de, hpa@zytor.com, Anson.Huang@nxp.com,
-        linux-kernel@vger.kernel.org, Aisheng.dong@nxp.com, mingo@kernel.org
-Reply-To: tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
-        Aisheng.dong@nxp.com, linux-kernel@vger.kernel.org,
-        Anson.Huang@nxp.com
-In-Reply-To: <1524117883-2484-1-git-send-email-Anson.Huang@nxp.com>
-References: <1524117883-2484-1-git-send-email-Anson.Huang@nxp.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] clocksource/imx-tpm: Correct -ETIME return
- condition check
-Git-Commit-ID: 7407188489c62a7b5694bc75a6db2b82af94c9a5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752514AbeDSLZd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:25:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46229 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752337AbeDSLZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 07:25:29 -0400
+Subject: Re: [PATCH] Input: xen-kbdfront - allow better run-time configuration
+To: Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com, lyan@suse.com,
+        boris.ostrovsky@oracle.com
+Cc: andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180418150445.9805-1-andr2000@gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <ccb7a33b-7862-9803-fb24-67861d5ecab9@suse.com>
+Date: Thu, 19 Apr 2018 13:25:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180418150445.9805-1-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7407188489c62a7b5694bc75a6db2b82af94c9a5
-Gitweb:     https://git.kernel.org/tip/7407188489c62a7b5694bc75a6db2b82af94c9a5
-Author:     Anson Huang <Anson.Huang@nxp.com>
-AuthorDate: Thu, 19 Apr 2018 14:04:43 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 19 Apr 2018 13:21:35 +0200
+On 18/04/18 17:04, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> 
+> It is now only possible to control if multi-touch virtual device
+> is created or not (via the corresponding XenStore entries),
+> but keyboard and pointer devices are always created.
 
-clocksource/imx-tpm: Correct -ETIME return condition check
+Why don't you want to go that route for keyboard and mouse, too?
+Or does this really make no sense?
 
-The additional brakects added to tpm_set_next_event's return value
-computation causes (int) forced type conversion NOT taking effect, and the
-incorrect value return will cause various system timer issue, like RCU
-stall etc..
+> In some cases this is not desirable. For example, if virtual
+> keyboard device is exposed to Android then the latter won't
+> automatically show on-screen keyboard as it expects that a
+> physical keyboard device can be used for typing.
+> 
+> Make it possible to configure which virtual devices are created
+> with module parameters:
+>   - no_ptr_dev=1 if no pointer device needs to be created
+>   - no_kbd_dev=1 if no keyboard device needs to be created
+> Keep old behavior by default.
+> 
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+> Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+> ---
+>  drivers/input/misc/xen-kbdfront.c | 159 +++++++++++++++++-------------
+>  1 file changed, 92 insertions(+), 67 deletions(-)
+> 
+> diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
+> index d91f3b1c5375..a3306aad40b0 100644
+> --- a/drivers/input/misc/xen-kbdfront.c
+> +++ b/drivers/input/misc/xen-kbdfront.c
+> @@ -51,6 +51,16 @@ module_param_array(ptr_size, int, NULL, 0444);
+>  MODULE_PARM_DESC(ptr_size,
+>  	"Pointing device width, height in pixels (default 800,600)");
+>  
+> +static unsigned int no_ptr_dev;
+> +module_param(no_ptr_dev, uint, 0);
 
-Remove the additional brackets to make sure tpm_set_next_event always
-returns correct value.
+Use type invbool instead?
 
-Fixes: 059ab7b82eec ("clocksource/drivers/imx-tpm: Add imx tpm timer support")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
-Cc: stable@vger.kernel.org
-Cc: daniel.lezcano@linaro.org
-Cc: Linux-imx@nxp.com
-Link: https://lkml.kernel.org/r/1524117883-2484-1-git-send-email-Anson.Huang@nxp.com
----
- drivers/clocksource/timer-imx-tpm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +MODULE_PARM_DESC(no_ptr_dev,
+> +	"If set then no virtual pointing device exposed to the guest");
+> +
+> +static unsigned int no_kbd_dev;
+> +module_param(no_kbd_dev, uint, 0);
 
-diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
-index 05d97a6871d8..6c8318470b48 100644
---- a/drivers/clocksource/timer-imx-tpm.c
-+++ b/drivers/clocksource/timer-imx-tpm.c
-@@ -114,7 +114,7 @@ static int tpm_set_next_event(unsigned long delta,
- 	 * of writing CNT registers which may cause the min_delta event got
- 	 * missed, so we need add a ETIME check here in case it happened.
- 	 */
--	return (int)((next - now) <= 0) ? -ETIME : 0;
-+	return (int)(next - now) <= 0 ? -ETIME : 0;
- }
- 
- static int tpm_set_state_oneshot(struct clock_event_device *evt)
+invbool?
+
+
+Juergen
