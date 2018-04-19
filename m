@@ -1,70 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753319AbeDSSxz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 14:53:55 -0400
-Received: from mga02.intel.com ([134.134.136.20]:62138 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753057AbeDSSxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 14:53:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,297,1520924400";
-   d="scan'208";a="35565935"
-Subject: Re: BUG: Bad page map in process python2 pte:10000000000
- pmd:17e8be067
-To: Fengguang Wu <fengguang.wu@intel.com>, linux-mm@kvack.org
-References: <20180419054047.xxiljmzaf2u7odc6@wfg-t540p.sh.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Huang Ying <ying.huang@intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
-        linux-kernel@vger.kernel.org, lkp@01.org
-From: Dave Hansen <dave.hansen@intel.com>
-Message-ID: <17463682-dc08-358d-8b44-02821352604c@intel.com>
-Date: Thu, 19 Apr 2018 11:53:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753364AbeDSS40 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 14:56:26 -0400
+Received: from mail-vk0-f45.google.com ([209.85.213.45]:46183 "EHLO
+        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752984AbeDSS4Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 14:56:25 -0400
+X-Google-Smtp-Source: AIpwx48pjj8O43xKnW1XCqZRAm3eoH9roZOeR8HAK3LfW2Pu7NjaYtCmSNt3sk5Kqpx/kO43I0fEx+m4YOsKAekzqWs=
 MIME-Version: 1.0
-In-Reply-To: <20180419054047.xxiljmzaf2u7odc6@wfg-t540p.sh.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CACsK=jcgPLMydKfRkKKXXUVqAWXwszbvkr=5jYXXPAmigTtszQ@mail.gmail.com>
+References: <CAG5TwLMyYtN19OFh=hxJ6bE_GRtoy-SkpK4K5jbfmQJV587mRw@mail.gmail.com>
+ <CAG5TwLORDZPmfF7P0S2y9_7PscjvcuQd4WYnZTsBwCi+y47dOQ@mail.gmail.com>
+ <CAM_iQpVtaP=NNpMTyS9vwEtS3QSN_ksYDenS4gy8zzPC3V8Xww@mail.gmail.com>
+ <CAF=yD-Lyu8YYiquNNat_RZ53Ydniivz59C8dek6RsWuy0YE8Cw@mail.gmail.com>
+ <CACsK=jeTu1mhOXXAFAkp5nGVG6WbcV+dJZmTavdjWerHhDQfVg@mail.gmail.com> <CACsK=jcgPLMydKfRkKKXXUVqAWXwszbvkr=5jYXXPAmigTtszQ@mail.gmail.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Thu, 19 Apr 2018 14:55:43 -0400
+Message-ID: <CAF=yD-JR1Bg1FLat41Uua9vi1-ALyuQttChAWyWz0Yx6_01_BA@mail.gmail.com>
+Subject: Re: WARNING in refcount_dec
+To: DaeRyong Jeong <threeearcat@gmail.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>,
+        Byoungyoung Lee <byoungyoung@purdue.edu>,
+        LKML <linux-kernel@vger.kernel.org>, Kyungtae Kim <kt0755@gmail.com>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/18/2018 10:40 PM, Fengguang Wu wrote:
-> [  716.494065] PASS concurrent_autogo_5ghz_ht40 4.803608 2018-03-23 09:57:21.586794
-> [  716.494069]
-> [  716.496923] passed all 1 test case(s)
-> [  716.496926]
-> [  716.511702] swap_info_get: Bad swap file entry 04000000
-> [  716.512731] BUG: Bad page map in process python2  pte:100_0000_0000 pmd:17e8be067
-> [  716.513844] addr:00000000860ba23b vm_flags:00000070 anon_vma:          (null) mapping:000000004c76fece index:1e2
-> [  716.515160] file:libpcre.so.3.13.3 fault:filemap_fault mmap:generic_file_mmap readpage:simple_readpage
-> [  716.516418] CPU: 2 PID: 8907 Comm: python2 Not tainted 4.16.0-rc5 #1
-> [  716.517533] Hardware name:  /DH67GD, BIOS BLH6710H.86A.0132.2011.1007.1505 10/07/2011
+On Thu, Apr 19, 2018 at 2:32 AM, DaeRyong Jeong <threeearcat@gmail.com> wrote:
+> Hello.
+> We have analyzed the cause of the crash in v4.16-rc3, WARNING in refcount_dec,
+> which is found by RaceFuzzer (a modified version of Syzkaller).
+>
+> Since struct packet_sock's member variables, running, has_vnet_hdr, origdev
+> and auxdata are declared as bitfields, accessing these variables can race if
+> there is no synchronization mechanism.
 
-Did you say that you have a few more examples of this?
+Great catch.
 
-I would be really interested if it's always python or always the same
-shared library, or always file-backed memory, always the same bit,
-etc...  From the vm_flags, I'd guess that this is the "rw-p" part of the
-file mapping.
+These fields po->{running, auxdata, origdev, has_vnet_hdr} are
+accessed without a uniform locking strategy.
 
-The bit that gets set is really weird.  It's bit 40.  I could definitely
-see scenarios where we might set the dirty bit, or even NX for that
-matter, or some *bit* that we mess with in software.  It's not even
-close to the boundary where it could represent a swapoffset=1 or swapfile=1.
+po->running is always accessed with po->bind_lock held (with the
+exception of reading in packet_seq_show, but that is best effort).
 
-It's also unlikely to be _PAGE_PSE having gone missing from the PMD
-since it's in the middle of a file-backed mapping and the PMD is
-obviously pointing to a 4k page.
+That is the only field written to outside setsockopt. If it is moved to
+a separate word, it will no longer interfere with the others.
 
-If I had to put money on it, I'd guess it's a hardware bit flip, or less
-likely, a rogue software bit flip.  But, more examples will hopefully
-shed some more light.
+The other fields are read lockless in the various recv and send
+functions, but only set in setsockopt. We've had enough
+locking bugs around setsockopt that I suggest we wrap all of
+those in lock_sock, like the example I gave before for
+has_vnet_hdr.
