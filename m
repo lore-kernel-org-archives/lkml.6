@@ -1,131 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753333AbeDSBg5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 21:36:57 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:41653 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753054AbeDSBgy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 21:36:54 -0400
-X-Google-Smtp-Source: AIpwx4/EwqtOWEL5fmhoXlqiGNtsuAwC3+aRQrFrjdnhfxQWmWJmEbdgeVDbgnNuVWUuIDzj7iJFT/vbjhx0YC0yXEE=
+        id S1752903AbeDSBkw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 21:40:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39632 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752116AbeDSBku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 21:40:50 -0400
+Date: Thu, 19 Apr 2018 09:40:30 +0800
+From: Dave Young <dyoung@redhat.com>
+To: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Indranil Choudhury <indranil@chelsio.com>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        "stephen@networkplumber.org" <stephen@networkplumber.org>,
+        Ganesh GR <ganeshgr@chelsio.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH net-next v4 0/3] kernel: add support to collect hardware
+ logs in crash recovery kernel
+Message-ID: <20180419014030.GA2340@dhcp-128-65.nay.redhat.com>
+References: <cover.1523950321.git.rahul.lakkireddy@chelsio.com>
+ <20180418061546.GA4551@dhcp-128-65.nay.redhat.com>
+ <20180418123114.GA19159@chelsio.com>
 MIME-Version: 1.0
-Reply-To: chrisgregsson@gmail.com
-In-Reply-To: <CAD4OcZhnvfxh-WaCHB-ixG44WFhp7vkEq9gXRYTLfYgh1bu1Ew@mail.gmail.com>
-References: <CAD4OcZhrV_QPBr3s6A4dayRuMZ5cbL36jFVEmmGfhB_NEqNmDg@mail.gmail.com>
- <CAD4OcZg8rHm4OTnfMW=b6SvSHccZdDvLkcCGcx6umOgpiH5-Ug@mail.gmail.com>
- <CAD4OcZgv=SRoPvd0dfsmOr=qp+R298A+SoXp1hHx+7hyvUG3mw@mail.gmail.com>
- <CAD4OcZgKEi8uB_9WCBOBkaBpsOmoHeSmLPnQXO+HCGOr8k4Zbg@mail.gmail.com>
- <CAD4OcZgHD2R5r9iGoGgcToEKkN1Sim5OGa2xR1XXYbq4u0=hDg@mail.gmail.com>
- <CAD4OcZj_ayM5xh6zd1Z6aQ9Ot73z5RhdvCQFQFiskdCh5tDRfQ@mail.gmail.com>
- <CAD4OcZjievmkuj_QY_WBdFt5o7T++MkRd8-P5Ej_Rz72dJ-shQ@mail.gmail.com>
- <CAD4OcZh6sWRxcSb4n44_0_knukTS0V8f9pxpkmwkuRLgSGHuyA@mail.gmail.com>
- <CAD4OcZjWzD0AHuf7LGksBaNPZCmv1q-83_3zMEB+5-45kB2d-Q@mail.gmail.com>
- <CAD4OcZi8N2C0T_irCakJhZ9iDt_=c94bjVSGhrn0VQVh0zkQXg@mail.gmail.com>
- <CAD4OcZi0a8ddm8rBZ4okKCDaxqT0rocHjb_nkuOY=WfiHtP2Tg@mail.gmail.com>
- <CAD4OcZhphMk77YttXgFLpS5YvaFETsW4QoLgBErmBS1VW6pKUg@mail.gmail.com>
- <CAD4OcZiR2eUQt3gcbg3kNrdNnaFQXF5_JW3Wg_ts_kOPoSAO-A@mail.gmail.com>
- <CAD4OcZitJpUDdJJvZ9JjUb5gW1BSRRRX6v78kK8fm01YAjqavw@mail.gmail.com>
- <CAD4OcZiV7iyXCFr1A9hFLs1f6D49-HJtDizUysxHBtAYAfQMCA@mail.gmail.com>
- <CAD4OcZjQPQe42Obx0ZaZ6tphv95nCniw7rh9nFjK6PX4FrmevQ@mail.gmail.com>
- <CAD4OcZhYixzHmFtHu=U3MEchBYgSjuT8iiADd2Zn5h45X4VsUg@mail.gmail.com>
- <CAD4OcZg-fqS7r_FxOMfyvqw7Oz1tT-cMxhmmQ5ZOFnymw7EojQ@mail.gmail.com>
- <CAD4OcZggRJHYrKxOBnZ2V3YPXVgEd=8BszxoVm42DxEg+H4d3Q@mail.gmail.com>
- <CAD4OcZiUNeQ2iruuR+Q0GfwfE6-Z8-PZe15MFfE0x-E6Wy=F=w@mail.gmail.com>
- <CAD4OcZicWz5ZHL8oeKR6Rzc-0dZkAG6DkwChm6gi+GXEFHAaCQ@mail.gmail.com>
- <CAD4OcZhPRCejRGe_9_6aOFWbdK0oKf6h0Xd+4xyzzF3xCJh_bw@mail.gmail.com>
- <CAD4OcZh+GgOos6oiBC3O-seT4RVNFkqb=YRduvcFMRmrzTQd4w@mail.gmail.com>
- <CAD4OcZizvLn9Hn4ZZQzC=03_c87D7fxsFqCZi7aGrk0z7EyPdA@mail.gmail.com>
- <CAD4OcZhyvNwW5JSU5ixMQoisVy_FNALKH+9nZqHHV=iaPgfDyQ@mail.gmail.com>
- <CAD4OcZhzZvstDog69FK=et0WoYm6r6EF0y13Nh=DMP0pacQXRg@mail.gmail.com>
- <CAD4OcZg0UsYO48njs2TJysy-CorjKPcPuXWOSKyrVHct30Zs=w@mail.gmail.com>
- <CAD4OcZhHss5Pp79kEGsXg9Yr6bUf2p70EO1peyN9=9R=GGiV8A@mail.gmail.com>
- <CAD4OcZik9SXRVL__yeOAM4djkk2P-3E8-_kOOuqokFCSjYuOBw@mail.gmail.com>
- <CAD4OcZhuBMeNPWLhLMCYO-2orheYo-Xa90nU9V0wMxzwfkmvrw@mail.gmail.com>
- <CAD4OcZhmDPWjzciogeM5qFkoCPeqMjp5MVo6mWjydnicr2Q7HQ@mail.gmail.com>
- <CAD4OcZhzexEc_a8z78m-c7vTV3Pkfo=f7AHyJtXDvWN=+wvBfg@mail.gmail.com>
- <CAD4OcZjFRk+BmPyasz7a3_Z+KeQds7ykB+zuxVhJ20uR-_x3KA@mail.gmail.com>
- <CAD4OcZiVQO7xk9Hbs8vQ=4f8CK2QFF+GqmGSZJePAr7cQwwzsw@mail.gmail.com>
- <CAD4OcZg5FmXtTWprw_LfzS1zsiwJJv+1dQnB_koBo2A7jcMAcg@mail.gmail.com>
- <CAD4OcZg+oEYk+Kqm5SzNP4UekwRL_AnWPZKaYotuMEO1ddWNNQ@mail.gmail.com>
- <CAD4OcZgXcYE3QHqx7v5Mtb_6x8Des_KFRRtSeoU1C+UMF3R5TQ@mail.gmail.com>
- <CAD4OcZgVui1QsPwSjWyN3+9s7gVmoG8A7rbYADozLYuWK6KmaQ@mail.gmail.com>
- <CAD4OcZitGNnB83cTzK0BLXh3bkZCrOecji-F5dprVPsBbOdLOQ@mail.gmail.com>
- <CAD4OcZhx=pNNjhvDkURQKm3+QWW12XqT=JzZ3TTHMfbmWpn_pQ@mail.gmail.com>
- <CAD4OcZgLBRuHz0XFwj-8Ys5=o-zLoCiW37zqLFwQyyPiEtzgSQ@mail.gmail.com>
- <CAD4OcZhWHFTZxP9ytAS4PiebF=sdvUiEN02LGpP2mtciuVUGyw@mail.gmail.com>
- <CAD4OcZjTQdJz2-QE89LjBmqRA4QoxGrXXbAfLU7oHYcXK2L=9Q@mail.gmail.com>
- <CAD4OcZiu-5ab7Ui09mxRwPx4ngCa1ZvWHVf7=pf4NK-cw3v7MA@mail.gmail.com>
- <CAD4OcZjP2TZ=k26h5OGda23+vcfEO-oWJr3MxMU3nyfucf3LrQ@mail.gmail.com>
- <CAD4OcZgbjkNemSEPpHKMWstU94ZAKFOzff5vQv1BMJavH1YXjw@mail.gmail.com>
- <CAD4OcZhiM_B086gjT8kFqLa6AJtJoknDL9SicC9RMDto7qSZLQ@mail.gmail.com>
- <CAD4OcZisEBVzJiV7qCugsN0t-TPV=qQARKSd=qAuWCjaNz2sng@mail.gmail.com>
- <CAD4OcZg=S1LdFsT694ZcLZNgq-npgeDC_fGPJcZC_qLntu2FdQ@mail.gmail.com>
- <CAD4OcZgyXNsBvCMea7dczXtZduJ+ZrCe+S0xjdAJRF9DkwCqAg@mail.gmail.com>
- <CAD4OcZgXXLwW0NyxTAaKXVYcVsfF54oXkh_uNb2Us1+rx8TYAw@mail.gmail.com>
- <CAD4OcZioH2hX=USoMJv6oYfDGPu0gGxD7xi+Wo-bz8FX_-oktw@mail.gmail.com>
- <CAD4OcZj=6Lba2_XNmAr9Dkn+i6yJTJ-4Gc1d4yHGQnK5ZWxLxA@mail.gmail.com>
- <CAD4OcZiDDukkp2zX+N6XLd9xkphN1KPeYnu2xNMaBxcs0iHwig@mail.gmail.com>
- <CAD4OcZh55fK4kQ5xf-D2rQuUpDCfyrmW_vjE4uzuS5qTf_9a3Q@mail.gmail.com>
- <CAD4OcZgqqutbXXpS3a1BY1qhDorCJQ5tDTAoFDi7by3NCuXh=Q@mail.gmail.com>
- <CAD4OcZhZv_PHL=f-SUBgYmKNSz_OOMhuhEFuc714M70L_Sw2cw@mail.gmail.com>
- <CAD4OcZhpQAw9wdJk8V_QcL0U_JXSE6OXxJmp7o2Jhk1afaR0_Q@mail.gmail.com>
- <CAD4OcZhxi3cbjcN=og7hBGd-A0Bwno+uF+YK94siuOTkZ9rvYw@mail.gmail.com>
- <CAD4OcZiAFUd63Fjt0LggY=_1D7VDv3xRxjK8EdgKcS+XJA_9wQ@mail.gmail.com>
- <CAD4OcZjV6Q9WnFdaf=R+XmDQs-YcgUuku4Rc75r=yiJ09AMh3g@mail.gmail.com>
- <CAD4OcZgPdOgP-OHu8vOmgtr3mW3wqB94MDgf0LQJ8x7LoHMSWQ@mail.gmail.com>
- <CAD4OcZjvmzk9ZTGVu-kc=Cgbrh1EA9Ey9atT8bCUV-54d5VeRQ@mail.gmail.com>
- <CAD4OcZhpBRcx=gyL_mbkyKjEy0FFmh-jcfTd=THU4CTepVnU+g@mail.gmail.com>
- <CAD4OcZjiYzPfyP=ON7EmuQQe7+Bs4867fes-u5e-17bSBQp85g@mail.gmail.com>
- <CAD4OcZj3BpKNpp+OxvKZE9YN30XU36JeGKVgD-gHA4ad9T5UeQ@mail.gmail.com>
- <CAD4OcZh2vgtfSwghXBR0szqcD=VUj_S+aML+CxNX4FhnReSvQg@mail.gmail.com>
- <CAD4OcZg--WPBqmznXDCq24-DNayJF76dwnxmisRCD7spmCRD4A@mail.gmail.com>
- <CAD4OcZi0+0tC+-9ZKs0EHSmCOFjjWaPeu9e13Wzi3rBUdU5Vpg@mail.gmail.com>
- <CAD4OcZj1sVm+gy+yJUqmP5KwCjgU1WupeQ4Z+8KCVnqLFDRjMg@mail.gmail.com>
- <CAD4OcZiLOgqNZXRzcr1jZ7Q9RyFhwNWrbREewohsGm+N3aRmjw@mail.gmail.com>
- <CAD4OcZhLNiiJ2d0=joULW04_a48nFoD0+n-SgGBUiBEuFj0CSQ@mail.gmail.com>
- <CAD4OcZipDqHpGLRUEzZzA9oXtejaaZ29reNgNCLKw5pPdFG3CA@mail.gmail.com>
- <CAD4OcZjjZDT4AJ9KNYAqjp6gNNdKF-8ejVXrCEU21Q_J0urScg@mail.gmail.com>
- <CAD4OcZimg7cE9ors7OFUw5rkZ5bg8Abne9oV67Jfcz+pSbG+BQ@mail.gmail.com>
- <CAD4OcZjvjBjM3L-NmKrhsNpMqYcb+Lv2SnzuxcyuzrYNy4UUNw@mail.gmail.com>
- <CAD4OcZjCMZ_YTbXjD27p_fvMLf43GZdUAA0DU4Xxt8SNLiWkRQ@mail.gmail.com>
- <CAD4OcZiHaFdPLPctg1p126taD8HPG+pB7QzkPEk8Ftzb8R8uDw@mail.gmail.com>
- <CAD4OcZi7Tm4yYtSdaGR=b9M-LAqzjcrT8cKL2CxcG9TnNRZ0kg@mail.gmail.com>
- <CAD4OcZiV9EdMbWhgmD9epkT_tXRDXuO6JdYj=mKviSj5yyun0w@mail.gmail.com>
- <CAD4OcZg1fTzu3BFsQqOrd8Qw7pdDA+VN5-8fiaSZSyP7YTK0kQ@mail.gmail.com>
- <CAD4OcZhFPMNXH5=o2+U0D7Ka7fSJfYvOfLOAJ78Cekr-c3shBA@mail.gmail.com>
- <CAD4OcZhgMNP39Wyp+x7YkgBLdLvdHWACLmhFH=xqbdoOcDJBgA@mail.gmail.com>
- <CAD4OcZgF8zj2ZUad1i9Quj28BHdMTMZ5qj8Up-szoVW4NCvoEw@mail.gmail.com>
- <CAD4OcZjWt5fOrHu1+GbrbYrkhcmDAqKKRK7d3+XB3MDwwA42+Q@mail.gmail.com>
- <CAD4OcZjgFp=5vGtU42SxWUpmX2pf-qfGCV6Jj3SG9sHg_dBxnA@mail.gmail.com> <CAD4OcZhnvfxh-WaCHB-ixG44WFhp7vkEq9gXRYTLfYgh1bu1Ew@mail.gmail.com>
-From: Christopher Gregson <wmofficemailss9@gmail.com>
-Date: Wed, 18 Apr 2018 18:36:52 -0700
-Message-ID: <CAD4OcZjQYR_PJjxPkGAdg7fherHU9=41aNOYa=ZMS2UUZnwXnA@mail.gmail.com>
-Subject: INVESTMENT OPPORTUNITY
-To: undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418123114.GA19159@chelsio.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On 04/18/18 at 06:01pm, Rahul Lakkireddy wrote:
+> On Wednesday, April 04/18/18, 2018 at 11:45:46 +0530, Dave Young wrote:
+> > Hi Rahul,
+> > On 04/17/18 at 01:14pm, Rahul Lakkireddy wrote:
+> > > On production servers running variety of workloads over time, kernel
+> > > panic can happen sporadically after days or even months. It is
+> > > important to collect as much debug logs as possible to root cause
+> > > and fix the problem, that may not be easy to reproduce. Snapshot of
+> > > underlying hardware/firmware state (like register dump, firmware
+> > > logs, adapter memory, etc.), at the time of kernel panic will be very
+> > > helpful while debugging the culprit device driver.
+> > > 
+> > > This series of patches add new generic framework that enable device
+> > > drivers to collect device specific snapshot of the hardware/firmware
+> > > state of the underlying device in the crash recovery kernel. In crash
+> > > recovery kernel, the collected logs are added as elf notes to
+> > > /proc/vmcore, which is copied by user space scripts for post-analysis.
+> > > 
+> > > The sequence of actions done by device drivers to append their device
+> > > specific hardware/firmware logs to /proc/vmcore are as follows:
+> > > 
+> > > 1. During probe (before hardware is initialized), device drivers
+> > > register to the vmcore module (via vmcore_add_device_dump()), with
+> > > callback function, along with buffer size and log name needed for
+> > > firmware/hardware log collection.
+> > 
+> > I assumed the elf notes info should be prepared while kexec_[file_]load
+> > phase. But I did not read the old comment, not sure if it has been discussed
+> > or not.
+> > 
+> 
+> We must not collect dumps in crashing kernel. Adding more things in
+> crash dump path risks not collecting vmcore at all. Eric had
+> discussed this in more detail at:
+> 
+> https://lkml.org/lkml/2018/3/24/319
+> 
+> We are safe to collect dumps in the second kernel. Each device dump
+> will be exported as an elf note in /proc/vmcore.
 
-I write to you based on a request by an investor for
-funding/investment in your project.
+I understand that we should avoid adding anything in crash path.  And I also
+agree to collect device dump in second kernel.  I just assumed device
+dump use some memory area to store the debug info and the memory
+is persistent so that this can be done in 2 steps, first register the
+address in elf header in kexec_load, then collect the dump in 2nd
+kernel.  But it seems the driver is doing some other logic to collect
+the info instead of just that simple like I thought. 
 
-My name is Christopher Gregson, a financial consultant with Williams
-Group UK Properties Limited.
+> 
+> > If do this in 2nd kernel a question is driver can be loaded later than vmcore init.
+> 
+> Yes, drivers will add their device dumps after vmcore init.
+> 
+> > How to guarantee the function works if vmcore reading happens before
+> > the driver is loaded?
+> > 
+> > Also it is possible that kdump initramfs does not contains the driver
+> > module.
+> > 
+> > Am I missing something?
+> > 
+> 
+> Yes, driver must be in initramfs if it wants to collect and add device
+> dump to /proc/vmcore in second kernel.
 
-My reason for contacting you is that my client who is a politician,
-has an urgent need to invest a considerable amount of funds into
-lucrative opportunities with you. My client's request is for a
-competent individual or company such as you, who will be willing
-to put this money to good use for a period of 10 years for a start.
+In RH/Fedora kdump scripts we only add the things are required to
+bring up the dump target, so that we can use as less memory as we can.
 
-Should this be of interest to you, please do not hesitate to e-mail me
-back for further information.
+For example, if a net driver panicked, and the dump target is rootfs
+which is a scsi disk, then no network related stuff will be added in
+initramfs.
 
-I take this opportunity to thank you for taking your time to read the
-contents of this email.
+In this case the device dump info will be not collected..
+> 
+> > > 
+> > > 2. vmcore module allocates the buffer with requested size. It adds
+> > > an elf note and invokes the device driver's registered callback
+> > > function.
+> > > 
+> > > 3. Device driver collects all hardware/firmware logs into the buffer
+> > > and returns control back to vmcore module.
+> > > 
+> > > The device specific hardware/firmware logs can be seen as elf notes:
+> > > 
+> > > # readelf -n /proc/vmcore
+> > > 
+> > > Displaying notes found at file offset 0x00001000 with length 0x04003288:
+> > >   Owner                 Data size	Description
+> > >   VMCOREDD_cxgb4_0000:02:00.4 0x02000fd8	Unknown note type: (0x00000700)
+> > >   VMCOREDD_cxgb4_0000:04:00.4 0x02000fd8	Unknown note type: (0x00000700)
+> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
+> > >   VMCOREINFO           0x0000074f	Unknown note type: (0x00000000)
+> > > 
+> > > Patch 1 adds API to vmcore module to allow drivers to register callback
+> > > to collect the device specific hardware/firmware logs.  The logs will
+> > > be added to /proc/vmcore as elf notes.
+> > > 
+> > > Patch 2 updates read and mmap logic to append device specific hardware/
+> > > firmware logs as elf notes.
+> > > 
+> > > Patch 3 shows a cxgb4 driver example using the API to collect
+> > > hardware/firmware logs in crash recovery kernel, before hardware is
+> > > initialized.
+> > > 
+> > > Thanks,
+> > > Rahul
+> > > 
+> > > RFC v1: https://lkml.org/lkml/2018/3/2/542
+> > > RFC v2: https://lkml.org/lkml/2018/3/16/326
+> > > 
+> [...]
+> 
+> Thanks,
+> Rahul
 
-Kind regards,
-Christopher Gregson
+Thanks
+Dave
