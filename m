@@ -1,62 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752966AbeDSDuR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 23:50:17 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:25233 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752077AbeDSDuP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 23:50:15 -0400
-X-UUID: db59ae21cdfb428a89bfabe8b51ad79b-20180419
-Message-ID: <1524109802.12959.10.camel@mtkswgap22>
-Subject: Re: [PATCH v1 2/4] dt-bindings: clock: mediatek: add g3dsys bindings
-From: Sean Wang <sean.wang@mediatek.com>
-To: Stephen Boyd <sboyd@kernel.org>
-CC: <airlied@linux.ie>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <mark.rutland@arm.com>,
-        <matthias.bgg@gmail.com>, <mturquette@baylibre.com>,
-        <robh+dt@kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date: Thu, 19 Apr 2018 11:50:02 +0800
-In-Reply-To: <152410791532.46528.10083030894445315558@swboyd.mtv.corp.google.com>
-References: <cover.1524044917.git.sean.wang@mediatek.com>
-         <4b5d243d33433f83874359794b796d4228574714.1524044917.git.sean.wang@mediatek.com>
-         <152410791532.46528.10083030894445315558@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1751293AbeDSEA4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 00:00:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51108 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750737AbeDSEAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 00:00:55 -0400
+Date: Thu, 19 Apr 2018 07:00:53 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Joby Poriyath <joby.poriyath@citrix.com>,
+        Ben Hutchings <bhutchings@solarflare.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: don't use kvzalloc for DMA memory
+Message-ID: <20180419065711-mutt-send-email-mst@kernel.org>
+References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
+ <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
+ <20180418204229-mutt-send-email-mst@kernel.org>
+ <f821bf46-94e9-c794-bc77-600dc19edb9a@gmail.com>
 MIME-Version: 1.0
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f821bf46-94e9-c794-bc77-600dc19edb9a@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-04-18 at 20:18 -0700, Stephen Boyd wrote:
-> Quoting sean.wang@mediatek.com (2018-04-18 03:24:54)
-> > From: Sean Wang <sean.wang@mediatek.com>
+On Wed, Apr 18, 2018 at 01:38:43PM -0700, Eric Dumazet wrote:
+> 
+> 
+> On 04/18/2018 10:55 AM, Michael S. Tsirkin wrote:
+> 
+> > Imagine you want to pass some data to card.
+> > Natural thing is to just put it in a variable and start DMA.
+> > However DMA API disallows stack access nowdays,
+> > so it's natural to put this within struct device.
 > > 
-> > Add bindings to g3dsys providing necessary clock and reset control to
-> > Mali-450.
+> > See e.g.
 > > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > ---
-> >  .../bindings/arm/mediatek/mediatek,g3dsys.txt      | 30 ++++++++++++++++++++++
+> > 	commit a725ee3e44e39dab1ec82cc745899a785d2a555e
+> > 	Author: Andy Lutomirski <luto@kernel.org>
+> > 	Date:   Mon Jul 18 15:34:49 2016 -0700
+> > 
+> > 	    virtio-net: Remove more stack DMA
+> >
 > 
-> Why isn't this under bindings/clock/ ?
+> Andy just moved the problem to another one, since at that time we already
+> had vmalloc() fallback for at least 2 years.
 > 
-
-Tons of bindings for clock controller have been present at
-binding/arm/mediatek. g3dsys just have a follow-up to them.
-
-It's worth another patch moving them all from bindings/arm/mediatek/ to
-bindings/clock/mediatek.
-
-what's your opinion for either doing it prior to g3dsys binding being
-added or doing it in the future ?
-
+> Note that my original patch had :
 > 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+> p = kzalloc(alloc_size, GFP_KERNEL | __GFP_NOWARN | __GFP_REPEAT);
+> if (!p)
+>       p = vzalloc(alloc_size);
+> 
+> So really, normal (less than PAGE_SIZE) allocations would have almost-zero-chance to end up to vmalloc(one_page)
+
+Thanks Eric, I'll fix virtio.
+
+
+-- 
+MST
