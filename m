@@ -1,44 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753320AbeDSPAg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:00:36 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:34111 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752326AbeDSPAd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:00:33 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 0/3] Add STM32 USBPHYC to stm32mp157c
-Date: Thu, 19 Apr 2018 16:59:53 +0200
-Message-ID: <1524149996-27809-1-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
+        id S1753237AbeDSPFV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:05:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40992 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752144AbeDSPFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:05:20 -0400
+Date: Thu, 19 Apr 2018 17:05:18 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: kevans@FreeBSD.org
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3] ARM: dts: sunxi: Add sid for a83t
+Message-ID: <20180419150518.nbeq5zelrl236grv@flea>
+References: <20180419141103.38196-1-kevans@FreeBSD.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kdx76qelsr5r5vbe"
+Content-Disposition: inline
+In-Reply-To: <20180419141103.38196-1-kevans@FreeBSD.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for STM32 USBPHYC (USB PHY Controller) to
-stm32mp157c SoC and enables it on stm32mp157c-ev1 board.
 
-Amelie Delaunay (3):
-  ARM: dts: stm32: add USBPHYC support to stm32mp157c
-  ARM: dts: stm32: add supplies to usbphyc ports on stm32mp157c-ed1
-  ARM: dts: stm32: enable USBPHYC on stm32mp157c-ev1
+--kdx76qelsr5r5vbe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/arm/boot/dts/stm32mp157c-ed1.dts | 12 ++++++++++++
- arch/arm/boot/dts/stm32mp157c-ev1.dts |  5 +++++
- arch/arm/boot/dts/stm32mp157c.dtsi    | 20 ++++++++++++++++++++
- 3 files changed, 37 insertions(+)
+On Thu, Apr 19, 2018 at 09:11:03AM -0500, kevans@FreeBSD.org wrote:
+> Allwinner a83t has a 1 KB sid block with efuse for security rootkey and t=
+hermal
+> calibration data, add node to describe it.
+>=20
+> a83t-sid is not currently supported by nvmem/sunxi-sid, but it is
+> supported in an external driver for FreeBSD.
+>=20
+> Signed-off-by: Kyle Evans <kevans@FreeBSD.org>
 
--- 
-2.7.4
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--kdx76qelsr5r5vbe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrYsC0ACgkQ0rTAlCFN
+r3TFDRAAmuUj4T/690oCZynzuvR0l53SQ8BsNlvj57JWwDat3XSMgUald6/7CBFI
+lNvQ4pMLqR+MjiBynCFJJXNto82uRXzhyrLiHdU66bIJgQWQXaLFVUaXKq+vvB55
+pA0nkyLpN1p6H8YuIykDc9hcyBb5dUAdQcctTwcKnwT/+Y1IvaOBZC6j1oBmNfB5
+j7Bve42RGcwCIoehgMh0BaNSLrml0IrNIe3YpsGMRpUW/zlldTCmrlqsCDyA5UW1
+9stAXbouvxqsE9/E3yqH/izrGlZEYTLBt9dIC1PIq3Sgvup6MM72VU74apTmvKlY
+bubugWun88fh6hYM3XqkAkQtJh5V7LeoOnKIZaN3CNh2h8dq5SacVjiiWHzGFcFt
+140xQoie5g0AFJPQ2ZWdhVxPwtQmfEAn5DIeiuinJtH7ndSDGjDEB897ZsoyiBi5
+huN+oUsniHT5q+dJKFf5cA02I7Qi3n7RhtQvxF02iWydeRG9FUnRLNUx+EeNumum
+N1j1fDD2Bqk5ZyiAZ1LKiPDW/kQ021SlCPQGjv68cIIcD4nL02bB/SNrVj61z74J
+YvRzqHv4SLHSFsbMt1XiGy4MkFI2S51zDsi3b5M7+JgZrIgnSZSdh+MPzW0SST10
+LkEhPl4bLawFBCSCOY+FloJOGWhSs8ytkVIidO+2jm5p6bOe4ns=
+=kNVI
+-----END PGP SIGNATURE-----
+
+--kdx76qelsr5r5vbe--
