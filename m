@@ -1,121 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753619AbeDSQIE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:08:04 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:54667 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753239AbeDSQIC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:08:02 -0400
-X-Google-Smtp-Source: AIpwx48HdIf0CZHzMAMP3UfXBoM7Sc/TCF6RY2janpXMHtT0SwhG4ZP3c7+XbKaKC92bLfEvOY2Ec8fpySj1zPgBHiovctuEzdps
+        id S1753791AbeDSQIS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:08:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53412 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753659AbeDSQIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 12:08:09 -0400
+Date: Thu, 19 Apr 2018 18:08:07 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+9a44753ac327c557796a@syzkaller.appspotmail.com>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tytso@mit.edu
+Subject: Re: WARNING in ext4_set_page_dirty
+Message-ID: <20180419160807.z4emwbb4rm62phrq@quack2.suse.cz>
+References: <089e0825cec8180a2b0568c4ee1d@google.com>
 MIME-Version: 1.0
-Date: Thu, 19 Apr 2018 09:08:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a366e2056a35c6fd@google.com>
-Subject: BUG: corrupted list in rdma_listen
-From: syzbot <syzbot+8458d13b13562abf6b77@syzkaller.appspotmail.com>
-To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
-        jgg@ziepe.ca, leonro@mellanox.com, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, markb@mellanox.com, monis@mellanox.com,
-        parav@mellanox.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <089e0825cec8180a2b0568c4ee1d@google.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-syzbot hit the following crash on upstream commit
-bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
-Merge tag 'pinctrl-v4.16-3' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=8458d13b13562abf6b77
+This is a known problem I was speaking about here [1]. It is a generic
+mm/fs problem but there's no solution to it yet. We'll discuss it at LSF/MM
+next week so after that we may have some solution...
 
-So far this crash happened 3 times on upstream.
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5502346817699840
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
-compiler: gcc (GCC) 7.1.1 20170620
+								Honza
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8458d13b13562abf6b77@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+[1] https://www.spinics.net/lists/linux-xfs/msg14468.html
 
-list_add corruption. prev->next should be next (00000000bbe7894a), but  
-was           (null). (prev=0000000053f15260).
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:28!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 31373 Comm: syz-executor1 Not tainted 4.16.0-rc6+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__list_add_valid+0x8f/0xd0 lib/list_debug.c:26
-RSP: 0018:ffff880188f87970 EFLAGS: 00010282
-RAX: 0000000000000075 RBX: ffffffff87449fe0 RCX: 0000000000000000
-RDX: 0000000000000075 RSI: ffffc900075c8000 RDI: ffffed00311f0f22
-RBP: ffff880188f87988 R08: 1ffff100311f0e7a R09: 0000000000000000
-R10: ffff880188f87988 R11: 0000000000000000 R12: ffff88018c479898
-R13: ffff88018c479898 R14: ffff8801d94baad8 R15: 0000000000000400
-FS:  00007f755bcca700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000725934 CR3: 00000001872ec001 CR4: 00000000001606e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __list_add include/linux/list.h:60 [inline]
-  list_add_tail include/linux/list.h:93 [inline]
-  cma_listen_on_all drivers/infiniband/core/cma.c:2309 [inline]
-  rdma_listen+0x581/0x8e0 drivers/infiniband/core/cma.c:3333
-  ucma_listen+0x172/0x1f0 drivers/infiniband/core/ucma.c:1074
-  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
-  __vfs_write+0xef/0x970 fs/read_write.c:480
-  vfs_write+0x189/0x510 fs/read_write.c:544
-  SYSC_write fs/read_write.c:589 [inline]
-  SyS_write+0xef/0x220 fs/read_write.c:581
-  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x454879
-RSP: 002b:00007f755bcc9c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f755bcca6d4 RCX: 0000000000454879
-RDX: 0000000000000010 RSI: 0000000020000000 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000683 R14: 00000000006face8 R15: 0000000000000000
-Code: 00 00 00 5b 41 5c 5d c3 48 89 d9 48 c7 c7 60 7e 40 86 e8 ad e0 fb fe  
-0f 0b 48 89 f1 48 c7 c7 20 7f 40 86 48 89 de e8 99 e0 fb fe <0f> 0b 48 89  
-f2 48 89 d9 4c 89 e6 48 c7 c7 a0 7f 40 86 e8 82 e0
-RIP: __list_add_valid+0x8f/0xd0 lib/list_debug.c:26 RSP: ffff880188f87970
----[ end trace fe3987c6813eeb9c ]---
-Kernel panic - not syncing: Fatal exception
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+On Sun 01-04-18 01:05:00, syzbot wrote:
+> syzbot hit the following crash on upstream commit
+> 10b84daddbec72c6b440216a69de9a9605127f7a (Sat Mar 31 17:59:00 2018 +0000)
+> Merge branch 'perf-urgent-for-linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=9a44753ac327c557796a
+> 
+> So far this crash happened 3 times on upstream.
+> Unfortunately, I don't have any reproducer for this crash yet.
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=5118663967375360
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
+> compiler: gcc (GCC) 7.1.1 20170620
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+9a44753ac327c557796a@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
+> 
+> WARNING: CPU: 0 PID: 7377 at fs/ext4/inode.c:3895
+> ext4_set_page_dirty+0x242/0x2b0 fs/ext4/inode.c:3895
+> Kernel panic - not syncing: panic_on_warn set ...
+> 
+> CPU: 0 PID: 7377 Comm: syz-executor1 Not tainted 4.16.0-rc7+ #9
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:17 [inline]
+>  dump_stack+0x194/0x24d lib/dump_stack.c:53
+>  panic+0x1e4/0x41c kernel/panic.c:183
+>  __warn+0x1dc/0x200 kernel/panic.c:547
+>  report_bug+0x1f4/0x2b0 lib/bug.c:186
+>  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+>  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+>  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+> RIP: 0010:ext4_set_page_dirty+0x242/0x2b0 fs/ext4/inode.c:3895
+> RSP: 0000:ffff88018b725df0 EFLAGS: 00010216
+> RAX: 0000000000040000 RBX: ffffea0006713040 RCX: ffffffff81ee1072
+> RDX: 0000000000002ee2 RSI: ffffc900074f3000 RDI: ffffea0006713040
+> RBP: ffff88018b725ec0 R08: 1ffff100316e4c1c R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff100316e4bbf
+> R13: ffffea0006713040 R14: ffff88018b725e98 R15: ffffea0006713060
+>  set_page_dirty+0x2c5/0x5d0 mm/page-writeback.c:2565
+>  set_page_dirty_lock+0xf2/0x160 mm/page-writeback.c:2590
+>  dio_bio_complete+0x514/0x750 fs/direct-io.c:560
+>  dio_await_completion fs/direct-io.c:581 [inline]
+>  do_blockdev_direct_IO+0x7270/0xc960 fs/direct-io.c:1392
+>  __blockdev_direct_IO+0x9d/0xd0 fs/direct-io.c:1421
+>  ext4_direct_IO_read fs/ext4/inode.c:3830 [inline]
+>  ext4_direct_IO+0xfe5/0x1980 fs/ext4/inode.c:3866
+>  generic_file_read_iter+0x4cc/0x28e0 mm/filemap.c:2343
+>  ext4_file_read_iter+0x113/0x160 fs/ext4/file.c:77
+>  call_read_iter include/linux/fs.h:1776 [inline]
+>  new_sync_read fs/read_write.c:401 [inline]
+>  __vfs_read+0x6a7/0xa00 fs/read_write.c:413
+>  vfs_read+0x11e/0x350 fs/read_write.c:447
+>  SYSC_pread64 fs/read_write.c:611 [inline]
+>  SyS_pread64+0x15b/0x190 fs/read_write.c:598
+>  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> RIP: 0033:0x454e79
+> RSP: 002b:00007feb4557bc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000011
+> RAX: ffffffffffffffda RBX: 00007feb4557c6d4 RCX: 0000000000454e79
+> RDX: 00000000ffffff72 RSI: 0000000020003c00 RDI: 0000000000000018
+> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 000000000000046d R14: 00000000006f8ad8 R15: 0000000000000000
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
