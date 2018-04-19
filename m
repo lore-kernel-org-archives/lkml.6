@@ -1,128 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753272AbeDSPnY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:43:24 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:34258 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752385AbeDSPnX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:43:23 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w3JFhHVa017379
-X-Nifty-SrcIP: [209.85.217.172]
-X-Google-Smtp-Source: AIpwx48+hmNDxouTT3yT9ERgP+iONoC5sXPMI9grdTYRTchtoRQtEs42TjB7WaVNzNb1AIVJlpQOrdfsX6naAPoJbq0=
-MIME-Version: 1.0
-In-Reply-To: <20180419135316.GA14790@embeddedor.com>
-References: <20180419135316.GA14790@embeddedor.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Fri, 20 Apr 2018 00:42:36 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATQSOtJs6xcYXyRqXdAL-x-CBLVmfAozEEZGnZpzURR8g@mail.gmail.com>
-Message-ID: <CAK7LNATQSOtJs6xcYXyRqXdAL-x-CBLVmfAozEEZGnZpzURR8g@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-cadence: fix logically and structurally dead code
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753423AbeDSPn6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:43:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42512 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753122AbeDSPnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:43:52 -0400
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 03/10] videobuf2-core: Add helper to get buffer private data from media request
+Date: Thu, 19 Apr 2018 17:41:17 +0200
+Message-Id: <20180419154124.17512-4-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+When calling media operation driver callbacks related to media requests,
+only a pointer to the request itself is provided, which is insufficient
+to retrieve the driver's context. Since the driver context is usually
+set as vb2 queue private data and given that the core can determine
+which objects attached to the request are buffers, it is possible to
+extract the associated private data for the first buffer found.
 
+This is required in order to access the current m2m context from m2m
+drivers' private data in the context of media request operation
+callbacks. More specifically, this allows scheduling m2m device runs
+from the newly-introduced request complete operation.
 
-2018-04-19 22:53 GMT+09:00 Gustavo A. R. Silva <gustavo@embeddedor.com>:
-> Currently, the code block inside the for loop will never execute
-> more than once, because the function returns inmediately after
-> the first iteration, hence the execution of the code at the second
-> iteration is structurally dead and, code at line 281: return 0; is
-> never reached.
->
-> Based on the code comments, it seems that the actual intention is
-> to execute the code inside the for loop twice instead of once.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ drivers/media/common/videobuf2/videobuf2-core.c | 15 +++++++++++++++
+ include/media/videobuf2-core.h                  |  1 +
+ 2 files changed, 16 insertions(+)
 
-Thanks for the report.
-
-> So, fix this issue by removing the return statement inside the for
-> loop and replace the "return 0" with "return ret".
->
-> Addresses-Coverity-ID: 1468009 ("Logically dead code")
-> Addresses-Coverity-ID: 1468002 ("Structurally dead code")
-> Fixes: 213fae74318b ("mmc: sdhci-cadence: send tune request twice to
-> work around errata")
-
-
-Probably, this Fixes tag will dangle.
-
-Ulf usually repeats git-rebase to build-up his pull-request.
-
-The addressed commit was already rebased,
-and its commit ID will change a few more times
-since it is now -rc1.
-
-
-A clean solution would be, to squash a fix-up into the original patch.
-(This patch is not what I want, though.)
-
-If you want to claim contribution in a separate patch,
-please rewrite the code as I suggested,
-and drop the Fixes tag.
-
-
-
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/mmc/host/sdhci-cadence.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-> index bc30d16..facbad8 100644
-> --- a/drivers/mmc/host/sdhci-cadence.c
-> +++ b/drivers/mmc/host/sdhci-cadence.c
-> @@ -275,10 +275,9 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
->                                          !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
->                                          0, 1);
->
-> -               return ret;
->         }
->
-> -       return 0;
-> +       return ret;
->  }
->
->  static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> --
-
-No.
-I want to confirm that the operation succeeds twice.
-
-Your code hides any error in the first loop.
-
-
-
-My intention is like follows:
-
-
-
- --- a/drivers/mmc/host/sdhci-cadence.c
- +++ b/drivers/mmc/host/sdhci-cadence.c
- @@ -275,10 +275,9 @@ static int sdhci_cdns_set_tune_val(struct
-sdhci_host *host, unsigned int val)
-                                          !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
-                                          0, 1);
- -
- -               return ret;
- +               if (ret)
- +                       return ret;
-         }
-
-         return 0;
-  }
-
-  static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)
-
-
-
+diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+index 13c9d9e243dd..6fa46bfc620f 100644
+--- a/drivers/media/common/videobuf2/videobuf2-core.c
++++ b/drivers/media/common/videobuf2/videobuf2-core.c
+@@ -1351,6 +1351,21 @@ bool vb2_core_request_has_buffers(struct media_request *req)
+ }
+ EXPORT_SYMBOL_GPL(vb2_core_request_has_buffers);
+ 
++void *vb2_core_request_find_buffer_priv(struct media_request *req)
++{
++	struct media_request_object *obj;
++	struct vb2_buffer *vb;
++
++	obj = media_request_object_find(req, &vb2_core_req_ops, NULL);
++	if (!obj)
++		return NULL;
++
++	vb = container_of(obj, struct vb2_buffer, req_obj);
++
++	return vb2_get_drv_priv(vb->vb2_queue);
++}
++EXPORT_SYMBOL_GPL(vb2_core_request_find_buffer_priv);
++
+ int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb,
+ 			 struct media_request *req)
+ {
+diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+index 032bd1bec555..65c0cf6afb55 100644
+--- a/include/media/videobuf2-core.h
++++ b/include/media/videobuf2-core.h
+@@ -1153,4 +1153,5 @@ int vb2_verify_memory_type(struct vb2_queue *q,
+ 		enum vb2_memory memory, unsigned int type);
+ 
+ bool vb2_core_request_has_buffers(struct media_request *req);
++void *vb2_core_request_find_buffer_priv(struct media_request *req);
+ #endif /* _MEDIA_VIDEOBUF2_CORE_H */
 -- 
-Best Regards
-Masahiro Yamada
+2.16.3
