@@ -1,65 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753580AbeDSO5R (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:57:17 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:42198 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752617AbeDSO5L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:57:11 -0400
-X-Google-Smtp-Source: AIpwx48fomw+npF5tiAkR1pvNE3Yn8RB7ooF67E0fgmUbUfJvihAL2//MS939NYyZMlJ/nRR8pAzIg==
-Subject: Re: [RFC PATCH v2 2/4] acpi: apei: Split GHES handlers outside of
- ghes_do_proc
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
-        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
-        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
-        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
-        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
-References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
- <20180416215903.7318-3-mr.nuke.me@gmail.com> <20180418175201.GI4795@pd.tnic>
- <5f26275c-5896-c552-69c4-78e5aaaa6558@gmail.com>
- <20180419143018.GC3600@pd.tnic>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <8f467611-16a1-8fe7-ea12-e2e29023e4e8@gmail.com>
-Date: Thu, 19 Apr 2018 09:57:08 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180419143018.GC3600@pd.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1753629AbeDSO5Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:57:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40438 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752617AbeDSO5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:57:20 -0400
+Message-ID: <e26c30b31aa8a5ae9692dc050b08d2bca85d4536.camel@bootlin.com>
+Subject: Re: [linux-sunxi] [PATCH 5/9] media: platform: Add Sunxi Cedrus
+ decoder driver
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Joonas =?ISO-8859-1?Q?Kylm=E4l=E4?= <joonas.kylmala@iki.fi>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.xyz>,
+        Florent Revest <revestflo@gmail.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas van Kleef <thomas@vitsch.nl>,
+        "Signed-off-by : Bob Ham" <rah@settrans.net>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 19 Apr 2018 16:56:05 +0200
+In-Reply-To: <a9cc2e3b-585a-b238-4187-e3c874013d2a@iki.fi>
+References: <20180309100933.15922-3-paul.kocialkowski@bootlin.com>
+         <20180309101445.16190-3-paul.kocialkowski@bootlin.com>
+         <a9cc2e3b-585a-b238-4187-e3c874013d2a@iki.fi>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-g3Z6ANf+IGQOvuuMrD+p"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--=-g3Z6ANf+IGQOvuuMrD+p
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/19/2018 09:30 AM, Borislav Petkov wrote:
-> On Thu, Apr 19, 2018 at 09:19:03AM -0500, Alex G. wrote:
->> On the other side, you lose readability as soon as you get a few more
->> handlers and the function becomes too long.
-> 
-> No you don't - you split it properly.
+Hi,
 
-And that was the motivation behind my splitting it in this patch.
+On Mon, 2018-03-12 at 20:29 +0000, Joonas Kylm=C3=A4l=C3=A4 wrote:
+> Paul Kocialkowski:
+> > diff --git a/drivers/media/platform/sunxi-cedrus/sunxi_cedrus.c
+> > b/drivers/media/platform/sunxi-cedrus/sunxi_cedrus.c
+> > new file mode 100644
+> > index 000000000000..88624035e0e3
+> > --- /dev/null
+> > +++ b/drivers/media/platform/sunxi-cedrus/sunxi_cedrus.c
+> > @@ -0,0 +1,313 @@
+> > +/*
+> > + * Sunxi Cedrus codec driver
+> > + *
+> > + * Copyright (C) 2016 Florent Revest
+> > + * Florent Revest <florent.revest@free-electrons.com>
+> > + *
+> > + * Based on vim2m
+> > + *
+> > + * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
+> > + * Pawel Osciak, <pawel@osciak.com>
+> > + * Marek Szyprowski, <m.szyprowski@samsung.com>
+> > + *
+> > + * This software is licensed under the terms of the GNU General
+> > Public
+> > + * License version 2, as published by the Free Software Foundation,
+> > and
+> > + * may be copied, distributed, and modified under those terms.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> > + */
+> > +
+> > +#include "sunxi_cedrus_common.h"
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/module.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/fs.h>
+> > +#include <linux/sched.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/of.h>
+> > +
+> > +#include <linux/platform_device.h>
+> > +#include <linux/videodev2.h>
+> > +#include <media/v4l2-mem2mem.h>
+> > +#include <media/v4l2-device.h>
+> > +#include <media/v4l2-ioctl.h>
+> > +#include <media/v4l2-ctrls.h>
+> > +#include <media/v4l2-event.h>
+> > +#include <media/videobuf2-dma-contig.h>
+>=20
+> I think that the definitions
+>=20
+> #include <linux/clk.h>
+> #include <linux/delay.h>
+> #include <linux/fs.h>
+> #include <linux/sched.h>
+> #include <linux/slab.h>
+> #include <linux/videodev2.h>
+>=20
+> are not used directly in the sunxi_cedrus.c file. Therefore they
+> should be removed.
 
->> And more importantly, you lose generality: it's not obvious that
->> there's ghes_edac_report_mem_error() which too wide a context.
-> 
-> I don't understand what that means.
+Thanks for the review, this will be done in v2.
 
-My apologies, sometimes my thought is too far ahead of my typing
-fingers. For the purpose of handling _one_ error, you need the CPER
-entry for that one error -- narrow context. You don't need the entire
-GHES structure -- wide context. Individual handlers should not be able
-to access the entire ghes.
+Cheers,
 
-When the handlers are restricted to a common signature --which doesn't
-include ghes--, it's obvious when functions try to bite more than they
-can chew.
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-g3Z6ANf+IGQOvuuMrD+p
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Alex
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrYrgUACgkQ3cLmz3+f
+v9E/2wf/YjU0oWpwWBmey5xWwP7D4QnN2xXU7lTHzGNrzNeVayz5oY+oyHO76Gxw
+No/1oYVhExYX5aD4D2MXx9leJuzulc2NpNF2J7dut/lRJgdUdeRqjJpd24MclL+T
+M126jX6i9SV7ImAzANajenJhQOe40DTLcWu5LL4L4zt6Djj+r1KRdztncTQEV55m
+2LYx6C3p1JW/qDYJaXhSRU09sKyB2f81+6GLO+yz4Cp4j1FYoy35tW7xRZYzPvZ/
+irJI67+ApZ7EUJ1Yx1Bf5Yt1nzGwWcXR3CSAS+ZK4KADdui4oalQbBS0OmEOnkG9
+Th93avgs532b7BYZhr9ZU5YSvmEL+g==
+=b9ts
+-----END PGP SIGNATURE-----
+
+--=-g3Z6ANf+IGQOvuuMrD+p--
