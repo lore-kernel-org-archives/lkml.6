@@ -1,61 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753505AbeDSPrU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:47:20 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:36814 "EHLO mail.skyhub.de"
+        id S1753482AbeDSPrS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:47:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42975 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753073AbeDSPrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:47:16 -0400
-Date: Thu, 19 Apr 2018 17:46:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Alex G." <mr.nuke.me@gmail.com>
-Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
-        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
-        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
-        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
-        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
-Subject: Re: [RFC PATCH v2 4/4] acpi: apei: Warn when GHES marks correctable
- errors as "fatal"
-Message-ID: <20180419154656.GF3600@pd.tnic>
-References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
- <20180416215903.7318-5-mr.nuke.me@gmail.com>
- <20180418175452.GK4795@pd.tnic>
- <807002b1-ccb9-22c8-6563-ade7e44912ff@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <807002b1-ccb9-22c8-6563-ade7e44912ff@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1753448AbeDSPq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:46:59 -0400
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 10/10] ARM: dts: sun8i-a33: Add Video Engine and reserved memory nodes
+Date: Thu, 19 Apr 2018 17:45:36 +0200
+Message-Id: <20180419154536.17846-6-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 10:11:03AM -0500, Alex G. wrote:
-> There is value in this. From my observations, fw claims it will do
-> everything through FFS, yet fails to fully handle the situation. It's
-> rooted in FW's assumptions about OS behavior. Because the (old) versions
-> of windows, esxi, and rhel used during development crash, fw assumes
-> that _all_ OSes crash. The result in a surprising majority of cases is
-> that FFS doesn't properly handle recurring errors, and fw is, in fact,
-> broken.
+This adds nodes for the Video Engine and the associated reserved memory
+for the Allwinner A33. Up to 96 MiB of memory are dedicated to the VPU.
 
-So FW being broken is a social secret. But we don't care. We have tried,
-nothing happens. No one moves. The crack monkeys which program it have
-long moved to the next release and you hear crap like, "we don't support
-linux" and other bullshit.
+The VPU can only map the first 256 MiB of DRAM, so the reserved memory
+pool has to be located in that area. Following Allwinner's decision in
+downstream software, the last 96 MiB of the first 256 MiB of RAM are
+reserved for this purpose.
 
-What we do now is to try to make the best of it - we either can handle
-an error *without* firmware's help or we panic. If we can recover from
-it, let's do that without screaming about something the user can't deal
-with anyway.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ arch/arm/boot/dts/sun8i-a33.dtsi | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-All those FW_ERR printks cause nothing but expensive support calls, the
-outcome of which is nothing. Just a lot of money down the drain.
-
+diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
+index a21f2ed07a52..308b532aee1d 100644
+--- a/arch/arm/boot/dts/sun8i-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a33.dtsi
+@@ -181,6 +181,20 @@
+ 		reg = <0x40000000 0x80000000>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
++		ve_memory: cma@4a000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x4a000000 0x6000000>;
++			no-map;
++			linux,cma-default;
++		};
++	};
++
+ 	sound: sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,name = "sun8i-a33-audio";
+@@ -204,6 +218,11 @@
+ 	};
+ 
+ 	soc@1c00000 {
++		syscon: system-controller@01c00000 {
++			compatible = "allwinner,sun8i-a33-syscon", "syscon";
++			reg = <0x01c00000 0x1000>;
++		};
++
+ 		tcon0: lcd-controller@1c0c000 {
+ 			compatible = "allwinner,sun8i-a33-tcon";
+ 			reg = <0x01c0c000 0x1000>;
+@@ -240,6 +259,25 @@
+ 			};
+ 		};
+ 
++		ve: video-engine@01c0e000 {
++			compatible = "allwinner,sun4i-a10-video-engine";
++			memory-region = <&ve_memory>;
++			syscon = <&syscon>;
++
++			clocks = <&ccu CLK_BUS_VE>, <&ccu CLK_VE>,
++				 <&ccu CLK_DRAM_VE>;
++			clock-names = "ahb", "mod", "ram";
++
++			assigned-clocks = <&ccu CLK_VE>;
++			assigned-clock-rates = <320000000>;
++
++			resets = <&ccu RST_BUS_VE>;
++
++			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++
++			reg = <0x01c0e000 0x1000>;
++		};
++
+ 		crypto: crypto-engine@1c15000 {
+ 			compatible = "allwinner,sun4i-a10-crypto";
+ 			reg = <0x01c15000 0x1000>;
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+2.16.3
