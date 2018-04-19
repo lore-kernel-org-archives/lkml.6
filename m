@@ -1,142 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753590AbeDSP77 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:59:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58074 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753077AbeDSP76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:59:58 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92887217D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
-Date: Thu, 19 Apr 2018 08:59:57 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk@google.com>, "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2] ext4: handle errors on ext4_commit_super
-Message-ID: <20180419155957.GB81439@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180330014429.27824-1-jaegeuk@kernel.org>
+        id S1753548AbeDSQCE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:02:04 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:42864 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753542AbeDSQCC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 12:02:02 -0400
+X-Google-Smtp-Source: AB8JxZpWvD7+cDJ7HtJL33wZ7Z4GbZ7MhflHSoNWPeyOYGhSh83yk9i3Wd5dogNQdqx3DFworqzJ3Ox6vozL+T4V/FvHXOVLOmB0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180330014429.27824-1-jaegeuk@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Date: Thu, 19 Apr 2018 09:02:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002ab8c5056a35b12b@google.com>
+Subject: WARNING in unlock_new_inode
+From: syzbot <syzbot+187510916eb6a14598f7@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When remounting ext4 from ro to rw, currently it allows its transition,
-even if ext4_commit_super() returns EIO. Even worse thing is, after that,
-fs/buffer complains buffer dirty bits like:
+Hello,
 
- Call trace:
- [<ffffff9750c259dc>] mark_buffer_dirty+0x184/0x1a4
- [<ffffff9750cb398c>] __ext4_handle_dirty_super+0x4c/0xfc
- [<ffffff9750c7a9fc>] ext4_file_open+0x154/0x1c0
- [<ffffff9750bea51c>] do_dentry_open+0x114/0x2d0
- [<ffffff9750bea75c>] vfs_open+0x5c/0x94
- [<ffffff9750bf879c>] path_openat+0x668/0xfe8
- [<ffffff9750bf8088>] do_filp_open+0x74/0x120
- [<ffffff9750beac98>] do_sys_open+0x148/0x254
- [<ffffff9750beade0>] SyS_openat+0x10/0x18
- [<ffffff9750a83ab0>] el0_svc_naked+0x24/0x28
- EXT4-fs (dm-1): previous I/O error to superblock detected
- Buffer I/O error on dev dm-1, logical block 0, lost sync page write
- EXT4-fs (dm-1): re-mounted. Opts: (null)
- Buffer I/O error on dev dm-1, logical block 80, lost async page write
+syzbot hit the following crash on upstream commit
+9dd2326890d89a5179967c947dab2bab34d7ddee (Fri Mar 30 17:29:47 2018 +0000)
+Merge tag 'ceph-for-4.16-rc8' of git://github.com/ceph/ceph-client
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=187510916eb6a14598f7
 
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-ext4@vger.kernel.org
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
+So far this crash happened 4 times on upstream.
+Unfortunately, I don't have any reproducer for this crash yet.
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6437140946747392
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
+compiler: gcc (GCC) 7.1.1 20170620
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+187510916eb6a14598f7@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
+
+hfs: can't find a HFS filesystem on dev loop3
+FAT-fs (loop3): invalid media value (0xd8)
+FAT-fs (loop3): Can't find a valid FAT filesystem
+REISERFS (device loop2): Using r5 hash to sort names
+REISERFS (device loop2): using 3.5.x disk format
+WARNING: CPU: 1 PID: 21970 at fs/inode.c:958 unlock_new_inode+0xea/0x120  
+fs/inode.c:958
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 21970 Comm: syz-executor2 Not tainted 4.16.0-rc7+ #7
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:unlock_new_inode+0xea/0x120 fs/inode.c:958
+RSP: 0018:ffff8801ad387120 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: ffff88017ecfe1a8 RCX: ffffffff81b7f52a
+RDX: 0000000000040000 RSI: ffffc900036cc000 RDI: ffff88017ecfe234
+RBP: ffff8801ad387140 R08: 1ffff10035a70d63 R09: 0000000000000004
+R10: ffff8801ad386fd8 R11: 0000000000000007 R12: 0000000000000000
+R13: ffff88017ecfe280 R14: ffff88017ecfe230 R15: ffff8801ad387598
+  reiserfs_new_inode+0x616/0x32a0 fs/reiserfs/inode.c:2159
+  reiserfs_mkdir+0x418/0x840 fs/reiserfs/namei.c:840
+  xattr_mkdir.constprop.14+0x115/0x170 fs/reiserfs/xattr.c:76
+  create_privroot fs/reiserfs/xattr.c:857 [inline]
+  reiserfs_xattr_init+0x501/0x970 fs/reiserfs/xattr.c:976
+  reiserfs_fill_super+0x2b26/0x33a0 fs/reiserfs/super.c:2176
+  mount_bdev+0x2b7/0x370 fs/super.c:1119
+  get_super_block+0x34/0x40 fs/reiserfs/super.c:2605
+  mount_fs+0x66/0x2d0 fs/super.c:1222
+  vfs_kern_mount.part.26+0xc6/0x4a0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:2509 [inline]
+  do_new_mount fs/namespace.c:2512 [inline]
+  do_mount+0xea4/0x2bb0 fs/namespace.c:2842
+  SYSC_mount fs/namespace.c:3058 [inline]
+  SyS_mount+0xab/0x120 fs/namespace.c:3035
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x4578aa
+RSP: 002b:00007f3983b39bb8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 00000000004578aa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f3983b39c00
+RBP: 0000000000000007 R08: 0000000020011500 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000013
+R13: 000000000000066d R14: 00000000006fbad8 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
 
-Change log from v1:
- - modify return value of ext4_setup_super
- - change the error handling order in ext4_commit_super
-
- fs/ext4/super.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 185f7e61f4cf..af4d373aa3ed 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2116,12 +2116,12 @@ static int ext4_setup_super(struct super_block *sb, struct ext4_super_block *es,
- 			    int read_only)
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
--	int res = 0;
-+	int err = 0;
- 
- 	if (le32_to_cpu(es->s_rev_level) > EXT4_MAX_SUPP_REV) {
- 		ext4_msg(sb, KERN_ERR, "revision level too high, "
- 			 "forcing read-only mode");
--		res = SB_RDONLY;
-+		err = -EROFS;
- 	}
- 	if (read_only)
- 		goto done;
-@@ -2154,7 +2154,7 @@ static int ext4_setup_super(struct super_block *sb, struct ext4_super_block *es,
- 	if (sbi->s_journal)
- 		ext4_set_feature_journal_needs_recovery(sb);
- 
--	ext4_commit_super(sb, 1);
-+	err = ext4_commit_super(sb, 1);
- done:
- 	if (test_opt(sb, DEBUG))
- 		printk(KERN_INFO "[EXT4 FS bs=%lu, gc=%u, "
-@@ -2166,7 +2166,7 @@ static int ext4_setup_super(struct super_block *sb, struct ext4_super_block *es,
- 			sbi->s_mount_opt, sbi->s_mount_opt2);
- 
- 	cleancache_init_fs(sb);
--	return res;
-+	return err;
- }
- 
- int ext4_alloc_flex_bg_array(struct super_block *sb, ext4_group_t ngroup)
-@@ -4760,11 +4760,7 @@ static int ext4_commit_super(struct super_block *sb, int sync)
- 		unlock_buffer(sbh);
- 		error = __sync_dirty_buffer(sbh,
- 			REQ_SYNC | (test_opt(sb, BARRIER) ? REQ_FUA : 0));
--		if (error)
--			return error;
--
--		error = buffer_write_io_error(sbh);
--		if (error) {
-+		if (buffer_write_io_error(sbh)) {
- 			ext4_msg(sb, KERN_ERR, "I/O error while writing "
- 			       "superblock");
- 			clear_buffer_write_io_error(sbh);
-@@ -5165,8 +5161,12 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
- 			if (sbi->s_journal)
- 				ext4_clear_journal_err(sb, es);
- 			sbi->s_mount_state = le16_to_cpu(es->s_state);
--			if (!ext4_setup_super(sb, es, 0))
--				sb->s_flags &= ~SB_RDONLY;
-+
-+			err = ext4_setup_super(sb, es, 0);
-+			if (err)
-+				goto restore_opts;
-+
-+			sb->s_flags &= ~SB_RDONLY;
- 			if (ext4_has_feature_mmp(sb))
- 				if (ext4_multi_mount_protect(sb,
- 						le64_to_cpu(es->s_mmp_block))) {
-@@ -5190,8 +5190,10 @@ static int ext4_remount(struct super_block *sb, int *flags, char *data)
- 	}
- 
- 	ext4_setup_system_zone(sb);
--	if (sbi->s_journal == NULL && !(old_sb_flags & SB_RDONLY))
--		ext4_commit_super(sb, 1);
-+	if (sbi->s_journal == NULL && !(old_sb_flags & SB_RDONLY)) {
-+		err = ext4_commit_super(sb, 1);
-+		goto restore_opts;
-+	}
- 
- #ifdef CONFIG_QUOTA
- 	/* Release old quota file names */
--- 
-2.17.0.484.g0c8726318c-goog
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
