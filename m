@@ -1,44 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753428AbeDSSpW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 14:45:22 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:34384 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753049AbeDSSpV (ORCPT
+        id S1753311AbeDSSwG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 14:52:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36132 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753074AbeDSSwE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 14:45:21 -0400
-X-Google-Smtp-Source: AIpwx48EayoTqeQsyTPPGVh9Nm86b2vtRjwY3pYrDoU+6dQMTxOUxpaCSYpf4WjkZneHKEVIqdfwVQ==
-From: Masanari Iida <standby24x7@gmail.com>
-To: linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
-        trivial@kernel.org, linux-input@vger.kernel.org
-Cc: Masanari Iida <standby24x7@gmail.com>
-Subject: [PATCH] Input: touchscreen: Fix a typo in Kconfig
-Date: Fri, 20 Apr 2018 03:45:14 +0900
-Message-Id: <20180419184514.9668-1-standby24x7@gmail.com>
-X-Mailer: git-send-email 2.17.0.140.g0b0cc9f86731
+        Thu, 19 Apr 2018 14:52:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B29060445
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH 1/1] scsi/ufs: qcom: Don't enable PHY_QCOM_UFS by default
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: martin.petersen@oracle.com, kishon@ti.com, jejb@linux.vnet.ibm.com,
+        subhashj@codeaurora.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        "cang@codeaurora.org" <cang@codeaurora.org>
+References: <20180409132404.20876-1-vivek.gautam@codeaurora.org>
+ <20180409165127.GK453@tuxbook-pro>
+ <2588cd12-081a-5fad-7ef5-af78b18168eb@codeaurora.org>
+ <20180409200904.GL453@tuxbook-pro>
+ <fa02c578-a89e-7934-2e88-d3728957ab71@codeaurora.org>
+ <20180417231109.GO18510@minitux>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <715f93be-611d-ae04-42e5-8a4b33ac2cce@codeaurora.org>
+Date: Fri, 20 Apr 2018 00:21:56 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180417231109.GO18510@minitux>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fix a spelling typo found in Kconfig.
+Hi Bjorn,
 
-Signed-off-by: Masanari Iida <standby24x7@gmail.com>
----
- drivers/input/touchscreen/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 4f15496fec8b..3e613afa10b4 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -362,7 +362,7 @@ config TOUCHSCREEN_HIDEEP
- 
- 	  If unsure, say N.
- 
--	  To compile this driver as a moudle, choose M here : the
-+	  To compile this driver as a module, choose M here : the
- 	  module will be called hideep_ts.
- 
- config TOUCHSCREEN_ILI210X
--- 
-2.17.0.140.g0b0cc9f86731
+On 4/18/2018 4:41 AM, Bjorn Andersson wrote:
+> On Mon 09 Apr 23:31 PDT 2018, Vivek Gautam wrote:
+>
+>>
+>> On 4/10/2018 1:39 AM, Bjorn Andersson wrote:
+>>> On Mon 09 Apr 10:38 PDT 2018, Vivek Gautam wrote:
+>>>> On 4/9/2018 10:21 PM, Bjorn Andersson wrote:
+>>>>> On Mon 09 Apr 06:24 PDT 2018, Vivek Gautam wrote:
+>>> [..]
+>>>>>> diff --git a/include/linux/phy/phy-qcom-ufs.h b/include/linux/phy/phy-qcom-ufs.h
+>>>>>> index 0a2c18a9771d..1388c2a2965e 100644
+>>>>>> --- a/include/linux/phy/phy-qcom-ufs.h
+>>>>>> +++ b/include/linux/phy/phy-qcom-ufs.h
+>>>>>> @@ -31,8 +31,21 @@ void ufs_qcom_phy_enable_dev_ref_clk(struct phy *phy);
+>>>>>>      */
+>>>>>>     void ufs_qcom_phy_disable_dev_ref_clk(struct phy *phy);
+>>>>>> +#if IS_ENABLED(CONFIG_PHY_QCOM_UFS)
+>>>>>>     int ufs_qcom_phy_set_tx_lane_enable(struct phy *phy, u32 tx_lanes);
+>>>>>>     void ufs_qcom_phy_save_controller_version(struct phy *phy,
+>>>>>> -			u8 major, u16 minor, u16 step);
+>>>>>> +					  u8 major, u16 minor, u16 step);
+>>>>>> +#else
+>>>>>> +static inline int ufs_qcom_phy_set_tx_lane_enable(struct phy *phy, u32 tx_lanes)
+>>>>>> +{
+>>>>>> +	return -ENOSYS;
+>>>>>> +}
+>>>>>> +
+>>>>>> +static inline void ufs_qcom_phy_save_controller_version(struct phy *phy,
+>>>>>> +							u8 major, u16 minor,
+>>>>>> +							u16 step)
+>>>>>> +{
+>>>>>> +}
+>>>>>> +#endif /* PHY_QCOM_UFS */
+>>>>> What's the timeline for getting rid of the references to these
+>>>>> functions? I presume that code depending on these being here will
+>>>>> compile but won't actually work?
+>>>> Yes, these inline definitions are just to keep ufs-qcom happy with the
+>>>> direct
+>>>> calls that it makes to these functions.
+>>>> As you would know these couple of functions are just used by the 20nm phy.
+>>>> However, we don't have any platform yet in the upstream that enables this
+>>>> phy.
+>>>> I am hoping that we will eventually get rid of these functions when we
+>>>> further
+>>>> clean up ufs-qcom driver.
+>>>>
+>>> I see, but that means that we're calling this function with a struct phy
+>>> that might not be a struct ufs_qcom_phy and as such a defconfig with
+>>> both enabled will have undefined outcome for the migrated phys.
+>> No, we will have to add support for separate phys as sdm845 has phy per each
+>> lane,
+>> and the older struct phy will exist alongside.
+>> We will call this function only with the older phy pointer.
+>>
+>>> In particular we do expect that the same kernel will boot on db820c and
+>>> sdm845-mtp, so we will have to enable support for the 14nm & 20nm phy
+>>> driver (and we don't want random crashes because someone happened to
+>>> enable it).
+>> Right, so we create new struct phy while keeping older one intact to keep
+>> the
+>> ufs-qcom work with both - ufs_qcom_phy and qmp_phy.
+>> Some of the controller drivers, such as usb/dwc3/ keep support for old and
+>> new phys,
+>> although there the difference is between generic phy and the usb-phy.
+>> So, I am assuming that if we want to keep ufs-qcom on platforms using 20nm,
+>> 14nm and 10nm phys happy, we will have to keep the phys separately for
+>> sometime.
+>> What do you say about it?
+>>
+> My concern is only that the UFS HCI driver doesn't have a way to know if
+> it's the new or old "type" of phy, but if you can get that working then
+> I don't have any objections about doing so for a transitional period.
+>
+> But, you may not use kernel config options to handle this, the same
+> Image should boot on msm8916, msm8996 and sdm845 (with appropriate dtb
+> for each one).
+
+Right, i get your concern. I will try to refactor the UFS HCI code to 
+handle the two
+'types' of phys.
+I think Can Guo (CC'ed here) was already working on this. I will check 
+with him
+if he already has some code to do this.
+
+Thanks
+Vivek
+>
+>> On db820c, we can still work with the ufs_qcom_phy.
+>>
+> I do not have an issue with that.
+>
+> Regards,
+> Bjorn
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
