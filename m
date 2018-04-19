@@ -1,100 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752765AbeDSKls (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:41:48 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:63440 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751957AbeDSKlq (ORCPT
+        id S1752805AbeDSKl6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:41:58 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53432 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752769AbeDSKlw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:41:46 -0400
-From: Philippe CORNU <philippe.cornu@st.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
-        Brian Norris <briannorris@chromium.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>, "Heiko Stubner" <heiko@sntech.de>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rockchip@lists.infradead.org"
-        <linux-rockchip@lists.infradead.org>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Vincent ABRIOU <vincent.abriou@st.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>
-Subject: Re: [PATCH v2] drm/bridge/synopsys: dsi: Adopt SPDX identifiers
-Thread-Topic: [PATCH v2] drm/bridge/synopsys: dsi: Adopt SPDX identifiers
-Thread-Index: AQHToPxgKSTOodIeekOGT4vbRiBataQIMlOA
-Date: Thu, 19 Apr 2018 10:41:03 +0000
-Message-ID: <c55dab05-8003-ea5b-58f9-39aaa861fab6@st.com>
-References: <20180208145805.24762-1-philippe.cornu@st.com>
- <101210971.aHjggv2rq0@avalon>
-In-Reply-To: <101210971.aHjggv2rq0@avalon>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.120]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BFA3071BA7863A43B8F21E8A6CFEBF21@st.com>
+        Thu, 19 Apr 2018 06:41:52 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180419104150euoutp025ea4b2c7193df65d154ece6bce064a49~m0EMQDjok2385923859euoutp02H
+X-AuditID: cbfec7f2-5ffe19c000011644-32-5ad8726bc7e1
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL V3] Thermal SoC management updates for v4.17-rc1
+Date: Thu, 19 Apr 2018 12:41:42 +0200
+Message-ID: <13169679.AINr0uuryx@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-Reply-To: <20180418141027.GA3303@localhost.localdomain>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_04:,,
- signatures=0
+Content-Type: text/plain; charset="iso-8859-1"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZduzned3sohtRBs8Oc1rMv3KN1WL5vn5G
+        i8u75rBZfO49wmjx5GEfmwOrx85Zd9k9Fu95yeTxeZNcAHMUl01Kak5mWWqRvl0CV8bsW8fZ
+        Ck5qVxz6c5OxgXGiVhcjB4eEgInE2hXKXYxcHEICKxglrq58zA7hfGGUePrnMRuE85lR4ter
+        EywwHZuOmULElzNKnNz6ngnC+cAosXPvDuYuRk4ONgEriYntqxhBbBEBLYkTl7aDFTELLGOU
+        WHevC6xIWMBd4vPBzUwgNouAqkT3sj9gNi9Qw/t1N1lBbFEBL4kt+9rB4pxAQ5een8wIUSMo
+        cXLmExYQm1lAW2LZwtfMELaexI2pU8DOlhBoZ5d49WwNO0hCQsBF4uvkq1C2sMSr41ugbBmJ
+        /zvnM0E0NDNKfNuxhxkiMYFRYs96IQjbWuLw8YusELatxKb5T9ghYcEnceOtIMRiPolJ26Yz
+        Q4R5JTraoDrVJDYs28AGs6pr50qo6R4SU26/ZJnAqDQLyTuzkLwzC8k7CxiZVzGKp5YW56an
+        FhvmpZbrFSfmFpfmpesl5+duYgSmkdP/jn/awfj1UtIhRgEORiUe3gT/61FCrIllxZW5hxgl
+        OJiVRHjFzwKFeFMSK6tSi/Lji0pzUosPMUpzsCiJ88Zp1EUJCaQnlqRmp6YWpBbBZJk4OKUa
+        GPfpXZnx4YN0yPwz712PJrw6pytyMXb2XYELpgYy7bde3vj4kC1DcV6PiIXnawnnR21p6a4P
+        dYViznmFpe/22vuId+JXYYkFGzM77zdxK7q1CgRwuy+W93JnPpKWtFmm/MmJ8stV6RI+/88y
+        GrS0ZqflSZd6CBrG2jzdaZ7WXTFzhnTGLulqJZbijERDLeai4kQAIMdI5B8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsVy+t/xu7qZRTeiDE7vNbSYf+Uaq8Xyff2M
+        Fpd3zWGz+Nx7hNHiycM+NgdWj52z7rJ7LN7zksnj8ya5AOYoPZui/NKSVIWM/OISW6VoQwsj
+        PUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYzdb7cwFXTLVazcdIq9gXGfeBcjB4eE
+        gInEpmOmXYxcHEICSxklrm7dwwwRl5E4vr6si5ETyBSW+HOtiw2i5h2jxNKNx9hAEmwCVhIT
+        21cxgtgiAloSJy5tZwIpYhZYxCgx7dZLVpCEsIC7xOeDm5lAbBYBVYnuZX/AbF6ghvfrboLV
+        iAp4SWzZ1w4W5wQauvT8ZEaIbb2MErPvL4BqEJQ4OfMJC4jNLKAtsWzha2YIW0/ixtQpbBMY
+        BWchKZuFpGwWkrIFjMyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcxAqNj27GfW3Ywdr0LPsQo
+        wMGoxMOb4H89Sog1say4MvcQowQHs5IIr/hZoBBvSmJlVWpRfnxRaU5q8SFGU6DvJjJLiSbn
+        AyM3ryTe0NTQ3MLS0NzY3NjMQkmc97xBZZSQQHpiSWp2ampBahFMHxMHp1QDo0TLR8OD0bcV
+        tPUfpKwW4j3okXs1LVLTrVBe58FJD5MLL/e2HFn6asqTh3/yrJckRskENIU937Jt1/+forfe
+        FHdsrpt3S4rh1vRGzpyej9OVd6882pawQ2vuVN1bXruyJxq6fMu53Gys9+hg76fDl7asnX8g
+        /uw+ZvsNJpnVC888vrQ81yXofocSS3FGoqEWc1FxIgBIYmGJpAIAAA==
+X-CMS-MailID: 20180419104145eucas1p2e64408e3340d5af7731765df0e82f1cd
+X-Msg-Generator: CA
+X-MTR: 20180419104145eucas1p2e64408e3340d5af7731765df0e82f1cd
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180419104145eucas1p2e64408e3340d5af7731765df0e82f1cd
+X-RootMTR: 20180419104145eucas1p2e64408e3340d5af7731765df0e82f1cd
+References: <20180414183051.GA27921@localhost.localdomain>
+        <1524037889.2553.13.camel@intel.com>
+        <20180418141027.GA3303@localhost.localdomain>
+        <CGME20180419104145eucas1p2e64408e3340d5af7731765df0e82f1cd@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3JAftrB021104
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3JAg1C1021108
 
-Applied on drm-misc-next.
-Many thanks,
-Philippe :-)
 
-On 02/08/2018 05:46 PM, Laurent Pinchart wrote:
-> Hi Philippe,
+Hi,
+
+On Wednesday, April 18, 2018 07:10:30 AM Eduardo Valentin wrote:
+> Hello,
 > 
-> Thank you for the patch.
+> On Wed, Apr 18, 2018 at 03:51:29PM +0800, Zhang Rui wrote:
+> > Hi, Eduardo,
+> > 
+> > On å…­, 2018-04-14 at 11:30 -0700, Eduardo Valentin wrote:
+> > > Hello Linus,
+> > > 
+> > > Please find thermal-soc changes for v4.17-rc1.
+> > > Rui asked me to send the pull request directly to you
+> > > as we are close to the end of the merge window.
+> > > Essentially this pull removes the series that caused
+> > > warning regression. I will work with the developer
+> > > to get that fixed later on, but I am still sending
+> > > the other few patches that are unrelated to that.
+> > > Let me know if this causes any issues and can still
+> > > be pulled.
+> > > 
+> > > Changelog:
+> > > - New i.MX7 thermal sensor
+> > > - Mediatek driver now supports MT7622 SoC
+> > > - Removal of min max cpu cooling DT property
+> > > 
+> > > Differences in V3:
+> > > - Rebased on top current linus/master, to avoid and merge issues
+> > > from previous pulled thermal code.
+> > > 
+> > > Differences in V2:
+> > > - Reordered the patches to drop exynos changes for now until we get
+> > > agreement on the fix on that driver for the compilation warns
+> > > caused by the confusing conversion functions.
+> > > 
+> > > 
+> > > The following changes since commit
+> > > 48023102b7078a6674516b1fe0d639669336049d:
+> > > 
+> > > Â  Merge branch 'overlayfs-linus' of
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs (2018-04-
+> > > 13 16:55:41 -0700)
+> > > 
+> > > are available in the git repository at:
+> > > 
+> > > Â  git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-
+> > > thermal linus
+> > > 
+> > > for you to fetch changes up to
+> > > 15a32df1918259be6c23fc36014fc26ee66c836c:
+> > > 
+> > > Â  dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
+> > > (2018-04-14 09:37:55 -0700)
+> > > 
+> > This pull request does not catch this merge window.
+> > So do you want to split it into 2 separate pull requests, one for 4.17-
+> > rc and another for 4.18-rc1?
 > 
-> On Thursday, 8 February 2018 16:58:05 EET Philippe Cornu wrote:
->> Add SPDX identifiers to the Synopsys DesignWare MIPI DSI
->> host controller driver.
->>
->> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> OK. Yeah, I am fine with that.
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > > ----------------------------------------------------------------
+> > > Anson Huang (1):
+> > > Â Â Â Â Â Â thermal: imx: add i.MX7 thermal sensor support
+> > > 
+> > > Bartlomiej Zolnierkiewicz (1):
+> > > Â Â Â Â Â Â dt-bindings: thermal: remove no longer needed samsung thermal
+> > > properties
+> > > 
+> > > Sean Wang (2):
+> > > Â Â Â Â Â Â dt-bindings: thermal: add binding for MT7622 SoC
+> > > Â Â Â Â Â Â thermal: mediatek: add support for MT7622 SoC
+> > > 
+> > > Viresh Kumar (1):
+> > > Â Â Â Â Â Â dt-bindings: thermal: Remove "cooling-{min|max}-level"
+> > > properties
+> > > 
+> > IMO, together with the refreshed exynos fixes, the one from Viresh and
+> > the one fromÂ Bartlomiej can be queued for 4.17-rc, and the others have
+> > to wait until next merge window.
+> > 
 > 
->> ---
->> Changes in v2: Update to "GPL-2.0+" following comments from Laurent
->> Pinchart, Benjamin Gaignard & Philippe Ombredanne.
->>
->>   drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 6 +-----
->>   1 file changed, 1 insertion(+), 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
->> b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c index
->> 7bac101c285c..99f0e4f51716 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
->> @@ -1,12 +1,8 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->>   /*
->>    * Copyright (c) 2016, Fuzhou Rockchip Electronics Co., Ltd
->>    * Copyright (C) STMicroelectronics SA 2017
->>    *
->> - * This program is free software; you can redistribute it and/or modify
->> - * it under the terms of the GNU General Public License as published by
->> - * the Free Software Foundation; either version 2 of the License, or
->> - * (at your option) any later version.
->> - *
->>    * Modified by Philippe Cornu <philippe.cornu@st.com>
->>    * This generic Synopsys DesignWare MIPI DSI host driver is based on the
->>    * Rockchip version from rockchip/dw-mipi-dsi.c with phy & bridge APIs.
+> Correct, the new chip support will need to wait for the next merge
+> window. I have already split the patches into the two categories.
+> The patches removing stuff are in my -fixes branch. All the other adding
+> new chip support are in my -linus branch.
 > 
-> 
+> Now, Do you have anything for this -rc2 ? If not, I will send directly
+> to Linus the stuff in my -fixes branch. Let me know.
+
+What about refreshed Exynos patches (https://lkml.org/lkml/2018/4/16/256)?
+
+Fixes from Marek (first two patches) are quite critical (without them
+booting with thermal enabled triggers critical temperature handling on
+Exynos4210 SoC).
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
