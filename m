@@ -1,21 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753793AbeDSOSi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:18:38 -0400
-Received: from sauhun.de ([88.99.104.3]:45270 "EHLO pokefinder.org"
+        id S1753620AbeDSORx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:17:53 -0400
+Received: from sauhun.de ([88.99.104.3]:45342 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753427AbeDSOHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:03 -0400
+        id S1753453AbeDSOHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:07:04 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org
-Subject: [PATCH 31/61] net: dsa: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:01 +0200
-Message-Id: <20180419140641.27926-32-wsa+renesas@sang-engineering.com>
+        netdev@vger.kernel.org
+Subject: [PATCH 33/61] net: ethernet: davicom: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:03 +0200
+Message-Id: <20180419140641.27926-34-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
@@ -31,56 +29,32 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/net/dsa/bcm_sf2.c | 6 ++----
- drivers/net/dsa/qca8k.c   | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/davicom/dm9000.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index 0378eded31f2..a61b937d1a37 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -1148,16 +1148,14 @@ static void bcm_sf2_sw_shutdown(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int bcm_sf2_suspend(struct device *dev)
+diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
+index 50222b7b81f3..0a82fcf16d35 100644
+--- a/drivers/net/ethernet/davicom/dm9000.c
++++ b/drivers/net/ethernet/davicom/dm9000.c
+@@ -1722,8 +1722,7 @@ dm9000_probe(struct platform_device *pdev)
+ static int
+ dm9000_drv_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct bcm_sf2_priv *priv = platform_get_drvdata(pdev);
-+	struct bcm_sf2_priv *priv = dev_get_drvdata(dev);
+-	struct net_device *ndev = platform_get_drvdata(pdev);
++	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct board_info *db;
  
- 	return dsa_switch_suspend(priv->dev->ds);
- }
- 
- static int bcm_sf2_resume(struct device *dev)
+ 	if (ndev) {
+@@ -1745,8 +1744,7 @@ dm9000_drv_suspend(struct device *dev)
+ static int
+ dm9000_drv_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct bcm_sf2_priv *priv = platform_get_drvdata(pdev);
-+	struct bcm_sf2_priv *priv = dev_get_drvdata(dev);
+-	struct net_device *ndev = platform_get_drvdata(pdev);
++	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct board_info *db = netdev_priv(ndev);
  
- 	return dsa_switch_resume(priv->dev->ds);
- }
-diff --git a/drivers/net/dsa/qca8k.c b/drivers/net/dsa/qca8k.c
-index 600d5ad1fbde..9f503e5db88a 100644
---- a/drivers/net/dsa/qca8k.c
-+++ b/drivers/net/dsa/qca8k.c
-@@ -910,8 +910,7 @@ qca8k_set_pm(struct qca8k_priv *priv, int enable)
- 
- static int qca8k_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct qca8k_priv *priv = platform_get_drvdata(pdev);
-+	struct qca8k_priv *priv = dev_get_drvdata(dev);
- 
- 	qca8k_set_pm(priv, 0);
- 
-@@ -920,8 +919,7 @@ static int qca8k_suspend(struct device *dev)
- 
- static int qca8k_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct qca8k_priv *priv = platform_get_drvdata(pdev);
-+	struct qca8k_priv *priv = dev_get_drvdata(dev);
- 
- 	qca8k_set_pm(priv, 1);
- 
+ 	if (ndev) {
 -- 
 2.11.0
