@@ -1,92 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753335AbeDSFdp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 01:33:45 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43922 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753208AbeDSFdn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 01:33:43 -0400
-X-Google-Smtp-Source: AIpwx4+6SVzUSXDC38i8+o6mZDE2BrgQ4wF+e4n3EMPPis4gtQ6XXj+wFJesVQ9SbSgXIoHvFaClCg==
-Date: Thu, 19 Apr 2018 13:33:35 +0800
-From: Leo Yan <leo.yan@linaro.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 4/5] samples/bpf: Refine printing symbol for
- sampleip
-Message-ID: <20180419053335.GB27295@leoy-ThinkPad-X240s>
-References: <1524101646-6544-1-git-send-email-leo.yan@linaro.org>
- <1524101646-6544-5-git-send-email-leo.yan@linaro.org>
- <20180419044743.srjhqegvir5exub5@ast-mbp>
- <20180419051249.GA27295@leoy-ThinkPad-X240s>
- <20180419052124.xzaz66vehd6pofnh@ast-mbp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419052124.xzaz66vehd6pofnh@ast-mbp>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1753273AbeDSFjQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 01:39:16 -0400
+Received: from mout.gmx.net ([212.227.15.19]:38787 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750913AbeDSFjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 01:39:15 -0400
+Message-ID: <1524116324.21378.1.camel@gmx.de>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+From: Mike Galbraith <efault@gmx.de>
+To: Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
+Date: Thu, 19 Apr 2018 07:38:44 +0200
+In-Reply-To: <1524030475.5645.2.camel@gmx.de>
+References: <20180417142119.GA4511@codeblueprint.co.uk>
+         <1524030475.5645.2.camel@gmx.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:/a3Gli4062q2Tqm8e4UCvdeiasV5CV0qy/zNbgWsT93NOHP2BeT
+ YEVauhCXcibscdDI0Wdz2qMkMbjqBJwEIjkQXyC+1X1BmsdNaYBpv06o2SwTp5JNMERA6TC
+ KFyxG3zehuTL3WsZc2b49wWewwsBloL6IYmwQZyttpDzevM9H0KadqP3PDfyRDcEMGvmqgs
+ kXg2YVaj/x+bQI00aO9ZA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:laqmJAs1SVo=:sRAoXUH5QYMnP+H4AKo3A6
+ VSsANo8rACmjPiN3qZfmcppfI0R72En9jbF4RID3qmw+Sqwj2p2kymKPz08tWMyX1O1Ne0rLG
+ PcML7TH+8EqgIiyB+VODkxxn1xNme72Nkp0KzWyk23Vo22fUSbotqcGW/P5aMnX6KrxrCbPPs
+ 3GL/DGeN3WGyjfBKC9FiYg5w3yfmePl7e/+7Jo4XyJ2iKRQip2TgcUEkSosCtJHP+o7a/vGqk
+ cbPj4gXPuFeIsq4PUIKavQpsRYzvnC5aKaS9RCn7l9F/XI5eCcMQcV3ru8MkaH5PkYT2JuTIR
+ Glgab9gko/BhaTgBkNK2XFdHO3XTzw85vyALHfSbo0u0nPGEoWwACJeBAD6DooraB3u8cXnWC
+ Rj7gEYkfbgCvwuoqYr8GyvE1BQMweU9+Fyt32kkddo/XsghtBQEWbrlwoUipxVJ3N9pjlGEJR
+ Dq392QWqDrZteYkS49myMbjJT9djCYfGUfCSu0QIitnr60/a6JkeF2rD/qe2pYbICc4Tlilaq
+ G+v/i3YXoIVI2SNQ26OfDchsUOCs56uGAwe3MmNanES0ABOVpXNBRBm+EiKXCLryjDThCdtEJ
+ nZqWi1Jf0RojRxKuS8JtoYtYDpJJHeDXwJKS3+uIerUNbenVyjBzQVaZxHHMDWW02PSBs7APu
+ NBFY2jdMBwEg/7nYhc+oUqOxgg1jnp5pdiPLpkwFwp248NjgKFOUcgZpPjU7DmBNGKfKOVMjx
+ aDWp72rgpw+rQkqHENX3OB4oJCehUWd2xkobuqt5Kr6q05nuX9nZCURjtVIcNObLZvAurURDt
+ UOpUJhMDGt6Tphx6VpV9lP1OAz9mfvII9aiNsOpQwK0pQnQJPc=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 10:21:25PM -0700, Alexei Starovoitov wrote:
-> On Thu, Apr 19, 2018 at 01:12:49PM +0800, Leo Yan wrote:
-> > On Wed, Apr 18, 2018 at 09:47:45PM -0700, Alexei Starovoitov wrote:
-> > > On Thu, Apr 19, 2018 at 09:34:05AM +0800, Leo Yan wrote:
-> > > > The code defines macro 'PAGE_OFFSET' and uses it to decide if the
-> > > > address is in kernel space or not.  But different architecture has
-> > > > different 'PAGE_OFFSET' so this program cannot be used for all
-> > > > platforms.
-> > > > 
-> > > > This commit changes to check returned pointer from ksym_search() to
-> > > > judge if the address falls into kernel space or not, and removes
-> > > > macro 'PAGE_OFFSET' as it isn't used anymore.  As result, this program
-> > > > has no architecture dependency.
-> > > > 
-> > > > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > > > ---
-> > > >  samples/bpf/sampleip_user.c | 8 +++-----
-> > > >  1 file changed, 3 insertions(+), 5 deletions(-)
-> > > > 
-> > > > diff --git a/samples/bpf/sampleip_user.c b/samples/bpf/sampleip_user.c
-> > > > index 4ed690b..0eea1b3 100644
-> > > > --- a/samples/bpf/sampleip_user.c
-> > > > +++ b/samples/bpf/sampleip_user.c
-> > > > @@ -26,7 +26,6 @@
-> > > >  #define DEFAULT_FREQ	99
-> > > >  #define DEFAULT_SECS	5
-> > > >  #define MAX_IPS		8192
-> > > > -#define PAGE_OFFSET	0xffff880000000000
-> > > >  
-> > > >  static int nr_cpus;
-> > > >  
-> > > > @@ -107,14 +106,13 @@ static void print_ip_map(int fd)
-> > > >  	/* sort and print */
-> > > >  	qsort(counts, max, sizeof(struct ipcount), count_cmp);
-> > > >  	for (i = 0; i < max; i++) {
-> > > > -		if (counts[i].ip > PAGE_OFFSET) {
-> > > > -			sym = ksym_search(counts[i].ip);
-> > > 
-> > > yes. it is x64 specific, since it's a sample code,
-> > > but simply removing it is not a fix.
-> > > It makes this sampleip code behaving incorrectly.
-> > > To do such 'cleanup of ksym' please refactor it in the true generic way,
-> > > so these ksym* helpers can work on all archs and put this new
-> > > functionality into selftests.
+On Wed, 2018-04-18 at 07:47 +0200, Mike Galbraith wrote:
+> On Tue, 2018-04-17 at 15:21 +0100, Matt Fleming wrote:
+> > Hi guys,
 > > 
-> > Just want to check, are you suggesting to create a standalone
-> > testing for kallsyms (like a folder tools/testing/selftests/ksym) or
-> > do you mean to place the generic code into folder
-> > tools/testing/selftests/bpf/?
+> > We've seen a bug in one of our SLE kernels where the cpu stopper
+> > thread ("migration/15") is entering idle balance. This then triggers
+> > active load balance.
+> > 
+> > At the same time, a task on another CPU triggers a page fault and NUMA
+> > balancing kicks in to try and migrate the task closer to the NUMA node
+> > for that page (we're inside stop_two_cpus()). This faulting task is
+> > spinning in try_to_wake_up() (inside smp_cond_load_acquire(&p->on_cpu,
+> > !VAL)), waiting for "migration/15" to context switch.
+> > 
+> > Unfortunately, because "migration/15" is doing active load balance
+> > it's spinning waiting for the NUMA-page-faulting CPU's stopper lock,
+> > which is already held (since it's inside stop_two_cpus()).
+> > 
+> > Deadlock ensues.
+> > 
+> > This seems like a situation that should be prohibited, but I cannot
+> > find any code to prevent it. Is it OK for stopper threads to load
+> > balance? Is there something that should prevent this situation from
+> > happening?
 > 
-> I think the minimal first step is to cleanup ksym bits into something
-> that bpf selftests can use and keep it as new .c in
-> tools/testing/selftests/bpf/
-> Later if it becomes useful for other tests in selftests it can be moved.
+> I don't see anything to stop the deadlock either, would exclude stop
+> class from playing idle balancer entirely...
 
-Thanks for explanation, now it's clear for me :)
-
-> Thanks!
-> 
+Bah, insufficient: __do_softirq() -> rebalance_domains() still bites.
