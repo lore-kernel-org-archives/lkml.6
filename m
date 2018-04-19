@@ -1,126 +1,768 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2118878-1524390137-2-1398141660554478845
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524390137; b=SloFkeW0+eKpHJO3R7pQO99caZY5FlRDHriHs01bDpF9ducacS
-    QnzMKgpO+FOqgNImZV//aiKljAcwqmUAJmSwpJTFAlBzq1b7OWRO2LL4nIcW8SG7
-    3XLSJqCC5O+nS/PY82s/8LkTjJausGVGFF/PZktG2HnHrbq4b43J+LbIMNy+sxvc
-    3dGTpdB06MfDUqEKOsIbOehbUU1nnHmF0gbUwukt+cxqVjsnfy0x4m+5WLu3xJBd
-    9AXN5VNaNmR+Z1/qvuZaa8SAXtEXIX6Nlti3hGbXKIGeA+KyRH8BF5E3+7o/u+Nv
-    U3MacNl6P9Gy5uBrzlqU8JpI/f+GZUaenOrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524390137; bh=nicPl
-    tiSznGKDd7FbiXuchnpM2GizdQg8hXIvpeVRqQ=; b=taJp4Wd6dgM2dh6AKeSX2
-    YsyLXoeFn5KvgQI6BuLXhF3cxcRi2w1v5WZ1j4ly1hktU2f0moMx4Pnc41Yeo4OK
-    bzaZG5aU7pNVpUp6x5p9dBdrZzeFtjrVdHlFKzqQtVY6ETPSmYxdUsDYyDu6e2ew
-    bVooE2t+3gdHciot/lE+p4J3IAxem8wjlZUdgZTJ36dwwQKq7uQUuFUVRsomn9D0
-    ZhIDaCeheepLW7fape1gxu14MnpEFOXvzBo1PnZylLHfpiSUKeFZ4KIEpivWk4I5
-    ybZT3wP9mnO7ejr1UNg3UkTIXHND3hpbQJ5liHFqu3s9JsnhOxiHP0WsBRJyv3zc
-    w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=FH0V8LJj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=awpbnvx5;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=FH0V8LJj x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=awpbnvx5;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfE+IOpLavx4v9qrvoBUPwK3EeZx2W8Ewf5Zm24kuTqsN/Z2118D6booQ4j+6gu1Z1Q5yOFjAXxvBZegVpMjB1ihcB2jFINWrYFcxhWyxraip0+Yc0Lvb
-    A/E3LuquYFDK+zy1qcvyjwt1KOSZyXOnukpBZ6t/qF6/8XyxxwKypYi9bimyhWvIGj1QIKBqDRI3V/LJU6BeT6ipGCLSVFrEV3Z3wFbzMJAlgIoBvr71/wA6
-    0T0AN+isZIoNYkWilkN/Ag==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8 a=DDOyTI_5AAAA:8
-    a=KW2fZluiVG7Zq2DVJ20A:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AIpwx49hBpthUKrZl+dwPGA/ikgVwmqTMcXYvKVnTpZgiyOW0BcwE0YhrNODnZsNpjMPeFL2bLk5FguyQfW1C/3qSzw=
-MIME-Version: 1.0
-In-Reply-To: <20180419124140.9309-16-hch@lst.de>
+Return-Path: <BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org>
+X-Google-Smtp-Source: AIpwx48wxxSiTdTxPlg9tL02NEttN4nuI7MjUHS9Z7XwJFidy1yIJC1z8jAKQYZifvofJnM86q6A
+ARC-Seal: i=1; a=rsa-sha256; t=1524141756; cv=none;
+        d=google.com; s=arc-20160816;
+        b=pGSv89g5MhwKo8BbZjLKTLVoLC3xQFkBCtNQnVlLUfaB0qYZCT60zhFASh9VBTXH4M
+         wfdhJzcGk2UFq0iG9lsBtA4neDqWnds1HCQl3Bvcb8ovMvPQhujmco9YxrjJUZdJF9L3
+         dtwnP47M83BFqLRZQZJQduDDcKdSaKOsJSZraQzc0CBzg63l0FJ3967BNAA5QWtA8Neu
+         F3vJmLhPDUXOfUMpPOl1EKVOTzsowi6LTXRtKgurRk2eVsW96Tuwpj0g6+xKP+xHLM8H
+         sT4VeCNNi9T6Gk1jQdWu0HqcjEl61ZKzffanV3Wo4D9eQj3l6CWkOyAhx6NtsAd8+KcS
+         +OPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=v3jZT2lXcB5fMG+aR1AV3OjJ4U6GuaG5CWLGng0tNTk=;
+        b=RGVKjJ9nFaP/qFwUCcRlzEcoe/N9OCdCglRSA3ufbJMGrX9aHBQdXjl850f5Qcl6Mg
+         tYDqAxKfMIbR1r+2S+arHMekU/pkllXA6zIElVjA0IM60+0LK1kVKz7R++rSdXDL+QHy
+         4cBN0MXvuNHZJhzfdwEVEzCLyyberqV689JPEayRT3x8m2pixDxdW/hnXiDIhQq/M3Zf
+         sI9r4eoaiAVuMEPeo26dT2JZGvDK70eH3llCJxXaEgCjk9LbPC+o943NS+H2GxaOzBG/
+         N9k9nWe+0unf8v4unH0QWDTw0bxRQk8QPVUtSqiVeXVQNHly+ys3ss+vPXIHmR92Xub1
+         tnYA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=T9SeAAl5;
+       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=T9SeAAl5;
+       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
+From: Christoph Hellwig <hch@lst.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Corey Minyard <minyard@acm.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-acpi@vger.kernel.org,
+	drbd-dev@lists.linbit.com,
+	linux-ide@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	linux-afs@lists.infradead.org,
+	linux-ext4@vger.kernel.org,
+	jfs-discussion@lists.sourceforge.net,
+	netfilter-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 14/39] proc: introduce proc_create_net_single
+Date: Thu, 19 Apr 2018 14:41:15 +0200
+Message-Id: <20180419124140.9309-15-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180419124140.9309-1-hch@lst.de>
 References: <20180419124140.9309-1-hch@lst.de>
- <20180419124140.9309-16-hch@lst.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sun, 22 Apr 2018 11:42:08 +0200
-X-Google-Sender-Auth: iB3F2RIKSJPLc15NKjNPaZ6zhIw
-Message-ID: <CAJZ5v0gRw8P8KL12QKMuSjyePxWn71LB+s8ephF2a4-Ns234NQ@mail.gmail.com>
-Subject: Re: [PATCH 15/39] acpi/battery: simplify procfs code
-To: Christoph Hellwig <hch@lst.de>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, devel@driverdev.osuosl.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "open list:TARGET SUBSYSTEM" <linux-scsi@vger.kernel.org>,
- Corey Minyard <minyard@acm.org>, linux-ide@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- jfs-discussion@lists.sourceforge.net, linux-afs@lists.infradead.org,
- ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
- netdev <netdev@vger.kernel.org>, netfilter-devel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jiri Slaby <jslaby@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Ext4 Developers List <linux-ext4@vger.kernel.org>,
- Alexey Dobriyan <adobriyan@gmail.com>, megaraidlinux.pdl@broadcom.com,
- drbd-dev@lists.linbit.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598178466789009501?=
+X-GMAIL-MSGID: =?utf-8?q?1598178466789009501?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 2:41 PM, Christoph Hellwig <hch@lst.de> wrote:
-> Use remove_proc_subtree to remove the whole subtree on cleanup, and
-> unwind the registration loop into individual calls.  Switch to use
-> proc_create_seq where applicable.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Variant of proc_create_data that directly take a seq_file show
+callback and deals with network namespaces in ->open and ->release.
+All callers of proc_create + single_open_net converted over, and
+single_{open,release}_net are removed entirely.
 
-It is OK AFAICS.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/proc/proc_net.c             |  47 +++++++-----
+ include/linux/proc_fs.h        |   4 ++
+ include/linux/seq_file_net.h   |   7 +-
+ net/can/bcm.c                  |  16 +----
+ net/can/proc.c                 | 127 ++++++---------------------------
+ net/ipv4/fib_trie.c            |  16 +----
+ net/ipv4/proc.c                |  48 ++-----------
+ net/ipv6/proc.c                |  31 ++------
+ net/ipv6/route.c               |  15 +---
+ net/kcm/kcmproc.c              |  16 +----
+ net/netfilter/ipvs/ip_vs_ctl.c |  31 ++------
+ net/sctp/proc.c                |  17 +----
+ net/xfrm/xfrm_proc.c           |  16 +----
+ 13 files changed, 84 insertions(+), 307 deletions(-)
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+index 9a1948d58f10..518b39025b23 100644
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -93,37 +93,48 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
+ }
+ EXPORT_SYMBOL_GPL(proc_create_net_data);
+ 
+-int single_open_net(struct inode *inode, struct file *file,
+-		int (*show)(struct seq_file *, void *))
++static int single_open_net(struct inode *inode, struct file *file)
+ {
+-	int err;
++	struct proc_dir_entry *de = PDE(inode);
+ 	struct net *net;
++	int err;
+ 
+-	err = -ENXIO;
+ 	net = get_proc_net(inode);
+-	if (net == NULL)
+-		goto err_net;
+-
+-	err = single_open(file, show, net);
+-	if (err < 0)
+-		goto err_open;
+-
+-	return 0;
++	if (!net)
++		return -ENXIO;
+ 
+-err_open:
+-	put_net(net);
+-err_net:
++	err = single_open(file, de->single_show, net);
++	if (err)
++		put_net(net);
+ 	return err;
+ }
+-EXPORT_SYMBOL_GPL(single_open_net);
+ 
+-int single_release_net(struct inode *ino, struct file *f)
++static int single_release_net(struct inode *ino, struct file *f)
+ {
+ 	struct seq_file *seq = f->private_data;
+ 	put_net(seq->private);
+ 	return single_release(ino, f);
+ }
+-EXPORT_SYMBOL_GPL(single_release_net);
++
++static const struct file_operations proc_net_single_fops = {
++	.open		= single_open_net,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release_net,
++};
++
++struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
++		struct proc_dir_entry *parent,
++		int (*show)(struct seq_file *, void *), void *data)
++{
++	struct proc_dir_entry *p;
++
++	p = proc_create_data(name, mode, parent, &proc_net_single_fops, data);
++	if (p)
++		p->single_show = show;
++	return p;
++}
++EXPORT_SYMBOL_GPL(proc_create_net_single);
+ 
+ static struct net *get_proc_task_net(struct inode *dir)
+ {
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index d58976e93ecd..84ec3cd44f8b 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -58,6 +58,9 @@ struct proc_dir_entry *proc_create_net_data(const char *name, umode_t mode,
+ 		size_t state_size, void *data);
+ #define proc_create_net(name, mode, parent, state_size, ops) \
+ 	proc_create_net_data(name, mode, parent, state_size, ops, NULL)
++struct proc_dir_entry *proc_create_net_single(const char *name, umode_t mode,
++		struct proc_dir_entry *parent,
++		int (*show)(struct seq_file *, void *), void *data);
+ 
+ #else /* CONFIG_PROC_FS */
+ 
+@@ -97,6 +100,7 @@ static inline int remove_proc_subtree(const char *name, struct proc_dir_entry *p
+ 
+ #define proc_create_net_data(name, mode, parent, ops, state_size, data) ({NULL;})
+ #define proc_create_net(name, mode, parent, state_size, ops) ({NULL;})
++#define proc_create_net_single(name, mode, parent, show, data) ({NULL;})
+ 
+ #endif /* CONFIG_PROC_FS */
+ 
+diff --git a/include/linux/seq_file_net.h b/include/linux/seq_file_net.h
+index 5ea18a16291a..0fdbe1ddd8d1 100644
+--- a/include/linux/seq_file_net.h
++++ b/include/linux/seq_file_net.h
+@@ -13,9 +13,6 @@ struct seq_net_private {
+ #endif
+ };
+ 
+-int single_open_net(struct inode *, struct file *file,
+-		int (*show)(struct seq_file *, void *));
+-int single_release_net(struct inode *, struct file *);
+ static inline struct net *seq_file_net(struct seq_file *seq)
+ {
+ #ifdef CONFIG_NET_NS
+@@ -26,8 +23,8 @@ static inline struct net *seq_file_net(struct seq_file *seq)
+ }
+ 
+ /*
+- * This one is needed for single_open_net since net is stored directly in
+- * private not as a struct i.e. seq_file_net can't be used.
++ * This one is needed for proc_create_net_single since net is stored directly
++ * in private not as a struct i.e. seq_file_net can't be used.
+  */
+ static inline struct net *seq_file_single_net(struct seq_file *seq)
+ {
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index 8073fa14e143..6ad89f49b341 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -239,18 +239,6 @@ static int bcm_proc_show(struct seq_file *m, void *v)
+ 	seq_putc(m, '\n');
+ 	return 0;
+ }
+-
+-static int bcm_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, bcm_proc_show);
+-}
+-
+-static const struct file_operations bcm_proc_fops = {
+-	.open		= bcm_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release_net,
+-};
+ #endif /* CONFIG_PROC_FS */
+ 
+ /*
+@@ -1606,9 +1594,9 @@ static int bcm_connect(struct socket *sock, struct sockaddr *uaddr, int len,
+ 	if (net->can.bcmproc_dir) {
+ 		/* unique socket address as filename */
+ 		sprintf(bo->procname, "%lu", sock_i_ino(sk));
+-		bo->bcm_proc_read = proc_create_data(bo->procname, 0644,
++		bo->bcm_proc_read = proc_create_net_single(bo->procname, 0644,
+ 						     net->can.bcmproc_dir,
+-						     &bcm_proc_fops, sk);
++						     bcm_proc_show, sk);
+ 		if (!bo->bcm_proc_read) {
+ 			ret = -ENOMEM;
+ 			goto fail;
+diff --git a/net/can/proc.c b/net/can/proc.c
+index fde2fd55b826..70fea17bb04c 100644
+--- a/net/can/proc.c
++++ b/net/can/proc.c
+@@ -270,18 +270,6 @@ static int can_stats_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int can_stats_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, can_stats_proc_show);
+-}
+-
+-static const struct file_operations can_stats_proc_fops = {
+-	.open		= can_stats_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release_net,
+-};
+-
+ static int can_reset_stats_proc_show(struct seq_file *m, void *v)
+ {
+ 	struct net *net = m->private;
+@@ -303,36 +291,12 @@ static int can_reset_stats_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int can_reset_stats_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, can_reset_stats_proc_show);
+-}
+-
+-static const struct file_operations can_reset_stats_proc_fops = {
+-	.open		= can_reset_stats_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static int can_version_proc_show(struct seq_file *m, void *v)
+ {
+ 	seq_printf(m, "%s\n", CAN_VERSION_STRING);
+ 	return 0;
+ }
+ 
+-static int can_version_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, can_version_proc_show);
+-}
+-
+-static const struct file_operations can_version_proc_fops = {
+-	.open		= can_version_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static inline void can_rcvlist_proc_show_one(struct seq_file *m, int idx,
+ 					     struct net_device *dev,
+ 					     struct can_dev_rcv_lists *d)
+@@ -373,18 +337,6 @@ static int can_rcvlist_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int can_rcvlist_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, can_rcvlist_proc_show);
+-}
+-
+-static const struct file_operations can_rcvlist_proc_fops = {
+-	.open		= can_rcvlist_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static inline void can_rcvlist_proc_show_array(struct seq_file *m,
+ 					       struct net_device *dev,
+ 					       struct hlist_head *rcv_array,
+@@ -440,19 +392,6 @@ static int can_rcvlist_sff_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int can_rcvlist_sff_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, can_rcvlist_sff_proc_show);
+-}
+-
+-static const struct file_operations can_rcvlist_sff_proc_fops = {
+-	.open		= can_rcvlist_sff_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release_net,
+-};
+-
+-
+ static int can_rcvlist_eff_proc_show(struct seq_file *m, void *v)
+ {
+ 	struct net_device *dev;
+@@ -483,18 +422,6 @@ static int can_rcvlist_eff_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int can_rcvlist_eff_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, can_rcvlist_eff_proc_show);
+-}
+-
+-static const struct file_operations can_rcvlist_eff_proc_fops = {
+-	.open		= can_rcvlist_eff_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release_net,
+-};
+-
+ /*
+  * can_init_proc - create main CAN proc directory and procfs entries
+  */
+@@ -510,37 +437,29 @@ void can_init_proc(struct net *net)
+ 	}
+ 
+ 	/* own procfs entries from the AF_CAN core */
+-	net->can.pde_version     = proc_create(CAN_PROC_VERSION, 0644,
+-					       net->can.proc_dir,
+-					       &can_version_proc_fops);
+-	net->can.pde_stats       = proc_create(CAN_PROC_STATS, 0644,
+-					       net->can.proc_dir,
+-					       &can_stats_proc_fops);
+-	net->can.pde_reset_stats = proc_create(CAN_PROC_RESET_STATS, 0644,
+-					       net->can.proc_dir,
+-					       &can_reset_stats_proc_fops);
+-	net->can.pde_rcvlist_err = proc_create_data(CAN_PROC_RCVLIST_ERR, 0644,
+-						    net->can.proc_dir,
+-						    &can_rcvlist_proc_fops,
+-						    (void *)RX_ERR);
+-	net->can.pde_rcvlist_all = proc_create_data(CAN_PROC_RCVLIST_ALL, 0644,
+-						    net->can.proc_dir,
+-						    &can_rcvlist_proc_fops,
+-						    (void *)RX_ALL);
+-	net->can.pde_rcvlist_fil = proc_create_data(CAN_PROC_RCVLIST_FIL, 0644,
+-						    net->can.proc_dir,
+-						    &can_rcvlist_proc_fops,
+-						    (void *)RX_FIL);
+-	net->can.pde_rcvlist_inv = proc_create_data(CAN_PROC_RCVLIST_INV, 0644,
+-						    net->can.proc_dir,
+-						    &can_rcvlist_proc_fops,
+-						    (void *)RX_INV);
+-	net->can.pde_rcvlist_eff = proc_create(CAN_PROC_RCVLIST_EFF, 0644,
+-					       net->can.proc_dir,
+-					       &can_rcvlist_eff_proc_fops);
+-	net->can.pde_rcvlist_sff = proc_create(CAN_PROC_RCVLIST_SFF, 0644,
+-					       net->can.proc_dir,
+-					       &can_rcvlist_sff_proc_fops);
++	net->can.pde_version = proc_create_net_single(CAN_PROC_VERSION, 0644,
++			net->can.proc_dir, can_version_proc_show, NULL);
++	net->can.pde_stats = proc_create_net_single(CAN_PROC_STATS, 0644,
++			net->can.proc_dir, can_stats_proc_show, NULL);
++	net->can.pde_reset_stats = proc_create_net_single(CAN_PROC_RESET_STATS,
++			0644, net->can.proc_dir, can_reset_stats_proc_show,
++			NULL);
++	net->can.pde_rcvlist_err = proc_create_net_single(CAN_PROC_RCVLIST_ERR,
++			0644, net->can.proc_dir, can_rcvlist_proc_show,
++			(void *)RX_ERR);
++	net->can.pde_rcvlist_all = proc_create_net_single(CAN_PROC_RCVLIST_ALL,
++			0644, net->can.proc_dir, can_rcvlist_proc_show,
++			(void *)RX_ALL);
++	net->can.pde_rcvlist_fil = proc_create_net_single(CAN_PROC_RCVLIST_FIL,
++			0644, net->can.proc_dir, can_rcvlist_proc_show,
++			(void *)RX_FIL);
++	net->can.pde_rcvlist_inv = proc_create_net_single(CAN_PROC_RCVLIST_INV,
++			0644, net->can.proc_dir, can_rcvlist_proc_show,
++			(void *)RX_INV);
++	net->can.pde_rcvlist_eff = proc_create_net_single(CAN_PROC_RCVLIST_EFF,
++			0644, net->can.proc_dir, can_rcvlist_eff_proc_show, NULL);
++	net->can.pde_rcvlist_sff = proc_create_net_single(CAN_PROC_RCVLIST_SFF,
++			0644, net->can.proc_dir, can_rcvlist_sff_proc_show, NULL);
+ }
+ 
+ /*
+diff --git a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+index 3293f04b941d..99c23a0cb8ca 100644
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -2348,18 +2348,6 @@ static int fib_triestat_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int fib_triestat_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, fib_triestat_seq_show);
+-}
+-
+-static const struct file_operations fib_triestat_fops = {
+-	.open	= fib_triestat_seq_open,
+-	.read	= seq_read,
+-	.llseek	= seq_lseek,
+-	.release = single_release_net,
+-};
+-
+ static struct key_vector *fib_trie_get_idx(struct seq_file *seq, loff_t pos)
+ {
+ 	struct fib_trie_iter *iter = seq->private;
+@@ -2719,8 +2707,8 @@ int __net_init fib_proc_init(struct net *net)
+ 			sizeof(struct fib_trie_iter)))
+ 		goto out1;
+ 
+-	if (!proc_create("fib_triestat", 0444, net->proc_net,
+-			 &fib_triestat_fops))
++	if (!proc_create_net_single("fib_triestat", 0444, net->proc_net,
++			fib_triestat_seq_show, NULL))
+ 		goto out2;
+ 
+ 	if (!proc_create_net("route", 0444, net->proc_net, &fib_route_seq_ops,
+diff --git a/net/ipv4/proc.c b/net/ipv4/proc.c
+index a058de677e94..573e43c8ed87 100644
+--- a/net/ipv4/proc.c
++++ b/net/ipv4/proc.c
+@@ -77,18 +77,6 @@ static int sockstat_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int sockstat_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, sockstat_seq_show);
+-}
+-
+-static const struct file_operations sockstat_seq_fops = {
+-	.open	 = sockstat_seq_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = single_release_net,
+-};
+-
+ /* snmp items */
+ static const struct snmp_mib snmp4_ipstats_list[] = {
+ 	SNMP_MIB_ITEM("InReceives", IPSTATS_MIB_INPKTS),
+@@ -460,20 +448,6 @@ static int snmp_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int snmp_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, snmp_seq_show);
+-}
+-
+-static const struct file_operations snmp_seq_fops = {
+-	.open	 = snmp_seq_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = single_release_net,
+-};
+-
+-
+-
+ /*
+  *	Output /proc/net/netstat
+  */
+@@ -507,26 +481,16 @@ static int netstat_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int netstat_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, netstat_seq_show);
+-}
+-
+-static const struct file_operations netstat_seq_fops = {
+-	.open	 = netstat_seq_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = single_release_net,
+-};
+-
+ static __net_init int ip_proc_init_net(struct net *net)
+ {
+-	if (!proc_create("sockstat", 0444, net->proc_net,
+-			 &sockstat_seq_fops))
++	if (!proc_create_net_single("sockstat", 0444, net->proc_net,
++			sockstat_seq_show, NULL))
+ 		goto out_sockstat;
+-	if (!proc_create("netstat", 0444, net->proc_net, &netstat_seq_fops))
++	if (!proc_create_net_single("netstat", 0444, net->proc_net,
++			netstat_seq_show, NULL))
+ 		goto out_netstat;
+-	if (!proc_create("snmp", 0444, net->proc_net, &snmp_seq_fops))
++	if (!proc_create_net_single("snmp", 0444, net->proc_net, snmp_seq_show,
++			NULL))
+ 		goto out_snmp;
+ 
+ 	return 0;
+diff --git a/net/ipv6/proc.c b/net/ipv6/proc.c
+index a0edf194822a..2356b4af7309 100644
+--- a/net/ipv6/proc.c
++++ b/net/ipv6/proc.c
+@@ -53,18 +53,6 @@ static int sockstat6_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int sockstat6_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, sockstat6_seq_show);
+-}
+-
+-static const struct file_operations sockstat6_seq_fops = {
+-	.open	 = sockstat6_seq_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = single_release_net,
+-};
+-
+ static const struct snmp_mib snmp6_ipstats_list[] = {
+ /* ipv6 mib according to RFC 2465 */
+ 	SNMP_MIB_ITEM("Ip6InReceives", IPSTATS_MIB_INPKTS),
+@@ -242,18 +230,6 @@ static int snmp6_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int snmp6_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, snmp6_seq_show);
+-}
+-
+-static const struct file_operations snmp6_seq_fops = {
+-	.open	 = snmp6_seq_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = single_release_net,
+-};
+-
+ static int snmp6_dev_seq_show(struct seq_file *seq, void *v)
+ {
+ 	struct inet6_dev *idev = (struct inet6_dev *)seq->private;
+@@ -302,11 +278,12 @@ int snmp6_unregister_dev(struct inet6_dev *idev)
+ 
+ static int __net_init ipv6_proc_init_net(struct net *net)
+ {
+-	if (!proc_create("sockstat6", 0444, net->proc_net,
+-			 &sockstat6_seq_fops))
++	if (!proc_create_net_single("sockstat6", 0444, net->proc_net,
++			sockstat6_seq_show, NULL))
+ 		return -ENOMEM;
+ 
+-	if (!proc_create("snmp6", 0444, net->proc_net, &snmp6_seq_fops))
++	if (!proc_create_net_single("snmp6", 0444, net->proc_net,
++			snmp6_seq_show, NULL))
+ 		goto proc_snmp6_fail;
+ 
+ 	net->mib.proc_net_devsnmp6 = proc_mkdir("dev_snmp6", net->proc_net);
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 07c4aafe7710..095ed6ae9cc9 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -4869,18 +4869,6 @@ static int rt6_stats_seq_show(struct seq_file *seq, void *v)
+ 
+ 	return 0;
+ }
+-
+-static int rt6_stats_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, rt6_stats_seq_show);
+-}
+-
+-static const struct file_operations rt6_stats_seq_fops = {
+-	.open	 = rt6_stats_seq_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = single_release_net,
+-};
+ #endif	/* CONFIG_PROC_FS */
+ 
+ #ifdef CONFIG_SYSCTL
+@@ -5087,7 +5075,8 @@ static int __net_init ip6_route_net_init_late(struct net *net)
+ #ifdef CONFIG_PROC_FS
+ 	proc_create_net("ipv6_route", 0, net->proc_net, &ipv6_route_seq_ops,
+ 			sizeof(struct ipv6_route_iter));
+-	proc_create("rt6_stats", 0444, net->proc_net, &rt6_stats_seq_fops);
++	proc_create_net_single("rt6_stats", 0444, net->proc_net,
++			rt6_stats_seq_show, NULL);
+ #endif
+ 	return 0;
+ }
+diff --git a/net/kcm/kcmproc.c b/net/kcm/kcmproc.c
+index 6283ed2f43b2..370da2f80e3c 100644
+--- a/net/kcm/kcmproc.c
++++ b/net/kcm/kcmproc.c
+@@ -345,22 +345,10 @@ static int kcm_stats_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int kcm_stats_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, kcm_stats_seq_show);
+-}
+-
+-static const struct file_operations kcm_stats_seq_fops = {
+-	.open    = kcm_stats_seq_open,
+-	.read    = seq_read,
+-	.llseek  = seq_lseek,
+-	.release = single_release_net,
+-};
+-
+ static int kcm_proc_init_net(struct net *net)
+ {
+-	if (!proc_create("kcm_stats", 0444, net->proc_net,
+-			 &kcm_stats_seq_fops))
++	if (!proc_create_net_single("kcm_stats", 0444, net->proc_net,
++			 kcm_stats_seq_show, NULL))
+ 		goto out_kcm_stats;
+ 
+ 	if (!proc_create_net("kcm", 0444, net->proc_net, &kcm_seq_ops,
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 5d7abe11ccb5..f5a1d3503a7c 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -2141,18 +2141,6 @@ static int ip_vs_stats_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int ip_vs_stats_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, ip_vs_stats_show);
+-}
+-
+-static const struct file_operations ip_vs_stats_fops = {
+-	.open = ip_vs_stats_seq_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release_net,
+-};
+-
+ static int ip_vs_stats_percpu_show(struct seq_file *seq, void *v)
+ {
+ 	struct net *net = seq_file_single_net(seq);
+@@ -2208,18 +2196,6 @@ static int ip_vs_stats_percpu_show(struct seq_file *seq, void *v)
+ 
+ 	return 0;
+ }
+-
+-static int ip_vs_stats_percpu_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, ip_vs_stats_percpu_show);
+-}
+-
+-static const struct file_operations ip_vs_stats_percpu_fops = {
+-	.open = ip_vs_stats_percpu_seq_open,
+-	.read = seq_read,
+-	.llseek = seq_lseek,
+-	.release = single_release_net,
+-};
+ #endif
+ 
+ /*
+@@ -4027,9 +4003,10 @@ int __net_init ip_vs_control_net_init(struct netns_ipvs *ipvs)
+ 
+ 	proc_create_net("ip_vs", 0, ipvs->net->proc_net, &ip_vs_info_seq_ops,
+ 			sizeof(struct ip_vs_iter));
+-	proc_create("ip_vs_stats", 0, ipvs->net->proc_net, &ip_vs_stats_fops);
+-	proc_create("ip_vs_stats_percpu", 0, ipvs->net->proc_net,
+-		    &ip_vs_stats_percpu_fops);
++	proc_create_net_single("ip_vs_stats", 0, ipvs->net->proc_net,
++			ip_vs_stats_show, NULL);
++	proc_create_net_single("ip_vs_stats_percpu", 0, ipvs->net->proc_net,
++			ip_vs_stats_percpu_show, NULL);
+ 
+ 	if (ip_vs_control_net_init_sysctl(ipvs))
+ 		goto err;
+diff --git a/net/sctp/proc.c b/net/sctp/proc.c
+index 009c185b71eb..ef5c9a82d4e8 100644
+--- a/net/sctp/proc.c
++++ b/net/sctp/proc.c
+@@ -88,19 +88,6 @@ static int sctp_snmp_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-/* Initialize the seq file operations for 'snmp' object. */
+-static int sctp_snmp_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, sctp_snmp_seq_show);
+-}
+-
+-static const struct file_operations sctp_snmp_seq_fops = {
+-	.open	 = sctp_snmp_seq_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = single_release_net,
+-};
+-
+ /* Dump local addresses of an association/endpoint. */
+ static void sctp_seq_dump_local_addrs(struct seq_file *seq, struct sctp_ep_common *epb)
+ {
+@@ -408,8 +395,8 @@ int __net_init sctp_proc_init(struct net *net)
+ 	net->sctp.proc_net_sctp = proc_net_mkdir(net, "sctp", net->proc_net);
+ 	if (!net->sctp.proc_net_sctp)
+ 		return -ENOMEM;
+-	if (!proc_create("snmp", 0444, net->sctp.proc_net_sctp,
+-			 &sctp_snmp_seq_fops))
++	if (!proc_create_net_single("snmp", 0444, net->sctp.proc_net_sctp,
++			 sctp_snmp_seq_show, NULL))
+ 		goto cleanup;
+ 	if (!proc_create_net("eps", 0444, net->sctp.proc_net_sctp,
+ 			&sctp_eps_ops, sizeof(struct seq_net_private)))
+diff --git a/net/xfrm/xfrm_proc.c b/net/xfrm/xfrm_proc.c
+index ed06903cd84d..178318d2e120 100644
+--- a/net/xfrm/xfrm_proc.c
++++ b/net/xfrm/xfrm_proc.c
+@@ -65,22 +65,10 @@ static int xfrm_statistics_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int xfrm_statistics_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open_net(inode, file, xfrm_statistics_seq_show);
+-}
+-
+-static const struct file_operations xfrm_statistics_seq_fops = {
+-	.open	 = xfrm_statistics_seq_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = single_release_net,
+-};
+-
+ int __net_init xfrm_proc_init(struct net *net)
+ {
+-	if (!proc_create("xfrm_stat", 0444, net->proc_net,
+-			 &xfrm_statistics_seq_fops))
++	if (!proc_create_net_single("xfrm_stat", 0444, net->proc_net,
++			 xfrm_statistics_seq_show, NULL))
+ 		return -ENOMEM;
+ 	return 0;
+ }
+-- 
+2.17.0
