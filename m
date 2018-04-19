@@ -1,61 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753336AbeDSNcm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:32:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35379 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753270AbeDSNce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:32:34 -0400
-Date: Thu, 19 Apr 2018 15:32:33 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Radu Pirea <radu.pirea@microchip.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: add binding for at91-usart in spi mode
-Message-ID: <20180419133233.GE7369@piout.net>
-References: <20180413161117.20274-1-radu.pirea@microchip.com>
- <20180413161117.20274-3-radu.pirea@microchip.com>
- <20180413162327.GE22187@piout.net>
- <8e6c447d-dce5-f9af-e5b2-8d1d863159d6@microchip.com>
- <20180413181251.GG22187@piout.net>
- <20180417110358.GD8973@sirena.org.uk>
+        id S1753372AbeDSNcq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:32:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34714 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753270AbeDSNco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 09:32:44 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 14/24] cpuset: Use fs_context [ver #7]
+From: David Howells <dhowells@redhat.com>
+To: viro@zeniv.linux.org.uk
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        linux-afs@lists.infradead.org
+Date: Thu, 19 Apr 2018 14:32:42 +0100
+Message-ID: <152414476200.23902.10569978915645391342.stgit@warthog.procyon.org.uk>
+In-Reply-To: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
+References: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180417110358.GD8973@sirena.org.uk>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/04/2018 12:03:58+0100, Mark Brown wrote:
-> On Fri, Apr 13, 2018 at 08:12:51PM +0200, Alexandre Belloni wrote:
-> > On 13/04/2018 19:12:54+0200, Nicolas Ferre wrote:
-> 
-> > > This layout of the hardware is completely different from the USART one and
-> > > it seems to makes sense to address it with a different hardware description
-> > > and so a different compatible string.
-> 
-> > But then, you can end up with two drivers trying to use the same IP
-> > because nothing prevents you from writing a DT with both a usart and an
-> > spi node enabled for the same IP. request_mem_region() will not help
-> > here because then the working driver will depend on the probing order.
-> 
-> We don't really have too much in the way of better ideas for how to
-> handle this though.  Take a look at how the PXA SSP stuff handles this,
-> though that's not really doing too much different it at least layers a
-> mechanism on top to avoid collisions.
+Make the cpuset filesystem use the filesystem context.  This is potentially
+tricky as the cpuset fs is almost an alias for the cgroup filesystem, but
+with some special parameters.
 
-My suggestion was to add an MFD driver that would match the current
-compatible and either have an atmel,usart-mode property or maybe more
-risky, check whether there are children nodes. Based on that, the
-correct platform device can be added, either an usart or an spi master
-device can be registered.
+This can, however, be handled by setting up an appropriate cgroup
+filesystem and returning the root directory of that as the root dir of this
+one.
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Tejun Heo <tj@kernel.org>
+---
+
+ kernel/cgroup/cpuset.c |   66 ++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 52 insertions(+), 14 deletions(-)
+
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 3c8ef37879f0..fce0584f161e 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -38,7 +38,7 @@
+ #include <linux/mm.h>
+ #include <linux/memory.h>
+ #include <linux/export.h>
+-#include <linux/mount.h>
++#include <linux/fs_context.h>
+ #include <linux/namei.h>
+ #include <linux/pagemap.h>
+ #include <linux/proc_fs.h>
+@@ -315,26 +315,64 @@ static inline bool is_in_v2_mode(void)
+  * users. If someone tries to mount the "cpuset" filesystem, we
+  * silently switch it to mount "cgroup" instead
+  */
+-static struct dentry *cpuset_mount(struct file_system_type *fs_type,
+-				   int flags, const char *unused_dev_name,
+-				   void *data, size_t data_size)
++static int cpuset_get_tree(struct fs_context *fc)
+ {
+-	struct file_system_type *cgroup_fs = get_fs_type("cgroup");
+-	struct dentry *ret = ERR_PTR(-ENODEV);
++	static const char opts[] = "cpuset,noprefix,release_agent=/sbin/cpuset_release_agent";
++	struct file_system_type *cgroup_fs;
++	struct fs_context *cg_fc;
++	char *p;
++	int ret = -ENODEV;
++
++	cgroup_fs = get_fs_type("cgroup");
+ 	if (cgroup_fs) {
+-		char mountopts[] =
+-			"cpuset,noprefix,"
+-			"release_agent=/sbin/cpuset_release_agent";
+-		ret = cgroup_fs->mount(cgroup_fs, flags, unused_dev_name,
+-				       mountopts, data_size);
+-		put_filesystem(cgroup_fs);
++		ret = PTR_ERR(cgroup_fs);
++		goto out;
++	}
++
++	cg_fc = vfs_new_fs_context(cgroup_fs, NULL, fc->sb_flags, fc->purpose);
++	put_filesystem(cgroup_fs);
++	if (IS_ERR(cg_fc)) {
++		ret = PTR_ERR(cg_fc);
++		goto out;
+ 	}
++
++	ret = -ENOMEM;
++	p = kstrdup(opts, GFP_KERNEL);
++	if (!p)
++		goto out_fc;
++
++	ret = generic_parse_monolithic(fc, p, sizeof(opts) - 1);
++	kfree(p);
++	if (ret < 0)
++		goto out_fc;
++
++	ret = vfs_get_tree(cg_fc);
++	if (ret < 0)
++		goto out_fc;
++
++	fc->root = dget(cg_fc->root);
++	ret = 0;
++
++out_fc:
++	put_fs_context(cg_fc);
++out:
+ 	return ret;
+ }
+ 
++static const struct fs_context_operations cpuset_fs_context_ops = {
++	.get_tree	= cpuset_get_tree,
++};
++
++static int cpuset_init_fs_context(struct fs_context *fc, struct super_block *src_sb)
++{
++	fc->ops = &cpuset_fs_context_ops;
++	return 0;
++}
++
+ static struct file_system_type cpuset_fs_type = {
+-	.name = "cpuset",
+-	.mount = cpuset_mount,
++	.name			= "cpuset",
++	.fs_context_size	= sizeof(struct fs_context),
++	.init_fs_context	= cpuset_init_fs_context,
+ };
+ 
+ /*
