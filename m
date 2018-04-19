@@ -1,74 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753237AbeDSPFV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:05:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40992 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752144AbeDSPFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:05:20 -0400
-Date: Thu, 19 Apr 2018 17:05:18 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: kevans@FreeBSD.org
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3] ARM: dts: sunxi: Add sid for a83t
-Message-ID: <20180419150518.nbeq5zelrl236grv@flea>
-References: <20180419141103.38196-1-kevans@FreeBSD.org>
+        id S1753081AbeDSPGs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:06:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38736 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752100AbeDSPGq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:06:46 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B63B0601E6
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Thu, 19 Apr 2018 09:06:44 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, evgreen@chromium.org,
+        dianders@chromium.org
+Subject: Re: [PATCH v5 07/10] drivers: qcom: rpmh: cache sleep/wake state
+ requests
+Message-ID: <20180419150644.GB17907@codeaurora.org>
+References: <20180405161834.3850-1-ilina@codeaurora.org>
+ <20180405161834.3850-8-ilina@codeaurora.org>
+ <152411832959.46528.17741598693542734318@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kdx76qelsr5r5vbe"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180419141103.38196-1-kevans@FreeBSD.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <152411832959.46528.17741598693542734318@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Apr 18 2018 at 00:12 -0600, Stephen Boyd wrote:
+>Quoting Lina Iyer (2018-04-05 09:18:31)
+>> Active state requests are sent immediately to the mailbox controller,
+>
+>Drive by note, mailbox went away from this code so grep 'mailbox' or
+>'mbox' on these patches should come up with zero hits.
+>
+Will do. Thanks.
 
---kdx76qelsr5r5vbe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+-- Lina
 
-On Thu, Apr 19, 2018 at 09:11:03AM -0500, kevans@FreeBSD.org wrote:
-> Allwinner a83t has a 1 KB sid block with efuse for security rootkey and t=
-hermal
-> calibration data, add node to describe it.
->=20
-> a83t-sid is not currently supported by nvmem/sunxi-sid, but it is
-> supported in an external driver for FreeBSD.
->=20
-> Signed-off-by: Kyle Evans <kevans@FreeBSD.org>
-
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---kdx76qelsr5r5vbe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrYsC0ACgkQ0rTAlCFN
-r3TFDRAAmuUj4T/690oCZynzuvR0l53SQ8BsNlvj57JWwDat3XSMgUald6/7CBFI
-lNvQ4pMLqR+MjiBynCFJJXNto82uRXzhyrLiHdU66bIJgQWQXaLFVUaXKq+vvB55
-pA0nkyLpN1p6H8YuIykDc9hcyBb5dUAdQcctTwcKnwT/+Y1IvaOBZC6j1oBmNfB5
-j7Bve42RGcwCIoehgMh0BaNSLrml0IrNIe3YpsGMRpUW/zlldTCmrlqsCDyA5UW1
-9stAXbouvxqsE9/E3yqH/izrGlZEYTLBt9dIC1PIq3Sgvup6MM72VU74apTmvKlY
-bubugWun88fh6hYM3XqkAkQtJh5V7LeoOnKIZaN3CNh2h8dq5SacVjiiWHzGFcFt
-140xQoie5g0AFJPQ2ZWdhVxPwtQmfEAn5DIeiuinJtH7ndSDGjDEB897ZsoyiBi5
-huN+oUsniHT5q+dJKFf5cA02I7Qi3n7RhtQvxF02iWydeRG9FUnRLNUx+EeNumum
-N1j1fDD2Bqk5ZyiAZ1LKiPDW/kQ021SlCPQGjv68cIIcD4nL02bB/SNrVj61z74J
-YvRzqHv4SLHSFsbMt1XiGy4MkFI2S51zDsi3b5M7+JgZrIgnSZSdh+MPzW0SST10
-LkEhPl4bLawFBCSCOY+FloJOGWhSs8ytkVIidO+2jm5p6bOe4ns=
-=kNVI
------END PGP SIGNATURE-----
-
---kdx76qelsr5r5vbe--
+>> while sleep and wake state requests are cached in this driver to avoid
+>> taxing the mailbox controller repeatedly. The cached values will be sent
+>> to the controller when the rpmh_flush() is called.
+>>
