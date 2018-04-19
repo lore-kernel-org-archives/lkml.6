@@ -1,28 +1,28 @@
 Return-Path: <BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org>
-X-Google-Smtp-Source: AIpwx4/o97SMZ2+GdFD9mWko99+T2C+0b5ehwGooGIjJ6o8yX2buWHU5uPdLvZQbLmzlqt5rtAsC
-ARC-Seal: i=1; a=rsa-sha256; t=1524141819; cv=none;
+X-Google-Smtp-Source: AIpwx49ZRBcPdLU1DQhfyEDpHAYOe2+JIBNZBf4VJCZRnnOlyuoNqNFHa86gbs7PbIDSjmBVIOV8
+ARC-Seal: i=1; a=rsa-sha256; t=1524141817; cv=none;
         d=google.com; s=arc-20160816;
-        b=gro8XhCrcPgvnfstUTRLM8WljnVbzeEbh+248N2hJocr2vHBJUxpBtaGpKsPPTc4km
-         1r9W4HTC35S6B05hdg6vZkunUlwNH7FCE2M1OhtYECgvwwPTKhKYVpakx+FmqMM3c7KO
-         6QubwrSTL1u2F5mi2keTlc9z5SSlzS+rlUDa+TeaISd9DfDSuvEUPN9uKVziIJ10M9Ra
-         bN+Xqu5ME/1iH0ACjx+v6uVh0cNx/2amPACJBjXjwozIaymBJd2B8NLZzgjgSjhcwSd5
-         CQVWXOlAElBXbDas078I2kN6fHsOgBE8k3f0owO85q2BbZZZU79r48YXMlv717Ly93FL
-         EQLQ==
+        b=thC2sodpvICXUS2oADgQqTHjDcUtf0uFy5hmB1IH2ReV5CWg/rXuwT4uyylpKIzBWb
+         4FQxYfCMA6KWj/vUZvT9Fo30dXF0tQ7NWYu1mCX6uH7P5eqMlrrqKJ1dIBzySo2TAwwQ
+         apTQ9YLGsmMJPYZbIEieeASlHX24ryl58Huiny6PlthF7FoRPMUmIGKKpl339XZu4wf/
+         9hRUXzOd7/3O2NQSLcr54B+sPtPaKHHoi7DcKs9frc6hLWUtjKPPPELdvNQIua2bv1dm
+         /8UjR4fdfE6M2KnxCP96JKRAr1+d7FHtqE/f5WgdBw3AWoIK9yMqOMel579Zf1K9VWkl
+         2Yyw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=IG61pFy4GkP3GnA8qp8UiJ1fXufhht5pH9kvurAP8uA=;
-        b=KHYHw7qPWSO3ZM5FtzoMkEewAGv26Q8/kMLZSODs4vyGkjuF79k2ElsUG6VSchNMMd
-         3OiJ0vN8ygbmqVHOHMcVw/A+ie2iC1HQSiYaOj6uBthsCGvmo9IBEUyCQ9dvjBI1daaP
-         7JNINwEULPry3+3g0w40QG2bgUXAxyLuatfnx1LqDOS7uT7IltFAAEvja79NUifpb3Nv
-         xmdQo6I+gkjwZNGSCPuIUGLC4TWf3jR7NAT/A0NRloY6A+KnMqLLrH0kUu1FBkGOmeu+
-         sDfOg1v9wK89qNTj920h1Ir2IeptRU5J+1jPFgtKAtoZnijTEFY1+bq77MJAmkim1one
-         kapw==
+        bh=SNrHWn9W2FuYRWu3VqtGPQFh08ahxN+WgYaSaDAmjZA=;
+        b=lSroquQjdR7S4hgHYLDDuLVSqw58OnGl/lerKtKX5MUaNyq3a4fR0xYrcIZe1r+PF3
+         DP0G8tsUcerJCnCEPNU9x0DdxuCkV7drfcvG7rOQSBfZ8qPkMZWiIjq0UmqZnixeJwGU
+         H8gU2oK82wJSXdz7eg49+g8zr6ZmZgvbtBAlm0igPpyy6v238aAti0zNPhnSVzP+X5lY
+         6kf+X7kg62TVwa19hBvRBU0XrJ+k1cyqMDztjp0wuHGpgiS/mBFtTNZgMyiVh4LEZEqM
+         VIx/UuSKp0y3chGixa2ykwBqJmIn7P3l7+ArxUywL64XwapRXbdpB/xjusVQz1ECdAEz
+         Qb3A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=sXPXJr/Q;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=Di9hvuFT;
        spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=sXPXJr/Q;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=Di9hvuFT;
        spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
@@ -46,113 +46,99 @@ Cc: Alexey Dobriyan <adobriyan@gmail.com>,
 	jfs-discussion@lists.sourceforge.net,
 	netfilter-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 32/39] bluetooth: switch to proc_create_seq_data
-Date: Thu, 19 Apr 2018 14:41:33 +0200
-Message-Id: <20180419124140.9309-33-hch@lst.de>
+Subject: [PATCH 31/39] netfilter/x_tables: switch to proc_create_seq_private
+Date: Thu, 19 Apr 2018 14:41:32 +0200
+Message-Id: <20180419124140.9309-32-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180419124140.9309-1-hch@lst.de>
 References: <20180419124140.9309-1-hch@lst.de>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598178532535447600?=
-X-GMAIL-MSGID: =?utf-8?q?1598178532535447600?=
+X-GMAIL-THRID: =?utf-8?q?1598178530383455519?=
+X-GMAIL-MSGID: =?utf-8?q?1598178530383455519?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-And use proc private data directly instead of doing a detour
-through seq->private and private state.
+And remove proc boilerplate code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/bluetooth/af_bluetooth.c | 40 +++++-------------------------------
- 1 file changed, 5 insertions(+), 35 deletions(-)
+ net/netfilter/x_tables.c | 42 ++++++----------------------------------
+ 1 file changed, 6 insertions(+), 36 deletions(-)
 
-diff --git a/net/bluetooth/af_bluetooth.c b/net/bluetooth/af_bluetooth.c
-index 84d92a077834..3264e1873219 100644
---- a/net/bluetooth/af_bluetooth.c
-+++ b/net/bluetooth/af_bluetooth.c
-@@ -605,15 +605,10 @@ int bt_sock_wait_ready(struct sock *sk, unsigned long flags)
- EXPORT_SYMBOL(bt_sock_wait_ready);
- 
- #ifdef CONFIG_PROC_FS
--struct bt_seq_state {
--	struct bt_sock_list *l;
--};
--
- static void *bt_seq_start(struct seq_file *seq, loff_t *pos)
- 	__acquires(seq->private->l->lock)
- {
--	struct bt_seq_state *s = seq->private;
--	struct bt_sock_list *l = s->l;
-+	struct bt_sock_list *l = PDE_DATA(file_inode(seq->file));
- 
- 	read_lock(&l->lock);
- 	return seq_hlist_start_head(&l->head, *pos);
-@@ -621,8 +616,7 @@ static void *bt_seq_start(struct seq_file *seq, loff_t *pos)
- 
- static void *bt_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- {
--	struct bt_seq_state *s = seq->private;
--	struct bt_sock_list *l = s->l;
-+	struct bt_sock_list *l = PDE_DATA(file_inode(seq->file));
- 
- 	return seq_hlist_next(v, &l->head, pos);
- }
-@@ -630,16 +624,14 @@ static void *bt_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- static void bt_seq_stop(struct seq_file *seq, void *v)
- 	__releases(seq->private->l->lock)
- {
--	struct bt_seq_state *s = seq->private;
--	struct bt_sock_list *l = s->l;
-+	struct bt_sock_list *l = PDE_DATA(file_inode(seq->file));
- 
- 	read_unlock(&l->lock);
- }
- 
- static int bt_seq_show(struct seq_file *seq, void *v)
- {
--	struct bt_seq_state *s = seq->private;
--	struct bt_sock_list *l = s->l;
-+	struct bt_sock_list *l = PDE_DATA(file_inode(seq->file));
- 
- 	if (v == SEQ_START_TOKEN) {
- 		seq_puts(seq ,"sk               RefCnt Rmem   Wmem   User   Inode  Parent");
-@@ -681,35 +673,13 @@ static const struct seq_operations bt_seq_ops = {
- 	.show  = bt_seq_show,
+diff --git a/net/netfilter/x_tables.c b/net/netfilter/x_tables.c
+index 344dd01a5027..0e314f95a4a3 100644
+--- a/net/netfilter/x_tables.c
++++ b/net/netfilter/x_tables.c
+@@ -1648,22 +1648,6 @@ static const struct seq_operations xt_match_seq_ops = {
+ 	.show	= xt_match_seq_show,
  };
  
--static int bt_seq_open(struct inode *inode, struct file *file)
+-static int xt_match_open(struct inode *inode, struct file *file)
 -{
--	struct bt_sock_list *sk_list;
--	struct bt_seq_state *s;
--
--	sk_list = PDE_DATA(inode);
--	s = __seq_open_private(file, &bt_seq_ops,
--			       sizeof(struct bt_seq_state));
--	if (!s)
+-	struct nf_mttg_trav *trav;
+-	trav = __seq_open_private(file, &xt_match_seq_ops, sizeof(*trav));
+-	if (!trav)
 -		return -ENOMEM;
--
--	s->l = sk_list;
 -	return 0;
 -}
 -
--static const struct file_operations bt_fops = {
--	.open = bt_seq_open,
--	.read = seq_read,
--	.llseek = seq_lseek,
--	.release = seq_release_private
+-static const struct file_operations xt_match_ops = {
+-	.open	 = xt_match_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = seq_release_private,
 -};
 -
- int bt_procfs_init(struct net *net, const char *name,
- 		   struct bt_sock_list *sk_list,
- 		   int (* seq_show)(struct seq_file *, void *))
+ static void *xt_target_seq_start(struct seq_file *seq, loff_t *pos)
  {
- 	sk_list->custom_seq_show = seq_show;
+ 	return xt_mttg_seq_start(seq, pos, true);
+@@ -1698,22 +1682,6 @@ static const struct seq_operations xt_target_seq_ops = {
+ 	.show	= xt_target_seq_show,
+ };
  
--	if (!proc_create_data(name, 0, net->proc_net, &bt_fops, sk_list))
-+	if (!proc_create_seq_data(name, 0, net->proc_net, &bt_seq_ops, sk_list))
- 		return -ENOMEM;
- 	return 0;
- }
+-static int xt_target_open(struct inode *inode, struct file *file)
+-{
+-	struct nf_mttg_trav *trav;
+-	trav = __seq_open_private(file, &xt_target_seq_ops, sizeof(*trav));
+-	if (!trav)
+-		return -ENOMEM;
+-	return 0;
+-}
+-
+-static const struct file_operations xt_target_ops = {
+-	.open	 = xt_target_open,
+-	.read	 = seq_read,
+-	.llseek	 = seq_lseek,
+-	.release = seq_release_private,
+-};
+-
+ #define FORMAT_TABLES	"_tables_names"
+ #define	FORMAT_MATCHES	"_tables_matches"
+ #define FORMAT_TARGETS 	"_tables_targets"
+@@ -1787,8 +1755,9 @@ int xt_proto_init(struct net *net, u_int8_t af)
+ 
+ 	strlcpy(buf, xt_prefix[af], sizeof(buf));
+ 	strlcat(buf, FORMAT_MATCHES, sizeof(buf));
+-	proc = proc_create_data(buf, 0440, net->proc_net, &xt_match_ops,
+-				(void *)(unsigned long)af);
++	proc = proc_create_seq_private(buf, 0440, net->proc_net,
++			&xt_match_seq_ops, sizeof(struct nf_mttg_trav),
++			(void *)(unsigned long)af);
+ 	if (!proc)
+ 		goto out_remove_tables;
+ 	if (uid_valid(root_uid) && gid_valid(root_gid))
+@@ -1796,8 +1765,9 @@ int xt_proto_init(struct net *net, u_int8_t af)
+ 
+ 	strlcpy(buf, xt_prefix[af], sizeof(buf));
+ 	strlcat(buf, FORMAT_TARGETS, sizeof(buf));
+-	proc = proc_create_data(buf, 0440, net->proc_net, &xt_target_ops,
+-				(void *)(unsigned long)af);
++	proc = proc_create_seq_private(buf, 0440, net->proc_net,
++			 &xt_target_seq_ops, sizeof(struct nf_mttg_trav),
++			 (void *)(unsigned long)af);
+ 	if (!proc)
+ 		goto out_remove_matches;
+ 	if (uid_valid(root_uid) && gid_valid(root_gid))
 -- 
 2.17.0
