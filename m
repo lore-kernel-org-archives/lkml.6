@@ -1,60 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753575AbeDSONc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:13:32 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:33345 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751957AbeDSON3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:13:29 -0400
-X-Google-Smtp-Source: AIpwx4+7G6mxUJop/rMV8awrugz9dO/rd/PDgQboEQWpyKAx4OAFA3842f3mc/pDfSbuW4BtZVGmIg==
-Message-ID: <1524147206.2601.104.camel@baylibre.com>
-Subject: Re: [PATCH 0/2] nvmem: meson-efuse: add write support
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>
-Cc: linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 19 Apr 2018 16:13:26 +0200
-In-Reply-To: <20180316150113.9779-1-jbrunet@baylibre.com>
-References: <20180316150113.9779-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1753604AbeDSOOR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:14:17 -0400
+Received: from sauhun.de ([88.99.104.3]:45270 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753524AbeDSOHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:07:08 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org
+Subject: [PATCH 42/61] ptp: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:12 +0200
+Message-Id: <20180419140641.27926-43-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-03-16 at 16:01 +0100, Jerome Brunet wrote:
-> This changeset adds write support to meson efuse driver.
-> The first patch just changes the way the nvmem data are allocated w/o
-> any functional changes. The second patches actually adds write support.
-> 
-> The memory being an OTP, it is safer if it remains read-only by default,
-> which is why I also submitted this DT patch [0].
-> 
-> If a user knows what he is doing, it should be easy to remove the
-> read-only property from the board DT. This can be done in u-boot, before
-> starting linux:
-> 
->  > fdt rm /efuse read-only
-> 
-> Tested on the gxl libretech-cc
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Hi Srinivas,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Is this patchset ok with you ? Do you want to me to change something ?
+Build tested only. buildbot is happy. Please apply individually.
 
-Regards
-Jerome
+ drivers/ptp/ptp_dte.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> 
-> [0]: https://lkml.kernel.org/r/20180316145021.8517-1-jbrunet@baylibre.com
-> 
-> Jerome Brunet (2):
->   nvmem: meson-efuse: remove econfig global
->   nvmem: meson-efuse: add write support
-> 
->  drivers/nvmem/meson-efuse.c | 37 +++++++++++++++++++++++++++----------
->  1 file changed, 27 insertions(+), 10 deletions(-)
-> 
+diff --git a/drivers/ptp/ptp_dte.c b/drivers/ptp/ptp_dte.c
+index 6edd3b9c7f01..5481a27d4fec 100644
+--- a/drivers/ptp/ptp_dte.c
++++ b/drivers/ptp/ptp_dte.c
+@@ -287,8 +287,7 @@ static int ptp_dte_remove(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int ptp_dte_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ptp_dte *ptp_dte = platform_get_drvdata(pdev);
++	struct ptp_dte *ptp_dte = dev_get_drvdata(dev);
+ 	u8 i;
+ 
+ 	for (i = 0; i < DTE_NUM_REGS_TO_RESTORE; i++) {
+@@ -304,8 +303,7 @@ static int ptp_dte_suspend(struct device *dev)
+ 
+ static int ptp_dte_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct ptp_dte *ptp_dte = platform_get_drvdata(pdev);
++	struct ptp_dte *ptp_dte = dev_get_drvdata(dev);
+ 	u8 i;
+ 
+ 	for (i = 0; i < DTE_NUM_REGS_TO_RESTORE; i++) {
+-- 
+2.11.0
