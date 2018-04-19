@@ -1,57 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752946AbeDSSHi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 14:07:38 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41487 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752086AbeDSSHg (ORCPT
+        id S1753114AbeDSSKh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 14:10:37 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:39447 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751184AbeDSSKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 14:07:36 -0400
-X-Google-Smtp-Source: AIpwx490ijZceomr+W8jQAVOFEuTT84WUm2/rDkAF2Md8A495tjMhk0+PDZY2jM/5bXV567ib6DsSw==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>,
-        <linux-gpio@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pinctrl: meson-axg: fix the range of aobus bank
-Organization: BayLibre
-References: <20180417170824.18670-1-yixun.lan@amlogic.com>
-Date: Thu, 19 Apr 2018 11:07:32 -0700
-In-Reply-To: <20180417170824.18670-1-yixun.lan@amlogic.com> (Yixun Lan's
-        message of "Tue, 17 Apr 2018 17:08:24 +0000")
-Message-ID: <7hd0yv3w9n.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 19 Apr 2018 14:10:35 -0400
+X-ME-Sender: <xms:m9vYWm5yUGQSnnzx22qAXHsGYYFOoRdrP9VLMWDWV7OCqChyhQbtGw>
+Subject: Re: [Xen-devel] [PATCH] xen-netfront: Fix hang on device removal
+To: netdev@vger.kernel.org
+Cc: Jason Andryuk <jandryuk@gmail.com>, xen-devel@lists.xenproject.org,
+        Eduardo Otubo <otubo@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20180228122323.3914-1-jandryuk@gmail.com>
+From: Simon Gaiser <simon@invisiblethingslab.com>
+Message-ID: <1b07e839-5633-3b1e-1997-b86a891b2962@invisiblethingslab.com>
+Date: Thu, 19 Apr 2018 18:10:00 +0000
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180228122323.3914-1-jandryuk@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="myGTiVextl6vFeRqaSm5HcOSlnXDVaIsW"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--myGTiVextl6vFeRqaSm5HcOSlnXDVaIsW
+Content-Type: multipart/mixed; boundary="gwO90y9nkFM5w1gygVmy6KSInYvYfczEg";
+ protected-headers="v1"
+From: Simon Gaiser <simon@invisiblethingslab.com>
+To: netdev@vger.kernel.org
+Cc: Jason Andryuk <jandryuk@gmail.com>, xen-devel@lists.xenproject.org,
+ Eduardo Otubo <otubo@redhat.com>, Juergen Gross <jgross@suse.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ open list <linux-kernel@vger.kernel.org>
+Message-ID: <1b07e839-5633-3b1e-1997-b86a891b2962@invisiblethingslab.com>
+Subject: Re: [Xen-devel] [PATCH] xen-netfront: Fix hang on device removal
+References: <20180228122323.3914-1-jandryuk@gmail.com>
+In-Reply-To: <20180228122323.3914-1-jandryuk@gmail.com>
 
-> The GPIOAO bank is range from GPIOAO_0 to GPIOAO_13.
->
-> Fixes: 83c566806a68 ("pinctrl: meson-axg: Add new pinctrl driver for Meson AXG SoC")
-> Reported-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+--gwO90y9nkFM5w1gygVmy6KSInYvYfczEg
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+Jason Andryuk:
+> A toolstack may delete the vif frontend and backend xenstore entries
+> while xen-netfront is in the removal code path.  In that case, the
+> checks for xenbus_read_driver_state would return XenbusStateUnknown, an=
+d
+> xennet_remove would hang indefinitely.  This hang prevents system
+> shutdown.
+>=20
+> xennet_remove must be able to handle XenbusStateUnknown, and
+> netback_changed must also wake up the wake_queue for that state as well=
+=2E
+>=20
+> Fixes: 5b5971df3bc2 ("xen-netfront: remove warning when unloading modul=
+e")
 
-> ---
->  drivers/pinctrl/meson/pinctrl-meson-axg.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-> index 4b91ff74779b..99a6ceac8e53 100644
-> --- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
-> +++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
-> @@ -898,7 +898,7 @@ static struct meson_bank meson_axg_periphs_banks[] = {
->  
->  static struct meson_bank meson_axg_aobus_banks[] = {
->  	/*   name    first      last      irq	pullen  pull    dir     out     in  */
-> -	BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
-> +	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
->  };
->  
->  static struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
+I think this should go into stable since AFAIK the hanging network
+device can only be fixed by rebooting the guest. AFAICS this affects all
+4.* branches since 5b5971df3bc2 got backported to them.
+
+Upstream commit c2d2e6738a209f0f9dffa2dc8e7292fc45360d61.
+
+Simon
+
+
+--gwO90y9nkFM5w1gygVmy6KSInYvYfczEg--
+
+--myGTiVextl6vFeRqaSm5HcOSlnXDVaIsW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE3E8ezGzG3N1CTQ//kO9xfO/xly8FAlrY27MACgkQkO9xfO/x
+ly+uSxAAyh4Burc07vRFEo20sKnzrVL5x7BqgQAznYOWKsB5D6Yb1VaG11GTZfBp
+G5FiaorTVm9zdqmIddxBgBZINtn2/SWvr5LwJfeYBjebBtccu+91CyeDT0P0T56l
+FVut4ON195ZLYfH8eXE8y9Nvqh8M50n9dmeINrrelYzLbrkP6h9TSJ1h1tz4Jing
+o+kBnjQJ9wGAuAQyWv2053ta/3oCYOI4DZsFcFhDZcCuEz6Kll4a/WeSA8QcLp9y
+m3iTqIAxtbom+DHfWaZnRD9GO4nxflDJb9Xt34TxJn3RKn34XZ+NSVUPkz2l44oS
+k6OowweN7/faH1SuVl2UTfcMflBNjISzQddXfHUpdfk9nNMSe9k3jnrRkWGfBmvA
+FbiBhmUXcEAVYRDdiOgKMtnKboY1lWKaNE1CdoVdMBo32FgJc1eKWOwV6LiQ1Xpo
+gNfjfZqmvJ8ok9Px4sg12wlSXkchtocRup48FTPHvdqdUAQXDwPM7iS1KGLKQ+QA
+8OayJEV19dyLQDRPy2kqynxJzt/0qX0hp/bNWG4MPawWJmSi2h5Mt2UrFsKqXEXa
+1DzGw0pmN2NaN8mdhcW1NEe098qh9qipIiEGHqN9qkYkt2wtYZF6+p/Vf6zX7lb7
+7vVbIvctoeGDpN9Q8eZYTUTwuDHAZcVZed2Dikrj+nk37pDxYqo=
+=a9YR
+-----END PGP SIGNATURE-----
+
+--myGTiVextl6vFeRqaSm5HcOSlnXDVaIsW--
