@@ -1,226 +1,233 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753257AbeDSFBx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 01:01:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53790 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750953AbeDSFBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 01:01:51 -0400
-Date: Thu, 19 Apr 2018 08:01:49 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mikulas Patocka <mpatocka@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        David Miller <davem@davemloft.net>, Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: [PATCH net] virtio_net: split out ctrl buffer
-Message-ID: <1524113437-308621-1-git-send-email-mst@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
+        id S1753283AbeDSFDx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 01:03:53 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36781 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753059AbeDSFDu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 01:03:50 -0400
+X-Google-Smtp-Source: AIpwx48PYz6FI5WpuFN9h/AOoE0CVq3OrVSZn5dbJcKl/9m2l8MbIdMcSBUJgvEPkRWsaYQylDoSYw==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Chris Lew <clew@codeaurora.org>
+Subject: [PATCH] net: qrtr: Expose tunneling endpoint to user space
+Date: Wed, 18 Apr 2018 22:03:46 -0700
+Message-Id: <20180419050346.17054-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When sending control commands, virtio net sets up several buffers for
-DMA. The buffers are all part of the net device which means it's
-actually allocated by kvmalloc so in theory (on extreme memory pressure)
-it's possible to get a vmalloc'ed buffer which on some platforms means
-we can't DMA there.
+This implements a misc character device named "qrtr-tun" for the purpose
+of allowing user space applications to implement endpoints in the qrtr
+network.
 
-Fix up by moving the DMA buffers out into a separate structure.
+This allows more advanced (and dynamic) testing of the qrtr code as well
+as opens up the ability of tunneling qrtr over a network or USB link.
 
-Reported-by: Mikulas Patocka <mpatocka@redhat.com>
-Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
+ net/qrtr/Kconfig  |   7 +++
+ net/qrtr/Makefile |   2 +
+ net/qrtr/tun.c    | 162 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 171 insertions(+)
+ create mode 100644 net/qrtr/tun.c
 
-Lightly tested.
-Mikulas, does this address your problem?
-
- drivers/net/virtio_net.c | 68 +++++++++++++++++++++++++++---------------------
- 1 file changed, 39 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 7b187ec..82f50e5 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -147,6 +147,17 @@ struct receive_queue {
- 	struct xdp_rxq_info xdp_rxq;
- };
+diff --git a/net/qrtr/Kconfig b/net/qrtr/Kconfig
+index 326fd97444f5..1944834d225c 100644
+--- a/net/qrtr/Kconfig
++++ b/net/qrtr/Kconfig
+@@ -21,4 +21,11 @@ config QRTR_SMD
+ 	  Say Y here to support SMD based ipcrouter channels.  SMD is the
+ 	  most common transport for IPC Router.
  
-+/* Control VQ buffers: protected by the rtnl lock */
-+struct control_buf {
-+	struct virtio_net_ctrl_hdr hdr;
-+	virtio_net_ctrl_ack status;
-+	struct virtio_net_ctrl_mq mq;
-+	u8 promisc;
-+	u8 allmulti;
-+	u16 vid;
-+	u64 offloads;
++config QRTR_TUN
++	tristate "TUN device for Qualcomm IPC Router"
++	---help---
++	  Say Y here to expose a character device that allows user space to
++	  implement endpoints of QRTR, for purpose of tunneling data to other
++	  hosts or testing purposes.
++
+ endif # QRTR
+diff --git a/net/qrtr/Makefile b/net/qrtr/Makefile
+index ab09e40f7c74..be012bfd3e52 100644
+--- a/net/qrtr/Makefile
++++ b/net/qrtr/Makefile
+@@ -2,3 +2,5 @@ obj-$(CONFIG_QRTR) := qrtr.o
+ 
+ obj-$(CONFIG_QRTR_SMD) += qrtr-smd.o
+ qrtr-smd-y	:= smd.o
++obj-$(CONFIG_QRTR_TUN) += qrtr-tun.o
++qrtr-tun-y	:= tun.o
+diff --git a/net/qrtr/tun.c b/net/qrtr/tun.c
+new file mode 100644
+index 000000000000..ab87a12cbb17
+--- /dev/null
++++ b/net/qrtr/tun.c
+@@ -0,0 +1,162 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2018, Linaro Ltd */
++
++#include <linux/miscdevice.h>
++#include <linux/module.h>
++#include <linux/skbuff.h>
++#include <linux/uaccess.h>
++
++#include "qrtr.h"
++
++struct qrtr_tun {
++	struct qrtr_endpoint ep;
++
++	struct mutex queue_lock;
++	struct sk_buff_head queue;
++	wait_queue_head_t readq;
 +};
 +
- struct virtnet_info {
- 	struct virtio_device *vdev;
- 	struct virtqueue *cvq;
-@@ -192,14 +203,7 @@ struct virtnet_info {
- 	struct hlist_node node;
- 	struct hlist_node node_dead;
- 
--	/* Control VQ buffers: protected by the rtnl lock */
--	struct virtio_net_ctrl_hdr ctrl_hdr;
--	virtio_net_ctrl_ack ctrl_status;
--	struct virtio_net_ctrl_mq ctrl_mq;
--	u8 ctrl_promisc;
--	u8 ctrl_allmulti;
--	u16 ctrl_vid;
--	u64 ctrl_offloads;
-+	struct control_buf *ctrl;
- 
- 	/* Ethtool settings */
- 	u8 duplex;
-@@ -1454,25 +1458,25 @@ static bool virtnet_send_command(struct virtnet_info *vi, u8 class, u8 cmd,
- 	/* Caller should know better */
- 	BUG_ON(!virtio_has_feature(vi->vdev, VIRTIO_NET_F_CTRL_VQ));
- 
--	vi->ctrl_status = ~0;
--	vi->ctrl_hdr.class = class;
--	vi->ctrl_hdr.cmd = cmd;
-+	vi->ctrl->status = ~0;
-+	vi->ctrl->hdr.class = class;
-+	vi->ctrl->hdr.cmd = cmd;
- 	/* Add header */
--	sg_init_one(&hdr, &vi->ctrl_hdr, sizeof(vi->ctrl_hdr));
-+	sg_init_one(&hdr, &vi->ctrl->hdr, sizeof(vi->ctrl->hdr));
- 	sgs[out_num++] = &hdr;
- 
- 	if (out)
- 		sgs[out_num++] = out;
- 
- 	/* Add return status. */
--	sg_init_one(&stat, &vi->ctrl_status, sizeof(vi->ctrl_status));
-+	sg_init_one(&stat, &vi->ctrl->status, sizeof(vi->ctrl->status));
- 	sgs[out_num] = &stat;
- 
- 	BUG_ON(out_num + 1 > ARRAY_SIZE(sgs));
- 	virtqueue_add_sgs(vi->cvq, sgs, out_num, 1, vi, GFP_ATOMIC);
- 
- 	if (unlikely(!virtqueue_kick(vi->cvq)))
--		return vi->ctrl_status == VIRTIO_NET_OK;
-+		return vi->ctrl->status == VIRTIO_NET_OK;
- 
- 	/* Spin for a response, the kick causes an ioport write, trapping
- 	 * into the hypervisor, so the request should be handled immediately.
-@@ -1481,7 +1485,7 @@ static bool virtnet_send_command(struct virtnet_info *vi, u8 class, u8 cmd,
- 	       !virtqueue_is_broken(vi->cvq))
- 		cpu_relax();
- 
--	return vi->ctrl_status == VIRTIO_NET_OK;
-+	return vi->ctrl->status == VIRTIO_NET_OK;
- }
- 
- static int virtnet_set_mac_address(struct net_device *dev, void *p)
-@@ -1593,8 +1597,8 @@ static int _virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
- 	if (!vi->has_cvq || !virtio_has_feature(vi->vdev, VIRTIO_NET_F_MQ))
- 		return 0;
- 
--	vi->ctrl_mq.virtqueue_pairs = cpu_to_virtio16(vi->vdev, queue_pairs);
--	sg_init_one(&sg, &vi->ctrl_mq, sizeof(vi->ctrl_mq));
-+	vi->ctrl->mq.virtqueue_pairs = cpu_to_virtio16(vi->vdev, queue_pairs);
-+	sg_init_one(&sg, &vi->ctrl->mq, sizeof(vi->ctrl->mq));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_MQ,
- 				  VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET, &sg)) {
-@@ -1653,22 +1657,22 @@ static void virtnet_set_rx_mode(struct net_device *dev)
- 	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_CTRL_RX))
- 		return;
- 
--	vi->ctrl_promisc = ((dev->flags & IFF_PROMISC) != 0);
--	vi->ctrl_allmulti = ((dev->flags & IFF_ALLMULTI) != 0);
-+	vi->ctrl->promisc = ((dev->flags & IFF_PROMISC) != 0);
-+	vi->ctrl->allmulti = ((dev->flags & IFF_ALLMULTI) != 0);
- 
--	sg_init_one(sg, &vi->ctrl_promisc, sizeof(vi->ctrl_promisc));
-+	sg_init_one(sg, &vi->ctrl->promisc, sizeof(vi->ctrl->promisc));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_RX,
- 				  VIRTIO_NET_CTRL_RX_PROMISC, sg))
- 		dev_warn(&dev->dev, "Failed to %sable promisc mode.\n",
--			 vi->ctrl_promisc ? "en" : "dis");
-+			 vi->ctrl->promisc ? "en" : "dis");
- 
--	sg_init_one(sg, &vi->ctrl_allmulti, sizeof(vi->ctrl_allmulti));
-+	sg_init_one(sg, &vi->ctrl->allmulti, sizeof(vi->ctrl->allmulti));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_RX,
- 				  VIRTIO_NET_CTRL_RX_ALLMULTI, sg))
- 		dev_warn(&dev->dev, "Failed to %sable allmulti mode.\n",
--			 vi->ctrl_allmulti ? "en" : "dis");
-+			 vi->ctrl->allmulti ? "en" : "dis");
- 
- 	uc_count = netdev_uc_count(dev);
- 	mc_count = netdev_mc_count(dev);
-@@ -1714,8 +1718,8 @@ static int virtnet_vlan_rx_add_vid(struct net_device *dev,
- 	struct virtnet_info *vi = netdev_priv(dev);
- 	struct scatterlist sg;
- 
--	vi->ctrl_vid = vid;
--	sg_init_one(&sg, &vi->ctrl_vid, sizeof(vi->ctrl_vid));
-+	vi->ctrl->vid = vid;
-+	sg_init_one(&sg, &vi->ctrl->vid, sizeof(vi->ctrl->vid));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
- 				  VIRTIO_NET_CTRL_VLAN_ADD, &sg))
-@@ -1729,8 +1733,8 @@ static int virtnet_vlan_rx_kill_vid(struct net_device *dev,
- 	struct virtnet_info *vi = netdev_priv(dev);
- 	struct scatterlist sg;
- 
--	vi->ctrl_vid = vid;
--	sg_init_one(&sg, &vi->ctrl_vid, sizeof(vi->ctrl_vid));
-+	vi->ctrl->vid = vid;
-+	sg_init_one(&sg, &vi->ctrl->vid, sizeof(vi->ctrl->vid));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
- 				  VIRTIO_NET_CTRL_VLAN_DEL, &sg))
-@@ -2126,9 +2130,9 @@ static int virtnet_restore_up(struct virtio_device *vdev)
- static int virtnet_set_guest_offloads(struct virtnet_info *vi, u64 offloads)
- {
- 	struct scatterlist sg;
--	vi->ctrl_offloads = cpu_to_virtio64(vi->vdev, offloads);
-+	vi->ctrl->offloads = cpu_to_virtio64(vi->vdev, offloads);
- 
--	sg_init_one(&sg, &vi->ctrl_offloads, sizeof(vi->ctrl_offloads));
-+	sg_init_one(&sg, &vi->ctrl->offloads, sizeof(vi->ctrl->offloads));
- 
- 	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_GUEST_OFFLOADS,
- 				  VIRTIO_NET_CTRL_GUEST_OFFLOADS_SET, &sg)) {
-@@ -2351,6 +2355,7 @@ static void virtnet_free_queues(struct virtnet_info *vi)
- 
- 	kfree(vi->rq);
- 	kfree(vi->sq);
-+	kfree(vi->err_ctrl);
- }
- 
- static void _free_receive_bufs(struct virtnet_info *vi)
-@@ -2543,6 +2548,9 @@ static int virtnet_alloc_queues(struct virtnet_info *vi)
- {
- 	int i;
- 
-+	vi->ctrl = kzalloc(sizeof(*vi->ctrl), GFP_KERNEL);
-+	if (!vi->ctrl)
-+		goto err_ctrl;
- 	vi->sq = kzalloc(sizeof(*vi->sq) * vi->max_queue_pairs, GFP_KERNEL);
- 	if (!vi->sq)
- 		goto err_sq;
-@@ -2571,6 +2579,8 @@ static int virtnet_alloc_queues(struct virtnet_info *vi)
- err_rq:
- 	kfree(vi->sq);
- err_sq:
-+	kfree(vq->ctrl);
-+err_ctrl:
- 	return -ENOMEM;
- }
- 
++static int qrtr_tun_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
++{
++	struct qrtr_tun *tun = container_of(ep, struct qrtr_tun, ep);
++
++	mutex_lock(&tun->queue_lock);
++	skb_queue_tail(&tun->queue, skb);
++	mutex_unlock(&tun->queue_lock);
++
++	/* wake up any blocking processes, waiting for new data */
++	wake_up_interruptible(&tun->readq);
++
++	return 0;
++}
++
++static int qrtr_tun_open(struct inode *inode, struct file *filp)
++{
++	struct qrtr_tun *tun;
++
++	tun = kzalloc(sizeof(*tun), GFP_KERNEL);
++	if (!tun)
++		return -ENOMEM;
++
++	mutex_init(&tun->queue_lock);
++	skb_queue_head_init(&tun->queue);
++	init_waitqueue_head(&tun->readq);
++
++	tun->ep.xmit = qrtr_tun_send;
++
++	filp->private_data = tun;
++
++	return qrtr_endpoint_register(&tun->ep, QRTR_EP_NID_AUTO);
++}
++
++static ssize_t qrtr_tun_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	struct file *filp = iocb->ki_filp;
++	struct qrtr_tun *tun = filp->private_data;
++	struct sk_buff *skb;
++	int count;
++
++	mutex_lock(&tun->queue_lock);
++
++	/* Wait for data in the queue */
++	if (skb_queue_empty(&tun->queue)) {
++		mutex_unlock(&tun->queue_lock);
++
++		if (filp->f_flags & O_NONBLOCK)
++			return -EAGAIN;
++
++		/* Wait until we get data or the endpoint goes away */
++		if (wait_event_interruptible(tun->readq,
++					     !skb_queue_empty(&tun->queue)))
++			return -ERESTARTSYS;
++
++		mutex_lock(&tun->queue_lock);
++	}
++
++	skb = skb_dequeue(&tun->queue);
++	mutex_unlock(&tun->queue_lock);
++	if (!skb)
++		return -EFAULT;
++
++	count = min_t(size_t, iov_iter_count(to), skb->len);
++	if (copy_to_iter(skb->data, count, to) != count)
++		count = -EFAULT;
++
++	kfree_skb(skb);
++
++	return count;
++}
++
++static ssize_t qrtr_tun_write_iter(struct kiocb *iocb, struct iov_iter *from)
++{
++	struct file *filp = iocb->ki_filp;
++	struct qrtr_tun *tun = filp->private_data;
++	size_t len = iov_iter_count(from);
++	ssize_t ret;
++	void *kbuf;
++
++	kbuf = kzalloc(len, GFP_KERNEL);
++	if (!kbuf)
++		return -ENOMEM;
++
++	if (!copy_from_iter_full(kbuf, len, from))
++		return -EFAULT;
++
++	ret = qrtr_endpoint_post(&tun->ep, kbuf, len);
++
++	return ret < 0 ? ret : len;
++}
++
++static int qrtr_tun_release(struct inode *inode, struct file *filp)
++{
++	struct qrtr_tun *tun = filp->private_data;
++	struct sk_buff *skb;
++
++	qrtr_endpoint_unregister(&tun->ep);
++
++	/* Discard all SKBs */
++	while (!skb_queue_empty(&tun->queue)) {
++		skb = skb_dequeue(&tun->queue);
++		kfree_skb(skb);
++	}
++
++	kfree(tun);
++
++	return 0;
++}
++
++static const struct file_operations qrtr_tun_ops = {
++	.owner = THIS_MODULE,
++	.open = qrtr_tun_open,
++	.read_iter = qrtr_tun_read_iter,
++	.write_iter = qrtr_tun_write_iter,
++	.release = qrtr_tun_release,
++};
++
++static struct miscdevice qrtr_tun_miscdev = {
++	MISC_DYNAMIC_MINOR,
++	"qrtr-tun",
++	&qrtr_tun_ops,
++};
++
++static int __init qrtr_tun_init(void)
++{
++	int ret;
++
++	ret = misc_register(&qrtr_tun_miscdev);
++	if (ret)
++		pr_err("failed to register Qualcomm IPC Router tun device\n");
++
++	return ret;
++}
++
++static void __exit qrtr_tun_exit(void)
++{
++	misc_deregister(&qrtr_tun_miscdev);
++}
++
++module_init(qrtr_tun_init);
++module_exit(qrtr_tun_exit);
++
++MODULE_DESCRIPTION("Qualcomm IPC Router TUN device");
++MODULE_LICENSE("GPL v2");
 -- 
-MST
+2.16.2
