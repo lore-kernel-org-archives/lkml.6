@@ -1,77 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752241AbeDSLWn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 07:22:43 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51472 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751136AbeDSLWm (ORCPT
+        id S1752308AbeDSLZZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:25:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51861 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751184AbeDSLZX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 07:22:42 -0400
-Date: Thu, 19 Apr 2018 12:22:32 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org"
-        <linux-samsung-soc@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [BUG] NULL pointer on next-20180419 on Odroid XU3
- (snd_soc_register_card)
-Message-ID: <20180419112232.GB27188@sirena.org.uk>
-References: <CAJKOXPd-+jp99p=5MsCa=68TNSJk57+drcFgUr2Y1rWW3RPbSA@mail.gmail.com>
+        Thu, 19 Apr 2018 07:25:23 -0400
+Date: Thu, 19 Apr 2018 04:25:13 -0700
+From: tip-bot for Anson Huang <tipbot@zytor.com>
+Message-ID: <tip-7407188489c62a7b5694bc75a6db2b82af94c9a5@git.kernel.org>
+Cc: tglx@linutronix.de, hpa@zytor.com, Anson.Huang@nxp.com,
+        linux-kernel@vger.kernel.org, Aisheng.dong@nxp.com, mingo@kernel.org
+Reply-To: tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
+        Aisheng.dong@nxp.com, linux-kernel@vger.kernel.org,
+        Anson.Huang@nxp.com
+In-Reply-To: <1524117883-2484-1-git-send-email-Anson.Huang@nxp.com>
+References: <1524117883-2484-1-git-send-email-Anson.Huang@nxp.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/urgent] clocksource/imx-tpm: Correct -ETIME return
+ condition check
+Git-Commit-ID: 7407188489c62a7b5694bc75a6db2b82af94c9a5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DKU6Jbt7q3WqK7+M"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAJKOXPd-+jp99p=5MsCa=68TNSJk57+drcFgUr2Y1rWW3RPbSA@mail.gmail.com>
-X-Cookie: We've upped our standards, so up yours!
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  7407188489c62a7b5694bc75a6db2b82af94c9a5
+Gitweb:     https://git.kernel.org/tip/7407188489c62a7b5694bc75a6db2b82af94c9a5
+Author:     Anson Huang <Anson.Huang@nxp.com>
+AuthorDate: Thu, 19 Apr 2018 14:04:43 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 19 Apr 2018 13:21:35 +0200
 
---DKU6Jbt7q3WqK7+M
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+clocksource/imx-tpm: Correct -ETIME return condition check
 
-On Thu, Apr 19, 2018 at 09:08:07AM +0200, Krzysztof Kozlowski wrote:
+The additional brakects added to tpm_set_next_event's return value
+computation causes (int) forced type conversion NOT taking effect, and the
+incorrect value return will cause various system timer issue, like RCU
+stall etc..
 
-> On today's next-20180419, NULL pointer exception appeared in
-> snd_soc_instantiate_card() on Odroid XU3 and XU boards (Samsung,
-> Exynos5422, Exynos5410, max98090 codec). Built with exynos_defconfig
-> (ARM).
+Remove the additional brackets to make sure tpm_set_next_event always
+returns correct value.
 
-> I bisected it to:
-> 45f8cb57da0d7a9ead4b39d7f5def333a5b0c08b is the first bad commit
-> commit 45f8cb57da0d7a9ead4b39d7f5def333a5b0c08b
-> Author: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-> Date:   Tue Mar 27 14:30:40 2018 +0100
->=20
->     ASoC: core: Allow topology to override machine driver FE DAI link con=
-fig.
+Fixes: 059ab7b82eec ("clocksource/drivers/imx-tpm: Add imx tpm timer support")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Dong Aisheng <Aisheng.dong@nxp.com>
+Cc: stable@vger.kernel.org
+Cc: daniel.lezcano@linaro.org
+Cc: Linux-imx@nxp.com
+Link: https://lkml.kernel.org/r/1524117883-2484-1-git-send-email-Anson.Huang@nxp.com
+---
+ drivers/clocksource/timer-imx-tpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-OK, reverting this one as well for now along with f11a5c27f9287 "ASoC:
-core: Add name prefix for machines with topology rewrites" which depends
-on it :(
-
---DKU6Jbt7q3WqK7+M
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrYe/cACgkQJNaLcl1U
-h9B76gf9HlWxBpQgKJSERvvphkwHewaLd2GMKeK+9jQtL3CelbLKeJgs4BKKPj3S
-iCcYpC+wTumtc/xV41okaOZLalAKDRR+Skhrjb94RDKK4wmFFB9sFRqxAEMK6yF4
-baQJ0gyKB35kIdsBFuc/zUXD4rm8icOCiEuivvz8dgFE6uHVRdeOYlq8deqde+6G
-dQ11do0uEQNBMvTvKE3cQP/Dlq4MFz29k0VjD0/zNTo7RqBBWAHBuO+eVSTEHB1D
-JzjsJxDqG7qlqniqpHjt//7yGuMpXp/g0JpzGAkSUtceqp2x1OyLI6w4w9+feRaQ
-F3KvpNdhBuLrKW4/M08tc0FWRS2Huw==
-=R69U
------END PGP SIGNATURE-----
-
---DKU6Jbt7q3WqK7+M--
+diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
+index 05d97a6871d8..6c8318470b48 100644
+--- a/drivers/clocksource/timer-imx-tpm.c
++++ b/drivers/clocksource/timer-imx-tpm.c
+@@ -114,7 +114,7 @@ static int tpm_set_next_event(unsigned long delta,
+ 	 * of writing CNT registers which may cause the min_delta event got
+ 	 * missed, so we need add a ETIME check here in case it happened.
+ 	 */
+-	return (int)((next - now) <= 0) ? -ETIME : 0;
++	return (int)(next - now) <= 0 ? -ETIME : 0;
+ }
+ 
+ static int tpm_set_state_oneshot(struct clock_event_device *evt)
