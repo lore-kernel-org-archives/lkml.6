@@ -1,102 +1,111 @@
-Return-Path: <stefan@agner.ch>
-X-Google-Smtp-Source: AIpwx49nUFgwOXAXeoLmIQnyjum8taufE+HWIbOeLOgacgd1wiWg0hBzXHr2uAjzO6/lAJTp4srx
-ARC-Seal: i=1; a=rsa-sha256; t=1524212562; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jJ/NOsBuv1rn4j6BllX64wx5UdmivxGLrPlCUKS5tBtYzRkQp1uKYsoy+N1uTFyxT0
-         lVB55wzV+Ae+6vvY2ZzBBC1lVnaCKzMUfeexpP4DhBynubdbQQBa6SoGbTGI4Wg4GoBZ
-         vpuJyflXc5HHnfkca9EpiFWxIhpAN6fjU7J6RSOG9cjrD7S74c28kyfL+1n/3+gcntKF
-         3Okz+7HGOwhKov6bsUKpazmJ04hhDNQyCdd4sjsZRgp5Y4YhpIG8kbWS5IiONW20tJH7
-         qxOIMiZvbMoBX1IQ+SkDu06Q1SNbgGAaCQ2cBOi82ZI0K492uPF5FAzeqytFoQJmkgXk
-         92KQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
-         :date:content-transfer-encoding:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=cwtq4XfinItztfDmWdT2ki3Ezn/K6ayBzvf1jwlL5Fc=;
-        b=KAsA7iNchi07lAoYnLxUTL2MGmXhF6P94p+m8SeoMaROXFEVT+SdxQSemRawWoaQb0
-         eqkU7G8DKUosVXu2ydZBOJ/GILKolFahIYfZtQzymEUy357QQC1SVz09zyyGW6jtO5JL
-         4SWi/A9V1/ewhQkDFai/yt7I8XoCUtjdvSIXaaDcpKPdsQXBnFUAyCn72gsZlUrsQjY4
-         HxvCxPlG3wWwyeLUI6P8lHaKS88+Ir1QF/hlkdHt0i4CK8tQnyqQzCFnSJH180uw5+CY
-         Nn5CMaLlzl1s+6UwvvEXLSIFecCAD/B3x78qcg7Yyha6kvh0gPGw7c27ZyrQOqTkVq65
-         rM4Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@agner.ch header.s=dkim header.b=zsQIAnAi;
-       spf=pass (google.com: domain of stefan@agner.ch designates 2a02:418:6a02::a2 as permitted sender) smtp.mailfrom=stefan@agner.ch
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@agner.ch header.s=dkim header.b=zsQIAnAi;
-       spf=pass (google.com: domain of stefan@agner.ch designates 2a02:418:6a02::a2 as permitted sender) smtp.mailfrom=stefan@agner.ch
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4107594-1524176149-2-3508580700276348060
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524176148; b=LhYSM3aRtLgNiJ2rks/sQdpEUq7nA9J21096YvvxOht6k4VJXL
+    VIfPGp6Vcx/hCPXq4WTBkJsb17dIA3v+GkXs23qXvRpTtpGHMC7Clszm0MLFM0bq
+    CxT+DtyIBAwLOP3M+s5YHnHyp5KYk3//plVozSoNYNZHAovrpNsLaOV4PIYr1HL1
+    PBQELNwvMnw2GeX3CBm50cg5IRpX3yvL3gpgL8wKgqJqdeS2ZPIVVRe6Mv7zEnHZ
+    9BRuoxi3hcUYI3V+J6/nNyoNm2eIkvba3xfNrBfoAvy3JEqgqCFfj9MFPzHrEIB9
+    GukwPi9AtW2dCX/A9TnCHQYL+SiQ5qWGu82A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1524176148; bh=IsMMnQylCbP/N5oR+TzhI/j6e7qoQabBqope01ruNV
+    M=; b=VVxOfsHCGB0OazmamMFbbnh50Xpo3E1npVtSTt9h5FBNKG5W6SWd79hlEP
+    +gFxky1wv+tqZqcA50hpHFfMDos5AmYmine+FbGwDsOr8e7yzGYgkd5O583rlUBM
+    ujSZWcVji8HpwBAbwIegyuRBmsLustD764krbS3ymt9GMOI0hCFEQ9FCQgUCMphr
+    wo+Yvl0pg8Hnd15Un4R6ZnsSXzT8oSjemhlyPuFuopQFk19nRYdDJS6jW8n1LElg
+    k1yvG1HwTQ16/41lgjpYJjYB+PR2Dkv6GhKPWIgyE1w1rX6mGvwH4pP3ToZQv2an
+    Y244PfOnVTo1STF0/UOo72uj4GQw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BHlBkXao x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FgvLuJfV;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BHlBkXao x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FgvLuJfV;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLJoOzgvI0jYsTtzVIBlMByaDw3jcxr3K/cDobq3Yqi75wTRCsrFl5xhwMlzhp75/LH9aNHyORn+aLJK8g4avQFYzsADVosSwZrXRxXcd7cHJA/E88n0
+    7U+jRA+w6c2t0vGsitNHbVfcHsUL20a6Uh537tvudbqv9mjaolwgYNCPUUcm3qlA4glEubhcppabSz4GioyIGyI+Nd70+NT3A5otvDJ0/scnKEWRME5HYBtf
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+    a=TIvwQ2_Y7WIA:10 a=Kd1tUaAdevIA:10 a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8
+    a=YNktkTzv_Wf3_YVv_6gA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=ST-jHhOKWsTCqRlWije3:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753794AbeDSWP2 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 18:15:28 -0400
+Received: from mail-ot0-f174.google.com ([74.125.82.174]:46825 "EHLO
+        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753786AbeDSWP1 (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Thu, 19 Apr 2018 18:15:27 -0400
+X-Google-Smtp-Source: AIpwx4+ZjcPNn/rphsTg/HuTjgPZON/39dDys7C2XXjOda1RW0DkbfEcq13gc4VXiW7+JN2h4Vpw6YmC21DXCGWLKtE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date: Fri, 20 Apr 2018 10:22:41 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: gregkh@linuxfoundation.org, jslaby@suse.com,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial: imx: fix cached UCR2 read on software reset
-In-Reply-To: <20180420060315.ob6eygfcibwq7f24@pengutronix.de>
+In-Reply-To: <20180416153502.11814-1-stefan@agner.ch>
 References: <20180416153502.11814-1-stefan@agner.ch>
- <581f0f26d7191aa3355a6c63b531f876@agner.ch>
- <20180420060315.ob6eygfcibwq7f24@pengutronix.de>
-Message-ID: <c53b19818748ec4c179970c5d53a89d3@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.10 / 15.00];
-	 RCVD_TLS_ALL(0.00)[];
-	 ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-	 RCVD_COUNT_ZERO(0.00)[0];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 FROM_HAS_DN(0.00)[];
-	 MID_RHS_MATCH_FROM(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 ARC_NA(0.00)[];
-	 DKIM_SIGNED(0.00)[]
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 19 Apr 2018 19:15:26 -0300
+Message-ID: <CAOMZO5C9GxqVJWB18j7JQ+3D93eL1r_PG5woxmOc=8cZRdVX=w@mail.gmail.com>
+Subject: Re: [PATCH] serial: imx: fix cached UCR2 read on software reset
+To: Stefan Agner <stefan@agner.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>, Jiri Slaby <jslaby@suse.com>,
+        linux-serial@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597917613675943799?=
-X-GMAIL-MSGID: =?utf-8?q?1598252711876942052?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 20.04.2018 08:03, Uwe Kleine-König wrote:
-> Hello Stefan,
-> 
-> On Thu, Apr 19, 2018 at 11:37:23PM +0200, Stefan Agner wrote:
->> On 16.04.2018 17:35, Stefan Agner wrote:
->> > To reset the UART the SRST needs be cleared (low active). According
->> > to the documentation the bit will remain active for 4 module clocks
->> > until it is cleared (set to 1).
->> >
->> > Hence the real register need to be read in case the cached register
->> > indcates that the SRST bit is zero.
->> >
->> > This bug lead to wrong baudrate because the baud rate register got
->> > restored before reset completed in imx_flush_buffer.
->>
->> Given that you reviewed my other patch rather quickly, you might have
->> overlooked this one?
-> 
-> no I didn't, still the ping was justified. I didn't look into it at once
-> because I didn't feel like opening the refman.
->  
->> Since it is a regression, this should go into v4.17 still...
-> 
-> That's right,
-> 
-> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
-> I wonder what is different on your side that made it break. I didn't see
-> any breakage and tested that on a handful of different machines.
+On Mon, Apr 16, 2018 at 12:35 PM, Stefan Agner <stefan@agner.ch> wrote:
+> To reset the UART the SRST needs be cleared (low active). According
+> to the documentation the bit will remain active for 4 module clocks
+> until it is cleared (set to 1).
+>
+> Hence the real register need to be read in case the cached register
+> indcates that the SRST bit is zero.
 
-I observed it on a i.MX 6DualLite, UART in DTE mode...
+s/indcates/indicates
 
-It did work on a i.MX 7Dual just fine for me too. Probably bus clock
-etc. dependent...
+> This bug lead to wrong baudrate because the baud rate register got
+> restored before reset completed in imx_flush_buffer.
+>
+> Fixes: 3a0ab62f43de ("serial: imx: implement shadow registers for UCRx and UFCR")
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
---
-Stefan
-
-> 
-> Best regards
-> Uwe
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
