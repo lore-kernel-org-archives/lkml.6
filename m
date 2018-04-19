@@ -1,72 +1,393 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752413AbeDSMSI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:18:08 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:33712 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750974AbeDSMSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:18:06 -0400
-Date: Thu, 19 Apr 2018 14:18:01 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jingju Hou <Jingju.Hou@synaptics.com>
-Subject: Re: [PATCH] net: phy: marvell: clear wol event before setting it
-Message-ID: <20180419121801.GC17888@lunn.ch>
-References: <20180419160232.519d15be@xhacker.debian>
+        id S1752749AbeDSMYx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 08:24:53 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:44467 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752489AbeDSMYs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 08:24:48 -0400
+X-Google-Smtp-Source: AB8JxZoFTYXwoXowsv0LBoknMrmefQHQIlR1H1jppX802G3kjImSEsfh69xuUnrGURXoGWxQ+z0E63GINnKWsz6029A=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419160232.519d15be@xhacker.debian>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180419082816.109338-1-mans.andersson@nibe.se>
+References: <20180419082816.109338-1-mans.andersson@nibe.se>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 19 Apr 2018 14:24:27 +0200
+Message-ID: <CANiq72=oPqsCkQ_aaO2cQgMxa_VLzL1yPC7APri6FL5jpxU15g@mail.gmail.com>
+Subject: Re: [PATCH] net: phy: TLK10X initial driver submission
+To: =?UTF-8?Q?M=C3=A5ns_Andersson?= <mans.andersson@nibe.se>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+        Network Development <netdev@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3JCOxEZ028367
 
-On Thu, Apr 19, 2018 at 04:02:32PM +0800, Jisheng Zhang wrote:
-> From: Jingju Hou <Jingju.Hou@synaptics.com>
-> 
-> If WOL event happened once, the LED[2] interrupt pin will not be
-> cleared unless reading the CSISR register. So clear the WOL event
-> before enabling it.
-> 
-> Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+On Thu, Apr 19, 2018 at 10:28 AM, Måns Andersson <mans.andersson@nibe.se> wrote:
+> From: Mans Andersson <mans.andersson@nibe.se>
+>
+> Add suport for the TI TLK105 and TLK106 10/100Mbit ethernet phys.
+>
+
+Hi Mans,
+
+Some quick notes.
+
+> In addition the TLK10X needs to be removed from DP83848 driver as the
+> power back off support is added here for this device.
+>
+> Datasheet:
+> http://www.ti.com/lit/gpn/tlk106
+
+Missing signature.
+
 > ---
->  drivers/net/phy/marvell.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
-> index c22e8e383247..b6abe1cbc84b 100644
-> --- a/drivers/net/phy/marvell.c
-> +++ b/drivers/net/phy/marvell.c
-> @@ -115,6 +115,9 @@
->  /* WOL Event Interrupt Enable */
->  #define MII_88E1318S_PHY_CSIER_WOL_EIE			BIT(7)
->  
-> +/* Copper Specific Interrupt Status Register */
-> +#define MII_88E1318S_PHY_CSISR				0x13
+>  .../devicetree/bindings/net/ti,tlk10x.txt          |  27 +++
+>  drivers/net/phy/Kconfig                            |   5 +
+>  drivers/net/phy/Makefile                           |   1 +
+>  drivers/net/phy/dp83848.c                          |   3 -
+>  drivers/net/phy/tlk10x.c                           | 209 +++++++++++++++++++++
+>  5 files changed, 242 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/ti,tlk10x.txt
+>  create mode 100644 drivers/net/phy/tlk10x.c
+>
+> diff --git a/Documentation/devicetree/bindings/net/ti,tlk10x.txt b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
+> new file mode 100644
+> index 0000000..371d0d7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
+> @@ -0,0 +1,27 @@
+> +* Texas Instruments - TLK105 / TLK106 ethernet PHYs
 > +
->  /* LED Timer Control Register */
->  #define MII_88E1318S_PHY_LED_TCR			0x12
->  #define MII_88E1318S_PHY_LED_TCR_FORCE_INT		BIT(15)
-> @@ -1393,6 +1396,12 @@ static int m88e1318_set_wol(struct phy_device *phydev,
->  		if (err < 0)
->  			goto error;
->  
-> +		/* If WOL event happened once, the LED[2] interrupt pin
-> +		 * will not be cleared unless reading the CSISR register.
-> +		 * So clear the WOL event first before enabling it.
-> +		 */
-> +		phy_read(phydev, MII_88E1318S_PHY_CSISR);
+> +Required properties:
+> +       - reg - The ID number for the phy, usually a small integer
 > +
+> +Optional properties:
+> +       - ti,power-back-off - Power Back Off Level
+> +               Please refer to data sheet chapter 8.6 and TI Application
+> +               Note SLLA3228
+> +               0 - Normal Operation
+> +               1 - Level 1 (up to 140m cable between TLK link partners)
+> +               2 - Level 2 (up to 100m cable between TLK link partners)
+> +               3 - Level 3 (up to 80m cable between TLK link partners)
+> +
+> +Default child nodes are standard Ethernet PHY device
+> +nodes as described in Documentation/devicetree/bindings/net/phy.txt
+> +
+> +Example:
+> +
+> +       ethernet-phy@0 {
+> +               reg = <0>;
+> +               ti,power-back-off = <2>;
+> +       };
+> +
+> +Datasheets and documentation can be found at:
+> +http://www.ti.com/lit/gpn/tlk106
+> +http://www.ti.com/lit/an/slla328/slla328.pdf
+> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
+> index bdfbabb..c980240 100644
+> --- a/drivers/net/phy/Kconfig
+> +++ b/drivers/net/phy/Kconfig
+> @@ -295,6 +295,11 @@ config DP83867_PHY
+>         ---help---
+>           Currently supports the DP83867 PHY.
+>
+> +config TLK10X_PHY
+> +       tristate "Texas Instruments TLK10x PHY"
+> +       ---help---
+> +         Supports the TLK105 and TLK106 PHYs.
+> +
+>  config FIXED_PHY
+>         tristate "MDIO Bus/PHY emulation with fixed speed/link PHYs"
+>         depends on PHYLIB
+> diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
+> index 01acbcb..37e4e02 100644
+> --- a/drivers/net/phy/Makefile
+> +++ b/drivers/net/phy/Makefile
+> @@ -79,5 +79,6 @@ obj-$(CONFIG_ROCKCHIP_PHY)    += rockchip.o
+>  obj-$(CONFIG_SMSC_PHY)         += smsc.o
+>  obj-$(CONFIG_STE10XP)          += ste10Xp.o
+>  obj-$(CONFIG_TERANETICS_PHY)   += teranetics.o
+> +obj-$(CONFIG_TLK10X_PHY)       += tlk10x.o
+>  obj-$(CONFIG_VITESSE_PHY)      += vitesse.o
+>  obj-$(CONFIG_XILINX_GMII2RGMII) += xilinx_gmii2rgmii.o
+> diff --git a/drivers/net/phy/dp83848.c b/drivers/net/phy/dp83848.c
+> index cd09c3a..435f401 100644
+> --- a/drivers/net/phy/dp83848.c
+> +++ b/drivers/net/phy/dp83848.c
+> @@ -19,7 +19,6 @@
+>  #define TI_DP83848C_PHY_ID             0x20005ca0
+>  #define TI_DP83620_PHY_ID              0x20005ce0
+>  #define NS_DP83848C_PHY_ID             0x20005c90
+> -#define TLK10X_PHY_ID                  0x2000a210
+>
+>  /* Registers */
+>  #define DP83848_MICR                   0x11 /* MII Interrupt Control Register */
+> @@ -78,7 +77,6 @@ static struct mdio_device_id __maybe_unused dp83848_tbl[] = {
+>         { TI_DP83848C_PHY_ID, 0xfffffff0 },
+>         { NS_DP83848C_PHY_ID, 0xfffffff0 },
+>         { TI_DP83620_PHY_ID, 0xfffffff0 },
+> -       { TLK10X_PHY_ID, 0xfffffff0 },
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
+> @@ -105,7 +103,6 @@ static struct phy_driver dp83848_driver[] = {
+>         DP83848_PHY_DRIVER(TI_DP83848C_PHY_ID, "TI DP83848C 10/100 Mbps PHY"),
+>         DP83848_PHY_DRIVER(NS_DP83848C_PHY_ID, "NS DP83848C 10/100 Mbps PHY"),
+>         DP83848_PHY_DRIVER(TI_DP83620_PHY_ID, "TI DP83620 10/100 Mbps PHY"),
+> -       DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY"),
+>  };
+>  module_phy_driver(dp83848_driver);
+>
+> diff --git a/drivers/net/phy/tlk10x.c b/drivers/net/phy/tlk10x.c
+> new file mode 100644
+> index 0000000..1efc81e
+> --- /dev/null
+> +++ b/drivers/net/phy/tlk10x.c
+> @@ -0,0 +1,209 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/**
+> + * Driver for the Texas Instruments TLK105 / TLK106
+> + *
+> + * Copyright (C) 2018 NIBE Industrier AB - http://www.nibe.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
 
-Hi Jisheng
+Since you are using the SPDX id, please remove the license text (which
+is actually wrong: it seems you have cut the v2+ version and then
+removed the last sentence of the first paragraph? :-).
 
-The problem with this is, you could be clearing a real interrupt, link
-down/up etc. If interrupts are in use, i think the normal interrupt
-handling will clear the WOL interrupt? So can you make this read
-conditional on !phy_interrupt_is_valid()?
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/phy.h>
+> +#include <linux/of.h>
+> +
+> +#define TLK10X_PHY_ID                  0x2000a210
+> +
+> +/* Registers */
+> +#define TLK10X_MICR                    0x11 /* MII Interrupt Control Reg */
+> +#define TLK10X_MISR                    0x12 /* MII Interrupt Status Reg */
+> +#define TLK10X_REGCR                   0x0d /* Register Control Register */
+> +#define TLK10X_ADDAR                   0x0e /* Data Register */
+> +#define TLK10X_PWRBOCR                 0xae /* Power Backoff Register */
+> +
+> +/* MICR Register Fields */
+> +#define TLK10X_MICR_INT_OE             BIT(0) /* Interrupt Output Enable */
+> +#define TLK10X_MICR_INTEN              BIT(1) /* Interrupt Enable */
+> +
+> +/* MISR Register Fields */
+> +#define TLK10X_MISR_RHF_INT_EN         BIT(0) /* Receive Error Counter */
+> +#define TLK10X_MISR_FHF_INT_EN         BIT(1) /* False Carrier Counter */
+> +#define TLK10X_MISR_ANC_INT_EN         BIT(2) /* Auto-negotiation complete */
+> +#define TLK10X_MISR_DUP_INT_EN         BIT(3) /* Duplex Status */
+> +#define TLK10X_MISR_SPD_INT_EN         BIT(4) /* Speed status */
+> +#define TLK10X_MISR_LINK_INT_EN                BIT(5) /* Link status */
+> +#define TLK10X_MISR_ED_INT_EN          BIT(6) /* Energy detect */
+> +#define TLK10X_MISR_LQM_INT_EN         BIT(7) /* Link Quality Monitor */
+> +
+> +/* PWRBOCR Register Fields */
+> +#define TLK10X_PWRBOCR_MASK            0xe0 /* Power Backoff Mask */
+> +
+> +#define TLK10X_INT_EN_MASK             \
+> +       (TLK10X_MISR_ANC_INT_EN |       \
+> +        TLK10X_MISR_DUP_INT_EN |       \
+> +        TLK10X_MISR_SPD_INT_EN |       \
+> +        TLK10X_MISR_LINK_INT_EN)
+> +
+> +struct tlk10x_private {
+> +       int pwrbo_level;
+> +};
+> +
+> +static int tlk10x_read(struct phy_device *phydev, int reg)
+> +{
+> +       if (reg & ~0x1f) {
 
-	Andrew
+0x1f or ~0x1f should probably have a #define name.
+
+> +               /* Extended register */
+> +               phy_write(phydev, TLK10X_REGCR, 0x001F);
+> +               phy_write(phydev, TLK10X_ADDAR, reg);
+> +               phy_write(phydev, TLK10X_REGCR, 0x401F);
+> +               reg = TLK10X_ADDAR;
+> +       }
+> +
+> +       return phy_read(phydev, reg);
+> +}
+> +
+> +static int tlk10x_write(struct phy_device *phydev, int reg, int val)
+> +{
+> +       if (reg & ~0x1f) {
+
+Ditto.
+
+> +               /* Extended register */
+> +               phy_write(phydev, TLK10X_REGCR, 0x001F);
+> +               phy_write(phydev, TLK10X_ADDAR, reg);
+> +               phy_write(phydev, TLK10X_REGCR, 0x401F);
+> +               reg = TLK10X_ADDAR;
+> +       }
+> +
+> +       return phy_write(phydev, reg, val);
+> +}
+> +
+> +#ifdef CONFIG_OF_MDIO
+
+Maybe you want the #ifdef inside.
+
+> +static int tlk10x_of_init(struct phy_device *phydev)
+> +{
+> +       struct tlk10x_private *tlk10x = phydev->priv;
+> +       struct device *dev = &phydev->mdio.dev;
+> +       struct device_node *of_node = dev->of_node;
+> +       int ret;
+> +
+> +       if (!of_node)
+> +               return 0;
+> +
+> +       ret = of_property_read_u32(of_node, "ti,power-back-off",
+> +                                  &tlk10x->pwrbo_level);
+> +       if (ret) {
+> +               dev_err(dev, "missing ti,power-back-off property");
+> +               tlk10x->pwrbo_level = 0;
+> +       }
+> +
+> +       return 0;
+> +}
+> +#else
+> +static int tlk10x_of_init(struct phy_device *phydev)
+> +{
+> +       return 0;
+> +}
+> +#endif /* CONFIG_OF_MDIO */
+> +
+> +static int tlk10x_config_init(struct phy_device *phydev)
+> +{
+> +       int ret, reg;
+> +       struct tlk10x_private *tlk10x;
+> +
+> +       ret = genphy_config_init(phydev);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       if (!phydev->priv) {
+> +               tlk10x = devm_kzalloc(&phydev->mdio.dev, sizeof(*tlk10x),
+> +                                     GFP_KERNEL);
+> +               if (!tlk10x)
+> +                       return -ENOMEM;
+> +
+> +               phydev->priv = tlk10x;
+> +               ret = tlk10x_of_init(phydev);
+> +               if (ret)
+> +                       return ret;
+> +       } else {
+> +               tlk10x = (struct tlk10x_private *)phydev->priv;
+> +       }
+> +
+> +       // Power back off
+> +       if (tlk10x->pwrbo_level < 0 || tlk10x->pwrbo_level > 3)
+> +               tlk10x->pwrbo_level = 0;
+> +       reg = tlk10x_read(phydev, TLK10X_PWRBOCR);
+> +       reg = ((reg & ~TLK10X_PWRBOCR_MASK)
+> +               | (tlk10x->pwrbo_level << 6));
+
+Maybe the 6 should have a name, or maybe a bigger macro for this would clarify.
+
+> +       ret = tlk10x_write(phydev, TLK10X_PWRBOCR, reg);
+> +       if (ret < 0) {
+> +               dev_err(&phydev->mdio.dev,
+> +                       "unable to set power back-off (err=%d)\n", ret);
+> +               return ret;
+> +       }
+> +       dev_info(&phydev->mdio.dev, "power back-off set to level %d\n",
+> +                tlk10x->pwrbo_level);
+> +
+> +       return 0;
+> +}
+> +
+> +static int tlk10x_ack_interrupt(struct phy_device *phydev)
+> +{
+> +       int err = tlk10x_read(phydev, TLK10X_MISR);
+
+Following the style of the rest of the file, shouldn't this be:
+
+    if (err < 0)
+        return err;
+
+    return 0;
+
+?
+
+> +
+> +       return err < 0 ? err : 0;
+> +}
+> +
+> +static int tlk10x_config_intr(struct phy_device *phydev)
+> +{
+> +       int control, ret;
+> +
+> +       control = tlk10x_read(phydev, TLK10X_MICR);
+> +       if (control < 0)
+> +               return control;
+> +
+> +       if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
+> +               control |= TLK10X_MICR_INT_OE;
+> +               control |= TLK10X_MICR_INTEN;
+> +
+> +               ret = tlk10x_write(phydev, TLK10X_MISR, TLK10X_INT_EN_MASK);
+> +               if (ret < 0)
+> +                       return ret;
+> +       } else {
+> +               control &= ~TLK10X_MICR_INTEN;
+> +       }
+> +
+> +       return tlk10x_write(phydev, TLK10X_MICR, control);
+> +}
+> +
+> +static struct phy_driver tlk10x_driver[] = {
+> +       {
+> +               .phy_id         = TLK10X_PHY_ID,
+> +               .phy_id_mask    = 0xfffffff0,
+> +               .name           = "TI TLK10X 10/100 Mbps PHY",
+> +               .features       = PHY_BASIC_FEATURES,
+> +               .flags          = PHY_HAS_INTERRUPT,
+> +
+> +               .config_init    = tlk10x_config_init,
+> +               .soft_reset     = genphy_soft_reset,
+> +
+> +               /* IRQ related */
+> +               .ack_interrupt  = tlk10x_ack_interrupt,
+> +               .config_intr    = tlk10x_config_intr,
+> +
+> +               .suspend        = genphy_suspend,
+> +               .resume         = genphy_resume,
+> +       },
+> +};
+> +module_phy_driver(tlk10x_driver);
+> +
+> +static struct mdio_device_id __maybe_unused tlk10x_tbl[] = {
+> +       { TLK10X_PHY_ID, 0xfffffff0 },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(mdio, tlk10x_tbl);
+> +
+> +MODULE_DESCRIPTION("Texas Instruments TLK105 / TLK106 PHY driver");
+> +MODULE_AUTHOR("Mans Andersson <mans.andersson@nibe.se>");
+> +MODULE_LICENSE("GPL");
+
+Should be "GPL v2".
+
+Cheers,
+Miguel
