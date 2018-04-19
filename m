@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754106AbeDSQ3x (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:29:53 -0400
-Received: from mail-he1eur01on0093.outbound.protection.outlook.com ([104.47.0.93]:41173
+        id S1754003AbeDSQ2M (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:28:12 -0400
+Received: from mail-he1eur01on0133.outbound.protection.outlook.com ([104.47.0.133]:26742
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753861AbeDSQ22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:28:28 -0400
+        id S1753239AbeDSQ2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 12:28:10 -0400
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=axentia.se;
 From: Peter Rosin <peda@axentia.se>
@@ -24,12 +24,10 @@ Cc: Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 3/7] drm: of: introduce drm_of_media_bus_fmt
-Date: Thu, 19 Apr 2018 18:27:47 +0200
-Message-Id: <20180419162751.25223-4-peda@axentia.se>
+Subject: [PATCH v3 0/7] Add tda998x (HDMI) support to atmel-hlcdc
+Date: Thu, 19 Apr 2018 18:27:44 +0200
+Message-Id: <20180419162751.25223-1-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180419162751.25223-1-peda@axentia.se>
-References: <20180419162751.25223-1-peda@axentia.se>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [85.226.244.23]
@@ -38,43 +36,44 @@ X-ClientProxiedBy: HE1PR0102CA0072.eurprd01.prod.exchangelabs.com
  (2603:10a6:800:db::9)
 X-MS-PublicTrafficType: Email
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:VI1PR0202MB2784;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;3:+2Bg+0piHtjg8gfmB6VtlLEuWd56LSQwQ0hG/LtEh8z3ODjw2reYFDS0+XISyOTqlDFLQSW26yWsIVTkfR5rkYflt503tvfNJc4/Q2mtddpkbrd2rOtUML4bDAC+ZzDf72ulfMk3Lbepkwb0GXDshNKX3faAUN5M1QmAXcYXN+DoPncNnSVyilrq3HNgSB/5tVD72Yme1zOFcjo7cDnQXCzgm0jv759bppENwH+yoM5sP5WKd5hi6rDA3RIEAoTa;25:QYHKORxYDb3xylIWG54cuIulGd4aESIaofd0dMpTBZ9lqKGzAi65L2X6+GRSmmZ6bAwn66e6g7cIUICmH8JpLKMvLK+HzGlV46tWE9rxfJPSIejmq5Ly6MdceggRB6F6OefDj5KFZ0SZu4aMckB9rNJOKP05ByL8W82I1VJkl4RsBaEGTX/EDRsy0HqtsLiBQjvoQXGdbswDy7Qq+iZmsN35hJ0Lu511Lrx3WJVt3UPJeakBBOM+4SNT8VClP534NayVJLfyp2il3eVSfKKPuXRl5rDHZ3iR5zdaYRDWEsg/P1c9adHqGOA0Pxe5bADnLUNPqT1jLzkgf0QmtyaYKQ==;31:FH5Sz2GJFu3V4luiqhbIQFQOfUmIk4qAKiD/+gx0gh+8iTmQ8Mb3T7zx8HQLJZpI1IRjUKlb8dcUB7Iq/yCCt+/ai7e4A2937vZKjTFOqp2xOMm0abpIaKWbFYwW8k7oGi1lg+eeMxzQjBVqtPyAwhhfggQdO/USV8Q/dqZPM81KE+yTbSG9XyqSVLhsRTdEB8ZwczTUS60zKOZgFRtv4hEHx05Pn1/Y9BAHDVwJ8G4=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;3:R9sFQXWOtdzXhTXvL6NXOdOrmlO16uoafjzToQDNGY3GVpU9QktPxeexyQ8ujMWPoAys+S4qQicyQJFBZsMKcs8hZURqegVXNmWh+1I48CA16XEOBc0IVUqUUT+fFARBoId51DBTS9UQ95EjFrBhrBOufEjonEPoyAT4iRAAvsas/tqva38LU8IO4jL25YtTKxA+2e857S44LPIVzPTGgNaXv3ePQsmdn0FBcLm2wiL9U+jE2F4L3fi98AovnAYx;25:Knhq5HaHM5XLXxCPsMN9XTKcVYRMJ2F4mQzdRzveVEtBCpXxIq+mUnKOcTSsLxWs8EanXdcjGHYV+6A/c849S+h1DQeyoK+jkOcSqJpSnguNtKKIKtYDaxyPA+ROvy1ki0Wv+o9U/GxAEVOh47Mavth0MN/mO60yAcPjKQIXlv1VcMWpvIH9IFNBmK+PDj/WRGV+pEuVp6M/64L4UU/BGe6EU8cID3njBRhANkjvqZze9BOBvn/obTQZZn8ZI3g1PbjdIM/c8A3SVJQjrDtZ3GhJRd8kDRJJSmBbL1QdZH3SdqdXcRrG+a6Sx048AH2WuOVBjJJpnzSAn9TyL7XETQ==;31:BkLnoGeilt9cfabJyFAIalDknnvnHp/8g/9mvbsoqmIFuwcPR6K10FPTxWLwsUeCnawXSFaT0YHT5NPFrJEyCVMXKN7+ou2gKxpZcrZ/gYKyeY1BWBmrf+8GEaJs48IyvknBNs9dLj7KaTetbL35WzSO6Pu+RKqObOnZmZtGXSVtaBRHTWAJy92BQXnAXQP07Hc8xAiUs12qW+h6wTnDnK8naMQurLqVTYKt7eiU5Wg=
 X-MS-TrafficTypeDiagnostic: VI1PR0202MB2784:
-X-Microsoft-Antispam-PRVS: <VI1PR0202MB27840B7BF6C540D846EBAB36BCB50@VI1PR0202MB2784.eurprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <VI1PR0202MB278465A9D2979DC0A83B1EEFBCB50@VI1PR0202MB2784.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231232)(944501327)(52105095)(10201501046)(3002001)(6041310)(20161123558120)(20161123562045)(2016111802025)(20161123564045)(20161123560045)(6072148)(6043046)(201708071742011);SRVR:VI1PR0202MB2784;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0202MB2784;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;4:RSjtOKMBtuhpFBY/1gJbzOQHCYIj4gFWjXOe7LMvb4qMaJDp9+3q4VgQUoDFyGrnoH3Exp71DqTS5jwmc6wM/E2VrJUHSs+4ItEBSi2BpXqjsTbLNgxUZHYvRaSbTvAtafNsdAjKP6Qj2LtVPvriguuNvYs3cmxaspnzXn9YFfN5pEzEZLUGKRGVAKeJol8HWi+B8iMvoe2bDsi/BNGYPi2br0o7kgYt3/iXm7FOGFC8wqBDk3DAgFAD9pIWp6UYl9C8FMfD5XCpuDdrcJE57g==
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;4:sIwPisSO+jb03LfboeM3yMRf/kmazyYuZDRlmC/W44QCAOqZNh1sJlBuKQynK6Px55zX4bjNG/HInGrjNNiGB+uUQ3YWr+SMxAiTXO3XhEq7k3jS1UV38jwWiXOUZhw9fJiVtdkurmppY3cAomPMrOLbsq6d7hs3rZF+/XcnH/8zC/1fHCjTvZ4kAl2BXkKvERhIPoY8KWs2tUgo7Us7bgHciiMqIH8TI33/LX87BrwuCEbnKP/TZaaMFGVLYawcuhPQ4eB70Z0xYMGMlth3Zw==
 X-Forefront-PRVS: 0647963F84
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(376002)(39380400002)(26005)(86362001)(50466002)(50226002)(8936002)(6506007)(386003)(76176011)(47776003)(1076002)(2351001)(66066001)(6116002)(3846002)(2361001)(16526019)(305945005)(186003)(74482002)(11346002)(956004)(2906002)(446003)(6512007)(52116002)(53936002)(6916009)(6486002)(476003)(478600001)(316002)(8676002)(4326008)(2616005)(36756003)(7416002)(7736002)(6666003)(48376002)(16586007)(5660300001)(54906003)(25786009)(81166006)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0202MB2784;H:orc.pedanet;FPR:;SPF:None;LANG:en;MLV:sfv;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0202MB2784;23:uvCOf/M3BFXop8MFyjQqmpAT7EvuGo/vkjmD+z8?=
- =?us-ascii?Q?1Knu4V5zp/WhPV2MD5c5AiYKLtAnqmpjrOaqHoFpcjTXueH2sR0CFeTxTypI?=
- =?us-ascii?Q?Wid1Xk2PFB3shg6FHF0eXTY1E4gmgiCEABBxI1/rmOkBsSa89kroSPYfECK0?=
- =?us-ascii?Q?xP0WGiSlQIUqU+vuhPmQn82YBhOHKKuZweHs0cMZjpVQe0VwLaJg7nXF4B0t?=
- =?us-ascii?Q?sv3KeK34Z7G8FK3yP//s0LoxhHgMUKmD4ScC5ZEoC4GxRlRwEmJP7NlylpVI?=
- =?us-ascii?Q?AY/5boYgAbTkLfpx+hBvAnzHqIk/I1g40aX+jPXAU9vpWDgYvRSY3UDjlHiH?=
- =?us-ascii?Q?6FcmaB9Y7inPFa0x1yH2AXwkqILuLoZR4UxOs7yl7DWSusnxTAESbsPRl+bn?=
- =?us-ascii?Q?D83k8UEJsHjadrY8I1kYFuXBi7YY/+LH//Q9jzsFFbyoAjruvFEsUoiinKja?=
- =?us-ascii?Q?NftYdCUPHzbAkgjjd3dCtmf2CXX8rkYurS+sNEW+LygOoztDNsEz0lax4XiF?=
- =?us-ascii?Q?iRzjzVeGqwUPQdSgx296WtwGSVkojJmq3Y9CSE6SxgetQuZHDclEAc7Uq4gB?=
- =?us-ascii?Q?hOpn8oZ9hx8KdHB19IXbicrnRhpxWUgABHFWrFcM3V4+0ISR8wsMhl8NaYJH?=
- =?us-ascii?Q?b2ytCygD+RHkDx9OEqrewnerU6sEVrJwQNmh+S8Mby0FCgG37YplWQuZsoZJ?=
- =?us-ascii?Q?JvvckFXVLqTK92Avz3acEmjBolYIMvOqTG9BkGxrNWa8cZNAe3eftAGuv3bA?=
- =?us-ascii?Q?EN83nn+BnljQJ1vKhchEI9mIkS99XeXo4+AyW56OYmuUh+J50hJb6RwvRz8R?=
- =?us-ascii?Q?vkV43/pV/nBPL2ss6DV7WOqiUealZojWRfXo0tZjmW5S/Na3fP62HRPRMbnq?=
- =?us-ascii?Q?iLGxH71qWIiAGcBcVuqJxLsApMiSr1D2emylQYe8UwMnZNpv8pz8QAvtkBKC?=
- =?us-ascii?Q?8aXTCvGDbM1nOcvwdO3ES6pP6UhRuKfUuyvUkNzpyHAqGlP/TbwrOabjl6mk?=
- =?us-ascii?Q?TLe998lD4C51QCs4D6nK+dpzFJNutsF0LIhgVm+1MeK9ERXV7rrTZzJTOyLK?=
- =?us-ascii?Q?VcTOTTP5/h5Q7d5ZjeT8PKieVa+QtDzGrYf1w8PctYzSxCnNugY0NiRWECtX?=
- =?us-ascii?Q?uWsrA3hzTOdI=3D?=
-X-Microsoft-Antispam-Message-Info: W7vbLS2tPpVfc1C9Z87s34tACIZ+Ifxele9hEMBmyW/r1Voajbc9d4Uhn91nyyCd+7B/NMgrFoA0rZF6QRk7bNMWTte3h/ZNIhvYUcazI8Nj4fgYLZP3BBRLuyz87ZplgSCvPFBPL1/IdHcziS3rMC1uMsi8ZZNCblRveyrowfid2Wg6eGiXTXhQnHEwolTJ
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;6:aKx4uW9kVd1jppPUQ5eACFiKcPKZdDyJVFfzjwqQrpYh7bJJ5Hr1wglY5nVbFAysbh1PSwg6FoN4ZvJMYDuFPdroFK9NXtbIwp5ydOuXiwRhXN7ESI2cYglh1yVUJpNGA5GntMzAD4iKBE5pVUZQ0KNTOx8v4lW7BLL/hNsHPhaxwHj2ihxZ9PwVbd9MNuRSoG1BSxKF6wvR9duqRUlY0jwjxLKsMtQmszAhE5Jy1u6Ll6Y1ZlSogFAxsiezKxSbBeTgHRZSQwXby/YaHZBNrZ0p3EnmVRljHnd9IhskOVKQgHxJCBjc6jiIp0YmWmKPg/KmiPTJzc88F8tCsFWx0207lNx2ecLRDhuF8kMqdg1Dqb6vHEhjXlKLD3KDGNBekHolvQaPOmm8zixf3LCjrY6QcqTMA6u7JgUu/4IhykmgNXOI8uxE6qCYe3oGVL4h8qBCDVyPRxDeRYlZuYaCPQ==;5:qoaEP1K/WU8dbLKBNaMWm7wl6CpYbnZDjuMWCqULehCsU+t5Roco7HhbQxpXGYvP94VaRFP52B5sE9XU3+ndKhi6ZNTjvxbm5hd1sTCsJLamgN0odIx5/+GiYyWE7uspcPCr9O6q6YfWYklYY/cBQXJrkp2yRLDUtOPMhDikJ4M=;24:t3czxj/DEb/3AdPI4fqDg/GOgkWI7nvLuNhqs2RvlrMY2QtG5sTt7sPctVcgdHqAoiWbPdo2EsIk71NKNKUc+3i10j2ZYZAPn3lF935RAVk=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(376002)(39380400002)(377424004)(52314003)(26005)(86362001)(50466002)(50226002)(8936002)(6506007)(386003)(47776003)(1076002)(59450400001)(2351001)(66066001)(6116002)(3846002)(2361001)(16526019)(305945005)(186003)(74482002)(956004)(6306002)(2906002)(6512007)(52116002)(53936002)(6916009)(6486002)(476003)(478600001)(316002)(8676002)(4326008)(2616005)(36756003)(7416002)(7736002)(6666003)(48376002)(16586007)(966005)(5660300001)(54906003)(25786009)(81166006)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0202MB2784;H:orc.pedanet;FPR:;SPF:None;LANG:en;MLV:sfv;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0202MB2784;23:C56lIJwtUUtbaWboLTBgdb0+arfOYCrHfCVecv2?=
+ =?us-ascii?Q?FGpMGkwZdvs+k8lINbil/KWwpWgeyuNf81cB+4+/lMovLNWKLgmaGv0XPidz?=
+ =?us-ascii?Q?gwRLth7LIAR2PSJLOCwHHPtjR4ZI6093KlWZPKGmmM4GVtl5o2RyS9tafQKv?=
+ =?us-ascii?Q?fLqNG3WLLDAUar+phCu7COSbHL+EB4PEbj+jndVxWrL6lXNc+tddvAF1zgW5?=
+ =?us-ascii?Q?REenwDU1kMsMJOqCgpct+x/H3HngXXbyNNjuap7Te5CquVaOf7XYQp9nVz0b?=
+ =?us-ascii?Q?qAnMYkrcfYLgqt/rqMjMwMzzFI+Rf+4Piuus+nVMrk2EEHpCUubl59+Xb5J+?=
+ =?us-ascii?Q?IqflKgPB32pnqecpVuxR+Ql15QdJjJ3FiX2lWOcA4pvFaVLK0RAKNYeD0cgw?=
+ =?us-ascii?Q?zszg6FgJ+XH72jYz7lj9BxTgawajrRSBZFqz6QxOwzCLMj0CiNtyAB3NS8bS?=
+ =?us-ascii?Q?asVT9psYeWLKiUKMbE5oS+MJQyioLOsg4fWsy2LXLAVuv/3gUVqWaaqkFahl?=
+ =?us-ascii?Q?TWmOPV3D2ilRiLPcDDAshbqoaZpavwxQS8A/ml4wYmo0wwm3/6x812zK4vrT?=
+ =?us-ascii?Q?7R8eAcyNKuqZIvPUgdIeyNldFH0Pc4qVYnncm7jconhdLYXDVdOtFdQmAqSv?=
+ =?us-ascii?Q?WJe2aj0GmvNBeSRJYA9GPsdcqocfjTYfC9Z/hm6dd7xHinxzkk7gRcEFutRb?=
+ =?us-ascii?Q?SnIl75EjpmmW6g87glfH06KQLktU8bNuOF+pmZoz1ME+3E7fZ/6zHQDaAFxa?=
+ =?us-ascii?Q?amSdZruZUUtODLOiAPUyghR5GcYr90lL7iqpkhxn2Rvv8rtJp09MReh2Rhmt?=
+ =?us-ascii?Q?JO0c083xZeo6vrSsvuEpcnM9XEMT7a0MT85TuEn0nFjAjxMY3PPb1nKHdbYS?=
+ =?us-ascii?Q?Rowq5eSnpejGVDucV3J9+vYI2T8Nwn+MpQ3ZvmjGpiAMI4reV49aQdyMCU6P?=
+ =?us-ascii?Q?r1cPe1wq3DHzB6tgXztTX/iSLizNvmGykLlc66Q2g2jQRkhNCa9HLYsz/ken?=
+ =?us-ascii?Q?Pc1iF+te14Hw+ZIXIOOSHbpcHq+QtppKTpmkVondEd8YzLT16jLupKTea7ui?=
+ =?us-ascii?Q?QIJD3bEkliRHuF3UiVEAMS5mGzeYjJTSCDi75Y9wR1ytWhgl1KZ2ukPyae9a?=
+ =?us-ascii?Q?B8MjGSRCvEymUrl/0YloYbpu/6kwgsHzvB1wfdxX1i+9YDpHc+f1cLQ=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: RYs7pC4APEX3IorwjmFOUXE5njPSXLjW0ShhW0fx/cdjUrvgse/bAYXGDTHdk9axv+62Eh/d5dP7tJObRDQgneFlGzd1gz48DaMAanBPx6wUg6awazVz+FeMIXekCsnZ8SsA+p4P4rJJBxPEVuWBPaQedWAeIZlrvMUpcUPylMFNzVC/qZ/Mq6BDSay6k+Ph
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;6:vgjwSbiQZxaIxfgPxx3YOmQJK4d+Y7dWAC5rqtDIuhcttE1751ZycIIB+hykdwOZd2f9hl5XgndmudE8XRsGYpUrfkXLmp5lSOtiFlqkHnK2NTWR3xIPBie8n/5+KVs8XjtT2b1ywOLZmQH+3gh/3Loq2C3S4QNGDWPCwOfW0wNoYh/j+mHVBm9TSjWJ/JFzxKPCb2qI/9Gmdd/HRYg6637ytyW73LFKfM8drr2iYyNQv6s+SxKqFvkNOLh9ZTdtj/SlTGBX2jETWDoyFC/58J3zLK23Zqcj8i7+sD4DNiyLXKe2Wf9dPwjb5fK0VZHp6qIKnSWC+wLnsUMIR6TitpZcROsiFXyO2dmdTuwL9O8FKPoPNZQ5S30Ez5GrNs3PqeKdkbLYdE1AE2P+Tbg3Tp7HMsg91uoTJ5BHecNpHq85kZSb/BaXjUJfYujIKiyg2tgpFhKZW824Qa+oy5Hgww==;5:JcwRGrj+KoChf/+vsySAHOIrzEGvZHo6fWaiON0jdlPCnk2BIzQVu9TxmHuixSALRVJfwfvGsCQP26BZFRP8RVo9eqp+28OCSPTi6jp37ek56cPPViUrg7EqQdGazWgAuikPoOOwNoPWyuuVkxIsF8jy/GLth5mVdUEs7br4+2s=;24:ptuSuQ6EVspuYFpaqyVuN/eWspJttvsjKLizY0Sy8B2Wb+scA4t1dIQijkyCzPyYa8RN4A5eLHKYq8k8Sfj4Q9cdoPxsnoxx/FQQlC+2I28=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;7:OCW5iI1FdRvztzZyD530lVTnMI5RTZ8WbX7VX+fgfE1lbLweglmAAA0P+vrfd/jYDI677gtFml5Mx7BqiJMi7MHmvkkx1SG+dV61tsnauLxdaoXBzgN+0nqqcKQ0JfN0w6llvKC1pvMB6SecYBD7lPHwhhc71+LILzLqsPXBu/v2eWozd/o8N0Z6quiMrH2UyPK9cbxi0E0afgqAEWE1O0TeogZDrPFicotmjUKjX9q/oUMQM7MuUk3/VJOEAhyU
-X-MS-Office365-Filtering-Correlation-Id: 28d08edc-4103-40ba-4b89-08d5a612931c
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0202MB2784;7:ARvx5PUDNtQGhAeysJ3rEjPI0gGj8ftXu+jLE3kDagJXKigr02eQ92iENdI26C627weZqi58vFV6uBfAY13jijC7I4umFnaCXhWFkNc1PpTUEnLtOF9Um3hjrtkMOLQMGvkkIGhWmd6YRKlx2ne8JizIIa+2mSBbNmszvJ9kI0pgR3/mRvLSz6C714Y+YuUMPmjgNmgm07qKJEo1N7miounZQbIXBSCMYd+gJjZJ+4OE1ZrTzdFQzp1q5Fpu/VMd
+X-MS-Office365-Filtering-Correlation-Id: 42c55e5e-c1b9-4663-b452-08d5a6128804
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2018 16:28:23.8801 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28d08edc-4103-40ba-4b89-08d5a612931c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2018 16:28:05.2706 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42c55e5e-c1b9-4663-b452-08d5a6128804
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0202MB2784
@@ -82,91 +81,74 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a central function to parse a node according to the video
-interface binding and get a media bus format.
+Hi!
 
-Start with only supporting a very limited set of a few basic media
-bus formats.
+I naively thought that since there was support for both nxp,tda19988 (in
+the tda998x driver) and the atmel-hlcdc, things would be a smooth ride.
+But it wasn't, so I started looking around and realized I had to fix
+things.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/gpu/drm/drm_of.c | 38 ++++++++++++++++++++++++++++++++++++++
- include/drm/drm_of.h     |  7 +++++++
- 2 files changed, 45 insertions(+)
+In v1 and v2 I fixed things by making the atmel-hlcdc driver a master
+component, but now in v3 I fix things by making the tda998x driver
+a bridge instead. This was after a suggestion from Boris Brezillion
+(the atmel-hlcdc maintainer), so there was some risk of bias ... but
+after comparing what was needed, I too find the bridge approach better.
 
-diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-index 4c191c050e7d..f9473edb60a7 100644
---- a/drivers/gpu/drm/drm_of.c
-+++ b/drivers/gpu/drm/drm_of.c
-@@ -212,6 +212,44 @@ int drm_of_encoder_active_endpoint(struct device_node *node,
- EXPORT_SYMBOL_GPL(drm_of_encoder_active_endpoint);
- 
- /*
-+ * drm_of_media_bus_fmt - return the media bus format described in the node
-+ * @node: device tree node containing the media bus format
-+ *
-+ * @node is presumably an of-graph endpoint node.
-+ *
-+ * Return the media bus format, or zero if none is described. Or one of the
-+ * standard error codes.
-+ */
-+int drm_of_media_bus_fmt(struct device_node *node)
-+{
-+	s32 bus_type;
-+	u32 bus_width = 0;
-+
-+	if (!node)
-+		return -EINVAL;
-+
-+	if (of_property_read_u32(node, "bus-type", &bus_type))
-+		return 0;
-+	if (bus_type != 0)
-+		return -EINVAL;
-+
-+	of_property_read_u32(node, "bus-width", &bus_width);
-+	switch (bus_width) {
-+	case 12:
-+		return MEDIA_BUS_FMT_RGB444_1X12;
-+	case 16:
-+		return MEDIA_BUS_FMT_RGB565_1X16;
-+	case 18:
-+		return MEDIA_BUS_FMT_RGB666_1X18;
-+	case 24:
-+		return MEDIA_BUS_FMT_RGB888_1X24;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(drm_of_media_bus_fmt);
-+
-+/*
-  * drm_of_find_panel_or_bridge - return connected panel or bridge device
-  * @np: device tree node containing encoder output ports
-  * @panel: pointer to hold returned drm_panel
-diff --git a/include/drm/drm_of.h b/include/drm/drm_of.h
-index b93c239afb60..f86f0098b21e 100644
---- a/include/drm/drm_of.h
-+++ b/include/drm/drm_of.h
-@@ -29,6 +29,7 @@ int drm_of_component_probe(struct device *dev,
- int drm_of_encoder_active_endpoint(struct device_node *node,
- 				   struct drm_encoder *encoder,
- 				   struct of_endpoint *endpoint);
-+int drm_of_media_bus_fmt(struct device_node *node);
- int drm_of_find_panel_or_bridge(const struct device_node *np,
- 				int port, int endpoint,
- 				struct drm_panel **panel,
-@@ -62,6 +63,12 @@ static inline int drm_of_encoder_active_endpoint(struct device_node *node,
- {
- 	return -EINVAL;
- }
-+
-+static inline int drm_of_media_bus_fmt(struct device_node *node)
-+{
-+	return -EINVAL;
-+}
-+
- static inline int drm_of_find_panel_or_bridge(const struct device_node *np,
- 					      int port, int endpoint,
- 					      struct drm_panel **panel,
+In addition to the above, our PCB interface between the SAMA5D3 and the
+HDMI encoder is only using 16 bits, and this has to be described
+somewhere, or the atmel-hlcdc driver have no chance of selecting the
+correct output mode. Since I have similar problems with a ds90c185 lvds
+encoder I added patches to override the atmel-hlcdc output format via
+DT properties compatible with the media video-interface binding and
+things start to play together.
+
+Since this series superseeds the bridge series [1], I have included the
+leftover bindings patch for the ti,ds90c185 here.
+
+Anyway, this series solves some real issues for my HW.
+
+Cheers,
+Peter
+
+Changes since v2   https://lkml.org/lkml/2018/4/17/385
+- patch 2/7 fixed spelling and added an example
+- patch 4/7 parse the DT up front and store the result indexed by encoder
+- old patch 5/6 and 6/6 dropped
+- patch 5-7/7 are new and makes the tda998x driver a drm_bridge
+
+Changes since v1   https://lkml.org/lkml/2018/4/9/294
+- added reviewed-by from Rob to patch 1/6
+- patch 2/6 changed so that the bus format override is in the endpoint
+  DT node, and follows the binding of media video-interfaces.
+- patch 3/6 is new, it adds drm_of_media_bus_fmt which parses above
+  media video-interface binding (partially).
+- patch 4/6 now makes use of the above helper (and also fixes problems
+  with the 3/5 patch from v1 when no override was specified).
+- do not mention unrelated connector display_info details in the cover
+  letter and commit messages.
+
+[1]
+"Bridge" series v2   https://lkml.org/lkml/2018/3/26/610
+"Bridge" series v1   https://lkml.org/lkml/2018/3/17/221
+
+Peter Rosin (7):
+  dt-bindings: display: bridge: lvds-transmitter: add ti,ds90c185
+  dt-bindings: display: atmel: optional video-interface of endpoints
+  drm: of: introduce drm_of_media_bus_fmt
+  drm/atmel-hlcdc: support bus-width (12/16/18/24) in endpoint nodes
+  drm/i2c: tda998x: find the drm_device via the drm_connector
+  drm/i2c: tda998x: split encoder and component functions from the work
+  drm/i2c: tda998x: register as a drm bridge
+
+ .../devicetree/bindings/display/atmel/hlcdc-dc.txt |  26 +++
+ .../bindings/display/bridge/lvds-transmitter.txt   |   8 +-
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c     |  71 ++++++--
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h       |   2 +
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c   |  40 +++-
+ drivers/gpu/drm/drm_of.c                           |  38 ++++
+ drivers/gpu/drm/i2c/tda998x_drv.c                  | 201 ++++++++++++++++++---
+ include/drm/drm_of.h                               |   7 +
+ 8 files changed, 342 insertions(+), 51 deletions(-)
+
 -- 
 2.11.0
