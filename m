@@ -1,145 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752273AbeDSKc6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:32:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40722 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751325AbeDSKcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:32:55 -0400
-Date: Thu, 19 Apr 2018 12:32:50 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Tim Chen <tim.c.chen@linux.intel.com>, "Theodore Ts'o" <tytso@mit.edu>,
-        Tejun Heo <tj@kernel.org>, Josef Bacik <jbacik@fb.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Jeff Layton <jlayton@redhat.com>
-Subject: Re: [RFC PATCH 00/79] Generic page write protection and a solution
- to page waitqueue
-Message-ID: <20180419103250.qvusqkjq6hlz3ch6@quack2.suse.cz>
-References: <20180404191831.5378-1-jglisse@redhat.com>
- <20180418141337.mrnxqolo6aar3ud3@quack2.suse.cz>
- <20180418155429.GA3476@redhat.com>
+        id S1752496AbeDSKdo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:33:44 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44796 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751042AbeDSKdk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 06:33:40 -0400
+X-Google-Smtp-Source: AIpwx4/Dv/GwfLaY9Bz64+RQXszEElOK16goY4bAdzcs/LMQRYY9X9mNyfs6rkXUkFr07UAy9HsQEA==
+Subject: Re: [PATCH v1 5/7] soc: mediatek: add a fixed wait for SRAM stable
+To: sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        marcel@holtmann.org, johan.hedberg@gmail.com
+Cc: devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>, Weiyi Lu <weiyi.lu@mediatek.com>
+References: <cover.1522736996.git.sean.wang@mediatek.com>
+ <0fc10b2498c6dbe20141831c722c32cc74330d3d.1522736996.git.sean.wang@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <5f2530a0-aee2-39fe-eb5c-56cd4a68c9db@gmail.com>
+Date: Thu, 19 Apr 2018 12:33:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180418155429.GA3476@redhat.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <0fc10b2498c6dbe20141831c722c32cc74330d3d.1522736996.git.sean.wang@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18-04-18 11:54:30, Jerome Glisse wrote:
-> > Overall I think you'd need to make a good benchmarking comparison showing
-> > how much this helps some real workloads (your motivation) and also how
-> > other loads on lower end machines are affected.
+
+
+On 04/03/2018 09:15 AM, sean.wang@mediatek.com wrote:
+> From: Sean Wang <sean.wang@mediatek.com>
 > 
-> Do you have any specific benchmark you would like to see ? My list was:
->   https://github.com/01org/lkp-tests
->   https://github.com/gormanm/mmtests
-
-So e.g. mmtests have a *lot* of different tests so it's probably not
-realistic for you to run them all. I'd look at bonnie++ (file & dir tests),
-dbench, reaim - these are crappy IO benchmarks because they mostly fit into
-page cache but for your purposes this is exactly what you want to see
-differences in CPU overhead :).
-
-> > > ----------------------------------------------------------------------
-> > > The What ?
-> > > 
-> > > Aim of this patch serie is to introduce generic page write protection
-> > > for any kind of regular page in a process (private anonymous or back
-> > > by regular file). This feature already exist, in one form, for private
-> > > anonymous page, as part of KSM (Kernel Share Memory).
-> > > 
-> > > So this patch serie is two fold. First it factors out the page write
-> > > protection of KSM into a generic write protection mechanim which KSM
-> > > becomes the first user of. Then it add support for regular file back
-> > > page memory (regular file or share memory aka shmem). To achieve this
-> > > i need to cut the dependency lot of code have on page->mapping so i
-> > > can set page->mapping to point to special structure when write
-> > > protected.
-> > 
-> > So I'm interested in this write protection mechanism but I didn't find much
-> > about it in the series. How does it work? I can see KSM writeprotects pages
-> > in page tables so that works for userspace mappings but what about
-> > in-kernel users modifying pages - e.g. pages in page cache carrying
-> > filesystem metadata do get modified a lot like this.
+> MT7622_POWER_DOMAIN_WB doesn't send an ACK when its managed SRAM becomes
+> stable, which is not like the behavior the other power domains should
+> have. Therefore, it's necessary for such a power domain to have a fixed
+> and well-predefined duration to wait until its managed SRAM can be allowed
+> to access by all functions running on the top.
 > 
-> So i only care about page which are mmaped into a process address space.
-> At first i only want to intercept CPU write access through mmap of file
-> but i also intend to extend write syscall to also "fault" on the write
-> protection ie it will call a callback to unprotect the page allowing the
-> write protector to take proper action while write syscall is happening.
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+>  drivers/soc/mediatek/mtk-scpsys.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
 > 
-> I am affraid truely generic write protection for metadata pages is bit
-> out of scope of what i am doing. However the mechanism i am proposing
-> can be extended for that too. Issue is that all place that want to write
-> to those page need to be converted to something where write happens
-> between write_begin and write_end section (mmap and CPU pte does give
-> this implicitly through page fault, so does write syscall). Basicly
-> there is a need to make sure that write and write protection can be
-> ordered against one another without complex locking.
+> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+> index f9b7248..19aceb8 100644
+> --- a/drivers/soc/mediatek/mtk-scpsys.c
+> +++ b/drivers/soc/mediatek/mtk-scpsys.c
+> @@ -121,6 +121,7 @@ struct scp_domain_data {
+>  	u32 bus_prot_mask;
+>  	enum clk_id clk_id[MAX_CLKS];
+>  	bool active_wakeup;
+> +	u32 us_sram_fwait;
 
-I understand metadata pages are not interesting for your use case. However
-from mm point of view these are page cache pages as any other. So maybe my
-question should have been: How do we make sure this mechanism will not be
-used for pages for which it cannot work?
+Before adding more and more fields to scp_domain_data which get checked in if's,
+I'd prefer to add a caps field used for bus_prot_mask, active_wakeup in a first
+patch and add the cap FORCE_WAIT in a second patch.
 
-> > > A write protected page has page->mapping pointing to a structure like
-> > > struct rmap_item for KSM. So this structure has a list for each unique
-> > > combination:
-> > >     struct write_protect {
-> > >         struct list_head *mappings; /* write_protect_mapping list */
-> > >         ...
-> > >     };
-> > > 
-> > >     struct write_protect_mapping {
-> > >         struct list_head list
-> > >         struct address_space *mapping;
-> > >         unsigned long offset;
-> > >         unsigned long private;
-> > >         ...
-> > >     };
-> > 
-> > Auch, the fact that we could share a page as data storage for several
-> > inode+offset combinations that are not sharing underlying storage just
-> > looks viciously twisted ;) But is it really that useful to warrant
-> > complications? In particular I'm afraid that filesystems expect consistency
-> > between their internal state (attached to page->private) and page state
-> > (e.g. page->flags) and when there are multiple internal states attached to
-> > the same page this could go easily wrong...
+Can you help to implement this Sean, or shall I give it a try?
+
+Regards,
+Matthias
+
+>  };
+>  
+>  struct scp;
+> @@ -234,11 +235,16 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+>  	val &= ~scpd->data->sram_pdn_bits;
+>  	writel(val, ctl_addr);
+>  
+> -	/* wait until SRAM_PDN_ACK all 0 */
+> -	ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
+> -				 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+> -	if (ret < 0)
+> -		goto err_pwr_ack;
+> +	/* Either wait until SRAM_PDN_ACK all 0 or have a force wait */
+> +	if (!scpd->data->us_sram_fwait) {
+> +		ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
+> +					 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+> +		if (ret < 0)
+> +			goto err_pwr_ack;
+> +	} else {
+> +		usleep_range(scpd->data->us_sram_fwait,
+> +			     scpd->data->us_sram_fwait + 100);
+> +	};
+>  
+>  	if (scpd->data->bus_prot_mask) {
+>  		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
+> @@ -783,6 +789,7 @@ static const struct scp_domain_data scp_domain_data_mt7622[] = {
+>  		.clk_id = {CLK_NONE},
+>  		.bus_prot_mask = MT7622_TOP_AXI_PROT_EN_WB,
+>  		.active_wakeup = true,
+> +		.us_sram_fwait = 12000,
+>  	},
+>  };
+>  
 > 
-> So at first i want to limit to write protect (not KSM) thus page->flags
-> will stay consistent (ie page is only ever associated with a single
-> mapping). For KSM yes the page->flags can be problematic, however here
-> we can assume that page is clean (and uptodate) and not under write
-> back. So problematic flags for KSM:
->   - private (page_has_buffers() or PagePrivate (nfs, metadata, ...))
->   - private_2 (FsCache)
->   - mappedtodisk
->   - swapcache
->   - error
-> 
-> Idea again would be to PageFlagsWithMapping(page, mapping) so that for
-> non KSM write protected page you test the usual page->flags and for
-> write protected page you find the flag value using mapping as lookup
-> index. Usualy those flag are seldomly changed/accessed. Again the
-> overhead (ignoring code size) would only be for page which are KSM.
-> So maybe KSM will not make sense because perf overhead it has with
-> page->flags access (i don't think so but i haven't tested this).
-
-Yeah, sure, page->flags could be dealt with in a similar way but at this
-point I don't think it's worth it. And without page->flags I don't think
-abstracting page->private makes much sense - or am I missing something why
-you need page->private depend on the mapping? So what I wanted to suggest
-is that we leave page->private as is currently and just concentrate on
-page->mapping hacks...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
