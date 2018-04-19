@@ -1,511 +1,360 @@
-Return-Path: <BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org>
-X-Google-Smtp-Source: AIpwx4+xsHS0ZMvvJWQgNTz/OOuKDqipZgS2tl+D1e4tMOapRD3pCGmkSKozJgHuxpluuLamQLtN
-ARC-Seal: i=1; a=rsa-sha256; t=1524141762; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Uu0LAcUPalMi8GMBYBR99CMNddgzo9dLJluTMawg/k/fmQEvHA9I8JoC2VGYLHGMq/
-         ajKyGbhFL1mO6JR+hQgb/13Irs9RSZ8NrG6gw3X0Ge738lKsye5pMQCrtUvBx4n35sck
-         Clc9DPkhmteBm1h62no0HH72/g/Nmp/Y4+a3imid/LskmYaWBhov1XuluV4uuFNS7zAg
-         VueTZXdy8QAtNuzdHMMCw7L9CNnR4q9+8E6PK7K0LBpn881CSbXz3nSlrQK0Xkg8M40/
-         D/0Pf2xUPTLut/6tjkQz4hYMvdTXqQo0NDmwU5VZAtMHDI5fz7+hPg3Bzwol+SzPaqzh
-         eCYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=YOzWEVUGd5soKAN+rQZbkuvD26rgUaXPuwyUJ69Ux8I=;
-        b=fdZ1Krwldm05YzfayR+qbxsu0icVGZ4yJ7afeKb+/lRHIbaVuTWL5W6oYn+KJLKq3I
-         fHIKJP5lsskQjjDFZT+6rVSt2HVUjY9kVT0NFlqRILPRFk7hzwVSy0pzrHzLSFNKhjvI
-         ostiwzgQoiqoWGr/5kyae0XgH6KXn5n48kUN8vMITEJEBxDd5sjmQFM8GcjttJNJfpor
-         yr5Byc6oOOCjTEIRni+MTxegNTNo++sz2k75kDvAFFP7YXrMHiuH/jaok+2EKqNtoedU
-         HpBwaGA5T/8YxrvAddgV/T5mmD+8UFboRqsxjCd2P2qZ0v6Vw1n6X/VK1SIXzKPeNuLV
-         Lkmw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=MqJ2aEDH;
-       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=MqJ2aEDH;
-       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
-From: Christoph Hellwig <hch@lst.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Corey Minyard <minyard@acm.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-acpi@vger.kernel.org,
-	drbd-dev@lists.linbit.com,
-	linux-ide@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	devel@driverdev.osuosl.org,
-	linux-afs@lists.infradead.org,
-	linux-ext4@vger.kernel.org,
-	jfs-discussion@lists.sourceforge.net,
-	netfilter-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 16/39] ipmi: simplify procfs code
-Date: Thu, 19 Apr 2018 14:41:17 +0200
-Message-Id: <20180419124140.9309-17-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180419124140.9309-1-hch@lst.de>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3414120-1524151785-2-440385694718147986
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524151784; b=J/MHy6P/x8YPbFkWgUT34YP5C7ewins1F+PTX14MWoszzQ24o2
+    AEWWY3Q/RSAzXSgG9dTHtI451go9Cb0dQKj2O3dAVqvNdq8mRZW1W4pknRZjJg0J
+    ObIbCC/ueta2bq7YRB4m0lx83g5+t0K7Rnjso+oE/9CyijBf47WMHj0sIkhuP6Gn
+    WagPQZz2I9IslDQZ/1psQAcY6NxBmOZbQnXI+P1o+W//+aXYyPnc/2gsDrYaHjv/
+    gUP4hOn9XVE/5p8WjkAkObfg129OjJS1QAUe8/fZXQzRRffPLvNE0q6M/r6nY6Kj
+    v3Qx6X+vNULAMLmpCPLGjGhlpO2X16zVn2CQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:references:from:message-id
+    :date:mime-version:in-reply-to:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:reply-to:cc
+    :content-transfer-encoding:content-type:sender; s=fm2; t=
+    1524151784; bh=m30LRVzZUy6cuurw1KKt8c0sN86lT7lhF/oyBkWZ38c=; b=v
+    nWZFN5lZZ0HEzgotmo0EUIAJk5Xymv3MCSIAZj0RZs1z1RQF9APfACBlTBcKNvLv
+    4B4VVKepRQSg4zF5UVETxC0XUS0jo3HFnQkC3HHMq5wz/sN6Eq6uapFgjcxf8kQI
+    xkoLB5K7QK177wlvmhgVyTeueLmvU6FSH+vxtvOae9sLmYjcpg1znuACQWDz3gWN
+    PjmS04XtQYIsesWxzqRC9fH7/61cnGAX9hsRI/jEX7uu0Ey5xlKusgHrJ7vtXc9H
+    21oco+M6RdRIJILP5gTg31XbDKzvSYP/+G4hd1DE0bV7Fbkj1cBk5phfcZ12tI/Y
+    ptL/g+bek9HWULLVOWCiw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LGQocNKf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=acm.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pD0Nt4OA;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=acm.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=LGQocNKf x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=acm.org;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=pD0Nt4OA;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=acm.org header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKZkJBd6yBqzDXwiLSCa6UtQBeDeJ4dvmeh46DngBMqM1VfNroQCs3drvzG3NcP8lRU939tHJEWN+I2JmtChtccWcZn/cG/5+Qjz4ehE5r5oFr2NRVMC
+    4SlaEtr4myKqLsuGPiejOhn5PLLHA1JHVLE+KLO9OuLovAdDY1HRN1M1OFmLsJA+1hUwXGzVO9Kfq9z+x8jOQ8LILALAuyMYnY77aZm4pcsKQ85KgpWiyB6M
+    B/2Ek9Vex76PF7to1CEbxg==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=LKbMA08WyaBY7UpCkWgA:9
+    a=RuyCzEi_Se8ci6cu:21 a=2kaA37_Zu6gd37q_:21 a=QEXdDO2ut3YA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AIpwx49QxVULHev4aBTzYrSFtXtX2NWpbmWoXvl4J7WiYnGr4yykeRqqu7A7AWPAMRmU6q/g9JitRw==
+Subject: Re: [PATCH 16/39] ipmi: simplify procfs code
+To: Christoph Hellwig <hch@lst.de>, Andrew Morton
+ <akpm@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>
 References: <20180419124140.9309-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+ <20180419124140.9309-17-hch@lst.de>
+From: Corey Minyard <minyard@acm.org>
+Message-ID: <f322f243-9ab1-7e9f-00a4-9652cd288ca2@acm.org>
+Date: Thu, 19 Apr 2018 10:29:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180419124140.9309-17-hch@lst.de>
+Content-Language: en-GB
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Reply-To: minyard@acm.org
+Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, devel@driverdev.osuosl.org,
+ linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-ide@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ jfs-discussion@lists.sourceforge.net, linux-afs@lists.infradead.org,
+ linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+ linux-ext4@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+ megaraidlinux.pdl@broadcom.com, drbd-dev@lists.linbit.com
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598178472540775921?=
-X-GMAIL-MSGID: =?utf-8?q?1598178472540775921?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use remove_proc_subtree to remove the whole subtree on cleanup instead
-of a hand rolled list of proc entries, unwind the registration loop into
-individual calls.  Switch to use proc_create_single to further simplify
-the code.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/char/ipmi/ipmi_msghandler.c | 150 +++++-----------------------
- drivers/char/ipmi/ipmi_si_intf.c    |  47 +--------
- drivers/char/ipmi/ipmi_ssif.c       |  34 +------
- include/linux/ipmi_smi.h            |   8 +-
- 4 files changed, 33 insertions(+), 206 deletions(-)
-
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 361148938801..c18db313e4c4 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -247,13 +247,6 @@ struct ipmi_my_addrinfo {
- 	unsigned char lun;
- };
- 
--#ifdef CONFIG_IPMI_PROC_INTERFACE
--struct ipmi_proc_entry {
--	char                   *name;
--	struct ipmi_proc_entry *next;
--};
--#endif
--
- /*
-  * Note that the product id, manufacturer id, guid, and device id are
-  * immutable in this structure, so dyn_mutex is not required for
-@@ -430,10 +423,6 @@ struct ipmi_smi {
- 	void                     *send_info;
- 
- #ifdef CONFIG_IPMI_PROC_INTERFACE
--	/* A list of proc entries for this interface. */
--	struct mutex           proc_entry_lock;
--	struct ipmi_proc_entry *proc_entries;
--
- 	struct proc_dir_entry *proc_dir;
- 	char                  proc_dir_name[10];
- #endif
-@@ -2358,18 +2347,6 @@ static int smi_ipmb_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int smi_ipmb_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, smi_ipmb_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations smi_ipmb_proc_ops = {
--	.open		= smi_ipmb_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int smi_version_proc_show(struct seq_file *m, void *v)
- {
- 	ipmi_smi_t intf = m->private;
-@@ -2387,18 +2364,6 @@ static int smi_version_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int smi_version_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, smi_version_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations smi_version_proc_ops = {
--	.open		= smi_version_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int smi_stats_proc_show(struct seq_file *m, void *v)
- {
- 	ipmi_smi_t intf = m->private;
-@@ -2462,95 +2427,45 @@ static int smi_stats_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int smi_stats_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, smi_stats_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations smi_stats_proc_ops = {
--	.open		= smi_stats_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- int ipmi_smi_add_proc_entry(ipmi_smi_t smi, char *name,
--			    const struct file_operations *proc_ops,
--			    void *data)
-+		int (*show)(struct seq_file *, void *), void *data)
- {
--	int                    rv = 0;
--	struct proc_dir_entry  *file;
--	struct ipmi_proc_entry *entry;
--
--	/* Create a list element. */
--	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
--	if (!entry)
-+	if (!proc_create_single_data(name, 0, smi->proc_dir, show, data))
- 		return -ENOMEM;
--	entry->name = kstrdup(name, GFP_KERNEL);
--	if (!entry->name) {
--		kfree(entry);
--		return -ENOMEM;
--	}
--
--	file = proc_create_data(name, 0, smi->proc_dir, proc_ops, data);
--	if (!file) {
--		kfree(entry->name);
--		kfree(entry);
--		rv = -ENOMEM;
--	} else {
--		mutex_lock(&smi->proc_entry_lock);
--		/* Stick it on the list. */
--		entry->next = smi->proc_entries;
--		smi->proc_entries = entry;
--		mutex_unlock(&smi->proc_entry_lock);
--	}
--
--	return rv;
-+	return 0;
- }
- EXPORT_SYMBOL(ipmi_smi_add_proc_entry);
- 
- static int add_proc_entries(ipmi_smi_t smi, int num)
- {
--	int rv = 0;
--
- 	sprintf(smi->proc_dir_name, "%d", num);
- 	smi->proc_dir = proc_mkdir(smi->proc_dir_name, proc_ipmi_root);
- 	if (!smi->proc_dir)
--		rv = -ENOMEM;
--
--	if (rv == 0)
--		rv = ipmi_smi_add_proc_entry(smi, "stats",
--					     &smi_stats_proc_ops,
--					     smi);
--
--	if (rv == 0)
--		rv = ipmi_smi_add_proc_entry(smi, "ipmb",
--					     &smi_ipmb_proc_ops,
--					     smi);
--
--	if (rv == 0)
--		rv = ipmi_smi_add_proc_entry(smi, "version",
--					     &smi_version_proc_ops,
--					     smi);
--
--	return rv;
-+		return -ENOMEM;
-+	if (!proc_create_single_data("stats", 0, smi->proc_dir,
-+			smi_stats_proc_show, smi))
-+		return -ENOMEM;
-+	if (!proc_create_single_data("ipmb", 0, smi->proc_dir,
-+			smi_ipmb_proc_show, smi))
-+		return -ENOMEM;
-+	if (!proc_create_single_data("version", 0, smi->proc_dir,
-+			smi_version_proc_show, smi))
-+		return -ENOMEM;
-+	return 0;
- }
- 
- static void remove_proc_entries(ipmi_smi_t smi)
- {
--	struct ipmi_proc_entry *entry;
--
--	mutex_lock(&smi->proc_entry_lock);
--	while (smi->proc_entries) {
--		entry = smi->proc_entries;
--		smi->proc_entries = entry->next;
--
--		remove_proc_entry(entry->name, smi->proc_dir);
--		kfree(entry->name);
--		kfree(entry);
--	}
--	mutex_unlock(&smi->proc_entry_lock);
--	remove_proc_entry(smi->proc_dir_name, proc_ipmi_root);
-+	if (smi->proc_dir)
-+		remove_proc_subtree(smi->proc_dir_name, proc_ipmi_root);
-+}
-+#else
-+static int add_proc_entries(ipmi_smi_t smi, int num)
-+{
-+	return 0;
-+}
-+static void remove_proc_entries(ipmi_smi_t smi)
-+{
- }
- #endif /* CONFIG_IPMI_PROC_INTERFACE */
- 
-@@ -3386,9 +3301,6 @@ int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
- 		intf->seq_table[j].seqid = 0;
- 	}
- 	intf->curr_seq = 0;
--#ifdef CONFIG_IPMI_PROC_INTERFACE
--	mutex_init(&intf->proc_entry_lock);
--#endif
- 	spin_lock_init(&intf->waiting_rcv_msgs_lock);
- 	INIT_LIST_HEAD(&intf->waiting_rcv_msgs);
- 	tasklet_init(&intf->recv_tasklet,
-@@ -3410,10 +3322,6 @@ int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
- 	for (i = 0; i < IPMI_NUM_STATS; i++)
- 		atomic_set(&intf->stats[i], 0);
- 
--#ifdef CONFIG_IPMI_PROC_INTERFACE
--	intf->proc_dir = NULL;
--#endif
--
- 	mutex_lock(&smi_watchers_mutex);
- 	mutex_lock(&ipmi_interfaces_mutex);
- 	/* Look for a hole in the numbers. */
-@@ -3448,17 +3356,11 @@ int ipmi_register_smi(const struct ipmi_smi_handlers *handlers,
- 	if (rv)
- 		goto out;
- 
--#ifdef CONFIG_IPMI_PROC_INTERFACE
- 	rv = add_proc_entries(intf, i);
--#endif
--
-  out:
- 	if (rv) {
- 		ipmi_bmc_unregister(intf);
--#ifdef CONFIG_IPMI_PROC_INTERFACE
--		if (intf->proc_dir)
--			remove_proc_entries(intf);
--#endif
-+		remove_proc_entries(intf);
- 		intf->handlers = NULL;
- 		list_del_rcu(&intf->link);
- 		mutex_unlock(&ipmi_interfaces_mutex);
-@@ -3563,9 +3465,7 @@ int ipmi_unregister_smi(ipmi_smi_t intf)
- 	intf->handlers = NULL;
- 	mutex_unlock(&ipmi_interfaces_mutex);
- 
--#ifdef CONFIG_IPMI_PROC_INTERFACE
- 	remove_proc_entries(intf);
--#endif
- 	ipmi_bmc_unregister(intf);
- 
- 	/*
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index ff870aa91cfe..7acc8cbf8d6f 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -1602,18 +1602,6 @@ static int smi_type_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int smi_type_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, smi_type_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations smi_type_proc_ops = {
--	.open		= smi_type_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int smi_si_stats_proc_show(struct seq_file *m, void *v)
- {
- 	struct smi_info *smi = m->private;
-@@ -1645,18 +1633,6 @@ static int smi_si_stats_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int smi_si_stats_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, smi_si_stats_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations smi_si_stats_proc_ops = {
--	.open		= smi_si_stats_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int smi_params_proc_show(struct seq_file *m, void *v)
- {
- 	struct smi_info *smi = m->private;
-@@ -1674,18 +1650,6 @@ static int smi_params_proc_show(struct seq_file *m, void *v)
- 
- 	return 0;
- }
--
--static int smi_params_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, smi_params_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations smi_params_proc_ops = {
--	.open		= smi_params_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
- #endif
- 
- #define IPMI_SI_ATTR(name) \
-@@ -2182,10 +2146,8 @@ static int try_smi_init(struct smi_info *new_smi)
- 		goto out_err;
- 	}
- 
--#ifdef CONFIG_IPMI_PROC_INTERFACE
- 	rv = ipmi_smi_add_proc_entry(new_smi->intf, "type",
--				     &smi_type_proc_ops,
--				     new_smi);
-+				     smi_type_proc_show, new_smi);
- 	if (rv) {
- 		dev_err(new_smi->io.dev,
- 			"Unable to create proc entry: %d\n", rv);
-@@ -2193,8 +2155,7 @@ static int try_smi_init(struct smi_info *new_smi)
- 	}
- 
- 	rv = ipmi_smi_add_proc_entry(new_smi->intf, "si_stats",
--				     &smi_si_stats_proc_ops,
--				     new_smi);
-+				     smi_si_stats_proc_show, new_smi);
- 	if (rv) {
- 		dev_err(new_smi->io.dev,
- 			"Unable to create proc entry: %d\n", rv);
-@@ -2202,14 +2163,12 @@ static int try_smi_init(struct smi_info *new_smi)
- 	}
- 
- 	rv = ipmi_smi_add_proc_entry(new_smi->intf, "params",
--				     &smi_params_proc_ops,
--				     new_smi);
-+				     smi_params_proc_show, new_smi);
- 	if (rv) {
- 		dev_err(new_smi->io.dev,
- 			"Unable to create proc entry: %d\n", rv);
- 		goto out_err;
- 	}
--#endif
- 
- 	/* Don't increment till we know we have succeeded. */
- 	smi_num++;
-diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-index 35a82f4bfd78..57f6116a17b2 100644
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -1349,18 +1349,6 @@ static int smi_type_proc_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--static int smi_type_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, smi_type_proc_show, inode->i_private);
--}
--
--static const struct file_operations smi_type_proc_ops = {
--	.open		= smi_type_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
--
- static int smi_stats_proc_show(struct seq_file *m, void *v)
- {
- 	struct ssif_info *ssif_info = m->private;
-@@ -1393,18 +1381,6 @@ static int smi_stats_proc_show(struct seq_file *m, void *v)
- 		   ssif_get_stat(ssif_info, alerts));
- 	return 0;
- }
--
--static int smi_stats_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, smi_stats_proc_show, PDE_DATA(inode));
--}
--
--static const struct file_operations smi_stats_proc_ops = {
--	.open		= smi_stats_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
- #endif
- 
- static int strcmp_nospace(char *s1, char *s2)
-@@ -1740,23 +1716,19 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		goto out_remove_attr;
- 	}
- 
--#ifdef CONFIG_IPMI_PROC_INTERFACE
- 	rv = ipmi_smi_add_proc_entry(ssif_info->intf, "type",
--				     &smi_type_proc_ops,
--				     ssif_info);
-+				     smi_type_proc_show, ssif_info);
- 	if (rv) {
- 		pr_err(PFX "Unable to create proc entry: %d\n", rv);
- 		goto out_err_unreg;
- 	}
- 
- 	rv = ipmi_smi_add_proc_entry(ssif_info->intf, "ssif_stats",
--				     &smi_stats_proc_ops,
--				     ssif_info);
-+				     smi_stats_proc_show, ssif_info);
- 	if (rv) {
- 		pr_err(PFX "Unable to create proc entry: %d\n", rv);
- 		goto out_err_unreg;
- 	}
--#endif
- 
-  out:
- 	if (rv) {
-@@ -1775,10 +1747,8 @@ static int ssif_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	kfree(resp);
- 	return rv;
- 
--#ifdef CONFIG_IPMI_PROC_INTERFACE
- out_err_unreg:
- 	ipmi_unregister_smi(ssif_info->intf);
--#endif
- 
- out_remove_attr:
- 	device_remove_group(&ssif_info->client->dev, &ipmi_ssif_dev_attr_group);
-diff --git a/include/linux/ipmi_smi.h b/include/linux/ipmi_smi.h
-index af457b5a689e..78d9fd480fe8 100644
---- a/include/linux/ipmi_smi.h
-+++ b/include/linux/ipmi_smi.h
-@@ -223,12 +223,10 @@ static inline void ipmi_free_smi_msg(struct ipmi_smi_msg *msg)
- }
- 
- #ifdef CONFIG_IPMI_PROC_INTERFACE
--/* Allow the lower layer to add things to the proc filesystem
--   directory for this interface.  Note that the entry will
--   automatically be dstroyed when the interface is destroyed. */
- int ipmi_smi_add_proc_entry(ipmi_smi_t smi, char *name,
--			    const struct file_operations *proc_ops,
--			    void *data);
-+		int (*show)(struct seq_file *, void *), void *data);
-+#else
-+#define ipmi_smi_add_proc_entry(smi, name, show, data)	0
- #endif
- 
- #endif /* __LINUX_IPMI_SMI_H */
--- 
-2.17.0
+T24gMDQvMTkvMjAxOCAwNzo0MSBBTSwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6Cj4gVXNlIHJl
+bW92ZV9wcm9jX3N1YnRyZWUgdG8gcmVtb3ZlIHRoZSB3aG9sZSBzdWJ0cmVlIG9uIGNsZWFudXAg
+aW5zdGVhZAo+IG9mIGEgaGFuZCByb2xsZWQgbGlzdCBvZiBwcm9jIGVudHJpZXMsIHVud2luZCB0
+aGUgcmVnaXN0cmF0aW9uIGxvb3AgaW50bwo+IGluZGl2aWR1YWwgY2FsbHMuICBTd2l0Y2ggdG8g
+dXNlIHByb2NfY3JlYXRlX3NpbmdsZSB0byBmdXJ0aGVyIHNpbXBsaWZ5Cj4gdGhlIGNvZGUuCgpJ
+J20geWFua2luZyBhbGwgdGhlIHByb2MgY29kZSBvdXQgb2YgdGhlIElQTUkgZHJpdmVyIGluIDMu
+MTguwqAgU28gdGhpcyAKaXMgcHJvYmFibHkKbm90IG5lY2Vzc2FyeS4KClRoYW5rcywKCi1jb3Jl
+eQoKPiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4KPiAtLS0K
+PiAgIGRyaXZlcnMvY2hhci9pcG1pL2lwbWlfbXNnaGFuZGxlci5jIHwgMTUwICsrKysrLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0KPiAgIGRyaXZlcnMvY2hhci9pcG1pL2lwbWlfc2lfaW50Zi5jICAg
+IHwgIDQ3ICstLS0tLS0tLQo+ICAgZHJpdmVycy9jaGFyL2lwbWkvaXBtaV9zc2lmLmMgICAgICAg
+fCAgMzQgKy0tLS0tLQo+ICAgaW5jbHVkZS9saW51eC9pcG1pX3NtaS5oICAgICAgICAgICAgfCAg
+IDggKy0KPiAgIDQgZmlsZXMgY2hhbmdlZCwgMzMgaW5zZXJ0aW9ucygrKSwgMjA2IGRlbGV0aW9u
+cygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2hhci9pcG1pL2lwbWlfbXNnaGFuZGxlci5j
+IGIvZHJpdmVycy9jaGFyL2lwbWkvaXBtaV9tc2doYW5kbGVyLmMKPiBpbmRleCAzNjExNDg5Mzg4
+MDEuLmMxOGRiMzEzZTRjNCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2NoYXIvaXBtaS9pcG1pX21z
+Z2hhbmRsZXIuYwo+ICsrKyBiL2RyaXZlcnMvY2hhci9pcG1pL2lwbWlfbXNnaGFuZGxlci5jCj4g
+QEAgLTI0NywxMyArMjQ3LDYgQEAgc3RydWN0IGlwbWlfbXlfYWRkcmluZm8gewo+ICAgCXVuc2ln
+bmVkIGNoYXIgbHVuOwo+ICAgfTsKPiAgIAo+IC0jaWZkZWYgQ09ORklHX0lQTUlfUFJPQ19JTlRF
+UkZBQ0UKPiAtc3RydWN0IGlwbWlfcHJvY19lbnRyeSB7Cj4gLQljaGFyICAgICAgICAgICAgICAg
+ICAgICpuYW1lOwo+IC0Jc3RydWN0IGlwbWlfcHJvY19lbnRyeSAqbmV4dDsKPiAtfTsKPiAtI2Vu
+ZGlmCj4gLQo+ICAgLyoKPiAgICAqIE5vdGUgdGhhdCB0aGUgcHJvZHVjdCBpZCwgbWFudWZhY3R1
+cmVyIGlkLCBndWlkLCBhbmQgZGV2aWNlIGlkIGFyZQo+ICAgICogaW1tdXRhYmxlIGluIHRoaXMg
+c3RydWN0dXJlLCBzbyBkeW5fbXV0ZXggaXMgbm90IHJlcXVpcmVkIGZvcgo+IEBAIC00MzAsMTAg
+KzQyMyw2IEBAIHN0cnVjdCBpcG1pX3NtaSB7Cj4gICAJdm9pZCAgICAgICAgICAgICAgICAgICAg
+ICpzZW5kX2luZm87Cj4gICAKPiAgICNpZmRlZiBDT05GSUdfSVBNSV9QUk9DX0lOVEVSRkFDRQo+
+IC0JLyogQSBsaXN0IG9mIHByb2MgZW50cmllcyBmb3IgdGhpcyBpbnRlcmZhY2UuICovCj4gLQlz
+dHJ1Y3QgbXV0ZXggICAgICAgICAgIHByb2NfZW50cnlfbG9jazsKPiAtCXN0cnVjdCBpcG1pX3By
+b2NfZW50cnkgKnByb2NfZW50cmllczsKPiAtCj4gICAJc3RydWN0IHByb2NfZGlyX2VudHJ5ICpw
+cm9jX2RpcjsKPiAgIAljaGFyICAgICAgICAgICAgICAgICAgcHJvY19kaXJfbmFtZVsxMF07Cj4g
+ICAjZW5kaWYKPiBAQCAtMjM1OCwxOCArMjM0Nyw2IEBAIHN0YXRpYyBpbnQgc21pX2lwbWJfcHJv
+Y19zaG93KHN0cnVjdCBzZXFfZmlsZSAqbSwgdm9pZCAqdikKPiAgIAlyZXR1cm4gMDsKPiAgIH0K
+PiAgIAo+IC1zdGF0aWMgaW50IHNtaV9pcG1iX3Byb2Nfb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2Rl
+LCBzdHJ1Y3QgZmlsZSAqZmlsZSkKPiAtewo+IC0JcmV0dXJuIHNpbmdsZV9vcGVuKGZpbGUsIHNt
+aV9pcG1iX3Byb2Nfc2hvdywgUERFX0RBVEEoaW5vZGUpKTsKPiAtfQo+IC0KPiAtc3RhdGljIGNv
+bnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgc21pX2lwbWJfcHJvY19vcHMgPSB7Cj4gLQkub3Bl
+bgkJPSBzbWlfaXBtYl9wcm9jX29wZW4sCj4gLQkucmVhZAkJPSBzZXFfcmVhZCwKPiAtCS5sbHNl
+ZWsJCT0gc2VxX2xzZWVrLAo+IC0JLnJlbGVhc2UJPSBzaW5nbGVfcmVsZWFzZSwKPiAtfTsKPiAt
+Cj4gICBzdGF0aWMgaW50IHNtaV92ZXJzaW9uX3Byb2Nfc2hvdyhzdHJ1Y3Qgc2VxX2ZpbGUgKm0s
+IHZvaWQgKnYpCj4gICB7Cj4gICAJaXBtaV9zbWlfdCBpbnRmID0gbS0+cHJpdmF0ZTsKPiBAQCAt
+MjM4NywxOCArMjM2NCw2IEBAIHN0YXRpYyBpbnQgc21pX3ZlcnNpb25fcHJvY19zaG93KHN0cnVj
+dCBzZXFfZmlsZSAqbSwgdm9pZCAqdikKPiAgIAlyZXR1cm4gMDsKPiAgIH0KPiAgIAo+IC1zdGF0
+aWMgaW50IHNtaV92ZXJzaW9uX3Byb2Nfb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3Qg
+ZmlsZSAqZmlsZSkKPiAtewo+IC0JcmV0dXJuIHNpbmdsZV9vcGVuKGZpbGUsIHNtaV92ZXJzaW9u
+X3Byb2Nfc2hvdywgUERFX0RBVEEoaW5vZGUpKTsKPiAtfQo+IC0KPiAtc3RhdGljIGNvbnN0IHN0
+cnVjdCBmaWxlX29wZXJhdGlvbnMgc21pX3ZlcnNpb25fcHJvY19vcHMgPSB7Cj4gLQkub3BlbgkJ
+PSBzbWlfdmVyc2lvbl9wcm9jX29wZW4sCj4gLQkucmVhZAkJPSBzZXFfcmVhZCwKPiAtCS5sbHNl
+ZWsJCT0gc2VxX2xzZWVrLAo+IC0JLnJlbGVhc2UJPSBzaW5nbGVfcmVsZWFzZSwKPiAtfTsKPiAt
+Cj4gICBzdGF0aWMgaW50IHNtaV9zdGF0c19wcm9jX3Nob3coc3RydWN0IHNlcV9maWxlICptLCB2
+b2lkICp2KQo+ICAgewo+ICAgCWlwbWlfc21pX3QgaW50ZiA9IG0tPnByaXZhdGU7Cj4gQEAgLTI0
+NjIsOTUgKzI0MjcsNDUgQEAgc3RhdGljIGludCBzbWlfc3RhdHNfcHJvY19zaG93KHN0cnVjdCBz
+ZXFfZmlsZSAqbSwgdm9pZCAqdikKPiAgIAlyZXR1cm4gMDsKPiAgIH0KPiAgIAo+IC1zdGF0aWMg
+aW50IHNtaV9zdGF0c19wcm9jX29wZW4oc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUg
+KmZpbGUpCj4gLXsKPiAtCXJldHVybiBzaW5nbGVfb3BlbihmaWxlLCBzbWlfc3RhdHNfcHJvY19z
+aG93LCBQREVfREFUQShpbm9kZSkpOwo+IC19Cj4gLQo+IC1zdGF0aWMgY29uc3Qgc3RydWN0IGZp
+bGVfb3BlcmF0aW9ucyBzbWlfc3RhdHNfcHJvY19vcHMgPSB7Cj4gLQkub3BlbgkJPSBzbWlfc3Rh
+dHNfcHJvY19vcGVuLAo+IC0JLnJlYWQJCT0gc2VxX3JlYWQsCj4gLQkubGxzZWVrCQk9IHNlcV9s
+c2VlaywKPiAtCS5yZWxlYXNlCT0gc2luZ2xlX3JlbGVhc2UsCj4gLX07Cj4gLQo+ICAgaW50IGlw
+bWlfc21pX2FkZF9wcm9jX2VudHJ5KGlwbWlfc21pX3Qgc21pLCBjaGFyICpuYW1lLAo+IC0JCQkg
+ICAgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyAqcHJvY19vcHMsCj4gLQkJCSAgICB2b2lk
+ICpkYXRhKQo+ICsJCWludCAoKnNob3cpKHN0cnVjdCBzZXFfZmlsZSAqLCB2b2lkICopLCB2b2lk
+ICpkYXRhKQo+ICAgewo+IC0JaW50ICAgICAgICAgICAgICAgICAgICBydiA9IDA7Cj4gLQlzdHJ1
+Y3QgcHJvY19kaXJfZW50cnkgICpmaWxlOwo+IC0Jc3RydWN0IGlwbWlfcHJvY19lbnRyeSAqZW50
+cnk7Cj4gLQo+IC0JLyogQ3JlYXRlIGEgbGlzdCBlbGVtZW50LiAqLwo+IC0JZW50cnkgPSBrbWFs
+bG9jKHNpemVvZigqZW50cnkpLCBHRlBfS0VSTkVMKTsKPiAtCWlmICghZW50cnkpCj4gKwlpZiAo
+IXByb2NfY3JlYXRlX3NpbmdsZV9kYXRhKG5hbWUsIDAsIHNtaS0+cHJvY19kaXIsIHNob3csIGRh
+dGEpKQo+ICAgCQlyZXR1cm4gLUVOT01FTTsKPiAtCWVudHJ5LT5uYW1lID0ga3N0cmR1cChuYW1l
+LCBHRlBfS0VSTkVMKTsKPiAtCWlmICghZW50cnktPm5hbWUpIHsKPiAtCQlrZnJlZShlbnRyeSk7
+Cj4gLQkJcmV0dXJuIC1FTk9NRU07Cj4gLQl9Cj4gLQo+IC0JZmlsZSA9IHByb2NfY3JlYXRlX2Rh
+dGEobmFtZSwgMCwgc21pLT5wcm9jX2RpciwgcHJvY19vcHMsIGRhdGEpOwo+IC0JaWYgKCFmaWxl
+KSB7Cj4gLQkJa2ZyZWUoZW50cnktPm5hbWUpOwo+IC0JCWtmcmVlKGVudHJ5KTsKPiAtCQlydiA9
+IC1FTk9NRU07Cj4gLQl9IGVsc2Ugewo+IC0JCW11dGV4X2xvY2soJnNtaS0+cHJvY19lbnRyeV9s
+b2NrKTsKPiAtCQkvKiBTdGljayBpdCBvbiB0aGUgbGlzdC4gKi8KPiAtCQllbnRyeS0+bmV4dCA9
+IHNtaS0+cHJvY19lbnRyaWVzOwo+IC0JCXNtaS0+cHJvY19lbnRyaWVzID0gZW50cnk7Cj4gLQkJ
+bXV0ZXhfdW5sb2NrKCZzbWktPnByb2NfZW50cnlfbG9jayk7Cj4gLQl9Cj4gLQo+IC0JcmV0dXJu
+IHJ2Owo+ICsJcmV0dXJuIDA7Cj4gICB9Cj4gICBFWFBPUlRfU1lNQk9MKGlwbWlfc21pX2FkZF9w
+cm9jX2VudHJ5KTsKPiAgIAo+ICAgc3RhdGljIGludCBhZGRfcHJvY19lbnRyaWVzKGlwbWlfc21p
+X3Qgc21pLCBpbnQgbnVtKQo+ICAgewo+IC0JaW50IHJ2ID0gMDsKPiAtCj4gICAJc3ByaW50Zihz
+bWktPnByb2NfZGlyX25hbWUsICIlZCIsIG51bSk7Cj4gICAJc21pLT5wcm9jX2RpciA9IHByb2Nf
+bWtkaXIoc21pLT5wcm9jX2Rpcl9uYW1lLCBwcm9jX2lwbWlfcm9vdCk7Cj4gICAJaWYgKCFzbWkt
+PnByb2NfZGlyKQo+IC0JCXJ2ID0gLUVOT01FTTsKPiAtCj4gLQlpZiAocnYgPT0gMCkKPiAtCQly
+diA9IGlwbWlfc21pX2FkZF9wcm9jX2VudHJ5KHNtaSwgInN0YXRzIiwKPiAtCQkJCQkgICAgICZz
+bWlfc3RhdHNfcHJvY19vcHMsCj4gLQkJCQkJICAgICBzbWkpOwo+IC0KPiAtCWlmIChydiA9PSAw
+KQo+IC0JCXJ2ID0gaXBtaV9zbWlfYWRkX3Byb2NfZW50cnkoc21pLCAiaXBtYiIsCj4gLQkJCQkJ
+ICAgICAmc21pX2lwbWJfcHJvY19vcHMsCj4gLQkJCQkJICAgICBzbWkpOwo+IC0KPiAtCWlmIChy
+diA9PSAwKQo+IC0JCXJ2ID0gaXBtaV9zbWlfYWRkX3Byb2NfZW50cnkoc21pLCAidmVyc2lvbiIs
+Cj4gLQkJCQkJICAgICAmc21pX3ZlcnNpb25fcHJvY19vcHMsCj4gLQkJCQkJICAgICBzbWkpOwo+
+IC0KPiAtCXJldHVybiBydjsKPiArCQlyZXR1cm4gLUVOT01FTTsKPiArCWlmICghcHJvY19jcmVh
+dGVfc2luZ2xlX2RhdGEoInN0YXRzIiwgMCwgc21pLT5wcm9jX2RpciwKPiArCQkJc21pX3N0YXRz
+X3Byb2Nfc2hvdywgc21pKSkKPiArCQlyZXR1cm4gLUVOT01FTTsKPiArCWlmICghcHJvY19jcmVh
+dGVfc2luZ2xlX2RhdGEoImlwbWIiLCAwLCBzbWktPnByb2NfZGlyLAo+ICsJCQlzbWlfaXBtYl9w
+cm9jX3Nob3csIHNtaSkpCj4gKwkJcmV0dXJuIC1FTk9NRU07Cj4gKwlpZiAoIXByb2NfY3JlYXRl
+X3NpbmdsZV9kYXRhKCJ2ZXJzaW9uIiwgMCwgc21pLT5wcm9jX2RpciwKPiArCQkJc21pX3ZlcnNp
+b25fcHJvY19zaG93LCBzbWkpKQo+ICsJCXJldHVybiAtRU5PTUVNOwo+ICsJcmV0dXJuIDA7Cj4g
+ICB9Cj4gICAKPiAgIHN0YXRpYyB2b2lkIHJlbW92ZV9wcm9jX2VudHJpZXMoaXBtaV9zbWlfdCBz
+bWkpCj4gICB7Cj4gLQlzdHJ1Y3QgaXBtaV9wcm9jX2VudHJ5ICplbnRyeTsKPiAtCj4gLQltdXRl
+eF9sb2NrKCZzbWktPnByb2NfZW50cnlfbG9jayk7Cj4gLQl3aGlsZSAoc21pLT5wcm9jX2VudHJp
+ZXMpIHsKPiAtCQllbnRyeSA9IHNtaS0+cHJvY19lbnRyaWVzOwo+IC0JCXNtaS0+cHJvY19lbnRy
+aWVzID0gZW50cnktPm5leHQ7Cj4gLQo+IC0JCXJlbW92ZV9wcm9jX2VudHJ5KGVudHJ5LT5uYW1l
+LCBzbWktPnByb2NfZGlyKTsKPiAtCQlrZnJlZShlbnRyeS0+bmFtZSk7Cj4gLQkJa2ZyZWUoZW50
+cnkpOwo+IC0JfQo+IC0JbXV0ZXhfdW5sb2NrKCZzbWktPnByb2NfZW50cnlfbG9jayk7Cj4gLQly
+ZW1vdmVfcHJvY19lbnRyeShzbWktPnByb2NfZGlyX25hbWUsIHByb2NfaXBtaV9yb290KTsKPiAr
+CWlmIChzbWktPnByb2NfZGlyKQo+ICsJCXJlbW92ZV9wcm9jX3N1YnRyZWUoc21pLT5wcm9jX2Rp
+cl9uYW1lLCBwcm9jX2lwbWlfcm9vdCk7Cj4gK30KPiArI2Vsc2UKPiArc3RhdGljIGludCBhZGRf
+cHJvY19lbnRyaWVzKGlwbWlfc21pX3Qgc21pLCBpbnQgbnVtKQo+ICt7Cj4gKwlyZXR1cm4gMDsK
+PiArfQo+ICtzdGF0aWMgdm9pZCByZW1vdmVfcHJvY19lbnRyaWVzKGlwbWlfc21pX3Qgc21pKQo+
+ICt7Cj4gICB9Cj4gICAjZW5kaWYgLyogQ09ORklHX0lQTUlfUFJPQ19JTlRFUkZBQ0UgKi8KPiAg
+IAo+IEBAIC0zMzg2LDkgKzMzMDEsNiBAQCBpbnQgaXBtaV9yZWdpc3Rlcl9zbWkoY29uc3Qgc3Ry
+dWN0IGlwbWlfc21pX2hhbmRsZXJzICpoYW5kbGVycywKPiAgIAkJaW50Zi0+c2VxX3RhYmxlW2pd
+LnNlcWlkID0gMDsKPiAgIAl9Cj4gICAJaW50Zi0+Y3Vycl9zZXEgPSAwOwo+IC0jaWZkZWYgQ09O
+RklHX0lQTUlfUFJPQ19JTlRFUkZBQ0UKPiAtCW11dGV4X2luaXQoJmludGYtPnByb2NfZW50cnlf
+bG9jayk7Cj4gLSNlbmRpZgo+ICAgCXNwaW5fbG9ja19pbml0KCZpbnRmLT53YWl0aW5nX3Jjdl9t
+c2dzX2xvY2spOwo+ICAgCUlOSVRfTElTVF9IRUFEKCZpbnRmLT53YWl0aW5nX3Jjdl9tc2dzKTsK
+PiAgIAl0YXNrbGV0X2luaXQoJmludGYtPnJlY3ZfdGFza2xldCwKPiBAQCAtMzQxMCwxMCArMzMy
+Miw2IEBAIGludCBpcG1pX3JlZ2lzdGVyX3NtaShjb25zdCBzdHJ1Y3QgaXBtaV9zbWlfaGFuZGxl
+cnMgKmhhbmRsZXJzLAo+ICAgCWZvciAoaSA9IDA7IGkgPCBJUE1JX05VTV9TVEFUUzsgaSsrKQo+
+ICAgCQlhdG9taWNfc2V0KCZpbnRmLT5zdGF0c1tpXSwgMCk7Cj4gICAKPiAtI2lmZGVmIENPTkZJ
+R19JUE1JX1BST0NfSU5URVJGQUNFCj4gLQlpbnRmLT5wcm9jX2RpciA9IE5VTEw7Cj4gLSNlbmRp
+Zgo+IC0KPiAgIAltdXRleF9sb2NrKCZzbWlfd2F0Y2hlcnNfbXV0ZXgpOwo+ICAgCW11dGV4X2xv
+Y2soJmlwbWlfaW50ZXJmYWNlc19tdXRleCk7Cj4gICAJLyogTG9vayBmb3IgYSBob2xlIGluIHRo
+ZSBudW1iZXJzLiAqLwo+IEBAIC0zNDQ4LDE3ICszMzU2LDExIEBAIGludCBpcG1pX3JlZ2lzdGVy
+X3NtaShjb25zdCBzdHJ1Y3QgaXBtaV9zbWlfaGFuZGxlcnMgKmhhbmRsZXJzLAo+ICAgCWlmIChy
+dikKPiAgIAkJZ290byBvdXQ7Cj4gICAKPiAtI2lmZGVmIENPTkZJR19JUE1JX1BST0NfSU5URVJG
+QUNFCj4gICAJcnYgPSBhZGRfcHJvY19lbnRyaWVzKGludGYsIGkpOwo+IC0jZW5kaWYKPiAtCj4g
+ICAgb3V0Ogo+ICAgCWlmIChydikgewo+ICAgCQlpcG1pX2JtY191bnJlZ2lzdGVyKGludGYpOwo+
+IC0jaWZkZWYgQ09ORklHX0lQTUlfUFJPQ19JTlRFUkZBQ0UKPiAtCQlpZiAoaW50Zi0+cHJvY19k
+aXIpCj4gLQkJCXJlbW92ZV9wcm9jX2VudHJpZXMoaW50Zik7Cj4gLSNlbmRpZgo+ICsJCXJlbW92
+ZV9wcm9jX2VudHJpZXMoaW50Zik7Cj4gICAJCWludGYtPmhhbmRsZXJzID0gTlVMTDsKPiAgIAkJ
+bGlzdF9kZWxfcmN1KCZpbnRmLT5saW5rKTsKPiAgIAkJbXV0ZXhfdW5sb2NrKCZpcG1pX2ludGVy
+ZmFjZXNfbXV0ZXgpOwo+IEBAIC0zNTYzLDkgKzM0NjUsNyBAQCBpbnQgaXBtaV91bnJlZ2lzdGVy
+X3NtaShpcG1pX3NtaV90IGludGYpCj4gICAJaW50Zi0+aGFuZGxlcnMgPSBOVUxMOwo+ICAgCW11
+dGV4X3VubG9jaygmaXBtaV9pbnRlcmZhY2VzX211dGV4KTsKPiAgIAo+IC0jaWZkZWYgQ09ORklH
+X0lQTUlfUFJPQ19JTlRFUkZBQ0UKPiAgIAlyZW1vdmVfcHJvY19lbnRyaWVzKGludGYpOwo+IC0j
+ZW5kaWYKPiAgIAlpcG1pX2JtY191bnJlZ2lzdGVyKGludGYpOwo+ICAgCj4gICAJLyoKPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9jaGFyL2lwbWkvaXBtaV9zaV9pbnRmLmMgYi9kcml2ZXJzL2NoYXIv
+aXBtaS9pcG1pX3NpX2ludGYuYwo+IGluZGV4IGZmODcwYWE5MWNmZS4uN2FjYzhjYmY4ZDZmIDEw
+MDY0NAo+IC0tLSBhL2RyaXZlcnMvY2hhci9pcG1pL2lwbWlfc2lfaW50Zi5jCj4gKysrIGIvZHJp
+dmVycy9jaGFyL2lwbWkvaXBtaV9zaV9pbnRmLmMKPiBAQCAtMTYwMiwxOCArMTYwMiw2IEBAIHN0
+YXRpYyBpbnQgc21pX3R5cGVfcHJvY19zaG93KHN0cnVjdCBzZXFfZmlsZSAqbSwgdm9pZCAqdikK
+PiAgIAlyZXR1cm4gMDsKPiAgIH0KPiAgIAo+IC1zdGF0aWMgaW50IHNtaV90eXBlX3Byb2Nfb3Bl
+bihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZmlsZSAqZmlsZSkKPiAtewo+IC0JcmV0dXJu
+IHNpbmdsZV9vcGVuKGZpbGUsIHNtaV90eXBlX3Byb2Nfc2hvdywgUERFX0RBVEEoaW5vZGUpKTsK
+PiAtfQo+IC0KPiAtc3RhdGljIGNvbnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgc21pX3R5cGVf
+cHJvY19vcHMgPSB7Cj4gLQkub3BlbgkJPSBzbWlfdHlwZV9wcm9jX29wZW4sCj4gLQkucmVhZAkJ
+PSBzZXFfcmVhZCwKPiAtCS5sbHNlZWsJCT0gc2VxX2xzZWVrLAo+IC0JLnJlbGVhc2UJPSBzaW5n
+bGVfcmVsZWFzZSwKPiAtfTsKPiAtCj4gICBzdGF0aWMgaW50IHNtaV9zaV9zdGF0c19wcm9jX3No
+b3coc3RydWN0IHNlcV9maWxlICptLCB2b2lkICp2KQo+ICAgewo+ICAgCXN0cnVjdCBzbWlfaW5m
+byAqc21pID0gbS0+cHJpdmF0ZTsKPiBAQCAtMTY0NSwxOCArMTYzMyw2IEBAIHN0YXRpYyBpbnQg
+c21pX3NpX3N0YXRzX3Byb2Nfc2hvdyhzdHJ1Y3Qgc2VxX2ZpbGUgKm0sIHZvaWQgKnYpCj4gICAJ
+cmV0dXJuIDA7Cj4gICB9Cj4gICAKPiAtc3RhdGljIGludCBzbWlfc2lfc3RhdHNfcHJvY19vcGVu
+KHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmaWxlICpmaWxlKQo+IC17Cj4gLQlyZXR1cm4g
+c2luZ2xlX29wZW4oZmlsZSwgc21pX3NpX3N0YXRzX3Byb2Nfc2hvdywgUERFX0RBVEEoaW5vZGUp
+KTsKPiAtfQo+IC0KPiAtc3RhdGljIGNvbnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgc21pX3Np
+X3N0YXRzX3Byb2Nfb3BzID0gewo+IC0JLm9wZW4JCT0gc21pX3NpX3N0YXRzX3Byb2Nfb3BlbiwK
+PiAtCS5yZWFkCQk9IHNlcV9yZWFkLAo+IC0JLmxsc2VlawkJPSBzZXFfbHNlZWssCj4gLQkucmVs
+ZWFzZQk9IHNpbmdsZV9yZWxlYXNlLAo+IC19Owo+IC0KPiAgIHN0YXRpYyBpbnQgc21pX3BhcmFt
+c19wcm9jX3Nob3coc3RydWN0IHNlcV9maWxlICptLCB2b2lkICp2KQo+ICAgewo+ICAgCXN0cnVj
+dCBzbWlfaW5mbyAqc21pID0gbS0+cHJpdmF0ZTsKPiBAQCAtMTY3NCwxOCArMTY1MCw2IEBAIHN0
+YXRpYyBpbnQgc21pX3BhcmFtc19wcm9jX3Nob3coc3RydWN0IHNlcV9maWxlICptLCB2b2lkICp2
+KQo+ICAgCj4gICAJcmV0dXJuIDA7Cj4gICB9Cj4gLQo+IC1zdGF0aWMgaW50IHNtaV9wYXJhbXNf
+cHJvY19vcGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmaWxlICpmaWxlKQo+IC17Cj4g
+LQlyZXR1cm4gc2luZ2xlX29wZW4oZmlsZSwgc21pX3BhcmFtc19wcm9jX3Nob3csIFBERV9EQVRB
+KGlub2RlKSk7Cj4gLX0KPiAtCj4gLXN0YXRpYyBjb25zdCBzdHJ1Y3QgZmlsZV9vcGVyYXRpb25z
+IHNtaV9wYXJhbXNfcHJvY19vcHMgPSB7Cj4gLQkub3BlbgkJPSBzbWlfcGFyYW1zX3Byb2Nfb3Bl
+biwKPiAtCS5yZWFkCQk9IHNlcV9yZWFkLAo+IC0JLmxsc2VlawkJPSBzZXFfbHNlZWssCj4gLQku
+cmVsZWFzZQk9IHNpbmdsZV9yZWxlYXNlLAo+IC19Owo+ICAgI2VuZGlmCj4gICAKPiAgICNkZWZp
+bmUgSVBNSV9TSV9BVFRSKG5hbWUpIFwKPiBAQCAtMjE4MiwxMCArMjE0Niw4IEBAIHN0YXRpYyBp
+bnQgdHJ5X3NtaV9pbml0KHN0cnVjdCBzbWlfaW5mbyAqbmV3X3NtaSkKPiAgIAkJZ290byBvdXRf
+ZXJyOwo+ICAgCX0KPiAgIAo+IC0jaWZkZWYgQ09ORklHX0lQTUlfUFJPQ19JTlRFUkZBQ0UKPiAg
+IAlydiA9IGlwbWlfc21pX2FkZF9wcm9jX2VudHJ5KG5ld19zbWktPmludGYsICJ0eXBlIiwKPiAt
+CQkJCSAgICAgJnNtaV90eXBlX3Byb2Nfb3BzLAo+IC0JCQkJICAgICBuZXdfc21pKTsKPiArCQkJ
+CSAgICAgc21pX3R5cGVfcHJvY19zaG93LCBuZXdfc21pKTsKPiAgIAlpZiAocnYpIHsKPiAgIAkJ
+ZGV2X2VycihuZXdfc21pLT5pby5kZXYsCj4gICAJCQkiVW5hYmxlIHRvIGNyZWF0ZSBwcm9jIGVu
+dHJ5OiAlZFxuIiwgcnYpOwo+IEBAIC0yMTkzLDggKzIxNTUsNyBAQCBzdGF0aWMgaW50IHRyeV9z
+bWlfaW5pdChzdHJ1Y3Qgc21pX2luZm8gKm5ld19zbWkpCj4gICAJfQo+ICAgCj4gICAJcnYgPSBp
+cG1pX3NtaV9hZGRfcHJvY19lbnRyeShuZXdfc21pLT5pbnRmLCAic2lfc3RhdHMiLAo+IC0JCQkJ
+ICAgICAmc21pX3NpX3N0YXRzX3Byb2Nfb3BzLAo+IC0JCQkJICAgICBuZXdfc21pKTsKPiArCQkJ
+CSAgICAgc21pX3NpX3N0YXRzX3Byb2Nfc2hvdywgbmV3X3NtaSk7Cj4gICAJaWYgKHJ2KSB7Cj4g
+ICAJCWRldl9lcnIobmV3X3NtaS0+aW8uZGV2LAo+ICAgCQkJIlVuYWJsZSB0byBjcmVhdGUgcHJv
+YyBlbnRyeTogJWRcbiIsIHJ2KTsKPiBAQCAtMjIwMiwxNCArMjE2MywxMiBAQCBzdGF0aWMgaW50
+IHRyeV9zbWlfaW5pdChzdHJ1Y3Qgc21pX2luZm8gKm5ld19zbWkpCj4gICAJfQo+ICAgCj4gICAJ
+cnYgPSBpcG1pX3NtaV9hZGRfcHJvY19lbnRyeShuZXdfc21pLT5pbnRmLCAicGFyYW1zIiwKPiAt
+CQkJCSAgICAgJnNtaV9wYXJhbXNfcHJvY19vcHMsCj4gLQkJCQkgICAgIG5ld19zbWkpOwo+ICsJ
+CQkJICAgICBzbWlfcGFyYW1zX3Byb2Nfc2hvdywgbmV3X3NtaSk7Cj4gICAJaWYgKHJ2KSB7Cj4g
+ICAJCWRldl9lcnIobmV3X3NtaS0+aW8uZGV2LAo+ICAgCQkJIlVuYWJsZSB0byBjcmVhdGUgcHJv
+YyBlbnRyeTogJWRcbiIsIHJ2KTsKPiAgIAkJZ290byBvdXRfZXJyOwo+ICAgCX0KPiAtI2VuZGlm
+Cj4gICAKPiAgIAkvKiBEb24ndCBpbmNyZW1lbnQgdGlsbCB3ZSBrbm93IHdlIGhhdmUgc3VjY2Vl
+ZGVkLiAqLwo+ICAgCXNtaV9udW0rKzsKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jaGFyL2lwbWkv
+aXBtaV9zc2lmLmMgYi9kcml2ZXJzL2NoYXIvaXBtaS9pcG1pX3NzaWYuYwo+IGluZGV4IDM1YTgy
+ZjRiZmQ3OC4uNTdmNjExNmExN2IyIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY2hhci9pcG1pL2lw
+bWlfc3NpZi5jCj4gKysrIGIvZHJpdmVycy9jaGFyL2lwbWkvaXBtaV9zc2lmLmMKPiBAQCAtMTM0
+OSwxOCArMTM0OSw2IEBAIHN0YXRpYyBpbnQgc21pX3R5cGVfcHJvY19zaG93KHN0cnVjdCBzZXFf
+ZmlsZSAqbSwgdm9pZCAqdikKPiAgIAlyZXR1cm4gMDsKPiAgIH0KPiAgIAo+IC1zdGF0aWMgaW50
+IHNtaV90eXBlX3Byb2Nfb3BlbihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZmlsZSAqZmls
+ZSkKPiAtewo+IC0JcmV0dXJuIHNpbmdsZV9vcGVuKGZpbGUsIHNtaV90eXBlX3Byb2Nfc2hvdywg
+aW5vZGUtPmlfcHJpdmF0ZSk7Cj4gLX0KPiAtCj4gLXN0YXRpYyBjb25zdCBzdHJ1Y3QgZmlsZV9v
+cGVyYXRpb25zIHNtaV90eXBlX3Byb2Nfb3BzID0gewo+IC0JLm9wZW4JCT0gc21pX3R5cGVfcHJv
+Y19vcGVuLAo+IC0JLnJlYWQJCT0gc2VxX3JlYWQsCj4gLQkubGxzZWVrCQk9IHNlcV9sc2VlaywK
+PiAtCS5yZWxlYXNlCT0gc2luZ2xlX3JlbGVhc2UsCj4gLX07Cj4gLQo+ICAgc3RhdGljIGludCBz
+bWlfc3RhdHNfcHJvY19zaG93KHN0cnVjdCBzZXFfZmlsZSAqbSwgdm9pZCAqdikKPiAgIHsKPiAg
+IAlzdHJ1Y3Qgc3NpZl9pbmZvICpzc2lmX2luZm8gPSBtLT5wcml2YXRlOwo+IEBAIC0xMzkzLDE4
+ICsxMzgxLDYgQEAgc3RhdGljIGludCBzbWlfc3RhdHNfcHJvY19zaG93KHN0cnVjdCBzZXFfZmls
+ZSAqbSwgdm9pZCAqdikKPiAgIAkJICAgc3NpZl9nZXRfc3RhdChzc2lmX2luZm8sIGFsZXJ0cykp
+Owo+ICAgCXJldHVybiAwOwo+ICAgfQo+IC0KPiAtc3RhdGljIGludCBzbWlfc3RhdHNfcHJvY19v
+cGVuKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmaWxlICpmaWxlKQo+IC17Cj4gLQlyZXR1
+cm4gc2luZ2xlX29wZW4oZmlsZSwgc21pX3N0YXRzX3Byb2Nfc2hvdywgUERFX0RBVEEoaW5vZGUp
+KTsKPiAtfQo+IC0KPiAtc3RhdGljIGNvbnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgc21pX3N0
+YXRzX3Byb2Nfb3BzID0gewo+IC0JLm9wZW4JCT0gc21pX3N0YXRzX3Byb2Nfb3BlbiwKPiAtCS5y
+ZWFkCQk9IHNlcV9yZWFkLAo+IC0JLmxsc2VlawkJPSBzZXFfbHNlZWssCj4gLQkucmVsZWFzZQk9
+IHNpbmdsZV9yZWxlYXNlLAo+IC19Owo+ICAgI2VuZGlmCj4gICAKPiAgIHN0YXRpYyBpbnQgc3Ry
+Y21wX25vc3BhY2UoY2hhciAqczEsIGNoYXIgKnMyKQo+IEBAIC0xNzQwLDIzICsxNzE2LDE5IEBA
+IHN0YXRpYyBpbnQgc3NpZl9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LCBjb25zdCBz
+dHJ1Y3QgaTJjX2RldmljZV9pZCAqaWQpCj4gICAJCWdvdG8gb3V0X3JlbW92ZV9hdHRyOwo+ICAg
+CX0KPiAgIAo+IC0jaWZkZWYgQ09ORklHX0lQTUlfUFJPQ19JTlRFUkZBQ0UKPiAgIAlydiA9IGlw
+bWlfc21pX2FkZF9wcm9jX2VudHJ5KHNzaWZfaW5mby0+aW50ZiwgInR5cGUiLAo+IC0JCQkJICAg
+ICAmc21pX3R5cGVfcHJvY19vcHMsCj4gLQkJCQkgICAgIHNzaWZfaW5mbyk7Cj4gKwkJCQkgICAg
+IHNtaV90eXBlX3Byb2Nfc2hvdywgc3NpZl9pbmZvKTsKPiAgIAlpZiAocnYpIHsKPiAgIAkJcHJf
+ZXJyKFBGWCAiVW5hYmxlIHRvIGNyZWF0ZSBwcm9jIGVudHJ5OiAlZFxuIiwgcnYpOwo+ICAgCQln
+b3RvIG91dF9lcnJfdW5yZWc7Cj4gICAJfQo+ICAgCj4gICAJcnYgPSBpcG1pX3NtaV9hZGRfcHJv
+Y19lbnRyeShzc2lmX2luZm8tPmludGYsICJzc2lmX3N0YXRzIiwKPiAtCQkJCSAgICAgJnNtaV9z
+dGF0c19wcm9jX29wcywKPiAtCQkJCSAgICAgc3NpZl9pbmZvKTsKPiArCQkJCSAgICAgc21pX3N0
+YXRzX3Byb2Nfc2hvdywgc3NpZl9pbmZvKTsKPiAgIAlpZiAocnYpIHsKPiAgIAkJcHJfZXJyKFBG
+WCAiVW5hYmxlIHRvIGNyZWF0ZSBwcm9jIGVudHJ5OiAlZFxuIiwgcnYpOwo+ICAgCQlnb3RvIG91
+dF9lcnJfdW5yZWc7Cj4gICAJfQo+IC0jZW5kaWYKPiAgIAo+ICAgIG91dDoKPiAgIAlpZiAocnYp
+IHsKPiBAQCAtMTc3NSwxMCArMTc0Nyw4IEBAIHN0YXRpYyBpbnQgc3NpZl9wcm9iZShzdHJ1Y3Qg
+aTJjX2NsaWVudCAqY2xpZW50LCBjb25zdCBzdHJ1Y3QgaTJjX2RldmljZV9pZCAqaWQpCj4gICAJ
+a2ZyZWUocmVzcCk7Cj4gICAJcmV0dXJuIHJ2Owo+ICAgCj4gLSNpZmRlZiBDT05GSUdfSVBNSV9Q
+Uk9DX0lOVEVSRkFDRQo+ICAgb3V0X2Vycl91bnJlZzoKPiAgIAlpcG1pX3VucmVnaXN0ZXJfc21p
+KHNzaWZfaW5mby0+aW50Zik7Cj4gLSNlbmRpZgo+ICAgCj4gICBvdXRfcmVtb3ZlX2F0dHI6Cj4g
+ICAJZGV2aWNlX3JlbW92ZV9ncm91cCgmc3NpZl9pbmZvLT5jbGllbnQtPmRldiwgJmlwbWlfc3Np
+Zl9kZXZfYXR0cl9ncm91cCk7Cj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvaXBtaV9zbWku
+aCBiL2luY2x1ZGUvbGludXgvaXBtaV9zbWkuaAo+IGluZGV4IGFmNDU3YjVhNjg5ZS4uNzhkOWZk
+NDgwZmU4IDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvbGludXgvaXBtaV9zbWkuaAo+ICsrKyBiL2lu
+Y2x1ZGUvbGludXgvaXBtaV9zbWkuaAo+IEBAIC0yMjMsMTIgKzIyMywxMCBAQCBzdGF0aWMgaW5s
+aW5lIHZvaWQgaXBtaV9mcmVlX3NtaV9tc2coc3RydWN0IGlwbWlfc21pX21zZyAqbXNnKQo+ICAg
+fQo+ICAgCj4gICAjaWZkZWYgQ09ORklHX0lQTUlfUFJPQ19JTlRFUkZBQ0UKPiAtLyogQWxsb3cg
+dGhlIGxvd2VyIGxheWVyIHRvIGFkZCB0aGluZ3MgdG8gdGhlIHByb2MgZmlsZXN5c3RlbQo+IC0g
+ICBkaXJlY3RvcnkgZm9yIHRoaXMgaW50ZXJmYWNlLiAgTm90ZSB0aGF0IHRoZSBlbnRyeSB3aWxs
+Cj4gLSAgIGF1dG9tYXRpY2FsbHkgYmUgZHN0cm95ZWQgd2hlbiB0aGUgaW50ZXJmYWNlIGlzIGRl
+c3Ryb3llZC4gKi8KPiAgIGludCBpcG1pX3NtaV9hZGRfcHJvY19lbnRyeShpcG1pX3NtaV90IHNt
+aSwgY2hhciAqbmFtZSwKPiAtCQkJICAgIGNvbnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgKnBy
+b2Nfb3BzLAo+IC0JCQkgICAgdm9pZCAqZGF0YSk7Cj4gKwkJaW50ICgqc2hvdykoc3RydWN0IHNl
+cV9maWxlICosIHZvaWQgKiksIHZvaWQgKmRhdGEpOwo+ICsjZWxzZQo+ICsjZGVmaW5lIGlwbWlf
+c21pX2FkZF9wcm9jX2VudHJ5KHNtaSwgbmFtZSwgc2hvdywgZGF0YSkJMAo+ICAgI2VuZGlmCj4g
+ICAKPiAgICNlbmRpZiAvKiBfX0xJTlVYX0lQTUlfU01JX0ggKi8KCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxA
+bGludXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVj
+dC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
