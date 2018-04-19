@@ -1,23 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753401AbeDSRGF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 13:06:05 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:37409 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753041AbeDSRGC (ORCPT
+        id S1753533AbeDSRGW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 13:06:22 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:40924 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753199AbeDSRGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Apr 2018 13:06:02 -0400
-X-Google-Smtp-Source: AB8JxZpgKtGFcVx50cNt/Oj0jtRjckG/g04Nj7/FMvDqHyXwUZf5PWaWMV+4mPvb91A5zgvLMkZoa2FfmaVO4e5sNbVE5lw/jeWS
+X-Google-Smtp-Source: AB8JxZozgAHZ34sPggWqDbAZ6Cr7/G85KOlqX5tgWNBnPMdG9k5/GAPhe+tQcrtmR0TFH+bztfe0NcRJdOAd9GWypXkrcEINLmSm
 MIME-Version: 1.0
-Date: Thu, 19 Apr 2018 10:06:01 -0700
+Date: Thu, 19 Apr 2018 10:06:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000e2bf3056a36962d@google.com>
-Subject: KMSAN: uninit-value in dccp_invalid_packet
-From: syzbot <syzbot+00763607efc31f91b276@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dccp@vger.kernel.org, gerrit@erg.abdn.ac.uk,
+Message-ID: <000000000000116485056a369609@google.com>
+Subject: KMSAN: uninit-value in __udp4_lib_rcv
+From: syzbot <syzbot+493bccc5b8cfe9d5035e@syzkaller.appspotmail.com>
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -27,36 +27,31 @@ Hello,
 
 syzbot hit the following crash on  
 https://github.com/google/kmsan.git/master commit
-e2ab7e8abba47a2f2698216258e5d8727ae58717 (Fri Apr 6 16:24:31 2018 +0000)
-kmsan: temporarily disable visitAsmInstruction() to help syzbot
+35ff515e4bda2646f6c881d33951c306ea9c282a (Tue Apr 10 08:59:43 2018 +0000)
+Merge pull request #11 from parkerduckworth/readme
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=00763607efc31f91b276
+https://syzkaller.appspot.com/bug?extid=493bccc5b8cfe9d5035e
 
-So far this crash happened 19 times on  
+So far this crash happened 11 times on  
 https://github.com/google/kmsan.git/master.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5163725019414528
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4935004320694272
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=4836676144726016
+https://syzkaller.appspot.com/x/repro.syz?id=5133260011077632
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4771447134224384
+https://syzkaller.appspot.com/x/log.txt?id=5329144879513600
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=6627248707860932248
 compiler: clang version 7.0.0 (trunk 329391)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+00763607efc31f91b276@syzkaller.appspotmail.com
+Reported-by: syzbot+493bccc5b8cfe9d5035e@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
 ==================================================================
-BUG: KMSAN: uninit-value in dccp_invalid_packet+0x3b8/0xf50  
-net/dccp/ipv4.c:716
-CPU: 1 PID: 3572 Comm: syzkaller338124 Not tainted 4.16.0+ #82
+BUG: KMSAN: uninit-value in __udp4_lib_rcv+0x628/0x4740 net/ipv4/udp.c:2066
+CPU: 1 PID: 3573 Comm: syzkaller192717 Not tainted 4.16.0+ #83
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
@@ -65,8 +60,8 @@ Call Trace:
   dump_stack+0x185/0x1d0 lib/dump_stack.c:53
   kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
   __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
-  dccp_invalid_packet+0x3b8/0xf50 net/dccp/ipv4.c:716
-  dccp_v4_rcv+0xf7/0x2630 net/dccp/ipv4.c:778
+  __udp4_lib_rcv+0x628/0x4740 net/ipv4/udp.c:2066
+  udp_rcv+0x5c/0x70 net/ipv4/udp.c:2287
   ip_local_deliver_finish+0x6ed/0xd40 net/ipv4/ip_input.c:216
   NF_HOOK include/linux/netfilter.h:288 [inline]
   ip_local_deliver+0x43c/0x4e0 net/ipv4/ip_input.c:257
@@ -98,17 +93,19 @@ Call Trace:
   inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
   sock_sendmsg_nosec net/socket.c:630 [inline]
   sock_sendmsg net/socket.c:640 [inline]
-  SYSC_sendto+0x6c3/0x7e0 net/socket.c:1747
-  SyS_sendto+0x8a/0xb0 net/socket.c:1715
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmsg net/socket.c:2080 [inline]
+  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+  SyS_sendmsg+0x54/0x80 net/socket.c:2087
   do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x441709
-RSP: 002b:00007ffffde4d688 EFLAGS: 00000217 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 000000000000001b RCX: 0000000000441709
-RDX: 0000000000000030 RSI: 0000000020000140 RDI: 0000000000000003
-RBP: 00000000004a3318 R08: 0000000020000000 R09: 0000000000000010
-R10: 0000000000000000 R11: 0000000000000217 R12: 00007ffffde4d768
-R13: 0000000000402490 R14: 0000000000000000 R15: 0000000000000000
+RIP: 0033:0x43fe99
+RSP: 002b:00007ffca5bf5be8 EFLAGS: 00000217 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fe99
+RDX: 0000000000000000 RSI: 00000000200002c0 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000217 R12: 00000000004017c0
+R13: 0000000000401850 R14: 0000000000000000 R15: 0000000000000000
 
 Uninit was stored to memory at:
   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
@@ -119,8 +116,8 @@ Uninit was stored to memory at:
   skb_copy_bits+0x63a/0xdb0 net/core/skbuff.c:2046
   __pskb_pull_tail+0x483/0x22e0 net/core/skbuff.c:1883
   pskb_may_pull include/linux/skbuff.h:2112 [inline]
-  dccp_invalid_packet+0x352/0xf50 net/dccp/ipv4.c:708
-  dccp_v4_rcv+0xf7/0x2630 net/dccp/ipv4.c:778
+  __udp4_lib_rcv+0x55f/0x4740 net/ipv4/udp.c:2058
+  udp_rcv+0x5c/0x70 net/ipv4/udp.c:2287
   ip_local_deliver_finish+0x6ed/0xd40 net/ipv4/ip_input.c:216
   NF_HOOK include/linux/netfilter.h:288 [inline]
   ip_local_deliver+0x43c/0x4e0 net/ipv4/ip_input.c:257
@@ -149,8 +146,10 @@ Uninit was created at:
   inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
   sock_sendmsg_nosec net/socket.c:630 [inline]
   sock_sendmsg net/socket.c:640 [inline]
-  SYSC_sendto+0x6c3/0x7e0 net/socket.c:1747
-  SyS_sendto+0x8a/0xb0 net/socket.c:1715
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmsg net/socket.c:2080 [inline]
+  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+  SyS_sendmsg+0x54/0x80 net/socket.c:2087
   do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 ==================================================================
