@@ -1,78 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753447AbeDSRgA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 13:36:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46828 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752887AbeDSRf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 13:35:58 -0400
-Date: Thu, 19 Apr 2018 20:35:57 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH] virtio_ring: switch to dma_XX barriers for rpmsg
-Message-ID: <1524159181-351878-1-git-send-email-mst@redhat.com>
+        id S1753558AbeDSRlZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 13:41:25 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:36714 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753086AbeDSRlX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 13:41:23 -0400
+X-Google-Smtp-Source: AIpwx4/A34bgtHTM3S06LCfO0IIrDb0t0OhXZcLuZ5EmCH5ZOyloivxLMYz0fPAW/qiIP5tTVKNTrw==
+From: Kevin Hilman <khilman@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Carlo Caione <carlo@caione.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/4] ARM64: dts: meson: hhi syscon and clock controllers
+Organization: BayLibre
+References: <20180315115545.1884-1-jbrunet@baylibre.com>
+Date: Thu, 19 Apr 2018 10:41:20 -0700
+In-Reply-To: <20180315115545.1884-1-jbrunet@baylibre.com> (Jerome Brunet's
+        message of "Thu, 15 Mar 2018 12:55:41 +0100")
+Message-ID: <7h1sfb5c1r.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-virtio is using barriers to order memory accesses, thus
-dma_wmb/rmb is a good match.
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Build-tested on x86: Before
+> The HHI register region provides more than just clocks. Several drivers may
+> need to access this region, such as the clock controllers and the display
+> driver.
+>
+> Meson-gx clock controllers has been developed and merged before we knew the
+> hhi could be needed elsewhere, which is why it requests the region directly.
+> Meson-axg was built following the model of meson-gx.
+>
+> To fix this situation, the clock controller should be a child of the hhi
+> system controllers. The hhi system controller node already exists on meson-gx.
+> It needs to be added on the axg.
+>
+> This changeset depends on [0]. This dependency has been merged in
+> clk-next. A topic branch is available here [1]
 
-[mst@tuck linux]$ size drivers/virtio/virtio_ring.o
-   text    data     bss     dec     hex filename
-  11392     820       0   12212    2fb4 drivers/virtio/virtio_ring.o
+As the dependencies are now merged for v4.17, applying this to
+v4.18/dt64,
 
-After
-mst@tuck linux]$ size drivers/virtio/virtio_ring.o
-   text    data     bss     dec     hex filename
-  11284     820       0   12104    2f48 drivers/virtio/virtio_ring.o
+Thanks,
 
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
-
-It's good in theory, but could one of RPMSG maintainers please review
-and ack this patch? Or even better test it?
-
-All these barriers are useless on Intel anyway ...
-
- include/linux/virtio_ring.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
-index bbf3252..fab0213 100644
---- a/include/linux/virtio_ring.h
-+++ b/include/linux/virtio_ring.h
-@@ -35,7 +35,7 @@ static inline void virtio_rmb(bool weak_barriers)
- 	if (weak_barriers)
- 		virt_rmb();
- 	else
--		rmb();
-+		dma_rmb();
- }
- 
- static inline void virtio_wmb(bool weak_barriers)
-@@ -43,7 +43,7 @@ static inline void virtio_wmb(bool weak_barriers)
- 	if (weak_barriers)
- 		virt_wmb();
- 	else
--		wmb();
-+		dma_wmb();
- }
- 
- static inline void virtio_store_mb(bool weak_barriers,
--- 
-MST
+Kevin
