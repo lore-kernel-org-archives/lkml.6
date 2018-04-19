@@ -1,149 +1,504 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754064AbeDSQkM (ORCPT <rfc822;w@1wt.eu>);
+        id S1753357AbeDSQkR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:40:17 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44482 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754042AbeDSQkM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Apr 2018 12:40:12 -0400
-Received: from mail-eopbgr00131.outbound.protection.outlook.com ([40.107.0.131]:60000
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753622AbeDSQkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:40:08 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se;
-Subject: Re: [PATCH v2 3/6] drm: of: introduce drm_of_media_bus_fmt
-To: Rob Herring <robh+dt@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>, Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180417131052.16336-1-peda@axentia.se>
- <20180417131052.16336-4-peda@axentia.se>
- <CAL_JsqL1=fzTb5dUgrj07Jv3r026ndsU2o=Nr2eft-bni5jueQ@mail.gmail.com>
-From: Peter Rosin <peda@axentia.se>
-Organization: Axentia Technologies AB
-Message-ID: <3181dfde-cd19-41a1-6e6d-5be7a9e40674@axentia.se>
-Date: Thu, 19 Apr 2018 18:40:01 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqL1=fzTb5dUgrj07Jv3r026ndsU2o=Nr2eft-bni5jueQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [85.226.244.23]
-X-ClientProxiedBy: HE1PR0501CA0019.eurprd05.prod.outlook.com
- (2603:10a6:3:1a::29) To HE1PR0202MB2779.eurprd02.prod.outlook.com
- (2603:10a6:3:e8::21)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:HE1PR0202MB2779;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2779;3:++zMZfh2Qo8ZKuiXXKephCUVZXeWTKigme+WnRadA0+aJzFcdWuesdYs6ED7M8zaj69+AQtmmfAgW75vs2945dRuABwjrQQs9WmDf0BMYzTrnXJRQuGaPXW3Iasfu7BtGih7YZTSPARDQ3LB34tzxXmS+Vrlya9hJWR9r3WyW7izwRU6UIp/9LVY7x+H1SoTZKrop45R4st2jz+S0f4+LvA0YVAXnigkS0KsW+61QBHylvL7Y2duwPWtwS3/3iuG;25:AUeMnVVAuw46FvsnJzYGa5dBTotc/tqWBsmTZB2CKfv+dZJcR7pFn4bG+r+8lhyl9nbT6xI31I0n+rf6iYq7pYvMDSsMEg5Dep4tE/AExUhs/uyicTZcaDR6f7Ons7Z/gQ02bGSWT4zLNmQGMjoMUqEBbOv0rRrHkTxMzMN3s9pp3L2mgghmAgQUW7B02i2oABdq0T/QD/GSThf9l8R1osWaD0jhm3iombUYDp3MA0rgjoy7eSqO5X3JGoehDhcWy7Gl3imyl2I3o4L6risygNuoTdFhmkZ8Iw/N9AJmhP6kQEXcA9TCAG3vu7fLMwF5PZDZa+XBqMbf/86FFA6hGw==;31:tS2QTC9wm/yp/wu7u5bqJdGzWnXm9tYW/O5uSfzjaUgQcWWIcT3Qx8ySNYPIzMDgNWieC3IpH2gAVkaxXLmZJCax5ycxr7kDx+lBKx4uVqkLdg88Sj+vTKXeadIW86iC9/sGlbamA4LumEdgYz3+ZUqYrndA7femdthaYO0V7+EKc6n3Vpq0EpGLqXh0nCaTGEYUXrWBYy+/xr95ZnxIKPXrSlbL3HjjsFgIQueVeX4=
-X-MS-TrafficTypeDiagnostic: HE1PR0202MB2779:
-X-Microsoft-Antispam-PRVS: <HE1PR0202MB2779A6D77B5A087DF201BC03BCB50@HE1PR0202MB2779.eurprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231232)(944501327)(52105095)(10201501046)(3002001)(6041310)(20161123564045)(20161123560045)(2016111802025)(20161123558120)(20161123562045)(6072148)(6043046)(201708071742011);SRVR:HE1PR0202MB2779;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0202MB2779;
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2779;4:FTUnSxJaUNto7mWH7Q/dL4RBktaDfVeTwxEL2vVMHlcYKQ+GYIR3EW4kJ9hLgAdruFJFHu3G6FpwJKfPCAgvU4FRXhLyAG/h+rrP7CGkZX1lHskdWdvx/8VGCmtmPQUJRsAdOhwasvRFmCQ/TCiTtk77EqFVVAnzIzCe6C227iNMZpW3dbOiZxWaCUMCJj9hY/FVD1wGWC93RjUGbTL1pQ5WnApwRpYhguZf/jwgVUwjkJL0jIOxF18ONHqSm9tEfPwae98v8aNiS8lScrVBGQ==
-X-Forefront-PRVS: 0647963F84
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(979002)(6049001)(346002)(39380400002)(396003)(39830400003)(366004)(376002)(377424004)(52314003)(6486002)(3846002)(5660300001)(3260700006)(50466002)(230700001)(26005)(478600001)(2906002)(86362001)(117156002)(77096007)(25786009)(31696002)(6116002)(16576012)(66066001)(36756003)(65806001)(7416002)(65956001)(305945005)(8936002)(58126008)(53936002)(54906003)(8676002)(74482002)(229853002)(65826007)(31686004)(446003)(81166006)(53546011)(956004)(11346002)(76176011)(2616005)(36916002)(186003)(386003)(52116002)(64126003)(16526019)(6246003)(7736002)(23676004)(2486003)(4326008)(47776003)(316002)(52146003)(6666003)(476003)(42262002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0202MB2779;H:[192.168.13.3];FPR:;SPF:None;LANG:en;MLV:ovrnspm;PTR:InfoNoRecords;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjAyMDJNQjI3Nzk7MjM6QlNwNlh2b1dYL2Nwb1N0N3R0MTJHcnlC?=
- =?utf-8?B?a3R4aVZFaHE2cGNERjQrQnV1RDdMRVQ5RW5wSUF3clFqeWpqbG1sTzlEcXFK?=
- =?utf-8?B?ZjBDalR6dmVUTVdDU0FVa1dkWVJXT3RHNWFybWpUdkxpUTJTWU9RT1dzRzF4?=
- =?utf-8?B?TUNYM1YrN1padlFxQzRuZDcrZnNZTk5VQktaMkIzWlhlRU1tVWpaVE1NM25X?=
- =?utf-8?B?U2lteXU5SnVsclMrYWtGZGZhTGlabzM0dDFWbFlvM3dWV2d1c0xDeUZteXNR?=
- =?utf-8?B?a0pCcWJzcGZXSDRRcVludkNSQ2ZYcy92ZGo2WlhMeXUrMzNHeE9MNThMNXRV?=
- =?utf-8?B?bmNoRGswYndGTXBDa1U2QUd0UElaZVowZXUvdWt4MC80VXNOY2pob3NRMWpP?=
- =?utf-8?B?eE1wMjJ4aE1UcXg1akNVeHE2T3hTcjI5dnlUajdjRHZRQ1l5MU9RQW53U253?=
- =?utf-8?B?Wlgxd2NYbjRTVFhTSm9ockhPUnlmaWFzbXlPbjdOZUlnMFhYUWJIUHkzTFVK?=
- =?utf-8?B?Z2NUczkrWGtFeCtUOFp2bjZneENHanRVOUhoTTFmQTRsY3FFbnpyZ3RKZ0l3?=
- =?utf-8?B?L1d4UXdmWXVvSnF5MlZYSmdPNEM5YUxZMHFoZmxDemlua1VldHpWNmdFVWVC?=
- =?utf-8?B?TVlOZTRIVGR1SjBneGI2K3Q4VjNPcm5XTTltQVpZeE91VnRhTkZtNDhqQlVY?=
- =?utf-8?B?dUdjTGxQZnhkOHFSaTRZM2pkMklRVy9JRGcreUxJSUhyaEw3WTc2dkxCeW1h?=
- =?utf-8?B?MUxVWWRGc3JVblN0UHNzcnJ4dWZOZnYyeElXVHpiRkVQaVFscWFPSnE1V1hK?=
- =?utf-8?B?WVJUNmhmT3VBN1RLTTdOU0UzQ0VZd3dYdlhiQXhDVlZnRHZmYm1nZWtlME9J?=
- =?utf-8?B?a1V6RUpUb2JoNExXT21rMnBBSHc3a3ZjTjZvYXJoU0dKUVdBR0EvVFgvdG9F?=
- =?utf-8?B?V3BOWHhEeTZPWnhZNmEyQ1UwOVl5OEZtR2lHYkNPZFhVM3phRFBDbmpsSXox?=
- =?utf-8?B?Yjh4UzhwV1RNUTVCU05mUGxDWDNmdDUzdUswVklRK1Q1SktqMlVWSGMwblNy?=
- =?utf-8?B?KzIrdE5OSjk2UzRSTHlVSmlPT3JISDlBcnRURS9VMVBrUmpnR0RKZTNjajFo?=
- =?utf-8?B?U1dNbS9oK2FzendzMDZWYzFaNWRZbTRjYXVyYVB5Y2tYSEV6dnlhNVhMKzFa?=
- =?utf-8?B?WHVvZEVJanp4dFZtajBOcEZYUExyOEhzKzkvNzBCVVZRVjY1d05nQzd3U2lQ?=
- =?utf-8?B?UGM4QS9yTU5FUTBTclhoY2RVQVhvRmR0dkd4MEtMNUxjQzVWWWJxc2hsRlpB?=
- =?utf-8?B?TTRzandSOFd2ZlIvcnRmdE5zZ05IQkhESWprbEtCcWhmK0dTZEtyV3p3UWx6?=
- =?utf-8?B?Mmo5M2puUUdwUHI2MEN5RVZocUZSWXlEWlMycGhUZFBWdisvbGFjcWs0S2Vu?=
- =?utf-8?B?WTZvRm1MVUJnNXVnTjJVM0JrSWtpZC9sNUlwbEV1bEFZV1c2MzFmR3ptb2hF?=
- =?utf-8?B?R1RRS004WEhENUEvMTVrL05TSFVsbUhtNGlDVjJBSCt5MXRHQXN2L0VJV0Zp?=
- =?utf-8?B?WWpiTXhQQVBSSHdGZlJzQkR2aDRGaGNjdTk5Ty93cUNNeitNUXhaNlBXdTNF?=
- =?utf-8?B?SEFoQ3ozRXFsUDNraEw0UEVmbWQ1TmJXRUlWTUh5QUxMWnBhRlppK3ErM0hO?=
- =?utf-8?B?VFNoaHJnS1YvcjlKU2xEaTRwbkFYRGNWaWl0S2VkMmpxVkVUVlZkd2hLZWxn?=
- =?utf-8?B?aDNCMVRwM1NTS2dBaUhqbFEvM3EzL3RvNXlFcXFUMC9TbitoRXBDeFBTT1M0?=
- =?utf-8?B?aVNNOFY1eXp4S204ZnBVV1Bhd2p0ZlZLbU1Ldyt6VjFXZWVRWUFBWG80c3Bq?=
- =?utf-8?B?dmpLbjBLaVh4MnNiZDFmbk1oVW8raVFlTHF2RWpqcUlYSFpza1IzSkxhczhy?=
- =?utf-8?B?NlVwSEpWMnVyQmZpVTBlOXV4aloxMjlSREQyREw0WHE3TkdHVklRblg5RGRK?=
- =?utf-8?B?Q0ZhVkVHZWZBSWdENy9qd3Q5d1podGRURmR5a1YwZE1XWWc3c0RHQWFzVE85?=
- =?utf-8?Q?c13JaLg9B3rPAdqxLpq6Q5Wbi7w?=
-X-Microsoft-Antispam-Message-Info: pTqJKWe5Sq8zSfjrsec85dP4LOTSdnurNJyExr9q+VUFjvJRP7k8SWr7RDct2UZIYRxKhPJQp12zPoNSkcngjIqXAHsssdy7eJrVD1vflehRiEBYjQ6rhjUsT3O7ki2lZ8tndCa/ILvr3IhMH7bmRPO5GinEreVn7DehqKEq2CRWa4wwdNJxa4pyD3vQTAHK
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2779;6:4uovPWD5pEwDYA7jNJcr6gSeXpXH511sF/ju7YdWuuMLneozNNbo5qM5kyRtNuBzWe/tLR2dzKj1KyjS/QHIMDu6VKcm2Y4HfwnTxQLLrDuiHK5h1Pl6y6VPzC6KEh0X4T+rZ5QdmdhYZnqL+2qnEDxT5jkw+6y+VCSJb3u4MfpvchGal6LBNLa4URdIkBJcOTxbk0PchwvKLrolop3ECKFG+q/1JqaWWg6/ruRt8zNN3l0ueqF39nYejfn8sZI996Eei4cBOW7GAUgdiLFBJTTiRce8zXFRZ1IH+BjC18uePSad/vPFKGp3roygNwudhPJEGWEcIGN+47JVSbvd2n51lDsLtG0hNzSNMGzBoDx6JBW1O4G3naXV2PwFgdlPCZq693eWNVS683TI7cPWIsWfGXS0dkOP+SxFbY+S/4/cmjsXn21Q7v4/YiwYAsleZcSejfczXIcAtXoGkSIWnw==;5:J9jgaoamYaix7i4fit096uWUSAS9pBx/VDvbVBtE56X9oNX+yad/MhGtNFDMKpSGkisIENseU8HVVX1hFzMs3wg0mOqg0gCvpmbMj/GfuIswvGCIXLIvhzgnQr4haNaqnOfISb2BANWJBqo5x6psAQnyAbgsOOovbPIp1o5Arvs=;24:d8J7I6qbXfzRdLDwFWm+i06ks81jXDxd9NRDyxPPoWBJAzDoEn/G/Keoy9ysClsjO3K0g8ucIfig5Bg+uGarWmlqPNErDSl0JfMdx0eWjZE=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0202MB2779;7:TN7ozfLg2MIYamMVF5GV2t3hY+TXJxWyGfU33rBxgMdzjamiiHBcSJ52+hOd15m06SgMRgc/Mg55mYe4tjbIrhMvDennJrUAVLp6hUuogs9v21yCPCXw3ThMp2QGS+thmnL1e4/TZIUTeJY395TA/a3OIjcGH+Yh8vTtq5CNM3PmZbqaG2Ihd40QEq10mokyyy4M64rQbqqRvq06Kpq23Ff59KSdnjyKCWDUOVJNfq17/R1GTQfgptJWBoQHf49d
-X-MS-Office365-Filtering-Correlation-Id: 6285d824-b8c3-4e84-ebf8-08d5a614348c
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2018 16:40:04.8375 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6285d824-b8c3-4e84-ebf8-08d5a614348c
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0202MB2779
+X-Google-Smtp-Source: AB8JxZrVtGarxwFowXaD7Dp2It76IQGSnvowkPueYeYHjwWoaQaMHlw383kN8OriRGkZMt7j+h9BSg==
+From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
+To: Matias Bjorling <mb@lightnvm.io>
+Cc: linux-block@vger.kernel.org, Javier Gonzales <javier@cnexlabs.com>,
+        linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: [PATCH 1/3] lightnvm: pblk: rework write error recovery path
+Date: Thu, 19 Apr 2018 18:39:22 +0200
+Message-Id: <1524155964-3743-2-git-send-email-hans.ml.holmberg@owltronix.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524155964-3743-1-git-send-email-hans.ml.holmberg@owltronix.com>
+References: <1524155964-3743-1-git-send-email-hans.ml.holmberg@owltronix.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-19 18:22, Rob Herring wrote:
-> On Tue, Apr 17, 2018 at 8:10 AM, Peter Rosin <peda@axentia.se> wrote:
->> Add a central function to parse a node according to the video
->> interface binding and get a media bus format.
->>
->> Start with only supporting a very limited set of a few basic media
->> bus formats.
->>
->> Signed-off-by: Peter Rosin <peda@axentia.se>
->> ---
->>  drivers/gpu/drm/drm_of.c | 38 ++++++++++++++++++++++++++++++++++++++
->>  include/drm/drm_of.h     |  7 +++++++
->>  2 files changed, 45 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
->> index 4c191c050e7d..f9473edb60a7 100644
->> --- a/drivers/gpu/drm/drm_of.c
->> +++ b/drivers/gpu/drm/drm_of.c
->> @@ -212,6 +212,44 @@ int drm_of_encoder_active_endpoint(struct device_node *node,
->>  EXPORT_SYMBOL_GPL(drm_of_encoder_active_endpoint);
->>
->>  /*
->> + * drm_of_media_bus_fmt - return the media bus format described in the node
->> + * @node: device tree node containing the media bus format
->> + *
->> + * @node is presumably an of-graph endpoint node.
->> + *
->> + * Return the media bus format, or zero if none is described. Or one of the
->> + * standard error codes.
->> + */
->> +int drm_of_media_bus_fmt(struct device_node *node)
-> 
-> Should use endpoint or ep here instead of node to be clear what node
-> this function operates on.
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-I just sent v3 and missed this. Anyway, the reason I didn't use ep,
-was that you at one point said "port of endpoint", and I wanted this
-function to cover both cases. And maybe others. Anyway, if I hear
-nothing I'll make the change to ep and I'll also reword the comment
-to talk more decisively about endpoints for v4.
+The write error recovery path is incomplete, so rework
+the write error recovery handling to do resubmits directly
+from the write buffer.
 
-Cheers,
-Peter
+When a write error occurs, the remaining sectors in the chunk are
+mapped out and invalidated and the request inserted in a resubmit list.
+
+The writer thread checks if there are any requests to resubmit,
+scans and invalidates any lbas that have been overwritten by later
+writes and resubmits the failed entries.
+
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+---
+ drivers/lightnvm/pblk-init.c     |   2 +
+ drivers/lightnvm/pblk-recovery.c |  91 ---------------
+ drivers/lightnvm/pblk-write.c    | 241 ++++++++++++++++++++++++++++-----------
+ drivers/lightnvm/pblk.h          |   8 +-
+ 4 files changed, 180 insertions(+), 162 deletions(-)
+
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index bfc488d..6f06727 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -426,6 +426,7 @@ static int pblk_core_init(struct pblk *pblk)
+ 		goto free_r_end_wq;
+ 
+ 	INIT_LIST_HEAD(&pblk->compl_list);
++	INIT_LIST_HEAD(&pblk->resubmit_list);
+ 
+ 	return 0;
+ 
+@@ -1185,6 +1186,7 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
+ 	pblk->state = PBLK_STATE_RUNNING;
+ 	pblk->gc.gc_enabled = 0;
+ 
++	spin_lock_init(&pblk->resubmit_lock);
+ 	spin_lock_init(&pblk->trans_lock);
+ 	spin_lock_init(&pblk->lock);
+ 
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index 9cb6d5d..5983428 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -16,97 +16,6 @@
+ 
+ #include "pblk.h"
+ 
+-void pblk_submit_rec(struct work_struct *work)
+-{
+-	struct pblk_rec_ctx *recovery =
+-			container_of(work, struct pblk_rec_ctx, ws_rec);
+-	struct pblk *pblk = recovery->pblk;
+-	struct nvm_rq *rqd = recovery->rqd;
+-	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
+-	struct bio *bio;
+-	unsigned int nr_rec_secs;
+-	unsigned int pgs_read;
+-	int ret;
+-
+-	nr_rec_secs = bitmap_weight((unsigned long int *)&rqd->ppa_status,
+-								NVM_MAX_VLBA);
+-
+-	bio = bio_alloc(GFP_KERNEL, nr_rec_secs);
+-
+-	bio->bi_iter.bi_sector = 0;
+-	bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
+-	rqd->bio = bio;
+-	rqd->nr_ppas = nr_rec_secs;
+-
+-	pgs_read = pblk_rb_read_to_bio_list(&pblk->rwb, bio, &recovery->failed,
+-								nr_rec_secs);
+-	if (pgs_read != nr_rec_secs) {
+-		pr_err("pblk: could not read recovery entries\n");
+-		goto err;
+-	}
+-
+-	if (pblk_setup_w_rec_rq(pblk, rqd, c_ctx)) {
+-		pr_err("pblk: could not setup recovery request\n");
+-		goto err;
+-	}
+-
+-#ifdef CONFIG_NVM_DEBUG
+-	atomic_long_add(nr_rec_secs, &pblk->recov_writes);
+-#endif
+-
+-	ret = pblk_submit_io(pblk, rqd);
+-	if (ret) {
+-		pr_err("pblk: I/O submission failed: %d\n", ret);
+-		goto err;
+-	}
+-
+-	mempool_free(recovery, pblk->rec_pool);
+-	return;
+-
+-err:
+-	bio_put(bio);
+-	pblk_free_rqd(pblk, rqd, PBLK_WRITE);
+-}
+-
+-int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
+-			struct pblk_rec_ctx *recovery, u64 *comp_bits,
+-			unsigned int comp)
+-{
+-	struct nvm_rq *rec_rqd;
+-	struct pblk_c_ctx *rec_ctx;
+-	int nr_entries = c_ctx->nr_valid + c_ctx->nr_padded;
+-
+-	rec_rqd = pblk_alloc_rqd(pblk, PBLK_WRITE);
+-	rec_ctx = nvm_rq_to_pdu(rec_rqd);
+-
+-	/* Copy completion bitmap, but exclude the first X completed entries */
+-	bitmap_shift_right((unsigned long int *)&rec_rqd->ppa_status,
+-				(unsigned long int *)comp_bits,
+-				comp, NVM_MAX_VLBA);
+-
+-	/* Save the context for the entries that need to be re-written and
+-	 * update current context with the completed entries.
+-	 */
+-	rec_ctx->sentry = pblk_rb_wrap_pos(&pblk->rwb, c_ctx->sentry + comp);
+-	if (comp >= c_ctx->nr_valid) {
+-		rec_ctx->nr_valid = 0;
+-		rec_ctx->nr_padded = nr_entries - comp;
+-
+-		c_ctx->nr_padded = comp - c_ctx->nr_valid;
+-	} else {
+-		rec_ctx->nr_valid = c_ctx->nr_valid - comp;
+-		rec_ctx->nr_padded = c_ctx->nr_padded;
+-
+-		c_ctx->nr_valid = comp;
+-		c_ctx->nr_padded = 0;
+-	}
+-
+-	recovery->rqd = rec_rqd;
+-	recovery->pblk = pblk;
+-
+-	return 0;
+-}
+-
+ int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta_buf)
+ {
+ 	u32 crc;
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index 3e6f1eb..ab45157 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -103,68 +103,147 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
+ 	pblk_rb_sync_end(&pblk->rwb, &flags);
+ }
+ 
+-/* When a write fails, we are not sure whether the block has grown bad or a page
+- * range is more susceptible to write errors. If a high number of pages fail, we
+- * assume that the block is bad and we mark it accordingly. In all cases, we
+- * remap and resubmit the failed entries as fast as possible; if a flush is
+- * waiting on a completion, the whole stack would stall otherwise.
+- */
+-static void pblk_end_w_fail(struct pblk *pblk, struct nvm_rq *rqd)
++/* Map remaining sectors in chunk, starting from ppa */
++static void pblk_map_remaining(struct pblk *pblk, struct ppa_addr *ppa)
+ {
+-	void *comp_bits = &rqd->ppa_status;
+-	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
+-	struct pblk_rec_ctx *recovery;
+-	struct ppa_addr *ppa_list = rqd->ppa_list;
+-	int nr_ppas = rqd->nr_ppas;
+-	unsigned int c_entries;
+-	int bit, ret;
++	struct nvm_tgt_dev *dev = pblk->dev;
++	struct nvm_geo *geo = &dev->geo;
++	struct pblk_line *line;
++	struct ppa_addr map_ppa = *ppa;
++	u64 paddr;
++	int done = 0;
+ 
+-	if (unlikely(nr_ppas == 1))
+-		ppa_list = &rqd->ppa_addr;
++	line = &pblk->lines[pblk_ppa_to_line(*ppa)];
++	spin_lock(&line->lock);
+ 
+-	recovery = mempool_alloc(pblk->rec_pool, GFP_ATOMIC);
++	while (!done)  {
++		paddr = pblk_dev_ppa_to_line_addr(pblk, map_ppa);
+ 
+-	INIT_LIST_HEAD(&recovery->failed);
++		if (!test_and_set_bit(paddr, line->map_bitmap))
++			line->left_msecs--;
+ 
+-	bit = -1;
+-	while ((bit = find_next_bit(comp_bits, nr_ppas, bit + 1)) < nr_ppas) {
+-		struct pblk_rb_entry *entry;
+-		struct ppa_addr ppa;
++		if (!test_and_set_bit(paddr, line->invalid_bitmap))
++			le32_add_cpu(line->vsc, -1);
+ 
+-		/* Logic error */
+-		if (bit > c_ctx->nr_valid) {
+-			WARN_ONCE(1, "pblk: corrupted write request\n");
+-			mempool_free(recovery, pblk->rec_pool);
+-			goto out;
++		if (geo->version == NVM_OCSSD_SPEC_12) {
++			map_ppa.ppa++;
++			if (map_ppa.g.pg == geo->num_pg)
++				done = 1;
++		} else {
++			map_ppa.m.sec++;
++			if (map_ppa.m.sec == geo->clba)
++				done = 1;
+ 		}
++	}
+ 
+-		ppa = ppa_list[bit];
+-		entry = pblk_rb_sync_scan_entry(&pblk->rwb, &ppa);
+-		if (!entry) {
+-			pr_err("pblk: could not scan entry on write failure\n");
+-			mempool_free(recovery, pblk->rec_pool);
+-			goto out;
+-		}
++	spin_unlock(&line->lock);
++}
++
++static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
++		unsigned int nr_entries)
++{
++	struct pblk_rb *rb = &pblk->rwb;
++	struct pblk_rb_entry *entry;
++	struct pblk_line *line;
++	struct pblk_w_ctx *w_ctx;
++	struct ppa_addr ppa_l2p;
++	int flags;
++	unsigned int pos, i;
++
++	spin_lock(&pblk->trans_lock);
++	pos = sentry;
++	for (i = 0; i < nr_entries; i++) {
++		entry = &rb->entries[pos];
++		w_ctx = &entry->w_ctx;
++
++		/* Check if the lba has been overwritten */
++		ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
++		if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
++			w_ctx->lba = ADDR_EMPTY;
++
++		/* Mark up the entry as submittable again */
++		flags = READ_ONCE(w_ctx->flags);
++		flags |= PBLK_WRITTEN_DATA;
++		/* Release flags on write context. Protect from writes */
++		smp_store_release(&w_ctx->flags, flags);
+ 
+-		/* The list is filled first and emptied afterwards. No need for
+-		 * protecting it with a lock
++		/* Decrese the reference count to the line as we will
++		 * re-map these entries
+ 		 */
+-		list_add_tail(&entry->index, &recovery->failed);
++		line = &pblk->lines[pblk_ppa_to_line(w_ctx->ppa)];
++		kref_put(&line->ref, pblk_line_put);
++
++		pos = (pos + 1) & (rb->nr_entries - 1);
+ 	}
++	spin_unlock(&pblk->trans_lock);
++}
+ 
+-	c_entries = find_first_bit(comp_bits, nr_ppas);
+-	ret = pblk_recov_setup_rq(pblk, c_ctx, recovery, comp_bits, c_entries);
+-	if (ret) {
+-		pr_err("pblk: could not recover from write failure\n");
+-		mempool_free(recovery, pblk->rec_pool);
+-		goto out;
++static void pblk_queue_resubmit(struct pblk *pblk, struct pblk_c_ctx *c_ctx)
++{
++	struct pblk_c_ctx *r_ctx;
++
++	r_ctx = kzalloc(sizeof(struct pblk_c_ctx), GFP_KERNEL);
++	if (!r_ctx) {
++		pr_err("pblk: failed to allocate resubmit context");
++		return;
+ 	}
+ 
++	r_ctx->lun_bitmap = NULL;
++	r_ctx->sentry = c_ctx->sentry;
++	r_ctx->nr_valid = c_ctx->nr_valid;
++	r_ctx->nr_padded = c_ctx->nr_padded;
++
++	spin_lock(&pblk->resubmit_lock);
++	list_add_tail(&r_ctx->list, &pblk->resubmit_list);
++	spin_unlock(&pblk->resubmit_lock);
++}
++
++static void pblk_submit_rec(struct work_struct *work)
++{
++	struct pblk_rec_ctx *recovery =
++			container_of(work, struct pblk_rec_ctx, ws_rec);
++	struct pblk *pblk = recovery->pblk;
++	struct nvm_rq *rqd = recovery->rqd;
++	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
++	struct ppa_addr *ppa_list;
++
++	pblk_log_write_err(pblk, rqd);
++
++	if (rqd->nr_ppas == 1)
++		ppa_list = &rqd->ppa_addr;
++	else
++		ppa_list = rqd->ppa_list;
++
++	pblk_map_remaining(pblk, ppa_list);
++	pblk_queue_resubmit(pblk, c_ctx);
++
++	pblk_up_rq(pblk, rqd->ppa_list, rqd->nr_ppas, c_ctx->lun_bitmap);
++	if (c_ctx->nr_padded)
++		pblk_bio_free_pages(pblk, rqd->bio, c_ctx->nr_valid,
++							c_ctx->nr_padded);
++	bio_put(rqd->bio);
++	pblk_free_rqd(pblk, rqd, PBLK_WRITE);
++	mempool_free(recovery, pblk->rec_pool);
++
++	atomic_dec(&pblk->inflight_io);
++}
++
++
++static void pblk_end_w_fail(struct pblk *pblk, struct nvm_rq *rqd)
++{
++	struct pblk_rec_ctx *recovery;
++
++	recovery = mempool_alloc(pblk->rec_pool, GFP_ATOMIC);
++	if (!recovery) {
++		pr_err("pblk: could not allocate recovery work\n");
++		return;
++	}
++
++	recovery->pblk = pblk;
++	recovery->rqd = rqd;
++
+ 	INIT_WORK(&recovery->ws_rec, pblk_submit_rec);
+ 	queue_work(pblk->close_wq, &recovery->ws_rec);
+-
+-out:
+-	pblk_complete_write(pblk, rqd, c_ctx);
+ }
+ 
+ static void pblk_end_io_write(struct nvm_rq *rqd)
+@@ -173,8 +252,8 @@ static void pblk_end_io_write(struct nvm_rq *rqd)
+ 	struct pblk_c_ctx *c_ctx = nvm_rq_to_pdu(rqd);
+ 
+ 	if (rqd->error) {
+-		pblk_log_write_err(pblk, rqd);
+-		return pblk_end_w_fail(pblk, rqd);
++		pblk_end_w_fail(pblk, rqd);
++		return;
+ 	}
+ #ifdef CONFIG_NVM_DEBUG
+ 	else
+@@ -339,6 +418,7 @@ int pblk_submit_meta_io(struct pblk *pblk, struct pblk_line *meta_line)
+ 	bio = pblk_bio_map_addr(pblk, data, rq_ppas, rq_len,
+ 					l_mg->emeta_alloc_type, GFP_KERNEL);
+ 	if (IS_ERR(bio)) {
++		pr_err("pblk: failed to map emeta io");
+ 		ret = PTR_ERR(bio);
+ 		goto fail_free_rqd;
+ 	}
+@@ -515,26 +595,54 @@ static int pblk_submit_write(struct pblk *pblk)
+ 	unsigned int secs_avail, secs_to_sync, secs_to_com;
+ 	unsigned int secs_to_flush;
+ 	unsigned long pos;
++	unsigned int resubmit;
+ 
+-	/* If there are no sectors in the cache, flushes (bios without data)
+-	 * will be cleared on the cache threads
+-	 */
+-	secs_avail = pblk_rb_read_count(&pblk->rwb);
+-	if (!secs_avail)
+-		return 1;
+-
+-	secs_to_flush = pblk_rb_flush_point_count(&pblk->rwb);
+-	if (!secs_to_flush && secs_avail < pblk->min_write_pgs)
+-		return 1;
+-
+-	secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail, secs_to_flush);
+-	if (secs_to_sync > pblk->max_write_pgs) {
+-		pr_err("pblk: bad buffer sync calculation\n");
+-		return 1;
+-	}
++	spin_lock(&pblk->resubmit_lock);
++	resubmit = !list_empty(&pblk->resubmit_list);
++	spin_unlock(&pblk->resubmit_lock);
++
++	/* Resubmit failed writes first */
++	if (resubmit) {
++		struct pblk_c_ctx *r_ctx;
++
++		spin_lock(&pblk->resubmit_lock);
++		r_ctx = list_first_entry(&pblk->resubmit_list,
++					struct pblk_c_ctx, list);
++		list_del(&r_ctx->list);
++		spin_unlock(&pblk->resubmit_lock);
+ 
+-	secs_to_com = (secs_to_sync > secs_avail) ? secs_avail : secs_to_sync;
+-	pos = pblk_rb_read_commit(&pblk->rwb, secs_to_com);
++		secs_avail = r_ctx->nr_valid;
++		pos = r_ctx->sentry;
++
++		pblk_prepare_resubmit(pblk, pos, secs_avail);
++		secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail,
++				secs_avail);
++
++		kfree(r_ctx);
++	} else {
++		/* If there are no sectors in the cache,
++		 * flushes (bios without data) will be cleared on
++		 * the cache threads
++		 */
++		secs_avail = pblk_rb_read_count(&pblk->rwb);
++		if (!secs_avail)
++			return 1;
++
++		secs_to_flush = pblk_rb_flush_point_count(&pblk->rwb);
++		if (!secs_to_flush && secs_avail < pblk->min_write_pgs)
++			return 1;
++
++		secs_to_sync = pblk_calc_secs_to_sync(pblk, secs_avail,
++					secs_to_flush);
++		if (secs_to_sync > pblk->max_write_pgs) {
++			pr_err("pblk: bad buffer sync calculation\n");
++			return 1;
++		}
++
++		secs_to_com = (secs_to_sync > secs_avail) ?
++			secs_avail : secs_to_sync;
++		pos = pblk_rb_read_commit(&pblk->rwb, secs_to_com);
++	}
+ 
+ 	bio = bio_alloc(GFP_KERNEL, secs_to_sync);
+ 
+@@ -553,6 +661,7 @@ static int pblk_submit_write(struct pblk *pblk)
+ 	if (pblk_submit_io_set(pblk, rqd))
+ 		goto fail_free_bio;
+ 
++
+ #ifdef CONFIG_NVM_DEBUG
+ 	atomic_long_add(secs_to_sync, &pblk->sub_writes);
+ #endif
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 9838d03..cff6aea 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -128,7 +128,6 @@ struct pblk_pad_rq {
+ struct pblk_rec_ctx {
+ 	struct pblk *pblk;
+ 	struct nvm_rq *rqd;
+-	struct list_head failed;
+ 	struct work_struct ws_rec;
+ };
+ 
+@@ -664,6 +663,9 @@ struct pblk {
+ 
+ 	struct list_head compl_list;
+ 
++	spinlock_t resubmit_lock;	 /* Resubmit list lock */
++	struct list_head resubmit_list; /* Resubmit list for failed writes*/
++
+ 	mempool_t *page_bio_pool;
+ 	mempool_t *gen_ws_pool;
+ 	mempool_t *rec_pool;
+@@ -849,13 +851,9 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq);
+ /*
+  * pblk recovery
+  */
+-void pblk_submit_rec(struct work_struct *work);
+ struct pblk_line *pblk_recov_l2p(struct pblk *pblk);
+ int pblk_recov_pad(struct pblk *pblk);
+ int pblk_recov_check_emeta(struct pblk *pblk, struct line_emeta *emeta);
+-int pblk_recov_setup_rq(struct pblk *pblk, struct pblk_c_ctx *c_ctx,
+-			struct pblk_rec_ctx *recovery, u64 *comp_bits,
+-			unsigned int comp);
+ 
+ /*
+  * pblk gc
+-- 
+2.7.4
