@@ -1,88 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752812AbeDSLAE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 07:00:04 -0400
-Received: from foss.arm.com ([217.140.101.70]:35890 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752617AbeDSK7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:59:03 -0400
-From: Dave Martin <Dave.Martin@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
-        linux-arch@vger.kernel.org
-Subject: [RFC PATCH 3/6] arm64: Use update{,_tsk}_thread_flag()
-Date: Thu, 19 Apr 2018 11:58:45 +0100
-Message-Id: <1524135528-28561-4-git-send-email-Dave.Martin@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1524135528-28561-1-git-send-email-Dave.Martin@arm.com>
-References: <1524135528-28561-1-git-send-email-Dave.Martin@arm.com>
+        id S1752844AbeDSLAl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:00:41 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34934 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752686AbeDSLAk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 07:00:40 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Philippe CORNU <philippe.cornu@st.com>
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: Re: [PATCH 2/2] drm/bridge: sii902x: add optional power supplies
+Date: Thu, 19 Apr 2018 14:00:47 +0300
+Message-ID: <2003583.WmldKZVqDK@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <ea6fbdbe-6ce5-0110-5590-083c7b697a85@st.com>
+References: <20180410051927.8268-1-philippe.cornu@st.com> <3775994.jviQhGlOpf@avalon> <ea6fbdbe-6ce5-0110-5590-083c7b697a85@st.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch uses the new update_thread_flag() helpers to simplify a
-couple of if () set; else clear; constructs.
+Hi Philippe,
 
-No functional change.
+On Thursday, 19 April 2018 12:46:31 EEST Philippe CORNU wrote:
+> On 04/19/2018 10:20 AM, Laurent Pinchart wrote:
+> > On Tuesday, 10 April 2018 08:19:27 EEST Philippe Cornu wrote:
+> > 
+> >> Add the 3 optional power supplies using the exact description
+> >> found in the document named
+> >> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
+> >>
+> >> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> >> ---
+> >> drivers/gpu/drm/bridge/sii902x.c | 39 +++++++++++++++++++++++++++++++----
+> >> 1 file changed, 35 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/bridge/sii902x.c
+> >> b/drivers/gpu/drm/bridge/sii902x.c index 60373d7eb220..e17ba6db1ec8
+> >> 100644
+> >> --- a/drivers/gpu/drm/bridge/sii902x.c
+> >> +++ b/drivers/gpu/drm/bridge/sii902x.c
 
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- arch/arm64/kernel/fpsimd.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+[snip]
 
-diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index 87a3536..0c4e7e0 100644
---- a/arch/arm64/kernel/fpsimd.c
-+++ b/arch/arm64/kernel/fpsimd.c
-@@ -618,10 +618,8 @@ int sve_set_vector_length(struct task_struct *task,
- 	task->thread.sve_vl = vl;
+> >> @@ -443,6 +471,9 @@ static int sii902x_remove(struct i2c_client *client)
+> >>
+> >>   	drm_bridge_remove(&sii902x->bridge);
+> >>
+> >> +	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
+> >> +			       sii902x->supplies);
+> >> +
+> > 
+> > While this seems functionally correct, would it be useful to only enable
+> > power supplies when needed to save power ?
  
- out:
--	if (flags & PR_SVE_VL_INHERIT)
--		set_tsk_thread_flag(task, TIF_SVE_VL_INHERIT);
--	else
--		clear_tsk_thread_flag(task, TIF_SVE_VL_INHERIT);
-+	update_tsk_thread_flag(task, TIF_SVE_VL_INHERIT,
-+			       flags & PR_SVE_VL_INHERIT);
- 
- 	return 0;
- }
-@@ -902,7 +900,7 @@ void fpsimd_thread_switch(struct task_struct *next)
- 	if (current->mm)
- 		task_fpsimd_save();
- 
--	if (next->mm) {
-+	if (next->mm)
- 		/*
- 		 * If we are switching to a task whose most recent userland
- 		 * FPSIMD state is already in the registers of *this* cpu,
-@@ -910,13 +908,10 @@ void fpsimd_thread_switch(struct task_struct *next)
- 		 * the TIF_FOREIGN_FPSTATE flag so the state will be loaded
- 		 * upon the next return to userland.
- 		 */
--		if (__this_cpu_read(fpsimd_last_state.st) ==
--			&next->thread.uw.fpsimd_state
--		    && next->thread.fpsimd_cpu == smp_processor_id())
--			clear_tsk_thread_flag(next, TIF_FOREIGN_FPSTATE);
--		else
--			set_tsk_thread_flag(next, TIF_FOREIGN_FPSTATE);
--	}
-+		update_tsk_thread_flag(next, TIF_FOREIGN_FPSTATE,
-+			__this_cpu_read(fpsimd_last_state.st) !=
-+				&next->thread.uw.fpsimd_state ||
-+			next->thread.fpsimd_cpu != smp_processor_id());
- }
- 
- void fpsimd_flush_thread(void)
+> that is a good point. I do not know well (yet) this bridge. Maybe I can 
+> add a 3rd patch with bridge pre_enable() and post_disable() containing 
+> reset & supplies management. Or I can put reset&supplies in bridge 
+> enable() & disable() but it could be a little messy.
+> 
+> Any opinion/advice?
+
+I'm not familiar with this bridge yet, so we need to be careful. The first 
+point you need to check is the hardware requirements regarding power supply 
+sequencing. For instance could it damage the chip if the I/O supply is turned 
+off while the I/O pins are externally driven ? Can the core supplies be turned 
+off with the I/O supply on ? Then, based on the hardware limitations, you 
+should pick the appropriate location for power handling.
+
+> >>   	return 0;
+> >>   }
+
 -- 
-2.1.4
+Regards,
+
+Laurent Pinchart
