@@ -1,193 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753595AbeDSVkH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 17:40:07 -0400
-Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:54644
-        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753449AbeDSVkE (ORCPT
+        id S1753542AbeDSVmO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 17:42:14 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:54158 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753385AbeDSVmM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 17:40:04 -0400
-x-originating-ip: 107.180.71.197
-From: Long Li <longli@linuxonhyperv.com>
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc: Long Li <longli@microsoft.com>
-Subject: [Patch v4] cifs: Allocate validate negotiation request through kmalloc
-Date: Thu, 19 Apr 2018 14:38:07 -0700
-Message-Id: <20180419213807.3128-1-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 2.15.1
-Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfLvMgfiLhZYpDTGPTGDFl0aqmb+XP6THjZjjM8bOENl4Z89bpuiFzg4UEsnvTXexueKfUXK63AnXij/Dtc7o87V6CUAPh3WJHgHpR64xujSEde7eSCWD
- 2x4JuENCIaeApKir6YenhHiBeqBivXysdqQxxdd56Wt+agNFsaPC01p8xXZVlcHJzfaY3a8zE621FxxJcjwS+jczgFIKc45f7u2fFH2wKABuOftTTM8Gn4Mr
- ygTq5kcm6LKQNrOcKnaEC+zPACDY0oTrIVQ2q85mmhv6sbu/paOfcYtQ51IpVXzfVi07fBzu+Ez4Wh1zlmzFjvvHoUwbHoGTDO7r2UyaecZDSgDNGuAwL3Sh
- KL31UXay5dJ7koxFOms/L/vfGgN4wrgUWqTi9yD25pmVkrqHhxsbR218ejOrx6bAVRPgGxhO
+        Thu, 19 Apr 2018 17:42:12 -0400
+From: Stefan Agner <stefan@agner.ch>
+To: akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com
+Cc: torvalds@linux-foundation.org, pasha.tatashin@oracle.com,
+        ard.biesheuvel@linaro.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH] treewide: use PHYS_ADDR_MAX to avoid type casting ULLONG_MAX
+Date: Thu, 19 Apr 2018 23:42:04 +0200
+Message-Id: <20180419214204.19322-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.17.0
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         RCVD_TLS_ALL(0.00)[];
+         ASN(0.00)[asn:13030, ipnet:2001:1620::/32, country:CH];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_HAS_DN(0.00)[];
+         MID_CONTAINS_FROM(1.00)[];
+         TO_DN_SOME(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_EQ_ENVFROM(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[9]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+With PHYS_ADDR_MAX there is now a type safe variant for all
+bits set. Make use of it.
 
-The data buffer allocated on the stack can't be DMA'ed, ib_dma_map_page will
-return an invalid DMA address for a buffer on stack. Even worse, this
-incorrect address can't be detected by ib_dma_mapping_error. Sending data
-from this address to hardware will not fail, but the remote peer will get
-junk data.
+Patch created using a sematic patch as follows:
 
-Fix this by allocating the request on the heap in smb3_validate_negotiate.
+// <smpl>
+@@
+typedef phys_addr_t;
+@@
+-(phys_addr_t)ULLONG_MAX
++PHYS_ADDR_MAX
+// </smpl>
 
-Changes in v2:
-Removed duplicated code on freeing buffers on function exit.
-(Thanks to Parav Pandit <parav@mellanox.com>)
-Fixed typo in the patch title.
-
-Changes in v3:
-Added "Fixes" to the patch.
-Changed several sizeof() to use *pointer in place of struct.
-
-Changes in v4:
-Added detailed comments on the failure through RDMA.
-Allocate request buffer using GPF_NOFS.
-Fixed possible memory leak.
-
-Fixes: ff1c038addc4 ("Check SMB3 dialects against downgrade attacks")
-Signed-off-by: Long Li <longli@microsoft.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- fs/cifs/smb2pdu.c | 61 ++++++++++++++++++++++++++++++-------------------------
- 1 file changed, 33 insertions(+), 28 deletions(-)
+ arch/arm64/mm/init.c               | 6 +++---
+ arch/mips/kernel/setup.c           | 4 ++--
+ arch/powerpc/mm/mem.c              | 2 +-
+ arch/sparc/mm/init_64.c            | 2 +-
+ arch/x86/mm/init_32.c              | 2 +-
+ arch/x86/mm/init_64.c              | 2 +-
+ drivers/firmware/efi/arm-init.c    | 2 +-
+ drivers/remoteproc/qcom_q6v5_pil.c | 2 +-
+ drivers/soc/qcom/mdt_loader.c      | 4 ++--
+ 9 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index 0f044c4..caa2a1e 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -729,8 +729,8 @@ SMB2_negotiate(const unsigned int xid, struct cifs_ses *ses)
- 
- int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
- {
--	int rc = 0;
--	struct validate_negotiate_info_req vneg_inbuf;
-+	int ret, rc = -EIO;
-+	struct validate_negotiate_info_req *pneg_inbuf;
- 	struct validate_negotiate_info_rsp *pneg_rsp = NULL;
- 	u32 rsplen;
- 	u32 inbuflen; /* max of 4 dialects */
-@@ -741,7 +741,6 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
- 	if (tcon->ses->server->rdma)
- 		return 0;
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 9f3c47acf8ff..f48b19496141 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -310,7 +310,7 @@ static void __init arm64_memory_present(void)
+ }
  #endif
--
- 	/* In SMB3.11 preauth integrity supersedes validate negotiate */
- 	if (tcon->ses->server->dialect == SMB311_PROT_ID)
- 		return 0;
-@@ -764,63 +763,67 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
- 	if (tcon->ses->session_flags & SMB2_SESSION_FLAG_IS_NULL)
- 		cifs_dbg(VFS, "Unexpected null user (anonymous) auth flag sent by server\n");
  
--	vneg_inbuf.Capabilities =
-+	pneg_inbuf = kmalloc(sizeof(*pneg_inbuf), GFP_NOFS);
-+	if (!pneg_inbuf)
-+		return -ENOMEM;
-+
-+	pneg_inbuf->Capabilities =
- 			cpu_to_le32(tcon->ses->server->vals->req_capabilities);
--	memcpy(vneg_inbuf.Guid, tcon->ses->server->client_guid,
-+	memcpy(pneg_inbuf->Guid, tcon->ses->server->client_guid,
- 					SMB2_CLIENT_GUID_SIZE);
+-static phys_addr_t memory_limit = (phys_addr_t)ULLONG_MAX;
++static phys_addr_t memory_limit = PHYS_ADDR_MAX;
  
- 	if (tcon->ses->sign)
--		vneg_inbuf.SecurityMode =
-+		pneg_inbuf->SecurityMode =
- 			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_REQUIRED);
- 	else if (global_secflags & CIFSSEC_MAY_SIGN)
--		vneg_inbuf.SecurityMode =
-+		pneg_inbuf->SecurityMode =
- 			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_ENABLED);
- 	else
--		vneg_inbuf.SecurityMode = 0;
-+		pneg_inbuf->SecurityMode = 0;
- 
- 
- 	if (strcmp(tcon->ses->server->vals->version_string,
- 		SMB3ANY_VERSION_STRING) == 0) {
--		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
--		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
--		vneg_inbuf.DialectCount = cpu_to_le16(2);
-+		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
-+		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
-+		pneg_inbuf->DialectCount = cpu_to_le16(2);
- 		/* structure is big enough for 3 dialects, sending only 2 */
- 		inbuflen = sizeof(struct validate_negotiate_info_req) - 2;
- 	} else if (strcmp(tcon->ses->server->vals->version_string,
- 		SMBDEFAULT_VERSION_STRING) == 0) {
--		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
--		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
--		vneg_inbuf.Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
--		vneg_inbuf.DialectCount = cpu_to_le16(3);
-+		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
-+		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
-+		pneg_inbuf->Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
-+		pneg_inbuf->DialectCount = cpu_to_le16(3);
- 		/* structure is big enough for 3 dialects */
- 		inbuflen = sizeof(struct validate_negotiate_info_req);
+ /*
+  * Limit the memory size that was specified via FDT.
+@@ -401,7 +401,7 @@ void __init arm64_memblock_init(void)
+ 	 * high up in memory, add back the kernel region that must be accessible
+ 	 * via the linear mapping.
+ 	 */
+-	if (memory_limit != (phys_addr_t)ULLONG_MAX) {
++	if (memory_limit != PHYS_ADDR_MAX) {
+ 		memblock_mem_limit_remove_map(memory_limit);
+ 		memblock_add(__pa_symbol(_text), (u64)(_end - _text));
+ 	}
+@@ -664,7 +664,7 @@ __setup("keepinitrd", keepinitrd_setup);
+  */
+ static int dump_mem_limit(struct notifier_block *self, unsigned long v, void *p)
+ {
+-	if (memory_limit != (phys_addr_t)ULLONG_MAX) {
++	if (memory_limit != PHYS_ADDR_MAX) {
+ 		pr_emerg("Memory Limit: %llu MB\n", memory_limit >> 20);
  	} else {
- 		/* otherwise specific dialect was requested */
--		vneg_inbuf.Dialects[0] =
-+		pneg_inbuf->Dialects[0] =
- 			cpu_to_le16(tcon->ses->server->vals->protocol_id);
--		vneg_inbuf.DialectCount = cpu_to_le16(1);
-+		pneg_inbuf->DialectCount = cpu_to_le16(1);
- 		/* structure is big enough for 3 dialects, sending only 1 */
- 		inbuflen = sizeof(struct validate_negotiate_info_req) - 4;
- 	}
+ 		pr_emerg("Memory Limit: none\n");
+diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+index 563188ac6fa2..2c96c0c68116 100644
+--- a/arch/mips/kernel/setup.c
++++ b/arch/mips/kernel/setup.c
+@@ -93,7 +93,7 @@ void __init add_memory_region(phys_addr_t start, phys_addr_t size, long type)
+ 	 * If the region reaches the top of the physical address space, adjust
+ 	 * the size slightly so that (start + size) doesn't overflow
+ 	 */
+-	if (start + size - 1 == (phys_addr_t)ULLONG_MAX)
++	if (start + size - 1 == PHYS_ADDR_MAX)
+ 		--size;
  
--	rc = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
-+	ret = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
- 		FSCTL_VALIDATE_NEGOTIATE_INFO, true /* is_fsctl */,
--		(char *)&vneg_inbuf, sizeof(struct validate_negotiate_info_req),
-+		(char *)pneg_inbuf, sizeof(*pneg_inbuf),
- 		(char **)&pneg_rsp, &rsplen);
+ 	/* Sanity check */
+@@ -376,7 +376,7 @@ static void __init bootmem_init(void)
+ 	unsigned long reserved_end;
+ 	unsigned long mapstart = ~0UL;
+ 	unsigned long bootmap_size;
+-	phys_addr_t ramstart = (phys_addr_t)ULLONG_MAX;
++	phys_addr_t ramstart = PHYS_ADDR_MAX;
+ 	bool bootmap_valid = false;
+ 	int i;
  
--	if (rc != 0) {
--		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
--		return -EIO;
-+	if (ret) {
-+		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", ret);
-+		goto out_free_inbuf;
- 	}
- 
--	if (rsplen != sizeof(struct validate_negotiate_info_rsp)) {
-+	if (rsplen != sizeof(*pneg_rsp)) {
- 		cifs_dbg(VFS, "invalid protocol negotiate response size: %d\n",
- 			 rsplen);
- 
- 		/* relax check since Mac returns max bufsize allowed on ioctl */
- 		if ((rsplen > CIFSMaxBufSize)
- 		     || (rsplen < sizeof(struct validate_negotiate_info_rsp)))
--			goto err_rsp_free;
-+			goto out_free_rsp;
- 	}
- 
- 	/* check validate negotiate info response matches what we got earlier */
-@@ -838,14 +841,16 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
- 
- 	/* validate negotiate successful */
- 	cifs_dbg(FYI, "validate negotiate info successful\n");
--	kfree(pneg_rsp);
--	return 0;
-+	rc = 0;
-+	goto out_free_rsp;
- 
- vneg_out:
- 	cifs_dbg(VFS, "protocol revalidation - security settings mismatch\n");
--err_rsp_free:
-+out_free_rsp:
- 	kfree(pneg_rsp);
--	return -EIO;
-+out_free_inbuf:
-+	kfree(pneg_inbuf);
-+	return rc;
+diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+index 737f8a4632cc..7607a509c695 100644
+--- a/arch/powerpc/mm/mem.c
++++ b/arch/powerpc/mm/mem.c
+@@ -213,7 +213,7 @@ void __init mem_topology_setup(void)
+ 	/* Place all memblock_regions in the same node and merge contiguous
+ 	 * memblock_regions
+ 	 */
+-	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
++	memblock_set_node(0, PHYS_ADDR_MAX, &memblock.memory, 0);
  }
  
- enum securityEnum
+ void __init initmem_init(void)
+diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
+index 8aeb1aabe76e..f396048a0d68 100644
+--- a/arch/sparc/mm/init_64.c
++++ b/arch/sparc/mm/init_64.c
+@@ -1620,7 +1620,7 @@ static void __init bootmem_init_nonnuma(void)
+ 	       (top_of_ram - total_ram) >> 20);
+ 
+ 	init_node_masks_nonnuma();
+-	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
++	memblock_set_node(0, PHYS_ADDR_MAX, &memblock.memory, 0);
+ 	allocate_node_data(0);
+ 	node_set_online(0);
+ }
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index c893c6a3d707..979e0a02cbe1 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -692,7 +692,7 @@ void __init initmem_init(void)
+ 	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE - 1) + 1;
+ #endif
+ 
+-	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
++	memblock_set_node(0, PHYS_ADDR_MAX, &memblock.memory, 0);
+ 	sparse_memory_present_with_active_regions(0);
+ 
+ #ifdef CONFIG_FLATMEM
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 0a400606dea0..765a50fb6364 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -742,7 +742,7 @@ kernel_physical_mapping_init(unsigned long paddr_start,
+ #ifndef CONFIG_NUMA
+ void __init initmem_init(void)
+ {
+-	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
++	memblock_set_node(0, PHYS_ADDR_MAX, &memblock.memory, 0);
+ }
+ #endif
+ 
+diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
+index 80d1a885def5..b5214c143fee 100644
+--- a/drivers/firmware/efi/arm-init.c
++++ b/drivers/firmware/efi/arm-init.c
+@@ -193,7 +193,7 @@ static __init void reserve_regions(void)
+ 	 * uses its own memory map instead.
+ 	 */
+ 	memblock_dump_all();
+-	memblock_remove(0, (phys_addr_t)ULLONG_MAX);
++	memblock_remove(0, PHYS_ADDR_MAX);
+ 
+ 	for_each_efi_memory_desc(md) {
+ 		paddr = md->phys_addr;
+diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
+index 8e70a627e0bb..da8edf3f85b3 100644
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -615,7 +615,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	struct elf32_hdr *ehdr;
+ 	phys_addr_t mpss_reloc;
+ 	phys_addr_t boot_addr;
+-	phys_addr_t min_addr = (phys_addr_t)ULLONG_MAX;
++	phys_addr_t min_addr = PHYS_ADDR_MAX;
+ 	phys_addr_t max_addr = 0;
+ 	bool relocate = false;
+ 	char seg_name[10];
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index 17b314d9a148..dc09d7ac905f 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -50,7 +50,7 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
+ 	const struct elf32_phdr *phdrs;
+ 	const struct elf32_phdr *phdr;
+ 	const struct elf32_hdr *ehdr;
+-	phys_addr_t min_addr = (phys_addr_t)ULLONG_MAX;
++	phys_addr_t min_addr = PHYS_ADDR_MAX;
+ 	phys_addr_t max_addr = 0;
+ 	int i;
+ 
+@@ -97,7 +97,7 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ 	const struct elf32_hdr *ehdr;
+ 	const struct firmware *seg_fw;
+ 	phys_addr_t mem_reloc;
+-	phys_addr_t min_addr = (phys_addr_t)ULLONG_MAX;
++	phys_addr_t min_addr = PHYS_ADDR_MAX;
+ 	phys_addr_t max_addr = 0;
+ 	size_t fw_name_len;
+ 	ssize_t offset;
 -- 
-2.7.4
+2.17.0
