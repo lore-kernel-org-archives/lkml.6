@@ -1,152 +1,182 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752261AbeDSMIW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:08:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43336 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751293AbeDSMIU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:08:20 -0400
-Date: Thu, 19 Apr 2018 13:08:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: David Collins <collinsd@codeaurora.org>, lgirdwood@gmail.com,
-        mark.rutland@arm.com, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rnayak@codeaurora.org, ilina@codeaurora.org
-Subject: Re: [PATCH 1/2] regulator: add QCOM RPMh regulator driver
-Message-ID: <20180419120813.GD27188@sirena.org.uk>
-References: <cover.1521246069.git.collinsd@codeaurora.org>
- <71fab82672524b95632cdb588c16edfc9711866a.1521246069.git.collinsd@codeaurora.org>
- <152165924074.91116.13025068669916027026@swboyd.mtv.corp.google.com>
- <493c1f5d-df99-ca68-0f90-a7937a696f5d@codeaurora.org>
- <152411734938.46528.9676451637772936597@swboyd.mtv.corp.google.com>
+        id S1752641AbeDSMJK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 08:09:10 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:33697 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752496AbeDSMJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 08:09:08 -0400
+Date: Thu, 19 Apr 2018 14:09:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?Q?M=E5ns?= Andersson <mans.andersson@nibe.se>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: TLK10X initial driver submission
+Message-ID: <20180419120902.GB17888@lunn.ch>
+References: <20180419082816.109338-1-mans.andersson@nibe.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="at6+YcpfzWZg/htY"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <152411734938.46528.9676451637772936597@swboyd.mtv.corp.google.com>
-X-Cookie: We've upped our standards, so up yours!
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180419082816.109338-1-mans.andersson@nibe.se>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Apr 19, 2018 at 10:28:16AM +0200, Måns Andersson wrote:
+> From: Mans Andersson <mans.andersson@nibe.se>
+> 
+> Add suport for the TI TLK105 and TLK106 10/100Mbit ethernet phys.
+> 
+> In addition the TLK10X needs to be removed from DP83848 driver as the
+> power back off support is added here for this device.
+> 
+> Datasheet:
+> http://www.ti.com/lit/gpn/tlk106
+> ---
+>  .../devicetree/bindings/net/ti,tlk10x.txt          |  27 +++
+>  drivers/net/phy/Kconfig                            |   5 +
+>  drivers/net/phy/Makefile                           |   1 +
+>  drivers/net/phy/dp83848.c                          |   3 -
+>  drivers/net/phy/tlk10x.c                           | 209 +++++++++++++++++++++
+>  5 files changed, 242 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/ti,tlk10x.txt
+>  create mode 100644 drivers/net/phy/tlk10x.c
+> 
+> diff --git a/Documentation/devicetree/bindings/net/ti,tlk10x.txt b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
+> new file mode 100644
+> index 0000000..371d0d7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
+> @@ -0,0 +1,27 @@
+> +* Texas Instruments - TLK105 / TLK106 ethernet PHYs
+> +
+> +Required properties:
+> +	- reg - The ID number for the phy, usually a small integer
+> +
+> +Optional properties:
+> +	- ti,power-back-off - Power Back Off Level
+> +		Please refer to data sheet chapter 8.6 and TI Application
+> +		Note SLLA3228
+> +		0 - Normal Operation
+> +		1 - Level 1 (up to 140m cable between TLK link partners)
+> +		2 - Level 2 (up to 100m cable between TLK link partners)
+> +		3 - Level 3 (up to 80m cable between TLK link partners)
 
---at6+YcpfzWZg/htY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Måns
 
-On Wed, Apr 18, 2018 at 10:55:49PM -0700, Stephen Boyd wrote:
+Device tree is all about board properties. In most cases, power back
+off is not a board properties, since it depends on the cable length
+and the peer board. If however, your board has two PHYs back to back,
+say to connect to an Ethernet switch, that would be a valid board
+property.
 
-> I lost the code context, but my general comment was that the modes that
-> the hardware supports should come from the driver. If there's some sort
-> of constraint on what those modes end up being because some board has an
-> issue with some mode then we would want a binding that indicates such a
+How are you using this?
 
-No, that's *never* how regulator constraints work.  We only change the
-hardware configuration if we have explicit permission from constraints
-to do so, otherwise everything is left as we found it.  That way if your
-board catches fire or whatever it wasn't something that Linux initiated
-just from default behaviour.
+I know of others who would like such a configuration. Marvell PHYs can
+do something similar. I've always suggested adding a PHY tunable. Pass
+the cable length in meters and let the PHY driver pick the nearest it
+can do, rounding up. The Marvell PHYs also support measuring the cable
+length as part of the cable diagnostics. So it would be good to
+reserve a configuration value to mean 'auto' - measure the cable and
+then pick the best power back off. Quickly scanning the data sheet, i
+see that this PHY also has the ability to measure the cable length.
 
-> > > Is this regulator-microvolt-offset? Ah I guess it's a thing in the RP=
-Mh
-> > > registers. This probably needs to be pushed into the framework and co=
-me
-> > > down through a 'set_headroom' op in the regulator ops via a
-> > > regulator-headroom-microvolt property that's parsed in of_regulator.c.
+> +static int tlk10x_read(struct phy_device *phydev, int reg)
+> +{
+> +	if (reg & ~0x1f) {
+> +		/* Extended register */
+> +		phy_write(phydev, TLK10X_REGCR, 0x001F);
+> +		phy_write(phydev, TLK10X_ADDAR, reg);
+> +		phy_write(phydev, TLK10X_REGCR, 0x401F);
+> +		reg = TLK10X_ADDAR;
+> +	}
+> +
+> +	return phy_read(phydev, reg);
+> +}
+> +
+> +static int tlk10x_write(struct phy_device *phydev, int reg, int val)
+> +{
+> +	if (reg & ~0x1f) {
+> +		/* Extended register */
+> +		phy_write(phydev, TLK10X_REGCR, 0x001F);
+> +		phy_write(phydev, TLK10X_ADDAR, reg);
+> +		phy_write(phydev, TLK10X_REGCR, 0x401F);
+> +		reg = TLK10X_ADDAR;
+> +	}
+> +
+> +	return phy_write(phydev, reg, val);
+> +}
 
-> > The qcom,headroom-voltage property is equivalent to struct
-> > regulator_desc.min_dropout_uV, but handled in hardware.  I don't see the
-> > need to make a new regulator op to configure this value dynamically.
+This looks to be phy_read_mmd() and phy_write_mmd(). If so, please use
+them, they get the locking correct.
 
-> Ok? We have other regulator ops just to configure boot time things. The
-> goal is to come up with generic regulator properties that can be applied
-> from the framework perspective and be used by other regulator drivers in
-> the future.
 
-This doesn't sound like what the min_dropout_uV constraint is intended
-to handle - that's there for the regulator driver (not constraints) to
-indicate how much headroom the regulator needs in the supply voltage in
-order to provide regulation.  It's not something the regulator uses,
-it's something that gets fed into voltage requests made on the supply of
-the regulator which I can't see that the hardware is going to be able to
-handle unaided.
+> +#ifdef CONFIG_OF_MDIO
+> +static int tlk10x_of_init(struct phy_device *phydev)
+> +{
+> +	struct tlk10x_private *tlk10x = phydev->priv;
+> +	struct device *dev = &phydev->mdio.dev;
+> +	struct device_node *of_node = dev->of_node;
+> +	int ret;
+> +
+> +	if (!of_node)
+> +		return 0;
+> +
+> +	ret = of_property_read_u32(of_node, "ti,power-back-off",
+> +				   &tlk10x->pwrbo_level);
+> +	if (ret) {
+> +		dev_err(dev, "missing ti,power-back-off property");
+> +		tlk10x->pwrbo_level = 0;
+> +	}
 
-> Cool. This should be a generic regulator DT property that all regulators
-> can use. We have the same problem on other RPM based regulator drivers
-> where boot sends a bunch of voltages because we don't know what it is by
-> default out of boot and we can't read it.
+If we decide to accept this, you should do range checking, and return
+-EINVAL if the value is out of range.
 
-Ideally future versions of the RPM will have improved interfaces,
-there's a bunch of problems like this :(
+> +static int tlk10x_config_init(struct phy_device *phydev)
+> +{
+> +	int ret, reg;
+> +	struct tlk10x_private *tlk10x;
+> +
+> +	ret = genphy_config_init(phydev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (!phydev->priv) {
+> +		tlk10x = devm_kzalloc(&phydev->mdio.dev, sizeof(*tlk10x),
+> +				      GFP_KERNEL);
+> +		if (!tlk10x)
+> +			return -ENOMEM;
+> +
+> +		phydev->priv = tlk10x;
+> +		ret = tlk10x_of_init(phydev);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		tlk10x = (struct tlk10x_private *)phydev->priv;
+> +	}
 
-> >=20
-> > >> +       if (type =3D=3D RPMH_REGULATOR_TYPE_XOB && init_data->constr=
-aints.min_uV) {
-> > >> +               vreg->rdesc.fixed_uV =3D init_data->constraints.min_=
-uV;
-> > >> +               init_data->constraints.apply_uV =3D 0;
-> > >> +               vreg->rdesc.n_voltages =3D 1;
-> > >> +       }
+This allocation should be done in .probe
 
-> > > What is this doing? Usually constraints aren't touched by the driver.
+> +
+> +	// Power back off
+> +	if (tlk10x->pwrbo_level < 0 || tlk10x->pwrbo_level > 3)
+> +		tlk10x->pwrbo_level = 0;
+> +	reg = tlk10x_read(phydev, TLK10X_PWRBOCR);
+> +	reg = ((reg & ~TLK10X_PWRBOCR_MASK)
+> +		| (tlk10x->pwrbo_level << 6));
+> +	ret = tlk10x_write(phydev, TLK10X_PWRBOCR, reg);
+> +	if (ret < 0) {
+> +		dev_err(&phydev->mdio.dev,
+> +			"unable to set power back-off (err=%d)\n", ret);
+> +		return ret;
+> +	}
+> +	dev_info(&phydev->mdio.dev, "power back-off set to level %d\n",
+> +		 tlk10x->pwrbo_level);
+> +
+> +	return 0;
+> +}
 
-> > For XOB managed regulators, we need to set fixed_uV to match the DT
-> > constraint voltage and n_voltages =3D 1.  This allows consumers
-> > regulator_set_voltage() calls to succeed for such regulators.  It works
-> > the same as a fixed regulator.  I think that apply_uV =3D 0 could be le=
-ft out.
-
-> Wouldn't XOB regulators only have one voltage specified for min/max in
-> DT already though? I seem to recall that's how we make set_voltage() in
-> those cases work. Or it could be that drivers aren't supposed to call
-> set_voltage() on single or fixed voltage regulators anyway, because
-> constraints take care of it for them.
-
-Yes, constraints that specify a single voltage are done by setting min
-and max to the same value.  fixed_uV is *only* for regulators that have
-a physically fixed voltage.
-
-> > >> +       if (vreg->hw_data->mode_map) {
-> > >> +               init_data->constraints.valid_ops_mask |=3D REGULATOR=
-_CHANGE_MODE;
-
-A driver must *NEVER* modify any constraints.
-
-> > > Huh, I thought this was assigned by the framework.
-
-> > No, this is not set anywhere in the regulator framework.  There isn't a=
- DT
-> > method to configure it.  It seems that it could only be handled before
-> > with board files.  Other regulator drivers also configure it.
-
-> Hmm ok. Would something be bad if we did support it through DT? I can't
-> seem to recall the history here.
-
-Yes, if someone wants to configure this through DT they should add
-support for configuring it using DT.  The mode support in most
-regulators is not practically useful so nobody did that yet.  Mostly the
-hardware does a much better job of adjusting modes on the fly for
-anything that's going on at runtime than software is ever likely to do
-so it's not worth it.
-
---at6+YcpfzWZg/htY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrYhqwACgkQJNaLcl1U
-h9BFMQgAgDeSgMRsDtkY6PyXw9wPTVA53XMSF3JXyrF1qWtLx4DmQlqE7ZAB2lY5
-j29vpVB9sqwyBzjPYqVI6vSGVV/SFnkByWpZJ3ZXEuIROOP4XfaR+jAbOx0N2kHA
-5xHWBbUGQUV3+Sr2rK/pYoc4swFrPplBwvrT5tP6kVg4UfMqRshl1AA1BL+TUeOZ
-rKycnOt3O9v2r2hu2U2+rp96g3qsnrIcXD6+rRR9aXIb/rv1D1sFYRIMbtcpTJeP
-oQqa7kVTcV1PcOW4/Dy6DEOPm86fyhIKZw3K92gLLZl/HlQDiSTADReDfiELUBP8
-wxWfQg8QO1AfYRRCHXiRFgXvr2TvJQ==
-=yrnc
------END PGP SIGNATURE-----
-
---at6+YcpfzWZg/htY--
+  Andrew
