@@ -1,81 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752932AbeDSAkk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 20:40:40 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:41226 "EHLO
-        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752532AbeDSAkj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 20:40:39 -0400
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: namhyung@kernel.org
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date: Thu, 19 Apr 2018 09:40:33 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>, tglx@linutronix.de,
-        vedang.patel@intel.com, bigeasy@linutronix.de, joel.opensrc@gmail.com,
-        joelaf@google.com, mathieu.desnoyers@efficios.com,
-        baohong.liu@intel.com, rajvi.jingar@intel.com, julia@ni.com,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, kernel-team@lge.com
-Subject: Re: [PATCH 2/6] tracing: Add trace event error log
-Message-ID: <20180419004033.GA13370@sejong>
-References: <cover.1523545519.git.tom.zanussi@linux.intel.com>
- <194bd34e689dd6df9e48855111fd6c5c66e37fc9.1523545519.git.tom.zanussi@linux.intel.com>
- <20180412182001.75bfb4e2@gandalf.local.home>
- <1523577133.11817.31.camel@tzanussi-mobl.amr.corp.intel.com>
- <20180413094515.19fb3691@gandalf.local.home>
- <1523629474.25328.14.camel@tzanussi-mobl.amr.corp.intel.com>
- <20180413104432.148f13dc@gandalf.local.home>
- <20180418183434.34eb10004275c9e89a9e709c@kernel.org>
- <20180418094924.3ad22dbf@gandalf.local.home>
+        id S1752881AbeDSAyT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 20:54:19 -0400
+Received: from mga14.intel.com ([192.55.52.115]:40499 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752326AbeDSAyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 20:54:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,467,1517904000";
+   d="scan'208";a="47314905"
+From: "Dey, Megha" <megha.dey@intel.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Subject: RE: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+ support
+Thread-Topic: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+ support
+Thread-Index: AQHTiaT71VA7Q5Or9ESQdIw+yX/ir6N6FLYAgFlFdnuAMogJgIABiP2AgABwaXA=
+Date: Thu, 19 Apr 2018 00:54:16 +0000
+Message-ID: <C440BA31B54DCD4AAC682D2365C8FEE738C13DDE@ORSMSX111.amr.corp.intel.com>
+References: <1515542948-24041-1-git-send-email-megha.dey@linux.intel.com>
+ <1515542948-24041-2-git-send-email-megha.dey@linux.intel.com>
+ <20180118113905.GA19904@gondor.apana.org.au>
+ <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
+ <20180316145351.GA6231@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
+ <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
+In-Reply-To: <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDg2YTNhMDEtYjJjZi00ODczLTk3MjEtNDUyZTE1YTVkYjE3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6ImRBQWJxU1luaDBmaldZVEZ1MnJsMmJCRlhVaUVGcVZ6UXlBRnZqU0hiTXc9In0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.0.116
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180418094924.3ad22dbf@gandalf.local.home>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys, :)
 
-On Wed, Apr 18, 2018 at 09:49:24AM -0400, Steven Rostedt wrote:
-> On Wed, 18 Apr 2018 18:34:34 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > On Fri, 13 Apr 2018 10:44:32 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > > On Fri, 13 Apr 2018 09:24:34 -0500
-> > > Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
-> > >   
-> > > > Yeah, I agree - I'd rather get it right than get it in now.  I thought
-> > > > this made sense, and was based on input from Masami, which I may have
-> > > > misinterpreted, but I'll wait for some more ideas about the best way to
-> > > > do this.  
-> > > 
-> > > Too bad we are not closer to November, as this would actually be a good
-> > > Plumbers topic. Maybe it's not that important and we should wait until
-> > > then. I'd like to get some brain storming ideas out before we decide on
-> > > anything, and this is something I believe is better done face to face
-> > > than over email.  
-> > 
-> > OK, sounds good for me too :)
-> > My point was that printk buffer is not good place for the parser error
-> > of ftrace, nor each sub-features (like hist, trigger, probe_events etc.) 
-> > has different place to show it. I just want to unify the user experience
-> > over the ftrace UI.
-> 
-> I totally agree. I just want to make sure that whatever we come up with
-> will be well thought out. Perhaps we can wait till November to talk
-> about it.
 
-I'm not sure I can go to LPC this year, but definitely interested in
-improving error logging for tracing.
+>-----Original Message-----
+>From: Herbert Xu [mailto:herbert@gondor.apana.org.au]
+>Sent: Wednesday, April 18, 2018 4:01 AM
+>To: Dey, Megha <megha.dey@intel.com>
+>Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org;
+>davem@davemloft.net
+>Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+>support
+>
+>On Tue, Apr 17, 2018 at 06:40:17PM +0000, Dey, Megha wrote:
+>>
+>>
+>> >-----Original Message-----
+>> >From: Herbert Xu [mailto:herbert@gondor.apana.org.au]
+>> >Sent: Friday, March 16, 2018 7:54 AM
+>> >To: Dey, Megha <megha.dey@intel.com>
+>> >Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org;
+>> >davem@davemloft.net
+>> >Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption
+>> >infrastructure support
+>> >
+>> >I have taken a deeper look and I'm even more convinced now that
+>> >mcryptd is simply not needed in your current model.
+>> >
+>> >The only reason you would need mcryptd is if you need to limit the
+>> >rate of requests going into the underlying mb algorithm.
+>> >
+>> >However, it doesn't do that all.  Even though it seems to have a
+>> >batch size of 10, but because it immediately reschedules itself after
+>> >the batch runs out, it's essentially just dumping all requests at the
+>> >underlying algorithm as fast as they're coming in.  The underlying
+>> >algorithm doesn't have need throttling anyway because it'll do the work
+>when the queue is full synchronously.
+>> >
+>> >So why not just get rid of mcryptd completely and expose the
+>> >underlying algorithm as a proper async skcipher/hash?
+>>
+>> Hi Herbert,
+>>
+>> Most part of the cryptd.c and mcryptd.c are similar, except the logic
+>> used to flush out partially completed jobs in the case of multibuffer
+>algorithms.
+>>
+>> I think I will try to merge the cryptd and mcryptd adding necessary quirks for
+>multibuffer where needed.
+>
+>I think you didn't quite get my point.  From what I'm seeing you don't need
+>either cryptd or mcryptd.  You just need to expose the underlying mb
+>algorithm directly.
 
-Thanks,
-Namhyung
+Hi Herbert,
+
+Yeah I think I misunderstood. I think what you mean is to remove mcryptd.c completely and avoid the extra layer of indirection to call the underlying algorithm, instead call it directly, correct?
+
+So currently we have 3 algorithms registered for every multibuffer algorithm:
+name         : __sha1-mb
+driver       : mcryptd(__intel_sha1-mb)
+
+name         : sha1
+driver       : sha1_mb
+
+name         : __sha1-mb
+driver       : __intel_sha1-mb
+
+If we remove mcryptd, then we will have just the 2?
+
+The outer algorithm:sha1-mb, will 
+>
+>So I'm not sure what we would gain from merging cryptd and mcryptd.
+>
+>Cheers,
+>--
+>Email: Herbert Xu <herbert@gondor.apana.org.au> Home Page:
+>http://gondor.apana.org.au/~herbert/
+>PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
