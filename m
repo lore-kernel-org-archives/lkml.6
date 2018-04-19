@@ -1,88 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751865AbeDSNS7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:18:59 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:34094 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeDSNS6 (ORCPT
+        id S1752546AbeDSNUE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:20:04 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42814 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751169AbeDSNUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:18:58 -0400
-X-Google-Smtp-Source: AIpwx4/oOfjPUAC9bd58x7upGSEcBDxteUDLUE0jVsCwsy3SIBxlv9sDsgBuzAa1BM6e6uZ9OqRzoW56ljNLCyTZwyg=
-MIME-Version: 1.0
-In-Reply-To: <e391bcb1abbe5f7ff46973a5713fd7e067b7e9ff.1523347340.git.ryder.lee@mediatek.com>
-References: <31f944ab8dfcc1d7b6f03b35657a2a34825b5246.1523347340.git.ryder.lee@mediatek.com>
- <e391bcb1abbe5f7ff46973a5713fd7e067b7e9ff.1523347340.git.ryder.lee@mediatek.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 19 Apr 2018 15:18:57 +0200
-Message-ID: <CAPDyKFr9O2YiN8KrwqzOA3rzsx6kA8gRO35_G5bpYRMpg8Z73Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: mediatek: use of_device_get_match_data()
-To: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Chaotian Jing <chaotian.jing@mediatek.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 19 Apr 2018 09:20:02 -0400
+X-Google-Smtp-Source: AIpwx4+g9fXsBxpdliMuBKjeYtmoCTs3C8iy2XGtmhKJX5savqqkKgXQtqhjVK1FYYmPY4wU9iRngQ==
+From: Greentime Hu <green.hu@gmail.com>
+X-Google-Original-From: Greentime Hu <greentime@andestech.com>
+To: linux-kernel@vger.kernel.org, arnd@arndb.de, greentime@andestech.com,
+        green.hu@gmail.com, private@roeck-us.net
+Subject: [PATCH 1/9] nds32: lib: To use generic lib instead of libgcc to prevent the symbol undefined issue.
+Date: Thu, 19 Apr 2018 21:18:07 +0800
+Message-Id: <347705ade75b5901537034561fd67311b1260358.1524143428.git.greentime@andestech.com>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16 April 2018 at 04:33, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> The usage of of_device_get_match_data() reduce the code size a bit.
->
-> Also, the only way to call msdc_drv_probe() is to match an entry in
-> msdc_of_ids[], so of_id cannot be NULL.
->
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+We can use the generic lib to fix these error because the symbol of
+libgcc in toolchain is not exported.
 
-Thanks, applied for next!
+ERROR: "__ucmpdi2" [fs/xfs/xfs.ko] undefined!
+ERROR: "__ashrdi3" [fs/xfs/xfs.ko] undefined!
+ERROR: "__lshrdi3" [fs/xfs/xfs.ko] undefined!
+ERROR: "__ashldi3" [fs/ntfs/ntfs.ko] undefined!
+...
 
-Kind regards
-Uffe
+Signed-off-by: Greentime Hu <greentime@andestech.com>
+---
+ arch/nds32/Kconfig  | 6 ++++++
+ arch/nds32/Makefile | 3 ---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-> ---
->  drivers/mmc/host/mtk-sd.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> index 6457a7d..67e9b57 100644
-> --- a/drivers/mmc/host/mtk-sd.c
-> +++ b/drivers/mmc/host/mtk-sd.c
-> @@ -19,6 +19,7 @@
->  #include <linux/ioport.h>
->  #include <linux/irq.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_device.h>
->  #include <linux/of_irq.h>
->  #include <linux/of_gpio.h>
->  #include <linux/pinctrl/consumer.h>
-> @@ -1808,7 +1809,6 @@ static int msdc_drv_probe(struct platform_device *pdev)
->         struct mmc_host *mmc;
->         struct msdc_host *host;
->         struct resource *res;
-> -       const struct of_device_id *of_id;
->         int ret;
->
->         if (!pdev->dev.of_node) {
-> @@ -1816,9 +1816,6 @@ static int msdc_drv_probe(struct platform_device *pdev)
->                 return -EINVAL;
->         }
->
-> -       of_id = of_match_node(msdc_of_ids, pdev->dev.of_node);
-> -       if (!of_id)
-> -               return -EINVAL;
->         /* Allocate MMC host for this device */
->         mmc = mmc_alloc_host(sizeof(struct msdc_host), &pdev->dev);
->         if (!mmc)
-> @@ -1887,7 +1884,7 @@ static int msdc_drv_probe(struct platform_device *pdev)
->         msdc_of_property_parse(pdev, host);
->
->         host->dev = &pdev->dev;
-> -       host->dev_comp = of_id->data;
-> +       host->dev_comp = of_device_get_match_data(&pdev->dev);
->         host->mmc = mmc;
->         host->src_clk_freq = clk_get_rate(host->src_clk);
->         /* Set host parameters to mmc */
-> --
-> 1.9.1
->
+diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
+index 249f38d3388f..98e05f997f91 100644
+--- a/arch/nds32/Kconfig
++++ b/arch/nds32/Kconfig
+@@ -9,6 +9,12 @@ config NDS32
+ 	select CLKSRC_MMIO
+ 	select CLONE_BACKWARDS
+ 	select COMMON_CLK
++	select GENERIC_ASHLDI3
++	select GENERIC_ASHRDI3
++	select GENERIC_LSHRDI3
++	select GENERIC_CMPDI2
++	select GENERIC_MULDI3
++	select GENERIC_UCMPDI2
+ 	select GENERIC_ATOMIC64
+ 	select GENERIC_CPU_DEVICES
+ 	select GENERIC_CLOCKEVENTS
+diff --git a/arch/nds32/Makefile b/arch/nds32/Makefile
+index 91f933d5a962..20edf34e70ce 100644
+--- a/arch/nds32/Makefile
++++ b/arch/nds32/Makefile
+@@ -23,9 +23,6 @@ export	TEXTADDR
+ # If we have a machine-specific directory, then include it in the build.
+ core-y				+= arch/nds32/kernel/ arch/nds32/mm/
+ libs-y				+= arch/nds32/lib/
+-LIBGCC_PATH     		:= \
+-  $(shell $(CC) $(KBUILD_CFLAGS) $(KCFLAGS) -print-libgcc-file-name)
+-libs-y				+= $(LIBGCC_PATH)
+ 
+ ifneq '$(CONFIG_NDS32_BUILTIN_DTB)' '""'
+ BUILTIN_DTB := y
+-- 
+1.9.5
