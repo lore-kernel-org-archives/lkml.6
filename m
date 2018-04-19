@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752748AbeDSNdK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:33:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60590 "EHLO mx1.redhat.com"
+        id S1753463AbeDSNdV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:33:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60624 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752380AbeDSNdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:33:02 -0400
+        id S1753423AbeDSNdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 09:33:17 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 16/24] hugetlbfs: Convert to fs_context [ver #7]
+Subject: [PATCH 18/24] VFS: Implement fsopen() to prepare for a mount [ver
+ #7]
 From: David Howells <dhowells@redhat.com>
 To: viro@zeniv.linux.org.uk
 Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
-Date: Thu, 19 Apr 2018 14:33:00 +0100
-Message-ID: <152414477998.23902.1572532467093131575.stgit@warthog.procyon.org.uk>
+Date: Thu, 19 Apr 2018 14:33:14 +0100
+Message-ID: <152414479473.23902.12923535574509363916.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
 References: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -28,462 +29,468 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the hugetlbfs to use the fs_context during mount.
+Provide an fsopen() system call that starts the process of preparing to
+mount, using an fd as a context handle.  fsopen() is given the name of the
+filesystem that will be used:
+
+	int mfd = fsopen(const char *fsname, int open_flags,
+			 void *reserved3, void *reserved4,
+			 void *reserved5);
+
+where open_flags can be 0 or O_CLOEXEC and reserved* should all be NULL for
+the moment.
+
+For example:
+
+	mfd = fsopen("ext4", O_CLOEXEC, NULL, NULL, NULL);
+	write(mfd, "s /dev/sdb1"); // note I'm ignoring write's length arg
+	write(mfd, "o noatime");
+	write(mfd, "o acl");
+	write(mfd, "o user_attr");
+	write(mfd, "o iversion");
+	write(mfd, "o ");
+	write(mfd, "r /my/container"); // root inside the fs
+	write(mfd, "x create"); // create the superblock
+	fsmount(mfd, container_fd, "/mnt", AT_NO_FOLLOW);
+
+	mfd = fsopen("afs", -1);
+	write(mfd, "s %grand.central.org:root.cell");
+	write(mfd, "o cell=grand.central.org");
+	write(mfd, "r /");
+	write(mfd, "x create");
+	fsmount(mfd, AT_FDCWD, "/mnt", 0);
+
+If an error is reported at any step, an error message may be available to be
+read() back (ENODATA will be reported if there isn't an error available) in
+the form:
+
+	"e <subsys>:<problem>"
+	"e SELinux:Mount on mountpoint not permitted"
+
+Once fsmount() has been called, further write() calls will incur EBUSY,
+even if the fsmount() fails.  read() is still possible to retrieve error
+information.
+
+The fsopen() syscall creates a mount context and hangs it of the fd that it
+returns.
+
+Netlink is not used because it is optional.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/hugetlbfs/inode.c |  330 ++++++++++++++++++++++++++++----------------------
- 1 file changed, 184 insertions(+), 146 deletions(-)
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 
+ fs/Makefile                            |    2 
+ fs/fsopen.c                            |  304 ++++++++++++++++++++++++++++++++
+ fs/super.c                             |    3 
+ include/linux/fs_context.h             |    1 
+ include/linux/syscalls.h               |    2 
+ include/uapi/linux/magic.h             |    1 
+ kernel/sys_ni.c                        |    3 
+ 9 files changed, 315 insertions(+), 3 deletions(-)
+ create mode 100644 fs/fsopen.c
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 76fb8eb2bea8..11056af43e66 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -45,11 +45,18 @@ const struct file_operations hugetlbfs_file_operations;
- static const struct inode_operations hugetlbfs_dir_inode_operations;
- static const struct inode_operations hugetlbfs_inode_operations;
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index d6b27dab1b30..d02346692c3f 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -396,3 +396,4 @@
+ 382	i386	pkey_free		sys_pkey_free			__ia32_sys_pkey_free
+ 383	i386	statx			sys_statx			__ia32_sys_statx
+ 384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
++385	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 4dfe42666d0c..6708847571e2 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -341,6 +341,7 @@
+ 330	common	pkey_alloc		__x64_sys_pkey_alloc
+ 331	common	pkey_free		__x64_sys_pkey_free
+ 332	common	statx			__x64_sys_statx
++333	common	fsopen			__x64_sys_fsopen
  
--struct hugetlbfs_config {
-+enum hugetlbfs_size_type { NO_SIZE, SIZE_STD, SIZE_PERCENT };
-+
-+struct hugetlbfs_fs_context {
-+	struct fs_context	fc;
- 	struct hstate		*hstate;
-+	unsigned long long	max_size_opt;
-+	unsigned long long	min_size_opt;
- 	long			max_hpages;
- 	long			nr_inodes;
- 	long			min_hpages;
-+	enum hugetlbfs_size_type max_val_type;
-+	enum hugetlbfs_size_type min_val_type;
- 	kuid_t			uid;
- 	kgid_t			gid;
- 	umode_t			mode;
-@@ -708,16 +715,16 @@ static int hugetlbfs_setattr(struct dentry *dentry, struct iattr *attr)
- }
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/fs/Makefile b/fs/Makefile
+index 6f2dae3c32da..ee3c8b31cc58 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -13,7 +13,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		seq_file.o xattr.o libfs.o fs-writeback.o \
+ 		pnode.o splice.o sync.o utimes.o d_path.o \
+ 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+-		fs_context.o
++		fs_context.o fsopen.o
  
- static struct inode *hugetlbfs_get_root(struct super_block *sb,
--					struct hugetlbfs_config *config)
-+					struct hugetlbfs_fs_context *ctx)
- {
- 	struct inode *inode;
- 
- 	inode = new_inode(sb);
- 	if (inode) {
- 		inode->i_ino = get_next_ino();
--		inode->i_mode = S_IFDIR | config->mode;
--		inode->i_uid = config->uid;
--		inode->i_gid = config->gid;
-+		inode->i_mode = S_IFDIR | ctx->mode;
-+		inode->i_uid = ctx->uid;
-+		inode->i_gid = ctx->gid;
- 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
- 		inode->i_op = &hugetlbfs_dir_inode_operations;
- 		inode->i_fop = &simple_dir_operations;
-@@ -1081,8 +1088,6 @@ static const struct super_operations hugetlbfs_ops = {
- 	.show_options	= hugetlbfs_show_options,
- };
- 
--enum hugetlbfs_size_type { NO_SIZE, SIZE_STD, SIZE_PERCENT };
--
- /*
-  * Convert size option passed from command line to number of huge pages
-  * in the pool specified by hstate.  Size option could be in bytes
-@@ -1105,171 +1110,156 @@ hugetlbfs_size_to_hpages(struct hstate *h, unsigned long long size_opt,
- 	return size_opt;
- }
- 
--static int
--hugetlbfs_parse_options(char *options, struct hugetlbfs_config *pconfig)
-+/*
-+ * Parse one mount option.
+ ifeq ($(CONFIG_BLOCK),y)
+ obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+new file mode 100644
+index 000000000000..2d115bad13bb
+--- /dev/null
++++ b/fs/fsopen.c
+@@ -0,0 +1,304 @@
++/* Filesystem access-by-fd.
++ *
++ * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
 + */
-+static int hugetlbfs_parse_option(struct fs_context *fc, char *opt, size_t len)
- {
--	char *p, *rest;
-+	struct hugetlbfs_fs_context *ctx = container_of(fc, struct hugetlbfs_fs_context, fc);
-+	char *rest;
-+	unsigned long ps;
- 	substring_t args[MAX_OPT_ARGS];
--	int option;
--	unsigned long long max_size_opt = 0, min_size_opt = 0;
--	enum hugetlbfs_size_type max_val_type = NO_SIZE, min_val_type = NO_SIZE;
--
--	if (!options)
-+	int token, option;
 +
-+	token = match_token(opt, tokens, args);
-+	switch (token) {
-+	case Opt_uid:
-+		if (match_int(&args[0], &option))
-+			goto bad_val;
-+		ctx->uid = make_kuid(current_user_ns(), option);
-+		if (!uid_valid(ctx->uid))
-+			goto bad_val;
- 		return 0;
- 
--	while ((p = strsep(&options, ",")) != NULL) {
--		int token;
--		if (!*p)
--			continue;
-+	case Opt_gid:
-+		if (match_int(&args[0], &option))
-+			goto bad_val;
-+		ctx->gid = make_kgid(current_user_ns(), option);
-+		if (!gid_valid(ctx->gid))
-+			goto bad_val;
-+		return 0;
- 
--		token = match_token(p, tokens, args);
--		switch (token) {
--		case Opt_uid:
--			if (match_int(&args[0], &option))
-- 				goto bad_val;
--			pconfig->uid = make_kuid(current_user_ns(), option);
--			if (!uid_valid(pconfig->uid))
--				goto bad_val;
--			break;
-+	case Opt_mode:
-+		if (match_octal(&args[0], &option))
-+			goto bad_val;
-+		ctx->mode = option & 01777U;
-+		return 0;
- 
--		case Opt_gid:
--			if (match_int(&args[0], &option))
-- 				goto bad_val;
--			pconfig->gid = make_kgid(current_user_ns(), option);
--			if (!gid_valid(pconfig->gid))
--				goto bad_val;
--			break;
-+	case Opt_size:
-+		/* memparse() will accept a K/M/G without a digit */
-+		if (!isdigit(*args[0].from))
-+			goto bad_val;
-+		ctx->max_size_opt = memparse(args[0].from, &rest);
-+		ctx->max_val_type = SIZE_STD;
-+		if (*rest == '%')
-+			ctx->max_val_type = SIZE_PERCENT;
-+		return 0;
- 
--		case Opt_mode:
--			if (match_octal(&args[0], &option))
-- 				goto bad_val;
--			pconfig->mode = option & 01777U;
--			break;
-+	case Opt_nr_inodes:
-+		/* memparse() will accept a K/M/G without a digit */
-+		if (!isdigit(*args[0].from))
-+			goto bad_val;
-+		ctx->nr_inodes = memparse(args[0].from, &rest);
-+		return 0;
- 
--		case Opt_size: {
--			/* memparse() will accept a K/M/G without a digit */
--			if (!isdigit(*args[0].from))
--				goto bad_val;
--			max_size_opt = memparse(args[0].from, &rest);
--			max_val_type = SIZE_STD;
--			if (*rest == '%')
--				max_val_type = SIZE_PERCENT;
--			break;
-+	case Opt_pagesize:
-+		ps = memparse(args[0].from, &rest);
-+		ctx->hstate = size_to_hstate(ps);
-+		if (!ctx->hstate) {
-+			pr_err("Unsupported page size %lu MB\n", ps >> 20);
-+			return -EINVAL;
- 		}
-+		return 0;
- 
--		case Opt_nr_inodes:
--			/* memparse() will accept a K/M/G without a digit */
--			if (!isdigit(*args[0].from))
--				goto bad_val;
--			pconfig->nr_inodes = memparse(args[0].from, &rest);
--			break;
-+	case Opt_min_size:
-+		/* memparse() will accept a K/M/G without a digit */
-+		if (!isdigit(*args[0].from))
-+			goto bad_val;
-+		ctx->min_size_opt = memparse(args[0].from, &rest);
-+		ctx->min_val_type = SIZE_STD;
-+		if (*rest == '%')
-+			ctx->min_val_type = SIZE_PERCENT;
-+		return 0;
- 
--		case Opt_pagesize: {
--			unsigned long ps;
--			ps = memparse(args[0].from, &rest);
--			pconfig->hstate = size_to_hstate(ps);
--			if (!pconfig->hstate) {
--				pr_err("Unsupported page size %lu MB\n",
--					ps >> 20);
--				return -EINVAL;
--			}
--			break;
--		}
-+	default:
-+		pr_err("Bad mount option: \"%s\"\n", opt);
++#include <linux/fs_context.h>
++#include <linux/mount.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++#include <linux/file.h>
++#include <linux/magic.h>
++#include <linux/syscalls.h>
++
++static struct vfsmount *fscontext_fs_mnt __read_mostly;
++
++static int fscontext_fs_release(struct inode *inode, struct file *file)
++{
++	struct fs_context *fc = file->private_data;
++
++	file->private_data = NULL;
++
++	put_fs_context(fc);
++	return 0;
++}
++
++/*
++ * Userspace writes configuration data and commands to the fd and we parse it
++ * here.  For the moment, we assume a single option or command per write.  Each
++ * line written is of the form
++ *
++ *	<option_type><space><stuff...>
++ *
++ *	d /dev/sda1				-- Device name
++ *	o noatime				-- Option without value
++ *	o cell=grand.central.org		-- Option with value
++ *	r /					-- Dir within device to mount
++ *	x create				-- Create a superblock
++ */
++static ssize_t fscontext_fs_write(struct file *file,
++			   const char __user *_buf, size_t len, loff_t *pos)
++{
++	struct fs_context *fc = file->private_data;
++	struct inode *inode = file_inode(file);
++	char opt[2], *data;
++	ssize_t ret;
++
++	if (len < 3 || len > 4095)
 +		return -EINVAL;
++
++	if (copy_from_user(opt, _buf, 2) != 0)
++		return -EFAULT;
++	switch (opt[0]) {
++	case 's':
++	case 'o':
++	case 'x':
++		break;
++	default:
++		goto err_bad_cmd;
 +	}
- 
--		case Opt_min_size: {
--			/* memparse() will accept a K/M/G without a digit */
--			if (!isdigit(*args[0].from))
--				goto bad_val;
--			min_size_opt = memparse(args[0].from, &rest);
--			min_val_type = SIZE_STD;
--			if (*rest == '%')
--				min_val_type = SIZE_PERCENT;
--			break;
--		}
-+bad_val:
-+	pr_err("Bad value '%s' for mount option '%s'\n", args[0].from, opt);
++	if (opt[1] != ' ')
++		goto err_bad_cmd;
++
++	data = memdup_user_nul(_buf + 2, len - 2);
++	if (IS_ERR(data))
++		return PTR_ERR(data);
++
++	/* From this point onwards we need to lock the fd against someone
++	 * trying to mount it.
++	 */
++	ret = inode_lock_killable(inode);
++	if (ret < 0)
++		goto err_free;
++
++	ret = -EINVAL;
++	switch (opt[0]) {
++	case 's':
++		ret = vfs_set_fs_source(fc, data, len - 2);
++		if (ret < 0)
++			goto err_unlock;
++		data = NULL;
++		break;
++
++	case 'o':
++		ret = vfs_parse_fs_option(fc, data, len - 2);
++		if (ret < 0)
++			goto err_unlock;
++		break;
++
++	case 'x':
++		if (strcmp(data, "create") == 0) {
++			ret = vfs_get_tree(fc);
++		} else {
++			ret = -EOPNOTSUPP;
++		}
++		if (ret < 0)
++			goto err_unlock;
++		break;
++
++	default:
++		goto err_unlock;
++	}
++
++	ret = len;
++err_unlock:
++	inode_unlock(inode);
++err_free:
++	kfree(data);
++	return ret;
++err_bad_cmd:
 +	return -EINVAL;
 +}
- 
--		default:
--			pr_err("Bad mount option: \"%s\"\n", p);
--			return -EINVAL;
--			break;
--		}
--	}
-+/*
-+ * Validate the parsed options.
-+ */
-+static int hugetlbfs_validate(struct fs_context *fc)
-+{
-+	struct hugetlbfs_fs_context *ctx = container_of(fc, struct hugetlbfs_fs_context, fc);
- 
- 	/*
- 	 * Use huge page pool size (in hstate) to convert the size
- 	 * options to number of huge pages.  If NO_SIZE, -1 is returned.
- 	 */
--	pconfig->max_hpages = hugetlbfs_size_to_hpages(pconfig->hstate,
--						max_size_opt, max_val_type);
--	pconfig->min_hpages = hugetlbfs_size_to_hpages(pconfig->hstate,
--						min_size_opt, min_val_type);
-+	ctx->max_hpages = hugetlbfs_size_to_hpages(ctx->hstate,
-+						   ctx->max_size_opt,
-+						   ctx->max_val_type);
-+	ctx->min_hpages = hugetlbfs_size_to_hpages(ctx->hstate,
-+						   ctx->min_size_opt,
-+						   ctx->min_val_type);
- 
- 	/*
- 	 * If max_size was specified, then min_size must be smaller
- 	 */
--	if (max_val_type > NO_SIZE &&
--	    pconfig->min_hpages > pconfig->max_hpages) {
--		pr_err("minimum size can not be greater than maximum size\n");
-+	if (ctx->max_val_type > NO_SIZE &&
-+	    ctx->min_hpages > ctx->max_hpages) {
-+		pr_err("Minimum size can not be greater than maximum size\n");
- 		return -EINVAL;
- 	}
- 
- 	return 0;
--
--bad_val:
--	pr_err("Bad value '%s' for mount option '%s'\n", args[0].from, p);
-- 	return -EINVAL;
- }
- 
- static int
--hugetlbfs_fill_super(struct super_block *sb, void *data, size_t data_size,
--		     int silent)
-+hugetlbfs_fill_super(struct super_block *sb, struct fs_context *fc)
- {
--	int ret;
--	struct hugetlbfs_config config;
-+	struct hugetlbfs_fs_context *ctx =
-+		container_of(fc, struct hugetlbfs_fs_context, fc);
- 	struct hugetlbfs_sb_info *sbinfo;
- 
--	config.max_hpages = -1; /* No limit on size by default */
--	config.nr_inodes = -1; /* No limit on number of inodes by default */
--	config.uid = current_fsuid();
--	config.gid = current_fsgid();
--	config.mode = 0755;
--	config.hstate = &default_hstate;
--	config.min_hpages = -1; /* No default minimum size */
--	ret = hugetlbfs_parse_options(data, &config);
--	if (ret)
--		return ret;
--
- 	sbinfo = kmalloc(sizeof(struct hugetlbfs_sb_info), GFP_KERNEL);
- 	if (!sbinfo)
- 		return -ENOMEM;
- 	sb->s_fs_info = sbinfo;
--	sbinfo->hstate = config.hstate;
- 	spin_lock_init(&sbinfo->stat_lock);
--	sbinfo->max_inodes = config.nr_inodes;
--	sbinfo->free_inodes = config.nr_inodes;
--	sbinfo->spool = NULL;
--	sbinfo->uid = config.uid;
--	sbinfo->gid = config.gid;
--	sbinfo->mode = config.mode;
-+	sbinfo->hstate		= ctx->hstate;
-+	sbinfo->max_inodes	= ctx->nr_inodes;
-+	sbinfo->free_inodes	= ctx->nr_inodes;
-+	sbinfo->spool		= NULL;
-+	sbinfo->uid		= ctx->uid;
-+	sbinfo->gid		= ctx->gid;
-+	sbinfo->mode		= ctx->mode;
- 
- 	/*
- 	 * Allocate and initialize subpool if maximum or minimum size is
- 	 * specified.  Any needed reservations (for minimim size) are taken
- 	 * taken when the subpool is created.
- 	 */
--	if (config.max_hpages != -1 || config.min_hpages != -1) {
--		sbinfo->spool = hugepage_new_subpool(config.hstate,
--							config.max_hpages,
--							config.min_hpages);
-+	if (ctx->max_hpages != -1 || ctx->min_hpages != -1) {
-+		sbinfo->spool = hugepage_new_subpool(ctx->hstate,
-+						     ctx->max_hpages,
-+						     ctx->min_hpages);
- 		if (!sbinfo->spool)
- 			goto out_free;
- 	}
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
--	sb->s_blocksize = huge_page_size(config.hstate);
--	sb->s_blocksize_bits = huge_page_shift(config.hstate);
-+	sb->s_blocksize = huge_page_size(ctx->hstate);
-+	sb->s_blocksize_bits = huge_page_shift(ctx->hstate);
- 	sb->s_magic = HUGETLBFS_MAGIC;
- 	sb->s_op = &hugetlbfs_ops;
- 	sb->s_time_gran = 1;
--	sb->s_root = d_make_root(hugetlbfs_get_root(sb, &config));
-+	sb->s_root = d_make_root(hugetlbfs_get_root(sb, ctx));
- 	if (!sb->s_root)
- 		goto out_free;
- 	return 0;
-@@ -1279,17 +1269,39 @@ hugetlbfs_fill_super(struct super_block *sb, void *data, size_t data_size,
- 	return -ENOMEM;
- }
- 
--static struct dentry *hugetlbfs_mount(struct file_system_type *fs_type,
--	int flags, const char *dev_name, void *data, size_t data_size)
-+static int hugetlbfs_get_tree(struct fs_context *fc)
-+{
-+	return vfs_get_super(fc, vfs_get_independent_super, hugetlbfs_fill_super);
-+}
 +
-+static const struct fs_context_operations hugetlbfs_fs_context_ops = {
-+	.parse_option	= hugetlbfs_parse_option,
-+	.validate	= hugetlbfs_validate,
-+	.get_tree	= hugetlbfs_get_tree,
++const struct file_operations fscontext_fs_fops = {
++	.write		= fscontext_fs_write,
++	.release	= fscontext_fs_release,
++	.llseek		= no_llseek,
 +};
 +
-+static int hugetlbfs_init_fs_context(struct fs_context *fc, struct super_block *src_sb)
- {
--	return mount_nodev(fs_type, flags, data, data_size,
--			   hugetlbfs_fill_super);
-+	struct hugetlbfs_fs_context *ctx = container_of(fc, struct hugetlbfs_fs_context, fc);
-+
-+	ctx->max_hpages	= -1; /* No limit on size by default */
-+	ctx->nr_inodes	= -1; /* No limit on number of inodes by default */
-+	ctx->uid	= current_fsuid();
-+	ctx->gid	= current_fsgid();
-+	ctx->mode	= 0755;
-+	ctx->hstate	= &default_hstate;
-+	ctx->min_hpages	= -1; /* No default minimum size */
-+	ctx->max_val_type = NO_SIZE;
-+	ctx->min_val_type = NO_SIZE;
-+	ctx->fc.ops	= &hugetlbfs_fs_context_ops;
-+	return 0;
- }
- 
- static struct file_system_type hugetlbfs_fs_type = {
--	.name		= "hugetlbfs",
--	.mount		= hugetlbfs_mount,
--	.kill_sb	= kill_litter_super,
-+	.name			= "hugetlbfs",
-+	.fs_context_size	= sizeof(struct hugetlbfs_fs_context),
-+	.init_fs_context	= hugetlbfs_init_fs_context,
-+	.kill_sb		= kill_litter_super,
- };
- 
- static struct vfsmount *hugetlbfs_vfsmount[HUGE_MAX_HSTATE];
-@@ -1396,8 +1408,47 @@ struct file *hugetlb_file_setup(const char *name, size_t size,
- 	return file;
- }
- 
-+static struct vfsmount *__init mount_one_hugetlbfs(struct hstate *h)
++/*
++ * Indicate the name we want to display the filesystem file as.
++ */
++static char *fscontext_fs_dname(struct dentry *dentry, char *buffer, int buflen)
 +{
-+	struct hugetlbfs_fs_context *ctx;
-+	struct fs_context *fc;
-+	struct vfsmount *mnt;
++	return dynamic_dname(dentry, buffer, buflen, "fs:[%lu]",
++			     d_inode(dentry)->i_ino);
++}
++
++static const struct dentry_operations fscontext_fs_dentry_operations = {
++	.d_dname	= fscontext_fs_dname,
++};
++
++/*
++ * Create a file that can be used to configure a new mount.
++ */
++static struct file *create_fscontext_file(struct fs_context *fc)
++{
++	struct inode *inode;
++	struct file *f;
++	struct path path;
 +	int ret;
 +
-+	fc = vfs_new_fs_context(&hugetlbfs_fs_type, NULL, 0,
-+				FS_CONTEXT_FOR_KERNEL_MOUNT);
-+	if (IS_ERR(fc)) {
-+		ret = PTR_ERR(fc);
-+		goto err;
++	inode = alloc_anon_inode(fscontext_fs_mnt->mnt_sb);
++	if (IS_ERR(inode))
++		return ERR_CAST(inode);
++	inode->i_fop = &fscontext_fs_fops;
++
++	ret = -ENOMEM;
++	path.dentry = d_alloc_pseudo(fscontext_fs_mnt->mnt_sb, &empty_name);
++	if (!path.dentry)
++		goto err_inode;
++	path.mnt = mntget(fscontext_fs_mnt);
++
++	d_instantiate(path.dentry, inode);
++
++	f = alloc_file(&path, FMODE_READ | FMODE_WRITE, &fscontext_fs_fops);
++	if (IS_ERR(f)) {
++		ret = PTR_ERR(f);
++		goto err_file;
 +	}
 +
-+	ctx = container_of(fc, struct hugetlbfs_fs_context, fc);
-+	ctx->hstate = h;
++	f->private_data = fc;
++	return f;
 +
-+	ret = vfs_get_tree(fc);
-+	if (ret < 0)
-+		goto err_fc;
++err_file:
++	path_put(&path);
++	return ERR_PTR(ret);
 +
-+	mnt = vfs_create_mount(fc);
-+	if (IS_ERR(mnt)) {
-+		ret = PTR_ERR(mnt);
-+		goto err_fc;
-+	}
-+
-+	put_fs_context(fc);
-+	return mnt;
-+
-+err_fc:
-+	put_fs_context(fc);
-+err:
-+	pr_err("Cannot mount internal hugetlbfs for page size %uK",
-+	       1U << (h->order + PAGE_SHIFT - 10));
++err_inode:
++	iput(inode);
 +	return ERR_PTR(ret);
 +}
 +
- static int __init init_hugetlbfs_fs(void)
- {
-+	struct vfsmount *mnt;
- 	struct hstate *h;
- 	int error;
- 	int i;
-@@ -1420,25 +1471,12 @@ static int __init init_hugetlbfs_fs(void)
++static const struct super_operations fscontext_fs_super_ops = {
++	.drop_inode	= generic_delete_inode,
++	.destroy_inode	= free_inode_nonrcu,
++	.statfs		= simple_statfs,
++};
++
++/*
++ * Finish filling in the superblock and allocate the root dentry.
++ */
++static int fscontext_fs_fill_super(struct super_block *sb,
++				   struct fs_context *fc)
++{
++	struct dentry *root;
++	struct inode *inode;
++
++	sb->s_op = &fscontext_fs_super_ops;
++	inode = alloc_anon_inode(sb);
++	if (IS_ERR(inode))
++		return PTR_ERR(inode);
++	inode->i_fop = &fscontext_fs_fops;
++
++	root = d_make_root(inode);
++	if (!root)
++		return -ENOMEM; /* inode is put by d_make_root() */
++	sb->s_root = root;
++	return 0;
++}
++
++static int fscontext_fs_get_tree(struct fs_context *fc)
++{
++	return vfs_get_super(fc, vfs_get_single_super, fscontext_fs_fill_super);
++}
++
++static const struct fs_context_operations fscontext_fs_context_ops = {
++	.get_tree	= fscontext_fs_get_tree,
++};
++
++static int fs_init_fs_context(struct fs_context *fc, struct super_block *src_sb)
++{
++	fc->ops = &fscontext_fs_context_ops;
++	return 0;
++}
++
++static struct file_system_type fscontext_fs_type = {
++	.name			= "fscontext",
++	.fs_context_size	= sizeof(struct fs_context),
++	.init_fs_context	= fs_init_fs_context,
++	.kill_sb		= kill_anon_super,
++};
++
++static int __init init_fscontext_fs(void)
++{
++	int ret;
++
++	ret = register_filesystem(&fscontext_fs_type);
++	if (ret < 0)
++		panic("Cannot register fscontext_fs\n");
++
++	fscontext_fs_mnt = kern_mount(&fscontext_fs_type);
++	if (IS_ERR(fscontext_fs_mnt))
++		panic("Cannot mount fscontext_fs: %ld\n",
++		      PTR_ERR(fscontext_fs_mnt));
++	return 0;
++}
++
++fs_initcall(init_fscontext_fs);
++
++/*
++ * Open a filesystem by name so that it can be configured for mounting.
++ *
++ * We are allowed to specify a container in which the filesystem will be
++ * opened, thereby indicating which namespaces will be used (notably, which
++ * network namespace will be used for network filesystems).
++ */
++SYSCALL_DEFINE5(fsopen, const char __user *, _fs_name, unsigned int, flags,
++		void *, reserved3, void *, reserved4, void *, reserved5)
++{
++	struct file_system_type *fs_type;
++	struct fs_context *fc;
++	struct file *file;
++	const char *fs_name;
++	int fd, ret;
++
++	if (flags & ~O_CLOEXEC || reserved3 || reserved4 || reserved5)
++		return -EINVAL;
++
++	fs_name = strndup_user(_fs_name, PAGE_SIZE);
++	if (IS_ERR(fs_name))
++		return PTR_ERR(fs_name);
++
++	fs_type = get_fs_type(fs_name);
++	kfree(fs_name);
++	if (!fs_type)
++		return -ENODEV;
++
++	fc = vfs_new_fs_context(fs_type, NULL, 0, FS_CONTEXT_FOR_USER_MOUNT);
++	put_filesystem(fs_type);
++	if (IS_ERR(fc))
++		return PTR_ERR(fc);
++
++	ret = -ENOTSUPP;
++	if (!fc->ops)
++		goto err_fc;
++
++	file = create_fscontext_file(fc);
++	if (IS_ERR(file)) {
++		ret = PTR_ERR(file);
++		goto err_fc;
++	}
++
++	ret = get_unused_fd_flags(flags & O_CLOEXEC);
++	if (ret < 0)
++		goto err_file;
++
++	fd = ret;
++	fd_install(fd, file);
++	return fd;
++
++err_file:
++	fput(file);
++	return ret;
++
++err_fc:
++	put_fs_context(fc);
++	return ret;
++}
+diff --git a/fs/super.c b/fs/super.c
+index a27487e34ea4..1e2942f81bc9 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1270,8 +1270,7 @@ int vfs_get_super(struct fs_context *fc,
+ 		return PTR_ERR(sb);
  
- 	i = 0;
- 	for_each_hstate(h) {
--		char buf[50];
--		unsigned ps_kb = 1U << (h->order + PAGE_SHIFT - 10);
--		int n;
--
--		n = snprintf(buf, sizeof(buf), "pagesize=%uK", ps_kb);
--		hugetlbfs_vfsmount[i] = kern_mount_data(&hugetlbfs_fs_type,
--							buf, n + 1);
--
--		if (IS_ERR(hugetlbfs_vfsmount[i])) {
--			pr_err("Cannot mount internal hugetlbfs for "
--				"page size %uK", ps_kb);
--			error = PTR_ERR(hugetlbfs_vfsmount[i]);
--			hugetlbfs_vfsmount[i] = NULL;
--		}
-+		mnt = mount_one_hugetlbfs(h);
-+		if (IS_ERR(mnt) && i == 0)
-+			goto out;
-+		hugetlbfs_vfsmount[i] = mnt;
- 		i++;
- 	}
--	/* Non default hstates are optional */
--	if (!IS_ERR_OR_NULL(hugetlbfs_vfsmount[default_hstate_idx]))
--		return 0;
+ 	if (!sb->s_root) {
+-		int err;
+-		err = fill_super(sb, fc);
++		int err = fill_super(sb, fc);
+ 		if (err) {
+ 			deactivate_locked_super(sb);
+ 			return err;
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 1914eef0a88f..536ae7d60f1f 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -102,4 +102,5 @@ extern int vfs_get_super(struct fs_context *fc,
+ 			 int (*fill_super)(struct super_block *sb,
+ 					   struct fs_context *fc));
  
-  out:
- 	kmem_cache_destroy(hugetlbfs_inode_cachep);
++extern const struct file_operations fs_fs_fops;
+ #endif /* _LINUX_FS_CONTEXT_H */
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 70fcda1a9049..3c9b10e92015 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -890,6 +890,8 @@ asmlinkage long sys_pkey_alloc(unsigned long flags, unsigned long init_val);
+ asmlinkage long sys_pkey_free(int pkey);
+ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+ 			  unsigned mask, struct statx __user *buffer);
++asmlinkage long sys_fsopen(const char *fs_name, unsigned int flags,
++			   void *reserved3, void *reserved4, void *reserved5);
+ 
+ 
+ /*
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index 1a6fee974116..2fe02277fb32 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -89,5 +89,6 @@
+ #define UDF_SUPER_MAGIC		0x15013346
+ #define BALLOON_KVM_MAGIC	0x13661366
+ #define ZSMALLOC_MAGIC		0x58295829
++#define FSCONTEXT_FS_MAGIC	0x66736673
+ 
+ #endif /* __LINUX_MAGIC_H__ */
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index 9791364925dc..c113fc9d5e77 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -430,3 +430,6 @@ COND_SYSCALL(setresgid16);
+ COND_SYSCALL(setresuid16);
+ COND_SYSCALL(setreuid16);
+ COND_SYSCALL(setuid16);
++
++/* fd-based mount */
++COND_SYSCALL(sys_fsopen);
