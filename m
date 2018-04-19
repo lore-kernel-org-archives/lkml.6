@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753755AbeDSOXg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:23:36 -0400
-Received: from sauhun.de ([88.99.104.3]:45270 "EHLO pokefinder.org"
+        id S1753716AbeDSOXf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:23:35 -0400
+Received: from sauhun.de ([88.99.104.3]:45272 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753314AbeDSOG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753324AbeDSOG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Apr 2018 10:06:56 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org
-Subject: [PATCH 14/61] gpu: drm: msm: dsi: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:44 +0200
-Message-Id: <20180419140641.27926-15-wsa+renesas@sang-engineering.com>
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
+Subject: [PATCH 15/61] gpu: drm: omapdrm: displays: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:45 +0200
+Message-Id: <20180419140641.27926-16-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
@@ -31,32 +30,72 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/gpu/drm/msm/dsi/dsi_host.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-index 7a03a9489708..10ed20736072 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-@@ -471,8 +471,7 @@ static void dsi_bus_clk_disable(struct msm_dsi_host *msm_host)
- 
- int msm_dsi_runtime_suspend(struct device *dev)
+diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
+index 428de90fced1..8f8573a00e07 100644
+--- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
++++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
+@@ -412,8 +412,7 @@ static const struct backlight_ops dsicm_bl_ops = {
+ static ssize_t dsicm_num_errors_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
-+	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
- 	struct mipi_dsi_host *host = msm_dsi->host;
- 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
- 
-@@ -486,8 +485,7 @@ int msm_dsi_runtime_suspend(struct device *dev)
- 
- int msm_dsi_runtime_resume(struct device *dev)
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	u8 errors = 0;
+ 	int r;
+@@ -444,8 +443,7 @@ static ssize_t dsicm_num_errors_show(struct device *dev,
+ static ssize_t dsicm_hw_revision_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
-+	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
- 	struct mipi_dsi_host *host = msm_dsi->host;
- 	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	u8 id1, id2, id3;
+ 	int r;
+@@ -476,8 +474,7 @@ static ssize_t dsicm_store_ulps(struct device *dev,
+ 		struct device_attribute *attr,
+ 		const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	unsigned long t;
+ 	int r;
+@@ -511,8 +508,7 @@ static ssize_t dsicm_show_ulps(struct device *dev,
+ 		struct device_attribute *attr,
+ 		char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	unsigned int t;
  
+ 	mutex_lock(&ddata->lock);
+@@ -526,8 +522,7 @@ static ssize_t dsicm_store_ulps_timeout(struct device *dev,
+ 		struct device_attribute *attr,
+ 		const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	struct omap_dss_device *in = ddata->in;
+ 	unsigned long t;
+ 	int r;
+@@ -558,8 +553,7 @@ static ssize_t dsicm_show_ulps_timeout(struct device *dev,
+ 		struct device_attribute *attr,
+ 		char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
++	struct panel_drv_data *ddata = dev_get_drvdata(dev);
+ 	unsigned int t;
+ 
+ 	mutex_lock(&ddata->lock);
 -- 
 2.11.0
