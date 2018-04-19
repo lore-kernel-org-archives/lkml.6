@@ -1,42 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753392AbeDSTOH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 15:14:07 -0400
-Received: from mail-pf0-f181.google.com ([209.85.192.181]:36068 "EHLO
-        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753269AbeDSTOG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 15:14:06 -0400
-X-Google-Smtp-Source: AIpwx4+Fg0PH+r0ERmUXzJJug1RqfMo7SvDtwS1KudX5vXEFP5SRueOC3rHlce4Z0i5zt9j0qG5NxQ==
-Date: Thu, 19 Apr 2018 12:14:04 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc: mhocko@kernel.org, akpm@linux-foundation.org, aarcange@redhat.com,
-        guro@fb.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper
- unmap
-In-Reply-To: <201804191945.BBF87517.FVMLOQFOHSFJOt@I-love.SAKURA.ne.jp>
-Message-ID: <alpine.DEB.2.21.1804191212530.157851@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com> <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com> <20180418075051.GO17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804181159020.227784@chino.kir.corp.google.com>
- <20180419063556.GK17484@dhcp22.suse.cz> <201804191945.BBF87517.FVMLOQFOHSFJOt@I-love.SAKURA.ne.jp>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1752962AbeDSTUo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 15:20:44 -0400
+Received: from anholt.net ([50.246.234.109]:57488 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751182AbeDSTUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 15:20:41 -0400
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
+Subject: [PATCH 0/2] Broadcom V3D driver (7268/7278)
+Date: Thu, 19 Apr 2018 12:20:33 -0700
+Message-Id: <20180419192035.19898-1-eric@anholt.net>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018, Tetsuo Handa wrote:
+Here's my first pass at submitting the DRM driver for V3D 3.x/4.x,
+"v3d".  I've previously been calling this project "vc5", but given
+that I also support a device that's called "vc6" already, I figured it
+was time to rename.
 
-> current code has a possibility that the OOM reaper is disturbed by
-> unpredictable dependencies, like I worried that
-> 
->   I think that there is a possibility that the OOM reaper tries to reclaim
->   mlocked pages as soon as exit_mmap() cleared VM_LOCKED flag by calling
->   munlock_vma_pages_all().
-> 
-> when current approach was proposed.
+I'm quite happy with the ABI.  My only concern as far as merging is
+that without GMP support, clients can access each other's memory even
+without having a GEM handle.  Authenticated DRI clients on other
+platforms have been able to do so, but I would like to prevent that if
+possible.  Given that I was planning on having the GMP, I didn't flag
+my ioctls as requiring authentication.  If this seems like a problem,
+I'd be happy to slap the authentication flag on BO submit, which I
+think would be enough to match the security provided by other drivers.
+I have a branch for GMP, but it's going to be a while before I finish
+it, I think.
 
-That's exactly the issue that this patch is fixing, yes.  If you brought 
-that possibility up then I'm sorry that it was ignored.
+Userspace for this driver is currently merged to Mesa but the build is
+disabled.  I figure I'll rename its driver to "v3d" and enable it once
+this is merged.
+
+Eric Anholt (2):
+  dt-bindings: Add a new binding for Broadcom V3D 3.x and newer GPUs.
+  drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+
+
+ .../bindings/display/brcm,bcm-v3d.txt         |  28 +
+ Documentation/gpu/drivers.rst                 |   1 +
+ MAINTAINERS                                   |   9 +
+ drivers/gpu/drm/Kconfig                       |   2 +
+ drivers/gpu/drm/Makefile                      |   1 +
+ drivers/gpu/drm/v3d/Kconfig                   |   9 +
+ drivers/gpu/drm/v3d/Makefile                  |  18 +
+ drivers/gpu/drm/v3d/v3d_bo.c                  | 392 ++++++++++
+ drivers/gpu/drm/v3d/v3d_debugfs.c             | 191 +++++
+ drivers/gpu/drm/v3d/v3d_drv.c                 | 371 ++++++++++
+ drivers/gpu/drm/v3d/v3d_drv.h                 | 305 ++++++++
+ drivers/gpu/drm/v3d/v3d_fence.c               |  58 ++
+ drivers/gpu/drm/v3d/v3d_gem.c                 | 671 ++++++++++++++++++
+ drivers/gpu/drm/v3d/v3d_irq.c                 | 211 ++++++
+ drivers/gpu/drm/v3d/v3d_mmu.c                 | 122 ++++
+ drivers/gpu/drm/v3d/v3d_regs.h                | 295 ++++++++
+ drivers/gpu/drm/v3d/v3d_sched.c               | 230 ++++++
+ drivers/gpu/drm/v3d/v3d_trace.h               |  82 +++
+ drivers/gpu/drm/v3d/v3d_trace_points.c        |   9 +
+ include/uapi/drm/v3d_drm.h                    | 191 +++++
+ 20 files changed, 3196 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
+ create mode 100644 drivers/gpu/drm/v3d/Kconfig
+ create mode 100644 drivers/gpu/drm/v3d/Makefile
+ create mode 100644 drivers/gpu/drm/v3d/v3d_bo.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_debugfs.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_drv.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_drv.h
+ create mode 100644 drivers/gpu/drm/v3d/v3d_fence.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_gem.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_irq.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_mmu.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_regs.h
+ create mode 100644 drivers/gpu/drm/v3d/v3d_sched.c
+ create mode 100644 drivers/gpu/drm/v3d/v3d_trace.h
+ create mode 100644 drivers/gpu/drm/v3d/v3d_trace_points.c
+ create mode 100644 include/uapi/drm/v3d_drm.h
+
+-- 
+2.17.0
