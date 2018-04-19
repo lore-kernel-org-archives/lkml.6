@@ -1,80 +1,53 @@
-Return-Path: <kstewart@linuxfoundation.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1524151931; cv=none;
-        d=google.com; s=arc-20160816;
-        b=0NgDhEwbXReHx70uIPVJyZr4+PcgMPuWpY4Oda+zroospjvhEjFuVtok8fdw2UjPzd
-         5uBQ2lbbQ7oyQrUNemyMQIbg0xbG+CgTLLJjfXVxNrJpl3qKQY7pPV+8JrMc1hB3A1cP
-         jHNy5953hstIqVdv6zHaWLur0MMgOfVUKs41e8Ooc/4+TEk/AZT5hAkRflvd9jxSTEE0
-         9I0KODfaMuRWEPuu6sUFKie5rpShTMhKOHx5CMi4a1xK8XXJhkzG34SR+rdS3V30Xgj7
-         hCW9vvvQAPNTr8vTcQcqlgklQvulnLUlJI//CJjtyrAa4N+SvUra3HV7vwpBl4SMYgX8
-         W3Gw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=rUVKNfQLdI6j4z3sGhhe/jV7r6BKIxzCUsH5fOx5++8=;
-        b=mb/wk2qzMTxzBqaRUPxlq/9sKdYvyBBWP6f2AGWZI5Z07usMmALiIHRD1oXU9OSyn/
-         30kv0Cz0J3ibdsfu2UHsLQHFaiLk8av4mqcmwQnpiD1r5vHQGByldFqKrn+Sws3WSrEF
-         e94uuU8SwcJs37ecFvIwNJM2PHH5CaRI/CkNeOhlLkkPPzXUDoLieTVx2az/iuY5NLD1
-         Kfx4SgiWm41U5iz99tyGBGOME7AgpHNt2YWU0LwidttzhCvtILpdLmMM20DLVkE8qzJo
-         CbY5tQI968HSqvyzWD4le2x2huHtbR41tw83E+TZFyZ6ovnBbMmftEMoIcGG05nwHyBS
-         CtTw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linuxfoundation.org header.s=google header.b=eaffFW2h;
-       spf=pass (google.com: domain of kstewart@linuxfoundation.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=kstewart@linuxfoundation.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linuxfoundation.org header.s=google header.b=eaffFW2h;
-       spf=pass (google.com: domain of kstewart@linuxfoundation.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=kstewart@linuxfoundation.org
-X-Google-Smtp-Source: AIpwx4+bKHLQnlA/Ixb2iVSVkd0tLVKjzq7EH3s1aKwFDUrOi9ZpfIUhGFgg7A9EAI99P7y5qED8qWUW9u10Md2Ensk=
-MIME-Version: 1.0
-In-Reply-To: <20180419100935.011090923@linutronix.de>
-References: <20180419100441.548834519@linutronix.de> <20180419100935.011090923@linutronix.de>
-From: Kate Stewart <kstewart@linuxfoundation.org>
-Date: Thu, 19 Apr 2018 10:32:10 -0500
-Message-ID: <CAG_66ZQJGhwKaVMyR8Vijd1Ew6YRrc6mO-Ci8zsqz5S2uuPJ6g@mail.gmail.com>
-Subject: Re: [patch V2 3/8] rslib: Add SPDX identifiers
+Date: Thu, 19 Apr 2018 15:55:51 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: Thomas Gleixner <tglx@linutronix.de>
 Cc: LKML <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>,
 	Segher Boessenkool <segher@kernel.crashing.org>,
 	Kernel Hardening <kernel-hardening@lists.openwall.com>,
 	Andrew Morton <akpm@linuxfoundation.org>,
-	Boris Brezillon <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>,
-	David Woodhouse <dwmw2@infradead.org>, Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
-	Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: multipart/alternative; boundary="0000000000006e6abe056a35462b"
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598168902175743568?=
-X-GMAIL-MSGID: =?utf-8?q?1598189135717815412?=
+	Boris Brezillon <boris.brezillon@free-electrons.com>,
+	Richard Weinberger <richard@nod.at>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+	Anton Vorontsov <anton@enomsg.org>,
+	Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>
+Subject: Re: [patch V2 3/8] rslib: Add SPDX identifiers
+Message-ID: <20180419135551.GA16862@kroah.com>
+References: <20180419100441.548834519@linutronix.de>
+ <20180419100935.011090923@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419100935.011090923@linutronix.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---0000000000006e6abe056a35462b
-Content-Type: text/plain; charset="UTF-8"
-
-On Thu, Apr 19, 2018 at 5:04 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-
+On Thu, Apr 19, 2018 at 12:04:44PM +0200, Thomas Gleixner wrote:
 > From: Thomas Gleixner <tglx@linutronix.de>
->
+> 
 > The Reed-Solomon library is based on code from Phil Karn who granted
 > permission to import it into the kernel under the GPL V2.
->
+> 
 > See commit 15b5423757a7 ("Shared Reed-Solomon ECC library") in the history
-> git tree at: git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.
-> git
->
+> git tree at: git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+> 
 >   ...
 >   The encoder/decoder code is lifted from the GPL'd userspace RS-library
 >   written by Phil Karn. I modified/wrapped it to provide the different
 >   functions which we need in the MTD/NAND code.
->   ...
+>   ...    
 >   Signed-Off-By: Thomas Gleixner <tglx@linutronix.de>
 >   Signed-Off-By: David Woodhouse <dwmw2@infradead.org>
 >   "No objections at all. Just keep the authorship notices." -- Phil Karn
->
+> 
 > Add the proper SPDX identifiers according to
 > Documentation/process/license-rules.rst.
->
->
+> 
+> 
 > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
 > Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
 > Cc: Tony Luck <tony.luck@intel.com>
 > Cc: Kees Cook <keescook@chromium.org>
@@ -88,103 +61,5 @@ On Thu, Apr 19, 2018 at 5:04 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
 > Cc: Andrew Morton <akpm@linuxfoundation.org>
 > Cc: David Woodhouse <dwmw2@infradead.org>
 > Cc: Alasdair Kergon <agk@redhat.com>
->
->  Reviewed-by: Kate Stewart <kstewart@linuxfoundation.org>
 
---0000000000006e6abe056a35462b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><div class=3D"gmail_quo=
-te">On Thu, Apr 19, 2018 at 5:04 AM, Thomas Gleixner <span dir=3D"ltr">&lt;=
-<a href=3D"mailto:tglx@linutronix.de" target=3D"_blank">tglx@linutronix.de<=
-/a>&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:=
-0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">From: Thomas Gleixn=
-er &lt;<a href=3D"mailto:tglx@linutronix.de">tglx@linutronix.de</a>&gt;<br>
-<br>
-The Reed-Solomon library is based on code from Phil Karn who granted<br>
-permission to import it into the kernel under the GPL V2.<br>
-<br>
-See commit 15b5423757a7 (&quot;Shared Reed-Solomon ECC library&quot;) in th=
-e history<br>
-git tree at: git://<a href=3D"http://git.kernel.org/pub/scm/linux/kernel/gi=
-t/tglx/history.git" rel=3D"noreferrer" target=3D"_blank">git.kernel.org/pub=
-/scm/<wbr>linux/kernel/git/tglx/history.<wbr>git</a><br>
-<br>
-=C2=A0 ...<br>
-=C2=A0 The encoder/decoder code is lifted from the GPL&#39;d userspace RS-l=
-ibrary<br>
-=C2=A0 written by Phil Karn. I modified/wrapped it to provide the different=
-<br>
-=C2=A0 functions which we need in the MTD/NAND code.<br>
-=C2=A0 ...=C2=A0 =C2=A0 <br>
-=C2=A0 Signed-Off-By: Thomas Gleixner &lt;<a href=3D"mailto:tglx@linutronix=
-.de">tglx@linutronix.de</a>&gt;<br>
-=C2=A0 Signed-Off-By: David Woodhouse &lt;<a href=3D"mailto:dwmw2@infradead=
-.org">dwmw2@infradead.org</a>&gt;<br>
-=C2=A0 &quot;No objections at all. Just keep the authorship notices.&quot; =
--- Phil Karn<br>
-<br>
-Add the proper SPDX identifiers according to<br>
-Documentation/process/license-<wbr>rules.rst.<br>
-<br>
-<br>
-Signed-off-by: Thomas Gleixner &lt;<a href=3D"mailto:tglx@linutronix.de">tg=
-lx@linutronix.de</a>&gt;<br>
-Cc: Boris Brezillon &lt;<a href=3D"mailto:boris.brezillon@free-electrons.co=
-m">boris.brezillon@free-<wbr>electrons.com</a>&gt;<br>
-Cc: Tony Luck &lt;<a href=3D"mailto:tony.luck@intel.com">tony.luck@intel.co=
-m</a>&gt;<br>
-Cc: Kees Cook &lt;<a href=3D"mailto:keescook@chromium.org">keescook@chromiu=
-m.org</a>&gt;<br>
-Cc: Segher Boessenkool &lt;<a href=3D"mailto:segher@kernel.crashing.org">se=
-gher@kernel.crashing.org</a>&gt;<br>
-Cc: Kernel Hardening &lt;<a href=3D"mailto:kernel-hardening@lists.openwall.=
-com">kernel-hardening@lists.<wbr>openwall.com</a>&gt;<br>
-Cc: Richard Weinberger &lt;<a href=3D"mailto:richard@nod.at">richard@nod.at=
-</a>&gt;<br>
-Cc: Mike Snitzer &lt;<a href=3D"mailto:snitzer@redhat.com">snitzer@redhat.c=
-om</a>&gt;<br>
-Cc: Anton Vorontsov &lt;<a href=3D"mailto:anton@enomsg.org">anton@enomsg.or=
-g</a>&gt;<br>
-Cc: Greg Kroah-Hartman &lt;<a href=3D"mailto:gregkh@linuxfoundation.org">gr=
-egkh@linuxfoundation.org</a>&gt;<br>
-Cc: Colin Cross &lt;<a href=3D"mailto:ccross@android.com">ccross@android.co=
-m</a>&gt;<br>
-Cc: Andrew Morton &lt;<a href=3D"mailto:akpm@linuxfoundation.org">akpm@linu=
-xfoundation.org</a>&gt;<br>
-Cc: David Woodhouse &lt;<a href=3D"mailto:dwmw2@infradead.org">dwmw2@infrad=
-ead.org</a>&gt;<br>
-Cc: Alasdair Kergon &lt;<a href=3D"mailto:agk@redhat.com">agk@redhat.com</a=
->&gt;<br>
-<br></blockquote><div><span style=3D"color:rgb(34,34,34);font-family:arial,=
-sans-serif;font-size:small;font-style:normal;font-variant-ligatures:normal;=
-font-variant-caps:normal;font-weight:400;letter-spacing:normal;text-align:s=
-tart;text-indent:0px;text-transform:none;white-space:normal;word-spacing:0p=
-x;background-color:rgb(255,255,255);text-decoration-style:initial;text-deco=
-ration-color:initial;float:none;display:inline">=C2=A0</span><span style=3D=
-"color:rgb(34,34,34);font-family:arial,sans-serif;font-style:normal;font-va=
-riant-ligatures:normal;font-variant-caps:normal;font-weight:400;letter-spac=
-ing:normal;text-align:start;text-indent:0px;text-transform:none;white-space=
-:normal;word-spacing:0px;text-decoration-style:initial;text-decoration-colo=
-r:initial;font-size:12.8px;background-color:rgb(255,255,255);float:none;dis=
-play:inline">Reviewed-by:=C2=A0<span style=3D"color:rgb(80,0,80);font-famil=
-y:arial,sans-serif;font-size:12.8px;font-style:normal;font-variant-ligature=
-s:normal;font-variant-caps:normal;font-weight:400;letter-spacing:normal;tex=
-t-align:start;text-indent:0px;text-transform:none;white-space:normal;word-s=
-pacing:0px;background-color:rgb(255,255,255);text-decoration-style:initial;=
-text-decoration-color:initial;float:none;display:inline">Kate Stewart &lt;<=
-/span><a href=3D"mailto:kstewart@linuxfoundation.org" style=3D"color:rgb(17=
-,85,204);font-family:arial,sans-serif;font-size:12.8px;font-style:normal;fo=
-nt-variant-ligatures:normal;font-variant-caps:normal;font-weight:400;letter=
--spacing:normal;text-align:start;text-indent:0px;text-transform:none;white-=
-space:normal;word-spacing:0px;background-color:rgb(255,255,255)">kstewart@l=
-inuxfoundation.org</a><span style=3D"color:rgb(80,0,80);font-family:arial,s=
-ans-serif;font-size:12.8px;font-style:normal;font-variant-ligatures:normal;=
-font-variant-caps:normal;font-weight:400;letter-spacing:normal;text-align:s=
-tart;text-indent:0px;text-transform:none;white-space:normal;word-spacing:0p=
-x;background-color:rgb(255,255,255);text-decoration-style:initial;text-deco=
-ration-color:initial;float:none;display:inline">&gt;</span></span></div><di=
-v>=C2=A0</div></div></div></div>
-
---0000000000006e6abe056a35462b--
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
