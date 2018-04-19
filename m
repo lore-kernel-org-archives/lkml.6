@@ -1,28 +1,28 @@
 Return-Path: <BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org>
-X-Google-Smtp-Source: AIpwx4/RBqQIL8jvItM4+lymJBU3omVPctcPTnK4SATj8p0mg1aSwbrS1yYnHKbVx6KuYUGN5Me3
-ARC-Seal: i=1; a=rsa-sha256; t=1524141780; cv=none;
+X-Google-Smtp-Source: AIpwx4/bg6KuhH1eKfCxP9W7LD/uTaxVMyqhlMQg1ulMGa0ZqXL9x6djx9luienBpeXkEoduvWdX
+ARC-Seal: i=1; a=rsa-sha256; t=1524141777; cv=none;
         d=google.com; s=arc-20160816;
-        b=lRkIJGr8/SNchCM2UfrHGkIfqVDeUbeoxoj90l1bpz0YZYI7EW9kGeASpn7D0kD0QY
-         icRRr482NlHVN/09n/t5lEberBkOtWTCwBP8zLITEl343Mcnq0Oq9O2RpuHBPR8SBvHz
-         JGQs8BwXSPmUvPZixwnLfe1r8oq23eMQZj2s2RRGE3OVbcDDV6CvimxxByhQFYpmo/ny
-         wowPhtpn0e8zcKG9ZN19WZeHzWSTIlKvOc4eDMErpDbdTyqTlg6I4hQS7Xwq/ND9O499
-         mgIPDgEm2cciDP/7cERlg9JlI6zoMiD/YX19kTnztUAby2oBVGyt3BHcIGkhEGKPelWm
-         bOcQ==
+        b=NzunIqe25lbEyp5lyyXpU+TvnAlLuicdNARdd9KKdpXkv2PB7aPVLrWQzDw8rWCx3U
+         QzRcby79G3H1eMJ3ozbXFpp5fFRKt6NM8En8AtCyPHa3fo/A0r0NHhalSiCYX2Xfh2Xy
+         XOfIU8xJpjvrG6ZFnpWCsIKV+I642Fu6KVCd9qx9yLjOOiw48w1zaUrYOqiukdFpL/FF
+         sr/wbezfOGR3t7b50FdrMWS8OVCx/ACU2RstiBGZgYQYCNVnzRHpNHMyTE0gWuTWw+ua
+         wU10CZxWUVnT9aARfuRTE+Nt1dBvV3sO5GJEjW6LGRK2A6KStRwo3ne+u1zzypy/evTr
+         Usow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=qULf1JVDpErDy6tFSxxrDhKQpGdhoo+HyG4CFeursPM=;
-        b=wC0hZjBE92RKG3ng9VqtkXLIG2lO2cmsPuWKulEwe16K0H1Iu+8RSuRXi/HZvdxV9Q
-         HvVAl6RYFo0t8TgQ5wGNbhVSaETOw283YyzuKp4uk6AtGS3P9/sPB+c+0E0vHzoziRXD
-         vPBlcMliZ6KqnT9Px0VZO5OZ/4bsz3HMUz67JmSds0LgXU54oerPgpi3brb7/xXdzQ75
-         iDLEIbpxYARlLX0KLSqPuv2jjHRlrgJx+MUhXpeftVAgjD3t1O7g0hXWrd1Fu0R8klEV
-         pLJtH0x/nAaHPVbQC8e+DGGsjagqpWKfovKhpWcrWImWUOdVYzLKih9vEXrVefDzGt2s
-         Vtlg==
+        bh=SE/Bfwh/pFpB5D945bg+atQWGn0r5VzAsJkE5LDfSHs=;
+        b=M2MXyCTLrA/TXp3vf56GIaI0IQ7n3PILC3YJjysELq3HIDbRLgnSm38r5stftCpeC6
+         Wo2zcFQ/tAbiNSQd0YtYuUYCoBqHwnDewkFlBZN5FvCChcFfZbCG1URwWs0qpRmr5H+G
+         B0J5DOvMbJ+zKhfnqQ5zebwGsIC+tw5Mo8Rmn5hv9AI/yym8y4wZtZHYmjDV+s/45QDI
+         haKatg8jVkgkZO1YACJYZGglD8map4Vpggq1zxEQ7dNof8rLzvT6TWa1h4U2AdtN6ZO1
+         3aw2+u+aO64DsL7NQRlUu6WCyiJFPS5ixsyihLhbCljbf7MZyILkl0ZqbjfMk68/vE/a
+         prnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=GtHjZCo4;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=TOa140NN;
        spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=GtHjZCo4;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=TOa140NN;
        spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
@@ -46,16 +46,16 @@ Cc: Alexey Dobriyan <adobriyan@gmail.com>,
 	jfs-discussion@lists.sourceforge.net,
 	netfilter-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 22/39] jfs: simplify procfs code
-Date: Thu, 19 Apr 2018 14:41:23 +0200
-Message-Id: <20180419124140.9309-23-hch@lst.de>
+Subject: [PATCH 21/39] ext4: simplify procfs code
+Date: Thu, 19 Apr 2018 14:41:22 +0200
+Message-Id: <20180419124140.9309-22-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180419124140.9309-1-hch@lst.de>
 References: <20180419124140.9309-1-hch@lst.de>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598178491715237553?=
-X-GMAIL-MSGID: =?utf-8?q?1598178491715237553?=
+X-GMAIL-THRID: =?utf-8?q?1598178488051639355?=
+X-GMAIL-MSGID: =?utf-8?q?1598178488051639355?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -65,255 +65,169 @@ proc_create_seq where applicable.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/jfs/jfs_debug.c    | 43 ++++++++++++++-----------------------------
- fs/jfs/jfs_debug.h    | 10 +++++-----
- fs/jfs/jfs_logmgr.c   | 14 +-------------
- fs/jfs/jfs_metapage.c | 14 +-------------
- fs/jfs/jfs_txnmgr.c   | 28 ++--------------------------
- fs/jfs/jfs_xtree.c    | 14 +-------------
- 6 files changed, 24 insertions(+), 99 deletions(-)
+ fs/ext4/ext4.h    |  2 +-
+ fs/ext4/mballoc.c | 29 ++++------------------------
+ fs/ext4/sysfs.c   | 49 +++++++++--------------------------------------
+ 3 files changed, 14 insertions(+), 66 deletions(-)
 
-diff --git a/fs/jfs/jfs_debug.c b/fs/jfs/jfs_debug.c
-index a70907606025..35a5b2a81ae0 100644
---- a/fs/jfs/jfs_debug.c
-+++ b/fs/jfs/jfs_debug.c
-@@ -29,7 +29,6 @@
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index a42e71203e53..229ea4da6785 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2390,7 +2390,7 @@ extern int ext4_init_inode_table(struct super_block *sb,
+ extern void ext4_end_bitmap_read(struct buffer_head *bh, int uptodate);
  
- #ifdef PROC_FS_JFS /* see jfs_debug.h */
+ /* mballoc.c */
+-extern const struct file_operations ext4_seq_mb_groups_fops;
++extern const struct seq_operations ext4_mb_seq_groups_ops;
+ extern long ext4_mb_stats;
+ extern long ext4_mb_max_to_scan;
+ extern int ext4_mb_init(struct super_block *);
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 769a62708b1c..6884e81c1465 100644
+--- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -2254,7 +2254,7 @@ ext4_mb_regular_allocator(struct ext4_allocation_context *ac)
  
--static struct proc_dir_entry *base;
- #ifdef CONFIG_JFS_DEBUG
- static int jfs_loglevel_proc_show(struct seq_file *m, void *v)
+ static void *ext4_mb_seq_groups_start(struct seq_file *seq, loff_t *pos)
  {
-@@ -66,43 +65,29 @@ static const struct file_operations jfs_loglevel_proc_fops = {
+-	struct super_block *sb = seq->private;
++	struct super_block *sb = PDE_DATA(file_inode(seq->file));
+ 	ext4_group_t group;
+ 
+ 	if (*pos < 0 || *pos >= ext4_get_groups_count(sb))
+@@ -2265,7 +2265,7 @@ static void *ext4_mb_seq_groups_start(struct seq_file *seq, loff_t *pos)
+ 
+ static void *ext4_mb_seq_groups_next(struct seq_file *seq, void *v, loff_t *pos)
+ {
+-	struct super_block *sb = seq->private;
++	struct super_block *sb = PDE_DATA(file_inode(seq->file));
+ 	ext4_group_t group;
+ 
+ 	++*pos;
+@@ -2277,7 +2277,7 @@ static void *ext4_mb_seq_groups_next(struct seq_file *seq, void *v, loff_t *pos)
+ 
+ static int ext4_mb_seq_groups_show(struct seq_file *seq, void *v)
+ {
+-	struct super_block *sb = seq->private;
++	struct super_block *sb = PDE_DATA(file_inode(seq->file));
+ 	ext4_group_t group = (ext4_group_t) ((unsigned long) v);
+ 	int i;
+ 	int err, buddy_loaded = 0;
+@@ -2330,34 +2330,13 @@ static void ext4_mb_seq_groups_stop(struct seq_file *seq, void *v)
+ {
+ }
+ 
+-static const struct seq_operations ext4_mb_seq_groups_ops = {
++const struct seq_operations ext4_mb_seq_groups_ops = {
+ 	.start  = ext4_mb_seq_groups_start,
+ 	.next   = ext4_mb_seq_groups_next,
+ 	.stop   = ext4_mb_seq_groups_stop,
+ 	.show   = ext4_mb_seq_groups_show,
  };
- #endif
  
--static struct {
--	const char	*name;
--	const struct file_operations *proc_fops;
--} Entries[] = {
--#ifdef CONFIG_JFS_STATISTICS
--	{ "lmstats",	&jfs_lmstats_proc_fops, },
--	{ "txstats",	&jfs_txstats_proc_fops, },
--	{ "xtstat",	&jfs_xtstat_proc_fops, },
--	{ "mpstat",	&jfs_mpstat_proc_fops, },
--#endif
--#ifdef CONFIG_JFS_DEBUG
--	{ "TxAnchor",	&jfs_txanchor_proc_fops, },
--	{ "loglevel",	&jfs_loglevel_proc_fops }
--#endif
--};
--#define NPROCENT	ARRAY_SIZE(Entries)
+-static int ext4_mb_seq_groups_open(struct inode *inode, struct file *file)
+-{
+-	struct super_block *sb = PDE_DATA(inode);
+-	int rc;
 -
- void jfs_proc_init(void)
- {
--	int i;
-+	struct proc_dir_entry *base;
- 
--	if (!(base = proc_mkdir("fs/jfs", NULL)))
-+	base = proc_mkdir("fs/jfs", NULL);
-+	if (!base)
- 		return;
- 
--	for (i = 0; i < NPROCENT; i++)
--		proc_create(Entries[i].name, 0, base, Entries[i].proc_fops);
-+#ifdef CONFIG_JFS_STATISTICS
-+	proc_create_single("lmstats", 0, base, jfs_lmstats_proc_show);
-+	proc_create_single("txstats", 0, base, jfs_txstats_proc_show);
-+	proc_create_single("xtstat", 0, base, jfs_xtstat_proc_show);
-+	proc_create_single("mpstat", 0, base, jfs_mpstat_proc_show);
-+#endif
-+#ifdef CONFIG_JFS_DEBUG
-+	proc_create_single("TxAnchor", 0, base, jfs_txanchor_proc_show);
-+	proc_create("loglevel", 0, base, &jfs_loglevel_proc_fops);
-+#endif
- }
- 
- void jfs_proc_clean(void)
- {
--	int i;
--
--	if (base) {
--		for (i = 0; i < NPROCENT; i++)
--			remove_proc_entry(Entries[i].name, base);
--		remove_proc_entry("fs/jfs", NULL);
+-	rc = seq_open(file, &ext4_mb_seq_groups_ops);
+-	if (rc == 0) {
+-		struct seq_file *m = file->private_data;
+-		m->private = sb;
 -	}
-+	remove_proc_subtree("fs/jfs", NULL);
- }
- 
- #endif /* PROC_FS_JFS */
-diff --git a/fs/jfs/jfs_debug.h b/fs/jfs/jfs_debug.h
-index eafd1300a00b..0d9e35da8462 100644
---- a/fs/jfs/jfs_debug.h
-+++ b/fs/jfs/jfs_debug.h
-@@ -62,7 +62,7 @@ extern void jfs_proc_clean(void);
- 
- extern int jfsloglevel;
- 
--extern const struct file_operations jfs_txanchor_proc_fops;
-+int jfs_txanchor_proc_show(struct seq_file *m, void *v);
- 
- /* information message: e.g., configuration, major event */
- #define jfs_info(fmt, arg...) do {			\
-@@ -105,10 +105,10 @@ extern const struct file_operations jfs_txanchor_proc_fops;
-  *	----------
-  */
- #ifdef	CONFIG_JFS_STATISTICS
--extern const struct file_operations jfs_lmstats_proc_fops;
--extern const struct file_operations jfs_txstats_proc_fops;
--extern const struct file_operations jfs_mpstat_proc_fops;
--extern const struct file_operations jfs_xtstat_proc_fops;
-+int jfs_lmstats_proc_show(struct seq_file *m, void *v);
-+int jfs_txstats_proc_show(struct seq_file *m, void *v);
-+int jfs_mpstat_proc_show(struct seq_file *m, void *v);
-+int jfs_xtstat_proc_show(struct seq_file *m, void *v);
- 
- #define	INCREMENT(x)		((x)++)
- #define	DECREMENT(x)		((x)--)
-diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
-index 0e5d412c0b01..6b68df395892 100644
---- a/fs/jfs/jfs_logmgr.c
-+++ b/fs/jfs/jfs_logmgr.c
-@@ -2493,7 +2493,7 @@ int lmLogFormat(struct jfs_log *log, s64 logAddress, int logSize)
- }
- 
- #ifdef CONFIG_JFS_STATISTICS
--static int jfs_lmstats_proc_show(struct seq_file *m, void *v)
-+int jfs_lmstats_proc_show(struct seq_file *m, void *v)
- {
- 	seq_printf(m,
- 		       "JFS Logmgr stats\n"
-@@ -2510,16 +2510,4 @@ static int jfs_lmstats_proc_show(struct seq_file *m, void *v)
- 		       lmStat.partial_page);
- 	return 0;
- }
+-	return rc;
 -
--static int jfs_lmstats_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_lmstats_proc_show, NULL);
 -}
 -
--const struct file_operations jfs_lmstats_proc_fops = {
--	.open		= jfs_lmstats_proc_open,
+-const struct file_operations ext4_seq_mb_groups_fops = {
+-	.open		= ext4_mb_seq_groups_open,
 -	.read		= seq_read,
 -	.llseek		= seq_lseek,
--	.release	= single_release,
+-	.release	= seq_release,
 -};
- #endif /* CONFIG_JFS_STATISTICS */
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 1a3b0cc22ad3..fa2c6824c7f2 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -815,7 +815,7 @@ void __invalidate_metapages(struct inode *ip, s64 addr, int len)
- }
- 
- #ifdef CONFIG_JFS_STATISTICS
--static int jfs_mpstat_proc_show(struct seq_file *m, void *v)
-+int jfs_mpstat_proc_show(struct seq_file *m, void *v)
- {
- 	seq_printf(m,
- 		       "JFS Metapage statistics\n"
-@@ -828,16 +828,4 @@ static int jfs_mpstat_proc_show(struct seq_file *m, void *v)
- 		       mpStat.lockwait);
- 	return 0;
- }
 -
--static int jfs_mpstat_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_mpstat_proc_show, NULL);
+ static struct kmem_cache *get_groupinfo_cache(int blocksize_bits)
+ {
+ 	int cache_index = blocksize_bits - EXT4_MIN_BLOCK_LOG_SIZE;
+diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
+index 9ebd26c957c2..f34da0bb8f17 100644
+--- a/fs/ext4/sysfs.c
++++ b/fs/ext4/sysfs.c
+@@ -346,39 +346,9 @@ static struct kobject *ext4_root;
+ 
+ static struct kobject *ext4_feat;
+ 
+-#define PROC_FILE_SHOW_DEFN(name) \
+-static int name##_open(struct inode *inode, struct file *file) \
+-{ \
+-	return single_open(file, ext4_seq_##name##_show, PDE_DATA(inode)); \
+-} \
+-\
+-static const struct file_operations ext4_seq_##name##_fops = { \
+-	.open		= name##_open, \
+-	.read		= seq_read, \
+-	.llseek		= seq_lseek, \
+-	.release	= single_release, \
 -}
 -
--const struct file_operations jfs_mpstat_proc_fops = {
--	.open		= jfs_mpstat_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
+-#define PROC_FILE_LIST(name) \
+-	{ __stringify(name), &ext4_seq_##name##_fops }
+-
+-PROC_FILE_SHOW_DEFN(es_shrinker_info);
+-PROC_FILE_SHOW_DEFN(options);
+-
+-static const struct ext4_proc_files {
+-	const char *name;
+-	const struct file_operations *fops;
+-} proc_files[] = {
+-	PROC_FILE_LIST(options),
+-	PROC_FILE_LIST(es_shrinker_info),
+-	PROC_FILE_LIST(mb_groups),
+-	{ NULL, NULL },
 -};
- #endif
-diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
-index 4d973524c887..a5663cb621d8 100644
---- a/fs/jfs/jfs_txnmgr.c
-+++ b/fs/jfs/jfs_txnmgr.c
-@@ -2998,7 +2998,7 @@ int jfs_sync(void *arg)
- }
- 
- #if defined(CONFIG_PROC_FS) && defined(CONFIG_JFS_DEBUG)
--static int jfs_txanchor_proc_show(struct seq_file *m, void *v)
-+int jfs_txanchor_proc_show(struct seq_file *m, void *v)
+-
+ int ext4_register_sysfs(struct super_block *sb)
  {
- 	char *freewait;
- 	char *freelockwait;
-@@ -3032,22 +3032,10 @@ static int jfs_txanchor_proc_show(struct seq_file *m, void *v)
- 		       list_empty(&TxAnchor.unlock_queue) ? "" : "not ");
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+-	const struct ext4_proc_files *p;
+ 	int err;
+ 
+ 	init_completion(&sbi->s_kobj_unregister);
+@@ -392,11 +362,14 @@ int ext4_register_sysfs(struct super_block *sb)
+ 
+ 	if (ext4_proc_root)
+ 		sbi->s_proc = proc_mkdir(sb->s_id, ext4_proc_root);
+-
+ 	if (sbi->s_proc) {
+-		for (p = proc_files; p->name; p++)
+-			proc_create_data(p->name, S_IRUGO, sbi->s_proc,
+-					 p->fops, sb);
++		proc_create_single_data("options", S_IRUGO, sbi->s_proc,
++				ext4_seq_options_show, sb);
++		proc_create_single_data("es_shrinker_info", S_IRUGO,
++				sbi->s_proc, ext4_seq_es_shrinker_info_show,
++				sb);
++		proc_create_seq_data("mb_groups", S_IRUGO, sbi->s_proc,
++				&ext4_mb_seq_groups_ops, sb);
+ 	}
  	return 0;
  }
--
--static int jfs_txanchor_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_txanchor_proc_show, NULL);
--}
--
--const struct file_operations jfs_txanchor_proc_fops = {
--	.open		= jfs_txanchor_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
- #endif
- 
- #if defined(CONFIG_PROC_FS) && defined(CONFIG_JFS_STATISTICS)
--static int jfs_txstats_proc_show(struct seq_file *m, void *v)
-+int jfs_txstats_proc_show(struct seq_file *m, void *v)
+@@ -404,13 +377,9 @@ int ext4_register_sysfs(struct super_block *sb)
+ void ext4_unregister_sysfs(struct super_block *sb)
  {
- 	seq_printf(m,
- 		       "JFS TxStats\n"
-@@ -3072,16 +3060,4 @@ static int jfs_txstats_proc_show(struct seq_file *m, void *v)
- 		       TxStat.txLockAlloc_freelock);
- 	return 0;
- }
--
--static int jfs_txstats_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_txstats_proc_show, NULL);
--}
--
--const struct file_operations jfs_txstats_proc_fops = {
--	.open		= jfs_txstats_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
- #endif
-diff --git a/fs/jfs/jfs_xtree.c b/fs/jfs/jfs_xtree.c
-index 5cde6d2fcfca..2c200b5256a6 100644
---- a/fs/jfs/jfs_xtree.c
-+++ b/fs/jfs/jfs_xtree.c
-@@ -3874,7 +3874,7 @@ s64 xtTruncate_pmap(tid_t tid, struct inode *ip, s64 committed_size)
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+-	const struct ext4_proc_files *p;
+ 
+-	if (sbi->s_proc) {
+-		for (p = proc_files; p->name; p++)
+-			remove_proc_entry(p->name, sbi->s_proc);
+-		remove_proc_entry(sb->s_id, ext4_proc_root);
+-	}
++	if (sbi->s_proc)
++		remove_proc_subtree(sb->s_id, ext4_proc_root);
+ 	kobject_del(&sbi->s_kobj);
  }
  
- #ifdef CONFIG_JFS_STATISTICS
--static int jfs_xtstat_proc_show(struct seq_file *m, void *v)
-+int jfs_xtstat_proc_show(struct seq_file *m, void *v)
- {
- 	seq_printf(m,
- 		       "JFS Xtree statistics\n"
-@@ -3887,16 +3887,4 @@ static int jfs_xtstat_proc_show(struct seq_file *m, void *v)
- 		       xtStat.split);
- 	return 0;
- }
--
--static int jfs_xtstat_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, jfs_xtstat_proc_show, NULL);
--}
--
--const struct file_operations jfs_xtstat_proc_fops = {
--	.open		= jfs_xtstat_proc_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
- #endif
 -- 
 2.17.0
