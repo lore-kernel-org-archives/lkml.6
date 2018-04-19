@@ -1,20 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753596AbeDSOV7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:21:59 -0400
-Received: from sauhun.de ([88.99.104.3]:45270 "EHLO pokefinder.org"
+        id S1753369AbeDSOG5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:06:57 -0400
+Received: from sauhun.de ([88.99.104.3]:45234 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753384AbeDSOHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:00 -0400
+        id S1752731AbeDSOGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:06:50 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Clark <robdclark@gmail.com>, Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH 24/61] iommu: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:54 +0200
-Message-Id: <20180419140641.27926-25-wsa+renesas@sang-engineering.com>
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 04/61] bus: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:34 +0200
+Message-Id: <20180419140641.27926-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
@@ -30,31 +33,52 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/iommu/qcom_iommu.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/bus/brcmstb_gisb.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
-index 65b9c99707f8..fe88a4880d3a 100644
---- a/drivers/iommu/qcom_iommu.c
-+++ b/drivers/iommu/qcom_iommu.c
-@@ -885,16 +885,14 @@ static int qcom_iommu_device_remove(struct platform_device *pdev)
- 
- static int __maybe_unused qcom_iommu_resume(struct device *dev)
+diff --git a/drivers/bus/brcmstb_gisb.c b/drivers/bus/brcmstb_gisb.c
+index 68ac3e93b600..f58ff67e97ac 100644
+--- a/drivers/bus/brcmstb_gisb.c
++++ b/drivers/bus/brcmstb_gisb.c
+@@ -150,8 +150,7 @@ static ssize_t gisb_arb_get_timeout(struct device *dev,
+ 				    struct device_attribute *attr,
+ 				    char *buf)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct qcom_iommu_dev *qcom_iommu = platform_get_drvdata(pdev);
-+	struct qcom_iommu_dev *qcom_iommu = dev_get_drvdata(dev);
+-	struct brcmstb_gisb_arb_device *gdev = platform_get_drvdata(pdev);
++	struct brcmstb_gisb_arb_device *gdev = dev_get_drvdata(dev);
+ 	u32 timeout;
  
- 	return qcom_iommu_enable_clocks(qcom_iommu);
- }
- 
- static int __maybe_unused qcom_iommu_suspend(struct device *dev)
+ 	mutex_lock(&gdev->lock);
+@@ -165,8 +164,7 @@ static ssize_t gisb_arb_set_timeout(struct device *dev,
+ 				    struct device_attribute *attr,
+ 				    const char *buf, size_t count)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct qcom_iommu_dev *qcom_iommu = platform_get_drvdata(pdev);
-+	struct qcom_iommu_dev *qcom_iommu = dev_get_drvdata(dev);
+-	struct brcmstb_gisb_arb_device *gdev = platform_get_drvdata(pdev);
++	struct brcmstb_gisb_arb_device *gdev = dev_get_drvdata(dev);
+ 	int val, ret;
  
- 	qcom_iommu_disable_clocks(qcom_iommu);
+ 	ret = kstrtoint(buf, 10, &val);
+@@ -418,8 +416,7 @@ static int __init brcmstb_gisb_arb_probe(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int brcmstb_gisb_arb_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct brcmstb_gisb_arb_device *gdev = platform_get_drvdata(pdev);
++	struct brcmstb_gisb_arb_device *gdev = dev_get_drvdata(dev);
+ 
+ 	gdev->saved_timeout = gisb_read(gdev, ARB_TIMER);
+ 
+@@ -431,8 +428,7 @@ static int brcmstb_gisb_arb_suspend(struct device *dev)
+  */
+ static int brcmstb_gisb_arb_resume_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct brcmstb_gisb_arb_device *gdev = platform_get_drvdata(pdev);
++	struct brcmstb_gisb_arb_device *gdev = dev_get_drvdata(dev);
+ 
+ 	gisb_write(gdev, gdev->saved_timeout, ARB_TIMER);
  
 -- 
 2.11.0
