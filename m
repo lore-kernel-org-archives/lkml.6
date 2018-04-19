@@ -1,126 +1,89 @@
-Return-Path: <SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoWGUqgW3D4OrC7ZzLj6/+KsswjKKul7TB7JIoO6d0MPrntDkXhfakNT/K5pSxHg9n3EDdw
-ARC-Seal: i=1; a=rsa-sha256; t=1524837497; cv=none;
+Return-Path: <yamada.masahiro@socionext.com>
+X-Google-Smtp-Source: AIpwx4+T8epQHDkea6ns5tpbMEyGf7Hep2nl0zxEqPeNbmgc3MgB1pveznEOK7FG1idxanzglhIT
+ARC-Seal: i=1; a=rsa-sha256; t=1524135882; cv=none;
         d=google.com; s=arc-20160816;
-        b=qWRqn/dnxJJzq1D3hxzD21fJCCQ6Uv+0+b9CtJXm34Ox1SuaR9L26TxRnMT1pv45Ce
-         ek9ZuwAMi5y+08d1wKfmO/+yXcPYEdktJraTd8ir4efnFXFC6p5YaTJV/9SACjcfHfYS
-         OiWzzqQDMj6HL+V4tAJo2lCxurf30ND8ece2zHas9QESpJa6Rgv9U91XX1GiLD8tZ8gf
-         76OoD3kk1aJoLR59zDkKMbhuUhDakp3C8A2OsLzzVh3S+5J0Y6kNVSYoLhQUyZt7JjBF
-         KufmNmRz0gro02erNP0O0aAuStXeyNGpUEEGeFSwEtMYBQBh9Kjfy1MTNfFnAZq8YR6g
-         gkng==
+        b=UTS9djkfzpr3iD66DoJdM5T/KQRal+TgG1Bm+JscuZOCk5qNpd5XZGnzyKYIp8XKXM
+         mWbxAbLXLXmEKQpRP6SP9OBcZLr3gqilE/fa4KfOsPj9X9kn6eGydN3iwsYQWNlnarIw
+         rYHGErwc34RgqimEwKdLkQnF19ztT6SZN+5oA6yNfpfRUybX2+R+IVgvdmSGHlBNTF/Z
+         efeCkVJydzCiSMlM5jWj7GCc5rhaqF9rG6wLyAb6cxO1VwDWAzXHSh7ERkq7WDBuSHwG
+         ojkZ7TtqkOAMhs0nyEL0Sv4NpJ8qptNWc/1Ubks+POwx+q9Vsf+GIKakpR7nM2gO5tgV
+         L3fg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dmarc-filter:arc-authentication-results;
-        bh=3uQIwbYk9MWOYNnkNoy23o3u16kFoH3qiw5C3Ibnp40=;
-        b=p6GVgn/5miSkFTFav2N08hhok+UUH3IiS/p1CyKZl7gvU0GRFod29SK8xRMlUl9RJi
-         rt8rG931bt4hwie8CKx/UWI5LhbkhE5Eyq8gyaWxTBTvl30yNaHibxEABSTvn2IjimM8
-         Xd36qlHxFrGDcBJioG8YTMwh5oejxDmdjuxKbOTZAS36/4HEwv3GyKDoDYrtIPKJky5d
-         yiv6K3mQXLFKUHCl1lMz7wYcw0fFVhBN5YcrN4C7QrR+F/V9EQPKUF5SOLWCtbszqSnS
-         CNe4Nyb+u/Ne4B0StwqeznALy7WYaozqfR5Oa4WKir3W7IC2bkgPw83FRxRE67vijABk
-         C7uQ==
+        h=message-id:date:subject:cc:to:from:dkim-signature:dkim-filter
+         :arc-authentication-results;
+        bh=LijawDXfA+hMBjvR5MD5NnFK9lLpyb6Kyem3aWCUGbA=;
+        b=wGAWvu8r5gRFk9lYK/k9rKDxhU+DgsR7qE7xxaup49A8dbGFMfGGO8oh/aDyDwqZmZ
+         sOf3kp1pkUWZjLyjKayvHLHGgUtoeVQomDOhM94cFqntzfQNrNlzFLVs7kHO3pZbWjKN
+         WQUtXyGgXccW5eH4H0i4n2jafeduU2ApMEFPcn3IezqIxR2IWjiWfSSLAgvOQCPW3Qcz
+         t/CYU9qvtIXJtpEAtsAS3qVTe8XO+/zfsOFJcn6ppb0i9Fto0mNTGzXuMgaMhKHNIhaf
+         Jxb+iWooZuE1OPt0r/7gWl6ZdxILR5y67DsIR/srbTn0V7BoR9GrsE7XJADWeKv2B0IJ
+         lzrw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=SHNSNUHh;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.78 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of srs0=4/0d=hq=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4/0d=HQ=linuxfoundation.org=gregkh@kernel.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87AC821894
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=gregkh@linuxfoundation.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Colin Ian King <colin.king@canonical.com>,
-	Pavel Shilovsky <pshilov@microsoft.com>,
-	Eryu Guan <eguan@redhat.com>,
-	Ronnie Sahlberg <lsahlber@redhat.com>,
-	Steve French <smfrench@gmail.com>
-Subject: [PATCH 3.18 01/24] cifs: do not allow creating sockets except with SMB1 posix exensions
-Date: Fri, 27 Apr 2018 15:57:36 +0200
-Message-Id: <20180427135631.643688596@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180427135631.584839868@linuxfoundation.org>
-References: <20180427135631.584839868@linuxfoundation.org>
-User-Agent: quilt/0.65
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=SHNSNUHh;
+       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.78 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w3JB42uq024223
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-usb@vger.kernel.org, Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: Rob Herring <robh@kernel.org>, Roger Quadros <rogerq@ti.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 0/2] usb: dwc3: support clocks and resets for DWC3 core
+Date: Thu, 19 Apr 2018 20:03:36 +0900
+Message-Id: <1524135818-14825-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1598908003745859053?=
-X-GMAIL-MSGID: =?utf-8?q?1598908003745859053?=
+X-GMAIL-THRID: =?utf-8?q?1598172301797892822?=
+X-GMAIL-MSGID: =?utf-8?q?1598172307112907244?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+In the current design of DWC3 driver,
+the DT typically becomes a nested structure like follows:
 
-------------------
+  dwc3-glue {
+          compatible = "foo,dwc3";
+          ...
 
-From: Steve French <smfrench@gmail.com>
+          dwc3 {
+                  compatible = "snps,dwc3";
+                  ...
+          };
+  }
 
-commit 1d0cffa674cfa7d185a302c8c6850fc50b893bed upstream.
+The current DWC3 core (drivers/usb/dwc3/core.c) can not handle
+clocks / resets at all.
 
-RHBZ: 1453123
+The only solution we have now, is to put DWC3 core node under
+the glue layer node, then add clocks and resets there.
+Actually, dwc3-of-simple.c exists to handle clocks and resets.
 
-Since at least the 3.10 kernel and likely a lot earlier we have
-not been able to create unix domain sockets in a cifs share
-when mounted using the SFU mount option (except when mounted
-with the cifs unix extensions to Samba e.g.)
-Trying to create a socket, for example using the af_unix command from
-xfstests will cause :
-BUG: unable to handle kernel NULL pointer dereference at 00000000
-00000040
+As always for digital circuits, DWC3 core IP itself needs clock input.
+This is specific to this IP.  So, supporting clocks and resets in
+dwc3/core.c makes sense.
 
-Since no one uses or depends on being able to create unix domains sockets
-on a cifs share the easiest fix to stop this vulnerability is to simply
-not allow creation of any other special files than char or block devices
-when sfu is used.
+In this version, the number of clocks (and names) is specific
+to this IP, with clock names taken from Synopsys datasheet.
 
-Added update to Ronnie's patch to handle a tcon link leak, and
-to address a buf leak noticed by Gustavo and Colin.
 
-Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-CC:  Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reported-by: Eryu Guan <eguan@redhat.com>
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Masahiro Yamada (2):
+  usb: dwc3: use local copy of resource to fix-up register offset
+  usb: dwc3: support clocks and resets for DWC3 core
 
----
- fs/cifs/dir.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/usb/dwc3.txt |  21 +++++
+ drivers/usb/dwc3/core.c                        | 119 +++++++++++++++++++------
+ drivers/usb/dwc3/core.h                        |   8 ++
+ 3 files changed, 123 insertions(+), 25 deletions(-)
 
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -674,6 +674,9 @@ int cifs_mknod(struct inode *inode, stru
- 		goto mknod_out;
- 	}
- 
-+	if (!S_ISCHR(mode) && !S_ISBLK(mode))
-+		goto mknod_out;
-+
- 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
- 		goto mknod_out;
- 
-@@ -682,10 +685,8 @@ int cifs_mknod(struct inode *inode, stru
- 
- 	buf = kmalloc(sizeof(FILE_ALL_INFO), GFP_KERNEL);
- 	if (buf == NULL) {
--		kfree(full_path);
- 		rc = -ENOMEM;
--		free_xid(xid);
--		return rc;
-+		goto mknod_out;
- 	}
- 
- 	if (backup_cred(cifs_sb))
-@@ -732,7 +733,7 @@ int cifs_mknod(struct inode *inode, stru
- 		pdev->minor = cpu_to_le64(MINOR(device_number));
- 		rc = tcon->ses->server->ops->sync_write(xid, &fid, &io_parms,
- 							&bytes_written, iov, 1);
--	} /* else if (S_ISFIFO) */
-+	}
- 	tcon->ses->server->ops->close(xid, tcon, &fid);
- 	d_drop(direntry);
- 
+-- 
+2.7.4
