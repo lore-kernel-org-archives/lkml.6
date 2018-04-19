@@ -1,82 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753110AbeDSNW7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:22:59 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:34319 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752703AbeDSNW5 (ORCPT
+        id S1753249AbeDSNWu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:22:50 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57453 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753180AbeDSNWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:22:57 -0400
-X-Google-Smtp-Source: AIpwx4+rafxUBGYcpSWx6zQjHiN0ScYnFAQu5NrOV449odtneSauoEG3QCXzuSK9q2g+HNSykzD6xQ==
-Subject: Re: [Xen-devel] [PATCH] Input: xen-kbdfront - allow better run-time
- configuration
-To: Juergen Gross <jgross@suse.com>, Jason Andryuk <jandryuk@gmail.com>
-Cc: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>, dmitry.torokhov@gmail.com,
-        lyan@suse.com, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180418150445.9805-1-andr2000@gmail.com>
- <ccb7a33b-7862-9803-fb24-67861d5ecab9@suse.com>
- <2bff035e-303e-d644-5f51-5e64150c097c@gmail.com>
- <c833ab0d-746c-c734-3dbe-e02ae7951d1d@suse.com>
- <d935e7d9-090f-a8b1-7f12-5e0a7f0adf1b@gmail.com>
- <CAKf6xpsM03AB-mHaYdpVfipRdtx9uO1rS=bHZdEi3fkfTo6b4g@mail.gmail.com>
- <5ed20b99-263d-d906-9349-d064eead36ad@gmail.com>
- <d4075815-2b41-781d-3541-6a17a181512d@suse.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <1d737998-6b90-ba33-bafa-8a8d4dc568d8@gmail.com>
-Date: Thu, 19 Apr 2018 16:22:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 19 Apr 2018 09:22:46 -0400
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH 4/4] rtc: stm32: get DBP register and mask from DT st,syscfg property
+Date: Thu, 19 Apr 2018 15:21:43 +0200
+Message-ID: <1524144103-21432-5-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
+References: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
-In-Reply-To: <d4075815-2b41-781d-3541-6a17a181512d@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/19/2018 04:19 PM, Juergen Gross wrote:
-> On 19/04/18 15:12, Oleksandr Andrushchenko wrote:
->> On 04/19/2018 04:10 PM, Jason Andryuk wrote:
->>> On Thu, Apr 19, 2018 at 9:01 AM, Oleksandr Andrushchenko
->>> <andr2000@gmail.com> wrote:
->>>> Ok, so I'll send v2 with the following changes:
->>>>
->>>> diff --git a/drivers/input/misc/xen-kbdfront.c
->>>> b/drivers/input/misc/xen-kbdfront.c
->>>> index a3306aad40b0..d8cca212f737 100644
->>>> --- a/drivers/input/misc/xen-kbdfront.c
->>>> +++ b/drivers/input/misc/xen-kbdfront.c
->>>> @@ -51,13 +51,13 @@ module_param_array(ptr_size, int, NULL, 0444);
->>>>    MODULE_PARM_DESC(ptr_size,
->>>>           "Pointing device width, height in pixels (default 800,600)");
->>>>
->>>> -static unsigned int no_ptr_dev;
->>>> -module_param(no_ptr_dev, uint, 0);
->>>> +static bool no_ptr_dev;
->>>> +module_param(no_ptr_dev, bool, 0);
->>>>    MODULE_PARM_DESC(no_ptr_dev,
->>>>           "If set then no virtual pointing device exposed to the guest");
->>>>
->>>> -static unsigned int no_kbd_dev;
->>>> -module_param(no_kbd_dev, uint, 0);
->>>> +static bool no_kbd_dev;
->>>> +module_param(no_kbd_dev, bool, 0);
->>>>    MODULE_PARM_DESC(no_kbd_dev,
->>>>           "If set then no virtual keyboard device exposed to the guest");
->>> I prefer direct logic over inverse logic.  Maybe just use kbd_dev,
->>> default to true, but allow it to be set off?
->>>
->>> static bool kbd_dev = true;
->>> module_param(kbd_dev, bool, 0);
->> I have no preference here, either way works for me
->> Juergen, what do you think about the above?
-> I really have no preference here. What should be taken into account is
-> that boolean parameters don't need a value, meaning "true" in that case.
-> This would make no sense for "kbd_dev" as it wouldn't change the
-> default.
-Then I'll go with the diff above, e.g. boolean no_{kbd|ptr})dev
-> Juergen
+RTC driver should not be aware of the PWR registers offset and bits
+position. Furthermore, we can imagine that DBP relative register and bit
+mask could change depending on the SoC.
+So this patch introduces 2 parameters, dbp_reg and dbp_mask, allowing to
+get PWR_CR and PWR_CR_DBP from device tree. And it prepares next RTC
+version, backup domain write protection is disabled only if needed.
+
+Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+---
+ drivers/rtc/rtc-stm32.c | 59 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 37 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/rtc/rtc-stm32.c b/drivers/rtc/rtc-stm32.c
+index 6a06078..de49b5b 100644
+--- a/drivers/rtc/rtc-stm32.c
++++ b/drivers/rtc/rtc-stm32.c
+@@ -85,23 +85,17 @@
+ #define RTC_WPR_2ND_KEY			0x53
+ #define RTC_WPR_WRONG_KEY		0xFF
+ 
+-/*
+- * RTC registers are protected against parasitic write access.
+- * PWR_CR_DBP bit must be set to enable write access to RTC registers.
+- */
+-/* STM32_PWR_CR */
+-#define PWR_CR				0x00
+-/* STM32_PWR_CR bit field */
+-#define PWR_CR_DBP			BIT(8)
+-
+ struct stm32_rtc_data {
+ 	bool has_pclk;
++	bool need_dbp;
+ };
+ 
+ struct stm32_rtc {
+ 	struct rtc_device *rtc_dev;
+ 	void __iomem *base;
+ 	struct regmap *dbp;
++	unsigned int dbp_reg;
++	unsigned int dbp_mask;
+ 	struct stm32_rtc_data *data;
+ 	struct clk *pclk;
+ 	struct clk *rtc_ck;
+@@ -498,10 +492,12 @@ static const struct rtc_class_ops stm32_rtc_ops = {
+ 
+ static const struct stm32_rtc_data stm32_rtc_data = {
+ 	.has_pclk = false,
++	.need_dbp = true,
+ };
+ 
+ static const struct stm32_rtc_data stm32h7_rtc_data = {
+ 	.has_pclk = true,
++	.need_dbp = true,
+ };
+ 
+ static const struct of_device_id stm32_rtc_of_match[] = {
+@@ -576,7 +572,6 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct stm32_rtc *rtc;
+ 	struct resource *res;
+-	const struct of_device_id *match;
+ 	int ret;
+ 
+ 	rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
+@@ -588,15 +583,31 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(rtc->base))
+ 		return PTR_ERR(rtc->base);
+ 
+-	rtc->dbp = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+-						   "st,syscfg");
+-	if (IS_ERR(rtc->dbp)) {
+-		dev_err(&pdev->dev, "no st,syscfg\n");
+-		return PTR_ERR(rtc->dbp);
+-	}
++	rtc->data = (struct stm32_rtc_data *)
++		    of_device_get_match_data(&pdev->dev);
++
++	if (rtc->data->need_dbp) {
++		rtc->dbp = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
++							   "st,syscfg");
++		if (IS_ERR(rtc->dbp)) {
++			dev_err(&pdev->dev, "no st,syscfg\n");
++			return PTR_ERR(rtc->dbp);
++		}
+ 
+-	match = of_match_device(stm32_rtc_of_match, &pdev->dev);
+-	rtc->data = (struct stm32_rtc_data *)match->data;
++		ret = of_property_read_u32_index(pdev->dev.of_node, "st,syscfg",
++						 1, &rtc->dbp_reg);
++		if (ret) {
++			dev_err(&pdev->dev, "can't read DBP register offset\n");
++			return ret;
++		}
++
++		ret = of_property_read_u32_index(pdev->dev.of_node, "st,syscfg",
++						 2, &rtc->dbp_mask);
++		if (ret) {
++			dev_err(&pdev->dev, "can't read DBP register mask\n");
++			return ret;
++		}
++	}
+ 
+ 	if (!rtc->data->has_pclk) {
+ 		rtc->pclk = NULL;
+@@ -624,7 +635,9 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err;
+ 
+-	regmap_update_bits(rtc->dbp, PWR_CR, PWR_CR_DBP, PWR_CR_DBP);
++	if (rtc->data->need_dbp)
++		regmap_update_bits(rtc->dbp, rtc->dbp_reg,
++				   rtc->dbp_mask, rtc->dbp_mask);
+ 
+ 	/*
+ 	 * After a system reset, RTC_ISR.INITS flag can be read to check if
+@@ -684,7 +697,8 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+ 		clk_disable_unprepare(rtc->pclk);
+ 	clk_disable_unprepare(rtc->rtc_ck);
+ 
+-	regmap_update_bits(rtc->dbp, PWR_CR, PWR_CR_DBP, 0);
++	if (rtc->data->need_dbp)
++		regmap_update_bits(rtc->dbp, rtc->dbp_reg, rtc->dbp_mask, 0);
+ 
+ 	device_init_wakeup(&pdev->dev, false);
+ 
+@@ -707,8 +721,9 @@ static int stm32_rtc_remove(struct platform_device *pdev)
+ 	if (rtc->data->has_pclk)
+ 		clk_disable_unprepare(rtc->pclk);
+ 
+-	/* Enable backup domain write protection */
+-	regmap_update_bits(rtc->dbp, PWR_CR, PWR_CR_DBP, 0);
++	/* Enable backup domain write protection if needed */
++	if (rtc->data->need_dbp)
++		regmap_update_bits(rtc->dbp, rtc->dbp_reg, rtc->dbp_mask, 0);
+ 
+ 	device_init_wakeup(&pdev->dev, false);
+ 
+-- 
+2.7.4
