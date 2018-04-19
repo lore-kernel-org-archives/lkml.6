@@ -1,78 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753829AbeDSOuC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:50:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49586 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753435AbeDSOt5 (ORCPT
+        id S1753594AbeDSOtb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:49:31 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:35370 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753492AbeDSOtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:49:57 -0400
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-To: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, cohuck@redhat.com
-Subject: [PATCH 09/10] vfio: ccw: Suppressing the BOXED state
-Date: Thu, 19 Apr 2018 16:48:12 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
-References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18041914-0040-0000-0000-00000430CE35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041914-0041-0000-0000-00002634E5E6
-Message-Id: <1524149293-12658-10-git-send-email-pmorel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804190131
+        Thu, 19 Apr 2018 10:49:25 -0400
+X-Google-Smtp-Source: AIpwx4/SXzAbAvBBFmV658wOKFlb0/ZnzkX6Ejj2NjyQcc5IgpS79WDdNzTNTHP/qBIchyONid/KMg==
+Subject: Re: [PATCH] arm64: msm8916: fix gic_irq_domain_translate warnings
+To: srinivas.kandagatla@linaro.org, andy.gross@linaro.org,
+        linux-arm-msm@vger.kernel.org
+Cc: david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180418163415.21646-1-srinivas.kandagatla@linaro.org>
+From: Thierry Escande <thierry.escande@linaro.org>
+Message-ID: <89454c94-dd62-80ca-6082-42cb24d43cf4@linaro.org>
+Date: Thu, 19 Apr 2018 16:49:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180418163415.21646-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VFIO_CCW_STATE_BOXED and VFIO_CCW_STATE_BUSY are the same
-states.
-Let's only keep one: VFIO_CCW_STATE_BUSY
+On 18/04/2018 18:34, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> Remove the usage of IRQ_TYPE_NONE to fix loud warnings from
+> patch (83a86fbb5b56b "irqchip/gic: Loudly complain about
+> the use of IRQ_TYPE_NONE").
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/msm8916.dtsi | 18 +++++++++---------
+>   1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> index cfbd72186762..5d66a575c7e1 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
 
-Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
----
- drivers/s390/cio/vfio_ccw_fsm.c     | 9 ---------
- drivers/s390/cio/vfio_ccw_private.h | 1 -
- 2 files changed, 10 deletions(-)
+Reviewed-by: Thierry Escande <thierry.escande@linaro.org>
 
-diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
-index 444424e..b77b8ad 100644
---- a/drivers/s390/cio/vfio_ccw_fsm.c
-+++ b/drivers/s390/cio/vfio_ccw_fsm.c
-@@ -261,15 +261,6 @@ fsm_func_t *vfio_ccw_jumptable[NR_VFIO_CCW_STATES][NR_VFIO_CCW_EVENTS] = {
- 		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
- 		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_sch_event,
- 	},
--	[VFIO_CCW_STATE_BOXED] = {
--		[VFIO_CCW_EVENT_INIT]		= fsm_nop,
--		[VFIO_CCW_EVENT_ONLINE]		= fsm_nop,
--		[VFIO_CCW_EVENT_OFFLINE]	= fsm_quiescing,
--		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_notoper,
--		[VFIO_CCW_EVENT_SSCH_REQ]	= fsm_io_busy,
--		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
--		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_sch_event,
--	},
- 	[VFIO_CCW_STATE_BUSY] = {
- 		[VFIO_CCW_EVENT_INIT]		= fsm_nop,
- 		[VFIO_CCW_EVENT_ONLINE]		= fsm_nop,
-diff --git a/drivers/s390/cio/vfio_ccw_private.h b/drivers/s390/cio/vfio_ccw_private.h
-index e7ea076..dbef727 100644
---- a/drivers/s390/cio/vfio_ccw_private.h
-+++ b/drivers/s390/cio/vfio_ccw_private.h
-@@ -66,7 +66,6 @@ enum vfio_ccw_state {
- 	VFIO_CCW_STATE_NOT_OPER,
- 	VFIO_CCW_STATE_STANDBY,
- 	VFIO_CCW_STATE_IDLE,
--	VFIO_CCW_STATE_BOXED,
- 	VFIO_CCW_STATE_BUSY,
- 	VFIO_CCW_STATE_QUIESCING,
- 	/* last element! */
--- 
-2.7.4
+Also successfully tested on dragonboard 410c so:
+Tested-by: Thierry Escande <thierry.escande@linaro.org>
+
+> @@ -180,7 +180,7 @@
+>   
+>   	pmu {
+>   		compatible = "arm,cortex-a53-pmu";
+> -		interrupts = <GIC_PPI 7 GIC_CPU_MASK_SIMPLE(4)>;
+> +		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4)| IRQ_TYPE_LEVEL_HIGH)>;
+>   	};
+>   
+>   	thermal-zones {
+> @@ -513,7 +513,7 @@
+>   		blsp_i2c2: i2c@78b6000 {
+>   			compatible = "qcom,i2c-qup-v2.2.1";
+>   			reg = <0x078b6000 0x500>;
+> -			interrupts = <GIC_SPI 96 0>;
+> +			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
+>   			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+>   				 <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
+>   			clock-names = "iface", "core";
+> @@ -528,7 +528,7 @@
+>   		blsp_i2c4: i2c@78b8000 {
+>   			compatible = "qcom,i2c-qup-v2.2.1";
+>   			reg = <0x078b8000 0x500>;
+> -			interrupts = <GIC_SPI 98 0>;
+> +			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+>   			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+>   				 <&gcc GCC_BLSP1_QUP4_I2C_APPS_CLK>;
+>   			clock-names = "iface", "core";
+> @@ -543,7 +543,7 @@
+>   		blsp_i2c6: i2c@78ba000 {
+>   			compatible = "qcom,i2c-qup-v2.2.1";
+>   			reg = <0x078ba000 0x500>;
+> -			interrupts = <GIC_SPI 100 0>;
+> +			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+>   			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
+>   				 <&gcc GCC_BLSP1_QUP6_I2C_APPS_CLK>;
+>   			clock-names = "iface", "core";
+> @@ -575,7 +575,7 @@
+>   					"mi2s-bit-clk3";
+>   			#sound-dai-cells = <1>;
+>   
+> -			interrupts = <0 160 0>;
+> +			interrupts = <0 160 IRQ_TYPE_LEVEL_HIGH>;
+>   			interrupt-names = "lpass-irq-lpaif";
+>   			reg = <0x07708000 0x10000>;
+>   			reg-names = "lpass-lpaif";
+> @@ -595,7 +595,7 @@
+>   			reg = <0x07824900 0x11c>, <0x07824000 0x800>;
+>   			reg-names = "hc_mem", "core_mem";
+>   
+> -			interrupts = <0 123 0>, <0 138 0>;
+> +			interrupts = <0 123 IRQ_TYPE_LEVEL_HIGH>, <0 138 IRQ_TYPE_LEVEL_HIGH>;
+>   			interrupt-names = "hc_irq", "pwr_irq";
+>   			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
+>   				 <&gcc GCC_SDCC1_AHB_CLK>,
+> @@ -612,7 +612,7 @@
+>   			reg = <0x07864900 0x11c>, <0x07864000 0x800>;
+>   			reg-names = "hc_mem", "core_mem";
+>   
+> -			interrupts = <0 125 0>, <0 221 0>;
+> +			interrupts = <0 125 IRQ_TYPE_LEVEL_HIGH>, <0 221 IRQ_TYPE_LEVEL_HIGH>;
+>   			interrupt-names = "hc_irq", "pwr_irq";
+>   			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
+>   				 <&gcc GCC_SDCC2_AHB_CLK>,
+> @@ -819,7 +819,7 @@
+>   			iommu-ctx@2000 {
+>   				compatible = "qcom,msm-iommu-v1-ns";
+>   				reg = <0x2000 0x1000>;
+> -				interrupts = <GIC_SPI 242 0>;
+> +				interrupts = <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>;
+>   			};
+>   		};
+>   
+> @@ -864,7 +864,7 @@
+>   				      "bus_clk",
+>   				      "vsync_clk";
+>   
+> -			interrupts = <0 72 0>;
+> +			interrupts = <0 72 IRQ_TYPE_LEVEL_HIGH>;
+>   
+>   			interrupt-controller;
+>   			#interrupt-cells = <1>;
+> 
