@@ -1,53 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753130AbeDSNqu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:46:50 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:50722 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753050AbeDSNqr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:46:47 -0400
-Date: Thu, 19 Apr 2018 16:46:34 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Lee Jones <lee.jones@linaro.org>,
-        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] mfd: tps65911-comparator: Fix an off by one bug
-Message-ID: <20180419134634.GA19793@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8867 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=874
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804190123
+        id S1753375AbeDSNrX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:47:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751293AbeDSNrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 09:47:17 -0400
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Waiman Long <longman@redhat.com>
+Subject: [PATCH v7 4/5] cpuset: Restrict load balancing off cpus to subset of cpus.isolated
+Date: Thu, 19 Apr 2018 09:47:03 -0400
+Message-Id: <1524145624-23655-5-git-send-email-longman@redhat.com>
+In-Reply-To: <1524145624-23655-1-git-send-email-longman@redhat.com>
+References: <1524145624-23655-1-git-send-email-longman@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tps_comparators[] array is used in two places.  We only access the
-COMP1 (1) and COMP2 (2) elements.  Unfortunately, we're accessing the
-wrong elements and also one element beyond the end of the array.  There
-was supposed to be a zero element at the start of the array which is
-isn't accessed but makes the math work out nicely.
+With the addition of "cpuset.cpus.isolated", it makes sense to add the
+restriction that load balancing can only be turned off if the CPUs in
+the isolated cpuset are subset of "cpuset.cpus.isolated".
 
-Fixes: 6851ad3ab346 ("TPS65911: Comparator: Add comparator driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
 ---
-I can't actually compile this code...
+ Documentation/cgroup-v2.txt |  7 ++++---
+ kernel/cgroup/cpuset.c      | 29 ++++++++++++++++++++++++++---
+ 2 files changed, 30 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/tps65911-comparator.c b/drivers/mfd/tps65911-comparator.c
-index c0789f81a1c5..35d7380f6fad 100644
---- a/drivers/mfd/tps65911-comparator.c
-+++ b/drivers/mfd/tps65911-comparator.c
-@@ -42,6 +42,7 @@ struct comparator {
- };
+diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+index 8d89dc2..c4227ee 100644
+--- a/Documentation/cgroup-v2.txt
++++ b/Documentation/cgroup-v2.txt
+@@ -1554,9 +1554,10 @@ Cpuset Interface Files
+ 	and will not be moved to other CPUs.
  
- static struct comparator tps_comparators[] = {
-+	{	.name = "COMP", },
- 	{
- 		.name = "COMP1",
- 		.reg = TPS65911_VMBCH,
+ 	This flag is hierarchical and is inherited by child cpusets. It
+-	can be turned off only when the CPUs in this cpuset aren't
+-	listed in the cpuset.cpus of other sibling cgroups, and all
+-	the child cpusets, if present, have this flag turned off.
++	can be explicitly turned off only when it is a direct child of
++	the root cgroup and the CPUs in this cpuset are subset of the
++	root's "cpuset.cpus.isolated".	Moreover, the CPUs cannot be
++	listed in the "cpuset.cpus" of other sibling cgroups.
+ 
+ 	Once it is off, it cannot be turned back on as long as the
+ 	parent cgroup still has this flag in the off state.
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index c746b18..d05c4c8 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -511,6 +511,16 @@ static int validate_change(struct cpuset *cur, struct cpuset *trial)
+ 
+ 	par = parent_cs(cur);
+ 
++	/*
++	 * On default hierarchy with sched_load_balance flag off, the cpu
++	 * list must be a subset of the parent's isolated CPU list, if
++	 * defined (root).
++	 */
++	if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys) &&
++	    !is_sched_load_balance(trial) && par->isolation_count &&
++	    !cpumask_subset(trial->cpus_allowed, par->isolated_cpus))
++		goto out;
++
+ 	/* On legacy hierarchy, we must be a subset of our parent cpuset. */
+ 	ret = -EACCES;
+ 	if (!is_in_v2_mode() && !is_cpuset_subset(trial, par))
+@@ -1431,10 +1441,16 @@ static int update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
+ 	else
+ 		clear_bit(bit, &trialcs->flags);
+ 
++	balance_flag_changed = (is_sched_load_balance(cs) !=
++				is_sched_load_balance(trialcs));
++
+ 	/*
+ 	 * On default hierarchy, turning off sched_load_balance flag implies
+ 	 * an implicit cpu_exclusive. Turning on sched_load_balance will
+ 	 * clear the cpu_exclusive flag.
++	 *
++	 * sched_load_balance can only be turned off if all the CPUs are
++	 * in the parent's isolated CPU list.
+ 	 */
+ 	if ((bit == CS_SCHED_LOAD_BALANCE) &&
+ 	    cgroup_subsys_on_dfl(cpuset_cgrp_subsys)) {
+@@ -1442,15 +1458,22 @@ static int update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
+ 			clear_bit(CS_CPU_EXCLUSIVE, &trialcs->flags);
+ 		else
+ 			set_bit(CS_CPU_EXCLUSIVE, &trialcs->flags);
++
++		if (balance_flag_changed && !turning_on) {
++			struct cpuset *parent = parent_cs(cs);
++
++			err = -EBUSY;
++			if (!parent->isolation_count ||
++			    !cpumask_subset(trialcs->cpus_allowed,
++					    parent->cpus_allowed))
++				goto out;
++		}
+ 	}
+ 
+ 	err = validate_change(cs, trialcs);
+ 	if (err < 0)
+ 		goto out;
+ 
+-	balance_flag_changed = (is_sched_load_balance(cs) !=
+-				is_sched_load_balance(trialcs));
+-
+ 	spread_flag_changed = ((is_spread_slab(cs) != is_spread_slab(trialcs))
+ 			|| (is_spread_page(cs) != is_spread_page(trialcs)));
+ 
+-- 
+1.8.3.1
