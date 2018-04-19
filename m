@@ -1,135 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753594AbeDSOtb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:49:31 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35370 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753492AbeDSOtZ (ORCPT
+        id S1753780AbeDSOtr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:49:47 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47382 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753725AbeDSOtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:49:25 -0400
-X-Google-Smtp-Source: AIpwx4/SXzAbAvBBFmV658wOKFlb0/ZnzkX6Ejj2NjyQcc5IgpS79WDdNzTNTHP/qBIchyONid/KMg==
-Subject: Re: [PATCH] arm64: msm8916: fix gic_irq_domain_translate warnings
-To: srinivas.kandagatla@linaro.org, andy.gross@linaro.org,
-        linux-arm-msm@vger.kernel.org
-Cc: david.brown@linaro.org, robh+dt@kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180418163415.21646-1-srinivas.kandagatla@linaro.org>
-From: Thierry Escande <thierry.escande@linaro.org>
-Message-ID: <89454c94-dd62-80ca-6082-42cb24d43cf4@linaro.org>
-Date: Thu, 19 Apr 2018 16:49:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180418163415.21646-1-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 19 Apr 2018 10:49:45 -0400
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+To: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, cohuck@redhat.com
+Subject: [PATCH 10/10] vfio: ccw: Let user wait when busy on IO
+Date: Thu, 19 Apr 2018 16:48:13 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18041914-0020-0000-0000-00000413BD3A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041914-0021-0000-0000-000042A80A4B
+Message-Id: <1524149293-12658-11-git-send-email-pmorel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804190131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/04/2018 18:34, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> Remove the usage of IRQ_TYPE_NONE to fix loud warnings from
-> patch (83a86fbb5b56b "irqchip/gic: Loudly complain about
-> the use of IRQ_TYPE_NONE").
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/msm8916.dtsi | 18 +++++++++---------
->   1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> index cfbd72186762..5d66a575c7e1 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+In the current implementation, we do not want to start a new SSCH
+command before the last one ends.
 
-Reviewed-by: Thierry Escande <thierry.escande@linaro.org>
+Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+---
+ drivers/s390/cio/vfio_ccw_fsm.c     |  3 +++
+ drivers/s390/cio/vfio_ccw_ops.c     | 21 ++++++++++++++++++++-
+ drivers/s390/cio/vfio_ccw_private.h |  4 +++-
+ 3 files changed, 26 insertions(+), 2 deletions(-)
 
-Also successfully tested on dragonboard 410c so:
-Tested-by: Thierry Escande <thierry.escande@linaro.org>
-
-> @@ -180,7 +180,7 @@
->   
->   	pmu {
->   		compatible = "arm,cortex-a53-pmu";
-> -		interrupts = <GIC_PPI 7 GIC_CPU_MASK_SIMPLE(4)>;
-> +		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4)| IRQ_TYPE_LEVEL_HIGH)>;
->   	};
->   
->   	thermal-zones {
-> @@ -513,7 +513,7 @@
->   		blsp_i2c2: i2c@78b6000 {
->   			compatible = "qcom,i2c-qup-v2.2.1";
->   			reg = <0x078b6000 0x500>;
-> -			interrupts = <GIC_SPI 96 0>;
-> +			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
->   				 <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>;
->   			clock-names = "iface", "core";
-> @@ -528,7 +528,7 @@
->   		blsp_i2c4: i2c@78b8000 {
->   			compatible = "qcom,i2c-qup-v2.2.1";
->   			reg = <0x078b8000 0x500>;
-> -			interrupts = <GIC_SPI 98 0>;
-> +			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
->   				 <&gcc GCC_BLSP1_QUP4_I2C_APPS_CLK>;
->   			clock-names = "iface", "core";
-> @@ -543,7 +543,7 @@
->   		blsp_i2c6: i2c@78ba000 {
->   			compatible = "qcom,i2c-qup-v2.2.1";
->   			reg = <0x078ba000 0x500>;
-> -			interrupts = <GIC_SPI 100 0>;
-> +			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
->   			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
->   				 <&gcc GCC_BLSP1_QUP6_I2C_APPS_CLK>;
->   			clock-names = "iface", "core";
-> @@ -575,7 +575,7 @@
->   					"mi2s-bit-clk3";
->   			#sound-dai-cells = <1>;
->   
-> -			interrupts = <0 160 0>;
-> +			interrupts = <0 160 IRQ_TYPE_LEVEL_HIGH>;
->   			interrupt-names = "lpass-irq-lpaif";
->   			reg = <0x07708000 0x10000>;
->   			reg-names = "lpass-lpaif";
-> @@ -595,7 +595,7 @@
->   			reg = <0x07824900 0x11c>, <0x07824000 0x800>;
->   			reg-names = "hc_mem", "core_mem";
->   
-> -			interrupts = <0 123 0>, <0 138 0>;
-> +			interrupts = <0 123 IRQ_TYPE_LEVEL_HIGH>, <0 138 IRQ_TYPE_LEVEL_HIGH>;
->   			interrupt-names = "hc_irq", "pwr_irq";
->   			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
->   				 <&gcc GCC_SDCC1_AHB_CLK>,
-> @@ -612,7 +612,7 @@
->   			reg = <0x07864900 0x11c>, <0x07864000 0x800>;
->   			reg-names = "hc_mem", "core_mem";
->   
-> -			interrupts = <0 125 0>, <0 221 0>;
-> +			interrupts = <0 125 IRQ_TYPE_LEVEL_HIGH>, <0 221 IRQ_TYPE_LEVEL_HIGH>;
->   			interrupt-names = "hc_irq", "pwr_irq";
->   			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
->   				 <&gcc GCC_SDCC2_AHB_CLK>,
-> @@ -819,7 +819,7 @@
->   			iommu-ctx@2000 {
->   				compatible = "qcom,msm-iommu-v1-ns";
->   				reg = <0x2000 0x1000>;
-> -				interrupts = <GIC_SPI 242 0>;
-> +				interrupts = <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>;
->   			};
->   		};
->   
-> @@ -864,7 +864,7 @@
->   				      "bus_clk",
->   				      "vsync_clk";
->   
-> -			interrupts = <0 72 0>;
-> +			interrupts = <0 72 IRQ_TYPE_LEVEL_HIGH>;
->   
->   			interrupt-controller;
->   			#interrupt-cells = <1>;
-> 
+diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
+index b77b8ad..4140292 100644
+--- a/drivers/s390/cio/vfio_ccw_fsm.c
++++ b/drivers/s390/cio/vfio_ccw_fsm.c
+@@ -195,6 +195,9 @@ static int fsm_irq(struct vfio_ccw_private *private)
+ 	if (private->io_trigger)
+ 		eventfd_signal(private->io_trigger, 1);
+ 
++	if (private->io_completion)
++		complete(private->io_completion);
++
+ 	return VFIO_CCW_STATE_IDLE;
+ }
+ 
+diff --git a/drivers/s390/cio/vfio_ccw_ops.c b/drivers/s390/cio/vfio_ccw_ops.c
+index f0f4071..346532d 100644
+--- a/drivers/s390/cio/vfio_ccw_ops.c
++++ b/drivers/s390/cio/vfio_ccw_ops.c
+@@ -171,6 +171,8 @@ static ssize_t vfio_ccw_mdev_write(struct mdev_device *mdev,
+ 	struct vfio_ccw_private *private;
+ 	struct ccw_io_region *region;
+ 	union scsw *scsw;
++	int max_retries = 5;
++	DECLARE_COMPLETION_ONSTACK(completion);
+ 
+ 	if (*ppos + count > sizeof(*region))
+ 		return -EINVAL;
+@@ -185,7 +187,24 @@ static ssize_t vfio_ccw_mdev_write(struct mdev_device *mdev,
+ 	if ((scsw->cmd.fctl & SCSW_FCTL_START_FUNC) != SCSW_FCTL_START_FUNC)
+ 		return -EINVAL;
+ 
+-	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_SSCH_REQ);
++	do {
++		switch (private->state) {
++		case VFIO_CCW_STATE_BUSY:
++			private->io_completion = &completion;
++			wait_for_completion(&completion);
++			break;
++		case VFIO_CCW_STATE_IDLE:
++			if (!vfio_ccw_fsm_event(private,
++						VFIO_CCW_EVENT_SSCH_REQ))
++				return count;
++			break;
++		default:
++			return -EBUSY;
++		}
++	} while (max_retries--);
++
++	if (max_retries <= 0)
++		return -EBUSY;
+ 	if (region->ret_code != 0)
+ 		return region->ret_code;
+ 
+diff --git a/drivers/s390/cio/vfio_ccw_private.h b/drivers/s390/cio/vfio_ccw_private.h
+index dbef727..7cca078 100644
+--- a/drivers/s390/cio/vfio_ccw_private.h
++++ b/drivers/s390/cio/vfio_ccw_private.h
+@@ -39,6 +39,7 @@ struct vfio_ccw_private {
+ 	struct subchannel	*sch;
+ 	int			state;
+ 	struct completion	*completion;
++	struct completion	*io_completion;
+ 	atomic_t		avail;
+ 	struct mdev_device	*mdev;
+ 	struct notifier_block	nb;
+@@ -93,12 +94,13 @@ enum vfio_ccw_event {
+ typedef int (fsm_func_t)(struct vfio_ccw_private *);
+ extern fsm_func_t *vfio_ccw_jumptable[NR_VFIO_CCW_STATES][NR_VFIO_CCW_EVENTS];
+ 
+-static inline void vfio_ccw_fsm_event(struct vfio_ccw_private *private,
++static inline int vfio_ccw_fsm_event(struct vfio_ccw_private *private,
+ 				     int event)
+ {
+ 	mutex_lock(&private->state_mutex);
+ 	private->state = vfio_ccw_jumptable[private->state][event](private);
+ 	mutex_unlock(&private->state_mutex);
++	return private->io_region.ret_code;
+ }
+ 
+ extern struct workqueue_struct *vfio_ccw_work_q;
+-- 
+2.7.4
