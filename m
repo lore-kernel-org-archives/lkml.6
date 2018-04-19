@@ -1,217 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753575AbeDSUA6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 16:00:58 -0400
-Received: from sauhun.de ([88.99.104.3]:48072 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753523AbeDSUAy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 16:00:54 -0400
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-i2c@vger.kernel.org
-Cc: Wolfram Sang <wsa@the-dreams.de>, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>,
-        Paul Walmsley <paul@pwsan.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        id S1753400AbeDSUG3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 16:06:29 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:51065 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753011AbeDSUG1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 16:06:27 -0400
+Date: Thu, 19 Apr 2018 13:06:23 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Michal Simek <michal.simek@xilinx.com>, linux-watchdog@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 4/7] i2c: i2c-omap: move header to platform_data
-Date: Thu, 19 Apr 2018 22:00:10 +0200
-Message-Id: <20180419200015.15095-5-wsa@the-dreams.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180419200015.15095-1-wsa@the-dreams.de>
-References: <20180419200015.15095-1-wsa@the-dreams.de>
+Subject: Re: [PATCH 59/61] watchdog: simplify getting .drvdata
+Message-ID: <20180419200623.GB24732@roeck-us.net>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-60-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419140641.27926-60-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This header only contains platform_data. Move it to the proper directory.
+On Thu, Apr 19, 2018 at 04:06:29PM +0200, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
- MAINTAINERS                                  | 4 ++--
- arch/arm/mach-omap1/common.h                 | 2 +-
- arch/arm/mach-omap1/i2c.c                    | 2 +-
- arch/arm/mach-omap2/common.h                 | 2 +-
- arch/arm/mach-omap2/omap_hwmod_2420_data.c   | 2 +-
- arch/arm/mach-omap2/omap_hwmod_2430_data.c   | 2 +-
- arch/arm/mach-omap2/omap_hwmod_33xx_data.c   | 2 +-
- arch/arm/mach-omap2/omap_hwmod_3xxx_data.c   | 2 +-
- arch/arm/mach-omap2/omap_hwmod_44xx_data.c   | 2 +-
- arch/arm/mach-omap2/omap_hwmod_54xx_data.c   | 2 +-
- arch/arm/mach-omap2/omap_hwmod_7xx_data.c    | 2 +-
- drivers/i2c/busses/i2c-omap.c                | 2 +-
- include/linux/{ => platform_data}/i2c-omap.h | 0
- 13 files changed, 13 insertions(+), 13 deletions(-)
- rename include/linux/{ => platform_data}/i2c-omap.h (100%)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 44b4bb5cf94e..c4b6d379423e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10235,7 +10235,7 @@ F:	arch/arm/mach-omap1/
- F:	arch/arm/plat-omap/
- F:	arch/arm/configs/omap1_defconfig
- F:	drivers/i2c/busses/i2c-omap.c
--F:	include/linux/i2c-omap.h
-+F:	include/linux/platform_data/i2c-omap.h
- 
- OMAP2+ SUPPORT
- M:	Tony Lindgren <tony@atomide.com>
-@@ -10267,7 +10267,7 @@ F:	drivers/regulator/tps65218-regulator.c
- F:	drivers/regulator/tps65910-regulator.c
- F:	drivers/regulator/twl-regulator.c
- F:	drivers/regulator/twl6030-regulator.c
--F:	include/linux/i2c-omap.h
-+F:	include/linux/platform_data/i2c-omap.h
- 
- ONION OMEGA2+ BOARD
- M:	Harvey Hunt <harveyhuntnexus@gmail.com>
-diff --git a/arch/arm/mach-omap1/common.h b/arch/arm/mach-omap1/common.h
-index d83ff257eaa8..c6537d2c2859 100644
---- a/arch/arm/mach-omap1/common.h
-+++ b/arch/arm/mach-omap1/common.h
-@@ -27,7 +27,7 @@
- #define __ARCH_ARM_MACH_OMAP1_COMMON_H
- 
- #include <linux/mtd/mtd.h>
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- #include <linux/reboot.h>
- 
- #include <asm/exception.h>
-diff --git a/arch/arm/mach-omap1/i2c.c b/arch/arm/mach-omap1/i2c.c
-index 5bdf3c4190f9..9250f263ac51 100644
---- a/arch/arm/mach-omap1/i2c.c
-+++ b/arch/arm/mach-omap1/i2c.c
-@@ -20,7 +20,7 @@
-  */
- 
- #include <linux/i2c.h>
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- #include <mach/mux.h>
- #include "soc.h"
- 
-diff --git a/arch/arm/mach-omap2/common.h b/arch/arm/mach-omap2/common.h
-index fbe0b78bf489..ed1a7e2f176a 100644
---- a/arch/arm/mach-omap2/common.h
-+++ b/arch/arm/mach-omap2/common.h
-@@ -30,7 +30,7 @@
- #include <linux/delay.h>
- #include <linux/i2c.h>
- #include <linux/mfd/twl.h>
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- #include <linux/reboot.h>
- #include <linux/irqchip/irq-omap-intc.h>
- 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_2420_data.c b/arch/arm/mach-omap2/omap_hwmod_2420_data.c
-index fe66cf247874..d684fac8f592 100644
---- a/arch/arm/mach-omap2/omap_hwmod_2420_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_2420_data.c
-@@ -13,7 +13,7 @@
-  * XXX these should be marked initdata for multi-OMAP kernels
-  */
- 
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- #include <linux/omap-dma.h>
- 
- #include "omap_hwmod.h"
-diff --git a/arch/arm/mach-omap2/omap_hwmod_2430_data.c b/arch/arm/mach-omap2/omap_hwmod_2430_data.c
-index 74eefd30518c..abef9f6f9bf5 100644
---- a/arch/arm/mach-omap2/omap_hwmod_2430_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_2430_data.c
-@@ -13,7 +13,7 @@
-  * XXX these should be marked initdata for multi-OMAP kernels
-  */
- 
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- #include <linux/platform_data/hsmmc-omap.h>
- #include <linux/omap-dma.h>
- 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
-index 53e1ac3724f2..c9483bc06228 100644
---- a/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_33xx_data.c
-@@ -14,7 +14,7 @@
-  * GNU General Public License for more details.
-  */
- 
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- 
- #include "omap_hwmod.h"
- #include "omap_hwmod_common_data.h"
-diff --git a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-index 23336b6c7125..9c0953de24da 100644
---- a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-@@ -15,7 +15,7 @@
-  * XXX these should be marked initdata for multi-OMAP kernels
-  */
- 
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- #include <linux/power/smartreflex.h>
- #include <linux/platform_data/hsmmc-omap.h>
- 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-index e4f8ae9cd637..9e4b4243fec7 100644
---- a/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_44xx_data.c
-@@ -23,7 +23,7 @@
- #include <linux/io.h>
- #include <linux/platform_data/hsmmc-omap.h>
- #include <linux/power/smartreflex.h>
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- 
- #include <linux/omap-dma.h>
- 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_54xx_data.c b/arch/arm/mach-omap2/omap_hwmod_54xx_data.c
-index c72cd84b07ec..890c789485d3 100644
---- a/arch/arm/mach-omap2/omap_hwmod_54xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_54xx_data.c
-@@ -20,7 +20,7 @@
- #include <linux/io.h>
- #include <linux/platform_data/hsmmc-omap.h>
- #include <linux/power/smartreflex.h>
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- 
- #include <linux/omap-dma.h>
- 
-diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-index 62352d1e6361..56b141fce973 100644
---- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
-@@ -20,7 +20,7 @@
- #include <linux/io.h>
- #include <linux/platform_data/hsmmc-omap.h>
- #include <linux/power/smartreflex.h>
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- 
- #include <linux/omap-dma.h>
- 
-diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
-index b9172f08fd05..65d06a819307 100644
---- a/drivers/i2c/busses/i2c-omap.c
-+++ b/drivers/i2c/busses/i2c-omap.c
-@@ -36,7 +36,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/slab.h>
--#include <linux/i2c-omap.h>
-+#include <linux/platform_data/i2c-omap.h>
- #include <linux/pm_runtime.h>
- #include <linux/pinctrl/consumer.h>
- 
-diff --git a/include/linux/i2c-omap.h b/include/linux/platform_data/i2c-omap.h
-similarity index 100%
-rename from include/linux/i2c-omap.h
-rename to include/linux/platform_data/i2c-omap.h
--- 
-2.11.0
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/watchdog/cadence_wdt.c   | 6 ++----
+>  drivers/watchdog/of_xilinx_wdt.c | 6 ++----
+>  drivers/watchdog/wdat_wdt.c      | 6 ++----
+>  3 files changed, 6 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/watchdog/cadence_wdt.c b/drivers/watchdog/cadence_wdt.c
+> index 3ec1f418837d..c3924356d173 100644
+> --- a/drivers/watchdog/cadence_wdt.c
+> +++ b/drivers/watchdog/cadence_wdt.c
+> @@ -418,8 +418,7 @@ static void cdns_wdt_shutdown(struct platform_device *pdev)
+>   */
+>  static int __maybe_unused cdns_wdt_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct cdns_wdt *wdt = platform_get_drvdata(pdev);
+> +	struct cdns_wdt *wdt = dev_get_drvdata(dev);
+>  
+>  	if (watchdog_active(&wdt->cdns_wdt_device)) {
+>  		cdns_wdt_stop(&wdt->cdns_wdt_device);
+> @@ -438,8 +437,7 @@ static int __maybe_unused cdns_wdt_suspend(struct device *dev)
+>  static int __maybe_unused cdns_wdt_resume(struct device *dev)
+>  {
+>  	int ret;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct cdns_wdt *wdt = platform_get_drvdata(pdev);
+> +	struct cdns_wdt *wdt = dev_get_drvdata(dev);
+>  
+>  	if (watchdog_active(&wdt->cdns_wdt_device)) {
+>  		ret = clk_prepare_enable(wdt->clk);
+> diff --git a/drivers/watchdog/of_xilinx_wdt.c b/drivers/watchdog/of_xilinx_wdt.c
+> index 4acbe05e27bb..d3f7eb046678 100644
+> --- a/drivers/watchdog/of_xilinx_wdt.c
+> +++ b/drivers/watchdog/of_xilinx_wdt.c
+> @@ -268,8 +268,7 @@ static int xwdt_remove(struct platform_device *pdev)
+>   */
+>  static int __maybe_unused xwdt_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct xwdt_device *xdev = platform_get_drvdata(pdev);
+> +	struct xwdt_device *xdev = dev_get_drvdata(dev);
+>  
+>  	if (watchdog_active(&xdev->xilinx_wdt_wdd))
+>  		xilinx_wdt_stop(&xdev->xilinx_wdt_wdd);
+> @@ -285,8 +284,7 @@ static int __maybe_unused xwdt_suspend(struct device *dev)
+>   */
+>  static int __maybe_unused xwdt_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct xwdt_device *xdev = platform_get_drvdata(pdev);
+> +	struct xwdt_device *xdev = dev_get_drvdata(dev);
+>  	int ret = 0;
+>  
+>  	if (watchdog_active(&xdev->xilinx_wdt_wdd))
+> diff --git a/drivers/watchdog/wdat_wdt.c b/drivers/watchdog/wdat_wdt.c
+> index 0da9943d405f..56ad19608a9b 100644
+> --- a/drivers/watchdog/wdat_wdt.c
+> +++ b/drivers/watchdog/wdat_wdt.c
+> @@ -447,8 +447,7 @@ static int wdat_wdt_probe(struct platform_device *pdev)
+>  #ifdef CONFIG_PM_SLEEP
+>  static int wdat_wdt_suspend_noirq(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct wdat_wdt *wdat = platform_get_drvdata(pdev);
+> +	struct wdat_wdt *wdat = dev_get_drvdata(dev);
+>  	int ret;
+>  
+>  	if (!watchdog_active(&wdat->wdd))
+> @@ -475,8 +474,7 @@ static int wdat_wdt_suspend_noirq(struct device *dev)
+>  
+>  static int wdat_wdt_resume_noirq(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct wdat_wdt *wdat = platform_get_drvdata(pdev);
+> +	struct wdat_wdt *wdat = dev_get_drvdata(dev);
+>  	int ret;
+>  
+>  	if (!watchdog_active(&wdat->wdd))
+> -- 
+> 2.11.0
+> 
