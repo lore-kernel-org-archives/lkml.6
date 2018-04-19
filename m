@@ -1,117 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753679AbeDSQEF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:04:05 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:41520 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753589AbeDSQED (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:04:03 -0400
-X-Google-Smtp-Source: AB8JxZrqCp/eB3+iiLmEipnpKJO+zKmwpeAFIPZrCh3D8oxeJkrbuPmhoENeK7njQ41i2ERM6jEYJBwG34H8Wuv3q3QVq2XN6BLI
+        id S1753708AbeDSQER (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:04:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53134 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753690AbeDSQEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 12:04:15 -0400
+Date: Thu, 19 Apr 2018 18:04:08 +0200
+From: Borislav Petkov <bp@suse.de>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Michal Kubecek <mkubecek@suse.cz>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <jroedel@suse.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] x86/ldt: Fix support_pte_mask filtering in
+ map_ldt_struct()
+Message-ID: <20180419160408.GA3905@pd.tnic>
+References: <1523871837-8378-1-git-send-email-joro@8bytes.org>
+ <CALCETrVgQspiO3nnyhqiXi17iaGG7bRDsr3gpHwdDnYfFDZabQ@mail.gmail.com>
+ <07e2c23e-10b7-b03f-5706-3d4b910537ba@linux.intel.com>
+ <20180418121403.GA3434@pd.tnic>
+ <20180419130011.GG3896@pd.tnic>
+ <20180419141134.GI15462@8bytes.org>
+ <20180419145832.5mq3va53swswajmu@unicorn.suse.cz>
+ <20180419151126.GJ15462@8bytes.org>
 MIME-Version: 1.0
-Date: Thu, 19 Apr 2018 09:04:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005c2cc4056a35b85a@google.com>
-Subject: general protection fault in rdma_resolve_route
-From: syzbot <syzbot+17c13600b3977aa8ef7f@syzkaller.appspotmail.com>
-To: danielj@mellanox.com, dasaratharaman.chandramouli@intel.com,
-        dledford@redhat.com, jgg@ziepe.ca, leon@kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        monis@mellanox.com, parav@mellanox.com, swise@opengridcomputing.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180419151126.GJ15462@8bytes.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Apr 19, 2018 at 05:11:27PM +0200, Joerg Roedel wrote:
+> Cool, thanks for testing! I prepared a patch and will send it out if
+> Boris also reports success. I'll also added your Tested-by :)
 
-syzbot hit the following crash on upstream commit
-a27fc14219f2e3c4a46ba9177b04d9b52c875532 (Mon Apr 16 21:07:39 2018 +0000)
-Merge branch 'parisc-4.17-3' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=17c13600b3977aa8ef7f
+Boris reports success too.
 
-So far this crash happened 2 times on upstream.
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6198183931674624
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-5914490758943236750
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+Very good catch, thanks!
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+17c13600b3977aa8ef7f@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+-- 
+Regards/Gruss,
+    Boris.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 750 Comm: syz-executor4 Not tainted 4.17.0-rc1+ #6
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:rdma_cap_ib_sa include/rdma/ib_verbs.h:2840 [inline]
-RIP: 0010:rdma_resolve_route+0x134/0x2160 drivers/infiniband/core/cma.c:2668
-RSP: 0018:ffff8801b3e87850 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffff8801abf92c00 RCX: 0000000000000029
-RDX: dffffc0000000000 RSI: 0000000000000004 RDI: 0000000000000148
-RBP: ffff8801b3e87a00 R08: ffffed00357f25e5 R09: ffffed00357f25e4
-R10: ffffed00357f25e4 R11: ffff8801abf92f23 R12: 1ffff100367d0f12
-R13: dffffc0000000000 R14: ffff8801abf92db8 R15: 0000000000000000
-FS:  00007f673e752700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000a3eab8 CR3: 00000001b10e7000 CR4: 00000000001426e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  ucma_resolve_route+0x179/0x1c0 drivers/infiniband/core/ucma.c:741
-  ucma_write+0x328/0x410 drivers/infiniband/core/ucma.c:1664
-  __vfs_write+0x10b/0x880 fs/read_write.c:485
-  vfs_write+0x1f8/0x560 fs/read_write.c:549
-  ksys_write+0xf9/0x250 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455329
-RSP: 002b:00007f673e751c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f673e7526d4 RCX: 0000000000455329
-RDX: 0000000000000010 RSI: 0000000020000100 RDI: 0000000000000014
-RBP: 000000000072c010 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000006c3 R14: 00000000006fd2e8 R15: 0000000000000002
-Code: ff df 48 c1 ea 03 80 3c 02 00 0f 85 14 1c 00 00 48 ba 00 00 00 00 00  
-fc ff df 48 8b 03 48 8d b8 48 01 00 00 48 89 f9 48 c1 e9 03 <80> 3c 11 00  
-0f 85 d7 1b 00 00 45 0f b6 ef 49 c1 e5 04 4c 03 a8
-RIP: rdma_cap_ib_sa include/rdma/ib_verbs.h:2840 [inline] RSP:  
-ffff8801b3e87850
-RIP: rdma_resolve_route+0x134/0x2160 drivers/infiniband/core/cma.c:2668  
-RSP: ffff8801b3e87850
----[ end trace c34c2fb6aeff4a19 ]---
-
-
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
