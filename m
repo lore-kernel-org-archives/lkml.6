@@ -1,65 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752143AbeDSJun (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 05:50:43 -0400
-Received: from mail-pl0-f42.google.com ([209.85.160.42]:43956 "EHLO
-        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751136AbeDSJul (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 05:50:41 -0400
-X-Google-Smtp-Source: AIpwx4/CsPtfx/Raot0Cbt5p/sUOQpWLnqsHETr18X6/4PnRj7UkH2nxL4VqUFb5ffHGlLbAYnk3NTYkExMpzcG6G3E=
-MIME-Version: 1.0
-In-Reply-To: <20180419065531.l6kblbziddplgcwi@wfg-t540p.sh.intel.com>
-References: <20180419021757.66xxs5fgvlrusiup@wfg-t540p.sh.intel.com>
- <CACT4Y+bmYk_A4NcOhCeHcG4t5_c=Q1fmQOPxHLtC8G0hLrxSLA@mail.gmail.com>
- <20180419062050.GA8683@jagdpanzerIV> <20180419065531.l6kblbziddplgcwi@wfg-t540p.sh.intel.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Thu, 19 Apr 2018 11:50:20 +0200
-Message-ID: <CACT4Y+ZL_xY-HJwgU+XQ-onqe+coxbNGOBno6HrPHwYuPdHRFA@mail.gmail.com>
-Subject: Re: [console_unlock] BUG: KASAN: use-after-scope in console_unlock+0x9cd/0xd10
-To: Fengguang Wu <fengguang.wu@intel.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        id S1752145AbeDSJyJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 05:54:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37881 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751042AbeDSJyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 05:54:07 -0400
+Date: Thu, 19 Apr 2018 11:54:05 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Nikitas Angelinas <nikitas.angelinas@gmail.com>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Bob Picco <bob.picco@oracle.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] printk: wake up klogd in vprintk_emit
+Message-ID: <20180419095405.juihlwjqvd3ntmvi@pathway.suse.cz>
+References: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
+ <20180418140409.6hvkbip4skfs4x7y@pathway.suse.cz>
+ <20180419012311.GB2700@jagdpanzerIV>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419012311.GB2700@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 8:55 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
-> On Thu, Apr 19, 2018 at 03:20:50PM +0900, Sergey Senozhatsky wrote:
->>
->> On (04/19/18 08:04), Dmitry Vyukov wrote:
->> [..]
->>>
->>> We could also make them mutually exclusive in config to prevent people
->>> from hitting these false positives again and again.
->>
->>
->> Let's do it. Ard and Kees agreed on making them mutually exclusive [1][2].
->> Dmitry, could send out a patch?
->>
->> [1]
->> lkml.kernel.org/r/CAKv+Gu8HN-t2om8sCfjxCWbsgSir54fZw222dsed0Xwqph2aNg@mail.gmail.com
->> [2]
->> lkml.kernel.org/r/CAGXu5j+mcfo4aB3PM1We6O62bFBJcMFX-9obJE4jFU1Dp=gNwg@mail.gmail.com
->
->
-> That'd be great, thank you very much!
+On Thu 2018-04-19 10:23:11, Sergey Senozhatsky wrote:
+> On (04/18/18 16:04), Petr Mladek wrote:
+> [..]
+> > > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > > index 2f4af216bd6e..86f0b337cbf6 100644
+> > > --- a/kernel/printk/printk.c
+> > > +++ b/kernel/printk/printk.c
+> > > @@ -1888,6 +1888,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+> > >  
+> > >  	printed_len = log_output(facility, level, lflags, dict, dictlen, text, text_len);
+> > >  
+> > > +	wake_up_klogd();
+> > >  	logbuf_unlock_irqrestore(flags);
+> > 
+> > In fact, I would feel more comfortable if we move this to the end
+> > of vprintk_emit() right before return printk_len. This will be
+> > more close to the current behavior (console first). But it will
+> > still wakeup klogd much earlier and regularly if there is
+> > a flood of messages.
+> 
+> Hm, the idea of the patch is that the existing "push everything to slow
+> consoles first, then wakeup syslog" is not very robust.
+
+I guess that you know why I suggested what I suggested ;-)
+Just for record, I thought the following way:
+
+The obsession about getting messages on consoles ASAP blocked
+any softlockup prevention for years. There are surely situations
+where this matter and we need to keep this in mind.
+
+Loggers might preempt the current task because of priority
+inversion. It is rather a corner case. The priority inversion is
+problem on its own that probably do not have a good solution.
 
 
-Just mailed "KASAN: prohibit KASAN+STRUCTLEAK combination":
-https://groups.google.com/d/msg/kasan-dev/Y1TEh7ZlHTQ/wR36C8uMCgAJ
+Our main target is to increase the chance to see the messages.
+In theory userspace loggers might be faster than a slow console.
+But they are not much reliable by definition. They need to get
+scheduled, copy the message, store it into a file, the file need
+to get synced to the disk. There are many things that might get
+wrong there.
+
+
+All in all, neither solution would work better in all situations.
+I would just feel more comfortable if we do not go to the other
+extreme, ...
+
+
+> But probably we can do what you suggested, yes.
+
+Thanks a lot for using this in v2.
+
+Best Regards,
+Petr
