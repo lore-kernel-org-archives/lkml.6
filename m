@@ -1,61 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752662AbeDSKqF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:46:05 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:10339 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751865AbeDSKqD (ORCPT
+        id S1752599AbeDSKqR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:46:17 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:33256 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751822AbeDSKqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:46:03 -0400
-To: mhocko@kernel.org, rientjes@google.com
-Cc: akpm@linux-foundation.org, aarcange@redhat.com, guro@fb.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com>
-        <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
-        <20180418075051.GO17484@dhcp22.suse.cz>
-        <alpine.DEB.2.21.1804181159020.227784@chino.kir.corp.google.com>
-        <20180419063556.GK17484@dhcp22.suse.cz>
-In-Reply-To: <20180419063556.GK17484@dhcp22.suse.cz>
-Message-Id: <201804191945.BBF87517.FVMLOQFOHSFJOt@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Thu, 19 Apr 2018 19:45:46 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 19 Apr 2018 06:46:15 -0400
+X-Google-Smtp-Source: AIpwx4924ZsfKXNSkTpwfDC3PdJzuo8NN57tgpwkAqtNVbIXmCNwrToIWs1N+o28CMvDLOolH69qrKk81Eb7EWN9FB8=
+MIME-Version: 1.0
+In-Reply-To: <cf7fe470-1b8f-a4a2-d3a1-3360ec1cc578@infradead.org>
+References: <20180414002933.6h3S5%akpm@linux-foundation.org> <cf7fe470-1b8f-a4a2-d3a1-3360ec1cc578@infradead.org>
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Thu, 19 Apr 2018 12:46:14 +0200
+Message-ID: <CADYN=9KhMhgCzmwg1P5FHEt0EaTH-EoELeF7mCCc-KtWocEGOQ@mail.gmail.com>
+Subject: Re: [PATCH] gpu/drm/amd/amdkfd: fix build, select MMU_NOTIFIER
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Oded Gabbay <oded.gabbay@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko wrote:
-> > exit_mmap() does not block before set_bit(MMF_OOM_SKIP) once it is 
-> > entered.
-> 
-> Not true. munlock_vma_pages_all might take page_lock which can have
-> unpredictable dependences. This is the reason why we are ruling out
-> mlocked VMAs in the first place when reaping the address space.
+On 14 April 2018 at 04:49, Randy Dunlap <rdunlap@infradead.org> wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+>
+> When CONFIG_MMU_NOTIFIER is not enabled, struct mmu_notifier has an
+> incomplete type definition, which causes build errors.
+>
+> ../drivers/gpu/drm/amd/amdkfd/kfd_priv.h:607:22: error: field 'mmu_notifier' has incomplete type
+> ../include/linux/kernel.h:979:32: error: dereferencing pointer to incomplete type
+> ../include/linux/kernel.h:980:18: error: dereferencing pointer to incomplete type
+> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:434:2: error: implicit declaration of function 'mmu_notifier_unregister_no_release' [-Werror=implicit-function-declaration]
+> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:435:2: error: implicit declaration of function 'mmu_notifier_call_srcu' [-Werror=implicit-function-declaration]
+> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:438:21: error: variable 'kfd_process_mmu_notifier_ops' has initializer but incomplete type
+> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:439:2: error: unknown field 'release' specified in initializer
+> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:439:2: warning: excess elements in struct initializer [enabled by default]
+> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:439:2: warning: (near initialization for 'kfd_process_mmu_notifier_ops') [enabled by default]
+> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:534:2: error: implicit declaration of function 'mmu_notifier_register' [-Werror=implicit-function-declaration]
+>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Oded Gabbay <oded.gabbay@gmail.com>
+> Cc: dri-devel@lists.freedesktop.org
 
-Wow! Then,
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
 
-> While you are correct, strictly speaking, because unmap_vmas can race
-> with the oom reaper. With the lock held during the whole operation we
-> can indeed trigger back off in the oom_repaer. It will keep retrying but
-> the tear down can take quite some time. This is a fair argument. On the
-> other hand your lock protocol introduces the MMF_OOM_SKIP problem I've
-> mentioned above and that really worries me. The primary objective of the
-> reaper is to guarantee a forward progress without relying on any
-> externalities. We might kill another OOM victim but that is safer than
-> lock up.
-
-current code has a possibility that the OOM reaper is disturbed by
-unpredictable dependencies, like I worried that
-
-  I think that there is a possibility that the OOM reaper tries to reclaim
-  mlocked pages as soon as exit_mmap() cleared VM_LOCKED flag by calling
-  munlock_vma_pages_all().
-
-when current approach was proposed. We currently have the MMF_OOM_SKIP problem.
-We need to teach the OOM reaper stop reaping as soon as entering exit_mmap().
-Maybe let the OOM reaper poll for progress (e.g. none of get_mm_counter(mm, *)
-decreased for last 1 second) ?
+> ---
+> From linux-next, not mmotm, but found in mmotm builds.
+>
+>  drivers/gpu/drm/amd/amdkfd/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> --- mmotm-2018-0413-1728.orig/drivers/gpu/drm/amd/amdkfd/Kconfig
+> +++ mmotm-2018-0413-1728/drivers/gpu/drm/amd/amdkfd/Kconfig
+> @@ -6,5 +6,6 @@ config HSA_AMD
+>         tristate "HSA kernel driver for AMD GPU devices"
+>         depends on DRM_AMDGPU && X86_64
+>         imply AMD_IOMMU_V2
+> +       select MMU_NOTIFIER
+>         help
+>           Enable this if you want to use HSA features on AMD GPU devices.
+>
