@@ -1,124 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753446AbeDSPq6 (ORCPT <rfc822;w@1wt.eu>);
+        id S1753471AbeDSPrB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:47:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42937 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753442AbeDSPq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Apr 2018 11:46:58 -0400
-Received: from dougal.metanate.com ([90.155.101.14]:42020 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752634AbeDSPqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:46:55 -0400
-From: John Keeping <john@metanate.com>
-To: linux-bluetooth@vger.kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        John Keeping <john@metanate.com>
-Subject: [PATCH] Bluetooth: use wait_event API instead of open-coding it
-Date: Thu, 19 Apr 2018 16:29:37 +0100
-Message-Id: <20180419152937.13515-1-john@metanate.com>
-X-Mailer: git-send-email 2.17.0
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 08/10] dt-bindings: media: Document bindings for the Sunxi-Cedrus VPU driver
+Date: Thu, 19 Apr 2018 17:45:34 +0200
+Message-Id: <20180419154536.17846-4-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I've seen timeout errors from HCI commands where it looks like
-schedule_timeout() has returned immediately; additional logging for the
-error case gives:
+This adds a device-tree binding document that specifies the properties
+used by the Sunxi-Cedurs VPU driver, as well as examples.
 
-	req_status=1 req_result=0 remaining=10000 jiffies
-
-so the device is still in state HCI_REQ_PEND and the value returned by
-schedule_timeout() is the same as the original timeout (HCI_INIT_TIMEOUT
-on a system with HZ=1000).
-
-Use wait_event_interruptible_timeout() instead of open-coding similar
-behaviour which is subject to the spurious failure described above.
-
-Signed-off-by: John Keeping <john@metanate.com>
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
-I saw problems with the -rt patchset on 4.9 and I'm not convinced that
-it's Bluetooth at fault for the problem described above, but I think
-this is a nice cleanup even if it's not a bug fix.
+ .../devicetree/bindings/media/sunxi-cedrus.txt     | 50 ++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedrus.txt
 
- net/bluetooth/hci_request.c | 30 +++++++-----------------------
- 1 file changed, 7 insertions(+), 23 deletions(-)
-
-diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
-index 66c0781773df..e44d34734834 100644
---- a/net/bluetooth/hci_request.c
-+++ b/net/bluetooth/hci_request.c
-@@ -122,7 +122,6 @@ void hci_req_sync_cancel(struct hci_dev *hdev, int err)
- struct sk_buff *__hci_cmd_sync_ev(struct hci_dev *hdev, u16 opcode, u32 plen,
- 				  const void *param, u8 event, u32 timeout)
- {
--	DECLARE_WAITQUEUE(wait, current);
- 	struct hci_request req;
- 	struct sk_buff *skb;
- 	int err = 0;
-@@ -135,21 +134,14 @@ struct sk_buff *__hci_cmd_sync_ev(struct hci_dev *hdev, u16 opcode, u32 plen,
- 
- 	hdev->req_status = HCI_REQ_PEND;
- 
--	add_wait_queue(&hdev->req_wait_q, &wait);
--	set_current_state(TASK_INTERRUPTIBLE);
--
- 	err = hci_req_run_skb(&req, hci_req_sync_complete);
--	if (err < 0) {
--		remove_wait_queue(&hdev->req_wait_q, &wait);
--		set_current_state(TASK_RUNNING);
-+	if (err < 0)
- 		return ERR_PTR(err);
--	}
- 
--	schedule_timeout(timeout);
-+	err = wait_event_interruptible_timeout(hdev->req_wait_q,
-+			hdev->req_status != HCI_REQ_PEND, timeout);
- 
--	remove_wait_queue(&hdev->req_wait_q, &wait);
--
--	if (signal_pending(current))
-+	if (err == -ERESTARTSYS)
- 		return ERR_PTR(-EINTR);
- 
- 	switch (hdev->req_status) {
-@@ -197,7 +189,6 @@ int __hci_req_sync(struct hci_dev *hdev, int (*func)(struct hci_request *req,
- 		   unsigned long opt, u32 timeout, u8 *hci_status)
- {
- 	struct hci_request req;
--	DECLARE_WAITQUEUE(wait, current);
- 	int err = 0;
- 
- 	BT_DBG("%s start", hdev->name);
-@@ -213,16 +204,10 @@ int __hci_req_sync(struct hci_dev *hdev, int (*func)(struct hci_request *req,
- 		return err;
- 	}
- 
--	add_wait_queue(&hdev->req_wait_q, &wait);
--	set_current_state(TASK_INTERRUPTIBLE);
--
- 	err = hci_req_run_skb(&req, hci_req_sync_complete);
- 	if (err < 0) {
- 		hdev->req_status = 0;
- 
--		remove_wait_queue(&hdev->req_wait_q, &wait);
--		set_current_state(TASK_RUNNING);
--
- 		/* ENODATA means the HCI request command queue is empty.
- 		 * This can happen when a request with conditionals doesn't
- 		 * trigger any commands to be sent. This is normal behavior
-@@ -240,11 +225,10 @@ int __hci_req_sync(struct hci_dev *hdev, int (*func)(struct hci_request *req,
- 		return err;
- 	}
- 
--	schedule_timeout(timeout);
--
--	remove_wait_queue(&hdev->req_wait_q, &wait);
-+	err = wait_event_interruptible_timeout(hdev->req_wait_q,
-+			hdev->req_status != HCI_REQ_PEND, timeout);
- 
--	if (signal_pending(current))
-+	if (err == -ERESTARTSYS)
- 		return -EINTR;
- 
- 	switch (hdev->req_status) {
+diff --git a/Documentation/devicetree/bindings/media/sunxi-cedrus.txt b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+new file mode 100644
+index 000000000000..71ad3f9c3352
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+@@ -0,0 +1,50 @@
++Device-tree bindings for the VPU found in Allwinner SoCs, referred to as the
++Video Engine (VE) in Allwinner literature.
++
++The VPU can only access the first 256 MiB of DRAM, that are DMA-mapped starting
++from the DRAM base. This requires specific memory allocation and handling.
++
++Required properties:
++- compatible	        : "allwinner,sun4i-a10-video-engine";
++- memory-region         : DMA pool for buffers allocation;
++- clocks	        : list of clock specifiers, corresponding to entries in
++                          the clock-names property;
++- clock-names	        : should contain "ahb", "mod" and "ram" entries;
++- assigned-clocks       : list of clocks assigned to the VE;
++- assigned-clocks-rates : list of clock rates for the clocks assigned to the VE;
++- resets	        : phandle for reset;
++- interrupts	        : should contain VE interrupt number;
++- reg		        : should contain register base and length of VE.
++
++Example:
++
++reserved-memory {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	ranges;
++
++	/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
++	ve_memory: cma@4a000000 {
++		compatible = "shared-dma-pool";
++		reg = <0x4a000000 0x6000000>;
++		no-map;
++		linux,cma-default;
++	};
++};
++
++video-engine@1c0e000 {
++	compatible = "allwinner,sun4i-a10-video-engine";
++	reg = <0x01c0e000 0x1000>;
++	memory-region = <&ve_memory>;
++
++	clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
++		 <&ccu CLK_DRAM_VE>;
++	clock-names = "ahb", "mod", "ram";
++
++	assigned-clocks = <&ccu CLK_VE>;
++	assigned-clock-rates = <320000000>;
++
++	resets = <&ccu RST_VE>;
++
++	interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++};
 -- 
-2.17.0
+2.16.3
