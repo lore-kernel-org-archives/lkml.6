@@ -1,94 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753731AbeDSWyx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 18:54:53 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:38917 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753537AbeDSWyu (ORCPT
+        id S1753849AbeDSWzP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 18:55:15 -0400
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:44097 "EHLO
+        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753792AbeDSWzL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 18:54:50 -0400
-X-Google-Smtp-Source: AIpwx4+A7yiCOTgjP6YmaqAND/5Z9Eq+T6cIlBibPmwGfsgE3NdA8LTdGTrbsft+OAcA9c7DoaRP6Fjjg+41kQOEM6Y=
+        Thu, 19 Apr 2018 18:55:11 -0400
+X-Google-Smtp-Source: AIpwx48oz+nNH0quBqtaGWagvT7ztQzt3s3dR28x4OxAajOZq4fpAYLyn+k11nw6XISKh+IdsASjSw==
+Subject: Re: [RFC PATCH v2 3/4] acpi: apei: Do not panic() when correctable
+ errors are marked as fatal.
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
+        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
+        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
+        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
+References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
+ <20180416215903.7318-4-mr.nuke.me@gmail.com> <20180418175415.GJ4795@pd.tnic>
+ <bdc1d19b-3cc1-3f90-d276-414aaacdbd3a@gmail.com>
+ <20180419154006.GE3600@pd.tnic>
+ <977608e6-9f5d-c523-a78a-993ac5bfd55f@gmail.com>
+ <20180419164528.GD5635@pd.tnic>
+ <ffe6b459-c80a-d3c0-451d-0d21ae63da54@gmail.com>
+ <20180419190323.GF5635@pd.tnic>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <dba07329-2f85-2bde-85ea-5bdf26fb8df2@gmail.com>
+Date: Thu, 19 Apr 2018 17:55:08 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180315183449.3102.64791.stgit@localhost.localdomain>
-References: <20180315183449.3102.64791.stgit@localhost.localdomain>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Thu, 19 Apr 2018 15:54:49 -0700
-Message-ID: <CAKgT0UdTANRo3xnr89aWdfSPmMg81-W2H-ZcJUdC=5nUkf9RAw@mail.gmail.com>
-Subject: Re: [pci PATCH v7 0/5] Add support for unmanaged SR-IOV
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org
-Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
-        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk, "Michael S. Tsirkin" <mst@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180419190323.GF5635@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Mar 15, 2018 at 11:40 AM, Alexander Duyck
-<alexander.duyck@gmail.com> wrote:
-> This series is meant to add support for SR-IOV on devices when the VFs are
-> not managed by the kernel. Examples of recent patches attempting to do this
-> include:
-> virto - https://patchwork.kernel.org/patch/10241225/
-> pci-stub - https://patchwork.kernel.org/patch/10109935/
-> vfio - https://patchwork.kernel.org/patch/10103353/
-> uio - https://patchwork.kernel.org/patch/9974031/
->
-> Since this is quickly blowing up into a multi-driver problem it is probably
-> best to implement this solution as generically as possible.
->
-> This series is an attempt to do that. What we do with this patch set is
-> provide a generic framework to enable SR-IOV in the case that the PF driver
-> doesn't support managing the VFs itself.
->
-> I based my patch set originally on the patch by Mark Rustad but there isn't
-> much left after going through and cleaning out the bits that were no longer
-> needed, and after incorporating the feedback from David Miller. At this point
-> the only items to be fully reused was his patch description which is now
-> present in patch 3 of the set.
->
-> This solution is limited in scope to just adding support for devices that
-> provide no functionality for SR-IOV other than allocating the VFs by
-> calling pci_enable_sriov. Previous sets had included patches for VFIO, but
-> for now I am dropping that as the scope of that work is larger then I
-> think I can take on at this time.
->
-> v2: Reduced scope back to just virtio_pci and vfio-pci
->     Broke into 3 patch set from single patch
->     Changed autoprobe behavior to always set when num_vfs is set non-zero
-> v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
->     Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
-> v4: Dropped vfio-pci patch
->     Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
->     Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
-> v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
->     Added new patch that enables pci_sriov_configure_simple
->     Updated drivers to use pci_sriov_configure_simple
-> v6: Defined pci_sriov_configure_simple as NULL when SR-IOV is not enabled
->     Updated drivers to drop "#ifdef" checks for IOV
->     Added pci-pf-stub as place for PF-only drivers to add support
-> v7: Dropped pci_id table explanation from pci-pf-stub driver
->     Updated pci_sriov_configure_simple to drop need for err value
->     Fixed comment explaining why pci_sriov_configure_simple is NULL
->
 
-Just following up since this has been sitting in patchwork for just
-over a month now
-(https://patchwork.ozlabs.org/project/linux-pci/list/?series=34034).
-I'm just wondering what the expectation is on getting these pulled
-into the pci tree? I'm assuming that is the best place for these
-patches. Are there any concerns I still need to address or are these
-going to be pulled in at some point, and if so is there any ETA on
-when that will be?
 
-Thanks.
+On 04/19/2018 02:03 PM, Borislav Petkov wrote:
+> (snip useful explanation).
+> 
+> On Thu, Apr 19, 2018 at 12:40:54PM -0500, Alex G. wrote:
+>> On the r740xd, FW just hides those errors from the OS with no further
+>> notification. On this machine BIOS sets things up such that non-posted
+>> requests report fatal (PCIe) errors. FW still tries very hard to hide
+>> this from the OS, and I think the heuristic is that if the drive
+>> physical presence is gone, don't even report the error.
+> 
+> Ok, second question: can you detect from the error signatures alone that
+> it was a surprise removal? 
 
-- Alex
+I suppose you could make some inference, given the timing of other
+events going on around the the crash. It's not uncommon to see a "Card
+not present" event around drive removal.
+
+Since the presence detect pin breaks last, you might not get that
+interrupt for a long while. In that case it's much harder to determine
+if you're seeing a SURPRISE!!! removal or some other fault.
+
+I don't think you can use GHES alone to determine the nature of the
+event. There is not a 1:1 mapping from the set of things going wrong to
+the set of PCIe errors.
+
+> How does such an error look like, in detail?
+
+It's green on the soft side, with lots of red accents, as well as some
+textured white shades:
+
+[   51.414616] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down
+[   51.414634] pciehp 0000:b0:05.0:pcie204: Slot(179): Link Down
+[   52.703343] FIRMWARE BUG: Firmware sent fatal error that we were able
+to correct
+[   52.703345] BROKEN FIRMWARE: Complain to your hardware vendor
+[   52.703347] {1}[Hardware Error]: Hardware error from APEI Generic
+Hardware Error Source: 1
+[   52.703358] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Up
+[   52.711616] {1}[Hardware Error]: event severity: fatal
+[   52.716754] {1}[Hardware Error]:  Error 0, type: fatal
+[   52.721891] {1}[Hardware Error]:   section_type: PCIe error
+[   52.727463] {1}[Hardware Error]:   port_type: 6, downstream switch port
+[   52.734075] {1}[Hardware Error]:   version: 3.0
+[   52.738607] {1}[Hardware Error]:   command: 0x0407, status: 0x0010
+[   52.744786] {1}[Hardware Error]:   device_id: 0000:b0:06.0
+[   52.750271] {1}[Hardware Error]:   slot: 4
+[   52.754371] {1}[Hardware Error]:   secondary_bus: 0xb3
+[   52.759509] {1}[Hardware Error]:   vendor_id: 0x10b5, device_id: 0x9733
+[   52.766123] {1}[Hardware Error]:   class_code: 000406
+[   52.771182] {1}[Hardware Error]:   bridge: secondary_status: 0x0000,
+control: 0x0003
+[   52.779038] pcieport 0000:b0:06.0: aer_status: 0x00100000, aer_mask:
+0x01a10000
+[   52.782303] nvme0n1: detected capacity change from 3200631791616 to 0
+[   52.786348] pcieport 0000:b0:06.0:    [20] Unsupported Request
+[   52.786349] pcieport 0000:b0:06.0: aer_layer=Transaction Layer,
+aer_agent=Requester ID
+[   52.786350] pcieport 0000:b0:06.0: aer_uncor_severity: 0x004eb030
+[   52.786352] pcieport 0000:b0:06.0:   TLP Header: 40000001 0000020f
+e12023bc 01000000
+[   52.786357] pcieport 0000:b0:06.0: broadcast error_detected message
+[   52.883895] pci 0000:b3:00.0: device has no driver
+[   52.883976] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down
+[   52.884184] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down event
+queued; currently getting powered on
+[   52.967175] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Up
+
+
+> Got error logs somewhere to dump?
+
+Sure [1]. They have the ANSI sequences, so you might want to wget and
+grep them in a color terminal.
+
+Alex
+
+[1] http://gtech.myftp.org/~mrnuke/nvme_logs/log-20180416-1919.log
