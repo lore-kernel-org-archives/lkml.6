@@ -1,166 +1,440 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753851AbeDSQNE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:13:04 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:51841 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753713AbeDSQNC (ORCPT
+        id S1753806AbeDSQQn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:16:43 -0400
+Received: from mail-ua0-f175.google.com ([209.85.217.175]:33969 "EHLO
+        mail-ua0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753527AbeDSQQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:13:02 -0400
-X-Google-Smtp-Source: AIpwx48QnoopbqgxociP5n1m29t871xSG7pLqbYYzokcsOHv9wH4Za/8KRfc2fXzyZE4rfBW5LXndNQG9KajnrhZ5sF59NPj9X/+
+        Thu, 19 Apr 2018 12:16:41 -0400
+X-Google-Smtp-Source: AIpwx481rWOyF503hN7TJahaSQ+s3Lqe0mZSxbCYg6DPlVOOVIKmMed/NCfDnMJhMWnWgiVWwJTNe79OUVwnPDRNMMA=
 MIME-Version: 1.0
-Date: Thu, 19 Apr 2018 09:13:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000083a5fd056a35d88d@google.com>
-Subject: KASAN: use-after-free Read in __fput (2)
-From: syzbot <syzbot+84182572be3bf4a0f9b9@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <4e3353fe-ebb5-46bb-aa58-49ad04c4d9db@codeaurora.org>
+References: <cover.1523673467.git.collinsd@codeaurora.org> <4b45f41996ea3344340e44fab2dc9e487572e209.1523673467.git.collinsd@codeaurora.org>
+ <CAD=FV=XKYCDtF93RtYi+dokR2BcT-z6Ex3UjgJ0ia_kF=847eA@mail.gmail.com> <4e3353fe-ebb5-46bb-aa58-49ad04c4d9db@codeaurora.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 19 Apr 2018 09:16:38 -0700
+X-Google-Sender-Auth: QjW0kJDAsvOLUzZWcuRkstGm10U
+Message-ID: <CAD=FV=W28_exRv+H0MJvPnHWGEeUG=SMKr=UqEKpBzkH44Fzmg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] regulator: add QCOM RPMh regulator driver
+To: David Collins <collinsd@codeaurora.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>, Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi,
 
-syzbot hit the following crash on net-next commit
-17dec0a949153d9ac00760ba2f5b78cb583e995f (Wed Apr 4 02:15:32 2018 +0000)
-Merge branch 'userns-linus' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=84182572be3bf4a0f9b9
+On Wed, Apr 18, 2018 at 4:30 PM, David Collins <collinsd@codeaurora.org> wrote:
+>>> + * @drms_mode:                 Array of regulator framework modes which can
+>>> + *                             be configured dynamically for this regulator
+>>> + *                             via the set_load() callback.
+>>
+>> Using the singular for something that is an array is confusing.  Why
+>> not "drms_modes" or "drms_mode_arr"?  In the past review you said
+>> 'Perhaps something along the lines of "drms_modes"'.
+>
+> It seems awkward to me to use a plural for arrays as it leads to indexing
+> like this: vreg->drms_modes[i].  "mode i" seems better than "modes i".
+> However, I'm willing to change this to be drms_modes and drms_mode_max_uAs
+> if that style is preferred.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6611189933015040
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-2735707888269579554
-compiler: gcc (GCC) 8.0.1 20180301 (experimental)
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+84182572be3bf4a0f9b9@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
-
-==================================================================
-BUG: KASAN: use-after-free in fsnotify_close include/linux/fsnotify.h:233  
-[inline]
-BUG: KASAN: use-after-free in __fput+0x807/0x890 fs/file_table.c:195
-Read of size 8 at addr ffff8801c96aa1c8 by task syz-executor1/10565
-
-CPU: 0 PID: 10565 Comm: syz-executor1 Not tainted 4.16.0+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x1b9/0x29f lib/dump_stack.c:53
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  fsnotify_close include/linux/fsnotify.h:233 [inline]
-  __fput+0x807/0x890 fs/file_table.c:195
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1aee/0x2730 kernel/exit.c:865
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  get_signal+0x886/0x1960 kernel/signal.c:2469
-  do_signal+0x90/0x2020 arch/x86/kernel/signal.c:810
-  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x792/0x9d0 arch/x86/entry/common.c:292
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x455259
-RSP: 002b:00007efdb432bce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 000000000072bf80 RCX: 0000000000455259
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072bf80
-RBP: 000000000072bf80 R08: 0000000000000000 R09: 000000000072bf58
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000a3e81f R14: 00007efdb432c9c0 R15: 0000000000000001
-
-Allocated by task 10558:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:552
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
-  slab_post_alloc_hook mm/slab.h:443 [inline]
-  slab_alloc mm/slab.c:3380 [inline]
-  kmem_cache_alloc+0x11b/0x760 mm/slab.c:3540
-  __d_alloc+0xc1/0xc00 fs/dcache.c:1610
-  d_alloc_pseudo+0x1d/0x30 fs/dcache.c:1732
-  sock_alloc_file+0x157/0x4e0 net/socket.c:401
-  __sys_accept4+0x28d/0x8a0 net/socket.c:1580
-  SYSC_accept4 net/socket.c:1626 [inline]
-  SyS_accept4+0x2c/0x40 net/socket.c:1623
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-Freed by task 10565:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-  set_track mm/kasan/kasan.c:459 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:520
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:527
-  __cache_free mm/slab.c:3486 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3744
-  __d_free fs/dcache.c:266 [inline]
-  dentry_free+0xe9/0x170 fs/dcache.c:342
-  __dentry_kill+0x516/0x770 fs/dcache.c:589
-  dentry_kill fs/dcache.c:616 [inline]
-  dput.part.25+0x7cb/0x9a0 fs/dcache.c:831
-  dput+0x1f/0x30 fs/dcache.c:795
-  path_put+0x31/0x70 fs/namei.c:481
-  free_fs_struct+0x22/0x60 fs/fs_struct.c:90
-  exit_fs+0xf3/0x130 fs/fs_struct.c:107
-  do_exit+0xf58/0x2730 kernel/exit.c:861
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  get_signal+0x886/0x1960 kernel/signal.c:2469
-  do_signal+0x90/0x2020 arch/x86/kernel/signal.c:810
-  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x792/0x9d0 arch/x86/entry/common.c:292
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-
-The buggy address belongs to the object at ffff8801c96aa170
-  which belongs to the cache dentry(29:syz1) of size 288
-The buggy address is located 88 bytes inside of
-  288-byte region [ffff8801c96aa170, ffff8801c96aa290)
-The buggy address belongs to the page:
-page:ffffea000725aa80 count:1 mapcount:0 mapping:ffff8801c96aa000 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801c96aa000 0000000000000000 000000010000000b
-raw: ffffea00072dee20 ffffea000725dda0 ffff8801d8328c00 ffff8801b45ba000
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff8801b45ba000
-
-Memory state around the buggy address:
-  ffff8801c96aa080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801c96aa100: fb fb fb fb fc fc fc fc fc fc fc fc fc fc fb fb
-> ffff8801c96aa180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                               ^
-  ffff8801c96aa200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801c96aa280: fb fb fc fc fc fc fc fc fc fc fc fc fb fb fb fb
-==================================================================
+I'd very much like a plural here.
 
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+>>> +static int rpmh_regulator_vrm_set_mode_bypass(struct rpmh_vreg *vreg,
+>>> +                                       unsigned int mode, bool bypassed)
+>>> +{
+>>> +       struct tcs_cmd cmd = {
+>>> +               .addr = vreg->addr + RPMH_REGULATOR_REG_VRM_MODE,
+>>> +       };
+>>
+>> Please add:
+>>
+>> if (mode & ~(REGULATOR_MODE_STANDBY |
+>>      REGULATOR_MODE_IDLE |
+>>      REGULATOR_MODE_NORMAL |
+>>      REGULATOR_MODE_FAST))
+>>   return -EINVAL;
+>>
+>> That way if someone adds a new mode you don't index off the end of
+>> your array.  Ah, I see, you have this in rpmh_regulator_vrm_set_mode
+>> by checking if mode > REGULATOR_MODE_STANDBY.  That works.  Can you
+>> move it here so it's closer to where the array access is?
+>
+> Theoretically, the (mode > REGULATOR_MODE_STANDBY) check in
+> rpmh_regulator_vrm_set_mode() shouldn't be necessary at all.  I felt safer
+> leaving it in though.  The framework ensures that no mode values may be
+> passed into rpmh_regulator_vrm_set_mode() which is not identified in
+> constraints.valid_modes_mask.  Similar sanitization happens for internal
+> rpmh_regulator_vrm_set_mode() calls.
+>
+> I'll move the (mode > REGULATOR_MODE_STANDBY) check into
+> rpmh_regulator_vrm_set_mode_bypass().
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+Ah, good point about the valid_modes_mask!  I'm happy with moving the
+test here.  I wouldn't mind a comment saying that the check is
+probably overkill because the framework already checks
+valid_modes_mask but shouldn't hurt.
+
+
+>>> +
+>>> +       return rpmh_regulator_vrm_set_mode(rdev, vreg->drms_mode[i]);
+>>
+>> Might not hurt to have a comment saying that this calls
+>> rpmh_regulator_vrm_set_mode() instead of calling
+>> rpmh_regulator_vrm_set_mode_bypass() directly because this is supposed
+>> to change the mode returned by a future call to get_mode().
+>
+> This seems pretty clear on inspection of the very closely spaced
+> functions.  I don't see the need for a comment about it.
+
+It wasn't clear to me--I thought it might have just been because you
+didn't want to manually pass in the current bypass state.  Then I
+looked at the function and thought there might have been a bug because
+it was saving the mode.  Then I looked back at the regulator framework
+and finally came to the conclusion that set_load() is supposed to
+change the mode (AKA: you'd expect that calling get_mode() after
+set_load() would show you the mode you ended up at).
+
+I guess this is all perhaps obvious to any regulator framework
+experts, but since I spent 5 minutes digging through all that it
+seemed like it deserved a comment to save the next person the 5
+minutes.  ...but I won't insist.
+
+
+>>> +static int rpmh_regulator_vrm_get_bypass(struct regulator_dev *rdev,
+>>> +                               bool *enable)
+>>> +{
+>>> +       struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
+>>> +
+>>> +       *enable = vreg->bypassed;
+>>> +
+>>> +       return 0;
+>>
+>> Should you return an error code if nobody has ever called set_bypass?
+>> ...or is it OK to just return "not bypassed"?  Please document this in
+>> the code.
+>
+> I think it is fine to return "not bypassed" by default if there is no
+> configuration in place to enable bypassing.  How are you suggesting that
+> this be documented in the code?
+
+I guess I wish the function had comments and then it could be
+documented there.  ...but none of the functions in this file do...
+
+I guess you're right that it's clear enough without a comment, so
+let's just leave it as is.
+
+
+>>> +static int rpmh_regulator_parse_vrm_modes(struct rpmh_vreg *vreg,
+>>> +                               struct device *dev, struct device_node *node)
+>>> +{
+>>> +       const char *prop;
+>>> +       int i, len, ret, mode;
+>>> +       u32 *buf;
+>>> +
+>>> +       /* qcom,allowed-drms-modes is optional */
+>>> +       prop = "qcom,allowed-drms-modes";
+>>> +       len = of_property_count_elems_of_size(node, prop, sizeof(u32));
+>>> +       if (len < 0)
+>>> +               return 0;
+>>> +
+>>> +       vreg->drms_mode = devm_kcalloc(dev, len, sizeof(*vreg->drms_mode),
+>>> +                                       GFP_KERNEL);
+>>> +       vreg->drms_mode_max_uA = devm_kcalloc(dev, len,
+>>> +                                  sizeof(*vreg->drms_mode_max_uA), GFP_KERNEL);
+>>> +       if (!vreg->drms_mode || !vreg->drms_mode_max_uA)
+>>> +               return -ENOMEM;
+>>> +       vreg->drms_mode_count = len;
+>>> +
+>>> +       buf = kcalloc(len, sizeof(*buf), GFP_KERNEL);
+>>> +       if (!buf)
+>>> +               return -ENOMEM;
+>>> +
+>>> +       ret = of_property_read_u32_array(node, prop, buf, len);
+>>> +       if (ret < 0) {
+>>> +               dev_err(dev, "%s: unable to read %s, ret=%d\n",
+>>> +                       node->name, prop, ret);
+>>> +               goto done;
+>>> +       }
+>>> +
+>>> +       for (i = 0; i < len; i++) {
+>>> +               mode = vreg->hw_data->of_map_mode(buf[i]);
+>>> +               if (mode <= 0) {
+>>
+>> Should be < 0, not <= 0 right?  Unless we take Javier's suggestion
+>> (see <https://patchwork.kernel.org/patch/10346081/>) and make 0 be
+>> invalid...
+>
+> It looks like the way forward is REGULATOR_MODE_INVALID == 0 so '<= 0' is
+> fine here.  I suppose that it could be changed to '==
+> REGULATOR_MODE_INVALID' as well.
+
+Yes, assuming my patch lands using "==" is better.  Checking whether
+an unsigned value is <= 0 is confusing.
+
+
+>>> +               prop = "qcom,regulator-initial-voltage";
+>>> +               ret = of_property_read_u32(node, prop, &uV);
+>>> +               if (!ret) {
+>>> +                       range = &vreg->hw_data->voltage_range;
+>>> +                       selector = DIV_ROUND_UP(uV - range->min_uV,
+>>> +                                       range->uV_step) + range->min_sel;
+>>> +                       if (uV < range->min_uV || selector > range->max_sel) {
+>>> +                               dev_err(dev, "%s: %s=%u is invalid\n",
+>>> +                                       node->name, prop, uV);
+>>> +                               return -EINVAL;
+>>> +                       }
+>>> +
+>>> +                       vreg->voltage_selector = selector;
+>>> +
+>>> +                       cmd[cmd_count].addr
+>>> +                               = vreg->addr + RPMH_REGULATOR_REG_VRM_VOLTAGE;
+>>> +                       cmd[cmd_count++].data
+>>> +                               = DIV_ROUND_UP(selector * range->uV_step
+>>> +                                               + range->min_uV, 1000);
+>>> +               }
+>>
+>> Seems like you want an "else { vreg->voltage_selector = -EINVAL; }".
+>> Otherwise "get_voltage_sel" will return selector 0 before the first
+>> set, right?
+>>
+>> Previously Mark said: "If the driver can't read values it should
+>> return an appropriate error code."
+>> ...and previously you said: "I'll try this out and see if the
+>> regulator framework complains during regulator registration."
+>
+> I tested out what happens when vreg->voltage_selector = -EINVAL is set
+> when qcom,regulator-initial-voltage is not present.  This results in
+> devm_regulator_register() failing and subsequently causing the
+> qcom_rpmh-regulator probe to fail.  The error happens in
+> machine_constraints_voltage() [1].
+>
+> This leaves two courses of action:
+> 1. (current patch set) allow voltage_selector to stay 0 if uninitialized
+> 2. Set voltage_selector = -EINVAL by default and specify in DT binding
+> documentation that qcom,regulator-initial-voltage is required for VRM
+> managed RPMh regulator resources which have regulator-min-microvolt and
+> regulator-max-microvolt specified.
+>
+> Are you ok with the DT implications of option #2?
+
+You'd need to ask Mark if he's OK with it, but a option #3 is to add a
+patch to your series fix the regulator framework to try setting the
+voltage if _regulator_get_voltage() fails.  Presumably in
+machine_constraints_voltage() you'd now do something like:
+
+  int target_min, target_max;
+  int current_uV = _regulator_get_voltage(rdev);
+  if (current_uV < 0) {
+    /* Maybe this regulator's hardware can't be read and needs to be initted */
+    _regulator_do_set_voltage(
+      rdev, rdev->constraints->min_uV, rdev->constraints->min_uV);
+    current_uV = _regulator_get_voltage(rdev);
+  }
+  if (current_uV < 0) {
+    rdev_err(rdev,
+      "failed to get the current voltage(%d)\n",
+      current_uV);
+      return current_uV;
+  }
+
+If Mark doesn't like that then I guess I'd be OK w/ initting it to 0
+but this needs to be documented _somewhere_ (unlike for bypass it's
+not obvious, so you need to find someplace to put it).  I'd rather not
+hack the DT to deal with our software limitations.
+
+
+>>> +static int rpmh_regulator_init_vreg(struct rpmh_vreg *vreg, struct device *dev,
+>>> +                               struct device_node *node, const char *pmic_id,
+>>> +                               const struct rpmh_vreg_init_data *rpmh_data)
+>>> +{
+>>> +       struct regulator_config reg_config = {};
+>>> +       char rpmh_resource_name[20] = "";
+>>> +       struct regulator_dev *rdev;
+>>> +       enum rpmh_regulator_type type;
+>>> +       struct regulator_init_data *init_data;
+>>> +       unsigned int mode;
+>>> +       int i, ret;
+>>> +
+>>> +       for (; rpmh_data->name; rpmh_data++)
+>>> +               if (!strcmp(rpmh_data->name, node->name))
+>>> +                       break;
+>>> +
+>>> +       if (!rpmh_data->name) {
+>>> +               dev_err(dev, "Unknown regulator %s\n", node->name);
+>>> +               return -EINVAL;
+>>> +       }
+>>> +
+>>> +       scnprintf(rpmh_resource_name, sizeof(rpmh_resource_name),
+>>> +               rpmh_data->resource_name, pmic_id);
+>>
+>> If the resulting string is exactly 20 characters then
+>> rpmh_resource_name won't be zero terminated.  Please handle this
+>> properly.
+>
+> The output of scnprintf() is always null-terminated; therefore, no other
+> check is needed.  Also, RPMh resource names stored in SMEM command DB data
+> structure are at most 8 bytes (<= 7 char + '\0' or 8 char and no '\0') so
+> using 20 chars in the buffer is overkill anyway.
+
+Wow, not sure where I looked to see that scnprintf() didn't always
+null-terminate.  Sorry.  Ignore this.
+
+
+>>> +static const u32 pmic_mode_map_pmic4_ldo[REGULATOR_MODE_STANDBY + 1] = {
+>>
+>> I may have suggested using this as an array that could be used as a
+>> "map" (index by regulator framework mode and get the PMIC mode), but
+>> now that I see it it doesn't seem super appealing since the regulator
+>> framework mode is not 0, 1, 2, 3 but is actually 1, 2, 4, 8.  ...but I
+>> guess it's not too bad--you're allocating 9 ints to map 4 elements and
+>> I guess that's about as efficient as you're going to get even if it
+>> feels a bit ugly.
+>
+> I'm ok with the sparse mapping as it makes indexing as simple as possible
+> and the extra space used is insignificant.
+>
+>
+>> ...but still a few improvements:
+>>
+>> * Don't specify the size of the array as "REGULATOR_MODE_STANDBY + 1".
+>> Let the compiler handle this.  It should do the right thing.  Then if
+>> someone ever changes the order of the #defines things will just work,
+>> I think.
+>>
+>> * Make sure that users of these arrays check that the mode is one of
+>> the mode you know about.  That way if someone does add a new mode you
+>> don't index off your array.  I'll put a comment in the user.
+>
+> Even if a new mode was added, the relative ordering of the existing modes
+> should not change and valid_modes_mask will only allow modes currently
+> supported by the driver.  I'd like to keep the bound checks as simple as
+> possible.  By explicitly sizing the arrays and then only checking for mode
+>> REGULATOR_MODE_STANDBY when indexing into the array we can be sure that
+> no out-of-bound access can ever occur.  Also, if one of the existing mode
+> value was made larger than REGULATOR_MODE_STANDBY it would be easy to
+> catch as it would cause a compilation error.
+>
+> Thus, I'd prefer to keep the array sizing and index checking as-in unless
+> there is a major objection.
+
+OK.
+
+
+>>> +static unsigned int rpmh_regulator_pmic4_bob_of_map_mode(unsigned int mode)
+>>> +{
+>>> +       static const unsigned int of_mode_map[RPMH_REGULATOR_MODE_COUNT] = {
+>>> +               [RPMH_REGULATOR_MODE_RET]  = -EINVAL,
+>>> +               [RPMH_REGULATOR_MODE_LPM]  = REGULATOR_MODE_IDLE,
+>>> +               [RPMH_REGULATOR_MODE_AUTO] = REGULATOR_MODE_NORMAL,
+>>> +               [RPMH_REGULATOR_MODE_HPM]  = REGULATOR_MODE_FAST,
+>>> +       };
+>>
+>> You're sticking a negative value in an array of unsigned inits.  Here
+>> and in other similar functions.
+>>
+>> I know, I know.  The function is defined to return an unsigned int.
+>> It's wrong.  of_regulator.c clearly puts the return code in a signed
+>> int.  First attempt at fixing this is at
+>> <https://patchwork.kernel.org/patch/10346081/>.
+>
+> I can change the error cases to use REGULATOR_MODE_INVALID which is added
+> by this change still under review [2].
+
+I haven't seen Mark NAK it (yet), so for lack of a better option I'd
+start using it in your patch and document in the commit message that
+it depends on my patch.
+
+
+>>> +static const struct rpmh_vreg_hw_data pmic4_bob = {
+>>> +       .regulator_type = VRM,
+>>> +       .ops = &rpmh_regulator_vrm_bypass_ops,
+>>> +       .voltage_range = REGULATOR_LINEAR_RANGE(1824000, 0, 83, 32000),
+>>> +       .n_voltages = 84,
+>>> +       .pmic_mode_map = pmic_mode_map_pmic4_bob,
+>>> +       .of_map_mode = rpmh_regulator_pmic4_bob_of_map_mode,
+>>> +       .bypass_mode = 0,
+>>
+>> Remove .bypass_mode from the structure and just change
+>> rpmh_regulator_vrm_set_mode_bypass() to set 0 if we're in bypass.
+>> Right now 100% of PMICs that support bypass use 0 as the bypass mode.
+>> If you ever have a future PMIC that uses a non-zero mode for bypass
+>> then we can always add this back.  ...and if no future PMICs ever use
+>> a non-zero bypass mode then we don't need the complexity of having
+>> another field in this struct.
+>>
+>> If you don't do this you might get arguments from some people saying
+>> that they don't like seeing inits of "= 0" in static structures (Linux
+>> conventions seem to like you to just assume that structs are
+>> zero-initted).
+>
+> Upcoming PMICs use 2 for bypass mode instead of 0.  That is why I left
+> this in.  I suppose that I can remove this member for now and add it back
+> in when newer PMIC support is added.
+
+I'm OK with keeping it as long as there is a real user coming up.
+IMHO with the #defines as suggested by Matthias this will look better
+anyway (it will be more obvious that this isn't a boolean, for
+instance).
+
+
+>>> +cleanup:
+>>> +       rpmh_release(rpmh_client);
+>>
+>> Still no devm_rpmh_get_client()?  If Lina is too busy spinning her
+>> patch series for other stuff, just add it to RPMH as a patch in your
+>> series.  I believe it's just this (untested):
+>>
+>> ---
+>>
+>> int devm_rpmh_release(struct device *dev, void *res)
+>> {
+>>   struct platform_device *pdev = to_platform_device(dev);
+>>   rpmh_release(pdev);
+>> }
+>>
+>> int devm_rpmh_get_client(struct device *dev)
+>> {
+>>   struct platform_device *pdev = to_platform_device(dev);
+>>   void *dr;
+>>   int rc;
+>>
+>>   dr = devres_alloc(devm_rpmh_release, 0, GFP_KERNEL);
+>>   if (!dr)
+>>     return -ENOMEM;
+>>
+>>   rc = rpmh_get_client(pdev);
+>>   if (!rc)
+>>     devres_add(dev, dr);
+>>   else
+>>     devres_free(dr);
+>>
+>>   return rc;
+>> }
+>>
+>> ---
+>>
+>> Note that you'll get rid of the error handling in probe, the whole
+>> remove function, and the need to do platform_set_drvdata().
+>
+> My understanding is that Lina is going to remove both rpmh_get_client()
+> and rpmh_release().  In their place, rpmh functions will use the consumer
+> device pointer as a handle and manage any necessary state internally [3].
+> I'll update this patch once she uploads a new series with this interface
+> modification.
+
+OK, sounds good.  Information like this is nice to include somewhere
+in the cover letter or the patch description so it's more obvious that
+you wouldn't want this patch to land until that's sorted out.
+
+
+-Doug
