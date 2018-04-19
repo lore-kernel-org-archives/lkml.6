@@ -1,246 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753465AbeDSPuY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:50:24 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44808 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752332AbeDSPuW (ORCPT
+        id S1753510AbeDSPv3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:51:29 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:36341 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753059AbeDSPvZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:50:22 -0400
-X-Google-Smtp-Source: AIpwx48mOFm92FYF7s8YD3j7hRTIy7/j9TXE6s9vGUIWg6sIgWDwotjQ9tOZP6RlSSVZKkLhQbFFkw==
-From: Varsha Rao <rvarsha016@gmail.com>
-To: Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        cocci <cocci@systeme.lip6.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>
-Cc: Varsha Rao <rvarsha016@gmail.com>
-Subject: [RESEND PATCH v2] crypto: cavium: zip: Remove unnecessary parentheses
-Date: Thu, 19 Apr 2018 21:19:43 +0530
-Message-Id: <20180419154943.21983-1-rvarsha016@gmail.com>
-X-Mailer: git-send-email 2.14.3
+        Thu, 19 Apr 2018 11:51:25 -0400
+From: Philippe CORNU <philippe.cornu@st.com>
+To: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>
+CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Vincent ABRIOU <vincent.abriou@st.com>
+Subject: Re: [PATCH] drm: clarify adjusted_mode documentation for bridges
+Thread-Topic: [PATCH] drm: clarify adjusted_mode documentation for bridges
+Thread-Index: AQHT0BczUn0iEJHYOUCxPfTONo+jRaQIKrOA
+Date: Thu, 19 Apr 2018 15:50:58 +0000
+Message-ID: <b09d3039-41f7-5de1-7323-2f30ccd7141b@st.com>
+References: <20180409152427.12449-1-philippe.cornu@st.com>
+In-Reply-To: <20180409152427.12449-1-philippe.cornu@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.119]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <60A474FA6C262948BC669A00970CF759@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3JFpWo1012265
 
-This patch fixes the clang warning of extraneous parentheses, with the
-following coccinelle script.
+Hi Archit & Andrzej,
 
-@@
-identifier i;
-constant c;
-expression e;
-@@
-(
-!((e))
-|
--((
-\(i == c\|i != c\|i <= c\|i < c\|i >= c\|i > c\)
--))
-)
+May I ask you please a short review of this documentation update.
+Many thanks
+Philippe :-)
 
-Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
----
-Changes in v2:
- - Modified coccinelle script
-
- drivers/crypto/cavium/zip/zip_regs.h | 42 ++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/crypto/cavium/zip/zip_regs.h b/drivers/crypto/cavium/zip/zip_regs.h
-index d0be682305c1..874e0236c87e 100644
---- a/drivers/crypto/cavium/zip/zip_regs.h
-+++ b/drivers/crypto/cavium/zip/zip_regs.h
-@@ -443,7 +443,7 @@ union zip_corex_bist_status {
- 
- static inline u64 ZIP_COREX_BIST_STATUS(u64 param1)
- {
--	if (((param1 <= 1)))
-+	if (param1 <= 1)
- 		return 0x0520ull + (param1 & 1) * 0x8ull;
- 	pr_err("ZIP_COREX_BIST_STATUS: %llu\n", param1);
- 	return 0;
-@@ -537,7 +537,7 @@ union zip_dbg_corex_inst {
- 
- static inline u64 ZIP_DBG_COREX_INST(u64 param1)
- {
--	if (((param1 <= 1)))
-+	if (param1 <= 1)
- 		return 0x0640ull + (param1 & 1) * 0x8ull;
- 	pr_err("ZIP_DBG_COREX_INST: %llu\n", param1);
- 	return 0;
-@@ -568,7 +568,7 @@ union zip_dbg_corex_sta {
- 
- static inline u64 ZIP_DBG_COREX_STA(u64 param1)
- {
--	if (((param1 <= 1)))
-+	if (param1 <= 1)
- 		return 0x0680ull + (param1 & 1) * 0x8ull;
- 	pr_err("ZIP_DBG_COREX_STA: %llu\n", param1);
- 	return 0;
-@@ -599,7 +599,7 @@ union zip_dbg_quex_sta {
- 
- static inline u64 ZIP_DBG_QUEX_STA(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1800ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_DBG_QUEX_STA: %llu\n", param1);
- 	return 0;
-@@ -817,7 +817,7 @@ union zip_msix_pbax {
- 
- static inline u64 ZIP_MSIX_PBAX(u64 param1)
- {
--	if (((param1 == 0)))
-+	if (param1 == 0)
- 		return 0x0000838000FF0000ull;
- 	pr_err("ZIP_MSIX_PBAX: %llu\n", param1);
- 	return 0;
-@@ -846,7 +846,7 @@ union zip_msix_vecx_addr {
- 
- static inline u64 ZIP_MSIX_VECX_ADDR(u64 param1)
- {
--	if (((param1 <= 17)))
-+	if (param1 <= 17)
- 		return 0x0000838000F00000ull + (param1 & 31) * 0x10ull;
- 	pr_err("ZIP_MSIX_VECX_ADDR: %llu\n", param1);
- 	return 0;
-@@ -875,7 +875,7 @@ union zip_msix_vecx_ctl {
- 
- static inline u64 ZIP_MSIX_VECX_CTL(u64 param1)
- {
--	if (((param1 <= 17)))
-+	if (param1 <= 17)
- 		return 0x0000838000F00008ull + (param1 & 31) * 0x10ull;
- 	pr_err("ZIP_MSIX_VECX_CTL: %llu\n", param1);
- 	return 0;
-@@ -900,7 +900,7 @@ union zip_quex_done {
- 
- static inline u64 ZIP_QUEX_DONE(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2000ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE: %llu\n", param1);
- 	return 0;
-@@ -925,7 +925,7 @@ union zip_quex_done_ack {
- 
- static inline u64 ZIP_QUEX_DONE_ACK(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2200ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE_ACK: %llu\n", param1);
- 	return 0;
-@@ -950,7 +950,7 @@ union zip_quex_done_ena_w1c {
- 
- static inline u64 ZIP_QUEX_DONE_ENA_W1C(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2600ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE_ENA_W1C: %llu\n", param1);
- 	return 0;
-@@ -975,7 +975,7 @@ union zip_quex_done_ena_w1s {
- 
- static inline u64 ZIP_QUEX_DONE_ENA_W1S(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2400ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE_ENA_W1S: %llu\n", param1);
- 	return 0;
-@@ -1004,7 +1004,7 @@ union zip_quex_done_wait {
- 
- static inline u64 ZIP_QUEX_DONE_WAIT(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x2800ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DONE_WAIT: %llu\n", param1);
- 	return 0;
-@@ -1029,7 +1029,7 @@ union zip_quex_doorbell {
- 
- static inline u64 ZIP_QUEX_DOORBELL(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x4000ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_DOORBELL: %llu\n", param1);
- 	return 0;
-@@ -1058,7 +1058,7 @@ union zip_quex_err_ena_w1c {
- 
- static inline u64 ZIP_QUEX_ERR_ENA_W1C(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x3600ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_ERR_ENA_W1C: %llu\n", param1);
- 	return 0;
-@@ -1087,7 +1087,7 @@ union zip_quex_err_ena_w1s {
- 
- static inline u64 ZIP_QUEX_ERR_ENA_W1S(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x3400ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_ERR_ENA_W1S: %llu\n", param1);
- 	return 0;
-@@ -1120,7 +1120,7 @@ union zip_quex_err_int {
- 
- static inline u64 ZIP_QUEX_ERR_INT(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x3000ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_ERR_INT: %llu\n", param1);
- 	return 0;
-@@ -1150,7 +1150,7 @@ union zip_quex_err_int_w1s {
- 
- static inline u64 ZIP_QUEX_ERR_INT_W1S(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x3200ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_ERR_INT_W1S: %llu\n", param1);
- 	return 0;
-@@ -1179,7 +1179,7 @@ union zip_quex_gcfg {
- 
- static inline u64 ZIP_QUEX_GCFG(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1A00ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_GCFG: %llu\n", param1);
- 	return 0;
-@@ -1204,7 +1204,7 @@ union zip_quex_map {
- 
- static inline u64 ZIP_QUEX_MAP(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1400ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_MAP: %llu\n", param1);
- 	return 0;
-@@ -1236,7 +1236,7 @@ union zip_quex_sbuf_addr {
- 
- static inline u64 ZIP_QUEX_SBUF_ADDR(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1000ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_SBUF_ADDR: %llu\n", param1);
- 	return 0;
-@@ -1276,7 +1276,7 @@ union zip_quex_sbuf_ctl {
- 
- static inline u64 ZIP_QUEX_SBUF_CTL(u64 param1)
- {
--	if (((param1 <= 7)))
-+	if (param1 <= 7)
- 		return 0x1200ull + (param1 & 7) * 0x8ull;
- 	pr_err("ZIP_QUEX_SBUF_CTL: %llu\n", param1);
- 	return 0;
--- 
-2.14.3
+On 04/09/2018 05:24 PM, Philippe Cornu wrote:
+> This patch clarifies the adjusted_mode documentation
+> for bridges.
+> 
+> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+> This patch follows discussions in:
+> - "drm: clarify adjusted_mode for a bridge connected to a crtc"
+>    https://patchwork.freedesktop.org/patch/206801/
+> - "drm: bridge: Constify mode arguments to bridge .mode_set() operation"
+>    https://patchwork.freedesktop.org/patch/215449/
+> 
+>   include/drm/drm_bridge.h | 16 ++++++++++++++++
+>   include/drm/drm_crtc.h   | 11 +++++++----
+>   2 files changed, 23 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index 3270fec46979..7d632c6a9214 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -178,6 +178,22 @@ struct drm_bridge_funcs {
+>   	 * then this would be &drm_encoder_helper_funcs.mode_set. The display
+>   	 * pipe (i.e.  clocks and timing signals) is off when this function is
+>   	 * called.
+> +	 *
+> +	 * The adjusted_mode parameter corresponds to the mode output by the CRTC
+> +	 * for the first bridge in the chain. It can be different from the mode
+> +	 * parameter that contains the desired mode for the connector at the end
+> +	 * of the bridges chain, for instance when the first bridge in the chain
+> +	 * performs scaling. The adjusted mode is mostly useful for the first
+> +	 * bridge in the chain and is likely irrelevant for the other bridges.
+> +	 *
+> +	 * For atomic drivers the adjusted_mode is the mode stored in
+> +	 * &drm_crtc_state.adjusted_mode.
+> +	 *
+> +	 * NOTE:
+> +	 *
+> +	 * If a need arises to store and access modes adjusted for other locations
+> +	 * than the connection between the CRTC and the first bridge, the DRM
+> +	 * framework will have to be extended with DRM bridge states.
+>   	 */
+>   	void (*mode_set)(struct drm_bridge *bridge,
+>   			 struct drm_display_mode *mode,
+> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> index a2d81d2907a9..65f749a9e9d3 100644
+> --- a/include/drm/drm_crtc.h
+> +++ b/include/drm/drm_crtc.h
+> @@ -134,10 +134,13 @@ struct drm_crtc_state {
+>   	 *
+>   	 * Internal display timings which can be used by the driver to handle
+>   	 * differences between the mode requested by userspace in @mode and what
+> -	 * is actually programmed into the hardware. It is purely driver
+> -	 * implementation defined what exactly this adjusted mode means. Usually
+> -	 * it is used to store the hardware display timings used between the
+> -	 * CRTC and encoder blocks.
+> +	 * is actually programmed into the hardware.
+> +	 *
+> +	 * For drivers using drm_bridge, this stores the hardware display timings
+> +	 * used between the CRTC and the first bridge. For other drivers, the
+> +	 * meaning of the adjusted_mode field is purely driver implementation
+> +	 * defined information, and will usually be used to store the hardware
+> +	 * display timings used between the CRTC and encoder blocks.
+>   	 */
+>   	struct drm_display_mode adjusted_mode;
+>   
+> 
