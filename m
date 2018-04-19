@@ -1,951 +1,282 @@
-Return-Path: <tom.hromatka@oracle.com>
-X-Google-Smtp-Source: AIpwx4/vYvtCkhDZsbo6QgLAiJH8a42TjfDKMHTFikLcQKgVKqh6OpY+hKyW1js81kd00ixF3rZh
-ARC-Seal: i=1; a=rsa-sha256; t=1524257549; cv=none;
-        d=google.com; s=arc-20160816;
-        b=WU+uganSlmCBTRPOpYos0UxbmZ7e/mNk3CveFFqx8GZUms4Yh6QfommUBD5cbnHHpO
-         gWh/kIIO3drVI0K817NyM1m3NXQlFag/XaT9i4+40Bo4aLo6nkNexMgQKeUQD+NtNC6w
-         gSvrnULI5jaotjF9oMtLLZQah7ob8vvtTA2Iij4szBHqMd4DY/c7MrqzANipj216sEdU
-         D/yZMxawY39b7GX/MhUEWwdEca7sHJwcJMYymaEO3KPic37533/rGU3lEdXqBO76uj3b
-         Bbe557J7xEinVJFgjUrsm56vR/+z8j1YFFXAafaGXd5a0gODdS6BrEByGW8W5KWm6ocX
-         uWcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=hN3S0s06PMBRE4gH7N/h2L3vgpuaLDHcVG7Yqx3yTiI=;
-        b=Wy/P8kJQYGAXyGbZcCrnTk8BzanctfvP/+N1l/ndGPBid/ErPNN/v4HlMzMmj/iGR0
-         9ZLL+1+6qE/KoXc5vNg0jbbOnmYiIlGeulWLqxA6nROweG2jgAb9gfrI9HQuGh8BeyEz
-         ZV2qLudvXKMQy/m1aiT+EJer2QBjQbxXjG08BwRz119BCGlFNhIx8MtD21Xt3p0FWMC4
-         +hdvPLl+BcuYD+fT8RIL2FIoBSxw7XG+MyU0sPZ79I4EWU2gdkGN963L8864xmKu4A+z
-         EpDeObgR92GplTIhglNt6KKbtkmwFcKbLzs+HmHzmInVRKBKWhfR1i4UXUV2nM3QuHy5
-         QMpQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=GmaaXcKV;
-       spf=pass (google.com: domain of tom.hromatka@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=tom.hromatka@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=GmaaXcKV;
-       spf=pass (google.com: domain of tom.hromatka@oracle.com designates 141.146.126.79 as permitted sender) smtp.mailfrom=tom.hromatka@oracle.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
-From: Tom Hromatka <tom.hromatka@oracle.com>
-To: davem@davemloft.net
-Cc: sparclinux@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, tom.hromatka@oracle.com,
-        shuah@kernel.org, linux-kselftest@vger.kernel.org,
-        allen.pais@oracle.com, khalid.aziz@oracle.com,
-        shannon.nelson@oracle.com, anthony.yznaga@oracle.com
-Subject: [PATCH v4 2/2] selftests: sparc64: char: Selftest for privileged ADI driver
-Date: Fri, 20 Apr 2018 14:52:21 -0600
-Message-Id: <20180420205221.488589-3-tom.hromatka@oracle.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20180420205221.488589-1-tom.hromatka@oracle.com>
-References: <20180420205221.488589-1-tom.hromatka@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8869 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804200210
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3309672-1524149075-2-18063860106330739436
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524149075; b=qJVbeVr9pH2sTEJTyJAhni+k3lHgoN6Kpr82qm5tjOQs7sAHNz
+    /qBOyJn4vtOd1E2tSgYUKfvagYspIM42hXJKn/eM+K5aXka1wzalq8ZdKTd0luNM
+    IIG+ASXUXiESwtjRdPCK2kf1bws0HeO2C90y3gUsM4balmTVRCtHm+9R/9kwOnGF
+    jWCHspbDghzf22UbF1z4zIf0VXGRbcM66V4OHw8deZ+qWUZYSlNqYQYiiKMXvXO8
+    GnBdMfzH5zqg1Y/+SztL2BF2r+RO+3HvzmxndBZDVm+U7FkpZvVxTg7RBXbn9qUY
+    Bqkk3eFpts6tEYdv9sKPLwnjpvt2r/HxPtFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1524149075; bh=EI+n4sVhe6ZzQSKV8xIsGM9qW7FV8y
+    Z2sHnFTY/Q1Q0=; b=bBocX3S4JWPyF12yxomAPcTU0eEVnCYpWaxJW8HyU/9OZC
+    TbPLvJQbhxYTxDmfwQcEeFvjlsiCFUqtT6pCHjAy76RFku9h6CYIrw7Yzj5+bgaC
+    wtIW3d8Shuyf3qu9NNppggnWXGjHyTr2Sw/H2dqnUTPognzsTwK9EVS/X1/FPL3r
+    3+262hQ5ow1Ocw/SPZPgcrWxFuV4f9kSEXIvjkRre17t93tfdXhTiXlAAMs2ejTh
+    9WYsqjJzI0j6rRWW2Du0v/IoTqRBhgHcXDivDQluZl+Kv+6aF3oRyAjQIGG+hKm3
+    dtVMtcfMrRuAdKBPM9ZmhBELwVvwaq9PKA4OJrtA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKMZ1Wo6mX2QVogXMtv26BfEXitARzkjzPIRWbyRQtBRpwCIlJHMDwSLCxWdrSrsGEmb6kgh+vbgi2SND10Fs1ggzYGnHjo8TPLW8qTeosOXH+juCxun
+    LF0SVMMpofdozsfXkWPJiBe5EM0ODA1dta/bZSxuONZec94MLo4vYyK5KXZVeCX9y4cHBAaBnaOlGpcIOgBKj+sSnHQG0NmF1y1an3W25126aZLqMo8bMLcB
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=D19gQVrFAAAA:8
+    a=07d9gI8wAAAA:8 a=VwQbUJbxAAAA:8 a=CCpqsmhAAAAA:8 a=pGLkceISAAAA:8
+    a=drOt6m5kAAAA:8 a=PtDNVHqPAAAA:8 a=VnNF1IyMAAAA:8 a=7CQSdrXTAAAA:8
+    a=WPyIoOwQAAAA:8 a=voM4FWlXAAAA:8 a=xGX7gT0K8vKGhRngJ-gA:9 a=x8gzFH9gYPwA:10
+    a=W4TVW4IDbPiebHqcZpNg:22 a=e2CUPOnPG4QKp8I52DXD:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=ul9cdbp4aOFLsgKbc677:22 a=RMMjzBEyIzXRtoq5n5K6:22 a=BpimnaHY1jUKGyF_4-AF:22
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=S-HzPIwwDS8t1QcwSuWs:22 a=IC2XNlieTeVoXbcui8wp:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752325AbeDSOib (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 10:38:31 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:47677 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbeDSOi2 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 10:38:28 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, libc-alpha@sourceware.org,
+        tglx@linutronix.de, deepa.kernel@gmail.com,
+        viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+        albert.aribaud@3adev.fr, linux-s390@vger.kernel.org,
+        schwidefsky@de.ibm.com, x86@kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, linux-mips@linux-mips.org, jhogan@kernel.org,
+        ralf@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org
+Subject: [PATCH v3 00/17] y2038: Convert IPC syscalls
+Date: Thu, 19 Apr 2018 16:37:20 +0200
+Message-Id: <20180419143737.606138-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:rs1qbSBVCDG+OXLdYXDxnZukGIrzB48yerCYS2q3MNUtRxXUtP1
+ obt2GxWTLqh2+w62mJLWdMuqCymG+mntgLheAtWlGtB63f5p97SCBf3v/S/l2rWzosy1GJz
+ 1RPnx2OdRGJDBgjaEfcF+zVuxW9nIsypQ+wHeLjbU/6kBN9v6UqYYwOcPNM4irXFxDzbUrQ
+ 2TRDHTq5re14dP0A51yiQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:dTipqaO1LU4=:hDGNO9tv+ung1cnRln1nwb
+ 9CvFfU1yjufa14sOG2V1g2kSTjGjo3jLWD9nc0oO/RURv8oreMGemLvDGfdRG5k+9VUxzM8Zw
+ 4jf6bLOjs827pbaN7O6aD08HyyiP7nU5dsS00Fkd+0wjpZNRUz7szWdmBdbISHBbYDeYy3nSB
+ jTjxCJyE+3zA6juYPZFKKDZkjnAx4VYrL1Bblfuh1Jv6ZPhJaSZTu2qiGhdvtNwZ+TUBKBQRO
+ 8yxXkyvvnB6EjVWgx3JDf/iQnBAbcq8Tv8uy32HxK02UAEGwqbQOlufJPMNmxAVfEMRtfu937
+ E7OtpZ/7vObRbD7+O84sPVi8r9O1jLWQ7rlOKELTeu2O3nqzQKfUFo+RKvgFWcHpzjkRrGjgo
+ SQwcfjRU3h3fb/rGOaFihcTXe6A9tkGSy9S/s+4hVirh2z/QkAx88Fa+XCRXT1rDYscbSsm13
+ CMWs60+bVe2YZihmGP/9N8F3brh2rZKYPedTASxLsNqu9vq98jUt+0frtD9ona1cb1pb7Nvhv
+ IS/CIvGdRcNF6YyxTF20PBx5UJz3uDsE/hbuE0A6p2f3SQjKa/gOJaLP7ALQpDj/jHw2ZX+47
+ BZlpHUpdUuZbcZnGarmMWspITpeoYim9Y79jpAjE45Qe8ZgYCpJzBHDPZRIE0VnAHJnXD2Pvh
+ 5T292yCfUb+qs71r9HkLR6n8PacrJ4Xzs5Tr2nnyjFPCrD4h9UQONz9RVB88l2SYvVj4tJVNP
+ BLexAJHCpaTbUhBNw3/zElpSu2b9k0ogatFiJg==
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598287409730316259?=
-X-GMAIL-MSGID: =?utf-8?q?1598299884030043150?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add a selftest for the sparc64 privileged ADI driver.  These
-tests verify the read(), pread(), write(), pwrite(), and seek()
-functionality of the driver.  The tests also report simple
-performance statistics:
+This is an update of a series I posted a long time ago [1], updating
+the IPC subsystem to pass down 64-bit time stamps to user space.
 
-        Syscall Call    AvgTime AvgSize
-                Count   (ticks) (bytes)
-        -------------------------------
-        read          3  119638    8133
-        pread         4  118164    6741
-        write         3  339442    8133
-        pwrite        4  280134    6741
-        seek         10    2919       0
-        Pass 8 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
+In particular, for sys_msgctl, sys_semctl and sys_shmctl, I do not
+introduce a completely new set of replacement system calls, but instead
+extend the existing ones to return data in the reserved fields of the
+normal data structure.
 
-Signed-off-by: Tom Hromatka <tom.hromatka@oracle.com>
-Reviewed-by: Allen Pais <allen.pais@oracle.com>
----
- tools/testing/selftests/Makefile                   |   1 +
- tools/testing/selftests/sparc64/Makefile           |  46 ++
- tools/testing/selftests/sparc64/drivers/.gitignore |   1 +
- tools/testing/selftests/sparc64/drivers/Makefile   |  15 +
- tools/testing/selftests/sparc64/drivers/adi-test.c | 721 +++++++++++++++++++++
- .../selftests/sparc64/drivers/drivers_test.sh      |  30 +
- tools/testing/selftests/sparc64/run.sh             |   3 +
- 7 files changed, 817 insertions(+)
- create mode 100644 tools/testing/selftests/sparc64/Makefile
- create mode 100644 tools/testing/selftests/sparc64/drivers/.gitignore
- create mode 100644 tools/testing/selftests/sparc64/drivers/Makefile
- create mode 100644 tools/testing/selftests/sparc64/drivers/adi-test.c
- create mode 100755 tools/testing/selftests/sparc64/drivers/drivers_test.sh
- create mode 100755 tools/testing/selftests/sparc64/run.sh
+This should be completely transparent to any existing user space, and
+only after the 32-bit time_t wraps, it will make a difference in the
+returned data.
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 7442dfb73b7f..94da632579e7 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -28,6 +28,7 @@ TARGETS += ptrace
- TARGETS += seccomp
- TARGETS += sigaltstack
- TARGETS += size
-+TARGETS += sparc64
- TARGETS += splice
- TARGETS += static_keys
- TARGETS += sync
-diff --git a/tools/testing/selftests/sparc64/Makefile b/tools/testing/selftests/sparc64/Makefile
-new file mode 100644
-index 000000000000..2082eeffd779
---- /dev/null
-+++ b/tools/testing/selftests/sparc64/Makefile
-@@ -0,0 +1,46 @@
-+SUBDIRS := drivers
-+
-+TEST_PROGS := run.sh
-+
-+.PHONY: all clean
-+
-+include ../lib.mk
-+
-+all:
-+	@for DIR in $(SUBDIRS); do		\
-+		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
-+		mkdir $$BUILD_TARGET  -p;	\
-+		make OUTPUT=$$BUILD_TARGET -C $$DIR $@;\
-+		#SUBDIR test prog name should be in the form: SUBDIR_test.sh \
-+		TEST=$$DIR"_test.sh"; \
-+		if [ -e $$DIR/$$TEST ]; then \
-+			rsync -a $$DIR/$$TEST $$BUILD_TARGET/; \
-+		fi \
-+	done
-+
-+override define RUN_TESTS
-+	@cd $(OUTPUT); ./run.sh
-+endef
-+
-+override define INSTALL_RULE
-+	mkdir -p $(INSTALL_PATH)
-+	install -t $(INSTALL_PATH) $(TEST_PROGS) $(TEST_PROGS_EXTENDED) $(TEST_FILES)
-+
-+	@for SUBDIR in $(SUBDIRS); do \
-+		BUILD_TARGET=$(OUTPUT)/$$SUBDIR;	\
-+		mkdir $$BUILD_TARGET  -p;	\
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$SUBDIR INSTALL_PATH=$(INSTALL_PATH)/$$SUBDIR install; \
-+	done;
-+endef
-+
-+override define EMIT_TESTS
-+	echo "./run.sh"
-+endef
-+
-+override define CLEAN
-+	@for DIR in $(SUBDIRS); do		\
-+		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
-+		mkdir $$BUILD_TARGET  -p;	\
-+		make OUTPUT=$$BUILD_TARGET -C $$DIR $@;\
-+	done
-+endef
-diff --git a/tools/testing/selftests/sparc64/drivers/.gitignore b/tools/testing/selftests/sparc64/drivers/.gitignore
-new file mode 100644
-index 000000000000..90e835ed74e6
---- /dev/null
-+++ b/tools/testing/selftests/sparc64/drivers/.gitignore
-@@ -0,0 +1 @@
-+adi-test
-diff --git a/tools/testing/selftests/sparc64/drivers/Makefile b/tools/testing/selftests/sparc64/drivers/Makefile
-new file mode 100644
-index 000000000000..6264f40bbdbc
---- /dev/null
-+++ b/tools/testing/selftests/sparc64/drivers/Makefile
-@@ -0,0 +1,15 @@
-+
-+INCLUDEDIR := -I.
-+CFLAGS := $(CFLAGS) $(INCLUDEDIR) -Wall -O2 -g
-+
-+TEST_GEN_FILES := adi-test
-+
-+all: $(TEST_GEN_FILES)
-+
-+$(TEST_GEN_FILES): adi-test.c
-+
-+TEST_PROGS := drivers_test.sh
-+
-+include ../../lib.mk
-+
-+$(OUTPUT)/adi-test: adi-test.c
-diff --git a/tools/testing/selftests/sparc64/drivers/adi-test.c b/tools/testing/selftests/sparc64/drivers/adi-test.c
-new file mode 100644
-index 000000000000..95d93c6a88a5
---- /dev/null
-+++ b/tools/testing/selftests/sparc64/drivers/adi-test.c
-@@ -0,0 +1,721 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * selftest for sparc64's privileged ADI driver
-+ *
-+ * Author: Tom Hromatka <tom.hromatka@oracle.com>
-+ */
-+#include <linux/kernel.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <unistd.h>
-+
-+#include "../../kselftest.h"
-+
-+#define DEBUG_LEVEL_1_BIT	(0x0001)
-+#define DEBUG_LEVEL_2_BIT	(0x0002)
-+#define DEBUG_LEVEL_3_BIT	(0x0004)
-+#define DEBUG_LEVEL_4_BIT	(0x0008)
-+#define DEBUG_TIMING_BIT	(0x1000)
-+
-+#ifndef ARRAY_SIZE
-+# define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-+#endif
-+
-+/* bit mask of enabled bits to print */
-+#define DEBUG 0x0001
-+
-+#define DEBUG_PRINT_L1(...)	debug_print(DEBUG_LEVEL_1_BIT, __VA_ARGS__)
-+#define DEBUG_PRINT_L2(...)	debug_print(DEBUG_LEVEL_2_BIT, __VA_ARGS__)
-+#define DEBUG_PRINT_L3(...)	debug_print(DEBUG_LEVEL_3_BIT, __VA_ARGS__)
-+#define DEBUG_PRINT_L4(...)	debug_print(DEBUG_LEVEL_4_BIT, __VA_ARGS__)
-+#define DEBUG_PRINT_T(...)	debug_print(DEBUG_TIMING_BIT, __VA_ARGS__)
-+
-+static void debug_print(int level, const char *s, ...)
-+{
-+	va_list args;
-+
-+	va_start(args, s);
-+
-+	if (DEBUG & level)
-+		vfprintf(stdout, s, args);
-+	va_end(args);
-+}
-+
-+#ifndef min
-+#define min(x, y) ((x) < (y) ? x : y)
-+#endif
-+
-+#define RETURN_FROM_TEST(_ret) \
-+	do { \
-+		DEBUG_PRINT_L1( \
-+			"\tTest %s returned %d\n", __func__, _ret); \
-+		return _ret; \
-+	} while (0)
-+
-+#define ADI_BLKSZ	64
-+#define ADI_MAX_VERSION	15
-+
-+#define TEST_STEP_FAILURE(_ret) \
-+	do { \
-+		fprintf(stderr, "\tTest step failure: %d at %s:%d\n", \
-+			_ret, __func__, __LINE__); \
-+		goto out; \
-+	} while (0)
-+
-+#define RDTICK(_x) \
-+	asm volatile(" rd %%tick, %0\n" : "=r" (_x))
-+
-+static int random_version(void)
-+{
-+	long tick;
-+
-+	RDTICK(tick);
-+
-+	return tick % (ADI_MAX_VERSION + 1);
-+}
-+
-+#define MAX_RANGES_SUPPORTED	5
-+static const char system_ram_str[] = "System RAM\n";
-+static int range_count;
-+static unsigned long long int start_addr[MAX_RANGES_SUPPORTED];
-+static unsigned long long int   end_addr[MAX_RANGES_SUPPORTED];
-+
-+struct stats {
-+	char		name[16];
-+	unsigned long	total;
-+	unsigned long	count;
-+	unsigned long	bytes;
-+};
-+
-+static struct stats read_stats = {
-+	.name = "read", .total = 0, .count = 0, .bytes = 0};
-+static struct stats pread_stats = {
-+	.name = "pread", .total = 0, .count = 0, .bytes = 0};
-+static struct stats write_stats = {
-+	.name = "write", .total = 0, .count = 0, .bytes = 0};
-+static struct stats pwrite_stats = {
-+	.name = "pwrite", .total = 0, .count = 0, .bytes = 0};
-+static struct stats seek_stats = {
-+	.name = "seek", .total = 0, .count = 0, .bytes = 0};
-+
-+static void update_stats(struct stats * const ustats,
-+			 unsigned long measurement, unsigned long bytes)
-+{
-+	ustats->total += measurement;
-+	ustats->bytes += bytes;
-+	ustats->count++;
-+}
-+
-+static void print_ustats(const struct stats * const ustats)
-+{
-+	DEBUG_PRINT_L1("%s\t%7d\t%7.0f\t%7.0f\n",
-+		       ustats->name, ustats->count,
-+		       (float)ustats->total / (float)ustats->count,
-+		       (float)ustats->bytes / (float)ustats->count);
-+}
-+
-+static void print_stats(void)
-+{
-+	DEBUG_PRINT_L1("\nSyscall\tCall\tAvgTime\tAvgSize\n"
-+		       "\tCount\t(ticks)\t(bytes)\n"
-+		       "-------------------------------\n");
-+
-+	print_ustats(&read_stats);
-+	print_ustats(&pread_stats);
-+	print_ustats(&write_stats);
-+	print_ustats(&pwrite_stats);
-+	print_ustats(&seek_stats);
-+}
-+
-+static int build_memory_map(void)
-+{
-+	char line[256];
-+	FILE *fp;
-+	int i;
-+
-+	range_count = 0;
-+
-+	fp = fopen("/proc/iomem", "r");
-+	if (!fp) {
-+		fprintf(stderr, "/proc/iomem: error %d: %s\n",
-+			errno, strerror(errno));
-+		return -errno;
-+	}
-+
-+	while (fgets(line, sizeof(line), fp) != 0) {
-+		if (strstr(line, system_ram_str)) {
-+			char *dash, *end_ptr;
-+
-+			/* Given a line like this:
-+			 * d0400000-10ffaffff : System RAM
-+			 * replace the "-" with a space
-+			 */
-+			dash = strstr(line, "-");
-+			dash[0] = 0x20;
-+
-+			start_addr[range_count] = strtoull(line, &end_ptr, 16);
-+			end_addr[range_count] = strtoull(end_ptr, NULL, 16);
-+			range_count++;
-+		}
-+	}
-+
-+	fclose(fp);
-+
-+	DEBUG_PRINT_L1("RAM Ranges\n");
-+	for (i = 0; i < range_count; i++)
-+		DEBUG_PRINT_L1("\trange %d: 0x%llx\t- 0x%llx\n",
-+			       i, start_addr[i], end_addr[i]);
-+
-+	if (range_count == 0) {
-+		fprintf(stderr, "No valid address ranges found.  Error.\n");
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int read_adi(int fd, unsigned char *buf, int buf_sz)
-+{
-+	int ret, bytes_read = 0;
-+	long start, end, elapsed_time = 0;
-+
-+	do {
-+		RDTICK(start);
-+		ret = read(fd, buf + bytes_read, buf_sz - bytes_read);
-+		RDTICK(end);
-+		if (ret < 0)
-+			return -errno;
-+
-+		elapsed_time += end - start;
-+		update_stats(&read_stats, elapsed_time, buf_sz);
-+		bytes_read += ret;
-+
-+	} while (bytes_read < buf_sz);
-+
-+	DEBUG_PRINT_T("\tread elapsed timed = %ld\n", elapsed_time);
-+	DEBUG_PRINT_L3("\tRead  %d bytes\n", bytes_read);
-+
-+	return bytes_read;
-+}
-+
-+static int pread_adi(int fd, unsigned char *buf,
-+		     int buf_sz, unsigned long offset)
-+{
-+	int ret, i, bytes_read = 0;
-+	unsigned long cur_offset;
-+	long start, end, elapsed_time = 0;
-+
-+	cur_offset = offset;
-+	do {
-+		RDTICK(start);
-+		ret = pread(fd, buf + bytes_read, buf_sz - bytes_read,
-+			    cur_offset);
-+		RDTICK(end);
-+		if (ret < 0)
-+			return -errno;
-+
-+		elapsed_time += end - start;
-+		update_stats(&pread_stats, elapsed_time, buf_sz);
-+		bytes_read += ret;
-+		cur_offset += ret;
-+
-+	} while (bytes_read < buf_sz);
-+
-+	DEBUG_PRINT_T("\tpread elapsed timed = %ld\n", elapsed_time);
-+	DEBUG_PRINT_L3("\tRead  %d bytes starting at offset 0x%lx\n",
-+		       bytes_read, offset);
-+	for (i = 0; i < bytes_read; i++)
-+		DEBUG_PRINT_L4("\t\t0x%lx\t%d\n", offset + i, buf[i]);
-+
-+	return bytes_read;
-+}
-+
-+static int write_adi(int fd, const unsigned char * const buf, int buf_sz)
-+{
-+	int ret, bytes_written = 0;
-+	long start, end, elapsed_time = 0;
-+
-+	do {
-+		RDTICK(start);
-+		ret = write(fd, buf + bytes_written, buf_sz - bytes_written);
-+		RDTICK(end);
-+		if (ret < 0)
-+			return -errno;
-+
-+		elapsed_time += (end - start);
-+		update_stats(&write_stats, elapsed_time, buf_sz);
-+		bytes_written += ret;
-+	} while (bytes_written < buf_sz);
-+
-+	DEBUG_PRINT_T("\twrite elapsed timed = %ld\n", elapsed_time);
-+	DEBUG_PRINT_L3("\tWrote %d of %d bytes\n", bytes_written, buf_sz);
-+
-+	return bytes_written;
-+}
-+
-+static int pwrite_adi(int fd, const unsigned char * const buf,
-+		      int buf_sz, unsigned long offset)
-+{
-+	int ret, bytes_written = 0;
-+	unsigned long cur_offset;
-+	long start, end, elapsed_time = 0;
-+
-+	cur_offset = offset;
-+
-+	do {
-+		RDTICK(start);
-+		ret = pwrite(fd, buf + bytes_written,
-+			     buf_sz - bytes_written, cur_offset);
-+		RDTICK(end);
-+		if (ret < 0) {
-+			fprintf(stderr, "pwrite(): error %d: %s\n",
-+				errno, strerror(errno));
-+			return -errno;
-+		}
-+
-+		elapsed_time += (end - start);
-+		update_stats(&pwrite_stats, elapsed_time, buf_sz);
-+		bytes_written += ret;
-+		cur_offset += ret;
-+
-+	} while (bytes_written < buf_sz);
-+
-+	DEBUG_PRINT_T("\tpwrite elapsed timed = %ld\n", elapsed_time);
-+	DEBUG_PRINT_L3("\tWrote %d of %d bytes starting at address 0x%lx\n",
-+		       bytes_written, buf_sz, offset);
-+
-+	return bytes_written;
-+}
-+
-+static off_t seek_adi(int fd, off_t offset, int whence)
-+{
-+	long start, end;
-+	off_t ret;
-+
-+	RDTICK(start);
-+	ret = lseek(fd, offset, whence);
-+	RDTICK(end);
-+	DEBUG_PRINT_L2("\tlseek ret = 0x%llx\n", ret);
-+	if (ret < 0)
-+		goto out;
-+
-+	DEBUG_PRINT_T("\tlseek elapsed timed = %ld\n", end - start);
-+	update_stats(&seek_stats, end - start, 0);
-+
-+out:
-+	(void)lseek(fd, 0, SEEK_END);
-+	return ret;
-+}
-+
-+static int test0_prpw_aligned_1byte(int fd)
-+{
-+	/* somewhat arbitrarily chosen address */
-+	unsigned long paddr =
-+		(end_addr[range_count - 1] - 0x1000) & ~(ADI_BLKSZ - 1);
-+	unsigned char version[1], expected_version;
-+	loff_t offset;
-+	int ret;
-+
-+	version[0] = random_version();
-+	expected_version = version[0];
-+
-+	offset = paddr / ADI_BLKSZ;
-+
-+	ret = pwrite_adi(fd, version, sizeof(version), offset);
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	ret = pread_adi(fd, version, sizeof(version), offset);
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	if (expected_version != version[0]) {
-+		DEBUG_PRINT_L2("\tExpected version %d but read version %d\n",
-+			       expected_version, version[0]);
-+		TEST_STEP_FAILURE(-expected_version);
-+	}
-+
-+	ret = 0;
-+out:
-+	RETURN_FROM_TEST(ret);
-+}
-+
-+#define TEST1_VERSION_SZ	4096
-+static int test1_prpw_aligned_4096bytes(int fd)
-+{
-+	/* somewhat arbitrarily chosen address */
-+	unsigned long paddr =
-+		(end_addr[range_count - 1] - 0x6000) & ~(ADI_BLKSZ - 1);
-+	unsigned char version[TEST1_VERSION_SZ],
-+		expected_version[TEST1_VERSION_SZ];
-+	loff_t offset;
-+	int ret, i;
-+
-+	for (i = 0; i < TEST1_VERSION_SZ; i++) {
-+		version[i] = random_version();
-+		expected_version[i] = version[i];
-+	}
-+
-+	offset = paddr / ADI_BLKSZ;
-+
-+	ret = pwrite_adi(fd, version, sizeof(version), offset);
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	ret = pread_adi(fd, version, sizeof(version), offset);
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	for (i = 0; i < TEST1_VERSION_SZ; i++) {
-+		if (expected_version[i] != version[i]) {
-+			DEBUG_PRINT_L2(
-+				"\tExpected version %d but read version %d\n",
-+				expected_version, version[0]);
-+			TEST_STEP_FAILURE(-expected_version[i]);
-+		}
-+	}
-+
-+	ret = 0;
-+out:
-+	RETURN_FROM_TEST(ret);
-+}
-+
-+#define TEST2_VERSION_SZ	10327
-+static int test2_prpw_aligned_10327bytes(int fd)
-+{
-+	/* somewhat arbitrarily chosen address */
-+	unsigned long paddr =
-+		(start_addr[0] + 0x6000) & ~(ADI_BLKSZ - 1);
-+	unsigned char version[TEST2_VERSION_SZ],
-+		expected_version[TEST2_VERSION_SZ];
-+	loff_t offset;
-+	int ret, i;
-+
-+	for (i = 0; i < TEST2_VERSION_SZ; i++) {
-+		version[i] = random_version();
-+		expected_version[i] = version[i];
-+	}
-+
-+	offset = paddr / ADI_BLKSZ;
-+
-+	ret = pwrite_adi(fd, version, sizeof(version), offset);
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	ret = pread_adi(fd, version, sizeof(version), offset);
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	for (i = 0; i < TEST2_VERSION_SZ; i++) {
-+		if (expected_version[i] != version[i]) {
-+			DEBUG_PRINT_L2(
-+				"\tExpected version %d but read version %d\n",
-+				expected_version, version[0]);
-+			TEST_STEP_FAILURE(-expected_version[i]);
-+		}
-+	}
-+
-+	ret = 0;
-+out:
-+	RETURN_FROM_TEST(ret);
-+}
-+
-+#define TEST3_VERSION_SZ	12541
-+static int test3_prpw_unaligned_12541bytes(int fd)
-+{
-+	/* somewhat arbitrarily chosen address */
-+	unsigned long paddr =
-+		((start_addr[0] + 0xC000) & ~(ADI_BLKSZ - 1)) + 17;
-+	unsigned char version[TEST3_VERSION_SZ],
-+		expected_version[TEST3_VERSION_SZ];
-+	loff_t offset;
-+	int ret, i;
-+
-+	for (i = 0; i < TEST3_VERSION_SZ; i++) {
-+		version[i] = random_version();
-+		expected_version[i] = version[i];
-+	}
-+
-+	offset = paddr / ADI_BLKSZ;
-+
-+	ret = pwrite_adi(fd, version, sizeof(version), offset);
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	ret = pread_adi(fd, version, sizeof(version), offset);
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	for (i = 0; i < TEST3_VERSION_SZ; i++) {
-+		if (expected_version[i] != version[i]) {
-+			DEBUG_PRINT_L2(
-+				"\tExpected version %d but read version %d\n",
-+				expected_version, version[0]);
-+			TEST_STEP_FAILURE(-expected_version[i]);
-+		}
-+	}
-+
-+	ret = 0;
-+out:
-+	RETURN_FROM_TEST(ret);
-+}
-+
-+static int test4_lseek(int fd)
-+{
-+#define	OFFSET_ADD	(0x100)
-+#define OFFSET_SUBTRACT	(0xFFFFFFF000000000)
-+
-+	off_t offset_out, offset_in;
-+	int ret;
-+
-+
-+	offset_in = 0x123456789abcdef0;
-+	offset_out = seek_adi(fd, offset_in, SEEK_SET);
-+	if (offset_out != offset_in) {
-+		ret = -1;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	/* seek to the current offset.  this should return EINVAL */
-+	offset_out = seek_adi(fd, offset_in, SEEK_SET);
-+	if (offset_out < 0 && errno == EINVAL)
-+		DEBUG_PRINT_L2(
-+			"\tSEEK_SET failed as designed. Not an error\n");
-+	else {
-+		ret = -2;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	offset_out = seek_adi(fd, 0, SEEK_CUR);
-+	if (offset_out != offset_in) {
-+		ret = -3;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	offset_out = seek_adi(fd, OFFSET_ADD, SEEK_CUR);
-+	if (offset_out != (offset_in + OFFSET_ADD)) {
-+		ret = -4;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	offset_out = seek_adi(fd, OFFSET_SUBTRACT, SEEK_CUR);
-+	if (offset_out != (offset_in + OFFSET_ADD + OFFSET_SUBTRACT)) {
-+		ret = -5;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	ret = 0;
-+out:
-+	RETURN_FROM_TEST(ret);
-+}
-+
-+static int test5_rw_aligned_1byte(int fd)
-+{
-+	/* somewhat arbitrarily chosen address */
-+	unsigned long paddr =
-+		(end_addr[range_count - 1] - 0xF000) & ~(ADI_BLKSZ - 1);
-+	unsigned char version, expected_version;
-+	loff_t offset;
-+	off_t oret;
-+	int ret;
-+
-+	offset = paddr / ADI_BLKSZ;
-+	version = expected_version = random_version();
-+
-+	oret = seek_adi(fd, offset, SEEK_SET);
-+	if (oret != offset) {
-+		ret = -1;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	ret = write_adi(fd, &version, sizeof(version));
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	oret = seek_adi(fd, offset, SEEK_SET);
-+	if (oret != offset) {
-+		ret = -1;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	ret = read_adi(fd, &version, sizeof(version));
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	if (expected_version != version) {
-+		DEBUG_PRINT_L2("\tExpected version %d but read version %d\n",
-+			       expected_version, version);
-+		TEST_STEP_FAILURE(-expected_version);
-+	}
-+
-+	ret = 0;
-+out:
-+	RETURN_FROM_TEST(ret);
-+}
-+
-+#define TEST6_VERSION_SZ        9434
-+static int test6_rw_aligned_9434bytes(int fd)
-+{
-+	/* somewhat arbitrarily chosen address */
-+	unsigned long paddr =
-+		(end_addr[range_count - 1] - 0x5F000) & ~(ADI_BLKSZ - 1);
-+	unsigned char version[TEST6_VERSION_SZ],
-+		      expected_version[TEST6_VERSION_SZ];
-+	loff_t offset;
-+	off_t oret;
-+	int ret, i;
-+
-+	offset = paddr / ADI_BLKSZ;
-+	for (i = 0; i < TEST6_VERSION_SZ; i++)
-+		version[i] = expected_version[i] = random_version();
-+
-+	oret = seek_adi(fd, offset, SEEK_SET);
-+	if (oret != offset) {
-+		ret = -1;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	ret = write_adi(fd, version, sizeof(version));
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	memset(version, 0, TEST6_VERSION_SZ);
-+
-+	oret = seek_adi(fd, offset, SEEK_SET);
-+	if (oret != offset) {
-+		ret = -1;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	ret = read_adi(fd, version, sizeof(version));
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	for (i = 0; i < TEST6_VERSION_SZ; i++) {
-+		if (expected_version[i] != version[i]) {
-+			DEBUG_PRINT_L2(
-+				"\tExpected version %d but read version %d\n",
-+				expected_version[i], version[i]);
-+			TEST_STEP_FAILURE(-expected_version[i]);
-+		}
-+	}
-+
-+	ret = 0;
-+out:
-+	RETURN_FROM_TEST(ret);
-+}
-+
-+#define TEST7_VERSION_SZ        14963
-+static int test7_rw_aligned_14963bytes(int fd)
-+{
-+	/* somewhat arbitrarily chosen address */
-+	unsigned long paddr =
-+	  ((start_addr[range_count - 1] + 0xF000) & ~(ADI_BLKSZ - 1)) + 39;
-+	unsigned char version[TEST7_VERSION_SZ],
-+		      expected_version[TEST7_VERSION_SZ];
-+	loff_t offset;
-+	off_t oret;
-+	int ret, i;
-+
-+	offset = paddr / ADI_BLKSZ;
-+	for (i = 0; i < TEST7_VERSION_SZ; i++) {
-+		version[i] = random_version();
-+		expected_version[i] = version[i];
-+	}
-+
-+	oret = seek_adi(fd, offset, SEEK_SET);
-+	if (oret != offset) {
-+		ret = -1;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	ret = write_adi(fd, version, sizeof(version));
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	memset(version, 0, TEST7_VERSION_SZ);
-+
-+	oret = seek_adi(fd, offset, SEEK_SET);
-+	if (oret != offset) {
-+		ret = -1;
-+		TEST_STEP_FAILURE(ret);
-+	}
-+
-+	ret = read_adi(fd, version, sizeof(version));
-+	if (ret != sizeof(version))
-+		TEST_STEP_FAILURE(ret);
-+
-+	for (i = 0; i < TEST7_VERSION_SZ; i++) {
-+		if (expected_version[i] != version[i]) {
-+			DEBUG_PRINT_L2(
-+				"\tExpected version %d but read version %d\n",
-+				expected_version[i], version[i]);
-+			TEST_STEP_FAILURE(-expected_version[i]);
-+		}
-+
-+		paddr += ADI_BLKSZ;
-+	}
-+
-+	ret = 0;
-+out:
-+	RETURN_FROM_TEST(ret);
-+}
-+
-+static int (*tests[])(int fd) = {
-+	test0_prpw_aligned_1byte,
-+	test1_prpw_aligned_4096bytes,
-+	test2_prpw_aligned_10327bytes,
-+	test3_prpw_unaligned_12541bytes,
-+	test4_lseek,
-+	test5_rw_aligned_1byte,
-+	test6_rw_aligned_9434bytes,
-+	test7_rw_aligned_14963bytes,
-+};
-+#define TEST_COUNT	ARRAY_SIZE(tests)
-+
-+int main(int argc, char *argv[])
-+{
-+	int fd, ret, test;
-+
-+	ret = build_memory_map();
-+	if (ret < 0)
-+		return ret;
-+
-+	fd = open("/dev/adi", O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "open: error %d: %s\n",
-+			errno, strerror(errno));
-+		return -errno;
-+	}
-+
-+	for (test = 0; test < TEST_COUNT; test++) {
-+		DEBUG_PRINT_L1("Running test #%d\n", test);
-+
-+		ret = (*tests[test])(fd);
-+		if (ret != 0)
-+			ksft_test_result_fail("Test #%d failed: error %d\n",
-+					      test, ret);
-+		else
-+			ksft_test_result_pass("Test #%d passed\n", test);
-+	}
-+
-+	print_stats();
-+	close(fd);
-+
-+	if (ksft_get_fail_cnt() > 0)
-+		ksft_exit_fail();
-+	else
-+		ksft_exit_pass();
-+
-+	/* it's impossible to get here, but the compiler throws a warning
-+	 * about control reaching the end of non-void function.  bah.
-+	 */
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/sparc64/drivers/drivers_test.sh b/tools/testing/selftests/sparc64/drivers/drivers_test.sh
-new file mode 100755
-index 000000000000..6d08273b7532
---- /dev/null
-+++ b/tools/testing/selftests/sparc64/drivers/drivers_test.sh
-@@ -0,0 +1,30 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+
-+SRC_TREE=../../../../
-+
-+test_run()
-+{
-+	if [ -f ${SRC_TREE}/drivers/char/adi.ko ]; then
-+		insmod ${SRC_TREE}/drivers/char/adi.ko 2> /dev/null
-+		if [ $? -ne 0 ]; then
-+			rc=1
-+		fi
-+	else
-+		# Use modprobe dry run to check for missing adi module
-+		if ! /sbin/modprobe -q -n adi; then
-+			echo "adi: [SKIP]"
-+		elif /sbin/modprobe -q adi; then
-+			echo "adi: ok"
-+		else
-+			echo "adi: [FAIL]"
-+			rc=1
-+		fi
-+	fi
-+	./adi-test
-+	rmmod adi 2> /dev/null
-+}
-+
-+rc=0
-+test_run
-+exit $rc
-diff --git a/tools/testing/selftests/sparc64/run.sh b/tools/testing/selftests/sparc64/run.sh
-new file mode 100755
-index 000000000000..38ad61f9328e
---- /dev/null
-+++ b/tools/testing/selftests/sparc64/run.sh
-@@ -0,0 +1,3 @@
-+#!/bin/sh
-+
-+(cd drivers; ./drivers_test.sh)
+libc implementations will consequently have to provide their own data
+structures when they move to 64-bit time_t, and convert the structures
+in user space from the ones returned by the kernel.
+
+In contrast, mq_timedsend, mq_timedreceive and and semtimedop all do
+need to change because having a libc redefine the timespec type
+breaks the ABI, so with this series, there will be two separate entry
+points for 32-bit architectures.
+
+There are three cases here:
+
+- little-endian architectures (except powerpc and mips) can use
+  the normal layout and just cast the data structure to the user space
+  type that contains 64-bit numbers.
+
+- parisc and sparc can do the same thing with big-endian user space
+
+- little-endian powerpc and most big-endian architectures have
+  to flip the upper and lower 32-bit halves of the time_t value in memory,
+  but can otherwise keep using the normal layout
+
+- mips and big-endian xtensa need to be more careful because
+  they are not consistent in their definitions, and they have to provide
+  custom libc implementations for the system calls to use 64-bit time_t.
+
+Changes to v2 [2]:
+- added patches for mq_timedsend, mq_timedreceive and and semtimedop
+  system calls
+- add asm-generic/compat.h changes to prepare for actually using those
+  on 32-bit.
+- fix 'make headers_install' as reported by Heiko Carstens
+- fix MIPS build as reported by build bot
+- Cc everyone on all patches as originally intended, not just on the
+  cover letter.
+
+Changes to v1 [1]:
+- Rebased to the latest kernel (4.17-rc)
+- Dropped changes for removed architectures
+- Simplified the IPC code changes, based on prior work from
+  both Deepa and Eric
+- Fixed a few bugs that I found during rebasing, in parcular the
+  sparc version was incorrect.
+
+I haven't seen any objections to v1 and will send a pull request
+to Thomas Gleixner after Deepa's first patches are all merged there.
+There are a few more patches in my tree [3] now, I'm still testing
+those and should be able to send the next batch next week.
+
+    Arnd
+
+[1] https://lkml.org/lkml/2015/5/20/605
+[2] https://lwn.net/Articles/751676/
+[3] git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git y2038-next
+
+Arnd Bergmann (17):
+  y2038: asm-generic: Extend sysvipc data structures
+  y2038: alpha: Remove unneeded ipc uapi header files
+  y2038: ia64: Remove unneeded ipc uapi header files
+  y2038: s390: Remove unneeded ipc uapi header files
+  y2038: arm64: Extend sysvipc compat data structures
+  y2038: mips: Extend sysvipc data structures
+  y2038: x86: Extend sysvipc data structures
+  y2038: parisc: Extend sysvipc data structures
+  y2038: sparc: Extend sysvipc data structures
+  y2038: powerpc: Extend sysvipc data structures
+  y2038: xtensa: Extend sysvipc data structures
+  y2038: ipc: Use ktime_get_real_seconds consistently
+  y2038: ipc: Report long times to user space
+  y2038: ipc: Use __kernel_timespec
+  y2038: ipc: Enable COMPAT_32BIT_TIME
+  y2038: ipc: Redirect ipc(SEMTIMEDOP, ...) to compat_ksys_semtimedop
+  y2038: compat: Move common compat types to asm-generic/compat.h
+
+Cc: linux-api@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: libc-alpha@sourceware.org
+Cc: tglx@linutronix.de
+Cc: deepa.kernel@gmail.com
+Cc: viro@zeniv.linux.org.uk
+Cc: ebiederm@xmission.com
+Cc: albert.aribaud@3adev.fr
+Cc: linux-s390@vger.kernel.org
+Cc: schwidefsky@de.ibm.com
+Cc: x86@kernel.org
+Cc: catalin.marinas@arm.com
+Cc: will.deacon@arm.com
+Cc: linux-mips@linux-mips.org
+Cc: jhogan@kernel.org
+Cc: ralf@linux-mips.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: sparclinux@vger.kernel.org
+
+ arch/alpha/include/uapi/asm/Kbuild     |  4 ++
+ arch/alpha/include/uapi/asm/ipcbuf.h   |  2 -
+ arch/alpha/include/uapi/asm/msgbuf.h   | 28 -----------
+ arch/alpha/include/uapi/asm/sembuf.h   | 23 ---------
+ arch/alpha/include/uapi/asm/shmbuf.h   | 39 ---------------
+ arch/arm64/include/asm/compat.h        | 52 +++++++-------------
+ arch/ia64/include/uapi/asm/Kbuild      |  4 ++
+ arch/ia64/include/uapi/asm/ipcbuf.h    |  2 -
+ arch/ia64/include/uapi/asm/msgbuf.h    | 28 -----------
+ arch/ia64/include/uapi/asm/sembuf.h    | 23 ---------
+ arch/ia64/include/uapi/asm/shmbuf.h    | 39 ---------------
+ arch/mips/include/asm/compat.h         | 58 +++++++++--------------
+ arch/mips/include/uapi/asm/msgbuf.h    | 57 ++++++++++++++--------
+ arch/mips/include/uapi/asm/sembuf.h    | 15 +++++-
+ arch/mips/include/uapi/asm/shmbuf.h    | 23 ++++++++-
+ arch/parisc/include/asm/compat.h       | 50 +++++++-------------
+ arch/parisc/include/uapi/asm/msgbuf.h  | 33 +++++++------
+ arch/parisc/include/uapi/asm/sembuf.h  | 16 +++----
+ arch/parisc/include/uapi/asm/shmbuf.h  | 19 ++++----
+ arch/powerpc/include/asm/compat.h      | 50 +++++++-------------
+ arch/powerpc/include/uapi/asm/msgbuf.h | 18 +++----
+ arch/powerpc/include/uapi/asm/sembuf.h | 14 +++---
+ arch/powerpc/include/uapi/asm/shmbuf.h | 19 ++++----
+ arch/s390/include/asm/compat.h         | 50 +++++++-------------
+ arch/s390/include/uapi/asm/Kbuild      |  3 ++
+ arch/s390/include/uapi/asm/msgbuf.h    | 38 ---------------
+ arch/s390/include/uapi/asm/sembuf.h    | 30 ------------
+ arch/s390/include/uapi/asm/shmbuf.h    | 49 -------------------
+ arch/sparc/include/asm/compat.h        | 51 +++++++-------------
+ arch/sparc/include/uapi/asm/msgbuf.h   | 22 ++++-----
+ arch/sparc/include/uapi/asm/sembuf.h   | 16 +++----
+ arch/sparc/include/uapi/asm/shmbuf.h   | 21 ++++-----
+ arch/x86/include/asm/compat.h          | 51 +++++++-------------
+ arch/x86/include/uapi/asm/Kbuild       |  5 +-
+ arch/x86/include/uapi/asm/msgbuf.h     |  1 -
+ arch/x86/include/uapi/asm/sembuf.h     | 11 ++++-
+ arch/x86/include/uapi/asm/shmbuf.h     |  1 -
+ arch/xtensa/include/uapi/asm/msgbuf.h  | 25 +++++-----
+ arch/xtensa/include/uapi/asm/sembuf.h  | 17 ++++---
+ arch/xtensa/include/uapi/asm/shmbuf.h  | 37 ++++-----------
+ include/asm-generic/compat.h           | 24 +++++++++-
+ include/linux/compat.h                 |  2 -
+ include/linux/syscalls.h               |  6 +--
+ include/uapi/asm-generic/msgbuf.h      | 17 ++++---
+ include/uapi/asm-generic/sembuf.h      | 26 ++++++----
+ include/uapi/asm-generic/shmbuf.h      | 17 ++++---
+ ipc/mqueue.c                           | 86 +++++++++++++++++-----------------
+ ipc/msg.c                              | 20 +++++---
+ ipc/sem.c                              | 27 +++++++----
+ ipc/shm.c                              | 14 ++++--
+ ipc/syscall.c                          | 13 +++--
+ ipc/util.h                             |  4 +-
+ 52 files changed, 493 insertions(+), 807 deletions(-)
+ delete mode 100644 arch/alpha/include/uapi/asm/ipcbuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/msgbuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/sembuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/shmbuf.h
+ delete mode 100644 arch/ia64/include/uapi/asm/ipcbuf.h
+ delete mode 100644 arch/ia64/include/uapi/asm/msgbuf.h
+ delete mode 100644 arch/ia64/include/uapi/asm/sembuf.h
+ delete mode 100644 arch/ia64/include/uapi/asm/shmbuf.h
+ delete mode 100644 arch/s390/include/uapi/asm/msgbuf.h
+ delete mode 100644 arch/s390/include/uapi/asm/sembuf.h
+ delete mode 100644 arch/s390/include/uapi/asm/shmbuf.h
+ delete mode 100644 arch/x86/include/uapi/asm/msgbuf.h
+ delete mode 100644 arch/x86/include/uapi/asm/shmbuf.h
+
 -- 
-2.15.0
+2.9.0
+
