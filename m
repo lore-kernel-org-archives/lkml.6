@@ -1,68 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753199AbeDSMnF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:43:05 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:45893 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752294AbeDSMm6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:42:58 -0400
-X-Google-Smtp-Source: AIpwx49eMDMBrAXVW7xtom/+iEtHjegW82f2ZCi1+sfW5336bBa8WCJ2YRMrZL26QwBqOCXhYr375mqSSwkQtPVJUFw=
-MIME-Version: 1.0
-In-Reply-To: <15d56b6d-6546-0655-563e-4492982c8d78@ti.com>
-References: <20180418153552.14632-1-brgl@bgdev.pl> <20180418153552.14632-3-brgl@bgdev.pl>
- <15d56b6d-6546-0655-563e-4492982c8d78@ti.com>
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Thu, 19 Apr 2018 14:42:56 +0200
-Message-ID: <CAMpxmJUC7wC7BSPekF_WjeSc+YV7AeRvU2ZfC8ZcqYvX5BKV5w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] memory: aemif: add support for board files
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1753444AbeDSM6Q (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 08:58:16 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33760 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751375AbeDSM6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 08:58:13 -0400
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH] drm/sun4i: Add missing frontend compatibles for A10, A13, A20 and A31
+Date: Thu, 19 Apr 2018 14:56:38 +0200
+Message-Id: <20180419125638.11683-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-19 14:09 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
-> On Wednesday 18 April 2018 09:05 PM, Bartosz Golaszewski wrote:
->> @@ -373,15 +372,23 @@ static int aemif_probe(struct platform_device *pdev)
->>               goto error;
->>       }
->>
->> -     /*
->> -      * For every controller device node, there is a cs device node that
->> -      * describe the bus configuration parameters. This functions iterate
->> -      * over these nodes and update the cs data array.
->> -      */
->> -     for_each_available_child_of_node(np, child_np) {
->> -             ret = of_aemif_parse_abus_config(pdev, child_np);
->> -             if (ret < 0)
->> -                     goto error;
->> +     if (np) {
->> +             /*
->> +              * For every controller device node, there is a cs device node
->> +              * that describe the bus configuration parameters. This
->> +              * functions iterate over these nodes and update the cs data
->> +              * array.
->> +              */
->> +             for_each_available_child_of_node(np, child_np) {
->> +                     ret = of_aemif_parse_abus_config(pdev, child_np);
->> +                     if (ret < 0)
->> +                             goto error;
->> +             }
->> +     } else if (pdata && pdata->num_abus_data > 0) {
->> +             for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
->> +                     aemif->cs_data[i].cs = pdata->abus_data->cs;
->
-> Since abus_data is an array, shouldn't it be pdata->abus_data[i].cs ?
->
-> Thanks,
-> Sekhar
+Although frontend nodes are defined in the device-trees of the
+aforementioned platforms, there are no matching compatibles defined in
+the driver. This makes it impossible to probe the frontend on these
+platforms.
 
-Yes, it should. It only worked because we're using a single config
-entry. Thanks, I'll fix it.
+Adding the appropriate compatibles to the driver fixes the issue.
 
-Bart
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index 85f75046712c..c5a3de11817d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -658,6 +658,10 @@ static const struct dev_pm_ops sun4i_frontend_pm_ops = {
+ };
+ 
+ const struct of_device_id sun4i_frontend_of_table[] = {
++	{ .compatible = "allwinner,sun7i-a10-display-frontend" },
++	{ .compatible = "allwinner,sun7i-a13-display-frontend" },
++	{ .compatible = "allwinner,sun7i-a20-display-frontend" },
++	{ .compatible = "allwinner,sun7i-a31-display-frontend" },
+ 	{ .compatible = "allwinner,sun8i-a33-display-frontend" },
+ 	{ }
+ };
+-- 
+2.16.3
