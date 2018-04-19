@@ -1,76 +1,75 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3352333-1524150272-2-6724050033014577210
+X-Cyrus-Session-Id: sloti22d1t05-3387646-1524150604-2-10760668383958383040
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='windows-1252'
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524150272; b=fY1t4Ymg+6FViKJKjVoEnAB+TQl5MOW3b/gx5GRk3ETZlvaZJB
-    t+C/M5KIxcfp/jBOKGF9KGbUFVI2u30Jo4Llm87JUufmEP844iWDDNXT75W9O1n7
-    bYoqqmvSlfT1KpWjRVx2x+x8slJ5R5/Auel45ErRv5oK2I3P94MRGuq3v3OYEMT3
-    q0uLpqRV2LlZxbH9yheGp41nD3s5ZFCfdQc7NL0ogst7Znp+yEG19Z9gwx6fO0bF
-    IVHrqrs5xR82o8PfEeLL7Fk2GwaHDWuDQwYcLWSDcVkqF2njpUgJTCqwImzLF6h4
-    /OQu25S05R9ioIz89kr12H0arTnjuj/AfYbg==
+    1524150603; b=avM3E6WBLfNnM0+QtRW6H7/blMLY2wKDB6dEJEAQ+2W0pIlRjx
+    ylpQxhh35DbN+Zfop87/9iQdKmXTVOBLc7BmOndaWhRxS6cYaV7nX4TM/ZIQIg4M
+    rgrhxHEWEvyRfw8nZ3phr450d2Y6se0Ahr4tiwv6J6PF5r7n/Z2aeRvnvoUVBDZv
+    qY15s6VGoOvanhCOmov7RCCoIoyT/56o69mMpGTeN3eW+oA4jhnF17sUp0WcC/XU
+    qIKwfiP69dYxah6a7whsW87zZaoL1x4pG9+l3aV2wnTSYtWxwU63I0E9mBLlYDKY
+    X7+kwb9fV/vF5aHb7gdLfNIMCQONUroj0+AA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524150272;
-    bh=J2bkM5r/pb346LmFZg9HQqtjrC4dwuECXBOrWh19rD8=; b=Uc2Eo2wHSMg/
-    9HyFFO0kauMJ6+JvUZwvMY16EPCw7ZTscTc/qcvLgyWcgpzRuM3Tp4Ql5irwjyiG
-    Q7vLpccnyldHGXJNtvs63+y3O5gLcamq3utOgSGnfIgT5F8XnbjrStpo4I0jBptB
-    BIT5O/ZcKjPQNTzVBbBSQQFDtku8n5nyuJHErdJGnox22R1BwjedyrBrtcpWAtHS
-    vF229wRCtLO0HcTeg9/L9ySj3dV2aiwwGjdA/QWgrtCIm+cBAg9UuE0jA1J2/cE2
-    d4dzqlTR2sT/6rUvcuZDHXjL7gDpj4jHUufajopnqM8OBoeHXzF4Vn0eUuujJQNT
-    34WXN1ezwA==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
+    t=1524150603; bh=P2hxJ9sNdMLX4vMkJFR54VRuVKfdYydb/3nPHoRjGsw=; b=
+    mvBAVsfivnJKyQbgMTSAnaEsXCkUfT4NA0GUCMBrYq+7jpW7r/a/W3E4Lj4PorcH
+    9W2QLrUjRdc9Yd6/cWz/DFD+x1YmwMFfFGyKz9iIbjpsvOUccpXQDb0YfKpWEGl1
+    jFD1x4X377r0IQpyIViGl06rY4WaBwLwBmTQFR3oAiE9z8m55JH6lFQBg0f6TIhm
+    FJcflC/hqLlTEcnBuEoqDA2jYoOeDHh0wNRX1YdQSI9+ZSfcKJBhWangPkBNVE9z
+    Daj+2eCGaCZ5a02mUqaasdRTzhSC2bym367qGMP+oj0lf7UX7VpQmJ9AtrkjxvjH
+    7VjbJNx0mmB29e8dSschOA==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mageia.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Wn7AS6ek x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mageia.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-50 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mageia.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com header.i=@microsoft.com header.b=Wn7AS6ek x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mageia.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-50 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=microsoft.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIxYh7/aBUUpJfWCWXgh6ecuV0Bx0nrAKDjzrY3wPDyHNYUr1G0fSTf8yAdXHahFNL9HbmtFy2GxUwYb/zOBXyeo3GcUr3rr3Nn7MotXFDGMjgIlOxTE
-    Unv2Perb61KvMr4VJaLauBqexgAN4NmFCaHocou5Ly9QHIuLANtl0cuJZW4HhIjfad0HNwwEDZZMajasnzbAy+wBmaTFFafwWvOMvNSowxqOXSiZwLU7XxUg
+X-CM-Envelope: MS4wfJ1b8hI6/YkTnaZjVsBq5zkkAyx3PgwRtmx4MRqAhdG6vENh1UI+vVna1KQrkUOvxOfB/BnaZsY4vohKFtL+7qjwm2LutjUyf6f4iMax+bkXpk2HJOqW
+    iXWyYzCrjX3sdE1gjEREeO/ZmC3U/TRhOGAxADKsH1kOkV6K8sLqU8YAfVL1dx7r9gARALRerbvUZp918v1iXYsLVtQpxFqzQxyUnSZOV8LoIYAAmfgzBB7L
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=N659UExz7-8A:10 a=Kd1tUaAdevIA:10
-    a=yMhMjlubAAAA:8 a=w-zqg_c3mILBhyfpDY4A:9 a=pILNOxqGKmIA:10
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
+    a=F7qjIGpQ-GgA:10 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=Lf-vpJhqX20A:10 a=eG5LCA3_yZqg6JBFOH0A:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752593AbeDSPEa (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 11:04:30 -0400
-Received: from mx1.yrkesakademin.fi ([85.134.45.194]:14878 "EHLO
-        mx1.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752153AbeDSPE3 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 19 Apr 2018 11:04:29 -0400
-Subject: Re: [PATCH AUTOSEL for 4.14 015/161] printk: Add console owner and
- waiter logic to load balance console writes
-To: Greg KH <gregkh@linuxfoundation.org>,
-        Thomas Backlund <tmb@mageia.org>
-CC: Sasha Levin <Alexander.Levin@microsoft.com>,
+        id S1751159AbeDSPKB (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 11:10:01 -0400
+Received: from mail-by2nam01on0124.outbound.protection.outlook.com ([104.47.34.124]:64544
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751070AbeDSPJ7 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:09:59 -0400
+From: Sasha Levin <Alexander.Levin@microsoft.com>
+To: Thomas Backlund <tmb@mageia.org>
+CC: Greg KH <gregkh@linuxfoundation.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Petr Mladek <pmladek@suse.com>,
@@ -88,87 +87,77 @@ CC: Sasha Levin <Alexander.Levin@microsoft.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Byungchul Park <byungchul.park@lge.com>,
         Tejun Heo <tj@kernel.org>, Pavel Machek <pavel@ucw.cz>
-References: <20180409001936.162706-15-alexander.levin@microsoft.com>
- <20180409082246.34hgp3ymkfqke3a4@pathway.suse.cz>
- <20180415144248.GP2341@sasha-vm> <20180416093058.6edca0bb@gandalf.local.home>
+Subject: Re: [PATCH AUTOSEL for 4.14 015/161] printk: Add console owner and
+ waiter logic to load balance console writes
+Thread-Topic: [PATCH AUTOSEL for 4.14 015/161] printk: Add console owner and
+ waiter logic to load balance console writes
+Thread-Index: AQHTz5h7IvK2v80d0k6VVqDoPwJEM6P4GK8AgAnYKwCAAX5DAIAAHfKAgAAFIICAAAchAIAAAugAgAAB5YCABGlsgIAAJpuAgAASFQCAAAGHAA==
+Date: Thu, 19 Apr 2018 15:09:56 +0000
+Message-ID: <20180419150954.GC2341@sasha-vm>
+References: <20180415144248.GP2341@sasha-vm>
+ <20180416093058.6edca0bb@gandalf.local.home>
  <CA+55aFysLTQN8qRu=nuKttGBZzfQq=BpJBH+TMdgLJR7bgRGYg@mail.gmail.com>
  <20180416113629.2474ae74@gandalf.local.home> <20180416160200.GY2341@sasha-vm>
  <20180416121224.2138b806@gandalf.local.home> <20180416161911.GA2341@sasha-vm>
  <7d5de770-aee7-ef71-3582-5354c38fc176@mageia.org>
  <20180419135943.GC16862@kroah.com>
-From: Thomas Backlund <tmb@mageia.org>
-Message-ID: <6425991f-7d7f-b1f9-ba37-3212a01ad6cf@mageia.org>
-Date: Thu, 19 Apr 2018 18:04:26 +0300
-MIME-Version: 1.0
-In-Reply-To: <20180419135943.GC16862@kroah.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+ <6425991f-7d7f-b1f9-ba37-3212a01ad6cf@mageia.org>
+In-Reply-To: <6425991f-7d7f-b1f9-ba37-3212a01ad6cf@mageia.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-WatchGuard-Spam-ID: str=0001.0A0C0202.5AD8AFFD.0165,ss=2,re=0.000,recu=0.000,reip=0.000,cl=2,cld=1,fgs=0
-X-WatchGuard-Spam-Score: 2, suspect; 0, virus threat unknown
-X-WatchGuard-Mail-Client-IP: 85.134.45.194
-X-WatchGuard-Mail-From: tmb@mageia.org
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR2101MB0885;7:zGC9cPNvA55K4BLC9yhDlodJzG8swcQrOFLzS7PRdCNCiy0/1PiI9T4ZyrJVR+uJonG1UUmqJVUOe2WPH6vlmWQ3/WL4AV9KRCrQVS1+a5Mx9dk+bx/7XxK+aIdHL9ceCcNmo+pcd+PKyT62R5r27idAAxmt937XjrX80SpwhKowH77+DbvGX/QnvE3qHTXm807YkQDaN7lVoQJc2PJ6z/fMAZDzzoePeW0521XXOaltFVmsPZlHRCJVVkQa2SAM;20:pkVM3OJDObIw6ba0JZKgpxkhlAZbYSOrborBcyJuuMLrH69BGJTNv2RU2NgstB/WEERbNIE4YJligx0Zq0bD/kcvXVg+F1Fc+ukW3vIIJyfIqz8vVkk2HObmraMSh/hrEKnrj9XRZNYSgup5m+w8laa7KaTsVh/k7U7zLbcDEQQ=
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7193020);SRVR:DM5PR2101MB0885;
+x-ms-traffictypediagnostic: DM5PR2101MB0885:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com;
+x-microsoft-antispam-prvs: <DM5PR2101MB0885EE6D33DA66FB4E8A4745FBB50@DM5PR2101MB0885.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(61425038)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231232)(944501383)(52105095)(10201501046)(93006095)(93001095)(6055026)(61426038)(61427038)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR2101MB0885;BCL:0;PCL:0;RULEID:;SRVR:DM5PR2101MB0885;
+x-forefront-prvs: 0647963F84
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(346002)(366004)(396003)(376002)(39860400002)(39380400002)(52314003)(51444003)(86362001)(76176011)(229853002)(316002)(54906003)(1076002)(33716001)(14454004)(3846002)(93886005)(6916009)(86612001)(33656002)(22452003)(66066001)(186003)(2900100001)(6116002)(72206003)(4326008)(3660700001)(9686003)(99286004)(2906002)(446003)(8936002)(476003)(11346002)(25786009)(7416002)(10290500003)(81166006)(478600001)(6512007)(53936002)(5250100002)(10090500001)(59450400001)(6506007)(8676002)(102836004)(7736002)(33896004)(305945005)(39060400002)(26005)(6486002)(6436002)(6246003)(3280700002)(5660300001)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB0885;H:DM5PR2101MB1032.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:ovrnspm;PTR:InfoNoRecords;
+x-microsoft-antispam-message-info: Gzfhoz3VvCtR4BZGsPEnJoUCdwsyWkTbYm2k0mBYExdvFeE7BczvBqmy5f+9HTPWDAx+gCfA5NWUe84Y0Y+3Eoyr+FLA+oPHpaatvQerRKaryoCNRGFmi5/OZ0PZr3t5S89k+xtd04rgq9Sf+eFrD84GWqTvbx4pYMTCA+cXyxeCN+ja4B9TXtKAwgJqsYo5
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A71313D467590E4DBDC77A56E2945198@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 79233c04-b75f-4aa6-a34b-08d5a6079cdc
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79233c04-b75f-4aa6-a34b-08d5a6079cdc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Apr 2018 15:09:56.7399
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB0885
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Den 19.04.2018 kl. 16:59, skrev Greg KH:
-> On Thu, Apr 19, 2018 at 02:41:33PM +0300, Thomas Backlund wrote:
->> Den 16-04-2018 kl. 19:19, skrev Sasha Levin:
->>> On Mon, Apr 16, 2018 at 12:12:24PM -0400, Steven Rostedt wrote:
->>>> On Mon, 16 Apr 2018 16:02:03 +0000
->>>> Sasha Levin <Alexander.Levin@microsoft.com> wrote:
->>>>
->>>>> One of the things Greg is pushing strongly for is "bug compatibility":
->>>>> we want the kernel to behave the same way between mainline and stable.
->>>>> If the code is broken, it should be broken in the same way.
->>>>
->>>> Wait! What does that mean? What's the purpose of stable if it is as
->>>> broken as mainline?
->>>
->>> This just means that if there is a fix that went in mainline, and the
->>> fix is broken somehow, we'd rather take the broken fix than not.
->>>
->>> In this scenario, *something* will be broken, it's just a matter of
->>> what. We'd rather have the same thing broken between mainline and
->>> stable.
->>>
->>
->> Yeah, but _intentionally_ breaking existing setups to stay "bug compatible"
->> _is_ a _regression_ you _really_ _dont_ want in a stable
->> supported distro. Because end-users dont care about upstream breaking
->> stuff... its the distro that takes the heat for that...
->>
->> Something "already broken" is not a regression...
->>
->> As distro maintainer that means one now have to review _every_ patch that
->> carries "AUTOSEL", follow all the mail threads that comes up about it, then
->> track if it landed in -stable queue, and read every response and possible
->> objection to all patches in the -stable queue a second time around... then
->> check if it still got included in final stable point relase and then either
->> revert them in distro kernel or go track down all the follow-up fixes
->> needed...
->>
->> Just to avoid being "bug compatible with master"
-> 
-> I've done this "bug compatible" "breakage" more than the AUTOSEL stuff
-> has in the past, so you had better also be reviewing all of my normal
-> commits as well :)
-> 
+On Thu, Apr 19, 2018 at 06:04:26PM +0300, Thomas Backlund wrote:
+>Den 19.04.2018 kl. 16:59, skrev Greg KH:
+>>Anyway, we are trying not to do this, but it does, and will,
+>>occasionally happen.  Look, we just did that for one platform for
+>>4.9.94!  And the key to all of this is good testing, which we are now
+>>doing, and hopefully you are also doing as well.
+>
+>Yeah, but having to test stuff with known breakages is no fun, so we=20
+>try to avoid that
 
-Yeah, I do... and same goes there ... if there is a known issue, then 
-same procedure... Either revert, or try to track down fixes...
+Known breakages are easier to deal with than unknown ones :)
 
+I think that that "bug compatability" is basically a policy on *which*
+regressions you'll see vs *if* you'll see a regression.
 
-> Anyway, we are trying not to do this, but it does, and will,
-> occasionally happen.  Look, we just did that for one platform for
-> 4.9.94!  And the key to all of this is good testing, which we are now
-> doing, and hopefully you are also doing as well.
-
-Yeah, but having to test stuff with known breakages is no fun, so we try 
-to avoid that
-
---
-Thomas
+We'll never pull in a commit that introduces a bug but doesn't fix
+another one, right? So if you have to deal with a regression anyway,
+might as well deal with a regression that is also seen on mainline, so
+that when you upgrade your stable kernel you'll keep the same set of
+regressions to deal with.=
