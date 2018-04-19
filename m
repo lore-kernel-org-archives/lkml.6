@@ -1,115 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753791AbeDSQIS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:08:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53412 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753659AbeDSQIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:08:09 -0400
-Date: Thu, 19 Apr 2018 18:08:07 +0200
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+9a44753ac327c557796a@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Subject: Re: WARNING in ext4_set_page_dirty
-Message-ID: <20180419160807.z4emwbb4rm62phrq@quack2.suse.cz>
-References: <089e0825cec8180a2b0568c4ee1d@google.com>
+        id S1753549AbeDSQKD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:10:03 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:38411 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753122AbeDSQKC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 12:10:02 -0400
+X-Google-Smtp-Source: AIpwx4/awQFRSqKcNcg3/Bk8twbewE/dulva7srFFAZll9vW8Ib34rHiYzO/VG2el4izkkUNOjYXtrgBLCGwksTon1I6OrFgJS62
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <089e0825cec8180a2b0568c4ee1d@google.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Date: Thu, 19 Apr 2018 09:10:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c4f379056a35cdf6@google.com>
+Subject: general protection fault in snd_rawmidi_ioctl_compat
+From: syzbot <syzbot+f7a0348affc3b67bc617@syzkaller.appspotmail.com>
+To: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hello,
 
-This is a known problem I was speaking about here [1]. It is a generic
-mm/fs problem but there's no solution to it yet. We'll discuss it at LSF/MM
-next week so after that we may have some solution...
+syzbot hit the following crash on upstream commit
+b284d4d5a6785f8cd07eda2646a95782373cd01e (Tue Apr 10 19:25:30 2018 +0000)
+Merge tag 'ceph-for-4.17-rc1' of git://github.com/ceph/ceph-client
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=f7a0348affc3b67bc617
 
-								Honza
+Unfortunately, I don't have any reproducer for this crash yet.
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5208906934517760
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=-1223000601505858474
+compiler: gcc (GCC) 8.0.1 20180301 (experimental)
 
-[1] https://www.spinics.net/lists/linux-xfs/msg14468.html
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f7a0348affc3b67bc617@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-On Sun 01-04-18 01:05:00, syzbot wrote:
-> syzbot hit the following crash on upstream commit
-> 10b84daddbec72c6b440216a69de9a9605127f7a (Sat Mar 31 17:59:00 2018 +0000)
-> Merge branch 'perf-urgent-for-linus' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=9a44753ac327c557796a
-> 
-> So far this crash happened 3 times on upstream.
-> Unfortunately, I don't have any reproducer for this crash yet.
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=5118663967375360
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
-> compiler: gcc (GCC) 7.1.1 20170620
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9a44753ac327c557796a@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> WARNING: CPU: 0 PID: 7377 at fs/ext4/inode.c:3895
-> ext4_set_page_dirty+0x242/0x2b0 fs/ext4/inode.c:3895
-> Kernel panic - not syncing: panic_on_warn set ...
-> 
-> CPU: 0 PID: 7377 Comm: syz-executor1 Not tainted 4.16.0-rc7+ #9
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x24d lib/dump_stack.c:53
->  panic+0x1e4/0x41c kernel/panic.c:183
->  __warn+0x1dc/0x200 kernel/panic.c:547
->  report_bug+0x1f4/0x2b0 lib/bug.c:186
->  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
->  fixup_bug arch/x86/kernel/traps.c:247 [inline]
->  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
->  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
->  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-> RIP: 0010:ext4_set_page_dirty+0x242/0x2b0 fs/ext4/inode.c:3895
-> RSP: 0000:ffff88018b725df0 EFLAGS: 00010216
-> RAX: 0000000000040000 RBX: ffffea0006713040 RCX: ffffffff81ee1072
-> RDX: 0000000000002ee2 RSI: ffffc900074f3000 RDI: ffffea0006713040
-> RBP: ffff88018b725ec0 R08: 1ffff100316e4c1c R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff100316e4bbf
-> R13: ffffea0006713040 R14: ffff88018b725e98 R15: ffffea0006713060
->  set_page_dirty+0x2c5/0x5d0 mm/page-writeback.c:2565
->  set_page_dirty_lock+0xf2/0x160 mm/page-writeback.c:2590
->  dio_bio_complete+0x514/0x750 fs/direct-io.c:560
->  dio_await_completion fs/direct-io.c:581 [inline]
->  do_blockdev_direct_IO+0x7270/0xc960 fs/direct-io.c:1392
->  __blockdev_direct_IO+0x9d/0xd0 fs/direct-io.c:1421
->  ext4_direct_IO_read fs/ext4/inode.c:3830 [inline]
->  ext4_direct_IO+0xfe5/0x1980 fs/ext4/inode.c:3866
->  generic_file_read_iter+0x4cc/0x28e0 mm/filemap.c:2343
->  ext4_file_read_iter+0x113/0x160 fs/ext4/file.c:77
->  call_read_iter include/linux/fs.h:1776 [inline]
->  new_sync_read fs/read_write.c:401 [inline]
->  __vfs_read+0x6a7/0xa00 fs/read_write.c:413
->  vfs_read+0x11e/0x350 fs/read_write.c:447
->  SYSC_pread64 fs/read_write.c:611 [inline]
->  SyS_pread64+0x15b/0x190 fs/read_write.c:598
->  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x454e79
-> RSP: 002b:00007feb4557bc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000011
-> RAX: ffffffffffffffda RBX: 00007feb4557c6d4 RCX: 0000000000454e79
-> RDX: 00000000ffffff72 RSI: 0000000020003c00 RDI: 0000000000000018
-> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 000000000000046d R14: 00000000006f8ad8 R15: 0000000000000000
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 21671 Comm: syz-executor7 Not tainted 4.16.0+ #17
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:snd_rawmidi_ioctl_status_x32 sound/core/rawmidi_compat.c:125  
+[inline]
+RIP: 0010:snd_rawmidi_ioctl_compat+0x51d/0xba0  
+sound/core/rawmidi_compat.c:168
+RSP: 0018:ffff88018ccdfc08 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc900054cb000
+RDX: 000000000000000b RSI: ffffffff85a61885 RDI: 0000000000000058
+RBP: ffff88018ccdfd80 R08: ffff8801af6f0740 R09: 0000000000000000
+R10: 0000000000000003 R11: 0000000000000000 R12: 1ffff1003199bf83
+R13: 0000000000930000 R14: ffff88018ccdfcf8 R15: 0000000000000001
+FS:  00007fa64d466700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa30835b518 CR3: 00000001879ef000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  C_SYSC_ioctl fs/compat_ioctl.c:1461 [inline]
+  compat_SyS_ioctl+0xa37/0x33b0 fs/compat_ioctl.c:1407
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x455259
+RSP: 002b:00007fa64d465c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000202
+RAX: ffffffffffffffda RBX: 00007fa64d4666d4 RCX: 0000000000455259
+RDX: 0000000000930000 RSI: 00000000c0305720 RDI: 0000000000000013
+RBP: 000000000072bf58 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000020000180 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000641 R14: 00000000006fc6b8 R15: 0000000000000001
+Code: df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 1c 06 00 00 48 b8 00 00 00  
+00 00 fc ff df 48 8b 5b 08 48 8d 7b 58 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
+0f 85 e5 05 00 00 48 8b 7b 58 4c 89 f6 e8 5d cc ff
+RIP: snd_rawmidi_ioctl_status_x32 sound/core/rawmidi_compat.c:125 [inline]  
+RSP: ffff88018ccdfc08
+RIP: snd_rawmidi_ioctl_compat+0x51d/0xba0 sound/core/rawmidi_compat.c:168  
+RSP: ffff88018ccdfc08
+---[ end trace 7dcd43c411f49842 ]---
+
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
