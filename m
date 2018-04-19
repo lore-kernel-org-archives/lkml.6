@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753625AbeDSOPT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:15:19 -0400
-Received: from sauhun.de ([88.99.104.3]:45448 "EHLO pokefinder.org"
+        id S1753512AbeDSOHG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:07:06 -0400
+Received: from sauhun.de ([88.99.104.3]:45280 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753515AbeDSOHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:07 -0400
+        id S1753331AbeDSOG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:06:57 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH 40/61] platform: x86: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:10 +0200
-Message-Id: <20180419140641.27926-41-wsa+renesas@sang-engineering.com>
+        Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+Subject: [PATCH 18/61] iio: common: cros_ec_sensors: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:48 +0200
+Message-Id: <20180419140641.27926-19-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
@@ -33,52 +31,32 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/platform/x86/asus-laptop.c    | 3 +--
- drivers/platform/x86/asus-wmi.c       | 3 +--
- drivers/platform/x86/samsung-laptop.c | 3 +--
- 3 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-laptop.c b/drivers/platform/x86/asus-laptop.c
-index c4768be24ba9..700c48ddfa7c 100644
---- a/drivers/platform/x86/asus-laptop.c
-+++ b/drivers/platform/x86/asus-laptop.c
-@@ -1593,8 +1593,7 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
- 				    int idx)
- {
- 	struct device *dev = container_of(kobj, struct device, kobj);
--	struct platform_device *pdev = to_platform_device(dev);
--	struct asus_laptop *asus = platform_get_drvdata(pdev);
-+	struct asus_laptop *asus = dev_get_drvdata(dev);
- 	acpi_handle handle = asus->handle;
- 	bool supported;
+diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+index a620eb5ce202..3df6c0e09832 100644
+--- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
++++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+@@ -448,8 +448,7 @@ EXPORT_SYMBOL_GPL(cros_ec_sensors_core_write);
  
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index a32c5c00e0e7..ef87e78ca772 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -1862,8 +1862,7 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
- 				    struct attribute *attr, int idx)
+ static int __maybe_unused cros_ec_sensors_prepare(struct device *dev)
  {
- 	struct device *dev = container_of(kobj, struct device, kobj);
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct asus_wmi *asus = platform_get_drvdata(pdev);
-+	struct asus_wmi *asus = dev_get_drvdata(dev);
- 	bool ok = true;
- 	int devid = -1;
+-	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+ 	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
  
-diff --git a/drivers/platform/x86/samsung-laptop.c b/drivers/platform/x86/samsung-laptop.c
-index 03305e0b89ff..7b160ee98115 100644
---- a/drivers/platform/x86/samsung-laptop.c
-+++ b/drivers/platform/x86/samsung-laptop.c
-@@ -1216,8 +1216,7 @@ static umode_t samsung_sysfs_is_visible(struct kobject *kobj,
- 					struct attribute *attr, int idx)
+ 	if (st->curr_sampl_freq == 0)
+@@ -471,8 +470,7 @@ static int __maybe_unused cros_ec_sensors_prepare(struct device *dev)
+ 
+ static void __maybe_unused cros_ec_sensors_complete(struct device *dev)
  {
- 	struct device *dev = container_of(kobj, struct device, kobj);
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct samsung_laptop *samsung = platform_get_drvdata(pdev);
-+	struct samsung_laptop *samsung = dev_get_drvdata(dev);
- 	bool ok = true;
+-	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+ 	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
  
- 	if (attr == &dev_attr_performance_level.attr)
+ 	if (st->curr_sampl_freq == 0)
 -- 
 2.11.0
