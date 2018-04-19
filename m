@@ -1,45 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753538AbeDSP5y (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:57:54 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33660 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753497AbeDSP5w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:57:52 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 29B2B602B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        id S1753550AbeDSP6U (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:58:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752514AbeDSP6T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:58:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4AF6217D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Thu, 19 Apr 2018 08:58:18 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@google.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] ext4: handle errors on ext4_commit_super
+Message-ID: <20180419155818.GA81439@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180330014429.27824-1-jaegeuk@kernel.org>
+ <20180419151853.jtif7ncjuhf6yuwl@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: ath6kl: fix spelling mistake: "chache" -> "cache"
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180329165304.26504-1-colin.king@canonical.com>
-References: <20180329165304.26504-1-colin.king@canonical.com>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Kalle Valo <kvalo@qca.qualcomm.com>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180419155752.0DF336090E@smtp.codeaurora.org>
-Date: Thu, 19 Apr 2018 15:57:52 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419151853.jtif7ncjuhf6yuwl@quack2.suse.cz>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
+Hi Jan,
 
-> Trivial fix to spelling mistake in message text
+Thank you for the review.
+
+On 04/19, Jan Kara wrote:
+> On Thu 29-03-18 18:44:29, Jaegeuk Kim wrote:
+> > From: Jaegeuk Kim <jaegeuk@google.com>
+> > 
+> > When remounting ext4 from ro to rw, currently it allows its transition,
+> > even if ext4_commit_super() returns EIO. Even worse thing is, after that,
+> > fs/buffer complains buffer dirty bits like:
+> > 
+> >  Call trace:
+> >  [<ffffff9750c259dc>] mark_buffer_dirty+0x184/0x1a4
+> >  [<ffffff9750cb398c>] __ext4_handle_dirty_super+0x4c/0xfc
+> >  [<ffffff9750c7a9fc>] ext4_file_open+0x154/0x1c0
+> >  [<ffffff9750bea51c>] do_dentry_open+0x114/0x2d0
+> >  [<ffffff9750bea75c>] vfs_open+0x5c/0x94
+> >  [<ffffff9750bf879c>] path_openat+0x668/0xfe8
+> >  [<ffffff9750bf8088>] do_filp_open+0x74/0x120
+> >  [<ffffff9750beac98>] do_sys_open+0x148/0x254
+> >  [<ffffff9750beade0>] SyS_openat+0x10/0x18
+> >  [<ffffff9750a83ab0>] el0_svc_naked+0x24/0x28
+> >  EXT4-fs (dm-1): previous I/O error to superblock detected
+> >  Buffer I/O error on dev dm-1, logical block 0, lost sync page write
+> >  EXT4-fs (dm-1): re-mounted. Opts: (null)
+> >  Buffer I/O error on dev dm-1, logical block 80, lost async page write
+> > 
+> > Cc: "Theodore Ts'o" <tytso@mit.edu>
+> > Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> > Cc: linux-ext4@vger.kernel.org
+> > Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
+> > ---
+> >  fs/ext4/super.c | 21 +++++++++++++--------
+> >  1 file changed, 13 insertions(+), 8 deletions(-)
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> Thanks for the patch. Some comments below.
+> 
+> > 
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index 39bf464c35f1..b268bfea879c 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -2151,7 +2151,7 @@ static int ext4_setup_super(struct super_block *sb, struct ext4_super_block *es,
+> >  	if (sbi->s_journal)
+> >  		ext4_set_feature_journal_needs_recovery(sb);
+> >  
+> > -	ext4_commit_super(sb, 1);
+> > +	res = ext4_commit_super(sb, 1);
+> >  done:
+> >  	if (test_opt(sb, DEBUG))
+> >  		printk(KERN_INFO "[EXT4 FS bs=%lu, gc=%u, "
+> 
+> So return value of ext4_setup_super() looks a bit strange and it seems it
+> currently returns 0 or SB_RDONLY. So I think you first need to clean this
 
-Patch applied to ath-next branch of ath.git, thanks.
+Indeed. I'll update it in v2.
 
-5072d87426bb ath6kl: fix spelling mistake: "chache" -> "cache"
+> up before making ext4_setup_super() return error code (as your patch could
+> make ext4_fill_super() return SB_RDONLY under some circumstances).
 
--- 
-https://patchwork.kernel.org/patch/10315713/
+Interestingly, it only affects ext4_remount() only. :P
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> 
+> > @@ -4739,11 +4739,10 @@ static int ext4_commit_super(struct super_block *sb, int sync)
+> >  		unlock_buffer(sbh);
+> >  		error = __sync_dirty_buffer(sbh,
+> >  			REQ_SYNC | (test_opt(sb, BARRIER) ? REQ_FUA : 0));
+> > -		if (error)
+> > +		if (error && !buffer_write_io_error(sbh))
+> >  			return error;
+> >  
+> > -		error = buffer_write_io_error(sbh);
+> > -		if (error) {
+> > +		if (buffer_write_io_error(sbh)) {
+> >  			ext4_msg(sb, KERN_ERR, "I/O error while writing "
+> >  			       "superblock");
+> >  			clear_buffer_write_io_error(sbh);
+> 
+> I'd rather rewrite this as:
+> 		if (buffer_write_io_error(sbh)) {
+> 			do stuff as now
+> 		}
+> 		if (error)
+> 			return error;
+
+Got it.
+
+Thanks,
+
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
