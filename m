@@ -1,308 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752705AbeDSKnE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:43:04 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34982 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751420AbeDSKkv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:40:51 -0400
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        robh+dt@kernel.org
-Cc: devicetree@vger.kernel.org, heiko@sntech.de, linux-pm@vger.kernel.org,
-        dbasehore@chromium.org, linux-kernel@vger.kernel.org,
-        dianders@google.com, groek@google.com, kernel@collabora.com,
-        Nick Milner <nick.milner@collabora.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH 1/6] dt-bindings: devfreq: rk3399_dmc: improve binding documentation.
-Date: Thu, 19 Apr 2018 12:40:14 +0200
-Message-Id: <20180419104019.24406-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180419104019.24406-1-enric.balletbo@collabora.com>
-References: <20180419104019.24406-1-enric.balletbo@collabora.com>
+        id S1752536AbeDSKoj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:44:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41452 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751565AbeDSKog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 06:44:36 -0400
+Date: Thu, 19 Apr 2018 12:44:32 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Jan Kara <jack@suse.cz>, linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh.triplett@intel.com>
+Subject: Re: [PATCH v8 15/18] mm, fs, dax: handle layout changes to pinned
+ dax mappings
+Message-ID: <20180419104432.7lzk7nbjmwav6ojl@quack2.suse.cz>
+References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152246901060.36038.4487158506830998280.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz>
+ <CAPcyv4joRA=BrurYZ1kzXpMG=jnXik9+LdLqH9961jM5VnmU7w@mail.gmail.com>
+ <20180409164944.6u7i4wgbp6yihvin@quack2.suse.cz>
+ <CAPcyv4gzJ4gcWgwOOmER1z7zsWR+X2zao-tMh8TjN9tx2kg_0g@mail.gmail.com>
+ <CAPcyv4h3RPdohsPyiB=GxE8iQCjRRen=knDd=Em5BMy1MYpRvA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4h3RPdohsPyiB=GxE8iQCjRRen=knDd=Em5BMy1MYpRvA@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Milner <nick.milner@collabora.com>
+On Fri 13-04-18 15:03:51, Dan Williams wrote:
+> On Mon, Apr 9, 2018 at 9:51 AM, Dan Williams <dan.j.williams@intel.com> wrote:
+> > On Mon, Apr 9, 2018 at 9:49 AM, Jan Kara <jack@suse.cz> wrote:
+> >> On Sat 07-04-18 12:38:24, Dan Williams wrote:
+> > [..]
+> >>> I wonder if this can be trivially solved by using srcu. I.e. we don't
+> >>> need to wait for a global quiescent state, just a
+> >>> get_user_pages_fast() quiescent state. ...or is that an abuse of the
+> >>> srcu api?
+> >>
+> >> Well, I'd rather use the percpu rwsemaphore (linux/percpu-rwsem.h) than
+> >> SRCU. It is a more-or-less standard locking mechanism rather than relying
+> >> on implementation properties of SRCU which is a data structure protection
+> >> method. And the overhead of percpu rwsemaphore for your use case should be
+> >> about the same as that of SRCU.
+> >
+> > I was just about to ask that. Yes, it seems they would share similar
+> > properties and it would be better to use the explicit implementation
+> > rather than a side effect of srcu.
+> 
+> ...unfortunately:
+> 
+>  BUG: sleeping function called from invalid context at
+> ./include/linux/percpu-rwsem.h:34
+>  [..]
+>  Call Trace:
+>   dump_stack+0x85/0xcb
+>   ___might_sleep+0x15b/0x240
+>   dax_layout_lock+0x18/0x80
+>   get_user_pages_fast+0xf8/0x140
+> 
+> ...and thinking about it more srcu is a better fit. We don't need the
+> 100% exclusion provided by an rwsem we only need the guarantee that
+> all cpus that might have been running get_user_pages_fast() have
+> finished it at least once.
+> 
+> In my tests synchronize_srcu is a bit slower than unpatched for the
+> trivial 100 truncate test, but certainly not the 200x latency you were
+> seeing with syncrhonize_rcu.
+> 
+> Elapsed time:
+> 0.006149178 unpatched
+> 0.009426360 srcu
 
-There are several typos, references to non existent files, grammar and
-punctuation mistakes in the rk3399_dmc.txt binding. This patch tries
-to improve the binding documentation and fix these mistakes.
+Hum, right. Yesterday I was looking into KSM for a different reason and
+I've noticed it also does writeprotect pages and deals with races with GUP.
+And what KSM relies on is:
 
-Signed-off-by: Nick Milner <nick.milner@collabora.com>
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+write_protect_page()
+  ...
+  entry = ptep_clear_flush(vma, pvmw.address, pvmw.pte);
+  /*
+   * Check that no O_DIRECT or similar I/O is in progress on the
+   * page
+   */
+  if (page_mapcount(page) + 1 + swapped != page_count(page)) {
+    page used -> bail
+  }
 
- .../bindings/devfreq/rk3399_dmc.txt           | 207 +++++++++---------
- 1 file changed, 105 insertions(+), 102 deletions(-)
+And this really works because gup_pte_range() does:
 
-diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-index d6d2833482c9..d83ef821d282 100644
---- a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-+++ b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
-@@ -1,155 +1,158 @@
--* Rockchip rk3399 DMC(Dynamic Memory Controller) device
-+* Rockchip rk3399 DMC (Dynamic Memory Controller) device
- 
- Required properties:
- - compatible:		 Must be "rockchip,rk3399-dmc".
- - devfreq-events:	 Node to get DDR loading, Refer to
--			 Documentation/devicetree/bindings/devfreq/
-+			 Documentation/devicetree/bindings/devfreq/event/
- 			 rockchip-dfi.txt
--- interrupts:		 The interrupt number to the CPU. The interrupt
--			 specifier format depends on the interrupt controller.
--			 It should be DCF interrupts, when DDR dvfs finish,
--			 it will happen.
-+- interrupts:		 The CPU interrupt number. The interrupt specifier
-+			 format depends on the interrupt controller.
-+			 It should be a DCF interrupt. When DDR DVFS finishes
-+			 a DCF interrupt is triggered.
- - clocks:		 Phandles for clock specified in "clock-names" property
- - clock-names :		 The name of clock used by the DFI, must be
- 			 "pclk_ddr_mon";
--- operating-points-v2:	 Refer to Documentation/devicetree/bindings/power/opp.txt
-+- operating-points-v2:	 Refer to Documentation/devicetree/bindings/opp/opp.txt
- 			 for details.
- - center-supply:	 DMC supply node.
- - status:		 Marks the node enabled/disabled.
- 
--Following properties are ddr timing:
-+Following properties relate to DDR timing:
- 
- - rockchip,dram_speed_bin :	  Value reference include/dt-bindings/clock/ddr.h,
--				  it select ddr3 cl-trp-trcd type, default value
--				  "DDR3_DEFAULT".it must selected according to
--				  "Speed Bin" in ddr3 datasheet, DO NOT use
--				  smaller "Speed Bin" than ddr3 exactly is.
--
--- rockchip,pd_idle :		  Config the PD_IDLE value, defined the power-down
--				  idle period, memories are places into power-down
--				  mode if bus is idle for PD_IDLE DFI clocks.
--
--- rockchip,sr_idle :		  Configure the SR_IDLE value, defined the
--				  selfrefresh idle period, memories are places
--				  into self-refresh mode if bus is idle for
--				  SR_IDLE*1024 DFI clocks (DFI clocks freq is
--				  half of dram's clocks), defaule value is "0".
--
--- rockchip,sr_mc_gate_idle :	  Defined the self-refresh with memory and
--				  controller clock gating idle period, memories
--				  are places into self-refresh mode and memory
--				  controller clock arg gating if bus is idle for
--				  sr_mc_gate_idle*1024 DFI clocks.
--
--- rockchip,srpd_lite_idle :	  Defined the self-refresh power down idle
--				  period, memories are places into self-refresh
--				  power down mode if bus is idle for
--				  srpd_lite_idle*1024 DFI clocks. This parameter
--				  is for LPDDR4 only.
--
--- rockchip,standby_idle :	  Defined the standby idle period, memories are
--				  places into self-refresh than controller, pi,
--				  phy and dram clock will gating if bus is idle
--				  for standby_idle * DFI clocks.
--
--- rockchip,dram_dll_disb_freq :  It's defined the DDR3 dll bypass frequency in
--				  MHz, when ddr freq less than DRAM_DLL_DISB_FREQ,
--				  ddr3 dll will bypssed note: if dll was bypassed,
--				  the odt also stop working.
--
--- rockchip,phy_dll_disb_freq :	  Defined the PHY dll bypass frequency in
--				  MHz (Mega Hz), when ddr freq less than
--				  DRAM_DLL_DISB_FREQ, phy dll will bypssed.
--				  note: phy dll and phy odt are independent.
--
--- rockchip,ddr3_odt_disb_freq :  When dram type is DDR3, this parameter defined
--				  the odt disable frequency in MHz (Mega Hz),
--				  when ddr frequency less then ddr3_odt_disb_freq,
--				  the odt on dram side and controller side are
-+				  it selects the DDR3 cl-trp-trcd type. It must be
-+				  set according to "Speed Bin" in DDR3 datasheet,
-+				  DO NOT use a smaller "Speed Bin" than specified
-+				  for the DDR3 being used.
-+
-+- rockchip,pd_idle :		  Configure the PD_IDLE value. Defines the
-+				  power-down idle period in which memories are
-+				  placed into power-down mode if bus is idle
-+				  for PD_IDLE DFI clock cycles.
-+
-+- rockchip,sr_idle :		  Configure the SR_IDLE value. Defines the
-+				  self-refresh idle period in which memories are
-+				  placed into self-refresh mode if bus is idle
-+				  for SR_IDLE * 1024 DFI clock cycles (DFI
-+				  clocks freq is half of DRAM clock), default
-+				  value is "0".
-+
-+- rockchip,sr_mc_gate_idle :	  Defines the memory self-refresh and controller
-+				  clock gating idle period. Memories are placed
-+				  into self-refresh mode and memory controller
-+				  clock arg gating started if bus is idle for
-+				  sr_mc_gate_idle*1024 DFI clock cycles.
-+
-+- rockchip,srpd_lite_idle :	  Defines the self-refresh power down idle
-+				  period in which memories are placed into
-+				  self-refresh power down mode if bus is idle
-+				  for srpd_lite_idle * 1024 DFI clock cycles.
-+				  This parameter is for LPDDR4 only.
-+
-+- rockchip,standby_idle :	  Defines the standby idle period in which
-+				  memories are placed into self-refresh mode.
-+				  The controller, pi, PHY and DRAM clock will
-+				  be gated if bus is idle for standby_idle * DFI
-+				  clock cycles.
-+
-+- rockchip,dram_dll_disb_freq :	  Defines the DDR3 DLL bypass frequency in MHz.
-+				  When DDR frequency is less than DRAM_DLL_DISB_FREQ,
-+				  DDR3 DLL will be bypassed. Note: if DLL was bypassed,
-+				  the odt will also stop working.
-+
-+- rockchip,phy_dll_disb_freq :	  Defines the PHY dll bypass frequency in
-+				  MHz (Mega Hz). When DDR frequency is less than
-+				  DRAM_DLL_DISB_FREQ, PHY DLL will be bypassed.
-+				  Note: PHY DLL and PHY ODT are independent.
-+
-+- rockchip,ddr3_odt_disb_freq :	  When the DRAM type is DDR3, this parameter defines
-+				  the ODT disable frequency in MHz (Mega Hz).
-+				  when the DDR frequency is  less then ddr3_odt_disb_freq,
-+				  the ODT on the DRAM side and controller side are
- 				  both disabled.
- 
--- rockchip,ddr3_drv :		  When dram type is DDR3, this parameter define
--				  the dram side driver stength in ohm, default
-+- rockchip,ddr3_drv :		  When the DRAM type is DDR3, this parameter defines
-+				  the DRAM side driver strength in ohms. Default
- 				  value is DDR3_DS_40ohm.
- 
--- rockchip,ddr3_odt :		  When dram type is DDR3, this parameter define
--				  the dram side ODT stength in ohm, default value
-+- rockchip,ddr3_odt :		  When the DRAM type is DDR3, this parameter defines
-+				  the DRAM side ODT strength in ohms. Default value
- 				  is DDR3_ODT_120ohm.
- 
--- rockchip,phy_ddr3_ca_drv :	  When dram type is DDR3, this parameter define
--				  the phy side CA line(incluing command line,
-+- rockchip,phy_ddr3_ca_drv :	  When the DRAM type is DDR3, this parameter defines
-+				  the phy side CA line (incluing command line,
- 				  address line and clock line) driver strength.
- 				  Default value is PHY_DRV_ODT_40.
- 
--- rockchip,phy_ddr3_dq_drv :	  When dram type is DDR3, this parameter define
--				  the phy side DQ line(incluing DQS/DQ/DM line)
--				  driver strength. default value is PHY_DRV_ODT_40.
-+- rockchip,phy_ddr3_dq_drv :	  When the DRAM type is DDR3, this parameter defines
-+				  the PHY side DQ line (including DQS/DQ/DM line)
-+				  driver strength. Default value is PHY_DRV_ODT_40.
- 
--- rockchip,phy_ddr3_odt : 	  When dram type is DDR3, this parameter define the
--				  phy side odt strength, default value is
-+- rockchip,phy_ddr3_odt : 	  When the DRAM type is DDR3, this parameter defines
-+				  the PHY side ODT strength. Default value is
- 				  PHY_DRV_ODT_240.
- 
--- rockchip,lpddr3_odt_disb_freq : When dram type is LPDDR3, this parameter defined
--				  then odt disable frequency in MHz (Mega Hz),
--				  when ddr frequency less then ddr3_odt_disb_freq,
--				  the odt on dram side and controller side are
-+- rockchip,lpddr3_odt_disb_freq : When the DRAM type is LPDDR3, this parameter defines
-+				  then ODT disable frequency in MHz (Mega Hz).
-+				  When DDR frequency is less then ddr3_odt_disb_freq,
-+				  the ODT on the DRAM side and controller side are
- 				  both disabled.
- 
--- rockchip,lpddr3_drv :	  When dram type is LPDDR3, this parameter define
--				  the dram side driver stength in ohm, default
-+- rockchip,lpddr3_drv :		  When the DRAM type is LPDDR3, this parameter defines
-+				  the DRAM side driver strength in ohms. Default
- 				  value is LP3_DS_34ohm.
- 
--- rockchip,lpddr3_odt :	  When dram type is LPDDR3, this parameter define
--				  the dram side ODT stength in ohm, default value
-+- rockchip,lpddr3_odt :		  When the DRAM type is LPDDR3, this parameter defines
-+				  the DRAM side ODT strength in ohms. Default value
- 				  is LP3_ODT_240ohm.
- 
--- rockchip,phy_lpddr3_ca_drv :	  When dram type is LPDDR3, this parameter define
--				  the phy side CA line(incluing command line,
-+- rockchip,phy_lpddr3_ca_drv :	  When the DRAM type is LPDDR3, this parameter defines
-+				  the PHY side CA line (including command line,
- 				  address line and clock line) driver strength.
--				  default value is PHY_DRV_ODT_40.
-+				  Default value is PHY_DRV_ODT_40.
- 
--- rockchip,phy_lpddr3_dq_drv :	  When dram type is LPDDR3, this parameter define
--				  the phy side DQ line(incluing DQS/DQ/DM line)
--				  driver strength. default value is
-+- rockchip,phy_lpddr3_dq_drv :	  When the DRAM type is LPDDR3, this parameter defines
-+				  the PHY side DQ line (including DQS/DQ/DM line)
-+				  driver strength. Default value is
- 				  PHY_DRV_ODT_40.
- 
- - rockchip,phy_lpddr3_odt : 	  When dram type is LPDDR3, this parameter define
- 				  the phy side odt strength, default value is
- 				  PHY_DRV_ODT_240.
- 
--- rockchip,lpddr4_odt_disb_freq : When dram type is LPDDR4, this parameter
--				  defined the odt disable frequency in
--				  MHz (Mega Hz), when ddr frequency less then
--				  ddr3_odt_disb_freq, the odt on dram side and
-+- rockchip,lpddr4_odt_disb_freq : When the DRAM type is LPDDR4, this parameter
-+				  defines the ODT disable frequency in
-+				  MHz (Mega Hz). When the DDR frequency is less then
-+				  ddr3_odt_disb_freq, the ODT on the DRAM side and
- 				  controller side are both disabled.
- 
--- rockchip,lpddr4_drv :	  When dram type is LPDDR4, this parameter define
--				  the dram side driver stength in ohm, default
-+- rockchip,lpddr4_drv :		  When the DRAM type is LPDDR4, this parameter defines
-+				  the DRAM side driver strength in ohms. Default
- 				  value is LP4_PDDS_60ohm.
- 
--- rockchip,lpddr4_dq_odt : 	  When dram type is LPDDR4, this parameter define
--				  the dram side ODT on dqs/dq line stength in ohm,
--				  default value is LP4_DQ_ODT_40ohm.
-+- rockchip,lpddr4_dq_odt : 	  When the DRAM type is LPDDR4, this parameter defines
-+				  the DRAM side ODT on DQS/DQ line strength in ohms.
-+				  Default value is LP4_DQ_ODT_40ohm.
- 
--- rockchip,lpddr4_ca_odt :	  When dram type is LPDDR4, this parameter define
--				  the dram side ODT on ca line stength in ohm,
--				  default value is LP4_CA_ODT_40ohm.
-+- rockchip,lpddr4_ca_odt :	  When the DRAM type is LPDDR4, this parameter defines
-+				  the DRAM side ODT on CA line strength in ohms.
-+				  Default value is LP4_CA_ODT_40ohm.
- 
--- rockchip,phy_lpddr4_ca_drv :	  When dram type is LPDDR4, this parameter define
--				  the phy side  CA line(incluing command address
--				  line) driver strength. default value is
-+- rockchip,phy_lpddr4_ca_drv :	  When the DRAM type is LPDDR4, this parameter defines
-+				  the PHY side CA line (including command address
-+				  line) driver strength. Default value is
- 				  PHY_DRV_ODT_40.
- 
--- rockchip,phy_lpddr4_ck_cs_drv : When dram type is LPDDR4, this parameter define
--				  the phy side clock line and cs line driver
--				  strength. default value is PHY_DRV_ODT_80.
-+- rockchip,phy_lpddr4_ck_cs_drv : When the DRAM type is LPDDR4, this parameter defines
-+				  the PHY side clock line and CS line driver
-+				  strength. Default value is PHY_DRV_ODT_80.
- 
--- rockchip,phy_lpddr4_dq_drv :	  When dram type is LPDDR4, this parameter define
--				  the phy side DQ line(incluing DQS/DQ/DM line)
--				  driver strength. default value is PHY_DRV_ODT_80.
-+- rockchip,phy_lpddr4_dq_drv :	  When the DRAM type is LPDDR4, this parameter defines
-+				  the PHY side DQ line (including DQS/DQ/DM line)
-+				  driver strength. Default value is PHY_DRV_ODT_80.
- 
--- rockchip,phy_lpddr4_odt :	  When dram type is LPDDR4, this parameter define
--				  the phy side odt strength, default value is
-+- rockchip,phy_lpddr4_odt :	  When the DRAM type is LPDDR4, this parameter defines
-+				  the PHY side ODT strength. Default value is
- 				  PHY_DRV_ODT_60.
- 
- Example:
+  page = pte_page(pte);
+  head = compound_head(page);
+
+  if (!page_cache_get_speculative(head))
+    goto pte_unmap;
+
+  if (unlikely(pte_val(pte) != pte_val(*ptep))) {
+    bail
+  }
+
+So either write_protect_page() page sees the elevated reference or
+gup_pte_range() bails because it will see the pte changed.
+
+In the truncate path things are a bit different but in principle the same
+should work - once truncate blocks page faults and unmaps pages from page
+tables, we can be sure GUP will not grab the page anymore or we'll see
+elevated page count. So IMO there's no need for any additional locking
+against the GUP path (but a comment explaining this is highly desirable I
+guess). 
+
+								Honza
 -- 
-2.17.0
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
