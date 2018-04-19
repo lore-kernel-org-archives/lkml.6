@@ -1,55 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754174AbeDSQlR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:41:17 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:45290 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753874AbeDSQkK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:40:10 -0400
-X-Google-Smtp-Source: AB8JxZo1GOCA0EXBzSoUxoliemU9dWQCZbp1cCzh4KfJGqp3kC3dPkvFJiaykVGTzK/8dRsZavY84g==
-From: Hans Holmberg <hans.ml.holmberg@owltronix.com>
-To: Matias Bjorling <mb@lightnvm.io>
-Cc: linux-block@vger.kernel.org, Javier Gonzales <javier@cnexlabs.com>,
-        linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Subject: [PATCH 0/3] Rework write error handling in pblk
-Date: Thu, 19 Apr 2018 18:39:21 +0200
-Message-Id: <1524155964-3743-1-git-send-email-hans.ml.holmberg@owltronix.com>
-X-Mailer: git-send-email 2.7.4
+        id S1754168AbeDSQlD (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:41:03 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38930 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753790AbeDSQlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 12:41:01 -0400
+Date: Thu, 19 Apr 2018 18:40:43 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Alex G." <mr.nuke.me@gmail.com>
+Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
+        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
+        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
+        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
+Subject: Re: [RFC PATCH v2 2/4] acpi: apei: Split GHES handlers outside of
+ ghes_do_proc
+Message-ID: <20180419164043.GC5635@pd.tnic>
+References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
+ <20180416215903.7318-3-mr.nuke.me@gmail.com>
+ <20180418175201.GI4795@pd.tnic>
+ <5f26275c-5896-c552-69c4-78e5aaaa6558@gmail.com>
+ <20180419143018.GC3600@pd.tnic>
+ <8f467611-16a1-8fe7-ea12-e2e29023e4e8@gmail.com>
+ <20180419152933.GD3600@pd.tnic>
+ <b9887ae1-8d7e-cfff-3933-d9358283a3c4@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b9887ae1-8d7e-cfff-3933-d9358283a3c4@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+On Thu, Apr 19, 2018 at 10:46:15AM -0500, Alex G. wrote:
+> The bulk of the function is the if/else mapping from UUID to error
+> handler. I don't see how that can be easily split up, hence why I
+> originally resorted to the mapping. As you said, we'll keep it simple at
+> first.
 
-This patch series fixes the(currently incomplete) write error handling 
-in pblk by:
+So that function is 43 lines now. Why are we even talking about this?!
 
- * queuing and re-submitting failed writes in the write buffer
- * evacuating valid data data in lines with write failures, so the
-   chunk(s) with write failures can be reset to a known state by the fw
-
-Lines with failures in smeta are put back on the free list.
-Failed chunks will be reset on the next use.
-
-If a write failes in emeta, the lba list is cached so the line can be 
-garbage collected without scanning the out-of-band area.
-
-Hans Holmberg (3):
-  lightnvm: pblk: rework write error recovery path
-  lightnvm: pblk: garbage collect lines with failed writes
-  lightnvm: pblk: fix smeta write error path
-
- drivers/lightnvm/pblk-core.c     |  50 +++++++-
- drivers/lightnvm/pblk-gc.c       |  79 ++++++++-----
- drivers/lightnvm/pblk-init.c     |  41 +++++--
- drivers/lightnvm/pblk-recovery.c |  91 ---------------
- drivers/lightnvm/pblk-rl.c       |  29 ++++-
- drivers/lightnvm/pblk-sysfs.c    |  15 ++-
- drivers/lightnvm/pblk-write.c    | 243 ++++++++++++++++++++++++++++-----------
- drivers/lightnvm/pblk.h          |  33 ++++--
- 8 files changed, 362 insertions(+), 219 deletions(-)
+Just add your UUID check to the if-else statement and be done with it
+already. No handlers no nothing.
 
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
