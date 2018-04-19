@@ -1,90 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752116AbeDSLo0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 07:44:26 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:38794 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751865AbeDSLoX (ORCPT
+        id S1751903AbeDSLwE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:52:04 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:34676 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751046AbeDSLwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 07:44:23 -0400
-X-Google-Smtp-Source: AB8JxZoDgezeK5AjXib9pM+wC/rIG8U86QtAFLXUoQl0yyV1tTg7hu/cJZv2o71ziJ3aC4IgmaMplQ==
-Subject: Re: [PATCH] Input: xen-kbdfront - allow better run-time configuration
-To: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmitry.torokhov@gmail.com, lyan@suse.com, boris.ostrovsky@oracle.com
-Cc: andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180418150445.9805-1-andr2000@gmail.com>
- <ccb7a33b-7862-9803-fb24-67861d5ecab9@suse.com>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <2bff035e-303e-d644-5f51-5e64150c097c@gmail.com>
-Date: Thu, 19 Apr 2018 14:44:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <ccb7a33b-7862-9803-fb24-67861d5ecab9@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Thu, 19 Apr 2018 07:52:03 -0400
+To: mhocko@kernel.org
+Cc: rientjes@google.com, akpm@linux-foundation.org, aarcange@redhat.com,
+        guro@fb.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <20180418075051.GO17484@dhcp22.suse.cz>
+        <alpine.DEB.2.21.1804181159020.227784@chino.kir.corp.google.com>
+        <20180419063556.GK17484@dhcp22.suse.cz>
+        <201804191945.BBF87517.FVMLOQFOHSFJOt@I-love.SAKURA.ne.jp>
+        <20180419110419.GQ17484@dhcp22.suse.cz>
+In-Reply-To: <20180419110419.GQ17484@dhcp22.suse.cz>
+Message-Id: <201804192051.JDE35992.OLFOQFMOtJHFSV@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Thu, 19 Apr 2018 20:51:45 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/19/2018 02:25 PM, Juergen Gross wrote:
-> On 18/04/18 17:04, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> It is now only possible to control if multi-touch virtual device
->> is created or not (via the corresponding XenStore entries),
->> but keyboard and pointer devices are always created.
-> Why don't you want to go that route for keyboard and mouse, too?
-> Or does this really make no sense?
-Well, I would prefer not to touch anything outside Linux and
-this driver. And these settings seem to be implementation specific.
-So, this is why introduce Linux module parameters and don't extend
-the kbdif protocol.
->> In some cases this is not desirable. For example, if virtual
->> keyboard device is exposed to Android then the latter won't
->> automatically show on-screen keyboard as it expects that a
->> physical keyboard device can be used for typing.
->>
->> Make it possible to configure which virtual devices are created
->> with module parameters:
->>    - no_ptr_dev=1 if no pointer device needs to be created
->>    - no_kbd_dev=1 if no keyboard device needs to be created
->> Keep old behavior by default.
->>
->> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->> Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
->> Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
->> ---
->>   drivers/input/misc/xen-kbdfront.c | 159 +++++++++++++++++-------------
->>   1 file changed, 92 insertions(+), 67 deletions(-)
->>
->> diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
->> index d91f3b1c5375..a3306aad40b0 100644
->> --- a/drivers/input/misc/xen-kbdfront.c
->> +++ b/drivers/input/misc/xen-kbdfront.c
->> @@ -51,6 +51,16 @@ module_param_array(ptr_size, int, NULL, 0444);
->>   MODULE_PARM_DESC(ptr_size,
->>   	"Pointing device width, height in pixels (default 800,600)");
->>   
->> +static unsigned int no_ptr_dev;
->> +module_param(no_ptr_dev, uint, 0);
-> Use type invbool instead?
-Hm, better bool then? invbool will require parameter name change to
-something like "with_ptr_dev" which might confuse, e.g.
-default was to go with pointer device, now we have with_ptr_dev
-module parameter: do I now need to set it to preserve the old behavior?
-The answer is no (because of invbool), but you have to dig for it.
+Michal Hocko wrote:
+> > We need to teach the OOM reaper stop reaping as soon as entering exit_mmap().
+> > Maybe let the OOM reaper poll for progress (e.g. none of get_mm_counter(mm, *)
+> > decreased for last 1 second) ?
+> 
+> Can we start simple and build a more elaborate heuristics on top _please_?
+> In other words holding the mmap_sem for write for oom victims in
+> exit_mmap should handle the problem. We can then enhance this to probe
+> for progress or any other clever tricks if we find out that the race
+> happens too often and we kill more than necessary.
+> 
+> Let's not repeat the error of trying to be too clever from the beginning
+> as we did previously. This are is just too subtle and obviously error
+> prone.
+> 
+Something like this?
 
-Will bool work for you?
->> +MODULE_PARM_DESC(no_ptr_dev,
->> +	"If set then no virtual pointing device exposed to the guest");
->> +
->> +static unsigned int no_kbd_dev;
->> +module_param(no_kbd_dev, uint, 0);
-> invbool?
->
->
-> Juergen
+---
+ mm/mmap.c     | 41 +++++++++++++++++++++++------------------
+ mm/oom_kill.c | 29 +++++++++++------------------
+ 2 files changed, 34 insertions(+), 36 deletions(-)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 188f195..3edb7da 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3015,6 +3015,28 @@ void exit_mmap(struct mm_struct *mm)
+ 	/* mm's last user has gone, and its about to be pulled down */
+ 	mmu_notifier_release(mm);
+ 
++	if (unlikely(mm_is_oom_victim(mm))) {
++		/*
++		 * Tell oom_reap_task() not to start reaping this mm.
++		 *
++		 * oom_reap_task() depends on a stable VM_LOCKED flag to
++		 * indicate it should not unmap during munlock_vma_pages_all().
++		 *
++		 * Since MMF_UNSTABLE is set before calling down_write(),
++		 * oom_reap_task() which calls down_read() before testing
++		 * MMF_UNSTABLE will not run on this mm after up_write().
++		 *
++		 * mm_is_oom_victim() cannot be set from under us because
++		 * victim->mm is already set to NULL under task_lock before
++		 * calling mmput() and victim->signal->oom_mm is set by the oom
++		 * killer only if victim->mm is non-NULL while holding
++		 * task_lock().
++		 */
++		set_bit(MMF_UNSTABLE, &mm->flags);
++		down_write(&mm->mmap_sem);
++		up_write(&mm->mmap_sem);
++	}
++
+ 	if (mm->locked_vm) {
+ 		vma = mm->mmap;
+ 		while (vma) {
+@@ -3036,26 +3058,9 @@ void exit_mmap(struct mm_struct *mm)
+ 	/* update_hiwater_rss(mm) here? but nobody should be looking */
+ 	/* Use -1 here to ensure all VMAs in the mm are unmapped */
+ 	unmap_vmas(&tlb, vma, 0, -1);
+-
+-	if (unlikely(mm_is_oom_victim(mm))) {
+-		/*
+-		 * Wait for oom_reap_task() to stop working on this
+-		 * mm. Because MMF_OOM_SKIP is already set before
+-		 * calling down_read(), oom_reap_task() will not run
+-		 * on this "mm" post up_write().
+-		 *
+-		 * mm_is_oom_victim() cannot be set from under us
+-		 * either because victim->mm is already set to NULL
+-		 * under task_lock before calling mmput and oom_mm is
+-		 * set not NULL by the OOM killer only if victim->mm
+-		 * is found not NULL while holding the task_lock.
+-		 */
+-		set_bit(MMF_OOM_SKIP, &mm->flags);
+-		down_write(&mm->mmap_sem);
+-		up_write(&mm->mmap_sem);
+-	}
+ 	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+ 	tlb_finish_mmu(&tlb, 0, -1);
++	set_bit(MMF_OOM_SKIP, &mm->flags);
+ 
+ 	/*
+ 	 * Walk the list again, actually closing and freeing it,
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index ff992fa..1fef1b6 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -510,25 +510,16 @@ static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 
+ 	/*
+ 	 * If the mm has invalidate_{start,end}() notifiers that could block,
++	 * or if the mm is in exit_mmap() which has unpredictable dependencies,
+ 	 * sleep to give the oom victim some more time.
+ 	 * TODO: we really want to get rid of this ugly hack and make sure that
+ 	 * notifiers cannot block for unbounded amount of time
+ 	 */
+-	if (mm_has_blockable_invalidate_notifiers(mm)) {
+-		up_read(&mm->mmap_sem);
+-		schedule_timeout_idle(HZ);
+-		goto unlock_oom;
+-	}
+-
+-	/*
+-	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
+-	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
+-	 * under mmap_sem for reading because it serializes against the
+-	 * down_write();up_write() cycle in exit_mmap().
+-	 */
+-	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
++	if (mm_has_blockable_invalidate_notifiers(mm) ||
++	    test_bit(MMF_UNSTABLE, &mm->flags)) {
+ 		up_read(&mm->mmap_sem);
+ 		trace_skip_task_reaping(tsk->pid);
++		schedule_timeout_idle(HZ);
+ 		goto unlock_oom;
+ 	}
+ 
+@@ -590,11 +581,9 @@ static void oom_reap_task(struct task_struct *tsk)
+ 	while (attempts++ < MAX_OOM_REAP_RETRIES && !__oom_reap_task_mm(tsk, mm))
+ 		schedule_timeout_idle(HZ/10);
+ 
+-	if (attempts <= MAX_OOM_REAP_RETRIES ||
+-	    test_bit(MMF_OOM_SKIP, &mm->flags))
++	if (test_bit(MMF_UNSTABLE, &mm->flags))
+ 		goto done;
+ 
+-
+ 	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
+ 		task_pid_nr(tsk), tsk->comm);
+ 	debug_show_all_locks();
+@@ -603,8 +592,12 @@ static void oom_reap_task(struct task_struct *tsk)
+ 	tsk->oom_reaper_list = NULL;
+ 
+ 	/*
+-	 * Hide this mm from OOM killer because it has been either reaped or
+-	 * somebody can't call up_write(mmap_sem).
++	 * Hide this mm from the OOM killer because:
++	 *   the OOM reaper completed reaping
++	 * or
++	 *   exit_mmap() told the OOM reaper not to start reaping
++	 * or
++	 *   neither exit_mmap() nor the OOM reaper started reaping
+ 	 */
+ 	set_bit(MMF_OOM_SKIP, &mm->flags);
+ 
+-- 
+1.8.3.1
