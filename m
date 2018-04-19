@@ -1,95 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753433AbeDSTKx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 15:10:53 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45800 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753117AbeDSTKv (ORCPT
+        id S1753392AbeDSTOH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 15:14:07 -0400
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:36068 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753269AbeDSTOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 15:10:51 -0400
-X-Google-Smtp-Source: AIpwx48cNOzO6twHekGuT71FOdbEydKwneFeCtc42sf1Cfa1QbxvTNWcjFTKBBp7Ek8Nkqvq32X01VmY6iqI2+wD8GM=
+        Thu, 19 Apr 2018 15:14:06 -0400
+X-Google-Smtp-Source: AIpwx4+Fg0PH+r0ERmUXzJJug1RqfMo7SvDtwS1KudX5vXEFP5SRueOC3rHlce4Z0i5zt9j0qG5NxQ==
+Date: Thu, 19 Apr 2018 12:14:04 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc: mhocko@kernel.org, akpm@linux-foundation.org, aarcange@redhat.com,
+        guro@fb.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper
+ unmap
+In-Reply-To: <201804191945.BBF87517.FVMLOQFOHSFJOt@I-love.SAKURA.ne.jp>
+Message-ID: <alpine.DEB.2.21.1804191212530.157851@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com> <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com> <20180418075051.GO17484@dhcp22.suse.cz> <alpine.DEB.2.21.1804181159020.227784@chino.kir.corp.google.com>
+ <20180419063556.GK17484@dhcp22.suse.cz> <201804191945.BBF87517.FVMLOQFOHSFJOt@I-love.SAKURA.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <1521810690-2576-1-git-send-email-kan.liang@linux.intel.com> <1521810690-2576-2-git-send-email-kan.liang@linux.intel.com>
-In-Reply-To: <1521810690-2576-2-git-send-email-kan.liang@linux.intel.com>
-From: Stephane Eranian <eranian@google.com>
-Date: Thu, 19 Apr 2018 19:10:39 +0000
-Message-ID: <CABPqkBQu8KfU4k_-TcBh3c+cvTJDibQkZmeo4Tv3HRvHhqz8YQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH 2/2] perf/x86/intel/uncore: Fix SBOX support for
- Broadwell CPUs
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Oskar Senft <osk@google.com>,
-        mark@voidzero.net, Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 6:12 AM Kan Liang <kan.liang@linux.intel.com> wrote:
+On Thu, 19 Apr 2018, Tetsuo Handa wrote:
 
-> From: Oskar Senft <osk@google.com>
+> current code has a possibility that the OOM reaper is disturbed by
+> unpredictable dependencies, like I worried that
+> 
+>   I think that there is a possibility that the OOM reaper tries to reclaim
+>   mlocked pages as soon as exit_mmap() cleared VM_LOCKED flag by calling
+>   munlock_vma_pages_all().
+> 
+> when current approach was proposed.
 
-> This fixes SBOX support for Broadwell CPUs by checking the Power Control
-> Unit CAPID4 register to determine the number of available SBOXes on the
-> particular CPU before trying to enable them.
-
-> Signed-off-by: Oskar Senft <osk@google.com>
-> Tested-by: Mark van Dijk <mark@voidzero.net>
-> Reviewed-by: Kan Liang <kan.liang@intel.com>
-
-Could you please merge this change?
-Thanks.
-
-> ---
->   arch/x86/events/intel/uncore_snbep.c | 17 ++++++++++++++++-
->   1 file changed, 16 insertions(+), 1 deletion(-)
-
-> diff --git a/arch/x86/events/intel/uncore_snbep.c
-b/arch/x86/events/intel/uncore_snbep.c
-> index 47c6910..715eb14 100644
-> --- a/arch/x86/events/intel/uncore_snbep.c
-> +++ b/arch/x86/events/intel/uncore_snbep.c
-> @@ -3060,6 +3060,8 @@ static struct event_constraint
-bdx_uncore_pcu_constraints[] = {
-
->   void bdx_uncore_cpu_init(void)
->   {
-> +       int pkg = topology_phys_to_logical_pkg(0);
-> +
->          if (bdx_uncore_cbox.num_boxes > boot_cpu_data.x86_max_cores)
->                  bdx_uncore_cbox.num_boxes = boot_cpu_data.x86_max_cores;
->          uncore_msr_uncores = bdx_msr_uncores;
-> @@ -3067,7 +3069,15 @@ void bdx_uncore_cpu_init(void)
->          /* BDX-DE doesn't have SBOX */
->          if (boot_cpu_data.x86_model == 86)
->                  uncore_msr_uncores[BDX_MSR_UNCORE_SBOX] = NULL;
-> -
-> +       /* Detect systems with no SBOXes */
-> +       else if (uncore_extra_pci_dev[pkg].dev[HSWEP_PCI_PCU_3]) {
-> +               u32 capid4;
-> +               pci_read_config_dword(
-> +                       uncore_extra_pci_dev[pkg].dev[HSWEP_PCI_PCU_3],
-> +                       0x94, &capid4);
-> +               if (((capid4 >> 6) & 0x3) == 0)
-> +                       bdx_msr_uncores[BDX_MSR_UNCORE_SBOX] = NULL;
-> +       }
->          hswep_uncore_pcu.constraints = bdx_uncore_pcu_constraints;
->   }
-
-> @@ -3285,6 +3295,11 @@ static const struct pci_device_id
-bdx_uncore_pci_ids[] = {
->                  PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f46),
->                  .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
-2),
->          },
-> +       { /* PCU.3 (for Capability registers) */
-> +               PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6fc0),
-> +               .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
-> +                                                  HSWEP_PCI_PCU_3),
-> +       },
->          { /* end: all zeroes */ }
->   };
-
-> --
-> 2.4.11
+That's exactly the issue that this patch is fixing, yes.  If you brought 
+that possibility up then I'm sorry that it was ignored.
