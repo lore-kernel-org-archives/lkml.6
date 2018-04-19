@@ -1,71 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752507AbeDSKHw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:07:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38911 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751386AbeDSKHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:07:51 -0400
-Date: Thu, 19 Apr 2018 12:07:45 +0200
-From: Borislav Petkov <bp@suse.de>
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        robh+dt@kernel.org, dan.j.williams@intel.com, nicolas.pitre@linaro.org,
-        josh@joshtriplett.org, Thomas Gleixner <tglx@linutronix.de>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Wei Yang <richard.weiyang@gmail.com>
-Subject: Re: [PATCH v3 2/3] resource: add walk_system_ram_res_rev()
-Message-ID: <20180419100745.GC3896@pd.tnic>
-References: <20180419001848.3041-1-bhe@redhat.com>
- <20180419001848.3041-3-bhe@redhat.com>
+        id S1752546AbeDSKIn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:08:43 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:52664 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeDSKIl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 06:08:41 -0400
+Date: Thu, 19 Apr 2018 13:08:28 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] regulator: ab8500: tidy ab8500_regulator_get_mode()
+Message-ID: <20180419100828.GA10724@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180419001848.3041-3-bhe@redhat.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8867 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804190089
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 08:18:47AM +0800, Baoquan He wrote:
-> This function, being a variant of walk_system_ram_res() introduced in
-> commit 8c86e70acead ("resource: provide new functions to walk through
-> resources"), walks through a list of all the resources of System RAM
-> in reversed order, i.e., from higher to lower.
-> 
-> It will be used in kexec_file code.
+The indenting here is confusing.
 
-Of course, what is missing is the big *WHY* you need this to happen this
-way...
+Also we don't check "ret".  That isn't likely to cause a runtime issue
+because if it fails here fails then we'd probably return -EINVAL at the
+end anyway.  But it does introduce a static checker warning since "val"
+is only inititialized on the success path.
 
->  /*
-> + * This function, being a variant of walk_system_ram_res(), calls the @func
-> + * callback against all memory ranges of type System RAM which are marked as
-> + * IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY in reversed order, i.e., from
-> + * higher to lower.
-> + */
-> +int walk_system_ram_res_rev(u64 start, u64 end, void *arg,
-> +				int (*func)(struct resource *, void *))
-> +{
-> +	unsigned long flags;
-> +	struct resource *res;
-> +	int ret = -1;
-> +
-> +	flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
-> +
-> +	read_lock(&resource_lock);
-> +	list_for_each_entry_reverse(res, &iomem_resource.child, sibling) {
+    drivers/regulator/ab8500.c:429 ab8500_regulator_get_mode()
+    error: uninitialized symbol 'val'.
 
-... and the other thing that I'm not clear on is why are you
-slapping this function just like that instead of extending
-__walk_iomem_res_desc() to do reverse direction too?
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+diff --git a/drivers/regulator/ab8500.c b/drivers/regulator/ab8500.c
+index 83dba3fbfe0c..4fab417f1803 100644
+--- a/drivers/regulator/ab8500.c
++++ b/drivers/regulator/ab8500.c
+@@ -425,7 +425,10 @@ static unsigned int ab8500_regulator_get_mode(struct regulator_dev *rdev)
+ 	if (info->mode_mask) {
+ 		/* Dedicated register for handling mode */
+ 		ret = abx500_get_register_interruptible(info->dev,
+-		info->mode_bank, info->mode_reg, &val);
++							info->mode_bank,
++							info->mode_reg, &val);
++		if (ret)
++			return ret;
+ 		val = val & info->mode_mask;
+ 
+ 		val_normal = info->mode_val_normal;
