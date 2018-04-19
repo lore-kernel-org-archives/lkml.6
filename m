@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753306AbeDSN4G (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:56:06 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:51765 "EHLO
+        id S1753416AbeDSN5s (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:57:48 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:50701 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753050AbeDSNzZ (ORCPT
+        with ESMTP id S1751169AbeDSNyS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:55:25 -0400
+        Thu, 19 Apr 2018 09:54:18 -0400
 From: Yixun Lan <yixun.lan@amlogic.com>
 To: Neil Armstrong <narmstrong@baylibre.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
@@ -18,9 +18,9 @@ CC: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
         Qiufang Dai <qiufang.dai@amlogic.com>,
         <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6 6/7] clk: meson: drop CLK_SET_RATE_PARENT flag
-Date: Thu, 19 Apr 2018 21:54:25 +0800
-Message-ID: <20180419135426.155794-7-yixun.lan@amlogic.com>
+Subject: [PATCH v6 1/7] clk: meson: migrate to devm_of_clk_add_hw_provider API
+Date: Thu, 19 Apr 2018 21:54:20 +0800
+Message-ID: <20180419135426.155794-2-yixun.lan@amlogic.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180419135426.155794-1-yixun.lan@amlogic.com>
 References: <20180419135426.155794-1-yixun.lan@amlogic.com>
@@ -31,24 +31,28 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clk81 is not expected to be changed, so drop this flag.
+There is a protential memory leak, as of_clk_del_provider is
+never called if of_clk_add_hw_provider has been executed.
+Fix this by using devm variant API.
 
+Fixes: f8c11f79912d ("clk: meson: Add GXBB AO Clock and Reset controller driver")
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 ---
  drivers/clk/meson/gxbb-aoclk.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index c785ee7586d1..e145ebcdef38 100644
+index 9ec23ae9a219..eebb580b9e0f 100644
 --- a/drivers/clk/meson/gxbb-aoclk.c
 +++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -69,7 +69,7 @@ static struct clk_regmap _name##_ao = {					\
- 		.ops = &clk_regmap_gate_ops,				\
- 		.parent_names = (const char *[]){ "clk81" },		\
- 		.num_parents = 1,					\
--		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
-+		.flags = CLK_IGNORE_UNUSED,				\
- 	},								\
+@@ -191,7 +191,7 @@ static int gxbb_aoclkc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get,
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+ 			&gxbb_aoclk_onecell_data);
  }
  
 -- 
