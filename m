@@ -1,237 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753306AbeDSNcl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:32:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60548 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751449AbeDSNch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:32:37 -0400
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 13/24] ipc: Convert mqueue fs to fs_context [ver #7]
-From: David Howells <dhowells@redhat.com>
-To: viro@zeniv.linux.org.uk
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
-Date: Thu, 19 Apr 2018 14:32:35 +0100
-Message-ID: <152414475508.23902.7607267381447716752.stgit@warthog.procyon.org.uk>
-In-Reply-To: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
-References: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        id S1753201AbeDSNij (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:38:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35709 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752906AbeDSNif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 09:38:35 -0400
+Date: Thu, 19 Apr 2018 15:38:33 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Kyle Evans <kevans@freebsd.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Emmanuel Vadot <manu@bidouilliste.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2] ARM: dts: sunxi: Add sid for a83t
+Message-ID: <20180419133833.etuuxm3eygp3wfye@flea>
+References: <CACNAnaE9GiVTXD-TV1xXyBJKtTGKpdA6n0REk6a=qm218EgHbg@mail.gmail.com>
+ <20171221152630.2vf57x5o2yi5sv3n@flea.lan>
+ <20171221190903.56ebae536acf51401c63802c@bidouilliste.com>
+ <20171222083508.dfcp6egfvxykmogg@flea.lan>
+ <20171222110727.520df7394234f6a5dc0b9ec0@bidouilliste.com>
+ <CAGb2v64mf-ihyOs-WJZuVa4Yib3Szp90RZu_a1EeQ1LJXnoXEQ@mail.gmail.com>
+ <20180104140119.5pyfihp4zs2poz35@flea.lan>
+ <CACNAnaHOuPH05hsJ-jt1135-Giknb-DOuvjeQRSGVR2L7Xc-Cg@mail.gmail.com>
+ <20180109133412.uyai4s6vfnh37hn2@flea>
+ <CACNAnaEyKztSt_SO25e+VcmyN=fdGTVbpooWSu891ueY6xvh-g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4syblqsgtkenq3hx"
+Content-Disposition: inline
+In-Reply-To: <CACNAnaEyKztSt_SO25e+VcmyN=fdGTVbpooWSu891ueY6xvh-g@mail.gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the mqueue filesystem to use the filesystem context stuff.
 
-Notes:
+--4syblqsgtkenq3hx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- (1) The relevant ipc namespace is selected in when the context is
-     initialised (and it defaults to the current task's ipc namespace).
-     The caller can override this before calling vfs_get_tree().
+On Wed, Apr 18, 2018 at 09:05:19AM -0500, Kyle Evans wrote:
+> On Tue, Jan 9, 2018 at 7:34 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Mon, Jan 08, 2018 at 09:30:57AM -0600, Kyle Evans wrote:
+> >> On Thu, Jan 4, 2018 at 8:01 AM, Maxime Ripard
+> >> <maxime.ripard@free-electrons.com> wrote:
+> >> > On Fri, Dec 22, 2017 at 06:11:52PM +0800, Chen-Yu Tsai wrote:
+> >> >> On Fri, Dec 22, 2017 at 6:07 PM, Emmanuel Vadot <manu@bidouilliste.=
+com> wrote:
+> >> >> > On Fri, 22 Dec 2017 09:35:08 +0100
+> >> >> > Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+> >> >> >
+> >> >> >> On Thu, Dec 21, 2017 at 07:09:03PM +0100, Emmanuel Vadot wrote:
+> >> >> >> >
+> >> >> >> >  Hi Maxime,
+> >> >> >> >
+> >> >> >> > On Thu, 21 Dec 2017 16:26:30 +0100
+> >> >> >> > Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
+> >> >> >> >
+> >> >> >> > > Hi,
+> >> >> >> > >
+> >> >> >> > > On Thu, Dec 21, 2017 at 09:19:24AM -0600, Kyle Evans wrote:
+> >> >> >> > > > On Thu, Dec 21, 2017 at 8:55 AM, Maxime Ripard
+> >> >> >> > > > <maxime.ripard@free-electrons.com> wrote:
+> >> >> >> > > > > Hi Kyle,
+> >> >> >> > > > >
+> >> >> >> > > > > On Tue, Dec 19, 2017 at 03:05:23PM -0600, kevans91@ksu.e=
+du wrote:
+> >> >> >> > > > >> Allwinner a83t has a 1 KB sid block with efuse for secu=
+rity rootkey and
+> >> >> >> > > > >> thermal calibration data, add node to describe it.
+> >> >> >> > > > >>
+> >> >> >> > > > >> a83t-sid is not currently supported by nvmem/sunxi-sid,=
+ but it is
+> >> >> >> > > > >> supported in an external driver for FreeBSD.
+> >> >> >> > > > >>
+> >> >> >> > > > >> Signed-off-by: Kyle Evans <kevans91@ksu.edu>
+> >> >> >> > > > >
+> >> >> >> > > > > The patch looks fine in itself, but we've had a number o=
+f issues with
+> >> >> >> > > > > the register layout (and access patterns) in the past, s=
+o I'd rather
+> >> >> >> > > > > have something that works in Linux too if possible.
+> >> >> >> > > >
+> >> >> >> > > > I have a patch that I think should make it work fine on Li=
+nux [1], but
+> >> >> >> > > > I'm afraid I have little to no capability to test it mysel=
+f and so I
+> >> >> >> > > > did not add it as well.
+> >> >> >> > > >
+> >> >> >> > > > I do know that the rootkey is offset 0x200 into the given =
+space [2],
+> >> >> >> > > > as is the case with the H3, and that the readout quirk is =
+not needed.
+> >> >> >> > > > I wasn't 100% sure that the a83t has 2Kbit worth of efuse =
+space as the
+> >> >> >> > > > H3, but I do know that thermal data can be found at 0x34 a=
+nd 0x38 in
+> >> >> >> > > > this space.
+> >> >> >> > >
+> >> >> >> > > Then maybe we should leave it aside until someone takes some=
+ time on
+> >> >> >> > > the A83t.
+> >> >> >> >
+> >> >> >> >  Take some time on the Linux driver and do not apply this patc=
+h for
+> >> >> >> > now you mean ?
+> >> >> >>
+> >> >> >> Yep.
+> >> >> >>
+> >> >> >> Maxime
+> >> >> >
+> >> >> >  Since linux doesn't have the compatible in it's driver what would
+> >> >> > be the harm to add the node in the DTS ? If a quirks is needed be=
+cause
+> >> >> > some region is weird this would go in the driver right ? I don't =
+see a
+> >> >> > technical problem for adding this node right now.
+> >> >> >  If Kyle confirm the lenght of the region and that no quirk is ne=
+eded
+> >> >> > will it be enough ?
+> >> >>
+> >> >> I guess I wasn't very clear. I'm OK with the patch going in. The de=
+vice
+> >> >> node currently says nothing about how much efuse space there is. The
+> >> >> memory region covers that and the control section, and the size mat=
+ches
+> >> >> what the memory map says.
+> >> >>
+> >> >> The size and offset of the efuse space would be dealt with in the d=
+river.
+> >> >
+> >> > Let's merge it then.
+> >> >
+> >> > Acked-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+> >>
+> >> What does the timeline for these things normally look like? I'm new to
+> >> these parts. =3D)
+> >
+> > We're one week away from the merge window, so it's a bit late for it
+> > to be merged in 4.16, but it'll be in 4.17.
 
- (2) Rather than simply calling kern_mount_data(), mq_init_ns() and
-     mq_internal_mount() create a context, adjust it and then do the rest
-     of the mount procedure.
+> It's been two months and this still hasn't quite landed in
+> sunxi/for-next. =3D( May I ask the status on this?
 
- (3) The lazy mqueue mounting on creation of a new namespace is retained
-     from a previous patch, but the avoidance of sget() if no superblock
-     yet exists is reverted and the superblock is again keyed on the
-     namespace pointer.
+It seems to have fallen through the cracks, sorry :/
 
-     Yes, there was a performance gain in not searching the superblock
-     hash, but it's only paid once per ipc namespace - and only if someone
-     uses mqueue within that namespace, so I'm not sure it's worth it,
-     especially as calling sget() allows avoidance of recursion.
+Can you resend it based on 4.17?
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Thanks!
+Maxime
 
- ipc/mqueue.c |  116 +++++++++++++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 94 insertions(+), 22 deletions(-)
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 910c3c7532e6..2f2e7d73b13d 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -18,6 +18,7 @@
- #include <linux/pagemap.h>
- #include <linux/file.h>
- #include <linux/mount.h>
-+#include <linux/fs_context.h>
- #include <linux/namei.h>
- #include <linux/sysctl.h>
- #include <linux/poll.h>
-@@ -42,6 +43,11 @@
- #include <net/sock.h>
- #include "util.h"
- 
-+struct mqueue_fs_context {
-+	struct fs_context	fc;
-+	struct ipc_namespace	*ipc_ns;
-+};
-+
- #define MQUEUE_MAGIC	0x19800202
- #define DIRENT_SIZE	20
- #define FILENT_SIZE	80
-@@ -87,9 +93,11 @@ struct mqueue_inode_info {
- 	unsigned long qsize; /* size of queue in memory (sum of all msgs) */
- };
- 
-+static struct file_system_type mqueue_fs_type;
- static const struct inode_operations mqueue_dir_inode_operations;
- static const struct file_operations mqueue_file_operations;
- static const struct super_operations mqueue_super_ops;
-+static const struct fs_context_operations mqueue_fs_context_ops;
- static void remove_notification(struct mqueue_inode_info *info);
- 
- static struct kmem_cache *mqueue_inode_cachep;
-@@ -322,7 +330,7 @@ static struct inode *mqueue_get_inode(struct super_block *sb,
- 	return ERR_PTR(ret);
- }
- 
--static int mqueue_fill_super(struct super_block *sb, void *data, size_t data_size, int silent)
-+static int mqueue_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	struct inode *inode;
- 	struct ipc_namespace *ns = sb->s_fs_info;
-@@ -343,19 +351,77 @@ static int mqueue_fill_super(struct super_block *sb, void *data, size_t data_siz
- 	return 0;
- }
- 
--static struct dentry *mqueue_mount(struct file_system_type *fs_type,
--			 int flags, const char *dev_name,
--			 void *data, size_t data_size)
-+static int mqueue_get_tree(struct fs_context *fc)
- {
--	struct ipc_namespace *ns;
--	if (flags & SB_KERNMOUNT) {
--		ns = data;
--		data = NULL;
--	} else {
--		ns = current->nsproxy->ipc_ns;
-+	struct mqueue_fs_context *ctx = container_of(fc, struct mqueue_fs_context, fc);
-+
-+	/* As a shortcut, if the namespace already has a superblock created,
-+	 * use the root from that directly rather than invoking sget() again.
-+	 */
-+	spin_lock(&mq_lock);
-+	if (ctx->ipc_ns->mq_mnt) {
-+		fc->root = dget(ctx->ipc_ns->mq_mnt->mnt_sb->s_root);
-+		atomic_inc(&fc->root->d_sb->s_active);
-+	}
-+	spin_unlock(&mq_lock);
-+	if (fc->root) {
-+		down_write(&fc->root->d_sb->s_umount);
-+		return 0;
- 	}
--	return mount_ns(fs_type, flags, data, data_size, ns, ns->user_ns,
--			mqueue_fill_super);
-+
-+	ctx->fc.s_fs_info = ctx->ipc_ns;
-+	return vfs_get_super(fc, vfs_get_keyed_super, mqueue_fill_super);
-+}
-+
-+static void mqueue_fs_context_free(struct fs_context *fc)
-+{
-+	struct mqueue_fs_context *ctx = container_of(fc, struct mqueue_fs_context, fc);
-+
-+	if (ctx->ipc_ns)
-+		put_ipc_ns(ctx->ipc_ns);
-+}
-+
-+static int mqueue_init_fs_context(struct fs_context *fc, struct super_block *src_sb)
-+{
-+	struct mqueue_fs_context *ctx = container_of(fc, struct mqueue_fs_context, fc);
-+
-+	ctx->ipc_ns = get_ipc_ns(current->nsproxy->ipc_ns);
-+	ctx->fc.ops = &mqueue_fs_context_ops;
-+	return 0;
-+}
-+
-+static struct vfsmount *mq_create_mount(struct ipc_namespace *ns)
-+{
-+	struct mqueue_fs_context *ctx;
-+	struct fs_context *fc;
-+	struct vfsmount *mnt;
-+	int ret;
-+
-+	fc = vfs_new_fs_context(&mqueue_fs_type, NULL, 0,
-+				FS_CONTEXT_FOR_KERNEL_MOUNT);
-+	if (IS_ERR(fc))
-+		return ERR_CAST(fc);
-+
-+	ctx = container_of(fc, struct mqueue_fs_context, fc);
-+	put_ipc_ns(ctx->ipc_ns);
-+	ctx->ipc_ns = get_ipc_ns(ns);
-+
-+	ret = vfs_get_tree(fc);
-+	if (ret < 0)
-+		goto err_fc;
-+
-+	mnt = vfs_create_mount(fc);
-+	if (IS_ERR(mnt)) {
-+		ret = PTR_ERR(mnt);
-+		goto err_fc;
-+	}
-+
-+	put_fs_context(fc);
-+	return mnt;
-+
-+err_fc:
-+	put_fs_context(fc);
-+	return ERR_PTR(ret);
- }
- 
- static void init_once(void *foo)
-@@ -1521,15 +1587,23 @@ static const struct super_operations mqueue_super_ops = {
- 	.statfs = simple_statfs,
- };
- 
-+static const struct fs_context_operations mqueue_fs_context_ops = {
-+	.free		= mqueue_fs_context_free,
-+	.get_tree	= mqueue_get_tree,
-+};
-+
- static struct file_system_type mqueue_fs_type = {
--	.name = "mqueue",
--	.mount = mqueue_mount,
--	.kill_sb = kill_litter_super,
--	.fs_flags = FS_USERNS_MOUNT,
-+	.name			= "mqueue",
-+	.fs_context_size	= sizeof(struct mqueue_fs_context),
-+	.init_fs_context	= mqueue_init_fs_context,
-+	.kill_sb		= kill_litter_super,
-+	.fs_flags		= FS_USERNS_MOUNT,
- };
- 
- int mq_init_ns(struct ipc_namespace *ns)
- {
-+	struct vfsmount *m;
-+
- 	ns->mq_queues_count  = 0;
- 	ns->mq_queues_max    = DFLT_QUEUESMAX;
- 	ns->mq_msg_max       = DFLT_MSGMAX;
-@@ -1537,12 +1611,10 @@ int mq_init_ns(struct ipc_namespace *ns)
- 	ns->mq_msg_default   = DFLT_MSG;
- 	ns->mq_msgsize_default  = DFLT_MSGSIZE;
- 
--	ns->mq_mnt = kern_mount_data(&mqueue_fs_type, ns, 0);
--	if (IS_ERR(ns->mq_mnt)) {
--		int err = PTR_ERR(ns->mq_mnt);
--		ns->mq_mnt = NULL;
--		return err;
--	}
-+	m = mq_create_mount(&init_ipc_ns);
-+	if (IS_ERR(m))
-+		return PTR_ERR(ns->mq_mnt);
-+	ns->mq_mnt = m;
- 	return 0;
- }
- 
+--4syblqsgtkenq3hx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrYm9gACgkQ0rTAlCFN
+r3R7+BAAk1r6nhdLEMwpCQG74YOvnbc/Wetd/1jioMW5eVqq5uyBflHmOMO1b7c/
+tr+Fnd8PxfUTjA6FIJ/rSSk5LXGILX65HoCz1ISGFABez+5lOUHf63ivWHJADgny
+HpesqsOXeb1Ty0kRObMkb6sI1yv71q+hYZO0QZErEwLB4czuBP+owYd34j4U2TTU
+Im3euCAwPI9eNA6oXmdcUD3fyz6zbU1Qiswp5/2KQO3xnkjhHcmo0RxTEtN6bae+
+8PLAH1swYLHnPYAvADak+nhtskw7+jeAnguz42sziel94TC2zv7QHQfxYjOJ8Zp6
+c1JH0efenn0LCTHG0Ijv1FRtdG3UDr0VzSOfE+7ytqVb0uCLADM49i0prP9lUrmG
+aXSJYoiH3aPuphEyXQu2OZpAWqcK1x7LQWnWO813cCeLtgHK6fvnE8r46wD8fqaM
+oDw1KwpxKMvJ1M4RKAftgVrvgbJncvyzsUIczDYoWgBRRyYb0AwiHc/cvsGQebug
+qxUq2Qx1kpGmB/MNqoc9z9FNKdwbrMji9c1Rmw/7I9fycJAiOWzQOaCgNVYmX1rE
+B3Daw77jNYw8+SwaPP4MrPaTo+8a7IT+j1zcw1wW+PYHrg2AJzLnaplSe5DcgUuw
+XkwAIQFaIlznfjcoaenJKL3k4j0TJyfD/Dq6qdcLIKKimIsUzQs=
+=WWM4
+-----END PGP SIGNATURE-----
+
+--4syblqsgtkenq3hx--
