@@ -1,51 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753444AbeDSM6Q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:58:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33760 "EHLO mail.bootlin.com"
+        id S1752644AbeDSNAT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:00:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57639 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751375AbeDSM6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:58:13 -0400
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH] drm/sun4i: Add missing frontend compatibles for A10, A13, A20 and A31
-Date: Thu, 19 Apr 2018 14:56:38 +0200
-Message-Id: <20180419125638.11683-1-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.16.3
+        id S1751169AbeDSNAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 09:00:17 -0400
+Date: Thu, 19 Apr 2018 15:00:11 +0200
+From: Borislav Petkov <bp@suse.de>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <jroedel@suse.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] x86/ldt: Fix support_pte_mask filtering in
+ map_ldt_struct()
+Message-ID: <20180419130011.GG3896@pd.tnic>
+References: <1523871837-8378-1-git-send-email-joro@8bytes.org>
+ <CALCETrVgQspiO3nnyhqiXi17iaGG7bRDsr3gpHwdDnYfFDZabQ@mail.gmail.com>
+ <07e2c23e-10b7-b03f-5706-3d4b910537ba@linux.intel.com>
+ <20180418121403.GA3434@pd.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180418121403.GA3434@pd.tnic>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Although frontend nodes are defined in the device-trees of the
-aforementioned platforms, there are no matching compatibles defined in
-the driver. This makes it impossible to probe the frontend on these
-platforms.
+On Wed, Apr 18, 2018 at 02:18:57PM +0200, Borislav Petkov wrote:
+> Btw, even with Jörg's fix,
+> 
+> fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
 
-Adding the appropriate compatibles to the driver fixes the issue.
+Some updates.
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- drivers/gpu/drm/sun4i/sun4i_frontend.c | 4 ++++
- 1 file changed, 4 insertions(+)
+1. current linus master with Joerg's fix triple-faults on the IVB laptop
+during resume from disk.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-index 85f75046712c..c5a3de11817d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-@@ -658,6 +658,10 @@ static const struct dev_pm_ops sun4i_frontend_pm_ops = {
- };
- 
- const struct of_device_id sun4i_frontend_of_table[] = {
-+	{ .compatible = "allwinner,sun7i-a10-display-frontend" },
-+	{ .compatible = "allwinner,sun7i-a13-display-frontend" },
-+	{ .compatible = "allwinner,sun7i-a20-display-frontend" },
-+	{ .compatible = "allwinner,sun7i-a31-display-frontend" },
- 	{ .compatible = "allwinner,sun8i-a33-display-frontend" },
- 	{ }
- };
+2. current linus master with Joerg's fix + those two:
+
+C Apr 17               Dave Hansen ( :  67) [PATCH 1/2] x86, pti: fix boot problems from Global-bit setting
+C Apr 17               Dave Hansen ( :  81) └─>[PATCH 2/2] x86, pti: fix boot warning from Global-bit setting
+
+triplefaults too.
+
+Bisection confirms again fb43d6cb91ef is the first bad:
+
+fb43d6cb91ef x86/mm: Do not auto-massage page protections <--- NOT OK
+6baf4bec02db x86/espfix: Document use of _PAGE_GLOBAL   <--- OK
+
 -- 
-2.16.3
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
