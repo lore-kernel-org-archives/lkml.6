@@ -1,94 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752786AbeDSK7i (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:59:38 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36453 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752695AbeDSK7O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:59:14 -0400
-Date: Thu, 19 Apr 2018 03:58:56 -0700
-From: tip-bot for Laura Abbott <tipbot@zytor.com>
-Message-ID: <tip-c3bca5d450b620dd3d36e14b5e1f43639fd47d6b@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, labbott@redhat.com,
-        m@max.pm, tglx@linutronix.de, mingo@kernel.org, john.stultz@linaro.org
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, labbott@redhat.com,
-        m@max.pm, tglx@linutronix.de, mingo@kernel.org, john.stultz@linaro.org
-In-Reply-To: <20180417215742.2521-1-labbott@redhat.com>
-References: <20180417215742.2521-1-labbott@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] posix-cpu-timers: Ensure set_process_cpu_timer
- is always evaluated
-Git-Commit-ID: c3bca5d450b620dd3d36e14b5e1f43639fd47d6b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        id S1752812AbeDSLAE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:00:04 -0400
+Received: from foss.arm.com ([217.140.101.70]:35890 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752617AbeDSK7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 06:59:03 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
+        linux-arch@vger.kernel.org
+Subject: [RFC PATCH 3/6] arm64: Use update{,_tsk}_thread_flag()
+Date: Thu, 19 Apr 2018 11:58:45 +0100
+Message-Id: <1524135528-28561-4-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1524135528-28561-1-git-send-email-Dave.Martin@arm.com>
+References: <1524135528-28561-1-git-send-email-Dave.Martin@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c3bca5d450b620dd3d36e14b5e1f43639fd47d6b
-Gitweb:     https://git.kernel.org/tip/c3bca5d450b620dd3d36e14b5e1f43639fd47d6b
-Author:     Laura Abbott <labbott@redhat.com>
-AuthorDate: Tue, 17 Apr 2018 14:57:42 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 19 Apr 2018 12:54:57 +0200
+This patch uses the new update_thread_flag() helpers to simplify a
+couple of if () set; else clear; constructs.
 
-posix-cpu-timers: Ensure set_process_cpu_timer is always evaluated
+No functional change.
 
-Commit a9445e47d897 ("posix-cpu-timers: Make set_process_cpu_timer()
-more robust") moved the check into the 'if' statement. Unfortunately,
-it did so on the right side of an && which means that it may get short
-circuited and never evaluated. This is easily reproduced with:
-
-$ cat loop.c
-void main() {
-  struct rlimit res;
-  /* set the CPU time limit */
-  getrlimit(RLIMIT_CPU,&res);
-  res.rlim_cur = 2;
-  res.rlim_max = 2;
-  setrlimit(RLIMIT_CPU,&res);
-
-  while (1);
-}
-
-Which will hang forever instead of being killed. Fix this by pulling the
-evaluation out of the if statement but checking the return value instead.
-
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1568337
-Fixes: a9445e47d897 ("posix-cpu-timers: Make set_process_cpu_timer() more robust")
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Cc: "Max R . P . Grossmann" <m@max.pm>
-Cc: John Stultz <john.stultz@linaro.org>
-Link: https://lkml.kernel.org/r/20180417215742.2521-1-labbott@redhat.com
-
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
 ---
- kernel/time/posix-cpu-timers.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/fpsimd.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 2541bd89f20e..5a6251ac6f7a 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -1205,10 +1205,12 @@ void set_process_cpu_timer(struct task_struct *tsk, unsigned int clock_idx,
- 			   u64 *newval, u64 *oldval)
- {
- 	u64 now;
-+	int ret;
+diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+index 87a3536..0c4e7e0 100644
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -618,10 +618,8 @@ int sve_set_vector_length(struct task_struct *task,
+ 	task->thread.sve_vl = vl;
  
- 	WARN_ON_ONCE(clock_idx == CPUCLOCK_SCHED);
-+	ret = cpu_timer_sample_group(clock_idx, tsk, &now);
+ out:
+-	if (flags & PR_SVE_VL_INHERIT)
+-		set_tsk_thread_flag(task, TIF_SVE_VL_INHERIT);
+-	else
+-		clear_tsk_thread_flag(task, TIF_SVE_VL_INHERIT);
++	update_tsk_thread_flag(task, TIF_SVE_VL_INHERIT,
++			       flags & PR_SVE_VL_INHERIT);
  
--	if (oldval && cpu_timer_sample_group(clock_idx, tsk, &now) != -EINVAL) {
-+	if (oldval && ret != -EINVAL) {
+ 	return 0;
+ }
+@@ -902,7 +900,7 @@ void fpsimd_thread_switch(struct task_struct *next)
+ 	if (current->mm)
+ 		task_fpsimd_save();
+ 
+-	if (next->mm) {
++	if (next->mm)
  		/*
- 		 * We are setting itimer. The *oldval is absolute and we update
- 		 * it to be relative, *newval argument is relative and we update
+ 		 * If we are switching to a task whose most recent userland
+ 		 * FPSIMD state is already in the registers of *this* cpu,
+@@ -910,13 +908,10 @@ void fpsimd_thread_switch(struct task_struct *next)
+ 		 * the TIF_FOREIGN_FPSTATE flag so the state will be loaded
+ 		 * upon the next return to userland.
+ 		 */
+-		if (__this_cpu_read(fpsimd_last_state.st) ==
+-			&next->thread.uw.fpsimd_state
+-		    && next->thread.fpsimd_cpu == smp_processor_id())
+-			clear_tsk_thread_flag(next, TIF_FOREIGN_FPSTATE);
+-		else
+-			set_tsk_thread_flag(next, TIF_FOREIGN_FPSTATE);
+-	}
++		update_tsk_thread_flag(next, TIF_FOREIGN_FPSTATE,
++			__this_cpu_read(fpsimd_last_state.st) !=
++				&next->thread.uw.fpsimd_state ||
++			next->thread.fpsimd_cpu != smp_processor_id());
+ }
+ 
+ void fpsimd_flush_thread(void)
+-- 
+2.1.4
