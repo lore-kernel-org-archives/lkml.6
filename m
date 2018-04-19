@@ -1,96 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752882AbeDSPIC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:08:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41183 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752255AbeDSPIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:08:00 -0400
-Date: Thu, 19 Apr 2018 17:07:59 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH] drm/sun4i: Add missing frontend compatibles for A10,
- A13, A20 and A31
-Message-ID: <20180419150759.ldi676ejnbtmb27z@flea>
-References: <20180419125638.11683-1-paul.kocialkowski@bootlin.com>
+        id S1752507AbeDSPLH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:11:07 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:44797 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbeDSPLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:11:05 -0400
+X-Google-Smtp-Source: AIpwx49In6UsczOEpvVCOPnzpzE0YChBbH4dyWGXD0yAPROpixJI8wqK4i7YRge+mY4gR32VPvh6Ww==
+Subject: Re: [RFC PATCH v2 4/4] acpi: apei: Warn when GHES marks correctable
+ errors as "fatal"
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
+        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
+        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
+        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
+References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
+ <20180416215903.7318-5-mr.nuke.me@gmail.com> <20180418175452.GK4795@pd.tnic>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <807002b1-ccb9-22c8-6563-ade7e44912ff@gmail.com>
+Date: Thu, 19 Apr 2018 10:11:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sk4w4ak4ug7fr4in"
-Content-Disposition: inline
-In-Reply-To: <20180419125638.11683-1-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180418175452.GK4795@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---sk4w4ak4ug7fr4in
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 19, 2018 at 02:56:38PM +0200, Paul Kocialkowski wrote:
-> Although frontend nodes are defined in the device-trees of the
-> aforementioned platforms, there are no matching compatibles defined in
-> the driver. This makes it impossible to probe the frontend on these
-> platforms.
->=20
-> Adding the appropriate compatibles to the driver fixes the issue.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_frontend.c | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun=
-4i/sun4i_frontend.c
-> index 85f75046712c..c5a3de11817d 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> @@ -658,6 +658,10 @@ static const struct dev_pm_ops sun4i_frontend_pm_ops=
- =3D {
->  };
-> =20
->  const struct of_device_id sun4i_frontend_of_table[] =3D {
-> +	{ .compatible =3D "allwinner,sun7i-a10-display-frontend" },
-> +	{ .compatible =3D "allwinner,sun7i-a13-display-frontend" },
-> +	{ .compatible =3D "allwinner,sun7i-a20-display-frontend" },
-> +	{ .compatible =3D "allwinner,sun7i-a31-display-frontend" },
+On 04/18/2018 12:54 PM, Borislav Petkov wrote:
+> On Mon, Apr 16, 2018 at 04:59:03PM -0500, Alexandru Gagniuc wrote:
 
-Most of these compatibles are wrong, so it won't really work :)
+(snip)
+>> +
+>> +		corrected_sev = max(corrected_sev, sec_sev);
+>> +	}
+>> +
+>> +	if ((sev >= GHES_SEV_PANIC) && (corrected_sev < sev)) {
+>> +		pr_warn("FIRMWARE BUG: Firmware sent fatal error that we were able to correct");
+>> +		pr_warn("BROKEN FIRMWARE: Complain to your hardware vendor");
+> 
+> No, I don't want any of that crap issuing stuff in dmesg and then people
+> opening bugs and running around and trying to replace hardware.
+> 
+> We either can handle the error and log a normal record somewhere or we
+> cannot and explode.
 
-If you only tested it on the A20, just add it. We didn't add all of
-them because there's some slight variations between the generations
-that are not yet taken into account.
+There is value in this. From my observations, fw claims it will do
+everything through FFS, yet fails to fully handle the situation. It's
+rooted in FW's assumptions about OS behavior. Because the (old) versions
+of windows, esxi, and rhel used during development crash, fw assumes
+that _all_ OSes crash. The result in a surprising majority of cases is
+that FFS doesn't properly handle recurring errors, and fw is, in fact,
+broken.
 
-Maxime
+> The complaining about the FW doesn't bring shit.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+You are correct. It doesn't bring defecation. It brings a red flag that
+helps people get closer to the root cause of problems.
 
---sk4w4ak4ug7fr4in
-Content-Type: application/pgp-signature; name="signature.asc"
+That being said, I can just drop this patch.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrYsM4ACgkQ0rTAlCFN
-r3RNaA//bNOeQyYkcMiGcFl0atmmm3fCaTvzu884/wb5chuTULV3gXwU+W0v3LC9
-OXsY6rrnRMCA0F3TK+9QJlTfCX8cmer8+N4iBcYLW+3T5SdheCZ8KbUXr37vFL2p
-7Gb/eyyIPnmEdQgo+9QglHy+END3KNPxMreyfbXJO5n6JV1tcoJFO8oisRDzFcWL
-r6y1h23d7kQJ1lX0V3YUYOkuwM2FsbnX3lzy9w8uNSvrbTrE53GZ7BuTTFoF8iMO
-u3ZMUNec9M+3V+dHUfcEgAJM5fcNwukLYGt0QX0LJ+nIf9HZGeleo+tC7llemFJP
-NKYvI0XoJ9NXnnSKMTJB/8FfWTLnD6gfkB16FToVQEbOl5epxO+0CDYtuw8q6qOW
-WHCprigNVOc0UXeu7zE36kanIOWsRK8gPxLlxJ+ciNobzf4KL3Rl1gJuBPu5il0k
-RS2ksUs7fiYNXU94B24S21Z49w9oqNKs46mt1aQu225vbnlWq1pu0WTeVQ7KLrMP
-UKbm772BQZR2peLBdi9/d94o4g372yNF1e8zd1uc0uTTXcdWtVpm4zqugy1RzlS9
-Nwh5o47V6aNNMKL1yig31E+km39WSu+FU/eGqf3IW0H4W7dAXGlWQiJCllFbwioh
-UeznItUpr76GYeZ88BRRSGw2BE67iPhS2bqyuHZut5Fdrl1RfZs=
-=PeI3
------END PGP SIGNATURE-----
-
---sk4w4ak4ug7fr4in--
+Alex
