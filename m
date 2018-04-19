@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752765AbeDSK7R (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:59:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35936 "EHLO
+        id S1752733AbeDSK7P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:59:15 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35966 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752670AbeDSK7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:59:08 -0400
+        id S1751228AbeDSK7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 06:59:11 -0400
 From: Dave Martin <Dave.Martin@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: Catalin Marinas <catalin.marinas@arm.com>,
@@ -18,9 +18,9 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>,
         Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
         linux-arch@vger.kernel.org
-Subject: [RFC PATCH 5/6] powerpc: Use update_thread_flag()
-Date: Thu, 19 Apr 2018 11:58:47 +0100
-Message-Id: <1524135528-28561-6-git-send-email-Dave.Martin@arm.com>
+Subject: [RFC PATCH 6/6] sparc: Use update_thread_flag()
+Date: Thu, 19 Apr 2018 11:58:48 +0100
+Message-Id: <1524135528-28561-7-git-send-email-Dave.Martin@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1524135528-28561-1-git-send-email-Dave.Martin@arm.com>
 References: <1524135528-28561-1-git-send-email-Dave.Martin@arm.com>
@@ -28,39 +28,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch uses the new update_thread_flag() helper to simplify a
-couple of if () set; else clear; constructs.
+This patch uses the new update_thread_flag() helper to simplify an
+if () set; else clear; construct.
 
 No functional change.
 
 Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: "David S. Miller" <davem@davemloft.net>
 ---
- arch/powerpc/include/asm/elf.h | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ arch/sparc/include/asm/elf_64.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/elf.h b/arch/powerpc/include/asm/elf.h
-index 548d9a4..136c9b1 100644
---- a/arch/powerpc/include/asm/elf.h
-+++ b/arch/powerpc/include/asm/elf.h
-@@ -88,14 +88,8 @@ typedef elf_vrregset_t elf_fpxregset_t;
- #ifdef __powerpc64__
- # define SET_PERSONALITY(ex)					\
- do {								\
--	if (((ex).e_flags & 0x3) == 2)				\
--		set_thread_flag(TIF_ELF2ABI);			\
--	else							\
--		clear_thread_flag(TIF_ELF2ABI);			\
--	if ((ex).e_ident[EI_CLASS] == ELFCLASS32)		\
--		set_thread_flag(TIF_32BIT);			\
--	else							\
--		clear_thread_flag(TIF_32BIT);			\
-+	update_thread_flag(TIF_ELF2ABI, ((ex).e_flags & 0x3) == 2);	\
-+	update_thread_flag(TIF_32BIT, (ex).e_ident[EI_CLASS] == ELFCLASS32); \
+diff --git a/arch/sparc/include/asm/elf_64.h b/arch/sparc/include/asm/elf_64.h
+index 7e078bc..f1ef89c 100644
+--- a/arch/sparc/include/asm/elf_64.h
++++ b/arch/sparc/include/asm/elf_64.h
+@@ -202,10 +202,7 @@ extern unsigned long sparc64_elf_hwcap;
+ #define ELF_PLATFORM	(NULL)
+ 
+ #define SET_PERSONALITY(ex)				\
+-do {	if ((ex).e_ident[EI_CLASS] == ELFCLASS32)	\
+-		set_thread_flag(TIF_32BIT);		\
+-	else						\
+-		clear_thread_flag(TIF_32BIT);		\
++do {	update_thread_flag(TIF_32BIT, (ex).e_ident[EI_CLASS] == ELFCLASS32); \
+ 	/* flush_thread will update pgd cache */	\
  	if (personality(current->personality) != PER_LINUX32)	\
- 		set_personality(PER_LINUX |			\
- 			(current->personality & (~PER_MASK)));	\
+ 		set_personality(PER_LINUX |		\
 -- 
 2.1.4
