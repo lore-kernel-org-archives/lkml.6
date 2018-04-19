@@ -1,182 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752641AbeDSMJK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:09:10 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:33697 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752496AbeDSMJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:09:08 -0400
-Date: Thu, 19 Apr 2018 14:09:02 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?iso-8859-1?Q?M=E5ns?= Andersson <mans.andersson@nibe.se>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: phy: TLK10X initial driver submission
-Message-ID: <20180419120902.GB17888@lunn.ch>
-References: <20180419082816.109338-1-mans.andersson@nibe.se>
+        id S1752743AbeDSMJs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 08:09:48 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:41064 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752209AbeDSMJq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 08:09:46 -0400
+Subject: Re: [PATCH 2/2] memory: aemif: add support for board files
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180418153552.14632-1-brgl@bgdev.pl>
+ <20180418153552.14632-3-brgl@bgdev.pl>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <15d56b6d-6546-0655-563e-4492982c8d78@ti.com>
+Date: Thu, 19 Apr 2018 17:39:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180419082816.109338-1-mans.andersson@nibe.se>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180418153552.14632-3-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 10:28:16AM +0200, Måns Andersson wrote:
-> From: Mans Andersson <mans.andersson@nibe.se>
-> 
-> Add suport for the TI TLK105 and TLK106 10/100Mbit ethernet phys.
-> 
-> In addition the TLK10X needs to be removed from DP83848 driver as the
-> power back off support is added here for this device.
-> 
-> Datasheet:
-> http://www.ti.com/lit/gpn/tlk106
-> ---
->  .../devicetree/bindings/net/ti,tlk10x.txt          |  27 +++
->  drivers/net/phy/Kconfig                            |   5 +
->  drivers/net/phy/Makefile                           |   1 +
->  drivers/net/phy/dp83848.c                          |   3 -
->  drivers/net/phy/tlk10x.c                           | 209 +++++++++++++++++++++
->  5 files changed, 242 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/ti,tlk10x.txt
->  create mode 100644 drivers/net/phy/tlk10x.c
-> 
-> diff --git a/Documentation/devicetree/bindings/net/ti,tlk10x.txt b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
-> new file mode 100644
-> index 0000000..371d0d7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
-> @@ -0,0 +1,27 @@
-> +* Texas Instruments - TLK105 / TLK106 ethernet PHYs
-> +
-> +Required properties:
-> +	- reg - The ID number for the phy, usually a small integer
-> +
-> +Optional properties:
-> +	- ti,power-back-off - Power Back Off Level
-> +		Please refer to data sheet chapter 8.6 and TI Application
-> +		Note SLLA3228
-> +		0 - Normal Operation
-> +		1 - Level 1 (up to 140m cable between TLK link partners)
-> +		2 - Level 2 (up to 100m cable between TLK link partners)
-> +		3 - Level 3 (up to 80m cable between TLK link partners)
+On Wednesday 18 April 2018 09:05 PM, Bartosz Golaszewski wrote:
+> @@ -373,15 +372,23 @@ static int aemif_probe(struct platform_device *pdev)
+>  		goto error;
+>  	}
+>  
+> -	/*
+> -	 * For every controller device node, there is a cs device node that
+> -	 * describe the bus configuration parameters. This functions iterate
+> -	 * over these nodes and update the cs data array.
+> -	 */
+> -	for_each_available_child_of_node(np, child_np) {
+> -		ret = of_aemif_parse_abus_config(pdev, child_np);
+> -		if (ret < 0)
+> -			goto error;
+> +	if (np) {
+> +		/*
+> +		 * For every controller device node, there is a cs device node
+> +		 * that describe the bus configuration parameters. This
+> +		 * functions iterate over these nodes and update the cs data
+> +		 * array.
+> +		 */
+> +		for_each_available_child_of_node(np, child_np) {
+> +			ret = of_aemif_parse_abus_config(pdev, child_np);
+> +			if (ret < 0)
+> +				goto error;
+> +		}
+> +	} else if (pdata && pdata->num_abus_data > 0) {
+> +		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
+> +			aemif->cs_data[i].cs = pdata->abus_data->cs;
 
-Hi Måns
+Since abus_data is an array, shouldn't it be pdata->abus_data[i].cs ?
 
-Device tree is all about board properties. In most cases, power back
-off is not a board properties, since it depends on the cable length
-and the peer board. If however, your board has two PHYs back to back,
-say to connect to an Ethernet switch, that would be a valid board
-property.
-
-How are you using this?
-
-I know of others who would like such a configuration. Marvell PHYs can
-do something similar. I've always suggested adding a PHY tunable. Pass
-the cable length in meters and let the PHY driver pick the nearest it
-can do, rounding up. The Marvell PHYs also support measuring the cable
-length as part of the cable diagnostics. So it would be good to
-reserve a configuration value to mean 'auto' - measure the cable and
-then pick the best power back off. Quickly scanning the data sheet, i
-see that this PHY also has the ability to measure the cable length.
-
-> +static int tlk10x_read(struct phy_device *phydev, int reg)
-> +{
-> +	if (reg & ~0x1f) {
-> +		/* Extended register */
-> +		phy_write(phydev, TLK10X_REGCR, 0x001F);
-> +		phy_write(phydev, TLK10X_ADDAR, reg);
-> +		phy_write(phydev, TLK10X_REGCR, 0x401F);
-> +		reg = TLK10X_ADDAR;
-> +	}
-> +
-> +	return phy_read(phydev, reg);
-> +}
-> +
-> +static int tlk10x_write(struct phy_device *phydev, int reg, int val)
-> +{
-> +	if (reg & ~0x1f) {
-> +		/* Extended register */
-> +		phy_write(phydev, TLK10X_REGCR, 0x001F);
-> +		phy_write(phydev, TLK10X_ADDAR, reg);
-> +		phy_write(phydev, TLK10X_REGCR, 0x401F);
-> +		reg = TLK10X_ADDAR;
-> +	}
-> +
-> +	return phy_write(phydev, reg, val);
-> +}
-
-This looks to be phy_read_mmd() and phy_write_mmd(). If so, please use
-them, they get the locking correct.
-
-
-> +#ifdef CONFIG_OF_MDIO
-> +static int tlk10x_of_init(struct phy_device *phydev)
-> +{
-> +	struct tlk10x_private *tlk10x = phydev->priv;
-> +	struct device *dev = &phydev->mdio.dev;
-> +	struct device_node *of_node = dev->of_node;
-> +	int ret;
-> +
-> +	if (!of_node)
-> +		return 0;
-> +
-> +	ret = of_property_read_u32(of_node, "ti,power-back-off",
-> +				   &tlk10x->pwrbo_level);
-> +	if (ret) {
-> +		dev_err(dev, "missing ti,power-back-off property");
-> +		tlk10x->pwrbo_level = 0;
-> +	}
-
-If we decide to accept this, you should do range checking, and return
--EINVAL if the value is out of range.
-
-> +static int tlk10x_config_init(struct phy_device *phydev)
-> +{
-> +	int ret, reg;
-> +	struct tlk10x_private *tlk10x;
-> +
-> +	ret = genphy_config_init(phydev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (!phydev->priv) {
-> +		tlk10x = devm_kzalloc(&phydev->mdio.dev, sizeof(*tlk10x),
-> +				      GFP_KERNEL);
-> +		if (!tlk10x)
-> +			return -ENOMEM;
-> +
-> +		phydev->priv = tlk10x;
-> +		ret = tlk10x_of_init(phydev);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		tlk10x = (struct tlk10x_private *)phydev->priv;
-> +	}
-
-This allocation should be done in .probe
-
-> +
-> +	// Power back off
-> +	if (tlk10x->pwrbo_level < 0 || tlk10x->pwrbo_level > 3)
-> +		tlk10x->pwrbo_level = 0;
-> +	reg = tlk10x_read(phydev, TLK10X_PWRBOCR);
-> +	reg = ((reg & ~TLK10X_PWRBOCR_MASK)
-> +		| (tlk10x->pwrbo_level << 6));
-> +	ret = tlk10x_write(phydev, TLK10X_PWRBOCR, reg);
-> +	if (ret < 0) {
-> +		dev_err(&phydev->mdio.dev,
-> +			"unable to set power back-off (err=%d)\n", ret);
-> +		return ret;
-> +	}
-> +	dev_info(&phydev->mdio.dev, "power back-off set to level %d\n",
-> +		 tlk10x->pwrbo_level);
-> +
-> +	return 0;
-> +}
-
-  Andrew
+Thanks,
+Sekhar
