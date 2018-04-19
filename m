@@ -1,77 +1,86 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3081306-1524141458-2-14315466053502568245
+X-Cyrus-Session-Id: sloti22d1t05-3169877-1524143245-2-14952397673530003883
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, TVD_PH_BODY_META 0.001,
-  TVD_PH_BODY_META_ALL 1.799, LANGUAGES enroca, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, TVD_PH_BODY_META 0.001, TVD_PH_BODY_META_ALL 1.799,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524141457; b=FFq4prjOiLoqZ0gZ3gsb7Gx7EeIGsmfNMPu1NKHaLKcyPZ6oLH
-    47d8CYtl4sY2O25zo7p19uOJ7/QdVG/9h8F6sIYwUmag8/SmdnM5/JbXr3f1d9D3
-    RNEDgg9U7Gyv6xSrBLSdrSi2Kn+wMyKOE5AVdTLl8PpCbEe9aAn/bwpTS+/GIsZq
-    Pn6BE4b+7v0+GQ5Yja23nwDCW5lkOQd1EqJgpxG7PYi1MCmHloVkGzq3751aLYzd
-    2eKiz1MpWgKDeFxTTh/hHoBs22jETm9XMoy7z9WAZYeDaTar6UOJvWkP0KLf0ZkM
-    TMbIOGiDts2ShIPkAbH5RmcHObGQQn7EqmSw==
+    1524143244; b=VJD0Dh7l+d5EQfk+ttGX2Xp+VpjvaOl27PYUspUeaJqRuJjPXP
+    JXPFrpAjqyd5pNn844zEFHNH3vBF8ZeKOQ42qpppOC2Q5cORhoCUVvwJxAtQ9pkE
+    /8YDFcijlorzjJvq94C1BASItQkhCY8jj0cqtM7dBn1NaEZzLLRcQ5fmjgIXMRuS
+    BMgEyMH3OQDuuYyndeMQkoxffDSc8FgFOnCJxw79mUNP/1F/4R0mRX2Cp+ptwp22
+    wjDeR4GFSoGdwQpfnocDl4ZoVhAZOV8BWM6JYIhz/uRSbKuLg3llA6JuBlJj1xQc
+    WaytgLYB1In30oFIHdDvbm6/eQbrqAZJiKgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524141457; bh=lpPJlHsvT0v2yNeQB2uPXzYWfbPlYl
-    Mq69ItrqAO1PQ=; b=LwQd6K3GGc9fK9u7ZuZMyy/lYZLukT0/P0UOZyNEUWDqQa
-    fLeQcDKSB0+fryJaLwN+dm1OllN1548P29tJS20i2W/p29B8B7BoPZXNNoJfZfCL
-    T72SLDPW64dIOPgxhArjXEHb7CnR1FdkftMoLiYoqK082iw4+Um4/yhwf9uZVw01
-    aeZ00Ps1T9pdkEMnvZXV8nN3Xokw9/NnVxPTZiqCQPOUD3oZpjxxsmeQxvkF0nDm
-    mIFuiSqUwAWihZ6l5zl9k/YrJm7RoufKNPVMn1CSz3+q9rgjFLfIE2CRt5vcdVb3
-    j7RRRoz78GICEpP/WkUKSz6SYw5qkcDBQpaGweng==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1524143244; bh=pzKdzzKUIglkEYRMoE1UUiEX2icTpo0v7cF5JfKVvQ
+    4=; b=IpriS6LGzk3gJmQAvAgZq78VAng4y+xhOvzROKaQInAGfAu5PFBZf4DTBf
+    sL6EdX6KSWc3YQ6BgKYN50vqWZybOVke5FPUFQKZo6Fyvl+Ga8uyf0fwMhlqMKV0
+    H5Mo2wWz/CYOKRFdWFy/+yWwSb8HLzoo7y0m0NuZwEt/qpYHhWxVgegZst+krRes
+    ZFesQ60ZHTd0rZhPTUK8qKybwmqsdAjM5+rrDMwq9k+AHPNX1BHy1iZrIOgPG39P
+    GSOwOtqVXvIFr5pnFXe8z67nH80w0CBDMOewM8nPWRLohFUt8kNmo7FOENHxlXG9
+    Nnalf8VWXzaUz1Jf/Eca0eWYs3ew==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=KhiS4Naw x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uhx98SeH;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b=KhiS4Naw x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=uhx98SeH;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=paul-moore.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHg6zkSjNA4PzNv1bpR2DNwIJWY1+muoRXU5B3jX5XyyuYbJH9KvJi00+GmCfllVzoOwRkAhWv4AWsi82TEtXAxw6dv7+asMvR1SSiTqAVRUeNbRH1mb
-    b3Ijy/KSqZsUDuuiYjJuOVIkKYrxcRgX9TliQxyh4WNPrWijVVD1n9QWUTvsbZdCqa/vgweFW+jZ5EjVHEEpIN387hd4JCoVj2loqpXNPvLJc/nSlTXd1o0Z
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=xVhDTqbCAAAA:8 a=VwQbUJbxAAAA:8 a=1PVALf44V1lLE6ejveMA:9
-    a=CjuIK1q_8ugA:10 a=jDz1Lg8WPqQA:10 a=x8gzFH9gYPwA:10
+X-CM-Envelope: MS4wfC2++9ZcrXTTEUQxa1+tSBIj80pWndCGCceTpOim7WUBgpBwuiroBEX0tZhFGp/dyPzvDLRBXGRht1QRqE3nmfoZ5hCkum/EhHhdmCNkIs20Vqq5AMcd
+    Vmju8DKQ2zdsBmK7P/GCbpdfTg8dkkYGSfFLwxR1nLTqfXAXKs379DU0BCDKhP2rPPqbp2a4TQBcxn47o2ogjNhlH1vagmAawERjulAbABjfDOcGpwpS3ovD
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=EmDd13E5pkEA:10 a=IkcTkHD0fZMA:10
+    a=Kd1tUaAdevIA:10 a=20KFwNOVAAAA:8 a=xVhDTqbCAAAA:8 a=VwQbUJbxAAAA:8
+    a=x5Lm99rlCkR1DWchEPEA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
     a=GrmWmAYt4dzCMttCBZOh:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeDSMhS (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 08:37:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53362 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751227AbeDSMhQ (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:37:16 -0400
-Date: Thu, 19 Apr 2018 08:31:09 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
+        id S1752694AbeDSNHW (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 09:07:22 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39497 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751449AbeDSNGq (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 09:06:46 -0400
+X-Google-Smtp-Source: AB8JxZpEOVEUq/18WLwTkvUZw/BHIKa/ZFWhGp/aaiMeoU4RVZqdVxq8Y64GWip2eNeZrB+NLq+EzgM68yqom9ekdUI=
+MIME-Version: 1.0
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <20180419123109.ab7gsnwrbtog4tbf@madcap2.tricolour.ca>
+References: <cover.1521179281.git.rgb@redhat.com> <c34a7a95eb045a62e2443457979db9d7afbd9aee.1521179281.git.rgb@redhat.com>
+ <CAHC9VhQ-i5oA48sXXnN2fP06t5=9-NMoY0bKcGXorQw2k=CK0Q@mail.gmail.com> <20180419123109.ab7gsnwrbtog4tbf@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 19 Apr 2018 08:59:29 -0400
+Message-ID: <CAHC9VhRL2PT65_c1OR=SNnicR+XVx33ZuuCttJ-OG+g3aBzsxg@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak32 V2 09/13] audit: add containerid support for
+ config/feature/user records
+To: Richard Guy Briggs <rgb@redhat.com>
 Cc: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
         linux-api@vger.kernel.org,
         Linux-Audit Mailing List <linux-audit@redhat.com>,
@@ -80,281 +89,56 @@ Cc: cgroups@vger.kernel.org, containers@lists.linux-foundation.org,
         jlayton@redhat.com, carlos@redhat.com, dhowells@redhat.com,
         viro@zeniv.linux.org.uk, simo@redhat.com,
         Eric Paris <eparis@parisplace.org>, serge@hallyn.com
-Subject: Re: [RFC PATCH ghak32 V2 09/13] audit: add containerid support for
- config/feature/user records
-Message-ID: <20180419123109.ab7gsnwrbtog4tbf@madcap2.tricolour.ca>
-References: <cover.1521179281.git.rgb@redhat.com>
- <c34a7a95eb045a62e2443457979db9d7afbd9aee.1521179281.git.rgb@redhat.com>
- <CAHC9VhQ-i5oA48sXXnN2fP06t5=9-NMoY0bKcGXorQw2k=CK0Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQ-i5oA48sXXnN2fP06t5=9-NMoY0bKcGXorQw2k=CK0Q@mail.gmail.com>
-User-Agent: NeoMutt/20171027
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018-04-18 21:27, Paul Moore wrote:
-> On Fri, Mar 16, 2018 at 5:00 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Add container ID auxiliary records to configuration change, feature set change
-> > and user generated standalone records.
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  kernel/audit.c       | 50 ++++++++++++++++++++++++++++++++++++++++----------
-> >  kernel/auditfilter.c |  5 ++++-
-> >  2 files changed, 44 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index b238be5..08662b4 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -400,8 +400,9 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
-> >  {
-> >         struct audit_buffer *ab;
-> >         int rc = 0;
-> > +       struct audit_context *context = audit_alloc_local();
-> 
-> We should be able to use current->audit_context here right?  If we
-> can't for every caller, perhaps we pass an audit_context as an
-> argument and only allocate a local context when the passed
-> audit_context is NULL.
-> 
-> Also, if you're not comfortable always using current, just pass the
-> audit_context as you do with audit_log_common_recv_msg().
+On Thu, Apr 19, 2018 at 8:31 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-04-18 21:27, Paul Moore wrote:
+>> On Fri, Mar 16, 2018 at 5:00 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+>> > Add container ID auxiliary records to configuration change, feature set change
+>> > and user generated standalone records.
+>> >
+>> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>> > ---
+>> >  kernel/audit.c       | 50 ++++++++++++++++++++++++++++++++++++++++----------
+>> >  kernel/auditfilter.c |  5 ++++-
+>> >  2 files changed, 44 insertions(+), 11 deletions(-)
+>> >
+>> > diff --git a/kernel/audit.c b/kernel/audit.c
+>> > index b238be5..08662b4 100644
+>> > --- a/kernel/audit.c
+>> > +++ b/kernel/audit.c
+>> > @@ -400,8 +400,9 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
+>> >  {
+>> >         struct audit_buffer *ab;
+>> >         int rc = 0;
+>> > +       struct audit_context *context = audit_alloc_local();
+>>
+>> We should be able to use current->audit_context here right?  If we
+>> can't for every caller, perhaps we pass an audit_context as an
+>> argument and only allocate a local context when the passed
+>> audit_context is NULL.
+>>
+>> Also, if you're not comfortable always using current, just pass the
+>> audit_context as you do with audit_log_common_recv_msg().
+>
+> As mentioned in the tree/watch/mark patch, this is all obsoleted by
+> making the AUDIT_CONFIG_CHANGE record a SYSCALL auxiliary record.
 
-As mentioned in the tree/watch/mark patch, this is all obsoleted by
-making the AUDIT_CONFIG_CHANGE record a SYSCALL auxiliary record.
-This review would have been more helpful a month and a half ago.
+You've known about my desire to connect records for quite some time.
 
-> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> >         if (unlikely(!ab))
-> >                 return rc;
-> >         audit_log_format(ab, "%s=%u old=%u", function_name, new, old);
-> > @@ -411,6 +412,8 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
-> >                 allow_changes = 0; /* Something weird, deny request */
-> >         audit_log_format(ab, " res=%d", allow_changes);
-> >         audit_log_end(ab);
-> > +       audit_log_container_info(context, "config", audit_get_containerid(current));
-> > +       audit_free_context(context);
-> >         return rc;
-> >  }
-> >
-> > @@ -1058,7 +1061,8 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
-> >         return err;
-> >  }
-> >
-> > -static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > +static void audit_log_common_recv_msg(struct audit_context *context,
-> > +                                     struct audit_buffer **ab, u16 msg_type)
-> >  {
-> >         uid_t uid = from_kuid(&init_user_ns, current_uid());
-> >         pid_t pid = task_tgid_nr(current);
-> > @@ -1068,7 +1072,7 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> >                 return;
-> >         }
-> >
-> > -       *ab = audit_log_start(NULL, GFP_KERNEL, msg_type);
-> > +       *ab = audit_log_start(context, GFP_KERNEL, msg_type);
-> >         if (unlikely(!*ab))
-> >                 return;
-> >         audit_log_format(*ab, "pid=%d uid=%u", pid, uid);
-> > @@ -1097,11 +1101,12 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
-> >                                      u32 old_lock, u32 new_lock, int res)
-> >  {
-> >         struct audit_buffer *ab;
-> > +       struct audit_context *context = audit_alloc_local();
-> 
-> So I know based on the other patch we are currently discussing that we
-> can use current here ...
-> 
-> >         if (audit_enabled == AUDIT_OFF)
-> >                 return;
-> >
-> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
-> > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
-> >         if (!ab)
-> >                 return;
-> >         audit_log_task_info(ab, current);
-> > @@ -1109,6 +1114,8 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
-> >                          audit_feature_names[which], !!old_feature, !!new_feature,
-> >                          !!old_lock, !!new_lock, res);
-> >         audit_log_end(ab);
-> > +       audit_log_container_info(context, "feature", audit_get_containerid(current));
-> > +       audit_free_context(context);
-> >  }
-> >
-> >  static int audit_set_feature(struct sk_buff *skb)
-> > @@ -1337,13 +1344,15 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> >
-> >                 err = audit_filter(msg_type, AUDIT_FILTER_USER);
-> >                 if (err == 1) { /* match or error */
-> > +                       struct audit_context *context = audit_alloc_local();
-> 
-> I'm pretty sure we can use current here.
-> 
-> >                         err = 0;
-> >                         if (msg_type == AUDIT_USER_TTY) {
-> >                                 err = tty_audit_push();
-> >                                 if (err)
-> >                                         break;
-> >                         }
-> > -                       audit_log_common_recv_msg(&ab, msg_type);
-> > +                       audit_log_common_recv_msg(context, &ab, msg_type);
-> >                         if (msg_type != AUDIT_USER_TTY)
-> >                                 audit_log_format(ab, " msg='%.*s'",
-> >                                                  AUDIT_MESSAGE_TEXT_MAX,
-> > @@ -1359,6 +1368,9 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> >                                 audit_log_n_untrustedstring(ab, data, size);
-> >                         }
-> >                         audit_log_end(ab);
-> > +                       audit_log_container_info(context, "user",
-> > +                                                audit_get_containerid(current));
-> > +                       audit_free_context(context);
-> >                 }
-> >                 break;
-> >         case AUDIT_ADD_RULE:
-> > @@ -1366,9 +1378,14 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> >                 if (nlmsg_len(nlh) < sizeof(struct audit_rule_data))
-> >                         return -EINVAL;
-> >                 if (audit_enabled == AUDIT_LOCKED) {
-> > -                       audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
-> > +                       struct audit_context *context = audit_alloc_local();
-> 
-> Pretty sure current can be used here too.  In fact I think everywhere
-> where we are processing commands from netlink we can use current as I
-> believe the entire netlink stack is processed in the context of the
-> caller.
-> 
-> > +                       audit_log_common_recv_msg(context, &ab, AUDIT_CONFIG_CHANGE);
-> >                         audit_log_format(ab, " audit_enabled=%d res=0", audit_enabled);
-> >                         audit_log_end(ab);
-> > +                       audit_log_container_info(context, "config",
-> > +                                                audit_get_containerid(current));
-> > +                       audit_free_context(context);
-> >                         return -EPERM;
-> >                 }
-> >                 err = audit_rule_change(msg_type, seq, data, nlmsg_len(nlh));
-> > @@ -1376,17 +1393,23 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> >         case AUDIT_LIST_RULES:
-> >                 err = audit_list_rules_send(skb, seq);
-> >                 break;
-> > -       case AUDIT_TRIM:
-> > +       case AUDIT_TRIM: {
-> > +               struct audit_context *context = audit_alloc_local();
-> 
-> Same.
-> 
-> >                 audit_trim_trees();
-> > -               audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
-> > +               audit_log_common_recv_msg(context, &ab, AUDIT_CONFIG_CHANGE);
-> >                 audit_log_format(ab, " op=trim res=1");
-> >                 audit_log_end(ab);
-> > +               audit_log_container_info(context, "config",
-> > +                                        audit_get_containerid(current));
-> > +               audit_free_context(context);
-> >                 break;
-> > +       }
-> >         case AUDIT_MAKE_EQUIV: {
-> >                 void *bufp = data;
-> >                 u32 sizes[2];
-> >                 size_t msglen = nlmsg_len(nlh);
-> >                 char *old, *new;
-> > +               struct audit_context *context = audit_alloc_local();
-> 
-> Same.
-> 
-> >                 err = -EINVAL;
-> >                 if (msglen < 2 * sizeof(u32))
-> > @@ -1408,7 +1431,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> >                 /* OK, here comes... */
-> >                 err = audit_tag_tree(old, new);
-> >
-> > -               audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
-> > +               audit_log_common_recv_msg(context, &ab, AUDIT_CONFIG_CHANGE);
-> >
-> >                 audit_log_format(ab, " op=make_equiv old=");
-> >                 audit_log_untrustedstring(ab, old);
-> > @@ -1418,6 +1441,9 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> >                 audit_log_end(ab);
-> >                 kfree(old);
-> >                 kfree(new);
-> > +               audit_log_container_info(context, "config",
-> > +                                        audit_get_containerid(current));
-> > +               audit_free_context(context);
-> >                 break;
-> >         }
-> >         case AUDIT_SIGNAL_INFO:
-> > @@ -1459,6 +1485,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> >                 struct audit_tty_status s, old;
-> >                 struct audit_buffer     *ab;
-> >                 unsigned int t;
-> > +               struct audit_context *context = audit_alloc_local();
-> 
-> Same.
-> 
-> >                 memset(&s, 0, sizeof(s));
-> >                 /* guard against past and future API changes */
-> > @@ -1477,12 +1504,15 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> >                 old.enabled = t & AUDIT_TTY_ENABLE;
-> >                 old.log_passwd = !!(t & AUDIT_TTY_LOG_PASSWD);
-> >
-> > -               audit_log_common_recv_msg(&ab, AUDIT_CONFIG_CHANGE);
-> > +               audit_log_common_recv_msg(context, &ab, AUDIT_CONFIG_CHANGE);
-> >                 audit_log_format(ab, " op=tty_set old-enabled=%d new-enabled=%d"
-> >                                  " old-log_passwd=%d new-log_passwd=%d res=%d",
-> >                                  old.enabled, s.enabled, old.log_passwd,
-> >                                  s.log_passwd, !err);
-> >                 audit_log_end(ab);
-> > +               audit_log_container_info(context, "config",
-> > +                                        audit_get_containerid(current));
-> > +               audit_free_context(context);
-> >                 break;
-> >         }
-> >         default:
-> > diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> > index c4c8746..5f7f4d6 100644
-> > --- a/kernel/auditfilter.c
-> > +++ b/kernel/auditfilter.c
-> > @@ -1109,11 +1109,12 @@ static void audit_log_rule_change(char *action, struct audit_krule *rule, int re
-> >         struct audit_buffer *ab;
-> >         uid_t loginuid = from_kuid(&init_user_ns, audit_get_loginuid(current));
-> >         unsigned int sessionid = audit_get_sessionid(current);
-> > +       struct audit_context *context = audit_alloc_local();
-> >
-> >         if (!audit_enabled)
-> >                 return;
-> 
-> Well, first I think we should be able to get rid of the local context,
-> but if for some reason we can't use current->audit_context then do the
-> allocation after the audit_enabled check.
-> 
-> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> >         if (!ab)
-> >                 return;
-> >         audit_log_format(ab, "auid=%u ses=%u" ,loginuid, sessionid);
-> > @@ -1122,6 +1123,8 @@ static void audit_log_rule_change(char *action, struct audit_krule *rule, int re
-> >         audit_log_key(ab, rule->filterkey);
-> >         audit_log_format(ab, " list=%d res=%d", rule->listnr, res);
-> >         audit_log_end(ab);
-> > +       audit_log_container_info(context, "config", audit_get_containerid(current));
-> > +       audit_free_context(context);
-> >  }
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
+> This review would have been more helpful a month and a half ago.
 
-- RGB
+If you really want to sink to that level of discussion, better quality
+patches from you would have been helpful too, that is the one of the
+main reasons why it takes so long to review your code.  Let's keep the
+commentary focused on the code, discussions like this aren't likely to
+be helpful to anyone.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+-- 
+paul moore
+www.paul-moore.com
