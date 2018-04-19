@@ -1,91 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751592AbeDVHsS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 22 Apr 2018 03:48:18 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39470 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750826AbeDVHsR (ORCPT
+        id S1751098AbeDVH4f (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 22 Apr 2018 03:56:35 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:33995 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750827AbeDVH4e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Apr 2018 03:48:17 -0400
-Message-ID: <1524383279.3389.7.camel@HansenPartnership.com>
-Subject: Re: [PATCH] bsg referencing bus driver module
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Anatoliy Glagolev <glagolig@gmail.com>
-Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        axboe@kernel.dk, fujita.tomonori@lab.ntt.co.jp,
-        martin.petersen@oracle.com, jthumshirn@suse.de, hare@suse.com,
-        bblock@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-Date: Sun, 22 Apr 2018 08:47:59 +0100
-In-Reply-To: <20180420224404.GC32372@xldev-tmpl.dev.purestorage.com>
-References: <CANFzKepsGq0EHX4GPtC0RZOWqVf2fTJ6uA2WH-SZNsBuwMJ5KA@mail.gmail.com>
-         <CANFzKer6QDaJALX3LKPF2DV6LgczTh-efQe9+zeK8BuxTWFt1A@mail.gmail.com>
-         <CANFzKepRSA+VoVAvOfW6U_qHFVDZex+=hQ=QhU+7Z=unvwejJQ@mail.gmail.com>
-         <1524218126.3321.6.camel@HansenPartnership.com>
-         <20180420224404.GC32372@xldev-tmpl.dev.purestorage.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 22 Apr 2018 03:56:34 -0400
+X-Google-Smtp-Source: AIpwx49AAuwvAdmnXMuKVVMZC70QuLwtRvwzUSZr9nl8tD6kWkJIQTEQIDF7SXMtsd8XYoF4QFhIDg==
+Date: Thu, 19 Apr 2018 13:21:14 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Fengguang Wu <fengguang.wu@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-kernel@vger.kernel.org, lkp@01.org
+Subject: Re: [dummy_stm_init] swapper/0: page allocation failure: order:9,
+ mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
+Message-ID: <20180419102114.irntfpy6i77apfq5@node.shutemov.name>
+References: <20180419023639.cddsueaq47mohfma@wfg-t540p.sh.intel.com>
+ <20180419065111.GM17484@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419065111.GM17484@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-20 at 16:44 -0600, Anatoliy Glagolev wrote:
->  
-> > This patch isn't applyable because your mailer has changed all the
-> > tabs to spaces.
+On Thu, Apr 19, 2018 at 08:51:11AM +0200, Michal Hocko wrote:
+> On Thu 19-04-18 10:36:39, Wu Fengguang wrote:
+> > Hi Alexander,
 > > 
-> > I also think there's no need to do it this way.  I think what we
-> > need is for fc_bsg_remove() to wait until the bsg queue is
-> > drained.  It does look like the author thought this happened
-> > otherwise the code wouldn't have the note.  If we fix it that way
-> > we can do the same thing in all the other transport classes that
-> > use bsg (which all have a similar issue).
+> > FYI this happens in mainline kernel 4.17.0-rc1.
+> > It dates back to at least v4.15.
 > > 
-> > James
+> > It occurs in 4 out of 4 boots. Here KVM has 1G memory.
 > > 
+> > This high order allocation caused lots of noises in our boot testing.
+> > We could disable this device in our tests, but it would be great if
+> > there are better ways out.
+> > 
+> > [   75.039408]       Product name: fake-design-for-testing
+> > [   75.040995] fmc fake-design-for-testing-f001: Driver has no ID: matches all
+> > [   75.042509] fmc_trivial: probe of fake-design-for-testing-f001 failed with error -95
+> > [   75.044323] fmc fake-design-for-testing-f001: Driver has no ID: matches all
+> > [   75.045644] fmc_chardev fake-design-for-testing-f001: Created misc device "fake-design-for-testing-f001"
+> > [   75.061570] swapper/0: page allocation failure: order:9, mode:0x14040c0(GFP_KERNEL|__GFP_COMP), nodemask=(null)
 > 
-> Thanks, James. Sorry about the tabs; re-sending.
+> Is there any reason why
+> > [   75.063338]  stm_register_device+0xf3/0x5c0:
+> > 						stm_register_device at drivers/hwtracing/stm/core.c:695
 > 
-> On fc_bsg_remove()...: are you suggesting to implement the whole fix
-> in scsi_transport_fc.c?
+> cannot use kvzalloc?
 
-Yes, but it's not just scsi_transport_fc, scsi_transport_sas has the
-same issue.  I think it's probably just the one liner addition of
-blk_drain_queue() that fixes this.  There should probably be a block
-primitive that does the correct queue reference dance and calls
-blk_cleanup_queue() and blk_drain_queue() in order.
+Michal, do you understand how allocating ~512kB leads to order-9 failure?
+Shouldn't it be order-8 at most? That's not clear to me.
 
->  That would be nice, but I do not see how that
-> is possible. Even with the queue drained bsg still holds a reference
-> to the Scsi_Host via bsg_class_device; bsg_class_device itself is
-> referenced on bsg_open and kept around while a user-mode process
-> keeps a handle to bsg.
-
-Once you've called bsg_unregister_queue(), the queue will be destroyed
-and the reference released once the last job is drained, meaning the
-user can keep the bsg device open, but it will just return errors
-because of the lack of queue.  This scenario allows removal to proceed
-without being held hostage by open devices.
-
-> Even if we somehow implement the waiting the call may be stuck
-> forever if the user-mode process keeps the handle.
-
-No it won't: after blk_cleanup_queue(), the queue is in bypass mode: no
-requests queued after this do anything other than complete with error,
-so they never make it into SCSI.
-
-> I think handling it via a rererence to the module is more consistent
-> with the way things are done in Linux. You suggested the approach
-> youself back in "Waiting for scsi_host_template release" discussion.
-
-That was before I analyzed the code paths.  Module release is tricky,
-because the module exit won't be called until the references drop to
-zero, so you have to be careful about not creating a situation where
-module exit never gets called and module exit code should force stuff
-to detach and wait for the forcing to complete to make up for the
-reference circularity problem.  If you do it purely by refcounting, the
-module actually may never release (that's why scsi_remove_host works
-the way it does, for instance).
-
-James
+-- 
+ Kirill A. Shutemov
