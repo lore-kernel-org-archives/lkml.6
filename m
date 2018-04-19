@@ -1,65 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752586AbeDSBvt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 21:51:49 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:41474 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeDSBvr (ORCPT
+        id S1753008AbeDSBwB convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 21:52:01 -0400
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:55809
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752700AbeDSBwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 21:51:47 -0400
-Subject: Re: PATCH V4 0/5 nvme-pci: fixes on nvme_timeout and nvme_dev_disable
-To: Ming Lei <ming.lei@redhat.com>
-Cc: keith.busch@intel.com, sagi@grimberg.me, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, axboe@fb.com, hch@lst.de
-References: <1520489971-31174-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180417151700.GC16286@ming.t460p>
- <a6e1de6d-6086-d467-d9ce-641bcd07b983@oracle.com>
- <20180418154032.GA22533@ming.t460p>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <2b985ef5-223f-6a11-45b4-e570c8a93bb3@oracle.com>
-Date: Thu, 19 Apr 2018 09:51:16 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180418154032.GA22533@ming.t460p>
-Content-Type: text/plain; charset=utf-8
+        Wed, 18 Apr 2018 21:52:00 -0400
+X-ASG-Debug-ID: 1524102717-093b7e10b3c3990001-xx1T2L
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+From: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+To: "sohil.mehta@intel.com" <sohil.mehta@intel.com>,
+        "gary.hook@amd.com" <gary.hook@amd.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "ghook@amd.com" <ghook@amd.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+Thread-Topic: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+X-ASG-Orig-Subj: Re: [PATCH v3 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+Thread-Index: AQHT1tpRJAZW59A4ZEqPfHlYD/OogKQFmZcAgAAR5ACAAMT2gIAACcYAgABT/QA=
+Date: Thu, 19 Apr 2018 01:52:02 +0000
+Message-ID: <1524102722.10902.1.camel@hxt-semitech.com>
+References: <152302042701.47565.17954813724758433858.stgit@sosxen2.amd.com>
+         <152302067362.47565.628887796165116844.stgit@sosxen2.amd.com>
+         <1523664612.2747.13.camel@intel.com>
+         <efa2b7a3-04a7-20b1-3651-89ebafa85c27@amd.com>
+         <1524031122.4031.5.camel@hxt-semitech.com>
+         <1524036520.2747.31.camel@intel.com>
+         <1524040290.4031.25.camel@hxt-semitech.com>
+         <1524082659.2747.37.camel@intel.com>
+         <151f3396-959b-86f6-e056-58d38682d858@amd.com>
+In-Reply-To: <151f3396-959b-86f6-e056-58d38682d858@amd.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8867 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=857
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804190017
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.64.6.5]
+Content-Type: text/plain; charset="iso-8859-15"
+Content-ID: <156E9AA99371004CA43B33CE2A76ADFD@hxt-semitech.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Barracuda-Connect: localhost[10.128.0.15]
+X-Barracuda-Start-Time: 1524102717
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.6345 1.0000 0.9281
+X-Barracuda-Spam-Score: 1.43
+X-Barracuda-Spam-Status: No, SCORE=1.43 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_RULE7568M
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.50042
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.50 BSF_RULE7568M          Custom Rule 7568M
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ming
+Hi, Gary,
 
-Thanks for your kindly response.
-
-On 04/18/2018 11:40 PM, Ming Lei wrote:
->> Regarding to this patchset, it is mainly to fix the dependency between
->> nvme_timeout and nvme_dev_disable, as your can see:
->> nvme_timeout will invoke nvme_dev_disable, and nvme_dev_disable have to
->> depend on nvme_timeout when controller no response.
-> Do you mean nvme_disable_io_queues()? If yes, this one has been handled
-> by wait_for_completion_io_timeout() already, and looks the block timeout
-> can be disabled simply. Or are there others?
+On Wed, 2018-04-18 at 16:51 -0400, Hook, Gary wrote:
+> On 4/18/2018 4:16 PM, Mehta, Sohil wrote:
+> > 
+> > On Wed, 2018-04-18 at 08:31 +0000, Yang, Shunyong wrote:
+> > > 
+> > > Maybe the original design is to call debugfs_initialized() before
+> > > calling debugfs_create_xxx()?
+> > I am unaware of the original design. Someone else would probably
+> > have
+> > more context. However, looking at other places in the kernel where
+> > debugfs_create_xx() is used, the common convention seems to be to
+> > avoid
+> > calling debugfs_initialized().
+> > 
+> >   Sohil
+> > 
+> debugfs_initialized() was introduced in commit c0f92ba99 back in 
+> 2.6.30-rc1. It was intended as a helper, not as a gatekeeper, which
+> is 
+> why one doesn't see it used. Given that my use in this proposed patch
+> is 
+> straightforward, I'm not seeing the need here. I had just seen some 
+> other code that used it, and copied the model.
 > 
-Here is one possible scenario currently
+> Unless someone comes along to say, yes, use it, I'll not.
+> 
 
-nvme_dev_disable // hold shutdown_lock             nvme_timeout
-  -> nvme_set_host_mem                               -> nvme_dev_disable
-    -> nvme_submit_sync_cmd                            -> try to require shutdown_lock 
-      -> __nvme_submit_sync_cmd
-        -> blk_execute_rq
-          //if sysctl_hung_task_timeout_secs == 0
-          -> wait_for_completion_io
-And maybe nvme_dev_disable need to issue other commands in the future.
+I agree with you and Sohil on removing the unnecessary function
+calling.
 
-Even if we could fix these kind of issues as nvme_disable_io_queues, 
-it is still a risk I think.
+Thanks.
+Shunyong.
 
-Thanks
-Jianchao
+
+> Gary
