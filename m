@@ -1,217 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753542AbeDSVmO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 17:42:14 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:54158 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753385AbeDSVmM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 17:42:12 -0400
-From: Stefan Agner <stefan@agner.ch>
-To: akpm@linux-foundation.org, mhocko@suse.com, catalin.marinas@arm.com
-Cc: torvalds@linux-foundation.org, pasha.tatashin@oracle.com,
-        ard.biesheuvel@linaro.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH] treewide: use PHYS_ADDR_MAX to avoid type casting ULLONG_MAX
-Date: Thu, 19 Apr 2018 23:42:04 +0200
-Message-Id: <20180419214204.19322-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.17.0
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         RCVD_TLS_ALL(0.00)[];
-         ASN(0.00)[asn:13030, ipnet:2001:1620::/32, country:CH];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_HAS_DN(0.00)[];
-         MID_CONTAINS_FROM(1.00)[];
-         TO_DN_SOME(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_EQ_ENVFROM(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[9]
+        id S1753616AbeDSVr1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 17:47:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38708 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753470AbeDSVrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 17:47:25 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE2D42077A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Thu, 19 Apr 2018 16:47:23 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Sinan Kaya <okaya@codeaurora.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org, sulrich@codeaurora.org,
+        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
+Message-ID: <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
+References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
+ <20180419202632.GE14063@ziepe.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419202632.GE14063@ziepe.ca>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With PHYS_ADDR_MAX there is now a type safe variant for all
-bits set. Make use of it.
+[+cc Alex, who might know why DRM drivers have their own PCIe Gen3 code]
 
-Patch created using a sematic patch as follows:
+On Thu, Apr 19, 2018 at 02:26:32PM -0600, Jason Gunthorpe wrote:
+> On Thu, Apr 19, 2018 at 03:56:23PM -0400, Sinan Kaya wrote:
+> > The infiniband adapter might be connected to a PCI hotplug slot. Performing
+> > secondary bus reset on a hotplug slot causes PCI link up/down interrupts.
+> > 
+> > Hotplug driver removes the device from system when a link down interrupt
+> > is observed and performs re-enumeration when link up interrupt is observed.
+> > 
+> > This conflicts with what this code is trying to do. Try secondary bus reset
+> > only if pci_reset_slot() fails/unsupported.
+> > 
+> > Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> >  drivers/infiniband/hw/hfi1/pcie.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/infiniband/hw/hfi1/pcie.c b/drivers/infiniband/hw/hfi1/pcie.c
+> > index 83d66e8..75f49e3 100644
+> > +++ b/drivers/infiniband/hw/hfi1/pcie.c
+> > @@ -908,7 +908,8 @@ static int trigger_sbr(struct hfi1_devdata *dd)
+> 
+> The code above this hunk is:
+> 
+> /*
+>  * Trigger a secondary bus reset (SBR) on ourselves using our parent.
+>  *
+>  * Based on pci_parent_bus_reset() which is not exported by the
+>  * kernel core.
+>  */
+> static int trigger_sbr(struct hfi1_devdata *dd)
+> {
+> 
+> [..]
+> 
+> This really seems like something the PCI core should be helping with,
+> drivers shouldn't be doing stuff like this. I get the feeling this
+> should be a common need if drivers support various error recovery
+> schemes?
+> 
+> Bjorn, would be appropriate to export pci_parent_bus_reset() or some
+> variation therin??
 
-// <smpl>
-@@
-typedef phys_addr_t;
-@@
--(phys_addr_t)ULLONG_MAX
-+PHYS_ADDR_MAX
-// </smpl>
+I agree it would be really nice if the PCI core could help out somehow
+so we could get some of this code out of individual drivers.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm64/mm/init.c               | 6 +++---
- arch/mips/kernel/setup.c           | 4 ++--
- arch/powerpc/mm/mem.c              | 2 +-
- arch/sparc/mm/init_64.c            | 2 +-
- arch/x86/mm/init_32.c              | 2 +-
- arch/x86/mm/init_64.c              | 2 +-
- drivers/firmware/efi/arm-init.c    | 2 +-
- drivers/remoteproc/qcom_q6v5_pil.c | 2 +-
- drivers/soc/qcom/mdt_loader.c      | 4 ++--
- 9 files changed, 13 insertions(+), 13 deletions(-)
+If fact, stepping back a few paces, this HFI reset path is part of a
+transition to PCIe gen3 signaling, and I'm not sure why *that* is in
+the driver either.
 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 9f3c47acf8ff..f48b19496141 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -310,7 +310,7 @@ static void __init arm64_memory_present(void)
- }
- #endif
- 
--static phys_addr_t memory_limit = (phys_addr_t)ULLONG_MAX;
-+static phys_addr_t memory_limit = PHYS_ADDR_MAX;
- 
- /*
-  * Limit the memory size that was specified via FDT.
-@@ -401,7 +401,7 @@ void __init arm64_memblock_init(void)
- 	 * high up in memory, add back the kernel region that must be accessible
- 	 * via the linear mapping.
- 	 */
--	if (memory_limit != (phys_addr_t)ULLONG_MAX) {
-+	if (memory_limit != PHYS_ADDR_MAX) {
- 		memblock_mem_limit_remove_map(memory_limit);
- 		memblock_add(__pa_symbol(_text), (u64)(_end - _text));
- 	}
-@@ -664,7 +664,7 @@ __setup("keepinitrd", keepinitrd_setup);
-  */
- static int dump_mem_limit(struct notifier_block *self, unsigned long v, void *p)
- {
--	if (memory_limit != (phys_addr_t)ULLONG_MAX) {
-+	if (memory_limit != PHYS_ADDR_MAX) {
- 		pr_emerg("Memory Limit: %llu MB\n", memory_limit >> 20);
- 	} else {
- 		pr_emerg("Memory Limit: none\n");
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 563188ac6fa2..2c96c0c68116 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -93,7 +93,7 @@ void __init add_memory_region(phys_addr_t start, phys_addr_t size, long type)
- 	 * If the region reaches the top of the physical address space, adjust
- 	 * the size slightly so that (start + size) doesn't overflow
- 	 */
--	if (start + size - 1 == (phys_addr_t)ULLONG_MAX)
-+	if (start + size - 1 == PHYS_ADDR_MAX)
- 		--size;
- 
- 	/* Sanity check */
-@@ -376,7 +376,7 @@ static void __init bootmem_init(void)
- 	unsigned long reserved_end;
- 	unsigned long mapstart = ~0UL;
- 	unsigned long bootmap_size;
--	phys_addr_t ramstart = (phys_addr_t)ULLONG_MAX;
-+	phys_addr_t ramstart = PHYS_ADDR_MAX;
- 	bool bootmap_valid = false;
- 	int i;
- 
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index 737f8a4632cc..7607a509c695 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -213,7 +213,7 @@ void __init mem_topology_setup(void)
- 	/* Place all memblock_regions in the same node and merge contiguous
- 	 * memblock_regions
- 	 */
--	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
-+	memblock_set_node(0, PHYS_ADDR_MAX, &memblock.memory, 0);
- }
- 
- void __init initmem_init(void)
-diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
-index 8aeb1aabe76e..f396048a0d68 100644
---- a/arch/sparc/mm/init_64.c
-+++ b/arch/sparc/mm/init_64.c
-@@ -1620,7 +1620,7 @@ static void __init bootmem_init_nonnuma(void)
- 	       (top_of_ram - total_ram) >> 20);
- 
- 	init_node_masks_nonnuma();
--	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
-+	memblock_set_node(0, PHYS_ADDR_MAX, &memblock.memory, 0);
- 	allocate_node_data(0);
- 	node_set_online(0);
- }
-diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
-index c893c6a3d707..979e0a02cbe1 100644
---- a/arch/x86/mm/init_32.c
-+++ b/arch/x86/mm/init_32.c
-@@ -692,7 +692,7 @@ void __init initmem_init(void)
- 	high_memory = (void *) __va(max_low_pfn * PAGE_SIZE - 1) + 1;
- #endif
- 
--	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
-+	memblock_set_node(0, PHYS_ADDR_MAX, &memblock.memory, 0);
- 	sparse_memory_present_with_active_regions(0);
- 
- #ifdef CONFIG_FLATMEM
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 0a400606dea0..765a50fb6364 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -742,7 +742,7 @@ kernel_physical_mapping_init(unsigned long paddr_start,
- #ifndef CONFIG_NUMA
- void __init initmem_init(void)
- {
--	memblock_set_node(0, (phys_addr_t)ULLONG_MAX, &memblock.memory, 0);
-+	memblock_set_node(0, PHYS_ADDR_MAX, &memblock.memory, 0);
- }
- #endif
- 
-diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
-index 80d1a885def5..b5214c143fee 100644
---- a/drivers/firmware/efi/arm-init.c
-+++ b/drivers/firmware/efi/arm-init.c
-@@ -193,7 +193,7 @@ static __init void reserve_regions(void)
- 	 * uses its own memory map instead.
- 	 */
- 	memblock_dump_all();
--	memblock_remove(0, (phys_addr_t)ULLONG_MAX);
-+	memblock_remove(0, PHYS_ADDR_MAX);
- 
- 	for_each_efi_memory_desc(md) {
- 		paddr = md->phys_addr;
-diff --git a/drivers/remoteproc/qcom_q6v5_pil.c b/drivers/remoteproc/qcom_q6v5_pil.c
-index 8e70a627e0bb..da8edf3f85b3 100644
---- a/drivers/remoteproc/qcom_q6v5_pil.c
-+++ b/drivers/remoteproc/qcom_q6v5_pil.c
-@@ -615,7 +615,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 	struct elf32_hdr *ehdr;
- 	phys_addr_t mpss_reloc;
- 	phys_addr_t boot_addr;
--	phys_addr_t min_addr = (phys_addr_t)ULLONG_MAX;
-+	phys_addr_t min_addr = PHYS_ADDR_MAX;
- 	phys_addr_t max_addr = 0;
- 	bool relocate = false;
- 	char seg_name[10];
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index 17b314d9a148..dc09d7ac905f 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -50,7 +50,7 @@ ssize_t qcom_mdt_get_size(const struct firmware *fw)
- 	const struct elf32_phdr *phdrs;
- 	const struct elf32_phdr *phdr;
- 	const struct elf32_hdr *ehdr;
--	phys_addr_t min_addr = (phys_addr_t)ULLONG_MAX;
-+	phys_addr_t min_addr = PHYS_ADDR_MAX;
- 	phys_addr_t max_addr = 0;
- 	int i;
- 
-@@ -97,7 +97,7 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	const struct elf32_hdr *ehdr;
- 	const struct firmware *seg_fw;
- 	phys_addr_t mem_reloc;
--	phys_addr_t min_addr = (phys_addr_t)ULLONG_MAX;
-+	phys_addr_t min_addr = PHYS_ADDR_MAX;
- 	phys_addr_t max_addr = 0;
- 	size_t fw_name_len;
- 	ssize_t offset;
--- 
-2.17.0
+There's an ongoing discussion [1] about why this gen3 code is in the
+driver.  Several DRM drivers include similar code
+(cik_pcie_gen3_enable(), si_pcie_gen3_enable()).
+
+I *thought* the hardware was supposed to automatically negotiate to
+the highest rate supported by both sides without any help at all from
+software.  But since several drivers have code to do it themselves, I
+wonder if I'm missing something, or maybe there's something the PCI
+core should be doing that it isn't, and the driver code is basically
+working around that PCI core deficiency.
+
+[1] https://lkml.kernel.org/r/20180417171956.GJ28657@bhelgaas-glaptop.roam.corp.google.com
