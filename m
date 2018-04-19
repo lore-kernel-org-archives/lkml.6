@@ -1,125 +1,142 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3526227-1524155022-2-9308811740416468674
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3240820-1524147301-2-3776316846930889718
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: from='iso-8859-1', plain='iso-8859-1'
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524155021; b=Zipry72KXg1UUB9JH9Srvxw1188hMcZdPgRreBxFy6jC6A09wD
-    9KYiBwwbTT9ZNdqWZSmLXaRWiFIonja3WObCQwWcJpSdNCipyO0OC42Yp2zHjS6M
-    mCCXFzb+cvgiR68DA9enmxG9KeBCCvUDBq5IuCdMPmFEIzzvhvXyv8xvksUirdxA
-    3XP9oxviVuvvHEM1KLv4hqmOsMXkyCJmj7hdy/uQsxWuKlwewBhavHR8pV2Y6/Vk
-    i4s/+RSwHZdseJW0SQusTNeFT0ncB6cR7FGzy65sYQeeBxC+lFSJUNZNpbkwfKhQ
-    TX6CqwjklBHi2kyuXAxL8ZY6HPkCRsHlf8Rw==
+    1524147300; b=vcoUXMQkrNozgKxo/MXG/gXFgmCPuX5ogjHefcHRqIW0AptqQl
+    6Mdz1cCbzkXp9iUL3x4Rxc6qU0TrZvV35OSlRkWUTtUN5z+LtVVk8Otp28n++Fxp
+    Ic0ktOPDHsRckC736KHne+au9MMphdb41kpRlOCXqK8gUVQRKB0m2RI4Iab+pQTW
+    N9ia5T8lv1BzGwuGVg/NfYa6luCn4CzTSrIoLqEnKkpMyVJCR4+JHhYJAuuZ4Oap
+    SjXh91+3VGUNwnWHQlYNrpMgy0hGD6okhvKpi94nCzXoqTR8ZdoCpx/KzWUPHMUN
+    A+yl8nkSCfGg2EYIrDuBWtTDPsx6jcBPN2oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1524155021; bh=IUwLeTONhxb
-    WLjcawikI1H7h7EHk2iUrqvqFQUA77Bc=; b=Yzge1g56+AGJLGwzX4g1HaIvmzx
-    Q7qzqqr6ywUoSeiKWpz9rzXfz54192FSNKJ8+Xj7sbKuRr9+vlz1RyKUXh28+/Bi
-    G7qLdKfQaT8nhd3ih9/OW5iNVYexu3oz+TMq3Ul4KEbUG3KNF/rpgcf6zoLrDXsM
-    krPRwfjGRR9JJliZyrmHQDD8qOwSWS5FNKXP1P7t0SgFtlruJUMzE0dadce0Gepq
-    OPs4ug2QQ077UQpzIj87+CgmCwnYbtK6f9tHPJ7GgIINL/6gZBFnncn8ueDCn2EV
-    6B8+gr5/1gx1pEwyEd4sVE8+BC128REij/7WdxsJU7w/ASJg2uxv9YnI7eg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524147300; bh=rJwDB
+    H1Py7heWzVOr9wcM81Hp7Q/kMO56+r4b9ANVtY=; b=quBUknVr8Cr9SkSo6S6PD
+    krTFJ47IStQ+27cKqvtc6p6S7fHdc46vznHtPxQu294sPWqJi7bXEzTzRfsjQVJw
+    zxxgA+vsm0K758xOBD6EiK2opv/65yEOc7KD5lhoenk3l8Zm3WwySWyiQhuiP5P+
+    30S3CpWVv41DrDQywlSodRkphridGxziKk8Y8gMOiX8ytNuQ8lpxcN+8+fjsDJ6V
+    1iTzIcUd9Lb+4XEXZevUa1xGzwvNp7xnnseU20Y7V48q9dRvsNhr/tcNurvLczzM
+    kY4NaJYNloSSb9VGzVHFDlFyS8dYmry35texo8nrxj89rc+oYBfela6Yj+HKYUGI
+    Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=sang-engineering.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=pengutronix.de header.result=pass header_is_org_domain=yes;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=sang-engineering.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=sang-engineering.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=pengutronix.de header.result=pass header_is_org_domain=yes;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=sang-engineering.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG7D1Thkr9K96GfqoW6IRQ8ui2qdoXcWTVvlvDz/YtkR1hrK5D+zJrDel9lHXkJBesTq9l6lws9IP1HYuK1EMe1Lr/aI6yNigOMinE7bdiHdqOdSe5LF
-    yeXKU2qAZe4Jt2lP/Nf8XvwDwPB1kQIiuE0iphIgcbeLFukqyuDjR+COwoMMnhYCvx+mz3bBHurH8fLDSOHeQ92hGBp439PZ4w4GzXii90Ozrl617EBMighm
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10
-    a=Kd1tUaAdevIA:10 a=LDBv8-xUAAAA:8 a=bGNZPXyTAAAA:8 a=VwQbUJbxAAAA:8
-    a=0krFTgGOLx_hOe0wlwAA:9 a=wPNLvfGTeEIA:10 a=x8gzFH9gYPwA:10
-    a=DZeXCJrVpAJBw65Qk4Ds:22 a=yL4RfsBhuEsimFDS2qtJ:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfM+APydGWG3AOyXuXLTfpg0HLi+cHUvkkck+UVKZXu+CeilYAANZ1KznAMCgYOErkl/JOiz5PubohQ4SQ9ct5sSYqrLur1801cccvrXFT+XcZjYe96bi
+    LVA+wE1tVyiEIb8sAyOlipFZL8gPBQSgiqKKJts6+zlfrsIcEa3VG84Pi4ifvhDuqijcjyGi1ezBnq5GPISQs38EgH5l+Tlsc7z5NY5zvVMuSCLim6JClmUq
+    cgATymamAXSAKV12gN8B6A==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=LDBv8-xUAAAA:8 a=DDOyTI_5AAAA:8
+    a=TfsKkDOJGvE6wVcqPHgA:9 a=CjuIK1q_8ugA:10 a=DZeXCJrVpAJBw65Qk4Ds:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753950AbeDSQXi (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 12:23:38 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34755 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753709AbeDSQXh (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:23:37 -0400
-Date: Thu, 19 Apr 2018 18:23:24 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 53/61] tty: serial: simplify getting .drvdata
-Message-ID: <20180419162324.f46tsdomp4vi67cb@pengutronix.de>
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Subject: [PATCH 49/61] staging: nvec: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:19 +0200
+Message-Id: <20180419140641.27926-50-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-54-wsa+renesas@sang-engineering.com>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ kernel-janitors@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-tegra@vger.kernel.org,
+ ac100@lists.launchpad.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180419140641.27926-54-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-serial@vger.kernel.org
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello Wolfram,
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-On Thu, Apr 19, 2018 at 04:06:23PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/tty/serial/imx.c              | 18 ++++++------------
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Marc Dietrich <marvin24@gmx.de>
+---
 
-for serial/imx.c:
+Build tested only. buildbot is happy. Please apply individually.
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+ drivers/staging/nvec/nvec.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Thanks Wolfram for going through this
-Uwe
-
-
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 52054a528723..2a5e0dcf4162 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -925,8 +925,7 @@ static int tegra_nvec_remove(struct platform_device *pdev)
+ static int nvec_suspend(struct device *dev)
+ {
+ 	int err;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct nvec_chip *nvec = platform_get_drvdata(pdev);
++	struct nvec_chip *nvec = dev_get_drvdata(dev);
+ 	struct nvec_msg *msg;
+ 	char ap_suspend[] = { NVEC_SLEEP, AP_SUSPEND };
+ 
+@@ -946,8 +945,7 @@ static int nvec_suspend(struct device *dev)
+ 
+ static int nvec_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct nvec_chip *nvec = platform_get_drvdata(pdev);
++	struct nvec_chip *nvec = dev_get_drvdata(dev);
+ 
+ 	dev_dbg(nvec->dev, "resuming\n");
+ 	tegra_init_i2c_slave(nvec);
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.11.0
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
