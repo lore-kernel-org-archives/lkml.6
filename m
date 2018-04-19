@@ -1,83 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753539AbeDSOjF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:39:05 -0400
-Received: from gateway36.websitewelcome.com ([192.185.200.11]:41162 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753162AbeDSOjC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:39:02 -0400
-X-Authority-Reason: nr=8
-Date: Thu, 19 Apr 2018 08:53:16 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mmc: sdhci-cadence: fix logically and structurally dead code
-Message-ID: <20180419135316.GA14790@embeddedor.com>
+        id S1753707AbeDSOjx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:39:53 -0400
+Received: from mga03.intel.com ([134.134.136.65]:42317 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753628AbeDSOjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:39:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,469,1517904000";
+   d="scan'208";a="33159508"
+Subject: Re: [i915] WARNING: CPU: 2 PID: 183 at
+ drivers/gpu/drm/i915/intel_display.c:14584 intel_modeset_init+0x3be/0x1060
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: intel-gfx@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Imre Deak <imre.deak@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Ben Widawsky <ben@bwidawsk.net>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, lkp@01.org
+References: <20180419025256.vtt37aljreb2wzrj@wfg-t540p.sh.intel.com>
+ <0427eb0b-0382-db2c-72c5-0cbc867d4370@linux.intel.com>
+ <20180419110505.wy47nheshalanxek@wfg-t540p.sh.intel.com>
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Message-ID: <e7cee8ae-f3b4-f342-f381-8ed48809148e@linux.intel.com>
+Date: Thu, 19 Apr 2018 16:39:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.6.211
-X-Source-L: No
-X-Exim-ID: 1f99zx-001dxw-AF
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.175.6.211]:39794
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180419110505.wy47nheshalanxek@wfg-t540p.sh.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the code block inside the for loop will never execute
-more than once, because the function returns inmediately after
-the first iteration, hence the execution of the code at the second
-iteration is structurally dead and, code at line 281: return 0; is
-never reached.
+Op 19-04-18 om 13:05 schreef Fengguang Wu:
+> Hi Maarten,
+>
+>> What extra dmesg output do you get when you boot with drm.debug=0x1f ?
+>
+> Attached is the dmesg with drm.debug=0x1f.
+>
+> Thanks,
+> Fengguang
 
-Based on the code comments, it seems that the actual intention is
-to execute the code inside the for loop twice instead of once.
+Ah so we're inheriting the FB 2x, once with 1280x1024, other with 1366x768:
 
-So, fix this issue by removing the return statement inside the for
-loop and replace the "return 0" with "return ret".
+kern  :debug : [   74.880444] [drm:i9xx_get_initial_plane_config [i915]] pipe A/primary A with fb: size=1366x768@32, offset=61000, pitch 5504, size 0x408000
+kern  :debug : [   74.881187] [drm:i915_gem_object_create_stolen_for_preallocated [i915]] creating preallocated stolen object: stolen_offset=0x0000000000061000, gtt_offset=0x0000000000061000, size=0x0000000000408000
+kern  :debug : [   74.882197] [drm:intel_alloc_initial_plane_obj.isra.126 [i915]] initial plane fb obj 000000005efa24f9
 
-Addresses-Coverity-ID: 1468009 ("Logically dead code")
-Addresses-Coverity-ID: 1468002 ("Structurally dead code")
-Fixes: 213fae74318b ("mmc: sdhci-cadence: send tune request twice to
-work around errata")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/mmc/host/sdhci-cadence.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+kern  :debug : [   74.883532] [drm:i9xx_get_initial_plane_config [i915]] pipe B/primary B with fb: size=1280x1024@32, offset=61000, pitch 5504, size 0x560000
+kern  :debug : [   74.884260] [drm:i915_gem_object_create_stolen_for_preallocated [i915]] creating preallocated stolen object: stolen_offset=0x0000000000061000, gtt_offset=0x0000000000061000, size=0x0000000000560000
+kern  :debug : [   74.885295] [drm:i915_gem_object_create_stolen_for_preallocated [i915]] failed to allocate stolen space
 
-diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-index bc30d16..facbad8 100644
---- a/drivers/mmc/host/sdhci-cadence.c
-+++ b/drivers/mmc/host/sdhci-cadence.c
-@@ -275,10 +275,9 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
- 					 !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
- 					 0, 1);
- 
--		return ret;
- 	}
- 
--	return 0;
-+	return ret;
- }
- 
- static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)
--- 
-2.7.4
+Which of course fails, but should be an interesting case to handle right. :)
+
+~Maarten
