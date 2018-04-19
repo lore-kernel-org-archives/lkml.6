@@ -1,57 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753364AbeDSS40 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 14:56:26 -0400
-Received: from mail-vk0-f45.google.com ([209.85.213.45]:46183 "EHLO
-        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752984AbeDSS4Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 14:56:25 -0400
-X-Google-Smtp-Source: AIpwx48pjj8O43xKnW1XCqZRAm3eoH9roZOeR8HAK3LfW2Pu7NjaYtCmSNt3sk5Kqpx/kO43I0fEx+m4YOsKAekzqWs=
+        id S1753370AbeDSTDq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 15:03:46 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:43150 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753074AbeDSTDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 15:03:44 -0400
+Date: Thu, 19 Apr 2018 21:03:23 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Alex G." <mr.nuke.me@gmail.com>
+Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
+        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
+        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
+        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
+        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
+        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
+        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
+Subject: Re: [RFC PATCH v2 3/4] acpi: apei: Do not panic() when correctable
+ errors are marked as fatal.
+Message-ID: <20180419190323.GF5635@pd.tnic>
+References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
+ <20180416215903.7318-4-mr.nuke.me@gmail.com>
+ <20180418175415.GJ4795@pd.tnic>
+ <bdc1d19b-3cc1-3f90-d276-414aaacdbd3a@gmail.com>
+ <20180419154006.GE3600@pd.tnic>
+ <977608e6-9f5d-c523-a78a-993ac5bfd55f@gmail.com>
+ <20180419164528.GD5635@pd.tnic>
+ <ffe6b459-c80a-d3c0-451d-0d21ae63da54@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CACsK=jcgPLMydKfRkKKXXUVqAWXwszbvkr=5jYXXPAmigTtszQ@mail.gmail.com>
-References: <CAG5TwLMyYtN19OFh=hxJ6bE_GRtoy-SkpK4K5jbfmQJV587mRw@mail.gmail.com>
- <CAG5TwLORDZPmfF7P0S2y9_7PscjvcuQd4WYnZTsBwCi+y47dOQ@mail.gmail.com>
- <CAM_iQpVtaP=NNpMTyS9vwEtS3QSN_ksYDenS4gy8zzPC3V8Xww@mail.gmail.com>
- <CAF=yD-Lyu8YYiquNNat_RZ53Ydniivz59C8dek6RsWuy0YE8Cw@mail.gmail.com>
- <CACsK=jeTu1mhOXXAFAkp5nGVG6WbcV+dJZmTavdjWerHhDQfVg@mail.gmail.com> <CACsK=jcgPLMydKfRkKKXXUVqAWXwszbvkr=5jYXXPAmigTtszQ@mail.gmail.com>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Thu, 19 Apr 2018 14:55:43 -0400
-Message-ID: <CAF=yD-JR1Bg1FLat41Uua9vi1-ALyuQttChAWyWz0Yx6_01_BA@mail.gmail.com>
-Subject: Re: WARNING in refcount_dec
-To: DaeRyong Jeong <threeearcat@gmail.com>
-Cc: Cong Wang <xiyou.wangcong@gmail.com>,
-        Byoungyoung Lee <byoungyoung@purdue.edu>,
-        LKML <linux-kernel@vger.kernel.org>, Kyungtae Kim <kt0755@gmail.com>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        Willem de Bruijn <willemb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ffe6b459-c80a-d3c0-451d-0d21ae63da54@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 2:32 AM, DaeRyong Jeong <threeearcat@gmail.com> wrote:
-> Hello.
-> We have analyzed the cause of the crash in v4.16-rc3, WARNING in refcount_dec,
-> which is found by RaceFuzzer (a modified version of Syzkaller).
->
-> Since struct packet_sock's member variables, running, has_vnet_hdr, origdev
-> and auxdata are declared as bitfields, accessing these variables can race if
-> there is no synchronization mechanism.
+(snip useful explanation).
 
-Great catch.
+On Thu, Apr 19, 2018 at 12:40:54PM -0500, Alex G. wrote:
+> On the r740xd, FW just hides those errors from the OS with no further
+> notification. On this machine BIOS sets things up such that non-posted
+> requests report fatal (PCIe) errors. FW still tries very hard to hide
+> this from the OS, and I think the heuristic is that if the drive
+> physical presence is gone, don't even report the error.
 
-These fields po->{running, auxdata, origdev, has_vnet_hdr} are
-accessed without a uniform locking strategy.
+Ok, second question: can you detect from the error signatures alone that
+it was a surprise removal? How does such an error look like, in detail?
+Got error logs somewhere to dump?
 
-po->running is always accessed with po->bind_lock held (with the
-exception of reading in packet_seq_show, but that is best effort).
+Thx.
 
-That is the only field written to outside setsockopt. If it is moved to
-a separate word, it will no longer interfere with the others.
+-- 
+Regards/Gruss,
+    Boris.
 
-The other fields are read lockless in the various recv and send
-functions, but only set in setsockopt. We've had enough
-locking bugs around setsockopt that I suggest we wrap all of
-those in lock_sock, like the example I gave before for
-has_vnet_hdr.
+Good mailing practices for 400: avoid top-posting and trim the reply.
