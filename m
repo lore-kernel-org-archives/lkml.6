@@ -1,234 +1,325 @@
-Return-Path: <kernel-hardening-return-12853-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AIpwx49MDVo43c4WJ1pSdXNAnc34cRvMMqFD8845HysiXdMHJU8afPT4pvP4xQHXOAO13nO4wLNM
-ARC-Seal: i=1; a=rsa-sha256; t=1522871770; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PSaRlSRfB2Q9HqukFprgQ3ZvUjjpEgxVc4SmnfDJkT3Cz4zqeGUp45+qh3AfzMczTe
-         1sx0wQtr8zOpXNVlShQ2CIvgmDUu/gljiqFu3EHbfYbtvFiO3/FzFBwkyABNuLW7GGQT
-         p+Hnq5QIC0ZncuEeVM/llt5zC221R6ox5yN4hPiIgX1roHoEt1sjmOhbEwcqWKqMZq7w
-         7sXe/BpdS04GNhpurgmua8SCmhwZmC4QzHb2h6K1hv74E5qVIXKv5vQEg7YcdcVdHel8
-         WaqvQ2xQW31E9QytEnFDIXxoG1bWeMq1oo/o1QO5xP9MgkPPn7taeU7/aa/EKThxAWlY
-         2tnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:delivered-to:delivered-to
-         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
-         :precedence:mailing-list:arc-authentication-results;
-        bh=aWgCKS3gGGsiXi5zkzD5xGPUAcZqVdclN2qCJFM+vwI=;
-        b=KWg5w8lF90jIEwvInXN9ZZc8pP0HyDJCfejEMDok3+kLmLUBGQY4Y61My+VYiNU8O6
-         z/peSNr5/U4m8OO5NXUknEpthEa6k755szltnddqngFH0qLWR0zIbzWCDe03DcEovfST
-         DGoKvFDNYYOr9r4pYrzUfBKplCAVyNKg6rPXNGfFYjmiJQEgW2LOSRPgRWdEic6Xfkdy
-         hEmAGFUTr6lf6k7xdO0hqsSsH1Tsn+Bc79m6gotfG5KtQkCEIlDJadECYl1uWXs4IMtb
-         GTumM2MG5t/g4KzoXYuTy2Iaq7scEgMk/WIEYKmw8j0eS2h8XjKs775fLORdayGbMiRy
-         edNw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12853-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12853-gregkh=linuxfoundation.org@lists.openwall.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of kernel-hardening-return-12853-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-12853-gregkh=linuxfoundation.org@lists.openwall.com
-Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
-List-Post: <mailto:kernel-hardening@lists.openwall.com>
-List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
-List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
-List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Date: Wed, 4 Apr 2018 21:52:34 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>,
- Segher Boessenkool <segher@kernel.crashing.org>, Kernel Hardening
- <kernel-hardening@lists.openwall.com>, Andrew Morton
- <akpm@linuxfoundation.org>, Boris Brezillon
- <boris.brezillon@free-electrons.com>, Richard Weinberger <richard@nod.at>,
- David Woodhouse <dwmw2@infradead.org>, Alasdair Kergon <agk@redhat.com>,
- Mike Snitzer <snitzer@redhat.com>, Anton Vorontsov <anton@enomsg.org>,
- Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>
-Subject: Re: [patch 6/8] mtd: diskonchip: Allocate rs control per instance
-Message-ID: <20180404215234.7519c5f9@bbrezillon>
-In-Reply-To: <20180328205554.748930560@linutronix.de>
-References: <20180328205138.301218351@linutronix.de>
-	<20180328205554.748930560@linutronix.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2442479-1524124344-2-14716119341482040627
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='iso-8859-1'
+X-Attached: signature.asc
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524124343; b=gfS13lGZLOsSHdvBiVDzzpup1Zn4qNH+2fDqWHtksNNlbWPxD7
+    wuk/mRQTVapvbbgLS1gvTC6PPDPw1bx46MrNKZdJD+NUwXydsKCFvfrAjYmMb5qM
+    7sOfMs68GI0bDhNCkKGtdJap2ad5UsgiNFI+TSI5yCZpUVMhIXMed0sRPLDu//Cq
+    F+IIvOuNhJHlAanqLzcoI/hyhnv1Pge/cr8UVq6PJbanTgEvSa3xT0+P+KG5TQXC
+    OJ0Y8pRIIaUUAiyVOzK85tusBf9fBvaY/wPbDEGsphrOeYnLyxWdMWw8qHf9tf8/
+    B8TepifxdeenZ8WUY/RVqYubZeZXar+hMFnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1524124343;
+    bh=grtpiMQZXSrF3+shaGvaEjlm/BBFH3RsZrYy5CAt2wE=; b=uHkCzp99XSzb
+    cCNNZrQLUircIIVgEBE1yKwoJJRd+Gpy7Zk/vXNgSMwlQjECgVmOZLmj97QJ6HNR
+    tIEfNFCXovMd2Er7E/kLc9tM/9wcUlKoi8g/ytRSaWpmeZICiJyKoEzySZJR4G6s
+    GS5oxCFyf+vkE5vpoxqC0KdoGxeQ1/b+DnkfEgCZ6ZMQ4kG/EIdMl+m3xcs3XHxJ
+    4FSBYLdtmLmlU7p9b/mUkFA6+1YkQkuuVWtt4JCAe0ydLzvNGP5ySfex7pWt9nVi
+    ubgKZ4+CKD+3n6P70mRdKN8nN6ihcZVu/fyrIVlKOZy+w/lPsV9ziytJ1aSSx7Jg
+    fRBet2ukhg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNVOct6/mMU7i5/LwcKfdM0TvoeK94J381pBZONeeDtQfmTMbRpVyherS6ftVqF/ysiCJUUh7UlUkdjcijyjwn2iHwqDCtTyg/SemqTyAAKmGfUiY6SK
+    e3uqmJl41wxgvlcxWUNIr9wal7RN5ykVTe1LEyuQCWof5HEgRHHF6bicv3huJ0rMEy4baV4HC7UrdYW6K4z/viX+RQ57k3+5Dsa26wrJsxe1RXvLgXSLD17K
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=TBiW29iDEYjsJ763JB0A:9 a=z-GEBE3G2xM7hO0Z:21 a=H6fMCVtJR7tyj22p:21
+    a=wPNLvfGTeEIA:10 a=Cl7ay3eDo-GZCIvcKg4A:9 a=ONNS8QRKHyMA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751830AbeDSHvk (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 03:51:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39692 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751822AbeDSHvj (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 19 Apr 2018 03:51:39 -0400
+Date: Thu, 19 Apr 2018 09:51:32 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc: lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Linux 4.14.35
+Message-ID: <20180419075132.GA27731@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+Content-Disposition: inline
+User-Agent: Mutt/1.9.5 (2018-04-13)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596216551681930065?=
-X-GMAIL-MSGID: =?utf-8?q?1596846789832179410?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 28 Mar 2018 22:51:44 +0200
-Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> The reed solomon library is moving the on stack decoder buffers into the rs
-> control structure. That would break the DoC driver because multiple
-> instances share the same control structure and can operate in parallel. At
-> least in theory....
-> 
-> Instantiate a rs control instance per DoC device to avoid that. The per
-> instance buffer is fine as the operation on a single DoC instance is
-> serialized by the MTD/NAND core.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  drivers/mtd/nand/diskonchip.c |   65 ++++++++++++++++++++----------------------
->  1 file changed, 31 insertions(+), 34 deletions(-)
-> 
-> --- a/drivers/mtd/nand/diskonchip.c
-> +++ b/drivers/mtd/nand/diskonchip.c
-> @@ -68,6 +68,7 @@ struct doc_priv {
->  	int curchip;
->  	int mh0_page;
->  	int mh1_page;
-> +	struct rs_control *rs_decoder;
->  	struct mtd_info *nextdoc;
->  
->  	/* Handle the last stage of initialization (BBT scan, partitioning) */
-> @@ -125,9 +126,6 @@ MODULE_PARM_DESC(doc_config_location, "P
->  /* Number of symbols */
->  #define NN 1023
->  
-> -/* the Reed Solomon control structure */
-> -static struct rs_control *rs_decoder;
-> -
->  /*
->   * The HW decoder in the DoC ASIC's provides us a error syndrome,
->   * which we must convert to a standard syndrome usable by the generic
-> @@ -933,7 +931,7 @@ static int doc200x_correct_data(struct m
->  				calc_ecc[i] = ReadDOC_(docptr, DoC_ECCSyndrome0 + i);
->  		}
->  
-> -		ret = doc_ecc_decode(rs_decoder, dat, calc_ecc);
-> +		ret = doc_ecc_decode(doc->rs_decoder, dat, calc_ecc);
->  		if (ret > 0)
->  			printk(KERN_ERR "doc200x_correct_data corrected %d errors\n", ret);
->  	}
-> @@ -1561,8 +1559,25 @@ static int __init doc_probe(unsigned lon
->  		goto fail;
->  	}
->  
-> +
-> +	/*
-> +	 * Allocate a RS codec instance
-> +	 *
-> +	 * Symbolsize is 10 (bits)
-> +	 * Primitve polynomial is x^10+x^3+1
-> +	 * First consecutive root is 510
-> +	 * Primitve element to generate roots = 1
-> +	 * Generator polinomial degree = 4
-> +	 */
-> +	doc = (struct doc_priv *) (nand + 1);
-> +	doc->rs_decoder = init_rs(10, 0x409, FCR, 1, NROOTS);
-> +	if (!doc->rs_decoder) {
-> +		pr_err("DiskOnChip: Could not create a RS codec\n");
-> +		ret = -ENOMEM;
-> +		goto fail_nand;
-> +	}
-> +
->  	mtd			= nand_to_mtd(nand);
-> -	doc			= (struct doc_priv *) (nand + 1);
->  	nand->bbt_td		= (struct nand_bbt_descr *) (doc + 1);
->  	nand->bbt_md		= nand->bbt_td + 1;
->  
-> @@ -1612,19 +1627,24 @@ static int __init doc_probe(unsigned lon
->  		   haven't yet added it.  This is handled without incident by
->  		   mtd_device_unregister, as far as I can tell. */
->  		nand_release(mtd);
-> -		kfree(nand);
-> -		goto fail;
-> +		goto fail_rs;
->  	}
->  
->  	/* Success! */
->  	doclist = mtd;
->  	return 0;
->  
-> - notfound:
-> +fail_rs:
-> +	free_rs(doc->rs_decoder);
-> +fail_nand:
-> +	kfree(nand);
-> +	goto fail;
-> +
-> +notfound:
->  	/* Put back the contents of the DOCControl register, in case it's not
->  	   actually a DiskOnChip.  */
->  	WriteDOC(save_control, virtadr, DOCControl);
-> - fail:
-> +fail:
+--NzB8fVQJ5HfG6fxh
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can we simplify a bit the exit path (in other words, avoid the 'goto
-fail' in the 'fail_nand' section) by initializing nand and doc to NULL
-and then adding something like that to the 'fail' path:
+I'm announcing the release of the 4.14.35 kernel.
 
-	if (doc && doc->rs_decoder)
-		free_rs(doc->rs_decoder);
+All users of the 4.14 kernel series must upgrade.
 
-	kfree(nand);
+The updated 4.14.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.14.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
 
->  	iounmap(virtadr);
->  
->  error_ioremap:
-> @@ -1647,6 +1667,7 @@ static void release_nanddoc(void)
->  		nand_release(mtd);
->  		iounmap(doc->virtadr);
->  		release_mem_region(doc->physadr, DOC_IOREMAP_LEN);
-> +		kfree(doc->rs_decoder);
+thanks,
 
-You mean free_rs() not kfree(), right?
+greg k-h
 
->  		kfree(nand);
->  	}
->  }
-> @@ -1655,26 +1676,11 @@ static int __init init_nanddoc(void)
->  {
->  	int i, ret = 0;
->  
-> -	/* We could create the decoder on demand, if memory is a concern.
-> -	 * This way we have it handy, if an error happens
-> -	 *
-> -	 * Symbolsize is 10 (bits)
-> -	 * Primitve polynomial is x^10+x^3+1
-> -	 * first consecutive root is 510
-> -	 * primitve element to generate roots = 1
-> -	 * generator polinomial degree = 4
-> -	 */
-> -	rs_decoder = init_rs(10, 0x409, FCR, 1, NROOTS);
-> -	if (!rs_decoder) {
-> -		printk(KERN_ERR "DiskOnChip: Could not create a RS decoder\n");
-> -		return -ENOMEM;
-> -	}
-> -
->  	if (doc_config_location) {
->  		printk(KERN_INFO "Using configured DiskOnChip probe address 0x%lx\n", doc_config_location);
->  		ret = doc_probe(doc_config_location);
->  		if (ret < 0)
-> -			goto outerr;
-> +			return ret;
->  	} else {
->  		for (i = 0; (doc_locations[i] != 0xffffffff); i++) {
->  			doc_probe(doc_locations[i]);
-> @@ -1685,23 +1691,14 @@ static int __init init_nanddoc(void)
->  	if (!doclist) {
->  		printk(KERN_INFO "No valid DiskOnChip devices found\n");
->  		ret = -ENODEV;
-> -		goto outerr;
->  	}
->  	return 0;
-> - outerr:
-> -	free_rs(rs_decoder);
-> -	return ret;
->  }
->  
->  static void __exit cleanup_nanddoc(void)
->  {
->  	/* Cleanup the nand/DoC resources */
->  	release_nanddoc();
-> -
-> -	/* Free the reed solomon resources */
-> -	if (rs_decoder) {
-> -		free_rs(rs_decoder);
-> -	}
->  }
->  
->  module_init(init_nanddoc);
-> 
-> 
+------------
+
+ Makefile                                            |    2=20
+ arch/parisc/kernel/drivers.c                        |    4 +
+ arch/parisc/kernel/hpmc.S                           |    6 +
+ arch/powerpc/kvm/book3s_hv_rm_mmu.c                 |    4 -
+ arch/s390/kernel/ipl.c                              |    1=20
+ arch/x86/include/asm/mce.h                          |    3=20
+ arch/x86/kernel/cpu/mcheck/mce.c                    |    4 -
+ arch/x86/kernel/cpu/mcheck/mce_amd.c                |   54 +++++++++++++++-
+ block/blk-mq-cpumap.c                               |    5 -
+ drivers/acpi/nfit/core.c                            |   22 ++++--
+ drivers/block/loop.c                                |   12 ++-
+ drivers/bluetooth/hci_bcm.c                         |   20 ------
+ drivers/edac/mce_amd.c                              |   11 ++-
+ drivers/gpu/drm/radeon/radeon_object.c              |    3=20
+ drivers/hv/channel_mgmt.c                           |    2=20
+ drivers/hwmon/ina2xx.c                              |    3=20
+ drivers/media/platform/vsp1/vsp1_dl.c               |    3=20
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c       |    4 -
+ drivers/net/slip/slhc.c                             |    5 +
+ drivers/net/usb/cdc_ether.c                         |    6 +
+ drivers/net/usb/lan78xx.c                           |    3=20
+ drivers/net/wireless/ath/ath9k/xmit.c               |    4 +
+ drivers/net/wireless/realtek/rtl818x/rtl8187/dev.c  |    2=20
+ drivers/pci/host/pci-hyperv.c                       |   34 +++++-----
+ drivers/s390/cio/qdio_main.c                        |   42 ++++++-------
+ drivers/scsi/qla2xxx/qla_os.c                       |   44 ++++++-------
+ drivers/vhost/vhost.c                               |   10 +--
+ drivers/xen/xenbus/xenbus_dev_frontend.c            |    2=20
+ fs/f2fs/gc.c                                        |    5 -
+ fs/f2fs/segment.c                                   |    3=20
+ fs/hugetlbfs/inode.c                                |   10 ++-
+ fs/namei.c                                          |    3=20
+ fs/nfsd/nfs4proc.c                                  |   12 +++
+ fs/nfsd/nfs4xdr.c                                   |    8 --
+ fs/nfsd/xdr4.h                                      |    2=20
+ fs/overlayfs/namei.c                                |    9 ++
+ include/net/bluetooth/hci_core.h                    |    2=20
+ include/net/slhc_vj.h                               |    1=20
+ kernel/events/core.c                                |    6 +
+ lib/bitmap.c                                        |    2=20
+ lib/test_bitmap.c                                   |    4 +
+ mm/gup.c                                            |    5 +
+ net/bluetooth/hci_conn.c                            |   29 ++++++---
+ net/bluetooth/hci_event.c                           |   15 +++-
+ net/bluetooth/l2cap_core.c                          |    2=20
+ net/netfilter/ipset/ip_set_core.c                   |    2=20
+ net/rds/send.c                                      |   15 +++-
+ net/sunrpc/auth_gss/gss_krb5_crypto.c               |    3=20
+ security/apparmor/apparmorfs.c                      |    4 -
+ security/apparmor/include/audit.h                   |    8 +-
+ security/apparmor/include/sig_names.h               |    4 -
+ security/apparmor/ipc.c                             |    2=20
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   64 +++++++++------=
+-----
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.h |    2=20
+ tools/perf/util/intel-pt.c                          |   37 +++++++++--
+ 55 files changed, 360 insertions(+), 214 deletions(-)
+
+Adrian Hunter (4):
+      perf intel-pt: Fix overlap detection to identify consecutive buffers =
+correctly
+      perf intel-pt: Fix sync_switch
+      perf intel-pt: Fix error recovery from missing TIP packet
+      perf intel-pt: Fix timestamp following overflow
+
+Al Viro (1):
+      getname_kernel() needs to make sure that ->name !=3D ->iname in long =
+case
+
+Amir Goldstein (1):
+      ovl: fix lookup with middle layer opaque dir and absolute path redire=
+cts
+
+Arnd Bergmann (1):
+      radeon: hide pointless #warning when compile testing
+
+Bassem Boubaker (1):
+      cdc_ether: flag the Cinterion AHS8 modem by gemalto as WWAN
+
+Bill Kuzeja (1):
+      scsi: qla2xxx: Fix small memory leak in qla2x00_probe_one on probe fa=
+ilure
+
+Dan Williams (1):
+      nfit: fix region registration vs block-data-window ranges
+
+Dexuan Cui (2):
+      Drivers: hv: vmbus: do not mark HV_PCIE as perf_device
+      PCI: hv: Serialize the present and eject work items
+
+Eric Auger (1):
+      vhost: Fix vhost_copy_to_user()
+
+Eric Biggers (1):
+      sunrpc: remove incorrect HMAC request initialization
+
+Greg Kroah-Hartman (1):
+      Linux 4.14.35
+
+Hans de Goede (1):
+      Bluetooth: hci_bcm: Treat Interrupt ACPI resources as always being ac=
+tive-low
+
+Helge Deller (2):
+      parisc: Fix out of array access in match_pci_device()
+      parisc: Fix HPMC handler by increasing size to multiple of 16 bytes
+
+J. Bruce Fields (1):
+      nfsd: fix incorrect umasks
+
+John Johansen (3):
+      apparmor: fix logging of the existence test for signals
+      apparmor: fix display of .ns_name for containers
+      apparmor: fix resource audit messages when auditing peer
+
+Jozsef Kadlecsik (1):
+      netfilter: ipset: Missing nfnl_lock()/nfnl_unlock() is added to ip_se=
+t_net_exit()
+
+Julian Wiedmann (2):
+      s390/qdio: don't retry EQBS after CCQ 96
+      s390/qdio: don't merge ERROR output buffers
+
+Ka-Cheong Poon (1):
+      rds: MP-RDS may use an invalid c_path
+
+Kieran Bingham (1):
+      media: v4l: vsp1: Fix header display list status check in continuous =
+mode
+
+Marek Szyprowski (1):
+      hwmon: (ina2xx) Fix access to uninitialized mutex
+
+Mauro Carvalho Chehab (1):
+      media: v4l2-compat-ioctl32: don't oops on overlay
+
+Michael S. Tsirkin (1):
+      get_user_pages_fast(): return -EFAULT on access_ok failure
+
+Mike Kravetz (1):
+      hugetlbfs: fix bug in pgoff overflow checking
+
+Ming Lei (1):
+      blk-mq: don't keep offline CPUs mapped to hctx 0
+
+Nicholas Piggin (1):
+      KVM: PPC: Book3S HV: trace_tlbie must not be called in realmode
+
+Phil Elwell (1):
+      lan78xx: Correctly indicate invalid OTP
+
+Prashant Bhole (1):
+      perf/core: Fix use-after-free in uprobe_perf_close()
+
+Simon Gaiser (1):
+      xen: xenbus_dev_frontend: Fix XS_TRANSACTION_END handling
+
+Stefan Hajnoczi (1):
+      vhost: fix vhost_vq_access_ok() log check
+
+Sudhir Sreedharan (1):
+      rtl8187: Fix NULL pointer dereference in priv->conf_mutex
+
+Szymon Janc (1):
+      Bluetooth: Fix connection if directed advertising and privacy is used
+
+Tejaswi Tanikella (1):
+      slip: Check if rstate is initialized before uncompressing
+
+Tetsuo Handa (1):
+      block/loop: fix deadlock after loop_set_status
+
+Toke H=F8iland-J=F8rgensen (1):
+      ath9k: Protect queue draining by rcu_read_lock()
+
+Vasily Gorbik (1):
+      s390/ipl: ensure loadparm valid flag is set
+
+Yazen Ghannam (5):
+      x86/MCE/AMD: Define a function to get SMCA bank type
+      x86/MCE: Report only DRAM ECC as memory errors on AMD systems
+      x86/mce/AMD: Pass the bank number to smca_get_bank_type()
+      x86/mce/AMD, EDAC/mce_amd: Enumerate Reserved SMCA bank type
+      x86/mce/AMD: Get address from already initialized block
+
+Yunlong Song (1):
+      f2fs: fix heap mode to reset it back
+
+Yury Norov (1):
+      lib: fix stall in __bitmap_parselist()
+
+
+--NzB8fVQJ5HfG6fxh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlrYSoMACgkQONu9yGCS
+aT67NxAAj9wk79RGKJGFQgVHtckWRUmjc/6D6zV3mNYhKNg5WFu+d7ihB/rG2ehd
+fHFCwrEjg8aENhlFgTrFFrFBIKETbOqrsi4LcofHJ5eYId9spT7J+60vSY03Oegq
+I63QdogwxZc381E/gjmsd7z5Wkf96UUdMWoDjC5SLWc1LlwUjLquojQmm8fuphqk
+BXstS/Xrkhg3hcpnzvvFhftBlLpeP2B+iBMs8FgfMGO24l5XAtDNrtWzbHGwCHh5
+iPTimHhA2+vNWZ3i0FijXx5covKQu/96hYjGa4PTFrRL6rZD4kre57Xwc2j/5A4B
+i1+d37J3If0mOWgRM7UDQEkI1QGCbn9mbTDMuGGRvGLyVYJR/2YsaJJuXOoJupDs
+0V6P1jQpJyw5BFJW4BrqAfbtpNAPAnTDLWZ7AzYZPQVuKCzx8nTglgzWyuuHDxMa
+EYnWzFgkzTtFAf09BixJiys0OM6hiFE6OU7BbhfTdTG6t3+6hGufLegv4Tn0Iws1
+BWrKQLntPU0zSg5lHJtx8InoX8WijrFDz+oo0CuIb9neswrit2FvJSgnO/TR4Clj
+5N6/JdeGPtGWdhL4F89h+1gmH27Um6z9U57ojuNKeQ5DwEsTSN+K1ySIuZQa7cRL
+RynDvlzQZnAALLsx3avv0N35RXoXyt5/Jrs1OEaZ8EpvG+rHDGU=
+=bAkp
+-----END PGP SIGNATURE-----
+
+--NzB8fVQJ5HfG6fxh--
