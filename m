@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753566AbeDSMvW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:51:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33437 "EHLO mail.bootlin.com"
+        id S1753311AbeDSMvV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 08:51:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33445 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753515AbeDSMuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:50:50 -0400
+        id S1753518AbeDSMuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 08:50:51 -0400
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 To: Shuah Khan <shuah@kernel.org>
 Cc: John Stultz <john.stultz@linaro.org>, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-rtc@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 1/4] selftests: timers: move PIE tests out of rtctest
-Date: Thu, 19 Apr 2018 14:50:27 +0200
-Message-Id: <20180419125030.5076-2-alexandre.belloni@bootlin.com>
+Subject: [PATCH 4/4] selftests: rtc: rework rtctest
+Date: Thu, 19 Apr 2018 14:50:30 +0200
+Message-Id: <20180419125030.5076-5-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180419125030.5076-1-alexandre.belloni@bootlin.com>
 References: <20180419125030.5076-1-alexandre.belloni@bootlin.com>
@@ -21,308 +21,538 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 6610e0893b8bc ("RTC: Rework RTC code to use timerqueue for
-events"), PIE are completely handled using hrtimers, without actually using
-any underlying hardware RTC.
-
-Move PIE testing out of rtctest. It still depends on the presence of an RTC
-(to access the device file) but doesn't depend on it actually working.
+Rework rtctest to use the test harness to better handle skipping tests
+(e.g. when alarms are not available). Also, it now handles timeout so it
+will not block expecting an alarm that never comes.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- tools/testing/selftests/timers/.gitignore |   1 +
- tools/testing/selftests/timers/Makefile   |   2 +-
- tools/testing/selftests/timers/rtcpie.c   | 132 ++++++++++++++++++++++
- tools/testing/selftests/timers/rtctest.c  |  83 +-------------
- 4 files changed, 138 insertions(+), 80 deletions(-)
- create mode 100644 tools/testing/selftests/timers/rtcpie.c
+ tools/testing/selftests/rtc/rtctest.c | 472 +++++++++++---------------
+ 1 file changed, 191 insertions(+), 281 deletions(-)
 
-diff --git a/tools/testing/selftests/timers/.gitignore b/tools/testing/selftests/timers/.gitignore
-index 2c8ac8416299..353ae15daa1e 100644
---- a/tools/testing/selftests/timers/.gitignore
-+++ b/tools/testing/selftests/timers/.gitignore
-@@ -9,6 +9,7 @@ nanosleep
- nsleep-lat
- posix_timers
- raw_skew
-+rtcpie
- rtctest
- set-2038
- set-tai
-diff --git a/tools/testing/selftests/timers/Makefile b/tools/testing/selftests/timers/Makefile
-index 3496680981f2..8be7895ff918 100644
---- a/tools/testing/selftests/timers/Makefile
-+++ b/tools/testing/selftests/timers/Makefile
-@@ -5,7 +5,7 @@ LDFLAGS += -lrt -lpthread -lm
- # these are all "safe" tests that don't modify
- # system time or require escalated privileges
- TEST_GEN_PROGS = posix_timers nanosleep nsleep-lat set-timer-lat mqueue-lat \
--	     inconsistency-check raw_skew threadtest rtctest
-+	     inconsistency-check raw_skew threadtest rtctest rtcpie
- 
- DESTRUCTIVE_TESTS = alarmtimer-suspend valid-adjtimex adjtick change_skew \
- 		      skew_consistency clocksource-switch freq-step leap-a-day \
-diff --git a/tools/testing/selftests/timers/rtcpie.c b/tools/testing/selftests/timers/rtcpie.c
-new file mode 100644
-index 000000000000..ea98b1f6ac17
---- /dev/null
-+++ b/tools/testing/selftests/timers/rtcpie.c
-@@ -0,0 +1,132 @@
+diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+index 6e17b96551ec..e20b017e7073 100644
+--- a/tools/testing/selftests/rtc/rtctest.c
++++ b/tools/testing/selftests/rtc/rtctest.c
+@@ -1,328 +1,238 @@
 +// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Real Time Clock Periodic Interrupt test program
-+ *
-+ * Since commit 6610e0893b8bc ("RTC: Rework RTC code to use timerqueue for
-+ * events"), PIE are completely handled using hrtimers, without actually using
-+ * any underlying hardware RTC.
-+ *
-+ */
-+
-+#include <stdio.h>
-+#include <linux/rtc.h>
-+#include <sys/ioctl.h>
-+#include <sys/time.h>
-+#include <sys/types.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <stdlib.h>
+ /*
+- *      Real Time Clock Driver Test/Example Program
+- *
+- *      Compile with:
+- *		     gcc -s -Wall -Wstrict-prototypes rtctest.c -o rtctest
+- *
+- *      Copyright (C) 1996, Paul Gortmaker.
+- *
+- *      Released under the GNU General Public License, version 2,
+- *      included herein by reference.
++ * Real Time Clock Driver Test Program
+  *
++ * Copyright (c) 2018 Alexandre Belloni <alexandre.belloni@bootlin.com>
+  */
+ 
+-#include <stdio.h>
 +#include <errno.h>
++#include <fcntl.h>
+ #include <linux/rtc.h>
++#include <stdio.h>
++#include <stdlib.h>
+ #include <sys/ioctl.h>
+ #include <sys/time.h>
+ #include <sys/types.h>
+-#include <fcntl.h>
++#include <time.h>
+ #include <unistd.h>
+-#include <stdlib.h>
+-#include <errno.h>
+ 
+-#ifndef ARRAY_SIZE
+-# define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+-#endif
++#include "../kselftest_harness.h"
+ 
+-/*
+- * This expects the new RTC class driver framework, working with
+- * clocks that will often not be clones of what the PC-AT had.
+- * Use the command line to specify another RTC if you need one.
+- */
+-static const char default_rtc[] = "/dev/rtc0";
+-
+-static struct rtc_time cutoff_dates[] = {
+-	{
+-		.tm_year = 70, /* 1970 -1900 */
+-		.tm_mday = 1,
+-	},
+-	/* signed time_t 19/01/2038 3:14:08 */
+-	{
+-		.tm_year = 138,
+-		.tm_mday = 19,
+-	},
+-	{
+-		.tm_year = 138,
+-		.tm_mday = 20,
+-	},
+-	{
+-		.tm_year = 199, /* 2099 -1900 */
+-		.tm_mday = 1,
+-	},
+-	{
+-		.tm_year = 200, /* 2100 -1900 */
+-		.tm_mday = 1,
+-	},
+-	/* unsigned time_t 07/02/2106 7:28:15*/
+-	{
+-		.tm_year = 205,
+-		.tm_mon = 1,
+-		.tm_mday = 7,
+-	},
+-	{
+-		.tm_year = 206,
+-		.tm_mon = 1,
+-		.tm_mday = 8,
+-	},
+-	/* signed time on 64bit in nanoseconds 12/04/2262 01:47:16*/
+-	{
+-		.tm_year = 362,
+-		.tm_mon = 3,
+-		.tm_mday = 12,
+-	},
+-	{
+-		.tm_year = 362, /* 2262 -1900 */
+-		.tm_mon = 3,
+-		.tm_mday = 13,
+-	},
++#define NUM_UIE 3
++#define ALARM_DELTA 3
 +
-+/*
-+ * This expects the new RTC class driver framework, working with
-+ * clocks that will often not be clones of what the PC-AT had.
-+ * Use the command line to specify another RTC if you need one.
-+ */
-+static const char default_rtc[] = "/dev/rtc0";
++static char *rtc_file = "/dev/rtc0";
++
++FIXTURE(rtc) {
++	int fd;
+ };
+ 
+-static int compare_dates(struct rtc_time *a, struct rtc_time *b)
+-{
+-	if (a->tm_year != b->tm_year ||
+-	    a->tm_mon != b->tm_mon ||
+-	    a->tm_mday != b->tm_mday ||
+-	    a->tm_hour != b->tm_hour ||
+-	    a->tm_min != b->tm_min ||
+-	    ((b->tm_sec - a->tm_sec) > 1))
+-		return 1;
++FIXTURE_SETUP(rtc) {
++	self->fd = open(rtc_file, O_RDONLY);
++	ASSERT_NE(-1, self->fd);
++}
+ 
+-	return 0;
++FIXTURE_TEARDOWN(rtc) {
++	close(self->fd);
+ }
+ 
+-int main(int argc, char **argv)
+-{
+-	int i, fd, retval, irqcount = 0, dangerous = 0;
+-	unsigned long data;
++TEST_F(rtc, date_read) {
++	int rc;
+ 	struct rtc_time rtc_tm;
+-	const char *rtc = default_rtc;
+ 
+-	switch (argc) {
+-	case 3:
+-		if (*argv[2] == 'd')
+-			dangerous = 1;
+-	case 2:
+-		rtc = argv[1];
+-		/* FALLTHROUGH */
+-	case 1:
+-		break;
+-	default:
+-		fprintf(stderr, "usage:  rtctest [rtcdev] [d]\n");
+-		return 1;
+-	}
++	/* Read the RTC time/date */
++	rc = ioctl(self->fd, RTC_RD_TIME, &rtc_tm);
++	ASSERT_NE(-1, rc);
+ 
+-	fd = open(rtc, O_RDONLY);
++	TH_LOG("Current RTC date/time is %02d/%02d/%02d %02d:%02d:%02d.",
++	       rtc_tm.tm_mday, rtc_tm.tm_mon + 1, rtc_tm.tm_year + 1900,
++	       rtc_tm.tm_hour, rtc_tm.tm_min, rtc_tm.tm_sec);
++}
+ 
+-	if (fd ==  -1) {
+-		perror(rtc);
+-		exit(errno);
+-	}
++TEST_F(rtc, uie_read) {
++	int i, rc, irq = 0;
++	unsigned long data;
+ 
+-	fprintf(stderr, "\n\t\t\tRTC Driver Test Example.\n\n");
+-
+-	/* Turn on update interrupts (one per second) */
+-	retval = ioctl(fd, RTC_UIE_ON, 0);
+-	if (retval == -1) {
+-		if (errno == EINVAL) {
+-			fprintf(stderr,
+-				"\n...Update IRQs not supported.\n");
+-			goto test_READ;
+-		}
+-		perror("RTC_UIE_ON ioctl");
+-		exit(errno);
++	/* Turn on update interrupts */
++	rc = ioctl(self->fd, RTC_UIE_ON, 0);
++	if (rc == -1) {
++		ASSERT_EQ(EINVAL, errno);
++		TH_LOG("skip update IRQs not supported.");
++		return;
+ 	}
+ 
+-	fprintf(stderr, "Counting 5 update (1/sec) interrupts from reading %s:",
+-			rtc);
+-	fflush(stderr);
+-	for (i=1; i<6; i++) {
++	for (i = 0; i < NUM_UIE; i++) {
+ 		/* This read will block */
+-		retval = read(fd, &data, sizeof(unsigned long));
+-		if (retval == -1) {
+-			perror("read");
+-			exit(errno);
+-		}
+-		fprintf(stderr, " %d",i);
+-		fflush(stderr);
+-		irqcount++;
++		rc = read(self->fd, &data, sizeof(data));
++		ASSERT_NE(-1, rc);
++		irq++;
++	}
++
++	EXPECT_EQ(NUM_UIE, irq);
++
++	rc = ioctl(self->fd, RTC_UIE_OFF, 0);
++	ASSERT_NE(-1, rc);
++}
++
++TEST_F(rtc, uie_select) {
++	int i, rc, irq = 0;
++	unsigned long data;
++
++	/* Turn on update interrupts */
++	rc = ioctl(self->fd, RTC_UIE_ON, 0);
++	if (rc == -1) {
++		ASSERT_EQ(EINVAL, errno);
++		TH_LOG("skip update IRQs not supported.");
++		return;
+ 	}
+ 
+-	fprintf(stderr, "\nAgain, from using select(2) on /dev/rtc:");
+-	fflush(stderr);
+-	for (i=1; i<6; i++) {
+-		struct timeval tv = {5, 0};     /* 5 second timeout on select */
++	for (i = 0; i < NUM_UIE; i++) {
++		struct timeval tv = { .tv_sec = 2 };
+ 		fd_set readfds;
+ 
+ 		FD_ZERO(&readfds);
+-		FD_SET(fd, &readfds);
++		FD_SET(self->fd, &readfds);
+ 		/* The select will wait until an RTC interrupt happens. */
+-		retval = select(fd+1, &readfds, NULL, NULL, &tv);
+-		if (retval == -1) {
+-		        perror("select");
+-		        exit(errno);
+-		}
+-		/* This read won't block unlike the select-less case above. */
+-		retval = read(fd, &data, sizeof(unsigned long));
+-		if (retval == -1) {
+-		        perror("read");
+-		        exit(errno);
+-		}
+-		fprintf(stderr, " %d",i);
+-		fflush(stderr);
+-		irqcount++;
+-	}
+-
+-	/* Turn off update interrupts */
+-	retval = ioctl(fd, RTC_UIE_OFF, 0);
+-	if (retval == -1) {
+-		perror("RTC_UIE_OFF ioctl");
+-		exit(errno);
++		rc = select(self->fd + 1, &readfds, NULL, NULL, &tv);
++		ASSERT_NE(-1, rc);
++		ASSERT_NE(0, rc);
++
++		/* This read won't block */
++		rc = read(self->fd, &data, sizeof(unsigned long));
++		ASSERT_NE(-1, rc);
++		irq++;
+ 	}
+ 
+-test_READ:
+-	/* Read the RTC time/date */
+-	retval = ioctl(fd, RTC_RD_TIME, &rtc_tm);
+-	if (retval == -1) {
+-		perror("RTC_RD_TIME ioctl");
+-		exit(errno);
+-	}
++	EXPECT_EQ(NUM_UIE, irq);
+ 
+-	fprintf(stderr, "\n\nCurrent RTC date/time is %d-%d-%d, %02d:%02d:%02d.\n",
+-		rtc_tm.tm_mday, rtc_tm.tm_mon + 1, rtc_tm.tm_year + 1900,
+-		rtc_tm.tm_hour, rtc_tm.tm_min, rtc_tm.tm_sec);
++	rc = ioctl(self->fd, RTC_UIE_OFF, 0);
++	ASSERT_NE(-1, rc);
++}
+ 
+-	/* Set the alarm to 5 sec in the future, and check for rollover */
+-	rtc_tm.tm_sec += 5;
+-	if (rtc_tm.tm_sec >= 60) {
+-		rtc_tm.tm_sec %= 60;
+-		rtc_tm.tm_min++;
+-	}
+-	if (rtc_tm.tm_min == 60) {
+-		rtc_tm.tm_min = 0;
+-		rtc_tm.tm_hour++;
+-	}
+-	if (rtc_tm.tm_hour == 24)
+-		rtc_tm.tm_hour = 0;
+-
+-	retval = ioctl(fd, RTC_ALM_SET, &rtc_tm);
+-	if (retval == -1) {
+-		if (errno == EINVAL) {
+-			fprintf(stderr,
+-				"\n...Alarm IRQs not supported.\n");
+-			goto test_DATE;
+-		}
+-
+-		perror("RTC_ALM_SET ioctl");
+-		exit(errno);
++TEST_F(rtc, alarm_alm_set) {
++	struct timeval tv = { .tv_sec = ALARM_DELTA + 2 };
++	unsigned long data;
++	struct rtc_time tm;
++	fd_set readfds;
++	time_t secs, new;
++	int rc;
++
++	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
++	ASSERT_NE(-1, rc);
++
++	secs = timegm((struct tm *)&tm) + ALARM_DELTA;
++	gmtime_r(&secs, (struct tm *)&tm);
++
++	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
++	if (rc == -1) {
++		ASSERT_EQ(EINVAL, errno);
++		TH_LOG("skip alarms are not supported.");
++		return;
+ 	}
+ 
+-	/* Read the current alarm settings */
+-	retval = ioctl(fd, RTC_ALM_READ, &rtc_tm);
+-	if (retval == -1) {
+-		if (errno == EINVAL) {
+-			fprintf(stderr,
+-					"\n...EINVAL reading current alarm setting.\n");
+-			goto test_DATE;
+-		}
+-		perror("RTC_ALM_READ ioctl");
+-		exit(errno);
+-	}
++	rc = ioctl(self->fd, RTC_ALM_READ, &tm);
++	ASSERT_NE(-1, rc);
+ 
+-	fprintf(stderr, "Alarm time now set to %02d:%02d:%02d.\n",
+-		rtc_tm.tm_hour, rtc_tm.tm_min, rtc_tm.tm_sec);
++	TH_LOG("Alarm time now set to %02d:%02d:%02d.",
++	       tm.tm_hour, tm.tm_min, tm.tm_sec);
+ 
+ 	/* Enable alarm interrupts */
+-	retval = ioctl(fd, RTC_AIE_ON, 0);
+-	if (retval == -1) {
+-		if (errno == EINVAL || errno == EIO) {
+-			fprintf(stderr,
+-				"\n...Alarm IRQs not supported.\n");
+-			goto test_DATE;
+-		}
+-
+-		perror("RTC_AIE_ON ioctl");
+-		exit(errno);
+-	}
++	rc = ioctl(self->fd, RTC_AIE_ON, 0);
++	ASSERT_NE(-1, rc);
+ 
+-	fprintf(stderr, "Waiting 5 seconds for alarm...");
+-	fflush(stderr);
+-	/* This blocks until the alarm ring causes an interrupt */
+-	retval = read(fd, &data, sizeof(unsigned long));
+-	if (retval == -1) {
+-		perror("read");
+-		exit(errno);
+-	}
+-	irqcount++;
+-	fprintf(stderr, " okay. Alarm rang.\n");
++	FD_ZERO(&readfds);
++	FD_SET(self->fd, &readfds);
++
++	rc = select(self->fd + 1, &readfds, NULL, NULL, &tv);
++	ASSERT_NE(-1, rc);
++	EXPECT_NE(0, rc);
+ 
+ 	/* Disable alarm interrupts */
+-	retval = ioctl(fd, RTC_AIE_OFF, 0);
+-	if (retval == -1) {
+-		perror("RTC_AIE_OFF ioctl");
+-		exit(errno);
+-	}
++	rc = ioctl(self->fd, RTC_AIE_OFF, 0);
++	ASSERT_NE(-1, rc);
++
++	if (rc == 0)
++		return;
++
++	rc = read(self->fd, &data, sizeof(unsigned long));
++	ASSERT_NE(-1, rc);
++	TH_LOG("data: %lx", data);
++
++	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
++	ASSERT_NE(-1, rc);
++
++	new = timegm((struct tm *)&tm);
++	ASSERT_EQ(new, secs);
++}
++
++TEST_F(rtc, alarm_wkalm_set) {
++	struct timeval tv = { .tv_sec = ALARM_DELTA + 2 };
++	struct rtc_wkalrm alarm = { 0 };
++	struct rtc_time tm;
++	unsigned long data;
++	fd_set readfds;
++	time_t secs, new;
++	int rc;
++
++	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
++	ASSERT_NE(-1, rc);
++
++	secs = timegm((struct tm *)&alarm.time) + ALARM_DELTA;
++	gmtime_r(&secs, (struct tm *)&alarm.time);
++
++	alarm.enabled = 1;
+ 
+-test_DATE:
+-	if (!dangerous)
+-		goto done;
+-
+-	fprintf(stderr, "\nTesting problematic dates\n");
+-
+-	for (i = 0; i < ARRAY_SIZE(cutoff_dates); i++) {
+-		struct rtc_time current;
+-
+-		/* Write the new date in RTC */
+-		retval = ioctl(fd, RTC_SET_TIME, &cutoff_dates[i]);
+-		if (retval == -1) {
+-			perror("RTC_SET_TIME ioctl");
+-			close(fd);
+-			exit(errno);
+-		}
+-
+-		/* Read back */
+-		retval = ioctl(fd, RTC_RD_TIME, &current);
+-		if (retval == -1) {
+-			perror("RTC_RD_TIME ioctl");
+-			exit(errno);
+-		}
+-
+-		if(compare_dates(&cutoff_dates[i], &current)) {
+-			fprintf(stderr,"Setting date %d failed\n",
+-			        cutoff_dates[i].tm_year + 1900);
+-			goto done;
+-		}
+-
+-		cutoff_dates[i].tm_sec += 5;
+-
+-		/* Write the new alarm in RTC */
+-		retval = ioctl(fd, RTC_ALM_SET, &cutoff_dates[i]);
+-		if (retval == -1) {
+-			perror("RTC_ALM_SET ioctl");
+-			close(fd);
+-			exit(errno);
+-		}
+-
+-		/* Read back */
+-		retval = ioctl(fd, RTC_ALM_READ, &current);
+-		if (retval == -1) {
+-			perror("RTC_ALM_READ ioctl");
+-			exit(errno);
+-		}
+-
+-		if(compare_dates(&cutoff_dates[i], &current)) {
+-			fprintf(stderr,"Setting alarm %d failed\n",
+-			        cutoff_dates[i].tm_year + 1900);
+-			goto done;
+-		}
+-
+-		fprintf(stderr, "Setting year %d is OK \n",
+-			cutoff_dates[i].tm_year + 1900);
++	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
++	if (rc == -1) {
++		ASSERT_EQ(EINVAL, errno);
++		TH_LOG("skip alarms are not supported.");
++		return;
+ 	}
+-done:
+-	fprintf(stderr, "\n\n\t\t\t *** Test complete ***\n");
+ 
+-	close(fd);
++	rc = ioctl(self->fd, RTC_WKALM_RD, &alarm);
++	ASSERT_NE(-1, rc);
++
++	TH_LOG("Alarm time now set to %02d/%02d/%02d %02d:%02d:%02d.",
++	       alarm.time.tm_mday, alarm.time.tm_mon + 1,
++	       alarm.time.tm_year + 1900, alarm.time.tm_hour,
++	       alarm.time.tm_min, alarm.time.tm_sec);
++
++	FD_ZERO(&readfds);
++	FD_SET(self->fd, &readfds);
++
++	rc = select(self->fd + 1, &readfds, NULL, NULL, &tv);
++	ASSERT_NE(-1, rc);
++	EXPECT_NE(0, rc);
++
++	rc = read(self->fd, &data, sizeof(unsigned long));
++	ASSERT_NE(-1, rc);
++
++	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
++	ASSERT_NE(-1, rc);
++
++	new = timegm((struct tm *)&tm);
++	ASSERT_EQ(new, secs);
++}
++
++static void __attribute__((constructor))
++__constructor_order_last(void)
++{
++	if (!__constructor_order)
++		__constructor_order = _CONSTRUCTOR_ORDER_BACKWARD;
++}
 +
 +int main(int argc, char **argv)
 +{
-+	int i, fd, retval, irqcount = 0;
-+	unsigned long tmp, data;
-+	const char *rtc = default_rtc;
-+	struct timeval start, end, diff;
-+
 +	switch (argc) {
 +	case 2:
-+		rtc = argv[1];
++		rtc_file = argv[1];
 +		/* FALLTHROUGH */
 +	case 1:
 +		break;
 +	default:
-+		fprintf(stderr, "usage:  rtctest [rtcdev] [d]\n");
++		fprintf(stderr, "usage: %s [rtcdev]\n", argv[0]);
 +		return 1;
 +	}
-+
-+	fd = open(rtc, O_RDONLY);
-+
-+	if (fd ==  -1) {
-+		perror(rtc);
-+		exit(errno);
-+	}
-+
-+	/* Read periodic IRQ rate */
-+	retval = ioctl(fd, RTC_IRQP_READ, &tmp);
-+	if (retval == -1) {
-+		/* not all RTCs support periodic IRQs */
-+		if (errno == EINVAL) {
-+			fprintf(stderr, "\nNo periodic IRQ support\n");
-+			goto done;
-+		}
-+		perror("RTC_IRQP_READ ioctl");
-+		exit(errno);
-+	}
-+	fprintf(stderr, "\nPeriodic IRQ rate is %ldHz.\n", tmp);
-+
-+	fprintf(stderr, "Counting 20 interrupts at:");
-+	fflush(stderr);
-+
-+	/* The frequencies 128Hz, 256Hz, ... 8192Hz are only allowed for root. */
-+	for (tmp=2; tmp<=64; tmp*=2) {
-+
-+		retval = ioctl(fd, RTC_IRQP_SET, tmp);
-+		if (retval == -1) {
-+			/* not all RTCs can change their periodic IRQ rate */
-+			if (errno == EINVAL) {
-+				fprintf(stderr,
-+					"\n...Periodic IRQ rate is fixed\n");
-+				goto done;
-+			}
-+			perror("RTC_IRQP_SET ioctl");
-+			exit(errno);
-+		}
-+
-+		fprintf(stderr, "\n%ldHz:\t", tmp);
-+		fflush(stderr);
-+
-+		/* Enable periodic interrupts */
-+		retval = ioctl(fd, RTC_PIE_ON, 0);
-+		if (retval == -1) {
-+			perror("RTC_PIE_ON ioctl");
-+			exit(errno);
-+		}
-+
-+		for (i=1; i<21; i++) {
-+			gettimeofday(&start, NULL);
-+			/* This blocks */
-+			retval = read(fd, &data, sizeof(unsigned long));
-+			if (retval == -1) {
-+				perror("read");
-+				exit(errno);
-+			}
-+			gettimeofday(&end, NULL);
-+			timersub(&end, &start, &diff);
-+			if (diff.tv_sec > 0 ||
-+			    diff.tv_usec > ((1000000L / tmp) * 1.10)) {
-+				fprintf(stderr, "\nPIE delta error: %ld.%06ld should be close to 0.%06ld\n",
-+				       diff.tv_sec, diff.tv_usec,
-+				       (1000000L / tmp));
-+				fflush(stdout);
-+				exit(-1);
-+			}
-+
-+			fprintf(stderr, " %d",i);
-+			fflush(stderr);
-+			irqcount++;
-+		}
-+
-+		/* Disable periodic interrupts */
-+		retval = ioctl(fd, RTC_PIE_OFF, 0);
-+		if (retval == -1) {
-+			perror("RTC_PIE_OFF ioctl");
-+			exit(errno);
-+		}
-+	}
-+
-+done:
-+	fprintf(stderr, "\n\n\t\t\t *** Test complete ***\n");
-+
-+	close(fd);
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/timers/rtctest.c b/tools/testing/selftests/timers/rtctest.c
-index 411eff625e66..6e17b96551ec 100644
---- a/tools/testing/selftests/timers/rtctest.c
-+++ b/tools/testing/selftests/timers/rtctest.c
-@@ -94,10 +94,9 @@ static int compare_dates(struct rtc_time *a, struct rtc_time *b)
- int main(int argc, char **argv)
- {
- 	int i, fd, retval, irqcount = 0, dangerous = 0;
--	unsigned long tmp, data;
-+	unsigned long data;
- 	struct rtc_time rtc_tm;
- 	const char *rtc = default_rtc;
--	struct timeval start, end, diff;
  
- 	switch (argc) {
- 	case 3:
-@@ -211,7 +210,7 @@ int main(int argc, char **argv)
- 		if (errno == EINVAL) {
- 			fprintf(stderr,
- 				"\n...Alarm IRQs not supported.\n");
--			goto test_PIE;
-+			goto test_DATE;
- 		}
- 
- 		perror("RTC_ALM_SET ioctl");
-@@ -224,7 +223,7 @@ int main(int argc, char **argv)
- 		if (errno == EINVAL) {
- 			fprintf(stderr,
- 					"\n...EINVAL reading current alarm setting.\n");
--			goto test_PIE;
-+			goto test_DATE;
- 		}
- 		perror("RTC_ALM_READ ioctl");
- 		exit(errno);
-@@ -239,7 +238,7 @@ int main(int argc, char **argv)
- 		if (errno == EINVAL || errno == EIO) {
- 			fprintf(stderr,
- 				"\n...Alarm IRQs not supported.\n");
--			goto test_PIE;
-+			goto test_DATE;
- 		}
- 
- 		perror("RTC_AIE_ON ioctl");
-@@ -264,80 +263,6 @@ int main(int argc, char **argv)
- 		exit(errno);
- 	}
- 
--test_PIE:
--	/* Read periodic IRQ rate */
--	retval = ioctl(fd, RTC_IRQP_READ, &tmp);
--	if (retval == -1) {
--		/* not all RTCs support periodic IRQs */
--		if (errno == EINVAL) {
--			fprintf(stderr, "\nNo periodic IRQ support\n");
--			goto test_DATE;
--		}
--		perror("RTC_IRQP_READ ioctl");
--		exit(errno);
--	}
--	fprintf(stderr, "\nPeriodic IRQ rate is %ldHz.\n", tmp);
--
--	fprintf(stderr, "Counting 20 interrupts at:");
--	fflush(stderr);
--
--	/* The frequencies 128Hz, 256Hz, ... 8192Hz are only allowed for root. */
--	for (tmp=2; tmp<=64; tmp*=2) {
--
--		retval = ioctl(fd, RTC_IRQP_SET, tmp);
--		if (retval == -1) {
--			/* not all RTCs can change their periodic IRQ rate */
--			if (errno == EINVAL) {
--				fprintf(stderr,
--					"\n...Periodic IRQ rate is fixed\n");
--				goto test_DATE;
--			}
--			perror("RTC_IRQP_SET ioctl");
--			exit(errno);
--		}
--
--		fprintf(stderr, "\n%ldHz:\t", tmp);
--		fflush(stderr);
--
--		/* Enable periodic interrupts */
--		retval = ioctl(fd, RTC_PIE_ON, 0);
--		if (retval == -1) {
--			perror("RTC_PIE_ON ioctl");
--			exit(errno);
--		}
--
--		for (i=1; i<21; i++) {
--			gettimeofday(&start, NULL);
--			/* This blocks */
--			retval = read(fd, &data, sizeof(unsigned long));
--			if (retval == -1) {
--				perror("read");
--				exit(errno);
--			}
--			gettimeofday(&end, NULL);
--			timersub(&end, &start, &diff);
--			if (diff.tv_sec > 0 ||
--			    diff.tv_usec > ((1000000L / tmp) * 1.10)) {
--				fprintf(stderr, "\nPIE delta error: %ld.%06ld should be close to 0.%06ld\n",
--				       diff.tv_sec, diff.tv_usec,
--				       (1000000L / tmp));
--				fflush(stdout);
--				exit(-1);
--			}
--
--			fprintf(stderr, " %d",i);
--			fflush(stderr);
--			irqcount++;
--		}
--
--		/* Disable periodic interrupts */
--		retval = ioctl(fd, RTC_PIE_OFF, 0);
--		if (retval == -1) {
--			perror("RTC_PIE_OFF ioctl");
--			exit(errno);
--		}
--	}
--
- test_DATE:
- 	if (!dangerous)
- 		goto done;
+-	return 0;
++	return test_harness_run(argc, argv);
+ }
 -- 
 2.17.0
