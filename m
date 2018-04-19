@@ -1,80 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750972AbeDSGRS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 02:17:18 -0400
-Received: from mga07.intel.com ([134.134.136.100]:32248 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750708AbeDSGRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 02:17:17 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.48,467,1517904000";
-   d="scan'208";a="33711512"
-Date: Thu, 19 Apr 2018 09:17:10 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Song Liu <songliubraving@fb.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 2/2] perf/core: fix bad use of igrab in
- kernel/event/core.c
-Message-ID: <20180419061710.l6sdq3kvricpyjdu@um.fi.intel.com>
-References: <20180418062907.3210386-1-songliubraving@fb.com>
- <20180418062907.3210386-2-songliubraving@fb.com>
+        id S1751046AbeDSGU4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 02:20:56 -0400
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:40405 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeDSGUz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 02:20:55 -0400
+X-Google-Smtp-Source: AIpwx48hkoz+EeH88Tau2mrUm1K6skiihBZv8TlKawu+Oyz4aDNmPiS/001teFcfEmIGdwk5lYU5YQ==
+Date: Thu, 19 Apr 2018 15:20:50 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Nikitas Angelinas <nikitas.angelinas@gmail.com>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Bob Picco <bob.picco@oracle.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [console_unlock] BUG: KASAN: use-after-scope in
+ console_unlock+0x9cd/0xd10
+Message-ID: <20180419062050.GA8683@jagdpanzerIV>
+References: <20180419021757.66xxs5fgvlrusiup@wfg-t540p.sh.intel.com>
+ <CACT4Y+bmYk_A4NcOhCeHcG4t5_c=Q1fmQOPxHLtC8G0hLrxSLA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180418062907.3210386-2-songliubraving@fb.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <CACT4Y+bmYk_A4NcOhCeHcG4t5_c=Q1fmQOPxHLtC8G0hLrxSLA@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 11:29:07PM -0700, Song Liu wrote:
-> As Miklos reported and suggested:
-> 
->   This pattern repeats two times in trace_uprobe.c and in
->   kernel/events/core.c as well:
-> 
->       ret = kern_path(filename, LOOKUP_FOLLOW, &path);
->       if (ret)
->           goto fail_address_parse;
-> 
->       inode = igrab(d_inode(path.dentry));
->       path_put(&path);
-> 
->   And it's wrong.  You can only hold a reference to the inode if you
->   have an active ref to the superblock as well (which is normally
->   through path.mnt) or holding s_umount.
+On (04/19/18 08:04), Dmitry Vyukov wrote:
+[..]
+> We could also make them mutually exclusive in config to prevent people
+> from hitting these false positives again and again.
 
-Oops. I must have snatched it from the uprobe code without thinking.
+Let's do it. Ard and Kees agreed on making them mutually exclusive [1][2].
+Dmitry, could send out a patch?
 
->   This way unmounting the containing filesystem while the tracepoint is
->   active will give you the "VFS: Busy inodes after unmount..." message
->   and a crash when the inode is finally put.
-> 
->   Solution: store path instead of inode.
-> 
-> This patch fixes the issue in kernel/event/core.c.
-> 
-> NOTE: Based on my understanding, perf_addr_filter only supports intel_pt.
+[1] lkml.kernel.org/r/CAKv+Gu8HN-t2om8sCfjxCWbsgSir54fZw222dsed0Xwqph2aNg@mail.gmail.com
+[2] lkml.kernel.org/r/CAGXu5j+mcfo4aB3PM1We6O62bFBJcMFX-9obJE4jFU1Dp=gNwg@mail.gmail.com
 
-Coresight too, but that's probably even further away from what you have.
-
-> However, my test system doesn't support address filtering (or I made a
-> mistake?). Therefore, I have NOT tested this patch.
-
-Check /sys/devices/intel_pt/caps/num_address_ranges, if it's non-zero,
-it's supported.
-
-> Could someone please help test it?
-
-Yes:
-
-Reviewed-and-tested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-
-The subject line needs a little love to be more like other perf commits, but
-other than that, looks good.
-
-Thanks!
+	-ss
