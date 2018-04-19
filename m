@@ -1,118 +1,296 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1944579-1524238789-2-83915878486912292
+X-Cyrus-Session-Id: sloti22d1t05-3581170-1524157349-2-12423313613622022535
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='net', MailFrom='org'
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524238788; b=bT8A/8apUi1sMew+frSU9sk5Ljbjk3CcyLXADRLpUaPBV27sLf
-    8RPD9xqWcPu/2anyFY9JL46U9B6Z426hnLBwnwhCvpB57PEkhqxjNigA3OqKE8vc
-    YgONFTeFkLc8rwwO0nt+r3naojxFG34ER9EDFaaM4KGjLuA5P0D/FtwbBQr2kf2K
-    ZnQqejMzVhPNPftkrx76h6rRbKTYVDzEOdcbT4995OusHVP0reOL9oDHtkG5uSVz
-    1ElgR7sTRSABC+yZ179T8SOeqI2kUzoKDQr/7gIzABlKDJoAYe7tr0TiSlCPnemV
-    ri1cVIA0eSqkEbIAU2m9o4Ap2A3QWhFyCT8Q==
+    1524157348; b=i8yh25+tW+MX3FbCr1FWfWnwOIRM8n4km6FgjyX1FimHnXByRt
+    lUIyY4Lbkbkg0v1qHPBK2NvSHjuqud5CAbQFQkU5d4SIe6Ex1fjik4CmKrO+cyfU
+    5zuWxdex83qxIl2f2KvmndixOR6lnZRz3vQ2wa6B26yKO/7Dh5Ii449WMytcVuP4
+    +FlglZFAyy8l10dgWigTuQtQih6GxR3MmTI50WU7aBByf5XXFaszQvxUT4TxnJSE
+    x5hWRVUfQrn+15KdYy15pRE6rTnH5ubUpuNc8PoQCCvJLE+ZAoguTfaXlzpUZK/9
+    fOxIKrlnFYmlVuLsxsYyLA4x2qkry7Yp+k6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:message-id:to:cc:subject:from
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524238788;
-    bh=kEcN/2S5I2mKybykMVYM8VyYeEeFCcbY1F6TzkoVpw8=; b=R4HIEVJiUdx1
-    hprJR9GQt7jB7PfJdQqYnCh8Gad28pV/zvcumL9/OWo+S1eoO2a59Li4Ki7pVzTo
-    nbBvv7uynoHiFZnaqfwr5GoXZylNaCfgXGsFkcMuDv1n/03oOyzAkmxUtHPiuExs
-    ojWgYUPWgFkGe58nGZf5h226Y4yUO19w8Xt54jR3VcM/wZUQZwo4ER8BbQlW5jTh
-    olIyDO/ketPS/arc8JSFrGpXrZ8mWMy1jJ3kqUaCjCtjB4gGyQ6pmV1BB6hJBP/J
-    hJTvD7aTHJQmoSPChFss5OgpPybqzitAPqY+ywkIpmfGw7A8ShjzaYQFG+WvYJB6
-    sYIPNbpL+w==
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524157348; bh=
+    AmH3sYnw0E0FGzg+syZZR1AyTB3mEa+10a9x34uX5/k=; b=Ed9tss4XtqhIT3xd
+    nIF8UR/CFxVvCeBRiBe3oG5PXVPppxL7bvb6ZVES3eDyhiUmDYZnlp3P4aagMrWl
+    OyRVYXEEFYtWgbW3D3A3uXXawyhFORjvjjkXK+VXPOh7UodTO0ynH8WlKqfESdsT
+    5GpYwe6orWVDk7qACwMWgLfkEemUKn8h/NfIao3fwQgUQmPwHo/VKyIVgtH7oCG6
+    VGExlMUlEjwKOr3pH92Xxr+J5qfoVjkP2KseGZ1iA6355vvrjHdw7e4G6ztArm0L
+    06UNJpBXwHtAKuucjfKLA/UG50sEKRnBi2g3DBlxWmBeCsiWNeMU7iX2Uxaasibp
+    hnmBsA==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=davemloft.net;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=JKnr9RFs x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=BeyD+L6j x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AZViAzjj;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=davemloft.net header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=davemloft.net;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=raspberrypi-org.20150623.gappssmtp.com header.i=@raspberrypi-org.20150623.gappssmtp.com header.b=JKnr9RFs x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dkim=invalid (public key: invalid data, 0-bit  key sha256) header.d=raspberrypi.org header.i=@raspberrypi.org header.b=BeyD+L6j x-bits=0 x-keytype="" x-algorithm=sha256 x-selector=pp;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=raspberrypi.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=AZViAzjj;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=davemloft.net header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=raspberrypi.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHWZEWEllFLAbfHexM4zQMFMkmPSZRrAxy8Lb7W3IUq6/t6tTeVF45v4aOItngDEqQb48lM3hr4c2IHAyTn3hPI26ac5k/rc5XC5HPxNAr2ZKD0H5jhz
-    mL6Ts1CXiCIyaDJph+3v9sebBs3+c0CQ3hbPT2u5iQxbTuZsBlSLByca1jVZWPSzmYXrUGUSGpa25UUyh9RNwlLUPtxlLl/9kDQ7Epf56ydkxjRhiRAxSdhO
+X-CM-Envelope: MS4wfKNzoTB8QSO7RBDkj++BMrRiSDmMrkvyThslUGz/6tbcKHXwMzdczITYRet/J/No2g7lHLihGabfwnI9Jlvfa05B/Gv8b1hsdjdD6sTfOMEvFiNZ5iUE
+    zvvG7aV8D0Sq7kQnC84DGEvv1kxCgP+0Dm+EvEyKq5Z4gr+CrXvLeabAb3KDT9ZvCBkivIwC8iS5ntgSJvgvYND7MGJmsxOrzfWaCuI1vjM451VQcqCkxv6l
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=WFZIRff2AAAA:8 a=VwQbUJbxAAAA:8 a=dSSbBeGmRD9XzgoCY8UA:9
-    a=6LKGa95oTSmxmVlg:21 a=VJXZKpJDvFt0E2wt:21 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=Kd1tUaAdevIA:10
+    a=WFZIRff2AAAA:8 a=XYAwZIGsAAAA:8 a=VwQbUJbxAAAA:8 a=w00BvIrj0aWh6mdj-2AA:9
+    a=x8gzFH9gYPwA:10 a=E8ToXWR_bxluHZ7gmE-Z:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755849AbeDTPjc (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 20 Apr 2018 11:39:32 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:45326 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755683AbeDTPja (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Fri, 20 Apr 2018 11:39:30 -0400
-Date: Fri, 20 Apr 2018 11:39:27 -0400 (EDT)
-Message-Id: <20180420.113927.810364321398349353.davem@davemloft.net>
-To: phil@raspberrypi.org
-Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, andrew@lunn.ch,
-        f.fainelli@gmail.com, mchehab@kernel.org,
-        gregkh@linuxfoundation.org, linus.walleij@linaro.org,
-        akpm@linux-foundation.org, rdunlap@infradead.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] lan78xx: Read configuration from Device Tree
-From: David Miller <davem@davemloft.net>
+        id S1753663AbeDSRBg (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 13:01:36 -0400
+Received: from mx08-00252a01.pphosted.com ([91.207.212.211]:33724 "EHLO
+        mx08-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753392AbeDSRAL (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 19 Apr 2018 13:00:11 -0400
+X-Google-Smtp-Source: AIpwx4/coPvcHUMiVtHnqp0QN70f0v942BXHKlR7sVNoPntETcoZ1spkMGtawfpZqJdu1N8k/y9BzA==
+From: Phil Elwell <phil@raspberrypi.org>
+To: Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Phil Elwell <phil@raspberrypi.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: [PATCH v4 2/3] lan78xx: Read LED states from Device Tree
+Date: Thu, 19 Apr 2018 17:59:39 +0100
+Message-Id: <1524157180-27276-3-git-send-email-phil@raspberrypi.org>
+X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524157180-27276-1-git-send-email-phil@raspberrypi.org>
 References: <1524157180-27276-1-git-send-email-phil@raspberrypi.org>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
+ signatures=0
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Phil Elwell <phil@raspberrypi.org>
-Date: Thu, 19 Apr 2018 17:59:37 +0100
+Add support for DT property "microchip,led-modes", a vector of zero
+to four cells (u32s) in the range 0-15, each of which sets the mode
+for one of the LEDs. Some possible values are:
 
-> The Microchip LAN78XX family of devices are Ethernet controllers with
-> a USB interface. Despite being discoverable devices it can be useful to
-> be able to configure them from Device Tree, particularly in low-cost
-> applications without an EEPROM or programmed OTP.
-> 
-> This patch set adds support for reading the MAC address and LED modes from
-> Device Tree.
-> 
-> v4:
-> - Rename nodes in bindings doc.
-> 
-> v3:
-> - Move LED setting into PHY driver.
-> 
-> v2:
-> - Use eth_platform_get_mac_address.
-> - Support up to 4 LEDs, and move LED mode constants into dt-bindings header.
-> - Improve bindings document.
-> - Remove EEE support.
+    0=link/activity          1=link1000/activity
+    2=link100/activity       3=link10/activity
+    4=link100/1000/activity  5=link10/1000/activity
+    6=link10/100/activity    14=off    15=on
 
-Series applied, thanks Phil.
+These values are given symbolic constants in a dt-bindings header.
+
+Also use the presence of the DT property to indicate that the
+LEDs should be enabled - necessary in the event that no valid OTP
+or EEPROM is available.
+
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+ MAINTAINERS                                 |  1 +
+ drivers/net/phy/microchip.c                 | 25 ++++++++++++++++++++++
+ drivers/net/usb/lan78xx.c                   | 32 ++++++++++++++++++++++++++++-
+ include/dt-bindings/net/microchip-lan78xx.h | 21 +++++++++++++++++++
+ include/linux/microchipphy.h                |  3 +++
+ 5 files changed, 81 insertions(+), 1 deletion(-)
+ create mode 100644 include/dt-bindings/net/microchip-lan78xx.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b60179d..23735d9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14573,6 +14573,7 @@ M:	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
+ L:	netdev@vger.kernel.org
+ S:	Maintained
+ F:	drivers/net/usb/lan78xx.*
++F:	include/dt-bindings/net/microchip-lan78xx.h
+ 
+ USB MASS STORAGE DRIVER
+ M:	Alan Stern <stern@rowland.harvard.edu>
+diff --git a/drivers/net/phy/microchip.c b/drivers/net/phy/microchip.c
+index 0f293ef..ef5e160 100644
+--- a/drivers/net/phy/microchip.c
++++ b/drivers/net/phy/microchip.c
+@@ -20,6 +20,8 @@
+ #include <linux/ethtool.h>
+ #include <linux/phy.h>
+ #include <linux/microchipphy.h>
++#include <linux/of.h>
++#include <dt-bindings/net/microchip-lan78xx.h>
+ 
+ #define DRIVER_AUTHOR	"WOOJUNG HUH <woojung.huh@microchip.com>"
+ #define DRIVER_DESC	"Microchip LAN88XX PHY driver"
+@@ -70,6 +72,8 @@ static int lan88xx_probe(struct phy_device *phydev)
+ {
+ 	struct device *dev = &phydev->mdio.dev;
+ 	struct lan88xx_priv *priv;
++	u32 led_modes[4];
++	int len;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+@@ -77,6 +81,27 @@ static int lan88xx_probe(struct phy_device *phydev)
+ 
+ 	priv->wolopts = 0;
+ 
++	len = of_property_read_variable_u32_array(dev->of_node,
++						  "microchip,led-modes",
++						  led_modes,
++						  0,
++						  ARRAY_SIZE(led_modes));
++	if (len >= 0) {
++		u32 reg = 0;
++		int i;
++
++		for (i = 0; i < len; i++) {
++			if (led_modes[i] > 15)
++				return -EINVAL;
++			reg |= led_modes[i] << (i * 4);
++		}
++		for (; i < ARRAY_SIZE(led_modes); i++)
++			reg |= LAN78XX_FORCE_LED_OFF << (i * 4);
++		(void)phy_write(phydev, LAN78XX_PHY_LED_MODE_SELECT, reg);
++	} else if (len == -EOVERFLOW) {
++		return -EINVAL;
++	}
++
+ 	/* these values can be used to identify internal PHY */
+ 	priv->chip_id = phy_read_mmd(phydev, 3, LAN88XX_MMD3_CHIP_ID);
+ 	priv->chip_rev = phy_read_mmd(phydev, 3, LAN88XX_MMD3_CHIP_REV);
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index a823f01..6b03b97 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -37,6 +37,7 @@
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/microchipphy.h>
+ #include <linux/phy.h>
++#include <linux/of_mdio.h>
+ #include <linux/of_net.h>
+ #include "lan78xx.h"
+ 
+@@ -1760,6 +1761,7 @@ static int lan78xx_mdiobus_write(struct mii_bus *bus, int phy_id, int idx,
+ 
+ static int lan78xx_mdio_init(struct lan78xx_net *dev)
+ {
++	struct device_node *node;
+ 	int ret;
+ 
+ 	dev->mdiobus = mdiobus_alloc();
+@@ -1788,7 +1790,13 @@ static int lan78xx_mdio_init(struct lan78xx_net *dev)
+ 		break;
+ 	}
+ 
+-	ret = mdiobus_register(dev->mdiobus);
++	node = of_get_child_by_name(dev->udev->dev.of_node, "mdio");
++	if (node) {
++		ret = of_mdiobus_register(dev->mdiobus, node);
++		of_node_put(node);
++	} else {
++		ret = mdiobus_register(dev->mdiobus);
++	}
+ 	if (ret) {
+ 		netdev_err(dev->net, "can't register MDIO bus\n");
+ 		goto exit1;
+@@ -2077,6 +2085,28 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+ 	mii_adv = (u32)mii_advertise_flowctrl(dev->fc_request_control);
+ 	phydev->advertising |= mii_adv_to_ethtool_adv_t(mii_adv);
+ 
++	if (phydev->mdio.dev.of_node) {
++		u32 reg;
++		int len;
++
++		len = of_property_count_elems_of_size(phydev->mdio.dev.of_node,
++						      "microchip,led-modes",
++						      sizeof(u32));
++		if (len >= 0) {
++			/* Ensure the appropriate LEDs are enabled */
++			lan78xx_read_reg(dev, HW_CFG, &reg);
++			reg &= ~(HW_CFG_LED0_EN_ |
++				 HW_CFG_LED1_EN_ |
++				 HW_CFG_LED2_EN_ |
++				 HW_CFG_LED3_EN_);
++			reg |= (len > 0) * HW_CFG_LED0_EN_ |
++				(len > 1) * HW_CFG_LED1_EN_ |
++				(len > 2) * HW_CFG_LED2_EN_ |
++				(len > 3) * HW_CFG_LED3_EN_;
++			lan78xx_write_reg(dev, HW_CFG, reg);
++		}
++	}
++
+ 	genphy_config_aneg(phydev);
+ 
+ 	dev->fc_autoneg = phydev->autoneg;
+diff --git a/include/dt-bindings/net/microchip-lan78xx.h b/include/dt-bindings/net/microchip-lan78xx.h
+new file mode 100644
+index 0000000..0742ff0
+--- /dev/null
++++ b/include/dt-bindings/net/microchip-lan78xx.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _DT_BINDINGS_MICROCHIP_LAN78XX_H
++#define _DT_BINDINGS_MICROCHIP_LAN78XX_H
++
++/* LED modes for LAN7800/LAN7850 embedded PHY */
++
++#define LAN78XX_LINK_ACTIVITY           0
++#define LAN78XX_LINK_1000_ACTIVITY      1
++#define LAN78XX_LINK_100_ACTIVITY       2
++#define LAN78XX_LINK_10_ACTIVITY        3
++#define LAN78XX_LINK_100_1000_ACTIVITY  4
++#define LAN78XX_LINK_10_1000_ACTIVITY   5
++#define LAN78XX_LINK_10_100_ACTIVITY    6
++#define LAN78XX_DUPLEX_COLLISION        8
++#define LAN78XX_COLLISION               9
++#define LAN78XX_ACTIVITY                10
++#define LAN78XX_AUTONEG_FAULT           12
++#define LAN78XX_FORCE_LED_OFF           14
++#define LAN78XX_FORCE_LED_ON            15
++
++#endif
+diff --git a/include/linux/microchipphy.h b/include/linux/microchipphy.h
+index eb492d4..8e4015e 100644
+--- a/include/linux/microchipphy.h
++++ b/include/linux/microchipphy.h
+@@ -70,4 +70,7 @@
+ #define	LAN88XX_MMD3_CHIP_ID			(32877)
+ #define	LAN88XX_MMD3_CHIP_REV			(32878)
+ 
++/* Registers specific to the LAN7800/LAN7850 embedded phy */
++#define LAN78XX_PHY_LED_MODE_SELECT		(0x1D)
++
+ #endif /* _MICROCHIPPHY_H */
+-- 
+2.7.4
+
