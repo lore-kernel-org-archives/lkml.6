@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753164AbeDSJfZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 05:35:25 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58531 "EHLO
+        id S1753132AbeDSJgJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 05:36:09 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53145 "EHLO
         relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752489AbeDSJbj (ORCPT
+        with ESMTP id S1751184AbeDSJbe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 05:31:39 -0400
+        Thu, 19 Apr 2018 05:31:34 -0400
 X-Originating-IP: 2.224.242.101
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: architt@codeaurora.org, a.hajda@samsung.com,
@@ -15,9 +15,9 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, daniel@ffwll.ch,
         peda@axentia.se, linux-renesas-soc@vger.kernel.org,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] drm: rcar-du: rcar-lvds: Add bridge format support
-Date: Thu, 19 Apr 2018 11:31:07 +0200
-Message-Id: <1524130269-32688-7-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 4/8] arm64: dts: renesas: eagle: Add thc63 LVDS map
+Date: Thu, 19 Apr 2018 11:31:05 +0200
+Message-Id: <1524130269-32688-5-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -25,108 +25,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the introduction of static input image format enumeration in DRM
-bridges, add support to retrieve the format in rcar-lvds LVDS encoder
-from both panel or bridge, to set the desired LVDS mode.
-
-Do not rely on 'DRM_BUS_FLAG_DATA_LSB_TO_MSB' flag to mirror the LVDS
-format, as it is only defined for drm connectors, but use the newly
-introduced _LE version of LVDS mbus image formats.
+Add LVDS map mode description property to THC63LVD1024 LVDS decoder in
+R-Car V3M-Eagle board device tree.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 64 +++++++++++++++++++++++++------------
- 1 file changed, 44 insertions(+), 20 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 3d2d3bb..2fa875f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -280,41 +280,65 @@ static bool rcar_lvds_mode_fixup(struct drm_bridge *bridge,
- 	return true;
- }
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+index ebfbb51..2609fa3 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -56,6 +56,7 @@
+ 		compatible = "thine,thc63lvd1024";
  
--static void rcar_lvds_get_lvds_mode(struct rcar_lvds *lvds)
-+static int rcar_lvds_get_lvds_mode_from_connector(struct rcar_lvds *lvds,
-+						  unsigned int *bus_fmt)
- {
- 	struct drm_display_info *info = &lvds->connector.display_info;
--	enum rcar_lvds_mode mode;
--
--	/*
--	 * There is no API yet to retrieve LVDS mode from a bridge, only panels
--	 * are supported.
--	 */
--	if (!lvds->panel)
--		return;
+ 		vcc-supply = <&d3p3>;
++		thine,map = <1>;
  
- 	if (!info->num_bus_formats || !info->bus_formats) {
- 		dev_err(lvds->dev, "no LVDS bus format reported\n");
--		return;
-+		return -EINVAL;
-+	}
-+
-+	*bus_fmt = info->bus_formats[0];
-+
-+	return 0;
-+}
-+
-+static int rcar_lvds_get_lvds_mode_from_bridge(struct rcar_lvds *lvds,
-+					       unsigned int *bus_fmt)
-+{
-+	if (!lvds->next_bridge->num_bus_formats ||
-+	    !lvds->next_bridge->bus_formats) {
-+		dev_err(lvds->dev, "no LVDS bus format reported\n");
-+		return -EINVAL;
- 	}
- 
--	switch (info->bus_formats[0]) {
-+	*bus_fmt = lvds->next_bridge->bus_formats[0];
-+
-+	return 0;
-+}
-+
-+static void rcar_lvds_get_lvds_mode(struct rcar_lvds *lvds)
-+{
-+	unsigned int bus_fmt;
-+	int ret;
-+
-+	if (lvds->panel)
-+		ret = rcar_lvds_get_lvds_mode_from_connector(lvds, &bus_fmt);
-+	else
-+		ret = rcar_lvds_get_lvds_mode_from_bridge(lvds, &bus_fmt);
-+	if (ret)
-+		return;
-+
-+	switch (bus_fmt) {
-+	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE:
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE:
-+		lvds->mode |= RCAR_LVDS_MODE_MIRROR;
- 	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
- 	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
--		mode = RCAR_LVDS_MODE_JEIDA;
-+		lvds->mode = RCAR_LVDS_MODE_JEIDA;
- 		break;
-+
-+	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE:
-+		lvds->mode |= RCAR_LVDS_MODE_MIRROR;
- 	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
--		mode = RCAR_LVDS_MODE_VESA;
-+		lvds->mode = RCAR_LVDS_MODE_VESA;
- 		break;
- 	default:
- 		dev_err(lvds->dev, "unsupported LVDS bus format 0x%04x\n",
--			info->bus_formats[0]);
--		return;
-+			bus_fmt);
- 	}
--
--	if (info->bus_flags & DRM_BUS_FLAG_DATA_LSB_TO_MSB)
--		mode |= RCAR_LVDS_MODE_MIRROR;
--
--	lvds->mode = mode;
- }
- 
- static void rcar_lvds_mode_set(struct drm_bridge *bridge,
+ 		ports {
+ 			#address-cells = <1>;
 -- 
 2.7.4
