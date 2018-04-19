@@ -1,96 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753485AbeDSUf0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 16:35:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37802 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753187AbeDSUfX (ORCPT
+        id S1753454AbeDSUj5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 16:39:57 -0400
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:35588 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753328AbeDSUjz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 16:35:23 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 23FDC60863
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
-To: Jason Gunthorpe <jgg@ziepe.ca>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, sulrich@codeaurora.org,
-        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
- <20180419202632.GE14063@ziepe.ca>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <0049ffa6-0735-160d-d504-09966839caf4@codeaurora.org>
-Date: Thu, 19 Apr 2018 16:35:20 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 19 Apr 2018 16:39:55 -0400
+X-Google-Smtp-Source: AIpwx49Z2zGhXLGbqtewYIPuXLE+WL9Z7ygon8UjDGH3vsmp+mTL6Py2x/KwQwP09dSqXIIsflHgNw==
+Date: Thu, 19 Apr 2018 23:39:49 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Waiman Long <longman@redhat.com>
+Cc: linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH] proc/stat: Separate out individual irq counts into
+ /proc/stat_irqs
+Message-ID: <20180419203949.GA4555@avx2>
+References: <20180419190846.GE2066@avx2>
+ <1c3b9cf3-3a36-568f-3da2-e560a721f4aa@redhat.com>
+ <20180419195504.GA4343@avx2>
+ <eb7c1569-e445-5cbb-6d10-2694b625232a@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180419202632.GE14063@ziepe.ca>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <eb7c1569-e445-5cbb-6d10-2694b625232a@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3JKe2Vt027312
 
-On 4/19/2018 4:26 PM, Jason Gunthorpe wrote:
-> On Thu, Apr 19, 2018 at 03:56:23PM -0400, Sinan Kaya wrote:
->> The infiniband adapter might be connected to a PCI hotplug slot. Performing
->> secondary bus reset on a hotplug slot causes PCI link up/down interrupts.
->>
->> Hotplug driver removes the device from system when a link down interrupt
->> is observed and performs re-enumeration when link up interrupt is observed.
->>
->> This conflicts with what this code is trying to do. Try secondary bus reset
->> only if pci_reset_slot() fails/unsupported.
->>
->> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->>  drivers/infiniband/hw/hfi1/pcie.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/infiniband/hw/hfi1/pcie.c b/drivers/infiniband/hw/hfi1/pcie.c
->> index 83d66e8..75f49e3 100644
->> +++ b/drivers/infiniband/hw/hfi1/pcie.c
->> @@ -908,7 +908,8 @@ static int trigger_sbr(struct hfi1_devdata *dd)
+On Thu, Apr 19, 2018 at 04:21:14PM -0400, Waiman Long wrote:
+> On 04/19/2018 03:55 PM, Alexey Dobriyan wrote:
+> > On Thu, Apr 19, 2018 at 03:28:40PM -0400, Waiman Long wrote:
+> >> On 04/19/2018 03:08 PM, Alexey Dobriyan wrote:
+> >>>> Therefore, application performance can be impacted if the application
+> >>>> reads /proc/stat rather frequently.
+> >>> [nods]
+> >>> Text interfaces can be designed in a very stupid way.
+> >>>
+> >>>> For example, reading /proc/stat in a certain 2-socket Skylake server
+> >>>> took about 4.6ms because it had over 5k irqs.
+> >>> Is this top(1)? What is this application doing?
+> >>> If it needs percpu usage stats, then maybe /proc/stat should be
+> >>> converted away from single_open() so that core seq_file code doesn't
+> >>> generate everything at once.
+> >> The application is actually a database benchmarking tool used by a
+> >> customer.
+> > So it probably needs lines before "intr" line.
+> >
+> >> The reading of /proc/stat is an artifact of the benchmarking
+> >> tool that can actually be turned off. Without doing that, about 20% of
+> >> CPU time were spent reading /proc/stat and the trashing of cachelines
+> >> slowed the benchmark number quite significantly. However, I was also
+> >> told that there are legitimate cases where reading /proc/stat was
+> >> necessary in some of their applications.
+> >>
+> >>>> -
+> >>>> -	/* sum again ? it could be updated? */
+> >>>> -	for_each_irq_nr(j)
+> >>>> -		seq_put_decimal_ull(p, " ", kstat_irqs_usr(j));
+> >>>> -
+> >>> This is direct userspace breakage.
+> >> Yes, I am aware of that. That is the cost of improving the performance
+> >> of applications that read /proc/stat, but don't need the individual irq
+> >> counts.
+> > Yeah, but all it takes is one script which cares.
+> >
+> > I have an idea.
+> >
+> > Maintain "maximum registered irq #", it should be much smaller than
+> > "nr_irqs":
+> >
+> > intr 4245359 151 0 0 0 0 0 0 0 38 0 0 0 0 0 0 0 0 0 64 0 0 0 0 0 0 0 0 0 0 44330 182364 57741 0 0 0 0 0 0 0 0 85 89124 0 0 0 0 0 323360 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 > 
-> The code above this hunk is:
+> Yes, that can probably help.
 > 
-> /*
->  * Trigger a secondary bus reset (SBR) on ourselves using our parent.
->  *
->  * Based on pci_parent_bus_reset() which is not exported by the
->  * kernel core.
->  */
-> static int trigger_sbr(struct hfi1_devdata *dd)
-> {
+> This is the data from the problematic skylake server:
 > 
-> [..]
+> model name    : Intel(R) Xeon(R) Gold 6136 CPU @ 3.00GHz
+> 56 sosreport-carevalo.02076935-20180413085327/proc/stat
+> Interrupts: 5370
+> Interrupts without "0" entries: 1011
 > 
-> This really seems like something the PCI core should be helping with,
-> drivers shouldn't be doing stuff like this. I get the feeling this
-> should be a common need if drivers support various error recovery
-> schemes?
+> There are still quite a large number of non-zero entries, though.
+> 
+> > Or maintain array of registered irqs and iterate over them only.
+> 
+> Right, we can allocate a bitmap of used irqs to do that.
+> 
+> >
+> > I have another idea.
+> >
+> > perf record shows mutex_lock/mutex_unlock at the top.
+> > Most of them are irq mutex not seqfile mutex as there are many more
+> > interrupts than reads. Take it once.
+> >
+> How many cpus are in your test system? In that skylake server, it was
+> the per-cpu summing operation of the irq counts that was consuming most
+> of the time for reading /proc/stat. I think we can certainly try to
+> optimize the lock taking.
 
-pci_parent_bus_reset() still doesn't deal with hotplug. We need to call
-a variation of pci_slot_reset() before calling pci_parent_bus_reset().
+It's 16x(NR_IRQS: 4352, nr_irqs: 960, preallocated irqs: 16)
+Given that irq registering is rare operation, maintaining sorted array
+of irq should be the best option.
 
-	rc = pci_dev_reset_slot_function(dev, 0);
-	if (rc != -ENOTTY)
-		return rc;
-	return pci_parent_bus_reset(dev, 0);
+> For the time being, I think I am going to have a clone /proc/stat2 as
+> suggested in my earlier email. Alternatively, I can put that somewhere
+> in sysfs if you have a good idea of where I can put it.
 
-VFIO driver does this.
+sysfs is strictly one-value-per-file.
 
-			/* User has access, do the reset */
-			ret = slot ? pci_try_reset_slot(vdev->pdev->slot) :
-				     pci_try_reset_bus(vdev->pdev->bus);
+> I will also look into ways to optimize the current per-IRQ stats
+> handling, but it will come later.
 
-I assumed the responsibility is at the driver to call the right API it likes.
+There is always a time-honored way of ioctl(2) switching irq info off
+/proc supports that.
 
--- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+There are many options.
