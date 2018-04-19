@@ -1,96 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753057AbeDSPQe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:16:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55006 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752337AbeDSPQb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:16:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2589760500
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [PATCH 09/61] dmaengine: qcom: simplify getting .drvdata
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Vinod Koul <vinod.koul@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, dmaengine@vger.kernel.org
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-10-wsa+renesas@sang-engineering.com>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <0d22fa16-1511-33ed-363e-fc42e4287aa0@codeaurora.org>
-Date: Thu, 19 Apr 2018 11:16:26 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753256AbeDSPS6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:18:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48580 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752831AbeDSPSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:18:55 -0400
+Date: Thu, 19 Apr 2018 17:18:53 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@google.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] ext4: handle errors on ext4_commit_super
+Message-ID: <20180419151853.jtif7ncjuhf6yuwl@quack2.suse.cz>
+References: <20180330014429.27824-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180419140641.27926-10-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180330014429.27824-1-jaegeuk@kernel.org>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/19/2018 10:05 AM, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
+On Thu 29-03-18 18:44:29, Jaegeuk Kim wrote:
+> From: Jaegeuk Kim <jaegeuk@google.com>
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> When remounting ext4 from ro to rw, currently it allows its transition,
+> even if ext4_commit_super() returns EIO. Even worse thing is, after that,
+> fs/buffer complains buffer dirty bits like:
+> 
+>  Call trace:
+>  [<ffffff9750c259dc>] mark_buffer_dirty+0x184/0x1a4
+>  [<ffffff9750cb398c>] __ext4_handle_dirty_super+0x4c/0xfc
+>  [<ffffff9750c7a9fc>] ext4_file_open+0x154/0x1c0
+>  [<ffffff9750bea51c>] do_dentry_open+0x114/0x2d0
+>  [<ffffff9750bea75c>] vfs_open+0x5c/0x94
+>  [<ffffff9750bf879c>] path_openat+0x668/0xfe8
+>  [<ffffff9750bf8088>] do_filp_open+0x74/0x120
+>  [<ffffff9750beac98>] do_sys_open+0x148/0x254
+>  [<ffffff9750beade0>] SyS_openat+0x10/0x18
+>  [<ffffff9750a83ab0>] el0_svc_naked+0x24/0x28
+>  EXT4-fs (dm-1): previous I/O error to superblock detected
+>  Buffer I/O error on dev dm-1, logical block 0, lost sync page write
+>  EXT4-fs (dm-1): re-mounted. Opts: (null)
+>  Buffer I/O error on dev dm-1, logical block 80, lost async page write
+> 
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
 > ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/dma/qcom/hidma.c          | 3 +--
->  drivers/dma/qcom/hidma_mgmt_sys.c | 6 ++----
->  2 files changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/dma/qcom/hidma.c b/drivers/dma/qcom/hidma.c
-> index 963cc5228d05..43d4b00b8138 100644
-> --- a/drivers/dma/qcom/hidma.c
-> +++ b/drivers/dma/qcom/hidma.c
-> @@ -616,8 +616,7 @@ static irqreturn_t hidma_chirq_handler_msi(int chirq, void *arg)
->  static ssize_t hidma_show_values(struct device *dev,
->  				 struct device_attribute *attr, char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct hidma_dev *mdev = platform_get_drvdata(pdev);
-> +	struct hidma_dev *mdev = dev_get_drvdata(dev);
->  
->  	buf[0] = 0;
->  
-> diff --git a/drivers/dma/qcom/hidma_mgmt_sys.c b/drivers/dma/qcom/hidma_mgmt_sys.c
-> index d61f1068a34b..cbb89eafd844 100644
-> --- a/drivers/dma/qcom/hidma_mgmt_sys.c
-> +++ b/drivers/dma/qcom/hidma_mgmt_sys.c
-> @@ -107,8 +107,7 @@ static struct hidma_mgmt_fileinfo hidma_mgmt_files[] = {
->  static ssize_t show_values(struct device *dev, struct device_attribute *attr,
->  			   char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct hidma_mgmt_dev *mdev = platform_get_drvdata(pdev);
-> +	struct hidma_mgmt_dev *mdev = dev_get_drvdata(dev);
->  	unsigned int i;
->  
->  	buf[0] = 0;
-> @@ -125,8 +124,7 @@ static ssize_t show_values(struct device *dev, struct device_attribute *attr,
->  static ssize_t set_values(struct device *dev, struct device_attribute *attr,
->  			  const char *buf, size_t count)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct hidma_mgmt_dev *mdev = platform_get_drvdata(pdev);
-> +	struct hidma_mgmt_dev *mdev = dev_get_drvdata(dev);
->  	unsigned long tmp;
->  	unsigned int i;
->  	int rc;
-> 
+>  fs/ext4/super.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
 
-Reviewed-by: Sinan Kaya <okaya@codeaurora.org>
+Thanks for the patch. Some comments below.
 
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 39bf464c35f1..b268bfea879c 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -2151,7 +2151,7 @@ static int ext4_setup_super(struct super_block *sb, struct ext4_super_block *es,
+>  	if (sbi->s_journal)
+>  		ext4_set_feature_journal_needs_recovery(sb);
+>  
+> -	ext4_commit_super(sb, 1);
+> +	res = ext4_commit_super(sb, 1);
+>  done:
+>  	if (test_opt(sb, DEBUG))
+>  		printk(KERN_INFO "[EXT4 FS bs=%lu, gc=%u, "
+
+So return value of ext4_setup_super() looks a bit strange and it seems it
+currently returns 0 or SB_RDONLY. So I think you first need to clean this
+up before making ext4_setup_super() return error code (as your patch could
+make ext4_fill_super() return SB_RDONLY under some circumstances).
+
+> @@ -4739,11 +4739,10 @@ static int ext4_commit_super(struct super_block *sb, int sync)
+>  		unlock_buffer(sbh);
+>  		error = __sync_dirty_buffer(sbh,
+>  			REQ_SYNC | (test_opt(sb, BARRIER) ? REQ_FUA : 0));
+> -		if (error)
+> +		if (error && !buffer_write_io_error(sbh))
+>  			return error;
+>  
+> -		error = buffer_write_io_error(sbh);
+> -		if (error) {
+> +		if (buffer_write_io_error(sbh)) {
+>  			ext4_msg(sb, KERN_ERR, "I/O error while writing "
+>  			       "superblock");
+>  			clear_buffer_write_io_error(sbh);
+
+I'd rather rewrite this as:
+		if (buffer_write_io_error(sbh)) {
+			do stuff as now
+		}
+		if (error)
+			return error;
+
+								Honza
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
