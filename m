@@ -1,62 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752807AbeDSOZW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:25:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46244 "EHLO mail.kernel.org"
+        id S1753306AbeDSO0H (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:26:07 -0400
+Received: from sauhun.de ([88.99.104.3]:45302 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751136AbeDSOZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:25:20 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81652170D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
-Date: Thu, 19 Apr 2018 22:24:42 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Anson Huang <Anson.Huang@nxp.com>, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org, Linux-imx@nxp.com,
-        kernel@pengutronix.de, fabio.estevam@nxp.com, shengjiu.wang@nxp.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz
- clock source
-Message-ID: <20180419142441.GW25429@dragon>
-References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
- <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
- <20180417142203.GM25429@dragon>
- <152410785516.46528.12432838242068784117@swboyd.mtv.corp.google.com>
- <20180419140236.GU25429@dragon>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419140236.GU25429@dragon>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1753205AbeDSOGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:06:53 -0400
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, dmaengine@vger.kernel.org
+Subject: [PATCH 09/61] dmaengine: qcom: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:39 +0200
+Message-Id: <20180419140641.27926-10-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 10:02:37PM +0800, Shawn Guo wrote:
-> On Wed, Apr 18, 2018 at 08:17:35PM -0700, Stephen Boyd wrote:
-> > Quoting Shawn Guo (2018-04-17 07:22:05)
-> > > On Mon, Mar 19, 2018 at 10:30:45AM +0800, Anson Huang wrote:
-> > > > On i.MX6SX SabreAuto board, there is external 24MHz clock
-> > > > source for analog clock2, add this clock source to clock tree.
-> > > > 
-> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > > ---
-> > > > changes since V1:
-> > > >       remove unnecessary clocks container.
-> > > 
-> > > I understand this is suggested by Fabio, but I'm afraid that it's not
-> > > going to work with imx_obtain_fixed_clock() call, which is coded to
-> > > look for clocks under /clocks node.
-> > > 
-> > 
-> > Should patch #1 be dropped from clk tree?
-> 
-> No.  Patch #1 is good.
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-Sorry, Stephen.  I just had a closer look at the driver code, and I
-think it can be done in a better way.  So please drop patch #1 for now.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Shawn
+Build tested only. buildbot is happy. Please apply individually.
+
+ drivers/dma/qcom/hidma.c          | 3 +--
+ drivers/dma/qcom/hidma_mgmt_sys.c | 6 ++----
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/dma/qcom/hidma.c b/drivers/dma/qcom/hidma.c
+index 963cc5228d05..43d4b00b8138 100644
+--- a/drivers/dma/qcom/hidma.c
++++ b/drivers/dma/qcom/hidma.c
+@@ -616,8 +616,7 @@ static irqreturn_t hidma_chirq_handler_msi(int chirq, void *arg)
+ static ssize_t hidma_show_values(struct device *dev,
+ 				 struct device_attribute *attr, char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hidma_dev *mdev = platform_get_drvdata(pdev);
++	struct hidma_dev *mdev = dev_get_drvdata(dev);
+ 
+ 	buf[0] = 0;
+ 
+diff --git a/drivers/dma/qcom/hidma_mgmt_sys.c b/drivers/dma/qcom/hidma_mgmt_sys.c
+index d61f1068a34b..cbb89eafd844 100644
+--- a/drivers/dma/qcom/hidma_mgmt_sys.c
++++ b/drivers/dma/qcom/hidma_mgmt_sys.c
+@@ -107,8 +107,7 @@ static struct hidma_mgmt_fileinfo hidma_mgmt_files[] = {
+ static ssize_t show_values(struct device *dev, struct device_attribute *attr,
+ 			   char *buf)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hidma_mgmt_dev *mdev = platform_get_drvdata(pdev);
++	struct hidma_mgmt_dev *mdev = dev_get_drvdata(dev);
+ 	unsigned int i;
+ 
+ 	buf[0] = 0;
+@@ -125,8 +124,7 @@ static ssize_t show_values(struct device *dev, struct device_attribute *attr,
+ static ssize_t set_values(struct device *dev, struct device_attribute *attr,
+ 			  const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct hidma_mgmt_dev *mdev = platform_get_drvdata(pdev);
++	struct hidma_mgmt_dev *mdev = dev_get_drvdata(dev);
+ 	unsigned long tmp;
+ 	unsigned int i;
+ 	int rc;
+-- 
+2.11.0
