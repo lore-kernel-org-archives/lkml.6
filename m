@@ -1,48 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753481AbeDSRKi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 13:10:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:41598 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753252AbeDSRKh (ORCPT
+        id S1753449AbeDSRNJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 13:13:09 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:60742 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752876AbeDSRNI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 13:10:37 -0400
-Subject: Re: [PATCH 1/2] blkcg: small fix on comment in blkcg_init_queue
-To: Jens Axboe <axboe@kernel.dk>, Jiang Biao <jiang.biao2@zte.com.cn>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tj@kernel.org, zhong.weidong@zte.com.cn, wen.yang99@zte.com.cn
-References: <1524110666-106945-1-git-send-email-jiang.biao2@zte.com.cn>
- <b24cd922-01c7-ce14-6427-1a8dd7819e58@kernel.dk>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c79d16cb-739d-2ac8-9fa4-bd5f6671269a@infradead.org>
-Date: Thu, 19 Apr 2018 10:10:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <b24cd922-01c7-ce14-6427-1a8dd7819e58@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Thu, 19 Apr 2018 13:13:08 -0400
+Date: Thu, 19 Apr 2018 13:13:05 -0400 (EDT)
+Message-Id: <20180419.131305.1385490904148860354.davem@davemloft.net>
+To: maxime.chevallier@bootlin.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        antoine.tenart@bootlin.com, thomas.petazzoni@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net] net: mvpp2: Fix DMA address mask size
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180418091444.14039-1-maxime.chevallier@bootlin.com>
+References: <20180418091444.14039-1-maxime.chevallier@bootlin.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/19/18 07:52, Jens Axboe wrote:
-> On 4/18/18 10:04 PM, Jiang Biao wrote:
->> The comment before blkg_create() in blkcg_init_queue() was moved
->> from blkcg_activate_policy() by commit ec13b1d6f0a0457312e615, but
->> it does not suit for the new context.
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Date: Wed, 18 Apr 2018 11:14:44 +0200
+
+> PPv2 TX/RX descriptors uses 40bits DMA addresses, but 41 bits masks were
+> used (GENMASK_ULL(40, 0)).
 > 
-> Applied - btw, in the future, if you send more than one patch in
-> a series, please include a cover letter.
+> This commit fixes that by using the correct mask.
+> 
+> Fixes: e7c5359f2eed ("net: mvpp2: introduce PPv2.2 HW descriptors and adapt accessors")
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Hi Jens,
-
-Where does that cover letter requirement come from?  It's not documented
-anywhere AFAICT and shouldn't be needed for such small patch series.
-
-> I've applied 2/2 as well.
-
-thanks,
--- 
-~Randy
+Applied and queued up for -stable, thank you.
