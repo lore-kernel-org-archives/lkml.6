@@ -1,11 +1,11 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3352333-1524148998-2-8156997837833823888
+X-Cyrus-Session-Id: sloti22d1t05-3352333-1524148971-2-7218949390418701648
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES roensk.us-ascii,
-  BAYES_USED global, SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES encafr, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
 X-Spam-charsets: 
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524148997; b=nN7C2qKYIOweDat1bGwi1m1WUr/hYM2kOmwF4LaqQpDkx4ekS2
-    IS7rDqyw0eFk63hxBLfyVupzblRxT+Zpd6FCSM0sdIjfBbWrFEGXTGWwmsrXFeB1
-    /oL1ZcHulfHo+XiUFzIF0CDbkZ7f61FjIU93tJdHEgNkLQGbqnQgEo/5N+vyoTjy
-    eFi37qaT70KgdlwrVORloS3dg7+N9qEfbOU4woHfnEftvGmFJQo5YCV3hlhTVRtt
-    FFqU7aNKZtLS8vkNwpOU09e/mXaOuqUdcmU3Um66Izdl5/qIBmoyPN1N5n8N9oQ+
-    6m5Llqrx3wBv+XpVay71L0zJ9yDMb0T5xLJA==
+    1524148970; b=IVwUN1OQBG0P3MBU3R7sbjRcTdGa9FzieaKnAGpsj2yOpFu4qv
+    KC5tibsd75kIvSb+v2F3w6ANGre7cQIofUKNIvglmVTadLH70nFp9l3/1Hg0JZdV
+    ISxtEqsXyZg3PmxUNNCAxFLcIlxiIwB5WfqRbNvZy8NU1T12JJLsydCb1y9bwn2r
+    jaN7BtGLVK1jkEnwskuoIdHszdtKfrtssSnxSzVWQ4mdyUNfRDIMK2WJm+sC0EU5
+    d8918deiODuGsQSt6tDlsPqccYkpWnlPSovKwq03dkx+LoqJZhpg1ByiWKM7gHGJ
+    +zmP7S4XdsNShqrSUllwdNua4njx27sC3/Mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524148997; bh=
-    o0tR1e+eBQPV5jbS0xxBWb4mTZcW/DooVkUVHXFw0gw=; b=gLu9OfpDNsdyizPo
-    YIAORL9tJxkeKjjSLMeYVh7pGXxfWlJ125eNsp5lpDrtIvymiPvEmRh1blFvM6yK
-    VE3E4qqeWR8ILTl5IAHGtHQZBZU1u9aZxwI/lXd748i9TZDz7kWAQtMIkiqpRXt2
-    h3LTeGZHqMPMypY0h1X3bmBLe/jHS/P8+E9Q5vizzswuzjt/CvBqCrv/gvhfWOPt
-    Q/H9PrFAw8JGLtL0HvA/Toe/aERgUHn37jKWIXCVxo/DiEQ9Og/qT0BnLD5Z+ovb
-    8U7Pb5YlvdcCjKXAX93pf2cgyMOJwl66IVIb4xqXStpCQd0h4aElO+f3S9ajKodi
-    KFzgkA==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524148970; bh=
+    /7cjMyPyz/2ilGwrBzZk/va2y1xHCDn/1ucxs0b4Jt8=; b=KV7ox+eSvHfbKqIc
+    P9pMCUH/nG57wJlTwI0/0t14Kr5QTUPkPAsRfsXCr/IzP69ggJLTw9r8WPYYq4yM
+    sZA9xZCbluFll5+hDABB8i1aFswRgXoRRXJeqXipxFCr4HjRbhyycf1XrSeqCWqG
+    cJwNsXEcTJapsZK/9XXaFtK6X273yuBH3leBJKw6gcdIsiovbjS/B9wNXQHMC2yh
+    BlfbigueMY712GUMhTWxN1lca4BmNAYDyTmOQxrgzgbdfrjLj+VuVczt9JwNuyfO
+    v5Vd6GyU0F4qDYYpaJZuMissOejhjU64PlivSlL8H8SrHb1gkqGweIoaZ7HRsDM7
+    ZKzXhg==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
@@ -51,20 +51,21 @@ Authentication-Results: mx1.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOpTWRuMLVKCbZ+9Wwgllb5h6uTxo1uPVyTqa+jaYOcIvRU7aCxJPFs4FLGk077SZvgB4vIw69hFgqdTg4oqzaMVsd7Jx5y2CHmCEuCwVv7gF6bRPGx4
-    MbUblcMgEj1HV1cCO1wgGQUQZ479brtD2e0b5N1iJ+CMzjJC74JG/dUhQ0pghOEt2rMqUusKyIBF+yg7UnyIXp3tstBubmL3i2HdWpprOVdzHRncY3craQ2n
+X-CM-Envelope: MS4wfD+G3O350Y10wN0XkpBLWSByEPzI8K/xYSwd4rftuUIUhygkLhnMNeJj6polWIMX+hiMEEiuR/Qmd/SXKIhB1omYs3tqKf3JAMWFhaNOUnlo/ZJxQSRb
+    PI8fYu9KSHd51q9ZWfGZlLBryMFoK4nBQ1J2m+0w6W5L+0AMdq8Shtd4fyZyeqtenrG/IbaAJD351cBoHzkksDCYYlWMiL6i7dyqfaPsTmOtokRbcZloO7OZ
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=9aIODNJXDyEBx6x27aYA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=Atj0wPqo01Ckh-GV-4YA:9 a=PSyshAn7aqplwmko:21 a=XUQPuvub0HF8LQCv:21
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeDSOnM (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 10:43:12 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:38767 "EHLO
+        id S1753613AbeDSOmh (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 10:42:37 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:46887 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753088AbeDSOit (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 10:38:49 -0400
+        with ESMTP id S1753190AbeDSOiv (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 10:38:51 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
@@ -76,153 +77,185 @@ Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
         will.deacon@arm.com, linux-mips@linux-mips.org, jhogan@kernel.org,
         ralf@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
         sparclinux@vger.kernel.org
-Subject: [PATCH v3 13/17] y2038: ipc: Report long times to user space
-Date: Thu, 19 Apr 2018 16:37:33 +0200
-Message-Id: <20180419143737.606138-14-arnd@arndb.de>
+Subject: [PATCH v3 15/17] y2038: ipc: Enable COMPAT_32BIT_TIME
+Date: Thu, 19 Apr 2018 16:37:35 +0200
+Message-Id: <20180419143737.606138-16-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180419143737.606138-1-arnd@arndb.de>
 References: <20180419143737.606138-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:3A5M6Zx0aSI7FLgzswFugGqVRIPzZO9S1bYu8R0NYJoypyo0ad7
- b7z06cg8/ZlV3L6cRq418zAr9FuQF5ziKPFEysSL8OBRemybuT4Vzo1SYFagBR1XgOEHO7H
- CMsi8rcOg0L02HTgdxn2el1BV2MELg8r6FCs4s0LU9naq+n8UWpA6uxawxj1kTk4CUP8R/T
- FouJ1HNyvhJfHxzLyIq6Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:gxdyLn+WgI8=:QrwmH4QYo+vDf32UyJdn7U
- GSXwOq8Z1P7oZctcw2SmS9F5NIQmA0QoW4HwdLoapUoWwk/u8gl7dIE1rRkTMnaHq4j/fGxPo
- hOk4JleURV63Logc0B8S1Cg40e4uLjhoQb18E27t0iANqBK6qEIYhQBAFt/1v1Uf08kG2PFF2
- jerMAjzenIdfTTE2EPhmO0I/q9a7+K+JH6t49M2eEwV+KnEPvip8TROI6rrgheWzfYTspKmZv
- oM3PjuC7K8J9PBGzlbyUC1Sbh5+c4uTdJpLR/1FP3PFCChiCP3+5aidqaKeksqFaQLlKZKHwA
- oKcXDoJ/VvjVfodTK0nC5V75BAkAzAsSAcfJZ57jU0jZgQ7NSJPiuUzrRO+flHJhgvwZWUKcz
- OqrkZR9cA6dn8Ixql3KIAGaFJQ+EgMsDxJIbjtJrm8aAMN6hzkL8CtGSS44JUx3Uut+nAJVXq
- zFn8dlpNU+5Q7RBIm9/uYgAJU+Tn9Iw2vOxrQrJQd9HrkgqTCwdKgJSYi+Ln7BRP2Njg54f3P
- gFgTEKRnrCf/3ipwryqF+06ElwS5qGmKFhUL1Lb+YKsyqgwMJ28krqyHeje9ZTYIe1wQfH2c1
- zgGOg7RQd9CWXv4b8OKcv+BS+8IXsCi9pLW3AxaC2S64mz+5Fb9ymNfbH0GnQuyCTRO5FSu1R
- 1zHcMUlI33FRxF6KJmfI6q3XHKaFgG1XRS820YwMaFhxt2bTgWie/p3f0wWuDk6sCRdtde6/0
- op3uJXKZvCvI42H8ci3022Ijj8oeqLWvpdeOow==
+X-Provags-ID: V03:K1:hTc/tiy+Hysq7Qezx00qPc3pSW3JxV9JMzmbP4EF+StwAcj79kc
+ 0TMq2vq1ymiJZHIxBh2mRObbcYc3Jl/AssGWTR0N0UAOSENbGWY4OOUG+WB7T8eJlbNuXDf
+ EPrNYNJVCS55yz6uGdXKcbK+k0HzUyOwnxwmHsY8Ax5PT+eeh8wRjVS1rH45CgQHRkfp28a
+ S/3OM/8MDTzrB+HtmZyrg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:28YI5D+IHS0=:xWOSR6zBUn8BQ/UqyYRXhL
+ 2jZ4Ua5Tfz9y0nGYuNgtJ9AoCf9UVNlxLpbksG0+sz62morHm8WPh3bFcloBjOtBrSOUr/vPG
+ DhWUmefNuknVVKQuU4o/SKwwfiH7kMuQX+ZjQP2U7OmH+OnsrEUi4pAU/GpmJDw1+qXMb8M5F
+ W/gGGNG0MmcZT6KcXRkibJFlATILysA2vPaIC9NFHW18BEoIvPdnRMW/IdbxxuzO1KJl0Kpvw
+ LA+SsUdEVQqcAZYYv2QeM7MpebnMa9uzx8iGyyOqpQODHQ5zsJbm+057hZLmy4BcDVwvJgegB
+ p7ttbRHoJxZmSuD+hSWZQAXSoLqRHJ1fAzLcrROj0F7D7XmgC7Nk9duydcz2tasnKj5ewVXn1
+ VITs/xOJttlXqNsGlFsw2dzpOG7SlDOuQ9Ufo0iS0sCj+xqFCEVdlSjB/KmPTS7aEeZU2jnib
+ tyDfbE5G2DAt7k6CngpfxCGzCvSIi/QnhVRFJfLoTm4e+a78viD7ju8kMhUGx8IMijdKR89Tk
+ sG4xFXBUB2v2iQ/4IzISz2jPK67F5LyVl2AY7dyE1dunUwbATjPl6OAdKVp7Sb03hin35+S52
+ pqzB073jE4UpbbeZWd/xK6Xlv0xmOWQooe1DptZpGLTJpg1JvjE1+cvVF3AnA+S6AglSphNXY
+ ehylfKumwMRdgYeuwfQGzJ7KEy+QNKGtTQh37Q8B+2nMycuNvNE/VU4vX1BmlewA11eET4EmW
+ 3JshkqEEpZa2OxYUdnRuu9OsKgy5C8SQB1uUfw==
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The shmid64_ds/semid64_ds/msqid64_ds data structures have been extended
-to contain extra fields for storing the upper bits of the time stamps,
-this patch does the other half of the job and and fills the new fields on
-32-bit architectures as well as 32-bit tasks running on a 64-bit kernel
-in compat mode.
+Three ipc syscalls (mq_timedsend, mq_timedreceive and and semtimedop)
+take a timespec argument. After we move 32-bit architectures over to
+useing 64-bit time_t based syscalls, we need seperate entry points for
+the old 32-bit based interfaces.
 
-There should be no change for native 64-bit tasks.
+This changes the #ifdef guards for the existing 32-bit compat syscalls
+to check for CONFIG_COMPAT_32BIT_TIME instead, which will then be
+enabled on all existing 32-bit architectures.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- ipc/msg.c | 14 +++++++++++---
- ipc/sem.c | 14 +++++++++++---
- ipc/shm.c | 14 +++++++++++---
- 3 files changed, 33 insertions(+), 9 deletions(-)
+ ipc/mqueue.c | 80 +++++++++++++++++++++++++++++++-----------------------------
+ ipc/sem.c    |  3 ++-
+ ipc/util.h   |  2 +-
+ 3 files changed, 44 insertions(+), 41 deletions(-)
 
-diff --git a/ipc/msg.c b/ipc/msg.c
-index 574f76c9a2ff..3b6545302598 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -537,6 +537,11 @@ static int msgctl_stat(struct ipc_namespace *ns, int msqid,
- 	p->msg_stime  = msq->q_stime;
- 	p->msg_rtime  = msq->q_rtime;
- 	p->msg_ctime  = msq->q_ctime;
-+#ifndef CONFIG_64BIT
-+	p->msg_stime_high = msq->q_stime >> 32;
-+	p->msg_rtime_high = msq->q_rtime >> 32;
-+	p->msg_ctime_high = msq->q_ctime >> 32;
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 9610afcfa2e5..c0d58f390c3b 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -1420,6 +1420,47 @@ COMPAT_SYSCALL_DEFINE4(mq_open, const char __user *, u_name,
+ 	return do_mq_open(u_name, oflag, mode, p);
+ }
+ 
++COMPAT_SYSCALL_DEFINE2(mq_notify, mqd_t, mqdes,
++		       const struct compat_sigevent __user *, u_notification)
++{
++	struct sigevent n, *p = NULL;
++	if (u_notification) {
++		if (get_compat_sigevent(&n, u_notification))
++			return -EFAULT;
++		if (n.sigev_notify == SIGEV_THREAD)
++			n.sigev_value.sival_ptr = compat_ptr(n.sigev_value.sival_int);
++		p = &n;
++	}
++	return do_mq_notify(mqdes, p);
++}
++
++COMPAT_SYSCALL_DEFINE3(mq_getsetattr, mqd_t, mqdes,
++		       const struct compat_mq_attr __user *, u_mqstat,
++		       struct compat_mq_attr __user *, u_omqstat)
++{
++	int ret;
++	struct mq_attr mqstat, omqstat;
++	struct mq_attr *new = NULL, *old = NULL;
++
++	if (u_mqstat) {
++		new = &mqstat;
++		if (get_compat_mq_attr(new, u_mqstat))
++			return -EFAULT;
++	}
++	if (u_omqstat)
++		old = &omqstat;
++
++	ret = do_mq_getsetattr(mqdes, new, old);
++	if (ret || !old)
++		return ret;
++
++	if (put_compat_mq_attr(old, u_omqstat))
++		return -EFAULT;
++	return 0;
++}
 +#endif
- 	p->msg_cbytes = msq->q_cbytes;
- 	p->msg_qnum   = msq->q_qnum;
- 	p->msg_qbytes = msq->q_qbytes;
-@@ -646,9 +651,12 @@ static int copy_compat_msqid_to_user(void __user *buf, struct msqid64_ds *in,
- 		struct compat_msqid64_ds v;
- 		memset(&v, 0, sizeof(v));
- 		to_compat_ipc64_perm(&v.msg_perm, &in->msg_perm);
--		v.msg_stime = in->msg_stime;
--		v.msg_rtime = in->msg_rtime;
--		v.msg_ctime = in->msg_ctime;
-+		v.msg_stime	 = lower_32_bits(in->msg_stime);
-+		v.msg_stime_high = upper_32_bits(in->msg_stime);
-+		v.msg_rtime	 = lower_32_bits(in->msg_rtime);
-+		v.msg_rtime_high = upper_32_bits(in->msg_rtime);
-+		v.msg_ctime	 = lower_32_bits(in->msg_ctime);
-+		v.msg_ctime_high = upper_32_bits(in->msg_ctime);
- 		v.msg_cbytes = in->msg_cbytes;
- 		v.msg_qnum = in->msg_qnum;
- 		v.msg_qbytes = in->msg_qbytes;
++
++#ifdef CONFIG_COMPAT_32BIT_TIME
+ static int compat_prepare_timeout(const struct compat_timespec __user *p,
+ 				   struct timespec64 *ts)
+ {
+@@ -1459,45 +1500,6 @@ COMPAT_SYSCALL_DEFINE5(mq_timedreceive, mqd_t, mqdes,
+ 	}
+ 	return do_mq_timedreceive(mqdes, u_msg_ptr, msg_len, u_msg_prio, p);
+ }
+-
+-COMPAT_SYSCALL_DEFINE2(mq_notify, mqd_t, mqdes,
+-		       const struct compat_sigevent __user *, u_notification)
+-{
+-	struct sigevent n, *p = NULL;
+-	if (u_notification) {
+-		if (get_compat_sigevent(&n, u_notification))
+-			return -EFAULT;
+-		if (n.sigev_notify == SIGEV_THREAD)
+-			n.sigev_value.sival_ptr = compat_ptr(n.sigev_value.sival_int);
+-		p = &n;
+-	}
+-	return do_mq_notify(mqdes, p);
+-}
+-
+-COMPAT_SYSCALL_DEFINE3(mq_getsetattr, mqd_t, mqdes,
+-		       const struct compat_mq_attr __user *, u_mqstat,
+-		       struct compat_mq_attr __user *, u_omqstat)
+-{
+-	int ret;
+-	struct mq_attr mqstat, omqstat;
+-	struct mq_attr *new = NULL, *old = NULL;
+-
+-	if (u_mqstat) {
+-		new = &mqstat;
+-		if (get_compat_mq_attr(new, u_mqstat))
+-			return -EFAULT;
+-	}
+-	if (u_omqstat)
+-		old = &omqstat;
+-
+-	ret = do_mq_getsetattr(mqdes, new, old);
+-	if (ret || !old)
+-		return ret;
+-
+-	if (put_compat_mq_attr(old, u_omqstat))
+-		return -EFAULT;
+-	return 0;
+-}
+ #endif
+ 
+ static const struct inode_operations mqueue_dir_inode_operations = {
 diff --git a/ipc/sem.c b/ipc/sem.c
-index c6a8a971769d..8935cd8cf166 100644
+index b951e25ba2db..cfd94d48a9aa 100644
 --- a/ipc/sem.c
 +++ b/ipc/sem.c
-@@ -1214,6 +1214,7 @@ static int semctl_stat(struct ipc_namespace *ns, int semid,
- 			 int cmd, struct semid64_ds *semid64)
- {
- 	struct sem_array *sma;
-+	time64_t semotime;
- 	int id = 0;
- 	int err;
+@@ -70,6 +70,7 @@
+  *   The worst-case behavior is nevertheless O(N^2) for N wakeups.
+  */
  
-@@ -1257,8 +1258,13 @@ static int semctl_stat(struct ipc_namespace *ns, int semid,
- 	}
++#include <linux/compat.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/init.h>
+@@ -2193,7 +2194,7 @@ SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsops,
+ 	return ksys_semtimedop(semid, tsops, nsops, timeout);
+ }
  
- 	kernel_to_ipc64_perm(&sma->sem_perm, &semid64->sem_perm);
--	semid64->sem_otime = get_semotime(sma);
-+	semotime = get_semotime(sma);
-+	semid64->sem_otime = semotime;
- 	semid64->sem_ctime = sma->sem_ctime;
-+#ifndef CONFIG_64BIT
-+	semid64->sem_otime_high = semotime >> 32;
-+	semid64->sem_ctime_high = sma->sem_ctime >> 32;
-+#endif
- 	semid64->sem_nsems = sma->sem_nsems;
+-#ifdef CONFIG_COMPAT
++#ifdef CONFIG_COMPAT_32BIT_TIME
+ long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
+ 			    unsigned int nsops,
+ 			    const struct compat_timespec __user *timeout)
+diff --git a/ipc/util.h b/ipc/util.h
+index 975c6de2df9d..0aba3230d007 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -265,10 +265,10 @@ long ksys_shmdt(char __user *shmaddr);
+ long ksys_shmctl(int shmid, int cmd, struct shmid_ds __user *buf);
  
- 	ipc_unlock_object(&sma->sem_perm);
-@@ -1704,8 +1710,10 @@ static int copy_compat_semid_to_user(void __user *buf, struct semid64_ds *in,
- 		struct compat_semid64_ds v;
- 		memset(&v, 0, sizeof(v));
- 		to_compat_ipc64_perm(&v.sem_perm, &in->sem_perm);
--		v.sem_otime = in->sem_otime;
--		v.sem_ctime = in->sem_ctime;
-+		v.sem_otime	 = lower_32_bits(in->sem_otime);
-+		v.sem_otime_high = upper_32_bits(in->sem_otime);
-+		v.sem_ctime	 = lower_32_bits(in->sem_ctime);
-+		v.sem_ctime_high = upper_32_bits(in->sem_ctime);
- 		v.sem_nsems = in->sem_nsems;
- 		return copy_to_user(buf, &v, sizeof(v));
- 	} else {
-diff --git a/ipc/shm.c b/ipc/shm.c
-index 3cf48988d68c..0075990338f4 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -1002,6 +1002,11 @@ static int shmctl_stat(struct ipc_namespace *ns, int shmid,
- 	tbuf->shm_atime	= shp->shm_atim;
- 	tbuf->shm_dtime	= shp->shm_dtim;
- 	tbuf->shm_ctime	= shp->shm_ctim;
-+#ifndef CONFIG_64BIT
-+	tbuf->shm_atime_high = shp->shm_atim >> 32;
-+	tbuf->shm_dtime_high = shp->shm_dtim >> 32;
-+	tbuf->shm_ctime_high = shp->shm_ctim >> 32;
-+#endif
- 	tbuf->shm_cpid	= pid_vnr(shp->shm_cprid);
- 	tbuf->shm_lpid	= pid_vnr(shp->shm_lprid);
- 	tbuf->shm_nattch = shp->shm_nattch;
-@@ -1233,9 +1238,12 @@ static int copy_compat_shmid_to_user(void __user *buf, struct shmid64_ds *in,
- 		struct compat_shmid64_ds v;
- 		memset(&v, 0, sizeof(v));
- 		to_compat_ipc64_perm(&v.shm_perm, &in->shm_perm);
--		v.shm_atime = in->shm_atime;
--		v.shm_dtime = in->shm_dtime;
--		v.shm_ctime = in->shm_ctime;
-+		v.shm_atime	 = lower_32_bits(in->shm_atime);
-+		v.shm_atime_high = upper_32_bits(in->shm_atime);
-+		v.shm_dtime	 = lower_32_bits(in->shm_dtime);
-+		v.shm_dtime_high = upper_32_bits(in->shm_dtime);
-+		v.shm_ctime	 = lower_32_bits(in->shm_ctime);
-+		v.shm_ctime_high = upper_32_bits(in->shm_ctime);
- 		v.shm_segsz = in->shm_segsz;
- 		v.shm_nattch = in->shm_nattch;
- 		v.shm_cpid = in->shm_cpid;
+ /* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
+-#ifdef CONFIG_COMPAT
+ long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
+ 			    unsigned int nsops,
+ 			    const struct compat_timespec __user *timeout);
++#ifdef CONFIG_COMPAT
+ long compat_ksys_semctl(int semid, int semnum, int cmd, int arg);
+ long compat_ksys_msgctl(int msqid, int cmd, void __user *uptr);
+ long compat_ksys_msgrcv(int msqid, compat_uptr_t msgp, compat_ssize_t msgsz,
 -- 
 2.9.0
 
