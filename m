@@ -1,47 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753080AbeDSSD2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 14:03:28 -0400
-Received: from mail.windriver.com ([147.11.1.11]:49860 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751130AbeDSSD1 (ORCPT
+        id S1752946AbeDSSHi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 14:07:38 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41487 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752086AbeDSSHg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 14:03:27 -0400
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH] rcu: ensure whatisRCU.txt actually says what RCU is.
-Date: Thu, 19 Apr 2018 13:59:36 -0400
-Message-ID: <20180419175936.19936-1-paul.gortmaker@windriver.com>
-X-Mailer: git-send-email 2.14.1
+        Thu, 19 Apr 2018 14:07:36 -0400
+X-Google-Smtp-Source: AIpwx490ijZceomr+W8jQAVOFEuTT84WUm2/rDkAF2Md8A495tjMhk0+PDZY2jM/5bXV567ib6DsSw==
+From: Kevin Hilman <khilman@baylibre.com>
+To: Yixun Lan <yixun.lan@amlogic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Carlo Caione <carlo@caione.org>, Xingyu Chen <xingyu.chen@amlogic.com>,
+        <linux-gpio@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pinctrl: meson-axg: fix the range of aobus bank
+Organization: BayLibre
+References: <20180417170824.18670-1-yixun.lan@amlogic.com>
+Date: Thu, 19 Apr 2018 11:07:32 -0700
+In-Reply-To: <20180417170824.18670-1-yixun.lan@amlogic.com> (Yixun Lan's
+        message of "Tue, 17 Apr 2018 17:08:24 +0000")
+Message-ID: <7hd0yv3w9n.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It came to my attention that the file "whatisRCU.txt" does not
-manage to actually ever spell out what is RCU.
+Yixun Lan <yixun.lan@amlogic.com> writes:
 
-This might not be an issue for a lot of people, but we have to
-assume the consumers of these documents are starting from ground
-zero; otherwise they'd not be reading the docs.
+> The GPIOAO bank is range from GPIOAO_0 to GPIOAO_13.
+>
+> Fixes: 83c566806a68 ("pinctrl: meson-axg: Add new pinctrl driver for Meson AXG SoC")
+> Reported-by: Xingyu Chen <xingyu.chen@amlogic.com>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- Documentation/RCU/whatisRCU.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Acked-by: Kevin Hilman <khilman@baylibre.com>
 
-diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
-index a27fbfb0efb8..65eb856526b7 100644
---- a/Documentation/RCU/whatisRCU.txt
-+++ b/Documentation/RCU/whatisRCU.txt
-@@ -1,3 +1,5 @@
-+What is RCU?  --  "Read, Copy, Update"
-+
- Please note that the "What is RCU?" LWN series is an excellent place
- to start learning about RCU:
- 
--- 
-2.14.1
+> ---
+>  drivers/pinctrl/meson/pinctrl-meson-axg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/meson/pinctrl-meson-axg.c b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+> index 4b91ff74779b..99a6ceac8e53 100644
+> --- a/drivers/pinctrl/meson/pinctrl-meson-axg.c
+> +++ b/drivers/pinctrl/meson/pinctrl-meson-axg.c
+> @@ -898,7 +898,7 @@ static struct meson_bank meson_axg_periphs_banks[] = {
+>  
+>  static struct meson_bank meson_axg_aobus_banks[] = {
+>  	/*   name    first      last      irq	pullen  pull    dir     out     in  */
+> -	BANK("AO",   GPIOAO_0,  GPIOAO_9, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
+> +	BANK("AO",   GPIOAO_0,  GPIOAO_13, 0, 13, 0,  16,  0, 0,  0,  0,  0, 16,  1,  0),
+>  };
+>  
+>  static struct meson_pmx_bank meson_axg_periphs_pmx_banks[] = {
