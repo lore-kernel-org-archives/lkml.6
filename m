@@ -1,65 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752743AbeDSMJs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:09:48 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:41064 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752209AbeDSMJq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:09:46 -0400
-Subject: Re: [PATCH 2/2] memory: aemif: add support for board files
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Kevin Hilman <khilman@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180418153552.14632-1-brgl@bgdev.pl>
- <20180418153552.14632-3-brgl@bgdev.pl>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <15d56b6d-6546-0655-563e-4492982c8d78@ti.com>
-Date: Thu, 19 Apr 2018 17:39:26 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752413AbeDSMSI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 08:18:08 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:33712 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750974AbeDSMSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 08:18:06 -0400
+Date: Thu, 19 Apr 2018 14:18:01 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jingju Hou <Jingju.Hou@synaptics.com>
+Subject: Re: [PATCH] net: phy: marvell: clear wol event before setting it
+Message-ID: <20180419121801.GC17888@lunn.ch>
+References: <20180419160232.519d15be@xhacker.debian>
 MIME-Version: 1.0
-In-Reply-To: <20180418153552.14632-3-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419160232.519d15be@xhacker.debian>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday 18 April 2018 09:05 PM, Bartosz Golaszewski wrote:
-> @@ -373,15 +372,23 @@ static int aemif_probe(struct platform_device *pdev)
->  		goto error;
->  	}
+On Thu, Apr 19, 2018 at 04:02:32PM +0800, Jisheng Zhang wrote:
+> From: Jingju Hou <Jingju.Hou@synaptics.com>
+> 
+> If WOL event happened once, the LED[2] interrupt pin will not be
+> cleared unless reading the CSISR register. So clear the WOL event
+> before enabling it.
+> 
+> Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> ---
+>  drivers/net/phy/marvell.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+> index c22e8e383247..b6abe1cbc84b 100644
+> --- a/drivers/net/phy/marvell.c
+> +++ b/drivers/net/phy/marvell.c
+> @@ -115,6 +115,9 @@
+>  /* WOL Event Interrupt Enable */
+>  #define MII_88E1318S_PHY_CSIER_WOL_EIE			BIT(7)
 >  
-> -	/*
-> -	 * For every controller device node, there is a cs device node that
-> -	 * describe the bus configuration parameters. This functions iterate
-> -	 * over these nodes and update the cs data array.
-> -	 */
-> -	for_each_available_child_of_node(np, child_np) {
-> -		ret = of_aemif_parse_abus_config(pdev, child_np);
-> -		if (ret < 0)
-> -			goto error;
-> +	if (np) {
-> +		/*
-> +		 * For every controller device node, there is a cs device node
-> +		 * that describe the bus configuration parameters. This
-> +		 * functions iterate over these nodes and update the cs data
-> +		 * array.
+> +/* Copper Specific Interrupt Status Register */
+> +#define MII_88E1318S_PHY_CSISR				0x13
+> +
+>  /* LED Timer Control Register */
+>  #define MII_88E1318S_PHY_LED_TCR			0x12
+>  #define MII_88E1318S_PHY_LED_TCR_FORCE_INT		BIT(15)
+> @@ -1393,6 +1396,12 @@ static int m88e1318_set_wol(struct phy_device *phydev,
+>  		if (err < 0)
+>  			goto error;
+>  
+> +		/* If WOL event happened once, the LED[2] interrupt pin
+> +		 * will not be cleared unless reading the CSISR register.
+> +		 * So clear the WOL event first before enabling it.
 > +		 */
-> +		for_each_available_child_of_node(np, child_np) {
-> +			ret = of_aemif_parse_abus_config(pdev, child_np);
-> +			if (ret < 0)
-> +				goto error;
-> +		}
-> +	} else if (pdata && pdata->num_abus_data > 0) {
-> +		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
-> +			aemif->cs_data[i].cs = pdata->abus_data->cs;
+> +		phy_read(phydev, MII_88E1318S_PHY_CSISR);
+> +
 
-Since abus_data is an array, shouldn't it be pdata->abus_data[i].cs ?
+Hi Jisheng
 
-Thanks,
-Sekhar
+The problem with this is, you could be clearing a real interrupt, link
+down/up etc. If interrupts are in use, i think the normal interrupt
+handling will clear the WOL interrupt? So can you make this read
+conditional on !phy_interrupt_is_valid()?
+
+	Andrew
