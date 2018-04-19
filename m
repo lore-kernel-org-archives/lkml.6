@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-223491-1524185426-2-13342250824569260039
+X-Cyrus-Session-Id: sloti22d1t05-3506551-1524154718-2-5390276615288705717
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -13,72 +13,74 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524185426; b=O+bubjN6TkBLJq4SlzmIAmpAglmhLSZ2JeqD6xJ6Riva/Zqssc
-    OwihoAMQspnyy08CIdwnypr/4YlN/Q3aGlMiYC0duY2Hf//yrByC02NKKIal3hHO
-    2TnT7w8rRtpF7EWFLwy8eOgMhL5FXMRmVw77xs57eOpXM4oSPLQRWcrZ6oSRoY2P
-    iiOAoGdxtBr4MvFEUlaWV588pWAkfqxpp0sAq1sBcWK/umlvc5WAgXzDw9/+ZUGA
-    OyC0h4Ua+2gF1//+k+bVWx0UoJv8EIF68f3g+hqGMQVtZbOrYVUURJvY4zAjRtvg
-    V6jstAT/cWm1s4GzFbaXlKoJcrJGG3eraJuA==
+    1524154717; b=Oyh3KlrfxjHkj/dMSR/VEdREjOZ7FiOo2CC/gFDodXCwGeHGuo
+    vY8aBQnY9ilVtNqadvflrWI3WjHPm93XnJrP6eQdufJBeolWIQy+ZnOwN8JrDHnX
+    CQgngb78zrWSrIDOntdmQuaGIsHMa66sMpS9TLKqyaf/5wwVAZQmp2IjtW0ZQcS4
+    D/4ZpEWJwvvsx4fF7hKGiyqIgJILhjRhjhVactEUF3J2WYbsc37sZUzAG9vH2GGc
+    8nDPbfAR0bL5J4ZBzQM6n1IDl3a6vEYeneaIVBdfFv3BhkXt4DRWtYO7mLz2kuvi
+    DjTD8uhMvb55jZYxE9GAcebq10fID8eSGYKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1524185426; bh=DDxf5AqkmSmD1/GliHtpFvidD/e9rnMzS9+xbBTcYk
-    M=; b=SZkV95dwrUUFAngz0j41oo6jClMBYpY05NJjxbr7iPawHp/3gq8/YK7zoT
-    w27Og8CqIUUkOikXEhOxFtzRU3r5RaIL8Q4FSel9vIFLlLhrWrbnO4VEX7husfyo
-    f/2fmvxGJVvQVvkaxLzEdOxPH+vm7Gsk4yryo08PotWz5uzH6JVIzL04cM5AhhXd
-    cCxrpZ4T07CXvHe75hQBjK6XGn6IlHw0/NM8dpAdtnUmD2ei1+P5iLXQOCYWM8+N
-    w0mJqobJe7Kg+o1Z1RQkFX5VzZ1nUv+x1s9g/8dE3qHurzE+3xbKu96NmUwppPrj
-    g1v9H+SndObLIOKc+YFBgGjWF3fg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=eiDThguO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    fm2; t=1524154717; bh=yPTwBO4OzbDD/avHuZCglntnIkxc5jm9vm3EoH2AS6
+    A=; b=k2Q9ATsLnjxnsWGPhB63LHroZgIFT/ULw07QHmPITuqTORMYwWUjfi2ABB
+    NGuDIqTO+QENr9juKC6OvJ5cVvBK0VN4PvpyEXzV5nKuQWd02JfvAGxX8rDevdy1
+    ykHCjfqaK6JH4mW22mCr1plpJ0HgZ5wgtXi621UUGP7hwF1szFCrsRLHQgeJLPa7
+    JMYhcqibwtz7RKezBP51uheL61fw71neYy1fPq+yzhFbvn4X4Fti6WIdvQg/w6xq
+    ME46xT6A3hHgDflmA1f3T+5A/ItWRwyQwcZd5IlFdTvgKnKGEwpuP5fmiHZao+OA
+    GzN5j7iZq3c1FaeOoQ16jd0qHttg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=TLePZXnR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IJderJqJ;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kVrgEKF2;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=eiDThguO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=google.com header.i=@google.com header.b=TLePZXnR x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=IJderJqJ;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=kVrgEKF2;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHrkJXjf0xagbKdhn2CNYkgoaGc7vK3zJN4FvtJRI28bCNI1wrlFD/0D3MlQsmALSR2cAxgmGtbH4H4MFIsk1bhq/6MYRmnDsOHovRpD6Crpj0ChVr7Y
-    28emUz2OOdoZXVY33Vdb2HC1XAgmxfBXs6NKqdy3QEjODJ0DLdylEMHKa5I2ETg6Sl4LbPg+LYAEqNNl2TdDYYHljOSx9RDAy/dBoH9Eflag8DNoMADfpIM1
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfPGBMNxuJKGJ/2R8XattA+z1uH5TD4T/J6IQI47/UQNqC7MjlqslxcJ+o4Ff/hgU0hqTxTylpaklBU9aS3Dt3TyFxduj9+/3gV8HYQDS/s1lCG2ROyZk
+    9M07KRxFSmVc0M2z5BpG4DuSw7cTnsfMm4LZdAxdrkGrdYYbUvzAvhxmlI8GXnZ+I5smvO4LVdECLyvYKEoqt876VnYgUWPH4uSGyAJXK5KBJ318Yu7y8gkO
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=cm27Pg_UAAAA:8 a=VwQbUJbxAAAA:8 a=RTtc9UJCmEXoFN7E73kA:9 a=QEXdDO2ut3YA:10
+    a=cm27Pg_UAAAA:8 a=VwQbUJbxAAAA:8 a=fX1Ww_5SySkgg4RiJ0YA:9 a=QEXdDO2ut3YA:10
     a=x8gzFH9gYPwA:10 a=xmb-EsYY8bH0VWELuYED:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753991AbeDTAuY (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 20:50:24 -0400
-Received: from mail-vk0-f47.google.com ([209.85.213.47]:46603 "EHLO
-        mail-vk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753919AbeDTAuX (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Thu, 19 Apr 2018 20:50:23 -0400
-X-Google-Smtp-Source: AIpwx4+OtqZwxEtgVcKMb7yg9VdKjxUSTyrXKEdi3PSpv4raj/F68K//YrkCRQUPJLYkFdUrnAfuV4K18YmxJXbshlE=
+        id S1753679AbeDSQSX (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 12:18:23 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34514 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753565AbeDSQSW (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 19 Apr 2018 12:18:22 -0400
+X-Google-Smtp-Source: AIpwx4/z5DzCMkXKYPxuYY2TA3UP9Owz6bqMONPoZmwZlV8/RL8vYYKrOUDF2G8bM1a/W4ekLcFyCNjUh5jp3BBIPog=
 MIME-Version: 1.0
 In-Reply-To: <Pine.LNX.4.44L0.1804191053410.1288-100000@iolanthe.rowland.org>
 References: <20180419001850.133110-1-ravisadineni@chromium.org> <Pine.LNX.4.44L0.1804191053410.1288-100000@iolanthe.rowland.org>
-From: Ravi Chandra Sadineni <ravisadineni@google.com>
-Date: Thu, 19 Apr 2018 17:50:01 -0700
-Message-ID: <CAOGSYL0=XFAidyUBtaCp2fDWHsTuTLb7UXuu=NXZBp6kpurqPA@mail.gmail.com>
+From: Rajat Jain <rajatja@google.com>
+Date: Thu, 19 Apr 2018 09:17:40 -0700
+Message-ID: <CACK8Z6Gq4R7nKJA-Jmichv5VyBWhF=RdYVBiGsmeg0VUjrMnFA@mail.gmail.com>
 Subject: Re: [PATCH] USB: Increment wakeup count on remote wakeup.
 To: Alan Stern <stern@rowland.harvard.edu>
 Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        gregkh@linuxfoundation.org, martin.blumenstingl@googlemail.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        martin.blumenstingl@googlemail.com,
+        Ravi Chandra Sadineni <ravisadineni@google.com>,
         chunfeng.yun@mediatek.com, johan@kernel.org,
         arvind.yadav.cs@gmail.com, Dmitry Torokhov <dtor@google.com>,
         anton.bondarenko.sama@gmail.com, f.fainelli@gmail.com,
@@ -86,7 +88,7 @@ Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>,
         felipe.balbi@linux.intel.com, ekorenevsky@gmail.com,
         peter.chen@nxp.com, joe@perches.com,
         Todd Broch <tbroch@google.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Benson Leung <bleung@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-usb-owner@vger.kernel.org
@@ -94,10 +96,6 @@ X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
-
-Hi Alan,
-Thanks for reviewing the change. Appreciate your time.  I tried to
-address your comments in the V2 of the patch.
 
 On Thu, Apr 19, 2018 at 8:01 AM, Alan Stern <stern@rowland.harvard.edu> wrote:
 > On Wed, 18 Apr 2018, Ravi Chandra Sadineni wrote:
@@ -141,28 +139,20 @@ On Thu, Apr 19, 2018 at 8:01 AM, Alan Stern <stern@rowland.harvard.edu> wrote:
 > Instead of dev, you probably want to use hcd->self.sysdev.  Or maybe
 > hcd->self.controller, although the difference probably doesn't matter
 > for your purposes.
-
-Trying to increment the wakeup count for the roothub. So pointed dev
-to &hcd->self.root_hub->dev. Hope this is fine.
-
 >
 > On the other hand, this wakeup event may already have been counted by
 > the host controller's bus subsystem.  Does it matter if the same wakeup
 > event gets counted twice?
+
+No. The context is that we're interested in making user space behave
+differently if the wake up source was a user input device (e.g. USB
+keyboard) v/s some other kind of USB device. So all that matters is
+that the USB device wakeup count gets incremented.
+
 >
 > (This is inevitable with USB devices, in any case.  If a device sends a
 > wakeup request, it will be counted for that device, for all the
 > intermediate hubs, and for the host controller.)
-
-We are o.k. with the wake-up count getting incremented for the
-intermediate hubs. We just want to identify the leaf hid devices, if
-they are cause of the remote wake. This way, we can differentiate user
-triggered wake from a automatic wakes (Ex: wakes triggered by WOLAN
-packets from USB ethernet adapter).
-
-We are also o.k. with the wake-up count getting incremented twice. All
-we look for is a change in the wake-up count for the interested
-devices.
 >
 >> @@ -3432,10 +3437,13 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
 >>
@@ -175,7 +165,6 @@ devices.
 >
 > What is the reason for moving the comment line down after the
 > hub_port_status() call?
-Sorry. This was a mistake. Changed this back in V2.
 >
 > Alan Stern
 >
@@ -189,6 +178,3 @@ Sorry. This was a mistake. Changed this back in V2.
 >>       if (hub_is_superspeed(hub->hdev))
 >>
 >
-
-Thanks,
-Ravi
