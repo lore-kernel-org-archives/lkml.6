@@ -1,173 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753303AbeDSFK2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 01:10:28 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33963 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750953AbeDSFK1 (ORCPT
+        id S1753278AbeDSFNA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 01:13:00 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38307 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752325AbeDSFM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 01:10:27 -0400
-X-Google-Smtp-Source: AIpwx49LA9ZNeIb+s0mDlc2eTUS8h5rG0VrVJk2GPEcGbvptcEyUi7I3m8xWyI9+AfCLqms235LRPg==
-Date: Thu, 19 Apr 2018 15:10:08 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Christophe LEROY <christophe.leroy@c-s.fr>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] powerpc: Allow selection of
- CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
-Message-ID: <20180419150955.6c2ae486@roar.ozlabs.ibm.com>
-In-Reply-To: <b098dd58-d8d3-0d42-6947-ea476bd2719d@c-s.fr>
-References: <20180417104909.22D416C07D@po15720vm.idsi0.si.c-s.fr>
-        <CA+7wUszKbPKu86jSprEBJsxJOmyAc42x5S4XmPce_RFXTsHTfQ@mail.gmail.com>
-        <e49e2296-11f8-a2fa-6b64-db18ba5db641@c-s.fr>
-        <CA+7wUswJoGnb50y8jbPfsi9ztCO1jZ+O4cirHtXc7gp7MXRm5Q@mail.gmail.com>
-        <48cdb73c-f0c4-0c8a-19f5-8fce000e7050@c-s.fr>
-        <CA+7wUszJzG4CyfO2_Tvmc_u9oMPxLQMaiP+HnhpEex6KCRgSYw@mail.gmail.com>
-        <b098dd58-d8d3-0d42-6947-ea476bd2719d@c-s.fr>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 19 Apr 2018 01:12:58 -0400
+X-Google-Smtp-Source: AIpwx4/R7KPFzJCxCGpB2gkDIPXmf9DstgMwCFFJoX33OnlDjY72x843HpjPc5YaULIIlNx9D+6fDQ==
+Date: Thu, 19 Apr 2018 13:12:49 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 4/5] samples/bpf: Refine printing symbol for
+ sampleip
+Message-ID: <20180419051249.GA27295@leoy-ThinkPad-X240s>
+References: <1524101646-6544-1-git-send-email-leo.yan@linaro.org>
+ <1524101646-6544-5-git-send-email-leo.yan@linaro.org>
+ <20180419044743.srjhqegvir5exub5@ast-mbp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419044743.srjhqegvir5exub5@ast-mbp>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 15:11:24 +0200
-Christophe LEROY <christophe.leroy@c-s.fr> wrote:
-
-> Le 18/04/2018 à 10:36, Mathieu Malaterre a écrit :
-> > Christophe,
+On Wed, Apr 18, 2018 at 09:47:45PM -0700, Alexei Starovoitov wrote:
+> On Thu, Apr 19, 2018 at 09:34:05AM +0800, Leo Yan wrote:
+> > The code defines macro 'PAGE_OFFSET' and uses it to decide if the
+> > address is in kernel space or not.  But different architecture has
+> > different 'PAGE_OFFSET' so this program cannot be used for all
+> > platforms.
 > > 
-> > On Wed, Apr 18, 2018 at 8:34 AM, Christophe LEROY
-> > <christophe.leroy@c-s.fr> wrote:  
-> >>
-> >>
-> >> Le 17/04/2018 à 19:10, Mathieu Malaterre a écrit :  
-> >>>
-> >>> On Tue, Apr 17, 2018 at 6:49 PM, Christophe LEROY
-> >>> <christophe.leroy@c-s.fr> wrote:  
-> >>>>
-> >>>>
-> >>>>
-> >>>> Le 17/04/2018 à 18:45, Mathieu Malaterre a écrit :  
-> >>>>>
-> >>>>>
-> >>>>> On Tue, Apr 17, 2018 at 12:49 PM, Christophe Leroy
-> >>>>> <christophe.leroy@c-s.fr> wrote:  
-> >>>>>>
-> >>>>>>
-> >>>>>> This option does dead code and data elimination with the linker by
-> >>>>>> compiling with -ffunction-sections -fdata-sections and linking with
-> >>>>>> --gc-sections.
-> >>>>>>
-> >>>>>> By selecting this option on mpc885_ads_defconfig,
-> >>>>>> vmlinux LOAD segment size gets reduced by 10%
-> >>>>>>
-> >>>>>> Program Header before the patch:
-> >>>>>>        LOAD off    0x00010000 vaddr 0xc0000000 paddr 0x00000000 align
-> >>>>>> 2**16
-> >>>>>>             filesz 0x0036eda4 memsz 0x0038de04 flags rwx
-> >>>>>>
-> >>>>>> Program Header after the patch:
-> >>>>>>        LOAD off    0x00010000 vaddr 0xc0000000 paddr 0x00000000 align
-> >>>>>> 2**16
-> >>>>>>             filesz 0x00316da4 memsz 0x00334268 flags rwx
-> >>>>>>
-> >>>>>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> >>>>>> ---
-> >>>>>>     arch/powerpc/Kconfig | 8 ++++++++
-> >>>>>>     1 file changed, 8 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> >>>>>> index 8fe4353be5e3..e1fac49cf465 100644
-> >>>>>> --- a/arch/powerpc/Kconfig
-> >>>>>> +++ b/arch/powerpc/Kconfig
-> >>>>>> @@ -888,6 +888,14 @@ config PPC_MEM_KEYS
-> >>>>>>
-> >>>>>>              If unsure, say y.
-> >>>>>>
-> >>>>>> +config PPC_UNUSED_ELIMINATION
-> >>>>>> +       bool "Eliminate unused functions and data from vmlinux"
-> >>>>>> +       default n
-> >>>>>> +       select LD_DEAD_CODE_DATA_ELIMINATION
-> >>>>>> +       help
-> >>>>>> +         Select this to do dead code and data elimination with the
-> >>>>>> linker
-> >>>>>> +         by compiling with -ffunction-sections -fdata-sections and
-> >>>>>> linking
-> >>>>>> +         with --gc-sections.
-> >>>>>>     endmenu
-> >>>>>>  
-> >>>>>
-> >>>>> Just for reference, I cannot boot my Mac Mini G4 anymore (yaboot). The
-> >>>>> messages I can see (prom_init) are:  
-> >>>>
-> >>>>
-> >>>>
-> >>>> Which version of GCC do you use ?  
-> >>>
-> >>>
-> >>> $ powerpc-linux-gnu-gcc --version
-> >>> powerpc-linux-gnu-gcc (Debian 6.3.0-18) 6.3.0 20170516
-> >>> Copyright (C) 2016 Free Software Foundation, Inc.
-> >>> This is free software; see the source for copying conditions.  There is NO
-> >>> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
-> >>> PURPOSE.
-> >>>
-> >>> this is simply coming from:
-> >>>
-> >>> $ apt-cache policy crossbuild-essential-powerpc
-> >>> crossbuild-essential-powerpc:
-> >>>     Installed: 12.3
-> >>>     Candidate: 12.3
-> >>>     Version table:
-> >>>    *** 12.3 500
-> >>>           500 http://ftp.fr.debian.org/debian stretch/main amd64 Packages
-> >>>           500 http://ftp.fr.debian.org/debian stretch/main i386 Packages
-> >>>           100 /var/lib/dpkg/status
-> >>>
-> >>>  
-> >>>> Can you provide the generated System.map with and without that option
-> >>>> active
-> >>>> ?  
-> >>>
-> >>>
-> >>> $ du -sh g4/System.map.*
-> >>> 1.7M g4/System.map.with
-> >>> 1.8M g4/System.map.without  
-> >>
-> >>
-> >> Here below is the list of objects removed with the option selected. I can't
-> >> see anything suspect at first.  
+> > This commit changes to check returned pointer from ksym_search() to
+> > judge if the address falls into kernel space or not, and removes
+> > macro 'PAGE_OFFSET' as it isn't used anymore.  As result, this program
+> > has no architecture dependency.
 > > 
-> > Does this help:
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  samples/bpf/sampleip_user.c | 8 +++-----
+> >  1 file changed, 3 insertions(+), 5 deletions(-)
 > > 
-> > $ grep orphan /tmp/g4.log|grep prom_init
-> > powerpc-linux-gnu-ld: warning: orphan section `.sbss.of_workarounds'
-> > from `arch/powerpc/kernel/prom_init.o' being placed in section
-> > `.sbss.of_workarounds'.
-> > powerpc-linux-gnu-ld: warning: orphan section `.sbss.of_workarounds'
-> > from `arch/powerpc/kernel/prom_init.o' being placed in section
-> > `.sbss.of_workarounds'.
-> > powerpc-linux-gnu-ld: warning: orphan section `.sbss.of_workarounds'
-> > from `arch/powerpc/kernel/prom_init.o' being placed in section
-> > `.sbss.of_workarounds'.  
+> > diff --git a/samples/bpf/sampleip_user.c b/samples/bpf/sampleip_user.c
+> > index 4ed690b..0eea1b3 100644
+> > --- a/samples/bpf/sampleip_user.c
+> > +++ b/samples/bpf/sampleip_user.c
+> > @@ -26,7 +26,6 @@
+> >  #define DEFAULT_FREQ	99
+> >  #define DEFAULT_SECS	5
+> >  #define MAX_IPS		8192
+> > -#define PAGE_OFFSET	0xffff880000000000
+> >  
+> >  static int nr_cpus;
+> >  
+> > @@ -107,14 +106,13 @@ static void print_ip_map(int fd)
+> >  	/* sort and print */
+> >  	qsort(counts, max, sizeof(struct ipcount), count_cmp);
+> >  	for (i = 0; i < max; i++) {
+> > -		if (counts[i].ip > PAGE_OFFSET) {
+> > -			sym = ksym_search(counts[i].ip);
 > 
-> Well, in a way yes. I initially thought that all those warnings where
-> normal, but indeed not. We were missing some things in powerpc linker 
-> script, and most likely some sections ended up in the wrong place.
-> 
-> Last week I tested on an 8xx and it was booting without any issue.
-> I tested today on an 83xx and it was not booting.
-> 
-> I will soon send new patches with the fixes in the linker scripts.
+> yes. it is x64 specific, since it's a sample code,
+> but simply removing it is not a fix.
+> It makes this sampleip code behaving incorrectly.
+> To do such 'cleanup of ksym' please refactor it in the true generic way,
+> so these ksym* helpers can work on all archs and put this new
+> functionality into selftests.
 
-Yeah there needs to be a bit more work for powerpc before we can enable
-this. I have some old patches I will dust off and re-send. I never got
-modules working properly, I'll see if I can figure it out.
+Just want to check, are you suggesting to create a standalone
+testing for kallsyms (like a folder tools/testing/selftests/ksym) or
+do you mean to place the generic code into folder
+tools/testing/selftests/bpf/?
 
-Thanks,
-Nick
+> If you can convert these examples into proper self-checking tests
+> that run out of selftests that would be awesome.
+
+Thank you for suggestions, Alexei.
+
+> Thanks!
+> 
