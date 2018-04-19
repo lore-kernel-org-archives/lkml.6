@@ -1,133 +1,520 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3082590-1524142844-2-4235035496792997116
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524142843; b=jpL4SYbXI1MUeHLO4RgXXqFSmfiyTGUZEns5xktfVBYxCsHwLs
-    j68z84zwmxFaGRESG558lK9pz4rfNV9yqqe+mCzW46pnFZ4Zkc6sgfvWb8QDQm8Y
-    O68wZ8PDDOAoufgTE4bk595qhiKtnqCPYBHRRAs6TYeaLNQzLIx9xJIbixgW/X+M
-    G9EXBOCkr1e/Rl5lLEoMXgCRA3X8HMAN1+t/2rtCY2ABILYXK9no9zxxloq5OoIk
-    QJ7MBMPtagW7wWmKMyMHbB5ioKCQP6ybTRbcWkHmsSnEULOkb7x/abQfy9HHU9ZN
-    UBqPonHVBKoMEV5MYIE6JytwSgt2j6abIskg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:in-reply-to:references:to:subject
-    :mime-version:content-id:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:content-type:content-transfer-encoding
-    :sender; s=fm2; t=1524142843; bh=2G72g7mRqASRJQrMaC11hF8a1Cu0syK
-    ikqnl4nh8mq8=; b=waQtXRTBSp6mWYCfWlYu8nU6R9RIUBNTL+DLu+sozkrkau9
-    3ecwgxlVcvYapibGwuZM3u98hlmuOgl1flh2imypRR099FVWy35dPV+DNL7fDicK
-    M2wfXZnB4yzP2h7jJCrUu7D3SL7a7RQnhH/oSGZGLJ/TVNeOSU/7sFtDzhMofyO6
-    mSFEzc/53q9CW4hqUETb3m6HhhSAPzYrtgtItn7C+8cWDn7mPOo9dLXaoX1LGpMe
-    PSDWrpDhrYXcQv+O+pLtS20WWNAmrIjjgG6mRJeoB1hBB6CLDNA9GJupT2hfDk6z
-    WT36TBKo/autQ2uTyi98H7r5mmFaSXBcJHK+12w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKwQ8nS86tHxBi4np/NQGk73CHdvINg5gBA7F0/g4u00HwqYlFg4B/ndFkONLD4GAQzCrOquqBC+Wv4PFwMLcmROvxwjmj+IiYJWiXLxV5To7eaNYWn7
-    cNEsLfPNS1U5YJ2yWN2hd/X1WIqDDvFXuG/roF5ftVl7/9LRu8oHUqp5XUg/lHuh3AveBb7CNfCHgQY/ANOwBYJWTGrejTFmbmXuMSGkWIxv10ka6rBvcOf3
-    AJOUqBW348LV8kypLnwH2Q==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=VwQbUJbxAAAA:8 a=DDOyTI_5AAAA:8
-    a=KW2fZluiVG7Zq2DVJ20A:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180419124140.9309-21-hch@lst.de>
-References: <20180419124140.9309-21-hch@lst.de>
- <20180419124140.9309-1-hch@lst.de>
-To: Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 20/39] afs: simplify procfs code
-MIME-Version: 1.0
-Content-ID: <22410.1524142823.1@warthog.procyon.org.uk>
-Date: Thu, 19 Apr 2018 14:00:23 +0100
-Message-ID: <22411.1524142823@warthog.procyon.org.uk>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- jfs-discussion@lists.sourceforge.net, dhowells@redhat.com,
- linux-ide@vger.kernel.org, linux-afs@lists.infradead.org,
- drbd-dev@lists.linbit.com, linux-rtc@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-acpi@vger.kernel.org,
- Jiri Slaby <jslaby@suse.com>, linux-ext4@vger.kernel.org,
- Alexey Dobriyan <adobriyan@gmail.com>, devel@driverdev.osuosl.org,
- Corey Minyard <minyard@acm.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- megaraidlinux.pdl@broadcom.com, Alessandro Zummo <a.zummo@towertech.it>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org>
+X-Google-Smtp-Source: AIpwx48N7pq4nR20h2McGeuu9ygF4CvUKVVeJYiWKsNKcAUz27GgJqAPTE5WHEdebmtCLin8MDiy
+ARC-Seal: i=1; a=rsa-sha256; t=1524141844; cv=none;
+        d=google.com; s=arc-20160816;
+        b=g6yQgOO3eAlcAfRsS6qUp4vFIFunVBjZYsuTphDt2debDrz/cYZvIxN56sWoQTFlrD
+         /4TuSx2UWNqwsK+oE6gd1DRvuoCKFgj8+4BWYCy5Y+OinvpecjPV8/BQVxUrDIT5R1aG
+         3VpkGOo6BHQ1Xdf8GdtSL3djLjj5bYUNbfT9fso+1neildBDukMn70+QI7BBh3clWrEd
+         rXZAmlWo939p8igh4xMumL9UvzV1uTh5+aAr5mMRU7uJU5Zo/o5WV0yZY6KWI6MAy32F
+         IimYbcdv6TSyziF9/RgLiUWKSRsPGRBLDb2Tu/PSuuqCo2k4mFxGTHYyaThmsydpdMLV
+         uvbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=DxpccM0sWNhZJb7jwQpTmOSDjhSwvFE2F5U/mE5J/GM=;
+        b=y7yG9pNe8zSk9mj0Q3yQCdrtJcb2vQfjoH3xwi81N/g5k5Tkc7T6FhQxIO/2pn+QQr
+         qgfvV4hOFup6Kx18R5ujmnrepKWO643IM10zKfMUvOKQyZTngCjl7YsxUtQL0/JcTco/
+         COE8AI8OmXGllURiV+tTH5tJ0SEsxkZarkosKq6e1wDFIvQDzJyrGf0MC4JiGjmJh2SU
+         4zVJsy+urVFaL5NDrxKeeaU1wdaQ/DlIVWd8/nx4LSUN7bUUFGqNQv52Devyj2Dqv/Hi
+         gVNRUm+EwYAPt7oaLKjouNhjzBfCPmupZfh7RjOPz2hxP/VESadNYA7ymD5uczSabDg7
+         PgrA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=uhkIBrGe;
+       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=uhkIBrGe;
+       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
+From: Christoph Hellwig <hch@lst.de>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Corey Minyard <minyard@acm.org>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-acpi@vger.kernel.org,
+	drbd-dev@lists.linbit.com,
+	linux-ide@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	linux-afs@lists.infradead.org,
+	linux-ext4@vger.kernel.org,
+	jfs-discussion@lists.sourceforge.net,
+	netfilter-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 39/39] tty: replace ->proc_fops with ->proc_show
+Date: Thu, 19 Apr 2018 14:41:40 +0200
+Message-Id: <20180419124140.9309-40-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180419124140.9309-1-hch@lst.de>
+References: <20180419124140.9309-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598178558463178598?=
+X-GMAIL-MSGID: =?utf-8?q?1598178558463178598?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Christoph Hellwig <hch@lst.de> wrote:
+Just set up the show callback in the tty_operations, and use
+proc_create_single_data to create the file without additional
+boilerplace code.
 
-> Use remove_proc_subtree to remove the whole subtree on cleanup, and
-> unwind the registration loop into individual calls.  Switch to use
-> proc_create_seq where applicable.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/ia64/hp/sim/simserial.c        | 15 +--------------
+ arch/xtensa/platforms/iss/console.c | 15 +--------------
+ drivers/char/pcmcia/synclink_cs.c   | 15 +--------------
+ drivers/mmc/core/sdio_uart.c        | 15 +--------------
+ drivers/staging/fwserial/fwserial.c | 15 +--------------
+ drivers/tty/amiserial.c             | 15 +--------------
+ drivers/tty/cyclades.c              | 15 +--------------
+ drivers/tty/serial/serial_core.c    | 15 +--------------
+ drivers/tty/synclink.c              | 15 +--------------
+ drivers/tty/synclink_gt.c           | 15 +--------------
+ drivers/tty/synclinkmp.c            | 15 +--------------
+ drivers/usb/serial/usb-serial.c     | 15 +--------------
+ fs/proc/proc_tty.c                  |  6 +++---
+ include/linux/tty_driver.h          |  2 +-
+ 14 files changed, 16 insertions(+), 172 deletions(-)
 
-Note that this is likely going to clash with my patch to net-namespace all of
-the afs proc files:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=mount-context&id=f60c26c827c073583107ebf19d87bc5c0e71c3d2
-
-If it helps, I should be able to disentangle this from the mount-api changes
-since the subsequent patch connects the dots to propagate the network
-namespace over automount using the new fs_context to do it.
-
-David
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/arch/ia64/hp/sim/simserial.c b/arch/ia64/hp/sim/simserial.c
+index a419ccf33cde..663388a73d4e 100644
+--- a/arch/ia64/hp/sim/simserial.c
++++ b/arch/ia64/hp/sim/simserial.c
+@@ -435,19 +435,6 @@ static int rs_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int rs_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, rs_proc_show, NULL);
+-}
+-
+-static const struct file_operations rs_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= rs_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static const struct tty_operations hp_ops = {
+ 	.open = rs_open,
+ 	.close = rs_close,
+@@ -462,7 +449,7 @@ static const struct tty_operations hp_ops = {
+ 	.unthrottle = rs_unthrottle,
+ 	.send_xchar = rs_send_xchar,
+ 	.hangup = rs_hangup,
+-	.proc_fops = &rs_proc_fops,
++	.proc_show = rs_proc_show,
+ };
+ 
+ static const struct tty_port_operations hp_port_ops = {
+diff --git a/arch/xtensa/platforms/iss/console.c b/arch/xtensa/platforms/iss/console.c
+index 92f567f9a21e..af81a62faba6 100644
+--- a/arch/xtensa/platforms/iss/console.c
++++ b/arch/xtensa/platforms/iss/console.c
+@@ -153,19 +153,6 @@ static int rs_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int rs_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, rs_proc_show, NULL);
+-}
+-
+-static const struct file_operations rs_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= rs_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static const struct tty_operations serial_ops = {
+ 	.open = rs_open,
+ 	.close = rs_close,
+@@ -176,7 +163,7 @@ static const struct tty_operations serial_ops = {
+ 	.chars_in_buffer = rs_chars_in_buffer,
+ 	.hangup = rs_hangup,
+ 	.wait_until_sent = rs_wait_until_sent,
+-	.proc_fops = &rs_proc_fops,
++	.proc_show = rs_proc_show,
+ };
+ 
+ int __init rs_init(void)
+diff --git a/drivers/char/pcmcia/synclink_cs.c b/drivers/char/pcmcia/synclink_cs.c
+index aa502e9fb7fa..66b04194aa9f 100644
+--- a/drivers/char/pcmcia/synclink_cs.c
++++ b/drivers/char/pcmcia/synclink_cs.c
+@@ -2616,19 +2616,6 @@ static int mgslpc_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int mgslpc_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, mgslpc_proc_show, NULL);
+-}
+-
+-static const struct file_operations mgslpc_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= mgslpc_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static int rx_alloc_buffers(MGSLPC_INFO *info)
+ {
+ 	/* each buffer has header and data */
+@@ -2815,7 +2802,7 @@ static const struct tty_operations mgslpc_ops = {
+ 	.tiocmget = tiocmget,
+ 	.tiocmset = tiocmset,
+ 	.get_icount = mgslpc_get_icount,
+-	.proc_fops = &mgslpc_proc_fops,
++	.proc_show = mgslpc_proc_show,
+ };
+ 
+ static int __init synclink_cs_init(void)
+diff --git a/drivers/mmc/core/sdio_uart.c b/drivers/mmc/core/sdio_uart.c
+index d3c91f412b69..25e113001a3c 100644
+--- a/drivers/mmc/core/sdio_uart.c
++++ b/drivers/mmc/core/sdio_uart.c
+@@ -1008,19 +1008,6 @@ static int sdio_uart_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int sdio_uart_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, sdio_uart_proc_show, NULL);
+-}
+-
+-static const struct file_operations sdio_uart_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= sdio_uart_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static const struct tty_port_operations sdio_uart_port_ops = {
+ 	.dtr_rts = uart_dtr_rts,
+ 	.carrier_raised = uart_carrier_raised,
+@@ -1045,7 +1032,7 @@ static const struct tty_operations sdio_uart_ops = {
+ 	.tiocmset		= sdio_uart_tiocmset,
+ 	.install		= sdio_uart_install,
+ 	.cleanup		= sdio_uart_cleanup,
+-	.proc_fops		= &sdio_uart_proc_fops,
++	.proc_show		= sdio_uart_proc_show,
+ };
+ 
+ static struct tty_driver *sdio_uart_tty_driver;
+diff --git a/drivers/staging/fwserial/fwserial.c b/drivers/staging/fwserial/fwserial.c
+index e8bfe5520bc7..fa0dd425b454 100644
+--- a/drivers/staging/fwserial/fwserial.c
++++ b/drivers/staging/fwserial/fwserial.c
+@@ -1506,11 +1506,6 @@ static int fwtty_debugfs_peers_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int fwtty_proc_open(struct inode *inode, struct file *fp)
+-{
+-	return single_open(fp, fwtty_proc_show, NULL);
+-}
+-
+ static int fwtty_stats_open(struct inode *inode, struct file *fp)
+ {
+ 	return single_open(fp, fwtty_debugfs_stats_show, inode->i_private);
+@@ -1537,14 +1532,6 @@ static const struct file_operations fwtty_peers_fops = {
+ 	.release =	single_release,
+ };
+ 
+-static const struct file_operations fwtty_proc_fops = {
+-	.owner =        THIS_MODULE,
+-	.open =         fwtty_proc_open,
+-	.read =         seq_read,
+-	.llseek =       seq_lseek,
+-	.release =      single_release,
+-};
+-
+ static const struct tty_port_operations fwtty_port_ops = {
+ 	.dtr_rts =		fwtty_port_dtr_rts,
+ 	.carrier_raised =	fwtty_port_carrier_raised,
+@@ -1570,7 +1557,7 @@ static const struct tty_operations fwtty_ops = {
+ 	.tiocmget =		fwtty_tiocmget,
+ 	.tiocmset =		fwtty_tiocmset,
+ 	.get_icount =		fwtty_get_icount,
+-	.proc_fops =		&fwtty_proc_fops,
++	.proc_show =		fwtty_proc_show,
+ };
+ 
+ static const struct tty_operations fwloop_ops = {
+diff --git a/drivers/tty/amiserial.c b/drivers/tty/amiserial.c
+index 32d7ce430b02..34dead614149 100644
+--- a/drivers/tty/amiserial.c
++++ b/drivers/tty/amiserial.c
+@@ -1566,19 +1566,6 @@ static int rs_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int rs_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, rs_proc_show, NULL);
+-}
+-
+-static const struct file_operations rs_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= rs_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ /*
+  * ---------------------------------------------------------------------
+  * rs_init() and friends
+@@ -1620,7 +1607,7 @@ static const struct tty_operations serial_ops = {
+ 	.tiocmget = rs_tiocmget,
+ 	.tiocmset = rs_tiocmset,
+ 	.get_icount = rs_get_icount,
+-	.proc_fops = &rs_proc_fops,
++	.proc_show = rs_proc_show,
+ };
+ 
+ static int amiga_carrier_raised(struct tty_port *port)
+diff --git a/drivers/tty/cyclades.c b/drivers/tty/cyclades.c
+index cf0bde3bb927..6d3c58051ce3 100644
+--- a/drivers/tty/cyclades.c
++++ b/drivers/tty/cyclades.c
+@@ -3972,19 +3972,6 @@ static int cyclades_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int cyclades_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, cyclades_proc_show, NULL);
+-}
+-
+-static const struct file_operations cyclades_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= cyclades_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ /* The serial driver boot-time initialization code!
+     Hardware I/O ports are mapped to character special devices on a
+     first found, first allocated manner.  That is, this code searches
+@@ -4024,7 +4011,7 @@ static const struct tty_operations cy_ops = {
+ 	.tiocmget = cy_tiocmget,
+ 	.tiocmset = cy_tiocmset,
+ 	.get_icount = cy_get_icount,
+-	.proc_fops = &cyclades_proc_fops,
++	.proc_show = cyclades_proc_show,
+ };
+ 
+ static int __init cy_init(void)
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 0466f9f08a91..6ff9405954a6 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -1829,19 +1829,6 @@ static int uart_proc_show(struct seq_file *m, void *v)
+ 		uart_line_info(m, drv, i);
+ 	return 0;
+ }
+-
+-static int uart_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, uart_proc_show, PDE_DATA(inode));
+-}
+-
+-static const struct file_operations uart_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= uart_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+ #endif
+ 
+ #if defined(CONFIG_SERIAL_CORE_CONSOLE) || defined(CONFIG_CONSOLE_POLL)
+@@ -2415,7 +2402,7 @@ static const struct tty_operations uart_ops = {
+ 	.break_ctl	= uart_break_ctl,
+ 	.wait_until_sent= uart_wait_until_sent,
+ #ifdef CONFIG_PROC_FS
+-	.proc_fops	= &uart_proc_fops,
++	.proc_show	= uart_proc_show,
+ #endif
+ 	.tiocmget	= uart_tiocmget,
+ 	.tiocmset	= uart_tiocmset,
+diff --git a/drivers/tty/synclink.c b/drivers/tty/synclink.c
+index 3c4ad71f261d..fbdf4d01c6a9 100644
+--- a/drivers/tty/synclink.c
++++ b/drivers/tty/synclink.c
+@@ -3534,19 +3534,6 @@ static int mgsl_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int mgsl_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, mgsl_proc_show, NULL);
+-}
+-
+-static const struct file_operations mgsl_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= mgsl_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ /* mgsl_allocate_dma_buffers()
+  * 
+  * 	Allocate and format DMA buffers (ISA adapter)
+@@ -4298,7 +4285,7 @@ static const struct tty_operations mgsl_ops = {
+ 	.tiocmget = tiocmget,
+ 	.tiocmset = tiocmset,
+ 	.get_icount = msgl_get_icount,
+-	.proc_fops = &mgsl_proc_fops,
++	.proc_show = mgsl_proc_show,
+ };
+ 
+ /*
+diff --git a/drivers/tty/synclink_gt.c b/drivers/tty/synclink_gt.c
+index 255c49687877..a94086597ebd 100644
+--- a/drivers/tty/synclink_gt.c
++++ b/drivers/tty/synclink_gt.c
+@@ -1316,19 +1316,6 @@ static int synclink_gt_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int synclink_gt_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, synclink_gt_proc_show, NULL);
+-}
+-
+-static const struct file_operations synclink_gt_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= synclink_gt_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ /*
+  * return count of bytes in transmit buffer
+  */
+@@ -3721,7 +3708,7 @@ static const struct tty_operations ops = {
+ 	.tiocmget = tiocmget,
+ 	.tiocmset = tiocmset,
+ 	.get_icount = get_icount,
+-	.proc_fops = &synclink_gt_proc_fops,
++	.proc_show = synclink_gt_proc_show,
+ };
+ 
+ static void slgt_cleanup(void)
+diff --git a/drivers/tty/synclinkmp.c b/drivers/tty/synclinkmp.c
+index 75f11ce1f0a1..1e4d5b9c981a 100644
+--- a/drivers/tty/synclinkmp.c
++++ b/drivers/tty/synclinkmp.c
+@@ -1421,19 +1421,6 @@ static int synclinkmp_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int synclinkmp_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, synclinkmp_proc_show, NULL);
+-}
+-
+-static const struct file_operations synclinkmp_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= synclinkmp_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ /* Return the count of bytes in transmit buffer
+  */
+ static int chars_in_buffer(struct tty_struct *tty)
+@@ -3899,7 +3886,7 @@ static const struct tty_operations ops = {
+ 	.tiocmget = tiocmget,
+ 	.tiocmset = tiocmset,
+ 	.get_icount = get_icount,
+-	.proc_fops = &synclinkmp_proc_fops,
++	.proc_show = synclinkmp_proc_show,
+ };
+ 
+ 
+diff --git a/drivers/usb/serial/usb-serial.c b/drivers/usb/serial/usb-serial.c
+index 790e0cbe3da9..268ffa6b51d2 100644
+--- a/drivers/usb/serial/usb-serial.c
++++ b/drivers/usb/serial/usb-serial.c
+@@ -476,19 +476,6 @@ static int serial_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
+-static int serial_proc_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, serial_proc_show, NULL);
+-}
+-
+-static const struct file_operations serial_proc_fops = {
+-	.owner		= THIS_MODULE,
+-	.open		= serial_proc_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
+-
+ static int serial_tiocmget(struct tty_struct *tty)
+ {
+ 	struct usb_serial_port *port = tty->driver_data;
+@@ -1192,7 +1179,7 @@ static const struct tty_operations serial_ops = {
+ 	.get_icount =		serial_get_icount,
+ 	.cleanup =		serial_cleanup,
+ 	.install =		serial_install,
+-	.proc_fops =		&serial_proc_fops,
++	.proc_show =		serial_proc_show,
+ };
+ 
+ 
+diff --git a/fs/proc/proc_tty.c b/fs/proc/proc_tty.c
+index b1a4a8ddd246..c69ff191e5d8 100644
+--- a/fs/proc/proc_tty.c
++++ b/fs/proc/proc_tty.c
+@@ -135,11 +135,11 @@ void proc_tty_register_driver(struct tty_driver *driver)
+ 	struct proc_dir_entry *ent;
+ 		
+ 	if (!driver->driver_name || driver->proc_entry ||
+-	    !driver->ops->proc_fops)
++	    !driver->ops->proc_show)
+ 		return;
+ 
+-	ent = proc_create_data(driver->driver_name, 0, proc_tty_driver,
+-			       driver->ops->proc_fops, driver);
++	ent = proc_create_single_data(driver->driver_name, 0, proc_tty_driver,
++			       driver->ops->proc_show, driver);
+ 	driver->proc_entry = ent;
+ }
+ 
+diff --git a/include/linux/tty_driver.h b/include/linux/tty_driver.h
+index 31c2b5b166de..71dbc891851a 100644
+--- a/include/linux/tty_driver.h
++++ b/include/linux/tty_driver.h
+@@ -293,7 +293,7 @@ struct tty_operations {
+ 	int (*poll_get_char)(struct tty_driver *driver, int line);
+ 	void (*poll_put_char)(struct tty_driver *driver, int line, char ch);
+ #endif
+-	const struct file_operations *proc_fops;
++	int (*proc_show)(struct seq_file *, void *);
+ } __randomize_layout;
+ 
+ struct tty_driver {
+-- 
+2.17.0
