@@ -1,85 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753071AbeDSJes (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 05:34:48 -0400
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:35662 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752777AbeDSJce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 05:32:34 -0400
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Jonathan Liu <net147@gmail.com>
-Subject: [PATCH 1/6] drm/sun4i: tcon: Pass drm_encoder * into sun4i_tcon0_mode_set_cpu
-Date: Thu, 19 Apr 2018 17:32:20 +0800
-Message-Id: <20180419093225.614-2-wens@csie.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180419093225.614-1-wens@csie.org>
-References: <20180419093225.614-1-wens@csie.org>
+        id S1753164AbeDSJfZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 05:35:25 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58531 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752489AbeDSJbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 05:31:39 -0400
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, daniel@ffwll.ch,
+        peda@axentia.se, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/8] drm: rcar-du: rcar-lvds: Add bridge format support
+Date: Thu, 19 Apr 2018 11:31:07 +0200
+Message-Id: <1524130269-32688-7-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sun4i_tcon0_mode_set_cpu() currently accepts struct mipi_dsi_device *
-as its second parameter. This is derived from drm_encoder.
+With the introduction of static input image format enumeration in DRM
+bridges, add support to retrieve the format in rcar-lvds LVDS encoder
+from both panel or bridge, to set the desired LVDS mode.
 
-The DSI encoder is tied to the CPU interface mode of the TCON as a
-special case. In theory, if hardware were available, we could also
-support normal CPU interface modes. It is better to pass the generic
-encoder instead of the specialized mipi_dsi_device, and handle the
-differences inside the function.
+Do not rely on 'DRM_BUS_FLAG_DATA_LSB_TO_MSB' flag to mirror the LVDS
+format, as it is only defined for drm connectors, but use the newly
+introduced _LE version of LVDS mbus image formats.
 
-Passing the encoder would also enable the function to pass it, or any
-other data structures related to it, to other functions expecting it.
-One such example would be dithering support that will be added in a
-later patch, which looks at properties tied to the connector to
-determine whether dithering should be enabled or not.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 64 +++++++++++++++++++++++++------------
+ 1 file changed, 44 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 08747fc3ee71..2bd53ef7d4b8 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -277,9 +277,12 @@ static void sun4i_tcon0_mode_set_common(struct sun4i_tcon *tcon,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 3d2d3bb..2fa875f 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -280,41 +280,65 @@ static bool rcar_lvds_mode_fixup(struct drm_bridge *bridge,
+ 	return true;
  }
  
- static void sun4i_tcon0_mode_set_cpu(struct sun4i_tcon *tcon,
--				     struct mipi_dsi_device *device,
-+				     struct drm_encoder *encoder,
- 				     const struct drm_display_mode *mode)
+-static void rcar_lvds_get_lvds_mode(struct rcar_lvds *lvds)
++static int rcar_lvds_get_lvds_mode_from_connector(struct rcar_lvds *lvds,
++						  unsigned int *bus_fmt)
  {
-+	/* TODO support normal CPU interface modes */
-+	struct sun6i_dsi *dsi = encoder_to_sun6i_dsi(encoder);
-+	struct mipi_dsi_device *device = dsi->device;
- 	u8 bpp = mipi_dsi_pixel_format_to_bpp(device->format);
- 	u8 lanes = device->lanes;
- 	u32 block_space, start_delay;
-@@ -606,16 +609,10 @@ void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
- 			 const struct drm_encoder *encoder,
- 			 const struct drm_display_mode *mode)
- {
--	struct sun6i_dsi *dsi;
+ 	struct drm_display_info *info = &lvds->connector.display_info;
+-	enum rcar_lvds_mode mode;
 -
- 	switch (encoder->encoder_type) {
- 	case DRM_MODE_ENCODER_DSI:
--		/*
--		 * This is not really elegant, but it's the "cleaner"
--		 * way I could think of...
--		 */
--		dsi = encoder_to_sun6i_dsi(encoder);
--		sun4i_tcon0_mode_set_cpu(tcon, dsi->device, mode);
-+		/* DSI is tied to special case of CPU interface */
-+		sun4i_tcon0_mode_set_cpu(tcon, encoder, mode);
+-	/*
+-	 * There is no API yet to retrieve LVDS mode from a bridge, only panels
+-	 * are supported.
+-	 */
+-	if (!lvds->panel)
+-		return;
+ 
+ 	if (!info->num_bus_formats || !info->bus_formats) {
+ 		dev_err(lvds->dev, "no LVDS bus format reported\n");
+-		return;
++		return -EINVAL;
++	}
++
++	*bus_fmt = info->bus_formats[0];
++
++	return 0;
++}
++
++static int rcar_lvds_get_lvds_mode_from_bridge(struct rcar_lvds *lvds,
++					       unsigned int *bus_fmt)
++{
++	if (!lvds->next_bridge->num_bus_formats ||
++	    !lvds->next_bridge->bus_formats) {
++		dev_err(lvds->dev, "no LVDS bus format reported\n");
++		return -EINVAL;
+ 	}
+ 
+-	switch (info->bus_formats[0]) {
++	*bus_fmt = lvds->next_bridge->bus_formats[0];
++
++	return 0;
++}
++
++static void rcar_lvds_get_lvds_mode(struct rcar_lvds *lvds)
++{
++	unsigned int bus_fmt;
++	int ret;
++
++	if (lvds->panel)
++		ret = rcar_lvds_get_lvds_mode_from_connector(lvds, &bus_fmt);
++	else
++		ret = rcar_lvds_get_lvds_mode_from_bridge(lvds, &bus_fmt);
++	if (ret)
++		return;
++
++	switch (bus_fmt) {
++	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE:
++	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE:
++		lvds->mode |= RCAR_LVDS_MODE_MIRROR;
+ 	case MEDIA_BUS_FMT_RGB666_1X7X3_SPWG:
+ 	case MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA:
+-		mode = RCAR_LVDS_MODE_JEIDA;
++		lvds->mode = RCAR_LVDS_MODE_JEIDA;
  		break;
- 	case DRM_MODE_ENCODER_LVDS:
- 		sun4i_tcon0_mode_set_lvds(tcon, encoder, mode);
++
++	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE:
++		lvds->mode |= RCAR_LVDS_MODE_MIRROR;
+ 	case MEDIA_BUS_FMT_RGB888_1X7X4_SPWG:
+-		mode = RCAR_LVDS_MODE_VESA;
++		lvds->mode = RCAR_LVDS_MODE_VESA;
+ 		break;
+ 	default:
+ 		dev_err(lvds->dev, "unsupported LVDS bus format 0x%04x\n",
+-			info->bus_formats[0]);
+-		return;
++			bus_fmt);
+ 	}
+-
+-	if (info->bus_flags & DRM_BUS_FLAG_DATA_LSB_TO_MSB)
+-		mode |= RCAR_LVDS_MODE_MIRROR;
+-
+-	lvds->mode = mode;
+ }
+ 
+ static void rcar_lvds_mode_set(struct drm_bridge *bridge,
 -- 
-2.17.0
+2.7.4
