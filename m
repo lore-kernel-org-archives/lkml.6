@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753654AbeDSOHr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:07:47 -0400
-Received: from sauhun.de ([88.99.104.3]:45342 "EHLO pokefinder.org"
+        id S1752489AbeDSOIS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:08:18 -0400
+Received: from sauhun.de ([88.99.104.3]:45350 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753577AbeDSOHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:07:17 -0400
+        id S1753572AbeDSOHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:07:16 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 61/61] ASoC: atmel: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:06:31 +0200
-Message-Id: <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCH 60/61] net: dsa: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:30 +0200
+Message-Id: <20180419140641.27926-61-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
@@ -33,32 +32,32 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- sound/soc/atmel/atmel_ssc_dai.c | 6 ++----
+ net/dsa/legacy.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index a1e2c5682dcd..4a0275a6505d 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -1002,8 +1002,7 @@ static const struct snd_soc_component_driver atmel_ssc_component = {
- 
- static int asoc_ssc_init(struct device *dev)
+diff --git a/net/dsa/legacy.c b/net/dsa/legacy.c
+index 42a7b85b84e1..f8d6b212328f 100644
+--- a/net/dsa/legacy.c
++++ b/net/dsa/legacy.c
+@@ -687,8 +687,7 @@ static void dsa_shutdown(struct platform_device *pdev)
+ #ifdef CONFIG_PM_SLEEP
+ static int dsa_suspend(struct device *d)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ssc_device *ssc = platform_get_drvdata(pdev);
-+	struct ssc_device *ssc = dev_get_drvdata(dev);
- 	int ret;
+-	struct platform_device *pdev = to_platform_device(d);
+-	struct dsa_switch_tree *dst = platform_get_drvdata(pdev);
++	struct dsa_switch_tree *dst = dev_get_drvdata(d);
+ 	int i, ret = 0;
  
- 	ret = snd_soc_register_component(dev, &atmel_ssc_component,
-@@ -1033,8 +1032,7 @@ static int asoc_ssc_init(struct device *dev)
+ 	for (i = 0; i < dst->pd->nr_chips; i++) {
+@@ -703,8 +702,7 @@ static int dsa_suspend(struct device *d)
  
- static void asoc_ssc_exit(struct device *dev)
+ static int dsa_resume(struct device *d)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ssc_device *ssc = platform_get_drvdata(pdev);
-+	struct ssc_device *ssc = dev_get_drvdata(dev);
+-	struct platform_device *pdev = to_platform_device(d);
+-	struct dsa_switch_tree *dst = platform_get_drvdata(pdev);
++	struct dsa_switch_tree *dst = dev_get_drvdata(d);
+ 	int i, ret = 0;
  
- 	if (ssc->pdata->use_dma)
- 		atmel_pcm_dma_platform_unregister(dev);
+ 	for (i = 0; i < dst->pd->nr_chips; i++) {
 -- 
 2.11.0
