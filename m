@@ -1,88 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753592AbeDSMwI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:52:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55772 "EHLO mx2.suse.de"
+        id S1752899AbeDSMyA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 08:54:00 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56099 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751151AbeDSMwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:52:06 -0400
-Subject: Re: [PATCH] Input: xen-kbdfront - allow better run-time configuration
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com, lyan@suse.com,
-        boris.ostrovsky@oracle.com
-Cc: andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180418150445.9805-1-andr2000@gmail.com>
- <ccb7a33b-7862-9803-fb24-67861d5ecab9@suse.com>
- <2bff035e-303e-d644-5f51-5e64150c097c@gmail.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <c833ab0d-746c-c734-3dbe-e02ae7951d1d@suse.com>
-Date: Thu, 19 Apr 2018 14:52:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751865AbeDSMx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 08:53:57 -0400
+Date: Thu, 19 Apr 2018 14:53:53 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, Peter Zijlstra <peterz@infradead.org>,
+        Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
+Message-ID: <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
+References: <20180413124704.19335-1-pmladek@suse.com>
+ <20180413101233.0792ebf0@gandalf.local.home>
+ <20180414023516.GA17806@tigerII.localdomain>
+ <20180416014729.GB1034@jagdpanzerIV>
+ <20180416042553.GA555@jagdpanzerIV>
 MIME-Version: 1.0
-In-Reply-To: <2bff035e-303e-d644-5f51-5e64150c097c@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180416042553.GA555@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/04/18 13:44, Oleksandr Andrushchenko wrote:
-> On 04/19/2018 02:25 PM, Juergen Gross wrote:
->> On 18/04/18 17:04, Oleksandr Andrushchenko wrote:
->>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>>
->>> It is now only possible to control if multi-touch virtual device
->>> is created or not (via the corresponding XenStore entries),
->>> but keyboard and pointer devices are always created.
->> Why don't you want to go that route for keyboard and mouse, too?
->> Or does this really make no sense?
-> Well, I would prefer not to touch anything outside Linux and
-> this driver. And these settings seem to be implementation specific.
-> So, this is why introduce Linux module parameters and don't extend
-> the kbdif protocol.
->>> In some cases this is not desirable. For example, if virtual
->>> keyboard device is exposed to Android then the latter won't
->>> automatically show on-screen keyboard as it expects that a
->>> physical keyboard device can be used for typing.
->>>
->>> Make it possible to configure which virtual devices are created
->>> with module parameters:
->>>    - no_ptr_dev=1 if no pointer device needs to be created
->>>    - no_kbd_dev=1 if no keyboard device needs to be created
->>> Keep old behavior by default.
->>>
->>> Signed-off-by: Oleksandr Andrushchenko
->>> <oleksandr_andrushchenko@epam.com>
->>> Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
->>> Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
->>> ---
->>>   drivers/input/misc/xen-kbdfront.c | 159 +++++++++++++++++-------------
->>>   1 file changed, 92 insertions(+), 67 deletions(-)
->>>
->>> diff --git a/drivers/input/misc/xen-kbdfront.c
->>> b/drivers/input/misc/xen-kbdfront.c
->>> index d91f3b1c5375..a3306aad40b0 100644
->>> --- a/drivers/input/misc/xen-kbdfront.c
->>> +++ b/drivers/input/misc/xen-kbdfront.c
->>> @@ -51,6 +51,16 @@ module_param_array(ptr_size, int, NULL, 0444);
->>>   MODULE_PARM_DESC(ptr_size,
->>>       "Pointing device width, height in pixels (default 800,600)");
->>>   +static unsigned int no_ptr_dev;
->>> +module_param(no_ptr_dev, uint, 0);
->> Use type invbool instead?
-> Hm, better bool then? invbool will require parameter name change to
-> something like "with_ptr_dev" which might confuse, e.g.
-> default was to go with pointer device, now we have with_ptr_dev
-> module parameter: do I now need to set it to preserve the old behavior?
-> The answer is no (because of invbool), but you have to dig for it.
-> 
-> Will bool work for you?
+On Mon 2018-04-16 13:25:53, Sergey Senozhatsky wrote:
+> On (04/16/18 10:47), Sergey Senozhatsky wrote:
+> > On (04/14/18 11:35), Sergey Senozhatsky wrote:
+> > > On (04/13/18 10:12), Steven Rostedt wrote:
+> > > > 
+> > > > > The interval is set to one hour. It is rather arbitrary selected time.
+> > > > > It is supposed to be a compromise between never print these messages,
+> > > > > do not lockup the machine, do not fill the entire buffer too quickly,
+> > > > > and get information if something changes over time.
+> > > > 
+> > > > 
+> > > > I think an hour is incredibly long. We only allow 100 lines per hour for
+> > > > printks happening inside another printk?
+> > > > 
+> > > > I think 5 minutes (at most) would probably be plenty. One minute may be
+> > > > good enough.
+> > > 
+> > > Besides 100 lines is absolutely not enough for any real lockdep splat.
+> > > My call would be - up to 1000 lines in a 1 minute interval.
 
-As long as the default won't change from today: yes.
+But this would break the intention of this patch. We need to flush all
+messages to the console before the timeout. Otherwise we would never
+break the possible infinite loop.
+
+Come on guys! The first reaction how to fix the infinite loop was
+to fix the console drivers and remove the recursive messages. We are
+talking about messages that should not be there or they should
+get replaced by WARN_ONCE(), print_once() or so. This patch only
+give us a chance to see the problem and do not blow up immediately.
+
+I am fine with increasing the number of lines. But we need to keep
+the timeout long. In fact, 1 hour is still rather short from my POV.
 
 
-Juergen
+> > Well, if we want to basically turn printk_safe() into printk_safe_ratelimited().
+> > I'm not so sure about it.
+
+No, it is not about printk_safe(). The ratelimit is active when
+console_owner == current. It triggers when printk() is called
+inside
+
+	console_lock_spinning_enable();
+
+	  call_console_drivers(ext_text, ext_len, text, len);
+	    printk();
+
+	console_lock_spinning_disable_and_check()
+
+It will continue working even if we disable printk_safe() context
+earlier and the messages are stored into the main log buffer.
+
+
+> > Besides the patch also rate limits printk_nmi->logbuf - the logbuf
+> > PRINTK_NMI_DEFERRED_CONTEXT_MASK bypass, which is way too important
+> > to rate limit it - for no reason.
+
+Again. It has the effect only when console_owner == current. It means
+that it affects "only" NMIs that interrupt console_unlock() when calling
+console drivers.
+
+Anyway, it needs to get fixed. I suggest to update the check in
+printk_func():
+
+	if (console_owner == current && !in_nmi() &&
+	    !__ratelimit(&ratelimit_console))
+		return 0;
+
+
+> One more thing,
+> I'd really prefer to rate limit the function which flushes per-CPU
+> printk_safe buffers; not the function that appends new messages to
+> the per-CPU printk_safe buffers.
+
+I wonder if this opinion is still valid after explaining the
+dependency on printk_safe(). In each case, it sounds weird
+to block printk_safe buffers with some "unwanted" messages.
+Or maybe I miss something.
+
+Best Regards,
+Petr
