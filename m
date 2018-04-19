@@ -1,105 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753122AbeDSPT4 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:19:56 -0400
-Received: from mx2.freebsd.org ([8.8.178.116]:40123 "EHLO mx2.freebsd.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751293AbeDSPTx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:19:53 -0400
-X-Google-Smtp-Source: AIpwx48a8tSsEP9nNa7bWZhZI1X3mlYoJ/m6nVHtfuiP98/iY4jmm+Iken6m7JX0oUBAE/0ZEOxlBxxWGiUrjCpTA/s=
+        id S1752644AbeDSPWy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:22:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48586 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751070AbeDSPWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:22:52 -0400
+Date: Thu, 19 Apr 2018 17:22:48 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio-ccw: process ssch with interrupts disabled
+Message-ID: <20180419172248.0d10db2a.cohuck@redhat.com>
+In-Reply-To: <b52e3aac-208c-8d55-cc77-2534a375fda5@linux.vnet.ibm.com>
+References: <20180413140509.9042-1-cohuck@redhat.com>
+        <b52e3aac-208c-8d55-cc77-2534a375fda5@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <F1D7126A-B6ED-4A83-A941-5F39CED472CE@aosc.io>
-References: <20180128232919.12639-1-embed3d@gmail.com> <20180128232919.12639-15-embed3d@gmail.com>
- <20180129095200.attg7cgvpifpchtn@flea.lan> <470ec61e-8b08-5193-ede1-01d02b2c865e@gmail.com>
- <CACNAnaGVSbk7czb+mcGTx1C=YwCWe1qqHQDQe9+PNifwEXovMw@mail.gmail.com> <F1D7126A-B6ED-4A83-A941-5F39CED472CE@aosc.io>
-From: Kyle Evans <kevans@freebsd.org>
-Date: Thu, 19 Apr 2018 10:19:30 -0500
-X-Gmail-Original-Message-ID: <CACNAnaFMKDmvAUXJngKHWkeGLfjsgn5hhJszNk7Sg4BU98Oafw@mail.gmail.com>
-Message-ID: <CACNAnaFMKDmvAUXJngKHWkeGLfjsgn5hhJszNk7Sg4BU98Oafw@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 14/16] arm: dts: sun8i: h3: enable H3
- sid controller
-To: icenowy@aosc.io
-Cc: embed3d@gmail.com, Maxime Ripard <maxime.ripard@free-electrons.com>,
-        lee.jones@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        davem@davemloft.net, hans.verkuil@cisco.com, mchehab@kernel.org,
-        rask@formelder.dk, clabbe.montjoie@gmail.com, sean@mess.org,
-        krzk@kernel.org, quentin.schulz@free-electrons.com,
-        edu.molinas@gmail.com, singhalsimran0@gmail.com,
-        linux-iio@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 10:13 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
->
->
-> 于 2018年4月19日 GMT+08:00 下午11:11:22, Kyle Evans <kevans@freebsd.org> 写到:
->>On Mon, Jan 29, 2018 at 6:03 AM, Philipp Rossak <embed3d@gmail.com>
->>wrote:
->>>
->>>
->>> On 29.01.2018 10:52, Maxime Ripard wrote:
->>>>
->>>> On Mon, Jan 29, 2018 at 12:29:17AM +0100, Philipp Rossak wrote:
->>>>>
->>>>> This patch enables the the sid controller in the H3. It can be used
->>>>> for thermal calibration data.
->>>>>
->>>>> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
->>>>> ---
->>>>>   arch/arm/boot/dts/sun8i-h3.dtsi | 7 +++++++
->>>>>   1 file changed, 7 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
->>>>> b/arch/arm/boot/dts/sun8i-h3.dtsi
->>>>> index 3f83f6a27c74..9bb5cc29fec5 100644
->>>>> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
->>>>> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
->>>>> @@ -72,6 +72,13 @@
->>>>>                 };
->>>>>         };
->>>>>   +     soc {
->>>>> +               sid: eeprom@1c14000 {
->>>>> +                       compatible = "allwinner,sun8i-h3-sid";
->>>>> +                       reg = <0x01c14000 0x400>;
->>>>> +               };
->>>>> +       };
->>>>> +
->>>>
->>>>
->>>> Shouldn't you also use a nvmem-cells property to the THS node?
->>>>
->>>> Maxime
->>>>
->>>
->>> Oh seems like I forgot that.
->>> As related to the wiki [1] this should be 64 bit wide at the address
->>0x34. I
->>> will add that in the next version.
->>>
->>>
->>> [1]: http://linux-sunxi.org/SID_Register_Guide#eFUSE
->>>
->>> Thanks,
->>> Philipp
->>>
->>
->>Hi,
->>
->>Any chance this will see a v3 soon? I'm kind of interested in sid node
->>for h3. =)
->
-> This patch is independent and can be easily sent out
-> by its own.
->
+On Thu, 19 Apr 2018 16:14:25 +0200
+Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
 
-Right- I had considered doing so, but wanted to make sure I wasn't
-going to collide with this series if a v3 is imminent.
+> On 13/04/2018 16:05, Cornelia Huck wrote:
+> > When we call ssch, an interrupt might already be pending once we
+> > return from the START SUBCHANNEL instruction. Therefore we need to
+> > make sure interrupts are disabled until after we're done with our
+> > processing.
+> >
+> > Note that the subchannel lock is the same as the ccwdevice lock that
+> > is mentioned in the documentation for ccw_device_start() and friends.
+> >
+> > Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+> > ---
+> >   drivers/s390/cio/vfio_ccw_fsm.c | 19 ++++++++++++-------
+> >   1 file changed, 12 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
+> > index ff6963ad6e39..3c800642134e 100644
+> > --- a/drivers/s390/cio/vfio_ccw_fsm.c
+> > +++ b/drivers/s390/cio/vfio_ccw_fsm.c
+> > @@ -20,12 +20,12 @@ static int fsm_io_helper(struct vfio_ccw_private *private)
+> >   	int ccode;
+> >   	__u8 lpm;
+> >   	unsigned long flags;
+> > +	int ret;
+> >
+> >   	sch = private->sch;
+> >
+> >   	spin_lock_irqsave(sch->lock, flags);
+> >   	private->state = VFIO_CCW_STATE_BUSY;
+> > -	spin_unlock_irqrestore(sch->lock, flags);
+> >
+> >   	orb = cp_get_orb(&private->cp, (u32)(addr_t)sch, sch->lpm);
+> >
+> > @@ -38,10 +38,12 @@ static int fsm_io_helper(struct vfio_ccw_private *private)
+> >   		 * Initialize device status information
+> >   		 */
+> >   		sch->schib.scsw.cmd.actl |= SCSW_ACTL_START_PEND;
+> > -		return 0;
+> > +		ret = 0;
+> > +		break;
+> >   	case 1:		/* Status pending */
+> >   	case 2:		/* Busy */
+> > -		return -EBUSY;
+> > +		ret = -EBUSY;
+> > +		break;
+> >   	case 3:		/* Device/path not operational */
+> >   	{
+> >   		lpm = orb->cmd.lpm;
+> > @@ -51,13 +53,16 @@ static int fsm_io_helper(struct vfio_ccw_private *private)
+> >   			sch->lpm = 0;
+> >
+> >   		if (cio_update_schib(sch))
+> > -			return -ENODEV;
+> > -
+> > -		return sch->lpm ? -EACCES : -ENODEV;
+> > +			ret = -ENODEV;
+> > +		else
+> > +			ret = sch->lpm ? -EACCES : -ENODEV;
+> > +		break;
+> >   	}
+> >   	default:
+> > -		return ccode;
+> > +		ret = ccode;
+> >   	}
+> > +	spin_unlock_irqrestore(sch->lock, flags);
+> > +	return ret;
+> >   }
+> >
+> >   static void fsm_notoper(struct vfio_ccw_private *private,  
+> 
+> 
+> I have been working on a patch to solve this problem between others, I 
+> provide it soon.
+> It is much more intrusive, reworking interrupts and state machine.
+> So may be you do not like it.
+
+I'll take a look at your state machine series later, but it is
+certainly material for the next release.
+
+[I also have my halt/clear implementation which I wanted to send this
+week, but other things have been eating up my bandwidth. Well, the week
+is not over yet...]
+
+> If we stay on this patch, even this is quite a long spinlock around ssch 
+> and stsch,
+> and we need it in the current implementation.
+
+I'd like to queue a small patch like this for the current release which
+is also suitable for stable. We can still rework things on top.
+
+> Acked-by: Pierre Morel<pmorel@linux.vnet.ibm.com>
+
+Thanks!
