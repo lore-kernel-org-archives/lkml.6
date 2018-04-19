@@ -1,18 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753523AbeDSRrh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 13:47:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42298 "EHLO mx1.redhat.com"
+        id S1753539AbeDSRsa (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 13:48:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42358 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753425AbeDSRrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 13:47:35 -0400
+        id S1753283AbeDSRs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 13:48:29 -0400
 Subject: Re: [PATCH] virtio_ring: switch to dma_XX barriers for rpmsg
-To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>,
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-remoteproc@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
         virtualization@lists.linux-foundation.org
 References: <1524159181-351878-1-git-send-email-mst@redhat.com>
+ <5047d08c-9f9e-2902-d425-1fac849ce5b4@redhat.com>
+ <20180419204017-mutt-send-email-mst@kernel.org>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -50,12 +52,12 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <5047d08c-9f9e-2902-d425-1fac849ce5b4@redhat.com>
-Date: Thu, 19 Apr 2018 19:39:21 +0200
+Message-ID: <524fb400-2325-f60b-7e03-15be01888afc@redhat.com>
+Date: Thu, 19 Apr 2018 19:48:24 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1524159181-351878-1-git-send-email-mst@redhat.com>
+In-Reply-To: <20180419204017-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,64 +65,20 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/04/2018 19:35, Michael S. Tsirkin wrote:
-> virtio is using barriers to order memory accesses, thus
-> dma_wmb/rmb is a good match.
+On 19/04/2018 19:46, Michael S. Tsirkin wrote:
+>> This should be okay, but I wonder if there should be a virtio_wmb(...)
+>> or an "if (weak_barriers) wmb()" before the "writel" in vm_notify
+>> (drivers/virtio/virtio_mmio.c).
+>>
+>> Thanks,
+>>
+>> Paolo
+> That one uses weak barriers AFAIK.
 > 
-> Build-tested on x86: Before
+> IIUC you mean rproc_virtio_notify.
 > 
-> [mst@tuck linux]$ size drivers/virtio/virtio_ring.o
->    text    data     bss     dec     hex filename
->   11392     820       0   12212    2fb4 drivers/virtio/virtio_ring.o
-> 
-> After
-> mst@tuck linux]$ size drivers/virtio/virtio_ring.o
->    text    data     bss     dec     hex filename
->   11284     820       0   12104    2f48 drivers/virtio/virtio_ring.o
-> 
-> Cc: Ohad Ben-Cohen <ohad@wizery.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: linux-remoteproc@vger.kernel.org
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
-> 
-> It's good in theory, but could one of RPMSG maintainers please review
-> and ack this patch? Or even better test it?
-> 
-> All these barriers are useless on Intel anyway ...
+> I suspect it works because specific kick callbacks have a barrier internally.
 
-This should be okay, but I wonder if there should be a virtio_wmb(...)
-or an "if (weak_barriers) wmb()" before the "writel" in vm_notify
-(drivers/virtio/virtio_mmio.c).
-
-Thanks,
+Yes, that one.  At least keystone_rproc_kick doesn't seem to have a barrier.
 
 Paolo
-
-> 
->  include/linux/virtio_ring.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/virtio_ring.h b/include/linux/virtio_ring.h
-> index bbf3252..fab0213 100644
-> --- a/include/linux/virtio_ring.h
-> +++ b/include/linux/virtio_ring.h
-> @@ -35,7 +35,7 @@ static inline void virtio_rmb(bool weak_barriers)
->  	if (weak_barriers)
->  		virt_rmb();
->  	else
-> -		rmb();
-> +		dma_rmb();
->  }
->  
->  static inline void virtio_wmb(bool weak_barriers)
-> @@ -43,7 +43,7 @@ static inline void virtio_wmb(bool weak_barriers)
->  	if (weak_barriers)
->  		virt_wmb();
->  	else
-> -		wmb();
-> +		dma_wmb();
->  }
->  
->  static inline void virtio_store_mb(bool weak_barriers,
-> 
