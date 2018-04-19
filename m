@@ -1,52 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753812AbeDSOY7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:24:59 -0400
-Received: from sauhun.de ([88.99.104.3]:45342 "EHLO pokefinder.org"
+        id S1752807AbeDSOZW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:25:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753229AbeDSOGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:06:54 -0400
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org
-Subject: [PATCH 11/61] gpu: drm: msm: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:41 +0200
-Message-Id: <20180419140641.27926-12-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+        id S1751136AbeDSOZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:25:20 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81652170D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=shawnguo@kernel.org
+Date: Thu, 19 Apr 2018 22:24:42 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org, Linux-imx@nxp.com,
+        kernel@pengutronix.de, fabio.estevam@nxp.com, shengjiu.wang@nxp.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH V2 2/2] ARM: dts: imx6sx-sabreauto: add external 24MHz
+ clock source
+Message-ID: <20180419142441.GW25429@dragon>
+References: <1521426645-19246-1-git-send-email-Anson.Huang@nxp.com>
+ <1521426645-19246-2-git-send-email-Anson.Huang@nxp.com>
+ <20180417142203.GM25429@dragon>
+ <152410785516.46528.12432838242068784117@swboyd.mtv.corp.google.com>
+ <20180419140236.GU25429@dragon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419140236.GU25429@dragon>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
+On Thu, Apr 19, 2018 at 10:02:37PM +0800, Shawn Guo wrote:
+> On Wed, Apr 18, 2018 at 08:17:35PM -0700, Stephen Boyd wrote:
+> > Quoting Shawn Guo (2018-04-17 07:22:05)
+> > > On Mon, Mar 19, 2018 at 10:30:45AM +0800, Anson Huang wrote:
+> > > > On i.MX6SX SabreAuto board, there is external 24MHz clock
+> > > > source for analog clock2, add this clock source to clock tree.
+> > > > 
+> > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > > > ---
+> > > > changes since V1:
+> > > >       remove unnecessary clocks container.
+> > > 
+> > > I understand this is suggested by Fabio, but I'm afraid that it's not
+> > > going to work with imx_obtain_fixed_clock() call, which is coded to
+> > > look for clocks under /clocks node.
+> > > 
+> > 
+> > Should patch #1 be dropped from clk tree?
+> 
+> No.  Patch #1 is good.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Sorry, Stephen.  I just had a closer look at the driver code, and I
+think it can be done in a better way.  So please drop patch #1 for now.
 
-Build tested only. buildbot is happy. Please apply individually.
-
- drivers/gpu/drm/msm/msm_drv.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index 30cd514d8f7c..5fdd6cf6bf42 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -203,8 +203,7 @@ static int vblank_ctrl_queue_work(struct msm_drm_private *priv,
- 
- static int msm_drm_uninit(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct drm_device *ddev = platform_get_drvdata(pdev);
-+	struct drm_device *ddev = dev_get_drvdata(dev);
- 	struct msm_drm_private *priv = ddev->dev_private;
- 	struct msm_kms *kms = priv->kms;
- 	struct msm_vblank_ctrl *vbl_ctrl = &priv->vblank_ctrl;
--- 
-2.11.0
+Shawn
