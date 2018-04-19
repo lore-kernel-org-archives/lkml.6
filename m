@@ -1,79 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752546AbeDSK43 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:56:29 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39428 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752247AbeDSK41 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:56:27 -0400
-X-Google-Smtp-Source: AIpwx4/FQ/hvtM+dUFUYK7Anr2JfgBMUHxz2jZYEuyyh94cCggqLhNdDgEfRnbvs05hepjeUV3c8N+UjP1dFILN8ibs=
-MIME-Version: 1.0
-In-Reply-To: <664e2827-5237-160b-6ecf-c2da163569e1@amd.com>
-References: <20180328155340.2253343-1-arnd@arndb.de> <664e2827-5237-160b-6ecf-c2da163569e1@amd.com>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Thu, 19 Apr 2018 12:56:26 +0200
-Message-ID: <CADYN=9LTmdLzeszPDeLZ1==9g1ciS1ubunC6jdjLJUiv6J6N3Q@mail.gmail.com>
-Subject: Re: [PATCH] amdkfd: always select MMU_NOTIFIER
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Oded Gabbay <oded.gabbay@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        amd-gfx@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752490AbeDSK65 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:58:57 -0400
+Received: from foss.arm.com ([217.140.101.70]:35792 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751228AbeDSK6z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 06:58:55 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
+        linux-arch@vger.kernel.org
+Subject: [RFC PATCH 0/6] Simplify setting thread flags to a particular value
+Date: Thu, 19 Apr 2018 11:58:42 +0100
+Message-Id: <1524135528-28561-1-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3JAuYxw024578
 
-On 28 March 2018 at 18:04, Christian König <christian.koenig@amd.com> wrote:
-> Am 28.03.2018 um 17:53 schrieb Arnd Bergmann:
->>
->> Building amdkfd without MMU notifiers is broken:
->>
->> In file included from drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_vi.c:28:
->> drivers/gpu/drm/amd/amdkfd/kfd_priv.h:584:22: error: field 'mmu_notifier'
->> has incomplete type
->>
->> This adds the missing 'select MMU_NOTIFIER' line to make it build
->> cleanly all the time.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
->
-> Acked-by: Christian König <christian.koenig@amd.com>, but I would wait on
-> what Felix says to that.
+There are a number of bits of code sprinkled around the kernel to
+set a thread flag if a certain condition is true, and clear it
+otherwise.
 
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
+To help make those call sites terser and less cumbersome, this
+patch adds a new family of thread flag manipulators
 
-Randy sent the same patch [1] and its still required.
+	update*_thread_flag([...,] flag, cond)
 
-Cheers,
-Anders
-[1] https://patchwork.kernel.org/patch/10340885/
+See patch 1 for details.
 
->
->
->> ---
->>   drivers/gpu/drm/amd/amdkfd/Kconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/amd/amdkfd/Kconfig
->> b/drivers/gpu/drm/amd/amdkfd/Kconfig
->> index ed2f06c9f346..5a26acb90e19 100644
->> --- a/drivers/gpu/drm/amd/amdkfd/Kconfig
->> +++ b/drivers/gpu/drm/amd/amdkfd/Kconfig
->> @@ -4,6 +4,7 @@
->>     config HSA_AMD
->>         tristate "HSA kernel driver for AMD GPU devices"
->> +       select MMU_NOTIFIER
->>         depends on DRM_AMDGPU && X86_64
->>         imply AMD_IOMMU_V2
->>         help
->
->
+Reviewers please pay close attention to accidental conversion of
+set_tsk_thread_flag() to set_thread_flag() for example, and accidental
+inversion of conditions.  I'm pretty sure neither happens, but
+build-testing can't pick these up.
+
+Build-tested on x86 and the explicitly patched architectures (defconfig
+and multi_v7_defconfig for arm, defconfig for arm64, mips, powerpc,
+sparc).
+
+Boot-tested on arm64, with some context-switch stress tests that depend
+on correct maintenance of TIF_FOREIGN_FPSTATE.
+
+
+Background rationale:
+
+I've found myself coding this idiom a few times now and would like to
+stop duplicating it.  Using an ungainly lash-up of sed and grep I tried
+to find other users of the same idiom without too many false positives,
+and there while there aren't a huge number it seemed enough to be worth
+having a go at a simple cleanup.
+
+The core changes are in the first patch; other changes are split
+per-arch.
+
+
+Dave Martin (6):
+  thread_info: Add update_thread_flag() helpers
+  ARM: Use update_thread_flag()
+  arm64: Use update{,_tsk}_thread_flag()
+  MIPS: Use update{,_tsk}_thread_flag()
+  powerpc: Use update_thread_flag()
+  sparc: Use update_thread_flag()
+
+ arch/arm/kernel/elf.c           |  9 +++------
+ arch/arm64/kernel/fpsimd.c      | 19 +++++++------------
+ arch/mips/kernel/elf.c          | 10 ++--------
+ arch/mips/kernel/process.c      | 15 ++++++---------
+ arch/mips/kernel/ptrace.c       |  5 +----
+ arch/mips/kernel/syscall.c      | 10 ++--------
+ arch/powerpc/include/asm/elf.h  | 10 ++--------
+ arch/sparc/include/asm/elf_64.h |  5 +----
+ include/linux/sched.h           |  6 ++++++
+ include/linux/thread_info.h     | 11 +++++++++++
+ include/trace/syscall.h         |  6 ++----
+ kernel/ptrace.c                 | 13 +++++--------
+ 12 files changed, 48 insertions(+), 71 deletions(-)
+
+-- 
+2.1.4
