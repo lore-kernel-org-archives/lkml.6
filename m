@@ -1,81 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeDSLZd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 07:25:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46229 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752337AbeDSLZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 07:25:29 -0400
-Subject: Re: [PATCH] Input: xen-kbdfront - allow better run-time configuration
-To: Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com, lyan@suse.com,
-        boris.ostrovsky@oracle.com
-Cc: andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180418150445.9805-1-andr2000@gmail.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <ccb7a33b-7862-9803-fb24-67861d5ecab9@suse.com>
-Date: Thu, 19 Apr 2018 13:25:25 +0200
+        id S1751159AbeDSLaW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:30:22 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35512 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750858AbeDSLaV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 07:30:21 -0400
+Subject: Re: [PATCH 2/6] dt-bindings: clock: add DDR3 standard speed bins.
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, dbasehore@chromium.org,
+        linux-kernel@vger.kernel.org, dianders@google.com, groeck@google.com,
+        kernel@collabora.com, Mark Rutland <mark.rutland@arm.com>
+References: <20180419104019.24406-1-enric.balletbo@collabora.com>
+ <20180419104019.24406-3-enric.balletbo@collabora.com>
+ <5662116.zj93FbmDPb@phil>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <62c4b6f0-e67c-8e25-a129-bf0c06c5157b@collabora.com>
+Date: Thu, 19 Apr 2018 13:30:16 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180418150445.9805-1-andr2000@gmail.com>
+In-Reply-To: <5662116.zj93FbmDPb@phil>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/04/18 17:04, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Hi Heiko,
+
+On 19/04/18 13:10, Heiko Stuebner wrote:
+> Hi Enric,
 > 
-> It is now only possible to control if multi-touch virtual device
-> is created or not (via the corresponding XenStore entries),
-> but keyboard and pointer devices are always created.
-
-Why don't you want to go that route for keyboard and mouse, too?
-Or does this really make no sense?
-
-> In some cases this is not desirable. For example, if virtual
-> keyboard device is exposed to Android then the latter won't
-> automatically show on-screen keyboard as it expects that a
-> physical keyboard device can be used for typing.
+> Am Donnerstag, 19. April 2018, 12:40:15 CEST schrieb Enric Balletbo i Serra:
+>> DDR3 SDRAM Standard (JESD79-3F) defines some standard speed bins for
+>> DDR3 memories. The devfreq/rk3399_dmc.txt binding refers to this file
+>> which does not exist, so add a ddr.h file with the standard speed bins
+>> for DDR3.
+>>
+>> Fixes: c1ceb8f7c167 (Documentation: bindings: add dt documentation for rk3399 dmc)
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>>  include/dt-bindings/clock/ddr.h | 34 +++++++++++++++++++++++++++++++++
+>>  1 file changed, 34 insertions(+)
+>>  create mode 100644 include/dt-bindings/clock/ddr.h
+>>
+>> diff --git a/include/dt-bindings/clock/ddr.h b/include/dt-bindings/clock/ddr.h
+>> new file mode 100644
+>> index 000000000000..506aef7e609e
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/ddr.h
+>> @@ -0,0 +1,34 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>> +
+>> +#ifndef DT_BINDINGS_DDR_H
+>> +#define DT_BINDINGS_DDR_H
+>> +
+>> +/* DDR3-800 Standard Speed Bins */
+>> +#define DDR3_800D	15
+>> +#define DDR3_800E		18
+>> +/* DDR3-1066 Standard Speed Bins */
+>> +#define DDR3_1066E	18
+>> +#define DDR3_1066F	21
+>> +#define DDR3_1066G	24
 > 
-> Make it possible to configure which virtual devices are created
-> with module parameters:
->   - no_ptr_dev=1 if no pointer device needs to be created
->   - no_kbd_dev=1 if no keyboard device needs to be created
-> Keep old behavior by default.
+> looking at the mentioned jedec standard, I don't see where these numerical
+> values are defined in the standard itself. [I may be blind though]
 > 
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
-> Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
-> ---
->  drivers/input/misc/xen-kbdfront.c | 159 +++++++++++++++++-------------
->  1 file changed, 92 insertions(+), 67 deletions(-)
+
+Damm it. No, you're not blind. I did an horrible mistake adding an old version
+of this file. It's wrong, that is supposed to be there is DDR3 table available
+in the ATF [1] not this.
+
+        /* 5-5-5 */
+	DDR3_800D = 0,
+	/* 6-6-6 */
+	DDR3_800E = 1,
+	/* 6-6-6 */
+	DDR3_1066E = 2,
+	/* 7-7-7 */
+	DDR3_1066F = 3,
+        ...
+
+The value is passed directly to the ATF so the above values are the correct.
+
+One question that I have on my mind is if this file should be called as is or if
+will be better name as atf-ddr.h or something like that.
+ddr.h -> atf-ddr.h
+
+[1]
+https://github.com/ARM-software/arm-trusted-firmware/blob/master/plat/rockchip/rk3399/drivers/dram/dram_spec_timing.h
+
+Sorry about that. Guess it's needed a v2 but let's wait a little bit for if more
+discussion arises.
+
+Best regards,
+  Enric
+
+> Could you explain a bit more where these numerical values are coming from?
 > 
-> diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
-> index d91f3b1c5375..a3306aad40b0 100644
-> --- a/drivers/input/misc/xen-kbdfront.c
-> +++ b/drivers/input/misc/xen-kbdfront.c
-> @@ -51,6 +51,16 @@ module_param_array(ptr_size, int, NULL, 0444);
->  MODULE_PARM_DESC(ptr_size,
->  	"Pointing device width, height in pixels (default 800,600)");
->  
-> +static unsigned int no_ptr_dev;
-> +module_param(no_ptr_dev, uint, 0);
-
-Use type invbool instead?
-
-> +MODULE_PARM_DESC(no_ptr_dev,
-> +	"If set then no virtual pointing device exposed to the guest");
-> +
-> +static unsigned int no_kbd_dev;
-> +module_param(no_kbd_dev, uint, 0);
-
-invbool?
-
-
-Juergen
+> 
+> Thanks
+> Heiko
+> 
