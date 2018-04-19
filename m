@@ -1,28 +1,28 @@
 Return-Path: <BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org>
-X-Google-Smtp-Source: AIpwx48T+zQ6RwbhGQxaOyuE60M1/PkOtM3IYcztIw7caiAyVOobixfBfJOsT03FkARjolsWivXo
-ARC-Seal: i=1; a=rsa-sha256; t=1524141825; cv=none;
+X-Google-Smtp-Source: AIpwx4+GEKg1UTFss+EcUi9yehBaKlm/AQU8OQ4s04cqz0RVDL+7WEeeuG10foSy8T1vrgQWIwrl
+ARC-Seal: i=1; a=rsa-sha256; t=1524141822; cv=none;
         d=google.com; s=arc-20160816;
-        b=llAHw1jnbxoAXmwC4r2ZCu8cKtc9M8CFEovPPLaQYgL5J129FDJ2xxS4ehiBphieIt
-         qXlr3k4w7t0gVfXc37UiH0iK+oV0l4C1qOg6l1e9cX0PCeGWLfd1ki9flOzVzY0X9P0d
-         kvYyA1wE9O1zqZmLFotMkO8gaY3+7EgWNuwuoiYcTVQ2Zv3yBB7995b/B2ngiN3KNskG
-         LcGJ+hkE7VbGzIB7sGnzLVG4m6kC9XqLXo1pKqgtGEIbna8y/rIXheIYH6sJVc3tQ/CO
-         F+8B2OnOsBS8/AN845omV2OXUNxn6ZLOJAVc8jYYjaXW2zVbYUGQjvzGN9gknycINkzf
-         jTDg==
+        b=MDhrYUyj8qZU1oQJz6Eiph7POGWVcekcGfTHAa8crt4KEc0wHY1GPHpvrLNmavitoe
+         QMunRohU9BxtFxw95LRdRPVlaOG3AcdFCJE4TeEXrPf7oVZloOQ75mmG/lA+HsMuh991
+         tePVyyhhmUx1jbRZB/9i9hCtulJ23z7Wr+Ksy75/6s3SBaZ3H6lsWFc5WgwK0JmJOJ4G
+         OxfYSjnT5jx17teTeQcjB5uGOS9b1hTViF/Vm+jV+oFk1vWIPg7Hg/POeDgykK8xYDKg
+         WXcQy6hfSp1iiURiDuFCABqdRalCGiPdbNl5BZhU403KwLbhX4AqeBNLHL+A2jUZCyUd
+         2X1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=GTrUthCMCvz/WgK420kGDqMxfC+70xqzgZlDMTrA2Vg=;
-        b=DDrwg2hIgYe4ykqIkcbuO6J2JpF+Go66Tj+hcUs+iMk5wSDjvauE25RUlC08PiUJ7N
-         SMXhTaicOUzkYR/gmkpOJs0mcK+5XGETkycmNqdWpKVX7iJsu/ne1vrDIehvMD8YKPO0
-         YxviCmi7DEg13sbESffhjTYyaiMtaAKBungWmaD62aBLScuKcFCLY6dKE7tgmp4pimvG
-         5gWUO+tvK4kZ9x7CHn9SK51Aeqh8b57S7vn6IXQWLcNqRtFWKNq6WvAUqzr6vB28km6T
-         YHClWuJdNgV/ng7dBKVJ+8uytVnAhIEsieqzncv7TUYMJlNM6h02YYsbDFzs9sCrVOZs
-         QHvw==
+        bh=fAB4gRwSdq5zuTnoC0rEeqoedUShfgWSxeh6EMTtVOg=;
+        b=VZJcqSy01PSRbYkFco0xk4rbdiU/vfzNO3sYpNasHTTqMtes5BDjI2oyIC/ibYi+pg
+         9MCCl41ONiUJYponL1E4mv0i5IYO4nn/bV8fKkGD3lBl/e0fe70AAAq8W637PQW6wsl7
+         ZB+tU6OebccvQtx4kyBPlWlP5vZSBv7gSWGy47tKaaJXpv4ZMpTTUkQIlt+CFcVHUzC2
+         RT23Z5G6wk1iD3Mcpwt8hSuXQaciBAFwgA/Qqi/wDJ+/j9UQhWdcaB+wJfgsnyDcm7CJ
+         78NGkSdScV3iHvq4ma6RAmJNZYrAm1ISDgSLcVb/xuc0/QcOTqPt4rWEZO1DuXsvt7Ni
+         8/ww==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=Fc8obFSr;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=qg+UdNik;
        spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=Fc8obFSr;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=qg+UdNik;
        spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
@@ -46,159 +46,116 @@ Cc: Alexey Dobriyan <adobriyan@gmail.com>,
 	jfs-discussion@lists.sourceforge.net,
 	netfilter-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 34/39] atm: switch to proc_create_seq_private
-Date: Thu, 19 Apr 2018 14:41:35 +0200
-Message-Id: <20180419124140.9309-35-hch@lst.de>
+Subject: [PATCH 33/39] atm: simplify procfs code
+Date: Thu, 19 Apr 2018 14:41:34 +0200
+Message-Id: <20180419124140.9309-34-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180419124140.9309-1-hch@lst.de>
 References: <20180419124140.9309-1-hch@lst.de>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598178538806622598?=
-X-GMAIL-MSGID: =?utf-8?q?1598178538806622598?=
+X-GMAIL-THRID: =?utf-8?q?1598178535741512929?=
+X-GMAIL-MSGID: =?utf-8?q?1598178535741512929?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-And remove proc boilerplate code.
+Use remove_proc_subtree to remove the whole subtree on cleanup, and
+unwind the registration loop into individual calls.  Switch to use
+proc_create_seq where applicable.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/atm/proc.c | 72 +++++++++-----------------------------------------
- 1 file changed, 13 insertions(+), 59 deletions(-)
+ net/atm/proc.c | 65 ++++++--------------------------------------------
+ 1 file changed, 7 insertions(+), 58 deletions(-)
 
 diff --git a/net/atm/proc.c b/net/atm/proc.c
-index f272b0f59d82..0b0495a41bbe 100644
+index 55410c00c7e2..f272b0f59d82 100644
 --- a/net/atm/proc.c
 +++ b/net/atm/proc.c
-@@ -68,7 +68,6 @@ static void atm_dev_info(struct seq_file *seq, const struct atm_dev *dev)
- struct vcc_state {
- 	int bucket;
- 	struct sock *sk;
--	int family;
+@@ -257,18 +257,6 @@ static const struct seq_operations atm_dev_seq_ops = {
+ 	.show	= atm_dev_seq_show,
  };
  
- static inline int compare_family(struct sock *sk, int family)
-@@ -106,23 +105,13 @@ static int __vcc_walk(struct sock **sock, int family, int *bucket, loff_t l)
- 	return (l < 0);
- }
- 
--static inline void *vcc_walk(struct vcc_state *state, loff_t l)
-+static inline void *vcc_walk(struct seq_file *seq, loff_t l)
- {
--	return __vcc_walk(&state->sk, state->family, &state->bucket, l) ?
--	       state : NULL;
+-static int atm_dev_seq_open(struct inode *inode, struct file *file)
+-{
+-	return seq_open(file, &atm_dev_seq_ops);
 -}
 -
--static int __vcc_seq_open(struct inode *inode, struct file *file,
--	int family, const struct seq_operations *ops)
--{
--	struct vcc_state *state;
--
--	state = __seq_open_private(file, ops, sizeof(*state));
--	if (state == NULL)
--		return -ENOMEM;
-+	struct vcc_state *state = seq->private;
-+	int family = (uintptr_t)(PDE_DATA(file_inode(seq->file)));
- 
--	state->family = family;
--	return 0;
-+	return __vcc_walk(&state->sk, family, &state->bucket, l) ?
-+	       state : NULL;
- }
- 
- static void *vcc_seq_start(struct seq_file *seq, loff_t *pos)
-@@ -133,7 +122,7 @@ static void *vcc_seq_start(struct seq_file *seq, loff_t *pos)
- 
- 	read_lock(&vcc_sklist_lock);
- 	state->sk = SEQ_START_TOKEN;
--	return left ? vcc_walk(state, left) : SEQ_START_TOKEN;
-+	return left ? vcc_walk(seq, left) : SEQ_START_TOKEN;
- }
- 
- static void vcc_seq_stop(struct seq_file *seq, void *v)
-@@ -144,9 +133,7 @@ static void vcc_seq_stop(struct seq_file *seq, void *v)
- 
- static void *vcc_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- {
--	struct vcc_state *state = seq->private;
--
--	v = vcc_walk(state, 1);
-+	v = vcc_walk(seq, 1);
- 	*pos += !!PTR_ERR(v);
- 	return v;
- }
-@@ -280,18 +267,6 @@ static const struct seq_operations pvc_seq_ops = {
- 	.show	= pvc_seq_show,
- };
- 
--static int pvc_seq_open(struct inode *inode, struct file *file)
--{
--	return __vcc_seq_open(inode, file, PF_ATMPVC, &pvc_seq_ops);
--}
--
--static const struct file_operations pvc_seq_fops = {
--	.open		= pvc_seq_open,
+-static const struct file_operations devices_seq_fops = {
+-	.open		= atm_dev_seq_open,
 -	.read		= seq_read,
 -	.llseek		= seq_lseek,
--	.release	= seq_release_private,
+-	.release	= seq_release,
 -};
 -
- static int vcc_seq_show(struct seq_file *seq, void *v)
+ static int pvc_seq_show(struct seq_file *seq, void *v)
  {
- 	if (v == SEQ_START_TOKEN) {
-@@ -314,18 +289,6 @@ static const struct seq_operations vcc_seq_ops = {
- 	.show	= vcc_seq_show,
- };
+ 	static char atm_pvc_banner[] =
+@@ -440,58 +428,19 @@ void atm_proc_dev_deregister(struct atm_dev *dev)
+ 	kfree(dev->proc_name);
+ }
  
--static int vcc_seq_open(struct inode *inode, struct file *file)
+-static struct atm_proc_entry {
+-	char *name;
+-	const struct file_operations *proc_fops;
+-	struct proc_dir_entry *dirent;
+-} atm_proc_ents[] = {
+-	{ .name = "devices",	.proc_fops = &devices_seq_fops },
+-	{ .name = "pvc",	.proc_fops = &pvc_seq_fops },
+-	{ .name = "svc",	.proc_fops = &svc_seq_fops },
+-	{ .name = "vc",		.proc_fops = &vcc_seq_fops },
+-	{ .name = NULL,		.proc_fops = NULL }
+-};
+-
+-static void atm_proc_dirs_remove(void)
 -{
--	return __vcc_seq_open(inode, file, 0, &vcc_seq_ops);
+-	static struct atm_proc_entry *e;
+-
+-	for (e = atm_proc_ents; e->name; e++) {
+-		if (e->dirent)
+-			remove_proc_entry(e->name, atm_proc_root);
+-	}
+-	remove_proc_entry("atm", init_net.proc_net);
 -}
 -
--static const struct file_operations vcc_seq_fops = {
--	.open		= vcc_seq_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= seq_release_private,
--};
--
- static int svc_seq_show(struct seq_file *seq, void *v)
+ int __init atm_proc_init(void)
  {
- 	static const char atm_svc_banner[] =
-@@ -349,18 +312,6 @@ static const struct seq_operations svc_seq_ops = {
- 	.show	= svc_seq_show,
- };
- 
--static int svc_seq_open(struct inode *inode, struct file *file)
--{
--	return __vcc_seq_open(inode, file, PF_ATMSVC, &svc_seq_ops);
--}
+-	static struct atm_proc_entry *e;
+-	int ret;
 -
--static const struct file_operations svc_seq_fops = {
--	.open		= svc_seq_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= seq_release_private,
--};
--
- static ssize_t proc_dev_atm_read(struct file *file, char __user *buf,
- 				 size_t count, loff_t *pos)
- {
-@@ -434,9 +385,12 @@ int __init atm_proc_init(void)
+ 	atm_proc_root = proc_net_mkdir(&init_net, "atm", init_net.proc_net);
  	if (!atm_proc_root)
- 		return -ENOMEM;
- 	proc_create_seq("devices", 0444, atm_proc_root, &atm_dev_seq_ops);
--	proc_create("pvc", 0444, atm_proc_root, &pvc_seq_fops);
--	proc_create("svc", 0444, atm_proc_root, &svc_seq_fops);
--	proc_create("vc", 0444, atm_proc_root, &vcc_seq_fops);
-+	proc_create_seq_private("pvc", 0444, atm_proc_root, &pvc_seq_ops,
-+			sizeof(struct vcc_state), (void *)(uintptr_t)PF_ATMPVC);
-+	proc_create_seq_private("svc", 0444, atm_proc_root, &svc_seq_ops,
-+			sizeof(struct vcc_state), (void *)(uintptr_t)PF_ATMSVC);
-+	proc_create_seq_private("vc", 0444, atm_proc_root, &vcc_seq_ops,
-+			sizeof(struct vcc_state), NULL);
- 	return 0;
+-		goto err_out;
+-	for (e = atm_proc_ents; e->name; e++) {
+-		struct proc_dir_entry *dirent;
+-
+-		dirent = proc_create(e->name, 0444,
+-				     atm_proc_root, e->proc_fops);
+-		if (!dirent)
+-			goto err_out_remove;
+-		e->dirent = dirent;
+-	}
+-	ret = 0;
+-out:
+-	return ret;
+-
+-err_out_remove:
+-	atm_proc_dirs_remove();
+-err_out:
+-	ret = -ENOMEM;
+-	goto out;
++		return -ENOMEM;
++	proc_create_seq("devices", 0444, atm_proc_root, &atm_dev_seq_ops);
++	proc_create("pvc", 0444, atm_proc_root, &pvc_seq_fops);
++	proc_create("svc", 0444, atm_proc_root, &svc_seq_fops);
++	proc_create("vc", 0444, atm_proc_root, &vcc_seq_fops);
++	return 0;
  }
  
+ void atm_proc_exit(void)
+ {
+-	atm_proc_dirs_remove();
++	remove_proc_subtree("atm", init_net.proc_net);
+ }
 -- 
 2.17.0
