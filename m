@@ -1,108 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753549AbeDSQKD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:10:03 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:38411 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753122AbeDSQKC (ORCPT
+        id S1753670AbeDSQKf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:10:35 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55757 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753239AbeDSQKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:10:02 -0400
-X-Google-Smtp-Source: AIpwx4/awQFRSqKcNcg3/Bk8twbewE/dulva7srFFAZll9vW8Ib34rHiYzO/VG2el4izkkUNOjYXtrgBLCGwksTon1I6OrFgJS62
+        Thu, 19 Apr 2018 12:10:33 -0400
+Date: Thu, 19 Apr 2018 16:10:29 +0000
+From: Tyler Hicks <tyhicks@canonical.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, ecryptfs@vger.kernel.org
+Subject: [GIT PULL] eCryptfs fixes for 4.17-rc2
+Message-ID: <20180419160750.GA16628@sec>
 MIME-Version: 1.0
-Date: Thu, 19 Apr 2018 09:10:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c4f379056a35cdf6@google.com>
-Subject: general protection fault in snd_rawmidi_ioctl_compat
-From: syzbot <syzbot+f7a0348affc3b67bc617@syzkaller.appspotmail.com>
-To: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot hit the following crash on upstream commit
-b284d4d5a6785f8cd07eda2646a95782373cd01e (Tue Apr 10 19:25:30 2018 +0000)
-Merge tag 'ceph-for-4.17-rc1' of git://github.com/ceph/ceph-client
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=f7a0348affc3b67bc617
+--0eh6TmSyL6TZE2Uz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5208906934517760
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-1223000601505858474
-compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+Hi Linus,
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f7a0348affc3b67bc617@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+The following changes since commit 3215b9d57a2c75c4305a3956ca303d7004485200:
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 21671 Comm: syz-executor7 Not tainted 4.16.0+ #17
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:snd_rawmidi_ioctl_status_x32 sound/core/rawmidi_compat.c:125  
-[inline]
-RIP: 0010:snd_rawmidi_ioctl_compat+0x51d/0xba0  
-sound/core/rawmidi_compat.c:168
-RSP: 0018:ffff88018ccdfc08 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffc900054cb000
-RDX: 000000000000000b RSI: ffffffff85a61885 RDI: 0000000000000058
-RBP: ffff88018ccdfd80 R08: ffff8801af6f0740 R09: 0000000000000000
-R10: 0000000000000003 R11: 0000000000000000 R12: 1ffff1003199bf83
-R13: 0000000000930000 R14: ffff88018ccdfcf8 R15: 0000000000000001
-FS:  00007fa64d466700(0000) GS:ffff8801db100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa30835b518 CR3: 00000001879ef000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  C_SYSC_ioctl fs/compat_ioctl.c:1461 [inline]
-  compat_SyS_ioctl+0xa37/0x33b0 fs/compat_ioctl.c:1407
-  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-RIP: 0033:0x455259
-RSP: 002b:00007fa64d465c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000202
-RAX: ffffffffffffffda RBX: 00007fa64d4666d4 RCX: 0000000000455259
-RDX: 0000000000930000 RSI: 00000000c0305720 RDI: 0000000000000013
-RBP: 000000000072bf58 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000020000180 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000641 R14: 00000000006fc6b8 R15: 0000000000000001
-Code: df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 1c 06 00 00 48 b8 00 00 00  
-00 00 fc ff df 48 8b 5b 08 48 8d 7b 58 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
-0f 85 e5 05 00 00 48 8b 7b 58 4c 89 f6 e8 5d cc ff
-RIP: snd_rawmidi_ioctl_status_x32 sound/core/rawmidi_compat.c:125 [inline]  
-RSP: ffff88018ccdfc08
-RIP: snd_rawmidi_ioctl_compat+0x51d/0xba0 sound/core/rawmidi_compat.c:168  
-RSP: ffff88018ccdfc08
----[ end trace 7dcd43c411f49842 ]---
+  Merge tag 'clk-fixes-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux (2018-03-20 17:44:27 -0700)
 
+are available in the git repository at:
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+  https://git.kernel.org/pub/scm/linux/kernel/git/tyhicks/ecryptfs.git tags/ecryptfs-4.17-rc2-fixes
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+for you to fetch changes up to e86281e700cca8a773f9a572fa406adf2784ba5c:
+
+  eCryptfs: don't pass up plaintext names when using filename encryption (2018-04-16 18:51:22 +0000)
+
+----------------------------------------------------------------
+Minor cleanups and a bug fix to completely ignore unencrypted filenames
+in the lower filesystem when filename encryption is enabled at the
+eCryptfs layer.
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      ecryptfs: fix spelling mistake: "cadidate" -> "candidate"
+
+Guenter Roeck (1):
+      ecryptfs: lookup: Don't check if mount_crypt_stat is NULL
+
+Tyler Hicks (1):
+      eCryptfs: don't pass up plaintext names when using filename encryption
+
+ fs/ecryptfs/crypto.c   | 41 ++++++++++++++++++++++++++++-------------
+ fs/ecryptfs/file.c     | 21 ++++++++++++++++-----
+ fs/ecryptfs/inode.c    |  3 +--
+ fs/ecryptfs/keystore.c |  2 +-
+ 4 files changed, 46 insertions(+), 21 deletions(-)
+
+--0eh6TmSyL6TZE2Uz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJa2L9pAAoJENaSAD2qAscKDFYP/R1LQEn6HG8SpedTnYLLBp6O
+8ieCBd8LPTRXHJnchR0q3lkeZsPGoPXIQpTsQdpqECs7lzvIOw8Mm6bAPiVhMLYp
+MZtnnsfuPuOA7r1G1p503ksiCtin2Y8TVT9EDzZE+Hv92zIivUlQYZYp9tzrqTpu
+xd6oYU06AI7DIshVT6fpchd6hHl0J+8d1EhH62ssHqEUK2ZPSbft92cJ+uZHHqgP
+UXJDxnyzvAT/wQdbg/86ZDH6+QlMgZ4Gps/YLGV3j/hGr0h2BE7RZQ7pR6u2Q+u3
+H9A587K4uQTRsSSwqyJ5qhMlGPSxt7qsBeq6blx0l74/hNZqRjGfFOdKbYBqhGs3
+vwI611C70y0FHXyxDp1OL5GjKgGjo3Zu/DETf2PLFvNkqDKPYe8pj2IMUboAE1f0
+Cj9rqHg+jzDnGuk1LgMb6KPDkIr/S4Yye6OY96h2mQ4Runz3hxpwG1fHldBGx1Kn
+aDfWFN7c5ADcLxY+f4spHCqRcO9t8YKVudovze0bbwmYO4dH+oBJoyHLfLK08VWy
+t9PNDmC4vFaBko0Yxvb1RR7afD2BSC7JKaeyvfXfxVwHPiD3dxGRDSX0TSUN96SO
+vjEJafZkDzDHNliH7aUj+X9FRSbMCEHbZWU+QnOWbPsRRcUjaqlF84wreJC8yVaY
+K3wFCq0kXTCp6uIy0D21
+=C90c
+-----END PGP SIGNATURE-----
+
+--0eh6TmSyL6TZE2Uz--
