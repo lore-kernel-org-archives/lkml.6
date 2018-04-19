@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3352333-1524148893-2-14268765383695451465
+X-Cyrus-Session-Id: sloti22d1t05-3309672-1524148848-2-839927957444166142
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524148892; b=LEPVRzL6J0hVrhUd5GeDnyv+no2sXifASOKjBzB8X/1JuQx8F8
-    mbVOWCPFa05nEu+/NIPxM+cpgZ+klHYxng4PkHdkcihvAYtjRI6+xubaSeDiA4Qm
-    p5KwjiWVp/y6kz332UENWNd1OBpaKGz+OnExRsNK2ID8qg4BZU9SrnAS5kZzOh58
-    tNmZ/mutez0s/ls0GsJdjXElTEEhHkT3MVPbFaXXgyzIELZLrohd7Z8l5JQLLHlS
-    qKw4xb0WULFemaB2Gl8qtDXjJcZ+1XGHuv2ckofH+OLxK6YRYDyoYLwwHVzvV59r
-    sF8N2QodgNzqUFvqjqV8XtaP27DI84y89W0A==
+    1524148847; b=vmnSLQIWoWv5Dii1GMco71aZJTXbyghTurxeoOmqu81NhcXrj+
+    ldQgIveQszDZKCUgG9ME6wWf/RMyLz+31wEcSNZi552xj+lOusYqiHV4tDMRaSHs
+    uLGKUwgMGCuy4Rdy9zCDRZkFlqBzGJFsSubImED1j/JDjnguDpxMWMEHy/MvCmkc
+    sOg0cM+ZWas6xtiQ+qndpNF4jaMb83Bmwkrv0Yk6cPdj1PM+t/oyuNan5pJCjMca
+    T79i8VgPhc7yoHqsi3ArjxS4eQkIpS9oQDjoknegUdJRqghDsh3ZYzWNOGYYyEwF
+    IH45YzJ3J/d8vrGr4gLg1QEQfVonbIsnsoEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524148892; bh=
-    dD9ilnbSt7ngRxD4OQwY+h9xAMs7la8MYipbcP4yibQ=; b=u9msRbRz1eIFhW9o
-    HZG3FHhfKzo8/X0IGu1Aya5byY2oRHCbXJWzuae8FUIpuelzEDnEbbITPbs7Br6m
-    INUJDiZm5isk7CtaytCF1VTUB7Qu9T1AvSfqzgfCoXSU2g/q8HkjE9ttixpTpWRX
-    orA/VKWBers+WQFu0gdHhfDF9y1HhagbrtVNKXWQxv53YORc1oDPoijT9VIkgavH
-    by4LwuMiTwZve4SHvmJS1e7K6fHUYMsODrMq0KHW575TdhoS5begZP4THrVCNfme
-    XpTKs3+HRpdgQVSlUqf4NxUP5k6aDOtduJrqhwfNZzfyeOMPghhauStUJREAGaK1
-    yaPzlw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524148847; bh=
+    lcEHOJO5/i7VCbGp7gBhPBmHyT83gDh0P3pvEhi9Kyk=; b=B+ETQL5KIIDu9yqZ
+    LZVk/VARXjkdJcupcqEvjd+qG6d86vNNHSWfBKmxIqoazKj0HTRPne4CwWxcoi/X
+    Ffwqt4a8sJQgJA96j5ZZqBokSpVQRcCN12GXNBqWBUVVV022vHiTFQsj3gHS7Z7w
+    TEWRAjddLXB0D2bZMxN48NyVAWUKZX1g1ciFowIsGCkumi76hYCERSTejc4sTrjA
+    lfsnMp5V1bR/R9ajIUoegaxowa6u4BiVUT6FiY7zHlU1vuGOTGbmRoDpBYsbwZCf
+    tlZj/dIcFuob7s5PYWB4CcX3X+fAOCsjahPcNSOtb9gfQzELLJ5cKuYExeOqOjIo
+    AJCneA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
@@ -51,20 +51,21 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAVXRNAqFUrGEUdVB0GN5SturoAxX1rYpDXvFKrDkQ6nmtTi0XYDq5WEFP+uHYQqk+yGXT/ytfhxqOF/7R7wVXbvq9kKv82+C1JeLXDCE0j+zJziJRNT
-    3Sn88l3XtOXxeHOhKUsNMLcNkRaeUjW9JEpUWIE6ZJLm6ZSC/HW53m36oajfq2bOozNlZ1jEHcPpJXTsfvjY9TdlzutSi7lRrktynL5xscVEXNRpowbwiWVV
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMtVCE7cS//xKNZjaxc+1+3nGDAo9i3K8bLbBhZN1n7keYxWXEtwDooalD5bhRH4UJo054C6vL39T5huwz9w5wHnovgdaGWNBECiLqZdallZQhOh1DeO
+    KOwOTE9zViqyVrlwuIc7T/BoeK36/z5GOB28yRxyDEyptA3f7rKwVBbv0vKGOvQBy4wPKTBQv5wbvYGIupkPP86wewnJVX4aKMe5bxRzN0gDhm9P0A0qXMt8
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=nfMvwj1s_EtHegV2GFMA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=Vs9-tm22JyKsff0lLkMA:9 a=Hmqi1hbdcqL3zREO:21 a=CJCOAXb9rn0pXy9g:21
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752283AbeDSOiz (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 10:38:55 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:50375 "EHLO
+        id S1753507AbeDSOjA (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 10:39:00 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:40917 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753359AbeDSOix (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 10:38:53 -0400
+        with ESMTP id S1753162AbeDSOi5 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 10:38:57 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
@@ -76,87 +77,312 @@ Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
         will.deacon@arm.com, linux-mips@linux-mips.org, jhogan@kernel.org,
         ralf@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
         sparclinux@vger.kernel.org
-Subject: [PATCH v3 16/17] y2038: ipc: Redirect ipc(SEMTIMEDOP, ...) to compat_ksys_semtimedop
-Date: Thu, 19 Apr 2018 16:37:36 +0200
-Message-Id: <20180419143737.606138-17-arnd@arndb.de>
+Subject: [PATCH v3 06/17] y2038: mips: Extend sysvipc data structures
+Date: Thu, 19 Apr 2018 16:37:26 +0200
+Message-Id: <20180419143737.606138-7-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180419143737.606138-1-arnd@arndb.de>
 References: <20180419143737.606138-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:taoylyHn9hPzLr8FvCdtoSclzmM7wtpNeibvAXK4GS65SL861VQ
- GVWSy7pErm1JOGiMO0VOzhm9fNOISb9xqito4CfsTGt3DzOCBp6R/kK0uODsoMyEV4y2VDf
- jBp3PyV98WDwgoZGFYXP7HUNuMJAGGiG3XyQpFUCHs0S0TESX0JweLqM8+ejD010uTrK9fL
- yCTQgNsVmi/xIwMSkzJTg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:wQXGZSTpe0U=:a/xBmS8XT/fFtn9/F9/ipp
- Y6bU55DSx34IJD2DR9vhY8W4gBLt1pQBF4swNmKRid5DyoGpkQkSSBuq3clFURdvSdreXTHPd
- o5cp4UrAdU8UHRZa4ePr04Igj1dJodu1ZjeIyfdREmGyTw66ND8BTVcEDQETzxEdn5ro8nIn1
- urhbE7cqq1GADF5lprGO1TV6azwqVdKM9Vtt6+A38DWb1jGMGx3baOHN+qsJaP4r2L6xqAPcd
- rJ6BaIhL1mzeg7nmWfzcyghexZB0H6+XAEuH3AMu9jqEjnLql9HCBGi1+YUnBKj1jzQYPObFp
- EJV2ERi/VPG+uB3/Mw/deLcTw/+wFdb+QFs8NnJTamZSeBa25aVEf8jfHoW7Lg51QBUQ1Eu+S
- rUrkiQJnrC8TVvrORGJFg/IdRu1LaYVQ2vcbrYy9f33278zFJ2/VGSWwg+koCfW+jRL2JiO7Q
- 7weOL93sEVrqIZKYKxQ4QLTovcEfPT8P+Yh6yVqQnhguSKpPmQ2VPgNkEqHHzrvD2Ob7QbilG
- 0uUK91A3w24KSn+Z9kAviq+nMVKe+2JXfhg7p42OqZY/utJ1OBuwrpxglMNYYiPmN6rjc4jiY
- pZ6JKIRt/BiMOpTA+ggj6mQKha71uNHr+zBMh8vBa6/vQ08oHxAsnyEnk+ozKocaL2RbGBuvF
- aQskQF2J3Kb0E3/esu5wGPlYsSAezYR29Wkc7Gy1WjESEzub8U8lx1qqZzu9wRvanhw5B/Fae
- DHMfIVamC4m3HSXx9c+8SZeh+uq64aLi7u3E8g==
+X-Provags-ID: V03:K1:w7eh+1LtL3zSwZjrO6FGNHteF3uN6eTLWo15awA9MfW1f7yI2cL
+ QMSjvI3KIfx++4sLSCMun8PTcbpBYX7nudXVqyLqB7Ql0abB7lTQcOvjHVtRG9xCk1c3Bv1
+ Jc5Cnx62P62kmsvocYgyU9MDZ2WzuT41AMYgaFjzDmP2R0bvVdd7zPAyzb5fhuQ+3ENH4AV
+ /z3FWIAUFt7jwFMiu9VdQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:wpZr/bw2BAM=:FFZcU9qYbzVrz3odtn+Ybn
+ SF/2bsUFWxrbsNS1UXftqCMq493M6D4WWFcRVc46s/+vc7F/qvRjLhSJ6k/tWAfWmsDCjWcV1
+ Dvuz6VXQ/JJ3to8J3yknipSsNPXZV2D0LnaEHl2VvjvBdCArEEuu0LTOBkXyZoUAP1OFmZi+f
+ 7mErUJwJt0RH2e+VaLGSbuPjNQLgKhq5xPqEd34nrAKOd8LQxAdodlrFXb6cRatV76iE6Y3cc
+ TiNx6UKbwh/aotL36NAr1LawoSZdf28+tcabZ2Q9S4dgJ6BFrNjkicnWcwoUIUVc9T3wT7yd+
+ aKz+UTO8bGEzfOUxxUIps9ub0ljc07JIoBXTAJSe51FaxtcY1s7bREAzjp8AShYsiFu7d8RRz
+ 9RMmJUI/U6gatcLSbKyr6Ia5/gFpjh9kMRMRzBEwS+qVpH1H4f8CcWsYb1QUM0jOBhUuohKDT
+ dav7bX8HVmXs+x5xY5tCJU4KHJf52rvtIfbXCzB9RfRMCt3BIKBqaGHBHYuP+uLr3N/65SUL2
+ h5IKYIa+mL2CDYtOBEUNUFSZuWGeBMRzBMNodDTBVnaiJw1ATcpcD0ZoJt08vmt/33riWS+r3
+ SSO0YUBuv1uC3zrGxjnF+y0oyuxxdonVc2rmIHGCGamt2QCm3sXCNWtV+c1hRWUUwoL5EqgNy
+ jn4Kz0h1XTjUGj1WW0B9AVA0gB2Po1ThN2KUM/TkaIcOHUXRq1Bkzxiw+SpF6x34MTYLxYfY4
+ HLKD1a9hWk/9KLfG32ThrB2u5h6ifE2v/NeXfA==
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-32-bit architectures implementing 64BIT_TIME and COMPAT_32BIT_TIME
-need to have the traditional semtimedop() behavior with 32-bit timestamps
-for sys_ipc() by calling compat_ksys_semtimedop(), while those that
-are not yet converted need to keep using ksys_semtimedop() like
-64-bit architectures do.
+MIPS is the weirdest case for sysvipc, because each of the
+three data structures is done differently:
 
-Note that I chose to not implement a new SEMTIMEDOP64 function that
-corresponds to the new sys_semtimedop() with 64-bit timeouts. The reason
-here is that sys_ipc() should no longer be used for new system calls,
-and libc should just call the semtimedop syscall directly.
+* msqid64_ds has padding in the right place so we could in theory
+  extend this one to just have 64-bit values instead of time_t.
+  As this does not work for most of the other combinations,
+  we just handle it in the common manner though.
 
-One open question remain to whether we want to completely avoid the
-sys_ipc() system call for architectures that do not yet have all the
-individual calls as they get converted to 64-bit time_t. Doing that
-would require adding several extra system calls on m68k, mips, powerpc,
-s390, sh, sparc, and x86-32.
+* semid64_ds has no padding for 64-bit time_t, but has two reserved
+  'long' fields, which are sufficient to extend the sem_otime
+  and sem_ctime fields to 64 bit. In order to do this, the libc
+  implementation will have to copy the data into another structure
+  that has the fields in a different order. MIPS is the only
+  architecture with this problem, so this is best done in MIPS
+  specific libc code.
+
+* shmid64_ds is slightly worse than that, because it has three
+  time_t fields but only two unused 32-bit words. As a workaround,
+  we extend each field only by 16 bits, ending up with 48-bit
+  timestamps that user space again has to work around by itself.
+
+The compat versions of the data structures are changed in the
+same way.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- ipc/syscall.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ arch/mips/include/asm/compat.h      | 40 ++++++++++++++------------
+ arch/mips/include/uapi/asm/msgbuf.h | 57 ++++++++++++++++++++++++-------------
+ arch/mips/include/uapi/asm/sembuf.h | 15 ++++++++--
+ arch/mips/include/uapi/asm/shmbuf.h | 23 +++++++++++++--
+ 4 files changed, 94 insertions(+), 41 deletions(-)
 
-diff --git a/ipc/syscall.c b/ipc/syscall.c
-index 77a883ef2eca..65d405f1ba0c 100644
---- a/ipc/syscall.c
-+++ b/ipc/syscall.c
-@@ -30,9 +30,14 @@ SYSCALL_DEFINE6(ipc, unsigned int, call, int, first, unsigned long, second,
- 		return ksys_semtimedop(first, (struct sembuf __user *)ptr,
- 				       second, NULL);
- 	case SEMTIMEDOP:
--		return ksys_semtimedop(first, (struct sembuf __user *)ptr,
--				       second,
--				       (const struct timespec __user *)fifth);
-+		if (IS_ENABLED(CONFIG_64BIT) || !IS_ENABLED(CONFIG_64BIT_TIME))
-+			return ksys_semtimedop(first, ptr, second,
-+			        (const struct __kernel_timespec __user *)fifth);
-+		else if (IS_ENABLED(CONFIG_COMPAT_32BIT_TIME))
-+			return compat_ksys_semtimedop(first, ptr, second,
-+			        (const struct compat_timespec __user *)fifth);
-+		else
-+			return -ENOSYS;
+diff --git a/arch/mips/include/asm/compat.h b/arch/mips/include/asm/compat.h
+index 3e548ee99a2f..78675f19440f 100644
+--- a/arch/mips/include/asm/compat.h
++++ b/arch/mips/include/asm/compat.h
+@@ -37,9 +37,11 @@ typedef struct {
+ typedef s32		compat_timer_t;
+ typedef s32		compat_key_t;
  
- 	case SEMGET:
- 		return ksys_semget(first, second, third);
-@@ -130,6 +135,8 @@ COMPAT_SYSCALL_DEFINE6(ipc, u32, call, int, first, int, second,
- 		/* struct sembuf is the same on 32 and 64bit :)) */
- 		return ksys_semtimedop(first, compat_ptr(ptr), second, NULL);
- 	case SEMTIMEDOP:
-+		if (!IS_ENABLED(CONFIG_COMPAT_32BIT_TIME))
-+			return -ENOSYS;
- 		return compat_ksys_semtimedop(first, compat_ptr(ptr), second,
- 						compat_ptr(fifth));
- 	case SEMGET:
++typedef s16		compat_short_t;
+ typedef s32		compat_int_t;
+ typedef s32		compat_long_t;
+ typedef s64		compat_s64;
++typedef u16		compat_ushort_t;
+ typedef u32		compat_uint_t;
+ typedef u32		compat_ulong_t;
+ typedef u64		compat_u64;
+@@ -157,35 +159,35 @@ struct compat_ipc64_perm {
+ 
+ struct compat_semid64_ds {
+ 	struct compat_ipc64_perm sem_perm;
+-	compat_time_t	sem_otime;
+-	compat_time_t	sem_ctime;
++	compat_ulong_t	sem_otime;
++	compat_ulong_t	sem_ctime;
+ 	compat_ulong_t	sem_nsems;
+-	compat_ulong_t	__unused1;
+-	compat_ulong_t	__unused2;
++	compat_ulong_t	sem_otime_high;
++	compat_ulong_t	sem_ctime_high;
+ };
+ 
+ struct compat_msqid64_ds {
+ 	struct compat_ipc64_perm msg_perm;
+ #ifndef CONFIG_CPU_LITTLE_ENDIAN
+-	compat_ulong_t	__unused1;
++	compat_ulong_t	msg_stime_high;
+ #endif
+-	compat_time_t	msg_stime;
++	compat_ulong_t	msg_stime;
+ #ifdef CONFIG_CPU_LITTLE_ENDIAN
+-	compat_ulong_t	__unused1;
++	compat_ulong_t	msg_stime_high;
+ #endif
+ #ifndef CONFIG_CPU_LITTLE_ENDIAN
+-	compat_ulong_t	__unused2;
++	compat_ulong_t	msg_rtime_high;
+ #endif
+-	compat_time_t	msg_rtime;
++	compat_ulong_t	msg_rtime;
+ #ifdef CONFIG_CPU_LITTLE_ENDIAN
+-	compat_ulong_t	__unused2;
++	compat_ulong_t	msg_rtime_high;
+ #endif
+ #ifndef CONFIG_CPU_LITTLE_ENDIAN
+-	compat_ulong_t	__unused3;
++	compat_ulong_t	msg_ctime_high;
+ #endif
+-	compat_time_t	msg_ctime;
++	compat_ulong_t	msg_ctime;
+ #ifdef CONFIG_CPU_LITTLE_ENDIAN
+-	compat_ulong_t	__unused3;
++	compat_ulong_t	msg_ctime_high;
+ #endif
+ 	compat_ulong_t	msg_cbytes;
+ 	compat_ulong_t	msg_qnum;
+@@ -199,14 +201,16 @@ struct compat_msqid64_ds {
+ struct compat_shmid64_ds {
+ 	struct compat_ipc64_perm shm_perm;
+ 	compat_size_t	shm_segsz;
+-	compat_time_t	shm_atime;
+-	compat_time_t	shm_dtime;
+-	compat_time_t	shm_ctime;
++	compat_ulong_t	shm_atime;
++	compat_ulong_t	shm_dtime;
++	compat_ulong_t	shm_ctime;
+ 	compat_pid_t	shm_cpid;
+ 	compat_pid_t	shm_lpid;
+ 	compat_ulong_t	shm_nattch;
+-	compat_ulong_t	__unused1;
+-	compat_ulong_t	__unused2;
++	compat_ushort_t	shm_atime_high;
++	compat_ushort_t	shm_dtime_high;
++	compat_ushort_t	shm_ctime_high;
++	compat_ushort_t	__unused2;
+ };
+ 
+ /* MIPS has unusual order of fields in stack_t */
+diff --git a/arch/mips/include/uapi/asm/msgbuf.h b/arch/mips/include/uapi/asm/msgbuf.h
+index eb4d0f9d7364..46aa15b13e4e 100644
+--- a/arch/mips/include/uapi/asm/msgbuf.h
++++ b/arch/mips/include/uapi/asm/msgbuf.h
+@@ -9,33 +9,15 @@
+  * between kernel and user space.
+  *
+  * Pad space is left for:
+- * - extension of time_t to 64-bit on 32-bitsystem to solve the y2038 problem
+  * - 2 miscellaneous unsigned long values
+  */
+ 
++#if defined(__mips64)
+ struct msqid64_ds {
+ 	struct ipc64_perm msg_perm;
+-#if !defined(__mips64) && defined(__MIPSEB__)
+-	unsigned long	__unused1;
+-#endif
+ 	__kernel_time_t msg_stime;	/* last msgsnd time */
+-#if !defined(__mips64) && defined(__MIPSEL__)
+-	unsigned long	__unused1;
+-#endif
+-#if !defined(__mips64) && defined(__MIPSEB__)
+-	unsigned long	__unused2;
+-#endif
+ 	__kernel_time_t msg_rtime;	/* last msgrcv time */
+-#if !defined(__mips64) && defined(__MIPSEL__)
+-	unsigned long	__unused2;
+-#endif
+-#if !defined(__mips64) && defined(__MIPSEB__)
+-	unsigned long	__unused3;
+-#endif
+ 	__kernel_time_t msg_ctime;	/* last change time */
+-#if !defined(__mips64) && defined(__MIPSEL__)
+-	unsigned long	__unused3;
+-#endif
+ 	unsigned long  msg_cbytes;	/* current number of bytes on queue */
+ 	unsigned long  msg_qnum;	/* number of messages in queue */
+ 	unsigned long  msg_qbytes;	/* max number of bytes on queue */
+@@ -44,5 +26,42 @@ struct msqid64_ds {
+ 	unsigned long  __unused4;
+ 	unsigned long  __unused5;
+ };
++#elif defined (__MIPSEB__)
++struct msqid64_ds {
++	struct ipc64_perm msg_perm;
++	unsigned long  msg_stime_high;
++	unsigned long  msg_stime;	/* last msgsnd time */
++	unsigned long  msg_rtime_high;
++	unsigned long  msg_rtime;	/* last msgrcv time */
++	unsigned long  msg_ctime_high;
++	unsigned long  msg_ctime;	/* last change time */
++	unsigned long  msg_cbytes;	/* current number of bytes on queue */
++	unsigned long  msg_qnum;	/* number of messages in queue */
++	unsigned long  msg_qbytes;	/* max number of bytes on queue */
++	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
++	__kernel_pid_t msg_lrpid;	/* last receive pid */
++	unsigned long  __unused4;
++	unsigned long  __unused5;
++};
++#elif defined (__MIPSEL__)
++struct msqid64_ds {
++	struct ipc64_perm msg_perm;
++	unsigned long  msg_stime;	/* last msgsnd time */
++	unsigned long  msg_stime_high;
++	unsigned long  msg_rtime;	/* last msgrcv time */
++	unsigned long  msg_rtime_high;
++	unsigned long  msg_ctime;	/* last change time */
++	unsigned long  msg_ctime_high;
++	unsigned long  msg_cbytes;	/* current number of bytes on queue */
++	unsigned long  msg_qnum;	/* number of messages in queue */
++	unsigned long  msg_qbytes;	/* max number of bytes on queue */
++	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
++	__kernel_pid_t msg_lrpid;	/* last receive pid */
++	unsigned long  __unused4;
++	unsigned long  __unused5;
++};
++#else
++#warning no endianess set
++#endif
+ 
+ #endif /* _ASM_MSGBUF_H */
+diff --git a/arch/mips/include/uapi/asm/sembuf.h b/arch/mips/include/uapi/asm/sembuf.h
+index 2c0f507ab7d1..60c89e6cb25b 100644
+--- a/arch/mips/include/uapi/asm/sembuf.h
++++ b/arch/mips/include/uapi/asm/sembuf.h
+@@ -7,10 +7,11 @@
+  * Note extra padding because this structure is passed back and forth
+  * between kernel and user space.
+  *
+- * Pad space is left for:
+- * - 2 miscellaneous 64-bit values
++ * Pad space is left for 2 miscellaneous 64-bit values on mips64,
++ * but used for the upper 32 bit of the time values on mips32.
+  */
+ 
++#ifdef __mips64
+ struct semid64_ds {
+ 	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
+ 	__kernel_time_t sem_otime;		/* last semop time */
+@@ -19,5 +20,15 @@ struct semid64_ds {
+ 	unsigned long	__unused1;
+ 	unsigned long	__unused2;
+ };
++#else
++struct semid64_ds {
++	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
++	unsigned long   sem_otime;		/* last semop time */
++	unsigned long   sem_ctime;		/* last change time */
++	unsigned long	sem_nsems;		/* no. of semaphores in array */
++	unsigned long	sem_otime_high;
++	unsigned long	sem_ctime_high;
++};
++#endif
+ 
+ #endif /* _ASM_SEMBUF_H */
+diff --git a/arch/mips/include/uapi/asm/shmbuf.h b/arch/mips/include/uapi/asm/shmbuf.h
+index 379e6bca518b..9b9bba3401f2 100644
+--- a/arch/mips/include/uapi/asm/shmbuf.h
++++ b/arch/mips/include/uapi/asm/shmbuf.h
+@@ -7,10 +7,13 @@
+  * Note extra padding because this structure is passed back and forth
+  * between kernel and user space.
+  *
+- * Pad space is left for:
+- * - 2 miscellaneous 32-bit rsp. 64-bit values
++ * As MIPS was lacking proper padding after shm_?time, we use 48 bits
++ * of the padding at the end to store a few additional bits of the time.
++ * libc implementations need to take care to convert this into a proper
++ * data structure when moving to 64-bit time_t.
+  */
+ 
++#ifdef __mips64
+ struct shmid64_ds {
+ 	struct ipc64_perm	shm_perm;	/* operation perms */
+ 	size_t			shm_segsz;	/* size of segment (bytes) */
+@@ -23,6 +26,22 @@ struct shmid64_ds {
+ 	unsigned long		__unused1;
+ 	unsigned long		__unused2;
+ };
++#else
++struct shmid64_ds {
++	struct ipc64_perm	shm_perm;	/* operation perms */
++	size_t			shm_segsz;	/* size of segment (bytes) */
++	unsigned long		shm_atime;	/* last attach time */
++	unsigned long		shm_dtime;	/* last detach time */
++	unsigned long		shm_ctime;	/* last change time */
++	__kernel_pid_t		shm_cpid;	/* pid of creator */
++	__kernel_pid_t		shm_lpid;	/* pid of last operator */
++	unsigned long		shm_nattch;	/* no. of current attaches */
++	unsigned short		shm_atime_high;
++	unsigned short		shm_dtime_high;
++	unsigned short		shm_ctime_high;
++	unsigned short		__unused1;
++};
++#endif
+ 
+ struct shminfo64 {
+ 	unsigned long	shmmax;
 -- 
 2.9.0
 
