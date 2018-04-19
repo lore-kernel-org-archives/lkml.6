@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753423AbeDSPn6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:43:58 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42512 "EHLO mail.bootlin.com"
+        id S1753403AbeDSPn5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:43:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42498 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753122AbeDSPnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1753002AbeDSPnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Apr 2018 11:43:52 -0400
 From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -22,9 +22,9 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Alexandre Courbot <acourbot@chromium.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 03/10] videobuf2-core: Add helper to get buffer private data from media request
-Date: Thu, 19 Apr 2018 17:41:17 +0200
-Message-Id: <20180419154124.17512-4-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 02/10] media-request: Add a request complete operation to allow m2m scheduling
+Date: Thu, 19 Apr 2018 17:41:16 +0200
+Message-Id: <20180419154124.17512-3-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
 References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
@@ -32,59 +32,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling media operation driver callbacks related to media requests,
-only a pointer to the request itself is provided, which is insufficient
-to retrieve the driver's context. Since the driver context is usually
-set as vb2 queue private data and given that the core can determine
-which objects attached to the request are buffers, it is possible to
-extract the associated private data for the first buffer found.
+When using the request API in the context of a m2m driver, the
+operations that come with a m2m run scheduling call in their
+(m2m-specific) ioctl handler are delayed until the request is queued
+(for instance, this includes queuing buffers and streamon).
 
-This is required in order to access the current m2m context from m2m
-drivers' private data in the context of media request operation
-callbacks. More specifically, this allows scheduling m2m device runs
-from the newly-introduced request complete operation.
+Thus, the m2m run scheduling calls are not called in due time since the
+request AP's internal plumbing will (rightfully) use the relevant core
+functions directly instead of the ioctl handler.
+
+This ends up in a situation where nothing happens if there is no
+run-scheduling ioctl called after queuing the request.
+
+In order to circumvent the issue, a new media operation is introduced,
+called at the time of handling the media request queue ioctl. It gives
+m2m drivers a chance to schedule a m2m device run at that time.
+
+The existing req_queue operation cannot be used for this purpose, since
+it is called with the request queue mutex held, that is eventually needed
+in the device_run call to apply relevant controls.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/media/common/videobuf2/videobuf2-core.c | 15 +++++++++++++++
- include/media/videobuf2-core.h                  |  1 +
- 2 files changed, 16 insertions(+)
+ drivers/media/media-request.c | 3 +++
+ include/media/media-device.h  | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
-index 13c9d9e243dd..6fa46bfc620f 100644
---- a/drivers/media/common/videobuf2/videobuf2-core.c
-+++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -1351,6 +1351,21 @@ bool vb2_core_request_has_buffers(struct media_request *req)
+diff --git a/drivers/media/media-request.c b/drivers/media/media-request.c
+index 415f7e31019d..28ac5ccfe6a2 100644
+--- a/drivers/media/media-request.c
++++ b/drivers/media/media-request.c
+@@ -157,6 +157,9 @@ static long media_request_ioctl_queue(struct media_request *req)
+ 		media_request_get(req);
+ 	}
+ 
++	if (mdev->ops->req_complete)
++		mdev->ops->req_complete(req);
++
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(vb2_core_request_has_buffers);
  
-+void *vb2_core_request_find_buffer_priv(struct media_request *req)
-+{
-+	struct media_request_object *obj;
-+	struct vb2_buffer *vb;
-+
-+	obj = media_request_object_find(req, &vb2_core_req_ops, NULL);
-+	if (!obj)
-+		return NULL;
-+
-+	vb = container_of(obj, struct vb2_buffer, req_obj);
-+
-+	return vb2_get_drv_priv(vb->vb2_queue);
-+}
-+EXPORT_SYMBOL_GPL(vb2_core_request_find_buffer_priv);
-+
- int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index, void *pb,
- 			 struct media_request *req)
- {
-diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-index 032bd1bec555..65c0cf6afb55 100644
---- a/include/media/videobuf2-core.h
-+++ b/include/media/videobuf2-core.h
-@@ -1153,4 +1153,5 @@ int vb2_verify_memory_type(struct vb2_queue *q,
- 		enum vb2_memory memory, unsigned int type);
+diff --git a/include/media/media-device.h b/include/media/media-device.h
+index 07e323c57202..c7dcf2079cc9 100644
+--- a/include/media/media-device.h
++++ b/include/media/media-device.h
+@@ -55,6 +55,7 @@ struct media_entity_notify {
+  * @req_alloc: Allocate a request
+  * @req_free: Free a request
+  * @req_queue: Queue a request
++ * @req_complete: Complete a request
+  */
+ struct media_device_ops {
+ 	int (*link_notify)(struct media_link *link, u32 flags,
+@@ -62,6 +63,7 @@ struct media_device_ops {
+ 	struct media_request *(*req_alloc)(struct media_device *mdev);
+ 	void (*req_free)(struct media_request *req);
+ 	int (*req_queue)(struct media_request *req);
++	void (*req_complete)(struct media_request *req);
+ };
  
- bool vb2_core_request_has_buffers(struct media_request *req);
-+void *vb2_core_request_find_buffer_priv(struct media_request *req);
- #endif /* _MEDIA_VIDEOBUF2_CORE_H */
+ /**
 -- 
 2.16.3
