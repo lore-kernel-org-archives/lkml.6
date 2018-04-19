@@ -1,109 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752683AbeDSNpo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:45:44 -0400
-Received: from bert.emutex.com ([91.103.1.109]:53638 "EHLO bert.emutex.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752085AbeDSNpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:45:41 -0400
-From: Javier Arteaga <javier@emutex.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        "Dan O'Donovan" <dan@emutex.com>, Javier Arteaga <javier@emutex.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] iio: adc128s052: add ACPI _HID AANT1280
-Date: Thu, 19 Apr 2018 14:20:36 +0100
-Message-Id: <20180419132036.27493-3-javier@emutex.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180419132036.27493-1-javier@emutex.com>
-References: <20180419132036.27493-1-javier@emutex.com>
-X-Spam-Score: -1.0 (-)
-X-Spam-Report: Spam detection software, running on the system "statler.emutex.com",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  From: Nicola Lunghi <nicola.lunghi@emutex.com> ACPI _HID AANT1280
-    matches an ADC124S101 present on the UP Squared board that is compatible
-   with adc128s052. Add it to the driver. [...]
- Content analysis details:   (-1.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+        id S1753130AbeDSNqu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:46:50 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50722 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753050AbeDSNqr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 09:46:47 -0400
+Date: Thu, 19 Apr 2018 16:46:34 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Lee Jones <lee.jones@linaro.org>,
+        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] mfd: tps65911-comparator: Fix an off by one bug
+Message-ID: <20180419134634.GA19793@mwanda>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8867 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=874
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804190123
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicola Lunghi <nicola.lunghi@emutex.com>
+The tps_comparators[] array is used in two places.  We only access the
+COMP1 (1) and COMP2 (2) elements.  Unfortunately, we're accessing the
+wrong elements and also one element beyond the end of the array.  There
+was supposed to be a zero element at the start of the array which is
+isn't accessed but makes the math work out nicely.
 
-ACPI _HID AANT1280 matches an ADC124S101 present on the UP Squared board
-that is compatible with adc128s052.
-
-Add it to the driver.
-
-Signed-off-by: Nicola Lunghi <nicola.lunghi@emutex.com>
-[javier@emutex.com: fix up commit message and one checkpatch warning]
-Signed-off-by: Javier Arteaga <javier@emutex.com>
+Fixes: 6851ad3ab346 ("TPS65911: Comparator: Add comparator driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/iio/adc/ti-adc128s052.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+I can't actually compile this code...
 
-diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
-index 56ec04d1c68f..917273f1268c 100644
---- a/drivers/iio/adc/ti-adc128s052.c
-+++ b/drivers/iio/adc/ti-adc128s052.c
-@@ -17,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/iio/iio.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/acpi.h>
- 
- struct adc128_configuration {
- 	const struct iio_chan_spec	*channels;
-@@ -136,9 +137,22 @@ static int adc128_probe(struct spi_device *spi)
- {
- 	struct iio_dev *indio_dev;
- 	struct adc128 *adc;
--	int config = spi_get_device_id(spi)->driver_data;
-+	int config;
- 	int ret;
- 
-+	if (ACPI_COMPANION(&spi->dev)) {
-+		const struct acpi_device_id *ad_id;
-+
-+		ad_id = acpi_match_device(spi->dev.driver->acpi_match_table,
-+					  &spi->dev);
-+		if (!ad_id)
-+			return -ENODEV;
-+
-+		config = ad_id->driver_data;
-+	} else {
-+		config = spi_get_device_id(spi)->driver_data;
-+	}
-+
- 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*adc));
- 	if (!indio_dev)
- 		return -ENOMEM;
-@@ -199,10 +213,19 @@ static const struct spi_device_id adc128_id[] = {
+diff --git a/drivers/mfd/tps65911-comparator.c b/drivers/mfd/tps65911-comparator.c
+index c0789f81a1c5..35d7380f6fad 100644
+--- a/drivers/mfd/tps65911-comparator.c
++++ b/drivers/mfd/tps65911-comparator.c
+@@ -42,6 +42,7 @@ struct comparator {
  };
- MODULE_DEVICE_TABLE(spi, adc128_id);
  
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id adc128_acpi_match[] = {
-+	{ "AANT1280", 2 }, /* ADC124S021 compatible ACPI ID */
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, adc128_acpi_match);
-+#endif
-+
- static struct spi_driver adc128_driver = {
- 	.driver = {
- 		.name = "adc128s052",
- 		.of_match_table = adc128_of_match,
-+		.acpi_match_table = ACPI_PTR(adc128_acpi_match),
- 	},
- 	.probe = adc128_probe,
- 	.remove = adc128_remove,
--- 
-2.17.0
+ static struct comparator tps_comparators[] = {
++	{	.name = "COMP", },
+ 	{
+ 		.name = "COMP1",
+ 		.reg = TPS65911_VMBCH,
