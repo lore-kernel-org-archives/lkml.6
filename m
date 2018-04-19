@@ -1,145 +1,139 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-329774-1523650978-2-15950178773592422290
+X-Cyrus-Session-Id: sloti22d1t05-3274038-1524148555-2-10062076003910502926
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, T_TVD_MIME_EPI 0.01, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
-  MailFrom='org'
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-Attached: signature.asc
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1523650978; b=g1qB+Sgs/vN7BBcnQ8tc/22sHT6Om+gE0N2U8vXcjpB8K+skvw
-    QbNdyp8psJK9Ck696IJUQD2Hy4WNdVEv6QS3CtnxPawycA7uqgiApfxmOLMHBmQU
-    Je7fEWGzji2AjrgNcbBsOFVmnulK6WYLmoRnCvTEvkAYI30VMhAovhouuqSRnmSW
-    4Tw/pmHKHRjEo9y+pyUGHDhJiZFMLq44+LaU09zpBg+SsuZ3zc8Tyhpze3CnIXZa
-    mdWUIxOFt1kpImhxkxf5E+FDxbQ1DBrJ9IZNocvBnzWMyj1NN1Kr5twUZY5FAYSX
-    46YKjdR9biU00/0aDNzzbUw2GHwTNgy2vKBQ==
+    1524148554; b=NwJUOmVuFkHRk2YBI2gs/51DrcoTddpt0gwpRVYZjaQypU+L60
+    JQzaRGnu0vwz7xcn6hVmEP/QJxBIsfrdACOkdbn4v4pqBSzLCYpvUbU13FCaJETN
+    wSSXUQvzf2Ihz8IWO7I0fV6z1GH+LSSuyutNXwR9qVWi4Nc/xT3grvkXTnVZ8612
+    GY10CuFTmSn/WLvFnYFUapWnDKCcdOFBVdYayYiv5qiv6H0XdMUbER+s6gcbVZ0F
+    1UaRGf7pFKQbb3342tIK0JS/jqiP+ZSGU+EjcjMXaZGXI3I1GAd707sYZpvsiJjv
+    RGkAK5DmfovvG93CfoQIwon9nF8b9aKmDv7w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1523650978; bh=SgqZz0/kJBJzmt9z+cBpPdDEuJ/gwn
-    cuD0IEBZS5GcQ=; b=jz4DwON/rmOfECEQYqTZPCDngiEaTp4/yFZhwUUKvTZLnH
-    EbyEbMXTn5dG/xw4iXdMUIqYlmsHZpmc1fC2WQejriZ0Ge13wS+DYaLTHRT82vGM
-    mBSB2GeaKz7e6S/r7GNptNa9OnboirxoutpzxzCPOUAKBrIuULzrj/tMNNRxt5Ah
-    wOEQxL9OqvEkGHGxkT+YZJd9+m8G1xXD/LOwXX/MEDPUXvunc1j6fUxDM++jdRQ0
-    amAxNiUDkVocRQ/1C8140GgswarKLXx/Eah8NLwB1+a3kDs4G6m2mDi980eE+jjS
-    i9vPOL2zjYROSoRVsasgC9KIflZK+zhOmF6Hdq2w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:in-reply-to:references:to:cc:subject
+    :mime-version:content-type:content-id:content-transfer-encoding
+    :date:message-id:sender:list-id; s=fm2; t=1524148554; bh=/BgXnWo
+    HZAQP6vl4OLP4sESmLmkZR1j7hLSokkJEBFA=; b=Zko4o70vlCpVy59Ycd2TO7y
+    oG+UJgBrVVvGgqEgKm3dc/HU8VsOTAL4Y5QDaxgmkxDPPa3+1bapjhXwCay+Vw1m
+    U/d41LKurwfhMl6Y41MFRHGFpS5RB0N642BNXWimwrFsKpga0VfMoXxB54g8EqoP
+    SJcCq/aOIb6kDenWVziQ07f4C84Okgspwmqo6OMp88cR/j9pgiNWfQXELL6kSBTn
+    DZCpRC28HX0GkGXol0S59uPUJE35tZT0sDW/EYRH8Xw9R2XJNJfxzE7V/xrMbtsb
+    rkq+ownz2AX631+xk85t6NT6HY1L/iw6zuVuVUaAxK23iNiVawlrtk3soQceDiQ=
+    =
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGcPcEY4MgJTaySTpnBtbm7CN/OEzTOiM9e4yqKhiHpq7T3Oth28vyibBKTVLe6v6lZL3gXt++i7hvt7++7MEZ7/1SFRk+FCQO8QkGEI9I6ZSpUcZXnh
-    B/faiAPuJWPCPy5zGCZzqPFRymlUjN8re17PO5rUPiiUBFME3TjDSf+S7d/hfk7uV6COVNBRE3fH8KjElLqW3hX3t7ydSffKkhGbwJV7tsul3H7Tby/mq70o
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=M8rcC2nyAAAA:8
-    a=RXnXJx7MAAAA:8 a=u-CgsrzmgoaB1oUMz_AA:9 a=CjuIK1q_8ugA:10 a=0dxXHNIcbWwA:10
-    a=gA6IeH5FQcgA:10 a=NWVoK91CQyQA:10 a=_-qdGLtDKeih3NeNQJgA:9 a=ONNS8QRKHyMA:10
-    a=VwQbUJbxAAAA:8 a=fUSZZkATYxXnQMecnGkA:9 a=x8gzFH9gYPwA:10
-    a=K9tzwgKBnWaK51F8Cre1:22 a=U_UV0sFCMgXoaKVbI-EZ:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfGFm43e9pHaJfoCZafBbaJ/UWXN7AIHn/5UmY8sTZECSy79Ebt4eyqe/CiX7g5ET2e/f0ifE5tC8snEp9WPiQdNAg1WAM3RxED5gFLebbUGtswACZq6j
+    x872dC0P4BELWYquunBMimRB9UjBUZ2oLLO4vCZOT+7ZqkqpNKiT5QXrRR5YXG4BONLxZKMaubVDW9MuU5/b4H2IJ4VT+PcqlxTUcKk6CPeNDtUQQqGzMaRX
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=VwQbUJbxAAAA:8 a=P8zLqvrZzsJ75_ydw54A:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751042AbeDMUWp (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 13 Apr 2018 16:22:45 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56739 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750973AbeDMUWn (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 13 Apr 2018 16:22:43 -0400
-Date: Fri, 13 Apr 2018 22:22:41 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: David Howells <dhowells@redhat.com>
-Cc: torvalds@linux-foundation.org, linux-man@vger.kernel.org,
-        linux-api@vger.kernel.org, jmorris@namei.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 24/24] debugfs: Restrict debugfs when the kernel is
- locked down
-Message-ID: <20180413202241.GB4484@amd>
-References: <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk>
- <152346403637.4030.15247096217928429102.stgit@warthog.procyon.org.uk>
+        id S1751953AbeDSOfv convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Thu, 19 Apr 2018 10:35:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35604 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751136AbeDSOfu (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:35:50 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20180413202241.GB4484@amd>
+References: <20180413202241.GB4484@amd> <152346387861.4030.4408662483445703127.stgit@warthog.procyon.org.uk> <152346403637.4030.15247096217928429102.stgit@warthog.procyon.org.uk>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: dhowells@redhat.com, torvalds@linux-foundation.org,
+        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 24/24] debugfs: Restrict debugfs when the kernel is locked down
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
-Content-Disposition: inline
-In-Reply-To: <152346403637.4030.15247096217928429102.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <27817.1524148547.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date: Thu, 19 Apr 2018 15:35:47 +0100
+Message-ID: <27818.1524148547@warthog.procyon.org.uk>
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Pavel Machek <pavel@ucw.cz> wrote:
 
---dTy3Mrz/UPE2dbVg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> >  (1) chmod and chown are disallowed on debugfs objects (though the root dir
+> >      can be modified by mount and remount, but I'm not worried about that).
+> 
+> This has nothing to do with the lockdown goals, right? I find chown of
+> such files quite nice, to allow debugging without doing sudo all the time.
 
-On Wed 2018-04-11 17:27:16, David Howells wrote:
-> Disallow opening of debugfs files that might be used to muck around when
-> the kernel is locked down as various drivers give raw access to hardware
-> through debugfs.  Given the effort of auditing all 2000 or so files and
-> manually fixing each one as necessary, I've chosen to apply a heuristic
-> instead.  The following changes are made:
->=20
->  (1) chmod and chown are disallowed on debugfs objects (though the root d=
-ir
->      can be modified by mount and remount, but I'm not worried about that=
-).
+It allows someone to give everyone access to files that should perhaps only be
+accessible by root.  Besides, if you disable lockdown then you can do this if
+you want.
 
-This has nothing to do with the lockdown goals, right? I find chown of
-such files quite nice, to allow debugging without doing sudo all the time.
+> >  (2) When the kernel is locked down, only files with the following criteria
+> >      are permitted to be opened:
+> > 
+> > 	- The file must have mode 00444
+> > 	- The file must not have ioctl methods
+> > 	- The file must not have mmap
+> 
+> Dunno. Would not it be nicer to go through the debugfs files and split
+> them into safe/unsafe varieties?
 
->  (2) When the kernel is locked down, only files with the following criter=
-ia
->      are permitted to be opened:
->=20
-> 	- The file must have mode 00444
-> 	- The file must not have ioctl methods
-> 	- The file must not have mmap
+Whilst that is a laudable idea, there are at least a couple of thousand files
+to analyse, some of them doing weird stuff in drivers that aren't easy to
+understand, and some of them with lists of files, some of which might be safe
+and some of which aren't safe.  Even some reads that look like they ought to
+be safe have side effects (such as read-and-reset counters).
 
-Dunno. Would not it be nicer to go through the debugfs files and split
-them into safe/unsafe varieties?
+Besides, define 'safe'.  Is reading a particular reg on a device and returning
+the value through a debugfs read safe, for example?  What about files where
+reading is harmless, but writing needs to be disallowed?
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+I did try initially passing in a flag to say whether something was safe or
+not, abusing an inode flag to store it since debugfs uses a plain inode
+struct, but then I realised just how many ways there are to create debugfs
+files and it started to get out of hand.  My initial idea also included
+locking everything down by default and marking things unlocked on an as-needed
+basis.
 
---dTy3Mrz/UPE2dbVg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+If you have the time to audit all these files, then that would be great.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+I lean more towards the lock debugfs down entirely side.
 
-iEYEARECAAYFAlrREZEACgkQMOfwapXb+vJzCACfSnkCF/54N13G7pz0zGeDo6ze
-e6sAn1h0VTYzTyRfA28tZ4D7RyjjUYJU
-=ESt0
------END PGP SIGNATURE-----
-
---dTy3Mrz/UPE2dbVg--
+David
