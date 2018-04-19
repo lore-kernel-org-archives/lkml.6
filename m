@@ -1,126 +1,109 @@
-Return-Path: <adobriyan@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524168140; cv=none;
+Return-Path: <longman@redhat.com>
+X-Google-Smtp-Source: AB8JxZpW3iv7NG5YdAZJrktxXsxpBJzYXE6ylBv7FkiXR2YqCibZbWscqGOYUY5BIrlV94mmiuLs
+ARC-Seal: i=1; a=rsa-sha256; t=1524167874; cv=none;
         d=google.com; s=arc-20160816;
-        b=LM4m0KxCHmMvNJpcMUgHUqA1EqU42vo/zvzmMoYWvQ8DKh7ZAaw7uG7zKpdfkhcAal
-         SD6OjBaUeOkk8aJUibF1bb1Z7dPyYfJQO6pbfU195k5yXkHaH0E9Q4B6qbghUgQb5+Mo
-         fzOkQS3K5baXDc4krIdlKBvz9Ovm2Ls92AGidsffYMiO6yxyRJxhhcHk0UpXn6UtPUfp
-         PZdcUO6TrqrSKvIM2Lu/Iuy9OS7Jal70rYrHLS33s+0X67wGPp2YkQH55XgZxTPjIeTL
-         rGRgJb4ol0tyHpi2Ebs3/DgJltsNLnjt7oae1XWkDlaV4IbGsAFGfW7Xk+FbOdgDGgfP
-         NbmA==
+        b=DiZSDwDaW3Y97ke3pqyH/WalTXmTJY4rRE7j1i2D08iilCDUUKgARsNdCmeweXlIhD
+         n57ZWV94Wu+4TRQN3aAx0uoXJ1cetT0yyqk26PSovgVYgC1f9Lz07y8uNDHw61N4Ag6I
+         7/AHv+oDdHpmHHJe3Fh2PIHrm3atJMowIZpib5AuhYsdTEwkp2qGYccMtSz/dLt7BUPc
+         iee2aWnXDGtgqHXI2ywzFqmdmP7kFXA/Lw4InzzND3zlihPe26q4ejbhRxF+LIfl4opP
+         UJB8FrtdOflIeuNCjr2Flp7GwnC+8HGoKp9ktuo/DC+3th+GB7nP2p8Nx9kr9FreMBGh
+         e8GA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:dkim-signature:arc-authentication-results;
-        bh=diReYfGUUrH+aPyxMzyyQ5YbtdpXeuqKOJxG8fcykR0=;
-        b=DZtOqWNSTCoEdLu8tVtszAuuIm2d2MksDRuU1NfenTVnWvvdUMIcQ28d04k5xXnuDa
-         6hRWoakJJIq9+u48jqP+zIFxbTw6Tpc9jEGUuUF1W7DHdUZ1OPFztv8dEwC7nqSAHPiD
-         USZJ8KQbhR4+F8IASccUZbMaEqXTAWYutfRIJKrY/W5lgD9JKlimakm6R+gLfDqWDzpC
-         QKXCBmVMDLtPodgA8wMm1K+nVYqTgrZkv8dIbrbTARnkl363wsC+zW1vL/lnBnW6ED6N
-         UfHHyypZju2eCLxomYownZJpYxV+39I2PNCBMeo5xuwJjmQ7y+pnCP4PMLtNLO3mvHph
-         X/Qg==
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:organization:from:references:cc:to
+         :subject:arc-authentication-results;
+        bh=/pDaCIO5SrTuP309JiiSyAChHT1YPLfWjH0p922EaPA=;
+        b=wbe1o3qAF3uuw9JZ+BemJ8SlBhBMdF3jiZEYj/5wamo8fdkrQCOtQlpzadcFwnQwjI
+         GtAXDeeu+CKcIJHuRxiv48adTUeTc3N1TZiBfeFjWh6TbXnkD2OumqRsYuHxbxsxQMDk
+         tdtYyEWzn9m/FITkLiTYv+MGPgLG3fHGCfoezoxdtyvQsAExKhIr7/cl7j0XYSGK0YTS
+         G9s94n2kJDAiGOEtHHQhsH33Dpk7wcAHQPot0h8b3pbTCtjyN6hcbOa+PVKq6Jk2g6I4
+         vfLSfmY9qk+TRB9IgUFv8KJWZ3ZPNDEMkImbpKewQKRr7Bu6cY5+Gvm5Nz0PP/iXlRAv
+         jrwA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vcidmzfy;
-       spf=pass (google.com: domain of adobriyan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=adobriyan@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of longman@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=longman@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vcidmzfy;
-       spf=pass (google.com: domain of adobriyan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=adobriyan@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx48ZDud5pcrUZZhVH6cFGfH7DzKWmJaPrQ1AtHWFDUjynJoupbQJJNJcO+OPNxKfIObx6gswgQ==
-Date: Thu, 19 Apr 2018 23:02:17 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Waiman Long <longman@redhat.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
+       spf=pass (google.com: domain of longman@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=longman@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Subject: Re: [PATCH] proc/stat: Separate out individual irq counts into
  /proc/stat_irqs
-Message-ID: <20180419200217.GA4467@avx2>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>
 References: <1524157769-30775-1-git-send-email-longman@redhat.com>
  <20180419124319.8e329eb25234c045bf161cd5@linux-foundation.org>
+From: Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <2003cebf-20e8-5347-902b-6a6f5586e04a@redhat.com>
+Date: Thu, 19 Apr 2018 15:57:52 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <20180419124319.8e329eb25234c045bf161cd5@linux-foundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598195278130024579?=
-X-GMAIL-MSGID: =?utf-8?q?1598206132026944588?=
+X-GMAIL-MSGID: =?utf-8?q?1598205852838572150?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 12:43:19PM -0700, Andrew Morton wrote:
-> On Thu, 19 Apr 2018 13:09:29 -0400 Waiman Long <longman@redhat.com> wrote:
-> 
-> > It was found that reading /proc/stat could be time consuming on
-> > systems with a lot of irqs. For example, reading /proc/stat in a
-> > certain 2-socket Skylake server took about 4.6ms because it had over
-> > 5k irqs. In that particular case, the majority of the CPU cycles for
-> > reading /proc/stat was spent in the kstat_irqs() function.  Therefore,
-> > application performance can be impacted if the application reads
-> > /proc/stat rather frequently.
-> > 
-> > The "intr" line within /proc/stat contains a sum total of all the irqs
-> > that have happened followed by a list of irq counts for each individual
-> > irq number. In many cases, the first number is good enough. The
-> > individual irq counts may not provide that much more information.
-> > 
-> > In order to avoid this kind of performance issue, all these individual
-> > irq counts are now separated into a new /proc/stat_irqs file. The
-> > sum total irq count will stay in /proc/stat and be duplicated in
-> > /proc/stat_irqs. Applications that need to look up individual irq counts
-> > will now have to look into /proc/stat_irqs instead of /proc/stat.
-> > 
-> 
+On 04/19/2018 03:43 PM, Andrew Morton wrote:
+> On Thu, 19 Apr 2018 13:09:29 -0400 Waiman Long <longman@redhat.com> wro=
+te:
+>
+>> It was found that reading /proc/stat could be time consuming on
+>> systems with a lot of irqs. For example, reading /proc/stat in a
+>> certain 2-socket Skylake server took about 4.6ms because it had over
+>> 5k irqs. In that particular case, the majority of the CPU cycles for
+>> reading /proc/stat was spent in the kstat_irqs() function.  Therefore,=
+
+>> application performance can be impacted if the application reads
+>> /proc/stat rather frequently.
+>>
+>> The "intr" line within /proc/stat contains a sum total of all the irqs=
+
+>> that have happened followed by a list of irq counts for each individua=
+l
+>> irq number. In many cases, the first number is good enough. The
+>> individual irq counts may not provide that much more information.
+>>
+>> In order to avoid this kind of performance issue, all these individual=
+
+>> irq counts are now separated into a new /proc/stat_irqs file. The
+>> sum total irq count will stay in /proc/stat and be duplicated in
+>> /proc/stat_irqs. Applications that need to look up individual irq coun=
+ts
+>> will now have to look into /proc/stat_irqs instead of /proc/stat.
+>>
 > (cc /proc maintainer)
-> 
+>
 > It's a non-backward-compatible change.  For something which has
 > existing for so long, it would be a mighty task to demonstrate that no
 > existing userspace will be disrupted by this change.
-> 
+>
 > So we need to think again.  A new interface which omits the per-IRQ
 > stats might be acceptable.
 
-Here is profile of open+read+close /proc/stat
+OK, how about a new /proc/stat2 file that is the same as /proc/stat
+except that it omits per-IRQ stats. BTW, do you have any suggestion for
+a better name?
 
-30% is taking mutex only to print "0".
+> Or, conceivably, a new /proc knob which disables the per-IRQ stats in
+> /proc/stat.  That would allow operators to opt in to this disabling and=
 
-+   98.80%     0.04%  a.out    [kernel.vmlinux]  [k] entry_SYSCALL_64                                                                            ▒
-+   98.75%     0.10%  a.out    [kernel.vmlinux]  [k] do_syscall_64                                                                               ▒
-+   95.56%     0.04%  a.out    libc-2.25.so      [.] __GI___libc_read                                                                            ◆
-+   95.09%     0.01%  a.out    [kernel.vmlinux]  [k] sys_read                                                                                    ▒
-+   95.04%     0.03%  a.out    [kernel.vmlinux]  [k] vfs_read                                                                                    ▒
-+   94.98%     0.05%  a.out    [kernel.vmlinux]  [k] proc_reg_read                                                                               ▒
-+   94.98%     0.00%  a.out    [kernel.vmlinux]  [k] __vfs_read                                                                                  ▒
-+   94.92%     0.06%  a.out    [kernel.vmlinux]  [k] seq_read                                                                                    ▒
-+   94.52%     3.65%  a.out    [kernel.vmlinux]  [k] show_stat                                                                                   ▒
-+   48.62%     2.59%  a.out    [kernel.vmlinux]  [k] kstat_irqs_usr                                                                              ▒
-+   33.52%     9.55%  a.out    [kernel.vmlinux]  [k] seq_put_decimal_ull                                                                         ▒
-+   19.63%    19.59%  a.out    [kernel.vmlinux]  [k] memcpy_erms                                                                                 ▒
-+   17.34%     9.53%  a.out    [kernel.vmlinux]  [k] kstat_irqs                                                                                  ▒
--   15.45%    15.43%  a.out    [kernel.vmlinux]  [k] mutex_lock                                                                                  ▒
-     15.43% __GI___libc_read                                                                                                                     ▒
-        entry_SYSCALL_64                                                                                                                         ▒
-        do_syscall_64                                                                                                                            ▒
-        sys_read                                                                                                                                 ▒
-        vfs_read                                                                                                                                 ▒
-        __vfs_read                                                                                                                               ▒
-        proc_reg_read                                                                                                                            ▒
-      - seq_read                                                                                                                                 ▒
-         - 15.41% show_stat                                                                                                                      ▒
-              kstat_irqs_usr                                                                                                                     ▒
-              mutex_lock                                                                                                                         ▒
-+   13.32%    13.27%  a.out    [kernel.vmlinux]  [k] mutex_unlock                                                                                ▒
-+    4.60%     1.35%  a.out    [kernel.vmlinux]  [k] cpumask_next                                                                                ▒
-+    3.03%     3.03%  a.out    [kernel.vmlinux]  [k] __radix_tree_lookup                                                                         ▒
-+    2.96%     0.08%  a.out    [kernel.vmlinux]  [k] seq_printf                                                                                  ▒
-+    2.92%     0.02%  a.out    libc-2.25.so      [.] __GI___libc_open                                                                            ▒
-+    2.89%     0.07%  a.out    [kernel.vmlinux]  [k] seq_vprintf                                                                                 ▒
-+    2.81%     0.70%  a.out    [kernel.vmlinux]  [k] vsnprintf                                                                                   ▒
-+    2.66%     2.66%  a.out    [kernel.vmlinux]  [k] _find_next_bit                                                                              ▒
-+    2.42%     1.36%  a.out    [kernel.vmlinux]  [k] num_to_str                                                                                  ▒
-+    2.41%     0.19%  a.out    [kernel.vmlinux]  [k] get_idle_time                                                                               ▒
-+    2.39%     0.02%  a.out    [kernel.vmlinux]  [k] do_sys_open
+> would avoid the need to alter
+> whatever-application-it-is-that-is-having-trouble.  This seems a bit ug=
+ly
+> though.
+>
+> Also, the changelog is rather vague.  "application performance can be
+> impacted".  Well, *are* applications impacted?  What is the real-world
+> performance gain which this change provides, in a real-world workload?
+
+Will clarify that in the next version.
+
+-Longman
