@@ -1,163 +1,231 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753325AbeDSFQQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 01:16:16 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:22867 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752792AbeDSFQO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 01:16:14 -0400
-X-IronPort-AV: E=Sophos;i="5.48,467,1517871600";
-   d="scan'208";a="323533673"
-Date: Thu, 19 Apr 2018 07:16:11 +0200 (CEST)
-From: Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To: Joe Perches <joe@perches.com>
-cc: Julia Lawall <julia.lawall@lip6.fr>, yuankuiz@codeaurora.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Whitcroft <apw@canonical.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH] checkpatch: Add a --strict test for structs with bool
- member definitions
-In-Reply-To: <b17a1d0de54ca0db12bd38a0b7fb20a5befb6778.camel@perches.com>
-Message-ID: <alpine.DEB.2.20.1804190705580.2830@hadrien>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>   <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>   <20180410123305.GF4082@hirez.programming.kicks-ass.net>   <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>  
- <95477c93db187bab6da8a8ba7c57836868446179.camel@perches.com>   <20180410143950.4b8526073b4e3e34689f68cb@linux-foundation.org>   <b3d75281c3a7b4b217b612913894b346eaa3288b.camel@perches.com>   <20180410150011.df9e036f57b5bcac7ac19686@linux-foundation.org>  
- <20180411081502.GJ4082@hirez.programming.kicks-ass.net>   <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>   <1c9f185f6086e9d89659f93720a27b660ee17c13.camel@perches.com>   <alpine.DEB.2.20.1804120816130.3559@hadrien>  
- <b2087cac13c3a1d01ebe1a17e66351f3777bc397.camel@perches.com>   <alpine.DEB.2.20.1804142315300.2750@hadrien>   <e7cbe275136b86083ff70d9af26f41bf@codeaurora.org>  <5341b3b1945c4c1dbf7b356b1a7a4bd6ce304287.camel@perches.com>  <alpine.DEB.2.20.1804190639410.2830@hadrien>
- <b17a1d0de54ca0db12bd38a0b7fb20a5befb6778.camel@perches.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S1753243AbeDSFS6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 01:18:58 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37610 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750737AbeDSFS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 01:18:56 -0400
+Date: Thu, 19 Apr 2018 08:18:55 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mikulas Patocka <mpatocka@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        David Miller <davem@davemloft.net>, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net] virtio_net: split out ctrl buffer
+Message-ID: <20180419081813-mutt-send-email-mst@kernel.org>
+References: <1524113437-308621-1-git-send-email-mst@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524113437-308621-1-git-send-email-mst@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Apr 19, 2018 at 08:01:49AM +0300, Michael S. Tsirkin wrote:
+> When sending control commands, virtio net sets up several buffers for
+> DMA. The buffers are all part of the net device which means it's
+> actually allocated by kvmalloc so in theory (on extreme memory pressure)
+> it's possible to get a vmalloc'ed buffer which on some platforms means
+> we can't DMA there.
+> 
+> Fix up by moving the DMA buffers out into a separate structure.
+> 
+> Reported-by: Mikulas Patocka <mpatocka@redhat.com>
+> Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
+Ouch forgot to commit a fix. Pls ignore will send v2 now.
 
-On Wed, 18 Apr 2018, Joe Perches wrote:
-
-> On Thu, 2018-04-19 at 06:40 +0200, Julia Lawall wrote:
-> >
-> > On Wed, 18 Apr 2018, Joe Perches wrote:
-> >
-> > > On Tue, 2018-04-17 at 17:07 +0800, yuankuiz@codeaurora.org wrote:
-> > > > Hi julia,
-> > > >
-> > > > On 2018-04-15 05:19 AM, Julia Lawall wrote:
-> > > > > On Wed, 11 Apr 2018, Joe Perches wrote:
-> > > > >
-> > > > > > On Thu, 2018-04-12 at 08:22 +0200, Julia Lawall wrote:
-> > > > > > > On Wed, 11 Apr 2018, Joe Perches wrote:
-> > > > > > > > On Wed, 2018-04-11 at 09:29 -0700, Andrew Morton wrote:
-> > > > > > > > > We already have some 500 bools-in-structs
-> > > > > > > >
-> > > > > > > > I got at least triple that only in include/
-> > > > > > > > so I expect there are at probably an order
-> > > > > > > > of magnitude more than 500 in the kernel.
-> > > > > > > >
-> > > > > > > > I suppose some cocci script could count the
-> > > > > > > > actual number of instances.  A regex can not.
-> > > > > > >
-> > > > > > > I got 12667.
-> > > > > >
-> > > > > > Could you please post the cocci script?
-> > > > > >
-> > > > > > > I'm not sure to understand the issue.  Will using a bitfield help if there
-> > > > > > > are no other bitfields in the structure?
-> > > > > >
-> > > > > > IMO, not really.
-> > > > > >
-> > > > > > The primary issue is described by Linus here:
-> > > > > > https://lkml.org/lkml/2017/11/21/384
-> > > > > >
-> > > > > > I personally do not find a significant issue with
-> > > > > > uncontrolled sizes of bool in kernel structs as
-> > > > > > all of the kernel structs are transitory and not
-> > > > > > written out to storage.
-> > > > > >
-> > > > > > I suppose bool bitfields are also OK, but for the
-> > > > > > RMW required.
-> > > > > >
-> > > > > > Using unsigned int :1 bitfield instead of bool :1
-> > > > > > has the negative of truncation so that the uint
-> > > > > > has to be set with !! instead of a simple assign.
-> > > > >
-> > > > > At least with gcc 5.4.0, a number of structures become larger with
-> > > > > unsigned int :1. bool:1 seems to mostly solve this problem.  The
-> > > > > structure
-> > > > > ichx_desc, defined in drivers/gpio/gpio-ich.c seems to become larger
-> > > > > with
-> > > > > both approaches.
-> > > >
-> > > > [ZJ] Hopefully, this could make it better in your environment.
-> > > >       IMHO, this is just for double check.
-> > >
-> > > I doubt this is actually better or smaller code.
-> > >
-> > > Check the actual object code using objdump and the
-> > > struct alignment using pahole.
-> >
-> > I didn't have a chance to try it, but it looks quite likely to result in a
-> > smaller data structure based on the other examples that I looked at.
->
-> I _really_ doubt there is any difference in size between the
-> below in any architecture
->
-> struct foo {
-> 	int bar;
-> 	bool baz:1;
-> 	int qux;
-> };
->
-> and
->
-> struct foo {
-> 	int bar;
-> 	bool baz;
-> 	int qux;
-> };
->
-> Where there would be a difference in size is
->
-> struct foo {
-> 	int bar;
-> 	bool baz1:1;
-> 	bool baz2:1;
-> 	int qux;
-> };
->
-> and
->
-> struct foo {
-> 	int bar;
-> 	bool baz1;
-> 	bool baz2;
->
-> int qux;
-> };
-
-In the situation of the example there are two bools together in the middle
-of the structure and one at the end.  Somehow, even converting to bool:1
-increases the size.  But it seems plausible that putting all three bools
-together and converting them all to :1 would reduce the size.  I don't
-know.  The size increase (more than 8 bytes) seems out of proportion for 3
-bools.
-
-I was able to check around 3000 structures that were not declared with any
-attributes, that don't declare named types internally, and that are
-compiled for x86.  Around 10% become smaller whn using bool:1, typically
-by at most 8 bytes.
-
-julia
-
->
->
+> ---
+> 
+> Lightly tested.
+> Mikulas, does this address your problem?
+> 
+>  drivers/net/virtio_net.c | 68 +++++++++++++++++++++++++++---------------------
+>  1 file changed, 39 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 7b187ec..82f50e5 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -147,6 +147,17 @@ struct receive_queue {
+>  	struct xdp_rxq_info xdp_rxq;
+>  };
+>  
+> +/* Control VQ buffers: protected by the rtnl lock */
+> +struct control_buf {
+> +	struct virtio_net_ctrl_hdr hdr;
+> +	virtio_net_ctrl_ack status;
+> +	struct virtio_net_ctrl_mq mq;
+> +	u8 promisc;
+> +	u8 allmulti;
+> +	u16 vid;
+> +	u64 offloads;
+> +};
+> +
+>  struct virtnet_info {
+>  	struct virtio_device *vdev;
+>  	struct virtqueue *cvq;
+> @@ -192,14 +203,7 @@ struct virtnet_info {
+>  	struct hlist_node node;
+>  	struct hlist_node node_dead;
+>  
+> -	/* Control VQ buffers: protected by the rtnl lock */
+> -	struct virtio_net_ctrl_hdr ctrl_hdr;
+> -	virtio_net_ctrl_ack ctrl_status;
+> -	struct virtio_net_ctrl_mq ctrl_mq;
+> -	u8 ctrl_promisc;
+> -	u8 ctrl_allmulti;
+> -	u16 ctrl_vid;
+> -	u64 ctrl_offloads;
+> +	struct control_buf *ctrl;
+>  
+>  	/* Ethtool settings */
+>  	u8 duplex;
+> @@ -1454,25 +1458,25 @@ static bool virtnet_send_command(struct virtnet_info *vi, u8 class, u8 cmd,
+>  	/* Caller should know better */
+>  	BUG_ON(!virtio_has_feature(vi->vdev, VIRTIO_NET_F_CTRL_VQ));
+>  
+> -	vi->ctrl_status = ~0;
+> -	vi->ctrl_hdr.class = class;
+> -	vi->ctrl_hdr.cmd = cmd;
+> +	vi->ctrl->status = ~0;
+> +	vi->ctrl->hdr.class = class;
+> +	vi->ctrl->hdr.cmd = cmd;
+>  	/* Add header */
+> -	sg_init_one(&hdr, &vi->ctrl_hdr, sizeof(vi->ctrl_hdr));
+> +	sg_init_one(&hdr, &vi->ctrl->hdr, sizeof(vi->ctrl->hdr));
+>  	sgs[out_num++] = &hdr;
+>  
+>  	if (out)
+>  		sgs[out_num++] = out;
+>  
+>  	/* Add return status. */
+> -	sg_init_one(&stat, &vi->ctrl_status, sizeof(vi->ctrl_status));
+> +	sg_init_one(&stat, &vi->ctrl->status, sizeof(vi->ctrl->status));
+>  	sgs[out_num] = &stat;
+>  
+>  	BUG_ON(out_num + 1 > ARRAY_SIZE(sgs));
+>  	virtqueue_add_sgs(vi->cvq, sgs, out_num, 1, vi, GFP_ATOMIC);
+>  
+>  	if (unlikely(!virtqueue_kick(vi->cvq)))
+> -		return vi->ctrl_status == VIRTIO_NET_OK;
+> +		return vi->ctrl->status == VIRTIO_NET_OK;
+>  
+>  	/* Spin for a response, the kick causes an ioport write, trapping
+>  	 * into the hypervisor, so the request should be handled immediately.
+> @@ -1481,7 +1485,7 @@ static bool virtnet_send_command(struct virtnet_info *vi, u8 class, u8 cmd,
+>  	       !virtqueue_is_broken(vi->cvq))
+>  		cpu_relax();
+>  
+> -	return vi->ctrl_status == VIRTIO_NET_OK;
+> +	return vi->ctrl->status == VIRTIO_NET_OK;
+>  }
+>  
+>  static int virtnet_set_mac_address(struct net_device *dev, void *p)
+> @@ -1593,8 +1597,8 @@ static int _virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+>  	if (!vi->has_cvq || !virtio_has_feature(vi->vdev, VIRTIO_NET_F_MQ))
+>  		return 0;
+>  
+> -	vi->ctrl_mq.virtqueue_pairs = cpu_to_virtio16(vi->vdev, queue_pairs);
+> -	sg_init_one(&sg, &vi->ctrl_mq, sizeof(vi->ctrl_mq));
+> +	vi->ctrl->mq.virtqueue_pairs = cpu_to_virtio16(vi->vdev, queue_pairs);
+> +	sg_init_one(&sg, &vi->ctrl->mq, sizeof(vi->ctrl->mq));
+>  
+>  	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_MQ,
+>  				  VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET, &sg)) {
+> @@ -1653,22 +1657,22 @@ static void virtnet_set_rx_mode(struct net_device *dev)
+>  	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_CTRL_RX))
+>  		return;
+>  
+> -	vi->ctrl_promisc = ((dev->flags & IFF_PROMISC) != 0);
+> -	vi->ctrl_allmulti = ((dev->flags & IFF_ALLMULTI) != 0);
+> +	vi->ctrl->promisc = ((dev->flags & IFF_PROMISC) != 0);
+> +	vi->ctrl->allmulti = ((dev->flags & IFF_ALLMULTI) != 0);
+>  
+> -	sg_init_one(sg, &vi->ctrl_promisc, sizeof(vi->ctrl_promisc));
+> +	sg_init_one(sg, &vi->ctrl->promisc, sizeof(vi->ctrl->promisc));
+>  
+>  	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_RX,
+>  				  VIRTIO_NET_CTRL_RX_PROMISC, sg))
+>  		dev_warn(&dev->dev, "Failed to %sable promisc mode.\n",
+> -			 vi->ctrl_promisc ? "en" : "dis");
+> +			 vi->ctrl->promisc ? "en" : "dis");
+>  
+> -	sg_init_one(sg, &vi->ctrl_allmulti, sizeof(vi->ctrl_allmulti));
+> +	sg_init_one(sg, &vi->ctrl->allmulti, sizeof(vi->ctrl->allmulti));
+>  
+>  	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_RX,
+>  				  VIRTIO_NET_CTRL_RX_ALLMULTI, sg))
+>  		dev_warn(&dev->dev, "Failed to %sable allmulti mode.\n",
+> -			 vi->ctrl_allmulti ? "en" : "dis");
+> +			 vi->ctrl->allmulti ? "en" : "dis");
+>  
+>  	uc_count = netdev_uc_count(dev);
+>  	mc_count = netdev_mc_count(dev);
+> @@ -1714,8 +1718,8 @@ static int virtnet_vlan_rx_add_vid(struct net_device *dev,
+>  	struct virtnet_info *vi = netdev_priv(dev);
+>  	struct scatterlist sg;
+>  
+> -	vi->ctrl_vid = vid;
+> -	sg_init_one(&sg, &vi->ctrl_vid, sizeof(vi->ctrl_vid));
+> +	vi->ctrl->vid = vid;
+> +	sg_init_one(&sg, &vi->ctrl->vid, sizeof(vi->ctrl->vid));
+>  
+>  	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
+>  				  VIRTIO_NET_CTRL_VLAN_ADD, &sg))
+> @@ -1729,8 +1733,8 @@ static int virtnet_vlan_rx_kill_vid(struct net_device *dev,
+>  	struct virtnet_info *vi = netdev_priv(dev);
+>  	struct scatterlist sg;
+>  
+> -	vi->ctrl_vid = vid;
+> -	sg_init_one(&sg, &vi->ctrl_vid, sizeof(vi->ctrl_vid));
+> +	vi->ctrl->vid = vid;
+> +	sg_init_one(&sg, &vi->ctrl->vid, sizeof(vi->ctrl->vid));
+>  
+>  	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
+>  				  VIRTIO_NET_CTRL_VLAN_DEL, &sg))
+> @@ -2126,9 +2130,9 @@ static int virtnet_restore_up(struct virtio_device *vdev)
+>  static int virtnet_set_guest_offloads(struct virtnet_info *vi, u64 offloads)
+>  {
+>  	struct scatterlist sg;
+> -	vi->ctrl_offloads = cpu_to_virtio64(vi->vdev, offloads);
+> +	vi->ctrl->offloads = cpu_to_virtio64(vi->vdev, offloads);
+>  
+> -	sg_init_one(&sg, &vi->ctrl_offloads, sizeof(vi->ctrl_offloads));
+> +	sg_init_one(&sg, &vi->ctrl->offloads, sizeof(vi->ctrl->offloads));
+>  
+>  	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_GUEST_OFFLOADS,
+>  				  VIRTIO_NET_CTRL_GUEST_OFFLOADS_SET, &sg)) {
+> @@ -2351,6 +2355,7 @@ static void virtnet_free_queues(struct virtnet_info *vi)
+>  
+>  	kfree(vi->rq);
+>  	kfree(vi->sq);
+> +	kfree(vi->err_ctrl);
+>  }
+>  
+>  static void _free_receive_bufs(struct virtnet_info *vi)
+> @@ -2543,6 +2548,9 @@ static int virtnet_alloc_queues(struct virtnet_info *vi)
+>  {
+>  	int i;
+>  
+> +	vi->ctrl = kzalloc(sizeof(*vi->ctrl), GFP_KERNEL);
+> +	if (!vi->ctrl)
+> +		goto err_ctrl;
+>  	vi->sq = kzalloc(sizeof(*vi->sq) * vi->max_queue_pairs, GFP_KERNEL);
+>  	if (!vi->sq)
+>  		goto err_sq;
+> @@ -2571,6 +2579,8 @@ static int virtnet_alloc_queues(struct virtnet_info *vi)
+>  err_rq:
+>  	kfree(vi->sq);
+>  err_sq:
+> +	kfree(vq->ctrl);
+> +err_ctrl:
+>  	return -ENOMEM;
+>  }
+>  
+> -- 
+> MST
