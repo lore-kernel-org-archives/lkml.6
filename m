@@ -1,163 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752903AbeDSBkw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 18 Apr 2018 21:40:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39632 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752116AbeDSBku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Apr 2018 21:40:50 -0400
-Date: Thu, 19 Apr 2018 09:40:30 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Indranil Choudhury <indranil@chelsio.com>,
-        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
-        "stephen@networkplumber.org" <stephen@networkplumber.org>,
-        Ganesh GR <ganeshgr@chelsio.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH net-next v4 0/3] kernel: add support to collect hardware
- logs in crash recovery kernel
-Message-ID: <20180419014030.GA2340@dhcp-128-65.nay.redhat.com>
-References: <cover.1523950321.git.rahul.lakkireddy@chelsio.com>
- <20180418061546.GA4551@dhcp-128-65.nay.redhat.com>
- <20180418123114.GA19159@chelsio.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180418123114.GA19159@chelsio.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1753071AbeDSBnB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 18 Apr 2018 21:43:01 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36109 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752262AbeDSBnA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Apr 2018 21:43:00 -0400
+X-Google-Smtp-Source: AIpwx4+pmkCxnQnygyGiMS8vcb2dq/JABfW6xg6kT5gswep9CAUXHbk0W0IfPmH8hq3n2Gmsj3GLNg==
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCHv2] printk: wake up klogd in vprintk_emit
+Date: Thu, 19 Apr 2018 10:42:50 +0900
+Message-Id: <20180419014250.5692-1-sergey.senozhatsky@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
+References: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/18/18 at 06:01pm, Rahul Lakkireddy wrote:
-> On Wednesday, April 04/18/18, 2018 at 11:45:46 +0530, Dave Young wrote:
-> > Hi Rahul,
-> > On 04/17/18 at 01:14pm, Rahul Lakkireddy wrote:
-> > > On production servers running variety of workloads over time, kernel
-> > > panic can happen sporadically after days or even months. It is
-> > > important to collect as much debug logs as possible to root cause
-> > > and fix the problem, that may not be easy to reproduce. Snapshot of
-> > > underlying hardware/firmware state (like register dump, firmware
-> > > logs, adapter memory, etc.), at the time of kernel panic will be very
-> > > helpful while debugging the culprit device driver.
-> > > 
-> > > This series of patches add new generic framework that enable device
-> > > drivers to collect device specific snapshot of the hardware/firmware
-> > > state of the underlying device in the crash recovery kernel. In crash
-> > > recovery kernel, the collected logs are added as elf notes to
-> > > /proc/vmcore, which is copied by user space scripts for post-analysis.
-> > > 
-> > > The sequence of actions done by device drivers to append their device
-> > > specific hardware/firmware logs to /proc/vmcore are as follows:
-> > > 
-> > > 1. During probe (before hardware is initialized), device drivers
-> > > register to the vmcore module (via vmcore_add_device_dump()), with
-> > > callback function, along with buffer size and log name needed for
-> > > firmware/hardware log collection.
-> > 
-> > I assumed the elf notes info should be prepared while kexec_[file_]load
-> > phase. But I did not read the old comment, not sure if it has been discussed
-> > or not.
-> > 
-> 
-> We must not collect dumps in crashing kernel. Adding more things in
-> crash dump path risks not collecting vmcore at all. Eric had
-> discussed this in more detail at:
-> 
-> https://lkml.org/lkml/2018/3/24/319
-> 
-> We are safe to collect dumps in the second kernel. Each device dump
-> will be exported as an elf note in /proc/vmcore.
+We wake up klogd very late - only when current console_sem owner
+is done pushing pending kernel messages to the serial/net consoles.
+In some cases this results in lost syslog messages, because kernel
+log buffer is a circular buffer and if we don't wakeup syslog long
+enough there are chances that logbuf simply will wrap around.
 
-I understand that we should avoid adding anything in crash path.  And I also
-agree to collect device dump in second kernel.  I just assumed device
-dump use some memory area to store the debug info and the memory
-is persistent so that this can be done in 2 steps, first register the
-address in elf header in kexec_load, then collect the dump in 2nd
-kernel.  But it seems the driver is doing some other logic to collect
-the info instead of just that simple like I thought. 
+The patch moves the klog wake up call to vprintk_emit(), which is
+the only legit way for a kernel message to appear in the logbuf,
+right before we attempt to grab the console_sem (possibly spinning
+on it waiting for the hand off) and call console drivers.
 
-> 
-> > If do this in 2nd kernel a question is driver can be loaded later than vmcore init.
-> 
-> Yes, drivers will add their device dumps after vmcore init.
-> 
-> > How to guarantee the function works if vmcore reading happens before
-> > the driver is loaded?
-> > 
-> > Also it is possible that kdump initramfs does not contains the driver
-> > module.
-> > 
-> > Am I missing something?
-> > 
-> 
-> Yes, driver must be in initramfs if it wants to collect and add device
-> dump to /proc/vmcore in second kernel.
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+---
+ kernel/printk/printk.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-In RH/Fedora kdump scripts we only add the things are required to
-bring up the dump target, so that we can use as less memory as we can.
-
-For example, if a net driver panicked, and the dump target is rootfs
-which is a scsi disk, then no network related stuff will be added in
-initramfs.
-
-In this case the device dump info will be not collected..
-> 
-> > > 
-> > > 2. vmcore module allocates the buffer with requested size. It adds
-> > > an elf note and invokes the device driver's registered callback
-> > > function.
-> > > 
-> > > 3. Device driver collects all hardware/firmware logs into the buffer
-> > > and returns control back to vmcore module.
-> > > 
-> > > The device specific hardware/firmware logs can be seen as elf notes:
-> > > 
-> > > # readelf -n /proc/vmcore
-> > > 
-> > > Displaying notes found at file offset 0x00001000 with length 0x04003288:
-> > >   Owner                 Data size	Description
-> > >   VMCOREDD_cxgb4_0000:02:00.4 0x02000fd8	Unknown note type: (0x00000700)
-> > >   VMCOREDD_cxgb4_0000:04:00.4 0x02000fd8	Unknown note type: (0x00000700)
-> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-> > >   CORE                 0x00000150	NT_PRSTATUS (prstatus structure)
-> > >   VMCOREINFO           0x0000074f	Unknown note type: (0x00000000)
-> > > 
-> > > Patch 1 adds API to vmcore module to allow drivers to register callback
-> > > to collect the device specific hardware/firmware logs.  The logs will
-> > > be added to /proc/vmcore as elf notes.
-> > > 
-> > > Patch 2 updates read and mmap logic to append device specific hardware/
-> > > firmware logs as elf notes.
-> > > 
-> > > Patch 3 shows a cxgb4 driver example using the API to collect
-> > > hardware/firmware logs in crash recovery kernel, before hardware is
-> > > initialized.
-> > > 
-> > > Thanks,
-> > > Rahul
-> > > 
-> > > RFC v1: https://lkml.org/lkml/2018/3/2/542
-> > > RFC v2: https://lkml.org/lkml/2018/3/16/326
-> > > 
-> [...]
-> 
-> Thanks,
-> Rahul
-
-Thanks
-Dave
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 2f4af216bd6e..247808333ba4 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1908,6 +1908,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		preempt_enable();
+ 	}
+ 
++	wake_up_klogd();
+ 	return printed_len;
+ }
+ EXPORT_SYMBOL(vprintk_emit);
+@@ -2289,9 +2290,7 @@ void console_unlock(void)
+ {
+ 	static char ext_text[CONSOLE_EXT_LOG_MAX];
+ 	static char text[LOG_LINE_MAX + PREFIX_MAX];
+-	static u64 seen_seq;
+ 	unsigned long flags;
+-	bool wake_klogd = false;
+ 	bool do_cond_resched, retry;
+ 
+ 	if (console_suspended) {
+@@ -2335,11 +2334,6 @@ void console_unlock(void)
+ 
+ 		printk_safe_enter_irqsave(flags);
+ 		raw_spin_lock(&logbuf_lock);
+-		if (seen_seq != log_next_seq) {
+-			wake_klogd = true;
+-			seen_seq = log_next_seq;
+-		}
+-
+ 		if (console_seq < log_first_seq) {
+ 			len = sprintf(text, "** %u printk messages dropped **\n",
+ 				      (unsigned)(log_first_seq - console_seq));
+@@ -2397,7 +2391,7 @@ void console_unlock(void)
+ 
+ 		if (console_lock_spinning_disable_and_check()) {
+ 			printk_safe_exit_irqrestore(flags);
+-			goto out;
++			return;
+ 		}
+ 
+ 		printk_safe_exit_irqrestore(flags);
+@@ -2429,10 +2423,6 @@ void console_unlock(void)
+ 
+ 	if (retry && console_trylock())
+ 		goto again;
+-
+-out:
+-	if (wake_klogd)
+-		wake_up_klogd();
+ }
+ EXPORT_SYMBOL(console_unlock);
+ 
+-- 
+2.17.0
