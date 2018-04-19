@@ -1,97 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753655AbeDSWNU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 18:13:20 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:36889 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753486AbeDSWNT (ORCPT
+        id S1753854AbeDSWQq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 18:16:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56902 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753728AbeDSWQo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 18:13:19 -0400
-To: rientjes@google.com, mhocko@kernel.org
-Cc: akpm@linux-foundation.org, aarcange@redhat.com, guro@fb.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
-        <20180418075051.GO17484@dhcp22.suse.cz>
-        <alpine.DEB.2.21.1804181159020.227784@chino.kir.corp.google.com>
-        <20180419063556.GK17484@dhcp22.suse.cz>
-        <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com>
-In-Reply-To: <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com>
-Message-Id: <201804200713.IJF15701.SOVFOMHtQJOFFL@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Fri, 20 Apr 2018 07:13:02 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Thu, 19 Apr 2018 18:16:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E1CFA60500
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v6 00/10] drivers/qcom: add RPMH communication support
+Date: Thu, 19 Apr 2018 16:16:25 -0600
+Message-Id: <20180419221635.17849-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Rientjes wrote:
-> On Thu, 19 Apr 2018, Michal Hocko wrote:
-> 
-> > > exit_mmap() does not block before set_bit(MMF_OOM_SKIP) once it is 
-> > > entered.
-> > 
-> > Not true. munlock_vma_pages_all might take page_lock which can have
-> > unpredictable dependences. This is the reason why we are ruling out
-> > mlocked VMAs in the first place when reaping the address space.
-> > 
-> 
-> I don't find any occurrences in millions of oom kills in real-world 
-> scenarios where this matters.
+Changes in v6:
+- Remove tasklet in rpmh-rsc.c
+- Remove rpmh_client and use struct device * instead
+- Variable changes and bug fixes
+- DT binding changes to describe all DRVs in the RSC
+- Documentation and comment fixes
 
-Is your OOM events system-wide rather than memcg?
-It is trivial to hide bugs in the details if your OOM events is memcg OOM.
+Changes in v5:
+- Add Reviewed-by tags
+- Rebase on top of 4.16
 
->                                The solution is certainly not to hold 
-> down_write(&mm->mmap_sem) during munlock_vma_pages_all() instead.  If 
-> exit_mmap() is not making forward progress then that's a separate issue; 
+Changes in v4:
+- Rename variables as suggested by Stephen and Evan
+- Lot of minor syntax and style fixes
+- Fix FTRACE compilation error
+- Improve doc comments and DT description
 
-Just a simple memory + CPU pressure is sufficient for making exit_mmap()
-unable to make forward progress. Try triggering system-wide OOM event by
-running below reproducer. We are ever ignoring this issue.
+Changes in v3:
+- Address Steven's comments in FTRACE
+- Fix DT documentation as suggested by Rob H
+- Fix error handling in IRQ handler as suggested by Evan
+- Remove locks in rpmh_flush()
+- Improve comments
 
------
-#include <unistd.h>
+Changes in v2:
+- Added sleep/wake, async and batch requests support
+- Addressed Bjorn's comments
+- Private FTRACE for drivers/soc/qcom as suggested by Steven
+- Sparse checked on these patches
+- Use SPDX license commenting sytle
 
-int main(int argc, char *argv[])
-{
-        while (1)
-                if (fork() == 0)
-                        execlp(argv[0], argv[0], NULL);
-        return 0;
-}
------
+This set of patches add the ability for platform drivers to make use of shared
+resources in newer Qualcomm SoCs like SDM845. Resources that are shared between
+multiple processors in a SoC are generally controlled by a dedicated remote
+processor. The remote processor (Resource Power Manager or RPM in previous QCOM
+SoCs) receives requests for resource state from other processors using the
+shared resource, aggregates the request and applies the result on the shared
+resource. SDM845 advances this concept and uses h/w (hardened I/P) blocks for
+aggregating requests and applying the result on the resource. The resources
+could be clocks, regulators or bandwidth requests for buses. This new
+architecture is called RPM-hardened or RPMH in short.
 
-> that would need to be fixed in one of two ways: (1) in oom_reap_task() to 
-> try over a longer duration before setting MMF_OOM_SKIP itself, but that 
-> would have to be a long duration to allow a large unmap and page table 
-> free, or (2) in oom_evaluate_task() so that we defer for MMF_OOM_SKIP but 
-> only if MMF_UNSTABLE has been set for a long period of time so we target 
-> another process when the oom killer has given up.
-> 
-> Either of those two fixes are simple to implement, I'd just like to see a 
-> bug report with stack traces to indicate that a victim getting stalled in 
-> exit_mmap() is a problem to justify the patch.
+Since this communication mechanism is completely hardware driven without a
+processor intervention on the remote end, existing mechanisms like RPM-SMD are
+no longer useful. Also, there is no serialization of data or is data is written
+to a shared memory in this new format. The data used is different, unsigned 32
+bits are used for representing an address, data and header. Each resource's
+property is a unique u32 address and have pre-defined set of property specific
+valid values. A request that comprises of <header, addr, data> is sent by
+writing to a set of registers from Linux and transmitted to the remote slave
+through an internal bus. The remote end aggregates this request along with
+requests from other processors for the <addr> and applies the result.
 
-It is too hard for normal users to report problems under memory pressure
-without a mean to help understand what is happening. See a bug report at
-https://lists.opensuse.org/opensuse-kernel/2018-04/msg00018.html for example.
+The hardware block that houses this functionality is called Resource State
+Coordinator or RSC. Inside the RSC are set of slots for sending RPMH requests
+called Trigger Commands Sets (TCS). The set of patches are for writing the
+requests into these TCSes and sending them to hardened IP blocks.
 
-> 
-> I'm trying to fix the page table corruption that is trivial to trigger on 
-> powerpc.  We simply cannot allow the oom reaper's unmap_page_range() to 
-> race with munlock_vma_pages_range(), ever.  Holding down_write on 
-> mm->mmap_sem otherwise needlessly over a large amount of code is riskier 
-> (hasn't been done or tested here), more error prone (any code change over 
-> this large area of code or in functions it calls are unnecessarily 
-> burdened by unnecessary locking), makes exit_mmap() less extensible for 
-> the same reason, and causes the oom reaper to give up and go set 
-> MMF_OOM_SKIP itself because it depends on taking down_read while the 
-> thread is still exiting.
+The driver design is split into two components. The RSC driver housed in
+rpmh-rsc.c and the set of library functions in rpmh.c that frame the request and
+transmit it using the controller. This first set of patches allow a simple
+synchronous request to be made by the platform drivers. Future patches will add
+more functionality that cater to complex drivers and use cases.
 
-I suggest reverting 212925802454 ("mm: oom: let oom_reap_task and exit_mmap
-run concurrently"). We can check for progress for a while before setting
-MMF_OOM_SKIP after the OOM reaper completed or gave up reaping.
+Please consider reviewing this patchset.
+
+v1: https://www.spinics.net/lists/devicetree/msg210980.html
+v2: https://lkml.org/lkml/2018/2/15/852
+v3: https://lkml.org/lkml/2018/3/2/801
+v4: https://lkml.org/lkml/2018/3/9/979
+v5: https://lkml.org/lkml/2018/4/5/480
+
+Lina Iyer (10):
+  drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
+  dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
+  drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
+  drivers: qcom: rpmh: add RPMH helper functions
+  drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+  drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
+  drivers: qcom: rpmh: cache sleep/wake state requests
+  drivers: qcom: rpmh: allow requests to be sent asynchronously
+  drivers: qcom: rpmh: add support for batch RPMH request
+  drivers: qcom: rpmh-rsc: allow active requests from wake TCS
+
+ .../devicetree/bindings/soc/qcom/rpmh-rsc.txt | 132 ++++
+ drivers/soc/qcom/Kconfig                      |  10 +
+ drivers/soc/qcom/Makefile                     |   4 +
+ drivers/soc/qcom/rpmh-internal.h              |  83 +++
+ drivers/soc/qcom/rpmh-rsc.c                   | 674 ++++++++++++++++++
+ drivers/soc/qcom/rpmh.c                       | 578 +++++++++++++++
+ drivers/soc/qcom/trace-rpmh.h                 |  81 +++
+ include/dt-bindings/soc/qcom,rpmh-rsc.h       |  14 +
+ include/soc/qcom/rpmh.h                       |  51 ++
+ include/soc/qcom/tcs.h                        |  56 ++
+ 10 files changed, 1683 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+ create mode 100644 drivers/soc/qcom/rpmh-internal.h
+ create mode 100644 drivers/soc/qcom/rpmh-rsc.c
+ create mode 100644 drivers/soc/qcom/rpmh.c
+ create mode 100644 drivers/soc/qcom/trace-rpmh.h
+ create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
+ create mode 100644 include/soc/qcom/rpmh.h
+ create mode 100644 include/soc/qcom/tcs.h
+
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
