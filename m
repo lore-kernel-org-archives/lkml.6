@@ -1,106 +1,70 @@
-Return-Path: <vitezslav@samel.cz>
-X-Google-Smtp-Source: AIpwx4+DjKLbB7cjz0OKIlxG9jz+lPY0tO7g/Kxq6UKJfS23lZghNVXD4CFWPJrtKlFcWiSWamio
-ARC-Seal: i=1; a=rsa-sha256; t=1524221649; cv=none;
+Return-Path: <ashok.raj@intel.com>
+X-Google-Smtp-Source: AIpwx48lk7OBW5WwempXzduQJy4O1NHmDLex6DdiceY75V6q+MvNPczR1qwPw3+laCGJGrymeBA7
+ARC-Seal: i=1; a=rsa-sha256; t=1524141140; cv=none;
         d=google.com; s=arc-20160816;
-        b=Oe142mp5SSFJJQpJGsPQcWDn4Vjc6stWzJRY3RBhBB6//6We3y0Cg/+lGwxkSE1FXl
-         3buCLamVObeen34s6NFdgXZrZLdrCDPHbEy33jsoLFTSZnQS3NTbnyzfNFwv6UxH8BXR
-         paZuixkAgtSiz2w7Orj+aOC7fLUYOEkjFTFemziYqu3krKrq/HKbzm83OPXDS/LutXUe
-         8kVOANqvtswsPuqVMjdyW9cMTPMCHIh1vJ+0ESVW13aesTlBeS8nQfcQlqNif1l7b1cw
-         Vp4jz+zkz6Z3qpPCxywTk9x7o0nCsFjlFtUnnDHzG55uOrXXVTHSytYZ3sDnxIlWsyyS
-         sa2Q==
+        b=xxANVgz863mAqL1EzdQkV0PyLCK7hXllHLbQGvqeSFs2spk33OBicYA1QZri+viRJg
+         S6H2F6lLeFHzdyP0bF6YxU6yZf6CYBHjGlBRzuQlyXPWI235vS1ZqLNl13eOjXfrPM5G
+         +NnmlQP6uUgBXICGB/ppTLblqSHnNd4qvV+ZCJZbuWL3byD7eLA2XcxzQzEzp9anmfcb
+         +bstRQnJykHYM/yCmuufiq0XDN+5IkBdtHW2tcZUKJNnK+K0aCbHXIxV25zjDFiLHEDv
+         OvSJO5jXr4gTqR+QbYwJ6Ixg4WC/9H3k/3wXCTpKGxd7sNpVcemAUidE1VTP914aZiOm
+         iPtg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:mail-followup-to
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=NCRVa90kwT2ZrikMR8ciGhuHr4WWzLYxA5WUOFxYXz4=;
-        b=guX4hkWlBPmyU5Pg828V1GQ9C1Q22eDCRXAsv78LK+nXUJ2L/qx7fqTnBy+PGW2osA
-         88e/P6WBdq1uv2ZbUg2luVEactZXYnKo3GOtZj4RhCPEAB9nD1eIkk4nJ3VcRDMzE70u
-         WvPMlLZTOwDGzf5/GB03LfoNc0fx8xtfIC4Lp3DtJm07dTWX0C2S+Onkc5JNBTpGLFD5
-         Np5Qop0pXn9KmPlrnmNKM6zSy5t11giog76rlwTzAAboR+OmU9IDsAekGtBZPVAA7gcY
-         l17TtJCZvVMu3oQiiRbCRDtdWlW8iRVHuj3mpm26i1LPUqZQyiIbSegyhHb+B4crlv0s
-         7nTw==
+        bh=KENZV2L16i/dWAPZsvVrKox053s2X7pWJGNdkQ1hS/Q=;
+        b=Hi43Onqzs27Tmtu24mq6fD4ES+DAos7jEOb/9FTtNdFrf8rG/MsJ66ORlWXM1em2tw
+         4X/fyNfrCQkSEeonlpfObPUuxmmX2NIPTxpseIsTBzwE4wb0rShC7qwmgDE3NVNUD/b5
+         ZOeskHtEF2snKvqhl9Lcwb6ZbJ1fkIyEfhpVaebT897bY6ytuPAGxb4Z6o+5ykic2XVe
+         MEUdDlUcf9Kr7KgvFZpl9KHmKo82sm6Vg9rFvKBCtl1b6N05O2jJhhY8DRPfFscjaYgJ
+         sqc9TYoT8gN/PnWT0yXInu5HZGbIcMFKsikCftLjoIcK8gLyqZ8+PHmqKxTvwf3SfJor
+         7S+w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 213.155.227.146 is neither permitted nor denied by best guess record for domain of vitezslav@samel.cz) smtp.mailfrom=vitezslav@samel.cz
+       spf=pass (google.com: domain of ashok.raj@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=ashok.raj@intel.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 213.155.227.146 is neither permitted nor denied by best guess record for domain of vitezslav@samel.cz) smtp.mailfrom=vitezslav@samel.cz
-Date: Fri, 20 Apr 2018 12:54:08 +0200
-From: Vitezslav Samel <vitezslav@samel.cz>
+       spf=pass (google.com: domain of ashok.raj@intel.com designates 192.55.52.88 as permitted sender) smtp.mailfrom=ashok.raj@intel.com
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.48,469,1517904000";
+   d="scan'208";a="35465898"
+Date: Thu, 19 Apr 2018 05:32:18 -0700
+From: "Raj, Ashok" <ashok.raj@intel.com>
 To: Borislav Petkov <bp@suse.de>
-Cc: "Raj, Ashok" <ashok.raj@intel.com>,
+Cc: Vitezslav Samel <vitezslav@samel.cz>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, x86-ml <x86@kernel.org>
-Subject: Re: [PATCH 1/2] x86/microcode/intel: Save microcode patch
- unconditionally
-Message-ID: <20180420105408.GA2257@pc11.op.pod.cz>
-Mail-Followup-To: Borislav Petkov <bp@suse.de>,
-	"Raj, Ashok" <ashok.raj@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, x86-ml <x86@kernel.org>
-References: <20180419104829.GE3896@pd.tnic>
+	linux-kernel@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>
+Subject: Re: 4.15.17 regression: bisected: timeout during microcode update
+Message-ID: <20180419123217.GA19746@araj-mobl1.jf.intel.com>
+References: <20180418081140.GA2439@pc11.op.pod.cz>
+ <20180418100721.GA5866@pd.tnic>
+ <20180418120839.GA5655@pc11.op.pod.cz>
+ <20180418122212.GA4290@pd.tnic>
+ <20180418135330.GA23580@araj-mobl1.jf.intel.com>
+ <20180419053531.GA2224@pc11.op.pod.cz>
+ <20180419104829.GE3896@pd.tnic>
  <20180419120239.GA2377@pc11.op.pod.cz>
  <20180419121840.GF3896@pd.tnic>
- <20180419134627.GA2387@pc11.op.pod.cz>
- <20180419163734.GB3905@pd.tnic>
- <20180420062021.GA2253@pc11.op.pod.cz>
- <20180420095220.GA13977@pd.tnic>
- <20180420100131.GA14217@pc11.op.pod.cz>
- <20180420103242.GB13977@pd.tnic>
- <20180420103428.GD13977@pd.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180420103428.GD13977@pd.tnic>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180419121840.GF3896@pd.tnic>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598261005085608238?=
-X-GMAIL-MSGID: =?utf-8?q?1598262240270756884?=
+X-GMAIL-THRID: =?utf-8?q?1598070825045426546?=
+X-GMAIL-MSGID: =?utf-8?q?1598177820015399614?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 20, 2018 at 12:34:28PM +0200, Borislav Petkov wrote:
-> save_mc_for_early() was a no-op on !CONFIG_HOTPLUG_CPU but the
-> generic_load_microcode() path saves the microcode patches it has found
-> into our cache of patches which is used for late loading too. Regardless
-> of whether we do CPU hotplug or not.
-> 
-> So make the saving unconditional so that late loading can find the
-> proper patch.
-> 
-> Reported-by: Vitezslav Samel <vitezslav@samel.cz>
+Thanks.. also can you remove the ret below, and send the output
+of /proc/cpuinfo before and after?
 
-  Tested-by: Vitezslav Samel <vitezslav@samel.cz>
+On Thu, Apr 19, 2018 at 02:18:41PM +0200, Borislav Petkov wrote:
+>  	} else {
+> +		pr_info("%s: CPU%d returning 0x%x\n", __func__, cpu, err);
+>  		return ret;
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>  	}
+>  
 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: <stable@vger.kernel.org> # if it has backported d8c3b52c00a05036e0a6b315b4b17921a7b67997
-> Link: http://lkml.kernel.org/r/20180418081140.GA2439@pc11.op.pod.cz
-> ---
->  arch/x86/kernel/cpu/microcode/intel.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-> index 32b8e5724f96..1c2cfa0644aa 100644
-> --- a/arch/x86/kernel/cpu/microcode/intel.c
-> +++ b/arch/x86/kernel/cpu/microcode/intel.c
-> @@ -485,7 +485,6 @@ static void show_saved_mc(void)
->   */
->  static void save_mc_for_early(u8 *mc, unsigned int size)
->  {
-> -#ifdef CONFIG_HOTPLUG_CPU
->  	/* Synchronization during CPU hotplug. */
->  	static DEFINE_MUTEX(x86_cpu_microcode_mutex);
->  
-> @@ -495,7 +494,6 @@ static void save_mc_for_early(u8 *mc, unsigned int size)
->  	show_saved_mc();
->  
->  	mutex_unlock(&x86_cpu_microcode_mutex);
-> -#endif
->  }
->  
->  static bool load_builtin_intel_microcode(struct cpio_data *cp)
-> -- 
-> 2.13.0
-> 
-> SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
-> -- 
+This should not panic, but curious what the microcode versions reported...
