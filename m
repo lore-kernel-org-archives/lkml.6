@@ -1,53 +1,55 @@
 Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx49hm0mH3jYH8dUiumCRkSm5gkEXZhAWMJWgP98U5Ndho1NJ5JCL7IjxVXIVvzBympZxJXZM
-ARC-Seal: i=1; a=rsa-sha256; t=1523954810; cv=none;
+X-Google-Smtp-Source: AIpwx488zpM7IaOIddJcPpKNH0pj0PE1ZHr6GyGoTUkJ1NMazybKm92L+m+HGdkX6F56WB9deTpU
+ARC-Seal: i=1; a=rsa-sha256; t=1524133714; cv=none;
         d=google.com; s=arc-20160816;
-        b=pI/VZAdzO9je1kH7/yn+fPVhRF38rUipRc9ue5UP4csji4MFXH8MOMJ8yJhcnWFhwO
-         CQFtZansOUdNytdKP//Q0tY1zuHdhf51OdqlEVl8FYaZTGdd9hVDZQ/81TZsbrW/riBC
-         u9CdwNvrA/O646Pr205ytp3STXRaFF9oU/vBNv8gwMg+QUTaAsfwogoS6NPA9GHq/7XO
-         /2GTouVZ9rYrGFxAHh5CYKqbW2jBjBBTa00nVbFvzF62/xh0G/sbys49bUC7wF9dv3ME
-         VtWsRDER9cfLM/86QvWQ9QhjirjGzQSjQ8U1b4RU5WaTvCm3iaUuqfGaZlz0vKiz9/Sc
-         wRug==
+        b=WWYFuZRL1j7aPvGi6RKAFO88QdeWm1uLyKadQeQIasc41YhkfaVZE/NF+i3sphy7HJ
+         J0CAeWTwVXgj6uf6hIpMTJo6zDE/FnXg5t4SJIp9UlcUXQI6i0L7HeJKrUAwxSozOBH+
+         hVM8IljtaQT0pDMUu+E+otdhmDflcCT+xDvhgsPnI/xnvacxI1q9X8IogC6v3MKqCSII
+         ad56Ge7sW4F8qA5Tog/rxprFRFcJojb7zr43rsw5Uu1RSkwreXuyUyqrV6qnf6JMNpvQ
+         lYTzA93MGUwuUkUEkbxTE19Qi5ph12lESrHv78bVLtiJwfvamuUDWhzt1U7fJAZqBVcc
+         WGqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=w6/aWsGN0YOYB/NI2L0glJgqmBg4UTqi/T+F2nXI9Fo=;
-        b=xOjDflzIZG5SznPxfMw725Qvptr+RHZOn8GA2uU7rFLf92ZzTd4U1Ty2T5qkD+GzpD
-         +sldA1JiRmeuXQX796/3UsxXs5pJSGb/SJD2JSpJYlncwO3+RwwdnF018HRhyD+jXBNm
-         7VgCPVr8XKqsiw6DnySIKI6cKhCLpeTYVsy0Zy9obU++H1DDT/bnZY5nLdWA3EsFPZyI
-         ryb/i2tC22Y3vU16WOCZbyIo7ReN9VGRciMreKdLEG24OffIAx5M8ze2E7+d7Bg5BeMM
-         bi98uvDoediTWERh/HtPQW+dyrFdAGKqBOWWh3TW7HxcqxKuUzrrJjTaWFRWhxOlnPr9
-         zwpw==
+        h=list-id:precedence:sender:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=bmb++EjRledQ2Dn9RPHmsgCYxgm0c5UUpBQMHIECUMs=;
+        b=iU0NCYmPV8XH5GHOPT4ikpDuTHIjUNNwTg5cnlc4LHgPTPxOph+T1qRpd01ROaRAXy
+         VTuxiOIttAqd4spgUQ543szaV/hzm+yKQ9abt4XiaeIEFscsvSA/FLYRSiwNbaP3NIx/
+         00btko0yPwGs0Kv1eyfhIkWT+Q2LlnKGfe1bAXcZvx0/SK0SeD1Wn7j+C8It/CWc8C3A
+         Jenow1Ulk/EXc5azrJqQRjk4ob9JX1hZ3+7WtQp3C+LUg0CboIV/J3B2U/sCivOaLl/K
+         YIlJiSlYWRmVk+8LP/sWfwhrruRENijU8q9IhnIeq/G0XdLIFJjM8E8GZMffKiFZ8N9p
+         jkyA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=jv9+NAN8;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=HJE+WVgK;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=jv9+NAN8;
+       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=HJE+WVgK;
        spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751878AbeDQIqi (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Tue, 17 Apr 2018 04:46:38 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44963 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751211AbeDQIqh (ORCPT
+        id S1751537AbeDSK2d (ORCPT <rfc822;gregkh@linuxfoundation.org>);
+        Thu, 19 Apr 2018 06:28:33 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46252 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbeDSK2c (ORCPT
         <rfc822;linux-kselftest@vger.kernel.org>);
-        Tue, 17 Apr 2018 04:46:37 -0400
+        Thu, 19 Apr 2018 06:28:32 -0400
 From: Anders Roxell <anders.roxell@linaro.org>
 To: shuah@kernel.org, corbet@lwn.net
 Cc: linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] doc: dev-tools: kselftest.rst: update contributing new tests
-Date: Tue, 17 Apr 2018 10:46:31 +0200
-Message-Id: <20180417084631.11242-1-anders.roxell@linaro.org>
+Subject: [PATCH v2] doc: dev-tools: kselftest.rst: update contributing new tests
+Date: Thu, 19 Apr 2018 12:28:25 +0200
+Message-Id: <20180419102825.2990-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180417084631.11242-1-anders.roxell@linaro.org>
+References: <20180417084631.11242-1-anders.roxell@linaro.org>
 Sender: linux-kselftest-owner@vger.kernel.org
 X-Mailing-List: linux-kselftest@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597982439415965732?=
-X-GMAIL-MSGID: =?utf-8?q?1597982439415965732?=
+X-GMAIL-MSGID: =?utf-8?q?1598170033359465498?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -56,19 +58,21 @@ possible and then the system headers.
 
 Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- Documentation/dev-tools/kselftest.rst | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/dev-tools/kselftest.rst | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/Documentation/dev-tools/kselftest.rst b/Documentation/dev-tools/kselftest.rst
-index e80850eefe13..27f08d6ba91c 100644
+index e80850eefe13..3bf371a938d0 100644
 --- a/Documentation/dev-tools/kselftest.rst
 +++ b/Documentation/dev-tools/kselftest.rst
-@@ -151,6 +151,9 @@ Contributing new tests (details)
+@@ -151,6 +151,11 @@ Contributing new tests (details)
     TEST_FILES, TEST_GEN_FILES mean it is the file which is used by
     test.
  
-+ * First use the headers inside the kernel, and then the system headers. The
-+   internal headers should be the primary focus to be able to find regressions.
++ * First use the headers inside the kernel source and/or git repo, and then the
++   system headers.  Headers for the kernel release as opposed to headers
++   installed by the distro on the system should be the primary focus to be able
++   to find regressions.
 +
  Test Harness
  ============
