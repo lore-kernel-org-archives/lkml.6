@@ -1,72 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753549AbeDSPAm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:00:42 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35553 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752900AbeDSPAj (ORCPT
+        id S1753738AbeDSPCV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:02:21 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:34370 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752932AbeDSPCT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:00:39 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 1/3] ARM: dts: stm32: add USBPHYC support to stm32mp157c
-Date: Thu, 19 Apr 2018 16:59:54 +0200
-Message-ID: <1524149996-27809-2-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524149996-27809-1-git-send-email-amelie.delaunay@st.com>
-References: <1524149996-27809-1-git-send-email-amelie.delaunay@st.com>
+        Thu, 19 Apr 2018 11:02:19 -0400
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Date: Thu, 19 Apr 2018 16:02:13 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        <patches@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: Re: [PATCH 05/21] regulator: arizona-ldo1: Look up a descriptor and
+ pass to the core
+Message-ID: <20180419150213.kzcl5ghpzkt2kkgk@localhost.localdomain>
+References: <20180212131717.27193-1-linus.walleij@linaro.org>
+ <20180212131717.27193-6-linus.walleij@linaro.org>
+ <20180213110631.o3zn5bifvypofsyg@localhost.localdomain>
+ <CACRpkdbOfycfGD-13OTEk7xT5FqLQsvcHrN-mn-vgjQ93cPHyQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
- signatures=0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbOfycfGD-13OTEk7xT5FqLQsvcHrN-mn-vgjQ93cPHyQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=854 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1804190133
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for USBPHYC (USB PHY Controller) to STM32MP157C SoC.
-It manages two usb2 ports.
+On Thu, Apr 19, 2018 at 03:43:22PM +0200, Linus Walleij wrote:
+> On Tue, Feb 13, 2018 at 12:06 PM, Charles Keepax
+> <ckeepax@opensource.cirrus.com> wrote:
+> > On Mon, Feb 12, 2018 at 02:17:01PM +0100, Linus Walleij wrote:
+> >> Instead of passing a global GPIO number, pass a descriptor looked
+> >> up with the standard devm_gpiod_get_optional() call.
+> >>
+> >> We have augmented the GPIO core to look up the regulator special
+> >> GPIO "wlf,ldoena" in a separate patch.
+> >>
+> >> Cc: patches@opensource.cirrus.com
+> >> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+> >> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> >> ---
+> > Also looking at this more you will need to you
+> > devm_gpio_get_from_of_node here since the device tree binding is
+> > for wlf,ldoena not wlf,ldoena-gpio. So this patch currently
+> > breaks the binding.
+> 
+> Actually not, because I fixed that in  the special quirk patch
+> 6a537d48461d
+> "gpio: of: Support regulator nonstandard GPIO properties"
+> as mentioned in the commit message. (Will clarify.)
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Apologies my bad should have spotted that in the commit message.
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index bc3eddc..c64cac1 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -167,6 +167,26 @@
- 			#reset-cells = <1>;
- 		};
- 
-+		usbphyc: usbphyc@5a006000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "st,stm32mp1-usbphyc";
-+			reg = <0x5a006000 0x1000>;
-+			clocks = <&rcc USBPHY_K>;
-+			resets = <&rcc USBPHY_R>;
-+			status = "disabled";
-+
-+			usbphyc_port0: usb-phy@0 {
-+				#phy-cells = <0>;
-+				reg = <0>;
-+			};
-+
-+			usbphyc_port1: usb-phy@1 {
-+				#phy-cells = <1>;
-+				reg = <1>;
-+			};
-+		};
-+
- 		usart1: serial@5c000000 {
- 			compatible = "st,stm32h7-uart";
- 			reg = <0x5c000000 0x400>;
--- 
-2.7.4
+Thanks,
+Charles
