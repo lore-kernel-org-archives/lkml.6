@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753259AbeDSNce (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:32:34 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42838 "EHLO mx1.redhat.com"
+        id S1753183AbeDSNcY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:32:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42818 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753221AbeDSNca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:32:30 -0400
+        id S1753082AbeDSNcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 09:32:17 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 12/24] proc: Add fs_context support to procfs [ver #7]
+Subject: [PATCH 10/24] VFS: Remove unused code after filesystem context
+ changes [ver #7]
 From: David Howells <dhowells@redhat.com>
 To: viro@zeniv.linux.org.uk
 Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com, linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org
-Date: Thu, 19 Apr 2018 14:32:28 +0100
-Message-ID: <152414474815.23902.6952548431423168966.stgit@warthog.procyon.org.uk>
+Date: Thu, 19 Apr 2018 14:32:14 +0100
+Message-ID: <152414473491.23902.15378926165697208797.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
 References: <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -28,291 +29,246 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add fs_context support to procfs.
+Remove code that is now unused after the filesystem context changes.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/proc/inode.c    |    2 -
- fs/proc/internal.h |    2 -
- fs/proc/root.c     |  169 ++++++++++++++++++++++++++++++++++------------------
- 3 files changed, 113 insertions(+), 60 deletions(-)
+ fs/internal.h              |    2 --
+ fs/super.c                 |   54 --------------------------------------------
+ include/linux/lsm_hooks.h  |    3 --
+ include/linux/security.h   |    7 ------
+ security/security.c        |    5 ----
+ security/selinux/hooks.c   |   20 ----------------
+ security/smack/smack_lsm.c |   33 ---------------------------
+ 7 files changed, 124 deletions(-)
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 0b13cf6eb6d7..7aa86dd65ba8 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -128,7 +128,7 @@ const struct super_operations proc_sops = {
- 	.drop_inode	= generic_delete_inode,
- 	.evict_inode	= proc_evict_inode,
- 	.statfs		= simple_statfs,
--	.remount_fs	= proc_remount,
-+	.reconfigure	= proc_reconfigure,
- 	.show_options	= proc_show_options,
- };
- 
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 3182e1b636d3..a5ab9504768a 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -254,7 +254,7 @@ static inline void proc_tty_init(void) {}
- extern struct proc_dir_entry proc_root;
- 
- extern void proc_self_init(void);
--extern int proc_remount(struct super_block *, int *, char *, size_t);
-+extern int proc_reconfigure(struct super_block *, struct fs_context *);
+diff --git a/fs/internal.h b/fs/internal.h
+index 91a990234488..f47ede6ace5a 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -101,8 +101,6 @@ extern struct file *get_empty_filp(void);
+ extern int do_remount_sb(struct super_block *, int, void *, size_t, int,
+ 			 struct fs_context *);
+ extern bool trylock_super(struct super_block *sb);
+-extern struct dentry *mount_fs(struct file_system_type *,
+-			       int, const char *, void *, size_t);
+ extern struct super_block *user_get_super(dev_t);
  
  /*
-  * task_[no]mmu.c
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 2fbc177f37a8..e6bd31fbc714 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -19,14 +19,24 @@
- #include <linux/module.h>
- #include <linux/bitops.h>
- #include <linux/user_namespace.h>
-+#include <linux/fs_context.h>
- #include <linux/mount.h>
- #include <linux/pid_namespace.h>
- #include <linux/parser.h>
- #include <linux/cred.h>
- #include <linux/magic.h>
-+#include <linux/slab.h>
+diff --git a/fs/super.c b/fs/super.c
+index 5d65a45ca6db..a27487e34ea4 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1441,60 +1441,6 @@ struct dentry *mount_single(struct file_system_type *fs_type,
+ }
+ EXPORT_SYMBOL(mount_single);
  
- #include "internal.h"
+-struct dentry *
+-mount_fs(struct file_system_type *type, int flags, const char *name,
+-	 void *data, size_t data_size)
+-{
+-	struct dentry *root;
+-	struct super_block *sb;
+-	char *secdata = NULL;
+-	int error = -ENOMEM;
+-
+-	if (data && !(type->fs_flags & FS_BINARY_MOUNTDATA)) {
+-		secdata = alloc_secdata();
+-		if (!secdata)
+-			goto out;
+-
+-		error = security_sb_copy_data(data, data_size, secdata);
+-		if (error)
+-			goto out_free_secdata;
+-	}
+-
+-	root = type->mount(type, flags, name, data, data_size);
+-	if (IS_ERR(root)) {
+-		error = PTR_ERR(root);
+-		goto out_free_secdata;
+-	}
+-	sb = root->d_sb;
+-	BUG_ON(!sb);
+-	WARN_ON(!sb->s_bdi);
+-	sb->s_flags |= SB_BORN;
+-
+-	error = security_sb_kern_mount(sb, flags, secdata, data_size);
+-	if (error)
+-		goto out_sb;
+-
+-	/*
+-	 * filesystems should never set s_maxbytes larger than MAX_LFS_FILESIZE
+-	 * but s_maxbytes was an unsigned long long for many releases. Throw
+-	 * this warning for a little while to try and catch filesystems that
+-	 * violate this rule.
+-	 */
+-	WARN((sb->s_maxbytes < 0), "%s set sb->s_maxbytes to "
+-		"negative value (%lld)\n", type->name, sb->s_maxbytes);
+-
+-	up_write(&sb->s_umount);
+-	free_secdata(secdata);
+-	return root;
+-out_sb:
+-	dput(root);
+-	deactivate_locked_super(sb);
+-out_free_secdata:
+-	free_secdata(secdata);
+-out:
+-	return ERR_PTR(error);
+-}
+-
+ /*
+  * Setup private BDI for given superblock. It gets automatically cleaned up
+  * in generic_shutdown_super().
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index d533ca038604..1d6481c4f965 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1511,8 +1511,6 @@ union security_list_options {
+ 	void (*sb_free_security)(struct super_block *sb);
+ 	int (*sb_copy_data)(char *orig, size_t orig_size, char *copy);
+ 	int (*sb_remount)(struct super_block *sb, void *data, size_t data_size);
+-	int (*sb_kern_mount)(struct super_block *sb, int flags,
+-			     void *data, size_t data_size);
+ 	int (*sb_show_options)(struct seq_file *m, struct super_block *sb);
+ 	int (*sb_statfs)(struct dentry *dentry);
+ 	int (*sb_mount)(const char *dev_name, const struct path *path,
+@@ -1858,7 +1856,6 @@ struct security_hook_heads {
+ 	struct hlist_head sb_free_security;
+ 	struct hlist_head sb_copy_data;
+ 	struct hlist_head sb_remount;
+-	struct hlist_head sb_kern_mount;
+ 	struct hlist_head sb_show_options;
+ 	struct hlist_head sb_statfs;
+ 	struct hlist_head sb_mount;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 22b83dc28bd3..5b9d9ffa6abd 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -245,7 +245,6 @@ int security_sb_alloc(struct super_block *sb);
+ void security_sb_free(struct super_block *sb);
+ int security_sb_copy_data(char *orig, size_t orig_size, char *copy);
+ int security_sb_remount(struct super_block *sb, void *data, size_t data_size);
+-int security_sb_kern_mount(struct super_block *sb, int flags, void *data, size_t data_size);
+ int security_sb_show_options(struct seq_file *m, struct super_block *sb);
+ int security_sb_statfs(struct dentry *dentry);
+ int security_sb_mount(const char *dev_name, const struct path *path,
+@@ -601,12 +600,6 @@ static inline int security_sb_remount(struct super_block *sb, void *data, size_t
+ 	return 0;
+ }
  
-+struct proc_fs_context {
-+	struct fs_context	fc;
-+	struct pid_namespace	*pid_ns;
-+	unsigned long		mask;
-+	int			hidepid;
-+	int			gid;
-+};
-+
- enum {
- 	Opt_gid, Opt_hidepid, Opt_err,
- };
-@@ -37,56 +47,60 @@ static const match_table_t tokens = {
- 	{Opt_err, NULL},
- };
- 
--static int proc_parse_options(char *options, struct pid_namespace *pid)
-+static int proc_parse_option(struct fs_context *fc, char *opt, size_t len)
+-static inline int security_sb_kern_mount(struct super_block *sb, int flags,
+-					 void *data, size_t data_size)
+-{
+-	return 0;
+-}
+-
+ static inline int security_sb_show_options(struct seq_file *m,
+ 					   struct super_block *sb)
  {
--	char *p;
-+	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
- 	substring_t args[MAX_OPT_ARGS];
--	int option;
+diff --git a/security/security.c b/security/security.c
+index 35abdc964724..9693a175587d 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -420,11 +420,6 @@ int security_sb_remount(struct super_block *sb, void *data, size_t data_size)
+ 	return call_int_hook(sb_remount, 0, sb, data, data_size);
+ }
+ 
+-int security_sb_kern_mount(struct super_block *sb, int flags, void *data, size_t data_size)
+-{
+-	return call_int_hook(sb_kern_mount, 0, sb, flags, data, data_size);
+-}
+-
+ int security_sb_show_options(struct seq_file *m, struct super_block *sb)
+ {
+ 	return call_int_hook(sb_show_options, 0, m, sb);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 46d31858eaba..cb76a2428926 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2909,25 +2909,6 @@ static int selinux_sb_remount(struct super_block *sb, void *data, size_t data_si
+ 	goto out_free_opts;
+ }
+ 
+-static int selinux_sb_kern_mount(struct super_block *sb, int flags, void *data, size_t data_size)
+-{
+-	const struct cred *cred = current_cred();
+-	struct common_audit_data ad;
+-	int rc;
+-
+-	rc = superblock_doinit(sb, data);
+-	if (rc)
+-		return rc;
+-
+-	/* Allow all mounts performed by the kernel */
+-	if (flags & MS_KERNMOUNT)
+-		return 0;
+-
+-	ad.type = LSM_AUDIT_DATA_DENTRY;
+-	ad.u.dentry = sb->s_root;
+-	return superblock_has_perm(cred, sb, FILESYSTEM__MOUNT, &ad);
+-}
+-
+ static int selinux_sb_statfs(struct dentry *dentry)
+ {
+ 	const struct cred *cred = current_cred();
+@@ -7138,7 +7119,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
+ 	LSM_HOOK_INIT(sb_copy_data, selinux_sb_copy_data),
+ 	LSM_HOOK_INIT(sb_remount, selinux_sb_remount),
+-	LSM_HOOK_INIT(sb_kern_mount, selinux_sb_kern_mount),
+ 	LSM_HOOK_INIT(sb_show_options, selinux_sb_show_options),
+ 	LSM_HOOK_INIT(sb_statfs, selinux_sb_statfs),
+ 	LSM_HOOK_INIT(sb_mount, selinux_mount),
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 5dc31a940961..5fe9e7948fde 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1150,38 +1150,6 @@ static int smack_set_mnt_opts(struct super_block *sb,
+ 	return 0;
+ }
+ 
+-/**
+- * smack_sb_kern_mount - Smack specific mount processing
+- * @sb: the file system superblock
+- * @flags: the mount flags
+- * @data: the smack mount options
+- *
+- * Returns 0 on success, an error code on failure
+- */
+-static int smack_sb_kern_mount(struct super_block *sb, int flags,
+-			       void *data, size_t data_size)
+-{
+-	int rc = 0;
+-	char *options = data;
+-	struct security_mnt_opts opts;
+-
+-	security_init_mnt_opts(&opts);
 -
 -	if (!options)
--		return 1;
+-		goto out;
 -
--	while ((p = strsep(&options, ",")) != NULL) {
--		int token;
--		if (!*p)
--			continue;
+-	rc = smack_parse_opts_str(options, &opts);
+-	if (rc)
+-		goto out_err;
 -
--		args[0].to = args[0].from = NULL;
--		token = match_token(p, tokens, args);
--		switch (token) {
--		case Opt_gid:
--			if (match_int(&args[0], &option))
--				return 0;
--			pid->pid_gid = make_kgid(current_user_ns(), option);
--			break;
--		case Opt_hidepid:
--			if (match_int(&args[0], &option))
--				return 0;
--			if (option < HIDEPID_OFF ||
--			    option > HIDEPID_INVISIBLE) {
--				pr_err("proc: hidepid value must be between 0 and 2.\n");
--				return 0;
--			}
--			pid->hide_pid = option;
--			break;
--		default:
--			pr_err("proc: unrecognized mount option \"%s\" "
--			       "or missing value\n", p);
--			return 0;
-+	int token;
-+	
-+	args[0].to = args[0].from = NULL;
-+	token = match_token(opt, tokens, args);
-+	switch (token) {
-+	case Opt_gid:
-+		if (match_int(&args[0], &ctx->gid))
-+			return -EINVAL;
-+		break;
-+
-+	case Opt_hidepid:
-+		if (match_int(&args[0], &ctx->hidepid))
-+			return -EINVAL;
-+		if (ctx->hidepid < HIDEPID_OFF ||
-+		    ctx->hidepid > HIDEPID_INVISIBLE) {
-+			pr_err("proc: hidepid value must be between 0 and 2.\n");
-+			return -EINVAL;
- 		}
-+		break;
-+
-+	default:
-+		pr_err("proc: unrecognized mount option \"%s\" or missing value\n",
-+		       opt);
-+		return -EINVAL;
- 	}
- 
--	return 1;
-+	ctx->mask |= 1 << token;
-+	return 0;
-+}
-+
-+static void proc_set_options(struct super_block *s,
-+			     struct fs_context *fc,
-+			     struct pid_namespace *pid_ns,
-+			     struct user_namespace *user_ns)
-+{
-+	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
-+
-+	if (ctx->mask & (1 << Opt_gid))
-+		pid_ns->pid_gid = make_kgid(user_ns, ctx->gid);
-+	if (ctx->mask & (1 << Opt_hidepid))
-+		pid_ns->hide_pid = ctx->hidepid;
- }
- 
--static int proc_fill_super(struct super_block *s, void *data, size_t data_size, int silent)
-+static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- {
--	struct pid_namespace *ns = get_pid_ns(s->s_fs_info);
-+	struct pid_namespace *pid_ns = get_pid_ns(s->s_fs_info);
- 	struct inode *root_inode;
- 	int ret;
- 
--	if (!proc_parse_options(data, ns))
--		return -EINVAL;
-+	proc_set_options(s, fc, pid_ns, current_user_ns());
- 
- 	/* User space would break if executables or devices appear on proc */
- 	s->s_iflags |= SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
-@@ -103,7 +117,7 @@ static int proc_fill_super(struct super_block *s, void *data, size_t data_size,
- 	 * top of it
- 	 */
- 	s->s_stack_depth = FILESYSTEM_MAX_STACK_DEPTH;
--	
-+
- 	pde_get(&proc_root);
- 	root_inode = proc_get_inode(s, &proc_root);
- 	if (!root_inode) {
-@@ -124,30 +138,46 @@ static int proc_fill_super(struct super_block *s, void *data, size_t data_size,
- 	return proc_setup_thread_self(s);
- }
- 
--int proc_remount(struct super_block *sb, int *flags,
--		 char *data, size_t data_size)
-+int proc_reconfigure(struct super_block *sb, struct fs_context *fc)
- {
- 	struct pid_namespace *pid = sb->s_fs_info;
- 
- 	sync_filesystem(sb);
--	return !proc_parse_options(data, pid);
-+
-+	if (fc)
-+		proc_set_options(sb, fc, pid, current_user_ns());
-+	return 0;
- }
- 
--static struct dentry *proc_mount(struct file_system_type *fs_type,
--				 int flags, const char *dev_name,
--				 void *data, size_t data_size)
-+static int proc_get_tree(struct fs_context *fc)
- {
--	struct pid_namespace *ns;
-+	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
- 
--	if (flags & SB_KERNMOUNT) {
--		ns = data;
--		data = NULL;
--	} else {
--		ns = task_active_pid_ns(current);
--	}
-+	ctx->fc.s_fs_info = ctx->pid_ns;
-+	return vfs_get_super(fc, vfs_get_keyed_super, proc_fill_super);
-+}
- 
--	return mount_ns(fs_type, flags, data, data_size, ns, ns->user_ns,
--			proc_fill_super);
-+static void proc_fs_context_free(struct fs_context *fc)
-+{
-+	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
-+
-+	if (ctx->pid_ns)
-+		put_pid_ns(ctx->pid_ns);
-+}
-+
-+static const struct fs_context_operations proc_fs_context_ops = {
-+	.free		= proc_fs_context_free,
-+	.parse_option	= proc_parse_option,
-+	.get_tree	= proc_get_tree,
-+};
-+
-+static int proc_init_fs_context(struct fs_context *fc, struct super_block *src_sb)
-+{
-+	struct proc_fs_context *ctx = container_of(fc, struct proc_fs_context, fc);
-+
-+	ctx->pid_ns = get_pid_ns(task_active_pid_ns(current));
-+	ctx->fc.ops = &proc_fs_context_ops;
-+	return 0;
- }
- 
- static void proc_kill_sb(struct super_block *sb)
-@@ -165,7 +195,8 @@ static void proc_kill_sb(struct super_block *sb)
- 
- static struct file_system_type proc_fs_type = {
- 	.name		= "proc",
--	.mount		= proc_mount,
-+	.fs_context_size	= sizeof(struct proc_fs_context),
-+	.init_fs_context	= proc_init_fs_context,
- 	.kill_sb	= proc_kill_sb,
- 	.fs_flags	= FS_USERNS_MOUNT,
- };
-@@ -205,7 +236,7 @@ static struct dentry *proc_root_lookup(struct inode * dir, struct dentry * dentr
- {
- 	if (!proc_pid_lookup(dir, dentry, flags))
- 		return NULL;
--	
-+
- 	return proc_lookup(dir, dentry, flags);
- }
- 
-@@ -259,9 +290,31 @@ struct proc_dir_entry proc_root = {
- 
- int pid_ns_prepare_proc(struct pid_namespace *ns)
- {
-+	struct proc_fs_context *ctx;
-+	struct fs_context *fc;
- 	struct vfsmount *mnt;
-+	int ret;
-+
-+	fc = vfs_new_fs_context(&proc_fs_type, NULL, 0,
-+				FS_CONTEXT_FOR_KERNEL_MOUNT);
-+	if (IS_ERR(fc))
-+		return PTR_ERR(fc);
-+
-+	ctx = container_of(fc, struct proc_fs_context, fc);
-+	if (ctx->pid_ns != ns) {
-+		put_pid_ns(ctx->pid_ns);
-+		get_pid_ns(ns);
-+		ctx->pid_ns = ns;
-+	}
-+
-+	ret = vfs_get_tree(fc);
-+	if (ret < 0) {
-+		put_fs_context(fc);
-+		return ret;
-+	}
- 
--	mnt = kern_mount_data(&proc_fs_type, ns, 0);
-+	mnt = vfs_create_mount(fc);
-+	put_fs_context(fc);
- 	if (IS_ERR(mnt))
- 		return PTR_ERR(mnt);
- 
+-out:
+-	rc = smack_set_mnt_opts(sb, &opts, 0, NULL);
+-
+-out_err:
+-	security_free_mnt_opts(&opts);
+-	return rc;
+-}
+-
+ /**
+  * smack_sb_statfs - Smack check on statfs
+  * @dentry: identifies the file system in question
+@@ -4942,7 +4910,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(sb_alloc_security, smack_sb_alloc_security),
+ 	LSM_HOOK_INIT(sb_free_security, smack_sb_free_security),
+ 	LSM_HOOK_INIT(sb_copy_data, smack_sb_copy_data),
+-	LSM_HOOK_INIT(sb_kern_mount, smack_sb_kern_mount),
+ 	LSM_HOOK_INIT(sb_statfs, smack_sb_statfs),
+ 	LSM_HOOK_INIT(sb_set_mnt_opts, smack_set_mnt_opts),
+ 	LSM_HOOK_INIT(sb_parse_opts_str, smack_parse_opts_str),
