@@ -1,79 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752683AbeDSNWq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:22:46 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:27931 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753059AbeDSNWn (ORCPT
+        id S1753110AbeDSNW7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:22:59 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34319 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752703AbeDSNW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:22:43 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 3/4] dt-bindings: rtc: update stm32-rtc documentation for st,syscfg property
-Date: Thu, 19 Apr 2018 15:21:42 +0200
-Message-ID: <1524144103-21432-4-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
-References: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
+        Thu, 19 Apr 2018 09:22:57 -0400
+X-Google-Smtp-Source: AIpwx4+rafxUBGYcpSWx6zQjHiN0ScYnFAQu5NrOV449odtneSauoEG3QCXzuSK9q2g+HNSykzD6xQ==
+Subject: Re: [Xen-devel] [PATCH] Input: xen-kbdfront - allow better run-time
+ configuration
+To: Juergen Gross <jgross@suse.com>, Jason Andryuk <jandryuk@gmail.com>
+Cc: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>, dmitry.torokhov@gmail.com,
+        lyan@suse.com, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180418150445.9805-1-andr2000@gmail.com>
+ <ccb7a33b-7862-9803-fb24-67861d5ecab9@suse.com>
+ <2bff035e-303e-d644-5f51-5e64150c097c@gmail.com>
+ <c833ab0d-746c-c734-3dbe-e02ae7951d1d@suse.com>
+ <d935e7d9-090f-a8b1-7f12-5e0a7f0adf1b@gmail.com>
+ <CAKf6xpsM03AB-mHaYdpVfipRdtx9uO1rS=bHZdEi3fkfTo6b4g@mail.gmail.com>
+ <5ed20b99-263d-d906-9349-d064eead36ad@gmail.com>
+ <d4075815-2b41-781d-3541-6a17a181512d@suse.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <1d737998-6b90-ba33-bafa-8a8d4dc568d8@gmail.com>
+Date: Thu, 19 Apr 2018 16:22:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
- signatures=0
+In-Reply-To: <d4075815-2b41-781d-3541-6a17a181512d@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RTC driver should not be aware of the PWR registers offset and bits
-position. Furthermore, we can imagine that Disable Backup Protection (DBP)
-relative register and bit mask could change depending on the SoC. So this
-patch moves st,syscfg property from single pwrcfg phandle to pwrcfg
-phandle/offset/mask triplet.
-
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
-index a66692a..00f8b5d 100644
---- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
-@@ -14,8 +14,10 @@ Required properties:
-     It is required only on stm32h7.
- - interrupt-parent: phandle for the interrupt controller.
- - interrupts: rtc alarm interrupt.
--- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup domain
--  (RTC registers) write protection.
-+- st,syscfg: phandle/offset/mask triplet. The phandle to pwrcfg used to
-+  access control register at offset, and change the dbp (Disable Backup
-+  Protection) bit represented by the mask, mandatory to disable/enable backup
-+  domain (RTC registers) write protection.
- 
- Optional properties (to override default rtc_ck parent clock):
- - assigned-clocks: reference to the rtc_ck clock entry.
-@@ -31,7 +33,7 @@ Example:
- 		assigned-clock-parents = <&rcc 1 CLK_LSE>;
- 		interrupt-parent = <&exti>;
- 		interrupts = <17 1>;
--		st,syscfg = <&pwrcfg>;
-+		st,syscfg = <&pwrcfg 0x00 0x100>;
- 	};
- 
- 	rtc: rtc@58004000 {
-@@ -44,5 +46,5 @@ Example:
- 		interrupt-parent = <&exti>;
- 		interrupts = <17 1>;
- 		interrupt-names = "alarm";
--		st,syscfg = <&pwrcfg>;
-+		st,syscfg = <&pwrcfg 0x00 0x100>;
- 	};
--- 
-2.7.4
+On 04/19/2018 04:19 PM, Juergen Gross wrote:
+> On 19/04/18 15:12, Oleksandr Andrushchenko wrote:
+>> On 04/19/2018 04:10 PM, Jason Andryuk wrote:
+>>> On Thu, Apr 19, 2018 at 9:01 AM, Oleksandr Andrushchenko
+>>> <andr2000@gmail.com> wrote:
+>>>> Ok, so I'll send v2 with the following changes:
+>>>>
+>>>> diff --git a/drivers/input/misc/xen-kbdfront.c
+>>>> b/drivers/input/misc/xen-kbdfront.c
+>>>> index a3306aad40b0..d8cca212f737 100644
+>>>> --- a/drivers/input/misc/xen-kbdfront.c
+>>>> +++ b/drivers/input/misc/xen-kbdfront.c
+>>>> @@ -51,13 +51,13 @@ module_param_array(ptr_size, int, NULL, 0444);
+>>>>    MODULE_PARM_DESC(ptr_size,
+>>>>           "Pointing device width, height in pixels (default 800,600)");
+>>>>
+>>>> -static unsigned int no_ptr_dev;
+>>>> -module_param(no_ptr_dev, uint, 0);
+>>>> +static bool no_ptr_dev;
+>>>> +module_param(no_ptr_dev, bool, 0);
+>>>>    MODULE_PARM_DESC(no_ptr_dev,
+>>>>           "If set then no virtual pointing device exposed to the guest");
+>>>>
+>>>> -static unsigned int no_kbd_dev;
+>>>> -module_param(no_kbd_dev, uint, 0);
+>>>> +static bool no_kbd_dev;
+>>>> +module_param(no_kbd_dev, bool, 0);
+>>>>    MODULE_PARM_DESC(no_kbd_dev,
+>>>>           "If set then no virtual keyboard device exposed to the guest");
+>>> I prefer direct logic over inverse logic.  Maybe just use kbd_dev,
+>>> default to true, but allow it to be set off?
+>>>
+>>> static bool kbd_dev = true;
+>>> module_param(kbd_dev, bool, 0);
+>> I have no preference here, either way works for me
+>> Juergen, what do you think about the above?
+> I really have no preference here. What should be taken into account is
+> that boolean parameters don't need a value, meaning "true" in that case.
+> This would make no sense for "kbd_dev" as it wouldn't change the
+> default.
+Then I'll go with the diff above, e.g. boolean no_{kbd|ptr})dev
+> Juergen
