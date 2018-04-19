@@ -1,89 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752481AbeDSJtA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 05:49:00 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:46535 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751228AbeDSJs6 (ORCPT
+        id S1752143AbeDSJun (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 05:50:43 -0400
+Received: from mail-pl0-f42.google.com ([209.85.160.42]:43956 "EHLO
+        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbeDSJul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 05:48:58 -0400
-Subject: Re: [PATCH v8 1/2] dt-bindings: display: bridge: Document
- THC63LVD1024 LVDS decoder
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, <architt@codeaurora.org>,
-        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
-        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
-        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-References: <1523357590-3841-1-git-send-email-jacopo+renesas@jmondi.org>
- <1523357590-3841-2-git-send-email-jacopo+renesas@jmondi.org>
- <29caaf6f-1783-9b01-5304-8748398d41c6@mentor.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-renesas-soc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <55ac6669-3dc6-8c6f-d9a0-f6c44f7f0953@mentor.com>
-Date: Thu, 19 Apr 2018 12:48:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Thu, 19 Apr 2018 05:50:41 -0400
+X-Google-Smtp-Source: AIpwx4/CsPtfx/Raot0Cbt5p/sUOQpWLnqsHETr18X6/4PnRj7UkH2nxL4VqUFb5ffHGlLbAYnk3NTYkExMpzcG6G3E=
 MIME-Version: 1.0
-In-Reply-To: <29caaf6f-1783-9b01-5304-8748398d41c6@mentor.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+In-Reply-To: <20180419065531.l6kblbziddplgcwi@wfg-t540p.sh.intel.com>
+References: <20180419021757.66xxs5fgvlrusiup@wfg-t540p.sh.intel.com>
+ <CACT4Y+bmYk_A4NcOhCeHcG4t5_c=Q1fmQOPxHLtC8G0hLrxSLA@mail.gmail.com>
+ <20180419062050.GA8683@jagdpanzerIV> <20180419065531.l6kblbziddplgcwi@wfg-t540p.sh.intel.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 19 Apr 2018 11:50:20 +0200
+Message-ID: <CACT4Y+ZL_xY-HJwgU+XQ-onqe+coxbNGOBno6HrPHwYuPdHRFA@mail.gmail.com>
+Subject: Re: [console_unlock] BUG: KASAN: use-after-scope in console_unlock+0x9cd/0xd10
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Nikitas Angelinas <nikitas.angelinas@gmail.com>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        LKML <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Bob Picco <bob.picco@oracle.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
-
-On 04/19/2018 12:44 PM, Vladimir Zapolskiy wrote:
-> Hi Jacopo, Laurent,
-> 
-> On 04/10/2018 01:53 PM, Jacopo Mondi wrote:
->> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+On Thu, Apr 19, 2018 at 8:55 AM, Fengguang Wu <fengguang.wu@intel.com> wrote:
+> On Thu, Apr 19, 2018 at 03:20:50PM +0900, Sergey Senozhatsky wrote:
 >>
->> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-> 
->> ---
->>  .../bindings/display/bridge/thine,thc63lvd1024.txt | 60 ++++++++++++++++++++++
->>  1 file changed, 60 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+>> On (04/19/18 08:04), Dmitry Vyukov wrote:
+>> [..]
+>>>
+>>> We could also make them mutually exclusive in config to prevent people
+>>> from hitting these false positives again and again.
 >>
->> diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->> new file mode 100644
->> index 0000000..0b23e70
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
->> @@ -0,0 +1,60 @@
->> +Thine Electronics THC63LVD1024 LVDS decoder
->> +-------------------------------------------
->> +
->> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
->> +to parallel data outputs. The chip supports single/dual input/output modes,
->> +handling up to two LVDS input streams and up to two digital CMOS/TTL outputs.
->> +
->> +Single or dual operation mode, output data mapping and DDR output modes are
->> +configured through input signals and the chip does not expose any control bus.
->> +
->> +Required properties:
->> +- compatible: Shall be "thine,thc63lvd1024"
->> +- vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS input,
->> +  PPL and digital circuitry
->> +
->> +Optional properties:
->> +- powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
-> 
+>>
+>> Let's do it. Ard and Kees agreed on making them mutually exclusive [1][2].
+>> Dmitry, could send out a patch?
+>>
+>> [1]
+>> lkml.kernel.org/r/CAKv+Gu8HN-t2om8sCfjxCWbsgSir54fZw222dsed0Xwqph2aNg@mail.gmail.com
+>> [2]
+>> lkml.kernel.org/r/CAGXu5j+mcfo4aB3PM1We6O62bFBJcMFX-9obJE4jFU1Dp=gNwg@mail.gmail.com
+>
+>
+> That'd be great, thank you very much!
 
-sorry for a follow-up, I've just noticed it, could you please double check
-spelling PDWN vs PWDN? Thank you in advance.
 
---
-With best wishes,
-Vladimir
+Just mailed "KASAN: prohibit KASAN+STRUCTLEAK combination":
+https://groups.google.com/d/msg/kasan-dev/Y1TEh7ZlHTQ/wR36C8uMCgAJ
