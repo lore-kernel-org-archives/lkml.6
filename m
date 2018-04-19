@@ -1,53 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753059AbeDSOeo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:34:44 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53470 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751836AbeDSOem (ORCPT
+        id S1753427AbeDSOex (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:34:53 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:42567 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753086AbeDSOeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:34:42 -0400
-From: Colin King <colin.king@canonical.com>
-To: Bard Liao <bardliao@realtek.com>, Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: rt5668: fix incorrect 'and' operator
-Date: Thu, 19 Apr 2018 15:34:31 +0100
-Message-Id: <20180419143431.13173-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 19 Apr 2018 10:34:50 -0400
+X-Google-Smtp-Source: AB8JxZpJ+ptcT60nvB7KGv5E+TKfLMdrdWFk+sDnVsgbMoVjfIwCObF65TJGo1wzjSp2DOTU0pEAtLOsBuK9dLKycGU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180419140641.27926-4-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-4-wsa+renesas@sang-engineering.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 19 Apr 2018 16:34:29 +0200
+Message-ID: <CANiq72kqcAom9QHG9fXNjDyuNC7_bh8ni6_vH0juaRdUVmf8pA@mail.gmail.com>
+Subject: Re: [PATCH 03/61] auxdisplay: simplify getting .drvdata
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Linus Walleij <triad@df.lth.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+[CC'ing Linus W.]
 
-Currently logical and is being used instead of bitwise and. Fix this.
+On Thu, Apr 19, 2018 at 4:05 PM, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Detected by CoverityScan, CID#1468008 ("Logical vs bitwise operator")
+Seems fine and other drivers in platform/ also call dev_get_drvdata
+directly for this.
 
-Fixes: d59fb2856223 ("ASoC: rt5668: add rt5668B codec driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/codecs/rt5668.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If Linus does not have anything against it, I will put it in my queue.
 
-diff --git a/sound/soc/codecs/rt5668.c b/sound/soc/codecs/rt5668.c
-index 52a343f96eb2..3c19d03f2446 100644
---- a/sound/soc/codecs/rt5668.c
-+++ b/sound/soc/codecs/rt5668.c
-@@ -1194,7 +1194,7 @@ static int set_filter_clk(struct snd_soc_dapm_widget *w,
- 	int ref, val, reg, idx = -EINVAL;
- 	static const int div[] = {1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48};
- 
--	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &&
-+	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &
- 		RT5668_GP4_PIN_MASK;
- 	if (w->shift == RT5668_PWR_ADC_S1F_BIT &&
- 		val == RT5668_GP4_PIN_ADCDAT2)
--- 
-2.17.0
+Thanks,
+Miguel
+
+> ---
+>
+> Build tested only. buildbot is happy. Please apply individually.
+>
+>  drivers/auxdisplay/arm-charlcd.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/auxdisplay/arm-charlcd.c b/drivers/auxdisplay/arm-charlcd.c
+> index b3176ee92b90..26246ab7a066 100644
+> --- a/drivers/auxdisplay/arm-charlcd.c
+> +++ b/drivers/auxdisplay/arm-charlcd.c
+> @@ -329,8 +329,7 @@ static int __init charlcd_probe(struct platform_device *pdev)
+>
+>  static int charlcd_suspend(struct device *dev)
+>  {
+> -       struct platform_device *pdev = to_platform_device(dev);
+> -       struct charlcd *lcd = platform_get_drvdata(pdev);
+> +       struct charlcd *lcd = dev_get_drvdata(dev);
+>
+>         /* Power the display off */
+>         charlcd_4bit_command(lcd, HD_DISPCTRL);
+> @@ -339,8 +338,7 @@ static int charlcd_suspend(struct device *dev)
+>
+>  static int charlcd_resume(struct device *dev)
+>  {
+> -       struct platform_device *pdev = to_platform_device(dev);
+> -       struct charlcd *lcd = platform_get_drvdata(pdev);
+> +       struct charlcd *lcd = dev_get_drvdata(dev);
+>
+>         /* Turn the display back on */
+>         charlcd_4bit_command(lcd, HD_DISPCTRL | HD_DISPCTRL_ON);
+> --
+> 2.11.0
+>
