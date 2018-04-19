@@ -1,194 +1,233 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753650AbeDSOl7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:41:59 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:56537 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752826AbeDSOlz (ORCPT
+        id S1753486AbeDSOoP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:44:15 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:45743 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752086AbeDSOoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:41:55 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20180413094211.GN16141@n2100.armlinux.org.uk>
-        <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
-        <20180413170827.GB16308@e103592.cambridge.arm.com>
-        <20180413175407.GO16141@n2100.armlinux.org.uk>
-        <CA+55aFyya6B9_aq8ZSrZT-S-BGbpbDgFvDff5z8upDirpcoiHA@mail.gmail.com>
-        <20180413184522.GD16308@e103592.cambridge.arm.com>
-        <CA+55aFwMUQbALx60b3JDrTcWVSBS7imS+zCYEMz8NOs=6rE6+A@mail.gmail.com>
-        <20180415131206.GR16141@n2100.armlinux.org.uk>
-        <87604sa2fu.fsf_-_@xmission.com>
-        <CA+55aFw1gmfFH1o+oWMo4TnU5hEczAOiY1g=eMxqYZmy9JqDYw@mail.gmail.com>
-        <20180419092840.GL16308@e103592.cambridge.arm.com>
-Date: Thu, 19 Apr 2018 09:40:28 -0500
-In-Reply-To: <20180419092840.GL16308@e103592.cambridge.arm.com> (Dave Martin's
-        message of "Thu, 19 Apr 2018 10:28:40 +0100")
-Message-ID: <87lgdjp8df.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 19 Apr 2018 10:44:11 -0400
+X-Google-Smtp-Source: AIpwx4+moBEJCFILJqk0aRs3GKjsXUDEUXYnXj9Z5Hpdli5TYpqoOPhgkJrMHnXAK1E5Y911bfej+Q==
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1f9Akx-0008Fz-C0;;;mid=<87lgdjp8df.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/U7941FrPFoizEncyyuXuLTbYohEFzQNk=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Dave Martin <Dave.Martin@arm.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 879 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 3.0 (0.3%), b_tie_ro: 1.98 (0.2%), parse: 1.56 (0.2%),
-        extract_message_metadata: 33 (3.8%), get_uri_detail_list: 6 (0.6%),
-        tests_pri_-1000: 15 (1.7%), tests_pri_-950: 2.1 (0.2%), tests_pri_-900: 1.65
-        (0.2%), tests_pri_-400: 47 (5.4%), check_bayes: 45 (5.1%), b_tokenize: 19
-        (2.1%), b_tok_get_all: 12 (1.4%), b_comp_prob: 7 (0.8%), b_tok_touch_all: 3.0
-        (0.3%), b_finish: 0.76 (0.1%), tests_pri_0: 762 (86.7%),
-        check_dkim_signature: 0.97 (0.1%), check_dkim_adsp: 4.5 (0.5%),
-        tests_pri_500: 6 (0.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC PATCH 0/3] Dealing with the aliases of SI_USER
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <CAELBmZB2XX=qEOLAdvGG4cPx4GEntcSnWQquJLUK1ongRj35cA@mail.gmail.com>
+References: <20180418174014.1592871-1-songliubraving@fb.com> <CAELBmZB2XX=qEOLAdvGG4cPx4GEntcSnWQquJLUK1ongRj35cA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 19 Apr 2018 16:44:08 +0200
+X-Gmail-Original-Message-ID: <CAELBmZBvt=9p8muDsRucR_06kmia9vKT6CMfZbHjQL97N4aFag@mail.gmail.com>
+Message-ID: <CAELBmZBvt=9p8muDsRucR_06kmia9vKT6CMfZbHjQL97N4aFag@mail.gmail.com>
+Subject: Re: [PATCH v2] tracing: fix bad use of igrab in trace_uprobe.c
+To: Song Liu <songliubraving@fb.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave Martin <Dave.Martin@arm.com> writes:
+On Thu, Apr 19, 2018 at 10:58 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Wed, Apr 18, 2018 at 7:40 PM, Song Liu <songliubraving@fb.com> wrote:
+>> As Miklos reported and suggested:
+>>
+>>   This pattern repeats two times in trace_uprobe.c and in
+>>   kernel/events/core.c as well:
+>>
+>>       ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+>>       if (ret)
+>>           goto fail_address_parse;
+>>
+>>       inode = igrab(d_inode(path.dentry));
+>>       path_put(&path);
+>>
+>>   And it's wrong.  You can only hold a reference to the inode if you
+>>   have an active ref to the superblock as well (which is normally
+>>   through path.mnt) or holding s_umount.
+>>
+>>   This way unmounting the containing filesystem while the tracepoint is
+>>   active will give you the "VFS: Busy inodes after unmount..." message
+>>   and a crash when the inode is finally put.
+>>
+>>   Solution: store path instead of inode.
+>>
+>> This patch fixes two instances in trace_uprobe.c.
+>>
+>> Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
+>> Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
+>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: Howard McLauchlan <hmclauchlan@fb.com>
+>> Cc: Josef Bacik <jbacik@fb.com>
+>> Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+>> Reported-by: Miklos Szeredi <miklos@szeredi.hu>
+>> Signed-off-by: Song Liu <songliubraving@fb.com>
+>> ---
+>>  kernel/trace/trace_uprobe.c | 49 +++++++++++++++------------------------------
+>>  1 file changed, 16 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+>> index 34fd0e0..d9ee522c 100644
+>> --- a/kernel/trace/trace_uprobe.c
+>> +++ b/kernel/trace/trace_uprobe.c
+>> @@ -55,7 +55,7 @@ struct trace_uprobe {
+>>         struct list_head                list;
+>>         struct trace_uprobe_filter      filter;
+>>         struct uprobe_consumer          consumer;
+>> -       struct inode                    *inode;
+>> +       struct path                     path;
+>>         char                            *filename;
+>>         unsigned long                   offset;
+>>         unsigned long                   nhit;
+>> @@ -289,7 +289,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
+>>         for (i = 0; i < tu->tp.nr_args; i++)
+>>                 traceprobe_free_probe_arg(&tu->tp.args[i]);
+>>
+>> -       iput(tu->inode);
+>> +       path_put(&tu->path);
+>>         kfree(tu->tp.call.class->system);
+>>         kfree(tu->tp.call.name);
+>>         kfree(tu->filename);
+>> @@ -363,7 +363,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
+>>  static int create_trace_uprobe(int argc, char **argv)
+>>  {
+>>         struct trace_uprobe *tu;
+>> -       struct inode *inode;
+>>         char *arg, *event, *group, *filename;
+>>         char buf[MAX_EVENT_NAME_LEN];
+>>         struct path path;
+>> @@ -371,7 +370,6 @@ static int create_trace_uprobe(int argc, char **argv)
+>>         bool is_delete, is_return;
+>>         int i, ret;
+>>
+>> -       inode = NULL;
+>>         ret = 0;
+>>         is_delete = false;
+>>         is_return = false;
+>> @@ -437,24 +435,14 @@ static int create_trace_uprobe(int argc, char **argv)
+>>         }
+>>         /* Find the last occurrence, in case the path contains ':' too. */
+>>         arg = strrchr(argv[1], ':');
+>> -       if (!arg) {
+>> -               ret = -EINVAL;
+>> -               goto fail_address_parse;
+>> -       }
+>> +       if (!arg)
+>> +               return -EINVAL;
+>>
+>>         *arg++ = '\0';
+>>         filename = argv[1];
+>>         ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+>>         if (ret)
+>> -               goto fail_address_parse;
+>> -
+>> -       inode = igrab(d_real_inode(path.dentry));
 
-> On Sun, Apr 15, 2018 at 11:16:04AM -0700, Linus Torvalds wrote:
->
-> [...]
->
->> The other thing we should do is to get rid of the stupid padding.
->> Right now "struct siginfo" is pointlessly padded to 128 bytes. That is
->> completely insane, when it's always just zero in the kernel.
->
-> Agreed, inside the kernel the padding achieves nothing.
->
->> So put that _pad[] thing inside #ifndef __KERNEL__, and make
->> copy_siginfo_to_user() write the padding zeroes when copying to user
->> space. The reason for the padding is "future expansion", so we do want
->> to tell the user space that it's maybe up to 128 bytes in size, but if
->> we don't fill it all, we shouldn't waste time and memory on clearing
->> the padding internally.
->> 
->> I'm certainly *hoping* nobody depends on the whole 128 bytes in
->> rt_sigqueueinfo(). In theory you can fill it all (as long as si_code
->> is negative), but the man-page only says "si_value", and the compat
->> function doesn't copy any more than that either, so any user that
->> tries to fill in more than si_value is already broken. In fact, it
->> might even be worth enforcing that in rt_sigqueueinfo(), just to see
->> if anybody plays any games..
->
-> [...]
->
-> Digression:
->
-> Since we don't traditionally zero the tail-padding in the user sigframe,
-> is there a reliable way for userspace to detect newly-added fields in
-> siginfo other than by having an explicit sigaction sa_flags flag to
-> request them?  I imagine something like [1] below from the userspace
-> perspective.
->
-> On a separate thread, the issue of how to report syndrome information
-> for SIGSEGV came up [2] (such as whether the faulting instruction was a
-> read or a write).  This information is useful (and used) by things like
-> userspace sanitisers and qemu.  Currently, reporting this to userspace
-> relies on arch-specific cruft in the sigframe.
->
-> We're committed to maintaining what's already in each arch sigframe,
-> but it would be preferable to have a portable way of adding information
-> to siginfo in a generic way.  si_code doesn't really work for that,
-> since si_codes are mutually exclusive: I can't see a way of adding
-> supplementary information using si_code.
->
-> Anyway, that would be a separate RFC in the future (if ever).
+Also, where has the d_real_inode() gone?
 
-So far what I have seen done is ``registers'' added to sigcontext.
-Which it looks like you have done with esr.
+Looks like we need tu->inode back, since the return value of
+d_real_inode() may change over time.   I'd do the "tu->inode =
+d_real_inode(tu->path.dentry)" just before first use (i.e. when
+enabling the tracepoint).
 
-Scrubbing information from faults to where the addresses point
-outside of the userspace mapping makes sense.
-
-I think before I would pursue what you are talking about on a generic
-level I would want to look at the fact that we handle unblockable faults
-wrong.  While unlikely it is possible for someone to send a thread
-specific signal at just the right time, and have that signal
-delivered before the synchronous fault.
-
-Then we could pass through additional arguments through that new
-``generic'' path.  Especially what are arguments such as
-tsk->thread.fault_address and tsk->thread.fault_code.
-
-We can do anything we like with a new SA_flag as that allows us to
-change the format of the sigframe.
-
-If we are very careful we can add generic fields after that crazy union
-anonymous union in the _sigfault case of struct siginfo.
-
-The trick would be to find something that would be enough so that people
-don't need to implement their own instruction decoder to see what is
-going on.  Something that is applicable to every sigfault case not just
-SIGSEGV.  Something that we can and want to implement on multiple
-architectures.
-
-The point being doing something generic can be a lot of work, even if it
-is worth it in the end.
+Thanks,
+Miklos
 
 
-> [1]
+>> -       path_put(&path);
+>> -
+>> -       if (!inode || !S_ISREG(inode->i_mode)) {
 >
-> static volatile int have_extflags = 0;
+> Where has the S_ISREG check gone?
 >
-> static void handler(int n, siginfo_t *si, void *uc)
-> {
-> 	/* ... */
+>> -               ret = -EINVAL;
+>> -               goto fail_address_parse;
+>> -       }
+>> +               return ret;
+>>
+>>         ret = kstrtoul(arg, 0, &offset);
+>>         if (ret)
+>> @@ -490,7 +478,7 @@ static int create_trace_uprobe(int argc, char **argv)
+>>                 goto fail_address_parse;
+>>         }
+>>         tu->offset = offset;
+>> -       tu->inode = inode;
+>> +       tu->path = path;
+>>         tu->filename = kstrdup(filename, GFP_KERNEL);
+>>
+>>         if (!tu->filename) {
+>> @@ -558,7 +546,7 @@ static int create_trace_uprobe(int argc, char **argv)
+>>         return ret;
+>>
+>>  fail_address_parse:
+>> -       iput(inode);
+>> +       path_put(&path);
+>>
+>>         pr_info("Failed to parse address or file.\n");
+>>
+>> @@ -922,7 +910,8 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
+>>                 goto err_flags;
+>>
+>>         tu->consumer.filter = filter;
+>> -       ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
+>> +       ret = uprobe_register(d_inode(tu->path.dentry), tu->offset,
+>> +                             &tu->consumer);
+>>         if (ret)
+>>                 goto err_buffer;
+>>
+>> @@ -966,7 +955,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
+>>
+>>         WARN_ON(!uprobe_filter_is_empty(&tu->filter));
+>>
+>> -       uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
+>> +       uprobe_unregister(d_inode(tu->path.dentry), tu->offset, &tu->consumer);
+>>         tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
+>>
+>>         uprobe_buffer_disable();
+>> @@ -1041,7 +1030,8 @@ static int uprobe_perf_close(struct trace_uprobe *tu, struct perf_event *event)
+>>         write_unlock(&tu->filter.rwlock);
+>>
+>>         if (!done)
+>> -               return uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
+>> +               return uprobe_apply(d_inode(tu->path.dentry), tu->offset,
+>> +                                   &tu->consumer, false);
+>>
+>>         return 0;
+>>  }
+>> @@ -1073,7 +1063,8 @@ static int uprobe_perf_open(struct trace_uprobe *tu, struct perf_event *event)
+>>
+>>         err = 0;
+>>         if (!done) {
+>> -               err = uprobe_apply(tu->inode, tu->offset, &tu->consumer, true);
+>> +               err = uprobe_apply(d_inode(tu->path.dentry),
+>> +                                  tu->offset, &tu->consumer, true);
+>>                 if (err)
+>>                         uprobe_perf_close(tu, event);
+>>         }
+>> @@ -1337,7 +1328,6 @@ struct trace_event_call *
+>>  create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+>>  {
+>>         struct trace_uprobe *tu;
+>> -       struct inode *inode;
+>>         struct path path;
+>>         int ret;
+>>
+>> @@ -1345,14 +1335,6 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+>>         if (ret)
+>>                 return ERR_PTR(ret);
+>>
+>> -       inode = igrab(d_inode(path.dentry));
+>> -       path_put(&path);
+>> -
+>> -       if (!inode || !S_ISREG(inode->i_mode)) {
 >
-> 	if (have_extflags) {
-> 		/* Check si->si_extflags */
-> 	} else {
-> 		/* fallback */
-> 	}
+> And here, again.
 >
-> 	/* ... */
-> }
+> Otherwise ACK.
 >
-> int main(void)
-> {
-> 	/* ... */
+> Also please create a separate patch that removes igrab/iput calls from
+> kernel/events/uprobes.c and adds a comment to the effect that the
+> caller is required to keep the inode (and the containing mount)
+> referenced.
 >
-> 	struct sigaction sa;
->
-> 	/* ... */
->
-> 	sa.sa_flags = SA_SIGINFO | SA_SIGINFO_EXTFLAGS;
-> 	sa.sa_sigaction = handler;
-> 	if (!sigaction(SIGSEGV, &sa, NULL)) {
-> 		have_extflags = 1;
-> 	} else {
-> 		sa.sa_flags &= ~SA_SIGINFO_EXTFLAGS;
-> 		if (sigaction(SIGSEGV, &sa, NULL))
-> 			goto error;
-> 	}
->
-> 	/* ... */
-> }
->
-> [2] [RFC PATCH] arm64: fault: Don't leak data in ESR context for user fault on kernel VA
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-April/571428.html
-
-Eric
+> Thanks,
+> Miklos
