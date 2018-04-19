@@ -1,275 +1,161 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3239998-1524145787-2-7927708344964084232
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='RU'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524145786; b=izx+mRMDLnzsSmdzt8B44KOYPSRhQp2BOM7xWOK5/LSPPh3jWz
-    RfnJma+IfH/EOFHo+2DpaZVPdYzSSnBBXk5zsvwI4Xt4jE32c+sfGdkGQB9t16Ss
-    9H04UC6jPiM1hSMCTLIKzGuT+ij9166nnngswmCS2sYxdus5RD09RhK8ZRIDYbjn
-    cetvydQfeNRBYKk7xh0fXmJcXDElCGprU3zqZspEHNZ+izu3VE7+TaAW9bOoCHbB
-    YYhWdcN4MG5OQBt+swITOHd6nAiA485NTcCLbkR8IRB71OgmpZNLd64SzUZ6PCr/
-    i6JC5zIj6zSj5PJPegV4bAklpUxo8BMU9WMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524145786; bh=mwyBT
-    TDLJpsGDI8J9Fiab5ik2QsP7kDWcjyL5XYLOqM=; b=Hvi9kU+vWjk8lAA2GJQX2
-    q1DAgknAGbk4UglMEGMcunOTiAmzWsQOY0i7ZV2mbY7z8bHjWTy2Ne3oUgsdxfTf
-    J1sGQtZSnmX35SnUsssZFNGbvy1TJeSYde95KF/GmbJWJm2Py/bpLsWBIr0ThHUv
-    FQhY0PpL4z04kU7TehHOfmcQfnVC2UOM4B5oreR3yhAWy6G2ElnQ3QklVTymZ6Jk
-    a6+ixD85ikqyJP5rpqEDAHeVpHGKWR50hsIBDKpVXTPj5IVanPVuMhf0N5dzVGFY
-    i+Ot3JSrLjOz1jdYshWu2R+juc/BRjFTcz6xrTp2li01ecUJ0l9yMO+uU6Zom6LO
-    g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=virtuozzo.com header.i=@virtuozzo.com header.b=TN994Ccj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=virtuozzo.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=virtuozzo.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256) header.d=virtuozzo.com header.i=@virtuozzo.com header.b=TN994Ccj x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=virtuozzo.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=virtuozzo.com header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJTT7rklfPZhKTVkSqyI3StlTe0+LmTdZ01TcqmiXp3inw/jHtsjetZ0V0eSu2hzZFnZxzBfL4pkzYAyd9lj1CT9ejVOvEGD+A3kVRQ3lGMnHrZZcKRp
-    gyc3o/NVhBZ98npXoRk+SJyC7hHlWz3KC4iOkOSv2mUgXe5CSTqAdTup5WAanhEYwR0e5ABZpHD0rVH2SEMHER7xF6pmS1T6FWIZ8h61RU0JeQqHnf8jPDoK
-    zWMUO5Yk1BeTY5qCmtzveg==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=osDrW2AON7y1HyiAeOL6jdcP5bE=:19
-    a=dhh_qWxcV0sA:10 a=Tgzm40sRGssA:10 a=D6hQ6p7FaAMA:10 a=kj9zAlcOel0A:10
-    a=Kd1tUaAdevIA:10 a=tpEzL2_AlxEA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=VwQbUJbxAAAA:8 a=0Zu1b9sXAAAA:8 a=DDOyTI_5AAAA:8 a=ddMjj3PsICsCB3HRVD4A:9
-    a=AW5Zo-io4V6G8fgz:21 a=QlU_W-C9C3YBXkOi:21 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=qSzbtxJfSrve39XLlx6B:22 a=_BcfOz0m4U4ohdxiHPKc:22
-    cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Return-Path: <aryabinin@virtuozzo.com>
+X-Google-Smtp-Source: AB8JxZpse7RSRwVpOuvy2e3PVzwkfk4L0RmRInRkbRUhxAuEA7DXWGvDKTJ2/Fj60Mb0kCt7NdZ/
+ARC-Seal: i=1; a=rsa-sha256; t=1524146075; cv=none;
+        d=google.com; s=arc-20160816;
+        b=sX58dbYP7GIRTOf/US/HrgpNE2S6uXAAK9m1+O06xLvi0iyJP46H979pPTWr4W7gal
+         4v8NoUIm1LxbzVo5VJ+dqzoT4b4iMsovGhOSPzyY5L5xIVdfL/7lQu5y5JecuqOVX0Mp
+         XAvFK8bgVAJYFz1sZj/mfWEELhMRVzqDv0ZhAC5z8SMAG3p9X6DR2Q6Ct4YplZnJVx99
+         ecJb4aVSb8utfW9Lpod2UT6K5JfNiHpj42SnaGak5y4ex2EYavwIo0SQlrCtHudcbNIX
+         LKE1eeFKDrhs2+4AJYcW+7UazvBvXHMxUDf+JJHzI+CZahHnIPL16XPp0BY04Gjjrsc2
+         +p3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=spamdiagnosticmetadata:spamdiagnosticoutput
+         :content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:references:cc:to:from:subject
+         :dkim-signature:arc-authentication-results;
+        bh=McbiJNRyjUQcf8G54aANqsKTWD29fdPTaHflwCmjiSo=;
+        b=Clrauj6SAQk1YPiqsK8605Ori7H0nZ4rH06ulcWb5CDIKQsDGp3RO7LL/en0TJJEbG
+         2chi5SAvIbIgh2+CZFfAmpedB3jy2Jf9lQK/wqxJPiyM7bbSzaAVjfS6YiLkQPMeLlD2
+         qchR7sJTeaYVamPb9qH61LrhCaw/O0QQtCFniO2T8AWSF8N9kzLQUA4/wp0O9tWRzrH/
+         SZsoaerhsAFUtfk+xq60IRUKmuZRleAwG1EtG34e9C0X2H53178nUuIu3tZAI9fx250P
+         AekBCTTbuhS29EbNj41tbJlJRxR4lFVdxevogafK8t6VddGEakC5WkK61ZDDu1NYQq90
+         3fAQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=ZJhzx9ZZ;
+       spf=pass (google.com: domain of aryabinin@virtuozzo.com designates 40.107.2.130 as permitted sender) smtp.mailfrom=aryabinin@virtuozzo.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=ZJhzx9ZZ;
+       spf=pass (google.com: domain of aryabinin@virtuozzo.com designates 40.107.2.130 as permitted sender) smtp.mailfrom=aryabinin@virtuozzo.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
 Authentication-Results: 01.org; dkim=none (message not signed)
  header.d=none;01.org; dmarc=none action=none header.from=virtuozzo.com;
 Subject: Re: [cfs_trace_lock_tcd] BUG: KASAN: null-ptr-deref in
  cfs_trace_lock_tcd+0x25/0xeb
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
  Fengguang Wu <fengguang.wu@intel.com>, NeilBrown <neilb@suse.com>
+Cc: Oleg Drokin <oleg.drokin@intel.com>,
+ Andreas Dilger <andreas.dilger@intel.com>,
+ James Simmons <jsimmons@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Denis Petrovic <denis.petrovic@edu.ece.fr>, lustre-devel@lists.lustre.org,
+ Staging subsystem List <devel@driverdev.osuosl.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, LKP <lkp@01.org>
 References: <20180418133831.uef7d77ejdyjtxgh@wfg-t540p.sh.intel.com>
  <20180418134058.l3orjjxcpv7cxjfw@wfg-t540p.sh.intel.com>
  <CA+55aFz=VCq6w=kH5aYavOM0-h130HgzVhVc94JxeYSdbMWbxg@mail.gmail.com>
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <b66f6034-7631-7fbf-56aa-e8e136e8b636@virtuozzo.com>
-Date: Thu, 19 Apr 2018 16:35:08 +0300
+ <b66f6034-7631-7fbf-56aa-e8e136e8b636@virtuozzo.com>
+Message-ID: <dfa02f34-5ada-70fe-0fd7-c494d632f8e1@virtuozzo.com>
+Date: Thu, 19 Apr 2018 16:55:28 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFz=VCq6w=kH5aYavOM0-h130HgzVhVc94JxeYSdbMWbxg@mail.gmail.com>
+In-Reply-To: <b66f6034-7631-7fbf-56aa-e8e136e8b636@virtuozzo.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: HE1PR02CA0111.eurprd02.prod.outlook.com
- (2603:10a6:7:29::40) To AM6PR08MB3256.eurprd08.prod.outlook.com
- (2603:10a6:209:47::21)
+X-ClientProxiedBy: HE1PR1001CA0023.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:3:f7::33) To AM0PR08MB3251.eurprd08.prod.outlook.com
+ (2603:10a6:208:5e::20)
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:; BCL:0; PCL:0;
- RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);
- SRVR:AM6PR08MB3256;
-X-Microsoft-Exchange-Diagnostics: 1; AM6PR08MB3256;
- 3:FAWeqydJO1iD1BKOTH604qxKLKQ2BDVQsw58rAtmeld1pPBcA2uHwxB+OD72nzeOjXvzwnQCoCtGDHFGStY4Fs04dT7Xmtc9CfzaZqc6gKXLPEwq7Le0u7SF563YI518Ij5Wn/fBGTV81hX/LbokjSGmNJRvcSV1FR1pH5iCONOOHIQMbL/O0i0Nxr87Nl0dNVrNsj3y8IpYJitS4ACJCt63j6+qAdPVY0euavcXERiBsKnTnYmByFa9Tz3UtQ+0;
- 25:wiyO5L6x7IwA2JcrxF0k2vsIn67JEpaKAC53DW7KyBTFPchQS+6A+y6/uRifQrfnI/P4cUjMeJ/JogHYZGCBYVaUXgzlwyWhwhV4fABUcdVugCj704zdb9zAq/RvPZKdCfgJtpQPOYcKVHd6/eVspefJB8usnnSlhIR6ne0G8tHdHhbSPg1oOsNbDt4ConZg0WTXFiF9i2ZI8LT1tnFczq5AdD6xhQtYaal5lQGhsIxRk5kbmM5mUgREZiVFD4bTvHc3+1TLCruea+/hQc5wqQ9anJljHnJ9CYdV7uBIRPdmqriWhKHJnPeov+QY2VzZpxTYvdw/OVYskFIzQFcIoA==;
- 31:UZnOxnQSmrJ6rr2hd2FJp/Ll9SWoJR/+UWvruXsnl8wtczSrWv+1aM19JQjx2k91LntvUAqyW3y53mPTlYlW/5fji58E6K3d1Ee++JiA4XZ1IY5tAcXcPEHyZVqTrqnhzcniVF5520/UByVq+KqECplldoGgR/GHftY5ShHuB+cmnp82uMBaXnxgd3yB6GTicVWlAr7Ok7T0y8lsl4Fgw1pnrvdN6yH5baaec94jcls=
-X-MS-TrafficTypeDiagnostic: AM6PR08MB3256:
-X-Microsoft-Exchange-Diagnostics: 1; AM6PR08MB3256;
- 20:U+sRpUuqbYAf+GziR5b56GaZF87PyWw/MMtgj6/iMmUnLS9Kvi0udahbvgIiivTNAuTeKb9fu03CAuewMbdq4KPTFF3Qie3klNA032gAszqm/AybFGF9TUXfLCrBz1IkHn6UZOgxkiiDLUHpY9vO2j9RDrxbhM9yFEQ1y04WI0pxTqYiUdHaXlyejiiUwRaUqSGCQxe4rqmtxnjidAfm34w1KwY/I6ip9Yj9RqwNEGH4jLvOZxizO2kJrAh1NBb86s58eDRop+dD5coJGjwTWoabq7REjqYI+stazoK/lvqkfa0IBiSpuLL49eHFKzWdqbDrPgk+KpBIH1TijgmiIoP/EluOC33MTpYC67qqDI3u0LZ/XhPHBhzkAA7mBtwH0yxolF9csICz2oVdBt1CcIsf2/6LIjrrBZLSM/gIfQcNGV3FGDbQzmKutIxU3aIX8mvAF9QdzJNN0EP+KTDnUClBZk+HFx2FYKC1k074aoXzV1FzhsT89Qqpf8tKhihV;
- 4:EUNlMqDCUcUN4q0mmoxq/xxz39lgnvml31bTHaOIwHPWZBVKjrmkg2Dw+hSVRe88/hpbPA2+FMEQ5y7RRL4C1Ho1yW4v2PNMrMWQG5pezImQnqKD5UQMuYGHTJEwKcJ48UZ7u/wF8W8mrwOZvCy0lNeLDZZgY9xm04pq85MlXUzdxb6t5sEgLstnqKFiHR+KF1KEst4nPi5WuSI6S0M8YYoKH7MKAlMjw0e/InBfhYjDYYJfHo15O13AxujZVPAgscAN+uX+VwQdICydA4QREep28JCgTBFWmxRbeC2IUxlrPJlUbjIDOUPdde/igRXb
-X-Microsoft-Antispam-PRVS: <AM6PR08MB3256234218AEE458E023BE3FB0B50@AM6PR08MB3256.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(42068640409301);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0; PCL:0;
- RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231232)(944501383)(52105095)(3002001)(6041310)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);
- SRVR:AM6PR08MB3256; BCL:0; PCL:0; RULEID:; SRVR:AM6PR08MB3256;
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3251;
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3251;3:fCrcknngYuOroPvC8lXtxfVJyayVg7jNB3+e+KoSEIc86XBrk191hzssYELskRGHhmiRSptTDNlMIASBYFOm/vJTHjh0/5pbmxOSKzo5AO1BefEge9fVfwx6xcTp7aj3geV+VVC5BNVV1Rq9usLlhb9chqkXFtNR4wbw9V2ebZa0z3+64M1K1+J1MrcsPLhsf0Yfko1be9aR/6NCwy8iexDgjE67fMexZdYbaezuxeXfOJPLtLscvOhqDmtoM1Na;25:Y9SfLpM4uop7FL+8r28jZDcNz6DfrCh4ltmjryUWYUpjL0HidexBa6siITJkmNkVYAqxDkHnx46HuC42QuKtTdXQPHPn6Ge7cchdPRX/cRZBiP74D/CYvss31Jsi1BAsDb096JVWqMhXo+M+Eol8knMu7Seg758nrT6pnetZcDWBNHE5R+kHmh3f37ie69ajCYdMty443SWrVitsx+3AV5JtxjZG6ZYQIQ67dXX0cNNP3Kb9xGn65x4+prr1E7CTlbt7cwj+sIRT7hN5RrmpgEw+OBCAK2G3bqQVcjm7HLy5aHdSlpRwTGrP+FIFX5iRZlfSkSHJdA6cWJt/8QZFUg==;31:e4NkCxCMHj2k4pDs/7ncjABuDu7lh7kal0wPJRyL1kxIO6FCkJsNVhYSbECJamlTiW8dfKWdQ3/mX+1h0u5hq4JThu9X13pe4ApdRZtBglyJJL1KOjz02SoBFUJgZZOXwQaeiayu1lEM9szDTj+JakZyHZ34AdZ7yH9aoN0R10WHyxGiz8jezpxlGr2RZ2gae/aDoo9p42DHKN+Ll1Pan8edWzLCTuHyL7fiNuoYzfE=
+X-MS-TrafficTypeDiagnostic: AM0PR08MB3251:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3251;20:EGVH6vmrq+fe1jGfzonukRjgetCykeXYW51J92tkO583niRv82lhjNnzjoMJB9ILGUhk/EsGiH0ilgyfJX7HhPatntH5lvUWEStiOhLTL1QbDC5V3a+fV22ChxO+fcCxVA2fyA67w1EVFc69A/AWstxdVk6jtiTGT1wbSD98Wp517uz9+7GGxbJWehp/BRRkuopu/q25bXQiFzJp4LN5j+6H0eks591Hji0EvEaE2awAuErMF2iGP6DCMKygW0Iqb009+ibD6G010In4EHPi54HFptSZK7RvcuxzwWXWB7MIuxafz8uV50ixkO5Wl4uDNTxL+NJFoOYyN+4DwOjhX4aduas3F/saBIWU05QQxFNffXJBTj/Yozf6acoSlE2WBbGx73I2+uJ09fOHbX3TPdqBWOr6eDxhIbLkqbyhICXVwLYqF3jermsh6tZr9NL1/Gm0j/jpWAUDOqWw9jwyZdHphfEt+TOkAypgB6EMHRNann23abamN5HCCFRYGW53;4:8ACrVFHppwb/QYnj3BXaINBaHgsiCTiH8OxYs84CYnTPXpUP2NOZgdz3KkiAwcwWAjy8NKO5h/qmorXQ6D1iYB9pdcjx9prkPNRZNxXiGv8sNRZLPyTygEupu3GmL8fkp+5YK9gwMXoN+YT/zEJmNm2OQx/GhzVNp5FP44dWqO+16tWyik81xpXMHJqtOW3Lvt7ZR8xHylXKBUn/Yzso05Yh0y7m6dinOC/Ypg9lcE5uEtx1vXl9K5SbwU4FSG4CqcCpL1RTC/rQ0WYc7we4WNBZ6+hl6XEDUmPaDAoGmLhatMG9nJGPVTQC/BN4KcD2UytJzXZFJumyWOcZZo4zt5rKcCGT2CwDBHThfBIhkUI=
+X-Microsoft-Antispam-PRVS: <AM0PR08MB3251031F0C7602551FEEE4A9B0B50@AM0PR08MB3251.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(20558992708506)(42068640409301);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231232)(944501327)(52105095)(3002001)(10201501046)(93006095)(93001095)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011);SRVR:AM0PR08MB3251;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3251;
 X-Forefront-PRVS: 0647963F84
-X-Forefront-Antispam-Report: SFV:NSPM;
- SFS:(10019020)(39380400002)(366004)(39850400004)(396003)(346002)(376002)(52314003)(6116002)(3846002)(76176011)(77096007)(31696002)(6306002)(16576012)(25786009)(53936002)(316002)(26005)(11346002)(7416002)(305945005)(4326008)(956004)(6246003)(446003)(52116002)(2486003)(81166006)(229853002)(2906002)(8936002)(230700001)(36756003)(52146003)(7736002)(8676002)(86362001)(23676004)(47776003)(66066001)(50466002)(59450400001)(53546011)(478600001)(6486002)(386003)(55236004)(16526019)(186003)(5660300001)(2616005)(476003)(65826007)(54906003)(110136005)(31686004)(966005);
- DIR:OUT; SFP:1102; SCL:1; SRVR:AM6PR08MB3256; H:[172.16.25.12]; FPR:; SPF:None;
- LANG:en; MLV:sfv;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTZQUjA4TUIzMjU2OzIzOitzNGRDTlFvdVFFOWNVa1B1bTZZL0lpSUhX?=
- =?utf-8?B?L1J4bkJXM2FKZU0rdkpMMmNBOU5wdXpNaWRKS2lNM3VLc2RQL0F0WnY0TElM?=
- =?utf-8?B?U090VXpnT2xTMVJpZ01PSzJzb2tQSi9TeE9CR01NbmIzcVNUa3p6VlFyQ0JD?=
- =?utf-8?B?QU1pOFVON1lUSVI3eTNqN2I4dXY5eWVoMmFSWVVRbFM1NVAzbkZYV1g0SFlU?=
- =?utf-8?B?NU01bjQ1MzJFM0Zhb0tMaGlQQlkzcndJYlZYM280cjdxbnpLNml0dldEamhF?=
- =?utf-8?B?VWZvMGREYTgvVlVucVh2T1l4c3doUnZzUzQ4bWxHVmZqU2tHS1RtMEJVOTVl?=
- =?utf-8?B?TVNDMGlNQkI4Zkd5U2JFa0pkTVI4UVhSKy9vUWdXcGhUaGQrMU9pSWVxaXJ3?=
- =?utf-8?B?R0JtY1hJa0Vhck03SG91NEdrK3lWdEhDNWVncFdhaGs2cWI5QkpRTk5IVHMv?=
- =?utf-8?B?UUUzanRzT3JmQ0dNc3VQSFM5dFR2RSt5WUIrQk9ycmdzc01JU1hVL3RkNUFz?=
- =?utf-8?B?aDBqZDVDcVAvYmpiL3dlSFo1MndWOTVocWVsdkt4WHFNWGJYZS9OcVhVREli?=
- =?utf-8?B?RUEyYTI4NUVVK0pqQ2JkNUR4ai9MelRqYytqcEoya3h6aTlkTG9DYlVCazNG?=
- =?utf-8?B?ZmxyWEwwOFlDYXY2WDNMbkIyWWdIam1Rajk5Z3JmTjlpMW5MMWZaMkFOUnVX?=
- =?utf-8?B?aEVzK2hLcXBlRmVodGdJS2JORUJwZTZ6S3JlNkhLTUNvZEdzaVJEWE8xeXNC?=
- =?utf-8?B?UzlsZkw3VE5aTVR2aWNrMnk1TUoxZnFYWlhYOG9iZDNGYzZDOGFZZmRHblM1?=
- =?utf-8?B?N2NWVUFoaXlDYmRqSGpsdGdIdEZXdFpYek0yZ3pNQXZtdmtDcnkyeDhWTjBU?=
- =?utf-8?B?bnhYQUFjeE5rSUVqeWs1N0hTakc4bmVDQzZHUklDOFlOQzVhRVlCVDdnS2hy?=
- =?utf-8?B?aGFXa3ZyTFRmYmZFQ3ZYam1ZTlAzNHE3SURUOGtHdmRPMGdJNlZKY3Z0aktx?=
- =?utf-8?B?bVlJYlhudmNpMDBHT0ZJS0NoekxLNzNKRytVekN4eDZjdFFxb0R3WW5wbnpz?=
- =?utf-8?B?TnBhWWdlRVNzc3RDbDh4UDVRODNVbm9MQVlBUlJnYVJvcG9rYkJ1NmMxR0Rs?=
- =?utf-8?B?MFZyanZHZDJtdkd3emM1MGpQcFdtSXBuWEh4S3lKbnpGaklXdlVpVG96a3lk?=
- =?utf-8?B?am1GV3R5VDZwbG9TRzdTNVZMR1ZuYXNxeTBKaE9oaTQ0d0xOaStubjMyYVBv?=
- =?utf-8?B?dUh5S0Y2c29Fa1VPT2JSdGpDbGpJbkRKS1crQU42KzgybElNbEVtV1gvVmtW?=
- =?utf-8?B?bENkT085Vy8vY2RSYUg4WW5oVmVpT1o0RHFObjlVcWd0Z2ozQ0lnNmp6Kzlj?=
- =?utf-8?B?VWRoSWlnViticFFmK3dGdUFZaDdhc2hIcVJTSWp2QUZkQ3dGSFk4UTNtRUxZ?=
- =?utf-8?B?M3NvNlBrWTFmVXNUeHMwcU05MTdiZE9xYU8xdVpxVDVYZHQyK3dkZXBnUjZI?=
- =?utf-8?B?Q0ZxUlN4Z1V2dmlpWUpXTXNEY3FteXFCMndqdWxwNFVDSUdCU016WFVWYlFh?=
- =?utf-8?B?T002dndiNzFodmRMeGhTbkhvZG14OXMyYkdkSFcvcjQ4dDFHQnVjUzJrallS?=
- =?utf-8?B?RStycjVPNk51aVdTOS9aVEYwWHFPSE8ySU9ZbFp2NjY4VHdMYWVOam5meTZC?=
- =?utf-8?Q?qcC5mm6c9E37M+uoWVBr1pyPZyur6WUD9H3nloi?=
-X-Microsoft-Antispam-Message-Info: CGrrvl378Q/6eKG7NKtvAnj/tdfuwYv5RaZEzQSpFWUOKpXBABHZv4C45n1g2k+h3kDG5CXfTq3bpZi0CZNcSe0pv8b/WCqNz7+YHTLNYy1cyGJA7XhDno0yW+qRdpBbgXn1G9b5z/6i+N2Q8XfEy92BLAaxkE9OsIqubxJ7B7YCbc6dI7NE7A0eI9eNCgUi
-X-Microsoft-Exchange-Diagnostics: 1; AM6PR08MB3256;
- 6:SMsK59RTwWrSlD9rsttsudX4nYoxgcmU4hCDKVZZuR+notRFgBo7QSW/ncJCvf019H5Fi7cv1itNhZZ2/dyDS3UwhmijFdvJvULvsxDbE8FHAk3M6zR7S6FxBd0DSm5i5JLRDsXmkCqh6CCKoT7ZjbKjf0doDTwUUtLo60O6YEGMw/LC9qIMk3y/gZgcdbsXInZHhCZcfvu3WuvFyoeRU/hzUGc2G+AU0Xku2OUaN1qt7qAkRQdmfjvsR9DE5aczu2xhhhPMhTuqfy8x6N9/gSb05MnrSCxopbeKbBmMsg4A8g3v3C7BDsapk1Vg6g6JPCTcSIIjnA9sYSdxbVuVrBL+hV+BAKl0o4wP4dnVVPePI9lcWILF4C2pt/w4v0uCNB1MzKsM6H/SQqtqw8Zc9RImjNcIdTwmwUl+0zCLX/vNSByx//pFKmokgzgR1cfZqqUd2Bb4CxDeyeDwFfHVYg==;
- 5:TNJ9nESt2GC8vJ8aUeNoSqvr4Eso5adtJRx+T0P+yeSOjZ1WlhJWXEQ5/DsGgm5P2GpA8rLXBxrYu3Kw6gvtZd7OjOJbRD0E5jzvUIKNRhCLVmSZ0XMCeQk0BH2jdKqFfCx0W4K4kMY96r1xysq4yAQjrbHpCj/54XTWdjUKxzY=;
- 24:WOQePl7VwQfVimwPkx7c5Fi9XoljHHnsU7PEniKbiX7EEd18AOPnk/O0LTOuYeHdsAMqCQs7Uafc7e1Ktmrv4G8sQyoiqb8OXKt7ywVDsK8=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39380400002)(39850400004)(366004)(346002)(52314003)(478600001)(2486003)(6486002)(4326008)(76176011)(7736002)(52146003)(52116002)(305945005)(53546011)(6306002)(53936002)(6246003)(23676004)(386003)(55236004)(25786009)(77096007)(26005)(8936002)(31686004)(186003)(81166006)(16526019)(8676002)(3846002)(2616005)(956004)(446003)(11346002)(6116002)(476003)(966005)(5660300001)(6666003)(230700001)(575784001)(86362001)(7416002)(93886005)(316002)(36756003)(229853002)(66066001)(65826007)(50466002)(31696002)(16576012)(110136005)(54906003)(2906002)(47776003)(99710200001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM0PR08MB3251;H:[172.16.25.12];FPR:;SPF:None;LANG:en;MLV:sfv;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTBQUjA4TUIzMjUxOzIzOnMxb25IN0hHc2lYd29rUlRibXY0NmdTQzhI?=
+ =?utf-8?B?WHRRdzlaTWJuL1FJTnhvMVhQcmUwcjBybFhzWHBJV29Nb25tQU04ZSs2blI3?=
+ =?utf-8?B?U1ZTNGdLWlhEbGZ4QmRsMStJL3JwMW8vTThSTlNIM3N3VWV0NGNkZDhNTjlk?=
+ =?utf-8?B?bWs0Sk1tVkxYODlDQnFUb0xsQklDMXhhVVRBSHB6RFd5ay9wb2wzTmIwWG9O?=
+ =?utf-8?B?RWtOc29USEtkVFZtR2pCanRIK1dIUkVvSllTM2N1ZFhJRDJmczM3SXhSTktO?=
+ =?utf-8?B?NW5sK3VLVC9Eam9JWkZXSHkrT29QNFBRZnIvdVpuZjJsODhrdUlwMGUvc3N5?=
+ =?utf-8?B?bVVsWEdTMEJZd0FuUkpOQnpRWkY2LzN4SStSSDNaM2JxRDZJbXg4MDBGdHFJ?=
+ =?utf-8?B?bzdOZTBsWVJXRC83alJQSGpvdmN4QWdMWCttWlI1L2R5MWs1WDBzdkkyQTBp?=
+ =?utf-8?B?ZzNwbkc1ME9sQnMwQ0pMSFdON2R1N0NMelBhV3dEZ3hUVWdpMEdSWENQa0pC?=
+ =?utf-8?B?dzdiMmo2aDFHbW55aVIwbjlyQzFaWkY0L08xUDVsUlhDWlVaUkxyUktMN3Mx?=
+ =?utf-8?B?M3AyLzZlUXRLQ0FUcEZLSzIzVG1BdE5HTjQwYzFOUm52RHNsQnltZHBWTWlB?=
+ =?utf-8?B?VVdDTFF4RGJLZXpQbmZIK2JkN2tmSWRwOXdIMkhtVkxuYUp0NHRjOWJNRjMx?=
+ =?utf-8?B?WEE5UWhlYjJrMnpUbmxtZnpWY2ViYnh3aGFoaWZwdWEwUzlRRXdIU3JKOU5W?=
+ =?utf-8?B?cGZEbjdyOVVQNWVaWjllV2ZNVFJ1OTZSa0gyNUdVNG1UZXdIUTR4V2lRcEtK?=
+ =?utf-8?B?SkVVTklpRWxreVdiWmswWkxFb1BNeklRZGtYL0RzSzZBbmRFT2tEZ3R3QVA1?=
+ =?utf-8?B?YTBXbnNBK2pobnc4VDBPZHA4N1ZqY2hBOXg5QkNKZFBSeFhIOFljd1N5Nm5L?=
+ =?utf-8?B?YmJoa0Y2cVJ1elQ2Ti9McldVQTVZdkljNWZRRWNteHpPazkyOHA5dEFkU0pD?=
+ =?utf-8?B?THI1YXBSSVV3N1Zlb2FaQXE4RGg1Rks2ZW1ZUmtCajNFOEcwTktmMVZRa1dB?=
+ =?utf-8?B?aTBKcGFZSHlyTHlnQUlITjJodTBuMjR2dXNwNmtQYzI5R0tQd3pBMVlpWVV4?=
+ =?utf-8?B?YVF5M1Jzb01tUGZDTkpTSFkzeWs2TmQ0ZFo0YmxtMldGWlpPQjROa2lJNFhZ?=
+ =?utf-8?B?UmtsZ2NOTzZ6dkFBUkdtaVZ3MlN6L1ZIbUQyTXd5eWdjSmpEa01ITktpbGRG?=
+ =?utf-8?B?MlNBdlZWVGNEMUtLYlJiSXNidXhUOU0wVXV6R2JEL1Y2aGJ1aStja243NlRn?=
+ =?utf-8?B?RkdRRnpMOEFPV29LRXdVa2hrVWhmaEZXOFdnZGpJK3VXRTEvakUrNFNUUVNY?=
+ =?utf-8?B?QnJJMWk4d0pqZXdzNDRveG0rZ0lWUDlnYlI2TEpOOXNFdkRuaDBXVmJEZWVn?=
+ =?utf-8?B?OGhNNzJEMFlYYXhKeDBGZHNhQ21lV0dRdGRSek56RDlQVVBVcTQ2TzFtWFF4?=
+ =?utf-8?B?Z0hSZG1BYlBZd0h2Y0NhR1o4SXMyU090ZU5KL0N2c2Zsb21wSnkxV2tVQkVD?=
+ =?utf-8?B?cnNHakNzdWdJVGc2UnE0UjFhS2gzRGVweWdwdmN6RXcxQXB1bGdTeC9mRGpq?=
+ =?utf-8?B?Qjhqako5MzIyYm40eHczcWMzcTBUamY3NDNLV0UyUWUvY1VyanI3TDdwbzY4?=
+ =?utf-8?B?SllGcWxoWkxIbWlVUW1COFh5dnNLMFc3dHFEcTBHT3NyM01TUC83MGVvVEFa?=
+ =?utf-8?B?d0JvV1dnRStnUnhoNEZkU2NpMXhaUG9mV1ZpbUp2ZlJ1bUEyY2k0blNNT3dj?=
+ =?utf-8?B?VTZDS3FFY3BiR01DVzVBWklRR2t5S2E3STZPckptNnNGRkE9PQ==?=
+X-Microsoft-Antispam-Message-Info: jrLzvpmjASmfV/KKsb6amgwBSa6iKW5mWv/JGPkxcfe0He6NTuK4zD7/0ynkhS4vLbPOKCaCwRtT0BFbcmrlknwSMm4WPO4S8UQNuMB6f/k0nLUPLa0I02RK3+Q7Hkj/HbEeUFrydFMbPoLsGFCU3rH2lOR/+xJXVw2zXV+BXHjkkMs2hqO+Ztm8ArA3vZVu
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3251;6:4eH31QeqnxyBC0s28K+bVYwXQAoyI1NlOWpzA37O0diH+BDWuNe6z8F5axHJhw/KAdXxggxK+vVU7Of0WbrS4z6k/VDl7xUwppKjyOwlYBwW9jJme4ahuIciDFwxdMBvCBw/0cPOgeJxnwHKFz8U+vtPxOimPnAr57bAqT5sGbUFs91MIBuCc5pFtVoCdLEghlKUnWg8HY0PP1nr66iqMDbNLqYUKryc2EWloeC0OwnBb+Fj2XIvuQSgjVR7ptPmvHHViFFYuJYMRD0+bgSTACJeyogc7+MUjiXLpp2Uawm3bmyTOVTKMolronW2I6WjzZOfPTNJBBR4Jz7C+m0G1J8uwDY3geP57hT4bJmXkDRJoP5HqmnJApeiKXSIYscTZ6LAPfVp7L1qC5FbZzmEIKZ9xehhyREzHI/S9pOdPJPMrq6djXY1gqxIX+mCkbnre3oqcR03PPDQ1FGolCTY7w==;5:X7bZM8WHpvrCZDfPW3kGr1tar7DB8HR+Q7YvuUePyFcSNMGu5QHdn+vlHzXbtTkesz0kmtMuVRuWhOy6kaooVovFRf71QFu83I2fB7xKgb9et5cBJtnQ2csYW7JG0NIy3VBA4bWbMup4GNDnOFdXCeFQumwRkPnATM98rvshTv8=;24:fcRhGDPbG0Zbds116EVGZjLdYkGz4I1DoCpe0gp0Uv1RLBCovfxJYdqKxlrIh0Airkz81OTI4ZefwpQr20WgoFxt7Dux1v7rdZoecWwGouI=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1; AM6PR08MB3256;
- 7:Y0L0oV+e47hIqT9PTs708rKSdjKPbaIYsJQqydKISeMvkwkxYUEVvYavwyk1hXPnRMqicqcAoddYO61aDcK/2jNe0yBQ++eHXkI1I720LCVhhZp6reN8TY5R75BFZVvyxlwK9++j9h9jPyV6eqhqW9C1l1GH9dj6QZGTdS0bppuTraCYn3TF9FhktxZDkdonb7QcojVMn0Zqiz8CXxpiIcpbHQWAHvikKaBD/lIcvKLaa2jSFaDuIiV7Ch18DMBQ;
- 20:7pbnIqaJ/uKKzlyJse/SMy9o3OYiOdxAi7Cy9f/npnv7OM0zQ8dukm0+3SqMfCftTvG5PTZuyrYf8V6cC1JPwki+7gTWcnKVsdDhfbi6k4VEXhcKsVw5P2+vduiUS9/Gj8S2YZaTXeh1HLLikMWo4YsvWqUO/PvCTzGp0a0wSUs=
-X-MS-Office365-Filtering-Correlation-Id: 8aa27e66-2e7d-405f-ec76-08d5a5fa3c5e
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR08MB3251;7:q3aXqfOxwIRmzcHpQousuRnDyay8t5RSFMD4SbgJ0bP5gbD/2Z+HmHbm9c2r6QdnJxLyC7rExaCp9ybA8okox+rQgcUC6zFj8uqj5aOL4t8flgVIiOwwVOGpbx4fBL5MoTNSiwSs95/CPjineoZkI1shZaXmu9isj9Xy01iPpy6+Y/ie6rL5X1hdzUBn4hxk0rjNp8f8TrnsyimbXfu7X/LEU6WLG7DsGHkQcfab1b1iC7XS6mi7TcpZkVI3vP7L;20:inTyiDPIV+dUIi445jDMhjrh4HHfFVn2RcvpHGJLahZMZm1dIqyV1n2W0eYSekKFEwYWfYJupSdD/B86KRMcDAK+ol0zbDoCv36E3nSRCKdZ5BscozEICJwoWAb7VsOCYfu2UbCWX+OWnxL/Rx1tpYAzmbnpZqMtuGGilBI60G0=
+X-MS-Office365-Filtering-Correlation-Id: a1ec3a73-bf49-49b5-3ed0-08d5a5fd13bc
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2018 13:34:10.7772 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8aa27e66-2e7d-405f-ec76-08d5a5fa3c5e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2018 13:54:31.1081 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1ec3a73-bf49-49b5-3ed0-08d5a5fd13bc
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3256
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Staging subsystem List <devel@driverdev.osuosl.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Oleg Drokin <oleg.drokin@intel.com>,
- Denis Petrovic <denis.petrovic@edu.ece.fr>, LKP <lkp@01.org>,
- Andreas Dilger <andreas.dilger@intel.com>, lustre-devel@lists.lustre.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3251
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598091550256531205?=
+X-GMAIL-MSGID: =?utf-8?q?1598182994386098200?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
 
-On 04/18/2018 09:37 PM, Linus Torvalds wrote:
-> Ugh, that lustre code is disgusting.
+On 04/19/2018 04:35 PM, Andrey Ryabinin wrote:
 > 
-> I thought we were getting rid of it.
 > 
-> Anyway, I started looking at why the stack trace is such an incredible
-> mess, with lots of stale entries.
+> On 04/18/2018 09:37 PM, Linus Torvalds wrote:
+>> Ugh, that lustre code is disgusting.
+>>
+>> I thought we were getting rid of it.
+>>
+>> Anyway, I started looking at why the stack trace is such an incredible
+>> mess, with lots of stale entries.
+>>
+>> The reason (well, _one_ reason) seems to be "ksocknal_startup". It has
+>> a 500-byte stack frame for some incomprehensible reason. I assume due
+>> to excessive inlining, because the function itself doesn't seem to be
+>> that bad.
+>>
+>> Similarly, LNetNIInit has a 300-byte stack frame. So it gets pretty deep.
+>>
+>> I'm getting the feeling that KASAN is making things worse because
+>> probably it's disabling all the sane stack frame stuff (ie no merging
+>> of stack slot entries, perhaps?).
+>>
 > 
-> The reason (well, _one_ reason) seems to be "ksocknal_startup". It has
-> a 500-byte stack frame for some incomprehensible reason. I assume due
-> to excessive inlining, because the function itself doesn't seem to be
-> that bad.
+> AFAIR no merging of stack slots policy enabled only if -fsanitize-address-use-after-scope 
+> is on (which is CONFIG_KASAN_EXTRA). This feature does cause sometimes significant stack bloat,
+> but hasn't been proven to be very useful, so I wouldn't mind disabling it completely.
 > 
-> Similarly, LNetNIInit has a 300-byte stack frame. So it gets pretty deep.
-> 
-> I'm getting the feeling that KASAN is making things worse because
-> probably it's disabling all the sane stack frame stuff (ie no merging
-> of stack slot entries, perhaps?).
->
+> So far I know only about a single BUG - https://lkml.kernel.org/r/<151238865557.4852.10258661301122491354@mail.alporthouse.com>
+> it has found.
 
-AFAIR no merging of stack slots policy enabled only if -fsanitize-address-use-after-scope 
-is on (which is CONFIG_KASAN_EXTRA). This feature does cause sometimes significant stack bloat,
-but hasn't been proven to be very useful, so I wouldn't mind disabling it completely.
+Actually, there is one more - https://syzkaller.appspot.com/bug?id=6a929b72a32ca0b1a6985126fa1bc77c03c12304
+so two bugs.
 
-So far I know only about a single BUG - https://lkml.kernel.org/r/<151238865557.4852.10258661301122491354@mail.alporthouse.com>
-it has found.
-There are also a lot of other 
+> There are also a lot of other 
 
+I didn't finish this sentence:
 
-> Without KASAN (but also without a lot of other things, so I might be
-> blaming KASAN incorrectly), the stack usage of ksocknal_startup() is
-> just under 100 bytes, so if it is KASAN, it's really a big difference.
->
-
-Yes, it's because of KASAN:
-CONFIG_KASAN=n
-socklnd.c:2795:1:ksocknal_startup       144     static
-
-CONFIG_KASAN=y
-CONFIG_KASAN_OUTLINE=y
-CONFIG_KASAN_EXTRA=n
-socklnd.c:2795:1:ksocknal_startup       552     static
-
-CONFIG_KASAN=y
-CONFIG_KASAN_OUTLINE=y
-CONFIG_KASAN_EXTRA=y
-socklnd.c:2795:1:ksocknal_startup       624     static
-
-It's expected that KASAN may cause sometimes significant stack usage growth.
-This is needed to catch out-of-bounds accesses to stack data.
-When compiler can't proof that access to stack variable is valid (e.g. reference to
-stack variable passed to some external function), it will create redzones around such
-stack variable.
-
-E.g. ksocknal_enumerate_interfaces() which is called only from ksocknal_startup(), thus probably
-inlined into ksocknal_startup() does this:
-
-
-	for (i = j = 0; i < n; i++) {
-		int up;
-		__u32 ip;
-		__u32 mask;
-
-		if (!strcmp(names[i], "lo")) /* skip the loopback IF */
-			continue;
-
-		rc = lnet_ipif_query(names[i], &up, &ip, &mask);
-
-
-With KASAN stack might look something like this:
-  [32-byte left redzone of the stack frame] [up (4 bytes)] [28-bytes redzone][ip (4 bytes)] [28-bytes redzone][mask (4 bytes)] [28-bytes redzone][32-byte right redzone of the stack frame]
-
-GCC always use 32-bytes redzones. AFAIK clang is more smart about this, it has adaptive redzone policy - smaller redzones for small variables, and bigger for big.
-
-In this particular case, the best way to reduce stack usage is to refactor the code.
-1) Drop 'int *up' argument from lnet_ipif_query(). When interface is down lnet_ipif_query() sets up to zero and doesn't return error.
-   But all callers treat up == 0 as error. So instead, lnet_ipif_query() should simply return error code, and 'up' won't be needed.
-    This will simplify the code, and should drop the stack usage with KASAN and without KASAN.
-
-2) Instead of using local ip, mask variables, pass pointers '&net->ksnn_interfaces[j].ksni_ipaddr', '&net->ksnn_interfaces[j].ksni_netmask'.
-    As in 1) this should alst drop the stack usage both with KASAN and without KASAN
-
-
-
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+There are also a lot of other reports about use-after-scope, but seem all of them are false positives
+caused by STRUCTLEAK plugin.
