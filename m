@@ -1,133 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751840AbeDSJ2q (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 05:28:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:34802 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751047AbeDSJ2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 05:28:45 -0400
-Date: Thu, 19 Apr 2018 10:28:40 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC PATCH 0/3] Dealing with the aliases of SI_USER
-Message-ID: <20180419092840.GL16308@e103592.cambridge.arm.com>
-References: <20180413094211.GN16141@n2100.armlinux.org.uk>
- <CA+55aFwoThxqUeAZSsMhf--ODyhGkmOENH5R6=4+CuaopFx9eA@mail.gmail.com>
- <20180413170827.GB16308@e103592.cambridge.arm.com>
- <20180413175407.GO16141@n2100.armlinux.org.uk>
- <CA+55aFyya6B9_aq8ZSrZT-S-BGbpbDgFvDff5z8upDirpcoiHA@mail.gmail.com>
- <20180413184522.GD16308@e103592.cambridge.arm.com>
- <CA+55aFwMUQbALx60b3JDrTcWVSBS7imS+zCYEMz8NOs=6rE6+A@mail.gmail.com>
- <20180415131206.GR16141@n2100.armlinux.org.uk>
- <87604sa2fu.fsf_-_@xmission.com>
- <CA+55aFw1gmfFH1o+oWMo4TnU5hEczAOiY1g=eMxqYZmy9JqDYw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFw1gmfFH1o+oWMo4TnU5hEczAOiY1g=eMxqYZmy9JqDYw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1751882AbeDSJb1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 05:31:27 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:38837 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750990AbeDSJbZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 05:31:25 -0400
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, airlied@linux.ie
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, daniel@ffwll.ch,
+        peda@axentia.se, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/8] drm: bridge: Add support for static image formats
+Date: Thu, 19 Apr 2018 11:31:01 +0200
+Message-Id: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 15, 2018 at 11:16:04AM -0700, Linus Torvalds wrote:
+Hello DRM list,
+  cc media-list for the mbus format extension
+  cc renesas-soc and devicetree for Eagle DTS patch
 
-[...]
+This series adds support for static image formats to DRM bridges, mimicking
+what display_info.bus_formats represents for DRM connectors.
 
-> The other thing we should do is to get rid of the stupid padding.
-> Right now "struct siginfo" is pointlessly padded to 128 bytes. That is
-> completely insane, when it's always just zero in the kernel.
+The main use case of this series is the R-Car DU LVDS encoder. This component
+can output LVDS streams compatible with JEIDA or SPWG specification, and so far
+it has only been possible to decide which one to output if the next component
+in the DRM pipeline was a panel, equipped with a DRM connector where to inspect
+the accepted input image format from.
 
-Agreed, inside the kernel the padding achieves nothing.
+With the introduction of the transparent THC63LVD1024 LVDS decoder driver, the
+next component in the pipeline is now a bridge, and the DU LVDS encoder needs
+to inspect which media bus image formats it accepts and set its LVDS output
+mode accordingly.
 
-> So put that _pad[] thing inside #ifndef __KERNEL__, and make
-> copy_siginfo_to_user() write the padding zeroes when copying to user
-> space. The reason for the padding is "future expansion", so we do want
-> to tell the user space that it's maybe up to 128 bytes in size, but if
-> we don't fill it all, we shouldn't waste time and memory on clearing
-> the padding internally.
-> 
-> I'm certainly *hoping* nobody depends on the whole 128 bytes in
-> rt_sigqueueinfo(). In theory you can fill it all (as long as si_code
-> is negative), but the man-page only says "si_value", and the compat
-> function doesn't copy any more than that either, so any user that
-> tries to fill in more than si_value is already broken. In fact, it
-> might even be worth enforcing that in rt_sigqueueinfo(), just to see
-> if anybody plays any games..
+The series implements -static- image format supports for bridges. As a result
+of the discussion on Peter Rosin's patch series:
+[PATCH v2 0/5] allow override of bus format in bridges
+https://lkml.org/lkml/2018/3/26/610
+my understanding is that the accepted image formats can be 'dynamic' (or
+'atomic') if depends on the configured DRM mode, or 'static' as in the
+THC63LVD1024 case, where an external pin configuration decides which LVDS
+mapping mode the encoder accepts (which implies it comes from DT, as in Peter's
+use case).
 
-[...]
+For dynamic formats Daniel already suggested a possible implementation:
+https://lkml.org/lkml/2018/3/28/57
+while for static image formats I am proposing an implementation that
+copies what we have for connectors at the moment.
 
-Digression:
+One more detail: the DU LVDS encoder supports 'mirroring' of LVDS modes, and
+that was handled through a set of flags (DRM_BUS_FLAG_DATA_*) defined for
+connectors only, and added for that specific purpose, if I got this right.
+Instead of replicating the same flags for bridges, or moving them to some shared
+header which I had trouble to identify, I have introduced the _LE version of
+mbus formats used to describe LVDS streams. While 'little endian' is not
+*technically* exact for those mirrored formats, it is my opinion they represent
+a good description anyhow of the reversed component ordering.
 
-Since we don't traditionally zero the tail-padding in the user sigframe,
-is there a reliable way for userspace to detect newly-added fields in
-siginfo other than by having an explicit sigaction sa_flags flag to
-request them?  I imagine something like [1] below from the userspace
-perspective.
+As a result, the connector specific DRM_BUS_FLAG_DATA_* have been removed as
+all their user have been ported to use the new _LE formats.
 
-On a separate thread, the issue of how to report syndrome information
-for SIGSEGV came up [2] (such as whether the faulting instruction was a
-read or a write).  This information is useful (and used) by things like
-userspace sanitisers and qemu.  Currently, reporting this to userspace
-relies on arch-specific cruft in the sigframe.
+The series depends on THC63LVD1024 support, implemented by the following
+in-review series:
+ [PATCH v9 0/2] drm: Add Thine THC63LVD1024 LVDS decoder bridge
+ [PATCH v3 0/5] V3M-Eagle HDMI output enablement
 
-We're committed to maintaining what's already in each arch sigframe,
-but it would be preferable to have a portable way of adding information
-to siginfo in a generic way.  si_code doesn't really work for that,
-since si_codes are mutually exclusive: I can't see a way of adding
-supplementary information using si_code.
+available for the interested at:
+git://jmondi.org/linux lvds-bridge/linus-master/v9-eagle-v3
 
-Anyway, that would be a separate RFC in the future (if ever).
+Thanks for comments
+   j
 
-Cheers
----Dave
+Jacopo Mondi (8):
+  drm: bridge: Add support for static image formats
+  dt-bindings: display: bridge: thc63lvd1024: Add lvds map property
+  drm: bridge: thc63lvd1024: Add support for LVDS mode map
+  arm64: dts: renesas: eagle: Add thc63 LVDS map
+  media: Add LE version of RGB LVDS formats
+  drm: rcar-du: rcar-lvds: Add bridge format support
+  drm: panel: Use _LE LVDS formats for data mirroring
+  drm: connector: Remove DRM_BUS_FLAG_DATA_* flags
 
+ .../bindings/display/bridge/thine,thc63lvd1024.txt |   3 +
+ Documentation/media/uapi/v4l/subdev-formats.rst    | 174 +++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts     |   1 +
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |  41 +++++
+ drivers/gpu/drm/drm_bridge.c                       |  30 ++++
+ drivers/gpu/drm/panel/panel-lvds.c                 |  21 +--
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                |  64 +++++---
+ include/drm/drm_bridge.h                           |   8 +
+ include/drm/drm_connector.h                        |   4 -
+ include/uapi/linux/media-bus-format.h              |   5 +-
+ 10 files changed, 317 insertions(+), 34 deletions(-)
 
-[1]
-
-static volatile int have_extflags = 0;
-
-static void handler(int n, siginfo_t *si, void *uc)
-{
-	/* ... */
-
-	if (have_extflags) {
-		/* Check si->si_extflags */
-	} else {
-		/* fallback */
-	}
-
-	/* ... */
-}
-
-int main(void)
-{
-	/* ... */
-
-	struct sigaction sa;
-
-	/* ... */
-
-	sa.sa_flags = SA_SIGINFO | SA_SIGINFO_EXTFLAGS;
-	sa.sa_sigaction = handler;
-	if (!sigaction(SIGSEGV, &sa, NULL)) {
-		have_extflags = 1;
-	} else {
-		sa.sa_flags &= ~SA_SIGINFO_EXTFLAGS;
-		if (sigaction(SIGSEGV, &sa, NULL))
-			goto error;
-	}
-
-	/* ... */
-}
-
-[2] [RFC PATCH] arm64: fault: Don't leak data in ESR context for user fault on kernel VA
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-April/571428.html
+--
+2.7.4
