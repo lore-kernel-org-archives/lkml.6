@@ -1,70 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752273AbeDSLKt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 07:10:49 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:32996 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751980AbeDSLKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 07:10:48 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, dbasehore@chromium.org,
-        linux-kernel@vger.kernel.org, dianders@google.com, groek@google.com,
-        kernel@collabora.com, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/6] dt-bindings: clock: add DDR3 standard speed bins.
-Date: Thu, 19 Apr 2018 13:10:35 +0200
-Message-ID: <5662116.zj93FbmDPb@phil>
-In-Reply-To: <20180419104019.24406-3-enric.balletbo@collabora.com>
-References: <20180419104019.24406-1-enric.balletbo@collabora.com> <20180419104019.24406-3-enric.balletbo@collabora.com>
+        id S1752530AbeDSLLb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:11:31 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:39164 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751695AbeDSLLa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 07:11:30 -0400
+Date: Thu, 19 Apr 2018 13:11:05 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Wang YanQing <udknight@gmail.com>
+cc: daniel@iogearbox.net, ast@kernel.org, illusionist.neo@gmail.com,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bpf, x86_32: add eBPF JIT compiler for ia32 (x86_32)
+In-Reply-To: <20180418093118.GA4184@udknight>
+Message-ID: <alpine.DEB.2.21.1804191308580.1563@nanos.tec.linutronix.de>
+References: <20180418093118.GA4184@udknight>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+On Wed, 18 Apr 2018, Wang YanQing wrote:
+> @@ -0,0 +1,147 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* bpf_jit.S : BPF JIT helper functions
 
-Am Donnerstag, 19. April 2018, 12:40:15 CEST schrieb Enric Balletbo i Serra:
-> DDR3 SDRAM Standard (JESD79-3F) defines some standard speed bins for
-> DDR3 memories. The devfreq/rk3399_dmc.txt binding refers to this file
-> which does not exist, so add a ddr.h file with the standard speed bins
-> for DDR3.
-> 
-> Fixes: c1ceb8f7c167 (Documentation: bindings: add dt documentation for rk3399 dmc)
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
-> 
->  include/dt-bindings/clock/ddr.h | 34 +++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 include/dt-bindings/clock/ddr.h
-> 
-> diff --git a/include/dt-bindings/clock/ddr.h b/include/dt-bindings/clock/ddr.h
-> new file mode 100644
-> index 000000000000..506aef7e609e
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/ddr.h
-> @@ -0,0 +1,34 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> +
-> +#ifndef DT_BINDINGS_DDR_H
-> +#define DT_BINDINGS_DDR_H
-> +
-> +/* DDR3-800 Standard Speed Bins */
-> +#define DDR3_800D	15
-> +#define DDR3_800E		18
-> +/* DDR3-1066 Standard Speed Bins */
-> +#define DDR3_1066E	18
-> +#define DDR3_1066F	21
-> +#define DDR3_1066G	24
+Please do not add these file names to the top level comment. They provide
+no value and just become stale when the file gets moved/renamed.
 
-looking at the mentioned jedec standard, I don't see where these numerical
-values are defined in the standard itself. [I may be blind though]
+> + *
+> + * Copyright (C) 2018 Wang YanQing (udknight@gmail.com)
+> + * Copyright (C) 2011 Eric Dumazet (eric.dumazet@gmail.com)
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; version 2
+> + * of the License.
 
-Could you explain a bit more where these numerical values are coming from?
+You have already the License Identifier. So you don't need the boiler plate
+text.
 
+Thanks,
 
-Thanks
-Heiko
+	tglx
