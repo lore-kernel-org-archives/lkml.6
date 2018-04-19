@@ -1,68 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752864AbeDSOFj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:05:39 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42640 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751381AbeDSOFi (ORCPT
+        id S1753128AbeDSOGU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:06:20 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:38567 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbeDSOGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:05:38 -0400
-Date: Thu, 19 Apr 2018 15:05:34 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        patches@opensource.cirrus.com, Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 16/21] regulator: wm8994: Pass descriptor instead of GPIO
- number
-Message-ID: <20180419140534.GE27188@sirena.org.uk>
-References: <20180212131717.27193-1-linus.walleij@linaro.org>
- <20180212131717.27193-17-linus.walleij@linaro.org>
- <20180213111147.kr4kecqbhmcoq6w2@localhost.localdomain>
- <CACRpkdZVoYsdWy6GwnnSfaSc2_wycEse3JswqufqDoz=GFb5FQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pY3vCvL1qV+PayAL"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZVoYsdWy6GwnnSfaSc2_wycEse3JswqufqDoz=GFb5FQ@mail.gmail.com>
-X-Cookie: We've upped our standards, so up yours!
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 19 Apr 2018 10:06:18 -0400
+X-Google-Smtp-Source: AIpwx49AvLdsn7Gy++CC0G8u+H/p2vOEp3BSJ9K+5dL0KHj6m3SYVD9K3+IvCSC1kU868MIjjDuUsw==
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>
+Subject: [PATCH RFC] ASoC: dai playback_active and capture_active may be greater than 1
+Date: Thu, 19 Apr 2018 16:06:12 +0200
+Message-Id: <20180419140612.11049-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+At the moment playback_active and capture_active are using only 1 bit so
+the maximum active count is 1.
 
---pY3vCvL1qV+PayAL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+However, snd_soc_runtime_activate() may be called several time on the
+same dai. This happens when a dai is part of several dai_links. It is
+often the case for "snd-soc-dummy-dai".
 
-On Thu, Apr 19, 2018 at 03:55:35PM +0200, Linus Walleij wrote:
+This is a problem if snd_soc_runtime_activate() is called an even number
+of times on a dai. In this case the active count overflow back to 0. As
+consequence, ASoC functions, such as soc_dpcm_runtime_update(), won't run
+correctly.
 
-> drivers pass an enable GPIO to the regulator core. The wm2200
-> for example is just managing the LDO without the use of the
-> regulator framework (I guess this is technically incorrect).
+Storing these usage counts on plain 'unsigned int' solves the problem.
 
-It's fine if it's internal to the chip and there's no realistic
-mechanism to replace the regulator with an off-chip one.  The reason
-the other two CODECs have explicit regulator drivers is that they're
-designed to support using an off-chip regulator instead so they need to
-look like external regulators do.
+Fixes: f0fba2ad1b6b ("ASoC: multi-component - ASoC Multi-Component Support")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
 
---pY3vCvL1qV+PayAL
-Content-Type: application/pgp-signature; name="signature.asc"
+Hi,
 
------BEGIN PGP SIGNATURE-----
+I found this problem while working on ASoC support for a new platform.
+During a playback, using DPCM, if I changed the backend dai, nothing
+happened, old backend path was not pruned, new backend path was not added.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrYoi0ACgkQJNaLcl1U
-h9AKUAf/UeeGkHpltDIu0mgdXSmkD4XnUmXd50ir2OkW+LyfHCtpdx8OSg6ypSBR
-b1YQ4VsJ9W2Rh9MgqW+uo16bx18+BZ7zSI5Q+h+hzm67tdiO69+nABwf2DOJDVMC
-T5iQdda1izoT5BX08DI/UhsIenio3TLyshcnZ74bi/KMqLzYd5K2gcttjTd5bWwL
-YDzAgYmb1kduryrABK54FPPLvTmnT5Zu03AKQdrLQf2bpk1Y84ViWb7vJU9YSSiU
-bcDiB/PrNVLD6gG8UJeuPmulvHHMubbqOMtrxSwSyUgNFVtvdX+VGpLcLVhLiaFg
-ooHvLthBRq1n01Zu6DMe+35Fptf0rA==
-=UYSt
------END PGP SIGNATURE-----
+Here is how it goes:
+1 FE and 2 BE, all 3 using snd-soc-dummy-dai for the codec_dai (ATM).
 
---pY3vCvL1qV+PayAL--
+On playback start:
+ - BE #1 activates and increments snd-soc-dummy-dai's playback_active
+ - FE activates and increments snd-soc-dummy-dai's playback_active
+
+The playback works but snd-soc-dummy-dai's playback_active value is now 0.
+
+Through a mux kcontrol, change BE client of FE, from BE #1 to BE #2.
+ -> trigger soc_dpcm_runtime_update().
+    -> checks fe's codec_dai playback_active which is zero so playback
+    path processing is skipped, keeping the old invalid path.
+
+ include/sound/soc-dai.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/sound/soc-dai.h b/include/sound/soc-dai.h
+index 8ad11669e4d8..35ebb0be5114 100644
+--- a/include/sound/soc-dai.h
++++ b/include/sound/soc-dai.h
+@@ -294,8 +294,8 @@ struct snd_soc_dai {
+ 	struct snd_soc_dai_driver *driver;
+ 
+ 	/* DAI runtime info */
+-	unsigned int capture_active:1;		/* stream is in use */
+-	unsigned int playback_active:1;		/* stream is in use */
++	unsigned int capture_active;		/* stream usage count */
++	unsigned int playback_active;		/* stream usage count */
+ 	unsigned int probed:1;
+ 
+ 	unsigned int active;
+-- 
+2.14.3
