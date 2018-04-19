@@ -1,85 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751386AbeDSLki (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 07:40:38 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:40184 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeDSLkg (ORCPT
+        id S1752116AbeDSLo0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:44:26 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:38794 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751865AbeDSLoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 07:40:36 -0400
-Subject: Re: [RFC 2/6] dmaengine: xilinx_dma: Pass AXI4-Stream control words
- to netdev dma client
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Radhey Shyam Pandey <radheys@xilinx.com>,
-        Vinod Koul <vinod.koul@intel.com>
-CC: "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>
-References: <1522665546-10035-1-git-send-email-radheys@xilinx.com>
- <1522665546-10035-3-git-send-email-radheys@xilinx.com>
- <20180411090854.GY6014@localhost>
- <BN6PR02MB32825FDF8601D8A310C2270BC7B70@BN6PR02MB3282.namprd02.prod.outlook.com>
- <7f549d2e-fc96-8c7e-d839-edb86ae088a5@metafoo.de>
- <4ba085c7-5256-6c8a-5697-c0d5736a6e46@ti.com>
- <1fc10bec-5c2c-98f1-1d5b-b768dea844ed@metafoo.de>
- <78828d31-e4cd-5211-f1b6-8918ac38f599@ti.com>
- <e5a6c1ad-e263-7b9d-a5e2-744884c9d6de@metafoo.de>
- <a6ac9ca8-91b4-c7b1-0f0c-c04dd10048e2@ti.com>
- <d7432292-cedd-7d61-f219-8b63eb6c1d50@metafoo.de>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <8c7a5ac8-0747-9dad-f6e5-74890b64f618@ti.com>
-Date: Thu, 19 Apr 2018 14:40:26 +0300
+        Thu, 19 Apr 2018 07:44:23 -0400
+X-Google-Smtp-Source: AB8JxZoDgezeK5AjXib9pM+wC/rIG8U86QtAFLXUoQl0yyV1tTg7hu/cJZv2o71ziJ3aC4IgmaMplQ==
+Subject: Re: [PATCH] Input: xen-kbdfront - allow better run-time configuration
+To: Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmitry.torokhov@gmail.com, lyan@suse.com, boris.ostrovsky@oracle.com
+Cc: andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180418150445.9805-1-andr2000@gmail.com>
+ <ccb7a33b-7862-9803-fb24-67861d5ecab9@suse.com>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <2bff035e-303e-d644-5f51-5e64150c097c@gmail.com>
+Date: Thu, 19 Apr 2018 14:44:19 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <d7432292-cedd-7d61-f219-8b63eb6c1d50@metafoo.de>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <ccb7a33b-7862-9803-fb24-67861d5ecab9@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04/19/2018 02:25 PM, Juergen Gross wrote:
+> On 18/04/18 17:04, Oleksandr Andrushchenko wrote:
+>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>>
+>> It is now only possible to control if multi-touch virtual device
+>> is created or not (via the corresponding XenStore entries),
+>> but keyboard and pointer devices are always created.
+> Why don't you want to go that route for keyboard and mouse, too?
+> Or does this really make no sense?
+Well, I would prefer not to touch anything outside Linux and
+this driver. And these settings seem to be implementation specific.
+So, this is why introduce Linux module parameters and don't extend
+the kbdif protocol.
+>> In some cases this is not desirable. For example, if virtual
+>> keyboard device is exposed to Android then the latter won't
+>> automatically show on-screen keyboard as it expects that a
+>> physical keyboard device can be used for typing.
+>>
+>> Make it possible to configure which virtual devices are created
+>> with module parameters:
+>>    - no_ptr_dev=1 if no pointer device needs to be created
+>>    - no_kbd_dev=1 if no keyboard device needs to be created
+>> Keep old behavior by default.
+>>
+>> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+>> Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+>> Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+>> ---
+>>   drivers/input/misc/xen-kbdfront.c | 159 +++++++++++++++++-------------
+>>   1 file changed, 92 insertions(+), 67 deletions(-)
+>>
+>> diff --git a/drivers/input/misc/xen-kbdfront.c b/drivers/input/misc/xen-kbdfront.c
+>> index d91f3b1c5375..a3306aad40b0 100644
+>> --- a/drivers/input/misc/xen-kbdfront.c
+>> +++ b/drivers/input/misc/xen-kbdfront.c
+>> @@ -51,6 +51,16 @@ module_param_array(ptr_size, int, NULL, 0444);
+>>   MODULE_PARM_DESC(ptr_size,
+>>   	"Pointing device width, height in pixels (default 800,600)");
+>>   
+>> +static unsigned int no_ptr_dev;
+>> +module_param(no_ptr_dev, uint, 0);
+> Use type invbool instead?
+Hm, better bool then? invbool will require parameter name change to
+something like "with_ptr_dev" which might confuse, e.g.
+default was to go with pointer device, now we have with_ptr_dev
+module parameter: do I now need to set it to preserve the old behavior?
+The answer is no (because of invbool), but you have to dig for it.
 
-On 2018-04-18 16:06, Lars-Peter Clausen wrote:
->> Hrm, true, but it is hardly the metadata use case. It is more like
->> different DMA transfer type.
-> 
-> When I look at this with my astronaut architect view from high high up above
-> I do not see a difference between metadata and multi-planar data.
-
-I tend to disagree.
-
-> Both split the data that is sent to the peripheral into multiple
-> sub-streams, each carrying part of the data. I'm sure there are peripherals
-> that interleave data and metadata on the same data stream. Similar to how we
-> have left and right channel interleaved in a audio stream.
-
-Slimbus, S/PDIF?
-
-> What about metadata that is not contiguous and split into multiple segments.
-> How do you handle passing a sgl to the metadata interface? And then it
-> suddenly looks quite similar to the normal DMA descriptor interface.
-
-Well, the metadata is for the descriptor. The descriptor describe the
-data transfer _and_ can convey additional information. Nothing is
-interleaved, the data and the descriptor are different things. It is
-more like TCP headers detached from the data (but pointing to it).
-
-> But maybe that's just one abstraction level to high.
-
-I understand your point, but at the end the metadata needs to end up in
-the descriptor which is describing the data that is going to be moved.
-
-The descriptor is not sent as a separate DMA trasnfer, it is part of the
-DMA transfer, it is handled internally by the DMA.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Will bool work for you?
+>> +MODULE_PARM_DESC(no_ptr_dev,
+>> +	"If set then no virtual pointing device exposed to the guest");
+>> +
+>> +static unsigned int no_kbd_dev;
+>> +module_param(no_kbd_dev, uint, 0);
+> invbool?
+>
+>
+> Juergen
