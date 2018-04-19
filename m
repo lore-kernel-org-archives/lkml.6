@@ -1,56 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752684AbeDSPL3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:11:29 -0400
-Received: from 8bytes.org ([81.169.241.247]:49268 "EHLO theia.8bytes.org"
+        id S1752775AbeDSPLs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:11:48 -0400
+Received: from mx2.freebsd.org ([8.8.178.116]:28615 "EHLO mx2.freebsd.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751836AbeDSPL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:11:28 -0400
-Date: Thu, 19 Apr 2018 17:11:27 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Michal Kubecek <mkubecek@suse.cz>
-Cc: Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <jroedel@suse.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] x86/ldt: Fix support_pte_mask filtering in
- map_ldt_struct()
-Message-ID: <20180419151126.GJ15462@8bytes.org>
-References: <1523871837-8378-1-git-send-email-joro@8bytes.org>
- <CALCETrVgQspiO3nnyhqiXi17iaGG7bRDsr3gpHwdDnYfFDZabQ@mail.gmail.com>
- <07e2c23e-10b7-b03f-5706-3d4b910537ba@linux.intel.com>
- <20180418121403.GA3434@pd.tnic>
- <20180419130011.GG3896@pd.tnic>
- <20180419141134.GI15462@8bytes.org>
- <20180419145832.5mq3va53swswajmu@unicorn.suse.cz>
+        id S1752530AbeDSPLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:11:46 -0400
+X-Google-Smtp-Source: AIpwx4/vu0mKFps/0fu3HlJnMbbaCu7p4mKAZfTzMTFgxSOjiuiVxzPNYs7+9rjkFnO9mIZO+eKvdlvuLGjzKFndbZg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419145832.5mq3va53swswajmu@unicorn.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <470ec61e-8b08-5193-ede1-01d02b2c865e@gmail.com>
+References: <20180128232919.12639-1-embed3d@gmail.com> <20180128232919.12639-15-embed3d@gmail.com>
+ <20180129095200.attg7cgvpifpchtn@flea.lan> <470ec61e-8b08-5193-ede1-01d02b2c865e@gmail.com>
+From: Kyle Evans <kevans@freebsd.org>
+Date: Thu, 19 Apr 2018 10:11:22 -0500
+X-Gmail-Original-Message-ID: <CACNAnaGVSbk7czb+mcGTx1C=YwCWe1qqHQDQe9+PNifwEXovMw@mail.gmail.com>
+Message-ID: <CACNAnaGVSbk7czb+mcGTx1C=YwCWe1qqHQDQe9+PNifwEXovMw@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 14/16] arm: dts: sun8i: h3: enable H3
+ sid controller
+To: embed3d@gmail.com
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, lee.jones@linaro.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
+        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        davem@davemloft.net, hans.verkuil@cisco.com, mchehab@kernel.org,
+        rask@formelder.dk, clabbe.montjoie@gmail.com, sean@mess.org,
+        krzk@kernel.org, quentin.schulz@free-electrons.com, icenowy@aosc.io,
+        edu.molinas@gmail.com, singhalsimran0@gmail.com,
+        linux-iio@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+On Mon, Jan 29, 2018 at 6:03 AM, Philipp Rossak <embed3d@gmail.com> wrote:
+>
+>
+> On 29.01.2018 10:52, Maxime Ripard wrote:
+>>
+>> On Mon, Jan 29, 2018 at 12:29:17AM +0100, Philipp Rossak wrote:
+>>>
+>>> This patch enables the the sid controller in the H3. It can be used
+>>> for thermal calibration data.
+>>>
+>>> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
+>>> ---
+>>>   arch/arm/boot/dts/sun8i-h3.dtsi | 7 +++++++
+>>>   1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
+>>> b/arch/arm/boot/dts/sun8i-h3.dtsi
+>>> index 3f83f6a27c74..9bb5cc29fec5 100644
+>>> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
+>>> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+>>> @@ -72,6 +72,13 @@
+>>>                 };
+>>>         };
+>>>   +     soc {
+>>> +               sid: eeprom@1c14000 {
+>>> +                       compatible = "allwinner,sun8i-h3-sid";
+>>> +                       reg = <0x01c14000 0x400>;
+>>> +               };
+>>> +       };
+>>> +
+>>
+>>
+>> Shouldn't you also use a nvmem-cells property to the THS node?
+>>
+>> Maxime
+>>
+>
+> Oh seems like I forgot that.
+> As related to the wiki [1] this should be 64 bit wide at the address 0x34. I
+> will add that in the next version.
+>
+>
+> [1]: http://linux-sunxi.org/SID_Register_Guide#eFUSE
+>
+> Thanks,
+> Philipp
+>
 
-On Thu, Apr 19, 2018 at 04:58:32PM +0200, Michal Kubecek wrote:
-> I had the same problem with v4.17-rc1 and fb43d6cb91ef and the change
-> you suggested applied on top of
-> 
->   (a) fb43d6cb91ef with cherry-picked e6f39e87b643
->   (b) current master (87ef12027b9b)
-> 
-> fixes the resume on my system.
+Hi,
 
-Cool, thanks for testing! I prepared a patch and will send it out if
-Boris also reports success. I'll also added your Tested-by :)
-
+Any chance this will see a v3 soon? I'm kind of interested in sid node
+for h3. =)
 
 Thanks,
 
-	Joerg
+Kyle Evans
