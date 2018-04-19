@@ -1,91 +1,192 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752160AbeDSJo5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 05:44:57 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:46124 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751046AbeDSJoz (ORCPT
+        id S1752096AbeDSJq6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 05:46:58 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:27984 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751082AbeDSJq4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 05:44:55 -0400
-Subject: Re: [PATCH v8 1/2] dt-bindings: display: bridge: Document
- THC63LVD1024 LVDS decoder
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, <architt@codeaurora.org>,
-        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
-        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
-        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-References: <1523357590-3841-1-git-send-email-jacopo+renesas@jmondi.org>
- <1523357590-3841-2-git-send-email-jacopo+renesas@jmondi.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-renesas-soc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <29caaf6f-1783-9b01-5304-8748398d41c6@mentor.com>
-Date: Thu, 19 Apr 2018 12:44:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
-MIME-Version: 1.0
-In-Reply-To: <1523357590-3841-2-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 19 Apr 2018 05:46:56 -0400
+From: Philippe CORNU <philippe.cornu@st.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: Re: [PATCH 2/2] drm/bridge: sii902x: add optional power supplies
+Thread-Topic: [PATCH 2/2] drm/bridge: sii902x: add optional power supplies
+Thread-Index: AQHT17dIuXEJMdIwqUuaIl69Iw7CLKQHtaAA
+Date: Thu, 19 Apr 2018 09:46:31 +0000
+Message-ID: <ea6fbdbe-6ce5-0110-5590-083c7b697a85@st.com>
+References: <20180410051927.8268-1-philippe.cornu@st.com>
+ <20180410051927.8268-3-philippe.cornu@st.com> <3775994.jviQhGlOpf@avalon>
+In-Reply-To: <3775994.jviQhGlOpf@avalon>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.117]
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+Content-ID: <914B4849EBCB6F49AD69B1AFCEEFEFE9@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3J9l5D0017960
 
-Hi Jacopo, Laurent,
+Hi Laurent :-)
 
-On 04/10/2018 01:53 PM, Jacopo Mondi wrote:
-> Document Thine THC63LVD1024 LVDS decoder device tree bindings.
+On 04/19/2018 10:20 AM, Laurent Pinchart wrote:
+> Hi Philippe,
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-
-> ---
->  .../bindings/display/bridge/thine,thc63lvd1024.txt | 60 ++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> Thank you for the patch.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> new file mode 100644
-> index 0000000..0b23e70
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
-> @@ -0,0 +1,60 @@
-> +Thine Electronics THC63LVD1024 LVDS decoder
-> +-------------------------------------------
-> +
-> +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS streams
-> +to parallel data outputs. The chip supports single/dual input/output modes,
-> +handling up to two LVDS input streams and up to two digital CMOS/TTL outputs.
-> +
-> +Single or dual operation mode, output data mapping and DDR output modes are
-> +configured through input signals and the chip does not expose any control bus.
-> +
-> +Required properties:
-> +- compatible: Shall be "thine,thc63lvd1024"
-> +- vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS input,
-> +  PPL and digital circuitry
-> +
-> +Optional properties:
-> +- powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
+> On Tuesday, 10 April 2018 08:19:27 EEST Philippe Cornu wrote:
+>> Add the 3 optional power supplies using the exact description
+>> found in the document named
+>> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
+>>
+>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>> ---
+>> drivers/gpu/drm/bridge/sii902x.c | 39 +++++++++++++++++++++++++++++++++----
+>> 1 file changed, 35 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/sii902x.c
+>> b/drivers/gpu/drm/bridge/sii902x.c index 60373d7eb220..e17ba6db1ec8 100644
+>> --- a/drivers/gpu/drm/bridge/sii902x.c
+>> +++ b/drivers/gpu/drm/bridge/sii902x.c
+>> @@ -24,6 +24,7 @@
+>>   #include <linux/i2c.h>
+>>   #include <linux/module.h>
+>>   #include <linux/regmap.h>
+>> +#include <linux/regulator/consumer.h>
+>>
+>>   #include <drm/drmP.h>
+>>   #include <drm/drm_atomic_helper.h>
+>> @@ -86,6 +87,7 @@ struct sii902x {
+>>   	struct drm_bridge bridge;
+>>   	struct drm_connector connector;
+>>   	struct gpio_desc *reset_gpio;
+>> +	struct regulator_bulk_data supplies[3];
+>>   };
+>>
+>>   static inline struct sii902x *bridge_to_sii902x(struct drm_bridge *bridge)
+>> @@ -392,23 +394,43 @@ static int sii902x_probe(struct i2c_client *client,
+>>   		return PTR_ERR(sii902x->reset_gpio);
+>>   	}
+>>
+>> +	sii902x->supplies[0].supply = "iovcc";
+>> +	sii902x->supplies[1].supply = "avcc12";
+>> +	sii902x->supplies[2].supply = "cvcc12";
+>> +	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(sii902x->supplies),
+>> +				      sii902x->supplies);
+>> +	if (ret) {
+>> +		dev_err(dev, "regulator_bulk_get failed\n");
+> 
+> Maybe "failed to get power supplies" to be a bit more explicit ? And while at
+> it, printing the value of ret too ?
+> 
 
-Thank you for the change.
+good point, I will do that in v2
 
-I would suggest to rename 'pwdn-gpios' property of THC63LVDM83D as well,
-as far as I understand it is only described in DT bindings documentation,
-and the property is unused in the driver or board DTS files at the moment.
 
-> +- oe-gpios: Output enable GPIO signal, pin name "OE". Active high
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = regulator_bulk_enable(ARRAY_SIZE(sii902x->supplies),
+>> +				    sii902x->supplies);
+>> +	if (ret) {
+>> +		dev_err(dev, "regulator_bulk_enable failed\n");
+> 
+> Same here ?
+> 
 
-Okay :)
+agreed
 
---
-With best wishes,
-Vladimir
+>> +		return ret;
+>> +	}
+>> +
+>> +	usleep_range(10000, 20000);
+>> +
+>>   	sii902x_reset(sii902x);
+>>
+>>   	ret = regmap_write(sii902x->regmap, SII902X_REG_TPI_RQB, 0x0);
+>>   	if (ret)
+>> -		return ret;
+>> +		goto err_disable_regulator;
+>>
+>>   	ret = regmap_bulk_read(sii902x->regmap, SII902X_REG_CHIPID(0),
+>>   			       &chipid, 4);
+>>   	if (ret) {
+>>   		dev_err(dev, "regmap_read failed %d\n", ret);
+>> -		return ret;
+>> +		goto err_disable_regulator;
+>>   	}
+>>
+>>   	if (chipid[0] != 0xb0) {
+>>   		dev_err(dev, "Invalid chipid: %02x (expecting 0xb0)\n",
+>>   			chipid[0]);
+>> -		return -EINVAL;
+>> +		ret = -EINVAL;
+>> +		goto err_disable_regulator;
+>>   	}
+>>
+>>   	/* Clear all pending interrupts */
+>> @@ -424,7 +446,7 @@ static int sii902x_probe(struct i2c_client *client,
+>>   						IRQF_ONESHOT, dev_name(dev),
+>>   						sii902x);
+>>   		if (ret)
+>> -			return ret;
+>> +			goto err_disable_regulator;
+>>   	}
+>>
+>>   	sii902x->bridge.funcs = &sii902x_bridge_funcs;
+>> @@ -434,6 +456,12 @@ static int sii902x_probe(struct i2c_client *client,
+>>   	i2c_set_clientdata(client, sii902x);
+>>
+>>   	return 0;
+>> +
+>> +err_disable_regulator:
+>> +	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
+>> +			       sii902x->supplies);
+>> +
+>> +	return ret;
+>>   }
+>>
+>>   static int sii902x_remove(struct i2c_client *client)
+>> @@ -443,6 +471,9 @@ static int sii902x_remove(struct i2c_client *client)
+>>
+>>   	drm_bridge_remove(&sii902x->bridge);
+>>
+>> +	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
+>> +			       sii902x->supplies);
+>> +
+> 
+> While this seems functionally correct, would it be useful to only enable power
+> supplies when needed to save power ?
+> 
+
+that is a good point. I do not know well (yet) this bridge. Maybe I can 
+add a 3rd patch with bridge pre_enable() and post_disable() containing 
+reset & supplies management. Or I can put reset&supplies in bridge 
+enable() & disable() but it could be a little messy.
+
+Any opinion/advice?
+Many thanks,
+Philippe :-)
+
+>>   	return 0;
+>>   }
+> 
