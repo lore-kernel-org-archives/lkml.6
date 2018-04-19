@@ -1,159 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752980AbeDSIUd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 04:20:33 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34296 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751070AbeDSIU3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 04:20:29 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Philippe Cornu <philippe.cornu@st.com>
-Cc: Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yannick Fertre <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 2/2] drm/bridge: sii902x: add optional power supplies
-Date: Thu, 19 Apr 2018 11:20:37 +0300
-Message-ID: <3775994.jviQhGlOpf@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180410051927.8268-3-philippe.cornu@st.com>
-References: <20180410051927.8268-1-philippe.cornu@st.com> <20180410051927.8268-3-philippe.cornu@st.com>
+        id S1751879AbeDSI1F (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 04:27:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:34314 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750799AbeDSI1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 04:27:01 -0400
+Date: Thu, 19 Apr 2018 09:26:57 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-arch@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC PATCH 1/3] signal: Ensure every siginfo we send has all
+ bits initialized
+Message-ID: <20180419082656.GK16308@e103592.cambridge.arm.com>
+References: <CA+55aFyya6B9_aq8ZSrZT-S-BGbpbDgFvDff5z8upDirpcoiHA@mail.gmail.com>
+ <20180413184522.GD16308@e103592.cambridge.arm.com>
+ <CA+55aFwMUQbALx60b3JDrTcWVSBS7imS+zCYEMz8NOs=6rE6+A@mail.gmail.com>
+ <20180415131206.GR16141@n2100.armlinux.org.uk>
+ <87604sa2fu.fsf_-_@xmission.com>
+ <87zi248nte.fsf_-_@xmission.com>
+ <20180417132328.GF16308@e103592.cambridge.arm.com>
+ <87d0yxzksd.fsf@xmission.com>
+ <20180418124717.GI16308@e103592.cambridge.arm.com>
+ <87h8o8y4q6.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h8o8y4q6.fsf@xmission.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
+On Wed, Apr 18, 2018 at 09:22:09AM -0500, Eric W. Biederman wrote:
+> Dave Martin <Dave.Martin@arm.com> writes:
+> 
+> > On Tue, Apr 17, 2018 at 02:37:38PM -0500, Eric W. Biederman wrote:
 
-Thank you for the patch.
+[...]
 
-On Tuesday, 10 April 2018 08:19:27 EEST Philippe Cornu wrote:
-> Add the 3 optional power supplies using the exact description
-> found in the document named
-> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
+> >> My intention is to leave 0 instances of clear_siginfo in the
+> >> architecture specific code.  Ideally struct siginfo will be limited to
+> >> kernel/signal.c but I am not certain I can quite get that far.
+> >> The function do_coredump appears to have a legit need for siginfo.
+> >
+> > So, you mean we can't detect that the caller didn't initialise all the
+> > members, or initialised the wrong union member?
 > 
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-> ---
-> drivers/gpu/drm/bridge/sii902x.c | 39 +++++++++++++++++++++++++++++++++----
-> 1 file changed, 35 insertions(+), 4 deletions(-)
+> Correct.  Even when we smuggled the the union member in the upper bits
+> of si_code we got it wrong.  So an interface that helps out and does
+> more and is harder to misues looks desirable.
 > 
-> diff --git a/drivers/gpu/drm/bridge/sii902x.c
-> b/drivers/gpu/drm/bridge/sii902x.c index 60373d7eb220..e17ba6db1ec8 100644
-> --- a/drivers/gpu/drm/bridge/sii902x.c
-> +++ b/drivers/gpu/drm/bridge/sii902x.c
-> @@ -24,6 +24,7 @@
->  #include <linux/i2c.h>
->  #include <linux/module.h>
->  #include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
+> > What would be the alternative?  Have a separate interface for each SIL_
+> > type, with only kernel/signal.c translating that into the siginfo_t that
+> > userspace sees?
 > 
->  #include <drm/drmP.h>
->  #include <drm/drm_atomic_helper.h>
-> @@ -86,6 +87,7 @@ struct sii902x {
->  	struct drm_bridge bridge;
->  	struct drm_connector connector;
->  	struct gpio_desc *reset_gpio;
-> +	struct regulator_bulk_data supplies[3];
->  };
-> 
->  static inline struct sii902x *bridge_to_sii902x(struct drm_bridge *bridge)
-> @@ -392,23 +394,43 @@ static int sii902x_probe(struct i2c_client *client,
->  		return PTR_ERR(sii902x->reset_gpio);
->  	}
-> 
-> +	sii902x->supplies[0].supply = "iovcc";
-> +	sii902x->supplies[1].supply = "avcc12";
-> +	sii902x->supplies[2].supply = "cvcc12";
-> +	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(sii902x->supplies),
-> +				      sii902x->supplies);
-> +	if (ret) {
-> +		dev_err(dev, "regulator_bulk_get failed\n");
+> Yes.  It really isn't bad as architecture specific code only generates
+> faults.  In general faults only take a pointer.  I have already merged
+> the needed helpers into kernel/signal.c
 
-Maybe "failed to get power supplies" to be a bit more explicit ? And while at 
-it, printing the value of ret too ?
+Good point.  I hadn't considered that only one class of signal comes
+from the arch code, but now that you point it out, it sounds right.
 
-> +		return ret;
-> +	}
-> +
-> +	ret = regulator_bulk_enable(ARRAY_SIZE(sii902x->supplies),
-> +				    sii902x->supplies);
-> +	if (ret) {
-> +		dev_err(dev, "regulator_bulk_enable failed\n");
+> > Either way, I don't see how we force the caller to initilise the whole
+> > structure.
+> 
+> In general the plan is to convert the callers to call force_sig_fault,
+> and then there is no need to have siginfo in the architecture specific
+> code.  I have all of the necessary helpers are already merged into
+> kernel/signal.c
 
-Same here ?
+Makes sense.
 
-> +		return ret;
-> +	}
-> +
-> +	usleep_range(10000, 20000);
-> +
->  	sii902x_reset(sii902x);
-> 
->  	ret = regmap_write(sii902x->regmap, SII902X_REG_TPI_RQB, 0x0);
->  	if (ret)
-> -		return ret;
-> +		goto err_disable_regulator;
-> 
->  	ret = regmap_bulk_read(sii902x->regmap, SII902X_REG_CHIPID(0),
->  			       &chipid, 4);
->  	if (ret) {
->  		dev_err(dev, "regmap_read failed %d\n", ret);
-> -		return ret;
-> +		goto err_disable_regulator;
->  	}
-> 
->  	if (chipid[0] != 0xb0) {
->  		dev_err(dev, "Invalid chipid: %02x (expecting 0xb0)\n",
->  			chipid[0]);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto err_disable_regulator;
->  	}
-> 
->  	/* Clear all pending interrupts */
-> @@ -424,7 +446,7 @@ static int sii902x_probe(struct i2c_client *client,
->  						IRQF_ONESHOT, dev_name(dev),
->  						sii902x);
->  		if (ret)
-> -			return ret;
-> +			goto err_disable_regulator;
->  	}
-> 
->  	sii902x->bridge.funcs = &sii902x_bridge_funcs;
-> @@ -434,6 +456,12 @@ static int sii902x_probe(struct i2c_client *client,
->  	i2c_set_clientdata(client, sii902x);
-> 
->  	return 0;
-> +
-> +err_disable_regulator:
-> +	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
-> +			       sii902x->supplies);
-> +
-> +	return ret;
->  }
-> 
->  static int sii902x_remove(struct i2c_client *client)
-> @@ -443,6 +471,9 @@ static int sii902x_remove(struct i2c_client *client)
-> 
->  	drm_bridge_remove(&sii902x->bridge);
-> 
-> +	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
-> +			       sii902x->supplies);
-> +
+I wonder if all the relevant siginfo data could be passed to
+force_sig_fault() (or whatever) as arguments.  Then the problem of
+uninitialised fields goes away.  Perhaps that's what you had in mind.
 
-While this seems functionally correct, would it be useful to only enable power 
-supplies when needed to save power ?
+[...]
 
->  	return 0;
->  }
+> >> Unless gcc has changed it's stance on type-punning through unions
+> >> or it's semantics with -fno-strict_aliasing we should be good.
+> >
+> > In practice you're probably right.
+> >
+> > Today, gcc is pretty conservative in this area, and I haven't been able
+> > to convince clang to optimise away memset in this way either.
+> >
+> > My concern is that is this assumption turns out to be wrong it may be
+> > some time before anybody notices, because the leakage of kernel stack may
+> > be the only symptom.
+> >
+> > I'll try to nail down a compiler guy to see if we can get a promise on
+> > this at least with -fno-strict-aliasing.
+> >
+> >
+> > I wonder whether it's worth protecting ourselves with something like:
+> >
+> >
+> > static void clear_siginfo(siginfo_t *si)
+> > {
+> > 	asm ("" : "=m" (*si));
+> > 	memset(si, 0, sizeof(*si));
+> > 	asm ("" : "+m" (*si));
+> > }
+> >
+> > Probably needs to be thought about more widely though.  I guess it's out
+> > of scope for this series.
+> 
+> It is definitely a question worth asking.
 
--- 
-Regards,
+I may follow it up later if I find myself at a loose end...
 
-Laurent Pinchart
+Cheers
+---Dave
