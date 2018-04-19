@@ -1,26 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752634AbeDSE3u (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 00:29:50 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44652 "EHLO
+        id S1753139AbeDSEaF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 00:30:05 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:44778 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750737AbeDSE3r (ORCPT
+        with ESMTP id S1752649AbeDSEaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 00:29:47 -0400
+        Thu, 19 Apr 2018 00:30:00 -0400
 To: Christoph Hellwig <hch@lst.de>
 Cc: iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
         linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-scsi@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/12] iscsi_tcp: don't set a bounce limit
+Subject: Re: [PATCH 02/12] storsvc: don't set a bounce limit
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
 References: <20180416085032.7367-1-hch@lst.de>
-        <20180416085032.7367-2-hch@lst.de>
-Date: Thu, 19 Apr 2018 00:29:38 -0400
-In-Reply-To: <20180416085032.7367-2-hch@lst.de> (Christoph Hellwig's message
-        of "Mon, 16 Apr 2018 10:50:21 +0200")
-Message-ID: <yq1h8o7lsy5.fsf@oracle.com>
+        <20180416085032.7367-3-hch@lst.de>
+Date: Thu, 19 Apr 2018 00:29:52 -0400
+In-Reply-To: <20180416085032.7367-3-hch@lst.de> (Christoph Hellwig's message
+        of "Mon, 16 Apr 2018 10:50:22 +0200")
+Message-ID: <yq1d0yvlsxr.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
