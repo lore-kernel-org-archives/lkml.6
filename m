@@ -1,98 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753859AbeDSXWy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 19:22:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43550 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753601AbeDSXWx (ORCPT
+        id S1753874AbeDSXXH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 19:23:07 -0400
+Received: from mail-wr0-f172.google.com ([209.85.128.172]:35670 "EHLO
+        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753575AbeDSXXE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 19:22:53 -0400
-Date: Thu, 19 Apr 2018 16:22:50 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: David Miller <davem@davemloft.net>, linux-mm@kvack.org,
-        eric.dumazet@gmail.com, edumazet@google.com, bhutchings@solarflare.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
-        jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        dm-devel@redhat.com, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
-Message-Id: <20180419162250.00bf82e2c40b4960a7e23cdc@linux-foundation.org>
-In-Reply-To: <alpine.LRH.2.02.1804191716100.10099@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
-        <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
-        <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
-        <20180418.134651.2225112489265654270.davem@davemloft.net>
-        <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
-        <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com>
-        <20180419124751.8884e516e99825d83da3d87a@linux-foundation.org>
-        <alpine.LRH.2.02.1804191716100.10099@file01.intranet.prod.int.rdu2.redhat.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 19 Apr 2018 19:23:04 -0400
+X-Google-Smtp-Source: AIpwx4+0hKct2bGsfEEnVss/Q7f9IKrwgeWzoBn6p7xd8+qTFWyrqTlcixmqQC9HSzdyMo0ggDJN/2CLTYypeDSNU/s=
+MIME-Version: 1.0
+In-Reply-To: <c0530769-50c3-87ad-1558-164873482130@redhat.com>
+References: <20180419190846.GE2066@avx2> <1c3b9cf3-3a36-568f-3da2-e560a721f4aa@redhat.com>
+ <20180419195504.GA4343@avx2> <eb7c1569-e445-5cbb-6d10-2694b625232a@redhat.com>
+ <20180419203949.GA4555@avx2> <c0530769-50c3-87ad-1558-164873482130@redhat.com>
+From: "Joel Fernandes (Google)" <joel.opensrc@gmail.com>
+Date: Thu, 19 Apr 2018 16:23:02 -0700
+Message-ID: <CAEi0qNn9KbTtUxLvFKvq958BhG9KrpY=S-89T5HJBebO9Da4zw@mail.gmail.com>
+Subject: Re: [PATCH] proc/stat: Separate out individual irq counts into /proc/stat_irqs
+To: Waiman Long <longman@redhat.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        rdunlap@infradead.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018 17:19:20 -0400 (EDT) Mikulas Patocka <mpatocka@redhat.com> wrote:
+Hi,
 
-> > > In order to detect these bugs reliably I submit this patch that changes
-> > > kvmalloc to always use vmalloc if CONFIG_DEBUG_VM is turned on.
-> > > 
-> > > ...
-> > >
-> > > --- linux-2.6.orig/mm/util.c	2018-04-18 15:46:23.000000000 +0200
-> > > +++ linux-2.6/mm/util.c	2018-04-18 16:00:43.000000000 +0200
-> > > @@ -395,6 +395,7 @@ EXPORT_SYMBOL(vm_mmap);
-> > >   */
-> > >  void *kvmalloc_node(size_t size, gfp_t flags, int node)
-> > >  {
-> > > +#ifndef CONFIG_DEBUG_VM
-> > >  	gfp_t kmalloc_flags = flags;
-> > >  	void *ret;
-> > >  
-> > > @@ -426,6 +427,7 @@ void *kvmalloc_node(size_t size, gfp_t f
-> > >  	 */
-> > >  	if (ret || size <= PAGE_SIZE)
-> > >  		return ret;
-> > > +#endif
-> > >  
-> > >  	return __vmalloc_node_flags_caller(size, node, flags,
-> > >  			__builtin_return_address(0));
-> > 
-> > Well, it doesn't have to be done at compile-time, does it?  We could
-> > add a knob (in debugfs, presumably) which enables this at runtime. 
-> > That's far more user-friendly.
-> 
-> But who will turn it on in debugfs?
+>>>> Or maintain array of registered irqs and iterate over them only.
+>>> Right, we can allocate a bitmap of used irqs to do that.
+>>>
+>>>> I have another idea.
+>>>>
+>>>> perf record shows mutex_lock/mutex_unlock at the top.
+>>>> Most of them are irq mutex not seqfile mutex as there are many more
+>>>> interrupts than reads. Take it once.
+>>>>
+>>> How many cpus are in your test system? In that skylake server, it was
+>>> the per-cpu summing operation of the irq counts that was consuming most
+>>> of the time for reading /proc/stat. I think we can certainly try to
+>>> optimize the lock taking.
+>> It's 16x(NR_IRQS: 4352, nr_irqs: 960, preallocated irqs: 16)
+>> Given that irq registering is rare operation, maintaining sorted array
+>> of irq should be the best option.
+>>> For the time being, I think I am going to have a clone /proc/stat2 as
+>>> suggested in my earlier email. Alternatively, I can put that somewhere
+>>> in sysfs if you have a good idea of where I can put it.
+>> sysfs is strictly one-value-per-file.
+>>
+>>> I will also look into ways to optimize the current per-IRQ stats
+>>> handling, but it will come later.
+>> There is always a time-honored way of ioctl(2) switching irq info off
+>> /proc supports that.
+>>
+>> There are many options.
+>
+> OK, it is good to know. Do you have any existing code snippet in the
+> kernel that I can use as reference on how to use ioctl(2) switching?
+>
+> I will look into how to optimize the existing per-IRQ stats code first
+> before venturing into cloning /proc/stat.
 
-But who will turn it on in Kconfig?  Just a handful of developers.  We
-could add SONFIG_DEBUG_SG to the list in
-Documentation/process/submit-checklist.rst, but nobody reads that.
+Can we not just remove per-IRQ stats from /proc/stat (since I gather
+from this discussion it isn't scalable), and just have applications
+that need per-IRQ stats use /proc/interrupts ?
 
-Also, a whole bunch of defconfigs set CONFIG_DEBUG_SG=y and some
-googling indicates that they aren't the only ones...
+thanks,
 
-> It should be default for debugging 
-> kernels, so that users using them would report the error.
-
-Well.  This isn't the first time we've wanted to enable expensive (or
-noisy) debugging things in debug kernels, by any means.
-
-So how could we define a debug kernel in which it's OK to enable such
-things?
-
-- Could be "it's an -rc kernel".  But then we'd be enabling a bunch of
-  untested code when Linus cuts a release.
-
-- Could be "it's an -rc kernel with SUBLEVEL <= 5".  But then we risk
-  unexpected things happening when Linux cuts -rc6, which still isn't
-  good.
-
-- How about "it's an -rc kernel with odd-numbered SUBLEVEL and
-  SUBLEVEL <= 5".  That way everybody who runs -rc1, -rc3 and -rc5 will
-  have kvmalloc debugging enabled.  That's potentially nasty because
-  vmalloc is much slower than kmalloc.  But kvmalloc() is only used for
-  large and probably infrequent allocations, so it's probably OK.
-
-I wonder how we get at SUBLEVEL from within .c.  
+- Joel
