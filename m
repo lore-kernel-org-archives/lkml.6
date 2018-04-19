@@ -1,393 +1,235 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeDSMYx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:24:53 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:44467 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752489AbeDSMYs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:24:48 -0400
-X-Google-Smtp-Source: AB8JxZoFTYXwoXowsv0LBoknMrmefQHQIlR1H1jppX802G3kjImSEsfh69xuUnrGURXoGWxQ+z0E63GINnKWsz6029A=
+        id S1752455AbeDSM0o (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 08:26:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60016 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751865AbeDSM0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 08:26:42 -0400
+Subject: Re: [PATCH v2 net 1/3] virtio_net: split out ctrl buffer
+To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Mikulas Patocka <mpatocka@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        David Miller <davem@davemloft.net>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+References: <1524115776-334953-1-git-send-email-mst@redhat.com>
+ <1524115776-334953-2-git-send-email-mst@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <43c20511-6c4a-5b8d-37f0-49e220bf5596@redhat.com>
+Date: Thu, 19 Apr 2018 20:26:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180419082816.109338-1-mans.andersson@nibe.se>
-References: <20180419082816.109338-1-mans.andersson@nibe.se>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 19 Apr 2018 14:24:27 +0200
-Message-ID: <CANiq72=oPqsCkQ_aaO2cQgMxa_VLzL1yPC7APri6FL5jpxU15g@mail.gmail.com>
-Subject: Re: [PATCH] net: phy: TLK10X initial driver submission
-To: =?UTF-8?Q?M=C3=A5ns_Andersson?= <mans.andersson@nibe.se>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        Network Development <netdev@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1524115776-334953-2-git-send-email-mst@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3JCOxEZ028367
 
-On Thu, Apr 19, 2018 at 10:28 AM, Måns Andersson <mans.andersson@nibe.se> wrote:
-> From: Mans Andersson <mans.andersson@nibe.se>
+
+
+On 2018年04月19日 13:30, Michael S. Tsirkin wrote:
+> When sending control commands, virtio net sets up several buffers for
+> DMA. The buffers are all part of the net device which means it's
+> actually allocated by kvmalloc so it's in theory (on extreme memory
+> pressure) possible to get a vmalloc'ed buffer which on some platforms
+> means we can't DMA there.
 >
-> Add suport for the TI TLK105 and TLK106 10/100Mbit ethernet phys.
+> Fix up by moving the DMA buffers into a separate structure.
 >
-
-Hi Mans,
-
-Some quick notes.
-
-> In addition the TLK10X needs to be removed from DP83848 driver as the
-> power back off support is added here for this device.
->
-> Datasheet:
-> http://www.ti.com/lit/gpn/tlk106
-
-Missing signature.
-
+> Reported-by: Mikulas Patocka <mpatocka@redhat.com>
+> Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 > ---
->  .../devicetree/bindings/net/ti,tlk10x.txt          |  27 +++
->  drivers/net/phy/Kconfig                            |   5 +
->  drivers/net/phy/Makefile                           |   1 +
->  drivers/net/phy/dp83848.c                          |   3 -
->  drivers/net/phy/tlk10x.c                           | 209 +++++++++++++++++++++
->  5 files changed, 242 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/net/ti,tlk10x.txt
->  create mode 100644 drivers/net/phy/tlk10x.c
 >
-> diff --git a/Documentation/devicetree/bindings/net/ti,tlk10x.txt b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
-> new file mode 100644
-> index 0000000..371d0d7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
-> @@ -0,0 +1,27 @@
-> +* Texas Instruments - TLK105 / TLK106 ethernet PHYs
-> +
-> +Required properties:
-> +       - reg - The ID number for the phy, usually a small integer
-> +
-> +Optional properties:
-> +       - ti,power-back-off - Power Back Off Level
-> +               Please refer to data sheet chapter 8.6 and TI Application
-> +               Note SLLA3228
-> +               0 - Normal Operation
-> +               1 - Level 1 (up to 140m cable between TLK link partners)
-> +               2 - Level 2 (up to 100m cable between TLK link partners)
-> +               3 - Level 3 (up to 80m cable between TLK link partners)
-> +
-> +Default child nodes are standard Ethernet PHY device
-> +nodes as described in Documentation/devicetree/bindings/net/phy.txt
-> +
-> +Example:
-> +
-> +       ethernet-phy@0 {
-> +               reg = <0>;
-> +               ti,power-back-off = <2>;
-> +       };
-> +
-> +Datasheets and documentation can be found at:
-> +http://www.ti.com/lit/gpn/tlk106
-> +http://www.ti.com/lit/an/slla328/slla328.pdf
-> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-> index bdfbabb..c980240 100644
-> --- a/drivers/net/phy/Kconfig
-> +++ b/drivers/net/phy/Kconfig
-> @@ -295,6 +295,11 @@ config DP83867_PHY
->         ---help---
->           Currently supports the DP83867 PHY.
+> Changes from v1:
+> 	build fix
 >
-> +config TLK10X_PHY
-> +       tristate "Texas Instruments TLK10x PHY"
-> +       ---help---
-> +         Supports the TLK105 and TLK106 PHYs.
-> +
->  config FIXED_PHY
->         tristate "MDIO Bus/PHY emulation with fixed speed/link PHYs"
->         depends on PHYLIB
-> diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
-> index 01acbcb..37e4e02 100644
-> --- a/drivers/net/phy/Makefile
-> +++ b/drivers/net/phy/Makefile
-> @@ -79,5 +79,6 @@ obj-$(CONFIG_ROCKCHIP_PHY)    += rockchip.o
->  obj-$(CONFIG_SMSC_PHY)         += smsc.o
->  obj-$(CONFIG_STE10XP)          += ste10Xp.o
->  obj-$(CONFIG_TERANETICS_PHY)   += teranetics.o
-> +obj-$(CONFIG_TLK10X_PHY)       += tlk10x.o
->  obj-$(CONFIG_VITESSE_PHY)      += vitesse.o
->  obj-$(CONFIG_XILINX_GMII2RGMII) += xilinx_gmii2rgmii.o
-> diff --git a/drivers/net/phy/dp83848.c b/drivers/net/phy/dp83848.c
-> index cd09c3a..435f401 100644
-> --- a/drivers/net/phy/dp83848.c
-> +++ b/drivers/net/phy/dp83848.c
-> @@ -19,7 +19,6 @@
->  #define TI_DP83848C_PHY_ID             0x20005ca0
->  #define TI_DP83620_PHY_ID              0x20005ce0
->  #define NS_DP83848C_PHY_ID             0x20005c90
-> -#define TLK10X_PHY_ID                  0x2000a210
+>   drivers/net/virtio_net.c | 68 +++++++++++++++++++++++++++---------------------
+>   1 file changed, 39 insertions(+), 29 deletions(-)
 >
->  /* Registers */
->  #define DP83848_MICR                   0x11 /* MII Interrupt Control Register */
-> @@ -78,7 +77,6 @@ static struct mdio_device_id __maybe_unused dp83848_tbl[] = {
->         { TI_DP83848C_PHY_ID, 0xfffffff0 },
->         { NS_DP83848C_PHY_ID, 0xfffffff0 },
->         { TI_DP83620_PHY_ID, 0xfffffff0 },
-> -       { TLK10X_PHY_ID, 0xfffffff0 },
->         { }
->  };
->  MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
-> @@ -105,7 +103,6 @@ static struct phy_driver dp83848_driver[] = {
->         DP83848_PHY_DRIVER(TI_DP83848C_PHY_ID, "TI DP83848C 10/100 Mbps PHY"),
->         DP83848_PHY_DRIVER(NS_DP83848C_PHY_ID, "NS DP83848C 10/100 Mbps PHY"),
->         DP83848_PHY_DRIVER(TI_DP83620_PHY_ID, "TI DP83620 10/100 Mbps PHY"),
-> -       DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY"),
->  };
->  module_phy_driver(dp83848_driver);
->
-> diff --git a/drivers/net/phy/tlk10x.c b/drivers/net/phy/tlk10x.c
-> new file mode 100644
-> index 0000000..1efc81e
-> --- /dev/null
-> +++ b/drivers/net/phy/tlk10x.c
-> @@ -0,0 +1,209 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/**
-> + * Driver for the Texas Instruments TLK105 / TLK106
-> + *
-> + * Copyright (C) 2018 NIBE Industrier AB - http://www.nibe.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-
-Since you are using the SPDX id, please remove the license text (which
-is actually wrong: it seems you have cut the v2+ version and then
-removed the last sentence of the first paragraph? :-).
-
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/phy.h>
-> +#include <linux/of.h>
-> +
-> +#define TLK10X_PHY_ID                  0x2000a210
-> +
-> +/* Registers */
-> +#define TLK10X_MICR                    0x11 /* MII Interrupt Control Reg */
-> +#define TLK10X_MISR                    0x12 /* MII Interrupt Status Reg */
-> +#define TLK10X_REGCR                   0x0d /* Register Control Register */
-> +#define TLK10X_ADDAR                   0x0e /* Data Register */
-> +#define TLK10X_PWRBOCR                 0xae /* Power Backoff Register */
-> +
-> +/* MICR Register Fields */
-> +#define TLK10X_MICR_INT_OE             BIT(0) /* Interrupt Output Enable */
-> +#define TLK10X_MICR_INTEN              BIT(1) /* Interrupt Enable */
-> +
-> +/* MISR Register Fields */
-> +#define TLK10X_MISR_RHF_INT_EN         BIT(0) /* Receive Error Counter */
-> +#define TLK10X_MISR_FHF_INT_EN         BIT(1) /* False Carrier Counter */
-> +#define TLK10X_MISR_ANC_INT_EN         BIT(2) /* Auto-negotiation complete */
-> +#define TLK10X_MISR_DUP_INT_EN         BIT(3) /* Duplex Status */
-> +#define TLK10X_MISR_SPD_INT_EN         BIT(4) /* Speed status */
-> +#define TLK10X_MISR_LINK_INT_EN                BIT(5) /* Link status */
-> +#define TLK10X_MISR_ED_INT_EN          BIT(6) /* Energy detect */
-> +#define TLK10X_MISR_LQM_INT_EN         BIT(7) /* Link Quality Monitor */
-> +
-> +/* PWRBOCR Register Fields */
-> +#define TLK10X_PWRBOCR_MASK            0xe0 /* Power Backoff Mask */
-> +
-> +#define TLK10X_INT_EN_MASK             \
-> +       (TLK10X_MISR_ANC_INT_EN |       \
-> +        TLK10X_MISR_DUP_INT_EN |       \
-> +        TLK10X_MISR_SPD_INT_EN |       \
-> +        TLK10X_MISR_LINK_INT_EN)
-> +
-> +struct tlk10x_private {
-> +       int pwrbo_level;
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 7b187ec..3d0eff53 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -147,6 +147,17 @@ struct receive_queue {
+>   	struct xdp_rxq_info xdp_rxq;
+>   };
+>   
+> +/* Control VQ buffers: protected by the rtnl lock */
+> +struct control_buf {
+> +	struct virtio_net_ctrl_hdr hdr;
+> +	virtio_net_ctrl_ack status;
+> +	struct virtio_net_ctrl_mq mq;
+> +	u8 promisc;
+> +	u8 allmulti;
+> +	u16 vid;
+> +	u64 offloads;
 > +};
 > +
-> +static int tlk10x_read(struct phy_device *phydev, int reg)
-> +{
-> +       if (reg & ~0x1f) {
+>   struct virtnet_info {
+>   	struct virtio_device *vdev;
+>   	struct virtqueue *cvq;
+> @@ -192,14 +203,7 @@ struct virtnet_info {
+>   	struct hlist_node node;
+>   	struct hlist_node node_dead;
+>   
+> -	/* Control VQ buffers: protected by the rtnl lock */
+> -	struct virtio_net_ctrl_hdr ctrl_hdr;
+> -	virtio_net_ctrl_ack ctrl_status;
+> -	struct virtio_net_ctrl_mq ctrl_mq;
+> -	u8 ctrl_promisc;
+> -	u8 ctrl_allmulti;
+> -	u16 ctrl_vid;
+> -	u64 ctrl_offloads;
+> +	struct control_buf *ctrl;
+>   
+>   	/* Ethtool settings */
+>   	u8 duplex;
+> @@ -1454,25 +1458,25 @@ static bool virtnet_send_command(struct virtnet_info *vi, u8 class, u8 cmd,
+>   	/* Caller should know better */
+>   	BUG_ON(!virtio_has_feature(vi->vdev, VIRTIO_NET_F_CTRL_VQ));
+>   
+> -	vi->ctrl_status = ~0;
+> -	vi->ctrl_hdr.class = class;
+> -	vi->ctrl_hdr.cmd = cmd;
+> +	vi->ctrl->status = ~0;
+> +	vi->ctrl->hdr.class = class;
+> +	vi->ctrl->hdr.cmd = cmd;
+>   	/* Add header */
+> -	sg_init_one(&hdr, &vi->ctrl_hdr, sizeof(vi->ctrl_hdr));
+> +	sg_init_one(&hdr, &vi->ctrl->hdr, sizeof(vi->ctrl->hdr));
+>   	sgs[out_num++] = &hdr;
+>   
+>   	if (out)
+>   		sgs[out_num++] = out;
+>   
+>   	/* Add return status. */
+> -	sg_init_one(&stat, &vi->ctrl_status, sizeof(vi->ctrl_status));
+> +	sg_init_one(&stat, &vi->ctrl->status, sizeof(vi->ctrl->status));
+>   	sgs[out_num] = &stat;
+>   
+>   	BUG_ON(out_num + 1 > ARRAY_SIZE(sgs));
+>   	virtqueue_add_sgs(vi->cvq, sgs, out_num, 1, vi, GFP_ATOMIC);
+>   
+>   	if (unlikely(!virtqueue_kick(vi->cvq)))
+> -		return vi->ctrl_status == VIRTIO_NET_OK;
+> +		return vi->ctrl->status == VIRTIO_NET_OK;
+>   
+>   	/* Spin for a response, the kick causes an ioport write, trapping
+>   	 * into the hypervisor, so the request should be handled immediately.
+> @@ -1481,7 +1485,7 @@ static bool virtnet_send_command(struct virtnet_info *vi, u8 class, u8 cmd,
+>   	       !virtqueue_is_broken(vi->cvq))
+>   		cpu_relax();
+>   
+> -	return vi->ctrl_status == VIRTIO_NET_OK;
+> +	return vi->ctrl->status == VIRTIO_NET_OK;
+>   }
+>   
+>   static int virtnet_set_mac_address(struct net_device *dev, void *p)
+> @@ -1593,8 +1597,8 @@ static int _virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+>   	if (!vi->has_cvq || !virtio_has_feature(vi->vdev, VIRTIO_NET_F_MQ))
+>   		return 0;
+>   
+> -	vi->ctrl_mq.virtqueue_pairs = cpu_to_virtio16(vi->vdev, queue_pairs);
+> -	sg_init_one(&sg, &vi->ctrl_mq, sizeof(vi->ctrl_mq));
+> +	vi->ctrl->mq.virtqueue_pairs = cpu_to_virtio16(vi->vdev, queue_pairs);
+> +	sg_init_one(&sg, &vi->ctrl->mq, sizeof(vi->ctrl->mq));
+>   
+>   	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_MQ,
+>   				  VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET, &sg)) {
+> @@ -1653,22 +1657,22 @@ static void virtnet_set_rx_mode(struct net_device *dev)
+>   	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_CTRL_RX))
+>   		return;
+>   
+> -	vi->ctrl_promisc = ((dev->flags & IFF_PROMISC) != 0);
+> -	vi->ctrl_allmulti = ((dev->flags & IFF_ALLMULTI) != 0);
+> +	vi->ctrl->promisc = ((dev->flags & IFF_PROMISC) != 0);
+> +	vi->ctrl->allmulti = ((dev->flags & IFF_ALLMULTI) != 0);
+>   
+> -	sg_init_one(sg, &vi->ctrl_promisc, sizeof(vi->ctrl_promisc));
+> +	sg_init_one(sg, &vi->ctrl->promisc, sizeof(vi->ctrl->promisc));
+>   
+>   	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_RX,
+>   				  VIRTIO_NET_CTRL_RX_PROMISC, sg))
+>   		dev_warn(&dev->dev, "Failed to %sable promisc mode.\n",
+> -			 vi->ctrl_promisc ? "en" : "dis");
+> +			 vi->ctrl->promisc ? "en" : "dis");
+>   
+> -	sg_init_one(sg, &vi->ctrl_allmulti, sizeof(vi->ctrl_allmulti));
+> +	sg_init_one(sg, &vi->ctrl->allmulti, sizeof(vi->ctrl->allmulti));
+>   
+>   	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_RX,
+>   				  VIRTIO_NET_CTRL_RX_ALLMULTI, sg))
+>   		dev_warn(&dev->dev, "Failed to %sable allmulti mode.\n",
+> -			 vi->ctrl_allmulti ? "en" : "dis");
+> +			 vi->ctrl->allmulti ? "en" : "dis");
+>   
+>   	uc_count = netdev_uc_count(dev);
+>   	mc_count = netdev_mc_count(dev);
+> @@ -1714,8 +1718,8 @@ static int virtnet_vlan_rx_add_vid(struct net_device *dev,
+>   	struct virtnet_info *vi = netdev_priv(dev);
+>   	struct scatterlist sg;
+>   
+> -	vi->ctrl_vid = vid;
+> -	sg_init_one(&sg, &vi->ctrl_vid, sizeof(vi->ctrl_vid));
+> +	vi->ctrl->vid = vid;
+> +	sg_init_one(&sg, &vi->ctrl->vid, sizeof(vi->ctrl->vid));
+>   
+>   	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
+>   				  VIRTIO_NET_CTRL_VLAN_ADD, &sg))
+> @@ -1729,8 +1733,8 @@ static int virtnet_vlan_rx_kill_vid(struct net_device *dev,
+>   	struct virtnet_info *vi = netdev_priv(dev);
+>   	struct scatterlist sg;
+>   
+> -	vi->ctrl_vid = vid;
+> -	sg_init_one(&sg, &vi->ctrl_vid, sizeof(vi->ctrl_vid));
+> +	vi->ctrl->vid = vid;
+> +	sg_init_one(&sg, &vi->ctrl->vid, sizeof(vi->ctrl->vid));
+>   
+>   	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_VLAN,
+>   				  VIRTIO_NET_CTRL_VLAN_DEL, &sg))
+> @@ -2126,9 +2130,9 @@ static int virtnet_restore_up(struct virtio_device *vdev)
+>   static int virtnet_set_guest_offloads(struct virtnet_info *vi, u64 offloads)
+>   {
+>   	struct scatterlist sg;
+> -	vi->ctrl_offloads = cpu_to_virtio64(vi->vdev, offloads);
+> +	vi->ctrl->offloads = cpu_to_virtio64(vi->vdev, offloads);
+>   
+> -	sg_init_one(&sg, &vi->ctrl_offloads, sizeof(vi->ctrl_offloads));
+> +	sg_init_one(&sg, &vi->ctrl->offloads, sizeof(vi->ctrl->offloads));
+>   
+>   	if (!virtnet_send_command(vi, VIRTIO_NET_CTRL_GUEST_OFFLOADS,
+>   				  VIRTIO_NET_CTRL_GUEST_OFFLOADS_SET, &sg)) {
+> @@ -2351,6 +2355,7 @@ static void virtnet_free_queues(struct virtnet_info *vi)
+>   
+>   	kfree(vi->rq);
+>   	kfree(vi->sq);
+> +	kfree(vi->ctrl);
+>   }
+>   
+>   static void _free_receive_bufs(struct virtnet_info *vi)
+> @@ -2543,6 +2548,9 @@ static int virtnet_alloc_queues(struct virtnet_info *vi)
+>   {
+>   	int i;
+>   
+> +	vi->ctrl = kzalloc(sizeof(*vi->ctrl), GFP_KERNEL);
+> +	if (!vi->ctrl)
+> +		goto err_ctrl;
+>   	vi->sq = kzalloc(sizeof(*vi->sq) * vi->max_queue_pairs, GFP_KERNEL);
+>   	if (!vi->sq)
+>   		goto err_sq;
+> @@ -2571,6 +2579,8 @@ static int virtnet_alloc_queues(struct virtnet_info *vi)
+>   err_rq:
+>   	kfree(vi->sq);
+>   err_sq:
+> +	kfree(vi->ctrl);
+> +err_ctrl:
+>   	return -ENOMEM;
+>   }
+>   
 
-0x1f or ~0x1f should probably have a #define name.
-
-> +               /* Extended register */
-> +               phy_write(phydev, TLK10X_REGCR, 0x001F);
-> +               phy_write(phydev, TLK10X_ADDAR, reg);
-> +               phy_write(phydev, TLK10X_REGCR, 0x401F);
-> +               reg = TLK10X_ADDAR;
-> +       }
-> +
-> +       return phy_read(phydev, reg);
-> +}
-> +
-> +static int tlk10x_write(struct phy_device *phydev, int reg, int val)
-> +{
-> +       if (reg & ~0x1f) {
-
-Ditto.
-
-> +               /* Extended register */
-> +               phy_write(phydev, TLK10X_REGCR, 0x001F);
-> +               phy_write(phydev, TLK10X_ADDAR, reg);
-> +               phy_write(phydev, TLK10X_REGCR, 0x401F);
-> +               reg = TLK10X_ADDAR;
-> +       }
-> +
-> +       return phy_write(phydev, reg, val);
-> +}
-> +
-> +#ifdef CONFIG_OF_MDIO
-
-Maybe you want the #ifdef inside.
-
-> +static int tlk10x_of_init(struct phy_device *phydev)
-> +{
-> +       struct tlk10x_private *tlk10x = phydev->priv;
-> +       struct device *dev = &phydev->mdio.dev;
-> +       struct device_node *of_node = dev->of_node;
-> +       int ret;
-> +
-> +       if (!of_node)
-> +               return 0;
-> +
-> +       ret = of_property_read_u32(of_node, "ti,power-back-off",
-> +                                  &tlk10x->pwrbo_level);
-> +       if (ret) {
-> +               dev_err(dev, "missing ti,power-back-off property");
-> +               tlk10x->pwrbo_level = 0;
-> +       }
-> +
-> +       return 0;
-> +}
-> +#else
-> +static int tlk10x_of_init(struct phy_device *phydev)
-> +{
-> +       return 0;
-> +}
-> +#endif /* CONFIG_OF_MDIO */
-> +
-> +static int tlk10x_config_init(struct phy_device *phydev)
-> +{
-> +       int ret, reg;
-> +       struct tlk10x_private *tlk10x;
-> +
-> +       ret = genphy_config_init(phydev);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       if (!phydev->priv) {
-> +               tlk10x = devm_kzalloc(&phydev->mdio.dev, sizeof(*tlk10x),
-> +                                     GFP_KERNEL);
-> +               if (!tlk10x)
-> +                       return -ENOMEM;
-> +
-> +               phydev->priv = tlk10x;
-> +               ret = tlk10x_of_init(phydev);
-> +               if (ret)
-> +                       return ret;
-> +       } else {
-> +               tlk10x = (struct tlk10x_private *)phydev->priv;
-> +       }
-> +
-> +       // Power back off
-> +       if (tlk10x->pwrbo_level < 0 || tlk10x->pwrbo_level > 3)
-> +               tlk10x->pwrbo_level = 0;
-> +       reg = tlk10x_read(phydev, TLK10X_PWRBOCR);
-> +       reg = ((reg & ~TLK10X_PWRBOCR_MASK)
-> +               | (tlk10x->pwrbo_level << 6));
-
-Maybe the 6 should have a name, or maybe a bigger macro for this would clarify.
-
-> +       ret = tlk10x_write(phydev, TLK10X_PWRBOCR, reg);
-> +       if (ret < 0) {
-> +               dev_err(&phydev->mdio.dev,
-> +                       "unable to set power back-off (err=%d)\n", ret);
-> +               return ret;
-> +       }
-> +       dev_info(&phydev->mdio.dev, "power back-off set to level %d\n",
-> +                tlk10x->pwrbo_level);
-> +
-> +       return 0;
-> +}
-> +
-> +static int tlk10x_ack_interrupt(struct phy_device *phydev)
-> +{
-> +       int err = tlk10x_read(phydev, TLK10X_MISR);
-
-Following the style of the rest of the file, shouldn't this be:
-
-    if (err < 0)
-        return err;
-
-    return 0;
-
-?
-
-> +
-> +       return err < 0 ? err : 0;
-> +}
-> +
-> +static int tlk10x_config_intr(struct phy_device *phydev)
-> +{
-> +       int control, ret;
-> +
-> +       control = tlk10x_read(phydev, TLK10X_MICR);
-> +       if (control < 0)
-> +               return control;
-> +
-> +       if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
-> +               control |= TLK10X_MICR_INT_OE;
-> +               control |= TLK10X_MICR_INTEN;
-> +
-> +               ret = tlk10x_write(phydev, TLK10X_MISR, TLK10X_INT_EN_MASK);
-> +               if (ret < 0)
-> +                       return ret;
-> +       } else {
-> +               control &= ~TLK10X_MICR_INTEN;
-> +       }
-> +
-> +       return tlk10x_write(phydev, TLK10X_MICR, control);
-> +}
-> +
-> +static struct phy_driver tlk10x_driver[] = {
-> +       {
-> +               .phy_id         = TLK10X_PHY_ID,
-> +               .phy_id_mask    = 0xfffffff0,
-> +               .name           = "TI TLK10X 10/100 Mbps PHY",
-> +               .features       = PHY_BASIC_FEATURES,
-> +               .flags          = PHY_HAS_INTERRUPT,
-> +
-> +               .config_init    = tlk10x_config_init,
-> +               .soft_reset     = genphy_soft_reset,
-> +
-> +               /* IRQ related */
-> +               .ack_interrupt  = tlk10x_ack_interrupt,
-> +               .config_intr    = tlk10x_config_intr,
-> +
-> +               .suspend        = genphy_suspend,
-> +               .resume         = genphy_resume,
-> +       },
-> +};
-> +module_phy_driver(tlk10x_driver);
-> +
-> +static struct mdio_device_id __maybe_unused tlk10x_tbl[] = {
-> +       { TLK10X_PHY_ID, 0xfffffff0 },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(mdio, tlk10x_tbl);
-> +
-> +MODULE_DESCRIPTION("Texas Instruments TLK105 / TLK106 PHY driver");
-> +MODULE_AUTHOR("Mans Andersson <mans.andersson@nibe.se>");
-> +MODULE_LICENSE("GPL");
-
-Should be "GPL v2".
-
-Cheers,
-Miguel
+Acked-by: Jason Wang <jasowang@redhat.com>
