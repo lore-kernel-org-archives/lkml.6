@@ -1,73 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753723AbeDSOLZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:11:25 -0400
-Received: from mx2.freebsd.org ([8.8.178.116]:13625 "EHLO mx2.freebsd.org"
+        id S1753842AbeDSOLi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:11:38 -0400
+Received: from 8bytes.org ([81.169.241.247]:48532 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753584AbeDSOLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:11:22 -0400
-From: kevans@FreeBSD.org
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Kyle Evans <kevans@FreeBSD.org>
-Subject: [PATCH v3] ARM: dts: sunxi: Add sid for a83t
-Date: Thu, 19 Apr 2018 09:11:03 -0500
-Message-Id: <20180419141103.38196-1-kevans@FreeBSD.org>
-X-Mailer: git-send-email 2.17.0
+        id S1753750AbeDSOLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:11:36 -0400
+Date: Thu, 19 Apr 2018 16:11:34 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Borislav Petkov <bp@suse.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <jroedel@suse.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] x86/ldt: Fix support_pte_mask filtering in
+ map_ldt_struct()
+Message-ID: <20180419141134.GI15462@8bytes.org>
+References: <1523871837-8378-1-git-send-email-joro@8bytes.org>
+ <CALCETrVgQspiO3nnyhqiXi17iaGG7bRDsr3gpHwdDnYfFDZabQ@mail.gmail.com>
+ <07e2c23e-10b7-b03f-5706-3d4b910537ba@linux.intel.com>
+ <20180418121403.GA3434@pd.tnic>
+ <20180419130011.GG3896@pd.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419130011.GG3896@pd.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner a83t has a 1 KB sid block with efuse for security rootkey and thermal
-calibration data, add node to describe it.
+On Thu, Apr 19, 2018 at 03:00:11PM +0200, Borislav Petkov wrote:
+> fb43d6cb91ef x86/mm: Do not auto-massage page protections <--- NOT OK
 
-a83t-sid is not currently supported by nvmem/sunxi-sid, but it is
-supported in an external driver for FreeBSD.
+Hmm, that hunk from above patch looks suspicious:
 
-Signed-off-by: Kyle Evans <kevans@FreeBSD.org>
----
+-               set_pgd(pgd + pgd_index(restore_jump_address), __pgd(__pa(pud) | _KERNPG_TABLE));
++               pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
++               set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
 
-Changes in v3:
-- rebased against 4.17
+The old code used __pa(pud) while the new one uses __pa(p4d).
 
-Changes in v2:
-- remove bogus "From:" line in commit text, no functional change
+Boris, can you change that back to __pa(pud) and test please?
 
- .../devicetree/bindings/nvmem/allwinner,sunxi-sid.txt        | 1 +
- arch/arm/boot/dts/sun8i-a83t.dtsi                            | 5 +++++
- 2 files changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/allwinner,sunxi-sid.txt b/Documentation/devicetree/bindings/nvmem/allwinner,sunxi-sid.txt
-index d69543701d5d..e319fe5e205a 100644
---- a/Documentation/devicetree/bindings/nvmem/allwinner,sunxi-sid.txt
-+++ b/Documentation/devicetree/bindings/nvmem/allwinner,sunxi-sid.txt
-@@ -4,6 +4,7 @@ Required properties:
- - compatible: Should be one of the following:
-   "allwinner,sun4i-a10-sid"
-   "allwinner,sun7i-a20-sid"
-+  "allwinner,sun8i-a83t-sid"
-   "allwinner,sun8i-h3-sid"
-   "allwinner,sun50i-a64-sid"
- 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 568307639be8..379981389eea 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -492,6 +492,11 @@
- 			#size-cells = <0>;
- 		};
- 
-+		sid: eeprom@1c14000 {
-+			compatible = "allwinner,sun8i-a83t-sid";
-+			reg = <0x1c14000 0x400>;
-+		};
-+
- 		usb_otg: usb@1c19000 {
- 			compatible = "allwinner,sun8i-a83t-musb",
- 				     "allwinner,sun8i-a33-musb";
--- 
-2.17.0
+Thanks,
+
+	Joerg
