@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753818AbeDSQGS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:06:18 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:45504 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753549AbeDSQGD (ORCPT
+        id S1753619AbeDSQIE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:08:04 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:54667 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753239AbeDSQIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:06:03 -0400
-X-Google-Smtp-Source: AIpwx48j2qp6bsJScID1Q3gMp+x1Q0BAkZMFPGiwsLgc2IsSCIuXPZDLU2ZuE18KgQY+22wTm23BADTPnSdFOuqDUSOrifxCHzbf
+        Thu, 19 Apr 2018 12:08:02 -0400
+X-Google-Smtp-Source: AIpwx48HdIf0CZHzMAMP3UfXBoM7Sc/TCF6RY2janpXMHtT0SwhG4ZP3c7+XbKaKC92bLfEvOY2Ec8fpySj1zPgBHiovctuEzdps
 MIME-Version: 1.0
-Date: Thu, 19 Apr 2018 09:06:02 -0700
+Date: Thu, 19 Apr 2018 09:08:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000852810056a35bf42@google.com>
-Subject: KASAN: use-after-free Read in llc_conn_tmr_common_cb
-From: syzbot <syzbot+f922284c18ea23a8e457@syzkaller.appspotmail.com>
-To: davem@davemloft.net, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Message-ID: <000000000000a366e2056a35c6fd@google.com>
+Subject: BUG: corrupted list in rdma_listen
+From: syzbot <syzbot+8458d13b13562abf6b77@syzkaller.appspotmail.com>
+To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
+        jgg@ziepe.ca, leonro@mellanox.com, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, markb@mellanox.com, monis@mellanox.com,
+        parav@mellanox.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -26,154 +27,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello,
 
 syzbot hit the following crash on upstream commit
-a27fc14219f2e3c4a46ba9177b04d9b52c875532 (Mon Apr 16 21:07:39 2018 +0000)
-Merge branch 'parisc-4.17-3' of  
-git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux
+bcfc1f4554662d8f2429ac8bd96064a59c149754 (Sat Mar 24 16:50:12 2018 +0000)
+Merge tag 'pinctrl-v4.16-3' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=f922284c18ea23a8e457
+https://syzkaller.appspot.com/bug?extid=8458d13b13562abf6b77
 
+So far this crash happened 3 times on upstream.
 Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6056927826018304
+https://syzkaller.appspot.com/x/log.txt?id=5502346817699840
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-5914490758943236750
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+https://syzkaller.appspot.com/x/.config?id=-5034017172441945317
+compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f922284c18ea23a8e457@syzkaller.appspotmail.com
+Reported-by: syzbot+8458d13b13562abf6b77@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-binder: 10195:10196 transaction failed 29189/-3, size 0-0 line 2963
-binder: undelivered TRANSACTION_ERROR: 29189
-binder: undelivered TRANSACTION_ERROR: 29189
-binder: undelivered TRANSACTION_ERROR: 29189
-==================================================================
-BUG: KASAN: use-after-free in __lock_acquire+0x3888/0x5140  
-kernel/locking/lockdep.c:3310
-Read of size 8 at addr ffff8801a8c862e0 by task swapper/0/0
-
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.17.0-rc1+ #6
+list_add corruption. prev->next should be next (00000000bbe7894a), but  
+was           (null). (prev=0000000053f15260).
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:28!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 31373 Comm: syz-executor1 Not tainted 4.16.0-rc6+ #1
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+RIP: 0010:__list_add_valid+0x8f/0xd0 lib/list_debug.c:26
+RSP: 0018:ffff880188f87970 EFLAGS: 00010282
+RAX: 0000000000000075 RBX: ffffffff87449fe0 RCX: 0000000000000000
+RDX: 0000000000000075 RSI: ffffc900075c8000 RDI: ffffed00311f0f22
+RBP: ffff880188f87988 R08: 1ffff100311f0e7a R09: 0000000000000000
+R10: ffff880188f87988 R11: 0000000000000000 R12: ffff88018c479898
+R13: ffff88018c479898 R14: ffff8801d94baad8 R15: 0000000000000400
+FS:  00007f755bcca700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000725934 CR3: 00000001872ec001 CR4: 00000000001606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __lock_acquire+0x3888/0x5140 kernel/locking/lockdep.c:3310
-  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
-  spin_lock include/linux/spinlock.h:310 [inline]
-  llc_conn_tmr_common_cb+0x8d/0x9e0 net/llc/llc_c_ac.c:1328
-  llc_conn_ack_tmr_cb+0x1e/0x30 net/llc/llc_c_ac.c:1357
-  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
-  expire_timers kernel/time/timer.c:1363 [inline]
-  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
-  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
-  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
-  invoke_softirq kernel/softirq.c:365 [inline]
-  irq_exit+0x1d1/0x200 kernel/softirq.c:405
-  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
-  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-  </IRQ>
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:54
-RSP: 0018:ffffffff88a07bc0 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffffffff1140f7b RCX: 0000000000000000
-RDX: 1ffffffff1163130 RSI: 0000000000000001 RDI: ffffffff88b18980
-RBP: ffffffff88a07bc0 R08: ffffed003b6046c3 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffffffff88a07c78 R14: ffffffff89591560 R15: 0000000000000000
-  arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
-  default_idle+0xc2/0x440 arch/x86/kernel/process.c:354
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:345
-  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x395/0x560 kernel/sched/idle.c:262
-  cpu_startup_entry+0x104/0x120 kernel/sched/idle.c:368
-  rest_init+0xe1/0xe4 init/main.c:441
-  start_kernel+0x906/0x92d init/main.c:737
-  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:445
-  x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:426
-  secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:242
-
-Allocated by task 10136:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:517 [inline]
-  sk_prot_alloc+0x1ae/0x2e0 net/core/sock.c:1474
-  sk_alloc+0x104/0x17b0 net/core/sock.c:1528
-  llc_sk_alloc+0x35/0x4b0 net/llc/llc_conn.c:949
-  llc_ui_create+0xf3/0x3e0 net/llc/af_llc.c:173
-  __sock_create+0x526/0x920 net/socket.c:1285
-  sock_create net/socket.c:1325 [inline]
-  __sys_socket+0x100/0x250 net/socket.c:1355
-  __do_sys_socket net/socket.c:1364 [inline]
-  __se_sys_socket net/socket.c:1362 [inline]
-  __x64_sys_socket+0x73/0xb0 net/socket.c:1362
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 10215:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  sk_prot_free net/core/sock.c:1511 [inline]
-  __sk_destruct+0x772/0xa40 net/core/sock.c:1593
-  sk_destruct+0x78/0x90 net/core/sock.c:1601
-  __sk_free+0x22e/0x340 net/core/sock.c:1612
-  sk_free+0x42/0x50 net/core/sock.c:1623
-  sock_put include/net/sock.h:1664 [inline]
-  llc_sk_free+0x9a/0xb0 net/llc/llc_conn.c:997
-  llc_ui_release+0x154/0x220 net/llc/af_llc.c:208
-  sock_release+0x96/0x1b0 net/socket.c:594
-  sock_close+0x16/0x20 net/socket.c:1149
-  __fput+0x34d/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1aee/0x2730 kernel/exit.c:865
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  get_signal+0x886/0x1960 kernel/signal.c:2469
-  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
-  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801a8c86240
-  which belongs to the cache kmalloc-2048 of size 2048
-The buggy address is located 160 bytes inside of
-  2048-byte region [ffff8801a8c86240, ffff8801a8c86a40)
-The buggy address belongs to the page:
-page:ffffea0006a32180 count:1 mapcount:0 mapping:ffff8801a8c86240 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801a8c86240 0000000000000000 0000000100000003
-raw: ffffea0006c17920 ffffea0006bf50a0 ffff8801dac00c40 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801a8c86180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801a8c86200: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-> ffff8801a8c86280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                        ^
-  ffff8801a8c86300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801a8c86380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+  __list_add include/linux/list.h:60 [inline]
+  list_add_tail include/linux/list.h:93 [inline]
+  cma_listen_on_all drivers/infiniband/core/cma.c:2309 [inline]
+  rdma_listen+0x581/0x8e0 drivers/infiniband/core/cma.c:3333
+  ucma_listen+0x172/0x1f0 drivers/infiniband/core/ucma.c:1074
+  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1649
+  __vfs_write+0xef/0x970 fs/read_write.c:480
+  vfs_write+0x189/0x510 fs/read_write.c:544
+  SYSC_write fs/read_write.c:589 [inline]
+  SyS_write+0xef/0x220 fs/read_write.c:581
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x454879
+RSP: 002b:00007f755bcc9c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f755bcca6d4 RCX: 0000000000454879
+RDX: 0000000000000010 RSI: 0000000020000000 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000000683 R14: 00000000006face8 R15: 0000000000000000
+Code: 00 00 00 5b 41 5c 5d c3 48 89 d9 48 c7 c7 60 7e 40 86 e8 ad e0 fb fe  
+0f 0b 48 89 f1 48 c7 c7 20 7f 40 86 48 89 de e8 99 e0 fb fe <0f> 0b 48 89  
+f2 48 89 d9 4c 89 e6 48 c7 c7 a0 7f 40 86 e8 82 e0
+RIP: __list_add_valid+0x8f/0xd0 lib/list_debug.c:26 RSP: ffff880188f87970
+---[ end trace fe3987c6813eeb9c ]---
+Kernel panic - not syncing: Fatal exception
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
