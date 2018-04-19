@@ -1,131 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753444AbeDSOwD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:52:03 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:36516 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752733AbeDSOwC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:52:02 -0400
-X-Google-Smtp-Source: AIpwx49QJ+2Dj3DmCExN5soT47SyPC7p25xSO86XV584YXFK/RKyuVyQI/b7n4TwfqOEmo5+OQEOKLpREN03kw/FWSycxaoZwr+f
+        id S1753663AbeDSOwZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:52:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36416 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752854AbeDSOwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:52:22 -0400
+Date: Thu, 19 Apr 2018 10:52:19 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <jbacik@fb.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Jeff Layton <jlayton@redhat.com>
+Subject: Re: [RFC PATCH 00/79] Generic page write protection and a solution
+ to page waitqueue
+Message-ID: <20180419145219.GB3519@redhat.com>
+References: <20180404191831.5378-1-jglisse@redhat.com>
+ <20180418141337.mrnxqolo6aar3ud3@quack2.suse.cz>
+ <20180418155429.GA3476@redhat.com>
+ <20180419103250.qvusqkjq6hlz3ch6@quack2.suse.cz>
 MIME-Version: 1.0
-Date: Thu, 19 Apr 2018 07:52:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d71bf6056a34b628@google.com>
-Subject: unregister_netdevice: waiting for DEV to become free
-From: syzbot <syzbot+2dfb68e639f0621b19fb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180419103250.qvusqkjq6hlz3ch6@quack2.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Apr 19, 2018 at 12:32:50PM +0200, Jan Kara wrote:
+> On Wed 18-04-18 11:54:30, Jerome Glisse wrote:
 
-syzbot hit the following crash on upstream commit
-87ef12027b9b1dd0e0b12cf311fbcb19f9d92539 (Wed Apr 18 19:48:17 2018 +0000)
-Merge tag 'ceph-for-4.17-rc2' of git://github.com/ceph/ceph-client
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=2dfb68e639f0621b19fb
+[...]
 
-So far this crash happened 5 times on upstream.
-Unfortunately, I don't have any reproducer for this crash yet.
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=5531107864870912
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+> > I am affraid truely generic write protection for metadata pages is bit
+> > out of scope of what i am doing. However the mechanism i am proposing
+> > can be extended for that too. Issue is that all place that want to write
+> > to those page need to be converted to something where write happens
+> > between write_begin and write_end section (mmap and CPU pte does give
+> > this implicitly through page fault, so does write syscall). Basicly
+> > there is a need to make sure that write and write protection can be
+> > ordered against one another without complex locking.
+> 
+> I understand metadata pages are not interesting for your use case. However
+> from mm point of view these are page cache pages as any other. So maybe my
+> question should have been: How do we make sure this mechanism will not be
+> used for pages for which it cannot work?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2dfb68e639f0621b19fb@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for  
-details.
-If you forward the report, please keep this part and the footer.
+Oh that one is easy, the API take vma + addr or rather mm struct + addr
+(ie like KSM today kind of). I will change wording in v1 to almost
+generic write protection :) or process' page write protection (but this
+would not work for special pfn/vma so not generic their either).
 
-connbytes_mt_check: 1 callbacks suppressed
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-unregister_netdevice: waiting for lo to become free. Usage count = 3
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-kernel msg: ebtables bug: please report to author: Entries_size never zero
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-nla_parse: 1 callbacks suppressed
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
-netlink: 17 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-xt_connbytes: cannot load conntrack support for proto=7
+> > > > A write protected page has page->mapping pointing to a structure like
+> > > > struct rmap_item for KSM. So this structure has a list for each unique
+> > > > combination:
+> > > >     struct write_protect {
+> > > >         struct list_head *mappings; /* write_protect_mapping list */
+> > > >         ...
+> > > >     };
+> > > > 
+> > > >     struct write_protect_mapping {
+> > > >         struct list_head list
+> > > >         struct address_space *mapping;
+> > > >         unsigned long offset;
+> > > >         unsigned long private;
+> > > >         ...
+> > > >     };
+> > > 
+> > > Auch, the fact that we could share a page as data storage for several
+> > > inode+offset combinations that are not sharing underlying storage just
+> > > looks viciously twisted ;) But is it really that useful to warrant
+> > > complications? In particular I'm afraid that filesystems expect consistency
+> > > between their internal state (attached to page->private) and page state
+> > > (e.g. page->flags) and when there are multiple internal states attached to
+> > > the same page this could go easily wrong...
+> > 
+> > So at first i want to limit to write protect (not KSM) thus page->flags
+> > will stay consistent (ie page is only ever associated with a single
+> > mapping). For KSM yes the page->flags can be problematic, however here
+> > we can assume that page is clean (and uptodate) and not under write
+> > back. So problematic flags for KSM:
+> >   - private (page_has_buffers() or PagePrivate (nfs, metadata, ...))
+> >   - private_2 (FsCache)
+> >   - mappedtodisk
+> >   - swapcache
+> >   - error
+> > 
+> > Idea again would be to PageFlagsWithMapping(page, mapping) so that for
+> > non KSM write protected page you test the usual page->flags and for
+> > write protected page you find the flag value using mapping as lookup
+> > index. Usualy those flag are seldomly changed/accessed. Again the
+> > overhead (ignoring code size) would only be for page which are KSM.
+> > So maybe KSM will not make sense because perf overhead it has with
+> > page->flags access (i don't think so but i haven't tested this).
+> 
+> Yeah, sure, page->flags could be dealt with in a similar way but at this
+> point I don't think it's worth it. And without page->flags I don't think
+> abstracting page->private makes much sense - or am I missing something why
+> you need page->private depend on the mapping? So what I wanted to suggest
+> is that we leave page->private as is currently and just concentrate on
+> page->mapping hacks...
 
+Well i wanted to go up to KSM or at least as close as possible to KSM
+for file back page. But i can focus on page->mapping first, do write
+protection with that and also do the per page wait queue for page lock.
+Which i believe are both nice features. This will also make the patchset
+smaller and easier to review (less scary).
 
----
-This bug is generated by a dumb bot. It may contain errors.
-See https://goo.gl/tpsmEJ for details.
-Direct all questions to syzkaller@googlegroups.com.
+KSM can be done on top of that latter and i will be happy to help. I
+have a bunch of coccinelle patches for page->private, page->index and
+i can do some for page->flags.
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+Cheers,
+Jérôme
