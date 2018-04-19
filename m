@@ -1,107 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeDSNsa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 09:48:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44458 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752780AbeDSNrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:47:14 -0400
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Waiman Long <longman@redhat.com>
-Subject: [PATCH v7 0/5] cpuset: Enable cpuset controller in default hierarchy
-Date: Thu, 19 Apr 2018 09:46:59 -0400
-Message-Id: <1524145624-23655-1-git-send-email-longman@redhat.com>
+        id S1753355AbeDSNtJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:49:09 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34573 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753411AbeDSNtH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 09:49:07 -0400
+Date: Thu, 19 Apr 2018 15:49:02 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+To: Alexander Popov <alex.popov@linux.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sil2review@lists.osadl.org,
+        Dmitry Vyukov <dvyukov@google.com>, syzkaller@googlegroups.com
+Subject: Re: [v2 1/1] i2c: dev: prevent ZERO_SIZE_PTR deref in
+ i2cdev_ioctl_rdwr()
+Message-ID: <20180419134902.6l5jsf4wpqfiaskj@pengutronix.de>
+References: <1524140962-25639-1-git-send-email-alex.popov@linux.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1524140962-25639-1-git-send-email-alex.popov@linux.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v7:
- - Add a root-only cpuset.cpus.isolated control file for CPU isolation.
- - Enforce that load_balancing can only be turned off on cpusets with
-   CPUs from the isolated list.
- - Update sched domain generation to allow cpusets with CPUs only
-   from the isolated CPU list to be in separate root domains.
+On Thu, Apr 19, 2018 at 03:29:22PM +0300, Alexander Popov wrote:
+> i2cdev_ioctl_rdwr() allocates i2c_msg.buf using memdup_user(), which
+> returns ZERO_SIZE_PTR if i2c_msg.len is zero.
+> 
+> Currently i2cdev_ioctl_rdwr() always dereferences the buf pointer in case
+> of I2C_M_RD | I2C_M_RECV_LEN transfer. That causes a kernel oops in
+> case of zero len.
+> 
+> Let's check the len against zero before dereferencing buf pointer.
+> 
+> This issue was triggered by syzkaller.
+> 
+> Signed-off-by: Alexander Popov <alex.popov@linux.com>
+> ---
+>  drivers/i2c/i2c-dev.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+> index 036a03f..5790bc8 100644
+> --- a/drivers/i2c/i2c-dev.c
+> +++ b/drivers/i2c/i2c-dev.c
+> @@ -280,6 +280,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+>  		 */
+>  		if (msgs[i].flags & I2C_M_RECV_LEN) {
+>  			if (!(msgs[i].flags & I2C_M_RD) ||
+> +			    !msgs[i].len ||
 
-v6:
- - Hide cpuset control knobs in root cgroup.
- - Rename effective_cpus and effective_mems to cpus.effective and
-   mems.effective respectively.
- - Remove cpuset.flags and add cpuset.sched_load_balance instead
-   as the behavior of sched_load_balance has changed and so is
-   not a simple flag.
- - Update cgroup-v2.txt accordingly.
+I'd prefer
 
-v5:
- - Add patch 2 to provide the cpuset.flags control knob for the
-   sched_load_balance flag which should be the only feature that is
-   essential as a replacement of the "isolcpus" kernel boot parameter.
+			msgs[i].len > 0
 
-v4:
- - Further minimize the feature set by removing the flags control knob.
+here instead of
 
-v3:
- - Further trim the additional features down to just memory_migrate.
- - Update Documentation/cgroup-v2.txt.
+			!msgs[i].len
 
-v6 patch: https://lkml.org/lkml/2018/3/21/530
+because I can parse that more easily. Semantically the patch is fine and
+can have my
 
-The purpose of this patchset is to provide a basic set of cpuset
-features for cgroup v2. This basic set includes the non-root "cpus",
-"mems", "cpus.effective" and "mems.effective", "sched_load_balance"
-control file as well as a root-only "cpus.isolated".
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-The root-only "cpus.isolated" file is added to support use cases similar
-to the "isolcpus" kernel parameter. CPUs from the isolated list can be
-put into child cpusets where "sched_load_balance" can be disabled to
-allow finer control of task-cpu mappings of those isolated CPUs.
+>  			    msgs[i].buf[0] < 1 ||
+>  			    msgs[i].len < msgs[i].buf[0] +
+>  					     I2C_SMBUS_BLOCK_MAX) {
 
-On the other hand, enabling the "sched_load_balance" on a cpuset with
-only CPUs from the isolated list will allow those CPUs to use a separate
-root domain from that of the root cpuset.
-
-This patchset does not exclude the possibility of adding more features
-in the future after careful consideration.
-
-Patch 1 enables cpuset in cgroup v2 with cpus, mems and their
-effective counterparts.
-
-Patch 2 adds sched_load_balance whose behavior changes in v2 to become
-hierarchical and includes an implicit !cpu_exclusive.
-
-Patch 3 adds a new root-only "cpuset.cpus.isolated" control file for
-CPU isolation purpose.
-
-Patch 4 adds the limitation that "sched_load_balance" can only be turned
-off in a cpuset if all the CPUs in the cpuset are already in the root's
-"cpuset.cpus.isolated".
-
-Patch 5 modifies the sched domain generation code to generate separate root
-sched domains if all the CPUs in a cpuset comes from "cpuset.cpus.isolated".
-
-In other words, all the CPUs that need to be isolated or in separate
-root domains have to be put into the "cpuset.cpus.isolated" first. Then
-child cpusets can be created to partition those isolated CPUs into
-either separate root domains with "sched_load_balance" on or really
-isolated CPUs with "sched_load_balance" off. Load balancing cannot
-be turned off at root.
-
-Waiman Long (5):
-  cpuset: Enable cpuset controller in default hierarchy
-  cpuset: Add cpuset.sched_load_balance to v2
-  cpuset: Add a root-only cpus.isolated v2 control file
-  cpuset: Restrict load balancing off cpus to subset of cpus.isolated
-  cpuset: Make generate_sched_domains() recognize isolated_cpus
-
- Documentation/cgroup-v2.txt | 138 ++++++++++++++++++++-
- kernel/cgroup/cpuset.c      | 287 +++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 404 insertions(+), 21 deletions(-)
+Best regards
+Uwe
 
 -- 
-1.8.3.1
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
