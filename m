@@ -1,141 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753828AbeDSRBz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 13:01:55 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:43929 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753649AbeDSRBv (ORCPT
+        id S1753850AbeDSRCE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 13:02:04 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:43977 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753375AbeDSRCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 13:01:51 -0400
-X-Google-Smtp-Source: AIpwx4+BPXigypatvbOHP7aHMdnF2dLIc+DTsA35qYgsEg0q7U+KwC+fI2kS0Gjjsi+i+fGSahz7KQ==
-Reply-To: alex.popov@linux.com
-Subject: Re: [v2 1/1] i2c: dev: prevent ZERO_SIZE_PTR deref in
- i2cdev_ioctl_rdwr()
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sil2review@lists.osadl.org,
-        Dmitry Vyukov <dvyukov@google.com>, syzkaller@googlegroups.com
-References: <1524140962-25639-1-git-send-email-alex.popov@linux.com>
- <20180419134902.6l5jsf4wpqfiaskj@pengutronix.de>
-From: Alexander Popov <alex.popov@linux.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
- 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
- jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
-Message-ID: <22fe9bbe-f1d7-3a92-9528-df66c34816a5@linux.com>
-Date: Thu, 19 Apr 2018 20:01:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 19 Apr 2018 13:02:02 -0400
+X-Google-Smtp-Source: AIpwx48nIz6nTAojFomEPC44ruXmnoNPakCRZPqeqrtv8Lz5Rxu+UXg3KxH3xVqePYxXStJ8ajQvUWWAEmHLh8I3moqSl+Y2I9GX
 MIME-Version: 1.0
-In-Reply-To: <20180419134902.6l5jsf4wpqfiaskj@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Date: Thu, 19 Apr 2018 10:02:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c4b45a056a36872f@google.com>
+Subject: kernel BUG at fs/ntfs/aops.c:LINE!
+From: syzbot <syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com>
+To: anton@tuxera.com, linux-kernel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.04.2018 16:49, Uwe Kleine-König wrote:
-> On Thu, Apr 19, 2018 at 03:29:22PM +0300, Alexander Popov wrote:
->> i2cdev_ioctl_rdwr() allocates i2c_msg.buf using memdup_user(), which
->> returns ZERO_SIZE_PTR if i2c_msg.len is zero.
->>
->> Currently i2cdev_ioctl_rdwr() always dereferences the buf pointer in case
->> of I2C_M_RD | I2C_M_RECV_LEN transfer. That causes a kernel oops in
->> case of zero len.
->>
->> Let's check the len against zero before dereferencing buf pointer.
->>
->> This issue was triggered by syzkaller.
->>
->> Signed-off-by: Alexander Popov <alex.popov@linux.com>
->> ---
->>  drivers/i2c/i2c-dev.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
->> index 036a03f..5790bc8 100644
->> --- a/drivers/i2c/i2c-dev.c
->> +++ b/drivers/i2c/i2c-dev.c
->> @@ -280,6 +280,7 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
->>  		 */
->>  		if (msgs[i].flags & I2C_M_RECV_LEN) {
->>  			if (!(msgs[i].flags & I2C_M_RD) ||
->> +			    !msgs[i].len ||
-> 
-> I'd prefer
-> 
-> 			msgs[i].len > 0
+Hello,
 
-Excuse me, it will be wrong. We stop if len is 0 to avoid the following
-ZERO_SIZE_PTR dereference.
+syzbot hit the following crash on upstream commit
+87ef12027b9b1dd0e0b12cf311fbcb19f9d92539 (Wed Apr 18 19:48:17 2018 +0000)
+Merge tag 'ceph-for-4.17-rc2' of git://github.com/ceph/ceph-client
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=6a5a7672f663cce8b156
 
-> here instead of
-> 
-> 			!msgs[i].len
+So far this crash happened 2 times on upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5736415891554304
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=6093704288796672
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=4519020095078400
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-I can change it to "msgs[i].len == 0". But is it really important?
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6a5a7672f663cce8b156@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-I've carefully tested the current version with the original repro. It works correct.
+ntfs: (device loop0): is_boot_sector_ntfs(): Invalid end of sector marker.
+------------[ cut here ]------------
+kernel BUG at fs/ntfs/aops.c:207!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 4507 Comm: syzkaller117743 Not tainted 4.17.0-rc1+ #8
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:ntfs_read_block fs/ntfs/aops.c:207 [inline]
+RIP: 0010:ntfs_readpage+0x1d0e/0x2290 fs/ntfs/aops.c:456
+RSP: 0018:ffff8801d9096f48 EFLAGS: 00010293
+RAX: ffff8801ac5a6440 RBX: 0000000000000000 RCX: ffffffff82573fa0
+RDX: 0000000000000000 RSI: ffffffff82573fae RDI: 0000000000000007
+RBP: ffff8801d90971a8 R08: ffff8801ac5a6440 R09: fffff94000e43853
+R10: fffff94000e43853 R11: ffffea000721c29f R12: ffffea000721c290
+R13: dffffc0000000000 R14: ffffea000721c280 R15: ffff8801a86b4788
+FS:  0000000002339880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 00000001a8b1c000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  do_read_cache_page+0x778/0x13b0 mm/filemap.c:2806
+  read_cache_page+0x61/0x80 mm/filemap.c:2894
+  read_mapping_page include/linux/pagemap.h:402 [inline]
+  ntfs_map_page fs/ntfs/aops.h:89 [inline]
+  map_mft_record_page fs/ntfs/mft.c:85 [inline]
+  map_mft_record+0x290/0xb40 fs/ntfs/mft.c:168
+  ntfs_read_locked_inode+0x19b/0x55f0 fs/ntfs/inode.c:575
+  ntfs_read_inode_mount+0xb53/0x23e0 fs/ntfs/inode.c:2100
+  ntfs_fill_super+0x1513/0x3090 fs/ntfs/super.c:2871
+  mount_bdev+0x30c/0x3e0 fs/super.c:1165
+  ntfs_mount+0x34/0x40 fs/ntfs/super.c:3065
+  mount_fs+0xae/0x328 fs/super.c:1268
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2517 [inline]
+  do_mount+0x564/0x3070 fs/namespace.c:2847
+  ksys_mount+0x12d/0x140 fs/namespace.c:3063
+  __do_sys_mount fs/namespace.c:3077 [inline]
+  __se_sys_mount fs/namespace.c:3074 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44471a
+RSP: 002b:00007ffe6b3e9468 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00000000200012c0 RCX: 000000000044471a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffe6b3e9470
+RBP: 0000000000000003 R08: 000000002007e200 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000004
+R13: 0000000000403610 R14: 0000000000000000 R15: 0000000000000000
+Code: 85 18 fe ff ff 31 ff 48 8b 98 80 fd ff ff 48 c1 eb 03 83 e3 01 48 89  
+de e8 b0 f1 21 ff 48 85 db 0f 85 38 f0 ff ff e8 72 f0 21 ff <0f> 0b c6 85  
+c4 fd ff ff 00 e9 8c f4 ff ff e8 5f f0 21 ff 0f 0b
+RIP: ntfs_read_block fs/ntfs/aops.c:207 [inline] RSP: ffff8801d9096f48
+RIP: ntfs_readpage+0x1d0e/0x2290 fs/ntfs/aops.c:456 RSP: ffff8801d9096f48
+---[ end trace dc7c4ed6d595ee67 ]---
 
-> because I can parse that more easily. Semantically the patch is fine and
-> can have my
-> 
-> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
->>  			    msgs[i].buf[0] < 1 ||
->>  			    msgs[i].len < msgs[i].buf[0] +
->>  					     I2C_SMBUS_BLOCK_MAX) {
 
-Best regards,
-Alexander
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
