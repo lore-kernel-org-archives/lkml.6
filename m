@@ -1,54 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753708AbeDSQER (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:04:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53134 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753690AbeDSQEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:04:15 -0400
-Date: Thu, 19 Apr 2018 18:04:08 +0200
-From: Borislav Petkov <bp@suse.de>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Michal Kubecek <mkubecek@suse.cz>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <jroedel@suse.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] x86/ldt: Fix support_pte_mask filtering in
- map_ldt_struct()
-Message-ID: <20180419160408.GA3905@pd.tnic>
-References: <1523871837-8378-1-git-send-email-joro@8bytes.org>
- <CALCETrVgQspiO3nnyhqiXi17iaGG7bRDsr3gpHwdDnYfFDZabQ@mail.gmail.com>
- <07e2c23e-10b7-b03f-5706-3d4b910537ba@linux.intel.com>
- <20180418121403.GA3434@pd.tnic>
- <20180419130011.GG3896@pd.tnic>
- <20180419141134.GI15462@8bytes.org>
- <20180419145832.5mq3va53swswajmu@unicorn.suse.cz>
- <20180419151126.GJ15462@8bytes.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180419151126.GJ15462@8bytes.org>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1753732AbeDSQE3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:04:29 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57067 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753715AbeDSQE1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 12:04:27 -0400
+Message-ID: <1524153860.3416.9.camel@pengutronix.de>
+Subject: Re: [PATCH v2 08/10] dt-bindings: media: Document bindings for the
+ Sunxi-Cedrus VPU driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>
+Date: Thu, 19 Apr 2018 18:04:20 +0200
+In-Reply-To: <20180419154536.17846-4-paul.kocialkowski@bootlin.com>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+         <20180419154536.17846-4-paul.kocialkowski@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 05:11:27PM +0200, Joerg Roedel wrote:
-> Cool, thanks for testing! I prepared a patch and will send it out if
-> Boris also reports success. I'll also added your Tested-by :)
+Hi Paul,
 
-Boris reports success too.
+On Thu, 2018-04-19 at 17:45 +0200, Paul Kocialkowski wrote:
+> This adds a device-tree binding document that specifies the properties
+> used by the Sunxi-Cedurs VPU driver, as well as examples.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  .../devicetree/bindings/media/sunxi-cedrus.txt     | 50 ++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/sunxi-cedrus.txt b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> new file mode 100644
+> index 000000000000..71ad3f9c3352
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> @@ -0,0 +1,50 @@
+> +Device-tree bindings for the VPU found in Allwinner SoCs, referred to as the
+> +Video Engine (VE) in Allwinner literature.
+> +
+> +The VPU can only access the first 256 MiB of DRAM, that are DMA-mapped starting
+> +from the DRAM base. This requires specific memory allocation and handling.
+> +
+> +Required properties:
+> +- compatible	        : "allwinner,sun4i-a10-video-engine";
+> +- memory-region         : DMA pool for buffers allocation;
+> +- clocks	        : list of clock specifiers, corresponding to entries in
+> +                          the clock-names property;
+> +- clock-names	        : should contain "ahb", "mod" and "ram" entries;
+> +- assigned-clocks       : list of clocks assigned to the VE;
+> +- assigned-clocks-rates : list of clock rates for the clocks assigned to the VE;
+> +- resets	        : phandle for reset;
+> +- interrupts	        : should contain VE interrupt number;
+> +- reg		        : should contain register base and length of VE.
+> +
+> +Example:
+> +
+> +reserved-memory {
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	ranges;
+> +
+> +	/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
+> +	ve_memory: cma@4a000000 {
+> +		compatible = "shared-dma-pool";
+> +		reg = <0x4a000000 0x6000000>;
+> +		no-map;
+> +		linux,cma-default;
+> +	};
+> +};
+> +
+> +video-engine@1c0e000 {
 
-Very good catch, thanks!
+This is not really required by any specification, and not as common as
+gpu@..., but could this reasonably be called "vpu@1c0e000" to follow
+somewhat-common practice?
 
--- 
-Regards/Gruss,
-    Boris.
+> +	compatible = "allwinner,sun4i-a10-video-engine";
+> +	reg = <0x01c0e000 0x1000>;
+> +	memory-region = <&ve_memory>;
+> +
+> +	clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
+> +		 <&ccu CLK_DRAM_VE>;
+> +	clock-names = "ahb", "mod", "ram";
+> +
+> +	assigned-clocks = <&ccu CLK_VE>;
+> +	assigned-clock-rates = <320000000>;
+> +
+> +	resets = <&ccu RST_VE>;
+> +
+> +	interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
+> +};
 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+regards
+Philipp
