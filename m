@@ -1,21 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753788AbeDSQFF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 12:05:05 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:33727 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753768AbeDSQFC (ORCPT
+        id S1753712AbeDSQGE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 12:06:04 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:58494 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753423AbeDSQGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 12:05:02 -0400
-X-Google-Smtp-Source: AIpwx48u08epC/g/D1mbWjxR/+fvHdzi0x3ffTKgtb9sgg4QcEZ2Kf63wrYZsZKexW+r5OyH5Y3fennqdSErxgJQkODOIHpSnfx8
+        Thu, 19 Apr 2018 12:06:02 -0400
+X-Google-Smtp-Source: AB8JxZo/IrOI3Y/u4zu/dP2RFNrL2GrVcR9cai1N+88V6tunSqBFRyglNA9BvUf5T09jYUQ0XWGg7jaZHr3eMNu8RGmp28FHFBLi
 MIME-Version: 1.0
-Date: Thu, 19 Apr 2018 09:05:01 -0700
+Date: Thu, 19 Apr 2018 09:06:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e563d7056a35bbb3@google.com>
-Subject: general protection fault in wb_workfn
-From: syzbot <syzbot+9873874c735f2892e7e9@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+Message-ID: <00000000000080e6b5056a35bf0b@google.com>
+Subject: WARNING in reconnect_path
+From: syzbot <syzbot+3d2f4fb8f8cb02694334@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, bfields@citi.umich.edu, dhowells@redhat.com,
+        linux-kernel@vger.kernel.org, neilb@suse.de,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -25,61 +26,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hello,
 
 syzbot hit the following crash on upstream commit
-3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
-Linux 4.16-rc7
+b5dbc28762fd3fd40ba76303be0c7f707826f982 (Sat Mar 31 04:53:57 2018 +0000)
+Merge tag 'kbuild-fixes-v4.16-3' of  
+git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=9873874c735f2892e7e9
+https://syzkaller.appspot.com/bug?extid=3d2f4fb8f8cb02694334
 
-So far this crash happened 29 times on upstream.
+So far this crash happened 3 times on upstream.
 Unfortunately, I don't have any reproducer for this crash yet.
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6617474409693184
+https://syzkaller.appspot.com/x/log.txt?id=5514244279762944
 Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
+https://syzkaller.appspot.com/x/.config?id=-2760467897697295172
 compiler: gcc (GCC) 7.1.1 20170620
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9873874c735f2892e7e9@syzkaller.appspotmail.com
+Reported-by: syzbot+3d2f4fb8f8cb02694334@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 28 Comm: kworker/u4:2 Not tainted 4.16.0-rc7+ #368
+WARNING: CPU: 1 PID: 8789 at fs/exportfs/expfs.c:96 clear_disconnected  
+fs/exportfs/expfs.c:96 [inline]
+WARNING: CPU: 1 PID: 8789 at fs/exportfs/expfs.c:96  
+reconnect_path+0x48e/0x670 fs/exportfs/expfs.c:232
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 8789 Comm: syz-executor6 Not tainted 4.16.0-rc7+ #8
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: writeback wb_workfn
-RIP: 0010:dev_name include/linux/device.h:981 [inline]
-RIP: 0010:wb_workfn+0x1a2/0x16b0 fs/fs-writeback.c:1936
-RSP: 0018:ffff8801d951f038 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81bf6ea5
-RDX: 000000000000000a RSI: ffffffff87b44840 RDI: 0000000000000050
-RBP: ffff8801d951f558 R08: 1ffff1003b2a3def R09: 0000000000000004
-R10: ffff8801d951f438 R11: 0000000000000004 R12: 0000000000000100
-R13: ffff8801baee0dc0 R14: ffff8801d951f530 R15: ffff8801baee10d8
-FS:  0000000000000000(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000047ff80 CR3: 0000000007a22006 CR4: 00000000001626f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
-  process_scheduled_works kernel/workqueue.c:2173 [inline]
-  worker_thread+0xa4b/0x1990 kernel/workqueue.c:2252
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 d9 14 00 00 48 8b 9b d0 05 00 00 48  
-b8 00 00 00 00 00 fc ff df 48 8d 7b 50 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
-0f 85 a9 14 00 00 4c 8b 63 50 4d 85 e4 0f 84 49 0e
-RIP: dev_name include/linux/device.h:981 [inline] RSP: ffff8801d951f038
-RIP: wb_workfn+0x1a2/0x16b0 fs/fs-writeback.c:1936 RSP: ffff8801d951f038
----[ end trace 303e9927650f10c6 ]---
-Kernel panic - not syncing: Fatal exception
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  panic+0x1e4/0x41c kernel/panic.c:183
+  __warn+0x1dc/0x200 kernel/panic.c:547
+  report_bug+0x1f4/0x2b0 lib/bug.c:186
+  fixup_bug.part.10+0x37/0x80 arch/x86/kernel/traps.c:178
+  fixup_bug arch/x86/kernel/traps.c:247 [inline]
+  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
+RIP: 0010:clear_disconnected fs/exportfs/expfs.c:96 [inline]
+RIP: 0010:reconnect_path+0x48e/0x670 fs/exportfs/expfs.c:232
+RSP: 0018:ffff8801d7a87ad0 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: ffff8801ac9ad5c0 RCX: ffffffff822aaa3e
+RDX: 0000000000040000 RSI: ffffc900066cc000 RDI: ffff8801ac9ad600
+RBP: ffff8801d7a87b28 R08: ffffffff8858c3c0 R09: 1ffff1003af50f1d
+R10: ffff8801d7a87870 R11: 0000000000000000 R12: ffff8801ac9ad5c0
+R13: dffffc0000000000 R14: ffff8801ac9ad5c0 R15: ffff880178769a20
+  exportfs_decode_fh+0x28a/0x5b0 fs/exportfs/expfs.c:448
+  do_handle_to_path fs/fhandle.c:152 [inline]
+  handle_to_path fs/fhandle.c:207 [inline]
+  do_handle_open+0x374/0x8a0 fs/fhandle.c:223
+  SYSC_open_by_handle_at fs/fhandle.c:265 [inline]
+  SyS_open_by_handle_at+0x27/0x30 fs/fhandle.c:256
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x454e79
+RSP: 002b:00007f73f54f1c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000130
+RAX: ffffffffffffffda RBX: 00007f73f54f26d4 RCX: 0000000000454e79
+RDX: 0000000000200000 RSI: 0000000020000040 RDI: 0000000000000015
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000016
+R13: 0000000000000416 R14: 00000000006f82b0 R15: 0000000000000025
 Dumping ftrace buffer:
     (ftrace buffer empty)
 Kernel Offset: disabled
