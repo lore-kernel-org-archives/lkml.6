@@ -1,56 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753249AbeDSR66 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 13:58:58 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46426 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753097AbeDSR6z (ORCPT
+        id S1753352AbeDSR7j (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 13:59:39 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41876 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752976AbeDSR7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 13:58:55 -0400
-X-Google-Smtp-Source: AIpwx4/EJY+WiEoqJnfhCxqTc2FnTIQpCkiSkWuSUX+dmOOyPcdS+nIcF+lXT/wh5vQ4aqHe4C+g0A==
-From: Kevin Hilman <khilman@baylibre.com>
-To: Yixun Lan <yixun.lan@amlogic.com>
-Cc: Nan Li <nan.li@amlogic.com>, Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, Rob Herring <robh@kernel.org>,
-        <linux-mmc@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2] ARM64: dts: meson-axg: enable the eMMC controller
-Organization: BayLibre
-References: <20180408113647.13543-1-yixun.lan@amlogic.com>
-Date: Thu, 19 Apr 2018 10:58:52 -0700
-In-Reply-To: <20180408113647.13543-1-yixun.lan@amlogic.com> (Yixun Lan's
-        message of "Sun, 8 Apr 2018 11:36:47 +0000")
-Message-ID: <7ho9if3wo3.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 19 Apr 2018 13:59:37 -0400
+Subject: Re: linux-next: Tree for Apr 19 (dell smbios SMM)
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>
+References: <20180419143545.63c0c639@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6aec5528-d6f1-3e05-1ac2-6eddbd0ac64f@infradead.org>
+Date: Thu, 19 Apr 2018 10:59:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180419143545.63c0c639@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+On 04/18/18 21:35, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180418:
+> 
 
-> From: Nan Li <nan.li@amlogic.com>
->
-> The IP of eMMC controller in AXG is similiar to Meson-GX series.
-> Here we add the initial support of the HS200 mode with
-> clock running at 166MHz (to be safe), since we found some eMMC chip
-> fail to run at 200MHz due to tunning phase error.
->
-> Signed-off-by: Nan Li <nan.li@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 
-Applied to v4.18/dt64
+I see some patches from about 1 month ago for this, but it was either
+never fixed ... or it's back.
 
-> ---
-> Hi Kevin
->   Please note this patch actually depend on the eMMC driver here [0].
->   Still a few problem to solve, to improve the tuning phase driver to make
-> the clock running at 200MHz, and to further support the HS400 mode.
-> Anyway, this patch itself is quite independent.
 
-The driver changes are queued for v4.18 also.  Good!
+on x86_64:
 
-Kevin
+WARNING: unmet direct dependencies detected for DELL_SMBIOS
+  Depends on [m]: X86 [=y] && X86_PLATFORM_DEVICES [=y] && (DCDBAS [=m] || DCDBAS [=m]=n) && (ACPI_WMI [=n] || ACPI_WMI [=n]=n)
+  Selected by [y]:
+  - DELL_LAPTOP [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && DMI [=y] && BACKLIGHT_CLASS_DEVICE [=y] && (ACPI_VIDEO [=n] || ACPI_VIDEO [=n]=n) && (RFKILL [=n] || RFKILL [=n]=n) && SERIO_I8042 [=y]
+
+
+drivers/platform/x86/dell-smbios-smm.o: In function `dell_smbios_smm_call':
+dell-smbios-smm.c:(.text+0x7d): undefined reference to `dcdbas_smi_request'
+
+
+-- 
+~Randy
