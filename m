@@ -1,67 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752725AbeDSTUl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 15:20:41 -0400
-Received: from anholt.net ([50.246.234.109]:57480 "EHLO anholt.net"
+        id S1753048AbeDSTWn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 15:22:43 -0400
+Received: from mga06.intel.com ([134.134.136.31]:43005 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751182AbeDSTUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 15:20:39 -0400
-From: Eric Anholt <eric@anholt.net>
-To: dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
-Subject: [PATCH 1/2] dt-bindings: Add a new binding for Broadcom V3D 3.x and newer GPUs.
-Date: Thu, 19 Apr 2018 12:20:34 -0700
-Message-Id: <20180419192035.19898-2-eric@anholt.net>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180419192035.19898-1-eric@anholt.net>
-References: <20180419192035.19898-1-eric@anholt.net>
+        id S1751194AbeDSTWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 15:22:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,297,1520924400";
+   d="scan'208";a="35571292"
+Subject: Re: [PATCH] x86/ldt: Fix support_pte_mask filtering in
+ map_ldt_struct()
+To: Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@suse.de>
+References: <1523871837-8378-1-git-send-email-joro@8bytes.org>
+ <CALCETrVgQspiO3nnyhqiXi17iaGG7bRDsr3gpHwdDnYfFDZabQ@mail.gmail.com>
+ <07e2c23e-10b7-b03f-5706-3d4b910537ba@linux.intel.com>
+ <20180418121403.GA3434@pd.tnic> <20180419130011.GG3896@pd.tnic>
+ <20180419141134.GI15462@8bytes.org>
+Cc: Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Joerg Roedel <jroedel@suse.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Message-ID: <a47fd151-a691-6b11-597e-aad1f646fdef@linux.intel.com>
+Date: Thu, 19 Apr 2018 12:22:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180419141134.GI15462@8bytes.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These OpenGL ES GPUs are present in the 7268 and 7278 set top box
-chips.
+On 04/19/2018 07:11 AM, Joerg Roedel wrote:
+> On Thu, Apr 19, 2018 at 03:00:11PM +0200, Borislav Petkov wrote:
+>> fb43d6cb91ef x86/mm: Do not auto-massage page protections <--- NOT OK
+> Hmm, that hunk from above patch looks suspicious:
+> 
+> -               set_pgd(pgd + pgd_index(restore_jump_address), __pgd(__pa(pud) | _KERNPG_TABLE));
+> +               pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
+> +               set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
+> 
+> The old code used __pa(pud) while the new one uses __pa(p4d).
+> 
+> Boris, can you change that back to __pa(pud) and test please?
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- .../bindings/display/brcm,bcm-v3d.txt         | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
+That does look like the culprit.  I probably copy/pasted the p4d line
+from above and missed that 'p4d' when converting it to pud.
 
-diff --git a/Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt b/Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
-new file mode 100644
-index 000000000000..1c814714de0e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/brcm,bcm-v3d.txt
-@@ -0,0 +1,28 @@
-+Broadcom V3D GPU
-+
-+Only the Broadcom V3D 3.x and newer GPUs are covered by this binding.
-+For V3D 2.x, see brcm,bcm-vc4.txt.
-+
-+Required properties:
-+- compatible:	Should be "brcm,7268-v3d" or "brcm,7278-v3d"
-+- reg:		Physical base addresses and lengths of the register areas
-+- reg-names:	Names for the register areas.  The "hub", "bridge", and "core0"
-+		  register areas are always required.  The "gca" register area
-+		  is required if the GCA cache controller is present.
-+- interrupts:	The interrupt numbers.  The first interrupt is for the hub,
-+		  while the following inerrupts are for the cores.
-+		  See bindings/interrupt-controller/interrupts.txt
-+
-+Optional properties:
-+- clocks:	The core clock the unit runs on
-+
-+v3d {
-+	compatible = "brcm,7268-v3d";
-+	reg = <0xf1204000 0x100>,
-+	      <0xf1200000 0x4000>,
-+	      <0xf1208000 0x4000>,
-+	      <0xf1204100 0x100>;
-+	reg-names = "bridge", "hub", "core0", "gca";
-+	interrupts = <0 78 4>,
-+		     <0 77 4>;
-+};
--- 
-2.17.0
+Thanks for finding this, guys.
