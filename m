@@ -1,55 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeDSMC7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 08:02:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38252 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752322AbeDSMC6 (ORCPT
+        id S1752658AbeDSMDV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 08:03:21 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:33079 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751170AbeDSMDT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 08:02:58 -0400
-Subject: Re: [PATCH] vfio-ccw: process ssch with interrupts disabled
-To: Cornelia Huck <cohuck@redhat.com>,
-        Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180413140509.9042-1-cohuck@redhat.com>
-From: Halil Pasic <pasic@linux.vnet.ibm.com>
-Date: Thu, 19 Apr 2018 14:01:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180413140509.9042-1-cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18041912-0040-0000-0000-0000044F4C52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18041912-0041-0000-0000-000020F3A158
-Message-Id: <dd958a03-d5e8-c826-6fc6-7229c3acbe1e@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804190108
+        Thu, 19 Apr 2018 08:03:19 -0400
+X-Google-Smtp-Source: AIpwx4+ia01jmDmgMTQiWP0vyvfDI4v/ht43/x63jEArQZ33f+BHybZvCO59o6UIkPhunzCSVcc0XQ==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, David Lechner <david@lechnology.com>,
+        Suman Anna <s-anna@ti.com>, Aparna Balasubramanian <aparnab@ti.com>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        Kevin Hilman <khilman@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] davinci_all_defconfig: enable support for remoteproc drivers
+Date: Thu, 19 Apr 2018 14:03:13 +0200
+Message-Id: <20180419120313.31359-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
+Enable the remoteproc framework and the da8xx remoteproc driver by
+default in the davinci defconfig.
 
-On 04/13/2018 04:05 PM, Cornelia Huck wrote:
-> When we call ssch, an interrupt might already be pending once we
-> return from the START SUBCHANNEL instruction. Therefore we need to
-> make sure interrupts are disabled until after we're done with our
-> processing.
-> 
-> Note that the subchannel lock is the same as the ccwdevice lock that
-> is mentioned in the documentation for ccw_device_start() and friends.
-> 
-> Signed-off-by: Cornelia Huck<cohuck@redhat.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/configs/davinci_all_defconfig | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Acked-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
+index c302a04e8cbc..21b2d7791df4 100644
+--- a/arch/arm/configs/davinci_all_defconfig
++++ b/arch/arm/configs/davinci_all_defconfig
+@@ -56,7 +56,7 @@ CONFIG_IP_PNP_DHCP=y
+ CONFIG_NETFILTER=y
+ CONFIG_DEVTMPFS=y
+ CONFIG_DEVTMPFS_MOUNT=y
+-# CONFIG_FW_LOADER is not set
++CONFIG_FW_LOADER=m
+ CONFIG_DMA_CMA=y
+ CONFIG_DA8XX_MSTPRI=y
+ CONFIG_MTD=m
+@@ -212,6 +212,8 @@ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_OMAP=m
+ CONFIG_DMADEVICES=y
+ CONFIG_TI_EDMA=y
++CONFIG_REMOTEPROC=m
++CONFIG_DA8XX_REMOTEPROC=m
+ CONFIG_MEMORY=y
+ CONFIG_TI_AEMIF=m
+ CONFIG_DA8XX_DDRCTL=y
+-- 
+2.17.0
