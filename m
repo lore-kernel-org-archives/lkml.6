@@ -1,131 +1,568 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeDSKo4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:44:56 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:48674 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751840AbeDSKoh (ORCPT
+        id S1752609AbeDSKpw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:45:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34720 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751151AbeDSKpr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:44:37 -0400
-Date: Thu, 19 Apr 2018 11:43:42 +0100
-From: Roman Gushchin <guro@fb.com>
-To: ufo19890607 <ufo19890607@gmail.com>
-CC: <mhocko@suse.com>, <vdavydov.dev@gmail.com>,
-        <penguin-kernel@i-love.sakura.ne.jp>, <rientjes@google.com>,
-        <akpm@linux-foundation.org>, <tj@kernel.org>, <kernel-team@fb.com>,
-        <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, yuzhoujian <yuzhoujian@didichuxing.com>
-Subject: Re: Some questions about cgroup aware OOM killer.
-Message-ID: <20180419104336.GA20675@castle.DHCP.thefacebook.com>
-References: <1524122224-26670-1-git-send-email-ufo19890607@gmail.com>
+        Thu, 19 Apr 2018 06:45:47 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1524122224-26670-1-git-send-email-ufo19890607@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-Originating-IP: [2620:10d:c092:200::1:543d]
-X-ClientProxiedBy: VI1PR07CA0193.eurprd07.prod.outlook.com
- (2603:10a6:802:3f::17) To DM3PR15MB1083.namprd15.prod.outlook.com
- (2603:10b6:0:12::9)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM3PR15MB1083;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR15MB1083;3:96wwq+hkxxHT64ZuftjJfmDL7GukivgzG32/o4iJ6p1YBSa+QTwgYPk6ctGVqxs9ZJPgjnrq4Gk4Pb4MQyoUC5xCK8Kpjk1t3jKVXQ+t1ttxR5ieEjh4JtlKpH9J30rT3TwAr0NY7RsA3gyO4OW7epqhjFPOcJ4VIa3A4HIA38qKAzK1A+ZzRpUNDLEF6Jvh5wvMv1/h9H8ls4wd1S5rk3sH00pHVS8n0YRwpR+unCGZxMIFONTqQ7Age0xcxyLw;25:mqGRpYylqVfJG7kGP7sBYHN6tBQi8LfEaOoAn81oZFAHst3t8GxUweN+cJwIzLl5sDPLNv5s4zjqGqz7Ld8dgVLOd60GWEaiZRZltAR+SEv/KPsltlGfjn6LxSznJrdvVMZzhWAW7Tw30J9pbtAs1vrYgXEtqpQ1yQ0/bILYBO8O6DqiiPyCJu7O4yjp6SovHIblrw4sRYfpOL7GRG4kI6OLC6tfSfyoVkWKrEgGvk7vYhTv9JXlEOo0zmsl27c7WAauHE+g3hnC1srVY9/57iMbpIM8gAkiwCP7c50fxh43k+gumt/iJuAFFz4IEp8Fc8l3OritDpcOyCd9CSWRiQ==;31:rHbil7Gz2kDXo0Nt67qpUfA8M/IPzsnyWKwd3G2phCAgvi+NwaXljQPWleFkiJ804wtRp1CQHjaPg+UkIYrPVnknXGyrLHXltMttxQ/a0vFnCzfEyJlr2b8FTfUZ+/RjtE3rD6t2e5S3NW6bKqJ5gg998XFWHYsLKKyvSWM4oWy1jGSaMsVcVCh7SKqseal0bBvdr9leKCeF+vx3AQVJth6x35OEzzRP+5425wfL464=
-X-MS-TrafficTypeDiagnostic: DM3PR15MB1083:
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR15MB1083;20:X7o5hO1V5HNPR7j+cm4Hf/3g2HkB8e+bXO3zg4eOReDAdNre6daA2Xd+Bc4SBNXrPE+1Da5Op8KgxURCFm6DvGmZ7hi+nNMRSds4tVlvR/ztpSUCwNmS3EB1It6Qh/jIjfRPGVvE+FLv5E13cLDHAuz+DSasn3hynO+AOLoZ2mUcOwWhRfU5gnR2XEHGZtNCf5PxT8eKv+k3Z+mO8RSrg9aaWahzb5TAQM/CmpLUKHA8GlYDZAxlgWnDftSyyMbaTnGcUdQ6nRBYUcI5jrtamBWIXNHh+NTvfQmM6ohtUTMADKb5wvG9Bm5UE6lzTGB4nbn6w/MM6dGr5glV+x1E43y5UKGErQf+pikEYq36w45NTk+SplBAJgKMlOqAHV26KcTGf0BJ/CGNKS7fDdsFTLV6/O+097yol/D3YEmZDOwTRrXWQGXy6qvXvbfMhmf0pkvLabRE/LUUG9ud71ixhGhFFC4BLuYk4Apip53CBQX5XVqiJEUmL2nops0q/9Fv;4:3COTj4cXYYcUsFmPzv95Zz+41JKaWsJVxCUSKRjsbzaMKgk4J8JYUc4CnbwFlNyfGvrQHvya5Kl3vKw0IG89kDogVaJW+jWUWbzXC3PO94phLzG/6x6bhAgixrI5Siy8HJAHmPKyLrBVbBu2Yb6U6HvOOFGRqCQfTu0x3dkadWgS1Y0h7wswFabkpb+ouJ4xynA+AMSGxHTo2bOjTDOa4y6YNxqSmE1Zw74Do27lKrUeZLH2hoZNc2KhAXtFMbSjGnYwTMshW9sS1OED8DgwHGZXfvq2vtVEcgNs07rCUjUc18eee7wYJ98Py1eVIFDfJlPbZa878AE42Brpz7aIXxA9RU+P9GsAgenJZUOkk4os7hkKbWJbPv2r5cPVNLvP
-X-Microsoft-Antispam-PRVS: <DM3PR15MB10837853AE26F7E3840CFAF1BEB50@DM3PR15MB1083.namprd15.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(67672495146484)(84791874153150);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231232)(11241501184)(944501327)(52105095)(93006095)(93001095)(6041310)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:DM3PR15MB1083;BCL:0;PCL:0;RULEID:;SRVR:DM3PR15MB1083;
-X-Forefront-PRVS: 0647963F84
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39860400002)(396003)(39380400002)(366004)(229853002)(7736002)(6306002)(7416002)(5660300001)(50466002)(4326008)(25786009)(47776003)(8676002)(59450400001)(58126008)(386003)(6916009)(81166006)(6666003)(86362001)(8936002)(476003)(7696005)(46003)(446003)(1076002)(16526019)(11346002)(6116002)(52396003)(52116002)(76176011)(2486003)(1411001)(966005)(52146003)(186003)(305945005)(2906002)(33656002)(2870700001)(316002)(55016002)(6246003)(23676004)(53936002)(478600001)(6506007)(9686003)(39060400002)(18370500001)(42262002)(422495003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM3PR15MB1083;H:castle.DHCP.thefacebook.com;FPR:;SPF:None;LANG:en;MLV:ovrnspm;PTR:InfoNoRecords;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTNQUjE1TUIxMDgzOzIzOnJmVVI1K2RrSWthR014ZVZRWnEzVUJGelc1?=
- =?utf-8?B?aUNhSSsrZVd5Zzk2Uy9lRXFUNDNsVytacWhyUVdtbmFma3pQb0lVb0JSMnRB?=
- =?utf-8?B?VzF5OHVhbXk2NEcrWWtwYjlmTnJNOE1lUGpDNGJkZm85ZkljclZQOHQ5WFBj?=
- =?utf-8?B?N2FaRkpOQ0dMcFBFQU1UeGFrNlVNbXorYUZ4UFNjeS9GUlZLNEI1UjVDQkpx?=
- =?utf-8?B?alN0T082UVdWSWh3Ry95czhPcTY1bk1FazNzOVRwQVZwdGgyZHlSOGdheFhL?=
- =?utf-8?B?V1dHclNrVFV6SFdjbG9BNHNPaXBPdEo2aS9CdDVCVEczVSs3U3VHaFFldCtZ?=
- =?utf-8?B?QlpoU3JpdmNVWmZPbnEvbEgwc3ZSaHphVG5CQzBUMTQ0VnF6ZmNDMHdkL3Rm?=
- =?utf-8?B?ZnJiWTBXdnJGV2NTdDd5eVprSzB4MXNGT1BhZE1ETTNFUUVZUzhzYm1BcXNt?=
- =?utf-8?B?d0pEZGtESUx5Ui9mUUpZVVdmSUdUYUVBbjZKZHVINVp1VTZ3eHZ6d1hHVjV3?=
- =?utf-8?B?Y2E4WE52NGtYMFJQL3FmMTlkOGxWNWV5Sm0zSmJiZWxsQUlxeUpPV1NsQk9t?=
- =?utf-8?B?SHJWL1JCaHkyMXBGcm5IWmtLRGpJN29wS2ZmeEExdDE2VFFxRjJjY2pMRGVw?=
- =?utf-8?B?WVNtZ2swZEpodUo1Yno3ekFod1NQbS8xRXBPSjhybjBQY1NtUmRGOHVLQm5j?=
- =?utf-8?B?OURMNzJqMmlZUzR0ZXF1K0hDTEJxQUZLMHdxd21hY2gvOFRza1ZHUDZibTRi?=
- =?utf-8?B?NFNkMEdlZHpnZkJjd1VGVC83SllGVExnaGJCclo4SEpLR1JyZEdsMmY3dlBB?=
- =?utf-8?B?VXR2c1VmZ21VS2FaMjA0czd4VWszVlN3NlhSU01xemxJMUpGNFBldlFqMGFF?=
- =?utf-8?B?UHpXNTBZS0RZK3RaVG1yVnV6aG5lTHJVdFgvQW1wTE9UMU9Yemt5UVdlbEQr?=
- =?utf-8?B?bWkzb2ZHMVpiUkNoZHNpaFZOdktTeTE1cE91QlRCNjBzbHJ2Zk50Rk9YWU03?=
- =?utf-8?B?YnVsMVFROHZZbGRhMk5BYmpjY3E0L2wxREJsZVRjM1p3YnVZeXI0bm5uZmhQ?=
- =?utf-8?B?clRhME1sOUJyckNUdVVDalQxdzlHN0tOQ3dUYnFDUFN3MVFZU1BsZVR5eGNz?=
- =?utf-8?B?RFlOWnFUTEtKRmFybzZtd0d5QitMMDBWN2pMemVoakdiTXh3WExkOU1DZHY0?=
- =?utf-8?B?cDFLQ29uVndoaitkNDFNSVJyZFhRc2FwelFnZ0dDbzFzbklGS2FFbTRyVFVs?=
- =?utf-8?B?c0l1RGZMeHEzQjFDT045UW1ENitQRzVQT25aZ3YraXZQMnpWZ2pYaWliL0lz?=
- =?utf-8?B?ZVdselBDdzl5V28xWkpqQjVVNlVEaWt3bnVJVnZYcWU0ZEdGM2x0QVhmRWlw?=
- =?utf-8?B?UzBJanpMUytwdVBFVHpKSzlHb3ZPK0h5SjdOT2RWNFN3dmpKUkRIVzBoYlZ1?=
- =?utf-8?B?U2Zsb3Z1cXk1by9NMGtEN21IUnVrc0FUNStsQTBlSGNFdmJHWVBSZDh6Q1gw?=
- =?utf-8?B?NzFHOEM4cjNWK1hEQXY4b3AyZEhwTWxRNVlPZkp2V1RkNlBvRG9ZQW9HRG9w?=
- =?utf-8?B?OXFuMjV3bktlK2N0OTZOb1ZBNmNKY0Z1NFJtV29LenBaK21DM2VPc1cwUGRW?=
- =?utf-8?B?MGM2RWorRTZ6NUNEaEdiaUFlUisycUd3ZDFzL2dDajhqY2w5LzVtdHc4NmN5?=
- =?utf-8?Q?nfr/qgNQydJfbNzN1rCG175MZ6UeBgRF49UB9Ed?=
-X-Microsoft-Antispam-Message-Info: 8L2mVEM1TVaOsGYPsT7gbvxPVYP4dvkEYGODTJXMI6fCustIpFzZ3+MyqoGeUTAyn0NIp7Ir4/VA0QVJNAvUaSnruC/aH/nT/uZ3KMq86XfbYdWEY5KOGIeIlQTgbzARWh80aIORgXTRSMoraGT2lg6U6COFX61ekA7IiF3nHdoPVlu9mXkJWmMKu3sb4SFo
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR15MB1083;6:mDiXh12PtERKLpFdXyxh50G6eoxFjywKKmbxOqu400VOvyh2/3up4ikCEB02ix8ZuPWI32d8rsI+zqC7NG4w1uiUhUGZaswEjPraXh8stN0LkAopL1bxcCM9zVRnRamlF6cM+cD0s/Ut98GTtj9YMepbGIQZ/6xTZZio7zB6bZz5V3aJKdyBediJd8YPkbkbXHqYcDEUuhNnzb6eujljXBG+4uH+sz4ZvhuoFlRlSXEVT6We98aZfOHU81vL7SnokTAE9c8/ChqjBZ+x14z90BdOmdHH3heKNAIqxXieMq0d1AJc7pf8I+3tJMjt4H3wVEGng4QYHtXbvQsQSxslKhVFJAzFUyqEeSSyBElG3ogOs7LFLSOZwWbT84jrf8WlgiGjummWvCkiM5tJlHHCcaZbY3zMPyEiuYtgFwcnn9EgFoRmFNAc9mDZ6fJEs/Gjwv/ea7TxI+YzndbPiq5pNw==;5:6cLL17KTa96A29Jrc0rJKQVMRObxgBno/SyIOqyY/JYPU2fN9RR90pWet9FeGMwhZgpi9QR3GAlFT6Gr5PY6jojtUsjanVMqRt5n5QW8mCZjcqQnCIfERIqF3pMtp4bpY3vpP7uU/CjzYossC87oCU1EQKdnurHfAOcOWjjP1Nk=;24:sBJzhl+wj/hFIWTxCvv5aiv8J7KjzWn8EgWak4tZrPRTfNY8ykfaoBxxN+DtyjsBstJTdbnXxmkRR/irL3TWlaZZHyPjljzE1m5rrW/Mztk=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR15MB1083;7:/NWdzGymZUlhwfX4v7qcu5rcHp7rrbxLBemSt2Dzke3g1b/DihWV/JFnyTLorkoIaLxuHgcG9oTdsFWTAU173sNL/l5V6aBnPb7Z6CFcDfPY1TXVysbzyrOJE9t3iMpomhGfAc4dXg+w1fyYh+Q5kdSDIJdSTqmj6glQU6KkLR/AS6l6bbYiFh4YJazaXM3cO4n3gcXjuqXNf+v2SQPnab6cI1/BvQmg0p7cXQKk1kNBDFASpFecgbsOwZRb/QUv;20:pw8qy3xEJcEHX2cqJF+6HRACbrr5EmDzQ5DFhmmP95FCm6nsDUAcwqMZJxnDM/1UaveFq/jGJJeGg8ERMyxzSMq7cMA8k0bybXXk/RkUnvPUsOFnD4r0NZTaQ8XuOrlAk84CMI1J9Q9Aysu6md0wnK0HusqJFv6PR5C+oL9P6oY=
-X-MS-Office365-Filtering-Correlation-Id: 31b2984e-1c00-411d-d1f9-08d5a5e2778b
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Apr 2018 10:44:00.4636 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31b2984e-1c00-411d-d1f9-08d5a5e2778b
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR15MB1083
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Thu, 19 Apr 2018 16:15:44 +0530
+From: kgunda@codeaurora.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH V1 4/4] qcom: spmi-wled: Add auto-calibration logic
+ support
+In-Reply-To: <20171205054004.GG28761@minitux>
+References: <1510834717-21765-1-git-send-email-kgunda@codeaurora.org>
+ <1510834717-21765-5-git-send-email-kgunda@codeaurora.org>
+ <20171205054004.GG28761@minitux>
+Message-ID: <d5ab425e78957fd59145f7d49fd897e6@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
 
-Please, pull the whole patchset from the next tree:
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
-$ git log next/master --oneline --author=guro@fb.com
-1fecc970ac9e cgroup: list groupoom in cgroup features
-dff73d397f7f mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix
-7cf83086511a mm, oom, docs: describe the cgroup-aware OOM killer
-e2194b2869f1 mm, oom: add cgroup v2 mount option for cgroup-aware OOM killer
-338fbcc52518 mm, oom: return error on access to memory.oom_group if groupoom is disabled
-96fb32250ded mm, oom: introduce memory.oom_group
-ed5f99985bf8 mm, oom: cgroup-aware OOM killer
-e33eba2c3273 mm: implement mem_cgroup_scan_tasks() for the root memory cgroup
-9bd3a4c529d4 mm, oom: refactor oom_kill_process()
-
-Thanks!
-
-On Thu, Apr 19, 2018 at 08:17:04AM +0100, ufo19890607 wrote:
-> From: yuzhoujian <yuzhoujian@didichuxing.com>
+On 2017-12-05 11:10, Bjorn Andersson wrote:
+> On Thu 16 Nov 04:18 PST 2017, Kiran Gunda wrote:
 > 
-> Hi Roman
-> I've read your patchset about cgroup aware OOM killer, and try
-> to merge your patchset to the upstream kernel(v4.17-rc1). But
-> I found some functions which in your patch([PATCH v13 3/7] 
-> mm, oom: cgroup-aware OOM killer) does not exist in the upstream
-> kernel. Which version of the kernel do you patch on? And, do you
-> have the latest patchset?
+>> The auto-calibration algorithm checks if the current WLED sink
+>> configuration is valid. It tries enabling every sink and checks
+>> if the OVP fault is observed. Based on this information it
+>> detects and enables the valid sink configuration. Auto calibration
+>> will be triggered when the OVP fault interrupts are seen frequently
+>> thereby it tries to fix the sink configuration.
+>> 
 > 
-> The faults in PATCH v13 3/7:
-> 1. mm/oom_kill.o: In function `out_of_memory':
->    /linux/mm/oom_kill.c:1125: undefined reference to `alloc_pages_before_oomkill'
-> 2. mm/oom_kill.c: In function ‘out_of_memory’:
->    mm/oom_kill.c:1125:5: error: ‘struct oom_control’ has no member named ‘page’
->    oc->page = alloc_pages_before_oomkill(oc);
->      ^
+> So it's not auto "calibration" it's auto "detection" of strings?
 > 
-> Best wishes
+Hi Bjorn,
+Sorry for late response. Please find my answers.
+
+Correct. This is the auto detection, This is the name given by the 
+HW/systems team.
+> When is this feature needed?
+> 
+This feature is needed if the string configuration is given wrong in the 
+DT node by the
+user.
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> ---
+>>  .../bindings/leds/backlight/qcom-spmi-wled.txt     |   5 +
+>>  drivers/video/backlight/qcom-spmi-wled.c           | 304 
+>> ++++++++++++++++++++-
+>>  2 files changed, 306 insertions(+), 3 deletions(-)
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt 
+>> b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
+>> index d39ee93..f06c0cd 100644
+>> --- 
+>> a/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
+>> +++ 
+>> b/Documentation/devicetree/bindings/leds/backlight/qcom-spmi-wled.txt
+>> @@ -94,6 +94,11 @@ The PMIC is connected to the host processor via 
+>> SPMI bus.
+>>  	Definition: Interrupt names associated with the interrupts.
+>>  		    Currently supported interrupts are "sc-irq" and "ovp-irq".
+>> 
+>> +- qcom,auto-calibration
+> 
+> qcom,auto-string-detect?
+> 
+ok. Will address in the next patch.
+>> +	Usage:      optional
+>> +	Value type: <bool>
+>> +	Definition: Enables auto-calibration of the WLED sink configuration.
+>> +
+>>  Example:
+>> 
+>>  qcom-wled@d800 {
+>> diff --git a/drivers/video/backlight/qcom-spmi-wled.c 
+>> b/drivers/video/backlight/qcom-spmi-wled.c
+>> index 8b2a77a..aee5c56 100644
+>> --- a/drivers/video/backlight/qcom-spmi-wled.c
+>> +++ b/drivers/video/backlight/qcom-spmi-wled.c
+>> @@ -38,11 +38,14 @@
+>>  #define  QCOM_WLED_CTRL_SC_FAULT_BIT		BIT(2)
+>> 
+>>  #define QCOM_WLED_CTRL_INT_RT_STS		0x10
+>> +#define  QCOM_WLED_CTRL_OVP_FLT_RT_STS_BIT	BIT(1)
+> 
+> The use of BIT() makes this a mask and not a bit number, so if you just
+> drop that you can afford to spell out the "FAULT" like the data sheet
+> does. Perhaps even making it QCOM_WLED_CTRL_OVP_FAULT_STATUS ?
+> 
+ok. Will change it in the next series.
+>> 
+>>  #define QCOM_WLED_CTRL_MOD_ENABLE		0x46
+>>  #define  QCOM_WLED_CTRL_MOD_EN_MASK		BIT(7)
+>>  #define  QCOM_WLED_CTRL_MODULE_EN_SHIFT		7
+>> 
+>> +#define QCOM_WLED_CTRL_FDBK_OP			0x48
+> 
+> This is called WLED_CTRL_FEEDBACK_CONTROL, why the need to make it
+> unreadable?
+> 
+Ok. Will address it in next series.
+>> +
+>>  #define QCOM_WLED_CTRL_SWITCH_FREQ		0x4c
+>>  #define  QCOM_WLED_CTRL_SWITCH_FREQ_MASK	GENMASK(3, 0)
+>> 
+>> @@ -99,6 +102,7 @@ struct qcom_wled_config {
+>>  	int ovp_irq;
+>>  	bool en_cabc;
+>>  	bool ext_pfet_sc_pro_en;
+>> +	bool auto_calib_enabled;
+>>  };
+>> 
+>>  struct qcom_wled {
+>> @@ -108,18 +112,25 @@ struct qcom_wled {
+>>  	struct mutex lock;
+>>  	struct qcom_wled_config cfg;
+>>  	ktime_t last_sc_event_time;
+>> +	ktime_t start_ovp_fault_time;
+>>  	u16 sink_addr;
+>>  	u16 ctrl_addr;
+>> +	u16 auto_calibration_ovp_count;
+>>  	u32 brightness;
+>>  	u32 sc_count;
+>>  	bool prev_state;
+>>  	bool ovp_irq_disabled;
+>> +	bool auto_calib_done;
+>> +	bool force_mod_disable;
+>>  };
+>> 
+>>  static int qcom_wled_module_enable(struct qcom_wled *wled, int val)
+>>  {
+>>  	int rc;
+>> 
+>> +	if (wled->force_mod_disable)
+>> +		return 0;
+>> +
+>>  	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+>>  			QCOM_WLED_CTRL_MOD_ENABLE, QCOM_WLED_CTRL_MOD_EN_MASK,
+>>  			val << QCOM_WLED_CTRL_MODULE_EN_SHIFT);
+>> @@ -187,12 +198,10 @@ static int qcom_wled_set_brightness(struct 
+>> qcom_wled *wled, u16 brightness)
+>>  	v[1] = (brightness >> 8) & 0xf;
+>> 
+>>  	for (i = 0; (string_cfg >> i) != 0; i++) {
+>> -		if (string_cfg & BIT(i)) {
+> 
+> Why was this check here in the first place, if it's now fine to
+> configure the brightness of all strings?
+> 
+> Also, a single-string config of 0b0001 will only set brightness on the
+> first string, while 0b1000 will set brightness on all strings.
+> 
+I will correct/remove it next series.
+>>  			rc = regmap_bulk_write(wled->regmap, wled->sink_addr +
+>>  					QCOM_WLED_SINK_BRIGHT_LSB_REG(i), v, 2);
+>>  			if (rc < 0)
+>>  				return rc;
+>> -		}
+>>  	}
+>> 
+>>  	return 0;
+>> @@ -294,6 +303,262 @@ static irqreturn_t qcom_wled_sc_irq_handler(int 
+>> irq, void *_wled)
+>>  	return IRQ_HANDLED;
+>>  }
+>> 
+>> +#define AUTO_CALIB_BRIGHTNESS		200
+>> +static int qcom_wled_auto_calibrate(struct qcom_wled *wled)
+>> +{
+>> +	int rc = 0, i;
+>> +	u32 sink_config = 0, int_sts;
+>> +	u8 reg = 0, sink_test = 0, sink_valid = 0;
+>> +	u8 string_cfg = wled->cfg.string_cfg;
+>> +
+>> +	/* read configured sink configuration */
+>> +	rc = regmap_read(wled->regmap, wled->sink_addr +
+>> +			QCOM_WLED_SINK_CURR_SINK_EN, &sink_config);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to read SINK configuration rc=%d\n", rc);
+>> +		goto failed_calib;
+>> +	}
+>> +
+>> +	/* disable the module before starting calibration */
+>> +	rc = regmap_update_bits(wled->regmap,
+>> +			wled->ctrl_addr + QCOM_WLED_CTRL_MOD_ENABLE,
+>> +			QCOM_WLED_CTRL_MOD_EN_MASK, 0);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to disable WLED module rc=%d\n",	rc);
+>> +		goto failed_calib;
+>> +	}
+> 
+> Any error handling beyond this point seems to leave the backlight off
+> (indefinitely?), this does seem like potentially bad user experience...
+Ok. will address in next series.
+> 
+> In particular I wonder about the case when this would happen at some
+> random time, minutes, hours, days, months after the device was booted.
+> 
+This will happen for every reboot.
+>> +
+>> +	/* set low brightness across all sinks */
+>> +	rc = qcom_wled_set_brightness(wled, AUTO_CALIB_BRIGHTNESS);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to set brightness for calibration rc=%d\n", rc);
+>> +		goto failed_calib;
+>> +	}
+>> +
+>> +	if (wled->cfg.en_cabc) {
+>> +		for (i = 0; (string_cfg >> i) != 0; i++) {
+>> +			reg = 0;
+>> +			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
+>> +					QCOM_WLED_SINK_CABC_REG(i),
+>> +					QCOM_WLED_SINK_CABC_MASK, reg);
+> 
+> Just replace "reg" with 0.
+Ok. will address in next series.
+> 
+>> +			if (rc < 0)
+>> +				goto failed_calib;
+>> +		}
+>> +	}
+>> +
+>> +	/* disable all sinks */
+>> +	rc = regmap_write(wled->regmap,
+>> +			wled->sink_addr + QCOM_WLED_SINK_CURR_SINK_EN, 0);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to disable all sinks rc=%d\n", rc);
+>> +		goto failed_calib;
+>> +	}
+>> +
+>> +	/* iterate through the strings one by one */
+>> +	for (i = 0; (string_cfg >> i) != 0; i++) {
+>> +		sink_test = 1 << (QCOM_WLED_SINK_CURR_SINK_SHFT + i);
+> 
+> BIT(QCOM_WLED_SINK_CURR_SINK_SHFT + i);
+> 
+Will address in next series.
+>> +
+>> +		/* Enable feedback control */
+>> +		rc = regmap_write(wled->regmap, wled->ctrl_addr +
+>> +				QCOM_WLED_CTRL_FDBK_OP, i + 1);
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to enable feedback for SINK %d rc = %d\n",
+>> +				i + 1, rc);
+>> +			goto failed_calib;
+>> +		}
+>> +
+>> +		/* enable the sink */
+>> +		rc = regmap_write(wled->regmap, wled->sink_addr +
+>> +				QCOM_WLED_SINK_CURR_SINK_EN, sink_test);
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to configure SINK %d rc=%d\n",
+>> +						i + 1, rc);
+>> +			goto failed_calib;
+>> +		}
+>> +
+>> +		/* Enable the module */
+>> +		rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+>> +				QCOM_WLED_CTRL_MOD_ENABLE,
+>> +				QCOM_WLED_CTRL_MOD_EN_MASK,
+>> +				QCOM_WLED_CTRL_MOD_EN_MASK);
+> 
+> I like the use of regmap_update_bits(..., MASK, MASK) it's clean, but
+> makes me wonder why it's done differently in qcom_wled_module_enable().
+> 
+will address it in the next series.
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to enable WLED module rc=%d\n", rc);
+>> +			goto failed_calib;
+>> +		}
+>> +
+>> +		usleep_range(QCOM_WLED_SOFT_START_DLY_US,
+>> +				QCOM_WLED_SOFT_START_DLY_US + 1000);
+>> +
+>> +		rc = regmap_read(wled->regmap, wled->ctrl_addr +
+>> +				QCOM_WLED_CTRL_INT_RT_STS, &int_sts);
+>> +		if (rc < 0) {
+>> +			pr_err("Error in reading WLED_INT_RT_STS rc=%d\n", rc);
+>> +			goto failed_calib;
+>> +		}
+>> +
+>> +		if (int_sts & QCOM_WLED_CTRL_OVP_FAULT_BIT)
+>> +			pr_debug("WLED OVP fault detected with SINK %d\n",
+>> +						i + 1);
+>> +		else
+>> +			sink_valid |= sink_test;
+>> +
+>> +		/* Disable the module */
+>> +		rc = regmap_update_bits(wled->regmap,
+>> +				wled->ctrl_addr + QCOM_WLED_CTRL_MOD_ENABLE,
+>> +				QCOM_WLED_CTRL_MOD_EN_MASK, 0);
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to disable WLED module rc=%d\n", rc);
+>> +			goto failed_calib;
+>> +		}
+>> +	}
+>> +
+>> +	if (sink_valid == sink_config) {
+>> +		pr_debug("WLED auto-calibration complete, default sink-config=%x 
+>> OK!\n",
+>> +						sink_config);
+>> +	} else {
+>> +		pr_warn("Invalid WLED default sink config=%x changing it to=%x\n",
+>> +						sink_config, sink_valid);
+>> +		sink_config = sink_valid;
+>> +	}
+>> +
+>> +	if (!sink_config) {
+>> +		pr_warn("No valid WLED sinks found\n");
+>> +		wled->force_mod_disable = true;
+>> +		goto failed_calib;
+>> +	}
+>> +
+>> +	/* write the new sink configuration */
+>> +	rc = regmap_write(wled->regmap,
+>> +			wled->sink_addr + QCOM_WLED_SINK_CURR_SINK_EN,
+>> +			sink_config);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to reconfigure the default sink rc=%d\n", rc);
+>> +		goto failed_calib;
+>> +	}
+>> +
+>> +	/* MODULATOR_EN setting for valid sinks */
+> 
+> "Enable valid sinks"
+> 
+Will address it in the next series.
+>> +	for (i = 0; (string_cfg >> i) != 0; i++) {
+>> +		if (wled->cfg.en_cabc) {
+>> +			reg = QCOM_WLED_SINK_CABC_EN;
+> 
+> "reg" is a bad name of a variable holding the "value" to be written to 
+> a
+> register.
+> 
+Will address it in the next series.
+>> +			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
+>> +					QCOM_WLED_SINK_CABC_REG(i),
+>> +					QCOM_WLED_SINK_CABC_MASK, reg);
+> 
+> Again, just inline the value in the function call.
+> 
+Will address it in the next series.
+>> +			if (rc < 0)
+>> +				goto failed_calib;
+>> +		}
+>> +
+>> +		if (sink_config & (1 << (QCOM_WLED_SINK_CURR_SINK_SHFT + i)))
+> 
+> BIT(QCOM_WLED_SINK_CURR_SINK_SHFT + i)
+> 
+Will address it in the next series.
+>> +			reg = QCOM_WLED_SINK_REG_STR_MOD_EN;
+>> +		else
+>> +			reg = 0x0; /* disable modulator_en for unused sink */
+>> +
+>> +		rc = regmap_write(wled->regmap, wled->sink_addr +
+>> +				QCOM_WLED_SINK_MOD_EN_REG(i), reg);
+>> +		if (rc < 0) {
+>> +			pr_err("Failed to configure MODULATOR_EN rc=%d\n", rc);
+>> +			goto failed_calib;
+>> +		}
+>> +	}
+>> +
+>> +	/* restore the feedback setting */
+>> +	rc = regmap_write(wled->regmap,
+>> +			wled->ctrl_addr + QCOM_WLED_CTRL_FDBK_OP, 0);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to restore feedback setting rc=%d\n", rc);
+>> +		goto failed_calib;
+>> +	}
+>> +
+>> +	/* restore  brightness */
+>> +	rc = qcom_wled_set_brightness(wled, wled->brightness);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to set brightness after calibration rc=%d\n",
+>> +			rc);
+>> +		goto failed_calib;
+>> +	}
+>> +
+>> +	rc = regmap_update_bits(wled->regmap,
+>> +			wled->ctrl_addr + QCOM_WLED_CTRL_MOD_ENABLE,
+>> +			QCOM_WLED_CTRL_MOD_EN_MASK,
+>> +			QCOM_WLED_CTRL_MOD_EN_MASK);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to enable WLED module rc=%d\n", rc);
+>> +		goto failed_calib;
+>> +	}
+>> +
+>> +	/* delay for WLED soft-start */
+> 
+> What comes after this that you want to delay?
+> 
+> This delay is used to make the OVP IRQ not fire immediately, but as
+> we've now successfully executed the string auto detection run we're
+> never going to do anything in the OVP handler.
+> 
+Will correct it in the next series.
+>> +	usleep_range(QCOM_WLED_SOFT_START_DLY_US,
+>> +			QCOM_WLED_SOFT_START_DLY_US + 1000);
+>> +
+>> +failed_calib:
+>> +	return rc;
+>> +}
+>> +
+>> +#define WLED_AUTO_CAL_OVP_COUNT		5
+>> +#define WLED_AUTO_CAL_CNT_DLY_US	1000000	/* 1 second */
+>> +static bool qcom_wled_auto_cal_required(struct qcom_wled *wled)
+>> +{
+>> +	s64 elapsed_time_us;
+>> +
+>> +	/*
+>> +	 * Check if the OVP fault was an occasional one
+>> +	 * or if its firing continuously, the latter qualifies
+>> +	 * for an auto-calibration check.
+>> +	 */
+>> +	if (!wled->auto_calibration_ovp_count) {
+>> +		wled->start_ovp_fault_time = ktime_get();
+>> +		wled->auto_calibration_ovp_count++;
+>> +	} else {
+>> +		elapsed_time_us = ktime_us_delta(ktime_get(),
+>> +				wled->start_ovp_fault_time);
+>> +		if (elapsed_time_us > WLED_AUTO_CAL_CNT_DLY_US)
+>> +			wled->auto_calibration_ovp_count = 0;
+>> +		else
+>> +			wled->auto_calibration_ovp_count++;
+>> +
+>> +		if (wled->auto_calibration_ovp_count >=
+>> +				WLED_AUTO_CAL_OVP_COUNT) {
+>> +			wled->auto_calibration_ovp_count = 0;
+>> +			return true;
+>> +		}
+>> +	}
+>> +
+>> +	return false;
+>> +}
+>> +
+>> +static int qcom_wled_auto_calibrate_at_init(struct qcom_wled *wled)
+> 
+> I presume this function is expected to detect if there is a invalid
+> configuration at boot and try to figure out which strings are actually
+> wired.
+> 
+Correct.
+>> +{
+>> +	int rc;
+>> +	u32 fault_status = 0, rt_status = 0;
+>> +
+>> +	if (!wled->cfg.auto_calib_enabled)
+>> +		return 0;
+>> +
+>> +	rc = regmap_read(wled->regmap,
+>> +			wled->ctrl_addr + QCOM_WLED_CTRL_INT_RT_STS,
+>> +			&rt_status);
+>> +	if (rc < 0)
+>> +		pr_err("Failed to read RT status rc=%d\n", rc);
+>> +
+>> +	rc = regmap_read(wled->regmap,
+>> +			wled->ctrl_addr + QCOM_WLED_CTRL_FAULT_STATUS,
+>> +			&fault_status);
+>> +	if (rc < 0)
+>> +		pr_err("Failed to read fault status rc=%d\n", rc);
+>> +
+>> +	if ((rt_status & QCOM_WLED_CTRL_OVP_FLT_RT_STS_BIT) ||
+>> +			(fault_status & QCOM_WLED_CTRL_OVP_FAULT_BIT)) {
+> 
+> You should be able to drop the extra () around these.
+> 
+Ok. Will remove it in the next series.
+>> +		mutex_lock(&wled->lock);
+>> +		rc = qcom_wled_auto_calibrate(wled);
+>> +		if (rc < 0)
+>> +			pr_err("Failed auto-calibration rc=%d\n", rc);
+> 
+> qcom_wled_auto_calibrate() did already print, no need to repeat this.
+> 
+Ok. Will remove this in the next series.
+>> +		else
+>> +			wled->auto_calib_done = true;
+>> +		mutex_unlock(&wled->lock);
+>> +	}
+>> +
+>> +	return rc;
+>> +}
+>> +
+>>  static irqreturn_t qcom_wled_ovp_irq_handler(int irq, void *_wled)
+>>  {
+>>  	struct qcom_wled *wled = _wled;
+>> @@ -319,6 +584,33 @@ static irqreturn_t qcom_wled_ovp_irq_handler(int 
+>> irq, void *_wled)
+>>  		pr_err("WLED OVP fault detected, int_sts=%x fault_sts= %x\n",
+>>  			int_sts, fault_sts);
+>> 
+>> +	if (fault_sts & QCOM_WLED_CTRL_OVP_FAULT_BIT) {
+>> +		if (wled->cfg.auto_calib_enabled && !wled->auto_calib_done) {
+>> +			if (qcom_wled_auto_cal_required(wled)) {
+> 
+> So this will be invoked only once, iff we didn't boot with a faulty
+> configuration in which case the qcom_wled_auto_calibrate_at_init() has
+> already done this step and set auto_calib_done.
+> 
+> 
+> Which also would mean that all logic in this handler, beyond the
+> printouts, are only ever going to be executed zero or one times.
+> 
+> Why don't you just do auto-detection during probe (iff the flag is set
+> in DT) and you can remove all this extra logic?
+> 
+I think we have seen a issue, where the OVP interrupt is not getting set
+some times during the execution of this function at boot. In that case 
+the auto calibration is
+done bit later. That's why this code is added.
+>> +				mutex_lock(&wled->lock);
+>> +				if (wled->cfg.ovp_irq > 0 &&
+>> +						!wled->ovp_irq_disabled) {
+>> +					disable_irq_nosync(wled->cfg.ovp_irq);
+>> +					wled->ovp_irq_disabled = true;
+>> +				}
+>> +
+>> +				rc = qcom_wled_auto_calibrate(wled);
+>> +				if (rc < 0)
+>> +					pr_err("Failed auto-calibration rc=%d\n",
+>> +						rc);
+> 
+> qcom_wled_auto_calibrate() did already print.
+> 
+Ok. I will remove it in the next series.
+>> +				else
+>> +					wled->auto_calib_done = true;
+>> +
+>> +				if (wled->cfg.ovp_irq > 0 &&
+>> +						wled->ovp_irq_disabled) {
+>> +					enable_irq(wled->cfg.ovp_irq);
+>> +					wled->ovp_irq_disabled = false;
+>> +				}
+>> +				mutex_unlock(&wled->lock);
+>> +			}
+>> +		}
+>> +	}
+>> +
+> 
+> Regards,
+> Bjorn
 > --
-> To unsubscribe from this list: send the line "unsubscribe cgroups" in
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-arm-msm" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
