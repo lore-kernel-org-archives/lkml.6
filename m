@@ -1,15 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753508AbeDSVFf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 17:05:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60404 "EHLO mail.kernel.org"
+        id S1753470AbeDSVFe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 17:05:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753187AbeDSVFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 17:05:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E30A2077A
+        id S1753396AbeDSVFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 17:05:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A2D12177E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Subject: [PATCH v1 0/2] PCI/ASPM: Tighten up ASPM L1.2 and LTR usage
+Subject: [PATCH v1 1/2] PCI/ASPM: Disable ASPM L1.2 Substate if we don't
+ have LTR
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: linux-pci@vger.kernel.org
 Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
@@ -18,8 +19,10 @@ Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Ray Jui <ray.jui@broadcom.com>, Keith Busch <keith.busch@intel.com>,
         linux-acpi@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date: Thu, 19 Apr 2018 16:05:19 -0500
-Message-ID: <152417080402.76853.4258398181136860884.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date: Thu, 19 Apr 2018 16:05:29 -0500
+Message-ID: <152417192976.76853.5171081412139699180.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <152417080402.76853.4258398181136860884.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <152417080402.76853.4258398181136860884.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -28,47 +31,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ASPM L1.2 substate depends on LTR information.  Per the PCI
-Firmware spec, the OS is supposed to negotiate with the platform for
-control of the LTR feature, but previously we didn't do that.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-In addition, we must not enable LTR in an endpoint unless the Root
-Complex and all intermediate switches also support LTR.  We already
-took care of that in pci_configure_ltr(), but we didn't ensure that
-LTR was enabled before allowing ASPM L1.2 to be enabled.
+When in the ASPM L1.0 state (but not the PCI-PM L1.0 state), the most
+recent LTR value and the LTR_L1.2_THRESHOLD determines whether the link
+enters the L1.2 substate.
 
-These patches fix both of these issues.  Or rather, they *should* fix
-them.  I don't have hardware to test them, so any help with testing
-would be appreciated.
+If we don't have LTR enabled, prevent the use of ASPM L1.2.
 
-I think the most likely issue would be a platform where the hardware
-supports LTR and the ASPM L1.2 substate, but the BIOS doesn't support
-LTR in _OSC.  In that case, we previously could have enabled ASPM L1.2
-(though it probably wouldn't work correctly), and after these patches,
-we should not enable ASPM L1.2.
+PCI-PM L1.2 may still be used because it doesn't depend on
+LTR_L1.2_THRESHOLD (see PCIe r4.0, sec 5.5.1).
 
-You can look for issues by comparing dmesg and "lspci -vv" output
-before and after these patches.
-
-It would also be interesting to collect an acpidump from platforms
-that support LTR, even if there's no endpoint that supports ASPM L1.2.
-The acpidump should show that _OSC supports LTR.
-
-I included some NVMe folks because these were motivated by Srinath's
-recent report of LTR and ASPM issues with a Samsung NVMe SSD
-Controller SM961/PM961 device, so this is sort of FYI in case you see
-similar issues or are in a position to test these.
-
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
-
-Bjorn Helgaas (2):
-      PCI/ASPM: Disable ASPM L1.2 Substate if we don't have LTR
-      PCI/ACPI: Request LTR control from platform before using it
-
-
- drivers/acpi/pci_root.c |    7 +++++++
  drivers/pci/pcie/aspm.c |    9 +++++++++
- drivers/pci/probe.c     |    5 +++++
- include/linux/acpi.h    |    3 ++-
- include/linux/pci.h     |    1 +
- 5 files changed, 24 insertions(+), 1 deletion(-)
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index f76eb7704f64..c687c817b47d 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -400,6 +400,15 @@ static void pcie_get_aspm_reg(struct pci_dev *pdev,
+ 		info->l1ss_cap = 0;
+ 		return;
+ 	}
++
++	/*
++	 * If we don't have LTR for the entire path from the Root Complex
++	 * to this device, we can't use ASPM L1.2 because it relies on the
++	 * LTR_L1.2_THRESHOLD.  See PCIe r4.0, secs 5.5.4, 6.18.
++	 */
++	if (!pdev->ltr_path)
++		info->l1ss_cap &= ~PCI_L1SS_CAP_ASPM_L1_2;
++
+ 	pci_read_config_dword(pdev, info->l1ss_cap_ptr + PCI_L1SS_CTL1,
+ 			      &info->l1ss_ctl1);
+ 	pci_read_config_dword(pdev, info->l1ss_cap_ptr + PCI_L1SS_CTL2,
