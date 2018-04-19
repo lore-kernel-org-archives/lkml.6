@@ -1,333 +1,133 @@
-Return-Path: <BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org>
-X-Google-Smtp-Source: AIpwx48Vq6vt6URWdVUPh19ZkxbHx+YVz3qrwrvHBOBgqR67NHALsIgT8FA1fda7xjH9ygu5gGsV
-ARC-Seal: i=1; a=rsa-sha256; t=1524141774; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Ipsi7BP1VkqXRL5zOcqvh46EAyV5bVYeh1LVndARtBzsvrqDxwMTI/kq+JesdAKYNW
-         ekTpqtlft9PiKnn1U/bxvuYvxeWuLS1zE4gEtAaU+LQ5JRHeehZ/szHqRROHM8lhmaRQ
-         u9RrrXxSUErb6jPlqMWLhVIAfl9+UPvohyJgtlL1pAK4kLZjVD6sXmvJ6h6sOmjhIO+a
-         JXiwLm6dBlv7mG09Xp1brg/hAkhMpfStGMK+yClK1SYr6TBa+FQ9L1LFdVw1Myd/l1sx
-         +G0xdLFEzXmz7pJfDaQQGH2AV3HXyqE0/GxtZY+cb4ZBrgzuF6x+8ngklDMIYflto2OG
-         n4Jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=3T/RFw81P5fIZt0VbwdoHMKd3/d5WyMLbpc7Kz0jsBg=;
-        b=MwwLjPjU1Uuvb2qgAG6y9ij+35c5ATGWp2CClg4DBSxIJgnbTGZ/iJBb4KidDCZk2W
-         6rNhHj7mmiVlpOQhv/WVP4cQlcty5mEZGi+9iJbkUc7BqqzhVDJJkNZk+9ziMtK+jXle
-         ZdF7LXto4SQ6J4aMadJoz7B9PPee8IXdgxi7ZtrqA+S7C+7irm30FBeTfdN3Zxzm7NF0
-         gnMeR3ikYSO3NEVoEnudBS0U4ybgL9gZjrBsR/Rluo8zBymKc9sYW54HRJmtYh5JllVx
-         DTS/sAAYQVyu9aH7D+8Z7+EF+s+nUlGhg3gqPChsF72qkbVfL5YaRtOmKiOelnfG/+UI
-         +7RQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=fzNhgoG5;
-       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=fzNhgoG5;
-       spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
-From: Christoph Hellwig <hch@lst.de>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>,
-	Corey Minyard <minyard@acm.org>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-acpi@vger.kernel.org,
-	drbd-dev@lists.linbit.com,
-	linux-ide@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com,
-	linux-scsi@vger.kernel.org,
-	devel@driverdev.osuosl.org,
-	linux-afs@lists.infradead.org,
-	linux-ext4@vger.kernel.org,
-	jfs-discussion@lists.sourceforge.net,
-	netfilter-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 20/39] afs: simplify procfs code
-Date: Thu, 19 Apr 2018 14:41:21 +0200
-Message-Id: <20180419124140.9309-21-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180419124140.9309-1-hch@lst.de>
-References: <20180419124140.9309-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3082590-1524142844-2-4235035496792997116
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524142843; b=jpL4SYbXI1MUeHLO4RgXXqFSmfiyTGUZEns5xktfVBYxCsHwLs
+    j68z84zwmxFaGRESG558lK9pz4rfNV9yqqe+mCzW46pnFZ4Zkc6sgfvWb8QDQm8Y
+    O68wZ8PDDOAoufgTE4bk595qhiKtnqCPYBHRRAs6TYeaLNQzLIx9xJIbixgW/X+M
+    G9EXBOCkr1e/Rl5lLEoMXgCRA3X8HMAN1+t/2rtCY2ABILYXK9no9zxxloq5OoIk
+    QJ7MBMPtagW7wWmKMyMHbB5ioKCQP6ybTRbcWkHmsSnEULOkb7x/abQfy9HHU9ZN
+    UBqPonHVBKoMEV5MYIE6JytwSgt2j6abIskg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:in-reply-to:references:to:subject
+    :mime-version:content-id:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:content-type:content-transfer-encoding
+    :sender; s=fm2; t=1524142843; bh=2G72g7mRqASRJQrMaC11hF8a1Cu0syK
+    ikqnl4nh8mq8=; b=waQtXRTBSp6mWYCfWlYu8nU6R9RIUBNTL+DLu+sozkrkau9
+    3ecwgxlVcvYapibGwuZM3u98hlmuOgl1flh2imypRR099FVWy35dPV+DNL7fDicK
+    M2wfXZnB4yzP2h7jJCrUu7D3SL7a7RQnhH/oSGZGLJ/TVNeOSU/7sFtDzhMofyO6
+    mSFEzc/53q9CW4hqUETb3m6HhhSAPzYrtgtItn7C+8cWDn7mPOo9dLXaoX1LGpMe
+    PSDWrpDhrYXcQv+O+pLtS20WWNAmrIjjgG6mRJeoB1hBB6CLDNA9GJupT2hfDk6z
+    WT36TBKo/autQ2uTyi98H7r5mmFaSXBcJHK+12w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKwQ8nS86tHxBi4np/NQGk73CHdvINg5gBA7F0/g4u00HwqYlFg4B/ndFkONLD4GAQzCrOquqBC+Wv4PFwMLcmROvxwjmj+IiYJWiXLxV5To7eaNYWn7
+    cNEsLfPNS1U5YJ2yWN2hd/X1WIqDDvFXuG/roF5ftVl7/9LRu8oHUqp5XUg/lHuh3AveBb7CNfCHgQY/ANOwBYJWTGrejTFmbmXuMSGkWIxv10ka6rBvcOf3
+    AJOUqBW348LV8kypLnwH2Q==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=VwQbUJbxAAAA:8 a=DDOyTI_5AAAA:8
+    a=KW2fZluiVG7Zq2DVJ20A:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20180419124140.9309-21-hch@lst.de>
+References: <20180419124140.9309-21-hch@lst.de>
+ <20180419124140.9309-1-hch@lst.de>
+To: Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 20/39] afs: simplify procfs code
+MIME-Version: 1.0
+Content-ID: <22410.1524142823.1@warthog.procyon.org.uk>
+Date: Thu, 19 Apr 2018 14:00:23 +0100
+Message-ID: <22411.1524142823@warthog.procyon.org.uk>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ jfs-discussion@lists.sourceforge.net, dhowells@redhat.com,
+ linux-ide@vger.kernel.org, linux-afs@lists.infradead.org,
+ drbd-dev@lists.linbit.com, linux-rtc@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-acpi@vger.kernel.org,
+ Jiri Slaby <jslaby@suse.com>, linux-ext4@vger.kernel.org,
+ Alexey Dobriyan <adobriyan@gmail.com>, devel@driverdev.osuosl.org,
+ Corey Minyard <minyard@acm.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ megaraidlinux.pdl@broadcom.com, Alessandro Zummo <a.zummo@towertech.it>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598178484970824742?=
-X-GMAIL-MSGID: =?utf-8?q?1598178484970824742?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use remove_proc_subtree to remove the whole subtree on cleanup, and
-unwind the registration loop into individual calls.  Switch to use
-proc_create_seq where applicable.
+Christoph Hellwig <hch@lst.de> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/afs/proc.c | 134 ++++++--------------------------------------------
- 1 file changed, 15 insertions(+), 119 deletions(-)
+> Use remove_proc_subtree to remove the whole subtree on cleanup, and
+> unwind the registration loop into individual calls.  Switch to use
+> proc_create_seq where applicable.
 
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 839a22280606..3aad32762989 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -62,7 +62,6 @@ static const struct file_operations afs_proc_rootcell_fops = {
- 	.llseek		= no_llseek,
- };
- 
--static int afs_proc_cell_volumes_open(struct inode *inode, struct file *file);
- static void *afs_proc_cell_volumes_start(struct seq_file *p, loff_t *pos);
- static void *afs_proc_cell_volumes_next(struct seq_file *p, void *v,
- 					loff_t *pos);
-@@ -76,15 +75,6 @@ static const struct seq_operations afs_proc_cell_volumes_ops = {
- 	.show	= afs_proc_cell_volumes_show,
- };
- 
--static const struct file_operations afs_proc_cell_volumes_fops = {
--	.open		= afs_proc_cell_volumes_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= seq_release,
--};
--
--static int afs_proc_cell_vlservers_open(struct inode *inode,
--					struct file *file);
- static void *afs_proc_cell_vlservers_start(struct seq_file *p, loff_t *pos);
- static void *afs_proc_cell_vlservers_next(struct seq_file *p, void *v,
- 					  loff_t *pos);
-@@ -98,14 +88,6 @@ static const struct seq_operations afs_proc_cell_vlservers_ops = {
- 	.show	= afs_proc_cell_vlservers_show,
- };
- 
--static const struct file_operations afs_proc_cell_vlservers_fops = {
--	.open		= afs_proc_cell_vlservers_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= seq_release,
--};
--
--static int afs_proc_servers_open(struct inode *inode, struct file *file);
- static void *afs_proc_servers_start(struct seq_file *p, loff_t *pos);
- static void *afs_proc_servers_next(struct seq_file *p, void *v,
- 					loff_t *pos);
-@@ -119,13 +101,6 @@ static const struct seq_operations afs_proc_servers_ops = {
- 	.show	= afs_proc_servers_show,
- };
- 
--static const struct file_operations afs_proc_servers_fops = {
--	.open		= afs_proc_servers_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= seq_release,
--};
--
- static int afs_proc_sysname_open(struct inode *inode, struct file *file);
- static int afs_proc_sysname_release(struct inode *inode, struct file *file);
- static void *afs_proc_sysname_start(struct seq_file *p, loff_t *pos);
-@@ -152,7 +127,7 @@ static const struct file_operations afs_proc_sysname_fops = {
- 	.write		= afs_proc_sysname_write,
- };
- 
--static const struct file_operations afs_proc_stats_fops;
-+static int afs_proc_stats_show(struct seq_file *m, void *v);
- 
- /*
-  * initialise the /proc/fs/afs/ directory
-@@ -167,8 +142,8 @@ int afs_proc_init(struct afs_net *net)
- 
- 	if (!proc_create("cells", 0644, net->proc_afs, &afs_proc_cells_fops) ||
- 	    !proc_create("rootcell", 0644, net->proc_afs, &afs_proc_rootcell_fops) ||
--	    !proc_create("servers", 0644, net->proc_afs, &afs_proc_servers_fops) ||
--	    !proc_create("stats", 0644, net->proc_afs, &afs_proc_stats_fops) ||
-+	    !proc_create_seq("servers", 0644, net->proc_afs, &afs_proc_servers_ops) ||
-+	    !proc_create_single("stats", 0644, net->proc_afs, afs_proc_stats_show) ||
- 	    !proc_create("sysname", 0644, net->proc_afs, &afs_proc_sysname_fops))
- 		goto error_tree;
- 
-@@ -196,16 +171,7 @@ void afs_proc_cleanup(struct afs_net *net)
-  */
- static int afs_proc_cells_open(struct inode *inode, struct file *file)
- {
--	struct seq_file *m;
--	int ret;
--
--	ret = seq_open(file, &afs_proc_cells_ops);
--	if (ret < 0)
--		return ret;
--
--	m = file->private_data;
--	m->private = PDE_DATA(inode);
--	return 0;
-+	return seq_open(file, &afs_proc_cells_ops);
- }
- 
- /*
-@@ -430,10 +396,11 @@ int afs_proc_cell_setup(struct afs_net *net, struct afs_cell *cell)
- 	if (!dir)
- 		goto error_dir;
- 
--	if (!proc_create_data("vlservers", 0, dir,
--			      &afs_proc_cell_vlservers_fops, cell) ||
--	    !proc_create_data("volumes", 0, dir,
--			      &afs_proc_cell_volumes_fops, cell))
-+	if (!proc_create_seq_data("vlservers", 0, dir,
-+			&afs_proc_cell_vlservers_ops, cell))
-+		goto error_tree;
-+	if (!proc_create_seq_data("volumes", 0, dir, &afs_proc_cell_volumes_ops,
-+			cell))
- 		goto error_tree;
- 
- 	_leave(" = 0");
-@@ -458,29 +425,6 @@ void afs_proc_cell_remove(struct afs_net *net, struct afs_cell *cell)
- 	_leave("");
- }
- 
--/*
-- * open "/proc/fs/afs/<cell>/volumes" which provides a summary of extant cells
-- */
--static int afs_proc_cell_volumes_open(struct inode *inode, struct file *file)
--{
--	struct afs_cell *cell;
--	struct seq_file *m;
--	int ret;
--
--	cell = PDE_DATA(inode);
--	if (!cell)
--		return -ENOENT;
--
--	ret = seq_open(file, &afs_proc_cell_volumes_ops);
--	if (ret < 0)
--		return ret;
--
--	m = file->private_data;
--	m->private = cell;
--
--	return 0;
--}
--
- /*
-  * set up the iterator to start reading from the cells list and return the
-  * first item
-@@ -488,7 +432,7 @@ static int afs_proc_cell_volumes_open(struct inode *inode, struct file *file)
- static void *afs_proc_cell_volumes_start(struct seq_file *m, loff_t *_pos)
- 	__acquires(cell->proc_lock)
- {
--	struct afs_cell *cell = m->private;
-+	struct afs_cell *cell = PDE_DATA(file_inode(m->file));
- 
- 	_enter("cell=%p pos=%Ld", cell, *_pos);
- 
-@@ -502,7 +446,7 @@ static void *afs_proc_cell_volumes_start(struct seq_file *m, loff_t *_pos)
- static void *afs_proc_cell_volumes_next(struct seq_file *p, void *v,
- 					loff_t *_pos)
- {
--	struct afs_cell *cell = p->private;
-+	struct afs_cell *cell = PDE_DATA(file_inode(p->file));
- 
- 	_enter("cell=%p pos=%Ld", cell, *_pos);
- 	return seq_list_next(v, &cell->proc_volumes, _pos);
-@@ -514,7 +458,7 @@ static void *afs_proc_cell_volumes_next(struct seq_file *p, void *v,
- static void afs_proc_cell_volumes_stop(struct seq_file *p, void *v)
- 	__releases(cell->proc_lock)
- {
--	struct afs_cell *cell = p->private;
-+	struct afs_cell *cell = PDE_DATA(file_inode(p->file));
- 
- 	read_unlock(&cell->proc_lock);
- }
-@@ -530,7 +474,7 @@ static const char afs_vol_types[3][3] = {
-  */
- static int afs_proc_cell_volumes_show(struct seq_file *m, void *v)
- {
--	struct afs_cell *cell = m->private;
-+	struct afs_cell *cell = PDE_DATA(file_inode(m->file));
- 	struct afs_volume *vol = list_entry(v, struct afs_volume, proc_link);
- 
- 	/* Display header on line 1 */
-@@ -546,30 +490,6 @@ static int afs_proc_cell_volumes_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--/*
-- * open "/proc/fs/afs/<cell>/vlservers" which provides a list of volume
-- * location server
-- */
--static int afs_proc_cell_vlservers_open(struct inode *inode, struct file *file)
--{
--	struct afs_cell *cell;
--	struct seq_file *m;
--	int ret;
--
--	cell = PDE_DATA(inode);
--	if (!cell)
--		return -ENOENT;
--
--	ret = seq_open(file, &afs_proc_cell_vlservers_ops);
--	if (ret<0)
--		return ret;
--
--	m = file->private_data;
--	m->private = cell;
--
--	return 0;
--}
--
- /*
-  * set up the iterator to start reading from the cells list and return the
-  * first item
-@@ -578,7 +498,7 @@ static void *afs_proc_cell_vlservers_start(struct seq_file *m, loff_t *_pos)
- 	__acquires(rcu)
- {
- 	struct afs_addr_list *alist;
--	struct afs_cell *cell = m->private;
-+	struct afs_cell *cell = PDE_DATA(file_inode(m->file));
- 	loff_t pos = *_pos;
- 
- 	rcu_read_lock();
-@@ -603,7 +523,7 @@ static void *afs_proc_cell_vlservers_next(struct seq_file *p, void *v,
- 					  loff_t *_pos)
- {
- 	struct afs_addr_list *alist;
--	struct afs_cell *cell = p->private;
-+	struct afs_cell *cell = PDE_DATA(file_inode(p->file));
- 	loff_t pos;
- 
- 	alist = rcu_dereference(cell->vl_addrs);
-@@ -643,15 +563,6 @@ static int afs_proc_cell_vlservers_show(struct seq_file *m, void *v)
- 	return 0;
- }
- 
--/*
-- * open "/proc/fs/afs/servers" which provides a summary of active
-- * servers
-- */
--static int afs_proc_servers_open(struct inode *inode, struct file *file)
--{
--	return seq_open(file, &afs_proc_servers_ops);
--}
--
- /*
-  * Set up the iterator to start reading from the server list and return the
-  * first item.
-@@ -931,18 +842,3 @@ static int afs_proc_stats_show(struct seq_file *m, void *v)
- 		   atomic_long_read(&net->n_store_bytes));
- 	return 0;
- }
--
--/*
-- * Open "/proc/fs/afs/stats" to allow reading of the stat counters.
-- */
--static int afs_proc_stats_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, afs_proc_stats_show, NULL);
--}
--
--static const struct file_operations afs_proc_stats_fops = {
--	.open		= afs_proc_stats_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release        = single_release,
--};
--- 
-2.17.0
+Note that this is likely going to clash with my patch to net-namespace all of
+the afs proc files:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=mount-context&id=f60c26c827c073583107ebf19d87bc5c0e71c3d2
+
+If it helps, I should be able to disentangle this from the mount-api changes
+since the subsequent patch connects the dots to propagate the network
+namespace over automount using the new fs_context to do it.
+
+David
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
