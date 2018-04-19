@@ -1,28 +1,28 @@
 Return-Path: <BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org>
-X-Google-Smtp-Source: AIpwx48SSEgftjbRqs2RTdbUBT7kMZbRSu1knnKljea7uRlC29qUXKj6nS+W0ppEarmn/u48yZXo
-ARC-Seal: i=1; a=rsa-sha256; t=1524141742; cv=none;
+X-Google-Smtp-Source: AIpwx48y1WF5Q0GrX/JK+9dyHTF3xASBZXah/EM9EJK0pgKPSnOajglxm7jnmZzBFMRNjC7kQjU7
+ARC-Seal: i=1; a=rsa-sha256; t=1524141738; cv=none;
         d=google.com; s=arc-20160816;
-        b=Lrj8t+pmarNxIaNOxf7DGNYeXI0auGCaZuKtAgV/HjEWfxXdCEkapyxUbwch2W2NE6
-         +a4FxoPPE0mtjkSAjIolIqs2sSrHAiqqEXFZ9dWlA5uDWSTKLY/mUEEtR+70WSLNItmS
-         LHTm5S2QPGgfgI6o8uMX0pXoPwcp2K8UbE1b5OlJ0SWWWfMaTX3RaKJul6FMSUVi02jM
-         0Q47Opp9BBSX8w/FoqrOlqJvrSVkyQ+Pkxxsnow/19jrdn/z4XXKNnMqHHzcYJxLutsI
-         IhyK9sc6k8dDJEXqPbN7X4DAtdb1e9x6/T/93HIMrVFbC3ZVOrIG2ccGX0TNOdjK5sTm
-         h69Q==
+        b=uOvyoo7X6I/LViNK+meFvYwSHYKeuhy8WUTQGFDqgfJln4YuxvlY0VXK2lc2MBUtyW
+         zGe5dh1RG1OXUBjfjFEXPsotpxPeeGbz/YThtzlejglkXqm7HEmEy2c66a1GIp8qbenH
+         iqlYCOq7Yc+SUgnH2XOUgl/BF+e8QRnUaS9QETBwLeLbfp3M9afis3mvCusiM6cg0toU
+         1UNYnQefc5Z3V272jBi3vZLgSe+elHR3075QH/K59Cgxammluv7PnLRw7J1Ek/6Lqunm
+         GgpOYCoRymj/kbr58u5WBhrH+GEm0n6THihc0zjNK60H1kFv2hVrp/bjqarwhBP0CPVL
+         WMrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=IBw29W98o9JhaE0Ol1cLFdA5CBPn6ll6ey0TFerNt7I=;
-        b=RctkGrqFR4ERPfK4/s05WaK8CJPZdI/kYoHKv5QiJybMfd034g9sREtcMk1y/mN4LM
-         Eu+itUMtqsg9FBoGPl6unWHSj2AfDDAOvcwPo4H8PAbrNxd9nD9SQFFSE0CemaDKCS5b
-         9KWfwiTPev3d/RSSrYMHmK4mDLT59yYJGMCvGt3kGpr4LBBxadVaZeW21lBQbIjlanFh
-         SppwLEZ2jzl3MfEQ1fbMRhQThwz78tqs+c60F9HIT9QksDMjzY6pqqVkHV3OvPQ33FFa
-         lN0DtdYbqaUhw3dgbh/oODfsVZlCKb9s7HcKj1XSoGBbjV4y/k8ydwmRy0YVZAyWB2eu
-         4G1g==
+        bh=Nr/fMNa2EYIfUJMtZ3v5wAxQojen7+SQUINM1QCPTpU=;
+        b=YzbW/6S6EzEqGkx/CgvZrD5Rg2SCWy+yTJT8+5Z2VUkl48ooFCJ8fvwFn2bkliLdpo
+         6fkot5NJfWdcUG56oUpjRXasxSd3G01swilRUt4tEfzX5kq51duGaX8Xr3+bkFddAeNn
+         ewE6NUHoOI6detJlIbXEFfMBDxasyaS7Y/VbQvyjKGmJP/YoV9RkzcF8Lhz2LuO5TwwH
+         R4CD7NDmg8dLTKwCwpjJcwJKj7I7g0sVphQHOo4c6po0nbyOZaHCtuJkpv5rpRrDbdir
+         ahOM70Nq95Fej47XteAruqPfhi+rzf0vvPeYcZCNrei/lQZB8Y9+WZEAhUvvwPaFOqAG
+         OSKA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=i8Ab7CS8;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=fDl1fDZ1;
        spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=i8Ab7CS8;
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=fDl1fDZ1;
        spf=pass (google.com: best guess record for domain of batv+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=BATV+e1a5265bff2368ff7229+5352+infradead.org+hch@bombadil.srs.infradead.org
 From: Christoph Hellwig <hch@lst.de>
 To: Andrew Morton <akpm@linux-foundation.org>,
@@ -46,150 +46,81 @@ Cc: Alexey Dobriyan <adobriyan@gmail.com>,
 	jfs-discussion@lists.sourceforge.net,
 	netfilter-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 10/39] net/kcm: simplify proc registration
-Date: Thu, 19 Apr 2018 14:41:11 +0200
-Message-Id: <20180419124140.9309-11-hch@lst.de>
+Subject: [PATCH 09/39] ipv6/flowlabel: simplify pid namespace lookup
+Date: Thu, 19 Apr 2018 14:41:10 +0200
+Message-Id: <20180419124140.9309-10-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180419124140.9309-1-hch@lst.de>
 References: <20180419124140.9309-1-hch@lst.de>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598178451183874329?=
-X-GMAIL-MSGID: =?utf-8?q?1598178451183874329?=
+X-GMAIL-THRID: =?utf-8?q?1598178447068712906?=
+X-GMAIL-MSGID: =?utf-8?q?1598178447068712906?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Remove a couple indirections to make the code look like most other
-protocols.
+The shole seq_file sequence already operates under a single RCU lock pair,
+so move the pid namespace lookup into it, and stop grabbing a reference
+and remove all kinds of boilerplate code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/kcm/kcmproc.c | 71 ++++++++++++-----------------------------------
- 1 file changed, 17 insertions(+), 54 deletions(-)
+ net/ipv6/ip6_flowlabel.c | 28 +++++-----------------------
+ 1 file changed, 5 insertions(+), 23 deletions(-)
 
-diff --git a/net/kcm/kcmproc.c b/net/kcm/kcmproc.c
-index 1fac92543094..6d0667e62baf 100644
---- a/net/kcm/kcmproc.c
-+++ b/net/kcm/kcmproc.c
-@@ -15,12 +15,6 @@
- #include <net/tcp.h>
- 
- #ifdef CONFIG_PROC_FS
--struct kcm_seq_muxinfo {
--	char				*name;
--	const struct file_operations	*seq_fops;
--	const struct seq_operations	seq_ops;
--};
--
- static struct kcm_mux *kcm_get_first(struct seq_file *seq)
+diff --git a/net/ipv6/ip6_flowlabel.c b/net/ipv6/ip6_flowlabel.c
+index c05c4e82a7ca..a9f221d45ef9 100644
+--- a/net/ipv6/ip6_flowlabel.c
++++ b/net/ipv6/ip6_flowlabel.c
+@@ -754,7 +754,10 @@ static struct ip6_flowlabel *ip6fl_get_idx(struct seq_file *seq, loff_t pos)
+ static void *ip6fl_seq_start(struct seq_file *seq, loff_t *pos)
+ 	__acquires(RCU)
  {
- 	struct net *net = seq_file_net(seq);
-@@ -86,14 +80,6 @@ struct kcm_proc_mux_state {
- 	int idx;
- };
- 
--static int kcm_seq_open(struct inode *inode, struct file *file)
--{
--	struct kcm_seq_muxinfo *muxinfo = PDE_DATA(inode);
--
--	return seq_open_net(inode, file, &muxinfo->seq_ops,
--			   sizeof(struct kcm_proc_mux_state));
--}
--
- static void kcm_format_mux_header(struct seq_file *seq)
- {
- 	struct net *net = seq_file_net(seq);
-@@ -246,6 +232,19 @@ static int kcm_seq_show(struct seq_file *seq, void *v)
- 	return 0;
++	struct ip6fl_iter_state *state = ip6fl_seq_private(seq);
++
+ 	rcu_read_lock_bh();
++	state->pid_ns = task_active_pid_ns(current);
+ 	return *pos ? ip6fl_get_idx(seq, *pos - 1) : SEQ_START_TOKEN;
  }
  
-+static const struct seq_operations kcm_seq_ops = {
-+	.show	= kcm_seq_show,
-+	.start	= kcm_seq_start,
-+	.next	= kcm_seq_next,
-+	.stop	= kcm_seq_stop,
-+};
-+
-+static int kcm_seq_open(struct inode *inode, struct file *file)
-+{
-+	return seq_open_net(inode, file, &kcm_seq_ops,
-+			   sizeof(struct kcm_proc_mux_state));
-+}
-+
- static const struct file_operations kcm_seq_fops = {
- 	.open		= kcm_seq_open,
- 	.read		= seq_read,
-@@ -253,37 +252,6 @@ static const struct file_operations kcm_seq_fops = {
- 	.release	= seq_release_net,
- };
+@@ -810,36 +813,15 @@ static const struct seq_operations ip6fl_seq_ops = {
  
--static struct kcm_seq_muxinfo kcm_seq_muxinfo = {
--	.name		= "kcm",
--	.seq_fops	= &kcm_seq_fops,
--	.seq_ops	= {
--		.show	= kcm_seq_show,
--		.start	= kcm_seq_start,
--		.next	= kcm_seq_next,
--		.stop	= kcm_seq_stop,
--	}
--};
--
--static int kcm_proc_register(struct net *net, struct kcm_seq_muxinfo *muxinfo)
--{
--	struct proc_dir_entry *p;
--	int rc = 0;
--
--	p = proc_create_data(muxinfo->name, 0444, net->proc_net,
--			     muxinfo->seq_fops, muxinfo);
--	if (!p)
--		rc = -ENOMEM;
--	return rc;
--}
--EXPORT_SYMBOL(kcm_proc_register);
--
--static void kcm_proc_unregister(struct net *net,
--				struct kcm_seq_muxinfo *muxinfo)
--{
--	remove_proc_entry(muxinfo->name, net->proc_net);
--}
--EXPORT_SYMBOL(kcm_proc_unregister);
--
- static int kcm_stats_seq_show(struct seq_file *seq, void *v)
+ static int ip6fl_seq_open(struct inode *inode, struct file *file)
  {
- 	struct kcm_psock_stats psock_stats;
-@@ -404,16 +372,11 @@ static const struct file_operations kcm_stats_seq_fops = {
- 
- static int kcm_proc_init_net(struct net *net)
- {
+-	struct seq_file *seq;
+-	struct ip6fl_iter_state *state;
 -	int err;
 -
- 	if (!proc_create("kcm_stats", 0444, net->proc_net,
--			 &kcm_stats_seq_fops)) {
--		err = -ENOMEM;
-+			 &kcm_stats_seq_fops))
- 		goto out_kcm_stats;
+-	err = seq_open_net(inode, file, &ip6fl_seq_ops,
++	return seq_open_net(inode, file, &ip6fl_seq_ops,
+ 			   sizeof(struct ip6fl_iter_state));
+-
+-	if (!err) {
+-		seq = file->private_data;
+-		state = ip6fl_seq_private(seq);
+-		rcu_read_lock();
+-		state->pid_ns = get_pid_ns(task_active_pid_ns(current));
+-		rcu_read_unlock();
 -	}
- 
--	err = kcm_proc_register(net, &kcm_seq_muxinfo);
--	if (err)
-+	if (!proc_create("kcm", 0444, net->proc_net, &kcm_seq_fops))
- 		goto out_kcm;
- 
- 	return 0;
-@@ -421,12 +384,12 @@ static int kcm_proc_init_net(struct net *net)
- out_kcm:
- 	remove_proc_entry("kcm_stats", net->proc_net);
- out_kcm_stats:
 -	return err;
-+	return -ENOMEM;
+-}
+-
+-static int ip6fl_seq_release(struct inode *inode, struct file *file)
+-{
+-	struct seq_file *seq = file->private_data;
+-	struct ip6fl_iter_state *state = ip6fl_seq_private(seq);
+-	put_pid_ns(state->pid_ns);
+-	return seq_release_net(inode, file);
  }
  
- static void kcm_proc_exit_net(struct net *net)
- {
--	kcm_proc_unregister(net, &kcm_seq_muxinfo);
-+	remove_proc_entry("kcm", net->proc_net);
- 	remove_proc_entry("kcm_stats", net->proc_net);
- }
+ static const struct file_operations ip6fl_seq_fops = {
+ 	.open		=	ip6fl_seq_open,
+ 	.read		=	seq_read,
+ 	.llseek		=	seq_lseek,
+-	.release	=	ip6fl_seq_release,
++	.release	=	seq_release_net,
+ };
  
+ static int __net_init ip6_flowlabel_proc_init(struct net *net)
 -- 
 2.17.0
