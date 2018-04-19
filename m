@@ -1,62 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752866AbeDSNnY (ORCPT <rfc822;w@1wt.eu>);
+        id S1753039AbeDSNn1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 09:43:27 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40669 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752499AbeDSNnY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Apr 2018 09:43:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36047 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751836AbeDSNnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 09:43:22 -0400
-Date: Thu, 19 Apr 2018 15:43:21 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Various fixes on STM32 RTC
-Message-ID: <20180419134321.GF7369@piout.net>
-References: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
+X-Google-Smtp-Source: AIpwx4+ga+npJPbM3RuOKW7v5U3zHpIOEjOWo49zAco+7oue/P24RTUGCjlrTkPFctRGRG6j6/RifDKBBgzu4NB7+IQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180213110631.o3zn5bifvypofsyg@localhost.localdomain>
+References: <20180212131717.27193-1-linus.walleij@linaro.org>
+ <20180212131717.27193-6-linus.walleij@linaro.org> <20180213110631.o3zn5bifvypofsyg@localhost.localdomain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 19 Apr 2018 15:43:22 +0200
+Message-ID: <CACRpkdbOfycfGD-13OTEk7xT5FqLQsvcHrN-mn-vgjQ93cPHyQ@mail.gmail.com>
+Subject: Re: [PATCH 05/21] regulator: arizona-ldo1: Look up a descriptor and
+ pass to the core
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        Richard Fitzgerald <rf@opensource.cirrus.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Feb 13, 2018 at 12:06 PM, Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+> On Mon, Feb 12, 2018 at 02:17:01PM +0100, Linus Walleij wrote:
+>> Instead of passing a global GPIO number, pass a descriptor looked
+>> up with the standard devm_gpiod_get_optional() call.
+>>
+>> We have augmented the GPIO core to look up the regulator special
+>> GPIO "wlf,ldoena" in a separate patch.
+>>
+>> Cc: patches@opensource.cirrus.com
+>> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> ---
+>>  drivers/regulator/arizona-ldo1.c       | 19 ++++++-------------
+>>  include/linux/regulator/arizona-ldo1.h |  3 ---
+>>  2 files changed, 6 insertions(+), 16 deletions(-)
+>>
+>
+> Does this patch not also need to update the hookups in
+> arch/arm/mach-s3c64xx/mach-crag6410-module.c? There is
+> wm5102_reva_pdata and wm5102_pdata both of which use the ldoena
+> you are removing here?
 
-Both series were not sent to the correct email address. I would suggest
-rebasing on top of v4.17-rc1 ;). No need to resend just for that.
+OK fixed this!
 
-On 19/04/2018 15:21:39+0200, Amelie Delaunay wrote:
-> This series makes some corrections on STM32 RTC:
-> - update copyright and adopt SPDX identifier
-> - fix alarm interrupt flags
-> - rework DBP (Disable Backup domain Protection) management.
-> 
-> This series is a preamble to the serie which will introduce next STM32 RTC
-> version.
-> 
-> Amelie Delaunay (4):
->   rtc: stm32: fix copyright and adopt SPDX identifier
->   rtc: stm32: fix alarm interrupt flags by removing IRQF_TRIGGER_RISING
->   dt-bindings: rtc: update stm32-rtc documentation for st,syscfg
->     property
->   rtc: stm32: get DBP register and mask from DT st,syscfg property
-> 
->  .../devicetree/bindings/rtc/st,stm32-rtc.txt       | 10 ++--
->  drivers/rtc/rtc-stm32.c                            | 68 +++++++++++++---------
->  2 files changed, 47 insertions(+), 31 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+> Also looking at this more you will need to you
+> devm_gpio_get_from_of_node here since the device tree binding is
+> for wlf,ldoena not wlf,ldoena-gpio. So this patch currently
+> breaks the binding.
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Actually not, because I fixed that in  the special quirk patch
+6a537d48461d
+"gpio: of: Support regulator nonstandard GPIO properties"
+as mentioned in the commit message. (Will clarify.)
+
+Yours,
+Linus Walleij
