@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752597AbeDSJbl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 05:31:41 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53169 "EHLO
+        id S1752658AbeDSJbp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 05:31:45 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:37477 "EHLO
         relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750990AbeDSJbg (ORCPT
+        with ESMTP id S1752546AbeDSJbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 05:31:36 -0400
+        Thu, 19 Apr 2018 05:31:41 -0400
 X-Originating-IP: 2.224.242.101
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: architt@codeaurora.org, a.hajda@samsung.com,
@@ -15,9 +15,9 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, daniel@ffwll.ch,
         peda@axentia.se, linux-renesas-soc@vger.kernel.org,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] media: Add LE version of RGB LVDS formats
-Date: Thu, 19 Apr 2018 11:31:06 +0200
-Message-Id: <1524130269-32688-6-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 7/8] drm: panel: Use _LE LVDS formats for data mirroring
+Date: Thu, 19 Apr 2018 11:31:08 +0200
+Message-Id: <1524130269-32688-8-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -25,243 +25,76 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some LVDS controller can output swapped versions of LVDS RGB formats.
-Define and document them in the list of supported media bus formats
+As now both bridges and panels report supported image formats,
+use the newly introduced _LE version of LVDS media bus formats in place
+of the DRM_BUS_FLAG_DATA_ flags defined in drm_connector.h
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- Documentation/media/uapi/v4l/subdev-formats.rst | 174 ++++++++++++++++++++++++
- include/uapi/linux/media-bus-format.h           |   5 +-
- 2 files changed, 178 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/panel/panel-lvds.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/media/uapi/v4l/subdev-formats.rst b/Documentation/media/uapi/v4l/subdev-formats.rst
-index 9fcabe7..9a5263c 100644
---- a/Documentation/media/uapi/v4l/subdev-formats.rst
-+++ b/Documentation/media/uapi/v4l/subdev-formats.rst
-@@ -1669,6 +1669,64 @@ JEIDA defined bit mapping will be named
-       - b\ :sub:`2`
-       - g\ :sub:`1`
-       - r\ :sub:`0`
-+    * .. _MEDIA-BUS-FMT-RGB666-1X7X3-SPWG_LE:
+diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+index 5185819..ac03eab 100644
+--- a/drivers/gpu/drm/panel/panel-lvds.c
++++ b/drivers/gpu/drm/panel/panel-lvds.c
+@@ -37,7 +37,6 @@ struct panel_lvds {
+ 	unsigned int height;
+ 	struct videomode video_mode;
+ 	unsigned int bus_format;
+-	bool data_mirror;
+ 
+ 	struct backlight_device *backlight;
+ 	struct regulator *supply;
+@@ -129,9 +128,6 @@ static int panel_lvds_get_modes(struct drm_panel *panel)
+ 	connector->display_info.height_mm = lvds->height;
+ 	drm_display_info_set_bus_formats(&connector->display_info,
+ 					 &lvds->bus_format, 1);
+-	connector->display_info.bus_flags = lvds->data_mirror
+-					  ? DRM_BUS_FLAG_DATA_LSB_TO_MSB
+-					  : DRM_BUS_FLAG_DATA_MSB_TO_LSB;
+ 
+ 	return 1;
+ }
+@@ -149,6 +145,7 @@ static int panel_lvds_parse_dt(struct panel_lvds *lvds)
+ 	struct device_node *np = lvds->dev->of_node;
+ 	struct display_timing timing;
+ 	const char *mapping;
++	bool data_mirror;
+ 	int ret;
+ 
+ 	ret = of_get_display_timing(np, "panel-timing", &timing);
+@@ -179,20 +176,26 @@ static int panel_lvds_parse_dt(struct panel_lvds *lvds)
+ 		return -ENODEV;
+ 	}
+ 
++	data_mirror = of_property_read_bool(np, "data-mirror");
 +
-+      - MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE
-+      - 0x101b
-+      - 0
-+      -
-+      -
-+      - b\ :sub:`2`
-+      - g\ :sub:`1`
-+      - r\ :sub:`0`
-+    * -
-+      -
-+      - 1
-+      -
-+      -
-+      - b\ :sub:`3`
-+      - g\ :sub:`2`
-+      - r\ :sub:`1`
-+    * -
-+      -
-+      - 2
-+      -
-+      -
-+      - b\ :sub:`4`
-+      - g\ :sub:`3`
-+      - r\ :sub:`2`
-+    * -
-+      -
-+      - 3
-+      -
-+      -
-+      - b\ :sub:`5`
-+      - g\ :sub:`4`
-+      - r\ :sub:`3`
-+    * -
-+      -
-+      - 4
-+      -
-+      -
-+      - d
-+      - g\ :sub:`5`
-+      - r\ :sub:`4`
-+    * -
-+      -
-+      - 5
-+      -
-+      -
-+      - d
-+      - b\ :sub:`0`
-+      - r\ :sub:`5`
-+    * -
-+      -
-+      - 6
-+      -
-+      -
-+      - d
-+      - b\ :sub:`1`
-+      - g\ :sub:`0`
-     * .. _MEDIA-BUS-FMT-RGB888-1X7X4-SPWG:
+ 	if (!strcmp(mapping, "jeida-18")) {
+-		lvds->bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG;
++		lvds->bus_format = data_mirror ?
++				   MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE :
++				   MEDIA_BUS_FMT_RGB666_1X7X3_SPWG;
+ 	} else if (!strcmp(mapping, "jeida-24")) {
+-		lvds->bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
++		lvds->bus_format = data_mirror ?
++				   MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE :
++				   MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
+ 	} else if (!strcmp(mapping, "vesa-24")) {
+-		lvds->bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
++		lvds->bus_format = data_mirror ?
++				   MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE :
++				   MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
+ 	} else {
+ 		dev_err(lvds->dev, "%pOF: invalid or missing %s DT property\n",
+ 			np, "data-mapping");
+ 		return -EINVAL;
+ 	}
  
-       - MEDIA_BUS_FMT_RGB888_1X7X4_SPWG
-@@ -1727,6 +1785,64 @@ JEIDA defined bit mapping will be named
-       - b\ :sub:`2`
-       - g\ :sub:`1`
-       - r\ :sub:`0`
-+    * .. _MEDIA-BUS-FMT-RGB888-1X7X4-SPWG_LE:
-+
-+      - MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE
-+      - 0x101c
-+      - 0
-+      -
-+      - r\ :sub:`6`
-+      - b\ :sub:`2`
-+      - g\ :sub:`1`
-+      - r\ :sub:`0`
-+    * -
-+      -
-+      - 1
-+      -
-+      - r\ :sub:`7`
-+      - b\ :sub:`3`
-+      - g\ :sub:`2`
-+      - r\ :sub:`1`
-+    * -
-+      -
-+      - 2
-+      -
-+      - g\ :sub:`6`
-+      - b\ :sub:`4`
-+      - g\ :sub:`3`
-+      - r\ :sub:`2`
-+    * -
-+      -
-+      - 3
-+      -
-+      - g\ :sub:`7`
-+      - b\ :sub:`5`
-+      - g\ :sub:`4`
-+      - r\ :sub:`3`
-+    * -
-+      -
-+      - 4
-+      -
-+      - b\ :sub:`6`
-+      - d
-+      - g\ :sub:`5`
-+      - r\ :sub:`4`
-+    * -
-+      -
-+      - 5
-+      -
-+      - b\ :sub:`7`
-+      - d
-+      - b\ :sub:`0`
-+      - r\ :sub:`5`
-+    * -
-+      -
-+      - 6
-+      -
-+      - d
-+      - d
-+      - b\ :sub:`1`
-+      - g\ :sub:`0`
-     * .. _MEDIA-BUS-FMT-RGB888-1X7X4-JEIDA:
+-	lvds->data_mirror = of_property_read_bool(np, "data-mirror");
+-
+ 	return 0;
+ }
  
-       - MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA
-@@ -1785,6 +1901,64 @@ JEIDA defined bit mapping will be named
-       - b\ :sub:`4`
-       - g\ :sub:`3`
-       - r\ :sub:`2`
-+    * .. _MEDIA-BUS-FMT-RGB888-1X7X4-JEIDA_LE:
-+
-+      - MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE
-+      - 0x101d
-+      - 0
-+      -
-+      - r\ :sub:`0`
-+      - b\ :sub:`4`
-+      - g\ :sub:`3`
-+      - r\ :sub:`2`
-+    * -
-+      -
-+      - 1
-+      -
-+      - r\ :sub:`1`
-+      - b\ :sub:`5`
-+      - g\ :sub:`4`
-+      - r\ :sub:`3`
-+    * -
-+      -
-+      - 2
-+      -
-+      - g\ :sub:`0`
-+      - b\ :sub:`6`
-+      - g\ :sub:`5`
-+      - r\ :sub:`4`
-+    * -
-+      -
-+      - 3
-+      -
-+      - g\ :sub:`1`
-+      - b\ :sub:`7`
-+      - g\ :sub:`6`
-+      - r\ :sub:`5`
-+    * -
-+      -
-+      - 4
-+      -
-+      - b\ :sub:`0`
-+      - d
-+      - g\ :sub:`7`
-+      - r\ :sub:`6`
-+    * -
-+      -
-+      - 5
-+      -
-+      - b\ :sub:`1`
-+      - d
-+      - b\ :sub:`2`
-+      - r\ :sub:`7`
-+    * -
-+      -
-+      - 6
-+      -
-+      - d
-+      - d
-+      - b\ :sub:`3`
-+      - g\ :sub:`2`
- 
- .. raw:: latex
- 
-diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
-index 9e35117..5bea7c0 100644
---- a/include/uapi/linux/media-bus-format.h
-+++ b/include/uapi/linux/media-bus-format.h
-@@ -34,7 +34,7 @@
- 
- #define MEDIA_BUS_FMT_FIXED			0x0001
- 
--/* RGB - next is	0x101b */
-+/* RGB - next is	0x101f */
- #define MEDIA_BUS_FMT_RGB444_1X12		0x1016
- #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_BE	0x1001
- #define MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE	0x1002
-@@ -49,13 +49,16 @@
- #define MEDIA_BUS_FMT_RBG888_1X24		0x100e
- #define MEDIA_BUS_FMT_RGB666_1X24_CPADHI	0x1015
- #define MEDIA_BUS_FMT_RGB666_1X7X3_SPWG		0x1010
-+#define MEDIA_BUS_FMT_RGB666_1X7X3_SPWG_LE	0x101b
- #define MEDIA_BUS_FMT_BGR888_1X24		0x1013
- #define MEDIA_BUS_FMT_GBR888_1X24		0x1014
- #define MEDIA_BUS_FMT_RGB888_1X24		0x100a
- #define MEDIA_BUS_FMT_RGB888_2X12_BE		0x100b
- #define MEDIA_BUS_FMT_RGB888_2X12_LE		0x100c
- #define MEDIA_BUS_FMT_RGB888_1X7X4_SPWG		0x1011
-+#define MEDIA_BUS_FMT_RGB888_1X7X4_SPWG_LE	0x101c
- #define MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA	0x1012
-+#define MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA_LE	0x101d
- #define MEDIA_BUS_FMT_ARGB8888_1X32		0x100d
- #define MEDIA_BUS_FMT_RGB888_1X32_PADHI		0x100f
- #define MEDIA_BUS_FMT_RGB101010_1X30		0x1018
 -- 
 2.7.4
