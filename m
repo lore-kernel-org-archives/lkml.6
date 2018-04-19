@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3309672-1524148848-2-839927957444166142
+X-Cyrus-Session-Id: sloti22d1t05-3309672-1524148832-2-17221898894645889450
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524148847; b=vmnSLQIWoWv5Dii1GMco71aZJTXbyghTurxeoOmqu81NhcXrj+
-    ldQgIveQszDZKCUgG9ME6wWf/RMyLz+31wEcSNZi552xj+lOusYqiHV4tDMRaSHs
-    uLGKUwgMGCuy4Rdy9zCDRZkFlqBzGJFsSubImED1j/JDjnguDpxMWMEHy/MvCmkc
-    sOg0cM+ZWas6xtiQ+qndpNF4jaMb83Bmwkrv0Yk6cPdj1PM+t/oyuNan5pJCjMca
-    T79i8VgPhc7yoHqsi3ArjxS4eQkIpS9oQDjoknegUdJRqghDsh3ZYzWNOGYYyEwF
-    IH45YzJ3J/d8vrGr4gLg1QEQfVonbIsnsoEw==
+    1524148831; b=ldMpBAlsJpZCnqGLyNhUx3L2GdYjF3giyHqFXz6rlf/qzCoRvg
+    ngotxN2K+B7a8zBeUS9GuPJIQKbYxxL/Ge1c0lDqzW6vHG7wYiZrg4FmZAUPgFo2
+    C8XjgzOeQk2R234VFl2HojkNZSPw/QKDX9pYiH29/CnLt4p9Y4P1/DxAfMLZXMrd
+    YXkJn7cM7ZqQ0s4OskxjINB0eWF0pvFHhv3bz7A/VVOgCh40Hwp9RD1qFPK9nOVe
+    le3ReGiMz2qUoK5TNVBvBc3mf+Ddbz2UEQwA4N7RbrrCPSEoy6HNH/y3Z8ZnPSfW
+    57Zb4JrD390N2IeyWeSmfxBCtMMQfYUxLm1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1524148847; bh=
-    lcEHOJO5/i7VCbGp7gBhPBmHyT83gDh0P3pvEhi9Kyk=; b=B+ETQL5KIIDu9yqZ
-    LZVk/VARXjkdJcupcqEvjd+qG6d86vNNHSWfBKmxIqoazKj0HTRPne4CwWxcoi/X
-    Ffwqt4a8sJQgJA96j5ZZqBokSpVQRcCN12GXNBqWBUVVV022vHiTFQsj3gHS7Z7w
-    TEWRAjddLXB0D2bZMxN48NyVAWUKZX1g1ciFowIsGCkumi76hYCERSTejc4sTrjA
-    lfsnMp5V1bR/R9ajIUoegaxowa6u4BiVUT6FiY7zHlU1vuGOTGbmRoDpBYsbwZCf
-    tlZj/dIcFuob7s5PYWB4CcX3X+fAOCsjahPcNSOtb9gfQzELLJ5cKuYExeOqOjIo
-    AJCneA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524148831; bh=
+    RPAou+pZRL3JDOy/LgOAfscZL25+nx2x/tUbkRVPEFM=; b=J+oVexlAFSGAdusy
+    8PLJn2xuFSWQSLbIW5uLAXsD63S2ojXEXIpRIH1om3Kh3FcEEY2rwJoC3b5wOawA
+    aLMSeQle4dimPzHjovSZGD7UJhOdUl19YXYqFdtMcSczO0AG8IRUpjJm372hJPwD
+    8e6B+ERTZzUfdv7aoddNhQ09WHCt2SdqxHJUX8WYe8ul7m0guFostk1wIo61m3ea
+    4UyZNSG3o6zcrtNleGuJPCVbE7wkRS5eKLBhF/0suZfCtxMHA5kDcBl1ixTaWIQR
+    3QkyeRvK0f7131SeTSW8Vl3IPBnwk2snOWTNEeDNYUzWzi5clDijWLL0+hbSLtq1
+    uziW6g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
@@ -51,21 +51,21 @@ Authentication-Results: mx6.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMtVCE7cS//xKNZjaxc+1+3nGDAo9i3K8bLbBhZN1n7keYxWXEtwDooalD5bhRH4UJo054C6vL39T5huwz9w5wHnovgdaGWNBECiLqZdallZQhOh1DeO
-    KOwOTE9zViqyVrlwuIc7T/BoeK36/z5GOB28yRxyDEyptA3f7rKwVBbv0vKGOvQBy4wPKTBQv5wbvYGIupkPP86wewnJVX4aKMe5bxRzN0gDhm9P0A0qXMt8
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJjhf4qel/qLjuJCyeemXN9lGW0qDhHFqymv2XIZQA1uVnf+tVaSkALYoQrk5Lv3/ANT5nXC6QnizGE65fltIvmrg9sBK16wdjtgXdnhHwcTSrKgVG3W
+    p9dUFbBxh1E1wa8xJQbbMOZaXFA3qMMUHEaet+wLnLI56/iCHyseHPhtKgigCGIX6CoxrXcAenBg53hDBYtMWn00rcdyjEhn+vsnG3TRC55vzl9ekBCRs3TW
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
-    a=Vs9-tm22JyKsff0lLkMA:9 a=Hmqi1hbdcqL3zREO:21 a=CJCOAXb9rn0pXy9g:21
+    a=XDPUjLVUeFrZggzrMEMA:9 a=8vlkM-slKRsSqWcT:21 a=J8TjxFBZp2hdAeYA:21
     a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753507AbeDSOjA (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 10:39:00 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:40917 "EHLO
+        id S1752838AbeDSOjN (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 10:39:13 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:60509 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753162AbeDSOi5 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 10:38:57 -0400
+        with ESMTP id S1751957AbeDSOjK (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 10:39:10 -0400
 From: Arnd Bergmann <arnd@arndb.de>
 To: y2038@lists.linaro.org, linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
@@ -77,312 +77,184 @@ Cc: Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
         will.deacon@arm.com, linux-mips@linux-mips.org, jhogan@kernel.org,
         ralf@linux-mips.org, linuxppc-dev@lists.ozlabs.org,
         sparclinux@vger.kernel.org
-Subject: [PATCH v3 06/17] y2038: mips: Extend sysvipc data structures
-Date: Thu, 19 Apr 2018 16:37:26 +0200
-Message-Id: <20180419143737.606138-7-arnd@arndb.de>
+Subject: [PATCH v3 02/17] y2038: alpha: Remove unneeded ipc uapi header files
+Date: Thu, 19 Apr 2018 16:37:22 +0200
+Message-Id: <20180419143737.606138-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180419143737.606138-1-arnd@arndb.de>
 References: <20180419143737.606138-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:w7eh+1LtL3zSwZjrO6FGNHteF3uN6eTLWo15awA9MfW1f7yI2cL
- QMSjvI3KIfx++4sLSCMun8PTcbpBYX7nudXVqyLqB7Ql0abB7lTQcOvjHVtRG9xCk1c3Bv1
- Jc5Cnx62P62kmsvocYgyU9MDZ2WzuT41AMYgaFjzDmP2R0bvVdd7zPAyzb5fhuQ+3ENH4AV
- /z3FWIAUFt7jwFMiu9VdQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:wpZr/bw2BAM=:FFZcU9qYbzVrz3odtn+Ybn
- SF/2bsUFWxrbsNS1UXftqCMq493M6D4WWFcRVc46s/+vc7F/qvRjLhSJ6k/tWAfWmsDCjWcV1
- Dvuz6VXQ/JJ3to8J3yknipSsNPXZV2D0LnaEHl2VvjvBdCArEEuu0LTOBkXyZoUAP1OFmZi+f
- 7mErUJwJt0RH2e+VaLGSbuPjNQLgKhq5xPqEd34nrAKOd8LQxAdodlrFXb6cRatV76iE6Y3cc
- TiNx6UKbwh/aotL36NAr1LawoSZdf28+tcabZ2Q9S4dgJ6BFrNjkicnWcwoUIUVc9T3wT7yd+
- aKz+UTO8bGEzfOUxxUIps9ub0ljc07JIoBXTAJSe51FaxtcY1s7bREAzjp8AShYsiFu7d8RRz
- 9RMmJUI/U6gatcLSbKyr6Ia5/gFpjh9kMRMRzBEwS+qVpH1H4f8CcWsYb1QUM0jOBhUuohKDT
- dav7bX8HVmXs+x5xY5tCJU4KHJf52rvtIfbXCzB9RfRMCt3BIKBqaGHBHYuP+uLr3N/65SUL2
- h5IKYIa+mL2CDYtOBEUNUFSZuWGeBMRzBMNodDTBVnaiJw1ATcpcD0ZoJt08vmt/33riWS+r3
- SSO0YUBuv1uC3zrGxjnF+y0oyuxxdonVc2rmIHGCGamt2QCm3sXCNWtV+c1hRWUUwoL5EqgNy
- jn4Kz0h1XTjUGj1WW0B9AVA0gB2Po1ThN2KUM/TkaIcOHUXRq1Bkzxiw+SpF6x34MTYLxYfY4
- HLKD1a9hWk/9KLfG32ThrB2u5h6ifE2v/NeXfA==
+X-Provags-ID: V03:K1:GJvU2GYz6J3khxgI87odc47RVbI/DmH/l0oNg9ieS6Rp+Cej7kA
+ Ry/0g+wcPyG7UdO8NfYEWbFqg4CvwW9e3fFG6zdxPyuIEEvv4SZ+paliYATGwdRE8RJi3NN
+ rqkDlFgFkTX8IqD3gRldLs8PHDXzTgkWVKmfocXsXoh2A4ElPmFDGLuo79tN0wBnXNhb6ah
+ mvp7WWScQ0BSt7x5v8wig==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:sordSBH9nY0=:pAyb50zZ4YGhv+LBLSR5qz
+ ttBE6I24AJl200y4dZMydeLJ8XU/UTytrzyGQ7MMWNjXert6SxeiQUfJfKDn9kr1knys+v1AR
+ Zrbes7eqMcJGgBO8418CuMUbcMyAxp8ZZoq0PQRG+dQHSbYz0FYBA+Ey4r/qtZyMvzbt15rdM
+ 3OngiFiSZAK9CawWxmzx0AUTM0ED7myyOGRckVi5yD0SVm402JvvoeQq2zWGzumlhQuMGdA6m
+ E5mYoWc2Yju3KPVKaIwHwFfMmlGP2aa0hZgFLeh6AZUf6QTHVCiW5g3m898IxwRmw8upWM0am
+ F7MLXYK0uniNyaYPXtVwsagJH+GdWMSjLYvmnrBp/6vmPgNc+muwYRH35jDWki5KeqKXepVA1
+ zqPrqNjXvmpsZaBDLgS2UfDsGvf6dEO97lEx6ue3J0ddcHB04GqKh0mTTNAmzv4lfJx15bWxH
+ 74JugZxX4I2P662oqLy3BlBTzqkDjsqx9ZILIJleRHhpn1AT7HtZhe4yGkziIzt3hiswyQrkU
+ 9f05kB6nz7zxPdVg4jZd3gTfua6gQPNBed4ihRzLYS2kTV4t/hIqOeHUSm9mTddIromj9E3vj
+ Or6rSFi7eQ5zSspZjtcU6vMF+knzyn7Kwtu7r2RVmYjUPGKZ7AGD1MvoLPqM4bBoDCsUYHfOF
+ cviK+T9gJoBHCGIb2y2oHnVz2rFw5Y97NySms2117EMa+7rZuyFjz8ouKiSO03xacqJyBxVRX
+ ukVrNBJqMF3UlOiittRapfSYig0o3KhRCIKPjA==
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-MIPS is the weirdest case for sysvipc, because each of the
-three data structures is done differently:
+The alpha ipcbuf/msgbuf/sembuf/shmbuf header files are all identical
+to the version from asm-generic.
 
-* msqid64_ds has padding in the right place so we could in theory
-  extend this one to just have 64-bit values instead of time_t.
-  As this does not work for most of the other combinations,
-  we just handle it in the common manner though.
-
-* semid64_ds has no padding for 64-bit time_t, but has two reserved
-  'long' fields, which are sufficient to extend the sem_otime
-  and sem_ctime fields to 64 bit. In order to do this, the libc
-  implementation will have to copy the data into another structure
-  that has the fields in a different order. MIPS is the only
-  architecture with this problem, so this is best done in MIPS
-  specific libc code.
-
-* shmid64_ds is slightly worse than that, because it has three
-  time_t fields but only two unused 32-bit words. As a workaround,
-  we extend each field only by 16 bits, ending up with 48-bit
-  timestamps that user space again has to work around by itself.
-
-The compat versions of the data structures are changed in the
-same way.
+This patch removes the files and replaces them with 'generic-y'
+statements as part of the y2038 series. Since there is no 32-bit
+syscall support for alpha, we don't need the other changes, but
+it's good to have clean this up anyway.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/mips/include/asm/compat.h      | 40 ++++++++++++++------------
- arch/mips/include/uapi/asm/msgbuf.h | 57 ++++++++++++++++++++++++-------------
- arch/mips/include/uapi/asm/sembuf.h | 15 ++++++++--
- arch/mips/include/uapi/asm/shmbuf.h | 23 +++++++++++++--
- 4 files changed, 94 insertions(+), 41 deletions(-)
+ arch/alpha/include/uapi/asm/Kbuild   |  4 ++++
+ arch/alpha/include/uapi/asm/ipcbuf.h |  2 --
+ arch/alpha/include/uapi/asm/msgbuf.h | 28 --------------------------
+ arch/alpha/include/uapi/asm/sembuf.h | 23 ---------------------
+ arch/alpha/include/uapi/asm/shmbuf.h | 39 ------------------------------------
+ 5 files changed, 4 insertions(+), 92 deletions(-)
+ delete mode 100644 arch/alpha/include/uapi/asm/ipcbuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/msgbuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/sembuf.h
+ delete mode 100644 arch/alpha/include/uapi/asm/shmbuf.h
 
-diff --git a/arch/mips/include/asm/compat.h b/arch/mips/include/asm/compat.h
-index 3e548ee99a2f..78675f19440f 100644
---- a/arch/mips/include/asm/compat.h
-+++ b/arch/mips/include/asm/compat.h
-@@ -37,9 +37,11 @@ typedef struct {
- typedef s32		compat_timer_t;
- typedef s32		compat_key_t;
+diff --git a/arch/alpha/include/uapi/asm/Kbuild b/arch/alpha/include/uapi/asm/Kbuild
+index 9afaba5e5503..1a5b75310cf4 100644
+--- a/arch/alpha/include/uapi/asm/Kbuild
++++ b/arch/alpha/include/uapi/asm/Kbuild
+@@ -2,4 +2,8 @@
+ include include/uapi/asm-generic/Kbuild.asm
  
-+typedef s16		compat_short_t;
- typedef s32		compat_int_t;
- typedef s32		compat_long_t;
- typedef s64		compat_s64;
-+typedef u16		compat_ushort_t;
- typedef u32		compat_uint_t;
- typedef u32		compat_ulong_t;
- typedef u64		compat_u64;
-@@ -157,35 +159,35 @@ struct compat_ipc64_perm {
- 
- struct compat_semid64_ds {
- 	struct compat_ipc64_perm sem_perm;
--	compat_time_t	sem_otime;
--	compat_time_t	sem_ctime;
-+	compat_ulong_t	sem_otime;
-+	compat_ulong_t	sem_ctime;
- 	compat_ulong_t	sem_nsems;
--	compat_ulong_t	__unused1;
--	compat_ulong_t	__unused2;
-+	compat_ulong_t	sem_otime_high;
-+	compat_ulong_t	sem_ctime_high;
- };
- 
- struct compat_msqid64_ds {
- 	struct compat_ipc64_perm msg_perm;
- #ifndef CONFIG_CPU_LITTLE_ENDIAN
--	compat_ulong_t	__unused1;
-+	compat_ulong_t	msg_stime_high;
- #endif
--	compat_time_t	msg_stime;
-+	compat_ulong_t	msg_stime;
- #ifdef CONFIG_CPU_LITTLE_ENDIAN
--	compat_ulong_t	__unused1;
-+	compat_ulong_t	msg_stime_high;
- #endif
- #ifndef CONFIG_CPU_LITTLE_ENDIAN
--	compat_ulong_t	__unused2;
-+	compat_ulong_t	msg_rtime_high;
- #endif
--	compat_time_t	msg_rtime;
-+	compat_ulong_t	msg_rtime;
- #ifdef CONFIG_CPU_LITTLE_ENDIAN
--	compat_ulong_t	__unused2;
-+	compat_ulong_t	msg_rtime_high;
- #endif
- #ifndef CONFIG_CPU_LITTLE_ENDIAN
--	compat_ulong_t	__unused3;
-+	compat_ulong_t	msg_ctime_high;
- #endif
--	compat_time_t	msg_ctime;
-+	compat_ulong_t	msg_ctime;
- #ifdef CONFIG_CPU_LITTLE_ENDIAN
--	compat_ulong_t	__unused3;
-+	compat_ulong_t	msg_ctime_high;
- #endif
- 	compat_ulong_t	msg_cbytes;
- 	compat_ulong_t	msg_qnum;
-@@ -199,14 +201,16 @@ struct compat_msqid64_ds {
- struct compat_shmid64_ds {
- 	struct compat_ipc64_perm shm_perm;
- 	compat_size_t	shm_segsz;
--	compat_time_t	shm_atime;
--	compat_time_t	shm_dtime;
--	compat_time_t	shm_ctime;
-+	compat_ulong_t	shm_atime;
-+	compat_ulong_t	shm_dtime;
-+	compat_ulong_t	shm_ctime;
- 	compat_pid_t	shm_cpid;
- 	compat_pid_t	shm_lpid;
- 	compat_ulong_t	shm_nattch;
--	compat_ulong_t	__unused1;
--	compat_ulong_t	__unused2;
-+	compat_ushort_t	shm_atime_high;
-+	compat_ushort_t	shm_dtime_high;
-+	compat_ushort_t	shm_ctime_high;
-+	compat_ushort_t	__unused2;
- };
- 
- /* MIPS has unusual order of fields in stack_t */
-diff --git a/arch/mips/include/uapi/asm/msgbuf.h b/arch/mips/include/uapi/asm/msgbuf.h
-index eb4d0f9d7364..46aa15b13e4e 100644
---- a/arch/mips/include/uapi/asm/msgbuf.h
-+++ b/arch/mips/include/uapi/asm/msgbuf.h
-@@ -9,33 +9,15 @@
-  * between kernel and user space.
-  *
-  * Pad space is left for:
-- * - extension of time_t to 64-bit on 32-bitsystem to solve the y2038 problem
-  * - 2 miscellaneous unsigned long values
-  */
- 
-+#if defined(__mips64)
- struct msqid64_ds {
- 	struct ipc64_perm msg_perm;
--#if !defined(__mips64) && defined(__MIPSEB__)
--	unsigned long	__unused1;
--#endif
- 	__kernel_time_t msg_stime;	/* last msgsnd time */
--#if !defined(__mips64) && defined(__MIPSEL__)
--	unsigned long	__unused1;
--#endif
--#if !defined(__mips64) && defined(__MIPSEB__)
--	unsigned long	__unused2;
--#endif
- 	__kernel_time_t msg_rtime;	/* last msgrcv time */
--#if !defined(__mips64) && defined(__MIPSEL__)
--	unsigned long	__unused2;
--#endif
--#if !defined(__mips64) && defined(__MIPSEB__)
--	unsigned long	__unused3;
--#endif
- 	__kernel_time_t msg_ctime;	/* last change time */
--#if !defined(__mips64) && defined(__MIPSEL__)
--	unsigned long	__unused3;
--#endif
- 	unsigned long  msg_cbytes;	/* current number of bytes on queue */
- 	unsigned long  msg_qnum;	/* number of messages in queue */
- 	unsigned long  msg_qbytes;	/* max number of bytes on queue */
-@@ -44,5 +26,42 @@ struct msqid64_ds {
- 	unsigned long  __unused4;
- 	unsigned long  __unused5;
- };
-+#elif defined (__MIPSEB__)
-+struct msqid64_ds {
-+	struct ipc64_perm msg_perm;
-+	unsigned long  msg_stime_high;
-+	unsigned long  msg_stime;	/* last msgsnd time */
-+	unsigned long  msg_rtime_high;
-+	unsigned long  msg_rtime;	/* last msgrcv time */
-+	unsigned long  msg_ctime_high;
-+	unsigned long  msg_ctime;	/* last change time */
-+	unsigned long  msg_cbytes;	/* current number of bytes on queue */
-+	unsigned long  msg_qnum;	/* number of messages in queue */
-+	unsigned long  msg_qbytes;	/* max number of bytes on queue */
-+	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
-+	__kernel_pid_t msg_lrpid;	/* last receive pid */
-+	unsigned long  __unused4;
-+	unsigned long  __unused5;
-+};
-+#elif defined (__MIPSEL__)
-+struct msqid64_ds {
-+	struct ipc64_perm msg_perm;
-+	unsigned long  msg_stime;	/* last msgsnd time */
-+	unsigned long  msg_stime_high;
-+	unsigned long  msg_rtime;	/* last msgrcv time */
-+	unsigned long  msg_rtime_high;
-+	unsigned long  msg_ctime;	/* last change time */
-+	unsigned long  msg_ctime_high;
-+	unsigned long  msg_cbytes;	/* current number of bytes on queue */
-+	unsigned long  msg_qnum;	/* number of messages in queue */
-+	unsigned long  msg_qbytes;	/* max number of bytes on queue */
-+	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
-+	__kernel_pid_t msg_lrpid;	/* last receive pid */
-+	unsigned long  __unused4;
-+	unsigned long  __unused5;
-+};
-+#else
-+#warning no endianess set
-+#endif
- 
- #endif /* _ASM_MSGBUF_H */
-diff --git a/arch/mips/include/uapi/asm/sembuf.h b/arch/mips/include/uapi/asm/sembuf.h
-index 2c0f507ab7d1..60c89e6cb25b 100644
---- a/arch/mips/include/uapi/asm/sembuf.h
-+++ b/arch/mips/include/uapi/asm/sembuf.h
-@@ -7,10 +7,11 @@
-  * Note extra padding because this structure is passed back and forth
-  * between kernel and user space.
-  *
+ generic-y += bpf_perf_event.h
++generic-y += ipcbuf.h
++generic-y += msgbuf.h
+ generic-y += poll.h
++generic-y += sembuf.h
++generic-y += shmbuf.h
+diff --git a/arch/alpha/include/uapi/asm/ipcbuf.h b/arch/alpha/include/uapi/asm/ipcbuf.h
+deleted file mode 100644
+index 90d6445a14df..000000000000
+--- a/arch/alpha/include/uapi/asm/ipcbuf.h
++++ /dev/null
+@@ -1,2 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#include <asm-generic/ipcbuf.h>
+diff --git a/arch/alpha/include/uapi/asm/msgbuf.h b/arch/alpha/include/uapi/asm/msgbuf.h
+deleted file mode 100644
+index 8c5d4d8c1b16..000000000000
+--- a/arch/alpha/include/uapi/asm/msgbuf.h
++++ /dev/null
+@@ -1,28 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _ALPHA_MSGBUF_H
+-#define _ALPHA_MSGBUF_H
+-
+-/* 
+- * The msqid64_ds structure for alpha architecture.
+- * Note extra padding because this structure is passed back and forth
+- * between kernel and user space.
+- *
 - * Pad space is left for:
 - * - 2 miscellaneous 64-bit values
-+ * Pad space is left for 2 miscellaneous 64-bit values on mips64,
-+ * but used for the upper 32 bit of the time values on mips32.
-  */
- 
-+#ifdef __mips64
- struct semid64_ds {
- 	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
- 	__kernel_time_t sem_otime;		/* last semop time */
-@@ -19,5 +20,15 @@ struct semid64_ds {
- 	unsigned long	__unused1;
- 	unsigned long	__unused2;
- };
-+#else
-+struct semid64_ds {
-+	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
-+	unsigned long   sem_otime;		/* last semop time */
-+	unsigned long   sem_ctime;		/* last change time */
-+	unsigned long	sem_nsems;		/* no. of semaphores in array */
-+	unsigned long	sem_otime_high;
-+	unsigned long	sem_ctime_high;
-+};
-+#endif
- 
- #endif /* _ASM_SEMBUF_H */
-diff --git a/arch/mips/include/uapi/asm/shmbuf.h b/arch/mips/include/uapi/asm/shmbuf.h
-index 379e6bca518b..9b9bba3401f2 100644
---- a/arch/mips/include/uapi/asm/shmbuf.h
-+++ b/arch/mips/include/uapi/asm/shmbuf.h
-@@ -7,10 +7,13 @@
-  * Note extra padding because this structure is passed back and forth
-  * between kernel and user space.
-  *
+- */
+-
+-struct msqid64_ds {
+-	struct ipc64_perm msg_perm;
+-	__kernel_time_t msg_stime;	/* last msgsnd time */
+-	__kernel_time_t msg_rtime;	/* last msgrcv time */
+-	__kernel_time_t msg_ctime;	/* last change time */
+-	unsigned long  msg_cbytes;	/* current number of bytes on queue */
+-	unsigned long  msg_qnum;	/* number of messages in queue */
+-	unsigned long  msg_qbytes;	/* max number of bytes on queue */
+-	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
+-	__kernel_pid_t msg_lrpid;	/* last receive pid */
+-	unsigned long  __unused1;
+-	unsigned long  __unused2;
+-};
+-
+-#endif /* _ALPHA_MSGBUF_H */
+diff --git a/arch/alpha/include/uapi/asm/sembuf.h b/arch/alpha/include/uapi/asm/sembuf.h
+deleted file mode 100644
+index f28ffa668b2f..000000000000
+--- a/arch/alpha/include/uapi/asm/sembuf.h
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _ALPHA_SEMBUF_H
+-#define _ALPHA_SEMBUF_H
+-
+-/* 
+- * The semid64_ds structure for alpha architecture.
+- * Note extra padding because this structure is passed back and forth
+- * between kernel and user space.
+- *
 - * Pad space is left for:
-- * - 2 miscellaneous 32-bit rsp. 64-bit values
-+ * As MIPS was lacking proper padding after shm_?time, we use 48 bits
-+ * of the padding at the end to store a few additional bits of the time.
-+ * libc implementations need to take care to convert this into a proper
-+ * data structure when moving to 64-bit time_t.
-  */
- 
-+#ifdef __mips64
- struct shmid64_ds {
- 	struct ipc64_perm	shm_perm;	/* operation perms */
- 	size_t			shm_segsz;	/* size of segment (bytes) */
-@@ -23,6 +26,22 @@ struct shmid64_ds {
- 	unsigned long		__unused1;
- 	unsigned long		__unused2;
- };
-+#else
-+struct shmid64_ds {
-+	struct ipc64_perm	shm_perm;	/* operation perms */
-+	size_t			shm_segsz;	/* size of segment (bytes) */
-+	unsigned long		shm_atime;	/* last attach time */
-+	unsigned long		shm_dtime;	/* last detach time */
-+	unsigned long		shm_ctime;	/* last change time */
-+	__kernel_pid_t		shm_cpid;	/* pid of creator */
-+	__kernel_pid_t		shm_lpid;	/* pid of last operator */
-+	unsigned long		shm_nattch;	/* no. of current attaches */
-+	unsigned short		shm_atime_high;
-+	unsigned short		shm_dtime_high;
-+	unsigned short		shm_ctime_high;
-+	unsigned short		__unused1;
-+};
-+#endif
- 
- struct shminfo64 {
- 	unsigned long	shmmax;
+- * - 2 miscellaneous 64-bit values
+- */
+-
+-struct semid64_ds {
+-	struct ipc64_perm sem_perm;		/* permissions .. see ipc.h */
+-	__kernel_time_t	sem_otime;		/* last semop time */
+-	__kernel_time_t	sem_ctime;		/* last change time */
+-	unsigned long	sem_nsems;		/* no. of semaphores in array */
+-	unsigned long	__unused1;
+-	unsigned long	__unused2;
+-};
+-
+-#endif /* _ALPHA_SEMBUF_H */
+diff --git a/arch/alpha/include/uapi/asm/shmbuf.h b/arch/alpha/include/uapi/asm/shmbuf.h
+deleted file mode 100644
+index 7e041ca2eb40..000000000000
+--- a/arch/alpha/include/uapi/asm/shmbuf.h
++++ /dev/null
+@@ -1,39 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+-#ifndef _ALPHA_SHMBUF_H
+-#define _ALPHA_SHMBUF_H
+-
+-/* 
+- * The shmid64_ds structure for alpha architecture.
+- * Note extra padding because this structure is passed back and forth
+- * between kernel and user space.
+- *
+- * Pad space is left for:
+- * - 2 miscellaneous 64-bit values
+- */
+-
+-struct shmid64_ds {
+-	struct ipc64_perm	shm_perm;	/* operation perms */
+-	size_t			shm_segsz;	/* size of segment (bytes) */
+-	__kernel_time_t		shm_atime;	/* last attach time */
+-	__kernel_time_t		shm_dtime;	/* last detach time */
+-	__kernel_time_t		shm_ctime;	/* last change time */
+-	__kernel_pid_t		shm_cpid;	/* pid of creator */
+-	__kernel_pid_t		shm_lpid;	/* pid of last operator */
+-	unsigned long		shm_nattch;	/* no. of current attaches */
+-	unsigned long		__unused1;
+-	unsigned long		__unused2;
+-};
+-
+-struct shminfo64 {
+-	unsigned long	shmmax;
+-	unsigned long	shmmin;
+-	unsigned long	shmmni;
+-	unsigned long	shmseg;
+-	unsigned long	shmall;
+-	unsigned long	__unused1;
+-	unsigned long	__unused2;
+-	unsigned long	__unused3;
+-	unsigned long	__unused4;
+-};
+-
+-#endif /* _ALPHA_SHMBUF_H */
 -- 
 2.9.0
 
