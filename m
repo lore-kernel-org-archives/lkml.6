@@ -1,197 +1,308 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752844AbeDSKmd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:42:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59324 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751228AbeDSKmY (ORCPT
+        id S1752705AbeDSKnE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:43:04 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34982 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751420AbeDSKkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:42:24 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Thu, 19 Apr 2018 18:42:20 +0800
-From: yuankuiz@codeaurora.org
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Whitcroft <apw@canonical.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, paulmck@linux.vnet.ibm.com,
-        Ingo Molnar <mingo@kernel.org>, Len Brown <len.brown@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pm-owner@vger.kernel.org
-Subject: Re: [PATCH] checkpatch: Add a --strict test for structs with bool
- member definitions
-In-Reply-To: <473cf88b25731a3729a3566abbebd0b6@codeaurora.org>
-References: <891d4f632fbff5052e11f2d0b6fac35d@codeaurora.org>
- <CAJZ5v0h=Jeb5JjjE9vNQM29xYAy-Ogmx1mycRv-hPJ1+m=edzw@mail.gmail.com>
- <20180410123305.GF4082@hirez.programming.kicks-ass.net>
- <e22fb871b1b7f2fda4b22f3a24e0d7f092eb612c.camel@perches.com>
- <95477c93db187bab6da8a8ba7c57836868446179.camel@perches.com>
- <20180410143950.4b8526073b4e3e34689f68cb@linux-foundation.org>
- <b3d75281c3a7b4b217b612913894b346eaa3288b.camel@perches.com>
- <20180410150011.df9e036f57b5bcac7ac19686@linux-foundation.org>
- <20180411081502.GJ4082@hirez.programming.kicks-ass.net>
- <20180411092959.e666ec443e4d3bb6f43901d7@linux-foundation.org>
- <1c9f185f6086e9d89659f93720a27b660ee17c13.camel@perches.com>
- <alpine.DEB.2.20.1804120816130.3559@hadrien>
- <b2087cac13c3a1d01ebe1a17e66351f3777bc397.camel@perches.com>
- <alpine.DEB.2.20.1804142315300.2750@hadrien>
- <e7cbe275136b86083ff70d9af26f41bf@codeaurora.org>
- <5341b3b1945c4c1dbf7b356b1a7a4bd6ce304287.camel@perches.com>
- <alpine.DEB.2.20.1804190639410.2830@hadrien>
- <b17a1d0de54ca0db12bd38a0b7fb20a5befb6778.camel@perches.com>
- <alpine.DEB.2.20.1804190705580.2830@hadrien>
- <473cf88b25731a3729a3566abbebd0b6@codeaurora.org>
-Message-ID: <a74acb94090555b96702de7a15f7dedf@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Thu, 19 Apr 2018 06:40:51 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, heiko@sntech.de, linux-pm@vger.kernel.org,
+        dbasehore@chromium.org, linux-kernel@vger.kernel.org,
+        dianders@google.com, groek@google.com, kernel@collabora.com,
+        Nick Milner <nick.milner@collabora.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 1/6] dt-bindings: devfreq: rk3399_dmc: improve binding documentation.
+Date: Thu, 19 Apr 2018 12:40:14 +0200
+Message-Id: <20180419104019.24406-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180419104019.24406-1-enric.balletbo@collabora.com>
+References: <20180419104019.24406-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-19 02:48 PM, yuankuiz@codeaurora.org wrote:
-> On 2018-04-19 01:16 PM, Julia Lawall wrote:
->> On Wed, 18 Apr 2018, Joe Perches wrote:
->> 
->>> On Thu, 2018-04-19 at 06:40 +0200, Julia Lawall wrote:
->>> >
->>> > On Wed, 18 Apr 2018, Joe Perches wrote:
->>> >
->>> > > On Tue, 2018-04-17 at 17:07 +0800, yuankuiz@codeaurora.org wrote:
->>> > > > Hi julia,
->>> > > >
->>> > > > On 2018-04-15 05:19 AM, Julia Lawall wrote:
->>> > > > > On Wed, 11 Apr 2018, Joe Perches wrote:
->>> > > > >
->>> > > > > > On Thu, 2018-04-12 at 08:22 +0200, Julia Lawall wrote:
->>> > > > > > > On Wed, 11 Apr 2018, Joe Perches wrote:
->>> > > > > > > > On Wed, 2018-04-11 at 09:29 -0700, Andrew Morton wrote:
->>> > > > > > > > > We already have some 500 bools-in-structs
->>> > > > > > > >
->>> > > > > > > > I got at least triple that only in include/
->>> > > > > > > > so I expect there are at probably an order
->>> > > > > > > > of magnitude more than 500 in the kernel.
->>> > > > > > > >
->>> > > > > > > > I suppose some cocci script could count the
->>> > > > > > > > actual number of instances.  A regex can not.
->>> > > > > > >
->>> > > > > > > I got 12667.
->>> > > > > >
->>> > > > > > Could you please post the cocci script?
->>> > > > > >
->>> > > > > > > I'm not sure to understand the issue.  Will using a bitfield help if there
->>> > > > > > > are no other bitfields in the structure?
->>> > > > > >
->>> > > > > > IMO, not really.
->>> > > > > >
->>> > > > > > The primary issue is described by Linus here:
->>> > > > > > https://lkml.org/lkml/2017/11/21/384
->>> > > > > >
->>> > > > > > I personally do not find a significant issue with
->>> > > > > > uncontrolled sizes of bool in kernel structs as
->>> > > > > > all of the kernel structs are transitory and not
->>> > > > > > written out to storage.
->>> > > > > >
->>> > > > > > I suppose bool bitfields are also OK, but for the
->>> > > > > > RMW required.
->>> > > > > >
->>> > > > > > Using unsigned int :1 bitfield instead of bool :1
->>> > > > > > has the negative of truncation so that the uint
->>> > > > > > has to be set with !! instead of a simple assign.
->>> > > > >
->>> > > > > At least with gcc 5.4.0, a number of structures become larger with
->>> > > > > unsigned int :1. bool:1 seems to mostly solve this problem.  The
->>> > > > > structure
->>> > > > > ichx_desc, defined in drivers/gpio/gpio-ich.c seems to become larger
->>> > > > > with
->>> > > > > both approaches.
->>> > > >
->>> > > > [ZJ] Hopefully, this could make it better in your environment.
->>> > > >       IMHO, this is just for double check.
->>> > >
->>> > > I doubt this is actually better or smaller code.
->>> > >
->>> > > Check the actual object code using objdump and the
->>> > > struct alignment using pahole.
->>> >
->>> > I didn't have a chance to try it, but it looks quite likely to result in a
->>> > smaller data structure based on the other examples that I looked at.
->>> 
->>> I _really_ doubt there is any difference in size between the
->>> below in any architecture
->>> 
->>> struct foo {
->>> 	int bar;
->>> 	bool baz:1;
->>> 	int qux;
->>> };
->>> 
->>> and
->>> 
->>> struct foo {
->>> 	int bar;
->>> 	bool baz;
->>> 	int qux;
->>> };
->>> 
->>> Where there would be a difference in size is
->>> 
->>> struct foo {
->>> 	int bar;
->>> 	bool baz1:1;
->>> 	bool baz2:1;
->>> 	int qux;
->>> };
->>> 
->>> and
->>> 
->>> struct foo {
->>> 	int bar;
->>> 	bool baz1;
->>> 	bool baz2;
->>> 
->>> int qux;
->>> };
-[ZJ] Even though, two bool:1 are grouped in the #3, finally 4 bytes are 
-padded
-      due for int is the most significant in the type size.
-      At least, they are all the same per x86 and arm based on gcc.(12 
-bytes).
->> 
->> In the situation of the example there are two bools together in the 
->> middle
->> of the structure and one at the end.  Somehow, even converting to 
->> bool:1
->> increases the size.  But it seems plausible that putting all three 
->> bools
->> together and converting them all to :1 would reduce the size.  I don't
->> know.  The size increase (more than 8 bytes) seems out of proportion 
->> for 3
->> bools.
-> [ZJ] Typically, addition saving is due for difference padding.
->> 
->> I was able to check around 3000 structures that were not declared with 
->> any
->> attributes, that don't declare named types internally, and that are
->> compiled for x86.  Around 10% become smaller whn using bool:1, 
->> typically
->> by at most 8 bytes.
-[ZJ] As my example, int (*)() requested 8 bytes in x86 arch, then 8 
-bytes is similiar to that.
-      While it request 4 bytes in arm arch. Typically, my previous 
-example struct can
-      reach to 32 bytes in x86 arch(compared to 40 bytes for original 
-version).
-      Similarly, 20 bytes in arm arch(compared to 24 bytes per original 
-version).
->> 
->> julia
->> 
->>> 
->>> 
+From: Nick Milner <nick.milner@collabora.com>
+
+There are several typos, references to non existent files, grammar and
+punctuation mistakes in the rk3399_dmc.txt binding. This patch tries
+to improve the binding documentation and fix these mistakes.
+
+Signed-off-by: Nick Milner <nick.milner@collabora.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+
+ .../bindings/devfreq/rk3399_dmc.txt           | 207 +++++++++---------
+ 1 file changed, 105 insertions(+), 102 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
+index d6d2833482c9..d83ef821d282 100644
+--- a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
++++ b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
+@@ -1,155 +1,158 @@
+-* Rockchip rk3399 DMC(Dynamic Memory Controller) device
++* Rockchip rk3399 DMC (Dynamic Memory Controller) device
+ 
+ Required properties:
+ - compatible:		 Must be "rockchip,rk3399-dmc".
+ - devfreq-events:	 Node to get DDR loading, Refer to
+-			 Documentation/devicetree/bindings/devfreq/
++			 Documentation/devicetree/bindings/devfreq/event/
+ 			 rockchip-dfi.txt
+-- interrupts:		 The interrupt number to the CPU. The interrupt
+-			 specifier format depends on the interrupt controller.
+-			 It should be DCF interrupts, when DDR dvfs finish,
+-			 it will happen.
++- interrupts:		 The CPU interrupt number. The interrupt specifier
++			 format depends on the interrupt controller.
++			 It should be a DCF interrupt. When DDR DVFS finishes
++			 a DCF interrupt is triggered.
+ - clocks:		 Phandles for clock specified in "clock-names" property
+ - clock-names :		 The name of clock used by the DFI, must be
+ 			 "pclk_ddr_mon";
+-- operating-points-v2:	 Refer to Documentation/devicetree/bindings/power/opp.txt
++- operating-points-v2:	 Refer to Documentation/devicetree/bindings/opp/opp.txt
+ 			 for details.
+ - center-supply:	 DMC supply node.
+ - status:		 Marks the node enabled/disabled.
+ 
+-Following properties are ddr timing:
++Following properties relate to DDR timing:
+ 
+ - rockchip,dram_speed_bin :	  Value reference include/dt-bindings/clock/ddr.h,
+-				  it select ddr3 cl-trp-trcd type, default value
+-				  "DDR3_DEFAULT".it must selected according to
+-				  "Speed Bin" in ddr3 datasheet, DO NOT use
+-				  smaller "Speed Bin" than ddr3 exactly is.
+-
+-- rockchip,pd_idle :		  Config the PD_IDLE value, defined the power-down
+-				  idle period, memories are places into power-down
+-				  mode if bus is idle for PD_IDLE DFI clocks.
+-
+-- rockchip,sr_idle :		  Configure the SR_IDLE value, defined the
+-				  selfrefresh idle period, memories are places
+-				  into self-refresh mode if bus is idle for
+-				  SR_IDLE*1024 DFI clocks (DFI clocks freq is
+-				  half of dram's clocks), defaule value is "0".
+-
+-- rockchip,sr_mc_gate_idle :	  Defined the self-refresh with memory and
+-				  controller clock gating idle period, memories
+-				  are places into self-refresh mode and memory
+-				  controller clock arg gating if bus is idle for
+-				  sr_mc_gate_idle*1024 DFI clocks.
+-
+-- rockchip,srpd_lite_idle :	  Defined the self-refresh power down idle
+-				  period, memories are places into self-refresh
+-				  power down mode if bus is idle for
+-				  srpd_lite_idle*1024 DFI clocks. This parameter
+-				  is for LPDDR4 only.
+-
+-- rockchip,standby_idle :	  Defined the standby idle period, memories are
+-				  places into self-refresh than controller, pi,
+-				  phy and dram clock will gating if bus is idle
+-				  for standby_idle * DFI clocks.
+-
+-- rockchip,dram_dll_disb_freq :  It's defined the DDR3 dll bypass frequency in
+-				  MHz, when ddr freq less than DRAM_DLL_DISB_FREQ,
+-				  ddr3 dll will bypssed note: if dll was bypassed,
+-				  the odt also stop working.
+-
+-- rockchip,phy_dll_disb_freq :	  Defined the PHY dll bypass frequency in
+-				  MHz (Mega Hz), when ddr freq less than
+-				  DRAM_DLL_DISB_FREQ, phy dll will bypssed.
+-				  note: phy dll and phy odt are independent.
+-
+-- rockchip,ddr3_odt_disb_freq :  When dram type is DDR3, this parameter defined
+-				  the odt disable frequency in MHz (Mega Hz),
+-				  when ddr frequency less then ddr3_odt_disb_freq,
+-				  the odt on dram side and controller side are
++				  it selects the DDR3 cl-trp-trcd type. It must be
++				  set according to "Speed Bin" in DDR3 datasheet,
++				  DO NOT use a smaller "Speed Bin" than specified
++				  for the DDR3 being used.
++
++- rockchip,pd_idle :		  Configure the PD_IDLE value. Defines the
++				  power-down idle period in which memories are
++				  placed into power-down mode if bus is idle
++				  for PD_IDLE DFI clock cycles.
++
++- rockchip,sr_idle :		  Configure the SR_IDLE value. Defines the
++				  self-refresh idle period in which memories are
++				  placed into self-refresh mode if bus is idle
++				  for SR_IDLE * 1024 DFI clock cycles (DFI
++				  clocks freq is half of DRAM clock), default
++				  value is "0".
++
++- rockchip,sr_mc_gate_idle :	  Defines the memory self-refresh and controller
++				  clock gating idle period. Memories are placed
++				  into self-refresh mode and memory controller
++				  clock arg gating started if bus is idle for
++				  sr_mc_gate_idle*1024 DFI clock cycles.
++
++- rockchip,srpd_lite_idle :	  Defines the self-refresh power down idle
++				  period in which memories are placed into
++				  self-refresh power down mode if bus is idle
++				  for srpd_lite_idle * 1024 DFI clock cycles.
++				  This parameter is for LPDDR4 only.
++
++- rockchip,standby_idle :	  Defines the standby idle period in which
++				  memories are placed into self-refresh mode.
++				  The controller, pi, PHY and DRAM clock will
++				  be gated if bus is idle for standby_idle * DFI
++				  clock cycles.
++
++- rockchip,dram_dll_disb_freq :	  Defines the DDR3 DLL bypass frequency in MHz.
++				  When DDR frequency is less than DRAM_DLL_DISB_FREQ,
++				  DDR3 DLL will be bypassed. Note: if DLL was bypassed,
++				  the odt will also stop working.
++
++- rockchip,phy_dll_disb_freq :	  Defines the PHY dll bypass frequency in
++				  MHz (Mega Hz). When DDR frequency is less than
++				  DRAM_DLL_DISB_FREQ, PHY DLL will be bypassed.
++				  Note: PHY DLL and PHY ODT are independent.
++
++- rockchip,ddr3_odt_disb_freq :	  When the DRAM type is DDR3, this parameter defines
++				  the ODT disable frequency in MHz (Mega Hz).
++				  when the DDR frequency is  less then ddr3_odt_disb_freq,
++				  the ODT on the DRAM side and controller side are
+ 				  both disabled.
+ 
+-- rockchip,ddr3_drv :		  When dram type is DDR3, this parameter define
+-				  the dram side driver stength in ohm, default
++- rockchip,ddr3_drv :		  When the DRAM type is DDR3, this parameter defines
++				  the DRAM side driver strength in ohms. Default
+ 				  value is DDR3_DS_40ohm.
+ 
+-- rockchip,ddr3_odt :		  When dram type is DDR3, this parameter define
+-				  the dram side ODT stength in ohm, default value
++- rockchip,ddr3_odt :		  When the DRAM type is DDR3, this parameter defines
++				  the DRAM side ODT strength in ohms. Default value
+ 				  is DDR3_ODT_120ohm.
+ 
+-- rockchip,phy_ddr3_ca_drv :	  When dram type is DDR3, this parameter define
+-				  the phy side CA line(incluing command line,
++- rockchip,phy_ddr3_ca_drv :	  When the DRAM type is DDR3, this parameter defines
++				  the phy side CA line (incluing command line,
+ 				  address line and clock line) driver strength.
+ 				  Default value is PHY_DRV_ODT_40.
+ 
+-- rockchip,phy_ddr3_dq_drv :	  When dram type is DDR3, this parameter define
+-				  the phy side DQ line(incluing DQS/DQ/DM line)
+-				  driver strength. default value is PHY_DRV_ODT_40.
++- rockchip,phy_ddr3_dq_drv :	  When the DRAM type is DDR3, this parameter defines
++				  the PHY side DQ line (including DQS/DQ/DM line)
++				  driver strength. Default value is PHY_DRV_ODT_40.
+ 
+-- rockchip,phy_ddr3_odt : 	  When dram type is DDR3, this parameter define the
+-				  phy side odt strength, default value is
++- rockchip,phy_ddr3_odt : 	  When the DRAM type is DDR3, this parameter defines
++				  the PHY side ODT strength. Default value is
+ 				  PHY_DRV_ODT_240.
+ 
+-- rockchip,lpddr3_odt_disb_freq : When dram type is LPDDR3, this parameter defined
+-				  then odt disable frequency in MHz (Mega Hz),
+-				  when ddr frequency less then ddr3_odt_disb_freq,
+-				  the odt on dram side and controller side are
++- rockchip,lpddr3_odt_disb_freq : When the DRAM type is LPDDR3, this parameter defines
++				  then ODT disable frequency in MHz (Mega Hz).
++				  When DDR frequency is less then ddr3_odt_disb_freq,
++				  the ODT on the DRAM side and controller side are
+ 				  both disabled.
+ 
+-- rockchip,lpddr3_drv :	  When dram type is LPDDR3, this parameter define
+-				  the dram side driver stength in ohm, default
++- rockchip,lpddr3_drv :		  When the DRAM type is LPDDR3, this parameter defines
++				  the DRAM side driver strength in ohms. Default
+ 				  value is LP3_DS_34ohm.
+ 
+-- rockchip,lpddr3_odt :	  When dram type is LPDDR3, this parameter define
+-				  the dram side ODT stength in ohm, default value
++- rockchip,lpddr3_odt :		  When the DRAM type is LPDDR3, this parameter defines
++				  the DRAM side ODT strength in ohms. Default value
+ 				  is LP3_ODT_240ohm.
+ 
+-- rockchip,phy_lpddr3_ca_drv :	  When dram type is LPDDR3, this parameter define
+-				  the phy side CA line(incluing command line,
++- rockchip,phy_lpddr3_ca_drv :	  When the DRAM type is LPDDR3, this parameter defines
++				  the PHY side CA line (including command line,
+ 				  address line and clock line) driver strength.
+-				  default value is PHY_DRV_ODT_40.
++				  Default value is PHY_DRV_ODT_40.
+ 
+-- rockchip,phy_lpddr3_dq_drv :	  When dram type is LPDDR3, this parameter define
+-				  the phy side DQ line(incluing DQS/DQ/DM line)
+-				  driver strength. default value is
++- rockchip,phy_lpddr3_dq_drv :	  When the DRAM type is LPDDR3, this parameter defines
++				  the PHY side DQ line (including DQS/DQ/DM line)
++				  driver strength. Default value is
+ 				  PHY_DRV_ODT_40.
+ 
+ - rockchip,phy_lpddr3_odt : 	  When dram type is LPDDR3, this parameter define
+ 				  the phy side odt strength, default value is
+ 				  PHY_DRV_ODT_240.
+ 
+-- rockchip,lpddr4_odt_disb_freq : When dram type is LPDDR4, this parameter
+-				  defined the odt disable frequency in
+-				  MHz (Mega Hz), when ddr frequency less then
+-				  ddr3_odt_disb_freq, the odt on dram side and
++- rockchip,lpddr4_odt_disb_freq : When the DRAM type is LPDDR4, this parameter
++				  defines the ODT disable frequency in
++				  MHz (Mega Hz). When the DDR frequency is less then
++				  ddr3_odt_disb_freq, the ODT on the DRAM side and
+ 				  controller side are both disabled.
+ 
+-- rockchip,lpddr4_drv :	  When dram type is LPDDR4, this parameter define
+-				  the dram side driver stength in ohm, default
++- rockchip,lpddr4_drv :		  When the DRAM type is LPDDR4, this parameter defines
++				  the DRAM side driver strength in ohms. Default
+ 				  value is LP4_PDDS_60ohm.
+ 
+-- rockchip,lpddr4_dq_odt : 	  When dram type is LPDDR4, this parameter define
+-				  the dram side ODT on dqs/dq line stength in ohm,
+-				  default value is LP4_DQ_ODT_40ohm.
++- rockchip,lpddr4_dq_odt : 	  When the DRAM type is LPDDR4, this parameter defines
++				  the DRAM side ODT on DQS/DQ line strength in ohms.
++				  Default value is LP4_DQ_ODT_40ohm.
+ 
+-- rockchip,lpddr4_ca_odt :	  When dram type is LPDDR4, this parameter define
+-				  the dram side ODT on ca line stength in ohm,
+-				  default value is LP4_CA_ODT_40ohm.
++- rockchip,lpddr4_ca_odt :	  When the DRAM type is LPDDR4, this parameter defines
++				  the DRAM side ODT on CA line strength in ohms.
++				  Default value is LP4_CA_ODT_40ohm.
+ 
+-- rockchip,phy_lpddr4_ca_drv :	  When dram type is LPDDR4, this parameter define
+-				  the phy side  CA line(incluing command address
+-				  line) driver strength. default value is
++- rockchip,phy_lpddr4_ca_drv :	  When the DRAM type is LPDDR4, this parameter defines
++				  the PHY side CA line (including command address
++				  line) driver strength. Default value is
+ 				  PHY_DRV_ODT_40.
+ 
+-- rockchip,phy_lpddr4_ck_cs_drv : When dram type is LPDDR4, this parameter define
+-				  the phy side clock line and cs line driver
+-				  strength. default value is PHY_DRV_ODT_80.
++- rockchip,phy_lpddr4_ck_cs_drv : When the DRAM type is LPDDR4, this parameter defines
++				  the PHY side clock line and CS line driver
++				  strength. Default value is PHY_DRV_ODT_80.
+ 
+-- rockchip,phy_lpddr4_dq_drv :	  When dram type is LPDDR4, this parameter define
+-				  the phy side DQ line(incluing DQS/DQ/DM line)
+-				  driver strength. default value is PHY_DRV_ODT_80.
++- rockchip,phy_lpddr4_dq_drv :	  When the DRAM type is LPDDR4, this parameter defines
++				  the PHY side DQ line (including DQS/DQ/DM line)
++				  driver strength. Default value is PHY_DRV_ODT_80.
+ 
+-- rockchip,phy_lpddr4_odt :	  When dram type is LPDDR4, this parameter define
+-				  the phy side odt strength, default value is
++- rockchip,phy_lpddr4_odt :	  When the DRAM type is LPDDR4, this parameter defines
++				  the PHY side ODT strength. Default value is
+ 				  PHY_DRV_ODT_60.
+ 
+ Example:
+-- 
+2.17.0
