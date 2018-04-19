@@ -1,57 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752899AbeDSLFu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 07:05:50 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39134 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751870AbeDSLFs (ORCPT
+        id S1751903AbeDSLJq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 07:09:46 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35008 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbeDSLJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 07:05:48 -0400
-Date: Thu, 19 Apr 2018 13:05:39 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Imre Deak <imre.deak@intel.com>
-cc: LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: Early timeouts due to inaccurate jiffies during system
- suspend/resume
-In-Reply-To: <20180419013200.wxkzqfdacfsijci5@ideak-desk.fi.intel.com>
-Message-ID: <alpine.DEB.2.21.1804191256200.1563@nanos.tec.linutronix.de>
-References: <20180419013200.wxkzqfdacfsijci5@ideak-desk.fi.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 19 Apr 2018 07:09:45 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Philippe CORNU <philippe.cornu@st.com>
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: Re: [PATCH 1/2] dt-bindings/display/bridge: sii902x: add optional power supplies
+Date: Thu, 19 Apr 2018 14:09:52 +0300
+Message-ID: <1733412.i2Wslp7VkI@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <e709e4f7-2266-f99f-5864-5a8c037dbdc2@st.com>
+References: <20180410051927.8268-1-philippe.cornu@st.com> <20599695.GSkeUvMnvx@avalon> <e709e4f7-2266-f99f-5864-5a8c037dbdc2@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018, Imre Deak wrote:
-> Hi,
+Hi Philippe,
+
+On Thursday, 19 April 2018 12:31:15 EEST Philippe CORNU wrote:
+> On 04/19/2018 10:11 AM, Laurent Pinchart wrote:
+> > On Tuesday, 10 April 2018 08:19:26 EEST Philippe Cornu wrote:
+> > 
+> >> Add the 3 optional power supplies using the exact description
+> >> found in the document named
+> >> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
+> >>
+> >> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+> >> ---
+> >> 
+> >>   Documentation/devicetree/bindings/display/bridge/sii902x.txt | 3 +++
+> >>   1 file changed, 3 insertions(+)
+> >>
+> >> diff --git
+> >> a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+> >> b/Documentation/devicetree/bindings/display/bridge/sii902x.txt index
+> >> 56a3e68ccb80..cf53678fe574 100644
+> >> --- a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+> >> +++ b/Documentation/devicetree/bindings/display/bridge/sii902x.txt
+> >> @@ -8,6 +8,9 @@ Optional properties:
+> >>   	- interrupts-extended or interrupt-parent + interrupts: describe
+> >>   	  the interrupt line used to inform the host about hotplug events.
+> >>   	- reset-gpios: OF device-tree gpio specification for RST_N pin.
+> >> +	- iovcc-supply: I/O supply voltage (1.8V or 3.3V, host-dependent).
+> >> +	- avcc12-supply: TMDS analog supply voltage (1.2V).
+> >> +	- cvcc12-supply: Digital core supply voltage (1.2V).
+> > 
+> > It seems that the AVCC12 and CVCC12 power supplies are usually derived
+> > from the same source. How about starting with one DT property for both,
+> > and adding a second one later if needed ?
 > 
-> while checking bug [1], I noticed that jiffies based timing loops like
+> Well, I do not know what is the best. Here I took the description from 
+> the documentation, and to allow all possible board configurations, I 
+> added these supplies as "optional" properties: if there is only one 1v2 
+> regulator on the board, the dt will contain only avcc12 or cvcc12 and 
+> everything will work fine (we will have a dummy regulator for the 
+> missing optional 1v2 reg), if both regulators are there for any reasons 
+> (stability, noise, whatever...) then both entries will be in the dt.
 > 
-> 	expire = jiffies + timeout + 1;
-> 	while (!time_after(jiffies, expire))
-> 		do_something;
-> 
-> can last shorter than expected (that is less than timeout).
+> If you confirm you prefer a single 1v2 supply (named for instance 
+> "vcc12-supply") then I will do :-)
 
-Yes, that can happen when the timer interrupt is delayed long enough for
-whatever reason. If you need accurate timing then you need to use
-ktime_get().
+Please see https://lists.freedesktop.org/archives/dri-devel/2018-April/
+172400.html (and the messages that lead to it) and https://
+lists.freedesktop.org/archives/dri-devel/2018-March/170763.html.
 
-> After some ftracing it seems like jiffies gets stale due to a missed
-> LAPIC timer interrupt after the interrupt is armed in
-> lapic_next_deadline() and before jiffies is sampled at 2. above.
-> Eventually the interrupt does get delivered, at which point jiffies gets
-> updated via tick_do_update_jiffies64() with a >1 ticks increment.
-> Between lapic_next_deadline() and the - late - delivery of the interrupt
-> the CPU on which the interrupt is armed doesn't go idle.
+> >>   Optional subnodes:
+> >>   	- video input: this subnode can contain a video input port node
 
-That's odd. I have no real explanation for that.
+-- 
+Regards,
 
-Thanks,
-
-	tglx
+Laurent Pinchart
