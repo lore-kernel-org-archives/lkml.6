@@ -1,141 +1,134 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-990390-1524210397-2-11207752521764290812
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3239998-1524147305-5-9323820898398349642
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524210396; b=lDLEoJK7s7jSd+eoxtCGJ4gharSXU1xOrRZ+6snVIPQHtxmrLG
-    qrE6E/FMbgfjDgeOEC687CfJQjucdUxLDDDxSbO8dStDFgHmJCSWjRacBgEZROAM
-    Bm1Jp69pa/oqL4ac7CvT5Jx/IUN6GR167k0k5PZzLlW9OO0OD41ipkYOlloeHLp5
-    Sm3p3AYTlsg+lCm1kbgH7UcXwyY59Gl3yMYH4D4AQXQ9wj13NIckh5X6X5zQaEEv
-    oyyb3YWjjO2JJ3M6cYLeb1DXk073VmKumCoUpt8AKtOfDiVPSpXx4tO9Zpf4UJmm
-    LlppkDkv+FW0W8/+kMeASNbwCLSi61nnFoMA==
+    1524147305; b=BNgEGDCjykcGUxu2HoVxXHpAVOW6vCrfJ4InhtafuG0SQQSpzX
+    m7i7JoIXlww096p8hnzZXiVr9LwssFWc1bzfTogxHnpsnMS8JHuz70scorN8SYFh
+    0fi/zVm+dnuKw9bEzCL0RzSlevY7odXUYsm5AF0Zd+q51mTpcu7eQCl6FGkKLyyT
+    9thqM6uR6v7BueYf9wiLHp92KIGbhe7GBWGMEiRcjVS0rvyf+cE5eiqmwbFhPLT8
+    jgNKKTEVNTCUwyuaBa5lvKCjBMyUKbgpR2tAERdXDaJe4U9QeqDK08z3LpLxKQKN
+    aqOVE25YliA0hy6sHNmDl7mSpIF5Aovuw6qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1524210396; bh=o51+anHjus
-    7rVpMq7pqCm8IDX76kW2yR8LBUZFEfE9Q=; b=ry9yFvD+wL+VZWNtOXckv4s7nc
-    YHk+2nWNNne5A1XkPrXcx49m4mffEAmBJ3YJHWDqrWNqS7H9vnj1VyTjGHspXzB/
-    2t7o66JH+TjBuKAv4DgPHrYG9aTGJhtBbhEHLc6iqXND1v2Jw+vk9DcbaOnFQ3PJ
-    6SeuiyYbYwI5C7nHJSVk2lrOiivivoObkCyqp6pbbOE9IGzWHLFs5WBmhbsKhuMl
-    vs6MrPdfJRSCme363nw7aFrVhYID5PWsokxah3i1GNy+1vmwcrxALWDjrMme3DHq
-    LURz6CM94/ZBwg3E3DCdONA+bPAepnpwxtMgNV53coHgbvMhvRj9Zm0HLVBA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1524147305; bh=L6jeo
+    mxvzm88DZ4guYeIwrRuwwO22jtIuXJ/o3lUilI=; b=o69//RvJkAc7TgDpCR2q2
+    H7b3Z5PMDki2CLLFX7AUTvitzYVT3rq+K9WNbFjXAibxy5INWnbnailKp978y0nE
+    4WDS6NFxm9uZwT6OxnhOelsE7nKZ8U+smONf+cfCVo4hJ9fcp6nzI+PrLX/tCBMf
+    etXj/TyHO56MQTAJDRQGhKK6jR/Ab4gvIXVdF9m7r6iWIFKDykjYoNDsKPZ95f9N
+    mXS9HoTOeX4JJpZ1urhHhxxSaMN3D9sMN22quSPSkH6Y5cyllbfCa8oG3M5W2TeG
+    dsArGzXgy4vew9SW1/Wo/XhqyBZ1ih4e4u/FrjgLfKbTf3geWKsRVZPIw+ToAZkD
+    Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=sang-engineering.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=sang-engineering.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=sang-engineering.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=mediatek.com header.result=pass header_is_org_domain=yes;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=sang-engineering.com header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHy6BDzOBv/WYTZtYfVDcz8u03eMDcu6ngbR+lmVn2KsiPpebdRVPELGLjULoXk/xUMGD9NqsPL9IQLMCz1ba0ziCLWDaHI8uUghOZJAv0ty01bIVT6b
-    PsAbGtTC6boinSsbxPA6k3H8D5jI5d7zVuvb5IaVTiSXcDsj5CDyeQDq/TpwnPnJP2VMpXb7e7jylhtsB1krXCeRhWXB65SIij5vUxhsOFyojOAHxqjEmjlO
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=LDBv8-xUAAAA:8 a=mpaa-ttXAAAA:8 a=VwQbUJbxAAAA:8 a=v-Wz_vH9cs9CTqFaDe4A:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=DZeXCJrVpAJBw65Qk4Ds:22
-    a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfMA0fBdqVH6FVzwRo9ArS74gPlP7/77RAd3CKMLKHV3KNdLfur0BjweHlCuT8TF/C9UVCiPs/0JJ9aGaCUM3XBslBM1QXhXS2c2WnCVFrOw1pDR2m69a
+    OB2vEW7Qe5xPIYFvgcwpR/eq/4/vG00HlFJxY+m79cHKocaZFMLSDdcCVW+q6kq5drIBs6YZ/z7ebCOQDa2FYI31pRNdnWAFJ9uiP3IuRA7BZJgn04M090ts
+    T5pPYURG2C3PcNnu2L6/qQ==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=LDBv8-xUAAAA:8 a=DDOyTI_5AAAA:8
+    a=QN9VAv3_1rD4yjwHS44A:9 a=CjuIK1q_8ugA:10 a=DZeXCJrVpAJBw65Qk4Ds:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753966AbeDTHqe (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 20 Apr 2018 03:46:34 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:31579 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753620AbeDTHqc (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Fri, 20 Apr 2018 03:46:32 -0400
-X-UUID: e41ed9a2e8364901b10c5eb53fdcc5c5-20180420
-Message-ID: <1524210384.25162.1.camel@mhfsdcap03>
-Subject: Re: [PATCH 55/61] usb: mtu3: simplify getting .drvdata
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC: <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date: Fri, 20 Apr 2018 15:46:24 +0800
-In-Reply-To: <20180419140641.27926-56-wsa+renesas@sang-engineering.com>
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Subject: [PATCH 47/61] staging: greybus: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:06:17 +0200
+Message-Id: <20180419140641.27926-48-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
-         <20180419140641.27926-56-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, greybus-dev@lists.linaro.org,
+ kernel-janitors@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+ linux-renesas-soc@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-X-MTK: N
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-hi,
+We should get drvdata from struct device directly. Going via
+platform_device is an unneeded step back and forth.
 
-On Thu, 2018-04-19 at 16:06 +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->  drivers/usb/mtu3/mtu3_plat.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/mtu3/mtu3_plat.c b/drivers/usb/mtu3/mtu3_plat.c
-> index 628d5ce356ca..46551f6d16fd 100644
-> --- a/drivers/usb/mtu3/mtu3_plat.c
-> +++ b/drivers/usb/mtu3/mtu3_plat.c
-> @@ -447,8 +447,7 @@ static int mtu3_remove(struct platform_device *pdev)
->   */
->  static int __maybe_unused mtu3_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct ssusb_mtk *ssusb = platform_get_drvdata(pdev);
-> +	struct ssusb_mtk *ssusb = dev_get_drvdata(dev);
->  
->  	dev_dbg(dev, "%s\n", __func__);
->  
-> @@ -466,8 +465,7 @@ static int __maybe_unused mtu3_suspend(struct device *dev)
->  
->  static int __maybe_unused mtu3_resume(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct ssusb_mtk *ssusb = platform_get_drvdata(pdev);
-> +	struct ssusb_mtk *ssusb = dev_get_drvdata(dev);
->  	int ret;
->  
->  	dev_dbg(dev, "%s\n", __func__);
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Johan Hovold <johan@kernel.org>
+---
 
-Acked-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Build tested only. buildbot is happy. Please apply individually.
 
-Thanks
+ drivers/staging/greybus/arche-platform.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
+index 83254a72a7bb..8fe8b6e35432 100644
+--- a/drivers/staging/greybus/arche-platform.c
++++ b/drivers/staging/greybus/arche-platform.c
+@@ -315,8 +315,7 @@ static ssize_t state_store(struct device *dev,
+ 			   struct device_attribute *attr,
+ 			   const char *buf, size_t count)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct arche_platform_drvdata *arche_pdata = platform_get_drvdata(pdev);
++	struct arche_platform_drvdata *arche_pdata = dev_get_drvdata(dev);
+ 	int ret = 0;
+ 
+ 	mutex_lock(&arche_pdata->platform_state_mutex);
+-- 
+2.11.0
 
-
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
