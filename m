@@ -1,63 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753470AbeDSPsf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:48:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42907 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753320AbeDSPq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:46:57 -0400
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2 06/10] media: v4l: Add definition for Allwinner's MB32-tiled NV12 format
-Date: Thu, 19 Apr 2018 17:45:32 +0200
-Message-Id: <20180419154536.17846-2-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
-References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+        id S1753465AbeDSPuY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:50:24 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44808 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752332AbeDSPuW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:50:22 -0400
+X-Google-Smtp-Source: AIpwx48mOFm92FYF7s8YD3j7hRTIy7/j9TXE6s9vGUIWg6sIgWDwotjQ9tOZP6RlSSVZKkLhQbFFkw==
+From: Varsha Rao <rvarsha016@gmail.com>
+To: Julia Lawall <julia.lawall@lip6.fr>, Joe Perches <joe@perches.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        cocci <cocci@systeme.lip6.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nicholas Mc Guire <der.herr@hofr.at>
+Cc: Varsha Rao <rvarsha016@gmail.com>
+Subject: [RESEND PATCH v2] crypto: cavium: zip: Remove unnecessary parentheses
+Date: Thu, 19 Apr 2018 21:19:43 +0530
+Message-Id: <20180419154943.21983-1-rvarsha016@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces support for Allwinner's MB32-tiled NV12 format, where
-each plane is divided into macroblocks of 32x32 pixels. Hence, the size
-of each plane has to be aligned to 32 bytes. The pixels inside each
-macroblock are coded as they would be if the macroblock was a single
-plane, line after line.
+This patch fixes the clang warning of extraneous parentheses, with the
+following coccinelle script.
 
-The MB32-tiled NV12 format is used by the video engine on Allwinner
-platforms: it is the default format for decoded frames (and the only one
-available in the oldest supported platforms).
+@@
+identifier i;
+constant c;
+expression e;
+@@
+(
+!((e))
+|
+-((
+\(i == c\|i != c\|i <= c\|i < c\|i >= c\|i > c\)
+-))
+)
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Signed-off-by: Varsha Rao <rvarsha016@gmail.com>
 ---
- include/uapi/linux/videodev2.h | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+ - Modified coccinelle script
 
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 4b8336f7bcf0..43993a116e2b 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -669,6 +669,7 @@ struct v4l2_pix_format {
- #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth data 16-bit */
- #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Mediatek compressed block mode  */
- #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
-+#define V4L2_PIX_FMT_MB32_NV12 v4l2_fourcc('M', 'N', '1', '2') /* Allwinner NV12 in 32x32 macroblocks */
+ drivers/crypto/cavium/zip/zip_regs.h | 42 ++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/crypto/cavium/zip/zip_regs.h b/drivers/crypto/cavium/zip/zip_regs.h
+index d0be682305c1..874e0236c87e 100644
+--- a/drivers/crypto/cavium/zip/zip_regs.h
++++ b/drivers/crypto/cavium/zip/zip_regs.h
+@@ -443,7 +443,7 @@ union zip_corex_bist_status {
  
- /* 10bit raw bayer packed, 32 bytes for every 25 pixels, last LSB 6 bits unused */
- #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* IPU3 packed 10-bit BGGR bayer */
+ static inline u64 ZIP_COREX_BIST_STATUS(u64 param1)
+ {
+-	if (((param1 <= 1)))
++	if (param1 <= 1)
+ 		return 0x0520ull + (param1 & 1) * 0x8ull;
+ 	pr_err("ZIP_COREX_BIST_STATUS: %llu\n", param1);
+ 	return 0;
+@@ -537,7 +537,7 @@ union zip_dbg_corex_inst {
+ 
+ static inline u64 ZIP_DBG_COREX_INST(u64 param1)
+ {
+-	if (((param1 <= 1)))
++	if (param1 <= 1)
+ 		return 0x0640ull + (param1 & 1) * 0x8ull;
+ 	pr_err("ZIP_DBG_COREX_INST: %llu\n", param1);
+ 	return 0;
+@@ -568,7 +568,7 @@ union zip_dbg_corex_sta {
+ 
+ static inline u64 ZIP_DBG_COREX_STA(u64 param1)
+ {
+-	if (((param1 <= 1)))
++	if (param1 <= 1)
+ 		return 0x0680ull + (param1 & 1) * 0x8ull;
+ 	pr_err("ZIP_DBG_COREX_STA: %llu\n", param1);
+ 	return 0;
+@@ -599,7 +599,7 @@ union zip_dbg_quex_sta {
+ 
+ static inline u64 ZIP_DBG_QUEX_STA(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1800ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_DBG_QUEX_STA: %llu\n", param1);
+ 	return 0;
+@@ -817,7 +817,7 @@ union zip_msix_pbax {
+ 
+ static inline u64 ZIP_MSIX_PBAX(u64 param1)
+ {
+-	if (((param1 == 0)))
++	if (param1 == 0)
+ 		return 0x0000838000FF0000ull;
+ 	pr_err("ZIP_MSIX_PBAX: %llu\n", param1);
+ 	return 0;
+@@ -846,7 +846,7 @@ union zip_msix_vecx_addr {
+ 
+ static inline u64 ZIP_MSIX_VECX_ADDR(u64 param1)
+ {
+-	if (((param1 <= 17)))
++	if (param1 <= 17)
+ 		return 0x0000838000F00000ull + (param1 & 31) * 0x10ull;
+ 	pr_err("ZIP_MSIX_VECX_ADDR: %llu\n", param1);
+ 	return 0;
+@@ -875,7 +875,7 @@ union zip_msix_vecx_ctl {
+ 
+ static inline u64 ZIP_MSIX_VECX_CTL(u64 param1)
+ {
+-	if (((param1 <= 17)))
++	if (param1 <= 17)
+ 		return 0x0000838000F00008ull + (param1 & 31) * 0x10ull;
+ 	pr_err("ZIP_MSIX_VECX_CTL: %llu\n", param1);
+ 	return 0;
+@@ -900,7 +900,7 @@ union zip_quex_done {
+ 
+ static inline u64 ZIP_QUEX_DONE(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2000ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE: %llu\n", param1);
+ 	return 0;
+@@ -925,7 +925,7 @@ union zip_quex_done_ack {
+ 
+ static inline u64 ZIP_QUEX_DONE_ACK(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2200ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE_ACK: %llu\n", param1);
+ 	return 0;
+@@ -950,7 +950,7 @@ union zip_quex_done_ena_w1c {
+ 
+ static inline u64 ZIP_QUEX_DONE_ENA_W1C(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2600ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE_ENA_W1C: %llu\n", param1);
+ 	return 0;
+@@ -975,7 +975,7 @@ union zip_quex_done_ena_w1s {
+ 
+ static inline u64 ZIP_QUEX_DONE_ENA_W1S(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2400ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE_ENA_W1S: %llu\n", param1);
+ 	return 0;
+@@ -1004,7 +1004,7 @@ union zip_quex_done_wait {
+ 
+ static inline u64 ZIP_QUEX_DONE_WAIT(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x2800ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DONE_WAIT: %llu\n", param1);
+ 	return 0;
+@@ -1029,7 +1029,7 @@ union zip_quex_doorbell {
+ 
+ static inline u64 ZIP_QUEX_DOORBELL(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x4000ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_DOORBELL: %llu\n", param1);
+ 	return 0;
+@@ -1058,7 +1058,7 @@ union zip_quex_err_ena_w1c {
+ 
+ static inline u64 ZIP_QUEX_ERR_ENA_W1C(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x3600ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_ERR_ENA_W1C: %llu\n", param1);
+ 	return 0;
+@@ -1087,7 +1087,7 @@ union zip_quex_err_ena_w1s {
+ 
+ static inline u64 ZIP_QUEX_ERR_ENA_W1S(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x3400ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_ERR_ENA_W1S: %llu\n", param1);
+ 	return 0;
+@@ -1120,7 +1120,7 @@ union zip_quex_err_int {
+ 
+ static inline u64 ZIP_QUEX_ERR_INT(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x3000ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_ERR_INT: %llu\n", param1);
+ 	return 0;
+@@ -1150,7 +1150,7 @@ union zip_quex_err_int_w1s {
+ 
+ static inline u64 ZIP_QUEX_ERR_INT_W1S(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x3200ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_ERR_INT_W1S: %llu\n", param1);
+ 	return 0;
+@@ -1179,7 +1179,7 @@ union zip_quex_gcfg {
+ 
+ static inline u64 ZIP_QUEX_GCFG(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1A00ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_GCFG: %llu\n", param1);
+ 	return 0;
+@@ -1204,7 +1204,7 @@ union zip_quex_map {
+ 
+ static inline u64 ZIP_QUEX_MAP(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1400ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_MAP: %llu\n", param1);
+ 	return 0;
+@@ -1236,7 +1236,7 @@ union zip_quex_sbuf_addr {
+ 
+ static inline u64 ZIP_QUEX_SBUF_ADDR(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1000ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_SBUF_ADDR: %llu\n", param1);
+ 	return 0;
+@@ -1276,7 +1276,7 @@ union zip_quex_sbuf_ctl {
+ 
+ static inline u64 ZIP_QUEX_SBUF_CTL(u64 param1)
+ {
+-	if (((param1 <= 7)))
++	if (param1 <= 7)
+ 		return 0x1200ull + (param1 & 7) * 0x8ull;
+ 	pr_err("ZIP_QUEX_SBUF_CTL: %llu\n", param1);
+ 	return 0;
 -- 
-2.16.3
+2.14.3
