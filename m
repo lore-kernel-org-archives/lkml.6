@@ -1,20 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753278AbeDSOGx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:06:53 -0400
-Received: from sauhun.de ([88.99.104.3]:45222 "EHLO pokefinder.org"
+        id S1753455AbeDSO0i (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:26:38 -0400
+Received: from sauhun.de ([88.99.104.3]:45280 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752100AbeDSOGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:06:50 -0400
+        id S1753028AbeDSOGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:06:52 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org
-Subject: [PATCH 02/61] ata: simplify getting .drvdata
-Date: Thu, 19 Apr 2018 16:05:32 +0200
-Message-Id: <20180419140641.27926-3-wsa+renesas@sang-engineering.com>
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Vinod Koul <vinod.koul@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>, Li Yang <leoyang.li@nxp.com>,
+        Zhang Wei <zw@zh-kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 07/61] dma: simplify getting .drvdata
+Date: Thu, 19 Apr 2018 16:05:37 +0200
+Message-Id: <20180419140641.27926-8-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
@@ -30,33 +34,199 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy. Please apply individually.
 
- drivers/ata/pata_samsung_cf.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/dma/at_hdmac.c  |  9 +++------
+ drivers/dma/at_xdmac.c  |  9 +++------
+ drivers/dma/fsldma.c    |  6 ++----
+ drivers/dma/idma64.c    |  6 ++----
+ drivers/dma/ste_dma40.c | 12 ++++--------
+ drivers/dma/txx9dmac.c  |  8 +++-----
+ 6 files changed, 17 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
-index bb96dc35950d..00602988bee9 100644
---- a/drivers/ata/pata_samsung_cf.c
-+++ b/drivers/ata/pata_samsung_cf.c
-@@ -608,17 +608,15 @@ static int __exit pata_s3c_remove(struct platform_device *pdev)
+diff --git a/drivers/dma/at_hdmac.c b/drivers/dma/at_hdmac.c
+index a861b5b4d443..75f38d19fcbe 100644
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -2041,8 +2041,7 @@ static void at_dma_shutdown(struct platform_device *pdev)
+ 
+ static int at_dma_prepare(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct at_dma *atdma = platform_get_drvdata(pdev);
++	struct at_dma *atdma = dev_get_drvdata(dev);
+ 	struct dma_chan *chan, *_chan;
+ 
+ 	list_for_each_entry_safe(chan, _chan, &atdma->dma_common.channels,
+@@ -2076,8 +2075,7 @@ static void atc_suspend_cyclic(struct at_dma_chan *atchan)
+ 
+ static int at_dma_suspend_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct at_dma *atdma = platform_get_drvdata(pdev);
++	struct at_dma *atdma = dev_get_drvdata(dev);
+ 	struct dma_chan *chan, *_chan;
+ 
+ 	/* preserve data */
+@@ -2118,8 +2116,7 @@ static void atc_resume_cyclic(struct at_dma_chan *atchan)
+ 
+ static int at_dma_resume_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct at_dma *atdma = platform_get_drvdata(pdev);
++	struct at_dma *atdma = dev_get_drvdata(dev);
+ 	struct dma_chan *chan, *_chan;
+ 
+ 	/* bring back DMA controller */
+diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
+index 94236ec9d410..4bf72561667c 100644
+--- a/drivers/dma/at_xdmac.c
++++ b/drivers/dma/at_xdmac.c
+@@ -1833,8 +1833,7 @@ static void at_xdmac_free_chan_resources(struct dma_chan *chan)
+ #ifdef CONFIG_PM
+ static int atmel_xdmac_prepare(struct device *dev)
+ {
+-	struct platform_device	*pdev = to_platform_device(dev);
+-	struct at_xdmac		*atxdmac = platform_get_drvdata(pdev);
++	struct at_xdmac		*atxdmac = dev_get_drvdata(dev);
+ 	struct dma_chan		*chan, *_chan;
+ 
+ 	list_for_each_entry_safe(chan, _chan, &atxdmac->dma.channels, device_node) {
+@@ -1853,8 +1852,7 @@ static int atmel_xdmac_prepare(struct device *dev)
  #ifdef CONFIG_PM_SLEEP
- static int pata_s3c_suspend(struct device *dev)
+ static int atmel_xdmac_suspend(struct device *dev)
+ {
+-	struct platform_device	*pdev = to_platform_device(dev);
+-	struct at_xdmac		*atxdmac = platform_get_drvdata(pdev);
++	struct at_xdmac		*atxdmac = dev_get_drvdata(dev);
+ 	struct dma_chan		*chan, *_chan;
+ 
+ 	list_for_each_entry_safe(chan, _chan, &atxdmac->dma.channels, device_node) {
+@@ -1878,8 +1876,7 @@ static int atmel_xdmac_suspend(struct device *dev)
+ 
+ static int atmel_xdmac_resume(struct device *dev)
+ {
+-	struct platform_device	*pdev = to_platform_device(dev);
+-	struct at_xdmac		*atxdmac = platform_get_drvdata(pdev);
++	struct at_xdmac		*atxdmac = dev_get_drvdata(dev);
+ 	struct at_xdmac_chan	*atchan;
+ 	struct dma_chan		*chan, *_chan;
+ 	int			i;
+diff --git a/drivers/dma/fsldma.c b/drivers/dma/fsldma.c
+index 3eaece888e75..1117b5123a6f 100644
+--- a/drivers/dma/fsldma.c
++++ b/drivers/dma/fsldma.c
+@@ -1328,8 +1328,7 @@ static int fsldma_of_remove(struct platform_device *op)
+ #ifdef CONFIG_PM
+ static int fsldma_suspend_late(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct ata_host *host = platform_get_drvdata(pdev);
-+	struct ata_host *host = dev_get_drvdata(dev);
+-	struct fsldma_device *fdev = platform_get_drvdata(pdev);
++	struct fsldma_device *fdev = dev_get_drvdata(dev);
+ 	struct fsldma_chan *chan;
+ 	int i;
  
- 	return ata_host_suspend(host, PMSG_SUSPEND);
- }
+@@ -1360,8 +1359,7 @@ static int fsldma_suspend_late(struct device *dev)
  
- static int pata_s3c_resume(struct device *dev)
+ static int fsldma_resume_early(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct ata_host *host = platform_get_drvdata(pdev);
--	struct s3c_ide_platdata *pdata = dev_get_platdata(&pdev->dev);
-+	struct ata_host *host = dev_get_drvdata(dev);
-+	struct s3c_ide_platdata *pdata = dev_get_platdata(dev);
- 	struct s3c_ide_info *info = host->private_data;
+-	struct fsldma_device *fdev = platform_get_drvdata(pdev);
++	struct fsldma_device *fdev = dev_get_drvdata(dev);
+ 	struct fsldma_chan *chan;
+ 	u32 mode;
+ 	int i;
+diff --git a/drivers/dma/idma64.c b/drivers/dma/idma64.c
+index 1953e57505f4..e5c911200bdb 100644
+--- a/drivers/dma/idma64.c
++++ b/drivers/dma/idma64.c
+@@ -670,8 +670,7 @@ static int idma64_platform_remove(struct platform_device *pdev)
  
- 	pata_s3c_hwinit(info, pdata);
+ static int idma64_pm_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct idma64_chip *chip = platform_get_drvdata(pdev);
++	struct idma64_chip *chip = dev_get_drvdata(dev);
+ 
+ 	idma64_off(chip->idma64);
+ 	return 0;
+@@ -679,8 +678,7 @@ static int idma64_pm_suspend(struct device *dev)
+ 
+ static int idma64_pm_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct idma64_chip *chip = platform_get_drvdata(pdev);
++	struct idma64_chip *chip = dev_get_drvdata(dev);
+ 
+ 	idma64_on(chip->idma64);
+ 	return 0;
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index c2b089af0420..1bc149af990e 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -2889,8 +2889,7 @@ static int __init d40_dmaengine_init(struct d40_base *base,
+ #ifdef CONFIG_PM_SLEEP
+ static int dma40_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	ret = pm_runtime_force_suspend(dev);
+@@ -2904,8 +2903,7 @@ static int dma40_suspend(struct device *dev)
+ 
+ static int dma40_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 	int ret = 0;
+ 
+ 	if (base->lcpa_regulator) {
+@@ -2970,8 +2968,7 @@ static void d40_save_restore_registers(struct d40_base *base, bool save)
+ 
+ static int dma40_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 
+ 	d40_save_restore_registers(base, true);
+ 
+@@ -2985,8 +2982,7 @@ static int dma40_runtime_suspend(struct device *dev)
+ 
+ static int dma40_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct d40_base *base = platform_get_drvdata(pdev);
++	struct d40_base *base = dev_get_drvdata(dev);
+ 
+ 	d40_save_restore_registers(base, false);
+ 
+diff --git a/drivers/dma/txx9dmac.c b/drivers/dma/txx9dmac.c
+index 4d8c7b9078fd..eb45af71d3a3 100644
+--- a/drivers/dma/txx9dmac.c
++++ b/drivers/dma/txx9dmac.c
+@@ -1244,8 +1244,7 @@ static void txx9dmac_shutdown(struct platform_device *pdev)
+ 
+ static int txx9dmac_suspend_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct txx9dmac_dev *ddev = platform_get_drvdata(pdev);
++	struct txx9dmac_dev *ddev = dev_get_drvdata(dev);
+ 
+ 	txx9dmac_off(ddev);
+ 	return 0;
+@@ -1253,9 +1252,8 @@ static int txx9dmac_suspend_noirq(struct device *dev)
+ 
+ static int txx9dmac_resume_noirq(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct txx9dmac_dev *ddev = platform_get_drvdata(pdev);
+-	struct txx9dmac_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	struct txx9dmac_dev *ddev = dev_get_drvdata(dev);
++	struct txx9dmac_platform_data *pdata = dev_get_platdata(dev);
+ 	u32 mcr;
+ 
+ 	mcr = TXX9_DMA_MCR_MSTEN | MCR_LE;
 -- 
 2.11.0
