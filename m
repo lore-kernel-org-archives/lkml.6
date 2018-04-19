@@ -1,47 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753565AbeDSRGg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 13:06:36 -0400
-Received: from mail-it0-f52.google.com ([209.85.214.52]:53090 "EHLO
-        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753535AbeDSRGd (ORCPT
+        id S1753508AbeDSRGV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 13:06:21 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:38424 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753230AbeDSRGC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 13:06:33 -0400
-X-Google-Smtp-Source: AIpwx4/GAfJ6w2WGUDacHaey7ahvfi1T2DhsZojyX6jH4ViyP+jY0TP2UHvMalK/QV3WdPE4ypzcTsy3HpwBVCgQrXE=
+        Thu, 19 Apr 2018 13:06:02 -0400
+X-Google-Smtp-Source: AB8JxZpeWRsvDLKCltz1DlHhjlD5zvsLYvGmxXRkFbDXyVIGGN/jJ1yFgn2BSOSUUgugz8JbS3dSfIC7BKgWMw0kBvreHTbH8dmn
 MIME-Version: 1.0
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Thu, 19 Apr 2018 19:06:31 +0200
-Message-ID: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
-Subject: Clang arm64 build is broken
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <christoffer.dall@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 19 Apr 2018 10:06:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001558f3056a369689@google.com>
+Subject: WARNING in __device_add_disk
+From: syzbot <syzbot+3337db851ace689ceb50@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc!
+Hello,
 
-Your recent commit [1] broke clang build on arm64. The issue is that
-clang doesn't know about the "S" asm constraint. I reported this to
-clang [2], and hopefully this will get fixed. In the meantime, would
-it possible to work around using the "S" constraint in the kernel?
+syzbot hit the following crash on upstream commit
+87ef12027b9b1dd0e0b12cf311fbcb19f9d92539 (Wed Apr 18 19:48:17 2018 +0000)
+Merge tag 'ceph-for-4.17-rc2' of git://github.com/ceph/ceph-client
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=3337db851ace689ceb50
 
-While we're here, regarding the other issue with kvm [3], I didn't
-receive any comments as to whether it makes sense to send the fix that
-adds -fno-jump-tables flag when building kvm with clang.
+Unfortunately, I don't have any reproducer for this crash yet.
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=5356500264419328
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=1808800213120130118
+compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
-Thanks!
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+3337db851ace689ceb50@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed. See footer for  
+details.
+If you forward the report, please keep this part and the footer.
 
-[1] https://github.com/torvalds/linux/commit/44a497abd621a71c645f06d3d545ae2f46448830
+RAX: ffffffffffffffda RBX: 00007fee9fefc6d4 RCX: 0000000000455329
+RDX: 0000000020000000 RSI: 0000000000004c80 RDI: 0000000000000014
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000015
+R13: 00000000000002a2 R14: 00000000006f6fd0 R15: 0000000000000036
+WARNING: CPU: 1 PID: 30128 at block/genhd.c:685  
+__device_add_disk+0x104a/0x1340 block/genhd.c:685
+Kernel panic - not syncing: panic_on_warn set ...
 
-[2] https://github.com/ClangBuiltLinux/linux/issues/13
+CPU: 1 PID: 30128 Comm: syz-executor3 Not tainted 4.17.0-rc1+ #8
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:__device_add_disk+0x104a/0x1340 block/genhd.c:685
+RSP: 0018:ffff8801b320f8a8 EFLAGS: 00010246
+RAX: 0000000000040000 RBX: ffff8801d7fbe880 RCX: ffffc90007714000
+RDX: 0000000000040000 RSI: ffffffff83434d6a RDI: 0000000000000005
+RBP: ffff8801b320fa78 R08: ffff8801a9364400 R09: ffffed003b5e46c2
+R10: ffffed003b5e46c2 R11: ffff8801daf23613 R12: 00000000fffffff4
+R13: ffff8801b320fa50 R14: ffff8801d7fbede0 R15: ffff8801d7fbe884
+  device_add_disk+0x22/0x30 block/genhd.c:705
+  add_disk include/linux/genhd.h:397 [inline]
+  loop_add+0x70b/0x9c0 drivers/block/loop.c:1873
+  loop_control_ioctl+0x178/0x500 drivers/block/loop.c:1970
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455329
+RSP: 002b:00007fee9fefbc68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fee9fefc6d4 RCX: 0000000000455329
+RDX: 0000000020000000 RSI: 0000000000004c80 RDI: 0000000000000014
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000015
+R13: 00000000000002a2 R14: 00000000006f6fd0 R15: 0000000000000036
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-[3] https://lkml.org/lkml/2018/3/16/476
+
+---
+This bug is generated by a dumb bot. It may contain errors.
+See https://goo.gl/tpsmEJ for details.
+Direct all questions to syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
