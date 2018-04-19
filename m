@@ -1,233 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753486AbeDSOoP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:44:15 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:45743 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752086AbeDSOoL (ORCPT
+        id S1752780AbeDSOs1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:48:27 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41590 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751170AbeDSOs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:44:11 -0400
-X-Google-Smtp-Source: AIpwx4+moBEJCFILJqk0aRs3GKjsXUDEUXYnXj9Z5Hpdli5TYpqoOPhgkJrMHnXAK1E5Y911bfej+Q==
-MIME-Version: 1.0
-In-Reply-To: <CAELBmZB2XX=qEOLAdvGG4cPx4GEntcSnWQquJLUK1ongRj35cA@mail.gmail.com>
-References: <20180418174014.1592871-1-songliubraving@fb.com> <CAELBmZB2XX=qEOLAdvGG4cPx4GEntcSnWQquJLUK1ongRj35cA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 19 Apr 2018 16:44:08 +0200
-X-Gmail-Original-Message-ID: <CAELBmZBvt=9p8muDsRucR_06kmia9vKT6CMfZbHjQL97N4aFag@mail.gmail.com>
-Message-ID: <CAELBmZBvt=9p8muDsRucR_06kmia9vKT6CMfZbHjQL97N4aFag@mail.gmail.com>
-Subject: Re: [PATCH v2] tracing: fix bad use of igrab in trace_uprobe.c
-To: Song Liu <songliubraving@fb.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team <kernel-team@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 19 Apr 2018 10:48:26 -0400
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+To: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, cohuck@redhat.com
+Subject: [PATCH 03/10] vfio: ccw: new SCH_EVENT event
+Date: Thu, 19 Apr 2018 16:48:06 +0200
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18041914-0008-0000-0000-000004ED1EA5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041914-0009-0000-0000-00001E813099
+Message-Id: <1524149293-12658-4-git-send-email-pmorel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804190131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 10:58 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Wed, Apr 18, 2018 at 7:40 PM, Song Liu <songliubraving@fb.com> wrote:
->> As Miklos reported and suggested:
->>
->>   This pattern repeats two times in trace_uprobe.c and in
->>   kernel/events/core.c as well:
->>
->>       ret = kern_path(filename, LOOKUP_FOLLOW, &path);
->>       if (ret)
->>           goto fail_address_parse;
->>
->>       inode = igrab(d_inode(path.dentry));
->>       path_put(&path);
->>
->>   And it's wrong.  You can only hold a reference to the inode if you
->>   have an active ref to the superblock as well (which is normally
->>   through path.mnt) or holding s_umount.
->>
->>   This way unmounting the containing filesystem while the tracepoint is
->>   active will give you the "VFS: Busy inodes after unmount..." message
->>   and a crash when the inode is finally put.
->>
->>   Solution: store path instead of inode.
->>
->> This patch fixes two instances in trace_uprobe.c.
->>
->> Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
->> Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Howard McLauchlan <hmclauchlan@fb.com>
->> Cc: Josef Bacik <jbacik@fb.com>
->> Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
->> Reported-by: Miklos Szeredi <miklos@szeredi.hu>
->> Signed-off-by: Song Liu <songliubraving@fb.com>
->> ---
->>  kernel/trace/trace_uprobe.c | 49 +++++++++++++++------------------------------
->>  1 file changed, 16 insertions(+), 33 deletions(-)
->>
->> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
->> index 34fd0e0..d9ee522c 100644
->> --- a/kernel/trace/trace_uprobe.c
->> +++ b/kernel/trace/trace_uprobe.c
->> @@ -55,7 +55,7 @@ struct trace_uprobe {
->>         struct list_head                list;
->>         struct trace_uprobe_filter      filter;
->>         struct uprobe_consumer          consumer;
->> -       struct inode                    *inode;
->> +       struct path                     path;
->>         char                            *filename;
->>         unsigned long                   offset;
->>         unsigned long                   nhit;
->> @@ -289,7 +289,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
->>         for (i = 0; i < tu->tp.nr_args; i++)
->>                 traceprobe_free_probe_arg(&tu->tp.args[i]);
->>
->> -       iput(tu->inode);
->> +       path_put(&tu->path);
->>         kfree(tu->tp.call.class->system);
->>         kfree(tu->tp.call.name);
->>         kfree(tu->filename);
->> @@ -363,7 +363,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
->>  static int create_trace_uprobe(int argc, char **argv)
->>  {
->>         struct trace_uprobe *tu;
->> -       struct inode *inode;
->>         char *arg, *event, *group, *filename;
->>         char buf[MAX_EVENT_NAME_LEN];
->>         struct path path;
->> @@ -371,7 +370,6 @@ static int create_trace_uprobe(int argc, char **argv)
->>         bool is_delete, is_return;
->>         int i, ret;
->>
->> -       inode = NULL;
->>         ret = 0;
->>         is_delete = false;
->>         is_return = false;
->> @@ -437,24 +435,14 @@ static int create_trace_uprobe(int argc, char **argv)
->>         }
->>         /* Find the last occurrence, in case the path contains ':' too. */
->>         arg = strrchr(argv[1], ':');
->> -       if (!arg) {
->> -               ret = -EINVAL;
->> -               goto fail_address_parse;
->> -       }
->> +       if (!arg)
->> +               return -EINVAL;
->>
->>         *arg++ = '\0';
->>         filename = argv[1];
->>         ret = kern_path(filename, LOOKUP_FOLLOW, &path);
->>         if (ret)
->> -               goto fail_address_parse;
->> -
->> -       inode = igrab(d_real_inode(path.dentry));
+The Sub channel event callback is threaded using workqueues.
+The work uses the FSM introducing the VFIO_CCW_EVENT_SCH_EVENT
+event.
+The update of the SCHIB is now done inside the FSM function.
 
-Also, where has the d_real_inode() gone?
+Signed-off-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+---
+ drivers/s390/cio/vfio_ccw_drv.c     | 33 +++++++++++++--------------------
+ drivers/s390/cio/vfio_ccw_fsm.c     | 23 +++++++++++++++++++++++
+ drivers/s390/cio/vfio_ccw_private.h |  3 +++
+ 3 files changed, 39 insertions(+), 20 deletions(-)
 
-Looks like we need tu->inode back, since the return value of
-d_real_inode() may change over time.   I'd do the "tu->inode =
-d_real_inode(tu->path.dentry)" just before first use (i.e. when
-enabling the tracepoint).
-
-Thanks,
-Miklos
-
-
->> -       path_put(&path);
->> -
->> -       if (!inode || !S_ISREG(inode->i_mode)) {
->
-> Where has the S_ISREG check gone?
->
->> -               ret = -EINVAL;
->> -               goto fail_address_parse;
->> -       }
->> +               return ret;
->>
->>         ret = kstrtoul(arg, 0, &offset);
->>         if (ret)
->> @@ -490,7 +478,7 @@ static int create_trace_uprobe(int argc, char **argv)
->>                 goto fail_address_parse;
->>         }
->>         tu->offset = offset;
->> -       tu->inode = inode;
->> +       tu->path = path;
->>         tu->filename = kstrdup(filename, GFP_KERNEL);
->>
->>         if (!tu->filename) {
->> @@ -558,7 +546,7 @@ static int create_trace_uprobe(int argc, char **argv)
->>         return ret;
->>
->>  fail_address_parse:
->> -       iput(inode);
->> +       path_put(&path);
->>
->>         pr_info("Failed to parse address or file.\n");
->>
->> @@ -922,7 +910,8 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
->>                 goto err_flags;
->>
->>         tu->consumer.filter = filter;
->> -       ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
->> +       ret = uprobe_register(d_inode(tu->path.dentry), tu->offset,
->> +                             &tu->consumer);
->>         if (ret)
->>                 goto err_buffer;
->>
->> @@ -966,7 +955,7 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
->>
->>         WARN_ON(!uprobe_filter_is_empty(&tu->filter));
->>
->> -       uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
->> +       uprobe_unregister(d_inode(tu->path.dentry), tu->offset, &tu->consumer);
->>         tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
->>
->>         uprobe_buffer_disable();
->> @@ -1041,7 +1030,8 @@ static int uprobe_perf_close(struct trace_uprobe *tu, struct perf_event *event)
->>         write_unlock(&tu->filter.rwlock);
->>
->>         if (!done)
->> -               return uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
->> +               return uprobe_apply(d_inode(tu->path.dentry), tu->offset,
->> +                                   &tu->consumer, false);
->>
->>         return 0;
->>  }
->> @@ -1073,7 +1063,8 @@ static int uprobe_perf_open(struct trace_uprobe *tu, struct perf_event *event)
->>
->>         err = 0;
->>         if (!done) {
->> -               err = uprobe_apply(tu->inode, tu->offset, &tu->consumer, true);
->> +               err = uprobe_apply(d_inode(tu->path.dentry),
->> +                                  tu->offset, &tu->consumer, true);
->>                 if (err)
->>                         uprobe_perf_close(tu, event);
->>         }
->> @@ -1337,7 +1328,6 @@ struct trace_event_call *
->>  create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
->>  {
->>         struct trace_uprobe *tu;
->> -       struct inode *inode;
->>         struct path path;
->>         int ret;
->>
->> @@ -1345,14 +1335,6 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
->>         if (ret)
->>                 return ERR_PTR(ret);
->>
->> -       inode = igrab(d_inode(path.dentry));
->> -       path_put(&path);
->> -
->> -       if (!inode || !S_ISREG(inode->i_mode)) {
->
-> And here, again.
->
-> Otherwise ACK.
->
-> Also please create a separate patch that removes igrab/iput calls from
-> kernel/events/uprobes.c and adds a comment to the effect that the
-> caller is required to keep the inode (and the containing mount)
-> referenced.
->
-> Thanks,
-> Miklos
+diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
+index f1b158c..8a91eee 100644
+--- a/drivers/s390/cio/vfio_ccw_drv.c
++++ b/drivers/s390/cio/vfio_ccw_drv.c
+@@ -77,6 +77,15 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
+ 		private->state = VFIO_CCW_STATE_IDLE;
+ }
+ 
++static void vfio_ccw_sch_event_todo(struct work_struct *work)
++{
++	struct vfio_ccw_private *private;
++
++	private = container_of(work, struct vfio_ccw_private, event_work);
++	vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_SCH_EVENT);
++}
++
++
+ /*
+  * Css driver callbacks
+  */
+@@ -125,6 +134,7 @@ static int vfio_ccw_sch_probe(struct subchannel *sch)
+ 		goto out_disable;
+ 
+ 	INIT_WORK(&private->io_work, vfio_ccw_sch_io_todo);
++	INIT_WORK(&private->event_work, vfio_ccw_sch_event_todo);
+ 	atomic_set(&private->avail, 1);
+ 	private->state = VFIO_CCW_STATE_STANDBY;
+ 
+@@ -171,28 +181,11 @@ static void vfio_ccw_sch_shutdown(struct subchannel *sch)
+ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+ {
+ 	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
+-	unsigned long flags;
+ 
+-	spin_lock_irqsave(sch->lock, flags);
+ 	if (!device_is_registered(&sch->dev))
+-		goto out_unlock;
+-
+-	if (work_pending(&sch->todo_work))
+-		goto out_unlock;
+-
+-	if (cio_update_schib(sch)) {
+-		vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_NOT_OPER);
+-		goto out_unlock;
+-	}
+-
+-	private = dev_get_drvdata(&sch->dev);
+-	if (private->state == VFIO_CCW_STATE_NOT_OPER) {
+-		private->state = private->mdev ? VFIO_CCW_STATE_IDLE :
+-				 VFIO_CCW_STATE_STANDBY;
+-	}
+-
+-out_unlock:
+-	spin_unlock_irqrestore(sch->lock, flags);
++		return -1;
++	WARN_ON(work_pending(&private->event_work));
++	queue_work(vfio_ccw_work_q, &private->event_work);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
+index 2f3108d..13751b4 100644
+--- a/drivers/s390/cio/vfio_ccw_fsm.c
++++ b/drivers/s390/cio/vfio_ccw_fsm.c
+@@ -183,6 +183,24 @@ static int fsm_irq(struct vfio_ccw_private *private,
+ }
+ 
+ /*
++ * Got a sub-channel event .
++ */
++static int fsm_sch_event(struct vfio_ccw_private *private,
++			 enum vfio_ccw_event event)
++{
++	unsigned long flags;
++	int ret = private->state;
++	struct subchannel *sch = private->sch;
++
++	spin_lock_irqsave(sch->lock, flags);
++	if (cio_update_schib(sch))
++		ret = VFIO_CCW_STATE_NOT_OPER;
++	spin_unlock_irqrestore(sch->lock, flags);
++
++	return ret;
++}
++
++/*
+  * Device statemachine
+  */
+ fsm_func_t *vfio_ccw_jumptable[NR_VFIO_CCW_STATES][NR_VFIO_CCW_EVENTS] = {
+@@ -190,25 +208,30 @@ fsm_func_t *vfio_ccw_jumptable[NR_VFIO_CCW_STATES][NR_VFIO_CCW_EVENTS] = {
+ 		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_nop,
+ 		[VFIO_CCW_EVENT_IO_REQ]		= fsm_io_error,
+ 		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_disabled_irq,
++		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_nop,
+ 	},
+ 	[VFIO_CCW_STATE_STANDBY] = {
+ 		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_notoper,
+ 		[VFIO_CCW_EVENT_IO_REQ]		= fsm_io_error,
+ 		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
++		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_sch_event,
+ 	},
+ 	[VFIO_CCW_STATE_IDLE] = {
+ 		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_notoper,
+ 		[VFIO_CCW_EVENT_IO_REQ]		= fsm_io_request,
+ 		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
++		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_sch_event,
+ 	},
+ 	[VFIO_CCW_STATE_BOXED] = {
+ 		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_notoper,
+ 		[VFIO_CCW_EVENT_IO_REQ]		= fsm_io_busy,
+ 		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
++		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_sch_event,
+ 	},
+ 	[VFIO_CCW_STATE_BUSY] = {
+ 		[VFIO_CCW_EVENT_NOT_OPER]	= fsm_notoper,
+ 		[VFIO_CCW_EVENT_IO_REQ]		= fsm_io_busy,
+ 		[VFIO_CCW_EVENT_INTERRUPT]	= fsm_irq,
++		[VFIO_CCW_EVENT_SCH_EVENT]	= fsm_sch_event,
+ 	},
+ };
+diff --git a/drivers/s390/cio/vfio_ccw_private.h b/drivers/s390/cio/vfio_ccw_private.h
+index f526b18..3284e64 100644
+--- a/drivers/s390/cio/vfio_ccw_private.h
++++ b/drivers/s390/cio/vfio_ccw_private.h
+@@ -33,6 +33,7 @@
+  * @scsw: scsw info
+  * @io_trigger: eventfd ctx for signaling userspace I/O results
+  * @io_work: work for deferral process of I/O handling
++ * @event_work: work for deferral process of sub-channel event
+  */
+ struct vfio_ccw_private {
+ 	struct subchannel	*sch;
+@@ -49,6 +50,7 @@ struct vfio_ccw_private {
+ 
+ 	struct eventfd_ctx	*io_trigger;
+ 	struct work_struct	io_work;
++	struct work_struct	event_work;
+ } __aligned(8);
+ 
+ extern int vfio_ccw_mdev_reg(struct subchannel *sch);
+@@ -76,6 +78,7 @@ enum vfio_ccw_event {
+ 	VFIO_CCW_EVENT_NOT_OPER,
+ 	VFIO_CCW_EVENT_IO_REQ,
+ 	VFIO_CCW_EVENT_INTERRUPT,
++	VFIO_CCW_EVENT_SCH_EVENT,
+ 	/* last element! */
+ 	NR_VFIO_CCW_EVENTS
+ };
+-- 
+2.7.4
