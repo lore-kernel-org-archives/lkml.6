@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752245AbeDSJba (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 05:31:30 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:55805 "EHLO
+        id S1752455AbeDSJbf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 05:31:35 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:49283 "EHLO
         relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751047AbeDSJb1 (ORCPT
+        with ESMTP id S1750990AbeDSJbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 05:31:27 -0400
+        Thu, 19 Apr 2018 05:31:32 -0400
 X-Originating-IP: 2.224.242.101
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: architt@codeaurora.org, a.hajda@samsung.com,
@@ -15,9 +15,9 @@ Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, daniel@ffwll.ch,
         peda@axentia.se, linux-renesas-soc@vger.kernel.org,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/8] drm: bridge: Add support for static image formats
-Date: Thu, 19 Apr 2018 11:31:02 +0200
-Message-Id: <1524130269-32688-2-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 3/8] drm: bridge: thc63lvd1024: Add support for LVDS mode map
+Date: Thu, 19 Apr 2018 11:31:04 +0200
+Message-Id: <1524130269-32688-4-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1524130269-32688-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -25,91 +25,85 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for storing image format information in DRM bridges with
-associated helper function.
+The THC63LVD1024 LVDS to RGB bridge supports two different LVDS mapping
+modes, selectable by means of an external pin.
 
-This patch replicates for bridges what 'drm_display_info_set_bus_formats()'
-is for connectors.
+Add support for configurable LVDS input mapping modes, using the newly
+introduced support for bridge input image formats.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/gpu/drm/drm_bridge.c | 30 ++++++++++++++++++++++++++++++
- include/drm/drm_bridge.h     |  8 ++++++++
- 2 files changed, 38 insertions(+)
+ drivers/gpu/drm/bridge/thc63lvd1024.c | 41 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 1638bfe..e2ad098 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -157,6 +157,36 @@ void drm_bridge_detach(struct drm_bridge *bridge)
+diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
+index 48527f8..a3071a1 100644
+--- a/drivers/gpu/drm/bridge/thc63lvd1024.c
++++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+@@ -10,9 +10,15 @@
+ #include <drm/drm_panel.h>
+ 
+ #include <linux/gpio/consumer.h>
++#include <linux/of.h>
+ #include <linux/of_graph.h>
+ #include <linux/regulator/consumer.h>
+ 
++enum thc63_lvds_mapping_mode {
++	THC63_LVDS_MAP_MODE2,
++	THC63_LVDS_MAP_MODE1,
++};
++
+ enum thc63_ports {
+ 	THC63_LVDS_IN0,
+ 	THC63_LVDS_IN1,
+@@ -116,6 +122,37 @@ static int thc63_parse_dt(struct thc63_dev *thc63)
+ 	return 0;
  }
  
- /**
-+ * drm_bridge_set_bus_formats() - set bridge supported image formats
-+ * @bridge: the bridge to set image formats in
-+ * @formats: array of MEDIA_BUS_FMT\_ supported image formats
-+ * @num_formats: number of elements in the @formats array
-+ *
-+ * Store a list of supported image formats in a bridge.
-+ * See MEDIA_BUS_FMT_* definitions in include/uapi/linux/media-bus-format.h for
-+ * a full list of available formats.
-+ */
-+int drm_bridge_set_bus_formats(struct drm_bridge *bridge, const u32 *formats,
-+			       unsigned int num_formats)
++static int thc63_set_bus_fmt(struct thc63_dev *thc63)
 +{
-+	u32 *fmts;
++	u32 bus_fmt;
++	u32 map;
++	int ret;
 +
-+	if (!formats || !num_formats)
++	ret = of_property_read_u32(thc63->dev->of_node, "thine,map", &map);
++	if (ret) {
++		dev_err(thc63->dev,
++			"Unable to parse property \"thine,map\": %d\n", ret);
++		return ret;
++	}
++
++	switch (map) {
++	case THC63_LVDS_MAP_MODE1:
++		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA;
++		break;
++	case THC63_LVDS_MAP_MODE2:
++		bus_fmt = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG;
++		break;
++	default:
++		dev_err(thc63->dev,
++			"Invalid value for property \"thine,map\": %u\n", map);
 +		return -EINVAL;
++	}
 +
-+	fmts = kmemdup(formats, sizeof(*formats) * num_formats, GFP_KERNEL);
-+	if (!fmts)
-+		return -ENOMEM;
-+
-+	kfree(bridge->bus_formats);
-+	bridge->bus_formats = fmts;
-+	bridge->num_bus_formats = num_formats;
++	drm_bridge_set_bus_formats(&thc63->bridge, &bus_fmt, 1);
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL(drm_bridge_set_bus_formats);
 +
-+/**
-  * DOC: bridge callbacks
-  *
-  * The &drm_bridge_funcs ops are populated by the bridge driver. The DRM
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index 3270fec..6b3648c 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -258,6 +258,9 @@ struct drm_bridge_timings {
-  * @encoder: encoder to which this bridge is connected
-  * @next: the next bridge in the encoder chain
-  * @of_node: device node pointer to the bridge
-+ * @bus_formats: wire image formats. Array of @num_bus_formats MEDIA_BUS_FMT\_
-+ * elements
-+ * @num_bus_formats: size of @bus_formats array
-  * @list: to keep track of all added bridges
-  * @timings: the timing specification for the bridge, if any (may
-  * be NULL)
-@@ -271,6 +274,9 @@ struct drm_bridge {
- #ifdef CONFIG_OF
- 	struct device_node *of_node;
- #endif
-+	const u32 *bus_formats;
-+	unsigned int num_bus_formats;
+ static int thc63_gpio_init(struct thc63_dev *thc63)
+ {
+ 	thc63->oe = devm_gpiod_get_optional(thc63->dev, "oe", GPIOD_OUT_LOW);
+@@ -166,6 +203,10 @@ static int thc63_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = thc63_set_bus_fmt(thc63);
++	if (ret)
++		return ret;
 +
- 	struct list_head list;
- 	const struct drm_bridge_timings *timings;
- 
-@@ -296,6 +302,8 @@ void drm_bridge_mode_set(struct drm_bridge *bridge,
- 			struct drm_display_mode *adjusted_mode);
- void drm_bridge_pre_enable(struct drm_bridge *bridge);
- void drm_bridge_enable(struct drm_bridge *bridge);
-+int drm_bridge_set_bus_formats(struct drm_bridge *bridge, const u32 *fmts,
-+			       unsigned int num_fmts);
- 
- #ifdef CONFIG_DRM_PANEL_BRIDGE
- struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
+ 	thc63->bridge.driver_private = thc63;
+ 	thc63->bridge.of_node = pdev->dev.of_node;
+ 	thc63->bridge.funcs = &thc63_bridge_func;
 -- 
 2.7.4
