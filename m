@@ -1,133 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753750AbeDSXdQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 19:33:16 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43432 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753575AbeDSXdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 19:33:15 -0400
-Date: Thu, 19 Apr 2018 18:33:13 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Namhyung Kim <namhyung@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, Jiri Olsa <jolsa@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, <kernel-team@lge.com>
-Subject: Re: [PATCH] perf tools: set kernel end address properly
-Message-Id: <20180419183313.db3e3a105191a7f30b7650b2@arm.com>
-In-Reply-To: <20180419025424.GC13370@sejong>
-References: <20180416042240.21528-1-namhyung@kernel.org>
-        <20180416092345.GA23274@krava>
-        <20180416135125.GA23802@kernel.org>
-        <20180416110730.1dd12801e43be66ea5d0cc48@arm.com>
-        <20180416165800.GD3202@kernel.org>
-        <20180416122407.0d90863b69fed80166384850@arm.com>
-        <20180416174811.1aca9106364effe435f363c8@arm.com>
-        <20180417022726.GA31947@sejong>
-        <20180418193759.b63912fe5e5b8a9023ec80a8@arm.com>
-        <20180419025424.GC13370@sejong>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753890AbeDSXn3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 19:43:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34378 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753636AbeDSXn2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 19:43:28 -0400
+Date: Thu, 19 Apr 2018 16:43:24 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Mario Limonciello <mario.limonciello@dell.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: dell-smbios: Match on www.dell.com in OEM
+ strings too
+Message-ID: <20180419234324.GA11546@fury>
+References: <1523994356-9598-1-git-send-email-mario.limonciello@dell.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523994356-9598-1-git-send-email-mario.limonciello@dell.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018 11:54:24 +0900
-Namhyung Kim <namhyung@kernel.org> wrote:
-
-> On Wed, Apr 18, 2018 at 07:37:59PM -0500, Kim Phillips wrote:
-> > diff --git a/tools/perf/arch/arm64/util/sym-handling.c b/tools/perf/arch/arm64/util/sym-handling.c
-> > index 0051b1ee8450..5c4a2e208bbc 100644
-> > --- a/tools/perf/arch/arm64/util/sym-handling.c
-> > +++ b/tools/perf/arch/arm64/util/sym-handling.c
-> > @@ -20,3 +20,16 @@ bool elf__needs_adjust_symbols(GElf_Ehdr ehdr)
-> >                ehdr.e_type == ET_DYN;
-> >  }
-> >  #endif
-> > +
-> > +const char *arch__normalize_symbol_name(const char *name)
-> > +{
-> > +       /* 
-> > +        * arm64 kernels compensating for a CPU erratum can put up a 
-> > +        * module_emit_adrp_veneer in place of a module_emit_plt_entry
-> > +        */
-> > +       if (name && strlen(name) >= 23 &&
-> > +           !strncmp(name, "module_emit_adrp_veneer", 23))
-> > +               return "module_emit_plt_entry";
-> > +
-> > +       return name;
-> > +}
+On Tue, Apr 17, 2018 at 02:45:56PM -0500, Mario Limonciello wrote:
+> Sergey reported that some much older Dell systems don't support
+> the OEM string "Dell System" but instead supported www.dell.com
+> in OEM strings.
 > 
-> I don't know it's always preferable or just for the test.  It it's the
-> latter it may be better to move it to the test code.
-
-AFACT, the veneer is a moniker and doesn't technically exist, and
-shouldn't be being looked-up.  Both chunks of this diff are needed to
-pass perf test 1: this chunk above is because in
-arch__normalize_symbol_name(), we squash the perf test 1's "<veneer>
-not in *kallsyms*" problem, and in the below chunk, we prevent it
-coming up when the test code iterates over the *vmlinux* symbols. I.e.
-we need to prevent the veneer from coming up in both kallsyms *and*
-vmlinux.
-
-> > diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
-> > index 1e5adb65632a..07064e76947d 100644
-> > --- a/tools/perf/tests/vmlinux-kallsyms.c
-> > +++ b/tools/perf/tests/vmlinux-kallsyms.c
-> > @@ -163,6 +163,29 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
-> >  
-> >                                 continue;
-> >                         }
-> > +               } else if (pair) {
-> > +                       s64 skew = mem_start - UM(pair->start);
-> > +                       struct map *kmap = map_groups__find(&kallsyms.kmaps, type, mem_start);
-> > +                       struct map *vmap = map_groups__find(&vmlinux.kmaps, type, mem_start);
-> > +
-> > +                       /* 
-> > +                        * arm64 kernels compensating for a CPU erratum can put up a 
-> > +                        * module_emit_adrp_veneer in place of a module_emit_plt_entry
-> > +                        */
-> > +                       if (llabs(skew) < page_size)
+> Match both of these to indicate that this driver is running on
+> a Dell system.
 > 
-> It seems that we needs to check it's the ARM64 at least.  If it's a
+> Reported-by: Sergey Kubushyn <ksi@koi8.net>
+> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+> Tested-by: Sergey Kubushyn <ksi@koi8.net>
+> ---
+>  drivers/platform/x86/dell-smbios-base.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
+> index 2485c80..fbd6557 100644
+> --- a/drivers/platform/x86/dell-smbios-base.c
+> +++ b/drivers/platform/x86/dell-smbios-base.c
+> @@ -555,11 +555,15 @@ static void free_group(struct platform_device *pdev)
+>  
+>  static int __init dell_smbios_init(void)
+>  {
+> -	const struct dmi_device *valid;
+> +	const struct dmi_device *valid_dell_system;
+> +	const struct dmi_device *valid_www;
+>  	int ret, wmi, smm;
+>  
+> -	valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL);
+> -	if (!valid) {
+> +	valid_dell_system =
+> +		dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL);
+> +	valid_www =
+> +		dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL);
+> +	if (!valid_dell_system && !valid_www) {
+>  		pr_err("Unable to run on non-Dell system\n");
+>  		return -ENODEV;
+>  	}
 
-OK.
+Hrm, rather than introduce another variable that we don't use and always perform
+both tests, when most of the time we only need to do the first, how about
+something like:
 
-> rare case we might need to add more paranoid checks.
 
-It's certainly rare: Adding the authors of the veneer to cc for
-comments:
+>From 2cb5959dadec769167350a9bcb1d212a02b17af8 Mon Sep 17 00:00:00 2001
+Message-Id: <2cb5959dadec769167350a9bcb1d212a02b17af8.1524181265.git.dvhart@infradead.org>
+From: Mario Limonciello <mario.limonciello@dell.com>
+Date: Tue, 17 Apr 2018 14:45:56 -0500
+Subject: [PATCH] platform/x86: dell-smbios: Match on www.dell.com in OEM
+ strings too
 
-Will, Ard, how probable are veneer-style symbols such as the
-one introduced in commit a257e0257 "arm64/kernel: don't ban ADRP to
-work around Cortex-A53 erratum #843419" to happen again in the future?
+Sergey reported that some much older Dell systems don't support
+the OEM string "Dell System" but instead supported www.dell.com
+in OEM strings.
 
-I would have thought WARNing on within-a-pagesize would be OK,
-Namhyung.  Are you suggesting checking instead for a hardcoded veneer
-symbol string?
+Match both of these to indicate that this driver is running on
+a Dell system.
 
-Thanks,
+Reported-by: Sergey Kubushyn <ksi@koi8.net>
+Tested-by: Sergey Kubushyn <ksi@koi8.net>
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+[dvhart: Simplify DMI logic and eliminate unnecessary variables]
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+---
+ drivers/platform/x86/dell-smbios-base.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Kim
+diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
+index 33fb2a20458a..9dc282ed5a9e 100644
+--- a/drivers/platform/x86/dell-smbios-base.c
++++ b/drivers/platform/x86/dell-smbios-base.c
+@@ -555,11 +555,10 @@ static void free_group(struct platform_device *pdev)
+ 
+ static int __init dell_smbios_init(void)
+ {
+-	const struct dmi_device *valid;
+ 	int ret, wmi, smm;
+ 
+-	valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL);
+-	if (!valid) {
++	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) &&
++	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com", NULL)) {
+ 		pr_err("Unable to run on non-Dell system\n");
+ 		return -ENODEV;
+ 	}
+-- 
+2.14.3
 
-> > +                       {
-> > +                               pr_debug("NO ERR FOR SKEW %ld: %#" PRIx64 ": diff start addr v: %s k: %#" PRIx64 " %s\n",
-> > +                                        skew, mem_start, sym->name, UM(pair->start), pair->name);
-> > +                               continue;
-> > +                       }
-> > +
-> > +                       pr_debug("ERR : %#" PRIx64 ": diff start addr v: %s k: %#" PRIx64 " %s\n",
-> > +                                mem_start, sym->name, UM(pair->start), pair->name);
-> > +
-> > +                       if (kmap && vmap) {
-> > +                               pr_debug("    : map v: %s k: %s\n",
-> > +                                        vmap->dso->short_name, kmap->dso->short_name);
-> > +                       }
-> >                 } else
-> >                         pr_debug("ERR : %#" PRIx64 ": %s not on kallsyms\n",
-> >                                  mem_start, sym->name);
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
