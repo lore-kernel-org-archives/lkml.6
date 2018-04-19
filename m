@@ -1,155 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753523AbeDSPrw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 11:47:52 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.85]:48028 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753475AbeDSPrS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 11:47:18 -0400
-X-Authority-Reason: nr=8
-Subject: Re: [PATCH] mmc: sdhci-cadence: fix logically and structurally dead
- code
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180419135316.GA14790@embeddedor.com>
- <CAK7LNATQSOtJs6xcYXyRqXdAL-x-CBLVmfAozEEZGnZpzURR8g@mail.gmail.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <35a4de52-a6c9-d65c-6446-b86044287db0@embeddedor.com>
-Date: Thu, 19 Apr 2018 10:47:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAK7LNATQSOtJs6xcYXyRqXdAL-x-CBLVmfAozEEZGnZpzURR8g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.6.211
-X-Source-L: No
-X-Exim-ID: 1f9BmH-003HVt-6h
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.175.6.211]:50926
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        id S1753526AbeDSPsS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 11:48:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42954 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752634AbeDSPq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 11:46:58 -0400
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 09/10] ARM: dts: sun7i-a20: Add Video Engine and reserved memory nodes
+Date: Thu, 19 Apr 2018 17:45:35 +0200
+Message-Id: <20180419154536.17846-5-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I got it.
+This adds nodes for the Video Engine and the associated reserved memory
+for the Allwinner A20. Up to 96 MiB of memory are dedicated to the VPU.
 
-I'll send v2 shortly.
+The VPU can only map the first 256 MiB of DRAM, so the reserved memory
+pool has to be located in that area. Following Allwinner's decision in
+downstream software, the last 96 MiB of the first 256 MiB of RAM are
+reserved for this purpose.
 
-Thanks for the feedback, Masahiro.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ arch/arm/boot/dts/sun7i-a20.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
---
-Gustavo
-
-On 04/19/2018 10:42 AM, Masahiro Yamada wrote:
-> Hi.
-> 
-> 
-> 2018-04-19 22:53 GMT+09:00 Gustavo A. R. Silva <gustavo@embeddedor.com>:
->> Currently, the code block inside the for loop will never execute
->> more than once, because the function returns inmediately after
->> the first iteration, hence the execution of the code at the second
->> iteration is structurally dead and, code at line 281: return 0; is
->> never reached.
->>
->> Based on the code comments, it seems that the actual intention is
->> to execute the code inside the for loop twice instead of once.
-> 
-> Thanks for the report.
-> 
->> So, fix this issue by removing the return statement inside the for
->> loop and replace the "return 0" with "return ret".
->>
->> Addresses-Coverity-ID: 1468009 ("Logically dead code")
->> Addresses-Coverity-ID: 1468002 ("Structurally dead code")
->> Fixes: 213fae74318b ("mmc: sdhci-cadence: send tune request twice to
->> work around errata")
-> 
-> 
-> Probably, this Fixes tag will dangle.
-> 
-> Ulf usually repeats git-rebase to build-up his pull-request.
-> 
-> The addressed commit was already rebased,
-> and its commit ID will change a few more times
-> since it is now -rc1.
-> 
-> 
-> A clean solution would be, to squash a fix-up into the original patch.
-> (This patch is not what I want, though.)
-> 
-> If you want to claim contribution in a separate patch,
-> please rewrite the code as I suggested,
-> and drop the Fixes tag.
-> 
-> 
-> 
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>   drivers/mmc/host/sdhci-cadence.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
->> index bc30d16..facbad8 100644
->> --- a/drivers/mmc/host/sdhci-cadence.c
->> +++ b/drivers/mmc/host/sdhci-cadence.c
->> @@ -275,10 +275,9 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
->>                                           !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
->>                                           0, 1);
->>
->> -               return ret;
->>          }
->>
->> -       return 0;
->> +       return ret;
->>   }
->>
->>   static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)
->> --
-> 
-> No.
-> I want to confirm that the operation succeeds twice.
-> 
-> Your code hides any error in the first loop.
-> 
-> 
-> 
-> My intention is like follows:
-> 
-> 
-> 
->   --- a/drivers/mmc/host/sdhci-cadence.c
->   +++ b/drivers/mmc/host/sdhci-cadence.c
->   @@ -275,10 +275,9 @@ static int sdhci_cdns_set_tune_val(struct
-> sdhci_host *host, unsigned int val)
->                                            !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
->                                            0, 1);
->   -
->   -               return ret;
->   +               if (ret)
->   +                       return ret;
->           }
-> 
->           return 0;
->    }
-> 
->    static int sdhci_cdns_execute_tuning(struct mmc_host *mmc, u32 opcode)
-> 
-> 
-> 
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index bd0cd3204273..cb6d82065dcf 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -163,6 +163,20 @@
+ 		reg = <0x40000000 0x80000000>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
++		ve_memory: cma@4a000000 {
++			compatible = "shared-dma-pool";
++			reg = <0x4a000000 0x6000000>;
++			no-map;
++			linux,cma-default;
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+@@ -451,6 +465,23 @@
+ 			};
+ 		};
+ 
++		ve: video-engine@1c0e000 {
++			compatible = "allwinner,sun4i-a10-video-engine";
++			reg = <0x01c0e000 0x1000>;
++			memory-region = <&ve_memory>;
++
++			clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
++				 <&ccu CLK_DRAM_VE>;
++			clock-names = "ahb", "mod", "ram";
++
++			assigned-clocks = <&ccu CLK_VE>;
++			assigned-clock-rates = <320000000>;
++
++			resets = <&ccu RST_VE>;
++
++			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun7i-a20-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+-- 
+2.16.3
