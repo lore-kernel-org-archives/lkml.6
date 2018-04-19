@@ -1,69 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752848AbeDSITt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 04:19:49 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34270 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750972AbeDSITq (ORCPT
+        id S1752914AbeDSIUC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 04:20:02 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:34090 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751182AbeDSIT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 04:19:46 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Philippe Cornu <philippe.cornu@st.com>
-Cc: Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yannick Fertre <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: [PATCH 1/2] dt-bindings/display/bridge: sii902x: add optional power supplies
-Date: Thu, 19 Apr 2018 11:11:26 +0300
-Message-ID: <20599695.GSkeUvMnvx@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180410051927.8268-2-philippe.cornu@st.com>
-References: <20180410051927.8268-1-philippe.cornu@st.com> <20180410051927.8268-2-philippe.cornu@st.com>
+        Thu, 19 Apr 2018 04:19:58 -0400
+X-Google-Smtp-Source: AIpwx48X4GOXBaDyCUvaDLfMsC4rej9yNrh7enhqqHmHd2LJNv5j9JMZuDxTb/Oc/oythoT2qKBP9g==
+Subject: Re: [PATCH v3 1/6] ilog2: create truly constant version for sparse
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Martin Wilck <mwilck@suse.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>,
+        James Bottomley <jejb@linux.vnet.ibm.com>,
+        Xose Vazquez Perez <xose.vazquez@gmail.com>,
+        Bart Van Assche <Bart.VanAssche@sandisk.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+        Randy Dunlap <rdunlap@infradead.org>
+References: <20180417233511.6573-1-mwilck@suse.com>
+ <20180417233511.6573-2-mwilck@suse.com>
+ <CA+55aFxLY2=RVAD8m-3bf4vKWpPKWSmjN_tLVWwb4Y7w81UTbA@mail.gmail.com>
+ <1524039174.3028.24.camel@suse.com>
+ <CA+55aFyLUNQUrog0MU3a07jesimiDYQ2HQc2UpAKG1SEOK23Xw@mail.gmail.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <c68a0f46-346c-70a0-a9b8-31747888f05f@rasmusvillemoes.dk>
+Date: Thu, 19 Apr 2018 10:19:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CA+55aFyLUNQUrog0MU3a07jesimiDYQ2HQc2UpAKG1SEOK23Xw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
-
-Thank you for the patch.
-
-On Tuesday, 10 April 2018 08:19:26 EEST Philippe Cornu wrote:
-> Add the 3 optional power supplies using the exact description
-> found in the document named
-> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
+On 2018-04-18 23:21, Linus Torvalds wrote:
+> On Wed, Apr 18, 2018 at 1:12 AM, Martin Wilck <mwilck@suse.com> wrote:
+>>
+>> No, it doesn't (gcc 7.3.0). -> https://paste.opensuse.org/27471594
+>> It doesn't even warn on an expression like this:
+>>
+>>   #define SIZE (1<<10)
+>>   static int foo[ilog2(SIZE)];
 > 
-> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
-> ---
->  Documentation/devicetree/bindings/display/bridge/sii902x.txt | 3 +++
->  1 file changed, 3 insertions(+)
+> Ok, I think this is the "random gcc versions act differently" issue.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
-> b/Documentation/devicetree/bindings/display/bridge/sii902x.txt index
-> 56a3e68ccb80..cf53678fe574 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/sii902x.txt
-> +++ b/Documentation/devicetree/bindings/display/bridge/sii902x.txt
-> @@ -8,6 +8,9 @@ Optional properties:
->  	- interrupts-extended or interrupt-parent + interrupts: describe
->  	  the interrupt line used to inform the host about hotplug events.
->  	- reset-gpios: OF device-tree gpio specification for RST_N pin.
-> +	- iovcc-supply: I/O supply voltage (1.8V or 3.3V, host-dependent).
-> +	- avcc12-supply: TMDS analog supply voltage (1.2V).
-> +	- cvcc12-supply: Digital core supply voltage (1.2V).
+> Sometimes __builtin_constant_p() to a ternary operation acts as a
+> constant expression, and sometimes it doesn't.
 
-It seems that the AVCC12 and CVCC12 power supplies are usually derived from 
-the same source. How about starting with one DT property for both, and adding 
-a second one later if needed ?
+So __builtin_constant_p on an actual ICE always fold immediately to 1.
+Looking at the gcc history, that seems to have been there since at least
+2000, but likely forever. And when it's the controlling expression of a
+ternary, it's apparently a stronger 1 than a literal 1:
 
->  Optional subnodes:
->  	- video input: this subnode can contain a video input port node
+int foo(int);
+#define SIZE (1<<10)
+#define half(x) (__builtin_constant_p(x) ? (x)>>1 : foo(x))
+int bla[half(SIZE)];
+int bla2[1 ? 123 : foo(3)+2];
 
--- 
-Regards,
+on godbolt.org, gcc 4.1 and gcc4.4 are perfectly happy with this, but
+newer gccs complain
 
-Laurent Pinchart
+  error: variably modified 'bla2' at file scope.
+
+Argh.
+
+> I suspect using the __is_constexpr() trick would make it rather more
+> technically correct, but would actually generate much worse code.
+> 
+> Because it would make us do that dynamic "__ilog2_uXX()" function call
+> even when you have a compile-time constant value, if it wasn't
+> actually a constant expression (ie a constant argument passed to an
+> inline function, for example).
+
+It's a bit ugly, but I suppose one could keep a __builtin_constant_p()
+check in the not-ICE-branch, so there's really three cases (ICE,
+constant due to various optimizations, really not known at compile
+time). But don't we use gcc's intrinsics for fls when available, so that
+gcc should be able to know the semantics of __builtin_fls(some-constant)
+and hence evaluate that itself at compile time?
+
+Somewhat unrelated, we should probably move the __is_constexpr helper
+from kernel.h to some more basic compiler header, to avoid cyclic header
+dependencies.
+
+Rasmus
