@@ -1,143 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751879AbeDSKcX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 06:32:23 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:41399 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751042AbeDSKcV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 06:32:21 -0400
-Date: Thu, 19 Apr 2018 12:32:07 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        airlied@linux.ie, horms@verge.net.au, magnus.damm@gmail.com,
-        geert@linux-m68k.org, niklas.soderlund@ragnatech.se,
-        sergei.shtylyov@cogentembedded.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] dt-bindings: display: bridge: Document
- THC63LVD1024 LVDS decoder
-Message-ID: <20180419103207.GA4235@w540>
-References: <1523357590-3841-1-git-send-email-jacopo+renesas@jmondi.org>
- <1523357590-3841-2-git-send-email-jacopo+renesas@jmondi.org>
- <29caaf6f-1783-9b01-5304-8748398d41c6@mentor.com>
+        id S1752273AbeDSKc6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 06:32:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40722 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751325AbeDSKcz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 06:32:55 -0400
+Date: Thu, 19 Apr 2018 12:32:50 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jerome Glisse <jglisse@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tim Chen <tim.c.chen@linux.intel.com>, "Theodore Ts'o" <tytso@mit.edu>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <jbacik@fb.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Jeff Layton <jlayton@redhat.com>
+Subject: Re: [RFC PATCH 00/79] Generic page write protection and a solution
+ to page waitqueue
+Message-ID: <20180419103250.qvusqkjq6hlz3ch6@quack2.suse.cz>
+References: <20180404191831.5378-1-jglisse@redhat.com>
+ <20180418141337.mrnxqolo6aar3ud3@quack2.suse.cz>
+ <20180418155429.GA3476@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <29caaf6f-1783-9b01-5304-8748398d41c6@mentor.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180418155429.GA3476@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed 18-04-18 11:54:30, Jerome Glisse wrote:
+> > Overall I think you'd need to make a good benchmarking comparison showing
+> > how much this helps some real workloads (your motivation) and also how
+> > other loads on lower end machines are affected.
+> 
+> Do you have any specific benchmark you would like to see ? My list was:
+>   https://github.com/01org/lkp-tests
+>   https://github.com/gormanm/mmtests
 
---BOKacYhQ+x31HxR3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So e.g. mmtests have a *lot* of different tests so it's probably not
+realistic for you to run them all. I'd look at bonnie++ (file & dir tests),
+dbench, reaim - these are crappy IO benchmarks because they mostly fit into
+page cache but for your purposes this is exactly what you want to see
+differences in CPU overhead :).
 
-On Thu, Apr 19, 2018 at 12:44:32PM +0300, Vladimir Zapolskiy wrote:
-Hi Vladimir,
+> > > ----------------------------------------------------------------------
+> > > The What ?
+> > > 
+> > > Aim of this patch serie is to introduce generic page write protection
+> > > for any kind of regular page in a process (private anonymous or back
+> > > by regular file). This feature already exist, in one form, for private
+> > > anonymous page, as part of KSM (Kernel Share Memory).
+> > > 
+> > > So this patch serie is two fold. First it factors out the page write
+> > > protection of KSM into a generic write protection mechanim which KSM
+> > > becomes the first user of. Then it add support for regular file back
+> > > page memory (regular file or share memory aka shmem). To achieve this
+> > > i need to cut the dependency lot of code have on page->mapping so i
+> > > can set page->mapping to point to special structure when write
+> > > protected.
+> > 
+> > So I'm interested in this write protection mechanism but I didn't find much
+> > about it in the series. How does it work? I can see KSM writeprotects pages
+> > in page tables so that works for userspace mappings but what about
+> > in-kernel users modifying pages - e.g. pages in page cache carrying
+> > filesystem metadata do get modified a lot like this.
+> 
+> So i only care about page which are mmaped into a process address space.
+> At first i only want to intercept CPU write access through mmap of file
+> but i also intend to extend write syscall to also "fault" on the write
+> protection ie it will call a callback to unprotect the page allowing the
+> write protector to take proper action while write syscall is happening.
+> 
+> I am affraid truely generic write protection for metadata pages is bit
+> out of scope of what i am doing. However the mechanism i am proposing
+> can be extended for that too. Issue is that all place that want to write
+> to those page need to be converted to something where write happens
+> between write_begin and write_end section (mmap and CPU pte does give
+> this implicitly through page fault, so does write syscall). Basicly
+> there is a need to make sure that write and write protection can be
+> ordered against one another without complex locking.
 
-> Hi Jacopo, Laurent,
->
-> On 04/10/2018 01:53 PM, Jacopo Mondi wrote:
-> > Document Thine THC63LVD1024 LVDS decoder device tree bindings.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> > Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
->
-> > ---
-> >  .../bindings/display/bridge/thine,thc63lvd1024.txt | 60 ++++++++++++++=
-++++++++
-> >  1 file changed, 60 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/th=
-ine,thc63lvd1024.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc=
-63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc6=
-3lvd1024.txt
-> > new file mode 100644
-> > index 0000000..0b23e70
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd10=
-24.txt
-> > @@ -0,0 +1,60 @@
-> > +Thine Electronics THC63LVD1024 LVDS decoder
-> > +-------------------------------------------
-> > +
-> > +The THC63LVD1024 is a dual link LVDS receiver designed to convert LVDS=
- streams
-> > +to parallel data outputs. The chip supports single/dual input/output m=
-odes,
-> > +handling up to two LVDS input streams and up to two digital CMOS/TTL o=
-utputs.
-> > +
-> > +Single or dual operation mode, output data mapping and DDR output mode=
-s are
-> > +configured through input signals and the chip does not expose any cont=
-rol bus.
-> > +
-> > +Required properties:
-> > +- compatible: Shall be "thine,thc63lvd1024"
-> > +- vcc-supply: Power supply for TTL output, TTL CLOCKOUT signal, LVDS i=
-nput,
-> > +  PPL and digital circuitry
-> > +
-> > +Optional properties:
-> > +- powerdown-gpios: Power down GPIO signal, pin name "/PDWN". Active low
->
-> Thank you for the change.
->
-> I would suggest to rename 'pwdn-gpios' property of THC63LVDM83D as well,
-> as far as I understand it is only described in DT bindings documentation,
-> and the property is unused in the driver or board DTS files at the moment.
+I understand metadata pages are not interesting for your use case. However
+from mm point of view these are page cache pages as any other. So maybe my
+question should have been: How do we make sure this mechanism will not be
+used for pages for which it cannot work?
 
-Thanks for the suggestion, I'll do that!
+> > > A write protected page has page->mapping pointing to a structure like
+> > > struct rmap_item for KSM. So this structure has a list for each unique
+> > > combination:
+> > >     struct write_protect {
+> > >         struct list_head *mappings; /* write_protect_mapping list */
+> > >         ...
+> > >     };
+> > > 
+> > >     struct write_protect_mapping {
+> > >         struct list_head list
+> > >         struct address_space *mapping;
+> > >         unsigned long offset;
+> > >         unsigned long private;
+> > >         ...
+> > >     };
+> > 
+> > Auch, the fact that we could share a page as data storage for several
+> > inode+offset combinations that are not sharing underlying storage just
+> > looks viciously twisted ;) But is it really that useful to warrant
+> > complications? In particular I'm afraid that filesystems expect consistency
+> > between their internal state (attached to page->private) and page state
+> > (e.g. page->flags) and when there are multiple internal states attached to
+> > the same page this could go easily wrong...
+> 
+> So at first i want to limit to write protect (not KSM) thus page->flags
+> will stay consistent (ie page is only ever associated with a single
+> mapping). For KSM yes the page->flags can be problematic, however here
+> we can assume that page is clean (and uptodate) and not under write
+> back. So problematic flags for KSM:
+>   - private (page_has_buffers() or PagePrivate (nfs, metadata, ...))
+>   - private_2 (FsCache)
+>   - mappedtodisk
+>   - swapcache
+>   - error
+> 
+> Idea again would be to PageFlagsWithMapping(page, mapping) so that for
+> non KSM write protected page you test the usual page->flags and for
+> write protected page you find the flag value using mapping as lookup
+> index. Usualy those flag are seldomly changed/accessed. Again the
+> overhead (ignoring code size) would only be for page which are KSM.
+> So maybe KSM will not make sense because perf overhead it has with
+> page->flags access (i don't think so but i haven't tested this).
 
->
-> > +- oe-gpios: Output enable GPIO signal, pin name "OE". Active high
->
-> Okay :)
+Yeah, sure, page->flags could be dealt with in a similar way but at this
+point I don't think it's worth it. And without page->flags I don't think
+abstracting page->private makes much sense - or am I missing something why
+you need page->private depend on the mapping? So what I wanted to suggest
+is that we leave page->private as is currently and just concentrate on
+page->mapping hacks...
 
-Yeah, please see Rob's and Laurent's reply to v7, where I renamed this
-to 'enable'.
-
-Thanks
-   j
->
-> --
-> With best wishes,
-> Vladimir
-
---BOKacYhQ+x31HxR3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJa2HAnAAoJEHI0Bo8WoVY8CLUP/0oI3S4m1u0cQT7zFrVBWQKA
-Z/1mTuAz3fbLQgzg3IRlQm9CdmTqt3EzZ6bCkuV/qw2Xx9VXLqHp/tQbw7oYKTzD
-ZinQKq4o5vx+EjrKmoA8T4YFgfIHYvlfGAc+s5GvZ/+xjP5sJv6O0oEZe9jrrtz3
-ZL7fxvkwSrBnpz9xrkmBfZLhlrSQW+eseEEATIQ0Fr0njHr+ojVcAIEurEpfvF6u
-MJ6LMpGJY6clEJZWNQ/HjFvmVupJxz5LS14utEdKM1fHOjte2fPjlmd+RCaKu1T4
-jlx/QMY6/m5YWv+tjBRSmHA7LVF5eZzw/six5F1vSnjfsGfpSRa5f4RO2O0hheX6
-mEAjzjh699D8zCl2i/9ZDiiRVoSCQsvopS32ry/ZNnjqVoiqQkpKYg4GPtOWBLEr
-IxsUFdXC88+Z0cywWnwYgHbMfgY0Ine1NitAItkY3Tr4lArPC521FMg6fshiOKTz
-ALKAbcmMXTAEHrw8B67Bsew5G9+m+FDu5zj5P9gVznsE+fVrYjmrIuuTpwVZQZEJ
-VKY7CNxwWnR8UIEoHWnBsDGDwKxcl+ulF8xkgxzePWzaRaiaCJ/ds8eb1ddzV9zr
-5Zlkg5uXo7aGYYLepXVbk/0t/WhbahLZ6w9R7y5iQih1f/Ua85G3GXpJb5a4nz1M
-k0T8RtEx0GtoSHxcjZN/
-=2O14
------END PGP SIGNATURE-----
-
---BOKacYhQ+x31HxR3--
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
