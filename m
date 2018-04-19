@@ -1,59 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753860AbeDSOud (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 10:50:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45940 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753406AbeDSOua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 10:50:30 -0400
-Date: Thu, 19 Apr 2018 16:50:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: "zhenwei.pi" <zhenwei.pi@youruncloud.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4 : fix comments in ext4_swap_extents
-Message-ID: <20180419145028.44fqs4wy5ofhvn5z@quack2.suse.cz>
-References: <1521448449-25916-1-git-send-email-zhenwei.pi@youruncloud.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1521448449-25916-1-git-send-email-zhenwei.pi@youruncloud.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        id S1753639AbeDSOtd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 10:49:33 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46138 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753518AbeDSOtZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 10:49:25 -0400
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+To: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, cohuck@redhat.com
+Subject: [PATCH 00/10] vfio: ccw: Refactoring the VFIO CCW state machine
+Date: Thu, 19 Apr 2018 16:48:03 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 18041914-0044-0000-0000-0000054A09CC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18041914-0045-0000-0000-0000288A25F0
+Message-Id: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-19_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804190131
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 19-03-18 16:34:09, zhenwei.pi wrote:
-> "mark_unwritten" in comment and "unwritten" in variable
-> argument lists is mismatch.
-> 
-> Signed-off-by: zhenwei.pi <zhenwei.pi@youruncloud.com>
+The goal of the patch serie is to enhance the state machine by
+centralizing all state changes inside the state machine wrapper
+and have a clear view of state changes.
 
-This seems to have fallen through cracks. The patch looks good to me. Ted,
-can you please merge it? Thanks!
+Doing this will:
+- facilitate the introduction of new events received from QEMU
+  (cancel/clear/stsh) or from the hardware (chr events).
+- produce small, easy to maintain FSM functions with clear
+  incoming events and outgoing states
 
-								Honza
+This series introduces new states and events and suppressed
+others.
+- VFIO_CCW_STATE_NOT_OPER : when the Sub-Channel is KO
+- VFIO_CCW_STATE_STANDBY  : when it is offline
+- VFIO_CCW_STATE_IDLE     : when it is ready for I/O
+- VFIO_CCW_STATE_BUSY     : when it is busy doing I/O
+- VFIO_CCW_STATE_QUIESCING: when it is busy going offline
 
-> ---
->  fs/ext4/extents.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 054416e..2fc4227 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -5751,7 +5751,7 @@ int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
->   * @lblk1:	Start block for first inode
->   * @lblk2:	Start block for second inode
->   * @count:	Number of blocks to swap
-> - * @mark_unwritten: Mark second inode's extents as unwritten after swap
-> + * @unwritten: Mark second inode's extents as unwritten after swap
->   * @erp:	Pointer to save error value
->   *
->   * This helper routine does exactly what is promise "swap extents". All other
-> -- 
-> 2.7.4
-> 
+- VFIO_CCW_EVENT_INIT     : the channel setup (admin)
+- VFIO_CCW_EVENT_NOT_OPER : something really wrong happened
+- VFIO_CCW_EVENT_SSCH_REQ : Starting an I/O request (UAPI)
+- VFIO_CCW_EVENT_INTERRUPT: Receiving an interrupt (callback)
+- VFIO_CCW_EVENT_SCH_EVENT: Receiving a channel event (callback)
+- VFIO_CCW_EVENT_ONLINE   : Channel is set online (admin)
+- VFIO_CCW_EVENT_OFFLINE  : Channel is set offline (admin)
+
+The ABI did not change, so a standard QEMU devel branch can be used.
+
+
+Pierre Morel (10):
+  vfio: ccw: Moving state change out of IRQ context
+  vfio: ccw: Transform FSM functions to return state
+  vfio: ccw: new SCH_EVENT event
+  vfio: ccw: replace IO_REQ event with SSCH_REQ event
+  vfio: ccw: Suppress unused event parameter
+  vfio: ccw: Make FSM functions atomic
+  vfio: ccw: Introduce the INIT event
+  vfio: ccw: Handling reset and shutdown with states
+  vfio: ccw: Suppressing the BOXED state
+  vfio: ccw: Let user wait when busy on IO
+
+ drivers/s390/cio/vfio_ccw_drv.c     | 120 +++++++-------------
+ drivers/s390/cio/vfio_ccw_fsm.c     | 215 +++++++++++++++++++++++++-----------
+ drivers/s390/cio/vfio_ccw_ops.c     |  58 +++++-----
+ drivers/s390/cio/vfio_ccw_private.h |  21 +++-
+ 4 files changed, 232 insertions(+), 182 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.7.4
