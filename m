@@ -1,23 +1,23 @@
 Return-Path: <gregory.clement@bootlin.com>
-X-Google-Smtp-Source: AIpwx4/Y9QJzUg7L2wRqs/G8gFLKHIblUe+nsIUhFL5whl9QveOemOdJpPmwGWfoPb3nizycKAQ4
-ARC-Seal: i=1; a=rsa-sha256; t=1524144672; cv=none;
+X-Google-Smtp-Source: AIpwx4+mHp+ZX+mqkWfrsNqsWM0cYJuCcCHbqysHAWkb0/pTDzJ5NtBixpHgqpa69RtHPVtNwor7
+ARC-Seal: i=1; a=rsa-sha256; t=1524144671; cv=none;
         d=google.com; s=arc-20160816;
-        b=v7NqVBUKYvN0A3aVhpiahbn9D16O4SwnxZvMvCjg3/TD0cAIK8xY6J71/op5Ophal0
-         0wAXS74uNkrsikjGT6qWNJJ/cdST1miC3oGpRkDLj2MdN6BlHkqA3VarRiKAcX//ugTs
-         va6+sbh7OP0E3SSB+iMdc9RwEj6G945HHYAmIHMxTc/a0i72QEsfhrbKIBrZzGVk0pFx
-         G0pqPYiSZDfGLx6+iOvi9E3ZJj/7Agf1587AmwGaNcMGoRdAubmvdJW5gYzfgXH6MxpM
-         BoJEiNji66OOEoyApMjrlWDLGM8S6RpEiWs0r1i3IxLJe8Rvw3h4rT9hIwgSXB245E5g
-         3wtA==
+        b=XWQ5fsiw1OaqSni3kqsd0YjiN0HpEnx/JCi/9R8wiz3S+uxn/us1uM8WAbqbyg++WR
+         2vgAV302rqPtaJPjUDVjZSdNw3x1HVUoyzyuuYttD9k1AfkdfySE7kDw/7iliVBfdqxN
+         oM1W3Q4HpHFTnnLFzFBqA6hSvCSIQwb21rAe3HnSbH7hQJxaAbzKdn9QaQnggG0KJrnF
+         EH9hRiWhvgu2l5qGXOCDs8ODb8S3mhbHSSs8W6rSvWaLsCKp7Spx+3R5EPi+pCZHM6IL
+         2rgJ6LDnwLM2dbla7l7PQQsUTlLnOF7KEVb7WP9eGf443SZhx350J7i/tKxb1EtiFZOD
+         Viag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=3WaodmuZ7JRiiwspq/DJ0kfFSyFsHOodiZ/Ymw44Ww8=;
-        b=LJTQrhB2SToYETRJVUE5yM7ayThvauMSm1AE9vAZ57iT1nvl9+g6cAkLcEWpiQ6Gx3
-         w50NKVUqF0SVHhoNtptyRMtfOt6tGNgtSoeAMXf7Gif4oicfqyzjItJm4E/N8o2GNqyW
-         Qg0v06bIgpgLqxbub37hSaXNJAJRVSmSN+YzEl+06LantDeXWxlK616wRcbS2bCyGGQn
-         3VAVvIrVqqZK+j4pckZaAvXqlNxQB1ttA3id8axTTA5gkKtOQ2iRicwd+Yv4Tcaa1of/
-         eET1Zn9sPZ8MoArSqjXb7P8VwrOm0BVDdZcxPgf3Yc17Ryl6SQ4qNiJBT/T4av+wgzJG
-         j1Sw==
+        bh=1qDHU6xIIWR+WWnzIJp/tQBFfeqQH/1QMo7rTR+4dzU=;
+        b=BXd/bkQwCx7lZ7uqrH7k0iLWik5pWJHabZ0f1D3Iqgko4DxCjbRTV0b0kfJN73kKGB
+         6JYs/NxI9xXIeM1ledsfVq0HmdtFCtjGuVUkcRFQysV8uUMFcnLvX1VF73PM6u3UpPot
+         jHkUPtCTSfg9hfSyINJk/+UlytzjxPnS7sDDp5k7MvsbShe0Td+FrJpq+HErJJK1Ry25
+         mCuDvgKQclrgP3W+GNI3SeLxN8+vQwYv1ybbM6Trj8H6Cy/ZPCe+cn119HhUgHRosl8/
+         EvBsq8yWj+xfMxib731hjMq00X48p/Hikn+W+r2CzYrWQkNSwyHsmH55uCWaHT3DvVT8
+         8Tzg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of gregory.clement@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=gregory.clement@bootlin.com
 Authentication-Results: mx.google.com;
@@ -42,142 +42,49 @@ Cc: Jason Cooper <jason@lakedaemon.net>,
 	Hanna Hawa <hannah@marvell.com>,
 	Igal Liberman <igall@marvell.com>,
 	Marcin Wojtas <mw@semihalf.com>
-Subject: [PATCH v2 2/2] usb: host: xhci-plat: Fix clock resource by adding a register clock
-Date: Thu, 19 Apr 2018 15:30:53 +0200
-Message-Id: <20180419133053.11894-3-gregory.clement@bootlin.com>
+Subject: [PATCH v2 1/2] usb: host: xhci-plat: Remove useless test before clk_disable_unprepare
+Date: Thu, 19 Apr 2018 15:30:52 +0200
+Message-Id: <20180419133053.11894-2-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180419133053.11894-1-gregory.clement@bootlin.com>
 References: <20180419133053.11894-1-gregory.clement@bootlin.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598181523435631106?=
-X-GMAIL-MSGID: =?utf-8?q?1598181523435631106?=
+X-GMAIL-THRID: =?utf-8?q?1598181523783849966?=
+X-GMAIL-MSGID: =?utf-8?q?1598181523783849966?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Armada 7K/8K we need to explicitly enable the register clock. This
-clock is optional because not all the SoCs using this IP need it but at
-least for Armada 7K/8K it is actually mandatory.
-
-The change was done at xhci-plat level and not at a xhci-mvebu.c because,
-it is expected that other SoC would have this kind of constraint.
-
-The binding documentation is updating accordingly.
+clk_disable_unprepare() already checks that the clock pointer is valid.
+No need to test it before calling it.
 
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- Documentation/devicetree/bindings/usb/usb-xhci.txt |  5 ++++-
- drivers/usb/host/xhci-plat.c                       | 25 ++++++++++++++++++----
- drivers/usb/host/xhci.h                            |  3 ++-
- 3 files changed, 27 insertions(+), 6 deletions(-)
+ drivers/usb/host/xhci-plat.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-index c4c00dff4b56..bd1dd316fb23 100644
---- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
-+++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-@@ -28,7 +28,10 @@ Required properties:
-   - interrupts: one XHCI interrupt should be described here.
- 
- Optional properties:
--  - clocks: reference to a clock
-+  - clocks: reference to the clocks
-+  - clock-names: mandatory if there is a second clock, in this case
-+    the name must be "core" for the first clock and "reg" for the
-+    second one
-   - usb2-lpm-disable: indicate if we don't want to enable USB2 HW LPM
-   - usb3-lpm-capable: determines if platform is USB3 LPM capable
-   - quirk-broken-port-ped: set if the controller has broken port disable mechanism
 diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index f0231fea524e..596e7a71b666 100644
+index df327dcc2bac..f0231fea524e 100644
 --- a/drivers/usb/host/xhci-plat.c
 +++ b/drivers/usb/host/xhci-plat.c
-@@ -157,6 +157,7 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	struct resource         *res;
- 	struct usb_hcd		*hcd;
- 	struct clk              *clk;
-+	struct clk              *reg_clk;
- 	int			ret;
- 	int			irq;
- 
-@@ -226,17 +227,27 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	hcd->rsrc_len = resource_size(res);
- 
- 	/*
--	 * Not all platforms have a clk so it is not an error if the
--	 * clock does not exists.
-+	 * Not all platforms have clks so it is not an error if the
-+	 * clock do not exist.
- 	 */
-+	reg_clk = devm_clk_get(&pdev->dev, "reg");
-+	if (!IS_ERR(reg_clk)) {
-+		ret = clk_prepare_enable(reg_clk);
-+		if (ret)
-+			goto put_hcd;
-+	} else if (PTR_ERR(reg_clk) == -EPROBE_DEFER) {
-+		ret = -EPROBE_DEFER;
-+		goto put_hcd;
-+	}
-+
- 	clk = devm_clk_get(&pdev->dev, NULL);
- 	if (!IS_ERR(clk)) {
- 		ret = clk_prepare_enable(clk);
- 		if (ret)
--			goto put_hcd;
-+			goto disable_reg_clk;
- 	} else if (PTR_ERR(clk) == -EPROBE_DEFER) {
- 		ret = -EPROBE_DEFER;
--		goto put_hcd;
-+		goto disable_reg_clk;
- 	}
- 
- 	xhci = hcd_to_xhci(hcd);
-@@ -252,6 +263,7 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	device_wakeup_enable(hcd->self.controller);
- 
- 	xhci->clk = clk;
-+	xhci->reg_clk = reg_clk;
- 	xhci->main_hcd = hcd;
- 	xhci->shared_hcd = __usb_create_hcd(driver, sysdev, &pdev->dev,
- 			dev_name(&pdev->dev), hcd);
-@@ -322,6 +334,9 @@ static int xhci_plat_probe(struct platform_device *pdev)
- disable_clk:
- 	clk_disable_unprepare(clk);
- 
-+disable_reg_clk:
-+	clk_disable_unprepare(reg_clk);
-+
- put_hcd:
- 	usb_put_hcd(hcd);
- 
-@@ -337,6 +352,7 @@ static int xhci_plat_remove(struct platform_device *dev)
- 	struct usb_hcd	*hcd = platform_get_drvdata(dev);
- 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
- 	struct clk *clk = xhci->clk;
-+	struct clk *reg_clk = xhci->reg_clk;
- 
- 	xhci->xhc_state |= XHCI_STATE_REMOVING;
- 
-@@ -347,6 +363,7 @@ static int xhci_plat_remove(struct platform_device *dev)
+@@ -320,8 +320,7 @@ static int xhci_plat_probe(struct platform_device *pdev)
  	usb_put_hcd(xhci->shared_hcd);
  
- 	clk_disable_unprepare(clk);
-+	clk_disable_unprepare(reg_clk);
+ disable_clk:
+-	if (!IS_ERR(clk))
+-		clk_disable_unprepare(clk);
++	clk_disable_unprepare(clk);
+ 
+ put_hcd:
+ 	usb_put_hcd(hcd);
+@@ -347,8 +346,7 @@ static int xhci_plat_remove(struct platform_device *dev)
+ 	usb_remove_hcd(hcd);
+ 	usb_put_hcd(xhci->shared_hcd);
+ 
+-	if (!IS_ERR(clk))
+-		clk_disable_unprepare(clk);
++	clk_disable_unprepare(clk);
  	usb_put_hcd(hcd);
  
  	pm_runtime_set_suspended(&dev->dev);
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 05c909b04f14..6dfc4867dbcf 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1729,8 +1729,9 @@ struct xhci_hcd {
- 	int		page_shift;
- 	/* msi-x vectors */
- 	int		msix_count;
--	/* optional clock */
-+	/* optional clocks */
- 	struct clk		*clk;
-+	struct clk		*reg_clk;
- 	/* data structures */
- 	struct xhci_device_context_array *dcbaa;
- 	struct xhci_ring	*cmd_ring;
 -- 
 2.16.3
