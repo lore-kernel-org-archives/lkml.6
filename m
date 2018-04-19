@@ -1,120 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753849AbeDSWzP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 18:55:15 -0400
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:44097 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753792AbeDSWzL (ORCPT
+        id S1753720AbeDSW6j (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 18:58:39 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36619 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753571AbeDSW6h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 18:55:11 -0400
-X-Google-Smtp-Source: AIpwx48oz+nNH0quBqtaGWagvT7ztQzt3s3dR28x4OxAajOZq4fpAYLyn+k11nw6XISKh+IdsASjSw==
-Subject: Re: [RFC PATCH v2 3/4] acpi: apei: Do not panic() when correctable
- errors are marked as fatal.
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-acpi@vger.kernel.org, linux-edac@vger.kernel.org,
-        rjw@rjwysocki.net, lenb@kernel.org, tony.luck@intel.com,
-        tbaicar@codeaurora.org, will.deacon@arm.com, james.morse@arm.com,
-        shiju.jose@huawei.com, zjzhang@codeaurora.org, gengdongjiu@huawei.com,
-        linux-kernel@vger.kernel.org, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com, devel@acpica.org,
-        mchehab@kernel.org, robert.moore@intel.com, erik.schmauss@intel.com
-References: <20180416215903.7318-1-mr.nuke.me@gmail.com>
- <20180416215903.7318-4-mr.nuke.me@gmail.com> <20180418175415.GJ4795@pd.tnic>
- <bdc1d19b-3cc1-3f90-d276-414aaacdbd3a@gmail.com>
- <20180419154006.GE3600@pd.tnic>
- <977608e6-9f5d-c523-a78a-993ac5bfd55f@gmail.com>
- <20180419164528.GD5635@pd.tnic>
- <ffe6b459-c80a-d3c0-451d-0d21ae63da54@gmail.com>
- <20180419190323.GF5635@pd.tnic>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <dba07329-2f85-2bde-85ea-5bdf26fb8df2@gmail.com>
-Date: Thu, 19 Apr 2018 17:55:08 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 19 Apr 2018 18:58:37 -0400
+X-Google-Smtp-Source: AIpwx4+8PnsqmnPIFmqvUG0KlNiVhaE24jTras1iCMRZ3ZNASx36hy6VrXl0cmrgDYihGrsaOPDGZw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20180419190323.GF5635@pd.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To: Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Brown <david.brown@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20180327160154.1938-1-bjorn.andersson@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Imran Khan <kimran@codeaurora.org>,
+        Joonwoo Park <joonwoop@codeaurora.org>, linux-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180327160154.1938-1-bjorn.andersson@linaro.org>
+Message-ID: <152417871558.46528.12974380945707201990@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/2] arm64: dts: Add msm8998 SoC and MTP board support
+Date: Thu, 19 Apr 2018 15:58:35 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3JMwlTZ005488
 
+Quoting Bjorn Andersson (2018-03-27 09:01:53)
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> new file mode 100644
+> index 000000000000..0f2f0e0de74f
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> @@ -0,0 +1,20 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2016, The Linux Foundation. All rights reserved. */
+> +
+> +#include "msm8998.dtsi"
+> +
+> +/ {
+> +       aliases {
+> +               serial0 = &blsp2_uart1;
+> +       };
+> +
+> +       chosen {
+> +               stdout-path = "serial0";
 
+Plus :115200n8?
 
-On 04/19/2018 02:03 PM, Borislav Petkov wrote:
-> (snip useful explanation).
-> 
-> On Thu, Apr 19, 2018 at 12:40:54PM -0500, Alex G. wrote:
->> On the r740xd, FW just hides those errors from the OS with no further
->> notification. On this machine BIOS sets things up such that non-posted
->> requests report fatal (PCIe) errors. FW still tries very hard to hide
->> this from the OS, and I think the heuristic is that if the drive
->> physical presence is gone, don't even report the error.
-> 
-> Ok, second question: can you detect from the error signatures alone that
-> it was a surprise removal? 
+> +       };
+> +};
+> +
+> +&soc {
+> +       serial@0c1b0000 {
+> +               status = "okay";
+> +       };
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> new file mode 100644
+> index 000000000000..9e2c0ff7457f
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> @@ -0,0 +1,344 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright (c) 2016, The Linux Foundation. All rights reserved. */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/qcom,gcc-msm8998.h>
+> +
+> +/ {
+> +       model = "Qualcomm Technologies, Inc. MSM 8998";
+> +
+> +       interrupt-parent = <&intc>;
+> +
+> +       qcom,msm-id = <292 0x0>;
 
-I suppose you could make some inference, given the timing of other
-events going on around the the crash. It's not uncommon to see a "Card
-not present" event around drive removal.
+Sadface.
 
-Since the presence detect pin breaks last, you might not get that
-interrupt for a long while. In that case it's much harder to determine
-if you're seeing a SURPRISE!!! removal or some other fault.
+> +
+> +       #address-cells = <2>;
+> +       #size-cells = <2>;
+> +
+[...]
+> +
+> +               cpu-map {
+> +                       cluster0 {
+> +                               core0 {
+> +                                       cpu = <&CPU0>;
+> +                               };
+> +
+> +                               core1 {
+> +                                       cpu = <&CPU1>;
+> +                               };
+> +
+> +                               core2 {
+> +                                       cpu = <&CPU2>;
+> +                               };
+> +
+> +                               core3 {
+> +                                       cpu = <&CPU3>;
+> +                               };
+> +                       };
+> +
+> +                       cluster1 {
+> +                               core0 {
+> +                                       cpu = <&CPU4>;
+> +                               };
+> +
+> +                               core1 {
+> +                                       cpu = <&CPU5>;
+> +                               };
+> +
+> +                               core2 {
+> +                                       cpu = <&CPU6>;
+> +                               };
+> +
+> +                               core3 {
+> +                                       cpu = <&CPU7>;
+> +                               };
+> +                       };
 
-I don't think you can use GHES alone to determine the nature of the
-event. There is not a 1:1 mapping from the set of things going wrong to
-the set of PCIe errors.
+Is this accurate? Or it's describing the power hierarchy?
 
-> How does such an error look like, in detail?
+> +               };
+> +       };
+> +
+> +       timer {
+> +               compatible = "arm,armv8-timer";
+> +               interrupts = <1 1 0xf08>,
+> +                            <1 2 0xf08>,
+> +                            <1 3 0xf08>,
+> +                            <1 0 0xf08>;
 
-It's green on the soft side, with lots of red accents, as well as some
-textured white shades:
+Are these 0xf08 things accurate?
 
-[   51.414616] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down
-[   51.414634] pciehp 0000:b0:05.0:pcie204: Slot(179): Link Down
-[   52.703343] FIRMWARE BUG: Firmware sent fatal error that we were able
-to correct
-[   52.703345] BROKEN FIRMWARE: Complain to your hardware vendor
-[   52.703347] {1}[Hardware Error]: Hardware error from APEI Generic
-Hardware Error Source: 1
-[   52.703358] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Up
-[   52.711616] {1}[Hardware Error]: event severity: fatal
-[   52.716754] {1}[Hardware Error]:  Error 0, type: fatal
-[   52.721891] {1}[Hardware Error]:   section_type: PCIe error
-[   52.727463] {1}[Hardware Error]:   port_type: 6, downstream switch port
-[   52.734075] {1}[Hardware Error]:   version: 3.0
-[   52.738607] {1}[Hardware Error]:   command: 0x0407, status: 0x0010
-[   52.744786] {1}[Hardware Error]:   device_id: 0000:b0:06.0
-[   52.750271] {1}[Hardware Error]:   slot: 4
-[   52.754371] {1}[Hardware Error]:   secondary_bus: 0xb3
-[   52.759509] {1}[Hardware Error]:   vendor_id: 0x10b5, device_id: 0x9733
-[   52.766123] {1}[Hardware Error]:   class_code: 000406
-[   52.771182] {1}[Hardware Error]:   bridge: secondary_status: 0x0000,
-control: 0x0003
-[   52.779038] pcieport 0000:b0:06.0: aer_status: 0x00100000, aer_mask:
-0x01a10000
-[   52.782303] nvme0n1: detected capacity change from 3200631791616 to 0
-[   52.786348] pcieport 0000:b0:06.0:    [20] Unsupported Request
-[   52.786349] pcieport 0000:b0:06.0: aer_layer=Transaction Layer,
-aer_agent=Requester ID
-[   52.786350] pcieport 0000:b0:06.0: aer_uncor_severity: 0x004eb030
-[   52.786352] pcieport 0000:b0:06.0:   TLP Header: 40000001 0000020f
-e12023bc 01000000
-[   52.786357] pcieport 0000:b0:06.0: broadcast error_detected message
-[   52.883895] pci 0000:b3:00.0: device has no driver
-[   52.883976] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down
-[   52.884184] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Down event
-queued; currently getting powered on
-[   52.967175] pciehp 0000:b0:06.0:pcie204: Slot(176): Link Up
+> +               clock-frequency = <19200000>;
 
+Drop? Should come from hardware.
 
-> Got error logs somewhere to dump?
+> +       };
+> +
+> +       clocks {
+> +               xo_board {
+> +                       compatible = "fixed-clock";
+> +                       #clock-cells = <0>;
+> +                       clock-frequency = <19200000>;
+> +                       clock-output-names = "xo_board";
 
-Sure [1]. They have the ANSI sequences, so you might want to wget and
-grep them in a color terminal.
+The output names aren't needed.
 
-Alex
+> +               };
+> +
+> +               sleep_clk {
+> +                       compatible = "fixed-clock";
+> +                       #clock-cells = <0>;
+> +                       clock-frequency = <32764>;
+> +                       clock-output-names = "sleep_clk";
+> +               };
+> +       };
+> +
+> +       psci {
+> +               compatible = "arm,psci-1.0";
+> +               method = "smc";
+> +       };
+> +
+> +       soc: soc {};
+> +};
+> +
+> +&soc {
 
-[1] http://gtech.myftp.org/~mrnuke/nvme_logs/log-20180416-1919.log
+Ok!
+
+> +       #address-cells = <1>;
+> +       #size-cells = <1>;
+> +       ranges = <0 0 0 0xffffffff>;
+> +       compatible = "simple-bus";
+> +
+> +       intc: interrupt-controller@17a00000 {
+> +               compatible = "arm,gic-v3";
+> +               reg = <0x17a00000 0x10000>,       /* GICD */
+> +                     <0x17b00000 0x100000>;      /* GICR * 8 */
+> +               #interrupt-cells = <3>;
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges;
+> +               interrupt-controller;
+> +               #redistributor-regions = <1>;
+> +               redistributor-stride = <0x0 0x20000>;
+
+Was this stride stuff needed still?
+
+> +               interrupts = <1 9 4>;
+
+Use special GIC flags?
+
+> +       };
+> +
+> +       gcc: clock-controller@100000 {
+> +               compatible = "qcom,gcc-msm8998";
+> +               #clock-cells = <1>;
+> +               #reset-cells = <1>;
+> +               #power-domain-cells = <1>;
+> +               reg = <0x100000 0xb0000>;
+> +       };
+> +
+> +       blsp2_uart1: serial@0c1b0000 {
+
+Drop leading zeroes please.
+
+> +               compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+> +               reg = <0xc1b0000 0x1000>;
+> +               interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
+> +               clocks = <&gcc GCC_BLSP2_UART2_APPS_CLK>,
+> +                        <&gcc GCC_BLSP2_AHB_CLK>;
+> +               clock-names = "core", "iface";
+> +               status = "disabled";
+> +       };
+> +
+> +       timer@17920000 {
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges;
+> +               compatible = "arm,armv7-timer-mem";
+> +               reg = <0x17920000 0x1000>;
+> +               clock-frequency = <19200000>;
+
+Read from hardware instead?
