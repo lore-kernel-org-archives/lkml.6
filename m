@@ -1,168 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752273AbeDTQrI convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:47:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35218 "EHLO mail.kernel.org"
+        id S1752902AbeDTQtg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:49:36 -0400
+Received: from mout.gmx.net ([212.227.15.18]:50977 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750841AbeDTQrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:47:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D40AF2178F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=sboyd@kernel.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1750818AbeDTQtc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 12:49:32 -0400
+Message-ID: <1524242934.5239.1.camel@gmx.de>
+Subject: Re: [PATCH 2/2] rtmutex: Reduce top-waiter blocking on a lock
+From: Mike Galbraith <efault@gmx.de>
+To: Peter Zijlstra <peterz@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Cc: tglx@linutronix.de, mingo@kernel.org, longman@redhat.com,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbues@suse.de>
+Date: Fri, 20 Apr 2018 18:48:54 +0200
+In-Reply-To: <20180420155028.GO4064@hirez.programming.kicks-ass.net>
+References: <20180410162750.8290-1-dave@stgolabs.net>
+         <20180410162750.8290-2-dave@stgolabs.net>
+         <20180420155028.GO4064@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8BIT
-To: Rob Herring <robh@kernel.org>, devicetree-spec@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180418222905.10414-1-robh@kernel.org>
-Cc: grant.likely@arm.com, frowand.list@gmail.com, mark.rutland@arm.com,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>, shawnguo@kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jonathan Cameron <jic23@kernel.org>
-References: <20180418222905.10414-1-robh@kernel.org>
-Message-ID: <152424282214.46528.2511757264045171935@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [RFC PATCH] dt-bindings: add a jsonschema binding example
-Date: Fri, 20 Apr 2018 09:47:02 -0700
+X-Provags-ID: V03:K1:uD3i+FCVnloLhP3sxVPdWD+FvV7jWAuwQ4dpOCXY8qT1ec6nQy8
+ LThpfedPBiocYwTsYaqkhef+qDZdWAvEBbmxFgWMXs9z64cV3e1HL9TOj3NNhWAuOk2O/YO
+ eWN9TRzibYlk+76p/j9oR+lsTbofNX+HbMkVW8Ih+xkxO974d/pYjhud9/ub2ORRPel30P/
+ c6Ry05Bj1Qc9tjnm3bh9g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:0pVnDyrWdh8=:WJF+DIKVN7/k5OQz8P79kT
+ 6XM6cNjDvWLJ6sDR3xItzEH79mtxmituPnHIB617GnVeDMrtLfIUtvxoDH+3IAS06/e+tstNw
+ oI3ehQYQkk2MB8HbJ9x8yK7oXlzmgTwr7D3BBpMHh5a07iQjDXVc+D9b5NXHGNF4tAIhpUPP2
+ JK32XDmU0jqYOqNmWzEt8P7UrM6VXvymFNe8864q9g47C4luW8OZEEomk7shAxApTMAV83gHc
+ tKrvGYGr2Wakcp7SC5JJZRylILtROKq/dxPxYGfW79I7I9Bjx6PVKbAU+e2ur4BcVaHGiIgLS
+ r149wsB3ieBB2MXPcIfdqm8PRMLpjOQZ8uxYwTUkAe70V+FSwT9ChPH8590A6ajWPXluIpZHS
+ 1u7jWMqJQNfiR1TZcdSL8U1X/P+OYNf6CC8uuTwBoM0XHmMfKAO+kauZDnN/542qkBaJfHXn3
+ 2xAEulfwJfrBKVtLUp6VdwV23W1E4pra0v6Xi/a/WuVD7Dd4shoIiodDGUyjZUm/KWcq6Fw6k
+ /FFgGcpAGT8fFYRwKKi7HR7sstI9b5qSGg1wZpLcfjGUvUqAKN/KTGcyvSbqgLTzQiE5dNdXH
+ zngxK3PG9OgK+eSWemaIquh6beUyFa4gqldCMYoVXK4VLxHo2sQrzrgQ5kmB5lvlzA+J+hOQx
+ 3L0FyV5bcHfDzq4sV36FATOmCvu6mvOZQ7gbRSVNHU04ZokiI++zVBJ7SvtocOpunfs5bsYbQ
+ QSRonadVB+uHPLZclGx9LIMCaaxZPbzUpp4irPdlYADiftnW64S5eEg3VCkMShcXXH9JkEm8c
+ er9jbQPMYQTkDhU2rIiRIriVoTEvsKhD+kVVzRKWtZof79/Ksg=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rob Herring (2018-04-18 15:29:05)
-> diff --git a/Documentation/devicetree/bindings/example-schema.yaml b/Documentation/devicetree/bindings/example-schema.yaml
-> new file mode 100644
-> index 000000000000..fe0a3bd1668e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/example-schema.yaml
-> @@ -0,0 +1,149 @@
-> +# SPDX-License-Identifier: BSD-2-Clause
-> +# Copyright 2018 Linaro Ltd.
-> +%YAML 1.2
-> +---
-> +# All the top-level keys are standard json-schema keywords except for
-> +# 'maintainers' and 'select'
-> +
-> +# $id is a unique idenifier based on the filename
-> +$id: "http://devicetree.org/schemas/example-schema.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +# Only 1 version supported for now
-> +version: 1
-> +
-> +title: An example schema annotated with jsonschema details
-> +
-> +maintainers:
-> +  - Rob Herring <robh@kernel.org>
-> +
-> +description: |
-> +  A more detailed multi-line description of the binding.
-> +
-> +  Details about the hardware device and any links to datasheets can go here.
-> +
-> +  The end of the description is marked by indentation less than the first line
-> +  in the description.
-> +
-> +select: false
-> +  # 'select' is a schema applied to a DT node to determine if this binding
-> +  # schema should be applied to the node. It is optional and by default the
-> +  # possible compatible strings are extracted and used to match.
+On Fri, 2018-04-20 at 17:50 +0200, Peter Zijlstra wrote:
+> On Tue, Apr 10, 2018 at 09:27:50AM -0700, Davidlohr Bueso wrote:
+> > By applying well known spin-on-lock-owner techniques, we can avoid the
+> > blocking overhead during the process of when the task is trying to take
+> > the rtmutex. The idea is that as long as the owner is running, there is a
+> > fair chance it'll release the lock soon, and thus a task trying to acquire
+> > the rtmutex will better off spinning instead of blocking immediately after
+> > the fastpath. This is similar to what we use for other locks, borrowed
+> > from -rt. The main difference (due to the obvious realtime constraints)
+> > is that top-waiter spinning must account for any new higher priority waiter,
+> > and therefore cannot steal the lock and avoid any pi-dance. As such there
+> > will be at most only one spinner waiter upon contended lock.
+> > 
+> > Conditions to stop spinning and block are simple:
+> > 
+> > (1) Upon need_resched()
+> > (2) Current lock owner blocks
+> > (3) The top-waiter has changed while spinning.
+> > 
+> > The unlock side remains unchanged as wake_up_process can safely deal with
+> > calls where the task is not actually blocked (TASK_NORMAL). As such, there
+> > is only unnecessary overhead dealing with the wake_q, but this allows us not
+> > to miss any wakeups between the spinning step and the unlocking side.
+> > 
+> > Passes running the pi_stress program with increasing thread-group counts.
+> 
+> Is this similar to what we have in RT (which, IIRC, has an optimistic
+> spinning implementation as well)?
 
-Can we get a concrete example here?
+For the RT spinlock replacement, the top waiter can spin.
 
-> +
-> +properties:
-[...]
-> +
-> +  interrupts:
-> +    # Either 1 or 2 interrupts can be present
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - description: tx or combined interrupt
-> +      - description: rx interrupt
-> +
-> +    description: |
+> ISTR there being some contention over the exact semantics of (3) many
+> years ago. IIRC the question was if an equal priority task was allowed
+> to steal; because lock stealing can lead to fairness issues. One would
+> expect two FIFO-50 tasks to be 'fair' wrt lock acquisition and not
+> starve one another.
+> 
+> Therefore I think we only allowed higher prio tasks to steal and kept
+> FIFO order for equal prioty tasks.
 
-The '|' is needed to make yaml happy?
+Yup, lateral steal is expressly forbidden for RT classes.
 
-> +      A variable number of interrupts warrants a description of what conditions
-> +      affect the number of interrupts. Otherwise, descriptions on standard
-> +      properties are not necessary.
-> +
-> +  interrupt-names:
-> +    # minItems must be specified here because the default would be 2
-> +    minItems: 1
-> +    items:
-> +      - const: "tx irq"
-> +      - const: "rx irq"
-> +
-> +  # Property names starting with '#' must be quoted
-> +  '#interrupt-cells':
-> +    # A simple case where the value must always be '2'.
-> +    # The core schema handles that this must be a single integer.
-> +    const: 2
-> +
-> +  interrupt-controller: {}
-
-Does '{}' mean nothing to see here?
-
-> +    # The core checks this is a boolean, so just have to list it here to be
-> +    # valid for this binding.
-> +
-> +  clock-frequency:
-> +    # The type is set in the core schema. Per device schema only need to set
-> +    # constraints on the possible values.
-> +    minimum: 100
-> +    maximum: 400000
-> +    # The value that should be used if the property is not present
-> +    default: 200
-> +
-
-The 'default' field is neat. I look forward to the compiler using the
-schema to insert defaults into the dtb if the properties aren't present
-in the input file.
-
-> +  foo-gpios:
-> +    maxItems: 1
-> +    description: A connection of the 'foo' gpio line.
-> +
-> +  vendor,int-property:
-> +    description: Vendor specific properties must have a description
-> +    type: integer # A type is also required
-> +    enum: [2, 4, 6, 8, 10]
-> +
-> +  vendor,bool-property:
-> +    description: Vendor specific properties must have a description
-> +    type: boolean
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-controller
-
-Can the required or optional parts go under each property instead of
-having a different section? Or does that make the schema parser
-difficult to implement? It may also make sense to negate this and
-specify only the optional properties, or to require both optional and
-required lists to make things more explicit at the cost of some
-verbosity.
-
-> +
-> +examples:
-> +  - |
-> +    /{
-
-Is the first slash required here?
-
-> +          compatible = "vendor,soc4-ip", "vendor,soc1-ip";
-> +          reg = <0x1000 0x80>,
-> +                <0x3000 0x80>;
-> +          reg-names = "core", "aux";
-> +          interrupts = <10>;
-> +          interrupt-controller;
-> +    };
++#define STEAL_NORMAL  0
++#define STEAL_LATERAL 1
++
++static inline int
++rt_mutex_steal(struct rt_mutex *lock, struct rt_mutex_waiter *waiter, int mode)
++{
++       struct rt_mutex_waiter *top_waiter = rt_mutex_top_waiter(lock);
++
++       if (waiter == top_waiter || rt_mutex_waiter_less(waiter, top_waiter))
++               return 1;
++
++       /*
++        * Note that RT tasks are excluded from lateral-steals
++        * to prevent the introduction of an unbounded latency.
++        */
++       if (mode == STEAL_NORMAL || rt_task(waiter->task))
++               return 0;
++
++       return rt_mutex_waiter_equal(waiter, top_waiter);
++}
++
