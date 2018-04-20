@@ -1,78 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753176AbeDTQ5V (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:57:21 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52034 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752325AbeDTQ5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:57:19 -0400
-Subject: Re: Clang arm64 build is broken
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>
-References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
- <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
- <CAKwvOdnKuFuqoWKpVJqVa1u8A0z2+vQp9j7+TsNh9qz3Yitk-Q@mail.gmail.com>
- <8b3e95df-a429-2f84-565c-3caed8e30e28@arm.com>
- <CAKwvOdmhNH4PYNwH+tsZc4uQQJVhOOHSph2YdDCHcyWNyFMxyA@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <ad937bae-ea95-2758-acf6-6170c4d94d07@arm.com>
-Date: Fri, 20 Apr 2018 17:57:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAKwvOdmhNH4PYNwH+tsZc4uQQJVhOOHSph2YdDCHcyWNyFMxyA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        id S1753251AbeDTQ6k (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:58:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57016 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753068AbeDTQ6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 12:58:39 -0400
+From: Chunyu Hu <chuhu@redhat.com>
+To: catalin.marinas@arm.com
+Cc: mhocko@suse.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [RFC] mm: kmemleak: replace __GFP_NOFAIL to GFP_NOWAIT in gfp_kmemleak_mask
+Date: Sat, 21 Apr 2018 00:58:33 +0800
+Message-Id: <1524243513-29118-1-git-send-email-chuhu@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/04/18 17:43, Nick Desaulniers wrote:
-> On Fri, Apr 20, 2018 at 9:36 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
-> 
->> On 20/04/18 17:30, Nick Desaulniers wrote:
->>> On Fri, Apr 20, 2018 at 1:13 AM Marc Zyngier <marc.zyngier@arm.com>
-> wrote:
->>>> Clang isn't
->>>> really supported to build the arm64 kernel anyway
->>>
->>> Can you expand on this?  There are millions of arm64 devices shipping
-> with
->>> Clang built Linux kernels.
-> 
->> How many of these devices run a full-featured mainline kernel?
-> 
->> Sure, Android is building the kernel with clang, but that's with a pile
->> of out of tree patches. At that point, I'm not sure we're talking about
->> the same arm64 kernel.
-> 
-> Do you recommend that we only work with ARM licensed SoC vendors with no
-> out of tree patches?
+__GFP_NORETRY and  __GFP_NOFAIL are combined in gfp_kmemleak_mask now.
+But it's a wrong combination. As __GFP_NOFAIL is blockable, but
+__GFP_NORETY is not blockable, make it self-contradiction.
 
-I mean the clang-related patches which are not upstream. We can ignore
-SoC support code for this discussion.
+__GFP_NOFAIL means 'The VM implementation _must_ retry infinitely'. But
+it's not the real intention, as kmemleak allow alloc failure happen in
+memory pressure, in that case kmemleak just disables itself.
 
-The android clang patches try to create the illusion that clang is
-usable for the kernel. It is not. It misses fundamental functionality
-that either leads to performance degradation (lack of asm goto) or
-prevents the implementation of security fixes (see the recent discussion
-about SMCCC 1.1 and the top of this very thread).
+commit 9a67f6488eca ("mm: consolidate GFP_NOFAIL checks in the allocator
+slowpath") documented that what user wants here should use GFP_NOWAIT, and
+the WARN in __alloc_pages_slowpath caught this weird usage.
 
-I'd rather recommend that clang is brought up to the level of GCC so
-that we don't have to continuously have that discussion. Give us that
-compiler, and we'll make sure the arm64 doesn't break.
+ <snip>
+ WARNING: CPU: 3 PID: 64 at mm/page_alloc.c:4261 __alloc_pages_slowpath+0x1cc3/0x2780
+ CPU: 3 PID: 64 Comm: kswapd1 Not tainted 4.17.0-rc1.syzcaller+ #12
+ Hardware name: Red Hat KVM, BIOS 0.0.0 02/06/2015
+ RIP: 0010:__alloc_pages_slowpath+0x1cc3/0x2780
+ RSP: 0000:ffff88002fa5e6c8 EFLAGS: 00010046
+ RAX: 0000000000000000 RBX: 0000000000010000 RCX: 1ffff10005f4bcb6
+ RDX: 1ffff10007da3f46 RSI: 0000000000000000 RDI: ffff88003ed1fa38
+ RBP: 0000000001000000 R08: 0000000000000040 R09: 0000000000000030
+ R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+ kmemleak: Kernel memory leak detector disabled
+ R13: ffff88002fa5ea68 R14: dffffc0000000000 R15: ffff88002fa5ea68
+ FS:  0000000000000000(0000) GS:ffff88003e900000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00007f5db91c6640 CR3: 0000000004014000 CR4: 00000000001406e0
+ Call Trace:
+  __alloc_pages_nodemask+0x5ce/0x7c0
+  alloc_pages_current+0xb6/0x230
+  new_slab+0x29d/0x9f0
+  ___slab_alloc+0x4e5/0xa90
+  __slab_alloc.isra.37+0x92/0x120
+  kmem_cache_alloc+0x35f/0x580
+  create_object+0xa6/0xaf0
+  kmem_cache_alloc+0x20a/0x580
+  mempool_alloc+0x13a/0x350
+  bio_alloc_bioset+0x3ef/0x6e0
+  get_swap_bio+0x125/0x490
+  __swap_writepage+0x7be/0x11f0
+  swap_writepage+0x46/0xb0
+  pageout.isra.33+0x435/0xe70
+  ? trace_event_raw_event_mm_shrink_slab_start+0x4d0/0x4d0
+  ? page_mapped+0x165/0x3f0
+  shrink_page_list+0x1ded/0x3960
+  shrink_inactive_list+0x737/0x14b0
+  shrink_node_memcg+0xa9f/0x1ef0
+  shrink_node+0x376/0x15f0
+  balance_pgdat+0x2c9/0x970
+  kswapd+0x537/0xfe0
+  kthread+0x387/0x510
+  <snip>
 
-Thanks,
+Replace the __GFP_NOFAIL with GFP_NOWAIT in gfp_kmemleak_mask, __GFP_NORETRY
+and GFP_NOWAIT are in the gfp_kmemleak_mask. So kmemleak object allocaion
+is no blockable and no reclaim, making kmemleak less disruptive to user
+processes in pressure.
 
-	M.
+Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+CC: Michal Hocko <mhocko@suse.com>
+---
+ mm/kmemleak.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 9a085d5..4ea07e4 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -126,7 +126,7 @@
+ /* GFP bitmask for kmemleak internal allocations */
+ #define gfp_kmemleak_mask(gfp)	(((gfp) & (GFP_KERNEL | GFP_ATOMIC)) | \
+ 				 __GFP_NORETRY | __GFP_NOMEMALLOC | \
+-				 __GFP_NOWARN | __GFP_NOFAIL)
++				 __GFP_NOWARN | GFP_NOWAIT)
+ 
+ /* scanning area inside a memory block */
+ struct kmemleak_scan_area {
 -- 
-Jazz is not dead. It just smells funny...
+1.8.3.1
