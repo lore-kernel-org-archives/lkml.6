@@ -1,62 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754567AbeDTKHs (ORCPT <rfc822;w@1wt.eu>);
+        id S1754594AbeDTKHv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:07:51 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7186 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754545AbeDTKHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Apr 2018 06:07:48 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:38941 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754375AbeDTKHq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:07:46 -0400
-X-Google-Smtp-Source: AIpwx4/QcjWdu7pgXl9M9/Q2OF8U6wOodhk+DrYLmFFQV5S8EuoIZEMD6SonO85KYGOd3lqI8CuZijXxUZkflOzl1tg=
+Subject: [PATCH] VFIO: Fix Documentation
+References: <1524218521-61496-1-git-send-email-zhangshaokun@hisilicon.com>
+To: <alex.williamson@redhat.com>, <corbet@lwn.net>
+CC: <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: "dongbo (E)" <dongbo4@huawei.com>
+X-Forwarded-Message-Id: <1524218521-61496-1-git-send-email-zhangshaokun@hisilicon.com>
+Message-ID: <36f5940b-cac5-9a4a-86cb-7ad9766d5d62@huawei.com>
+Date: Fri, 20 Apr 2018 18:07:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 MIME-Version: 1.0
-In-Reply-To: <1524215874-15093-2-git-send-email-pierre-yves.mordret@st.com>
-References: <1524215874-15093-1-git-send-email-pierre-yves.mordret@st.com> <1524215874-15093-2-git-send-email-pierre-yves.mordret@st.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Apr 2018 12:07:44 +0200
-X-Google-Sender-Auth: H04hCWeIHHtksaDg-IYsfE9kcko
-Message-ID: <CAMuHMdWwmsOm_LjjhYBFseFa1HaWFCbGEGf+XbZxSSf3JC=vPQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/5] ARM: configs: multi_v7: Add I2C support
-To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1524218521-61496-1-git-send-email-zhangshaokun@hisilicon.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.63.195.168]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pierre-Yves,
+From: Dong Bo <dongbo4@huawei.com>
 
-On Fri, Apr 20, 2018 at 11:17 AM, Pierre-Yves MORDRET
-<pierre-yves.mordret@st.com> wrote:
-> This patch adds I2C F7 support to multi_v7_defconfig
->
-> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Signed-off-by: Dong Bo <dongbo4@huawei.com>
+---
+ Documentation/vfio.txt | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Thanks for your patch!
+diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
+index ef6a511..f1a4d3c 100644
+--- a/Documentation/vfio.txt
++++ b/Documentation/vfio.txt
+@@ -252,15 +252,14 @@ into VFIO core.  When devices are bound and unbound to the driver,
+ the driver should call vfio_add_group_dev() and vfio_del_group_dev()
+ respectively::
+ -	extern int vfio_add_group_dev(struct iommu_group *iommu_group,
+-	                              struct device *dev,
++	extern int vfio_add_group_dev(struct device *dev,
+ 				      const struct vfio_device_ops *ops,
+ 				      void *device_data);
+  	extern void *vfio_del_group_dev(struct device *dev);
+  vfio_add_group_dev() indicates to the core to begin tracking the
+-specified iommu_group and register the specified dev as owned by
++iommu_group of the specified dev and register the dev as owned by
+ a VFIO bus driver.  The driver provides an ops structure for callbacks
+ similar to a file operations structure::
+ -- 1.9.1
 
-I think the subject should be "ARM: multi_v7_defconfig: Add STM32F7
-I2C support",
-as generic I2C support is already enabled.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+.
