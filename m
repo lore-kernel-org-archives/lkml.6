@@ -1,34 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752775AbeDTXeh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 19:34:37 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:52432 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752047AbeDTXef (ORCPT
+        id S1752754AbeDTXiY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 19:38:24 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52340 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751876AbeDTXiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 19:34:35 -0400
+        Fri, 20 Apr 2018 19:38:23 -0400
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: Bradley Grove <linuxdrivers@attotech.com>,
+Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
         "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Tomas Henzl <thenzl@redhat.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [RESEND 2] scsi: esas2r: use ktime_get_real_seconds()
+        Finn Thain <fthain@telegraphics.com.au>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [v2] scsi: ips: fix firmware timestamps for 32-bit
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
 Organization: Oracle Corporation
-References: <20180420160219.3560091-1-arnd@arndb.de>
-Date: Fri, 20 Apr 2018 19:34:04 -0400
-In-Reply-To: <20180420160219.3560091-1-arnd@arndb.de> (Arnd Bergmann's message
-        of "Fri, 20 Apr 2018 18:02:09 +0200")
-Message-ID: <yq11sf9h2qb.fsf@oracle.com>
+References: <20180420160459.3621883-1-arnd@arndb.de>
+Date: Fri, 20 Apr 2018 19:38:11 -0400
+In-Reply-To: <20180420160459.3621883-1-arnd@arndb.de> (Arnd Bergmann's message
+        of "Fri, 20 Apr 2018 18:04:40 +0200")
+Message-ID: <yq1wox1fnz0.fsf@oracle.com>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8869 signatures=668698
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=373
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=573
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804200234
+ engine=8.0.1-1711220000 definitions=main-1804200235
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -36,18 +36,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Arnd,
 
-> do_gettimeofday() is deprecated because of the y2038 overflow.  Here,
-> we use the result to pass into a 32-bit field in the firmware, which
-> still risks an overflow, but if the firmware is written to expect
-> unsigned values, it can at least last until y2106, and there is not
-> much we can do about it.
+> do_gettimeofday() is deprecated since it will stop working in 2038 on
+> 32-bit platforms, leading to incorrect times passed to the firmware.
+> On 64-bit platforms the current code appears to be fine, as the
+> calculation passes an 8-bit century number into the firmware that can
+> represent times long in the future (possibly until 25599).
 >
-> This changes do_gettimeofday() to ktime_get_real_seconds(), which at
-> least simplifies the code a bit, and avoids the deprecated
-> interface. I'm adding a comment about the overflow to document what
-> happens.
+> Using ktime_get_real_seconds() to get a 64-bit seconds value and
+> time64_to_tm() to convert it into the firmware format greatly
+> simplifies the ips timekeeping code, makes 32-bit and 64-bit behave
+> the same way here, and gets us closer to removing the deprecated
+> interfaces.
 
-Applied to 4.18/scsi-queue. Thanks!
+Applied to 4.18/scsi-queue, thanks!
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
