@@ -1,447 +1,218 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754705AbeDTMAd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 08:00:33 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:46892 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754591AbeDTMAb (ORCPT
+        id S1754736AbeDTMAn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 08:00:43 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45976 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754591AbeDTMAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:00:31 -0400
-Date: Fri, 20 Apr 2018 13:00:16 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 7/7] drm/i2c: tda998x: register as a drm bridge
-Message-ID: <20180420120015.GY16141@n2100.armlinux.org.uk>
-References: <20180419162751.25223-1-peda@axentia.se>
- <20180419162751.25223-8-peda@axentia.se>
+        Fri, 20 Apr 2018 08:00:38 -0400
+Subject: Re: [PATCH] KVM: s390: reset crypto attributes for all vcpus
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: borntraeger@de.ibm.com, cohuck@redhat.com, pmorel@linux.vnet.ibm.com,
+        pasic@linux.vnet.ibm.com, pbonzini@redhat.com, rkrcmar@redhat.com
+References: <1524172432-26211-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: Janosch Frank <frankja@linux.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=frankja@linux.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ lFM6NIuMAY1Y
+Date: Fri, 20 Apr 2018 13:59:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419162751.25223-8-peda@axentia.se>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1524172432-26211-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="n6kp673LA74rEC7tWUKnaqaFFXhqwqKAb"
+X-TM-AS-GCONF: 00
+x-cbid: 18042011-0044-0000-0000-0000054A5EFF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042011-0045-0000-0000-0000288A80B5
+Message-Id: <870459b4-228d-0be3-5dd3-48ab480b46de@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804200118
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 06:27:51PM +0200, Peter Rosin wrote:
-> This makes this driver work with all(?) drivers that are not
-> componentized and instead expect to connect to a panel/bridge. That
-> said, the only one tested is atmel_hlcdc.
-> 
-> This hooks the relevant work function previously called by the encoder
-> and the component also to the bridge, since the encoder goes away when
-> connecting to the bridge interface of the driver and the equivalent of
-> bind/unbind of the component is handled by bridge attach/detach.
-> 
-> The lifetime requirements of a bridge and a component are slightly
-> different, which is the reason for struct tda998x_bridge.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--n6kp673LA74rEC7tWUKnaqaFFXhqwqKAb
+Content-Type: multipart/mixed; boundary="zDi7kUaLoViTvIsrjxjUh4nfna871sGlG";
+ protected-headers="v1"
+From: Janosch Frank <frankja@linux.ibm.com>
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: borntraeger@de.ibm.com, cohuck@redhat.com, pmorel@linux.vnet.ibm.com,
+ pasic@linux.vnet.ibm.com, pbonzini@redhat.com, rkrcmar@redhat.com
+Message-ID: <870459b4-228d-0be3-5dd3-48ab480b46de@linux.ibm.com>
+Subject: Re: [PATCH] KVM: s390: reset crypto attributes for all vcpus
+References: <1524172432-26211-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+In-Reply-To: <1524172432-26211-1-git-send-email-akrowiak@linux.vnet.ibm.com>
 
-As we are talking about bridge stuff, the patch below is what I've had
-for a while converting Armada to be able to use a bridge-based tda998x.
-As you can see, it's far from satisfactory at the moment.  Specifically:
+--zDi7kUaLoViTvIsrjxjUh4nfna871sGlG
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-1) it assumes all bridges are TMDS bridges, because as far as I can see,
-   there's no way to know any different.
-2) there's no way to really know whether a missing bridge is because we
-   should be using the component helpers or that the bridge device
-   doesn't exist yet.
-
-diff --git a/drivers/gpu/drm/armada/armada_drv.c b/drivers/gpu/drm/armada/armada_drv.c
-index 262409cae8bf..854d74466dec 100644
---- a/drivers/gpu/drm/armada/armada_drv.c
-+++ b/drivers/gpu/drm/armada/armada_drv.c
-@@ -20,6 +20,127 @@
- #include <drm/armada_drm.h>
- #include "armada_ioctlP.h"
- 
-+static const struct drm_encoder_helper_funcs dummy_encoder_helper_funcs = {
-+};
-+
-+static const struct drm_encoder_funcs dummy_encoder_funcs = {
-+	.destroy = drm_encoder_cleanup,
-+};
-+
-+static int dummy_encoder_add(struct device *dev, struct drm_device *drm,
-+			     struct drm_bridge *bridge, int type, u32 crtcs)
-+{
-+	struct drm_encoder *enc;
-+	int ret;
-+
-+	enc = devm_kzalloc(dev, sizeof(*enc), GFP_KERNEL);
-+	if (!enc)
-+		return -ENOMEM;
-+
-+	drm_encoder_helper_add(enc, &dummy_encoder_helper_funcs);
-+	ret = drm_encoder_init(drm, enc, &dummy_encoder_funcs, type, NULL);
-+	if (ret)
-+		return ret;
-+
-+	enc->possible_crtcs = crtcs;
-+	enc->bridge = bridge;
-+	bridge->encoder = enc;
-+
-+	ret = drm_bridge_attach(enc, bridge, NULL);
-+	if (ret)
-+		dev_err(dev, "drm_bridge_attach() failed: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int hack_of_add_crtc_encoders(struct drm_device *drm,
-+				     struct device_node *port)
-+{
-+	struct device *dev = drm->dev;
-+	struct device_node *ep, *remote;
-+	struct drm_bridge *bridge;
-+	u32 crtcs;
-+	int ret;
-+
-+	for_each_child_of_node(port, ep) {
-+		remote = of_graph_get_remote_port_parent(ep);
-+		if (!remote || !of_device_is_available(remote) ||
-+		    !of_device_is_available(remote->parent)) {
-+			of_node_put(remote);
-+			continue;
-+		}
-+
-+		bridge = of_drm_find_bridge(remote);
-+dev_info(dev, "found remote %s => bridge %p\n", of_node_full_name(remote), bridge);
-+		if (!bridge) {
-+			of_node_put(remote);
-+			continue;
-+		}
-+
-+		crtcs = drm_of_find_possible_crtcs(drm, remote);
-+		/* If no CRTCs were found, fall back to our old behaviour */
-+		if (crtcs == 0) {
-+			dev_warn(dev, "Falling back to first CRTC\n");
-+			crtcs = 1 << 0;
-+		}
-+
-+		ret = dummy_encoder_add(dev, drm, bridge, DRM_MODE_ENCODER_TMDS,
-+					crtcs);
-+		if (ret) {
-+			dev_err(dev, "drm_bridge_attach() failed: %d\n", ret);
-+			of_node_put(ep);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int hack_create_encoders(struct drm_device *drm)
-+{
-+	struct device *dev = drm->dev;
-+	struct device_node *port = NULL;
-+	int i, ret = 0;
-+
-+	if (dev->of_node) {
-+		for (i = 0; ; i++) {
-+			port = of_parse_phandle(dev->of_node, "ports", i);
-+			if (!port)
-+				break;
-+
-+			if (of_device_is_available(port->parent))
-+				ret = hack_of_add_crtc_encoders(drm, port);
-+
-+			of_node_put(port);
-+
-+			if (ret)
-+				break;
-+		}
-+	} else if (dev->platform_data) {
-+		const char **devices = dev->platform_data;
-+		struct device *d;
-+
-+		for (i = 0; devices[i]; i++) {
-+			d = bus_find_device_by_name(&platform_bus_type, NULL,
-+						    devices[i]);
-+			if (d && d->of_node) {
-+				for_each_child_of_node(d->of_node, port) {
-+					ret = hack_of_add_crtc_encoders(drm, port);
-+					if (ret) {
-+						of_node_put(port);
-+						break;
-+					}
-+				}
-+			}
-+			put_device(d);
-+			if (ret)
-+				break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
- static void armada_drm_unref_work(struct work_struct *work)
- {
- 	struct armada_private *priv =
-@@ -153,6 +274,10 @@ static int armada_drm_bind(struct device *dev)
- 	if (ret)
- 		goto err_kms;
- 
-+	ret = hack_create_encoders(&priv->drm);
-+	if (ret)
-+		goto err_comp;
-+
- 	ret = drm_vblank_init(&priv->drm, priv->drm.mode_config.num_crtc);
- 	if (ret)
- 		goto err_comp;
-diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
-index b78c0627e7cf..feb6debb1563 100644
---- a/drivers/gpu/drm/i2c/tda998x_drv.c
-+++ b/drivers/gpu/drm/i2c/tda998x_drv.c
-@@ -68,7 +68,7 @@ struct tda998x_priv {
- 	wait_queue_head_t edid_delay_waitq;
- 	bool edid_delay_active;
- 
--	struct drm_encoder encoder;
-+	struct drm_bridge bridge;
- 	struct drm_connector connector;
- 
- 	struct tda998x_audio_port audio_port[2];
-@@ -80,8 +80,8 @@ struct tda998x_priv {
- #define conn_to_tda998x_priv(x) \
- 	container_of(x, struct tda998x_priv, connector)
- 
--#define enc_to_tda998x_priv(x) \
--	container_of(x, struct tda998x_priv, encoder)
-+#define bridge_to_tda998x_priv(x) \
-+	container_of(x, struct tda998x_priv, bridge)
- 
- /* The TDA9988 series of devices use a paged register scheme.. to simplify
-  * things we encode the page # in upper bits of the register #.  To read/
-@@ -753,7 +753,7 @@ static void tda998x_detect_work(struct work_struct *work)
- {
- 	struct tda998x_priv *priv =
- 		container_of(work, struct tda998x_priv, detect_work);
--	struct drm_device *dev = priv->encoder.dev;
-+	struct drm_device *dev = priv->connector.dev;
- 
- 	if (dev)
- 		drm_kms_helper_hotplug_event(dev);
-@@ -1262,7 +1262,7 @@ tda998x_connector_best_encoder(struct drm_connector *connector)
- {
- 	struct tda998x_priv *priv = conn_to_tda998x_priv(connector);
- 
--	return &priv->encoder;
-+	return priv->bridge.encoder;
- }
- 
- static
-@@ -1292,36 +1292,27 @@ static int tda998x_connector_init(struct tda998x_priv *priv,
- 	if (ret)
- 		return ret;
- 
--	drm_mode_connector_attach_encoder(&priv->connector, &priv->encoder);
-+	drm_mode_connector_attach_encoder(&priv->connector,
-+					  priv->bridge.encoder);
- 
- 	return 0;
- }
- 
--/* DRM encoder functions */
-+/* DRM bridge functions */
- 
--static void tda998x_encoder_dpms(struct drm_encoder *encoder, int mode)
-+static int tda998x_bridge_attach(struct drm_bridge *bridge)
- {
--	struct tda998x_priv *priv = enc_to_tda998x_priv(encoder);
--	bool on;
-+	struct tda998x_priv *priv = bridge_to_tda998x_priv(bridge);
-+	struct drm_device *drm = bridge->dev;
- 
--	/* we only care about on or off: */
--	on = mode == DRM_MODE_DPMS_ON;
--
--	if (on == priv->is_on)
--		return;
-+	return tda998x_connector_init(priv, drm);
-+}
- 
--	if (on) {
--		/* enable video ports, audio will be enabled later */
--		reg_write(priv, REG_ENA_VP_0, 0xff);
--		reg_write(priv, REG_ENA_VP_1, 0xff);
--		reg_write(priv, REG_ENA_VP_2, 0xff);
--		/* set muxing after enabling ports: */
--		reg_write(priv, REG_VIP_CNTRL_0, priv->vip_cntrl_0);
--		reg_write(priv, REG_VIP_CNTRL_1, priv->vip_cntrl_1);
--		reg_write(priv, REG_VIP_CNTRL_2, priv->vip_cntrl_2);
-+static void tda998x_bridge_disable(struct drm_bridge *bridge)
-+{
-+	struct tda998x_priv *priv = bridge_to_tda998x_priv(bridge);
- 
--		priv->is_on = true;
--	} else {
-+	if (priv->is_on) {
- 		/* disable video ports */
- 		reg_write(priv, REG_ENA_VP_0, 0x00);
- 		reg_write(priv, REG_ENA_VP_1, 0x00);
-@@ -1332,11 +1323,11 @@ static void tda998x_encoder_dpms(struct drm_encoder *encoder, int mode)
- }
- 
- static void
--tda998x_encoder_mode_set(struct drm_encoder *encoder,
--			 struct drm_display_mode *mode,
--			 struct drm_display_mode *adjusted_mode)
-+tda998x_bridge_mode_set(struct drm_bridge *bridge,
-+			struct drm_display_mode *mode,
-+			struct drm_display_mode *adjusted_mode)
- {
--	struct tda998x_priv *priv = enc_to_tda998x_priv(encoder);
-+	struct tda998x_priv *priv = bridge_to_tda998x_priv(bridge);
- 	u16 ref_pix, ref_line, n_pix, n_line;
- 	u16 hs_pix_s, hs_pix_e;
- 	u16 vs1_pix_s, vs1_pix_e, vs1_line_s, vs1_line_e;
-@@ -1543,6 +1534,31 @@ tda998x_encoder_mode_set(struct drm_encoder *encoder,
- 	mutex_unlock(&priv->audio_mutex);
- }
- 
-+static void tda998x_bridge_enable(struct drm_bridge *bridge)
-+{
-+	struct tda998x_priv *priv = bridge_to_tda998x_priv(bridge);
-+
-+	if (!priv->is_on) {
-+		/* enable video ports, audio will be enabled later */
-+		reg_write(priv, REG_ENA_VP_0, 0xff);
-+		reg_write(priv, REG_ENA_VP_1, 0xff);
-+		reg_write(priv, REG_ENA_VP_2, 0xff);
-+		/* set muxing after enabling ports: */
-+		reg_write(priv, REG_VIP_CNTRL_0, priv->vip_cntrl_0);
-+		reg_write(priv, REG_VIP_CNTRL_1, priv->vip_cntrl_1);
-+		reg_write(priv, REG_VIP_CNTRL_2, priv->vip_cntrl_2);
-+
-+		priv->is_on = true;
-+	}
-+}
-+
-+static const struct drm_bridge_funcs tda998x_bridge_funcs = {
-+	.attach = tda998x_bridge_attach,
-+	.disable = tda998x_bridge_disable,
-+	.mode_set = tda998x_bridge_mode_set,
-+	.enable = tda998x_bridge_enable,
-+};
-+
- static void tda998x_destroy(struct tda998x_priv *priv)
- {
- 	/* disable all IRQs and free the IRQ handler */
-@@ -1796,35 +1812,6 @@ static int tda998x_create(struct i2c_client *client, struct tda998x_priv *priv)
- 	return ret;
- }
- 
--static void tda998x_encoder_prepare(struct drm_encoder *encoder)
--{
--	tda998x_encoder_dpms(encoder, DRM_MODE_DPMS_OFF);
--}
--
--static void tda998x_encoder_commit(struct drm_encoder *encoder)
--{
--	tda998x_encoder_dpms(encoder, DRM_MODE_DPMS_ON);
--}
--
--static const struct drm_encoder_helper_funcs tda998x_encoder_helper_funcs = {
--	.dpms = tda998x_encoder_dpms,
--	.prepare = tda998x_encoder_prepare,
--	.commit = tda998x_encoder_commit,
--	.mode_set = tda998x_encoder_mode_set,
--};
--
--static void tda998x_encoder_destroy(struct drm_encoder *encoder)
--{
--	struct tda998x_priv *priv = enc_to_tda998x_priv(encoder);
--
--	tda998x_destroy(priv);
--	drm_encoder_cleanup(encoder);
--}
--
--static const struct drm_encoder_funcs tda998x_encoder_funcs = {
--	.destroy = tda998x_encoder_destroy,
--};
--
- static void tda998x_set_config(struct tda998x_priv *priv,
- 			       const struct tda998x_encoder_params *p)
- {
-@@ -1882,9 +1869,7 @@ static int tda998x_bind(struct device *dev, struct device *master, void *data)
- {
- 	struct tda998x_encoder_params *params = dev->platform_data;
- 	struct i2c_client *client = to_i2c_client(dev);
--	struct drm_device *drm = data;
- 	struct tda998x_priv *priv;
--	u32 crtcs = 0;
- 	int ret;
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-@@ -1893,16 +1878,6 @@ static int tda998x_bind(struct device *dev, struct device *master, void *data)
- 
- 	dev_set_drvdata(dev, priv);
- 
--	if (dev->of_node)
--		crtcs = drm_of_find_possible_crtcs(drm, dev->of_node);
--
--	/* If no CRTCs were found, fall back to our old behaviour */
--	if (crtcs == 0) {
--		dev_warn(dev, "Falling back to first CRTC\n");
--		crtcs = 1 << 0;
--	}
--
--	priv->encoder.possible_crtcs = crtcs;
- 	priv->audio_params.config = BIT(2);
- 	priv->audio_params.format = AFMT_SPDIF;
- 	priv->audio_params.sample_rate = 44100;
-@@ -1925,23 +1900,12 @@ static int tda998x_bind(struct device *dev, struct device *master, void *data)
- 	if (!dev->of_node && params)
- 		tda998x_set_config(priv, params);
- 
--	drm_encoder_helper_add(&priv->encoder, &tda998x_encoder_helper_funcs);
--	ret = drm_encoder_init(drm, &priv->encoder, &tda998x_encoder_funcs,
--			       DRM_MODE_ENCODER_TMDS, NULL);
--	if (ret)
--		goto err_encoder;
-+	priv->bridge.funcs = &tda998x_bridge_funcs;
-+	priv->bridge.of_node = dev->of_node;
- 
--	ret = tda998x_connector_init(priv, drm);
--	if (ret)
--		goto err_connector;
-+	drm_bridge_add(&priv->bridge);
- 
- 	return 0;
--
--err_connector:
--	drm_encoder_cleanup(&priv->encoder);
--err_encoder:
--	tda998x_destroy(priv);
--	return ret;
- }
- 
- static void tda998x_unbind(struct device *dev, struct device *master,
-@@ -1950,7 +1914,7 @@ static void tda998x_unbind(struct device *dev, struct device *master,
- 	struct tda998x_priv *priv = dev_get_drvdata(dev);
- 
- 	drm_connector_cleanup(&priv->connector);
--	drm_encoder_cleanup(&priv->encoder);
-+	drm_bridge_remove(&priv->bridge);
- 	tda998x_destroy(priv);
- }
- 
+Thanks, applied.
 
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+On 19.04.2018 23:13, Tony Krowiak wrote:
+> Introduces a new function to reset the crypto attributes for all
+> vcpus whether they are running or not. Each vcpu in KVM will
+> be removed from SIE prior to resetting the crypto attributes in its
+> SIE state description. After all vcpus have had their crypto attributes=
+
+> reset the vcpus will be restored to SIE.
+>=20
+> This function is incorporated into the kvm_s390_vm_set_crypto(kvm)
+> function to fix a reported issue whereby the crypto key wrapping
+> attributes could potentially get out of synch for running vcpus.
+>=20
+> Reported-by: Halil Pasic <pasic@linux.vnet.ibm.com>
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> ---
+>  arch/s390/kvm/kvm-s390.c |   18 ++++++++++++++----
+>  arch/s390/kvm/kvm-s390.h |   13 +++++++++++++
+>  2 files changed, 27 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index fa355a6..4fa3037 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -789,6 +789,19 @@ static int kvm_s390_set_mem_control(struct kvm *kv=
+m, struct kvm_device_attr *att
+>  	return ret;
+>  }
+>=20
+> +void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm)
+> + {
+> +	int i;
+> +	struct kvm_vcpu *vcpu;
+> +
+> +	kvm_s390_vcpu_block_all(kvm);
+> +
+> +	kvm_for_each_vcpu(i, vcpu, kvm)
+> +	        kvm_s390_vcpu_crypto_setup(vcpu);
+> +
+> +	kvm_s390_vcpu_unblock_all(kvm);
+> +}
+> +
+>  static void kvm_s390_vcpu_crypto_setup(struct kvm_vcpu *vcpu);
+>=20
+>  static int kvm_s390_vm_set_crypto(struct kvm *kvm, struct kvm_device_a=
+ttr *attr)
+> @@ -832,10 +845,7 @@ static int kvm_s390_vm_set_crypto(struct kvm *kvm,=
+ struct kvm_device_attr *attr)
+>  		return -ENXIO;
+>  	}
+>=20
+> -	kvm_for_each_vcpu(i, vcpu, kvm) {
+> -		kvm_s390_vcpu_crypto_setup(vcpu);
+> -		exit_sie(vcpu);
+> -	}
+> +	kvm_s390_vcpu_crypto_reset_all(kvm);
+>  	mutex_unlock(&kvm->lock);
+>  	return 0;
+>  }
+> diff --git a/arch/s390/kvm/kvm-s390.h b/arch/s390/kvm/kvm-s390.h
+> index 1b5621f..981e3ba 100644
+> --- a/arch/s390/kvm/kvm-s390.h
+> +++ b/arch/s390/kvm/kvm-s390.h
+> @@ -410,4 +410,17 @@ static inline int kvm_s390_use_sca_entries(void)
+>  }
+>  void kvm_s390_reinject_machine_check(struct kvm_vcpu *vcpu,
+>  				     struct mcck_volatile_info *mcck_info);
+> +
+> +/**
+> + * kvm_s390_vcpu_crypto_reset_all
+> + *
+> + * Reset the crypto attributes for each vcpu. This can be done while t=
+he vcpus
+> + * are running as each vcpu will be removed from SIE before resetting =
+the crypt
+> + * attributes and restored to SIE afterward.
+> + *
+> + * Note: The kvm->lock must be held while calling this function
+> + *
+> + * @kvm: the KVM guest
+> + */
+> +void kvm_s390_vcpu_crypto_reset_all(struct kvm *kvm);
+>  #endif
+>=20
+
+
+
+--zDi7kUaLoViTvIsrjxjUh4nfna871sGlG--
+
+--n6kp673LA74rEC7tWUKnaqaFFXhqwqKAb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJa2dY3AAoJEBcO/8Q8ZEV5QRMP/j2ytqH+wyXbC6is8dKiQd6u
+8KlWeoDZ5OprEu3pTuXOpVDv2IVVEBYVTcNhWwTF2KqzhoebcMck877TGNRPgfPq
+xBB1IygZ3Fk25301a6jEz7j++cKKpP+XzMDNb+KJPyF18yck/0ZIvD+dQR5Z/nuO
+WXiyDR2RWS9tjzc+qVhNjGAxPMPGD1EJMPJBE4aQN6PTz8gyl4ZzhVGhXm8yB93q
+jdpg3yclD/i8HvS7b/JRDaEuXdMf2DfdxZh2uBlCp9LXdqZyoGlfo03pnGrRM/la
+8q94Fpu4L95rTOPuXzlQP5tKUpZxkXdaGQ2gNzj0EN1Jg4sBpJuAUgRpI9cbQBhV
+vn5Knsjih1l2kVYiLz9TvmavDe0juwzF2/4mLtMrpmWchRilVVcbHnNRLdP0sJD4
+MVFR6/xcx1bA0A1C59xvoYWPeyO0zftZ7XXtoxz3epybVIm2HLRti00NssevpVIU
+Xu2SqVqR9EYo8KVEnQL3eOhEBReYVelcKFH50lV+Y2t/xOJvLho4ixRCVag9MRW7
+039bw4t43VI2khi9JeK5Pj7UDgJLVLngzJHvcAGXmfnSI+6GxGg83dJwIRSCkCaj
+Ze3kLb2f+MPyRfJVxbFXqrwWdpoRZztx7LPCZhsCD07xzRg+vV5EFROVQRJTfhUe
+75XP6mkJnPH0Rkn46pXK
+=/GRu
+-----END PGP SIGNATURE-----
+
+--n6kp673LA74rEC7tWUKnaqaFFXhqwqKAb--
