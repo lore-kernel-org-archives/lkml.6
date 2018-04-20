@@ -1,80 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752427AbeDTUrz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 16:47:55 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56368 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751860AbeDTUrx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 16:47:53 -0400
-Subject: Re: [pci PATCH v8 0/4] Add support for unmanaged SR-IOV
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Alexander Duyck <alexander.h.duyck@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
-        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk
-References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
- <5fc62d10-790f-2356-c2f6-fd49f542dd3c@infradead.org>
- <CAKgT0UewuO7LWc8wkHPTv2cksF39-8+5nFfEP_DmXVRQtgOWdg@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d744f4cc-9bac-ba1a-7757-ca05fd855708@infradead.org>
-Date: Fri, 20 Apr 2018 13:47:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752786AbeDTUs4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 16:48:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51048 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751227AbeDTUsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 16:48:55 -0400
+Date: Fri, 20 Apr 2018 22:48:53 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: thor.thayer@linux.intel.com
+Cc: cyrille.pitchen@wedev4u.fr, marek.vasut@gmail.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, richard@nod.at,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] mtd: spi-nor: Fix Cadence QSPI page fault kernel
+ panic
+Message-ID: <20180420224853.427d188e@bbrezillon>
+In-Reply-To: <1522073537-27386-1-git-send-email-thor.thayer@linux.intel.com>
+References: <1522073537-27386-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UewuO7LWc8wkHPTv2cksF39-8+5nFfEP_DmXVRQtgOWdg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/18 13:01, Alexander Duyck wrote:
-> On Fri, Apr 20, 2018 at 10:23 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 04/20/18 09:28, Alexander Duyck wrote:
->>> This series is meant to add support for SR-IOV on devices when the VFs are
->>> not managed by the kernel. Examples of recent patches attempting to do this
->>> include:
->>> virto - https://patchwork.kernel.org/patch/10241225/
->>> pci-stub - https://patchwork.kernel.org/patch/10109935/
->>> vfio - https://patchwork.kernel.org/patch/10103353/
->>> uio - https://patchwork.kernel.org/patch/9974031/
->>
->> Hi,
->>
->> Somewhere in this patch series it would be nice to tell us what the heck
->> a "PF" is.  :)
->>
->> Thanks.
+On Mon, 26 Mar 2018 09:12:17 -0500
+thor.thayer@linux.intel.com wrote:
+
+> From: Thor Thayer <thor.thayer@linux.intel.com>
 > 
-> Sorry, I was kind of operating on the assumption of everyone
-> understanding SR-IOV nomenclature.
-
-Yes, I understood that. :)
-
-> A "PF" is a PCIe Physical Function. When you bring up a PCIe device
-> that supports SR-IOV it is the device that is there to begin with.
+> The current Cadence QSPI driver caused a kernel panic when loading
+> a Root Filesystem from QSPI. The problem was caused by reading more
+> bytes than needed because the QSPI operated on 4 bytes at a time.
+> <snip>
+> [    7.947754] spi_nor_read[1048]:from 0x037cad74, len 1 [bfe07fff]
+> [    7.956247] cqspi_read[910]:offset 0x58502516, buffer=bfe07fff
+> [    7.956247]
+> [    7.966046] Unable to handle kernel paging request at virtual
+> address bfe08002
+> [    7.973239] pgd = eebfc000
+> [    7.975931] [bfe08002] *pgd=2fffb811, *pte=00000000, *ppte=00000000
+> </snip>
+> Notice above how only 1 byte needed to be read but by reading 4 bytes
+> into the end of a mapped page, an unrecoverable page fault occurred.
 > 
-> A "VF" is a PCIe Virtual Function. You could think of as a logical
-> device that is spawned from the physical function using a combination
-> of hardware configuration via the SR-IOV block in the PCIe extended
-> configuration space and kernel/driver features.
+> This patch uses a temporary buffer to hold the 4 bytes read and then
+> copies only the bytes required into the buffer. A min() function is
+> used to limit the length to prevent buffer overflows.
 > 
-> There are also a number of online resources you could use to research
-> SR-IOV further. Hope that helps to clarify some of this.
+> Request testing of this patch on other platforms. This was tested
+> on the Intel Arria10 SoCFPGA DevKit.
 > 
-> Thanks.
+> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
 
-Thank you.
+Can you add a Fixes and Cc-stable tag?
 
-
--- 
-~Randy
+> ---
+> v2  Changes to only write dangling bytes at end of transfer since
+>       previous patch may have multiple dangling byte transfers.
+>     Remove write patch since no errors reported and write timeout
+>       needs more investigation.
+> ---
+>  drivers/mtd/spi-nor/cadence-quadspi.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+> index 4b8e9183489a..5872f31eaa60 100644
+> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
+> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+> @@ -501,7 +501,9 @@ static int cqspi_indirect_read_execute(struct spi_nor *nor, u8 *rxbuf,
+>  	void __iomem *reg_base = cqspi->iobase;
+>  	void __iomem *ahb_base = cqspi->ahb_base;
+>  	unsigned int remaining = n_rx;
+> +	unsigned int mod_bytes = n_rx % 4;
+>  	unsigned int bytes_to_read = 0;
+> +	u8 *rxbuf_end = rxbuf + n_rx;
+>  	int ret = 0;
+>  
+>  	writel(from_addr, reg_base + CQSPI_REG_INDIRECTRDSTARTADDR);
+> @@ -530,11 +532,24 @@ static int cqspi_indirect_read_execute(struct spi_nor *nor, u8 *rxbuf,
+>  		}
+>  
+>  		while (bytes_to_read != 0) {
+> +			unsigned int word_remain = round_down(remaining, 4);
+> +
+>  			bytes_to_read *= cqspi->fifo_width;
+>  			bytes_to_read = bytes_to_read > remaining ?
+>  					remaining : bytes_to_read;
+> -			ioread32_rep(ahb_base, rxbuf,
+> -				     DIV_ROUND_UP(bytes_to_read, 4));
+> +			bytes_to_read = round_down(bytes_to_read, 4);
+> +			/* Read 4 byte word chunks then single bytes */
+> +			if (bytes_to_read) {
+> +				ioread32_rep(ahb_base, rxbuf,
+> +					     (bytes_to_read / 4));
+> +			} else if (!word_remain && mod_bytes) {
+> +				unsigned int temp = ioread32(ahb_base);
+> +
+> +				bytes_to_read = mod_bytes;
+> +				memcpy(rxbuf, &temp, min((unsigned int)
+> +							 (rxbuf_end - rxbuf),
+> +							 bytes_to_read));
+> +			}
+>  			rxbuf += bytes_to_read;
+>  			remaining -= bytes_to_read;
+>  			bytes_to_read = cqspi_get_rd_sram_level(cqspi);
