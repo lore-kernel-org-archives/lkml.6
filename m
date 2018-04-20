@@ -1,200 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754116AbeDTCiQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 22:38:16 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:42676 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753954AbeDTCiO (ORCPT
+        id S1754139AbeDTDAP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 23:00:15 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:33149 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753964AbeDTDAM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 22:38:14 -0400
-X-Google-Smtp-Source: AIpwx4/GyOEJbIrp0AdsAtIZHCaO1XArlfDC07wTiOBquljpLuYORIHXROjxwYGfKm12cfop2v6yng==
-Date: Fri, 20 Apr 2018 11:38:09 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>, Andrey Vagin <avagin@openvz.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Subject: Re: [v2] prctl: Deprecate non PR_SET_MM_MAP operations
-Message-ID: <20180420023809.GD6397@jagdpanzerIV>
-References: <20180405182651.GM15783@uranus.lan>
+        Thu, 19 Apr 2018 23:00:12 -0400
+X-Google-Smtp-Source: AIpwx4+9pZlncn8fpBblusZzVtJoDgB3APCzi092eKuCcmkLmh55DKhKwEQcVk+RIdF8jLmSzhcEFaSjwg3Q5lW1f5M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180405182651.GM15783@uranus.lan>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180419104432.7lzk7nbjmwav6ojl@quack2.suse.cz>
+References: <152246892890.36038.18436540150980653229.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152246901060.36038.4487158506830998280.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20180404094656.dssixqvvdcp5jff2@quack2.suse.cz> <CAPcyv4joRA=BrurYZ1kzXpMG=jnXik9+LdLqH9961jM5VnmU7w@mail.gmail.com>
+ <20180409164944.6u7i4wgbp6yihvin@quack2.suse.cz> <CAPcyv4gzJ4gcWgwOOmER1z7zsWR+X2zao-tMh8TjN9tx2kg_0g@mail.gmail.com>
+ <CAPcyv4h3RPdohsPyiB=GxE8iQCjRRen=knDd=Em5BMy1MYpRvA@mail.gmail.com> <20180419104432.7lzk7nbjmwav6ojl@quack2.suse.cz>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 19 Apr 2018 20:00:09 -0700
+Message-ID: <CAPcyv4ievTQtaMRBe8Pdz=f-rvpcv82tLDTFbJ6v5WSixU91pg@mail.gmail.com>
+Subject: Re: [PATCH v8 15/18] mm, fs, dax: handle layout changes to pinned dax mappings
+To: Jan Kara <jack@suse.cz>
+Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Jeff Moyer <jmoyer@redhat.com>, Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh.triplett@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/05/18 21:26), Cyrill Gorcunov wrote:
-[..]
-> -
->  #ifdef CONFIG_CHECKPOINT_RESTORE
->  	if (opt == PR_SET_MM_MAP || opt == PR_SET_MM_MAP_SIZE)
->  		return prctl_set_mm_map(opt, (const void __user *)addr, arg4);
->  #endif
->  
-> -	if (!capable(CAP_SYS_RESOURCE))
-> -		return -EPERM;
-> -
-> -	if (opt == PR_SET_MM_EXE_FILE)
-> -		return prctl_set_mm_exe_file(mm, (unsigned int)addr);
-> -
-> -	if (opt == PR_SET_MM_AUXV)
-> -		return prctl_set_auxv(mm, addr, arg4);
+On Thu, Apr 19, 2018 at 3:44 AM, Jan Kara <jack@suse.cz> wrote:
+> On Fri 13-04-18 15:03:51, Dan Williams wrote:
+>> On Mon, Apr 9, 2018 at 9:51 AM, Dan Williams <dan.j.williams@intel.com> wrote:
+>> > On Mon, Apr 9, 2018 at 9:49 AM, Jan Kara <jack@suse.cz> wrote:
+>> >> On Sat 07-04-18 12:38:24, Dan Williams wrote:
+>> > [..]
+>> >>> I wonder if this can be trivially solved by using srcu. I.e. we don't
+>> >>> need to wait for a global quiescent state, just a
+>> >>> get_user_pages_fast() quiescent state. ...or is that an abuse of the
+>> >>> srcu api?
+>> >>
+>> >> Well, I'd rather use the percpu rwsemaphore (linux/percpu-rwsem.h) than
+>> >> SRCU. It is a more-or-less standard locking mechanism rather than relying
+>> >> on implementation properties of SRCU which is a data structure protection
+>> >> method. And the overhead of percpu rwsemaphore for your use case should be
+>> >> about the same as that of SRCU.
+>> >
+>> > I was just about to ask that. Yes, it seems they would share similar
+>> > properties and it would be better to use the explicit implementation
+>> > rather than a side effect of srcu.
+>>
+>> ...unfortunately:
+>>
+>>  BUG: sleeping function called from invalid context at
+>> ./include/linux/percpu-rwsem.h:34
+>>  [..]
+>>  Call Trace:
+>>   dump_stack+0x85/0xcb
+>>   ___might_sleep+0x15b/0x240
+>>   dax_layout_lock+0x18/0x80
+>>   get_user_pages_fast+0xf8/0x140
+>>
+>> ...and thinking about it more srcu is a better fit. We don't need the
+>> 100% exclusion provided by an rwsem we only need the guarantee that
+>> all cpus that might have been running get_user_pages_fast() have
+>> finished it at least once.
+>>
+>> In my tests synchronize_srcu is a bit slower than unpatched for the
+>> trivial 100 truncate test, but certainly not the 200x latency you were
+>> seeing with syncrhonize_rcu.
+>>
+>> Elapsed time:
+>> 0.006149178 unpatched
+>> 0.009426360 srcu
+>
+> Hum, right. Yesterday I was looking into KSM for a different reason and
+> I've noticed it also does writeprotect pages and deals with races with GUP.
+> And what KSM relies on is:
+>
+> write_protect_page()
+>   ...
+>   entry = ptep_clear_flush(vma, pvmw.address, pvmw.pte);
+>   /*
+>    * Check that no O_DIRECT or similar I/O is in progress on the
+>    * page
+>    */
+>   if (page_mapcount(page) + 1 + swapped != page_count(page)) {
+>     page used -> bail
 
-Then validate_prctl_map() and prctl_set_mm_exe_file() can be moved
-under CONFIG_CHECKPOINT_RESTORE ifdef.
+Slick.
 
----
+>   }
+>
+> And this really works because gup_pte_range() does:
+>
+>   page = pte_page(pte);
+>   head = compound_head(page);
+>
+>   if (!page_cache_get_speculative(head))
+>     goto pte_unmap;
+>
+>   if (unlikely(pte_val(pte) != pte_val(*ptep))) {
+>     bail
 
- kernel/sys.c | 126 +++++++++++++++++++++++++++++------------------------------
- 1 file changed, 63 insertions(+), 63 deletions(-)
+Need to add a similar check to __gup_device_huge_pmd.
 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 6bdffe264303..86e5ef1a5612 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -1815,68 +1815,7 @@ SYSCALL_DEFINE1(umask, int, mask)
- 	return mask;
- }
- 
--static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
--{
--	struct fd exe;
--	struct file *old_exe, *exe_file;
--	struct inode *inode;
--	int err;
--
--	exe = fdget(fd);
--	if (!exe.file)
--		return -EBADF;
--
--	inode = file_inode(exe.file);
--
--	/*
--	 * Because the original mm->exe_file points to executable file, make
--	 * sure that this one is executable as well, to avoid breaking an
--	 * overall picture.
--	 */
--	err = -EACCES;
--	if (!S_ISREG(inode->i_mode) || path_noexec(&exe.file->f_path))
--		goto exit;
--
--	err = inode_permission(inode, MAY_EXEC);
--	if (err)
--		goto exit;
--
--	/*
--	 * Forbid mm->exe_file change if old file still mapped.
--	 */
--	exe_file = get_mm_exe_file(mm);
--	err = -EBUSY;
--	if (exe_file) {
--		struct vm_area_struct *vma;
--
--		down_read(&mm->mmap_sem);
--		for (vma = mm->mmap; vma; vma = vma->vm_next) {
--			if (!vma->vm_file)
--				continue;
--			if (path_equal(&vma->vm_file->f_path,
--				       &exe_file->f_path))
--				goto exit_err;
--		}
--
--		up_read(&mm->mmap_sem);
--		fput(exe_file);
--	}
--
--	err = 0;
--	/* set the new file, lockless */
--	get_file(exe.file);
--	old_exe = xchg(&mm->exe_file, exe.file);
--	if (old_exe)
--		fput(old_exe);
--exit:
--	fdput(exe);
--	return err;
--exit_err:
--	up_read(&mm->mmap_sem);
--	fput(exe_file);
--	goto exit;
--}
--
-+#ifdef CONFIG_CHECKPOINT_RESTORE
- /*
-  * WARNING: we don't require any capability here so be very careful
-  * in what is allowed for modification from userspace.
-@@ -1968,7 +1907,68 @@ static int validate_prctl_map(struct prctl_mm_map *prctl_map)
- 	return error;
- }
- 
--#ifdef CONFIG_CHECKPOINT_RESTORE
-+static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
-+{
-+	struct fd exe;
-+	struct file *old_exe, *exe_file;
-+	struct inode *inode;
-+	int err;
-+
-+	exe = fdget(fd);
-+	if (!exe.file)
-+		return -EBADF;
-+
-+	inode = file_inode(exe.file);
-+
-+	/*
-+	 * Because the original mm->exe_file points to executable file, make
-+	 * sure that this one is executable as well, to avoid breaking an
-+	 * overall picture.
-+	 */
-+	err = -EACCES;
-+	if (!S_ISREG(inode->i_mode) || path_noexec(&exe.file->f_path))
-+		goto exit;
-+
-+	err = inode_permission(inode, MAY_EXEC);
-+	if (err)
-+		goto exit;
-+
-+	/*
-+	 * Forbid mm->exe_file change if old file still mapped.
-+	 */
-+	exe_file = get_mm_exe_file(mm);
-+	err = -EBUSY;
-+	if (exe_file) {
-+		struct vm_area_struct *vma;
-+
-+		down_read(&mm->mmap_sem);
-+		for (vma = mm->mmap; vma; vma = vma->vm_next) {
-+			if (!vma->vm_file)
-+				continue;
-+			if (path_equal(&vma->vm_file->f_path,
-+				       &exe_file->f_path))
-+				goto exit_err;
-+		}
-+
-+		up_read(&mm->mmap_sem);
-+		fput(exe_file);
-+	}
-+
-+	err = 0;
-+	/* set the new file, lockless */
-+	get_file(exe.file);
-+	old_exe = xchg(&mm->exe_file, exe.file);
-+	if (old_exe)
-+		fput(old_exe);
-+exit:
-+	fdput(exe);
-+	return err;
-+exit_err:
-+	up_read(&mm->mmap_sem);
-+	fput(exe_file);
-+	goto exit;
-+}
-+
- static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data_size)
- {
- 	struct prctl_mm_map prctl_map = { .exe_fd = (u32)-1, };
+>   }
+>
+> So either write_protect_page() page sees the elevated reference or
+> gup_pte_range() bails because it will see the pte changed.
+>
+> In the truncate path things are a bit different but in principle the same
+> should work - once truncate blocks page faults and unmaps pages from page
+> tables, we can be sure GUP will not grab the page anymore or we'll see
+> elevated page count. So IMO there's no need for any additional locking
+> against the GUP path (but a comment explaining this is highly desirable I
+> guess).
+
+Yes, those "pte_val(pte) != pte_val(*ptep)" checks should be
+documented for the same reason we require comments on rmb/wmb pairs.
+I'll take a look, thanks Jan.
