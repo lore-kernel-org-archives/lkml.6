@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753202AbeDTWjk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 18:39:40 -0400
-Received: from mga01.intel.com ([192.55.52.88]:60384 "EHLO mga01.intel.com"
+        id S1753239AbeDTWjz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 18:39:55 -0400
+Received: from mga01.intel.com ([192.55.52.88]:60382 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752924AbeDTWjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752900AbeDTWjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Apr 2018 18:39:10 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,303,1520924400";
-   d="scan'208";a="34982644"
+   d="scan'208";a="34982641"
 From: Vikas Shivappa <vikas.shivappa@linux.intel.com>
 To: vikas.shivappa@intel.com, tony.luck@intel.com,
         ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
         tglx@linutronix.de, hpa@zytor.com
 Cc: linux-kernel@vger.kernel.org, ak@linux.intel.com,
         vikas.shivappa@linux.intel.com
-Subject: [PATCH 5/6] x86/intel_rdt/mba_sc: Prepare for feedback loop
-Date: Fri, 20 Apr 2018 15:36:20 -0700
-Message-Id: <1524263781-14267-6-git-send-email-vikas.shivappa@linux.intel.com>
+Subject: [PATCH 4/6] x86/intel_rdt/mba_sc: Add schemata support
+Date: Fri, 20 Apr 2018 15:36:19 -0700
+Message-Id: <1524263781-14267-5-git-send-email-vikas.shivappa@linux.intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1524263781-14267-1-git-send-email-vikas.shivappa@linux.intel.com>
 References: <1524263781-14267-1-git-send-email-vikas.shivappa@linux.intel.com>
@@ -27,118 +27,99 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a preparatory patch for the mba feedback loop. We add support to
-measure the "bandwidth in MBps" and the "delta bandwidth". We measure it
-reading the MBM IA32_QM_CTR MSRs and calculating the amount of "bytes"
-moved. There is no user interface for this and will only be used by the
-feedback loop patch.
+Currently when user updates the "schemata" with new MBA percentage
+values, kernel writes the corresponding bandwidth percentage values to
+the IA32_MBA_THRTL_MSR.
+
+When MBA is expressed in MBps, the schemata format is changed to have
+the per package memory bandwidth in MBps instead of being specified in
+percentage. We do not write the IA32_MBA_THRTL_MSRs when the schemata
+is updated as that is handled separately.
 
 Signed-off-by: Vikas Shivappa <vikas.shivappa@linux.intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.h         | 10 ++++++++
- arch/x86/kernel/cpu/intel_rdt_monitor.c | 45 ++++++++++++++++++++++++++++-----
- 2 files changed, 49 insertions(+), 6 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt.c             |  2 +-
+ arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 24 +++++++++++++++++++-----
+ 2 files changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 91cc310..66a0ba3 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -180,10 +180,20 @@ struct rftype {
-  * struct mbm_state - status for each MBM counter in each domain
-  * @chunks:	Total data moved (multiply by rdt_group.mon_scale to get bytes)
-  * @prev_msr	Value of IA32_QM_CTR for this RMID last time we read it
-+ * @chunks_bw	Total local data moved. Used for bandwidth calculation
-+ * @prev_bw_msr:Value of previous IA32_QM_CTR for bandwidth counting
-+ * @prev_bw	The most recent bandwidth in MBps
-+ * @delta_bw	Difference between the current and previous bandwidth
-+ * @delta_comp	Indicates whether to compute the delta_bw
-  */
- struct mbm_state {
- 	u64	chunks;
- 	u64	prev_msr;
-+	u64	chunks_bw;
-+	u64	prev_bw_msr;
-+	u32	prev_bw;
-+	u32	delta_bw;
-+	bool	delta_comp;
+diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
+index 07f6b3b..85805d7 100644
+--- a/arch/x86/kernel/cpu/intel_rdt.c
++++ b/arch/x86/kernel/cpu/intel_rdt.c
+@@ -179,7 +179,7 @@ struct rdt_resource rdt_resources_all[] = {
+ 		.msr_update		= mba_wrmsr,
+ 		.cache_level		= 3,
+ 		.parse_ctrlval		= parse_bw,
+-		.format_str		= "%d=%*d",
++		.format_str		= "%d=%*u",
+ 		.fflags			= RFTYPE_RES_MB,
+ 	},
  };
+diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+index 23e1d5c..116d57b 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
++++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
+@@ -53,7 +53,8 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
+ 		return false;
+ 	}
  
- /**
-diff --git a/arch/x86/kernel/cpu/intel_rdt_monitor.c b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-index 681450e..32c9e55 100644
---- a/arch/x86/kernel/cpu/intel_rdt_monitor.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-@@ -225,10 +225,18 @@ void free_rmid(u32 rmid)
- 		list_add_tail(&entry->list, &rmid_free_lru);
- }
+-	if (bw < r->membw.min_bw || bw > r->default_ctrl) {
++	if ((bw < r->membw.min_bw || bw > r->default_ctrl) &&
++	    !is_mba_sc(r)) {
+ 		rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
+ 				    r->membw.min_bw, r->default_ctrl);
+ 		return false;
+@@ -179,6 +180,8 @@ static int update_domains(struct rdt_resource *r, int closid)
+ 	struct msr_param msr_param;
+ 	cpumask_var_t cpu_mask;
+ 	struct rdt_domain *d;
++	bool mba_sc;
++	u32 *dc;
+ 	int cpu;
  
-+static u64 mbm_overflow_count(u64 prev_msr, u64 cur_msr)
-+{
-+	u64 shift = 64 - MBM_CNTR_WIDTH, chunks;
+ 	if (!zalloc_cpumask_var(&cpu_mask, GFP_KERNEL))
+@@ -188,13 +191,20 @@ static int update_domains(struct rdt_resource *r, int closid)
+ 	msr_param.high = msr_param.low + 1;
+ 	msr_param.res = r;
+ 
++	mba_sc = is_mba_sc(r);
+ 	list_for_each_entry(d, &r->domains, list) {
+-		if (d->have_new_ctrl && d->new_ctrl != d->ctrl_val[closid]) {
++		dc = !mba_sc ? d->ctrl_val : d->mbps_val;
++		if (d->have_new_ctrl && d->new_ctrl != dc[closid]) {
+ 			cpumask_set_cpu(cpumask_any(&d->cpu_mask), cpu_mask);
+-			d->ctrl_val[closid] = d->new_ctrl;
++			dc[closid] = d->new_ctrl;
+ 		}
+ 	}
+-	if (cpumask_empty(cpu_mask))
 +
-+	chunks = (cur_msr << shift) - (prev_msr << shift);
-+	return chunks >>= shift;
-+}
-+
- static int __mon_event_count(u32 rmid, struct rmid_read *rr)
++	/*
++	 * Avoid writing the control msr with control values when
++	 * MBA software controller is enabled
++	 */
++	if (cpumask_empty(cpu_mask) || mba_sc)
+ 		goto done;
+ 	cpu = get_cpu();
+ 	/* Update CBM on this cpu if it's in cpu_mask. */
+@@ -282,13 +292,17 @@ static void show_doms(struct seq_file *s, struct rdt_resource *r, int closid)
  {
--	u64 chunks, shift, tval;
- 	struct mbm_state *m;
-+	u64 chunks, tval;
+ 	struct rdt_domain *dom;
+ 	bool sep = false;
++	u32 ctrl_val;
  
- 	tval = __rmid_read(rmid, rr->evtid);
- 	if (tval & (RMID_VAL_ERROR | RMID_VAL_UNAVAIL)) {
-@@ -254,14 +262,12 @@ static int __mon_event_count(u32 rmid, struct rmid_read *rr)
+ 	seq_printf(s, "%*s:", max_name_width, r->name);
+ 	list_for_each_entry(dom, &r->domains, list) {
+ 		if (sep)
+ 			seq_puts(s, ";");
++
++		ctrl_val = (!is_mba_sc(r) ? dom->ctrl_val[closid] :
++			    dom->mbps_val[closid]);
+ 		seq_printf(s, r->format_str, dom->id, max_data_width,
+-			   dom->ctrl_val[closid]);
++			   ctrl_val);
+ 		sep = true;
  	}
- 
- 	if (rr->first) {
--		m->prev_msr = tval;
--		m->chunks = 0;
-+		memset(m, 0, sizeof(struct mbm_state));
-+		m->prev_bw_msr = m->prev_msr = tval;
- 		return 0;
- 	}
- 
--	shift = 64 - MBM_CNTR_WIDTH;
--	chunks = (tval << shift) - (m->prev_msr << shift);
--	chunks >>= shift;
-+	chunks = mbm_overflow_count(m->prev_msr, tval);
- 	m->chunks += chunks;
- 	m->prev_msr = tval;
- 
-@@ -270,6 +276,33 @@ static int __mon_event_count(u32 rmid, struct rmid_read *rr)
- }
- 
- /*
-+ * Supporting function to calculate the memory bandwidth
-+ * and delta bandwidth in MBps.
-+ */
-+static void mbm_bw_count(u32 rmid, struct rmid_read *rr)
-+{
-+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3];
-+	struct mbm_state *m = &rr->d->mbm_local[rmid];
-+	u64 tval, cur_bw, chunks;
-+
-+	tval = __rmid_read(rmid, rr->evtid);
-+	if (tval & (RMID_VAL_ERROR | RMID_VAL_UNAVAIL)) {
-+		return;
-+	}
-+
-+	chunks = mbm_overflow_count(m->prev_bw_msr, tval);
-+	m->chunks_bw += chunks;
-+	m->chunks = m->chunks_bw;
-+	cur_bw = (chunks * r->mon_scale) >> 20;
-+
-+	if (m->delta_comp)
-+		m->delta_bw = abs(cur_bw - m->prev_bw);
-+	m->delta_comp = false;
-+	m->prev_bw = cur_bw;
-+	m->prev_bw_msr = tval;
-+}
-+
-+/*
-  * This is called via IPI to read the CQM/MBM counters
-  * on a domain.
-  */
+ 	seq_puts(s, "\n");
 -- 
 1.9.1
