@@ -1,37 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754726AbeDTLsF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 07:48:05 -0400
-Received: from mail-lf0-f45.google.com ([209.85.215.45]:44968 "EHLO
-        mail-lf0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754591AbeDTLsE (ORCPT
+        id S1754696AbeDTLux (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 07:50:53 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:41089 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754619AbeDTLuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:48:04 -0400
-X-Google-Smtp-Source: AIpwx4/tVUTIqYXeHmlAc4AroxfHCOeNOzTvxJJIEcPEx5Y0H+KqgPqZpwfq4gYo12xchR4KumJQSvQh9UMQK2lJG7Q=
-MIME-Version: 1.0
-In-Reply-To: <20180420082829.GE4064@hirez.programming.kicks-ass.net>
-References: <20180414202831.GA20373@jordon-HP-15-Notebook-PC> <20180420082829.GE4064@hirez.programming.kicks-ass.net>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Fri, 20 Apr 2018 17:18:02 +0530
-Message-ID: <CAFqt6zb3N3qVVcUOvd2F4q2P3PYrOoU8M3c=qSZDEpHokHHBaQ@mail.gmail.com>
-Subject: Re: [PATCH] kernel: event: core: Change return type to vm_fault_t
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, acme@kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 20 Apr 2018 07:50:52 -0400
+X-Google-Smtp-Source: AIpwx48aeOVXuDH5XOlSAOw3ZBoMAH+jY9xYZiwcBCsk65JT78ecIP2vMFS90BOaQ0p6j7pZ4TqBEA==
+From: Emil Lundmark <lndmrk@chromium.org>
+To: dri-devel@lists.freedesktop.org
+Cc: Dave Airlie <airlied@redhat.com>, Sean Paul <seanpaul@chromium.org>,
+        linux-kernel@vger.kernel.org, Emil Lundmark <lndmrk@chromium.org>
+Subject: [PATCH] drm: udl: Destroy framebuffer only if it was initialized
+Date: Fri, 20 Apr 2018 13:50:01 +0200
+Message-Id: <20180420115001.161745-1-lndmrk@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I'm fine with the patch, but shouldn't this be part of a larger series /
-> cocinelle script?
->
+This fixes a NULL pointer dereference that can happen if the UDL
+driver is unloaded before the framebuffer is initialized. This can
+happen e.g. if the USB device is unplugged right after it was plugged
+in.
 
-This one is trivial but many others are not.
-As part of this clean up we have fixed many
-existing bugs in fault handlers of drivers/
-file systems. Also we are replacing existing
-vm_insert_foo() with new vmf_insert_foo()
-in fault handlers (wherever applicable).
-Refer - 1c8f422059ae5da07db7406ab916203f9417e396
-in 4.17-rc1
+Signed-off-by: Emil Lundmark <lndmrk@chromium.org>
+---
+ drivers/gpu/drm/udl/udl_fb.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/udl/udl_fb.c b/drivers/gpu/drm/udl/udl_fb.c
+index 2ebdc6d5a76e..5754e37f741b 100644
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -426,9 +426,11 @@ static void udl_fbdev_destroy(struct drm_device *dev,
+ {
+ 	drm_fb_helper_unregister_fbi(&ufbdev->helper);
+ 	drm_fb_helper_fini(&ufbdev->helper);
+-	drm_framebuffer_unregister_private(&ufbdev->ufb.base);
+-	drm_framebuffer_cleanup(&ufbdev->ufb.base);
+-	drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
++	if (ufbdev->ufb.obj) {
++		drm_framebuffer_unregister_private(&ufbdev->ufb.base);
++		drm_framebuffer_cleanup(&ufbdev->ufb.base);
++		drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
++	}
+ }
+ 
+ int udl_fbdev_init(struct drm_device *dev)
+-- 
+2.17.0.484.g0c8726318c-goog
