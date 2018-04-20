@@ -1,172 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752776AbeDTWIv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 18:08:51 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33310 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752100AbeDTWIt (ORCPT
+        id S1752851AbeDTWJE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 18:09:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60766 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752792AbeDTWJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 18:08:49 -0400
-X-Google-Smtp-Source: AIpwx48HET00yLY4AG+gVt0vCFVXKe1k5DtexvO1CXBTgdGHhKUW4Hc8TwtasOQ3yf+ji/9eI1PXHg==
-Subject: Re: [pci PATCH v8 4/4] pci-pf-stub: Add PF driver stub for PFs that
- function only to enable VFs
-To: Alexander Duyck <alexander.h.duyck@intel.com>, bhelgaas@google.com,
-        linux-pci@vger.kernel.org
-Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        keith.busch@intel.com, netanel@amazon.com, ddutile@redhat.com,
-        mheyne@amazon.de, liang-min.wang@intel.com, mark.d.rustad@intel.com,
-        dwmw2@infradead.org, hch@lst.de, dwmw@amazon.co.uk
-References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
- <20180420163109.46077.60334.stgit@ahduyck-green-test.jf.intel.com>
-From: Gregory Rose <gvrose8192@gmail.com>
-Message-ID: <33785f68-d445-f49b-5668-3195cfa32159@gmail.com>
-Date: Fri, 20 Apr 2018 15:08:46 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 20 Apr 2018 18:09:00 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32A7260310
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH v2 2/2] regulator: add QCOM RPMh regulator driver
+To: Doug Anderson <dianders@chromium.org>, Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arm-msm@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>, Matthias Kaehlcke <mka@chromium.org>
+References: <cover.1523673467.git.collinsd@codeaurora.org>
+ <4b45f41996ea3344340e44fab2dc9e487572e209.1523673467.git.collinsd@codeaurora.org>
+ <CAD=FV=XKYCDtF93RtYi+dokR2BcT-z6Ex3UjgJ0ia_kF=847eA@mail.gmail.com>
+ <4e3353fe-ebb5-46bb-aa58-49ad04c4d9db@codeaurora.org>
+ <CAD=FV=W28_exRv+H0MJvPnHWGEeUG=SMKr=UqEKpBzkH44Fzmg@mail.gmail.com>
+From: David Collins <collinsd@codeaurora.org>
+Message-ID: <132ab845-52d6-6192-4d8c-5a9c95410688@codeaurora.org>
+Date: Fri, 20 Apr 2018 15:08:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-In-Reply-To: <20180420163109.46077.60334.stgit@ahduyck-green-test.jf.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAD=FV=W28_exRv+H0MJvPnHWGEeUG=SMKr=UqEKpBzkH44Fzmg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/20/2018 9:31 AM, Alexander Duyck wrote:
-> Add a new driver called "pci-pf-stub" to act as a "white-list" for PF
-> devices that provide no other functionality other then acting as a means of
-> allocating a set of VFs. For now I only have one example ID provided by
-> Amazon in terms of devices that require this functionality. The general
-> idea is that in the future we will see other devices added as vendors come
-> up with devices where the PF is more or less just a lightweight shim used
-> to allocate VFs.
->
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
-> ---
->
-> v6: New driver to address concerns about Amazon devices left unsupported
-> v7: Dropped pci_id table explanation from pci-pf-stub driver
->
->   drivers/pci/Kconfig       |   12 ++++++++++
->   drivers/pci/Makefile      |    2 ++
->   drivers/pci/pci-pf-stub.c |   54 +++++++++++++++++++++++++++++++++++++++++++++
->   include/linux/pci_ids.h   |    2 ++
->   4 files changed, 70 insertions(+)
->   create mode 100644 drivers/pci/pci-pf-stub.c
->
-> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-> index 34b56a8..cdef2a2 100644
-> --- a/drivers/pci/Kconfig
-> +++ b/drivers/pci/Kconfig
-> @@ -71,6 +71,18 @@ config PCI_STUB
->   
->   	  When in doubt, say N.
->   
-> +config PCI_PF_STUB
-> +	tristate "PCI PF Stub driver"
-> +	depends on PCI
-> +	depends on PCI_IOV
-> +	help
-> +	  Say Y or M here if you want to enable support for devices that
-> +	  require SR-IOV support, while at the same time the PF itself is
-> +	  not providing any actual services on the host itself such as
-> +	  storage or networking.
-> +
-> +	  When in doubt, say N.
-> +
->   config XEN_PCIDEV_FRONTEND
->           tristate "Xen PCI Frontend"
->           depends on PCI && X86 && XEN
-> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> index 9419709..4e133d3 100644
-> --- a/drivers/pci/Makefile
-> +++ b/drivers/pci/Makefile
-> @@ -43,6 +43,8 @@ obj-$(CONFIG_PCI_SYSCALL) += syscall.o
->   
->   obj-$(CONFIG_PCI_STUB) += pci-stub.o
->   
-> +obj-$(CONFIG_PCI_PF_STUB) += pci-pf-stub.o
-> +
->   obj-$(CONFIG_PCI_ECAM) += ecam.o
->   
->   obj-$(CONFIG_XEN_PCIDEV_FRONTEND) += xen-pcifront.o
-> diff --git a/drivers/pci/pci-pf-stub.c b/drivers/pci/pci-pf-stub.c
-> new file mode 100644
-> index 0000000..9d5fdf2
-> --- /dev/null
-> +++ b/drivers/pci/pci-pf-stub.c
-> @@ -0,0 +1,54 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* pci-pf-stub - simple stub driver for PCI SR-IOV PF device
-> + *
-> + * This driver is meant to act as a "white-list" for devices that provde
-> + * SR-IOV functionality while at the same time not actually needing a
-> + * driver of their own.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +
-> +/**
-> + * pci_pf_stub_white_list - White list of devices to bind pci-pf-stub onto
-> + *
-> + * This table provides the list of IDs this driver is supposed to bind
-> + * onto. You could think of this as a list of "quirked" devices where we
-> + * are adding support for SR-IOV here since there are no other drivers
-> + * that they would be running under.
-> + */
-> +static const struct pci_device_id pci_pf_stub_white_list[] = {
-> +	{ PCI_VDEVICE(AMAZON, 0x0053) },
-> +	/* required last entry */
-> +	{ 0 }
-> +};
-> +MODULE_DEVICE_TABLE(pci, pci_pf_stub_white_list);
-> +
-> +static int pci_pf_stub_probe(struct pci_dev *dev,
-> +			     const struct pci_device_id *id)
-> +{
-> +	pci_info(dev, "claimed by pci-pf-stub\n");
-> +	return 0;
-> +}
-> +
-> +static struct pci_driver pf_stub_driver = {
-> +	.name			= "pci-pf-stub",
-> +	.id_table		= pci_pf_stub_white_list,
-> +	.probe			= pci_pf_stub_probe,
-> +	.sriov_configure	= pci_sriov_configure_simple,
-> +};
-> +
-> +static int __init pci_pf_stub_init(void)
-> +{
-> +	return pci_register_driver(&pf_stub_driver);
-> +}
-> +
-> +static void __exit pci_pf_stub_exit(void)
-> +{
-> +	pci_unregister_driver(&pf_stub_driver);
-> +}
-> +
-> +module_init(pci_pf_stub_init);
-> +module_exit(pci_pf_stub_exit);
-> +
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index a637a7d..62dab14 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -2549,6 +2549,8 @@
->   #define PCI_VENDOR_ID_CIRCUITCO		0x1cc8
->   #define PCI_SUBSYSTEM_ID_CIRCUITCO_MINNOWBOARD	0x0001
->   
-> +#define PCI_VENDOR_ID_AMAZON		0x1d0f
-> +
->   #define PCI_VENDOR_ID_TEKRAM		0x1de1
->   #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
->   
->
+On 04/19/2018 09:16 AM, Doug Anderson wrote:
+> On Wed, Apr 18, 2018 at 4:30 PM, David Collins <collinsd@codeaurora.org> wrote:
+>>>> + * @drms_mode:                 Array of regulator framework modes which can
+>>>> + *                             be configured dynamically for this regulator
+>>>> + *                             via the set_load() callback.
+>>>
+>>> Using the singular for something that is an array is confusing.  Why
+>>> not "drms_modes" or "drms_mode_arr"?  In the past review you said
+>>> 'Perhaps something along the lines of "drms_modes"'.
+>>
+>> It seems awkward to me to use a plural for arrays as it leads to indexing
+>> like this: vreg->drms_modes[i].  "mode i" seems better than "modes i".
+>> However, I'm willing to change this to be drms_modes and drms_mode_max_uAs
+>> if that style is preferred.
+> 
+> I'd very much like a plural here.
 
-LGTM
+Ok.  I'll change this to be plural.
 
-Reviewed-by: Greg Rose <gvrose8192@gmail.com>
+
+>>>> +               prop = "qcom,regulator-initial-voltage";
+>>>> +               ret = of_property_read_u32(node, prop, &uV);
+>>>> +               if (!ret) {
+>>>> +                       range = &vreg->hw_data->voltage_range;
+>>>> +                       selector = DIV_ROUND_UP(uV - range->min_uV,
+>>>> +                                       range->uV_step) + range->min_sel;
+>>>> +                       if (uV < range->min_uV || selector > range->max_sel) {
+>>>> +                               dev_err(dev, "%s: %s=%u is invalid\n",
+>>>> +                                       node->name, prop, uV);
+>>>> +                               return -EINVAL;
+>>>> +                       }
+>>>> +
+>>>> +                       vreg->voltage_selector = selector;
+>>>> +
+>>>> +                       cmd[cmd_count].addr
+>>>> +                               = vreg->addr + RPMH_REGULATOR_REG_VRM_VOLTAGE;
+>>>> +                       cmd[cmd_count++].data
+>>>> +                               = DIV_ROUND_UP(selector * range->uV_step
+>>>> +                                               + range->min_uV, 1000);
+>>>> +               }
+>>>
+>>> Seems like you want an "else { vreg->voltage_selector = -EINVAL; }".
+>>> Otherwise "get_voltage_sel" will return selector 0 before the first
+>>> set, right?
+>>>
+>>> Previously Mark said: "If the driver can't read values it should
+>>> return an appropriate error code."
+>>> ...and previously you said: "I'll try this out and see if the
+>>> regulator framework complains during regulator registration."
+>>
+>> I tested out what happens when vreg->voltage_selector = -EINVAL is set
+>> when qcom,regulator-initial-voltage is not present.  This results in
+>> devm_regulator_register() failing and subsequently causing the
+>> qcom_rpmh-regulator probe to fail.  The error happens in
+>> machine_constraints_voltage() [1].
+>>
+>> This leaves two courses of action:
+>> 1. (current patch set) allow voltage_selector to stay 0 if uninitialized
+>> 2. Set voltage_selector = -EINVAL by default and specify in DT binding
+>> documentation that qcom,regulator-initial-voltage is required for VRM
+>> managed RPMh regulator resources which have regulator-min-microvolt and
+>> regulator-max-microvolt specified.
+>>
+>> Are you ok with the DT implications of option #2?
+> 
+> You'd need to ask Mark if he's OK with it, but a option #3 is to add a
+> patch to your series fix the regulator framework to try setting the
+> voltage if _regulator_get_voltage() fails.  Presumably in
+> machine_constraints_voltage() you'd now do something like:
+> 
+>   int target_min, target_max;
+>   int current_uV = _regulator_get_voltage(rdev);
+>   if (current_uV < 0) {
+>     /* Maybe this regulator's hardware can't be read and needs to be initted */
+>     _regulator_do_set_voltage(
+>       rdev, rdev->constraints->min_uV, rdev->constraints->min_uV);
+>     current_uV = _regulator_get_voltage(rdev);
+>   }
+>   if (current_uV < 0) {
+>     rdev_err(rdev,
+>       "failed to get the current voltage(%d)\n",
+>       current_uV);
+>       return current_uV;
+>   }
+> 
+> If Mark doesn't like that then I guess I'd be OK w/ initting it to 0
+> but this needs to be documented _somewhere_ (unlike for bypass it's
+> not obvious, so you need to find someplace to put it).  I'd rather not
+> hack the DT to deal with our software limitations.
+
+I'm not opposed to your option #3 though it does seem a little hacky and
+tailored to the qcom_rpmh-regulator specific case.  Note that I think it
+would be better to vote for min_uV to max_uV than min_uV to min_uV though.
+
+Mark, what are your thoughts on the best way to handle this situation?
+
+
+>>>> +static unsigned int rpmh_regulator_pmic4_bob_of_map_mode(unsigned int mode)
+>>>> +{
+>>>> +       static const unsigned int of_mode_map[RPMH_REGULATOR_MODE_COUNT] = {
+>>>> +               [RPMH_REGULATOR_MODE_RET]  = -EINVAL,
+>>>> +               [RPMH_REGULATOR_MODE_LPM]  = REGULATOR_MODE_IDLE,
+>>>> +               [RPMH_REGULATOR_MODE_AUTO] = REGULATOR_MODE_NORMAL,
+>>>> +               [RPMH_REGULATOR_MODE_HPM]  = REGULATOR_MODE_FAST,
+>>>> +       };
+>>>
+>>> You're sticking a negative value in an array of unsigned inits.  Here
+>>> and in other similar functions.
+>>>
+>>> I know, I know.  The function is defined to return an unsigned int.
+>>> It's wrong.  of_regulator.c clearly puts the return code in a signed
+>>> int.  First attempt at fixing this is at
+>>> <https://patchwork.kernel.org/patch/10346081/>.
+>>
+>> I can change the error cases to use REGULATOR_MODE_INVALID which is added
+>> by this change still under review [2].
+> 
+> I haven't seen Mark NAK it (yet), so for lack of a better option I'd
+> start using it in your patch and document in the commit message that
+> it depends on my patch.
+
+Your patch was accepted.  I'll switch to using REGULATOR_MODE_INVALID.
+
+Thanks,
+David
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
