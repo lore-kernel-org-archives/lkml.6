@@ -1,230 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeDTTxQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 15:53:16 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:45135 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeDTTxN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 15:53:13 -0400
-X-Google-Smtp-Source: AIpwx4/BSt1sCWxEePsdkXiXA+gE3cVHtMCkQmLz/NcBNmi880heQFKJdaaSSWBeXi72Sa/3zhxX6w==
-Subject: Re: [RFC PATCH] dt-bindings: add a jsonschema binding example
-To: Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree-spec@vger.kernel.org, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Grant Likely <grant.likely@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jonathan Cameron <jic23@kernel.org>
-References: <20180418222905.10414-1-robh@kernel.org>
- <152424282214.46528.2511757264045171935@swboyd.mtv.corp.google.com>
- <CAL_Jsq+1G61+E0wtVEkzann3Z=2Cr=2PkbDJ_OuaA5GysWZsXQ@mail.gmail.com>
-From: Frank Rowand <frowand.list@gmail.com>
-Message-ID: <de8cf071-2280-45fb-c41a-feb1f039d68b@gmail.com>
-Date: Fri, 20 Apr 2018 12:53:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752291AbeDTTyn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 15:54:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50363 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751227AbeDTTym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 15:54:42 -0400
+Date: Fri, 20 Apr 2018 21:54:40 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: NeilBrown <neil@brown.name>
+Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mtd: spi-nor: clear Winbond Extended Address Reg on
+ switch to 3-byte addressing.
+Message-ID: <20180420215440.7b078f6c@bbrezillon>
+In-Reply-To: <87sh7wrq8p.fsf@notabene.neil.brown.name>
+References: <874lkmw54j.fsf@notabene.neil.brown.name>
+        <87sh7wrq8p.fsf@notabene.neil.brown.name>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAL_Jsq+1G61+E0wtVEkzann3Z=2Cr=2PkbDJ_OuaA5GysWZsXQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/18 11:15, Rob Herring wrote:
-> On Fri, Apr 20, 2018 at 11:47 AM, Stephen Boyd <sboyd@kernel.org> wrote:
->> Quoting Rob Herring (2018-04-18 15:29:05)
->>> diff --git a/Documentation/devicetree/bindings/example-schema.yaml b/Documentation/devicetree/bindings/example-schema.yaml
->>> new file mode 100644
->>> index 000000000000..fe0a3bd1668e
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/example-schema.yaml
->>> @@ -0,0 +1,149 @@
->>> +# SPDX-License-Identifier: BSD-2-Clause
->>> +# Copyright 2018 Linaro Ltd.
->>> +%YAML 1.2
->>> +---
->>> +# All the top-level keys are standard json-schema keywords except for
->>> +# 'maintainers' and 'select'
->>> +
->>> +# $id is a unique idenifier based on the filename
->>> +$id: "http://devicetree.org/schemas/example-schema.yaml#"
->>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->>> +
->>> +# Only 1 version supported for now
->>> +version: 1
->>> +
->>> +title: An example schema annotated with jsonschema details
->>> +
->>> +maintainers:
->>> +  - Rob Herring <robh@kernel.org>
->>> +
->>> +description: |
->>> +  A more detailed multi-line description of the binding.
->>> +
->>> +  Details about the hardware device and any links to datasheets can go here.
->>> +
->>> +  The end of the description is marked by indentation less than the first line
->>> +  in the description.
->>> +
->>> +select: false
->>> +  # 'select' is a schema applied to a DT node to determine if this binding
->>> +  # schema should be applied to the node. It is optional and by default the
->>> +  # possible compatible strings are extracted and used to match.
->>
->> Can we get a concrete example here?
-> 
-> select: true
-> 
-> :) Which is apply to every node.
-> 
-> A better one is from the memory node schema ('$nodename' gets added :
-> 
-> select:
->   required: ["$nodename"]
->   properties:
->     $nodename:
->       oneOf:
->         - pattern: "^memory@[0-9a-f]*"
->         - const: "memory" # 'memory' only allowed for selecting
-> 
-> 
-> I expect the vast majority of device bindings will not use select at
-> all and rely on compatible string matching.
-> 
->>> +
->>> +properties:
->> [...]
->>> +
->>> +  interrupts:
->>> +    # Either 1 or 2 interrupts can be present
->>> +    minItems: 1
->>> +    maxItems: 2
->>> +    items:
->>> +      - description: tx or combined interrupt
->>> +      - description: rx interrupt
->>> +
->>> +    description: |
->>
->> The '|' is needed to make yaml happy?
-> 
-> Yes, this is simply how you do literal text blocks in yaml.
-> 
-> We don't really need for this one really, but for the top-level
-> 'description' we do. The long term intent is 'description' would be
-> written in sphinx/rst and can be extracted into the DT spec (for
-> common bindings). Grant has experimented with that some.
-> 
->>> +      A variable number of interrupts warrants a description of what conditions
->>> +      affect the number of interrupts. Otherwise, descriptions on standard
->>> +      properties are not necessary.
->>> +
->>> +  interrupt-names:
->>> +    # minItems must be specified here because the default would be 2
->>> +    minItems: 1
->>> +    items:
->>> +      - const: "tx irq"
->>> +      - const: "rx irq"
->>> +
->>> +  # Property names starting with '#' must be quoted
->>> +  '#interrupt-cells':
->>> +    # A simple case where the value must always be '2'.
->>> +    # The core schema handles that this must be a single integer.
->>> +    const: 2
->>> +
->>> +  interrupt-controller: {}
->>
->> Does '{}' mean nothing to see here?
-> 
-> Yes. It's just an empty schema that's always valid.
-> 
->>> +    # The core checks this is a boolean, so just have to list it here to be
->>> +    # valid for this binding.
->>> +
->>> +  clock-frequency:
->>> +    # The type is set in the core schema. Per device schema only need to set
->>> +    # constraints on the possible values.
->>> +    minimum: 100
->>> +    maximum: 400000
->>> +    # The value that should be used if the property is not present
->>> +    default: 200
->>> +
->>
->> The 'default' field is neat. I look forward to the compiler using the
->> schema to insert defaults into the dtb if the properties aren't present
->> in the input file.
-> 
-> That wasn't really my intention, but it's what the OS should use if
-> property is not present. But at least for required properties, we
-> could certainly do as you suggest.
+Hi Neil,
 
-I understand the thought of 'neat', but it would also add yet one more
-layer to the "how did this property get into my dtb?" stew.
+On Mon, 16 Apr 2018 09:42:30 +1000
+NeilBrown <neil@brown.name> wrote:
 
-But more importantly, if this becomes a required part of the kernel
-build process, is it adding a new required tool (python)?  (Or is
-python already required?)  There is resistance to adding new tools.
+> Winbond spi-nor flash 32MB and larger have an 'Extended Address
+> Register' as one option for addressing beyond 16MB (Macronix
+> has the same concept, Spansion has EXTADD bits in the Bank Address
+> Register).
+> 
+> According to section
+>    8.2.7 Write Extended Address Register (C5h)
+> 
+> of the Winbond W25Q256FV data sheet (256M-BIT SPI flash)
+> 
+>    The Extended Address Register is only effective when the device is
+>    in the 3-Byte Address Mode.  When the device operates in the 4-Byte
+>    Address Mode (ADS=1), any command with address input of A31-A24
+>    will replace the Extended Address Register values. It is
+>    recommended to check and update the Extended Address Register if
+>    necessary when the device is switched from 4-Byte to 3-Byte Address
+>    Mode.
+> 
+> So the documentation suggests clearing the EAR after switching to
+> 3-byte mode.  Experimentation shows that the EAR is *always* one after
+> the switch to 3-byte mode, so clearing the EAR is mandatory at
+> shutdown for a subsequent 3-byte-addressed reboot to work.
+> 
+> Note that some SOCs (e.g. MT7621) do not assert a reset line at normal
+> reboot, so we cannot rely on hardware reset.  The MT7621 does assert a
+> reset line at watchdog-reset.
+> 
+> Signed-off-by: NeilBrown <neil@brown.name>
 
--Frank
+We should probably backport the fix. Can you add a Fixes and Cc-stable
+tag?
 
+> ---
+> 
+> following a helpful discussion with Marek, I've revised the description
+> a little, and make the code change specific to winbond.
+> I've change the OP names to RDEAR and WREAR instead of RDXA and WRXA to
+> match names used in the Macronix documentation.  Winbond documentation
+> doesn't provide abbreviated OP names.
+> 
+> Thanks,
+> NeilBrown
+> 
+> 
+>  drivers/mtd/spi-nor/spi-nor.c | 13 +++++++++++++
+>  include/linux/mtd/spi-nor.h   |  2 ++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index d445a4d3b770..0d0af0acf8b9 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -284,6 +284,19 @@ static inline int set_4byte(struct spi_nor *nor, const struct flash_info *info,
+>  		if (need_wren)
+>  			write_disable(nor);
+>  
+> +		if (!status && !enable &&
+> +		    JEDEC_MFR(info) == SNOR_MFR_WINBOND) {
+> +			/* On Winbond W25Q256FV, leaving 4byte mode causes
 
->>> +  foo-gpios:
->>> +    maxItems: 1
->>> +    description: A connection of the 'foo' gpio line.
->>> +
->>> +  vendor,int-property:
->>> +    description: Vendor specific properties must have a description
->>> +    type: integer # A type is also required
->>> +    enum: [2, 4, 6, 8, 10]
->>> +
->>> +  vendor,bool-property:
->>> +    description: Vendor specific properties must have a description
->>> +    type: boolean
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - interrupts
->>> +  - interrupt-controller
->>
->> Can the required or optional parts go under each property instead of
->> having a different section?
-> 
-> No, because then it is not json-schema language.
-> 
->> Or does that make the schema parser
->> difficult to implement?
-> 
-> Yes, because then we have to implement a schema parser.
-> 
->> It may also make sense to negate this and
->> specify only the optional properties, or to require both optional and
->> required lists to make things more explicit at the cost of some
->> verbosity.
->>
->>> +
->>> +examples:
->>> +  - |
->>> +    /{
->>
->> Is the first slash required here?
-> 
-> No, just leftover from being the root node in the example.
-> 
-> 
-> Thanks for taking a look.
-> 
->>> +          compatible = "vendor,soc4-ip", "vendor,soc1-ip";
->>> +          reg = <0x1000 0x80>,
->>> +                <0x3000 0x80>;
->>> +          reg-names = "core", "aux";
->>> +          interrupts = <10>;
->>> +          interrupt-controller;
->>> +    };
-> 
+We use regular kernel-comment style in MTD:
+
+			/*
+			 * blablabla
+			 */
+
+Thanks,
+
+Boris
+
+> +			 * the Extended Address Register to be set to 1, so all
+> +			 * 3-byte-address reads come from the second 16M.
+> +			 * We must clear the register to enable normal behavior.
+> +			 */
+> +			write_enable(nor);
+> +			nor->cmd_buf[0] = 0;
+> +			nor->write_reg(nor, SPINOR_OP_WREAR, nor->cmd_buf, 1);
+> +			write_disable(nor);
+> +		}
+> +
+>  		return status;
+>  	default:
+>  		/* Spansion style */
+> diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+> index de36969eb359..e60da0d34cc1 100644
+> --- a/include/linux/mtd/spi-nor.h
+> +++ b/include/linux/mtd/spi-nor.h
+> @@ -62,6 +62,8 @@
+>  #define SPINOR_OP_RDCR		0x35	/* Read configuration register */
+>  #define SPINOR_OP_RDFSR		0x70	/* Read flag status register */
+>  #define SPINOR_OP_CLFSR		0x50	/* Clear flag status register */
+> +#define SPINOR_OP_RDEAR		0xc8	/* Read Extended Address Register */
+> +#define SPINOR_OP_WREAR		0xc5	/* Write Extended Address Register */
+>  
+>  /* 4-byte address opcodes - used on Spansion and some Macronix flashes. */
+>  #define SPINOR_OP_READ_4B	0x13	/* Read data bytes (low frequency) */
