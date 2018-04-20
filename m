@@ -1,97 +1,216 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753694AbeDTSI6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:08:58 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:42744 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753576AbeDTSI4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:08:56 -0400
-Smtp-Origin-Hostprefix: devbig
-From: Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig102.frc2.facebook.com
-To: <linux-kernel@vger.kernel.org>
-CC: <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Smtp-Origin-Cluster: frc2c02
-Subject: [PATCH v4] tracing: remove igrab() iput() call from uprobes.c
-Date: Fri, 20 Apr 2018 11:08:47 -0700
-Message-ID: <20180420180847.418760-1-songliubraving@fb.com>
-X-Mailer: git-send-email 2.9.5
-X-FB-Internal: Safe
+        id S1753636AbeDTSP2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:15:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753158AbeDTSP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 14:15:26 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97FB9217D3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
+X-Google-Smtp-Source: AB8JxZrp7aaksqZVGadV+WOebojJ28JiuI6hUw3GK4fpZinUN2i58K892u69uxnjkyTmcXeKuJnfmWz265tvg3kqy4I=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_08:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <152424282214.46528.2511757264045171935@swboyd.mtv.corp.google.com>
+References: <20180418222905.10414-1-robh@kernel.org> <152424282214.46528.2511757264045171935@swboyd.mtv.corp.google.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 20 Apr 2018 13:15:04 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+1G61+E0wtVEkzann3Z=2Cr=2PkbDJ_OuaA5GysWZsXQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+1G61+E0wtVEkzann3Z=2Cr=2PkbDJ_OuaA5GysWZsXQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] dt-bindings: add a jsonschema binding example
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree-spec@vger.kernel.org, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Grant Likely <grant.likely@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Jonathan Cameron <jic23@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Caller of uprobe_register is required to keep the inode and containing
-mount point referenced.
+On Fri, Apr 20, 2018 at 11:47 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Rob Herring (2018-04-18 15:29:05)
+>> diff --git a/Documentation/devicetree/bindings/example-schema.yaml b/Documentation/devicetree/bindings/example-schema.yaml
+>> new file mode 100644
+>> index 000000000000..fe0a3bd1668e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/example-schema.yaml
+>> @@ -0,0 +1,149 @@
+>> +# SPDX-License-Identifier: BSD-2-Clause
+>> +# Copyright 2018 Linaro Ltd.
+>> +%YAML 1.2
+>> +---
+>> +# All the top-level keys are standard json-schema keywords except for
+>> +# 'maintainers' and 'select'
+>> +
+>> +# $id is a unique idenifier based on the filename
+>> +$id: "http://devicetree.org/schemas/example-schema.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +# Only 1 version supported for now
+>> +version: 1
+>> +
+>> +title: An example schema annotated with jsonschema details
+>> +
+>> +maintainers:
+>> +  - Rob Herring <robh@kernel.org>
+>> +
+>> +description: |
+>> +  A more detailed multi-line description of the binding.
+>> +
+>> +  Details about the hardware device and any links to datasheets can go here.
+>> +
+>> +  The end of the description is marked by indentation less than the first line
+>> +  in the description.
+>> +
+>> +select: false
+>> +  # 'select' is a schema applied to a DT node to determine if this binding
+>> +  # schema should be applied to the node. It is optional and by default the
+>> +  # possible compatible strings are extracted and used to match.
+>
+> Can we get a concrete example here?
 
-There was misuse of igrab() in uprobes.c and trace_uprobe.c. This is
-because igrab() will not prevent umount of the containing mount point.
-To fix this, we added path to struct trace_uprobe, which keeps the inode
-and containing mount reference.
+select: true
 
-For uprobes.c sisde, igrab() is not necessary. So we removed it and
-added comments on requirements to callers of uprobe_register().
+:) Which is apply to every node.
 
-Link: http://lkml.kernel.org/r/CAELBmZB2XX=qEOLAdvGG4cPx4GEntcSnWQquJLUK1ongRj35cA@mail.gmail.com
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Howard McLauchlan <hmclauchlan@fb.com>
-Cc: Josef Bacik <jbacik@fb.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- kernel/events/uprobes.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+A better one is from the memory node schema ('$nodename' gets added :
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index ce6848e..20486bb 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -491,7 +491,6 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
- 	if (!uprobe)
- 		return NULL;
- 
--	uprobe->inode = igrab(inode);
- 	uprobe->offset = offset;
- 	init_rwsem(&uprobe->register_rwsem);
- 	init_rwsem(&uprobe->consumer_rwsem);
-@@ -502,7 +501,6 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
- 	if (cur_uprobe) {
- 		kfree(uprobe);
- 		uprobe = cur_uprobe;
--		iput(inode);
- 	}
- 
- 	return uprobe;
-@@ -701,7 +699,6 @@ static void delete_uprobe(struct uprobe *uprobe)
- 	rb_erase(&uprobe->rb_node, &uprobes_tree);
- 	spin_unlock(&uprobes_treelock);
- 	RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
--	iput(uprobe->inode);
- 	put_uprobe(uprobe);
- }
- 
-@@ -873,7 +870,8 @@ static void __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *u
-  * tuple).  Creation refcount stops uprobe_unregister from freeing the
-  * @uprobe even before the register operation is complete. Creation
-  * refcount is released when the last @uc for the @uprobe
-- * unregisters.
-+ * unregisters. Caller of uprobe_register() is required to keep @inode
-+ * (and the containing mount) referenced.
-  *
-  * Return errno if it cannot successully install probes
-  * else return 0 (success)
--- 
-2.9.5
+select:
+  required: ["$nodename"]
+  properties:
+    $nodename:
+      oneOf:
+        - pattern: "^memory@[0-9a-f]*"
+        - const: "memory" # 'memory' only allowed for selecting
+
+
+I expect the vast majority of device bindings will not use select at
+all and rely on compatible string matching.
+
+>> +
+>> +properties:
+> [...]
+>> +
+>> +  interrupts:
+>> +    # Either 1 or 2 interrupts can be present
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +    items:
+>> +      - description: tx or combined interrupt
+>> +      - description: rx interrupt
+>> +
+>> +    description: |
+>
+> The '|' is needed to make yaml happy?
+
+Yes, this is simply how you do literal text blocks in yaml.
+
+We don't really need for this one really, but for the top-level
+'description' we do. The long term intent is 'description' would be
+written in sphinx/rst and can be extracted into the DT spec (for
+common bindings). Grant has experimented with that some.
+
+>> +      A variable number of interrupts warrants a description of what conditions
+>> +      affect the number of interrupts. Otherwise, descriptions on standard
+>> +      properties are not necessary.
+>> +
+>> +  interrupt-names:
+>> +    # minItems must be specified here because the default would be 2
+>> +    minItems: 1
+>> +    items:
+>> +      - const: "tx irq"
+>> +      - const: "rx irq"
+>> +
+>> +  # Property names starting with '#' must be quoted
+>> +  '#interrupt-cells':
+>> +    # A simple case where the value must always be '2'.
+>> +    # The core schema handles that this must be a single integer.
+>> +    const: 2
+>> +
+>> +  interrupt-controller: {}
+>
+> Does '{}' mean nothing to see here?
+
+Yes. It's just an empty schema that's always valid.
+
+>> +    # The core checks this is a boolean, so just have to list it here to be
+>> +    # valid for this binding.
+>> +
+>> +  clock-frequency:
+>> +    # The type is set in the core schema. Per device schema only need to set
+>> +    # constraints on the possible values.
+>> +    minimum: 100
+>> +    maximum: 400000
+>> +    # The value that should be used if the property is not present
+>> +    default: 200
+>> +
+>
+> The 'default' field is neat. I look forward to the compiler using the
+> schema to insert defaults into the dtb if the properties aren't present
+> in the input file.
+
+That wasn't really my intention, but it's what the OS should use if
+property is not present. But at least for required properties, we
+could certainly do as you suggest.
+
+>> +  foo-gpios:
+>> +    maxItems: 1
+>> +    description: A connection of the 'foo' gpio line.
+>> +
+>> +  vendor,int-property:
+>> +    description: Vendor specific properties must have a description
+>> +    type: integer # A type is also required
+>> +    enum: [2, 4, 6, 8, 10]
+>> +
+>> +  vendor,bool-property:
+>> +    description: Vendor specific properties must have a description
+>> +    type: boolean
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - interrupt-controller
+>
+> Can the required or optional parts go under each property instead of
+> having a different section?
+
+No, because then it is not json-schema language.
+
+> Or does that make the schema parser
+> difficult to implement?
+
+Yes, because then we have to implement a schema parser.
+
+> It may also make sense to negate this and
+> specify only the optional properties, or to require both optional and
+> required lists to make things more explicit at the cost of some
+> verbosity.
+>
+>> +
+>> +examples:
+>> +  - |
+>> +    /{
+>
+> Is the first slash required here?
+
+No, just leftover from being the root node in the example.
+
+
+Thanks for taking a look.
+
+>> +          compatible = "vendor,soc4-ip", "vendor,soc1-ip";
+>> +          reg = <0x1000 0x80>,
+>> +                <0x3000 0x80>;
+>> +          reg-names = "core", "aux";
+>> +          interrupts = <10>;
+>> +          interrupt-controller;
+>> +    };
