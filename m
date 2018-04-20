@@ -1,218 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752153AbeDTSsu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:48:50 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16832 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750858AbeDTSss (ORCPT
+        id S1752291AbeDTStk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:49:40 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:41714 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbeDTSth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:48:48 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 20 Apr 2018 11:48:47 -0700
-From: Vladislav Zhurba <vzhurba@nvidia.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
-        Jun Yan <juyan@nvidia.com>, marting <marting@nvidia.com>,
-        Daniel Fu <danifu@nvidia.com>, Vladislav Zhurba <vzhurba@nvidia.com>
-Subject: [PATCH 1/1] media: rc: Add NVIDIA IR keymapping
-Date: Fri, 20 Apr 2018 11:47:47 -0700
-Message-ID: <20180420184747.29022-2-vzhurba@nvidia.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180420184747.29022-1-vzhurba@nvidia.com>
-References: <20180420184747.29022-1-vzhurba@nvidia.com>
-X-NVConfidentiality: public
+        Fri, 20 Apr 2018 14:49:37 -0400
+X-Google-Smtp-Source: AIpwx49rLLzmW8RQT6W1vj3t+HNE8tceb0kc9IlDXlqg1mVcVSSRYt4hPu/9EBGe17kSGCIAk8JKGg==
+Date: Fri, 20 Apr 2018 11:49:32 -0700
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk,
+        bart.vanassche@wdc.com, ming.lei@redhat.com, tytso@mit.edu,
+        darrick.wong@oracle.com, jikos@kernel.org, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com, linux-fsdevel@vger.kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        todd.e.brandt@linux.intel.com, nborisov@suse.com,
+        martin.petersen@oracle.com, ONeukum@suse.com, oleksandr@natalenko.name,
+        oleg.b.antonyan@gmail.com, yu.chen.surf@gmail.com,
+        dan.j.williams@intel.com, linux-pm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jlayton@redhat.com
+Subject: Re: [PATCH 03/11] fs: add frozen sb state helpers
+Message-ID: <20180420184932.57as7jup75nx463v@garbanzo.do-not-panic.com>
+References: <20171129232356.28296-1-mcgrof@kernel.org>
+ <20171129232356.28296-4-mcgrof@kernel.org>
+ <20171130171310.GG28180@quack2.suse.cz>
+ <20171130190548.GJ729@wotan.suse.de>
+ <20171201114724.GC8365@quack2.suse.cz>
+ <20171201211327.GQ729@wotan.suse.de>
+ <20171221110329.GG31584@quack2.suse.cz>
+ <20180418005936.j3fa5rogfm353clf@garbanzo.do-not-panic.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418005936.j3fa5rogfm353clf@garbanzo.do-not-panic.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jun Yan <juyan@nvidia.com>
+On Tue, Apr 17, 2018 at 05:59:36PM -0700, Luis R. Rodriguez wrote:
+> On Thu, Dec 21, 2017 at 12:03:29PM +0100, Jan Kara wrote:
+> > Hello,
+> > 
+> > I think I owe you a reply here... Sorry that it took so long.
+> 
+> Took me just as long :)
+> 
+> > On Fri 01-12-17 22:13:27, Luis R. Rodriguez wrote:
+> > > 
+> > > I'll note that its still not perfectly clear if really the semantics behind
+> > > freeze_bdev() match what I described above fully. That still needs to be
+> > > vetted for. For instance, does thaw_bdev() keep a superblock frozen if we
+> > > an ioctl initiated freeze had occurred before? If so then great. Otherwise
+> > > I think we'll need to distinguish the ioctl interface. Worst possible case
+> > > is that bdev semantics and in-kernel semantics differ somehow, then that
+> > > will really create a holy fucking mess.
+> > 
+> > I believe nobody really thought about mixing those two interfaces to fs
+> > freezing and so the behavior is basically defined by the implementation.
+> > That is:
+> > 
+> > freeze_bdev() on sb frozen by ioctl_fsfreeze() -> EBUSY
+> > freeze_bdev() on sb frozen by freeze_bdev() -> success
+> > ioctl_fsfreeze() on sb frozen by freeze_bdev() -> EBUSY
+> > ioctl_fsfreeze() on sb frozen by ioctl_fsfreeze() -> EBUSY
+> > 
+> > thaw_bdev() on sb frozen by ioctl_fsfreeze() -> EINVAL
+> 
+> Phew, so this is what we want for the in-kernel freezing so we're good
+> and *can* combine these then.
 
-Add keymap with NEC and SONY12 protocol for NVIDIA IR
+I double checked, and I don't see where you get EINVAL for this case.
+We *do* keep the sb frozen though, which is good, and the worst fear
+I had was that we did not. However we return 0 if there was already
+a prior freeze_bdev() or ioctl_fsfreeze() other than the context that
+started the prior freeze (--bdev->bd_fsfreeze_count > 0).
 
-Signed-off-by: Jun Yan <juyan@nvidia.com>
-Signed-off-by: marting <marting@nvidia.com>
-Signed-off-by: Daniel Fu <danifu@nvidia.com>
-Signed-off-by: Vladislav Zhurba <vzhurba@nvidia.com>
----
- drivers/media/rc/keymaps/Makefile        |  2 +
- drivers/media/rc/keymaps/rc-nvidia-nec.c | 66 ++++++++++++++++++++++++
- drivers/media/rc/keymaps/rc-nvidia.c     | 66 ++++++++++++++++++++++++
- include/media/rc-map.h                   |  2 +
- 4 files changed, 136 insertions(+)
- create mode 100644 drivers/media/rc/keymaps/rc-nvidia-nec.c
- create mode 100644 drivers/media/rc/keymaps/rc-nvidia.c
+The -EINVAL is only returned currently if there were no freezers.
 
-diff --git a/drivers/media/rc/keymaps/Makefile b/drivers/media/rc/keymaps/Makefile
-index d6b913a3032d..1d08500462fd 100644
---- a/drivers/media/rc/keymaps/Makefile
-+++ b/drivers/media/rc/keymaps/Makefile
-@@ -75,6 +75,8 @@ obj-$(CONFIG_RC_MAP) += rc-adstech-dvb-t-pci.o \
- 			rc-nec-terratec-cinergy-xs.o \
- 			rc-norwood.o \
- 			rc-npgtech.o \
-+			rc-nvidia.o \
-+			rc-nvidia-nec.o \
- 			rc-pctv-sedna.o \
- 			rc-pinnacle-color.o \
- 			rc-pinnacle-grey.o \
-diff --git a/drivers/media/rc/keymaps/rc-nvidia-nec.c b/drivers/media/rc/keymaps/rc-nvidia-nec.c
-new file mode 100644
-index 000000000000..c910a2a683f6
---- /dev/null
-+++ b/drivers/media/rc/keymaps/rc-nvidia-nec.c
-@@ -0,0 +1,66 @@
-+/* Keytable for NVIDIA Remote Controller
-+ *
-+ * Copyright (c) 2014-2018, NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+#include <media/rc-map.h>
-+#include <linux/module.h>
-+
-+static struct rc_map_table foster_table[] = {
-+	{ 0x807e12, KEY_VOLUMEUP },
-+	{ 0x807e15, KEY_VOLUMEDOWN },
-+	{ 0x807e0c, KEY_UP },
-+	{ 0x807e0e, KEY_DOWN },
-+	{ 0x807e0b, KEY_LEFT },
-+	{ 0x807e0d, KEY_RIGHT },
-+	{ 0x807e09, KEY_HOMEPAGE },
-+	{ 0x807e06, KEY_POWER },
-+	{ 0x807e03, KEY_SELECT },
-+	{ 0x807e02, KEY_BACK },
-+	{ 0x807e14, KEY_MUTE },
-+	{ 0x807e20, KEY_PLAYPAUSE },
-+	{ 0x807e11, KEY_PLAYCD },
-+	{ 0x807e08, KEY_PAUSECD },
-+	{ 0x807e07, KEY_STOP },
-+	{ 0x807e0f, KEY_FASTFORWARD },
-+	{ 0x807e0a, KEY_REWIND },
-+	{ 0x807e41, KEY_SLEEP },
-+	{ 0x807e45, KEY_WAKEUP },
-+};
-+
-+static struct rc_map_list nvidia_map = {
-+	.map = {
-+			.scan = foster_table,
-+			.size = ARRAY_SIZE(foster_table),
-+			.rc_type = RC_TYPE_NEC,
-+			.name = RC_MAP_NVIDIA_NEC,
-+	}
-+};
-+
-+static int __init init_rc_map_nvidia(void)
-+{
-+	return rc_map_register(&nvidia_map);
-+}
-+
-+static void __exit exit_rc_map_nvidia(void)
-+{
-+	rc_map_unregister(&nvidia_map);
-+}
-+
-+module_init(init_rc_map_nvidia);
-+module_exit(exit_rc_map_nvidia);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Daniel Fu <danifu@nvidia.com>");
-diff --git a/drivers/media/rc/keymaps/rc-nvidia.c b/drivers/media/rc/keymaps/rc-nvidia.c
-new file mode 100644
-index 000000000000..9767d85a6c9e
---- /dev/null
-+++ b/drivers/media/rc/keymaps/rc-nvidia.c
-@@ -0,0 +1,66 @@
-+/* Keytable for NVIDIA Remote Controller
-+ *
-+ * Copyright (c) 2014-2018, NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ *
-+ */
-+#include <media/rc-map.h>
-+#include <linux/module.h>
-+
-+static struct rc_map_table foster_table[] = {
-+	{ 0x10009, KEY_0 },
-+	{ 0x10000, KEY_1 },
-+	{ 0x10001, KEY_2 },
-+	{ 0x10002, KEY_3 },
-+	{ 0x10003, KEY_4 },
-+	{ 0x10004, KEY_5 },
-+	{ 0x10005, KEY_6 },
-+	{ 0x10006, KEY_7 },
-+	{ 0x10007, KEY_8 },
-+	{ 0x10008, KEY_9 },
-+	{ 0x10012, KEY_VOLUMEUP },
-+	{ 0x10013, KEY_VOLUMEDOWN },
-+	{ 0x10010, KEY_CHANNELUP },
-+	{ 0x10011, KEY_CHANNELDOWN },
-+	{ 0x10074, KEY_UP },
-+	{ 0x10075, KEY_DOWN },
-+	{ 0x10034, KEY_LEFT },
-+	{ 0x10033, KEY_RIGHT },
-+	{ 0x10060, KEY_HOME },
-+};
-+
-+static struct rc_map_list nvidia_map = {
-+	.map = {
-+			.scan = foster_table,
-+			.size = ARRAY_SIZE(foster_table),
-+			.rc_type = RC_TYPE_SONY12,
-+			.name = RC_MAP_NVIDIA,
-+	}
-+};
-+
-+static int __init init_rc_map_nvidia(void)
-+{
-+	return rc_map_register(&nvidia_map);
-+}
-+
-+static void __exit exit_rc_map_nvidia(void)
-+{
-+	rc_map_unregister(&nvidia_map);
-+}
-+
-+module_init(init_rc_map_nvidia);
-+module_exit(exit_rc_map_nvidia);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Jun Yan <juyan@nvidia.com>");
-diff --git a/include/media/rc-map.h b/include/media/rc-map.h
-index bfa3017cecba..673d16eaabdf 100644
---- a/include/media/rc-map.h
-+++ b/include/media/rc-map.h
-@@ -235,6 +235,8 @@ struct rc_map *rc_map_get(const char *name);
- #define RC_MAP_NEC_TERRATEC_CINERGY_XS   "rc-nec-terratec-cinergy-xs"
- #define RC_MAP_NORWOOD                   "rc-norwood"
- #define RC_MAP_NPGTECH                   "rc-npgtech"
-+#define RC_MAP_NVIDIA                    "rc-nvidia"
-+#define RC_MAP_NVIDIA_NEC                "rc-nvidia-nec"
- #define RC_MAP_PCTV_SEDNA                "rc-pctv-sedna"
- #define RC_MAP_PINNACLE_COLOR            "rc-pinnacle-color"
- #define RC_MAP_PINNACLE_GREY             "rc-pinnacle-grey"
--- 
-2.17.0
+int thaw_bdev(struct block_device *bdev, struct super_block *sb)
+{
+	int error = -EINVAL;
+
+	mutex_lock(&bdev->bd_fsfreeze_mutex);
+	if (!bdev->bd_fsfreeze_count)
+		goto out;
+
+	error = 0;
+	if (--bdev->bd_fsfreeze_count > 0)
+		goto out;
+	...
+out:
+	mutex_unlock(&bdev->bd_fsfreeze_mutex);
+	return error;
+}
+
+  Luis
