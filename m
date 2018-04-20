@@ -1,208 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755168AbeDTN5f (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:57:35 -0400
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:42810 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754846AbeDTN5c (ORCPT
+        id S1755147AbeDTN6Q (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:58:16 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:43947 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754982AbeDTN6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:57:32 -0400
-Subject: Re: [PATCH v2 05/10] media: v4l: Add definitions for MPEG2 frame
- format and header metadata
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>
-References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
- <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <4e6c4cb7-01b2-3278-4f12-c0ce8cd82ecc@xs4all.nl>
-Date: Fri, 20 Apr 2018 15:57:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfLvqnmb6eoo4JmSv7EVXsqfQrEo2CLKJWkZfmR75qs4Pdcjob5X6AqLwqmMne3Pfb5MWqv3yo8M7avbcSrQ0VfKWBRwAnyyU+K6mEsvm7y3BEhc7q7v9
- 6KaNGwHQd3SWWzhdo0Kg+P9s6Ua+hiPVAjYLa9c18kLuDop6kpY/Cnvrwj/SyBpX5Hg9VI7GS7IkBGiYYiEcffpi0LVcfGkfbbMff/UwOIrnJGe77umj3MWc
- Ed23V1RFxUS4YJnJMPRDuUGEan8+9tLg9q4Ss1mOoy0CLHdPrvl1JUViFF7ctM0VkLQq77HwMpq/SYFsC7CxjesJquB2wL0aihQZZE73GR+nU2pvtjSTE6Bu
- 69FSx3eM9KHO+pSswD+xTHg8+/dOk4MYKyWaeH3/0vpoQhhBRAM4Rhc+0x9hrgcr6gR52UIVMCjOBA3AwnDxP72ylxgVQcBcCrjePfXHNBH5kUaR2sFK3AYV
- lMAAFQx2VPsqKDClcUZTAgJNpwgzuuvEfSyC81eOzzJiPgIRnaTclVi4FfRL8cfZcvt/AbxVc4AD5MDnnqZAtQkyMx79SOLftzDjR7PlcuDLS+Bhiymm5ZhZ
- UANzdSnzo8MgI7OiqNbiLuYydoCeiFkT8UAO9vMe3bAeqdZdg8nZJho65d2B0064LoQRKE8sHLtAymy7uEcC+lA1Pqbdc331FbnukkeMQJbxRyOkMBkhAnut
- D3Tu462qnIOXEsyN9fGIEy2d+Jg9i/Az8MVLdUKoOLNqxIbT6ci+TMGYuzkdtWZ2L28wF+6bPm/+lTDSCnlbPap1Qx62yi+cBFK1JV+rcIsD3CKltOAMuKLl
- S4HY5VcDGMZ8lrcx1EsRrStNF6Q6CqMCsuQDBcqqtqFcKXvoJbmgqFYodi2byAumqPahGKzoyqZSsInPkCtu3QclP3U/ASwCNOb/Y4GYolHJ8YlG7qJJhDn4
- jR9v3isHZ5+O/h/y7jGUWxUZRFc7YAtW0iA3IAWQSCaTF3RQq4EhwjPi+qhyr/UMKbyoxGmRww8cxkkJaBsS8MfgXddeEw5yWZWLinVPWr1cmdE+tB7i/OwD
- QCkgwWRmnfWyFX3rvbYIovehvQp2cjH2pFRhWXCNpc2znpZJGjMWTPPL
+        Fri, 20 Apr 2018 09:58:14 -0400
+X-Google-Smtp-Source: AIpwx4/Gxef7/iqRXxqXForteMR3wRvtb61M/pvjPJ2BXF74BZaeQMxbCRmdBnxPjD6O3x+Vc2Q58Q==
+From: Ahmed Abdelsalam <amsalam20@gmail.com>
+To: davem@davemloft.net, dlebrun@google.com, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: amsalam20@gmail.com
+Subject: [PATCH] [net] ipv6: sr: fix NULL pointer dereference in seg6_do_srh_encap()- v4 pkts
+Date: Fri, 20 Apr 2018 15:58:05 +0200
+Message-Id: <1524232685-1203-1-git-send-email-amsalam20@gmail.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/19/18 17:45, Paul Kocialkowski wrote:
-> Stateless video decoding engines require both the MPEG slices and
-> associated metadata from the video stream in order to decode frames.
-> 
-> This introduces definitions for a new pixel format, describing buffers
-> with MPEG2 slice data, as well as a control structure for passing the
-> frame header (metadata) to drivers.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
-> ---
->  drivers/media/v4l2-core/v4l2-ctrls.c | 10 ++++++++++
->  drivers/media/v4l2-core/v4l2-ioctl.c |  1 +
->  include/uapi/linux/v4l2-controls.h   | 26 ++++++++++++++++++++++++++
->  include/uapi/linux/videodev2.h       |  3 +++
->  4 files changed, 40 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index ba05a8b9a095..fcdc12b9a9e0 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -761,6 +761,7 @@ const char *v4l2_ctrl_get_name(u32 id)
->  	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:		return "Vertical MV Search Range";
->  	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:		return "Repeat Sequence Header";
->  	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		return "Force Key Frame";
-> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:		return "MPEG2 Frame Header";
->  
->  	/* VPX controls */
->  	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:		return "VPX Number of Partitions";
-> @@ -1152,6 +1153,9 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
->  	case V4L2_CID_RDS_TX_ALT_FREQS:
->  		*type = V4L2_CTRL_TYPE_U32;
->  		break;
-> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:
-> +		*type = V4L2_CTRL_TYPE_MPEG2_FRAME_HDR;
-> +		break;
->  	default:
->  		*type = V4L2_CTRL_TYPE_INTEGER;
->  		break;
-> @@ -1472,6 +1476,9 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
->  			return -ERANGE;
->  		return 0;
->  
-> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
-> +		return 0;
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -2046,6 +2053,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
->  	case V4L2_CTRL_TYPE_U32:
->  		elem_size = sizeof(u32);
->  		break;
-> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
-> +		elem_size = sizeof(struct v4l2_ctrl_mpeg2_frame_hdr);
-> +		break;
->  	default:
->  		if (type < V4L2_CTRL_COMPOUND_TYPES)
->  			elem_size = sizeof(s32);
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 468c3c65362d..8070203da5d2 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1273,6 +1273,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
->  		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
->  		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
-> +		case V4L2_PIX_FMT_MPEG2_FRAME:	descr = "MPEG2 Frame"; break;
->  		case V4L2_PIX_FMT_CPIA1:	descr = "GSPCA CPiA YUV"; break;
->  		case V4L2_PIX_FMT_WNVA:		descr = "WNVA"; break;
->  		case V4L2_PIX_FMT_SN9C10X:	descr = "GSPCA SN9C10X"; break;
-> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> index cbbb750d87d1..8431b2a540c7 100644
-> --- a/include/uapi/linux/v4l2-controls.h
-> +++ b/include/uapi/linux/v4l2-controls.h
-> @@ -557,6 +557,8 @@ enum v4l2_mpeg_video_mpeg4_profile {
->  };
->  #define V4L2_CID_MPEG_VIDEO_MPEG4_QPEL		(V4L2_CID_MPEG_BASE+407)
->  
-> +#define V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR     (V4L2_CID_MPEG_BASE+450)
-> +
->  /*  Control IDs for VP8 streams
->   *  Although VP8 is not part of MPEG we add these controls to the MPEG class
->   *  as that class is already handling other video compression standards
-> @@ -985,4 +987,28 @@ enum v4l2_detect_md_mode {
->  #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_CLASS_BASE + 3)
->  #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DETECT_CLASS_BASE + 4)
->  
-> +struct v4l2_ctrl_mpeg2_frame_hdr {
-> +	__u32 slice_len;
-> +	__u32 slice_pos;
-> +	enum { MPEG1, MPEG2 } type;
-> +
-> +	__u16 width;
-> +	__u16 height;
-> +
-> +	enum { PCT_I = 1, PCT_P, PCT_B, PCT_D } picture_coding_type;
+In case of seg6 in encap mode, seg6_do_srh_encap() calls set_tun_src()
+in order to set the src addr of outer IPv6 header.
 
-As someone else already mentioned (I believe): avoid enums. Use __u16
-instead.
+The net_device is required for set_tun_src(). However calling ip6_dst_idev()
+on dst_entry in case of IPv4 traffic results on the following bug.
 
-> +	__u8 f_code[2][2];
-> +
-> +	__u8 intra_dc_precision;
-> +	__u8 picture_structure;
-> +	__u8 top_field_first;
-> +	__u8 frame_pred_frame_dct;
-> +	__u8 concealment_motion_vectors;
-> +	__u8 q_scale_type;
-> +	__u8 intra_vlc_format;
-> +	__u8 alternate_scan;
-> +
-> +	__u8 backward_ref_index;
-> +	__u8 forward_ref_index;
-> +};
+Using just dst->dev should fix this BUG.
 
-Please test that the layout and size of this structure is identical for 32 and 64 bit
-architectures, both on Intel and ARM.
+[  196.242461] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+[  196.242975] PGD 800000010f076067 P4D 800000010f076067 PUD 10f060067 PMD 0
+[  196.243329] Oops: 0000 [#1] SMP PTI
+[  196.243468] Modules linked in: nfsd auth_rpcgss nfs_acl nfs lockd grace fscache sunrpc crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd input_leds glue_helper led_class pcspkr serio_raw mac_hid video autofs4 hid_generic usbhid hid e1000 i2c_piix4 ahci pata_acpi libahci
+[  196.244362] CPU: 2 PID: 1089 Comm: ping Not tainted 4.16.0+ #1
+[  196.244606] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
+[  196.244968] RIP: 0010:seg6_do_srh_encap+0x1ac/0x300
+[  196.245236] RSP: 0018:ffffb2ce00b23a60 EFLAGS: 00010202
+[  196.245464] RAX: 0000000000000000 RBX: ffff8c7f53eea300 RCX: 0000000000000000
+[  196.245742] RDX: 0000f10000000000 RSI: ffff8c7f52085a6c RDI: ffff8c7f41166850
+[  196.246018] RBP: ffffb2ce00b23aa8 R08: 00000000000261e0 R09: ffff8c7f41166800
+[  196.246294] R10: ffffdce5040ac780 R11: ffff8c7f41166828 R12: ffff8c7f41166808
+[  196.246570] R13: ffff8c7f52085a44 R14: ffffffffb73211c0 R15: ffff8c7e69e44200
+[  196.246846] FS:  00007fc448789700(0000) GS:ffff8c7f59d00000(0000) knlGS:0000000000000000
+[  196.247286] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  196.247526] CR2: 0000000000000000 CR3: 000000010f05a000 CR4: 00000000000406e0
+[  196.247804] Call Trace:
+[  196.247972]  seg6_do_srh+0x15b/0x1c0
+[  196.248156]  seg6_output+0x3c/0x220
+[  196.248341]  ? prandom_u32+0x14/0x20
+[  196.248526]  ? ip_idents_reserve+0x6c/0x80
+[  196.248723]  ? __ip_select_ident+0x90/0x100
+[  196.248923]  ? ip_append_data.part.50+0x6c/0xd0
+[  196.249133]  lwtunnel_output+0x44/0x70
+[  196.249328]  ip_send_skb+0x15/0x40
+[  196.249515]  raw_sendmsg+0x8c3/0xac0
+[  196.249701]  ? _copy_from_user+0x2e/0x60
+[  196.249897]  ? rw_copy_check_uvector+0x53/0x110
+[  196.250106]  ? _copy_from_user+0x2e/0x60
+[  196.250299]  ? copy_msghdr_from_user+0xce/0x140
+[  196.250508]  sock_sendmsg+0x36/0x40
+[  196.250690]  ___sys_sendmsg+0x292/0x2a0
+[  196.250881]  ? _cond_resched+0x15/0x30
+[  196.251074]  ? copy_termios+0x1e/0x70
+[  196.251261]  ? _copy_to_user+0x22/0x30
+[  196.251575]  ? tty_mode_ioctl+0x1c3/0x4e0
+[  196.251782]  ? _cond_resched+0x15/0x30
+[  196.251972]  ? mutex_lock+0xe/0x30
+[  196.252152]  ? vvar_fault+0xd2/0x110
+[  196.252337]  ? __do_fault+0x1f/0xc0
+[  196.252521]  ? __handle_mm_fault+0xc1f/0x12d0
+[  196.252727]  ? __sys_sendmsg+0x63/0xa0
+[  196.252919]  __sys_sendmsg+0x63/0xa0
+[  196.253107]  do_syscall_64+0x72/0x200
+[  196.253305]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+[  196.253530] RIP: 0033:0x7fc4480b0690
+[  196.253715] RSP: 002b:00007ffde9f252f8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+[  196.254053] RAX: ffffffffffffffda RBX: 0000000000000040 RCX: 00007fc4480b0690
+[  196.254331] RDX: 0000000000000000 RSI: 000000000060a360 RDI: 0000000000000003
+[  196.254608] RBP: 00007ffde9f253f0 R08: 00000000002d1e81 R09: 0000000000000002
+[  196.254884] R10: 00007ffde9f250c0 R11: 0000000000000246 R12: 0000000000b22070
+[  196.255205] R13: 20c49ba5e353f7cf R14: 431bde82d7b634db R15: 00007ffde9f278fe
+[  196.255484] Code: a5 0f b6 45 c0 41 88 41 28 41 0f b6 41 2c 48 c1 e0 04 49 8b 54 01 38 49 8b 44 01 30 49 89 51 20 49 89 41 18 48 8b 83 b0 00 00 00 <48> 8b 30 49 8b 86 08 0b 00 00 48 8b 40 20 48 8b 50 08 48 0b 10
+[  196.256190] RIP: seg6_do_srh_encap+0x1ac/0x300 RSP: ffffb2ce00b23a60
+[  196.256445] CR2: 0000000000000000
+[  196.256676] ---[ end trace 71af7d093603885c ]---
 
-It looks good, but it doesn't hurt to check.
+Fixes: 8936ef7604c11 ipv6: sr: fix NULL pointer dereference when setting encap source address
+Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+---
+I tested the patch for IPv6 and IPv4 traffic 
 
-Regards,
+ net/ipv6/seg6_iptunnel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	Hans
-
-> +
->  #endif
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 31b5728b56e9..4b8336f7bcf0 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -635,6 +635,7 @@ struct v4l2_pix_format {
->  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /* SMPTE 421M Annex L compliant stream */
->  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
->  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
-> +#define V4L2_PIX_FMT_MPEG2_FRAME v4l2_fourcc('M', 'G', '2', 'F') /* MPEG2 frame */
->  
->  /*  Vendor-specific formats   */
->  #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1 YUV */
-> @@ -1586,6 +1587,7 @@ struct v4l2_ext_control {
->  		__u8 __user *p_u8;
->  		__u16 __user *p_u16;
->  		__u32 __user *p_u32;
-> +		struct v4l2_ctrl_mpeg2_frame_hdr __user *p_mpeg2_frame_hdr;
->  		void __user *ptr;
->  	};
->  } __attribute__ ((packed));
-> @@ -1631,6 +1633,7 @@ enum v4l2_ctrl_type {
->  	V4L2_CTRL_TYPE_U8	     = 0x0100,
->  	V4L2_CTRL_TYPE_U16	     = 0x0101,
->  	V4L2_CTRL_TYPE_U32	     = 0x0102,
-> +	V4L2_CTRL_TYPE_MPEG2_FRAME_HDR = 0x0109,
->  };
->  
->  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
-> 
+diff --git a/net/ipv6/seg6_iptunnel.c b/net/ipv6/seg6_iptunnel.c
+index f343e6f..5fe1394 100644
+--- a/net/ipv6/seg6_iptunnel.c
++++ b/net/ipv6/seg6_iptunnel.c
+@@ -136,7 +136,7 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
+ 	isrh->nexthdr = proto;
+ 
+ 	hdr->daddr = isrh->segments[isrh->first_segment];
+-	set_tun_src(net, ip6_dst_idev(dst)->dev, &hdr->daddr, &hdr->saddr);
++	set_tun_src(net, dst->dev, &hdr->daddr, &hdr->saddr);
+ 
+ #ifdef CONFIG_IPV6_SEG6_HMAC
+ 	if (sr_has_hmac(isrh)) {
+-- 
+2.1.4
