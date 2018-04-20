@@ -1,223 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753992AbeDTH3K (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 03:29:10 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:34217 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753935AbeDTH3I (ORCPT
+        id S1754016AbeDTHb0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 03:31:26 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44604 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753765AbeDTHbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 03:29:08 -0400
-X-Google-Smtp-Source: AIpwx487ZMXuood+hJKSlTA8IlbVPz31J+OXjkyM1UlzuTbFVsRNqCSpO/x9n/dNOqyKGKYo1ulSBQ==
-Date: Fri, 20 Apr 2018 16:29:03 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Cyrill Gorcunov <gorcunov@gmail.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>, Andrey Vagin <avagin@openvz.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Subject: Re: [v2] prctl: Deprecate non PR_SET_MM_MAP operations
-Message-ID: <20180420072903.GA594@jagdpanzerIV>
-References: <20180405182651.GM15783@uranus.lan>
- <20180420023809.GD6397@jagdpanzerIV>
- <20180420070257.GJ19578@uranus.lan>
+        Fri, 20 Apr 2018 03:31:24 -0400
+X-Google-Smtp-Source: AIpwx4+KUwTcWmyXIKtj2ve2Q8GnjmvMcJfsXbRJU3cgvAF2V1zxFCnPDF0iwm5ClUd5f3pE0nQQIA==
+Date: Fri, 20 Apr 2018 09:31:19 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v1 3/4] drm/tegra: plane: Add custom colorkey properties
+ for older Tegra's
+Message-ID: <20180420073119.GJ31310@phenom.ffwll.local>
+Mail-Followup-To: Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <cover.1523880381.git.digetx@gmail.com>
+ <d78f7339de922d6a8114c73f0919534f4195f572.1523880381.git.digetx@gmail.com>
+ <20180417090040.GY31310@phenom.ffwll.local>
+ <6ff89658-28e4-fa9f-173d-4e9a885a7962@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180420070257.GJ19578@uranus.lan>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <6ff89658-28e4-fa9f-173d-4e9a885a7962@gmail.com>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (04/20/18 10:02), Cyrill Gorcunov wrote:
-> On Fri, Apr 20, 2018 at 11:38:09AM +0900, Sergey Senozhatsky wrote:
-> > On (04/05/18 21:26), Cyrill Gorcunov wrote:
-> > [..]
-> > > -
-> > >  #ifdef CONFIG_CHECKPOINT_RESTORE
-> > >  	if (opt == PR_SET_MM_MAP || opt == PR_SET_MM_MAP_SIZE)
-> > >  		return prctl_set_mm_map(opt, (const void __user *)addr, arg4);
-> > >  #endif
-> > >  
-> > > -	if (!capable(CAP_SYS_RESOURCE))
-> > > -		return -EPERM;
-> > > -
-> > > -	if (opt == PR_SET_MM_EXE_FILE)
-> > > -		return prctl_set_mm_exe_file(mm, (unsigned int)addr);
-> > > -
-> > > -	if (opt == PR_SET_MM_AUXV)
-> > > -		return prctl_set_auxv(mm, addr, arg4);
+On Tue, Apr 17, 2018 at 08:08:27PM +0300, Dmitry Osipenko wrote:
+> On 17.04.2018 12:00, Daniel Vetter wrote:
+> > On Mon, Apr 16, 2018 at 03:16:27PM +0300, Dmitry Osipenko wrote:
+> >> Colorkey'ing allows to draw on top of overlapping planes, like for example
+> >> on top of a video plane. Older Tegra's have a limited colorkey'ing
+> >> capability such that blending features are reduced when colorkey'ing is
+> >> enabled. In particular dependent weighting isn't possible, meaning that
+> >> cursors plane can't be displayed properly. In most cases it is more useful
+> >> to display content on top of video overlay, sacrificing mouse cursor
+> >> in the area of three planes intersection with colorkey mismatch. This
+> >> patch adds a custom colorkey properties to primary plane and CRTC's of
+> >> older Tegra's, allowing userspace like Opentegra Xorg driver to implement
+> >> colorkey support for XVideo extension.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > > 
-> > Then validate_prctl_map() and prctl_set_mm_exe_file() can be moved
-> > under CONFIG_CHECKPOINT_RESTORE ifdef.
+> > Since this is your own uapi, where's the userspace per
+> > 
+> > https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
 > 
-> I don't mind. Could you please make the patch on top of linux-next?
+> Userspace patches for colorkey and CSC utilization are in my personal github
+> repos for now [0][1]. The longterm plan is to get Opentegra driver / libdrm bits
+> of [2] to repos on freedesktop.org, which should be considered as upstream. We
+> have everything depending on libdrm-tegra and it is currently on hold because of
+> upcoming massive rework of Tegra DRM UAPI with further de-staging of jobs
+> submission UAPI, that reworking should start with 4.18 kernel.
+> 
+> For now I wanted to get initial input on the patches. Once everyone is in
+> agreement, I'd like to have colorkey / CSC supported by the upstream DRM driver,
+> so that at least grate-driver projects could utilize them right now.
+> 
+> > And why wo we need a tegra-private colorkey property here? I thought
+> > other's have been discussing this in the context of other drivers.
+> 
+> At least older Tegra's have limitations in regards to colorkey, like planes
+> blending capabilities are reduced a lot when colorkey'ing is enabled. I'm not
+> sure whether we'd want to have it as a generic property, because generic
+> userspace should be aware of those limitations, otherwise there is a good chance
+> to get undesirable result using colorkey. Though I'm not really sure how widely
+> colorkey property could be utilize by userspace and what kind of applications
+> that userspace could have for it, maybe having colorkey as a generic property
+> would be good enough after all.
+> 
+> I've looked up the DRI ML archive and seems the most recent colorkey-related
+> patches are [3]. These patches are a bit odd to me because by generic property I
+> assume a property that is HW-agnostic and the patchset does opposite to it.
+> Maybe I'm misunderstanding what is meant by 'generic' property then? Anyway I've
+> applied [3] and made Tegra to use that generic property, it works fine. I'll be
+> happy to switch to a generic property if we'll consider that it is a viable way.
+> 
+> [0] https://github.com/digetx/xf86-video-opentegra/commits/ckey
+> [1] https://github.com/digetx/libvdpau-tegra/commits/ckey
+> [2] https://github.com/grate-driver
+> [3] https://patchwork.kernel.org/patch/10117593/
 
-As far as I can see, it's not in linux-next yet. So the following is
-against the mmots tree. I wouldn't mind it if we could just squash the
-patches.
+Yes that's the patches I meant, thanks for surfacing them.
 
-=======================================================================
-
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH] prctl: Don't compile some of prctl functions when CRUI
- disabled
-
-CHECKPOINT_RESTORE is the only user of validate_prctl_map()
-and prctl_set_mm_exe_file(), so we can move those two under
-CONFIG_CHECKPOINT_RESTORE.
-
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
----
- kernel/sys.c | 126 +++++++++++++++++++++++++--------------------------
- 1 file changed, 63 insertions(+), 63 deletions(-)
-
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 6bdffe264303..86e5ef1a5612 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -1815,68 +1815,7 @@ SYSCALL_DEFINE1(umask, int, mask)
- 	return mask;
- }
- 
--static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
--{
--	struct fd exe;
--	struct file *old_exe, *exe_file;
--	struct inode *inode;
--	int err;
--
--	exe = fdget(fd);
--	if (!exe.file)
--		return -EBADF;
--
--	inode = file_inode(exe.file);
--
--	/*
--	 * Because the original mm->exe_file points to executable file, make
--	 * sure that this one is executable as well, to avoid breaking an
--	 * overall picture.
--	 */
--	err = -EACCES;
--	if (!S_ISREG(inode->i_mode) || path_noexec(&exe.file->f_path))
--		goto exit;
--
--	err = inode_permission(inode, MAY_EXEC);
--	if (err)
--		goto exit;
--
--	/*
--	 * Forbid mm->exe_file change if old file still mapped.
--	 */
--	exe_file = get_mm_exe_file(mm);
--	err = -EBUSY;
--	if (exe_file) {
--		struct vm_area_struct *vma;
--
--		down_read(&mm->mmap_sem);
--		for (vma = mm->mmap; vma; vma = vma->vm_next) {
--			if (!vma->vm_file)
--				continue;
--			if (path_equal(&vma->vm_file->f_path,
--				       &exe_file->f_path))
--				goto exit_err;
--		}
--
--		up_read(&mm->mmap_sem);
--		fput(exe_file);
--	}
--
--	err = 0;
--	/* set the new file, lockless */
--	get_file(exe.file);
--	old_exe = xchg(&mm->exe_file, exe.file);
--	if (old_exe)
--		fput(old_exe);
--exit:
--	fdput(exe);
--	return err;
--exit_err:
--	up_read(&mm->mmap_sem);
--	fput(exe_file);
--	goto exit;
--}
--
-+#ifdef CONFIG_CHECKPOINT_RESTORE
- /*
-  * WARNING: we don't require any capability here so be very careful
-  * in what is allowed for modification from userspace.
-@@ -1968,7 +1907,68 @@ static int validate_prctl_map(struct prctl_mm_map *prctl_map)
- 	return error;
- }
- 
--#ifdef CONFIG_CHECKPOINT_RESTORE
-+static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
-+{
-+	struct fd exe;
-+	struct file *old_exe, *exe_file;
-+	struct inode *inode;
-+	int err;
-+
-+	exe = fdget(fd);
-+	if (!exe.file)
-+		return -EBADF;
-+
-+	inode = file_inode(exe.file);
-+
-+	/*
-+	 * Because the original mm->exe_file points to executable file, make
-+	 * sure that this one is executable as well, to avoid breaking an
-+	 * overall picture.
-+	 */
-+	err = -EACCES;
-+	if (!S_ISREG(inode->i_mode) || path_noexec(&exe.file->f_path))
-+		goto exit;
-+
-+	err = inode_permission(inode, MAY_EXEC);
-+	if (err)
-+		goto exit;
-+
-+	/*
-+	 * Forbid mm->exe_file change if old file still mapped.
-+	 */
-+	exe_file = get_mm_exe_file(mm);
-+	err = -EBUSY;
-+	if (exe_file) {
-+		struct vm_area_struct *vma;
-+
-+		down_read(&mm->mmap_sem);
-+		for (vma = mm->mmap; vma; vma = vma->vm_next) {
-+			if (!vma->vm_file)
-+				continue;
-+			if (path_equal(&vma->vm_file->f_path,
-+				       &exe_file->f_path))
-+				goto exit_err;
-+		}
-+
-+		up_read(&mm->mmap_sem);
-+		fput(exe_file);
-+	}
-+
-+	err = 0;
-+	/* set the new file, lockless */
-+	get_file(exe.file);
-+	old_exe = xchg(&mm->exe_file, exe.file);
-+	if (old_exe)
-+		fput(old_exe);
-+exit:
-+	fdput(exe);
-+	return err;
-+exit_err:
-+	up_read(&mm->mmap_sem);
-+	fput(exe_file);
-+	goto exit;
-+}
-+
- static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data_size)
- {
- 	struct prctl_mm_map prctl_map = { .exe_fd = (u32)-1, };
+Please work together with Laurent, Maxime and Boris on this (jump on that
+thread and Cc them on your own patches for the next round). And pls also
+work together on a common userspace for this.
+-Daniel
 -- 
-2.17.0
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
