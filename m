@@ -1,95 +1,109 @@
-Return-Path: <brgl@bgdev.pl>
-ARC-Seal: i=1; a=rsa-sha256; t=1524591072; cv=none;
-        d=google.com; s=arc-20160816;
-        b=xNuGqlslYmKCD+6UEQJe+fFa08p9Sirq9pJVtSuMQSMYetYSgSaU5BA6mKn46w1T2c
-         3nYpafc4guNMN4Bnta27fN1uVWjUDE1DE6vY8PaX9CwCtJPBnZEsAf+659cERTjK1roT
-         yMsGzlnuObjkbFbsNXbEJUBxRIWB6yQ2jub9eHIe3MBGNBs373A30md7TzKtZ1mGmgTG
-         32LTSpQqKQtXJQbKG522jvc1Dpmt513O+97qaN0VauFXTAU/cUrRaQoje9RYUYiR6AKV
-         17tveuPPmBsPNCMOvgznLOj7H22XrziPZRZAvs6CfFNeuaVZc2mmvq2cqSgiFuIfS5A4
-         5Xlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=TLphgLDITGLWBW8+v0MCFaYzGJJYv3PJMes+2gWVaNQ=;
-        b=CZItRVlh2S9aY3GWPHFjeTbKTze5dpUgZJSvvD42gPEJtVb5gTmBx1p0vGcmpRN3P8
-         5zVjXSF2F5lzBFx+XoBKHQ5mCPBF2Ui8+RolEf/KwlXjH0KipAkouAIlhpvGTSsFVBpG
-         kH088yLtA6yGYFDwaWSS0N708fGrV/jmd6a/aKY+tk2qJ71NlKXbh8AKrq6Y2Hqb3W6z
-         PzeFYORopr/92uCSxQ+bhepXKnuUYlY1evIbNF/7yxYd1jqezSVcfJZpDaF3HmH1HsbP
-         XQZvVFGtbY0fVxhQsDMdcY8fH5c+FpADNsGrViBw67XYZ096APF0I3eA00j63UpWFzQn
-         GHJA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=Aoc4iZ36;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=Aoc4iZ36;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-X-Google-Smtp-Source: AIpwx4/D7Z+9ziV8Vnr7+pvtpIfwMHSN/5f5TgEGvuZkYydExoAYPkkaPcCuY237yzEfVRDk/WRlBQ==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Michal Suchanek <msuchanek@suse.de>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 01/11] platform: early: provide early_platform_add_device()
-Date: Tue, 24 Apr 2018 19:30:41 +0200
-Message-Id: <20180424173051.15099-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180424173051.15099-1-brgl@bgdev.pl>
-References: <20180424173051.15099-1-brgl@bgdev.pl>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2222762-1524248284-2-13096037595112644239
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524248283; b=dOnU4tl9Dpf+L09dl5KT8xSrQW6njK4l8ksrwnfF4EQuAPl1+h
+    pIErBavDayVvcp0KNsbGUTyOoCxOyyqKc27+mUgge9FPQEwzo7hsCLRr2Io9LceZ
+    0BkjvL4gy7X2cs3wog2hKcxM5uL0p8oKYZzSP+gME8//psto6mH/bDT0hsXarP7k
+    IroqBdsIgAKMjBMtTAhD6kT9diu5wpQzqL+oyvFnlzhj32R90xPnkgCV+Vhy558y
+    yOqB5i4UEWhKUlPhQdLaQa4n4+sC/5OhdXYr9Vem7NGKUuX2Od9GWT8Wk6bmCjvu
+    38vLm5DCP6eTAF+YjghG9IE7mVch/urL2Yrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1524248283;
+    bh=3GJOBwssU2ZgUP/I5mNH5zZoeQkVvjP5sbral87B+AI=; b=asCtiQqT1XLp
+    KT2WPA61f+R2rLtOgmyyzQeLv8n96UebZqD+MENvJGDVlshKr8KPSKOAqJRrSwLR
+    mM2aOPil9OkLiTzf2bvItmMlG8aZHPhqHAppGakfZ3RDrOjTOaQGLBe/lpu0yyh5
+    8sLizxUsKdjQkZXxqQTP5ar5ar4yjvADfIsIdsQnLinbFOAOUFBTc6fq/LDd2NsZ
+    I956RacSZYmsh45poocKdqVcjeYWWSD/GvwF/dIIeOGI8pj8FIClM6y9ZzJ/tSyw
+    LVjQEBot7BJs7oec8brCHrB00AVmsfiPeg5U0YjjjMeVjR8Eix8QZA0VGaaumtb7
+    w2Zv+CUbFA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEo3TnhvX9ct+DpLzGpxphZ/RqubYuzrUMzb4o6Zjn1qnir2LP+MYevLmVgjim8b5HXbC/GIMa1EBa5njuX7UNvbEIHt3nB8bN+0fnSUS9PF7uljyUXh
+    iPerYWwl9E57VydSUObfx+kQePAgNomkMP5FoNaZ+JIpn0z/tevvaPP9e0xEVuO8EwS/fYwc22QIAY8iCyh1vr2uqGCc4bfXUgYuFuWYE4+/MQFOayPXYdcG
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
+    a=6niVsOXXeHRc7cUCZrkA:9 a=CjuIK1q_8ugA:10
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753521AbeDTSSC (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 20 Apr 2018 14:18:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59658 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753514AbeDTSSB (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 20 Apr 2018 14:18:01 -0400
+Date: Fri, 20 Apr 2018 21:18:00 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        virtualization@lists.linux-foundation.org, stable@vger.kernel.org,
+        Tiwei Bie <tiwei.bie@intel.com>,
+        Jason Wang <jasowang@redhat.com>
+Subject: [PATCH 0/6] virtio-console: spec compliance fixes
+Message-ID: <1524248223-393618-1-git-send-email-mst@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mutt-Fcc: =sent
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598649608628512261?=
-X-GMAIL-MSGID: =?utf-8?q?1598649608628512261?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Turns out virtio console tries to take a buffer out of an active vq.
+Works by sheer luck, and is explicitly forbidden by spec.  And while
+going over it I saw that error handling is also broken -
+failure is easy to trigger if I force allocations to fail.
 
-Currently we only have early_platform_add_devices() which takes struct
-platform_device ** as argument, requiring the users to have an
-intermediate array of platform_device pointers even if we're only
-adding a single device. Provide a helper for adding a single device at
-a time.
+Lightly tested.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/platform_device.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Michael S. Tsirkin (6):
+  virtio_console: don't tie bufs to a vq
+  virtio: add ability to iterate over vqs
+  virtio_console: free buffers after reset
+  virtio_console: drop custom control queue cleanup
+  virtio_console: move removal code
+  virtio_console: reset on out of memory
 
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index 49f634d96118..80942ed0f728 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -301,6 +301,11 @@ extern int early_platform_driver_register(struct early_platform_driver *epdrv,
- 					  char *buf);
- extern void early_platform_add_devices(struct platform_device **devs, int num);
- 
-+static inline void early_platform_add_device(struct platform_device *pdev)
-+{
-+	early_platform_add_devices(&pdev, 1);
-+}
-+
- static inline int is_early_platform_device(struct platform_device *pdev)
- {
- 	return !pdev->dev.driver;
+ drivers/char/virtio_console.c | 155 ++++++++++++++++++++----------------------
+ include/linux/virtio.h        |   3 +
+ 2 files changed, 75 insertions(+), 83 deletions(-)
+
 -- 
-2.17.0
+MST
