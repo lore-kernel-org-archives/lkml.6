@@ -1,48 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753589AbeDTSCW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:02:22 -0400
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:36108 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752722AbeDTSCU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:02:20 -0400
-X-Google-Smtp-Source: AIpwx4+cNKBD+X67J5J+G0PPvPH8NEOcM13atq/Dka35BowlMOyn0V7ampkFMg0LRXYldwjKNipGPUmCFZQo/7NMrGg=
+        id S1753664AbeDTSDW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:03:22 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:33858 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753467AbeDTSDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 14:03:21 -0400
+Date: Fri, 20 Apr 2018 20:03:01 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
+ systems
+Message-ID: <20180420180301.GF13351@pd.tnic>
+References: <20180402195707.42875-1-Yazen.Ghannam@amd.com>
+ <20180417172102.GA3633@pd.tnic>
+ <CY4PR12MB15574493593120818D9BFE11F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
+ <20180418171347.GH4795@pd.tnic>
+ <CY4PR12MB155779EEC2894B501F30292EF8B40@CY4PR12MB1557.namprd12.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <CAH2r5mtYQujfeEUpEiE557o3YccD9QwWCTLCJFbBoF7zbYcggQ@mail.gmail.com>
-References: <20180420131919.GA1766@embeddedor.com> <CAH2r5mtYQujfeEUpEiE557o3YccD9QwWCTLCJFbBoF7zbYcggQ@mail.gmail.com>
-From: Pavel Shilovsky <piastryyy@gmail.com>
-Date: Fri, 20 Apr 2018 11:02:17 -0700
-Message-ID: <CAKywueQ0rd6iJPPS7Z4r_1NU9Er9rnjLEprLwJ-U5g-em3tfKQ@mail.gmail.com>
-Subject: Re: [PATCH] cifs: dir: fix memory leak in cifs_mknod
-To: Steve French <smfrench@gmail.com>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Colin King <colin.king@canonical.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CY4PR12MB155779EEC2894B501F30292EF8B40@CY4PR12MB1557.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-20 10:37 GMT-07:00 Steve French <smfrench@gmail.com>:
-> I noticed a similar problem with the tcon link leak on that (which
-> Colin and Gustavo pointed out - thank you!) but also in another return
-> statement, so updated the original patch of Ronnie's merging the fixes
->
-> https://git.samba.org/sfrench/cifs-2.6.git/?p=sfrench/cifs-2.6.git;a=commit;h=167bc5de08dc97695f9d5c7069c3e69f409ff80b
->
->
-> Let me know if you see any problems with it.
->
+On Fri, Apr 20, 2018 at 01:05:17PM +0000, Ghannam, Yazen wrote:
+> Okay, I can do that. What about using mce_rdmsrl()? The value gets set to
+> 0 and a user gets a single warning. This may be more clear to the user. Also,
+> it shouldn't affect code that checks for non-zero values, like in __print_mce().
 
-Looks good.
+Hmm, good point. From the looks of it, it shouldn't be a problem and a
+MSR value of 0 is of no interest anyway. I *think*.
 
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+But pls make it a separate patch so that we can revert it in case
+something doesn't work as expected and we've missed a case.
 
---
-Best regards,
-Pavel Shilovsky
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
