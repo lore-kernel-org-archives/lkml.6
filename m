@@ -1,64 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754663AbeDTL2Z (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 07:28:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40229 "EHLO mx2.suse.de"
+        id S1754656AbeDTLeI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 07:34:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40611 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754549AbeDTL2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:28:23 -0400
-Subject: Re: [PATCH 3/3] xen blkback: add fault injection facility
-To: Stanislav Kinsburskii <staskins@amazon.com>
-Cc: jakub.kicinski@netronome.com, hpa@zytor.com, mcroce@redhat.com,
-        tglx@linutronix.de, ggarcia@abra.uab.cat, daniel@iogearbox.net,
-        x86@kernel.org, mingo@redhat.com, xen-devel@lists.xenproject.org,
-        axboe@kernel.dk, konrad.wilk@oracle.com, amir.jer.levy@intel.com,
-        paul.durrant@citrix.com, stefanha@redhat.com, dsa@cumulusnetworks.com,
-        boris.ostrovsky@oracle.com, linux-block@vger.kernel.org,
-        wei.liu2@citrix.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net, dwmw@amazon.co.uk,
-        roger.pau@citrix.com
-References: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
- <20180420104736.17823.42983.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
-From: Juergen Gross <jgross@suse.com>
-Message-ID: <ef016b7b-6c0e-1684-5714-0a6d5a46504e@suse.com>
-Date: Fri, 20 Apr 2018 13:28:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754549AbeDTLeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 07:34:07 -0400
+Date: Fri, 20 Apr 2018 13:34:04 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Stefan Agner <stefan@agner.ch>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+        catalin.marinas@arm.com, torvalds@linux-foundation.org,
+        pasha.tatashin@oracle.com, ard.biesheuvel@linaro.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] treewide: use PHYS_ADDR_MAX to avoid type casting
+ ULLONG_MAX
+Message-ID: <20180420113404.GZ17484@dhcp22.suse.cz>
+References: <20180419214204.19322-1-stefan@agner.ch>
+ <20180420111510.GA10788@bombadil.infradead.org>
+ <d91c35be6f85a20028910babb35243d0@agner.ch>
 MIME-Version: 1.0
-In-Reply-To: <20180420104736.17823.42983.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d91c35be6f85a20028910babb35243d0@agner.ch>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/04/18 12:47, Stanislav Kinsburskii wrote:
-> This patch adds wrapper helpers around generic Xen fault inject
-> facility.
-> The major reason is to keep all the module fault injection directories
-> in a dedicated subdirectory instead of Xen fault inject root.
+On Fri 20-04-18 13:20:10, Stefan Agner wrote:
+> On 20.04.2018 13:15, Matthew Wilcox wrote:
+> > On Thu, Apr 19, 2018 at 11:42:04PM +0200, Stefan Agner wrote:
+> >> With PHYS_ADDR_MAX there is now a type safe variant for all
+> >> bits set. Make use of it.
+> > 
+> > There is?  I don't see it in linux-next.
 > 
-> IOW, when using these helpers, per-device and named by device name
-> fault injection control directories will appear under the following
-> directory:
-> - /sys/kernel/debug/xen/fault_inject/xen-blkback/
-> instead of:
-> - /sys/kernel/debug/xen/fault_inject/
-> 
-> Signed-off-by: Stanislav Kinsburskii <staskins@amazon.com>
-> CC: Jens Axboe <axboe@kernel.dk>
-> CC: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> CC: "Roger Pau Monné" <roger.pau@citrix.com>
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-block@vger.kernel.org
-> CC: xen-devel@lists.xenproject.org
-> CC: Stanislav Kinsburskii <staskins@amazon.com>
-> CC: David Woodhouse <dwmw@amazon.co.uk>
+> The patch "mm/memblock: introduce PHYS_ADDR_MAX" got merged earlier this
+> week, should be in the -mm tree.
 
-This is an exact copy of the netback patch apart from the names.
-
-I don't like adding multiple copies of the same coding to the tree.
-
-
-Juergen
+Andrew hasn't released his mmotm tree yet so this is not in linux-next
+yet as well.
+-- 
+Michal Hocko
+SUSE Labs
