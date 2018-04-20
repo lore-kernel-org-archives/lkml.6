@@ -1,50 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753664AbeDTSDW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:03:22 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33858 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753467AbeDTSDV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:03:21 -0400
-Date: Fri, 20 Apr 2018 20:03:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
- systems
-Message-ID: <20180420180301.GF13351@pd.tnic>
-References: <20180402195707.42875-1-Yazen.Ghannam@amd.com>
- <20180417172102.GA3633@pd.tnic>
- <CY4PR12MB15574493593120818D9BFE11F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
- <20180418171347.GH4795@pd.tnic>
- <CY4PR12MB155779EEC2894B501F30292EF8B40@CY4PR12MB1557.namprd12.prod.outlook.com>
+        id S1753752AbeDTSD4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:03:56 -0400
+Received: from mail-qt0-f172.google.com ([209.85.216.172]:33193 "EHLO
+        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753726AbeDTSDz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 14:03:55 -0400
+X-Google-Smtp-Source: AIpwx4+GZzKUqezIxUtBCcp163MtYuaOykAPPP0In9PIoCeQg7iTKsw08+dmUTGikbWmNCkrgSLuO3N7DZypZGvO2zc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CY4PR12MB155779EEC2894B501F30292EF8B40@CY4PR12MB1557.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date: Fri, 20 Apr 2018 23:33:53 +0530
+Message-ID: <CAG=yYwnMXFxHxCnYNWCb-HhpAb21kc5_e_6q-N_DRGhMVurPMQ@mail.gmail.com>
+Subject: PROBLEM: error due to conflicting types during build of kselftests
+To: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3KI41O8011656
 
-On Fri, Apr 20, 2018 at 01:05:17PM +0000, Ghannam, Yazen wrote:
-> Okay, I can do that. What about using mce_rdmsrl()? The value gets set to
-> 0 and a user gets a single warning. This may be more clear to the user. Also,
-> it shouldn't affect code that checks for non-zero values, like in __print_mce().
+hello,
 
-Hmm, good point. From the looks of it, it shouldn't be a problem and a
-MSR value of 0 is of no interest anyway. I *think*.
+the following is the error found...
+-----------------------------------------------------------------------------------
+protection_keys.c:421:5: error: conflicting types for ‘pkey_set’
+ int pkey_set(int pkey, unsigned long rights, unsigned long flags)
+     ^~~~~~~~
+------------------------------------------------------------------------------------
 
-But pls make it a separate patch so that we can revert it in case
-something doesn't work as expected and we've missed a case.
+to reproduce this error...
+make -C tools/testing/selftests
 
-Thx.
+Details about software:
+
+Linux debian 4.17.0-rc1+ #1 SMP Thu Apr 19 18:59:45 IST 2018 x86_64 GNU/Linux
+
+GNU Make             4.2.1
+Binutils             2.30
+Util-linux           2.31.1
+Mount                2.31.1
+Linux C Library      2.27
+Dynamic linker (ldd) 2.27
+readlink: missing operand
+Try 'readlink --help' for more information.
+Procps               3.3.14
+Kbd                  2.0.4
+Console-tools        2.0.4
+Sh-utils             8.28
+Udev                 238
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+software engineer
+rajagiri school of engineering and technology
