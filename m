@@ -1,70 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755188AbeDTOMa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:12:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:31256 "EHLO mx1.redhat.com"
+        id S1755219AbeDTOMf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:12:35 -0400
+Received: from mga17.intel.com ([192.55.52.151]:55931 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754902AbeDTOM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:12:29 -0400
-Date: Fri, 20 Apr 2018 17:12:21 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: Tiwei Bie <tiwei.bie@intel.com>, alex.williamson@redhat.com,
-        ddutile@redhat.com, alexander.h.duyck@intel.com,
-        virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, dan.daly@intel.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com, jianfeng.tan@intel.com, xiao.w.wang@intel.com
-Subject: Re: [RFC] vhost: introduce mdev based hardware vhost backend
-Message-ID: <20180420165302-mutt-send-email-mst@kernel.org>
-References: <20180402152330.4158-1-tiwei.bie@intel.com>
- <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
- <20180410045723.rftsb7l4l3ip2ioi@debian>
- <30a63fff-7599-640a-361f-a27e5783012a@redhat.com>
- <20180419212911-mutt-send-email-mst@kernel.org>
- <060e2b5f-2e93-c53f-387b-5baaa33e87cd@redhat.com>
+        id S1755009AbeDTOMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:12:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,301,1520924400";
+   d="scan'208";a="222034246"
+Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
+To: "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        Bjorn Helgaas <helgaas@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Sinan Kaya <okaya@codeaurora.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "sulrich@codeaurora.org" <sulrich@codeaurora.org>,
+        "timur@codeaurora.org" <timur@codeaurora.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
+ <20180419202632.GE14063@ziepe.ca>
+ <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
+ <BN6PR12MB1809BD30AA5B890C054F9832F7B50@BN6PR12MB1809.namprd12.prod.outlook.com>
+From: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Message-ID: <9c893ac2-9482-2134-9ca9-04a306e9a416@intel.com>
+Date: Fri, 20 Apr 2018 10:12:28 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <060e2b5f-2e93-c53f-387b-5baaa33e87cd@redhat.com>
+In-Reply-To: <BN6PR12MB1809BD30AA5B890C054F9832F7B50@BN6PR12MB1809.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 11:52:47AM +0800, Jason Wang wrote:
-> > The biggest issue is that you let userspace poke at the
-> > device which is also allowed by the IOMMU to poke at
-> > kernel memory (needed for kernel driver to work).
+On 4/19/2018 6:11 PM, Deucher, Alexander wrote:
+>> -----Original Message-----
+>> From: Bjorn Helgaas [mailto:helgaas@kernel.org]
+>> Sent: Thursday, April 19, 2018 5:47 PM
+>> To: Jason Gunthorpe <jgg@ziepe.ca>
+>> Cc: Sinan Kaya <okaya@codeaurora.org>; Bjorn Helgaas
+>> <bhelgaas@google.com>; linux-pci@vger.kernel.org;
+>> sulrich@codeaurora.org; timur@codeaurora.org; linux-arm-
+>> msm@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Mike
+>> Marciniszyn <mike.marciniszyn@intel.com>; Dennis Dalessandro
+>> <dennis.dalessandro@intel.com>; Doug Ledford <dledford@redhat.com>;
+>> open list:HFI1 DRIVER <linux-rdma@vger.kernel.org>; open list <linux-
+>> kernel@vger.kernel.org>; Deucher, Alexander
+>> <Alexander.Deucher@amd.com>
+>> Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
+>>
+>> [+cc Alex, who might know why DRM drivers have their own PCIe Gen3
+>> code]
+>>
+>> On Thu, Apr 19, 2018 at 02:26:32PM -0600, Jason Gunthorpe wrote:
+>>> On Thu, Apr 19, 2018 at 03:56:23PM -0400, Sinan Kaya wrote:
+>>>> The infiniband adapter might be connected to a PCI hotplug slot.
+>>>> Performing secondary bus reset on a hotplug slot causes PCI link
+>> up/down interrupts.
+>>>>
+>>>> Hotplug driver removes the device from system when a link down
+>>>> interrupt is observed and performs re-enumeration when link up
+>> interrupt is observed.
+>>>>
+>>>> This conflicts with what this code is trying to do. Try secondary
+>>>> bus reset only if pci_reset_slot() fails/unsupported.
+>>>>
+>>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>>>> drivers/infiniband/hw/hfi1/pcie.c | 3 ++-
+>>>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/infiniband/hw/hfi1/pcie.c
+>>>> b/drivers/infiniband/hw/hfi1/pcie.c
+>>>> index 83d66e8..75f49e3 100644
+>>>> +++ b/drivers/infiniband/hw/hfi1/pcie.c
+>>>> @@ -908,7 +908,8 @@ static int trigger_sbr(struct hfi1_devdata *dd)
+>>>
+>>> The code above this hunk is:
+>>>
+>>> /*
+>>>   * Trigger a secondary bus reset (SBR) on ourselves using our parent.
+>>>   *
+>>>   * Based on pci_parent_bus_reset() which is not exported by the
+>>>   * kernel core.
+>>>   */
+>>> static int trigger_sbr(struct hfi1_devdata *dd) {
+>>>
+>>> [..]
+>>>
+>>> This really seems like something the PCI core should be helping with,
+>>> drivers shouldn't be doing stuff like this. I get the feeling this
+>>> should be a common need if drivers support various error recovery
+>>> schemes?
+>>>
+>>> Bjorn, would be appropriate to export pci_parent_bus_reset() or some
+>>> variation therin??
+>>
+>> I agree it would be really nice if the PCI core could help out somehow so we
+>> could get some of this code out of individual drivers.
+>>
+>> If fact, stepping back a few paces, this HFI reset path is part of a transition to
+>> PCIe gen3 signaling, and I'm not sure why *that* is in the driver either.
+>>
+>> There's an ongoing discussion [1] about why this gen3 code is in the driver.
+>> Several DRM drivers include similar code (cik_pcie_gen3_enable(),
+>> si_pcie_gen3_enable()).
+>>
+>> I *thought* the hardware was supposed to automatically negotiate to the
+>> highest rate supported by both sides without any help at all from software.
+>> But since several drivers have code to do it themselves, I wonder if I'm
+>> missing something, or maybe there's something the PCI core should be doing
+>> that it isn't, and the driver code is basically working around that PCI core
+>> deficiency.
 > 
-> I don't quite get. The userspace driver could be built on top of VFIO for
-> sure. So kernel memory were perfectly isolated in this case.
-
-VFIO does what it can but it mostly just has the IOMMU to play with.
-So don't overestimate what it can do - it assumes a high level
-of spec compliance for protections to work. For example,
-ATS is enabled by default if device has it, and that
-treats translated requests are trusted. FLS is assumed to reset
-the device for when VFIO is unbound from the device. etc.
-
-
-> > 
-> > Yes, maybe if device is not buggy it's all fine, but
-> > it's better if we do not have to trust the device
-> > otherwise the security picture becomes more murky.
-> > 
-> > I suggested attaching a PASID to (some) queues - see my old post "using
-> > PASIDs to enable a safe variant of direct ring access".
-> > 
-> > Then using IOMMU with VFIO to limit access through queue to corrent
-> > ranges of memory.
+> My understanding was that some platfoms only bring up the link in gen 1 mode for compatibility reasons.  TBH, I'm not that familiar with how the links come up on different platforms.
 > 
-> Well userspace driver could benefit from this too. And we can even go
-> further by using nested IO page tables to share IOVA address space between
-> devices and a VM.
+> Alex
 > 
-> Thanks
 
-Yes I suggested this separately.
+I'm checking with our HW folks and the guys that wrote the PCI code in 
+our driver. I quite frankly just don't recall what all is going on here. 
+Let me find out for sure before I give out wrong information.
 
--- 
-MST
+-Denny
