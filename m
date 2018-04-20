@@ -1,87 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754014AbeDTAzJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 20:55:09 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:38691 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753761AbeDTAzH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 20:55:07 -0400
-X-Google-Smtp-Source: AIpwx49fWZuUPXKYnINXKocCK63BGuAqaN6tuK23+OjEPj9v5L3SyCNLjCqg2aTOqXBugTShTGlVXkXX0bUJcBTiH1M=
+        id S1754163AbeDTBHR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 21:07:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754127AbeDTBHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 21:07:14 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 887EB217D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh+dt@kernel.org
+X-Google-Smtp-Source: AB8JxZoTOsE69l1jhy8VqnSnvN09CLLxuq00h9U7WjQC2WedlIsgyT1mRlRFOWyESgDOy5nHNuPLOD9oXWC+GuvkHkM=
 MIME-Version: 1.0
-In-Reply-To: <20180419160929.2c2f5e1b.cohuck@redhat.com>
-References: <1524141040-50214-1-git-send-email-wanpengli@tencent.com>
- <20180419150641.5922e7e1.cohuck@redhat.com> <KL1PR02MB1301D3C3A62E6CED2530496180B50@KL1PR02MB1301.apcprd02.prod.outlook.com>
- <20180419160929.2c2f5e1b.cohuck@redhat.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Fri, 20 Apr 2018 08:55:06 +0800
-Message-ID: <CANRm+CxRJKgAgZ7NNBAEZfHTE6=TUP0UCQuksHFpc=efrbeZeA@mail.gmail.com>
-Subject: Re: [PATCH] KVM: X86: Extend MAX_IRQ_ROUTES to 4096
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: Wanpeng Li <wanpeng.li@hotmail.com>,
+In-Reply-To: <20180419143240.3717-1-lukma@denx.de>
+References: <20180405070939.22245-1-lukma@denx.de> <20180419143240.3717-1-lukma@denx.de>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Thu, 19 Apr 2018 20:06:52 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+TCaWZOuS-wKTFtxFShZcSj=Zg12f1NonN3DL-4hHWSA@mail.gmail.com>
+Message-ID: <CAL_Jsq+TCaWZOuS-wKTFtxFShZcSj=Zg12f1NonN3DL-4hHWSA@mail.gmail.com>
+Subject: Re: [PATCH v6] ARM: dts: tpc: Device tree description of the iMX6Q
+ TPC board
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Tonny Lu <tonnylu@tencent.com>
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3K0tFNg012480
 
-2018-04-19 22:09 GMT+08:00 Cornelia Huck <cohuck@redhat.com>:
-> On Thu, 19 Apr 2018 13:42:55 +0000
-> Wanpeng Li <wanpeng.li@hotmail.com> wrote:
+On Thu, Apr 19, 2018 at 9:32 AM, Lukasz Majewski <lukma@denx.de> wrote:
+> This commit adds device tree description of Kieback & Peter GmbH
+> iMX6Q TPC board.
 >
->> On Thu, 19 Apr 2018 05:30:40 -0700
->>
->> Wanpeng Li <kernellwp@gmail.com> wrote:
->>
->> > From: Wanpeng Li <wanpengli@tencent.com>
->> >
->> > Our virtual machines make use of device assignment by configuring
->> > 12 NVMe disks for high I/O performance. Each NVMe device has 129
->> > MSI-X Table entries:
->> > Capabilities: [50] MSI-X: Enable+ Count=129 Masked-Vector table: BAR=0 offset=00002000
->> > The windows virtual machines fail to boot since they will map the number of
->> > MSI-table entries that the NVMe hardware reported to the bus to msi routing
->> > table, this will exceed the 1024. This patch extends MAX_IRQ_ROUTES to 4096,
->> > In the future this might be extended if needed.
->> >
->> > Cc: Paolo Bonzini <pbonzini@redhat.com>
->> > Cc: Radim Krčmář <rkrcmar@redhat.com>
->> > Cc: Tonny Lu <tonnylu@tencent.com>
->> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->> > Signed-off-by: Tonny Lu <tonnylu@tencent.com>
->> > ---
->> >  include/linux/kvm_host.h | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
->> > index 6930c63..815ae66 100644
->> > --- a/include/linux/kvm_host.h
->> > +++ b/include/linux/kvm_host.h
->> > @@ -1050,7 +1050,7 @@ static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
->> >  #elif defined(CONFIG_ARM64)
->> >  #define KVM_MAX_IRQ_ROUTES 4096
->> >  #else
->> > -#define KVM_MAX_IRQ_ROUTES 1024
->> > +#define KVM_MAX_IRQ_ROUTES 4096
->> >  #endif
->> >
->> >  bool kvm_arch_can_set_irq_routing(struct kvm *kvm);
->>
->> So, this basically means we have 4096 everywhere, no?
->>
->> I suspect different architectures maybe extend to different limits again according to their requirements.
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
 >
-> Yes, but for now, we have the same everywhere (as you also bumped the
-> limit on power and 32-bit arm, implicitly). If that's ok, we might as
+> ---
+> Changes for v6:
+> - Add space between // and SPDX
+> - Replace 'disp0' with 'display'
+> - Replace 'rtc: ds1307@32' with 'ds1307: rtc@32'
+> - Replace 'codec: audio-codec@a' with 'sgtl5000: audio-codec@a'
+> - Move &can[12] nodes extension to proper position to be alphabetically sorted
+>
+> Changes for v5:
+> - Use 'interpolation-steps' to fill the brightness level table
+> - Remove not needed status = "okay" properties
+> - Replace goodix_ts -> touchscreen
+> - Replace sgtl5000 -> audio-codec
+>
+> This patch depends on PWM backlight intepolation work:
+> https://patchwork.kernel.org/patch/10330775/
+> https://patchwork.kernel.org/patch/10330777/
+>
+> Changes for v4:
+> - Remove not needed bus-format-override = "rgb565";
+>   property
+>
+> Changes for v3:
+> - Provide proper compatible for RTC DTS node
+> - Remove wrong comment style for beeper
+> - Add proper SPDX entries for DTS files
+> - Add vendor prefix to a separate patch
+>
+> Changes for v2:
+> - SPDX license identifiers used
+> - Separate regulators
+> - Proper beeper driver
+> - Use of the lcd panel (with compatible) instead of timings provided in
+>   device tree
+> - Add IRQ types (like IRQ_TYPE_EDGE_FALLING) and GPIO active levels (like
+>   GPIO_ACTIVE_HIGH)
+> - Remove not needed nodes
+> - Make W=1 dtbs compilation with no errors
+> ---
+>  arch/arm/boot/dts/Makefile         |   1 +
+>  arch/arm/boot/dts/imx6q-kp-tpc.dts |  22 ++
+>  arch/arm/boot/dts/imx6q-kp.dtsi    | 432 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 455 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/imx6q-kp-tpc.dts
+>  create mode 100644 arch/arm/boot/dts/imx6q-kp.dtsi
 
-I suspect they will have the same issue when configured as our
-production environment, so v2 gets rid of the ifdeffey.
-
-Regards,
-Wanpeng Li
+Reviewed-by: Rob Herring <robh@kernel.org>
