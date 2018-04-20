@@ -1,106 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754016AbeDTAqu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 20:46:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59084 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753761AbeDTAqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 20:46:48 -0400
-Date: Fri, 20 Apr 2018 03:46:46 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        "Daly, Dan" <dan.daly@intel.com>, LKML <linux-kernel@vger.kernel.org>,
-        linux-nvme@lists.infradead.org, Keith Busch <keith.busch@intel.com>,
-        netanel@amazon.com, Don Dutile <ddutile@redhat.com>,
-        Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk
-Subject: Re: [pci PATCH v7 0/5] Add support for unmanaged SR-IOV
-Message-ID: <20180420034106-mutt-send-email-mst@kernel.org>
-References: <20180315183449.3102.64791.stgit@localhost.localdomain>
- <CAKgT0UdTANRo3xnr89aWdfSPmMg81-W2H-ZcJUdC=5nUkf9RAw@mail.gmail.com>
+        id S1754026AbeDTAsT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 20:48:19 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37544 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753761AbeDTAsR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 20:48:17 -0400
+X-Google-Smtp-Source: AIpwx4/z+N3wEkZWxzMc+NKiP2ZJmZl3Hj+aoumy5aV7rnu/MyMR1ujrOt0WCW6oDahtcUpbGmLEXg==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Tonny Lu <tonnylu@tencent.com>, Cornelia Huck <cohuck@redhat.com>
+Subject: [PATCH v2] KVM: Extend MAX_IRQ_ROUTES to 4096 for all archs
+Date: Thu, 19 Apr 2018 17:47:28 -0700
+Message-Id: <1524185248-51744-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKgT0UdTANRo3xnr89aWdfSPmMg81-W2H-ZcJUdC=5nUkf9RAw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 03:54:49PM -0700, Alexander Duyck wrote:
-> On Thu, Mar 15, 2018 at 11:40 AM, Alexander Duyck
-> <alexander.duyck@gmail.com> wrote:
-> > This series is meant to add support for SR-IOV on devices when the VFs are
-> > not managed by the kernel. Examples of recent patches attempting to do this
-> > include:
-> > virto - https://patchwork.kernel.org/patch/10241225/
-> > pci-stub - https://patchwork.kernel.org/patch/10109935/
-> > vfio - https://patchwork.kernel.org/patch/10103353/
-> > uio - https://patchwork.kernel.org/patch/9974031/
-> >
-> > Since this is quickly blowing up into a multi-driver problem it is probably
-> > best to implement this solution as generically as possible.
-> >
-> > This series is an attempt to do that. What we do with this patch set is
-> > provide a generic framework to enable SR-IOV in the case that the PF driver
-> > doesn't support managing the VFs itself.
-> >
-> > I based my patch set originally on the patch by Mark Rustad but there isn't
-> > much left after going through and cleaning out the bits that were no longer
-> > needed, and after incorporating the feedback from David Miller. At this point
-> > the only items to be fully reused was his patch description which is now
-> > present in patch 3 of the set.
-> >
-> > This solution is limited in scope to just adding support for devices that
-> > provide no functionality for SR-IOV other than allocating the VFs by
-> > calling pci_enable_sriov. Previous sets had included patches for VFIO, but
-> > for now I am dropping that as the scope of that work is larger then I
-> > think I can take on at this time.
-> >
-> > v2: Reduced scope back to just virtio_pci and vfio-pci
-> >     Broke into 3 patch set from single patch
-> >     Changed autoprobe behavior to always set when num_vfs is set non-zero
-> > v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
-> >     Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
-> > v4: Dropped vfio-pci patch
-> >     Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
-> >     Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
-> > v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
-> >     Added new patch that enables pci_sriov_configure_simple
-> >     Updated drivers to use pci_sriov_configure_simple
-> > v6: Defined pci_sriov_configure_simple as NULL when SR-IOV is not enabled
-> >     Updated drivers to drop "#ifdef" checks for IOV
-> >     Added pci-pf-stub as place for PF-only drivers to add support
-> > v7: Dropped pci_id table explanation from pci-pf-stub driver
-> >     Updated pci_sriov_configure_simple to drop need for err value
-> >     Fixed comment explaining why pci_sriov_configure_simple is NULL
-> >
-> 
-> Just following up since this has been sitting in patchwork for just
-> over a month now
-> (https://patchwork.ozlabs.org/project/linux-pci/list/?series=34034).
-> I'm just wondering what the expectation is on getting these pulled
-> into the pci tree? I'm assuming that is the best place for these
-> patches. Are there any concerns I still need to address or are these
-> going to be pulled in at some point, and if so is there any ETA on
-> when that will be?
-> 
-> Thanks.
-> 
-> - Alex
+From: Wanpeng Li <wanpengli@tencent.com>
 
-Sorry I didn't notice you had more questions. I have responded
-hopefully explaining my concerns. Summary:
+Our virtual machines make use of device assignment by configuring
+12 NVMe disks for high I/O performance. Each NVMe device has 129 
+MSI-X Table entries:
+Capabilities: [50] MSI-X: Enable+ Count=129 Masked-Vector table: BAR=0 offset=00002000
+The windows virtual machines fail to boot since they will map the number of 
+MSI-table entries that the NVMe hardware reported to the bus to msi routing 
+table, this will exceed the 1024. This patch extends MAX_IRQ_ROUTES to 4096
+for all archs, in the future this might be extended again if needed.
 
-- For virtio we should add this with a feature bit.
-- I am worried about security of this for the stub, but I am
-  not the maintainer there.
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Tonny Lu <tonnylu@tencent.com>
+Cc: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+Signed-off-by: Tonny Lu <tonnylu@tencent.com>
+---
+v1 -> v2:
+ * extend MAX_IRQ_ROUTES to 4096 for all archs 
 
+ include/linux/kvm_host.h | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 6930c63..0a5c299 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -1045,13 +1045,7 @@ static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
+ 
+ #ifdef CONFIG_HAVE_KVM_IRQ_ROUTING
+ 
+-#ifdef CONFIG_S390
+ #define KVM_MAX_IRQ_ROUTES 4096 //FIXME: we can have more than that...
+-#elif defined(CONFIG_ARM64)
+-#define KVM_MAX_IRQ_ROUTES 4096
+-#else
+-#define KVM_MAX_IRQ_ROUTES 1024
+-#endif
+ 
+ bool kvm_arch_can_set_irq_routing(struct kvm *kvm);
+ int kvm_set_irq_routing(struct kvm *kvm,
 -- 
-MST
+2.7.4
