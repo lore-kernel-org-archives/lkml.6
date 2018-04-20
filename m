@@ -1,204 +1,224 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-74658-1524635428-2-17913423324095642746
+X-Cyrus-Session-Id: sloti22d1t05-2222762-1524248361-2-11054660430332740133
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524635428; b=goP2xe6XqZ+FyE/xz+vNOQTNN5hhuPByELB7yd0OSYzEl7/5H5
-    yud71iFeEiz9CI5mXWZUAmeS4Q/tZehrEmg8do6qh0fciMfcvWIZkoEgkhR+VbhJ
-    wVeOqLJLYqAZII9gkBAp2jMlx8JUqSNaSQeaES5bQmy2Qj6SvhkyjtDQFsqnO5rN
-    jHoYIBmPEfkk/u0TRt8uIMzAoBwWbepJHwIqu1BMCsiAumMzJN2UqeofFtB3lo1x
-    xK9FMtp2aTr6TjSl1QRWmqusgM3YJAdXmE2BZev5Nd1vbgxf8VEi0cHMAOXzUQQ/
-    V48XQf0sxpdogcEVbGMQgU1g+GqinoYFbiHw==
+    1524248360; b=OI8fSO7K1yXtk9VHAev0Um+5qV+kWYUfO6HZgT8cXfv0I3KS/2
+    k7JjWvj17SUb/N3ZUBthpnT0xEVfvHD4c4nI7ML5DWa+UdYP1ZfQYMd5gy4oxCXF
+    42iYhfVXbqbNPpG+h1DQ+0c3fh55EpfaJs1wQQvPzOTquVH9QtWSJrkpV2/xyz4w
+    yOl+Z/BnGs08VX5gt9hN+vuW42Q5VKoJfdEYZsMEUFF/UDUpOrAzckJwO6XeYplB
+    JRS9h9o4SZSmRFpHGWF57lRPGUfEDY/4TTxkug3p0oekN2xvjRHzeV4k5DiINvW7
+    TT2fewdRMZHfQlfP87JLuohqrm9JpEM+3Hcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1524635428; bh=/d/eY22gOOVsSJgnyfKk8D4nazH0bu
-    09jMKmhBZqTNk=; b=KR9ZQOtGB9N8J9JZoWR+RtEqI3+WOrJrcr580rJKFsh9ky
-    3XeiQgX8oZc43qdSJ6D+3OlGHUZFbL94lV2ijksbHw2ZuVFA1PMc6T5fhVf7/1VI
-    CicwIoHefBt7v2+1F7Os+RLuvjWjgJEYpVQdm25bpP9MlriIytEDlakya07PWPie
-    cGAPW352kDXdE5uC3EQvjHed3jqAPXANrqqwtNW+YRWyT6AAAdRaU4WikO0D7V8X
-    jFD9oJjT5l4v/4RKErdToNEbAF5ryEVnPrdiQFipp0W2dfqfkjOlMGDwn/3Nofoz
-    apZAbGsebEQcSItDIKcIfr/7XL8taJq2fSS39OVA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :references:mime-version:content-type:content-transfer-encoding
+    :in-reply-to:sender:list-id; s=fm2; t=1524248360; bh=OGnm0nlLcag
+    feiUapHxzKF1VdD3WA24I5pfGYzUCua0=; b=VEZ8/6vBFsCWU7ctzW7sd49MSeQ
+    dLKjvTTCpwayPRMPNvI9jNxFzJMW69CNQOVtkX3q2+oIMGdoHU1dQE7uXOczI31m
+    lBB0ug/Z7j4Comc5egRiVCN64LS4TxE0W2/6V8n7o366x9saJ2gIfaGtSrRw+3Lm
+    GnkUA59NyiGQGI9HXhbat2Hc22J7wA/OPXUZNxLZ85ZdsU+/zEEUszN4e7dMhFSa
+    0if+BlL9VF0/vhSftbqoPvSxnLgf+fR1bsxoymCd8kTiIQ06RpT8hbvy4D7Ysa7o
+    Wbb/GIiBJ9g/HFiklKwxU8DQ3SDyD7BiZMrLFmzHeP2aNiZpowhTUGyzDWA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linuxfoundation.org;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=linuxfoundation.org header.result=pass header_is_org_domain=yes;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfC+HRSdNLaT0YLTFyXUIUc3NtpLRCPiTTgmJnxG65qsZa8GcjTCXOX3g0L0WRqSR8F9gkgqIb4dPhoU0ScvpKwgu87V/4Z+Eq2sjPTxe3w4BvcysWoEp
-    hfwnkCVBzimGqzzVUCECnc8cc/GC3BtoliuZVdaSY/eQ5yOh0XZKWnliO2PRH6O+ox6WhwY1v1p6rPYJDMYglXwCdnW2Kft0UAEiJmzabD4n3E3fvypyh/tN
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=FhJzGMl4X9cYfT0W5ksA:9 a=CjuIK1q_8ugA:10
-    a=1R1Xb7_w0-cA:10 a=OREKyDgYLcYA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfGinTdEm4gdNudvAJK6Q3BR5LngftqZgaIlOpyslsvgpnJ4lYA9jjhuKnpFBk+h8757GfwwJrk4ruT500oqEK/R06zRQURDvDtwow+H8tG4tNTlmt6wZ
+    y91yuJPxcV15ei+zpuhyWPdP4GJPnpVJ8OjIRb+XK0HvgNO1rW9IcPkayeYGUptM37K3NNYsAHRoTRdpxc2Nnm48mNAD1V5IOPoIlPTszfiHXhsgzPRhhHTx
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=GggQS1mPNjHnj7bSnTEA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750929AbeDYFuZ (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 25 Apr 2018 01:50:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58752 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750882AbeDYFuY (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 25 Apr 2018 01:50:24 -0400
-Date: Wed, 25 Apr 2018 07:50:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Amit Shah <amit@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        id S1753782AbeDTSTA (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 20 Apr 2018 14:19:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59676 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753514AbeDTSSE (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 20 Apr 2018 14:18:04 -0400
+Date: Fri, 20 Apr 2018 21:18:02 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         virtualization@lists.linux-foundation.org, stable@vger.kernel.org,
         Tiwei Bie <tiwei.bie@intel.com>,
-        Jason Wang <jasowang@redhat.com>
-Subject: Re: [PATCH 1/6] virtio_console: don't tie bufs to a vq
-Message-ID: <20180425055016.GD30843@kroah.com>
+        Jason Wang <jasowang@redhat.com>, stable@kernel.org
+Subject: [PATCH 3/6] virtio_console: free buffers after reset
+Message-ID: <1524248223-393618-4-git-send-email-mst@redhat.com>
 References: <1524248223-393618-1-git-send-email-mst@redhat.com>
- <1524248223-393618-2-git-send-email-mst@redhat.com>
- <20180421073005.GA3744@kroah.com>
- <20180424215318-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180424215318-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1524248223-393618-1-git-send-email-mst@redhat.com>
+X-Mutt-Fcc: =sent
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 24, 2018 at 09:56:33PM +0300, Michael S. Tsirkin wrote:
-> On Sat, Apr 21, 2018 at 09:30:05AM +0200, Greg Kroah-Hartman wrote:
-> > On Fri, Apr 20, 2018 at 09:18:01PM +0300, Michael S. Tsirkin wrote:
-> > > an allocated buffer doesn't need to be tied to a vq -
-> > > only vq->vdev is ever used. Pass the function the
-> > > just what it needs - the vdev.
-> > > 
-> > > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > > ---
-> > >  drivers/char/virtio_console.c | 14 +++++++-------
-> > >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > > 
-> > > diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
-> > > index 468f061..3e56f32 100644
-> > > --- a/drivers/char/virtio_console.c
-> > > +++ b/drivers/char/virtio_console.c
-> > > @@ -422,7 +422,7 @@ static void reclaim_dma_bufs(void)
-> > >  	}
-> > >  }
-> > >  
-> > > -static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
-> > > +static struct port_buffer *alloc_buf(struct virtio_device *vdev, size_t buf_size,
-> > >  				     int pages)
-> > >  {
-> > >  	struct port_buffer *buf;
-> > > @@ -445,16 +445,16 @@ static struct port_buffer *alloc_buf(struct virtqueue *vq, size_t buf_size,
-> > >  		return buf;
-> > >  	}
-> > >  
-> > > -	if (is_rproc_serial(vq->vdev)) {
-> > > +	if (is_rproc_serial(vdev)) {
-> > >  		/*
-> > >  		 * Allocate DMA memory from ancestor. When a virtio
-> > >  		 * device is created by remoteproc, the DMA memory is
-> > >  		 * associated with the grandparent device:
-> > >  		 * vdev => rproc => platform-dev.
-> > >  		 */
-> > > -		if (!vq->vdev->dev.parent || !vq->vdev->dev.parent->parent)
-> > > +		if (!vdev->dev.parent || !vdev->dev.parent->parent)
-> > >  			goto free_buf;
-> > > -		buf->dev = vq->vdev->dev.parent->parent;
-> > > +		buf->dev = vdev->dev.parent->parent;
-> > >  
-> > >  		/* Increase device refcnt to avoid freeing it */
-> > >  		get_device(buf->dev);
-> > > @@ -838,7 +838,7 @@ static ssize_t port_fops_write(struct file *filp, const char __user *ubuf,
-> > >  
-> > >  	count = min((size_t)(32 * 1024), count);
-> > >  
-> > > -	buf = alloc_buf(port->out_vq, count, 0);
-> > > +	buf = alloc_buf(port->portdev->vdev, count, 0);
-> > >  	if (!buf)
-> > >  		return -ENOMEM;
-> > >  
-> > > @@ -957,7 +957,7 @@ static ssize_t port_fops_splice_write(struct pipe_inode_info *pipe,
-> > >  	if (ret < 0)
-> > >  		goto error_out;
-> > >  
-> > > -	buf = alloc_buf(port->out_vq, 0, pipe->nrbufs);
-> > > +	buf = alloc_buf(port->portdev->vdev, 0, pipe->nrbufs);
-> > >  	if (!buf) {
-> > >  		ret = -ENOMEM;
-> > >  		goto error_out;
-> > > @@ -1374,7 +1374,7 @@ static unsigned int fill_queue(struct virtqueue *vq, spinlock_t *lock)
-> > >  
-> > >  	nr_added_bufs = 0;
-> > >  	do {
-> > > -		buf = alloc_buf(vq, PAGE_SIZE, 0);
-> > > +		buf = alloc_buf(vq->vdev, PAGE_SIZE, 0);
-> > >  		if (!buf)
-> > >  			break;
-> > >  
-> > > -- 
-> > > MST
-> > 
-> > <formletter>
-> > 
-> > This is not the correct way to submit patches for inclusion in the
-> > stable kernel tree.  Please read:
-> >     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> > for how to do this properly.
-> > 
-> > </formletter>
-> 
-> 
-> Thanks!
-> I have some questions about this one:
-> 
-> Cc: <stable@vger.kernel.org> # 3.3.x: a1f84a3: sched: Check for idle
-> Cc: <stable@vger.kernel.org> # 3.3.x: 1b9508f: sched: Rate-limit newidle
-> Cc: <stable@vger.kernel.org> # 3.3.x: fd21073: sched: Fix affinity logic
-> Cc: <stable@vger.kernel.org> # 3.3.x
-> Signed-off-by: Ingo Molnar <mingo@elte.hu>
-> 
-> 1. what does the kernel version mean? can I omit it?
+Console driver is out of spec. The spec says:
+	A driver MUST NOT decrement the available idx on a live
+	virtqueue (ie. there is no way to “unexpose” buffers).
+and it does exactly that by trying to detach unused buffers
+without doing a device reset first.
 
-Did you read the document?, it explains that the version can be used to
-say "this kernel version and newer"
+Defer detaching the buffers until device unplug.
 
-> 2. so when I rebase to add the tag, this changes commit IDs for
->    following tags in the same tree, breaking their tags
->    in the process. Pretty annoying. Any idea how to do it better?
+Of course this means we might get an interrupt for
+a vq without an attached port now. Handle that by
+discarding the consumed buffer.
 
-You only put tags there if you want me to pick up pre-requisite patches
-that are already in Linus's tree.  If you have a patch series that all
-needs to go into stable, just add the "cc: stable@" to the tags on all
-of them and I'll pick them up in the correct order then.
+Reported-by: Tiwei Bie <tiwei.bie@intel.com>
+Fixes: b3258ff1d6 ("virtio: Decrement avail idx on buffer detach")
+CC: stable@kernel.org
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
+ drivers/char/virtio_console.c | 49 +++++++++++++++++++++----------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
 
-hope this helps,
-
-greg k-h
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 3e56f32..26a66ff 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1402,7 +1402,6 @@ static int add_port(struct ports_device *portdev, u32 id)
+ {
+ 	char debugfs_name[16];
+ 	struct port *port;
+-	struct port_buffer *buf;
+ 	dev_t devt;
+ 	unsigned int nr_added_bufs;
+ 	int err;
+@@ -1513,8 +1512,6 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 	return 0;
+ 
+ free_inbufs:
+-	while ((buf = virtqueue_detach_unused_buf(port->in_vq)))
+-		free_buf(buf, true);
+ free_device:
+ 	device_destroy(pdrvdata.class, port->dev->devt);
+ free_cdev:
+@@ -1539,34 +1536,14 @@ static void remove_port(struct kref *kref)
+ 
+ static void remove_port_data(struct port *port)
+ {
+-	struct port_buffer *buf;
+-
+ 	spin_lock_irq(&port->inbuf_lock);
+ 	/* Remove unused data this port might have received. */
+ 	discard_port_data(port);
+ 	spin_unlock_irq(&port->inbuf_lock);
+ 
+-	/* Remove buffers we queued up for the Host to send us data in. */
+-	do {
+-		spin_lock_irq(&port->inbuf_lock);
+-		buf = virtqueue_detach_unused_buf(port->in_vq);
+-		spin_unlock_irq(&port->inbuf_lock);
+-		if (buf)
+-			free_buf(buf, true);
+-	} while (buf);
+-
+ 	spin_lock_irq(&port->outvq_lock);
+ 	reclaim_consumed_buffers(port);
+ 	spin_unlock_irq(&port->outvq_lock);
+-
+-	/* Free pending buffers from the out-queue. */
+-	do {
+-		spin_lock_irq(&port->outvq_lock);
+-		buf = virtqueue_detach_unused_buf(port->out_vq);
+-		spin_unlock_irq(&port->outvq_lock);
+-		if (buf)
+-			free_buf(buf, true);
+-	} while (buf);
+ }
+ 
+ /*
+@@ -1791,13 +1768,24 @@ static void control_work_handler(struct work_struct *work)
+ 	spin_unlock(&portdev->c_ivq_lock);
+ }
+ 
++static void flush_bufs(struct virtqueue *vq, bool can_sleep)
++{
++	struct port_buffer *buf;
++	unsigned int len;
++
++	while ((buf = virtqueue_get_buf(vq, &len)))
++		free_buf(buf, can_sleep);
++}
++
+ static void out_intr(struct virtqueue *vq)
+ {
+ 	struct port *port;
+ 
+ 	port = find_port_by_vq(vq->vdev->priv, vq);
+-	if (!port)
++	if (!port) {
++		flush_bufs(vq, false);
+ 		return;
++	}
+ 
+ 	wake_up_interruptible(&port->waitqueue);
+ }
+@@ -1808,8 +1796,10 @@ static void in_intr(struct virtqueue *vq)
+ 	unsigned long flags;
+ 
+ 	port = find_port_by_vq(vq->vdev->priv, vq);
+-	if (!port)
++	if (!port) {
++		flush_bufs(vq, false);
+ 		return;
++	}
+ 
+ 	spin_lock_irqsave(&port->inbuf_lock, flags);
+ 	port->inbuf = get_inbuf(port);
+@@ -1984,6 +1974,15 @@ static const struct file_operations portdev_fops = {
+ 
+ static void remove_vqs(struct ports_device *portdev)
+ {
++	struct virtqueue *vq;
++
++	virtio_device_for_each_vq(portdev->vdev, vq) {
++		struct port_buffer *buf;
++
++		flush_bufs(vq, true);
++		while ((buf = virtqueue_detach_unused_buf(vq)))
++			free_buf(buf, true);
++	}
+ 	portdev->vdev->config->del_vqs(portdev->vdev);
+ 	kfree(portdev->in_vqs);
+ 	kfree(portdev->out_vqs);
+-- 
+MST
