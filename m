@@ -1,57 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753956AbeDTASn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 20:18:43 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:37664 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753703AbeDTASm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 20:18:42 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0T.VpzAp_1524183500;
-Subject: Re: [RFC PATCH] fs: introduce ST_HUGE flag and set it to tmpfs and
- hugetlbfs
-To: Christoph Hellwig <hch@infradead.org>
-Cc: viro@zeniv.linux.org.uk, nyc@holomorphy.com, mike.kravetz@oracle.com,
-        kirill.shutemov@linux.intel.com, hughd@google.com,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1523999293-94152-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180418102744.GA10397@infradead.org>
- <73090d4b-6831-805b-8b9d-5dff267428d9@linux.alibaba.com>
- <20180419082810.GA8624@infradead.org>
-From: Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <9d8c9198-46c4-fd34-3546-c6f9b3fef0fb@linux.alibaba.com>
-Date: Thu, 19 Apr 2018 17:18:20 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        id S1754009AbeDTAlB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 20:41:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37124 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753761AbeDTAk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 20:40:59 -0400
+Date: Fri, 20 Apr 2018 03:40:55 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: "Daly, Dan" <dan.daly@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
+ unmanaged SR-IOV on virtio_pci devices
+Message-ID: <20180420030640-mutt-send-email-mst@kernel.org>
+References: <20180315183449.3102.64791.stgit@localhost.localdomain>
+ <20180315184132.3102.90947.stgit@localhost.localdomain>
+ <20180316183042-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
+ <20180403161151-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com>
+ <20180403212503-mutt-send-email-mst@kernel.org>
+ <CAKgT0Ude79FYrK4qA0OKRJ1NackyqPi-hZ8Zh3WSdLDFxoOosQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180419082810.GA8624@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0Ude79FYrK4qA0OKRJ1NackyqPi-hZ8Zh3WSdLDFxoOosQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Apr 03, 2018 at 12:06:03PM -0700, Alexander Duyck wrote:
+> On Tue, Apr 3, 2018 at 11:27 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> > On Tue, Apr 03, 2018 at 10:32:00AM -0700, Alexander Duyck wrote:
+> >> On Tue, Apr 3, 2018 at 6:12 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> >> > On Fri, Mar 16, 2018 at 09:40:34AM -0700, Alexander Duyck wrote:
+> >> >> On Fri, Mar 16, 2018 at 9:34 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> >> >> > On Thu, Mar 15, 2018 at 11:42:41AM -0700, Alexander Duyck wrote:
+> >> >> >> From: Alexander Duyck <alexander.h.duyck@intel.com>
+> >> >> >>
+> >> >> >> Hardware-realized virtio_pci devices can implement SR-IOV, so this
+> >> >> >> patch enables its use. The device in question is an upcoming Intel
+> >> >> >> NIC that implements both a virtio_net PF and virtio_net VFs. These
+> >> >> >> are hardware realizations of what has been up to now been a software
+> >> >> >> interface.
+> >> >> >>
+> >> >> >> The device in question has the following 4-part PCI IDs:
+> >> >> >>
+> >> >> >> PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+> >> >> >> VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
+> >> >> >>
+> >> >> >> The patch currently needs no check for device ID, because the callback
+> >> >> >> will never be made for devices that do not assert the capability or
+> >> >> >> when run on a platform incapable of SR-IOV.
+> >> >> >>
+> >> >> >> One reason for this patch is because the hardware requires the
+> >> >> >> vendor ID of a VF to be the same as the vendor ID of the PF that
+> >> >> >> created it. So it seemed logical to simply have a fully-functioning
+> >> >> >> virtio_net PF create the VFs. This patch makes that possible.
+> >> >> >>
+> >> >> >> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> >> >> >> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+> >> >> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+> >> >> >
+> >> >> > So if and when virtio PFs can manage the VFs, then we can
+> >> >> > add a feature bit for that?
+> >> >> > Seems reasonable.
+> >> >>
+> >> >> Yes. If nothing else you may not even need a feature bit depending on
+> >> >> how things go.
+> >> >
+> >> > OTOH if the interface is changed in an incompatible way,
+> >> > and old Linux will attempt to drive the new device
+> >> > since there is no check.
+> >> >
+> >> > I think we should add a feature bit right away.
+> >>
+> >> I'm not sure why you would need a feature bit. The capability is
+> >> controlled via PCI configuration space. If it is present the device
+> >> has the capability. If it is not then it does not.
+> >>
+> >> Basically if the PCI configuration space is not present then the sysfs
+> >> entries will not be spawned and nothing will attempt to use this
+> >> function.
+> >>
+> >> - ALex
+> >
+> > It's about compability with older guests which ignore the
+> > capability.
+> >
+> > The feature is thus helpful so host knows whether guest supports VFs.
+> 
+> The thing is if the capability is ignored then the feature isn't used.
+> So for SR-IOV it isn't an uncommon thing for there to be drivers for
+> the PF floating around that do not support SR-IOV. In such cases
+> SR-IOV just isn't used while the hardware could support it.
 
+Right but how come there are VF drivers but PF driver does not
+know about these?
 
-On 4/19/18 1:28 AM, Christoph Hellwig wrote:
-> On Wed, Apr 18, 2018 at 11:18:25AM -0700, Yang Shi wrote:
->> Yes, thanks for the suggestion. I did think about it before I went with the
->> new flag. Not like hugetlb, THP will *not* guarantee huge page is used all
->> the time, it may fallback to regular 4K page or may get split. I'm not sure
->> how the applications use f_bsize field, it might break existing applications
->> and the value might be abused by applications to have counter optimization.
->> So, IMHO, a new flag may sound safer.
-> But st_blksize isn't the block size, that is why I suggested it.  It is
-> the preferred I/O size, and various file systems can report way
-> larger values than the block size already.
+And are there PF drivers that intentially do not enable SRIOV
+because it's known to be broken in some way?
 
-Thanks. If it is safe to applications, It definitely can return huge 
-page size via st_blksize.
+Case in point I do think virtio want to limit this
+depending on a feature bit on general principles
+(the principle being that all extensions have feature bits).
 
-Is it safe to return huge page size via statfs->f_bsize? It sounds it 
-has not to be the physical block size too. The man page says it is 
-"Optimal transfer block size".
+There are security implications here - we previously relied on
+whitelisting after all.
 
-Yang
+Wouldn't it be safer to be a bit more careful and update the
+actual PF drivers? It's just one line per driver, but it
+can be done with an ack by driver maintainer.
+If/once we find out all drivers do have it, we can then
+change the default.
+
+> I would think in the case of virtio it would be the same kind of
+> thing. Basically if SR-IOV is supported by the host then the
+> capability would be present. If SR-IOV is supported by the guest then
+> it would make use of the capability to spawn VFs. If either the
+> capability isn't present, or the driver doesn't use it then you won't
+> be able to spawn VFs in the guest.
+
+> Maybe I am missing something. Do you support dynamically changing the
+> PCI configuration space for Virtio devices based on the presence of
+> feature bits provided by the guest?
+
+No. The point is that IMHO at least virtio - in absence of feature bit -
+to ignore VFs rather than assume they are safe to drive
+in an unmanaged way.
+
+> Also are you saying this patch set should wait on the feature bit to
+> be added, or are you talking about doing this as some sort of
+> follow-up?
+> 
+> - Alex
+
+I think for virtio it should include the feature bit, yes.
+Adding feature bit is very easy - post a patch to the virtio TC mailing
+list, wait about a week to give people time to respond (two weeks if it
+is around holidays and such).
+
+-- 
+MST
