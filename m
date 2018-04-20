@@ -1,138 +1,142 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1234427-1524214577-2-3685872643515246279
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='hk',
-  MailFrom='org'
-X-Spam-charsets: to='UTF-8', plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524214576; b=gr2C07iboYMVEroy3M0TBX4Xm2kf55SUDHRreAyymVmskiewcV
-    QZY3JgZVH5mmDVeQjpz/6jhKkzKmQpugi5+TpZFlt15aRRpGcXqWFi2jw1xc0t/7
-    TogAo/6Qi3RqR2hJDhbggykZTMWrXHajzdVwHnUvYnBlpLHnhKf5A8C8f/xAfEUX
-    Im0wSnsgkCiErG1DsnkoMVO0XcsDgcaef/PlvoaSc8tz0U/2yO0p1ZdFfbZFWRJv
-    G38/HTQK3KHU++zXWtqHSJMEBJXIAFPdC6wd7bVUpOjrlG63raYWc9TMu3jWl50W
-    4bLDh0NYKtFXPKMscIbFscT8RUTTu6lmQstQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1524214576;
-    bh=gzcgWKQ7B9jV8rlBCsvHwlm9Z/H1nW4Nj2vjUEOmxYE=; b=V7D5nVTfq2V2
-    Po8/LoKxREahEnSPDTIFW0rFfJObld2M1F1+N8KJNX+TeeNqyzprsGpLPThgW1im
-    S37kLXNoTcGH6MT94Acqytoc9TIaORPUh95RAFl8RF+kob04p+9dz89BNitfo5IP
-    gxtPxRbIGZE+PHmhO3ezeUSRh/qjG3ya3Vyv3itIHV5F7I6v4YWq7+5G2xkKJPKl
-    K3ZDx9oZaX/bfz/fiWrO9GAcv+EJ3pnmcr0zTAgBxrs5T009PNKa7ztr5E01qFgj
-    Xvsk2ejciUZFdVzWbROdBMzCTfQA34ftlycFtcp2jPluTHXKaR74SnoqtN5OnLuv
-    d8hZJmL51Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gtsys.com.hk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gtsys.com.hk header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gtsys.com.hk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gtsys.com.hk header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOj5FBOCq2cLYTTVgvdwgJCwfYjHH2eOTes2FAO9mEiQ94zdGEPFKYwGWRRubSHdgy1t0e28hAsh2j9JabjYo1TQbagVHNVPevdKqHCLk6GzlfFTnB0B
-    ME2gDfBi4VzEu7UbMhhSu+QRRadHAOERcqFFyIFnvZFtgIlZzIUQ+Ygmg0MDrHeKVZZtiRqSAZQ7kPTuQUZZtDaTMctZ6JhKcz2245h18UYGKVfQhp8LbXZ1
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
-    a=Kd1tUaAdevIA:10 a=O7zmUmNSAAAA:8 a=VwQbUJbxAAAA:8 a=vhPfHTAonYh4u7SR1sIA:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=IJxu9zi5bFdC9NS7oKyv:22
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754104AbeDTI4N (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 20 Apr 2018 04:56:13 -0400
-Received: from sh1.xit.com.hk ([111.91.236.50]:41468 "EHLO sh1.xit.com.hk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754066AbeDTI4M (ORCPT <rfc822;linux-serial@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:56:12 -0400
-Subject: Re: [PATCH] serial: imx: enable IMX21_UCR3_RXDMUXSEL for non-dte-mode
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1524186479-25315-1-git-send-email-chris.ruehl@gtsys.com.hk>
- <20180420061316.sakoupltqxn2qhfr@pengutronix.de>
-From: Chris Ruehl <chris.ruehl@gtsys.com.hk>
-Message-ID: <f9cea977-56b8-052d-ccc2-9b6de7cd3645@gtsys.com.hk>
-Date: Fri, 20 Apr 2018 16:56:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <DavidWang@zhaoxin.com>
+X-Google-Smtp-Source: AIpwx48lkGi/O+9IQclRY4t4rSR5DSQPPhHzD3I0xtDvqgvv/wKT5puZy/82rQGAzJa4HNsfUYYP
+ARC-Seal: i=1; a=rsa-sha256; t=1524212983; cv=none;
+        d=google.com; s=arc-20160816;
+        b=cjl1UpVAC48FBbd5PzNmlf5joh37hNYON20Y1eQU5Rc9wFnGIXYUpKHNpAY24ESCYZ
+         NZIrqw92cmZST2iu3cewfO9iF9ts5Fli2TfMTOkNzX1VStkeJ2Kchw58Bgp/2OCu7j39
+         3NGcPpMXKipW2+v4G+dre7hYgGt+fGlSvDLBMI3s4lod5BVKez4OwN+WTCyOR9qk8mBo
+         nJHUMMlJWsYmuh+22SGa/sP+yIsDY3SNg8h73Fvx2aRhJljYFsB917CoyFtxuet+qfQP
+         D6a4Tam8CXN9okvMnnY5zs3JSVlPfEsUf5siTdoxCf4DXv5UNcMhgZWM4eR89OF2N1C2
+         flZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=VcYtKiNvVf9x69v8XVPmyo5uwEZZkBhPqMCLZqBrrbk=;
+        b=jfGhod26CU80aZLo1lKTcOjAPVUQSZKva0FXVSGcA7E5B4XJGnnk6YQjPIWxu4wHX7
+         0CXQ/R5knxZVqec4ZCSavJDTIFdFJh0kop8ewqteqBAbjMHSBbCFoz4leD3RlKBf4ZXL
+         Nn5xYIdWz+xSGJO4NMTtPCJWbHpI+LOE0szIAmpY1l3yFURVD/OEBtld6Xeh34lSXqq7
+         OXtNrrNVGklKCSa+NstqXu97wMsrYDTXgnkEeY2hIYU6uNC8lbQJQx8Z4NL9n+FECRRK
+         IonBGQeXjT9xjlT/A5/Y8yQI+O8c1adJAWRFwPo66X8IV5yj3VdakZyir0AhGV3oIxm6
+         g+Qg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 180.169.121.91 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 180.169.121.91 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
+From: David Wang <davidwang@zhaoxin.com>
+To: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+	<gregkh@linuxfoundation.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
+	<qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>, <lukelin@viacpu.com>,
+	<timguo@zhaoxin.com>, David Wang <davidwang@zhaoxin.com>
+Subject: [PATCH v2] x86/Centaur: show more HW features in /proc/cpuinfo
+Date: Fri, 20 Apr 2018 16:29:28 +0800
+Message-ID: <1524212968-28998-1-git-send-email-davidwang@zhaoxin.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180420061316.sakoupltqxn2qhfr@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Content-Type: text/plain
+X-Originating-IP: [10.29.8.54]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598253151735079564?=
+X-GMAIL-MSGID: =?utf-8?q?1598253151735079564?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Friday, April 20, 2018 02:13 PM, Uwe Kleine-König wrote:
-> Hello Chris,
-> 
-> On Fri, Apr 20, 2018 at 09:07:59AM +0800, Chris Ruehl wrote:
->> Fix a problem introduced with
->> commit e61c38d85b73 ("serial: imx: setup DCEDTE early and ensure DCD and RI irqs to be off")
->> result in non dte-mode imx-uart fail receive data.
->> By add back IMX21_UCR3_RXDMUXSEL the serial port works as expected.
->>
->> Signed-off-by: Chris Ruehl <chris.ruehl@gtsys.com.hk>
->> ---
->>   drivers/tty/serial/imx.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
->> index 91f3a1a..3d09933 100644
->> --- a/drivers/tty/serial/imx.c
->> +++ b/drivers/tty/serial/imx.c
->> @@ -1391,7 +1391,7 @@ static int imx_uart_startup(struct uart_port *port)
->>   
->>   		ucr3 = imx_uart_readl(sport, UCR3);
->>   
->> -		ucr3 |= UCR3_DTRDEN | UCR3_RI | UCR3_DCD;
->> +		ucr3 |= IMX21_UCR3_RXDMUXSEL | UCR3_DTRDEN | UCR3_RI | UCR3_DCD;
->>   
->>   		if (sport->dte_mode)
->>   			/* disable broken interrupts */
-> 
-> Doesn't 6df765dca378bddf994cfd2044acafa501bd800f fix this for you?
-> 
-> Best regards
-> Uwe
-> 
+Centaur CPU has some intel compatible capabilities,include PMC and some
+CPU virtualization capabilities. These capabilities should be initialized
+in the centaur init function.
 
-Uwe,
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
 
-the patch you point out would fix that problem from what I can see.
+Changes from v1 to v2:
+*1, move some defines outside the centaur_detect_vmx_virtcap;
+*2, Delete some unuseful cap clear operaions in centaur_detect_vmx_virtcap;
+*3, other little changes according to sugesstions from tglx;
+---
+ arch/x86/kernel/cpu/centaur.c | 48 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-But it not yet at the linux-next and since the error persists for 4.9.89 
-to present I filed a patch simple patch which fix my system.
-
-Let me apply your patch and see if all works well then I fine to drop my
-one liner.
-
-Chris
+diff --git a/arch/x86/kernel/cpu/centaur.c b/arch/x86/kernel/cpu/centaur.c
+index e5ec0f1..80d5110 100644
+--- a/arch/x86/kernel/cpu/centaur.c
++++ b/arch/x86/kernel/cpu/centaur.c
+@@ -18,6 +18,13 @@
+ #define RNG_ENABLED	(1 << 3)
+ #define RNG_ENABLE	(1 << 6)	/* MSR_VIA_RNG */
+ 
++#define X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW	0x00200000
++#define X86_VMX_FEATURE_PROC_CTLS_VNMI		0x00400000
++#define X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS	0x80000000
++#define X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC	0x00000001
++#define X86_VMX_FEATURE_PROC_CTLS2_EPT		0x00000002
++#define X86_VMX_FEATURE_PROC_CTLS2_VPID		0x00000020
++
+ static void init_c3(struct cpuinfo_x86 *c)
+ {
+ 	u32  lo, hi;
+@@ -112,6 +119,31 @@ static void early_init_centaur(struct cpuinfo_x86 *c)
+ 	}
+ }
+ 
++static void centaur_detect_vmx_virtcap(struct cpuinfo_x86 *c)
++{
++	u32 vmx_msr_low, vmx_msr_high, msr_ctl, msr_ctl2;
++
++	rdmsr(MSR_IA32_VMX_PROCBASED_CTLS, vmx_msr_low, vmx_msr_high);
++	msr_ctl = vmx_msr_high | vmx_msr_low;
++
++	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW)
++		set_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
++	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_VNMI)
++		set_cpu_cap(c, X86_FEATURE_VNMI);
++	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS) {
++		rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
++		      vmx_msr_low, vmx_msr_high);
++		msr_ctl2 = vmx_msr_high | vmx_msr_low;
++		if ((msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC) &&
++		    (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW))
++			set_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
++		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_EPT)
++			set_cpu_cap(c, X86_FEATURE_EPT);
++		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VPID)
++			set_cpu_cap(c, X86_FEATURE_VPID);
++	}
++}
++
+ static void init_centaur(struct cpuinfo_x86 *c)
+ {
+ #ifdef CONFIG_X86_32
+@@ -128,6 +160,19 @@ static void init_centaur(struct cpuinfo_x86 *c)
+ 	clear_cpu_cap(c, 0*32+31);
+ #endif
+ 	early_init_centaur(c);
++
++	if (c->cpuid_level > 9) {
++		unsigned int eax = cpuid_eax(10);
++
++		/*
++		 * Check for version and the number of counters
++		 * Version(eax[7:0]) can't be 0;
++		 * Counters(eax[15:8]) should be greater than 1;
++		 */
++		if ((eax & 0xff) && (((eax >> 8) & 0xff) > 1))
++			set_cpu_cap(c, X86_FEATURE_ARCH_PERFMON);
++	}
++
+ 	switch (c->x86) {
+ #ifdef CONFIG_X86_32
+ 	case 5:
+@@ -199,6 +244,9 @@ static void init_centaur(struct cpuinfo_x86 *c)
+ #ifdef CONFIG_X86_64
+ 	set_cpu_cap(c, X86_FEATURE_LFENCE_RDTSC);
+ #endif
++
++	if (cpu_has(c, X86_FEATURE_VMX))
++		centaur_detect_vmx_virtcap(c);
+ }
+ 
+ #ifdef CONFIG_X86_32
+-- 
+1.9.1
