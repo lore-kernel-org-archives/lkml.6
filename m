@@ -1,223 +1,271 @@
-Return-Path: <mingo.kernel.org@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524296356; cv=none;
+Return-Path: <acme@kernel.org>
+X-Google-Smtp-Source: AIpwx4/B3kGwSNisNWfUsxX/GsdaYOF4NNGzMqwLbRHPG+FbKNDH518QDpk++OCypLSSJ467prKR
+ARC-Seal: i=1; a=rsa-sha256; t=1524234826; cv=none;
         d=google.com; s=arc-20160816;
-        b=hmb5SgltrVIe9HwPHz229M9yKbE9NvPHmgaisOumwiIwJSPxs9I9AZBa9phMejEy9m
-         AFpkFjloUJp2MMGr9DiEWUR4QpPlWBXRrVGv4GcTtJbFeefQyyU316uxdmBKXbHNneaB
-         rA7Z9hHk9GFet7M6KpGM+BZK6seLhl1tD603TNUbbW0lHEF4WQmdbTixDq3e4D2qw+BL
-         ZZgrMLXwe7fBFzHEieDSrCjs2HB88ImmE/JninAxNWE7afozQZCVk+HtesQya34AQb/1
-         x7BfiHCeOEvbv/GS1Z1ZX3ivIV6nooTnHJbrkGDIqOb0FQqRdBEM89lLDZfSdLyIyGUm
-         p7NQ==
+        b=lL4NGEIB9yE+lqpXoJMwEXqWtWVpxkOYASesLskcQZzRErmAy8YEcAzKHHc2etKCf1
+         l2lM1tCsw0TmMG81kpxdPvLyt/iwx4BE11d7Bay+5qZ3zCnMMZB9aHZSit8bb3/EqUyX
+         xx+363ibTZsjai/p3cGIJ8WURf3yto3gyyZnUnZYdnFp+PhDNZWGQuvzQTcxQjS2FrqM
+         rmn+W5sV51ABjOKTWEn0qWRhKSDsaAQTSyDl3u5t7hgcP+27IdejC8/hRlbh1XLPH8vD
+         baw/sfDPI/HNoaqlGS8wL7LmFBVrDSXwfde553vVqdEHP+WPyzQEHMV4uoI8+EKd58NR
+         AQ/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=XeCN8j+TDZla46nSV14qlEWdwJkT9ViO0yLTimMcrVQ=;
-        b=XThlMJegAj6M01PZxkE8QFWfiKz2cyL3sHmfDc/Mq9UOKjckzxE3/j2AT7quCstSqf
-         2UNZU/dBNAmjQq42csFgI8+6jqTkRpiyh9GDO/VeRNc1H6wewoo4DjOxI2VelZCSPWgn
-         FEwJEFbPHhk316amU9z/rizLsDeYgeFJZ7mUQ5YQKq4QvYlSNirwRPrDQC8EbxwwgW/A
-         AnamkkfDcf1INnYvjW9jb3hBpxJFQqoUQQJErX2ZRJeF+1sv8pyyZazKGwh2WQ0HFf1i
-         E3iB3KChq/NCzpwRUx+9G4koD8U/WoegED0C5Z714+gVC+aaW7VU+WN7B10hJIohYJRC
-         DK6A==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dmarc-filter:arc-authentication-results;
+        bh=FmLgtAm794KkapOslqZbhD1ct5m+GjRQVHWkwhFRflo=;
+        b=D1jcKQcONSx8SpK1soUFBMnMVLd2lsN7jeK+IymLsYQ+6kBa3epFcpxUTmJpJvuD7y
+         QkBV1h9dXN/J0v+g6UmVF+s8ICFL7inXDul/60/Si6ZgsWwHRXPnbG6Er8AP7chC6u6k
+         D1aS++pywyMzgZCl7JAcjWqPBaFT3AEbtiZFeEdAOsdpNaGMLUXVtvVkl88aDY3jsApY
+         5T3Mc0uREgPJOU8TFU8I44jr7NfX0+vqb5xZEmkH3ZYL3xk1pK+3t8o3nxO6c6lOj+yF
+         wqWK6XTW6BCE/zI1uDrgyb0EdTjWogXq+1/cuwE8GDHjtkqnLPzjZA7JSVi5jcbWSP0O
+         9Ieg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oY4K0NIo;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
+       spf=pass (google.com: best guess record for domain of acme@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=acme@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=oY4K0NIo;
-       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com
-X-Google-Smtp-Source: AIpwx4/1zi7gQx9qwG1I6zEWmaeQUXxhIJLqHA8Qu1H4pcf4oyNExUyl1+amIKLr4Q/jXx/C2zpEWQ==
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Sat, 21 Apr 2018 09:39:10 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+       spf=pass (google.com: best guess record for domain of acme@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=acme@kernel.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911D6217D3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>,
+	linux-kernel@vger.kernel.org,
 	linux-perf-users@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Alexey Budankov <alexey.budankov@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Brian Robbins <brianrob@microsoft.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	David Ahern <dsahern@gmail.com>,
-	"Dmitriy Vyukov dvyukov @ google . com" <dvyukov@google.com>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiko Carstens <heiko.carstens@de.ibm.com>,
-	Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Jesper Dangaard Brouer <brouer@redhat.com>,
-	Jin Yao <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Kim Phillips <kim.phillips@arm.com>,
-	Krister Johansen <kjlx@templeofstupid.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Li Zhijian <lizhijian@cn.fujitsu.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Martin =?utf-8?B?TGnFoWth?= <mliska@suse.cz>,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Miguel Bernal Marin <miguel.bernal.marin@linux.intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Olsa <jolsa@redhat.com>,
 	Namhyung Kim <namhyung@kernel.org>,
-	"Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-	Sandipan Das <sandipan@linux.vnet.ibm.com>,
-	Sihyeon Jang <uneedsihyeon@gmail.com>,
-	Stephane Eranian <eranian@google.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Takuya Yamamoto <tkydevel@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Wang Nan <wangnan0@huawei.com>, William Cohen <wcohen@redhat.com>,
-	x86@kernel.org, Yonghong Song <yhs@fb.com>,
+	linux-arm-kernel@lists.infradead.org,
 	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL 00/17] perf/urgent fixes and improvements
-Message-ID: <20180421073910.urxorhupps2sjc7h@gmail.com>
-References: <20180420143227.16030-1-acme@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Subject: [PATCH 17/17] coresight: Move to SPDX identifier
+Date: Fri, 20 Apr 2018 11:32:27 -0300
+Message-Id: <20180420143227.16030-18-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180420143227.16030-1-acme@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+References: <20180420143227.16030-1-acme@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598275995329372109?=
-X-GMAIL-MSGID: =?utf-8?q?1598340576025696794?=
+X-GMAIL-THRID: =?utf-8?q?1598276057981436359?=
+X-GMAIL-MSGID: =?utf-8?q?1598276057981436359?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+Move CoreSight headers to the SPDX identifier.
 
-> Hi Ingo,
-> 
-> 	Please consider pulling, this took longer than I expected
-> due to the syscall rename fallout :-\
-> 
-> - Arnaldo
-> 
-> The following changes since commit 5c8dad48e4f53d6fd0a7e4f95d7c1c983374de88:
-> 
->   trace_kprobe: Remove warning message "Could not insert probe at..." (2018-04-17 07:54:57 +0200)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.17-20180420
-> 
-> for you to fetch changes up to 8a9fd8323087e794f1d3cd4850b393ced048bc73:
-> 
->   coresight: Move to SPDX identifier (2018-04-19 12:29:41 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/urgent fixes and improvements:
-> 
-> - Store context switch out type in PERF_RECORD_SWITCH[_CPU_WIDE].
->   The percentage of preempting and non-preempting context switches help
->   understanding the nature of workloads (CPU or IO bound) that are running
->   on a machine. This adds the kernel facility and userspace changes needed
->   to show this information in 'perf script' and 'perf report -D' (Alexey Budankov)
-> 
-> - Remove old error messages about things that unlikely to be the root cause
->   in modern systems (Andi Kleen)
-> 
-> - Synchronize kernel ABI headers, v4.17-rc1 (Ingo Molnar)
-> 
-> - Support MAP_FIXED_NOREPLACE, noticed when updating the tools/include/
->   copies (Arnaldo Carvalho de Melo)
-> 
-> - Fixup BPF test using epoll_pwait syscall function probe, to cope with
->   the syscall routines renames performed in this development cycle (Arnaldo Carvalho de Melo)
-> 
-> - Fix sample_max_stack maximum check and do not proceed when an error
->   has been detect, return them to avoid misidentifying errors (Jiri Olsa)
-> 
-> - Add '\n' at the end of parse-options error messages (Ravi Bangoria)
-> 
-> - Add s390 support for detailed/verbose PMU event description (Thomas Richter)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Alexey Budankov (3):
->       perf/core: Store context switch out type in PERF_RECORD_SWITCH[_CPU_WIDE]
->       perf report: Extend raw dump (-D) out with switch out event type
->       perf script: Extend misc field decoding with switch out event type
-> 
-> Andi Kleen (4):
->       perf mem: Allow all record/report options
->       perf hists browser: Clarify top/report browser help
->       perf record: Remove misleading error suggestion
->       perf record: Remove suggestion to enable APIC
-> 
-> Arnaldo Carvalho de Melo (3):
->       perf trace: Support MAP_FIXED_NOREPLACE
->       perf tests mmap: Show which tracepoint is failing
->       perf test BPF: Fixup BPF test using epoll_pwait syscall function probe
-> 
-> Ingo Molnar (1):
->       tools/headers: Synchronize kernel ABI headers, v4.17-rc1
-> 
-> Jiri Olsa (3):
->       perf: Return proper values for user stack errors
->       perf: Fix sample_max_stack maximum check
->       perf: Remove superfluous allocation error check
-> 
-> Mathieu Poirier (1):
->       coresight: Move to SPDX identifier
-> 
-> Ravi Bangoria (1):
->       perf tools: Add '\n' at the end of parse-options error messages
-> 
-> Thomas Richter (1):
->       perf list: Add s390 support for detailed/verbose PMU event description
-> 
->  include/linux/coresight-pmu.h                     |  13 +-
->  include/uapi/linux/perf_event.h                   |  18 +-
->  kernel/events/callchain.c                         |  25 +-
->  kernel/events/core.c                              |   8 +-
->  tools/arch/arm/include/uapi/asm/kvm.h             |   9 +
->  tools/arch/x86/include/asm/required-features.h    |   8 +-
->  tools/arch/x86/include/uapi/asm/kvm.h             |  19 +-
->  tools/include/linux/coresight-pmu.h               |  13 +-
->  tools/include/uapi/asm-generic/mman-common.h      |   3 +
->  tools/include/uapi/linux/bpf.h                    |   1 +
->  tools/include/uapi/linux/if_link.h                |  39 ++
->  tools/include/uapi/linux/kvm.h                    |  21 +-
->  tools/include/uapi/linux/perf_event.h             |  18 +-
->  tools/include/uapi/sound/asound.h                 |   1 +
->  tools/lib/subcmd/parse-options.c                  |   6 +-
->  tools/perf/Documentation/perf-mem.txt             |   3 +
->  tools/perf/Documentation/perf-script.txt          |  17 +-
->  tools/perf/arch/arm/util/auxtrace.c               |  13 +-
->  tools/perf/arch/arm/util/cs-etm.c                 |  13 +-
->  tools/perf/arch/arm/util/cs-etm.h                 |  13 +-
->  tools/perf/arch/arm/util/pmu.c                    |  13 +-
->  tools/perf/arch/x86/Makefile                      |   2 +-
->  tools/perf/arch/x86/entry/syscalls/syscall_64.tbl | 712 +++++++++++-----------
->  tools/perf/builtin-mem.c                          |   4 +-
->  tools/perf/builtin-script.c                       |   5 +-
->  tools/perf/tests/bpf-script-example.c             |   2 +-
->  tools/perf/tests/mmap-basic.c                     |   2 +-
->  tools/perf/trace/beauty/mmap.c                    |   3 +
->  tools/perf/ui/browsers/hists.c                    |   2 +-
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c   |   3 +-
->  tools/perf/util/cs-etm.c                          |   3 +-
->  tools/perf/util/cs-etm.h                          |  13 +-
->  tools/perf/util/event.c                           |   4 +-
->  tools/perf/util/evsel.c                           |   6 +-
->  tools/perf/util/pmu.c                             |   6 +
->  35 files changed, 545 insertions(+), 496 deletions(-)
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1524089118-27595-1-git-send-email-mathieu.poirier@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ include/linux/coresight-pmu.h                   | 13 +------------
+ tools/include/linux/coresight-pmu.h             | 13 +------------
+ tools/perf/arch/arm/util/auxtrace.c             | 13 +------------
+ tools/perf/arch/arm/util/cs-etm.c               | 13 +------------
+ tools/perf/arch/arm/util/cs-etm.h               | 13 +------------
+ tools/perf/arch/arm/util/pmu.c                  | 13 +------------
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c |  3 +--
+ tools/perf/util/cs-etm.c                        |  3 +--
+ tools/perf/util/cs-etm.h                        | 13 +------------
+ 9 files changed, 9 insertions(+), 88 deletions(-)
 
-Pulled, thanks a lot Arnaldo!
-
-	Ingo
+diff --git a/include/linux/coresight-pmu.h b/include/linux/coresight-pmu.h
+index edfeaba95429..a1a959ba24ff 100644
+--- a/include/linux/coresight-pmu.h
++++ b/include/linux/coresight-pmu.h
+@@ -1,18 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright(C) 2015 Linaro Limited. All rights reserved.
+  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published by
+- * the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #ifndef _LINUX_CORESIGHT_PMU_H
+diff --git a/tools/include/linux/coresight-pmu.h b/tools/include/linux/coresight-pmu.h
+index edfeaba95429..a1a959ba24ff 100644
+--- a/tools/include/linux/coresight-pmu.h
++++ b/tools/include/linux/coresight-pmu.h
+@@ -1,18 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright(C) 2015 Linaro Limited. All rights reserved.
+  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published by
+- * the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #ifndef _LINUX_CORESIGHT_PMU_H
+diff --git a/tools/perf/arch/arm/util/auxtrace.c b/tools/perf/arch/arm/util/auxtrace.c
+index fa639e3e52ac..1ce6bdbda561 100644
+--- a/tools/perf/arch/arm/util/auxtrace.c
++++ b/tools/perf/arch/arm/util/auxtrace.c
+@@ -1,18 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright(C) 2015 Linaro Limited. All rights reserved.
+  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published by
+- * the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #include <stdbool.h>
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index 5c655ad4621e..2f595cd73da6 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -1,18 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright(C) 2015 Linaro Limited. All rights reserved.
+  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published by
+- * the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #include <api/fs/fs.h>
+diff --git a/tools/perf/arch/arm/util/cs-etm.h b/tools/perf/arch/arm/util/cs-etm.h
+index 5256741be549..1a12e64f5127 100644
+--- a/tools/perf/arch/arm/util/cs-etm.h
++++ b/tools/perf/arch/arm/util/cs-etm.h
+@@ -1,18 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright(C) 2015 Linaro Limited. All rights reserved.
+  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published by
+- * the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #ifndef INCLUDE__PERF_CS_ETM_H__
+diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
+index ac4dffc807b8..e047571e6080 100644
+--- a/tools/perf/arch/arm/util/pmu.c
++++ b/tools/perf/arch/arm/util/pmu.c
+@@ -1,18 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright(C) 2015 Linaro Limited. All rights reserved.
+  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published by
+- * the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #include <string.h>
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+index 640af88331b4..c8b98fa22997 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+@@ -1,6 +1,5 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- * SPDX-License-Identifier: GPL-2.0
+- *
+  * Copyright(C) 2015-2018 Linaro Limited.
+  *
+  * Author: Tor Jeremiassen <tor@ti.com>
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 1b0d422373be..40020b1ca54f 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -1,6 +1,5 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+- * SPDX-License-Identifier: GPL-2.0
+- *
+  * Copyright(C) 2015-2018 Linaro Limited.
+  *
+  * Author: Tor Jeremiassen <tor@ti.com>
+diff --git a/tools/perf/util/cs-etm.h b/tools/perf/util/cs-etm.h
+index 5864d5dca616..37f8d48179ca 100644
+--- a/tools/perf/util/cs-etm.h
++++ b/tools/perf/util/cs-etm.h
+@@ -1,18 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright(C) 2015 Linaro Limited. All rights reserved.
+  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms of the GNU General Public License version 2 as published by
+- * the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License along with
+- * this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ 
+ #ifndef INCLUDE__UTIL_PERF_CS_ETM_H__
+-- 
+2.14.3
