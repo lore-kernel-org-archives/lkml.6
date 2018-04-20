@@ -1,58 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753562AbeDTGUX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 02:20:23 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:48126 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751254AbeDTGUV (ORCPT
+        id S1753669AbeDTG2c (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 02:28:32 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:32831 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751254AbeDTG23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 02:20:21 -0400
-Subject: Re: [PATCH v9 2/2] drm: bridge: Add thc63lvd1024 LVDS decoder driver
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>, <architt@codeaurora.org>,
-        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
-        <airlied@linux.ie>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <geert@linux-m68k.org>, <niklas.soderlund@ragnatech.se>,
-        <sergei.shtylyov@cogentembedded.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-References: <1524062429-325-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524062429-325-3-git-send-email-jacopo+renesas@jmondi.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-renesas-soc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <cf1263ff-313e-109e-13f0-32cf15d27b41@mentor.com>
-Date: Fri, 20 Apr 2018 09:20:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Fri, 20 Apr 2018 02:28:29 -0400
+X-Google-Smtp-Source: AIpwx48HaTPondZXVXwuLfzZWYGAvLqrJmw0pmmnu832poptlxzG32W9EFbLIQwEoF17A7wbPOQ4ysxgW2LlwY+ZhFk=
 MIME-Version: 1.0
-In-Reply-To: <1524062429-325-3-git-send-email-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+In-Reply-To: <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+References: <1524063005-1716-1-git-send-email-geert+renesas@glider.be>
+ <1524063005-1716-2-git-send-email-geert+renesas@glider.be> <152417672470.46528.14790019208345640453@swboyd.mtv.corp.google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 20 Apr 2018 08:28:28 +0200
+X-Google-Sender-Auth: 7BYFx3cA8evub-LVj59WwZFp35E
+Message-ID: <CAMuHMdUX9dJcGLgftAAeCOXYxKUOQ_dW7=oLwNt5VRbd6nQpuA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] clk: Extract OF clock helpers in <linux/of_clk.h>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-tegra@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Hi Stephen, Rob,
 
-On 04/18/2018 05:40 PM, Jacopo Mondi wrote:
-> Add DRM bridge driver for Thine THC63LVD1024 LVDS to digital parallel
-> output converter.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
->  drivers/gpu/drm/bridge/Kconfig        |   6 +
->  drivers/gpu/drm/bridge/Makefile       |   1 +
->  drivers/gpu/drm/bridge/thc63lvd1024.c | 206 ++++++++++++++++++++++++++++++++++
->  3 files changed, 213 insertions(+)
->  create mode 100644 drivers/gpu/drm/bridge/thc63lvd1024.c
+On Fri, Apr 20, 2018 at 12:25 AM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2018-04-18 07:50:01)
+>> The use of of_clk_get_parent_{count,name}() and of_clk_init() is not
+>> limited to clock providers.
+>>
+>> Hence move these helpers into their own header file, so callers that are
+>> not clock providers no longer have to include <linux/clk-provider.h>.
+>>
+>> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>> ---
+>> v3:
+>>   - Add Reviewed-by,
+>>   - Add SPDX-License-Identifier,
+>>   - Add to clock section in MAINTAINERS (note that Rob is still listed
+>>     as a maintainer, too, due to the include/linux/of*.h catch-all
+>>     rule),
+>
+> Can you X: out this file so Rob is happy? Or that doesn't work?
 
-Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+I guess that should work.
 
---
-With best wishes,
-Vladimir
+My point here is that due to the catch-all rule, he's listed as maintainer
+for of_{dma,gpio,irq,iommu,mdio,net,pci} too, which are all helpers for
+other subsystems. Perhaps these should be X'd-out too?
+Or is it OK without X-ing them out, as the clock maintainers are now shown, too?
+
+Rob: What's your preference?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
