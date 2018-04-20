@@ -1,33 +1,34 @@
 Return-Path: <matthias.bgg@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524229244; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524229473; cv=none;
         d=google.com; s=arc-20160816;
-        b=VMlJRVLNnOzDixbTeCSNjy6mQsFGn1q9u2A3z61+Oavi2+4ZnVTfiNVyBLcT7jTUbc
-         AoeezpgfOc7S6FGmsqT5jf3fLWokR3AfNXzMUptP20GTSKc8TjZyrg/NHYHcqBDhKfi3
-         B3Ef/pABHottqj1lKR/ePgjngjBZKVJdXnF9g5jPX+VWj8+l/EbvuQTx+a1ngGlESE7e
-         hyWt0enlVLewc/h1siFVPWF0gzfrPPQIwouHVDhoeJ705J7OjWXAry/MSpJs0JWwU08b
-         p7xoF55i3ElvWX0+E3lqH8jbkfzlQoRlF17+SOxSIB8hoApgGoSTkyFYaV+n8lilv97d
-         hVhg==
+        b=H2KvLCwz8d7Z6EbNmOZqlIqoQtF2QvPjHuHxUF22jDXDhaXJZWFWaymborxyQkuYX1
+         WIyzSVb7LN3GcdxU0YrtHHowh2kQNk3oBukcKHd35DkvyuNwUNwJotV3Td6cgINIs1q2
+         tsA85PpfDwiEVznGpA006gs3N1uZT37WdU4Xpry+b1IjnFxdQYRVPW1+gkvleVFIGGgP
+         PvDNq0ozWNytMMObdbPreyLpEpgdli7Z+P2F0nvXLWVITLwvzA2a4jzZJOzTQassSIe3
+         P2qHIXsGCCDUxPrWegCaI+tJBUC1Ifbt7n3PjpEuGBw5+h7oKRgw8k74mLES00ggu2l+
+         IZ2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:autocrypt:openpgp:from:references:cc:to
+         :user-agent:date:message-id:autocrypt:openpgp:references:cc:to:from
          :subject:dkim-signature:arc-authentication-results;
-        bh=9F2UjNyxvuIrbbmX8Blnujqs/iEZxNB1bcMuVKp7hp4=;
-        b=UbOgg7giN6lQTX46t6btTWtfiLGjsdE3aVwPQTbRpXgD6szYq3o8D5b4ozvBi/SaAf
-         GaNdwsZM8vrqJAaOwQEqSPwSTwwGyXFZzGSpZJg+KsgwvF9A9MduycKZAD8PdHX1LBOq
-         MOVNlWuXnztY368Y5Bp76d0lDrGPq6l2tTnMHcifHC2SYQjT1ozQmJxgHPB4uol253Xr
-         FKM0A1JfDyJCyAGDYMbmpetWnYJwbJc5rVtgOE/NrxezOd6mT+n8uE6y4uv+O/x1JxhR
-         qX0Cw6l7jiTTMkEaqOCMdCfudHdAZ+vmL+3/4jNsE/b/9DUDZvmV2tiKN4MH383i0oId
-         F0ZA==
+        bh=I8EYm6OQIPcmQ9oBp4Sjqe2eAOiHYr7HZfjkOa8l02Y=;
+        b=k8aIk72A4XLgJQhtFs6DEN2J/qSkjV9N0ZR8fVC3ZuSenL8RJHab8jc2lkStLlQcA1
+         AYoNG9F6Hrvuj0pYjxEg+ptR8I4h+boGs/bCHo0OKIj08oYACVFTi3PbsQ6jpeGdyYaO
+         1UjBdSz/DXg1O2UB53/vtd2TEtlpD3DaTKcsnJoxBWv894XrBn1/7IpBRzxs0COZl18W
+         03tRLq9pmthqlt2Q4jZ9Jrdybg9z3DFX46vJqd0qkeFz8FS1wUuTPUE9SjqwIeIvBxrJ
+         ag6lASfaQaLtVJ9SaA5ze9Nst9iVqVv2GraZFP9cnS8owV2fIgwOD4j3BCzYMOK3EkAw
+         GzIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=UPWgHrAh;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GgBk5IuX;
        spf=pass (google.com: domain of matthias.bgg@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=matthias.bgg@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=UPWgHrAh;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GgBk5IuX;
        spf=pass (google.com: domain of matthias.bgg@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=matthias.bgg@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AIpwx49SH9rBmedczAFB9vz31t1GVPon1CiLxVh7dC7gD8uPjMLf2bRSBLFdOmUxD7VrMkbKudkycA==
+X-Google-Smtp-Source: AIpwx4/KzBJB/Gb/6ewV5QpLW/g7iVXFEhh8kwHUMUU4LokkOCPbatDpDIUG+ZxtNkygyp6x59s4uQ==
 Subject: Re: [PATCH 4/8] clk: mediatek: mt2701-mm: switch to mfd device
+From: Matthias Brugger <matthias.bgg@gmail.com>
 To: Stephen Boyd <sboyd@codeaurora.org>
 Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
  ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
@@ -41,7 +42,7 @@ Cc: ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
 References: <20171114214114.15793-1-mbrugger@suse.com>
  <20171114214114.15793-5-mbrugger@suse.com>
  <20171115001705.GJ11955@codeaurora.org>
-From: Matthias Brugger <matthias.bgg@gmail.com>
+ <e41d07ff-5870-1ec5-18fc-d89538529a8f@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  xsFNBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
@@ -85,39 +86,46 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  3GRKuEIuXx1SDnchsfHg18gCCrEtYZ9czwNjVoV1Tv2lpzTTk+6HEJaQpMnPeAKbOeehq3gY
  KcvmDL+bRCTjmXg8WrBZdUuj0BCDYqneaUgVnp+wQogA3mHGVs281v1XZmjlsVmM9Y8VPE61
  4zSiZQBL5CinBTTI8ssYlV/aIKYi0dxRcj6vYnAfUImOsdZ5AQja5xIqw1rwWWUOYb99
-Message-ID: <e41d07ff-5870-1ec5-18fc-d89538529a8f@gmail.com>
-Date: Fri, 20 Apr 2018 15:00:39 +0200
+Message-ID: <b00448fb-6e8c-1766-f9b7-2a8581ad075b@gmail.com>
+Date: Fri, 20 Apr 2018 15:04:29 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20171115001705.GJ11955@codeaurora.org>
+In-Reply-To: <e41d07ff-5870-1ec5-18fc-d89538529a8f@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1584079275756695759?=
-X-GMAIL-MSGID: =?utf-8?q?1598270204181852251?=
+X-GMAIL-MSGID: =?utf-8?q?1598270444505034331?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Stephen,
 
-On 11/15/2017 01:17 AM, Stephen Boyd wrote:
-> On 11/14, Matthias Brugger wrote:
->> As the new mfd device is in place, switch probing
->> for the MMSYS to support invocation from the mfd device.
+
+On 04/20/2018 03:00 PM, Matthias Brugger wrote:
+> Hi Stephen,
+> 
+> On 11/15/2017 01:17 AM, Stephen Boyd wrote:
+>> On 11/14, Matthias Brugger wrote:
+>>> As the new mfd device is in place, switch probing
+>>> for the MMSYS to support invocation from the mfd device.
+>>>
+>>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>>> ---
 >>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->> ---
+>> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+>>
 > 
-> Acked-by: Stephen Boyd <sboyd@codeaurora.org>
+> I did a minor change to this patch and patch 7/8 to get rid of mmsys_private
+> variable. Nevertheless I kept your Acked-by, as it only changes how we get the
+> device tree node.
+> 
+> Hope that's OK with you.
 > 
 
-I did a minor change to this patch and patch 7/8 to get rid of mmsys_private
-variable. Nevertheless I kept your Acked-by, as it only changes how we get the
-device tree node.
-
-Hope that's OK with you.
+Sorry, I didn't explain me. I'm talking about v2 of the series, which I'm
+working on right now.
 
 Regards,
 Matthias
