@@ -1,156 +1,272 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753283AbeDTWk0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 18:40:26 -0400
-Received: from mga01.intel.com ([192.55.52.88]:60382 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752881AbeDTWjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 18:39:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,303,1520924400";
-   d="scan'208";a="34982634"
-From: Vikas Shivappa <vikas.shivappa@linux.intel.com>
-To: vikas.shivappa@intel.com, tony.luck@intel.com,
-        ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com
-Cc: linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        vikas.shivappa@linux.intel.com
-Subject: [PATCH 2/6] x86/intel_rdt/mba_sc: Enable/disable MBA software controller
-Date: Fri, 20 Apr 2018 15:36:17 -0700
-Message-Id: <1524263781-14267-3-git-send-email-vikas.shivappa@linux.intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1524263781-14267-1-git-send-email-vikas.shivappa@linux.intel.com>
-References: <1524263781-14267-1-git-send-email-vikas.shivappa@linux.intel.com>
+        id S1752496AbeDTWoL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 18:44:11 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44771 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751865AbeDTWoJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 18:44:09 -0400
+X-Google-Smtp-Source: AIpwx480IOr63VTg8gzOnJXr4VAOp5qW3PU/DIQ+7UJwWmVVglUdaTAHezSK0jPZ/qkIHWs9zup6KQ==
+Date: Fri, 20 Apr 2018 16:44:05 -0600
+From: Anatoliy Glagolev <glagolig@gmail.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        axboe@kernel.dk, fujita.tomonori@lab.ntt.co.jp,
+        martin.petersen@oracle.com, jthumshirn@suse.de, hare@suse.com,
+        bblock@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bsg referencing bus driver module
+Message-ID: <20180420224404.GC32372@xldev-tmpl.dev.purestorage.com>
+References: <CANFzKepsGq0EHX4GPtC0RZOWqVf2fTJ6uA2WH-SZNsBuwMJ5KA@mail.gmail.com>
+ <CANFzKer6QDaJALX3LKPF2DV6LgczTh-efQe9+zeK8BuxTWFt1A@mail.gmail.com>
+ <CANFzKepRSA+VoVAvOfW6U_qHFVDZex+=hQ=QhU+7Z=unvwejJQ@mail.gmail.com>
+ <1524218126.3321.6.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524218126.3321.6.camel@HansenPartnership.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently user does memory bandwidth allocation(MBA) by specifying the
-bandwidth in percentage via the resctrl schemata file:
-	"/sys/fs/resctrl/schemata"
+ 
+> This patch isn't applyable because your mailer has changed all the tabs
+> to spaces.
+> 
+> I also think there's no need to do it this way.  I think what we need
+> is for fc_bsg_remove() to wait until the bsg queue is drained.  It does
+> look like the author thought this happened otherwise the code wouldn't
+> have the note.  If we fix it that way we can do the same thing in all
+> the other transport classes that use bsg (which all have a similar
+> issue).
+> 
+> James
+> 
 
-Add a new mount option "mba_MBps" to enable the user to specify MBA
-in MBps:
+Thanks, James. Sorry about the tabs; re-sending.
 
-$mount -t resctrl resctrl [-o cdp[,cdpl2][mba_MBps]] /sys/fs/resctrl
+On fc_bsg_remove()...: are you suggesting to implement the whole fix
+in scsi_transport_fc.c? That would be nice, but I do not see how that
+is possible. Even with the queue drained bsg still holds a reference
+to the Scsi_Host via bsg_class_device; bsg_class_device itself is
+referenced on bsg_open and kept around while a user-mode process keeps
+a handle to bsg.
+Even if we somehow implement the waiting the call may be stuck
+forever if the user-mode process keeps the handle.
+I think handling it via a rererence to the module is more consistent
+with the way things are done in Linux. You suggested the approach
+youself back in "Waiting for scsi_host_template release" discussion.
 
-Signed-off-by: Vikas Shivappa <vikas.shivappa@linux.intel.com>
+
+>From df939b80d02bf37b21efaaef8ede86cfd39b0cb8 Mon Sep 17 00:00:00 2001
+From: Anatoliy Glagolev <glagolig@gmail.com>
+Date: Thu, 19 Apr 2018 15:06:06 -0600
+Subject: [PATCH] bsg referencing parent module
+
+Fixing a bug when bsg layer holds the last reference to device
+when the device's module has been unloaded. Upon dropping the
+reference the device's release function may touch memory of
+the unloaded module.
 ---
- arch/x86/kernel/cpu/intel_rdt.c          |  8 ++++++++
- arch/x86/kernel/cpu/intel_rdt.h          |  3 +++
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c | 30 ++++++++++++++++++++++++++++++
- 3 files changed, 41 insertions(+)
+ block/bsg-lib.c                  | 24 ++++++++++++++++++++++--
+ block/bsg.c                      | 29 ++++++++++++++++++++++++++---
+ drivers/scsi/scsi_transport_fc.c |  8 ++++++--
+ include/linux/bsg-lib.h          |  4 ++++
+ include/linux/bsg.h              |  5 +++++
+ 5 files changed, 63 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index 2b65601..2a0931f 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -230,6 +230,14 @@ static inline void cache_alloc_hsw_probe(void)
- 	rdt_alloc_capable = true;
- }
- 
-+bool is_mba_sc(struct rdt_resource *r)
-+{
-+	if (!r)
-+		return rdt_resources_all[RDT_RESOURCE_MBA].membw.mba_sc;
-+
-+	return r->membw.mba_sc;
-+}
-+
- /*
-  * rdt_get_mb_table() - get a mapping of bandwidth(b/w) percentage values
-  * exposed to user interface and the h/w understandable delay values.
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 3fd7a70..74aee0f 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -259,6 +259,7 @@ struct rdt_cache {
-  * @min_bw:		Minimum memory bandwidth percentage user can request
-  * @bw_gran:		Granularity at which the memory bandwidth is allocated
-  * @delay_linear:	True if memory B/W delay is in linear scale
-+ * @mba_sc:		True if MBA software controller(mba_sc) is enabled
-  * @mb_map:		Mapping of memory B/W percentage to memory B/W delay
-  */
- struct rdt_membw {
-@@ -266,6 +267,7 @@ struct rdt_membw {
- 	u32		min_bw;
- 	u32		bw_gran;
- 	u32		delay_linear;
-+	bool		mba_sc;
- 	u32		*mb_map;
- };
- 
-@@ -445,6 +447,7 @@ void mon_event_read(struct rmid_read *rr, struct rdt_domain *d,
- void mbm_setup_overflow_handler(struct rdt_domain *dom,
- 				unsigned long delay_ms);
- void mbm_handle_overflow(struct work_struct *work);
-+bool is_mba_sc(struct rdt_resource *r);
- void cqm_setup_limbo_handler(struct rdt_domain *dom, unsigned long delay_ms);
- void cqm_handle_limbo(struct work_struct *work);
- bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index fca759d..b9ceb13 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1005,6 +1005,11 @@ static void l2_qos_cfg_update(void *arg)
- 	wrmsrl(IA32_L2_QOS_CFG, *enable ? L2_QOS_CDP_ENABLE : 0ULL);
- }
- 
-+static inline bool is_mba_linear(void)
-+{
-+	return rdt_resources_all[RDT_RESOURCE_MBA].membw.delay_linear;
-+}
-+
- static int set_cache_qos_cfg(int level, bool enable)
+diff --git a/block/bsg-lib.c b/block/bsg-lib.c
+index fc2e5ff..90c28fd 100644
+--- a/block/bsg-lib.c
++++ b/block/bsg-lib.c
+@@ -309,6 +309,25 @@ struct request_queue *bsg_setup_queue(struct device *dev, const char *name,
+ 		bsg_job_fn *job_fn, int dd_job_size,
+ 		void (*release)(struct device *))
  {
- 	void (*update)(void *arg);
-@@ -1041,6 +1046,25 @@ static int set_cache_qos_cfg(int level, bool enable)
++	return bsg_setup_queue_ex(dev, name, job_fn, dd_job_size, release,
++		NULL);
++}
++EXPORT_SYMBOL_GPL(bsg_setup_queue);
++
++/**
++ * bsg_setup_queue - Create and add the bsg hooks so we can receive requests
++ * @dev: device to attach bsg device to
++ * @name: device to give bsg device
++ * @job_fn: bsg job handler
++ * @dd_job_size: size of LLD data needed for each job
++ * @release: @dev release function
++ * @dev_module: @dev's module
++ */
++struct request_queue *bsg_setup_queue_ex(struct device *dev, const char *name,
++		bsg_job_fn *job_fn, int dd_job_size,
++		void (*release)(struct device *),
++		struct module *dev_module)
++{
+ 	struct request_queue *q;
+ 	int ret;
+ 
+@@ -331,7 +350,8 @@ struct request_queue *bsg_setup_queue(struct device *dev, const char *name,
+ 	blk_queue_softirq_done(q, bsg_softirq_done);
+ 	blk_queue_rq_timeout(q, BLK_DEFAULT_SG_TIMEOUT);
+ 
+-	ret = bsg_register_queue(q, dev, name, &bsg_transport_ops, release);
++	ret = bsg_register_queue_ex(q, dev, name, &bsg_transport_ops, release,
++		dev_module);
+ 	if (ret) {
+ 		printk(KERN_ERR "%s: bsg interface failed to "
+ 		       "initialize - register queue\n", dev->kobj.name);
+@@ -343,4 +363,4 @@ struct request_queue *bsg_setup_queue(struct device *dev, const char *name,
+ 	blk_cleanup_queue(q);
+ 	return ERR_PTR(ret);
+ }
+-EXPORT_SYMBOL_GPL(bsg_setup_queue);
++EXPORT_SYMBOL_GPL(bsg_setup_queue_ex);
+diff --git a/block/bsg.c b/block/bsg.c
+index defa06c..6920c5b 100644
+--- a/block/bsg.c
++++ b/block/bsg.c
+@@ -750,7 +750,8 @@ static struct bsg_device *__bsg_get_device(int minor, struct request_queue *q)
+ 	return bd;
+ }
+ 
+-static struct bsg_device *bsg_get_device(struct inode *inode, struct file *file)
++static struct bsg_device *bsg_get_device(struct inode *inode, struct file *file,
++	struct bsg_class_device **pbcd)
+ {
+ 	struct bsg_device *bd;
+ 	struct bsg_class_device *bcd;
+@@ -766,6 +767,7 @@ static struct bsg_device *bsg_get_device(struct inode *inode, struct file *file)
+ 
+ 	if (!bcd)
+ 		return ERR_PTR(-ENODEV);
++	*pbcd = bcd;
+ 
+ 	bd = __bsg_get_device(iminor(inode), bcd->queue);
+ 	if (bd)
+@@ -781,22 +783,34 @@ static struct bsg_device *bsg_get_device(struct inode *inode, struct file *file)
+ static int bsg_open(struct inode *inode, struct file *file)
+ {
+ 	struct bsg_device *bd;
++	struct bsg_class_device *bcd;
+ 
+-	bd = bsg_get_device(inode, file);
++	bd = bsg_get_device(inode, file, &bcd);
+ 
+ 	if (IS_ERR(bd))
+ 		return PTR_ERR(bd);
+ 
+ 	file->private_data = bd;
++	if (bcd->parent_module) {
++		if (!try_module_get(bcd->parent_module)) {
++			bsg_put_device(bd);
++			return -ENODEV;
++		}
++	}
  	return 0;
  }
  
-+/*
-+ * Enable or disable the MBA software controller
-+ * which helps user specify bandwidth in MBps.
-+ * MBA software controller is supported only if
-+ * MBM is supported and MBA is in linear scale.
-+ */
-+static int set_mba_sc(bool mba_sc)
-+{
-+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_MBA];
-+
-+	if (!is_mbm_enabled() || !is_mba_linear() ||
-+	    mba_sc == is_mba_sc(r))
-+		return -1;
-+
-+	r->membw.mba_sc = mba_sc;
-+
-+	return 0;
+ static int bsg_release(struct inode *inode, struct file *file)
+ {
++	int ret;
+ 	struct bsg_device *bd = file->private_data;
++	struct module *parent_module = bd->queue->bsg_dev.parent_module;
+ 
+ 	file->private_data = NULL;
+-	return bsg_put_device(bd);
++	ret = bsg_put_device(bd);
++	if (parent_module)
++		module_put(parent_module);
++	return ret;
+ }
+ 
+ static __poll_t bsg_poll(struct file *file, poll_table *wait)
+@@ -922,6 +936,14 @@ int bsg_register_queue(struct request_queue *q, struct device *parent,
+ 		const char *name, const struct bsg_ops *ops,
+ 		void (*release)(struct device *))
+ {
++	return bsg_register_queue_ex(q, parent, name, ops, release, NULL);
 +}
 +
- static int cdp_enable(int level, int data_type, int code_type)
- {
- 	struct rdt_resource *r_ldata = &rdt_resources_all[data_type];
-@@ -1123,6 +1147,10 @@ static int parse_rdtgroupfs_options(char *data)
- 			ret = cdpl2_enable();
- 			if (ret)
- 				goto out;
-+		} else if (!strcmp(token, "mba_MBps")) {
-+			ret = set_mba_sc(true);
-+			if (ret)
-+				goto out;
- 		} else {
- 			ret = -EINVAL;
- 			goto out;
-@@ -1445,6 +1473,8 @@ static void rdt_kill_sb(struct super_block *sb)
- 	cpus_read_lock();
- 	mutex_lock(&rdtgroup_mutex);
++int bsg_register_queue_ex(struct request_queue *q, struct device *parent,
++		const char *name, const struct bsg_ops *ops,
++		void (*release)(struct device *),
++		struct module *parent_module)
++{
+ 	struct bsg_class_device *bcd;
+ 	dev_t dev;
+ 	int ret;
+@@ -958,6 +980,7 @@ int bsg_register_queue(struct request_queue *q, struct device *parent,
+ 	bcd->parent = get_device(parent);
+ 	bcd->release = release;
+ 	bcd->ops = ops;
++	bcd->parent_module = parent_module;
+ 	kref_init(&bcd->ref);
+ 	dev = MKDEV(bsg_major, bcd->minor);
+ 	class_dev = device_create(bsg_class, parent, dev, NULL, "%s", devname);
+diff --git a/drivers/scsi/scsi_transport_fc.c b/drivers/scsi/scsi_transport_fc.c
+index be3be0f..f21f7d2 100644
+--- a/drivers/scsi/scsi_transport_fc.c
++++ b/drivers/scsi/scsi_transport_fc.c
+@@ -3772,17 +3772,21 @@ static int fc_bsg_dispatch(struct bsg_job *job)
+ 	struct fc_internal *i = to_fc_internal(shost->transportt);
+ 	struct request_queue *q;
+ 	char bsg_name[20];
++	struct module *shost_module = NULL;
  
-+	set_mba_sc(false);
+ 	fc_host->rqst_q = NULL;
+ 
+ 	if (!i->f->bsg_request)
+ 		return -ENOTSUPP;
+ 
++	if (shost->hostt)
++		shost_module = shost->hostt->module;
 +
- 	/*Put everything back to default values. */
- 	for_each_alloc_enabled_rdt_resource(r)
- 		reset_all_ctrls(r);
+ 	snprintf(bsg_name, sizeof(bsg_name),
+ 		 "fc_host%d", shost->host_no);
+ 
+-	q = bsg_setup_queue(dev, bsg_name, fc_bsg_dispatch, i->f->dd_bsg_size,
+-			NULL);
++	q = bsg_setup_queue_ex(dev, bsg_name, fc_bsg_dispatch,
++		i->f->dd_bsg_size, NULL, shost_module);
+ 	if (IS_ERR(q)) {
+ 		dev_err(dev,
+ 			"fc_host%d: bsg interface failed to initialize - setup queue\n",
+diff --git a/include/linux/bsg-lib.h b/include/linux/bsg-lib.h
+index 28a7ccc..232c855 100644
+--- a/include/linux/bsg-lib.h
++++ b/include/linux/bsg-lib.h
+@@ -74,6 +74,10 @@ void bsg_job_done(struct bsg_job *job, int result,
+ struct request_queue *bsg_setup_queue(struct device *dev, const char *name,
+ 		bsg_job_fn *job_fn, int dd_job_size,
+ 		void (*release)(struct device *));
++struct request_queue *bsg_setup_queue_ex(struct device *dev, const char *name,
++		bsg_job_fn *job_fn, int dd_job_size,
++		void (*release)(struct device *),
++		struct module *dev_module);
+ void bsg_job_put(struct bsg_job *job);
+ int __must_check bsg_job_get(struct bsg_job *job);
+ 
+diff --git a/include/linux/bsg.h b/include/linux/bsg.h
+index 0c7dd9c..0e7c26c 100644
+--- a/include/linux/bsg.h
++++ b/include/linux/bsg.h
+@@ -23,11 +23,16 @@ struct bsg_class_device {
+ 	struct kref ref;
+ 	const struct bsg_ops *ops;
+ 	void (*release)(struct device *);
++	struct module *parent_module;
+ };
+ 
+ int bsg_register_queue(struct request_queue *q, struct device *parent,
+ 		const char *name, const struct bsg_ops *ops,
+ 		void (*release)(struct device *));
++int bsg_register_queue_ex(struct request_queue *q, struct device *parent,
++		const char *name, const struct bsg_ops *ops,
++		void (*release)(struct device *),
++		struct module *parent_module);
+ int bsg_scsi_register_queue(struct request_queue *q, struct device *parent);
+ void bsg_unregister_queue(struct request_queue *q);
+ #else
 -- 
 1.9.1
