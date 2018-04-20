@@ -1,127 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753997AbeDTHK0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 03:10:26 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33427 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753971AbeDTHKW (ORCPT
+        id S1753870AbeDTHNT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 03:13:19 -0400
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:45854 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753529AbeDTHNQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 03:10:22 -0400
-X-Google-Smtp-Source: AIpwx4/X+v4EV6L5baqvJcAtsL0oA18Enjl3x6eFb6uqKvO1y3f3BnOPKZuVCtpL89M3O7zvg2ZddFSDLw7cHmkRj4A=
+        Fri, 20 Apr 2018 03:13:16 -0400
+X-Google-Smtp-Source: AIpwx4/PVgsm2t2jrBsk9PtbCOaZk1Fo/KNjY3AYi/02GZ9o1ahsc6TNUlzT/TBndygDj+FlYceHJw==
+Date: Fri, 20 Apr 2018 09:13:12 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Jerome Glisse <jglisse@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
+Message-ID: <20180420071312.GF31310@phenom.ffwll.local>
+Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-4-christian.koenig@amd.com>
+ <20180329065753.GD3881@phenom.ffwll.local>
+ <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
+ <20180403090909.GN3881@phenom.ffwll.local>
+ <20180403170645.GB5935@redhat.com>
+ <20180403180832.GZ3881@phenom.ffwll.local>
+ <20180416123937.GA9073@infradead.org>
+ <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
+ <20180419081657.GA16735@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180419140641.27926-29-wsa+renesas@sang-engineering.com>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-29-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 20 Apr 2018 09:10:20 +0200
-Message-ID: <CAPDyKFrsnXeuHkAGM-w7hH_HuTr+n62Z1UziP0umNQB-oKn+8g@mail.gmail.com>
-Subject: Re: [PATCH 28/61] mmc: host: simplify getting .drvdata
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Tony Prisk <linux@prisktech.co.nz>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419081657.GA16735@infradead.org>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 April 2018 at 16:05, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Thu, Apr 19, 2018 at 01:16:57AM -0700, Christoph Hellwig wrote:
+> On Mon, Apr 16, 2018 at 03:38:56PM +0200, Daniel Vetter wrote:
+> > We've broken that assumption in i915 years ago. Not struct page backed
+> > gpu memory is very real.
+> > 
+> > Of course we'll never feed such a strange sg table to a driver which
+> > doesn't understand it, but allowing sg_page == NULL works perfectly
+> > fine. At least for gpu drivers.
+> 
+> For GPU drivers on x86 with no dma coherency problems, sure.  But not
+> all the world is x86.  We already have problems due to dmabugs use
+> of the awkward get_sgtable interface (see the common on
+> arm_dma_get_sgtable that I fully agree with), and doing this for memory
+> that doesn't have a struct page at all will make things even worse.
 
-Thanks, applied for next!
+x86 dma isn't coherent either, if you're a GPU :-) Flushing gpu caches
+tends to be too expensive, so there's pci-e support and chipset support to
+forgo it. Plus drivers flushing caches themselves.
 
-Kind regards
-Uffe
+The dma_get_sgtable thing is indeed fun, right solution would probably be
+to push the dma-buf export down into the dma layer. The comment for
+arm_dma_get_sgtable is also not a realy concern, because dma-buf also
+abstracts away the flushing (or well is supposed to), so there really
+shouldn't be anyone calling the streaming apis on the returned sg table.
+That's why dma-buf gives you an sg table that's mapped already.
 
-> ---
->
-> Build tested only. buildbot is happy. Please apply individually.
->
->  drivers/mmc/host/davinci_mmc.c     | 6 ++----
->  drivers/mmc/host/sdhci-of-arasan.c | 6 ++----
->  drivers/mmc/host/wmt-sdmmc.c       | 6 ++----
->  3 files changed, 6 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
-> index 8e363174f9d6..9e68c3645e22 100644
-> --- a/drivers/mmc/host/davinci_mmc.c
-> +++ b/drivers/mmc/host/davinci_mmc.c
-> @@ -1377,8 +1377,7 @@ static int __exit davinci_mmcsd_remove(struct platform_device *pdev)
->  #ifdef CONFIG_PM
->  static int davinci_mmcsd_suspend(struct device *dev)
->  {
-> -       struct platform_device *pdev = to_platform_device(dev);
-> -       struct mmc_davinci_host *host = platform_get_drvdata(pdev);
-> +       struct mmc_davinci_host *host = dev_get_drvdata(dev);
->
->         writel(0, host->base + DAVINCI_MMCIM);
->         mmc_davinci_reset_ctrl(host, 1);
-> @@ -1389,8 +1388,7 @@ static int davinci_mmcsd_suspend(struct device *dev)
->
->  static int davinci_mmcsd_resume(struct device *dev)
->  {
-> -       struct platform_device *pdev = to_platform_device(dev);
-> -       struct mmc_davinci_host *host = platform_get_drvdata(pdev);
-> +       struct mmc_davinci_host *host = dev_get_drvdata(dev);
->
->         clk_enable(host->clk);
->         mmc_davinci_reset_ctrl(host, 0);
-> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-> index c33a5f7393bd..bed3612247b0 100644
-> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> @@ -359,8 +359,7 @@ static const struct sdhci_pltfm_data sdhci_arasan_cqe_pdata = {
->   */
->  static int sdhci_arasan_suspend(struct device *dev)
->  {
-> -       struct platform_device *pdev = to_platform_device(dev);
-> -       struct sdhci_host *host = platform_get_drvdata(pdev);
-> +       struct sdhci_host *host = dev_get_drvdata(dev);
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->         struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
->         int ret;
-> @@ -403,8 +402,7 @@ static int sdhci_arasan_suspend(struct device *dev)
->   */
->  static int sdhci_arasan_resume(struct device *dev)
->  {
-> -       struct platform_device *pdev = to_platform_device(dev);
-> -       struct sdhci_host *host = platform_get_drvdata(pdev);
-> +       struct sdhci_host *host = dev_get_drvdata(dev);
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->         struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
->         int ret;
-> diff --git a/drivers/mmc/host/wmt-sdmmc.c b/drivers/mmc/host/wmt-sdmmc.c
-> index fd30ac7da5e5..3ba42f508014 100644
-> --- a/drivers/mmc/host/wmt-sdmmc.c
-> +++ b/drivers/mmc/host/wmt-sdmmc.c
-> @@ -928,8 +928,7 @@ static int wmt_mci_remove(struct platform_device *pdev)
->  static int wmt_mci_suspend(struct device *dev)
->  {
->         u32 reg_tmp;
-> -       struct platform_device *pdev = to_platform_device(dev);
-> -       struct mmc_host *mmc = platform_get_drvdata(pdev);
-> +       struct mmc_host *mmc = dev_get_drvdata(dev);
->         struct wmt_mci_priv *priv;
->
->         if (!mmc)
-> @@ -953,8 +952,7 @@ static int wmt_mci_suspend(struct device *dev)
->  static int wmt_mci_resume(struct device *dev)
->  {
->         u32 reg_tmp;
-> -       struct platform_device *pdev = to_platform_device(dev);
-> -       struct mmc_host *mmc = platform_get_drvdata(pdev);
-> +       struct mmc_host *mmc = dev_get_drvdata(dev);
->         struct wmt_mci_priv *priv;
->
->         if (mmc) {
-> --
-> 2.11.0
->
+> > If that's not acceptable then I guess we could go over the entire tree
+> > and frob all the gpu related code to switch over to a new struct
+> > sg_table_might_not_be_struct_page_backed, including all the other
+> > functions we added over the past few years to iterate over sg tables.
+> > But seems slightly silly, given that sg tables seem to do exactly what
+> > we need.
+> 
+> It isn't silly.  We will have to do some surgery like that anyway
+> because the current APIs don't work.  So relax, sit back and come up
+> with an API that solves the existing issues and serves us well in
+> the future.
+
+So we should just implement a copy of sg table for dma-buf, since I still
+think it does exactly what we need for gpus?
+
+Yes there's a bit a layering violation insofar that drivers really
+shouldn't each have their own copy of "how do I convert a piece of dma
+memory into  dma-buf", but that doesn't render the interface a bad idea.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
