@@ -1,73 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755013AbeDTNT2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:19:28 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.140]:41587 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754903AbeDTNTV (ORCPT
+        id S1754944AbeDTNTN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:19:13 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50200 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754919AbeDTNTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:19:21 -0400
-X-Authority-Reason: nr=8
-Date: Fri, 20 Apr 2018 08:19:19 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <sfrench@samba.org>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] cifs: dir: fix memory leak in cifs_mknod
-Message-ID: <20180420131919.GA1766@embeddedor.com>
+        Fri, 20 Apr 2018 09:19:11 -0400
+Message-Id: <20180420131632.028647632@infradead.org>
+User-Agent: quilt/0.63-1
+Date: Fri, 20 Apr 2018 15:14:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: linux-kernel@vger.kernel.org, mingo@kernel.org
+Cc: tglx@linutronix.de, dan.j.williams@intel.com,
+        torvalds@linux-foundation.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Peter Zijlstra" <peterz@infradead.org>
+Subject: [PATCH 7/7] sched,autogroup: Fix possible Spectre-v1 for sched_prio_to_weight
+References: <20180420131407.721875616@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.175.6.211
-X-Source-L: No
-X-Exim-ID: 1f9Vwe-001SdE-2N
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.175.6.211]:50368
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=peterz-spectre1-7.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Free allocated memory for full_path and xid before return.
+> kernel/sched/autogroup.c:230 proc_sched_autogroup_set_nice() warn: potential spectre issue 'sched_prio_to_weight'
 
-Addresses-Coverity-ID: 1468029 ("Resource leak")
-Fixes: 49162bfde140 ("cifs: do not allow creating sockets except with
-SMB1 posix exensions")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Userspace controls @nice, sanitize the array index.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
 ---
- fs/cifs/dir.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/sched/autogroup.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index f0a759d..71e32d9 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -684,8 +684,11 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 		goto mknod_out;
- 	}
+--- a/kernel/sched/autogroup.c
++++ b/kernel/sched/autogroup.c
+@@ -209,7 +209,7 @@ int proc_sched_autogroup_set_nice(struct
+ 	static unsigned long next = INITIAL_JIFFIES;
+ 	struct autogroup *ag;
+ 	unsigned long shares;
+-	int err;
++	int err, idx;
  
--	if (!S_ISCHR(mode) && !S_ISBLK(mode))
-+	if (!S_ISCHR(mode) && !S_ISBLK(mode)) {
-+		kfree(full_path);
-+		free_xid(xid);
- 		return -EPERM;
-+	}
+ 	if (nice < MIN_NICE || nice > MAX_NICE)
+ 		return -EINVAL;
+@@ -227,7 +227,9 @@ int proc_sched_autogroup_set_nice(struct
  
- 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
- 		goto mknod_out;
--- 
-2.7.4
+ 	next = HZ / 10 + jiffies;
+ 	ag = autogroup_task_get(p);
+-	shares = scale_load(sched_prio_to_weight[nice + 20]);
++
++	idx = array_index_nospec(nice + 20, 40);
++	shares = scale_load(sched_prio_to_weight[idx]);
+ 
+ 	down_write(&ag->lock);
+ 	err = sched_group_set_shares(ag->tg, shares);
