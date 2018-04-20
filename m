@@ -1,75 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753554AbeDTGtM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 02:49:12 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:52647 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751254AbeDTGtL (ORCPT
+        id S1753604AbeDTGvx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 02:51:53 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39492 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752771AbeDTGvv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 02:49:11 -0400
-X-Google-Smtp-Source: AIpwx49IiVJ9oDtXmUpLxlJZbtkulLDpRhO1PZkg2KaXSzuVsT3vmuVZvo0+uu/BHMQ6UgNpVC6gBKsXnsSPNUiGlBs=
-MIME-Version: 1.0
-In-Reply-To: <20180420054457.GA26393@jagdpanzerIV>
-References: <20180301163331.987775783@linutronix.de> <CA+55aFzV8Q20vL83xa+1UKzeQ0w-SAksCDxJD4szALRDCSUZ2w@mail.gmail.com>
- <20180313063630.zxebyb7gczeiovyf@gmail.com> <CALAqxLXJw-QOztJvt1sBSyxDg4NFz5KXmPv3PjF4VEChz20BGA@mail.gmail.com>
- <CANq1E4Tf27FJHTrO4ZVtWhYK=DLmwzszK=njOpgXZZXqzAOunA@mail.gmail.com> <20180420054457.GA26393@jagdpanzerIV>
-From: David Herrmann <dh.herrmann@gmail.com>
-Date: Fri, 20 Apr 2018 08:49:10 +0200
-Message-ID: <CANq1E4QppGAaU5PYbGpuC00S6wGQcAt70Z7CntZHiLC6748z2A@mail.gmail.com>
-Subject: Re: [RFC/RFT patch 0/7] timekeeping: Unify clock MONOTONIC and clock BOOTTIME
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: John Stultz <john.stultz@linaro.org>, Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Petr Mladek <pmladek@suse.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 20 Apr 2018 02:51:51 -0400
+X-Google-Smtp-Source: AB8JxZoRAReuW6HnnRO1mALqun0igj+syZ9Xm+yvskFhgJMBruYu6KZgRLcienN4c/MMGNzBKt8qUw==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Jaehoon Chung <jh80.chung@samsung.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v.4.17-rc2
+Date: Fri, 20 Apr 2018 08:51:47 +0200
+Message-Id: <1524207107-3397-1-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Hi Linus,
 
-On Fri, Apr 20, 2018 at 7:44 AM, Sergey Senozhatsky
-<sergey.senozhatsky.work@gmail.com> wrote:
-> On (04/20/18 06:37), David Herrmann wrote:
->>
->> I get lots of timer-errors on Arch-Linux booting current master, after
->> a suspend/resume cycle. Just a selection of errors I see on resume:
->
-> Hello David,
-> Any chance you can revert the patches in question and test? I'm running
-> ARCH (4.17.0-rc1-dbg-00042-gaa03ddd9c434) and suspend/resume cycle does
-> not trigger any errors. Except for this one
->
->         kernel: do_IRQ: 0.55 No irq handler for vector
+Here's a PR with a couple of MMC fixes intended for v4.17-rc2. Details about
+the highlights are as usual found in the signed tag.
 
-I can easily reproduce it by sleeping for >5min, so the systemd
-watchdog timers are triggered. The patches don't revert cleanly, so I
-didn't look into booting without them, yet. I will try just linking
-the monotonic clock to the monotonic_active clock later.
+Please pull this in!
 
-Also, doesn't this hunk in 72199320d49d need a 'break;':
+Kind regards
+Ulf Hansson
 
-diff --git a/kernel/time/posix-stubs.c b/kernel/time/posix-stubs.c
-index b258bee13b02..6259dbc0191a 100644
---- a/kernel/time/posix-stubs.c
-+++ b/kernel/time/posix-stubs.c
-@@ -73,6 +73,8 @@ int do_clock_gettime(clockid_t which_clock, struct
-timespec64 *tp)
-        case CLOCK_BOOTTIME:
-                get_monotonic_boottime64(tp);
-                break;
-+       case CLOCK_MONOTONIC_ACTIVE:
-+               ktime_get_active_ts64(tp);
-        default:
-                return -EINVAL;
-        }
+
+The following changes since commit fc167daff581c01ebce8695e9618231cae3561a1:
+
+  mmc: tmio: Fix error handling when issuing CMD23 (2018-04-04 12:21:27 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.17-3
+
+for you to fetch changes up to 0cbc94daa55441c21999e96a07061952d873dcb7:
+
+  mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs (2018-04-19 14:57:17 +0200)
+
+----------------------------------------------------------------
+MMC host:
+ - sdhci-pci: Fixup tuning for AMD for eMMC HS200 mode
+ - renesas_sdhi_internal_dmac: Avoid data corruption by limiting DMA RX
+
+----------------------------------------------------------------
+Daniel Kurtz (1):
+      mmc: sdhci-pci: Only do AMD tuning for HS200
+
+Wolfram Sang (1):
+      mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs
+
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 39 ++++++++++++++++++++++-----
+ drivers/mmc/host/sdhci-pci-core.c             | 25 +++++++++++++++--
+ 2 files changed, 56 insertions(+), 8 deletions(-)
