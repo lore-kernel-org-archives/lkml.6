@@ -1,221 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754881AbeDTNEp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:04:45 -0400
-Received: from mga14.intel.com ([192.55.52.115]:53581 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754866AbeDTNEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:04:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,301,1520924400";
-   d="scan'208";a="35135449"
-From: "Liang, Kan" <kan.liang@intel.com>
-To: "peterz@infradead.org" <peterz@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "acme@kernel.org" <acme@kernel.org>,
-        "eranian@google.com" <eranian@google.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>
-Subject: RE: [PATCH V7 6/8] perf/x86/intel/uncore: Support IIO free running
- counters on SKX
-Thread-Topic: [PATCH V7 6/8] perf/x86/intel/uncore: Support IIO free running
- counters on SKX
-Thread-Index: AQHTwEesHZIBLoGfOkOHcNsI+JYRJqQJzugw
-Date: Fri, 20 Apr 2018 13:04:38 +0000
-Message-ID: <37D7C6CF3E00A74B8858931C1DB2F07753898B6F@SHSMSX103.ccr.corp.intel.com>
-References: <1521549165-6216-1-git-send-email-kan.liang@intel.com>
- <1521549165-6216-6-git-send-email-kan.liang@intel.com>
-In-Reply-To: <1521549165-6216-6-git-send-email-kan.liang@intel.com>
-Accept-Language: zh-CN, en-US
+        id S1754895AbeDTNFV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:05:21 -0400
+Received: from mail-sn1nam01on0078.outbound.protection.outlook.com ([104.47.32.78]:42330
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754769AbeDTNFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 09:05:19 -0400
+From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: RE: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
+ systems
+Thread-Topic: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
+ systems
+Thread-Index: AQHTyrzRqCN7fg42eUKg23bN8kMvXKQFS3EAgAAGZOCAAYnqgIAC2dNg
+Date: Fri, 20 Apr 2018 13:05:17 +0000
+Message-ID: <CY4PR12MB155779EEC2894B501F30292EF8B40@CY4PR12MB1557.namprd12.prod.outlook.com>
+References: <20180402195707.42875-1-Yazen.Ghannam@amd.com>
+ <20180417172102.GA3633@pd.tnic>
+ <CY4PR12MB15574493593120818D9BFE11F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
+ <20180418171347.GH4795@pd.tnic>
+In-Reply-To: <20180418171347.GH4795@pd.tnic>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOWFkMGI0MDItYzA5ZS00OWIyLTg4YzktN2U3YzQxNzU5OTI4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX0lDIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6InlDRm9XM01HeDhyUk40Q1k2RVJ2eXlQTTJyUVJOb2pxZkNpcUQ0RkJPOVU9In0=
-x-ctpclassification: CTP_IC
-dlp-product: dlpe-windows
-dlp-version: 11.0.0.116
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+authentication-results: alien8.de; dkim=none (message not signed)
+ header.d=none;alien8.de; dmarc=none action=none header.from=amd.com;
+x-originating-ip: [165.204.84.17]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR12MB1413;7:Ny34XD/2e6fta/giYdSvz0zRVqBJcXjwU5IiG7H/gobMxujNNOl48wCINf/jTdvT6U7yIVWit2bJKgf0Wkaen4yomDSpg+F6oJXa4W2c3vGPX/VuOEvwVxuMW9pel23VTdLBjqElcsKjRriSJ05VVETA+hzc69VX4kOm21VcOuuv3RbpdM8CNzYMxFhyUu5kQ7E6ky1uvp1+Oq9L8IkwsM/x65umPgJWc4HWiwkcctKBF9DXBN+RDNsl+G7vM/2F;20:cjfuNV3THyMLA8ZZ+Prh+7fCdH+J7mq+a6tyvilY73m/InK6XKZhFLeZk9AMtd91pr4VldYWwp3txZcrVFn2hlIKRtREkBJ0x7trl/2PQ6Yl1cB5dRJM631mGjtitQ2sjhufdyime9o1IbiJIsOHWf94hg6jYmt3pB/ODS/B84/ySRVm8R30inVxp2xbAwaGQmmAdP5b7JsPQHN6WhLNG9qN3gAi9heXZIJ3zgHe55zhxn9PegA5AN7LyaMNZiOP
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:CY4PR12MB1413;
+x-ms-traffictypediagnostic: CY4PR12MB1413:
+x-microsoft-antispam-prvs: <CY4PR12MB1413AF2C3B6B28C99044CCD1F8B40@CY4PR12MB1413.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(228905959029699);
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231232)(944501394)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:CY4PR12MB1413;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1413;
+x-forefront-prvs: 0648FCFFA8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(39380400002)(39860400002)(376002)(13464003)(66066001)(3280700002)(6246003)(25786009)(6116002)(53936002)(3846002)(5250100002)(33656002)(229853002)(93886005)(3660700001)(2906002)(11346002)(6916009)(26005)(2900100001)(86362001)(316002)(476003)(186003)(446003)(4326008)(54906003)(55016002)(7736002)(59450400001)(5660300001)(8936002)(76176011)(8676002)(6436002)(102836004)(53546011)(72206003)(6506007)(7696005)(305945005)(478600001)(9686003)(81166006)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1413;H:CY4PR12MB1557.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
+x-microsoft-antispam-message-info: 6fyZ5+wljIYede1cKzqWr9VQ/wGnEo8CNaYP2pc+3GgZY0mJSo2vegk1Hn/MwoTz42/aHcjBPnrLiclMw29HWHuVqD5exG+Cpm879IILUVOM1SEU2lBdbcZZcaYInYHa4V+WUwC6yfzaI5tJ3h34Dzi2lKPI0TLW0CUWpoWiEUj1ntGZuiXHd/fgJQcI3zuB
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 5844cae3-16b8-40c2-9324-08d5a6bf5d55
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5844cae3-16b8-40c2-9324-08d5a6bf5d55
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2018 13:05:17.6084
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1413
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KD5QqC024457
 
+> -----Original Message-----
+> From: Borislav Petkov <bp@alien8.de>
+> Sent: Wednesday, April 18, 2018 1:14 PM
+> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
+> Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org;
+> tony.luck@intel.com; x86@kernel.org
+> Subject: Re: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on
+> SMCA systems
 > 
-> From: Kan Liang <kan.liang@intel.com>
+> On Tue, Apr 17, 2018 at 06:30:34PM +0000, Ghannam, Yazen wrote:
+> > We could but it's an issue of documentation and testing the older systems.
+> >
+> > My first pass at this was to unconditionally read the registers because my
+> > understanding was that registers that aren't accessible would be read-as-
+> zero.
+> > I thought this was a common MCA implementation. But Tony pointed out
+> that
+> > this isn't the case on Intel systems. This is the case on recent AMD systems.
+> But
+> > I don't know if it's the case on older systems which may or may not have
+> > followed the Intel implementation more closely.
 > 
-> As of Skylake Server, there are a number of free-running counters in
-> each IIO Box that collect counts for per box IO clocks and per Port
-> Input/Output x BW/Utilization.
-> Add a new PMU for these free-running counters. Don't let them share with
-> the GP counters of IIO box. Otherwise, it will result in some (probably)
-> unexpected scheduling artifacts.
+> So if our worry is the #GPs, we can always use the rdmsr*_safe()
+> variants and look at the return value. And dump a invalid value like
+> 0xdeadbeef or so, if the read failed.
 > 
-> The free running counter is read-only and always active. Counting will
-> be suspended only when the IIO Box is powered down.
-> 
-> There are three types of IIO free running counters on Skylake server, IO
-> CLOCKS counter, BANDWIDTH counters and UTILIZATION counters.
-> IO CLOCKS counter is to count IO clocks.
-> BANDWIDTH counters are to count inbound(PCIe->CPU)/outbound(CPU-
-> >PCIe)
-> bandwidth.
-> UTILIZATION counters are to count input/output utilization.
-> 
-> The bit width of the free running counters is 36-bits.
-> 
-> Signed-off-by: Kan Liang <kan.liang@intel.com>
-> ---
-> 
-> Changes since V6:
->  - Add a new PMU for IIO free-running counters.
+> But if any bit of info we've gotten this way, helps us debug an MCE,
+> we're already golden!
 > 
 
-Hi Peter,
+Okay, I can do that. What about using mce_rdmsrl()? The value gets set to
+0 and a user gets a single warning. This may be more clear to the user. Also,
+it shouldn't affect code that checks for non-zero values, like in __print_mce().
 
-Could you please review the patch?
-If it's OK for you, could you please merge the patch set?
+> > For example,
+> >
+> > Deferred error occurs:
+> > - MCA_{STATUS,ADDR,DESTAT,DEADDR} all have valid data.
+> >
+> > MCE occurs
+> > - MCA_{STATUS,ADDR} are overwritten with non-zero data.
+> > - MCE handler clears MCA_STATUS. MCA_ADDR is non-zero.
+> >
+> > DFR handler finds MCA_STATUS[Deferred] is clear, so it saves
+> > MCA_DESTAT and MCA_DEADDR which is 0.
+> >
+> > If !m->addr (which has MCA_DEADDR), then we read MCA_STATUS
+> > which has the address from the MCE.
+> 
+> The code could use a shorter version of this as a comment to state why
+> we're doing it. Because it is not obvious.
+> 
+
+Yes, will do.
 
 Thanks,
-Kan
-
->  arch/x86/events/intel/uncore_snbep.c | 82
-> ++++++++++++++++++++++++++++++++++++
->  1 file changed, 82 insertions(+)
-> 
-> diff --git a/arch/x86/events/intel/uncore_snbep.c
-> b/arch/x86/events/intel/uncore_snbep.c
-> index 22ec65b..d6b302e 100644
-> --- a/arch/x86/events/intel/uncore_snbep.c
-> +++ b/arch/x86/events/intel/uncore_snbep.c
-> @@ -3484,6 +3484,87 @@ static struct intel_uncore_type skx_uncore_iio = {
->  	.format_group		= &skx_uncore_iio_format_group,
->  };
-> 
-> +enum perf_uncore_iio_freerunning_type_id {
-> +	SKX_IIO_MSR_IOCLK			= 0,
-> +	SKX_IIO_MSR_BW				= 1,
-> +	SKX_IIO_MSR_UTIL			= 2,
-> +
-> +	SKX_IIO_FREERUNNING_TYPE_MAX,
-> +};
-> +
-> +
-> +static struct freerunning_counters skx_iio_freerunning[] = {
-> +	[SKX_IIO_MSR_IOCLK]	= { 0xa45, 0x1, 0x20, 1, 36 },
-> +	[SKX_IIO_MSR_BW]	= { 0xb00, 0x1, 0x10, 8, 36 },
-> +	[SKX_IIO_MSR_UTIL]	= { 0xb08, 0x1, 0x10, 8, 36 },
-> +};
-> +
-> +static struct uncore_event_desc skx_uncore_iio_freerunning_events[] = {
-> +	/* Free-Running IO CLOCKS Counter */
-> +	INTEL_UNCORE_EVENT_DESC(ioclk,
-> 	"event=0xff,umask=0x10"),
-> +	/* Free-Running IIO BANDWIDTH Counters */
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port0,
-> 	"event=0xff,umask=0x20"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port0.scale,
-> 	"3.814697266e-6"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port0.unit,	"MiB"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port1,
-> 	"event=0xff,umask=0x21"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port1.scale,
-> 	"3.814697266e-6"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port1.unit,	"MiB"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port2,
-> 	"event=0xff,umask=0x22"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port2.scale,
-> 	"3.814697266e-6"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port2.unit,	"MiB"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port3,
-> 	"event=0xff,umask=0x23"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port3.scale,
-> 	"3.814697266e-6"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_in_port3.unit,	"MiB"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port0,
-> 	"event=0xff,umask=0x24"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port0.scale,
-> 	"3.814697266e-6"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port0.unit,	"MiB"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port1,
-> 	"event=0xff,umask=0x25"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port1.scale,
-> 	"3.814697266e-6"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port1.unit,	"MiB"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port2,
-> 	"event=0xff,umask=0x26"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port2.scale,
-> 	"3.814697266e-6"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port2.unit,	"MiB"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port3,
-> 	"event=0xff,umask=0x27"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port3.scale,
-> 	"3.814697266e-6"),
-> +	INTEL_UNCORE_EVENT_DESC(bw_out_port3.unit,	"MiB"),
-> +	/* Free-running IIO UTILIZATION Counters */
-> +	INTEL_UNCORE_EVENT_DESC(util_in_port0,
-> 	"event=0xff,umask=0x30"),
-> +	INTEL_UNCORE_EVENT_DESC(util_out_port0,
-> 	"event=0xff,umask=0x31"),
-> +	INTEL_UNCORE_EVENT_DESC(util_in_port1,
-> 	"event=0xff,umask=0x32"),
-> +	INTEL_UNCORE_EVENT_DESC(util_out_port1,
-> 	"event=0xff,umask=0x33"),
-> +	INTEL_UNCORE_EVENT_DESC(util_in_port2,
-> 	"event=0xff,umask=0x34"),
-> +	INTEL_UNCORE_EVENT_DESC(util_out_port2,
-> 	"event=0xff,umask=0x35"),
-> +	INTEL_UNCORE_EVENT_DESC(util_in_port3,
-> 	"event=0xff,umask=0x36"),
-> +	INTEL_UNCORE_EVENT_DESC(util_out_port3,
-> 	"event=0xff,umask=0x37"),
-> +	{ /* end: all zeroes */ },
-> +};
-> +
-> +static struct intel_uncore_ops skx_uncore_iio_freerunning_ops = {
-> +	.read_counter		= uncore_msr_read_counter,
-> +};
-> +
-> +static struct attribute *skx_uncore_iio_freerunning_formats_attr[] = {
-> +	&format_attr_event.attr,
-> +	&format_attr_umask.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group
-> skx_uncore_iio_freerunning_format_group = {
-> +	.name = "format",
-> +	.attrs = skx_uncore_iio_freerunning_formats_attr,
-> +};
-> +
-> +static struct intel_uncore_type skx_uncore_iio_free_running = {
-> +	.name			= "iio_free_running",
-> +	.num_counters		= 17,
-> +	.num_boxes		= 6,
-> +	.num_freerunning_types	= SKX_IIO_FREERUNNING_TYPE_MAX,
-> +	.freerunning		= skx_iio_freerunning,
-> +	.ops			= &skx_uncore_iio_freerunning_ops,
-> +	.event_descs		= skx_uncore_iio_freerunning_events,
-> +	.format_group		=
-> &skx_uncore_iio_freerunning_format_group,
-> +};
-> +
->  static struct attribute *skx_uncore_formats_attr[] = {
->  	&format_attr_event.attr,
->  	&format_attr_umask.attr,
-> @@ -3557,6 +3638,7 @@ static struct intel_uncore_type *skx_msr_uncores[]
-> = {
->  	&skx_uncore_ubox,
->  	&skx_uncore_chabox,
->  	&skx_uncore_iio,
-> +	&skx_uncore_iio_free_running,
->  	&skx_uncore_irp,
->  	&skx_uncore_pcu,
->  	NULL,
-> --
-> 2.7.4
+Yazen
