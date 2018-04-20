@@ -1,111 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753347AbeDTRpN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:45:13 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47890 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751254AbeDTRpL (ORCPT
+        id S1753472AbeDTRsJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:48:09 -0400
+Received: from gateway22.websitewelcome.com ([192.185.46.156]:20477 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752831AbeDTRsI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:45:11 -0400
-Message-ID: <7b4976b0a8a642767bd4e0a5e9d7fb6c9dc86ec9.camel@collabora.com>
-Subject: Re: [PATCH] Input: atmel_mxt_ts - fix reset-gpio for level based
- irqs
-From: Ezequiel Garcia <ezequiel@collabora.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Nick Dyer <nick@shmanahar.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel@collabora.com
-Date: Fri, 20 Apr 2018 14:44:02 -0300
-In-Reply-To: <20180420172408.26164-1-sebastian.reichel@collabora.co.uk>
-References: <20180420172408.26164-1-sebastian.reichel@collabora.co.uk>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        Fri, 20 Apr 2018 13:48:08 -0400
+X-Authority-Reason: nr=8
+Subject: Re: [PATCH] cifs: dir: fix memory leak in cifs_mknod
+To: Steve French <smfrench@gmail.com>,
+        Colin King <colin.king@canonical.com>
+Cc: Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <sfrench@samba.org>, CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>
+References: <20180420131919.GA1766@embeddedor.com>
+ <CAH2r5mtYQujfeEUpEiE557o3YccD9QwWCTLCJFbBoF7zbYcggQ@mail.gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <67525f3c-f6f2-d1b2-c6eb-66b2315e6530@embeddedor.com>
+Date: Fri, 20 Apr 2018 12:48:05 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAH2r5mtYQujfeEUpEiE557o3YccD9QwWCTLCJFbBoF7zbYcggQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.175.6.211
+X-Source-L: No
+X-Exim-ID: 1f9a8l-000V4Z-Fo
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.175.6.211]:34550
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian,
+Hi Steve,
 
-On Fri, 2018-04-20 at 19:24 +0200, Sebastian Reichel wrote:
-> The current reset-gpio support triggers an interrupt storm on platforms
-> using the maxtouch with level based interrupt. The Motorola Droid 4,
-> which I used for some of the tests is not affected, since it uses a level
-> based interrupt.
+On 04/20/2018 12:37 PM, Steve French wrote:
+> I noticed a similar problem with the tcon link leak on that (which
+> Colin and Gustavo pointed out - thank you!) but also in another return
+> statement, so updated the original patch of Ronnie's merging the fixes
+> 
+> https://git.samba.org/sfrench/cifs-2.6.git/?p=sfrench/cifs-2.6.git;a=commit;h=167bc5de08dc97695f9d5c7069c3e69f409ff80b
+> 
+> 
+> Let me know if you see any problems with it.
 > 
 
-I found this confusing. Interrupt storm happen with level-based interrupts,
-but the Droid4 is not affected?
+Looks correct to me.
 
-> This change avoids the interrupt storm by enabling the device while
-> its interrupt is disabled. The following mxt_initialize() requires,
-> that the device is responsive (at least mxt224E is unresponsive for
-> ~22ms), so we wait some time. We don't wait for leaving bootloader
-> mode anymore, since mxt_initialize() checks for it anyways.
+Thanks
+--
+Gustavo
+
+> On Fri, Apr 20, 2018 at 8:19 AM, Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>> Free allocated memory for full_path and xid before return.
+>>
+>> Addresses-Coverity-ID: 1468029 ("Resource leak")
+>> Fixes: 49162bfde140 ("cifs: do not allow creating sockets except with
+>> SMB1 posix exensions")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   fs/cifs/dir.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
+>> index f0a759d..71e32d9 100644
+>> --- a/fs/cifs/dir.c
+>> +++ b/fs/cifs/dir.c
+>> @@ -684,8 +684,11 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
+>>                  goto mknod_out;
+>>          }
+>>
+>> -       if (!S_ISCHR(mode) && !S_ISBLK(mode))
+>> +       if (!S_ISCHR(mode) && !S_ISBLK(mode)) {
+>> +               kfree(full_path);
+>> +               free_xid(xid);
+>>                  return -EPERM;
+>> +       }
+>>
+>>          if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
+>>                  goto mknod_out;
+>> --
+>> 2.7.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-cifs" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-
-IMHO, having some more or less arbritrary sleeps is almost
-always a problem. This value might be enough for some platform,
-might be too short for some other, and then it might get too large
-for someone else.
-
-> This fixes a boot problem on GE PPD (watchdog kills device) and also
-> has been tested on the Droid 4.
-> 
-> Fixes: f657b00df22e ("Input: atmel_mxt_ts - add support for reset line")
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> ---
->  drivers/input/touchscreen/atmel_mxt_ts.c | 15 +++++----------
->  1 file changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 5d9699fe1b55..f8a9f2a47e78 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -194,6 +194,7 @@ enum t100_type {
->  
->  /* Delay times */
->  #define MXT_BACKUP_TIME		50	/* msec */
-> +#define MXT_RESET_GPIO_TIME	20	/* msec */
->  #define MXT_RESET_TIME		200	/* msec */
->  #define MXT_RESET_TIMEOUT	3000	/* msec */
->  #define MXT_CRC_TIMEOUT		1000	/* msec */
-> @@ -3167,20 +3168,14 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		return error;
->  	}
->  
-> +	disable_irq(client->irq);
-> +
->  	if (data->reset_gpio) {
-> -		data->in_bootloader = true;
-> -		msleep(MXT_RESET_TIME);
-> -		reinit_completion(&data->bl_completion);
-> +		msleep(MXT_RESET_GPIO_TIME);
->  		gpiod_set_value(data->reset_gpio, 1);
-
-Can't we enable the IRQ here, just before the wait...
-
-> -		error = mxt_wait_for_completion(data, &data->bl_completion,
-> -						MXT_RESET_TIMEOUT);
-
-... and then disable it back afterwards?
-
-> -		if (error)
-> -			return error;
-> -		data->in_bootloader = false;
-> +		msleep(MXT_RESET_TIME);
-
->  	}
->  
-> -	disable_irq(client->irq);
-> -
->  	error = mxt_initialize(data);
->  	if (error)
->  		return error;
-> -- 
-> 2.17.0
 > 
 > 
