@@ -1,62 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753604AbeDTGvx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 02:51:53 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:39492 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752771AbeDTGvv (ORCPT
+        id S1753855AbeDTGzv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 02:55:51 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51512 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753772AbeDTGzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 02:51:51 -0400
-X-Google-Smtp-Source: AB8JxZoRAReuW6HnnRO1mALqun0igj+syZ9Xm+yvskFhgJMBruYu6KZgRLcienN4c/MMGNzBKt8qUw==
+        Fri, 20 Apr 2018 02:55:49 -0400
+X-Google-Smtp-Source: AIpwx4/ghGR9ayZunZwpVahf8HUiZqLs7otJWIz0vA29a918qsCJ7GcFVcktqkhKxNXOKjSvkrLx8SQmjXGUQmwGsZU=
+MIME-Version: 1.0
+In-Reply-To: <7ho9if3wo3.fsf@baylibre.com>
+References: <20180408113647.13543-1-yixun.lan@amlogic.com> <7ho9if3wo3.fsf@baylibre.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Jaehoon Chung <jh80.chung@samsung.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v.4.17-rc2
-Date: Fri, 20 Apr 2018 08:51:47 +0200
-Message-Id: <1524207107-3397-1-git-send-email-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.7.4
+Date: Fri, 20 Apr 2018 08:55:47 +0200
+Message-ID: <CAPDyKFpcmO7LYuyuNPcYmzeDyq_AXDH5W4Y9dByTL-B+DGZSqg@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM64: dts: meson-axg: enable the eMMC controller
+To: Kevin Hilman <khilman@baylibre.com>
+Cc: Yixun Lan <yixun.lan@amlogic.com>, Rob Herring <robh@kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Nan Li <nan.li@amlogic.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Carlo Caione <carlo@caione.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 19 April 2018 at 19:58, Kevin Hilman <khilman@baylibre.com> wrote:
+> Yixun Lan <yixun.lan@amlogic.com> writes:
+>
+>> From: Nan Li <nan.li@amlogic.com>
+>>
+>> The IP of eMMC controller in AXG is similiar to Meson-GX series.
+>> Here we add the initial support of the HS200 mode with
+>> clock running at 166MHz (to be safe), since we found some eMMC chip
+>> fail to run at 200MHz due to tunning phase error.
+>>
+>> Signed-off-by: Nan Li <nan.li@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>
+> Applied to v4.18/dt64
+>
+>> ---
+>> Hi Kevin
+>>   Please note this patch actually depend on the eMMC driver here [0].
+>>   Still a few problem to solve, to improve the tuning phase driver to make
+>> the clock running at 200MHz, and to further support the HS400 mode.
+>> Anyway, this patch itself is quite independent.
+>
+> The driver changes are queued for v4.18 also.  Good!
 
-Here's a PR with a couple of MMC fixes intended for v4.17-rc2. Details about
-the highlights are as usual found in the signed tag.
-
-Please pull this in!
+Right, may I consider that as an ack? :-)
 
 Kind regards
-Ulf Hansson
+Uffe
 
-
-The following changes since commit fc167daff581c01ebce8695e9618231cae3561a1:
-
-  mmc: tmio: Fix error handling when issuing CMD23 (2018-04-04 12:21:27 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.17-3
-
-for you to fetch changes up to 0cbc94daa55441c21999e96a07061952d873dcb7:
-
-  mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs (2018-04-19 14:57:17 +0200)
-
-----------------------------------------------------------------
-MMC host:
- - sdhci-pci: Fixup tuning for AMD for eMMC HS200 mode
- - renesas_sdhi_internal_dmac: Avoid data corruption by limiting DMA RX
-
-----------------------------------------------------------------
-Daniel Kurtz (1):
-      mmc: sdhci-pci: Only do AMD tuning for HS200
-
-Wolfram Sang (1):
-      mmc: renesas_sdhi_internal_dmac: limit DMA RX for old SoCs
-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 39 ++++++++++++++++++++++-----
- drivers/mmc/host/sdhci-pci-core.c             | 25 +++++++++++++++--
- 2 files changed, 56 insertions(+), 8 deletions(-)
+>
+> Kevin
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
