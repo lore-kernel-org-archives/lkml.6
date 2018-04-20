@@ -1,103 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754085AbeDTCPR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 22:15:17 -0400
-Received: from mail-pg0-f47.google.com ([74.125.83.47]:42717 "EHLO
-        mail-pg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753784AbeDTCPQ (ORCPT
+        id S1754089AbeDTCSH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 22:18:07 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43160 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753784AbeDTCSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 22:15:16 -0400
-X-Google-Smtp-Source: AIpwx4//uueBmnyWUajdoeqD340sY1B7BDIUgGBdOvZRU4GdEN74F8zxK70LQ7zU3NjnEs1CTJlJIg==
-Date: Fri, 20 Apr 2018 11:15:11 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, Peter Zijlstra <peterz@infradead.org>,
-        Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180420021511.GB6397@jagdpanzerIV>
-References: <20180413124704.19335-1-pmladek@suse.com>
- <20180413101233.0792ebf0@gandalf.local.home>
- <20180414023516.GA17806@tigerII.localdomain>
- <20180416014729.GB1034@jagdpanzerIV>
- <20180416042553.GA555@jagdpanzerIV>
- <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Thu, 19 Apr 2018 22:18:06 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH] iommu/vt-d: fix usage of force parameter in
+ intel_ir_reconfigure_irte()
+From: Jag Raman <jag.raman@oracle.com>
+In-Reply-To: <23b8f026-2dc2-e00e-98d5-f1a090e3e534@oracle.com>
+Date: Thu, 19 Apr 2018 22:17:42 -0400
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Message-Id: <183BCE4E-1BCF-4410-AFA7-1D46B7978AD3@oracle.com>
+References: <1520375981-4958-1-git-send-email-jag.raman@oracle.com>
+ <23b8f026-2dc2-e00e-98d5-f1a090e3e534@oracle.com>
+To: joro@8bytes.org, tglx@linutronix.de
+X-Mailer: Apple Mail (2.3445.6.18)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8868 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804200018
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3K2ICq1016163
 
-On (04/19/18 14:53), Petr Mladek wrote:
-> > > > 
-> > > > Besides 100 lines is absolutely not enough for any real lockdep splat.
-> > > > My call would be - up to 1000 lines in a 1 minute interval.
+
+
+> On Apr 4, 2018, at 2:06 PM, Jag Raman <jag.raman@oracle.com> wrote:
 > 
-> But this would break the intention of this patch.
-
-You picked an arbitrary value and now you are saying that any other
-value will not work?
-
-> Come on guys! The first reaction how to fix the infinite loop was
-> to fix the console drivers and remove the recursive messages. We are
-> talking about messages that should not be there or they should
-> get replaced by WARN_ONCE(), print_once() or so. This patch only
-> give us a chance to see the problem and do not blow up immediately.
 > 
-> I am fine with increasing the number of lines. But we need to keep
-> the timeout long. In fact, 1 hour is still rather short from my POV.
-
-Disagree.
-
-I saw 3 or 4 lockdep reports coming from console drivers. "100 lines"
-is way too restrictive. I want to have a complete report; not the first
-50 lines, not the first 103 lines, which would "hint" me that "hey, there
-is something wrong there, but you are on your own to figure out the rest".
-
-> > > Well, if we want to basically turn printk_safe() into printk_safe_ratelimited().
-> > > I'm not so sure about it.
 > 
-> No, it is not about printk_safe(). The ratelimit is active when
-> console_owner == current. It triggers when printk() is called
-> inside
-
-"console_owner == current" is exactly the point when we call console
-drivers and add scheduler, networking, timekeeping, etc. locks to the
-picture. And so far all of the lockdeps reports that we had were from
-call_console_drivers(). So it very much is about printk_safe().
-
-> > > Besides the patch also rate limits printk_nmi->logbuf - the logbuf
-> > > PRINTK_NMI_DEFERRED_CONTEXT_MASK bypass, which is way too important
-> > > to rate limit it - for no reason.
+> On 3/6/2018 5:39 PM, Jagannathan Raman wrote:
+>> It was noticed that the IRTE configured for guest OS kernel
+>> was over-written while the guest was running. As a result,
+>> vt-d Posted Interrupts configured for the guest are not being
+>> delivered directly, and instead bounces off the host. Every
+>> interrupt delivery takes a VM Exit.
+>> It was noticed that the following stack is doing the over-write:
+>> [  147.463177]  modify_irte+0x171/0x1f0
+>> [  147.463405]  intel_ir_set_affinity+0x5c/0x80
+>> [  147.463641]  msi_domain_set_affinity+0x32/0x90
+>> [  147.463881]  irq_do_set_affinity+0x37/0xd0
+>> [  147.464125]  irq_set_affinity_locked+0x9d/0xb0
+>> [  147.464374]  __irq_set_affinity+0x42/0x70
+>> [  147.464627]  write_irq_affinity.isra.5+0xe1/0x110
+>> [  147.464895]  proc_reg_write+0x38/0x70
+>> [  147.465150]  __vfs_write+0x36/0x180
+>> [  147.465408]  ? handle_mm_fault+0xdf/0x200
+>> [  147.465671]  ? _cond_resched+0x15/0x30
+>> [  147.465936]  vfs_write+0xad/0x1a0
+>> [  147.466204]  SyS_write+0x52/0xc0
+>> [  147.466472]  do_syscall_64+0x74/0x1a0
+>> [  147.466744]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+>> reversing the sense of force check in intel_ir_reconfigure_irte()
+>> restores proper posted interrupt functionality
+>> Signed-off-by: Jagannathan Raman <jag.raman@oracle.com>
+>> ---
+>>  Hi Thomas,
+>>  I noticed that you added intel_ir_reconfigure_irte() with the
+>>  following commit:
+>>  d491bdff888e ("iommu/vt-d: Reevaluate vector configuration on
+>>  activate()")
+>>  Could you please confirm the usage of "force" parameter in
+>>  intel_ir_reconfigure_irte()?
+>>  drivers/iommu/intel_irq_remapping.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+>> index 66f69af..3062a15 100644
+>> --- a/drivers/iommu/intel_irq_remapping.c
+>> +++ b/drivers/iommu/intel_irq_remapping.c
+>> @@ -1136,7 +1136,7 @@ static void intel_ir_reconfigure_irte(struct irq_data *irqd, bool force)
+>>  	irte->dest_id = IRTE_DEST(cfg->dest_apicid);
+>>    	/* Update the hardware only if the interrupt is in remapped mode. */
+>> -	if (!force || ir_data->irq_2_iommu.mode == IRQ_REMAPPING)
+>> +	if (force || ir_data->irq_2_iommu.mode == IRQ_REMAPPING)
+>>  		modify_irte(&ir_data->irq_2_iommu, irte);
+>>  }
+>>  
 > 
-> Again. It has the effect only when console_owner == current. It means
-> that it affects "only" NMIs that interrupt console_unlock() when calling
-> console drivers.
+> *ping*
 
-What is your objection here? NMIs can come anytime.
+*ping*
 
-> > One more thing,
-> > I'd really prefer to rate limit the function which flushes per-CPU
-> > printk_safe buffers; not the function that appends new messages to
-> > the per-CPU printk_safe buffers.
-> 
-> I wonder if this opinion is still valid after explaining the
-> dependency on printk_safe(). In each case, it sounds weird
-> to block printk_safe buffers with some "unwanted" messages.
-> Or maybe I miss something.
-
-I'm not following.
-
-The fact that some consoles under some circumstances can add unwanted
-messages to the buffer does not look like a good enough reason to start
-rate limiting _all_ messages and to potentially discard the _important_
-ones.
-
-	-ss
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
