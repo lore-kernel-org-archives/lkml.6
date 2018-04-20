@@ -1,161 +1,190 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752778AbeDTV7a convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 17:59:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52466 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752325AbeDTV71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 17:59:27 -0400
-Date: Fri, 20 Apr 2018 23:59:15 +0200
-From: =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/11] Sunxi: Add SMP support on A83T
-Message-ID: <20180420235915.3dea5e09@dell-desktop.home>
-In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
-References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752273AbeDTWEw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 18:04:52 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:36355 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751338AbeDTWEs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 18:04:48 -0400
+X-Google-Smtp-Source: AIpwx48dwRwcZMFoqAJFrH4FcXGHI5QX8/LJyzrhBquw19Dn/KxSyqjSbKECXrPCiRB2p8X0CDEWnQ==
+Subject: Re: [RFC PATCH 3/4] acpi: apei: Do not panic() in NMI because of GHES
+ messages
+To: James Morse <james.morse@arm.com>
+Cc: linux-acpi@vger.kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
+        tony.luck@intel.com, bp@alien8.de, tbaicar@codeaurora.org,
+        will.deacon@arm.com, shiju.jose@huawei.com, zjzhang@codeaurora.org,
+        gengdongjiu@huawei.com, linux-kernel@vger.kernel.org,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com
+References: <20180403170830.29282-1-mr.nuke.me@gmail.com>
+ <20180403170830.29282-4-mr.nuke.me@gmail.com>
+ <338e9bb4-a837-69f9-36e5-5ee2ddcaaa38@arm.com>
+ <d6492b41-612a-b256-44c9-4ff3b3d5ae4b@gmail.com>
+ <e65986c8-55a1-14c4-5c06-f34fa25916d8@arm.com>
+ <9e29e5c6-b942-617e-f92e-728627799506@gmail.com>
+ <cdea7af5-6c9b-10c5-a9a9-1481446c65a8@arm.com>
+ <2120d34a-41d2-9fff-2710-d11e9a19e12a@gmail.com>
+ <855860ef-f84e-00af-ed44-55d6a5a41a94@arm.com>
+ <70c0a230-945a-3a1a-7c49-4b0784a3cfa6@gmail.com>
+ <d1053bc8-959d-2d24-af90-61fa4b3fd03f@arm.com>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <47e5ea8b-f9d0-0167-b2e4-d461ae8fdeed@gmail.com>
+Date: Fri, 20 Apr 2018 17:04:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <d1053bc8-959d-2d24-af90-61fa4b3fd03f@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On Fri, 20 Apr 2018 23:10:11 +0200
-Mylène Josserand <mylene.josserand@bootlin.com> wrote:
 
-> Hello everyone,
+On 04/20/2018 02:27 AM, James Morse wrote:
+> Hi Alex,
 > 
-> This is a V7 of my series that adds SMP support for Allwinner sun8i-a83t.
-> Based on sunxi's tree, sunxi/for-next branch.
-> Depends on a patch from Doug Berger that allows to include the "cpu-type"
-> header on assembly files:
-> https://lkml.org/lkml/2018/2/23/1263
-> (applied on Broadcom's tree: https://github.com/Broadcom/stblinux/commits/soc/next)
+> On 04/16/2018 10:59 PM, Alex G. wrote:
+>> On 04/13/2018 11:38 AM, James Morse wrote:
+>>> This assumes a cache-invalidate will clear the error, which I don't
+> think we're
+>>> guaranteed on arm.
+>>> It also destroys any adjacent data, "everyone's happy" includes the
+> thread that
+>>> got a chunk of someone-else's stack frame, I don't think it will be
+> happy for
+>>> very long!
+>>
+>> Hmm, no cache-line (or page) invalidation on arm64? How does
+>> dma_map/unmap_*() work then? You may not guarantee to fix the error, but
+> 
+> There are cache-invalidate instructions, but I don't think 'solving' a
+> RAS error with them is the right thing to do.
 
-And I forgot to say that I will have a look at the CPU0 hotplug but not
-on this series.
+You seem to be putting RAS on a pedestal in a very cloudy and foggy day.
+I admit that I fail to see the specialness of RAS in comparison to other
+errors.
 
-Best regards,
+>> I don't buy into the "let's crash without trying" argument.
+> 
+> Our 'cache writeback granule' may be as large as 2K, so we may have to
+> invalidate up to 2K of data to convince the hardware this address is
+> okay again.
 
-Mylène
+Eureka! OS can invalidate the entire page. 1:1 mapping with the memory
+management data.
 
+> All we've done here is differently-corrupt the data so that it no longer
+> generates a RAS fault, it just gives you the wrong data instead.
+> Cache-invalidation is destructive.
 > 
-> If you have any remarks/questions, let me know.
-> Thank you in advance,
-> Mylène
+> I don't think there is a one-size-fits-all solution here.
+
+Of course there isn't. That's not the issue.
+
+A cache corruption is a special case of a memory access issue, and that,
+we already know how to handle. Triple-fault and cpu-on-fire concerns
+apply wrt returning to the context which triggered the problem. We've
+already figured that out.
+
+There is a lot of opportunity here for using well tested code paths and
+not crashing on first go. Why let firmware make this a problem again?
+
+>>> (this is a side issue for AER though)
+>>
+>> Somebody muddled up AER with these tables, so we now have to worry about
+>> it. :)
 > 
-> Changes from v6:
->     - Correct the commit log on patch 07 according to Sergei Shtylyov's
->     review.
->     - Rename the field "is_sun8i" into "is_a83t".
->     - Add all Tested-by and Reviewed-by from previous version.
+> Eh? I see there is a v2, maybe I'll understand this comment once I read it.
+
+I meant that somebody (the spec writers) decided to put ominous errors
+(PCIe) on the same severity scale with "cpu is on fire" errors.
+
+>>>> How does FFS handle race conditions that can occur when accessing HW
+>>>> concurrently with the OS? I'm told it's the main reasons why BIOS
+>>>> doesn't release unused cores from SMM early.
+>>>
+>>> This is firmware's problem, it depends on whether there is any
+> hardware that is
+>>> shared with the OS. Some hardware can be marked 'secure' in which
+> case only
+>>> firmware can access it, alternatively firmware can trap or just
+> disable the OS's
+>>> access to the shared hardware.
+>>
+>> It's everyone's problem. It's the firmware's responsibility.
 > 
-> Changes from v5:
->     - Remove my patch 01 and use the patch of Doug Berger to be able to
->     include the cpu-type header on assembly files.
->     - Rename smp_init_cntvoff function into secure_cntvoff_init according
->     to Marc Zyngier's review.
->     - According to Chen-Yu and Maxime's reviews, remove the patch that was
->     moving structures. Instead of using an index to retrieve which
->     architecture we are having, use a global variable.
->     - Merge the 2 patches that move assembly code from C to assembly file.
->     - Use a sun8i field instead of sun9i to know on which architecture we
->     are using because many modifications/additions of the code are for
->     sun8i-a83t.
->     - Rework the patch "add is_sun8i field" to add only this field in this
->     patch. The part of the patch that was starting to handle the differences
->     between sun8i-a83t and sun9i-a80 is merged in the patch that adds the
->     support of sun8i-a83t.
->     - Add a new patch that refactor the shmobile code to use the new function
->     secure_cntvoff_init introduced in this series.
+> It depends on the SoC design. If there is no hardware that the OS and
+> firmware both need to access to handle an error then I don't think
+> firmware needs to do this.
 > 
-> Changes from v4:
->     - Rebased my series according to new Chen-Yu series:
->        "ARM: sunxi: Clean and improvements for multi-cluster SMP"
->        https://lkml.org/lkml/2018/3/8/886
->     - Updated my series according to Marc Zyngier's reviews to add CNTVOFF
->     initialization's function into ARM's common part. Thanks to that, other
->     platforms such as Renesa can use this function.
->     - For boot CPU, create a new machine to handle the CNTVOFF initialization
->     using "init_early" callback.
 > 
-> Changes from v3:
->     - Take into account Maxime's reviews:
-> 	- split the first patch into 4 new patches: add sun9i device tree
-> 	parsing, rename some variables, add a83t support and finally,
-> 	add hotplug support.
-> 	- Move the code of previous patch 07 (to disable CPU0 disabling)
-> 	into hotplug support patch (see patch 04)
-> 	- Remove the patch that added PRCM register because it is already
-> 	available. Because of that, update the device tree parsing to use
-> 	"sun8i-a83t-r-ccu".
-> 	- Use a variable to know which SoC we currently have
->     - Take into account Chen-Yu's reviews: create two iounmap functions
->     to release the resources of the device tree parsing.
->     - Take into account Marc's review: Update the code to initialize CNTVOFF
->     register. As there is already assembly code in the driver, I decided
->     to create an assembly file not to mix assembly and C code.
->     For that, I create 3 new patches: move the current assembly code that
->     handles the cluster cache enabling into a file, move the cpu_resume entry
->     in this file and finally, add a new assembly entry to initialize the timer
->     offset for boot CPU and secondary CPUs.
+>>> For example, with the v8.2 RAS Extensions, there are some per-cpu error
+>>> registers. Firmware can disable these for the OS, so that it always
+> reads 0 from
+>>> them. Instead firmware takes the error via FF, reads the registers from
+>>> firmware, and dumps CPER records into the OS's memory.
+>>>
+>>> If there is a shared hardware resource that both the OS and firmware
+> may be
+>>> accessing, yes firmware needs to pull the other CPUs in, but this
+> depends on the
+>>> SoC design, it doesn't necessarily happen.
+>>
+>> The problem with shared resources is just a problem. I've seen systems
+>> where all 100 cores are held up for 300+ ms. In latency-critical
+>> applications reliability drops exponentially. Am I correct in assuming
+>> your answer would be to "hide" more stuff from the OS?
 > 
-> Changes from v2:
->     - Rebased my modifications according to new Chen Yu's patch series
->     that adds SMP support for sun9i-a80 (without MCPM).
->     - Split the device-tree patches into 3 patches for CPUCFG, R_CPUCFG
->     and PRCM registers for more visibility.
->     - The hotplug of CPU0 is currently not working (even after trying what
->     Allwinner's code is doing) so remove the possibility of disabling
->     this CPU. Created a new patch for it.
+> No, I'm not a fan of firmware cycle stealing. If you can design the SoC or
+> firmware so that the 'all CPUs' stuff doesn't need to happen, then you
+> won't get
+> these issues. (I don't design these things, I'm sure they're much more
+> complicated
+> than I think!)
 > 
-> Changes from v1:
->     - Add Chen Yu's patch in my series (see path 01)
->     - Add new compatibles for prcm and cpucfg registers for sun8i-a83t.
->     Create two functions to separate the DT parsing of sun9i-a80 and
->     sun8i-a83t.
->     - Thanks to Maxime's review: order device tree's nodes according
->     to physical addresses, remove unused label and fix registers' sizes.
->     Update the commit log and commit title of my last patch (see
->     patch 05).
+> Because the firmware is SoC-specific, so it only needs to do exactly
+> what is necessary.
+
+Irrespective of the hardware design, there's devicetree, ACPI methods,
+and a few other ways to inform the OS of non-standard bits. They don't
+have the resource sharing problem. I'm confused as to why FFS is used
+when there are concerns about resource conflicts instead of race-free
+alternatives.
+
+>>>> I think the idea of firmware-first is broken. But it's there, it's
+>>>> shipping in FW, so we have to accommodate it in SW.
+>>>
+>>> Part of our different-views here is firmware-first is taking
+> something away from
+>>> you, whereas for me its giving me information that would otherwise be in
+>>> secret-soc-specific registers.
+>>
+>> Under this interpretation, FFS is a band-aid to the problem of "secret"
+>> registers. "Secret" hardware doesn't really fit well into the idea of an
+>> OS [1].
 > 
-> Mylène Josserand (11):
->   ARM: sunxi: smp: Move assembly code into a file
->   ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
->   ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
->   ARM: dts: sun8i: a83t: Add CCI-400 node
->   ARM: smp: Add initialization of CNTVOFF
->   ARM: sunxi: Add initialization of CNTVOFF
->   ARM: sun9i: smp: Rename clusters's power-off
->   ARM: sun9i: smp: Add is_a83t field
->   ARM: sun8i: smp: Add support for A83T
->   ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
->   ARM: shmobile: Convert file to use cntvoff
+> Sorry, I'm being sloppy with my terminology, by secret-soc-specific I
+> mean either Linux can't access them (firmware privilege-level only) or
+> Linux can't reasonably know where these registers are, as they're
+> soc-specific and vary by manufacture.
+
+This is still a software problem. I'm assuming register access can be
+granted to the OS, and I'm also assuming that there exists a non-FFS way
+to describe the registers to the OS.
+
+>>>> And linux can handle a wide subset of MCEs just fine, so the
+>>>> ghes_is_deferrable() logic would, under my argument, agree to pass
+>>>> execution to the actual handlers.
+>>>
+>>> For some classes of error we can't safely get there.
+>>
+>> Optimize for the common case.
 > 
->  arch/arm/boot/dts/sun8i-a83t.dtsi        |  59 ++++++++
->  arch/arm/common/Makefile                 |   1 +
->  arch/arm/common/secure_cntvoff.S         |  31 ++++
->  arch/arm/include/asm/secure_cntvoff.h    |   8 ++
->  arch/arm/mach-shmobile/common.h          |   1 -
->  arch/arm/mach-shmobile/headsmp-apmu.S    |  22 +--
->  arch/arm/mach-shmobile/setup-rcar-gen2.c |   3 +-
->  arch/arm/mach-sunxi/Kconfig              |   2 +-
->  arch/arm/mach-sunxi/Makefile             |   4 +-
->  arch/arm/mach-sunxi/headsmp.S            |  81 +++++++++++
->  arch/arm/mach-sunxi/mc_smp.c             | 239 +++++++++++++++++++------------
->  arch/arm/mach-sunxi/sunxi.c              |  20 ++-
->  12 files changed, 349 insertions(+), 122 deletions(-)
->  create mode 100644 arch/arm/common/secure_cntvoff.S
->  create mode 100644 arch/arm/include/asm/secure_cntvoff.h
->  create mode 100644 arch/arm/mach-sunxi/headsmp.S
-> 
+> At the expense of reliability?
+
+Who suggested to sacrifice reliability?
+
+Alex
