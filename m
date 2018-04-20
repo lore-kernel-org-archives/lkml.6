@@ -1,425 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753957AbeDTHIB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 03:08:01 -0400
-Received: from imail.nibe.se ([193.218.206.193]:58894 "EHLO imail.nibe.se"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753067AbeDTHH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 03:07:59 -0400
-X-IronPort-AV: E=Sophos;i="5.49,300,1520895600";
-   d="scan'208";a="19035312"
-Date: Fri, 20 Apr 2018 09:07:55 +0200
-From: =?iso-8859-1?Q?M=E5ns?= Andersson <mans.andersson@nibe.se>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-        Network Development <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: phy: TLK10X initial driver submission
-Message-ID: <20180420070755.GB110571@ninb0909vm2.ninb0909.nibe.se>
-References: <20180419082816.109338-1-mans.andersson@nibe.se>
- <CANiq72=oPqsCkQ_aaO2cQgMxa_VLzL1yPC7APri6FL5jpxU15g@mail.gmail.com>
+        id S1753744AbeDTHKL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 03:10:11 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:22818 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753067AbeDTHKI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 03:10:08 -0400
+Subject: Re: [PATCHv3 3/8] drm/omap: add support for manually updated displays
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Pavel Machek <pavel@ucw.cz>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@collabora.com>
+References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
+ <20180330171822.25896-4-sebastian.reichel@collabora.co.uk>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <a078d8c3-9e65-cc7b-737a-cbd5cf141f95@ti.com>
+Date: Fri, 20 Apr 2018 10:09:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=oPqsCkQ_aaO2cQgMxa_VLzL1yPC7APri6FL5jpxU15g@mail.gmail.com>
-User-Agent: Mutt/1.7.1 (2016-10-04)
-X-C2ProcessedOrg: 0e72f327-13a8-401d-baac-ca43efdc4f0c
+In-Reply-To: <20180330171822.25896-4-sebastian.reichel@collabora.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 02:24:27PM +0200, Miguel Ojeda wrote:
-> On Thu, Apr 19, 2018 at 10:28 AM, Måns Andersson <mans.andersson@nibe.se> wrote:
-> > From: Mans Andersson <mans.andersson@nibe.se>
-> >
-> > Add suport for the TI TLK105 and TLK106 10/100Mbit ethernet phys.
-> >
-> 
-> Hi Mans,
-> 
-> Some quick notes.
-> 
-> > In addition the TLK10X needs to be removed from DP83848 driver as the
-> > power back off support is added here for this device.
-> >
-> > Datasheet:
-> > http://www.ti.com/lit/gpn/tlk106
-> 
-> Missing signature.
+Hi Sebastian,
 
-Hi Miguel,
+On 30/03/18 20:18, Sebastian Reichel wrote:
+> This adds the required infrastructure for manually
+> updated displays, such as DSI command mode panels.
+> 
+> While those panels often support partial updates
+> we currently always do a full refresh. Display
+> will be refreshed when something calls the dirty
+> callback, such as libdrm's drmModeDirtyFB().
+> 
+> This is currently being implemented for the kernel
+> console and for Xorg. Weston currently does not
+> implement this and is known not to work on manually
+> updated displays.
+> 
+> Tested-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/omapdrm/omap_crtc.c | 107 +++++++++++++++++++++++++++++++++---
+>  drivers/gpu/drm/omapdrm/omap_crtc.h |   1 +
+>  drivers/gpu/drm/omapdrm/omap_fb.c   |  20 +++++++
+>  3 files changed, 120 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdrm/omap_crtc.c
+> index b893985e4efb..1b91bff5bac6 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_crtc.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
+> @@ -51,6 +51,7 @@ struct omap_crtc {
+>  	bool pending;
+>  	wait_queue_head_t pending_wait;
+>  	struct drm_pending_vblank_event *event;
+> +	struct delayed_work update_work;
+>  
+>  	void (*framedone_handler)(void *);
+>  	void *framedone_handler_data;
+> @@ -146,6 +147,25 @@ static void omap_crtc_dss_disconnect(struct omap_drm_private *priv,
+>  static void omap_crtc_dss_start_update(struct omap_drm_private *priv,
+>  				       enum omap_channel channel)
+>  {
+> +	priv->dispc_ops->mgr_enable(priv->dispc, channel, true);
+> +}
+> +
+> +static bool omap_crtc_is_manually_updated(struct drm_crtc *crtc)
+> +{
+> +	struct drm_connector *connector;
+> +	struct drm_connector_list_iter conn_iter;
+> +	bool result = false;
+> +
+> +	drm_connector_list_iter_begin(crtc->dev, &conn_iter);
+> +	drm_for_each_connector_iter(connector, &conn_iter) {
+> +		if (connector->state->crtc != crtc)
+> +			continue;
+> +		result = omap_connector_get_manually_updated(connector);
+> +		break;
+> +	}
+> +	drm_connector_list_iter_end(&conn_iter);
 
-My bad, will fix.
+It would be much nicer if the is-manual flag was somehow conveyed from
+connector/encoder to the crtc when doing modesetting. I don't know how
+or where, so just thinking out loud. However, if we need to do such loop
+as above, I think we should just do it once, perhaps in
+omap_crtc_atomic_enable, and store the value in omap_crtc's private data.
 
-> 
-> > ---
-> >  .../devicetree/bindings/net/ti,tlk10x.txt          |  27 +++
-> >  drivers/net/phy/Kconfig                            |   5 +
-> >  drivers/net/phy/Makefile                           |   1 +
-> >  drivers/net/phy/dp83848.c                          |   3 -
-> >  drivers/net/phy/tlk10x.c                           | 209 +++++++++++++++++++++
-> >  5 files changed, 242 insertions(+), 3 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/net/ti,tlk10x.txt
-> >  create mode 100644 drivers/net/phy/tlk10x.c
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/ti,tlk10x.txt b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
-> > new file mode 100644
-> > index 0000000..371d0d7
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/ti,tlk10x.txt
-> > @@ -0,0 +1,27 @@
-> > +* Texas Instruments - TLK105 / TLK106 ethernet PHYs
-> > +
-> > +Required properties:
-> > +       - reg - The ID number for the phy, usually a small integer
-> > +
-> > +Optional properties:
-> > +       - ti,power-back-off - Power Back Off Level
-> > +               Please refer to data sheet chapter 8.6 and TI Application
-> > +               Note SLLA3228
-> > +               0 - Normal Operation
-> > +               1 - Level 1 (up to 140m cable between TLK link partners)
-> > +               2 - Level 2 (up to 100m cable between TLK link partners)
-> > +               3 - Level 3 (up to 80m cable between TLK link partners)
-> > +
-> > +Default child nodes are standard Ethernet PHY device
-> > +nodes as described in Documentation/devicetree/bindings/net/phy.txt
-> > +
-> > +Example:
-> > +
-> > +       ethernet-phy@0 {
-> > +               reg = <0>;
-> > +               ti,power-back-off = <2>;
-> > +       };
-> > +
-> > +Datasheets and documentation can be found at:
-> > +http://www.ti.com/lit/gpn/tlk106
-> > +http://www.ti.com/lit/an/slla328/slla328.pdf
-> > diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-> > index bdfbabb..c980240 100644
-> > --- a/drivers/net/phy/Kconfig
-> > +++ b/drivers/net/phy/Kconfig
-> > @@ -295,6 +295,11 @@ config DP83867_PHY
-> >         ---help---
-> >           Currently supports the DP83867 PHY.
-> >
-> > +config TLK10X_PHY
-> > +       tristate "Texas Instruments TLK10x PHY"
-> > +       ---help---
-> > +         Supports the TLK105 and TLK106 PHYs.
-> > +
-> >  config FIXED_PHY
-> >         tristate "MDIO Bus/PHY emulation with fixed speed/link PHYs"
-> >         depends on PHYLIB
-> > diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
-> > index 01acbcb..37e4e02 100644
-> > --- a/drivers/net/phy/Makefile
-> > +++ b/drivers/net/phy/Makefile
-> > @@ -79,5 +79,6 @@ obj-$(CONFIG_ROCKCHIP_PHY)    += rockchip.o
-> >  obj-$(CONFIG_SMSC_PHY)         += smsc.o
-> >  obj-$(CONFIG_STE10XP)          += ste10Xp.o
-> >  obj-$(CONFIG_TERANETICS_PHY)   += teranetics.o
-> > +obj-$(CONFIG_TLK10X_PHY)       += tlk10x.o
-> >  obj-$(CONFIG_VITESSE_PHY)      += vitesse.o
-> >  obj-$(CONFIG_XILINX_GMII2RGMII) += xilinx_gmii2rgmii.o
-> > diff --git a/drivers/net/phy/dp83848.c b/drivers/net/phy/dp83848.c
-> > index cd09c3a..435f401 100644
-> > --- a/drivers/net/phy/dp83848.c
-> > +++ b/drivers/net/phy/dp83848.c
-> > @@ -19,7 +19,6 @@
-> >  #define TI_DP83848C_PHY_ID             0x20005ca0
-> >  #define TI_DP83620_PHY_ID              0x20005ce0
-> >  #define NS_DP83848C_PHY_ID             0x20005c90
-> > -#define TLK10X_PHY_ID                  0x2000a210
-> >
-> >  /* Registers */
-> >  #define DP83848_MICR                   0x11 /* MII Interrupt Control Register */
-> > @@ -78,7 +77,6 @@ static struct mdio_device_id __maybe_unused dp83848_tbl[] = {
-> >         { TI_DP83848C_PHY_ID, 0xfffffff0 },
-> >         { NS_DP83848C_PHY_ID, 0xfffffff0 },
-> >         { TI_DP83620_PHY_ID, 0xfffffff0 },
-> > -       { TLK10X_PHY_ID, 0xfffffff0 },
-> >         { }
-> >  };
-> >  MODULE_DEVICE_TABLE(mdio, dp83848_tbl);
-> > @@ -105,7 +103,6 @@ static struct phy_driver dp83848_driver[] = {
-> >         DP83848_PHY_DRIVER(TI_DP83848C_PHY_ID, "TI DP83848C 10/100 Mbps PHY"),
-> >         DP83848_PHY_DRIVER(NS_DP83848C_PHY_ID, "NS DP83848C 10/100 Mbps PHY"),
-> >         DP83848_PHY_DRIVER(TI_DP83620_PHY_ID, "TI DP83620 10/100 Mbps PHY"),
-> > -       DP83848_PHY_DRIVER(TLK10X_PHY_ID, "TI TLK10X 10/100 Mbps PHY"),
-> >  };
-> >  module_phy_driver(dp83848_driver);
-> >
-> > diff --git a/drivers/net/phy/tlk10x.c b/drivers/net/phy/tlk10x.c
-> > new file mode 100644
-> > index 0000000..1efc81e
-> > --- /dev/null
-> > +++ b/drivers/net/phy/tlk10x.c
-> > @@ -0,0 +1,209 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/**
-> > + * Driver for the Texas Instruments TLK105 / TLK106
-> > + *
-> > + * Copyright (C) 2018 NIBE Industrier AB - http://www.nibe.com
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License as published by
-> > + * the Free Software Foundation; either version 2 of the License.
-> > + *
-> > + * This program is distributed in the hope that it will be useful,
-> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > + * GNU General Public License for more details.
-> 
-> Since you are using the SPDX id, please remove the license text (which
-> is actually wrong: it seems you have cut the v2+ version and then
-> removed the last sentence of the first paragraph? :-).
->
+> +
+> +	return result;
+>  }
+>  
+>  /* Called only from the encoder enable/disable and suspend/resume handlers. */
+> @@ -157,12 +177,17 @@ static void omap_crtc_set_enabled(struct drm_crtc *crtc, bool enable)
+>  	enum omap_channel channel = omap_crtc->channel;
+>  	struct omap_irq_wait *wait;
+>  	u32 framedone_irq, vsync_irq;
+> +	bool is_manual = omap_crtc_is_manually_updated(crtc);
+> +	enum omap_display_type type = omap_crtc_output[channel]->output_type;
+>  	int ret;
+>  
+>  	if (WARN_ON(omap_crtc->enabled == enable))
+>  		return;
+>  
+> -	if (omap_crtc_output[channel]->output_type == OMAP_DISPLAY_TYPE_HDMI) {
+> +	if (is_manual)
+> +		omap_irq_enable_framedone(crtc, enable);
+> +
+> +	if (is_manual || type == OMAP_DISPLAY_TYPE_HDMI) {
+>  		priv->dispc_ops->mgr_enable(priv->dispc, channel, enable);
+>  		omap_crtc->enabled = enable;
+>  		return;
 
-Ok.
- 
-> > + */
-> > +
-> > +#include <linux/module.h>
-> > +#include <linux/phy.h>
-> > +#include <linux/of.h>
-> > +
-> > +#define TLK10X_PHY_ID                  0x2000a210
-> > +
-> > +/* Registers */
-> > +#define TLK10X_MICR                    0x11 /* MII Interrupt Control Reg */
-> > +#define TLK10X_MISR                    0x12 /* MII Interrupt Status Reg */
-> > +#define TLK10X_REGCR                   0x0d /* Register Control Register */
-> > +#define TLK10X_ADDAR                   0x0e /* Data Register */
-> > +#define TLK10X_PWRBOCR                 0xae /* Power Backoff Register */
-> > +
-> > +/* MICR Register Fields */
-> > +#define TLK10X_MICR_INT_OE             BIT(0) /* Interrupt Output Enable */
-> > +#define TLK10X_MICR_INTEN              BIT(1) /* Interrupt Enable */
-> > +
-> > +/* MISR Register Fields */
-> > +#define TLK10X_MISR_RHF_INT_EN         BIT(0) /* Receive Error Counter */
-> > +#define TLK10X_MISR_FHF_INT_EN         BIT(1) /* False Carrier Counter */
-> > +#define TLK10X_MISR_ANC_INT_EN         BIT(2) /* Auto-negotiation complete */
-> > +#define TLK10X_MISR_DUP_INT_EN         BIT(3) /* Duplex Status */
-> > +#define TLK10X_MISR_SPD_INT_EN         BIT(4) /* Speed status */
-> > +#define TLK10X_MISR_LINK_INT_EN                BIT(5) /* Link status */
-> > +#define TLK10X_MISR_ED_INT_EN          BIT(6) /* Energy detect */
-> > +#define TLK10X_MISR_LQM_INT_EN         BIT(7) /* Link Quality Monitor */
-> > +
-> > +/* PWRBOCR Register Fields */
-> > +#define TLK10X_PWRBOCR_MASK            0xe0 /* Power Backoff Mask */
-> > +
-> > +#define TLK10X_INT_EN_MASK             \
-> > +       (TLK10X_MISR_ANC_INT_EN |       \
-> > +        TLK10X_MISR_DUP_INT_EN |       \
-> > +        TLK10X_MISR_SPD_INT_EN |       \
-> > +        TLK10X_MISR_LINK_INT_EN)
-> > +
-> > +struct tlk10x_private {
-> > +       int pwrbo_level;
-> > +};
-> > +
-> > +static int tlk10x_read(struct phy_device *phydev, int reg)
-> > +{
-> > +       if (reg & ~0x1f) {
-> 
-> 0x1f or ~0x1f should probably have a #define name.
-> 
+This doesn't look correct, omap_crtc_dss_start_update() already sets the
+enable bit for manual update displays. And you don't want to set the
+enable to false with manual update displays.
 
-That's true, will fix that.
+HDMI handling here is already a special case due to HW issues, so I'd
+rather see the manual update handled separately from the HDMI.
 
-> > +               /* Extended register */
-> > +               phy_write(phydev, TLK10X_REGCR, 0x001F);
-> > +               phy_write(phydev, TLK10X_ADDAR, reg);
-> > +               phy_write(phydev, TLK10X_REGCR, 0x401F);
-> > +               reg = TLK10X_ADDAR;
-> > +       }
-> > +
-> > +       return phy_read(phydev, reg);
-> > +}
-> > +
-> > +static int tlk10x_write(struct phy_device *phydev, int reg, int val)
-> > +{
-> > +       if (reg & ~0x1f) {
-> 
-> Ditto.
-> 
+> @@ -214,7 +239,6 @@ static void omap_crtc_set_enabled(struct drm_crtc *crtc, bool enable)
+>  	}
+>  }
+>  
+> -
+>  static int omap_crtc_dss_enable(struct omap_drm_private *priv,
+>  				enum omap_channel channel)
+>  {
+> @@ -378,6 +402,53 @@ void omap_crtc_framedone_irq(struct drm_crtc *crtc, uint32_t irqstatus)
+>  	wake_up(&omap_crtc->pending_wait);
+>  }
+>  
+> +void omap_crtc_flush(struct drm_crtc *crtc)
+> +{
+> +	struct omap_crtc *omap_crtc = to_omap_crtc(crtc);
+> +
+> +	if (!omap_crtc_is_manually_updated(crtc))
+> +		return;
+> +
+> +	if (!delayed_work_pending(&omap_crtc->update_work))
+> +		schedule_delayed_work(&omap_crtc->update_work, 0);
+> +}
 
-Ok.
+Why delayed work here?
 
-> > +               /* Extended register */
-> > +               phy_write(phydev, TLK10X_REGCR, 0x001F);
-> > +               phy_write(phydev, TLK10X_ADDAR, reg);
-> > +               phy_write(phydev, TLK10X_REGCR, 0x401F);
-> > +               reg = TLK10X_ADDAR;
-> > +       }
-> > +
-> > +       return phy_write(phydev, reg, val);
-> > +}
-> > +
-> > +#ifdef CONFIG_OF_MDIO
-> 
-> Maybe you want the #ifdef inside.
-> 
+It's actually not quite clear to me how manual update displays work with
+DRM...
 
-What's the preferred way by the kernel maintainers? I've seen both solutions
-used but figured this was the most common.
+As far as I see, we have essentially two cases: 1) single buffering,
+where the userspace must set an area in the fb dirty, which then
+triggers the update, 2) multi buffering, which doesn't need fb dirty,
+but just a page flip which triggers the update.
 
-> > +static int tlk10x_of_init(struct phy_device *phydev)
-> > +{
-> > +       struct tlk10x_private *tlk10x = phydev->priv;
-> > +       struct device *dev = &phydev->mdio.dev;
-> > +       struct device_node *of_node = dev->of_node;
-> > +       int ret;
-> > +
-> > +       if (!of_node)
-> > +               return 0;
-> > +
-> > +       ret = of_property_read_u32(of_node, "ti,power-back-off",
-> > +                                  &tlk10x->pwrbo_level);
-> > +       if (ret) {
-> > +               dev_err(dev, "missing ti,power-back-off property");
-> > +               tlk10x->pwrbo_level = 0;
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +#else
-> > +static int tlk10x_of_init(struct phy_device *phydev)
-> > +{
-> > +       return 0;
-> > +}
-> > +#endif /* CONFIG_OF_MDIO */
-> > +
-> > +static int tlk10x_config_init(struct phy_device *phydev)
-> > +{
-> > +       int ret, reg;
-> > +       struct tlk10x_private *tlk10x;
-> > +
-> > +       ret = genphy_config_init(phydev);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       if (!phydev->priv) {
-> > +               tlk10x = devm_kzalloc(&phydev->mdio.dev, sizeof(*tlk10x),
-> > +                                     GFP_KERNEL);
-> > +               if (!tlk10x)
-> > +                       return -ENOMEM;
-> > +
-> > +               phydev->priv = tlk10x;
-> > +               ret = tlk10x_of_init(phydev);
-> > +               if (ret)
-> > +                       return ret;
-> > +       } else {
-> > +               tlk10x = (struct tlk10x_private *)phydev->priv;
-> > +       }
-> > +
-> > +       // Power back off
-> > +       if (tlk10x->pwrbo_level < 0 || tlk10x->pwrbo_level > 3)
-> > +               tlk10x->pwrbo_level = 0;
-> > +       reg = tlk10x_read(phydev, TLK10X_PWRBOCR);
-> > +       reg = ((reg & ~TLK10X_PWRBOCR_MASK)
-> > +               | (tlk10x->pwrbo_level << 6));
-> 
-> Maybe the 6 should have a name, or maybe a bigger macro for this would clarify.
-> 
+In the 2) case (which I think is the optimal case which all the modern
+apps should use), there's no need for delayed work or any work, and the
+code flow should be very similar to the auto-update model.
 
-Will look into this.
+Also, as Daniel mentioned in "drm/omapdrm: Nuke
+omap_framebuffer_get_next_connector()" thread, the dirtying mechanism in
+the series is not valid.
 
-> > +       ret = tlk10x_write(phydev, TLK10X_PWRBOCR, reg);
-> > +       if (ret < 0) {
-> > +               dev_err(&phydev->mdio.dev,
-> > +                       "unable to set power back-off (err=%d)\n", ret);
-> > +               return ret;
-> > +       }
-> > +       dev_info(&phydev->mdio.dev, "power back-off set to level %d\n",
-> > +                tlk10x->pwrbo_level);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int tlk10x_ack_interrupt(struct phy_device *phydev)
-> > +{
-> > +       int err = tlk10x_read(phydev, TLK10X_MISR);
-> 
-> Following the style of the rest of the file, shouldn't this be:
-> 
->     if (err < 0)
->         return err;
-> 
->     return 0;
-> 
-> ?
-> 
+ Tomi
 
-True, will fix that.
-
-> > +
-> > +       return err < 0 ? err : 0;
-> > +}
-> > +
-> > +static int tlk10x_config_intr(struct phy_device *phydev)
-> > +{
-> > +       int control, ret;
-> > +
-> > +       control = tlk10x_read(phydev, TLK10X_MICR);
-> > +       if (control < 0)
-> > +               return control;
-> > +
-> > +       if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
-> > +               control |= TLK10X_MICR_INT_OE;
-> > +               control |= TLK10X_MICR_INTEN;
-> > +
-> > +               ret = tlk10x_write(phydev, TLK10X_MISR, TLK10X_INT_EN_MASK);
-> > +               if (ret < 0)
-> > +                       return ret;
-> > +       } else {
-> > +               control &= ~TLK10X_MICR_INTEN;
-> > +       }
-> > +
-> > +       return tlk10x_write(phydev, TLK10X_MICR, control);
-> > +}
-> > +
-> > +static struct phy_driver tlk10x_driver[] = {
-> > +       {
-> > +               .phy_id         = TLK10X_PHY_ID,
-> > +               .phy_id_mask    = 0xfffffff0,
-> > +               .name           = "TI TLK10X 10/100 Mbps PHY",
-> > +               .features       = PHY_BASIC_FEATURES,
-> > +               .flags          = PHY_HAS_INTERRUPT,
-> > +
-> > +               .config_init    = tlk10x_config_init,
-> > +               .soft_reset     = genphy_soft_reset,
-> > +
-> > +               /* IRQ related */
-> > +               .ack_interrupt  = tlk10x_ack_interrupt,
-> > +               .config_intr    = tlk10x_config_intr,
-> > +
-> > +               .suspend        = genphy_suspend,
-> > +               .resume         = genphy_resume,
-> > +       },
-> > +};
-> > +module_phy_driver(tlk10x_driver);
-> > +
-> > +static struct mdio_device_id __maybe_unused tlk10x_tbl[] = {
-> > +       { TLK10X_PHY_ID, 0xfffffff0 },
-> > +       { }
-> > +};
-> > +MODULE_DEVICE_TABLE(mdio, tlk10x_tbl);
-> > +
-> > +MODULE_DESCRIPTION("Texas Instruments TLK105 / TLK106 PHY driver");
-> > +MODULE_AUTHOR("Mans Andersson <mans.andersson@nibe.se>");
-> > +MODULE_LICENSE("GPL");
-> 
-> Should be "GPL v2".
-> 
-> Cheers,
-> Miguel
-
-Good catch, will update that as well. Thanks for all the input! I will
-get back in a couple of days with an updated patch.
-// Måns
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
