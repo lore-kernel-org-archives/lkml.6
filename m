@@ -1,53 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752762AbeDTX7E (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 19:59:04 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:40571 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752590AbeDTX7D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 19:59:03 -0400
-X-Google-Smtp-Source: AIpwx494W3/Wf1yck/+v0zekH8dPOP5Z1IUw/DH6+j3riT+P8x/XqgPZn6dNBG3HxStZBcISQN4yvJWhfPxMC0JtTliJFcqUeyiO
-MIME-Version: 1.0
-Date: Fri, 20 Apr 2018 16:59:02 -0700
-In-Reply-To: <000000000000d71bf6056a34b628@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ed9844056a507832@google.com>
-Subject: Re: unregister_netdevice: waiting for DEV to become free
-From: syzbot <syzbot+2dfb68e639f0621b19fb@syzkaller.appspotmail.com>
-To: ddstreet@ieee.org, dvyukov@google.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        id S1753048AbeDTX7P (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 19:59:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47202 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752590AbeDTX7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 19:59:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EC4C21742
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Cc: jack@suse.cz, bart.vanassche@wdc.com, ming.lei@redhat.com,
+        rjw@rjwysocki.net, mguzik@redhat.com, linux-pm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH 0/3] fs: minor fs thaw fixes and adjustments
+Date: Fri, 20 Apr 2018 16:59:01 -0700
+Message-Id: <20180420235904.27496-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.13.2
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found reproducer for the following crash on  
-https://github.com/google/kmsan.git/master commit
-48c6a2b0ab1b752451cdc40b5392471ed1a2a329 (Mon Apr 16 08:42:26 2018 +0000)
-mm/kmsan: fix origin calculation in kmsan_internal_check_memory
-syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=2dfb68e639f0621b19fb
+Here's a few minor fs thaw fixes and adjustments I ran accross
+as I started to refresh my development for to use freeze_fs on
+suspend/hibernation [0]. These are just prep commits for the real
+work, I'm still reviewing feedback and adjusting the code for
+that.
 
-So far this crash happened 180 times on  
-https://github.com/google/kmsan.git/master, net-next, upstream.
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4936564132020224
-syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5817131010621440
-Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=6313498770407424
-Kernel config:  
-https://syzkaller.appspot.com/x/.config?id=6627248707860932248
-compiler: clang version 7.0.0 (trunk 329391)
+I've tested the patches with generic/085 on xfs and found no regressions.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2dfb68e639f0621b19fb@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed.
+Luis R. Rodriguez (3):
+  fs: move documentation for thaw_super() where appropriate
+  fs: make thaw_super_locked() really just a helper
+  fs: fix corner case race on freeze_bdev() when sb disappears
 
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-device bridge_slave_1 left promiscuous mode
-bridge0: port 2(bridge_slave_1) entered disabled state
-device bridge_slave_0 left promiscuous mode
-bridge0: port 1(bridge_slave_0) entered disabled state
-unregister_netdevice: waiting for lo to become free. Usage count = 3
+ fs/block_dev.c |  4 +++-
+ fs/super.c     | 39 ++++++++++++++++++++++++++-------------
+ 2 files changed, 29 insertions(+), 14 deletions(-)
+
+-- 
+2.16.3
