@@ -1,234 +1,370 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754667AbeDTLZ0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 07:25:26 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:34500 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754601AbeDTLZY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:25:24 -0400
-X-Google-Smtp-Source: AIpwx4//4n4D4bdKwjhhm5TK5pOp28+jINJCkXRt+RG+wMxqgCqVbz5rjNV14fjG57Ghjodv8Afitw==
-Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
- DRM driver
-To: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        jgross@suse.com, Artem Mygaiev <Artem_Mygaiev@epam.com>,
-        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
-        airlied@linux.ie,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
-        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
-        boris.ostrovsky@oracle.com
-References: <20180329131931.29957-1-andr2000@gmail.com>
- <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
- <20180416192905.GA18096@downor-Z87X-UD5H>
- <20180417075928.GT31310@phenom.ffwll.local>
- <20180417205744.GA15930@downor-Z87X-UD5H>
- <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
- <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
- <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
- <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
- <20180420071914.GG31310@phenom.ffwll.local>
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
-Date: Fri, 20 Apr 2018 14:25:20 +0300
+        id S1754723AbeDTLZy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 07:25:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40065 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754601AbeDTLZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 07:25:52 -0400
+Subject: Re: [PATCH 2/3] xen netback: add fault injection facility
+To: Stanislav Kinsburskii <staskins@amazon.com>
+Cc: jakub.kicinski@netronome.com, hpa@zytor.com, mcroce@redhat.com,
+        tglx@linutronix.de, ggarcia@abra.uab.cat, daniel@iogearbox.net,
+        x86@kernel.org, mingo@redhat.com, xen-devel@lists.xenproject.org,
+        axboe@kernel.dk, konrad.wilk@oracle.com, amir.jer.levy@intel.com,
+        paul.durrant@citrix.com, stefanha@redhat.com, dsa@cumulusnetworks.com,
+        boris.ostrovsky@oracle.com, linux-block@vger.kernel.org,
+        wei.liu2@citrix.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, davem@davemloft.net, dwmw@amazon.co.uk,
+        roger.pau@citrix.com
+References: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+ <20180420104731.17823.97617.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <e33c055c-5a5a-2329-7a2e-faf715bb95fc@suse.com>
+Date: Fri, 20 Apr 2018 13:25:46 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180420071914.GG31310@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20180420104731.17823.97617.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/2018 10:19 AM, Daniel Vetter wrote:
-> On Wed, Apr 18, 2018 at 11:10:58AM +0100, Roger Pau Monné wrote:
->> On Wed, Apr 18, 2018 at 11:01:12AM +0300, Oleksandr Andrushchenko wrote:
->>> On 04/18/2018 10:35 AM, Roger Pau Monné wrote:
->>>> On Wed, Apr 18, 2018 at 09:38:39AM +0300, Oleksandr Andrushchenko wrote:
->>>>> On 04/17/2018 11:57 PM, Dongwon Kim wrote:
->>>>>> On Tue, Apr 17, 2018 at 09:59:28AM +0200, Daniel Vetter wrote:
->>>>>>> On Mon, Apr 16, 2018 at 12:29:05PM -0700, Dongwon Kim wrote:
->>>>> 3.2 Backend exports dma-buf to xen-front
->>>>>
->>>>> In this case Dom0 pages are shared with DomU. As before, DomU can only write
->>>>> to these pages, not any other page from Dom0, so it can be still considered
->>>>> safe.
->>>>> But, the following must be considered (highlighted in xen-front's Kernel
->>>>> documentation):
->>>>>    - If guest domain dies then pages/grants received from the backend cannot
->>>>>      be claimed back - think of it as memory lost to Dom0 (won't be used for
->>>>> any
->>>>>      other guest)
->>>>>    - Misbehaving guest may send too many requests to the backend exhausting
->>>>>      its grant references and memory (consider this from security POV). As the
->>>>>      backend runs in the trusted domain we also assume that it is trusted as
->>>>> well,
->>>>>      e.g. must take measures to prevent DDoS attacks.
->>>> I cannot parse the above sentence:
->>>>
->>>> "As the backend runs in the trusted domain we also assume that it is
->>>> trusted as well, e.g. must take measures to prevent DDoS attacks."
->>>>
->>>> What's the relation between being trusted and protecting from DoS
->>>> attacks?
->>> I mean that we trust the backend that it can prevent Dom0
->>> from crashing in case DomU's frontend misbehaves, e.g.
->>> if the frontend sends too many memory requests etc.
->>>> In any case, all? PV protocols are implemented with the frontend
->>>> sharing pages to the backend, and I think there's a reason why this
->>>> model is used, and it should continue to be used.
->>> This is the first use-case above. But there are real-world
->>> use-cases (embedded in my case) when physically contiguous memory
->>> needs to be shared, one of the possible ways to achieve this is
->>> to share contiguous memory from Dom0 to DomU (the second use-case above)
->>>> Having to add logic in the backend to prevent such attacks means
->>>> that:
->>>>
->>>>    - We need more code in the backend, which increases complexity and
->>>>      chances of bugs.
->>>>    - Such code/logic could be wrong, thus allowing DoS.
->>> You can live without this code at all, but this is then up to
->>> backend which may make Dom0 down because of DomU's frontend doing evil
->>> things
->> IMO we should design protocols that do not allow such attacks instead
->> of having to defend against them.
->>
->>>>> 4. xen-front/backend/xen-zcopy synchronization
->>>>>
->>>>> 4.1. As I already said in 2) all the inter VM communication happens between
->>>>> xen-front and the backend, xen-zcopy is NOT involved in that.
->>>>> When xen-front wants to destroy a display buffer (dumb/dma-buf) it issues a
->>>>> XENDISPL_OP_DBUF_DESTROY command (opposite to XENDISPL_OP_DBUF_CREATE).
->>>>> This call is synchronous, so xen-front expects that backend does free the
->>>>> buffer pages on return.
->>>>>
->>>>> 4.2. Backend, on XENDISPL_OP_DBUF_DESTROY:
->>>>>     - closes all dumb handles/fd's of the buffer according to [3]
->>>>>     - issues DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE IOCTL to xen-zcopy to make
->>>>> sure
->>>>>       the buffer is freed (think of it as it waits for dma-buf->release
->>>>> callback)
->>>> So this zcopy thing keeps some kind of track of the memory usage? Why
->>>> can't the user-space backend keep track of the buffer usage?
->>> Because there is no dma-buf UAPI which allows to track the buffer life cycle
->>> (e.g. wait until dma-buf's .release callback is called)
->>>>>     - replies to xen-front that the buffer can be destroyed.
->>>>> This way deletion of the buffer happens synchronously on both Dom0 and DomU
->>>>> sides. In case if DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE returns with time-out
->>>>> error
->>>>> (BTW, wait time is a parameter of this IOCTL), Xen will defer grant
->>>>> reference
->>>>> removal and will retry later until those are free.
->>>>>
->>>>> Hope this helps understand how buffers are synchronously deleted in case
->>>>> of xen-zcopy with a single protocol command.
->>>>>
->>>>> I think the above logic can also be re-used by the hyper-dmabuf driver with
->>>>> some additional work:
->>>>>
->>>>> 1. xen-zcopy can be split into 2 parts and extend:
->>>>> 1.1. Xen gntdev driver [4], [5] to allow creating dma-buf from grefs and
->>>>> vise versa,
->>>> I don't know much about the dma-buf implementation in Linux, but
->>>> gntdev is a user-space device, and AFAICT user-space applications
->>>> don't have any notion of dma buffers. How are such buffers useful for
->>>> user-space? Why can't this just be called memory?
->>> A dma-buf is seen by user-space as a file descriptor and you can
->>> pass it to different drivers then. For example, you can share a buffer
->>> used by a display driver for scanout with a GPU, to compose a picture
->>> into it:
->>> 1. User-space (US) allocates a display buffer from display driver
->>> 2. US asks display driver to export the dma-buf which backs up that buffer,
->>> US gets buffer's fd: dma_buf_fd
->>> 3. US asks GPU driver to import a buffer and provides it with dma_buf_fd
->>> 4. GPU renders contents into display buffer (dma_buf_fd)
->> After speaking with Oleksandr on IRC, I think the main usage of the
->> gntdev extension is to:
->>
->> 1. Create a dma-buf from a set of grant references.
->> 2. Share dma-buf and get a list of grant references.
->>
->> I think this set of operations could be broken into:
->>
->> 1.1 Map grant references into user-space using the gntdev.
->> 1.2 Create a dma-buf out of a set of user-space virtual addresses.
->>
->> 2.1 Map a dma-buf into user-space.
->> 2.2 Get grefs out of the user-space addresses where the dma-buf is
->>      mapped.
->>
->> So it seems like what's actually missing is a way to:
->>
->>   - Create a dma-buf from a list of user-space virtual addresses.
->>   - Allow to map a dma-buf into user-space, so it can then be used with
->>     the gntdev.
->>
->> I think this is generic enough that it could be implemented by a
->> device not tied to Xen. AFAICT the hyper_dma guys also wanted
->> something similar to this.
-> You can't just wrap random userspace memory into a dma-buf. We've just had
-> this discussion with kvm/qemu folks, who proposed just that, and after a
-> bit of discussion they'll now try to have a driver which just wraps a
-> memfd into a dma-buf.
-So, we have to decide either we introduce a new driver
-(say, under drivers/xen/xen-dma-buf) or extend the existing
-gntdev/balloon to support dma-buf use-cases.
+On 20/04/18 12:47, Stanislav Kinsburskii wrote:
+> This patch adds wrapper helpers around generic Xen fault inject facility.
+> The major reason is to keep all the module fault injection directories
+> in a dedicated subdirectory instead of Xen fault inject root.
+> 
+> IOW, when using these helpers, per-device and named by device name fault
+> injection control directories will appear under the following directory:
+> - /sys/kernel/debug/xen/fault_inject/xen-netback/
+> instead of:
+> - /sys/kernel/debug/xen/fault_inject/
+> 
+> Signed-off-by: Stanislav Kinsburskii <staskins@amazon.com>
+> CC: Wei Liu <wei.liu2@citrix.com>
+> CC: Paul Durrant <paul.durrant@citrix.com>
+> CC: "David S. Miller" <davem@davemloft.net>
+> CC: Matteo Croce <mcroce@redhat.com>
+> CC: Stefan Hajnoczi <stefanha@redhat.com>
+> CC: Daniel Borkmann <daniel@iogearbox.net>
+> CC: Gerard Garcia <ggarcia@deic.uab.cat>
+> CC: David Ahern <dsa@cumulusnetworks.com>
+> CC: Juergen Gross <jgross@suse.com>
+> CC: Amir Levy <amir.jer.levy@intel.com>
+> CC: Jakub Kicinski <jakub.kicinski@netronome.com>
+> CC: linux-kernel@vger.kernel.org
+> CC: netdev@vger.kernel.org
+> CC: xen-devel@lists.xenproject.org
+> CC: Stanislav Kinsburskii <staskins@amazon.com>
+> CC: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>  drivers/net/Kconfig                  |    8 ++
+>  drivers/net/xen-netback/Makefile     |    1 
+>  drivers/net/xen-netback/common.h     |    3 +
+>  drivers/net/xen-netback/netback.c    |    3 +
+>  drivers/net/xen-netback/netback_fi.c |  119 ++++++++++++++++++++++++++++++++++
+>  drivers/net/xen-netback/netback_fi.h |   35 ++++++++++
+>  drivers/net/xen-netback/xenbus.c     |    6 ++
+>  7 files changed, 175 insertions(+)
+>  create mode 100644 drivers/net/xen-netback/netback_fi.c
+>  create mode 100644 drivers/net/xen-netback/netback_fi.h
+> 
+> diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+> index 8918466..5cc9acd 100644
+> --- a/drivers/net/Kconfig
+> +++ b/drivers/net/Kconfig
+> @@ -465,6 +465,14 @@ config XEN_NETDEV_BACKEND
+>  	  compile this driver as a module, chose M here: the module
+>  	  will be called xen-netback.
+>  
+> +config XEN_NETDEV_BACKEND_FAULT_INJECTION
+> +	  bool "Xen net-device backend driver fault injection"
+> +	  depends on XEN_NETDEV_BACKEND
+> +	  depends on XEN_FAULT_INJECTION
+> +	  default n
+> +	  help
+> +	    Allow to inject errors to Xen backend network driver
+> +
+>  config VMXNET3
+>  	tristate "VMware VMXNET3 ethernet driver"
+>  	depends on PCI && INET
+> diff --git a/drivers/net/xen-netback/Makefile b/drivers/net/xen-netback/Makefile
+> index d49798a..28abcdc 100644
+> --- a/drivers/net/xen-netback/Makefile
+> +++ b/drivers/net/xen-netback/Makefile
+> @@ -1,3 +1,4 @@
+>  obj-$(CONFIG_XEN_NETDEV_BACKEND) := xen-netback.o
+>  
+>  xen-netback-y := netback.o xenbus.o interface.o hash.o rx.o
+> +xen-netback-$(CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION) += netback_fi.o
+> diff --git a/drivers/net/xen-netback/common.h b/drivers/net/xen-netback/common.h
+> index a46a1e9..30d676d 100644
+> --- a/drivers/net/xen-netback/common.h
+> +++ b/drivers/net/xen-netback/common.h
+> @@ -286,6 +286,9 @@ struct xenvif {
+>  
+>  #ifdef CONFIG_DEBUG_FS
+>  	struct dentry *xenvif_dbg_root;
+> +#ifdef CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION
+> +	void *fi_info;
+> +#endif
+>  #endif
+>  
+>  	struct xen_netif_ctrl_back_ring ctrl;
+> diff --git a/drivers/net/xen-netback/netback.c b/drivers/net/xen-netback/netback.c
+> index a27daa2..ecc416e 100644
+> --- a/drivers/net/xen-netback/netback.c
+> +++ b/drivers/net/xen-netback/netback.c
+> @@ -33,6 +33,7 @@
+>   */
+>  
+>  #include "common.h"
+> +#include "netback_fi.h"
+>  
+>  #include <linux/kthread.h>
+>  #include <linux/if_vlan.h>
+> @@ -1649,6 +1650,7 @@ static int __init netback_init(void)
+>  			PTR_ERR(xen_netback_dbg_root));
+>  #endif /* CONFIG_DEBUG_FS */
+>  
+> +	(void) xen_netbk_fi_init();
 
-Can anybody from Xen community express their preference here?
+This is the only usage of xen_netbk_fi_init(). Why don't you make it
+return void from the beginning?
 
-And I hope that there is no objection to have it all in the kernel,
-without going to user-space with VAs and back (device-X driver)
+>  	return 0;
+>  
+>  failed_init:
+> @@ -1659,6 +1661,7 @@ module_init(netback_init);
+>  
+>  static void __exit netback_fini(void)
+>  {
+> +	xen_netbk_fi_fini();
+>  #ifdef CONFIG_DEBUG_FS
+>  	if (!IS_ERR_OR_NULL(xen_netback_dbg_root))
+>  		debugfs_remove_recursive(xen_netback_dbg_root);
+> diff --git a/drivers/net/xen-netback/netback_fi.c b/drivers/net/xen-netback/netback_fi.c
+> new file mode 100644
+> index 0000000..47541d0
+> --- /dev/null
+> +++ b/drivers/net/xen-netback/netback_fi.c
+> @@ -0,0 +1,119 @@
+> +/*
+> + * Fault injection interface for Xen backend network driver
+> + *
+> + * Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License version 2
+> + * as published by the Free Software Foundation; or, when distributed
+> + * separately from the Linux kernel or incorporated into other
+> + * software packages, subject to the following license:
+
+SPDX again.
+
+> + *
+> + * Permission is hereby granted, free of charge, to any person obtaining a copy
+> + * of this source file (the "Software"), to deal in the Software without
+> + * restriction, including without limitation the rights to use, copy, modify,
+> + * merge, publish, distribute, sublicense, and/or sell copies of the Software,
+> + * and to permit persons to whom the Software is furnished to do so, subject to
+> + * the following conditions:
+> + *
+> + * The above copyright notice and this permission notice shall be included in
+> + * all copies or substantial portions of the Software.
+> + *
+> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+> + * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> + * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> + * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+> + * IN THE SOFTWARE.
+> + */
+> +
+> +#include "common.h"
+> +
+> +#include <linux/debugfs.h>
+> +
+> +#include <xen/fault_inject.h>
+> +#include "netback_fi.h"
+> +
+> +static struct dentry *vif_fi_dir;
+> +
+> +static const char *xenvif_fi_names[] = {
+> +};
+> +
+> +struct xenvif_fi {
+> +	struct dentry *dir;
+> +	struct xen_fi *faults[XENVIF_FI_MAX];
+> +};
+> +
+> +int xen_netbk_fi_init(void)
+> +{
+> +	vif_fi_dir = xen_fi_dir_create("xen-netback");
+> +	if (!vif_fi_dir)
+> +		return -ENOMEM;
+> +	return 0;
+> +}
+> +
+> +void xen_netbk_fi_fini(void)
+> +{
+> +	debugfs_remove_recursive(vif_fi_dir);
+> +}
+> +
+> +void xenvif_fi_fini(struct xenvif *vif)
+> +{
+> +	struct xenvif_fi *vfi = vif->fi_info;
+> +	int fi;
+> +
+> +	if (!vif->fi_info)
+> +		return;
+> +
+> +	vif->fi_info = NULL;
+> +
+> +	for (fi = 0; fi < XENVIF_FI_MAX; fi++)
+> +		xen_fi_del(vfi->faults[fi]);
+> +	debugfs_remove_recursive(vfi->dir);
+> +	kfree(vfi);
+> +}
+> +
+> +int xenvif_fi_init(struct xenvif *vif)
+> +{
+> +	struct dentry *parent;
+> +	struct xenvif_fi *vfi;
+> +	int fi, err = -ENOMEM;
+> +
+> +	parent = vif_fi_dir;
+> +	if (!parent)
+> +		return -ENOMEM;
+> +
+> +	vfi = kmalloc(sizeof(*vfi), GFP_KERNEL);
+> +	if (!vfi)
+> +		return -ENOMEM;
+> +
+> +	vfi->dir = debugfs_create_dir(vif->dev->name, parent);
+> +	if (!vfi->dir)
+> +		goto err_dir;
+> +
+> +	for (fi = 0; fi < XENVIF_FI_MAX; fi++) {
+> +		vfi->faults[fi] = xen_fi_dir_add(vfi->dir,
+> +				xenvif_fi_names[fi]);
+
+How does this work? xenvif_fi_names[] is an empty array and this is the
+only reference to it. Who is allocating the memory for that array?
+
+> +		if (!vfi->faults[fi])
+> +			goto err_fault;
+> +	}
+> +
+> +	vif->fi_info = vfi;
+> +	return 0;
+> +
+> +err_fault:
+> +	for (; fi > 0; fi--)
+> +		xen_fi_del(vfi->faults[fi]);
+
+What about vfi->faults[0] ?
+
+> +	debugfs_remove_recursive(vfi->dir);
+> +err_dir:
+> +	kfree(vfi);
+> +	return err;
+> +}
+> +
+> +bool xenvif_should_fail(struct xenvif *vif, xenvif_fi_t type)
+> +{
+> +	struct xenvif_fi *vfi = vif->fi_info;
+> +
+> +	return xen_should_fail(vfi->faults[type]);
+> +}
+> diff --git a/drivers/net/xen-netback/netback_fi.h b/drivers/net/xen-netback/netback_fi.h
+> new file mode 100644
+> index 0000000..895c6a6
+> --- /dev/null
+> +++ b/drivers/net/xen-netback/netback_fi.h
+> @@ -0,0 +1,35 @@
+> +#ifndef _XEN_NETBACK_FI_H
+> +#define _XEN_NETBACK_FI_H
+> +
+> +struct xen_fi;
+
+Why?
+
+> +
+> +typedef enum {
+> +	XENVIF_FI_MAX
+> +} xenvif_fi_t;
+
+It would have helped if you had added some users of the stuff you are
+adding here. This enum just looks weird this way.
+
+> +
+> +#ifdef CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION
+> +
+> +int xen_netbk_fi_init(void);
+> +void xen_netbk_fi_fini(void);
+> +
+> +void xenvif_fi_fini(struct xenvif *vif);
+> +int xenvif_fi_init(struct xenvif *vif);
+> +
+> +bool xenvif_should_fail(struct xenvif *vif, xenvif_fi_t type);
+> +
+> +#else
+> +
+> +static inline int xen_netbk_fi_init(void) { return 0; }
+> +static inline void xen_netbk_fi_fini(void) { }
+> +
+> +static inline void xenvif_fi_fini(struct xenvif *vif) { }
+> +static inline int xenvif_fi_init(struct xenvif *vif) { return 0; }
+> +
+> +static inline bool xenvif_should_fail(struct xenvif *vif, xenvif_fi_t type)
+> +{
+> +	return false;
+> +}
+> +
+> +#endif /* CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION */
+> +
+> +#endif /* _XEN_NETBACK_FI_H */
+> diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
+> index e1aef25..c775ee0 100644
+> --- a/drivers/net/xen-netback/xenbus.c
+> +++ b/drivers/net/xen-netback/xenbus.c
+> @@ -21,6 +21,7 @@
+>  #include "common.h"
+>  #include <linux/vmalloc.h>
+>  #include <linux/rtnetlink.h>
+> +#include "netback_fi.h"
+>  
+>  struct backend_info {
+>  	struct xenbus_device *dev;
+> @@ -502,6 +503,7 @@ static void backend_disconnect(struct backend_info *be)
+>  #ifdef CONFIG_DEBUG_FS
+>  		xenvif_debugfs_delif(vif);
+>  #endif /* CONFIG_DEBUG_FS */
+> +		xenvif_fi_fini(vif);
+>  		xenvif_disconnect_data(vif);
+>  
+>  		/* At this point some of the handlers may still be active
+> @@ -1024,6 +1026,10 @@ static void connect(struct backend_info *be)
+>  		}
+>  	}
+>  
+> +	err = xenvif_fi_init(be->vif);
+> +	if (err)
+> +		goto err;
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>  	xenvif_debugfs_addif(be->vif);
+>  #endif /* CONFIG_DEBUG_FS */
 >
-> Yes i915 and amdgpu and a few other drivers do have facilities to wrap
-> userspace memory into a gpu buffer object. But we don't allow those to be
-> exported to other drivers, because the core mm magic needed to make this
-> all work is way too tricky, even within the context of just 1 driver. And
-> dma-buf does not have the required callbacks and semantics to make it
-> work.
-> -Daniel
->
->>> Finally, this is indeed some memory, but a bit more [1]
->>>> Also, (with my FreeBSD maintainer hat) how is this going to translate
->>>> to other OSes? So far the operations performed by the gntdev device
->>>> are mostly OS-agnostic because this just map/unmap memory, and in fact
->>>> they are implemented by Linux and FreeBSD.
->>> At the moment I can only see Linux implementation and it seems
->>> to be perfectly ok as we do not change Xen's APIs etc. and only
->>> use the existing ones (remember, we only extend gntdev/balloon
->>> drivers, all the changes in the Linux kernel)
->>> As the second note I can also think that we do not extend gntdev/balloon
->>> drivers and have re-worked xen-zcopy driver be a separate entity,
->>> say drivers/xen/dma-buf
->>>>> implement "wait" ioctl (wait for dma-buf->release): currently these are
->>>>> DRM_XEN_ZCOPY_DUMB_FROM_REFS, DRM_XEN_ZCOPY_DUMB_TO_REFS and
->>>>> DRM_XEN_ZCOPY_DUMB_WAIT_FREE
->>>>> 1.2. Xen balloon driver [6] to allow allocating contiguous buffers (not
->>>>> needed
->>>>> by current hyper-dmabuf, but is a must for xen-zcopy use-cases)
->>>> I think this needs clarifying. In which memory space do you need those
->>>> regions to be contiguous?
->>> Use-case: Dom0 has a HW driver which only works with contig memory
->>> and I want DomU to be able to directly write into that memory, thus
->>> implementing zero copying
->>>> Do they need to be contiguous in host physical memory, or guest
->>>> physical memory?
->>> Host
->>>> If it's in guest memory space, isn't there any generic interface that
->>>> you can use?
->>>>
->>>> If it's in host physical memory space, why do you need this buffer to
->>>> be contiguous in host physical memory space? The IOMMU should hide all
->>>> this.
->>> There are drivers/HW which can only work with contig memory and
->>> if it is backed by an IOMMU then still it has to be contig in IPA
->>> space (real device doesn't know that it is actually IPA contig, not PA)
->> What's IPA contig?
->>
->> Thanks, Roger.
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+Without any user of that infrastructure I really can't say whether I
+want this.
+
+
+Juergen
