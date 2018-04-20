@@ -1,32 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524235633; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524235631; cv=none;
         d=google.com; s=arc-20160816;
-        b=sId4JL+1o2AZYjgLd91sT2bmrS+mMFFBSdr6cpoqZhFNZB0dGMY2uIQh/X/eCrweVJ
-         oRzLwsYwUCzFGERSw/H84fN6TVv+mngb1+ky5O8gVYhbVxIeXXKa4OP6eIR5C15LqxAz
-         l37btfTIHkYZCXJrYBOn9SV5eG391Ao78D3p2KIxLIjxZ2Sj1IJKbdOoPa9DDDyCm0lU
-         a/jGdj60H1qbRH/caoRN4ri3p8XT/vYxC5SjeYQzn3mZ1NbKQByynfpfsrwF5Xf3eAN6
-         IuAzj3FPDjJvjIpVpQM+9r+iQGuUOxdih/HuU0zyHOa7cixz3FFxqsQrbR1O6lb/aO80
-         q+rQ==
+        b=yDol960S6XwoRhSFY/gksYhnBmTmmTxPE9XMUDPeMLvAo7LX4nZxw/bneNi7zFEvzn
+         yUX5XyfCPOT+pVTIj9YGoIbXlhho3+ldE87Df5K/HSP1PVALFfIngs1auOipVTqTr3TH
+         /++x3MKI2AFzsy2CtOkcgarTPSj9lBadSopMK8vrcm48oWcqfXp1+eDIKj9XQfe15bsY
+         XVVPIDPGC/0IxjwRHpO4HdbsvkPDOHBQ+yhB51IZsApwuqKDJWHuPooZYLOcFPqPd+94
+         f1e1e/GFsTLeEhY1WgMF9sznfQnW8lqrXr0+Vz0NPmRLi9z3rUCDgnv+cQo6gJnTvLjc
+         LT0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:references:in-reply-to:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=psFyy1Vm8Oe+6Qe8QqYlrR+5398njAdvtAF3IZ3Iomo=;
-        b=ngtN+MAqIifpqhAppwRakzKEjyXFoBRhTH9DdcBw7rKStTkaZCwF3WMsoGm8NktvKm
-         gemX+mgzKgqXzQQEZwmgKzGHipvyg7ecRZLAaXbPL0QNoGSwl4KlU7eg4kIZzkMUpYr7
-         N/zt1M0bZv6vMXT7F/8JZPh/DL2K9Bo/fKioL4Z1Yl4D2S6wUoye+Lku9b8w2+I2Nt1k
-         445OMUrF5uL5iPp8zHWl5gq5PmgNpxxdcunGSb5DM0iYaaDTIXOuRS0Foz/qFykJpnXy
-         TFBnzjp+pnSLI+VqWpUzgbruWhNFSgpJDGan3N+mGUCxy/c4030l0pO3IMD7Emnm9uTz
-         ivcQ==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=cKLqaioCn68SkR/RKsa9TUc3eioBgTB5cuxjcyT4QJI=;
+        b=UIOWUU4XzGbHQzE1ARrpJYf355yCHxrJtSypy6qUd85xmb/MYHiiSO+vU9k0j9RXNO
+         OZEPuo5yA4uKY9ThP9uImCRCPYquXFxkq2DWHp3eLhU9ev/ps6bcZ5b2hBCs9u5ET43z
+         1IxgMutxx3qHXaVUk711l9VGC6XT0yT87V3jZBQdHDlyyPaek+TrzWn+X5wYf6uUlRKS
+         KOgntdfr9LT5Qe5yrpGLaSwXswJEbn85rXvsJqFzyRkN/QVNzWpWglZ4n5xJCBcnl2c6
+         bqRpNITzVwEaQbxsOJYq8c+jg6B7Ezjnu29XTLJanRZOSoo0rLYbzXwBgtus41UaJnD/
+         dl2w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=J1frY0D7;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=B0Ew6ozf;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=J1frY0D7;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=B0Ew6ozf;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx4+a5fKuB4iIoMs0fiYuvHbLHGJNQZlgC7AVjeKzx9vkiLEARVlDgHl/CU95FxJ4c8R+YfLLeA==
+X-Google-Smtp-Source: AIpwx4/p42bwPuiFvpYLQ+P6NE2r134lBnQUaP67oI9eTyVJ3WSVOfbL0+BM9Om9I6qbvC/xDl0Cnw==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Alexander Potapenko <glider@google.com>,
@@ -86,213 +85,49 @@ Cc: Kostya Serebryany <kcc@google.com>,
 	Kees Cook <keescook@google.com>,
 	Jann Horn <jannh@google.com>,
 	Mark Brand <markbrand@google.com>
-Subject: [RFC PATCH v3 07/15] khwasan: add tag related helper functions
-Date: Fri, 20 Apr 2018 16:46:45 +0200
-Message-Id: <88f97e510801a331bf8a8bfd088cb5115c1281d6.1524235387.git.andreyknvl@google.com>
+Subject: [RFC PATCH v3 06/15] khwasan, arm64: fix up fault handling logic
+Date: Fri, 20 Apr 2018 16:46:44 +0200
+Message-Id: <4aaaba7c1788004c1cb654787f005efbe47eca6a.1524235387.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 In-Reply-To: <cover.1524235387.git.andreyknvl@google.com>
 References: <cover.1524235387.git.andreyknvl@google.com>
-MIME-Version: 1.0
 In-Reply-To: <cover.1524235387.git.andreyknvl@google.com>
 References: <cover.1524235387.git.andreyknvl@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598276903895689442?=
-X-GMAIL-MSGID: =?utf-8?q?1598276903895689442?=
+X-GMAIL-THRID: =?utf-8?q?1598276900868330624?=
+X-GMAIL-MSGID: =?utf-8?q?1598276900868330624?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit adds a few helper functions, that are meant to be used to
-work with tags embedded in the top byte of kernel pointers: to set, to
-get or to reset (set to 0xff) the top byte.
+show_pte in arm64 fault handling relies on the fact that the top byte of
+a kernel pointer is 0xff, which isn't always the case with KHWASAN enabled.
+Reset the top byte.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/mm/kasan_init.c |  2 ++
- include/linux/kasan.h      | 23 ++++++++++++++++
- mm/kasan/kasan.h           | 55 ++++++++++++++++++++++++++++++++++++++
- mm/kasan/khwasan.c         | 48 +++++++++++++++++++++++++++++++++
- 4 files changed, 128 insertions(+)
+ arch/arm64/mm/fault.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index 85b21292ee68..8ef9b1bc6d81 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -250,6 +250,8 @@ void __init kasan_init(void)
- 	memset(kasan_zero_page, KASAN_SHADOW_INIT, PAGE_SIZE);
- 	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 4165485e8b6e..e834fe76f5d2 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -32,6 +32,7 @@
+ #include <linux/perf_event.h>
+ #include <linux/preempt.h>
+ #include <linux/hugetlb.h>
++#include <linux/kasan.h>
  
-+	khwasan_init();
-+
- 	/* At this point kasan is fully initialized. Enable error messages */
- 	init_task.kasan_depth = 0;
- 	pr_info("KernelAddressSanitizer initialized\n");
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index 336385baf926..d7624b879d86 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -155,6 +155,29 @@ static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
+ #include <asm/bug.h>
+ #include <asm/cmpxchg.h>
+@@ -134,6 +135,8 @@ void show_pte(unsigned long addr)
+ 	pgd_t *pgdp;
+ 	pgd_t pgd;
  
- #define KASAN_SHADOW_INIT 0xFF
- 
-+void khwasan_init(void);
++	addr = (unsigned long)khwasan_reset_tag((void *)addr);
 +
-+void *khwasan_set_tag(const void *addr, u8 tag);
-+u8 khwasan_get_tag(const void *addr);
-+void *khwasan_reset_tag(const void *ptr);
-+
-+#else /* CONFIG_KASAN_HW */
-+
-+static inline void khwasan_init(void) { }
-+
-+static inline void *khwasan_set_tag(const void *addr, u8 tag)
-+{
-+	return (void *)addr;
-+}
-+static inline u8 khwasan_get_tag(const void *addr)
-+{
-+	return 0xFF;
-+}
-+static inline void *khwasan_reset_tag(const void *ptr)
-+{
-+	return (void *)ptr;
-+}
-+
- #endif /* CONFIG_KASAN_HW */
- 
- #endif /* LINUX_KASAN_H */
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index 5091a433f266..cd51ae9d8149 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -8,6 +8,10 @@
- #define KASAN_SHADOW_SCALE_SIZE (1UL << KASAN_SHADOW_SCALE_SHIFT)
- #define KASAN_SHADOW_MASK       (KASAN_SHADOW_SCALE_SIZE - 1)
- 
-+#define KHWASAN_TAG_KERNEL	0xFF /* native kernel pointers tag */
-+#define KHWASAN_TAG_INVALID	0xFE /* inaccessible memory tag */
-+#define KHWASAN_TAG_MAX		0xFD /* maximum value for random tags */
-+
- #define KASAN_FREE_PAGE         0xFF  /* page was freed */
- #define KASAN_PAGE_REDZONE      0xFE  /* redzone for kmalloc_large allocations */
- #define KASAN_KMALLOC_REDZONE   0xFC  /* redzone inside slub object */
-@@ -135,6 +139,57 @@ static inline void quarantine_reduce(void) { }
- static inline void quarantine_remove_cache(struct kmem_cache *cache) { }
- #endif
- 
-+#ifdef CONFIG_KASAN_HW
-+
-+#define KHWASAN_TAG_SHIFT 56
-+#define KHWASAN_TAG_MASK (0xFFUL << KHWASAN_TAG_SHIFT)
-+
-+u8 random_tag(void);
-+
-+static inline void *set_tag(const void *addr, u8 tag)
-+{
-+	u64 a = (u64)addr;
-+
-+	a &= ~KHWASAN_TAG_MASK;
-+	a |= ((u64)tag << KHWASAN_TAG_SHIFT);
-+
-+	return (void *)a;
-+}
-+
-+static inline u8 get_tag(const void *addr)
-+{
-+	return (u8)((u64)addr >> KHWASAN_TAG_SHIFT);
-+}
-+
-+static inline void *reset_tag(const void *addr)
-+{
-+	return set_tag(addr, KHWASAN_TAG_KERNEL);
-+}
-+
-+#else /* CONFIG_KASAN_HW */
-+
-+static inline u8 random_tag(void)
-+{
-+	return 0;
-+}
-+
-+static inline void *set_tag(const void *addr, u8 tag)
-+{
-+	return (void *)addr;
-+}
-+
-+static inline u8 get_tag(const void *addr)
-+{
-+	return 0;
-+}
-+
-+static inline void *reset_tag(const void *addr)
-+{
-+	return (void *)addr;
-+}
-+
-+#endif /* CONFIG_KASAN_HW */
-+
- /*
-  * Exported functions for interfaces called from assembly or from generated
-  * code. Declarations here to avoid warning about missing declarations.
-diff --git a/mm/kasan/khwasan.c b/mm/kasan/khwasan.c
-index e2c3a7f7fd1f..4e253c1e4d35 100644
---- a/mm/kasan/khwasan.c
-+++ b/mm/kasan/khwasan.c
-@@ -38,6 +38,54 @@
- #include "kasan.h"
- #include "../slab.h"
- 
-+static DEFINE_PER_CPU(u32, prng_state);
-+
-+void khwasan_init(void)
-+{
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		per_cpu(prng_state, cpu) = get_random_u32();
-+	}
-+}
-+
-+/*
-+ * If a preemption happens between this_cpu_read and this_cpu_write, the only
-+ * side effect is that we'll give a few allocated in different contexts objects
-+ * the same tag. Since KHWASAN is meant to be used a probabilistic bug-detection
-+ * debug feature, this doesn’t have significant negative impact.
-+ *
-+ * Ideally the tags use strong randomness to prevent any attempts to predict
-+ * them during explicit exploit attempts. But strong randomness is expensive,
-+ * and we did an intentional trade-off to use a PRNG. This non-atomic RMW
-+ * sequence has in fact positive effect, since interrupts that randomly skew
-+ * PRNG at unpredictable points do only good.
-+ */
-+u8 random_tag(void)
-+{
-+	u32 state = this_cpu_read(prng_state);
-+
-+	state = 1664525 * state + 1013904223;
-+	this_cpu_write(prng_state, state);
-+
-+	return (u8)(state % (KHWASAN_TAG_MAX + 1));
-+}
-+
-+void *khwasan_set_tag(const void *addr, u8 tag)
-+{
-+	return set_tag(addr, tag);
-+}
-+
-+u8 khwasan_get_tag(const void *addr)
-+{
-+	return get_tag(addr);
-+}
-+
-+void *khwasan_reset_tag(const void *addr)
-+{
-+	return reset_tag(addr);
-+}
-+
- void check_memory_region(unsigned long addr, size_t size, bool write,
- 				unsigned long ret_ip)
- {
+ 	if (addr < TASK_SIZE) {
+ 		/* TTBR0 */
+ 		mm = current->active_mm;
 -- 
 2.17.0.484.g0c8726318c-goog
