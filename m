@@ -1,72 +1,82 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AB8JxZqOIjbaJrLY50TFd2dpc9yS/iLakYHid2PB0YLaI8y0USXWh4lg5Dac1lpircdGTne/CiG8
-ARC-Seal: i=1; a=rsa-sha256; t=1524849261; cv=none;
+Return-Path: <jorge.sanjuan@codethink.co.uk>
+X-Google-Smtp-Source: AIpwx4/JuBf70gwsV6vZb43yo3PoGJDjElpcpckkihp3iiJFKMB4vL+7tx41AdyuQum5dMhjL2us
+ARC-Seal: i=1; a=rsa-sha256; t=1524243819; cv=none;
         d=google.com; s=arc-20160816;
-        b=dwdQ1peH0gYVLm2JuRsHh0sBKlSvBfxuCMt/X48ukoVsFElgeVCGrHJ/1mPaOi9rSn
-         RSBA5T96SrJcRFfeH6j0zQmzBWZHwze0xRSY4yOfckydEGFHI3UIJ0yOrH8UVb335TSG
-         sevOQ8Pi7eIgn7f95l5C5M4m4FxHtKXi0jEiZXBnaJj9JQT9ORlg4L61/+F5Ue0bP33e
-         4jjuCcnGZJA0QKklYoS7eEil7HrxTY7APIHe9Zt0jYTv29i9alPKalAIyx+FVRlzHcn4
-         XeUpZHhpQ+DJPd19L6GWiW/X4cP8QylU2ouFYPvlWVYD+ERzshfwEVz0a11LWxpUZt74
-         NCZQ==
+        b=YhjOvA8qhctAkt/Kh6IPj0kAnNRNLSL3/6yheb2K4E93eRTiwcUZaX6RVJt2Ly5me1
+         iRWQGlM+V5SvW1uSRT25IBqzrVWMNnyZ803lZkJv3rgWMOybr/X4zLqGR3KuCMCottf/
+         8gvujEVwpMZ5okH+mXwMu+UtaasZlnvGTqSoUB6A69vJ4U1UfC8Tzin3KradOORTtQFW
+         vu5mDEzZbKsRekkM/+BrG5AcMRDK4CZseKOIjKQJp+4Qjcsyu1O35w6D0cJhPNKtFbXt
+         jqhH1g/UFwJsxI9mOIBcIb69uNcs0NIZ04E/ylT6Xxap2Onga6mZwWt3cuce3faJEUnr
+         MkIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-transfer-encoding:mime-version
-         :references:in-reply-to:from:subject:cc:to:message-id:date
-         :arc-authentication-results;
-        bh=64YsFfQMoKqdyp8F6bDg7Lpy9BCXPRG9AZ4nGx7d/24=;
-        b=ew+z722lwbzdt38WamC9vna83EQQ9x54U23jzzANyMpcHuaW0WTO3Amdd6bfeqWYzz
-         C0IgumK54ms+WJOsdEFEbds+bulQmHpjs6iVSduHEOqsDVVPVFiMMzQLlF7TYu+NjFF3
-         P9CXK2z9/pEuUbjvNDBQCg8CuIdv9wofz8FPisuelRsQWn5aeGJ2FuxK3opzsbqrfspN
-         bWxqKxGfeNHV9layoVkEOGj66EuQizLC4OSSJke4CqH658NiuzvcN1wy01C1ASeG2wvS
-         xsTiVt0aKeeINkp+nQdOHvvRa9gr5WsBTGVbECPGEEHec1q4fsG38fQPfO202KS/VCsM
-         RvHg==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=n2gUFmcN7Wk8GZcS/ha9XuM/ObH3P/FLHavXMY+svVU=;
+        b=uzaLN7Ss4LtfcxzALoMyYaZC3OBMlQSjZJH2uhZVdfnki+we4W3DDR4bY59bBtQ8Ke
+         hI+glBR6XqygTgGDCLdQl3NorYrO1TMK9rvCbMWSWPWPGTRYgk9L+ILS2AS2yZ/yJYWc
+         dZmJnCmugfdAn11yKhysGtMrL9mfRt7hekdcIJJduS9ZoGD8Q2JfUKFFXpozlsbHKk3T
+         4Kn6/vqvbTB5NKz2kBnCGuAhmNVqfKMDDJnNM23QCfs5gyRf4zKTXjmaMEhiVhvxo39I
+         KpqElPzxEt/eJdf/55ADA2Lnzt79SSzf+jo3Zevj3IsytqpfKKWH+FPEqdBP3TbnjurZ
+         a2pA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
+       spf=pass (google.com: domain of jorge.sanjuan@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=jorge.sanjuan@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758606AbeD0ROE (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 27 Apr 2018 13:14:04 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:55024 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758271AbeD0ROD (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 27 Apr 2018 13:14:03 -0400
-Date: Fri, 27 Apr 2018 13:14:01 -0400 (EDT)
-Message-Id: <20180427.131401.2013176564896918298.davem@davemloft.net>
-To: anders.roxell@linaro.org
-Cc: shuah@kernel.org, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selftests: net: add in_netns.sh
- TEST_GEN_PROGS_EXTENDED
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180425213206.7531-1-anders.roxell@linaro.org>
-References: <20180425.132513.1786379382285267245.davem@davemloft.net>
-        <20180425213206.7531-1-anders.roxell@linaro.org>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       spf=pass (google.com: domain of jorge.sanjuan@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=jorge.sanjuan@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+From: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+To: tiwai@suse.com
+Cc: alsa-devel@alsa-project.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Subject: [PATCH 0/4] ALSA: usb: UAC3 new features.
+Date: Fri, 20 Apr 2018 18:03:23 +0100
+Message-Id: <20180420170327.31569-1-jorge.sanjuan@codethink.co.uk>
+X-Mailer: git-send-email 2.11.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598667778719810638?=
-X-GMAIL-MSGID: =?utf-8?q?1598920339590638470?=
+X-GMAIL-THRID: =?utf-8?q?1598285487756615401?=
+X-GMAIL-MSGID: =?utf-8?q?1598285487756615401?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Wed, 25 Apr 2018 23:32:06 +0200
+Now that the UAC3 patch [1] has made it to linux-next I have some extra
+features to make a UAC3 device fully work in Linux. Including Jack 
+insertion control that I have put on top of this other patch [2] for 
+UAC2. Also adding support for the UAC3 Mixer Unit which is most likely
+to appear in most headset type devices.
 
-> Script in_netns.sh is a utility function and not its own test so it
-> shouldn't be part of the TEST_PROGS. The in_netns.sh get used by
-> run_afpackettests.
-> To install in_netns.sh without being added to the main run_kselftest.sh
-> script use the TEST_GEN_PROGS_EXTENDED variable.
-> 
-> Fixes: 5ff9c1a3dd92 ("selftests: net: add in_netns.sh to TEST_PROGS")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
-> 
-> respin against the 'net' tree.
+UAC3 devices also require to have a Basic Audio Device (BADD) in a separate 
+config for which both Ruslan Bilovol and myself have submited different 
+approaches[3][4] but I don't know what the final merge will be. Once there 
+is official support for BADD, we'll need to test it with an actual UAC3 
+device to confirm it all wokrs.
 
-Applied, thank you.
+All this features are tested with an actual UAC3 device that is still in
+development. For this patch series, only the legacy config (#1. UAC1/UAC2)
+and the UAC3 config have been tested. The BADD config is only tested using
+and updated verison of [4].
+
+[1]: https://patchwork.kernel.org/patch/10298179/
+[2]: https://patchwork.kernel.org/patch/10305847/
+[3]: https://patchwork.kernel.org/patch/10340851/
+[4]: https://www.spinics.net/lists/alsa-devel/msg71617.html
+
+Based on linux-next tag: next-20180420
+
+Jorge Sanjuan (3):
+  ALSA: usb-audio: UAC3. Add support for mixer unit.
+  ALSA: usb-audio: Use Class Specific EP for UAC3 devices.
+  ALSA: usb-audio: UAC3 Add support for connector insertion.
+
+Michael Drake (1):
+  ALSA: usb-audio: ADC3: Fix channel mapping conversion for ADC3.
+
+ include/linux/usb/audio-v2.h   |   7 ++
+ include/linux/usb/audio-v3.h   |  14 ++++
+ include/uapi/linux/usb/audio.h |  13 ++-
+ sound/usb/mixer.c              | 175 ++++++++++++++++++++++++++++++++++++-----
+ sound/usb/stream.c             |  19 ++++-
+ 5 files changed, 204 insertions(+), 24 deletions(-)
+
+-- 
+2.11.0
