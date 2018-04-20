@@ -1,111 +1,219 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4107594-1524176149-2-3508580700276348060
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524176148; b=LhYSM3aRtLgNiJ2rks/sQdpEUq7nA9J21096YvvxOht6k4VJXL
-    VIfPGp6Vcx/hCPXq4WTBkJsb17dIA3v+GkXs23qXvRpTtpGHMC7Clszm0MLFM0bq
-    CxT+DtyIBAwLOP3M+s5YHnHyp5KYk3//plVozSoNYNZHAovrpNsLaOV4PIYr1HL1
-    PBQELNwvMnw2GeX3CBm50cg5IRpX3yvL3gpgL8wKgqJqdeS2ZPIVVRe6Mv7zEnHZ
-    9BRuoxi3hcUYI3V+J6/nNyoNm2eIkvba3xfNrBfoAvy3JEqgqCFfj9MFPzHrEIB9
-    GukwPi9AtW2dCX/A9TnCHQYL+SiQ5qWGu82A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1524176148; bh=IsMMnQylCbP/N5oR+TzhI/j6e7qoQabBqope01ruNV
-    M=; b=VVxOfsHCGB0OazmamMFbbnh50Xpo3E1npVtSTt9h5FBNKG5W6SWd79hlEP
-    +gFxky1wv+tqZqcA50hpHFfMDos5AmYmine+FbGwDsOr8e7yzGYgkd5O583rlUBM
-    ujSZWcVji8HpwBAbwIegyuRBmsLustD764krbS3ymt9GMOI0hCFEQ9FCQgUCMphr
-    wo+Yvl0pg8Hnd15Un4R6ZnsSXzT8oSjemhlyPuFuopQFk19nRYdDJS6jW8n1LElg
-    k1yvG1HwTQ16/41lgjpYJjYB+PR2Dkv6GhKPWIgyE1w1rX6mGvwH4pP3ToZQv2an
-    Y244PfOnVTo1STF0/UOo72uj4GQw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BHlBkXao x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FgvLuJfV;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BHlBkXao x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=FgvLuJfV;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLJoOzgvI0jYsTtzVIBlMByaDw3jcxr3K/cDobq3Yqi75wTRCsrFl5xhwMlzhp75/LH9aNHyORn+aLJK8g4avQFYzsADVosSwZrXRxXcd7cHJA/E88n0
-    7U+jRA+w6c2t0vGsitNHbVfcHsUL20a6Uh537tvudbqv9mjaolwgYNCPUUcm3qlA4glEubhcppabSz4GioyIGyI+Nd70+NT3A5otvDJ0/scnKEWRME5HYBtf
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=TIvwQ2_Y7WIA:10 a=Kd1tUaAdevIA:10 a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8
-    a=YNktkTzv_Wf3_YVv_6gA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=ST-jHhOKWsTCqRlWije3:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753794AbeDSWP2 (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 18:15:28 -0400
-Received: from mail-ot0-f174.google.com ([74.125.82.174]:46825 "EHLO
-        mail-ot0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753786AbeDSWP1 (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 19 Apr 2018 18:15:27 -0400
-X-Google-Smtp-Source: AIpwx4+ZjcPNn/rphsTg/HuTjgPZON/39dDys7C2XXjOda1RW0DkbfEcq13gc4VXiW7+JN2h4Vpw6YmC21DXCGWLKtE=
+Return-Path: <daelyong.jeong@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1524210057; cv=none;
+        d=google.com; s=arc-20160816;
+        b=j0rSYte7WyTP8T/96pqGaTbtTsxXWiWfBDyhYF/DnfLWgT1fXf+jOBHHrTBDe1n9La
+         MLhkFVo2YRfAhI3KrBpMjDmcvteuzIvlg1e/cPN/gVr32qdeW6HA0EcoIe7R6omctddp
+         Kgamc4n0Us6UzZaEpxWwpNDfI9ToEIyziRKGp/h+46I5bTFldkKNmh2li++BRmvNp8l6
+         G0EchQUClYOAaNgO6U3u9ik1NicQkBdGDL7wLlN9v9MURcMQJOqR0Ax+niHTXnebtCDg
+         VVAN0WLm197R8ZGLsz3ywXrsHK4dP8DK1bfMjgNaWpbEQigng/OVcpHg3ppU1gASyq7e
+         qcbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature
+         :arc-authentication-results;
+        bh=RqB8thb3hFAxWE3j1EbMLVtXWHysXAErc/RrFLzRGAE=;
+        b=rf22aZJLjDE1s4yYfqJf2xW3Gr2DCjbZpAaK7nQYyYEb9Kk5is3WSworUBD4xFY56e
+         lJvZh3e4gkmbU7A6w3B733Jyl/JTU+dzLSEjqJYfr5p2DAyaxg07T8tCZ1d49BRqIV5s
+         jxqpAKjrqMcHFhYqDM2ROI4Ra9bEUANDUjL0kpo4mq8X+vqTQ3NWch0slyOWiq+k7Qxe
+         aY0JzW7dcUfSbSSBa/i4HHU6JJHo2sxqI2BlkGcut4oNsC0Hj9e13gL/bXbkLLtCMyxH
+         VLHGb2G098AvStnsbm7CNLU6v+in6uvtMv9PDSIjEsWhm7i5/Za28iHOnHw9pqy1Duiy
+         tsug==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZhwW4a/4;
+       spf=pass (google.com: domain of daelyong.jeong@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=daelyong.jeong@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ZhwW4a/4;
+       spf=pass (google.com: domain of daelyong.jeong@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=daelyong.jeong@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AIpwx4/wVl6oNAHuasCl+HC6sPAtJATBc0DRdY40TBA4xYO4J433x+gojeOmRrnw9CWIzRkk7Txv+piXfJeDxv6Oi6o=
 MIME-Version: 1.0
-In-Reply-To: <20180416153502.11814-1-stefan@agner.ch>
-References: <20180416153502.11814-1-stefan@agner.ch>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 19 Apr 2018 19:15:26 -0300
-Message-ID: <CAOMZO5C9GxqVJWB18j7JQ+3D93eL1r_PG5woxmOc=8cZRdVX=w@mail.gmail.com>
-Subject: Re: [PATCH] serial: imx: fix cached UCR2 read on software reset
-To: Stefan Agner <stefan@agner.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?=
-        <u.kleine-koenig@pengutronix.de>, Jiri Slaby <jslaby@suse.com>,
-        linux-serial@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+From: daelyong jeong <daelyong.jeong@gmail.com>
+Date: Fri, 20 Apr 2018 16:40:56 +0900
+Message-ID: <CAARE==e6obTMLBeo3t2oJuwwtv3zfei7sUhREJwDcqUEGFPdAg@mail.gmail.com>
+Subject: [PATCH] tty: Fix data race in tty_insert_flip_string_fixed_flag()
+To: Greg KH <gregkh@linuxfoundation.org>, jslaby@suse.com,
+	LKML <linux-kernel@vger.kernel.org>
+Cc: Byoungyoung Lee <lifeasageek@gmail.com>, Kyungtae Kim <kt0755@gmail.com>, basavesh@purdue.edu
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598249520396476716?=
+X-GMAIL-MSGID: =?utf-8?q?1598250085141735476?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 16, 2018 at 12:35 PM, Stefan Agner <stefan@agner.ch> wrote:
-> To reset the UART the SRST needs be cleared (low active). According
-> to the documentation the bit will remain active for 4 module clocks
-> until it is cleared (set to 1).
->
-> Hence the real register need to be read in case the cached register
-> indcates that the SRST bit is zero.
+tty_insert_flip_string_fixed_flag() copies chars to the buffer indicated
+by th->used and updates tb->used.
+But it is possible that tty_insert_flip_string_fixed_flag() is executed
+concurrently and tb->used is updated improperly.
+It leads slab-out-of-bound write in tty_insert_flip_string_fixed_flag or
+slab-out-of-bounds read in flush_to_ldisc.
 
-s/indcates/indicates
+BUG: KASAN: slab-out-of-bounds in
+tty_insert_flip_string_fixed_flag+0xb5/0x130
+drivers/tty/tty_buffer.c:316 at addr ffff880114fcc121
+Write of size 1792 by task syz-executor0/30017
+CPU: 1 PID: 30017 Comm: syz-executor0 Not tainted 4.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
+ 0000000000000000 ffff88011638f888 ffffffff81694cc3 ffff88007d802140
+ ffff880114fcb300 ffff880114fcc300 ffff880114fcb300 ffff88011638f8b0
+ ffffffff8130075c ffff88011638f940 ffff88007d802140 ffff880194fcc121
+Call Trace:
+ [<ffffffff81694cc3>] __dump_stack lib/dump_stack.c:15 [inline]
+ [<ffffffff81694cc3>] dump_stack+0xb3/0x110 lib/dump_stack.c:51
+ [<ffffffff8130075c>] kasan_object_err+0x1c/0x70 mm/kasan/report.c:156
+ [<ffffffff813009f7>] print_address_description mm/kasan/report.c:194 [inline]
+ [<ffffffff813009f7>] kasan_report_error+0x1f7/0x4e0 mm/kasan/report.c:283
+ [<ffffffff81301076>] kasan_report+0x36/0x40 mm/kasan/report.c:303
+ [<ffffffff812ff9ce>] check_memory_region_inline mm/kasan/kasan.c:292 [inline]
+ [<ffffffff812ff9ce>] check_memory_region+0x13e/0x1a0 mm/kasan/kasan.c:299
+ [<ffffffff812ffea7>] memcpy+0x37/0x50 mm/kasan/kasan.c:335
+ [<ffffffff817f19f5>] tty_insert_flip_string_fixed_flag+0xb5/0x130
+drivers/tty/tty_buffer.c:316
+ [<ffffffff817f4d6f>] tty_insert_flip_string
+include/linux/tty_flip.h:35 [inline]
+ [<ffffffff817f4d6f>] pty_write+0x7f/0xc0 drivers/tty/pty.c:115
+ [<ffffffff817f83c4>] n_hdlc_send_frames+0x1d4/0x3b0 drivers/tty/n_hdlc.c:419
+ [<ffffffff817f8613>] n_hdlc_tty_wakeup+0x73/0xa0 drivers/tty/n_hdlc.c:496
+ [<ffffffff817dea32>] tty_wakeup+0x92/0xb0 drivers/tty/tty_io.c:601
+ [<ffffffff817e06c6>] __start_tty.part.26+0x66/0x70 drivers/tty/tty_io.c:1018
+ [<ffffffff817e5114>] __start_tty+0x34/0x40 drivers/tty/tty_io.c:1013
+ [<ffffffff817efbb6>] n_tty_ioctl_helper+0x146/0x1e0
+drivers/tty/tty_ioctl.c:1138
+ [<ffffffff817f9443>] n_hdlc_tty_ioctl+0xb3/0x2b0 drivers/tty/n_hdlc.c:794
+ [<ffffffff817e4415>] tty_ioctl+0xa85/0x16d0 drivers/tty/tty_io.c:2992
+ [<ffffffff8133500e>] vfs_ioctl fs/ioctl.c:43 [inline]
+ [<ffffffff8133500e>] do_vfs_ioctl+0x13e/0xba0 fs/ioctl.c:679
+ [<ffffffff81335aff>] SYSC_ioctl fs/ioctl.c:694 [inline]
+ [<ffffffff81335aff>] SyS_ioctl+0x8f/0xc0 fs/ioctl.c:685
+ [<ffffffff8230de3c>] entry_SYSCALL_64_fastpath+0x1f/0xbd
 
-> This bug lead to wrong baudrate because the baud rate register got
-> restored before reset completed in imx_flush_buffer.
->
-> Fixes: 3a0ab62f43de ("serial: imx: implement shadow registers for UCRx and UFCR")
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+Call sequences are as follows.
+CPU0                                    CPU1
+n_tty_ioctl_helper                      n_tty_ioctl_helper
+__start_tty                             tty_send_xchar
+tty_wakeup                              pty_write
+n_hdlc_tty_wakeup                       tty_insert_flip_string
+n_hdlc_send_frames                      tty_insert_flip_string_fixed_flag
+pty_write
+tty_insert_flip_string
+tty_insert_flip_string_fixed_flag
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Acquire tty->atomic_write_lock by calling tty_write_lock() before
+__start_tty() since __start_tty() can sends frames.
+
+Signed-off-by: Daelyong Jeong <daelyong.jeong@gmail.com>
+---
+Rationale:
+- Since tty_wakeup() called by __start_tty() sends frames, call
+  tty_write_lock() before __start_tty().
+- Since tty_write_lock() might sleep, locate tty_write_lock() before
+  spin_lock_irq(&tty->flow_lock).
+- Since wake_up_interruptible_poll() is called by both tty_write_unlock()
+  and __start_tty(), Prevent calling wake_up_interruptible_poll() twice
+  by adding the wakeup flag to tty_write_unlock()
+
+---
+ drivers/tty/tty_io.c    | 16 +++++++++-------
+ drivers/tty/tty_ioctl.c |  5 +++++
+ include/linux/tty.h     |  2 ++
+ 3 files changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 63114ea..41f83bd 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -873,13 +873,15 @@ static ssize_t tty_read(struct file *file, char
+__user *buf, size_t count,
+  return i;
+ }
+
+-static void tty_write_unlock(struct tty_struct *tty)
++void tty_write_unlock(struct tty_struct *tty, int wakeup)
+ {
+  mutex_unlock(&tty->atomic_write_lock);
+- wake_up_interruptible_poll(&tty->write_wait, EPOLLOUT);
++ if (wakeup) {
++ wake_up_interruptible_poll(&tty->write_wait, EPOLLOUT);
++ }
+ }
+
+-static int tty_write_lock(struct tty_struct *tty, int ndelay)
++int tty_write_lock(struct tty_struct *tty, int ndelay)
+ {
+  if (!mutex_trylock(&tty->atomic_write_lock)) {
+  if (ndelay)
+@@ -973,7 +975,7 @@ static inline ssize_t do_tty_write(
+  ret = written;
+  }
+ out:
+- tty_write_unlock(tty);
++ tty_write_unlock(tty, 1);
+  return ret;
+ }
+
+@@ -997,7 +999,7 @@ void tty_write_message(struct tty_struct *tty, char *msg)
+  if (tty->ops->write && tty->count > 0)
+  tty->ops->write(tty, msg, strlen(msg));
+  tty_unlock(tty);
+- tty_write_unlock(tty);
++ tty_write_unlock(tty, 1);
+  }
+  return;
+ }
+@@ -1092,7 +1094,7 @@ int tty_send_xchar(struct tty_struct *tty, char ch)
+  if (was_stopped)
+  stop_tty(tty);
+  up_read(&tty->termios_rwsem);
+- tty_write_unlock(tty);
++ tty_write_unlock(tty, 1);
+  return 0;
+ }
+
+@@ -2395,7 +2397,7 @@ static int send_break(struct tty_struct *tty,
+unsigned int duration)
+  msleep_interruptible(duration);
+  retval = tty->ops->break_ctl(tty, 0);
+ out:
+- tty_write_unlock(tty);
++ tty_write_unlock(tty, 1);
+  if (signal_pending(current))
+  retval = -EINTR;
+  }
+diff --git a/drivers/tty/tty_ioctl.c b/drivers/tty/tty_ioctl.c
+index d9b561d..a54ab91 100644
+--- a/drivers/tty/tty_ioctl.c
++++ b/drivers/tty/tty_ioctl.c
+@@ -911,12 +911,17 @@ int n_tty_ioctl_helper(struct tty_struct *tty,
+struct file *file,
+  spin_unlock_irq(&tty->flow_lock);
+  break;
+  case TCOON:
++ if (tty_write_lock(tty, 0) < 0)
++ return -ERESTARTSYS;
++
+  spin_lock_irq(&tty->flow_lock);
+  if (tty->flow_stopped) {
+  tty->flow_stopped = 0;
+  __start_tty(tty);
+  }
+  spin_unlock_irq(&tty->flow_lock);
++
++ tty_write_unlock(tty, 0);
+  break;
+  case TCIOFF:
+  if (STOP_CHAR(tty) != __DISABLED_CHAR)
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index 47f8af2..5bdf928 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -458,6 +458,8 @@ static inline struct tty_struct
+*tty_kref_get(struct tty_struct *tty)
+  return tty;
+ }
+
++extern void tty_write_unlock(struct tty_struct *tty, int wakeup);
++extern int tty_write_lock(struct tty_struct *tty, int ndelay);
+ extern const char *tty_driver_name(const struct tty_struct *tty);
+ extern void tty_wait_until_sent(struct tty_struct *tty, long timeout);
+ extern int __tty_check_change(struct tty_struct *tty, int sig);
