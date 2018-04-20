@@ -1,47 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754309AbeDTI6D (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:58:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60642 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754264AbeDTI6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:58:02 -0400
-Date: Fri, 20 Apr 2018 10:57:57 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, borntraeger@de.ibm.com, pmorel@linux.vnet.ibm.com,
-        pasic@linux.vnet.ibm.com, pbonzini@redhat.com, rkrcmar@redhat.com
-Subject: Re: [PATCH] KVM: s390: reset crypto attributes for all vcpus
-Message-ID: <20180420105757.506c4421.cohuck@redhat.com>
-In-Reply-To: <1524172432-26211-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1524172432-26211-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1754395AbeDTI6e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:58:34 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:41955 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754368AbeDTI6a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 04:58:30 -0400
+X-Google-Smtp-Source: AIpwx49AsMPp0khzJAgESwjr+LytekNIo1BYiprTbyUQrHU8j4C50sM8+h9n5BVtvkYJYiQFscH37A==
+Date: Fri, 20 Apr 2018 09:58:26 +0100
+From: Lee Jones <lee.jones@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/4] regulator: bd9571mwv: Add support for DDR backup
+ mode
+Message-ID: <20180420085826.4omlf2rrwuno3mtj@dell>
+References: <1524057484-25350-1-git-send-email-geert+renesas@glider.be>
+ <20180420074914.vl4rer5zdeldfzb3@dell>
+ <CAMuHMdWeROfJNvUtfooN8gqA+nTRXhVLvQFpc-xiqUbG9XgcmA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWeROfJNvUtfooN8gqA+nTRXhVLvQFpc-xiqUbG9XgcmA@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018 17:13:52 -0400
-Tony Krowiak <akrowiak@linux.vnet.ibm.com> wrote:
-
-> Introduces a new function to reset the crypto attributes for all
-> vcpus whether they are running or not. Each vcpu in KVM will
-> be removed from SIE prior to resetting the crypto attributes in its
-> SIE state description. After all vcpus have had their crypto attributes
-> reset the vcpus will be restored to SIE.
+On Fri, 20 Apr 2018, Geert Uytterhoeven wrote:
+> On Fri, Apr 20, 2018 at 9:49 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> > On Wed, 18 Apr 2018, Geert Uytterhoeven wrote:
+> >> The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
+> >> development boards supports DDR Backup Power, which means that the DDR
+> >> power rails can be kept powered while the main SoC is powered down.
+> >
+> > Should this set be applied together, or can the MFD patches be applied
+> > on their own, without the Regulator patch?
 > 
-> This function is incorporated into the kvm_s390_vm_set_crypto(kvm)
-> function to fix a reported issue whereby the crypto key wrapping
-> attributes could potentially get out of synch for running vcpus.
+> The regulator patch depends on the MFD patches, so it's best for them to
+> go in together.
 > 
-> Reported-by: Halil Pasic <pasic@linux.vnet.ibm.com>
-> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-> ---
->  arch/s390/kvm/kvm-s390.c |   18 ++++++++++++++----
->  arch/s390/kvm/kvm-s390.h |   13 +++++++++++++
->  2 files changed, 27 insertions(+), 4 deletions(-)
+> > If the former, then we're going to need an Ack from Mark.
+> 
+> Alternative, as you've already supplied (some form of) your Ack for the firs
+> 3 patches, they can go in through Mark? All of it is enhancing the
+> regulator part.
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Yes, that's fine too:
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
