@@ -1,107 +1,143 @@
-Return-Path: <p.zabel@pengutronix.de>
-X-Google-Smtp-Source: AB8JxZrGYnzidQdeJKEP3L1wLP5kkW1vbn1nPWRbByrLbuBTi1ITwS59nltMxbMDRdjmmIe7d+WL
-ARC-Seal: i=1; a=rsa-sha256; t=1524218436; cv=none;
-        d=google.com; s=arc-20160816;
-        b=SPqrjdjVsYmLBTht/Pi8I9PAnZbLIbmNxVVRVaOSskixtbh244mVP/oiQzMPPZIVk+
-         4jujmeUZOYWLSfxUrphDpxe2A2G+MhiWO0xOUP6vXv1xRg9wPgGBhe50qfb2z2rOPiPT
-         aicU80/grwSmWQUFEfHo74J/Wb/3EoRaMFH7DAD2GMbXq23M4B1nZzKGus7S+KXDkJ7e
-         K/9TislY/ocp53HF8wnrhs2YjpbmD4rif61E7jdAy0wZCTGAQY7Otv3WteN6JKUTfsIq
-         hCfVpnL05elUiQhrj9BYT7WUUTuKKjcZN+ImeGQmUrPUu8JwEopjjbE6TRC1ZhJyV2IB
-         FjgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:date
-         :cc:to:from:subject:message-id:arc-authentication-results;
-        bh=aij0oTAXcNvxVT8YNoWZq6Jfj3HtLK4njKslORX1nVU=;
-        b=AMrj2sQQjMj19rgShz1eaTwtLYX2N8fF1CUD8FL7DZD84wS4hAwefYfRUuLDbeJIWZ
-         9GYIjoMVsC9l7xzUQL908iS/g/1eWBfSrTPnv/o0j+TGZ8soo3tUWfmSPKxvgU4DyuUB
-         HTe6RrQiriezc2rD+FszYE29xLG3tEMlrXAuachUSWMQrgJS2QEztTDpLiEX1I7mH5Me
-         u9rInqonbbWIBA5ra/VcQKmMnKax1P5TePzVhZ4Le1Mtg5Ne/Ip3QCASv/YOrkOoAabY
-         64VT1SdWyQr7XviL79Ga9aD5/Tj5i4WmpgUIZ9x3SiYRX2Rm/6ZVrP29VtWne9R0eun6
-         vWMg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of p.zabel@pengutronix.de designates 2001:67c:670:201:290:27ff:fe1d:cc33 as permitted sender) smtp.mailfrom=p.zabel@pengutronix.de
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of p.zabel@pengutronix.de designates 2001:67c:670:201:290:27ff:fe1d:cc33 as permitted sender) smtp.mailfrom=p.zabel@pengutronix.de
-Message-ID: <1524218419.16259.7.camel@pengutronix.de>
-Subject: Re: [PATCH 1/8] drm/mediatek: Use regmap for register access
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
- ulrich.hecht+renesas@gmail.com,  laurent.pinchart@ideasonboard.com,
- ck.hu@mediatek.com, airlied@linux.ie,  robh+dt@kernel.org,
- mark.rutland@arm.com, mturquette@baylibre.com,  sboyd@codeaurora.org,
- lee.jones@linaro.org
-Cc: davem@davemloft.net, gregkh@linuxfoundation.org, mchehab@kernel.org,
-	rdunlap@infradead.org, pi-cheng.chen@linaro.org, sean.wang@mediatek.com,
-	linux-clk@vger.kernel.org, linux@armlinux.org.uk,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
-	Matthias Brugger
-	 <mbrugger@suse.com>
-Date: Fri, 20 Apr 2018 12:00:19 +0200
-In-Reply-To: <3fffe06c-f19b-ef26-a19d-771611aae158@gmail.com>
-References: <20171114214114.15793-1-mbrugger@suse.com>
-	 <20171114214114.15793-2-mbrugger@suse.com>
-	 <1511427282.7685.1.camel@pengutronix.de>
-	 <3fffe06c-f19b-ef26-a19d-771611aae158@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: gregkh@linuxfoundation.org
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1573997-1524228259-2-16800818672378882185
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='ch',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1524228258; b=LUAOgElXKEvb7Z8xuAcHhVXBMcpjqABSbBqFXsI8VX+YfkAF4c
+    DtCrCIUlVIOW5uldbB8g+OUPBeRbelVt5cAlg/uBWU86pbBceNKMo7GfTChVjd9y
+    w2qbCbaYXdUuQ/VTw86o00V3VO9CFCgSnB1I/7/EtFbwPGq0tpAwNp8Ap/GKdIb+
+    S3dnJa/De/IW4nrL71dh/52iQ8RJFiXXbPyQS/llnDCQv20FGvsv9FqDjTfGs5eF
+    DTLWJqvvhtupTEZWsKqOxMeIZXM60UODqgGvuX26KoNykt43IonjmRhpFVShHRnh
+    6DSrgRFmT1FGoqB1WU0EiNq/FrXJrAOfg9jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1524228258; bh=fO1eydDw5EdL2x4jTesuQiVPSFTMvu
+    drQbC1Vm9xU6g=; b=l6N3XIA+k9FD06DbGPFfZ8Y3ywT2M4bUNT+kfYzkDc1KJW
+    /2PlcrL09jCGlqFogGWb5qy36qOw6NUcwotPd4JhnxQUGmO6lA/ur+k4rGOcBEqz
+    tCAtcdeLIZmqFjCAlCLJqh6YzqoZmZP9VEJx5sIi0FGJlcVoY7rax2T5wu/N1w2a
+    kxSYBTs7bcwUr7vEgkA9y6xb8Rc5GQq1vf/sOneL+igkdngZt9snGiISpPQ+YdmM
+    joj0+9qYXCIzQeVAj8U0cP25I9jgFUTnZc9ku1ZCS/GMyPL2aDjkNc4lc9013EGc
+    szHf0jDLr0alVAqVX3XxOiqH4pbB7DIjhtMFMt+w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=agner.ch header.i=@agner.ch header.b=vKui75vg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=dkim;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=agner.ch;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=agner.ch header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256) header.d=agner.ch header.i=@agner.ch header.b=vKui75vg x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=dkim;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=agner.ch;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=agner.ch header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfD5Lg6uTHnZvUr5i0eHtp5sYqTmuiYf5TE4x56dFYRYlBlOxKZ/1+i8Wq0f8A2QD5R1WA3+Eo5Q7CTIAqQkj9xhEI5gAMBKyVD0Dzd+hAc43KRFnP1O6
+    fLD0/3bXaWZ6uJvqb1Wr5zAKwzowpCB4C2xkY9DEOMC8kL5VbvSvcrnFTON4IYpzOEMfkLfEu0tfvX6njllkgFXAnvO/Pty+sjFrL3IuzYixGO2H1cyo82OJ
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
+    a=Kd1tUaAdevIA:10 a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8 a=IoFmlQYEO8KAc7pQ7V0A:9
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=ST-jHhOKWsTCqRlWije3:22
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754786AbeDTMoO (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 20 Apr 2018 08:44:14 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:60670 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754712AbeDTMoM (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Fri, 20 Apr 2018 08:44:12 -0400
+From: Stefan Agner <stefan@agner.ch>
+To: gregkh@linuxfoundation.org
+Cc: u.kleine-koenig@pengutronix.de, festevam@gmail.com,
+        jslaby@suse.com, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v2] serial: imx: fix cached UCR2 read on software reset
+Date: Fri, 20 Apr 2018 14:44:07 +0200
+Message-Id: <20180420124407.12892-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Remote-Spamd-Result: default: False [-2.10 / 15.00];
+         RCVD_TLS_ALL(0.00)[];
+         ASN(0.00)[asn:13030, ipnet:2001:1620::/32, country:CH];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_HAS_DN(0.00)[];
+         MID_CONTAINS_FROM(1.00)[];
+         TO_DN_SOME(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_EQ_ENVFROM(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[7]
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1584079267404697590?=
-X-GMAIL-MSGID: =?utf-8?q?1598258871420672542?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Matthias,
+To reset the UART the SRST needs be cleared (low active). According
+to the documentation the bit will remain active for 4 module clocks
+until it is cleared (set to 1).
 
-On Fri, 2018-04-20 at 11:41 +0200, Matthias Brugger wrote:
-> Hi Philipp,
-> 
-> On 11/23/2017 09:54 AM, Philipp Zabel wrote:
-> > Hi Matthias,
-> > 
-> > On Tue, 2017-11-14 at 22:41 +0100, Matthias Brugger wrote:
-> > > The mmsys memory space is shared between the drm and the
-> > > clk driver. Use regmap to access it.
-> > > 
-> > > Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> > > ---
-> > >  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 ++--
-> > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 30 +++++++++++++++++-------------
-> > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 ++--
-> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++++---------
-> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
-> > >  5 files changed, 26 insertions(+), 27 deletions(-)
-> > 
-> > [...]
-> 
-> [...]
-> > >  	}
-> > >  
-> > >  	value = mtk_ddp_sel_in(cur, next, &addr);
-> > >  	if (value) {
-> > > -		reg = readl_relaxed(config_regs + addr) & ~value;
-> > > -		writel_relaxed(reg, config_regs + addr);
-> > > +		regmap_read(config_regs, addr, &reg);
-> > > +		reg &= ~value;
-> > > +		regmap_write(config_regs, addr, reg);
-> > 
-> > 		regmap_update_bits(config_regs, addr, value, 0);
-> > 
-> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> > 
-> 
-> Thanks for having a look on that.
-> 
-> I'll update the next version with regmap_update_bits and leave your Reviewed-by,
-> hope that's ok.
+Hence the real register need to be read in case the cached register
+indicates that the SRST bit is zero.
 
-Yes, that's fine.
+This bug lead to wrong baudrate because the baud rate register got
+restored before reset completed in imx_flush_buffer.
 
-regards
-Philipp
+Fixes: 3a0ab62f43de ("serial: imx: implement shadow registers for UCRx and UFCR")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+Hi Greg,
+
+Since this fixes a regression it should go into v4.17...
+
+--
+Stefan
+
+
+ drivers/tty/serial/imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 91f3a1a5cb7f..4ff6bd6eb9ab 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -316,7 +316,7 @@ static u32 imx_uart_readl(struct imx_port *sport, u32 offset)
+ 		 * differ from the value that was last written. As it only
+ 		 * clears after being set, reread conditionally.
+ 		 */
+-		if (sport->ucr2 & UCR2_SRST)
++		if (!(sport->ucr2 & UCR2_SRST))
+ 			sport->ucr2 = readl(sport->port.membase + offset);
+ 		return sport->ucr2;
+ 		break;
+-- 
+2.17.0
+
