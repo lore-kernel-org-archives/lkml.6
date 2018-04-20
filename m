@@ -1,259 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754673AbeDTLZN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 07:25:13 -0400
-Received: from mga03.intel.com ([134.134.136.65]:39911 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754601AbeDTLZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:25:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,301,1520924400";
-   d="scan'208";a="48520290"
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH RESEND v2]: perf/x86: expose user space frame-pointer value on
- a sample
-Organization: Intel Corp.
-Message-ID: <4098f0b8-9de4-df03-a945-e3986359dab4@linux.intel.com>
-Date: Fri, 20 Apr 2018 14:25:04 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1754667AbeDTLZ0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 07:25:26 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:34500 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754601AbeDTLZY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 07:25:24 -0400
+X-Google-Smtp-Source: AIpwx4//4n4D4bdKwjhhm5TK5pOp28+jINJCkXRt+RG+wMxqgCqVbz5rjNV14fjG57Ghjodv8Afitw==
+Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+To: =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
+        jgross@suse.com, Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
+        boris.ostrovsky@oracle.com
+References: <20180329131931.29957-1-andr2000@gmail.com>
+ <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
+ <20180416192905.GA18096@downor-Z87X-UD5H>
+ <20180417075928.GT31310@phenom.ffwll.local>
+ <20180417205744.GA15930@downor-Z87X-UD5H>
+ <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
+ <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
+ <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+ <20180420071914.GG31310@phenom.ffwll.local>
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <76cdc65a-7bb1-9377-7bc5-6164e32f7b5d@gmail.com>
+Date: Fri, 20 Apr 2018 14:25:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180420071914.GG31310@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04/20/2018 10:19 AM, Daniel Vetter wrote:
+> On Wed, Apr 18, 2018 at 11:10:58AM +0100, Roger Pau Monné wrote:
+>> On Wed, Apr 18, 2018 at 11:01:12AM +0300, Oleksandr Andrushchenko wrote:
+>>> On 04/18/2018 10:35 AM, Roger Pau Monné wrote:
+>>>> On Wed, Apr 18, 2018 at 09:38:39AM +0300, Oleksandr Andrushchenko wrote:
+>>>>> On 04/17/2018 11:57 PM, Dongwon Kim wrote:
+>>>>>> On Tue, Apr 17, 2018 at 09:59:28AM +0200, Daniel Vetter wrote:
+>>>>>>> On Mon, Apr 16, 2018 at 12:29:05PM -0700, Dongwon Kim wrote:
+>>>>> 3.2 Backend exports dma-buf to xen-front
+>>>>>
+>>>>> In this case Dom0 pages are shared with DomU. As before, DomU can only write
+>>>>> to these pages, not any other page from Dom0, so it can be still considered
+>>>>> safe.
+>>>>> But, the following must be considered (highlighted in xen-front's Kernel
+>>>>> documentation):
+>>>>>    - If guest domain dies then pages/grants received from the backend cannot
+>>>>>      be claimed back - think of it as memory lost to Dom0 (won't be used for
+>>>>> any
+>>>>>      other guest)
+>>>>>    - Misbehaving guest may send too many requests to the backend exhausting
+>>>>>      its grant references and memory (consider this from security POV). As the
+>>>>>      backend runs in the trusted domain we also assume that it is trusted as
+>>>>> well,
+>>>>>      e.g. must take measures to prevent DDoS attacks.
+>>>> I cannot parse the above sentence:
+>>>>
+>>>> "As the backend runs in the trusted domain we also assume that it is
+>>>> trusted as well, e.g. must take measures to prevent DDoS attacks."
+>>>>
+>>>> What's the relation between being trusted and protecting from DoS
+>>>> attacks?
+>>> I mean that we trust the backend that it can prevent Dom0
+>>> from crashing in case DomU's frontend misbehaves, e.g.
+>>> if the frontend sends too many memory requests etc.
+>>>> In any case, all? PV protocols are implemented with the frontend
+>>>> sharing pages to the backend, and I think there's a reason why this
+>>>> model is used, and it should continue to be used.
+>>> This is the first use-case above. But there are real-world
+>>> use-cases (embedded in my case) when physically contiguous memory
+>>> needs to be shared, one of the possible ways to achieve this is
+>>> to share contiguous memory from Dom0 to DomU (the second use-case above)
+>>>> Having to add logic in the backend to prevent such attacks means
+>>>> that:
+>>>>
+>>>>    - We need more code in the backend, which increases complexity and
+>>>>      chances of bugs.
+>>>>    - Such code/logic could be wrong, thus allowing DoS.
+>>> You can live without this code at all, but this is then up to
+>>> backend which may make Dom0 down because of DomU's frontend doing evil
+>>> things
+>> IMO we should design protocols that do not allow such attacks instead
+>> of having to defend against them.
+>>
+>>>>> 4. xen-front/backend/xen-zcopy synchronization
+>>>>>
+>>>>> 4.1. As I already said in 2) all the inter VM communication happens between
+>>>>> xen-front and the backend, xen-zcopy is NOT involved in that.
+>>>>> When xen-front wants to destroy a display buffer (dumb/dma-buf) it issues a
+>>>>> XENDISPL_OP_DBUF_DESTROY command (opposite to XENDISPL_OP_DBUF_CREATE).
+>>>>> This call is synchronous, so xen-front expects that backend does free the
+>>>>> buffer pages on return.
+>>>>>
+>>>>> 4.2. Backend, on XENDISPL_OP_DBUF_DESTROY:
+>>>>>     - closes all dumb handles/fd's of the buffer according to [3]
+>>>>>     - issues DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE IOCTL to xen-zcopy to make
+>>>>> sure
+>>>>>       the buffer is freed (think of it as it waits for dma-buf->release
+>>>>> callback)
+>>>> So this zcopy thing keeps some kind of track of the memory usage? Why
+>>>> can't the user-space backend keep track of the buffer usage?
+>>> Because there is no dma-buf UAPI which allows to track the buffer life cycle
+>>> (e.g. wait until dma-buf's .release callback is called)
+>>>>>     - replies to xen-front that the buffer can be destroyed.
+>>>>> This way deletion of the buffer happens synchronously on both Dom0 and DomU
+>>>>> sides. In case if DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE returns with time-out
+>>>>> error
+>>>>> (BTW, wait time is a parameter of this IOCTL), Xen will defer grant
+>>>>> reference
+>>>>> removal and will retry later until those are free.
+>>>>>
+>>>>> Hope this helps understand how buffers are synchronously deleted in case
+>>>>> of xen-zcopy with a single protocol command.
+>>>>>
+>>>>> I think the above logic can also be re-used by the hyper-dmabuf driver with
+>>>>> some additional work:
+>>>>>
+>>>>> 1. xen-zcopy can be split into 2 parts and extend:
+>>>>> 1.1. Xen gntdev driver [4], [5] to allow creating dma-buf from grefs and
+>>>>> vise versa,
+>>>> I don't know much about the dma-buf implementation in Linux, but
+>>>> gntdev is a user-space device, and AFAICT user-space applications
+>>>> don't have any notion of dma buffers. How are such buffers useful for
+>>>> user-space? Why can't this just be called memory?
+>>> A dma-buf is seen by user-space as a file descriptor and you can
+>>> pass it to different drivers then. For example, you can share a buffer
+>>> used by a display driver for scanout with a GPU, to compose a picture
+>>> into it:
+>>> 1. User-space (US) allocates a display buffer from display driver
+>>> 2. US asks display driver to export the dma-buf which backs up that buffer,
+>>> US gets buffer's fd: dma_buf_fd
+>>> 3. US asks GPU driver to import a buffer and provides it with dma_buf_fd
+>>> 4. GPU renders contents into display buffer (dma_buf_fd)
+>> After speaking with Oleksandr on IRC, I think the main usage of the
+>> gntdev extension is to:
+>>
+>> 1. Create a dma-buf from a set of grant references.
+>> 2. Share dma-buf and get a list of grant references.
+>>
+>> I think this set of operations could be broken into:
+>>
+>> 1.1 Map grant references into user-space using the gntdev.
+>> 1.2 Create a dma-buf out of a set of user-space virtual addresses.
+>>
+>> 2.1 Map a dma-buf into user-space.
+>> 2.2 Get grefs out of the user-space addresses where the dma-buf is
+>>      mapped.
+>>
+>> So it seems like what's actually missing is a way to:
+>>
+>>   - Create a dma-buf from a list of user-space virtual addresses.
+>>   - Allow to map a dma-buf into user-space, so it can then be used with
+>>     the gntdev.
+>>
+>> I think this is generic enough that it could be implemented by a
+>> device not tied to Xen. AFAICT the hyper_dma guys also wanted
+>> something similar to this.
+> You can't just wrap random userspace memory into a dma-buf. We've just had
+> this discussion with kvm/qemu folks, who proposed just that, and after a
+> bit of discussion they'll now try to have a driver which just wraps a
+> memfd into a dma-buf.
+So, we have to decide either we introduce a new driver
+(say, under drivers/xen/xen-dma-buf) or extend the existing
+gntdev/balloon to support dma-buf use-cases.
 
-Store user space frame-pointer value (BP register) into Perf trace 
-on a sample for a process so the value becomes available when 
-unwinding call stacks for functions gaining event samples.
+Can anybody from Xen community express their preference here?
 
-Test executable for the example below was compiled with frame pointer 
-support enabled:
-
-g++ -o futex-fp -fpermissive --no-omit-frame-pointer futex.c
-
-and profiled using:
-
-tools/perf/perf record --user-regs=IP,SP,BP \
-	-g --call-graph=dwarf,1024 -e cycles -- ./futex-fp
-
-Output of
-
-tools/perf/perf report -i perf.data --stdio 
-
-demonstrates the effect of the patch change so before saving BP 
-value on a sample we have several frames missing above main 
-function frame:
-
-# Samples: 138K of event 'cpu-cycles'
-# Event count (approx.): 92713835335
-#
-# Children      Self  Command   Shared Object     Symbol                                        
-# ........  ........  ........  ................  ..........................
-#
-    96.15%     0.72%  futex-fp  futex-fp          [.] main
-            |          
-            |--95.43%--main
-            |          |          
-            |          |--71.56%--syscall
-            |          |          |          
-            |          |          |--57.28%--entry_SYSCALL_64_after_hwframe
-            |          |          |          |          
-            |          |          |           --56.95%--do_syscall_64
-            |          |          |                     |          
-            |          |          |                      --55.77%--sys_futex
-
-and after saving BP value on a sample we have expected 
-
-	_start
-	__libc_start_main 
-
-frames unwound:
-
-# Samples: 128K of event 'cpu-cycles'
-# Event count (approx.): 85349981034
-#
-# Children      Self  Command   Shared Object     Symbol                                        
-# ........  ........  ........  ................  ..................
-#
-    95.83%     0.00%  futex-fp  futex-fp          [.] _start
-            |
-==>         ---_start
-==>            __libc_start_main
-               main
-               |          
-               |--71.28%--syscall
-               |          |          
-               |          |--55.67%--entry_SYSCALL_64
-               |          |          |          
-               |          |           --55.40%--do_syscall_64
-               |          |                     |          
-               |          |                      --54.21%--sys_futex
-
-
-Testing results:
-
-tools/perf/perf test
- 1: vmlinux symtab matches kallsyms                       : Ok
- 2: Detect openat syscall event                           : Ok
- 3: Detect openat syscall event on all cpus               : Ok
- 4: Read samples using the mmap interface                 : Ok
- 5: Test data source output                               : Ok
- 6: Parse event definition strings                        : Ok
- 7: Simple expression parser                              : Ok
- 8: PERF_RECORD_* events & perf_sample fields             : Ok
- 9: Parse perf pmu format                                 : Ok
-10: DSO data read                                         : Ok
-11: DSO data cache                                        : Ok
-12: DSO data reopen                                       : Ok
-13: Roundtrip evsel->name                                 : Ok
-14: Parse sched tracepoints fields                        : Ok
-15: syscalls:sys_enter_openat event fields                : Ok
-16: Setup struct perf_event_attr                          : Skip
-17: Match and link multiple hists                         : Ok
-18: 'import perf' in python                               : FAILED!
-19: Breakpoint overflow signal handler                    : Ok
-20: Breakpoint overflow sampling                          : Ok
-21: Breakpoint accounting                                 : Ok
-22: Number of exit events of a simple workload            : Ok
-23: Software clock events period values                   : Ok
-24: Object code reading                                   : Ok
-25: Sample parsing                                        : Ok
-26: Use a dummy software event to keep tracking           : Ok
-27: Parse with no sample_id_all bit set                   : Ok
-28: Filter hist entries                                   : Ok
-29: Lookup mmap thread                                    : Ok
-30: Share thread mg                                       : Ok
-31: Sort output of hist entries                           : Ok
-32: Cumulate child hist entries                           : Ok
-33: Track with sched_switch                               : Ok
-34: Filter fds with revents mask in a fdarray             : Ok
-35: Add fd to a fdarray, making it autogrow               : Ok
-36: kmod_path__parse                                      : Ok
-37: Thread map                                            : Ok
-38: LLVM search and compile                               :
-38.1: Basic BPF llvm compile                              : Skip
-38.2: kbuild searching                                    : Skip
-38.3: Compile source for BPF prologue generation          : Skip
-38.4: Compile source for BPF relocation                   : Skip
-39: Session topology                                      : Ok
-40: BPF filter                                            :
-40.1: Basic BPF filtering                                 : Skip
-40.2: BPF pinning                                         : Skip
-40.3: BPF prologue generation                             : Skip
-40.4: BPF relocation checker                              : Skip
-41: Synthesize thread map                                 : Ok
-42: Remove thread map                                     : Ok
-43: Synthesize cpu map                                    : Ok
-44: Synthesize stat config                                : Ok
-45: Synthesize stat                                       : Ok
-46: Synthesize stat round                                 : Ok
-47: Synthesize attr update                                : Ok
-48: Event times                                           : Ok
-49: Read backward ring buffer                             : Ok
-50: Print cpu map                                         : Ok
-51: Probe SDT events                                      : Ok
-52: is_printable_array                                    : Ok
-53: Print bitmap                                          : Ok
-54: perf hooks                                            : Ok
-55: builtin clang support                                 : Skip (not compiled in)
-56: unit_number__scnprintf                                : Ok
-57: mem2node                                              : Ok
-58: x86 rdpmc                                             : Ok
-59: Convert perf time to TSC                              : Ok
-60: DWARF unwind                                          : Ok
-61: x86 instruction decoder - new instructions            : Ok
-62: Use vfs_getname probe to get syscall args filenames   : Ok
-63: Add vfs_getname probe to get syscall args filenames   : Ok
-64: Check open filename arg using perf trace + vfs_getname: Ok
-65: probe libc's inet_pton & backtrace it with ping       : Ok
-
-make -C tools/perf/ build-test
-make: Entering directory '/root/abudanko/kernel/tip/tools/perf'
-- tarpkg: ./tests/perf-targz-src-pkg .
-- /root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP: cd . && make FEATURE_DUMP_COPY=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP  feature-dump
-cd . && make FEATURE_DUMP_COPY=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP feature-dump
-           make_util_map_o_O: cd . && make util/map.o FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.hCniCh5IOV DESTDIR=/tmp/tmp.pE0ZNthwCF
- make_install_prefix_slash_O: cd . && make install prefix=/tmp/krava/ FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.aug1Rs4tNf DESTDIR=/tmp/tmp.Nr57uRH4a7
-         make_no_libunwind_O: cd . && make NO_LIBUNWIND=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.K6mNdV9ny7 DESTDIR=/tmp/tmp.rJ4MiEneK3
-          make_install_bin_O: cd . && make install-bin FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.4qmyWxqRIq DESTDIR=/tmp/tmp.fQ9pvBSPbK
-         make_no_libbionic_O: cd . && make NO_LIBBIONIC=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.Ja0slX338A DESTDIR=/tmp/tmp.QoqYxqLoLM
-            make_no_libbpf_O: cd . && make NO_LIBBPF=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.M4cGuRET89 DESTDIR=/tmp/tmp.yRbVHtN25b
-                  make_doc_O: cd . && make doc FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.vit59hhoQw DESTDIR=/tmp/tmp.Pdf8YRdUZ6
-             make_no_slang_O: cd . && make NO_SLANG=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.HVyxNOBsAd DESTDIR=/tmp/tmp.a0faga36nq
-make_no_libdw_dwarf_unwind_O: cd . && make NO_LIBDW_DWARF_UNWIND=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.wmv42sG9uM DESTDIR=/tmp/tmp.QqGhSX5KBD
-            make_clean_all_O: cd . && make clean all FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.EXQULIs1Lz DESTDIR=/tmp/tmp.R7rWtWOfbj
-              make_no_gtk2_O: cd . && make NO_GTK2=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.Ic7nrL0sJw DESTDIR=/tmp/tmp.CG4zzMpTRo
-     make_util_pmu_bison_o_O: cd . && make util/pmu-bison.o FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.SlTUvMOKNC DESTDIR=/tmp/tmp.EPHTxRCqhZ
-                 make_help_O: cd . && make help FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.8ERtFQpSgy DESTDIR=/tmp/tmp.qm6slgq3vY
-         make_no_libpython_O: cd . && make NO_LIBPYTHON=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.nBDottRklF DESTDIR=/tmp/tmp.wa3Y3kbyuj
-          make_no_auxtrace_O: cd . && make NO_AUXTRACE=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.DUdGkNlbTo DESTDIR=/tmp/tmp.hCudQY48Pl
-          make_no_libaudit_O: cd . && make NO_LIBAUDIT=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.R881i6xKAm DESTDIR=/tmp/tmp.93owQPSDcX
-           make_no_scripts_O: cd . && make NO_LIBPYTHON=1 NO_LIBPERL=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.reGc8rOYV1 DESTDIR=/tmp/tmp.B6QViKjMvW
-      make_with_babeltrace_O: cd . && make LIBBABELTRACE=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.FhQXwacUez DESTDIR=/tmp/tmp.I3nVzmrMkw
-- /root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP_STATIC: cd . && make FEATURE_DUMP_COPY=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP_STATIC  LDFLAGS='-static' feature-dump
-cd . && make FEATURE_DUMP_COPY=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP_STATIC LDFLAGS='-static' feature-dump
-               make_static_O: cd . && make LDFLAGS=-static FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP_STATIC -j8 O=/tmp/tmp.WAd4qqaobf DESTDIR=/tmp/tmp.HQGv9RVti6
-                 make_tags_O: cd . && make tags FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.4exbvnNqL7 DESTDIR=/tmp/tmp.egmegRFPBa
-         make_no_backtrace_O: cd . && make NO_BACKTRACE=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.EVUZhEZdL1 DESTDIR=/tmp/tmp.IU2Hw5iXV9
-                make_debug_O: cd . && make DEBUG=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.82NeGzBeKh DESTDIR=/tmp/tmp.0nDEL657DW
-                make_no_ui_O: cd . && make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.WPsaGPykuA DESTDIR=/tmp/tmp.BE2i6xrlcz
-              make_minimal_O: cd . && make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.mqwTCtkYMZ DESTDIR=/tmp/tmp.HAE2gO2Qcc
-       make_install_prefix_O: cd . && make install prefix=/tmp/krava FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.i9spzN3Ffn DESTDIR=/tmp/tmp.HZaM1gdpnX
-            make_no_libelf_O: cd . && make NO_LIBELF=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.yXvEPnLS3l DESTDIR=/tmp/tmp.wDVGcoV12j
-                 make_pure_O: cd . && make FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.Lyk3dyMDUS DESTDIR=/tmp/tmp.X7yG8O8oPZ
-              make_no_newt_O: cd . && make NO_NEWT=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.u2rAAJ77BP DESTDIR=/tmp/tmp.ZO73ixWJ4R
-               make_perf_o_O: cd . && make perf.o FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.PzkhlImKTo DESTDIR=/tmp/tmp.9Z5E1d0ADO
-              make_install_O: cd . && make install FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.LeTMZGGxYu DESTDIR=/tmp/tmp.i0QyvEIrk0
-           make_no_libnuma_O: cd . && make NO_LIBNUMA=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.FBhx6NatXS DESTDIR=/tmp/tmp.1LrUcc5i7s
-           make_no_libperl_O: cd . && make NO_LIBPERL=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.iPoY2Rkjbw DESTDIR=/tmp/tmp.kUsnd09yOc
-       make_with_clangllvm_O: cd . && make LIBCLANGLLVM=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.yA8pvPEJHH DESTDIR=/tmp/tmp.XwY7J5Etvy
-          make_no_demangle_O: cd . && make NO_DEMANGLE=1 FEATURES_DUMP=/root/abudanko/kernel/tip/tools/perf/BUILD_TEST_FEATURE_DUMP -j8 O=/tmp/tmp.NARFUtnpY0 DESTDIR=/tmp/tmp.dR62bKhig0
-OK
-make: Leaving directory '/root/abudanko/kernel/tip/tools/perf'
-
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v2:
-- lifted restriction on frame pointer architecture so it's value is provided
-  as for i386 as for x86_64 processes
-
-MAINTAINERS file lacks references to appropriate folks for reviewing 
-  changes at arch/x86/kernel/perf_regs.c so probably it makes sense to 
-  update the file as well in this respect. 
----
- arch/x86/kernel/perf_regs.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-index e47b2dbbdef3..8d68658eff7f 100644
---- a/arch/x86/kernel/perf_regs.c
-+++ b/arch/x86/kernel/perf_regs.c
-@@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
- 	 * Most system calls don't save these registers, don't report them.
- 	 */
- 	regs_user_copy->bx = -1;
--	regs_user_copy->bp = -1;
-+	/*
-+	 * Store user space frame-pointer value on sample
-+	 * to facilitate stack unwinding for cases when
-+	 * user space executable code has such support
-+	 * enabled at compile time;
-+	 */
-+	regs_user_copy->bp = user_regs->bp;
- 	regs_user_copy->r12 = -1;
- 	regs_user_copy->r13 = -1;
- 	regs_user_copy->r14 = -1;
+And I hope that there is no objection to have it all in the kernel,
+without going to user-space with VAs and back (device-X driver)
+>
+> Yes i915 and amdgpu and a few other drivers do have facilities to wrap
+> userspace memory into a gpu buffer object. But we don't allow those to be
+> exported to other drivers, because the core mm magic needed to make this
+> all work is way too tricky, even within the context of just 1 driver. And
+> dma-buf does not have the required callbacks and semantics to make it
+> work.
+> -Daniel
+>
+>>> Finally, this is indeed some memory, but a bit more [1]
+>>>> Also, (with my FreeBSD maintainer hat) how is this going to translate
+>>>> to other OSes? So far the operations performed by the gntdev device
+>>>> are mostly OS-agnostic because this just map/unmap memory, and in fact
+>>>> they are implemented by Linux and FreeBSD.
+>>> At the moment I can only see Linux implementation and it seems
+>>> to be perfectly ok as we do not change Xen's APIs etc. and only
+>>> use the existing ones (remember, we only extend gntdev/balloon
+>>> drivers, all the changes in the Linux kernel)
+>>> As the second note I can also think that we do not extend gntdev/balloon
+>>> drivers and have re-worked xen-zcopy driver be a separate entity,
+>>> say drivers/xen/dma-buf
+>>>>> implement "wait" ioctl (wait for dma-buf->release): currently these are
+>>>>> DRM_XEN_ZCOPY_DUMB_FROM_REFS, DRM_XEN_ZCOPY_DUMB_TO_REFS and
+>>>>> DRM_XEN_ZCOPY_DUMB_WAIT_FREE
+>>>>> 1.2. Xen balloon driver [6] to allow allocating contiguous buffers (not
+>>>>> needed
+>>>>> by current hyper-dmabuf, but is a must for xen-zcopy use-cases)
+>>>> I think this needs clarifying. In which memory space do you need those
+>>>> regions to be contiguous?
+>>> Use-case: Dom0 has a HW driver which only works with contig memory
+>>> and I want DomU to be able to directly write into that memory, thus
+>>> implementing zero copying
+>>>> Do they need to be contiguous in host physical memory, or guest
+>>>> physical memory?
+>>> Host
+>>>> If it's in guest memory space, isn't there any generic interface that
+>>>> you can use?
+>>>>
+>>>> If it's in host physical memory space, why do you need this buffer to
+>>>> be contiguous in host physical memory space? The IOMMU should hide all
+>>>> this.
+>>> There are drivers/HW which can only work with contig memory and
+>>> if it is backed by an IOMMU then still it has to be contig in IPA
+>>> space (real device doesn't know that it is actually IPA contig, not PA)
+>> What's IPA contig?
+>>
+>> Thanks, Roger.
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
