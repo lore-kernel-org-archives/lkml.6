@@ -1,56 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754868AbeDTNPX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:15:23 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45768 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754158AbeDTNPV (ORCPT
+        id S1754848AbeDTNTB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:19:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57176 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754591AbeDTNS7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:15:21 -0400
-From: Colin King <colin.king@canonical.com>
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        Ronnie Sahlberg <lsahlber@redhat.com>, samba-technical@lists.samba.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] cifs: ensure full_path is free'd on error exit path
-Date: Fri, 20 Apr 2018 14:15:19 +0100
-Message-Id: <20180420131519.30510-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 20 Apr 2018 09:18:59 -0400
+Message-Id: <20180420131631.875020804@infradead.org>
+User-Agent: quilt/0.63-1
+Date: Fri, 20 Apr 2018 15:14:11 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: linux-kernel@vger.kernel.org, mingo@kernel.org
+Cc: tglx@linutronix.de, dan.j.williams@intel.com,
+        torvalds@linux-foundation.org,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "Peter Zijlstra" <peterz@infradead.org>
+Subject: [PATCH 4/7] perf,x86/msr: Fix possible Spectre-v1 for msr
+References: <20180420131407.721875616@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline; filename=peterz-spectre1-4.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+> arch/x86/events/msr.c:178 msr_event_init() warn: potential spectre issue 'msr' (local cap)
 
-Currently the check on the mode flags that returns -EPERM is leaking
-full_path on the error exit return. Fix this by kfree'ing it before
-the return.
+Userspace controls @attr, sanitize cfg (attr->config) before using it
+to index an array.
 
-Detected by CoverityScan, CID#1468029 ("Resource Leak")
-
-Fixes: 49162bfde140 ("cifs: do not allow creating sockets except with SMB1 posix exensions")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
 ---
- fs/cifs/dir.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/events/msr.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index f0a759dd6817..207883b39362 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -684,8 +684,10 @@ int cifs_mknod(struct inode *inode, struct dentry *direntry, umode_t mode,
- 		goto mknod_out;
- 	}
+--- a/arch/x86/events/msr.c
++++ b/arch/x86/events/msr.c
+@@ -158,9 +158,6 @@ static int msr_event_init(struct perf_ev
+ 	if (event->attr.type != event->pmu->type)
+ 		return -ENOENT;
  
--	if (!S_ISCHR(mode) && !S_ISBLK(mode))
-+	if (!S_ISCHR(mode) && !S_ISBLK(mode)) {
-+		kfree(full_path);
- 		return -EPERM;
-+	}
+-	if (cfg >= PERF_MSR_EVENT_MAX)
+-		return -EINVAL;
+-
+ 	/* unsupported modes and filters */
+ 	if (event->attr.exclude_user   ||
+ 	    event->attr.exclude_kernel ||
+@@ -171,6 +168,11 @@ static int msr_event_init(struct perf_ev
+ 	    event->attr.sample_period) /* no sampling */
+ 		return -EINVAL;
  
- 	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
- 		goto mknod_out;
--- 
-2.17.0
++	if (cfg >= PERF_MSR_EVENT_MAX)
++		return -EINVAL;
++
++	cfg = array_index_nospec(cfg, PERF_MSR_EVENT_MAX);
++
+ 	if (!msr[cfg].attr)
+ 		return -EINVAL;
+ 
