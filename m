@@ -1,91 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754748AbeDTLze (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 07:55:34 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:36578 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754631AbeDTLzc (ORCPT
+        id S1754765AbeDTL4I (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 07:56:08 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60310 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754631AbeDTL4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:55:32 -0400
-X-Google-Smtp-Source: AIpwx4/kjA+ndk8rxqSdMnzh6Z+LFN3Ouha29U+KSJZrFA5OLyvHvuikekT0QR6exOz4z8gBkEx7q1ujf90UO2dAOOU=
+        Fri, 20 Apr 2018 07:56:06 -0400
+Subject: Re: [PATCH 1/4] vfio: ccw: fix cleanup if cp_prefetch fails
+To: Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.vnet.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
+        Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        borntraeger@de.ibm.com
+References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
+ <20180321020822.86255-2-bjsdjshi@linux.vnet.ibm.com>
+ <682d8b1c-5aca-7015-043b-a3f1446bf378@linux.vnet.ibm.com>
+ <20180322022248.GB12194@bjsdjshi@linux.vnet.ibm.com>
+ <54fd02cd-bd0b-889b-c40f-f9a32aa25d77@linux.vnet.ibm.com>
+ <20180326142839.23bfc4f6.cohuck@redhat.com>
+ <20180327014200.GH12194@bjsdjshi@linux.vnet.ibm.com>
+ <59687ed1-befb-a861-7b91-40859ac00bb7@linux.vnet.ibm.com>
+ <20180420133614.20e3c6ae.cohuck@redhat.com>
+From: Halil Pasic <pasic@linux.ibm.com>
+Date: Fri, 20 Apr 2018 13:55:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180419183840.GA500@roeck-us.net>
-References: <21ef6561299cdbbe0f3571c5048a2eaf5eb43bc7.1524143428.git.greentime@andestech.com>
- <20180419183840.GA500@roeck-us.net>
-From: Greentime Hu <green.hu@gmail.com>
-Date: Fri, 20 Apr 2018 19:54:51 +0800
-Message-ID: <CAEbi=3dpFsm-gSZbTngcdT9kMr1aPPoXgUmuqvDFWaKUFgXVfw@mail.gmail.com>
-Subject: Re: [9/9] nds32: Fix the allmodconfig build. To make sure
- CONFIG_CPU_LITTLE_ENDIAN is default y
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Greentime <greentime@andestech.com>,
-        Guenter Roeck <private@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180420133614.20e3c6ae.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18042011-0020-0000-0000-00000414124D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042011-0021-0000-0000-000042A86517
+Message-Id: <c5416a0f-1506-80cc-7c9f-e1adfeef183a@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804200117
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-20 2:38 GMT+08:00 Guenter Roeck <linux@roeck-us.net>:
-> On Thu, Apr 19, 2018 at 09:18:15PM +0800, Greentime Hu wrote:
->> This way we can build kernel with CONFIG_CPU_LITTLE_ENDIAN=y and allmodconfig
->> will be available.
+
+
+On 04/20/2018 01:36 PM, Cornelia Huck wrote:
+> On Fri, 20 Apr 2018 12:54:26 +0200
+> Halil Pasic <pasic@linux.vnet.ibm.com> wrote:
+> 
+>> ping
 >>
->> Signed-off-by: Greentime Hu <greentime@andestech.com>
->
-> As Arnd suspected, this causes allnoconfig to fail.
-> The failure is due to endianness mismatches in vdso code.
->
-> Not sure if that is really an improvement.
->
+>> I think get this fixed. Better sooner than later.
 
-Thank you for reviewing.
-The reason of this issue is because some objects are compiled with -EL
-and some objects are compiled with -EB to cause endianness mismatch
-issue.
-It happened because AFLAGS and LDFLAGS is not passed correctly. I will
-send the 2nd verson patch to fix this issue.
+[..]
 
-Yes, allnoconfig is fine after applying these fixes.
+> 
+> Hm, it seems that drowned in other patches... can I get a re-send,
+> please?
 
-diff --git a/arch/nds32/Makefile b/arch/nds32/Makefile
-index 20edf34e70ce..513bb2e9baf9 100644
---- a/arch/nds32/Makefile
-+++ b/arch/nds32/Makefile
-@@ -32,8 +32,12 @@ endif
+I guess Dong Jia will handle it. If not I will on Monday.
 
- ifdef CONFIG_CPU_LITTLE_ENDIAN
- KBUILD_CFLAGS   += $(call cc-option, -EL)
-+KBUILD_AFLAGS   += $(call cc-option, -EL)
-+LDFLAGS         += $(call cc-option, -EL)
- else
- KBUILD_CFLAGS   += $(call cc-option, -EB)
-+KBUILD_AFLAGS   += $(call cc-option, -EB)
-+LDFLAGS         += $(call cc-option, -EB)
- endif
-
----
-greentime@atcsqa02:/sqa2/greentime/contrib/travis/build_script/src_pkg/linux
-<gt-master> $ nds32le-elf-readelf -h vmlinux
-ELF Header:
-  Magic:   7f 45 4c 46 01 02 01 00 00 00 00 00 00 00 00 00
-  Class:                             ELF32
-  Data:                              2's complement, big endian
-  Version:                           1 (current)
-  OS/ABI:                            UNIX - System V
-  ABI Version:                       0
-  Type:                              EXEC (Executable file)
-  Machine:                           Andes Technology compact code
-size embedded RISC processor family
-  Version:                           0x1
-  Entry point address:               0xc000
-  Start of program headers:          52 (bytes into file)
-  Start of section headers:          905772 (bytes into file)
-  Flags:                             0x30000242, AABI, Andes ELF V1.4,
-Andes Star v3.0, PERF1
-  Size of this header:               52 (bytes)
-  Size of program headers:           32 (bytes)
-  Number of program headers:         4
-  Size of section headers:           40 (bytes)
-  Number of section headers:         18
-  Section header string table index: 15
+Regards,
+Halil
