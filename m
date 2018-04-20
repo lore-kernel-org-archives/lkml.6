@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755115AbeDTN7b (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:59:31 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:55259 "EHLO
+        id S1755226AbeDTOAR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:00:17 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:58056 "EHLO
         lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754888AbeDTN72 (ORCPT
+        by vger.kernel.org with ESMTP id S1754989AbeDTOAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:59:28 -0400
-Subject: Re: [PATCH v2 06/10] media: v4l: Add definition for Allwinner's
- MB32-tiled NV12 format
+        Fri, 20 Apr 2018 10:00:15 -0400
+Subject: Re: [PATCH v2 05/10] media: v4l: Add definitions for MPEG2 frame
+ format and header metadata
 To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -25,65 +25,177 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Alexandre Courbot <acourbot@chromium.org>,
         Tomasz Figa <tfiga@chromium.org>
 References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
- <20180419154536.17846-2-paul.kocialkowski@bootlin.com>
+ <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <198e991c-1052-5bfb-f397-0e7d388b3c00@xs4all.nl>
-Date: Fri, 20 Apr 2018 15:59:23 +0200
+Message-ID: <c7331038-dd03-a384-9582-658e6aa2fd04@xs4all.nl>
+Date: Fri, 20 Apr 2018 16:00:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180419154536.17846-2-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfF7JSTUyU5LEHYW+Y+3xC+RVIGri3J0YtWg2nQdJyT/314fP6WmyojYlvK2lelPACs7X/BGqkheJ2xE1z8cmwdPgWRXdpb+2pgpntF/KPW665Pet/4eB
- XoPMVclv2in3GpKOmQihg1/gJjie2S8e6aLG5cI5t5eDqxLQ4ITdWtY4D4OYfVEOPsBCDjoWZPfILx9LbVerikBLvWpRY9GDPWVXHDsBAKoP6nYKJQPouu0n
- AIf69GL0/HnvmAptALa9D19++2hKh9mmzARfFjw4i/GyZY/GSvNSmQCI/p9cRtmwIWri/AmYkWGi4x06NK8j2kKfrG4BaP14B5VNRSijaVG8ZINgwPGfy5dz
- rJF2TFyXsvBAKM8LKmGITnbl/3XvVXOsgeoDxBUd31VLZnrcPZ6z7QunOO7j1PS/y+r1+JU16n8/Bw15V0MV4lHPZoeAPYcCE7QNXjvPGtOsOMu47SsWvLbC
- fIAtut4Ug00f+wLhx85rHDHq0sT32rKjWw0OquYm8IOCHq7AJvNzI/3mfbd+LHhVn5ITPLVi7GJNZ9VX7QqAKiupwvGnwBjZB+UrfZuUgfinCtHS+HFyTj6B
- hEwzJss91hXqzs+5k4eIjxbL8Knw9CtJu/k4WtpDHVdnsqDtszXuokpc5cOSJSwnJohNEG4Corg3532GYbbLfpB5m4ys+ARTxkpsEzrL8t8SktiFp54WD4pa
- wBBFz4CJbwXAG30innkQuG69qqIrBa4LTaQfU5bRRKH+KXkgFn7aIcLdXpvy6+rEomaNbf0dWbylG2oNb9aFFKXSFWffGPDVq59MP9n4hmu6iaRduYcz9WVk
- f6bX7W5BdwiqsHvVNwC7Fjs7h1xWxNYSW8S0Ay19D4XzSkZqr5TIeut1E3c++dKmBnECBlzP116TUZn7vbhWNcZfFrZLkEhHVFI3BUHxko7rPiS0GeyvqES9
- 19JjYWoYVhsf+ZetNGfKKaouNDQH+9nnbL9SK25a5eZ4qPVfjL19e8g1l2NpnpH7qMuETS/HEbezHiedzgl+v1JiFlhHUlAvKM9YHOin/5aXiMM+sQSmhRDR
- 2Isuo23SMl8S6tf3XVEVRwGiH9clhLDj9WapOnQt7loOjWQiOwVpo1Zy
+X-CMAE-Envelope: MS4wfDMfFZC7MuU8olpIiLqJNHr0u/miX/WAFXoHdnMMhKOuRTp6N9ki9eUg3Nu/JIsLPZZKL/pkh3DlWZytW7nHvYTIoZN+Z6rlDnJKNz99fAr3QMgb7lYf
+ NbJhkhldgcj5qqVqwiWItMKaIo9CVHd1w3s4ibGYZlrUXhtJu1+cquxMnTu2whzKIa/4mR1z2v1qnewmNECCg3XHh5ZiYcyjnBlwRj5S+RBgw6pr1l8gJvQy
+ DMYe5GaNdDrRqauupoZ/Y4YOdin8lgqCvEl29TIkvAR1uCEfEJmZq20PX0KWTXVvtJMKUEedyh/qj9fnCdwbJYylEFEhfk6nN44OTMQniLKDr9sDj+ZixwvP
+ A5GNJkMZbYMnjQxJ56Kdrl/gh6WH8yN44nb+ZdH06PiVVGvftUoxfPrJu/KVfMukHMZ68YiGYmgcnOyIl6tEVPXyoDNZKWXLkNiWgUmWQWhrx2TBe/IvIGDb
+ x4IgH3VdNFC64eLwj1OyIyNjUVMqV0Rw5df7IEd7gIj4IjVXho1pJyi5A74NhxBkC9eIe+evebt66ODeO+UvWfAuR5W/UgrV3FU9cOYKNLkkeuPlBWubMLOV
+ hSg2+GD+LyZCXIUsidE6kvFLhIsspcmmjn56vjJ85xcJrktius/xNH+DF0ZA8CRtZSu3pKPCLXBlBndVnkw4iyhne3D3Pc66wuHXGlJJ34V1O7GhZXfH6AeN
+ rTbu93y+Y35v6Uz+VniJGW3XEBfJiGqrp/kCLPC2evYHrUdXVGJ08C0JMC+/JHIgAu+Dxz2yZ05NsdSgM43jo5iEU7T5CkdX8VJAI8ZorPnDyAOdWFmqBC3t
+ IlXh1+Kw2ZqVIA38HEM9XENOLRcrHKBKNhkzsz0cFftx1BdG2WSAJrgbDIIQjpkTOZ2RsYeIzzqCk4C2mCJSCmKlt6OqEOYhAAwdZmIzX3mwNZLgmfVGTMwi
+ 5ydOANDyjTTvbYg7in9fQPe38gJZuQM+vZWybb+ZDSPV09QXd4YgdcSHUir4NfTpeXEClsQ743cTn8qW4GdmJJi5BfdE/mNsCmWzjZdDBLYSXguTExlnpywj
+ DKwUal4USR867zIsqI8XyfBnlaqc9xAHHCKjgBT9PL094tlpurxM09KE
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 04/19/18 17:45, Paul Kocialkowski wrote:
-> This introduces support for Allwinner's MB32-tiled NV12 format, where
-> each plane is divided into macroblocks of 32x32 pixels. Hence, the size
-> of each plane has to be aligned to 32 bytes. The pixels inside each
-> macroblock are coded as they would be if the macroblock was a single
-> plane, line after line.
+> Stateless video decoding engines require both the MPEG slices and
+> associated metadata from the video stream in order to decode frames.
 > 
-> The MB32-tiled NV12 format is used by the video engine on Allwinner
-> platforms: it is the default format for decoded frames (and the only one
-> available in the oldest supported platforms).
+> This introduces definitions for a new pixel format, describing buffers
+> with MPEG2 slice data, as well as a control structure for passing the
+> frame header (metadata) to drivers.
 > 
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
 > ---
->  include/uapi/linux/videodev2.h | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/media/v4l2-core/v4l2-ctrls.c | 10 ++++++++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c |  1 +
+>  include/uapi/linux/v4l2-controls.h   | 26 ++++++++++++++++++++++++++
+>  include/uapi/linux/videodev2.h       |  3 +++
+>  4 files changed, 40 insertions(+)
 > 
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+> index ba05a8b9a095..fcdc12b9a9e0 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -761,6 +761,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:		return "Vertical MV Search Range";
+>  	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:		return "Repeat Sequence Header";
+>  	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		return "Force Key Frame";
+> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:		return "MPEG2 Frame Header";
+>  
+>  	/* VPX controls */
+>  	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:		return "VPX Number of Partitions";
+> @@ -1152,6 +1153,9 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>  	case V4L2_CID_RDS_TX_ALT_FREQS:
+>  		*type = V4L2_CTRL_TYPE_U32;
+>  		break;
+> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:
+> +		*type = V4L2_CTRL_TYPE_MPEG2_FRAME_HDR;
+> +		break;
+>  	default:
+>  		*type = V4L2_CTRL_TYPE_INTEGER;
+>  		break;
+> @@ -1472,6 +1476,9 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
+>  			return -ERANGE;
+>  		return 0;
+>  
+> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
+> +		return 0;
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -2046,6 +2053,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
+>  	case V4L2_CTRL_TYPE_U32:
+>  		elem_size = sizeof(u32);
+>  		break;
+> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
+> +		elem_size = sizeof(struct v4l2_ctrl_mpeg2_frame_hdr);
+> +		break;
+>  	default:
+>  		if (type < V4L2_CTRL_COMPOUND_TYPES)
+>  			elem_size = sizeof(s32);
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 468c3c65362d..8070203da5d2 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1273,6 +1273,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
+>  		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
+>  		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
+> +		case V4L2_PIX_FMT_MPEG2_FRAME:	descr = "MPEG2 Frame"; break;
+>  		case V4L2_PIX_FMT_CPIA1:	descr = "GSPCA CPiA YUV"; break;
+>  		case V4L2_PIX_FMT_WNVA:		descr = "WNVA"; break;
+>  		case V4L2_PIX_FMT_SN9C10X:	descr = "GSPCA SN9C10X"; break;
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index cbbb750d87d1..8431b2a540c7 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -557,6 +557,8 @@ enum v4l2_mpeg_video_mpeg4_profile {
+>  };
+>  #define V4L2_CID_MPEG_VIDEO_MPEG4_QPEL		(V4L2_CID_MPEG_BASE+407)
+>  
+> +#define V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR     (V4L2_CID_MPEG_BASE+450)
+> +
+>  /*  Control IDs for VP8 streams
+>   *  Although VP8 is not part of MPEG we add these controls to the MPEG class
+>   *  as that class is already handling other video compression standards
+> @@ -985,4 +987,28 @@ enum v4l2_detect_md_mode {
+>  #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_CLASS_BASE + 3)
+>  #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DETECT_CLASS_BASE + 4)
+>  
+> +struct v4l2_ctrl_mpeg2_frame_hdr {
+> +	__u32 slice_len;
+> +	__u32 slice_pos;
+> +	enum { MPEG1, MPEG2 } type;
+> +
+> +	__u16 width;
+> +	__u16 height;
+> +
+> +	enum { PCT_I = 1, PCT_P, PCT_B, PCT_D } picture_coding_type;
+> +	__u8 f_code[2][2];
+> +
+> +	__u8 intra_dc_precision;
+> +	__u8 picture_structure;
+> +	__u8 top_field_first;
+> +	__u8 frame_pred_frame_dct;
+> +	__u8 concealment_motion_vectors;
+> +	__u8 q_scale_type;
+> +	__u8 intra_vlc_format;
+> +	__u8 alternate_scan;
+> +
+> +	__u8 backward_ref_index;
+> +	__u8 forward_ref_index;
+> +};
+> +
+>  #endif
 > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 4b8336f7bcf0..43993a116e2b 100644
+> index 31b5728b56e9..4b8336f7bcf0 100644
 > --- a/include/uapi/linux/videodev2.h
 > +++ b/include/uapi/linux/videodev2.h
-> @@ -669,6 +669,7 @@ struct v4l2_pix_format {
->  #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth data 16-bit */
->  #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Mediatek compressed block mode  */
->  #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
-> +#define V4L2_PIX_FMT_MB32_NV12 v4l2_fourcc('M', 'N', '1', '2') /* Allwinner NV12 in 32x32 macroblocks */
->  
->  /* 10bit raw bayer packed, 32 bytes for every 25 pixels, last LSB 6 bits unused */
->  #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* IPU3 packed 10-bit BGGR bayer */
-> 
+> @@ -635,6 +635,7 @@ struct v4l2_pix_format {
+>  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /* SMPTE 421M Annex L compliant stream */
+>  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
+>  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
+> +#define V4L2_PIX_FMT_MPEG2_FRAME v4l2_fourcc('M', 'G', '2', 'F') /* MPEG2 frame */
 
-Add an entry for this to v4l_fill_fmtdesc() in v4l2-ioctl.c.
-
-It also needs to be documented in the spec.
+Needs to be added to v4l_fill_fmtdesc in v4l2-ioctl.c.
 
 Regards,
 
 	Hans
+
+>  
+>  /*  Vendor-specific formats   */
+>  #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1 YUV */
+> @@ -1586,6 +1587,7 @@ struct v4l2_ext_control {
+>  		__u8 __user *p_u8;
+>  		__u16 __user *p_u16;
+>  		__u32 __user *p_u32;
+> +		struct v4l2_ctrl_mpeg2_frame_hdr __user *p_mpeg2_frame_hdr;
+>  		void __user *ptr;
+>  	};
+>  } __attribute__ ((packed));
+> @@ -1631,6 +1633,7 @@ enum v4l2_ctrl_type {
+>  	V4L2_CTRL_TYPE_U8	     = 0x0100,
+>  	V4L2_CTRL_TYPE_U16	     = 0x0101,
+>  	V4L2_CTRL_TYPE_U32	     = 0x0102,
+> +	V4L2_CTRL_TYPE_MPEG2_FRAME_HDR = 0x0109,
+>  };
+>  
+>  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
+> 
