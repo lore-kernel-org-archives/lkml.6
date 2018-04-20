@@ -1,59 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752489AbeDTVvV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 17:51:21 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:35345 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751228AbeDTVvT (ORCPT
+        id S1752593AbeDTVwS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 17:52:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51930 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751865AbeDTVwQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 17:51:19 -0400
-X-Google-Smtp-Source: AIpwx48SejwKlq5tfb7mGBKpbUEP6MZhC+hyTIa6rcnpqu7MuQnrTlN+LiIGGoLKlNhaK8eJD7waN/PPEO+aLNYO2Qo=
+        Fri, 20 Apr 2018 17:52:16 -0400
+Date: Fri, 20 Apr 2018 14:52:12 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: Mario Limonciello <mario.limonciello@dell.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH] platform/x86: Kconfig: Fix dell-laptop dependency chain.
+Message-ID: <20180420215212.GE11546@fury>
+References: <1524246131-17621-1-git-send-email-mario.limonciello@dell.com>
 MIME-Version: 1.0
-In-Reply-To: <20180420154933.3235131-4-arnd@arndb.de>
-References: <20180420154933.3235131-1-arnd@arndb.de> <20180420154933.3235131-4-arnd@arndb.de>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 20 Apr 2018 23:51:18 +0200
-X-Google-Sender-Auth: ovDKP8fYwUz9vEAUhC5cRzS80AI
-Message-ID: <CAK8P3a2vh+BH_GJSPkc8D61+J2NK_e_HWJkuz6DVmb_Ln6ND0Q@mail.gmail.com>
-Subject: Re: [PATCH 4/4] sh: remove board_time_init() callback
-To: Rich Felker <dalias@libc.org>
-Cc: Baolin Wang <baolin.wang@linaro.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524246131-17621-1-git-send-email-mario.limonciello@dell.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 5:48 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+On Fri, Apr 20, 2018 at 12:42:11PM -0500, Mario Limonciello wrote:
+> As reported by Randy Dunlap:
+> >> WARNING: unmet direct dependencies detected for DELL_SMBIOS
+> >>   Depends on [m]: X86 [=y] && X86_PLATFORM_DEVICES [=y]
+> >>	&& (DCDBAS [=m] ||
+> >> DCDBAS [=m]=n) && (ACPI_WMI [=n] || ACPI_WMI [=n]=n)
+> >>   Selected by [y]:
+> >>   - DELL_LAPTOP [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y]
+> >> && DMI [=y]
+> >> && BACKLIGHT_CLASS_DEVICE [=y] && (ACPI_VIDEO [=n] ||
+> >>	ACPI_VIDEO [=n]=n)
+> >> && (RFKILL [=n] || RFKILL [=n]=n) && SERIO_I8042 [=y]
+> >>
+> 
+> Right now it's possible to set dell laptop to compile in but this
+> causes dell-smbios to compile in which breaks if dcdbas is a module.
+> 
+> Dell laptop shouldn't select dell-smbios anymore, but depend on it.
 
-> @@ -41,8 +39,7 @@ static void __init sh_late_time_init(void)
->
->  void __init time_init(void)
->  {
-> -       if (board_time_init)
-> -               board_time_init();
-> +       timer_init();
+Ugh. Indeed.
 
-Testing revealed this to be broken, the fix is:
+One of the goals of the previous maelstrom of dell* kconfig depencency
+changes was to make it so DELL_LAPTOP was visible without having to
+toggle DELL_SMBIOS*.  But, having "select DELL_SMBIOS" avoids the
+dependency check causing this failure (I'm surprised and dismayed this
+made it through all the config permutation testing this saw).
 
-diff --git a/arch/sh/kernel/time.c b/arch/sh/kernel/time.c
-index a29eb989d81b..8a1c6c8ab4ec 100644
---- a/arch/sh/kernel/time.c
-+++ b/arch/sh/kernel/time.c
-@@ -39,7 +39,7 @@ static void __init sh_late_time_init(void)
+I'll apply this patch, and I guess it should go to stable, and for the
+next version I think it's time for a new "CONFIG DELL_EXTRAS" which will
+allow us to default DELL_SMBIOS to y and make the menu more consistent.
 
- void __init time_init(void)
- {
-- timer_init();
-+ timer_probe();
+Thank you for the catch. Grrrrrr :-(
 
-  clk_init();
-
-Let me know if you'd like me to resend the series with that typo fixed.
-
-      Arnd
+-- 
+Darren Hart
+VMware Open Source Technology Center
