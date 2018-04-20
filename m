@@ -1,35 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754718AbeDTMEc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 08:04:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754591AbeDTMEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:04:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFFF021104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 20 Apr 2018 08:04:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180420080428.622a8e7f@gandalf.local.home>
-In-Reply-To: <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
-References: <20180413124704.19335-1-pmladek@suse.com>
-        <20180413101233.0792ebf0@gandalf.local.home>
-        <20180414023516.GA17806@tigerII.localdomain>
-        <20180416014729.GB1034@jagdpanzerIV>
-        <20180416042553.GA555@jagdpanzerIV>
-        <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
-        <20180420021511.GB6397@jagdpanzerIV>
-        <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1754769AbeDTMKL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 08:10:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60842 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754607AbeDTMKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 08:10:09 -0400
+Date: Fri, 20 Apr 2018 14:10:04 +0200
+From: Jesper Dangaard Brouer <brouer@redhat.com>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: brouer@redhat.com, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 1/5] samples/bpf: Fix typo in comment
+Message-ID: <20180420141004.259d7d6f@redhat.com>
+In-Reply-To: <1524101646-6544-2-git-send-email-leo.yan@linaro.org>
+References: <1524101646-6544-1-git-send-email-leo.yan@linaro.org>
+        <1524101646-6544-2-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -37,27 +24,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 11:12:24 +0200
-Petr Mladek <pmladek@suse.com> wrote:
 
-> Yes, my number was arbitrary. The important thing is that it was long
-> enough. Or do you know about an console that will not be able to write
-> 100 lines within one hour?
+On Thu, 19 Apr 2018 09:34:02 +0800 Leo Yan <leo.yan@linaro.org> wrote:
 
-The problem is the way rate limit works. If you print 100 lines (or
-1000) in 5 seconds, then you just stopped printing from that context
-for 59 minutes and 55 seconds. That's a long time to block printing.
+> Fix typo by replacing 'iif' with 'if'.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  samples/bpf/bpf_load.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/samples/bpf/bpf_load.c b/samples/bpf/bpf_load.c
+> index bebe418..28e4678 100644
+> --- a/samples/bpf/bpf_load.c
+> +++ b/samples/bpf/bpf_load.c
+> @@ -393,7 +393,7 @@ static int load_elf_maps_section(struct bpf_map_data *maps, int maps_shndx,
+>  			continue;
+>  		if (sym[nr_maps].st_shndx != maps_shndx)
+>  			continue;
+> -		/* Only increment iif maps section */
+> +		/* Only increment if maps section */
+>  		nr_maps++;
+>  	}
 
-What happens if you had a couple of NMIs go off that takes up that
-time, and then you hit a bug 10 minutes later from that context. You
-just lost it.
+This was actually not a typo from my side.
 
-This is a magnitude larger than any other user of rate limit in the
-kernel. The most common time is 5 seconds. The longest I can find is 1
-minute. You are saying you want to block printing from this context for
-60 minutes!
+With 'iif' I mean 'if and only if' ... but it doesn't matter much.
 
-That is HUGE! I don't understand your rational for such a huge number.
-What data do you have to back that up with?
-
--- Steve
+-- 
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
