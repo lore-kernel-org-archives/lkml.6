@@ -1,50 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754303AbeDTJ03 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:26:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40960 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754258AbeDTJ02 (ORCPT
+        id S1754251AbeDTJ3W (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 05:29:22 -0400
+Received: from mail-oi0-f50.google.com ([209.85.218.50]:43329 "EHLO
+        mail-oi0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754194AbeDTJ3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:26:28 -0400
-From: Colin King <colin.king@canonical.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        patches@opensource.cirrus.com
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: wm8350: fix missing increment of loop index i
-Date: Fri, 20 Apr 2018 10:26:23 +0100
-Message-Id: <20180420092623.1327-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 20 Apr 2018 05:29:21 -0400
+X-Google-Smtp-Source: AIpwx49mbUoyw86c5xHby+uLJCvlSul+QuOM56v+lrGr4zRTuuucSjp9VJTQqZuQ8moFpGe8zCoATSslhBjwUcXRe9U=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEwRVpOFS5UsyVHkHr+w_OR0eSpvT-CZGG6b4Vr6gxkc4rwO6g@mail.gmail.com>
+References: <CAEwRVpOFS5UsyVHkHr+w_OR0eSpvT-CZGG6b4Vr6gxkc4rwO6g@mail.gmail.com>
+From: Teck Choon Giam <giamteckchoon@gmail.com>
+Date: Fri, 20 Apr 2018 17:29:19 +0800
+Message-ID: <CAEwRVpPCFumSj45tCEbTg87u2wuG2AT+S69s4+uHCSM2pLR34A@mail.gmail.com>
+Subject: Re: kernel-4.9.94 compile error: 'KMOD_DECOMP_LEN' undeclared
+To: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+HI,
 
-It seems that the loop index i is not being incremented and hence
-potentially the while loop could spin forever. Fortunately with the
-data being used this does not appear to happen at the moment.
+> <mock-chroot>sh-4.2# grep -r KMOD_DECOMP_LEN ./linux-4.15.17
+> ./linux-4.15.17/tools/perf/tests/code-reading.c: char
+> decomp_name[KMOD_DECOMP_LEN];
+> ./linux-4.15.17/tools/perf/util/dso.h:#define KMOD_DECOMP_LEN
+> sizeof(KMOD_DECOMP_NAME)
+> ./linux-4.15.17/tools/perf/util/annotate.c: char tmp[KMOD_DECOMP_LEN];
+> ./linux-4.15.17/tools/perf/util/dso.c: char newpath[KMOD_DECOMP_LEN];
+> sh-4.2# grep -r KMOD_DECOMP_LEN ./linux-4.9.94
+> ./linux-4.9.94/tools/perf/tests/code-reading.c: char
+> decomp_name[KMOD_DECOMP_LEN];
+> ./linux-4.9.94/tools/perf/util/dso.c: char newpath[KMOD_DECOMP_LEN];
+>
+> So I guess for linux-4.9.94 has not define KMOD_DECOMP_LEN in
+> tools/perf/util/dso.h?
 
-Fixes: da09155ac8d3 ("regulator: Add WM8350 regulator support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/regulator/wm8350-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
+grep -r KMOD_DECOMP_LEN ./linux-4.9.95
+./linux-4.9.95/tools/perf/util/dso.c: char newpath[KMOD_DECOMP_LEN];
 
-diff --git a/drivers/regulator/wm8350-regulator.c b/drivers/regulator/wm8350-regulator.c
-index da9106bd2109..8ad11b074b49 100644
---- a/drivers/regulator/wm8350-regulator.c
-+++ b/drivers/regulator/wm8350-regulator.c
-@@ -911,6 +911,7 @@ static unsigned int get_mode(int uA, const struct wm8350_dcdc_efficiency *eff)
- 	while (eff[i].uA_load_min != -1) {
- 		if (uA >= eff[i].uA_load_min && uA <= eff[i].uA_load_max)
- 			return eff[i].mode;
-+		i++;
- 	}
- 	return REGULATOR_MODE_NORMAL;
- }
--- 
-2.17.0
+linux-4.9.95 still can't compile for tools/perf:
+
+util/dso.c:370:16: error: 'KMOD_DECOMP_LEN' undeclared (first use in
+this function)
+make[3]: *** [util/dso.o] Error 1
+make[2]: *** [util] Error 2
+make[1]: *** [libperf-in.o] Error 2
+make: *** [all] Error 2
+
+Thanks.
+
+Regards,
+Giam Teck Choon
