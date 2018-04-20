@@ -1,135 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752665AbeDTR3Y (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:29:24 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55064 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751159AbeDTR3X (ORCPT
+        id S1753477AbeDTRe2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:34:28 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:42272 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752618AbeDTReX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:29:23 -0400
-Subject: Re: [PATCH 1/2] mm: introduce memory.min
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, kernel-team@fb.com,
-        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
-References: <20180420163632.3978-1-guro@fb.com>
- <527af98a-8d7f-42ab-9ba8-71444ef7e25f@infradead.org>
- <20180420172039.GA4965@castle.DHCP.thefacebook.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e1ffe28c-841f-1714-7460-d2a6d309176c@infradead.org>
-Date: Fri, 20 Apr 2018 10:29:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180420172039.GA4965@castle.DHCP.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 20 Apr 2018 13:34:23 -0400
+From: Liming Sun <lsun@mellanox.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Liming Sun <lsun@mellanox.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] mmc: dw_mmc-bluefield: Add driver extension
+Date: Fri, 20 Apr 2018 13:32:17 -0400
+Message-Id: <1524245538-34137-1-git-send-email-lsun@mellanox.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/18 10:20, Roman Gushchin wrote:
-> 
-> Hi, Randy!
-> 
-> An updated version below.
-> 
-> Thanks!
+This commit adds extension to the dw_mmc driver for Mellanox BlueField
+SoC. It updates the UHS_REG_EXT register to bring up the eMMC card on
+this SoC.
 
-OK, looks good now. Thanks.
+Signed-off-by: Liming Sun <lsun@mellanox.com>
+---
+ .../devicetree/bindings/mmc/bluefield-dw-mshc.txt  | 29 +++++++++
+ drivers/mmc/host/Kconfig                           |  9 +++
+ drivers/mmc/host/Makefile                          |  1 +
+ drivers/mmc/host/dw_mmc-bluefield.c                | 72 ++++++++++++++++++++++
+ 4 files changed, 111 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+ create mode 100644 drivers/mmc/host/dw_mmc-bluefield.c
 
-FWIW:
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org> # for Documentation/ only.
-
-> ------------------------------------------------------------
-> 
-> 
-> From 2225fa0b3400431dd803f206b20a9344f0dfcd0a Mon Sep 17 00:00:00 2001
-> From: Roman Gushchin <guro@fb.com>
-> Date: Fri, 20 Apr 2018 15:24:44 +0100
-> Subject: [PATCH 1/2] mm: introduce memory.min
-> 
-> Memory controller implements the memory.low best-effort memory
-> protection mechanism, which works perfectly in many cases and
-> allows protecting working sets of important workloads from
-> sudden reclaim.
-> 
-> But it's semantics has a significant limitation: it works
-> only until there is a supply of reclaimable memory.
-> This makes it pretty useless against any sort of slow memory
-> leaks or memory usage increases. This is especially true
-> for swapless systems. If swap is enabled, memory soft protection
-> effectively postpones problems, allowing a leaking application
-> to fill all swap area, which makes no sense.
-> The only effective way to guarantee the memory protection
-> in this case is to invoke the OOM killer.
-> 
-> This patch introduces the memory.min interface for cgroup v2
-> memory controller. It works very similarly to memory.low
-> (sharing the same hierarchical behavior), except that it's
-> not disabled if there is no more reclaimable memory in the system.
-> 
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> ---
->  Documentation/cgroup-v2.txt  | 24 ++++++++++-
->  include/linux/memcontrol.h   | 15 ++++++-
->  include/linux/page_counter.h | 11 ++++-
->  mm/memcontrol.c              | 99 ++++++++++++++++++++++++++++++++++++--------
->  mm/page_counter.c            | 63 ++++++++++++++++++++--------
->  mm/vmscan.c                  | 19 ++++++++-
->  6 files changed, 191 insertions(+), 40 deletions(-)
-> 
-> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
-> index 657fe1769c75..a413118b9c29 100644
-> --- a/Documentation/cgroup-v2.txt
-> +++ b/Documentation/cgroup-v2.txt
-> @@ -1002,6 +1002,26 @@ PAGE_SIZE multiple when read back.
->  	The total amount of memory currently being used by the cgroup
->  	and its descendants.
->  
-> +  memory.min
-> +	A read-write single value file which exists on non-root
-> +	cgroups.  The default is "0".
-> +
-> +	Hard memory protection.  If the memory usage of a cgroup
-> +	is within its effective min boundary, the cgroup's memory
-> +	won't be reclaimed under any conditions. If there is no
-> +	unprotected reclaimable memory available, OOM killer
-> +	is invoked.
-> +
-> +	Effective low boundary is limited by memory.min values of
-> +	all ancestor cgroups. If there is memory.min overcommitment
-> +	(child cgroup or cgroups are requiring more protected memory
-> +	than parent will allow), then each child cgroup will get
-> +	the part of parent's protection proportional to its
-> +	actual memory usage below memory.min.
-> +
-> +	Putting more memory than generally available under this
-> +	protection is discouraged and may lead to constant OOMs.
-> +
->    memory.low
->  	A read-write single value file which exists on non-root
->  	cgroups.  The default is "0".
-> @@ -1013,9 +1033,9 @@ PAGE_SIZE multiple when read back.
->  
->  	Effective low boundary is limited by memory.low values of
->  	all ancestor cgroups. If there is memory.low overcommitment
-> -	(child cgroup or cgroups are requiring more protected memory,
-> +	(child cgroup or cgroups are requiring more protected memory
->  	than parent will allow), then each child cgroup will get
-> -	the part of parent's protection proportional to the its
-> +	the part of parent's protection proportional to its
->  	actual memory usage below memory.low.
->  
->  	Putting more memory than generally available under this
-
-
-
+diff --git a/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+new file mode 100644
+index 0000000..ee0dd61
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+@@ -0,0 +1,29 @@
++* Mellanox Bluefield SoC specific extensions to the Synopsys Designware
++  Mobile Storage Host Controller
++
++Read synopsys-dw-mshc.txt for more details
++
++The Synopsys designware mobile storage host controller is used to interface
++a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
++differences between the core Synopsys dw mshc controller properties described
++by synopsys-dw-mshc.txt and the properties used by the Mellanox Bluefield SoC
++specific extensions to the Synopsys Designware Mobile Storage Host Controller.
++
++Required Properties:
++
++* compatible: should be one of the following.
++  - "mellanox,bluefield-dw-mshc": for controllers with Mellanox Bluefield SoC
++    specific extensions.
++
++Example:
++
++	/* Mellanox Bluefield SoC MMC */
++	dwmmc0@4,0 {
++		compatible = "mellanox,bluefield-dw-mshc";
++		reg = <4 0x8000 0x400>;
++		interrupts = <32>;
++		fifo-depth = <0x100>;
++		clock-frequency = <24000000>;
++		bus-width = <8>;
++		cap-mmc-highspeed;
++	};
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 9589f9c..26ac6b5 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -717,6 +717,15 @@ config MMC_DW_K3
+ 	  Synopsys DesignWare Memory Card Interface driver. Select this option
+ 	  for platforms based on Hisilicon K3 SoC's.
+ 
++config MMC_DW_BLUEFIELD
++	tristate "BlueField specific extensions for Synopsys DW Memory Card Interface"
++	depends on MMC_DW
++	select MMC_DW_PLTFM
++	help
++	  This selects support for Mellanox BlueField SoC specific extensions to
++	  the Synopsys DesignWare Memory Card Interface driver. Select this
++	  option for platforms based on Mellanox BlueField SoC's.
++
+ config MMC_DW_PCI
+ 	tristate "Synopsys Designware MCI support on PCI bus"
+ 	depends on MMC_DW && PCI
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index 6aead24..267b3f1 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -55,6 +55,7 @@ obj-$(CONFIG_MMC_DW_K3)		+= dw_mmc-k3.o
+ obj-$(CONFIG_MMC_DW_PCI)	+= dw_mmc-pci.o
+ obj-$(CONFIG_MMC_DW_ROCKCHIP)	+= dw_mmc-rockchip.o
+ obj-$(CONFIG_MMC_DW_ZX)		+= dw_mmc-zx.o
++obj-$(CONFIG_MMC_DW_BLUEFIELD)	+= dw_mmc-bluefield.o
+ obj-$(CONFIG_MMC_SH_MMCIF)	+= sh_mmcif.o
+ obj-$(CONFIG_MMC_JZ4740)	+= jz4740_mmc.o
+ obj-$(CONFIG_MMC_VUB300)	+= vub300.o
+diff --git a/drivers/mmc/host/dw_mmc-bluefield.c b/drivers/mmc/host/dw_mmc-bluefield.c
+new file mode 100644
+index 0000000..12067b1
+--- /dev/null
++++ b/drivers/mmc/host/dw_mmc-bluefield.c
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018 Mellanox Technologies.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/module.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/mmc/host.h>
++#include <linux/mmc/mmc.h>
++#include <linux/of.h>
++
++#include "dw_mmc.h"
++#include "dw_mmc-pltfm.h"
++
++static void dw_mci_bluefield_set_ios(struct dw_mci *host, struct mmc_ios *ios)
++{
++	u32 regs;
++
++	/* Set drive=4 (bit 29:23) and sample=2 (bit 22:16) in UHS_REG_EXT. */
++	regs = mci_readl(host, UHS_REG_EXT);
++	regs = (regs & ~0x3F100000 & ~0x7F0000) | (4 << 23) | (2 << 16);
++	mci_writel(host, UHS_REG_EXT, regs);
++}
++
++static const struct dw_mci_drv_data bluefield_drv_data = {
++	.set_ios		= dw_mci_bluefield_set_ios
++};
++
++static const struct of_device_id dw_mci_bluefield_match[] = {
++	{ .compatible = "mellanox,bluefield-dw-mshc",
++		.data = &bluefield_drv_data },
++	{},
++};
++MODULE_DEVICE_TABLE(of, dw_mci_bluefield_match);
++
++static int dw_mci_bluefield_probe(struct platform_device *pdev)
++{
++	const struct dw_mci_drv_data *drv_data = NULL;
++	const struct of_device_id *match;
++
++	if (pdev->dev.of_node) {
++		match = of_match_node(dw_mci_bluefield_match,
++				      pdev->dev.of_node);
++		drv_data = match->data;
++	}
++
++	return dw_mci_pltfm_register(pdev, drv_data);
++}
++
++static struct platform_driver dw_mci_bluefield_pltfm_driver = {
++	.probe		= dw_mci_bluefield_probe,
++	.remove		= dw_mci_pltfm_remove,
++	.driver		= {
++		.name		= "dwmmc_bluefield",
++		.of_match_table	= dw_mci_bluefield_match,
++		.pm		= &dw_mci_pltfm_pmops,
++	},
++};
++
++module_platform_driver(dw_mci_bluefield_pltfm_driver);
++
++MODULE_DESCRIPTION("BlueField DW Multimedia Card driver");
++MODULE_AUTHOR("Mellanox Technologies");
++MODULE_LICENSE("GPL v2");
 -- 
-~Randy
+1.8.3.1
