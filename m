@@ -1,63 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754741AbeDTL0C (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 07:26:02 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:46201 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754726AbeDTLZ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:25:59 -0400
-X-Google-Smtp-Source: AIpwx49Q8FzJNtivl6iIFJpakQW1Y51ojg2hkXMMFUSqiOP8t8luJfXDTsfGD1c7K3LlQtBUQv/uqw==
-From: Anders Roxell <anders.roxell@linaro.org>
-To: tomi.valkeinen@ti.com, b.zolnierkie@samsung.com
-Cc: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] drivers: omap2: Kconfig: make FB_OMAP2_DSS_INIT depend on OF
-Date: Fri, 20 Apr 2018 13:25:51 +0200
-Message-Id: <20180420112551.27027-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.17.0
+        id S1754663AbeDTL2Z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 07:28:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40229 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754549AbeDTL2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 07:28:23 -0400
+Subject: Re: [PATCH 3/3] xen blkback: add fault injection facility
+To: Stanislav Kinsburskii <staskins@amazon.com>
+Cc: jakub.kicinski@netronome.com, hpa@zytor.com, mcroce@redhat.com,
+        tglx@linutronix.de, ggarcia@abra.uab.cat, daniel@iogearbox.net,
+        x86@kernel.org, mingo@redhat.com, xen-devel@lists.xenproject.org,
+        axboe@kernel.dk, konrad.wilk@oracle.com, amir.jer.levy@intel.com,
+        paul.durrant@citrix.com, stefanha@redhat.com, dsa@cumulusnetworks.com,
+        boris.ostrovsky@oracle.com, linux-block@vger.kernel.org,
+        wei.liu2@citrix.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, davem@davemloft.net, dwmw@amazon.co.uk,
+        roger.pau@citrix.com
+References: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+ <20180420104736.17823.42983.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <ef016b7b-6c0e-1684-5714-0a6d5a46504e@suse.com>
+Date: Fri, 20 Apr 2018 13:28:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180420104736.17823.42983.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 7378f1149884 ("media: omap2: omapfb: allow building it with
-COMPILE_TEST") broke compilation without CONFIG_OF selected.
-  CC      drivers/video/fbdev/core/fbmem.o
-drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c: In function ‘omapdss_update_prop’:
-drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c:68:2: error: implicit declaration of function ‘of_update_property’; did you mean ‘of_get_property’? [-Werror=implicit-function-declaration]
-  of_update_property(node, prop);
-  ^~~~~~~~~~~~~~~~~~
-  of_get_property
-cc1: some warnings being treated as errors
-scripts/Makefile.build:312: recipe for target 'drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.o' failed
-make[7]: *** [drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.o] Error 1
-scripts/Makefile.build:559: recipe for target 'drivers/video/fbdev/omap2/omapfb/dss' failed
-make[6]: *** [drivers/video/fbdev/omap2/omapfb/dss] Error 2
-make[6]: *** Waiting for unfinished jobs....
+On 20/04/18 12:47, Stanislav Kinsburskii wrote:
+> This patch adds wrapper helpers around generic Xen fault inject
+> facility.
+> The major reason is to keep all the module fault injection directories
+> in a dedicated subdirectory instead of Xen fault inject root.
+> 
+> IOW, when using these helpers, per-device and named by device name
+> fault injection control directories will appear under the following
+> directory:
+> - /sys/kernel/debug/xen/fault_inject/xen-blkback/
+> instead of:
+> - /sys/kernel/debug/xen/fault_inject/
+> 
+> Signed-off-by: Stanislav Kinsburskii <staskins@amazon.com>
+> CC: Jens Axboe <axboe@kernel.dk>
+> CC: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> CC: "Roger Pau Monné" <roger.pau@citrix.com>
+> CC: linux-kernel@vger.kernel.org
+> CC: linux-block@vger.kernel.org
+> CC: xen-devel@lists.xenproject.org
+> CC: Stanislav Kinsburskii <staskins@amazon.com>
+> CC: David Woodhouse <dwmw@amazon.co.uk>
 
-Add OF dependency in order to make all configurations work again.
+This is an exact copy of the netback patch apart from the names.
 
-of_update_property() has no inline stub, and that that could be added as
-an alternative.
+I don't like adding multiple copies of the same coding to the tree.
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- drivers/video/fbdev/omap2/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/omap2/Kconfig b/drivers/video/fbdev/omap2/Kconfig
-index 82008699d253..4de381f2452e 100644
---- a/drivers/video/fbdev/omap2/Kconfig
-+++ b/drivers/video/fbdev/omap2/Kconfig
-@@ -1,4 +1,4 @@
--if ARCH_OMAP2PLUS || COMPILE_TEST
-+if OF && (ARCH_OMAP2PLUS || COMPILE_TEST)
- 
- source "drivers/video/fbdev/omap2/omapfb/Kconfig"
- 
--- 
-2.17.0
+Juergen
