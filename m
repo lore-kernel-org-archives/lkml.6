@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753211AbeDTQzE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:55:04 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:44970 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752854AbeDTQzC (ORCPT
+        id S1753269AbeDTQzG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:55:06 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:37991 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753059AbeDTQzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:55:02 -0400
-X-Google-Smtp-Source: AIpwx4+bkZ8aG/i05AQGpMu6vuczV6CgjG/xdgu2qltuMYTWe4rh4/nMh7+xmfr1zsI8MkuLx9meMD3te1ooX5Q96KoVfBmzgYOB
+        Fri, 20 Apr 2018 12:55:03 -0400
+X-Google-Smtp-Source: AIpwx49QIQV1DA0RBwwyajg23tCqejWAwaO7+fKhPXqUDw4MVifgs2ycIICwXhp1mPOl2+wgDGPlYm1/RLI35Dko/FqL2h8zt3oL
 MIME-Version: 1.0
-Date: Fri, 20 Apr 2018 09:55:02 -0700
+Date: Fri, 20 Apr 2018 09:55:01 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000092512b056a4a8c76@google.com>
-Subject: KASAN: slab-out-of-bounds Read in build_segment_manager
-From: syzbot <syzbot+0a725420475916460f12@syzkaller.appspotmail.com>
+Message-ID: <0000000000008f4e8e056a4a8cc3@google.com>
+Subject: KASAN: use-after-free Read in build_segment_manager
+From: syzbot <syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com>
 To: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
         yuchao0@huawei.com
@@ -29,19 +29,19 @@ syzbot hit the following crash on upstream commit
 87ef12027b9b1dd0e0b12cf311fbcb19f9d92539 (Wed Apr 18 19:48:17 2018 +0000)
 Merge tag 'ceph-for-4.17-rc2' of git://github.com/ceph/ceph-client
 syzbot dashboard link:  
-https://syzkaller.appspot.com/bug?extid=0a725420475916460f12
+https://syzkaller.appspot.com/bug?extid=7d6d31d3bc702f566ce3
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4726415475867648
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5889325317226496
 syzkaller reproducer:  
-https://syzkaller.appspot.com/x/repro.syz?id=5230577728880640
+https://syzkaller.appspot.com/x/repro.syz?id=5793527682301952
 Raw console output:  
-https://syzkaller.appspot.com/x/log.txt?id=4759744422084608
+https://syzkaller.appspot.com/x/log.txt?id=5487272690450432
 Kernel config:  
 https://syzkaller.appspot.com/x/.config?id=1808800213120130118
 compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
+Reported-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
 It will help syzbot understand when the bug is fixed. See footer for  
 details.
 If you forward the report, please keep this part and the footer.
@@ -50,13 +50,13 @@ F2FS-fs (loop0): Magic Mismatch, valid(0xf2f52010) - read(0x0)
 F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
 F2FS-fs (loop0): invalid crc value
 ==================================================================
-BUG: KASAN: slab-out-of-bounds in build_sit_entries fs/f2fs/segment.c:3653  
+BUG: KASAN: use-after-free in build_sit_entries fs/f2fs/segment.c:3653  
 [inline]
-BUG: KASAN: slab-out-of-bounds in build_segment_manager+0xb92d/0xbf70  
+BUG: KASAN: use-after-free in build_segment_manager+0xb92d/0xbf70  
 fs/f2fs/segment.c:3852
-Read of size 4 at addr ffff8801ac7b66e0 by task syzkaller806281/4519
+Read of size 4 at addr ffff8801d8dc2740 by task syzkaller723534/4535
 
-CPU: 0 PID: 4519 Comm: syzkaller806281 Not tainted 4.17.0-rc1+ #8
+CPU: 1 PID: 4535 Comm: syzkaller723534 Not tainted 4.17.0-rc1+ #8
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
@@ -82,63 +82,73 @@ Call Trace:
   __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
   do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4477ca
-RSP: 002b:00007fff69213888 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000b70 RCX: 00000000004477ca
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007fff692138c0
-RBP: 0000000000000064 R08: 0000000020016600 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000064
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+RIP: 0033:0x443daa
+RSP: 002b:00007ffc697a8218 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000c00 RCX: 0000000000443daa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffc697a8220
+RBP: 0000000000000003 R08: 0000000020016a00 R09: 000000000000000a
+R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000004
+R13: 0000000000402ca0 R14: 0000000000000000 R15: 0000000000000000
 
-Allocated by task 2845:
+Allocated by task 2838:
   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
   set_track mm/kasan/kasan.c:460 [inline]
   kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  getname_flags+0xd0/0x5a0 fs/namei.c:140
-  getname+0x19/0x20 fs/namei.c:211
-  do_sys_open+0x39a/0x740 fs/open.c:1087
-  __do_sys_open fs/open.c:1111 [inline]
-  __se_sys_open fs/open.c:1106 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1106
+  __do_kmalloc_node mm/slab.c:3682 [inline]
+  __kmalloc_node+0x47/0x70 mm/slab.c:3689
+  kmalloc_node include/linux/slab.h:554 [inline]
+  kvmalloc_node+0x6b/0x100 mm/util.c:421
+  kvmalloc include/linux/mm.h:550 [inline]
+  seq_buf_alloc fs/seq_file.c:32 [inline]
+  seq_read+0xa33/0x1520 fs/seq_file.c:211
+  __vfs_read+0x10f/0xa50 fs/read_write.c:416
+  vfs_read+0x17f/0x3d0 fs/read_write.c:452
+  ksys_read+0xf9/0x250 fs/read_write.c:578
+  __do_sys_read fs/read_write.c:588 [inline]
+  __se_sys_read fs/read_write.c:586 [inline]
+  __x64_sys_read+0x73/0xb0 fs/read_write.c:586
   do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Freed by task 2845:
+Freed by task 2838:
   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
   set_track mm/kasan/kasan.c:460 [inline]
   __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
   __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
-  putname+0xf2/0x130 fs/namei.c:261
-  do_sys_open+0x554/0x740 fs/open.c:1102
-  __do_sys_open fs/open.c:1111 [inline]
-  __se_sys_open fs/open.c:1106 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1106
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  kfree+0xd9/0x260 mm/slab.c:3813
+  kvfree+0x61/0x70 mm/util.c:440
+  seq_release fs/seq_file.c:371 [inline]
+  single_release+0x78/0xb0 fs/seq_file.c:608
+  __fput+0x34d/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
+  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-The buggy address belongs to the object at ffff8801ac7b69c0
-  which belongs to the cache names_cache of size 4096
-The buggy address is located 736 bytes to the left of
-  4096-byte region [ffff8801ac7b69c0, ffff8801ac7b79c0)
+The buggy address belongs to the object at ffff8801d8dc23c0
+  which belongs to the cache kmalloc-4096 of size 4096
+The buggy address is located 896 bytes inside of
+  4096-byte region [ffff8801d8dc23c0, ffff8801d8dc33c0)
 The buggy address belongs to the page:
-page:ffffea0006b1ed80 count:1 mapcount:0 mapping:ffff8801ac7b69c0 index:0x0  
+page:ffffea0007637080 count:1 mapcount:0 mapping:ffff8801d8dc23c0 index:0x0  
 compound_mapcount: 0
 flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801ac7b69c0 0000000000000000 0000000100000001
-raw: ffffea0006b1f7a0 ffffea0006b1eea0 ffff8801da988dc0 0000000000000000
+raw: 02fffc0000008100 ffff8801d8dc23c0 0000000000000000 0000000100000001
+raw: ffffea0007637020 ffffea000763a120 ffff8801da800dc0 0000000000000000
 page dumped because: kasan: bad access detected
 
 Memory state around the buggy address:
-  ffff8801ac7b6580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801ac7b6600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801ac7b6680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                                        ^
-  ffff8801ac7b6700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801ac7b6780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d8dc2600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801d8dc2680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801d8dc2700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                            ^
+  ffff8801d8dc2780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801d8dc2800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
 ==================================================================
 
 
