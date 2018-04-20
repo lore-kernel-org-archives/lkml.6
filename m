@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752924AbeDTX7N (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 19:59:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47216 "EHLO mail.kernel.org"
+        id S1753179AbeDTX7r (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 19:59:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752771AbeDTX7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752775AbeDTX7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Apr 2018 19:59:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19269217D6
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DB2217D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=mcgrof@kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -15,9 +15,9 @@ Cc: jack@suse.cz, bart.vanassche@wdc.com, ming.lei@redhat.com,
         rjw@rjwysocki.net, mguzik@redhat.com, linux-pm@vger.kernel.org,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH 1/3] fs: move documentation for thaw_super() where appropriate
-Date: Fri, 20 Apr 2018 16:59:02 -0700
-Message-Id: <20180420235904.27496-2-mcgrof@kernel.org>
+Subject: [PATCH 2/3] fs: make thaw_super_locked() really just a helper
+Date: Fri, 20 Apr 2018 16:59:03 -0700
+Message-Id: <20180420235904.27496-3-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.13.2
 In-Reply-To: <20180420235904.27496-1-mcgrof@kernel.org>
 References: <20180420235904.27496-1-mcgrof@kernel.org>
@@ -25,44 +25,99 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On commit 08fdc8a0138a ("buffer.c: call thaw_super during emergency thaw")
-Mateusz added thaw_super_locked() and made thaw_super() use it, but
-forgot to move the documentation.
+thaw_super_locked() was added via commit 08fdc8a0138a ("buffer.c: call
+thaw_super during emergency thaw") merged on v4.17 to help with the
+ability so that the caller can take charge of handling the s_umount lock,
+however, it has left all* of the failure handling including unlocking
+lock of s_umount inside thaw_super_locked().
+
+This does not make thaw_super_locked() flexible. For instance we may
+later want to use it with the abilty to handle unfolding of the locks
+ourselves.
+
+Change thaw_super_locked() to really just be a helper, and let the
+callers deal with all the error handling.
+
+This commit introeuces no functional changes.
 
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- fs/super.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/super.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
 diff --git a/fs/super.c b/fs/super.c
-index 5fa9a8d8d865..9d0eb5e20a1f 100644
+index 9d0eb5e20a1f..82bc74a16f06 100644
 --- a/fs/super.c
 +++ b/fs/super.c
-@@ -1532,12 +1532,6 @@ int freeze_super(struct super_block *sb)
+@@ -937,10 +937,15 @@ void emergency_remount(void)
+ 
+ static void do_thaw_all_callback(struct super_block *sb)
+ {
++	int error;
++
+ 	down_write(&sb->s_umount);
+ 	if (sb->s_root && sb->s_flags & MS_BORN) {
+ 		emergency_thaw_bdev(sb);
+-		thaw_super_locked(sb);
++		error = thaw_super_locked(sb);
++		if (error)
++			up_write(&sb->s_umount);
++		deactivate_locked_super(sb);
+ 	} else {
+ 		up_write(&sb->s_umount);
+ 	}
+@@ -1532,14 +1537,13 @@ int freeze_super(struct super_block *sb)
  }
  EXPORT_SYMBOL(freeze_super);
  
--/**
-- * thaw_super -- unlock filesystem
-- * @sb: the super to thaw
-- *
-- * Unlocks the filesystem and marks it writeable again after freeze_super().
-- */
++/* Caller takes the sb->s_umount rw_semaphore lock and handles active count */
  static int thaw_super_locked(struct super_block *sb)
  {
  	int error;
-@@ -1573,6 +1567,12 @@ static int thaw_super_locked(struct super_block *sb)
+ 
+-	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE) {
+-		up_write(&sb->s_umount);
++	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE)
+ 		return -EINVAL;
+-	}
+ 
+ 	if (sb_rdonly(sb)) {
+ 		sb->s_writers.frozen = SB_UNFROZEN;
+@@ -1554,7 +1558,6 @@ static int thaw_super_locked(struct super_block *sb)
+ 			printk(KERN_ERR
+ 				"VFS:Filesystem thaw failed\n");
+ 			lockdep_sb_freeze_release(sb);
+-			up_write(&sb->s_umount);
+ 			return error;
+ 		}
+ 	}
+@@ -1563,7 +1566,6 @@ static int thaw_super_locked(struct super_block *sb)
+ 	sb_freeze_unlock(sb);
+ out:
+ 	wake_up(&sb->s_writers.wait_unfrozen);
+-	deactivate_locked_super(sb);
  	return 0;
  }
  
-+/**
-+ * thaw_super -- unlock filesystem
-+ * @sb: the super to thaw
-+ *
-+ * Unlocks the filesystem and marks it writeable again after freeze_super().
-+ */
+@@ -1575,7 +1577,18 @@ static int thaw_super_locked(struct super_block *sb)
+  */
  int thaw_super(struct super_block *sb)
  {
++	int error;
++
  	down_write(&sb->s_umount);
+-	return thaw_super_locked(sb);
++	error = thaw_super_locked(sb);
++	if (error) {
++		up_write(&sb->s_umount);
++		goto out;
++	}
++
++	deactivate_locked_super(sb);
++
++out:
++	return error;
+ }
+ EXPORT_SYMBOL(thaw_super);
 -- 
 2.16.3
