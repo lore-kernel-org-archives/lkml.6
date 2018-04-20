@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524235631; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524235628; cv=none;
         d=google.com; s=arc-20160816;
-        b=yDol960S6XwoRhSFY/gksYhnBmTmmTxPE9XMUDPeMLvAo7LX4nZxw/bneNi7zFEvzn
-         yUX5XyfCPOT+pVTIj9YGoIbXlhho3+ldE87Df5K/HSP1PVALFfIngs1auOipVTqTr3TH
-         /++x3MKI2AFzsy2CtOkcgarTPSj9lBadSopMK8vrcm48oWcqfXp1+eDIKj9XQfe15bsY
-         XVVPIDPGC/0IxjwRHpO4HdbsvkPDOHBQ+yhB51IZsApwuqKDJWHuPooZYLOcFPqPd+94
-         f1e1e/GFsTLeEhY1WgMF9sznfQnW8lqrXr0+Vz0NPmRLi9z3rUCDgnv+cQo6gJnTvLjc
-         LT0A==
+        b=uV2gbWGL+HIu9yd2YSKiPLubxujORuiHHpWO3DuywC5tSRJ6ZxK/VF9qTnFoXrF3FE
+         vV2i01cZqkOzavaGwUwr1T8hzipB5FQwAUbXOxSfoDrIe7ILvfGxDfcehYDaikS24DE7
+         zX2LR+fdKhjKSxMKsI2scImSsE2KDg/yfxp9YBhAmpBxFI7DLAfyPy7mfdw96U9B40mE
+         hzXJ6g3Ea0xhYnuhWJPAJFJGzIV/yp4bBiDqt6Lr9/E10IgPpzuQzVkb6/IVPaoUrEqc
+         WaYcErnGyBEI5lpJOFmuCF6Hldbk4BLnAFJmIJr9REkgET6a6jMYYh4YEUyEI191c35Q
+         7mbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=cKLqaioCn68SkR/RKsa9TUc3eioBgTB5cuxjcyT4QJI=;
-        b=UIOWUU4XzGbHQzE1ARrpJYf355yCHxrJtSypy6qUd85xmb/MYHiiSO+vU9k0j9RXNO
-         OZEPuo5yA4uKY9ThP9uImCRCPYquXFxkq2DWHp3eLhU9ev/ps6bcZ5b2hBCs9u5ET43z
-         1IxgMutxx3qHXaVUk711l9VGC6XT0yT87V3jZBQdHDlyyPaek+TrzWn+X5wYf6uUlRKS
-         KOgntdfr9LT5Qe5yrpGLaSwXswJEbn85rXvsJqFzyRkN/QVNzWpWglZ4n5xJCBcnl2c6
-         bqRpNITzVwEaQbxsOJYq8c+jg6B7Ezjnu29XTLJanRZOSoo0rLYbzXwBgtus41UaJnD/
-         dl2w==
+        bh=PLGai3QDUPqCGJ1KlHeKqpQ2ua2JrjDqw97J4/zXzP4=;
+        b=nPRnGHG4GHQj0zVsuQuFhSdoy/2pFY8aDDqXo3sYR3wjjNuaJ2AGbf7Kvb0e7zEm36
+         0kGUUxXQwbpQ8WYOA+1edcHksNGJPIr3/j5QzWsUnG2SsO2iLmc5XcxxVQySDp02+48M
+         xloJ7y9iF5Rm8i3MtLgQzT1SAhh7jEeIqpUz8kcKMKeiWlXKddqJvMJwW6n4KY6SmMtK
+         56zXk1HoJgkS2xQwXg39F+HhB0DuBxwi7Xg90hmoDobp/CI6uFLAPYJ5KlTUaPI0okYi
+         3XQ3rCy0ORSx0iUFJQ6d5eNe47+A+59Xbkk6xsxu4KdXTbygEDlGXhvNV8dPWrtziElI
+         Ym6g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=B0Ew6ozf;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=DPQgA+jH;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=B0Ew6ozf;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=DPQgA+jH;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx4/p42bwPuiFvpYLQ+P6NE2r134lBnQUaP67oI9eTyVJ3WSVOfbL0+BM9Om9I6qbvC/xDl0Cnw==
+X-Google-Smtp-Source: AIpwx4/fHSXE61OAZLy3b3ZXypHWfop6wb21e4FDzU+YpiZYQwYxo1ofAmhZpJg+F5mYvVLnKqIICw==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Alexander Potapenko <glider@google.com>,
@@ -85,49 +85,61 @@ Cc: Kostya Serebryany <kcc@google.com>,
 	Kees Cook <keescook@google.com>,
 	Jann Horn <jannh@google.com>,
 	Mark Brand <markbrand@google.com>
-Subject: [RFC PATCH v3 06/15] khwasan, arm64: fix up fault handling logic
-Date: Fri, 20 Apr 2018 16:46:44 +0200
-Message-Id: <4aaaba7c1788004c1cb654787f005efbe47eca6a.1524235387.git.andreyknvl@google.com>
+Subject: [RFC PATCH v3 05/15] khwasan, arm64: untag virt address in __kimg_to_phys
+Date: Fri, 20 Apr 2018 16:46:43 +0200
+Message-Id: <6f8133fa9e0c4adb15bb36a540cd7f923d000f3c.1524235387.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 In-Reply-To: <cover.1524235387.git.andreyknvl@google.com>
 References: <cover.1524235387.git.andreyknvl@google.com>
 In-Reply-To: <cover.1524235387.git.andreyknvl@google.com>
 References: <cover.1524235387.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598276900868330624?=
-X-GMAIL-MSGID: =?utf-8?q?1598276900868330624?=
+X-GMAIL-THRID: =?utf-8?q?1598276898526264936?=
+X-GMAIL-MSGID: =?utf-8?q?1598276898526264936?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-show_pte in arm64 fault handling relies on the fact that the top byte of
-a kernel pointer is 0xff, which isn't always the case with KHWASAN enabled.
-Reset the top byte.
+__kimg_to_phys (which is used by virt_to_phys) assumes that the top byte
+of the address is 0xff, which isn't always the case with KHWASAN enabled.
+The solution is to reset the tag in __kimg_to_phys.
+
+__lm_to_phys doesn't require any fixups, as it zeroes out the top byte
+with the current implementation.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/mm/fault.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/include/asm/memory.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 4165485e8b6e..e834fe76f5d2 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -32,6 +32,7 @@
- #include <linux/perf_event.h>
- #include <linux/preempt.h>
- #include <linux/hugetlb.h>
-+#include <linux/kasan.h>
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index 6d084431b7f7..f206273469b5 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -92,6 +92,12 @@
+ #define KASAN_THREAD_SHIFT	0
+ #endif
  
- #include <asm/bug.h>
- #include <asm/cmpxchg.h>
-@@ -134,6 +135,8 @@ void show_pte(unsigned long addr)
- 	pgd_t *pgdp;
- 	pgd_t pgd;
- 
-+	addr = (unsigned long)khwasan_reset_tag((void *)addr);
++#ifdef CONFIG_KASAN_HW
++#define KASAN_TAG_SHIFTED(tag)		((unsigned long)(tag) << 56)
++#define KASAN_SET_TAG(addr, tag)	(((addr) & ~KASAN_TAG_SHIFTED(0xff)) | \
++						KASAN_TAG_SHIFTED(tag))
++#endif
 +
- 	if (addr < TASK_SIZE) {
- 		/* TTBR0 */
- 		mm = current->active_mm;
+ #define MIN_THREAD_SHIFT	(14 + KASAN_THREAD_SHIFT)
+ 
+ /*
+@@ -225,7 +231,12 @@ static inline unsigned long kaslr_offset(void)
+ #define __is_lm_address(addr)	(!!((addr) & BIT(VA_BITS - 1)))
+ 
+ #define __lm_to_phys(addr)	(((addr) & ~PAGE_OFFSET) + PHYS_OFFSET)
++
++#ifdef CONFIG_KASAN_HW
++#define __kimg_to_phys(addr)	(KASAN_SET_TAG((addr), 0xff) - kimage_voffset)
++#else
+ #define __kimg_to_phys(addr)	((addr) - kimage_voffset)
++#endif
+ 
+ #define __virt_to_phys_nodebug(x) ({					\
+ 	phys_addr_t __x = (phys_addr_t)(x);				\
 -- 
 2.17.0.484.g0c8726318c-goog
