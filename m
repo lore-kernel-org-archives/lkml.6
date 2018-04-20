@@ -1,102 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754034AbeDTHXc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 03:23:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54911 "EHLO mail.bootlin.com"
+        id S1754066AbeDTHXs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 03:23:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54932 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753539AbeDTHX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 03:23:29 -0400
-Date: Fri, 20 Apr 2018 09:23:16 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        id S1753539AbeDTHXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 03:23:46 -0400
+Message-ID: <5fa80b1e88ad2a215f51ea3a2b9b62274fa9b1ec.camel@bootlin.com>
+Subject: Re: [PATCH v2 08/10] dt-bindings: media: Document bindings for the
+ Sunxi-Cedrus VPU driver
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Tomasz Figa <tfiga@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
+         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-sunxi@googlegroups.com,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, wens@csie.org,
+        Pawel Osciak <pawel@osciak.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>
-Subject: Re: [PATCH v2 01/10] media: v4l2-ctrls: Add missing v4l2 ctrl unlock
-Message-ID: <20180420072316.sifritx54mppgwz3@flea>
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>
+Date: Fri, 20 Apr 2018 09:22:20 +0200
+In-Reply-To: <CAAFQd5DT_xjUbZzFOoKk7_duiSZ8Awb1J=0dPEhVTBk0P3gppA@mail.gmail.com>
 References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
- <20180419154124.17512-2-paul.kocialkowski@bootlin.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yqpvzbuk2a5n4355"
-Content-Disposition: inline
-In-Reply-To: <20180419154124.17512-2-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180323
+         <20180419154536.17846-4-paul.kocialkowski@bootlin.com>
+         <1524153860.3416.9.camel@pengutronix.de>
+         <CAAFQd5DT_xjUbZzFOoKk7_duiSZ8Awb1J=0dPEhVTBk0P3gppA@mail.gmail.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-9FZvfMmIQIhuBv3NJwWK"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---yqpvzbuk2a5n4355
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-9FZvfMmIQIhuBv3NJwWK
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 19, 2018 at 05:41:15PM +0200, Paul Kocialkowski wrote:
-> This adds a missing v4l2_ctrl_unlock call that is required to avoid
-> deadlocks.
+Hi and thanks for the review,
 
-Maybe you can explain what the deadlock scenario is?
-
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/media/v4l2-core/v4l2-ctrls.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+On Fri, 2018-04-20 at 01:31 +0000, Tomasz Figa wrote:
+> Hi Paul, Philipp,
 >=20
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-co=
-re/v4l2-ctrls.c
-> index f67e9f5531fa..ba05a8b9a095 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -3614,10 +3614,12 @@ void v4l2_ctrl_request_complete(struct media_requ=
-est *req,
->  			continue;
-> =20
->  		v4l2_ctrl_lock(ctrl);
-> +
->  		if (ref->req)
->  			ptr_to_ptr(ctrl, ref->req->p_req, ref->p_req);
->  		else
->  			ptr_to_ptr(ctrl, ctrl->p_cur, ref->p_req);
-> +
+> On Fri, Apr 20, 2018 at 1:04 AM Philipp Zabel <p.zabel@pengutronix.de>
+> wrote:
+>=20
+> > Hi Paul,
+> > On Thu, 2018-04-19 at 17:45 +0200, Paul Kocialkowski wrote:
+> > > This adds a device-tree binding document that specifies the
+> > > properties
+> > > used by the Sunxi-Cedurs VPU driver, as well as examples.
+> > >=20
+> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > ---
+> > >  .../devicetree/bindings/media/sunxi-cedrus.txt     | 50
+>=20
+> ++++++++++++++++++++++
+> > >  1 file changed, 50 insertions(+)
+> > >  create mode 100644
+>=20
+> Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/media/sunxi-
+> > > cedrus.txt
+>=20
+> b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> > > new file mode 100644
+> > > index 000000000000..71ad3f9c3352
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> > > @@ -0,0 +1,50 @@
+> > > +Device-tree bindings for the VPU found in Allwinner SoCs,
+> > > referred to
+>=20
+> as the
+> > > +Video Engine (VE) in Allwinner literature.
+> > > +
+> > > +The VPU can only access the first 256 MiB of DRAM, that are DMA-
+> > > mapped
+>=20
+> starting
+> > > +from the DRAM base. This requires specific memory allocation and
+>=20
+> handling.
+>=20
+> And no IOMMU? Brings back memories.
 
-I'm not sure that this is relevant in this patch.
+Exactly, no IOMMU so we don't have much choice but cope with that
+hardware limitation...
 
-Maxime
+> > > +
+> > > +Required properties:
+> > > +- compatible         : "allwinner,sun4i-a10-video-engine";
+> > > +- memory-region         : DMA pool for buffers allocation;
+> > > +- clocks             : list of clock specifiers, corresponding to
+>=20
+> entries in
+> > > +                          the clock-names property;
+> > > +- clock-names                : should contain "ahb", "mod" and
+> > > "ram"
+>=20
+> entries;
+> > > +- assigned-clocks       : list of clocks assigned to the VE;
+> > > +- assigned-clocks-rates : list of clock rates for the clocks
+> > > assigned
+>=20
+> to the VE;
+> > > +- resets             : phandle for reset;
+> > > +- interrupts         : should contain VE interrupt number;
+> > > +- reg                        : should contain register base and
+> > > length
+>=20
+> of VE.
+> > > +
+> > > +Example:
+> > > +
+> > > +reserved-memory {
+> > > +     #address-cells =3D <1>;
+> > > +     #size-cells =3D <1>;
+> > > +     ranges;
+> > > +
+> > > +     /* Address must be kept in the lower 256 MiBs of DRAM for
+> > > VE. */
+> > > +     ve_memory: cma@4a000000 {
+> > > +             compatible =3D "shared-dma-pool";
+> > > +             reg =3D <0x4a000000 0x6000000>;
+> > > +             no-map;
+> > > +             linux,cma-default;
+> > > +     };
+> > > +};
+> > > +
+> > > +video-engine@1c0e000 {
+> > This is not really required by any specification, and not as common
+> > as
+> > gpu@..., but could this reasonably be called "vpu@1c0e000" to follow
+> > somewhat-common practice?
+>=20
+> AFAIR the name is supposed to be somewhat readable for someone that
+> doesn't know the hardware. To me, "video-engine" sounds more obvious
+> than "vpu", but we actually use "codec" already, in case of MFC and
+> JPEG codec on Exynos. If encode/decode is the only functionality of
+> this block, I'd personally go with "codec". If it can do other things,
+> e.g. scaling/rotation without encode/decode, I'd probably call it
+> "video-processor".
+
+I agree that the term VPU is more commonly associated with video
+decoding, while video engine could mean a number of things.
+
+The reason I went with "video-engine" here (while still presenting the
+driver as a VPU driver) is that Video Engine is the term used in
+Allwinner's litterature. Other nodes in Allwinner device-trees generally
+stick to these terms (for instance, we have "display-engine" nodes).
+This also makes it easier to find the matching parts in the
+documentation.
+
+Cheers,
 
 --=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
 https://bootlin.com
-
---yqpvzbuk2a5n4355
+--=-9FZvfMmIQIhuBv3NJwWK
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrZlVcACgkQ0rTAlCFN
-r3Ta5g//U10D/ucGkinLguIgg52ZcwICCeHZjAnqkWjobQv9c6ehmRQoSvUadY+I
-7tr4APQa1bOeBfXDheWw2GicNmefCYOFAHxXjdRsIoTJeTJRvLYlSqGVfP4rF9mP
-6s69+J2zbTLiSGSDajNV6akt4te9JB3ribKl1ayzRnXmWgA79yNXNDcfBDVZZYMB
-xMtoKrsR9sheG2AYdFNHo7+BLzpJsp9kCOguwTUbDXy6mcC9APrpWMUmFRRPeTtk
-ZBZJopxNGlSQixq5b8a4CTx4abQoWj+ccSTY0JwHUsaV6XuMqhPVE56KM70m0MlF
-xS41Qn9y6p2hTSmXDIsB4pqF6Ii+OOJtZXAqj0OPBTSxKDNNy6JegNCvJOuZxVRI
-lDDTpXbABTt4BM/3wpd3Zn59Mn4t72NlGQI2uJoj99nnE/0vCr+fGVCNLqMyZ89n
-tNZhp5vDWp6pxjj64m3Me9Qf0GKjJaHUuWDqLmhnIBUTyFoi/f/tJLza6diehJXD
-2lMyWwE4m/NL7RO2Y9835nhdNvPTy2/Pc15HMOd3ZNlhHWQUbTNZUdN4fIyfbOKc
-xwQg5lMf5Gn2RFxXLC9+/jjNsQ0APbr9e/Qw6Vive2foe63mF0DXSBGLPRk7tgID
-lAy2ty+JVhKVRXrbvQxgf5WaAwXTu28tiqz1qAP8Nk3eNZO/X1s=
-=UQpD
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrZlSwACgkQ3cLmz3+f
+v9Hy3ggAnk4HQUzPACB7k5/RwBMiSycikYulTkmhVcK+LnVj5b9Mq2z83uyPj0pp
+TdeyYi4zNHQYPrEFoK+s45leqrfJUaI4Nr24qJAVz5tia7zgFnKrW12KoPeOO2vI
+ijcAEy2dypRajYxjUxW3KqRwbomJcpTbNHAb0JQBP60FuWlq3hjfsaH/DRr66AzP
+gvCg/o2L9Cosd/mmWupmdwH92zWNMrS5r7f+XyouKaoxZuUm3QJXVttBtGxx/XXE
+hBtgj+2BFYgeN5shsXCO0kasjcJC3TkQyxhfd/BrrMxvbRDhOogeBJXGe/mlY1Xu
+JIjjIGANMCsARw9Uyeyh/Kc/ktwi5Q==
+=OpZH
 -----END PGP SIGNATURE-----
 
---yqpvzbuk2a5n4355--
+--=-9FZvfMmIQIhuBv3NJwWK--
