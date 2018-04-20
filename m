@@ -1,57 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752321AbeDTQSl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:18:41 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40632 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751130AbeDTQSj (ORCPT
+        id S1751325AbeDTQ1h (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:27:37 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:45952 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750751AbeDTQ1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:18:39 -0400
-X-Google-Smtp-Source: AIpwx49315EKz+Hn8GkuSjZnQMh1/GFArEd3hqqtvhn2266TwNur2m2EEpfa/+M8l0hPLHRjDRWBjg==
-Date: Fri, 20 Apr 2018 09:18:35 -0700
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Rui Zhang <rui.zhang@intel.com>
-Subject: [GIT PULL] Thermal management updates for v4.17-rc2
-Message-ID: <20180420161834.GA22776@localhost.localdomain>
+        Fri, 20 Apr 2018 12:27:36 -0400
+X-Google-Smtp-Source: AIpwx4/Rd1SebrFHwcFhXnSAtQRuXMXQ13pFmYIuFWiYkVnvgce/3sDIuR0Jt6h41jgos08NjcG5lN0yh6/RI3w+nWQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180420143811.9994-22-ebiederm@xmission.com>
+References: <87604mhrnb.fsf@xmission.com> <20180420143811.9994-22-ebiederm@xmission.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Fri, 20 Apr 2018 09:27:35 -0700
+Message-ID: <CAMo8Bf+LhSQX=debxSBLzpESb1LojBVdPd+L4x1ax5mBVvvYMA@mail.gmail.com>
+Subject: Re: [REVIEW][PATCH 22/22] signal/xtensa: Use force_sig_fault where appropriate
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linux-Arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Chris Zankel <chris@zankel.net>,
+        linux-xtensa@linux-xtensa.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+On Fri, Apr 20, 2018 at 7:38 AM, Eric W. Biederman
+<ebiederm@xmission.com> wrote:
+> Filling in struct siginfo before calling force_sig_info a tedious and
+> error prone process, where once in a great while the wrong fields
+> are filled out, and siginfo has been inconsistently cleared.
+>
+> Simplify this process by using the helper force_sig_fault.  Which
+> takes as a parameters all of the information it needs, ensures
+> all of the fiddly bits of filling in struct siginfo are done properly
+> and then calls force_sig_info.
+>
+> In short about a 5 line reduction in code for every time force_sig_info
+> is called, which makes the calling function clearer.
+>
+> Cc: Max Filippov <jcmvbkbc@gmail.com>
+> Cc: Chris Zankel <chris@zankel.net>
+> Cc: linux-xtensa@linux-xtensa.org
+> Cc: linux-xtensa@linux-xtensa.org
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  arch/xtensa/kernel/traps.c | 10 +---------
+>  arch/xtensa/mm/fault.c     | 19 +++++--------------
+>  2 files changed, 6 insertions(+), 23 deletions(-)
 
-Here are a couple of fixes on thermal subsystem.
-Please consider pulling from
+Acked-by: Max Filippov <jcmvbkbc@gmail.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal fixes
-
-to receive Thermal Management updates for v4.17-rc2 with top-most
-
-e04907dbc25930b88ee2328fe692c776f63ddf2c:
-
-  dt-bindings: thermal: Remove "cooling-{min|max}-level" properties (2018-04-18 07:04:28 -0700)
-
-on top of commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-BR,
-
-Eduardo Valentin
-
-----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (1):
-      dt-bindings: thermal: remove no longer needed samsung thermal properties
-
-Viresh Kumar (1):
-      dt-bindings: thermal: Remove "cooling-{min|max}-level" properties
-
- .../devicetree/bindings/thermal/exynos-thermal.txt | 23 +++++-----------------
- .../devicetree/bindings/thermal/thermal.txt        | 16 +--------------
- 2 files changed, 6 insertions(+), 33 deletions(-)
+-- 
+Thanks.
+-- Max
