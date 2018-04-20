@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754521AbeDTJTk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:19:40 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:63587 "EHLO
+        id S1754499AbeDTJTj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 05:19:39 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:26215 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754427AbeDTJTA (ORCPT
+        by vger.kernel.org with ESMTP id S1754434AbeDTJTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:19:00 -0400
+        Fri, 20 Apr 2018 05:19:03 -0400
 From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre Torgue <alexandre.torgue@st.com>,
@@ -20,16 +20,16 @@ To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Yangbo Lu <yangbo.lu@nxp.com>, <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v1 2/5] ARM: dts: stm32: Add I2C support for STM32MP157C SoC
-Date: Fri, 20 Apr 2018 11:17:51 +0200
-Message-ID: <1524215874-15093-3-git-send-email-pierre-yves.mordret@st.com>
+Subject: [PATCH v1 3/5] ARM: dts: stm32: Add I2Cs pin control on STM32MP157C
+Date: Fri, 20 Apr 2018 11:17:52 +0200
+Message-ID: <1524215874-15093-4-git-send-email-pierre-yves.mordret@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1524215874-15093-1-git-send-email-pierre-yves.mordret@st.com>
 References: <1524215874-15093-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.75.127.119]
-X-ClientProxiedBy: GPXDAG1NODE4.st.com (10.75.127.65) To GPXDAG5NODE5.st.com
+X-ClientProxiedBy: GPXDAG3NODE4.st.com (10.75.127.71) To GPXDAG5NODE5.st.com
  (10.75.127.78)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_02:,,
  signatures=0
@@ -37,110 +37,74 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds all I2C instances for STM32MP157C SoC.
+This patch adds a dedicated pin control applied on I2C1,2,4 & 5
 
 Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
   Version history:
      v1:
-       * Initial
+        * Initial
 ---
 ---
- arch/arm/boot/dts/stm32mp157c.dtsi | 77 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 40 +++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index bc3eddc..9e94186 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -136,6 +136,57 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+index 6f044100..862e626 100644
+--- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+@@ -146,6 +146,36 @@
+ 				gpio-ranges = <&pinctrl 0 160 8>;
+ 			};
  
-+		i2c1: i2c@40012000 {
-+			compatible = "st,stm32f7-i2c";
-+			reg = <0x40012000 0x400>;
-+			interrupt-names = "event", "error";
-+			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&rcc I2C1_K>;
-+			resets = <&rcc I2C1_R>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++			i2c1_pins_a: i2c1@0 {
++				pins {
++					pinmux = <STM32_PINMUX('D', 12, AF5)>, /* I2C1_SCL */
++						 <STM32_PINMUX('F', 15, AF5)>; /* I2C1_SDA */
++					bias-disable;
++					drive-open-drain;
++					slew-rate = <0>;
++				};
++			};
 +
-+		i2c2: i2c@40013000 {
-+			compatible = "st,stm32f7-i2c";
-+			reg = <0x40013000 0x400>;
-+			interrupt-names = "event", "error";
-+			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&rcc I2C2_K>;
-+			resets = <&rcc I2C2_R>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++			i2c2_pins_a: i2c2@0 {
++				pins {
++					pinmux = <STM32_PINMUX('H', 4, AF4)>, /* I2C2_SCL */
++						 <STM32_PINMUX('H', 5, AF4)>; /* I2C2_SDA */
++					bias-disable;
++					drive-open-drain;
++					slew-rate = <0>;
++				};
++			};
 +
-+		i2c3: i2c@40014000 {
-+			compatible = "st,stm32f7-i2c";
-+			reg = <0x40014000 0x400>;
-+			interrupt-names = "event", "error";
-+			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&rcc I2C3_K>;
-+			resets = <&rcc I2C3_R>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
++			i2c5_pins_a: i2c5@0 {
++				pins {
++					pinmux = <STM32_PINMUX('A', 11, AF4)>, /* I2C5_SCL */
++						 <STM32_PINMUX('A', 12, AF4)>; /* I2C5_SDA */
++					bias-disable;
++					drive-open-drain;
++					slew-rate = <0>;
++				};
++			};
 +
-+		i2c5: i2c@40015000 {
-+			compatible = "st,stm32f7-i2c";
-+			reg = <0x40015000 0x400>;
-+			interrupt-names = "event", "error";
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&rcc I2C5_K>;
-+			resets = <&rcc I2C5_R>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
+ 			uart4_pins_a: uart4@0 {
+ 				pins1 {
+ 					pinmux = <STM32_PINMUX('G', 11, AF6)>; /* UART4_TX */
+@@ -180,6 +210,16 @@
+ 				ngpios = <8>;
+ 				gpio-ranges = <&pinctrl_z 0 400 8>;
+ 			};
 +
- 		uart7: serial@40018000 {
- 			compatible = "st,stm32h7-uart";
- 			reg = <0x40018000 0x400>;
-@@ -174,5 +225,31 @@
- 			clocks = <&rcc USART1_K>;
- 			status = "disabled";
++			i2c4_pins_a: i2c4@0 {
++				pins {
++					pinmux = <STM32_PINMUX('Z', 4, AF6)>, /* I2C4_SCL */
++						 <STM32_PINMUX('Z', 5, AF6)>; /* I2C4_SDA */
++					bias-disable;
++					drive-open-drain;
++					slew-rate = <0>;
++				};
++			};
  		};
-+
-+		i2c4: i2c@5c002000 {
-+			compatible = "st,stm32f7-i2c";
-+			reg = <0x5c002000 0x400>;
-+			interrupt-names = "event", "error";
-+			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&rcc I2C4_K>;
-+			resets = <&rcc I2C4_R>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		i2c6: i2c@5c009000 {
-+			compatible = "st,stm32f7-i2c";
-+			reg = <0x5c009000 0x400>;
-+			interrupt-names = "event", "error";
-+			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&rcc I2C6_K>;
-+			resets = <&rcc I2C6_R>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
  	};
  };
 -- 
