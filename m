@@ -1,55 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751325AbeDTQ1h (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:27:37 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:45952 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750751AbeDTQ1g (ORCPT
+        id S1752738AbeDTQaV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:30:21 -0400
+Received: from mail-it0-f52.google.com ([209.85.214.52]:35565 "EHLO
+        mail-it0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbeDTQaT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:27:36 -0400
-X-Google-Smtp-Source: AIpwx4/Rd1SebrFHwcFhXnSAtQRuXMXQ13pFmYIuFWiYkVnvgce/3sDIuR0Jt6h41jgos08NjcG5lN0yh6/RI3w+nWQ=
+        Fri, 20 Apr 2018 12:30:19 -0400
+X-Google-Smtp-Source: AIpwx4812W2LOkIdrHd9udDxq2geGMFAPNQEQGy4wamNtnWnz5rbwdxWd6fPZAAIDgKWuQ/8mjlh3kk0kUcVQtrOfYo=
 MIME-Version: 1.0
-In-Reply-To: <20180420143811.9994-22-ebiederm@xmission.com>
-References: <87604mhrnb.fsf@xmission.com> <20180420143811.9994-22-ebiederm@xmission.com>
-From: Max Filippov <jcmvbkbc@gmail.com>
-Date: Fri, 20 Apr 2018 09:27:35 -0700
-Message-ID: <CAMo8Bf+LhSQX=debxSBLzpESb1LojBVdPd+L4x1ax5mBVvvYMA@mail.gmail.com>
-Subject: Re: [REVIEW][PATCH 22/22] signal/xtensa: Use force_sig_fault where appropriate
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Chris Zankel <chris@zankel.net>,
-        linux-xtensa@linux-xtensa.org
+References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
+ <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
+In-Reply-To: <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 20 Apr 2018 16:30:06 +0000
+Message-ID: <CAKwvOdnKuFuqoWKpVJqVa1u8A0z2+vQp9j7+TsNh9qz3Yitk-Q@mail.gmail.com>
+Subject: Re: Clang arm64 build is broken
+To: marc.zyngier@arm.com
+Cc: Andrey Konovalov <andreyknvl@google.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 7:38 AM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
-> Filling in struct siginfo before calling force_sig_info a tedious and
-> error prone process, where once in a great while the wrong fields
-> are filled out, and siginfo has been inconsistently cleared.
->
-> Simplify this process by using the helper force_sig_fault.  Which
-> takes as a parameters all of the information it needs, ensures
-> all of the fiddly bits of filling in struct siginfo are done properly
-> and then calls force_sig_info.
->
-> In short about a 5 line reduction in code for every time force_sig_info
-> is called, which makes the calling function clearer.
->
-> Cc: Max Filippov <jcmvbkbc@gmail.com>
-> Cc: Chris Zankel <chris@zankel.net>
-> Cc: linux-xtensa@linux-xtensa.org
-> Cc: linux-xtensa@linux-xtensa.org
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
->  arch/xtensa/kernel/traps.c | 10 +---------
->  arch/xtensa/mm/fault.c     | 19 +++++--------------
->  2 files changed, 6 insertions(+), 23 deletions(-)
+On Fri, Apr 20, 2018 at 1:13 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
+> Clang isn't
+> really supported to build the arm64 kernel anyway
 
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
+Can you expand on this?  There are millions of arm64 devices shipping with
+Clang built Linux kernels.
 
--- 
-Thanks.
--- Max
+--
+Thanks,
+~Nick Desaulniers
