@@ -1,61 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754340AbeDTIJw (ORCPT <rfc822;w@1wt.eu>);
+        id S1754443AbeDTIJz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:09:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50425 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754426AbeDTIJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Apr 2018 04:09:52 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:36715 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754271AbeDTIJq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:09:46 -0400
-X-Google-Smtp-Source: AIpwx48HY/2p4n4j4fHOP9tDyc9ls0vGYRc6AOk06VLF9bEXdrgyOm48w2c5QNg49nBvVxuslEATSw==
-Date: Fri, 20 Apr 2018 09:09:43 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mfd: tps65911-comparator: Fix an off by one bug
-Message-ID: <20180420080943.jdbf7vtnkc33vbvd@dell>
-References: <20180419134634.GA19793@mwanda>
+Date: Fri, 20 Apr 2018 10:09:48 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Minchan Kim <minchan@kernel.org>
+Cc: David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH] mm:memcg: add __GFP_NOWARN in
+ __memcg_schedule_kmem_cache_create
+Message-ID: <20180420080948.GV17484@dhcp22.suse.cz>
+References: <20180418022912.248417-1-minchan@kernel.org>
+ <20180418072002.GN17484@dhcp22.suse.cz>
+ <20180418074117.GA210164@rodete-desktop-imager.corp.google.com>
+ <20180418075437.GP17484@dhcp22.suse.cz>
+ <20180418132328.GB210164@rodete-desktop-imager.corp.google.com>
+ <20180418132715.GD17484@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1804181152240.227784@chino.kir.corp.google.com>
+ <20180419064005.GL17484@dhcp22.suse.cz>
+ <20180420054239.GA221997@rodete-desktop-imager.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180419134634.GA19793@mwanda>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180420054239.GA221997@rodete-desktop-imager.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018, Dan Carpenter wrote:
+On Fri 20-04-18 14:42:39, Minchan Kim wrote:
+[...]
+> When I see replies of this thread, it's arguble to add such one-line
+> warn so if you want it strongly, could you handle by yourself?
 
-> The tps_comparators[] array is used in two places.  We only access the
-> COMP1 (1) and COMP2 (2) elements.  Unfortunately, we're accessing the
-> wrong elements and also one element beyond the end of the array.  There
-> was supposed to be a zero element at the start of the array which is
-> isn't accessed but makes the math work out nicely.
-
-I normally just apply patches from you, but this is a hack, right?
-
-> Fixes: 6851ad3ab346 ("TPS65911: Comparator: Add comparator driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I can't actually compile this code...
-> 
-> diff --git a/drivers/mfd/tps65911-comparator.c b/drivers/mfd/tps65911-comparator.c
-> index c0789f81a1c5..35d7380f6fad 100644
-> --- a/drivers/mfd/tps65911-comparator.c
-> +++ b/drivers/mfd/tps65911-comparator.c
-> @@ -42,6 +42,7 @@ struct comparator {
->  };
->  
->  static struct comparator tps_comparators[] = {
-> +	{	.name = "COMP", },
->  	{
->  		.name = "COMP1",
->  		.reg = TPS65911_VMBCH,
-
+I do not feel strongly about it to argue as well. So the patch Andrew
+added with a better explanation is sufficient from my POV.
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Michal Hocko
+SUSE Labs
