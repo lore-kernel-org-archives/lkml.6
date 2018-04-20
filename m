@@ -1,90 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755175AbeDTO3f (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:29:35 -0400
-Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:37383 "EHLO
-        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754987AbeDTO3c (ORCPT
+        id S1755224AbeDTOad (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:30:33 -0400
+Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:44300 "EHLO
+        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754894AbeDTOab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:29:32 -0400
+        Fri, 20 Apr 2018 10:30:31 -0400
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HmAAAu+NlamMmZ6ERcHQEBBQELAYQVg?=
- =?us-ascii?q?QgoCotijHaBdIEPkniBeAuEaQKCRiE0GAECAQEBAQEBAgEBAhABAQEBAQgLCwY?=
- =?us-ascii?q?oL4I1IoJNAQEBBDo0CwwEAgEIEQQBAQEeCQdGCQgCBAENBQiFBahuiD6CKYgGg?=
- =?us-ascii?q?hOEGoFBiQYCl3EIjjeMVpApgSUcggtwUIJDgi6OIG+OT4EYAQE?=
-X-IPAS-Result: =?us-ascii?q?A2HmAAAu+NlamMmZ6ERcHQEBBQELAYQVgQgoCotijHaBdIE?=
- =?us-ascii?q?PkniBeAuEaQKCRiE0GAECAQEBAQEBAgEBAhABAQEBAQgLCwYoL4I1IoJNAQEBB?=
- =?us-ascii?q?Do0CwwEAgEIEQQBAQEeCQdGCQgCBAENBQiFBahuiD6CKYgGghOEGoFBiQYCl3E?=
- =?us-ascii?q?IjjeMVpApgSUcggtwUIJDgi6OIG+OT4EYAQE?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HFAADY+Nlah2Oa6ERcHAEBAQQBAQoBA?=
+ =?us-ascii?q?YQVgQgoCoNgiAKMdoF0gQ+Ga4wNgXgLhGkCGoIsITQYAQIBAQEBAQECAQECEAE?=
+ =?us-ascii?q?BAQoLCQgoL4I1IoJNAQEBBCMRRQwEAgEIEQQBAQECAiMDAgICHyUBCAgCBAENB?=
+ =?us-ascii?q?QiEbQMVpk+CHIcGDYErgimBCYZ9ghOEGoJPgjuCaYJUApdFLAiLQoJ1jFaJc4Y?=
+ =?us-ascii?q?2gSUcggtwgxOCLo4gbwGOToEYAQE?=
+X-IPAS-Result: =?us-ascii?q?A2HFAADY+Nlah2Oa6ERcHAEBAQQBAQoBAYQVgQgoCoNgiAK?=
+ =?us-ascii?q?MdoF0gQ+Ga4wNgXgLhGkCGoIsITQYAQIBAQEBAQECAQECEAEBAQoLCQgoL4I1I?=
+ =?us-ascii?q?oJNAQEBBCMRRQwEAgEIEQQBAQECAiMDAgICHyUBCAgCBAENBQiEbQMVpk+CHIc?=
+ =?us-ascii?q?GDYErgimBCYZ9ghOEGoJPgjuCaYJUApdFLAiLQoJ1jFaJc4Y2gSUcggtwgxOCL?=
+ =?us-ascii?q?o4gbwGOToEYAQE?=
 From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.172
+X-LoopCount0: from 10.166.132.187
 X-IronPort-AV: E=Sophos;i="5.49,301,1520917200";
-   d="scan'208";a="171509786"
+   d="scan'208";a="1136650540"
 X-DLP: DLP_GlobalPCIDSS
-To: <rdunlap@infradead.org>, <sfr@canb.auug.org.au>,
-        <linux-next@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
-Subject: RE: linux-next: Tree for Apr 19 (dell smbios SMM)
-Thread-Topic: linux-next: Tree for Apr 19 (dell smbios SMM)
-Thread-Index: AQHT2AgwKJy6Z28GlkKE9Su24yAKO6QJt6TQ
-Date: Fri, 20 Apr 2018 14:29:30 +0000
-Message-ID: <43bec7e798f5491284d2c049f835d339@ausx13mpc120.AMER.DELL.COM>
-References: <20180419143545.63c0c639@canb.auug.org.au>
- <6aec5528-d6f1-3e05-1ac2-6eddbd0ac64f@infradead.org>
-In-Reply-To: <6aec5528-d6f1-3e05-1ac2-6eddbd0ac64f@infradead.org>
+To: <pali.rohar@gmail.com>, <kai.heng.feng@canonical.com>
+CC: <mjg59@srcf.ucam.org>, <dvhart@infradead.org>, <andy@infradead.org>,
+        <platform-driver-x86@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] platform/x86: dell-wmi: Ignore new rfkill and fn-lock
+ events
+Thread-Topic: [PATCH v2] platform/x86: dell-wmi: Ignore new rfkill and fn-lock
+ events
+Thread-Index: AQHT2Hj+hRNRbiJ0fECuCEQaHuZrtaQJlVgAgAAh4AA=
+Date: Fri, 20 Apr 2018 14:30:27 +0000
+Message-ID: <71dccbbb971f44ff8ed329c29e611f57@ausx13mpc120.AMER.DELL.COM>
+References: <20180420072648.5426-1-kai.heng.feng@canonical.com>
+ <20180420072854.bprouoj5poim5rxv@pali>
+In-Reply-To: <20180420072854.bprouoj5poim5rxv@pali>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-ms-exchange-transport-fromentityheader: Hosted
 x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3KETfYv028560
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KEUcNN028564
+
+
 
 > -----Original Message-----
-> From: Randy Dunlap [mailto:rdunlap@infradead.org]
-> Sent: Thursday, April 19, 2018 1:00 PM
-> To: Stephen Rothwell; Linux-Next Mailing List
-> Cc: Linux Kernel Mailing List; Platform Driver; Limonciello, Mario
-> Subject: Re: linux-next: Tree for Apr 19 (dell smbios SMM)
+> From: Pali Rohár [mailto:pali.rohar@gmail.com]
+> Sent: Friday, April 20, 2018 2:29 AM
+> To: Kai-Heng Feng
+> Cc: mjg59@srcf.ucam.org; dvhart@infradead.org; andy@infradead.org;
+> Limonciello, Mario; platform-driver-x86@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH v2] platform/x86: dell-wmi: Ignore new rfkill and fn-lock
+> events
 > 
-> On 04/18/18 21:35, Stephen Rothwell wrote:
-> > Hi all,
+> On Friday 20 April 2018 15:26:48 Kai-Heng Feng wrote:
+> > There are two new events generated by dell-wmi, rfkill and fn-lock, from
+> > Dell Systems.
 > >
-> > Changes since 20180418:
+> > When Fn-lock hotkey gets pressed to switch to function mode:
+> > [85951.591542] dell_wmi: Unknown key with type 0x0010 and code 0xe035
+> > pressed
+> > [85951.591546] dell_wmi: Unknown key with type 0x0010 and code 0x0000
+> > pressed
 > >
+> > When Fn-lock hotkey gets pressed to switch to multimedia mode:
+> > [85956.667686] dell_wmi: Unknown key with type 0x0010 and code 0xe035
+> > pressed
+> > [85956.667690] dell_wmi: Unknown key with type 0x0010 and code 0x0001
+> > pressed
+> >
+> > When radio hotkey gets pressed:
+> > [85974.430220] dell_wmi: Unknown key with type 0x0010 and code 0xe008
+> > pressed
+> >
+> > These events are for notification purpose, so we can ignore them.
+> >
+> > This patch is tested on XPS 9370.
+> >
+> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 > 
+> Reviewed-by: Pali Rohár <pali.rohar@gmail.com>
+
+Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
+
 > 
-> I see some patches from about 1 month ago for this, but it was either
-> never fixed ... or it's back.
-> 
-> 
-> on x86_64:
-> 
-> WARNING: unmet direct dependencies detected for DELL_SMBIOS
->   Depends on [m]: X86 [=y] && X86_PLATFORM_DEVICES [=y] && (DCDBAS [=m] ||
-> DCDBAS [=m]=n) && (ACPI_WMI [=n] || ACPI_WMI [=n]=n)
->   Selected by [y]:
->   - DELL_LAPTOP [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && DMI [=y]
-> && BACKLIGHT_CLASS_DEVICE [=y] && (ACPI_VIDEO [=n] || ACPI_VIDEO [=n]=n)
-> && (RFKILL [=n] || RFKILL [=n]=n) && SERIO_I8042 [=y]
-> 
-> 
-> drivers/platform/x86/dell-smbios-smm.o: In function `dell_smbios_smm_call':
-> dell-smbios-smm.c:(.text+0x7d): undefined reference to `dcdbas_smi_request'
-> 
+> > ---
+> > v2: Reorder alphabetically.
+> >     More detailed changelog.
+> >
+> >  drivers/platform/x86/dell-wmi.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> > diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
+> > index 8d102195a392..ba8e6725d7ac 100644
+> > --- a/drivers/platform/x86/dell-wmi.c
+> > +++ b/drivers/platform/x86/dell-wmi.c
+> > @@ -261,6 +261,12 @@ static const u16 bios_to_linux_keycode[256] = {
+> >   * override them.
+> >   */
+> >  static const struct key_entry dell_wmi_keymap_type_0010[] = {
+> > +	/* Fn-lock switched to function keys */
+> > +	{ KE_IGNORE, 0x0, { KEY_RESERVED } },
+> > +
+> > +	/* Fn-lock switched to multimedia keys */
+> > +	{ KE_IGNORE, 0x1, { KEY_RESERVED } },
+> > +
+> >  	/* Mic mute */
+> >  	{ KE_KEY, 0x150, { KEY_MICMUTE } },
+> >
+> > @@ -296,6 +302,14 @@ static const struct key_entry
+> dell_wmi_keymap_type_0010[] = {
+> >  	{ KE_KEY,    0x851, { KEY_PROG2 } },
+> >  	{ KE_KEY,    0x852, { KEY_PROG3 } },
+> >
+> > +	/*
+> > +	 * Radio disable (notify only -- there is no model for which the
+> > +	 * WMI event is supposed to trigger an action).
+> > +	 */
+> > +	{ KE_IGNORE, 0xe008, { KEY_RFKILL } },
+> > +
+> > +	/* Fn-lock */
+> > +	{ KE_IGNORE, 0xe035, { KEY_RESERVED } },
+> >  };
+> >
+> >  /*
 > 
 > --
-> ~Randy
-
-Randy,
-
-Would you mind posting your kernel config somewhere like a pastebin or github gist
-so we can try to easily reproduce with your combination of configure options?
-
-Thanks,
+> Pali Rohár
+> pali.rohar@gmail.com
