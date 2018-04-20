@@ -1,177 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753744AbeDTHKL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 03:10:11 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:22818 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753067AbeDTHKI (ORCPT
+        id S1753953AbeDTHKS (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 03:10:18 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52829 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753849AbeDTHKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 03:10:08 -0400
-Subject: Re: [PATCHv3 3/8] drm/omap: add support for manually updated displays
-To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Sebastian Reichel <sre@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Pavel Machek <pavel@ucw.cz>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@collabora.com>
-References: <20180330171822.25896-1-sebastian.reichel@collabora.co.uk>
- <20180330171822.25896-4-sebastian.reichel@collabora.co.uk>
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <a078d8c3-9e65-cc7b-737a-cbd5cf141f95@ti.com>
-Date: Fri, 20 Apr 2018 10:09:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 20 Apr 2018 03:10:16 -0400
+X-Google-Smtp-Source: AIpwx4/3lnWYiX/9398OOKrnAPVvTG0hUtzxbHBeoPQ4/4NMZn1FydVWtGvvo/syOLqUOv5HZa75vbr+pQeuAvtVH+M=
 MIME-Version: 1.0
-In-Reply-To: <20180330171822.25896-4-sebastian.reichel@collabora.co.uk>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180419155958.GA18593@embeddedor.com>
+References: <20180419155958.GA18593@embeddedor.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 20 Apr 2018 09:10:13 +0200
+Message-ID: <CAPDyKFq-BzzMjYrnDwrmKiKm_L=8dq-G_Mtx+pbpG0qqgHgerg@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: sdhci-cadence: fix logically and structurally
+ dead code
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian,
+On 19 April 2018 at 17:59, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
+> Currently, the code block inside the for loop will never execute
+> more than once, because the function returns inmediately after
+> the first iteration, hence the execution of the code at the second
+> iteration is structurally dead and, code at line 281: return 0; is
+> never reached.
+>
+> Fix this by checking _ret_ before return.
+>
+> Addresses-Coverity-ID: 1468009 ("Logically dead code")
+> Addresses-Coverity-ID: 1468002 ("Structurally dead code")
+> Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-On 30/03/18 20:18, Sebastian Reichel wrote:
-> This adds the required infrastructure for manually
-> updated displays, such as DSI command mode panels.
-> 
-> While those panels often support partial updates
-> we currently always do a full refresh. Display
-> will be refreshed when something calls the dirty
-> callback, such as libdrm's drmModeDirtyFB().
-> 
-> This is currently being implemented for the kernel
-> console and for Xorg. Weston currently does not
-> implement this and is known not to work on manually
-> updated displays.
-> 
-> Tested-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Thanks, applied for next and by fixing the minor spelling mistake in
+the changelog.
+
+Kind regards
+Uffe
+
 > ---
->  drivers/gpu/drm/omapdrm/omap_crtc.c | 107 +++++++++++++++++++++++++++++++++---
->  drivers/gpu/drm/omapdrm/omap_crtc.h |   1 +
->  drivers/gpu/drm/omapdrm/omap_fb.c   |  20 +++++++
->  3 files changed, 120 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdrm/omap_crtc.c
-> index b893985e4efb..1b91bff5bac6 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_crtc.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
-> @@ -51,6 +51,7 @@ struct omap_crtc {
->  	bool pending;
->  	wait_queue_head_t pending_wait;
->  	struct drm_pending_vblank_event *event;
-> +	struct delayed_work update_work;
->  
->  	void (*framedone_handler)(void *);
->  	void *framedone_handler_data;
-> @@ -146,6 +147,25 @@ static void omap_crtc_dss_disconnect(struct omap_drm_private *priv,
->  static void omap_crtc_dss_start_update(struct omap_drm_private *priv,
->  				       enum omap_channel channel)
->  {
-> +	priv->dispc_ops->mgr_enable(priv->dispc, channel, true);
-> +}
-> +
-> +static bool omap_crtc_is_manually_updated(struct drm_crtc *crtc)
-> +{
-> +	struct drm_connector *connector;
-> +	struct drm_connector_list_iter conn_iter;
-> +	bool result = false;
-> +
-> +	drm_connector_list_iter_begin(crtc->dev, &conn_iter);
-> +	drm_for_each_connector_iter(connector, &conn_iter) {
-> +		if (connector->state->crtc != crtc)
-> +			continue;
-> +		result = omap_connector_get_manually_updated(connector);
-> +		break;
-> +	}
-> +	drm_connector_list_iter_end(&conn_iter);
-
-It would be much nicer if the is-manual flag was somehow conveyed from
-connector/encoder to the crtc when doing modesetting. I don't know how
-or where, so just thinking out loud. However, if we need to do such loop
-as above, I think we should just do it once, perhaps in
-omap_crtc_atomic_enable, and store the value in omap_crtc's private data.
-
-> +
-> +	return result;
->  }
->  
->  /* Called only from the encoder enable/disable and suspend/resume handlers. */
-> @@ -157,12 +177,17 @@ static void omap_crtc_set_enabled(struct drm_crtc *crtc, bool enable)
->  	enum omap_channel channel = omap_crtc->channel;
->  	struct omap_irq_wait *wait;
->  	u32 framedone_irq, vsync_irq;
-> +	bool is_manual = omap_crtc_is_manually_updated(crtc);
-> +	enum omap_display_type type = omap_crtc_output[channel]->output_type;
->  	int ret;
->  
->  	if (WARN_ON(omap_crtc->enabled == enable))
->  		return;
->  
-> -	if (omap_crtc_output[channel]->output_type == OMAP_DISPLAY_TYPE_HDMI) {
-> +	if (is_manual)
-> +		omap_irq_enable_framedone(crtc, enable);
-> +
-> +	if (is_manual || type == OMAP_DISPLAY_TYPE_HDMI) {
->  		priv->dispc_ops->mgr_enable(priv->dispc, channel, enable);
->  		omap_crtc->enabled = enable;
->  		return;
-
-This doesn't look correct, omap_crtc_dss_start_update() already sets the
-enable bit for manual update displays. And you don't want to set the
-enable to false with manual update displays.
-
-HDMI handling here is already a special case due to HW issues, so I'd
-rather see the manual update handled separately from the HDMI.
-
-> @@ -214,7 +239,6 @@ static void omap_crtc_set_enabled(struct drm_crtc *crtc, bool enable)
->  	}
->  }
->  
+> Changes in v2:
+>  - Update changelog.
+>  - Drop the 'Fixes' tag.
+>  - Add check on ret instead of removing the "return ret;" line.
+>  - Thanks to Masahiro Yamada for the feedback provided.
+>
+>  drivers/mmc/host/sdhci-cadence.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+> index bc30d16..7a343b8 100644
+> --- a/drivers/mmc/host/sdhci-cadence.c
+> +++ b/drivers/mmc/host/sdhci-cadence.c
+> @@ -274,8 +274,8 @@ static int sdhci_cdns_set_tune_val(struct sdhci_host *host, unsigned int val)
+>                 ret = readl_poll_timeout(reg, tmp,
+>                                          !(tmp & SDHCI_CDNS_HRS06_TUNE_UP),
+>                                          0, 1);
 > -
->  static int omap_crtc_dss_enable(struct omap_drm_private *priv,
->  				enum omap_channel channel)
->  {
-> @@ -378,6 +402,53 @@ void omap_crtc_framedone_irq(struct drm_crtc *crtc, uint32_t irqstatus)
->  	wake_up(&omap_crtc->pending_wait);
->  }
->  
-> +void omap_crtc_flush(struct drm_crtc *crtc)
-> +{
-> +	struct omap_crtc *omap_crtc = to_omap_crtc(crtc);
-> +
-> +	if (!omap_crtc_is_manually_updated(crtc))
-> +		return;
-> +
-> +	if (!delayed_work_pending(&omap_crtc->update_work))
-> +		schedule_delayed_work(&omap_crtc->update_work, 0);
-> +}
-
-Why delayed work here?
-
-It's actually not quite clear to me how manual update displays work with
-DRM...
-
-As far as I see, we have essentially two cases: 1) single buffering,
-where the userspace must set an area in the fb dirty, which then
-triggers the update, 2) multi buffering, which doesn't need fb dirty,
-but just a page flip which triggers the update.
-
-In the 2) case (which I think is the optimal case which all the modern
-apps should use), there's no need for delayed work or any work, and the
-code flow should be very similar to the auto-update model.
-
-Also, as Daniel mentioned in "drm/omapdrm: Nuke
-omap_framebuffer_get_next_connector()" thread, the dirtying mechanism in
-the series is not valid.
-
- Tomi
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> -               return ret;
+> +               if (ret)
+> +                       return ret;
+>         }
+>
+>         return 0;
+> --
+> 2.7.4
+>
