@@ -1,93 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754408AbeDTJzd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:55:33 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54726 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754263AbeDTJzc (ORCPT
+        id S1754486AbeDTJzk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 05:55:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34765 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754420AbeDTJzf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:55:32 -0400
-Message-ID: <1524218126.3321.6.camel@HansenPartnership.com>
-Subject: Re: [PATCH] bsg referencing bus driver module
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Anatoliy Glagolev <glagolig@gmail.com>, linux-scsi@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc: axboe@kernel.dk, fujita.tomonori@lab.ntt.co.jp,
-        martin.petersen@oracle.com, jthumshirn@suse.de, hare@suse.com,
-        bblock@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
-Date: Fri, 20 Apr 2018 11:55:26 +0200
-In-Reply-To: <CANFzKepRSA+VoVAvOfW6U_qHFVDZex+=hQ=QhU+7Z=unvwejJQ@mail.gmail.com>
-References: <CANFzKepsGq0EHX4GPtC0RZOWqVf2fTJ6uA2WH-SZNsBuwMJ5KA@mail.gmail.com>
-         <CANFzKer6QDaJALX3LKPF2DV6LgczTh-efQe9+zeK8BuxTWFt1A@mail.gmail.com>
-         <CANFzKepRSA+VoVAvOfW6U_qHFVDZex+=hQ=QhU+7Z=unvwejJQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
+        Fri, 20 Apr 2018 05:55:35 -0400
+Date: Fri, 20 Apr 2018 02:55:20 -0700
+From: tip-bot for Joerg Roedel <tipbot@zytor.com>
+Message-ID: <tip-05189820da23fc87ee2a7d87c20257f298af27f4@git.kernel.org>
+Cc: bp@suse.de, jroedel@suse.de, dave.hansen@linux.intel.com,
+        hpa@zytor.com, mkubecek@suse.cz, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, mkubecek@suse.cz, hpa@zytor.com,
+        dave.hansen@linux.intel.com, jroedel@suse.de, bp@suse.de,
+        mingo@kernel.org, tglx@linutronix.de
+In-Reply-To: <1524162360-26179-1-git-send-email-joro@8bytes.org>
+References: <1524162360-26179-1-git-send-email-joro@8bytes.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/power/64: Fix page-table setup for temporary
+ text mapping
+Git-Commit-ID: 05189820da23fc87ee2a7d87c20257f298af27f4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-04-19 at 15:10 -0700, Anatoliy Glagolev wrote:
-> Updated: rebased on recent Linux, cc-ed maintainers per instructions
-> in MAINTAINERS file
-> 
-> From df939b80d02bf37b21efaaef8ede86cfd39b0cb8 Mon Sep 17 00:00:00
-> 2001
-> From: Anatoliy Glagolev <aglagolev@purestorage.com>
-> Date: Thu, 19 Apr 2018 15:06:06 -0600
-> Subject: [PATCH] bsg referencing parent module
-> 
-> Fixing a bug when bsg layer holds the last reference to device
-> when the device's module has been unloaded. Upon dropping the
-> reference the device's release function may touch memory of
-> the unloaded module.
-> ---
->  block/bsg-lib.c                  | 24 ++++++++++++++++++++++--
->  block/bsg.c                      | 29 ++++++++++++++++++++++++++---
->  drivers/scsi/scsi_transport_fc.c |  8 ++++++--
->  include/linux/bsg-lib.h          |  4 ++++
->  include/linux/bsg.h              |  5 +++++
->  5 files changed, 63 insertions(+), 7 deletions(-)
-> 
-> diff --git a/block/bsg-lib.c b/block/bsg-lib.c
-> index fc2e5ff..90c28fd 100644
-> --- a/block/bsg-lib.c
-> +++ b/block/bsg-lib.c
-> @@ -309,6 +309,25 @@ struct request_queue *bsg_setup_queue(struct
-> device *dev, const char *name,
->   bsg_job_fn *job_fn, int dd_job_size,
->   void (*release)(struct device *))
->  {
-> + return bsg_setup_queue_ex(dev, name, job_fn, dd_job_size, release,
-> + NULL);
-> +}
-> +EXPORT_SYMBOL_GPL(bsg_setup_queue);
-> +
-> +/**
-> + * bsg_setup_queue - Create and add the bsg hooks so we can receive
-> requests
-> + * @dev: device to attach bsg device to
-> + * @name: device to give bsg device
-> + * @job_fn: bsg job handler
-> + * @dd_job_size: size of LLD data needed for each job
-> + * @release: @dev release function
-> + * @dev_module: @dev's module
-> + */
-> +struct request_queue *bsg_setup_queue_ex(struct device *dev, const
-> char *name,
-> + bsg_job_fn *job_fn, int dd_job_size,
-> + void (*release)(struct device *),
-> + struct module *dev_module)
+Commit-ID:  05189820da23fc87ee2a7d87c20257f298af27f4
+Gitweb:     https://git.kernel.org/tip/05189820da23fc87ee2a7d87c20257f298af27f4
+Author:     Joerg Roedel <jroedel@suse.de>
+AuthorDate: Thu, 19 Apr 2018 20:26:00 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 20 Apr 2018 11:52:00 +0200
 
-This patch isn't applyable because your mailer has changed all the tabs
-to spaces.
+x86/power/64: Fix page-table setup for temporary text mapping
 
-I also think there's no need to do it this way.  I think what we need
-is for fc_bsg_remove() to wait until the bsg queue is drained.  It does
-look like the author thought this happened otherwise the code wouldn't
-have the note.  If we fix it that way we can do the same thing in all
-the other transport classes that use bsg (which all have a similar
-issue).
+On a system with 4-level page-tables there is no p4d, so the pud in the pgd
+should be mapped. The old code before commit fb43d6cb91ef already did that.
 
-James
+The change from above commit causes an invalid page-table which causes
+undefined behavior. In one report it caused triple faults.
+
+Fix it by changing the p4d back to pud.
+
+Fixes: fb43d6cb91ef ('x86/mm: Do not auto-massage page protections')
+Reported-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Michal Kubecek <mkubecek@suse.cz>
+Tested-by: Borislav Petkov <bp@suse.de>
+Cc: linux-pm@vger.kernel.org
+Cc: rjw@rjwysocki.net
+Cc: pavel@ucw.cz
+Cc: hpa@zytor.com
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lkml.kernel.org/r/1524162360-26179-1-git-send-email-joro@8bytes.org
+
+---
+ arch/x86/power/hibernate_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+index 48b14b534897..ccf4a49bb065 100644
+--- a/arch/x86/power/hibernate_64.c
++++ b/arch/x86/power/hibernate_64.c
+@@ -98,7 +98,7 @@ static int set_up_temporary_text_mapping(pgd_t *pgd)
+ 		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
+ 	} else {
+ 		/* No p4d for 4-level paging: point the pgd to the pud page table */
+-		pgd_t new_pgd = __pgd(__pa(p4d) | pgprot_val(pgtable_prot));
++		pgd_t new_pgd = __pgd(__pa(pud) | pgprot_val(pgtable_prot));
+ 		set_pgd(pgd + pgd_index(restore_jump_address), new_pgd);
+ 	}
+ 
