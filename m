@@ -1,96 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755610AbeDTPVi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:21:38 -0400
-Received: from foss.arm.com ([217.140.101.70]:50444 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755561AbeDTPVg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:21:36 -0400
-Subject: Re: Clang arm64 build is broken
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>
-References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
- <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
- <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <74f96c43-cfce-ca78-56e3-0e3a0f1f5a8a@arm.com>
-Date: Fri, 20 Apr 2018 16:21:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755721AbeDTPWx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:22:53 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:43757 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755707AbeDTPWv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 11:22:51 -0400
+X-Google-Smtp-Source: AB8JxZqg6culLK3uoUIqF81ma4nljoI1FGaBDCzCu+z248AOTxFfQrjp/py7IsBT1UN0HG8VrUAI7sAs+b7S8ir0FLc=
 MIME-Version: 1.0
-In-Reply-To: <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <0ca46228311ec615947e199def9fed62d70c1f07.1524118799.git.baolin.wang@linaro.org>
+References: <0ca46228311ec615947e199def9fed62d70c1f07.1524118799.git.baolin.wang@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 20 Apr 2018 17:22:49 +0200
+X-Google-Sender-Auth: NlqMErMg1pGBLK78KVDUmQBQgnk
+Message-ID: <CAK8P3a15stj5Yurd7rM7278cYPtM6kufs=QL2GihCOxRUCHRSQ@mail.gmail.com>
+Subject: Re: [PATCH] m68k: Remove read_persistent_clock()
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Brown <broonie@kernel.org>, linux-m68k@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[fixing up Christoffer's address]
+On Thu, Apr 19, 2018 at 8:22 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
+> The read_persistent_clock() uses a timespec, which is not year 2038 safe
+> on 32bit systems. Moreover on m68k architecture, we have implemented generic
+> RTC drivers that can be used to compensate the system suspend time. So
+> we can remove the obsolete read_persistent_clock().
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-On 20/04/18 15:59, Andrey Konovalov wrote:
-> On Fri, Apr 20, 2018 at 10:13 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>> The issue is that
->>> clang doesn't know about the "S" asm constraint. I reported this to
->>> clang [2], and hopefully this will get fixed. In the meantime, would
->>> it possible to work around using the "S" constraint in the kernel?
->>
->> I have no idea, I've never used clang to build the kernel. Clang isn't
->> really supported to build the arm64 kernel anyway (as you mention
->> below), and working around clang deficiencies would mean that we leave
->> with the workaround forever. I'd rather enable clang once it is at
->> feature parity with GCC.
-> 
-> The fact that there are some existing issues with building arm64
-> kernel with clang doesn't sound like a good justification for adding
-> new issues :)
+I'm not sure about this one: it's still possible to turn off
+CONFIG_RTC_DRV_GENERIC
+on M68KCLASSIC, and in that case we still need a read_persistent_clock64()
+implementation. Or we use your patch but make CONFIG_RTC_DRV_GENERIC
+mandatory.
 
-Once clang is in a state where it actually compiles a full-featured
-kernel that can be subsequently booted, I'll definitely care about it,
-and will make sure it doesn't break. In the meantime, I'm targeting GCC,
-which is the only sane option for arm64 at the moment. Waiting for clang
-to fixed is not an option.
+See below for a version I did a while ago (but never submitted as I got
+distracted).
 
-> However in this case I do believe that this is more of a bug in clang
-> that should be fixed.
+       Arnd
 
-Absolutely. Lack of GCC compatibility is what impairs the adoption of clang.
+commit 13ddf5a33a195e9b7a7a6ed10481363b5259c1d4
+Author: Arnd Bergmann <arnd@arndb.de>
+Date:   Thu Jan 25 15:30:50 2018 +0100
 
->>> While we're here, regarding the other issue with kvm [3], I didn't
->>> receive any comments as to whether it makes sense to send the fix that
->>> adds -fno-jump-tables flag when building kvm with clang.
->>
->> Is that the only thing missing? Are you sure that there is no other way
->> for clang to generate absolute addresses that will then lead to a crash?
->> Again, I'd rather make sure we have the full picture.
-> 
-> Well, I have tried applying that patch and running kvm tests that I
-> could find [1], and they passed (actually I think there was an issue
-> with one of them, but I saw the same thing when I tried running them
-> on a kernel built with GCC).
-> 
-> [1] https://www.linux-kvm.org/page/KVM-unit-tests
+    m68k: use read_persistent_clock64 consistently
 
-Which issue? Maybe it'd be worth reporting it?
+    We have two ways of getting the current time from a platform at boot
+    or during suspend: either using read_persistent_clock() or the rtc
+    class operation. We never need both, so I'm hiding the
+    read_persistent_clock variant when the generic RTC is enabled.
 
-To the original discussion about absolute addresses: I'm not so much
-looking for additional testing (I trust that you've tested the patch
-before sending it). I'm more after a statement from the LLVM folks
-indicating in which conditions the compiler will emit absolute addresses
-instead of PC-relative ones, and whether there is a way to make sure
-that we always get the latter. If '-fno-jump-tables' is the only missing
-flag, great. Otherwise, I'd like to know.
+    Since read_persistent_clock() and mktime() are deprecated because of
+    the y2038 overflow of time_t, we should use the time64_t based
+    replacements here.
 
-Thanks,
+    Finally, the dependency on CONFIG_ARCH_USES_GETTIMEOFFSET looks
+    completely bogus in this case, so let's remove that. It was
+    added in commit b13b3f51ff7b ("m68k: fix inclusion of
+    arch_gettimeoffset for non-MMU 68k classic CPU types") to deal
+    with arch_gettimeoffset(), which has since been removed from
+    this file and is unrelated to the RTC functions.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+    The rtc accessors are only used by classic machines, while
+    coldfire uses proper RTC drivers, so we can put the old
+    ifdef back around both functions.
+
+    Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/arch/m68k/kernel/time.c b/arch/m68k/kernel/time.c
+index 97dd4e26f234..edcf3855d8b0 100644
+--- a/arch/m68k/kernel/time.c
++++ b/arch/m68k/kernel/time.c
+@@ -71,7 +71,9 @@ static irqreturn_t timer_interrupt(int irq, void *dummy)
+        return IRQ_HANDLED;
+ }
+
+-void read_persistent_clock(struct timespec *ts)
++#ifdef CONFIG_M68KCLASSIC
++#if !IS_BUILTIN(CONFIG_RTC_DRV_GENERIC)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+        struct rtc_time time;
+        ts->tv_sec = 0;
+@@ -82,12 +84,13 @@ void read_persistent_clock(struct timespec *ts)
+
+                if ((time.tm_year += 1900) < 1970)
+                        time.tm_year += 100;
+-               ts->tv_sec = mktime(time.tm_year, time.tm_mon, time.tm_mday,
++               ts->tv_sec = mktime64(time.tm_year, time.tm_mon, time.tm_mday,
+                                      time.tm_hour, time.tm_min, time.tm_sec);
+        }
+ }
++#endif
+
+-#if defined(CONFIG_ARCH_USES_GETTIMEOFFSET) &&
+IS_ENABLED(CONFIG_RTC_DRV_GENERIC)
++#if IS_ENABLED(CONFIG_RTC_DRV_GENERIC)
+ static int rtc_generic_get_time(struct device *dev, struct rtc_time *tm)
+ {
+        mach_hwclk(0, tm);
+@@ -145,8 +148,8 @@ static int __init rtc_init(void)
+ }
+
+ module_init(rtc_init);
+-
+-#endif /* CONFIG_ARCH_USES_GETTIMEOFFSET */
++#endif /* CONFIG_RTC_DRV_GENERIC */
++#endif /* CONFIG M68KCLASSIC */
+
+ void __init time_init(void)
+ {
