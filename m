@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754649AbeDTKI0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:08:26 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6754 "EHLO huawei.com"
+        id S1754636AbeDTKIX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:08:23 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:6753 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754398AbeDTKIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754335AbeDTKIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Apr 2018 06:08:19 -0400
 From: John Garry <john.garry@huawei.com>
 To: <rjw@rjwysocki.net>, <andriy.shevchenko@linux.intel.com>,
@@ -14,12 +14,10 @@ CC: <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
         <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
         <linuxarm@huawei.com>, <z.liuxinliang@hisilicon.com>,
         John Garry <john.garry@huawei.com>
-Subject: [RFC PATCH 1/2] ACPI / PNP: Don't add "enumeration_by_parent" devices
-Date: Fri, 20 Apr 2018 18:07:25 +0800
-Message-ID: <1524218846-169934-2-git-send-email-john.garry@huawei.com>
+Subject: [RFC PATCH 0/2] HISI LPC: Add PNP device support
+Date: Fri, 20 Apr 2018 18:07:24 +0800
+Message-ID: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
-References: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.67.212.75]
@@ -28,47 +26,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For ACPI devices with the enumeration_by_parent flag set,
-we expect the parent device to enumerate the device after
-the ACPI scan.
+This patchset adds support for creating PNP devices
+for devices attached to the HiSilicon LPC host bus.
 
-This patch does partially the same for devices which are
-enumerated as PNP devices.
+Currently an mfd-cell (platform device) is created per
+device on the bus for using ACPI-based firmware. As
+such, we need require a platform driver for these
+devices.
 
-We still want PNP scan code to create the per-ACPI device
-PNP device, but hold off adding the device to allow the
-parent to do this optionally.
+However for PNP-compatible devices, it would be better
+to create a PNP device so that we may use the existing
+PNP driver.
 
-Flag acpi_device.driver_data is used as temp store as a
-reference to the PNP device for the parent.
+The PNP-compatible device we are interested in is the
+8250-compatible UART on the Huawei D03 development
+board. This uart has the following profile:
+- IO space iotype
+- no interrupt, so polling mode required
+- 16550 compatible
 
-Signed-off-by: John Garry <john.garry@huawei.com>
----
+Currently no platform driver exists for this. I did
+send an RFC to add support to the 8250_dw driver, but
+Andy Shevchenko suggested adding PNP support to the
+host driver instead so we may use the appropriate PNP
+driver (8250_pnp) without modification, see here:
+https://lkml.org/lkml/2018/2/26/354
+
+As for the implementation in this patchset, to avoid
+the PNP scan from creating and adding the device,
+we reuse the "enumeration_by_parent" flag to hold off
+adding the PNP device, so the parent driver can modify
+the IO resources to translate from the bus address
+to the logical PIO address, and then add the device
+for probing.
+
+This solution is not good - hence the RFC. But I am
+looking for suggestions on how to solve this.
+
+Any opinions or ideas?
+
+Thanks!
+
+John Garry (2):
+  ACPI / PNP: Don't add "enumeration_by_parent" devices
+  HISI LPC: Add PNP device support
+
+ drivers/bus/hisi_lpc.c     | 38 +++++++++++++++++++++++++++++++++++++-
  drivers/pnp/pnpacpi/core.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ 2 files changed, 45 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pnp/pnpacpi/core.c b/drivers/pnp/pnpacpi/core.c
-index 3a4c1aa..92f9d6f 100644
---- a/drivers/pnp/pnpacpi/core.c
-+++ b/drivers/pnp/pnpacpi/core.c
-@@ -285,10 +285,14 @@ static int __init pnpacpi_add_device(struct acpi_device *device)
- 	if (!dev->active)
- 		pnp_init_resources(dev);
- 
--	error = pnp_add_device(dev);
--	if (error) {
--		put_device(&dev->dev);
--		return error;
-+	if (!device->flags.enumeration_by_parent) {
-+		error = pnp_add_device(dev);
-+		if (error) {
-+			put_device(&dev->dev);
-+			return error;
-+		}
-+	} else {
-+		device->driver_data = dev;
- 	}
- 
- 	num++;
 -- 
 1.9.1
