@@ -1,69 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755010AbeDTNzf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:55:35 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:41546 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754786AbeDTNze (ORCPT
+        id S1755168AbeDTN5f (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:57:35 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:42810 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754846AbeDTN5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:55:34 -0400
-X-Google-Smtp-Source: AIpwx4/2LXrBgYQJm5Pq/p4wZBGvGI2QLcqkqSiwbZLMq56/8A6JqRsjjGVq2vZAyCW2arWRbk1wvA==
-Date: Fri, 20 Apr 2018 09:55:32 -0400
-From: Sean Paul <seanpaul@chromium.org>
-To: Emil Lundmark <lndmrk@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
-        Sean Paul <seanpaul@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: udl: Destroy framebuffer only if it was initialized
-Message-ID: <20180420135532.GH73214@art_vandelay>
-References: <20180420115001.161745-1-lndmrk@chromium.org>
+        Fri, 20 Apr 2018 09:57:32 -0400
+Subject: Re: [PATCH v2 05/10] media: v4l: Add definitions for MPEG2 frame
+ format and header metadata
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+ <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <4e6c4cb7-01b2-3278-4f12-c0ce8cd82ecc@xs4all.nl>
+Date: Fri, 20 Apr 2018 15:57:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420115001.161745-1-lndmrk@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfLvqnmb6eoo4JmSv7EVXsqfQrEo2CLKJWkZfmR75qs4Pdcjob5X6AqLwqmMne3Pfb5MWqv3yo8M7avbcSrQ0VfKWBRwAnyyU+K6mEsvm7y3BEhc7q7v9
+ 6KaNGwHQd3SWWzhdo0Kg+P9s6Ua+hiPVAjYLa9c18kLuDop6kpY/Cnvrwj/SyBpX5Hg9VI7GS7IkBGiYYiEcffpi0LVcfGkfbbMff/UwOIrnJGe77umj3MWc
+ Ed23V1RFxUS4YJnJMPRDuUGEan8+9tLg9q4Ss1mOoy0CLHdPrvl1JUViFF7ctM0VkLQq77HwMpq/SYFsC7CxjesJquB2wL0aihQZZE73GR+nU2pvtjSTE6Bu
+ 69FSx3eM9KHO+pSswD+xTHg8+/dOk4MYKyWaeH3/0vpoQhhBRAM4Rhc+0x9hrgcr6gR52UIVMCjOBA3AwnDxP72ylxgVQcBcCrjePfXHNBH5kUaR2sFK3AYV
+ lMAAFQx2VPsqKDClcUZTAgJNpwgzuuvEfSyC81eOzzJiPgIRnaTclVi4FfRL8cfZcvt/AbxVc4AD5MDnnqZAtQkyMx79SOLftzDjR7PlcuDLS+Bhiymm5ZhZ
+ UANzdSnzo8MgI7OiqNbiLuYydoCeiFkT8UAO9vMe3bAeqdZdg8nZJho65d2B0064LoQRKE8sHLtAymy7uEcC+lA1Pqbdc331FbnukkeMQJbxRyOkMBkhAnut
+ D3Tu462qnIOXEsyN9fGIEy2d+Jg9i/Az8MVLdUKoOLNqxIbT6ci+TMGYuzkdtWZ2L28wF+6bPm/+lTDSCnlbPap1Qx62yi+cBFK1JV+rcIsD3CKltOAMuKLl
+ S4HY5VcDGMZ8lrcx1EsRrStNF6Q6CqMCsuQDBcqqtqFcKXvoJbmgqFYodi2byAumqPahGKzoyqZSsInPkCtu3QclP3U/ASwCNOb/Y4GYolHJ8YlG7qJJhDn4
+ jR9v3isHZ5+O/h/y7jGUWxUZRFc7YAtW0iA3IAWQSCaTF3RQq4EhwjPi+qhyr/UMKbyoxGmRww8cxkkJaBsS8MfgXddeEw5yWZWLinVPWr1cmdE+tB7i/OwD
+ QCkgwWRmnfWyFX3rvbYIovehvQp2cjH2pFRhWXCNpc2znpZJGjMWTPPL
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 01:50:01PM +0200, Emil Lundmark wrote:
-> This fixes a NULL pointer dereference that can happen if the UDL
-> driver is unloaded before the framebuffer is initialized. This can
-> happen e.g. if the USB device is unplugged right after it was plugged
-> in.
+On 04/19/18 17:45, Paul Kocialkowski wrote:
+> Stateless video decoding engines require both the MPEG slices and
+> associated metadata from the video stream in order to decode frames.
 > 
-
-JFYI, in future, if someone makes a suggestion on how to fix a bug, it's good
-practice to add a Suggested-by tag to give credit.
-
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-> Signed-off-by: Emil Lundmark <lndmrk@chromium.org>
+> This introduces definitions for a new pixel format, describing buffers
+> with MPEG2 slice data, as well as a control structure for passing the
+> frame header (metadata) to drivers.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
 > ---
->  drivers/gpu/drm/udl/udl_fb.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  drivers/media/v4l2-core/v4l2-ctrls.c | 10 ++++++++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c |  1 +
+>  include/uapi/linux/v4l2-controls.h   | 26 ++++++++++++++++++++++++++
+>  include/uapi/linux/videodev2.h       |  3 +++
+>  4 files changed, 40 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/udl/udl_fb.c b/drivers/gpu/drm/udl/udl_fb.c
-> index 2ebdc6d5a76e..5754e37f741b 100644
-> --- a/drivers/gpu/drm/udl/udl_fb.c
-> +++ b/drivers/gpu/drm/udl/udl_fb.c
-> @@ -426,9 +426,11 @@ static void udl_fbdev_destroy(struct drm_device *dev,
->  {
->  	drm_fb_helper_unregister_fbi(&ufbdev->helper);
->  	drm_fb_helper_fini(&ufbdev->helper);
-> -	drm_framebuffer_unregister_private(&ufbdev->ufb.base);
-> -	drm_framebuffer_cleanup(&ufbdev->ufb.base);
-> -	drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
-> +	if (ufbdev->ufb.obj) {
-> +		drm_framebuffer_unregister_private(&ufbdev->ufb.base);
-> +		drm_framebuffer_cleanup(&ufbdev->ufb.base);
-> +		drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
-> +	}
->  }
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+> index ba05a8b9a095..fcdc12b9a9e0 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -761,6 +761,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:		return "Vertical MV Search Range";
+>  	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:		return "Repeat Sequence Header";
+>  	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		return "Force Key Frame";
+> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:		return "MPEG2 Frame Header";
 >  
->  int udl_fbdev_init(struct drm_device *dev)
-> -- 
-> 2.17.0.484.g0c8726318c-goog
-> 
+>  	/* VPX controls */
+>  	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:		return "VPX Number of Partitions";
+> @@ -1152,6 +1153,9 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>  	case V4L2_CID_RDS_TX_ALT_FREQS:
+>  		*type = V4L2_CTRL_TYPE_U32;
+>  		break;
+> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:
+> +		*type = V4L2_CTRL_TYPE_MPEG2_FRAME_HDR;
+> +		break;
+>  	default:
+>  		*type = V4L2_CTRL_TYPE_INTEGER;
+>  		break;
+> @@ -1472,6 +1476,9 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
+>  			return -ERANGE;
+>  		return 0;
+>  
+> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
+> +		return 0;
+> +
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -2046,6 +2053,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
+>  	case V4L2_CTRL_TYPE_U32:
+>  		elem_size = sizeof(u32);
+>  		break;
+> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
+> +		elem_size = sizeof(struct v4l2_ctrl_mpeg2_frame_hdr);
+> +		break;
+>  	default:
+>  		if (type < V4L2_CTRL_COMPOUND_TYPES)
+>  			elem_size = sizeof(s32);
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 468c3c65362d..8070203da5d2 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1273,6 +1273,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
+>  		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
+>  		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
+> +		case V4L2_PIX_FMT_MPEG2_FRAME:	descr = "MPEG2 Frame"; break;
+>  		case V4L2_PIX_FMT_CPIA1:	descr = "GSPCA CPiA YUV"; break;
+>  		case V4L2_PIX_FMT_WNVA:		descr = "WNVA"; break;
+>  		case V4L2_PIX_FMT_SN9C10X:	descr = "GSPCA SN9C10X"; break;
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index cbbb750d87d1..8431b2a540c7 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -557,6 +557,8 @@ enum v4l2_mpeg_video_mpeg4_profile {
+>  };
+>  #define V4L2_CID_MPEG_VIDEO_MPEG4_QPEL		(V4L2_CID_MPEG_BASE+407)
+>  
+> +#define V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR     (V4L2_CID_MPEG_BASE+450)
+> +
+>  /*  Control IDs for VP8 streams
+>   *  Although VP8 is not part of MPEG we add these controls to the MPEG class
+>   *  as that class is already handling other video compression standards
+> @@ -985,4 +987,28 @@ enum v4l2_detect_md_mode {
+>  #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_CLASS_BASE + 3)
+>  #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DETECT_CLASS_BASE + 4)
+>  
+> +struct v4l2_ctrl_mpeg2_frame_hdr {
+> +	__u32 slice_len;
+> +	__u32 slice_pos;
+> +	enum { MPEG1, MPEG2 } type;
+> +
+> +	__u16 width;
+> +	__u16 height;
+> +
+> +	enum { PCT_I = 1, PCT_P, PCT_B, PCT_D } picture_coding_type;
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+As someone else already mentioned (I believe): avoid enums. Use __u16
+instead.
+
+> +	__u8 f_code[2][2];
+> +
+> +	__u8 intra_dc_precision;
+> +	__u8 picture_structure;
+> +	__u8 top_field_first;
+> +	__u8 frame_pred_frame_dct;
+> +	__u8 concealment_motion_vectors;
+> +	__u8 q_scale_type;
+> +	__u8 intra_vlc_format;
+> +	__u8 alternate_scan;
+> +
+> +	__u8 backward_ref_index;
+> +	__u8 forward_ref_index;
+> +};
+
+Please test that the layout and size of this structure is identical for 32 and 64 bit
+architectures, both on Intel and ARM.
+
+It looks good, but it doesn't hurt to check.
+
+Regards,
+
+	Hans
+
+> +
+>  #endif
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 31b5728b56e9..4b8336f7bcf0 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -635,6 +635,7 @@ struct v4l2_pix_format {
+>  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /* SMPTE 421M Annex L compliant stream */
+>  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
+>  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
+> +#define V4L2_PIX_FMT_MPEG2_FRAME v4l2_fourcc('M', 'G', '2', 'F') /* MPEG2 frame */
+>  
+>  /*  Vendor-specific formats   */
+>  #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1 YUV */
+> @@ -1586,6 +1587,7 @@ struct v4l2_ext_control {
+>  		__u8 __user *p_u8;
+>  		__u16 __user *p_u16;
+>  		__u32 __user *p_u32;
+> +		struct v4l2_ctrl_mpeg2_frame_hdr __user *p_mpeg2_frame_hdr;
+>  		void __user *ptr;
+>  	};
+>  } __attribute__ ((packed));
+> @@ -1631,6 +1633,7 @@ enum v4l2_ctrl_type {
+>  	V4L2_CTRL_TYPE_U8	     = 0x0100,
+>  	V4L2_CTRL_TYPE_U16	     = 0x0101,
+>  	V4L2_CTRL_TYPE_U32	     = 0x0102,
+> +	V4L2_CTRL_TYPE_MPEG2_FRAME_HDR = 0x0109,
+>  };
+>  
+>  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
+> 
