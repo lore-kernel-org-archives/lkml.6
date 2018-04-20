@@ -1,185 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752792AbeDTSvp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:51:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44662 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750927AbeDTSvm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:51:42 -0400
+        id S1752831AbeDTSvy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:51:54 -0400
+Received: from mail-sn1nam02on0055.outbound.protection.outlook.com ([104.47.36.55]:50336
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750985AbeDTSvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 14:51:50 -0400
+From: Javier Gonzalez <javier@cnexlabs.com>
+To: Hans Holmberg <hans.ml.holmberg@owltronix.com>
+CC: =?utf-8?B?TWF0aWFzIEJqw7hybGluZw==?= <mb@lightnvm.io>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: Re: [PATCH 3/3] lightnvm: pblk: fix smeta write error path
+Thread-Topic: [PATCH 3/3] lightnvm: pblk: fix smeta write error path
+Thread-Index: AQHT1/0b8OpU9eEjKk63ot0afhGD4aQKAUQA
+Date: Fri, 20 Apr 2018 18:51:47 +0000
+Message-ID: <621D78CA-8246-43D0-930D-866C3EBA5FA2@cnexlabs.com>
+References: <1524155964-3743-1-git-send-email-hans.ml.holmberg@owltronix.com>
+ <1524155964-3743-4-git-send-email-hans.ml.holmberg@owltronix.com>
+In-Reply-To: <1524155964-3743-4-git-send-email-hans.ml.holmberg@owltronix.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+authentication-results: owltronix.com; dkim=none (message not signed)
+ header.d=none;owltronix.com; dmarc=none action=none header.from=cnexlabs.com;
+x-originating-ip: [50.207.153.190]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CO2PR06MB892;7:uw3d8TDKYE8WH3iLtxDvCmAcntIlBoKHpCBJYkEbTN0pKp72JHhxYVzcDvhp5cFyk7Tv4FWg8L/H1KYO8xfeRM3bs55T74j2pzDvZmWTy3hR+nz3hswuw6osMgJ+YUjqM5YEZdICu4dOQlEzNvpIMW0Six7Zk1RA9l2/DlPaQLMygXqxVWTh13JX96jYPmxuGCkb9rbTY6e5lb5uT9m5TZ/0fAi9jtuC9Pfd7U+6lITJHoz+cXyc2YrOPPl0TQ37
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(366004)(39380400002)(346002)(376002)(2906002)(6916009)(99936001)(6486002)(25786009)(26005)(3660700001)(3280700002)(6512007)(305945005)(5250100002)(316002)(7736002)(54906003)(6116002)(6436002)(3846002)(229853002)(36756003)(33656002)(186003)(8676002)(486006)(83716003)(6246003)(107886003)(2900100001)(6506007)(81166006)(4326008)(446003)(66066001)(11346002)(8936002)(82746002)(478600001)(76176011)(5660300001)(86362001)(476003)(53936002)(102836004)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR06MB892;H:CO2PR06MB538.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(49563074)(7193020);SRVR:CO2PR06MB892;
+x-ms-traffictypediagnostic: CO2PR06MB892:
+x-microsoft-antispam-prvs: <CO2PR06MB892FEE6F5C4DB0EC045338CBAB40@CO2PR06MB892.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(102415395)(6040522)(2401047)(8121501046)(5005006)(3231232)(944501397)(52105095)(10201501046)(3002001)(93006095)(93001095)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:CO2PR06MB892;BCL:0;PCL:0;RULEID:;SRVR:CO2PR06MB892;
+x-forefront-prvs: 0648FCFFA8
+x-microsoft-antispam-message-info: vqFfQek/+Cce9Aee+fZMn0vLW4sv19iFnOlCcoeIpYij0nhprthhLqDVJDnL+OYL1OKtn0Rui9MUp4lEAUf1BDlGRVVn7PA3La4AjJog58iIMEVYsCWqNe7urLTS14kHpnJydYVPiZQD6K3sNYuuQmCyJk/Oe5ZmWG6pjefWttQAD1A40pTeKDbiKPg13dhr
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_E8618736-166D-4F11-A6EF-EA599FBF81B1";
+        protocol="application/pgp-signature"; micalg=pgp-sha512
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 20 Apr 2018 11:51:40 -0700
-From: Channa <ckadabi@codeaurora.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-arm@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Trilok Soni <tsoni@codeaurora.org>,
-        Kyle Yan <kyan@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Evan Green <evgreen@chromium.org>, linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] Documentation: Documentation for qcom, llcc
-In-Reply-To: <589e84221ca7723c1739f713216abce5@codeaurora.org>
-References: <1523390893-10904-1-git-send-email-rishabhb@codeaurora.org>
- <1523390893-10904-2-git-send-email-rishabhb@codeaurora.org>
- <20180416145912.ja7d2xd2kqiukrgl@rob-hp-laptop>
- <9a9ffe61f85dd28199bcc2d449097059@codeaurora.org>
- <1d31f2d727d32922aaf98c345723229e@codeaurora.org>
- <CAL_JsqKihiUwPW-aKYtG2cSFnOZonygahUeO5kgLjL3GYO7w=Q@mail.gmail.com>
- <589e84221ca7723c1739f713216abce5@codeaurora.org>
-Message-ID: <8cb9bd887d94bedfb43225569647337e@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+X-MS-Office365-Filtering-Correlation-Id: 713bbe6a-be18-4001-86ea-08d5a6efc559
+X-OriginatorOrg: cnexlabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 713bbe6a-be18-4001-86ea-08d5a6efc559
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2018 18:51:47.9760
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: e40dfc2e-c6c1-463a-a598-38602b2c3cff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR06MB892
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-18 11:11, Channa wrote:
-> On 2018-04-18 07:52, Rob Herring wrote:
->> On Tue, Apr 17, 2018 at 5:12 PM,  <rishabhb@codeaurora.org> wrote:
->>> On 2018-04-17 10:43, rishabhb@codeaurora.org wrote:
->>>> 
->>>> On 2018-04-16 07:59, Rob Herring wrote:
->>>>> 
->>>>> On Tue, Apr 10, 2018 at 01:08:12PM -0700, Rishabh Bhatnagar wrote:
->>>>>> 
->>>>>> Documentation for last level cache controller device tree 
->>>>>> bindings,
->>>>>> client bindings usage examples.
->>>>> 
->>>>> 
->>>>> "Documentation: Documentation ..."? That wastes a lot of the 
->>>>> subject
->>>>> line... The preferred prefix is "dt-bindings: ..."
->>>>> 
->>>>>> 
->>>>>> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
->>>>>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
->>>>>> ---
->>>>>>  .../devicetree/bindings/arm/msm/qcom,llcc.txt      | 58
->>>>>> ++++++++++++++++++++++
->>>>>>  1 file changed, 58 insertions(+)
->>>>>>  create mode 100644
->>>>>> Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
->>>>>> 
->>>>>> diff --git 
->>>>>> a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
->>>>>> b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
->>>>>> new file mode 100644
->>>>>> index 0000000..497cf0f
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
->>>>>> @@ -0,0 +1,58 @@
->>>>>> +== Introduction==
->>>>>> +
->>>>>> +LLCC (Last Level Cache Controller) provides last level of cache 
->>>>>> memory
->>>>>> in SOC,
->>>>>> +that can be shared by multiple clients. Clients here are 
->>>>>> different
->>>>>> cores in the
->>>>>> +SOC, the idea is to minimize the local caches at the clients and
->>>>>> migrate to
->>>>>> +common pool of memory
->>>>>> +
->>>>>> +Properties:
->>>>>> +- compatible:
->>>>>> +        Usage: required
->>>>>> +        Value type: <string>
->>>>>> +        Definition: must be "qcom,sdm845-llcc"
->>>>>> +
->>>>>> +- reg:
->>>>>> +        Usage: required
->>>>>> +        Value Type: <prop-encoded-array>
->>>>>> +        Definition: must be addresses and sizes of the LLCC 
->>>>>> registers
->>>>> 
->>>>> 
->>>>> How many address ranges?
->>>>> 
->>>> It consists of just one address range. I'll edit the definition to 
->>>> make
->>>> it more clear.
->>>>>> 
->>>>>> +
->>>>>> +- #cache-cells:
->>>>> 
->>>>> 
->>>>> This is all written as it is a common binding, but it is not one.
->>>>> 
->>>>> You already have most of the configuration data for each client in 
->>>>> the
->>>>> driver, I think I'd just put the client connection there too. Is 
->>>>> there
->>>>> any variation of this for a given SoC?
->>>>> 
->>>> #cache-cells and max-slices won't change for a given SOC. So you 
->>>> want me
->>>> to hard-code in the driver itself?
->>>> 
->>> I can use of_parse_phandle_with_fixed_args function and fix the 
->>> number of
->>> args as 1 instead of keeping #cache-cells here in DT. Does that look 
->>> fine?
->> 
->> No, I'm saying why even put cache-slices properties in DT to begin
->> with? You could just define client id's within the kernel and clients
->> can use those instead of getting the id from the DT.
-> 
-> The reason to add cache-slices here is to establish a connection 
-> between
-> client and system cache. For example if we have multiple instances of
-> system cache blocks and client wants to choose a system cache instance
-> based on the usecase then its easier to establish this connection using
-> device tree than hard coding in the driver.
-> 
->> 
->> I have a couple of hesitations with putting this into the DT. First, I
->> think a cache is just one aspect of describing the interconnect
->> between masters and memory (and there's been discussions on
->> interconnect bindings too) and any binding needs to consider all of
->> the aspects of the interconnect. Second, I'd expect this cache
->> architecture will change SoC to SoC and the binding here is pretty
->> closely tied to the current cache implementation (e.g. slices). If
->> there were a bunch of SoCs with the same design and just different
->> client IDs (like interrupt IDs), then I'd feel differently.
-> 
-> This is partially true, a bunch of SoCs would support this design but
-> clients IDs are not expected to change. So Ideally client drivers could
-> hard code these IDs.
-> 
-> However I have other concerns of moving the client Ids in the driver.
-> The way the APIs implemented today are as follows:
-> #1. Client calls into system cache driver to get cache slice handle
-> with the usecase Id as input.
-> #2. System cache driver gets the phandle of system cache instance from
-> the client device to obtain the private data.
-> #3. Based on the usecase Id perform look up in the private data to get
-> cache slice handle.
-> #4. Return the cache slice handle to client
-> 
-> If we don't have the connection between client & system cache then the
-> private data needs to declared as static global in the system cache 
-> driver,
-> that limits us to have just once instance of system cache block.
-> 
-> 
->> 
->> Rob
+--Apple-Mail=_E8618736-166D-4F11-A6EF-EA599FBF81B1
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-Hi Rob:
+> On 19 Apr 2018, at 09.39, Hans Holmberg =
+<hans.ml.holmberg@owltronix.com> wrote:
+>=20
+> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+>=20
+> Smeta write errors were previously ignored. Skip these
+> lines instead and throw them back on the free
+> list, so the chunks will go through a reset cycle
+> before we attempt to use the line again.
+>=20
+> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> ---
+> drivers/lightnvm/pblk-core.c | 7 ++++---
+> 1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/lightnvm/pblk-core.c =
+b/drivers/lightnvm/pblk-core.c
+> index f6135e4..485fe8c 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -849,9 +849,10 @@ static int pblk_line_submit_smeta_io(struct pblk =
+*pblk, struct pblk_line *line,
+> 	atomic_dec(&pblk->inflight_io);
+>=20
+> 	if (rqd.error) {
+> -		if (dir =3D=3D PBLK_WRITE)
+> +		if (dir =3D=3D PBLK_WRITE) {
+> 			pblk_log_write_err(pblk, &rqd);
+> -		else if (dir =3D=3D PBLK_READ)
+> +			ret =3D 1;
+> +		} else if (dir =3D=3D PBLK_READ)
+> 			pblk_log_read_err(pblk, &rqd);
+> 	}
+>=20
+> @@ -1120,7 +1121,7 @@ static int pblk_line_init_bb(struct pblk *pblk, =
+struct pblk_line *line,
+>=20
+> 	if (init && pblk_line_submit_smeta_io(pblk, line, off, =
+PBLK_WRITE)) {
+> 		pr_debug("pblk: line smeta I/O failed. Retry\n");
+> -		return 1;
+> +		return 0;
+> 	}
+>=20
+> 	bitmap_copy(line->invalid_bitmap, line->map_bitmap, =
+lm->sec_per_line);
+> --
+> 2.7.4
 
-Can you please provide your opinion on the approach here?
+Looks good to me..
 
-Thanks,
-Channa
+Reviewed-by: Javier Gonz=C3=A1lez <javier@cnexlabs.com>
 
--- 
---
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,
-a Linux Foundation Collaborative Project
+
+
+--Apple-Mail=_E8618736-166D-4F11-A6EF-EA599FBF81B1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="signature.asc"
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE+ws7Qq+qZPG1bJoyIX4xUKFRnnQFAlraNr8ACgkQIX4xUKFR
+nnQ5jQ//dF985kd7LBAsmSbHMt2nM4pjd6iBpGhi0S0+n3IBCOGd9DrtSAIWlV6N
+rn0ON0iU3i3I47FAL846SK56aFYOBF4mAyNtZXLwH3JVJ2JF9V4q6LP1+6B43RuV
++0jIBQ8uW0lg1JnqlphFHu8GsznXUHJPjAtRaWEPXBcOeulfCqCR6yCL9FPb0fYO
+e+X4ggQyY1zuiKo0Ro5N2JTNk3xIr/bXrK9vwPoqGiZs5w1zFKxZxjK9WRkFZDI1
+1wfvNJe7ZHYUs3eAzThZl6A+ibbKHTf//dYlsZnIOYCaq83vppXCzFWE+7YzqVrT
+Tf97hl0AU0FcM9301mXJaiIqBxLFH5RGRvUpO8lEECd9C6qgOgPgy9MratBwNA09
+ClTgb4vuymy+Gv/hHPL3gJOUtBKGrOasdMKzBfAoCkSlYuJQLbTl7T3a1522nfa4
+vJVfoGa3OVRwNkl92+nOUVllGGsMqmWo5CoCBXM4j0mx1zwjevdkYhx7tdreJdbt
+ClcwhsXbUNisVB2F3uE6a5Hy+BsVt6ATAxc/NmUD9i+nWZCJeVw93DinC/LC6qBi
+vAhNGdrQpZ9Z/zUtCgOP+676A3FYCo4K15ufsjirt/0+FJPcl7VrVDF3y7cHItBj
+sVqD9IERkw8QxpJKbEOqCGpH63+ikewWLNw79IqmmEyV39tPI2g=
+=uwEZ
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_E8618736-166D-4F11-A6EF-EA599FBF81B1--
