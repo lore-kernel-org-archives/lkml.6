@@ -1,75 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754848AbeDTMfY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 08:35:24 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7187 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754752AbeDTMfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:35:23 -0400
-Subject: Re: s390 perf events JSONs query
-To: Thomas-Mich Richter <tmricht@linux.ibm.com>,
-        <brueckner@linux.vnet.ibm.com>, <tmricht@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        "Arnaldo Carvalho de Melo" <acme@kernel.org>
-References: <68e84967-ca29-0b86-027a-76307e003a55@huawei.com>
- <a3d9a3c0-8251-c922-64d4-6b91fe5df324@linux.ibm.com>
-CC: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <88a0164e-0dbb-14a5-4746-351ea7eeeb68@huawei.com>
-Date: Fri, 20 Apr 2018 13:34:55 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <a3d9a3c0-8251-c922-64d4-6b91fe5df324@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        id S1754775AbeDTMh3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 08:37:29 -0400
+Received: from mout.gmx.net ([212.227.17.20]:55225 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754591AbeDTMh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 08:37:28 -0400
+Message-ID: <1524227844.6103.1.camel@gmx.de>
+Subject: Re: DOS by unprivileged user
+From: Mike Galbraith <efault@gmx.de>
+To: Ferry Toth <ftoth@telfort.nl>
+Cc: lkml <linux-kernel@vger.kernel.org>
+Date: Fri, 20 Apr 2018 14:37:24 +0200
+In-Reply-To: <1911073.n8LaRrY1S6@ferry-quad>
+References: <9023506.UBh6vynRGa@delfion> <1524199618.5757.3.camel@gmx.de>
+         <1911073.n8LaRrY1S6@ferry-quad>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+X-Provags-ID: V03:K1:NSyCyRQYdKXVfWYiX8LtuGCnvFd73yTKgRYgm2xqqA8iZ7g13lm
+ Y3eQuC+MPlUOnvg18W98jjz8b4yFtUX/OlluboLpc46ynKkVZD0cgEV/QFu3C0j5gUwrha/
+ MZbMHojWMb7E4YgB2QwVMzidBpNH9Bx7aM7R8ZkWvmC9BFqF7SM0GrTlTYkgkC+Sp8EbuIn
+ 2GoyBr97IN7tJrJ69ITvQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:kdb/fhsY1nI=:NaO0ILz9VnKsotMoI5bGhM
+ S/yviYpZlJ5zgfs/eIIchBtvlnyHJpFetr0ooKSY4YcclEGJMZwdGbWtcxx+brTvyWO8gMnV5
+ x6SXMIKavEhd2d5NEM3I3QuLcJNMfS9fRrxQ7zY8HUQg0U4J9624nw+7Ju9bT+aUfYuDkLlZq
+ iPHQFf/mxqqqtxrG+/Os9WbQM5FntSYDvD+68/22qTiHwzvPnX2NitmkW2SV2ZQLgu/eelWdY
+ pFkYx06iSeAnp4o6Ug6mK82jbk7AiL9VCBE4bLO6sIyKfZa7hmsHOFSXo5kwB87fI+cqp9Yzd
+ RNqHt5lKJ4RX6x7t9eL06BTckJNZSUAHv/t8QtOPVGc/oB2PBoENe3DVOFa5iCYRx6oK/1AQo
+ UFyvx1O4zgbmmZz6P7qJm3V5W09J4cZUJAKUpEJxHuS1naAQ5V5BMfOxveJirVI2ehPzTp87s
+ SRgdXMmFxOLS50qTbnnOOmp67CAsqxw2n+yI/Lp/eP33IKsvBI8OikPe/j5iESaDr5ckxxJQi
+ O2LGU7e99ZlAu6H76v5k2twRa8pRud4/nw9psU8WD3LTtu3ZQxhQnKg1WOvB6JMRilEF2UiEU
+ W/nt247TLn2AejT65ieO1SmqDLASqGZrsAPusIs3KJJxWxUjD6VecVQB6+2xGzU+luP1EqaEp
+ nUkLTEqfCO+BIHEU1LA+YqcKeugiB2p0JXevqAVigSf/N2FmT/zc52e+fjzteK8KmZR46nBSj
+ mnvlHEkzwEUitm6o78Bc/1rrjfYhVVzWYOqV08rlQoLCiYXxFnwfZHbbeBptqgEKDy9J6rqif
+ 9gw7zNA0tMH7J2fR96XPxRBYQ0fJUezqaTHEruHelEy4hAIUOc=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/04/2018 12:44, Thomas-Mich Richter wrote:
-> On 04/20/2018 12:51 PM, John Garry wrote:
->> Hi Hendrik, Thomas,
->>
->> I noticed that in 4.17-rc1 support was included for s390 perf pmu-events. I also notice that the JSONs contain many common (identical actually) events between different chips for this arch.
->>
->> Support was added for factoring out common arch events in https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/tools/perf/pmu-events?h=next-20180420&id=e9d32c1bf0cd7a98358ec4aa1625bf2b3459b9ac
->>
->> ARM64 chips use this feature. I am not familiar with the s390 arch, but do you think you could also use this feature?
->>
->> Thanks,
->> John
->>
->
-> Thanks John,
->
-> for bringing this to my attention. Yes I will definitely look into this feature and will try to
-> rework our s390 json files when this seems beneficial.
->
-> I did not notice this patch on the linux-perf-users mailing list. Was it there for review?
-> I do ask this because recently I have nearly no traffic on this list in my reader, so I wonder
-> if there is something wrong with my mailing list subscription or setup.
->
+On Fri, 2018-04-20 at 10:39 +0200, Ferry Toth wrote:
+> 
+> Nevertheless I feel one process should not be allowed to harm other
+> processes by denying them resources. Even if when btrfs makes it easy
+> abuse I think the scheduler should have throttled gitk.
 
-Hi Thomas,
+Memory management is not in it's job description.
 
-The only relevant list was linux-kernel@vger.kernel.org
-
-This is the only list which the MAINTAINERS file advises to add. I did 
-wonder about a dedicated perf list, as I seem to miss mails also.
-
-Hi Peter, Ingo, Arnaldo,
-
-Should linux-perf-users address be added for perf-related patches? If 
-so, should we add it to the maintainers file? If not, why no dedicated list?
-
-Thanks,
-John
-
-> Thanks.
->
+	-Mike
