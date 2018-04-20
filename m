@@ -1,82 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755053AbeDTOJ6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:09:58 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7189 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754895AbeDTOJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:09:56 -0400
-Subject: Re: [RFC PATCH 1/2] ACPI / PNP: Don't add "enumeration_by_parent"
- devices
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
- <1524218846-169934-2-git-send-email-john.garry@huawei.com>
- <20180420130727.GV2173@lahna.fi.intel.com>
- <27c3f84e-4d53-4b6b-7382-04908082ed01@huawei.com>
- <20180420135222.GY2173@lahna.fi.intel.com>
-CC: <rjw@rjwysocki.net>, <andriy.shevchenko@linux.intel.com>,
-        <linux-acpi@vger.kernel.org>, <lenb@kernel.org>,
-        <lorenzo.pieralisi@arm.com>, <linux-kernel@vger.kernel.org>,
-        <arnd@arndb.de>, <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
-        <linuxarm@huawei.com>, <z.liuxinliang@hisilicon.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <75eae3ac-228f-d6a4-bb0e-4bd27e35c55d@huawei.com>
-Date: Fri, 20 Apr 2018 15:09:30 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1755149AbeDTOLu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:11:50 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:42359 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754996AbeDTOLt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:11:49 -0400
+X-Google-Smtp-Source: AIpwx4+Ak2ZACLR61QrQEXBUMWB86XDXZ0E5Uczo+6tjj5iH2ggSIgLZ9QGp5w+ocrKybPbWotWlOw==
+Date: Fri, 20 Apr 2018 16:11:45 +0200
+From: Juri Lelli <juri.lelli@gmail.com>
+To: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sched/rt: Rework for_each_process_thread() iterations
+ in tg_has_rt_tasks()
+Message-ID: <20180420141145.GI24599@localhost.localdomain>
+References: <152415882713.2054.8734093066910722403.stgit@localhost.localdomain>
+ <20180420092540.GG24599@localhost.localdomain>
+ <0d7fbdab-b972-7f86-4090-b49f9315c868@virtuozzo.com>
+ <854a5fb1-a9c1-023f-55ec-17fa14ad07d5@virtuozzo.com>
 MIME-Version: 1.0
-In-Reply-To: <20180420135222.GY2173@lahna.fi.intel.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <854a5fb1-a9c1-023f-55ec-17fa14ad07d5@virtuozzo.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/04/2018 14:52, Mika Westerberg wrote:
-> On Fri, Apr 20, 2018 at 02:24:18PM +0100, John Garry wrote:
->> Hi Mika,
->>
->> On 20/04/2018 14:07, Mika Westerberg wrote:
->>> On Fri, Apr 20, 2018 at 06:07:25PM +0800, John Garry wrote:
->>>> +	} else {
->>>> +		device->driver_data = dev;
->>>
->>> I think this deserves a comment explaining why we (ab)use driver_data
->>> like this.
->>
->> Sure, could add. I didn't see any other way for the acpi_device structure to
->> reference the derived PNP device.
->>
->> TBH, This overall approach is not good since we are creating the PNP device
->> in the scan, and then leaving the device in limbo, waiting for the parent to
->> add it, if at all. There's no rule for this.
->>
->> So I'm looking for ideas on how to improve this.
->
+On 20/04/18 13:06, Kirill Tkhai wrote:
+> From: Kirill Tkhai <ktkhai@virtuozzo.com>
+> 
+> tg_rt_schedulable() iterates over all child task groups,
+> while tg_has_rt_tasks() iterates over all linked tasks.
+> In case of systems with big number of tasks, this may
+> take a lot of time.
+> 
+> I observed hard LOCKUP on machine with 20000+ processes
+> after write to "cpu.rt_period_us" of cpu cgroup with
+> 39 children. The problem occurred because of tasklist_lock
+> is held for a long time and other processes can't do fork().
+> 
+> PID: 1036268  TASK: ffff88766c310000  CPU: 36  COMMAND: "criu"
+>  #0 [ffff887f7f408e48] crash_nmi_callback at ffffffff81050601
+>  #1 [ffff887f7f408e58] nmi_handle at ffffffff816e0cc7
+>  #2 [ffff887f7f408eb0] do_nmi at ffffffff816e0fb0
+>  #3 [ffff887f7f408ef0] end_repeat_nmi at ffffffff816e00b9
+>     [exception RIP: tg_rt_schedulable+463]
+>     RIP: ffffffff810bf49f  RSP: ffff886537ad7d50  RFLAGS: 00000202
+>     RAX: 0000000000000000  RBX: 000000003b9aca00  RCX: ffff883e9cb4b1b0
+>     RDX: ffff887d0be43608  RSI: ffff886537ad7dd8  RDI: ffff8840a6ad0000
+>     RBP: ffff886537ad7d68   R8: ffff887d0be431b0   R9: 00000000000e7ef0
+>     R10: ffff88164fc39400  R11: 0000000000023380  R12: ffffffff81ef8d00
+>     R13: ffffffff810bea40  R14: 0000000000000000  R15: ffff8840a6ad0000
+>     ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+> --- <NMI exception stack> ---
+>  #4 [ffff886537ad7d50] tg_rt_schedulable at ffffffff810bf49f
+>  #5 [ffff886537ad7d70] walk_tg_tree_from at ffffffff810c6c91
+>  #6 [ffff886537ad7dc0] tg_set_rt_bandwidth at ffffffff810c6dd0
+>  #7 [ffff886537ad7e28] cpu_rt_period_write_uint at ffffffff810c6eea
+>  #8 [ffff886537ad7e38] cgroup_file_write at ffffffff8111cfd3
+>  #9 [ffff886537ad7ec8] vfs_write at ffffffff8121eced
+> #10 [ffff886537ad7f08] sys_write at ffffffff8121faff
+> #11 [ffff886537ad7f50] system_call_fastpath at ffffffff816e8a7d
+> 
+> The patch reworks tg_has_rt_tasks() and makes it to iterate over
+> task group process list instead of iteration over all tasks list.
+> This makes the function to scale well, and reduces its execution
+> time.
+> 
+> Note, that since tasklist_lock doesn't protect a task against
+> sched_class changing, we don't introduce new races in comparison
+> to that we had before.
 
-Hi Mika,
+This seems to be true. However, I wonder why we are OK with current racy
+code (against tasks moving between groups). :/
 
-> One idea is to make pnpacpi_add_device() available outside of PNP and
-> call it directly (or some variation) in hisi_lpc.c when it walks over
-> its children.
->
-
-I did consider this initially and it seems quite straightforward.
-
-However I think the problem is that we would need to modify the 
-acpi_device child resources from FW with kernel-specific resources, 
-which does not seem right (I think that is what you meant). As I see, 
-this is one reason that we went in the direction of modelling the host 
-as an MFD, as we could set the resources of the mfd_cells.
-
-So adding a variant of pnpacpi_add_device() could work, or modifying 
-pnpacpi_add_device() to accept a callback to translate the resources. 
-But this feature is specific to our very special requirement...
-
-Thanks,
-John
-
-> .
->
+Can't a task join the group while we are iterating and we miss that?
