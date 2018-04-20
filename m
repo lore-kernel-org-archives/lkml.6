@@ -1,169 +1,314 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755318AbeDTOjj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:39:39 -0400
-Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:2782 "EHLO
-        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755147AbeDTOjh (ORCPT
+        id S1755303AbeDTOkI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:40:08 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:46109 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755168AbeDTOkE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:39:37 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2H4AABH+tlah2Ka6ERcHgEGDIQVDnooC?=
- =?us-ascii?q?phYNIFAgQ9gkhiBPTsLGxCBAoM8AoJGITQYAQIBAQEBAQECAQECEAEBAQgNCQg?=
- =?us-ascii?q?oIwyCNSINBEspAy8BAQEBAQEBAQEBAQEBAQEBAQEBAQEVAg0iIRoBAQEDAToPM?=
- =?us-ascii?q?AwEAgEIEQMBAQEBHgkHRgkIAgQOBQiEfQioa4g+gimIBoITgQ+DC4MRAoc0Apd?=
- =?us-ascii?q?xCIVbiFyMVhiNGQGCd4ElHIILcIMTCYIXDgkpgxyFFIU+b45PgRgBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2H4AABH+tlah2Ka6ERcHgEGDIQVDnooCphYNIFAgQ9gkhi?=
- =?us-ascii?q?BPTsLGxCBAoM8AoJGITQYAQIBAQEBAQECAQECEAEBAQgNCQgoIwyCNSINBEspA?=
- =?us-ascii?q?y8BAQEBAQEBAQEBAQEBAQEBAQEBAQEVAg0iIRoBAQEDAToPMAwEAgEIEQMBAQE?=
- =?us-ascii?q?BHgkHRgkIAgQOBQiEfQioa4g+gimIBoITgQ+DC4MRAoc0ApdxCIVbiFyMVhiNG?=
- =?us-ascii?q?QGCd4ElHIILcIMTCYIXDgkpgxyFFIU+b45PgRgBAQ?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.187
-X-IronPort-AV: E=Sophos;i="5.49,301,1520917200";
-   d="scan'208";a="171516519"
-X-DLP: DLP_GlobalPCIDSS
-To: <dvhart@infradead.org>
-CC: <andy.shevchenko@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <platform-driver-x86@vger.kernel.org>
-Subject: RE: [PATCH] platform/x86: dell-smbios: Match on www.dell.com in OEM
- strings too
-Thread-Topic: [PATCH] platform/x86: dell-smbios: Match on www.dell.com in OEM
- strings too
-Thread-Index: AQHT1oS6IeqEU+bE9Eel4U89fMISpaQJFzEAgACmaUA=
-Date: Fri, 20 Apr 2018 14:39:32 +0000
-Message-ID: <8649d2b7b64741b4beb7b17085aa9d56@ausx13mpc120.AMER.DELL.COM>
-References: <1523994356-9598-1-git-send-email-mario.limonciello@dell.com>
- <20180419234324.GA11546@fury>
-In-Reply-To: <20180419234324.GA11546@fury>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+        Fri, 20 Apr 2018 10:40:04 -0400
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        linux-alpha@vger.kernel.org
+Date: Fri, 20 Apr 2018 09:37:50 -0500
+Message-Id: <20180420143811.9994-1-ebiederm@xmission.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <87604mhrnb.fsf@xmission.com>
+References: <87604mhrnb.fsf@xmission.com>
+X-XM-SPF: eid=1f9XCi-0006Ha-Gb;;;mid=<20180420143811.9994-1-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+ZnRCjZoXuFdnGrPrMRR84bgq6TyTxu5c=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;linux-arch@vger.kernel.org
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1580 ms - load_scoreonly_sql: 0.25 (0.0%),
+        signal_user_changed: 7 (0.4%), b_tie_ro: 4.1 (0.3%), parse: 3.0 (0.2%),
+        extract_message_metadata: 47 (3.0%), get_uri_detail_list: 10 (0.6%),
+        tests_pri_-1000: 20 (1.2%), tests_pri_-950: 2.8 (0.2%), tests_pri_-900: 2.1
+        (0.1%), tests_pri_-400: 60 (3.8%), check_bayes: 57 (3.6%), b_tokenize: 30
+        (1.9%), b_tok_get_all: 12 (0.8%), b_comp_prob: 6 (0.4%), b_tok_touch_all: 4.8
+        (0.3%), b_finish: 0.93 (0.1%), tests_pri_0: 1368 (86.6%),
+        check_dkim_signature: 1.52 (0.1%), check_dkim_adsp: 6 (0.4%), tests_pri_500:
+        60 (3.8%), rewrite_mail: 0.00 (0.0%)
+Subject: [REVIEW][PATCH 01/22] signal/alpha: Use send_sig_fault where appropriate
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3KEdlSW028700
 
+Filling in struct siginfo before calling send_sig_info a tedious and
+error prone process, where once in a great while the wrong fields
+are filled out, and siginfo has been inconsistently cleared.
 
+Simplify this process by using the helper send_sig_fault.  Which
+takes as a parameters all of the information it needs, ensures
+all of the fiddly bits of filling in struct siginfo are done properly
+and then calls send_sig_info.
 
-> -----Original Message-----
-> From: Darren Hart [mailto:dvhart@infradead.org]
-> Sent: Thursday, April 19, 2018 6:43 PM
-> To: Limonciello, Mario
-> Cc: Andy Shevchenko; LKML; platform-driver-x86@vger.kernel.org
-> Subject: Re: [PATCH] platform/x86: dell-smbios: Match on www.dell.com in OEM
-> strings too
-> 
-> On Tue, Apr 17, 2018 at 02:45:56PM -0500, Mario Limonciello wrote:
-> > Sergey reported that some much older Dell systems don't support
-> > the OEM string "Dell System" but instead supported www.dell.com
-> > in OEM strings.
-> >
-> > Match both of these to indicate that this driver is running on
-> > a Dell system.
-> >
-> > Reported-by: Sergey Kubushyn <ksi@koi8.net>
-> > Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> > Tested-by: Sergey Kubushyn <ksi@koi8.net>
-> > ---
-> >  drivers/platform/x86/dell-smbios-base.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-
-> smbios-base.c
-> > index 2485c80..fbd6557 100644
-> > --- a/drivers/platform/x86/dell-smbios-base.c
-> > +++ b/drivers/platform/x86/dell-smbios-base.c
-> > @@ -555,11 +555,15 @@ static void free_group(struct platform_device *pdev)
-> >
-> >  static int __init dell_smbios_init(void)
-> >  {
-> > -	const struct dmi_device *valid;
-> > +	const struct dmi_device *valid_dell_system;
-> > +	const struct dmi_device *valid_www;
-> >  	int ret, wmi, smm;
-> >
-> > -	valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System",
-> NULL);
-> > -	if (!valid) {
-> > +	valid_dell_system =
-> > +		dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System",
-> NULL);
-> > +	valid_www =
-> > +		dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com",
-> NULL);
-> > +	if (!valid_dell_system && !valid_www) {
-> >  		pr_err("Unable to run on non-Dell system\n");
-> >  		return -ENODEV;
-> >  	}
-> 
-> Hrm, rather than introduce another variable that we don't use and always perform
-> both tests, when most of the time we only need to do the first, how about
-> something like:
-> 
+In short about a 5 line reduction in code for every time send_sig_info
+is called, which makes the calling function clearer.
 
-Darren,
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: linux-alpha@vger.kernel.org
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ arch/alpha/kernel/osf_sys.c | 10 ++-----
+ arch/alpha/kernel/signal.c  | 22 +++-----------
+ arch/alpha/kernel/traps.c   | 71 +++++++++++----------------------------------
+ 3 files changed, 24 insertions(+), 79 deletions(-)
 
-That looks good to me, thanks!
-
-> 
-> From 2cb5959dadec769167350a9bcb1d212a02b17af8 Mon Sep 17 00:00:00 2001
-> Message-Id:
-> <2cb5959dadec769167350a9bcb1d212a02b17af8.1524181265.git.dvhart@infrad
-> ead.org>
-> From: Mario Limonciello <mario.limonciello@dell.com>
-> Date: Tue, 17 Apr 2018 14:45:56 -0500
-> Subject: [PATCH] platform/x86: dell-smbios: Match on www.dell.com in OEM
->  strings too
-> 
-> Sergey reported that some much older Dell systems don't support
-> the OEM string "Dell System" but instead supported www.dell.com
-> in OEM strings.
-> 
-> Match both of these to indicate that this driver is running on
-> a Dell system.
-> 
-> Reported-by: Sergey Kubushyn <ksi@koi8.net>
-> Tested-by: Sergey Kubushyn <ksi@koi8.net>
-> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> [dvhart: Simplify DMI logic and eliminate unnecessary variables]
-> Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
-> ---
->  drivers/platform/x86/dell-smbios-base.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-
-> smbios-base.c
-> index 33fb2a20458a..9dc282ed5a9e 100644
-> --- a/drivers/platform/x86/dell-smbios-base.c
-> +++ b/drivers/platform/x86/dell-smbios-base.c
-> @@ -555,11 +555,10 @@ static void free_group(struct platform_device *pdev)
-> 
->  static int __init dell_smbios_init(void)
->  {
-> -	const struct dmi_device *valid;
->  	int ret, wmi, smm;
-> 
-> -	valid = dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System",
-> NULL);
-> -	if (!valid) {
-> +	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL)
-> &&
-> +	    !dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "www.dell.com",
-> NULL)) {
->  		pr_err("Unable to run on non-Dell system\n");
->  		return -ENODEV;
->  	}
-> --
-> 2.14.3
-> 
-> 
-> --
-> Darren Hart
-> VMware Open Source Technology Center
+diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
+index bb3619118926..6e921754c8fc 100644
+--- a/arch/alpha/kernel/osf_sys.c
++++ b/arch/alpha/kernel/osf_sys.c
+@@ -871,7 +871,6 @@ SYSCALL_DEFINE5(osf_setsysinfo, unsigned long, op, void __user *, buffer,
+ 		   send a signal.  Old exceptions are not signaled.  */
+ 		fex = (exc >> IEEE_STATUS_TO_EXCSUM_SHIFT) & swcr;
+  		if (fex) {
+-			siginfo_t info;
+ 			int si_code = FPE_FLTUNK;
+ 
+ 			if (fex & IEEE_TRAP_ENABLE_DNO) si_code = FPE_FLTUND;
+@@ -881,12 +880,9 @@ SYSCALL_DEFINE5(osf_setsysinfo, unsigned long, op, void __user *, buffer,
+ 			if (fex & IEEE_TRAP_ENABLE_DZE) si_code = FPE_FLTDIV;
+ 			if (fex & IEEE_TRAP_ENABLE_INV) si_code = FPE_FLTINV;
+ 
+-			clear_siginfo(&info);
+-			info.si_signo = SIGFPE;
+-			info.si_errno = 0;
+-			info.si_code = si_code;
+-			info.si_addr = NULL;  /* FIXME */
+- 			send_sig_info(SIGFPE, &info, current);
++			send_sig_fault(SIGFPE, si_code,
++				       (void __user *)NULL,  /* FIXME */
++				       0, current);
+  		}
+ 		return 0;
+ 	}
+diff --git a/arch/alpha/kernel/signal.c b/arch/alpha/kernel/signal.c
+index cd306e602313..8c0c4ee0be6e 100644
+--- a/arch/alpha/kernel/signal.c
++++ b/arch/alpha/kernel/signal.c
+@@ -219,15 +219,8 @@ do_sigreturn(struct sigcontext __user *sc)
+ 
+ 	/* Send SIGTRAP if we're single-stepping: */
+ 	if (ptrace_cancel_bpt (current)) {
+-		siginfo_t info;
+-
+-		clear_siginfo(&info);
+-		info.si_signo = SIGTRAP;
+-		info.si_errno = 0;
+-		info.si_code = TRAP_BRKPT;
+-		info.si_addr = (void __user *) regs->pc;
+-		info.si_trapno = 0;
+-		send_sig_info(SIGTRAP, &info, current);
++		send_sig_fault(SIGTRAP, TRAP_BRKPT, (void __user *) regs->pc, 0,
++			       current);
+ 	}
+ 	return;
+ 
+@@ -254,15 +247,8 @@ do_rt_sigreturn(struct rt_sigframe __user *frame)
+ 
+ 	/* Send SIGTRAP if we're single-stepping: */
+ 	if (ptrace_cancel_bpt (current)) {
+-		siginfo_t info;
+-
+-		clear_siginfo(&info);
+-		info.si_signo = SIGTRAP;
+-		info.si_errno = 0;
+-		info.si_code = TRAP_BRKPT;
+-		info.si_addr = (void __user *) regs->pc;
+-		info.si_trapno = 0;
+-		send_sig_info(SIGTRAP, &info, current);
++		send_sig_fault(SIGTRAP, TRAP_BRKPT, (void __user *) regs->pc, 0,
++			       current);
+ 	}
+ 	return;
+ 
+diff --git a/arch/alpha/kernel/traps.c b/arch/alpha/kernel/traps.c
+index 242c83d86ace..106a1692fca0 100644
+--- a/arch/alpha/kernel/traps.c
++++ b/arch/alpha/kernel/traps.c
+@@ -213,7 +213,6 @@ do_entArith(unsigned long summary, unsigned long write_mask,
+ 	    struct pt_regs *regs)
+ {
+ 	long si_code = FPE_FLTINV;
+-	siginfo_t info;
+ 
+ 	if (summary & 1) {
+ 		/* Software-completion summary bit is set, so try to
+@@ -228,21 +227,14 @@ do_entArith(unsigned long summary, unsigned long write_mask,
+ 	}
+ 	die_if_kernel("Arithmetic fault", regs, 0, NULL);
+ 
+-	clear_siginfo(&info);
+-	info.si_signo = SIGFPE;
+-	info.si_errno = 0;
+-	info.si_code = si_code;
+-	info.si_addr = (void __user *) regs->pc;
+-	send_sig_info(SIGFPE, &info, current);
++	send_sig_fault(SIGFPE, si_code, (void __user *) regs->pc, 0, current);
+ }
+ 
+ asmlinkage void
+ do_entIF(unsigned long type, struct pt_regs *regs)
+ {
+-	siginfo_t info;
+ 	int signo, code;
+ 
+-	clear_siginfo(&info);
+ 	if ((regs->ps & ~IPL_MAX) == 0) {
+ 		if (type == 1) {
+ 			const unsigned int *data
+@@ -272,31 +264,20 @@ do_entIF(unsigned long type, struct pt_regs *regs)
+ 
+ 	switch (type) {
+ 	      case 0: /* breakpoint */
+-		info.si_signo = SIGTRAP;
+-		info.si_errno = 0;
+-		info.si_code = TRAP_BRKPT;
+-		info.si_trapno = 0;
+-		info.si_addr = (void __user *) regs->pc;
+-
+ 		if (ptrace_cancel_bpt(current)) {
+ 			regs->pc -= 4;	/* make pc point to former bpt */
+ 		}
+ 
+-		send_sig_info(SIGTRAP, &info, current);
++		send_sig_fault(SIGTRAP, TRAP_BRKPT, (void __user *)regs->pc, 0,
++			       current);
+ 		return;
+ 
+ 	      case 1: /* bugcheck */
+-		info.si_signo = SIGTRAP;
+-		info.si_errno = 0;
+-		info.si_code = TRAP_UNK;
+-		info.si_addr = (void __user *) regs->pc;
+-		info.si_trapno = 0;
+-		send_sig_info(SIGTRAP, &info, current);
++		send_sig_fault(SIGTRAP, TRAP_UNK, (void __user *) regs->pc, 0,
++			       current);
+ 		return;
+ 		
+ 	      case 2: /* gentrap */
+-		info.si_addr = (void __user *) regs->pc;
+-		info.si_trapno = regs->r16;
+ 		switch ((long) regs->r16) {
+ 		case GEN_INTOVF:
+ 			signo = SIGFPE;
+@@ -354,11 +335,8 @@ do_entIF(unsigned long type, struct pt_regs *regs)
+ 			break;
+ 		}
+ 
+-		info.si_signo = signo;
+-		info.si_errno = 0;
+-		info.si_code = code;
+-		info.si_addr = (void __user *) regs->pc;
+-		send_sig_info(signo, &info, current);
++		send_sig_fault(signo, code, (void __user *) regs->pc, regs->r16,
++			       current);
+ 		return;
+ 
+ 	      case 4: /* opDEC */
+@@ -382,11 +360,9 @@ do_entIF(unsigned long type, struct pt_regs *regs)
+ 			if (si_code == 0)
+ 				return;
+ 			if (si_code > 0) {
+-				info.si_signo = SIGFPE;
+-				info.si_errno = 0;
+-				info.si_code = si_code;
+-				info.si_addr = (void __user *) regs->pc;
+-				send_sig_info(SIGFPE, &info, current);
++				send_sig_fault(SIGFPE, si_code,
++					       (void __user *) regs->pc, 0,
++					       current);
+ 				return;
+ 			}
+ 		}
+@@ -411,11 +387,7 @@ do_entIF(unsigned long type, struct pt_regs *regs)
+ 		      ;
+ 	}
+ 
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code = ILL_ILLOPC;
+-	info.si_addr = (void __user *) regs->pc;
+-	send_sig_info(SIGILL, &info, current);
++	send_sig_fault(SIGILL, ILL_ILLOPC, (void __user *)regs->pc, 0, current);
+ }
+ 
+ /* There is an ifdef in the PALcode in MILO that enables a 
+@@ -761,11 +733,9 @@ do_entUnaUser(void __user * va, unsigned long opcode,
+ 
+ 	unsigned long tmp1, tmp2, tmp3, tmp4;
+ 	unsigned long fake_reg, *reg_addr = &fake_reg;
+-	siginfo_t info;
++	int si_code;
+ 	long error;
+ 
+-	clear_siginfo(&info);
+-
+ 	/* Check the UAC bits to decide what the user wants us to do
+ 	   with the unaliged access.  */
+ 
+@@ -986,34 +956,27 @@ do_entUnaUser(void __user * va, unsigned long opcode,
+ 
+ give_sigsegv:
+ 	regs->pc -= 4;  /* make pc point to faulting insn */
+-	info.si_signo = SIGSEGV;
+-	info.si_errno = 0;
+ 
+ 	/* We need to replicate some of the logic in mm/fault.c,
+ 	   since we don't have access to the fault code in the
+ 	   exception handling return path.  */
+ 	if ((unsigned long)va >= TASK_SIZE)
+-		info.si_code = SEGV_ACCERR;
++		si_code = SEGV_ACCERR;
+ 	else {
+ 		struct mm_struct *mm = current->mm;
+ 		down_read(&mm->mmap_sem);
+ 		if (find_vma(mm, (unsigned long)va))
+-			info.si_code = SEGV_ACCERR;
++			si_code = SEGV_ACCERR;
+ 		else
+-			info.si_code = SEGV_MAPERR;
++			si_code = SEGV_MAPERR;
+ 		up_read(&mm->mmap_sem);
+ 	}
+-	info.si_addr = va;
+-	send_sig_info(SIGSEGV, &info, current);
++	send_sig_fault(SIGSEGV, si_code, va, 0, current);
+ 	return;
+ 
+ give_sigbus:
+ 	regs->pc -= 4;
+-	info.si_signo = SIGBUS;
+-	info.si_errno = 0;
+-	info.si_code = BUS_ADRALN;
+-	info.si_addr = va;
+-	send_sig_info(SIGBUS, &info, current);
++	send_sig_fault(SIGBUS, BUS_ADRALN, va, 0, current);
+ 	return;
+ }
+ 
+-- 
+2.14.1
