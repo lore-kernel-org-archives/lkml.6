@@ -1,222 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755568AbeDTOz5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:55:57 -0400
-Received: from p3plsmtpa11-02.prod.phx3.secureserver.net ([68.178.252.103]:60427
-        "EHLO p3plsmtpa11-02.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755529AbeDTOzz (ORCPT
+        id S1755573AbeDTO4U (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:56:20 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:45467 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755214AbeDTO4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:55:55 -0400
-Subject: Re: [Patch v4] cifs: Allocate validate negotiation request through
- kmalloc
-To: longli@microsoft.com, Steve French <sfrench@samba.org>,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
-References: <20180419213807.3128-1-longli@linuxonhyperv.com>
-From: Tom Talpey <tom@talpey.com>
-Message-ID: <c8924b83-dfa2-a44c-a425-deb7e03d0bf1@talpey.com>
-Date: Fri, 20 Apr 2018 10:55:52 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 20 Apr 2018 10:56:16 -0400
+X-Google-Smtp-Source: AIpwx48pb/y8GLVHFcwRqULb+m7w8zRdotkBYdEUu5KkVwBwmP0XRb9G79kqGNMkjj3HCDU774MSabYJ5rr3QJaEUcg=
 MIME-Version: 1.0
-In-Reply-To: <20180419213807.3128-1-longli@linuxonhyperv.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfH4C0OuKzjxz/nYQWJPNe6/W0wCdrNXuINelXL7ZGSy9GuFEbUzc46+Az+7cFhuXG/1yjI2vKLaZgvfqm0Ob+5yHmOUfjslkPHEerqOQrUJw9rghTI2g
- rMK8NzQif/cBveCqWW5i7yIpNvUxaJJYRZ7DF+fUbO2kQ/330DPHF0B1cvhzXnsKJvINZJH4D20ZngS8i3JWl3ybdsypO4S4TdkE4ep4lDu1qVOs3KG4ea1+
- lAIV3XGdO6VLsd+cdDT0EswIbtl813TGRzw5Zzbntx7jyf/QbTaGuE6LQq2VA33BnzRx729H8sdTcd9UsTyWTJBe+4SGEEW1dpO+99DRpNB/fMB0HotLkuKE
- 5p7rIxhx
+In-Reply-To: <20180420030640-mutt-send-email-mst@kernel.org>
+References: <20180315183449.3102.64791.stgit@localhost.localdomain>
+ <20180315184132.3102.90947.stgit@localhost.localdomain> <20180316183042-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
+ <20180403161151-mutt-send-email-mst@kernel.org> <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com>
+ <20180403212503-mutt-send-email-mst@kernel.org> <CAKgT0Ude79FYrK4qA0OKRJ1NackyqPi-hZ8Zh3WSdLDFxoOosQ@mail.gmail.com>
+ <20180420030640-mutt-send-email-mst@kernel.org>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Fri, 20 Apr 2018 07:56:14 -0700
+Message-ID: <CAKgT0Ucpw9D1u8MYoEX5KOij6sxs-5O9gPFTmOVq=Dgt=HUJ=g@mail.gmail.com>
+Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
+ unmanaged SR-IOV on virtio_pci devices
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: "Daly, Dan" <dan.daly@intel.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good, but I have two possibly style-related comments.
+On Thu, Apr 19, 2018 at 5:40 PM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> On Tue, Apr 03, 2018 at 12:06:03PM -0700, Alexander Duyck wrote:
+>> On Tue, Apr 3, 2018 at 11:27 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+>> > On Tue, Apr 03, 2018 at 10:32:00AM -0700, Alexander Duyck wrote:
+>> >> On Tue, Apr 3, 2018 at 6:12 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+>> >> > On Fri, Mar 16, 2018 at 09:40:34AM -0700, Alexander Duyck wrote:
+>> >> >> On Fri, Mar 16, 2018 at 9:34 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+>> >> >> > On Thu, Mar 15, 2018 at 11:42:41AM -0700, Alexander Duyck wrote:
+>> >> >> >> From: Alexander Duyck <alexander.h.duyck@intel.com>
+>> >> >> >>
+>> >> >> >> Hardware-realized virtio_pci devices can implement SR-IOV, so this
+>> >> >> >> patch enables its use. The device in question is an upcoming Intel
+>> >> >> >> NIC that implements both a virtio_net PF and virtio_net VFs. These
+>> >> >> >> are hardware realizations of what has been up to now been a software
+>> >> >> >> interface.
+>> >> >> >>
+>> >> >> >> The device in question has the following 4-part PCI IDs:
+>> >> >> >>
+>> >> >> >> PF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 15fe
+>> >> >> >> VF: vendor: 1af4 device: 1041 subvendor: 8086 subdevice: 05fe
+>> >> >> >>
+>> >> >> >> The patch currently needs no check for device ID, because the callback
+>> >> >> >> will never be made for devices that do not assert the capability or
+>> >> >> >> when run on a platform incapable of SR-IOV.
+>> >> >> >>
+>> >> >> >> One reason for this patch is because the hardware requires the
+>> >> >> >> vendor ID of a VF to be the same as the vendor ID of the PF that
+>> >> >> >> created it. So it seemed logical to simply have a fully-functioning
+>> >> >> >> virtio_net PF create the VFs. This patch makes that possible.
+>> >> >> >>
+>> >> >> >> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> >> >> >> Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
+>> >> >> >> Signed-off-by: Alexander Duyck <alexander.h.duyck@intel.com>
+>> >> >> >
+>> >> >> > So if and when virtio PFs can manage the VFs, then we can
+>> >> >> > add a feature bit for that?
+>> >> >> > Seems reasonable.
+>> >> >>
+>> >> >> Yes. If nothing else you may not even need a feature bit depending on
+>> >> >> how things go.
+>> >> >
+>> >> > OTOH if the interface is changed in an incompatible way,
+>> >> > and old Linux will attempt to drive the new device
+>> >> > since there is no check.
+>> >> >
+>> >> > I think we should add a feature bit right away.
+>> >>
+>> >> I'm not sure why you would need a feature bit. The capability is
+>> >> controlled via PCI configuration space. If it is present the device
+>> >> has the capability. If it is not then it does not.
+>> >>
+>> >> Basically if the PCI configuration space is not present then the sysfs
+>> >> entries will not be spawned and nothing will attempt to use this
+>> >> function.
+>> >>
+>> >> - ALex
+>> >
+>> > It's about compability with older guests which ignore the
+>> > capability.
+>> >
+>> > The feature is thus helpful so host knows whether guest supports VFs.
+>>
+>> The thing is if the capability is ignored then the feature isn't used.
+>> So for SR-IOV it isn't an uncommon thing for there to be drivers for
+>> the PF floating around that do not support SR-IOV. In such cases
+>> SR-IOV just isn't used while the hardware could support it.
+>
+> Right but how come there are VF drivers but PF driver does not
+> know about these?
 
-On 4/19/2018 5:38 PM, Long Li wrote:
-> From: Long Li <longli@microsoft.com>
-> 
-> The data buffer allocated on the stack can't be DMA'ed, ib_dma_map_page will
-> return an invalid DMA address for a buffer on stack. Even worse, this
-> incorrect address can't be detected by ib_dma_mapping_error. Sending data
-> from this address to hardware will not fail, but the remote peer will get
-> junk data.
-> 
-> Fix this by allocating the request on the heap in smb3_validate_negotiate.
-> 
-> Changes in v2:
-> Removed duplicated code on freeing buffers on function exit.
-> (Thanks to Parav Pandit <parav@mellanox.com>)
-> Fixed typo in the patch title.
-> 
-> Changes in v3:
-> Added "Fixes" to the patch.
-> Changed several sizeof() to use *pointer in place of struct.
-> 
-> Changes in v4:
-> Added detailed comments on the failure through RDMA.
-> Allocate request buffer using GPF_NOFS.
-> Fixed possible memory leak.
-> 
-> Fixes: ff1c038addc4 ("Check SMB3 dialects against downgrade attacks")
-> Signed-off-by: Long Li <longli@microsoft.com>
-> ---
->   fs/cifs/smb2pdu.c | 61 ++++++++++++++++++++++++++++++-------------------------
->   1 file changed, 33 insertions(+), 28 deletions(-)
-> 
-> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-> index 0f044c4..caa2a1e 100644
-> --- a/fs/cifs/smb2pdu.c
-> +++ b/fs/cifs/smb2pdu.c
-> @@ -729,8 +729,8 @@ SMB2_negotiate(const unsigned int xid, struct cifs_ses *ses)
->   
->   int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
->   {
-> -	int rc = 0;
-> -	struct validate_negotiate_info_req vneg_inbuf;
-> +	int ret, rc = -EIO;
+I'm not sure what you mean here. The VF and PF drivers are the same
+driver. The only difference is that the PF has the extra SR-IOV
+configuration space.
 
-Seems awkward to have "rc" and "ret", and based on the code below I
-don't see why two variables are needed. Simplify? (see later comment)
+What this code is meant to enable is a form of SR-IOV where the VFs
+are essentially pre-allocated resources. So for example in our case
+the MMIO space is identical for a PF versus any of the VFs. It doesn't
+have any special controls in place to allow the PF to manipulate any
+of the resources belonging to the VFs.
 
-> +	struct validate_negotiate_info_req *pneg_inbuf;
->   	struct validate_negotiate_info_rsp *pneg_rsp = NULL;
->   	u32 rsplen;
->   	u32 inbuflen; /* max of 4 dialects */
-> @@ -741,7 +741,6 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
->   	if (tcon->ses->server->rdma)
->   		return 0;
->   #endif
-> -
->   	/* In SMB3.11 preauth integrity supersedes validate negotiate */
->   	if (tcon->ses->server->dialect == SMB311_PROT_ID)
->   		return 0;
-> @@ -764,63 +763,67 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
->   	if (tcon->ses->session_flags & SMB2_SESSION_FLAG_IS_NULL)
->   		cifs_dbg(VFS, "Unexpected null user (anonymous) auth flag sent by server\n");
->   
-> -	vneg_inbuf.Capabilities =
-> +	pneg_inbuf = kmalloc(sizeof(*pneg_inbuf), GFP_NOFS);
-> +	if (!pneg_inbuf)
-> +		return -ENOMEM;
-> +
-> +	pneg_inbuf->Capabilities =
->   			cpu_to_le32(tcon->ses->server->vals->req_capabilities);
-> -	memcpy(vneg_inbuf.Guid, tcon->ses->server->client_guid,
-> +	memcpy(pneg_inbuf->Guid, tcon->ses->server->client_guid,
->   					SMB2_CLIENT_GUID_SIZE);
->   
->   	if (tcon->ses->sign)
-> -		vneg_inbuf.SecurityMode =
-> +		pneg_inbuf->SecurityMode =
->   			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_REQUIRED);
->   	else if (global_secflags & CIFSSEC_MAY_SIGN)
-> -		vneg_inbuf.SecurityMode =
-> +		pneg_inbuf->SecurityMode =
->   			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_ENABLED);
->   	else
-> -		vneg_inbuf.SecurityMode = 0;
-> +		pneg_inbuf->SecurityMode = 0;
->   
->   
->   	if (strcmp(tcon->ses->server->vals->version_string,
->   		SMB3ANY_VERSION_STRING) == 0) {
-> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
-> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
-> -		vneg_inbuf.DialectCount = cpu_to_le16(2);
-> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
-> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
-> +		pneg_inbuf->DialectCount = cpu_to_le16(2);
->   		/* structure is big enough for 3 dialects, sending only 2 */
->   		inbuflen = sizeof(struct validate_negotiate_info_req) - 2;
+> And are there PF drivers that intentially do not enable SRIOV
+> because it's known to be broken in some way?
 
-The "- 2" is a little confusing here. This was existing code, but I
-suggest you change this to a sizeof (u16) construct for consistency.
-It's reducing by the length of a single Dialects[n] entry.
+In the Virtio IO case right now are there any devices that support
+SR-IOV? For now this is just an add-on bit to a function that is
+already emulating the Virtio in hardware.
 
->   	} else if (strcmp(tcon->ses->server->vals->version_string,
->   		SMBDEFAULT_VERSION_STRING) == 0) {
-> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
-> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
-> -		vneg_inbuf.Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
-> -		vneg_inbuf.DialectCount = cpu_to_le16(3);
-> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
-> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
-> +		pneg_inbuf->Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
-> +		pneg_inbuf->DialectCount = cpu_to_le16(3);
->   		/* structure is big enough for 3 dialects */
->   		inbuflen = sizeof(struct validate_negotiate_info_req);
->   	} else {
->   		/* otherwise specific dialect was requested */
-> -		vneg_inbuf.Dialects[0] =
-> +		pneg_inbuf->Dialects[0] =
->   			cpu_to_le16(tcon->ses->server->vals->protocol_id);
-> -		vneg_inbuf.DialectCount = cpu_to_le16(1);
-> +		pneg_inbuf->DialectCount = cpu_to_le16(1);
->   		/* structure is big enough for 3 dialects, sending only 1 */
->   		inbuflen = sizeof(struct validate_negotiate_info_req) - 4;
+> Case in point I do think virtio want to limit this
+> depending on a feature bit on general principles
+> (the principle being that all extensions have feature bits).
 
-Ditto previous sizeof (u16) comment, with a *2 this case.
+This part has me kind of scratching my head. In our setup the "PF" is
+really nothing more than a "VF" with the SR-IOV configuration space
+attached to it. There are already examples of similar designs for NVMe
+and the Amazon ENA devices. Giving the "PF" any functionality in MMIO
+space that controls the SR-IOV kind of defeats the whole point of
+allowing this function in the first place. Basically the PF isn't
+really controlling things, it is the kernel that is doing it.
 
->   	}
->   
-> -	rc = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
-> +	ret = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
->   		FSCTL_VALIDATE_NEGOTIATE_INFO, true /* is_fsctl */,
-> -		(char *)&vneg_inbuf, sizeof(struct validate_negotiate_info_req),
-> +		(char *)pneg_inbuf, sizeof(*pneg_inbuf),
->   		(char **)&pneg_rsp, &rsplen);
->   
-> -	if (rc != 0) {
-> -		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
-> -		return -EIO;
-> +	if (ret) {
-> +		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", ret);
-> +		goto out_free_inbuf;
->   	}
+> There are security implications here - we previously relied on
+> whitelisting after all.
 
-Why not leave "rc" alone, and set its value to -EIO before the goto
-if the ioctl fails? That will simplify and make the code much more
-readable IMO.
+Yes and no. The original patch set had issues as you could have a PF
+assigned to user space and the VFs managed by the host. When I changed
+things so that the function had to be in a kernel driver that issue
+went away.
 
->   
-> -	if (rsplen != sizeof(struct validate_negotiate_info_rsp)) {
-> +	if (rsplen != sizeof(*pneg_rsp)) {
->   		cifs_dbg(VFS, "invalid protocol negotiate response size: %d\n",
->   			 rsplen);
->   
->   		/* relax check since Mac returns max bufsize allowed on ioctl */
->   		if ((rsplen > CIFSMaxBufSize)
->   		     || (rsplen < sizeof(struct validate_negotiate_info_rsp)))
-> -			goto err_rsp_free;
-> +			goto out_free_rsp;
->   	}
+> Wouldn't it be safer to be a bit more careful and update the
+> actual PF drivers? It's just one line per driver, but it
+> can be done with an ack by driver maintainer.
+> If/once we find out all drivers do have it, we can then
+> change the default.
 
-Would need an rc = -EIO here too if above comment is accepted.
+I have no clue what you are talking about here. This is the more
+careful approach. Are you sure you are reviewing the v7 of the
+patches?
 
-Tom.
+My understanding is that no paravirtual interfaces currently expose
+SR-IOV. What we are looking at is hardware will want to emulate
+Virtio, specifically virtio_net in the future and as a part of that
+the PF ends up emulating it as well. What we would need to watch for
+going forward is that any device that enables SR-IOV support would
+need to also provide a 4 tuple ID so that if something goes wrong with
+it we could disable SR-IOV on the device via a PCI quirk later.
 
->   
->   	/* check validate negotiate info response matches what we got earlier */
-> @@ -838,14 +841,16 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
->   
->   	/* validate negotiate successful */
->   	cifs_dbg(FYI, "validate negotiate info successful\n");
-> -	kfree(pneg_rsp);
-> -	return 0;
-> +	rc = 0;
-> +	goto out_free_rsp;
->   
->   vneg_out:
->   	cifs_dbg(VFS, "protocol revalidation - security settings mismatch\n");
-> -err_rsp_free:
-> +out_free_rsp:
->   	kfree(pneg_rsp);
-> -	return -EIO;
-> +out_free_inbuf:
-> +	kfree(pneg_inbuf);
-> +	return rc;
->   }
->   
->   enum securityEnum
-> 
+>> I would think in the case of virtio it would be the same kind of
+>> thing. Basically if SR-IOV is supported by the host then the
+>> capability would be present. If SR-IOV is supported by the guest then
+>> it would make use of the capability to spawn VFs. If either the
+>> capability isn't present, or the driver doesn't use it then you won't
+>> be able to spawn VFs in the guest.
+>
+>> Maybe I am missing something. Do you support dynamically changing the
+>> PCI configuration space for Virtio devices based on the presence of
+>> feature bits provided by the guest?
+>
+> No. The point is that IMHO at least virtio - in absence of feature bit -
+> to ignore VFs rather than assume they are safe to drive
+> in an unmanaged way.
+>
+>> Also are you saying this patch set should wait on the feature bit to
+>> be added, or are you talking about doing this as some sort of
+>> follow-up?
+>>
+>> - Alex
+>
+> I think for virtio it should include the feature bit, yes.
+> Adding feature bit is very easy - post a patch to the virtio TC mailing
+> list, wait about a week to give people time to respond (two weeks if it
+> is around holidays and such).
+
+The problem is we are talking about hardware/FPGA, not software.
+Adding a feature bit means going back and updating RTL. The software
+side of things is easy, re-validating things after a hardware/FPGA
+change not so much.
+
+If this is a hard requirement I may just drop the virtio patch, push
+what I have, and leave it to Mark/Dan to deal with the necessary RTL
+and code changes needed to support Virtio as I don't expect the
+turnaround to be as easy as just a patch.
+
+Thanks.
+
+- Alex
