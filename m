@@ -1,104 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755329AbeDTPIj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:08:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56606 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755295AbeDTPIh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:08:37 -0400
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To: rostedt@goodmis.org
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        kamalesh@linux.vnet.ibm.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [RFC] trace_events: Fix kernel crash while using empty filter with perf
-Date: Fri, 20 Apr 2018 20:37:58 +0530
-X-Mailer: git-send-email 2.14.3
-X-TM-AS-GCONF: 00
-x-cbid: 18042015-0008-0000-0000-000004ED83B4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042015-0009-0000-0000-00001E819C46
-Message-Id: <20180420150758.19787-1-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804200152
+        id S1755375AbeDTPNL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:13:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54220 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755291AbeDTPNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 11:13:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 000C82178F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 20 Apr 2018 11:13:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
+Message-ID: <20180420111307.44008fc7@gandalf.local.home>
+In-Reply-To: <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
+References: <20180413101233.0792ebf0@gandalf.local.home>
+        <20180414023516.GA17806@tigerII.localdomain>
+        <20180416014729.GB1034@jagdpanzerIV>
+        <20180416042553.GA555@jagdpanzerIV>
+        <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
+        <20180420021511.GB6397@jagdpanzerIV>
+        <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
+        <20180420080428.622a8e7f@gandalf.local.home>
+        <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
+        <20180420101751.6c1c70e8@gandalf.local.home>
+        <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel is crashing when user tries to record 'ftrace:function' event
-with empty filter:
+On Fri, 20 Apr 2018 16:57:20 +0200
+Petr Mladek <pmladek@suse.com> wrote:
 
-  # perf record -e ftrace:function --filter="" ls
 
-  # dmesg
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-  Oops: 0000 [#1] SMP PTI
-  ...
-  RIP: 0010:ftrace_profile_set_filter+0x14b/0x2d0
-  RSP: 0018:ffffa4a7c0da7d20 EFLAGS: 00010246
-  RAX: ffffa4a7c0da7d64 RBX: 0000000000000000 RCX: 0000000000000006
-  RDX: 0000000000000000 RSI: 0000000000000092 RDI: ffff8c48ffc968f0
-  ...
-  Call Trace:
-   _perf_ioctl+0x54a/0x6b0
-   ? rcu_all_qs+0x5/0x30
-  ...
+> No, call_console_drivers() is done with interrupts disabled:
+> 
+> 		console_lock_spinning_enable();
+> 
+> 		stop_critical_timings();	/* don't trace print latency */
+>  ---->		call_console_drivers(ext_text, ext_len, text, len);  
+> 		start_critical_timings();
+> 
+> 		if (console_lock_spinning_disable_and_check()) {
+>  ---->			printk_safe_exit_irqrestore(flags);  
+> 			goto out;
+> 		}
+> 
+>  ---->		printk_safe_exit_irqrestore(flags);  
+> 
+> They were called with interrupts disabled for ages, long before
+> printk_safe. In fact, it was all the time in the git kernel history.
+> 
+> Therefore only NMIs are in the game. And they should be solved
+> by the above change.
+> 
 
-After patch:
-  # perf record -e ftrace:function --filter="" ls
-  failed to set filter "" on event ftrace:function with 22 (Invalid argument)
+Really?
 
-Also, if user tries to echo "" > filter, it used to throw an error.
-This behavior got changed by commit 80765597bc58 ("tracing: Rewrite
-filter logic to be simpler and faster"). This patch restores the
-behavior as a side effect:
 
-Before patch:
-  # echo "" > filter
-  #
+  console_trylock_spinning(); /* console_owner now equals current */
+  console_unlock() {
 
-After patch:
-  # echo "" > filter
-  bash: echo: write error: Invalid argument
-  #
+---> take interrupt here:
 
-Fixes: 80765597bc58 ("tracing: Rewrite filter logic to be simpler and faster")
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- kernel/trace/trace_events_filter.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+					vprintk() {
+					   vprintk_func() {
+					      if (console_owner == current && !__ratelimit(&ratelimit_console))
 
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index 9b4716bb8bb0..1f951b3df60c 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -1499,14 +1499,14 @@ static int process_preds(struct trace_event_call *call,
- 		return ret;
- 	}
- 
--	if (!nr_preds) {
--		prog = NULL;
--	} else {
--		prog = predicate_parse(filter_string, nr_parens, nr_preds,
-+	if (!nr_preds)
-+		return -EINVAL;
-+
-+	prog = predicate_parse(filter_string, nr_parens, nr_preds,
- 			       parse_pred, call, pe);
--		if (IS_ERR(prog))
--			return PTR_ERR(prog);
--	}
-+	if (IS_ERR(prog))
-+		return PTR_ERR(prog);
-+
- 	rcu_assign_pointer(filter->prog, prog);
- 	return 0;
- }
--- 
-2.14.3
+				[ RATE LIMIT HERE!!!! ]
+
+
+	for (;;) {
+		printk_safe_enter_irqsave(flags);
+
+-- Steve
