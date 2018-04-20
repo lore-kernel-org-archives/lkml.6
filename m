@@ -1,212 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754689AbeDTLWT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 07:22:19 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:42743 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754549AbeDTLWR (ORCPT
+        id S1754705AbeDTLWa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 07:22:30 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52893 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754549AbeDTLW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:22:17 -0400
-X-Originating-IP: 2.224.242.101
-Date: Fri, 20 Apr 2018 13:22:04 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/7] Add tda998x (HDMI) support to atmel-hlcdc
-Message-ID: <20180420112204.GK4235@w540>
-References: <20180419162751.25223-1-peda@axentia.se>
- <20180420085235.GI4235@w540>
- <6354350.l8DgUyNhLT@avalon>
+        Fri, 20 Apr 2018 07:22:28 -0400
+Date: Fri, 20 Apr 2018 04:22:05 -0700
+From: tip-bot for Oskar Senft <tipbot@zytor.com>
+Message-ID: <tip-15a3e845b01ce2342cf187dc123c92c44c3c8170@git.kernel.org>
+Cc: tglx@linutronix.de, peterz@infradead.org, osk@google.com,
+        mingo@kernel.org, hpa@zytor.com, kan.liang@intel.com,
+        linux-kernel@vger.kernel.org, mark@voidzero.net
+Reply-To: tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org,
+        osk@google.com, hpa@zytor.com, kan.liang@intel.com, mark@voidzero.net,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1521810690-2576-2-git-send-email-kan.liang@linux.intel.com>
+References: <1521810690-2576-2-git-send-email-kan.liang@linux.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf/x86/intel/uncore: Fix SBOX support for
+ Broadwell CPUs
+Git-Commit-ID: 15a3e845b01ce2342cf187dc123c92c44c3c8170
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="d8Lz2Tf5e5STOWUP"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <6354350.l8DgUyNhLT@avalon>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  15a3e845b01ce2342cf187dc123c92c44c3c8170
+Gitweb:     https://git.kernel.org/tip/15a3e845b01ce2342cf187dc123c92c44c3c8170
+Author:     Oskar Senft <osk@google.com>
+AuthorDate: Fri, 23 Mar 2018 09:11:30 -0400
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 20 Apr 2018 13:17:50 +0200
 
---d8Lz2Tf5e5STOWUP
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+perf/x86/intel/uncore: Fix SBOX support for Broadwell CPUs
 
-Hi Laurent,
+SBOX on some Broadwell CPUs is broken because it's enabled unconditionally
+despite the fact that there are no SBOXes available.
 
-On Fri, Apr 20, 2018 at 01:18:13PM +0300, Laurent Pinchart wrote:
-> Hello,
->
-> On Friday, 20 April 2018 11:52:35 EEST jacopo mondi wrote:
-> > Hi Peter,
-> >     I've been a bit a pain in the arse for you recently, but please
-> > bear with me a bit more, and sorry for jumping late on the band wagon.
-> >
-> > On Thu, Apr 19, 2018 at 06:27:44PM +0200, Peter Rosin wrote:
-> > > Hi!
-> > >
-> > > I naively thought that since there was support for both nxp,tda19988 (in
-> > > the tda998x driver) and the atmel-hlcdc, things would be a smooth ride.
-> > > But it wasn't, so I started looking around and realized I had to fix
-> > > things.
-> > >
-> > > In v1 and v2 I fixed things by making the atmel-hlcdc driver a master
-> > > component, but now in v3 I fix things by making the tda998x driver
-> > > a bridge instead. This was after a suggestion from Boris Brezillion
-> > > (the atmel-hlcdc maintainer), so there was some risk of bias ... but
-> > > after comparing what was needed, I too find the bridge approach better.
-> > >
-> > > In addition to the above, our PCB interface between the SAMA5D3 and the
-> > > HDMI encoder is only using 16 bits, and this has to be described
-> > > somewhere, or the atmel-hlcdc driver have no chance of selecting the
-> > > correct output mode. Since I have similar problems with a ds90c185 lvds
-> > > encoder I added patches to override the atmel-hlcdc output format via
-> > > DT properties compatible with the media video-interface binding and
-> > > things start to play together.
-> > >
-> > > Since this series superseeds the bridge series [1], I have included the
-> > > leftover bindings patch for the ti,ds90c185 here.
-> >
-> > I feel like this series would look better if it would make use of the
-> > proposed bridge media bus format support I have recently sent out [1]
-> > (and which was not there when you first sent v1).
-> >
-> > I understand your fundamental problem here is that the bus format
-> > that should be reported by your bridge is different from the ones
-> > actually supported by the TDA19988 chip, as the wirings ground some
-> > of the input pins.
-> >
-> > Although this is defintely something that could be described in the
-> > bridge's own OF node with the 'bus_width' property, and what I would do,
-> > now that you have made a bridge out from the tda19988 driver, is:
-> >
-> > 1) Set the bridge accepted input bus_format parsing its pin
-> > configuration, or default it if that's not implemented yet.
-> > This will likely be rgb888. You can do that using the trivial
-> > support for bridge input image formats implemented by my series.
-> > 2) Specify in the bridge endpoint a 'bus_width' of <16>
-> > 3) In your atmel-hlcd get both the image format of the bridge (rgb888)
-> > and parse the remote endpoint property 'bus_width' and get the <16>
-> > value back.
->
-> Parsing properties of remote nodes should be avoided as much as possible, as
-> they need to be interpreted in the context of the DT bindings related to the
-> compatible string applicable to that node. I'd rather have the bus_width
-> property in the local endpoint node.
+Check the Power Control Unit CAPID4 register to determine the number of
+available SBOXes on the particular CPU before trying to enable them. If
+there are none, nullify the SBOX descriptor so it isn't tried to be
+initialized.
 
-Right, I see...
-Well, in Peter's case, the bus width, being a consequence of
-wirings, can be described safely in both endpoints, right?
+Signed-off-by: Oskar Senft <osk@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Mark van Dijk <mark@voidzero.net>
+Reviewed-by: Kan Liang <kan.liang@intel.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: ak@linux.intel.com
+Cc: peterz@infradead.org
+Cc: eranian@google.com
+Link: https://lkml.kernel.org/r/1521810690-2576-2-git-send-email-kan.liang@linux.intel.com
+---
+ arch/x86/events/intel/uncore_snbep.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
->
-> > 4) Set the correct format in the atmel hlcd driver to accommodate a
-> > bridge that wants rgb888 on a 16 bit wide bus (that would be rgb565,
-> > or are there other possible combinations I am missing?)
-> >
-> > I would consider this better mostly because in this series you are
-> > creating a semantic for the whole DRM subsystem on the 'bus_width'
-> > property, where numerical values as '12', '16' etc are arbitrary tied
-> > to the selection of a media bus format. At least you should use a
-> > common set of defines [1] between the device tree and the driver,
-> > but this looks anyway fragile imho.
->
-> This I agree with though. Combining the remote bus format with the local bus
-> width should fix the problem without having to parse remote properties.
->
-> > Have I maybe missed some parts of the problem you are trying to solve
-> > here?
-> >
-> > Thank you
-> >    j
-> >
-> > [1] drm: bridge: Add support for static image formats
-> >     https://lwn.net/Articles/752296/
-> > [2] include/uapi/linux/media-bus-format.h
-> >
-> > > Anyway, this series solves some real issues for my HW.
-> > >
-> > > Cheers,
-> > > Peter
-> > >
-> > > Changes since v2   https://lkml.org/lkml/2018/4/17/385
-> > > - patch 2/7 fixed spelling and added an example
-> > > - patch 4/7 parse the DT up front and store the result indexed by encoder
-> > > - old patch 5/6 and 6/6 dropped
-> > > - patch 5-7/7 are new and makes the tda998x driver a drm_bridge
-> > >
-> > > Changes since v1   https://lkml.org/lkml/2018/4/9/294
-> > > - added reviewed-by from Rob to patch 1/6
-> > > - patch 2/6 changed so that the bus format override is in the endpoint
-> > >   DT node, and follows the binding of media video-interfaces.
-> > > - patch 3/6 is new, it adds drm_of_media_bus_fmt which parses above
-> > >   media video-interface binding (partially).
-> > > - patch 4/6 now makes use of the above helper (and also fixes problems
-> > >   with the 3/5 patch from v1 when no override was specified).
-> > > - do not mention unrelated connector display_info details in the cover
-> > >   letter and commit messages.
-> > >
-> > > [1]
-> > > "Bridge" series v2   https://lkml.org/lkml/2018/3/26/610
-> > > "Bridge" series v1   https://lkml.org/lkml/2018/3/17/221
-> > >
-> > > Peter Rosin (7):
-> > >   dt-bindings: display: bridge: lvds-transmitter: add ti,ds90c185
-> > >   dt-bindings: display: atmel: optional video-interface of endpoints
-> > >   drm: of: introduce drm_of_media_bus_fmt
-> > >   drm/atmel-hlcdc: support bus-width (12/16/18/24) in endpoint nodes
-> > >   drm/i2c: tda998x: find the drm_device via the drm_connector
-> > >   drm/i2c: tda998x: split encoder and component functions from the work
-> > >   drm/i2c: tda998x: register as a drm bridge
-> > >
-> > >  .../devicetree/bindings/display/atmel/hlcdc-dc.txt |  26 +++
-> > >  .../bindings/display/bridge/lvds-transmitter.txt   |   8 +-
-> > >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c     |  71 ++++++--
-> > >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h       |   2 +
-> > >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c   |  40 +++-
-> > >  drivers/gpu/drm/drm_of.c                           |  38 ++++
-> > >  drivers/gpu/drm/i2c/tda998x_drv.c                  | 201 ++++++++++++++--
-> > >  include/drm/drm_of.h                               |   7 +
-> > >  8 files changed, 342 insertions(+), 51 deletions(-)
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
->
-
---d8Lz2Tf5e5STOWUP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJa2c1cAAoJEHI0Bo8WoVY8mTYP/ireNw+s3433VFFdGe6ODpnG
-DFqSsw1xM594JlbB1TpR3t6vV5bxCWb1PwaDqbpN0G2S+RpD06WLM1gcHe/9/caa
-R8yF6wBxtM+OAIzU8SAsCjTJA0LY1yCmivjuh88my0BMOtGKg8Xn6Ztqjh9XfL71
-gwbpHiJr24a2GTxAKk0OvMB4hmXIVEw3DsOnxmDJ/wLUiuTFLJYcAzb/8FcUDiQT
-krEEa90OOAY+6IOW9veNYAO7E9Q1XnUEt7Lkd9ZQ3VFDaVLNuu3VEokUB8K9TyxR
-pxJbOtgnBtKIcO/fmESOf0h5rQn7R5nzg2myk0BZkgWrsy5wvFz1STNjwdHRwocF
-HceiknS5ldrCZxfRlkRDm+1/uqs4XD5YyIpZYMQVkOSB9SUjIBHOXdfAT0Wbbti0
-f3tFPrbE8ygO6tKpwFXh5ZMiQJk2zJucrDDZ7o0fWZs1dwf3bC9BzAEAfoOl3Co/
-jIq4/P2v+Y1HQJKK4gcRDXud8UEo/zx8iMPRGvzMim8OZywrxue5cc0pId09UQjm
-gEM+jSDYRh1n+R92kE6FgwmBpVvYG1XHJ3Z/kfBPIoWxnzdV8B/HMW5WN18+hN85
-Gpdu6W5EA91Zl7Qh5j2yDcdh+U9PX3SZxOjjYjgJGbEW8CGrsTa2LMIx0cafJ/Bz
-M2r5E3k/oT7t/kXf8Tf3
-=mh3I
------END PGP SIGNATURE-----
-
---d8Lz2Tf5e5STOWUP--
+diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
+index 5bbbbee11879..77076a102e34 100644
+--- a/arch/x86/events/intel/uncore_snbep.c
++++ b/arch/x86/events/intel/uncore_snbep.c
+@@ -3060,14 +3060,25 @@ static struct event_constraint bdx_uncore_pcu_constraints[] = {
+ 
+ void bdx_uncore_cpu_init(void)
+ {
++	int pkg = topology_phys_to_logical_pkg(0);
++
+ 	if (bdx_uncore_cbox.num_boxes > boot_cpu_data.x86_max_cores)
+ 		bdx_uncore_cbox.num_boxes = boot_cpu_data.x86_max_cores;
+ 	uncore_msr_uncores = bdx_msr_uncores;
+ 
+ 	/* BDX-DE doesn't have SBOX */
+-	if (boot_cpu_data.x86_model == 86)
++	if (boot_cpu_data.x86_model == 86) {
+ 		uncore_msr_uncores[BDX_MSR_UNCORE_SBOX] = NULL;
++	/* Detect systems with no SBOXes */
++	} else if (uncore_extra_pci_dev[pkg].dev[HSWEP_PCI_PCU_3]) {
++		struct pci_dev *pdev;
++		u32 capid4;
+ 
++		pdev = uncore_extra_pci_dev[pkg].dev[HSWEP_PCI_PCU_3];
++		pci_read_config_dword(pdev, 0x94, &capid4);
++		if (((capid4 >> 6) & 0x3) == 0)
++			bdx_msr_uncores[BDX_MSR_UNCORE_SBOX] = NULL;
++	}
+ 	hswep_uncore_pcu.constraints = bdx_uncore_pcu_constraints;
+ }
+ 
+@@ -3285,6 +3296,11 @@ static const struct pci_device_id bdx_uncore_pci_ids[] = {
+ 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f46),
+ 		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 2),
+ 	},
++	{ /* PCU.3 (for Capability registers) */
++		PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6fc0),
++		.driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
++						   HSWEP_PCI_PCU_3),
++	},
+ 	{ /* end: all zeroes */ }
+ };
+ 
