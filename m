@@ -1,102 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752047AbeDTQed (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:34:33 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:48271 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750858AbeDTQeb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:34:31 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0T.Z-jf-_1524242039;
-From: Yang Shi <yang.shi@linux.alibaba.com>
-To: kirill.shutemov@linux.intel.com, hughd@google.com, hch@infradead.org,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org
-Cc: yang.shi@linux.alibaba.com, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [RFC v2 PATCH] mm: shmem: make stat.st_blksize return huge page size if THP is on
-Date: Sat, 21 Apr 2018 00:33:59 +0800
-Message-Id: <1524242039-64997-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1752350AbeDTQfF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:35:05 -0400
+Received: from mga18.intel.com ([134.134.136.126]:13286 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750751AbeDTQfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 12:35:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,302,1520924400";
+   d="scan'208";a="222038367"
+Subject: [pci PATCH v8 0/4] Add support for unmanaged SR-IOV
+From: Alexander Duyck <alexander.h.duyck@intel.com>
+To: bhelgaas@google.com, alexander.h.duyck@intel.com,
+        linux-pci@vger.kernel.org
+Cc: virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        keith.busch@intel.com, netanel@amazon.com, ddutile@redhat.com,
+        mheyne@amazon.de, liang-min.wang@intel.com, mark.d.rustad@intel.com,
+        dwmw2@infradead.org, hch@lst.de, dwmw@amazon.co.uk
+Date: Fri, 20 Apr 2018 12:28:08 -0400
+Message-ID: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since tmpfs THP was supported in 4.8, hugetlbfs is not the only
-filesystem with huge page support anymore. tmpfs can use huge page via
-THP when mounting by "huge=" mount option.
+This series is meant to add support for SR-IOV on devices when the VFs are
+not managed by the kernel. Examples of recent patches attempting to do this
+include:
+virto - https://patchwork.kernel.org/patch/10241225/
+pci-stub - https://patchwork.kernel.org/patch/10109935/
+vfio - https://patchwork.kernel.org/patch/10103353/
+uio - https://patchwork.kernel.org/patch/9974031/
 
-When applications use huge page on hugetlbfs, it just need check the
-filesystem magic number, but it is not enough for tmpfs. Make
-stat.st_blksize return huge page size if it is mounted by appropriate
-"huge=" option.
+Since this is quickly blowing up into a multi-driver problem it is probably
+best to implement this solution as generically as possible.
 
-Some applications could benefit from this change, for example QEMU.
-When use mmap file as guest VM backend memory, QEMU typically mmap the
-file size plus one extra page. If the file is on hugetlbfs the extra
-page is huge page size (i.e. 2MB), but it is still 4KB on tmpfs even
-though THP is enabled. tmpfs THP requires VMA is huge page aligned, so
-if 4KB page is used THP will not be used at all. The below /proc/meminfo
-fragment shows the THP use of QEMU with 4K page:
+This series is an attempt to do that. What we do with this patch set is
+provide a generic framework to enable SR-IOV in the case that the PF driver
+doesn't support managing the VFs itself.
 
-ShmemHugePages:   679936 kB
-ShmemPmdMapped:        0 kB
+I based my patch set originally on the patch by Mark Rustad but there isn't
+much left after going through and cleaning out the bits that were no longer
+needed, and after incorporating the feedback from David Miller. At this point
+the only items to be fully reused was his patch description which is now
+present in patch 3 of the set.
 
-By reading st_blksize, tmpfs can use huge page, then /proc/meminfo looks
-like:
+This solution is limited in scope to just adding support for devices that
+provide no functionality for SR-IOV other than allocating the VFs by
+calling pci_enable_sriov. Previous sets had included patches for VFIO, but
+for now I am dropping that as the scope of that work is larger then I
+think I can take on at this time.
 
-ShmemHugePages:    77824 kB
-ShmemPmdMapped:     6144 kB
+v2: Reduced scope back to just virtio_pci and vfio-pci
+    Broke into 3 patch set from single patch
+    Changed autoprobe behavior to always set when num_vfs is set non-zero
+v3: Updated Documentation to clarify when sriov_unmanaged_autoprobe is used
+    Wrapped vfio_pci_sriov_configure to fix build errors w/o SR-IOV in kernel
+v4: Dropped vfio-pci patch
+    Added ena and nvme to drivers now using pci_sriov_configure_unmanaged
+    Dropped pci_disable_sriov call in virtio_pci to be consistent with ena
+v5: Dropped sriov_unmanaged_autoprobe and pci_sriov_conifgure_unmanaged
+    Added new patch that enables pci_sriov_configure_simple
+    Updated drivers to use pci_sriov_configure_simple
+v6: Defined pci_sriov_configure_simple as NULL when SR-IOV is not enabled
+    Updated drivers to drop "#ifdef" checks for IOV
+    Added pci-pf-stub as place for PF-only drivers to add support
+v7: Dropped pci_id table explanation from pci-pf-stub driver
+    Updated pci_sriov_configure_simple to drop need for err value
+    Fixed comment explaining why pci_sriov_configure_simple is NULL
+v8: Dropped virtio from the set, support to be added later after TC approval
 
-statfs.f_bsize still returns 4KB for tmpfs since THP could be split, and it
-also may fallback to 4KB page silently if there is not enough huge page.
-Furthermore, different f_bsize makes max_blocks and free_blocks
-calculation harder but without too much benefit. Returning huge page
-size via stat.st_blksize sounds good enough.
+Cc: Mark Rustad <mark.d.rustad@intel.com>
+Cc: Maximilian Heyne <mheyne@amazon.de>
+Cc: Liang-Min Wang <liang-min.wang@intel.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
 
-Since PUD size huge page for THP has not been supported, now it just
-returns HPAGE_PMD_SIZE.
-
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Suggested-by: Christoph Hellwig <hch@infradead.org>
 ---
-v2 --> v1:
-* Adopted the suggestion from hch to return huge page size via st_blksize
-  instead of creating a new flag.
 
- mm/shmem.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Alexander Duyck (4):
+      pci: Add pci_sriov_configure_simple for PFs that don't manage VF resources
+      ena: Migrate over to unmanaged SR-IOV support
+      nvme: Migrate over to unmanaged SR-IOV support
+      pci-pf-stub: Add PF driver stub for PFs that function only to enable VFs
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index b859192..3704258 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -39,6 +39,7 @@
- #include <asm/tlbflush.h> /* for arch/microblaze update_mmu_cache() */
- 
- static struct vfsmount *shm_mnt;
-+static bool is_huge = false;
- 
- #ifdef CONFIG_SHMEM
- /*
-@@ -995,6 +996,8 @@ static int shmem_getattr(const struct path *path, struct kstat *stat,
- 		spin_unlock_irq(&info->lock);
- 	}
- 	generic_fillattr(inode, stat);
-+	if (is_huge)
-+		stat->blksize = HPAGE_PMD_SIZE;
- 	return 0;
- }
- 
-@@ -3574,6 +3577,7 @@ static int shmem_parse_options(char *options, struct shmem_sb_info *sbinfo,
- 					huge != SHMEM_HUGE_NEVER)
- 				goto bad_val;
- 			sbinfo->huge = huge;
-+			is_huge = true;
- #endif
- #ifdef CONFIG_NUMA
- 		} else if (!strcmp(this_char,"mpol")) {
--- 
-1.8.3.1
+
+ drivers/net/ethernet/amazon/ena/ena_netdev.c |   28 -------------
+ drivers/nvme/host/pci.c                      |   20 ----------
+ drivers/pci/Kconfig                          |   12 ++++++
+ drivers/pci/Makefile                         |    2 +
+ drivers/pci/iov.c                            |   31 +++++++++++++++
+ drivers/pci/pci-pf-stub.c                    |   54 ++++++++++++++++++++++++++
+ include/linux/pci.h                          |    3 +
+ include/linux/pci_ids.h                      |    2 +
+ 8 files changed, 106 insertions(+), 46 deletions(-)
+ create mode 100644 drivers/pci/pci-pf-stub.c
+
+--
