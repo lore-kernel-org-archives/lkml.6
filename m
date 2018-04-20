@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753099AbeDTWjM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 18:39:12 -0400
+        id S1753067AbeDTWjL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 18:39:11 -0400
 Received: from mga01.intel.com ([192.55.52.88]:60382 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752937AbeDTWjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 18:39:10 -0400
+        id S1752712AbeDTWjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 18:39:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,303,1520924400";
-   d="scan'208";a="34982647"
+   d="scan'208";a="34982630"
 From: Vikas Shivappa <vikas.shivappa@linux.intel.com>
 To: vikas.shivappa@intel.com, tony.luck@intel.com,
         ravi.v.shankar@intel.com, fenghua.yu@intel.com, x86@kernel.org,
         tglx@linutronix.de, hpa@zytor.com
 Cc: linux-kernel@vger.kernel.org, ak@linux.intel.com,
         vikas.shivappa@linux.intel.com
-Subject: [PATCH 6/6] x86/intel_rdt/mba_sc: Feedback loop to dynamically update mem bandwidth
-Date: Fri, 20 Apr 2018 15:36:21 -0700
-Message-Id: <1524263781-14267-7-git-send-email-vikas.shivappa@linux.intel.com>
+Subject: [PATCH 1/6] x86/intel_rdt/mba_sc: Documentation for MBA software controller(mba_sc)
+Date: Fri, 20 Apr 2018 15:36:16 -0700
+Message-Id: <1524263781-14267-2-git-send-email-vikas.shivappa@linux.intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1524263781-14267-1-git-send-email-vikas.shivappa@linux.intel.com>
 References: <1524263781-14267-1-git-send-email-vikas.shivappa@linux.intel.com>
@@ -27,221 +27,139 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mba_sc is a feedback loop where we periodically read MBM counters and
-try to restrict the bandwidth below a max value so the below is always
-true:
-
-  "current bandwidth(cur_bw) < user specified bandwidth(user_bw)"
-
-The frequency of these checks is currently 1s and we just tag along the
-MBM overflow timer to do the updates. Doing it once in a second also
-makes the calculation of bandwidth easy. The steps of increase or
-decrease of bandwidth is the minimum granularity specified by the
-hardware.
-
-Although the MBA's goal is to restrict the bandwidth below a maximum,
-there may be a need to even increase the bandwidth. Since MBA controls
-the L2 external bandwidth where as MBM measures the L3 external
-bandwidth, we may end up restricting some rdtgroups unnecessarily. This
-may happen in the sequence where rdtgroup (set of jobs) had high
-"L3 <-> memory traffic" in initial phases -> mba_sc kicks in and reduced
-bandwidth percentage values -> but after some it has mostly "L2 <-> L3"
-traffic. In this scenario mba_sc increases the bandwidth percentage when
-there is lesser memory traffic.
+Add documentation about the feedback loop mechanism (MBA software
+controller) which lets the user specify the memory bandwidth allocation
+in MBps. This includes some changes to "schemata" formati with
+examples.
 
 Signed-off-by: Vikas Shivappa <vikas.shivappa@linux.intel.com>
 ---
- arch/x86/kernel/cpu/intel_rdt.c         |   3 +-
- arch/x86/kernel/cpu/intel_rdt.h         |   2 +
- arch/x86/kernel/cpu/intel_rdt_monitor.c | 121 +++++++++++++++++++++++++++++++-
- 3 files changed, 123 insertions(+), 3 deletions(-)
+ Documentation/x86/intel_rdt_ui.txt | 75 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 67 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index 85805d7..6dcd93b 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -33,7 +33,6 @@
- #include <asm/intel_rdt_sched.h>
- #include "intel_rdt.h"
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/intel_rdt_ui.txt
+index 71c3098..a16aa21 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/intel_rdt_ui.txt
+@@ -17,12 +17,14 @@ MBA (Memory Bandwidth Allocation) - "mba"
  
--#define MAX_MBA_BW	100u
- #define MBA_IS_LINEAR	0x4
- #define MBA_MAX_MBPS	U32_MAX
+ To use the feature mount the file system:
  
-@@ -350,7 +349,7 @@ static int get_cache_id(int cpu, int level)
-  * that can be written to QOS_MSRs.
-  * There are currently no SKUs which support non linear delay values.
-  */
--static u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
-+u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
- {
- 	if (r->membw.delay_linear)
- 		return MAX_MBA_BW - bw;
-diff --git a/arch/x86/kernel/cpu/intel_rdt.h b/arch/x86/kernel/cpu/intel_rdt.h
-index 66a0ba3..3975282 100644
---- a/arch/x86/kernel/cpu/intel_rdt.h
-+++ b/arch/x86/kernel/cpu/intel_rdt.h
-@@ -28,6 +28,7 @@
+- # mount -t resctrl resctrl [-o cdp[,cdpl2]] /sys/fs/resctrl
++ # mount -t resctrl resctrl [-o cdp[,cdpl2][,mba_MBps]] /sys/fs/resctrl
  
- #define MBM_CNTR_WIDTH			24
- #define MBM_OVERFLOW_INTERVAL		1000
-+#define MAX_MBA_BW			100u
+ mount options are:
  
- #define RMID_VAL_ERROR			BIT_ULL(63)
- #define RMID_VAL_UNAVAIL		BIT_ULL(62)
-@@ -461,6 +462,7 @@ void mbm_setup_overflow_handler(struct rdt_domain *dom,
- void mbm_handle_overflow(struct work_struct *work);
- bool is_mba_sc(struct rdt_resource *r);
- void setup_default_ctrlval(struct rdt_resource *r, u32 *dc, u32 *dm);
-+u32 delay_bw_map(unsigned long bw, struct rdt_resource *r);
- void cqm_setup_limbo_handler(struct rdt_domain *dom, unsigned long delay_ms);
- void cqm_handle_limbo(struct work_struct *work);
- bool has_busy_rmid(struct rdt_resource *r, struct rdt_domain *d);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_monitor.c b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-index 32c9e55..5a26c1c 100644
---- a/arch/x86/kernel/cpu/intel_rdt_monitor.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_monitor.c
-@@ -330,6 +330,113 @@ void mon_event_count(void *info)
- 	}
- }
+ "cdp": Enable code/data prioritization in L3 cache allocations.
+ "cdpl2": Enable code/data prioritization in L2 cache allocations.
++"mba_MBps": Enable the MBA Software Controller(mba_sc) to specify MBA
++ bandwidth in MBps
  
-+/*
-+ * This implements feedback loop for MBA software controller(mba_sc)
-+ *
-+ * mba_sc is a feedback loop where we periodically read MBM counters
-+ * and adjust the bandwidth percentage values via the IA32_MBA_THRTL_MSRs
-+ * so that:
-+ * "current bandwdith(cur_bw) < user specified bandwidth(user_bw)".
-+ * We can simply use the MBM counters to measure the bandwidth and
-+ * use MBA throttle MSRs to control the bandwidth for a particular
-+ * rdtgrp because we use the same resctrl rdtgroup for both monitoring
-+ * and control now as suggested by Thomas Gleixner.
-+ *
-+ * The frequency of the checks is 1s and we just tag along the
-+ * MBM overflow timer. Having 1s interval makes the calculation of
-+ * bandwidth simpler.
-+ *
-+ * Although MBA's goal is to restrict the bandwidth to a maximum,
-+ * there may be a need to increase the bandwidth to avoid
-+ * uncecessarily restricting the L2 <-> L3 traffic.
-+ * Since MBA controls the L2 external bandwidth where as
-+ * MBM measures the L3 external bandwidth the following sequence
-+ * could lead to such a situation.
-+ * Consider an rdtgroup which had high L3 <-> memory traffic
-+ * in initial phases -> mba_sc kicks in and reduced bandwidth
-+ * percentage values -> but after some time rdtgroup has mostly
-+ * L2 <-> L3 traffic.
-+ * In this case we may restrict the rdtgroup's L2 <-> L3 traffic
-+ * as its throttle MSRs already have low percentage values.
-+ * To avoid unnecessarily restricting such rdtgroups,we also
-+ * increase the bandwidth.
-+ */
-+static void update_mba_bw(struct rdtgroup *rgrp, struct rdt_domain *dom_mbm)
-+{
-+	u32 closid, rmid, cur_msr, cur_msr_val, new_msr_val;
-+	struct mbm_state *pmbm_data, *cmbm_data;
-+	u32 cur_bw, delta_bw, user_bw;
-+	struct rdt_resource *r_mba;
-+	struct rdt_domain *dom_mba;
-+	struct list_head *head;
-+	struct rdtgroup *entry;
-+
-+	r_mba = &rdt_resources_all[RDT_RESOURCE_MBA];
-+	closid = rgrp->closid;
-+	rmid = rgrp->mon.rmid;
-+	pmbm_data = &dom_mbm->mbm_local[rmid];
-+
-+	dom_mba = get_domain_from_cpu(smp_processor_id(), r_mba);
-+	if (!dom_mba) {
-+		pr_warn_once("Failure to get domain for MBA update\n");
-+		return;
-+	}
-+
-+	cur_bw = pmbm_data->prev_bw;
-+	user_bw = dom_mba->mbps_val[closid];
-+	delta_bw = pmbm_data->delta_bw;
-+	cur_msr_val = dom_mba->ctrl_val[closid];
-+
-+	/*
-+	 * For Ctrl groups read data from child monitor groups.
-+	 */
-+	head = &rgrp->mon.crdtgrp_list;
-+	list_for_each_entry(entry, head, mon.crdtgrp_list) {
-+		cmbm_data = &dom_mbm->mbm_local[entry->mon.rmid];
-+		cur_bw += cmbm_data->prev_bw;
-+		delta_bw += cmbm_data->delta_bw;
-+	}
-+
-+	/*
-+	 * Scale up/down the bandwidth linearly for the ctrl group.
-+	 * The bandwidth step is the bandwidth granularity specified
-+	 * by the hardware.
-+	 *
-+	 * The delta_bw is used when increasing the bandwidth
-+	 * so that we dont alternately increase and decrease the control values
-+	 * continuously.
-+	 * For ex: consider cur_bw = 90MBps, user_bw = 100MBps and if
-+	 * bandwidth step is 20MBps(> user_bw - cur_bw), we would keep switching
-+	 * between 90 and 110 continuously if we only check cur_bw < user_bw.
-+	 */
-+	if (cur_msr_val > r_mba->membw.min_bw && user_bw < cur_bw) {
-+		new_msr_val = cur_msr_val - r_mba->membw.bw_gran;
-+	} else if (cur_msr_val < MAX_MBA_BW &&
-+		   (user_bw > (cur_bw + delta_bw))) {
-+		new_msr_val = cur_msr_val + r_mba->membw.bw_gran;
-+	} else {
-+		return;
-+	}
-+
-+	cur_msr = r_mba->msr_base + closid;
-+	wrmsrl(cur_msr, delay_bw_map(new_msr_val, r_mba));
-+	dom_mba->ctrl_val[closid] = new_msr_val;
-+
-+	/*
-+	 * Delta values are updated dynamically package wise for each rdtgrp
-+	 * everytime the throttle MSR changes value.
-+	 * This is because (1)the increase in bandwidth is not perfectly
-+	 * linear and only "approximately" linear even when the hardware says
-+	 * it is linear.(2)Also since MBA is a core specific mechanism, the
-+	 * delta values vary based on number of cores used by the rdtgrp.
-+	 */
-+	pmbm_data->delta_comp = true;
-+	list_for_each_entry(entry, head, mon.crdtgrp_list) {
-+		cmbm_data = &dom_mbm->mbm_local[entry->mon.rmid];
-+		cmbm_data->delta_comp = true;
-+	}
-+}
-+
- static void mbm_update(struct rdt_domain *d, int rmid)
- {
- 	struct rmid_read rr;
-@@ -347,7 +454,16 @@ static void mbm_update(struct rdt_domain *d, int rmid)
- 	}
- 	if (is_mbm_local_enabled()) {
- 		rr.evtid = QOS_L3_MBM_LOCAL_EVENT_ID;
--		__mon_event_count(rmid, &rr);
-+
-+		/*
-+		 * Call the MBA software controller only for the
-+		 * control groups and when user has enabled
-+		 * the software controller explicitly.
-+		 */
-+		if (!is_mba_sc(NULL))
-+			__mon_event_count(rmid, &rr);
-+		else
-+			mbm_bw_count(rmid, &rr);
- 	}
- }
+ L2 and L3 CDP are controlled seperately.
  
-@@ -418,6 +534,9 @@ void mbm_handle_overflow(struct work_struct *work)
- 		head = &prgrp->mon.crdtgrp_list;
- 		list_for_each_entry(crgrp, head, mon.crdtgrp_list)
- 			mbm_update(d, crgrp->mon.rmid);
-+
-+		if (is_mba_sc(NULL))
-+			update_mba_bw(prgrp, d);
- 	}
+@@ -270,10 +272,11 @@ and 0xA are not.  On a system with a 20-bit mask each bit represents 5%
+ of the capacity of the cache. You could partition the cache into four
+ equal parts with masks: 0x1f, 0x3e0, 0x7c00, 0xf8000.
  
- 	schedule_delayed_work_on(cpu, &d->mbm_over, delay);
+-Memory bandwidth(b/w) percentage
+---------------------------------
+-For Memory b/w resource, user controls the resource by indicating the
+-percentage of total memory b/w.
++Memory bandwidth Allocation and monitoring
++------------------------------------------
++
++For Memory bandwidth resource, by default the user controls the resource
++by indicating the percentage of total memory bandwidth.
+ 
+ The minimum bandwidth percentage value for each cpu model is predefined
+ and can be looked up through "info/MB/min_bandwidth". The bandwidth
+@@ -285,7 +288,47 @@ to the next control step available on the hardware.
+ The bandwidth throttling is a core specific mechanism on some of Intel
+ SKUs. Using a high bandwidth and a low bandwidth setting on two threads
+ sharing a core will result in both threads being throttled to use the
+-low bandwidth.
++low bandwidth. The fact that Memory bandwidth allocation(MBA) is a core
++specific mechanism where as memory bandwidth monitoring(MBM) is done at
++the package level may lead to confusion when users try to apply control
++via the MBA and then monitor the bandwidth to see if the controls are
++effective. Below are such scenarios:
++
++1. User may *not* see increase in actual bandwidth when percentage
++   values are increased:
++
++This can occur when aggregate L2 external bandwidth is more than L3
++external bandwidth. Consider an SKL SKU with 24 cores on a package and
++where L2 external  is 10GBps (hence aggregate L2 external bandwidth is
++240GBps) and L3 external bandwidth is 100GBps. Now a workload with '20
++threads, having 50% bandwidth, each consuming 5GBps' consumes the max L3
++bandwidth of 100GBps although the percentage value specified is only 50%
++<< 100%. Hence increasing the bandwidth percentage will not yeild any
++more bandwidth. This is because although the L2 external bandwidth still
++has capacity, the L3 external bandwidth is fully used. Also note that
++this would be dependent on number of cores the benchmark is run on.
++
++2. Same bandwidth percentage may mean different actual bandwidth
++   depending on # of threads:
++
++For the same SKU in #1, a 'single thread, with 10% bandwidth' and '4
++thread, with 10% bandwidth' can consume upto 10GBps and 40GBps although
++they have same percentage bandwidth of 10%. This is simply because as
++threads start using more cores in an rdtgroup, the actual bandwidth may
++increase or vary although user specified bandwidth percentage is same.
++
++In order to mitigate this and make the interface more user friendly,
++resctrl added support for specifying the bandwidth in MBps as well.  The
++kernel underneath would use a software feedback mechanism or a "Software
++Controller(mba_sc)" which reads the actual bandwidth using MBM counters
++and adjust the memowy bandwidth percentages to ensure
++
++	"actual bandwidth < user specified bandwidth".
++
++By default, the schemata would take the bandwidth percentage values
++where as user can switch to the "MBA software controller" mode using
++a mount option 'mba_MBps'. The schemata format is specified in the below
++sections.
+ 
+ L3 schemata file details (code and data prioritization disabled)
+ ----------------------------------------------------------------
+@@ -308,13 +351,20 @@ schemata format is always:
+ 
+ 	L2:<cache_id0>=<cbm>;<cache_id1>=<cbm>;...
+ 
+-Memory b/w Allocation details
+------------------------------
++Memory bandwidth Allocation (default mode)
++------------------------------------------
+ 
+ Memory b/w domain is L3 cache.
+ 
+ 	MB:<cache_id0>=bandwidth0;<cache_id1>=bandwidth1;...
+ 
++Memory bandwidth Allocation specified in MBps
++---------------------------------------------
++
++Memory bandwidth domain is L3 cache.
++
++	MB:<cache_id0>=bw_MBps0;<cache_id1>=bw_MBps1;...
++
+ Reading/writing the schemata file
+ ---------------------------------
+ Reading the schemata file will show the state of all resources
+@@ -358,6 +408,15 @@ allocations can overlap or not. The allocations specifies the maximum
+ b/w that the group may be able to use and the system admin can configure
+ the b/w accordingly.
+ 
++If the MBA is specified in MB(megabytes) then user can enter the max b/w in MB
++rather than the percentage values.
++
++# echo "L3:0=3;1=c\nMB:0=1024;1=500" > /sys/fs/resctrl/p0/schemata
++# echo "L3:0=3;1=3\nMB:0=1024;1=500" > /sys/fs/resctrl/p1/schemata
++
++In the above example the tasks in "p1" and "p0" on socket 0 would use a max b/w
++of 1024MB where as on socket 1 they would use 500MB.
++
+ Example 2
+ ---------
+ Again two sockets, but this time with a more realistic 20-bit mask.
 -- 
 1.9.1
