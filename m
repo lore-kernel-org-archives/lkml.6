@@ -1,137 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754516AbeDTJoy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:44:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41257 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754476AbeDTJow (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:44:52 -0400
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: mjg59@srcf.ucam.org, pali.rohar@gmail.com, dvhart@infradead.org,
-        andy@infradead.org, mario.limonciello@dell.com, tiwai@suse.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v4 3/3] ALSA: hda: Disabled unused audio controller for Dell platforms with Switchable Graphics
-Date: Fri, 20 Apr 2018 17:44:32 +0800
-Message-Id: <20180420094432.13133-3-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180420094432.13133-1-kai.heng.feng@canonical.com>
-References: <20180420094432.13133-1-kai.heng.feng@canonical.com>
+        id S1754551AbeDTJqJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 05:46:09 -0400
+Received: from verein.lst.de ([213.95.11.211]:41208 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754519AbeDTJqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 05:46:07 -0400
+Date: Fri, 20 Apr 2018 11:47:02 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] dma-direct: Try reallocation with GFP_DMA32 if
+        possible
+Message-ID: <20180420094702.GA6530@lst.de>
+References: <20180416151819.27520-1-tiwai@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180416151819.27520-1-tiwai@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some Dell platforms (Preicsion 7510/7710/7520/7720) have a BIOS option
-"Switchable Graphics" (SG).
+On Mon, Apr 16, 2018 at 05:18:19PM +0200, Takashi Iwai wrote:
+> As the recent swiotlb bug revealed, we seem to have given up the
+> direct DMA allocation too early and felt back to swiotlb allocation.
+> The reason is that swiotlb allocator expected that dma_direct_alloc()
+> would try harder to get pages even below 64bit DMA mask with
+> GFP_DMA32, but the function doesn't do that but only deals with
+> GFP_DMA case.
+> 
+> This patch adds a similar fallback reallocation with GFP_DMA32 as
+> we've done with GFP_DMA.  The condition is that the coherent mask is
+> smaller than 64bit (i.e. some address limitation), and neither GFP_DMA
+> nor GFP_DMA32 is set beforehand.
+> 
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> 
+> ---
+> 
+> This is a resend of a test patch included in the previous thread
+> ("swiotlb: Fix unexpected swiotlb_alloc_coherent() failures").
 
-When SG is enabled, we have:
-00:02.0 VGA compatible controller: Intel Corporation Device 591b (rev 04)
-00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
-01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.  [AMD/ATI] Ellesmere [Polaris10]
-01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere [Radeon RX 580]
-
-The Intel Audio outputs all the sound, including HDMI audio. The audio
-controller comes with AMD graphics doesn't get used.
-
-When SG is disabled, we have:
-00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
-01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.  [AMD/ATI] Ellesmere [Polaris10]
-01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere [Radeon RX 580]
-
-Now it's a typical discrete-only system. HDMI audio comes from AMD audio
-controller, others from Intel audio controller.
-
-When SG is enabled, the unused AMD audio contoller still exposes its
-sysfs, so userspace still opens the control file and stream. If
-userspace tries to output sound through the stream, it hangs the system.
-
-Since the discrete audio controller isn't useful when SG is enabled, we
-should just disable the device.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
-v4: Change the commit message to clarify there's no more runtime pm
-    warning.
-    Also skip the check for thunderbolt attached devices.
-
-v3: Simplify dell_switchable_gfx_is_enabled() by returning bool instead
-    of error code.
-    Use DMI_DEV_TYPE_OEM_STRING to match Dell System.
-
-v2: Mario suggested to squash the HDA part into the same series.
-
- sound/pci/hda/hda_intel.c | 43 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 7a111a1b5836..3981193c8d29 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -49,6 +49,8 @@
- #include <linux/clocksource.h>
- #include <linux/time.h>
- #include <linux/completion.h>
-+#include <linux/dell-common.h>
-+#include <linux/dmi.h>
- 
- #ifdef CONFIG_X86
- /* for snoop control */
-@@ -1627,6 +1629,42 @@ static void check_msi(struct azx *chip)
- 	}
- }
- 
-+#if IS_ENABLED(CONFIG_DELL_LAPTOP)
-+static bool check_dell_switchable_gfx(struct pci_dev *pdev)
-+{
-+	bool (*dell_switchable_gfx_is_enabled_func)(void);
-+	bool enabled;
-+
-+	/* Thunderbolt devices won't be switchable */
-+	if (pci_is_thunderbolt_attached(pdev))
-+		return false;
-+
-+	/* Only check for Dell laptops and AIOs */
-+	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) ||
-+	    !(dmi_match(DMI_CHASSIS_TYPE, "10") ||
-+	      dmi_match(DMI_CHASSIS_TYPE, "13")) ||
-+	    !(pdev->vendor == PCI_VENDOR_ID_ATI ||
-+	      pdev->vendor == PCI_VENDOR_ID_NVIDIA))
-+		return false;
-+
-+	dell_switchable_gfx_is_enabled_func =
-+		symbol_request(dell_switchable_gfx_is_enabled);
-+	if (!dell_switchable_gfx_is_enabled_func)
-+		return false;
-+
-+	enabled = dell_switchable_gfx_is_enabled_func();
-+
-+	symbol_put(dell_switchable_gfx_is_enabled);
-+
-+	return enabled;
-+}
-+#else
-+static bool check_dell_switchable_gfx(struct pci_dev *pdev)
-+{
-+	return false;
-+}
-+#endif
-+
- /* check the snoop mode availability */
- static void azx_check_snoop_available(struct azx *chip)
- {
-@@ -1709,6 +1747,11 @@ static int azx_create(struct snd_card *card, struct pci_dev *pci,
- 	if (err < 0)
- 		return err;
- 
-+	if (check_dell_switchable_gfx(pci)) {
-+		pci_disable_device(pci);
-+		return -ENODEV;
-+	}
-+
- 	hda = kzalloc(sizeof(*hda), GFP_KERNEL);
- 	if (!hda) {
- 		pci_disable_device(pci);
--- 
-2.17.0
+I like the patch, but as-is it doesn't apply.  Can you resend it against
+latest Linus' tree?
