@@ -1,38 +1,41 @@
-Return-Path: <bp@suse.de>
-X-Google-Smtp-Source: AIpwx48c6UjBNUg18eW5mYxSBGQbicxhNNlueQD0QnkaEOjxLb/hgYGulEfySmyGBIBShDZsYFs3
-ARC-Seal: i=1; a=rsa-sha256; t=1524220632; cv=none;
+Return-Path: <ashok.raj@intel.com>
+X-Google-Smtp-Source: AIpwx4+PQCF2vGHk4810KcLDtVNWxX99Y8oZYapGf+btKQSLzUzuyVNemTmBO58Eb5zirEbuqW1o
+ARC-Seal: i=1; a=rsa-sha256; t=1524240019; cv=none;
         d=google.com; s=arc-20160816;
-        b=Rurnxm5WheepXCGtrrwqENxSUj3vFNNFEUhgnKx433j4nKcR+QuXPFxhklCUM2H6+C
-         Z2qYi+jmM3f/tt4hgejGtNXVoCHF1vgn9IgODB+ORQzB8LSsY/dzh9p5HRdvHiX5U2Vs
-         chG/rlw/9XbgF5CMcqeRdQ2h3WLNrvRQfxwM4jRHXQFPaoKX2ZfViP3drrZl3zBxzPDi
-         TMEMUfATi9zY1+plgNJm/FKrWr15JHqG1SlQX5uImPVNHr19o0O0PbRDZX7NiFi08qtA
-         TCctJExBe3M7TYHDZaE4WvAWX/gPKmlt723an6ayNfmzLgWKUVPW1NTtp4PLQH5bQHvu
-         7iUw==
+        b=kj4TRROQLr87fFmsZFWmJSpmCo5oS5+HY9uesDD/v4WDz2NFixtdghTDsVyY/zGz7w
+         7NevgQTb/KprSq+T2tdgOh5so9RbnwsCb5jrbRAQbWGozvLvziRuRFsbYw/dyeLexVi9
+         iwPio1VSHgxIb1yBnlPWphmI2YJNEUsveVo9m47BHLQWemoJCOd0xFd13EBvGfdM119O
+         AUywxp3EY42cu5wBujvse4XyGr9CkCKyyJjJysRNDsxTki/wyVphVU8pLXeNjLTKs/Jz
+         +Vm1aPBuyutEw8I7g6jN5gO9equQJWiRilDRmYB2uDNZyxkymJ80eBSlQENBnquv3r2o
+         ishA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=uVPH4+lYR2umKpWCLNQJ3hySNnXFciHJ5UnposFjOWs=;
-        b=hwWrV/uRHDMT4kLn7/Iw9EFVRILcAFsd+/ZVeorI0hMVJUMWQ84rQ0SgGnoEg/XfnX
-         hN3FsB0Wxz0HAYK/ug4nng67hRnPvJPk1N3i68gN0tofSFI0DvQ1CmGWrX6Ca6Bw088J
-         2E/AbVb2uJ+x0bzcqlorR5In2hWbrxBOiw9RL/JGV42+uSIowZ8huU+DouEnMjbhzQp9
-         wpd03SklJcTxtGQXze8pcql/ANKy90VVqelosIFRM2PscDArGVM8mnQrrJXHwN+IJe3K
-         9HCTTJnlblndt6RWygydBLzYKD1L0TOPOWoAiZsqWQASZvkam1XqmgFy32zbj+n6wlv+
-         Uyog==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=Y3rfnBCnnoiAZkzs6iRjbfvcQjz2eRvuqnFTtVINiyw=;
+        b=h2SUtLtEWJzeMLcGObXcDkyQn880oF3DCkRBstAXt/UqRBML6OfwoTURXkgFJ3lqN1
+         xTEVAAxbTMVD9rEii1SPRUpxbJ+B6dnyKKdt4iq7J5WG5NnnS/0Cax6ZbkRWvvhuVM0d
+         7vvtVU9rA91+6oXcXdLu7lkd6udYimHOgcEsA4Kwk/rBCrRdIIxOnaOZ9JwKJTcqTkNi
+         Mz9C2rJlC1uwwfAmWVOVBulnl7Iqd1Uaeh/VsyRSutCiPXAEd/EO5lpSJxSa9gh1OAwD
+         T5OSTe5z4Ug0J9cE/nqKdbekKdX4ixxoQGBuZbTOQW8XlROwxJEjN1CgsrweZEggDrNS
+         v+7g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bp@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=bp@suse.de
+       spf=pass (google.com: domain of ashok.raj@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=ashok.raj@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bp@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=bp@suse.de
-Date: Fri, 20 Apr 2018 12:37:08 +0200
-From: Borislav Petkov <bp@suse.de>
-To: Vitezslav Samel <vitezslav@samel.cz>,
-	"Raj, Ashok" <ashok.raj@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+       spf=pass (google.com: domain of ashok.raj@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=ashok.raj@intel.com
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,302,1520924400";
+   d="scan'208";a="193082415"
+Date: Fri, 20 Apr 2018 09:00:18 -0700
+From: "Raj, Ashok" <ashok.raj@intel.com>
+To: Borislav Petkov <bp@suse.de>
+Cc: Vitezslav Samel <vitezslav@samel.cz>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org, x86-ml <x86@kernel.org>
-Subject: [PATCH 2/2] x86/microcode: Do not exit early from __reload_late()
-Message-ID: <20180420103708.GE13977@pd.tnic>
-References: <20180419053531.GA2224@pc11.op.pod.cz>
- <20180419104829.GE3896@pd.tnic>
+Subject: Re: [PATCH 2/2] x86/microcode: Do not exit early from __reload_late()
+Message-ID: <20180420160017.GB9792@araj-mobl1.jf.intel.com>
+References: <20180419104829.GE3896@pd.tnic>
  <20180419120239.GA2377@pc11.op.pod.cz>
  <20180419121840.GF3896@pd.tnic>
  <20180419134627.GA2387@pc11.op.pod.cz>
@@ -41,68 +44,43 @@ References: <20180419053531.GA2224@pc11.op.pod.cz>
  <20180420095220.GA13977@pd.tnic>
  <20180420100131.GA14217@pc11.op.pod.cz>
  <20180420103242.GB13977@pd.tnic>
+ <20180420103708.GE13977@pd.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180420103242.GB13977@pd.tnic>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180420103708.GE13977@pd.tnic>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598261173668216348?=
-X-GMAIL-MSGID: =?utf-8?q?1598261173668216348?=
+X-GMAIL-MSGID: =?utf-8?q?1598281502508960208?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Vitezslav reported a case where the
+On Fri, Apr 20, 2018 at 12:37:08PM +0200, Borislav Petkov wrote:
+> Vitezslav reported a case where the
+> 
+>   "Timeout during microcode update!"
+> 
+> panic would hit. After a deeper look, it turned out that his .config had
+> CONFIG_HOTPLUG_CPU disabled which practically made save_mc_for_early() a
+> no-op.
+> 
+> When that happened, the discovered microcode patch wasn't saved into our
+> cache and the late loading path wouldn't find any.
+> 
+> This, then, lead to early exit from __reload_late() and thus CPUs
+> waiting until the timeout is reached, leading to the panic.
+> 
+> In hindsight, I should've made that function not return before the
+> post-synchronization. Oh well, I know better now...
+> 
+> Reported-by: Vitezslav Samel <vitezslav@samel.cz>
+> Signed-off-by: Borislav Petkov <bp@suse.de>
 
-  "Timeout during microcode update!"
+Tested-by: Ashok Raj <ashok.raj@intel.com>
 
-panic would hit. After a deeper look, it turned out that his .config had
-CONFIG_HOTPLUG_CPU disabled which practically made save_mc_for_early() a
-no-op.
-
-When that happened, the discovered microcode patch wasn't saved into our
-cache and the late loading path wouldn't find any.
-
-This, then, lead to early exit from __reload_late() and thus CPUs
-waiting until the timeout is reached, leading to the panic.
-
-In hindsight, I should've made that function not return before the
-post-synchronization. Oh well, I know better now...
-
-Reported-by: Vitezslav Samel <vitezslav@samel.cz>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: <stable@vger.kernel.org>
-Fixes: bb8c13d61a62 ("x86/microcode: Fix CPU synchronization routine")
-Link: http://lkml.kernel.org/r/20180418081140.GA2439@pc11.op.pod.cz
----
- arch/x86/kernel/cpu/microcode/core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 10c4fc2c91f8..77e201301528 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -564,14 +564,12 @@ static int __reload_late(void *info)
- 	apply_microcode_local(&err);
- 	spin_unlock(&update_lock);
- 
-+	/* siblings return UCODE_OK because their engine got updated already */
- 	if (err > UCODE_NFOUND) {
- 		pr_warn("Error reloading microcode on CPU %d\n", cpu);
--		return -1;
--	/* siblings return UCODE_OK because their engine got updated already */
-+		ret = -1;
- 	} else if (err == UCODE_UPDATED || err == UCODE_OK) {
- 		ret = 1;
--	} else {
--		return ret;
- 	}
- 
- 	/*
--- 
-2.13.0
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: bb8c13d61a62 ("x86/microcode: Fix CPU synchronization routine")
+> Link: http://lkml.kernel.org/r/20180418081140.GA2439@pc11.op.pod.cz
+> ---
