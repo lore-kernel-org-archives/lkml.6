@@ -1,72 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752153AbeDTTJ7 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 15:09:59 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35532 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeDTTJ6 (ORCPT
+        id S1752209AbeDTTLf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 15:11:35 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37570 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750858AbeDTTLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 15:09:58 -0400
-Date: Fri, 20 Apr 2018 20:09:56 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [git pull] vfs fixes
-Message-ID: <20180420190956.GP30522@ZenIV.linux.org.uk>
-References: <20180420155846.GO30522@ZenIV.linux.org.uk>
- <20180420112945.98686d9c78121bdc1e93483a@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420112945.98686d9c78121bdc1e93483a@linux-foundation.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Fri, 20 Apr 2018 15:11:34 -0400
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+To: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mhocko@suse.com, linux-mm@kvack.org,
+        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
+        rostedt@goodmis.org, fengguang.wu@intel.com, dennisszhou@gmail.com
+Subject: [v1] mm: access to uninitialized struct page
+Date: Fri, 20 Apr 2018 15:10:42 -0400
+Message-Id: <20180420191042.23452-1-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.17.0
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8869 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804200192
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 11:29:45AM -0700, Andrew Morton wrote:
-> On Fri, 20 Apr 2018 16:58:46 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
-> 
-> > 	Assorted fixes.  Some of that is only a matter with fault injection
-> > (broken handling of small allocation failure in various mount-related places),
-> > but the last one is a root-triggerable stack overflow, and combined with
-> > userns it gets really nasty ;-/
-> > 
-> > The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-> > 
-> >   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-linus
-> > 
-> > for you to fetch changes up to 16a34adb9392b2fe4195267475ab5b472e55292c:
-> > 
-> >   Don't leak MNT_INTERNAL away from internal mounts (2018-04-19 23:52:15 -0400)
-> > ...
-> >
-> > Tetsuo Handa (1):
-> >       mm,vmscan: Allow preallocating memory for register_shrinker().
-> 
-> Confused.  You had a bunch of issues with this patch
-> (http://lkml.kernel.org/r/20180411005938.GN30522@ZenIV.linux.org.uk)
-> and Tetsuo sent out a v2 but now we've merged the v1.  Deliberate?
+The following two bugs were reported by Fengguang Wu:
 
-I think by that time I'd applied v1 and fixed those issues myself (same as his
-variant, modulo slightly different names).
+kernel reboot-without-warning in early-boot stage, last printk:
+early console in setup code
 
-> Also, it would be nice if you could get the Link: thing working in your
-> commits please - this one took a bit of hunting down.
+https://lkml.org/lkml/2018/4/18/797
 
-*blink*
+And, also:
+[per_cpu_ptr_to_phys] PANIC: early exception 0x0d
+IP 10:ffffffffa892f15f error 0 cr2 0xffff88001fbff000
 
-What Link: thing?  You mean lkml.kernel.org references to original postings?
-Or is it something else?  Never done that, actually; any tips re tools needed
-for that?  Normally it's save a bunch of postings into a local file in mutt,
-scp it over to development box, then git am -s - either all at once, or step
-by step with ediiting and git commit --amend in between...
+https://lkml.org/lkml/2018/4/18/387
 
-I realize that message-id can be picked and massaged into Link: ... form,
-of course, but I'd rather not reinvent the wheel if it's already done by
-somebody...
+Both of the problems are due to accessing uninitialized struct page from
+trap_init(). We must first do mm_init() in order to initialize allocated
+struct pages, and than we can access fields of any struct page that belongs
+to memory that's been allocated.
+
+Below is explanation of the root cause.
+
+The issue arises in this stack:
+
+start_kernel()
+ trap_init()
+  setup_cpu_entry_areas()
+   setup_cpu_entry_area(cpu)
+    get_cpu_gdt_paddr(cpu)
+     per_cpu_ptr_to_phys(addr)
+      pcpu_addr_to_page(addr)
+       virt_to_page(addr)
+        pfn_to_page(__pa(addr) >> PAGE_SHIFT)
+The returned "struct page" is sometimes uninitialized, and thus
+failing later when used. It turns out sometimes is because it depends
+on KASLR.
+
+When boot is failing we have this when  pfn_to_page() is called:
+kasrl: 0x000000000d600000
+ addr: ffffffff83e0d000
+    pa: 1040d000
+   pfn: 1040d
+page: ffff88001f113340
+page->flags ffffffffffffffff <- Uninitialized!
+
+When boot is successful:
+kaslr: 0x000000000a800000
+ addr: ffffffff83e0d000
+     pa: d60d000
+    pfn: d60d
+ page: ffff88001f05b340
+page->flags 280000000000 <- Initialized!
+
+Here are physical addresses that BIOS provided to us:
+e820: BIOS-provided physical RAM map:
+BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+BIOS-e820: [mem 0x0000000000100000-0x000000001ffdffff] usable
+BIOS-e820: [mem 0x000000001ffe0000-0x000000001fffffff] reserved
+BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+
+In both cases, working and non-working the real physical address is
+the same:
+
+pa - kasrl = 0x2E0D000
+
+The only thing that is different is PFN.
+
+We initialize struct pages in four places:
+
+1. Early in boot a small set of struct pages is initialized to fill
+the first section, and lower zones.
+2. During mm_init() we initialize "struct pages" for all the memory
+that is allocated, i.e reserved in memblock.
+3. Using on-demand logic when pages are allocated after mm_init call
+4. After smp_init() when the rest free deferred pages are initialized.
+
+The above path happens before deferred memory is initialized, and thus
+it must be covered either by 1, 2 or 3.
+
+So, lets check what PFNs are initialized after (1).
+
+memmap_init_zone() is called for pfn ranges:
+1 - 1000, and 1000 - 1ffe0, but it quits after reaching pfn 0x10000,
+as it leaves the rest to be initialized as deferred pages.
+
+In the working scenario pfn ended up being below 1000, but in the
+failing scenario it is above. Hence, we must initialize this page in
+(2). But trap_init() is called before mm_init().
+
+The bug was introduced by "mm: initialize pages on demand during boot"
+because we lowered amount of pages that is initialized in the step
+(1). But, it still could happen, because the number of initialized
+pages was a guessing.
+
+The current fix moves trap_init() to be called after mm_init, but as
+alternative, we could increase pgdat->static_init_pgcnt:
+In free_area_init_node we can increase:
+       pgdat->static_init_pgcnt = min_t(unsigned long, PAGES_PER_SECTION,
+                                        pgdat->node_spanned_pages);
+Instead of one PAGES_PER_SECTION, set several, so the text is
+covered for all KASLR offsets. But, this would still be guessing.
+Therefore, I prefer the current fix.
+
+Fixes: c9e97a1997fb ("mm: initialize pages on demand during boot")
+
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+---
+ init/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/init/main.c b/init/main.c
+index b795aa341a3a..870f75581cea 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -585,8 +585,8 @@ asmlinkage __visible void __init start_kernel(void)
+ 	setup_log_buf(0);
+ 	vfs_caches_init_early();
+ 	sort_main_extable();
+-	trap_init();
+ 	mm_init();
++	trap_init();
+ 
+ 	ftrace_init();
+ 
+-- 
+2.17.0
