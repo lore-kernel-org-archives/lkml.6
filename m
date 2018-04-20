@@ -1,126 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754608AbeDTKIV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:08:21 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6752 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754328AbeDTKIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:08:19 -0400
-From: John Garry <john.garry@huawei.com>
-To: <rjw@rjwysocki.net>, <andriy.shevchenko@linux.intel.com>,
-        <linux-acpi@vger.kernel.org>, <lenb@kernel.org>,
-        <mika.westerberg@linux.intel.com>, <lorenzo.pieralisi@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
-        <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
-        <linuxarm@huawei.com>, <z.liuxinliang@hisilicon.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [RFC PATCH 2/2] HISI LPC: Add PNP device support
-Date: Fri, 20 Apr 2018 18:07:26 +0800
-Message-ID: <1524218846-169934-3-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
-References: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
+        id S1754507AbeDTKNX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:13:23 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33551 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754294AbeDTKNV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 06:13:21 -0400
+Date: Fri, 20 Apr 2018 03:13:10 -0700
+From: tip-bot for David Wang <tipbot@zytor.com>
+Message-ID: <tip-60882cc159e1416fb1d17210de60d4a3ba04e613@git.kernel.org>
+Cc: davidwang@zhaoxin.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        mingo@kernel.org, tglx@linutronix.de
+Reply-To: davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org
+In-Reply-To: <1524212968-28998-1-git-send-email-davidwang@zhaoxin.com>
+References: <1524212968-28998-1-git-send-email-davidwang@zhaoxin.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cpu] x86/Centaur: Initialize supported CPU features
+ properly
+Git-Commit-ID: 60882cc159e1416fb1d17210de60d4a3ba04e613
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the driver creates an per-ACPI device mfd_cell
-for child devices. This does not suit devices which are
-PNP-compatible, as we expect PNP-compatible devices to
-derive PNP devices.
+Commit-ID:  60882cc159e1416fb1d17210de60d4a3ba04e613
+Gitweb:     https://git.kernel.org/tip/60882cc159e1416fb1d17210de60d4a3ba04e613
+Author:     David Wang <davidwang@zhaoxin.com>
+AuthorDate: Fri, 20 Apr 2018 16:29:28 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 20 Apr 2018 12:08:17 +0200
 
-To add PNP device support, we continue to allow the PNP
-scan code to create the PNP device (which have the
-enumeration_by_parent flag set), but expect the PNP
-scan to defer adding the device to allow the host probe
-code to do this. In addition, no longer do we create an
-mfd_cell (platform_device) for PNP-compatible devices.
+x86/Centaur: Initialize supported CPU features properly
 
-We take this approach so that host probe code can
-translate the IO resources of the PNP device prior
-to adding the device.
+Centaur CPUs have some Intel compatible capabilities,including Permformance
+Monitoring Counters and CPU virtualization capabilities. Initialize them in
+the Centaur specific init code.
 
-Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: lukelin@viacpu.com
+Cc: qiyuanwang@zhaoxin.com
+Cc: gregkh@linuxfoundation.org
+Cc: brucechang@via-alliance.com
+Cc: timguo@zhaoxin.com
+Cc: cooperyan@zhaoxin.com
+Cc: hpa@zytor.com
+Cc: benjaminpan@viatech.com
+Link: https://lkml.kernel.org/r/1524212968-28998-1-git-send-email-davidwang@zhaoxin.com
+
 ---
- drivers/bus/hisi_lpc.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/centaur.c | 48 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
-index 2d4611e..d228bc5 100644
---- a/drivers/bus/hisi_lpc.c
-+++ b/drivers/bus/hisi_lpc.c
-@@ -17,8 +17,11 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/pci.h>
-+#include <linux/pnp.h>
- #include <linux/slab.h>
+diff --git a/arch/x86/kernel/cpu/centaur.c b/arch/x86/kernel/cpu/centaur.c
+index e5ec0f11c0de..80d5110481ec 100644
+--- a/arch/x86/kernel/cpu/centaur.c
++++ b/arch/x86/kernel/cpu/centaur.c
+@@ -18,6 +18,13 @@
+ #define RNG_ENABLED	(1 << 3)
+ #define RNG_ENABLE	(1 << 6)	/* MSR_VIA_RNG */
  
-+#include "../pnp/base.h"
++#define X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW	0x00200000
++#define X86_VMX_FEATURE_PROC_CTLS_VNMI		0x00400000
++#define X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS	0x80000000
++#define X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC	0x00000001
++#define X86_VMX_FEATURE_PROC_CTLS2_EPT		0x00000002
++#define X86_VMX_FEATURE_PROC_CTLS2_VPID		0x00000020
 +
- #define DRV_NAME "hisi-lpc"
- 
- /*
-@@ -469,8 +472,11 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
- 	struct acpi_device *child;
- 	int size, ret, count = 0, cell_num = 0;
- 
--	list_for_each_entry(child, &adev->children, node)
-+	list_for_each_entry(child, &adev->children, node) {
-+		if (acpi_is_pnp_device(child))
-+			continue;
- 		cell_num++;
-+	}
- 
- 	/* allocate the mfd cell and companion ACPI info, one per child */
- 	size = sizeof(*mfd_cells) + sizeof(*hisi_lpc_mfd_cells);
-@@ -492,6 +498,9 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
- 			.pnpid = pnpid,
- 		};
- 
-+		if (acpi_is_pnp_device(child))
-+			continue;
-+
- 		/*
- 		 * For any instances of this host controller (Hip06 and Hip07
- 		 * are the only chipsets), we would not have multiple slaves
-@@ -523,6 +532,33 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
- 		return ret;
+ static void init_c3(struct cpuinfo_x86 *c)
+ {
+ 	u32  lo, hi;
+@@ -112,6 +119,31 @@ static void early_init_centaur(struct cpuinfo_x86 *c)
  	}
- 
-+	list_for_each_entry(child, &adev->children, node) {
-+		struct pnp_resource *pnp_res;
-+		struct pnp_dev *pnp_dev;
-+		int rc;
-+
-+		if (!acpi_is_pnp_device(child))
-+			continue;
-+
-+		pnp_dev = child->driver_data;
-+
-+		/*
-+		 * Prior to adding the device, we need to translate the
-+		 * resources to logical PIO addresses.
-+		 */
-+		list_for_each_entry(pnp_res, &pnp_dev->resources, list) {
-+			struct resource *res = &pnp_res->res;
-+
-+			if (res->flags | IORESOURCE_IO)
-+				hisi_lpc_acpi_xlat_io_res(child, adev, res);
-+		}
-+		rc = pnp_add_device(pnp_dev);
-+		if (rc) {
-+			put_device(&pnp_dev->dev);
-+			return rc;
-+		}
-+	}
-+
- 	return 0;
  }
  
--- 
-1.9.1
++static void centaur_detect_vmx_virtcap(struct cpuinfo_x86 *c)
++{
++	u32 vmx_msr_low, vmx_msr_high, msr_ctl, msr_ctl2;
++
++	rdmsr(MSR_IA32_VMX_PROCBASED_CTLS, vmx_msr_low, vmx_msr_high);
++	msr_ctl = vmx_msr_high | vmx_msr_low;
++
++	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW)
++		set_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
++	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_VNMI)
++		set_cpu_cap(c, X86_FEATURE_VNMI);
++	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS) {
++		rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
++		      vmx_msr_low, vmx_msr_high);
++		msr_ctl2 = vmx_msr_high | vmx_msr_low;
++		if ((msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC) &&
++		    (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW))
++			set_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
++		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_EPT)
++			set_cpu_cap(c, X86_FEATURE_EPT);
++		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VPID)
++			set_cpu_cap(c, X86_FEATURE_VPID);
++	}
++}
++
+ static void init_centaur(struct cpuinfo_x86 *c)
+ {
+ #ifdef CONFIG_X86_32
+@@ -128,6 +160,19 @@ static void init_centaur(struct cpuinfo_x86 *c)
+ 	clear_cpu_cap(c, 0*32+31);
+ #endif
+ 	early_init_centaur(c);
++
++	if (c->cpuid_level > 9) {
++		unsigned int eax = cpuid_eax(10);
++
++		/*
++		 * Check for version and the number of counters
++		 * Version(eax[7:0]) can't be 0;
++		 * Counters(eax[15:8]) should be greater than 1;
++		 */
++		if ((eax & 0xff) && (((eax >> 8) & 0xff) > 1))
++			set_cpu_cap(c, X86_FEATURE_ARCH_PERFMON);
++	}
++
+ 	switch (c->x86) {
+ #ifdef CONFIG_X86_32
+ 	case 5:
+@@ -199,6 +244,9 @@ static void init_centaur(struct cpuinfo_x86 *c)
+ #ifdef CONFIG_X86_64
+ 	set_cpu_cap(c, X86_FEATURE_LFENCE_RDTSC);
+ #endif
++
++	if (cpu_has(c, X86_FEATURE_VMX))
++		centaur_detect_vmx_virtcap(c);
+ }
+ 
+ #ifdef CONFIG_X86_32
