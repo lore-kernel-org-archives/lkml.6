@@ -1,65 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755339AbeDTO7i (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:59:38 -0400
-Received: from mail-io0-f180.google.com ([209.85.223.180]:33212 "EHLO
-        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755277AbeDTO7h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:59:37 -0400
-X-Google-Smtp-Source: AIpwx48MFOo6v2G4sq2XEhwi5hZFDo+sJ5s320N/GTwO7yb3RScqbehC5MhfJbOZYVP4FYXR1EnxXFgSsKFEnb9IeMg=
+        id S1755323AbeDTPEY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:04:24 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40366 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755224AbeDTPEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 11:04:22 -0400
+Date: Fri, 20 Apr 2018 09:04:20 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Sinan Kaya <okaya@codeaurora.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        sulrich@codeaurora.org, timur@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
+Message-ID: <20180420090420.03fb1e6c@w520.home>
+In-Reply-To: <20180420140049.GP28657@bhelgaas-glaptop.roam.corp.google.com>
+References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
+        <20180419202632.GE14063@ziepe.ca>
+        <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
+        <290e9530-dcde-9c10-7ae0-59ac4c509db4@codeaurora.org>
+        <20180420140049.GP28657@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
-References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
- <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
-From: Andrey Konovalov <andreyknvl@google.com>
-Date: Fri, 20 Apr 2018 16:59:35 +0200
-Message-ID: <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
-Subject: Re: Clang arm64 build is broken
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Christoffer Dall <christoffer.dall@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 10:13 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->> The issue is that
->> clang doesn't know about the "S" asm constraint. I reported this to
->> clang [2], and hopefully this will get fixed. In the meantime, would
->> it possible to work around using the "S" constraint in the kernel?
->
-> I have no idea, I've never used clang to build the kernel. Clang isn't
-> really supported to build the arm64 kernel anyway (as you mention
-> below), and working around clang deficiencies would mean that we leave
-> with the workaround forever. I'd rather enable clang once it is at
-> feature parity with GCC.
+On Fri, 20 Apr 2018 09:00:49 -0500
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-The fact that there are some existing issues with building arm64
-kernel with clang doesn't sound like a good justification for adding
-new issues :)
+> [+cc Rajat, Alex because of their interest in the reset/hotplug issue]
+> 
+> For context, Sinan's patch is this:
+> 
+> > diff --git a/drivers/infiniband/hw/hfi1/pcie.c b/drivers/infiniband/hw/hfi1/pcie.c
+> > index 83d66e8..75f49e3 100644
+> > --- a/drivers/infiniband/hw/hfi1/pcie.c
+> > +++ b/drivers/infiniband/hw/hfi1/pcie.c
+> > @@ -908,7 +908,8 @@ static int trigger_sbr(struct hfi1_devdata *dd)
+> >          * delay after a reset is required.  Per spec requirements,
+> >          * the link is either working or not after that point.
+> >          */
+> > -       pci_reset_bridge_secondary_bus(dev->bus->self);
+> > +       if (pci_reset_slot(dev->slot))
+> > +               pci_reset_bridge_secondary_bus(dev->bus->self);  
+> 
+> On Thu, Apr 19, 2018 at 06:19:32PM -0400, Sinan Kaya wrote:
+> > On 4/19/2018 5:47 PM, Bjorn Helgaas wrote:  
+> > >> Bjorn, would be appropriate to export pci_parent_bus_reset() or some
+> > >> variation therin??  
+> > > I agree it would be really nice if the PCI core could help out somehow
+> > > so we could get some of this code out of individual drivers.  
+> 
+> What I was really thinking here was about the whole Gen3 transition
+> thing, not the reset thing by itself.
+> 
+> > I can create a function called pci_reset_link() and move both slot and
+> > secondary bus reset inside.  
+> 
+> What exactly is your patch fixing?  Is it the following?
+> 
+>   If the HFI link is not operating at 8GT/s, the driver's .probe()
+>   method tries to transition it to 8GT/s, which involves resetting the
+>   HFI device with pci_reset_bridge_secondary_bus().  If the HFI device
+>   is in a hotplug slot, the reset causes a "Link Down" event, which
+>   causes the pciehp driver to remove the HFI device and re-enumerate
+>   it when the link comes back up.
+> 
+>   When pciehp removes the device, it calls the HFI .remove() method,
+>   which is a problem because the .probe() method is still active.
+> 
+>   It looks like this should deadlock because __device_attach() holds
+>   the device_lock while calling .probe() and the
+>   device_release_driver() path tries to acquire it.
+> 
+> Your patch uses pci_reset_slot(), which connects with Rajat's work
+> (06a8d89af551 ("PCI: pciehp: Disable link notification across slot
+> reset")) to avoid hotplug events for intentional resets.
+> 
+> So I think I just reverse-engineered the whole rationale for your
+> patch :)  Sorry about the long detour.
+> 
+> I'm having a hard time articulating my thoughts here.  I think my
+> concern is that knowledge about this reset/link down/hotplug issue is
+> leaking out and we'll end up with different reset interfaces that may
+> or may not result in hotplug events.  This seems like a confusing API
+> because it's hard to explain which interface a driver should use.
 
-However in this case I do believe that this is more of a bug in clang
-that should be fixed.
+Is there a concern here about whether the endpoint device driver or the
+PCI core really knows better about link retraining?  This makes me
+remember my unfinished (and need to revisit) Pericom quirk[1] where
+errata in the PCIe switch requires that upstream and downstream links
+are balanced (ie. same link rate) or else enabling ACS results in
+packets not properly flowing through the switch.  If an endpoint driver
+starts deciding to retrain links, overriding quirks in the PCI core,
+then such topology manipulation isn't possible.  Why does the
+driver .probe() function think it can retrain at a higher link rate
+than PCI core?  Thanks,
 
->> While we're here, regarding the other issue with kvm [3], I didn't
->> receive any comments as to whether it makes sense to send the fix that
->> adds -fno-jump-tables flag when building kvm with clang.
->
-> Is that the only thing missing? Are you sure that there is no other way
-> for clang to generate absolute addresses that will then lead to a crash?
-> Again, I'd rather make sure we have the full picture.
+Alex
 
-Well, I have tried applying that patch and running kvm tests that I
-could find [1], and they passed (actually I think there was an issue
-with one of them, but I saw the same thing when I tried running them
-on a kernel built with GCC).
-
-[1] https://www.linux-kvm.org/page/KVM-unit-tests
+[1]https://lists.linuxfoundation.org/pipermail/iommu/2016-October/018890.html
