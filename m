@@ -1,61 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754192AbeDTISV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:18:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51358 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754001AbeDTISR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:18:17 -0400
-Date: Fri, 20 Apr 2018 10:18:16 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCHv2] printk: wake up klogd in vprintk_emit
-Message-ID: <20180420081815.5lvob7fuyvlfpriw@pathway.suse.cz>
-References: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
- <20180419014250.5692-1-sergey.senozhatsky@gmail.com>
- <20180419100248.rflodqcvpvnve5vl@pathway.suse.cz>
- <20180420015221.GA6397@jagdpanzerIV>
+        id S1754232AbeDTISo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:18:44 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:21796 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753777AbeDTISk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 04:18:40 -0400
+X-IronPort-AV: E=Sophos;i="5.48,469,1517900400";
+   d="scan'208";a="13367393"
+Subject: Re: [PATCH 43/61] pwm: simplify getting .drvdata
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        <linux-kernel@vger.kernel.org>
+CC: <linux-renesas-soc@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        <linux-pwm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <e7d16777-6a31-2657-0ce9-463f6d908ee9@microchip.com>
+Date: Fri, 20 Apr 2018 10:17:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420015221.GA6397@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180419140641.27926-44-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-04-20 10:52:21, Sergey Senozhatsky wrote:
-> On (04/19/18 12:02), Petr Mladek wrote:
-> > On Thu 2018-04-19 10:42:50, Sergey Senozhatsky wrote:
-> > > We wake up klogd very late - only when current console_sem owner
-> > > is done pushing pending kernel messages to the serial/net consoles.
-> > > In some cases this results in lost syslog messages, because kernel
-> > > log buffer is a circular buffer and if we don't wakeup syslog long
-> > > enough there are chances that logbuf simply will wrap around.
-> > > 
-> > > The patch moves the klog wake up call to vprintk_emit(), which is
-> > > the only legit way for a kernel message to appear in the logbuf,
-> > > right before we attempt to grab the console_sem (possibly spinning
-> > > on it waiting for the hand off) and call console drivers.
-> > 
-> > The last two lines need an update. What about?
+On 19/04/2018 at 16:06, Wolfram Sang wrote:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
 > 
-> Ah. Indeed!
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
+> ---
 > 
-> > "right after the attempt to handle consoles. As a result, klog
-> > will get waken either after flushing the new message to consoles
-> > or immediately when consoles are still busy with older messages."
+> Build tested only. buildbot is happy. Please apply individually.
 > 
-> Looks good. Do you want me to resend the patch?
+>   drivers/pwm/pwm-atmel-tcb.c | 6 ++----
+>   drivers/pwm/pwm-rcar.c      | 3 +--
+>   2 files changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-atmel-tcb.c b/drivers/pwm/pwm-atmel-tcb.c
+> index 4fb1be246c44..0d0f8376bc35 100644
+> --- a/drivers/pwm/pwm-atmel-tcb.c
+> +++ b/drivers/pwm/pwm-atmel-tcb.c
+> @@ -460,8 +460,7 @@ MODULE_DEVICE_TABLE(of, atmel_tcb_pwm_dt_ids);
+>   #ifdef CONFIG_PM_SLEEP
+>   static int atmel_tcb_pwm_suspend(struct device *dev)
+>   {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
+> +	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
+>   	void __iomem *base = tcbpwm->tc->regs;
+>   	int i;
+>   
+> @@ -478,8 +477,7 @@ static int atmel_tcb_pwm_suspend(struct device *dev)
+>   
+>   static int atmel_tcb_pwm_resume(struct device *dev)
+>   {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct atmel_tcb_pwm_chip *tcbpwm = platform_get_drvdata(pdev);
+> +	struct atmel_tcb_pwm_chip *tcbpwm = dev_get_drvdata(dev);
+>   	void __iomem *base = tcbpwm->tc->regs;
+>   	int i;
+>   
+> diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+> index 91d11f2e2fef..748f614d5375 100644
+> --- a/drivers/pwm/pwm-rcar.c
+> +++ b/drivers/pwm/pwm-rcar.c
+> @@ -261,8 +261,7 @@ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
+>   #ifdef CONFIG_PM_SLEEP
+>   static struct pwm_device *rcar_pwm_dev_to_pwm_dev(struct device *dev)
+>   {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
+> +	struct rcar_pwm_chip *rcar_pwm = dev_get_drvdata(dev);
+>   	struct pwm_chip *chip = &rcar_pwm->chip;
+>   
+>   	return &chip->pwms[0];
+> 
 
-No need to resend. I could update the patch when pushing.
 
-I'll wait few more days to give people time to respond.
-
-Best Regards,
-Petr
+-- 
+Nicolas Ferre
