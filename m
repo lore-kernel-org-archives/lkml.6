@@ -1,74 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754209AbeDTJCD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:02:03 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44729 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754198AbeDTJCA (ORCPT
+        id S1754427AbeDTJDR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 05:03:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40651 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754159AbeDTJDP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:02:00 -0400
-X-Google-Smtp-Source: AIpwx49nqt6lLJywyZGoVUGhV4nGTeFF8U3D635sGqsr5H9tDMJGdqrTg+qTCNZud3edsbkDtq75LA==
-Date: Fri, 20 Apr 2018 19:01:47 +1000
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH] kernel/sched/core: busy wait before going idle
-Message-ID: <20180420190126.1644f4cd@roar.ozlabs.ibm.com>
-In-Reply-To: <20180420074456.GA4064@hirez.programming.kicks-ass.net>
-References: <20180415133149.24112-1-npiggin@gmail.com>
-        <20180420074456.GA4064@hirez.programming.kicks-ass.net>
-Organization: IBM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 20 Apr 2018 05:03:15 -0400
+From: Colin King <colin.king@canonical.com>
+To: Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] isci: Fix infinite loop in while loop
+Date: Fri, 20 Apr 2018 10:03:10 +0100
+Message-Id: <20180420090310.714-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 09:44:56 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> On Sun, Apr 15, 2018 at 11:31:49PM +1000, Nicholas Piggin wrote:
-> > This is a quick hack for comments, but I've always wondered --
-> > if we have a short term polling idle states in cpuidle for performance
-> > -- why not skip the context switch and entry into all the idle states,
-> > and just wait for a bit to see if something wakes up again.  
-> 
-> Is that context switch so expensive?
+In the case when the phy_mask is bitwise anded with the
+phy_index bit is zero the continue statement currently jumps
+to the next iteration of the while loop and phy_index is
+never actually incremented, potentially causing an infinite
+loop if phy_index is less than SCI_MAX_PHS. Fix this by
+jumping to the increment of phy_index.
 
-I guess relatively much more than taking one branch mispredict on the
-loop exit when the task wakes. 10s of cycles vs 1000s?
+[ The goto is used to save one more level of nesting that
+makes the code far wider than 80 columns. ]
 
-> And what kernel did you test on? We recently merged a bunch of patches
-> from Rafael that avoided disabling the tick for short idle predictions.
-> This also has a performance improvements for such workloads.  Did your
-> kernel include those?
+Fixes: 80aebef7c112 ("[SCSI] isci: Fix a infinite loop.")
 
-Yes that actually improved profiles quite a lot, but these numbers were
-with those changes. I'll try to find some fast disks or network and get
-some more more interesting numbers.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/isci/port_config.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> > It's not uncommon to see various going-to-idle work in kernel profiles.
-> > This might be a way to reduce that (and just the cost of switching
-> > registers and kernel stack to idle thread). This can be an important
-> > path for single thread request-response throughput.  
-> 
-> So I feel that _if_ we do a spin here, it should only be long enough to
-> amortize the schedule switch context.
-> 
-> However, doing busy waits here has the downside that the 'idle' time is
-> not in fact fed into the cpuidle predictor.
-
-That's why I cc'ed Rafael :)
-
-Yes the latency in my hack is probably too long, but I think if we
-did this, the cpuile predictor could become involved here. There is
-no fundamental reason it has to wait for the idle task to be context
-switched for that... it's already become involved in core scheduler
-code.
-
-Thanks,
-Nick
+diff --git a/drivers/scsi/isci/port_config.c b/drivers/scsi/isci/port_config.c
+index edb7be786c65..55dc7c1dbc2b 100644
+--- a/drivers/scsi/isci/port_config.c
++++ b/drivers/scsi/isci/port_config.c
+@@ -293,7 +293,7 @@ sci_mpc_agent_validate_phy_configuration(struct isci_host *ihost,
+ 		 *       This is expected and required to add the phy to the port. */
+ 		while (phy_index < SCI_MAX_PHYS) {
+ 			if ((phy_mask & (1 << phy_index)) == 0)
+-				continue;
++				goto next_index;
+ 			sci_phy_get_sas_address(&ihost->phys[phy_index],
+ 						     &phy_assigned_address);
+ 
+@@ -311,6 +311,7 @@ sci_mpc_agent_validate_phy_configuration(struct isci_host *ihost,
+ 					      &ihost->phys[phy_index]);
+ 
+ 			assigned_phy_mask |= (1 << phy_index);
++next_index:
+ 			phy_index++;
+ 		}
+ 
+-- 
+2.17.0
