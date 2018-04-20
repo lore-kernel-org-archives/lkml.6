@@ -1,98 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754431AbeDTI64 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:58:56 -0400
-Received: from mail-wr0-f177.google.com ([209.85.128.177]:44024 "EHLO
-        mail-wr0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754414AbeDTI6x (ORCPT
+        id S1754235AbeDTI7w (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:59:52 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:56440 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754066AbeDTI7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:58:53 -0400
-X-Google-Smtp-Source: AIpwx4/Dxx+ht8lM9bB0ERSaiaWh37CezCcX+lp0uCGKyecll5yJ1Qwb57AoWUoYn34TVpiuJYPjUA==
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
-To: Christoph Hellwig <hch@infradead.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-4-christian.koenig@amd.com>
- <20180329065753.GD3881@phenom.ffwll.local>
- <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
- <20180403090909.GN3881@phenom.ffwll.local> <20180403170645.GB5935@redhat.com>
- <20180403180832.GZ3881@phenom.ffwll.local>
- <20180416123937.GA9073@infradead.org>
- <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
- <20180419081657.GA16735@infradead.org>
- <20180420071312.GF31310@phenom.ffwll.local>
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
-Date: Fri, 20 Apr 2018 10:58:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 20 Apr 2018 04:59:51 -0400
+Date: Fri, 20 Apr 2018 11:59:39 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: Lee Jones <lee.jones@linaro.org>,
+        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mfd: tps65911-comparator: Fix an off by one bug
+Message-ID: <20180420085938.ymf2jc46dswylxh4@mwanda>
+References: <20180419134634.GA19793@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20180420071312.GF31310@phenom.ffwll.local>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419134634.GA19793@mwanda>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8868 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=711
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804200090
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 20.04.2018 um 09:13 schrieb Daniel Vetter:
-> On Thu, Apr 19, 2018 at 01:16:57AM -0700, Christoph Hellwig wrote:
->> On Mon, Apr 16, 2018 at 03:38:56PM +0200, Daniel Vetter wrote:
->>> We've broken that assumption in i915 years ago. Not struct page backed
->>> gpu memory is very real.
->>>
->>> Of course we'll never feed such a strange sg table to a driver which
->>> doesn't understand it, but allowing sg_page == NULL works perfectly
->>> fine. At least for gpu drivers.
->> For GPU drivers on x86 with no dma coherency problems, sure.  But not
->> all the world is x86.  We already have problems due to dmabugs use
->> of the awkward get_sgtable interface (see the common on
->> arm_dma_get_sgtable that I fully agree with), and doing this for memory
->> that doesn't have a struct page at all will make things even worse.
-> x86 dma isn't coherent either, if you're a GPU :-) Flushing gpu caches
-> tends to be too expensive, so there's pci-e support and chipset support to
-> forgo it. Plus drivers flushing caches themselves.
->
-> The dma_get_sgtable thing is indeed fun, right solution would probably be
-> to push the dma-buf export down into the dma layer. The comment for
-> arm_dma_get_sgtable is also not a realy concern, because dma-buf also
-> abstracts away the flushing (or well is supposed to), so there really
-> shouldn't be anyone calling the streaming apis on the returned sg table.
-> That's why dma-buf gives you an sg table that's mapped already.
->
->>> If that's not acceptable then I guess we could go over the entire tree
->>> and frob all the gpu related code to switch over to a new struct
->>> sg_table_might_not_be_struct_page_backed, including all the other
->>> functions we added over the past few years to iterate over sg tables.
->>> But seems slightly silly, given that sg tables seem to do exactly what
->>> we need.
->> It isn't silly.  We will have to do some surgery like that anyway
->> because the current APIs don't work.  So relax, sit back and come up
->> with an API that solves the existing issues and serves us well in
->> the future.
-> So we should just implement a copy of sg table for dma-buf, since I still
-> think it does exactly what we need for gpus?
->
-> Yes there's a bit a layering violation insofar that drivers really
-> shouldn't each have their own copy of "how do I convert a piece of dma
-> memory into  dma-buf", but that doesn't render the interface a bad idea.
+On Thu, Apr 19, 2018 at 04:46:34PM +0300, Dan Carpenter wrote:
+> The tps_comparators[] array is used in two places.  We only access the
+> COMP1 (1) and COMP2 (2) elements.  Unfortunately, we're accessing the
+> wrong elements and also one element beyond the end of the array.  There
+> was supposed to be a zero element at the start of the array which is
+> isn't accessed but makes the math work out nicely.
+> 
+> Fixes: 6851ad3ab346 ("TPS65911: Comparator: Add comparator driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> ---
+> I can't actually compile this code...
 
-Completely agree on that.
+I assumed that I couldn't compile this code because it was non-x86 or
+something but actually it's just really out of date.  We broke it in
+2012 when we removed the ->write() function pointer.
 
-What we need is an sg_alloc_table_from_resources(dev, resources, 
-num_resources) which does the handling common to all drivers.
+commit 3f7e82759c692df473675ed06fb90b20f1f225c3
+Author: Rhyland Klein <rklein@nvidia.com>
+Date:   Tue May 8 11:42:38 2012 -0700
 
-Christian.
+    mfd: Commonize tps65910 regmap access through header
 
-> -Daniel
+regards,
+dan carpenter
