@@ -1,40 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754175AbeDTDBw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 23:01:52 -0400
-Received: from mga06.intel.com ([134.134.136.31]:36603 "EHLO mga06.intel.com"
+        id S1754177AbeDTDE0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 23:04:26 -0400
+Received: from mga14.intel.com ([192.55.52.115]:25405 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753964AbeDTDBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 23:01:48 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1753964AbeDTDEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 23:04:24 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,299,1520924400";
-   d="gz'50?scan'50,208,50";a="35650493"
-Date: Fri, 20 Apr 2018 11:01:25 +0800
-From: kernel test robot <lkp@intel.com>
+   d="gz'50?scan'50,208,50";a="34772377"
+Date: Fri, 20 Apr 2018 11:04:59 +0800
+From: kernel test robot <shun.hao@intel.com>
 To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: LKP <lkp@01.org>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        wfg@linux.intel.com
-Subject: f7e4367268 ("llc: hold llc_sap before release_sock()"):  BUG:
- unable to handle kernel NULL pointer dereference at 0000000000000004
-Message-ID: <5ad95805.EXDIDfbk83xLufcv%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, LKP <lkp@01.org>
+Subject: [lkp-robot] f7e4367268 [   27.313502] BUG: unable to handle kernel
+ NULL pointer dereference at 0000000000000004
+Message-ID: <20180420030459.h7j373jxfcnmtwc4@shao2-debian>
+Reply-To: kernel test robot <lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="=_5ad95805.9H8yFaFc7a4Ss6EBsFb1OnMS4STZM7iKTW6p09okjGfYn3Tp"
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Content-Type: multipart/mixed; boundary="vhxke4pxt6dmsyxz"
+Content-Disposition: inline
+User-Agent: Heirloom mailx 12.5 6/20/10
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
 
---=_5ad95805.9H8yFaFc7a4Ss6EBsFb1OnMS4STZM7iKTW6p09okjGfYn3Tp
+--vhxke4pxt6dmsyxz
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 Greetings,
@@ -168,11 +164,10 @@ git bisect good 4418dff382eb778442f4b92b0276308ba32d4c43  # 11:01  G     11     
 0-DAY kernel test infrastructure                Open Source Technology Center
 https://lists.01.org/pipermail/lkp                          Intel Corporation
 
---=_5ad95805.9H8yFaFc7a4Ss6EBsFb1OnMS4STZM7iKTW6p09okjGfYn3Tp
+--vhxke4pxt6dmsyxz
 Content-Type: application/gzip
+Content-Disposition: attachment; filename="dmesg-quantal-intel12-12:20180420093339:x86_64-randconfig-s0-04200522:4.16.0-11886-gf7e4367:1.gz"
 Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="dmesg-quantal-intel12-12:20180420093339:x86_64-randconfig-s0-04200522:4.16.0-11886-gf7e4367:1.gz"
 
 H4sICPhX2VoAA2RtZXNnLXF1YW50YWwtaW50ZWwxMi0xMjoyMDE4MDQyMDA5MzMzOTp4ODZf
 NjQtcmFuZGNvbmZpZy1zMC0wNDIwMDUyMjo0LjE2LjAtMTE4ODYtZ2Y3ZTQzNjc6MQDsXOtz
@@ -566,12 +561,9 @@ ShwZQ1MZ9FrMb8c7Nq6IxNltmo71WeWyCx3JGSi22YyZMImK3CRFPEvBb0iELITkZ5+X2Oif
 Y6fH72YdLnq+LU53Hw/7bP1lBSwGAfvhp78AHv/494f//RCMS2kLoKz89MffoHj0f2OkICFJ
 KAEA
 
---=_5ad95805.9H8yFaFc7a4Ss6EBsFb1OnMS4STZM7iKTW6p09okjGfYn3Tp
-Content-Type: text/plain;
- charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="reproduce-quantal-intel12-12:20180420093339:x86_64-randconfig-s0-04200522:4.16.0-11886-gf7e4367:1"
+--vhxke4pxt6dmsyxz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="reproduce-quantal-intel12-12:20180420093339:x86_64-randconfig-s0-04200522:4.16.0-11886-gf7e4367:1"
 
 #!/bin/bash
 
@@ -629,12 +621,9 @@ append=(
 
 "${kvm[@]}" -append "${append[*]}"
 
---=_5ad95805.9H8yFaFc7a4Ss6EBsFb1OnMS4STZM7iKTW6p09okjGfYn3Tp
-Content-Type: text/plain;
- charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="config-4.16.0-11886-gf7e4367"
+--vhxke4pxt6dmsyxz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="config-4.16.0-11886-gf7e4367"
 
 #
 # Automatically generated file; DO NOT EDIT.
@@ -5553,4 +5542,4 @@ CONFIG_STACKDEPOT=y
 CONFIG_SBITMAP=y
 CONFIG_STRING_SELFTEST=y
 
---=_5ad95805.9H8yFaFc7a4Ss6EBsFb1OnMS4STZM7iKTW6p09okjGfYn3Tp--
+--vhxke4pxt6dmsyxz--
