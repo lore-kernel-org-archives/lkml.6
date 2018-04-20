@@ -1,10 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-223491-1524186742-2-2031966791927478763
+X-Cyrus-Session-Id: sloti22d1t05-223491-1524186739-2-9699313547259038682
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enca, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524186741; b=ldqkXlVaMPfEfjSSHz/PFQdhxd+Ze40raYTP+qGthU+gN1+Cft
-    56lJEB95GWIX8hLAtzuVV5/1T1/a/3ogqhwsVeL8Pxvp7oTErthMiDLgmEIhQl8k
-    4h1xPxWw5btcUOq0tLhVIVDI2Vg5t+ChcIYLwYzdZb54vgVZAUTPkzWUQ8oFvYnZ
-    lqcTdy7VkzVIH0579VszbSgwFi4Jwu1f0XZaaggdYR5+CAG3ZjneTPRsb2Mjevvp
-    XJm0q45GJjqkwUmxs8lNFoGU69b03dNgB/PNMeDkO+bimY7P/8EeSyV+sY25Kgvs
-    bdinUNC84ehy17ZVRV7NOvR9/iRgsyAcmsbg==
+    1524186739; b=DaGUnayKCevVjNbfy1eD8Xm2E0s7QUnNInBvviujBuSCvX/hVo
+    +uRfX7H1frS56/08454s6gEc9mcz1w6OwdWYBHQOd5dei4FkcbjKTQ4qMeqZcv+v
+    nGV1z/9ipAM5PPa7wSxvvb9P4A9pBlwGLEl/NtXXYnMEKBQP+jEbOYQ+pH/aCISw
+    8Rbafusdu61k2tegVvH9L2mCcFfDvHmgcr7eeyDvEbG38SqeSmFiiRTTh0aWWnqh
+    sutBi7haRSz2DvHRp6/2P/jf9BrHHGmsMbeWHfhstmCPS1GVhAonbJWvBpUZ5fib
+    q6xBK9ZfkRpkfANFuE8y6g42sdQrkzkwB9uQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:date:message-id:in-reply-to
-    :references:subject:sender:list-id; s=fm2; t=1524186741; bh=qY8D
-    VQCBlMGpgUC2uKHBgZ5LuTgx9WJng7GasWqGYP8=; b=ZNuRQAuC7QJpcZ9WJBtP
-    imSlUdva1laTE/F36VPt/6UuhL7/t5io716OSZl/yFvDI7ihEusqBxUxzfUnEfxR
-    DL7vGB5jH+HNslaPMereyGccqaeH+OA7K2BtVlw/GMh81PoEvojf7dZI1Telsf6a
-    O5cu1KiblJ2RJrCAuaStJ2Lc50q/RdMMFu6auDSm/34FUZRsKZBeugkW/LRjxvd+
-    gUH+0XSh9dlQDNfopNgD+OZ30Ox2gqzXV+4Tjl6xSV8YPHfarxK4opy+TU3KR9TO
-    ISk0tZkJB+7+vaccpHE36db3WBvZMp2gmSKV8A/7fe5KybaIGOdbLX62B6mJPbB0
-    4w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :references:subject:sender:list-id; s=fm2; t=1524186739; bh=Vxhd
+    lcAfKI3cGu01TPJXc7W9XEs09g8E87lal7HLOiE=; b=j/PEpOp7hhaKIL13cYdH
+    NziF+wpG1OaWboo2lzOOLPoB884ATpTNQQe8vt/Di2DNtmohKnFeotmoBe5j9rWN
+    FM3o0NCc4OoCSkVepqNE4iF/43xq2ijFLDXt6p9XUhtKMl66poCgirOZPn5jRHso
+    j9yKcxanU954RM+3BBLrJWOHbDq/KgEnEjMorwW+uUb1SZ04D7iZ70D8Mg4L8Ipg
+    whpKa1Wx3qqYdntlIkwc0/YH8D/7PtlDQD9+JghdLUAufhzRIsVW6bqzPLclvfaa
+    dNKZIvt5EdByk0j6dFExgUdd0lMlM4PgYEobVXP1PtBOm6JtPnupnOCx5w9yQ9rC
+    3Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xmission.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
@@ -51,37 +51,39 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=xmission.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMm7pY2dJmfrUQ+A1fJeNAHqzq+VsaEhZsRykyRsMbCk6CMJYId9U/Xc9576DY72plu2LEksaeOJ1jQXNtXG+wl3AhvLja3zC0BEjdDcBZWeW93yP0bh
-    5RS/vUAqr2nhmYLrqbNMd3nwStU/cZCJxo72wzH47WytQBER4+B3Jg8YQ+hyN0Zz/li0d+WwEKfJXp6WWiic0W6bMVUta9p0Al4BeZzP+ISNuDom0NpiSvv5
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=rWkr9Ua9AAAA:8
-    a=tOO0nKmCAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=PtDNVHqPAAAA:8
-    a=YV59-HsJ764DQurnoHwA:9 a=x8gzFH9gYPwA:10 a=Qv-QrLrHZjTXZfLJ-zom:22
-    a=Gz67Kf0DkuxJ4rqyVRET:22 a=AjGcO6oz07-iQ99wixmX:22 a=BpimnaHY1jUKGyF_4-AF:22
+X-CM-Envelope: MS4wfCAb3GTA+BwzqzHOfrMF7rUaV4DvM7OhqT912mZnfee8sPT0lRVCLc+RLIsjQ68y0U2y+P7iylgNOMyGQ3kk1ufDESELgtlbf+DSf6S2SqxY+WmN5RTt
+    MviHVO+qq7G6idcZkcc2kQuLjp5DBmwHgcpt9rjTvcWsisV/aaTeJAA6LgmhWFf/GFCtz7+Gu12QhJVA3DSFBymyRBJkU49fteuYvnyn5xp4h00XNUw/hlYo
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=hGzw-44bAAAA:8
+    a=6ohNodAXAAAA:8 a=wMNdZWldAAAA:8 a=voM4FWlXAAAA:8 a=VwQbUJbxAAAA:8
+    a=PtDNVHqPAAAA:8 a=T5HBY6FBPKQUrMSdn78A:9 a=x8gzFH9gYPwA:10
+    a=HvKuF1_PTVFglORKqfwH:22 a=0gLUg1G2xj6MhZ7RLP3J:22 a=FUarYpL4UH3yWsho8X8J:22
+    a=IC2XNlieTeVoXbcui8wp:22 a=AjGcO6oz07-iQ99wixmX:22 a=BpimnaHY1jUKGyF_4-AF:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754112AbeDTBMS (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 19 Apr 2018 21:12:18 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:36115 "EHLO
+        id S1754076AbeDTBMP (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 19 Apr 2018 21:12:15 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:36103 "EHLO
         out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753857AbeDTBMJ (ORCPT
+        with ESMTP id S1753826AbeDTBMJ (ORCPT
         <rfc822;linux-api@vger.kernel.org>); Thu, 19 Apr 2018 21:12:09 -0400
 From: "Eric W. Biederman" <ebiederm@xmission.com>
 To: linux-arch@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         "Eric W. Biederman" <ebiederm@xmission.com>,
-        Helge Deller <deller@gmx.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org
-Date: Thu, 19 Apr 2018 20:04:02 -0500
-Message-Id: <20180420010408.24438-11-ebiederm@xmission.com>
+        Paul Mackerras <paulus@samba.org>,
+        Kumar Gala <kumar.gala@freescale.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linuxppc-dev@lists.ozlabs.org
+Date: Thu, 19 Apr 2018 20:04:08 -0500
+Message-Id: <20180420010408.24438-17-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <878t9ilmhv.fsf@xmission.com>
 References: <878t9ilmhv.fsf@xmission.com>
-X-XM-SPF: eid=1f9KWg-00014u-IC;;;mid=<20180420010408.24438-11-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18U2bBvwMe0brnPMZgtc9Vr1yAVFAZdUZk=
+X-XM-SPF: eid=1f9KXc-00014u-LS;;;mid=<20180420010408.24438-17-ebiederm@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18bSq8ljw24PtGJS1uOQzJiTjnb/4GdPLA=
 X-SA-Exim-Connect-IP: 97.119.174.25
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Remote-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on sa07.xmission.com
@@ -102,17 +104,17 @@ X-Remote-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via S
 X-Remote-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
 X-Remote-Spam-Combo: ***;linux-arch@vger.kernel.org
 X-Remote-Spam-Relay-Country: 
-X-Remote-Spam-Timing: total 15036 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.2 (0.0%), b_tie_ro: 2.1 (0.0%), parse: 1.01 (0.0%),
-        extract_message_metadata: 21 (0.1%), get_uri_detail_list: 3.0 (0.0%),
-        tests_pri_-1000: 3.0 (0.0%), tests_pri_-950: 1.24 (0.0%), tests_pri_-900:
-        0.96 (0.0%), tests_pri_-400: 26 (0.2%), check_bayes: 25 (0.2%), b_tokenize:
-        10 (0.1%), b_tok_get_all: 7 (0.0%), b_comp_prob: 2.4 (0.0%), b_tok_touch_all:
-        2.9 (0.0%), b_finish: 0.64 (0.0%), tests_pri_0: 171 (1.1%),
-        check_dkim_signature: 0.43 (0.0%), check_dkim_adsp: 2.4 (0.0%),
-        tests_pri_500: 14806 (98.5%), poll_dns_idle: 14791 (98.4%), rewrite_mail:
+X-Remote-Spam-Timing: total 15037 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.8 (0.0%), b_tie_ro: 1.98 (0.0%), parse: 0.72 (0.0%),
+        extract_message_metadata: 23 (0.2%), get_uri_detail_list: 2.3 (0.0%),
+        tests_pri_-1000: 2.9 (0.0%), tests_pri_-950: 1.15 (0.0%), tests_pri_-900:
+        0.96 (0.0%), tests_pri_-400: 24 (0.2%), check_bayes: 23 (0.2%), b_tokenize: 8
+        (0.1%), b_tok_get_all: 7 (0.0%), b_comp_prob: 2.1 (0.0%), b_tok_touch_all:
+        3.8 (0.0%), b_finish: 0.59 (0.0%), tests_pri_0: 192 (1.3%),
+        check_dkim_signature: 0.44 (0.0%), check_dkim_adsp: 3.4 (0.0%),
+        tests_pri_500: 14788 (98.3%), poll_dns_idle: 14773 (98.2%), rewrite_mail:
         0.00 (0.0%)
-Subject: [REVIEW][PATCH 11/17] signal/alpha: Replace FPE_FIXME with FPE_FLTUNK
+Subject: [REVIEW][PATCH 17/17] signal/powerpc: Replace TRAP_FIXME with TRAP_UNK
 X-Remote-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
@@ -125,70 +127,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 Using an si_code of 0 that aliases with SI_USER is clearly the wrong
 thing todo, and causes problems in interesting ways.
 
-The newly defined FPE_FLTUNK semantically appears to fit the bill so
-use it instead.
+For use in unknown_exception the recently defined TRAP_UNK
+semantically is a perfect fit.  For use in RunModeException it looks
+like something more specific than TRAP_UNK could be used.  No one has
+bothered to find a better fit than the broken si_code of 0 in all of
+these years and I don't see an obvious better fit so TRAP_UNK is
+switching RunModeException to return TRAP_UNK is clearly an
+improvement.
 
-Given recent experience in this area odds are it will not break
-anything.  Fixing it removes a hazard to kernel maintenance.
+Recent history suggests no actually cares about crazy corner
+cases of the kernel behavior like this so I don't expect any
+regressions from changing this.  However if something does
+happen this change is easy to revert.
 
-Cc: Helge Deller <deller@gmx.de>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: linux-alpha@vger.kernel.org
+Though I wonder if SIGKILL might not be a better fit.
+
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Kumar Gala <kumar.gala@freescale.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Fixes: 9bad068c24d7 ("[PATCH] ppc32: support for e500 and 85xx")
+Fixes: 0ed70f6105ef ("PPC32: Provide proper siginfo information on various exceptions.")
 History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
-Fixes: 0a635c7a84cf ("Fill in siginfo_t.")
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- arch/alpha/include/uapi/asm/siginfo.h | 7 -------
- arch/alpha/kernel/osf_sys.c           | 2 +-
- arch/alpha/kernel/traps.c             | 2 +-
- 3 files changed, 2 insertions(+), 9 deletions(-)
+ arch/powerpc/include/uapi/asm/siginfo.h | 8 --------
+ arch/powerpc/kernel/traps.c             | 4 ++--
+ 2 files changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/arch/alpha/include/uapi/asm/siginfo.h b/arch/alpha/include/uapi/asm/siginfo.h
-index 0cf3b527b274..3ebbb1e17902 100644
---- a/arch/alpha/include/uapi/asm/siginfo.h
-+++ b/arch/alpha/include/uapi/asm/siginfo.h
-@@ -7,13 +7,6 @@
+diff --git a/arch/powerpc/include/uapi/asm/siginfo.h b/arch/powerpc/include/uapi/asm/siginfo.h
+index 0437afc9ef3c..1d51d9b88221 100644
+--- a/arch/powerpc/include/uapi/asm/siginfo.h
++++ b/arch/powerpc/include/uapi/asm/siginfo.h
+@@ -15,12 +15,4 @@
  
  #include <asm-generic/siginfo.h>
  
 -/*
-- * SIGFPE si_codes
+- * SIGTRAP si_codes
 - */
 -#ifdef __KERNEL__
--#define FPE_FIXME	0	/* Broken dup of SI_USER */
+-#define TRAP_FIXME	0	/* Broken dup of SI_USER */
 -#endif /* __KERNEL__ */
 -
- /*
-  * SIGTRAP si_codes
-  */
-diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-index f5f154942aab..bb3619118926 100644
---- a/arch/alpha/kernel/osf_sys.c
-+++ b/arch/alpha/kernel/osf_sys.c
-@@ -872,7 +872,7 @@ SYSCALL_DEFINE5(osf_setsysinfo, unsigned long, op, void __user *, buffer,
- 		fex = (exc >> IEEE_STATUS_TO_EXCSUM_SHIFT) & swcr;
-  		if (fex) {
- 			siginfo_t info;
--			int si_code = FPE_FIXME;
-+			int si_code = FPE_FLTUNK;
+-
+ #endif	/* _ASM_POWERPC_SIGINFO_H */
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index fdf9400beec8..0e17dcb48720 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -969,7 +969,7 @@ void unknown_exception(struct pt_regs *regs)
+ 	printk("Bad trap at PC: %lx, SR: %lx, vector=%lx\n",
+ 	       regs->nip, regs->msr, regs->trap);
  
- 			if (fex & IEEE_TRAP_ENABLE_DNO) si_code = FPE_FLTUND;
- 			if (fex & IEEE_TRAP_ENABLE_INE) si_code = FPE_FLTRES;
-diff --git a/arch/alpha/kernel/traps.c b/arch/alpha/kernel/traps.c
-index 91636765dd6d..422b676b28f2 100644
---- a/arch/alpha/kernel/traps.c
-+++ b/arch/alpha/kernel/traps.c
-@@ -328,7 +328,7 @@ do_entIF(unsigned long type, struct pt_regs *regs)
- 			break;
- 		case GEN_ROPRAND:
- 			signo = SIGFPE;
--			code = FPE_FIXME;
-+			code = FPE_FLTUNK;
- 			break;
+-	_exception(SIGTRAP, regs, TRAP_FIXME, 0);
++	_exception(SIGTRAP, regs, TRAP_UNK, 0);
  
- 		case GEN_DECOVF:
+ 	exception_exit(prev_state);
+ }
+@@ -991,7 +991,7 @@ void instruction_breakpoint_exception(struct pt_regs *regs)
+ 
+ void RunModeException(struct pt_regs *regs)
+ {
+-	_exception(SIGTRAP, regs, TRAP_FIXME, 0);
++	_exception(SIGTRAP, regs, TRAP_UNK, 0);
+ }
+ 
+ void single_step_exception(struct pt_regs *regs)
 -- 
 2.14.1
 
