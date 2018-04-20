@@ -1,107 +1,262 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752683AbeDTSt4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:49:56 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:44474 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752599AbeDTStv (ORCPT
+        id S1752765AbeDTSu1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:50:27 -0400
+Received: from p3plsmtpa11-04.prod.phx3.secureserver.net ([68.178.252.105]:55823
+        "EHLO p3plsmtpa11-04.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752712AbeDTSuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:49:51 -0400
-From: Song Liu <songliubraving@fb.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: LKML <linux-kernel@vger.kernel.org>, Kernel Team <Kernel-team@fb.com>,
-        Ingo Molnar <mingo@redhat.com>, Howard McLauchlan <hmclauchlan@fb.com>,
-        Josef Bacik <jbacik@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH v4] tracing: remove igrab() iput() call from uprobes.c
-Thread-Topic: [PATCH v4] tracing: remove igrab() iput() call from uprobes.c
-Thread-Index: AQHT2NK64Wn5tr/gjUWZCJg6HfV2qqQJ+VsAgAACB4CAAAExgIAAAnOA
-Date: Fri, 20 Apr 2018 18:49:40 +0000
-Message-ID: <45E2FF15-D82B-43AA-ADF4-0B440A87D12C@fb.com>
-References: <20180420180847.418760-1-songliubraving@fb.com>
- <20180420142922.08ad9e64@gandalf.local.home>
- <9BEE77C2-B1BE-4697-919B-06997F05A0B0@fb.com>
- <20180420144053.1e2b8396@gandalf.local.home>
-In-Reply-To: <20180420144053.1e2b8396@gandalf.local.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.6.18)
-authentication-results: goodmis.org; dkim=none (message not signed)
- header.d=none;goodmis.org; dmarc=none action=none header.from=fb.com;
-x-originating-ip: [2620:10d:c090:200::6:dc3a]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR15MB1946;7:PCxM24pmZhI0vok/cAzOQIM4vT/gevhtIaN4DQ/hTkNZ1dldWIyw8isfl7enuC2uqeuuZEA2H2/kzPOwmq64u4jysrAqG03yJq1AJD6oVIiFgbDtO4yZT9kpXblkZqLAsb+xZWVp2pUP4dSk78MKGT65vYU8KFes5FUOMk9+Ect8oLdDjEmDeNsQjREgoMZPzrtXNBBXNBaDTBV7lqTHuWNQGdtbEoKypoWR/E2n5DKrbB39LrdtRWxBxu2KIHEx;20:Eru0k8b0SdOldJppTOCVek9i8YnHR/h5Wr8wcd+8BRgFCMZPIoqVv3sdU+P2Lyl+pTRoqkz0vVcl1ydm7yp18qxK97A2bBe3KGG3VeAHRibCPohFnYl2QRdosuraUL7LKfRdur5y/JqZEidfvBL/OCHpQGOJWmQiOP3xu3p2lXo=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR15MB1946;
-x-ms-traffictypediagnostic: DM5PR15MB1946:
-x-microsoft-antispam-prvs: <DM5PR15MB1946E054BA9193D4B616C975B3B40@DM5PR15MB1946.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(67672495146484);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231232)(11241501184)(944501397)(52105095)(93006095)(93001095)(3002001)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:DM5PR15MB1946;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1946;
-x-forefront-prvs: 0648FCFFA8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(39860400002)(396003)(346002)(376002)(8936002)(53936002)(59450400001)(86362001)(102836004)(53546011)(93886005)(2900100001)(476003)(83716003)(57306001)(11346002)(6486002)(6246003)(76176011)(6506007)(478600001)(6512007)(25786009)(446003)(2616005)(5660300001)(4326008)(7736002)(316002)(5250100002)(50226002)(3660700001)(46003)(36756003)(3280700002)(6916009)(8676002)(305945005)(6116002)(33656002)(229853002)(2906002)(6436002)(82746002)(54906003)(186003)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1946;H:DM5PR15MB1548.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
-x-microsoft-antispam-message-info: 3QDEfpMQuwUMLN54DL8doeZ+p/RN4VjYe8u9xzbZz+VhzknPohh24btnpPzp4BCVEhPuyicBQ7YCyIviaaiSLob5DmrR9DX89jOF+87AtoksaQUvkjgvI7swX6fxj1VGn5J9SUoJPu+Hhk4TzpsulxXQ1axJy84m/D9jNutWEAnzNxNMw3n6f9KPCCEt+D9F
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <00839FDB3EB1054ABDF0882DDE284E52@namprd15.prod.outlook.com>
+        Fri, 20 Apr 2018 14:50:25 -0400
+Subject: Re: [Patch v4] cifs: Allocate validate negotiation request through
+ kmalloc
+To: Long Li <longli@microsoft.com>, Steve French <sfrench@samba.org>,
+        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
+References: <20180419213807.3128-1-longli@linuxonhyperv.com>
+ <c8924b83-dfa2-a44c-a425-deb7e03d0bf1@talpey.com>
+ <MWHPR2101MB0729D25131DCC9AF638E0449CEB40@MWHPR2101MB0729.namprd21.prod.outlook.com>
+From: Tom Talpey <tom@talpey.com>
+Message-ID: <1734dfc1-acef-def8-9aa9-1b9960d26f94@talpey.com>
+Date: Fri, 20 Apr 2018 14:50:22 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: e7c07439-0fd4-4f78-4600-08d5a6ef7956
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7c07439-0fd4-4f78-4600-08d5a6ef7956
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2018 18:49:40.4947
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1946
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_08:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <MWHPR2101MB0729D25131DCC9AF638E0449CEB40@MWHPR2101MB0729.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfGRs18soewD55Nsq+SgxmsOkhtHfs33QEElnAjlTrBDLvBzQIOKM38i059Lw6srcypASM7t1BnVeq1rWuhUk95sPQPzaiBJgEqdOg/AkbkV18YwxCpts
+ 61j4v7m+XnH0h96A9welPMTF46edOO3kuUgb/koFAyyxFKxVWhBQYYh9gf/aD1eMXykXjdan6afvkI7tEvKd0u0SU5luefpzsbYyVyNJ7JkwApCnv+On7iMI
+ qhy+uZPG22aMZaQgeTIPaPhy9atnR2LodvTeqxBQrjxx5jKr97K/nHzOnWgLs+7QYrqmnfNYS0e6uTYF0Oi+X2metFFDhZMnzNnnBC8ECDkcqR0G77CIVZwv
+ jb19mCu8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w3KIo2VA015267
 
-
-
-> On Apr 20, 2018, at 11:40 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
+On 4/20/2018 2:41 PM, Long Li wrote:
+>> Subject: Re: [Patch v4] cifs: Allocate validate negotiation request through
+>> kmalloc
+>>
+>> Looks good, but I have two possibly style-related comments.
+>>
+>> On 4/19/2018 5:38 PM, Long Li wrote:
+>>> From: Long Li <longli@microsoft.com>
+>>>
+>>> The data buffer allocated on the stack can't be DMA'ed,
+>>> ib_dma_map_page will return an invalid DMA address for a buffer on
+>>> stack. Even worse, this incorrect address can't be detected by
+>>> ib_dma_mapping_error. Sending data from this address to hardware will
+>>> not fail, but the remote peer will get junk data.
+>>>
+>>> Fix this by allocating the request on the heap in smb3_validate_negotiate.
+>>>
+>>> Changes in v2:
+>>> Removed duplicated code on freeing buffers on function exit.
+>>> (Thanks to Parav Pandit <parav@mellanox.com>) Fixed typo in the patch
+>>> title.
+>>>
+>>> Changes in v3:
+>>> Added "Fixes" to the patch.
+>>> Changed several sizeof() to use *pointer in place of struct.
+>>>
+>>> Changes in v4:
+>>> Added detailed comments on the failure through RDMA.
+>>> Allocate request buffer using GPF_NOFS.
+>>> Fixed possible memory leak.
+>>>
+>>> Fixes: ff1c038addc4 ("Check SMB3 dialects against downgrade attacks")
+>>> Signed-off-by: Long Li <longli@microsoft.com>
+>>> ---
+>>>    fs/cifs/smb2pdu.c | 61 ++++++++++++++++++++++++++++++--------------
+>> -----------
+>>>    1 file changed, 33 insertions(+), 28 deletions(-)
+>>>
+>>> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c index
+>>> 0f044c4..caa2a1e 100644
+>>> --- a/fs/cifs/smb2pdu.c
+>>> +++ b/fs/cifs/smb2pdu.c
+>>> @@ -729,8 +729,8 @@ SMB2_negotiate(const unsigned int xid, struct
+>>> cifs_ses *ses)
+>>>
+>>>    int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+>>>    {
+>>> -	int rc = 0;
+>>> -	struct validate_negotiate_info_req vneg_inbuf;
+>>> +	int ret, rc = -EIO;
+>>
+>> Seems awkward to have "rc" and "ret", and based on the code below I don't
+>> see why two variables are needed. Simplify? (see later comment)
 > 
-> On Fri, 20 Apr 2018 18:36:38 +0000
-> Song Liu <songliubraving@fb.com> wrote:
-> 
->>> On Apr 20, 2018, at 11:29 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
->>> 
->>> On Fri, 20 Apr 2018 11:08:47 -0700
->>> Song Liu <songliubraving@fb.com> wrote:
->>> 
->>>> For uprobes.c sisde, igrab() is not necessary. So we removed it and  
->>> 
->>> You don't need to send another patch, but what is the above sentence
->>> suppose to say?
->>> 
->>> -- Steve
->>> 
->> 
->> Sorry for the typo. I meant "For uprobes.c side". Or "it is not necessary
->> to call igrab() in uprobe_register(), as the caller is required to keep
->> the inode reference. 
->> 
-> 
-> I'll update it to:
-> 
-> "For uprobes.c, it is not necessary to call igrab() in
-> uprobe_register(), as the caller is required to keep the inode
-> reference. The igrab() is removed and comments on this requirement is
-> added to uprobe_register()."
-> 
-> -- Steve
+> This is for addressing a prior comment to reduce duplicate code. All the failure paths
+> (after issuing I/O) returning -EIO, there are 5 of them. Set rc to -EIO at the beginning
+> so we don’t need to set it multiple times.
+
+Well, ok but now there are semi-duplicate and rather confusing "rc"
+and "ret" local variables, only one of which is actually returned.
+
+How about a "goto err" with unconditonal -EIO, and just leave the
+"return 0" path alone, like it was? That would be much clearer IMO.
+
+As-is, I needed to read it several times to convince myself the right
+rc was returned.
+
+Tom,
 
 
-Looks good!
-
-Thanks,
-Song
+> 
+>>
+>>> +	struct validate_negotiate_info_req *pneg_inbuf;
+>>>    	struct validate_negotiate_info_rsp *pneg_rsp = NULL;
+>>>    	u32 rsplen;
+>>>    	u32 inbuflen; /* max of 4 dialects */ @@ -741,7 +741,6 @@ int
+>>> smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+>>>    	if (tcon->ses->server->rdma)
+>>>    		return 0;
+>>>    #endif
+>>> -
+>>>    	/* In SMB3.11 preauth integrity supersedes validate negotiate */
+>>>    	if (tcon->ses->server->dialect == SMB311_PROT_ID)
+>>>    		return 0;
+>>> @@ -764,63 +763,67 @@ int smb3_validate_negotiate(const unsigned int
+>> xid, struct cifs_tcon *tcon)
+>>>    	if (tcon->ses->session_flags & SMB2_SESSION_FLAG_IS_NULL)
+>>>    		cifs_dbg(VFS, "Unexpected null user (anonymous) auth flag
+>> sent by
+>>> server\n");
+>>>
+>>> -	vneg_inbuf.Capabilities =
+>>> +	pneg_inbuf = kmalloc(sizeof(*pneg_inbuf), GFP_NOFS);
+>>> +	if (!pneg_inbuf)
+>>> +		return -ENOMEM;
+>>> +
+>>> +	pneg_inbuf->Capabilities =
+>>>    			cpu_to_le32(tcon->ses->server->vals-
+>>> req_capabilities);
+>>> -	memcpy(vneg_inbuf.Guid, tcon->ses->server->client_guid,
+>>> +	memcpy(pneg_inbuf->Guid, tcon->ses->server->client_guid,
+>>>    					SMB2_CLIENT_GUID_SIZE);
+>>>
+>>>    	if (tcon->ses->sign)
+>>> -		vneg_inbuf.SecurityMode =
+>>> +		pneg_inbuf->SecurityMode =
+>>>
+>> 	cpu_to_le16(SMB2_NEGOTIATE_SIGNING_REQUIRED);
+>>>    	else if (global_secflags & CIFSSEC_MAY_SIGN)
+>>> -		vneg_inbuf.SecurityMode =
+>>> +		pneg_inbuf->SecurityMode =
+>>>
+>> 	cpu_to_le16(SMB2_NEGOTIATE_SIGNING_ENABLED);
+>>>    	else
+>>> -		vneg_inbuf.SecurityMode = 0;
+>>> +		pneg_inbuf->SecurityMode = 0;
+>>>
+>>>
+>>>    	if (strcmp(tcon->ses->server->vals->version_string,
+>>>    		SMB3ANY_VERSION_STRING) == 0) {
+>>> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
+>>> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
+>>> -		vneg_inbuf.DialectCount = cpu_to_le16(2);
+>>> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
+>>> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
+>>> +		pneg_inbuf->DialectCount = cpu_to_le16(2);
+>>>    		/* structure is big enough for 3 dialects, sending only 2 */
+>>>    		inbuflen = sizeof(struct validate_negotiate_info_req) - 2;
+>>
+>> The "- 2" is a little confusing here. This was existing code, but I suggest you
+>> change this to a sizeof (u16) construct for consistency.
+>> It's reducing by the length of a single Dialects[n] entry.
+>>
+>>>    	} else if (strcmp(tcon->ses->server->vals->version_string,
+>>>    		SMBDEFAULT_VERSION_STRING) == 0) {
+>>> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
+>>> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
+>>> -		vneg_inbuf.Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
+>>> -		vneg_inbuf.DialectCount = cpu_to_le16(3);
+>>> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
+>>> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
+>>> +		pneg_inbuf->Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
+>>> +		pneg_inbuf->DialectCount = cpu_to_le16(3);
+>>>    		/* structure is big enough for 3 dialects */
+>>>    		inbuflen = sizeof(struct validate_negotiate_info_req);
+>>>    	} else {
+>>>    		/* otherwise specific dialect was requested */
+>>> -		vneg_inbuf.Dialects[0] =
+>>> +		pneg_inbuf->Dialects[0] =
+>>>    			cpu_to_le16(tcon->ses->server->vals->protocol_id);
+>>> -		vneg_inbuf.DialectCount = cpu_to_le16(1);
+>>> +		pneg_inbuf->DialectCount = cpu_to_le16(1);
+>>>    		/* structure is big enough for 3 dialects, sending only 1 */
+>>>    		inbuflen = sizeof(struct validate_negotiate_info_req) - 4;
+>>
+>> Ditto previous sizeof (u16) comment, with a *2 this case.
+>>
+>>>    	}
+>>>
+>>> -	rc = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
+>>> +	ret = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
+>>>    		FSCTL_VALIDATE_NEGOTIATE_INFO, true /* is_fsctl */,
+>>> -		(char *)&vneg_inbuf, sizeof(struct
+>> validate_negotiate_info_req),
+>>> +		(char *)pneg_inbuf, sizeof(*pneg_inbuf),
+>>>    		(char **)&pneg_rsp, &rsplen);
+>>>
+>>> -	if (rc != 0) {
+>>> -		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
+>>> -		return -EIO;
+>>> +	if (ret) {
+>>> +		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", ret);
+>>> +		goto out_free_inbuf;
+>>>    	}
+>>
+>> Why not leave "rc" alone, and set its value to -EIO before the goto if the ioctl
+>> fails? That will simplify and make the code much more readable IMO.
+>>
+>>>
+>>> -	if (rsplen != sizeof(struct validate_negotiate_info_rsp)) {
+>>> +	if (rsplen != sizeof(*pneg_rsp)) {
+>>>    		cifs_dbg(VFS, "invalid protocol negotiate response
+>> size: %d\n",
+>>>    			 rsplen);
+>>>
+>>>    		/* relax check since Mac returns max bufsize allowed on ioctl
+>> */
+>>>    		if ((rsplen > CIFSMaxBufSize)
+>>>    		     || (rsplen < sizeof(struct validate_negotiate_info_rsp)))
+>>> -			goto err_rsp_free;
+>>> +			goto out_free_rsp;
+>>>    	}
+>>
+>> Would need an rc = -EIO here too if above comment is accepted.
+>>
+>> Tom.
+>>
+>>>
+>>>    	/* check validate negotiate info response matches what we got
+>>> earlier */ @@ -838,14 +841,16 @@ int smb3_validate_negotiate(const
+>>> unsigned int xid, struct cifs_tcon *tcon)
+>>>
+>>>    	/* validate negotiate successful */
+>>>    	cifs_dbg(FYI, "validate negotiate info successful\n");
+>>> -	kfree(pneg_rsp);
+>>> -	return 0;
+>>> +	rc = 0;
+>>> +	goto out_free_rsp;
+>>>
+>>>    vneg_out:
+>>>    	cifs_dbg(VFS, "protocol revalidation - security settings
+>>> mismatch\n");
+>>> -err_rsp_free:
+>>> +out_free_rsp:
+>>>    	kfree(pneg_rsp);
+>>> -	return -EIO;
+>>> +out_free_inbuf:
+>>> +	kfree(pneg_inbuf);
+>>> +	return rc;
+>>>    }
+>>>
+>>>    enum securityEnum
+>>>
+> N�����r��y���b�X��ǧv�^�)޺{.n�+����{��ٚ�{ay�ʇڙ�,j��f���h���z��w������j:+v���w�j�m��������zZ+�����ݢj"��!tml=
+> 
