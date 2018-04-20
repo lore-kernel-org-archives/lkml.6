@@ -1,125 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754631AbeDTK4F (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:56:05 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57020 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754511AbeDTK4E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:56:04 -0400
-Subject: Re: [PATCH 1/4] vfio: ccw: fix cleanup if cp_prefetch fails
-To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        borntraeger@de.ibm.com
-References: <20180321020822.86255-1-bjsdjshi@linux.vnet.ibm.com>
- <20180321020822.86255-2-bjsdjshi@linux.vnet.ibm.com>
- <682d8b1c-5aca-7015-043b-a3f1446bf378@linux.vnet.ibm.com>
- <20180322022248.GB12194@bjsdjshi@linux.vnet.ibm.com>
- <54fd02cd-bd0b-889b-c40f-f9a32aa25d77@linux.vnet.ibm.com>
- <20180326142839.23bfc4f6.cohuck@redhat.com>
- <20180327014200.GH12194@bjsdjshi@linux.vnet.ibm.com>
-From: Halil Pasic <pasic@linux.vnet.ibm.com>
-Date: Fri, 20 Apr 2018 12:54:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754629AbeDTK6Z (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:58:25 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:51118 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754462AbeDTK6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 06:58:23 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        robh+dt@kernel.org
+Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        dbasehore@chromium.org, linux-kernel@vger.kernel.org,
+        dianders@google.com, groeck@google.com, kernel@collabora.com,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/6] dt-bindings: clock: add DDR3 standard speed bins.
+Date: Fri, 20 Apr 2018 12:58:10 +0200
+Message-ID: <39099779.d2GlTJ02DA@phil>
+In-Reply-To: <62c4b6f0-e67c-8e25-a129-bf0c06c5157b@collabora.com>
+References: <20180419104019.24406-1-enric.balletbo@collabora.com> <5662116.zj93FbmDPb@phil> <62c4b6f0-e67c-8e25-a129-bf0c06c5157b@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20180327014200.GH12194@bjsdjshi@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18042010-0040-0000-0000-0000044FAADC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042010-0041-0000-0000-000020F40685
-Message-Id: <59687ed1-befb-a861-7b91-40859ac00bb7@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804200106
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Enric,
+
+Am Donnerstag, 19. April 2018, 13:30:16 CEST schrieb Enric Balletbo i Serra:
+> On 19/04/18 13:10, Heiko Stuebner wrote:
+> > Am Donnerstag, 19. April 2018, 12:40:15 CEST schrieb Enric Balletbo i Serra:
+> >> DDR3 SDRAM Standard (JESD79-3F) defines some standard speed bins for
+> >> DDR3 memories. The devfreq/rk3399_dmc.txt binding refers to this file
+> >> which does not exist, so add a ddr.h file with the standard speed bins
+> >> for DDR3.
+> >>
+> >> Fixes: c1ceb8f7c167 (Documentation: bindings: add dt documentation for rk3399 dmc)
+> >> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> >> ---
+> >>
+> >>  include/dt-bindings/clock/ddr.h | 34 +++++++++++++++++++++++++++++++++
+> >>  1 file changed, 34 insertions(+)
+> >>  create mode 100644 include/dt-bindings/clock/ddr.h
+> >>
+> >> diff --git a/include/dt-bindings/clock/ddr.h b/include/dt-bindings/clock/ddr.h
+> >> new file mode 100644
+> >> index 000000000000..506aef7e609e
+> >> --- /dev/null
+> >> +++ b/include/dt-bindings/clock/ddr.h
+> >> @@ -0,0 +1,34 @@
+> >> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> >> +
+> >> +#ifndef DT_BINDINGS_DDR_H
+> >> +#define DT_BINDINGS_DDR_H
+> >> +
+> >> +/* DDR3-800 Standard Speed Bins */
+> >> +#define DDR3_800D	15
+> >> +#define DDR3_800E		18
+> >> +/* DDR3-1066 Standard Speed Bins */
+> >> +#define DDR3_1066E	18
+> >> +#define DDR3_1066F	21
+> >> +#define DDR3_1066G	24
+> > 
+> > looking at the mentioned jedec standard, I don't see where these numerical
+> > values are defined in the standard itself. [I may be blind though]
+> > 
+> 
+> Damm it. No, you're not blind. I did an horrible mistake adding an old version
+> of this file. It's wrong, that is supposed to be there is DDR3 table available
+> in the ATF [1] not this.
+
+Mistakes can always happen ... so no problem :-) .
 
 
-ping
+>         /* 5-5-5 */
+> 	DDR3_800D = 0,
+> 	/* 6-6-6 */
+> 	DDR3_800E = 1,
+> 	/* 6-6-6 */
+> 	DDR3_1066E = 2,
+> 	/* 7-7-7 */
+> 	DDR3_1066F = 3,
+>         ...
+> 
+> The value is passed directly to the ATF so the above values are the correct.
+> 
+> One question that I have on my mind is if this file should be called as is or if
+> will be better name as atf-ddr.h or something like that.
+> ddr.h -> atf-ddr.h
 
-I think get this fixed. Better sooner than later.
+The more interesting question would be if this isn't a very much rockchip
+or even rk3399-specific scheme. So such a generic header name looks very
+much out of place (also including the very generic constant names).
 
-On 03/27/2018 03:42 AM, Dong Jia Shi wrote:
-> * Cornelia Huck <cohuck@redhat.com> [2018-03-26 14:28:39 +0200]:
+So far the only upstream ATF implementation is for the rk3399.
+
+
+Heiko
+
 > 
-> [...]
+> [1]
+> https://github.com/ARM-software/arm-trusted-firmware/blob/master/plat/rockchip/rk3399/drivers/dram/dram_spec_timing.h
+>
+> Sorry about that. Guess it's needed a v2 but let's wait a little bit for if more
+> discussion arises.
 > 
->>> By the way, since you will propose a new version,
->>> you have a long description of the cp_prefetch function in the code.
->>> I think you should modify it according to the changes and describe how and
->>> why the ch_len field of each chain is used and changed by this function.
->>>
->>> Something like:
->>>
->>> "
->>> For each chain composing the channel program:
->>> On entry ch_len hold the count of CCW to be translated.
->>
->> s/hold/holds/ ?
->>
-> Sure.
+> Best regards,
+>   Enric
 > 
->>> On exit ch_len is adjusted to the count of successfully translated CCW.
->>>
->>> This allows cp_free to find in ch_len the count of CCW to free in a chain.
->>> "
->>>
->>> Could also be inside the commit message.
->>>
->>> Pierre
->>>
->>>
->>>>   
->>>>>> Acked-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
->>>>>> Reviewed-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
->>>>>> Signed-off-by: Halil Pasic <pasic@linux.vnet.ibm.com>
->>>>>> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
->>>>>> ---
->>>>>>    drivers/s390/cio/vfio_ccw_cp.c | 9 ++++++++-
->>>>>>    1 file changed, 8 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
->>>>>> index d9a2fffd034b..2be114db02f9 100644
->>>>>> --- a/drivers/s390/cio/vfio_ccw_cp.c
->>>>>> +++ b/drivers/s390/cio/vfio_ccw_cp.c
->>>>>> @@ -749,11 +749,18 @@ int cp_prefetch(struct channel_program *cp)
->>>>>>    		for (idx = 0; idx < len; idx++) {
->>>>>>    			ret = ccwchain_fetch_one(chain, idx, cp);
->>>>>>    			if (ret)
->>>>>> -				return ret;
->>>>>> +				goto out_err;
->>>>>>    		}
->>>>>>    	}
->>>>>>
->>>>>>    	return 0;
->>>>>> +out_err:
->>>>>> +	/* Only cleanup the chain elements that where actually translated. */
->>
->> s/where/were/
-> Ok.
+> > Could you explain a bit more where these numerical values are coming from?
+> > 
+> > 
+> > Thanks
+> > Heiko
+> > 
 > 
->>
->>>>>> +	chain->ch_len = idx;
->>>>>> +	list_for_each_entry_continue(chain, &cp->ccwchain_list, next) {
->>>>>> +		chain->ch_len = 0;
->>>>>> +	}
->>>>>> +	return ret;
->>>>>>    }
->>>>>>
->>>>>>    /**
->>>>>>   
->>>
->>
 > 
