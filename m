@@ -1,93 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753702AbeDTFjt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 01:39:49 -0400
-Received: from mga01.intel.com ([192.55.52.88]:63591 "EHLO mga01.intel.com"
+        id S1753755AbeDTFkO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 01:40:14 -0400
+Received: from mga09.intel.com ([134.134.136.24]:46048 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753623AbeDTFjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 01:39:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1751438AbeDTFkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 01:40:13 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,300,1520924400";
-   d="scan'208";a="48446743"
-From: changbin.du@intel.com
-To: joro@8bytes.org
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Changbin Du <changbin.du@intel.com>
-Subject: [PATCH] iommu/vt-d: fix shift-out-of-bounds in bug checking
-Date: Fri, 20 Apr 2018 13:29:55 +0800
-Message-Id: <1524202195-4656-1-git-send-email-changbin.du@intel.com>
-X-Mailer: git-send-email 2.7.4
+   d="scan'208";a="221933005"
+Date: Fri, 20 Apr 2018 08:40:09 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: Thiebaud Weksteen <tweek@google.com>
+Cc: nayna@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] tpm: Move shared eventlog functions to common.c
+Message-ID: <20180420054009.GC15364@linux.intel.com>
+References: <20180412101350.210547-1-tweek@google.com>
+ <20180412101350.210547-4-tweek@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180412101350.210547-4-tweek@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Changbin Du <changbin.du@intel.com>
+On Thu, Apr 12, 2018 at 12:13:49PM +0200, Thiebaud Weksteen wrote:
+> Functions and structures specific to TPM1 are renamed from tpm* to tpm1*.
+> 
+> Signed-off-by: Thiebaud Weksteen <tweek@google.com>
+> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-It allows to flush more than 4GB of device TLBs. So the mask should be
-64bit wide. UBSAN captured this fault as below.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-[    3.760024] ================================================================================
-[    3.768440] UBSAN: Undefined behaviour in drivers/iommu/dmar.c:1348:3
-[    3.774864] shift exponent 64 is too large for 32-bit type 'int'
-[    3.780853] CPU: 2 PID: 0 Comm: swapper/2 Tainted: G     U            4.17.0-rc1+ #89
-[    3.788661] Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.2.8 01/26/2016
-[    3.796034] Call Trace:
-[    3.798472]  <IRQ>
-[    3.800479]  dump_stack+0x90/0xfb
-[    3.803787]  ubsan_epilogue+0x9/0x40
-[    3.807353]  __ubsan_handle_shift_out_of_bounds+0x10e/0x170
-[    3.812916]  ? qi_flush_dev_iotlb+0x124/0x180
-[    3.817261]  qi_flush_dev_iotlb+0x124/0x180
-[    3.821437]  iommu_flush_dev_iotlb+0x94/0xf0
-[    3.825698]  iommu_flush_iova+0x10b/0x1c0
-[    3.829699]  ? fq_ring_free+0x1d0/0x1d0
-[    3.833527]  iova_domain_flush+0x25/0x40
-[    3.837448]  fq_flush_timeout+0x55/0x160
-[    3.841368]  ? fq_ring_free+0x1d0/0x1d0
-[    3.845200]  ? fq_ring_free+0x1d0/0x1d0
-[    3.849034]  call_timer_fn+0xbe/0x310
-[    3.852696]  ? fq_ring_free+0x1d0/0x1d0
-[    3.856530]  run_timer_softirq+0x223/0x6e0
-[    3.860625]  ? sched_clock+0x5/0x10
-[    3.864108]  ? sched_clock+0x5/0x10
-[    3.867594]  __do_softirq+0x1b5/0x6f5
-[    3.871250]  irq_exit+0xd4/0x130
-[    3.874470]  smp_apic_timer_interrupt+0xb8/0x2f0
-[    3.879075]  apic_timer_interrupt+0xf/0x20
-[    3.883159]  </IRQ>
-[    3.885255] RIP: 0010:poll_idle+0x60/0xe7
-[    3.889252] RSP: 0018:ffffb1b201943e30 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-[    3.896802] RAX: 0000000080200000 RBX: 000000000000008e RCX: 000000000000001f
-[    3.903918] RDX: 0000000000000000 RSI: 000000002819aa06 RDI: 0000000000000000
-[    3.911031] RBP: ffff9e93c6b33280 R08: 00000010f717d567 R09: 000000000010d205
-[    3.918146] R10: ffffb1b201943df8 R11: 0000000000000001 R12: 00000000e01b169d
-[    3.925260] R13: 0000000000000000 R14: ffffffffb12aa400 R15: 0000000000000000
-[    3.932382]  cpuidle_enter_state+0xb4/0x470
-[    3.936558]  do_idle+0x222/0x310
-[    3.939779]  cpu_startup_entry+0x78/0x90
-[    3.943693]  start_secondary+0x205/0x2e0
-[    3.947607]  secondary_startup_64+0xa5/0xb0
-[    3.951783] ================================================================================
-
-Signed-off-by: Changbin Du <changbin.du@intel.com>
----
- drivers/iommu/dmar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index accf5838..e4ae600 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1345,7 +1345,7 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
- 	struct qi_desc desc;
- 
- 	if (mask) {
--		BUG_ON(addr & ((1 << (VTD_PAGE_SHIFT + mask)) - 1));
-+		BUG_ON(addr & ((1ULL << (VTD_PAGE_SHIFT + mask)) - 1));
- 		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
- 		desc.high = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
- 	} else
--- 
-2.7.4
+/Jarkko
