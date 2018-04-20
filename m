@@ -1,121 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754895AbeDTNFV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:05:21 -0400
-Received: from mail-sn1nam01on0078.outbound.protection.outlook.com ([104.47.32.78]:42330
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754769AbeDTNFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:05:19 -0400
-From: "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        id S1754890AbeDTNH1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:07:27 -0400
+Received: from stargate.chelsio.com ([12.32.117.8]:46745 "EHLO
+        stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754776AbeDTNHY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 09:07:24 -0400
+Date: Fri, 20 Apr 2018 18:36:34 +0530
+From: Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Dave Young <dyoung@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
- systems
-Thread-Topic: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on SMCA
- systems
-Thread-Index: AQHTyrzRqCN7fg42eUKg23bN8kMvXKQFS3EAgAAGZOCAAYnqgIAC2dNg
-Date: Fri, 20 Apr 2018 13:05:17 +0000
-Message-ID: <CY4PR12MB155779EEC2894B501F30292EF8B40@CY4PR12MB1557.namprd12.prod.outlook.com>
-References: <20180402195707.42875-1-Yazen.Ghannam@amd.com>
- <20180417172102.GA3633@pd.tnic>
- <CY4PR12MB15574493593120818D9BFE11F8B70@CY4PR12MB1557.namprd12.prod.outlook.com>
- <20180418171347.GH4795@pd.tnic>
-In-Reply-To: <20180418171347.GH4795@pd.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: alien8.de; dkim=none (message not signed)
- header.d=none;alien8.de; dmarc=none action=none header.from=amd.com;
-x-originating-ip: [165.204.84.17]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR12MB1413;7:Ny34XD/2e6fta/giYdSvz0zRVqBJcXjwU5IiG7H/gobMxujNNOl48wCINf/jTdvT6U7yIVWit2bJKgf0Wkaen4yomDSpg+F6oJXa4W2c3vGPX/VuOEvwVxuMW9pel23VTdLBjqElcsKjRriSJ05VVETA+hzc69VX4kOm21VcOuuv3RbpdM8CNzYMxFhyUu5kQ7E6ky1uvp1+Oq9L8IkwsM/x65umPgJWc4HWiwkcctKBF9DXBN+RDNsl+G7vM/2F;20:cjfuNV3THyMLA8ZZ+Prh+7fCdH+J7mq+a6tyvilY73m/InK6XKZhFLeZk9AMtd91pr4VldYWwp3txZcrVFn2hlIKRtREkBJ0x7trl/2PQ6Yl1cB5dRJM631mGjtitQ2sjhufdyime9o1IbiJIsOHWf94hg6jYmt3pB/ODS/B84/ySRVm8R30inVxp2xbAwaGQmmAdP5b7JsPQHN6WhLNG9qN3gAi9heXZIJ3zgHe55zhxn9PegA5AN7LyaMNZiOP
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:CY4PR12MB1413;
-x-ms-traffictypediagnostic: CY4PR12MB1413:
-x-microsoft-antispam-prvs: <CY4PR12MB1413AF2C3B6B28C99044CCD1F8B40@CY4PR12MB1413.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(767451399110)(228905959029699);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231232)(944501394)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:CY4PR12MB1413;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1413;
-x-forefront-prvs: 0648FCFFA8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(366004)(39380400002)(39860400002)(376002)(13464003)(66066001)(3280700002)(6246003)(25786009)(6116002)(53936002)(3846002)(5250100002)(33656002)(229853002)(93886005)(3660700001)(2906002)(11346002)(6916009)(26005)(2900100001)(86362001)(316002)(476003)(186003)(446003)(4326008)(54906003)(55016002)(7736002)(59450400001)(5660300001)(8936002)(76176011)(8676002)(6436002)(102836004)(53546011)(72206003)(6506007)(7696005)(305945005)(478600001)(9686003)(81166006)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1413;H:CY4PR12MB1557.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;MLV:sfv;
-x-microsoft-antispam-message-info: 6fyZ5+wljIYede1cKzqWr9VQ/wGnEo8CNaYP2pc+3GgZY0mJSo2vegk1Hn/MwoTz42/aHcjBPnrLiclMw29HWHuVqD5exG+Cpm879IILUVOM1SEU2lBdbcZZcaYInYHa4V+WUwC6yfzaI5tJ3h34Dzi2lKPI0TLW0CUWpoWiEUj1ntGZuiXHd/fgJQcI3zuB
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        Indranil Choudhury <indranil@chelsio.com>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        "stephen@networkplumber.org" <stephen@networkplumber.org>,
+        Ganesh GR <ganeshgr@chelsio.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH net-next v4 0/3] kernel: add support to collect hardware
+ logs in crash recovery kernel
+Message-ID: <20180420130632.GA32304@chelsio.com>
+References: <cover.1523950321.git.rahul.lakkireddy@chelsio.com>
+ <20180418061546.GA4551@dhcp-128-65.nay.redhat.com>
+ <20180418123114.GA19159@chelsio.com>
+ <20180419014030.GA2340@dhcp-128-65.nay.redhat.com>
+ <20180419142747.GA30274@chelsio.com>
+ <87lgdjnt72.fsf@xmission.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 5844cae3-16b8-40c2-9324-08d5a6bf5d55
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5844cae3-16b8-40c2-9324-08d5a6bf5d55
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2018 13:05:17.6084
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1413
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lgdjnt72.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KD5QqC024457
 
-> -----Original Message-----
-> From: Borislav Petkov <bp@alien8.de>
-> Sent: Wednesday, April 18, 2018 1:14 PM
-> To: Ghannam, Yazen <Yazen.Ghannam@amd.com>
-> Cc: linux-edac@vger.kernel.org; linux-kernel@vger.kernel.org;
-> tony.luck@intel.com; x86@kernel.org
-> Subject: Re: [PATCH] x86/MCE, EDAC/mce_amd: Save all aux registers on
-> SMCA systems
+On Thursday, April 04/19/18, 2018 at 20:23:37 +0530, Eric W. Biederman wrote:
+> Rahul Lakkireddy <rahul.lakkireddy@chelsio.com> writes:
 > 
-> On Tue, Apr 17, 2018 at 06:30:34PM +0000, Ghannam, Yazen wrote:
-> > We could but it's an issue of documentation and testing the older systems.
+> > On Thursday, April 04/19/18, 2018 at 07:10:30 +0530, Dave Young wrote:
+> >> On 04/18/18 at 06:01pm, Rahul Lakkireddy wrote:
+> >> > On Wednesday, April 04/18/18, 2018 at 11:45:46 +0530, Dave Young wrote:
+> >> > > Hi Rahul,
+> >> > > On 04/17/18 at 01:14pm, Rahul Lakkireddy wrote:
+> >> > > > On production servers running variety of workloads over time, kernel
+> >> > > > panic can happen sporadically after days or even months. It is
+> >> > > > important to collect as much debug logs as possible to root cause
+> >> > > > and fix the problem, that may not be easy to reproduce. Snapshot of
+> >> > > > underlying hardware/firmware state (like register dump, firmware
+> >> > > > logs, adapter memory, etc.), at the time of kernel panic will be very
+> >> > > > helpful while debugging the culprit device driver.
+> >> > > > 
+> >> > > > This series of patches add new generic framework that enable device
+> >> > > > drivers to collect device specific snapshot of the hardware/firmware
+> >> > > > state of the underlying device in the crash recovery kernel. In crash
+> >> > > > recovery kernel, the collected logs are added as elf notes to
+> >> > > > /proc/vmcore, which is copied by user space scripts for post-analysis.
+> >> > > > 
+> >> > > > The sequence of actions done by device drivers to append their device
+> >> > > > specific hardware/firmware logs to /proc/vmcore are as follows:
+> >> > > > 
+> >> > > > 1. During probe (before hardware is initialized), device drivers
+> >> > > > register to the vmcore module (via vmcore_add_device_dump()), with
+> >> > > > callback function, along with buffer size and log name needed for
+> >> > > > firmware/hardware log collection.
+> >> > > 
+> >> > > I assumed the elf notes info should be prepared while kexec_[file_]load
+> >> > > phase. But I did not read the old comment, not sure if it has been discussed
+> >> > > or not.
+> >> > > 
+> >> > 
+> >> > We must not collect dumps in crashing kernel. Adding more things in
+> >> > crash dump path risks not collecting vmcore at all. Eric had
+> >> > discussed this in more detail at:
+> >> > 
+> >> > https://lkml.org/lkml/2018/3/24/319
+> >> > 
+> >> > We are safe to collect dumps in the second kernel. Each device dump
+> >> > will be exported as an elf note in /proc/vmcore.
+> >> 
+> >> I understand that we should avoid adding anything in crash path.  And I also
+> >> agree to collect device dump in second kernel.  I just assumed device
+> >> dump use some memory area to store the debug info and the memory
+> >> is persistent so that this can be done in 2 steps, first register the
+> >> address in elf header in kexec_load, then collect the dump in 2nd
+> >> kernel.  But it seems the driver is doing some other logic to collect
+> >> the info instead of just that simple like I thought. 
+> >> 
 > >
-> > My first pass at this was to unconditionally read the registers because my
-> > understanding was that registers that aren't accessible would be read-as-
-> zero.
-> > I thought this was a common MCA implementation. But Tony pointed out
-> that
-> > this isn't the case on Intel systems. This is the case on recent AMD systems.
-> But
-> > I don't know if it's the case on older systems which may or may not have
-> > followed the Intel implementation more closely.
+> > It seems simpler, but I'm concerned with waste of memory area, if
+> > there are no device dumps being collected in second kernel. In
+> > approach proposed in these series, we dynamically allocate memory
+> > for the device dumps from second kernel's available memory.
 > 
-> So if our worry is the #GPs, we can always use the rdmsr*_safe()
-> variants and look at the return value. And dump a invalid value like
-> 0xdeadbeef or so, if the read failed.
-> 
-> But if any bit of info we've gotten this way, helps us debug an MCE,
-> we're already golden!
+> Don't count that kernel having more than about 128MiB.
 > 
 
-Okay, I can do that. What about using mce_rdmsrl()? The value gets set to
-0 and a user gets a single warning. This may be more clear to the user. Also,
-it shouldn't affect code that checks for non-zero values, like in __print_mce().
+If large dump is expected, Administrator can increase the memory
+allocated to the second kernel (using crashkernel boot param), to
+ensure device dumps get collected.
 
-> > For example,
-> >
-> > Deferred error occurs:
-> > - MCA_{STATUS,ADDR,DESTAT,DEADDR} all have valid data.
-> >
-> > MCE occurs
-> > - MCA_{STATUS,ADDR} are overwritten with non-zero data.
-> > - MCE handler clears MCA_STATUS. MCA_ADDR is non-zero.
-> >
-> > DFR handler finds MCA_STATUS[Deferred] is clear, so it saves
-> > MCA_DESTAT and MCA_DEADDR which is 0.
-> >
-> > If !m->addr (which has MCA_DEADDR), then we read MCA_STATUS
-> > which has the address from the MCE.
-> 
-> The code could use a shorter version of this as a comment to state why
-> we're doing it. Because it is not obvious.
+> For that reason if for no other it would be nice if it was possible to
+> have the driver to not initialize the device and just stand there
+> handing out the data a piece at a time as it is read from /proc/vmcore.
 > 
 
-Yes, will do.
+Since cxgb4 is a network driver, it can be used to transfer the dumps
+over the network. So we must ensure the dumps get collected and
+stored, before device gets initialized to transfer dumps over
+the network.
+
+> The 2GiB number I read earlier concerns me for working in a limited
+> environment.
+> 
+
+All dumps, including the 2GB on-chip memory dump, is compressed by
+the cxgb4 driver as they are collected. The overall compressed dump
+comes out at max 32 MB.
+
+> It might even make sense to separate this into a completely separate
+> module (depended upon the main driver if it makes sense to share
+> the functionality) so that people performing crash dumps would not
+> hesitate to include the code in their initramfs images.
+> 
+> I can see splitting a device up into a portion only to be used in case
+> of a crash dump and a normal portion like we do for main memory but I
+> doubt that makes sense in practice.
+> 
+
+This is not required, especially in case of network drivers, which
+must collect underlying device dump and initialize the device to
+transfer dumps over the network.
+
+> >> > > If do this in 2nd kernel a question is driver can be loaded later than vmcore init.
+> >> > 
+> >> > Yes, drivers will add their device dumps after vmcore init.
+> >> > 
+> >> > > How to guarantee the function works if vmcore reading happens before
+> >> > > the driver is loaded?
+> >> > > 
+> >> > > Also it is possible that kdump initramfs does not contains the driver
+> >> > > module.
+> >> > > 
+> >> > > Am I missing something?
+> >> > > 
+> >> > 
+> >> > Yes, driver must be in initramfs if it wants to collect and add device
+> >> > dump to /proc/vmcore in second kernel.
+> >> 
+> >> In RH/Fedora kdump scripts we only add the things are required to
+> >> bring up the dump target, so that we can use as less memory as we can.
+> >> 
+> >> For example, if a net driver panicked, and the dump target is rootfs
+> >> which is a scsi disk, then no network related stuff will be added in
+> >> initramfs.
+> >> 
+> >> In this case the device dump info will be not collected..
+> >
+> > Correct. If the driver is not present in initramfs, it can't collect
+> > its underlying device's dump. Administrator is expected to add the 
+> > driver to initramfs, if device dump needs to be collected.
+> 
+> That makes sense, as most people won't have that need.  Still if we can
+> find something that can work automatically and safely without the need
+> for manual configuration people are more likely to use it.
+> 
 
 Thanks,
-Yazen
+Rahul
