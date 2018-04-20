@@ -1,93 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753351AbeDTQ70 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:59:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39378 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753284AbeDTQ7Y (ORCPT
+        id S1753449AbeDTRBX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:01:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54682 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753158AbeDTRBW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:59:24 -0400
-Date: Fri, 20 Apr 2018 17:59:21 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, devicetree-spec@vger.kernel.org,
-        linux-kernel@vger.kernel.org, grant.likely@arm.com,
-        frowand.list@gmail.com, mark.rutland@arm.com,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>, shawnguo@kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [RFC PATCH] dt-bindings: add a jsonschema binding example
-Message-ID: <20180420165921.GD22369@sirena.org.uk>
-References: <20180418222905.10414-1-robh@kernel.org>
+        Fri, 20 Apr 2018 13:01:22 -0400
+Subject: Re: [PATCH 1/2] mm: introduce memory.min
+To: Roman Gushchin <guro@fb.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
+References: <20180420163632.3978-1-guro@fb.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <527af98a-8d7f-42ab-9ba8-71444ef7e25f@infradead.org>
+Date: Fri, 20 Apr 2018 10:01:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IDYEmSnFhs3mNXr+"
-Content-Disposition: inline
-In-Reply-To: <20180418222905.10414-1-robh@kernel.org>
-X-Cookie: Smear the road with a runner!!
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180420163632.3978-1-guro@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04/20/18 09:36, Roman Gushchin wrote:
 
---IDYEmSnFhs3mNXr+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> ---
+>  Documentation/cgroup-v2.txt  | 20 +++++++++
+>  include/linux/memcontrol.h   | 15 ++++++-
+>  include/linux/page_counter.h | 11 ++++-
+>  mm/memcontrol.c              | 99 ++++++++++++++++++++++++++++++++++++--------
+>  mm/page_counter.c            | 63 ++++++++++++++++++++--------
+>  mm/vmscan.c                  | 19 ++++++++-
+>  6 files changed, 189 insertions(+), 38 deletions(-)
+> 
+> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
+> index 657fe1769c75..49c846020f96 100644
+> --- a/Documentation/cgroup-v2.txt
+> +++ b/Documentation/cgroup-v2.txt
+> @@ -1002,6 +1002,26 @@ PAGE_SIZE multiple when read back.
+>  	The total amount of memory currently being used by the cgroup
+>  	and its descendants.
+>  
+> +  memory.min
+> +	A read-write single value file which exists on non-root
+> +	cgroups.  The default is "0".
+> +
+> +	Hard memory protection.  If the memory usage of a cgroup
+> +	is within its effectife min boundary, the cgroup's memory
 
-On Wed, Apr 18, 2018 at 05:29:05PM -0500, Rob Herring wrote:
-> The current DT binding documentation format of freeform text is painful
-> to write, review, validate and maintain.
->=20
-> This is just an example of what a binding in the schema format looks
-> like. It's using jsonschema vocabulary in a YAML encoded document. Using
-> jsonschema gives us access to existing tooling. A YAML encoding gives us
-> something easy to edit.
+	              effective
 
-It'd be useful to see some examples of how things like including by
-reference other schema work.  It feels like something we should be able
-to use more in a schema based thing but perhaps that's not viable with
-realistic tooling.  In general this looks OK, especially with all the
-meta comments about the language stripped out.
+> +	won't be reclaimed under any conditions. If there is no
+> +	unprotected reclaimable memory available, OOM killer
+> +	is invoked.
+> +
+> +	Effective low boundary is limited by memory.min values of
+> +	all ancestor cgroups. If there is memory.mn overcommitment
 
-> +    description: |
-> +      A variable number of interrupts warrants a description of what con=
-ditions
+	                                  memory.min ? overcommit
 
-Like Stephen said the | looks odd.
+> +	(child cgroup or cgroups are requiring more protected memory,
 
-> +  interrupt-names:
-> +    # minItems must be specified here because the default would be 2
-> +    minItems: 1
-> +    items:
-> +      - const: "tx irq"
-> +      - const: "rx irq"
+	                                          drop ending ','  ^^
 
-Any way to relate this to the interrupts property in the schema
-language (eg, must have the less or equal number of elements)?
+> +	than parent will allow), then each child cgroup will get
+> +	the part of parent's protection proportional to the its
 
-> +  # Property names starting with '#' must be quoted
+	                                             to its
 
-That's awkward :/  Perhaps just by convention quote all property names
-for simplicity?
+> +	actual memory usage below memory.min.
+> +
+> +	Putting more memory than generally available under this
+> +	protection is discouraged and may lead to constant OOMs.
+> +
+>    memory.low
+>  	A read-write single value file which exists on non-root
+>  	cgroups.  The default is "0".
 
---IDYEmSnFhs3mNXr+
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlraHGgACgkQJNaLcl1U
-h9Cwcwf+OPT6H3e4dIpc3TXlGFnRUlq6lOCoKrFgghQKJGb++VRCZ5En6R3KgC9/
-GwuGMxXL8DofYs6bmSlsfHBXFfIgixvNcWeoVMtXxZI2YiXZ2560F0i4ccL0pZgc
-WkZsv2QDD+6k9to98mrX7pJG95+5mziDnbSmSFaemLSYGnPCM2JH+VsxuX1sblg+
-BFu0PbSjuht7QVqiI6BraLT/YuoSkX35Il/oL8GVkpMn0mtLXoPhd6zzhSt+qNZV
-BHc7CIacO/FejCygpY+4TlBqk7S53grNwvcxEQNeTGLT2QJZdJZOOHmzeaPqD2Ee
-V/oXJpbYRoeXiBwC3F4PfMJO7j2K7g==
-=Dqz+
------END PGP SIGNATURE-----
-
---IDYEmSnFhs3mNXr+--
+-- 
+~Randy
