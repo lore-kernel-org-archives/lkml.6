@@ -1,216 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753636AbeDTSP2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:15:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753158AbeDTSP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:15:26 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97FB9217D3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=robh@kernel.org
-X-Google-Smtp-Source: AB8JxZrp7aaksqZVGadV+WOebojJ28JiuI6hUw3GK4fpZinUN2i58K892u69uxnjkyTmcXeKuJnfmWz265tvg3kqy4I=
+        id S1753913AbeDTSTa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:19:30 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:35848 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753566AbeDTST1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 14:19:27 -0400
+X-Google-Smtp-Source: AIpwx4+1ItbuUdIszMK9OHZi/HwDgE7GI5wvM1VidldxAs2uEggnu3kykRZF75q5HmDeHfS07s1Lq+x56zfxJXERldw=
 MIME-Version: 1.0
-In-Reply-To: <152424282214.46528.2511757264045171935@swboyd.mtv.corp.google.com>
-References: <20180418222905.10414-1-robh@kernel.org> <152424282214.46528.2511757264045171935@swboyd.mtv.corp.google.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 20 Apr 2018 13:15:04 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+1G61+E0wtVEkzann3Z=2Cr=2PkbDJ_OuaA5GysWZsXQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+1G61+E0wtVEkzann3Z=2Cr=2PkbDJ_OuaA5GysWZsXQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] dt-bindings: add a jsonschema binding example
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree-spec@vger.kernel.org, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Grant Likely <grant.likely@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jonathan Cameron <jic23@kernel.org>
+References: <CABPqkBS6MuO6Twtq=_+TDV=RNy0_2vRWf=LVCk6wk0tPwNSTog@mail.gmail.com>
+ <20180417062010.GA2052@krava> <alpine.DEB.2.21.1804181109100.1587@macbook-air>
+ <20180420083607.GG4064@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1804201015250.22578@macbook-air>
+ <alpine.DEB.2.21.1804201247050.28907@macbook-air>
+In-Reply-To: <alpine.DEB.2.21.1804201247050.28907@macbook-air>
+From: Stephane Eranian <eranian@google.com>
+Date: Fri, 20 Apr 2018 18:19:13 +0000
+Message-ID: <CABPqkBSA8-kvMtiPfWZ6bJCqL9TSJP=d3mLxd4MNOQyd1Kd-rg@mail.gmail.com>
+Subject: Re: [RFC] perf/core: what is exclude_idle supposed to do
+To: Vince Weaver <vincent.weaver@maine.edu>
+Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, mingo@elte.hu,
+        Andi Kleen <ak@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 11:47 AM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Rob Herring (2018-04-18 15:29:05)
->> diff --git a/Documentation/devicetree/bindings/example-schema.yaml b/Documentation/devicetree/bindings/example-schema.yaml
->> new file mode 100644
->> index 000000000000..fe0a3bd1668e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/example-schema.yaml
->> @@ -0,0 +1,149 @@
->> +# SPDX-License-Identifier: BSD-2-Clause
->> +# Copyright 2018 Linaro Ltd.
->> +%YAML 1.2
->> +---
->> +# All the top-level keys are standard json-schema keywords except for
->> +# 'maintainers' and 'select'
->> +
->> +# $id is a unique idenifier based on the filename
->> +$id: "http://devicetree.org/schemas/example-schema.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +# Only 1 version supported for now
->> +version: 1
->> +
->> +title: An example schema annotated with jsonschema details
->> +
->> +maintainers:
->> +  - Rob Herring <robh@kernel.org>
->> +
->> +description: |
->> +  A more detailed multi-line description of the binding.
->> +
->> +  Details about the hardware device and any links to datasheets can go here.
->> +
->> +  The end of the description is marked by indentation less than the first line
->> +  in the description.
->> +
->> +select: false
->> +  # 'select' is a schema applied to a DT node to determine if this binding
->> +  # schema should be applied to the node. It is optional and by default the
->> +  # possible compatible strings are extracted and used to match.
->
-> Can we get a concrete example here?
+On Fri, Apr 20, 2018 at 9:51 AM Vince Weaver <vincent.weaver@maine.edu>
+wrote:
 
-select: true
+> On Fri, 20 Apr 2018, Vince Weaver wrote:
 
-:) Which is apply to every node.
+> > > AFAICT it works on Power and possibly ARM.
+> >
+> > at least some ARMs are a bit more honest about it than x86
+> >
+> > ivybridge:
+> >       Performance counter stats for '/bin/ls':
+> >       1,368,162      instructions
+> >       1,368,162      instructions:I
+> >
+> > pi2/ARM cortex-A7
+> >       Performance counter stats for '/bin/ls':
+> >       1,910,083      instructions
+> >       <not supported>      instructions:I
+> >
+> > I'd fire up my Power8 machine to see but not sure it's worth the hassle
+> > and/or having to get out the ear protection.
 
-A better one is from the memory node schema ('$nodename' gets added :
+> I did power up the Power8 machine in the end:
 
-select:
-  required: ["$nodename"]
-  properties:
-    $nodename:
-      oneOf:
-        - pattern: "^memory@[0-9a-f]*"
-        - const: "memory" # 'memory' only allowed for selecting
+> power8:
+>          perf stat -e cycles,cycles:I sleep 5
+>          Performance counter stats for 'sleep 5':
+>          14,271,273      cycles
+>          14,271,273      cycles:I
 
+> ???
 
-I expect the vast majority of device bindings will not use select at
-all and rely on compatible string matching.
+> But then if I try again on power8
 
->> +
->> +properties:
-> [...]
->> +
->> +  interrupts:
->> +    # Either 1 or 2 interrupts can be present
->> +    minItems: 1
->> +    maxItems: 2
->> +    items:
->> +      - description: tx or combined interrupt
->> +      - description: rx interrupt
->> +
->> +    description: |
->
-> The '|' is needed to make yaml happy?
+>          perf stat -a -e cycles,cycles:I sleep 5
+>           Performance counter stats for 'system wide':
+>          1,238,772,322,327      cycles
+>          1,238,674,771,713      cycles:I
 
-Yes, this is simply how you do literal text blocks in yaml.
+> there is a difference.
 
-We don't really need for this one really, but for the top-level
-'description' we do. The long term intent is 'description' would be
-written in sphinx/rst and can be extracted into the DT spec (for
-common bindings). Grant has experimented with that some.
+> But then on ivybridge
 
->> +      A variable number of interrupts warrants a description of what conditions
->> +      affect the number of interrupts. Otherwise, descriptions on standard
->> +      properties are not necessary.
->> +
->> +  interrupt-names:
->> +    # minItems must be specified here because the default would be 2
->> +    minItems: 1
->> +    items:
->> +      - const: "tx irq"
->> +      - const: "rx irq"
->> +
->> +  # Property names starting with '#' must be quoted
->> +  '#interrupt-cells':
->> +    # A simple case where the value must always be '2'.
->> +    # The core schema handles that this must be a single integer.
->> +    const: 2
->> +
->> +  interrupt-controller: {}
->
-> Does '{}' mean nothing to see here?
+>          perf stat -a -e cycles,cycles:I sleep 5
+>          Performance counter stats for 'system wide':
+>          589,598,104      cycles
+>          589,537,190      cycles:I
 
-Yes. It's just an empty schema that's always valid.
+This may be noise.
 
->> +    # The core checks this is a boolean, so just have to list it here to be
->> +    # valid for this binding.
->> +
->> +  clock-frequency:
->> +    # The type is set in the core schema. Per device schema only need to set
->> +    # constraints on the possible values.
->> +    minimum: 100
->> +    maximum: 400000
->> +    # The value that should be used if the property is not present
->> +    default: 200
->> +
->
-> The 'default' field is neat. I look forward to the compiler using the
-> schema to insert defaults into the dtb if the properties aren't present
-> in the input file.
+The way the flag is named leads me to believe its goal is to not count when
+executing in the context of the idle task (pid 0 on each CPU).
+However, it does not seem to be implemented that way. If you were to
+implement this, then in system wide mode you'd have to check
+the incoming task on ctxsw, very much like we do in cgroup monitoring. So
+it would not be totally free. One can argue, in sampling mode
+you can eliminate the samples coming from PID=0 in the tool. But there
+would be nothing to cover counting mode.
 
-That wasn't really my intention, but it's what the OS should use if
-property is not present. But at least for required properties, we
-could certainly do as you suggest.
-
->> +  foo-gpios:
->> +    maxItems: 1
->> +    description: A connection of the 'foo' gpio line.
->> +
->> +  vendor,int-property:
->> +    description: Vendor specific properties must have a description
->> +    type: integer # A type is also required
->> +    enum: [2, 4, 6, 8, 10]
->> +
->> +  vendor,bool-property:
->> +    description: Vendor specific properties must have a description
->> +    type: boolean
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - interrupt-controller
->
-> Can the required or optional parts go under each property instead of
-> having a different section?
-
-No, because then it is not json-schema language.
-
-> Or does that make the schema parser
-> difficult to implement?
-
-Yes, because then we have to implement a schema parser.
-
-> It may also make sense to negate this and
-> specify only the optional properties, or to require both optional and
-> required lists to make things more explicit at the cost of some
-> verbosity.
->
->> +
->> +examples:
->> +  - |
->> +    /{
->
-> Is the first slash required here?
-
-No, just leftover from being the root node in the example.
+Interestingly, there is also code in perf tool to exclude known idle
+routines from reporting. But this is targeted to only some routines that the
+idle task may end up executing. so it is not quite the same.
 
 
-Thanks for taking a look.
+> So maybe exclude_idle does do something on x86?  Or am I completely
+> misunderstanding what the flag is supposed to be indicating?
 
->> +          compatible = "vendor,soc4-ip", "vendor,soc1-ip";
->> +          reg = <0x1000 0x80>,
->> +                <0x3000 0x80>;
->> +          reg-names = "core", "aux";
->> +          interrupts = <10>;
->> +          interrupt-controller;
->> +    };
+> Vince
