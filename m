@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754490AbeDTJow (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:44:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41252 "EHLO
+        id S1754516AbeDTJoy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 05:44:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41257 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754440AbeDTJos (ORCPT
+        with ESMTP id S1754476AbeDTJow (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:44:48 -0400
+        Fri, 20 Apr 2018 05:44:52 -0400
 From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 To: mjg59@srcf.ucam.org, pali.rohar@gmail.com, dvhart@infradead.org,
         andy@infradead.org, mario.limonciello@dell.com, tiwai@suse.com
 Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org,
         Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH v4 2/3] platform/x86: dell-*: Add interface for switchable graphics status query
-Date: Fri, 20 Apr 2018 17:44:31 +0800
-Message-Id: <20180420094432.13133-2-kai.heng.feng@canonical.com>
+Subject: [PATCH v4 3/3] ALSA: hda: Disabled unused audio controller for Dell platforms with Switchable Graphics
+Date: Fri, 20 Apr 2018 17:44:32 +0800
+Message-Id: <20180420094432.13133-3-kai.heng.feng@canonical.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180420094432.13133-1-kai.heng.feng@canonical.com>
 References: <20180420094432.13133-1-kai.heng.feng@canonical.com>
@@ -23,12 +23,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some Dell platforms, there's a BIOS option "Enable Switchable
-Graphics". This information is useful if we want to do different things
-based on this value, e.g. disable unused audio controller that comes
-with the discrete graphics.
+Some Dell platforms (Preicsion 7510/7710/7520/7720) have a BIOS option
+"Switchable Graphics" (SG).
 
-Cc: Mario Limonciello <mario.limonciello@dell.com>
+When SG is enabled, we have:
+00:02.0 VGA compatible controller: Intel Corporation Device 591b (rev 04)
+00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
+01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.  [AMD/ATI] Ellesmere [Polaris10]
+01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere [Radeon RX 580]
+
+The Intel Audio outputs all the sound, including HDMI audio. The audio
+controller comes with AMD graphics doesn't get used.
+
+When SG is disabled, we have:
+00:1f.3 Audio device: Intel Corporation CM238 HD Audio Controller (rev 31)
+01:00.0 VGA compatible controller: Advanced Micro Devices, Inc.  [AMD/ATI] Ellesmere [Polaris10]
+01:00.1 Audio device: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere [Radeon RX 580]
+
+Now it's a typical discrete-only system. HDMI audio comes from AMD audio
+controller, others from Intel audio controller.
+
+When SG is enabled, the unused AMD audio contoller still exposes its
+sysfs, so userspace still opens the control file and stream. If
+userspace tries to output sound through the stream, it hangs the system.
+
+Since the discrete audio controller isn't useful when SG is enabled, we
+should just disable the device.
+
 Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
 v4: Change the commit message to clarify there's no more runtime pm
@@ -41,76 +62,76 @@ v3: Simplify dell_switchable_gfx_is_enabled() by returning bool instead
 
 v2: Mario suggested to squash the HDA part into the same series.
 
- drivers/platform/x86/dell-laptop.c      | 17 +++++++++++++++++
- drivers/platform/x86/dell-smbios-base.c |  2 ++
- drivers/platform/x86/dell-smbios.h      |  2 ++
- include/linux/dell-common.h             |  1 +
- 4 files changed, 22 insertions(+)
+ sound/pci/hda/hda_intel.c | 43 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell-laptop.c
-index 8ba820e6c3d0..033a27b190cc 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -2116,6 +2116,23 @@ int dell_micmute_led_set(int state)
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index 7a111a1b5836..3981193c8d29 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -49,6 +49,8 @@
+ #include <linux/clocksource.h>
+ #include <linux/time.h>
+ #include <linux/completion.h>
++#include <linux/dell-common.h>
++#include <linux/dmi.h>
+ 
+ #ifdef CONFIG_X86
+ /* for snoop control */
+@@ -1627,6 +1629,42 @@ static void check_msi(struct azx *chip)
+ 	}
  }
- EXPORT_SYMBOL_GPL(dell_micmute_led_set);
  
-+bool dell_switchable_gfx_is_enabled(void)
++#if IS_ENABLED(CONFIG_DELL_LAPTOP)
++static bool check_dell_switchable_gfx(struct pci_dev *pdev)
 +{
-+	struct calling_interface_buffer buffer;
-+	struct calling_interface_token *token;
++	bool (*dell_switchable_gfx_is_enabled_func)(void);
++	bool enabled;
 +
-+	token = dell_smbios_find_token(SWITCHABLE_GRAPHICS_ENABLE);
-+	if (!token)
++	/* Thunderbolt devices won't be switchable */
++	if (pci_is_thunderbolt_attached(pdev))
 +		return false;
 +
-+	dell_fill_request(&buffer, token->location, 0, 0, 0);
-+	if (dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD))
++	/* Only check for Dell laptops and AIOs */
++	if (!dmi_find_device(DMI_DEV_TYPE_OEM_STRING, "Dell System", NULL) ||
++	    !(dmi_match(DMI_CHASSIS_TYPE, "10") ||
++	      dmi_match(DMI_CHASSIS_TYPE, "13")) ||
++	    !(pdev->vendor == PCI_VENDOR_ID_ATI ||
++	      pdev->vendor == PCI_VENDOR_ID_NVIDIA))
 +		return false;
 +
-+	return !!buffer.output[1];
++	dell_switchable_gfx_is_enabled_func =
++		symbol_request(dell_switchable_gfx_is_enabled);
++	if (!dell_switchable_gfx_is_enabled_func)
++		return false;
++
++	enabled = dell_switchable_gfx_is_enabled_func();
++
++	symbol_put(dell_switchable_gfx_is_enabled);
++
++	return enabled;
 +}
-+EXPORT_SYMBOL_GPL(dell_switchable_gfx_is_enabled);
++#else
++static bool check_dell_switchable_gfx(struct pci_dev *pdev)
++{
++	return false;
++}
++#endif
 +
- static int __init dell_init(void)
+ /* check the snoop mode availability */
+ static void azx_check_snoop_available(struct azx *chip)
  {
- 	struct calling_interface_token *token;
-diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
-index 33fb2a20458a..881ce42f0ca7 100644
---- a/drivers/platform/x86/dell-smbios-base.c
-+++ b/drivers/platform/x86/dell-smbios-base.c
-@@ -86,6 +86,8 @@ struct token_range {
- static struct token_range token_whitelist[] = {
- 	/* used by userspace: fwupdate */
- 	{CAP_SYS_ADMIN,	CAPSULE_EN_TOKEN,	CAPSULE_DIS_TOKEN},
-+	/* can indicate to userspace Switchable Graphics enable status */
-+	{CAP_SYS_ADMIN,	SWITCHABLE_GRAPHICS_ENABLE,	SWITCHABLE_GRAPHICS_DISABLE},
- 	/* can indicate to userspace that WMI is needed */
- 	{0x0000,	WSMT_EN_TOKEN,		WSMT_DIS_TOKEN}
- };
-diff --git a/drivers/platform/x86/dell-smbios.h b/drivers/platform/x86/dell-smbios.h
-index d8adaf959740..7863e6a7cff8 100644
---- a/drivers/platform/x86/dell-smbios.h
-+++ b/drivers/platform/x86/dell-smbios.h
-@@ -37,6 +37,8 @@
- #define KBD_LED_AUTO_100_TOKEN	0x02F6
- #define GLOBAL_MIC_MUTE_ENABLE	0x0364
- #define GLOBAL_MIC_MUTE_DISABLE	0x0365
-+#define SWITCHABLE_GRAPHICS_ENABLE	0x037A
-+#define SWITCHABLE_GRAPHICS_DISABLE	0x037B
+@@ -1709,6 +1747,11 @@ static int azx_create(struct snd_card *card, struct pci_dev *pci,
+ 	if (err < 0)
+ 		return err;
  
- struct notifier_block;
- 
-diff --git a/include/linux/dell-common.h b/include/linux/dell-common.h
-index 37e4b614dd74..1a90bc9a3bea 100644
---- a/include/linux/dell-common.h
-+++ b/include/linux/dell-common.h
-@@ -3,5 +3,6 @@
- #define __DELL_COMMON_H__
- 
- int dell_micmute_led_set(int on);
-+bool dell_switchable_gfx_is_enabled(void);
- 
- #endif
++	if (check_dell_switchable_gfx(pci)) {
++		pci_disable_device(pci);
++		return -ENODEV;
++	}
++
+ 	hda = kzalloc(sizeof(*hda), GFP_KERNEL);
+ 	if (!hda) {
+ 		pci_disable_device(pci);
 -- 
 2.17.0
