@@ -1,90 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754610AbeDTKV4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:21:56 -0400
-Received: from s02.spamexperts.axc.nl ([185.182.56.112]:50791 "EHLO
-        s02.spamexperts.axc.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754398AbeDTKVy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:21:54 -0400
-From: Pascal Roeleven <dev@pascalroeleven.nl>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: linux-sunxi@googlegroups.com, Pascal Roeleven <dev@pascalroeleven.nl>
-Subject: [PATCH] ARM: dts: sun4i: Fix incorrect clocks for displays
-Date: Fri, 20 Apr 2018 12:21:12 +0200
-Message-Id: <20180420102112.2843-1-dev@pascalroeleven.nl>
-X-Mailer: git-send-email 2.14.1
-X-Originating-IP: 185.182.56.82
-X-SpamExperts-Domain: vserver22.axc.nl
-X-SpamExperts-Username: 185.182.56.82
-Authentication-Results: spamexperts.axc.nl; auth=pass smtp.auth=185.182.56.82@vserver22.axc.nl
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00205997689309)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5gug3QpvOCQpWMNMcj0zVsJ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvOyJdjcti6J0RCGni7o34pMJaNxoI+swKN4OKBxxlpUrIjI/HPNQqquPS+4u1dv03D8yT
- HgXnmMJMKigbOQhSUXL+d1rVz1NDwrOQGxk7mqtiDzCjdvuLlNprJt7sM9U2tvEm1xUk+uitP3zt
- fVUM86qADZEAq6MVvDzVG1eBiMwsxonw6auRGB+OqkfrxZvcAu63p/UbUTcmIpuXtxg/CxlyFZQN
- yGR1xdWr/EMlluN/HaaU/Zb275qB1xqcfpxQM78iXoKuit7KYsvfORRN32/uqqHf0YlM0FoFl5SM
- CrNVm5UrAVUJXWCOkjmLx5rfPZgVK/yuYE/krsmCL6uU3MJd3FLLN5JZzRmnU7SUHT2Pg8CBO1Sn
- vm6qXHQp7O9kdXzJqywiCyRpWLvaQP8TpD1s24tFNcrW2H3oHk7M+t/IGFvlHOQsi9fJrQH2HB7K
- cn7E9n664KB+xMpIjboCH5KLZs4XEHfQdJxMWQNlIJHit1AzVHmN/1Ca6vYbegKN9pDtMXpd47Jk
- uyvi9F/b5Xr+q263SxhPVtF/V2M9L7dcNvokIFGx07bhuY7QrNII/xIn+RMmMo9n/zJo//hfCVlk
- AdhK23InA2zzja5I1riDJBcOl1Sca1tCLiymrRRXBKDkaM024bykcyHR7I4FbmnLRaO3oh2Y+QPh
- zq1ed4hKPsarl5dnGXsBogEFWhbvijo/WtzAwxKxmN+PCLjJS1n9BQ7dDQWLiI0sLYm4yP/7OMye
- V7249X2e1GQHGQCkca9WJmbhekdrgcJsDlHBdahrSlHVtLHaZkFpoXAuc0NSszzIs5JwgEfDLX6H
- GowTU2CijbR5gOtRiEFrJGnSGxi96t0jSpXk/FZ1fwcf7/prCnx4FGUWiONpnHe100SbOuHRfOND
- F4cVqm7lmX5VA+Pwnfs6UYm2Ai3DKHJBJpSzRMpIF9IBzdGcYCSXOfSYlSMSQqwehtcVwrU/hgPN
- NmRy2DNwOgV373pfDhBQ21OdRS1J8Q9o9wsNBuY1VdC8WZCMICylBBeA9ExrvE2k+wP4j3vl9ilE
- NAJdELfMPSIKfhWFL18GAOeh/x4RI75Pxakgsnq2YdHMNQhGOMdLA4kBXtD10+3+aA6m3yQ23IEc
- XNM8K+LjoSSEl2/JdfLG6TwbaO2SDHRS+6qA2mIAaxiySMNG8mWJheziSx58QXxt
-X-Report-Abuse-To: spam@s01.spamexperts.axc.nl
+        id S1754623AbeDTKXy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:23:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:47582 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754321AbeDTKXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 06:23:48 -0400
+Subject: Re: [PATCH 01/22] dma-debug: move initialization to common code
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
+        linux-c6x-dev@linux-c6x.org, linux-parisc@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org,
+        openrisc@lists.librecores.org, Greentime Hu <green.hu@gmail.com>,
+        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180420080313.18796-1-hch@lst.de>
+ <20180420080313.18796-2-hch@lst.de>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <294a1469-01d6-10fb-5de1-b1d4513a066c@arm.com>
+Date: Fri, 20 Apr 2018 11:23:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180420080313.18796-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some displays on SUN4i devices wouldn't properly stay on unless 'clk_ignore_unused' is used.
+Hi Christoph,
 
-Change the duplicate clocks to the probably intended ones.
+Nice cleanup! Looks good overall, just a couple of nits.
 
-Signed-off-by: Pascal Roeleven <dev@pascalroeleven.nl>
----
- arch/arm/boot/dts/sun4i-a10.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On 20/04/18 09:02, Christoph Hellwig wrote:
+[...]
+> diff --git a/lib/dma-debug.c b/lib/dma-debug.c
+> index 7f5cdc1e6b29..712a897174e4 100644
+> --- a/lib/dma-debug.c
+> +++ b/lib/dma-debug.c
+> @@ -41,6 +41,11 @@
+>   #define HASH_FN_SHIFT   13
+>   #define HASH_FN_MASK    (HASH_SIZE - 1)
+>   
+> +/* allow architectures to override this if absolutely required */
+> +#ifndef PREALLOC_DMA_DEBUG_ENTRIES
+> +#define PREALLOC_DMA_DEBUG_ENTRIES (1 << 16)
+> +#endif
+> +
+>   enum {
+>   	dma_debug_single,
+>   	dma_debug_page,
+> @@ -1004,18 +1009,16 @@ void dma_debug_add_bus(struct bus_type *bus)
+>   	bus_register_notifier(bus, nb);
+>   }
+>   
+> -/*
+> - * Let the architectures decide how many entries should be preallocated.
+> - */
+> -void dma_debug_init(u32 num_entries)
+> +static int dma_debug_init(void)
+>   {
+> +	u32 num_entries;
 
-diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-index 77e8436b..3a1c6b45 100644
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -76,7 +76,7 @@
- 			allwinner,pipeline = "de_fe0-de_be0-lcd0-hdmi";
- 			clocks = <&ccu CLK_AHB_LCD0>, <&ccu CLK_AHB_HDMI0>,
- 				 <&ccu CLK_AHB_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
--				 <&ccu CLK_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
-+				 <&ccu CLK_DE_BE0>, <&ccu CLK_DE_FE0>,
- 				 <&ccu CLK_TCON0_CH1>, <&ccu CLK_HDMI>,
- 				 <&ccu CLK_DRAM_DE_FE0>, <&ccu CLK_DRAM_DE_BE0>;
- 			status = "disabled";
-@@ -88,7 +88,7 @@
- 			allwinner,pipeline = "de_fe0-de_be0-lcd0";
- 			clocks = <&ccu CLK_AHB_LCD0>, <&ccu CLK_AHB_DE_BE0>,
- 				 <&ccu CLK_AHB_DE_FE0>, <&ccu CLK_DE_BE0>,
--				 <&ccu CLK_AHB_DE_FE0>, <&ccu CLK_TCON0_CH0>,
-+				 <&ccu CLK_DE_FE0>, <&ccu CLK_TCON0_CH0>,
- 				 <&ccu CLK_DRAM_DE_FE0>, <&ccu CLK_DRAM_DE_BE0>;
- 			status = "disabled";
- 		};
-@@ -99,7 +99,7 @@
- 			allwinner,pipeline = "de_fe0-de_be0-lcd0-tve0";
- 			clocks = <&ccu CLK_AHB_TVE0>, <&ccu CLK_AHB_LCD0>,
- 				 <&ccu CLK_AHB_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
--				 <&ccu CLK_DE_BE0>, <&ccu CLK_AHB_DE_FE0>,
-+				 <&ccu CLK_DE_BE0>, <&ccu CLK_DE_FE0>,
- 				 <&ccu CLK_TCON0_CH1>, <&ccu CLK_DRAM_TVE0>,
- 				 <&ccu CLK_DRAM_DE_FE0>, <&ccu CLK_DRAM_DE_BE0>;
- 			status = "disabled";
--- 
-2.14.1
+Maybe initialise it to PREALLOC_DMA_DEBUG_ENTRIES?
+
+>   	int i;
+>   
+>   	/* Do not use dma_debug_initialized here, since we really want to be
+>   	 * called to set dma_debug_initialized
+>   	 */
+>   	if (global_disable)
+> -		return;
+> +		return 0;
+>   
+>   	for (i = 0; i < HASH_SIZE; ++i) {
+>   		INIT_LIST_HEAD(&dma_entry_hash[i].list);
+> @@ -1026,17 +1029,19 @@ void dma_debug_init(u32 num_entries)
+>   		pr_err("DMA-API: error creating debugfs entries - disabling\n");
+>   		global_disable = true;
+>   
+> -		return;
+> +		return 0;
+>   	}
+>   
+>   	if (req_entries)
+>   		num_entries = req_entries;
+> +	else
+> +		num_entries = PREALLOC_DMA_DEBUG_ENTRIES;
+>   
+>   	if (prealloc_memory(num_entries) != 0) {
+>   		pr_err("DMA-API: debugging out of memory error - disabled\n");
+>   		global_disable = true;
+>   
+> -		return;
+> +		return 0;
+>   	}
+>   
+>   	nr_total_entries = num_free_entries;
+> @@ -1044,7 +1049,9 @@ void dma_debug_init(u32 num_entries)
+>   	dma_debug_initialized = true;
+>   
+>   	pr_info("DMA-API: debugging enabled by kernel config\n");
+> +	return 0;
+>   }
+> +core_initcall(dma_debug_init);
+
+I think it's worth noting that for most users this now happens much 
+earlier than before. In general that's probably good (e.g. on arm64 it 
+should prevent false-positives from the Arm SMMU drivers under ACPI), 
+and I can't imagine it's high-risk, but it is a behaviour change.
+
+Robin.
+
+>   
+>   static __init int dma_debug_cmdline(char *str)
+>   {
+> 
