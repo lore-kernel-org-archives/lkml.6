@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1524235628; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1524235626; cv=none;
         d=google.com; s=arc-20160816;
-        b=uV2gbWGL+HIu9yd2YSKiPLubxujORuiHHpWO3DuywC5tSRJ6ZxK/VF9qTnFoXrF3FE
-         vV2i01cZqkOzavaGwUwr1T8hzipB5FQwAUbXOxSfoDrIe7ILvfGxDfcehYDaikS24DE7
-         zX2LR+fdKhjKSxMKsI2scImSsE2KDg/yfxp9YBhAmpBxFI7DLAfyPy7mfdw96U9B40mE
-         hzXJ6g3Ea0xhYnuhWJPAJFJGzIV/yp4bBiDqt6Lr9/E10IgPpzuQzVkb6/IVPaoUrEqc
-         WaYcErnGyBEI5lpJOFmuCF6Hldbk4BLnAFJmIJr9REkgET6a6jMYYh4YEUyEI191c35Q
-         7mbg==
+        b=yTwdT/fCiTKGweeehrK0xUvSPVdu3GnTULjaSfzZJL5o9mRkSPwIBDxucSFpBteCHk
+         uCYM4ksLykxZMIEF1UI3nSJJ3R6bZGOPoLWs53/jJ7PoA4dQL5Xok68vi9md19xZqkj3
+         aDGY2En3SC6l6uMHprXsDELO1GiCr9FJ9t2PxGu7MNwp1YfXk4BGFgjuZEJ47wnWGjIV
+         BjzkRBwNyzNbw87hqw3SxxbgsFHKAu3SwkjUFcXNO2RGyd88bxeYSK7puf62hz9JDHqU
+         uaUro2mE7mMSaCCAgZjq0+4v6jyCj8teL7ZSEx+krNF0fsz2HMp130DZhB4ae+u4UIhW
+         Vscg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=PLGai3QDUPqCGJ1KlHeKqpQ2ua2JrjDqw97J4/zXzP4=;
-        b=nPRnGHG4GHQj0zVsuQuFhSdoy/2pFY8aDDqXo3sYR3wjjNuaJ2AGbf7Kvb0e7zEm36
-         0kGUUxXQwbpQ8WYOA+1edcHksNGJPIr3/j5QzWsUnG2SsO2iLmc5XcxxVQySDp02+48M
-         xloJ7y9iF5Rm8i3MtLgQzT1SAhh7jEeIqpUz8kcKMKeiWlXKddqJvMJwW6n4KY6SmMtK
-         56zXk1HoJgkS2xQwXg39F+HhB0DuBxwi7Xg90hmoDobp/CI6uFLAPYJ5KlTUaPI0okYi
-         3XQ3rCy0ORSx0iUFJQ6d5eNe47+A+59Xbkk6xsxu4KdXTbygEDlGXhvNV8dPWrtziElI
-         Ym6g==
+        bh=1KNZxo9pgNSgjJXWjbJLsdoYc3okiM61PxCazqNMVXI=;
+        b=ahH8T+z7De4raj+fygmbn605gINrm0wOQrrT3mEr24iy/+5M8S2E36WZxJkX45OGll
+         +EiNe1//UT0CypJT/grwWs2RaaYi9ehzhUD1Hyvl90f3VcHgiekCngnVmFstGPQOgAcR
+         evk+yoLSFqfFAfEgDGbWk9xDXgkA9wMrEAfXm9da1N4hJ1z+69ycFUBaA6myEanpgv1o
+         vUir7qeVWFeEu/4P/Fz9/MRVYeyS8pdSHfQEjIk86szkxu3j6juMFDCciCi6ZFJ9TotI
+         /NhWvDTm7od9YstH/zQ8HedXBjhYkWZCwsRLG0J9gH6sObKITtNtO8ZUFqQX3FjZTymT
+         QHlw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=DPQgA+jH;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Zv9X/1YY;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=DPQgA+jH;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=Zv9X/1YY;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AIpwx4/fHSXE61OAZLy3b3ZXypHWfop6wb21e4FDzU+YpiZYQwYxo1ofAmhZpJg+F5mYvVLnKqIICw==
+X-Google-Smtp-Source: AIpwx4+pFektwrvdIc/Npn2EBpymxa3apSPR65WGNs/plsYpcFVZwlXKDQ0O/7MhMSOB78aSS+QALA==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Alexander Potapenko <glider@google.com>,
@@ -85,61 +85,121 @@ Cc: Kostya Serebryany <kcc@google.com>,
 	Kees Cook <keescook@google.com>,
 	Jann Horn <jannh@google.com>,
 	Mark Brand <markbrand@google.com>
-Subject: [RFC PATCH v3 05/15] khwasan, arm64: untag virt address in __kimg_to_phys
-Date: Fri, 20 Apr 2018 16:46:43 +0200
-Message-Id: <6f8133fa9e0c4adb15bb36a540cd7f923d000f3c.1524235387.git.andreyknvl@google.com>
+Subject: [RFC PATCH v3 04/15] khwasan: initialize shadow to 0xff
+Date: Fri, 20 Apr 2018 16:46:42 +0200
+Message-Id: <cafdff6e4a796ba4e1aeebbc0e6b65f2145407d3.1524235387.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 In-Reply-To: <cover.1524235387.git.andreyknvl@google.com>
 References: <cover.1524235387.git.andreyknvl@google.com>
 In-Reply-To: <cover.1524235387.git.andreyknvl@google.com>
 References: <cover.1524235387.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598276898526264936?=
-X-GMAIL-MSGID: =?utf-8?q?1598276898526264936?=
+X-GMAIL-THRID: =?utf-8?q?1598276896631704591?=
+X-GMAIL-MSGID: =?utf-8?q?1598276896631704591?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-__kimg_to_phys (which is used by virt_to_phys) assumes that the top byte
-of the address is 0xff, which isn't always the case with KHWASAN enabled.
-The solution is to reset the tag in __kimg_to_phys.
-
-__lm_to_phys doesn't require any fixups, as it zeroes out the top byte
-with the current implementation.
+A KHWASAN shadow memory cell contains a memory tag, that corresponds to
+the tag in the top byte of the pointer, that points to that memory. The
+native top byte value of kernel pointers is 0xff, so with KHWASAN we
+need to initialize shadow memory to 0xff. This commit does that.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/include/asm/memory.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/mm/kasan_init.c | 16 ++++++++++++++--
+ include/linux/kasan.h      |  8 ++++++++
+ mm/kasan/common.c          |  3 ++-
+ 3 files changed, 24 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index 6d084431b7f7..f206273469b5 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -92,6 +92,12 @@
- #define KASAN_THREAD_SHIFT	0
- #endif
+diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
+index dabfc1ecda3d..85b21292ee68 100644
+--- a/arch/arm64/mm/kasan_init.c
++++ b/arch/arm64/mm/kasan_init.c
+@@ -44,6 +44,15 @@ static phys_addr_t __init kasan_alloc_zeroed_page(int node)
+ 	return __pa(p);
+ }
+ 
++static phys_addr_t __init kasan_alloc_raw_page(int node)
++{
++	void *p = memblock_virt_alloc_try_nid_raw(PAGE_SIZE, PAGE_SIZE,
++						  __pa(MAX_DMA_ADDRESS),
++						  MEMBLOCK_ALLOC_ACCESSIBLE,
++						  node);
++	return __pa(p);
++}
++
+ static pte_t *__init kasan_pte_offset(pmd_t *pmdp, unsigned long addr, int node,
+ 				      bool early)
+ {
+@@ -89,7 +98,9 @@ static void __init kasan_pte_populate(pmd_t *pmdp, unsigned long addr,
+ 
+ 	do {
+ 		phys_addr_t page_phys = early ? __pa_symbol(kasan_zero_page)
+-					      : kasan_alloc_zeroed_page(node);
++					      : kasan_alloc_raw_page(node);
++		if (!early)
++			memset(__va(page_phys), KASAN_SHADOW_INIT, PAGE_SIZE);
+ 		next = addr + PAGE_SIZE;
+ 		set_pte(ptep, pfn_pte(__phys_to_pfn(page_phys), PAGE_KERNEL));
+ 	} while (ptep++, addr = next, addr != end && pte_none(READ_ONCE(*ptep)));
+@@ -139,6 +150,7 @@ asmlinkage void __init kasan_early_init(void)
+ 		KASAN_SHADOW_END - (1UL << (64 - KASAN_SHADOW_SCALE_SHIFT)));
+ 	BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_START, PGDIR_SIZE));
+ 	BUILD_BUG_ON(!IS_ALIGNED(KASAN_SHADOW_END, PGDIR_SIZE));
++
+ 	kasan_pgd_populate(KASAN_SHADOW_START, KASAN_SHADOW_END, NUMA_NO_NODE,
+ 			   true);
+ }
+@@ -235,7 +247,7 @@ void __init kasan_init(void)
+ 		set_pte(&kasan_zero_pte[i],
+ 			pfn_pte(sym_to_pfn(kasan_zero_page), PAGE_KERNEL_RO));
+ 
+-	memset(kasan_zero_page, 0, PAGE_SIZE);
++	memset(kasan_zero_page, KASAN_SHADOW_INIT, PAGE_SIZE);
+ 	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
+ 
+ 	/* At this point kasan is fully initialized. Enable error messages */
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index 6608aa9b35ac..336385baf926 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -139,6 +139,8 @@ static inline size_t kasan_metadata_size(struct kmem_cache *cache) { return 0; }
+ 
+ #ifdef CONFIG_KASAN_GENERIC
+ 
++#define KASAN_SHADOW_INIT 0
++
+ void kasan_cache_shrink(struct kmem_cache *cache);
+ void kasan_cache_shutdown(struct kmem_cache *cache);
+ 
+@@ -149,4 +151,10 @@ static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
+ 
+ #endif /* CONFIG_KASAN_GENERIC */
  
 +#ifdef CONFIG_KASAN_HW
-+#define KASAN_TAG_SHIFTED(tag)		((unsigned long)(tag) << 56)
-+#define KASAN_SET_TAG(addr, tag)	(((addr) & ~KASAN_TAG_SHIFTED(0xff)) | \
-+						KASAN_TAG_SHIFTED(tag))
-+#endif
 +
- #define MIN_THREAD_SHIFT	(14 + KASAN_THREAD_SHIFT)
- 
- /*
-@@ -225,7 +231,12 @@ static inline unsigned long kaslr_offset(void)
- #define __is_lm_address(addr)	(!!((addr) & BIT(VA_BITS - 1)))
- 
- #define __lm_to_phys(addr)	(((addr) & ~PAGE_OFFSET) + PHYS_OFFSET)
++#define KASAN_SHADOW_INIT 0xFF
 +
-+#ifdef CONFIG_KASAN_HW
-+#define __kimg_to_phys(addr)	(KASAN_SET_TAG((addr), 0xff) - kimage_voffset)
-+#else
- #define __kimg_to_phys(addr)	((addr) - kimage_voffset)
-+#endif
++#endif /* CONFIG_KASAN_HW */
++
+ #endif /* LINUX_KASAN_H */
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index ebb48415e4cf..0c1159feaf5e 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -454,11 +454,12 @@ int kasan_module_alloc(void *addr, size_t size)
  
- #define __virt_to_phys_nodebug(x) ({					\
- 	phys_addr_t __x = (phys_addr_t)(x);				\
+ 	ret = __vmalloc_node_range(shadow_size, 1, shadow_start,
+ 			shadow_start + shadow_size,
+-			GFP_KERNEL | __GFP_ZERO,
++			GFP_KERNEL,
+ 			PAGE_KERNEL, VM_NO_GUARD, NUMA_NO_NODE,
+ 			__builtin_return_address(0));
+ 
+ 	if (ret) {
++		__memset(ret, KASAN_SHADOW_INIT, shadow_size);
+ 		find_vm_area(addr)->flags |= VM_KASAN;
+ 		kmemleak_ignore(ret);
+ 		return 0;
 -- 
 2.17.0.484.g0c8726318c-goog
