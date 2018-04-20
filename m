@@ -1,111 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755147AbeDTN6Q (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:58:16 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43947 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754982AbeDTN6O (ORCPT
+        id S1755202AbeDTN6X (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:58:23 -0400
+Received: from mail-vk0-f73.google.com ([209.85.213.73]:55853 "EHLO
+        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755165AbeDTN6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:58:14 -0400
-X-Google-Smtp-Source: AIpwx4/Gxef7/iqRXxqXForteMR3wRvtb61M/pvjPJ2BXF74BZaeQMxbCRmdBnxPjD6O3x+Vc2Q58Q==
-From: Ahmed Abdelsalam <amsalam20@gmail.com>
-To: davem@davemloft.net, dlebrun@google.com, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: amsalam20@gmail.com
-Subject: [PATCH] [net] ipv6: sr: fix NULL pointer dereference in seg6_do_srh_encap()- v4 pkts
-Date: Fri, 20 Apr 2018 15:58:05 +0200
-Message-Id: <1524232685-1203-1-git-send-email-amsalam20@gmail.com>
-X-Mailer: git-send-email 2.1.4
+        Fri, 20 Apr 2018 09:58:18 -0400
+X-Google-Smtp-Source: AIpwx49LWnabJOjhYGeMqNMkVuwUteiq7KSfLqCAcihFLtiHbPQkelgJD9cERie4HaCSlowJGqGTVHx8Nw==
+MIME-Version: 1.0
+Date: Fri, 20 Apr 2018 15:57:30 +0200
+Message-Id: <20180420135730.44921-1-jannh@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+Subject: [PATCH net] tcp: don't read out-of-bounds opsize
+From: Jann Horn <jannh@google.com>
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, jannh@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of seg6 in encap mode, seg6_do_srh_encap() calls set_tun_src()
-in order to set the src addr of outer IPv6 header.
+The old code reads the "opsize" variable from out-of-bounds memory (first
+byte behind the segment) if a broken TCP segment ends directly after an
+opcode that is neither EOL nor NOP.
 
-The net_device is required for set_tun_src(). However calling ip6_dst_idev()
-on dst_entry in case of IPv4 traffic results on the following bug.
+The result of the read isn't used for anything, so the worst thing that
+could theoretically happen is a pagefault; and since the physmap is usually
+mostly contiguous, even that seems pretty unlikely.
 
-Using just dst->dev should fix this BUG.
+The following C reproducer triggers the uninitialized read - however, you
+can't actually see anything happen unless you put something like a
+pr_warn() in tcp_parse_md5sig_option() to print the opsize.
 
-[  196.242461] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-[  196.242975] PGD 800000010f076067 P4D 800000010f076067 PUD 10f060067 PMD 0
-[  196.243329] Oops: 0000 [#1] SMP PTI
-[  196.243468] Modules linked in: nfsd auth_rpcgss nfs_acl nfs lockd grace fscache sunrpc crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd input_leds glue_helper led_class pcspkr serio_raw mac_hid video autofs4 hid_generic usbhid hid e1000 i2c_piix4 ahci pata_acpi libahci
-[  196.244362] CPU: 2 PID: 1089 Comm: ping Not tainted 4.16.0+ #1
-[  196.244606] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[  196.244968] RIP: 0010:seg6_do_srh_encap+0x1ac/0x300
-[  196.245236] RSP: 0018:ffffb2ce00b23a60 EFLAGS: 00010202
-[  196.245464] RAX: 0000000000000000 RBX: ffff8c7f53eea300 RCX: 0000000000000000
-[  196.245742] RDX: 0000f10000000000 RSI: ffff8c7f52085a6c RDI: ffff8c7f41166850
-[  196.246018] RBP: ffffb2ce00b23aa8 R08: 00000000000261e0 R09: ffff8c7f41166800
-[  196.246294] R10: ffffdce5040ac780 R11: ffff8c7f41166828 R12: ffff8c7f41166808
-[  196.246570] R13: ffff8c7f52085a44 R14: ffffffffb73211c0 R15: ffff8c7e69e44200
-[  196.246846] FS:  00007fc448789700(0000) GS:ffff8c7f59d00000(0000) knlGS:0000000000000000
-[  196.247286] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  196.247526] CR2: 0000000000000000 CR3: 000000010f05a000 CR4: 00000000000406e0
-[  196.247804] Call Trace:
-[  196.247972]  seg6_do_srh+0x15b/0x1c0
-[  196.248156]  seg6_output+0x3c/0x220
-[  196.248341]  ? prandom_u32+0x14/0x20
-[  196.248526]  ? ip_idents_reserve+0x6c/0x80
-[  196.248723]  ? __ip_select_ident+0x90/0x100
-[  196.248923]  ? ip_append_data.part.50+0x6c/0xd0
-[  196.249133]  lwtunnel_output+0x44/0x70
-[  196.249328]  ip_send_skb+0x15/0x40
-[  196.249515]  raw_sendmsg+0x8c3/0xac0
-[  196.249701]  ? _copy_from_user+0x2e/0x60
-[  196.249897]  ? rw_copy_check_uvector+0x53/0x110
-[  196.250106]  ? _copy_from_user+0x2e/0x60
-[  196.250299]  ? copy_msghdr_from_user+0xce/0x140
-[  196.250508]  sock_sendmsg+0x36/0x40
-[  196.250690]  ___sys_sendmsg+0x292/0x2a0
-[  196.250881]  ? _cond_resched+0x15/0x30
-[  196.251074]  ? copy_termios+0x1e/0x70
-[  196.251261]  ? _copy_to_user+0x22/0x30
-[  196.251575]  ? tty_mode_ioctl+0x1c3/0x4e0
-[  196.251782]  ? _cond_resched+0x15/0x30
-[  196.251972]  ? mutex_lock+0xe/0x30
-[  196.252152]  ? vvar_fault+0xd2/0x110
-[  196.252337]  ? __do_fault+0x1f/0xc0
-[  196.252521]  ? __handle_mm_fault+0xc1f/0x12d0
-[  196.252727]  ? __sys_sendmsg+0x63/0xa0
-[  196.252919]  __sys_sendmsg+0x63/0xa0
-[  196.253107]  do_syscall_64+0x72/0x200
-[  196.253305]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-[  196.253530] RIP: 0033:0x7fc4480b0690
-[  196.253715] RSP: 002b:00007ffde9f252f8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-[  196.254053] RAX: ffffffffffffffda RBX: 0000000000000040 RCX: 00007fc4480b0690
-[  196.254331] RDX: 0000000000000000 RSI: 000000000060a360 RDI: 0000000000000003
-[  196.254608] RBP: 00007ffde9f253f0 R08: 00000000002d1e81 R09: 0000000000000002
-[  196.254884] R10: 00007ffde9f250c0 R11: 0000000000000246 R12: 0000000000b22070
-[  196.255205] R13: 20c49ba5e353f7cf R14: 431bde82d7b634db R15: 00007ffde9f278fe
-[  196.255484] Code: a5 0f b6 45 c0 41 88 41 28 41 0f b6 41 2c 48 c1 e0 04 49 8b 54 01 38 49 8b 44 01 30 49 89 51 20 49 89 41 18 48 8b 83 b0 00 00 00 <48> 8b 30 49 8b 86 08 0b 00 00 48 8b 40 20 48 8b 50 08 48 0b 10
-[  196.256190] RIP: seg6_do_srh_encap+0x1ac/0x300 RSP: ffffb2ce00b23a60
-[  196.256445] CR2: 0000000000000000
-[  196.256676] ---[ end trace 71af7d093603885c ]---
+====================================
+#define _GNU_SOURCE
+#include <arpa/inet.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdarg.h>
+#include <net/if.h>
+#include <linux/if.h>
+#include <linux/ip.h>
+#include <linux/tcp.h>
+#include <linux/in.h>
+#include <linux/if_tun.h>
+#include <err.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <assert.h>
 
-Fixes: 8936ef7604c11 ipv6: sr: fix NULL pointer dereference when setting encap source address
-Signed-off-by: Ahmed Abdelsalam <amsalam20@gmail.com>
+void systemf(const char *command, ...) {
+  char *full_command;
+  va_list ap;
+  va_start(ap, command);
+  if (vasprintf(&full_command, command, ap) == -1)
+    err(1, "vasprintf");
+  va_end(ap);
+  printf("systemf: <<<%s>>>\n", full_command);
+  system(full_command);
+}
+
+char *devname;
+
+int tun_alloc(char *name) {
+  int fd = open("/dev/net/tun", O_RDWR);
+  if (fd == -1)
+    err(1, "open tun dev");
+  static struct ifreq req = { .ifr_flags = IFF_TUN|IFF_NO_PI };
+  strcpy(req.ifr_name, name);
+  if (ioctl(fd, TUNSETIFF, &req))
+    err(1, "TUNSETIFF");
+  devname = req.ifr_name;
+  printf("device name: %s\n", devname);
+  return fd;
+}
+
+#define IPADDR(a,b,c,d) (((a)<<0)+((b)<<8)+((c)<<16)+((d)<<24))
+
+void sum_accumulate(unsigned int *sum, void *data, int len) {
+  assert((len&2)==0);
+  for (int i=0; i<len/2; i++) {
+    *sum += ntohs(((unsigned short *)data)[i]);
+  }
+}
+
+unsigned short sum_final(unsigned int sum) {
+  sum = (sum >> 16) + (sum & 0xffff);
+  sum = (sum >> 16) + (sum & 0xffff);
+  return htons(~sum);
+}
+
+void fix_ip_sum(struct iphdr *ip) {
+  unsigned int sum = 0;
+  sum_accumulate(&sum, ip, sizeof(*ip));
+  ip->check = sum_final(sum);
+}
+
+void fix_tcp_sum(struct iphdr *ip, struct tcphdr *tcp) {
+  unsigned int sum = 0;
+  struct {
+    unsigned int saddr;
+    unsigned int daddr;
+    unsigned char pad;
+    unsigned char proto_num;
+    unsigned short tcp_len;
+  } fakehdr = {
+    .saddr = ip->saddr,
+    .daddr = ip->daddr,
+    .proto_num = ip->protocol,
+    .tcp_len = htons(ntohs(ip->tot_len) - ip->ihl*4)
+  };
+  sum_accumulate(&sum, &fakehdr, sizeof(fakehdr));
+  sum_accumulate(&sum, tcp, tcp->doff*4);
+  tcp->check = sum_final(sum);
+}
+
+int main(void) {
+  int tun_fd = tun_alloc("inject_dev%d");
+  systemf("ip link set %s up", devname);
+  systemf("ip addr add 192.168.42.1/24 dev %s", devname);
+
+  struct {
+    struct iphdr ip;
+    struct tcphdr tcp;
+    unsigned char tcp_opts[20];
+  } __attribute__((packed)) syn_packet = {
+    .ip = {
+      .ihl = sizeof(struct iphdr)/4,
+      .version = 4,
+      .tot_len = htons(sizeof(syn_packet)),
+      .ttl = 30,
+      .protocol = IPPROTO_TCP,
+      /* FIXUP check */
+      .saddr = IPADDR(192,168,42,2),
+      .daddr = IPADDR(192,168,42,1)
+    },
+    .tcp = {
+      .source = htons(1),
+      .dest = htons(1337),
+      .seq = 0x12345678,
+      .doff = (sizeof(syn_packet.tcp)+sizeof(syn_packet.tcp_opts))/4,
+      .syn = 1,
+      .window = htons(64),
+      .check = 0 /*FIXUP*/
+    },
+    .tcp_opts = {
+      /* INVALID: trailing MD5SIG opcode after NOPs */
+      1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1,
+      1, 1, 1, 1, 19
+    }
+  };
+  fix_ip_sum(&syn_packet.ip);
+  fix_tcp_sum(&syn_packet.ip, &syn_packet.tcp);
+  while (1) {
+    int write_res = write(tun_fd, &syn_packet, sizeof(syn_packet));
+    if (write_res != sizeof(syn_packet))
+      err(1, "packet write failed");
+  }
+}
+====================================
+
+Fixes: cfb6eeb4c860 ("[TCP]: MD5 Signature Option (RFC2385) support.")
+Signed-off-by: Jann Horn <jannh@google.com>
 ---
-I tested the patch for IPv6 and IPv4 traffic 
+ net/ipv4/tcp_input.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
- net/ipv6/seg6_iptunnel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ipv6/seg6_iptunnel.c b/net/ipv6/seg6_iptunnel.c
-index f343e6f..5fe1394 100644
---- a/net/ipv6/seg6_iptunnel.c
-+++ b/net/ipv6/seg6_iptunnel.c
-@@ -136,7 +136,7 @@ int seg6_do_srh_encap(struct sk_buff *skb, struct ipv6_sr_hdr *osrh, int proto)
- 	isrh->nexthdr = proto;
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 367def6ddeda..e51c644484dc 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -3868,11 +3868,8 @@ const u8 *tcp_parse_md5sig_option(const struct tcphdr *th)
+ 	int length = (th->doff << 2) - sizeof(*th);
+ 	const u8 *ptr = (const u8 *)(th + 1);
  
- 	hdr->daddr = isrh->segments[isrh->first_segment];
--	set_tun_src(net, ip6_dst_idev(dst)->dev, &hdr->daddr, &hdr->saddr);
-+	set_tun_src(net, dst->dev, &hdr->daddr, &hdr->saddr);
+-	/* If the TCP option is too short, we can short cut */
+-	if (length < TCPOLEN_MD5SIG)
+-		return NULL;
+-
+-	while (length > 0) {
++	/* If not enough data remaining, we can short cut */
++	while (length >= TCPOLEN_MD5SIG) {
+ 		int opcode = *ptr++;
+ 		int opsize;
  
- #ifdef CONFIG_IPV6_SEG6_HMAC
- 	if (sr_has_hmac(isrh)) {
 -- 
-2.1.4
+2.17.0.484.g0c8726318c-goog
