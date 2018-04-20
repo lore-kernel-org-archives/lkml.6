@@ -1,75 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754553AbeDTJ7R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:59:17 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:41295 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754513AbeDTJ7P (ORCPT
+        id S1754485AbeDTKFJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:05:09 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:60371 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754290AbeDTKFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:59:15 -0400
-X-Google-Smtp-Source: AIpwx49HZdraxk+EK24ztU/egdx7HAdeAI8FnquaBUGEuIhk2UCQ5Q6rIuIqj0lE/6S2RQS1/GratXDYIEY0Wf6ykbU=
+        Fri, 20 Apr 2018 06:05:06 -0400
+From: Jean-Jacques Hiblot <jjhiblot@ti.com>
+To: <broonie@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <perex@perex.cz>, <tiwai@suse.com>
+CC: <dannenberg@ti.com>, <afd@ti.com>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH 2/3] ASoC: tas6424: Add support for the standby pin
+Date: Fri, 20 Apr 2018 12:04:43 +0200
+Message-ID: <1524218684-19752-3-git-send-email-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524218684-19752-1-git-send-email-jjhiblot@ti.com>
+References: <1524218684-19752-1-git-send-email-jjhiblot@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20180420083147.GC31275@infradead.org>
-References: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
- <20180418104703.GA12462@infradead.org> <20180418131314.GC3999@w540> <20180420083147.GC31275@infradead.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Apr 2018 11:59:13 +0200
-X-Google-Sender-Auth: 51nJHTbsL0rlzApckLAsSlsfgfM
-Message-ID: <CAMuHMdWwJrUgOjaAX1oUHd+KFUMuUzcH6g29zC2mJX377oAHiA@mail.gmail.com>
-Subject: Re: [PATCH] sh: mm: Fix unprotected access to struct device
-To: Christoph Hellwig <hch@infradead.org>
-Cc: jacopo mondi <jacopo@jmondi.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+The standby pin can be connected to a GPIO. In that case we have to drive
+it to the correct values for the TAS6424 to operate properly.
 
-On Fri, Apr 20, 2018 at 10:31 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> On Wed, Apr 18, 2018 at 03:13:14PM +0200, jacopo mondi wrote:
->> As long as it goes for arch/sh, the only user of dma_alloc_coherent()
->> is platform_resource_setup_memory(), and it has been fixed by this
->> patch.
->
-> Great!
->
->> Unfortunately, as Thomas pointed out, there are drivers which calls
->> into this with the wrong 'struct device' as the sh_eth one he had fixed.
->
-> Yes, we'll need fixes there.  Other DMA ops implementations also look
-> at struct device, so they generally are buggy.
->
->> I would then say that as long as it goes for the NULL case, we should be
->> fine now.
->
-> Then I'd say skil that part, please.
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+---
+ .../devicetree/bindings/sound/ti,tas6424.txt       |  1 +
+ sound/soc/codecs/tas6424.c                         | 22 ++++++++++++++++++++++
+ 2 files changed, 23 insertions(+)
 
-The major reason for keeping the NULL WARN_ON() checks is to make it
-obvious to the developer what is wrong, and fall back to the old behavior.
-
-Without the checks, the kernel will just crash during early startup,
-without a clue in the (missing) kernel output, usually leading to a
-frustrating bisection experience (if the developer is sufficiently motivated,
-at all).
-
-Hence my vote for keeping the checks.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/sound/ti,tas6424.txt b/Documentation/devicetree/bindings/sound/ti,tas6424.txt
+index bf2ff98..82c6d48 100644
+--- a/Documentation/devicetree/bindings/sound/ti,tas6424.txt
++++ b/Documentation/devicetree/bindings/sound/ti,tas6424.txt
+@@ -8,6 +8,7 @@ Required properties:
+ 	- sound-dai-cells: must be equal to 0
+ 	- disable-auto-diagnostics: disable DC auto diagnostics (faster power
+ 	  on, but less safe as shortage won't be detected)
++	- standby-gpio: GPIO used to shut the TAS6424 down.
+ 
+ Example:
+ 
+diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
+index 5cee400..926259a 100644
+--- a/sound/soc/codecs/tas6424.c
++++ b/sound/soc/codecs/tas6424.c
+@@ -16,6 +16,7 @@
+ #include <linux/slab.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/delay.h>
++#include <linux/gpio/consumer.h>
+ 
+ #include <sound/pcm.h>
+ #include <sound/pcm_params.h>
+@@ -44,6 +45,7 @@ struct tas6424_data {
+ 	unsigned int last_fault2;
+ 	unsigned int last_warn;
+ 	bool no_auto_diags;
++	struct gpio_desc *standby_gpio;
+ };
+ 
+ /*
+@@ -632,6 +634,22 @@ static int tas6424_i2c_probe(struct i2c_client *client,
+ 	tas6424->no_auto_diags = of_property_read_bool(dev->of_node,
+ 						"disable-auto-diagnostics");
+ 
++	/*
++	 * Get control of the standby pin and set it LOW to take the codec
++	 * out of the stand-by mode.
++	 * Note: The actual pin polarity is taken care of in the GPIO lib
++	 * according the polarity specified in the DTS.
++	 */
++	tas6424->standby_gpio = devm_gpiod_get_optional(dev, "standby",
++						      GPIOD_OUT_LOW);
++	if (IS_ERR(tas6424->standby_gpio)) {
++		if (PTR_ERR(tas6424->standby_gpio) == -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++		dev_info(dev, "failed to get standvby GPIO: %ld\n",
++			PTR_ERR(tas6424->standby_gpio));
++		tas6424->standby_gpio = NULL;
++	}
++
+ 	for (i = 0; i < ARRAY_SIZE(tas6424->supplies); i++)
+ 		tas6424->supplies[i].supply = tas6424_supply_names[i];
+ 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(tas6424->supplies),
+@@ -691,6 +709,10 @@ static int tas6424_i2c_remove(struct i2c_client *client)
+ 
+ 	cancel_delayed_work_sync(&tas6424->fault_check_work);
+ 
++	/* put the codec in stand-by */
++	if (tas6424->standby_gpio)
++		gpiod_set_value_cansleep(tas6424->standby_gpio, 1);
++
+ 	ret = regulator_bulk_disable(ARRAY_SIZE(tas6424->supplies),
+ 				     tas6424->supplies);
+ 	if (ret < 0) {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
