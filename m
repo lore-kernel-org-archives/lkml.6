@@ -1,196 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755202AbeDTN6X (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:58:23 -0400
-Received: from mail-vk0-f73.google.com ([209.85.213.73]:55853 "EHLO
-        mail-vk0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755165AbeDTN6S (ORCPT
+        id S1755115AbeDTN7b (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:59:31 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:55259 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754888AbeDTN72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:58:18 -0400
-X-Google-Smtp-Source: AIpwx49LWnabJOjhYGeMqNMkVuwUteiq7KSfLqCAcihFLtiHbPQkelgJD9cERie4HaCSlowJGqGTVHx8Nw==
+        Fri, 20 Apr 2018 09:59:28 -0400
+Subject: Re: [PATCH v2 06/10] media: v4l: Add definition for Allwinner's
+ MB32-tiled NV12 format
+To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+ <20180419154536.17846-2-paul.kocialkowski@bootlin.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <198e991c-1052-5bfb-f397-0e7d388b3c00@xs4all.nl>
+Date: Fri, 20 Apr 2018 15:59:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Date: Fri, 20 Apr 2018 15:57:30 +0200
-Message-Id: <20180420135730.44921-1-jannh@google.com>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
-Subject: [PATCH net] tcp: don't read out-of-bounds opsize
-From: Jann Horn <jannh@google.com>
-To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, jannh@google.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180419154536.17846-2-paul.kocialkowski@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfF7JSTUyU5LEHYW+Y+3xC+RVIGri3J0YtWg2nQdJyT/314fP6WmyojYlvK2lelPACs7X/BGqkheJ2xE1z8cmwdPgWRXdpb+2pgpntF/KPW665Pet/4eB
+ XoPMVclv2in3GpKOmQihg1/gJjie2S8e6aLG5cI5t5eDqxLQ4ITdWtY4D4OYfVEOPsBCDjoWZPfILx9LbVerikBLvWpRY9GDPWVXHDsBAKoP6nYKJQPouu0n
+ AIf69GL0/HnvmAptALa9D19++2hKh9mmzARfFjw4i/GyZY/GSvNSmQCI/p9cRtmwIWri/AmYkWGi4x06NK8j2kKfrG4BaP14B5VNRSijaVG8ZINgwPGfy5dz
+ rJF2TFyXsvBAKM8LKmGITnbl/3XvVXOsgeoDxBUd31VLZnrcPZ6z7QunOO7j1PS/y+r1+JU16n8/Bw15V0MV4lHPZoeAPYcCE7QNXjvPGtOsOMu47SsWvLbC
+ fIAtut4Ug00f+wLhx85rHDHq0sT32rKjWw0OquYm8IOCHq7AJvNzI/3mfbd+LHhVn5ITPLVi7GJNZ9VX7QqAKiupwvGnwBjZB+UrfZuUgfinCtHS+HFyTj6B
+ hEwzJss91hXqzs+5k4eIjxbL8Knw9CtJu/k4WtpDHVdnsqDtszXuokpc5cOSJSwnJohNEG4Corg3532GYbbLfpB5m4ys+ARTxkpsEzrL8t8SktiFp54WD4pa
+ wBBFz4CJbwXAG30innkQuG69qqIrBa4LTaQfU5bRRKH+KXkgFn7aIcLdXpvy6+rEomaNbf0dWbylG2oNb9aFFKXSFWffGPDVq59MP9n4hmu6iaRduYcz9WVk
+ f6bX7W5BdwiqsHvVNwC7Fjs7h1xWxNYSW8S0Ay19D4XzSkZqr5TIeut1E3c++dKmBnECBlzP116TUZn7vbhWNcZfFrZLkEhHVFI3BUHxko7rPiS0GeyvqES9
+ 19JjYWoYVhsf+ZetNGfKKaouNDQH+9nnbL9SK25a5eZ4qPVfjL19e8g1l2NpnpH7qMuETS/HEbezHiedzgl+v1JiFlhHUlAvKM9YHOin/5aXiMM+sQSmhRDR
+ 2Isuo23SMl8S6tf3XVEVRwGiH9clhLDj9WapOnQt7loOjWQiOwVpo1Zy
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The old code reads the "opsize" variable from out-of-bounds memory (first
-byte behind the segment) if a broken TCP segment ends directly after an
-opcode that is neither EOL nor NOP.
+On 04/19/18 17:45, Paul Kocialkowski wrote:
+> This introduces support for Allwinner's MB32-tiled NV12 format, where
+> each plane is divided into macroblocks of 32x32 pixels. Hence, the size
+> of each plane has to be aligned to 32 bytes. The pixels inside each
+> macroblock are coded as they would be if the macroblock was a single
+> plane, line after line.
+> 
+> The MB32-tiled NV12 format is used by the video engine on Allwinner
+> platforms: it is the default format for decoded frames (and the only one
+> available in the oldest supported platforms).
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  include/uapi/linux/videodev2.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 4b8336f7bcf0..43993a116e2b 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -669,6 +669,7 @@ struct v4l2_pix_format {
+>  #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth data 16-bit */
+>  #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Mediatek compressed block mode  */
+>  #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
+> +#define V4L2_PIX_FMT_MB32_NV12 v4l2_fourcc('M', 'N', '1', '2') /* Allwinner NV12 in 32x32 macroblocks */
+>  
+>  /* 10bit raw bayer packed, 32 bytes for every 25 pixels, last LSB 6 bits unused */
+>  #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* IPU3 packed 10-bit BGGR bayer */
+> 
 
-The result of the read isn't used for anything, so the worst thing that
-could theoretically happen is a pagefault; and since the physmap is usually
-mostly contiguous, even that seems pretty unlikely.
+Add an entry for this to v4l_fill_fmtdesc() in v4l2-ioctl.c.
 
-The following C reproducer triggers the uninitialized read - however, you
-can't actually see anything happen unless you put something like a
-pr_warn() in tcp_parse_md5sig_option() to print the opsize.
+It also needs to be documented in the spec.
 
-====================================
-#define _GNU_SOURCE
-#include <arpa/inet.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <stdarg.h>
-#include <net/if.h>
-#include <linux/if.h>
-#include <linux/ip.h>
-#include <linux/tcp.h>
-#include <linux/in.h>
-#include <linux/if_tun.h>
-#include <err.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <assert.h>
+Regards,
 
-void systemf(const char *command, ...) {
-  char *full_command;
-  va_list ap;
-  va_start(ap, command);
-  if (vasprintf(&full_command, command, ap) == -1)
-    err(1, "vasprintf");
-  va_end(ap);
-  printf("systemf: <<<%s>>>\n", full_command);
-  system(full_command);
-}
-
-char *devname;
-
-int tun_alloc(char *name) {
-  int fd = open("/dev/net/tun", O_RDWR);
-  if (fd == -1)
-    err(1, "open tun dev");
-  static struct ifreq req = { .ifr_flags = IFF_TUN|IFF_NO_PI };
-  strcpy(req.ifr_name, name);
-  if (ioctl(fd, TUNSETIFF, &req))
-    err(1, "TUNSETIFF");
-  devname = req.ifr_name;
-  printf("device name: %s\n", devname);
-  return fd;
-}
-
-#define IPADDR(a,b,c,d) (((a)<<0)+((b)<<8)+((c)<<16)+((d)<<24))
-
-void sum_accumulate(unsigned int *sum, void *data, int len) {
-  assert((len&2)==0);
-  for (int i=0; i<len/2; i++) {
-    *sum += ntohs(((unsigned short *)data)[i]);
-  }
-}
-
-unsigned short sum_final(unsigned int sum) {
-  sum = (sum >> 16) + (sum & 0xffff);
-  sum = (sum >> 16) + (sum & 0xffff);
-  return htons(~sum);
-}
-
-void fix_ip_sum(struct iphdr *ip) {
-  unsigned int sum = 0;
-  sum_accumulate(&sum, ip, sizeof(*ip));
-  ip->check = sum_final(sum);
-}
-
-void fix_tcp_sum(struct iphdr *ip, struct tcphdr *tcp) {
-  unsigned int sum = 0;
-  struct {
-    unsigned int saddr;
-    unsigned int daddr;
-    unsigned char pad;
-    unsigned char proto_num;
-    unsigned short tcp_len;
-  } fakehdr = {
-    .saddr = ip->saddr,
-    .daddr = ip->daddr,
-    .proto_num = ip->protocol,
-    .tcp_len = htons(ntohs(ip->tot_len) - ip->ihl*4)
-  };
-  sum_accumulate(&sum, &fakehdr, sizeof(fakehdr));
-  sum_accumulate(&sum, tcp, tcp->doff*4);
-  tcp->check = sum_final(sum);
-}
-
-int main(void) {
-  int tun_fd = tun_alloc("inject_dev%d");
-  systemf("ip link set %s up", devname);
-  systemf("ip addr add 192.168.42.1/24 dev %s", devname);
-
-  struct {
-    struct iphdr ip;
-    struct tcphdr tcp;
-    unsigned char tcp_opts[20];
-  } __attribute__((packed)) syn_packet = {
-    .ip = {
-      .ihl = sizeof(struct iphdr)/4,
-      .version = 4,
-      .tot_len = htons(sizeof(syn_packet)),
-      .ttl = 30,
-      .protocol = IPPROTO_TCP,
-      /* FIXUP check */
-      .saddr = IPADDR(192,168,42,2),
-      .daddr = IPADDR(192,168,42,1)
-    },
-    .tcp = {
-      .source = htons(1),
-      .dest = htons(1337),
-      .seq = 0x12345678,
-      .doff = (sizeof(syn_packet.tcp)+sizeof(syn_packet.tcp_opts))/4,
-      .syn = 1,
-      .window = htons(64),
-      .check = 0 /*FIXUP*/
-    },
-    .tcp_opts = {
-      /* INVALID: trailing MD5SIG opcode after NOPs */
-      1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1,
-      1, 1, 1, 1, 19
-    }
-  };
-  fix_ip_sum(&syn_packet.ip);
-  fix_tcp_sum(&syn_packet.ip, &syn_packet.tcp);
-  while (1) {
-    int write_res = write(tun_fd, &syn_packet, sizeof(syn_packet));
-    if (write_res != sizeof(syn_packet))
-      err(1, "packet write failed");
-  }
-}
-====================================
-
-Fixes: cfb6eeb4c860 ("[TCP]: MD5 Signature Option (RFC2385) support.")
-Signed-off-by: Jann Horn <jannh@google.com>
----
- net/ipv4/tcp_input.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 367def6ddeda..e51c644484dc 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -3868,11 +3868,8 @@ const u8 *tcp_parse_md5sig_option(const struct tcphdr *th)
- 	int length = (th->doff << 2) - sizeof(*th);
- 	const u8 *ptr = (const u8 *)(th + 1);
- 
--	/* If the TCP option is too short, we can short cut */
--	if (length < TCPOLEN_MD5SIG)
--		return NULL;
--
--	while (length > 0) {
-+	/* If not enough data remaining, we can short cut */
-+	while (length >= TCPOLEN_MD5SIG) {
- 		int opcode = *ptr++;
- 		int opsize;
- 
--- 
-2.17.0.484.g0c8726318c-goog
+	Hans
