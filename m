@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752733AbeDTVIC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 17:08:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51237 "EHLO mail.bootlin.com"
+        id S1752192AbeDTVK1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 17:10:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51311 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752308AbeDTVIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 17:08:00 -0400
+        id S1751227AbeDTVK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 17:10:26 -0400
 From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
 To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
         marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
@@ -15,8 +15,8 @@ Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
 Subject: [PATCH v7 00/11] Sunxi: Add SMP support on A83T
-Date: Fri, 20 Apr 2018 23:07:46 +0200
-Message-Id: <20180420210757.11638-1-mylene.josserand@bootlin.com>
+Date: Fri, 20 Apr 2018 23:10:11 +0200
+Message-Id: <20180420211022.11759-1-mylene.josserand@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
