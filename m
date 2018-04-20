@@ -1,83 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752695AbeDTUaS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 16:30:18 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42660 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752590AbeDTUaP (ORCPT
+        id S1752558AbeDTUaO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 16:30:14 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44281 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751903AbeDTUaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 16:30:15 -0400
-Date: Fri, 20 Apr 2018 13:31:21 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH 0/2] tools/memory-model: References updates
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1524241813-14045-1-git-send-email-andrea.parri@amarulasolutions.com>
+        Fri, 20 Apr 2018 16:30:12 -0400
+Date: Fri, 20 Apr 2018 22:30:09 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Daniel Micay <danielmicay@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>, Tony Lindgren <tony@atomide.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        pali.rohar@gmail.com, sre@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, Kevin Hilman <khilman@kernel.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, ivo.g.dimitrov.75@gmail.com,
+        Patrik Bachan <patrikbachan@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        =?utf-8?B?TWlja3Vsw6HFoQ==?= Qwertz <abcloriens@gmail.com>,
+        Clayton Craft <clayton@craftyguy.net>,
+        Martijn Braam <martijn@brixit.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [regression v4.17-rc0] Re: FORTIFY_SOURCE breaks ARM compilation
+ in -next -- was Re: ARM compile failure in Re: linux-next: Tree for Apr 4
+Message-ID: <20180420203009.GA2244@amd>
+References: <20180404195951.GJ5700@atomide.com>
+ <20180404201837.GA9710@amd>
+ <20180415173908.GA2024@amd>
+ <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
+ <20180420073402.GA9356@amd>
+ <CAGXu5j+6D3PiVc9SR4+31ZGDC2r5uWJOw8Sn3cDhXdNqBGH+hQ@mail.gmail.com>
+ <20180420191523.GA28597@amd>
+ <CA+DvKQKLpXP50vV0yoyB_w26NK5h6KdVUSWEHvHZ-8OdVvdt9w@mail.gmail.com>
+ <20180420192832.GA1870@amd>
+ <CA+DvKQ+ekrr51_JcPiGrOaHj79NxYUqLWEo97z97tSuUzcuoZg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
 Content-Disposition: inline
-In-Reply-To: <1524241813-14045-1-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18042020-0044-0000-0000-000004089D5D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008889; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000257; SDB=6.01020807; UDB=6.00520894; IPR=6.00800045;
- MB=3.00020688; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-20 20:30:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042020-0045-0000-0000-0000083AA4A6
-Message-Id: <20180420203121.GR26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804200207
+In-Reply-To: <CA+DvKQ+ekrr51_JcPiGrOaHj79NxYUqLWEo97z97tSuUzcuoZg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 06:30:11PM +0200, Andrea Parri wrote:
-> A couple of fixes to our references and comments: the first updating
-> ASPLOS information, the second adding a reference.
 
-I applied both, thank you!
+--5mCyUwZo2JvN/JJP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-							Thanx, Paul
+On Fri 2018-04-20 15:30:03, Daniel Micay wrote:
+> Well, that's not related, it's just this:
+>=20
+> #ifdef __GNUC__
+> #if (__GNUC__ =3D=3D 3 && __GNUC_MINOR__ < 3)
+> #error Your compiler is too buggy; it is known to miscompile kernels.
+> #error    Known good compilers: 3.3, 4.x
+> #endif
+> #if GCC_VERSION >=3D 40800 && GCC_VERSION < 40803
+> #error Your compiler is too buggy; it is known to miscompile kernels
+> #error and result in filesystem corruption and oopses.
+> #endif
+> #endif
 
-> Cheers,
->   Andrea
-> 
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> Cc: Luc Maranget <luc.maranget@inria.fr>
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Akira Yokosawa <akiyks@gmail.com>
-> 
-> Andrea Parri (2):
->   tools/memory-model: Update ASPLOS information
->   tools/memory-model: Add reference for 'Simplifying ARM concurrency'
-> 
->  tools/memory-model/Documentation/references.txt | 17 ++++++++++++-----
->  tools/memory-model/linux-kernel.bell            |  4 ++--
->  tools/memory-model/linux-kernel.cat             |  4 ++--
->  tools/memory-model/linux-kernel.def             |  4 ++--
->  4 files changed, 18 insertions(+), 11 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+Yeah, I know. I guess the kernel would compile if I removed those
+checks...=20
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--5mCyUwZo2JvN/JJP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlraTdEACgkQMOfwapXb+vLDtQCdG8+9dBZlXUAY6QOxIX0vk1zp
+7hYAoJ63jV69XqkJDuXwdtQhHr1du/7/
+=GcEL
+-----END PGP SIGNATURE-----
+
+--5mCyUwZo2JvN/JJP--
