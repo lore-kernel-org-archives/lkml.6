@@ -1,50 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752665AbeDTQQk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:16:40 -0400
-Received: from mail-qt0-f202.google.com ([209.85.216.202]:33703 "EHLO
-        mail-qt0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750858AbeDTQQh (ORCPT
+        id S1752826AbeDTQRQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:17:16 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45507 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752306AbeDTQRO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:16:37 -0400
-X-Google-Smtp-Source: AIpwx493AKxSQPq8bsV4FzfeX5F2Cig+5nitdIORGvFg9PSROMcQk81MneVwQQbecXSnB8eXj/k9pVKpHw==
-MIME-Version: 1.0
-Date: Fri, 20 Apr 2018 18:16:30 +0200
-Message-Id: <20180420161630.233178-1-jannh@google.com>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
-Subject: [PATCH net] bpf: sockmap remove dead check
-From: Jann Horn <jannh@google.com>
-To: ast@kernel.org, daniel@iogearbox.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, john.fastabend@gmail.com,
-        jannh@google.com
-Cc: linux-kernel@vger.kernel.org,
-        John Fastabend <john.fastabend@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 20 Apr 2018 12:17:14 -0400
+X-Google-Smtp-Source: AIpwx48hMzmHdFxKUGMP60NOe272LbLc8rRkkNFuIFtSu/lCUK/zK0KZ4aPB8kAJKHNRh1ZqZBVJ8g==
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>
+Subject: [PATCH] MAINTAINERS: Update e-mail address for Andrea Parri
+Date: Fri, 20 Apr 2018 18:16:53 +0200
+Message-Id: <1524241013-13671-1-git-send-email-andrea.parri@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove dead code that bails on `attr->value_size > KMALLOC_MAX_SIZE` - the
-previous check already bails on `attr->value_size != 4`.
+I moved to Amarula Solutions; switch to work e-mail address.
 
-Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+Cc: Luc Maranget <luc.maranget@inria.fr>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Akira Yokosawa <akiyks@gmail.com>
 ---
- kernel/bpf/sockmap.c | 3 ---
- 1 file changed, 3 deletions(-)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/sockmap.c b/kernel/bpf/sockmap.c
-index 8dd9210d7db7..a3b21385e947 100644
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -1442,9 +1442,6 @@ static struct bpf_map *sock_map_alloc(union bpf_attr *attr)
- 	    attr->value_size != 4 || attr->map_flags & ~SOCK_CREATE_FLAG_MASK)
- 		return ERR_PTR(-EINVAL);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 27ffa56e75500..2544827564f82 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8153,7 +8153,7 @@ F:	drivers/misc/lkdtm*
  
--	if (attr->value_size > KMALLOC_MAX_SIZE)
--		return ERR_PTR(-E2BIG);
--
- 	err = bpf_tcp_ulp_register();
- 	if (err && err != -EEXIST)
- 		return ERR_PTR(err);
+ LINUX KERNEL MEMORY CONSISTENCY MODEL (LKMM)
+ M:	Alan Stern <stern@rowland.harvard.edu>
+-M:	Andrea Parri <parri.andrea@gmail.com>
++M:	Andrea Parri <andrea.parri@amarulasolutions.com>
+ M:	Will Deacon <will.deacon@arm.com>
+ M:	Peter Zijlstra <peterz@infradead.org>
+ M:	Boqun Feng <boqun.feng@gmail.com>
 -- 
-2.17.0.484.g0c8726318c-goog
+2.7.4
