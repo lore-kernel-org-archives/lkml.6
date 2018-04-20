@@ -1,67 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752703AbeDTUXW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 16:23:22 -0400
-Received: from mail-vk0-f45.google.com ([209.85.213.45]:44993 "EHLO
-        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752629AbeDTUXT (ORCPT
+        id S1752306AbeDTU0V (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 16:26:21 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:34287 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751478AbeDTU0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 16:23:19 -0400
-X-Google-Smtp-Source: AIpwx49D1A0ZIpll8/ezyw0B/c29rQNoiJokU0RkNE105oS/v0JGU7x85oDUTdLQ/h6gYZfJrR923Gh/wNN5fxj/4b0=
-MIME-Version: 1.0
-In-Reply-To: <13DBFC76-4849-4DDA-AC44-B2C1257912E7@linaro.org>
-References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
- <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
- <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
- <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
- <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
- <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
- <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com>
- <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk> <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
- <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
- <07f263ff-cea6-ac3c-944b-0f36fee8ba25@kernel.dk> <CAGXu5j+kHipvoyFWjGp8M6+83zbd6yHOzwxQ-2LNBQbD5-jS9w@mail.gmail.com>
- <8b32e079-d4e6-3fea-a89d-ff856e4e13b1@kernel.dk> <0fbf2b13-8bae-c7c5-d930-ebaafdc72202@kernel.dk>
- <011EF7D1-B095-4B8D-AD2A-993048932C49@linaro.org> <c30400f9-50e6-b5cf-d06b-a5e971e98546@kernel.dk>
- <13DBFC76-4849-4DDA-AC44-B2C1257912E7@linaro.org>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 20 Apr 2018 13:23:17 -0700
-X-Google-Sender-Auth: cgl7n54rU4t0lYVck5Q7XFFQZ2k
-Message-ID: <CAGXu5j+8WUgr1y=JYhCkUqUWE0SJ+ymkM9DPEQwY8UoqPmoPSw@mail.gmail.com>
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 20 Apr 2018 16:26:19 -0400
+X-Google-Smtp-Source: AIpwx4/4feNLAvhNgpB8SgEOkHH2ZIZjOWkhl/2CfgC0TdLDAKk94x41Ws2RVNvsjycxHix/tSrfKg==
+From: Andreas Dilger <adilger@dilger.ca>
+Message-Id: <6C3CB775-988A-4543-9A92-3DB67BA3D92A@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_FF36D015-D8B0-4A0C-AA5F-2BB54F47DC8B";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH] vfs: Undo an overly zealous MS_RDONLY -> SB_RDONLY
+ conversion
+Date: Fri, 20 Apr 2018 14:26:13 -0600
+In-Reply-To: <CA+55aFyez2t_JUBhb3R0VFN7s_Gn+LwOS16gTSmSFb_M90v98A@mail.gmail.com>
+Cc: David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+References: <152422770230.23067.14348897715991489250.stgit@warthog.procyon.org.uk>
+ <CA+55aFyez2t_JUBhb3R0VFN7s_Gn+LwOS16gTSmSFb_M90v98A@mail.gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 2:32 AM, Paolo Valente <paolo.valente@linaro.org> wrote:
-> I'm missing something here.  When the request gets completed in the
-> first place, the hook bfq_finish_requeue_request gets called, and that
-> hook clears both ->elv.priv elements (as the request has a non-null
-> elv.icq).  So, when bfq gets the same request again, those elements
-> must be NULL.  What am I getting wrong?
->
-> I have some more concern on this point, but I'll stick to this for the
-> moment, to not create more confusion.
 
-I don't know the "how", I only found the "what". :) If you want, grab
-the reproducer VM linked to earlier in this thread; it'll hit the
-problem within about 30 seconds of running the reproducer.
+--Apple-Mail=_FF36D015-D8B0-4A0C-AA5F-2BB54F47DC8B
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
--Kees
+On Apr 20, 2018, at 11:03 AM, Linus Torvalds =
+<torvalds@linux-foundation.org> wrote:
+>=20
+> On Fri, Apr 20, 2018 at 5:35 AM, David Howells <dhowells@redhat.com> =
+wrote:
+>> In do_mount() when the MS_* flags are being converted to MNT_* flags,
+>> MS_RDONLY got accidentally convered to SB_RDONLY.
+>=20
+> Applied.
+>=20
+> I guess they have the same value (1). How did you notice? Do you have
+> some patches that turn the kernel flags into a bitwise type? Or did
+> you just happen on it manually?
 
--- 
-Kees Cook
-Pixel Security
+Making s_flags and mnt_flags differently-named enums would help make
+this problem more obvious (and some compilers might complain if used
+incorrectly).  That also makes it more clear what kind of flags are
+being passed to do_mount(), rather than "unsigned long flags".
+
+Even while looking at the code for this, I see that s_flags is being
+used incorrectly with MS_* flags all over the place:
+
+static inline bool sb_rdonly(const struct super_block *sb) {
+	return sb->s_flags & MS_RDONLY;
+}
+
+void inode_add_lru(struct inode *inode)
+{
+        if (!(inode->i_state & (I_DIRTY_ALL | I_SYNC |
+                                I_FREEING | I_WILL_FREE)) &&
+            !atomic_read(&inode->i_count) && inode->i_sb->s_flags & =
+MS_ACTIVE)
+                inode_lru_list_add(inode);
+}
+
+A quick grep showed 243 lines matching "->s_flags.*MS_".
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_FF36D015-D8B0-4A0C-AA5F-2BB54F47DC8B
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlraTOUACgkQcqXauRfM
+H+D/tw/+PoAZ7hVBSuX6j2tcDSYkSr/4uvW4/VJGmm4QfJ0Kgby/jfTaDLr6mSgl
+aZIZ5L4VUIM4b5YyZeuvxd7F+rCayxniHX4R4212reTlxtnKcwH5ryK1RggfYKDF
+2uhAnjPLV7VzQiplu8TfBgHTsk5yjldxaNqic9zkV/8HedgPUJk7+gMAENGg/z/q
+y9VBqAoQMlIj5r08e8oK7royW/C+10MXzUskdn8ZVVIv+UVWWVNYivDm4tmLTJRE
+GELk2qCetTIQPrYQRIyr6zJ9GMyPZCk80Rc81TjdZLEjyDOfyWEVs0WmOe5iSgcj
+SP/rnSItOH0jdAJyd/vVRooP2TrA7LdxOCo2gQMvhRmWKfCfi56YrN471x6yFowa
+hT+d7NXNHK6KbT1o/pR3m4tJKh2OuBHhB2pCxjsGKN4vNBHQZDkCStw3flYdOrgV
+GIzw35G8MjnGJzwDUSJs86AWlowCKf4MH79/pDhIMFhQkmSDV16HNtNUnIBJBWHu
+d/Eg9/ghtrVXGdL3lourOqWLi1AmBJOuQD5dIBRK+2UqOkJlhEmvhfg8tYyiGF0/
+uBErv1kz7kYhHMblWfLNQjX1wfFgbrow/BUMOcFdz6AnPpTjlMSWgwciVXhYrJNI
+ww4SGcpfEo/Q1aa+bVywCKNYWbIbH3ORe8RjORloTiYVb7S/wvU=
+=rNX3
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_FF36D015-D8B0-4A0C-AA5F-2BB54F47DC8B--
