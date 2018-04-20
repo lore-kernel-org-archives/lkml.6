@@ -1,123 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754623AbeDTKXy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:23:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:47582 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754321AbeDTKXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:23:48 -0400
-Subject: Re: [PATCH 01/22] dma-debug: move initialization to common code
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
-        linux-c6x-dev@linux-c6x.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        openrisc@lists.librecores.org, Greentime Hu <green.hu@gmail.com>,
-        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org,
+        id S1754665AbeDTKYp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:24:45 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:45508 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754595AbeDTKYm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 06:24:42 -0400
+Date: Fri, 20 Apr 2018 11:24:09 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: dri-devel@lists.freedesktop.org, Mark Rutland <mark.rutland@arm.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Daniel Vetter <daniel.vetter@intel.com>, Peter Rosin <peda@axentia.se>,
         linux-arm-kernel@lists.infradead.org
-References: <20180420080313.18796-1-hch@lst.de>
- <20180420080313.18796-2-hch@lst.de>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <294a1469-01d6-10fb-5de1-b1d4513a066c@arm.com>
-Date: Fri, 20 Apr 2018 11:23:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Subject: Re: [PATCH v3 7/7] drm/i2c: tda998x: register as a drm bridge
+Message-ID: <20180420102408.GW16141@n2100.armlinux.org.uk>
+References: <20180419162751.25223-1-peda@axentia.se>
+ <20180419162751.25223-8-peda@axentia.se>
+ <2556566.3fxMPoIyx0@avalon>
 MIME-Version: 1.0
-In-Reply-To: <20180420080313.18796-2-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2556566.3fxMPoIyx0@avalon>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
-
-Nice cleanup! Looks good overall, just a couple of nits.
-
-On 20/04/18 09:02, Christoph Hellwig wrote:
-[...]
-> diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-> index 7f5cdc1e6b29..712a897174e4 100644
-> --- a/lib/dma-debug.c
-> +++ b/lib/dma-debug.c
-> @@ -41,6 +41,11 @@
->   #define HASH_FN_SHIFT   13
->   #define HASH_FN_MASK    (HASH_SIZE - 1)
->   
-> +/* allow architectures to override this if absolutely required */
-> +#ifndef PREALLOC_DMA_DEBUG_ENTRIES
-> +#define PREALLOC_DMA_DEBUG_ENTRIES (1 << 16)
-> +#endif
-> +
->   enum {
->   	dma_debug_single,
->   	dma_debug_page,
-> @@ -1004,18 +1009,16 @@ void dma_debug_add_bus(struct bus_type *bus)
->   	bus_register_notifier(bus, nb);
->   }
->   
-> -/*
-> - * Let the architectures decide how many entries should be preallocated.
-> - */
-> -void dma_debug_init(u32 num_entries)
-> +static int dma_debug_init(void)
->   {
-> +	u32 num_entries;
-
-Maybe initialise it to PREALLOC_DMA_DEBUG_ENTRIES?
-
->   	int i;
->   
->   	/* Do not use dma_debug_initialized here, since we really want to be
->   	 * called to set dma_debug_initialized
->   	 */
->   	if (global_disable)
-> -		return;
-> +		return 0;
->   
->   	for (i = 0; i < HASH_SIZE; ++i) {
->   		INIT_LIST_HEAD(&dma_entry_hash[i].list);
-> @@ -1026,17 +1029,19 @@ void dma_debug_init(u32 num_entries)
->   		pr_err("DMA-API: error creating debugfs entries - disabling\n");
->   		global_disable = true;
->   
-> -		return;
-> +		return 0;
->   	}
->   
->   	if (req_entries)
->   		num_entries = req_entries;
-> +	else
-> +		num_entries = PREALLOC_DMA_DEBUG_ENTRIES;
->   
->   	if (prealloc_memory(num_entries) != 0) {
->   		pr_err("DMA-API: debugging out of memory error - disabled\n");
->   		global_disable = true;
->   
-> -		return;
-> +		return 0;
->   	}
->   
->   	nr_total_entries = num_free_entries;
-> @@ -1044,7 +1049,9 @@ void dma_debug_init(u32 num_entries)
->   	dma_debug_initialized = true;
->   
->   	pr_info("DMA-API: debugging enabled by kernel config\n");
-> +	return 0;
->   }
-> +core_initcall(dma_debug_init);
-
-I think it's worth noting that for most users this now happens much 
-earlier than before. In general that's probably good (e.g. on arm64 it 
-should prevent false-positives from the Arm SMMU drivers under ACPI), 
-and I can't imagine it's high-risk, but it is a behaviour change.
-
-Robin.
-
->   
->   static __init int dma_debug_cmdline(char *str)
->   {
+On Fri, Apr 20, 2018 at 01:06:49PM +0300, Laurent Pinchart wrote:
+> Hi Peter,
 > 
+> Thank you for the patch.
+> 
+> On Thursday, 19 April 2018 19:27:51 EEST Peter Rosin wrote:
+> > This makes this driver work with all(?) drivers that are not
+> > componentized and instead expect to connect to a panel/bridge. That
+> > said, the only one tested is atmel_hlcdc.
+> > 
+> > This hooks the relevant work function previously called by the encoder
+> > and the component also to the bridge, since the encoder goes away when
+> > connecting to the bridge interface of the driver and the equivalent of
+> > bind/unbind of the component is handled by bridge attach/detach.
+> > 
+> > The lifetime requirements of a bridge and a component are slightly
+> > different, which is the reason for struct tda998x_bridge.
+> 
+> Couldn't you move the allocation and initialization (tda998x_create) of the 
+> tda998x_priv structure to probe time ? I think you wouldn't need a separate 
+> structure in that case. Unless I'm mistaken there would be an added benefit of 
+> separating component and bridge initialization, resulting in the encoder not 
+> being initialized at all if the component isn't used. You wouldn't need to add 
+> a local_encoder parameter to the tda998x_init() function.
+
+No, I don't like that idea one bit, as I've stated in the past about the
+component API.  The same (probably) goes for the bridge stuff too.
+
+Consider the following:
+
+Your DRM system is initialised.  You then remove a module, which results
+in the DRM system being torn down.  You re-insert the module (eg, having
+made a change to it).  The DRM system is then re-initialised.
+
+At this point, what is the state of variables such as priv->is_on if
+you allocate the structure at probe time?
+
+What about all the other variables in the driver private structure - are
+you sure that the driver can cope with random values from the previous
+"usage" remaining there?
+
+At the moment, this isn't a concern for the driver because we
+dev_kzalloc() the structure in the bind callback.  Move that to the
+probe function, and the structure is no longer re-initialised each
+time, and so it retains the previous state.  The driver is not setup
+to cope with that.
+
+So, to work around that, you would need to reinitialise _everything_
+in the structure that the driver requires, which IMHO is a very
+open to bugs (eg, if a member is missed, or added without the
+necessary re-initialisation), _especially_ when this is not a path
+that will get regular testing.
+
+If you want to do this for a subset of data, it would be much better
+to separate them into independent structures (maybe one embedded into
+the other) so that this problem can not occur.  That way, a subset
+of the data can be memset() when bound to the rest of the DRM system
+ensuring a consistent driver state and still achieve what you're
+suggesting.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
