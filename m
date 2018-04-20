@@ -1,142 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752047AbeDTT21 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 15:28:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:45270 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbeDTT2Y (ORCPT
+        id S1752288AbeDTT2h (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 15:28:37 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42789 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbeDTT2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 15:28:24 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4BF5E60398
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-Subject: Re: [PATCH 1/2] regulator: add QCOM RPMh regulator driver
-To: Mark Brown <broonie@kernel.org>, Stephen Boyd <swboyd@chromium.org>
-Cc: lgirdwood@gmail.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rnayak@codeaurora.org, ilina@codeaurora.org
-References: <cover.1521246069.git.collinsd@codeaurora.org>
- <71fab82672524b95632cdb588c16edfc9711866a.1521246069.git.collinsd@codeaurora.org>
- <152165924074.91116.13025068669916027026@swboyd.mtv.corp.google.com>
- <493c1f5d-df99-ca68-0f90-a7937a696f5d@codeaurora.org>
- <152411734938.46528.9676451637772936597@swboyd.mtv.corp.google.com>
- <20180419120813.GD27188@sirena.org.uk>
-From: David Collins <collinsd@codeaurora.org>
-Message-ID: <38f42537-f801-115a-4120-1344a67a0462@codeaurora.org>
-Date: Fri, 20 Apr 2018 12:28:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        Fri, 20 Apr 2018 15:28:35 -0400
+Date: Fri, 20 Apr 2018 21:28:32 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Daniel Micay <danielmicay@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>, Tony Lindgren <tony@atomide.com>,
+        Thorsten Leemhuis <regressions@leemhuis.info>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        pali.rohar@gmail.com, sre@kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, Kevin Hilman <khilman@kernel.org>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, ivo.g.dimitrov.75@gmail.com,
+        Patrik Bachan <patrikbachan@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        =?utf-8?B?TWlja3Vsw6HFoQ==?= Qwertz <abcloriens@gmail.com>,
+        Clayton Craft <clayton@craftyguy.net>,
+        Martijn Braam <martijn@brixit.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [regression v4.17-rc0] Re: FORTIFY_SOURCE breaks ARM compilation
+ in -next -- was Re: ARM compile failure in Re: linux-next: Tree for Apr 4
+Message-ID: <20180420192832.GA1870@amd>
+References: <20180404175852.GI5700@atomide.com>
+ <20180404184622.GA8608@amd>
+ <20180404195951.GJ5700@atomide.com>
+ <20180404201837.GA9710@amd>
+ <20180415173908.GA2024@amd>
+ <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
+ <20180420073402.GA9356@amd>
+ <CAGXu5j+6D3PiVc9SR4+31ZGDC2r5uWJOw8Sn3cDhXdNqBGH+hQ@mail.gmail.com>
+ <20180420191523.GA28597@amd>
+ <CA+DvKQKLpXP50vV0yoyB_w26NK5h6KdVUSWEHvHZ-8OdVvdt9w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180419120813.GD27188@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
+Content-Disposition: inline
+In-Reply-To: <CA+DvKQKLpXP50vV0yoyB_w26NK5h6KdVUSWEHvHZ-8OdVvdt9w@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/19/2018 05:08 AM, Mark Brown wrote:
-> On Wed, Apr 18, 2018 at 10:55:49PM -0700, Stephen Boyd wrote:
->>>> Is this regulator-microvolt-offset? Ah I guess it's a thing in the RPMh
->>>> registers. This probably needs to be pushed into the framework and come
->>>> down through a 'set_headroom' op in the regulator ops via a
->>>> regulator-headroom-microvolt property that's parsed in of_regulator.c.
-> 
->>> The qcom,headroom-voltage property is equivalent to struct
->>> regulator_desc.min_dropout_uV, but handled in hardware.  I don't see the
->>> need to make a new regulator op to configure this value dynamically.
-> 
->> Ok? We have other regulator ops just to configure boot time things. The
->> goal is to come up with generic regulator properties that can be applied
->> from the framework perspective and be used by other regulator drivers in
->> the future.
-> 
-> This doesn't sound like what the min_dropout_uV constraint is intended
-> to handle - that's there for the regulator driver (not constraints) to
-> indicate how much headroom the regulator needs in the supply voltage in
-> order to provide regulation.  It's not something the regulator uses,
-> it's something that gets fed into voltage requests made on the supply of
-> the regulator which I can't see that the hardware is going to be able to
-> handle unaided.
 
-RPMh hardware enforces the requested minimum headroom voltage for all
-regulators with a parent.  It has full knowledge of the parent-child
-connections of regulators on the board (as programmed by the bootloader).
-It automatically reconfigures the parent voltage when needed as a result
-of requests changing the voltage of any of its child regulators.
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri 2018-04-20 15:18:32, Daniel Micay wrote:
+> On 20 April 2018 at 15:15, Pavel Machek <pavel@ucw.cz> wrote:
+> > Hi!
+> >
+> >> >> Hi! Sorry I lost this email in my inbox. It seems this is specific =
+to
+> >> >> a particular subset of arm architectures? (My local builds of arm a=
+ll
+> >> >> succeed, for example. Can you send your failing config?) I'll take a
+> >> >> closer look on Monday if Daniel doesn't beat me to it.
+> >> >
+> >> > Daniel, Kees: any news?
+> >> >
+> >> > I'm aware you did not specify which Monday :-).
+> >>
+> >> Hi! Sorry, I got distracted. So the .config you sent me builds fine
+> >> with my cross compiler. I suspect this is something specific to ELDK's
+> >> compiler. I can try some other compiler versions. What version of gcc
+> >> is failing?
+> >
+> > I have:
+> >
+> > pavel@duo:/data/l/linux-n900$ arm-linux-gnueabi-gcc --version
+> > arm-linux-gnueabi-gcc (GCC) 4.7.2
+> > Copyright (C) 2012 Free Software Foundation, Inc.
+> > pavel@duo:/data/l/linux-n900$ arm-linux-gnueabi-ld --version
+> > GNU ld (GNU Binutils) 2.23.1.20121113
+> > Copyright 2012 Free Software Foundation, Inc.
+> >
+> > Let me try with eldk-5.6:
+> >
+> > pavel@duo:/data/l/linux-n900$ arm-linux-gnueabi-gcc --version
+> > arm-linux-gnueabi-gcc (GCC) 4.8.2
+> > pavel@duo:/data/l/linux-n900$ arm-linux-gnueabi-ld --version
+> > GNU ld (GNU Binutils) 2.24
+> >
+> > make  lib/string.o
+> >
+> > Seems to succeed, so I guess full build will succeed, too...
+>=20
+> It doesn't imply that a full build would work.
 
->> Cool. This should be a generic regulator DT property that all regulators
->> can use. We have the same problem on other RPM based regulator drivers
->> where boot sends a bunch of voltages because we don't know what it is by
->> default out of boot and we can't read it.
-> 
-> Ideally future versions of the RPM will have improved interfaces,
-> there's a bunch of problems like this :(
+You are right. eldk-5.6 does not have problem with string.o, but does
+not compile the kernel, either...
 
-Do you have a preference for qcom,regulator-initial-microvolt vs a generic
-framework supported regulator-initial-microvolt property for configuring a
-specific voltage at registration time?  We'll need to have support for one
-or the other in order for the qcom_rpmh-regulator driver to be functional.
+  CC      arch/arm/kernel/asm-offsets.s
+  arch/arm/kernel/asm-offsets.c:56:2: error: #error Your compiler is
+  too buggy; it is known to miscompile kernels
+   #error Your compiler is too buggy; it is known to miscompile
+  kernels
+    ^
+    arch/arm/kernel/asm-offsets.c:57:2: error: #error and result in
+  filesystem corruption and oopses.
+   #error and result in filesystem corruption and oopses.
+     ^
 
+									Pavel
 
->>>>> +       if (type == RPMH_REGULATOR_TYPE_XOB && init_data->constraints.min_uV) {
->>>>> +               vreg->rdesc.fixed_uV = init_data->constraints.min_uV;
->>>>> +               init_data->constraints.apply_uV = 0;
->>>>> +               vreg->rdesc.n_voltages = 1;
->>>>> +       }
-> 
->>>> What is this doing? Usually constraints aren't touched by the driver.
-> 
->>> For XOB managed regulators, we need to set fixed_uV to match the DT
->>> constraint voltage and n_voltages = 1.  This allows consumers
->>> regulator_set_voltage() calls to succeed for such regulators.  It works
->>> the same as a fixed regulator.  I think that apply_uV = 0 could be left out.
-> 
->> Wouldn't XOB regulators only have one voltage specified for min/max in
->> DT already though? I seem to recall that's how we make set_voltage() in
->> those cases work. Or it could be that drivers aren't supposed to call
->> set_voltage() on single or fixed voltage regulators anyway, because
->> constraints take care of it for them.
-> 
-> Yes, constraints that specify a single voltage are done by setting min
-> and max to the same value.  fixed_uV is *only* for regulators that have
-> a physically fixed voltage.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-XOB managed regulators physically cannot change voltage.  Therefore, do
-you agree that it is reasonable to use fixed_uV for them?  Note that I
-removed init_data->constraints.apply_uV manipulation in version 2 of this
-patch.
+--BOKacYhQ+x31HxR3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
->>>>> +       if (vreg->hw_data->mode_map) {
->>>>> +               init_data->constraints.valid_ops_mask |= REGULATOR_CHANGE_MODE;
-> 
-> A driver must *NEVER* modify any constraints.
-> 
->>>> Huh, I thought this was assigned by the framework.
-> 
->>> No, this is not set anywhere in the regulator framework.  There isn't a DT
->>> method to configure it.  It seems that it could only be handled before
->>> with board files.  Other regulator drivers also configure it.
-> 
->> Hmm ok. Would something be bad if we did support it through DT? I can't
->> seem to recall the history here.
-> 
-> Yes, if someone wants to configure this through DT they should add
-> support for configuring it using DT.  The mode support in most
-> regulators is not practically useful so nobody did that yet.  Mostly the
-> hardware does a much better job of adjusting modes on the fly for
-> anything that's going on at runtime than software is ever likely to do
-> so it's not worth it.
+iEYEARECAAYFAlraP2AACgkQMOfwapXb+vJEIACffw4iwM+EDb+s3S8yeMfXCXia
+hWYAoJdu/R6npi3P+hYD8NMYrwzQ8GWB
+=YXXb
+-----END PGP SIGNATURE-----
 
-I'll send out a patch to add generic support for this configuration via
-device tree in the of_get_regulation_constraints() function.
-
-Thanks,
-David
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--BOKacYhQ+x31HxR3--
