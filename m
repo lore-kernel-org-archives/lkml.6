@@ -1,116 +1,75 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-990390-1524209011-2-1466488522216607126
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524209011; b=n6gw3wxsEXfaInrvZrz1vQ6zQzjQG8jaXn2iW94ZcIkTi53Z3V
-    5J9mTCy+KOqMxEt+E9oH6tuMfwwVlaxr7BUO5jTXEMAhl4pW2PkAo5jegccdkyke
-    yNRwxbIpeYUIZbiuRPm2+ExWrmOqIAHZrJszNampBcGZ53YmHHOxoTrbBBxp5PQ1
-    rNmOHMZAG7+ndq4lflr2c9Fxi48wne2rfkkPqTt5VAG90PQYr9E2pgHIcCxbNrLR
-    ZS8epENWIzlfSuuxEtgRppsDC0/icmE3zcFTtOeJvcDFjgLN8ThXu/qaHS67tQFk
-    DY+/mzPXWlNdUBaME8YDJkunamGJAvh63JQA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524209011; bh=XqqcL
-    sDJkWEsSIaTXkPxceaw9pzJAWU7PTnrMBibmkw=; b=ME07WmxrKaGV2gG3vvrdI
-    sNpGZZCQK/NYO1Dk4jbPpWNBhqFYarWXL1XDKW0OSYUBnix9QszO3YCzwPyTLZEY
-    Vd0lb/y09m/60GLfhqR/7fsFGl08Zl1kcxinpw3neKuTMHawH0ooowb2WxTEsnPf
-    pdrNZb2rxUVT5Ee5bjJREfwm49mj+sZUQVBGCYDjTYM9XkMX6S9LRRGhA9G+VnEU
-    4QR8zOToqOXL1F1dpkP01FAO6+qJ3v6DI4QOcXBvNfCYJtG1QU+7jmd6WrBzfe0S
-    VyJwntuTj/hTsfLh/NGeIXBYjOS0B2AhojPXcPwuUW0LGyML9neR1dNh9c1+zgHX
-    Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=dmpdcixO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=eTTPOt4a;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=dmpdcixO x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=eTTPOt4a;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP2o57FEcGI6dpOjU4AYVcbJ6c/fENrxEBzPNs6hgNp5MqQo5ZcKji/UqzhKocFUs717q4UMSxpPlIhyxOE5mt6sFBCq55wSP3UxyC+f+of3p/7igO2F
-    mBmEJyOXz2Pa6Ogb8wSUg/xB6n6mnMw0msXotf66eDmSmTy8fzkU7YyNxJfgj+RK7wpRsJCKeFTIqlGgoMCxVIfDWHZD/q377wKqi2nNkGysnfpDGD9VGZUW
-    XNF/Ob0l+c7lrlCBZS219A==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=LDBv8-xUAAAA:8 a=VwQbUJbxAAAA:8
-    a=DDOyTI_5AAAA:8 a=bWRg1Lgjned46bBKuhAA:9 a=CjuIK1q_8ugA:10
-    a=DZeXCJrVpAJBw65Qk4Ds:22 a=AjGcO6oz07-iQ99wixmX:22 a=_BcfOz0m4U4ohdxiHPKc:22
-    cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZqD8Sg3E8aYJHr415kJw/kxA+f3ncAXbZUvxeeBiUGBAXPsCECI5KZssju74uICzXmLGCXWjQ==
-Date: Fri, 20 Apr 2018 09:23:18 +0200
-From: Johan Hovold <johan@kernel.org>
+Return-Path: <greybus-dev-bounces@lists.linaro.org>
+X-Google-Smtp-Source: AB8JxZqs9vY2SK9D22Xe7eUAuIm2xvGH11WbuXPzFPnOsF/5O9NcDWrXepGH36ijV6mmt1eK8+9s
+ARC-Seal: i=1; a=rsa-sha256; t=1524198275; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Zz3LMotplRCf2pgGy0e/3cM9WB1JWj4E4uF7w93uRnkSahw15JE+5mAiH9DPBc4Xz1
+         a21RzELnfqUg2PpJ8WerxrfU9zPQfsd7H7iSkRLLsqq3+KZ047VNV/aXSyxYcZ7OSUOy
+         FxWZqOo2SUTxHFdLN+u3JYQ6x5jn8PZWWjzbnT7Yomk4Ya3o+IbKTV20ssyAIAsC9IAV
+         214xKwVgenl5tVQsHdgzlLm9FOeOwuS5PO5bhXqCyu4X62g+33xdIUpjHaduNUqHh4rE
+         sEBIKeVN4PmK5eBZolputQKXv9Qsse5e+tNrE/O14xzDuOgmX1coUdcgx2KxuKaWQMeD
+         ayJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=sender:errors-to:content-transfer-encoding:list-subscribe:list-help
+         :list-post:list-archive:list-unsubscribe:list-id:precedence:subject
+         :cc:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:to:from:date:delivered-to
+         :arc-authentication-results;
+        bh=213U+dmwDnfMitVLtolMju1uvBfZiwvjB9Rb3yditXg=;
+        b=sFUdkJuukFKvL1/ihdeRkwHB1Xgb9Y/IQ5TCXABppIR/Q2o1emmFVvU0T4W3IKvUOk
+         P4/J0TaSBrwkE6+BsvjSNejipQOM7liBBl3PI244YbQAOdxd4I8Td4ZWHkkOyIIpcDE+
+         PH84D1zetc+zM/TgpQJSzwu/aN4jmvDlZRXyNcAy5xQfOg/a2NfJ4LZaqE2fmqgnD3pd
+         YU4AMvW/ELHoxBPz7LER8B8nb8/YzemFAd1pc4iXQHeJGFGk6F+CFc4w9hLItUwtvWhO
+         h3yuTGQsKC2f200uPB0J4E3C90NE2BRvVksa7sNnAqEjAYXz00L10pfSvl3Av2kI17XE
+         +Z9w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of greybus-dev-bounces@lists.linaro.org designates 54.197.127.237 as permitted sender) smtp.mailfrom=greybus-dev-bounces@lists.linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of greybus-dev-bounces@lists.linaro.org designates 54.197.127.237 as permitted sender) smtp.mailfrom=greybus-dev-bounces@lists.linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Date: Fri, 20 Apr 2018 09:54:23 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH 47/61] staging: greybus: simplify getting .drvdata
-Message-ID: <20180420072318.GM9198@localhost>
+Message-ID: <20180420042423.GI24576@vireshk-i7>
 References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
  <20180419140641.27926-48-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Disposition: inline
 In-Reply-To: <20180419140641.27926-48-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
+User-Agent: Mutt/1.5.24 (2015-08-30)
+Cc: devel@driverdev.osuosl.org, Alex Elder <elder@kernel.org>,
+ kernel-janitors@vger.kernel.org, Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
  linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
- linux-renesas-soc@vger.kernel.org, greybus-dev@lists.linaro.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+ linux-renesas-soc@vger.kernel.org, greybus-dev@lists.linaro.org
+Subject: Re: [greybus-dev] [PATCH 47/61] staging: greybus: simplify getting
+ .drvdata
+X-BeenThere: greybus-dev@lists.linaro.org
+X-Mailman-Version: 2.1.16
+List-Unsubscribe: <https://lists.linaro.org/mailman/options/greybus-dev>,
+ <mailto:greybus-dev-request@lists.linaro.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/greybus-dev/>
+List-Post: <mailto:greybus-dev@lists.linaro.org>
+List-Help: <mailto:greybus-dev-request@lists.linaro.org?subject=help>
+List-Subscribe: <https://lists.linaro.org/mailman/listinfo/greybus-dev>,
+ <mailto:greybus-dev-request@lists.linaro.org?subject=subscribe>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: greybus-dev-bounces@lists.linaro.org
+Sender: "greybus-dev" <greybus-dev-bounces@lists.linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598183785757708408?=
+X-GMAIL-MSGID: =?utf-8?q?1598237730720534573?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 04:06:17PM +0200, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Acked-by: Johan Hovold <johan@kernel.org>
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+T24gMTktMDQtMTgsIDE2OjA2LCBXb2xmcmFtIFNhbmcgd3JvdGU6Cj4gV2Ugc2hvdWxkIGdldCBk
+cnZkYXRhIGZyb20gc3RydWN0IGRldmljZSBkaXJlY3RseS4gR29pbmcgdmlhCj4gcGxhdGZvcm1f
+ZGV2aWNlIGlzIGFuIHVubmVlZGVkIHN0ZXAgYmFjayBhbmQgZm9ydGguCj4gCj4gU2lnbmVkLW9m
+Zi1ieTogV29sZnJhbSBTYW5nIDx3c2ErcmVuZXNhc0BzYW5nLWVuZ2luZWVyaW5nLmNvbT4KPiAt
+LS0KPiAKPiBCdWlsZCB0ZXN0ZWQgb25seS4gYnVpbGRib3QgaXMgaGFwcHkuIFBsZWFzZSBhcHBs
+eSBpbmRpdmlkdWFsbHkuCj4gCj4gIGRyaXZlcnMvc3RhZ2luZy9ncmV5YnVzL2FyY2hlLXBsYXRm
+b3JtLmMgfCAzICstLQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDIgZGVsZXRp
+b25zKC0pCgpBY2tlZC1ieTogVmlyZXNoIEt1bWFyIDx2aXJlc2gua3VtYXJAbGluYXJvLm9yZz4K
+Ci0tIAp2aXJlc2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZ3JleWJ1cy1kZXYgbWFpbGluZyBsaXN0CmdyZXlidXMtZGV2QGxpc3RzLmxpbmFyby5vcmcK
+aHR0cHM6Ly9saXN0cy5saW5hcm8ub3JnL21haWxtYW4vbGlzdGluZm8vZ3JleWJ1cy1kZXYK
