@@ -1,98 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753913AbeDTSTa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:19:30 -0400
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:35848 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753566AbeDTST1 (ORCPT
+        id S1753854AbeDTS1d (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:27:33 -0400
+Received: from www.linux-watchdog.org ([185.87.125.42]:56062 "EHLO
+        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753678AbeDTS1c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:19:27 -0400
-X-Google-Smtp-Source: AIpwx4+1ItbuUdIszMK9OHZi/HwDgE7GI5wvM1VidldxAs2uEggnu3kykRZF75q5HmDeHfS07s1Lq+x56zfxJXERldw=
-MIME-Version: 1.0
-References: <CABPqkBS6MuO6Twtq=_+TDV=RNy0_2vRWf=LVCk6wk0tPwNSTog@mail.gmail.com>
- <20180417062010.GA2052@krava> <alpine.DEB.2.21.1804181109100.1587@macbook-air>
- <20180420083607.GG4064@hirez.programming.kicks-ass.net> <alpine.DEB.2.21.1804201015250.22578@macbook-air>
- <alpine.DEB.2.21.1804201247050.28907@macbook-air>
-In-Reply-To: <alpine.DEB.2.21.1804201247050.28907@macbook-air>
-From: Stephane Eranian <eranian@google.com>
-Date: Fri, 20 Apr 2018 18:19:13 +0000
-Message-ID: <CABPqkBSA8-kvMtiPfWZ6bJCqL9TSJP=d3mLxd4MNOQyd1Kd-rg@mail.gmail.com>
-Subject: Re: [RFC] perf/core: what is exclude_idle supposed to do
-To: Vince Weaver <vincent.weaver@maine.edu>
-Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@redhat.com>,
+        Fri, 20 Apr 2018 14:27:32 -0400
+Date: Fri, 20 Apr 2018 20:14:24 +0200
+From: Wim Van Sebroeck <wim@linux-watchdog.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>, mingo@elte.hu,
-        Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: [GIT PULL REQUEST] watchdog - v4.17-rc2 patches
+Message-ID: <20180420181424.GA19456@www.linux-watchdog.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 9:51 AM Vince Weaver <vincent.weaver@maine.edu>
-wrote:
+Hi Linus,
 
-> On Fri, 20 Apr 2018, Vince Weaver wrote:
+Please pull the following watchdog changes for the v4.17 release cycle.
 
-> > > AFAICT it works on Power and possibly ARM.
-> >
-> > at least some ARMs are a bit more honest about it than x86
-> >
-> > ivybridge:
-> >       Performance counter stats for '/bin/ls':
-> >       1,368,162      instructions
-> >       1,368,162      instructions:I
-> >
-> > pi2/ARM cortex-A7
-> >       Performance counter stats for '/bin/ls':
-> >       1,910,083      instructions
-> >       <not supported>      instructions:I
-> >
-> > I'd fire up my Power8 machine to see but not sure it's worth the hassle
-> > and/or having to get out the ear protection.
+This series contains:
+- fall-through fixes
+- MAINTAINER change for hpwdt
+- renesas-wdt: Add support for WDIOF_CARDRESET
+- aspeed: set bootstatus during probe
 
-> I did power up the Power8 machine in the end:
+The output from git request-pull:
+----------------------------------------------------------------
 
-> power8:
->          perf stat -e cycles,cycles:I sleep 5
->          Performance counter stats for 'sleep 5':
->          14,271,273      cycles
->          14,271,273      cycles:I
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-> ???
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
 
-> But then if I try again on power8
+are available in the git repository at:
 
->          perf stat -a -e cycles,cycles:I sleep 5
->           Performance counter stats for 'system wide':
->          1,238,772,322,327      cycles
->          1,238,674,771,713      cycles:I
+  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-4.17-rc2
 
-> there is a difference.
+for you to fetch changes up to 49d4d277ca54e04170d39484c8758a0ea9bca37d:
 
-> But then on ivybridge
+  aspeed: watchdog: Set bootstatus during probe (2018-04-16 10:22:40 +0200)
 
->          perf stat -a -e cycles,cycles:I sleep 5
->          Performance counter stats for 'system wide':
->          589,598,104      cycles
->          589,537,190      cycles:I
+----------------------------------------------------------------
+linux-watchdog 4.17-rc2 tag
 
-This may be noise.
+----------------------------------------------------------------
+Eddie James (1):
+      aspeed: watchdog: Set bootstatus during probe
 
-The way the flag is named leads me to believe its goal is to not count when
-executing in the context of the idle task (pid 0 on each CPU).
-However, it does not seem to be implemented that way. If you were to
-implement this, then in system wide mode you'd have to check
-the incoming task on ctxsw, very much like we do in cgroup monitoring. So
-it would not be totally free. One can argue, in sampling mode
-you can eliminate the samples coming from PID=0 in the tool. But there
-would be nothing to cover counting mode.
+Gustavo A. R. Silva (3):
+      watchdog: sch311x_wdt: Mark expected switch fall-through
+      watchdog: w83977f_wdt: Mark expected switch fall-through
+      watchdog: wafer5823wdt: Mark expected switch fall-through
 
-Interestingly, there is also code in perf tool to exclude known idle
-routines from reporting. But this is targeted to only some routines that the
-idle task may end up executing. so it is not quite the same.
+Jerry Hoemann (1):
+      watchdog: hpwdt: change maintainer.
 
+Veeraiyan Chidambaram (1):
+      watchdog: renesas-wdt: Add support for WDIOF_CARDRESET
 
-> So maybe exclude_idle does do something on x86?  Or am I completely
-> misunderstanding what the flag is supposed to be indicating?
+ MAINTAINERS                     | 2 +-
+ drivers/watchdog/aspeed_wdt.c   | 7 +++++++
+ drivers/watchdog/renesas_wdt.c  | 6 ++++--
+ drivers/watchdog/sch311x_wdt.c  | 2 +-
+ drivers/watchdog/w83977f_wdt.c  | 2 +-
+ drivers/watchdog/wafer5823wdt.c | 2 +-
+ 6 files changed, 15 insertions(+), 6 deletions(-)
+----------------------------------------------------------------
 
-> Vince
+Kind regards,
+Wim.
