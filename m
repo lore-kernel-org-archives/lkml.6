@@ -1,72 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755553AbeDTO5J (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:57:09 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:46126 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755243AbeDTO5C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:57:02 -0400
-Date: Fri, 20 Apr 2018 10:56:21 -0400
-From: Rich Felker <dalias@libc.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        jacopo mondi <jacopo@jmondi.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sh: mm: Fix unprotected access to struct device
-Message-ID: <20180420145621.GQ3094@brightrain.aerifal.cx>
-References: <1523972123-5700-1-git-send-email-jacopo+renesas@jmondi.org>
- <20180418104703.GA12462@infradead.org>
- <20180418131314.GC3999@w540>
- <20180420083147.GC31275@infradead.org>
- <CAMuHMdWwJrUgOjaAX1oUHd+KFUMuUzcH6g29zC2mJX377oAHiA@mail.gmail.com>
+        id S1755532AbeDTO5Y (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:57:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37673 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755240AbeDTO5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:57:23 -0400
+Date: Fri, 20 Apr 2018 16:57:20 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
+Message-ID: <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
+References: <20180413101233.0792ebf0@gandalf.local.home>
+ <20180414023516.GA17806@tigerII.localdomain>
+ <20180416014729.GB1034@jagdpanzerIV>
+ <20180416042553.GA555@jagdpanzerIV>
+ <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
+ <20180420021511.GB6397@jagdpanzerIV>
+ <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
+ <20180420080428.622a8e7f@gandalf.local.home>
+ <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
+ <20180420101751.6c1c70e8@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdWwJrUgOjaAX1oUHd+KFUMuUzcH6g29zC2mJX377oAHiA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180420101751.6c1c70e8@gandalf.local.home>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 11:59:13AM +0200, Geert Uytterhoeven wrote:
-> Hi Christoph,
+On Fri 2018-04-20 10:17:51, Steven Rostedt wrote:
+> On Fri, 20 Apr 2018 16:01:57 +0200
+> Petr Mladek <pmladek@suse.com> wrote:
+> > On Fri 2018-04-20 08:04:28, Steven Rostedt wrote:
+> > > The problem is the way rate limit works. If you print 100 lines (or
+> > > 1000) in 5 seconds, then you just stopped printing from that context
+> > > for 59 minutes and 55 seconds. That's a long time to block printing.  
+> > 
+> > Are we talking about the same context?
+> > 
+> > I am talking about console drivers called from console_unlock(). It is
+> > very special context because it is more or less recursive:
+> > 
+> >      + could cause infinite loop
+> >      + the errors are usually the same again and again
 > 
-> On Fri, Apr 20, 2018 at 10:31 AM, Christoph Hellwig <hch@infradead.org> wrote:
-> > On Wed, Apr 18, 2018 at 03:13:14PM +0200, jacopo mondi wrote:
-> >> As long as it goes for arch/sh, the only user of dma_alloc_coherent()
-> >> is platform_resource_setup_memory(), and it has been fixed by this
-> >> patch.
-> >
-> > Great!
-> >
-> >> Unfortunately, as Thomas pointed out, there are drivers which calls
-> >> into this with the wrong 'struct device' as the sh_eth one he had fixed.
-> >
-> > Yes, we'll need fixes there.  Other DMA ops implementations also look
-> > at struct device, so they generally are buggy.
-> >
-> >> I would then say that as long as it goes for the NULL case, we should be
-> >> fine now.
-> >
-> > Then I'd say skil that part, please.
-> 
-> The major reason for keeping the NULL WARN_ON() checks is to make it
-> obvious to the developer what is wrong, and fall back to the old behavior.
-> 
-> Without the checks, the kernel will just crash during early startup,
-> without a clue in the (missing) kernel output, usually leading to a
-> frustrating bisection experience (if the developer is sufficiently motivated,
-> at all).
-> 
-> Hence my vote for keeping the checks.
+> The check is only when console_owner == current, which can easily
+> happen with an interrupt let alone an NMI.
 
-Sounds good to me.
+Yeah. Sergey pointed this out and I suggested to update it
+to
 
-Rich
+	if (console_owner == current && !in_nmi() &&
+	    !__ratelimit(&ratelimit_console))
+		return 0;
+
+Only messages from console drivers called from console_unlock()
+should be ratelimited. Ratelimiting any other messages was not
+intended (is a bug).
+
+The above does not handle recursion in NMI. But console drivers
+are called from NMI only when we flush consoles in panic().
+I wonder if it is worth the effort.
+
+
+> > > What happens if you had a couple of NMIs go off that takes up that
+> > > time, and then you hit a bug 10 minutes later from that context. You
+> > > just lost it.  
+> > 
+> > I do not understand how this is related to the NMI context.
+> > The messages in NMI context are not throttled!
+> > 
+> > OK, the original patch throttled also NMI messages when NMI
+> > interrupted console drivers. But it is easy to fix.
+> 
+> My mistake in just mentioning NMIs, because the check is on
+> console_owner which can be set with interrupts enabled. That means an
+> interrupt that does a print could hide printks from other interrupts or
+> NMIs when console_owner is set.
+
+No, call_console_drivers() is done with interrupts disabled:
+
+		console_lock_spinning_enable();
+
+		stop_critical_timings();	/* don't trace print latency */
+ ---->		call_console_drivers(ext_text, ext_len, text, len);
+		start_critical_timings();
+
+		if (console_lock_spinning_disable_and_check()) {
+ ---->			printk_safe_exit_irqrestore(flags);
+			goto out;
+		}
+
+ ---->		printk_safe_exit_irqrestore(flags);
+
+They were called with interrupts disabled for ages, long before
+printk_safe. In fact, it was all the time in the git kernel history.
+
+Therefore only NMIs are in the game. And they should be solved
+by the above change.
+
+
+> > I proposed that long delay because I want to be on the safe side.
+> > Also I do not see a huge benefit in repeating the same messages
+> > too often.
+> 
+> Actually, I think we are fine with the one hour and 1000 prints if we
+> add to the condition.
+
+great
+
+> It can't just check console_owner. We need a way
+> to know that this is indeed a recursion. Perhaps we should set the
+> context we are in when setting console owner. Something like I have in
+> the ring buffer code.
+
+> enum {
+> 	CONTEXT_NONE,
+> 	CONTEXT_NMI,
+> 	CONTEXT_IRQ,
+> 	CONTEXT_SOFTIRQ,
+> 	CONTEXT_NORMAL
+> };
+> 
+> int get_context(void)
+> {
+> 	unsigned long pc = preempt_count();
+> 
+> 	if (!(pc & (NMI_MASK | HARDIRQ_MASK | SOFTIRQ_OFFSET)))
+> 		return CONTEXT_NORMAL;
+> 	else
+> 		return pc & NMI_MASK ? CONTEXT_NMI :
+> 			pc & HARDIRQ_MASK ? CONTEXT_IRQ : CONTEXT_SOFTIRQ;
+> }
+
+We actually would need this only when flushing consoles in NMI in panic().
+I am not sure of it is worth the effort.
+
+Best Regards,
+Petr
