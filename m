@@ -1,201 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755226AbeDTOAR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:00:17 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:58056 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754989AbeDTOAP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:00:15 -0400
-Subject: Re: [PATCH v2 05/10] media: v4l: Add definitions for MPEG2 frame
- format and header metadata
-To: Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>
-References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
- <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <c7331038-dd03-a384-9582-658e6aa2fd04@xs4all.nl>
-Date: Fri, 20 Apr 2018 16:00:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1755191AbeDTOAy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:00:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39644 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755043AbeDTOAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:00:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E3620853
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Fri, 20 Apr 2018 09:00:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org, sulrich@codeaurora.org,
+        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Rajat Jain <rajatja@google.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
+Message-ID: <20180420140049.GP28657@bhelgaas-glaptop.roam.corp.google.com>
+References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
+ <20180419202632.GE14063@ziepe.ca>
+ <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
+ <290e9530-dcde-9c10-7ae0-59ac4c509db4@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfDMfFZC7MuU8olpIiLqJNHr0u/miX/WAFXoHdnMMhKOuRTp6N9ki9eUg3Nu/JIsLPZZKL/pkh3DlWZytW7nHvYTIoZN+Z6rlDnJKNz99fAr3QMgb7lYf
- NbJhkhldgcj5qqVqwiWItMKaIo9CVHd1w3s4ibGYZlrUXhtJu1+cquxMnTu2whzKIa/4mR1z2v1qnewmNECCg3XHh5ZiYcyjnBlwRj5S+RBgw6pr1l8gJvQy
- DMYe5GaNdDrRqauupoZ/Y4YOdin8lgqCvEl29TIkvAR1uCEfEJmZq20PX0KWTXVvtJMKUEedyh/qj9fnCdwbJYylEFEhfk6nN44OTMQniLKDr9sDj+ZixwvP
- A5GNJkMZbYMnjQxJ56Kdrl/gh6WH8yN44nb+ZdH06PiVVGvftUoxfPrJu/KVfMukHMZ68YiGYmgcnOyIl6tEVPXyoDNZKWXLkNiWgUmWQWhrx2TBe/IvIGDb
- x4IgH3VdNFC64eLwj1OyIyNjUVMqV0Rw5df7IEd7gIj4IjVXho1pJyi5A74NhxBkC9eIe+evebt66ODeO+UvWfAuR5W/UgrV3FU9cOYKNLkkeuPlBWubMLOV
- hSg2+GD+LyZCXIUsidE6kvFLhIsspcmmjn56vjJ85xcJrktius/xNH+DF0ZA8CRtZSu3pKPCLXBlBndVnkw4iyhne3D3Pc66wuHXGlJJ34V1O7GhZXfH6AeN
- rTbu93y+Y35v6Uz+VniJGW3XEBfJiGqrp/kCLPC2evYHrUdXVGJ08C0JMC+/JHIgAu+Dxz2yZ05NsdSgM43jo5iEU7T5CkdX8VJAI8ZorPnDyAOdWFmqBC3t
- IlXh1+Kw2ZqVIA38HEM9XENOLRcrHKBKNhkzsz0cFftx1BdG2WSAJrgbDIIQjpkTOZ2RsYeIzzqCk4C2mCJSCmKlt6OqEOYhAAwdZmIzX3mwNZLgmfVGTMwi
- 5ydOANDyjTTvbYg7in9fQPe38gJZuQM+vZWybb+ZDSPV09QXd4YgdcSHUir4NfTpeXEClsQ743cTn8qW4GdmJJi5BfdE/mNsCmWzjZdDBLYSXguTExlnpywj
- DKwUal4USR867zIsqI8XyfBnlaqc9xAHHCKjgBT9PL094tlpurxM09KE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <290e9530-dcde-9c10-7ae0-59ac4c509db4@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/19/18 17:45, Paul Kocialkowski wrote:
-> Stateless video decoding engines require both the MPEG slices and
-> associated metadata from the video stream in order to decode frames.
-> 
-> This introduces definitions for a new pixel format, describing buffers
-> with MPEG2 slice data, as well as a control structure for passing the
-> frame header (metadata) to drivers.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
-> ---
->  drivers/media/v4l2-core/v4l2-ctrls.c | 10 ++++++++++
->  drivers/media/v4l2-core/v4l2-ioctl.c |  1 +
->  include/uapi/linux/v4l2-controls.h   | 26 ++++++++++++++++++++++++++
->  include/uapi/linux/videodev2.h       |  3 +++
->  4 files changed, 40 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index ba05a8b9a095..fcdc12b9a9e0 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -761,6 +761,7 @@ const char *v4l2_ctrl_get_name(u32 id)
->  	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:		return "Vertical MV Search Range";
->  	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:		return "Repeat Sequence Header";
->  	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		return "Force Key Frame";
-> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:		return "MPEG2 Frame Header";
->  
->  	/* VPX controls */
->  	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:		return "VPX Number of Partitions";
-> @@ -1152,6 +1153,9 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
->  	case V4L2_CID_RDS_TX_ALT_FREQS:
->  		*type = V4L2_CTRL_TYPE_U32;
->  		break;
-> +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:
-> +		*type = V4L2_CTRL_TYPE_MPEG2_FRAME_HDR;
-> +		break;
->  	default:
->  		*type = V4L2_CTRL_TYPE_INTEGER;
->  		break;
-> @@ -1472,6 +1476,9 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
->  			return -ERANGE;
->  		return 0;
->  
-> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
-> +		return 0;
-> +
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -2046,6 +2053,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
->  	case V4L2_CTRL_TYPE_U32:
->  		elem_size = sizeof(u32);
->  		break;
-> +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
-> +		elem_size = sizeof(struct v4l2_ctrl_mpeg2_frame_hdr);
-> +		break;
->  	default:
->  		if (type < V4L2_CTRL_COMPOUND_TYPES)
->  			elem_size = sizeof(s32);
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 468c3c65362d..8070203da5d2 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1273,6 +1273,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
->  		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
->  		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
-> +		case V4L2_PIX_FMT_MPEG2_FRAME:	descr = "MPEG2 Frame"; break;
->  		case V4L2_PIX_FMT_CPIA1:	descr = "GSPCA CPiA YUV"; break;
->  		case V4L2_PIX_FMT_WNVA:		descr = "WNVA"; break;
->  		case V4L2_PIX_FMT_SN9C10X:	descr = "GSPCA SN9C10X"; break;
-> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> index cbbb750d87d1..8431b2a540c7 100644
-> --- a/include/uapi/linux/v4l2-controls.h
-> +++ b/include/uapi/linux/v4l2-controls.h
-> @@ -557,6 +557,8 @@ enum v4l2_mpeg_video_mpeg4_profile {
->  };
->  #define V4L2_CID_MPEG_VIDEO_MPEG4_QPEL		(V4L2_CID_MPEG_BASE+407)
->  
-> +#define V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR     (V4L2_CID_MPEG_BASE+450)
-> +
->  /*  Control IDs for VP8 streams
->   *  Although VP8 is not part of MPEG we add these controls to the MPEG class
->   *  as that class is already handling other video compression standards
-> @@ -985,4 +987,28 @@ enum v4l2_detect_md_mode {
->  #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_CLASS_BASE + 3)
->  #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DETECT_CLASS_BASE + 4)
->  
-> +struct v4l2_ctrl_mpeg2_frame_hdr {
-> +	__u32 slice_len;
-> +	__u32 slice_pos;
-> +	enum { MPEG1, MPEG2 } type;
-> +
-> +	__u16 width;
-> +	__u16 height;
-> +
-> +	enum { PCT_I = 1, PCT_P, PCT_B, PCT_D } picture_coding_type;
-> +	__u8 f_code[2][2];
-> +
-> +	__u8 intra_dc_precision;
-> +	__u8 picture_structure;
-> +	__u8 top_field_first;
-> +	__u8 frame_pred_frame_dct;
-> +	__u8 concealment_motion_vectors;
-> +	__u8 q_scale_type;
-> +	__u8 intra_vlc_format;
-> +	__u8 alternate_scan;
-> +
-> +	__u8 backward_ref_index;
-> +	__u8 forward_ref_index;
-> +};
-> +
->  #endif
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 31b5728b56e9..4b8336f7bcf0 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -635,6 +635,7 @@ struct v4l2_pix_format {
->  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /* SMPTE 421M Annex L compliant stream */
->  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
->  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
-> +#define V4L2_PIX_FMT_MPEG2_FRAME v4l2_fourcc('M', 'G', '2', 'F') /* MPEG2 frame */
+[+cc Rajat, Alex because of their interest in the reset/hotplug issue]
 
-Needs to be added to v4l_fill_fmtdesc in v4l2-ioctl.c.
+For context, Sinan's patch is this:
 
-Regards,
+> diff --git a/drivers/infiniband/hw/hfi1/pcie.c b/drivers/infiniband/hw/hfi1/pcie.c
+> index 83d66e8..75f49e3 100644
+> --- a/drivers/infiniband/hw/hfi1/pcie.c
+> +++ b/drivers/infiniband/hw/hfi1/pcie.c
+> @@ -908,7 +908,8 @@ static int trigger_sbr(struct hfi1_devdata *dd)
+>          * delay after a reset is required.  Per spec requirements,
+>          * the link is either working or not after that point.
+>          */
+> -       pci_reset_bridge_secondary_bus(dev->bus->self);
+> +       if (pci_reset_slot(dev->slot))
+> +               pci_reset_bridge_secondary_bus(dev->bus->self);
 
-	Hans
+On Thu, Apr 19, 2018 at 06:19:32PM -0400, Sinan Kaya wrote:
+> On 4/19/2018 5:47 PM, Bjorn Helgaas wrote:
+> >> Bjorn, would be appropriate to export pci_parent_bus_reset() or some
+> >> variation therin??
+> > I agree it would be really nice if the PCI core could help out somehow
+> > so we could get some of this code out of individual drivers.
 
->  
->  /*  Vendor-specific formats   */
->  #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1 YUV */
-> @@ -1586,6 +1587,7 @@ struct v4l2_ext_control {
->  		__u8 __user *p_u8;
->  		__u16 __user *p_u16;
->  		__u32 __user *p_u32;
-> +		struct v4l2_ctrl_mpeg2_frame_hdr __user *p_mpeg2_frame_hdr;
->  		void __user *ptr;
->  	};
->  } __attribute__ ((packed));
-> @@ -1631,6 +1633,7 @@ enum v4l2_ctrl_type {
->  	V4L2_CTRL_TYPE_U8	     = 0x0100,
->  	V4L2_CTRL_TYPE_U16	     = 0x0101,
->  	V4L2_CTRL_TYPE_U32	     = 0x0102,
-> +	V4L2_CTRL_TYPE_MPEG2_FRAME_HDR = 0x0109,
->  };
->  
->  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
-> 
+What I was really thinking here was about the whole Gen3 transition
+thing, not the reset thing by itself.
+
+> I can create a function called pci_reset_link() and move both slot and
+> secondary bus reset inside.
+
+What exactly is your patch fixing?  Is it the following?
+
+  If the HFI link is not operating at 8GT/s, the driver's .probe()
+  method tries to transition it to 8GT/s, which involves resetting the
+  HFI device with pci_reset_bridge_secondary_bus().  If the HFI device
+  is in a hotplug slot, the reset causes a "Link Down" event, which
+  causes the pciehp driver to remove the HFI device and re-enumerate
+  it when the link comes back up.
+
+  When pciehp removes the device, it calls the HFI .remove() method,
+  which is a problem because the .probe() method is still active.
+
+  It looks like this should deadlock because __device_attach() holds
+  the device_lock while calling .probe() and the
+  device_release_driver() path tries to acquire it.
+
+Your patch uses pci_reset_slot(), which connects with Rajat's work
+(06a8d89af551 ("PCI: pciehp: Disable link notification across slot
+reset")) to avoid hotplug events for intentional resets.
+
+So I think I just reverse-engineered the whole rationale for your
+patch :)  Sorry about the long detour.
+
+I'm having a hard time articulating my thoughts here.  I think my
+concern is that knowledge about this reset/link down/hotplug issue is
+leaking out and we'll end up with different reset interfaces that may
+or may not result in hotplug events.  This seems like a confusing API
+because it's hard to explain which interface a driver should use.
+
+Bjorn
