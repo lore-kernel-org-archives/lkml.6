@@ -1,131 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752385AbeDTQPA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:15:00 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53680 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750858AbeDTQO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:14:56 -0400
-Date: Fri, 20 Apr 2018 19:14:51 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Alexander Duyck <alexander.duyck@gmail.com>
-Cc: "Daly, Dan" <dan.daly@intel.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
-        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
-        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
-        "Wang, Liang-min" <liang-min.wang@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        dwmw@amazon.co.uk
-Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
- unmanaged SR-IOV on virtio_pci devices
-Message-ID: <20180420191055-mutt-send-email-mst@kernel.org>
-References: <20180316183042-mutt-send-email-mst@kernel.org>
- <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
- <20180403161151-mutt-send-email-mst@kernel.org>
- <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com>
- <20180403212503-mutt-send-email-mst@kernel.org>
- <CAKgT0Ude79FYrK4qA0OKRJ1NackyqPi-hZ8Zh3WSdLDFxoOosQ@mail.gmail.com>
- <20180420030640-mutt-send-email-mst@kernel.org>
- <CAKgT0Ucpw9D1u8MYoEX5KOij6sxs-5O9gPFTmOVq=Dgt=HUJ=g@mail.gmail.com>
- <20180420180839-mutt-send-email-mst@kernel.org>
- <CAKgT0UeWzK=_8m9hhWfaKyYB02WXDsuCkgowS4hgQ9GkLMcAMA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKgT0UeWzK=_8m9hhWfaKyYB02WXDsuCkgowS4hgQ9GkLMcAMA@mail.gmail.com>
+        id S1752558AbeDTQPH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:15:07 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:36201 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeDTQPD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 12:15:03 -0400
+From: Arnd Bergmann <arnd@arndb.de>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] rtc: tps6586x: remove mktime usage
+Date: Fri, 20 Apr 2018 18:14:26 +0200
+Message-Id: <20180420161433.3721192-3-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180420161433.3721192-1-arnd@arndb.de>
+References: <20180420161433.3721192-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:uFk+XX53/Bun0nehYpCnUvhWFTU85ztqI+ZUVYREyY7ClPW/b/m
+ dYt+MXwYQY2GDInUkNGWZE5D3jKkkfnMg3q2JdF1GpEvqU/NyZ7W7W8s8/0PC5bmoxU+9Nr
+ o0fP/J2pJiQpiSNeM4sCZanRYykTof5qHxjIQv27wp+quVhXDeNWfNfKxhL7Qtsb8eS3/PY
+ G3CEZUkV3EqQVQ2kd+EIg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:f7sSTuXSSpE=:PscYx+5khXoWBuyf9Kwhn0
+ NeIp+C3b+2Es1jINxyzosxTkiD10E6MXnSGg4M+us+apa4fg4PSXA73QlQhVe80EXdkT3Kjv9
+ i41npYRTsRQbjCipg5VcTBqNlz8drtOUqKAe4zq/21Qd+l/wO4qyE/YdBu3TYJUCjVnOGPIGB
+ Dil1zMfYqZhmajD8Atg08VE7DrBLWaCmTHutZdO3ZWUpT25q3DIspwLcJF5yfZj5XNvQpbb6p
+ f+Ojq9e0Za4gmbWzf+DZFgrXr5XjmjjV0gOi9WlsJn1yEqgnLKceOvJDIwjVTG7Kn+22TN6HV
+ WyeSomVeOhyPxLzKvki03Iu6d5kBjXlVYhW9SR86Oh6CC2Aew60jMTg0B8X4yFFfUek+S1/Qu
+ gS8cSEd/0Snoul2EDbN9JdMTXCKDT6pzs4QLlOfeypm4EPmfJ4zFv6mRdzvvkn6CAC9xaGD8n
+ 33O4Wgo3LFMB0j1Mpi1CH2LTigjzzpgky/uWJAF3FZmWk0mTGg4F91YepTVyBeagwIeX9FN6k
+ /0mumc+0kWI4VW1VuKLGI6ijuhDy2WI9TiogYbb+tX6JaWdZwljT0ZliSGOvq2d9cW/ofSHX1
+ 9dB8cKuOJyThqL3XXLhy/o7iIcxhNprRpBNjvwu/OoCLAPkBg7kfIsxVl2xNp4vhYlYHz8AFp
+ N4tEXCwh/V22gr/BALpOptjkKAgJo7YuKHcPNa8VOMkvPssqoZSrxPr6geikRktufm9GwmGEb
+ zQ8cn9yb+SJshUAg+NowlUWdc0ow0h6IRe+azw==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 09:08:51AM -0700, Alexander Duyck wrote:
-> On Fri, Apr 20, 2018 at 8:28 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > On Fri, Apr 20, 2018 at 07:56:14AM -0700, Alexander Duyck wrote:
-> >> > I think for virtio it should include the feature bit, yes.
-> >> > Adding feature bit is very easy - post a patch to the virtio TC mailing
-> >> > list, wait about a week to give people time to respond (two weeks if it
-> >> > is around holidays and such).
-> >>
-> >> The problem is we are talking about hardware/FPGA, not software.
-> >> Adding a feature bit means going back and updating RTL. The software
-> >> side of things is easy, re-validating things after a hardware/FPGA
-> >> change not so much.
-> >>
-> >> If this is a hard requirement I may just drop the virtio patch, push
-> >> what I have, and leave it to Mark/Dan to deal with the necessary RTL
-> >> and code changes needed to support Virtio as I don't expect the
-> >> turnaround to be as easy as just a patch.
-> >>
-> >> Thanks.
-> >>
-> >> - Alex
-> >
-> > Let's focus on virtio in this thread.
-> 
-> That is kind of what I was thinking, and why I was thinking it might
-> make sense to make the virtio specific changes a separate patch set. I
-> could get the PCI bits taken care of in the meantime since they effect
-> genetic PCI, NVMe, and the Amazon ENA interfaces.
-> 
-> > Involving the virtio TC in host/guest interface changes is a
-> > hard requirement. It's just too easy to create conflicts otherwise.
-> >
-> > So you guys should have just sent the proposal to the TC when you
-> > were doing your RTL and you would have been in the clear.
-> 
-> Agreed. I believe I brought this up when I was originally asked to
-> look into the coding for this.
-> 
-> > Generally adding a feature bit with any extension is a good idea:
-> > this way you merely reserve a feature bit for your feature through
-> > the TC and are more or less sure of forward and backward compatibility.
-> > It's incredibly easy.
-> 
-> Agreed, though in this case I am not sure it makes sense since this
-> isn't necessarily something that is a Virtio feature itself. It is
-> just a side effect of the fact that they are adding SR-IOV support to
-> a device that happens to emulate Virtio NET and apparently their PF
-> has to be identical to the VF other than the PCIe extended config
-> space.
+The tps6586x use a 64-bit 'epoch_start' value, but then computes that
+value using an 'mktime()', which has a smaller range and overflows
+in 2106 at the latest. As both the hardware and the subsystem interface
+support wider than 32-bit ranges for rtc times here, let's change all
+the operations on 'seconds' to time64_t.
 
-I got that. My point is not everyone implementing SR-IOV will
-want to do it like this. Others might want to have VFs
-be different from PFs somehow. Feature bits ensure forward
-not just backward compatibility.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/rtc/rtc-tps6586x.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-
-> > But maybe it's not needed here.  I am not making the decisions myself.
-> > Not too late: post to the TC list and let's see what the response is.
-> > Without a feature bit you are making a change affecting all future
-> > implementations without exception so the bar is a bit higher: you need
-> > to actually post a spec text proposal not just a patch showing how to
-> > use the feature, and TC needs to vote on it. Voting takes a week,
-> > review a week or two depending on change complexity.
-> >
-> > Hope this helps,
-> >
-> > --
-> > MST
-> 
-> I think I will leave this for Dan and Mark to handle since I am still
-> not all that familiar with the hardware in use here. Once a decision
-> has been made him and Mark could look at pushing either the one line
-> patch or something more complex involving a feature flag.
-> 
-> Thanks.
-> 
-> Alex
-
-As long as the TC is involved.
-
-I know it's a bit of a strange thing to block it at the driver level,
-the issue is with the device, but it's literally the only handle I have
-to prevent people from doing out of spec hacks then pushing it all on us
-to maintain.
-
+diff --git a/drivers/rtc/rtc-tps6586x.c b/drivers/rtc/rtc-tps6586x.c
+index d7785ae0a2b4..46a19adf9a96 100644
+--- a/drivers/rtc/rtc-tps6586x.c
++++ b/drivers/rtc/rtc-tps6586x.c
+@@ -58,7 +58,7 @@ struct tps6586x_rtc {
+ 	struct rtc_device	*rtc;
+ 	int			irq;
+ 	bool			irq_en;
+-	unsigned long long	epoch_start;
++	time64_t		epoch_start;
+ };
+ 
+ static inline struct device *to_tps6586x_dev(struct device *dev)
+@@ -71,7 +71,7 @@ static int tps6586x_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	struct tps6586x_rtc *rtc = dev_get_drvdata(dev);
+ 	struct device *tps_dev = to_tps6586x_dev(dev);
+ 	unsigned long long ticks = 0;
+-	unsigned long seconds;
++	time64_t seconds;
+ 	u8 buff[6];
+ 	int ret;
+ 	int i;
+@@ -98,11 +98,11 @@ static int tps6586x_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	struct tps6586x_rtc *rtc = dev_get_drvdata(dev);
+ 	struct device *tps_dev = to_tps6586x_dev(dev);
+ 	unsigned long long ticks;
+-	unsigned long seconds;
++	time64_t seconds;
+ 	u8 buff[5];
+ 	int ret;
+ 
+-	rtc_tm_to_time(tm, &seconds);
++	seconds = rtc_tm_to_time64(tm);
+ 	if (seconds < rtc->epoch_start) {
+ 		dev_err(dev, "requested time unsupported\n");
+ 		return -EINVAL;
+@@ -157,7 +157,7 @@ static int tps6586x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ {
+ 	struct tps6586x_rtc *rtc = dev_get_drvdata(dev);
+ 	struct device *tps_dev = to_tps6586x_dev(dev);
+-	unsigned long seconds;
++	time64_t seconds;
+ 	unsigned long ticks;
+ 	unsigned long rtc_current_time;
+ 	unsigned long long rticks = 0;
+@@ -166,7 +166,7 @@ static int tps6586x_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	int ret;
+ 	int i;
+ 
+-	rtc_tm_to_time(&alrm->time, &seconds);
++	seconds = rtc_tm_to_time64(&alrm->time);
+ 
+ 	if (alrm->enabled && (seconds < rtc->epoch_start)) {
+ 		dev_err(dev, "can't set alarm to requested time\n");
+@@ -213,7 +213,7 @@ static int tps6586x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	struct tps6586x_rtc *rtc = dev_get_drvdata(dev);
+ 	struct device *tps_dev = to_tps6586x_dev(dev);
+ 	unsigned long ticks;
+-	unsigned long seconds;
++	time64_t seconds;
+ 	u8 buff[3];
+ 	int ret;
+ 
+@@ -227,7 +227,7 @@ static int tps6586x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	seconds = ticks >> 10;
+ 	seconds += rtc->epoch_start;
+ 
+-	rtc_time_to_tm(seconds, &alrm->time);
++	rtc_time64_to_tm(seconds, &alrm->time);
+ 	return 0;
+ }
+ 
+@@ -261,7 +261,7 @@ static int tps6586x_rtc_probe(struct platform_device *pdev)
+ 	rtc->irq = platform_get_irq(pdev, 0);
+ 
+ 	/* Set epoch start as 00:00:00:01:01:2009 */
+-	rtc->epoch_start = mktime(2009, 1, 1, 0, 0, 0);
++	rtc->epoch_start = mktime64(2009, 1, 1, 0, 0, 0);
+ 
+ 	/* 1 kHz tick mode, enable tick counting */
+ 	ret = tps6586x_update(tps_dev, RTC_CTRL,
 -- 
-MST
+2.9.0
