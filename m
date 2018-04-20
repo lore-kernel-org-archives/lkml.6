@@ -1,105 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753870AbeDTHNT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 03:13:19 -0400
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:45854 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753529AbeDTHNQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 03:13:16 -0400
-X-Google-Smtp-Source: AIpwx4/PVgsm2t2jrBsk9PtbCOaZk1Fo/KNjY3AYi/02GZ9o1ahsc6TNUlzT/TBndygDj+FlYceHJw==
-Date: Fri, 20 Apr 2018 09:13:12 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Jerome Glisse <jglisse@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180420071312.GF31310@phenom.ffwll.local>
-Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20180325110000.2238-1-christian.koenig@amd.com>
- <20180325110000.2238-4-christian.koenig@amd.com>
- <20180329065753.GD3881@phenom.ffwll.local>
- <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
- <20180403090909.GN3881@phenom.ffwll.local>
- <20180403170645.GB5935@redhat.com>
- <20180403180832.GZ3881@phenom.ffwll.local>
- <20180416123937.GA9073@infradead.org>
- <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
- <20180419081657.GA16735@infradead.org>
+        id S1753923AbeDTHO0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 03:14:26 -0400
+Received: from www.zeus03.de ([194.117.254.33]:48016 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753565AbeDTHOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 03:14:24 -0400
+X-UD-Smtp-Session: l3s3148p1@Y1jpb0Jq7IggAwDPW8ZDAAId4P/+oMhl
+Date: Fri, 20 Apr 2018 09:14:21 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Darren Hart <dvhart@infradead.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 40/61] platform: x86: simplify getting .drvdata
+Message-ID: <20180420071421.ex6gcegotzjdswbg@katana>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-41-wsa+renesas@sang-engineering.com>
+ <20180419235651.GC11546@fury>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3khbrrzjm7np76wh"
 Content-Disposition: inline
-In-Reply-To: <20180419081657.GA16735@infradead.org>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180419235651.GC11546@fury>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 01:16:57AM -0700, Christoph Hellwig wrote:
-> On Mon, Apr 16, 2018 at 03:38:56PM +0200, Daniel Vetter wrote:
-> > We've broken that assumption in i915 years ago. Not struct page backed
-> > gpu memory is very real.
-> > 
-> > Of course we'll never feed such a strange sg table to a driver which
-> > doesn't understand it, but allowing sg_page == NULL works perfectly
-> > fine. At least for gpu drivers.
-> 
-> For GPU drivers on x86 with no dma coherency problems, sure.  But not
-> all the world is x86.  We already have problems due to dmabugs use
-> of the awkward get_sgtable interface (see the common on
-> arm_dma_get_sgtable that I fully agree with), and doing this for memory
-> that doesn't have a struct page at all will make things even worse.
 
-x86 dma isn't coherent either, if you're a GPU :-) Flushing gpu caches
-tends to be too expensive, so there's pci-e support and chipset support to
-forgo it. Plus drivers flushing caches themselves.
+--3khbrrzjm7np76wh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The dma_get_sgtable thing is indeed fun, right solution would probably be
-to push the dma-buf export down into the dma layer. The comment for
-arm_dma_get_sgtable is also not a realy concern, because dma-buf also
-abstracts away the flushing (or well is supposed to), so there really
-shouldn't be anyone calling the streaming apis on the returned sg table.
-That's why dma-buf gives you an sg table that's mapped already.
 
-> > If that's not acceptable then I guess we could go over the entire tree
-> > and frob all the gpu related code to switch over to a new struct
-> > sg_table_might_not_be_struct_page_backed, including all the other
-> > functions we added over the past few years to iterate over sg tables.
-> > But seems slightly silly, given that sg tables seem to do exactly what
-> > we need.
-> 
-> It isn't silly.  We will have to do some surgery like that anyway
-> because the current APIs don't work.  So relax, sit back and come up
-> with an API that solves the existing issues and serves us well in
-> the future.
+> (I'm not sure what you mean by "Please apply individually")
 
-So we should just implement a copy of sg table for dma-buf, since I still
-think it does exactly what we need for gpus?
+Right, that is not very precise. "Individually" as "per subsystem
+individually". I.e. I don't want to collect tags and push it upstream as
+one huge pull-request.
 
-Yes there's a bit a layering violation insofar that drivers really
-shouldn't each have their own copy of "how do I convert a piece of dma
-memory into  dma-buf", but that doesn't render the interface a bad idea.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Thanks!
+
+
+--3khbrrzjm7np76wh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrZk0kACgkQFA3kzBSg
+KbZT3w//afpRm3RefDNQ2Ysr5+0YF5JxKxGDkxsQbgVVAlWAjt4qsFsM1Y32PcWb
+/uT7lJyE4mNSJie4OFT5X5Hcf9K2wWCO8cOtyDqysNdL7/+eJ/6vvjwjqIwYG6Jh
+eGiq1H7hXI8m3f0xudQFjdKFdMkvQYYWs3VQ2U9wwlOP1AzJqTna7QzNk0hCN7jL
+jyenIY2MsYK059MyE/qgDM0l913/O+3P4mOa5cA4OYGgX84MBc3i4DRrnhnEhLV0
+StzkjAbHQKvVHNip802HC4ML6lDUlrlj3XUutlX78aSKZPs8V6NE3H7GvumcBV7T
+WkH2Jv84jWt+IcF1cwPk5+T6c3rRXvRuRY01LpbsDenbxXPG4dQ0nSqQDvtdyo/e
+6xT2Dk1fQ1PVIOPRyMqUJotg6Fy1+JklLVh8PMXpcEQuLbuy9wBmLFsC88U3AyMi
+tUHbKGfArcITKQmpVacecTI44jff4Eyp77hWOjgujNC92Cj/PT0LPON/vHh6yYyi
+ZcY/Bg6jAxZeHcroJmeVlph0vp6VU3GG7Cx6YJhcGYUWpBBo6HnKQCjOzlaIuvN5
+NMWd5B0ZrjUJ/Awi8AOb0qzI7iyDJtZQ8O60wxPuwfG+4SZXL2KndwsdlZecrxGN
+T5dEJRmA0oq1gSmtpMX3YznXDLwIxz7w3AYiIn2bXFHH/xWeOho=
+=fyhZ
+-----END PGP SIGNATURE-----
+
+--3khbrrzjm7np76wh--
