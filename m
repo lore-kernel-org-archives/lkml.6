@@ -1,56 +1,272 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754473AbeDTIG3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:06:29 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:37185 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754034AbeDTIG0 (ORCPT
+        id S1754500AbeDTIHN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:07:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40810 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754347AbeDTIEy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:06:26 -0400
-X-Google-Smtp-Source: AIpwx4+CmkGw2NdZwhqBub1m8yKWgvyHBC1Zzw6Mz3+qmZwz30dteITHmSR5+CgkvMW6aTk/z3pO/Q==
-Date: Fri, 20 Apr 2018 09:06:23 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: ryang <decatf@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Fri, 20 Apr 2018 04:04:54 -0400
+From: Christoph Hellwig <hch@lst.de>
+Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: tps6586x: Add support for TPS658624
-Message-ID: <20180420080623.cyohf6js6evxgtmx@dell>
-References: <20180419161850.GA9144@computer>
- <20180419164801.GI27188@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180419164801.GI27188@sirena.org.uk>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Subject: [PATCH 21/22] sparc: use generic dma_noncoherent_ops
+Date: Fri, 20 Apr 2018 10:03:12 +0200
+Message-Id: <20180420080313.18796-22-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180420080313.18796-1-hch@lst.de>
+References: <20180420080313.18796-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018, Mark Brown wrote:
+Switch to the generic noncoherent direct mapping implementation.
 
-> On Thu, Apr 19, 2018 at 12:18:50PM -0400, ryang wrote:
-> > This version is exists in the Samsung Galaxy Tab 10.1 which is based on the
-> > Nvidia Tegra 2 board. The TPS658624 has the same SM2 voltage table as
-> > TPS658623.
-> 
-> > Signed-off-by: ryang <decatf@gmail.com>
-> > ---
-> >  drivers/regulator/tps6586x-regulator.c | 1 +
-> >  include/linux/mfd/tps6586x.h           | 1 +
-> >  2 files changed, 2 insertions(+)
-> 
-> This also touches the MFD header for the part so should've been sent to
-> Lee, the MFD maintainer (CCed here, left the entire patch for context).  
+This removes the previous sync_single_for_device implementation, which
+looks bogus given that no syncing is happening in the similar but more
+important map_single case.
 
-Thanks Mark.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/sparc/Kconfig                   |   2 +
+ arch/sparc/include/asm/dma-mapping.h |   5 +-
+ arch/sparc/kernel/ioport.c           | 151 ++-------------------------
+ 3 files changed, 14 insertions(+), 144 deletions(-)
 
-Please take it.
-
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
+diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+index c1cfc17eb504..5680eece3014 100644
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -49,6 +49,8 @@ config SPARC
+ 
+ config SPARC32
+ 	def_bool !64BIT
++	select ARCH_HAS_SYNC_DMA_FOR_CPU
++	select DMA_NONCOHERENT_OPS
+ 	select GENERIC_ATOMIC64
+ 	select CLZ_TAB
+ 	select HAVE_UID16
+diff --git a/arch/sparc/include/asm/dma-mapping.h b/arch/sparc/include/asm/dma-mapping.h
+index 12ae33daf52f..e17566376934 100644
+--- a/arch/sparc/include/asm/dma-mapping.h
++++ b/arch/sparc/include/asm/dma-mapping.h
+@@ -7,7 +7,6 @@
+ #include <linux/dma-debug.h>
+ 
+ extern const struct dma_map_ops *dma_ops;
+-extern const struct dma_map_ops pci32_dma_ops;
+ 
+ extern struct bus_type pci_bus_type;
+ 
+@@ -15,11 +14,11 @@ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+ {
+ #ifdef CONFIG_SPARC_LEON
+ 	if (sparc_cpu_model == sparc_leon)
+-		return &pci32_dma_ops;
++		return &dma_noncoherent_ops;
+ #endif
+ #if defined(CONFIG_SPARC32) && defined(CONFIG_PCI)
+ 	if (bus == &pci_bus_type)
+-		return &pci32_dma_ops;
++		return &dma_noncoherent_ops;
+ #endif
+ 	return dma_ops;
+ }
+diff --git a/arch/sparc/kernel/ioport.c b/arch/sparc/kernel/ioport.c
+index 3bcef9ce74df..7954512c42e7 100644
+--- a/arch/sparc/kernel/ioport.c
++++ b/arch/sparc/kernel/ioport.c
+@@ -38,6 +38,7 @@
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+ #include <linux/scatterlist.h>
++#include <linux/dma-noncoherent.h>
+ #include <linux/of_device.h>
+ 
+ #include <asm/io.h>
+@@ -434,9 +435,8 @@ arch_initcall(sparc_register_ioport);
+ /* Allocate and map kernel buffer using consistent mode DMA for a device.
+  * hwdev should be valid struct pci_dev pointer for PCI devices.
+  */
+-static void *pci32_alloc_coherent(struct device *dev, size_t len,
+-				  dma_addr_t *pba, gfp_t gfp,
+-				  unsigned long attrs)
++void *arch_dma_alloc(struct device *dev, size_t len, dma_addr_t *pba, gfp_t gfp,
++		unsigned long attrs)
+ {
+ 	unsigned long len_total = PAGE_ALIGN(len);
+ 	void *va;
+@@ -488,8 +488,8 @@ static void *pci32_alloc_coherent(struct device *dev, size_t len,
+  * References to the memory and mappings associated with cpu_addr/dma_addr
+  * past this call are illegal.
+  */
+-static void pci32_free_coherent(struct device *dev, size_t n, void *p,
+-				dma_addr_t ba, unsigned long attrs)
++void arch_dma_free(struct device *dev, size_t n, void *p, dma_addr_t ba,
++		unsigned long attrs)
+ {
+ 	struct resource *res;
+ 
+@@ -519,146 +519,15 @@ static void pci32_free_coherent(struct device *dev, size_t n, void *p,
+ 	free_pages((unsigned long)phys_to_virt(ba), get_order(n));
+ }
+ 
+-/*
+- * Same as pci_map_single, but with pages.
+- */
+-static dma_addr_t pci32_map_page(struct device *dev, struct page *page,
+-				 unsigned long offset, size_t size,
+-				 enum dma_data_direction dir,
+-				 unsigned long attrs)
+-{
+-	/* IIep is write-through, not flushing. */
+-	return page_to_phys(page) + offset;
+-}
+-
+-static void pci32_unmap_page(struct device *dev, dma_addr_t ba, size_t size,
+-			     enum dma_data_direction dir, unsigned long attrs)
+-{
+-	if (dir != PCI_DMA_TODEVICE && !(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		dma_make_coherent(ba, PAGE_ALIGN(size));
+-}
+-
+-/* Map a set of buffers described by scatterlist in streaming
+- * mode for DMA.  This is the scatter-gather version of the
+- * above pci_map_single interface.  Here the scatter gather list
+- * elements are each tagged with the appropriate dma address
+- * and length.  They are obtained via sg_dma_{address,length}(SG).
+- *
+- * NOTE: An implementation may be able to use a smaller number of
+- *       DMA address/length pairs than there are SG table elements.
+- *       (for example via virtual mapping capabilities)
+- *       The routine returns the number of addr/length pairs actually
+- *       used, at most nents.
+- *
+- * Device ownership issues as mentioned above for pci_map_single are
+- * the same here.
+- */
+-static int pci32_map_sg(struct device *device, struct scatterlist *sgl,
+-			int nents, enum dma_data_direction dir,
+-			unsigned long attrs)
+-{
+-	struct scatterlist *sg;
+-	int n;
+-
+-	/* IIep is write-through, not flushing. */
+-	for_each_sg(sgl, sg, nents, n) {
+-		sg->dma_address = sg_phys(sg);
+-		sg->dma_length = sg->length;
+-	}
+-	return nents;
+-}
+-
+-/* Unmap a set of streaming mode DMA translations.
+- * Again, cpu read rules concerning calls here are the same as for
+- * pci_unmap_single() above.
+- */
+-static void pci32_unmap_sg(struct device *dev, struct scatterlist *sgl,
+-			   int nents, enum dma_data_direction dir,
+-			   unsigned long attrs)
+-{
+-	struct scatterlist *sg;
+-	int n;
+-
+-	if (dir != PCI_DMA_TODEVICE && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)) {
+-		for_each_sg(sgl, sg, nents, n) {
+-			dma_make_coherent(sg_phys(sg), PAGE_ALIGN(sg->length));
+-		}
+-	}
+-}
++/* IIep is write-through, not flushing on cpu to device transfer. */
+ 
+-/* Make physical memory consistent for a single
+- * streaming mode DMA translation before or after a transfer.
+- *
+- * If you perform a pci_map_single() but wish to interrogate the
+- * buffer using the cpu, yet do not wish to teardown the PCI dma
+- * mapping, you must call this function before doing so.  At the
+- * next point you give the PCI dma address back to the card, you
+- * must first perform a pci_dma_sync_for_device, and then the
+- * device again owns the buffer.
+- */
+-static void pci32_sync_single_for_cpu(struct device *dev, dma_addr_t ba,
+-				      size_t size, enum dma_data_direction dir)
++void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
+ {
+-	if (dir != PCI_DMA_TODEVICE) {
+-		dma_make_coherent(ba, PAGE_ALIGN(size));
+-	}
+-}
+-
+-static void pci32_sync_single_for_device(struct device *dev, dma_addr_t ba,
+-					 size_t size, enum dma_data_direction dir)
+-{
+-	if (dir != PCI_DMA_TODEVICE) {
+-		dma_make_coherent(ba, PAGE_ALIGN(size));
+-	}
++	if (dir != PCI_DMA_TODEVICE)
++		dma_make_coherent(paddr, PAGE_ALIGN(size));
+ }
+ 
+-/* Make physical memory consistent for a set of streaming
+- * mode DMA translations after a transfer.
+- *
+- * The same as pci_dma_sync_single_* but for a scatter-gather list,
+- * same rules and usage.
+- */
+-static void pci32_sync_sg_for_cpu(struct device *dev, struct scatterlist *sgl,
+-				  int nents, enum dma_data_direction dir)
+-{
+-	struct scatterlist *sg;
+-	int n;
+-
+-	if (dir != PCI_DMA_TODEVICE) {
+-		for_each_sg(sgl, sg, nents, n) {
+-			dma_make_coherent(sg_phys(sg), PAGE_ALIGN(sg->length));
+-		}
+-	}
+-}
+-
+-static void pci32_sync_sg_for_device(struct device *device, struct scatterlist *sgl,
+-				     int nents, enum dma_data_direction dir)
+-{
+-	struct scatterlist *sg;
+-	int n;
+-
+-	if (dir != PCI_DMA_TODEVICE) {
+-		for_each_sg(sgl, sg, nents, n) {
+-			dma_make_coherent(sg_phys(sg), PAGE_ALIGN(sg->length));
+-		}
+-	}
+-}
+-
+-/* note: leon re-uses pci32_dma_ops */
+-const struct dma_map_ops pci32_dma_ops = {
+-	.alloc			= pci32_alloc_coherent,
+-	.free			= pci32_free_coherent,
+-	.map_page		= pci32_map_page,
+-	.unmap_page		= pci32_unmap_page,
+-	.map_sg			= pci32_map_sg,
+-	.unmap_sg		= pci32_unmap_sg,
+-	.sync_single_for_cpu	= pci32_sync_single_for_cpu,
+-	.sync_single_for_device	= pci32_sync_single_for_device,
+-	.sync_sg_for_cpu	= pci32_sync_sg_for_cpu,
+-	.sync_sg_for_device	= pci32_sync_sg_for_device,
+-};
+-EXPORT_SYMBOL(pci32_dma_ops);
+-
+ const struct dma_map_ops *dma_ops = &sbus_dma_ops;
+ EXPORT_SYMBOL(dma_ops);
+ 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.0
