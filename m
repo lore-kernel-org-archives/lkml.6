@@ -1,114 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755581AbeDTPV1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:21:27 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:37443 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755546AbeDTPVQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:21:16 -0400
-X-Google-Smtp-Source: AIpwx4/pAq2TrAhDLNejhZxv1kY4zDaQzC8wgYke5ZaMwNABch95YtSO1lhd09l0VAiGau3yR49T7A==
-Date: Fri, 20 Apr 2018 17:21:11 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180420152111.GR31310@phenom.ffwll.local>
-Mail-Followup-To: Christoph Hellwig <hch@infradead.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" <linaro-mm-sig@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" <linux-media@vger.kernel.org>
-References: <20180403170645.GB5935@redhat.com>
- <20180403180832.GZ3881@phenom.ffwll.local>
- <20180416123937.GA9073@infradead.org>
- <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
- <20180419081657.GA16735@infradead.org>
- <20180420071312.GF31310@phenom.ffwll.local>
- <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
- <20180420101755.GA11400@infradead.org>
- <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
- <20180420124625.GA31078@infradead.org>
+        id S1755610AbeDTPVi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:21:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:50444 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755561AbeDTPVg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 11:21:36 -0400
+Subject: Re: Clang arm64 build is broken
+To: Andrey Konovalov <andreyknvl@google.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu, LKML <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
+References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
+ <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
+ <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <74f96c43-cfce-ca78-56e3-0e3a0f1f5a8a@arm.com>
+Date: Fri, 20 Apr 2018 16:21:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180420124625.GA31078@infradead.org>
-X-Operating-System: Linux phenom 4.15.0-1-amd64 
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 05:46:25AM -0700, Christoph Hellwig wrote:
-> On Fri, Apr 20, 2018 at 12:44:01PM +0200, Christian König wrote:
-> > > > What we need is an sg_alloc_table_from_resources(dev, resources,
-> > > > num_resources) which does the handling common to all drivers.
-> > > A structure that contains
-> > > 
-> > > {page,offset,len} + {dma_addr+dma_len}
-> > > 
-> > > is not a good container for storing
-> > > 
-> > > {virt addr, dma_addr, len}
-> > > 
-> > > no matter what interface you build arond it.
-> > 
-> > Why not? I mean at least for my use case we actually don't need the virtual
-> > address.
-> 
-> If you don't need the virtual address you need scatterlist even list.
-> 
-> > What we need is {dma_addr+dma_len} in a consistent interface which can come
-> > from both {page,offset,len} as well as {resource, len}.
-> 
-> Ok.
-> 
-> > What I actually don't need is separate handling for system memory and
-> > resources, but that would we get exactly when we don't use sg_table.
-> 
-> At the very lowest level they will need to be handled differently for
-> many architectures, the questions is at what point we'll do the
-> branching out.
+[fixing up Christoffer's address]
 
-Having at least struct page also in that list with (dma_addr_t, lenght)
-pairs has a bunch of benefits for drivers in unifying buffer handling
-code. You just pass that one single list around, use the dma_addr_t side
-for gpu access (generally bashing it into gpu ptes). And the struct page
-(if present) for cpu access, using kmap or vm_insert_*. We generally
-ignore virt, if we do need a full mapping then we construct a vmap for
-that buffer of our own.
+On 20/04/18 15:59, Andrey Konovalov wrote:
+> On Fri, Apr 20, 2018 at 10:13 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>> The issue is that
+>>> clang doesn't know about the "S" asm constraint. I reported this to
+>>> clang [2], and hopefully this will get fixed. In the meantime, would
+>>> it possible to work around using the "S" constraint in the kernel?
+>>
+>> I have no idea, I've never used clang to build the kernel. Clang isn't
+>> really supported to build the arm64 kernel anyway (as you mention
+>> below), and working around clang deficiencies would mean that we leave
+>> with the workaround forever. I'd rather enable clang once it is at
+>> feature parity with GCC.
+> 
+> The fact that there are some existing issues with building arm64
+> kernel with clang doesn't sound like a good justification for adding
+> new issues :)
 
-If (and that would be serious amounts of work all over the tree, with lots
-of drivers) we come up with a new struct for gpu buffers, then I'd also
-add "force page alignement for everything" to the requirements list.
-That's another mismatch we have, since gpu buffer objects (and dma-buf)
-are always full pages. That mismatch motived the addition of the
-page-oriented sg iterators.
+Once clang is in a state where it actually compiles a full-featured
+kernel that can be subsequently booted, I'll definitely care about it,
+and will make sure it doesn't break. In the meantime, I'm targeting GCC,
+which is the only sane option for arm64 at the moment. Waiting for clang
+to fixed is not an option.
 
-So maybe a list of (struct page *, dma_addr_t, num_pages) would suit best,
-with struct page * being optional (if it's a resource, or something else
-that the kernel core mm isn't aware of). But that only has benefits if we
-really roll it out everywhere, in all the subsystems and drivers, since if
-we don't we've made the struct pages ** <-> sgt conversion fun only worse
-by adding a 3 representation of gpu buffer object backing storage.
--Daniel
+> However in this case I do believe that this is more of a bug in clang
+> that should be fixed.
+
+Absolutely. Lack of GCC compatibility is what impairs the adoption of clang.
+
+>>> While we're here, regarding the other issue with kvm [3], I didn't
+>>> receive any comments as to whether it makes sense to send the fix that
+>>> adds -fno-jump-tables flag when building kvm with clang.
+>>
+>> Is that the only thing missing? Are you sure that there is no other way
+>> for clang to generate absolute addresses that will then lead to a crash?
+>> Again, I'd rather make sure we have the full picture.
+> 
+> Well, I have tried applying that patch and running kvm tests that I
+> could find [1], and they passed (actually I think there was an issue
+> with one of them, but I saw the same thing when I tried running them
+> on a kernel built with GCC).
+> 
+> [1] https://www.linux-kvm.org/page/KVM-unit-tests
+
+Which issue? Maybe it'd be worth reporting it?
+
+To the original discussion about absolute addresses: I'm not so much
+looking for additional testing (I trust that you've tested the patch
+before sending it). I'm more after a statement from the LLVM folks
+indicating in which conditions the compiler will emit absolute addresses
+instead of PC-relative ones, and whether there is a way to make sure
+that we always get the latter. If '-fno-jump-tables' is the only missing
+flag, great. Otherwise, I'd like to know.
+
+Thanks,
+
+	M.
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Jazz is not dead. It just smells funny...
