@@ -1,242 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753081AbeDTQ4a (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:56:30 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:46440 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752618AbeDTQ43 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:56:29 -0400
-Smtp-Origin-Hostprefix: devbig
-From: Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig102.frc2.facebook.com
-To: <linux-kernel@vger.kernel.org>
-CC: <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Smtp-Origin-Cluster: frc2c02
-Subject: [PATCH v3 1/2] tracing: fix bad use of igrab in trace_uprobe.c
-Date: Fri, 20 Apr 2018 09:56:24 -0700
-Message-ID: <20180420165625.129593-1-songliubraving@fb.com>
-X-Mailer: git-send-email 2.9.5
-X-FB-Internal: Safe
+        id S1753176AbeDTQ5V (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:57:21 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52034 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752325AbeDTQ5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 12:57:19 -0400
+Subject: Re: Clang arm64 build is broken
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Andrey Konovalov <andreyknvl@google.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
+References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
+ <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com>
+ <CAKwvOdnKuFuqoWKpVJqVa1u8A0z2+vQp9j7+TsNh9qz3Yitk-Q@mail.gmail.com>
+ <8b3e95df-a429-2f84-565c-3caed8e30e28@arm.com>
+ <CAKwvOdmhNH4PYNwH+tsZc4uQQJVhOOHSph2YdDCHcyWNyFMxyA@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <ad937bae-ea95-2758-acf6-6170c4d94d07@arm.com>
+Date: Fri, 20 Apr 2018 17:57:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <CAKwvOdmhNH4PYNwH+tsZc4uQQJVhOOHSph2YdDCHcyWNyFMxyA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Miklos reported and suggested:
+On 20/04/18 17:43, Nick Desaulniers wrote:
+> On Fri, Apr 20, 2018 at 9:36 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
+> 
+>> On 20/04/18 17:30, Nick Desaulniers wrote:
+>>> On Fri, Apr 20, 2018 at 1:13 AM Marc Zyngier <marc.zyngier@arm.com>
+> wrote:
+>>>> Clang isn't
+>>>> really supported to build the arm64 kernel anyway
+>>>
+>>> Can you expand on this?  There are millions of arm64 devices shipping
+> with
+>>> Clang built Linux kernels.
+> 
+>> How many of these devices run a full-featured mainline kernel?
+> 
+>> Sure, Android is building the kernel with clang, but that's with a pile
+>> of out of tree patches. At that point, I'm not sure we're talking about
+>> the same arm64 kernel.
+> 
+> Do you recommend that we only work with ARM licensed SoC vendors with no
+> out of tree patches?
 
-  This pattern repeats two times in trace_uprobe.c and in
-  kernel/events/core.c as well:
+I mean the clang-related patches which are not upstream. We can ignore
+SoC support code for this discussion.
 
-      ret = kern_path(filename, LOOKUP_FOLLOW, &path);
-      if (ret)
-          goto fail_address_parse;
+The android clang patches try to create the illusion that clang is
+usable for the kernel. It is not. It misses fundamental functionality
+that either leads to performance degradation (lack of asm goto) or
+prevents the implementation of security fixes (see the recent discussion
+about SMCCC 1.1 and the top of this very thread).
 
-      inode = igrab(d_inode(path.dentry));
-      path_put(&path);
+I'd rather recommend that clang is brought up to the level of GCC so
+that we don't have to continuously have that discussion. Give us that
+compiler, and we'll make sure the arm64 doesn't break.
 
-  And it's wrong.  You can only hold a reference to the inode if you
-  have an active ref to the superblock as well (which is normally
-  through path.mnt) or holding s_umount.
+Thanks,
 
-  This way unmounting the containing filesystem while the tracepoint is
-  active will give you the "VFS: Busy inodes after unmount..." message
-  and a crash when the inode is finally put.
-
-  Solution: store path instead of inode.
-
-This patch fixes two instances in trace_uprobe.c. struct path is added to
-struct trace_uprobe to keep the inode and containing mount point
-referenced.
-
-Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
-Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Howard McLauchlan <hmclauchlan@fb.com>
-Cc: Josef Bacik <jbacik@fb.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Reported-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- kernel/trace/trace_uprobe.c | 55 +++++++++++++++++++--------------------------
- 1 file changed, 23 insertions(+), 32 deletions(-)
-
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 34fd0e0..e7ffb5e 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -55,6 +55,7 @@ struct trace_uprobe {
- 	struct list_head		list;
- 	struct trace_uprobe_filter	filter;
- 	struct uprobe_consumer		consumer;
-+	struct path			path;
- 	struct inode			*inode;
- 	char				*filename;
- 	unsigned long			offset;
-@@ -289,7 +290,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
- 	for (i = 0; i < tu->tp.nr_args; i++)
- 		traceprobe_free_probe_arg(&tu->tp.args[i]);
- 
--	iput(tu->inode);
-+	path_put(&tu->path);
- 	kfree(tu->tp.call.class->system);
- 	kfree(tu->tp.call.name);
- 	kfree(tu->filename);
-@@ -363,7 +364,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
- static int create_trace_uprobe(int argc, char **argv)
- {
- 	struct trace_uprobe *tu;
--	struct inode *inode;
- 	char *arg, *event, *group, *filename;
- 	char buf[MAX_EVENT_NAME_LEN];
- 	struct path path;
-@@ -371,7 +371,6 @@ static int create_trace_uprobe(int argc, char **argv)
- 	bool is_delete, is_return;
- 	int i, ret;
- 
--	inode = NULL;
- 	ret = 0;
- 	is_delete = false;
- 	is_return = false;
-@@ -437,24 +436,14 @@ static int create_trace_uprobe(int argc, char **argv)
- 	}
- 	/* Find the last occurrence, in case the path contains ':' too. */
- 	arg = strrchr(argv[1], ':');
--	if (!arg) {
--		ret = -EINVAL;
--		goto fail_address_parse;
--	}
-+	if (!arg)
-+		return -EINVAL;
- 
- 	*arg++ = '\0';
- 	filename = argv[1];
- 	ret = kern_path(filename, LOOKUP_FOLLOW, &path);
- 	if (ret)
--		goto fail_address_parse;
--
--	inode = igrab(d_real_inode(path.dentry));
--	path_put(&path);
--
--	if (!inode || !S_ISREG(inode->i_mode)) {
--		ret = -EINVAL;
--		goto fail_address_parse;
--	}
-+		return ret;
- 
- 	ret = kstrtoul(arg, 0, &offset);
- 	if (ret)
-@@ -490,7 +479,7 @@ static int create_trace_uprobe(int argc, char **argv)
- 		goto fail_address_parse;
- 	}
- 	tu->offset = offset;
--	tu->inode = inode;
-+	tu->path = path;
- 	tu->filename = kstrdup(filename, GFP_KERNEL);
- 
- 	if (!tu->filename) {
-@@ -558,7 +547,7 @@ static int create_trace_uprobe(int argc, char **argv)
- 	return ret;
- 
- fail_address_parse:
--	iput(inode);
-+	path_put(&path);
- 
- 	pr_info("Failed to parse address or file.\n");
- 
-@@ -922,7 +911,14 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
- 		goto err_flags;
- 
- 	tu->consumer.filter = filter;
--	ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
-+	tu->inode = d_real_inode(tu->path.dentry);
-+	if (!tu->inode || !S_ISREG(tu->inode->i_mode)) {
-+		tu->inode = NULL;
-+		ret = -EINVAL;
-+		goto err_buffer;
-+	}
-+	ret = uprobe_register(tu->inode, tu->offset,
-+			      &tu->consumer);
- 	if (ret)
- 		goto err_buffer;
- 
-@@ -966,7 +962,8 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
- 
- 	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
- 
--	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
-+	uprobe_unregister(d_inode(tu->path.dentry), tu->offset, &tu->consumer);
-+	tu->inode = NULL;
- 	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
- 
- 	uprobe_buffer_disable();
-@@ -1041,7 +1038,8 @@ static int uprobe_perf_close(struct trace_uprobe *tu, struct perf_event *event)
- 	write_unlock(&tu->filter.rwlock);
- 
- 	if (!done)
--		return uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
-+		return uprobe_apply(d_inode(tu->path.dentry), tu->offset,
-+				    &tu->consumer, false);
- 
- 	return 0;
- }
-@@ -1073,7 +1071,8 @@ static int uprobe_perf_open(struct trace_uprobe *tu, struct perf_event *event)
- 
- 	err = 0;
- 	if (!done) {
--		err = uprobe_apply(tu->inode, tu->offset, &tu->consumer, true);
-+		err = uprobe_apply(d_inode(tu->path.dentry),
-+				   tu->offset, &tu->consumer, true);
- 		if (err)
- 			uprobe_perf_close(tu, event);
- 	}
-@@ -1337,7 +1336,6 @@ struct trace_event_call *
- create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
- {
- 	struct trace_uprobe *tu;
--	struct inode *inode;
- 	struct path path;
- 	int ret;
- 
-@@ -1345,14 +1343,6 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
- 	if (ret)
- 		return ERR_PTR(ret);
- 
--	inode = igrab(d_inode(path.dentry));
--	path_put(&path);
--
--	if (!inode || !S_ISREG(inode->i_mode)) {
--		iput(inode);
--		return ERR_PTR(-EINVAL);
--	}
--
- 	/*
- 	 * local trace_kprobes are not added to probe_list, so they are never
- 	 * searched in find_trace_kprobe(). Therefore, there is no concern of
-@@ -1364,11 +1354,12 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
- 	if (IS_ERR(tu)) {
- 		pr_info("Failed to allocate trace_uprobe.(%d)\n",
- 			(int)PTR_ERR(tu));
-+		path_put(&path);
- 		return ERR_CAST(tu);
- 	}
- 
- 	tu->offset = offs;
--	tu->inode = inode;
-+	tu->path = path;
- 	tu->filename = kstrdup(name, GFP_KERNEL);
- 	init_trace_event_call(tu, &tu->tp.call);
- 
+	M.
 -- 
-2.9.5
+Jazz is not dead. It just smells funny...
