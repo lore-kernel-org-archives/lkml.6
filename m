@@ -1,136 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754118AbeDTIXw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:23:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51827 "EHLO mx2.suse.de"
+        id S1754155AbeDTIYF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:24:05 -0400
+Received: from mout.gmx.net ([212.227.15.18]:52515 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753905AbeDTIXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:23:50 -0400
-Date: Fri, 20 Apr 2018 10:23:49 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrea Arcangeli <aarcange@redhat.com>, Roman Gushchin <guro@fb.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch v2] mm, oom: fix concurrent munlock and oom reaper unmap
-Message-ID: <20180420082349.GW17484@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1804171545460.53786@chino.kir.corp.google.com>
- <201804180057.w3I0vieV034949@www262.sakura.ne.jp>
- <alpine.DEB.2.21.1804171928040.100886@chino.kir.corp.google.com>
- <alpine.DEB.2.21.1804171951440.105401@chino.kir.corp.google.com>
- <20180418075051.GO17484@dhcp22.suse.cz>
- <alpine.DEB.2.21.1804181159020.227784@chino.kir.corp.google.com>
- <20180419063556.GK17484@dhcp22.suse.cz>
- <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1804191214130.157851@chino.kir.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1753905AbeDTIYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 04:24:01 -0400
+Message-ID: <1524212601.11030.2.camel@gmx.de>
+Subject: Re: [PATCH v7 0/5] cpuset: Enable cpuset controller in default
+ hierarchy
+From: Mike Galbraith <efault@gmx.de>
+To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>, Juri Lelli <juri.lelli@redhat.com>
+Date: Fri, 20 Apr 2018 10:23:21 +0200
+In-Reply-To: <1524145624-23655-1-git-send-email-longman@redhat.com>
+References: <1524145624-23655-1-git-send-email-longman@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:cKR187XmS0/JnqrhOqzg3IW+TcZA5IsAhQlNfqyD/+LCqd2BOoy
+ Sqq4hBGLVwY/LTKfIfecoEb3UZoS04WBnl9AAu4OWSctDjua231s0b0Ii0ya+I/6W8KVEoc
+ DauQuOkdXZgYex8Wklpa6Mwgej0kd142uTQBcuZwXaUxjkdw0rwE7Vj2DICI+W19sBVsn0h
+ 9vI5xvCpOtXOMGvKQYduA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:w/7ET0+DbCs=:O3q/4+PDoOOo5CsLOuZVvF
+ QhBQirLdw4g0dB02ZIabHCb4s+QYwp6Mq8xxML+K+SNeMLyvDUtCtJ5sI+7d1r9u1MD+qJqJY
+ g6vqJ4NOwi7QLEiJu0ouShKnQfE4IFN9sF36EvhER8tu1GR8eFBcN4TkEN0Ai/wraBC1xD6li
+ R/2bRvgDIZtaCfmLx/k3aRhJiFjK21iArEiFaIjgrMHcLAIH69rErMq02xS6LVEmD0DbztZe4
+ LUwmgaR5AlnJcSxohZ/zPZWzggpf345sVLa1mcwLcOqiyGG8c2ukdtFC3g4GKAZwcA6F0DCDg
+ ih/8nk29k+5qm8N5TrwRkUWB5DGp5tWe7fOWFF/BfMfus3PBzDzCZbWaAUryeYU/A3eP+l9ph
+ KDcu7bUQH7G+nB3ZcpsE9TFcR1Qg7yijXpyLpx5ebguWLMLGJWP6HAhBdp5R3P0LYlFo0DOsP
+ eOmntAQ84tFyxz/hdbTlu9SCDCn+ukHj/mv1DTvrjY6Olg7zkVdaECALkqZOjJV5lW0UNLIOQ
+ FI+uUmQQR6zxvpVKu+XEPjAuJ686hBWZqIn42oqruIuA9VmiIbJgRbsOvegUeUj8BoWOZu6MW
+ sNNYn125bVorwxmuIlGaoF+KyP6725+LiFIW3xgePXyDaAMp85qyuiQxM+V1y3VVncDqX0dod
+ woNrjrC/w5AiVSpewxzKahVdSpvSveCGiqnsQlfQVjIDCcjGSEC72Kq8Es5iZuv0CBA0Xq4Kb
+ YgvSloKVM1StWcx+XSk9eskwwDbkX6HiBFowGbuGwmnUCaKfOxfE5xWB1QgE1g9UndIbJbDCf
+ vrXIltmownUQ1ASsu9+3lFUjjjxnb8IYC4Hyt8r+jN5pArBFkU=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 19-04-18 12:34:53, David Rientjes wrote:
-> On Thu, 19 Apr 2018, Michal Hocko wrote:
-> 
-> > > exit_mmap() does not block before set_bit(MMF_OOM_SKIP) once it is 
-> > > entered.
-> > 
-> > Not true. munlock_vma_pages_all might take page_lock which can have
-> > unpredictable dependences. This is the reason why we are ruling out
-> > mlocked VMAs in the first place when reaping the address space.
-> > 
-> 
-> I don't find any occurrences in millions of oom kills in real-world 
-> scenarios where this matters.
+On Thu, 2018-04-19 at 09:46 -0400, Waiman Long wrote:
+> v7:
+>  - Add a root-only cpuset.cpus.isolated control file for CPU isolation.
+>  - Enforce that load_balancing can only be turned off on cpusets with
+>    CPUs from the isolated list.
+>  - Update sched domain generation to allow cpusets with CPUs only
+>    from the isolated CPU list to be in separate root domains.
 
-Which doesn't really mean much. We want a guarantee here.
+I haven't done much, but was able to do a q/d manual build, populate
+and teardown of system/critical sets on my desktop box, and it looked
+ok.  Thanks for getting this aboard the v2 boat.
 
-> The solution is certainly not to hold 
-> down_write(&mm->mmap_sem) during munlock_vma_pages_all() instead.
-
-Why not? This is what we do for normal paths. exit path just tries to be
-clever because it knows that it doesn't have to lock because there is no
-concurent user. At least it wasn't until the oom reaper came. So I
-really fail to see why we shouldn't do the most obvious thing and use
-the locking.
-
-> If 
-> exit_mmap() is not making forward progress then that's a separate issue; 
-
-Please read what I wrote. There is a page lock and there is no way to
-guarantee it will make a forward progress. Or do you consider that not
-true?
-
-> that would need to be fixed in one of two ways: (1) in oom_reap_task() to 
-> try over a longer duration before setting MMF_OOM_SKIP itself, but that 
-> would have to be a long duration to allow a large unmap and page table 
-> free, or (2) in oom_evaluate_task() so that we defer for MMF_OOM_SKIP but 
-> only if MMF_UNSTABLE has been set for a long period of time so we target 
-> another process when the oom killer has given up.
-> 
-> Either of those two fixes are simple to implement, I'd just like to see a 
-> bug report with stack traces to indicate that a victim getting stalled in 
-> exit_mmap() is a problem to justify the patch.
-
-And both are not really needed if we do the proper and straightforward
-locking.
-
-> I'm trying to fix the page table corruption that is trivial to trigger on 
-> powerpc.  We simply cannot allow the oom reaper's unmap_page_range() to 
-> race with munlock_vma_pages_range(), ever.
-
-There is no discussion about that. Sure, you are right. We are just
-arguing how to achieve that.
-
-> Holding down_write on 
-> mm->mmap_sem otherwise needlessly over a large amount of code is riskier 
-> (hasn't been done or tested here), more error prone (any code change over 
-> this large area of code or in functions it calls are unnecessarily 
-> burdened by unnecessary locking), makes exit_mmap() less extensible for 
-> the same reason,
-
-I do not see any of the calls in that path could suffer from holding
-mmap_sem. Do you?
-
-> and causes the oom reaper to give up and go set 
-> MMF_OOM_SKIP itself because it depends on taking down_read while the 
-> thread is still exiting.
-
-Which is the standard backoff mechanism.
-
-> > On the
-> > other hand your lock protocol introduces the MMF_OOM_SKIP problem I've
-> > mentioned above and that really worries me. The primary objective of the
-> > reaper is to guarantee a forward progress without relying on any
-> > externalities. We might kill another OOM victim but that is safer than
-> > lock up.
-> > 
-> 
-> I understand the concern, but it's the difference between the victim 
-> getting stuck in exit_mmap() and actually taking a long time to free its 
-> memory in exit_mmap().  I don't have evidence of the former.
-
-I do not really want to repeat myself. The primary purpose of the oom
-reaper is to provide a _guarantee_ of the forward progress. I do not
-care whether there is any evidences. All I know that lock_page has
-plethora of different dependencies and we cannot clearly state this is
-safe so we _must not_ depend on it when setting MMF_OOM_SKIP.
-
-The way how the oom path was fragile and lockup prone based on
-optimistic assumptions shouldn't be repeated.
-
-That being said, I haven't heard any actual technical argument about why
-locking the munmap path is a wrong thing to do while the MMF_OOM_SKIP
-dependency on the page_lock really concerns me so
-
-Nacked-by: Michal Hocko <mhocko@suse.com>
-
-If you want to keep the current locking protocol then you really have to
-make sure that the oom reaper will set MMF_OOM_SKIP when racing with
-exit_mmap.
--- 
-Michal Hocko
-SUSE Labs
+	-Mike
