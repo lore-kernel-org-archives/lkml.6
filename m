@@ -1,49 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752783AbeDTXY5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 19:24:57 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47638 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751325AbeDTXY4 (ORCPT
+        id S1752707AbeDTXbX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 19:31:23 -0400
+Received: from mail-pl0-f48.google.com ([209.85.160.48]:37293 "EHLO
+        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751325AbeDTXbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 19:24:56 -0400
-To: Colin King <colin.king@canonical.com>
-Cc: Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2] isci: Fix infinite loop in while loop
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180420095716.2143-1-colin.king@canonical.com>
-Date: Fri, 20 Apr 2018 19:24:47 -0400
-In-Reply-To: <20180420095716.2143-1-colin.king@canonical.com> (Colin King's
-        message of "Fri, 20 Apr 2018 10:57:16 +0100")
-Message-ID: <yq1a7txh35s.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8869 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=280
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804200233
+        Fri, 20 Apr 2018 19:31:21 -0400
+X-Google-Smtp-Source: AIpwx49RU6w1+ME6DD7oyPM+UILgqmq73oVXNG6HRNWnIiH2Au3YapFw+7AHnc7ZyR00otXeATo4KA==
+From: Eric Biggers <ebiggers@google.com>
+To: linux-fscrypt@vger.kernel.org, "Theodore Y . Ts'o" <tytso@mit.edu>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-kernel@vger.kernel.org,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH] fscrypt: use unbound workqueue for decryption
+Date: Fri, 20 Apr 2018 16:30:02 -0700
+Message-Id: <20180420233002.134687-1-ebiggers@google.com>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Improve fscrypt read performance by switching the decryption workqueue
+from bound to unbound.  With the bound workqueue, when multiple bios
+completed on the same CPU, they were decrypted on that same CPU.  But
+with the unbound queue, they are now decrypted in parallel on any CPU.
 
-Colin,
+Although fscrypt read performance can be tough to measure due to the
+many sources of variation, this change is most beneficial when
+decryption is slow, e.g. on CPUs without AES instructions.  For example,
+I timed tarring up encrypted directories on f2fs.  On x86 with AES-NI
+instructions disabled, the unbound workqueue improved performance by
+about 25-35%, using 1 to NUM_CPUs jobs with 4 or 8 CPUs available.  But
+with AES-NI enabled, performance was unchanged to within ~2%.
 
-> In the case when the phy_mask is bitwise anded with the phy_index bit
-> is zero the continue statement currently jumps to the next iteration
-> of the while loop and phy_index is never actually incremented,
-> potentially causing an infinite loop if phy_index is less than
-> SCI_MAX_PHS. Fix this by turning the while loop into a for loop.
+I also did the same test on a quad-core ARM CPU using xts-speck128-neon
+encryption.  There performance was usually about 10% better with the
+unbound workqueue, bringing it closer to the unencrypted speed.
 
-Applied to 4.17/scsi-fixes. Thanks!
+The unbound workqueue may be worse in some cases due to worse locality,
+but I think it's still the better default.  dm-crypt uses an unbound
+workqueue by default too, so this change makes fscrypt match.
 
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/crypto/crypto.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/crypto/crypto.c b/fs/crypto/crypto.c
+index ce654526c0fb..984e190f9b89 100644
+--- a/fs/crypto/crypto.c
++++ b/fs/crypto/crypto.c
+@@ -427,8 +427,17 @@ int fscrypt_initialize(unsigned int cop_flags)
+  */
+ static int __init fscrypt_init(void)
+ {
++	/*
++	 * Use an unbound workqueue to allow bios to be decrypted in parallel
++	 * even when they happen to complete on the same CPU.  This sacrifices
++	 * locality, but it's worthwhile since decryption is CPU-intensive.
++	 *
++	 * Also use a high-priority workqueue to prioritize decryption work,
++	 * which blocks reads from completing, over regular application tasks.
++	 */
+ 	fscrypt_read_workqueue = alloc_workqueue("fscrypt_read_queue",
+-							WQ_HIGHPRI, 0);
++						 WQ_UNBOUND | WQ_HIGHPRI,
++						 num_online_cpus());
+ 	if (!fscrypt_read_workqueue)
+ 		goto fail;
+ 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.17.0.484.g0c8726318c-goog
