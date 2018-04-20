@@ -1,119 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755248AbeDTONo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:13:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49480 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755000AbeDTONn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:13:43 -0400
-Date: Fri, 20 Apr 2018 16:13:35 +0200
-From: Hendrik Brueckner <brueckner@linux.ibm.com>
-To: John Garry <john.garry@huawei.com>
-Cc: Thomas-Mich Richter <tmricht@linux.ibm.com>,
-        brueckner@linux.vnet.ibm.com, tmricht@linux.vnet.ibm.com,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Linuxarm <linuxarm@huawei.com>, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: s390 perf events JSONs query
-References: <68e84967-ca29-0b86-027a-76307e003a55@huawei.com>
- <c5dde055-de48-52c1-04d7-7ec22623d75f@linux.ibm.com>
- <c5c99152-4823-2f21-1b98-2a271637bed4@huawei.com>
+        id S1755114AbeDTOR4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:17:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43080 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755019AbeDTORz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:17:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4882A20C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
+Date: Fri, 20 Apr 2018 10:17:51 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
+Message-ID: <20180420101751.6c1c70e8@gandalf.local.home>
+In-Reply-To: <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
+References: <20180413124704.19335-1-pmladek@suse.com>
+        <20180413101233.0792ebf0@gandalf.local.home>
+        <20180414023516.GA17806@tigerII.localdomain>
+        <20180416014729.GB1034@jagdpanzerIV>
+        <20180416042553.GA555@jagdpanzerIV>
+        <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
+        <20180420021511.GB6397@jagdpanzerIV>
+        <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
+        <20180420080428.622a8e7f@gandalf.local.home>
+        <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5c99152-4823-2f21-1b98-2a271637bed4@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18042014-0020-0000-0000-000004141E78
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042014-0021-0000-0000-000042A8721A
-Message-Id: <20180420141335.GA32698@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804200142
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
+On Fri, 20 Apr 2018 16:01:57 +0200
+Petr Mladek <pmladek@suse.com> wrote:
 
-On Fri, Apr 20, 2018 at 02:53:27PM +0100, John Garry wrote:
-> On 20/04/2018 14:25, Thomas-Mich Richter wrote:
-> >On 04/20/2018 12:51 PM, John Garry wrote:
-> >>I noticed that in 4.17-rc1 support was included for s390 perf pmu-events. I also notice that the JSONs contain many common (identical actually) events between different chips for this arch.
-> >>
-> >>Support was added for factoring out common arch events in https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/tools/perf/pmu-events?h=next-20180420&id=e9d32c1bf0cd7a98358ec4aa1625bf2b3459b9ac
-> >>
-> >>ARM64 chips use this feature. I am not familiar with the s390 arch, but do you think you could also use this feature?
-> >>
-> >>Thanks,
-> >>John
-> >>
-> >
-> >I have just played with this feature. I was caught off by this error message:
-> >
-> >[root@s35lp76 pmu-events]# ./jevents s390 arch /tmp/xxx 100000
-> >d 0    4096 s390                 arch/s390
-> >d 1    4096 cf_z14               arch/s390/cf_z14
-> >f 2    1338 basic.json           arch/s390/cf_z14/basic.json
-> >....
-> >jevents: Ignoring file arch/s390/archevent.json  <---- confusing error message
+> On Fri 2018-04-20 08:04:28, Steven Rostedt wrote:
+> > On Fri, 20 Apr 2018 11:12:24 +0200
+> > Petr Mladek <pmladek@suse.com> wrote:
+> >   
+> > > Yes, my number was arbitrary. The important thing is that it was long
+> > > enough. Or do you know about an console that will not be able to write
+> > > 100 lines within one hour?  
+> > 
+> > The problem is the way rate limit works. If you print 100 lines (or
+> > 1000) in 5 seconds, then you just stopped printing from that context
+> > for 59 minutes and 55 seconds. That's a long time to block printing.  
 > 
-> Let me check if this can be silenced.
+> Are we talking about the same context?
 > 
-> >
-> >jevents: Processing mapfile arch/s390/mapfile.csv
-> >[root@s35lp76 pmu-events]#
-> >
-> >I started debugging, until I realized this file is still processed.....
-> >(Just a side remark).
-> >
-> >Anyway the features is nice, but it does not save anything in the resulting
-> >pmu-events.c file, correct? The events defined in the common archevent.json
-> >files are just copied into the structures of a specific machine.
-> >
+> I am talking about console drivers called from console_unlock(). It is
+> very special context because it is more or less recursive:
 > 
-> Yes, the resulting derived pmu-events.c should be the same. In fact,
-> if there was naming inconsistencies in JSONs previously, they should
-> now be gone.
+>      + could cause infinite loop
+>      + the errors are usually the same again and again
+
+The check is only when console_owner == current, which can easily
+happen with an interrupt let alone an NMI.
+
+The common case is not recursive.
+
 > 
-> >The feature saves time and space when you create the machine specific json
-> >files because it allows you to refer to a common event by name. Cool!
-> >
-> >On s390 we do not create the json files manually, but have some scripts to
-> >create them based on s390 type/model hardware specific input files.
+> As a result, if you get too many messages from this context:
 > 
-> Right, I would say that this is mostly useful when the JSONs are
-> created manually, which was the case in the ARM world, but not x86.
+>      + you are lost (recursion)
+>      + more messages != new information
+> 
+> And you need to fix the problem anyway. Otherwise, the system
+> logging is a mess.
+> 
+> 
+> > What happens if you had a couple of NMIs go off that takes up that
+> > time, and then you hit a bug 10 minutes later from that context. You
+> > just lost it.  
+> 
+> I do not understand how this is related to the NMI context.
+> The messages in NMI context are not throttled!
+> 
+> OK, the original patch throttled also NMI messages when NMI
+> interrupted console drivers. But it is easy to fix.
 
-It is really the right way and the coolest feature to go when the JSONs need
-to be created manually.
+My mistake in just mentioning NMIs, because the check is on
+console_owner which can be set with interrupts enabled. That means an
+interrupt that does a print could hide printks from other interrupts or
+NMIs when console_owner is set.
 
-For s390, I started manually with adding descriptions for the libpfm4 library.
-Then, the events sysfs came up and that was the point in time when I created
-a common database for the counters in the s390-tools package.  Meanwhile,
-s390-tools, libpfm4, kernel, and Thomas recently added perf JSONs as possible
-outputs formats.
+> 
+> 
+> > This is a magnitude larger than any other user of rate limit in the
+> > kernel. The most common time is 5 seconds. The longest I can find is 1
+> > minute. You are saying you want to block printing from this context for
+> > 60 minutes!  
+> 
+> I see 1 day long limits in dio_warn_stale_pagecache() and
+> xfs_scrub_experimental_warning().
+> 
+> Note that most ratelimiting is related to a single message. Also it
+> is in situation where the system should recover within seconds.
+> 
+> 
+> > That is HUGE! I don't understand your rational for such a huge number.
+> > What data do you have to back that up with?  
+> 
+> We want to allow seeing the entire lockdep splat (Sergey wants more
+> than 100 lines). Also it is not that unusual that slow console is busy
+> several minutes when too many things are happening.
+> 
+> I proposed that long delay because I want to be on the safe side.
+> Also I do not see a huge benefit in repeating the same messages
+> too often.
+> 
+> Alternative solution would be to allow first, lets say 250, lines
+> and then nothing. I mean to change the approach from rate-limiting
+> to print-once.
 
-> >@Hendrik,
-> >we could rework our internal tool chain to emit the new "ArchStdEvent"
-> >keyword for common events, but in the end we do not save anything in the
-> >resulting pmu-events.c file. And it requires considerable rework to
-> >support it.
-> >Given that, I would put it very low priority on your todo list, comments?
 
-I would consider this a low-priority given the fact that have to overwrite
-to the counter number (for the model-dependent counters) as well.
+Actually, I think we are fine with the one hour and 1000 prints if we
+add to the condition. It can't just check console_owner. We need a way
+to know that this is indeed a recursion. Perhaps we should set the
+context we are in when setting console owner. Something like I have in
+the ring buffer code.
 
-Many thanks!
- 
-Kind regards,
-  Hendrik
+enum {
+	CONTEXT_NONE,
+	CONTEXT_NMI,
+	CONTEXT_IRQ,
+	CONTEXT_SOFTIRQ,
+	CONTEXT_NORMAL
+};
+
+int git_context(void)
+{
+	unsigned long pc = preempt_count();
+
+	if (!(pc & (NMI_MASK | HARDIRQ_MASK | SOFTIRQ_OFFSET)))
+		return CONTEXT_NORMAL;
+	else
+		return pc & NMI_MASK ? CONTEXT_NMI :
+			pc & HARDIRQ_MASK ? CONTEXT_IRQ : CONTEXT_SOFTIRQ;
+}
+
+static void console_lock_spinning_enable(void)
+{
+	raw_spin_lock(&console_owner_lock);
+	console_owner = current;
+	console_context = get_context();
+	raw_spin_unlock(&console_owner_lock);
+[..]
+
+
+static int console_lock_spinning_disable_and_check(void)
+{
+	raw_spin_lock(&console_owner_lock);
+	waiter = READ_ONCE(console_waiter);
+	console_owner = NULL;
+	console_context = CONTEXT_NONE;
+	raw_spin_unlock(&console_owner_lock);
+[..]
+
+
+Then have your check be:
+
++	/* Prevent infinite loop caused by messages from console drivers. */
++	if (console_owner == current && console_context == get_context() &&
++	    !__ratelimit(&ratelimit_console))
++		return 0;
+
+Then you know that this is definitely due to recursion.
+
+-- Steve
