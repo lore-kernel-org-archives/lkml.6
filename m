@@ -1,65 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754395AbeDTI6e (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:58:34 -0400
-Received: from mail-wr0-f182.google.com ([209.85.128.182]:41955 "EHLO
-        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754368AbeDTI6a (ORCPT
+        id S1754431AbeDTI64 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:58:56 -0400
+Received: from mail-wr0-f177.google.com ([209.85.128.177]:44024 "EHLO
+        mail-wr0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754414AbeDTI6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:58:30 -0400
-X-Google-Smtp-Source: AIpwx49AsMPp0khzJAgESwjr+LytekNIo1BYiprTbyUQrHU8j4C50sM8+h9n5BVtvkYJYiQFscH37A==
-Date: Fri, 20 Apr 2018 09:58:26 +0100
-From: Lee Jones <lee.jones@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/4] regulator: bd9571mwv: Add support for DDR backup
- mode
-Message-ID: <20180420085826.4omlf2rrwuno3mtj@dell>
-References: <1524057484-25350-1-git-send-email-geert+renesas@glider.be>
- <20180420074914.vl4rer5zdeldfzb3@dell>
- <CAMuHMdWeROfJNvUtfooN8gqA+nTRXhVLvQFpc-xiqUbG9XgcmA@mail.gmail.com>
+        Fri, 20 Apr 2018 04:58:53 -0400
+X-Google-Smtp-Source: AIpwx4/Dxx+ht8lM9bB0ERSaiaWh37CezCcX+lp0uCGKyecll5yJ1Qwb57AoWUoYn34TVpiuJYPjUA==
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
+To: Christoph Hellwig <hch@infradead.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20180325110000.2238-1-christian.koenig@amd.com>
+ <20180325110000.2238-4-christian.koenig@amd.com>
+ <20180329065753.GD3881@phenom.ffwll.local>
+ <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
+ <20180403090909.GN3881@phenom.ffwll.local> <20180403170645.GB5935@redhat.com>
+ <20180403180832.GZ3881@phenom.ffwll.local>
+ <20180416123937.GA9073@infradead.org>
+ <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
+ <20180419081657.GA16735@infradead.org>
+ <20180420071312.GF31310@phenom.ffwll.local>
+From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
+Date: Fri, 20 Apr 2018 10:58:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWeROfJNvUtfooN8gqA+nTRXhVLvQFpc-xiqUbG9XgcmA@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180420071312.GF31310@phenom.ffwll.local>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018, Geert Uytterhoeven wrote:
-> On Fri, Apr 20, 2018 at 9:49 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> > On Wed, 18 Apr 2018, Geert Uytterhoeven wrote:
-> >> The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
-> >> development boards supports DDR Backup Power, which means that the DDR
-> >> power rails can be kept powered while the main SoC is powered down.
-> >
-> > Should this set be applied together, or can the MFD patches be applied
-> > on their own, without the Regulator patch?
-> 
-> The regulator patch depends on the MFD patches, so it's best for them to
-> go in together.
-> 
-> > If the former, then we're going to need an Ack from Mark.
-> 
-> Alternative, as you've already supplied (some form of) your Ack for the firs
-> 3 patches, they can go in through Mark? All of it is enhancing the
-> regulator part.
+Am 20.04.2018 um 09:13 schrieb Daniel Vetter:
+> On Thu, Apr 19, 2018 at 01:16:57AM -0700, Christoph Hellwig wrote:
+>> On Mon, Apr 16, 2018 at 03:38:56PM +0200, Daniel Vetter wrote:
+>>> We've broken that assumption in i915 years ago. Not struct page backed
+>>> gpu memory is very real.
+>>>
+>>> Of course we'll never feed such a strange sg table to a driver which
+>>> doesn't understand it, but allowing sg_page == NULL works perfectly
+>>> fine. At least for gpu drivers.
+>> For GPU drivers on x86 with no dma coherency problems, sure.  But not
+>> all the world is x86.  We already have problems due to dmabugs use
+>> of the awkward get_sgtable interface (see the common on
+>> arm_dma_get_sgtable that I fully agree with), and doing this for memory
+>> that doesn't have a struct page at all will make things even worse.
+> x86 dma isn't coherent either, if you're a GPU :-) Flushing gpu caches
+> tends to be too expensive, so there's pci-e support and chipset support to
+> forgo it. Plus drivers flushing caches themselves.
+>
+> The dma_get_sgtable thing is indeed fun, right solution would probably be
+> to push the dma-buf export down into the dma layer. The comment for
+> arm_dma_get_sgtable is also not a realy concern, because dma-buf also
+> abstracts away the flushing (or well is supposed to), so there really
+> shouldn't be anyone calling the streaming apis on the returned sg table.
+> That's why dma-buf gives you an sg table that's mapped already.
+>
+>>> If that's not acceptable then I guess we could go over the entire tree
+>>> and frob all the gpu related code to switch over to a new struct
+>>> sg_table_might_not_be_struct_page_backed, including all the other
+>>> functions we added over the past few years to iterate over sg tables.
+>>> But seems slightly silly, given that sg tables seem to do exactly what
+>>> we need.
+>> It isn't silly.  We will have to do some surgery like that anyway
+>> because the current APIs don't work.  So relax, sit back and come up
+>> with an API that solves the existing issues and serves us well in
+>> the future.
+> So we should just implement a copy of sg table for dma-buf, since I still
+> think it does exactly what we need for gpus?
+>
+> Yes there's a bit a layering violation insofar that drivers really
+> shouldn't each have their own copy of "how do I convert a piece of dma
+> memory into  dma-buf", but that doesn't render the interface a bad idea.
 
-Yes, that's fine too:
+Completely agree on that.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+What we need is an sg_alloc_table_from_resources(dev, resources, 
+num_resources) which does the handling common to all drivers.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Christian.
+
+> -Daniel
