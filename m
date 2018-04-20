@@ -1,138 +1,285 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755507AbeDTOsQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:48:16 -0400
-Received: from mail.netline.ch ([148.251.143.178]:35653 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755487AbeDTOsC (ORCPT
+        id S1755490AbeDTOsB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:48:01 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:46799 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755209AbeDTOqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:48:02 -0400
-Subject: Re: AMD graphics performance regression in 4.15 and later
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Gabriel C <nix.or.die@gmail.com>
-Cc: Jean-Marc Valin <jmvalin@mozilla.com>, Dave Airlie <airlied@linux.ie>,
-        Felix.Kuehling@amd.com, LKML <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, alexander.deucher@amd.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <c743b220-0395-eef3-4405-a21cdbe8eee1@mozilla.com>
- <9ca940f1-7f21-c420-de45-13d72e783ab6@amd.com>
- <a96df0b8-fc22-4438-646d-2f0096dfcc84@mozilla.com>
- <6cebabff-908f-5ebe-4252-760773c4cd6f@amd.com>
- <312ed341-7052-a61e-331f-d1e8fd5b477e@mozilla.com>
- <d136f940-d807-d2f7-30a7-8617f130912d@amd.com>
- <77866d66-2728-8295-d7ee-9975dbf64b99@mozilla.com>
- <55e1712b-6567-50c5-3789-53dd1ccddb94@gmail.com>
- <CAEJqkgiOR3aCGoNquVeEyC1BLMBPmXNjgrmjNeeE9UVfzcJKzg@mail.gmail.com>
- <dafca4cc-c7ca-a06d-3a17-46240b1d20c3@amd.com>
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <2a864040-3888-c30a-2fab-6ff637dddda4@daenzer.net>
-Date: Fri, 20 Apr 2018 16:47:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <dafca4cc-c7ca-a06d-3a17-46240b1d20c3@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Apr 2018 10:46:04 -0400
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: linux-arch@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org
+Date: Fri, 20 Apr 2018 09:38:06 -0500
+Message-Id: <20180420143811.9994-17-ebiederm@xmission.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <87604mhrnb.fsf@xmission.com>
+References: <87604mhrnb.fsf@xmission.com>
+X-XM-SPF: eid=1f9XEU-0006Ha-VD;;;mid=<20180420143811.9994-17-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+2XVmpbSnQV5rkdS5LbfCziHKCU/hYraM=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;linux-arch@vger.kernel.org
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 15032 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 5 (0.0%), b_tie_ro: 3.1 (0.0%), parse: 1.15 (0.0%),
+        extract_message_metadata: 15 (0.1%), get_uri_detail_list: 3.8 (0.0%),
+        tests_pri_-1000: 2.6 (0.0%), tests_pri_-950: 1.14 (0.0%), tests_pri_-900:
+        0.93 (0.0%), tests_pri_-400: 38 (0.3%), check_bayes: 37 (0.2%), b_tokenize:
+        19 (0.1%), b_tok_get_all: 8 (0.1%), b_comp_prob: 3.4 (0.0%), b_tok_touch_all:
+        3.4 (0.0%), b_finish: 0.59 (0.0%), tests_pri_0: 445 (3.0%),
+        check_dkim_signature: 0.84 (0.0%), check_dkim_adsp: 2.8 (0.0%),
+        tests_pri_500: 14519 (96.6%), poll_dns_idle: 14507 (96.5%), rewrite_mail:
+        0.00 (0.0%)
+Subject: [REVIEW][PATCH 17/22] signal/sparc: Use send_sig_fault where appropriate
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-11 11:37 AM, Christian König wrote:
-> Am 11.04.2018 um 06:00 schrieb Gabriel C:
->> 2018-04-09 11:42 GMT+02:00 Christian König
->> <ckoenig.leichtzumerken@gmail.com>:
->>> Am 07.04.2018 um 00:00 schrieb Jean-Marc Valin:
->>>> Hi Christian,
->>>>
->>>> Thanks for the info. FYI, I've also opened a Firefox bug for that at:
->>>> https://bugzilla.mozilla.org/show_bug.cgi?id=1448778
->>>> Feel free to comment since you have a better understanding of what's
->>>> going on.
->>>>
->>>> One last question: right now I'm running 4.15.0 with the "offending"
->>>> patch reverted. Is that safe to run or are there possible bad
->>>> interactions with other changes.
->>>
->>> That should work without problems.
->>>
->>> But I just had another idea as well, if you want you could still test
->>> the
->>> new code path which will be using in 4.17.
->>>
->> While Firefox may do some strange things is not about only Firefox.
->>
->> With your patches my EPYC box is unusable with  4.15++ kernels.
->> The whole Desktop is acting weird.  This one is using
->> an Cape Verde PRO [Radeon HD 7750/8740 / R7 250E] GPU.
->>
->> Box is  2 * EPYC 7281 with 128 GB ECC RAM
->>
->> Also a 14C Xeon box with a HD7700 is broken same way.
-> 
-> The hardware is irrelevant for this. We need to know what software stack
-> you use on top of it.
-> 
-> E.g. desktop environment/Mesa and DDX version etc...
-> 
->>
->> Everything breaks in X .. scrolling , moving windows , flickering etc.
->>
->>
->> reverting f4c809914a7c3e4a59cf543da6c2a15d0f75ee38 and
->> 648bc3574716400acc06f99915815f80d9563783
->> from an 4.15 kernel makes things work again.
->>
->>
->>> Backporting all the detection logic is to invasive, but you could
->>> just go
->>> into drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c and forcefull use the other
->>> code path.
->>>
->>> Just look out for "#ifdef CONFIG_SWIOTLB" checks and disable those.
->>>
->> Well you really can't be serious about these suggestions ? Are you ?
->>
->> Telling peoples to #if 0 random code is not a solution.
-> 
-> That is for testing and not a permanent solution.
-> 
->> You broke existsing working userland with your patches and at least
->> please fix that for 4.16.
->>
->> I can help testing code for 4.17/++ if you wish but that is
->> *different* storry.
-> 
-> Please test Alex's amd-staging-drm-next branch from
-> git://people.freedesktop.org/~agd5f/linux.
+Filling in struct siginfo before calling send_sig_info a tedious and
+error prone process, where once in a great while the wrong fields
+are filled out, and siginfo has been inconsistently cleared.
 
-I think we're still missing something here.
+Simplify this process by using the helper send_sig_fault.  Which
+takes as a parameters all of the information it needs, ensures
+all of the fiddly bits of filling in struct siginfo are done properly
+and then calls send_sig_info.
 
-I'm currently running 4.16.2 + the DRM subsystem changes which are going
-into 4.17 (so I have the changes Christian is referring to) with a
-Kaveri APU, and I'm seeing similar symptoms as described by Jean-Marc.
-Some observations:
+In short about a 5 line reduction in code for every time send_sig_info
+is called, which makes the calling function clearer.
 
-Firefox, Thunderbird, or worst, gnome-shell, can freeze for up to on the
-order of a minute, during which the kernel is spending most of one
-core's cycles inside alloc_pages (__alloc_pages_nodemask to be more
-precise), called from ttm_alloc_new_pages.
+Cc: David Miller <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ arch/sparc/kernel/traps_32.c     | 93 ++++++++--------------------------------
+ arch/sparc/kernel/unaligned_32.c | 12 ++----
+ 2 files changed, 20 insertions(+), 85 deletions(-)
 
-At least in the case of Firefox, this happens due to Mesa internal BO
-allocations for glTex(Sub)Image, so it's not obvious that Firefox is
-doing something wrong.
-
-I never noticed this before this week. Before, I was running 4.15.y +
-DRM subsystem changes from 4.16. Maybe something has changed in core
-code, trying harder to allocate huge pages.
-
-
-Maybe TTM should only try to use any huge pages that happen to be
-available, not spend any (/ "too much"?) additional effort trying to
-free up huge pages?
-
-
+diff --git a/arch/sparc/kernel/traps_32.c b/arch/sparc/kernel/traps_32.c
+index 03e522274b8b..06f43cf9695f 100644
+--- a/arch/sparc/kernel/traps_32.c
++++ b/arch/sparc/kernel/traps_32.c
+@@ -116,8 +116,6 @@ void do_hw_interrupt(struct pt_regs *regs, unsigned long type)
+ void do_illegal_instruction(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 			    unsigned long psr)
+ {
+-	siginfo_t info;
+-
+ 	if(psr & PSR_PS)
+ 		die_if_kernel("Kernel illegal instruction", regs);
+ #ifdef TRAP_DEBUG
+@@ -125,29 +123,15 @@ void do_illegal_instruction(struct pt_regs *regs, unsigned long pc, unsigned lon
+ 	       regs->pc, *(unsigned long *)regs->pc);
+ #endif
+ 
+-	clear_siginfo(&info);
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code = ILL_ILLOPC;
+-	info.si_addr = (void __user *)pc;
+-	info.si_trapno = 0;
+-	send_sig_info(SIGILL, &info, current);
++	send_sig_fault(SIGILL, ILL_ILLOPC, (void __user *)pc, 0, current);
+ }
+ 
+ void do_priv_instruction(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 			 unsigned long psr)
+ {
+-	siginfo_t info;
+-
+ 	if(psr & PSR_PS)
+ 		die_if_kernel("Penguin instruction from Penguin mode??!?!", regs);
+-	clear_siginfo(&info);
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code = ILL_PRVOPC;
+-	info.si_addr = (void __user *)pc;
+-	info.si_trapno = 0;
+-	send_sig_info(SIGILL, &info, current);
++	send_sig_fault(SIGILL, ILL_PRVOPC, (void __user *)pc, 0, current);
+ }
+ 
+ /* XXX User may want to be allowed to do this. XXX */
+@@ -155,8 +139,6 @@ void do_priv_instruction(struct pt_regs *regs, unsigned long pc, unsigned long n
+ void do_memaccess_unaligned(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 			    unsigned long psr)
+ {
+-	siginfo_t info;
+-
+ 	if(regs->psr & PSR_PS) {
+ 		printk("KERNEL MNA at pc %08lx npc %08lx called by %08lx\n", pc, npc,
+ 		       regs->u_regs[UREG_RETPC]);
+@@ -168,13 +150,9 @@ void do_memaccess_unaligned(struct pt_regs *regs, unsigned long pc, unsigned lon
+ 	instruction_dump ((unsigned long *) regs->pc);
+ 	printk ("do_MNA!\n");
+ #endif
+-	clear_siginfo(&info);
+-	info.si_signo = SIGBUS;
+-	info.si_errno = 0;
+-	info.si_code = BUS_ADRALN;
+-	info.si_addr = /* FIXME: Should dig out mna address */ (void *)0;
+-	info.si_trapno = 0;
+-	send_sig_info(SIGBUS, &info, current);
++	send_sig_fault(SIGBUS, BUS_ADRALN,
++		       /* FIXME: Should dig out mna address */ (void *)0,
++		       0, current);
+ }
+ 
+ static unsigned long init_fsr = 0x0UL;
+@@ -230,9 +208,9 @@ void do_fpe_trap(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 		 unsigned long psr)
+ {
+ 	static int calls;
+-	siginfo_t info;
+ 	unsigned long fsr;
+ 	int ret = 0;
++	int code;
+ #ifndef CONFIG_SMP
+ 	struct task_struct *fpt = last_task_used_math;
+ #else
+@@ -307,25 +285,20 @@ void do_fpe_trap(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 	}
+ 
+ 	fsr = fpt->thread.fsr;
+-	clear_siginfo(&info);
+-	info.si_signo = SIGFPE;
+-	info.si_errno = 0;
+-	info.si_addr = (void __user *)pc;
+-	info.si_trapno = 0;
+-	info.si_code = FPE_FLTUNK;
++	code = FPE_FLTUNK;
+ 	if ((fsr & 0x1c000) == (1 << 14)) {
+ 		if (fsr & 0x10)
+-			info.si_code = FPE_FLTINV;
++			code = FPE_FLTINV;
+ 		else if (fsr & 0x08)
+-			info.si_code = FPE_FLTOVF;
++			code = FPE_FLTOVF;
+ 		else if (fsr & 0x04)
+-			info.si_code = FPE_FLTUND;
++			code = FPE_FLTUND;
+ 		else if (fsr & 0x02)
+-			info.si_code = FPE_FLTDIV;
++			code = FPE_FLTDIV;
+ 		else if (fsr & 0x01)
+-			info.si_code = FPE_FLTRES;
++			code = FPE_FLTRES;
+ 	}
+-	send_sig_info(SIGFPE, &info, fpt);
++	send_sig_fault(SIGFPE, code, (void __user *)pc, 0, fpt);
+ #ifndef CONFIG_SMP
+ 	last_task_used_math = NULL;
+ #endif
+@@ -337,17 +310,9 @@ void do_fpe_trap(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ void handle_tag_overflow(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 			 unsigned long psr)
+ {
+-	siginfo_t info;
+-
+ 	if(psr & PSR_PS)
+ 		die_if_kernel("Penguin overflow trap from kernel mode", regs);
+-	clear_siginfo(&info);
+-	info.si_signo = SIGEMT;
+-	info.si_errno = 0;
+-	info.si_code = EMT_TAGOVF;
+-	info.si_addr = (void __user *)pc;
+-	info.si_trapno = 0;
+-	send_sig_info(SIGEMT, &info, current);
++	send_sig_fault(SIGEMT, EMT_TAGOVF, (void __user *)pc, 0, current);
+ }
+ 
+ void handle_watchpoint(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+@@ -383,47 +348,23 @@ void handle_reg_access(struct pt_regs *regs, unsigned long pc, unsigned long npc
+ void handle_cp_disabled(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 			unsigned long psr)
+ {
+-	siginfo_t info;
+-
+-	clear_siginfo(&info);
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code = ILL_COPROC;
+-	info.si_addr = (void __user *)pc;
+-	info.si_trapno = 0;
+-	send_sig_info(SIGILL, &info, current);
++	send_sig_fault(SIGILL, ILL_COPROC, (void __user *)pc, 0, current);
+ }
+ 
+ void handle_cp_exception(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 			 unsigned long psr)
+ {
+-	siginfo_t info;
+-
+ #ifdef TRAP_DEBUG
+ 	printk("Co-Processor Exception at PC %08lx NPC %08lx PSR %08lx\n",
+ 	       pc, npc, psr);
+ #endif
+-	clear_siginfo(&info);
+-	info.si_signo = SIGILL;
+-	info.si_errno = 0;
+-	info.si_code = ILL_COPROC;
+-	info.si_addr = (void __user *)pc;
+-	info.si_trapno = 0;
+-	send_sig_info(SIGILL, &info, current);
++	send_sig_fault(SIGILL, ILL_COPROC, (void __user *)pc, 0, current);
+ }
+ 
+ void handle_hw_divzero(struct pt_regs *regs, unsigned long pc, unsigned long npc,
+ 		       unsigned long psr)
+ {
+-	siginfo_t info;
+-
+-	clear_siginfo(&info);
+-	info.si_signo = SIGFPE;
+-	info.si_errno = 0;
+-	info.si_code = FPE_INTDIV;
+-	info.si_addr = (void __user *)pc;
+-	info.si_trapno = 0;
+-	send_sig_info(SIGFPE, &info, current);
++	send_sig_fault(SIGFPE, FPE_INTDIV, (void __user *)pc, 0, current);
+ }
+ 
+ #ifdef CONFIG_DEBUG_BUGVERBOSE
+diff --git a/arch/sparc/kernel/unaligned_32.c b/arch/sparc/kernel/unaligned_32.c
+index 0e4cf7217413..64ac8c0c1429 100644
+--- a/arch/sparc/kernel/unaligned_32.c
++++ b/arch/sparc/kernel/unaligned_32.c
+@@ -311,15 +311,9 @@ static inline int ok_for_user(struct pt_regs *regs, unsigned int insn,
+ 
+ static void user_mna_trap_fault(struct pt_regs *regs, unsigned int insn)
+ {
+-	siginfo_t info;
+-
+-	clear_siginfo(&info);
+-	info.si_signo = SIGBUS;
+-	info.si_errno = 0;
+-	info.si_code = BUS_ADRALN;
+-	info.si_addr = (void __user *)safe_compute_effective_address(regs, insn);
+-	info.si_trapno = 0;
+-	send_sig_info(SIGBUS, &info, current);
++	send_sig_fault(SIGBUS, BUS_ADRALN,
++		       (void __user *)safe_compute_effective_address(regs, insn),
++		       0, current);
+ }
+ 
+ asmlinkage void user_unaligned_trap(struct pt_regs *regs, unsigned int insn)
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+2.14.1
