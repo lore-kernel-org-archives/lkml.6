@@ -1,262 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752765AbeDTSu1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:50:27 -0400
-Received: from p3plsmtpa11-04.prod.phx3.secureserver.net ([68.178.252.105]:55823
-        "EHLO p3plsmtpa11-04.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752712AbeDTSuZ (ORCPT
+        id S1752792AbeDTSvp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:51:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44662 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750927AbeDTSvm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:50:25 -0400
-Subject: Re: [Patch v4] cifs: Allocate validate negotiation request through
- kmalloc
-To: Long Li <longli@microsoft.com>, Steve French <sfrench@samba.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "samba-technical@lists.samba.org" <samba-technical@lists.samba.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-References: <20180419213807.3128-1-longli@linuxonhyperv.com>
- <c8924b83-dfa2-a44c-a425-deb7e03d0bf1@talpey.com>
- <MWHPR2101MB0729D25131DCC9AF638E0449CEB40@MWHPR2101MB0729.namprd21.prod.outlook.com>
-From: Tom Talpey <tom@talpey.com>
-Message-ID: <1734dfc1-acef-def8-9aa9-1b9960d26f94@talpey.com>
-Date: Fri, 20 Apr 2018 14:50:22 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 20 Apr 2018 14:51:42 -0400
 MIME-Version: 1.0
-In-Reply-To: <MWHPR2101MB0729D25131DCC9AF638E0449CEB40@MWHPR2101MB0729.namprd21.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfGRs18soewD55Nsq+SgxmsOkhtHfs33QEElnAjlTrBDLvBzQIOKM38i059Lw6srcypASM7t1BnVeq1rWuhUk95sPQPzaiBJgEqdOg/AkbkV18YwxCpts
- 61j4v7m+XnH0h96A9welPMTF46edOO3kuUgb/koFAyyxFKxVWhBQYYh9gf/aD1eMXykXjdan6afvkI7tEvKd0u0SU5luefpzsbYyVyNJ7JkwApCnv+On7iMI
- qhy+uZPG22aMZaQgeTIPaPhy9atnR2LodvTeqxBQrjxx5jKr97K/nHzOnWgLs+7QYrqmnfNYS0e6uTYF0Oi+X2metFFDhZMnzNnnBC8ECDkcqR0G77CIVZwv
- jb19mCu8
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Fri, 20 Apr 2018 11:51:40 -0700
+From: Channa <ckadabi@codeaurora.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-arm@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Trilok Soni <tsoni@codeaurora.org>,
+        Kyle Yan <kyan@codeaurora.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Evan Green <evgreen@chromium.org>, linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] Documentation: Documentation for qcom, llcc
+In-Reply-To: <589e84221ca7723c1739f713216abce5@codeaurora.org>
+References: <1523390893-10904-1-git-send-email-rishabhb@codeaurora.org>
+ <1523390893-10904-2-git-send-email-rishabhb@codeaurora.org>
+ <20180416145912.ja7d2xd2kqiukrgl@rob-hp-laptop>
+ <9a9ffe61f85dd28199bcc2d449097059@codeaurora.org>
+ <1d31f2d727d32922aaf98c345723229e@codeaurora.org>
+ <CAL_JsqKihiUwPW-aKYtG2cSFnOZonygahUeO5kgLjL3GYO7w=Q@mail.gmail.com>
+ <589e84221ca7723c1739f713216abce5@codeaurora.org>
+Message-ID: <8cb9bd887d94bedfb43225569647337e@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/20/2018 2:41 PM, Long Li wrote:
->> Subject: Re: [Patch v4] cifs: Allocate validate negotiation request through
->> kmalloc
->>
->> Looks good, but I have two possibly style-related comments.
->>
->> On 4/19/2018 5:38 PM, Long Li wrote:
->>> From: Long Li <longli@microsoft.com>
->>>
->>> The data buffer allocated on the stack can't be DMA'ed,
->>> ib_dma_map_page will return an invalid DMA address for a buffer on
->>> stack. Even worse, this incorrect address can't be detected by
->>> ib_dma_mapping_error. Sending data from this address to hardware will
->>> not fail, but the remote peer will get junk data.
->>>
->>> Fix this by allocating the request on the heap in smb3_validate_negotiate.
->>>
->>> Changes in v2:
->>> Removed duplicated code on freeing buffers on function exit.
->>> (Thanks to Parav Pandit <parav@mellanox.com>) Fixed typo in the patch
->>> title.
->>>
->>> Changes in v3:
->>> Added "Fixes" to the patch.
->>> Changed several sizeof() to use *pointer in place of struct.
->>>
->>> Changes in v4:
->>> Added detailed comments on the failure through RDMA.
->>> Allocate request buffer using GPF_NOFS.
->>> Fixed possible memory leak.
->>>
->>> Fixes: ff1c038addc4 ("Check SMB3 dialects against downgrade attacks")
->>> Signed-off-by: Long Li <longli@microsoft.com>
->>> ---
->>>    fs/cifs/smb2pdu.c | 61 ++++++++++++++++++++++++++++++--------------
->> -----------
->>>    1 file changed, 33 insertions(+), 28 deletions(-)
->>>
->>> diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c index
->>> 0f044c4..caa2a1e 100644
->>> --- a/fs/cifs/smb2pdu.c
->>> +++ b/fs/cifs/smb2pdu.c
->>> @@ -729,8 +729,8 @@ SMB2_negotiate(const unsigned int xid, struct
->>> cifs_ses *ses)
->>>
->>>    int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
->>>    {
->>> -	int rc = 0;
->>> -	struct validate_negotiate_info_req vneg_inbuf;
->>> +	int ret, rc = -EIO;
->>
->> Seems awkward to have "rc" and "ret", and based on the code below I don't
->> see why two variables are needed. Simplify? (see later comment)
+On 2018-04-18 11:11, Channa wrote:
+> On 2018-04-18 07:52, Rob Herring wrote:
+>> On Tue, Apr 17, 2018 at 5:12 PM,  <rishabhb@codeaurora.org> wrote:
+>>> On 2018-04-17 10:43, rishabhb@codeaurora.org wrote:
+>>>> 
+>>>> On 2018-04-16 07:59, Rob Herring wrote:
+>>>>> 
+>>>>> On Tue, Apr 10, 2018 at 01:08:12PM -0700, Rishabh Bhatnagar wrote:
+>>>>>> 
+>>>>>> Documentation for last level cache controller device tree 
+>>>>>> bindings,
+>>>>>> client bindings usage examples.
+>>>>> 
+>>>>> 
+>>>>> "Documentation: Documentation ..."? That wastes a lot of the 
+>>>>> subject
+>>>>> line... The preferred prefix is "dt-bindings: ..."
+>>>>> 
+>>>>>> 
+>>>>>> Signed-off-by: Channagoud Kadabi <ckadabi@codeaurora.org>
+>>>>>> Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+>>>>>> ---
+>>>>>>  .../devicetree/bindings/arm/msm/qcom,llcc.txt      | 58
+>>>>>> ++++++++++++++++++++++
+>>>>>>  1 file changed, 58 insertions(+)
+>>>>>>  create mode 100644
+>>>>>> Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>>>>>> 
+>>>>>> diff --git 
+>>>>>> a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>>>>>> b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>>>>>> new file mode 100644
+>>>>>> index 0000000..497cf0f
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.txt
+>>>>>> @@ -0,0 +1,58 @@
+>>>>>> +== Introduction==
+>>>>>> +
+>>>>>> +LLCC (Last Level Cache Controller) provides last level of cache 
+>>>>>> memory
+>>>>>> in SOC,
+>>>>>> +that can be shared by multiple clients. Clients here are 
+>>>>>> different
+>>>>>> cores in the
+>>>>>> +SOC, the idea is to minimize the local caches at the clients and
+>>>>>> migrate to
+>>>>>> +common pool of memory
+>>>>>> +
+>>>>>> +Properties:
+>>>>>> +- compatible:
+>>>>>> +        Usage: required
+>>>>>> +        Value type: <string>
+>>>>>> +        Definition: must be "qcom,sdm845-llcc"
+>>>>>> +
+>>>>>> +- reg:
+>>>>>> +        Usage: required
+>>>>>> +        Value Type: <prop-encoded-array>
+>>>>>> +        Definition: must be addresses and sizes of the LLCC 
+>>>>>> registers
+>>>>> 
+>>>>> 
+>>>>> How many address ranges?
+>>>>> 
+>>>> It consists of just one address range. I'll edit the definition to 
+>>>> make
+>>>> it more clear.
+>>>>>> 
+>>>>>> +
+>>>>>> +- #cache-cells:
+>>>>> 
+>>>>> 
+>>>>> This is all written as it is a common binding, but it is not one.
+>>>>> 
+>>>>> You already have most of the configuration data for each client in 
+>>>>> the
+>>>>> driver, I think I'd just put the client connection there too. Is 
+>>>>> there
+>>>>> any variation of this for a given SoC?
+>>>>> 
+>>>> #cache-cells and max-slices won't change for a given SOC. So you 
+>>>> want me
+>>>> to hard-code in the driver itself?
+>>>> 
+>>> I can use of_parse_phandle_with_fixed_args function and fix the 
+>>> number of
+>>> args as 1 instead of keeping #cache-cells here in DT. Does that look 
+>>> fine?
+>> 
+>> No, I'm saying why even put cache-slices properties in DT to begin
+>> with? You could just define client id's within the kernel and clients
+>> can use those instead of getting the id from the DT.
 > 
-> This is for addressing a prior comment to reduce duplicate code. All the failure paths
-> (after issuing I/O) returning -EIO, there are 5 of them. Set rc to -EIO at the beginning
-> so we don’t need to set it multiple times.
-
-Well, ok but now there are semi-duplicate and rather confusing "rc"
-and "ret" local variables, only one of which is actually returned.
-
-How about a "goto err" with unconditonal -EIO, and just leave the
-"return 0" path alone, like it was? That would be much clearer IMO.
-
-As-is, I needed to read it several times to convince myself the right
-rc was returned.
-
-Tom,
-
-
+> The reason to add cache-slices here is to establish a connection 
+> between
+> client and system cache. For example if we have multiple instances of
+> system cache blocks and client wants to choose a system cache instance
+> based on the usecase then its easier to establish this connection using
+> device tree than hard coding in the driver.
 > 
->>
->>> +	struct validate_negotiate_info_req *pneg_inbuf;
->>>    	struct validate_negotiate_info_rsp *pneg_rsp = NULL;
->>>    	u32 rsplen;
->>>    	u32 inbuflen; /* max of 4 dialects */ @@ -741,7 +741,6 @@ int
->>> smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
->>>    	if (tcon->ses->server->rdma)
->>>    		return 0;
->>>    #endif
->>> -
->>>    	/* In SMB3.11 preauth integrity supersedes validate negotiate */
->>>    	if (tcon->ses->server->dialect == SMB311_PROT_ID)
->>>    		return 0;
->>> @@ -764,63 +763,67 @@ int smb3_validate_negotiate(const unsigned int
->> xid, struct cifs_tcon *tcon)
->>>    	if (tcon->ses->session_flags & SMB2_SESSION_FLAG_IS_NULL)
->>>    		cifs_dbg(VFS, "Unexpected null user (anonymous) auth flag
->> sent by
->>> server\n");
->>>
->>> -	vneg_inbuf.Capabilities =
->>> +	pneg_inbuf = kmalloc(sizeof(*pneg_inbuf), GFP_NOFS);
->>> +	if (!pneg_inbuf)
->>> +		return -ENOMEM;
->>> +
->>> +	pneg_inbuf->Capabilities =
->>>    			cpu_to_le32(tcon->ses->server->vals-
->>> req_capabilities);
->>> -	memcpy(vneg_inbuf.Guid, tcon->ses->server->client_guid,
->>> +	memcpy(pneg_inbuf->Guid, tcon->ses->server->client_guid,
->>>    					SMB2_CLIENT_GUID_SIZE);
->>>
->>>    	if (tcon->ses->sign)
->>> -		vneg_inbuf.SecurityMode =
->>> +		pneg_inbuf->SecurityMode =
->>>
->> 	cpu_to_le16(SMB2_NEGOTIATE_SIGNING_REQUIRED);
->>>    	else if (global_secflags & CIFSSEC_MAY_SIGN)
->>> -		vneg_inbuf.SecurityMode =
->>> +		pneg_inbuf->SecurityMode =
->>>
->> 	cpu_to_le16(SMB2_NEGOTIATE_SIGNING_ENABLED);
->>>    	else
->>> -		vneg_inbuf.SecurityMode = 0;
->>> +		pneg_inbuf->SecurityMode = 0;
->>>
->>>
->>>    	if (strcmp(tcon->ses->server->vals->version_string,
->>>    		SMB3ANY_VERSION_STRING) == 0) {
->>> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
->>> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
->>> -		vneg_inbuf.DialectCount = cpu_to_le16(2);
->>> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
->>> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
->>> +		pneg_inbuf->DialectCount = cpu_to_le16(2);
->>>    		/* structure is big enough for 3 dialects, sending only 2 */
->>>    		inbuflen = sizeof(struct validate_negotiate_info_req) - 2;
->>
->> The "- 2" is a little confusing here. This was existing code, but I suggest you
->> change this to a sizeof (u16) construct for consistency.
->> It's reducing by the length of a single Dialects[n] entry.
->>
->>>    	} else if (strcmp(tcon->ses->server->vals->version_string,
->>>    		SMBDEFAULT_VERSION_STRING) == 0) {
->>> -		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
->>> -		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
->>> -		vneg_inbuf.Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
->>> -		vneg_inbuf.DialectCount = cpu_to_le16(3);
->>> +		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
->>> +		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
->>> +		pneg_inbuf->Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
->>> +		pneg_inbuf->DialectCount = cpu_to_le16(3);
->>>    		/* structure is big enough for 3 dialects */
->>>    		inbuflen = sizeof(struct validate_negotiate_info_req);
->>>    	} else {
->>>    		/* otherwise specific dialect was requested */
->>> -		vneg_inbuf.Dialects[0] =
->>> +		pneg_inbuf->Dialects[0] =
->>>    			cpu_to_le16(tcon->ses->server->vals->protocol_id);
->>> -		vneg_inbuf.DialectCount = cpu_to_le16(1);
->>> +		pneg_inbuf->DialectCount = cpu_to_le16(1);
->>>    		/* structure is big enough for 3 dialects, sending only 1 */
->>>    		inbuflen = sizeof(struct validate_negotiate_info_req) - 4;
->>
->> Ditto previous sizeof (u16) comment, with a *2 this case.
->>
->>>    	}
->>>
->>> -	rc = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
->>> +	ret = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
->>>    		FSCTL_VALIDATE_NEGOTIATE_INFO, true /* is_fsctl */,
->>> -		(char *)&vneg_inbuf, sizeof(struct
->> validate_negotiate_info_req),
->>> +		(char *)pneg_inbuf, sizeof(*pneg_inbuf),
->>>    		(char **)&pneg_rsp, &rsplen);
->>>
->>> -	if (rc != 0) {
->>> -		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
->>> -		return -EIO;
->>> +	if (ret) {
->>> +		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", ret);
->>> +		goto out_free_inbuf;
->>>    	}
->>
->> Why not leave "rc" alone, and set its value to -EIO before the goto if the ioctl
->> fails? That will simplify and make the code much more readable IMO.
->>
->>>
->>> -	if (rsplen != sizeof(struct validate_negotiate_info_rsp)) {
->>> +	if (rsplen != sizeof(*pneg_rsp)) {
->>>    		cifs_dbg(VFS, "invalid protocol negotiate response
->> size: %d\n",
->>>    			 rsplen);
->>>
->>>    		/* relax check since Mac returns max bufsize allowed on ioctl
->> */
->>>    		if ((rsplen > CIFSMaxBufSize)
->>>    		     || (rsplen < sizeof(struct validate_negotiate_info_rsp)))
->>> -			goto err_rsp_free;
->>> +			goto out_free_rsp;
->>>    	}
->>
->> Would need an rc = -EIO here too if above comment is accepted.
->>
->> Tom.
->>
->>>
->>>    	/* check validate negotiate info response matches what we got
->>> earlier */ @@ -838,14 +841,16 @@ int smb3_validate_negotiate(const
->>> unsigned int xid, struct cifs_tcon *tcon)
->>>
->>>    	/* validate negotiate successful */
->>>    	cifs_dbg(FYI, "validate negotiate info successful\n");
->>> -	kfree(pneg_rsp);
->>> -	return 0;
->>> +	rc = 0;
->>> +	goto out_free_rsp;
->>>
->>>    vneg_out:
->>>    	cifs_dbg(VFS, "protocol revalidation - security settings
->>> mismatch\n");
->>> -err_rsp_free:
->>> +out_free_rsp:
->>>    	kfree(pneg_rsp);
->>> -	return -EIO;
->>> +out_free_inbuf:
->>> +	kfree(pneg_inbuf);
->>> +	return rc;
->>>    }
->>>
->>>    enum securityEnum
->>>
-> N�����r��y���b�X��ǧv�^�)޺{.n�+����{��ٚ�{ay�ʇڙ�,j��f���h���z��w������j:+v���w�j�m��������zZ+�����ݢj"��!tml=
+>> 
+>> I have a couple of hesitations with putting this into the DT. First, I
+>> think a cache is just one aspect of describing the interconnect
+>> between masters and memory (and there's been discussions on
+>> interconnect bindings too) and any binding needs to consider all of
+>> the aspects of the interconnect. Second, I'd expect this cache
+>> architecture will change SoC to SoC and the binding here is pretty
+>> closely tied to the current cache implementation (e.g. slices). If
+>> there were a bunch of SoCs with the same design and just different
+>> client IDs (like interrupt IDs), then I'd feel differently.
 > 
+> This is partially true, a bunch of SoCs would support this design but
+> clients IDs are not expected to change. So Ideally client drivers could
+> hard code these IDs.
+> 
+> However I have other concerns of moving the client Ids in the driver.
+> The way the APIs implemented today are as follows:
+> #1. Client calls into system cache driver to get cache slice handle
+> with the usecase Id as input.
+> #2. System cache driver gets the phandle of system cache instance from
+> the client device to obtain the private data.
+> #3. Based on the usecase Id perform look up in the private data to get
+> cache slice handle.
+> #4. Return the cache slice handle to client
+> 
+> If we don't have the connection between client & system cache then the
+> private data needs to declared as static global in the system cache 
+> driver,
+> that limits us to have just once instance of system cache block.
+> 
+> 
+>> 
+>> Rob
+
+Hi Rob:
+
+Can you please provide your opinion on the approach here?
+
+Thanks,
+Channa
+
+-- 
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
+Forum,
+a Linux Foundation Collaborative Project
