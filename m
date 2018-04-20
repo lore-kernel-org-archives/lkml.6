@@ -1,42 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753831AbeDTS30 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:29:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753626AbeDTS3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:29:25 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA1EA217AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 20 Apr 2018 14:29:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Song Liu <songliubraving@fb.com>
-Cc: <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        Ingo Molnar <mingo@redhat.com>, Howard McLauchlan <hmclauchlan@fb.com>,
-        Josef Bacik <jbacik@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH v4] tracing: remove igrab() iput() call from uprobes.c
-Message-ID: <20180420142922.08ad9e64@gandalf.local.home>
-In-Reply-To: <20180420180847.418760-1-songliubraving@fb.com>
-References: <20180420180847.418760-1-songliubraving@fb.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+        id S1753876AbeDTS3v (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:29:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38788 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753587AbeDTS3u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 14:29:50 -0400
+Date: Fri, 20 Apr 2018 11:29:45 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [git pull] vfs fixes
+Message-Id: <20180420112945.98686d9c78121bdc1e93483a@linux-foundation.org>
+In-Reply-To: <20180420155846.GO30522@ZenIV.linux.org.uk>
+References: <20180420155846.GO30522@ZenIV.linux.org.uk>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 11:08:47 -0700
-Song Liu <songliubraving@fb.com> wrote:
+On Fri, 20 Apr 2018 16:58:46 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
 
-> For uprobes.c sisde, igrab() is not necessary. So we removed it and
+> 	Assorted fixes.  Some of that is only a matter with fault injection
+> (broken handling of small allocation failure in various mount-related places),
+> but the last one is a root-triggerable stack overflow, and combined with
+> userns it gets really nasty ;-/
+> 
+> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+> 
+>   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-linus
+> 
+> for you to fetch changes up to 16a34adb9392b2fe4195267475ab5b472e55292c:
+> 
+>   Don't leak MNT_INTERNAL away from internal mounts (2018-04-19 23:52:15 -0400)
+> ...
+>
+> Tetsuo Handa (1):
+>       mm,vmscan: Allow preallocating memory for register_shrinker().
 
-You don't need to send another patch, but what is the above sentence
-suppose to say?
+Confused.  You had a bunch of issues with this patch
+(http://lkml.kernel.org/r/20180411005938.GN30522@ZenIV.linux.org.uk)
+and Tetsuo sent out a v2 but now we've merged the v1.  Deliberate?
 
--- Steve
-
-> added comments on requirements to callers of uprobe_register().
+Also, it would be nice if you could get the Link: thing working in your
+commits please - this one took a bit of hunting down.
