@@ -1,154 +1,250 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755554AbeDTOzr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:55:47 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:46112 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755529AbeDTOzp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1755539AbeDTOzp (ORCPT <rfc822;w@1wt.eu>);
         Fri, 20 Apr 2018 10:55:45 -0400
-Date: Fri, 20 Apr 2018 10:55:14 -0400
-From: Rich Felker <dalias@libc.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
-Subject: Re: [REVIEW][PATCH 16/22] signal/sh: Use force_sig_fault where
- appropriate
-Message-ID: <20180420145514.GP3094@brightrain.aerifal.cx>
-References: <87604mhrnb.fsf@xmission.com>
- <20180420143811.9994-16-ebiederm@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420143811.9994-16-ebiederm@xmission.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: from foss.arm.com ([217.140.101.70]:50170 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755302AbeDTOzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:55:40 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: kvmarm@lists.cs.columbia.edu
+Cc: Punit Agrawal <punit.agrawal@arm.com>,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
+        suzuki.poulose@arm.com, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
+Date: Fri, 20 Apr 2018 15:54:09 +0100
+Message-Id: <20180420145409.24485-5-punit.agrawal@arm.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180420145409.24485-1-punit.agrawal@arm.com>
+References: <20180420145409.24485-1-punit.agrawal@arm.com>
+X-ARM-No-Footer: FoSSMail
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 09:38:05AM -0500, Eric W. Biederman wrote:
-> Filling in struct siginfo before calling force_sig_info a tedious and
-> error prone process, where once in a great while the wrong fields
-> are filled out, and siginfo has been inconsistently cleared.
-> 
-> Simplify this process by using the helper force_sig_fault.  Which
-> takes as a parameters all of the information it needs, ensures
-> all of the fiddly bits of filling in struct siginfo are done properly
-> and then calls force_sig_info.
-> 
-> In short about a 5 line reduction in code for every time force_sig_info
-> is called, which makes the calling function clearer.
-> 
-> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> Cc: Rich Felker <dalias@libc.org>
-> Cc: linux-sh@vger.kernel.org
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
->  arch/sh/kernel/traps_32.c | 19 +++++--------------
->  arch/sh/math-emu/math.c   |  9 ++-------
->  arch/sh/mm/fault.c        | 10 +---------
->  3 files changed, 8 insertions(+), 30 deletions(-)
-> 
-> diff --git a/arch/sh/kernel/traps_32.c b/arch/sh/kernel/traps_32.c
-> index e85e59c3d6df..660a4bc17698 100644
-> --- a/arch/sh/kernel/traps_32.c
-> +++ b/arch/sh/kernel/traps_32.c
-> @@ -477,7 +477,6 @@ asmlinkage void do_address_error(struct pt_regs *regs,
->  {
->  	unsigned long error_code = 0;
->  	mm_segment_t oldfs;
-> -	siginfo_t info;
->  	insn_size_t instruction;
->  	int tmp;
->  
-> @@ -537,12 +536,7 @@ asmlinkage void do_address_error(struct pt_regs *regs,
->  		       "access (PC %lx PR %lx)\n", current->comm, regs->pc,
->  		       regs->pr);
->  
-> -		clear_siginfo(&info);
-> -		info.si_signo = SIGBUS;
-> -		info.si_errno = 0;
-> -		info.si_code = si_code;
-> -		info.si_addr = (void __user *)address;
-> -		force_sig_info(SIGBUS, &info, current);
-> +		force_sig_fault(SIGBUS, si_code, (void __user *)address, current);
->  	} else {
->  		inc_unaligned_kernel_access();
->  
-> @@ -599,20 +593,17 @@ int is_dsp_inst(struct pt_regs *regs)
->  #ifdef CONFIG_CPU_SH2A
->  asmlinkage void do_divide_error(unsigned long r4)
->  {
-> -	siginfo_t info;
-> +	int code;
->  
-> -	clear_siginfo(&info);
->  	switch (r4) {
->  	case TRAP_DIVZERO_ERROR:
-> -		info.si_code = FPE_INTDIV;
-> +		code = FPE_INTDIV;
->  		break;
->  	case TRAP_DIVOVF_ERROR:
-> -		info.si_code = FPE_INTOVF;
-> +		code = FPE_INTOVF;
->  		break;
->  	}
-> -
-> -	info.si_signo = SIGFPE;
-> -	force_sig_info(info.si_signo, &info, current);
-> +	force_sig_fault(SIGFPE, code, NULL, current);
->  }
->  #endif
->  
-> diff --git a/arch/sh/math-emu/math.c b/arch/sh/math-emu/math.c
-> index d6d2213df078..a0fa8fc88739 100644
-> --- a/arch/sh/math-emu/math.c
-> +++ b/arch/sh/math-emu/math.c
-> @@ -507,7 +507,6 @@ static int ieee_fpe_handler(struct pt_regs *regs)
->  	unsigned short insn = *(unsigned short *)regs->pc;
->  	unsigned short finsn;
->  	unsigned long nextpc;
-> -	siginfo_t info;
->  	int nib[4] = {
->  		(insn >> 12) & 0xf,
->  		(insn >> 8) & 0xf,
-> @@ -560,12 +559,8 @@ static int ieee_fpe_handler(struct pt_regs *regs)
->  				~(FPSCR_CAUSE_MASK | FPSCR_FLAG_MASK);
->  			task_thread_info(tsk)->status |= TS_USEDFPU;
->  		} else {
-> -			clear_siginfo(&info);
-> -			info.si_signo = SIGFPE;
-> -			info.si_errno = 0;
-> -			info.si_code = FPE_FLTINV;
-> -			info.si_addr = (void __user *)regs->pc;
-> -			force_sig_info(SIGFPE, &info, tsk);
-> +			force_sig_fault(SIGFPE, FPE_FLTINV,
-> +					(void __user *)regs->pc, tsk);
->  		}
->  
->  		regs->pc = nextpc;
-> diff --git a/arch/sh/mm/fault.c b/arch/sh/mm/fault.c
-> index 4c98b6f20e02..b8e7bb84b6b1 100644
-> --- a/arch/sh/mm/fault.c
-> +++ b/arch/sh/mm/fault.c
-> @@ -42,15 +42,7 @@ static void
->  force_sig_info_fault(int si_signo, int si_code, unsigned long address,
->  		     struct task_struct *tsk)
->  {
-> -	siginfo_t info;
-> -
-> -	clear_siginfo(&info);
-> -	info.si_signo	= si_signo;
-> -	info.si_errno	= 0;
-> -	info.si_code	= si_code;
-> -	info.si_addr	= (void __user *)address;
-> -
-> -	force_sig_info(si_signo, &info, tsk);
-> +	force_sig_fault(si_signo, si_code, (void __user *)address, tsk);
->  }
->  
->  /*
-> -- 
-> 2.14.1
+KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
+handling to add support for PUD hugepages.
 
-Acked-by: Rich Felker <dalias@libc.org>
+Addition of pud hugepage support enables additional hugepage
+sizes (e.g., 1G with 4K granule) which can be useful on cores that
+support mapping larger block sizes in the TLB entries.
+
+Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm/include/asm/kvm_mmu.h         | 19 +++++++++
+ arch/arm64/include/asm/kvm_mmu.h       | 15 +++++++
+ arch/arm64/include/asm/pgtable-hwdef.h |  4 ++
+ arch/arm64/include/asm/pgtable.h       |  2 +
+ virt/kvm/arm/mmu.c                     | 54 ++++++++++++++++++++------
+ 5 files changed, 83 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+index 224c22c0a69c..155916dbdd7e 100644
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@ -77,8 +77,11 @@ void kvm_clear_hyp_idmap(void);
+ 
+ #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
+ #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
++#define kvm_pfn_pud(pfn, prot)	(__pud(0))
+ 
+ #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
++/* No support for pud hugepages */
++#define kvm_pud_mkhuge(pud)	(pud)
+ 
+ /*
+  * The following kvm_*pud*() functionas are provided strictly to allow
+@@ -95,6 +98,22 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+ 	return false;
+ }
+ 
++static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
++{
++	BUG();
++}
++
++static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
++{
++	BUG();
++	return pud;
++}
++
++static inline pud_t kvm_s2pud_mkexec(pud_t pud)
++{
++	BUG();
++	return pud;
++}
+ 
+ static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
+ {
+diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+index f440cf216a23..f49a68fcbf26 100644
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -172,11 +172,14 @@ void kvm_clear_hyp_idmap(void);
+ 
+ #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
+ #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
++#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
+ 
+ #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
+ #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
++#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
+ 
+ #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
++#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
+ 
+ static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+ {
+@@ -190,6 +193,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
+ 	return pmd;
+ }
+ 
++static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
++{
++	pud_val(pud) |= PUD_S2_RDWR;
++	return pud;
++}
++
+ static inline pte_t kvm_s2pte_mkexec(pte_t pte)
+ {
+ 	pte_val(pte) &= ~PTE_S2_XN;
+@@ -202,6 +211,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
+ 	return pmd;
+ }
+ 
++static inline pud_t kvm_s2pud_mkexec(pud_t pud)
++{
++	pud_val(pud) &= ~PUD_S2_XN;
++	return pud;
++}
++
+ static inline void kvm_set_s2pte_readonly(pte_t *ptep)
+ {
+ 	pteval_t old_pteval, pteval;
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index fd208eac9f2a..e327665e94d1 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -193,6 +193,10 @@
+ #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
+ #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
+ 
++#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /* HAP[2:1] */
++#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
++#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
++
+ /*
+  * Memory Attribute override for Stage-2 (MemAttr[3:0])
+  */
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 7e2c27e63cd8..5efb4585c879 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -386,6 +386,8 @@ static inline int pmd_protnone(pmd_t pmd)
+ 
+ #define pud_write(pud)		pte_write(pud_pte(pud))
+ 
++#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
++
+ #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
+ #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
+ #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index 5f53909da90e..7fb58dca0a83 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1036,6 +1036,26 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+ 	return 0;
+ }
+ 
++static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
++			       phys_addr_t addr, const pud_t *new_pud)
++{
++	pud_t *pud, old_pud;
++
++	pud = stage2_get_pud(kvm, cache, addr);
++	VM_BUG_ON(!pud);
++
++	old_pud = *pud;
++	if (pud_present(old_pud)) {
++		pud_clear(pud);
++		kvm_tlb_flush_vmid_ipa(kvm, addr);
++	} else {
++		get_page(virt_to_page(pud));
++	}
++
++	kvm_set_pud(pud, *new_pud);
++	return 0;
++}
++
+ static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+ {
+ 	pmd_t *pmdp;
+@@ -1452,9 +1472,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	}
+ 
+ 	vma_pagesize = vma_kernel_pagesize(vma);
+-	if (vma_pagesize == PMD_SIZE && !logging_active) {
++	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
++	    !logging_active) {
++		struct hstate *h = hstate_vma(vma);
++
+ 		hugetlb = true;
+-		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
++		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
+ 	} else {
+ 		/*
+ 		 * Pages belonging to memslots that don't have the same
+@@ -1521,15 +1544,8 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	if (mmu_notifier_retry(kvm, mmu_seq))
+ 		goto out_unlock;
+ 
+-	if (!hugetlb && !force_pte) {
+-		/*
+-		 * Only PMD_SIZE transparent hugepages(THP) are
+-		 * currently supported. This code will need to be
+-		 * updated if other THP sizes are supported.
+-		 */
++	if (!hugetlb && !force_pte)
+ 		hugetlb = transparent_hugepage_adjust(&pfn, &fault_ipa);
+-		vma_pagesize = PMD_SIZE;
+-	}
+ 
+ 	if (writable)
+ 		kvm_set_pfn_dirty(pfn);
+@@ -1540,7 +1556,23 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	if (exec_fault)
+ 		invalidate_icache_guest_page(pfn, vma_pagesize);
+ 
+-	if (hugetlb) {
++	if (vma_pagesize == PUD_SIZE) {
++		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
++
++		new_pud = kvm_pud_mkhuge(new_pud);
++		if (writable)
++			new_pud = kvm_s2pud_mkwrite(new_pud);
++
++		if (exec_fault) {
++			new_pud = kvm_s2pud_mkexec(new_pud);
++		} else if (fault_status == FSC_PERM) {
++			/* Preserve execute if XN was already cleared */
++			if (stage2_is_exec(kvm, fault_ipa))
++				new_pud = kvm_s2pud_mkexec(new_pud);
++		}
++
++		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
++	} else if (vma_pagesize == PMD_SIZE) {
+ 		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+ 
+ 		new_pmd = kvm_pmd_mkhuge(new_pmd);
+-- 
+2.17.0
