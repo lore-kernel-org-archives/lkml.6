@@ -1,192 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754298AbeDTIyS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:54:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59356 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754066AbeDTIyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:54:05 -0400
-From: Quentin Schulz <quentin.schulz@bootlin.com>
-To: dedekind1@gmail.com, richard@nod.at, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
-        marek.vasut@gmail.com
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com,
-        Quentin Schulz <quentin.schulz@bootlin.com>
-Subject: [PATCH 2/2] ubi: introduce ubi.nocheck parameter to skip CRC check when attaching ubi vol
-Date: Fri, 20 Apr 2018 10:52:41 +0200
-Message-Id: <6551534f88b3aa77cc377c4270c4ddf7fe92cdf4.1524214122.git-series.quentin.schulz@bootlin.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com>
-References: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com>
-In-Reply-To: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com>
-References: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com>
+        id S1754190AbeDTI4u (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:56:50 -0400
+Received: from mail-it0-f43.google.com ([209.85.214.43]:38987 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754106AbeDTI4r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 04:56:47 -0400
+X-Google-Smtp-Source: AIpwx4/z3FTiSMhhFzuPTMQ162mCQSTKnTn2VQiGhaYdMHpUkGx944ZEL4UZqtT3s3Hb9uScemQh7uhk/1VCzo49m4U=
+MIME-Version: 1.0
+In-Reply-To: <1524210132.4614.4.camel@synopsys.com>
+References: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
+ <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com> <1524210132.4614.4.camel@synopsys.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 20 Apr 2018 10:56:46 +0200
+Message-ID: <CAPDyKFqGNR_YV=adUKqzEuYk-ZV48MHW68Uyr=8nXBEvafGsWQ@mail.gmail.com>
+Subject: Re: [RFC 0/2] dw_mmc: add multislot support
+To: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc: "jh80.chung@samsung.com" <jh80.chung@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's already ECC on NAND pages so there may be no need for one to
-check the CRC of a UBI volume.
+On 20 April 2018 at 09:42, Alexey Brodkin <Alexey.Brodkin@synopsys.com> wrote:
+> Hi Ulf,
+>
+> On Fri, 2018-04-20 at 09:35 +0200, Ulf Hansson wrote:
+>> [...]
+>>
+>> >
+>> > 2. Add missing stuff to support multislot mode in DesignWare MMC driver.
+>> >  * Add missing slot switch to __dw_mci_start_request() function.
+>> >  * Refactor set_ios function:
+>> >    a) Calculate common clock which is
+>> >       suitable for all slots instead of directly use clock value
+>> >       provided by mmc core. We calculate common clock as the minimum
+>> >       among each used slot clocks. This clock is calculated in
+>> >       dw_mci_calc_common_clock() function which is called
+>> >       from set_ios()
+>> >    b) Disable clock only if no other slots are ON.
+>> >    c) Setup clock directly in set_ios() only if no other slots
+>> >       are ON. Otherwise adjust clock in __dw_mci_start_request()
+>> >       function before slot switch.
+>> >    d) Move timings and bus_width setup to separate funcions.
+>> >  * Use timing field in each slot structure instead of common field in
+>> >    host structure.
+>> >  * Add locks to serialize access to registers.
+>>
+>> Sorry, but this is a hack to *try* to make multi-slot work and this
+>> isn't sufficient. There were good reasons to why the earlier
+>> non-working multi slot support was removed from dw_mmc.
+>>
+>> Let me elaborate a bit for your understanding. The core uses a host
+>> lock (mmc_claim|release_host()) to serialize operations and commands,
+>> as to confirm to the SD/SDIO/(e)MMC specs. The above changes gives no
+>> guarantees for this. To make that work, we would need a "mmc bus lock"
+>> to be managed by the core.
+>>
+>> However, inventing a "mmc bus lock" would lead to other problems
+>> related to I/O scheduling for upper layers - it simply breaks. For
+>> example, I/O requests for one card/slot can then starve I/O requests
+>> reaching another card/slot.
+>
+> So are you saying that multi-slot support is a no go in general or it is only
+> applicable to DW MMC (I really doubt that's a case)?
 
-Let's introduce a ubi.nocheck parameter that let one skip the CRC check
-when attaching a UBI volume.
+In general.
 
-This also drastically speeds kernel boot by removing a potentially
-useless check, e.g. I gained 3.2s on boot time of a SPEAr600-based board
-for a ~20MB UBI volume used as rootfs.
+>
+> BTW there're other controllers that seem to support multi-slot like Atmel etc.
 
-Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
----
- drivers/mtd/ubi/kapi.c | 70 +++++++++++++++++++++++++++++++++++++++++++-
- drivers/mtd/ubi/ubi.h  |  6 ++++-
- drivers/mtd/ubi/vtbl.c | 24 ++++++++++++++-
- 3 files changed, 99 insertions(+), 1 deletion(-)
+Yeah, none of those are working - it just bad attempts to try to make
+*something* work.
 
-diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
-index d4b2e87..d604cd5 100644
---- a/drivers/mtd/ubi/kapi.c
-+++ b/drivers/mtd/ubi/kapi.c
-@@ -28,6 +28,9 @@
- #include <asm/div64.h>
- #include "ubi.h"
- 
-+struct ubivol_param ubinocheck_param[UBIVOL_MAX_DEVICES];
-+int ubinocheck_devs;
-+
- /**
-  * ubi_do_get_device_info - get information about UBI device.
-  * @ubi: UBI device description object
-@@ -865,3 +868,70 @@ int ubi_unregister_volume_notifier(struct notifier_block *nb)
- 	return blocking_notifier_chain_unregister(&ubi_notifiers, nb);
- }
- EXPORT_SYMBOL_GPL(ubi_unregister_volume_notifier);
-+
-+static int __init ubinocheckvol_set_param(const char *val,
-+					  const struct kernel_param *kp)
-+{
-+	int i, ret;
-+	size_t len;
-+	struct ubivol_param *param;
-+	char buf[UBIVOL_PARAM_LEN];
-+	char *pbuf = &buf[0];
-+	char *tokens[UBIVOL_PARAM_COUNT];
-+
-+	if (!val)
-+		return -EINVAL;
-+
-+	len = strnlen(val, UBIVOL_PARAM_LEN);
-+	if (len == 0) {
-+		pr_warn("UBI: nocheck: empty 'nocheck=' parameter - ignored\n");
-+		return 0;
-+	}
-+
-+	if (len == UBIVOL_PARAM_LEN) {
-+		pr_err("UBI: nocheck: parameter \"%s\" is too long, max. is %d\n",
-+		       val, UBIVOL_PARAM_LEN);
-+		return -EINVAL;
-+	}
-+
-+	strcpy(buf, val);
-+
-+	/* Get rid of the final newline */
-+	if (buf[len - 1] == '\n')
-+		buf[len - 1] = '\0';
-+
-+	for (i = 0; i < UBIVOL_PARAM_COUNT; i++)
-+		tokens[i] = strsep(&pbuf, ",");
-+
-+	param = &ubinocheck_param[ubinocheck_devs];
-+	if (tokens[1]) {
-+		/* Two parameters: can be 'ubi, vol_id' or 'ubi, vol_name' */
-+		ret = kstrtoint(tokens[0], 10, &param->ubi_num);
-+		if (ret < 0)
-+			return -EINVAL;
-+
-+		/* Second param can be a number or a name */
-+		ret = kstrtoint(tokens[1], 10, &param->vol_id);
-+		if (ret < 0) {
-+			param->vol_id = -1;
-+			strcpy(param->name, tokens[1]);
-+		}
-+	}
-+
-+	ubinocheck_devs++;
-+
-+	return 0;
-+}
-+
-+static const struct kernel_param_ops ubinocheckvol_param_ops = {
-+	.set	= ubinocheckvol_set_param,
-+};
-+module_param_cb(nocheck, &ubinocheckvol_param_ops, NULL, 0);
-+MODULE_PARM_DESC(nocheck,
-+		 "Disable CRC check for UBI volumes. Parameter format: nocheck=dev,[num|name]>.\n"
-+		 "Multiple \"nocheck\" parameters may be specified.\n"
-+		 "Examples\n"
-+		 "Using the UBI device, and the volume name:\n"
-+		 "ubi.nocheck=0,rootfs\n"
-+		 "Using both UBI device number and UBI volume number:\n"
-+		 "ubi.nocheck=0,0\n");
-diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
-index 4cc6ec9..2bd89b4 100644
---- a/drivers/mtd/ubi/ubi.h
-+++ b/drivers/mtd/ubi/ubi.h
-@@ -825,6 +825,12 @@ struct ubivol_param {
- 	char name[UBIVOL_PARAM_LEN + 1];
- };
- 
-+/* Numbers of elements set in the @ubinocheck_param array */
-+extern int ubinocheck_devs;
-+
-+/* MTD devices specification parameters */
-+extern struct ubivol_param ubinocheck_param[UBIVOL_MAX_DEVICES];
-+
- #include "debug.h"
- 
- extern struct kmem_cache *ubi_wl_entry_slab;
-diff --git a/drivers/mtd/ubi/vtbl.c b/drivers/mtd/ubi/vtbl.c
-index 263743e..06b6cfd 100644
---- a/drivers/mtd/ubi/vtbl.c
-+++ b/drivers/mtd/ubi/vtbl.c
-@@ -534,9 +534,10 @@ static int init_volumes(struct ubi_device *ubi,
- 			const struct ubi_attach_info *ai,
- 			const struct ubi_vtbl_record *vtbl)
- {
--	int i, reserved_pebs = 0;
-+	int i, j, reserved_pebs = 0;
- 	struct ubi_ainf_volume *av;
- 	struct ubi_volume *vol;
-+	struct ubivol_param *param;
- 
- 	for (i = 0; i < ubi->vtbl_slots; i++) {
- 		cond_resched();
-@@ -620,6 +621,27 @@ static int init_volumes(struct ubi_device *ubi,
- 			(long long)(vol->used_ebs - 1) * vol->usable_leb_size;
- 		vol->used_bytes += av->last_data_size;
- 		vol->last_eb_bytes = av->last_data_size;
-+
-+		for (j = 0; j < ubinocheck_devs; j++) {
-+			param = &ubinocheck_param[j];
-+
-+			if (vol->ubi->ubi_num != param->ubi_num)
-+				continue;
-+			if (vol->vol_id == param->vol_id) {
-+				ubi_msg(vol->ubi,
-+					"skipping CRC check for volume %d",
-+					vol->vol_id);
-+				vol->checked = true;
-+				break;
-+			}
-+			if (!strcmp(vol->name, param->name)) {
-+				ubi_msg(vol->ubi,
-+					"skipping CRC check for volume %s",
-+					param->name);
-+				vol->checked = true;
-+				break;
-+			}
-+		}
- 	}
- 
- 	/* And add the layout volume */
--- 
-git-series 0.9.1
+Kind regards
+Uffe
