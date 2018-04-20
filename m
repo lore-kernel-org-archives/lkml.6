@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752899AbeDTVLZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 17:11:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51397 "EHLO mail.bootlin.com"
+        id S1753041AbeDTVLd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 17:11:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51406 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751467AbeDTVLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 17:11:22 -0400
+        id S1751695AbeDTVLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 17:11:30 -0400
 From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
 To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
         marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
@@ -14,9 +14,9 @@ Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
         thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v7 03/11] ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
-Date: Fri, 20 Apr 2018 23:10:14 +0200
-Message-Id: <20180420211022.11759-4-mylene.josserand@bootlin.com>
+Subject: [PATCH v7 04/11] ARM: dts: sun8i: a83t: Add CCI-400 node
+Date: Fri, 20 Apr 2018 23:10:15 +0200
+Message-Id: <20180420211022.11759-5-mylene.josserand@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180420211022.11759-1-mylene.josserand@bootlin.com>
 References: <20180420211022.11759-1-mylene.josserand@bootlin.com>
@@ -27,32 +27,121 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The R_CPUCFG is a collection of registers needed for SMP bringup
-on clusters and cluster's reset.
-For the moment, documentation about this register is found in
-Allwinner's code only.
+Add CCI-400 node and control-port on CPUs needed by SMP bringup.
 
 Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t.dtsi | 41 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
 diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 32992afa0b12..7974eaba57a7 100644
+index 7974eaba57a7..42539267e329 100644
 --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
 +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -933,6 +933,11 @@
- 			#reset-cells = <1>;
+@@ -66,6 +66,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
++			cci-control-port = <&cci_control0>;
+ 			reg = <0>;
  		};
  
-+		r_cpucfg@1f01c00 {
-+			compatible = "allwinner,sun8i-a83t-r-cpucfg";
-+			reg = <0x1f01c00 0x400>;
+@@ -73,6 +74,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
++			cci-control-port = <&cci_control0>;
+ 			reg = <1>;
+ 		};
+ 
+@@ -80,6 +82,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
++			cci-control-port = <&cci_control0>;
+ 			reg = <2>;
+ 		};
+ 
+@@ -87,6 +90,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
++			cci-control-port = <&cci_control0>;
+ 			reg = <3>;
+ 		};
+ 
+@@ -96,6 +100,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu1_opp_table>;
++			cci-control-port = <&cci_control1>;
+ 			reg = <0x100>;
+ 		};
+ 
+@@ -103,6 +108,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu1_opp_table>;
++			cci-control-port = <&cci_control1>;
+ 			reg = <0x101>;
+ 		};
+ 
+@@ -110,6 +116,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu1_opp_table>;
++			cci-control-port = <&cci_control1>;
+ 			reg = <0x102>;
+ 		};
+ 
+@@ -117,6 +124,7 @@
+ 			compatible = "arm,cortex-a7";
+ 			device_type = "cpu";
+ 			operating-points-v2 = <&cpu1_opp_table>;
++			cci-control-port = <&cci_control1>;
+ 			reg = <0x103>;
+ 		};
+ 	};
+@@ -354,6 +362,39 @@
+ 			reg = <0x01700000 0x400>;
+ 		};
+ 
++		cci@1790000 {
++			compatible = "arm,cci-400";
++			#address-cells = <1>;
++			#size-cells = <1>;
++			reg = <0x01790000 0x10000>;
++			ranges = <0x0 0x01790000 0x10000>;
++
++			cci_control0: slave-if@4000 {
++				compatible = "arm,cci-400-ctrl-if";
++				interface-type = "ace";
++				reg = <0x4000 0x1000>;
++			};
++
++			cci_control1: slave-if@5000 {
++				compatible = "arm,cci-400-ctrl-if";
++				interface-type = "ace";
++				reg = <0x5000 0x1000>;
++			};
++
++			pmu@9000 {
++				compatible = "arm,cci-400-pmu,r1";
++				reg = <0x9000 0x5000>;
++				interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			};
 +		};
 +
- 		r_pio: pinctrl@1f02c00 {
- 			compatible = "allwinner,sun8i-a83t-r-pinctrl";
- 			reg = <0x01f02c00 0x400>;
+ 		syscon: syscon@1c00000 {
+ 			compatible = "allwinner,sun8i-a83t-system-controller",
+ 				"syscon";
 -- 
 2.11.0
