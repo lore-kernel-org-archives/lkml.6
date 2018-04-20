@@ -1,100 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755191AbeDTOAy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:00:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39644 "EHLO mail.kernel.org"
+        id S1755182AbeDTOCB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:02:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56239 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755043AbeDTOAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:00:52 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59E3620853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
-Date: Fri, 20 Apr 2018 09:00:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, sulrich@codeaurora.org,
-        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Rajat Jain <rajatja@google.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
-Message-ID: <20180420140049.GP28657@bhelgaas-glaptop.roam.corp.google.com>
-References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
- <20180419202632.GE14063@ziepe.ca>
- <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
- <290e9530-dcde-9c10-7ae0-59ac4c509db4@codeaurora.org>
+        id S1754894AbeDTOB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:01:59 -0400
+Date: Fri, 20 Apr 2018 16:01:57 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
+Message-ID: <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
+References: <20180413124704.19335-1-pmladek@suse.com>
+ <20180413101233.0792ebf0@gandalf.local.home>
+ <20180414023516.GA17806@tigerII.localdomain>
+ <20180416014729.GB1034@jagdpanzerIV>
+ <20180416042553.GA555@jagdpanzerIV>
+ <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
+ <20180420021511.GB6397@jagdpanzerIV>
+ <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
+ <20180420080428.622a8e7f@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <290e9530-dcde-9c10-7ae0-59ac4c509db4@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180420080428.622a8e7f@gandalf.local.home>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Rajat, Alex because of their interest in the reset/hotplug issue]
+On Fri 2018-04-20 08:04:28, Steven Rostedt wrote:
+> On Fri, 20 Apr 2018 11:12:24 +0200
+> Petr Mladek <pmladek@suse.com> wrote:
+> 
+> > Yes, my number was arbitrary. The important thing is that it was long
+> > enough. Or do you know about an console that will not be able to write
+> > 100 lines within one hour?
+> 
+> The problem is the way rate limit works. If you print 100 lines (or
+> 1000) in 5 seconds, then you just stopped printing from that context
+> for 59 minutes and 55 seconds. That's a long time to block printing.
 
-For context, Sinan's patch is this:
+Are we talking about the same context?
 
-> diff --git a/drivers/infiniband/hw/hfi1/pcie.c b/drivers/infiniband/hw/hfi1/pcie.c
-> index 83d66e8..75f49e3 100644
-> --- a/drivers/infiniband/hw/hfi1/pcie.c
-> +++ b/drivers/infiniband/hw/hfi1/pcie.c
-> @@ -908,7 +908,8 @@ static int trigger_sbr(struct hfi1_devdata *dd)
->          * delay after a reset is required.  Per spec requirements,
->          * the link is either working or not after that point.
->          */
-> -       pci_reset_bridge_secondary_bus(dev->bus->self);
-> +       if (pci_reset_slot(dev->slot))
-> +               pci_reset_bridge_secondary_bus(dev->bus->self);
+I am talking about console drivers called from console_unlock(). It is
+very special context because it is more or less recursive:
 
-On Thu, Apr 19, 2018 at 06:19:32PM -0400, Sinan Kaya wrote:
-> On 4/19/2018 5:47 PM, Bjorn Helgaas wrote:
-> >> Bjorn, would be appropriate to export pci_parent_bus_reset() or some
-> >> variation therin??
-> > I agree it would be really nice if the PCI core could help out somehow
-> > so we could get some of this code out of individual drivers.
+     + could cause infinite loop
+     + the errors are usually the same again and again
 
-What I was really thinking here was about the whole Gen3 transition
-thing, not the reset thing by itself.
+As a result, if you get too many messages from this context:
 
-> I can create a function called pci_reset_link() and move both slot and
-> secondary bus reset inside.
+     + you are lost (recursion)
+     + more messages != new information
 
-What exactly is your patch fixing?  Is it the following?
+And you need to fix the problem anyway. Otherwise, the system
+logging is a mess.
 
-  If the HFI link is not operating at 8GT/s, the driver's .probe()
-  method tries to transition it to 8GT/s, which involves resetting the
-  HFI device with pci_reset_bridge_secondary_bus().  If the HFI device
-  is in a hotplug slot, the reset causes a "Link Down" event, which
-  causes the pciehp driver to remove the HFI device and re-enumerate
-  it when the link comes back up.
 
-  When pciehp removes the device, it calls the HFI .remove() method,
-  which is a problem because the .probe() method is still active.
+> What happens if you had a couple of NMIs go off that takes up that
+> time, and then you hit a bug 10 minutes later from that context. You
+> just lost it.
 
-  It looks like this should deadlock because __device_attach() holds
-  the device_lock while calling .probe() and the
-  device_release_driver() path tries to acquire it.
+I do not understand how this is related to the NMI context.
+The messages in NMI context are not throttled!
 
-Your patch uses pci_reset_slot(), which connects with Rajat's work
-(06a8d89af551 ("PCI: pciehp: Disable link notification across slot
-reset")) to avoid hotplug events for intentional resets.
+OK, the original patch throttled also NMI messages when NMI
+interrupted console drivers. But it is easy to fix.
 
-So I think I just reverse-engineered the whole rationale for your
-patch :)  Sorry about the long detour.
 
-I'm having a hard time articulating my thoughts here.  I think my
-concern is that knowledge about this reset/link down/hotplug issue is
-leaking out and we'll end up with different reset interfaces that may
-or may not result in hotplug events.  This seems like a confusing API
-because it's hard to explain which interface a driver should use.
+> This is a magnitude larger than any other user of rate limit in the
+> kernel. The most common time is 5 seconds. The longest I can find is 1
+> minute. You are saying you want to block printing from this context for
+> 60 minutes!
 
-Bjorn
+I see 1 day long limits in dio_warn_stale_pagecache() and
+xfs_scrub_experimental_warning().
+
+Note that most ratelimiting is related to a single message. Also it
+is in situation where the system should recover within seconds.
+
+
+> That is HUGE! I don't understand your rational for such a huge number.
+> What data do you have to back that up with?
+
+We want to allow seeing the entire lockdep splat (Sergey wants more
+than 100 lines). Also it is not that unusual that slow console is busy
+several minutes when too many things are happening.
+
+I proposed that long delay because I want to be on the safe side.
+Also I do not see a huge benefit in repeating the same messages
+too often.
+
+Alternative solution would be to allow first, lets say 250, lines
+and then nothing. I mean to change the approach from rate-limiting
+to print-once.
+
+Best Regards,
+Petr
