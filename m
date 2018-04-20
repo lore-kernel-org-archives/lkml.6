@@ -1,35 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753548AbeDTREf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:04:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48092 "EHLO
+        id S1753595AbeDTRFH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:05:07 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48976 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753530AbeDTREc (ORCPT
+        with ESMTP id S1752485AbeDTRFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:04:32 -0400
+        Fri, 20 Apr 2018 13:05:04 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rt5668: fix incorrect 'and' operator" to the asoc tree
-In-Reply-To: <20180419143431.13173-1-colin.king@canonical.com>
-Message-Id: <E1f9ZSM-0004Ws-HJ@debutante>
-Date: Fri, 20 Apr 2018 18:04:18 +0100
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        David Collins <collinsd@codeaurora.org>,
+        Javier Martinez Canillas <javier@dowhile0.org>, evgreen@chromium.org,
+        swboyd@chromium.org, linux-omap@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: Don't return or expect -errno from of_map_mode()" to the regulator tree
+In-Reply-To: <20180418155418.111278-1-dianders@chromium.org>
+Message-Id: <E1f9ZSv-0004Zn-Ml@debutante>
+Date: Fri, 20 Apr 2018 18:04:53 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rt5668: fix incorrect 'and' operator
+   regulator: Don't return or expect -errno from of_map_mode()
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -50,34 +50,116 @@ to this mail.
 Thanks,
 Mark
 
->From 4bb3f73a2da740e38f2e418bd0c468826046687a Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 19 Apr 2018 15:34:31 +0100
-Subject: [PATCH] ASoC: rt5668: fix incorrect 'and' operator
+>From 02f3703934a42417021405ef336fe45add13c3d1 Mon Sep 17 00:00:00 2001
+From: Douglas Anderson <dianders@chromium.org>
+Date: Wed, 18 Apr 2018 08:54:18 -0700
+Subject: [PATCH] regulator: Don't return or expect -errno from of_map_mode()
 
-Currently logical and is being used instead of bitwise and. Fix this.
+In of_get_regulation_constraints() we were taking the result of
+of_map_mode() (an unsigned int) and assigning it to an int.  We were
+then checking whether this value was -EINVAL.  Some implementers of
+of_map_mode() were returning -EINVAL (even though the return type of
+their function needed to be unsigned int) because they needed to
+signal an error back to of_get_regulation_constraints().
 
-Detected by CoverityScan, CID#1468008 ("Logical vs bitwise operator")
+In general in the regulator framework the mode is always referred to
+as an unsigned int.  While we could fix this to be a signed int (the
+highest value we store in there right now is 0x8), it's actually
+pretty clean to just define the regulator mode 0x0 (the lack of any
+bits set) as an invalid mode.  Let's do that.
 
-Fixes: d59fb2856223 ("ASoC: rt5668: add rt5668B codec driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes: 5e5e3a42c653 ("regulator: of: Add support for parsing initial and suspend modes")
+Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt5668.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/cpcap-regulator.c |  2 +-
+ drivers/regulator/of_regulator.c    | 13 +++++++------
+ drivers/regulator/twl-regulator.c   |  2 +-
+ include/linux/regulator/consumer.h  |  1 +
+ 4 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5668.c b/sound/soc/codecs/rt5668.c
-index 52a343f96eb2..3c19d03f2446 100644
---- a/sound/soc/codecs/rt5668.c
-+++ b/sound/soc/codecs/rt5668.c
-@@ -1194,7 +1194,7 @@ static int set_filter_clk(struct snd_soc_dapm_widget *w,
- 	int ref, val, reg, idx = -EINVAL;
- 	static const int div[] = {1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48};
+diff --git a/drivers/regulator/cpcap-regulator.c b/drivers/regulator/cpcap-regulator.c
+index f541b80f1b54..bd910fe123d9 100644
+--- a/drivers/regulator/cpcap-regulator.c
++++ b/drivers/regulator/cpcap-regulator.c
+@@ -222,7 +222,7 @@ static unsigned int cpcap_map_mode(unsigned int mode)
+ 	case CPCAP_BIT_AUDIO_LOW_PWR:
+ 		return REGULATOR_MODE_STANDBY;
+ 	default:
+-		return -EINVAL;
++		return REGULATOR_MODE_INVALID;
+ 	}
+ }
  
--	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &&
-+	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &
- 		RT5668_GP4_PIN_MASK;
- 	if (w->shift == RT5668_PWR_ADC_S1F_BIT &&
- 		val == RT5668_GP4_PIN_ADCDAT2)
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index f47264fa1940..0d3f73eacb99 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -31,6 +31,7 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 	struct regulation_constraints *constraints = &(*init_data)->constraints;
+ 	struct regulator_state *suspend_state;
+ 	struct device_node *suspend_np;
++	unsigned int mode;
+ 	int ret, i;
+ 	u32 pval;
+ 
+@@ -124,11 +125,11 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 
+ 	if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
+ 		if (desc && desc->of_map_mode) {
+-			ret = desc->of_map_mode(pval);
+-			if (ret == -EINVAL)
++			mode = desc->of_map_mode(pval);
++			if (mode == REGULATOR_MODE_INVALID)
+ 				pr_err("%s: invalid mode %u\n", np->name, pval);
+ 			else
+-				constraints->initial_mode = ret;
++				constraints->initial_mode = mode;
+ 		} else {
+ 			pr_warn("%s: mapping for mode %d not defined\n",
+ 				np->name, pval);
+@@ -163,12 +164,12 @@ static void of_get_regulation_constraints(struct device_node *np,
+ 		if (!of_property_read_u32(suspend_np, "regulator-mode",
+ 					  &pval)) {
+ 			if (desc && desc->of_map_mode) {
+-				ret = desc->of_map_mode(pval);
+-				if (ret == -EINVAL)
++				mode = desc->of_map_mode(pval);
++				if (mode == REGULATOR_MODE_INVALID)
+ 					pr_err("%s: invalid mode %u\n",
+ 					       np->name, pval);
+ 				else
+-					suspend_state->mode = ret;
++					suspend_state->mode = mode;
+ 			} else {
+ 				pr_warn("%s: mapping for mode %d not defined\n",
+ 					np->name, pval);
+diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
+index a4456db5849d..884c7505ed91 100644
+--- a/drivers/regulator/twl-regulator.c
++++ b/drivers/regulator/twl-regulator.c
+@@ -274,7 +274,7 @@ static inline unsigned int twl4030reg_map_mode(unsigned int mode)
+ 	case RES_STATE_SLEEP:
+ 		return REGULATOR_MODE_STANDBY;
+ 	default:
+-		return -EINVAL;
++		return REGULATOR_MODE_INVALID;
+ 	}
+ }
+ 
+diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
+index df176d7c2b87..25602afd4844 100644
+--- a/include/linux/regulator/consumer.h
++++ b/include/linux/regulator/consumer.h
+@@ -80,6 +80,7 @@ struct regmap;
+  * These modes can be OR'ed together to make up a mask of valid register modes.
+  */
+ 
++#define REGULATOR_MODE_INVALID			0x0
+ #define REGULATOR_MODE_FAST			0x1
+ #define REGULATOR_MODE_NORMAL			0x2
+ #define REGULATOR_MODE_IDLE			0x4
 -- 
 2.17.0
