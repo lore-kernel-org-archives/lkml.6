@@ -1,215 +1,248 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753944AbeDTHTL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 03:19:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43318 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753798AbeDTHTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 03:19:07 -0400
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR QXL
-        VIRTUAL GPU),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 1/4] qxl: remove qxl_io_log()
-Date: Fri, 20 Apr 2018 09:19:01 +0200
-Message-Id: <20180420071904.24276-2-kraxel@redhat.com>
-In-Reply-To: <20180420071904.24276-1-kraxel@redhat.com>
-References: <20180420071904.24276-1-kraxel@redhat.com>
+        id S1753987AbeDTHTV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 03:19:21 -0400
+Received: from mail-wr0-f170.google.com ([209.85.128.170]:37817 "EHLO
+        mail-wr0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753595AbeDTHTT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 03:19:19 -0400
+X-Google-Smtp-Source: AIpwx49vE3lsho4nDoB+MzRL058dULWR818CC8THe8206/d5A+wjHkM5eEjB5SYYb0Ch9FWCaTucqQ==
+Date: Fri, 20 Apr 2018 09:19:14 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>
+Cc: Oleksandr Andrushchenko <andr2000@gmail.com>, jgross@suse.com,
+        Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
+        boris.ostrovsky@oracle.com
+Subject: Re: [Xen-devel] [PATCH 0/1] drm/xen-zcopy: Add Xen zero-copy helper
+ DRM driver
+Message-ID: <20180420071914.GG31310@phenom.ffwll.local>
+Mail-Followup-To: Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+        Oleksandr Andrushchenko <andr2000@gmail.com>, jgross@suse.com,
+        Artem Mygaiev <Artem_Mygaiev@epam.com>,
+        Dongwon Kim <dongwon.kim@intel.com>, konrad.wilk@oracle.com,
+        airlied@linux.ie,
+        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Potrola, MateuszX" <mateuszx.potrola@intel.com>,
+        xen-devel@lists.xenproject.org, daniel.vetter@intel.com,
+        boris.ostrovsky@oracle.com
+References: <20180329131931.29957-1-andr2000@gmail.com>
+ <5d8fec7f-956c-378f-be90-f45029385740@gmail.com>
+ <20180416192905.GA18096@downor-Z87X-UD5H>
+ <20180417075928.GT31310@phenom.ffwll.local>
+ <20180417205744.GA15930@downor-Z87X-UD5H>
+ <41487acb-a67a-8933-d0c3-702c19b0938e@gmail.com>
+ <20180418073508.ptvntwedczpvl7bx@MacBook-Pro-de-Roger.local>
+ <ebcbf6ce-1d7a-5f3e-cff8-546d1c010e59@gmail.com>
+ <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180418101058.hyqk3gr3b2ibxswu@MacBook-Pro-de-Roger.local>
+X-Operating-System: Linux phenom 4.15.0-1-amd64 
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qxl_io_log() sends messages over to the host (qemu) for logging.
-Remove the function and all callers, we can just use standard
-DRM_DEBUG calls (and if needed a serial console).
+On Wed, Apr 18, 2018 at 11:10:58AM +0100, Roger Pau Monné wrote:
+> On Wed, Apr 18, 2018 at 11:01:12AM +0300, Oleksandr Andrushchenko wrote:
+> > On 04/18/2018 10:35 AM, Roger Pau Monné wrote:
+> > > On Wed, Apr 18, 2018 at 09:38:39AM +0300, Oleksandr Andrushchenko wrote:
+> > > > On 04/17/2018 11:57 PM, Dongwon Kim wrote:
+> > > > > On Tue, Apr 17, 2018 at 09:59:28AM +0200, Daniel Vetter wrote:
+> > > > > > On Mon, Apr 16, 2018 at 12:29:05PM -0700, Dongwon Kim wrote:
+> > > > 3.2 Backend exports dma-buf to xen-front
+> > > > 
+> > > > In this case Dom0 pages are shared with DomU. As before, DomU can only write
+> > > > to these pages, not any other page from Dom0, so it can be still considered
+> > > > safe.
+> > > > But, the following must be considered (highlighted in xen-front's Kernel
+> > > > documentation):
+> > > >   - If guest domain dies then pages/grants received from the backend cannot
+> > > >     be claimed back - think of it as memory lost to Dom0 (won't be used for
+> > > > any
+> > > >     other guest)
+> > > >   - Misbehaving guest may send too many requests to the backend exhausting
+> > > >     its grant references and memory (consider this from security POV). As the
+> > > >     backend runs in the trusted domain we also assume that it is trusted as
+> > > > well,
+> > > >     e.g. must take measures to prevent DDoS attacks.
+> > > I cannot parse the above sentence:
+> > > 
+> > > "As the backend runs in the trusted domain we also assume that it is
+> > > trusted as well, e.g. must take measures to prevent DDoS attacks."
+> > > 
+> > > What's the relation between being trusted and protecting from DoS
+> > > attacks?
+> > I mean that we trust the backend that it can prevent Dom0
+> > from crashing in case DomU's frontend misbehaves, e.g.
+> > if the frontend sends too many memory requests etc.
+> > > In any case, all? PV protocols are implemented with the frontend
+> > > sharing pages to the backend, and I think there's a reason why this
+> > > model is used, and it should continue to be used.
+> > This is the first use-case above. But there are real-world
+> > use-cases (embedded in my case) when physically contiguous memory
+> > needs to be shared, one of the possible ways to achieve this is
+> > to share contiguous memory from Dom0 to DomU (the second use-case above)
+> > > Having to add logic in the backend to prevent such attacks means
+> > > that:
+> > > 
+> > >   - We need more code in the backend, which increases complexity and
+> > >     chances of bugs.
+> > >   - Such code/logic could be wrong, thus allowing DoS.
+> > You can live without this code at all, but this is then up to
+> > backend which may make Dom0 down because of DomU's frontend doing evil
+> > things
+> 
+> IMO we should design protocols that do not allow such attacks instead
+> of having to defend against them.
+> 
+> > > > 4. xen-front/backend/xen-zcopy synchronization
+> > > > 
+> > > > 4.1. As I already said in 2) all the inter VM communication happens between
+> > > > xen-front and the backend, xen-zcopy is NOT involved in that.
+> > > > When xen-front wants to destroy a display buffer (dumb/dma-buf) it issues a
+> > > > XENDISPL_OP_DBUF_DESTROY command (opposite to XENDISPL_OP_DBUF_CREATE).
+> > > > This call is synchronous, so xen-front expects that backend does free the
+> > > > buffer pages on return.
+> > > > 
+> > > > 4.2. Backend, on XENDISPL_OP_DBUF_DESTROY:
+> > > >    - closes all dumb handles/fd's of the buffer according to [3]
+> > > >    - issues DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE IOCTL to xen-zcopy to make
+> > > > sure
+> > > >      the buffer is freed (think of it as it waits for dma-buf->release
+> > > > callback)
+> > > So this zcopy thing keeps some kind of track of the memory usage? Why
+> > > can't the user-space backend keep track of the buffer usage?
+> > Because there is no dma-buf UAPI which allows to track the buffer life cycle
+> > (e.g. wait until dma-buf's .release callback is called)
+> > > >    - replies to xen-front that the buffer can be destroyed.
+> > > > This way deletion of the buffer happens synchronously on both Dom0 and DomU
+> > > > sides. In case if DRM_IOCTL_XEN_ZCOPY_DUMB_WAIT_FREE returns with time-out
+> > > > error
+> > > > (BTW, wait time is a parameter of this IOCTL), Xen will defer grant
+> > > > reference
+> > > > removal and will retry later until those are free.
+> > > > 
+> > > > Hope this helps understand how buffers are synchronously deleted in case
+> > > > of xen-zcopy with a single protocol command.
+> > > > 
+> > > > I think the above logic can also be re-used by the hyper-dmabuf driver with
+> > > > some additional work:
+> > > > 
+> > > > 1. xen-zcopy can be split into 2 parts and extend:
+> > > > 1.1. Xen gntdev driver [4], [5] to allow creating dma-buf from grefs and
+> > > > vise versa,
+> > > I don't know much about the dma-buf implementation in Linux, but
+> > > gntdev is a user-space device, and AFAICT user-space applications
+> > > don't have any notion of dma buffers. How are such buffers useful for
+> > > user-space? Why can't this just be called memory?
+> > A dma-buf is seen by user-space as a file descriptor and you can
+> > pass it to different drivers then. For example, you can share a buffer
+> > used by a display driver for scanout with a GPU, to compose a picture
+> > into it:
+> > 1. User-space (US) allocates a display buffer from display driver
+> > 2. US asks display driver to export the dma-buf which backs up that buffer,
+> > US gets buffer's fd: dma_buf_fd
+> > 3. US asks GPU driver to import a buffer and provides it with dma_buf_fd
+> > 4. GPU renders contents into display buffer (dma_buf_fd)
+> 
+> After speaking with Oleksandr on IRC, I think the main usage of the
+> gntdev extension is to:
+> 
+> 1. Create a dma-buf from a set of grant references.
+> 2. Share dma-buf and get a list of grant references.
+> 
+> I think this set of operations could be broken into:
+> 
+> 1.1 Map grant references into user-space using the gntdev.
+> 1.2 Create a dma-buf out of a set of user-space virtual addresses.
+> 
+> 2.1 Map a dma-buf into user-space.
+> 2.2 Get grefs out of the user-space addresses where the dma-buf is
+>     mapped.
+> 
+> So it seems like what's actually missing is a way to:
+> 
+>  - Create a dma-buf from a list of user-space virtual addresses.
+>  - Allow to map a dma-buf into user-space, so it can then be used with
+>    the gntdev.
+> 
+> I think this is generic enough that it could be implemented by a
+> device not tied to Xen. AFAICT the hyper_dma guys also wanted
+> something similar to this.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/qxl/qxl_drv.h     |  3 ---
- drivers/gpu/drm/qxl/qxl_cmd.c     | 34 ++--------------------------------
- drivers/gpu/drm/qxl/qxl_display.c | 27 ++++-----------------------
- drivers/gpu/drm/qxl/qxl_fb.c      |  2 --
- drivers/gpu/drm/qxl/qxl_irq.c     |  3 +--
- 5 files changed, 7 insertions(+), 62 deletions(-)
+You can't just wrap random userspace memory into a dma-buf. We've just had
+this discussion with kvm/qemu folks, who proposed just that, and after a
+bit of discussion they'll now try to have a driver which just wraps a
+memfd into a dma-buf.
 
-diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
-index 00a1a66b05..4b89840173 100644
---- a/drivers/gpu/drm/qxl/qxl_drv.h
-+++ b/drivers/gpu/drm/qxl/qxl_drv.h
-@@ -298,9 +298,6 @@ struct qxl_device {
- 	int monitors_config_height;
- };
- 
--/* forward declaration for QXL_INFO_IO */
--__printf(2,3) void qxl_io_log(struct qxl_device *qdev, const char *fmt, ...);
--
- extern const struct drm_ioctl_desc qxl_ioctls[];
- extern int qxl_max_ioctl;
- 
-diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
-index c0fb52c6d4..850f8d7d37 100644
---- a/drivers/gpu/drm/qxl/qxl_cmd.c
-+++ b/drivers/gpu/drm/qxl/qxl_cmd.c
-@@ -341,12 +341,9 @@ int qxl_io_update_area(struct qxl_device *qdev, struct qxl_bo *surf,
- 	surface_height = surf->surf.height;
- 
- 	if (area->left < 0 || area->top < 0 ||
--	    area->right > surface_width || area->bottom > surface_height) {
--		qxl_io_log(qdev, "%s: not doing area update for "
--			   "%d, (%d,%d,%d,%d) (%d,%d)\n", __func__, surface_id, area->left,
--			   area->top, area->right, area->bottom, surface_width, surface_height);
-+	    area->right > surface_width || area->bottom > surface_height)
- 		return -EINVAL;
--	}
-+
- 	mutex_lock(&qdev->update_area_mutex);
- 	qdev->ram_header->update_area = *area;
- 	qdev->ram_header->update_surface = surface_id;
-@@ -407,20 +404,6 @@ void qxl_io_memslot_add(struct qxl_device *qdev, uint8_t id)
- 	wait_for_io_cmd(qdev, id, QXL_IO_MEMSLOT_ADD_ASYNC);
- }
- 
--void qxl_io_log(struct qxl_device *qdev, const char *fmt, ...)
--{
--	va_list args;
--
--	va_start(args, fmt);
--	vsnprintf(qdev->ram_header->log_buf, QXL_LOG_BUF_SIZE, fmt, args);
--	va_end(args);
--	/*
--	 * DO not do a DRM output here - this will call printk, which will
--	 * call back into qxl for rendering (qxl_fb)
--	 */
--	outb(0, qdev->io_base + QXL_IO_LOG);
--}
--
- void qxl_io_reset(struct qxl_device *qdev)
- {
- 	outb(0, qdev->io_base + QXL_IO_RESET);
-@@ -428,19 +411,6 @@ void qxl_io_reset(struct qxl_device *qdev)
- 
- void qxl_io_monitors_config(struct qxl_device *qdev)
- {
--	qxl_io_log(qdev, "%s: %d [%dx%d+%d+%d]\n", __func__,
--		   qdev->monitors_config ?
--		   qdev->monitors_config->count : -1,
--		   qdev->monitors_config && qdev->monitors_config->count ?
--		   qdev->monitors_config->heads[0].width : -1,
--		   qdev->monitors_config && qdev->monitors_config->count ?
--		   qdev->monitors_config->heads[0].height : -1,
--		   qdev->monitors_config && qdev->monitors_config->count ?
--		   qdev->monitors_config->heads[0].x : -1,
--		   qdev->monitors_config && qdev->monitors_config->count ?
--		   qdev->monitors_config->heads[0].y : -1
--		   );
--
- 	wait_for_io_cmd(qdev, 0, QXL_IO_MONITORS_CONFIG_ASYNC);
- }
- 
-diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
-index ecb35ed0ea..dea757ef62 100644
---- a/drivers/gpu/drm/qxl/qxl_display.c
-+++ b/drivers/gpu/drm/qxl/qxl_display.c
-@@ -48,12 +48,8 @@ static void qxl_alloc_client_monitors_config(struct qxl_device *qdev, unsigned c
- 		qdev->client_monitors_config = kzalloc(
- 				sizeof(struct qxl_monitors_config) +
- 				sizeof(struct qxl_head) * count, GFP_KERNEL);
--		if (!qdev->client_monitors_config) {
--			qxl_io_log(qdev,
--				   "%s: allocation failure for %u heads\n",
--				   __func__, count);
-+		if (!qdev->client_monitors_config)
- 			return;
--		}
- 	}
- 	qdev->client_monitors_config->count = count;
- }
-@@ -74,12 +70,8 @@ static int qxl_display_copy_rom_client_monitors_config(struct qxl_device *qdev)
- 	num_monitors = qdev->rom->client_monitors_config.count;
- 	crc = crc32(0, (const uint8_t *)&qdev->rom->client_monitors_config,
- 		  sizeof(qdev->rom->client_monitors_config));
--	if (crc != qdev->rom->client_monitors_config_crc) {
--		qxl_io_log(qdev, "crc mismatch: have %X (%zd) != %X\n", crc,
--			   sizeof(qdev->rom->client_monitors_config),
--			   qdev->rom->client_monitors_config_crc);
-+	if (crc != qdev->rom->client_monitors_config_crc)
- 		return MONITORS_CONFIG_BAD_CRC;
--	}
- 	if (!num_monitors) {
- 		DRM_DEBUG_KMS("no client monitors configured\n");
- 		return status;
-@@ -170,12 +162,10 @@ void qxl_display_read_client_monitors_config(struct qxl_device *qdev)
- 		udelay(5);
- 	}
- 	if (status == MONITORS_CONFIG_BAD_CRC) {
--		qxl_io_log(qdev, "config: bad crc\n");
- 		DRM_DEBUG_KMS("ignoring client monitors config: bad crc");
- 		return;
- 	}
- 	if (status == MONITORS_CONFIG_UNCHANGED) {
--		qxl_io_log(qdev, "config: unchanged\n");
- 		DRM_DEBUG_KMS("ignoring client monitors config: unchanged");
- 		return;
- 	}
-@@ -385,14 +375,6 @@ static bool qxl_crtc_mode_fixup(struct drm_crtc *crtc,
- 				  const struct drm_display_mode *mode,
- 				  struct drm_display_mode *adjusted_mode)
- {
--	struct drm_device *dev = crtc->dev;
--	struct qxl_device *qdev = dev->dev_private;
--
--	qxl_io_log(qdev, "%s: (%d,%d) => (%d,%d)\n",
--		   __func__,
--		   mode->hdisplay, mode->vdisplay,
--		   adjusted_mode->hdisplay,
--		   adjusted_mode->vdisplay);
- 	return true;
- }
- 
-@@ -403,10 +385,9 @@ qxl_send_monitors_config(struct qxl_device *qdev)
- 
- 	BUG_ON(!qdev->ram_header->monitors_config);
- 
--	if (qdev->monitors_config->count == 0) {
--		qxl_io_log(qdev, "%s: 0 monitors??\n", __func__);
-+	if (qdev->monitors_config->count == 0)
- 		return;
--	}
-+
- 	for (i = 0 ; i < qdev->monitors_config->count ; ++i) {
- 		struct qxl_head *head = &qdev->monitors_config->heads[i];
- 
-diff --git a/drivers/gpu/drm/qxl/qxl_fb.c b/drivers/gpu/drm/qxl/qxl_fb.c
-index 338891401f..9a67526060 100644
---- a/drivers/gpu/drm/qxl/qxl_fb.c
-+++ b/drivers/gpu/drm/qxl/qxl_fb.c
-@@ -185,8 +185,6 @@ static int qxlfb_framebuffer_dirty(struct drm_framebuffer *fb,
- 	/*
- 	 * we are using a shadow draw buffer, at qdev->surface0_shadow
- 	 */
--	qxl_io_log(qdev, "dirty x[%d, %d], y[%d, %d]\n", clips->x1, clips->x2,
--		   clips->y1, clips->y2);
- 	image->dx = clips->x1;
- 	image->dy = clips->y1;
- 	image->width = clips->x2 - clips->x1;
-diff --git a/drivers/gpu/drm/qxl/qxl_irq.c b/drivers/gpu/drm/qxl/qxl_irq.c
-index 23a40106ab..3bb31add63 100644
---- a/drivers/gpu/drm/qxl/qxl_irq.c
-+++ b/drivers/gpu/drm/qxl/qxl_irq.c
-@@ -57,10 +57,9 @@ irqreturn_t qxl_irq_handler(int irq, void *arg)
- 		 * to avoid endless loops).
- 		 */
- 		qdev->irq_received_error++;
--		qxl_io_log(qdev, "%s: driver is in bug mode.\n", __func__);
-+		DRM_WARN("driver is in bug mode\n");
- 	}
- 	if (pending & QXL_INTERRUPT_CLIENT_MONITORS_CONFIG) {
--		qxl_io_log(qdev, "QXL_INTERRUPT_CLIENT_MONITORS_CONFIG\n");
- 		schedule_work(&qdev->client_monitors_config_work);
- 	}
- 	qdev->ram_header->int_mask = QXL_INTERRUPT_MASK;
+Yes i915 and amdgpu and a few other drivers do have facilities to wrap
+userspace memory into a gpu buffer object. But we don't allow those to be
+exported to other drivers, because the core mm magic needed to make this
+all work is way too tricky, even within the context of just 1 driver. And
+dma-buf does not have the required callbacks and semantics to make it
+work.
+-Daniel
+
+> 
+> > Finally, this is indeed some memory, but a bit more [1]
+> > > 
+> > > Also, (with my FreeBSD maintainer hat) how is this going to translate
+> > > to other OSes? So far the operations performed by the gntdev device
+> > > are mostly OS-agnostic because this just map/unmap memory, and in fact
+> > > they are implemented by Linux and FreeBSD.
+> > At the moment I can only see Linux implementation and it seems
+> > to be perfectly ok as we do not change Xen's APIs etc. and only
+> > use the existing ones (remember, we only extend gntdev/balloon
+> > drivers, all the changes in the Linux kernel)
+> > As the second note I can also think that we do not extend gntdev/balloon
+> > drivers and have re-worked xen-zcopy driver be a separate entity,
+> > say drivers/xen/dma-buf
+> > > > implement "wait" ioctl (wait for dma-buf->release): currently these are
+> > > > DRM_XEN_ZCOPY_DUMB_FROM_REFS, DRM_XEN_ZCOPY_DUMB_TO_REFS and
+> > > > DRM_XEN_ZCOPY_DUMB_WAIT_FREE
+> > > > 1.2. Xen balloon driver [6] to allow allocating contiguous buffers (not
+> > > > needed
+> > > > by current hyper-dmabuf, but is a must for xen-zcopy use-cases)
+> > > I think this needs clarifying. In which memory space do you need those
+> > > regions to be contiguous?
+> > Use-case: Dom0 has a HW driver which only works with contig memory
+> > and I want DomU to be able to directly write into that memory, thus
+> > implementing zero copying
+> > > 
+> > > Do they need to be contiguous in host physical memory, or guest
+> > > physical memory?
+> > Host
+> > > 
+> > > If it's in guest memory space, isn't there any generic interface that
+> > > you can use?
+> > > 
+> > > If it's in host physical memory space, why do you need this buffer to
+> > > be contiguous in host physical memory space? The IOMMU should hide all
+> > > this.
+> > There are drivers/HW which can only work with contig memory and
+> > if it is backed by an IOMMU then still it has to be contig in IPA
+> > space (real device doesn't know that it is actually IPA contig, not PA)
+> 
+> What's IPA contig?
+> 
+> Thanks, Roger.
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-2.9.3
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
