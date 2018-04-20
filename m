@@ -1,70 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753923AbeDTHO0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 03:14:26 -0400
-Received: from www.zeus03.de ([194.117.254.33]:48016 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753565AbeDTHOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 03:14:24 -0400
-X-UD-Smtp-Session: l3s3148p1@Y1jpb0Jq7IggAwDPW8ZDAAId4P/+oMhl
-Date: Fri, 20 Apr 2018 09:14:21 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Darren Hart <dvhart@infradead.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Corentin Chary <corentin.chary@gmail.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 40/61] platform: x86: simplify getting .drvdata
-Message-ID: <20180420071421.ex6gcegotzjdswbg@katana>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-41-wsa+renesas@sang-engineering.com>
- <20180419235651.GC11546@fury>
+        id S1753850AbeDTHPn convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 03:15:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50730 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753508AbeDTHPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 03:15:41 -0400
+Date: Fri, 20 Apr 2018 09:15:37 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Tonny Lu <tonnylu@tencent.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>
+Subject: Re: [PATCH v2] KVM: Extend MAX_IRQ_ROUTES to 4096 for all archs
+Message-ID: <20180420091537.1c6cb06b.cohuck@redhat.com>
+In-Reply-To: <1524185248-51744-1-git-send-email-wanpengli@tencent.com>
+References: <1524185248-51744-1-git-send-email-wanpengli@tencent.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3khbrrzjm7np76wh"
-Content-Disposition: inline
-In-Reply-To: <20180419235651.GC11546@fury>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 19 Apr 2018 17:47:28 -0700
+Wanpeng Li <kernellwp@gmail.com> wrote:
 
---3khbrrzjm7np76wh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> From: Wanpeng Li <wanpengli@tencent.com>
+> 
+> Our virtual machines make use of device assignment by configuring
+> 12 NVMe disks for high I/O performance. Each NVMe device has 129 
+> MSI-X Table entries:
+> Capabilities: [50] MSI-X: Enable+ Count=129 Masked-Vector table: BAR=0 offset=00002000
+> The windows virtual machines fail to boot since they will map the number of 
+> MSI-table entries that the NVMe hardware reported to the bus to msi routing 
+> table, this will exceed the 1024. This patch extends MAX_IRQ_ROUTES to 4096
+> for all archs, in the future this might be extended again if needed.
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Tonny Lu <tonnylu@tencent.com>
+> Cc: Cornelia Huck <cohuck@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> Signed-off-by: Tonny Lu <tonnylu@tencent.com>
+> ---
+> v1 -> v2:
+>  * extend MAX_IRQ_ROUTES to 4096 for all archs 
+> 
+>  include/linux/kvm_host.h | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 6930c63..0a5c299 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -1045,13 +1045,7 @@ static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
+>  
+>  #ifdef CONFIG_HAVE_KVM_IRQ_ROUTING
+>  
+> -#ifdef CONFIG_S390
+>  #define KVM_MAX_IRQ_ROUTES 4096 //FIXME: we can have more than that...
 
+What about /* might need extension/rework in the future */ instead of
+the FIXME?
 
-> (I'm not sure what you mean by "Please apply individually")
+As far as I understand, 4096 should cover most architectures and the
+sane end of s390 configurations, but will not be enough at the scarier
+end of s390. (I'm not sure how much it matters in practice.)
 
-Right, that is not very precise. "Individually" as "per subsystem
-individually". I.e. I don't want to collect tags and push it upstream as
-one huge pull-request.
+Do we want to make this a tuneable in the future? Do some kind of
+dynamic allocation? Not sure whether it is worth the trouble.
 
-Thanks!
-
-
---3khbrrzjm7np76wh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrZk0kACgkQFA3kzBSg
-KbZT3w//afpRm3RefDNQ2Ysr5+0YF5JxKxGDkxsQbgVVAlWAjt4qsFsM1Y32PcWb
-/uT7lJyE4mNSJie4OFT5X5Hcf9K2wWCO8cOtyDqysNdL7/+eJ/6vvjwjqIwYG6Jh
-eGiq1H7hXI8m3f0xudQFjdKFdMkvQYYWs3VQ2U9wwlOP1AzJqTna7QzNk0hCN7jL
-jyenIY2MsYK059MyE/qgDM0l913/O+3P4mOa5cA4OYGgX84MBc3i4DRrnhnEhLV0
-StzkjAbHQKvVHNip802HC4ML6lDUlrlj3XUutlX78aSKZPs8V6NE3H7GvumcBV7T
-WkH2Jv84jWt+IcF1cwPk5+T6c3rRXvRuRY01LpbsDenbxXPG4dQ0nSqQDvtdyo/e
-6xT2Dk1fQ1PVIOPRyMqUJotg6Fy1+JklLVh8PMXpcEQuLbuy9wBmLFsC88U3AyMi
-tUHbKGfArcITKQmpVacecTI44jff4Eyp77hWOjgujNC92Cj/PT0LPON/vHh6yYyi
-ZcY/Bg6jAxZeHcroJmeVlph0vp6VU3GG7Cx6YJhcGYUWpBBo6HnKQCjOzlaIuvN5
-NMWd5B0ZrjUJ/Awi8AOb0qzI7iyDJtZQ8O60wxPuwfG+4SZXL2KndwsdlZecrxGN
-T5dEJRmA0oq1gSmtpMX3YznXDLwIxz7w3AYiIn2bXFHH/xWeOho=
-=fyhZ
------END PGP SIGNATURE-----
-
---3khbrrzjm7np76wh--
+> -#elif defined(CONFIG_ARM64)
+> -#define KVM_MAX_IRQ_ROUTES 4096
+> -#else
+> -#define KVM_MAX_IRQ_ROUTES 1024
+> -#endif
+>  
+>  bool kvm_arch_can_set_irq_routing(struct kvm *kvm);
+>  int kvm_set_irq_routing(struct kvm *kvm,
