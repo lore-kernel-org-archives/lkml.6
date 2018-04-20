@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754701AbeDTKrx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:47:53 -0400
-Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:51383 "EHLO
-        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754639AbeDTKru (ORCPT
+        id S1754721AbeDTKr5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:47:57 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:43906 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754639AbeDTKry (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:47:50 -0400
-X-IronPort-AV: E=Sophos;i="5.49,300,1520899200";
-   d="scan'208";a="736319511"
-Subject: [PATCH 2/3] xen netback: add fault injection facility
+        Fri, 20 Apr 2018 06:47:54 -0400
+X-IronPort-AV: E=Sophos;i="5.49,301,1520899200";
+   d="scan'208";a="607906235"
+Subject: [PATCH 3/3] xen blkback: add fault injection facility
 From: Stanislav Kinsburskii <staskins@amazon.com>
 CC: <jakub.kicinski@netronome.com>, <hpa@zytor.com>, <mcroce@redhat.com>,
         <staskins@amazon.com>, <tglx@linutronix.de>, <ggarcia@abra.uab.cat>,
@@ -22,8 +22,8 @@ CC: <jakub.kicinski@netronome.com>, <hpa@zytor.com>, <mcroce@redhat.com>,
         <wei.liu2@citrix.com>, <netdev@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <davem@davemloft.net>,
         <dwmw@amazon.co.uk>, <roger.pau@citrix.com>
-Date: Fri, 20 Apr 2018 10:47:31 +0000
-Message-ID: <20180420104731.17823.97617.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+Date: Fri, 20 Apr 2018 10:47:36 +0000
+Message-ID: <20180420104736.17823.42983.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
 In-Reply-To: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
 References: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
 User-Agent: StGit/0.17.1-dirty
@@ -34,125 +34,108 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KAlxbA016966
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KAm4Qk016970
 
-This patch adds wrapper helpers around generic Xen fault inject facility.
+This patch adds wrapper helpers around generic Xen fault inject
+facility.
 The major reason is to keep all the module fault injection directories
 in a dedicated subdirectory instead of Xen fault inject root.
 
-IOW, when using these helpers, per-device and named by device name fault
-injection control directories will appear under the following directory:
-- /sys/kernel/debug/xen/fault_inject/xen-netback/
+IOW, when using these helpers, per-device and named by device name
+fault injection control directories will appear under the following
+directory:
+- /sys/kernel/debug/xen/fault_inject/xen-blkback/
 instead of:
 - /sys/kernel/debug/xen/fault_inject/
 
 Signed-off-by: Stanislav Kinsburskii <staskins@amazon.com>
-CC: Wei Liu <wei.liu2@citrix.com>
-CC: Paul Durrant <paul.durrant@citrix.com>
-CC: "David S. Miller" <davem@davemloft.net>
-CC: Matteo Croce <mcroce@redhat.com>
-CC: Stefan Hajnoczi <stefanha@redhat.com>
-CC: Daniel Borkmann <daniel@iogearbox.net>
-CC: Gerard Garcia <ggarcia@deic.uab.cat>
-CC: David Ahern <dsa@cumulusnetworks.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Amir Levy <amir.jer.levy@intel.com>
-CC: Jakub Kicinski <jakub.kicinski@netronome.com>
+CC: Jens Axboe <axboe@kernel.dk>
+CC: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+CC: "Roger Pau Monné" <roger.pau@citrix.com>
 CC: linux-kernel@vger.kernel.org
-CC: netdev@vger.kernel.org
+CC: linux-block@vger.kernel.org
 CC: xen-devel@lists.xenproject.org
 CC: Stanislav Kinsburskii <staskins@amazon.com>
 CC: David Woodhouse <dwmw@amazon.co.uk>
 ---
- drivers/net/Kconfig                  |    8 ++
- drivers/net/xen-netback/Makefile     |    1 
- drivers/net/xen-netback/common.h     |    3 +
- drivers/net/xen-netback/netback.c    |    3 +
- drivers/net/xen-netback/netback_fi.c |  119 ++++++++++++++++++++++++++++++++++
- drivers/net/xen-netback/netback_fi.h |   35 ++++++++++
- drivers/net/xen-netback/xenbus.c     |    6 ++
- 7 files changed, 175 insertions(+)
- create mode 100644 drivers/net/xen-netback/netback_fi.c
- create mode 100644 drivers/net/xen-netback/netback_fi.h
+ drivers/block/Kconfig                  |    7 ++
+ drivers/block/xen-blkback/Makefile     |    1 
+ drivers/block/xen-blkback/blkback.c    |    9 ++
+ drivers/block/xen-blkback/blkback_fi.c |  116 ++++++++++++++++++++++++++++++++
+ drivers/block/xen-blkback/blkback_fi.h |   37 ++++++++++
+ drivers/block/xen-blkback/common.h     |    3 +
+ drivers/block/xen-blkback/xenbus.c     |    5 +
+ 7 files changed, 178 insertions(+)
+ create mode 100644 drivers/block/xen-blkback/blkback_fi.c
+ create mode 100644 drivers/block/xen-blkback/blkback_fi.h
 
-diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index 8918466..5cc9acd 100644
---- a/drivers/net/Kconfig
-+++ b/drivers/net/Kconfig
-@@ -465,6 +465,14 @@ config XEN_NETDEV_BACKEND
+diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
+index ad9b687..0ce05fe 100644
+--- a/drivers/block/Kconfig
++++ b/drivers/block/Kconfig
+@@ -436,6 +436,13 @@ config XEN_BLKDEV_BACKEND
  	  compile this driver as a module, chose M here: the module
- 	  will be called xen-netback.
+ 	  will be called xen-blkback.
  
-+config XEN_NETDEV_BACKEND_FAULT_INJECTION
-+	  bool "Xen net-device backend driver fault injection"
-+	  depends on XEN_NETDEV_BACKEND
++config XEN_BLKDEV_BACKEND_FAULT_INJECTION
++	  bool "Xen block-device backend driver fault injection"
++	  depends on XEN_BLKDEV_BACKEND
 +	  depends on XEN_FAULT_INJECTION
 +	  default n
 +	  help
-+	    Allow to inject errors to Xen backend network driver
-+
- config VMXNET3
- 	tristate "VMware VMXNET3 ethernet driver"
- 	depends on PCI && INET
-diff --git a/drivers/net/xen-netback/Makefile b/drivers/net/xen-netback/Makefile
-index d49798a..28abcdc 100644
---- a/drivers/net/xen-netback/Makefile
-+++ b/drivers/net/xen-netback/Makefile
++	    Allow to inject errors to Xen backend block driver
+ 
+ config VIRTIO_BLK
+ 	tristate "Virtio block driver"
+diff --git a/drivers/block/xen-blkback/Makefile b/drivers/block/xen-blkback/Makefile
+index e491c1b..035d134 100644
+--- a/drivers/block/xen-blkback/Makefile
++++ b/drivers/block/xen-blkback/Makefile
 @@ -1,3 +1,4 @@
- obj-$(CONFIG_XEN_NETDEV_BACKEND) := xen-netback.o
+ obj-$(CONFIG_XEN_BLKDEV_BACKEND) := xen-blkback.o
  
- xen-netback-y := netback.o xenbus.o interface.o hash.o rx.o
-+xen-netback-$(CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION) += netback_fi.o
-diff --git a/drivers/net/xen-netback/common.h b/drivers/net/xen-netback/common.h
-index a46a1e9..30d676d 100644
---- a/drivers/net/xen-netback/common.h
-+++ b/drivers/net/xen-netback/common.h
-@@ -286,6 +286,9 @@ struct xenvif {
- 
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *xenvif_dbg_root;
-+#ifdef CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION
-+	void *fi_info;
-+#endif
- #endif
- 
- 	struct xen_netif_ctrl_back_ring ctrl;
-diff --git a/drivers/net/xen-netback/netback.c b/drivers/net/xen-netback/netback.c
-index a27daa2..ecc416e 100644
---- a/drivers/net/xen-netback/netback.c
-+++ b/drivers/net/xen-netback/netback.c
-@@ -33,6 +33,7 @@
-  */
- 
+ xen-blkback-y	:= blkback.o xenbus.o
++xen-blkback-$(CONFIG_XEN_BLKDEV_BACKEND_FAULT_INJECTION) += blkback_fi.o
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index 987d665..2933bec 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -51,6 +51,7 @@
+ #include <xen/balloon.h>
+ #include <xen/grant_table.h>
  #include "common.h"
-+#include "netback_fi.h"
++#include "blkback_fi.h"
  
- #include <linux/kthread.h>
- #include <linux/if_vlan.h>
-@@ -1649,6 +1650,7 @@ static int __init netback_init(void)
- 			PTR_ERR(xen_netback_dbg_root));
- #endif /* CONFIG_DEBUG_FS */
+ /*
+  * Maximum number of unused free pages to keep in the internal buffer.
+@@ -1491,11 +1492,19 @@ static int __init xen_blkif_init(void)
+ 	if (rc)
+ 		goto failed_init;
  
-+	(void) xen_netbk_fi_init();
- 	return 0;
++	(void) xen_blkbk_fi_init();
+  failed_init:
+ 	return rc;
+ }
  
- failed_init:
-@@ -1659,6 +1661,7 @@ module_init(netback_init);
+ module_init(xen_blkif_init);
  
- static void __exit netback_fini(void)
- {
-+	xen_netbk_fi_fini();
- #ifdef CONFIG_DEBUG_FS
- 	if (!IS_ERR_OR_NULL(xen_netback_dbg_root))
- 		debugfs_remove_recursive(xen_netback_dbg_root);
-diff --git a/drivers/net/xen-netback/netback_fi.c b/drivers/net/xen-netback/netback_fi.c
++static void __exit xen_blkif_fini(void)
++{
++	xen_blkbk_fi_fini();
++}
++
++module_exit(xen_blkif_fini);
++
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_ALIAS("xen-backend:vbd");
+diff --git a/drivers/block/xen-blkback/blkback_fi.c b/drivers/block/xen-blkback/blkback_fi.c
 new file mode 100644
-index 0000000..47541d0
+index 0000000..b7abaea
 --- /dev/null
-+++ b/drivers/net/xen-netback/netback_fi.c
-@@ -0,0 +1,119 @@
++++ b/drivers/block/xen-blkback/blkback_fi.c
+@@ -0,0 +1,116 @@
 +/*
-+ * Fault injection interface for Xen backend network driver
++ * Fault injection interface for Xen virtual block devices
 + *
 + * Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 + *
@@ -181,167 +164,179 @@ index 0000000..47541d0
 + * IN THE SOFTWARE.
 + */
 +
-+#include "common.h"
-+
++#include <linux/slab.h>
 +#include <linux/debugfs.h>
 +
 +#include <xen/fault_inject.h>
-+#include "netback_fi.h"
 +
-+static struct dentry *vif_fi_dir;
++#include "blkback_fi.h"
++#include "common.h"
 +
-+static const char *xenvif_fi_names[] = {
++static struct dentry *blkif_fi_dir;
++
++static const char *xen_blkif_fi_names[XENBLKIF_FI_MAX] = {
 +};
 +
-+struct xenvif_fi {
++struct xen_blkif_fi {
 +	struct dentry *dir;
-+	struct xen_fi *faults[XENVIF_FI_MAX];
++	struct xen_fi *faults[XENBLKIF_FI_MAX];
 +};
 +
-+int xen_netbk_fi_init(void)
++int xen_blkbk_fi_init(void)
 +{
-+	vif_fi_dir = xen_fi_dir_create("xen-netback");
-+	if (!vif_fi_dir)
++	blkif_fi_dir = xen_fi_dir_create("xen-blkback");
++	if (!blkif_fi_dir)
 +		return -ENOMEM;
 +	return 0;
 +}
 +
-+void xen_netbk_fi_fini(void)
++void xen_blkbk_fi_fini(void)
 +{
-+	debugfs_remove_recursive(vif_fi_dir);
++	debugfs_remove_recursive(blkif_fi_dir);
 +}
 +
-+void xenvif_fi_fini(struct xenvif *vif)
++void xen_blkif_fi_fini(struct xen_blkif *blkif)
 +{
-+	struct xenvif_fi *vfi = vif->fi_info;
++	struct xen_blkif_fi *bfi = blkif->fi_info;
 +	int fi;
 +
-+	if (!vif->fi_info)
++	if (!blkif->fi_info)
 +		return;
 +
-+	vif->fi_info = NULL;
++	blkif->fi_info = NULL;
 +
-+	for (fi = 0; fi < XENVIF_FI_MAX; fi++)
-+		xen_fi_del(vfi->faults[fi]);
-+	debugfs_remove_recursive(vfi->dir);
-+	kfree(vfi);
++	for (fi = 0; fi < XENBLKIF_FI_MAX; fi++)
++		xen_fi_del(bfi->faults[fi]);
++	debugfs_remove_recursive(bfi->dir);
++	kfree(bfi);
 +}
 +
-+int xenvif_fi_init(struct xenvif *vif)
++int xen_blkif_fi_init(struct xen_blkif *blkif)
 +{
-+	struct dentry *parent;
-+	struct xenvif_fi *vfi;
++	struct xen_blkif_fi *bfi;
 +	int fi, err = -ENOMEM;
 +
-+	parent = vif_fi_dir;
-+	if (!parent)
++	bfi = kmalloc(sizeof(*bfi), GFP_KERNEL);
++	if (!bfi)
 +		return -ENOMEM;
 +
-+	vfi = kmalloc(sizeof(*vfi), GFP_KERNEL);
-+	if (!vfi)
-+		return -ENOMEM;
-+
-+	vfi->dir = debugfs_create_dir(vif->dev->name, parent);
-+	if (!vfi->dir)
++	bfi->dir = debugfs_create_dir(dev_name(&blkif->be->dev->dev),
++				      blkif_fi_dir);
++	if (!bfi->dir)
 +		goto err_dir;
 +
-+	for (fi = 0; fi < XENVIF_FI_MAX; fi++) {
-+		vfi->faults[fi] = xen_fi_dir_add(vfi->dir,
-+				xenvif_fi_names[fi]);
-+		if (!vfi->faults[fi])
++	for (fi = 0; fi < XENBLKIF_FI_MAX; fi++) {
++		bfi->faults[fi] = xen_fi_dir_add(bfi->dir,
++						 xen_blkif_fi_names[fi]);
++		if (!bfi->faults[fi])
 +			goto err_fault;
 +	}
 +
-+	vif->fi_info = vfi;
++	blkif->fi_info = bfi;
 +	return 0;
 +
 +err_fault:
 +	for (; fi > 0; fi--)
-+		xen_fi_del(vfi->faults[fi]);
-+	debugfs_remove_recursive(vfi->dir);
++		xen_fi_del(bfi->faults[fi]);
++	debugfs_remove_recursive(bfi->dir);
 +err_dir:
-+	kfree(vfi);
++	kfree(bfi);
 +	return err;
 +}
 +
-+bool xenvif_should_fail(struct xenvif *vif, xenvif_fi_t type)
++bool xenblkif_should_fail(struct xen_blkif *blkif, xen_blkbk_fi_t type)
 +{
-+	struct xenvif_fi *vfi = vif->fi_info;
++	struct xen_blkif_fi *bfi = blkif->fi_info;
 +
-+	return xen_should_fail(vfi->faults[type]);
++	return xen_should_fail(bfi->faults[type]);
 +}
-diff --git a/drivers/net/xen-netback/netback_fi.h b/drivers/net/xen-netback/netback_fi.h
+diff --git a/drivers/block/xen-blkback/blkback_fi.h b/drivers/block/xen-blkback/blkback_fi.h
 new file mode 100644
-index 0000000..895c6a6
+index 0000000..4e29850
 --- /dev/null
-+++ b/drivers/net/xen-netback/netback_fi.h
-@@ -0,0 +1,35 @@
-+#ifndef _XEN_NETBACK_FI_H
-+#define _XEN_NETBACK_FI_H
++++ b/drivers/block/xen-blkback/blkback_fi.h
+@@ -0,0 +1,37 @@
++#ifndef _XEN_BLKBACK_FI_H
++#define _XEN_BLKBACK_FI_H
 +
 +struct xen_fi;
++struct xen_blkif;
 +
 +typedef enum {
-+	XENVIF_FI_MAX
-+} xenvif_fi_t;
++	XENBLKIF_FI_MAX
++} xen_blkbk_fi_t;
 +
-+#ifdef CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION
++#ifdef CONFIG_XEN_BLKDEV_BACKEND_FAULT_INJECTION
 +
-+int xen_netbk_fi_init(void);
-+void xen_netbk_fi_fini(void);
++void xen_blkbk_fi_fini(void);
++int xen_blkbk_fi_init(void);
 +
-+void xenvif_fi_fini(struct xenvif *vif);
-+int xenvif_fi_init(struct xenvif *vif);
++void xen_blkif_fi_fini(struct xen_blkif *blkif);
++int xen_blkif_fi_init(struct xen_blkif *blkif);
 +
-+bool xenvif_should_fail(struct xenvif *vif, xenvif_fi_t type);
++bool xenblkif_should_fail(struct xen_blkif *blkif, xen_blkbk_fi_t type);
 +
 +#else
 +
-+static inline int xen_netbk_fi_init(void) { return 0; }
-+static inline void xen_netbk_fi_fini(void) { }
++static inline void xen_blkbk_fi_fini(void) { }
++static inline int xen_blkbk_fi_init(void) { return 0; }
 +
-+static inline void xenvif_fi_fini(struct xenvif *vif) { }
-+static inline int xenvif_fi_init(struct xenvif *vif) { return 0; }
++static inline void xen_blkif_fi_fini(struct xen_blkif *blkif) { }
++static inline int xen_blkif_fi_init(struct xen_blkif *blkif) { return 0; }
 +
-+static inline bool xenvif_should_fail(struct xenvif *vif, xenvif_fi_t type)
++static inline bool xenblkif_should_fail(struct xen_blkif *blkif, xen_blkbk_fi_t type)
 +{
 +	return false;
 +}
 +
-+#endif /* CONFIG_XEN_NETDEV_BACKEND_FAULT_INJECTION */
++#endif /* CONFIG_XEN_BLKDEV_BACKEND_FAULT_INJECTION */
 +
-+#endif /* _XEN_NETBACK_FI_H */
-diff --git a/drivers/net/xen-netback/xenbus.c b/drivers/net/xen-netback/xenbus.c
-index e1aef25..c775ee0 100644
---- a/drivers/net/xen-netback/xenbus.c
-+++ b/drivers/net/xen-netback/xenbus.c
-@@ -21,6 +21,7 @@
++#endif /* _XEN_BLKBACK_FI_H */
++
+diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
+index ecb35fe..6d12d4d 100644
+--- a/drivers/block/xen-blkback/common.h
++++ b/drivers/block/xen-blkback/common.h
+@@ -329,6 +329,9 @@ struct xen_blkif {
+ 	/* All rings for this device. */
+ 	struct xen_blkif_ring	*rings;
+ 	unsigned int		nr_rings;
++#ifdef CONFIG_XEN_BLKDEV_BACKEND_FAULT_INJECTION
++	void			*fi_info;
++#endif
+ };
+ 
+ struct seg_buf {
+diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+index 21c1be1..9931fc8 100644
+--- a/drivers/block/xen-blkback/xenbus.c
++++ b/drivers/block/xen-blkback/xenbus.c
+@@ -22,6 +22,7 @@
+ #include <xen/events.h>
+ #include <xen/grant_table.h>
  #include "common.h"
- #include <linux/vmalloc.h>
- #include <linux/rtnetlink.h>
-+#include "netback_fi.h"
++#include "blkback_fi.h"
  
- struct backend_info {
- 	struct xenbus_device *dev;
-@@ -502,6 +503,7 @@ static void backend_disconnect(struct backend_info *be)
- #ifdef CONFIG_DEBUG_FS
- 		xenvif_debugfs_delif(vif);
- #endif /* CONFIG_DEBUG_FS */
-+		xenvif_fi_fini(vif);
- 		xenvif_disconnect_data(vif);
+ /* On the XenBus the max length of 'ring-ref%u'. */
+ #define RINGREF_NAME_LEN (20)
+@@ -246,6 +247,8 @@ static int xen_blkif_disconnect(struct xen_blkif *blkif)
+ 	unsigned int j, r;
+ 	bool busy = false;
  
- 		/* At this point some of the handlers may still be active
-@@ -1024,6 +1026,10 @@ static void connect(struct backend_info *be)
- 		}
++	xen_blkif_fi_fini(blkif);
++
+ 	for (r = 0; r < blkif->nr_rings; r++) {
+ 		struct xen_blkif_ring *ring = &blkif->rings[r];
+ 		unsigned int i = 0;
+@@ -998,6 +1001,8 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+ 		return err;
  	}
  
-+	err = xenvif_fi_init(be->vif);
-+	if (err)
-+		goto err;
++	(void) xen_blkif_fi_init(blkif);
 +
- #ifdef CONFIG_DEBUG_FS
- 	xenvif_debugfs_addif(be->vif);
- #endif /* CONFIG_DEBUG_FS */
+ 	return 0;
+ 
+ fail:
 
 Amazon Development Center Germany GmbH
 Berlin - Dresden - Aachen
