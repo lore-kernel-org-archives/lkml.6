@@ -1,83 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752325AbeDTUlc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 16:41:32 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:30830 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751227AbeDTUl3 (ORCPT
+        id S1752686AbeDTUm3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 16:42:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751860AbeDTUm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 16:41:29 -0400
-ARC-Authentication-Results: i=1; auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1524256894; a=rsa-sha256;
-        cv=none;
-        b=rPUIty3A75NIzfp2Iv+ws64G44wv1rdE0PDlhKy73lpE45EEJKnQF3KKlbOSFWUp5oLmJAUTGrOtSr/WSn032hyzDCJabMLv3TDMvu8KN4CM6RWAYWSgiWA7NFVcfJvAKX6/mhN8GTHNBAUSY1o219T/VRljpnKj/8TrA/2iZmY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1524256894;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4hWjI3S9t3sYswaxbHZ4cifP/qZAdfjrGnsjwNCLR6w=;
-        b=YHTJb2m05xfrO9aJOQyvVDc0DbLlD6aTOtyq1EQz8wH10GuU5SoZbyX+061ct+pNkSbQ+q
-        +xWf2XRoTfVeAUXPzC8mGpAwmrMpr3PEPc3Rw4Zq04J/JBxwrMpgPP4/p2Vtd8Vr5IMony
-        lD5zHmdgliqDpOTRekRGxyteEx8BS68=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 18D213416D7
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Fri, 20 Apr 2018 16:42:28 -0400
+Date: Fri, 20 Apr 2018 13:43:34 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rcu: ensure whatisRCU.txt actually says what RCU is.
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180419175936.19936-1-paul.gortmaker@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 20 Apr 2018 22:41:33 +0200
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Kees Cook <keescook@chromium.org>
-Cc: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        David Windsor <dave@nullcore.net>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>, keescook@google.com
-Subject: Re: usercopy whitelist woe in scsi_sense_cache
-In-Reply-To: <CAGXu5j+8WUgr1y=JYhCkUqUWE0SJ+ymkM9DPEQwY8UoqPmoPSw@mail.gmail.com>
-References: <10360653.ov98egbaqx@natalenko.name>
- <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
- <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
- <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
- <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
- <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
- <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
- <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com>
- <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk>
- <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
- <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
- <07f263ff-cea6-ac3c-944b-0f36fee8ba25@kernel.dk>
- <CAGXu5j+kHipvoyFWjGp8M6+83zbd6yHOzwxQ-2LNBQbD5-jS9w@mail.gmail.com>
- <8b32e079-d4e6-3fea-a89d-ff856e4e13b1@kernel.dk>
- <0fbf2b13-8bae-c7c5-d930-ebaafdc72202@kernel.dk>
- <011EF7D1-B095-4B8D-AD2A-993048932C49@linaro.org>
- <c30400f9-50e6-b5cf-d06b-a5e971e98546@kernel.dk>
- <13DBFC76-4849-4DDA-AC44-B2C1257912E7@linaro.org>
- <CAGXu5j+8WUgr1y=JYhCkUqUWE0SJ+ymkM9DPEQwY8UoqPmoPSw@mail.gmail.com>
-Message-ID: <bd69860bb48eedc4908e055ff869c5a5@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419175936.19936-1-paul.gortmaker@windriver.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18042020-0044-0000-0000-000004089E3E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008889; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000257; SDB=6.01020811; UDB=6.00520896; IPR=6.00800048;
+ MB=3.00020689; MTD=3.00000008; XFM=3.00000015; UTC=2018-04-20 20:42:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18042020-0045-0000-0000-0000083AA589
+Message-Id: <20180420204334.GS26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1804200208
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+On Thu, Apr 19, 2018 at 01:59:36PM -0400, Paul Gortmaker wrote:
+> It came to my attention that the file "whatisRCU.txt" does not
+> manage to actually ever spell out what is RCU.
+> 
+> This might not be an issue for a lot of people, but we have to
+> assume the consumers of these documents are starting from ground
+> zero; otherwise they'd not be reading the docs.
+> 
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-On 20.04.2018 22:23, Kees Cook wrote:
-> I don't know the "how", I only found the "what". :) If you want, grab
-> the reproducer VM linked to earlier in this thread; it'll hit the
-> problem within about 30 seconds of running the reproducer.
+Queued for review, thank you!
 
-Just to avoid a possible confusion I should note that I've removed the 
-reproducer from my server, but I can re-upload it if needed.
+							Thanx, Paul
 
--- 
-   Oleksandr Natalenko (post-factum)
+> ---
+>  Documentation/RCU/whatisRCU.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
+> index a27fbfb0efb8..65eb856526b7 100644
+> --- a/Documentation/RCU/whatisRCU.txt
+> +++ b/Documentation/RCU/whatisRCU.txt
+> @@ -1,3 +1,5 @@
+> +What is RCU?  --  "Read, Copy, Update"
+> +
+>  Please note that the "What is RCU?" LWN series is an excellent place
+>  to start learning about RCU:
+> 
+> -- 
+> 2.14.1
+> 
