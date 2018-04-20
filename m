@@ -1,103 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754855AbeDTMp2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 08:45:28 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:63637 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754711AbeDTMp0 (ORCPT
+        id S1754838AbeDTMqb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 08:46:31 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50082 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754686AbeDTMq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:45:26 -0400
-X-IronPort-AV: E=Sophos;i="5.49,301,1520899200";
-   d="scan'208";a="716745722"
-Subject: Re: [PATCH 1/3] xen: add generic fault injection facility
-To: Juergen Gross <jgross@suse.com>
-CC: <jakub.kicinski@netronome.com>, <hpa@zytor.com>, <mcroce@redhat.com>,
-        <tglx@linutronix.de>, <ggarcia@abra.uab.cat>, <daniel@iogearbox.net>,
-        <x86@kernel.org>, <mingo@redhat.com>, <xen-devel@lists.xenproject.org>,
-        <axboe@kernel.dk>, <konrad.wilk@oracle.com>, <amir.jer.levy@intel.com>,
-        <paul.durrant@citrix.com>, <stefanha@redhat.com>,
-        <dsa@cumulusnetworks.com>, <boris.ostrovsky@oracle.com>,
-        <linux-block@vger.kernel.org>, <wei.liu2@citrix.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <davem@davemloft.net>, <dwmw@amazon.co.uk>, <roger.pau@citrix.com>
-References: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
- <20180420104726.17823.40147.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
- <03a333dc-e505-e254-f39d-e68b1453a6f3@suse.com>
-From: <staskins@amazon.com>
-Message-ID: <74989e7c-4cde-81cf-c1ad-a3c19d477f52@amazon.com>
-Date: Fri, 20 Apr 2018 14:45:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 20 Apr 2018 08:46:29 -0400
+Date: Fri, 20 Apr 2018 05:46:25 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
+Message-ID: <20180420124625.GA31078@infradead.org>
+References: <20180403090909.GN3881@phenom.ffwll.local>
+ <20180403170645.GB5935@redhat.com>
+ <20180403180832.GZ3881@phenom.ffwll.local>
+ <20180416123937.GA9073@infradead.org>
+ <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
+ <20180419081657.GA16735@infradead.org>
+ <20180420071312.GF31310@phenom.ffwll.local>
+ <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
+ <20180420101755.GA11400@infradead.org>
+ <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <03a333dc-e505-e254-f39d-e68b1453a6f3@suse.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KCjXW5020929
 
-On 04/20/18 12:59, Juergen Gross wrote:
-> On 20/04/18 12:47, Stanislav Kinsburskii wrote:
->> diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
->> index c1f98f3..483fc16 100644
->> --- a/arch/x86/xen/Kconfig
->> +++ b/arch/x86/xen/Kconfig
->> @@ -77,3 +77,10 @@ config XEN_PVH
->>   	bool "Support for running as a PVH guest"
->>   	depends on XEN && XEN_PVHVM && ACPI
->>   	def_bool n
->> +
->> +config XEN_FAULT_INJECTION
->> +	bool "Enable Xen fault injection"
->> +	depends on FAULT_INJECTION_DEBUG_FS
->> +	default n
->> +	help
->> +	  Enable Xen fault injection facility
-> Why for x86 only? I'd rather add this under drivers/xen
+On Fri, Apr 20, 2018 at 12:44:01PM +0200, Christian König wrote:
+> > > What we need is an sg_alloc_table_from_resources(dev, resources,
+> > > num_resources) which does the handling common to all drivers.
+> > A structure that contains
+> > 
+> > {page,offset,len} + {dma_addr+dma_len}
+> > 
+> > is not a good container for storing
+> > 
+> > {virt addr, dma_addr, len}
+> > 
+> > no matter what interface you build arond it.
+> 
+> Why not? I mean at least for my use case we actually don't need the virtual
+> address.
 
-Sure.
+If you don't need the virtual address you need scatterlist even list.
 
->
->> diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
->> index d83cb54..3158fe1 100644
->> --- a/arch/x86/xen/Makefile
->> +++ b/arch/x86/xen/Makefile
->> @@ -34,3 +34,4 @@ obj-$(CONFIG_XEN_DOM0)		+= vga.o
->>   obj-$(CONFIG_SWIOTLB_XEN)	+= pci-swiotlb-xen.o
->>   obj-$(CONFIG_XEN_EFI)		+= efi.o
->>   obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
->> +obj-$(CONFIG_XEN_FAULT_INJECTION)	+= fault_inject.o
->> diff --git a/arch/x86/xen/fault_inject.c b/arch/x86/xen/fault_inject.c
->> new file mode 100644
->> index 0000000..ecf0f7c
->> --- /dev/null
->> +++ b/arch/x86/xen/fault_inject.c
->> @@ -0,0 +1,109 @@
->> +/*
->> + * Fauit injection interface for Xen virtual block devices
->> + *
->> + * Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
->> + *
->> + * This program is free software; you can redistribute it and/or
->> + * modify it under the terms of the GNU General Public License version 2
->> + * as published by the Free Software Foundation; or, when distributed
->> + * separately from the Linux kernel or incorporated into other
->> + * software packages, subject to the following license:
-> Please use the appropriate SPDX header instead of the full GPL2
-> boilerplate.
+> What we need is {dma_addr+dma_len} in a consistent interface which can come
+> from both {page,offset,len} as well as {resource, len}.
 
-Ditto.
+Ok.
 
->
->
-> Juergen
->
+> What I actually don't need is separate handling for system memory and
+> resources, but that would we get exactly when we don't use sg_table.
 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+At the very lowest level they will need to be handled differently for
+many architectures, the questions is at what point we'll do the
+branching out.
