@@ -1,116 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752671AbeDTXsZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 19:48:25 -0400
-Received: from mga17.intel.com ([192.55.52.151]:18039 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752100AbeDTXsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 19:48:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,303,1520924400";
-   d="scan'208";a="218217371"
-Subject: Re: [RFC PATCH 00/79] Generic page write protection and a solution to
- page waitqueue
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Ts'o" <tytso@mit.edu>, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Jeff Layton <jlayton@redhat.com>
-References: <20180404191831.5378-1-jglisse@redhat.com>
- <6f6e3602-c8a6-ae81-3ef0-9fe18e43c841@linux.intel.com>
- <20180420221905.GA4124@redhat.com>
-From: Tim Chen <tim.c.chen@linux.intel.com>
-Message-ID: <1809b27e-e79d-f2c3-19f5-0f505c340519@linux.intel.com>
-Date: Fri, 20 Apr 2018 16:48:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        id S1752762AbeDTX7E (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 19:59:04 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:40571 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752590AbeDTX7D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 19:59:03 -0400
+X-Google-Smtp-Source: AIpwx494W3/Wf1yck/+v0zekH8dPOP5Z1IUw/DH6+j3riT+P8x/XqgPZn6dNBG3HxStZBcISQN4yvJWhfPxMC0JtTliJFcqUeyiO
 MIME-Version: 1.0
-In-Reply-To: <20180420221905.GA4124@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Date: Fri, 20 Apr 2018 16:59:02 -0700
+In-Reply-To: <000000000000d71bf6056a34b628@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ed9844056a507832@google.com>
+Subject: Re: unregister_netdevice: waiting for DEV to become free
+From: syzbot <syzbot+2dfb68e639f0621b19fb@syzkaller.appspotmail.com>
+To: ddstreet@ieee.org, dvyukov@google.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/2018 03:19 PM, Jerome Glisse wrote:
-> On Fri, Apr 20, 2018 at 12:57:41PM -0700, Tim Chen wrote:
->> On 04/04/2018 12:17 PM, jglisse@redhat.com wrote:
->>
->>
->> Your approach seems useful if there are lots of locked pages sharing
->> the same wait queue.  
->>
->> That said, in the original workload from our customer with the long wait queue
->> problem, there was a single super hot page getting migrated, and it
->> is being accessed by all threads which caused the big log jam while they wait for
->> the migration to get completed.  
->> With your approach, we will still likely end up with a long queue 
->> in that workload even if we have per page wait queue.
->>
->> Thanks.
-> 
-> Ok so i re-read the thread, i was writting this cover letter from memory
-> and i had bad recollection of your issue, so sorry.
-> 
-> First, do you have a way to reproduce the issue ? Something easy would
-> be nice :)
+syzbot has found reproducer for the following crash on  
+https://github.com/google/kmsan.git/master commit
+48c6a2b0ab1b752451cdc40b5392471ed1a2a329 (Mon Apr 16 08:42:26 2018 +0000)
+mm/kmsan: fix origin calculation in kmsan_internal_check_memory
+syzbot dashboard link:  
+https://syzkaller.appspot.com/bug?extid=2dfb68e639f0621b19fb
 
-Unfortunately it is a customer workload that they guard closely and wouldn't let us
-look at the source code.  We have to profile and backtrace its behavior.
+So far this crash happened 180 times on  
+https://github.com/google/kmsan.git/master, net-next, upstream.
+C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4936564132020224
+syzkaller reproducer:  
+https://syzkaller.appspot.com/x/repro.syz?id=5817131010621440
+Raw console output:  
+https://syzkaller.appspot.com/x/log.txt?id=6313498770407424
+Kernel config:  
+https://syzkaller.appspot.com/x/.config?id=6627248707860932248
+compiler: clang version 7.0.0 (trunk 329391)
 
-Mel made a quick attempt to reproduce the behavior with a hot page migration, 
-but he wasn't quite able to duplicate the pathologic behavior.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2dfb68e639f0621b19fb@syzkaller.appspotmail.com
+It will help syzbot understand when the bug is fixed.
 
-> 
-> So what i am proposing for per page wait queue would only marginaly help
-> you (it might not even be mesurable in your workload). It would certainly
-> make the code smaller and easier to understand i believe.
-
-In certain cases if we have lots of pages sharing a page wait queue,
-your solution would help, and we wouldn't be wasting time checking
-waiters not waiting on the page that's being unlocked.  Though I
-don't have a specific workload that has such behavior.
-
-> 
-> Now that i have look back at your issue i think there is 2 things we
-> should do. First keep migration page map read only, this would at least
-> avoid CPU read fault. In trace you captured i wasn't able to ascertain
-> if this were read or write fault.
-> 
-> Second idea i have is about NUMA, everytime we NUMA migrate a page we
-> could attach a temporary struct to the page (using page->mapping). So
-> if we scan that page again we can inspect information about previous
-> migration and see if we are not over migrating that page (ie bouncing
-> it all over). If so we can mark the page (maybe with a page flag if we
-> can find one) to protect it from further migration. That temporary
-> struct would be remove after a while, ie autonuma would preallocate a
-> bunch of those and keep an LRU of them and recycle the oldest when it
-> needs a new one to migrate another page.
-
-The goal to migrate a hot page with care, or avoid bouncing it around 
-frequently makes sense.  If it is a hot page shared by many threads
-running on different NUMA nodes, and moving it will only mildly improve NUMA
-locality, we should avoid the migration.
-
-Tim
-
-> 
-> 
-> LSF/MM slots:
-> 
-> Michal can i get 2 slots to talk about this ? MM only discussion, one
-> to talk about doing migration with page map read only but write
-> protected while migration is happening. The other one to talk about
-> attaching auto NUMA tracking struct to page.
-> 
-> Cheers,
-> Jérôme
-> 
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+device bridge_slave_1 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+device bridge_slave_0 left promiscuous mode
+bridge0: port 1(bridge_slave_0) entered disabled state
+unregister_netdevice: waiting for lo to become free. Usage count = 3
