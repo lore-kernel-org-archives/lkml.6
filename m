@@ -1,735 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755043AbeDTOGa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:06:30 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:46690 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754872AbeDTOG2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:06:28 -0400
-To: ebiggers3@gmail.com, dvyukov@google.com
-Cc: syzbot+4684a000d5abdade83fac55b1e7d1f935ef1936e@syzkaller.appspotmail.com,
-        axboe@kernel.dk, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: possible deadlock in blkdev_reread_part
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <001a11446e86e97ceb055cf07f4e@google.com>
-        <CACT4Y+bGjnajib6P4a0SxYkNUJpg_x8abEkec8AR+oBmC=-QUQ@mail.gmail.com>
-        <CACT4Y+bGjnajib6P4a0SxYkNUJpg_x8abEkec8AR+oBmC=-QUQ@mail.gmail.com>
-        <20171105201834.GA8126@zzz.localdomain>
-        <201804162302.GBI43737.OLFSOFQHVJMFtO@I-love.SAKURA.ne.jp>
-In-Reply-To: <201804162302.GBI43737.OLFSOFQHVJMFtO@I-love.SAKURA.ne.jp>
-Message-Id: <201804202306.FGC05220.OOJFMFOSFHtLQV@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Fri, 20 Apr 2018 23:06:17 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1755120AbeDTOH3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:07:29 -0400
+Received: from mail-he1eur01on0108.outbound.protection.outlook.com ([104.47.0.108]:62384
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754987AbeDTOH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:07:27 -0400
+Authentication-Results: 01.org; dkim=none (message not signed)
+ header.d=none;01.org; dmarc=none action=none header.from=virtuozzo.com;
+Subject: Re: [kcov] watchdog: BUG: soft lockup - CPU#0 stuck for 22s!
+ [swapper/0:1]
+Cc: Fengguang Wu <fengguang.wu@intel.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org,
+        lkp@01.org
+References: <20180419030135.nn454aqxlqdwe7ah@wfg-t540p.sh.intel.com>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+To: Yury Norov <ynorov@caviumnetworks.com>
+Message-ID: <be75eae0-624d-f5ab-1b07-9a0d86d366b5@virtuozzo.com>
+Date: Fri, 20 Apr 2018 17:08:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180419030135.nn454aqxlqdwe7ah@wfg-t540p.sh.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: PR0P264CA0036.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:100:1::24) To DB7PR08MB3258.eurprd08.prod.outlook.com
+ (2603:10a6:5:1f::20)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB7PR08MB3258;
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;3:ssFNtUB1ZxpVdz6mCk/HE0l8I+H9HJzqQqGjBeq0MdZ8wHJmgf/0hgLKINuxNV33oKOuYdGxoQQc2+zt4c+BaI3IH0uGFpPVeLYlIF/io4S+SsvORg7kLakz9HX/cHjqyCCLX5r2cRyLunlU28aQj0slvld9nRrJ5vYUNiZKzyLyVjn806fDG4pVmtDkL8onTTbWAkF2AtsLM0WD63sE+D15opCNmJ1Xpl0udku3dMOofVSfciCLTBfAHfqx6jeo;25:P/QU+9xPmeBUOYtVDNkKLYxbxib5GEb8x9lQ2qK3UvOkd3/ADIGNjL700WbHH/idtHte2RfOvgAVV13i9Xy/xQo9rNRtHDA7QA3oqRLQk6bhZPO3pRivde51aqVQeK/akYLmW9wfpcwg2joWn2i4AgZCJZgKI2UpENQ4VGMvhiaGCJfG+yJO9xqkUFR/RzbjnFqTU8fmcenRVH/J0yPqvdhWFQdaDUKl0xnaX9a8d4BA+VLkhfumCFdmBbYybjQVq0rGskKXXzpRIPU/xBIeqm9EwJ5UPDCXc6ZOZlDWWMwF+GtI2oRS+EvWg+a+jwzLjr+49wYCvOEfuVYlF9zbHQ==;31:6YsSD4GpUhPbpKWpfDtbcmoo4n0YuV4X2TnejR6+dCebQ3u7MnaYmonOvHuL735xMyJcqHPlWAyA+ZtwEu1x20huOg87bD7bW+XjXKI4FXmT1UzYMvdBv22ZYdT0wEEMBku+k7b8muD9HBgkp0AdtSKx0995Mfe4AM/araR/wv3jly6Vb1dwKFs6Mc3PBvO+GOj/qSBlZ8flnzIo2mR+OQZR6aJh3o9e2atMd+WIhHs=
+X-MS-TrafficTypeDiagnostic: DB7PR08MB3258:
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;20:qckwbKgz6YMrTUExwBi+wuGDjjMdmLvBWoFbMPcp+aLdMeJsnelvYGZy7M1Cbi4TuZ+2w1zRcZRN6NCNxftLZz2ymu+rRimIPYW0r3cYrsGtChP81/RpLYjr34EWd4rzf3NWI69Oz4QmmXQAF1l5DwOBAstubMIa5u5LTFm3HPcWI0YmhOtvwDi1BIMcTZilxN7oowonEgLVq4e6l0bO+WielREGWBjY4RPjyJwM1FwUh2i2jBeDi7Bjpcb0eGwFOsdqwZZRInbJilM2UNi/BNwNayxdJfyS0n5SK07D5E5z/rLTIMKHPEXZF7Xx3KqiXoVO2pu2qoHABaE3D5s4nfWloV2o0RdG6Mq7sRoENCVr17mVvrk5pOBjpO92u5bAaD3DMoioqWt6cOHfznkIBJvdDmLo7S3kLEAKo9c+hEhmM579ndVURWkZ50vxZrLscujff/hqF+7Hbow82FZrXTRWOqmV5BDYnNtSFIUUgNAycsxcHJivml85+qIY20tJ;4:8MwAMq5vjwf4GEwNfeN8S/uhNBvjX61833J41/aWXooN8MVBZV420ByGA3dDyj3kyXzcBYov6EHWsdNIZ6/g2fCgpj0lXW5KVC6TQ013fIRxB+ZhpSGsD6w6OU44dOrq1TONv05F/TnEEuzcIYR8wDKw8PAFVwqXl1rY4DglOpk0ska02jrVSPuF002F7i2NdEiN/lB/WgnY+MN9qc6RjxU0ycip6OYY1fAxzx4Fk99fyjcCDdgrn6iw/DJFCgUdUulRU2AUU25+3CvkDXBCNw==
+X-Microsoft-Antispam-PRVS: <DB7PR08MB325816D73D8459C1887A895AB0B40@DB7PR08MB3258.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231232)(944501327)(52105095)(10201501046)(93006095)(93001095)(3002001)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:DB7PR08MB3258;BCL:0;PCL:0;RULEID:;SRVR:DB7PR08MB3258;
+X-Forefront-PRVS: 0648FCFFA8
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39380400002)(396003)(39840400004)(366004)(346002)(376002)(69234005)(66066001)(3846002)(6116002)(305945005)(4326008)(186003)(47776003)(16526019)(6246003)(476003)(2616005)(316002)(77096007)(31696002)(478600001)(26005)(23746002)(54906003)(229853002)(86362001)(25786009)(16576012)(6916009)(11346002)(53936002)(53546011)(31686004)(386003)(55236004)(76176011)(2906002)(7736002)(52116002)(6486002)(50466002)(446003)(36756003)(8676002)(956004)(230700001)(81166006)(8936002)(65826007)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3258;H:[172.16.25.12];FPR:;SPF:None;LANG:en;MLV:sfv;
+X-Microsoft-Exchange-Diagnostics: =?Windows-1252?Q?1;DB7PR08MB3258;23:Cf+CJvVn4ulwqGjWmibpE/Skd41673BdVf+Bb?=
+ =?Windows-1252?Q?xBPgGCDjSvqX4BsfcEoUIZkQdttQShfejlbd++waa5hDvB0MTKqjKqC0?=
+ =?Windows-1252?Q?N0SRdYDSNVRd2eI74ECdfecqnLAfwAJwNl4v40iPw+Xa3N6fxJqsqnYw?=
+ =?Windows-1252?Q?nlX211b+Zg34khIo881B22QlTV7a/2HGABbxbrDvONbAaRBW6Qysv4IJ?=
+ =?Windows-1252?Q?JA+JLHCrUtSEF5ly9YLvOKJ2SpTfbXJRRn5YAQwm3Vrtd/9M0+mChdzC?=
+ =?Windows-1252?Q?UOr0f9kqtzC8lEzFOkm7DZvOkQ8Kj9A4R4bR4noG/ETmeZnh/0oqAa4r?=
+ =?Windows-1252?Q?55tZpHyo5ByPowQrsA8MiWOWlubxewGMYLBg+VzKc8DvIhTFgKrzDE3R?=
+ =?Windows-1252?Q?eiTSHtXncjBrepNiQkR4SJFGtBtj83jgR2kNdd0m/LOKI+8sFJJeI6TU?=
+ =?Windows-1252?Q?zJRs0d3jLXiTAkegMiqbWOsDPvPAkVT0d1A06TBM9UKYZw7ldURmxxIp?=
+ =?Windows-1252?Q?xrq0U5p7bwGpmx3CWsVgCmu9Xe+cgihDwZowQaC2cp7upE1MIaXfRsjR?=
+ =?Windows-1252?Q?I9ZQYbP4ujwh0OdeClBsCAZDy6rwZ/vJEqx7G5swwgbcTtRC/o6H13Zv?=
+ =?Windows-1252?Q?bURh7+vs5LgE1GEGzxUcINkgaIqo+xk4FpLdIGfBOHbMohkjtBUPumbf?=
+ =?Windows-1252?Q?x+4/bOizVn+YnBKDx0IwF3Jf5aeZJzKzJSE/s+UYlPOMv9GTxtYxrBdg?=
+ =?Windows-1252?Q?JbPouCE12Iz37iXWEuTYQfKfTev/JJHr59OxM3ZLMK24jpNfP4SCoSd+?=
+ =?Windows-1252?Q?9tWD3/Xa2Jqyu5RI+m1Pj85xOjV8PMoFSUGxjMIdg0D8u6h6SGdSVMm6?=
+ =?Windows-1252?Q?jZ66nxRcqyVoytrZTlbtym56kp2Won1vcinIOsv1XIvBNlkyOM0VkhY6?=
+ =?Windows-1252?Q?TSql3cjjLuxrp2atXmgzMv7wV1YZK5YhdfO1yD07JdPacT73lf+2C2Jl?=
+ =?Windows-1252?Q?M5ubL3fEJSbFDn5w7W2pomm4i0lis+KEjkyWogkATW+vbp9evRBkpEna?=
+ =?Windows-1252?Q?zVLAc7A4iuKWpGehM2sfU/RS/FYq4XH9RC7hK8HJOEgvIxZajschVTOk?=
+ =?Windows-1252?Q?pI/JR9FtmTkGVy8zTWzFUVemAnyKRTrU8VKSHlyMqzMBlwujTqgEKoF6?=
+ =?Windows-1252?Q?4F/TNmaY9zZ7knYbUpmu3zcTbGneuF4WF1t+A9DW+vgtd6k1Uy18Uqs/?=
+ =?Windows-1252?Q?CRNtmdHLrysgXHM6w=3D=3D?=
+X-Microsoft-Antispam-Message-Info: chUw8rh3fmoPhZk+3k5fNJ95p6zvDJ+FyddfP950tyvdK7q1eUYBmv9Z6SFDf0q79qSkgsW7kvbgo24ga/Dq3A0AG78UCc3LdbEFryIvOsHX4kTCZdSwhX/WsAKvK9/wxDeOiWxIVv8wv3MQAbMYYIwHZE9ubDdvWA8XcyNzqcjPPLEjUQbs/1HFlYyC/gXE
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;6:2+Oy8tudEJkqbl6ODnE2tm/zWTSveLiLSjd+uVm3fKIbmuLlmUspJlPpd1Rdh83pd0Rsz927gIlf2SSSO253cEBLl4XDK4q7uMREVzjk1HfR/g7ozPzYbfR9yYZGL8malo6QEs+de+m+UoW/oWvI8weFQVMb+a5hKidK/a9W7azjcEsP/WyjHhgOskbXqCrCtnBdsiFRw/U34wbYZAXwkZAaCo2INYVVup4YHR6vzaTxaUxgiNnrNRc96iwilPv66qIZ4Peu+Nm/fj93DVULb2u1ukpZfDDfwnnvHj1IimDAY/cgiYcJjWgJDN5WoY9NZd03snlbd0Pdo/XIqa8obdKsWZ3NdFq0pEpVszgfVV/sOeLP+CkvYcy8TjWXvb1LHYxpJJW0eFpf53HDtmbDjtss8bcBqlwx4tZRbVF1LK8JGL82e38CSTCFnT6fv1vUVW/8WOK7uktEQfbHve70MQ==;5:y+rhpBlY9anhhBQSolk6eF0t/LhT+Lzff66BatLe8lKlD3zpf1kY9ev7Zp07Puhbp9OWyA340EOmH6E6f3yn/ZzV6ZtfU5YggFIBuPyyFnr8xf4Qs83pJJJ8xu0iBp0z0frckBD9mWQG0n6c3wrBQZK+8ldzw0JLsjef4uMxHxk=;24:IdMjkU8e06qOcB8nmcvlYHyeMN12UKMJsafmNfDrxzY2o2z2ewVr/DlwPF85Cb/dWzaERt5iBRzZu+Xr1/FNYYnfrpk59LOgW/RK8dY18Vs=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;7:q1pU2ptTgypw+9SgucbELEqf1r/KWgJ0U1Dvq7zvDJfWLkfu9c0dak7pEGBDQ+qKZnsPgOWsyJw+UdBa6BcDyyaQnAqLZTSraOf6H+kBWefW1uAqh6URESvn9Pan6ljLx6QqlUwKjM6yjkbWxAEHYGhyC3Q3iX1iS3CfgoHqAC3NLjiCKAdlVWnO+RfkPy9BIlXGainimYLIJyR46w8qAHeynyNP4Ki12ZeS4TjQaHLouANtGFi9O8EvmJRuVZEv;20:bxatuhwqTr7XGdoF0hM8XiaNx6tnQIQygLuRGu8maElwOO5BWYHqjEOtvwYAVklprJhyFaY3cTezvvz+vtoNUf6C2SiMuIOrSoiF75DK09SU3JsPii1rS8a+Yn92AbHfGOq26MB9nWg/Y5sdPcyBFyJKv73ykIceIN4escx9EaQ=
+X-MS-Office365-Filtering-Correlation-Id: 0b2a85dd-49dc-41d1-089b-08d5a6c80ab8
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Apr 2018 14:07:24.0671 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b2a85dd-49dc-41d1-089b-08d5a6c80ab8
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3258
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tetsuo Handa wrote:
-> Eric Biggers wrote:
-> > It seems that ->bd_mutex is held while opening and closing block devices, which
-> > should rank it above both ->lo_ctl_mutex and loop_index_mutex (see lo_open() and
-> > lo_release()).
-> > 
-> > But blkdev_reread_part(), which takes ->bd_mutex, is called from some of the
-> > ioctls while ->lo_ctl_mutex is held.
-> > 
-> > Perhaps we should call blkdev_reread_part() at the end of the ioctls, after
-> > ->lo_ctl_mutex has been dropped?  But it looks like that can do I/O to the
-> > device, which probably could race with loop_clr_fd()...
-> > 
-> > Or perhaps we should just take both locks for the ioctls, in the order
-> > ->bd_mutex, then ->lo_ctl_mutex -- and then use __blkdev_reread_part()?
+
+
+On 04/19/2018 06:01 AM, Fengguang Wu wrote:
+> Hello,
 > 
-> But do we really need ->lo_ctl_mutex ? What is the purpose of ->lo_ctl_mutex ?
-> If the purpose of ->lo_ctl_mutex is to serialize ioctl() request against each
-> loop device when multiple threads opened the same loop device, I feel that
+> FYI this happens in mainline kernel 4.17.0-rc1.
+> It at least dates back to v4.8 .
 > 
->   There is no need to use ->lo_ctl_mutex which the lockdep will check and
->   complain, provided that ioctl() request cannot recurse into ioctl() request.
->   Instead, we can use simple flag variable whether an ioctl() is in progress.
->  
->   There is no need to use ->lo_ctl_mutex from __lo_release(), for it is
->   guaranteed that there is no in-flight ioctl() request when __lo_release()
->   is called, and loop_index_mutex is blocking further open() requests.
-> 
-> and simplify like below.
-> 
-Can we test this patch?
+> [   25.697463]
+> [   25.697463] Start testing find_bit() with random-filled bitmap
+> [   25.736615] find_next_bit:                30203201 ns, 163965 iterations
+> [   25.783266] find_next_zero_bit:           45554622 ns, 163716 iterations
+> [   25.832480] find_last_bit:                48003878 ns, 163965 iterations
+> [   52.050031] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [swapper/0:1]
+> [   52.050031] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc1 #210
+> [   52.050031] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [   52.050031] RIP: 0010:__sanitizer_cov_trace_pc+0x65/0x66:
+> 						__sanitizer_cov_trace_pc at kernel/kcov.c:111
+> [   52.050031] RSP: 0000:ffff88000fd43e40 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> [   52.050031] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000017
+> [   52.050031] RDX: 0000000000000000 RSI: ffff88000fd3e000 RDI: 0000000000000002
+> [   52.050031] RBP: 0000000000050000 R08: 0000000000000008 R09: 0000000000000000
+> [   52.050031] R10: ffff88000fd3e000 R11: 00000000222e2c32 R12: ffffffff85565d90
+> [   52.050031] R13: 0000000000030f80 R14: 0000000000030f80 R15: 0000000000000000
+> [   52.050031] FS:  0000000000000000(0000) GS:ffff88001f600000(0000) knlGS:0000000000000000
+> [   52.050031] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   52.050031] CR2: 0000000000000000 CR3: 0000000003c6a000 CR4: 00000000000006b0
+> [   52.050031] Call Trace:
+> [   52.050031]  find_first_bit+0x66/0x7c:
+> 						find_first_bit at lib/find_bit.c:106 (discriminator 1)
+> [   52.050031]  test_find_first_bit+0x3a/0x93
 
->From 0ca0694b74ca4b02e9d2e3f46c9d960ba167adec Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Fri, 20 Apr 2018 22:54:42 +0900
-Subject: [PATCH] block/loop: Serialize ioctl operations.
 
-syzbot is reporting various bugs which involve /dev/loopX.
-Two of them
+I suppose test_find_first_bit() needs a little more than zero cond_resched() calls.
 
-  INFO: rcu detected stall in lo_ioctl
-  https://syzkaller.appspot.com/bug?id=7b49fb610af9cca78c24e9f796f2e8b0d5573997
 
-  general protection fault in lo_ioctl (2)
-  https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
-
-suggest that loop module is not thread safe. The former suggests that
-l->lo_backing_file is forming circular loop and the latter suggests that
-l->lo_backing_file became NULL.
-
-In fact, recursion avoidance check in loop_set_fd() is traversing loop
-devices without holding each lo->lo_ctl_mutex lock. lo_state can become
-Lo_rundown and lo_backing_file can become NULL if raced with loop_clr_fd().
-
-  /* Avoid recursion */
-  f = file;
-  while (is_loop_device(f)) {
-    struct loop_device *l;
-
-    if (f->f_mapping->host->i_bdev == bdev)
-      goto out_putf;
-
-    l = f->f_mapping->host->i_bdev->bd_disk->private_data;
-    if (l->lo_state == Lo_unbound) {
-      error = -EINVAL;
-      goto out_putf;
-    }
-    f = l->lo_backing_file;
-  }
-
-Since ioctl() request on loop devices is not frequent operation, we don't
-need fine grained locking. Let's use global lock rather than dancing with
-locking order inside this recursion avoidance check.
-
-Strategy is that the global lock is held upon entry of ioctl() request,
-and release it before either starting operations which might recurse or
-leaving ioctl() request. After the global lock is released, current thread
-no longer uses "struct loop_device" memory because it might be modified
-by next ioctl() request which was waiting for current ioctl() request.
-
-In order to enforce this strategy, this patch inversed
-loop_reread_partitions() and loop_unprepare_queue() in loop_clr_fd().
-I don't know whether it breaks something, but I don't have testcases.
-
-Since this patch serializes using global lock, race bugs should no longer
-exist. Thus, it will be easy to test whether this patch broke something.
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+e5e426c6a47c26ada908348fe84aff916a26d337@syzkaller.appspotmail.com>
-Reported-by: syzbot <syzbot+116e7de10c6752bf5e1e@syzkaller.appspotmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>
----
- drivers/block/loop.c | 231 ++++++++++++++++++++++++++++-----------------------
- drivers/block/loop.h |   1 -
- 2 files changed, 128 insertions(+), 104 deletions(-)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index c9d0449..59716d1 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -81,11 +81,50 @@
- #include <linux/uaccess.h>
- 
- static DEFINE_IDR(loop_index_idr);
--static DEFINE_MUTEX(loop_index_mutex);
-+static DEFINE_MUTEX(loop_mutex);
-+static void *loop_mutex_owner; /* == __mutex_owner(&loop_mutex) */
- 
- static int max_part;
- static int part_shift;
- 
-+/*
-+ * lock_loop - Lock loop_mutex.
-+ */
-+static void lock_loop(void)
-+{
-+	mutex_lock(&loop_mutex);
-+	loop_mutex_owner = current;
-+}
-+
-+/*
-+ * lock_loop_killable - Lock loop_mutex unless killed.
-+ */
-+static int lock_loop_killable(void)
-+{
-+	int err = mutex_lock_killable(&loop_mutex);
-+
-+	if (err)
-+		return err;
-+	loop_mutex_owner = current;
-+	return 0;
-+}
-+
-+/*
-+ * unlock_loop - Unlock loop_mutex as needed.
-+ *
-+ * Explicitly call this function before calling fput() or blkdev_reread_part()
-+ * in order to avoid circular lock dependency. After this function is called,
-+ * current thread is no longer allowed to access "struct loop_device" memory,
-+ * for another thread would access that memory as soon as loop_mutex is held.
-+ */
-+static void unlock_loop(void)
-+{
-+	if (loop_mutex_owner == current) {
-+		loop_mutex_owner = NULL;
-+		mutex_unlock(&loop_mutex);
-+	}
-+}
-+
- static int transfer_xor(struct loop_device *lo, int cmd,
- 			struct page *raw_page, unsigned raw_off,
- 			struct page *loop_page, unsigned loop_off,
-@@ -604,7 +643,12 @@ static void loop_reread_partitions(struct loop_device *lo,
- 				   struct block_device *bdev)
- {
- 	int rc;
-+	/* Save variables which might change after unlock_loop() is called. */
-+	char filename[sizeof(lo->lo_file_name)];
-+	const int num = lo->lo_number;
- 
-+	memmove(filename, lo->lo_file_name, sizeof(filename));
-+	unlock_loop();
- 	/*
- 	 * bd_mutex has been held already in release path, so don't
- 	 * acquire it if this function is called in such case.
-@@ -619,7 +663,7 @@ static void loop_reread_partitions(struct loop_device *lo,
- 		rc = blkdev_reread_part(bdev);
- 	if (rc)
- 		pr_warn("%s: partition scan of loop%d (%s) failed (rc=%d)\n",
--			__func__, lo->lo_number, lo->lo_file_name, rc);
-+			__func__, num, filename, rc);
- }
- 
- /*
-@@ -637,6 +681,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
- 	struct inode	*inode;
- 	int		error;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	error = -ENXIO;
- 	if (lo->lo_state != Lo_bound)
- 		goto out;
-@@ -673,12 +718,14 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
- 	loop_update_dio(lo);
- 	blk_mq_unfreeze_queue(lo->lo_queue);
- 
--	fput(old_file);
- 	if (lo->lo_flags & LO_FLAGS_PARTSCAN)
--		loop_reread_partitions(lo, bdev);
-+		loop_reread_partitions(lo, bdev); /* calls unlock_loop() */
-+	unlock_loop();
-+	fput(old_file);
- 	return 0;
- 
-  out_putf:
-+	unlock_loop();
- 	fput(file);
-  out:
- 	return error;
-@@ -862,6 +909,7 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 	int		error;
- 	loff_t		size;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	/* This is safe, since we have a reference from open(). */
- 	__module_get(THIS_MODULE);
- 
-@@ -936,19 +984,21 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 	set_blocksize(bdev, S_ISBLK(inode->i_mode) ?
- 		      block_size(inode->i_bdev) : PAGE_SIZE);
- 
-+	/*
-+	 * Grab the block_device to prevent its destruction after we
-+	 * put /dev/loopXX inode. Later in loop_clr_fd() we bdput(bdev).
-+	 */
-+	bdgrab(bdev);
-+
- 	lo->lo_state = Lo_bound;
- 	if (part_shift)
- 		lo->lo_flags |= LO_FLAGS_PARTSCAN;
- 	if (lo->lo_flags & LO_FLAGS_PARTSCAN)
--		loop_reread_partitions(lo, bdev);
--
--	/* Grab the block_device to prevent its destruction after we
--	 * put /dev/loopXX inode. Later in loop_clr_fd() we bdput(bdev).
--	 */
--	bdgrab(bdev);
-+		loop_reread_partitions(lo, bdev); /* calls unlock_loop() */
- 	return 0;
- 
-  out_putf:
-+	unlock_loop();
- 	fput(file);
-  out:
- 	/* This is safe: open() is still holding a reference. */
-@@ -998,7 +1048,9 @@ static int loop_clr_fd(struct loop_device *lo)
- 	struct file *filp = lo->lo_backing_file;
- 	gfp_t gfp = lo->old_gfp_mask;
- 	struct block_device *bdev = lo->lo_device;
-+	bool reread;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	if (lo->lo_state != Lo_bound)
- 		return -ENXIO;
- 
-@@ -1014,7 +1066,6 @@ static int loop_clr_fd(struct loop_device *lo)
- 	 */
- 	if (atomic_read(&lo->lo_refcnt) > 1) {
- 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
--		mutex_unlock(&lo->lo_ctl_mutex);
- 		return 0;
- 	}
- 
-@@ -1059,20 +1110,14 @@ static int loop_clr_fd(struct loop_device *lo)
- 	/* This is safe: open() is still holding a reference. */
- 	module_put(THIS_MODULE);
- 	blk_mq_unfreeze_queue(lo->lo_queue);
--
--	if (lo->lo_flags & LO_FLAGS_PARTSCAN && bdev)
--		loop_reread_partitions(lo, bdev);
-+	reread = (lo->lo_flags & LO_FLAGS_PARTSCAN) && bdev;
- 	lo->lo_flags = 0;
- 	if (!part_shift)
- 		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
- 	loop_unprepare_queue(lo);
--	mutex_unlock(&lo->lo_ctl_mutex);
--	/*
--	 * Need not hold lo_ctl_mutex to fput backing file.
--	 * Calling fput holding lo_ctl_mutex triggers a circular
--	 * lock dependency possibility warning as fput can take
--	 * bd_mutex which is usually taken before lo_ctl_mutex.
--	 */
-+	if (reread)
-+		loop_reread_partitions(lo, bdev); /* calls unlock_loop() */
-+	unlock_loop();
- 	fput(filp);
- 	return 0;
- }
-@@ -1162,7 +1207,7 @@ static int loop_clr_fd(struct loop_device *lo)
- 	     !(lo->lo_flags & LO_FLAGS_PARTSCAN)) {
- 		lo->lo_flags |= LO_FLAGS_PARTSCAN;
- 		lo->lo_disk->flags &= ~GENHD_FL_NO_PART_SCAN;
--		loop_reread_partitions(lo, lo->lo_device);
-+		loop_reread_partitions(lo, lo->lo_device); /* calls unlock_loop() */
- 	}
- 
- 	return err;
-@@ -1171,14 +1216,13 @@ static int loop_clr_fd(struct loop_device *lo)
- static int
- loop_get_status(struct loop_device *lo, struct loop_info64 *info)
- {
--	struct file *file;
-+	struct path path;
- 	struct kstat stat;
- 	int ret;
- 
--	if (lo->lo_state != Lo_bound) {
--		mutex_unlock(&lo->lo_ctl_mutex);
-+	lockdep_assert_held(&loop_mutex);
-+	if (lo->lo_state != Lo_bound)
- 		return -ENXIO;
--	}
- 
- 	memset(info, 0, sizeof(*info));
- 	info->lo_number = lo->lo_number;
-@@ -1195,17 +1239,17 @@ static int loop_clr_fd(struct loop_device *lo)
- 		       lo->lo_encrypt_key_size);
- 	}
- 
--	/* Drop lo_ctl_mutex while we call into the filesystem. */
--	file = get_file(lo->lo_backing_file);
--	mutex_unlock(&lo->lo_ctl_mutex);
--	ret = vfs_getattr(&file->f_path, &stat, STATX_INO,
--			  AT_STATX_SYNC_AS_STAT);
-+	/* Drop loop_mutex while we call into the filesystem. */
-+	path = lo->lo_backing_file->f_path;
-+	path_get(&path);
-+	unlock_loop();
-+	ret = vfs_getattr(&path, &stat, STATX_INO, AT_STATX_SYNC_AS_STAT);
- 	if (!ret) {
- 		info->lo_device = huge_encode_dev(stat.dev);
- 		info->lo_inode = stat.ino;
- 		info->lo_rdevice = huge_encode_dev(stat.rdev);
- 	}
--	fput(file);
-+	path_put(&path);
- 	return ret;
- }
- 
-@@ -1267,6 +1311,7 @@ static int loop_clr_fd(struct loop_device *lo)
- 	struct loop_info info;
- 	struct loop_info64 info64;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	if (copy_from_user(&info, arg, sizeof (struct loop_info)))
- 		return -EFAULT;
- 	loop_info64_from_old(&info, &info64);
-@@ -1278,6 +1323,7 @@ static int loop_clr_fd(struct loop_device *lo)
- {
- 	struct loop_info64 info64;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	if (copy_from_user(&info64, arg, sizeof (struct loop_info64)))
- 		return -EFAULT;
- 	return loop_set_status(lo, &info64);
-@@ -1289,10 +1335,8 @@ static int loop_clr_fd(struct loop_device *lo)
- 	struct loop_info64 info64;
- 	int err;
- 
--	if (!arg) {
--		mutex_unlock(&lo->lo_ctl_mutex);
-+	if (!arg)
- 		return -EINVAL;
--	}
- 	err = loop_get_status(lo, &info64);
- 	if (!err)
- 		err = loop_info64_to_old(&info64, &info);
-@@ -1307,10 +1351,8 @@ static int loop_clr_fd(struct loop_device *lo)
- 	struct loop_info64 info64;
- 	int err;
- 
--	if (!arg) {
--		mutex_unlock(&lo->lo_ctl_mutex);
-+	if (!arg)
- 		return -EINVAL;
--	}
- 	err = loop_get_status(lo, &info64);
- 	if (!err && copy_to_user(arg, &info64, sizeof(info64)))
- 		err = -EFAULT;
-@@ -1320,6 +1362,7 @@ static int loop_clr_fd(struct loop_device *lo)
- 
- static int loop_set_capacity(struct loop_device *lo)
- {
-+	lockdep_assert_held(&loop_mutex);
- 	if (unlikely(lo->lo_state != Lo_bound))
- 		return -ENXIO;
- 
-@@ -1329,6 +1372,8 @@ static int loop_set_capacity(struct loop_device *lo)
- static int loop_set_dio(struct loop_device *lo, unsigned long arg)
- {
- 	int error = -ENXIO;
-+
-+	lockdep_assert_held(&loop_mutex);
- 	if (lo->lo_state != Lo_bound)
- 		goto out;
- 
-@@ -1342,6 +1387,7 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
- 
- static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
- {
-+	lockdep_assert_held(&loop_mutex);
- 	if (lo->lo_state != Lo_bound)
- 		return -ENXIO;
- 
-@@ -1364,12 +1410,10 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 	unsigned int cmd, unsigned long arg)
- {
- 	struct loop_device *lo = bdev->bd_disk->private_data;
--	int err;
-+	int err = lock_loop_killable();
- 
--	err = mutex_lock_killable_nested(&lo->lo_ctl_mutex, 1);
- 	if (err)
--		goto out_unlocked;
--
-+		return err;
- 	switch (cmd) {
- 	case LOOP_SET_FD:
- 		err = loop_set_fd(lo, mode, bdev, arg);
-@@ -1378,10 +1422,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 		err = loop_change_fd(lo, bdev, arg);
- 		break;
- 	case LOOP_CLR_FD:
--		/* loop_clr_fd would have unlocked lo_ctl_mutex on success */
- 		err = loop_clr_fd(lo);
--		if (!err)
--			goto out_unlocked;
- 		break;
- 	case LOOP_SET_STATUS:
- 		err = -EPERM;
-@@ -1391,8 +1432,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 		break;
- 	case LOOP_GET_STATUS:
- 		err = loop_get_status_old(lo, (struct loop_info __user *) arg);
--		/* loop_get_status() unlocks lo_ctl_mutex */
--		goto out_unlocked;
-+		break;
- 	case LOOP_SET_STATUS64:
- 		err = -EPERM;
- 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-@@ -1401,8 +1441,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 		break;
- 	case LOOP_GET_STATUS64:
- 		err = loop_get_status64(lo, (struct loop_info64 __user *) arg);
--		/* loop_get_status() unlocks lo_ctl_mutex */
--		goto out_unlocked;
-+		break;
- 	case LOOP_SET_CAPACITY:
- 		err = -EPERM;
- 		if ((mode & FMODE_WRITE) || capable(CAP_SYS_ADMIN))
-@@ -1421,9 +1460,7 @@ static int lo_ioctl(struct block_device *bdev, fmode_t mode,
- 	default:
- 		err = lo->ioctl ? lo->ioctl(lo, cmd, arg) : -EINVAL;
- 	}
--	mutex_unlock(&lo->lo_ctl_mutex);
--
--out_unlocked:
-+	unlock_loop();
- 	return err;
- }
- 
-@@ -1524,6 +1561,7 @@ struct compat_loop_info {
- 	struct loop_info64 info64;
- 	int ret;
- 
-+	lockdep_assert_held(&loop_mutex);
- 	ret = loop_info64_from_compat(arg, &info64);
- 	if (ret < 0)
- 		return ret;
-@@ -1537,10 +1575,9 @@ struct compat_loop_info {
- 	struct loop_info64 info64;
- 	int err;
- 
--	if (!arg) {
--		mutex_unlock(&lo->lo_ctl_mutex);
-+	lockdep_assert_held(&loop_mutex);
-+	if (!arg)
- 		return -EINVAL;
--	}
- 	err = loop_get_status(lo, &info64);
- 	if (!err)
- 		err = loop_info64_to_compat(&info64, arg);
-@@ -1555,20 +1592,16 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
- 
- 	switch(cmd) {
- 	case LOOP_SET_STATUS:
--		err = mutex_lock_killable(&lo->lo_ctl_mutex);
--		if (!err) {
-+		err = lock_loop_killable();
-+		if (!err)
- 			err = loop_set_status_compat(lo,
- 						     (const struct compat_loop_info __user *)arg);
--			mutex_unlock(&lo->lo_ctl_mutex);
--		}
- 		break;
- 	case LOOP_GET_STATUS:
--		err = mutex_lock_killable(&lo->lo_ctl_mutex);
--		if (!err) {
-+		err = lock_loop_killable();
-+		if (!err)
- 			err = loop_get_status_compat(lo,
- 						     (struct compat_loop_info __user *)arg);
--			/* loop_get_status() unlocks lo_ctl_mutex */
--		}
- 		break;
- 	case LOOP_SET_CAPACITY:
- 	case LOOP_CLR_FD:
-@@ -1583,6 +1616,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
- 		err = -ENOIOCTLCMD;
- 		break;
- 	}
-+	unlock_loop();
- 	return err;
- }
- #endif
-@@ -1590,37 +1624,30 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
- static int lo_open(struct block_device *bdev, fmode_t mode)
- {
- 	struct loop_device *lo;
--	int err = 0;
-+	int err = lock_loop_killable();
- 
--	mutex_lock(&loop_index_mutex);
-+	if (err)
-+		return err;
- 	lo = bdev->bd_disk->private_data;
--	if (!lo) {
-+	if (!lo)
- 		err = -ENXIO;
--		goto out;
--	}
--
--	atomic_inc(&lo->lo_refcnt);
--out:
--	mutex_unlock(&loop_index_mutex);
-+	else
-+		atomic_inc(&lo->lo_refcnt);
-+	unlock_loop();
- 	return err;
- }
- 
- static void __lo_release(struct loop_device *lo)
- {
--	int err;
--
- 	if (atomic_dec_return(&lo->lo_refcnt))
- 		return;
--
--	mutex_lock(&lo->lo_ctl_mutex);
-+	lockdep_assert_held(&loop_mutex);
- 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
- 		/*
- 		 * In autoclear mode, stop the loop thread
- 		 * and remove configuration after last close.
- 		 */
--		err = loop_clr_fd(lo);
--		if (!err)
--			return;
-+		loop_clr_fd(lo);
- 	} else if (lo->lo_state == Lo_bound) {
- 		/*
- 		 * Otherwise keep thread (if running) and config,
-@@ -1629,15 +1656,13 @@ static void __lo_release(struct loop_device *lo)
- 		blk_mq_freeze_queue(lo->lo_queue);
- 		blk_mq_unfreeze_queue(lo->lo_queue);
- 	}
--
--	mutex_unlock(&lo->lo_ctl_mutex);
- }
- 
- static void lo_release(struct gendisk *disk, fmode_t mode)
- {
--	mutex_lock(&loop_index_mutex);
-+	lock_loop();
- 	__lo_release(disk->private_data);
--	mutex_unlock(&loop_index_mutex);
-+	unlock_loop();
- }
- 
- static const struct block_device_operations lo_fops = {
-@@ -1676,10 +1701,8 @@ static int unregister_transfer_cb(int id, void *ptr, void *data)
- 	struct loop_device *lo = ptr;
- 	struct loop_func_table *xfer = data;
- 
--	mutex_lock(&lo->lo_ctl_mutex);
- 	if (lo->lo_encryption == xfer)
- 		loop_release_xfer(lo);
--	mutex_unlock(&lo->lo_ctl_mutex);
- 	return 0;
- }
- 
-@@ -1691,8 +1714,14 @@ int loop_unregister_transfer(int number)
- 	if (n == 0 || n >= MAX_LO_CRYPT || (xfer = xfer_funcs[n]) == NULL)
- 		return -EINVAL;
- 
-+	/*
-+	 * cleanup_cryptoloop() cannot handle errors because it is called
-+	 * from module_exit(). Thus, don't give up upon SIGKILL here.
-+	 */
-+	lock_loop();
- 	xfer_funcs[n] = NULL;
- 	idr_for_each(&loop_index_idr, &unregister_transfer_cb, xfer);
-+	unlock_loop();
- 	return 0;
- }
- 
-@@ -1860,7 +1889,6 @@ static int loop_add(struct loop_device **l, int i)
- 	if (!part_shift)
- 		disk->flags |= GENHD_FL_NO_PART_SCAN;
- 	disk->flags |= GENHD_FL_EXT_DEVT;
--	mutex_init(&lo->lo_ctl_mutex);
- 	atomic_set(&lo->lo_refcnt, 0);
- 	lo->lo_number		= i;
- 	spin_lock_init(&lo->lo_lock);
-@@ -1936,20 +1964,19 @@ static int loop_lookup(struct loop_device **l, int i)
- static struct kobject *loop_probe(dev_t dev, int *part, void *data)
- {
- 	struct loop_device *lo;
--	struct kobject *kobj;
--	int err;
-+	struct kobject *kobj = NULL;
-+	int err = lock_loop_killable();
- 
--	mutex_lock(&loop_index_mutex);
-+	*part = 0;
-+	if (err)
-+		return NULL;
- 	err = loop_lookup(&lo, MINOR(dev) >> part_shift);
- 	if (err < 0)
- 		err = loop_add(&lo, MINOR(dev) >> part_shift);
--	if (err < 0)
--		kobj = NULL;
--	else
-+	if (err >= 0)
- 		kobj = get_disk_and_module(lo->lo_disk);
--	mutex_unlock(&loop_index_mutex);
-+	unlock_loop();
- 
--	*part = 0;
- 	return kobj;
- }
- 
-@@ -1957,9 +1984,11 @@ static long loop_control_ioctl(struct file *file, unsigned int cmd,
- 			       unsigned long parm)
- {
- 	struct loop_device *lo;
--	int ret = -ENOSYS;
-+	int ret = lock_loop_killable();
- 
--	mutex_lock(&loop_index_mutex);
-+	if (ret)
-+		return ret;
-+	ret = -ENOSYS;
- 	switch (cmd) {
- 	case LOOP_CTL_ADD:
- 		ret = loop_lookup(&lo, parm);
-@@ -1973,21 +2002,17 @@ static long loop_control_ioctl(struct file *file, unsigned int cmd,
- 		ret = loop_lookup(&lo, parm);
- 		if (ret < 0)
- 			break;
--		ret = mutex_lock_killable(&lo->lo_ctl_mutex);
- 		if (ret)
- 			break;
- 		if (lo->lo_state != Lo_unbound) {
- 			ret = -EBUSY;
--			mutex_unlock(&lo->lo_ctl_mutex);
- 			break;
- 		}
- 		if (atomic_read(&lo->lo_refcnt) > 0) {
- 			ret = -EBUSY;
--			mutex_unlock(&lo->lo_ctl_mutex);
- 			break;
- 		}
- 		lo->lo_disk->private_data = NULL;
--		mutex_unlock(&lo->lo_ctl_mutex);
- 		idr_remove(&loop_index_idr, lo->lo_number);
- 		loop_remove(lo);
- 		break;
-@@ -1997,7 +2022,7 @@ static long loop_control_ioctl(struct file *file, unsigned int cmd,
- 			break;
- 		ret = loop_add(&lo, -1);
- 	}
--	mutex_unlock(&loop_index_mutex);
-+	unlock_loop();
- 
- 	return ret;
- }
-@@ -2081,10 +2106,10 @@ static int __init loop_init(void)
- 				  THIS_MODULE, loop_probe, NULL, NULL);
- 
- 	/* pre-create number of devices given by config or max_loop */
--	mutex_lock(&loop_index_mutex);
-+	lock_loop();
- 	for (i = 0; i < nr; i++)
- 		loop_add(&lo, i);
--	mutex_unlock(&loop_index_mutex);
-+	unlock_loop();
- 
- 	printk(KERN_INFO "loop: module loaded\n");
- 	return 0;
-diff --git a/drivers/block/loop.h b/drivers/block/loop.h
-index 0f45416..61c6421 100644
---- a/drivers/block/loop.h
-+++ b/drivers/block/loop.h
-@@ -54,7 +54,6 @@ struct loop_device {
- 
- 	spinlock_t		lo_lock;
- 	int			lo_state;
--	struct mutex		lo_ctl_mutex;
- 	struct kthread_worker	worker;
- 	struct task_struct	*worker_task;
- 	bool			use_dio;
--- 
-1.8.3.1
+> [   52.050031]  find_bit_test+0x84/0x173:
+> 						find_bit_test at lib/find_bit_benchmark.c:135
+> [   52.050031]  ? test_find_next_and_bit+0x9b/0x9b
+> [   52.050031]  do_one_initcall+0x18e/0x3df:
+> 						do_one_initcall at init/main.c:883
+> [   52.050031]  ? check_kcov_mode+0x5/0x37:
+> 						check_kcov_mode at kernel/kcov.c:60
+> [   52.050031]  ? __sanitizer_cov_trace_pc+0x2b/0x66:
+> 						__sanitizer_cov_trace_pc at kernel/kcov.c:101
+> [   52.050031]  ? check_kcov_mode+0x5/0x37:
+> 						check_kcov_mode at kernel/kcov.c:60
+> [   52.050031]  kernel_init_freeable+0x250/0x3a5:
+> 						do_initcall_level at init/main.c:951
+> 						 (inlined by) do_initcalls at init/main.c:959
+> 						 (inlined by) do_basic_setup at init/main.c:977
+> 						 (inlined by) kernel_init_freeable at init/main.c:1127
+> [   52.050031]  ? rest_init+0x13a/0x13a:
+> 						kernel_init at init/main.c:1050
+> [   52.050031]  kernel_init+0x17/0x218:
+> 						kernel_init at init/main.c:1053
+> [   52.050031]  ? rest_init+0x13a/0x13a:
+> 						kernel_init at init/main.c:1050
+> [   52.050031]  ret_from_fork+0x35/0x40:
+> 						ret_from_fork at arch/x86/entry/entry_64.S:418
+> [   52.050031] Code: 1c 00 00 8b 8b 1c 1c 00 00 48 ff 05 d2 2d fd 04 48 8b 02 48 ff c0 48 39 c1 76 0e 48 ff 05 c8 2d fd 04 48 89 2c c2 48 89 02 5b 5d <c3> 48 8b 0c 24 40 0f b6 d6 40 0f b6 f7 31 ff 48 ff 05 e9 2d fd
+> [   52.050031] Kernel panic - not syncing: softlockup: hung tasks
