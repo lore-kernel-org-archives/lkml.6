@@ -1,124 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754481AbeDTJgV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:36:21 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36993 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754229AbeDTJfw (ORCPT
+        id S1754357AbeDTJhM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 05:37:12 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:37660 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754190AbeDTJhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:35:52 -0400
-X-Google-Smtp-Source: AIpwx48rJV1quaFqRlHcx3MukdTplE3GqhO3t4iLcySZUvHp/WvKAQSngtWpqrb3vtLHsUYVViBQNw==
-Subject: Re: [linux-sunxi] Re: [PATCH v2 14/16] arm: dts: sun8i: h3: enable H3
- sid controller
-To: Kyle Evans <kevans@freebsd.org>, icenowy@aosc.io
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, lee.jones@linaro.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, Russell King <linux@armlinux.org.uk>,
-        jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        davem@davemloft.net, hans.verkuil@cisco.com, mchehab@kernel.org,
-        rask@formelder.dk, clabbe.montjoie@gmail.com, sean@mess.org,
-        krzk@kernel.org, quentin.schulz@free-electrons.com,
-        edu.molinas@gmail.com, singhalsimran0@gmail.com,
-        linux-iio@vger.kernel.org, devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-References: <20180128232919.12639-1-embed3d@gmail.com>
- <20180128232919.12639-15-embed3d@gmail.com>
- <20180129095200.attg7cgvpifpchtn@flea.lan>
- <470ec61e-8b08-5193-ede1-01d02b2c865e@gmail.com>
- <CACNAnaGVSbk7czb+mcGTx1C=YwCWe1qqHQDQe9+PNifwEXovMw@mail.gmail.com>
- <F1D7126A-B6ED-4A83-A941-5F39CED472CE@aosc.io>
- <CACNAnaFMKDmvAUXJngKHWkeGLfjsgn5hhJszNk7Sg4BU98Oafw@mail.gmail.com>
-From: Philipp Rossak <embed3d@gmail.com>
-Message-ID: <0ab29bf0-b069-338e-f312-e533656fa0b6@gmail.com>
-Date: Fri, 20 Apr 2018 11:35:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 20 Apr 2018 05:37:11 -0400
+From: Richard Weinberger <richard@nod.at>
+To: Quentin Schulz <quentin.schulz@bootlin.com>
+Cc: dedekind1@gmail.com, dwmw2@infradead.org, computersforpeace@gmail.com,
+        boris.brezillon@bootlin.com, marek.vasut@gmail.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH 2/2] ubi: introduce ubi.nocheck parameter to skip CRC check when attaching ubi vol
+Date: Fri, 20 Apr 2018 11:37:07 +0200
+Message-ID: <2085970.qGmQXvoWho@blindfold>
+In-Reply-To: <6551534f88b3aa77cc377c4270c4ddf7fe92cdf4.1524214122.git-series.quentin.schulz@bootlin.com>
+References: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com> <6551534f88b3aa77cc377c4270c4ddf7fe92cdf4.1524214122.git-series.quentin.schulz@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <CACNAnaFMKDmvAUXJngKHWkeGLfjsgn5hhJszNk7Sg4BU98Oafw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kyle,
+Quentin,
 
-I'm already working on a Version 3 of this patch series. Right now this 
-slowed down since I'm very busy and the ToDo-List is still very long.
-
-My plan is to send out a version during this release cycle.
-
-If you need it right now feel free to submit patches!
-
-Philipp
-
-On 19.04.2018 17:19, Kyle Evans wrote:
-> On Thu, Apr 19, 2018 at 10:13 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
->>
->>
->> 于 2018年4月19日 GMT+08:00 下午11:11:22, Kyle Evans <kevans@freebsd.org> 写到:
->>> On Mon, Jan 29, 2018 at 6:03 AM, Philipp Rossak <embed3d@gmail.com>
->>> wrote:
->>>>
->>>>
->>>> On 29.01.2018 10:52, Maxime Ripard wrote:
->>>>>
->>>>> On Mon, Jan 29, 2018 at 12:29:17AM +0100, Philipp Rossak wrote:
->>>>>>
->>>>>> This patch enables the the sid controller in the H3. It can be used
->>>>>> for thermal calibration data.
->>>>>>
->>>>>> Signed-off-by: Philipp Rossak <embed3d@gmail.com>
->>>>>> ---
->>>>>>    arch/arm/boot/dts/sun8i-h3.dtsi | 7 +++++++
->>>>>>    1 file changed, 7 insertions(+)
->>>>>>
->>>>>> diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi
->>>>>> b/arch/arm/boot/dts/sun8i-h3.dtsi
->>>>>> index 3f83f6a27c74..9bb5cc29fec5 100644
->>>>>> --- a/arch/arm/boot/dts/sun8i-h3.dtsi
->>>>>> +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
->>>>>> @@ -72,6 +72,13 @@
->>>>>>                  };
->>>>>>          };
->>>>>>    +     soc {
->>>>>> +               sid: eeprom@1c14000 {
->>>>>> +                       compatible = "allwinner,sun8i-h3-sid";
->>>>>> +                       reg = <0x01c14000 0x400>;
->>>>>> +               };
->>>>>> +       };
->>>>>> +
->>>>>
->>>>>
->>>>> Shouldn't you also use a nvmem-cells property to the THS node?
->>>>>
->>>>> Maxime
->>>>>
->>>>
->>>> Oh seems like I forgot that.
->>>> As related to the wiki [1] this should be 64 bit wide at the address
->>> 0x34. I
->>>> will add that in the next version.
->>>>
->>>>
->>>> [1]: http://linux-sunxi.org/SID_Register_Guide#eFUSE
->>>>
->>>> Thanks,
->>>> Philipp
->>>>
->>>
->>> Hi,
->>>
->>> Any chance this will see a v3 soon? I'm kind of interested in sid node
->>> for h3. =)
->>
->> This patch is independent and can be easily sent out
->> by its own.
->>
+Am Freitag, 20. April 2018, 10:52:41 CEST schrieb Quentin Schulz:
+> There's already ECC on NAND pages so there may be no need for one to
+> check the CRC of a UBI volume.
 > 
-> Right- I had considered doing so, but wanted to make sure I wasn't
-> going to collide with this series if a v3 is imminent.
+> Let's introduce a ubi.nocheck parameter that let one skip the CRC check
+> when attaching a UBI volume.
 > 
+> This also drastically speeds kernel boot by removing a potentially
+> useless check, e.g. I gained 3.2s on boot time of a SPEAr600-based board
+> for a ~20MB UBI volume used as rootfs.
+
+You mean at *open* time of a *static* UBI volume?
+So I guess the use case is having a read-only filesystem on top of ubiblock?
+
+> Signed-off-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> ---
+>  drivers/mtd/ubi/kapi.c | 70 +++++++++++++++++++++++++++++++++++++++++++-
+>  drivers/mtd/ubi/ubi.h  |  6 ++++-
+>  drivers/mtd/ubi/vtbl.c | 24 ++++++++++++++-
+>  3 files changed, 99 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/ubi/kapi.c b/drivers/mtd/ubi/kapi.c
+> index d4b2e87..d604cd5 100644
+> --- a/drivers/mtd/ubi/kapi.c
+> +++ b/drivers/mtd/ubi/kapi.c
+> @@ -28,6 +28,9 @@
+>  #include <asm/div64.h>
+>  #include "ubi.h"
+>  
+> +struct ubivol_param ubinocheck_param[UBIVOL_MAX_DEVICES];
+> +int ubinocheck_devs;
+> +
+>  /**
+>   * ubi_do_get_device_info - get information about UBI device.
+>   * @ubi: UBI device description object
+> @@ -865,3 +868,70 @@ int ubi_unregister_volume_notifier(struct notifier_block *nb)
+>  	return blocking_notifier_chain_unregister(&ubi_notifiers, nb);
+>  }
+>  EXPORT_SYMBOL_GPL(ubi_unregister_volume_notifier);
+> +
+> +static int __init ubinocheckvol_set_param(const char *val,
+> +					  const struct kernel_param *kp)
+> +{
+> +	int i, ret;
+> +	size_t len;
+> +	struct ubivol_param *param;
+> +	char buf[UBIVOL_PARAM_LEN];
+> +	char *pbuf = &buf[0];
+> +	char *tokens[UBIVOL_PARAM_COUNT];
+> +
+> +	if (!val)
+> +		return -EINVAL;
+> +
+> +	len = strnlen(val, UBIVOL_PARAM_LEN);
+> +	if (len == 0) {
+> +		pr_warn("UBI: nocheck: empty 'nocheck=' parameter - ignored\n");
+> +		return 0;
+> +	}
+> +
+> +	if (len == UBIVOL_PARAM_LEN) {
+> +		pr_err("UBI: nocheck: parameter \"%s\" is too long, max. is %d\n",
+> +		       val, UBIVOL_PARAM_LEN);
+> +		return -EINVAL;
+> +	}
+> +
+> +	strcpy(buf, val);
+> +
+> +	/* Get rid of the final newline */
+> +	if (buf[len - 1] == '\n')
+> +		buf[len - 1] = '\0';
+> +
+> +	for (i = 0; i < UBIVOL_PARAM_COUNT; i++)
+> +		tokens[i] = strsep(&pbuf, ",");
+> +
+> +	param = &ubinocheck_param[ubinocheck_devs];
+> +	if (tokens[1]) {
+> +		/* Two parameters: can be 'ubi, vol_id' or 'ubi, vol_name' */
+> +		ret = kstrtoint(tokens[0], 10, &param->ubi_num);
+> +		if (ret < 0)
+> +			return -EINVAL;
+> +
+> +		/* Second param can be a number or a name */
+> +		ret = kstrtoint(tokens[1], 10, &param->vol_id);
+> +		if (ret < 0) {
+> +			param->vol_id = -1;
+> +			strcpy(param->name, tokens[1]);
+> +		}
+> +	}
+>
+
+Do we really need this per volume? If your flash is trustworthy, it should not matter.
+Having it per UBI instance instead of volume would make the code less complicated.
+
+> +	ubinocheck_devs++;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct kernel_param_ops ubinocheckvol_param_ops = {
+> +	.set	= ubinocheckvol_set_param,
+> +};
+> +module_param_cb(nocheck, &ubinocheckvol_param_ops, NULL, 0);
+> +MODULE_PARM_DESC(nocheck,
+> +		 "Disable CRC check for UBI volumes. Parameter format: nocheck=dev,[num|name]>.\n"
+> +		 "Multiple \"nocheck\" parameters may be specified.\n"
+> +		 "Examples\n"
+> +		 "Using the UBI device, and the volume name:\n"
+> +		 "ubi.nocheck=0,rootfs\n"
+> +		 "Using both UBI device number and UBI volume number:\n"
+> +		 "ubi.nocheck=0,0\n");
+> diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
+> index 4cc6ec9..2bd89b4 100644
+> --- a/drivers/mtd/ubi/ubi.h
+> +++ b/drivers/mtd/ubi/ubi.h
+> @@ -825,6 +825,12 @@ struct ubivol_param {
+>  	char name[UBIVOL_PARAM_LEN + 1];
+>  };
+>  
+> +/* Numbers of elements set in the @ubinocheck_param array */
+> +extern int ubinocheck_devs;
+> +
+> +/* MTD devices specification parameters */
+> +extern struct ubivol_param ubinocheck_param[UBIVOL_MAX_DEVICES];
+> +
+>  #include "debug.h"
+>  
+>  extern struct kmem_cache *ubi_wl_entry_slab;
+> diff --git a/drivers/mtd/ubi/vtbl.c b/drivers/mtd/ubi/vtbl.c
+> index 263743e..06b6cfd 100644
+> --- a/drivers/mtd/ubi/vtbl.c
+> +++ b/drivers/mtd/ubi/vtbl.c
+> @@ -534,9 +534,10 @@ static int init_volumes(struct ubi_device *ubi,
+>  			const struct ubi_attach_info *ai,
+>  			const struct ubi_vtbl_record *vtbl)
+>  {
+> -	int i, reserved_pebs = 0;
+> +	int i, j, reserved_pebs = 0;
+>  	struct ubi_ainf_volume *av;
+>  	struct ubi_volume *vol;
+> +	struct ubivol_param *param;
+>  
+>  	for (i = 0; i < ubi->vtbl_slots; i++) {
+>  		cond_resched();
+> @@ -620,6 +621,27 @@ static int init_volumes(struct ubi_device *ubi,
+>  			(long long)(vol->used_ebs - 1) * vol->usable_leb_size;
+>  		vol->used_bytes += av->last_data_size;
+>  		vol->last_eb_bytes = av->last_data_size;
+> +
+> +		for (j = 0; j < ubinocheck_devs; j++) {
+> +			param = &ubinocheck_param[j];
+> +
+> +			if (vol->ubi->ubi_num != param->ubi_num)
+> +				continue;
+> +			if (vol->vol_id == param->vol_id) {
+> +				ubi_msg(vol->ubi,
+> +					"skipping CRC check for volume %d",
+> +					vol->vol_id);
+> +				vol->checked = true;
+
+Please don't abuse the checked flag.
+A new one a la "skip_check" does not hurt.
+But again, I don't think we need it per volume.
+
+Also don't forget to add the nocheck parameter to the ioctl() interface, such that
+you can specify it also with ubiattach...
+
+Thanks,
+//richard
