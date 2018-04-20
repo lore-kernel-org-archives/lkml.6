@@ -1,213 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752578AbeDTWNs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 18:13:48 -0400
-Received: from mga14.intel.com ([192.55.52.115]:15348 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751338AbeDTWNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 18:13:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,303,1520924400";
-   d="scan'208";a="49572128"
-Date: Fri, 20 Apr 2018 15:13:46 -0700
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>, airlied@linux.ie,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [Intel-gfx] [PATCH] gpu: drm: i915: Change return type to
- vm_fault_t
-Message-ID: <20180420221346.GN1310@intel.com>
-References: <20180417151127.GA31655@jordon-HP-15-Notebook-PC>
- <87h8o9g8be.fsf@intel.com>
- <CAFqt6zb_XqVKHPH5U4TubgDTgBURWv63cfa_OMQEyHjGZpKTHQ@mail.gmail.com>
- <20180417161557.GA3603@bombadil.infradead.org>
- <CAFqt6zb5TgZEHHT9kTWsoQ8REy6rVjZ6uQN4oQ2LUatwG13jQw@mail.gmail.com>
- <871sfdxe0r.fsf@intel.com>
+        id S1752826AbeDTWTL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 18:19:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46334 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752634AbeDTWTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 18:19:08 -0400
+Date: Fri, 20 Apr 2018 18:19:05 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>, Tejun Heo <tj@kernel.org>,
+        Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Jeff Layton <jlayton@redhat.com>
+Subject: Re: [RFC PATCH 00/79] Generic page write protection and a solution
+ to page waitqueue
+Message-ID: <20180420221905.GA4124@redhat.com>
+References: <20180404191831.5378-1-jglisse@redhat.com>
+ <6f6e3602-c8a6-ae81-3ef0-9fe18e43c841@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <871sfdxe0r.fsf@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6f6e3602-c8a6-ae81-3ef0-9fe18e43c841@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 08:46:44AM +0300, Jani Nikula wrote:
-> On Tue, 17 Apr 2018, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> > On 17-Apr-2018 9:45 PM, "Matthew Wilcox" <willy@infradead.org> wrote:
-> >>
-> >> On Tue, Apr 17, 2018 at 09:14:32PM +0530, Souptick Joarder wrote:
-> >> > Not exactly. The plan for these patches is to introduce new vm_fault_t
-> > type
-> >> > in vm_operations_struct fault handlers. It's now available in 4.17-rc1.
-> > We will
-> >> > push all the required drivers/filesystem changes through different
-> > maintainers
-> >> > to linus tree. Once everything is converted into vm_fault_t type then
-> > Changing
-> >> > it from a signed to an unsigned int causes GCC to warn about an
-> > assignment
-> >> > from an incompatible type -- int foo(void) is incompatible with
-> >> > unsigned int foo(void).
-> >> >
-> >> > Please refer 1c8f422059ae ("mm: change return type to vm_fault_t") in
-> > 4.17-rc1.
-> >>
-> >> I think this patch would be clearer if you did
-> >>
-> >> -       int ret;
-> >> +       int err;
-> >> +       vm_fault_t ret;
-> >>
-> >> Then it would be clearer to the maintainer that you're splitting apart the
-> >> VM_FAULT and errno codes.
-> >>
-> >> Sorry for not catching this during initial review.
-> >
-> > Ok, I will make required changes and send v2. Sorry, even I missed this :)
+On Fri, Apr 20, 2018 at 12:57:41PM -0700, Tim Chen wrote:
+> On 04/04/2018 12:17 PM, jglisse@redhat.com wrote:
+> > From: Jérôme Glisse <jglisse@redhat.com>
+> > 
+> > https://cgit.freedesktop.org/~glisse/linux/log/?h=generic-write-protection-rfc
+> > 
+> > This is an RFC for LSF/MM discussions. It impacts the file subsystem,
+> > the block subsystem and the mm subsystem. Hence it would benefit from
+> > a cross sub-system discussion.
+> > 
+> > Patchset is not fully bake so take it with a graint of salt. I use it
+> > to illustrate the fact that it is doable and now that i did it once i
+> > believe i have a better and cleaner plan in my head on how to do this.
+> > I intend to share and discuss it at LSF/MM (i still need to write it
+> > down). That plan lead to quite different individual steps than this
+> > patchset takes and his also easier to split up in more manageable
+> > pieces.
+> > 
+> > I also want to apologize for the size and number of patches (and i am
+> > not even sending them all).
+> > 
+> > ----------------------------------------------------------------------
+> > The Why ?
+> > 
+> > I have two objectives: duplicate memory read only accross nodes and or
+> > devices and work around PCIE atomic limitations. More on each of those
+> > objective below. I also want to put forward that it can solve the page
+> > wait list issue ie having each page with its own wait list and thus
+> > avoiding long wait list traversale latency recently reported [1].
+> > 
+> > It does allow KSM for file back pages (truely generic KSM even between
+> > both anonymous and file back page). I am not sure how useful this can
+> > be, this was not an objective i did pursue, this is just a for free
+> > feature (see below).
+> > 
+> > [1] https://groups.google.com/forum/#!topic/linux.kernel/Iit1P5BNyX8
+> > 
+> > ----------------------------------------------------------------------
+> > Per page wait list, so long page_waitqueue() !
+> > 
+> > Not implemented in this RFC but below is the logic and pseudo code
+> > at bottom of this email.
+> > 
+> > When there is a contention on struct page lock bit, the caller which
+> > is trying to lock the page will add itself to a waitqueue. The issues
+> > here is that multiple pages share the same wait queue and on large
+> > system with a lot of ram this means we can quickly get to a long list
+> > of waiters for differents pages (or for the same page) on the same
+> > list [1].
 > 
-> I'm afraid Daniel is closer to the truth.
+> Your approach seems useful if there are lots of locked pages sharing
+> the same wait queue.  
+> 
+> That said, in the original workload from our customer with the long wait queue
+> problem, there was a single super hot page getting migrated, and it
+> is being accessed by all threads which caused the big log jam while they wait for
+> the migration to get completed.  
+> With your approach, we will still likely end up with a long queue 
+> in that workload even if we have per page wait queue.
+> 
+> Thanks.
 
-+1.
+Ok so i re-read the thread, i was writting this cover letter from memory
+and i had bad recollection of your issue, so sorry.
 
-> My bad, sorry for the noise.
+First, do you have a way to reproduce the issue ? Something easy would
+be nice :)
 
-I opened this thread to add exactly question/noise ;).
+So what i am proposing for per page wait queue would only marginaly help
+you (it might not even be mesurable in your workload). It would certainly
+make the code smaller and easier to understand i believe.
 
-So my recommendation for some next time is to make the intention clear
-on the commit message itself from the begin.
+Now that i have look back at your issue i think there is 2 things we
+should do. First keep migration page map read only, this would at least
+avoid CPU read fault. In trace you captured i wasn't able to ascertain
+if this were read or write fault.
 
-> 
-> BR,
-> Jani.
-> 
-> 
-> 
-> >>
-> >> > On Tue, Apr 17, 2018 at 8:59 PM, Jani Nikula
-> >> > <jani.nikula@linux.intel.com> wrote:
-> >> > > On Tue, 17 Apr 2018, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >> > >> Use new return type vm_fault_t for fault handler. For
-> >> > >> now, this is just documenting that the function returns
-> >> > >> a VM_FAULT value rather than an errno. Once all instances
-> >> > >> are converted, vm_fault_t will become a distinct type.
-> >> > >>
-> >> > >> Reference id -> 1c8f422059ae ("mm: change return type to
-> >> > >> vm_fault_t")
-> >> > >>
-> >> > >> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> >> > >> ---
-> >> > >>  drivers/gpu/drm/i915/i915_drv.h |  3 ++-
-> >> > >>  drivers/gpu/drm/i915/i915_gem.c | 15 ++++++++-------
-> >> > >>  2 files changed, 10 insertions(+), 8 deletions(-)
-> >> > >>
-> >> > >> diff --git a/drivers/gpu/drm/i915/i915_drv.h
-> > b/drivers/gpu/drm/i915/i915_drv.h
-> >> > >> index a42deeb..95b0d50 100644
-> >> > >> --- a/drivers/gpu/drm/i915/i915_drv.h
-> >> > >> +++ b/drivers/gpu/drm/i915/i915_drv.h
-> >> > >> @@ -51,6 +51,7 @@
-> >> > >>  #include <drm/drm_gem.h>
-> >> > >>  #include <drm/drm_auth.h>
-> >> > >>  #include <drm/drm_cache.h>
-> >> > >> +#include <linux/mm_types.h>
-> >> > >>
-> >> > >>  #include "i915_params.h"
-> >> > >>  #include "i915_reg.h"
-> >> > >> @@ -3363,7 +3364,7 @@ int i915_gem_wait_for_idle(struct
-> > drm_i915_private *dev_priv,
-> >> > >>                          unsigned int flags);
-> >> > >>  int __must_check i915_gem_suspend(struct drm_i915_private
-> > *dev_priv);
-> >> > >>  void i915_gem_resume(struct drm_i915_private *dev_priv);
-> >> > >> -int i915_gem_fault(struct vm_fault *vmf);
-> >> > >> +vm_fault_t i915_gem_fault(struct vm_fault *vmf);
-> >> > >>  int i915_gem_object_wait(struct drm_i915_gem_object *obj,
-> >> > >>                        unsigned int flags,
-> >> > >>                        long timeout,
-> >> > >> diff --git a/drivers/gpu/drm/i915/i915_gem.c
-> > b/drivers/gpu/drm/i915/i915_gem.c
-> >> > >> index dd89abd..bdac690 100644
-> >> > >> --- a/drivers/gpu/drm/i915/i915_gem.c
-> >> > >> +++ b/drivers/gpu/drm/i915/i915_gem.c
-> >> > >> @@ -1882,7 +1882,7 @@ int i915_gem_mmap_gtt_version(void)
-> >> > >>   * The current feature set supported by i915_gem_fault() and thus
-> > GTT mmaps
-> >> > >>   * is exposed via I915_PARAM_MMAP_GTT_VERSION (see
-> > i915_gem_mmap_gtt_version).
-> >> > >>   */
-> >> > >> -int i915_gem_fault(struct vm_fault *vmf)
-> >> > >> +vm_fault_t i915_gem_fault(struct vm_fault *vmf)
-> >> > >>  {
-> >> > >>  #define MIN_CHUNK_PAGES ((1 << 20) >> PAGE_SHIFT) /* 1 MiB */
-> >> > >>       struct vm_area_struct *area = vmf->vma;
-> >> > >> @@ -1895,6 +1895,7 @@ int i915_gem_fault(struct vm_fault *vmf)
-> >> > >>       pgoff_t page_offset;
-> >> > >>       unsigned int flags;
-> >> > >>       int ret;
-> >> > >> +     vm_fault_t retval;
-> >> > >
-> >> > > What's the point of changing the name? An unnecessary change.
-> >> > >
-> >> > > BR,
-> >> > > Jani.
-> >> > >
-> >> > >>
-> >> > >>       /* We don't use vmf->pgoff since that has the fake offset */
-> >> > >>       page_offset = (vmf->address - area->vm_start) >> PAGE_SHIFT;
-> >> > >> @@ -2000,7 +2001,7 @@ int i915_gem_fault(struct vm_fault *vmf)
-> >> > >>                * and so needs to be reported.
-> >> > >>                */
-> >> > >>               if (!i915_terminally_wedged(&dev_priv->gpu_error)) {
-> >> > >> -                     ret = VM_FAULT_SIGBUS;
-> >> > >> +                     retval = VM_FAULT_SIGBUS;
-> >> > >>                       break;
-> >> > >>               }
-> >> > >>       case -EAGAIN:
-> >> > >> @@ -2017,21 +2018,21 @@ int i915_gem_fault(struct vm_fault *vmf)
-> >> > >>                * EBUSY is ok: this just means that another thread
-> >> > >>                * already did the job.
-> >> > >>                */
-> >> > >> -             ret = VM_FAULT_NOPAGE;
-> >> > >> +             retval = VM_FAULT_NOPAGE;
-> >> > >>               break;
-> >> > >>       case -ENOMEM:
-> >> > >> -             ret = VM_FAULT_OOM;
-> >> > >> +             retval = VM_FAULT_OOM;
-> >> > >>               break;
-> >> > >>       case -ENOSPC:
-> >> > >>       case -EFAULT:
-> >> > >> -             ret = VM_FAULT_SIGBUS;
-> >> > >> +             retval = VM_FAULT_SIGBUS;
-> >> > >>               break;
-> >> > >>       default:
-> >> > >>               WARN_ONCE(ret, "unhandled error in i915_gem_fault:
-> > %i\n", ret);
-> >> > >> -             ret = VM_FAULT_SIGBUS;
-> >> > >> +             retval = VM_FAULT_SIGBUS;
-> >> > >>               break;
-> >> > >>       }
-> >> > >> -     return ret;
-> >> > >> +     return retval;
-> >> > >>  }
-> >> > >>
-> >> > >>  static void __i915_gem_object_release_mmap(struct
-> > drm_i915_gem_object *obj)
-> >> > >> --
-> >> > >> 1.9.1
-> >> > >>
-> >> > >
-> >> > > --
-> >> > > Jani Nikula, Intel Open Source Technology Center
-> 
-> -- 
-> Jani Nikula, Intel Open Source Technology Center
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+Second idea i have is about NUMA, everytime we NUMA migrate a page we
+could attach a temporary struct to the page (using page->mapping). So
+if we scan that page again we can inspect information about previous
+migration and see if we are not over migrating that page (ie bouncing
+it all over). If so we can mark the page (maybe with a page flag if we
+can find one) to protect it from further migration. That temporary
+struct would be remove after a while, ie autonuma would preallocate a
+bunch of those and keep an LRU of them and recycle the oldest when it
+needs a new one to migrate another page.
+
+
+LSF/MM slots:
+
+Michal can i get 2 slots to talk about this ? MM only discussion, one
+to talk about doing migration with page map read only but write
+protected while migration is happening. The other one to talk about
+attaching auto NUMA tracking struct to page.
+
+Cheers,
+Jérôme
