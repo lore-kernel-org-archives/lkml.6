@@ -1,88 +1,114 @@
-Return-Path: <deller@gmx.de>
-X-Google-Smtp-Source: AB8JxZrckEKbNu2Z0gm6NQ5NuukaUXblPd9I3JlLlZ2PU9HJ+BZ6B953S5vONJ6bVU1y6q0CO/fE
-ARC-Seal: i=1; a=rsa-sha256; t=1524331765; cv=none;
+Return-Path: <gunthorp@deltatee.com>
+X-Google-Smtp-Source: AB8JxZoSGd9UoaMuh1GnIJ1i1d3HgWbsCqN4NBZzlLmHGuxczOPjyKocNBfEhL/UP+wh6VhruZtI
+ARC-Seal: i=1; a=rsa-sha256; t=1524248660; cv=none;
         d=google.com; s=arc-20160816;
-        b=YvVE355D96dA7wVeoPHsQIzC+MkKTh6OljEsXY9xGuujPT09JhQkAjfQM9BhfDcFTA
-         VnVaZWEMyF6ouiQAp6OC70uu/+C2F/26C4XnXjZJcMv8fctbVyxtzhh0FSWA/lhwZ5Ml
-         anilqzWbEe6SUrmhU+AxJvrul8Df+MpH5yM9CribKcMrkkqqeGHIw2OI8Iohkscxn3m5
-         3xo4oe1QH2j+ZzhrZalUhNnbFs6PMvYB50nFIdJn/mD+qxmBsqMh9KrUaYUlw3yzi01M
-         9+jQHPzakbpZGKHNK4diRuoIC0OlayPlUQ7waIw4TV2RFAJGrY+yPfU4+exO/0ILJnhS
-         5lrQ==
+        b=utxIDeK8AmyJ6I7eUpJ3WunyK5DQFiX1ce66mW92yo4qmHEWsYI8u05+C6Z68Vr5hd
+         HwTV6KR+m1CNZSfNpGkGaC9j7dUgPkjbW0qxri+e8ElYx2HtURqKl7VNhja6EfUyDxcl
+         4e7aWMOE/3KaxeakZ+m/YxC4xfhZNr/+xcqQfrjjZF66G7BfeGwUiXFVxFqTmvGpWvCz
+         qmTq/ZotGHzyX/PuJ1EEH89dip26TAr1OG4EO3Gso0UvRrjU89nCyUmRjrFejNhEWx2e
+         UIaPpMvVSEYowGTDeQVOMfIc0H6XXBpbxMYYajZHAJ+t0zt6Mm3qWMWwdjFtlAGsHDS9
+         n6RA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=subject:references:in-reply-to:message-id:date:cc:to:from
          :arc-authentication-results;
-        bh=MbUdC+NUUbbW8L1fpHtz2x7a9lZcqdrSLW58rvbQw3U=;
-        b=n0Jw9TfBcTMt6jjtRckucNG/GlF6MnhlOBd7fwH92WmlGUfRr5YDvYSzlkBVyzrQk3
-         Y2x7LNR+Tx4Qf7RJdCgSWydETZxvejUHrTqzR6dKE9QhWmkbO4zlNeMbUALgPZ5HNw8Y
-         SO8ZZqqXBNcaqZfjWU/lsl3FRBPRh7qcgWqM0fbmd2a1JBzht2VQXSnjxfE3LOUHlLbE
-         rC2PbZLuivoyXHpQGRkTKQCsEgfSvkJXJ8xDL327kHgC+1GJVsSOMfveEXO1IAVtKOto
-         Kq0H5Dp9z7eTK47nk+IacormdLhsNFFYbnc5EIv9IAcgcCCQCEOYJzGcUOS1v3fx4rpS
-         dgYg==
+        bh=eUesbsohkNyEFifBJRCUCMZbZTpJkONjRjAFIY5PoS4=;
+        b=XaMUMD8sy5KgX5IYZlyVz9l+AGnCwHYXwz5+O/pAUNHaAzO3Wm1fCouxD7RtLls6kV
+         U+RvDJKgIv090Pl/Kbtc93RBNhXaJnUAGd9yTsJXbalK9i4mOendkichvFAyxLSYuu44
+         nPbb0KqPB16ODa+mslcaGM6HDbbXVE8VAkzL4AGF015ryC4w81RfNSOKZtNhjeBFfHVc
+         KjliksROs5SJNUSK7htc308h5liLKxPJwECDcS4zh/A99mIzy/J1IpMjBZ5sapmrocv5
+         ZYxV5i13pDUrfPM6hA+bywm9/R5gQGTo1xpkAtZNfiwrS/yrQplyy8vphztSRS/Yijty
+         BBBA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of deller@gmx.de designates 212.227.17.20 as permitted sender) smtp.mailfrom=deller@gmx.de
+       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of deller@gmx.de designates 212.227.17.20 as permitted sender) smtp.mailfrom=deller@gmx.de
-Subject: Re: [PATCH v16 2/7] parisc: iomap: introduce io{read|write}64
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-ntb@googlegroups.com,
- linux-crypto@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+       spf=pass (google.com: domain of gunthorp@deltatee.com designates 207.54.116.67 as permitted sender) smtp.mailfrom=gunthorp@deltatee.com
+From: Logan Gunthorpe <logang@deltatee.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-ntb@googlegroups.com,
+	linux-crypto@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
- "James E.J. Bottomley" <jejb@parisc-linux.org>,
- Philippe Ombredanne <pombredanne@nexb.com>,
- Kate Stewart <kstewart@linuxfoundation.org>,
- Thomas Gleixner <tglx@linutronix.de>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	=?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>
+Date: Fri, 20 Apr 2018 12:23:57 -0600
+Message-Id: <20180420182403.9691-2-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180420182403.9691-1-logang@deltatee.com>
 References: <20180420182403.9691-1-logang@deltatee.com>
- <20180420182403.9691-3-logang@deltatee.com>
-From: Helge Deller <deller@gmx.de>
-Message-ID: <4cf30fbf-4972-2b1d-f327-99c20f07e84e@gmx.de>
-Date: Sat, 21 Apr 2018 19:29:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20180420182403.9691-3-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:1P3JdxeM9adZQ+6fAF8ZgFXHgZq20NyIkPfh5g5VIhgNOa9++0O
- kAciezjNUcFlRuWl9cadcWKx4R9BT0AjnEDaxGiOXAyW9NJOc8Y1XMyiUnkD71FknWejnxF
- EszrXOPvWBxVyS5R6+g+qG5NFij65t0pYJspd/vg7ZIWlifLm8oQ5KtiZTo+4D4+aJQK+I/
- /C8f7XuH7KtGRo/4MFkvw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:zc1Mqf3lKC0=:LUtow1XgpFLOcLgOqdga4Q
- TpY/qpNJhczgZAXjF/8gwjT648EnJ0rfGbyKBD3eGq6+y/cZhnrz8XUIGFYAj8j1Zyl5+A126
- eQ45ygndIGFfpyE5LANOIGql9L6OG/2LtyEuY3/8oE4vpRWbNrzT7tJFB6c5SCErmIe4wr0Cn
- NESmJTAiqkDGrCXEQxvC+CpXZMZ3ULBnl69hdNWeHNNnwqo+2U5M2qDgITS8w9hHQZmak+kOb
- 4uLvHYlywJ/K/ItqSilC6QNlfIsOoSalrAbuPXr/W0xXgNxwrq6n7MUmfnN49DwEY4R53FidK
- 1PbedpgSNTolqo6dQd6ub81PJWAQ/ftoKZ+6Yety6e9pX2YGBypXJ7LCFboU0Wl8eMnE2CGYw
- 7n6nDc+L+/as9KuQyAujukuvTdpI8vt2rYV6MAss7rQZRb21YQJbH2nXbzsIEi2DxhL0cVCVe
- c6wqNWxyuvoM+8ziezUnUynFOkZlUhGRLZweDcuGb2Di41m1YQUhgyUEFme65D4GD1UlqNzpG
- w7vh65xQbR4eTknTx3b44NAgL9Fz7poVSKTvqQGlMmbohqkPNRjLpWEuljLwDXb7ZK7Kx3aDI
- Vc5cNSuuXX0tiZHrQojCNN2PDXETVMmRUWu3Ww19SowJpmVn1309g4ISkIylR+a6oN8rQWjSq
- U+a2pOMHlgqxcQvGROQP0rlQpBh0q0MSEeciLl9Sk8dWEN2JyE9e8eo01U5R1GNHAJvhjiRF9
- Tz/r/OJRrv+g9wf/pdandt5HOWJUN5MH8y7vH5SP1pxy77h/tgM3dtboYhgRWcjHfWMk0qqGc
- eqQnn/B5jbGukkYza8R76VnEfcgO8qOxbeQL7QDWx4wa7+vPBs=
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, akpm@linux-foundation.org, arnd@arndb.de, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com, tglx@linutronix.de, gregkh@linuxfoundation.org, kstewart@linuxfoundation.org, pombredanne@nexb.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v16 1/7] iomap: Use non-raw io functions for io{read|write}XXbe
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598290563713613159?=
-X-GMAIL-MSGID: =?utf-8?q?1598377705433134067?=
+X-GMAIL-THRID: =?utf-8?q?1598290563402982006?=
+X-GMAIL-MSGID: =?utf-8?q?1598290563402982006?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 20.04.2018 20:23, Logan Gunthorpe wrote:
-> Add support for io{read|write}64() functions in parisc architecture.
-> These are pretty straightforward copies of similar functions which
-> make use of readq and writeq.
-> 
-> Also, indicate that the lo_hi and hi_lo variants of these functions
-> are not provided by this architecture.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Cc: "James E.J. Bottomley" <jejb@parisc-linux.org>
-> Cc: Helge Deller <deller@gmx.de>
+Fix an asymmetry in the io{read|write}XXbe functions in that the
+big-endian variants make use of the raw io accessors while the
+little-endian variants use the regular accessors. Some architectures
+implement barriers to order against both spinlocks and DMA accesses
+and for these case, the big-endian variant of the API would not be
+protected.
 
-Acked-by: Helge Deller <deller@gmx.de> # parisc
+Thus, change the mmio_XXXXbe macros to use the appropriate swab() function
+wrapping the regular accessor. This is similar to what was done for PIO.
 
-Helge
+When this code was originally written, barriers in the IO accessors were
+not common and the accessors simply wrapped the raw functions in a
+conversion to CPU endianness. Since then, barriers have been added in
+some architectures and are now missing in the big endian variant of the
+API.
+
+This also manages to silence a few sparse warnings that check
+for using the correct endian types which the original code did
+not annotate correctly.
+
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Link: http://lkml.kernel.org/r/CAK8P3a25zQDxyaY3iVv+JmSSzs7F6ssGc+HdBkGs54ZfViX+Fg@mail.gmail.com
+---
+ lib/iomap.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/lib/iomap.c b/lib/iomap.c
+index 541d926da95e..2c293b22569f 100644
+--- a/lib/iomap.c
++++ b/lib/iomap.c
+@@ -65,8 +65,8 @@ static void bad_io_access(unsigned long port, const char *access)
+ #endif
+ 
+ #ifndef mmio_read16be
+-#define mmio_read16be(addr) be16_to_cpu(__raw_readw(addr))
+-#define mmio_read32be(addr) be32_to_cpu(__raw_readl(addr))
++#define mmio_read16be(addr) swab16(readw(addr))
++#define mmio_read32be(addr) swab32(readl(addr))
+ #endif
+ 
+ unsigned int ioread8(void __iomem *addr)
+@@ -106,8 +106,8 @@ EXPORT_SYMBOL(ioread32be);
+ #endif
+ 
+ #ifndef mmio_write16be
+-#define mmio_write16be(val,port) __raw_writew(be16_to_cpu(val),port)
+-#define mmio_write32be(val,port) __raw_writel(be32_to_cpu(val),port)
++#define mmio_write16be(val,port) writew(swab16(val),port)
++#define mmio_write32be(val,port) writel(swab32(val),port)
+ #endif
+ 
+ void iowrite8(u8 val, void __iomem *addr)
+-- 
+2.11.0
