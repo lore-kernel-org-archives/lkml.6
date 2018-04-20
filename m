@@ -1,47 +1,278 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754443AbeDTIJz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:09:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50425 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754426AbeDTIJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:09:52 -0400
-Date: Fri, 20 Apr 2018 10:09:48 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH] mm:memcg: add __GFP_NOWARN in
- __memcg_schedule_kmem_cache_create
-Message-ID: <20180420080948.GV17484@dhcp22.suse.cz>
-References: <20180418022912.248417-1-minchan@kernel.org>
- <20180418072002.GN17484@dhcp22.suse.cz>
- <20180418074117.GA210164@rodete-desktop-imager.corp.google.com>
- <20180418075437.GP17484@dhcp22.suse.cz>
- <20180418132328.GB210164@rodete-desktop-imager.corp.google.com>
- <20180418132715.GD17484@dhcp22.suse.cz>
- <alpine.DEB.2.21.1804181152240.227784@chino.kir.corp.google.com>
- <20180419064005.GL17484@dhcp22.suse.cz>
- <20180420054239.GA221997@rodete-desktop-imager.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420054239.GA221997@rodete-desktop-imager.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1754371AbeDTIKa (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:10:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40468 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754194AbeDTIEk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 04:04:40 -0400
+From: Christoph Hellwig <hch@lst.de>
+Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 14/22] nios2: use generic dma_noncoherent_ops
+Date: Fri, 20 Apr 2018 10:03:05 +0200
+Message-Id: <20180420080313.18796-15-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180420080313.18796-1-hch@lst.de>
+References: <20180420080313.18796-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 20-04-18 14:42:39, Minchan Kim wrote:
-[...]
-> When I see replies of this thread, it's arguble to add such one-line
-> warn so if you want it strongly, could you handle by yourself?
+Switch to the generic noncoherent direct mapping implementation.
 
-I do not feel strongly about it to argue as well. So the patch Andrew
-added with a better explanation is sufficient from my POV.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/nios2/Kconfig                   |   3 +
+ arch/nios2/include/asm/Kbuild        |   1 +
+ arch/nios2/include/asm/dma-mapping.h |  20 ----
+ arch/nios2/mm/dma-mapping.c          | 139 +++------------------------
+ 4 files changed, 17 insertions(+), 146 deletions(-)
+ delete mode 100644 arch/nios2/include/asm/dma-mapping.h
+
+diff --git a/arch/nios2/Kconfig b/arch/nios2/Kconfig
+index 3d4ec88f1db1..92035042cf62 100644
+--- a/arch/nios2/Kconfig
++++ b/arch/nios2/Kconfig
+@@ -1,6 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0
+ config NIOS2
+ 	def_bool y
++	select ARCH_HAS_SYNC_DMA_FOR_CPU
++	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
++	select DMA_NONCOHERENT_OPS
+ 	select TIMER_OF
+ 	select GENERIC_ATOMIC64
+ 	select GENERIC_CLOCKEVENTS
+diff --git a/arch/nios2/include/asm/Kbuild b/arch/nios2/include/asm/Kbuild
+index d232da2cbb38..24f6ee1ee69b 100644
+--- a/arch/nios2/include/asm/Kbuild
++++ b/arch/nios2/include/asm/Kbuild
+@@ -8,6 +8,7 @@ generic-y += current.h
+ generic-y += device.h
+ generic-y += div64.h
+ generic-y += dma.h
++generic-y += dma-mapping.h
+ generic-y += emergency-restart.h
+ generic-y += exec.h
+ generic-y += extable.h
+diff --git a/arch/nios2/include/asm/dma-mapping.h b/arch/nios2/include/asm/dma-mapping.h
+deleted file mode 100644
+index 6ceb92251da0..000000000000
+--- a/arch/nios2/include/asm/dma-mapping.h
++++ /dev/null
+@@ -1,20 +0,0 @@
+-/*
+- * Copyright (C) 2011 Tobias Klauser <tklauser@distanz.ch>
+- * Copyright (C) 2009 Wind River Systems Inc
+- *
+- * This file is subject to the terms and conditions of the GNU General
+- * Public License.  See the file COPYING in the main directory of this
+- * archive for more details.
+- */
+-
+-#ifndef _ASM_NIOS2_DMA_MAPPING_H
+-#define _ASM_NIOS2_DMA_MAPPING_H
+-
+-extern const struct dma_map_ops nios2_dma_ops;
+-
+-static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+-{
+-	return &nios2_dma_ops;
+-}
+-
+-#endif /* _ASM_NIOS2_DMA_MAPPING_H */
+diff --git a/arch/nios2/mm/dma-mapping.c b/arch/nios2/mm/dma-mapping.c
+index 4be815519dd4..4af9e5b5ba1c 100644
+--- a/arch/nios2/mm/dma-mapping.c
++++ b/arch/nios2/mm/dma-mapping.c
+@@ -12,18 +12,18 @@
+ 
+ #include <linux/types.h>
+ #include <linux/mm.h>
+-#include <linux/export.h>
+ #include <linux/string.h>
+-#include <linux/scatterlist.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/io.h>
+ #include <linux/cache.h>
+ #include <asm/cacheflush.h>
+ 
+-static inline void __dma_sync_for_device(void *vaddr, size_t size,
+-			      enum dma_data_direction direction)
++void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
+ {
+-	switch (direction) {
++	void *vaddr = phys_to_virt(paddr);
++
++	switch (dir) {
+ 	case DMA_FROM_DEVICE:
+ 		invalidate_dcache_range((unsigned long)vaddr,
+ 			(unsigned long)(vaddr + size));
+@@ -42,10 +42,12 @@ static inline void __dma_sync_for_device(void *vaddr, size_t size,
+ 	}
+ }
+ 
+-static inline void __dma_sync_for_cpu(void *vaddr, size_t size,
+-			      enum dma_data_direction direction)
++void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
+ {
+-	switch (direction) {
++	void *vaddr = phys_to_virt(paddr);
++
++	switch (dir) {
+ 	case DMA_BIDIRECTIONAL:
+ 	case DMA_FROM_DEVICE:
+ 		invalidate_dcache_range((unsigned long)vaddr,
+@@ -58,8 +60,8 @@ static inline void __dma_sync_for_cpu(void *vaddr, size_t size,
+ 	}
+ }
+ 
+-static void *nios2_dma_alloc(struct device *dev, size_t size,
+-		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
++void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
++		gfp_t gfp, unsigned long attrs)
+ {
+ 	void *ret;
+ 
+@@ -80,125 +82,10 @@ static void *nios2_dma_alloc(struct device *dev, size_t size,
+ 	return ret;
+ }
+ 
+-static void nios2_dma_free(struct device *dev, size_t size, void *vaddr,
++void arch_dma_free(struct device *dev, size_t size, void *vaddr,
+ 		dma_addr_t dma_handle, unsigned long attrs)
+ {
+ 	unsigned long addr = (unsigned long) CAC_ADDR((unsigned long) vaddr);
+ 
+ 	free_pages(addr, get_order(size));
+ }
+-
+-static int nios2_dma_map_sg(struct device *dev, struct scatterlist *sg,
+-		int nents, enum dma_data_direction direction,
+-		unsigned long attrs)
+-{
+-	int i;
+-
+-	for_each_sg(sg, sg, nents, i) {
+-		void *addr = sg_virt(sg);
+-
+-		if (!addr)
+-			continue;
+-
+-		sg->dma_address = sg_phys(sg);
+-
+-		if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
+-			continue;
+-
+-		__dma_sync_for_device(addr, sg->length, direction);
+-	}
+-
+-	return nents;
+-}
+-
+-static dma_addr_t nios2_dma_map_page(struct device *dev, struct page *page,
+-			unsigned long offset, size_t size,
+-			enum dma_data_direction direction,
+-			unsigned long attrs)
+-{
+-	void *addr = page_address(page) + offset;
+-
+-	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		__dma_sync_for_device(addr, size, direction);
+-
+-	return page_to_phys(page) + offset;
+-}
+-
+-static void nios2_dma_unmap_page(struct device *dev, dma_addr_t dma_address,
+-		size_t size, enum dma_data_direction direction,
+-		unsigned long attrs)
+-{
+-	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		__dma_sync_for_cpu(phys_to_virt(dma_address), size, direction);
+-}
+-
+-static void nios2_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+-		int nhwentries, enum dma_data_direction direction,
+-		unsigned long attrs)
+-{
+-	void *addr;
+-	int i;
+-
+-	if (direction == DMA_TO_DEVICE)
+-		return;
+-
+-	if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
+-		return;
+-
+-	for_each_sg(sg, sg, nhwentries, i) {
+-		addr = sg_virt(sg);
+-		if (addr)
+-			__dma_sync_for_cpu(addr, sg->length, direction);
+-	}
+-}
+-
+-static void nios2_dma_sync_single_for_cpu(struct device *dev,
+-		dma_addr_t dma_handle, size_t size,
+-		enum dma_data_direction direction)
+-{
+-	__dma_sync_for_cpu(phys_to_virt(dma_handle), size, direction);
+-}
+-
+-static void nios2_dma_sync_single_for_device(struct device *dev,
+-		dma_addr_t dma_handle, size_t size,
+-		enum dma_data_direction direction)
+-{
+-	__dma_sync_for_device(phys_to_virt(dma_handle), size, direction);
+-}
+-
+-static void nios2_dma_sync_sg_for_cpu(struct device *dev,
+-		struct scatterlist *sg, int nelems,
+-		enum dma_data_direction direction)
+-{
+-	int i;
+-
+-	/* Make sure that gcc doesn't leave the empty loop body.  */
+-	for_each_sg(sg, sg, nelems, i)
+-		__dma_sync_for_cpu(sg_virt(sg), sg->length, direction);
+-}
+-
+-static void nios2_dma_sync_sg_for_device(struct device *dev,
+-		struct scatterlist *sg, int nelems,
+-		enum dma_data_direction direction)
+-{
+-	int i;
+-
+-	/* Make sure that gcc doesn't leave the empty loop body.  */
+-	for_each_sg(sg, sg, nelems, i)
+-		__dma_sync_for_device(sg_virt(sg), sg->length, direction);
+-
+-}
+-
+-const struct dma_map_ops nios2_dma_ops = {
+-	.alloc			= nios2_dma_alloc,
+-	.free			= nios2_dma_free,
+-	.map_page		= nios2_dma_map_page,
+-	.unmap_page		= nios2_dma_unmap_page,
+-	.map_sg			= nios2_dma_map_sg,
+-	.unmap_sg		= nios2_dma_unmap_sg,
+-	.sync_single_for_device	= nios2_dma_sync_single_for_device,
+-	.sync_single_for_cpu	= nios2_dma_sync_single_for_cpu,
+-	.sync_sg_for_cpu	= nios2_dma_sync_sg_for_cpu,
+-	.sync_sg_for_device	= nios2_dma_sync_sg_for_device,
+-};
+-EXPORT_SYMBOL(nios2_dma_ops);
 -- 
-Michal Hocko
-SUSE Labs
+2.17.0
