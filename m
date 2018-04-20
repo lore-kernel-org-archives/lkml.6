@@ -1,101 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754086AbeDTHfD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 03:35:03 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55622 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753922AbeDTHfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 03:35:01 -0400
-Message-ID: <f89313a67594665f4ddf88e76947ba642b554358.camel@bootlin.com>
-Subject: Re: [PATCH] drm/sun4i: Add missing frontend compatibles for A10,
- A13, A20 and A31
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 20 Apr 2018 09:33:36 +0200
-In-Reply-To: <20180419150759.ldi676ejnbtmb27z@flea>
-References: <20180419125638.11683-1-paul.kocialkowski@bootlin.com>
-         <20180419150759.ldi676ejnbtmb27z@flea>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-OjTcU76JSgIL/4bxs5lp"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S1753697AbeDTHfb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 03:35:31 -0400
+Received: from mail-io0-f176.google.com ([209.85.223.176]:32893 "EHLO
+        mail-io0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753597AbeDTHf3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 03:35:29 -0400
+X-Google-Smtp-Source: AIpwx48nQy1k0Rtg/ZXGMeuzSVEIxI27svTzF5kVZloONV/HN2XVm4wQT8j2/fGL0pSQsEr5h4KY2Dee4r0egVmvT98=
+MIME-Version: 1.0
+In-Reply-To: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
+References: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 20 Apr 2018 09:35:28 +0200
+Message-ID: <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com>
+Subject: Re: [RFC 0/2] dw_mmc: add multislot support
+To: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-snps-arc@lists.infradead.org,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[...]
 
---=-OjTcU76JSgIL/4bxs5lp
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+>
+> 2. Add missing stuff to support multislot mode in DesignWare MMC driver.
+>  * Add missing slot switch to __dw_mci_start_request() function.
+>  * Refactor set_ios function:
+>    a) Calculate common clock which is
+>       suitable for all slots instead of directly use clock value
+>       provided by mmc core. We calculate common clock as the minimum
+>       among each used slot clocks. This clock is calculated in
+>       dw_mci_calc_common_clock() function which is called
+>       from set_ios()
+>    b) Disable clock only if no other slots are ON.
+>    c) Setup clock directly in set_ios() only if no other slots
+>       are ON. Otherwise adjust clock in __dw_mci_start_request()
+>       function before slot switch.
+>    d) Move timings and bus_width setup to separate funcions.
+>  * Use timing field in each slot structure instead of common field in
+>    host structure.
+>  * Add locks to serialize access to registers.
 
-Hi,
+Sorry, but this is a hack to *try* to make multi-slot work and this
+isn't sufficient. There were good reasons to why the earlier
+non-working multi slot support was removed from dw_mmc.
 
-On Thu, 2018-04-19 at 17:07 +0200, Maxime Ripard wrote:
-> On Thu, Apr 19, 2018 at 02:56:38PM +0200, Paul Kocialkowski wrote:
-> > Although frontend nodes are defined in the device-trees of the
-> > aforementioned platforms, there are no matching compatibles defined
-> > in
-> > the driver. This makes it impossible to probe the frontend on these
-> > platforms.
-> >=20
-> > Adding the appropriate compatibles to the driver fixes the issue.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun4i_frontend.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >=20
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> > b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> > index 85f75046712c..c5a3de11817d 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
-> > @@ -658,6 +658,10 @@ static const struct dev_pm_ops
-> > sun4i_frontend_pm_ops =3D {
-> >  };
-> > =20
-> >  const struct of_device_id sun4i_frontend_of_table[] =3D {
-> > +	{ .compatible =3D "allwinner,sun7i-a10-display-frontend" },
-> > +	{ .compatible =3D "allwinner,sun7i-a13-display-frontend" },
-> > +	{ .compatible =3D "allwinner,sun7i-a20-display-frontend" },
-> > +	{ .compatible =3D "allwinner,sun7i-a31-display-frontend" },
->=20
-> Most of these compatibles are wrong, so it won't really work :)
+Let me elaborate a bit for your understanding. The core uses a host
+lock (mmc_claim|release_host()) to serialize operations and commands,
+as to confirm to the SD/SDIO/(e)MMC specs. The above changes gives no
+guarantees for this. To make that work, we would need a "mmc bus lock"
+to be managed by the core.
 
-Sorry for screwing up so bad...
+However, inventing a "mmc bus lock" would lead to other problems
+related to I/O scheduling for upper layers - it simply breaks. For
+example, I/O requests for one card/slot can then starve I/O requests
+reaching another card/slot.
 
-> If you only tested it on the A20, just add it. We didn't add all of
-> them because there's some slight variations between the generations
-> that are not yet taken into account.
+[...]
 
-That makes sense. I will thus send v2 with A20 only and send follow-up
-patches for other platforms when tested and properly working.
-
-Thanks!
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-OjTcU76JSgIL/4bxs5lp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrZl9AACgkQ3cLmz3+f
-v9ELDgf9HL+ZeLe1filKlSe7fbY14l+VseOn8D+mIsAgd+YEDKvUUxEQ9WSrV+tN
-U7P/z/UCP3taLOM3oEIqFVAudAjmKo4/yXKQ6bG+bvqTezymwCxtaCzWUboX6tbN
-3CfB+2zK0kwV3+IdPrZ2ADRrFNDkPw5VCs85QARB79UZE5r22vtGbDF5K7jj+ooo
-QrCWSWApj/2GmSq78I8obxKkrZaFuCnX/v73hfhhsxMNexBaFoCl8WnrwFo/YDAo
-HpotmgVdwQReo1OGLDr5d8H3Knka63oyjPZB+Nu5hmWCZHTGnbcRTQd+nP4135kc
-0KxHwWUa273r5Tq5fEKV43VWKfFpvQ==
-=K7Nc
------END PGP SIGNATURE-----
-
---=-OjTcU76JSgIL/4bxs5lp--
+Kind regards
+Uffe
