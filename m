@@ -1,100 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752671AbeDTT5p (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 15:57:45 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41705 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752546AbeDTT5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 15:57:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,303,1520924400";
-   d="scan'208";a="218175530"
-Subject: Re: [RFC PATCH 00/79] Generic page write protection and a solution to
- page waitqueue
-To: jglisse@redhat.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Ts'o" <tytso@mit.edu>, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Jeff Layton <jlayton@redhat.com>
-References: <20180404191831.5378-1-jglisse@redhat.com>
-From: Tim Chen <tim.c.chen@linux.intel.com>
-Message-ID: <6f6e3602-c8a6-ae81-3ef0-9fe18e43c841@linux.intel.com>
-Date: Fri, 20 Apr 2018 12:57:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        id S1752150AbeDTUBM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 16:01:12 -0400
+Received: from mail-ot0-f169.google.com ([74.125.82.169]:32829 "EHLO
+        mail-ot0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751136AbeDTUBK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 16:01:10 -0400
+X-Google-Smtp-Source: AB8JxZruzl8gMYhPTT1MDch8mpVDfGN/ArSNlBWckfFJvlHP336m9OyHF4UXi/yO8gSVc1hIgvoR4CDFqkluWuXV2rU=
 MIME-Version: 1.0
-In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5fc62d10-790f-2356-c2f6-fd49f542dd3c@infradead.org>
+References: <20180420162633.46077.49012.stgit@ahduyck-green-test.jf.intel.com> <5fc62d10-790f-2356-c2f6-fd49f542dd3c@infradead.org>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Fri, 20 Apr 2018 13:01:07 -0700
+Message-ID: <CAKgT0UewuO7LWc8wkHPTv2cksF39-8+5nFfEP_DmXVRQtgOWdg@mail.gmail.com>
+Subject: Re: [pci PATCH v8 0/4] Add support for unmanaged SR-IOV
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Alexander Duyck <alexander.h.duyck@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, kvm@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>, "Daly, Dan" <dan.daly@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/04/2018 12:17 PM, jglisse@redhat.com wrote:
-> From: Jérôme Glisse <jglisse@redhat.com>
-> 
-> https://cgit.freedesktop.org/~glisse/linux/log/?h=generic-write-protection-rfc
-> 
-> This is an RFC for LSF/MM discussions. It impacts the file subsystem,
-> the block subsystem and the mm subsystem. Hence it would benefit from
-> a cross sub-system discussion.
-> 
-> Patchset is not fully bake so take it with a graint of salt. I use it
-> to illustrate the fact that it is doable and now that i did it once i
-> believe i have a better and cleaner plan in my head on how to do this.
-> I intend to share and discuss it at LSF/MM (i still need to write it
-> down). That plan lead to quite different individual steps than this
-> patchset takes and his also easier to split up in more manageable
-> pieces.
-> 
-> I also want to apologize for the size and number of patches (and i am
-> not even sending them all).
-> 
-> ----------------------------------------------------------------------
-> The Why ?
-> 
-> I have two objectives: duplicate memory read only accross nodes and or
-> devices and work around PCIE atomic limitations. More on each of those
-> objective below. I also want to put forward that it can solve the page
-> wait list issue ie having each page with its own wait list and thus
-> avoiding long wait list traversale latency recently reported [1].
-> 
-> It does allow KSM for file back pages (truely generic KSM even between
-> both anonymous and file back page). I am not sure how useful this can
-> be, this was not an objective i did pursue, this is just a for free
-> feature (see below).
-> 
-> [1] https://groups.google.com/forum/#!topic/linux.kernel/Iit1P5BNyX8
-> 
-> ----------------------------------------------------------------------
-> Per page wait list, so long page_waitqueue() !
-> 
-> Not implemented in this RFC but below is the logic and pseudo code
-> at bottom of this email.
-> 
-> When there is a contention on struct page lock bit, the caller which
-> is trying to lock the page will add itself to a waitqueue. The issues
-> here is that multiple pages share the same wait queue and on large
-> system with a lot of ram this means we can quickly get to a long list
-> of waiters for differents pages (or for the same page) on the same
-> list [1].
+On Fri, Apr 20, 2018 at 10:23 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 04/20/18 09:28, Alexander Duyck wrote:
+>> This series is meant to add support for SR-IOV on devices when the VFs are
+>> not managed by the kernel. Examples of recent patches attempting to do this
+>> include:
+>> virto - https://patchwork.kernel.org/patch/10241225/
+>> pci-stub - https://patchwork.kernel.org/patch/10109935/
+>> vfio - https://patchwork.kernel.org/patch/10103353/
+>> uio - https://patchwork.kernel.org/patch/9974031/
+>
+> Hi,
+>
+> Somewhere in this patch series it would be nice to tell us what the heck
+> a "PF" is.  :)
+>
+> Thanks.
 
-Your approach seems useful if there are lots of locked pages sharing
-the same wait queue.  
+Sorry, I was kind of operating on the assumption of everyone
+understanding SR-IOV nomenclature.
 
-That said, in the original workload from our customer with the long wait queue
-problem, there was a single super hot page getting migrated, and it
-is being accessed by all threads which caused the big log jam while they wait for
-the migration to get completed.  
-With your approach, we will still likely end up with a long queue 
-in that workload even if we have per page wait queue.
+A "PF" is a PCIe Physical Function. When you bring up a PCIe device
+that supports SR-IOV it is the device that is there to begin with.
+
+A "VF" is a PCIe Virtual Function. You could think of as a logical
+device that is spawned from the physical function using a combination
+of hardware configuration via the SR-IOV block in the PCIe extended
+configuration space and kernel/driver features.
+
+There are also a number of online resources you could use to research
+SR-IOV further. Hope that helps to clarify some of this.
 
 Thanks.
 
-Tim
+Alex
