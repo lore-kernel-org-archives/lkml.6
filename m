@@ -1,156 +1,140 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-945756-1524672703-2-5911669489464010616
+Return-Path: <kernelnewbies-bounces@kernelnewbies.org>
+X-Cyrus-Session-Id: sloti22d1t05-3113896-1524774546-2-15013206630859900495
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
+  RCVD_IN_DNSWL_NONE -0.0001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='96.67.55.147', Host='shelob.surriel.com', Country='US',
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: kernelnewbies-bounces@kernelnewbies.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524672701; b=GeMmqO09D8c5NAP4ZsrxNt7IeCKf0Qzt7sWIL1mcnZHydLfirs
-    i6bG2fbEYutRlf9/KvTs+9vRO5UQOAHVbsbqTPdk9bbUuVsa7xO6lV6kpcj8QLMP
-    v+379jYdzzedkqVGYL94OIT2AIUy+VC5zIj+ZUnkv9QCI25E/24DLVfrcg9s6JsT
-    0fxZD/n4ySNdFhfpjEPgqvqjJpNl4+Md94f2SQCXhznJ/urVk6Ta+/KB4I2Sv31z
-    WQyzavxCuLh888P4LkN5Y40C3repo6j2+R0b9Geh3NKEPVVmz8W3/SUI0apX9rLb
-    iq6HX9btIGmuEn/5w0NWQZM8hXh3hGKqzLhw==
+    1524774546; b=uw1KaZ76oyzZkwKdZ0V3iCpnCyGQfqUcK/Ssob0Zcp9Wpv6S2p
+    BExWwE3uVxzGMGiW/gOiIQ79LxkErYTlfm/oOuy3e26EnvtxIG+lpNMKouv1Xk83
+    526Zkhs7HSufFTmeJu58DVm2RWx7FALhUpq4iqGBjqwS9FrEvWbBOl2N4gZPiCZs
+    10NLUnA9vtqcEjOXBi1Kgy9Fx2GdbQ/2GTv+6to2798slYjY7eThQaR8/nv4LKSz
+    hCrxNAsdeVLOI+DrQywV+Wmy63mDHPqKKNfj3YPltS+hrhrgUAHgaEEP8o3aGygc
+    2YJAp7nj11oUH4mpgeLNECPbAUUYiECXWAkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1524672701; bh=z70DP
-    +BH2X6OpdZM8YJ7+zQYdvt/oqb+WtSyakygn4E=; b=XegKFqQEsdwDag0zBeeJh
-    AaQQHAlh25HKevqhzBtD+RAPLmlpHqtFgHaLzLmnJag8/ddeKq+zApwwe92MApkD
-    cHVBbO10qUZ1wTdX3t957Py8urn7yav8SVVDSUqmw8GmfhJJWAEUND0FnCx1tW9y
-    nF8eBPX5nzreCd7Pmeaft/IvrjZr00yIJgv7HyPDARMfT2dTqhcZ6Ann67elPKKl
-    9YC+jXt6iObQMXVFt9g+vm6OZESX96R28Zckd4x/2X/BEX1xE9637RF3y8gCL8iD
-    L2MeaRGnyqcXJihT5GVzWv3hVwR0f0nxC5gRQynslU8JtIAPYXaKwTWK8nHVMR5G
-    A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    messagingengine.com; h=date:from:to:subject:message-id
+    :references:mime-version:in-reply-to:cc:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:content-type
+    :content-transfer-encoding; s=fm2; t=1524774546; bh=1+dBRXqZ+UKB
+    RBDo5So4/qgdmKzsgdRgWK/5ju3mB3o=; b=WxPG8hyTdKX3slOqLzwZ/OG6wCJ8
+    glcKMfywpwbCHElByExpozlswSXY+3s6h0BAEkrxZeLbnTQzaAOL87h+6z91fO4I
+    Fdu4RqJHdnrFf2/PAF2Y9fhFUQ/AYQTtvvJbOBOpbV3gTJ5GAn/+WLShQXdF6FKH
+    0JAztIBSI6AZMyl6qzt/l42yjX3wYEl2oICOM26wsEDraNKmkrVPGJLeQqth7gXc
+    pBY9CjXsrVhPnzmECmn8yA9I95G43cGvZUpayhAh1y5Ui06Od+jaQlN+Z5kusqpw
+    oBClKTn+x9V+qm8dJqv4RvI19g/yS/yx7S+cq8s0FkSLYvJhPibtRAen/w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=tPGdBCYW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org smtp.helo=shelob.surriel.com;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microchip.com header.result=pass header_is_org_domain=yes;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=community:mailing-list score=20 state=13
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org smtp.helo=silver.osuosl.org;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=infradead.org header.i=@infradead.org header.b=tPGdBCYW x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org smtp.helo=shelob.surriel.com;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass smtp_is_org_domain=yes header.domain=microchip.com header.result=pass header_is_org_domain=yes;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass smtp_is_org_domain=yes header.domain=infradead.org header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF7TLVi6wVjJ1V3IGpRvgqkgfIrVgq0TwlTl64dL7svbHznHtpvMWjhCUiMmwKK3TxUNKySPqvYeRb1e8lK3txkKFOdRYiV1ELNxIL4oom4HveH8wEZv
-    U7xrij6bgQ78gvDIXXYpovA7WrnGIae956qXVYy6pHVcfPzfmq5zy1oKz7PD50bJi/Bzf0QcYY53cSENGq6JFGCfBtgPWmLsDi6tUBqINpp9u0iqY/wybLWq
-    hxnowLVEmQeFc5+FSyQTuQ==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8
-    a=jp5uUZKRKvbujw_BeY4A:9 a=5l0zR64t4fAwKJi3:21 a=0tmGfeLXjvakv-Yz:21
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    x-vs=community:mailing-list score=20 state=13
+X-ME-VSCategory: community:mailing-list
+X-CM-Envelope: MS4wfOqcmQXICYuFPkQDGRWzahFuuw6kyC7BcC2PUkalpS3kI8TPMDU8IWH6XsisdvvNl3jdOSL6jA6KglHk6D5SUjtBbAFWGDuvxS5aYVVYKk6+w/JOHj+r
+    pINyEP8n0vffiFTrSY3Lbwcpkxs7BuzUD4/Qhms4iUvbFNh911GwqGUMfZCCFQy+LmjPzo0vtxAFImBxm4BW82J+qZaGp71G6cQ=
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=rY4dWIxwDULXyY+dMrlW8Q==:117
+    a=rY4dWIxwDULXyY+dMrlW8Q==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
+    a=Kd1tUaAdevIA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=SiqW3_QkAAAA:8
+    a=5FgZ4SOrXQCZoryIS9cA:9 a=CjuIK1q_8ugA:10 a=0-oVHmElw7bdUHZZ8WX8:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-IronPort-AV: E=Sophos;i="5.49,326,1520924400"; d="scan'208";a="14212586"
-Subject: Re: [PATCH] staging/wilc1000: fix wilc_mac_xmit()'s return type
-To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
- <linux-kernel@vger.kernel.org>
-References: <20180424131857.5668-1-luc.vanoostenryck@gmail.com>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <3c4bbd52-5af9-72b9-732b-f83f0bd23905@microchip.com>
-Date: Wed, 25 Apr 2018 18:11:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Date: Fri, 20 Apr 2018 09:57:17 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Philipp Klocke <Phil_K97@gmx.de>
+Subject: Re: [PATCH] sched/fair: Change sched_feat(x) in !CONFIG_SCHED_DEBUG
+ case
+Message-ID: <20180420075717.GB4064@hirez.programming.kicks-ass.net>
+References: <20180416085426.24157-1-Phil_K97@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <20180424131857.5668-1-luc.vanoostenryck@gmail.com>
-Content-Language: en-US
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Aditya Shankar <aditya.shankar@microchip.com>, linux-wireless@vger.kernel.org,
- Ganesh Krishna <ganesh.krishna@microchip.com>
+Content-Disposition: inline
+In-Reply-To: <20180416085426.24157-1-Phil_K97@gmx.de>
+User-Agent: Mutt/1.9.3 (2018-01-21)
+X-Mailman-Approved-At: Thu, 26 Apr 2018 16:28:11 -0400
+Cc: sil2review@lists.osadl.org, kernelnewbies@kernelnewbies.org,
+ llvmlinux@lists.linuxfoundation.org, linux-kernel@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, der.herr@hofr.at, lukas.bulwahn@gmail.com
+X-BeenThere: kernelnewbies@kernelnewbies.org
+X-Mailman-Version: 2.1.15
+List-Unsubscribe: <https://lists.kernelnewbies.org/mailman/options/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=unsubscribe>
+List-Archive: <http://lists.kernelnewbies.org/pipermail/kernelnewbies/>
+List-Post: <mailto:kernelnewbies@kernelnewbies.org>
+List-Help: <mailto:kernelnewbies-request@kernelnewbies.org?subject=help>
+List-Subscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=subscribe>
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Errors-To: kernelnewbies-bounces@kernelnewbies.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Luc,
+On Mon, Apr 16, 2018 at 10:54:26AM +0200, Philipp Klocke wrote:
 
-I'm resending this since last time I only send it to staging ml.
-
-Could you, please, change the "return 0;"s inside wilc_mac_xmit() with
-"return NETDEV_TX_OK" ?
-
-Thank you,
-Claudiu
-
-On 24.04.2018 15:18, Luc Van Oostenryck wrote:
-> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
-> which is a typedef for an enum type, but the implementation in this
-> driver returns an 'int'.
+> This patch is motivated by the clang warning Wconstant-logical-operand,
+> issued when logically comparing a variable to a constant integer that is
+> neither 1 nor 0.  It happens for sched_feat(x) when sysctl_sched_features
+> is constant, i.e., CONFIG_SCHED_DEBUG is not set.
 > 
-> Fix this by returning 'netdev_tx_t' in this driver too.
-> 
-> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-> ---
->  drivers/staging/wilc1000/linux_wlan.c | 2 +-
->  drivers/staging/wilc1000/wilc_wlan.h  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/wilc1000/linux_wlan.c b/drivers/staging/wilc1000/linux_wlan.c
-> index 38a83bd31..e06aaed5e 100644
-> --- a/drivers/staging/wilc1000/linux_wlan.c
-> +++ b/drivers/staging/wilc1000/linux_wlan.c
-> @@ -941,7 +941,7 @@ static void linux_wlan_tx_complete(void *priv, int status)
->  	kfree(pv_data);
->  }
+> kernel/sched/fair.c:3927:14: warning: use of logical '&&' with constant operand [-Wconstant-logical-operand]
+>         if (initial && sched_feat(START_DEBIT))
+>                     ^  ~~~~~~~~~~~~~~~~~~~~~~~
+> kernel/sched/fair.c:3927:14: note: use '&' for a bitwise operation
+>         if (initial && sched_feat(START_DEBIT))
+>                     ^~
+>                     &
+> kernel/sched/fair.c:3927:14: note: remove constant to silence this warning
+>         if (initial && sched_feat(START_DEBIT))
+>                    ~^~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+> @@ -1305,7 +1305,11 @@ static const_debug __maybe_unused unsigned int sysctl_sched_features =
+>  	0;
+>  #undef SCHED_FEAT
 >  
-> -int wilc_mac_xmit(struct sk_buff *skb, struct net_device *ndev)
-> +netdev_tx_t wilc_mac_xmit(struct sk_buff *skb, struct net_device *ndev)
->  {
->  	struct wilc_vif *vif;
->  	struct tx_complete_data *tx_data = NULL;
-> diff --git a/drivers/staging/wilc1000/wilc_wlan.h b/drivers/staging/wilc1000/wilc_wlan.h
-> index fa157a67b..d3b5a6b38 100644
-> --- a/drivers/staging/wilc1000/wilc_wlan.h
-> +++ b/drivers/staging/wilc1000/wilc_wlan.h
-> @@ -298,7 +298,7 @@ void wilc_chip_sleep_manually(struct wilc *wilc);
->  
->  void wilc_enable_tcp_ack_filter(bool value);
->  int wilc_wlan_get_num_conn_ifcs(struct wilc *wilc);
-> -int wilc_mac_xmit(struct sk_buff *skb, struct net_device *dev);
-> +netdev_tx_t wilc_mac_xmit(struct sk_buff *skb, struct net_device *dev);
->  
->  void WILC_WFI_p2p_rx(struct net_device *dev, u8 *buff, u32 size);
->  void host_wakeup_notify(struct wilc *wilc);
-> 
+> +#ifdef CONFIG_SCHED_DEBUG
+>  #define sched_feat(x) (sysctl_sched_features & (1UL << __SCHED_FEAT_##x))
+> +#else
+> +#define sched_feat(x) ((sysctl_sched_features >> __SCHED_FEAT_##x) & 1UL)
+> +#endif
+
+So this is extra ugly, for no gain?
+
+WTH does clang complain about a constant? Can't you just disable that
+stupid warning?
+
+Also, if sysctl_sched_features is a constant, the both expressions
+_should_ really result in a constant and clang should still warn about
+it.
+
+I'm really not seeing why we'd want to do this. Just fix clang to not be
+stupid.
+
 _______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Kernelnewbies mailing list
+Kernelnewbies@kernelnewbies.org
+https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
