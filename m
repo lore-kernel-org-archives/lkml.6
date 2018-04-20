@@ -1,70 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754850AbeDTMl3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 08:41:29 -0400
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:42396 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754726AbeDTMl1 (ORCPT
+        id S1754855AbeDTMp2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 08:45:28 -0400
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:63637 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754711AbeDTMp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:41:27 -0400
-X-Google-Smtp-Source: AIpwx4/2BOplptRrAZ+vh4TDhD57dCDHBXWbBitEbRrC8Fs4qJSUxr/oBBZbXOoJGUEIevN6nrrS8ONRF82B3tcnkbY=
+        Fri, 20 Apr 2018 08:45:26 -0400
+X-IronPort-AV: E=Sophos;i="5.49,301,1520899200";
+   d="scan'208";a="716745722"
+Subject: Re: [PATCH 1/3] xen: add generic fault injection facility
+To: Juergen Gross <jgross@suse.com>
+CC: <jakub.kicinski@netronome.com>, <hpa@zytor.com>, <mcroce@redhat.com>,
+        <tglx@linutronix.de>, <ggarcia@abra.uab.cat>, <daniel@iogearbox.net>,
+        <x86@kernel.org>, <mingo@redhat.com>, <xen-devel@lists.xenproject.org>,
+        <axboe@kernel.dk>, <konrad.wilk@oracle.com>, <amir.jer.levy@intel.com>,
+        <paul.durrant@citrix.com>, <stefanha@redhat.com>,
+        <dsa@cumulusnetworks.com>, <boris.ostrovsky@oracle.com>,
+        <linux-block@vger.kernel.org>, <wei.liu2@citrix.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <davem@davemloft.net>, <dwmw@amazon.co.uk>, <roger.pau@citrix.com>
+References: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+ <20180420104726.17823.40147.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+ <03a333dc-e505-e254-f39d-e68b1453a6f3@suse.com>
+From: <staskins@amazon.com>
+Message-ID: <74989e7c-4cde-81cf-c1ad-a3c19d477f52@amazon.com>
+Date: Fri, 20 Apr 2018 14:45:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <6ad676c8-476f-1181-1acd-985671f6c837@invisiblethingslab.com>
-References: <20180228122323.3914-1-jandryuk@gmail.com> <1b07e839-5633-3b1e-1997-b86a891b2962@invisiblethingslab.com>
- <CAKf6xpuusCJ0DMJ_G3hG5pd9vd8rUBH=VPa4TCvaoptGto-=Zw@mail.gmail.com> <6ad676c8-476f-1181-1acd-985671f6c837@invisiblethingslab.com>
-From: Jason Andryuk <jandryuk@gmail.com>
-Date: Fri, 20 Apr 2018 08:41:25 -0400
-Message-ID: <CAKf6xpsOZr85PHutrdL7QtfYuN+rN4SH6+1zy92P_oBKTv-EHA@mail.gmail.com>
-Subject: Re: [Xen-devel] [PATCH] xen-netfront: Fix hang on device removal
-To: Simon Gaiser <simon@invisiblethingslab.com>
-Cc: netdev@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Eduardo Otubo <otubo@redhat.com>, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <03a333dc-e505-e254-f39d-e68b1453a6f3@suse.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KCjXW5020929
 
-On Thu, Apr 19, 2018 at 4:09 PM, Simon Gaiser
-<simon@invisiblethingslab.com> wrote:
-> Jason Andryuk:
->> On Thu, Apr 19, 2018 at 2:10 PM, Simon Gaiser
->> <simon@invisiblethingslab.com> wrote:
->>> Jason Andryuk:
->>>> A toolstack may delete the vif frontend and backend xenstore entries
->>>> while xen-netfront is in the removal code path.  In that case, the
->>>> checks for xenbus_read_driver_state would return XenbusStateUnknown, and
->>>> xennet_remove would hang indefinitely.  This hang prevents system
->>>> shutdown.
->>>>
->>>> xennet_remove must be able to handle XenbusStateUnknown, and
->>>> netback_changed must also wake up the wake_queue for that state as well.
->>>>
->>>> Fixes: 5b5971df3bc2 ("xen-netfront: remove warning when unloading module")
->>>
->>> I think this should go into stable since AFAIK the hanging network
->>> device can only be fixed by rebooting the guest. AFAICS this affects all
->>> 4.* branches since 5b5971df3bc2 got backported to them.
->>>
->>> Upstream commit c2d2e6738a209f0f9dffa2dc8e7292fc45360d61.
->>
->> Simon,
->>
->> Yes, I agree.  I actually submitted the request to stable earlier
->> today, so hopefully it gets added soon.
+On 04/20/18 12:59, Juergen Gross wrote:
+> On 20/04/18 12:47, Stanislav Kinsburskii wrote:
+>> diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
+>> index c1f98f3..483fc16 100644
+>> --- a/arch/x86/xen/Kconfig
+>> +++ b/arch/x86/xen/Kconfig
+>> @@ -77,3 +77,10 @@ config XEN_PVH
+>>   	bool "Support for running as a PVH guest"
+>>   	depends on XEN && XEN_PVHVM && ACPI
+>>   	def_bool n
+>> +
+>> +config XEN_FAULT_INJECTION
+>> +	bool "Enable Xen fault injection"
+>> +	depends on FAULT_INJECTION_DEBUG_FS
+>> +	default n
+>> +	help
+>> +	  Enable Xen fault injection facility
+> Why for x86 only? I'd rather add this under drivers/xen
+
+Sure.
+
 >
-> Ok, great. (I checked the stable patch queue, but didn't check the
-> mailing list archive).
+>> diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
+>> index d83cb54..3158fe1 100644
+>> --- a/arch/x86/xen/Makefile
+>> +++ b/arch/x86/xen/Makefile
+>> @@ -34,3 +34,4 @@ obj-$(CONFIG_XEN_DOM0)		+= vga.o
+>>   obj-$(CONFIG_SWIOTLB_XEN)	+= pci-swiotlb-xen.o
+>>   obj-$(CONFIG_XEN_EFI)		+= efi.o
+>>   obj-$(CONFIG_XEN_PVH)	 	+= xen-pvh.o
+>> +obj-$(CONFIG_XEN_FAULT_INJECTION)	+= fault_inject.o
+>> diff --git a/arch/x86/xen/fault_inject.c b/arch/x86/xen/fault_inject.c
+>> new file mode 100644
+>> index 0000000..ecf0f7c
+>> --- /dev/null
+>> +++ b/arch/x86/xen/fault_inject.c
+>> @@ -0,0 +1,109 @@
+>> +/*
+>> + * Fauit injection interface for Xen virtual block devices
+>> + *
+>> + * Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> + * modify it under the terms of the GNU General Public License version 2
+>> + * as published by the Free Software Foundation; or, when distributed
+>> + * separately from the Linux kernel or incorporated into other
+>> + * software packages, subject to the following license:
+> Please use the appropriate SPDX header instead of the full GPL2
+> boilerplate.
+
+Ditto.
+
 >
->> Have you experienced this hang?
 >
-> Yes, it's affecting the kernel shipped by Qubes OS (see [1]).
+> Juergen
+>
 
-Ok, interesting.  I tracked down this bug with older xenvm tools, and
-I didn't know if libxl tools were also affected.
-
-Greg KH added the patch to the stable queue, so it's in the process.
-
-Regards,
-Jason
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
