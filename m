@@ -1,99 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752455AbeDTT51 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 15:57:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36436 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751130AbeDTT5Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 15:57:25 -0400
-Date: Fri, 20 Apr 2018 12:57:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [git pull] vfs fixes
-Message-Id: <20180420125724.28c218907de8ab805beba3f3@linux-foundation.org>
-In-Reply-To: <20180420190956.GP30522@ZenIV.linux.org.uk>
-References: <20180420155846.GO30522@ZenIV.linux.org.uk>
-        <20180420112945.98686d9c78121bdc1e93483a@linux-foundation.org>
-        <20180420190956.GP30522@ZenIV.linux.org.uk>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752671AbeDTT5p (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 15:57:45 -0400
+Received: from mga02.intel.com ([134.134.136.20]:41705 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752546AbeDTT5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 15:57:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,303,1520924400";
+   d="scan'208";a="218175530"
+Subject: Re: [RFC PATCH 00/79] Generic page write protection and a solution to
+ page waitqueue
+To: jglisse@redhat.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>, Tejun Heo <tj@kernel.org>,
+        Jan Kara <jack@suse.cz>, Josef Bacik <jbacik@fb.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Jeff Layton <jlayton@redhat.com>
+References: <20180404191831.5378-1-jglisse@redhat.com>
+From: Tim Chen <tim.c.chen@linux.intel.com>
+Message-ID: <6f6e3602-c8a6-ae81-3ef0-9fe18e43c841@linux.intel.com>
+Date: Fri, 20 Apr 2018 12:57:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
+MIME-Version: 1.0
+In-Reply-To: <20180404191831.5378-1-jglisse@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 20:09:56 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
-
-> On Fri, Apr 20, 2018 at 11:29:45AM -0700, Andrew Morton wrote:
-> > On Fri, 20 Apr 2018 16:58:46 +0100 Al Viro <viro@ZenIV.linux.org.uk> wrote:
-> > 
-> > > 	Assorted fixes.  Some of that is only a matter with fault injection
-> > > (broken handling of small allocation failure in various mount-related places),
-> > > but the last one is a root-triggerable stack overflow, and combined with
-> > > userns it gets really nasty ;-/
-> > > 
-> > > The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-> > > 
-> > >   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> > > 
-> > > are available in the git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-linus
-> > > 
-> > > for you to fetch changes up to 16a34adb9392b2fe4195267475ab5b472e55292c:
-> > > 
-> > >   Don't leak MNT_INTERNAL away from internal mounts (2018-04-19 23:52:15 -0400)
-> > > ...
-> > >
-> > > Tetsuo Handa (1):
-> > >       mm,vmscan: Allow preallocating memory for register_shrinker().
-> > 
-> > Confused.  You had a bunch of issues with this patch
-> > (http://lkml.kernel.org/r/20180411005938.GN30522@ZenIV.linux.org.uk)
-> > and Tetsuo sent out a v2 but now we've merged the v1.  Deliberate?
+On 04/04/2018 12:17 PM, jglisse@redhat.com wrote:
+> From: Jérôme Glisse <jglisse@redhat.com>
 > 
-> I think by that time I'd applied v1 and fixed those issues myself (same as his
-> variant, modulo slightly different names).
-
-AH.
-
-> > Also, it would be nice if you could get the Link: thing working in your
-> > commits please - this one took a bit of hunting down.
+> https://cgit.freedesktop.org/~glisse/linux/log/?h=generic-write-protection-rfc
 > 
-> *blink*
+> This is an RFC for LSF/MM discussions. It impacts the file subsystem,
+> the block subsystem and the mm subsystem. Hence it would benefit from
+> a cross sub-system discussion.
 > 
-> What Link: thing?  You mean lkml.kernel.org references to original postings?
+> Patchset is not fully bake so take it with a graint of salt. I use it
+> to illustrate the fact that it is doable and now that i did it once i
+> believe i have a better and cleaner plan in my head on how to do this.
+> I intend to share and discuss it at LSF/MM (i still need to write it
+> down). That plan lead to quite different individual steps than this
+> patchset takes and his also easier to split up in more manageable
+> pieces.
+> 
+> I also want to apologize for the size and number of patches (and i am
+> not even sending them all).
+> 
+> ----------------------------------------------------------------------
+> The Why ?
+> 
+> I have two objectives: duplicate memory read only accross nodes and or
+> devices and work around PCIE atomic limitations. More on each of those
+> objective below. I also want to put forward that it can solve the page
+> wait list issue ie having each page with its own wait list and thus
+> avoiding long wait list traversale latency recently reported [1].
+> 
+> It does allow KSM for file back pages (truely generic KSM even between
+> both anonymous and file back page). I am not sure how useful this can
+> be, this was not an objective i did pursue, this is just a for free
+> feature (see below).
+> 
+> [1] https://groups.google.com/forum/#!topic/linux.kernel/Iit1P5BNyX8
+> 
+> ----------------------------------------------------------------------
+> Per page wait list, so long page_waitqueue() !
+> 
+> Not implemented in this RFC but below is the logic and pseudo code
+> at bottom of this email.
+> 
+> When there is a contention on struct page lock bit, the caller which
+> is trying to lock the page will add itself to a waitqueue. The issues
+> here is that multiple pages share the same wait queue and on large
+> system with a lot of ram this means we can quickly get to a long list
+> of waiters for differents pages (or for the same page) on the same
+> list [1].
 
-yup.  It's often fairly useful.
+Your approach seems useful if there are lots of locked pages sharing
+the same wait queue.  
 
-> Or is it something else?  Never done that, actually; any tips re tools needed
-> for that?  Normally it's save a bunch of postings into a local file in mutt,
-> scp it over to development box, then git am -s - either all at once, or step
-> by step with ediiting and git commit --amend in between...
+That said, in the original workload from our customer with the long wait queue
+problem, there was a single super hot page getting migrated, and it
+is being accessed by all threads which caused the big log jam while they wait for
+the migration to get completed.  
+With your approach, we will still likely end up with a long queue 
+in that workload even if we have per page wait queue.
 
-I'd have expected git-am to have a way of doing that by now.
+Thanks.
 
-> I realize that message-id can be picked and massaged into Link: ... form,
-> of course, but I'd rather not reinvent the wheel if it's already done by
-> somebody...
-
-I just do this:
-
-message_url()
-{
-	pname="$1"
-
-	idline=$(grep -i "^Message-Id:" "$pname" | head -1)
-	if [ x"$idline" != "x" ]
-	then
-		msgid=$(echo "$idline" | sed -e 's/[^<]*<\([^>]*\).*/\1/')
-		if [ x"$msgid" != "x" ]
-		then
-			echo "http://lkml.kernel.org/r/$msgid"
-		fi
-	fi
-}
+Tim
