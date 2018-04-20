@@ -1,91 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752514AbeDTUWc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 16:22:32 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35658 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752306AbeDTUW3 (ORCPT
+        id S1752703AbeDTUXW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 16:23:22 -0400
+Received: from mail-vk0-f45.google.com ([209.85.213.45]:44993 "EHLO
+        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752629AbeDTUXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 16:22:29 -0400
-X-Google-Smtp-Source: AIpwx4+TcNMgPXoSP3wCcDE6FKEOeKl936DPLoZ0DD7tt6uXHEadtzu+IPIEvSd4GE3Cfoj+0jM/Kg==
-Date: Fri, 20 Apr 2018 13:22:28 -0700 (PDT)
-X-Google-Original-Date: Fri, 20 Apr 2018 13:22:11 PDT (-0700)
-Subject: Re: [PATCH v6 01/16] initrd: Add weakly-linked generic free_initrd_mem.
-In-Reply-To: <87tvs8rcrr.fsf@xps13.shealevy.com>
-CC: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@sifive.com>
-To: shea@shealevy.com, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>
-Message-ID: <mhng-72f2db2a-5505-4736-b39b-66b85db4d21c@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Apr 2018 16:23:19 -0400
+X-Google-Smtp-Source: AIpwx49D1A0ZIpll8/ezyw0B/c29rQNoiJokU0RkNE105oS/v0JGU7x85oDUTdLQ/h6gYZfJrR923Gh/wNN5fxj/4b0=
+MIME-Version: 1.0
+In-Reply-To: <13DBFC76-4849-4DDA-AC44-B2C1257912E7@linaro.org>
+References: <10360653.ov98egbaqx@natalenko.name> <CAGXu5j+dh1zm32iBjRVh0s+3gLJYgjwt+z1aBJmrK2Cr8XPWnA@mail.gmail.com>
+ <CAGXu5jLhnWnUiscP9B=kTEFNyRw9jgFn7Zr5FxhZrO20553+1Q@mail.gmail.com>
+ <CAGXu5jKuZwicyyXH2gB3vp-OjtS+MkG+hqxV1cq1jaG9vAAO=g@mail.gmail.com>
+ <CAGXu5jLQuzpjFcfjpT=MvgOxBizFNMjnfmY+E7eCHkDAV5swHg@mail.gmail.com>
+ <CAGXu5jJTMqbXia7TmN2yEW11SM+XC3pkMt=bb+xBrY7-OOf=tw@mail.gmail.com>
+ <CAGXu5j+xX3kDDS_sPY44hPVb=8isMX-evYzPx3ur=rge1rL5JQ@mail.gmail.com>
+ <CAGXu5jJmvKcANUSsCz3fjGSv-tv1hceNd3rOpT4WTfYRb65RRA@mail.gmail.com>
+ <8473f909-2123-0cfc-43b1-beba0b1aef9b@kernel.dk> <CAGXu5jL9miO3OXpjAxm9t8v=f_f5StB=Tk=aV8BVRdEj-Y-PDA@mail.gmail.com>
+ <CAGXu5jKVPQi0cdTbe5Y1DNHdiJ6-kEFRBTNv7znuqT9w5eifGg@mail.gmail.com>
+ <07f263ff-cea6-ac3c-944b-0f36fee8ba25@kernel.dk> <CAGXu5j+kHipvoyFWjGp8M6+83zbd6yHOzwxQ-2LNBQbD5-jS9w@mail.gmail.com>
+ <8b32e079-d4e6-3fea-a89d-ff856e4e13b1@kernel.dk> <0fbf2b13-8bae-c7c5-d930-ebaafdc72202@kernel.dk>
+ <011EF7D1-B095-4B8D-AD2A-993048932C49@linaro.org> <c30400f9-50e6-b5cf-d06b-a5e971e98546@kernel.dk>
+ <13DBFC76-4849-4DDA-AC44-B2C1257912E7@linaro.org>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 20 Apr 2018 13:23:17 -0700
+X-Google-Sender-Auth: cgl7n54rU4t0lYVck5Q7XFFQZ2k
+Message-ID: <CAGXu5j+8WUgr1y=JYhCkUqUWE0SJ+ymkM9DPEQwY8UoqPmoPSw@mail.gmail.com>
+Subject: Re: usercopy whitelist woe in scsi_sense_cache
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        David Windsor <dave@nullcore.net>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        linux-block <linux-block@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Apr 2018 04:10:16 PDT (-0700), shea@shealevy.com wrote:
-> Hi all,
+On Thu, Apr 19, 2018 at 2:32 AM, Paolo Valente <paolo.valente@linaro.org> wrote:
+> I'm missing something here.  When the request gets completed in the
+> first place, the hook bfq_finish_requeue_request gets called, and that
+> hook clears both ->elv.priv elements (as the request has a non-null
+> elv.icq).  So, when bfq gets the same request again, those elements
+> must be NULL.  What am I getting wrong?
 >
-> Shea Levy <shea@shealevy.com> writes:
->
->> This function is effectively identical across 14 architectures, and
->> the generic implementation is small enough to be negligible in the
->> architectures that do override it. Many of the remaining divergent
->> implementations can be included in the common code path in future,
->> further reducing code duplication and sharing improvements between
->> architectures.
->>
->> Series boot-tested on RISC-V (which now uses the generic
->> implementation) and x86_64 (which doesn't).
->>
->> v6: Add information about build/run testing.
->> v5: Add more complete commit messages.
->> v4: Use weak symbols instead of Kconfig.
->> v3: Make the generic path opt-out instead of opt-in.
->> v2: Mark generic free_initrd_mem __init.
->>
->> Signed-off-by: Shea Levy <shea@shealevy.com>
->> ---
->>  init/initramfs.c | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/init/initramfs.c b/init/initramfs.c
->> index 7e99a0038942..c8fe150f958a 100644
->> --- a/init/initramfs.c
->> +++ b/init/initramfs.c
->> @@ -526,6 +526,11 @@ extern unsigned long __initramfs_size;
->>  #include <linux/initrd.h>
->>  #include <linux/kexec.h>
->>  
->> +void __init __weak free_initrd_mem(unsigned long start, unsigned long end)
->> +{
->> +       free_reserved_area((void *)start, (void *)end, -1, "initrd");
->> +}
->> +
->>  static void __init free_initrd(void)
->>  {
->>  #ifdef CONFIG_KEXEC_CORE
->> -- 
->> 2.16.2
->
-> This series has been quiet for a few weeks other than picking up some
-> arch-specific acks. What is the next step here?
+> I have some more concern on this point, but I'll stick to this for the
+> moment, to not create more confusion.
 
-I'm not sure.  I don't really think it's sane for the RISC-V tree because it 
-touches so many architectures -- I haven't looked closely, though.  IIRC 
-there's a slight behavior change to the RISC-V port, which I'd be OK taking 
-through my tree (and then obviously the RISC-V cleanup as well, unless it goes 
-in as a whole patch set).
+I don't know the "how", I only found the "what". :) If you want, grab
+the reproducer VM linked to earlier in this thread; it'll hit the
+problem within about 30 seconds of running the reproducer.
 
-For the IRQ cleanup I currently have in flight
+-Kees
 
-* Add the generic support
-* Move every arch over (RISC-V is in, the rest aren't yet)
-* Clean up a bit now that everyone is generic
-
-That lets all the arch-specific patches go in parallel, but can be a bit of a 
-headache to manage.
-
-I'm adding Arnd and Olof, as they know a lot more about Linux than I do.  
-Here's the top-level of the v4 patch set: https://lkml.org/lkml/2018/3/28/744
+-- 
+Kees Cook
+Pixel Security
