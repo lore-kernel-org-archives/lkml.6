@@ -1,80 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754508AbeDTIHq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:07:46 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:53431 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754387AbeDTIHk (ORCPT
+        id S1754330AbeDTIEu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:04:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40614 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754277AbeDTIEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:07:40 -0400
-X-IronPort-AV: E=Sophos;i="5.49,469,1520924400";
-   d="scan'208";a="10756483"
-Subject: Re: [PATCH 61/61] ASoC: atmel: simplify getting .drvdata
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        <linux-kernel@vger.kernel.org>
-CC: <linux-renesas-soc@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <alsa-devel@alsa-project.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <23044c16-efbf-7920-2a25-338ad46376eb@microchip.com>
-Date: Fri, 20 Apr 2018 10:06:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 20 Apr 2018 04:04:46 -0400
+From: Christoph Hellwig <hch@lst.de>
+Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 16/22] sh: simplify get_arch_dma_ops
+Date: Fri, 20 Apr 2018 10:03:07 +0200
+Message-Id: <20180420080313.18796-17-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180420080313.18796-1-hch@lst.de>
+References: <20180420080313.18796-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/04/2018 at 16:06, Wolfram Sang wrote:
-> We should get drvdata from struct device directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Remove the indirection through the dma_ops variable, and just return
+nommu_dma_ops directly from get_arch_dma_ops.
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/sh/include/asm/dma-mapping.h |  5 ++---
+ arch/sh/kernel/dma-nommu.c        |  8 +-------
+ arch/sh/mm/consistent.c           |  3 ---
+ arch/sh/mm/init.c                 | 10 ----------
+ 4 files changed, 3 insertions(+), 23 deletions(-)
 
-> ---
-> 
-> Build tested only. buildbot is happy. Please apply individually.
-> 
->   sound/soc/atmel/atmel_ssc_dai.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-> index a1e2c5682dcd..4a0275a6505d 100644
-> --- a/sound/soc/atmel/atmel_ssc_dai.c
-> +++ b/sound/soc/atmel/atmel_ssc_dai.c
-> @@ -1002,8 +1002,7 @@ static const struct snd_soc_component_driver atmel_ssc_component = {
->   
->   static int asoc_ssc_init(struct device *dev)
->   {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct ssc_device *ssc = platform_get_drvdata(pdev);
-> +	struct ssc_device *ssc = dev_get_drvdata(dev);
->   	int ret;
->   
->   	ret = snd_soc_register_component(dev, &atmel_ssc_component,
-> @@ -1033,8 +1032,7 @@ static int asoc_ssc_init(struct device *dev)
->   
->   static void asoc_ssc_exit(struct device *dev)
->   {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct ssc_device *ssc = platform_get_drvdata(pdev);
-> +	struct ssc_device *ssc = dev_get_drvdata(dev);
->   
->   	if (ssc->pdata->use_dma)
->   		atmel_pcm_dma_platform_unregister(dev);
-> 
-
-
+diff --git a/arch/sh/include/asm/dma-mapping.h b/arch/sh/include/asm/dma-mapping.h
+index 41167931e5d9..149e71f95be7 100644
+--- a/arch/sh/include/asm/dma-mapping.h
++++ b/arch/sh/include/asm/dma-mapping.h
+@@ -2,12 +2,11 @@
+ #ifndef __ASM_SH_DMA_MAPPING_H
+ #define __ASM_SH_DMA_MAPPING_H
+ 
+-extern const struct dma_map_ops *dma_ops;
+-extern void no_iommu_init(void);
++extern const struct dma_map_ops nommu_dma_ops;
+ 
+ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+ {
+-	return dma_ops;
++	return &nommu_dma_ops;
+ }
+ 
+ extern void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+diff --git a/arch/sh/kernel/dma-nommu.c b/arch/sh/kernel/dma-nommu.c
+index 2077cfe73cc6..c0fff676e2e4 100644
+--- a/arch/sh/kernel/dma-nommu.c
++++ b/arch/sh/kernel/dma-nommu.c
+@@ -76,10 +76,4 @@ const struct dma_map_ops nommu_dma_ops = {
+ 	.sync_sg_for_device	= nommu_sync_sg_for_device,
+ #endif
+ };
+-
+-void __init no_iommu_init(void)
+-{
+-	if (dma_ops)
+-		return;
+-	dma_ops = &nommu_dma_ops;
+-}
++EXPORT_SYMBOL(nommu_dma_ops);
+diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
+index a7bff3f29c2b..af2f28572119 100644
+--- a/arch/sh/mm/consistent.c
++++ b/arch/sh/mm/consistent.c
+@@ -20,9 +20,6 @@
+ #include <asm/cacheflush.h>
+ #include <asm/addrspace.h>
+ 
+-const struct dma_map_ops *dma_ops;
+-EXPORT_SYMBOL(dma_ops);
+-
+ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+ 				 dma_addr_t *dma_handle, gfp_t gfp,
+ 				 unsigned long attrs)
+diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
+index ce0bbaa7e404..32e09f03e6bf 100644
+--- a/arch/sh/mm/init.c
++++ b/arch/sh/mm/init.c
+@@ -395,22 +395,12 @@ void __init paging_init(void)
+ 	free_area_init_nodes(max_zone_pfns);
+ }
+ 
+-/*
+- * Early initialization for any I/O MMUs we might have.
+- */
+-static void __init iommu_init(void)
+-{
+-	no_iommu_init();
+-}
+-
+ unsigned int mem_init_done = 0;
+ 
+ void __init mem_init(void)
+ {
+ 	pg_data_t *pgdat;
+ 
+-	iommu_init();
+-
+ 	high_memory = NULL;
+ 	for_each_online_pgdat(pgdat)
+ 		high_memory = max_t(void *, high_memory,
 -- 
-Nicolas Ferre
+2.17.0
