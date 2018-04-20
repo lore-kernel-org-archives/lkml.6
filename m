@@ -1,56 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755416AbeDTOx4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:53:56 -0400
-Received: from resqmta-ch2-06v.sys.comcast.net ([69.252.207.38]:48978 "EHLO
-        resqmta-ch2-06v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755234AbeDTOxz (ORCPT
+        id S1755459AbeDTOyG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:54:06 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:53062 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755422AbeDTOyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:53:55 -0400
-Date: Fri, 20 Apr 2018 09:53:53 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Michal Hocko <mhocko@kernel.org>
-cc: Vlastimil Babka <vbabka@suse.cz>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Pekka Enberg <penberg@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] SLUB: Do not fallback to mininum order if __GFP_NORETRY
- is set
-In-Reply-To: <20180419110051.GB16083@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.20.1804200952230.18006@nuc-kabylake>
-References: <alpine.DEB.2.20.1804180944180.1062@nuc-kabylake> <20180419110051.GB16083@dhcp22.suse.cz>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Fri, 20 Apr 2018 10:54:03 -0400
+X-Google-Smtp-Source: AB8JxZrGIuV31wMxCSE+cAqer6oUIvutL3XY7S8PqrmMtYfhFvLFVrnF5TnmrxvBu75HQL9Jn4evxw==
+Date: Fri, 20 Apr 2018 08:54:00 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Sinan Kaya <okaya@codeaurora.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org, sulrich@codeaurora.org,
+        timur@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "open list:HFI1 DRIVER" <linux-rdma@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: Re: [PATCH 1/2] IB/hfi1: Try slot reset before secondary bus reset
+Message-ID: <20180420145400.GA30433@ziepe.ca>
+References: <1524167784-5911-1-git-send-email-okaya@codeaurora.org>
+ <20180419202632.GE14063@ziepe.ca>
+ <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfLG2F4Q8peAuO9L/0cRlAM3/YH8XqExASWsBtksX6eak3NvWqD5t+hUULQxECxskI+klYVaDpfpbPuSA5YxoGlceEJEyvIMIq5Yuzg1mBvdAhOmff9xU
- PrqA0wP5Y7XhaS0/3iSG4b6i5tuUPBYzXVAFIZDTn9xs5GWQ+3kYmB6BbbGUVHxxksBJ/nopgYVLgWuAgpwRGrSAGg3IoCiAmdmItSCX/fGwvDiKysvppEdc
- hdcBsMazBdqZ6m839+FOBTgC4+rlaqxuw0EkMryz8ENJnf3zZAgPGTM9LJQaOHztpUu7C5p6kXq0QLTqp3lMk7yvIL7PQOwIDUUoCNIA+9TQolC2+ptSeFOZ
- p42obiwNxiqdIgY518UYKBulGJjldBD9AVf+z0G+ucCD4ZkOIMm9zQmLh6SvBJS4tzSkqVqeY8c3gGimShL2fqakGWAwwC1JSmoqpEPE+uAUQroMSED1COrV
- fR8a0aT7cslM0Cr6SZJsDCTbKCcLQLzBmgCsxQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180419214722.GO28657@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Apr 2018, Michal Hocko wrote:
+On Thu, Apr 19, 2018 at 04:47:23PM -0500, Bjorn Helgaas wrote:
+ 
+> I *thought* the hardware was supposed to automatically negotiate to
+> the highest rate supported by both sides without any help at all from
+> software.  But since several drivers have code to do it themselves, I
+> wonder if I'm missing something, or maybe there's something the PCI
+> core should be doing that it isn't, and the driver code is basically
+> working around that PCI core deficiency.
 
-> Overriding __GFP_NORETRY is just a bad idea. It will make the semantic
-> of the flag just more confusing. Note there are users who use
-> __GFP_NORETRY as a way to suppress heavy memory pressure and/or the OOM
-> killer. You do not want to change the semantic for them.
+The HW is supposed to do that, but Gen3 is electrically *hard*.
 
-Redoing the allocation after failing a large order alloc is a retry. I
-would say its confusing right now because a retry occurs despite
-specifying GFP_NORETRY,
+I'm not surprised that some HW has run into trouble where the driver
+might have to be involved to tweak the SERDES.. eg there is now often
+on-device software involved here and updating the SERDES 'firmware'
+may be needed.
 
-> Besides that the changelog is less than optimal. What is the actual
-> problem? Why somebody doesn't want a fallback? Is there a configuration
-> that could prevent the same?
-
-The problem is that SLUB does not honor GFP_NORETRY. The semantics of
-GFP_NORETRY are not followed.
+Jason
