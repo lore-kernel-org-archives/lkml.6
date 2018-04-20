@@ -1,173 +1,111 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AIpwx48hiM8BGhrM+EapqBi99UM2tBZsRT3YveVeG+KyZJLGkLijNxXqg8OtknbCJGS/pZNGGE8r
-ARC-Seal: i=1; a=rsa-sha256; t=1524256436; cv=none;
+Return-Path: <tom.hromatka@oracle.com>
+X-Google-Smtp-Source: AIpwx49BcagdpeyirEg1er6mNibG1yxapnwHqywbZaJplkattV/qp4PjeYTP7G12eFseSGacH0JA
+ARC-Seal: i=1; a=rsa-sha256; t=1524253188; cv=none;
         d=google.com; s=arc-20160816;
-        b=A0mln28dTud+thb69Y+f4LNDJzVKDYRi4UgcXySQGknkeGgjjsS0zeYqXpqId3Q6Ku
-         VMYr8A50cldKEaSr6OjBbQyz16RYc/NPT1bPaVAO3YVMomr62iDvAb7m/IDD7aDi+LYN
-         ZSkndix4ilXZAKsrjyy5FOKJZlwwwrxZGfTVwbkLK0woNU/M5qbrDVHNmKvabxmL0HOQ
-         JsY/ZgHaGb0DjyCFVRXdWFNPL1EsgUbVhqATHKESJqYn+CI9TF0v43Ufdq4A6KJBfP9s
-         FeF/ZmAflbpcMezkb9zwSo2nPwyMwovurjxMP0fD1Uk3PPj9JhhQ9YsBOinUPpTcU60o
-         mb7g==
+        b=LFrpvfCn4XRNa1dGL6MCnTofWyn2uoc9wu8mAe/bHxOVW9Pp50q+sXKYv08xvHuHlU
+         JktegwOHeXvKVrSn9yik0W8OppEUo5PFFFw0HOxWsSjZnjOmz36BoxgAVo0MBVOS7pmZ
+         DKqz7+ugD6S7EhAjiDHf+MBQahsHz/SbYJu82cYnPPdr1DCDaeuqaauhoypCZf9nQo+x
+         7CaeJdh5gWccb5XUC7u8gPV83R8cs2sN6cuikEGeDR1mpt4Nv8b/Hk2ySqqZaJ9LDeKQ
+         J+b2NA0UGyOEtN8FF0XwNQLP89s7p3OICvxZlXox5loiSsFKlaWoAMas00i0Xq3+TfXe
+         e0lw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:content-language:mime-version:user-agent
-         :date:message-id:autocrypt:openpgp:subject:from:cc:to
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=DVpD6A7qM69EMGmbA7uoY9d44Kmx91eY0KwnY9cx8v4=;
-        b=wJsbJ+wIySpuDs0VMQ7YxLbwcFhFNgt3x0g60kTgVpdj1KSpKplRRtjI1OiIM3BAYz
-         ZzpS+ZF+urJ4+ofu69M9faf0sBaLfIA+6/FGHxWxhvFu4WCi4bOpgPwAPXyeLZKzM2kf
-         qSWp/m4S1JbiLUg6dkRHjGAKqZj9o5Noowqr1cyhKLABtZBoWBqElc20h6D7+K6gTzKl
-         6o+KZhe7QPP7iQIdhDfhs62A1cxGEIojYIUNJVPrp6MHsTx4FKBk8gJji9Mw7hQIPYo9
-         8qOlzifXMRhn7TgQ9qIMeRGgsURkW8pRtfIG2ehrruiPbzW/ZFMUbdcAkhY4UoMpkGHb
-         hh0A==
+        bh=erfA20x/KzUluKzc+olIfYzUFNuI7oxsPA65WNN5Ngs=;
+        b=xGuMXMf+QhthferBaBEEJhftvIZL0z7IwUA1meO8+dbegbtb9Bh93/+OSsjU+fSES6
+         Z2KXRUL5HpIxpEPiFzodFiZxsBJd4gBV2whfBMIh3oCbhFM3xJ5C849WMMbuhnG6LlfU
+         1DL84bhAU1Q4MEtj50tJTt6Nmjy614w4PUGC6SCjWuOw1c7X339u72GHqOEUYMDdMjTu
+         4IUX6yTI9ZQGhqjvr7oV/Rf8VP5SPSZhaImxuRLl2L8JANswQGvuQfI7agBUpDCKYOJZ
+         Wn3ZfhU0RTGTK9/SxSKuSMlah4FOk4JYCBTa5frwVkvDBZ6Bydle5OfjyGbCkOLLd6Lr
+         ogmg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=YeLM9Efr;
+       spf=pass (google.com: domain of tom.hromatka@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=tom.hromatka@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=samsung.com
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751325AbeDTUdz (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 20 Apr 2018 16:33:55 -0400
-Received: from osg.samsung.com ([64.30.133.232]:46293 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751258AbeDTUdy (ORCPT <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 20 Apr 2018 16:33:54 -0400
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <shuahkh@osg.samsung.com>,
-        christian.brauner@ubuntu.com
-From: Shuah Khan <shuahkh@osg.samsung.com>
-Subject: [GIT PULL] kselftest update for 4.17-rc2
-Openpgp: preference=signencrypt
-Autocrypt: addr=shuahkh@osg.samsung.com; prefer-encrypt=mutual; keydata=
- xsFNBFIzbI0BEADtNDUjCT2vg2pVl9+XAwjq43AnDpggRIWjq8c82lcGgt9WYeQ2ezoGHADx
- 9XS5dP8OUdf2e1j2GtxOA9DpuAE6KNp9q4n2WHl9Q6Y06JwaXcMKlqH1WzAu8QWDou8KC8UL
- k+Ma/80uqlwQDmy+SDuLSLSPXP03P3NfKII8vAdREVTDfDzle+IKXDgYB8E5On1533QNVXdH
- rWQOU/SggOF8pGklv/a8VMR6KUYbkkkFy9wGLSLeBUx6ZfRkZSYBcAinwHLqWyDGB1993l1K
- y/FArlfEYLjKZ9od9ZGmnA3Ww9EMqpUUTP9b7a/sNuBhmsk5WVwMhMEtCxtIxHj0PVX8+m2R
- mj7mvdBukwsBOfu4ef0tK8CJHUNOXpWwNEl8LY1S+yJS/AZuwvzjpmfNQCzdixGG48oAeb11
- 9YKDCAUP0gjI44jZOiWb38jUn1SGqphW4i2jSiDi9R82mCtrcEXFHUuom2aRGyXEVdL9cEor
- 9/e4uaLDDZPGI4QqlbH6VoJkLzNFTAZnCKW9UsPXonQ7lP9hzH4+3sekYDkpmm2FcIXfVBRC
- XQPri2YuJtk/tgjuTC/5Y+b1itiI/xuKj7YmTYwFICUjYF9ehNe/6giG7zYZPIp2cr+oKwW5
- OTo49wqTdUVm84gULn90p2YQlXnbcw81l+K09AvGj5BntvmjDQARAQABzSFTaHVhaCBLaGFu
- IDxzaHVhaEBnb25laGlraW5nLm9yZz7CwXoEEwECACQCGwMCHgECF4AFCwkIBwMFFQoJCAsF
- FgIDAQAFAlIzc34CGQEACgkQCwJExA0NQxyAmhAAiIg5u11jeZtK2T1cGqITPyrzMg+Mu5WB
- /8xKvbc8wYuStJ6mn84zedBzAjjpCUpdZBfGKGV4Piyj6RyVtPOUe1aze7xNl6jq2XodyHpz
- yCBpVozvQGlWdSO34vTA+iwmbQat4DDHoIjvuGf2gqMzSNXiP6KG0erKOP0l5wBGOgjRtJAn
- 6LSrxC/q7M0OKdSxOQpLd9JHc9MPhjRiEHJGxRTYwb93kzJVZTYVIi5ns709/VvR9dA2kcJx
- mE7AxFduFYEkndF1eS15YRHzPUgH6qlcmpd+BqFDd9Xr4qlEygcOKbUktAbi0iqGJZQiAm7k
- Bc1C/WLVmf6w1Hmd5kc+9JU4nYN3LzsvUHVkzY+XqaTkYYIlziRec40XvIDE6J55ByJYTO94
- iBswwY7IwcxL1qUWrBDvJC8jJFtZw+hcuCZr8cwH9UpFRPejZ2iuXycLagtYAe6ppor8uepj
- FB3yJjrFwwe5XSxjAQyBRvGpzLjZTvSGfsJ6WUwE+7/my9Ab+wnDhebxEbyCuGoIQsNaA5qh
- JHL5xXEw0yVrYSiuBTuOVyTwZvyisvOWAnehIlVok+Oq372vjXitfAr43doeyKoQJkpKdcgD
- wMfU2Sxbiqvfqid/9g+GaySvA9jnkO11INvUqQAnFwQ8QjmzRCMRVK3/ZP4lQ8d4rkks+Rsy
- 7HvOwU0EUjNzxQEQALrsbTCFLIY0/JmCNZ4Wdy6iWdAYjLBqKVxLQ9hBD+y8cQ/tF183XfP/
- oVQrRHiJXJHFN94KjL05g9ww4HHoqSq66f8nYFBtZ58kvhY1qgZDbnXaraz5dTN+um5jUTNp
- jmnqmVRiEs+UredmKUIQkQOnbY+sZNUPb25BX6ebdQ0p+aiJysJtO6fi/Au2K2PIj26RmwAK
- L2+DGSqFR183N8/XTBtb2qtFsvm1hO+jUtt7MB6+jf35AR+CDZd6c+ypqO+RpoS3G+5Cbiv0
- D8jMQxWgZ8MTxAKlI5aUT2J2ep+cQxnm8J1NXM996MkUZE8+6CFeH8y/JftlsZ1dvaBs4eHC
- UqeE2xc6dFxrftDuDlFTtEDGCPmd/z5KWUAM0yX+pJXUiu4ljxtu0drdo/QfcNf4RTSw4JoI
- WE8WjHTnONfyMW860qJknddYB2/m+tpF4C/5ocNms3SaFYnMPOu1orn3imBMEeYmiX778FU+
- CgZBIlftMwcY2+3EeWBTjbJdZnhJ0jD+akLRnjJWUXY9RtxYLS2D7nFZCiUiwjGrh+ctEs7U
- we4in7KOb1lZKykrH/DM70HgKRkSHnFqNSinbRA2ty8QoE04RIy56JNNgqDSthlgW/aY7Q4g
- d70eu5/GMuqvMAa8ONceuJZ6vEZ9vvPL0Boolac+I0hiS71KqqpvABEBAAHCwV8EGAECAAkF
- AlIzc8UCGwwACgkQCwJExA0NQxyxXxAAqaLaK7pYT+z89HDsIrgWIbOv1Fr+LuEWYLk9UFEm
- Y0S/Hl7WIII1XHnspeWauaA6XDQ14Lyw7ywmhwhbwfUPC+W2UXRZ/6azE+pxJYcde41pLXgY
- vBHrvs2thzsZNUHslwHoN/tNwRZLpg2tbRVCbjV7/xAWXl0WCmvOd0C5yMVKx4oQ6/Eg1EaW
- TiPpZ5DM0TKBQ99nzwx8yQs2AZSzgl/mx0e9jWFzsn0XiH8DJKiGK5biKiHN3gsorEULkAje
- /GqbYDQuHbT7khmKiLtLcXktV8OVTGAg+cJaHtmpRSUQ16Gji4IkZCt0ZTZclAs2EstECa5a
- zuehlSFo7wmVteR4/ox+qJvQjwI+CU2l4Rcz9l9QgAo5bhW74oQ4mcN3o9OzRo85e8DVaR8K
- jKe2BHpSRV7mpiRXQ/t7sNKZN3w8mMIXzq5xa+TFWaVHJfOLwKvtFpL/7gRBZV2+yqV/J35b
- CjTFOY1/+fA5hwODGBz/SiHv21t11Nnk6yg9Solpc4HG47V24h2lTwlEfIUTpuwhYG+LBY48
- uPJXU+CdBcyHUwWSA/O1/vXMuJ6byXTbcwtrwBnIO3hoBfxIfGVIgzjwI+/PkDEyn3m0+IAX
- 7ipOURNtfmY71UIeV+kk2j9tHWlcx8yOmStvZ3JFpAuqgZhrDa9aAlaq9GyT/t3HsKs=
-Message-ID: <4c8657ee-d7e8-3e87-05fb-57de6fff13e2@osg.samsung.com>
-Date: Fri, 20 Apr 2018 14:33:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------449CC5B777BA75A09DB57954"
-Content-Language: en-US
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass header.i=@oracle.com header.s=corp-2017-10-26 header.b=YeLM9Efr;
+       spf=pass (google.com: domain of tom.hromatka@oracle.com designates 156.151.31.85 as permitted sender) smtp.mailfrom=tom.hromatka@oracle.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=oracle.com
+From: Tom Hromatka <tom.hromatka@oracle.com>
+To: davem@davemloft.net
+Cc: sparclinux@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, tom.hromatka@oracle.com,
+        shuah@kernel.org, linux-kselftest@vger.kernel.org,
+        allen.pais@oracle.com, khalid.aziz@oracle.com,
+        shannon.nelson@oracle.com, anthony.yznaga@oracle.com
+Subject: [PATCH v3 0/2] sparc64: Add privileged ADI driver
+Date: Fri, 20 Apr 2018 13:39:37 -0600
+Message-Id: <20180420193939.487546-1-tom.hromatka@oracle.com>
+X-Mailer: git-send-email 2.15.0
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8869 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=703
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1804200197
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598298717288101554?=
-X-GMAIL-MSGID: =?utf-8?q?1598298717288101554?=
+X-GMAIL-THRID: =?utf-8?q?1598287413064530122?=
+X-GMAIL-MSGID: =?utf-8?q?1598295310976424071?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------449CC5B777BA75A09DB57954
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+ADI is a feature supported on SPARC M7 and newer processors to allow
+hardware to catch rogue accesses to memory. ADI is supported for data
+fetches only and not instruction fetches. An app can enable ADI on its
+data pages, set version tags on them and use versioned addresses to
+access the data pages. Upper bits of the address contain the version
+tag. On M7 processors, upper four bits (bits 63-60) contain the version
+tag. If a rogue app attempts to access ADI enabled data pages, its
+access is blocked and processor generates an exception. Please see
+Documentation/sparc/adi.txt for further details.
 
-Hi Linus,
+This patchset implements a char driver to read/write ADI versions from
+privileged user space processes.  Intended consumers are makedumpfile
+and crash.
 
-Please pull the following Kselftest update for 4.17-rc2
+v3:
+  * Really fixed the copyright headers to use SPDX GPL v2.  Really.
+v2:
+  * Simplified copyright headers
+  * Completely reworked sparc64 selftests Makefiles.  Used the
+    android selftests Makefiles as an example
+  * Added run.sh and drivers_test.sh to the sparc64 selftest
+    directory.  Used bpf/test_kmod.sh and the android selftests
+    as examples
+  * Minor cleanups in the selftest adi-test.c
+  * Added calls to ksft_test_*() in the adi-test.c
 
+Tom Hromatka (2):
+  SPARC M7 and newer processors utilize ADI to version and protect
+    memory.  This driver is capable of reading/writing ADI/MCD versions
+    from privileged user space processes. Addresses in the adi file are
+    mapped linearly to physical memory at a ratio of 1:adi_blksz.  Thus,
+    a read (or write) of offset K in the file operates upon the ADI
+    version at physical address K * adi_blksz.  The version information
+    is encoded as one version per byte.  Intended consumers are
+    makedumpfile and crash.
+  Add a selftest for the sparc64 privileged ADI driver.  These tests
+    verify the read(), pread(), write(), pwrite(), and seek()
+    functionality of the driver.  The tests also report simple
+    performance statistics:
 
-This Kselftest update for 4.17-rc2 consists of a fix from Michael Ellerman
-to not run dnotify_test by default to prevent Kselftest running forever.
+ drivers/char/Kconfig                               |  12 +
+ drivers/char/Makefile                              |   1 +
+ drivers/char/adi.c                                 | 240 +++++++
+ tools/testing/selftests/Makefile                   |   1 +
+ tools/testing/selftests/sparc64/Makefile           |  46 ++
+ tools/testing/selftests/sparc64/drivers/.gitignore |   1 +
+ tools/testing/selftests/sparc64/drivers/Makefile   |  15 +
+ tools/testing/selftests/sparc64/drivers/adi-test.c | 721 +++++++++++++++++++++
+ .../selftests/sparc64/drivers/drivers_test.sh      |  30 +
+ tools/testing/selftests/sparc64/run.sh             |   3 +
+ 10 files changed, 1070 insertions(+)
+ create mode 100644 drivers/char/adi.c
+ create mode 100644 tools/testing/selftests/sparc64/Makefile
+ create mode 100644 tools/testing/selftests/sparc64/drivers/.gitignore
+ create mode 100644 tools/testing/selftests/sparc64/drivers/Makefile
+ create mode 100644 tools/testing/selftests/sparc64/drivers/adi-test.c
+ create mode 100755 tools/testing/selftests/sparc64/drivers/drivers_test.sh
+ create mode 100755 tools/testing/selftests/sparc64/run.sh
 
-diff is attached.
-
-thanks,
--- Shuah
-
------------------------------------------------------------------------------------
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-4.17-rc2
-
-for you to fetch changes up to 8bf24e8319613bbe950d4188682b3a0d9441b76b:
-
-  selftests/filesystems: Don't run dnotify_test by default (2018-04-17 17:01:16 -0600)
-
-----------------------------------------------------------------
-linux-kselftest-4.17-rc2
-
-This Kselftest update for 4.17-rc2 consists of a fix from Michael Ellerman
-to not run dnotify_test by default to prevent Kselftest running forever.
-
-----------------------------------------------------------------
-Michael Ellerman (1):
-      selftests/filesystems: Don't run dnotify_test by default
-
- tools/testing/selftests/filesystems/Makefile | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
------------------------------------------------------------------------------------
-
---------------449CC5B777BA75A09DB57954
-Content-Type: text/x-patch;
- name="linux-kselftest-4.17-rc2.diff"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="linux-kselftest-4.17-rc2.diff"
-
-diff --git a/tools/testing/selftests/filesystems/Makefile b/tools/testing=
-/selftests/filesystems/Makefile
-index 4e6d09fb166f..5c7d7001ad37 100644
---- a/tools/testing/selftests/filesystems/Makefile
-+++ b/tools/testing/selftests/filesystems/Makefile
-@@ -1,8 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
--TEST_PROGS :=3D dnotify_test devpts_pts
--all: $(TEST_PROGS)
-=20
--include ../lib.mk
-+TEST_GEN_PROGS :=3D devpts_pts
-+TEST_GEN_PROGS_EXTENDED :=3D dnotify_test
-=20
--clean:
--	rm -fr $(TEST_PROGS)
-+include ../lib.mk
-
---------------449CC5B777BA75A09DB57954--
+-- 
+2.15.0
