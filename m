@@ -1,31 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753595AbeDTRFH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:05:07 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48976 "EHLO
+        id S1753635AbeDTRFT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:05:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49292 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752485AbeDTRFE (ORCPT
+        with ESMTP id S1753074AbeDTRFO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:05:04 -0400
+        Fri, 20 Apr 2018 13:05:14 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        David Collins <collinsd@codeaurora.org>,
-        Javier Martinez Canillas <javier@dowhile0.org>, evgreen@chromium.org,
-        swboyd@chromium.org, linux-omap@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>, Tony Lindgren <tony@atomide.com>,
+To: ryang <decatf@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
         linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: Don't return or expect -errno from of_map_mode()" to the regulator tree
-In-Reply-To: <20180418155418.111278-1-dianders@chromium.org>
-Message-Id: <E1f9ZSv-0004Zn-Ml@debutante>
-Date: Fri, 20 Apr 2018 18:04:53 +0100
+Subject: Applied "regulator: tps6586x: Add support for TPS658624" to the regulator tree
+In-Reply-To: <20180419161850.GA9144@computer>
+Message-Id: <E1f9ZTE-0004bF-7z@debutante>
+Date: Fri, 20 Apr 2018 18:05:12 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: Don't return or expect -errno from of_map_mode()
+   regulator: tps6586x: Add support for TPS658624
 
 has been applied to the regulator tree at
 
@@ -50,116 +47,46 @@ to this mail.
 Thanks,
 Mark
 
->From 02f3703934a42417021405ef336fe45add13c3d1 Mon Sep 17 00:00:00 2001
-From: Douglas Anderson <dianders@chromium.org>
-Date: Wed, 18 Apr 2018 08:54:18 -0700
-Subject: [PATCH] regulator: Don't return or expect -errno from of_map_mode()
+>From 669ca0303ac93adba0e046d414165250861efdb7 Mon Sep 17 00:00:00 2001
+From: ryang <decatf@gmail.com>
+Date: Thu, 19 Apr 2018 12:18:50 -0400
+Subject: [PATCH] regulator: tps6586x: Add support for TPS658624
 
-In of_get_regulation_constraints() we were taking the result of
-of_map_mode() (an unsigned int) and assigning it to an int.  We were
-then checking whether this value was -EINVAL.  Some implementers of
-of_map_mode() were returning -EINVAL (even though the return type of
-their function needed to be unsigned int) because they needed to
-signal an error back to of_get_regulation_constraints().
+This version is exists in the Samsung Galaxy Tab 10.1 which is based on the
+Nvidia Tegra 2 board. The TPS658624 has the same SM2 voltage table as
+TPS658623.
 
-In general in the regulator framework the mode is always referred to
-as an unsigned int.  While we could fix this to be a signed int (the
-highest value we store in there right now is 0x8), it's actually
-pretty clean to just define the regulator mode 0x0 (the lack of any
-bits set) as an invalid mode.  Let's do that.
-
-Fixes: 5e5e3a42c653 ("regulator: of: Add support for parsing initial and suspend modes")
-Suggested-by: Javier Martinez Canillas <javierm@redhat.com>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+Signed-off-by: ryang <decatf@gmail.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/cpcap-regulator.c |  2 +-
- drivers/regulator/of_regulator.c    | 13 +++++++------
- drivers/regulator/twl-regulator.c   |  2 +-
- include/linux/regulator/consumer.h  |  1 +
- 4 files changed, 10 insertions(+), 8 deletions(-)
+ drivers/regulator/tps6586x-regulator.c | 1 +
+ include/linux/mfd/tps6586x.h           | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/cpcap-regulator.c b/drivers/regulator/cpcap-regulator.c
-index f541b80f1b54..bd910fe123d9 100644
---- a/drivers/regulator/cpcap-regulator.c
-+++ b/drivers/regulator/cpcap-regulator.c
-@@ -222,7 +222,7 @@ static unsigned int cpcap_map_mode(unsigned int mode)
- 	case CPCAP_BIT_AUDIO_LOW_PWR:
- 		return REGULATOR_MODE_STANDBY;
- 	default:
--		return -EINVAL;
-+		return REGULATOR_MODE_INVALID;
- 	}
- }
+diff --git a/drivers/regulator/tps6586x-regulator.c b/drivers/regulator/tps6586x-regulator.c
+index 9e9d22038017..ba3dae7b2d2d 100644
+--- a/drivers/regulator/tps6586x-regulator.c
++++ b/drivers/regulator/tps6586x-regulator.c
+@@ -342,6 +342,7 @@ static struct tps6586x_regulator *find_regulator_info(int id, int version)
  
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index f47264fa1940..0d3f73eacb99 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -31,6 +31,7 @@ static void of_get_regulation_constraints(struct device_node *np,
- 	struct regulation_constraints *constraints = &(*init_data)->constraints;
- 	struct regulator_state *suspend_state;
- 	struct device_node *suspend_np;
-+	unsigned int mode;
- 	int ret, i;
- 	u32 pval;
- 
-@@ -124,11 +125,11 @@ static void of_get_regulation_constraints(struct device_node *np,
- 
- 	if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
- 		if (desc && desc->of_map_mode) {
--			ret = desc->of_map_mode(pval);
--			if (ret == -EINVAL)
-+			mode = desc->of_map_mode(pval);
-+			if (mode == REGULATOR_MODE_INVALID)
- 				pr_err("%s: invalid mode %u\n", np->name, pval);
- 			else
--				constraints->initial_mode = ret;
-+				constraints->initial_mode = mode;
- 		} else {
- 			pr_warn("%s: mapping for mode %d not defined\n",
- 				np->name, pval);
-@@ -163,12 +164,12 @@ static void of_get_regulation_constraints(struct device_node *np,
- 		if (!of_property_read_u32(suspend_np, "regulator-mode",
- 					  &pval)) {
- 			if (desc && desc->of_map_mode) {
--				ret = desc->of_map_mode(pval);
--				if (ret == -EINVAL)
-+				mode = desc->of_map_mode(pval);
-+				if (mode == REGULATOR_MODE_INVALID)
- 					pr_err("%s: invalid mode %u\n",
- 					       np->name, pval);
- 				else
--					suspend_state->mode = ret;
-+					suspend_state->mode = mode;
- 			} else {
- 				pr_warn("%s: mapping for mode %d not defined\n",
- 					np->name, pval);
-diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
-index a4456db5849d..884c7505ed91 100644
---- a/drivers/regulator/twl-regulator.c
-+++ b/drivers/regulator/twl-regulator.c
-@@ -274,7 +274,7 @@ static inline unsigned int twl4030reg_map_mode(unsigned int mode)
- 	case RES_STATE_SLEEP:
- 		return REGULATOR_MODE_STANDBY;
- 	default:
--		return -EINVAL;
-+		return REGULATOR_MODE_INVALID;
- 	}
- }
- 
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index df176d7c2b87..25602afd4844 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -80,6 +80,7 @@ struct regmap;
-  * These modes can be OR'ed together to make up a mask of valid register modes.
-  */
- 
-+#define REGULATOR_MODE_INVALID			0x0
- #define REGULATOR_MODE_FAST			0x1
- #define REGULATOR_MODE_NORMAL			0x2
- #define REGULATOR_MODE_IDLE			0x4
+ 	switch (version) {
+ 	case TPS658623:
++	case TPS658624:
+ 		table = tps658623_regulator;
+ 		num = ARRAY_SIZE(tps658623_regulator);
+ 		break;
+diff --git a/include/linux/mfd/tps6586x.h b/include/linux/mfd/tps6586x.h
+index 2fe68e481230..b19c2801a30e 100644
+--- a/include/linux/mfd/tps6586x.h
++++ b/include/linux/mfd/tps6586x.h
+@@ -18,6 +18,7 @@
+ #define TPS658621A	0x15
+ #define TPS658621CD	0x2c
+ #define TPS658623	0x1b
++#define TPS658624	0x0a
+ #define TPS658640	0x01
+ #define TPS658640v2	0x02
+ #define TPS658643	0x03
 -- 
 2.17.0
