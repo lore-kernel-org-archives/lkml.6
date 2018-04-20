@@ -1,98 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754665AbeDTKYp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:24:45 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:45508 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754595AbeDTKYm (ORCPT
+        id S1754590AbeDTK0J (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:26:09 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:53944 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754458AbeDTK0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:24:42 -0400
-Date: Fri, 20 Apr 2018 11:24:09 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, Mark Rutland <mark.rutland@arm.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Daniel Vetter <daniel.vetter@intel.com>, Peter Rosin <peda@axentia.se>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 7/7] drm/i2c: tda998x: register as a drm bridge
-Message-ID: <20180420102408.GW16141@n2100.armlinux.org.uk>
-References: <20180419162751.25223-1-peda@axentia.se>
- <20180419162751.25223-8-peda@axentia.se>
- <2556566.3fxMPoIyx0@avalon>
+        Fri, 20 Apr 2018 06:26:08 -0400
+From: Matt Redfearn <matt.redfearn@mips.com>
+To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+CC: <linux-mips@linux-mips.org>, Matt Redfearn <matt.redfearn@mips.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: [PATCH v3 3/7] MIPS: perf: Use correct VPE ID when setting up VPE tracing
+Date: Fri, 20 Apr 2018 11:23:05 +0100
+Message-ID: <1524219789-31241-4-git-send-email-matt.redfearn@mips.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524219789-31241-1-git-send-email-matt.redfearn@mips.com>
+References: <1524219789-31241-1-git-send-email-matt.redfearn@mips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2556566.3fxMPoIyx0@avalon>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [192.168.155.41]
+X-BESS-ID: 1524219945-321457-10557-42113-2
+X-BESS-VER: 2018.5-r1804181636
+X-BESS-Apparent-Source-IP: 12.201.5.28
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192194
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 01:06:49PM +0300, Laurent Pinchart wrote:
-> Hi Peter,
-> 
-> Thank you for the patch.
-> 
-> On Thursday, 19 April 2018 19:27:51 EEST Peter Rosin wrote:
-> > This makes this driver work with all(?) drivers that are not
-> > componentized and instead expect to connect to a panel/bridge. That
-> > said, the only one tested is atmel_hlcdc.
-> > 
-> > This hooks the relevant work function previously called by the encoder
-> > and the component also to the bridge, since the encoder goes away when
-> > connecting to the bridge interface of the driver and the equivalent of
-> > bind/unbind of the component is handled by bridge attach/detach.
-> > 
-> > The lifetime requirements of a bridge and a component are slightly
-> > different, which is the reason for struct tda998x_bridge.
-> 
-> Couldn't you move the allocation and initialization (tda998x_create) of the 
-> tda998x_priv structure to probe time ? I think you wouldn't need a separate 
-> structure in that case. Unless I'm mistaken there would be an added benefit of 
-> separating component and bridge initialization, resulting in the encoder not 
-> being initialized at all if the component isn't used. You wouldn't need to add 
-> a local_encoder parameter to the tda998x_init() function.
+There are a couple of FIXME's in the perf code which state that
+cpu_data[event->cpu].vpe_id reports 0 for both CPUs. This is no longer
+the case, since the vpe_id is used extensively by SMP CPS.
 
-No, I don't like that idea one bit, as I've stated in the past about the
-component API.  The same (probably) goes for the bridge stuff too.
+VPE local counting gets around this by using smp_processor_id() instead.
+As it happens this does work correctly to count events on the right VPE,
+but relies on 2 assumptions:
+a) Always having 2 VPEs / core.
+b) The hardware only paying attention to the least significant bit of
+the PERFCTL.VPEID field.
+If either of these assumptions change then the incorrect VPEs events
+will be counted.
 
-Consider the following:
+Fix this by replacing smp_processor_id() with
+cpu_vpe_id(&current_cpu_data), in the vpe_id() macro, and pass vpe_id()
+to M_PERFCTL_VPEID() when setting up PERFCTL.VPEID. The FIXME's can also
+be removed since they no longer apply.
 
-Your DRM system is initialised.  You then remove a module, which results
-in the DRM system being torn down.  You re-insert the module (eg, having
-made a change to it).  The DRM system is then re-initialised.
+Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
+---
 
-At this point, what is the state of variables such as priv->is_on if
-you allocate the structure at probe time?
+Changes in v3: None
+Changes in v2: None
 
-What about all the other variables in the driver private structure - are
-you sure that the driver can cope with random values from the previous
-"usage" remaining there?
+ arch/mips/kernel/perf_event_mipsxx.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-At the moment, this isn't a concern for the driver because we
-dev_kzalloc() the structure in the bind callback.  Move that to the
-probe function, and the structure is no longer re-initialised each
-time, and so it retains the previous state.  The driver is not setup
-to cope with that.
-
-So, to work around that, you would need to reinitialise _everything_
-in the structure that the driver requires, which IMHO is a very
-open to bugs (eg, if a member is missed, or added without the
-necessary re-initialisation), _especially_ when this is not a path
-that will get regular testing.
-
-If you want to do this for a subset of data, it would be much better
-to separate them into independent structures (maybe one embedded into
-the other) so that this problem can not occur.  That way, a subset
-of the data can be memset() when bound to the rest of the DRM system
-ensuring a consistent driver state and still achieve what you're
-suggesting.
-
+diff --git a/arch/mips/kernel/perf_event_mipsxx.c b/arch/mips/kernel/perf_event_mipsxx.c
+index 0595a974bc81..7e2b7d38a774 100644
+--- a/arch/mips/kernel/perf_event_mipsxx.c
++++ b/arch/mips/kernel/perf_event_mipsxx.c
+@@ -135,12 +135,8 @@ static DEFINE_RWLOCK(pmuint_rwlock);
+ #define vpe_id()	(cpu_has_mipsmt_pertccounters ? \
+ 			 0 : (smp_processor_id() & MIPS_CPUID_TO_COUNTER_MASK))
+ #else
+-/*
+- * FIXME: For VSMP, vpe_id() is redefined for Perf-events, because
+- * cpu_data[cpuid].vpe_id reports 0 for _both_ CPUs.
+- */
+ #define vpe_id()	(cpu_has_mipsmt_pertccounters ? \
+-			 0 : smp_processor_id())
++			 0 : cpu_vpe_id(&current_cpu_data))
+ #endif
+ 
+ /* Copied from op_model_mipsxx.c */
+@@ -1277,11 +1273,7 @@ static void check_and_calc_range(struct perf_event *event,
+ 			 */
+ 			hwc->config_base |= M_TC_EN_ALL;
+ 		} else {
+-			/*
+-			 * FIXME: cpu_data[event->cpu].vpe_id reports 0
+-			 * for both CPUs.
+-			 */
+-			hwc->config_base |= M_PERFCTL_VPEID(event->cpu);
++			hwc->config_base |= M_PERFCTL_VPEID(vpe_id());
+ 			hwc->config_base |= M_TC_EN_VPE;
+ 		}
+ 	} else
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+2.7.4
