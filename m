@@ -1,101 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754231AbeDTJOU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 05:14:20 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:37841 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754158AbeDTJOS (ORCPT
+        id S1754337AbeDTJPM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 05:15:12 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:48150 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754172AbeDTJPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 05:14:18 -0400
-X-Google-Smtp-Source: AIpwx49BWzpMJOP23MuaoAF3MUV8DVUeoOtT6ALXwro+cC3HPKXK9fDZvsC/DXfwfbF6bNXz734Zni58eQEo0kdqytU=
+        Fri, 20 Apr 2018 05:15:09 -0400
+From: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v1 4/4] ARM: dts: stm32: Add DMAMUX support on STM32MP157C
+Date: Fri, 20 Apr 2018 11:14:41 +0200
+Message-ID: <1524215681-14555-5-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1524215681-14555-1-git-send-email-pierre-yves.mordret@st.com>
+References: <1524215681-14555-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180419195449.GC9451@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-32-mszeredi@redhat.com>
- <CAOQ4uxgdWCWvwWgjUu06H=BeMxh-BVAjxVE5Ckj-poKRGgwvMQ@mail.gmail.com>
- <CAJfpegtLdmnxieDx7+FBUoc-fKsTEwA+oHinhAfa4E9SDFfSNw@mail.gmail.com>
- <20180418093845.19ca33f3@gandalf.local.home> <CAJfpeguJN0+m9Vhtv0fo79xq-P1UzWki9GqQq9WyJRMEwiJBqQ@mail.gmail.com>
- <20180419195449.GC9451@redhat.com>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Fri, 20 Apr 2018 11:14:17 +0200
-Message-ID: <CAOssrKeNY2Er6qyE8dPWh3a0yCx_QnDOgZgntn_mvJSbCCDTEw@mail.gmail.com>
-Subject: Re: [RFC PATCH 31/35] Revert "vfs: add d_real_inode() helper"
-To: Vivek Goyal <vgoyal@redhat.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Howard McLauchlan <hmclauchlan@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.116]
+X-ClientProxiedBy: GPXDAG2NODE5.st.com (10.75.127.69) To GPXDAG5NODE5.st.com
+ (10.75.127.78)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 9:54 PM, Vivek Goyal <vgoyal@redhat.com> wrote:
-> On Wed, Apr 18, 2018 at 03:49:02PM +0200, Miklos Szeredi wrote:
->> On Wed, Apr 18, 2018 at 3:38 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
->> > On Wed, 18 Apr 2018 13:42:03 +0200
->> > Miklos Szeredi <miklos@szeredi.hu> wrote:
->> >
->> >> On Wed, Apr 18, 2018 at 10:19 AM, Amir Goldstein <amir73il@gmail.com> wrote:
->> >> > On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
->> >> >> This reverts commit a118084432d642eeccb961c7c8cc61525a941fcb.
->> >> >>
->> >> >> No user of d_real_inode() remains, so it can be removed.
->> >> >>
->> >> >
->> >> > FYI, there is a new user in v4.17-rc1 added by commit
->> >> > f0a2aa5a2a40 tracing/uprobe: Add support for overlayfs
->> >> >
->> >> > Seems like this patch got merged without any CC to overlayfs
->> >> > mailing list nor maintainer?
->> >
->> > It appeared to be a small change with lots of reviewers. I didn't think
->> > it was something to notify the overlayfs folks with. But perhaps I was
->> > wrong.
->>
->> The patch is correct.  The code surrounding it isn't, though.
->>
->> >
->> >> >
->> >> > Not sure yet if overlayfs-rorw patches would allow reverting this
->> >> > change.
->> >>
->> >> Not trivial, because uprobe is looking at i_mapping to get a list of
->> >> current memory maps.   We could set i_mapping at overlay inode
->> >> initialization time, but we definitely can't *change* i_mapping at
->> >> copy up.  Which is bound to result in some weird inconsistencies.  So
->> >> likely we'll need to keep d_real_inode() for the time being.
->> >
->> > I just received this patch:
->> >
->> >  http://lkml.kernel.org/r/20180418062907.3210386-1-songliubraving@fb.com
->> >
->> > Which removes this code. Can you review it and I'll take it.
->>
->> It shouldn't remove d_real_inode(), because that part is correct and
->> fixes a real bug in handling overlayfs files.
->
-> I am wondering what does it practically mean for metdata only copy up
-> patches. Given this is uprobe code, I am assuming its modifying some
-> executable code dynamically. And for the the case of metadata only
-> copy up, it will return inode of lower. That probably means, as long
-> as all running instances of that exeutable are using that inode, things
-> will work fine.
->
-> But if for some reason somebody opens that file for WRITE and triggers
-> copy up and new instances of same binary will not see the probe taking
-> affect?
->
-> Which is probably very similar to what will happen if a lower executable
-> is copied up. Having said that, in normal cases there should not be a
-> need to copy up a binary in normal circumstances.
+Activate DMAMUX for STM32MP157C
 
-The only thing we need to ensure when uprobes interact with copy-ups
-is that the kernel doesn't crash and doesn't leak memory.  Other than
-that, it's a totally uninteresting corner case and we don't need to
-worry about its behavior.
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+---
+  Version history:
+     v1:
+        * Initial
+---
+---
+ arch/arm/boot/dts/stm32mp157c.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Thanks,
-Miklos
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 3c0ca6c..da4c39e 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -174,6 +174,7 @@
+ 			clocks = <&rcc DMA1>;
+ 			#dma-cells = <4>;
+ 			st,mem2mem;
++			dma-requests = <8>;
+ 		};
+ 
+ 		dma2: dma@48001000 {
+@@ -190,6 +191,17 @@
+ 			clocks = <&rcc DMA2>;
+ 			#dma-cells = <4>;
+ 			st,mem2mem;
++			dma-requests = <8>;
++		};
++
++		dmamux1: dma-router@48002000 {
++			compatible = "st,stm32h7-dmamux";
++			reg = <0x48002000 0x1c>;
++			#dma-cells = <3>;
++			dma-requests = <128>;
++			dma-masters = <&dma1 &dma2>;
++			dma-channels = <16>;
++			clocks = <&rcc DMAMUX>;
+ 		};
+ 
+ 		rcc: rcc@50000000 {
+-- 
+2.7.4
