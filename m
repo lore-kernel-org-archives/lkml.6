@@ -1,138 +1,143 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-990390-1524210864-2-12221484691414276457
+X-Cyrus-Session-Id: sloti22d1t05-990390-1524211124-2-7463725217158493165
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524210864; b=vJVWo+lF+3GAc24pC7gxqbKZlCtM918qSzuYM589SsNMGa7oph
-    xmmrXe0lFOc97PoKY8lkgFITetpUZZg2kTgYmqEmalE/PG3Edqa24LxoA0vbo0mY
-    /DN/ZdGXIK9O6Sgv0xKx0zSi6S3AmI17g2CoLEXdCDuyl/wej/mYEutF8jdN7waQ
-    QLLj4yy5IsTrLBRg7iDe2arUhC7kYxMcOTtiOe4DKxInZz6iYlrgmtBcgEPcesqM
-    1nT30n77s6tcdb0yBxMoEJEhOsXiTgvP1QAFl/L7+htxWrLTvuFiklkP6sAInQJH
-    9/ReUm3JNpNS9EX/ZeWUTPbbeLt6BTzIcB3w==
+    1524211124; b=jUnKAtdQMulZ5w7hAihkD8K+o/jXmNye4wyJL72LkFyziZA+9f
+    5gucSvkOdBH6z0rpy3WTuVLOrkMP7V8dvmDKkmr09k5Bmq57z0uShCTKUZDxuyKC
+    k/4QUa+xy5+byGj9g7qu1+Q5ormDaiSGoVNF6KknEhkQWKgbuHMhVqzgMsmBi7cT
+    5yDquJwMY1Zan0TlW2sziITCIQMA5D+e9js+IsbToWrArCvcFxbfsdvPXxmijFXO
+    Q8dvT9Nfj9dQAcmn4VdkH7oxHAzOw3CwatkjMEJOZ8x5ZGEV6ZirkwhSPHWHMpDC
+    T19VrSCQOxUGpNYcoAdeoanaUjmm6IbyEJAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:references
-    :mime-version:content-type:in-reply-to:message-id:sender
-    :list-id; s=fm2; t=1524210864; bh=D8rNWSvym7J9FOt7GwjSMzMH/MFi/b
-    Gt6U8AHGdYjoM=; b=mmeQEJdVUVsojCmC8XkRJwalo5c1ulB81XF1l/7xYF/sOP
-    nW3yVVVlxuE0meyn2bmFaeyqV8wQe9Wsg8ljlNvClQrzsTA98Y2qey71WvO0wed9
-    dl0QEGFg5cq3fVFKPRtMtTRoBdYo7n561Hg4GRQVeXCCjPMz+++FVnDHZ7THlBaC
-    sN8D/ToCPYwslZDeXY+0BK/2vqbgd3PBFMyKkxhBuvFxpAsNCe6SdB+c0POXeeO3
-    8zZ+fDZ/zm095V8hiGjErENPvYD/2UbjlfJYHTsrX2bt3CkEtR24zayiyQV1OLOH
-    X8lyh9L0aKWq/xpkIItEcyQ0XCHODl1nYeO3bJ9A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=de.ibm.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1524211124; bh=7hizPu69vVpgc44NglxzXxSntzmNambQ8LeQD896uC
+    E=; b=W4cegtp96Uo9qFDXTYhC//ZoD4+4oaedU/es7SvtZizPdPod/ovxtBX0OB
+    /rknRpei+uHB+Fo0hHR7XURJ4DInQr4J0DBpzhHiDdYhZS9PCx5bDunHgTabD+vK
+    ++ZlOSkKwUJ5bXJpQ6UOgyi4TFvx3MJWWV6CwSCUqGdlxjz8Zd8YqvIR2P4RnKHN
+    RwhesqhX2P8+1+HoFna+O5hRrdv1C2hkz0cJgdmuNX2/ZFdSNGxV2M1Z9M82I+Tg
+    a0nmFiVg0AG2yFYu8qQwviqzBbGlomHUNEfV7aB1OQE+ST2EZi9of5LcfKVAP0/1
+    COlVX7KhUJ5zhfXpcNuA1dpUWEsQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=k37mhGlX x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Ko8KGphz;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=de.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=de.ibm.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=k37mhGlX x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=Ko8KGphz;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=de.ibm.com header.result=pass header_org.domain=ibm.com header_org.result=pass header_is_org_domain=no;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKyvcKgy4RNWuYaJITuuLzuL+hXSLbCXck2sGbSfOAyWCBQXIYqg2RxjFurIWSh+0SWqEN1DZqo8ULWODBbWNAEtqiAdfveUtI4zoRUBstbpPArQNLQ0
-    mjc0M64/AGi+07y8/3bBnm0QfGqQFjV9fyrd4w4VSw3gsVOgW+hV0vKFsSegWP9S8pRyQz6DJgstgawTXKdax61KnShZGFvSR/qrInwvXTnunNroPXvtI14/
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=Kd1tUaAdevIA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=hsoxY6qMgJ34QE3A0z0A:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfLIQlz/OORlW6od6Nc30KGvFC8KvduaL6g8hyuyf2oYObL8N4lyBTMJG3ZuxsK25rMsXFoJHJe0DbVdkNvJHRymII67pSvpzKqt1Jm9uV4Y5UFaC6Fz9
+    RHNSK5yVlOOJmX+daPGpJexFSZF9j50/LqdH6FzMViCqHhjroEjU84zQ8eFz8R6Xq3AiBz6tTbbnx9Gv69SdS0zQsoBWGabJDQurYBKzb3f9kDWzH+8Rp3Bo
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=dmTx0TcGlETd0u4mwdoA:9 a=QEXdDO2ut3YA:10
     a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753849AbeDTHyV (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 20 Apr 2018 03:54:21 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48732 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753854AbeDTHyT (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 20 Apr 2018 03:54:19 -0400
-Date: Fri, 20 Apr 2018 09:54:07 +0200
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        libc-alpha@sourceware.org, tglx@linutronix.de,
-        deepa.kernel@gmail.com, viro@zeniv.linux.org.uk,
-        ebiederm@xmission.com, albert.aribaud@3adev.fr,
-        linux-s390@vger.kernel.org, schwidefsky@de.ibm.com, x86@kernel.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-mips@linux-mips.org, jhogan@kernel.org, ralf@linux-mips.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH v3 04/17] y2038: s390: Remove unneeded ipc uapi header
- files
-References: <20180419143737.606138-1-arnd@arndb.de>
- <20180419143737.606138-5-arnd@arndb.de>
+        id S1754024AbeDTH63 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 20 Apr 2018 03:58:29 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:42695 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753957AbeDTH60 (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 20 Apr 2018 03:58:26 -0400
+X-Google-Smtp-Source: AB8JxZrRyZ6k002QS9Q1occohyKgpunn2fXCxVeCrcoLr1KtLtdkKWSVfze8QRo+8GFnEBnHRVkLV04/b5K3sp7pNkM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180419143737.606138-5-arnd@arndb.de>
-X-TM-AS-GCONF: 00
-x-cbid: 18042007-0044-0000-0000-0000054A493A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18042007-0045-0000-0000-0000288A6979
-Message-Id: <20180420075407.GA7119@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1804200079
+In-Reply-To: <20180420075407.GA7119@osiris>
+References: <20180419143737.606138-1-arnd@arndb.de> <20180419143737.606138-5-arnd@arndb.de>
+ <20180420075407.GA7119@osiris>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 20 Apr 2018 09:58:24 +0200
+X-Google-Sender-Auth: eVOYssfyI36gGjjuqQplKA-NT7Y
+Message-ID: <CAK8P3a1_TLs=QZuMVbbAGMEct+SBg2wZ663Kq2RJN5mgU1ZCtw@mail.gmail.com>
+Subject: Re: [PATCH v3 04/17] y2038: s390: Remove unneeded ipc uapi header files
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Albert ARIBAUD <albert.aribaud@3adev.fr>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        sparclinux <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 19, 2018 at 04:37:24PM +0200, Arnd Bergmann wrote:
-> The s390 msgbuf/sembuf/shmbuf header files are all identical to the
-> version from asm-generic.
-> 
-> This patch removes the files and replaces them with 'generic-y'
-> statements, to avoid having to modify each copy when we extend sysvipc
-> to deal with 64-bit time_t in 32-bit user space.
-> 
-> Note that unlike alpha and ia64, the ipcbuf.h header file is slightly
-> different here, so I'm leaving the private copy.
-> 
-> To deal with 32-bit compat tasks, we also have to adapt the definitions
-> of compat_{shm,sem,msg}id_ds to match the changes to the respective
-> asm-generic files.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/s390/include/asm/compat.h      | 32 ++++++++++++------------
->  arch/s390/include/uapi/asm/Kbuild   |  3 +++
->  arch/s390/include/uapi/asm/msgbuf.h | 38 ----------------------------
->  arch/s390/include/uapi/asm/sembuf.h | 30 -----------------------
->  arch/s390/include/uapi/asm/shmbuf.h | 49 -------------------------------------
->  5 files changed, 19 insertions(+), 133 deletions(-)
->  delete mode 100644 arch/s390/include/uapi/asm/msgbuf.h
->  delete mode 100644 arch/s390/include/uapi/asm/sembuf.h
->  delete mode 100644 arch/s390/include/uapi/asm/shmbuf.h
+On Fri, Apr 20, 2018 at 9:54 AM, Heiko Carstens
+<heiko.carstens@de.ibm.com> wrote:
+> On Thu, Apr 19, 2018 at 04:37:24PM +0200, Arnd Bergmann wrote:
+>> The s390 msgbuf/sembuf/shmbuf header files are all identical to the
+>> version from asm-generic.
+>>
+>> This patch removes the files and replaces them with 'generic-y'
+>> statements, to avoid having to modify each copy when we extend sysvipc
+>> to deal with 64-bit time_t in 32-bit user space.
+>>
+>> Note that unlike alpha and ia64, the ipcbuf.h header file is slightly
+>> different here, so I'm leaving the private copy.
+>>
+>> To deal with 32-bit compat tasks, we also have to adapt the definitions
+>> of compat_{shm,sem,msg}id_ds to match the changes to the respective
+>> asm-generic files.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  arch/s390/include/asm/compat.h      | 32 ++++++++++++------------
+>>  arch/s390/include/uapi/asm/Kbuild   |  3 +++
+>>  arch/s390/include/uapi/asm/msgbuf.h | 38 ----------------------------
+>>  arch/s390/include/uapi/asm/sembuf.h | 30 -----------------------
+>>  arch/s390/include/uapi/asm/shmbuf.h | 49 -------------------------------------
+>>  5 files changed, 19 insertions(+), 133 deletions(-)
+>>  delete mode 100644 arch/s390/include/uapi/asm/msgbuf.h
+>>  delete mode 100644 arch/s390/include/uapi/asm/sembuf.h
+>>  delete mode 100644 arch/s390/include/uapi/asm/shmbuf.h
+>
+> FWIW,
+>
+> Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-FWIW,
+Thanks, added to the patch.
 
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-
+     Arnd
