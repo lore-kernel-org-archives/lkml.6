@@ -1,52 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754696AbeDTLux (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 07:50:53 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41089 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754619AbeDTLuw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 07:50:52 -0400
-X-Google-Smtp-Source: AIpwx48aeOVXuDH5XOlSAOw3ZBoMAH+jY9xYZiwcBCsk65JT78ecIP2vMFS90BOaQ0p6j7pZ4TqBEA==
-From: Emil Lundmark <lndmrk@chromium.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Dave Airlie <airlied@redhat.com>, Sean Paul <seanpaul@chromium.org>,
-        linux-kernel@vger.kernel.org, Emil Lundmark <lndmrk@chromium.org>
-Subject: [PATCH] drm: udl: Destroy framebuffer only if it was initialized
-Date: Fri, 20 Apr 2018 13:50:01 +0200
-Message-Id: <20180420115001.161745-1-lndmrk@chromium.org>
+        id S1754714AbeDTLxL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 07:53:11 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:5913 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754631AbeDTLxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 07:53:09 -0400
+From: xuyandong <xuyandong2@huawei.com>
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Zhanghailiang <zhang.zhanghailiang@huawei.com>,
+        "wangxin (U)" <wangxinxin.wang@huawei.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Subject: RE: [PATCH] vfio iommu type1: no need to check task->mm if task has
+ been destroyed
+Thread-Topic: [PATCH] vfio iommu type1: no need to check task->mm if task
+ has been destroyed
+Thread-Index: AQHT1wQjp9zm6aRJKUq4lyRPmwjqeaQHwDoAgAA8MQCAAYv2QA==
+Date: Fri, 20 Apr 2018 11:52:56 +0000
+Message-ID: <7CECC2DFC21538489F72729DF5EFB4D9BF9F0B@dggemm501-mbs.china.huawei.com>
+References: <20180418105545.13488-1-xuyandong2@huawei.com>
+        <20180419101926.5700f8a9@w520.home> <20180419135452.72d0ff32@w520.home>
+In-Reply-To: <20180419135452.72d0ff32@w520.home>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.177.33.58]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KBrG1G020670
 
-This fixes a NULL pointer dereference that can happen if the UDL
-driver is unloaded before the framebuffer is initialized. This can
-happen e.g. if the USB device is unplugged right after it was plugged
-in.
+Hi Alex,
+ After days of intensive test, the bug did not show up any more.
+ So I think the new patch does solve this problem.
 
-Signed-off-by: Emil Lundmark <lndmrk@chromium.org>
----
- drivers/gpu/drm/udl/udl_fb.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/udl/udl_fb.c b/drivers/gpu/drm/udl/udl_fb.c
-index 2ebdc6d5a76e..5754e37f741b 100644
---- a/drivers/gpu/drm/udl/udl_fb.c
-+++ b/drivers/gpu/drm/udl/udl_fb.c
-@@ -426,9 +426,11 @@ static void udl_fbdev_destroy(struct drm_device *dev,
- {
- 	drm_fb_helper_unregister_fbi(&ufbdev->helper);
- 	drm_fb_helper_fini(&ufbdev->helper);
--	drm_framebuffer_unregister_private(&ufbdev->ufb.base);
--	drm_framebuffer_cleanup(&ufbdev->ufb.base);
--	drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
-+	if (ufbdev->ufb.obj) {
-+		drm_framebuffer_unregister_private(&ufbdev->ufb.base);
-+		drm_framebuffer_cleanup(&ufbdev->ufb.base);
-+		drm_gem_object_put_unlocked(&ufbdev->ufb.obj->base);
-+	}
- }
- 
- int udl_fbdev_init(struct drm_device *dev)
--- 
-2.17.0.484.g0c8726318c-goog
+> -----Original Message-----
+> From: Alex Williamson [mailto:alex.williamson@redhat.com]
+> Sent: Friday, April 20, 2018 3:55 AM
+> To: xuyandong <xuyandong2@huawei.com>
+> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org; Zhanghailiang
+> <zhang.zhanghailiang@huawei.com>; wangxin (U)
+> <wangxinxin.wang@huawei.com>; Kirti Wankhede
+> <kwankhede@nvidia.com>
+> Subject: Re: [PATCH] vfio iommu type1: no need to check task->mm if task
+> has been destroyed
+> 
+> On Thu, 19 Apr 2018 10:19:26 -0600
+> Alex Williamson <alex.williamson@redhat.com> wrote:
+> 
+> > [cc +Kirti]
+> >
+> > On Wed, 18 Apr 2018 18:55:45 +0800
+> > Xu Yandong <xuyandong2@huawei.com> wrote:
+> >
+> > > The task structure in vfio_dma struct used to identify the same task
+> > > who map it or other task who shares same adress space is allowed to
+> > > unmap. But if the task who map it has exited, mm of the task has
+> > > been set to null, we should unmap the vfio dma directly.
+> > >
+> > > Signed-off-by: Xu Yandong <xuyandong2@huawei.com>
+> > > ---
+> > > Hi all,
+> > > When I unplug a vcpu from a VM lanched with a VFIO hostdev device, I
+> > > found that the *vfio_dma* mapped by this vcpu task could not be
+> > > unmaped in the future, so I send this patch to unmap vfio_dma
+> > > directly if the task who mapped it has exited.
+> > >
+> > > Howerver this patch may introduce a new security risk because any task
+> can
+> > > unmap the *vfio_dma* if the mapper task has exited.
+> >
+> > Well that's unexpected, but adding some debugging code I can clearly
+> > see that the map and unmap ioctls are typically called by the various
+> > processor threads, which all share the same mm_struct (so accounting
+> > is correct regardless of which CPU does the unmap).  I don't think the
+> > fix below is correct though, it's not for a security risk, but for
+> > accounting issue and correctness issues.  The pages are mapped and
+> > accounted against the users locked memory limits, if we simply bail
+> > out, both the IOMMU mappings and the limit accounting are wrong.
+> > Perhaps rather than referencing the calling task_struct in the
+> > vfio_dma on mapping, we should traverse to the highest parent task
+> > sharing the same mm_struct.  Kirti, any thoughts since this code
+> > originated for mdev support?  Thanks,
+> 
+> I think something like below is a better solution.  More research required on
+> group_leader and if it needs to be sanity tested or if testing mm_struct is
+> redundant, but I think it should resolve the failing test case, all mappings
+> reference the same task regardless of which vCPU triggers it.  Thanks,
+> 
+> Alex
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c
+> b/drivers/vfio/vfio_iommu_type1.c index 5c212bf29640..3a1d3695c3fb
+> 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -1093,6 +1093,7 @@ static int vfio_dma_do_map(struct vfio_iommu
+> *iommu,
+>  	int ret = 0, prot = 0;
+>  	uint64_t mask;
+>  	struct vfio_dma *dma;
+> +	struct task_struct *task;
+> 
+>  	/* Verify that none of our __u64 fields overflow */
+>  	if (map->size != size || map->vaddr != vaddr || map->iova != iova)
+> @@ -1131,8 +1132,12 @@ static int vfio_dma_do_map(struct vfio_iommu
+> *iommu,
+>  	dma->iova = iova;
+>  	dma->vaddr = vaddr;
+>  	dma->prot = prot;
+> -	get_task_struct(current);
+> -	dma->task = current;
+> +
+> +	task = (current->mm == current->group_leader->mm ?
+> +		current->group_leader : current);
+> +	get_task_struct(task);
+> +	dma->task = task;
+> +
+>  	dma->pfn_list = RB_ROOT;
+> 
+>  	/* Insert zero-sized and grow as we map chunks of it */
+> 
+> 
