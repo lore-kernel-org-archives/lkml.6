@@ -1,65 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755071AbeDTNUG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:20:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50202 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754920AbeDTNTL (ORCPT
+        id S1754884AbeDTNTD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:19:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57178 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754741AbeDTNS7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:19:11 -0400
-Message-Id: <20180420131631.772098990@infradead.org>
+        Fri, 20 Apr 2018 09:18:59 -0400
+Message-Id: <20180420131631.720909184@infradead.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 20 Apr 2018 15:14:09 +0200
+Date: Fri, 20 Apr 2018 15:14:08 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org
 Cc: tglx@linutronix.de, dan.j.williams@intel.com,
         torvalds@linux-foundation.org,
         Dan Carpenter <dan.carpenter@oracle.com>,
         "Peter Zijlstra" <peterz@infradead.org>
-Subject: [PATCH 2/7] perf,x86: Fix possible Spectre-v1 for hw_perf_event
+Subject: [PATCH 1/7] perf: Fix possible Spectre-v1 for aux_pages
 References: <20180420131407.721875616@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-spectre1-2.patch
+Content-Disposition: inline; filename=peterz-spectre1-1.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> arch/x86/events/core.c:319 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_event_ids[cache_type]' (local cap)
-> arch/x86/events/core.c:319 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_event_ids' (local cap)
-> arch/x86/events/core.c:328 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_extra_regs[cache_type]' (local cap)
-> arch/x86/events/core.c:328 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_extra_regs' (local cap)
+> kernel/events/ring_buffer.c:871 perf_mmap_to_page() warn: potential spectre issue 'rb->aux_pages'
 
-Userspace controls @config which contains 3 (byte) fields used for a 3
-dimensional array deref.
+Userspace controls @pgoff through the fault address. Sanitize the
+array index before doing the array dereference.
 
 Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Peter Zijlstra <peterz@infradead.org>
 ---
- arch/x86/events/core.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/events/ring_buffer.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -304,17 +304,20 @@ set_ext_hw_attr(struct hw_perf_event *hw
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -867,8 +867,10 @@ perf_mmap_to_page(struct ring_buffer *rb
+ 			return NULL;
  
- 	config = attr->config;
+ 		/* AUX space */
+-		if (pgoff >= rb->aux_pgoff)
+-			return virt_to_page(rb->aux_pages[pgoff - rb->aux_pgoff]);
++		if (pgoff >= rb->aux_pgoff) {
++			int aux_pgoff = array_index_nospec(pgoff - rb->aux_pgoff, rb->aux_nr_pages);
++			return virt_to_page(rb->aux_pages[aux_pgoff]);
++		}
+ 	}
  
--	cache_type = (config >>  0) & 0xff;
-+	cache_type = (config >> 0) & 0xff;
- 	if (cache_type >= PERF_COUNT_HW_CACHE_MAX)
- 		return -EINVAL;
-+	cache_type = array_index_nospec(cache_type, PERF_COUNT_HW_CACHE_MAX);
- 
- 	cache_op = (config >>  8) & 0xff;
- 	if (cache_op >= PERF_COUNT_HW_CACHE_OP_MAX)
- 		return -EINVAL;
-+	cache_op = array_index_nospec(cache_op, PERF_COUNT_HW_CACHE_OP_MAX);
- 
- 	cache_result = (config >> 16) & 0xff;
- 	if (cache_result >= PERF_COUNT_HW_CACHE_RESULT_MAX)
- 		return -EINVAL;
-+	cache_result = array_index_nospec(cache_result, PERF_COUNT_HW_CACHE_RESULT_MAX);
- 
- 	val = hw_cache_event_ids[cache_type][cache_op][cache_result];
- 
+ 	return __perf_mmap_to_page(rb, pgoff);
