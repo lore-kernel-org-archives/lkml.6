@@ -1,141 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755871AbeDTPw3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:52:29 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:45881 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755390AbeDTPw1 (ORCPT
+        id S1755896AbeDTPxg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:53:36 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:35538 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755664AbeDTPxe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:52:27 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Rich Felker <dalias@libc.org>
-Cc: Baolin Wang <baolin.wang@linaro.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org,
-        broonie@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] sh: remove board_time_init() callback
-Date: Fri, 20 Apr 2018 17:48:56 +0200
-Message-Id: <20180420154933.3235131-4-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180420154933.3235131-1-arnd@arndb.de>
-References: <20180420154933.3235131-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:E6aI9z5mOwSy8SUT+nQPwhJTVsiqKC1upruTVpvUf7i5xfZa28r
- 9WFRFG0OqOFj5Q0KqreXb95HyRaThOJ9p5jPI4cy4BBHXOXhNHQIde7QbV/ypboG1BfZz5K
- wtYGpKyLrVnMPYGRTL8Mb2WKQyQK32WXQGdfWoOuOX7th9aT0OsMU0qpP/2NFZ5vhvtwieD
- ehAw3H5vdXGN7Y7ksXr0A==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ElrQUGIjCBE=:2k0JXKUI3TfS6+wJX04xVE
- xjFFE77GXbNZomgqIjl3a7fmFUEgGo47LC7TUygFJYu2JfMe5VJYAeHAoKG5PtW7Wfmu+x7Ib
- kwkBmqzxZvmIw3poNO6XyiHEBXCehrpYQMW38k/w6BztJAvV3qKWlbyKeYRT6/B6xyL6N8vYh
- QLyUS1OsMnvhrA2atXcBOxDcTiJH6RsagTX0u5xhOWcfQk8T/nKRDP2X6ae44xjvGd7EN4pHJ
- TYEJiX5PUZoMFTAakznzHD1SzCJUm3FfccIIq6PB8CaGtHHFf9eFZUceBFqobylLvaCTYK977
- 1MIgZRKBCTZ/dDnRhl4/a1C80+2rzB/+1mq5DyxVk6PD5Srb8CTKYyV1FSKgRokwJeOm3k1vz
- Znpi27AIwu46O6Z6Qna5Ntoh/zvpRUr0cCyWz/MJx4nn26S2wKlKs7NLTMwQh0zbMwdmle+p7
- 54gLWC2FQeHFqRcvQX+/XdkfxS9bN0ihupSPKJOoSU2GptL2qxJvsYpwzNPhb/AQTW8TY8Oa6
- GePg4uITNfz5kmBGcl9zWB2Bcekrph4s8jGKi2Ggvxx1YAUeIR7dn8kOnCqIGbHUFsMlsKhZg
- 08AIHodjtaupj4AIcAfxWarW7PhjBbUvLFpBtvYprIXwv12o18JGypsToHKjOtbr1B9pE+g0x
- 5wRn8wFbphnah56nP7DdPc4bra/7Sg1DBLoP02Rg7re1CwFVOLifE+nuCVF2hKLDKs93R+/dS
- FtM5qe+8x+/O3zSqjMWBRcaD/9yqhdarsf3hAw==
+        Fri, 20 Apr 2018 11:53:34 -0400
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>
+CC: "jh80.chung@samsung.com" <jh80.chung@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey.Brodkin@synopsys.com" <Alexey.Brodkin@synopsys.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "kgene@kernel.org" <kgene@kernel.org>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org"
+        <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [RFC 0/2] dw_mmc: add multislot support
+Thread-Topic: [RFC 0/2] dw_mmc: add multislot support
+Thread-Index: AQHT1kU9JRWyVBt9pU2N/kM9u9RtRKQJJjwAgACLJYA=
+Date: Fri, 20 Apr 2018 15:53:30 +0000
+Message-ID: <1524239609.10138.47.camel@synopsys.com>
+References: <20180417121130.25281-1-Eugeniy.Paltsev@synopsys.com>
+         <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com>
+In-Reply-To: <CAPDyKFqxZLtx_=0UU9NgBnW0Vmw=456q2FFbMBK4LKEaF-ua7A@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.3.53]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0E79426BD2A16D41A85A936916640BBD@internal.synopsys.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KFrfuX003749
 
-The only remaining user of board_time_init() is the of-generic
-machine, and that just calls the global timer_init() function.
-Calling that one has no effect on non-DT platforms, so we can
-simply call it unconditionally in place of board_time_init().
+Hi Ulf,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- Documentation/sh/new-machine.txt | 8 --------
- arch/sh/boards/of-generic.c      | 8 --------
- arch/sh/include/asm/rtc.h        | 1 -
- arch/sh/kernel/time.c            | 5 +----
- 4 files changed, 1 insertion(+), 21 deletions(-)
+On Fri, 2018-04-20 at 09:35 +0200, Ulf Hansson wrote:
+> [...]
+> 
+> > 
+> > 2. Add missing stuff to support multislot mode in DesignWare MMC driver.
+> >  * Add missing slot switch to __dw_mci_start_request() function.
+> >  * Refactor set_ios function:
+> >    a) Calculate common clock which is
+> >       suitable for all slots instead of directly use clock value
+> >       provided by mmc core. We calculate common clock as the minimum
+> >       among each used slot clocks. This clock is calculated in
+> >       dw_mci_calc_common_clock() function which is called
+> >       from set_ios()
+> >    b) Disable clock only if no other slots are ON.
+> >    c) Setup clock directly in set_ios() only if no other slots
+> >       are ON. Otherwise adjust clock in __dw_mci_start_request()
+> >       function before slot switch.
+> >    d) Move timings and bus_width setup to separate funcions.
+> >  * Use timing field in each slot structure instead of common field in
+> >    host structure.
+> >  * Add locks to serialize access to registers.
+> 
+> Sorry, but this is a hack to *try* to make multi-slot work and this
+> isn't sufficient. There were good reasons to why the earlier
+> non-working multi slot support was removed from dw_mmc.
 
-diff --git a/Documentation/sh/new-machine.txt b/Documentation/sh/new-machine.txt
-index f0354164cb0e..e0961a66130b 100644
---- a/Documentation/sh/new-machine.txt
-+++ b/Documentation/sh/new-machine.txt
-@@ -116,7 +116,6 @@ might look something like:
-  * arch/sh/boards/vapor/setup.c - Setup code for imaginary board
-  */
- #include <linux/init.h>
--#include <asm/rtc.h> /* for board_time_init() */
- 
- const char *get_system_type(void)
- {
-@@ -132,13 +131,6 @@ int __init platform_setup(void)
- 	 * this board.
- 	 */
- 
--  	/* 
--	 * Presume all FooTech boards have the same broken timer,
--	 * and also presume that we've defined foo_timer_init to
--	 * do something useful.
--	 */
--  	board_time_init = foo_timer_init;
--
- 	/* Start-up imaginary PCI ... */
- 
- 	/* And whatever else ... */
-diff --git a/arch/sh/boards/of-generic.c b/arch/sh/boards/of-generic.c
-index 46b2481eec90..ee74ff1e7721 100644
---- a/arch/sh/boards/of-generic.c
-+++ b/arch/sh/boards/of-generic.c
-@@ -116,18 +116,10 @@ static void __init sh_of_mem_reserve(void)
- 	early_init_fdt_scan_reserved_mem();
- }
- 
--static void __init sh_of_time_init(void)
--{
--	pr_info("SH generic board support: scanning for clocksource devices\n");
--	timer_probe();
--}
--
- static void __init sh_of_setup(char **cmdline_p)
- {
- 	struct device_node *root;
- 
--	board_time_init = sh_of_time_init;
--
- 	sh_mv.mv_name = "Unknown SH model";
- 	root = of_find_node_by_path("/");
- 	if (root) {
-diff --git a/arch/sh/include/asm/rtc.h b/arch/sh/include/asm/rtc.h
-index fe55fbb181aa..69dbae2949b0 100644
---- a/arch/sh/include/asm/rtc.h
-+++ b/arch/sh/include/asm/rtc.h
-@@ -3,7 +3,6 @@
- #define _ASM_RTC_H
- 
- void time_init(void);
--extern void (*board_time_init)(void);
- 
- #define RTC_CAP_4_DIGIT_YEAR	(1 << 0)
- 
-diff --git a/arch/sh/kernel/time.c b/arch/sh/kernel/time.c
-index eb0a91270499..a29eb989d81b 100644
---- a/arch/sh/kernel/time.c
-+++ b/arch/sh/kernel/time.c
-@@ -22,8 +22,6 @@
- #include <asm/clock.h>
- #include <asm/rtc.h>
- 
--void (*board_time_init)(void);
--
- static void __init sh_late_time_init(void)
- {
- 	/*
-@@ -41,8 +39,7 @@ static void __init sh_late_time_init(void)
- 
- void __init time_init(void)
- {
--	if (board_time_init)
--		board_time_init();
-+	timer_init();
- 
- 	clk_init();
- 
+Previous multi slot implementation was removed as nobody used it and
+nobody tested it. There are lots of mistakes in previous implementation
+which are not related to request serialization
+like lack of slot switch / lack of adding slot id to CIU commands / ets...
+So obviously it was never tested and never used at real multi slot hardware.
+
+> Let me elaborate a bit for your understanding. The core uses a host
+> lock (mmc_claim|release_host()) to serialize operations and commands,
+> as to confirm to the SD/SDIO/(e)MMC specs. The above changes gives no
+> guarantees for this. To make that work, we would need a "mmc bus lock"
+> to be managed by the core.
+
+In current implementation data transfers and commands to different
+hosts (slots) are serialized internally in the dw_mmc driver. We have
+request queue and when .request() is called we add new request to the
+queue. We take new request from the queue only if the previous one
+has already finished.
+
+So although hosts (slots) have separate locks (mmc_claim|release_host())
+the requests to different slots are serialized by driver.
+
+Isn't that enough?
+I'm not very familiar with SD/SDIO/(e)MMC specs so my assumptions might be wrong
+in that case please correct me.
+
+> However, inventing a "mmc bus lock" would lead to other problems
+> related to I/O scheduling for upper layers - it simply breaks. For
+> example, I/O requests for one card/slot can then starve I/O requests
+> reaching another card/slot.
+> 
+
+Nevertheless we had to deal somehow with existing hardware which
+has multislot dw mmc controller and both slots are used...
+
+This patch at least shouldn't break anything for current users (which use
+it in single slot mode)
+
+Moreover we tested this dual-slot implementation and don't catch any problems
+(probably yet) except bus performance decrease in dual-slot mode (which is
+quite expected).
+
+> 
+> Kind regards
+> Uffe
 -- 
-2.9.0
+ Eugeniy Paltsev
