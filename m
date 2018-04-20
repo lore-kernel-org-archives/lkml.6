@@ -1,83 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755189AbeDTNw4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:52:56 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37084 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754958AbeDTNwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:52:54 -0400
-Date: Fri, 20 Apr 2018 09:46:51 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-Subject: Re: [PATCH ghak80 V1] audit: add syscall information to
- FEATURE_CHANGE records
-Message-ID: <20180420134651.3badjswsokqs7hex@madcap2.tricolour.ca>
-References: <08bd08ee9bc70f6e98b9e298ba6a2c0f4dcadb4b.1523372093.git.rgb@redhat.com>
- <CAHC9VhSxjEKNcdE2Mm-Vwef6RvTG2ykGFFmeAtVypAaPRvddmg@mail.gmail.com>
+        id S1755203AbeDTNxr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:53:47 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60754 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754872AbeDTNxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 09:53:44 -0400
+Subject: Re: s390 perf events JSONs query
+To: Thomas-Mich Richter <tmricht@linux.ibm.com>,
+        <brueckner@linux.vnet.ibm.com>, <tmricht@linux.vnet.ibm.com>
+References: <68e84967-ca29-0b86-027a-76307e003a55@huawei.com>
+ <c5dde055-de48-52c1-04d7-7ec22623d75f@linux.ibm.com>
+CC: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, "Namhyung Kim" <namhyung@kernel.org>,
+        Linuxarm <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <c5c99152-4823-2f21-1b98-2a271637bed4@huawei.com>
+Date: Fri, 20 Apr 2018 14:53:27 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSxjEKNcdE2Mm-Vwef6RvTG2ykGFFmeAtVypAaPRvddmg@mail.gmail.com>
-User-Agent: NeoMutt/20171027
+In-Reply-To: <c5dde055-de48-52c1-04d7-7ec22623d75f@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-17 18:06, Paul Moore wrote:
-> On Wed, Apr 11, 2018 at 8:46 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Tie syscall information to FEATURE_CHANGE calls since it is a result of
-> > user action.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/80
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  kernel/audit.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 8da24ef..23f125b 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -1103,10 +1103,9 @@ static void audit_log_feature_change(int which, u32 old_feature, u32 new_feature
-> >  {
-> >         struct audit_buffer *ab;
-> >
-> > -       if (audit_enabled == AUDIT_OFF)
-> > +       if (!audit_enabled)
-> 
-> Sooo, this is an unrelated style change, why?  Looking at the rest of
-> kernel/audit.c we seem to use a mix of "(!x)" and "(x == 0/CONST)" so
-> why are you adding noise to this patch?
+On 20/04/2018 14:25, Thomas-Mich Richter wrote:
+> On 04/20/2018 12:51 PM, John Garry wrote:
+>> Hi Hendrik, Thomas,
+>>
+>> I noticed that in 4.17-rc1 support was included for s390 perf pmu-events. I also notice that the JSONs contain many common (identical actually) events between different chips for this arch.
+>>
+>> Support was added for factoring out common arch events in https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/tools/perf/pmu-events?h=next-20180420&id=e9d32c1bf0cd7a98358ec4aa1625bf2b3459b9ac
+>>
+>> ARM64 chips use this feature. I am not familiar with the s390 arch, but do you think you could also use this feature?
+>>
+>> Thanks,
+>> John
+>>
+>
+> I have just played with this feature. I was caught off by this error message:
+>
+> [root@s35lp76 pmu-events]# ./jevents s390 arch /tmp/xxx 100000
+> d 0    4096 s390                 arch/s390
+> d 1    4096 cf_z14               arch/s390/cf_z14
+> f 2    1338 basic.json           arch/s390/cf_z14/basic.json
+> ....
+> jevents: Ignoring file arch/s390/archevent.json  <---- confusing error message
 
-Ok, survey sez 25 instances of audit_enabled used as a boolean vs 7
-instances where it could be used as a boolean where the expression is
-made harder to read (in my opinion).  I thought it was worth changing to
-read the same way most of the other instances I've been reviewing are
-written.  There are only two where the non-boolean distiction with
-AUDIT_LOCKED is required.
+Let me check if this can be silenced.
 
-> >                 return;
-> > -
-> > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
-> > +       ab = audit_log_start(current->audit_context, GFP_KERNEL, AUDIT_FEATURE_CHANGE);
-> 
-> This is the important part, and the Right Thing To Do.
-> 
-> >         if (!ab)
-> >                 return;
-> >         audit_log_task_info(ab, current);
-> 
-> paul moore
+>
+> jevents: Processing mapfile arch/s390/mapfile.csv
+> [root@s35lp76 pmu-events]#
+>
+> I started debugging, until I realized this file is still processed.....
+> (Just a side remark).
+>
+> Anyway the features is nice, but it does not save anything in the resulting
+> pmu-events.c file, correct? The events defined in the common archevent.json
+> files are just copied into the structures of a specific machine.
+>
 
-- RGB
+Yes, the resulting derived pmu-events.c should be the same. In fact, if 
+there was naming inconsistencies in JSONs previously, they should now be 
+gone.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> The feature saves time and space when you create the machine specific json
+> files because it allows you to refer to a common event by name. Cool!
+>
+> On s390 we do not create the json files manually, but have some scripts to
+> create them based on s390 type/model hardware specific input files.
+
+Right, I would say that this is mostly useful when the JSONs are created 
+manually, which was the case in the ARM world, but not x86. I didn't 
+know about s390.
+
+>
+> @Hendirk,
+> we could rework our internal tool chain to emit the new "ArchStdEvent"
+> keyword for common events, but in the end we do not save anything in the
+> resulting pmu-events.c file. And it requires considerable rework to
+> support it.
+> Given that, I would put it very low priority on your todo list, comments?
+>
+
+Cheers,
+John
