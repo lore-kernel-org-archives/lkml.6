@@ -1,145 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753525AbeDTREU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:04:20 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:38096 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753515AbeDTREN (ORCPT
+        id S1753548AbeDTREf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:04:35 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48092 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753530AbeDTREc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:04:13 -0400
-X-Google-Smtp-Source: AIpwx4+IER4BcXtIUWb7nxSFQKVUo9dQM7IMlOxR8wXRReq6MWWpXE1qzEjgVg1laGSKVGQ7lmGeDA==
-Date: Fri, 20 Apr 2018 19:04:05 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@linux.vnet.ibm.com
-Subject: Re: [RFC PATCH v2 0/6] Documentation/features: Provide and apply
- 'features-refresh.sh'
-Message-ID: <20180420170405.GA14509@andrea>
-References: <1523205027-31786-1-git-send-email-andrea.parri@amarulasolutions.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1523205027-31786-1-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 20 Apr 2018 13:04:32 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rt5668: fix incorrect 'and' operator" to the asoc tree
+In-Reply-To: <20180419143431.13173-1-colin.king@canonical.com>
+Message-Id: <E1f9ZSM-0004Ws-HJ@debutante>
+Date: Fri, 20 Apr 2018 18:04:18 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo, Jon,
+The patch
 
-On Sun, Apr 08, 2018 at 06:30:21PM +0200, Andrea Parri wrote:
-> Hi,
-> 
-> This series provides the script 'features-refresh.sh', which operates on
-> the arch support status files, and it applies this script to refresh the
-> status files in place; previous discussions about this series are at [1].
-> 
-> The series is organized as follows.
-> 
->   - Patch 1/6 adds the script to 'Documentation/features/scripts/'.
-> 
->   - Patch 2/6 presents the results of running the script; this run
->     also printed the messages
-> 
->        WARNING: 'HAVE_BPF_JIT' is not a valid Kconfig
->        WARNING: '__HAVE_ARCH_STRNCASECMP' is not a valid Kconfig
->        WARNING: 'Optimized asm/rwsem.h' is not a valid Kconfig
->        WARNING: '__HAVE_ARCH_PTE_SPECIAL' is not a valid Kconfig
-> 
->     to standard output.
-> 
->   - Patches 3-6/6 fix each of these warnings.
-> 
-> (Applies on today's mainline.)
-> 
-> Cheers,
->   Andrea
-> 
-> [1] https://marc.info/?l=linux-kernel&m=152223974927255&w=2
->     https://marc.info/?l=linux-kernel&m=152277458614862&w=2
-> 
-> Changes in v2:
->   - support negation operators in Kconfig (suggested by Ingo Molnar)
->   - reorder patches 2/6 and 3/6 (suggested by Ingo Molnar)
->   - add patches 4-6/6 (suggested by Ingo Molnar)
-> 
-> Andrea Parri (6):
->   Documentation/features: Add script that refreshes the arch support
->     status files in place
->   Documentation/features: Refresh the arch support status files in place
->   Documentation/features/core: Add arch support status files for
->     'cBPF-JIT' and 'eBPF-JIT'
->   Documentation/features/locking: Use '!RWSEM_GENERIC_SPINLOCK' as
->     Kconfig for 'rwsem-optimized'
->   Documentation/features/lib: Remove arch support status file for
->     'strncasecmp'
->   Documentation/features/vm: Remove arch support status file for
->     'pte_special'
+   ASoC: rt5668: fix incorrect 'and' operator
 
-I understand that you didn't get the chance to look into this yet ;D
-please let me know if you'd like me to rebase and re-send the series.
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-  Andrea
+Mark
 
+>From 4bb3f73a2da740e38f2e418bd0c468826046687a Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Thu, 19 Apr 2018 15:34:31 +0100
+Subject: [PATCH] ASoC: rt5668: fix incorrect 'and' operator
 
-> 
->  .../features/core/BPF-JIT/arch-support.txt         | 31 -------
->  .../features/core/cBPF-JIT/arch-support.txt        | 33 ++++++++
->  .../features/core/eBPF-JIT/arch-support.txt        | 33 ++++++++
->  .../core/generic-idle-thread/arch-support.txt      |  4 +-
->  .../features/core/jump-labels/arch-support.txt     |  2 +
->  .../features/core/tracehook/arch-support.txt       |  2 +
->  .../features/debug/KASAN/arch-support.txt          |  4 +-
->  .../debug/gcov-profile-all/arch-support.txt        |  2 +
->  Documentation/features/debug/kgdb/arch-support.txt |  4 +-
->  .../debug/kprobes-on-ftrace/arch-support.txt       |  2 +
->  .../features/debug/kprobes/arch-support.txt        |  4 +-
->  .../features/debug/kretprobes/arch-support.txt     |  4 +-
->  .../features/debug/optprobes/arch-support.txt      |  4 +-
->  .../features/debug/stackprotector/arch-support.txt |  2 +
->  .../features/debug/uprobes/arch-support.txt        |  6 +-
->  .../debug/user-ret-profiler/arch-support.txt       |  2 +
->  .../features/io/dma-api-debug/arch-support.txt     |  2 +
->  .../features/io/dma-contiguous/arch-support.txt    |  4 +-
->  .../features/io/sg-chain/arch-support.txt          |  2 +
->  .../features/lib/strncasecmp/arch-support.txt      | 31 -------
->  .../locking/cmpxchg-local/arch-support.txt         |  4 +-
->  .../features/locking/lockdep/arch-support.txt      |  4 +-
->  .../locking/queued-rwlocks/arch-support.txt        | 10 ++-
->  .../locking/queued-spinlocks/arch-support.txt      |  8 +-
->  .../locking/rwsem-optimized/arch-support.txt       | 10 ++-
->  .../features/perf/kprobes-event/arch-support.txt   |  6 +-
->  .../features/perf/perf-regs/arch-support.txt       |  4 +-
->  .../features/perf/perf-stackdump/arch-support.txt  |  4 +-
->  .../sched/membarrier-sync-core/arch-support.txt    |  2 +
->  .../features/sched/numa-balancing/arch-support.txt |  6 +-
->  Documentation/features/scripts/features-refresh.sh | 98 ++++++++++++++++++++++
->  .../seccomp/seccomp-filter/arch-support.txt        |  6 +-
->  .../time/arch-tick-broadcast/arch-support.txt      |  4 +-
->  .../features/time/clockevents/arch-support.txt     |  4 +-
->  .../time/context-tracking/arch-support.txt         |  2 +
->  .../features/time/irq-time-acct/arch-support.txt   |  4 +-
->  .../time/modern-timekeeping/arch-support.txt       |  2 +
->  .../features/time/virt-cpuacct/arch-support.txt    |  2 +
->  .../features/vm/ELF-ASLR/arch-support.txt          |  4 +-
->  .../features/vm/PG_uncached/arch-support.txt       |  2 +
->  Documentation/features/vm/THP/arch-support.txt     |  2 +
->  Documentation/features/vm/TLB/arch-support.txt     |  2 +
->  .../features/vm/huge-vmap/arch-support.txt         |  2 +
->  .../features/vm/ioremap_prot/arch-support.txt      |  2 +
->  .../features/vm/numa-memblock/arch-support.txt     |  4 +-
->  .../features/vm/pte_special/arch-support.txt       | 31 -------
->  46 files changed, 279 insertions(+), 128 deletions(-)
->  delete mode 100644 Documentation/features/core/BPF-JIT/arch-support.txt
->  create mode 100644 Documentation/features/core/cBPF-JIT/arch-support.txt
->  create mode 100644 Documentation/features/core/eBPF-JIT/arch-support.txt
->  delete mode 100644 Documentation/features/lib/strncasecmp/arch-support.txt
->  create mode 100755 Documentation/features/scripts/features-refresh.sh
->  delete mode 100644 Documentation/features/vm/pte_special/arch-support.txt
-> 
-> -- 
-> 2.7.4
-> 
+Currently logical and is being used instead of bitwise and. Fix this.
+
+Detected by CoverityScan, CID#1468008 ("Logical vs bitwise operator")
+
+Fixes: d59fb2856223 ("ASoC: rt5668: add rt5668B codec driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/rt5668.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/rt5668.c b/sound/soc/codecs/rt5668.c
+index 52a343f96eb2..3c19d03f2446 100644
+--- a/sound/soc/codecs/rt5668.c
++++ b/sound/soc/codecs/rt5668.c
+@@ -1194,7 +1194,7 @@ static int set_filter_clk(struct snd_soc_dapm_widget *w,
+ 	int ref, val, reg, idx = -EINVAL;
+ 	static const int div[] = {1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48};
+ 
+-	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &&
++	val = snd_soc_component_read32(component, RT5668_GPIO_CTRL_1) &
+ 		RT5668_GP4_PIN_MASK;
+ 	if (w->shift == RT5668_PWR_ADC_S1F_BIT &&
+ 		val == RT5668_GP4_PIN_ADCDAT2)
+-- 
+2.17.0
