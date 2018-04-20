@@ -1,94 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753511AbeDTREM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:04:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47454 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752337AbeDTREK (ORCPT
+        id S1753525AbeDTREU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:04:20 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:38096 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753515AbeDTREN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:04:10 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        alsa-devel@alsa-project.org, Takashi Iwai <tiwai@suse.com>,
-        kernel-janitors@vger.kernel.org,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, linux-renesas-soc@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: atmel: simplify getting .drvdata" to the asoc tree
-In-Reply-To: <20180419140641.27926-62-wsa+renesas@sang-engineering.com>
-Message-Id: <E1f9ZS7-0004VB-By@debutante>
-Date: Fri, 20 Apr 2018 18:04:03 +0100
+        Fri, 20 Apr 2018 13:04:13 -0400
+X-Google-Smtp-Source: AIpwx4+IER4BcXtIUWb7nxSFQKVUo9dQM7IMlOxR8wXRReq6MWWpXE1qzEjgVg1laGSKVGQ7lmGeDA==
+Date: Fri, 20 Apr 2018 19:04:05 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@linux.vnet.ibm.com
+Subject: Re: [RFC PATCH v2 0/6] Documentation/features: Provide and apply
+ 'features-refresh.sh'
+Message-ID: <20180420170405.GA14509@andrea>
+References: <1523205027-31786-1-git-send-email-andrea.parri@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523205027-31786-1-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi Ingo, Jon,
 
-   ASoC: atmel: simplify getting .drvdata
+On Sun, Apr 08, 2018 at 06:30:21PM +0200, Andrea Parri wrote:
+> Hi,
+> 
+> This series provides the script 'features-refresh.sh', which operates on
+> the arch support status files, and it applies this script to refresh the
+> status files in place; previous discussions about this series are at [1].
+> 
+> The series is organized as follows.
+> 
+>   - Patch 1/6 adds the script to 'Documentation/features/scripts/'.
+> 
+>   - Patch 2/6 presents the results of running the script; this run
+>     also printed the messages
+> 
+>        WARNING: 'HAVE_BPF_JIT' is not a valid Kconfig
+>        WARNING: '__HAVE_ARCH_STRNCASECMP' is not a valid Kconfig
+>        WARNING: 'Optimized asm/rwsem.h' is not a valid Kconfig
+>        WARNING: '__HAVE_ARCH_PTE_SPECIAL' is not a valid Kconfig
+> 
+>     to standard output.
+> 
+>   - Patches 3-6/6 fix each of these warnings.
+> 
+> (Applies on today's mainline.)
+> 
+> Cheers,
+>   Andrea
+> 
+> [1] https://marc.info/?l=linux-kernel&m=152223974927255&w=2
+>     https://marc.info/?l=linux-kernel&m=152277458614862&w=2
+> 
+> Changes in v2:
+>   - support negation operators in Kconfig (suggested by Ingo Molnar)
+>   - reorder patches 2/6 and 3/6 (suggested by Ingo Molnar)
+>   - add patches 4-6/6 (suggested by Ingo Molnar)
+> 
+> Andrea Parri (6):
+>   Documentation/features: Add script that refreshes the arch support
+>     status files in place
+>   Documentation/features: Refresh the arch support status files in place
+>   Documentation/features/core: Add arch support status files for
+>     'cBPF-JIT' and 'eBPF-JIT'
+>   Documentation/features/locking: Use '!RWSEM_GENERIC_SPINLOCK' as
+>     Kconfig for 'rwsem-optimized'
+>   Documentation/features/lib: Remove arch support status file for
+>     'strncasecmp'
+>   Documentation/features/vm: Remove arch support status file for
+>     'pte_special'
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+I understand that you didn't get the chance to look into this yet ;D
+please let me know if you'd like me to rebase and re-send the series.
 
 Thanks,
-Mark
+  Andrea
 
->From c0380478139fce887b948b35dc0dcee0b40bdf09 Mon Sep 17 00:00:00 2001
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Thu, 19 Apr 2018 16:06:31 +0200
-Subject: [PATCH] ASoC: atmel: simplify getting .drvdata
 
-We should get drvdata from struct device directly. Going via
-platform_device is an unneeded step back and forth.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/atmel/atmel_ssc_dai.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index 1c7af0ca98ec..d3b69682d9c2 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -1002,8 +1002,7 @@ static const struct snd_soc_component_driver atmel_ssc_component = {
- 
- static int asoc_ssc_init(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ssc_device *ssc = platform_get_drvdata(pdev);
-+	struct ssc_device *ssc = dev_get_drvdata(dev);
- 	int ret;
- 
- 	ret = snd_soc_register_component(dev, &atmel_ssc_component,
-@@ -1033,8 +1032,7 @@ static int asoc_ssc_init(struct device *dev)
- 
- static void asoc_ssc_exit(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct ssc_device *ssc = platform_get_drvdata(pdev);
-+	struct ssc_device *ssc = dev_get_drvdata(dev);
- 
- 	if (ssc->pdata->use_dma)
- 		atmel_pcm_dma_platform_unregister(dev);
--- 
-2.17.0
+> 
+>  .../features/core/BPF-JIT/arch-support.txt         | 31 -------
+>  .../features/core/cBPF-JIT/arch-support.txt        | 33 ++++++++
+>  .../features/core/eBPF-JIT/arch-support.txt        | 33 ++++++++
+>  .../core/generic-idle-thread/arch-support.txt      |  4 +-
+>  .../features/core/jump-labels/arch-support.txt     |  2 +
+>  .../features/core/tracehook/arch-support.txt       |  2 +
+>  .../features/debug/KASAN/arch-support.txt          |  4 +-
+>  .../debug/gcov-profile-all/arch-support.txt        |  2 +
+>  Documentation/features/debug/kgdb/arch-support.txt |  4 +-
+>  .../debug/kprobes-on-ftrace/arch-support.txt       |  2 +
+>  .../features/debug/kprobes/arch-support.txt        |  4 +-
+>  .../features/debug/kretprobes/arch-support.txt     |  4 +-
+>  .../features/debug/optprobes/arch-support.txt      |  4 +-
+>  .../features/debug/stackprotector/arch-support.txt |  2 +
+>  .../features/debug/uprobes/arch-support.txt        |  6 +-
+>  .../debug/user-ret-profiler/arch-support.txt       |  2 +
+>  .../features/io/dma-api-debug/arch-support.txt     |  2 +
+>  .../features/io/dma-contiguous/arch-support.txt    |  4 +-
+>  .../features/io/sg-chain/arch-support.txt          |  2 +
+>  .../features/lib/strncasecmp/arch-support.txt      | 31 -------
+>  .../locking/cmpxchg-local/arch-support.txt         |  4 +-
+>  .../features/locking/lockdep/arch-support.txt      |  4 +-
+>  .../locking/queued-rwlocks/arch-support.txt        | 10 ++-
+>  .../locking/queued-spinlocks/arch-support.txt      |  8 +-
+>  .../locking/rwsem-optimized/arch-support.txt       | 10 ++-
+>  .../features/perf/kprobes-event/arch-support.txt   |  6 +-
+>  .../features/perf/perf-regs/arch-support.txt       |  4 +-
+>  .../features/perf/perf-stackdump/arch-support.txt  |  4 +-
+>  .../sched/membarrier-sync-core/arch-support.txt    |  2 +
+>  .../features/sched/numa-balancing/arch-support.txt |  6 +-
+>  Documentation/features/scripts/features-refresh.sh | 98 ++++++++++++++++++++++
+>  .../seccomp/seccomp-filter/arch-support.txt        |  6 +-
+>  .../time/arch-tick-broadcast/arch-support.txt      |  4 +-
+>  .../features/time/clockevents/arch-support.txt     |  4 +-
+>  .../time/context-tracking/arch-support.txt         |  2 +
+>  .../features/time/irq-time-acct/arch-support.txt   |  4 +-
+>  .../time/modern-timekeeping/arch-support.txt       |  2 +
+>  .../features/time/virt-cpuacct/arch-support.txt    |  2 +
+>  .../features/vm/ELF-ASLR/arch-support.txt          |  4 +-
+>  .../features/vm/PG_uncached/arch-support.txt       |  2 +
+>  Documentation/features/vm/THP/arch-support.txt     |  2 +
+>  Documentation/features/vm/TLB/arch-support.txt     |  2 +
+>  .../features/vm/huge-vmap/arch-support.txt         |  2 +
+>  .../features/vm/ioremap_prot/arch-support.txt      |  2 +
+>  .../features/vm/numa-memblock/arch-support.txt     |  4 +-
+>  .../features/vm/pte_special/arch-support.txt       | 31 -------
+>  46 files changed, 279 insertions(+), 128 deletions(-)
+>  delete mode 100644 Documentation/features/core/BPF-JIT/arch-support.txt
+>  create mode 100644 Documentation/features/core/cBPF-JIT/arch-support.txt
+>  create mode 100644 Documentation/features/core/eBPF-JIT/arch-support.txt
+>  delete mode 100644 Documentation/features/lib/strncasecmp/arch-support.txt
+>  create mode 100755 Documentation/features/scripts/features-refresh.sh
+>  delete mode 100644 Documentation/features/vm/pte_special/arch-support.txt
+> 
+> -- 
+> 2.7.4
+> 
