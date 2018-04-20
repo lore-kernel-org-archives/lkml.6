@@ -1,59 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754944AbeDTNTN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:19:13 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50200 "EHLO
+        id S1755071AbeDTNUG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:20:06 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50202 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754919AbeDTNTL (ORCPT
+        with ESMTP id S1754920AbeDTNTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Apr 2018 09:19:11 -0400
-Message-Id: <20180420131632.028647632@infradead.org>
+Message-Id: <20180420131631.772098990@infradead.org>
 User-Agent: quilt/0.63-1
-Date: Fri, 20 Apr 2018 15:14:14 +0200
+Date: Fri, 20 Apr 2018 15:14:09 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: linux-kernel@vger.kernel.org, mingo@kernel.org
 Cc: tglx@linutronix.de, dan.j.williams@intel.com,
         torvalds@linux-foundation.org,
         Dan Carpenter <dan.carpenter@oracle.com>,
         "Peter Zijlstra" <peterz@infradead.org>
-Subject: [PATCH 7/7] sched,autogroup: Fix possible Spectre-v1 for sched_prio_to_weight
+Subject: [PATCH 2/7] perf,x86: Fix possible Spectre-v1 for hw_perf_event
 References: <20180420131407.721875616@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline; filename=peterz-spectre1-7.patch
+Content-Disposition: inline; filename=peterz-spectre1-2.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> kernel/sched/autogroup.c:230 proc_sched_autogroup_set_nice() warn: potential spectre issue 'sched_prio_to_weight'
+> arch/x86/events/core.c:319 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_event_ids[cache_type]' (local cap)
+> arch/x86/events/core.c:319 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_event_ids' (local cap)
+> arch/x86/events/core.c:328 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_extra_regs[cache_type]' (local cap)
+> arch/x86/events/core.c:328 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_extra_regs' (local cap)
 
-Userspace controls @nice, sanitize the array index.
+Userspace controls @config which contains 3 (byte) fields used for a 3
+dimensional array deref.
 
 Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Peter Zijlstra <peterz@infradead.org>
 ---
- kernel/sched/autogroup.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/events/core.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/kernel/sched/autogroup.c
-+++ b/kernel/sched/autogroup.c
-@@ -209,7 +209,7 @@ int proc_sched_autogroup_set_nice(struct
- 	static unsigned long next = INITIAL_JIFFIES;
- 	struct autogroup *ag;
- 	unsigned long shares;
--	int err;
-+	int err, idx;
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -304,17 +304,20 @@ set_ext_hw_attr(struct hw_perf_event *hw
  
- 	if (nice < MIN_NICE || nice > MAX_NICE)
+ 	config = attr->config;
+ 
+-	cache_type = (config >>  0) & 0xff;
++	cache_type = (config >> 0) & 0xff;
+ 	if (cache_type >= PERF_COUNT_HW_CACHE_MAX)
  		return -EINVAL;
-@@ -227,7 +227,9 @@ int proc_sched_autogroup_set_nice(struct
++	cache_type = array_index_nospec(cache_type, PERF_COUNT_HW_CACHE_MAX);
  
- 	next = HZ / 10 + jiffies;
- 	ag = autogroup_task_get(p);
--	shares = scale_load(sched_prio_to_weight[nice + 20]);
-+
-+	idx = array_index_nospec(nice + 20, 40);
-+	shares = scale_load(sched_prio_to_weight[idx]);
+ 	cache_op = (config >>  8) & 0xff;
+ 	if (cache_op >= PERF_COUNT_HW_CACHE_OP_MAX)
+ 		return -EINVAL;
++	cache_op = array_index_nospec(cache_op, PERF_COUNT_HW_CACHE_OP_MAX);
  
- 	down_write(&ag->lock);
- 	err = sched_group_set_shares(ag->tg, shares);
+ 	cache_result = (config >> 16) & 0xff;
+ 	if (cache_result >= PERF_COUNT_HW_CACHE_RESULT_MAX)
+ 		return -EINVAL;
++	cache_result = array_index_nospec(cache_result, PERF_COUNT_HW_CACHE_RESULT_MAX);
+ 
+ 	val = hw_cache_event_ids[cache_type][cache_op][cache_result];
+ 
