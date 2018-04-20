@@ -1,75 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754191AbeDTIwM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:52:12 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:43062 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754035AbeDTIwH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:52:07 -0400
-X-Google-Smtp-Source: AIpwx49XuxnkzB4QyM/asWxGjQAx9+eGfnFZ/mkSwVX7TqOoJqpZ1SXRliyCASmSOrFmxcWoXxyuijDcKRBOfaeG6sU=
+        id S1754213AbeDTIwX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:52:23 -0400
+Received: from mout01.posteo.de ([185.67.36.141]:56886 "EHLO mout01.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754074AbeDTIwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 04:52:09 -0400
+From: Marc Dietrich <marvin24@gmx.de>
+To: Marcel Ziswiler <marcel@ziswiler.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: tegra: fix ulpi regression on tegra20
+Date: Fri, 20 Apr 2018 10:52:00 +0200
+Message-ID: <6600596.BijQW1iq1K@ax5200p>
+In-Reply-To: <20180219151252.29289-1-marcel@ziswiler.com>
+References: <20180219151252.29289-1-marcel@ziswiler.com>
 MIME-Version: 1.0
-In-Reply-To: <152417192976.76853.5171081412139699180.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152417080402.76853.4258398181136860884.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <152417192976.76853.5171081412139699180.stgit@bhelgaas-glaptop.roam.corp.google.com>
-From: Srinath Mannam <srinath.mannam@broadcom.com>
-Date: Fri, 20 Apr 2018 14:22:06 +0530
-Message-ID: <CABe79T546trxQ2YSUj74SmW2qVUPkB1Mor2TP-K3SM0rerpogw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] PCI/ASPM: Disable ASPM L1.2 Substate if we don't
- have LTR
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sinan Kaya <okaya@codeaurora.org>, Rajat Jain <rajatja@google.com>,
-        Ray Jui <ray.jui@broadcom.com>, Keith Busch <keith.busch@intel.com>,
-        linux-acpi@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+Hi Marcel,
 
-I have verified this patch, it works fine for me.
+Am Montag, 19. Februar 2018, 16:12:52 CEST schrieb Marcel Ziswiler:
+> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
+> Since commit f8f8f1d04494 ("clk: Don't touch hardware when reparenting
+> during registration") ULPI has been broken on Tegra20 leading to the
+> following error message during boot:
+> 
+> [    1.974698] ulpi_phy_power_on: ulpi write failed
+> [    1.979384] tegra-ehci c5004000.usb: Failed to power on the phy
+> [    1.985434] tegra-ehci: probe of c5004000.usb failed with error -110
+> 
+> Debugging through the changes and finally also consulting the TRM
+> revealed that rather than the CDEV2 clock off OSC requiring such pin
+> muxing actually the PLL_P_OUT4 clock is in use. It looks like so far it
+> just worked by chance of that one having been enabled which Stephen's
+> commit now changed when reparenting sclk away from pll_p_out4 leaving
+> that one disabled. Fix this by properly assigning the PLL_P_OUT4 clock
+> as the ULPI PHY clock.
 
-Thanks & Regards,
-Srinath.
+I booted 4.17-rc1 (which includes this fix) on an AC100 (T20 paz00 board) and 
+the error above is still there. Surprisingly the error vanishes when I revert 
+your patch. So this patch actually *causes* the problem above on my board. 
+Could it be, that we need all four clocks? Dimitry mentioned on IRC that it 
+could also be a problem in the clock init table. I don't have the technical 
+background myself to fix it, but I still wonder what could be so different 
+between TrimSlice and AC100.
 
-On Fri, Apr 20, 2018 at 2:35 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->
-> When in the ASPM L1.0 state (but not the PCI-PM L1.0 state), the most
-> recent LTR value and the LTR_L1.2_THRESHOLD determines whether the link
-> enters the L1.2 substate.
->
-> If we don't have LTR enabled, prevent the use of ASPM L1.2.
->
-> PCI-PM L1.2 may still be used because it doesn't depend on
-> LTR_L1.2_THRESHOLD (see PCIe r4.0, sec 5.5.1).
->
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Marc
+
+
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> 
 > ---
->  drivers/pci/pcie/aspm.c |    9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index f76eb7704f64..c687c817b47d 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -400,6 +400,15 @@ static void pcie_get_aspm_reg(struct pci_dev *pdev,
->                 info->l1ss_cap = 0;
->                 return;
->         }
-> +
-> +       /*
-> +        * If we don't have LTR for the entire path from the Root Complex
-> +        * to this device, we can't use ASPM L1.2 because it relies on the
-> +        * LTR_L1.2_THRESHOLD.  See PCIe r4.0, secs 5.5.4, 6.18.
-> +        */
-> +       if (!pdev->ltr_path)
-> +               info->l1ss_cap &= ~PCI_L1SS_CAP_ASPM_L1_2;
-> +
->         pci_read_config_dword(pdev, info->l1ss_cap_ptr + PCI_L1SS_CTL1,
->                               &info->l1ss_ctl1);
->         pci_read_config_dword(pdev, info->l1ss_cap_ptr + PCI_L1SS_CTL2,
->
+> 
+>  arch/arm/boot/dts/tegra20.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 864a95872b8d..e05b6bb2599f 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -741,7 +741,7 @@
+>  		phy_type = "ulpi";
+>  		clocks = <&tegra_car TEGRA20_CLK_USB2>,
+>  			 <&tegra_car TEGRA20_CLK_PLL_U>,
+> -			 <&tegra_car TEGRA20_CLK_CDEV2>;
+> +			 <&tegra_car TEGRA20_CLK_PLL_P_OUT4>;
+>  		clock-names = "reg", "pll_u", "ulpi-link";
+>  		resets = <&tegra_car 58>, <&tegra_car 22>;
+>  		reset-names = "usb", "utmi-pads";
