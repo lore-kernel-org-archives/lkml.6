@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755423AbeDTOdq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:33:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45016 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755409AbeDTOdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1755408AbeDTOdn (ORCPT <rfc822;w@1wt.eu>);
         Fri, 20 Apr 2018 10:33:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 351E92183A
+Received: from mail.kernel.org ([198.145.29.99]:44956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755377AbeDTOdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:33:40 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1377217D3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=acme@kernel.org
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -19,9 +19,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Dominik Brodowski <linux@dominikbrodowski.net>,
         Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 16/17] perf test BPF: Fixup BPF test using epoll_pwait syscall function probe
-Date: Fri, 20 Apr 2018 11:32:26 -0300
-Message-Id: <20180420143227.16030-17-acme@kernel.org>
+Subject: [PATCH 15/17] perf tests mmap: Show which tracepoint is failing
+Date: Fri, 20 Apr 2018 11:32:25 -0300
+Message-Id: <20180420143227.16030-16-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180420143227.16030-1-acme@kernel.org>
 References: <20180420143227.16030-1-acme@kernel.org>
@@ -31,34 +31,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Since e145242ea0df ("syscalls/core, syscalls/x86: Clean up syscall stub
-naming convention") changed the main syscall function for 'epoll_pwait'
-to something other than the expected 'SyS_epoll_pwait the' 'perf test
-BPF' entries started failing, fix it by using something called from the
-main syscall function instead, 'epoll_wait', which should keep this test
-working in older kernels too.
+In the 'perf test "mmap interface"' we try creating events for several
+tracepoints, but when perf_evsel__new() fails we're not showing which
+one is failing, fix that to help diagnosing problems, such as the
+syscall tracepoints ones being found and fixes in this merge window.
 
-Before:
+Now the failing tests shows:
 
-  # perf test BPF
-  40: BPF filter                           :
-  40.1: Basic BPF filtering                : FAILED!
-  40.2: BPF pinning                        : Skip
-  40.3: BPF prologue generation            : Skip
-  40.4: BPF relocation checker             : Skip
+  # perf test -v "mmap interface"
+ 4: Read samples using the mmap interface                 :
+  --- start ---
+  test child forked, pid 14311
+  <SNIP>
+  perf_evsel__new(sys_enter_getppid)
+  test child finished with -1
+  ---- end ----
+  Read samples using the mmap interface: FAILED!
+  #
 
-If we use -v for that test we see the problem:
+Now to check why the syscalls:sys_enter_getppid is failing...
 
-    Probe point 'SyS_epoll_pwait' not found.
-
-After:
-
-  # perf test BPF
-  40: BPF filter                           :
-  40.1: Basic BPF filtering                : Ok
-  40.2: BPF pinning                        : Ok
-  40.3: BPF prologue generation            : Ok
-  40.4: BPF relocation checker             : Ok
+  # ls -la /sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid
+  ls: cannot access '/sys/kernel/debug/tracing/events/syscalls/sys_enter_getppid': No such file or directory
   #
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
@@ -68,24 +62,24 @@ Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/r/tip-y24nmn70cs2am8jh4i344dng@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-44xk0ycdzrfzx1o9rklf5itl@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/bpf-script-example.c | 2 +-
+ tools/perf/tests/mmap-basic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/bpf-script-example.c b/tools/perf/tests/bpf-script-example.c
-index e4123c1b0e88..1ca5106df5f1 100644
---- a/tools/perf/tests/bpf-script-example.c
-+++ b/tools/perf/tests/bpf-script-example.c
-@@ -31,7 +31,7 @@ struct bpf_map_def SEC("maps") flip_table = {
- 	.max_entries = 1,
- };
+diff --git a/tools/perf/tests/mmap-basic.c b/tools/perf/tests/mmap-basic.c
+index bb8e6bcb0d96..0919b0793e5b 100644
+--- a/tools/perf/tests/mmap-basic.c
++++ b/tools/perf/tests/mmap-basic.c
+@@ -75,7 +75,7 @@ int test__basic_mmap(struct test *test __maybe_unused, int subtest __maybe_unuse
+ 		snprintf(name, sizeof(name), "sys_enter_%s", syscall_names[i]);
+ 		evsels[i] = perf_evsel__newtp("syscalls", name);
+ 		if (IS_ERR(evsels[i])) {
+-			pr_debug("perf_evsel__new\n");
++			pr_debug("perf_evsel__new(%s)\n", name);
+ 			goto out_delete_evlist;
+ 		}
  
--SEC("func=SyS_epoll_pwait")
-+SEC("func=do_epoll_wait")
- int bpf_func__SyS_epoll_pwait(void *ctx)
- {
- 	int ind =0;
 -- 
 2.14.3
