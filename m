@@ -1,58 +1,242 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753332AbeDTQzX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:55:23 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:34450 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752844AbeDTQzU (ORCPT
+        id S1753081AbeDTQ4a (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:56:30 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:46440 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752618AbeDTQ43 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:55:20 -0400
-Date: Sat, 21 Apr 2018 00:54:55 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
-Cc: Dmitry Vyukov <dvyukov@google.com>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Miller <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-        Eric Biggers <ebiggers3@gmail.com>,
-        syzbot <syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] crypto: drbg - set freed buffers to NULL
-Message-ID: <20180420165455.4kmmphyexqyd3kp3@gondor.apana.org.au>
-References: <001a114467482dbc4b05692df8f9@google.com>
- <2186798.qrgUIDAn9S@positron.chronox.de>
- <20316956.hJt0ZTxKTH@positron.chronox.de>
- <2295196.9WStPcntd3@positron.chronox.de>
+        Fri, 20 Apr 2018 12:56:29 -0400
+Smtp-Origin-Hostprefix: devbig
+From: Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig102.frc2.facebook.com
+To: <linux-kernel@vger.kernel.org>
+CC: <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
+        Howard McLauchlan <hmclauchlan@fb.com>, Josef Bacik <jbacik@fb.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Smtp-Origin-Cluster: frc2c02
+Subject: [PATCH v3 1/2] tracing: fix bad use of igrab in trace_uprobe.c
+Date: Fri, 20 Apr 2018 09:56:24 -0700
+Message-ID: <20180420165625.129593-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.9.5
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2295196.9WStPcntd3@positron.chronox.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-04-20_07:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 08:40:55AM +0200, Stephan Müller wrote:
-> Add the Fixes, CC stable tags.
-> 
-> ---8<---
-> 
-> During freeing of the internal buffers used by the DRBG, set the pointer
-> to NULL. It is possible that the context with the freed buffers is
-> reused. In case of an error during initialization where the pointers
-> do not yet point to allocated memory, the NULL value prevents a double
-> free.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 3cfc3b9721123 ("crypto: drbg - use aligned buffers")
-> Signed-off-by: Stephan Mueller <smueller@chronox.de>
-> Reported-by: syzbot+75397ee3df5c70164154@syzkaller.appspotmail.com
+As Miklos reported and suggested:
 
-Patch applied.  Thanks.
+  This pattern repeats two times in trace_uprobe.c and in
+  kernel/events/core.c as well:
+
+      ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+      if (ret)
+          goto fail_address_parse;
+
+      inode = igrab(d_inode(path.dentry));
+      path_put(&path);
+
+  And it's wrong.  You can only hold a reference to the inode if you
+  have an active ref to the superblock as well (which is normally
+  through path.mnt) or holding s_umount.
+
+  This way unmounting the containing filesystem while the tracepoint is
+  active will give you the "VFS: Busy inodes after unmount..." message
+  and a crash when the inode is finally put.
+
+  Solution: store path instead of inode.
+
+This patch fixes two instances in trace_uprobe.c. struct path is added to
+struct trace_uprobe to keep the inode and containing mount point
+referenced.
+
+Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
+Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Howard McLauchlan <hmclauchlan@fb.com>
+Cc: Josef Bacik <jbacik@fb.com>
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Reported-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ kernel/trace/trace_uprobe.c | 55 +++++++++++++++++++--------------------------
+ 1 file changed, 23 insertions(+), 32 deletions(-)
+
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index 34fd0e0..e7ffb5e 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -55,6 +55,7 @@ struct trace_uprobe {
+ 	struct list_head		list;
+ 	struct trace_uprobe_filter	filter;
+ 	struct uprobe_consumer		consumer;
++	struct path			path;
+ 	struct inode			*inode;
+ 	char				*filename;
+ 	unsigned long			offset;
+@@ -289,7 +290,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
+ 	for (i = 0; i < tu->tp.nr_args; i++)
+ 		traceprobe_free_probe_arg(&tu->tp.args[i]);
+ 
+-	iput(tu->inode);
++	path_put(&tu->path);
+ 	kfree(tu->tp.call.class->system);
+ 	kfree(tu->tp.call.name);
+ 	kfree(tu->filename);
+@@ -363,7 +364,6 @@ static int register_trace_uprobe(struct trace_uprobe *tu)
+ static int create_trace_uprobe(int argc, char **argv)
+ {
+ 	struct trace_uprobe *tu;
+-	struct inode *inode;
+ 	char *arg, *event, *group, *filename;
+ 	char buf[MAX_EVENT_NAME_LEN];
+ 	struct path path;
+@@ -371,7 +371,6 @@ static int create_trace_uprobe(int argc, char **argv)
+ 	bool is_delete, is_return;
+ 	int i, ret;
+ 
+-	inode = NULL;
+ 	ret = 0;
+ 	is_delete = false;
+ 	is_return = false;
+@@ -437,24 +436,14 @@ static int create_trace_uprobe(int argc, char **argv)
+ 	}
+ 	/* Find the last occurrence, in case the path contains ':' too. */
+ 	arg = strrchr(argv[1], ':');
+-	if (!arg) {
+-		ret = -EINVAL;
+-		goto fail_address_parse;
+-	}
++	if (!arg)
++		return -EINVAL;
+ 
+ 	*arg++ = '\0';
+ 	filename = argv[1];
+ 	ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+ 	if (ret)
+-		goto fail_address_parse;
+-
+-	inode = igrab(d_real_inode(path.dentry));
+-	path_put(&path);
+-
+-	if (!inode || !S_ISREG(inode->i_mode)) {
+-		ret = -EINVAL;
+-		goto fail_address_parse;
+-	}
++		return ret;
+ 
+ 	ret = kstrtoul(arg, 0, &offset);
+ 	if (ret)
+@@ -490,7 +479,7 @@ static int create_trace_uprobe(int argc, char **argv)
+ 		goto fail_address_parse;
+ 	}
+ 	tu->offset = offset;
+-	tu->inode = inode;
++	tu->path = path;
+ 	tu->filename = kstrdup(filename, GFP_KERNEL);
+ 
+ 	if (!tu->filename) {
+@@ -558,7 +547,7 @@ static int create_trace_uprobe(int argc, char **argv)
+ 	return ret;
+ 
+ fail_address_parse:
+-	iput(inode);
++	path_put(&path);
+ 
+ 	pr_info("Failed to parse address or file.\n");
+ 
+@@ -922,7 +911,14 @@ probe_event_enable(struct trace_uprobe *tu, struct trace_event_file *file,
+ 		goto err_flags;
+ 
+ 	tu->consumer.filter = filter;
+-	ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
++	tu->inode = d_real_inode(tu->path.dentry);
++	if (!tu->inode || !S_ISREG(tu->inode->i_mode)) {
++		tu->inode = NULL;
++		ret = -EINVAL;
++		goto err_buffer;
++	}
++	ret = uprobe_register(tu->inode, tu->offset,
++			      &tu->consumer);
+ 	if (ret)
+ 		goto err_buffer;
+ 
+@@ -966,7 +962,8 @@ probe_event_disable(struct trace_uprobe *tu, struct trace_event_file *file)
+ 
+ 	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
+ 
+-	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
++	uprobe_unregister(d_inode(tu->path.dentry), tu->offset, &tu->consumer);
++	tu->inode = NULL;
+ 	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
+ 
+ 	uprobe_buffer_disable();
+@@ -1041,7 +1038,8 @@ static int uprobe_perf_close(struct trace_uprobe *tu, struct perf_event *event)
+ 	write_unlock(&tu->filter.rwlock);
+ 
+ 	if (!done)
+-		return uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
++		return uprobe_apply(d_inode(tu->path.dentry), tu->offset,
++				    &tu->consumer, false);
+ 
+ 	return 0;
+ }
+@@ -1073,7 +1071,8 @@ static int uprobe_perf_open(struct trace_uprobe *tu, struct perf_event *event)
+ 
+ 	err = 0;
+ 	if (!done) {
+-		err = uprobe_apply(tu->inode, tu->offset, &tu->consumer, true);
++		err = uprobe_apply(d_inode(tu->path.dentry),
++				   tu->offset, &tu->consumer, true);
+ 		if (err)
+ 			uprobe_perf_close(tu, event);
+ 	}
+@@ -1337,7 +1336,6 @@ struct trace_event_call *
+ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+ {
+ 	struct trace_uprobe *tu;
+-	struct inode *inode;
+ 	struct path path;
+ 	int ret;
+ 
+@@ -1345,14 +1343,6 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+-	inode = igrab(d_inode(path.dentry));
+-	path_put(&path);
+-
+-	if (!inode || !S_ISREG(inode->i_mode)) {
+-		iput(inode);
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+ 	/*
+ 	 * local trace_kprobes are not added to probe_list, so they are never
+ 	 * searched in find_trace_kprobe(). Therefore, there is no concern of
+@@ -1364,11 +1354,12 @@ create_local_trace_uprobe(char *name, unsigned long offs, bool is_return)
+ 	if (IS_ERR(tu)) {
+ 		pr_info("Failed to allocate trace_uprobe.(%d)\n",
+ 			(int)PTR_ERR(tu));
++		path_put(&path);
+ 		return ERR_CAST(tu);
+ 	}
+ 
+ 	tu->offset = offs;
+-	tu->inode = inode;
++	tu->path = path;
+ 	tu->filename = kstrdup(name, GFP_KERNEL);
+ 	init_trace_event_call(tu, &tu->tp.call);
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.9.5
