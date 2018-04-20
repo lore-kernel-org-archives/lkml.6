@@ -1,85 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754559AbeDTKSA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:18:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55838 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754469AbeDTKR6 (ORCPT
+        id S1754587AbeDTKSI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:18:08 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39772 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754469AbeDTKSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:17:58 -0400
-Date: Fri, 20 Apr 2018 03:17:55 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: christian.koenig@amd.com
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
-Message-ID: <20180420101755.GA11400@infradead.org>
-References: <20180329065753.GD3881@phenom.ffwll.local>
- <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
- <20180403090909.GN3881@phenom.ffwll.local>
- <20180403170645.GB5935@redhat.com>
- <20180403180832.GZ3881@phenom.ffwll.local>
- <20180416123937.GA9073@infradead.org>
- <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
- <20180419081657.GA16735@infradead.org>
- <20180420071312.GF31310@phenom.ffwll.local>
- <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
+        Fri, 20 Apr 2018 06:18:06 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: jacopo mondi <jacopo@jmondi.org>
+Cc: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/7] Add tda998x (HDMI) support to atmel-hlcdc
+Date: Fri, 20 Apr 2018 13:18:13 +0300
+Message-ID: <6354350.l8DgUyNhLT@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180420085235.GI4235@w540>
+References: <20180419162751.25223-1-peda@axentia.se> <20180420085235.GI4235@w540>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 10:58:50AM +0200, Christian König wrote:
-> > Yes there's a bit a layering violation insofar that drivers really
-> > shouldn't each have their own copy of "how do I convert a piece of dma
-> > memory into  dma-buf", but that doesn't render the interface a bad idea.
+Hello,
+
+On Friday, 20 April 2018 11:52:35 EEST jacopo mondi wrote:
+> Hi Peter,
+>     I've been a bit a pain in the arse for you recently, but please
+> bear with me a bit more, and sorry for jumping late on the band wagon.
 > 
-> Completely agree on that.
+> On Thu, Apr 19, 2018 at 06:27:44PM +0200, Peter Rosin wrote:
+> > Hi!
+> > 
+> > I naively thought that since there was support for both nxp,tda19988 (in
+> > the tda998x driver) and the atmel-hlcdc, things would be a smooth ride.
+> > But it wasn't, so I started looking around and realized I had to fix
+> > things.
+> > 
+> > In v1 and v2 I fixed things by making the atmel-hlcdc driver a master
+> > component, but now in v3 I fix things by making the tda998x driver
+> > a bridge instead. This was after a suggestion from Boris Brezillion
+> > (the atmel-hlcdc maintainer), so there was some risk of bias ... but
+> > after comparing what was needed, I too find the bridge approach better.
+> > 
+> > In addition to the above, our PCB interface between the SAMA5D3 and the
+> > HDMI encoder is only using 16 bits, and this has to be described
+> > somewhere, or the atmel-hlcdc driver have no chance of selecting the
+> > correct output mode. Since I have similar problems with a ds90c185 lvds
+> > encoder I added patches to override the atmel-hlcdc output format via
+> > DT properties compatible with the media video-interface binding and
+> > things start to play together.
+> > 
+> > Since this series superseeds the bridge series [1], I have included the
+> > leftover bindings patch for the ti,ds90c185 here.
 > 
-> What we need is an sg_alloc_table_from_resources(dev, resources,
-> num_resources) which does the handling common to all drivers.
-
-A structure that contains
-
-{page,offset,len} + {dma_addr+dma_len}
-
-is not a good container for storing
-
-{virt addr, dma_addr, len}
-
-no matter what interface you build arond it.  And that is discounting
-all the problems around mapping coherent allocations for other devices,
-or the iommu merging problem we are having another thread on.
-
-So let's come up with a better high level interface first, and then
-worrty about how to implement it in the low-level dma-mapping interface
-second.  Especially given that my consolidation of the dma_map_ops
-implementation is in full stream and there shoudn't be all that many
-to bother with.
-
-So first question:  Do you actually care about having multiple
-pairs of the above, or instead of all chunks just deal with a single
-of the above?  In that case we really should not need that many
-new interfaces as dma_map_resource will be all you need anyway.
-
+> I feel like this series would look better if it would make use of the
+> proposed bridge media bus format support I have recently sent out [1]
+> (and which was not there when you first sent v1).
 > 
-> Christian.
+> I understand your fundamental problem here is that the bus format
+> that should be reported by your bridge is different from the ones
+> actually supported by the TDA19988 chip, as the wirings ground some
+> of the input pins.
 > 
-> > -Daniel
+> Although this is defintely something that could be described in the
+> bridge's own OF node with the 'bus_width' property, and what I would do,
+> now that you have made a bridge out from the tda19988 driver, is:
 > 
----end quoted text---
+> 1) Set the bridge accepted input bus_format parsing its pin
+> configuration, or default it if that's not implemented yet.
+> This will likely be rgb888. You can do that using the trivial
+> support for bridge input image formats implemented by my series.
+> 2) Specify in the bridge endpoint a 'bus_width' of <16>
+> 3) In your atmel-hlcd get both the image format of the bridge (rgb888)
+> and parse the remote endpoint property 'bus_width' and get the <16>
+> value back.
+
+Parsing properties of remote nodes should be avoided as much as possible, as 
+they need to be interpreted in the context of the DT bindings related to the 
+compatible string applicable to that node. I'd rather have the bus_width 
+property in the local endpoint node.
+
+> 4) Set the correct format in the atmel hlcd driver to accommodate a
+> bridge that wants rgb888 on a 16 bit wide bus (that would be rgb565,
+> or are there other possible combinations I am missing?)
+> 
+> I would consider this better mostly because in this series you are
+> creating a semantic for the whole DRM subsystem on the 'bus_width'
+> property, where numerical values as '12', '16' etc are arbitrary tied
+> to the selection of a media bus format. At least you should use a
+> common set of defines [1] between the device tree and the driver,
+> but this looks anyway fragile imho.
+
+This I agree with though. Combining the remote bus format with the local bus 
+width should fix the problem without having to parse remote properties.
+
+> Have I maybe missed some parts of the problem you are trying to solve
+> here?
+> 
+> Thank you
+>    j
+> 
+> [1] drm: bridge: Add support for static image formats
+>     https://lwn.net/Articles/752296/
+> [2] include/uapi/linux/media-bus-format.h
+> 
+> > Anyway, this series solves some real issues for my HW.
+> > 
+> > Cheers,
+> > Peter
+> > 
+> > Changes since v2   https://lkml.org/lkml/2018/4/17/385
+> > - patch 2/7 fixed spelling and added an example
+> > - patch 4/7 parse the DT up front and store the result indexed by encoder
+> > - old patch 5/6 and 6/6 dropped
+> > - patch 5-7/7 are new and makes the tda998x driver a drm_bridge
+> > 
+> > Changes since v1   https://lkml.org/lkml/2018/4/9/294
+> > - added reviewed-by from Rob to patch 1/6
+> > - patch 2/6 changed so that the bus format override is in the endpoint
+> >   DT node, and follows the binding of media video-interfaces.
+> > - patch 3/6 is new, it adds drm_of_media_bus_fmt which parses above
+> >   media video-interface binding (partially).
+> > - patch 4/6 now makes use of the above helper (and also fixes problems
+> >   with the 3/5 patch from v1 when no override was specified).
+> > - do not mention unrelated connector display_info details in the cover
+> >   letter and commit messages.
+> > 
+> > [1]
+> > "Bridge" series v2   https://lkml.org/lkml/2018/3/26/610
+> > "Bridge" series v1   https://lkml.org/lkml/2018/3/17/221
+> > 
+> > Peter Rosin (7):
+> >   dt-bindings: display: bridge: lvds-transmitter: add ti,ds90c185
+> >   dt-bindings: display: atmel: optional video-interface of endpoints
+> >   drm: of: introduce drm_of_media_bus_fmt
+> >   drm/atmel-hlcdc: support bus-width (12/16/18/24) in endpoint nodes
+> >   drm/i2c: tda998x: find the drm_device via the drm_connector
+> >   drm/i2c: tda998x: split encoder and component functions from the work
+> >   drm/i2c: tda998x: register as a drm bridge
+> >  
+> >  .../devicetree/bindings/display/atmel/hlcdc-dc.txt |  26 +++
+> >  .../bindings/display/bridge/lvds-transmitter.txt   |   8 +-
+> >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c     |  71 ++++++--
+> >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.h       |   2 +
+> >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c   |  40 +++-
+> >  drivers/gpu/drm/drm_of.c                           |  38 ++++
+> >  drivers/gpu/drm/i2c/tda998x_drv.c                  | 201 ++++++++++++++--
+> >  include/drm/drm_of.h                               |   7 +
+> >  8 files changed, 342 insertions(+), 51 deletions(-)
+
+-- 
+Regards,
+
+Laurent Pinchart
