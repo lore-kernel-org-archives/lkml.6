@@ -1,88 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752243AbeDTVV3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 17:21:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43552 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751228AbeDTVV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 17:21:27 -0400
-Date: Fri, 20 Apr 2018 17:21:26 -0400 (EDT)
-From: Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To: Matthew Wilcox <willy@infradead.org>
-cc: Michal Hocko <mhocko@kernel.org>, David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        eric.dumazet@gmail.com, edumazet@google.com, bhutchings@solarflare.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
-        jasowang@redhat.com, virtualization@lists.linux-foundation.org,
-        dm-devel@redhat.com, Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
-In-Reply-To: <20180420210200.GH10788@bombadil.infradead.org>
-Message-ID: <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com> <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com> <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com> <20180418.134651.2225112489265654270.davem@davemloft.net>
- <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com> <20180420130852.GC16083@dhcp22.suse.cz> <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
- <20180420210200.GH10788@bombadil.infradead.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S1752308AbeDTV0s (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 17:26:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53305 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751478AbeDTV0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 17:26:47 -0400
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "To"
+From: NeilBrown <neil@brown.name>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "Brian Norris" <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date: Sat, 21 Apr 2018 07:26:34 +1000
+Subject: [PATCH v3] mtd: spi-nor: clear Winbond Extended Address Reg on switch to 3-byte addressing.
+In-Reply-To: <20180420215440.7b078f6c@bbrezillon>
+References: <874lkmw54j.fsf@notabene.neil.brown.name> <87sh7wrq8p.fsf@notabene.neil.brown.name> <20180420215440.7b078f6c@bbrezillon>
+Message-ID: <87h8o5po1h.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
-On Fri, 20 Apr 2018, Matthew Wilcox wrote:
+Winbond spi-nor flash 32MB and larger have an 'Extended Address
+Register' as one option for addressing beyond 16MB (Macronix
+has the same concept, Spansion has EXTADD bits in the Bank Address
+Register).
 
-> On Fri, Apr 20, 2018 at 04:54:53PM -0400, Mikulas Patocka wrote:
-> > On Fri, 20 Apr 2018, Michal Hocko wrote:
-> > > No way. This is just wrong! First of all, you will explode most likely
-> > > on many allocations of small sizes. Second, CONFIG_DEBUG_VM tends to be
-> > > enabled quite often.
-> > 
-> > You're an evil person who doesn't want to fix bugs.
-> 
-> Steady on.  There's no need for that.  Michal isn't evil.  Please
-> apologise.
+According to section
+   8.2.7 Write Extended Address Register (C5h)
 
-I see this attitude from Michal again and again.
+of the Winbond W25Q256FV data sheet (256M-BIT SPI flash)
 
-He didn't want to fix vmalloc(GFP_NOIO), he didn't want to fix alloc_pages 
-sleeping when __GFP_NORETRY is used. So what should I say? Fix them and 
-you won't be evil :-)
+   The Extended Address Register is only effective when the device is
+   in the 3-Byte Address Mode.  When the device operates in the 4-Byte
+   Address Mode (ADS=3D1), any command with address input of A31-A24
+   will replace the Extended Address Register values. It is
+   recommended to check and update the Extended Address Register if
+   necessary when the device is switched from 4-Byte to 3-Byte Address
+   Mode.
 
-(he could also fix the oom killer, so that it is triggered when 
-free_memory+cache+free_swap goes beyond a threshold and not when you loop 
-too long in the allocator)
+So the documentation suggests clearing the EAR after switching to
+3-byte mode.  Experimentation shows that the EAR is *always* one after
+the switch to 3-byte mode, so clearing the EAR is mandatory at
+shutdown for a subsequent 3-byte-addressed reboot to work.
 
-> > You refused to fix vmalloc(GFP_NOIO) misbehavior a year ago (did you make 
-> > some progress with it since that time?) and you refuse to fix kvmalloc 
-> > misuses.
-> 
-> I understand you're frustrated, but this is not the way to get the problems
-> fixed.
-> 
-> > I tried this patch on text-only virtual machine and /proc/vmallocinfo 
-> > shows 614kB more memory. I tried it on a desktop machine with the chrome 
-> > browser open and /proc/vmallocinfo space is increased by 7MB. So no - this 
-> > won't exhaust memory and kill the machine.
-> 
-> This is good data, thank you for providing it.
-> 
-> > Arguing that this increases memory consumption is as bogus as arguing that 
-> > CONFIG_LOCKDEP increses memory consumption. No one is forcing you to 
-> > enable CONFIG_LOCKDEP and no one is forcing you to enable this kvmalloc 
-> > test too.
-> 
-> I think there's a real problem which is that CONFIG_DEBUG_VM is too broad.
-> It inserts code in a *lot* of places, some of which is quite expensive.
-> We would do better to split it into more granular pieces ... although
-> an explosion of configuration options isn't great either.  Maybe just
-> CONFIG_DEBUG_VM and CONFIG_DEBUG_VM_EXPENSIVE.
-> 
-> Michal may be wrong, but he's not evil.
+Note that some SOCs (e.g. MT7621) do not assert a reset line at normal
+reboot, so we cannot rely on hardware reset.  The MT7621 does assert a
+reset line at watchdog-reset.
 
-I already said that we can change it from CONFIG_DEBUG_VM to 
-CONFIG_DEBUG_SG - or to whatever other option you may want, just to make 
-sure that it is enabled in distro debug kernels by default.
+This problem is not a regression.  However the commit identified below
+added support for resetting an spi-nor chip at shutdown, but didn't
+achieve the goal for all spi-nor chips.  So this patch can be seen as
+fixing that one.
 
-Mikulas
+Fixes: 59b356ffd0b0 ("mtd: m25p80: restore the status of SPI flash when exi=
+ting")
+Cc: stable@vger.kernel.org (v4.16)
+Signed-off-by: NeilBrown <neil@brown.name>
+=2D--
+ drivers/mtd/spi-nor/spi-nor.c | 14 ++++++++++++++
+ include/linux/mtd/spi-nor.h   |  2 ++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 5bfa36e95f35..42ae9a1529bb 100644
+=2D-- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -284,6 +284,20 @@ static inline int set_4byte(struct spi_nor *nor, const=
+ struct flash_info *info,
+ 		if (need_wren)
+ 			write_disable(nor);
+=20
++		if (!status && !enable &&
++		    JEDEC_MFR(info) =3D=3D SNOR_MFR_WINBOND) {
++			/*
++			 * On Winbond W25Q256FV, leaving 4byte mode causes
++			 * the Extended Address Register to be set to 1, so all
++			 * 3-byte-address reads come from the second 16M.
++			 * We must clear the register to enable normal behavior.
++			 */
++			write_enable(nor);
++			nor->cmd_buf[0] =3D 0;
++			nor->write_reg(nor, SPINOR_OP_WREAR, nor->cmd_buf, 1);
++			write_disable(nor);
++		}
++
+ 		return status;
+ 	default:
+ 		/* Spansion style */
+diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+index de36969eb359..e60da0d34cc1 100644
+=2D-- a/include/linux/mtd/spi-nor.h
++++ b/include/linux/mtd/spi-nor.h
+@@ -62,6 +62,8 @@
+ #define SPINOR_OP_RDCR		0x35	/* Read configuration register */
+ #define SPINOR_OP_RDFSR		0x70	/* Read flag status register */
+ #define SPINOR_OP_CLFSR		0x50	/* Clear flag status register */
++#define SPINOR_OP_RDEAR		0xc8	/* Read Extended Address Register */
++#define SPINOR_OP_WREAR		0xc5	/* Write Extended Address Register */
+=20
+ /* 4-byte address opcodes - used on Spansion and some Macronix flashes. */
+ #define SPINOR_OP_READ_4B	0x13	/* Read data bytes (low frequency) */
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlraWwoACgkQOeye3VZi
+gbmWew/+PyOFPURJGUfsYjHdaVrSW/gwINL41xepcR1aswxpHM/VQ35iC0NddLQt
+w28F3m5fyBkPAMh8LLJhpctXuS55OmUAd8t9HdRvn6JPx2+wZJFr9B1LHjM3vxMZ
+JzWdm4NYAeYNa6sMG+tR/+VwL0p6X5Rxxf5DRzm0cCWG6TCQUEiILFB7reyLmjbB
+74jKNFcG0ZRzxvCCvR88jj/PIKoVVLDBMZPkhvRkCDqmEPNSm+5k1VUuL3mR1CrX
+spvcbTTrvfA0YKj1Iiv/tH1/CMkGLiosLcVKKvmMQ7NPiCZu/1bixBm+r/UEBg5C
+Lkrb9+YsRI5eq9z/Ihi7co0Yoj6v4wiw04Mdwd+7aEfwEWQs+dMrnjlzOxef6fYc
+EGsfPiIc4QyYwzrtZfcLI9xBu4uvD6PoACY6slMygoIXefDBDU6+ZfuAca70iw/x
+VYnlTC5LR3/PEfda31i9wpWVJOQOFTzgCYCaFQ6wSvX9afkQ2Euy9BZk2Tfq5mNB
+UxI84DBfuN5hjXUW4B9BnhN03PIfPaXSpbwwWeDjUEkcbtYNMt9eGDlcEbQXkFkd
+M//sjPdWp9sGlGqRAx2iMECi7Sfc8bJtJeHQEgLzAWbeYZ2iGX2Pp43mSal8mm4n
+15vNmkmMaI3g+9bl4CzDH9cGYAxRrmtlNl+1A8UWbCLMINVYMKM=
+=FUbh
+-----END PGP SIGNATURE-----
+--=-=-=--
