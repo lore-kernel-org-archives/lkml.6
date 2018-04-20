@@ -1,42 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754945AbeDTNHe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 09:07:34 -0400
-Received: from mga12.intel.com ([192.55.52.136]:27831 "EHLO mga12.intel.com"
+        id S1754953AbeDTNIz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 09:08:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49529 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754883AbeDTNHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 09:07:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,301,1520924400";
-   d="scan'208";a="39047150"
-Date: Fri, 20 Apr 2018 16:07:27 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: John Garry <john.garry@huawei.com>
-Cc: rjw@rjwysocki.net, andriy.shevchenko@linux.intel.com,
-        linux-acpi@vger.kernel.org, lenb@kernel.org, lorenzo.pieralisi@arm.com,
-        linux-kernel@vger.kernel.org, arnd@arndb.de, graeme.gregory@linaro.org,
-        helgaas@kernel.org, linuxarm@huawei.com, z.liuxinliang@hisilicon.com
-Subject: Re: [RFC PATCH 1/2] ACPI / PNP: Don't add "enumeration_by_parent"
- devices
-Message-ID: <20180420130727.GV2173@lahna.fi.intel.com>
-References: <1524218846-169934-1-git-send-email-john.garry@huawei.com>
- <1524218846-169934-2-git-send-email-john.garry@huawei.com>
+        id S1754740AbeDTNIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 09:08:54 -0400
+Date: Fri, 20 Apr 2018 15:08:52 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, bhutchings@solarflare.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
+        jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        dm-devel@redhat.com, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+Message-ID: <20180420130852.GC16083@dhcp22.suse.cz>
+References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com>
+ <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com>
+ <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180418.134651.2225112489265654270.davem@davemloft.net>
+ <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1524218846-169934-2-git-send-email-john.garry@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 06:07:25PM +0800, John Garry wrote:
-> +	} else {
-> +		device->driver_data = dev;
+On Thu 19-04-18 12:12:38, Mikulas Patocka wrote:
+[...]
+> From: Mikulas Patocka <mpatocka@redhat.com>
+> Subject: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+> 
+> The kvmalloc function tries to use kmalloc and falls back to vmalloc if
+> kmalloc fails.
+> 
+> Unfortunatelly, some kernel code has bugs - it uses kvmalloc and then
+> uses DMA-API on the returned memory or frees it with kfree. Such bugs were
+> found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
+> code.
+> 
+> These bugs are hard to reproduce because vmalloc falls back to kmalloc
+> only if memory is fragmented.
+> 
+> In order to detect these bugs reliably I submit this patch that changes
+> kvmalloc to always use vmalloc if CONFIG_DEBUG_VM is turned on.
 
-I think this deserves a comment explaining why we (ab)use driver_data
-like this.
+No way. This is just wrong! First of all, you will explode most likely
+on many allocations of small sizes. Second, CONFIG_DEBUG_VM tends to be
+enabled quite often.
+
+> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+
+Nacked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  mm/util.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> Index: linux-2.6/mm/util.c
+> ===================================================================
+> --- linux-2.6.orig/mm/util.c	2018-04-18 15:46:23.000000000 +0200
+> +++ linux-2.6/mm/util.c	2018-04-18 16:00:43.000000000 +0200
+> @@ -395,6 +395,7 @@ EXPORT_SYMBOL(vm_mmap);
+>   */
+>  void *kvmalloc_node(size_t size, gfp_t flags, int node)
+>  {
+> +#ifndef CONFIG_DEBUG_VM
+>  	gfp_t kmalloc_flags = flags;
+>  	void *ret;
+>  
+> @@ -426,6 +427,7 @@ void *kvmalloc_node(size_t size, gfp_t f
+>  	 */
+>  	if (ret || size <= PAGE_SIZE)
+>  		return ret;
+> +#endif
+>  
+>  	return __vmalloc_node_flags_caller(size, node, flags,
+>  			__builtin_return_address(0));
+
+-- 
+Michal Hocko
+SUSE Labs
