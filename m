@@ -1,54 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754607AbeDTKrC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:47:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36911 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754559AbeDTKrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:47:00 -0400
-From: Juergen Gross <jgross@suse.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com
-Subject: [GIT PULL] xen: fixes and one header update for 4.17-rc2
-Date: Fri, 20 Apr 2018 12:46:57 +0200
-Message-Id: <20180420104657.7640-1-jgross@suse.com>
-X-Mailer: git-send-email 2.13.6
+        id S1754653AbeDTKrb (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:47:31 -0400
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:24767 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754549AbeDTKr3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 06:47:29 -0400
+X-IronPort-AV: E=Sophos;i="5.49,301,1520899200";
+   d="scan'208";a="675575123"
+Subject: [PATCH 0/3] Introduce Xen fault injection facility
+From: Stanislav Kinsburskii <staskins@amazon.com>
+CC: <jakub.kicinski@netronome.com>, <hpa@zytor.com>, <mcroce@redhat.com>,
+        <staskins@amazon.com>, <tglx@linutronix.de>, <ggarcia@abra.uab.cat>,
+        <daniel@iogearbox.net>, <x86@kernel.org>, <mingo@redhat.com>,
+        <xen-devel@lists.xenproject.org>, <axboe@kernel.dk>,
+        <konrad.wilk@oracle.com>, <amir.jer.levy@intel.com>,
+        <paul.durrant@citrix.com>, <stefanha@redhat.com>,
+        <dsa@cumulusnetworks.com>, <boris.ostrovsky@oracle.com>,
+        <jgross@suse.com>, <linux-block@vger.kernel.org>,
+        <wei.liu2@citrix.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <davem@davemloft.net>,
+        <dwmw@amazon.co.uk>, <roger.pau@citrix.com>
+Date: Fri, 20 Apr 2018 10:47:20 +0000
+Message-ID: <20180420104603.17823.31095.stgit@dev-dsk-staskins-1a-ca5afbf2.eu-west-1.amazon.com>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KAlakM016950
 
-Linus,
+This series adds a facility, which can be used to instrument Xen code with
+fault injections.
+It is based "Fault injection capabilities infrastructure" described here:
+- Documentation/fault-injection/fault-injection.txt
 
-Please git pull the following tag:
+First patch adds a generic facility to use anywhere in Xen.
+When using it all the fault injection user land control directories (if
+any) will appear here:
+- /sys/kernel/debug/xen/fault_inject/
 
- git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.17-rc2-tag
+To distinguish with generic (or core) Xen fault injections, next two
+patches add additional directories to the root path above for blkback and
+netback drivers respectively:
+- /sys/kernel/debug/xen/fault_inject/xen-blkback/
+- /sys/kernel/debug/xen/fault_inject/xen-netback/
 
-xen: fixes and one header update for 4.17-rc2
+---
 
-It contains some fixes of kmalloc() flags, one fix of the xenbus driver
-and an update of the pv sound driver interface needed for a driver
-which will go through the sound tree.
+Stanislav Kinsburskii (3):
+      xen: add generic fault injection facility
+      xen netback: add fault injection facility
+      xen blkback: add fault injection facility
 
-Thanks.
 
-Juergen
-
- drivers/xen/xen-pciback/conf_space_quirks.c |   2 +-
- drivers/xen/xen-pciback/pci_stub.c          |   8 +-
- drivers/xen/xenbus/xenbus_dev_frontend.c    |   3 +-
- include/xen/interface/io/sndif.h            | 322 ++++++++++++++++++++++++++--
- 4 files changed, 313 insertions(+), 22 deletions(-)
-
-Jia-Ju Bai (5):
-      xen: xen-pciback: Replace GFP_ATOMIC with GFP_KERNEL in pcistub_probe
-      xen: xen-pciback: Replace GFP_ATOMIC with GFP_KERNEL in pcistub_init_device
-      xen: xen-pciback: Replace GFP_ATOMIC with GFP_KERNEL in pcistub_device_alloc
-      xen: xen-pciback: Replace GFP_ATOMIC with GFP_KERNEL in xen_pcibk_config_quirks_init
-      xen: xen-pciback: Replace GFP_ATOMIC with GFP_KERNEL in pcistub_reg_add
-
-Oleksandr Andrushchenko (1):
-      xen/sndif: Sync up with the canonical definition in Xen
-
-Simon Gaiser (1):
-      xen: xenbus_dev_frontend: Really return response string
+ arch/x86/xen/Kconfig                   |    7 ++
+ arch/x86/xen/Makefile                  |    1 
+ arch/x86/xen/fault_inject.c            |  109 +++++++++++++++++++++++++++++
+ drivers/block/Kconfig                  |    7 ++
+ drivers/block/xen-blkback/Makefile     |    1 
+ drivers/block/xen-blkback/blkback.c    |    9 ++
+ drivers/block/xen-blkback/blkback_fi.c |  116 +++++++++++++++++++++++++++++++
+ drivers/block/xen-blkback/blkback_fi.h |   37 ++++++++++
+ drivers/block/xen-blkback/common.h     |    3 +
+ drivers/block/xen-blkback/xenbus.c     |    5 +
+ drivers/net/Kconfig                    |    8 ++
+ drivers/net/xen-netback/Makefile       |    1 
+ drivers/net/xen-netback/common.h       |    3 +
+ drivers/net/xen-netback/netback.c      |    3 +
+ drivers/net/xen-netback/netback_fi.c   |  119 ++++++++++++++++++++++++++++++++
+ drivers/net/xen-netback/netback_fi.h   |   35 +++++++++
+ drivers/net/xen-netback/xenbus.c       |    6 ++
+ include/xen/fault_inject.h             |   45 ++++++++++++
+ 18 files changed, 515 insertions(+)
+ create mode 100644 arch/x86/xen/fault_inject.c
+ create mode 100644 drivers/block/xen-blkback/blkback_fi.c
+ create mode 100644 drivers/block/xen-blkback/blkback_fi.h
+ create mode 100644 drivers/net/xen-netback/netback_fi.c
+ create mode 100644 drivers/net/xen-netback/netback_fi.h
+ create mode 100644 include/xen/fault_inject.h
+Amazon Development Center Germany GmbH
+Berlin - Dresden - Aachen
+main office: Krausenstr. 38, 10117 Berlin
+Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+Ust-ID: DE289237879
+Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
