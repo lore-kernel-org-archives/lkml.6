@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755936AbeDTP4R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:56:17 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:37546 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755903AbeDTPz5 (ORCPT
+        id S1755959AbeDTP4o (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:56:44 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:42764 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755318AbeDTPzw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:55:57 -0400
-X-Google-Smtp-Source: AIpwx48pACIQBdRZoa8zadbigeB0f0sgP9lSw83Z0qRDVBLpXcpkWBZicow84dLfQ3yz9ODlPwoUiA==
+        Fri, 20 Apr 2018 11:55:52 -0400
+X-Google-Smtp-Source: AIpwx4+mvdAxLPOv+jJe6jl7DaYUBcy4F/SczjgBfdWw8de9jlGb8k4jvQAnzsqYAluj8LIs2QUZ+A==
 From: Eric Dumazet <edumazet@google.com>
 To: "David S . Miller" <davem@davemloft.net>
 Cc: netdev <netdev@vger.kernel.org>,
@@ -15,9 +15,9 @@ Cc: netdev <netdev@vger.kernel.org>,
         Soheil Hassas Yeganeh <soheil@google.com>,
         Eric Dumazet <edumazet@google.com>,
         Eric Dumazet <eric.dumazet@gmail.com>
-Subject: [PATCH net-next 4/4] tcp: mmap: move the skb cleanup to tcp_mmap_hook()
-Date: Fri, 20 Apr 2018 08:55:42 -0700
-Message-Id: <20180420155542.122183-5-edumazet@google.com>
+Subject: [PATCH net-next 2/4] net: implement sock_mmap_hook()
+Date: Fri, 20 Apr 2018 08:55:40 -0700
+Message-Id: <20180420155542.122183-3-edumazet@google.com>
 X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 In-Reply-To: <20180420155542.122183-1-edumazet@google.com>
 References: <20180420155542.122183-1-edumazet@google.com>
@@ -25,62 +25,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Freeing all skbs and sending ACK is time consuming.
+sock_mmap_hook() is the mmap_hook handler provided for socket_file_ops
 
-This is currently done while both current->mm->mmap_sem and socket
-lock are held, in tcp_mmap()
-
-Thanks to mmap_hook infrastructure, we can perform the cleanup
-after current->mm->mmap_sem has been released, thus allowing
-other threads to perform mm operations without delay.
-
-Note that the preparation work (building the array of page
-pointers) can also be done from tcp_mmap_hook() while
-mmap_sem has not been taken yet, but this is another independent change.
+Following patch will provide tcp_mmap_hook() for TCP protocol.
 
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 ---
- net/ipv4/tcp.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ include/linux/net.h | 1 +
+ net/socket.c        | 9 +++++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index e913b2dd5df321f2789e8d5f233ede9c2f1d5624..82f7c3e47253cecac6ea1819fbb7a0712058ec55 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -1740,9 +1740,16 @@ int tcp_mmap_hook(struct socket *sock, enum mmap_hook mode)
- 		 */
- 		return 0;
- 	}
--	/* TODO: Move here the stuff that can been done after
--	 * current->mm->mmap_sem has been released.
--	 */
-+	if (mode == MMAP_HOOK_COMMIT) {
-+		u32 offset;
-+
-+		tcp_rcv_space_adjust(sk);
-+
-+		/* Clean up data we have read: This will do ACK frames. */
-+		tcp_recv_skb(sk, tcp_sk(sk)->copied_seq, &offset);
-+
-+		tcp_cleanup_rbuf(sk, PAGE_SIZE);
-+	}
- 	release_sock(sk);
- 	return 0;
- }
-@@ -1843,13 +1850,8 @@ int tcp_mmap(struct file *file, struct socket *sock,
- 		if (ret)
- 			goto out;
- 	}
--	/* operation is complete, we can 'consume' all skbs */
-+	/* operation is complete, skbs will be freed from tcp_mmap_hook() */
- 	tp->copied_seq = seq;
--	tcp_rcv_space_adjust(sk);
--
--	/* Clean up data we have read: This will do ACK frames. */
--	tcp_recv_skb(sk, seq, &offset);
--	tcp_cleanup_rbuf(sk, size);
+diff --git a/include/linux/net.h b/include/linux/net.h
+index 6554d3ba4396b3df49acac934ad16eeb71a695f4..5192bf502b11e42c3d9eb342ce67361916149bfa 100644
+--- a/include/linux/net.h
++++ b/include/linux/net.h
+@@ -181,6 +181,7 @@ struct proto_ops {
+ 				      size_t total_len, int flags);
+ 	int		(*mmap)	     (struct file *file, struct socket *sock,
+ 				      struct vm_area_struct * vma);
++	int		(*mmap_hook) (struct socket *sock, enum mmap_hook);
+ 	ssize_t		(*sendpage)  (struct socket *sock, struct page *page,
+ 				      int offset, size_t size, int flags);
+ 	ssize_t 	(*splice_read)(struct socket *sock,  loff_t *ppos,
+diff --git a/net/socket.c b/net/socket.c
+index f10f1d947c78c193b49379b0ec641d81367fb4cf..75a5c2ebe57e0621dae17c6c9e1a796ee818b107 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -131,6 +131,14 @@ static ssize_t sock_splice_read(struct file *file, loff_t *ppos,
+ 				struct pipe_inode_info *pipe, size_t len,
+ 				unsigned int flags);
  
- 	ret = 0;
- out:
++static int sock_mmap_hook(struct file *file, enum mmap_hook mode)
++{
++	struct socket *sock = file->private_data;
++
++	if (!sock->ops->mmap_hook)
++		return 0;
++	return sock->ops->mmap_hook(sock, mode);
++}
+ /*
+  *	Socket files have a set of 'special' operations as well as the generic file ones. These don't appear
+  *	in the operation structures but are done directly via the socketcall() multiplexor.
+@@ -147,6 +155,7 @@ static const struct file_operations socket_file_ops = {
+ 	.compat_ioctl = compat_sock_ioctl,
+ #endif
+ 	.mmap =		sock_mmap,
++	.mmap_hook =	sock_mmap_hook,
+ 	.release =	sock_close,
+ 	.fasync =	sock_fasync,
+ 	.sendpage =	sock_sendpage,
 -- 
 2.17.0.484.g0c8726318c-goog
