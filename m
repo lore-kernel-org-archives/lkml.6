@@ -1,54 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754069AbeDTIZG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:25:06 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:58782 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754068AbeDTIZB (ORCPT
+        id S1754086AbeDTI2j (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:28:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60970 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753924AbeDTI2h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:25:01 -0400
-Date: Fri, 20 Apr 2018 11:24:45 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mfd: tps65911-comparator: Fix an off by one bug
-Message-ID: <20180420082444.flvvdgs572jfqxee@mwanda>
-References: <20180419134634.GA19793@mwanda>
- <20180420080943.jdbf7vtnkc33vbvd@dell>
- <20180420082150.u2oovqr4b4fd6vrq@mwanda>
+        Fri, 20 Apr 2018 04:28:37 -0400
+Date: Fri, 20 Apr 2018 10:28:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: mingo@redhat.com, acme@kernel.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+Subject: Re: [PATCH] kernel: event: core: Change return type to vm_fault_t
+Message-ID: <20180420082829.GE4064@hirez.programming.kicks-ass.net>
+References: <20180414202831.GA20373@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180420082150.u2oovqr4b4fd6vrq@mwanda>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8868 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=667
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1804200084
+In-Reply-To: <20180414202831.GA20373@jordon-HP-15-Notebook-PC>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 11:21:50AM +0300, Dan Carpenter wrote:
-> On Fri, Apr 20, 2018 at 09:09:43AM +0100, Lee Jones wrote:
-> > On Thu, 19 Apr 2018, Dan Carpenter wrote:
-> > 
-> > > The tps_comparators[] array is used in two places.  We only access the
-> > > COMP1 (1) and COMP2 (2) elements.  Unfortunately, we're accessing the
-> > > wrong elements and also one element beyond the end of the array.  There
-> > > was supposed to be a zero element at the start of the array which is
-> > > isn't accessed but makes the math work out nicely.
-> > 
-> > I normally just apply patches from you, but this is a hack, right?
-> > 
+On Sun, Apr 15, 2018 at 01:58:31AM +0530, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler and
+> page_mkwrite handler in struct vm_operations_struct.
 > 
-> I liked it, I thought it was nice.  It uses 32 bytes but any fix was
-> going to use *some* memory.  I don't have strong feelings about it
-> though, if you want to write a different patch I can do that instead.
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+>  kernel/events/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 96db9ae..d09f1c4 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -4918,11 +4918,11 @@ void perf_event_update_userpage(struct perf_event *event)
+>  }
+>  EXPORT_SYMBOL_GPL(perf_event_update_userpage);
+> 
+> -static int perf_mmap_fault(struct vm_fault *vmf)
+> +static vm_fault_t perf_mmap_fault(struct vm_fault *vmf)
 
-"If you want *me* to write" I meant...
+I'm fine with the patch, but shouldn't this be part of a larger series /
+cocinelle script?
 
-regards,
-dan carpenter
+Even if not everything that has a (struct vm_fault *) argument is a
+fault handler, you could still match on the function being assigned to
+vm_operations_struct::fault.
+
+So ACK on the patch, but please don't do this with a slow trickle of
+individual patches.
