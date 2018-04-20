@@ -1,170 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754191AbeDTDYA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 23:24:00 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60349 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753964AbeDTDX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 23:23:59 -0400
-Subject: Re: [PATCH 4/5] f2fs: show GC failure info in debugfs
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20180418094505.98888-1-yuchao0@huawei.com>
- <20180418094505.98888-4-yuchao0@huawei.com>
- <20180420031525.GD39280@jaegeuk-macbookpro.roam.corp.google.com>
-From: Chao Yu <yuchao0@huawei.com>
-Message-ID: <357d4213-1e0b-3934-1e9a-a6ea8ee6020a@huawei.com>
-Date: Fri, 20 Apr 2018 11:24:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1754205AbeDTD1Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 23:27:25 -0400
+Received: from mga02.intel.com ([134.134.136.20]:38695 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753964AbeDTD1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 23:27:23 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,299,1520924400";
+   d="scan'208";a="33311949"
+Date: Fri, 20 Apr 2018 11:28:07 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, alex.williamson@redhat.com,
+        ddutile@redhat.com, alexander.h.duyck@intel.com,
+        virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, dan.daly@intel.com, cunming.liang@intel.com,
+        zhihong.wang@intel.com, jianfeng.tan@intel.com, xiao.w.wang@intel.com,
+        kevin.tian@intel.com
+Subject: Re: [RFC] vhost: introduce mdev based hardware vhost backend
+Message-ID: <20180420032806.i3jy7xb7emgil6eu@debian>
+References: <20180402152330.4158-1-tiwei.bie@intel.com>
+ <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
+ <20180410045723.rftsb7l4l3ip2ioi@debian>
+ <30a63fff-7599-640a-361f-a27e5783012a@redhat.com>
+ <20180419212911-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180420031525.GD39280@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180419212911-mutt-send-email-mst@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/4/20 11:15, Jaegeuk Kim wrote:
-> On 04/18, Chao Yu wrote:
->> This patch adds to show GC failure information in debugfs, now it just
->> shows count of failure caused by atomic write.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  fs/f2fs/debug.c |  5 +++++
->>  fs/f2fs/f2fs.h  |  1 +
->>  fs/f2fs/gc.c    | 13 +++++++------
->>  fs/f2fs/gc.h    |  2 +-
->>  4 files changed, 14 insertions(+), 7 deletions(-)
->>
->> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
->> index a66107b5cfff..715beb85e9db 100644
->> --- a/fs/f2fs/debug.c
->> +++ b/fs/f2fs/debug.c
->> @@ -104,6 +104,8 @@ static void update_general_status(struct f2fs_sb_info *sbi)
->>  	si->avail_nids = NM_I(sbi)->available_nids;
->>  	si->alloc_nids = NM_I(sbi)->nid_cnt[PREALLOC_NID];
->>  	si->bg_gc = sbi->bg_gc;
->> +	si->bg_atomic = sbi->gc_thread->atomic_file[BG_GC];
->> +	si->fg_atomic = sbi->gc_thread->atomic_file[FG_GC];
+On Thu, Apr 19, 2018 at 09:40:23PM +0300, Michael S. Tsirkin wrote:
+> On Tue, Apr 10, 2018 at 03:25:45PM +0800, Jason Wang wrote:
+> > > > > One problem is that, different virtio ring compatible devices
+> > > > > may have different device interfaces. That is to say, we will
+> > > > > need different drivers in QEMU. It could be troublesome. And
+> > > > > that's what this patch trying to fix. The idea behind this
+> > > > > patch is very simple: mdev is a standard way to emulate device
+> > > > > in kernel.
+> > > > So you just move the abstraction layer from qemu to kernel, and you still
+> > > > need different drivers in kernel for different device interfaces of
+> > > > accelerators. This looks even more complex than leaving it in qemu. As you
+> > > > said, another idea is to implement userspace vhost backend for accelerators
+> > > > which seems easier and could co-work with other parts of qemu without
+> > > > inventing new type of messages.
+> > > I'm not quite sure. Do you think it's acceptable to
+> > > add various vendor specific hardware drivers in QEMU?
+> > > 
+> > 
+> > I don't object but we need to figure out the advantages of doing it in qemu
+> > too.
+> > 
+> > Thanks
 > 
-> Need to change the naming like skipped_atomic_files?
-
-OK
-
+> To be frank kernel is exactly where device drivers belong.  DPDK did
+> move them to userspace but that's merely a requirement for data path.
+> *If* you can have them in kernel that is best:
+> - update kernel and there's no need to rebuild userspace
+> - apps can be written in any language no need to maintain multiple
+>   libraries or add wrappers
+> - security concerns are much smaller (ok people are trying to
+>   raise the bar with IOMMUs and such, but it's already pretty
+>   good even without)
 > 
->>  	si->util_free = (int)(free_user_blocks(sbi) >> sbi->log_blocks_per_seg)
->>  		* 100 / (int)(sbi->user_block_count >> sbi->log_blocks_per_seg)
->>  		/ 2;
->> @@ -342,6 +344,9 @@ static int stat_show(struct seq_file *s, void *v)
->>  				si->bg_data_blks);
->>  		seq_printf(s, "  - node blocks : %d (%d)\n", si->node_blks,
->>  				si->bg_node_blks);
->> +		seq_printf(s, "Failure : atomic write %d (%d)\n",
-> 
-> It's not failure.
+> The biggest issue is that you let userspace poke at the
+> device which is also allowed by the IOMMU to poke at
+> kernel memory (needed for kernel driver to work).
 
-Alright... just skip..
+I think the device won't and shouldn't be allowed to
+poke at kernel memory. Its kernel driver needs some
+kernel memory to work. But the device doesn't have
+the access to them. Instead, the device only has the
+access to:
 
-> 
->> +				si->bg_atomic + si->fg_atomic,
->> +				si->bg_atomic);
->>  		seq_puts(s, "\nExtent Cache:\n");
->>  		seq_printf(s, "  - Hit Count: L1-1:%llu L1-2:%llu L2:%llu\n",
->>  				si->hit_largest, si->hit_cached,
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index 3453288d6a71..567c6bb57ae3 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -3003,6 +3003,7 @@ struct f2fs_stat_info {
->>  	int bg_node_segs, bg_data_segs;
->>  	int tot_blks, data_blks, node_blks;
->>  	int bg_data_blks, bg_node_blks;
->> +	unsigned int bg_atomic, fg_atomic;
->>  	int curseg[NR_CURSEG_TYPE];
->>  	int cursec[NR_CURSEG_TYPE];
->>  	int curzone[NR_CURSEG_TYPE];
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index 495876ca62b6..da89ca16a55d 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -135,7 +135,8 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
->>  	gc_th->gc_urgent = 0;
->>  	gc_th->gc_wake= 0;
->>  
->> -	gc_th->atomic_file = 0;
->> +	gc_th->atomic_file[BG_GC] = 0;
->> +	gc_th->atomic_file[FG_GC] = 0;
-> 
-> Need to merge the previous patch with this.
+(1) the entire memory of the VM (if vIOMMU isn't used)
+or
+(2) the memory belongs to the guest virtio device (if
+    vIOMMU is being used).
 
-Let me merge them. :)
+Below is the reason:
 
-Thanks,
+For the first case, we should program the IOMMU for
+the hardware device based on the info in the memory
+table which is the entire memory of the VM.
+
+For the second case, we should program the IOMMU for
+the hardware device based on the info in the shadow
+page table of the vIOMMU.
+
+So the memory can be accessed by the device is limited,
+it should be safe especially for the second case.
+
+My concern is that, in this RFC, we don't program the
+IOMMU for the mdev device in the userspace via the VFIO
+API directly. Instead, we pass the memory table to the
+kernel driver via the mdev device (BAR0) and ask the
+driver to do the IOMMU programming. Someone may don't
+like it. The main reason why we don't program IOMMU via
+VFIO API in userspace directly is that, currently IOMMU
+drivers don't support mdev bus.
 
 > 
->>  
->>  	sbi->gc_thread = gc_th;
->>  	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
->> @@ -633,7 +634,7 @@ static void move_data_block(struct inode *inode, block_t bidx,
->>  		goto out;
->>  
->>  	if (f2fs_is_atomic_file(inode)) {
->> -		F2FS_I_SB(inode)->gc_thread->atomic_file++;
->> +		F2FS_I_SB(inode)->gc_thread->atomic_file[gc_type]++;
->>  		goto out;
->>  	}
->>  
->> @@ -742,7 +743,7 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->>  		goto out;
->>  
->>  	if (f2fs_is_atomic_file(inode)) {
->> -		F2FS_I_SB(inode)->gc_thread->atomic_file++;
->> +		F2FS_I_SB(inode)->gc_thread->atomic_file[gc_type]++;
->>  		goto out;
->>  	}
->>  	if (f2fs_is_pinned_file(inode)) {
->> @@ -1024,7 +1025,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>  		.ilist = LIST_HEAD_INIT(gc_list.ilist),
->>  		.iroot = RADIX_TREE_INIT(GFP_NOFS),
->>  	};
->> -	unsigned int last_atomic_file = sbi->gc_thread->atomic_file;
->> +	unsigned int last_atomic_file = sbi->gc_thread->atomic_file[FG_GC];
->>  	unsigned int skipped_round = 0, round = 0;
->>  
->>  	trace_f2fs_gc_begin(sbi->sb, sync, background,
->> @@ -1078,9 +1079,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>  	total_freed += seg_freed;
->>  
->>  	if (gc_type == FG_GC) {
->> -		if (sbi->gc_thread->atomic_file > last_atomic_file)
->> +		if (sbi->gc_thread->atomic_file[FG_GC] > last_atomic_file)
->>  			skipped_round++;
->> -		last_atomic_file = sbi->gc_thread->atomic_file;
->> +		last_atomic_file = sbi->gc_thread->atomic_file[FG_GC];
->>  		round++;
->>  	}
->>  
->> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
->> index bc1d21d46ae7..a6cffe6b249b 100644
->> --- a/fs/f2fs/gc.h
->> +++ b/fs/f2fs/gc.h
->> @@ -41,7 +41,7 @@ struct f2fs_gc_kthread {
->>  	unsigned int gc_wake;
->>  
->>  	/* for stuck statistic */
->> -	unsigned int atomic_file;
->> +	unsigned int atomic_file[2];
->>  };
->>  
->>  struct gc_inode_list {
->> -- 
->> 2.15.0.55.gc2ece9dc4de6
+> Yes, maybe if device is not buggy it's all fine, but
+> it's better if we do not have to trust the device
+> otherwise the security picture becomes more murky.
 > 
-> .
+> I suggested attaching a PASID to (some) queues - see my old post "using
+> PASIDs to enable a safe variant of direct ring access".
+
+It's pretty cool. We also have some similar ideas.
+Cunming will talk more about this.
+
+Best regards,
+Tiwei Bie
+
 > 
+> Then using IOMMU with VFIO to limit access through queue to corrent
+> ranges of memory.
+> 
+> 
+> -- 
+> MST
