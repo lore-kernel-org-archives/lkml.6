@@ -1,143 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754507AbeDTKNX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:13:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33551 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754294AbeDTKNV (ORCPT
+        id S1754559AbeDTKSA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:18:00 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55838 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754469AbeDTKR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:13:21 -0400
-Date: Fri, 20 Apr 2018 03:13:10 -0700
-From: tip-bot for David Wang <tipbot@zytor.com>
-Message-ID: <tip-60882cc159e1416fb1d17210de60d4a3ba04e613@git.kernel.org>
-Cc: davidwang@zhaoxin.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        mingo@kernel.org, tglx@linutronix.de
-Reply-To: davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org
-In-Reply-To: <1524212968-28998-1-git-send-email-davidwang@zhaoxin.com>
-References: <1524212968-28998-1-git-send-email-davidwang@zhaoxin.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/Centaur: Initialize supported CPU features
- properly
-Git-Commit-ID: 60882cc159e1416fb1d17210de60d4a3ba04e613
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 20 Apr 2018 06:17:58 -0400
+Date: Fri, 20 Apr 2018 03:17:55 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: christian.koenig@amd.com
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 4/8] dma-buf: add peer2peer flag
+Message-ID: <20180420101755.GA11400@infradead.org>
+References: <20180329065753.GD3881@phenom.ffwll.local>
+ <8b823458-8bdc-3217-572b-509a28aae742@gmail.com>
+ <20180403090909.GN3881@phenom.ffwll.local>
+ <20180403170645.GB5935@redhat.com>
+ <20180403180832.GZ3881@phenom.ffwll.local>
+ <20180416123937.GA9073@infradead.org>
+ <CAKMK7uEFVOh-R2_4vs1M22_wDau0oNTgmCcTWDE+ScxL=92+2g@mail.gmail.com>
+ <20180419081657.GA16735@infradead.org>
+ <20180420071312.GF31310@phenom.ffwll.local>
+ <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  60882cc159e1416fb1d17210de60d4a3ba04e613
-Gitweb:     https://git.kernel.org/tip/60882cc159e1416fb1d17210de60d4a3ba04e613
-Author:     David Wang <davidwang@zhaoxin.com>
-AuthorDate: Fri, 20 Apr 2018 16:29:28 +0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Apr 2018 12:08:17 +0200
+On Fri, Apr 20, 2018 at 10:58:50AM +0200, Christian König wrote:
+> > Yes there's a bit a layering violation insofar that drivers really
+> > shouldn't each have their own copy of "how do I convert a piece of dma
+> > memory into  dma-buf", but that doesn't render the interface a bad idea.
+> 
+> Completely agree on that.
+> 
+> What we need is an sg_alloc_table_from_resources(dev, resources,
+> num_resources) which does the handling common to all drivers.
 
-x86/Centaur: Initialize supported CPU features properly
+A structure that contains
 
-Centaur CPUs have some Intel compatible capabilities,including Permformance
-Monitoring Counters and CPU virtualization capabilities. Initialize them in
-the Centaur specific init code.
+{page,offset,len} + {dma_addr+dma_len}
 
-Signed-off-by: David Wang <davidwang@zhaoxin.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: lukelin@viacpu.com
-Cc: qiyuanwang@zhaoxin.com
-Cc: gregkh@linuxfoundation.org
-Cc: brucechang@via-alliance.com
-Cc: timguo@zhaoxin.com
-Cc: cooperyan@zhaoxin.com
-Cc: hpa@zytor.com
-Cc: benjaminpan@viatech.com
-Link: https://lkml.kernel.org/r/1524212968-28998-1-git-send-email-davidwang@zhaoxin.com
+is not a good container for storing
 
----
- arch/x86/kernel/cpu/centaur.c | 48 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+{virt addr, dma_addr, len}
 
-diff --git a/arch/x86/kernel/cpu/centaur.c b/arch/x86/kernel/cpu/centaur.c
-index e5ec0f11c0de..80d5110481ec 100644
---- a/arch/x86/kernel/cpu/centaur.c
-+++ b/arch/x86/kernel/cpu/centaur.c
-@@ -18,6 +18,13 @@
- #define RNG_ENABLED	(1 << 3)
- #define RNG_ENABLE	(1 << 6)	/* MSR_VIA_RNG */
- 
-+#define X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW	0x00200000
-+#define X86_VMX_FEATURE_PROC_CTLS_VNMI		0x00400000
-+#define X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS	0x80000000
-+#define X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC	0x00000001
-+#define X86_VMX_FEATURE_PROC_CTLS2_EPT		0x00000002
-+#define X86_VMX_FEATURE_PROC_CTLS2_VPID		0x00000020
-+
- static void init_c3(struct cpuinfo_x86 *c)
- {
- 	u32  lo, hi;
-@@ -112,6 +119,31 @@ static void early_init_centaur(struct cpuinfo_x86 *c)
- 	}
- }
- 
-+static void centaur_detect_vmx_virtcap(struct cpuinfo_x86 *c)
-+{
-+	u32 vmx_msr_low, vmx_msr_high, msr_ctl, msr_ctl2;
-+
-+	rdmsr(MSR_IA32_VMX_PROCBASED_CTLS, vmx_msr_low, vmx_msr_high);
-+	msr_ctl = vmx_msr_high | vmx_msr_low;
-+
-+	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW)
-+		set_cpu_cap(c, X86_FEATURE_TPR_SHADOW);
-+	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_VNMI)
-+		set_cpu_cap(c, X86_FEATURE_VNMI);
-+	if (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_2ND_CTLS) {
-+		rdmsr(MSR_IA32_VMX_PROCBASED_CTLS2,
-+		      vmx_msr_low, vmx_msr_high);
-+		msr_ctl2 = vmx_msr_high | vmx_msr_low;
-+		if ((msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VIRT_APIC) &&
-+		    (msr_ctl & X86_VMX_FEATURE_PROC_CTLS_TPR_SHADOW))
-+			set_cpu_cap(c, X86_FEATURE_FLEXPRIORITY);
-+		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_EPT)
-+			set_cpu_cap(c, X86_FEATURE_EPT);
-+		if (msr_ctl2 & X86_VMX_FEATURE_PROC_CTLS2_VPID)
-+			set_cpu_cap(c, X86_FEATURE_VPID);
-+	}
-+}
-+
- static void init_centaur(struct cpuinfo_x86 *c)
- {
- #ifdef CONFIG_X86_32
-@@ -128,6 +160,19 @@ static void init_centaur(struct cpuinfo_x86 *c)
- 	clear_cpu_cap(c, 0*32+31);
- #endif
- 	early_init_centaur(c);
-+
-+	if (c->cpuid_level > 9) {
-+		unsigned int eax = cpuid_eax(10);
-+
-+		/*
-+		 * Check for version and the number of counters
-+		 * Version(eax[7:0]) can't be 0;
-+		 * Counters(eax[15:8]) should be greater than 1;
-+		 */
-+		if ((eax & 0xff) && (((eax >> 8) & 0xff) > 1))
-+			set_cpu_cap(c, X86_FEATURE_ARCH_PERFMON);
-+	}
-+
- 	switch (c->x86) {
- #ifdef CONFIG_X86_32
- 	case 5:
-@@ -199,6 +244,9 @@ static void init_centaur(struct cpuinfo_x86 *c)
- #ifdef CONFIG_X86_64
- 	set_cpu_cap(c, X86_FEATURE_LFENCE_RDTSC);
- #endif
-+
-+	if (cpu_has(c, X86_FEATURE_VMX))
-+		centaur_detect_vmx_virtcap(c);
- }
- 
- #ifdef CONFIG_X86_32
+no matter what interface you build arond it.  And that is discounting
+all the problems around mapping coherent allocations for other devices,
+or the iommu merging problem we are having another thread on.
+
+So let's come up with a better high level interface first, and then
+worrty about how to implement it in the low-level dma-mapping interface
+second.  Especially given that my consolidation of the dma_map_ops
+implementation is in full stream and there shoudn't be all that many
+to bother with.
+
+So first question:  Do you actually care about having multiple
+pairs of the above, or instead of all chunks just deal with a single
+of the above?  In that case we really should not need that many
+new interfaces as dma_map_resource will be all you need anyway.
+
+> 
+> Christian.
+> 
+> > -Daniel
+> 
+---end quoted text---
