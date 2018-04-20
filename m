@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754614AbeDTKUP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 06:20:15 -0400
-Received: from s02.spamexperts.axc.nl ([185.182.56.112]:54047 "EHLO
+        id S1754610AbeDTKV4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 06:21:56 -0400
+Received: from s02.spamexperts.axc.nl ([185.182.56.112]:50791 "EHLO
         s02.spamexperts.axc.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754398AbeDTKUN (ORCPT
+        with ESMTP id S1754398AbeDTKVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 06:20:13 -0400
+        Fri, 20 Apr 2018 06:21:54 -0400
 From: Pascal Roeleven <dev@pascalroeleven.nl>
 To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -14,17 +14,17 @@ To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc: linux-sunxi@googlegroups.com, Pascal Roeleven <dev@pascalroeleven.nl>
 Subject: [PATCH] ARM: dts: sun4i: Fix incorrect clocks for displays
-Date: Fri, 20 Apr 2018 11:18:10 +0200
-Message-Id: <20180420091810.2130-1-dev@pascalroeleven.nl>
+Date: Fri, 20 Apr 2018 12:21:12 +0200
+Message-Id: <20180420102112.2843-1-dev@pascalroeleven.nl>
 X-Mailer: git-send-email 2.14.1
 X-Originating-IP: 185.182.56.82
 X-SpamExperts-Domain: vserver22.axc.nl
 X-SpamExperts-Username: 185.182.56.82
 Authentication-Results: spamexperts.axc.nl; auth=pass smtp.auth=185.182.56.82@vserver22.axc.nl
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00206002638942)
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00205997689309)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5lsYfMKD4uovKMDFj3XzL7p602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5gug3QpvOCQpWMNMcj0zVsJ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvOyJdjcti6J0RCGni7o34pMJaNxoI+swKN4OKBxxlpUrIjI/HPNQqquPS+4u1dv03D8yT
  HgXnmMJMKigbOQhSUXL+d1rVz1NDwrOQGxk7mqtiDzCjdvuLlNprJt7sM9U2tvEm1xUk+uitP3zt
  fVUM86qADZEAq6MVvDzVG1eBiMwsxonw6auRGB+OqkfrxZvcAu63p/UbUTcmIpuXtxg/CxlyFZQN
@@ -35,10 +35,10 @@ X-Filter-ID: EX5BVjFpneJeBchSMxfU5lsYfMKD4uovKMDFj3XzL7p602E9L7XzfQH6nu9C/Fh9KJz
  uyvi9F/b5Xr+q263SxhPVtF/V2M9L7dcNvokIFGx07bhuY7QrNII/xIn+RMmMo9n/zJo//hfCVlk
  AdhK23InA2zzja5I1riDJBcOl1Sca1tCLiymrRRXBKDkaM024bykcyHR7I4FbmnLRaO3oh2Y+QPh
  zq1ed4hKPsarl5dnGXsBogEFWhbvijo/WtzAwxKxmN+PCLjJS1n9BQ7dDQWLiI0sLYm4yP/7OMye
- V7249X2e1GQHGQCkca9WJmbhekdrgcJsDlHBdahrSlHVtLHaZkFpoXAuc0NSmkWymZjuaeKBghfF
- 4Xhz3WCijbR5gOtRiEFrJGnSGxi96t0jSpXk/FZ1fwcf7/prCnx4FGUWiONpnHe100SbOuHRfOND
- F4cVqm7lmX5VA+Pwnfs6UYm2Ai3DKHJBJpSzj83Eb5hmv6KsttDgYmv3Dibr49k4DG1OGMOiHEMR
- Uady2DNwOgV373pfDhBQ21OdRS1J8Q9o9wsNBuY1VdC8WZCMICylBBeA9ExrvE2k+wP4j3vl9ilE
+ V7249X2e1GQHGQCkca9WJmbhekdrgcJsDlHBdahrSlHVtLHaZkFpoXAuc0NSszzIs5JwgEfDLX6H
+ GowTU2CijbR5gOtRiEFrJGnSGxi96t0jSpXk/FZ1fwcf7/prCnx4FGUWiONpnHe100SbOuHRfOND
+ F4cVqm7lmX5VA+Pwnfs6UYm2Ai3DKHJBJpSzRMpIF9IBzdGcYCSXOfSYlSMSQqwehtcVwrU/hgPN
+ NmRy2DNwOgV373pfDhBQ21OdRS1J8Q9o9wsNBuY1VdC8WZCMICylBBeA9ExrvE2k+wP4j3vl9ilE
  NAJdELfMPSIKfhWFL18GAOeh/x4RI75Pxakgsnq2YdHMNQhGOMdLA4kBXtD10+3+aA6m3yQ23IEc
  XNM8K+LjoSSEl2/JdfLG6TwbaO2SDHRS+6qA2mIAaxiySMNG8mWJheziSx58QXxt
 X-Report-Abuse-To: spam@s01.spamexperts.axc.nl
