@@ -1,59 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755839AbeDTPez (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:34:55 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:37793 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755821AbeDTPex (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:34:53 -0400
-X-Google-Smtp-Source: AIpwx4+TLM7Bp4QK2z2UhAjmftJ0pZFHGvBm/mOrqtx5aOSG5oqUU83SRQdNUEJaPqwefpptf/btMg==
-Date: Fri, 20 Apr 2018 09:34:51 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Doug Ledford <dledford@redhat.com>
-Cc: =?utf-8?B?SMOla29u?= Bugge <Haakon.Bugge@oracle.com>,
-        Don Hiatt <don.hiatt@intel.com>,
-        Dasaratharaman Chandramouli
-        <dasaratharaman.chandramouli@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] IB/core: Make ib_mad_client_id atomic
-Message-ID: <20180420153451.GF30433@ziepe.ca>
-References: <20180418142450.15581-1-Haakon.Bugge@oracle.com>
- <1524196555.11756.30.camel@redhat.com>
+        id S1755856AbeDTPfQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:35:16 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41916 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755665AbeDTPfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 11:35:14 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHC9VhQhaBNBFwAXJ4TxKO56UTcwb_LcT2G8LwNxdxOD96tTvA@mail.gmail.com>
+References: <CAHC9VhQhaBNBFwAXJ4TxKO56UTcwb_LcT2G8LwNxdxOD96tTvA@mail.gmail.com> <152414466005.23902.12967974041384198114.stgit@warthog.procyon.org.uk> <152414469006.23902.8132059438921850399.stgit@warthog.procyon.org.uk>
+To: Paul Moore <paul@paul-moore.com>
+Cc: dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, selinux@tycho.nsa.gov
+Subject: Re: [PATCH 04/24] VFS: Add LSM hooks for filesystem context [ver #7]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1524196555.11756.30.camel@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3231.1524238511.1@warthog.procyon.org.uk>
+Date: Fri, 20 Apr 2018 16:35:11 +0100
+Message-ID: <3232.1524238511@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 11:55:55PM -0400, Doug Ledford wrote:
-> On Wed, 2018-04-18 at 16:24 +0200, Håkon Bugge wrote:
-> > Two kernel threads may get the same value for agent.hi_tid, if the
-> > agents are registered for different ports. As of now, this works, as
-> > the agent list is per port.
-> > 
-> > It is however confusing and not future robust. Hence, making it
-> > atomic.
-> > 
-> 
-> People sometimes underestimate the performance penalty of atomic ops. 
-> Every atomic op is the equivalent of a spin_lock/spin_unlock pair.  This
-> is why two atomics are worse than taking a spin_lock, doing what you
-> have to do, and releasing the spin_lock.  Is this really what you want
-> for a "confusing, let's make it robust" issue?
+Paul Moore <paul@paul-moore.com> wrote:
 
-But it is on the ib_register_mad_agent() path which is not a
-performance path..
+> Adding the SELinux mailing list to the CC line; in the future please
+> include the SELinux mailing list on patches like this.  It would also
+> be very helpful to include "selinux" somewhere in the subject line
+> when the patch is predominately SELinux related (much like you did for
+> the other LSMs in this patchset).
 
-This actually looks like a genuine bug, why is it described only as
-'confusing'? ib_register_mad_agent is callable from userspace, so at
-least two userspace agents can race and get the same TID's.
+I should probably evict the SELinux bits into their own patch since the point
+of this patch is the LSM hooks, not specifically SELinux's implementation
+thereof.
 
-TIDs need to be globally unique on the entire machine.
+> I can't say I've digested all of this yet, but what SELinux testing
+> have you done with this patchset?
 
-Jason
+Using the fsopen()/fsmount() syscalls, these hooks will be made use of, say
+for NFS (which I haven't included in this list).  Even sys_mount() will make
+use of them a bit, so just booting the system does that.
+
+Note that for SELinux these hooks don't change very much except how the
+parameters are handled.  It doesn't actually change the checks that are made -
+at least, not yet.  There are some additional syscalls under consideration
+(such as the ability to pick a live mounted filesystem into a context) that
+might require additional permits.
+
+David
