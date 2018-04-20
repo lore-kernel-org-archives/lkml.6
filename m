@@ -1,46 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753205AbeDTQuj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:50:39 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:34324 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753150AbeDTQug (ORCPT
+        id S1753082AbeDTQvX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:51:23 -0400
+Received: from mail-qk0-f173.google.com ([209.85.220.173]:46518 "EHLO
+        mail-qk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751865AbeDTQvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:50:36 -0400
-Date: Sat, 21 Apr 2018 00:50:33 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Nick Terrell <terrelln@fb.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        kernel-team@fb.com, Chris Mason <clm@fb.com>,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        Geliang Tang <geliangtang@gmail.com>
-Subject: Re: [RESEND PATCH] crypto: Add zstd support
-Message-ID: <20180420165032.ufqzoefyvnym75s3@gondor.apana.org.au>
-References: <20180330191453.3535287-1-terrelln@fb.com>
+        Fri, 20 Apr 2018 12:51:21 -0400
+X-Google-Smtp-Source: AB8JxZo/cfnuGMql+/FVbplwUlloK3+a0IVEZPstD3l46+UaawH1gc8AjWndHJrfVMivLWxg2LuULw==
+From: Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date: Fri, 20 Apr 2018 12:51:12 -0400 (EDT)
+X-X-Sender: vince@macbook-air
+To: Vince Weaver <vincent.weaver@maine.edu>
+cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@redhat.com>,
+        Stephane Eranian <eranian@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, mingo@elte.hu,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC] perf/core: what is exclude_idle supposed to do
+In-Reply-To: <alpine.DEB.2.21.1804201015250.22578@macbook-air>
+Message-ID: <alpine.DEB.2.21.1804201247050.28907@macbook-air>
+References: <CABPqkBS6MuO6Twtq=_+TDV=RNy0_2vRWf=LVCk6wk0tPwNSTog@mail.gmail.com> <20180417062010.GA2052@krava> <alpine.DEB.2.21.1804181109100.1587@macbook-air> <20180420083607.GG4064@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1804201015250.22578@macbook-air>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180330191453.3535287-1-terrelln@fb.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 30, 2018 at 12:14:53PM -0700, Nick Terrell wrote:
-> Adds zstd support to crypto and scompress. Only supports the default
-> level.
-> 
-> Previously we held off on this patch, since there weren't any users.
-> Now zram is ready for zstd support, but depends on CONFIG_CRYPTO_ZSTD,
-> which isn't defined until this patch is in. I also see a patch adding
-> zstd to pstore [0], which depends on crypto zstd.
-> 
-> [0] lkml.kernel.org/r/9c9416b2dff19f05fb4c35879aaa83d11ff72c92.1521626182.git.geliangtang@gmail.com
-> 
-> Signed-off-by: Nick Terrell <terrelln@fb.com>
+On Fri, 20 Apr 2018, Vince Weaver wrote:
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> > AFAICT it works on Power and possibly ARM.
+> 
+> at least some ARMs are a bit more honest about it than x86
+> 
+> ivybridge:
+> 	Performance counter stats for '/bin/ls':
+> 	1,368,162      instructions
+> 	1,368,162      instructions:I
+> 
+> pi2/ARM cortex-A7
+> 	Performance counter stats for '/bin/ls':
+> 	1,910,083      instructions
+> 	<not supported>      instructions:I
+> 
+> I'd fire up my Power8 machine to see but not sure it's worth the hassle 
+> and/or having to get out the ear protection.
+
+I did power up the Power8 machine in the end:
+
+power8:
+	perf stat -e cycles,cycles:I sleep 5
+	Performance counter stats for 'sleep 5':
+        14,271,273      cycles
+        14,271,273      cycles:I
+
+???
+
+But then if I try again on power8
+
+	perf stat -a -e cycles,cycles:I sleep 5
+	 Performance counter stats for 'system wide':
+	1,238,772,322,327      cycles
+ 	1,238,674,771,713      cycles:I   
+
+there is a difference.
+
+But then on ivybridge
+
+	perf stat -a -e cycles,cycles:I sleep 5
+	Performance counter stats for 'system wide':
+	589,598,104      cycles
+	589,537,190      cycles:I
+
+there is also a different in system wide mode.
+
+So maybe exclude_idle does do something on x86?  Or am I completely 
+misunderstanding what the flag is supposed to be indicating?
+
+Vince
