@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754134AbeDTIEU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:04:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39868 "EHLO
+        id S1754189AbeDTIER (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:04:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39794 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753854AbeDTIEO (ORCPT
+        with ESMTP id S1754134AbeDTIEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:04:14 -0400
+        Fri, 20 Apr 2018 04:04:11 -0400
 From: Christoph Hellwig <hch@lst.de>
 Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
         Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
@@ -17,9 +17,9 @@ Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
         linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
         sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 07/22] arm-nommu: use generic dma_noncoherent_ops
-Date: Fri, 20 Apr 2018 10:02:58 +0200
-Message-Id: <20180420080313.18796-8-hch@lst.de>
+Subject: [PATCH 06/22] arc: use generic dma_noncoherent_ops
+Date: Fri, 20 Apr 2018 10:02:57 +0200
+Message-Id: <20180420080313.18796-7-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180420080313.18796-1-hch@lst.de>
 References: <20180420080313.18796-1-hch@lst.de>
@@ -29,257 +29,260 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the generic noncoherent direct mapping implementation for
-the nommu dma map implementation.
+Switch to the generic noncoherent direct mapping implementation.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/arc/Kconfig                |   1 +
- arch/arm/Kconfig                |   4 +
- arch/arm/mm/dma-mapping-nommu.c | 139 +++++---------------------------
- 3 files changed, 23 insertions(+), 121 deletions(-)
+ arch/arc/Kconfig                   |   4 +
+ arch/arc/include/asm/Kbuild        |   1 +
+ arch/arc/include/asm/dma-mapping.h |  21 -----
+ arch/arc/mm/dma.c                  | 141 +++--------------------------
+ 4 files changed, 19 insertions(+), 148 deletions(-)
+ delete mode 100644 arch/arc/include/asm/dma-mapping.h
 
 diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 89d47eac18b2..3a492a9aeaad 100644
+index 7498aca4b887..89d47eac18b2 100644
 --- a/arch/arc/Kconfig
 +++ b/arch/arc/Kconfig
-@@ -9,6 +9,7 @@
+@@ -9,11 +9,15 @@
  config ARC
  	def_bool y
  	select ARC_TIMERS
++	select ARCH_HAS_SYNC_DMA_FOR_CPU
 +	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
  	select ARCH_HAS_SG_CHAIN
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index f91f69174630..eacc45ac4e77 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -12,6 +12,8 @@ config ARM
- 	select ARCH_HAS_PHYS_TO_DMA
- 	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
- 	select ARCH_HAS_STRICT_MODULE_RWX if MMU
-+	select ARCH_HAS_SYNC_DMA_FOR_CPU if !MMU
-+	select ARCH_HAS_SYNC_DMA_FOR_DEVICE if !MMU
- 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_HAVE_CUSTOM_GPIO_H
- 	select ARCH_HAS_GCOV_PROFILE_ALL
-@@ -27,6 +29,8 @@ config ARM
- 	select CPU_PM if (SUSPEND || CPU_IDLE)
- 	select DCACHE_WORD_ACCESS if HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	select DMA_DIRECT_OPS if !MMU
-+	select DMA_NONCOHERENT_OPS if !MMU
-+	select DMA_NONCOHERENT_MMAP if !MMU
- 	select EDAC_SUPPORT
- 	select EDAC_ATOMIC_SCRUB
- 	select GENERIC_ALLOCATOR
-diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
-index f448a0663b10..a74ed6632982 100644
---- a/arch/arm/mm/dma-mapping-nommu.c
-+++ b/arch/arm/mm/dma-mapping-nommu.c
-@@ -12,6 +12,7 @@
- #include <linux/export.h>
- #include <linux/mm.h>
- #include <linux/dma-direct.h>
-+#include <linux/dma-noncoherent.h>
- #include <linux/scatterlist.h>
- 
- #include <asm/cachetype.h>
-@@ -26,18 +27,16 @@
-  *   - MMU/MPU is off
-  *   - cpu is v7m w/o cache support
-  *   - device is coherent
-- *  otherwise arm_nommu_dma_ops is used.
-+ *  otherwise dma_noncoherent_ops is used.
-  *
-- *  arm_nommu_dma_ops rely on consistent DMA memory (please, refer to
-+ *  dma_noncoherent_ops rely on consistent DMA memory (please, refer to
-  *  [1] on how to declare such memory).
-  *
-  *  [1] Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+ 	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
+ 	select BUILDTIME_EXTABLE_SORT
+ 	select CLONE_BACKWARDS
+ 	select COMMON_CLK
++	select DMA_NONCOHERENT_OPS
++	select DMA_NONCOHERENT_MMAP
+ 	select GENERIC_ATOMIC64 if !ISA_ARCV2 || !(ARC_HAS_LL64 && ARC_HAS_LLSC)
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_FIND_FIRST_BIT
+diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild
+index 4bd5d4369e05..bbdcb955e18f 100644
+--- a/arch/arc/include/asm/Kbuild
++++ b/arch/arc/include/asm/Kbuild
+@@ -2,6 +2,7 @@
+ generic-y += bugs.h
+ generic-y += device.h
+ generic-y += div64.h
++generic-y += dma-mapping.h
+ generic-y += emergency-restart.h
+ generic-y += extable.h
+ generic-y += fb.h
+diff --git a/arch/arc/include/asm/dma-mapping.h b/arch/arc/include/asm/dma-mapping.h
+deleted file mode 100644
+index 7a16824bfe98..000000000000
+--- a/arch/arc/include/asm/dma-mapping.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/*
+- * DMA Mapping glue for ARC
+- *
+- * Copyright (C) 2004, 2007-2010, 2011-2012 Synopsys, Inc. (www.synopsys.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#ifndef ASM_ARC_DMA_MAPPING_H
+-#define ASM_ARC_DMA_MAPPING_H
+-
+-extern const struct dma_map_ops arc_dma_ops;
+-
+-static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+-{
+-	return &arc_dma_ops;
+-}
+-
+-#endif
+diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
+index 1dcc404b5aec..ecfeb5585cc7 100644
+--- a/arch/arc/mm/dma.c
++++ b/arch/arc/mm/dma.c
+@@ -16,13 +16,12 @@
+  * The default DMA address == Phy address which is 0x8000_0000 based.
   */
  
--static void *arm_nommu_dma_alloc(struct device *dev, size_t size,
--				 dma_addr_t *dma_handle, gfp_t gfp,
--				 unsigned long attrs)
+-#include <linux/dma-mapping.h>
++#include <linux/dma-noncoherent.h>
+ #include <asm/cache.h>
+ #include <asm/cacheflush.h>
+ 
 -
+-static void *arc_dma_alloc(struct device *dev, size_t size,
+-		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
 +void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
 +		gfp_t gfp, unsigned long attrs)
  {
- 	void *ret;
- 
-@@ -65,9 +64,8 @@ static void *arm_nommu_dma_alloc(struct device *dev, size_t size,
- 	return ret;
+ 	unsigned long order = get_order(size);
+ 	struct page *page;
+@@ -89,7 +88,7 @@ static void *arc_dma_alloc(struct device *dev, size_t size,
+ 	return kvaddr;
  }
  
--static void arm_nommu_dma_free(struct device *dev, size_t size,
--			       void *cpu_addr, dma_addr_t dma_addr,
--			       unsigned long attrs)
-+void arch_dma_free(struct device *dev, size_t size, void *cpu_addr,
-+		dma_addr_t dma_addr, unsigned long attrs)
+-static void arc_dma_free(struct device *dev, size_t size, void *vaddr,
++void arch_dma_free(struct device *dev, size_t size, void *vaddr,
+ 		dma_addr_t dma_handle, unsigned long attrs)
  {
- 	if (attrs & DMA_ATTR_NON_CONSISTENT) {
- 		dma_direct_free(dev, size, cpu_addr, dma_addr, attrs);
-@@ -81,9 +79,9 @@ static void arm_nommu_dma_free(struct device *dev, size_t size,
- 	return;
+ 	phys_addr_t paddr = dma_handle;
+@@ -105,9 +104,9 @@ static void arc_dma_free(struct device *dev, size_t size, void *vaddr,
+ 	__free_pages(page, get_order(size));
  }
  
--static int arm_nommu_dma_mmap(struct device *dev, struct vm_area_struct *vma,
--			      void *cpu_addr, dma_addr_t dma_addr, size_t size,
--			      unsigned long attrs)
+-static int arc_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+-			void *cpu_addr, dma_addr_t dma_addr, size_t size,
+-			unsigned long attrs)
 +int arch_dma_mmap(struct device *dev, struct vm_area_struct *vma,
 +		void *cpu_addr, dma_addr_t dma_addr, size_t size,
 +		unsigned long attrs)
  {
- 	int ret;
- 
-@@ -93,9 +91,8 @@ static int arm_nommu_dma_mmap(struct device *dev, struct vm_area_struct *vma,
- 	return dma_common_mmap(dev, vma, cpu_addr, dma_addr, size);
- }
- 
--
--static void __dma_page_cpu_to_dev(phys_addr_t paddr, size_t size,
--				  enum dma_data_direction dir)
-+void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
+ 	unsigned long user_count = vma_pages(vma);
+ 	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+@@ -135,7 +134,7 @@ static int arc_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+  * CPU accesses page via normal paddr, thus needs to explicitly made
+  * consistent before each use
+  */
+-static void _dma_cache_sync(phys_addr_t paddr, size_t size,
++static void _dma_cache_sync(struct device *dev, phys_addr_t paddr size_t size,
+ 		enum dma_data_direction dir)
  {
- 	dmac_map_area(__va(paddr), size, dir);
- 
-@@ -105,8 +102,8 @@ static void __dma_page_cpu_to_dev(phys_addr_t paddr, size_t size,
- 		outer_clean_range(paddr, paddr + size);
- }
- 
--static void __dma_page_dev_to_cpu(phys_addr_t paddr, size_t size,
--				  enum dma_data_direction dir)
-+void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
- {
- 	if (dir != DMA_TO_DEVICE) {
- 		outer_inv_range(paddr, paddr + size);
-@@ -114,110 +111,9 @@ static void __dma_page_dev_to_cpu(phys_addr_t paddr, size_t size,
+ 	switch (dir) {
+@@ -153,126 +152,14 @@ static void _dma_cache_sync(phys_addr_t paddr, size_t size,
  	}
  }
  
--static dma_addr_t arm_nommu_dma_map_page(struct device *dev, struct page *page,
--					 unsigned long offset, size_t size,
--					 enum dma_data_direction dir,
--					 unsigned long attrs)
+-/*
+- * arc_dma_map_page - map a portion of a page for streaming DMA
+- *
+- * Ensure that any data held in the cache is appropriately discarded
+- * or written back.
+- *
+- * The device owns this memory once this call has completed.  The CPU
+- * can regain ownership by calling dma_unmap_page().
+- *
+- * Note: while it takes struct page as arg, caller can "abuse" it to pass
+- * a region larger than PAGE_SIZE, provided it is physically contiguous
+- * and this still works correctly
+- */
+-static dma_addr_t arc_dma_map_page(struct device *dev, struct page *page,
+-		unsigned long offset, size_t size, enum dma_data_direction dir,
+-		unsigned long attrs)
 -{
--	dma_addr_t handle = page_to_phys(page) + offset;
+-	phys_addr_t paddr = page_to_phys(page) + offset;
 -
--	__dma_page_cpu_to_dev(handle, size, dir);
+-	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		_dma_cache_sync(paddr, size, dir);
 -
--	return handle;
+-	return paddr;
 -}
 -
--static void arm_nommu_dma_unmap_page(struct device *dev, dma_addr_t handle,
--				     size_t size, enum dma_data_direction dir,
--				     unsigned long attrs)
+-/*
+- * arc_dma_unmap_page - unmap a buffer previously mapped through dma_map_page()
+- *
+- * After this call, reads by the CPU to the buffer are guaranteed to see
+- * whatever the device wrote there.
+- *
+- * Note: historically this routine was not implemented for ARC
+- */
+-static void arc_dma_unmap_page(struct device *dev, dma_addr_t handle,
+-			       size_t size, enum dma_data_direction dir,
+-			       unsigned long attrs)
 -{
--	__dma_page_dev_to_cpu(handle, size, dir);
+-	phys_addr_t paddr = handle;
+-
+-	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		_dma_cache_sync(paddr, size, dir);
 -}
 -
--
--static int arm_nommu_dma_map_sg(struct device *dev, struct scatterlist *sgl,
--				int nents, enum dma_data_direction dir,
--				unsigned long attrs)
+-static int arc_dma_map_sg(struct device *dev, struct scatterlist *sg,
+-	   int nents, enum dma_data_direction dir, unsigned long attrs)
 -{
+-	struct scatterlist *s;
 -	int i;
--	struct scatterlist *sg;
 -
--	for_each_sg(sgl, sg, nents, i) {
--		sg_dma_address(sg) = sg_phys(sg);
--		sg_dma_len(sg) = sg->length;
--		__dma_page_cpu_to_dev(sg_dma_address(sg), sg_dma_len(sg), dir);
--	}
+-	for_each_sg(sg, s, nents, i)
+-		s->dma_address = dma_map_page(dev, sg_page(s), s->offset,
+-					       s->length, dir);
 -
 -	return nents;
 -}
 -
--static void arm_nommu_dma_unmap_sg(struct device *dev, struct scatterlist *sgl,
--				   int nents, enum dma_data_direction dir,
--				   unsigned long attrs)
+-static void arc_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+-			     int nents, enum dma_data_direction dir,
+-			     unsigned long attrs)
 -{
--	struct scatterlist *sg;
+-	struct scatterlist *s;
 -	int i;
 -
--	for_each_sg(sgl, sg, nents, i)
--		__dma_page_dev_to_cpu(sg_dma_address(sg), sg_dma_len(sg), dir);
+-	for_each_sg(sg, s, nents, i)
+-		arc_dma_unmap_page(dev, sg_dma_address(s), sg_dma_len(s), dir,
+-				   attrs);
 -}
 -
--static void arm_nommu_dma_sync_single_for_device(struct device *dev,
--		dma_addr_t handle, size_t size, enum dma_data_direction dir)
+-static void arc_dma_sync_single_for_cpu(struct device *dev,
+-		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)
 -{
--	__dma_page_cpu_to_dev(handle, size, dir);
+-	_dma_cache_sync(dma_handle, size, DMA_FROM_DEVICE);
 -}
 -
--static void arm_nommu_dma_sync_single_for_cpu(struct device *dev,
--		dma_addr_t handle, size_t size, enum dma_data_direction dir)
--{
--	__dma_page_cpu_to_dev(handle, size, dir);
--}
--
--static void arm_nommu_dma_sync_sg_for_device(struct device *dev, struct scatterlist *sgl,
--					     int nents, enum dma_data_direction dir)
--{
--	struct scatterlist *sg;
--	int i;
--
--	for_each_sg(sgl, sg, nents, i)
--		__dma_page_cpu_to_dev(sg_dma_address(sg), sg_dma_len(sg), dir);
--}
--
--static void arm_nommu_dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sgl,
--					  int nents, enum dma_data_direction dir)
--{
--	struct scatterlist *sg;
--	int i;
--
--	for_each_sg(sgl, sg, nents, i)
--		__dma_page_dev_to_cpu(sg_dma_address(sg), sg_dma_len(sg), dir);
--}
--
--const struct dma_map_ops arm_nommu_dma_ops = {
--	.alloc			= arm_nommu_dma_alloc,
--	.free			= arm_nommu_dma_free,
--	.mmap			= arm_nommu_dma_mmap,
--	.map_page		= arm_nommu_dma_map_page,
--	.unmap_page		= arm_nommu_dma_unmap_page,
--	.map_sg			= arm_nommu_dma_map_sg,
--	.unmap_sg		= arm_nommu_dma_unmap_sg,
--	.sync_single_for_device	= arm_nommu_dma_sync_single_for_device,
--	.sync_single_for_cpu	= arm_nommu_dma_sync_single_for_cpu,
--	.sync_sg_for_device	= arm_nommu_dma_sync_sg_for_device,
--	.sync_sg_for_cpu	= arm_nommu_dma_sync_sg_for_cpu,
--};
--EXPORT_SYMBOL(arm_nommu_dma_ops);
--
--static const struct dma_map_ops *arm_nommu_get_dma_map_ops(bool coherent)
--{
--	return coherent ? &dma_direct_ops : &arm_nommu_dma_ops;
--}
--
- void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
- 			const struct iommu_ops *iommu, bool coherent)
+-static void arc_dma_sync_single_for_device(struct device *dev,
+-		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)
++void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
  {
--	const struct dma_map_ops *dma_ops;
--
- 	if (IS_ENABLED(CONFIG_CPU_V7M)) {
- 		/*
- 		 * Cache support for v7m is optional, so can be treated as
-@@ -233,9 +129,10 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
- 		dev->archdata.dma_coherent = (get_cr() & CR_M) ? coherent : true;
- 	}
- 
--	dma_ops = arm_nommu_get_dma_map_ops(dev->archdata.dma_coherent);
--
--	set_dma_ops(dev, dma_ops);
-+	if (dev->archdata.dma_coherent)
-+		set_dma_ops(dev, &dma_direct_ops);
-+	else
-+		set_dma_ops(dev, &dma_noncoherent_ops);
+-	_dma_cache_sync(dma_handle, size, DMA_TO_DEVICE);
++	return _dma_cache_sync(dev, paddr, size, dir);
  }
  
- void arch_teardown_dma_ops(struct device *dev)
+-static void arc_dma_sync_sg_for_cpu(struct device *dev,
+-		struct scatterlist *sglist, int nelems,
+-		enum dma_data_direction dir)
++void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
+ {
+-	int i;
+-	struct scatterlist *sg;
+-
+-	for_each_sg(sglist, sg, nelems, i)
+-		_dma_cache_sync(sg_phys(sg), sg->length, dir);
++	return _dma_cache_sync(dev, paddr, size, dir);
+ }
+-
+-static void arc_dma_sync_sg_for_device(struct device *dev,
+-		struct scatterlist *sglist, int nelems,
+-		enum dma_data_direction dir)
+-{
+-	int i;
+-	struct scatterlist *sg;
+-
+-	for_each_sg(sglist, sg, nelems, i)
+-		_dma_cache_sync(sg_phys(sg), sg->length, dir);
+-}
+-
+-static int arc_dma_supported(struct device *dev, u64 dma_mask)
+-{
+-	/* Support 32 bit DMA mask exclusively */
+-	return dma_mask == DMA_BIT_MASK(32);
+-}
+-
+-const struct dma_map_ops arc_dma_ops = {
+-	.alloc			= arc_dma_alloc,
+-	.free			= arc_dma_free,
+-	.mmap			= arc_dma_mmap,
+-	.map_page		= arc_dma_map_page,
+-	.unmap_page		= arc_dma_unmap_page,
+-	.map_sg			= arc_dma_map_sg,
+-	.unmap_sg		= arc_dma_unmap_sg,
+-	.sync_single_for_device	= arc_dma_sync_single_for_device,
+-	.sync_single_for_cpu	= arc_dma_sync_single_for_cpu,
+-	.sync_sg_for_cpu	= arc_dma_sync_sg_for_cpu,
+-	.sync_sg_for_device	= arc_dma_sync_sg_for_device,
+-	.dma_supported		= arc_dma_supported,
+-};
+-EXPORT_SYMBOL(arc_dma_ops);
 -- 
 2.17.0
