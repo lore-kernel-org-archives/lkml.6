@@ -1,130 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754205AbeDTD1Z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 19 Apr 2018 23:27:25 -0400
-Received: from mga02.intel.com ([134.134.136.20]:38695 "EHLO mga02.intel.com"
+        id S1754228AbeDTD2A (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 19 Apr 2018 23:28:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753964AbeDTD1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Apr 2018 23:27:23 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,299,1520924400";
-   d="scan'208";a="33311949"
-Date: Fri, 20 Apr 2018 11:28:07 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, alex.williamson@redhat.com,
-        ddutile@redhat.com, alexander.h.duyck@intel.com,
-        virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, dan.daly@intel.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com, jianfeng.tan@intel.com, xiao.w.wang@intel.com,
-        kevin.tian@intel.com
-Subject: Re: [RFC] vhost: introduce mdev based hardware vhost backend
-Message-ID: <20180420032806.i3jy7xb7emgil6eu@debian>
-References: <20180402152330.4158-1-tiwei.bie@intel.com>
- <622f4bd7-1249-5545-dc5a-5a92b64f5c26@redhat.com>
- <20180410045723.rftsb7l4l3ip2ioi@debian>
- <30a63fff-7599-640a-361f-a27e5783012a@redhat.com>
- <20180419212911-mutt-send-email-mst@kernel.org>
+        id S1753964AbeDTD16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Apr 2018 23:27:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF832170D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=jaegeuk@kernel.org
+Date: Thu, 19 Apr 2018 20:27:57 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        chao@kernel.org
+Subject: Re: [PATCH 3/5] f2fs: avoid stucking GC due to atomic write
+Message-ID: <20180420032757.GG39280@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180418094505.98888-1-yuchao0@huawei.com>
+ <20180418094505.98888-3-yuchao0@huawei.com>
+ <20180420031238.GC39280@jaegeuk-macbookpro.roam.corp.google.com>
+ <bc1936b6-52ee-cf29-4773-9a5b9bb68f29@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180419212911-mutt-send-email-mst@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <bc1936b6-52ee-cf29-4773-9a5b9bb68f29@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 09:40:23PM +0300, Michael S. Tsirkin wrote:
-> On Tue, Apr 10, 2018 at 03:25:45PM +0800, Jason Wang wrote:
-> > > > > One problem is that, different virtio ring compatible devices
-> > > > > may have different device interfaces. That is to say, we will
-> > > > > need different drivers in QEMU. It could be troublesome. And
-> > > > > that's what this patch trying to fix. The idea behind this
-> > > > > patch is very simple: mdev is a standard way to emulate device
-> > > > > in kernel.
-> > > > So you just move the abstraction layer from qemu to kernel, and you still
-> > > > need different drivers in kernel for different device interfaces of
-> > > > accelerators. This looks even more complex than leaving it in qemu. As you
-> > > > said, another idea is to implement userspace vhost backend for accelerators
-> > > > which seems easier and could co-work with other parts of qemu without
-> > > > inventing new type of messages.
-> > > I'm not quite sure. Do you think it's acceptable to
-> > > add various vendor specific hardware drivers in QEMU?
-> > > 
+On 04/20, Chao Yu wrote:
+> On 2018/4/20 11:12, Jaegeuk Kim wrote:
+> > On 04/18, Chao Yu wrote:
+> >> f2fs doesn't allow abuse on atomic write class interface, so except
+> >> limiting in-mem pages' total memory usage capacity, we need to limit
+> >> atomic-write usage as well when filesystem is seriously fragmented,
+> >> otherwise we may run into infinite loop during foreground GC because
+> >> target blocks in victim segment are belong to atomic opened file for
+> >> long time.
+> >>
+> >> Now, we will detect failure due to atomic write in foreground GC, if
+> >> the count exceeds threshold, we will drop all atomic written data in
+> >> cache, by this, I expect it can keep our system running safely to
+> >> prevent Dos attack.
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >>  fs/f2fs/f2fs.h    |  1 +
+> >>  fs/f2fs/file.c    |  5 +++++
+> >>  fs/f2fs/gc.c      | 27 +++++++++++++++++++++++----
+> >>  fs/f2fs/gc.h      |  3 +++
+> >>  fs/f2fs/segment.c |  1 +
+> >>  fs/f2fs/segment.h |  2 ++
+> >>  6 files changed, 35 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >> index c1c3a1d11186..3453288d6a71 100644
+> >> --- a/fs/f2fs/f2fs.h
+> >> +++ b/fs/f2fs/f2fs.h
+> >> @@ -2249,6 +2249,7 @@ enum {
+> >>  	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
+> >>  	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
+> >>  	FI_PIN_FILE,		/* indicate file should not be gced */
+> >> +	FI_ATOMIC_REVOKE_REQUEST,/* indicate atomic committed data has been dropped */
+> >>  };
+> >>  
+> >>  static inline void __mark_inode_dirty_flag(struct inode *inode,
+> >> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >> index 7c90ded5a431..cddd9aee1bb2 100644
+> >> --- a/fs/f2fs/file.c
+> >> +++ b/fs/f2fs/file.c
+> >> @@ -1698,6 +1698,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >>  skip_flush:
+> >>  	set_inode_flag(inode, FI_HOT_DATA);
+> >>  	set_inode_flag(inode, FI_ATOMIC_FILE);
+> >> +	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >>  	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> >>  
+> >>  	F2FS_I(inode)->inmem_task = current;
+> >> @@ -1746,6 +1747,10 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >>  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
+> >>  	}
+> >>  err_out:
+> >> +	if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST)) {
+> >> +		clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >> +		ret = -EINVAL;
+> >> +	}
+> >>  	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+> >>  	inode_unlock(inode);
+> >>  	mnt_drop_write_file(filp);
+> >> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> >> index bfb7a4a3a929..495876ca62b6 100644
+> >> --- a/fs/f2fs/gc.c
+> >> +++ b/fs/f2fs/gc.c
+> >> @@ -135,6 +135,8 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+> >>  	gc_th->gc_urgent = 0;
+> >>  	gc_th->gc_wake= 0;
+> >>  
+> >> +	gc_th->atomic_file = 0;
+> >> +
+> >>  	sbi->gc_thread = gc_th;
+> >>  	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
+> >>  	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
+> >> @@ -603,7 +605,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>   * This can be used to move blocks, aka LBAs, directly on disk.
+> >>   */
+> >>  static void move_data_block(struct inode *inode, block_t bidx,
+> >> -					unsigned int segno, int off)
+> >> +				int gc_type, unsigned int segno, int off)
+> >>  {
+> >>  	struct f2fs_io_info fio = {
+> >>  		.sbi = F2FS_I_SB(inode),
+> >> @@ -630,8 +632,10 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+> >>  		goto out;
+> >>  
+> >> -	if (f2fs_is_atomic_file(inode))
+> >> +	if (f2fs_is_atomic_file(inode)) {
+> >> +		F2FS_I_SB(inode)->gc_thread->atomic_file++;
+> >>  		goto out;
+> >> +	}
+> >>  
+> >>  	if (f2fs_is_pinned_file(inode)) {
+> >>  		f2fs_pin_file_control(inode, true);
+> >> @@ -737,8 +741,10 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+> >>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+> >>  		goto out;
+> >>  
+> >> -	if (f2fs_is_atomic_file(inode))
+> >> +	if (f2fs_is_atomic_file(inode)) {
+> >> +		F2FS_I_SB(inode)->gc_thread->atomic_file++;
+> >>  		goto out;
+> >> +	}
+> >>  	if (f2fs_is_pinned_file(inode)) {
+> >>  		if (gc_type == FG_GC)
+> >>  			f2fs_pin_file_control(inode, true);
+> >> @@ -900,7 +906,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>  			start_bidx = start_bidx_of_node(nofs, inode)
+> >>  								+ ofs_in_node;
+> >>  			if (f2fs_encrypted_file(inode))
+> >> -				move_data_block(inode, start_bidx, segno, off);
+> >> +				move_data_block(inode, start_bidx, gc_type,
+> >> +								segno, off);
+> >>  			else
+> >>  				move_data_page(inode, start_bidx, gc_type,
+> >>  								segno, off);
+> >> @@ -1017,6 +1024,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >>  		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+> >>  		.iroot = RADIX_TREE_INIT(GFP_NOFS),
+> >>  	};
+> >> +	unsigned int last_atomic_file = sbi->gc_thread->atomic_file;
+> >> +	unsigned int skipped_round = 0, round = 0;
+> >>  
+> >>  	trace_f2fs_gc_begin(sbi->sb, sync, background,
+> >>  				get_pages(sbi, F2FS_DIRTY_NODES),
+> >> @@ -1068,11 +1077,21 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >>  		sec_freed++;
+> >>  	total_freed += seg_freed;
+> >>  
+> >> +	if (gc_type == FG_GC) {
+> >> +		if (sbi->gc_thread->atomic_file > last_atomic_file)
+> >> +			skipped_round++;
+> >> +		last_atomic_file = sbi->gc_thread->atomic_file;
 > > 
-> > I don't object but we need to figure out the advantages of doing it in qemu
-> > too.
+> > How about resetting ->atomic_file to zero?
+> 
+> Since we will show this stat number through sysfs entry, it'd better to keep its
+> data?
+
+Alright, but we need to manage overflow?
+
+> 
+> Thanks,
+> 
 > > 
-> > Thanks
-> 
-> To be frank kernel is exactly where device drivers belong.  DPDK did
-> move them to userspace but that's merely a requirement for data path.
-> *If* you can have them in kernel that is best:
-> - update kernel and there's no need to rebuild userspace
-> - apps can be written in any language no need to maintain multiple
->   libraries or add wrappers
-> - security concerns are much smaller (ok people are trying to
->   raise the bar with IOMMUs and such, but it's already pretty
->   good even without)
-> 
-> The biggest issue is that you let userspace poke at the
-> device which is also allowed by the IOMMU to poke at
-> kernel memory (needed for kernel driver to work).
-
-I think the device won't and shouldn't be allowed to
-poke at kernel memory. Its kernel driver needs some
-kernel memory to work. But the device doesn't have
-the access to them. Instead, the device only has the
-access to:
-
-(1) the entire memory of the VM (if vIOMMU isn't used)
-or
-(2) the memory belongs to the guest virtio device (if
-    vIOMMU is being used).
-
-Below is the reason:
-
-For the first case, we should program the IOMMU for
-the hardware device based on the info in the memory
-table which is the entire memory of the VM.
-
-For the second case, we should program the IOMMU for
-the hardware device based on the info in the shadow
-page table of the vIOMMU.
-
-So the memory can be accessed by the device is limited,
-it should be safe especially for the second case.
-
-My concern is that, in this RFC, we don't program the
-IOMMU for the mdev device in the userspace via the VFIO
-API directly. Instead, we pass the memory table to the
-kernel driver via the mdev device (BAR0) and ask the
-driver to do the IOMMU programming. Someone may don't
-like it. The main reason why we don't program IOMMU via
-VFIO API in userspace directly is that, currently IOMMU
-drivers don't support mdev bus.
-
-> 
-> Yes, maybe if device is not buggy it's all fine, but
-> it's better if we do not have to trust the device
-> otherwise the security picture becomes more murky.
-> 
-> I suggested attaching a PASID to (some) queues - see my old post "using
-> PASIDs to enable a safe variant of direct ring access".
-
-It's pretty cool. We also have some similar ideas.
-Cunming will talk more about this.
-
-Best regards,
-Tiwei Bie
-
-> 
-> Then using IOMMU with VFIO to limit access through queue to corrent
-> ranges of memory.
-> 
-> 
-> -- 
-> MST
+> >> +		round++;
+> >> +	}
+> >> +
+> >>  	if (gc_type == FG_GC)
+> >>  		sbi->cur_victim_sec = NULL_SEGNO;
+> >>  
+> >>  	if (!sync) {
+> >>  		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> >> +			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
+> >> +				skipped_round * 2 >= round)
+> >> +				drop_inmem_pages_all(sbi);
+> >>  			segno = NULL_SEGNO;
+> >>  			goto gc_more;
+> >>  		}
+> >> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+> >> index b0045d4c8d1e..bc1d21d46ae7 100644
+> >> --- a/fs/f2fs/gc.h
+> >> +++ b/fs/f2fs/gc.h
+> >> @@ -39,6 +39,9 @@ struct f2fs_gc_kthread {
+> >>  	unsigned int gc_idle;
+> >>  	unsigned int gc_urgent;
+> >>  	unsigned int gc_wake;
+> >> +
+> >> +	/* for stuck statistic */
+> >> +	unsigned int atomic_file;
+> >>  };
+> >>  
+> >>  struct gc_inode_list {
+> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> index d809f731bfd1..831cefa088bc 100644
+> >> --- a/fs/f2fs/segment.c
+> >> +++ b/fs/f2fs/segment.c
+> >> @@ -287,6 +287,7 @@ void drop_inmem_pages_all(struct f2fs_sb_info *sbi)
+> >>  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
+> >>  
+> >>  	if (inode) {
+> >> +		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >>  		drop_inmem_pages(inode);
+> >>  		iput(inode);
+> >>  	}
+> >> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> >> index 492ad0c86fa9..7702b054689c 100644
+> >> --- a/fs/f2fs/segment.h
+> >> +++ b/fs/f2fs/segment.h
+> >> @@ -215,6 +215,8 @@ struct segment_allocation {
+> >>  #define IS_DUMMY_WRITTEN_PAGE(page)			\
+> >>  		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
+> >>  
+> >> +#define MAX_SKIP_ATOMIC_COUNT			16
+> >> +
+> >>  struct inmem_pages {
+> >>  	struct list_head list;
+> >>  	struct page *page;
+> >> -- 
+> >> 2.15.0.55.gc2ece9dc4de6
+> > 
+> > .
+> > 
