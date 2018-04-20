@@ -1,74 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753491AbeDTRmz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 13:42:55 -0400
-Received: from esa2.dell-outbound.iphmx.com ([68.232.149.220]:52997 "EHLO
-        esa2.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753336AbeDTRmy (ORCPT
+        id S1753347AbeDTRpN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 13:45:13 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47890 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751254AbeDTRpL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 13:42:54 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2ECAQABJtpah2Oa6ERbhEYOejKDYJR6g?=
- =?us-ascii?q?XSBD5J4gXgLIwiEPgIagiwhNBgBAgEBAQEBAQIBAQIQAQEBCgsJCCgjDII1IhF?=
- =?us-ascii?q?LXAEBAQEBASMCDV0BAQEDASMRRRACAQgaAiYCAgJFEAIEAQ0NhH0ID6ZighyIQ?=
- =?us-ascii?q?YIkBYEJhn2CE4QagUGGMoJUApdxCIVbiFyBLosoiTSGdYElHIILcIMUgi2IYoU?=
- =?us-ascii?q?+jz2BGAEB?=
-X-IPAS-Result: =?us-ascii?q?A2ECAQABJtpah2Oa6ERbhEYOejKDYJR6gXSBD5J4gXgLIwi?=
- =?us-ascii?q?EPgIagiwhNBgBAgEBAQEBAQIBAQIQAQEBCgsJCCgjDII1IhFLXAEBAQEBASMCD?=
- =?us-ascii?q?V0BAQEDASMRRRACAQgaAiYCAgJFEAIEAQ0NhH0ID6ZighyIQYIkBYEJhn2CE4Q?=
- =?us-ascii?q?agUGGMoJUApdxCIVbiFyBLosoiTSGdYElHIILcIMUgi2IYoU+jz2BGAEB?=
-From: <Mario.Limonciello@dell.com>
-X-LoopCount0: from 10.166.132.189
-X-IronPort-AV: E=Sophos;i="5.49,302,1520917200";
-   d="scan'208";a="242414311"
-X-DLP: DLP_GlobalPCIDSS
-To: <rdunlap@infradead.org>, <sfr@canb.auug.org.au>,
-        <linux-next@vger.kernel.org>, <dvhart@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
-Subject: RE: linux-next: Tree for Apr 19 (dell smbios SMM)
-Thread-Topic: linux-next: Tree for Apr 19 (dell smbios SMM)
-Thread-Index: AQHT2AgwKJy6Z28GlkKE9Su24yAKO6QJt6TQgABkPwD//82qsA==
-Date: Fri, 20 Apr 2018 17:42:52 +0000
-Message-ID: <ef8c8d74b23848c19ee7adaca189a99f@ausx13mpc120.AMER.DELL.COM>
-References: <20180419143545.63c0c639@canb.auug.org.au>
- <6aec5528-d6f1-3e05-1ac2-6eddbd0ac64f@infradead.org>
- <43bec7e798f5491284d2c049f835d339@ausx13mpc120.AMER.DELL.COM>
- <de6910be-497c-c3b2-39df-bec37bd79f81@infradead.org>
-In-Reply-To: <de6910be-497c-c3b2-39df-bec37bd79f81@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Fri, 20 Apr 2018 13:45:11 -0400
+Message-ID: <7b4976b0a8a642767bd4e0a5e9d7fb6c9dc86ec9.camel@collabora.com>
+Subject: Re: [PATCH] Input: atmel_mxt_ts - fix reset-gpio for level based
+ irqs
+From: Ezequiel Garcia <ezequiel@collabora.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Nick Dyer <nick@shmanahar.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel@collabora.com
+Date: Fri, 20 Apr 2018 14:44:02 -0300
+In-Reply-To: <20180420172408.26164-1-sebastian.reichel@collabora.co.uk>
+References: <20180420172408.26164-1-sebastian.reichel@collabora.co.uk>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w3KHh2Mh008156
 
+Hi Sebastian,
+
+On Fri, 2018-04-20 at 19:24 +0200, Sebastian Reichel wrote:
+> The current reset-gpio support triggers an interrupt storm on platforms
+> using the maxtouch with level based interrupt. The Motorola Droid 4,
+> which I used for some of the tests is not affected, since it uses a level
+> based interrupt.
 > 
-> Hi,
-> I've attached it here.
+
+I found this confusing. Interrupt storm happen with level-based interrupts,
+but the Droid4 is not affected?
+
+> This change avoids the interrupt storm by enabling the device while
+> its interrupt is disabled. The following mxt_initialize() requires,
+> that the device is responsive (at least mxt224E is unresponsive for
+> ~22ms), so we wait some time. We don't wait for leaving bootloader
+> mode anymore, since mxt_initialize() checks for it anyways.
 > 
-> thanks,
-> --
-> ~Randy
 
-Thanks.  Darren's patch.  It was supposed to be prevented by 
-32d7b19bad9695c4c9026b0ceb3a384561ddee70
-(see comment in Kconfig).
+IMHO, having some more or less arbritrary sleeps is almost
+always a problem. This value might be enough for some platform,
+might be too short for some other, and then it might get too large
+for someone else.
 
-#                                                                   
-# The DELL_SMBIOS driver depends on ACPI_WMI and/or DCDBAS if those 
-# backends are selected. The "depends" line prevents a configuration
-# where DELL_SMBIOS=y while either of those dependencies =m.        
-#                                                                   
+> This fixes a boot problem on GE PPD (watchdog kills device) and also
+> has been tested on the Droid 4.
+> 
+> Fixes: f657b00df22e ("Input: atmel_mxt_ts - add support for reset line")
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+> ---
+>  drivers/input/touchscreen/atmel_mxt_ts.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+> index 5d9699fe1b55..f8a9f2a47e78 100644
+> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
+> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+> @@ -194,6 +194,7 @@ enum t100_type {
+>  
+>  /* Delay times */
+>  #define MXT_BACKUP_TIME		50	/* msec */
+> +#define MXT_RESET_GPIO_TIME	20	/* msec */
+>  #define MXT_RESET_TIME		200	/* msec */
+>  #define MXT_RESET_TIMEOUT	3000	/* msec */
+>  #define MXT_CRC_TIMEOUT		1000	/* msec */
+> @@ -3167,20 +3168,14 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>  		return error;
+>  	}
+>  
+> +	disable_irq(client->irq);
+> +
+>  	if (data->reset_gpio) {
+> -		data->in_bootloader = true;
+> -		msleep(MXT_RESET_TIME);
+> -		reinit_completion(&data->bl_completion);
+> +		msleep(MXT_RESET_GPIO_TIME);
+>  		gpiod_set_value(data->reset_gpio, 1);
 
-As I can tell it's getting caused by CONFIG_DELL_LAPTOP which is
-        select DELL_SMBIOS
+Can't we enable the IRQ here, just before the wait...
 
-OK, this should help:
-https://patchwork.kernel.org/patch/10353385/
+> -		error = mxt_wait_for_completion(data, &data->bl_completion,
+> -						MXT_RESET_TIMEOUT);
+
+... and then disable it back afterwards?
+
+> -		if (error)
+> -			return error;
+> -		data->in_bootloader = false;
+> +		msleep(MXT_RESET_TIME);
+
+>  	}
+>  
+> -	disable_irq(client->irq);
+> -
+>  	error = mxt_initialize(data);
+>  	if (error)
+>  		return error;
+> -- 
+> 2.17.0
+> 
+> 
