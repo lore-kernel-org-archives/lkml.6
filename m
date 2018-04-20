@@ -1,51 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754775AbeDTMh3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 08:37:29 -0400
-Received: from mout.gmx.net ([212.227.17.20]:55225 "EHLO mout.gmx.net"
+        id S1754807AbeDTMi5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 08:38:57 -0400
+Received: from mga02.intel.com ([134.134.136.20]:9469 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754591AbeDTMh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 08:37:28 -0400
-Message-ID: <1524227844.6103.1.camel@gmx.de>
-Subject: Re: DOS by unprivileged user
-From: Mike Galbraith <efault@gmx.de>
-To: Ferry Toth <ftoth@telfort.nl>
-Cc: lkml <linux-kernel@vger.kernel.org>
-Date: Fri, 20 Apr 2018 14:37:24 +0200
-In-Reply-To: <1911073.n8LaRrY1S6@ferry-quad>
-References: <9023506.UBh6vynRGa@delfion> <1524199618.5757.3.camel@gmx.de>
-         <1911073.n8LaRrY1S6@ferry-quad>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:NSyCyRQYdKXVfWYiX8LtuGCnvFd73yTKgRYgm2xqqA8iZ7g13lm
- Y3eQuC+MPlUOnvg18W98jjz8b4yFtUX/OlluboLpc46ynKkVZD0cgEV/QFu3C0j5gUwrha/
- MZbMHojWMb7E4YgB2QwVMzidBpNH9Bx7aM7R8ZkWvmC9BFqF7SM0GrTlTYkgkC+Sp8EbuIn
- 2GoyBr97IN7tJrJ69ITvQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:kdb/fhsY1nI=:NaO0ILz9VnKsotMoI5bGhM
- S/yviYpZlJ5zgfs/eIIchBtvlnyHJpFetr0ooKSY4YcclEGJMZwdGbWtcxx+brTvyWO8gMnV5
- x6SXMIKavEhd2d5NEM3I3QuLcJNMfS9fRrxQ7zY8HUQg0U4J9624nw+7Ju9bT+aUfYuDkLlZq
- iPHQFf/mxqqqtxrG+/Os9WbQM5FntSYDvD+68/22qTiHwzvPnX2NitmkW2SV2ZQLgu/eelWdY
- pFkYx06iSeAnp4o6Ug6mK82jbk7AiL9VCBE4bLO6sIyKfZa7hmsHOFSXo5kwB87fI+cqp9Yzd
- RNqHt5lKJ4RX6x7t9eL06BTckJNZSUAHv/t8QtOPVGc/oB2PBoENe3DVOFa5iCYRx6oK/1AQo
- UFyvx1O4zgbmmZz6P7qJm3V5W09J4cZUJAKUpEJxHuS1naAQ5V5BMfOxveJirVI2ehPzTp87s
- SRgdXMmFxOLS50qTbnnOOmp67CAsqxw2n+yI/Lp/eP33IKsvBI8OikPe/j5iESaDr5ckxxJQi
- O2LGU7e99ZlAu6H76v5k2twRa8pRud4/nw9psU8WD3LTtu3ZQxhQnKg1WOvB6JMRilEF2UiEU
- W/nt247TLn2AejT65ieO1SmqDLASqGZrsAPusIs3KJJxWxUjD6VecVQB6+2xGzU+luP1EqaEp
- nUkLTEqfCO+BIHEU1LA+YqcKeugiB2p0JXevqAVigSf/N2FmT/zc52e+fjzteK8KmZR46nBSj
- mnvlHEkzwEUitm6o78Bc/1rrjfYhVVzWYOqV08rlQoLCiYXxFnwfZHbbeBptqgEKDy9J6rqif
- 9gw7zNA0tMH7J2fR96XPxRBYQ0fJUezqaTHEruHelEy4hAIUOc=
+        id S1754591AbeDTMi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 08:38:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,301,1520924400";
+   d="scan'208";a="43381269"
+Date: Fri, 20 Apr 2018 20:38:52 +0800
+From: Fengguang Wu <fengguang.wu@intel.com>
+To: Peter Oberparleiter <oberpar@linux.ibm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Riku Voipio <riku.voipio@linaro.org>,
+        Frantisek Hrbata <fhrbata@redhat.com>,
+        Masahiro Yamada <yamada.m@jp.panasonic.com>,
+        linux-kernel@vger.kernel.org, lkp@01.org
+Subject: Re: [gcov_module_notifier] WARNING: CPU: 0 PID: 155 at
+ mm/slab_common.c:996 kmalloc_slab+0x1f/0x79
+Message-ID: <20180420123852.ox5xcmwgj4krzapf@wfg-t540p.sh.intel.com>
+References: <20180419025854.uasnqkaflr45zeat@wfg-t540p.sh.intel.com>
+ <4e2d71d1-e945-e2c3-cf8f-e19df52df6f5@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <4e2d71d1-e945-e2c3-cf8f-e19df52df6f5@linux.ibm.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-04-20 at 10:39 +0200, Ferry Toth wrote:
-> 
-> Nevertheless I feel one process should not be allowed to harm other
-> processes by denying them resources. Even if when btrfs makes it easy
-> abuse I think the scheduler should have throttled gitk.
+Hi Peter,
 
-Memory management is not in it's job description.
+On Fri, Apr 20, 2018 at 01:08:07PM +0200, Peter Oberparleiter wrote:
+>On 19.04.2018 04:58, Fengguang Wu wrote:
+>> FYI this happens in mainline kernel 4.17.0-rc1.
+>> It at least dates back to v4.5 .
+>
+>This is likely the result of compiling the kernel with GCC 7 while
+>specifying that gcov-kernel should expect GCC <= 3.4 format data:
+>
+>dmesg:
+>> (gcc version 7.3.0 (Debian 7.3.0-1)) #31 Mon Apr 16 23:17:50 CST 2018
+>
+>.config:
+>> # CONFIG_GCOV_FORMAT_AUTODETECT is not set
+>> CONFIG_GCOV_FORMAT_3_4=y
+>> # CONFIG_GCOV_FORMAT_4_7 is not set
+>
+>As such, it is an expected test failure. Assuming that this is a
+>randconfig test, my recommendation would be to blacklist
+>"CONFIG_GCOV_FORMAT_3_4=y" when using GCC >3.4.
 
-	-Mike
+Ah OK, thanks! It looks easy to fix for us. Interestingly there's
+the default GCOV_FORMAT_AUTODETECT option, however the randconfig
+test obviously (blindly) will try other options if ever they are
+selectable.
+
+Thanks,
+Fengguang
