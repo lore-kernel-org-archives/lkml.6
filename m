@@ -1,124 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752153AbeDTQOy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 12:14:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:55201 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750858AbeDTQOw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 12:14:52 -0400
-From: Arnd Bergmann <arnd@arndb.de>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] rtc: vr41xx: remove mktime usage
-Date: Fri, 20 Apr 2018 18:14:24 +0200
-Message-Id: <20180420161433.3721192-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:5q6Yn/6t1PHM/iTwtOaUQDAOWGhqGQWn6ZhUBQMPfwOfzH+FHzT
- lPcDQWyLVkYwosho7qesbDYm9bKzB8SEehzgf7dFfSdhlCMVzD+M6V+OSVuf3PyAXzHOBf0
- JUciYlMbFP4xPEvDvkkKr2m7SIyaLtodIGHfERJe2+ascePIaow3A6krgqcx/AuCdjwkJMy
- xfAXAgLzuw317DAFfRjOQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:g6+nH7Yf/T0=:uwuoSN6lV6R9JG4aoWip+T
- RGzfW6EpOXgfsFg6v7VpSuCFhlBRXu/VsUz6YKeGu7QByI9QzSOeL4o7803I1ZTDWBLrjzz+x
- Fh4Zdwqr0XI5sdDgCHdq/DJyWYPBkgh0mFgRHS40tHREkjr75yHNqLPDvSjVxxcPmMLv/LWtv
- a4U5UCDPojT78iz/cMhGMW/sNV5VMpS718gh3Uxh/XdmxEqCmpEq36yQQwX/DaZM6YREoUplj
- d8RljjZv9NxQZyve5z+q2xc+V0LVJ0i8sauCbDYDnA3g6GW1Cwso8ekGRyReu7OEnoxvypcCI
- ooz+wpF8KqS3eDYbTHiD9un0vTAezeYQpUeuSQiUA8oSCojUW8LFVaMToWUi0sPC4metPttRx
- W0Xf7GZP0YdzCspwm7GK2OcvLKI0We6QvoJoOZgzFZPCdprP9MySg2WMctzjjt6WWjchdfKm9
- H7TiK5pNNs+PcQthIFeCRZESlUkVtXjn5hr9LWQ9SzP+w3indY1xE5BFgp9LB4QWirGGKOTJo
- 18N1fWPS5mG1qpwEtMZoZYlNPeTRTadT9TzcvZtMGc+faxoMmF0/lkcVPqC9RdsiYkU7VPu8Y
- FGKSOKun2hQ2rp98I/Q1Lo7xZHr8CjI6kyaiMj4Sh4eZzsHn3Uq8nSiUfPkrzd3zWXKgJMXIh
- 15kTswAAZEnb5PxeYC5xL+1hRNriDOddZSvkBeAWhSnoJu9O56TwmanPZXDCMYmjJ3OI915kh
- RuzQgBlSNajILJLQgLdNpGZDWEahtedKtMlbVA==
+        id S1752385AbeDTQPA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 12:15:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750858AbeDTQO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 12:14:56 -0400
+Date: Fri, 20 Apr 2018 19:14:51 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Alexander Duyck <alexander.duyck@gmail.com>
+Cc: "Daly, Dan" <dan.daly@intel.com>,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Duyck, Alexander H" <alexander.h.duyck@intel.com>,
+        linux-pci@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        kvm@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>, netanel@amazon.com,
+        Don Dutile <ddutile@redhat.com>, Maximilian Heyne <mheyne@amazon.de>,
+        "Wang, Liang-min" <liang-min.wang@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        dwmw@amazon.co.uk
+Subject: Re: [virtio-dev] [pci PATCH v7 2/5] virtio_pci: Add support for
+ unmanaged SR-IOV on virtio_pci devices
+Message-ID: <20180420191055-mutt-send-email-mst@kernel.org>
+References: <20180316183042-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfgZ2gAdiAbCe4MTOr3o9cqq1q-mykCQsw68p2F-QEC8g@mail.gmail.com>
+ <20180403161151-mutt-send-email-mst@kernel.org>
+ <CAKgT0UfeSmG=xsd6sTkg4cOMnZ0QiqtCRDt4PynpF3d6nvvFCA@mail.gmail.com>
+ <20180403212503-mutt-send-email-mst@kernel.org>
+ <CAKgT0Ude79FYrK4qA0OKRJ1NackyqPi-hZ8Zh3WSdLDFxoOosQ@mail.gmail.com>
+ <20180420030640-mutt-send-email-mst@kernel.org>
+ <CAKgT0Ucpw9D1u8MYoEX5KOij6sxs-5O9gPFTmOVq=Dgt=HUJ=g@mail.gmail.com>
+ <20180420180839-mutt-send-email-mst@kernel.org>
+ <CAKgT0UeWzK=_8m9hhWfaKyYB02WXDsuCkgowS4hgQ9GkLMcAMA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UeWzK=_8m9hhWfaKyYB02WXDsuCkgowS4hgQ9GkLMcAMA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver uses mktime() and rtc_time_to_tm() to convert between time
-values. This works fine on 64-bit kernels over the whole supported
-range, and the vr41xx chip is a 64-bit MIPS implementation, but it is
-inconsistent because it doesn't do the same thing on 32-bit kernels that
-overflow in 2106 or 2038.
+On Fri, Apr 20, 2018 at 09:08:51AM -0700, Alexander Duyck wrote:
+> On Fri, Apr 20, 2018 at 8:28 AM, Michael S. Tsirkin <mst@redhat.com> wrote:
+> > On Fri, Apr 20, 2018 at 07:56:14AM -0700, Alexander Duyck wrote:
+> >> > I think for virtio it should include the feature bit, yes.
+> >> > Adding feature bit is very easy - post a patch to the virtio TC mailing
+> >> > list, wait about a week to give people time to respond (two weeks if it
+> >> > is around holidays and such).
+> >>
+> >> The problem is we are talking about hardware/FPGA, not software.
+> >> Adding a feature bit means going back and updating RTL. The software
+> >> side of things is easy, re-validating things after a hardware/FPGA
+> >> change not so much.
+> >>
+> >> If this is a hard requirement I may just drop the virtio patch, push
+> >> what I have, and leave it to Mark/Dan to deal with the necessary RTL
+> >> and code changes needed to support Virtio as I don't expect the
+> >> turnaround to be as easy as just a patch.
+> >>
+> >> Thanks.
+> >>
+> >> - Alex
+> >
+> > Let's focus on virtio in this thread.
+> 
+> That is kind of what I was thinking, and why I was thinking it might
+> make sense to make the virtio specific changes a separate patch set. I
+> could get the PCI bits taken care of in the meantime since they effect
+> genetic PCI, NVMe, and the Amazon ENA interfaces.
+> 
+> > Involving the virtio TC in host/guest interface changes is a
+> > hard requirement. It's just too easy to create conflicts otherwise.
+> >
+> > So you guys should have just sent the proposal to the TC when you
+> > were doing your RTL and you would have been in the clear.
+> 
+> Agreed. I believe I brought this up when I was originally asked to
+> look into the coding for this.
+> 
+> > Generally adding a feature bit with any extension is a good idea:
+> > this way you merely reserve a feature bit for your feature through
+> > the TC and are more or less sure of forward and backward compatibility.
+> > It's incredibly easy.
+> 
+> Agreed, though in this case I am not sure it makes sense since this
+> isn't necessarily something that is a Virtio feature itself. It is
+> just a side effect of the fact that they are adding SR-IOV support to
+> a device that happens to emulate Virtio NET and apparently their PF
+> has to be identical to the VF other than the PCIe extended config
+> space.
 
-Changing it to use mktime64/rtc_time64_to_tm() should have no visible
-impact on vr41xx but gets us closer to removing the 32-bit interfaces.
+I got that. My point is not everyone implementing SR-IOV will
+want to do it like this. Others might want to have VFs
+be different from PFs somehow. Feature bits ensure forward
+not just backward compatibility.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/rtc/rtc-vr41xx.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/rtc/rtc-vr41xx.c b/drivers/rtc/rtc-vr41xx.c
-index 7ce22967fd16..480cffe8d321 100644
---- a/drivers/rtc/rtc-vr41xx.c
-+++ b/drivers/rtc/rtc-vr41xx.c
-@@ -88,7 +88,7 @@ static unsigned int alarm_enabled;
- static int aie_irq;
- static int pie_irq;
- 
--static inline unsigned long read_elapsed_second(void)
-+static inline time64_t read_elapsed_second(void)
- {
- 
- 	unsigned long first_low, first_mid, first_high;
-@@ -105,10 +105,10 @@ static inline unsigned long read_elapsed_second(void)
- 	} while (first_low != second_low || first_mid != second_mid ||
- 		 first_high != second_high);
- 
--	return (first_high << 17) | (first_mid << 1) | (first_low >> 15);
-+	return ((u64)first_high << 17) | (first_mid << 1) | (first_low >> 15);
- }
- 
--static inline void write_elapsed_second(unsigned long sec)
-+static inline void write_elapsed_second(time64_t sec)
- {
- 	spin_lock_irq(&rtc_lock);
- 
-@@ -121,22 +121,22 @@ static inline void write_elapsed_second(unsigned long sec)
- 
- static int vr41xx_rtc_read_time(struct device *dev, struct rtc_time *time)
- {
--	unsigned long epoch_sec, elapsed_sec;
-+	time64_t epoch_sec, elapsed_sec;
- 
--	epoch_sec = mktime(epoch, 1, 1, 0, 0, 0);
-+	epoch_sec = mktime64(epoch, 1, 1, 0, 0, 0);
- 	elapsed_sec = read_elapsed_second();
- 
--	rtc_time_to_tm(epoch_sec + elapsed_sec, time);
-+	rtc_time64_to_tm(epoch_sec + elapsed_sec, time);
- 
- 	return 0;
- }
- 
- static int vr41xx_rtc_set_time(struct device *dev, struct rtc_time *time)
- {
--	unsigned long epoch_sec, current_sec;
-+	time64_t epoch_sec, current_sec;
- 
--	epoch_sec = mktime(epoch, 1, 1, 0, 0, 0);
--	current_sec = mktime(time->tm_year + 1900, time->tm_mon + 1, time->tm_mday,
-+	epoch_sec = mktime64(epoch, 1, 1, 0, 0, 0);
-+	current_sec = mktime64(time->tm_year + 1900, time->tm_mon + 1, time->tm_mday,
- 			     time->tm_hour, time->tm_min, time->tm_sec);
- 
- 	write_elapsed_second(current_sec - epoch_sec);
-@@ -165,11 +165,11 @@ static int vr41xx_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *wkalrm)
- 
- static int vr41xx_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *wkalrm)
- {
--	unsigned long alarm_sec;
-+	time64_t alarm_sec;
- 	struct rtc_time *time = &wkalrm->time;
- 
--	alarm_sec = mktime(time->tm_year + 1900, time->tm_mon + 1, time->tm_mday,
--			   time->tm_hour, time->tm_min, time->tm_sec);
-+	alarm_sec = mktime64(time->tm_year + 1900, time->tm_mon + 1, time->tm_mday,
-+			     time->tm_hour, time->tm_min, time->tm_sec);
- 
- 	spin_lock_irq(&rtc_lock);
- 
+> > But maybe it's not needed here.  I am not making the decisions myself.
+> > Not too late: post to the TC list and let's see what the response is.
+> > Without a feature bit you are making a change affecting all future
+> > implementations without exception so the bar is a bit higher: you need
+> > to actually post a spec text proposal not just a patch showing how to
+> > use the feature, and TC needs to vote on it. Voting takes a week,
+> > review a week or two depending on change complexity.
+> >
+> > Hope this helps,
+> >
+> > --
+> > MST
+> 
+> I think I will leave this for Dan and Mark to handle since I am still
+> not all that familiar with the hardware in use here. Once a decision
+> has been made him and Mark could look at pushing either the one line
+> patch or something more complex involving a feature flag.
+> 
+> Thanks.
+> 
+> Alex
+
+As long as the TC is involved.
+
+I know it's a bit of a strange thing to block it at the driver level,
+the issue is with the device, but it's literally the only handle I have
+to prevent people from doing out of spec hacks then pushing it all on us
+to maintain.
+
 -- 
-2.9.0
+MST
