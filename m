@@ -1,46 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752903AbeDTUxP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 16:53:15 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:52294 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752765AbeDTUxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 16:53:14 -0400
-Date: Fri, 20 Apr 2018 16:54:50 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, kernel-team@fb.com,
-        Michal Hocko <mhocko@suse.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 2/2] mm: move the high field from struct mem_cgroup to
- page_counter
-Message-ID: <20180420205450.GB24563@cmpxchg.org>
-References: <20180420163632.3978-1-guro@fb.com>
- <20180420163632.3978-2-guro@fb.com>
+        id S1752948AbeDTUy4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 16:54:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42812 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751860AbeDTUyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 16:54:55 -0400
+Date: Fri, 20 Apr 2018 16:54:53 -0400 (EDT)
+From: Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To: Michal Hocko <mhocko@kernel.org>
+cc: David Miller <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        eric.dumazet@gmail.com, edumazet@google.com, bhutchings@solarflare.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com,
+        jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        dm-devel@redhat.com, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+In-Reply-To: <20180420130852.GC16083@dhcp22.suse.cz>
+Message-ID: <alpine.LRH.2.02.1804201635180.25408@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.1804181029270.19294@file01.intranet.prod.int.rdu2.redhat.com> <3e65977e-53cd-bf09-bc4b-0ce40e9091fe@gmail.com> <alpine.LRH.2.02.1804181218270.19136@file01.intranet.prod.int.rdu2.redhat.com> <20180418.134651.2225112489265654270.davem@davemloft.net>
+ <alpine.LRH.2.02.1804181350050.17942@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.1804191207380.31175@file01.intranet.prod.int.rdu2.redhat.com> <20180420130852.GC16083@dhcp22.suse.cz>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180420163632.3978-2-guro@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 05:36:32PM +0100, Roman Gushchin wrote:
-> We do store memory.min, memory.low and memory.max actual values
-> in struct page_counter fields, while memory.high value is located
-> in the struct mem_cgroup directly, which is not very consistent.
+
+
+On Fri, 20 Apr 2018, Michal Hocko wrote:
+
+> On Thu 19-04-18 12:12:38, Mikulas Patocka wrote:
+> [...]
+> > From: Mikulas Patocka <mpatocka@redhat.com>
+> > Subject: [PATCH] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
+> > 
+> > The kvmalloc function tries to use kmalloc and falls back to vmalloc if
+> > kmalloc fails.
+> > 
+> > Unfortunatelly, some kernel code has bugs - it uses kvmalloc and then
+> > uses DMA-API on the returned memory or frees it with kfree. Such bugs were
+> > found in the virtio-net driver, dm-integrity or RHEL7 powerpc-specific
+> > code.
+> > 
+> > These bugs are hard to reproduce because vmalloc falls back to kmalloc
+> > only if memory is fragmented.
+> > 
+> > In order to detect these bugs reliably I submit this patch that changes
+> > kvmalloc to always use vmalloc if CONFIG_DEBUG_VM is turned on.
 > 
-> This patch moves the high field from struct mem_cgroup to
-> struct page_counter to simplify the code and make handling
-> of all limits/boundaries clearer.
+> No way. This is just wrong! First of all, you will explode most likely
+> on many allocations of small sizes. Second, CONFIG_DEBUG_VM tends to be
+> enabled quite often.
 
-I would prefer not doing this.
+You're an evil person who doesn't want to fix bugs.
 
-Yes, it looks a bit neater if all these things are next to each other
-in the struct, but on the other hand it separates the high variable
-from high_work, and it adds an unnecessary setter function as well.
+You refused to fix vmalloc(GFP_NOIO) misbehavior a year ago (did you make 
+some progress with it since that time?) and you refuse to fix kvmalloc 
+misuses.
 
-Plus, nothing in the page_counter code actually uses the value, it
-really isn't part of that abstraction layer.
+I tried this patch on text-only virtual machine and /proc/vmallocinfo 
+shows 614kB more memory. I tried it on a desktop machine with the chrome 
+browser open and /proc/vmallocinfo space is increased by 7MB. So no - this 
+won't exhaust memory and kill the machine.
+
+Arguing that this increases memory consumption is as bogus as arguing that 
+CONFIG_LOCKDEP increses memory consumption. No one is forcing you to 
+enable CONFIG_LOCKDEP and no one is forcing you to enable this kvmalloc 
+test too.
+
+Mikulas
