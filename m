@@ -1,66 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754431AbeDTILk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:11:40 -0400
-Received: from mail-ua0-f170.google.com ([209.85.217.170]:42153 "EHLO
-        mail-ua0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754229AbeDTILg (ORCPT
+        id S1754475AbeDTIMK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:12:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40278 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754249AbeDTIEb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:11:36 -0400
-X-Google-Smtp-Source: AIpwx49E6yO0d57KQO6JZAPo7WBVRTu9d27PfdQvxGNahYWp62w4cnR/69n2ZmefK76oDihWw0KJkMwRexLlWLbgBb4=
-MIME-Version: 1.0
-In-Reply-To: <20180420074914.vl4rer5zdeldfzb3@dell>
-References: <1524057484-25350-1-git-send-email-geert+renesas@glider.be> <20180420074914.vl4rer5zdeldfzb3@dell>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 20 Apr 2018 10:11:34 +0200
-X-Google-Sender-Auth: 4jHxk_OjywAXrtHqqvAJljaTe7E
-Message-ID: <CAMuHMdWeROfJNvUtfooN8gqA+nTRXhVLvQFpc-xiqUbG9XgcmA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] regulator: bd9571mwv: Add support for DDR backup mode
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 20 Apr 2018 04:04:31 -0400
+From: Christoph Hellwig <hch@lst.de>
+Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 12/22] microblaze: remove the consistent_sync and consistent_sync_page
+Date: Fri, 20 Apr 2018 10:03:03 +0200
+Message-Id: <20180420080313.18796-13-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180420080313.18796-1-hch@lst.de>
+References: <20180420080313.18796-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
+Both unused.
 
-On Fri, Apr 20, 2018 at 9:49 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Wed, 18 Apr 2018, Geert Uytterhoeven wrote:
->> The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
->> development boards supports DDR Backup Power, which means that the DDR
->> power rails can be kept powered while the main SoC is powered down.
->
-> Should this set be applied together, or can the MFD patches be applied
-> on their own, without the Regulator patch?
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/microblaze/include/asm/pgtable.h |  3 --
+ arch/microblaze/mm/consistent.c       | 45 ---------------------------
+ 2 files changed, 48 deletions(-)
 
-The regulator patch depends on the MFD patches, so it's best for them to
-go in together.
-
-> If the former, then we're going to need an Ack from Mark.
-
-Alternative, as you've already supplied (some form of) your Ack for the firs
-3 patches, they can go in through Mark? All of it is enhancing the
-regulator part.
-
-I don't care much which path the patches take, though.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/microblaze/include/asm/pgtable.h b/arch/microblaze/include/asm/pgtable.h
+index 5174733fb489..ac6a37bd41ec 100644
+--- a/arch/microblaze/include/asm/pgtable.h
++++ b/arch/microblaze/include/asm/pgtable.h
+@@ -551,9 +551,6 @@ void __init *early_get_page(void);
+ 
+ extern unsigned long ioremap_bot, ioremap_base;
+ 
+-void consistent_sync(void *vaddr, size_t size, int direction);
+-void consistent_sync_page(struct page *page, unsigned long offset,
+-	size_t size, int direction);
+ unsigned long consistent_virt_to_pfn(void *vaddr);
+ 
+ void setup_memory(void);
+diff --git a/arch/microblaze/mm/consistent.c b/arch/microblaze/mm/consistent.c
+index b9a9c8c3397b..c9a278ac795a 100644
+--- a/arch/microblaze/mm/consistent.c
++++ b/arch/microblaze/mm/consistent.c
+@@ -220,48 +220,3 @@ void arch_dma_free(struct device *dev, size_t size, void *vaddr,
+ 	flush_tlb_all();
+ #endif
+ }
+-
+-/*
+- * make an area consistent.
+- */
+-void consistent_sync(void *vaddr, size_t size, int direction)
+-{
+-	unsigned long start;
+-	unsigned long end;
+-
+-	start = (unsigned long)vaddr;
+-
+-	/* Convert start address back down to unshadowed memory region */
+-#ifdef CONFIG_XILINX_UNCACHED_SHADOW
+-	start &= ~UNCACHED_SHADOW_MASK;
+-#endif
+-	end = start + size;
+-
+-	switch (direction) {
+-	case PCI_DMA_NONE:
+-		BUG();
+-	case PCI_DMA_FROMDEVICE:	/* invalidate only */
+-		invalidate_dcache_range(start, end);
+-		break;
+-	case PCI_DMA_TODEVICE:		/* writeback only */
+-		flush_dcache_range(start, end);
+-		break;
+-	case PCI_DMA_BIDIRECTIONAL:	/* writeback and invalidate */
+-		flush_dcache_range(start, end);
+-		break;
+-	}
+-}
+-EXPORT_SYMBOL(consistent_sync);
+-
+-/*
+- * consistent_sync_page makes memory consistent. identical
+- * to consistent_sync, but takes a struct page instead of a
+- * virtual address
+- */
+-void consistent_sync_page(struct page *page, unsigned long offset,
+-	size_t size, int direction)
+-{
+-	unsigned long start = (unsigned long)page_address(page) + offset;
+-	consistent_sync((void *)start, size, direction);
+-}
+-EXPORT_SYMBOL(consistent_sync_page);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.0
