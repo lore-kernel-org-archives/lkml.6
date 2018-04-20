@@ -1,47 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754215AbeDTISB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 04:18:01 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46770 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753905AbeDTIR6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 04:17:58 -0400
-Date: Fri, 20 Apr 2018 10:17:42 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Omar Sandoval <osandov@osandov.com>
-Cc: linux-kernel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, kernel-team@fb.com
-Subject: Re: [PATCH] lockdep: fix fs_reclaim annotation
-Message-ID: <20180420081742.GC4064@hirez.programming.kicks-ass.net>
-References: <9f8aa70652a98e98d7c4de0fc96a4addcee13efe.1523778026.git.osandov@fb.com>
+        id S1754192AbeDTISV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 04:18:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51358 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754001AbeDTISR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 04:18:17 -0400
+Date: Fri, 20 Apr 2018 10:18:16 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCHv2] printk: wake up klogd in vprintk_emit
+Message-ID: <20180420081815.5lvob7fuyvlfpriw@pathway.suse.cz>
+References: <20180414030145.26304-1-sergey.senozhatsky@gmail.com>
+ <20180419014250.5692-1-sergey.senozhatsky@gmail.com>
+ <20180419100248.rflodqcvpvnve5vl@pathway.suse.cz>
+ <20180420015221.GA6397@jagdpanzerIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9f8aa70652a98e98d7c4de0fc96a4addcee13efe.1523778026.git.osandov@fb.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180420015221.GA6397@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 15, 2018 at 12:42:25AM -0700, Omar Sandoval wrote:
-> From: Omar Sandoval <osandov@fb.com>
+On Fri 2018-04-20 10:52:21, Sergey Senozhatsky wrote:
+> On (04/19/18 12:02), Petr Mladek wrote:
+> > On Thu 2018-04-19 10:42:50, Sergey Senozhatsky wrote:
+> > > We wake up klogd very late - only when current console_sem owner
+> > > is done pushing pending kernel messages to the serial/net consoles.
+> > > In some cases this results in lost syslog messages, because kernel
+> > > log buffer is a circular buffer and if we don't wakeup syslog long
+> > > enough there are chances that logbuf simply will wrap around.
+> > > 
+> > > The patch moves the klog wake up call to vprintk_emit(), which is
+> > > the only legit way for a kernel message to appear in the logbuf,
+> > > right before we attempt to grab the console_sem (possibly spinning
+> > > on it waiting for the hand off) and call console drivers.
+> > 
+> > The last two lines need an update. What about?
 > 
-> While revisiting my Btrfs swapfile series [1], I introduced a situation
-> in which reclaim would lock i_rwsem, and even though the swapon() path
-> clearly made GFP_KERNEL allocations while holding i_rwsem, I got no
-> complaints from lockdep. It turns out that the rework of the fs_reclaim
-> annotation was broken: if the current task has PF_MEMALLOC set, we don't
-> acquire the dummy fs_reclaim lock, but when reclaiming we always check
-> this _after_ we've just set the PF_MEMALLOC flag. In most cases, we can
-> fix this by moving the fs_reclaim_{acquire,release}() outside of the
-> memalloc_noreclaim_{save,restore}(), althought kswapd is slightly
-> different. After applying this, I got the expected lockdep splats.
+> Ah. Indeed!
 > 
-> 1: https://lwn.net/Articles/625412/
-> Fixes: d92a8cfcb37e ("locking/lockdep: Rework FS_RECLAIM annotation")
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
+> > "right after the attempt to handle consoles. As a result, klog
+> > will get waken either after flushing the new message to consoles
+> > or immediately when consoles are still busy with older messages."
+> 
+> Looks good. Do you want me to resend the patch?
 
-Urgh, thanks for fixing that!
+No need to resend. I could update the patch when pushing.
+
+I'll wait few more days to give people time to respond.
+
+Best Regards,
+Petr
