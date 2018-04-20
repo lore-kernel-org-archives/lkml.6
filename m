@@ -1,178 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755114AbeDTOR4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 10:17:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755019AbeDTORz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 10:17:55 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4882A20C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=rostedt@goodmis.org
-Date: Fri, 20 Apr 2018 10:17:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180420101751.6c1c70e8@gandalf.local.home>
-In-Reply-To: <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
-References: <20180413124704.19335-1-pmladek@suse.com>
-        <20180413101233.0792ebf0@gandalf.local.home>
-        <20180414023516.GA17806@tigerII.localdomain>
-        <20180416014729.GB1034@jagdpanzerIV>
-        <20180416042553.GA555@jagdpanzerIV>
-        <20180419125353.lawdc3xna5oqlq7k@pathway.suse.cz>
-        <20180420021511.GB6397@jagdpanzerIV>
-        <20180420091224.cotxcfycmtt2hm4m@pathway.suse.cz>
-        <20180420080428.622a8e7f@gandalf.local.home>
-        <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1755202AbeDTOSI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 10:18:08 -0400
+Received: from mail-qt0-f169.google.com ([209.85.216.169]:38060 "EHLO
+        mail-qt0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755168AbeDTOSH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 10:18:07 -0400
+X-Google-Smtp-Source: AB8JxZoHpuZ2d7fK3xucVHznGWa67Q9xJ1bPSTFmQTuu0W3eFvjQwgTdkBp8kr7l5ioQajQuE9zDNA==
+From: Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date: Fri, 20 Apr 2018 10:18:04 -0400 (EDT)
+X-X-Sender: vince@macbook-air
+To: Peter Zijlstra <peterz@infradead.org>
+cc: Vince Weaver <vincent.weaver@maine.edu>, Jiri Olsa <jolsa@redhat.com>,
+        Stephane Eranian <eranian@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, mingo@elte.hu,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC] perf/core: what is exclude_idle supposed to do
+In-Reply-To: <20180420083607.GG4064@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1804201015250.22578@macbook-air>
+References: <CABPqkBS6MuO6Twtq=_+TDV=RNy0_2vRWf=LVCk6wk0tPwNSTog@mail.gmail.com> <20180417062010.GA2052@krava> <alpine.DEB.2.21.1804181109100.1587@macbook-air> <20180420083607.GG4064@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Apr 2018 16:01:57 +0200
-Petr Mladek <pmladek@suse.com> wrote:
+On Fri, 20 Apr 2018, Peter Zijlstra wrote:
 
-> On Fri 2018-04-20 08:04:28, Steven Rostedt wrote:
-> > On Fri, 20 Apr 2018 11:12:24 +0200
-> > Petr Mladek <pmladek@suse.com> wrote:
-> >   
-> > > Yes, my number was arbitrary. The important thing is that it was long
-> > > enough. Or do you know about an console that will not be able to write
-> > > 100 lines within one hour?  
+> On Wed, Apr 18, 2018 at 11:10:20AM -0400, Vince Weaver wrote:
+> > On Tue, 17 Apr 2018, Jiri Olsa wrote:
 > > 
-> > The problem is the way rate limit works. If you print 100 lines (or
-> > 1000) in 5 seconds, then you just stopped printing from that context
-> > for 59 minutes and 55 seconds. That's a long time to block printing.  
+> > > On Mon, Apr 16, 2018 at 10:04:53PM +0000, Stephane Eranian wrote:
+> > > > Hi,
+> > > > 
+> > > > I am trying to understand what the exclude_idle event attribute is supposed
+> > > > to accomplish.
+> > > > As per the definition in the header file:
+> > > > 
+> > > >     exclude_idle   :  1, /* don't count when idle */
+> > > 
+> > > AFAICS it's not implemented
+> > 
+> > so just to be completely clear hear, we're saying that the "exclude_idle" 
+> > modifier has never done anything useful and still doesn't?
 > 
-> Are we talking about the same context?
-> 
-> I am talking about console drivers called from console_unlock(). It is
-> very special context because it is more or less recursive:
-> 
->      + could cause infinite loop
->      + the errors are usually the same again and again
+> AFAICT it works on Power and possibly ARM.
 
-The check is only when console_owner == current, which can easily
-happen with an interrupt let alone an NMI.
+at least some ARMs are a bit more honest about it than x86
 
-The common case is not recursive.
+ivybridge:
+	Performance counter stats for '/bin/ls':
+	1,368,162      instructions
+	1,368,162      instructions:I
 
-> 
-> As a result, if you get too many messages from this context:
-> 
->      + you are lost (recursion)
->      + more messages != new information
-> 
-> And you need to fix the problem anyway. Otherwise, the system
-> logging is a mess.
-> 
-> 
-> > What happens if you had a couple of NMIs go off that takes up that
-> > time, and then you hit a bug 10 minutes later from that context. You
-> > just lost it.  
-> 
-> I do not understand how this is related to the NMI context.
-> The messages in NMI context are not throttled!
-> 
-> OK, the original patch throttled also NMI messages when NMI
-> interrupted console drivers. But it is easy to fix.
+pi2/ARM cortex-A7
+	Performance counter stats for '/bin/ls':
+	1,910,083      instructions
+	<not supported>      instructions:I
 
-My mistake in just mentioning NMIs, because the check is on
-console_owner which can be set with interrupts enabled. That means an
-interrupt that does a print could hide printks from other interrupts or
-NMIs when console_owner is set.
+I'd fire up my Power8 machine to see but not sure it's worth the hassle 
+and/or having to get out the ear protection.
 
-> 
-> 
-> > This is a magnitude larger than any other user of rate limit in the
-> > kernel. The most common time is 5 seconds. The longest I can find is 1
-> > minute. You are saying you want to block printing from this context for
-> > 60 minutes!  
-> 
-> I see 1 day long limits in dio_warn_stale_pagecache() and
-> xfs_scrub_experimental_warning().
-> 
-> Note that most ratelimiting is related to a single message. Also it
-> is in situation where the system should recover within seconds.
-> 
-> 
-> > That is HUGE! I don't understand your rational for such a huge number.
-> > What data do you have to back that up with?  
-> 
-> We want to allow seeing the entire lockdep splat (Sergey wants more
-> than 100 lines). Also it is not that unusual that slow console is busy
-> several minutes when too many things are happening.
-> 
-> I proposed that long delay because I want to be on the safe side.
-> Also I do not see a huge benefit in repeating the same messages
-> too often.
-> 
-> Alternative solution would be to allow first, lets say 250, lines
-> and then nothing. I mean to change the approach from rate-limiting
-> to print-once.
-
-
-Actually, I think we are fine with the one hour and 1000 prints if we
-add to the condition. It can't just check console_owner. We need a way
-to know that this is indeed a recursion. Perhaps we should set the
-context we are in when setting console owner. Something like I have in
-the ring buffer code.
-
-enum {
-	CONTEXT_NONE,
-	CONTEXT_NMI,
-	CONTEXT_IRQ,
-	CONTEXT_SOFTIRQ,
-	CONTEXT_NORMAL
-};
-
-int git_context(void)
-{
-	unsigned long pc = preempt_count();
-
-	if (!(pc & (NMI_MASK | HARDIRQ_MASK | SOFTIRQ_OFFSET)))
-		return CONTEXT_NORMAL;
-	else
-		return pc & NMI_MASK ? CONTEXT_NMI :
-			pc & HARDIRQ_MASK ? CONTEXT_IRQ : CONTEXT_SOFTIRQ;
-}
-
-static void console_lock_spinning_enable(void)
-{
-	raw_spin_lock(&console_owner_lock);
-	console_owner = current;
-	console_context = get_context();
-	raw_spin_unlock(&console_owner_lock);
-[..]
-
-
-static int console_lock_spinning_disable_and_check(void)
-{
-	raw_spin_lock(&console_owner_lock);
-	waiter = READ_ONCE(console_waiter);
-	console_owner = NULL;
-	console_context = CONTEXT_NONE;
-	raw_spin_unlock(&console_owner_lock);
-[..]
-
-
-Then have your check be:
-
-+	/* Prevent infinite loop caused by messages from console drivers. */
-+	if (console_owner == current && console_context == get_context() &&
-+	    !__ratelimit(&ratelimit_console))
-+		return 0;
-
-Then you know that this is definitely due to recursion.
-
--- Steve
+Vince
