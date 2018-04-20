@@ -1,196 +1,235 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1234427-1524214482-2-15119367754175675884
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1681476-1524229563-2-13587624511892655703
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1524214482; b=POef/RwgLn5/SDtJ4QP7TaMU6uuiftuLCXNy87BKasxYfrPwtS
-    r2dmFAqFAlP6eQnKa6pZB7RyHi3uNYlRZODN7aMhPqUhoyHZzK0Yd4idDEvQUaSb
-    w9JrZmvq5BGVlITdmzfF4Z24Wz0HObAZ/Y59rLfRlGGFoCZ6TdlU+d7kjp4LXX7l
-    geJNDOsq01DIAjoiRRF/3YYlvBw+YSMx3HSB8obAZfKI9m3MJBi5NRW4Sswtq78K
-    z5tCKswbnEWqe3krGfGg8N7ube6F6NXpYnDLkDM+W7H0Uq2D63VQ9rJfeK6xVEPl
-    YGzY31pmUtGZrpZcZ10Vn8DJVynJtMCYaUlA==
+    1524229562; b=oYvaz8ud0IEV1OmgfpMXI59AbP1c3PipE/CKO+ReIWCBBurQJR
+    XVm1nZaYDN9alHrX4Z97rnSofkkc9hg9shZPoP3uuJExNMdWkTLs/0L2h2nTWa3o
+    XT+21HpaG6cBxj6mhxzBuPzo0nUsmzcV/5dCuCktiqRuNriPXl96WlwV2d8p+p3i
+    nVn2tFeL9Miwivjh5tVTj/CvSIbvPOvYlR+AUuwvzJrhukIzYCgpuTDEslVpSXwt
+    u+HeTWClxbNpoWxHUWngYuvuvU0Wbkt46cfrECNHc3mmwBJ8ML+XAmHydSVLXIkm
+    gWbL5QPvk9l0fUquXVJliCh2frXf//Lo3eVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1524214482; bh=JXaJKYoKmmgbydDk2fgIIPfoKyiXDh8pYqzyDppjwj
-    c=; b=Qs0L7rV3rJenhnhEJ35dY4XrmXkFWXWlsAN/dCNzi0gcEjTl6QZhBNFIXn
-    B5hDh2RIqV3I9/3VRvzOJcGXz9fkGfN4zwqFMCfM82fFGsBRhs4Ph8R/n3tl78CW
-    sqAKEBlJPHvDoyP694K6aG1GLt4htY4nuRUv/ibQTJdKvSQQ7lR0ltieWqxVHKK8
-    UiQHx3zPuTSPqV0lEnoHfTaLww0bDQ1WNZeCj+hk3OvpFRYDNB233uYVLceAMmav
-    qOPbDeF1LwUbZZk6s/SE0ZGRA4DXOiiJyi0jMeLqyyIYjQz5VuxAXtVlmVTkxDMP
-    vzZ9CVGGUia14ZzIezL+Qy/z3EyQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BuLEFbtD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1524229562; bh=
+    lRPDox80EIknxUrKHZMpkCRPN4I10Vculgb2kpFHM3Y=; b=KHr22PJL6b+IBCid
+    FkL+kjLG1cGmyb4hKszx82o9r36OjkeriMNTO3LGBCohxYqqLc6v5s3VXQQx92Lc
+    Tj1svaJJxkQpWA9IGgQRKV8yxkzELWj8WZOkRxNZJIoqy+mUZpMaUx0qM/IRv4bQ
+    eknA3z23vdfjdkCn9pZwNnOiEHkbJhKWUH3SoRl3IdKbwEE6fHa8VNRJX3Ydz5KJ
+    sUzSM153a5QTpgbRONzKkILEP2oINwiStzuBvLjpDgTdq5+qEleEYmsBF2pJgcaz
+    SaGTFrR0JGxDT2D7NCIKVFplIBC8iXE7Q/24CcDVILtqX4tUzV7+bmyvnYXfcwAI
+    KZ1LnA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=hLrLxC7g;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256) header.d=gmail.com header.i=@gmail.com header.b=BuLEFbtD x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org smtp.helo=vger.kernel.org;
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key) header.d=1e100.net header.i=@1e100.net header.b=hLrLxC7g;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no header.domain=arndb.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDKdufpN5JSkjNX5mfUoQ018qLdGsMaxFAnBNwc6mcrtDrzBrrJQXNIIjJJVdj+MLzv6DYMmgPdE4B7yFm9odpcoib9dycuOIsB7ydJ3J9+hkf0FYevy
-    IC6X72b43umDryWhCaqAGxhOG7w3la6KPxTpaSsEZQ0yXaMO1al04GFPLWFT8jwnLrYDQYH/enFPpcmaiU9O81CFUyMqcwBpnXsosu2+8O8azWKkLwFn4Aru
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=Kd1tUaAdevIA:10
-    a=PtDNVHqPAAAA:8 a=VwQbUJbxAAAA:8 a=ZWjZ2FytY9Zz4HJLFpIA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=BpimnaHY1jUKGyF_4-AF:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfAnUXcP0sf02teyr/OMwlPz6GNYTPg5DN9jbkXHnWPSAgkhLR3pR7u7pM/nqhf96GJ6sWijPEsAjcj6yCRtobJCFk3fK1KggsAf4I+HoZlyMhc0kwFXK
+    EE+76rlSSoGNoq8wnC1gCtPMwdFErsL/NPyTincJhJvawnRUUHA1cd04vSeJMTtMekYhFxzUAqBlYYN532O8Pc090qIhCcVZ199fZHDIwVJtYLb02zIa5tVG
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=Kd1tUaAdevIA:10 a=VwQbUJbxAAAA:8
+    a=ss1IfW1GVHqlzswJ9RYA:9 a=SMRuI_uThru93hmM:21 a=JZMq6HhDVfSzc12D:21
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754321AbeDTIya (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 20 Apr 2018 04:54:30 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:35888 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754307AbeDTIy1 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 20 Apr 2018 04:54:27 -0400
-X-Google-Smtp-Source: AB8JxZqtUTnZIlasdnq0AkzllUsn5TyoUokukSVbapwu1EtpHMhAZpozgWc8R9CLrCcJUFcgrjqV75t+wGAnxHWEdHA=
-MIME-Version: 1.0
-In-Reply-To: <87k1t2n8v5.fsf@xmission.com>
-References: <20180419143737.606138-1-arnd@arndb.de> <20180419143737.606138-2-arnd@arndb.de>
- <87efjbnswr.fsf@xmission.com> <CAK8P3a196QYoM1egagMuZw4WhiwRiO83Qpj0CxoCeVQBEaj-gw@mail.gmail.com>
- <CAK8P3a2KR+0ZE5jHSmO6pSuiRPH83p75KetuQuHL1atChcTJGA@mail.gmail.com> <87k1t2n8v5.fsf@xmission.com>
+        id S1754917AbeDTNF6 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 20 Apr 2018 09:05:58 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:34327 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754764AbeDTNFy (ORCPT
+        <rfc822;stable@vger.kernel.org>); Fri, 20 Apr 2018 09:05:54 -0400
 From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 20 Apr 2018 10:54:25 +0200
-X-Google-Sender-Auth: tOfzH-co8L5k2AQrWlQ-PMWJMfw
-Message-ID: <CAK8P3a3qAoR1afmTTK1CAp1L81dzwtBL+SKj=QMqD=dBr_8oRQ@mail.gmail.com>
-Subject: Re: [PATCH v3 01/17] y2038: asm-generic: Extend sysvipc data structures
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+To: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Cc: ebiederm@xmission.com, y2038 Mailman List <y2038@lists.linaro.org>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, libc-alpha@sourceware.org,
         Deepa Dinamani <deepa.kernel@gmail.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Albert ARIBAUD <albert.aribaud@3adev.fr>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
+        linux-s390@vger.kernel.org, schwidefsky@de.ibm.com,
+        Catalin Marinas <catalin.marinas@arm.com>, will.deacon@arm.com,
+        linux-mips@linux-mips.org, jhogan@kernel.org,
         Ralf Baechle <ralf@linux-mips.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
         Ben Hutchings <ben@decadent.org.uk>,
         Jeffrey Walton <noloader@gmail.com>,
         Daniel Schepler <dschepler@gmail.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
         Adam Borowski <kilobyte@angband.pl>, tg@mirbsd.de,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] x86: ipc: fix x32 version of shmid64_ds and msqid64_ds
+Date: Fri, 20 Apr 2018 15:03:29 +0200
+Message-Id: <20180420130346.3178914-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <CAK8P3a3qAoR1afmTTK1CAp1L81dzwtBL+SKj=QMqD=dBr_8oRQ@mail.gmail.com>
+References: <CAK8P3a3qAoR1afmTTK1CAp1L81dzwtBL+SKj=QMqD=dBr_8oRQ@mail.gmail.com>
+X-Provags-ID: V03:K1:s4pXsIJyLTMXyL6KgDWw8XcyU9mNufw2Dpp+Cebn4jG13dUGY1C
+ kn25mDG58Ah63DpYCMjhtr8DYRnDjCfrvfn5jaKQMUHjw1tpPHOJoGc8dZsjw4nAbEt+pif
+ yrYJo7Zl6AzsSODDBse03XbXGmH+jIYec0rD1Smc2TO5xWlh3yUKiBil7oCpMcQtlMxFaTB
+ SaAS2zRvYqvXwE4IKVchQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ZdrNTAdpv9E=:toj5rfEn+T28bZ7LpkA/HI
+ cNYVyEd8cQ+9S5H4Gy20PQeDPjv3Cb2Y5eJN2flMvk5PNzUz0xsFUnmFX9SgYpIk/X5UJD8vd
+ JMa9EBEHiFW1rWMFCSvBD3NJ7aHps9vbPlX9FUn8v0+6RCkujkg8QW3FKDX7TFB5CWyobkDxC
+ T6t8sgGkY04OilcPlQRpoWaKXy4gHM4LD4bqo5HdePlT3fdJAjVnrBqayamHtWChxcn7EWiH5
+ lbwfrUanuhRMNJi9BI3IxE94tQLZhFSgAPRrSH3P3xn7rHSGo1touSNrPehKhF1WRgqvSzd3U
+ N5LtsxWvT5AKozDqUaEgNS0aV+1xU9R9vx9Xf6cVgljDR/5y2QySg9a1mWaDekGztuBGDg7ZN
+ rW5QpWNMlt4Uimic2l1Shp1O09Bz8ZFSmeKWa+DwCaLknI0M9Bxy4l6p7RfcfT2NVydqW177b
+ fHktiY4rJb9MV6B+mXRFFRAB23/Hz2BndmJX7bkZkgFcPB/riPq0b2Ezic6yImJAM7vZSwav6
+ s49+/3ihU8y1P6ycpG0L/JmuacuSWFTHaPQNQdnNUVLwQx7adRnhMJY9ZVIgW/pQdQLq7kgMf
+ qQru3sXaBJddqmAmmF4Az5i9+y3pQp+MCocilev/2IeESmgbRfYZTdAtBL29jU7ngHGki8A+o
+ gjINkRAmxFnZHPvaZyNSLrxP93r+9QrzYXBaYgjkp/ba+FGqBeeoJtIpo2nbbTB0vHTJQmBAb
+ +FVCERHJJI7o9C4KYnyQ/noDwNW6dHcDlJ+7dA==
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, Apr 20, 2018 at 12:12 AM, Eric W. Biederman
-<ebiederm@xmission.com> wrote:
-> Arnd Bergmann <arnd@arndb.de> writes:
->
->> On Thu, Apr 19, 2018 at 5:20 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->>> On Thu, Apr 19, 2018 at 4:59 PM, Eric W. Biederman <ebiederm@xmission.com> wrote:
->>>> I suspect you want to use __kernel_ulong_t here instead of a raw
->>>> unsigned long.  If nothing else it seems inconsistent to use typedefs
->>>> in one half of the structure and no typedefs in the other half.
->>>
->>> Good catch, there is definitely something wrong here, but I think using
->>> __kernel_ulong_t for all members would also be wrong, as that
->>> still changes the layout on x32, which effectively is
->>>
->>> struct msqid64_ds {
->>>      ipc64_perm msg_perm;
->>>      u64 msg_stime;
->>>      u32 __unused1;
->>>      /* 32 bit implict padding */
->>>      u64 msg_rtime;
->>>      u32 __unused2;
->>>      /* 32 bit implict padding */
->>>      u64 msg_ctime;
->>>      u32 __unused3;
->>>      /* 32 bit implict padding */
->>>      __kernel_pid_t          shm_cpid;       /* pid of creator */
->>>      __kernel_pid_t          shm_lpid;       /* pid of last operator */
->>>      ....
->>> };
->>>
->>> The choices here would be to either use a mix of
->>> __kernel_ulong_t and unsigned long, or taking the x32
->>> version back into arch/x86/include/uapi/asm/ so the
->>> generic version at least makes some sense.
->>>
->>> I can't use __kernel_time_t for the lower half on 32-bit
->>> since it really should be unsigned.
->>
->> After thinking about it some more, I conclude that the structure is simply
->> incorrect on x32: The __kernel_ulong_t usage was introduced in 2013
->> in commit b9cd5ca22d67 ("uapi: Use __kernel_ulong_t in struct
->> msqid64_ds") and apparently was correct initially as __BITS_PER_LONG
->> evaluated to 64, but it broke with commit f4b4aae18288 ("x86/headers/uapi:
->> Fix __BITS_PER_LONG value for x32 builds") that changed the value
->> of __BITS_PER_LONG and introduced the extra padding in 2015.
->>
->> The same change apparently also broke a lot of other definitions, e.g.
->>
->> $ echo "#include <linux/types.h>" | gcc -mx32 -E -xc - | grep -A3
->> __kernel_size_t
->> typedef unsigned int __kernel_size_t;
->> typedef int __kernel_ssize_t;
->> typedef int __kernel_ptrdiff_t;
->>
->> Those used to be defined as 'unsigned long long' and 'long long'
->> respectively, so now all kernel interfaces using those on x32
->> became incompatible!
->
-> Is this just for the uapi header as seen by userspace?  I expect we are
-> using the a normal kernel interface with 64bit longs and 64bit pointers
-> when we build the kernel.
+A bugfix broke the x32 shmid64_ds and msqid64_ds data structure layout
+(as seen from user space)  a few years ago: Originally, __BITS_PER_LONG
+was defined as 64 on x32, so we did not have padding after the 64-bit
+__kernel_time_t fields, After __BITS_PER_LONG got changed to 32,
+applications would observe extra padding.
 
-Yes, that patch shouldn't have changed anything in the kernel, which
-continues to be built with __BITS_PER_LONG=64. I haven't
-checked the vdso, which is the only bit of the kernel that gets built
-with -mx32, but I assume it's fine as well.
+In other parts of the uapi headers we seem to have a mix of those
+expecting either 32 or 64 on x32 applications, so we can't easily revert
+the path that broke these two structures.
 
-> If this is just a header as seen from userspace mess it seems
-> unfortunate but fixable.
+Instead, this patch decouples x32 from the other architectures and moves
+it back into arch specific headers, partially reverting the even older
+commit 73a2d096fdf2 ("x86: remove all now-duplicate header files").
 
-Right. I'll fix the IPC stuff for this series to make it work with
-any value of __BITS_PER_LONG on x32, but I don't plan to
-do anything about the rest of x32. The patch that caused the
-problem was intended as a bugfix, so we can't just revert it
-without first understanding how to properly fix the original bug,
-and which other interfaces have now come to rely on
-__BITS_PER_LONG=32 for x32.
+It's not clear whether this ever made any difference, since at least
+glibc carries its own (correct) copy of both of these header files,
+so possibly no application has ever observed the definitions here.
 
-Adding a few other folks that have been involved in the x32
-kernel support or the Debian port in the past. Maybe one of
-them is motivated to figure out how to fix this properly.
+There are other UAPI interfaces that depend on __BITS_PER_LONG and
+that might suffer from the same problem on x32, but I have not tried to
+analyse them in enough detail to be sure. If anyone still cares about x32,
+that may be a useful thing to do.
 
-       Arnd
+Fixes: f4b4aae18288 ("x86/headers/uapi: Fix __BITS_PER_LONG value for x32 builds")
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+This came out of the y2038 ipc syscall series but can be applied
+and backported independently.
+---
+ arch/x86/include/uapi/asm/msgbuf.h | 29 +++++++++++++++++++++++++++
+ arch/x86/include/uapi/asm/shmbuf.h | 40 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 69 insertions(+)
+
+diff --git a/arch/x86/include/uapi/asm/msgbuf.h b/arch/x86/include/uapi/asm/msgbuf.h
+index 809134c644a6..5f1604961e6d 100644
+--- a/arch/x86/include/uapi/asm/msgbuf.h
++++ b/arch/x86/include/uapi/asm/msgbuf.h
+@@ -1 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef __ASM_X64_MSGBUF_H
++#define __ASM_X64_MSGBUF_H
++
++#if !defined(__x86_64__) || !defined(__ilp32__)
+ #include <asm-generic/msgbuf.h>
++#else
++/*
++ * The msqid64_ds structure for x86 architecture with x32 ABI.
++ *
++ * On x86-32 and x86-64 we can just use the generic definition, but
++ * x32 uses the same binary layout as x86_64, which is differnet
++ * from other 32-bit architectures.
++ */
++
++struct msqid64_ds {
++	struct ipc64_perm msg_perm;
++	__kernel_time_t msg_stime;	/* last msgsnd time */
++	__kernel_time_t msg_rtime;	/* last msgrcv time */
++	__kernel_time_t msg_ctime;	/* last change time */
++	__kernel_ulong_t msg_cbytes;	/* current number of bytes on queue */
++	__kernel_ulong_t msg_qnum;	/* number of messages in queue */
++	__kernel_ulong_t msg_qbytes;	/* max number of bytes on queue */
++	__kernel_pid_t msg_lspid;	/* pid of last msgsnd */
++	__kernel_pid_t msg_lrpid;	/* last receive pid */
++	__kernel_ulong_t __unused4;
++	__kernel_ulong_t __unused5;
++};
++
++#endif /* __ASM_GENERIC_MSGBUF_H */
+diff --git a/arch/x86/include/uapi/asm/shmbuf.h b/arch/x86/include/uapi/asm/shmbuf.h
+index 83c05fc2de38..cdd7eec878fa 100644
+--- a/arch/x86/include/uapi/asm/shmbuf.h
++++ b/arch/x86/include/uapi/asm/shmbuf.h
+@@ -1 +1,41 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef __ASM_X86_SHMBUF_H
++#define __ASM_X86_SHMBUF_H
++
++#if !defined(__x86_64__) || !defined(__ilp32__)
+ #include <asm-generic/shmbuf.h>
++#else
++/*
++ * The shmid64_ds structure for x86 architecture with x32 ABI.
++ *
++ * On x86-32 and x86-64 we can just use the generic definition, but
++ * x32 uses the same binary layout as x86_64, which is differnet
++ * from other 32-bit architectures.
++ */
++
++struct shmid64_ds {
++	struct ipc64_perm	shm_perm;	/* operation perms */
++	size_t			shm_segsz;	/* size of segment (bytes) */
++	__kernel_time_t		shm_atime;	/* last attach time */
++	__kernel_time_t		shm_dtime;	/* last detach time */
++	__kernel_time_t		shm_ctime;	/* last change time */
++	__kernel_pid_t		shm_cpid;	/* pid of creator */
++	__kernel_pid_t		shm_lpid;	/* pid of last operator */
++	__kernel_ulong_t	shm_nattch;	/* no. of current attaches */
++	__kernel_ulong_t	__unused4;
++	__kernel_ulong_t	__unused5;
++};
++
++struct shminfo64 {
++	__kernel_ulong_t	shmmax;
++	__kernel_ulong_t	shmmin;
++	__kernel_ulong_t	shmmni;
++	__kernel_ulong_t	shmseg;
++	__kernel_ulong_t	shmall;
++	__kernel_ulong_t	__unused1;
++	__kernel_ulong_t	__unused2;
++	__kernel_ulong_t	__unused3;
++	__kernel_ulong_t	__unused4;
++};
++
++#endif /* __ASM_X86_SHMBUF_H */
+-- 
+2.9.0
