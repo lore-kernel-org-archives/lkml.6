@@ -1,72 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752899AbeDTSwI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 14:52:08 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:12066 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752047AbeDTSvx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 14:51:53 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 20 Apr 2018 11:51:52 -0700
-From: Vladislav Zhurba <vzhurba@nvidia.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
-        Daniel Fu <danifu@nvidia.com>, Vladislav Zhurba <vzhurba@nvidia.com>
-Subject: [PATCH 1/1] media: nec-decoder: remove trailer_space state
-Date: Fri, 20 Apr 2018 11:51:39 -0700
-Message-ID: <20180420185139.29238-1-vzhurba@nvidia.com>
-X-Mailer: git-send-email 2.17.0
-X-NVConfidentiality: public
+        id S1751237AbeDTS44 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 14:56:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46080 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750745AbeDTS4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 14:56:55 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5934217CE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=helgaas@kernel.org
+Date: Fri, 20 Apr 2018 13:56:53 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Michal Simek <monstr@monstr.eu>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] microblaze/PCI: Remove unused code
+Message-ID: <20180420185653.GV28657@bhelgaas-glaptop.roam.corp.google.com>
+References: <152336656418.18958.17017091754578447948.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152336656418.18958.17017091754578447948.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Fu <danifu@nvidia.com>
+On Tue, Apr 10, 2018 at 08:24:59AM -0500, Bjorn Helgaas wrote:
+> Remove some unused microblaze PCI code.
+> 
+> I can merge these via PCI if you like, Michal.  I have some related
+> changes coming for some sparc resource claim issues.  Or it's fine if
+> you pick them up.
 
-Remove STATE_TRAILER_SPACE from state machine.
-Causing 2 issue:
-- can not decode the keycode, if it didn't following with
-  another keycode/repeat code
-- will generate one more code in current logic.
-  i.e. key_right + repeat code + key_left + repeat code.
-  expect: key_right, key_left.
-  Result: key_right, key_right, key_right.
-  Reason: when receive repeat code of key_right, state machine will
-  stay in STATE_TRAILER_SPACE state, then wait for a new interrupt,
-  if an interrupt came after keyup_timer, then will generate another
-  fake key.
+I applied these to pci/microblaze for v4.17.  If you pick them up,
+Michal, I'll drop them; just let me know.
 
-According to the NEC protocol, it don't need a trailer space. Remove it.
-
-Signed-off-by: Daniel Fu <danifu@nvidia.com>
-Signed-off-by: Vladislav Zhurba <vzhurba@nvidia.com>
----
- drivers/media/rc/ir-nec-decoder.c | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/drivers/media/rc/ir-nec-decoder.c b/drivers/media/rc/ir-nec-decoder.c
-index 21647b809e6f..760b66affd1a 100644
---- a/drivers/media/rc/ir-nec-decoder.c
-+++ b/drivers/media/rc/ir-nec-decoder.c
-@@ -128,16 +128,6 @@ static int ir_nec_decode(struct rc_dev *dev, struct ir_raw_event ev)
- 		if (!eq_margin(ev.duration, NEC_TRAILER_PULSE, NEC_UNIT / 2))
- 			break;
- 
--		data->state = STATE_TRAILER_SPACE;
--		return 0;
--
--	case STATE_TRAILER_SPACE:
--		if (ev.pulse)
--			break;
--
--		if (!geq_margin(ev.duration, NEC_TRAILER_SPACE, NEC_UNIT / 2))
--			break;
--
- 		if (data->count == NEC_NBITS) {
- 			address     = bitrev8((data->bits >> 24) & 0xff);
- 			not_address = bitrev8((data->bits >> 16) & 0xff);
--- 
-2.16.2
+> ---
+> 
+> Bjorn Helgaas (2):
+>       microblaze/PCI: Remove pcibios_finish_adding_to_bus() dead code
+>       microblaze/PCI: Remove pcibios_claim_one_bus() dead code
+> 
+> 
+>  arch/microblaze/include/asm/pci.h |    4 --
+>  arch/microblaze/pci/pci-common.c  |   61 -------------------------------------
+>  2 files changed, 65 deletions(-)
