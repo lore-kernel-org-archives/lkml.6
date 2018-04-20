@@ -1,98 +1,213 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753074AbeDTWKi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 18:10:38 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52705 "EHLO mail.bootlin.com"
+        id S1752578AbeDTWNs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 18:13:48 -0400
+Received: from mga14.intel.com ([192.55.52.115]:15348 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752647AbeDTWKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 18:10:37 -0400
-Date: Sat, 21 Apr 2018 00:10:28 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: NeilBrown <neil@brown.name>
-Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Brian Norris" <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: spi-nor: clear Winbond Extended Address Reg on
- switch to 3-byte addressing.
-Message-ID: <20180421001028.544f5d09@bbrezillon>
-In-Reply-To: <87efj9pnyk.fsf@notabene.neil.brown.name>
-References: <874lkmw54j.fsf@notabene.neil.brown.name>
-        <87sh7wrq8p.fsf@notabene.neil.brown.name>
-        <20180420215440.7b078f6c@bbrezillon>
-        <87efj9pnyk.fsf@notabene.neil.brown.name>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751338AbeDTWNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Apr 2018 18:13:46 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,303,1520924400";
+   d="scan'208";a="49572128"
+Date: Fri, 20 Apr 2018 15:13:46 -0700
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>, airlied@linux.ie,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [Intel-gfx] [PATCH] gpu: drm: i915: Change return type to
+ vm_fault_t
+Message-ID: <20180420221346.GN1310@intel.com>
+References: <20180417151127.GA31655@jordon-HP-15-Notebook-PC>
+ <87h8o9g8be.fsf@intel.com>
+ <CAFqt6zb_XqVKHPH5U4TubgDTgBURWv63cfa_OMQEyHjGZpKTHQ@mail.gmail.com>
+ <20180417161557.GA3603@bombadil.infradead.org>
+ <CAFqt6zb5TgZEHHT9kTWsoQ8REy6rVjZ6uQN4oQ2LUatwG13jQw@mail.gmail.com>
+ <871sfdxe0r.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871sfdxe0r.fsf@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 21 Apr 2018 07:28:19 +1000
-NeilBrown <neil@brown.name> wrote:
-
-> On Fri, Apr 20 2018, Boris Brezillon wrote:
-> 
-> > Hi Neil,
+On Wed, Apr 18, 2018 at 08:46:44AM +0300, Jani Nikula wrote:
+> On Tue, 17 Apr 2018, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> > On 17-Apr-2018 9:45 PM, "Matthew Wilcox" <willy@infradead.org> wrote:
+> >>
+> >> On Tue, Apr 17, 2018 at 09:14:32PM +0530, Souptick Joarder wrote:
+> >> > Not exactly. The plan for these patches is to introduce new vm_fault_t
+> > type
+> >> > in vm_operations_struct fault handlers. It's now available in 4.17-rc1.
+> > We will
+> >> > push all the required drivers/filesystem changes through different
+> > maintainers
+> >> > to linus tree. Once everything is converted into vm_fault_t type then
+> > Changing
+> >> > it from a signed to an unsigned int causes GCC to warn about an
+> > assignment
+> >> > from an incompatible type -- int foo(void) is incompatible with
+> >> > unsigned int foo(void).
+> >> >
+> >> > Please refer 1c8f422059ae ("mm: change return type to vm_fault_t") in
+> > 4.17-rc1.
+> >>
+> >> I think this patch would be clearer if you did
+> >>
+> >> -       int ret;
+> >> +       int err;
+> >> +       vm_fault_t ret;
+> >>
+> >> Then it would be clearer to the maintainer that you're splitting apart the
+> >> VM_FAULT and errno codes.
+> >>
+> >> Sorry for not catching this during initial review.
 > >
-> > On Mon, 16 Apr 2018 09:42:30 +1000
-> > NeilBrown <neil@brown.name> wrote:
-> >  
-> >> Winbond spi-nor flash 32MB and larger have an 'Extended Address
-> >> Register' as one option for addressing beyond 16MB (Macronix
-> >> has the same concept, Spansion has EXTADD bits in the Bank Address
-> >> Register).
-> >> 
-> >> According to section
-> >>    8.2.7 Write Extended Address Register (C5h)
-> >> 
-> >> of the Winbond W25Q256FV data sheet (256M-BIT SPI flash)
-> >> 
-> >>    The Extended Address Register is only effective when the device is
-> >>    in the 3-Byte Address Mode.  When the device operates in the 4-Byte
-> >>    Address Mode (ADS=1), any command with address input of A31-A24
-> >>    will replace the Extended Address Register values. It is
-> >>    recommended to check and update the Extended Address Register if
-> >>    necessary when the device is switched from 4-Byte to 3-Byte Address
-> >>    Mode.
-> >> 
-> >> So the documentation suggests clearing the EAR after switching to
-> >> 3-byte mode.  Experimentation shows that the EAR is *always* one after
-> >> the switch to 3-byte mode, so clearing the EAR is mandatory at
-> >> shutdown for a subsequent 3-byte-addressed reboot to work.
-> >> 
-> >> Note that some SOCs (e.g. MT7621) do not assert a reset line at normal
-> >> reboot, so we cannot rely on hardware reset.  The MT7621 does assert a
-> >> reset line at watchdog-reset.
-> >> 
-> >> Signed-off-by: NeilBrown <neil@brown.name>  
-> >
-> > We should probably backport the fix. Can you add a Fixes and Cc-stable
-> > tag?  
+> > Ok, I will make required changes and send v2. Sorry, even I missed this :)
 > 
-> It's a bit weird having Fixes when this isn't a regression, but I guess
-> it doesn't hurt.
+> I'm afraid Daniel is closer to the truth.
 
-Well, I thought you wanted this patch to be backported to stable
-releases, hence my suggestion. Of course it's not a regression, since
-the bug is here from the beginning, but nonetheless it's fixing a bug.
++1.
 
-> I chose
->   Fixes: 59b356ffd0b0 ("mtd: m25p80: restore the status of SPI flash when exiting")
-> as this patch it useless without that one.
+> My bad, sorry for the noise.
 
-Not sure that's how Fixes should be used. IIUC, it should point to the
-first commit where the bug was introduced, so I guess it's 0aa87b7563f1
-("mtd: m25p80: add support for the windbond w25q256 chip") in this case.
+I opened this thread to add exactly question/noise ;).
 
-Now, if you want to restrict the kernel releases this patch should be
-backported to, you can use the '# vX.Y+' suffix in your Cc-stable tag.
+So my recommendation for some next time is to make the intention clear
+on the commit message itself from the begin.
 
 > 
-> I also fixed the comment and have resent.
-
-Thanks.
+> BR,
+> Jani.
+> 
+> 
+> 
+> >>
+> >> > On Tue, Apr 17, 2018 at 8:59 PM, Jani Nikula
+> >> > <jani.nikula@linux.intel.com> wrote:
+> >> > > On Tue, 17 Apr 2018, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >> > >> Use new return type vm_fault_t for fault handler. For
+> >> > >> now, this is just documenting that the function returns
+> >> > >> a VM_FAULT value rather than an errno. Once all instances
+> >> > >> are converted, vm_fault_t will become a distinct type.
+> >> > >>
+> >> > >> Reference id -> 1c8f422059ae ("mm: change return type to
+> >> > >> vm_fault_t")
+> >> > >>
+> >> > >> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> >> > >> ---
+> >> > >>  drivers/gpu/drm/i915/i915_drv.h |  3 ++-
+> >> > >>  drivers/gpu/drm/i915/i915_gem.c | 15 ++++++++-------
+> >> > >>  2 files changed, 10 insertions(+), 8 deletions(-)
+> >> > >>
+> >> > >> diff --git a/drivers/gpu/drm/i915/i915_drv.h
+> > b/drivers/gpu/drm/i915/i915_drv.h
+> >> > >> index a42deeb..95b0d50 100644
+> >> > >> --- a/drivers/gpu/drm/i915/i915_drv.h
+> >> > >> +++ b/drivers/gpu/drm/i915/i915_drv.h
+> >> > >> @@ -51,6 +51,7 @@
+> >> > >>  #include <drm/drm_gem.h>
+> >> > >>  #include <drm/drm_auth.h>
+> >> > >>  #include <drm/drm_cache.h>
+> >> > >> +#include <linux/mm_types.h>
+> >> > >>
+> >> > >>  #include "i915_params.h"
+> >> > >>  #include "i915_reg.h"
+> >> > >> @@ -3363,7 +3364,7 @@ int i915_gem_wait_for_idle(struct
+> > drm_i915_private *dev_priv,
+> >> > >>                          unsigned int flags);
+> >> > >>  int __must_check i915_gem_suspend(struct drm_i915_private
+> > *dev_priv);
+> >> > >>  void i915_gem_resume(struct drm_i915_private *dev_priv);
+> >> > >> -int i915_gem_fault(struct vm_fault *vmf);
+> >> > >> +vm_fault_t i915_gem_fault(struct vm_fault *vmf);
+> >> > >>  int i915_gem_object_wait(struct drm_i915_gem_object *obj,
+> >> > >>                        unsigned int flags,
+> >> > >>                        long timeout,
+> >> > >> diff --git a/drivers/gpu/drm/i915/i915_gem.c
+> > b/drivers/gpu/drm/i915/i915_gem.c
+> >> > >> index dd89abd..bdac690 100644
+> >> > >> --- a/drivers/gpu/drm/i915/i915_gem.c
+> >> > >> +++ b/drivers/gpu/drm/i915/i915_gem.c
+> >> > >> @@ -1882,7 +1882,7 @@ int i915_gem_mmap_gtt_version(void)
+> >> > >>   * The current feature set supported by i915_gem_fault() and thus
+> > GTT mmaps
+> >> > >>   * is exposed via I915_PARAM_MMAP_GTT_VERSION (see
+> > i915_gem_mmap_gtt_version).
+> >> > >>   */
+> >> > >> -int i915_gem_fault(struct vm_fault *vmf)
+> >> > >> +vm_fault_t i915_gem_fault(struct vm_fault *vmf)
+> >> > >>  {
+> >> > >>  #define MIN_CHUNK_PAGES ((1 << 20) >> PAGE_SHIFT) /* 1 MiB */
+> >> > >>       struct vm_area_struct *area = vmf->vma;
+> >> > >> @@ -1895,6 +1895,7 @@ int i915_gem_fault(struct vm_fault *vmf)
+> >> > >>       pgoff_t page_offset;
+> >> > >>       unsigned int flags;
+> >> > >>       int ret;
+> >> > >> +     vm_fault_t retval;
+> >> > >
+> >> > > What's the point of changing the name? An unnecessary change.
+> >> > >
+> >> > > BR,
+> >> > > Jani.
+> >> > >
+> >> > >>
+> >> > >>       /* We don't use vmf->pgoff since that has the fake offset */
+> >> > >>       page_offset = (vmf->address - area->vm_start) >> PAGE_SHIFT;
+> >> > >> @@ -2000,7 +2001,7 @@ int i915_gem_fault(struct vm_fault *vmf)
+> >> > >>                * and so needs to be reported.
+> >> > >>                */
+> >> > >>               if (!i915_terminally_wedged(&dev_priv->gpu_error)) {
+> >> > >> -                     ret = VM_FAULT_SIGBUS;
+> >> > >> +                     retval = VM_FAULT_SIGBUS;
+> >> > >>                       break;
+> >> > >>               }
+> >> > >>       case -EAGAIN:
+> >> > >> @@ -2017,21 +2018,21 @@ int i915_gem_fault(struct vm_fault *vmf)
+> >> > >>                * EBUSY is ok: this just means that another thread
+> >> > >>                * already did the job.
+> >> > >>                */
+> >> > >> -             ret = VM_FAULT_NOPAGE;
+> >> > >> +             retval = VM_FAULT_NOPAGE;
+> >> > >>               break;
+> >> > >>       case -ENOMEM:
+> >> > >> -             ret = VM_FAULT_OOM;
+> >> > >> +             retval = VM_FAULT_OOM;
+> >> > >>               break;
+> >> > >>       case -ENOSPC:
+> >> > >>       case -EFAULT:
+> >> > >> -             ret = VM_FAULT_SIGBUS;
+> >> > >> +             retval = VM_FAULT_SIGBUS;
+> >> > >>               break;
+> >> > >>       default:
+> >> > >>               WARN_ONCE(ret, "unhandled error in i915_gem_fault:
+> > %i\n", ret);
+> >> > >> -             ret = VM_FAULT_SIGBUS;
+> >> > >> +             retval = VM_FAULT_SIGBUS;
+> >> > >>               break;
+> >> > >>       }
+> >> > >> -     return ret;
+> >> > >> +     return retval;
+> >> > >>  }
+> >> > >>
+> >> > >>  static void __i915_gem_object_release_mmap(struct
+> > drm_i915_gem_object *obj)
+> >> > >> --
+> >> > >> 1.9.1
+> >> > >>
+> >> > >
+> >> > > --
+> >> > > Jani Nikula, Intel Open Source Technology Center
+> 
+> -- 
+> Jani Nikula, Intel Open Source Technology Center
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
