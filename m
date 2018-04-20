@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755454AbeDTPOV (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 20 Apr 2018 11:14:21 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34329 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755291AbeDTPOT (ORCPT
+        id S1755461AbeDTPSl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 20 Apr 2018 11:18:41 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:37847 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755357AbeDTPSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Apr 2018 11:14:19 -0400
-X-Google-Smtp-Source: AIpwx48p4yJFK1FwOzObr6DfleW+HFLrDmDyRyfL3gCagzOQkz1lIewxT9AhcTs8qkksgBMHEiamLQ==
+        Fri, 20 Apr 2018 11:18:39 -0400
+X-Google-Smtp-Source: AIpwx4/7x1MQJQ/ElELAlUIIlfCkKxlE+14R2XfBlid5fSrctsOXuxo7npB0PZxqRaXUOzizbjb0Tw==
 From: Yafang Shao <laoar.shao@gmail.com>
 To: eric.dumazet@gmail.com, alexei.starovoitov@gmail.com,
         songliubraving@fb.com, davem@davemloft.net
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH net-next v3] net: introduce a new tracepoint for tcp_rcv_space_adjust
-Date: Fri, 20 Apr 2018 23:14:05 +0800
-Message-Id: <1524237245-10940-1-git-send-email-laoar.shao@gmail.com>
+Subject: [PATCH v3 net-next] net: introduce a new tracepoint for tcp_rcv_space_adjust
+Date: Fri, 20 Apr 2018 23:18:26 +0800
+Message-Id: <1524237506-11011-1-git-send-email-laoar.shao@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,14 +51,13 @@ v2 -> v3: use sock_gen_cookie in tcp_event_sk as well.
           path we just read it other than set it. If that is needed I
           will do it in another new patch.
 v1 -> v2: use sk_cookie as a key suggested by Eric.
-
 ---
  include/trace/events/tcp.h | 30 +++++++++++++++++++++---------
  net/ipv4/tcp_input.c       |  2 ++
  2 files changed, 23 insertions(+), 9 deletions(-)
 
 diff --git a/include/trace/events/tcp.h b/include/trace/events/tcp.h
-index 3dd6802..c820bf6 100644
+index 3dd6802..c1a5284 100644
 --- a/include/trace/events/tcp.h
 +++ b/include/trace/events/tcp.h
 @@ -10,6 +10,7 @@
@@ -95,7 +94,7 @@ index 3dd6802..c820bf6 100644
  	),
  
 -	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c",
-+	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c sock_cookie=%llu",
++	TP_printk("sport=%hu dport=%hu saddr=%pI4 daddr=%pI4 saddrv6=%pI6c daddrv6=%pI6c sock_cookie=%llx",
  		  __entry->sport, __entry->dport,
  		  __entry->saddr, __entry->daddr,
 -		  __entry->saddr_v6, __entry->daddr_v6)
